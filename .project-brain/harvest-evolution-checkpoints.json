@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T09:53:27.102Z",
+  "last_updated": "2026-11-14T10:17:20.411Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-14T05:32:15.509Z",
@@ -2526,9 +2526,24 @@
       "processed_at": "2026-11-14T09:53:25.864Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "onehumanbeing-esp32-iphone-agent-learnings.md": {
+      "processed_at": "2026-11-14T10:16:43.942Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "hf-adventists-ai-sophon-realtime-v1-learnings.md": {
+      "processed_at": "2026-11-14T10:17:19.424Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "software-mansion-react-native-gesture-handler-learnings.md": {
+      "processed_at": "2026-11-14T10:17:19.782Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 810,
-  "total_canonical_promoted": 184,
-  "total_staged_for_review": 625
+  "total_dossiers_evaluated": 813,
+  "total_canonical_promoted": 185,
+  "total_staged_for_review": 627
 }

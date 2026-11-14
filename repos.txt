@@ -5074,3 +5074,9 @@ https://huggingface.co/DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-N
 # --- Automatically Discovered by AI Scout Engine [2026-11-14T09:07:53.853Z] ---
 # [HUGGINGFACE-AI-MODELS] laion/clap-htsat-fused (3780 score) - Verified Hugging Face Model: laion/clap-htsat-fused (178 likes, 8599807 download
 https://huggingface.co/laion/clap-htsat-fused
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-14T10:16:22.120Z] ---
+# [AI-AGENTS] onehumanbeing/esp32-iphone-agent (2847 score) - Let an AI model use a real iPhone with a $7 ESP32: AirPlay eyes, USB HID hands, 
+https://github.com/onehumanbeing/esp32-iphone-agent
+# [HUGGINGFACE-AI-MODELS] adventists-ai/Sophon-Realtime-v1 (2530 score) - Verified Hugging Face Model: adventists-ai/Sophon-Realtime-v1 (253 likes, 0 down
+https://huggingface.co/adventists-ai/Sophon-Realtime-v1

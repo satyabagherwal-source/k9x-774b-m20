@@ -1,17 +1,18 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T09:53:26.915Z",
-  "total_records": 626,
+  "last_updated": "2026-11-14T10:17:20.152Z",
+  "total_records": 634,
   "domains": {
     "A": {
-      "total": 5,
+      "total": 6,
       "record_ids": [
         "DOM-A-DD59FA01",
         "domain_intelligence-human-need-intelligence-foreactlabs-openexecutive-core-invariants",
         "domain_intelligence-human-need-intelligence-foreactlabs-openexecutive-learnings-core-invariants",
         "domain_intelligence-human-need-intelligence-argoproj-argo-workflows-core-invariants",
-        "domain_intelligence-human-need-intelligence-argoproj-argo-workflows-learnings-core-invariants"
+        "domain_intelligence-human-need-intelligence-argoproj-argo-workflows-learnings-core-invariants",
+        "domain_intelligence-human-need-intelligence-kumahq-kuma-core-invariants"
       ]
     },
     "B": {
@@ -35,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 305,
+      "total": 308,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -341,7 +342,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanes",
         "domain_intelligence-research-knowledge-intelligence-facebookai-xlm-roberta-base-core-invariants",
         "DOM-D-F08B07B4",
-        "domain_intelligence-research-knowledge-intelligence-hf-facebookai-xlm-roberta-base-learnings-core-in"
+        "domain_intelligence-research-knowledge-intelligence-hf-facebookai-xlm-roberta-base-learnings-core-in",
+        "domain_intelligence-research-knowledge-intelligence-adventists-ai-sophon-realtime-v1-core-invariants",
+        "DOM-D-BDCABDC2",
+        "domain_intelligence-research-knowledge-intelligence-hf-adventists-ai-sophon-realtime-v1-learnings-co"
       ]
     },
     "E": {
@@ -373,7 +377,7 @@
       ]
     },
     "G": {
-      "total": 88,
+      "total": 90,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -462,11 +466,13 @@
         "domain_intelligence-architecture-intelligence-materializeinc-materialize-core-invariants",
         "domain_intelligence-architecture-intelligence-matthart1983-netwatch-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-helixdb-helix-db-core-invariants",
-        "domain_intelligence-architecture-intelligence-helixdb-helix-db-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-helixdb-helix-db-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-software-mansion-react-native-gesture-handler-core-inv",
+        "domain_intelligence-architecture-intelligence-software-mansion-react-native-gesture-handler-learning"
       ]
     },
     "H": {
-      "total": 139,
+      "total": 141,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -606,7 +612,9 @@
         "domain_intelligence-technical-construction-intelligence-hf-davidau-qwen3-5-9b-the-defiant-fable-unce",
         "DOM-H-538CE636",
         "domain_intelligence-technical-construction-intelligence-wix-react-native-ui-lib-learnings-core-invar",
-        "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co"
+        "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co",
+        "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
+        "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-learnings-c"
       ]
     },
     "I": {
@@ -13419,6 +13427,111 @@
       "repository": "zoontek-react-native-bootsplash-learnings",
       "content_hash": "cef6d8c9fb333f105d9e96bc3a4574189ed3a3332de57552740778797bb8e80f",
       "created_at": "2026-11-14T09:53:26.458Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: onehumanbeing/esp32-iphone-agent Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-onehumanbeing-esp32-iphone-agent-technical-construction-intelligence-onehumanbei.md",
+      "repository": "onehumanbeing/esp32-iphone-agent",
+      "content_hash": "84de2319edfe61f94d34b1674b061a7b900bd040bd6b9cd7559ded64f1d6f42c",
+      "created_at": "2026-11-14T10:16:29.562Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-adventists-ai-sophon-realtime-v1-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-adventists-ai-sophon-realtime-v1-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: adventists-ai/Sophon-Realtime-v1 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-adventists-ai-sophon-realtime-v1-research-knowledge-intelligence-adventists-a.md",
+      "repository": "adventists-ai/Sophon-Realtime-v1",
+      "content_hash": "5d5e4ab85e59b22d880eba7a1f9a5cf60261b80b558d6716c1195f5ab0d7b153",
+      "created_at": "2026-11-14T10:16:31.546Z"
+    },
+    "domain_intelligence-architecture-intelligence-software-mansion-react-native-gesture-handler-core-inv": {
+      "record_id": "domain_intelligence-architecture-intelligence-software-mansion-react-native-gesture-handler-core-inv",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: software-mansion/react-native-gesture-handler Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-software-mansion-react-native-gesture-handler-architecture-intelligence-software.md",
+      "repository": "software-mansion/react-native-gesture-handler",
+      "content_hash": "7cccfae596fdcea35fb422d9cea4b4a969af73bef0ef756a1c42aea92f2b3b52",
+      "created_at": "2026-11-14T10:16:38.638Z"
+    },
+    "domain_intelligence-human-need-intelligence-kumahq-kuma-core-invariants": {
+      "record_id": "domain_intelligence-human-need-intelligence-kumahq-kuma-core-invariants",
+      "domain_letter": "A",
+      "title": "Human & Need Intelligence: kumahq/kuma Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-kumahq-kuma-human-need-intelligence-kumahq-kuma-core-invariants.md",
+      "repository": "kumahq/kuma",
+      "content_hash": "62bb9003579469ca51973dd8b8c41ec887c247450615106e6d99ea47843f4414",
+      "created_at": "2026-11-14T10:16:41.055Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-learnings-c": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-learnings-c",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: onehumanbeing-esp32-iphone-agent-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-onehumanbeing-esp32-iphone-agent-learnings-technical-construction-intelligence-o.md",
+      "repository": "onehumanbeing-esp32-iphone-agent-learnings",
+      "content_hash": "92465f38d03900ee0da11479cc0173c98ec50d414ec965a85dcbf0a59fe072e9",
+      "created_at": "2026-11-14T10:16:44.416Z"
+    },
+    "DOM-D-BDCABDC2": {
+      "record_id": "DOM-D-BDCABDC2",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): adventists-ai/Sophon-Realtime-v1",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-adventists-ai-sophon-realtime-v1-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/adventists-ai/Sophon-Realtime-v1](https://huggingface.co/adventists-ai/Sophon-Realtime-v1))  \n> **Source Version**: `hf-adventist`  \n> **Lice",
+      "content_hash": "22b2d16ffa1533a7e8462bd26d26d110ea10453a99d04c70fb002dedf65d999c",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-adventists-ai-sophon-realtime-v1-learnings.md`  \n> **Source**: huggingface ([http -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-adventists-ai-sophon-realtime-v1-learnings.md`  \n> **Source**: huggingface ([http",
+      "provenance": {
+        "source_uri": "project://hf-adventists-ai-sophon-realtime-v1/hf-adventists-ai-sophon-realtime-v1-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T10:16:44.654Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-adventists-ai-sophon-realtime-v1)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-adventists-ai-sophon-realtime-v1"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T10:17:19.411Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-adventists-ai-sophon-realtime-v1-learnings-co": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-adventists-ai-sophon-realtime-v1-learnings-co",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-adventists-ai-sophon-realtime-v1-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-adventists-ai-sophon-realtime-v1-learnings-research-knowledge-intelligence-hf.md",
+      "repository": "hf-adventists-ai-sophon-realtime-v1-learnings",
+      "content_hash": "5699e4be69ac3250fd30e55e5d7b322b1a14447cce173169451f7473851325cf",
+      "created_at": "2026-11-14T10:17:19.633Z"
+    },
+    "domain_intelligence-architecture-intelligence-software-mansion-react-native-gesture-handler-learning": {
+      "record_id": "domain_intelligence-architecture-intelligence-software-mansion-react-native-gesture-handler-learning",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: software-mansion-react-native-gesture-handler-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-software-mansion-react-native-gesture-handler-learnings-architecture-intelligenc.md",
+      "repository": "software-mansion-react-native-gesture-handler-learnings",
+      "content_hash": "33b531bf143f347d81e4a1df34900784910b50f16e09e790e07b5aabad122847",
+      "created_at": "2026-11-14T10:17:20.152Z"
     }
   }
 }

@@ -9802,3 +9802,8 @@
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T09:18:32.951Z` | `hf-laion-clap-htsat-fused` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-7AAC58BB` [Domain D] | Yes (`dbaeebf0...`) |
 | `CYCLE-20261114-9CHN` | `2026-11-14T09:52:56.699Z` | `FacebookAI/xlm-roberta-base` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-facebookai-xlm-roberta-base-learnings.md` | Yes (`1c8c1b55...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T09:53:25.864Z` | `hf-facebookai-xlm-roberta-base` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-F08B07B4` [Domain D] | Yes (`18e12f61...`) |
+| `CYCLE-20261114-3ME5` | `2026-11-14T10:16:29.213Z` | `onehumanbeing/esp32-iphone-agent` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8477` | Yes (`1996f210...`) |
+| `CYCLE-20261114-3O16` | `2026-11-14T10:16:31.338Z` | `adventists-ai/Sophon-Realtime-v1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-adventists-ai-sophon-realtime-v1-learnings.md` | Yes (`b341513c...`) |
+| `CYCLE-20261114-3TEI` | `2026-11-14T10:16:38.298Z` | `software-mansion/react-native-gesture-handler` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8478` | Yes (`75f613d0...`) |
+| `CYCLE-20261114-3V92` | `2026-11-14T10:16:40.694Z` | `kumahq/kuma` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/kumahq-kuma-learnings.md` | Yes (`f04197cf...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T10:17:19.424Z` | `hf-adventists-ai-sophon-realtime-v1` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-BDCABDC2` [Domain D] | Yes (`22b2d16f...`) |

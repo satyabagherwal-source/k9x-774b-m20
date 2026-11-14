@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T09:53:25.875Z",
+  "updated_at": "2026-11-14T10:17:19.833Z",
   "stats": {
-    "total_discovered": 3205,
-    "approved_pending_harvest": 3000,
+    "total_discovered": 3213,
+    "approved_pending_harvest": 3008,
     "harvested_count": 0,
     "rejected_count": 205,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2994,
+      "COMMUNITY_AND_EXPERT": 3002,
       "OFFICIAL_DOCUMENTATION": 116,
       "STANDARDS_AND_SPECIFICATIONS": 81,
       "ENGINEERING_BLOGS": 1,
@@ -69095,6 +69095,182 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-facebookai-xlm-roberta-base-learnings.md",
         "fileName": "hf-facebookai-xlm-roberta-base-learnings.md"
+      }
+    },
+    "SRC-46D4D2098136": {
+      "id": "SRC-46D4D2098136",
+      "url": "https://github.com/onehumanbeing/esp32-iphone-agent",
+      "title": "https://github.com/onehumanbeing/esp32-iphone-agent",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T10:16:43.960Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/onehumanbeing-esp32-iphone-agent-learnings.md",
+        "fileName": "onehumanbeing-esp32-iphone-agent-learnings.md"
+      }
+    },
+    "SRC-AB04E20ED4F2": {
+      "id": "SRC-AB04E20ED4F2",
+      "url": "https://…",
+      "title": "https://…",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T10:16:44.000Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/onehumanbeing-esp32-iphone-agent-learnings.md",
+        "fileName": "onehumanbeing-esp32-iphone-agent-learnings.md"
+      }
+    },
+    "SRC-D72EC848FD3D": {
+      "id": "SRC-D72EC848FD3D",
+      "url": "https://logs.example.com/poll",
+      "title": "https://logs.example.com/poll",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T10:16:44.026Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/onehumanbeing-esp32-iphone-agent-learnings.md",
+        "fileName": "onehumanbeing-esp32-iphone-agent-learnings.md"
+      }
+    },
+    "SRC-6D0AEA345211": {
+      "id": "SRC-6D0AEA345211",
+      "url": "https://logs.example.com/upload",
+      "title": "https://logs.example.com/upload",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T10:16:44.054Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/onehumanbeing-esp32-iphone-agent-learnings.md",
+        "fileName": "onehumanbeing-esp32-iphone-agent-learnings.md"
+      }
+    },
+    "SRC-D23802DA529A": {
+      "id": "SRC-D23802DA529A",
+      "url": "https://handsy.tech/cli",
+      "title": "https://handsy.tech/cli",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T10:16:44.092Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/onehumanbeing-esp32-iphone-agent-learnings.md",
+        "fileName": "onehumanbeing-esp32-iphone-agent-learnings.md"
+      }
+    },
+    "SRC-A5B5B4E52D94": {
+      "id": "SRC-A5B5B4E52D94",
+      "url": "https://huggingface.co/adventists-ai/Sophon-Realtime-v1",
+      "title": "https://huggingface.co/adventists-ai/Sophon-Realtime-v1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T10:17:19.437Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-adventists-ai-sophon-realtime-v1-learnings.md",
+        "fileName": "hf-adventists-ai-sophon-realtime-v1-learnings.md"
+      }
+    },
+    "SRC-243B2D63314E": {
+      "id": "SRC-243B2D63314E",
+      "url": "https://github.com/software-mansion/react-native-gesture-handler",
+      "title": "https://github.com/software-mansion/react-native-gesture-handler",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T10:17:19.795Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/software-mansion-react-native-gesture-handler-learnings.md",
+        "fileName": "software-mansion-react-native-gesture-handler-learnings.md"
+      }
+    },
+    "SRC-B2488B47C2C4": {
+      "id": "SRC-B2488B47C2C4",
+      "url": "https://snack.expo.io/@adamgrzybowski/react-native-gesture-handler-demo",
+      "title": "https://snack.expo.io/@adamgrzybowski/react-native-gesture-handler-demo",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T10:17:19.833Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/software-mansion-react-native-gesture-handler-learnings.md",
+        "fileName": "software-mansion-react-native-gesture-handler-learnings.md"
       }
     }
   }

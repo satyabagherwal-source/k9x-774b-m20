@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-14T09:52:56.710Z",
+  "last_updated": "2026-11-14T10:16:40.735Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5121,14 +5121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kumahq-kuma",
-      "content_hash": "6c7548a6c39a929d2e5541bace632dc19f3f619440d1288b82e3a3f7992e123b",
-      "verified_at": "2026-11-13T07:47:22.639Z",
+      "content_hash": "f04197cf8ca846a1be2bc99ab2b8b6152cdda0ce358b4c9d8a53d6a2e980014c",
+      "verified_at": "2026-11-14T10:16:40.734Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T07:47:22.639Z"
+      "last_updated": "2026-11-14T10:16:40.734Z"
     },
     "cilium/cilium": {
       "repository": "cilium/cilium",
@@ -7311,14 +7311,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-software-mansion-react-native-gesture-handler",
-      "content_hash": "6fccda01d8b60ef6bac6482ab9690b7b37721ff6e7d593d3fba40fda11cad76a",
-      "verified_at": "2026-11-10T01:58:25.940Z",
+      "content_hash": "75f613d0f67068d1462a12079509ccbf026e2572f3b613fe7c60ec818745f1a5",
+      "verified_at": "2026-11-14T10:16:38.313Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-10T01:58:25.940Z"
+      "last_updated": "2026-11-14T10:16:38.313Z"
     },
     "aws/aws-cdk": {
       "repository": "aws/aws-cdk",
@@ -18869,6 +18869,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-14T09:18:01.303Z"
+    },
+    "onehumanbeing/esp32-iphone-agent": {
+      "repository": "onehumanbeing/esp32-iphone-agent",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
+      "content_hash": "1996f210080579bd3fe7e6c40bed85f74ab1f8e120128f6637a362621e92a6f5",
+      "verified_at": "2026-11-14T10:16:29.228Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-14T10:16:29.228Z"
+    },
+    "adventists-ai/Sophon-Realtime-v1": {
+      "repository": "adventists-ai/Sophon-Realtime-v1",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-adventists-ai-sophon-realtime-v1",
+      "content_hash": "b341513ce2f8c9a693175b7f06d075bede692503bbef50ff19bfa9137a133469",
+      "verified_at": "2026-11-14T10:16:31.352Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-14T10:16:31.352Z"
     }
   },
   "repos": {

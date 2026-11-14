@@ -21112,5 +21112,32 @@
     "downloads": 8599807,
     "qualityScore": 3780,
     "discoveredAt": "2026-11-14T09:05:45.708Z"
+  },
+  {
+    "name": "esp32-iphone-agent",
+    "fullName": "onehumanbeing/esp32-iphone-agent",
+    "url": "https://github.com/onehumanbeing/esp32-iphone-agent",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Let an AI model use a real iPhone with a $7 ESP32: AirPlay eyes, USB HID hands, any OpenAI-compatible vision model. No Mac, no developer account, no jailbreak.",
+    "stars": 4929,
+    "forks": 675,
+    "openIssues": 15,
+    "language": "Swift",
+    "qualityScore": 2847,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-14T10:13:02.636Z"
+  },
+  {
+    "name": "adventists-ai/Sophon-Realtime-v1",
+    "fullName": "adventists-ai/Sophon-Realtime-v1",
+    "url": "https://huggingface.co/adventists-ai/Sophon-Realtime-v1",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: adventists-ai/Sophon-Realtime-v1 (253 likes, 0 downloads)",
+    "likes": 253,
+    "downloads": 0,
+    "qualityScore": 2530,
+    "discoveredAt": "2026-11-14T10:14:14.261Z"
   }
 ]

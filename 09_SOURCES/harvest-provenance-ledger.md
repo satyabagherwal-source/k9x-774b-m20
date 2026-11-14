@@ -9835,3 +9835,8 @@ Every entry in this ledger must capture:
 | `learn-dom-d-7aac58bb` | `project://hf-laion-clap-htsat-fused` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-laion-clap-htsat-fused-learnings.md` | 2026-11-14T09:18:32.951Z |
 | `learn-huggingface-facebookai-xlm-roberta-base` | `https://huggingface.co/FacebookAI/xlm-roberta-base` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-11-14T09:52:56.702Z |
 | `learn-dom-d-f08b07b4` | `project://hf-facebookai-xlm-roberta-base` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-facebookai-xlm-roberta-base-learnings.md` | 2026-11-14T09:53:25.864Z |
+| `learn-github-onehumanbeing-esp32-iphone-agent` | `https://github.com/onehumanbeing/esp32-iphone-agent` | `39aa23e1` | Multi-dimensional audit evidence | 2026-11-14T10:16:29.217Z |
+| `learn-huggingface-adventists-ai-sophon-realtime-v1` | `https://huggingface.co/adventists-ai/Sophon-Realtime-v1` | `hf-adventi` | Multi-dimensional audit evidence | 2026-11-14T10:16:31.342Z |
+| `learn-github-software-mansion-react-native-gesture-handler` | `https://github.com/software-mansion/react-native-gesture-handler` | `b9b1140e` | Multi-dimensional audit evidence | 2026-11-14T10:16:38.302Z |
+| `learn-github-kumahq-kuma` | `https://github.com/kumahq/kuma` | `e3849aea` | Multi-dimensional audit evidence | 2026-11-14T10:16:40.700Z |
+| `learn-dom-d-bdcabdc2` | `project://hf-adventists-ai-sophon-realtime-v1` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-adventists-ai-sophon-realtime-v1-learnings.md` | 2026-11-14T10:17:19.424Z |

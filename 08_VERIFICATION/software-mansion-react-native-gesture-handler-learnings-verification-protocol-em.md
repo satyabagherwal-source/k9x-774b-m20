@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:44:58.709Z",
+  "timestamp": "2026-11-14T10:17:19.919Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-software-mansion-react-native-gesture-handler-learnings",
+  "learning_id": "LEARN-EVO-software-mansion-react-native-gesture-handler-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [software-mansion-react-native-gesture-handler-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:44:58.709Z`  
-> **Learning ID**: `LEARN-REEXTRACT-software-mansion-react-native-gesture-handler-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-14T10:17:19.919Z`  
+> **Learning ID**: `LEARN-EVO-software-mansion-react-native-gesture-handler-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-gesture-handler-learnings.md`  
 > **Source**: github ([https://github.com/software-mansion/react-native-gesture-handler](https://github.com/software-mansion/react-native-gesture-handler))  
-> **Source Version**: `ba126f38`  
+> **Source Version**: `b9b1140e`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-10T01:58:24.354Z  
+> **Timestamp**: 2026-11-14T10:16:37.297Z  
 > **Learning ID**: `learn-github-software-mansion-react-native-gesture-handler`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-gesture-handler-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/software-mansion/react-native-gesture-handler](https://github.com/software-mansion/react-native-gesture-handler))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-10T01:58:24.348Z  
+> **Harvest Timestamp**: 2026-11-14T10:16:37.290Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1413,119 +1413,90 @@ class LongPressGestureHandler(context: Context) : GestureHandler() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7de893dc` (2026-11-09)
-**Commit Message**: [iOS] Fix callback crashes from detached gesture recognizers (#4679)
+### Incident Patch 1: `b9b1140e` (2026-11-13)
+**Commit Message**: [iOS] Fix worklet callbacks running on the JS thread when `enabled` turns off mid-gesture (#4691)
 
 ## Description
 
-Fixes a rare crash during native screen detachment on iOS:
+On iOS, when React state turns `enabled` to `false` while a gesture is
+active, the gesture's worklet callbacks for the end of the gesture
+(`onDeactivate`, `onFinalize`) run on the JS thread. A worklet that
+needs the UI runtime then throws, and a release build crashes with
+`TypeError: undefined is not a function`.
 
-```text
-Tag should be defined when dispatching an event
-```
+`setConfig:` runs `resetConfig`, then `updateConfig:`. `resetConfig`
+clears `dispatchesAnimatedEvents` and `dispatchesReanimatedEvents`, and
+`updateConfig:` applied `enabled` first, through the setter that writes
+`recognizer.enabled`. Disabling an active recognizer cancels it
+synchronously, so the cancellation event was sent while both flags were
+still `NO`, and it went to the JS handler. A `SharedValue` for `enabled`
+arrives through `updateConfig:` alone, where the flags keep their
+values, which is why that case works.
 
-This crash may occur one in hundreds of times when navigation removes a
-gesture-containing screen from its window while its React component
-remains mounted. This detachment still triggers gesture-handler cleanup.
+Like #4520, `resetConfig` and `updateConfig:` now only store `enabled`.
+The recognizer is synced once, at the end of `updateConfig:`, and only
+when its value differs. `setConfig:` goes through `updateConfig:`, so
+both paths are covered.
 
-> When dismissing screen with gesture (or a native back button), the
-native screen will be removed before React component unmount. If it
-still remains (not unmounted yet in that short time), it will trigger
-crash. So it occurs very rarely, I've reproduced it multiple times by
-torture testing the hover gesture.
+Note
 
-<details>
-  <summary>Crash Log 1</summary>
-
-```
-0   APP.debug.dylib                    0x000000010f0c7f60 -[RNGestureHandler handleGesture:inState:fromManualStateChange:] + 320
-1   APP.debug.dylib                    0x000000010f0c7aec -[RNGestureHandler handleGesture:fromReset:fromManualStateChange:] + 860
-2   APP.debug.dylib                    0x000000010f0c7750 -[RNGestureHandler handleGesture:fromReset:] + 84
-3   APP.debug.dylib                    0x000000010
-
-**File**: `packages/react-native-gesture-handler/apple/RNGestureHandler.mm` (modified, +6/-0)
+**File**: `packages/react-native-gesture-handler/apple/RNGestureHandler.mm` (modified, +16/-2)
 ```diff
-@@ -410,6 +410,12 @@ - (void)handleGesture:(UIGestureRecognizer *)recognizer
-     return;
+@@ -114,7 +114,9 @@ - (instancetype)initWithTag:(NSNumber *)tag
+ 
+ - (void)resetConfig
+ {
+-  self.enabled = YES;
++  // Only the stored value is reset here. The recognizer is synced once the new config is applied,
++  // see `syncRecognizerEnabled`.
++  _enabled = YES;
+   self.testID = nil;
+   _manualActivation = NO;
+   _shouldCancelWhenOutside = NO;
+@@ -139,7 +141,7 @@ - (void)updateConfig:(NSDictionary *)config
+ {
+   id prop = config[@"enabled"];
+   if (prop != nil) {
+-    self.enabled = [RCTConvert BOOL:prop];
++    _enabled = [RCTConvert BOOL:prop];
    }
  
-+  // UIKit can invoke the action synchronously during removeGestureRecognizer:, after clearing view.
-+  // unbindFromView already finalizes the gesture while attached, therefore we can ignore the stale callback.
-+  if (recognizer.view == nil) {
-+    return;
-+  }
+   prop = config[@"testID"];
+@@ -202,6 +204,8 @@ - (void)updateConfig:(NSDictionary *)config
+   } else if (prop != nil) {
+     _hitSlop = RNGHHitSlopEmpty;
+   }
 +
-   RNGHUIView *view = [self chooseViewForInteraction:recognizer];
++  [self syncRecognizerEnabled];
+ }
  
-   // it may happen that the gesture recognizer is reset after it's been unbound from the view,
-```
-
----
-
-### Incident Patch 2: `ba126f38` (2026-11-09)
-**Commit Message**: Bump brace-expansion from 1.1.18 to 1.1.21 in /packages/docs-gesture-handler (#4684)
-
-Bumps [brace-expansion](https://github.com/juliangruber/brace-expansion)
-from 1.1.18 to 1.1.21.
-<details>
-<summary>Commits</summary>
-<ul>
-<li><a
-href="https://github.com/juliangruber/brace-expansion/commit/8e81e187b6e9c6c723d16c042657c00acefc2483"><code>8e81e18</code></a>
-1.1.21</li>
-<li><a
-href="https://github.com/juliangruber/brace-expansion/commit/ffdfa3e3806bed17c0874b8f1439b084de354a7e"><code>ffdfa3e</code></a>
-Merge commit from fork</li>
-<li><a
-href="https://github.com/juliangruber/brace-expansion/commit/c6513ad31e08edb56dc414a629e39cba724b7548"><code>c6513ad</code></a>
-1.1.20</li>
-<li><a
-href="https://github.com/juliangruber/brace-expansion/commit/1efee7c397c191da6287a78ec19512476a966a7b"><code>1efee7c</code></a>
-Merge commit from fork</li>
-<li><a
-href="https://github.com/juliangruber/brace-expansion/commit/a34340a053abb475cc226aeb3f71887018e71bd0"><code>a34340a</code></a>
-1.1.19</li>
-<li><a
-href="https://github.com/juliangruber/brace-expansion/commit/0bcbfc0a5928c3073d48f42999d1ce4fc1c42fbc"><code>0bcbfc0</code></a>
-Merge commit from fork</li>
-<li>See full diff in <a
-href="https://github.c
-
-**File**: `packages/docs-gesture-handler/yarn.lock` (modified, +6/-6)
-```diff
-@@ -4961,17 +4961,17 @@ boxen@^7.0.0:
-     wrap-ansi "^8.1.0"
+ - (void)updateRelations:(NSDictionary *)relations
+@@ -217,6 +221,16 @@ - (void)setEnabled:(BOOL)enabled
+   self.recognizer.enabled = enabled;
+ }
  
- brace-expansion@^1.1.7:
--  version "1.1.18"
--  resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-1.1.18.tgz#3ce74d89885136be1535341f8c3d4425c29a5cab"
--  integrity sha512-Edep/X9fGqVNmzKBVsDYIOtD+z1tuezV70LBjdCst9Tqu76lsnvRiZ6oTic1n+/BIwX6QDGAO94PN4N2SADvtw==
-+  version "1.1.21"
-+  resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-1.1.21.tgz#edf4fab5c64d051aea5a8def49aba1c7522279f3"
-+  integrity sha512-9zeA+KLZNNzglF2TPKRQEDyx6Yby7daAkuy8MiPzpXPsYDWi/DRM8jmwUDxokQjYqBpv5DgPiwD4h4ZZSy1Ujw==
-   dependencies:
-     balanced-match "^1.0.0"
-     concat-map "0.0.1"
- 
- brace-expansion@^2.0.1, brace-expansion@^2.0.2:
--  version "2.1.4"
--  resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-2.1.4.tgz#589dab11c0018d0366be64cd8bf12c8dbecc8326"
--  integrity sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg==
-+  version "2.1.7"
-+  resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-2.1.7.tgz#14ea3836731823bb24740225ea43b941b436f9d1"
-+  integrity sha512-uZbew1NqdmPDTMJ8ah1y+b+9QEJrfkXFk3RcTQw3X0jW/xRUvFKsg1CfQdSYGdTbXZWExtU3J3ccxtnfw1Fi0g==
-   dependencies:
-     balanced-match "^1.0.0"
- 
++// Disabling an active recognizer cancels it synchronously, and the cancellation event is sent right away.
++// The recognizer is therefore synced at the end of `updateConfig:`, once `dispatchesAnimatedEvents` and
++// `dispatchesReanimatedEvents` hold their new values, so that the event reaches the right handler type.
++- (void)syncRecognizerEnabled
++{
++  if (self.recognizer.enabled != _enabled) {
++    self.recognizer.enabled = _enabled;
++  }
++}
++
+ - (void)setCurrentPointerType:(RNGestureHandlerPointerType)pointerType
+ {
+   _pointerType = pointerType;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4691** (2026-11-13): [iOS] Fix worklet callbacks running on the JS thread when `enabled` turns off mid-gesture (@shahjahanpak)
 - **PR #4684** (2026-11-09): Bump brace-expansion from 1.1.18 to 1.1.21 in /packages/docs-gesture-handler (@dependabot[bot])
 - **PR #4683** (2026-11-09): Restore the scroll responder claim for `ScrollView` with `keyboardShouldPersistTaps="handled"` (@m-bert)
 - **PR #4682** (2026-11-09): [Web] Skip config updates for a dropped handler (@chocky335)
 - **PR #4681** (2026-11-09): [Web] Track velocity separately for each pointer (@ChandraChaan)
 - **PR #4679** (2026-11-09): [iOS] Fix callback crashes from detached gesture recognizers (@theeket)
-- **PR #4678** (2026-11-09): Bump example apps to React Native 0.88.1 (@m-bert)
 
 ---
 
@@ -1545,13 +1516,13 @@ href="https://github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [iOS] Fix callback crashes from detached gesture recognizers (#4679)
+## X. [iOS] Fix worklet callbacks running on the JS thread when `enabled` turns off mi
 
 **RULE**:
 When implementing operations in `packages/react-native-gesture-handler/apple/RNGestureHandler.mm`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-gesture-handler. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7de893dc`: [iOS] Fix callback crashes from detached gesture recognizers (#4679). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b9b1140e`: [iOS] Fix worklet callbacks running on the JS thread when `enabled` turns off mid-gesture. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native-gesture-handler/apple/RNGestureHandler.mm`.
@@ -1559,22 +1530,33 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  // UIKit can invoke the action synchronously during removeGestureRecognizer:, after clearing view.
-  // unbindFromView already finalizes the gesture while attached, therefore we can ignore the stale callback.
-  if (recognizer.view == nil) {
-    return;
+  // Only the stored value is reset here. The recognizer is synced once the new config is applied,
+  // see `syncRecognizerEnabled`.
+  _enabled = YES;
+    _enabled = [RCTConvert BOOL:prop];
+
+  [self syncRecognizerEnabled];
+// Disabling an active recognizer cancels it synchronously, and the cancellation event is sent right away.
+// The recognizer is therefore synced at the end of `updateConfig:`, once `dispatchesAnimatedEvents` and
+// `dispatchesReanimatedEvents` hold their new values, so that the event reaches the right handler type.
+- (void)syncRecognizerEnabled
+{
+  if (self.recognizer.enabled != _enabled) {
+    self.recognizer.enabled = _enabled;
   }
+}
 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+  self.enabled = YES;
+    self.enabled = [RCTConvert BOOL:prop];
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7de893dc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b9b1140e` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

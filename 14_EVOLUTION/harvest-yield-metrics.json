@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T09:52:56.707Z",
-  "total_cycles_completed": 9496,
-  "total_learnings_persisted": 9496,
-  "total_rules_promoted": 9198,
+  "last_updated": "2026-11-14T10:16:40.731Z",
+  "total_cycles_completed": 9500,
+  "total_learnings_persisted": 9500,
+  "total_rules_promoted": 9200,
   "history": [
-    {
-      "timestamp": "2026-11-13T16:25:48.432Z",
-      "repository": "gauthierpiarrette/highball",
-      "learningId": "learn-github-gauthierpiarrette-highball",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T16:25:49.535Z",
-      "repository": "gocd/gocd",
-      "learningId": "learn-github-gocd-gocd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T16:26:01.288Z",
-      "repository": "orcarouter/OrcaSAQ-2-27B",
-      "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T16:39:32.253Z",
-      "repository": "TaichuAI/ZDTaichu5.0-9B",
-      "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T16:39:42.850Z",
       "repository": "microsoft/agent-governance-toolkit",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-14T09:52:56.707Z",
       "repository": "FacebookAI/xlm-roberta-base",
       "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T10:16:29.224Z",
+      "repository": "onehumanbeing/esp32-iphone-agent",
+      "learningId": "learn-github-onehumanbeing-esp32-iphone-agent",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T10:16:31.348Z",
+      "repository": "adventists-ai/Sophon-Realtime-v1",
+      "learningId": "learn-huggingface-adventists-ai-sophon-realtime-v1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T10:16:38.308Z",
+      "repository": "software-mansion/react-native-gesture-handler",
+      "learningId": "learn-github-software-mansion-react-native-gesture-handler",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T10:16:40.731Z",
+      "repository": "kumahq/kuma",
+      "learningId": "learn-github-kumahq-kuma",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

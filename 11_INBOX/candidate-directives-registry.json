@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T09:53:26.813Z",
+  "last_updated": "2026-11-14T10:17:20.020Z",
   "directives": [
     {
       "id": "CD-001",
@@ -12197,6 +12197,57 @@
       "source_repo": "zoontek-react-native-permissions",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-EDA82B-android-skip-explicit-kotlin-plugin-when.md",
+      "staged_date": "2026-11-14"
+    },
+    {
+      "id": "CD-3Y0Z",
+      "directive_title": "Agent fixes: open apps by code, Chinese/accented typing, tap verdict, Jev thresh",
+      "source_repo": "onehumanbeing-esp32-iphone-agent-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-3Y0Z-agent-fixes-open-apps-by-code-chinese-accented-typing-tap-verdict-jev-thresh.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-14",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-4PLF",
+      "directive_title": "[iOS] Fix worklet callbacks running on the JS thread when `enabled` turns off mi",
+      "source_repo": "software-mansion-react-native-gesture-handler-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-4PLF-ios-fix-worklet-callbacks-running-on-the-js-thread-when-enabled-turns-off-mi.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-14",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-3VFR",
+      "directive_title": "validate workload token at issuance",
+      "source_repo": "kumahq/kuma",
+      "source_commit": "e3849aea",
+      "staged_file": "11_INBOX/candidate-directives/CD-3VFR-validate-workload-token-at-issuance.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-14",
+      "domain_letter": "A"
+    },
+    {
+      "id": "CD-REV-B7D4D1",
+      "directive_title": "Agent fixes: open apps by code, Chinese/accented typing, tap verdict, Jev thresh",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "onehumanbeing-esp32-iphone-agent",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B7D4D1-agent-fixes-open-apps-by-code-chinese-ac.md",
+      "staged_date": "2026-11-14"
+    },
+    {
+      "id": "CD-REV-1CD04B",
+      "directive_title": "[iOS] Fix worklet callbacks running on the JS thread when `enabled` turns off mi",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "software-mansion-react-native-gesture-handler",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-1CD04B--ios-fix-worklet-callbacks-running-on-th.md",
       "staged_date": "2026-11-14"
     }
   ]
