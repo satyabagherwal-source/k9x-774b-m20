@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-2ERH",
-    "timestamp": "2026-11-13T08:35:53.789Z",
-    "repository": "ccore/Qwen3.5-4B-3D-Coder",
-    "learningId": "learn-huggingface-ccore-qwen3-5-4b-3d-coder",
-    "contentHash": "7e448dacfaa5b0d4aca30a731199bc3927b01db69f25e4ff6bd72abc175135c9",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-8JPS",
-    "timestamp": "2026-11-13T08:40:40.144Z",
-    "repository": "PeerDB-io/peerdb",
-    "learningId": "learn-github-peerdb-io-peerdb",
-    "contentHash": "578a7d959b7d3b76eb80410fd81d0b3eb6c7f55089ed4392bf99a9d56c9cdca9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-RSSK",
-    "timestamp": "2026-11-13T08:55:38.372Z",
-    "repository": "LiquidAI/LFM3-1.7B",
-    "learningId": "learn-huggingface-liquidai-lfm3-1-7b",
-    "contentHash": "73c3b58137ecc2c9069eaf582b25b6481dbf48f05edc6aed10aa2f2783e10172",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-S1A9",
     "timestamp": "2026-11-13T08:55:49.377Z",
     "repository": "FalkorDB/FalkorDB",
@@ -7492,6 +7447,51 @@
     "contentHash": "bd2dea14a5580c21a1fb68db5a22a7b91bf9fff719ec8f89e65e2f4aa7a60356",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-GCC5",
+    "timestamp": "2026-11-14T05:46:26.549Z",
+    "repository": "Aleph-Alpha/Kolibri-1",
+    "learningId": "learn-huggingface-aleph-alpha-kolibri-1",
+    "contentHash": "e50f0c4bbffc10169da00d7df4b7fb2a0c2d85da4efa1ed6e2677ee555efbb8f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-GHQJ",
+    "timestamp": "2026-11-14T05:46:33.547Z",
+    "repository": "BuilderIO/builder",
+    "learningId": "learn-github-builderio-builder",
+    "contentHash": "76eb9d0b5a8cde616e610db26e852104dab50d5c32f7fe6c241244983835ecb4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-GNDL",
+    "timestamp": "2026-11-14T05:46:40.857Z",
+    "repository": "pixeltable/pixeltable",
+    "learningId": "learn-github-pixeltable-pixeltable",
+    "contentHash": "88a46480e707494b5f8db2eca7d1068ca8d253326063787f86f458cb7ee4e912",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T05:32:16.551Z",
-  "total_records": 554,
+  "last_updated": "2026-11-14T05:47:18.606Z",
+  "total_records": 561,
   "domains": {
     "A": {
       "total": 5,
@@ -35,7 +35,7 @@
       ]
     },
     "D": {
-      "total": 273,
+      "total": 276,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -309,7 +309,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v3-learnings-core-invari",
         "domain_intelligence-research-knowledge-intelligence-baidu-unlimited-ocr-core-invariants",
         "DOM-D-2A203D84",
-        "domain_intelligence-research-knowledge-intelligence-hf-baidu-unlimited-ocr-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-hf-baidu-unlimited-ocr-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-aleph-alpha-kolibri-1-core-invariants",
+        "DOM-D-2C3ED23B",
+        "domain_intelligence-research-knowledge-intelligence-hf-aleph-alpha-kolibri-1-learnings-core-invarian"
       ]
     },
     "E": {
@@ -337,7 +340,7 @@
       ]
     },
     "G": {
-      "total": 79,
+      "total": 81,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -417,11 +420,13 @@
         "domain_intelligence-architecture-intelligence-keybase-client-core-invariants",
         "domain_intelligence-architecture-intelligence-keybase-client-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-restatedev-restate-core-invariants",
-        "domain_intelligence-architecture-intelligence-restatedev-restate-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-restatedev-restate-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-builderio-builder-core-invariants",
+        "domain_intelligence-architecture-intelligence-builderio-builder-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 116,
+      "total": 118,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -538,7 +543,9 @@
         "DOM-H-DD654136",
         "domain_intelligence-technical-construction-intelligence-hf-meta-llama-llama-2-7b-learnings-core-inva",
         "DOM-H-948029CF",
-        "DOM-H-C33FF226"
+        "DOM-H-C33FF226",
+        "domain_intelligence-technical-construction-intelligence-pixeltable-pixeltable-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-pixeltable-pixeltable-learnings-core-invaria"
       ]
     },
     "I": {
@@ -12228,6 +12235,102 @@
       "repository": "hf-baidu-unlimited-ocr-learnings",
       "content_hash": "024386d11a0dcc755474a15c0febd311577c19665725b90de132b44ed553ecad",
       "created_at": "2026-11-14T05:32:15.370Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-aleph-alpha-kolibri-1-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-aleph-alpha-kolibri-1-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: Aleph-Alpha/Kolibri-1 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-aleph-alpha-kolibri-1-research-knowledge-intelligence-aleph-alpha-kolibri-1-c.md",
+      "repository": "Aleph-Alpha/Kolibri-1",
+      "content_hash": "9fa938fc35c477f17fabbf2e4b1e912c0fe6ce53148aa3e725d07dd51545986f",
+      "created_at": "2026-11-14T05:46:26.754Z"
+    },
+    "domain_intelligence-architecture-intelligence-builderio-builder-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-builderio-builder-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: BuilderIO/builder Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-builderio-builder-architecture-intelligence-builderio-builder-core-invariants.md",
+      "repository": "BuilderIO/builder",
+      "content_hash": "610bd71849fb3e3930d753af09e900fa94d5f1b7b2e6f7effed3f7d21366e449",
+      "created_at": "2026-11-14T05:46:33.873Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-pixeltable-pixeltable-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-pixeltable-pixeltable-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: pixeltable/pixeltable Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-pixeltable-pixeltable-technical-construction-intelligence-pixeltable-pixeltable-.md",
+      "repository": "pixeltable/pixeltable",
+      "content_hash": "4398ad45e259bc79751b1facc6ea66849285b60f54cf4911b4c3381255a57e82",
+      "created_at": "2026-11-14T05:46:41.185Z"
+    },
+    "DOM-D-2C3ED23B": {
+      "record_id": "DOM-D-2C3ED23B",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Aleph-Alpha/Kolibri-1",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/Aleph-Alpha/Kolibri-1](https://huggingface.co/Aleph-Alpha/Kolibri-1))  \n> **Source Version**: `hf-aleph-alp`  \n> **License**: Open-Source  \n> **Synthesi",
+      "content_hash": "664d6ff1333d6b62a9753456295d48dc15b2a8c66966f7b85a2721348cdf6863",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1-learnings.md`  \n> **Source**: huggingface ([https://hugging -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1-learnings.md`  \n> **Source**: huggingface ([https://hugging",
+      "provenance": {
+        "source_uri": "project://hf-aleph-alpha-kolibri-1/hf-aleph-alpha-kolibri-1-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T05:46:44.193Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-aleph-alpha-kolibri-1)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-aleph-alpha-kolibri-1"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T05:47:17.065Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-aleph-alpha-kolibri-1-learnings-core-invarian": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-aleph-alpha-kolibri-1-learnings-core-invarian",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-aleph-alpha-kolibri-1-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-aleph-alpha-kolibri-1-learnings-research-knowledge-intelligence-hf-aleph-alph.md",
+      "repository": "hf-aleph-alpha-kolibri-1-learnings",
+      "content_hash": "c1775df68f139561fa0abf74aff2a34d361f7661677c9693f1245bfbf811c62e",
+      "created_at": "2026-11-14T05:47:17.303Z"
+    },
+    "domain_intelligence-architecture-intelligence-builderio-builder-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-builderio-builder-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: builderio-builder-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-builderio-builder-learnings-architecture-intelligence-builderio-builder-learning.md",
+      "repository": "builderio-builder-learnings",
+      "content_hash": "52d9d45fb9a23c75a083e38b5d281de80463ffb16fcddadc5c0ae5aca2b889d9",
+      "created_at": "2026-11-14T05:47:17.924Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-pixeltable-pixeltable-learnings-core-invaria": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-pixeltable-pixeltable-learnings-core-invaria",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: pixeltable-pixeltable-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-pixeltable-pixeltable-learnings-technical-construction-intelligence-pixeltable-p.md",
+      "repository": "pixeltable-pixeltable-learnings",
+      "content_hash": "9e1c89922770b032b38ee7b81071600a58616116bc740a2d38fb2ea51a893cf9",
+      "created_at": "2026-11-14T05:47:18.606Z"
     }
   }
 }

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md`  
 > **Source**: github ([https://github.com/pixeltable/pixeltable](https://github.com/pixeltable/pixeltable))  
-> **Source Version**: `506e2f7d`  
+> **Source Version**: `941d38df`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T04:13:25.394Z  
+> **Timestamp**: 2026-11-14T05:46:39.869Z  
 > **Learning ID**: `learn-github-pixeltable-pixeltable`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pixeltable/pixeltable](https://github.com/pixeltable/pixeltable))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T04:13:25.389Z  
+> **Harvest Timestamp**: 2026-11-14T05:46:39.862Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -941,6 +941,7 @@ from pixeltable.catalog.model import diff
 from pixeltable.config import Config
 from pixeltable.env import Env
 from pixeltable.func import FunctionRegistry
+from pixeltable.func.symbols import load_error_msg
 from pixeltable.utils.project import in_environment
 from pixeltable_cli.types import CheckReport, RouteSpec, ServiceSpec
 
@@ -988,19 +989,17 @@ def load_app_module(file: str, *, subject: str) -> ModuleType:
     try:
         registry = FunctionRegistry.get()
         with _lock, Catalog.freeze():
-            _evict_project_modules()
-            # a file written after this process started is invisible to a finder that cached its directory
-            importlib.invalidate_caches()
+            root = Config.get().project_root
+            assert root is not None  # module_name() refuses a file outside a project root
+            # evict before importing: importlib returns a module in sys.modules without reading its file again
+            evict_modules(root)
             return registry.import_module(name)
     except ProhibitedWriteError as e:
         raise excs.RequestError(
             excs.ErrorCode.UNSUPPORTED_OPERATION, _prohibited_write_msg(str(path), subject, e)
         ) from e
-    except excs.Error as e:
-        raise excs.RequestError(excs.ErrorCode.INVALID_ARGUMENT, f'error loading {file}: {e}') from e
     except Exception as e:
-        reason = f'{type(e).__name__}: {e}' if str(e) else type(e).__name__
-        raise excs.RequestError(excs.ErrorCode.INVALID_ARGUMENT, f'error loading {file}: {reason}') from e
+        raise excs.RequestError(excs.ErrorCode.INVALID_ARGUMENT, load_error_msg(file, e)) from e
 
 
 def _no_root_msg(path: Path, subject: str, root: Path | None) -> str:
@@ -1024,16 +1023,16 @@ def _no_root_msg(path: Path, subject: str, root: Path | None) -> str:
     )
 
 
-def _evict_project_modules() -> None:
-    """Remove the project's own modules from sys.modules, and their udfs from the registry.
+def evict_modules(root: Path) -> None:
+    """Remove the modules under root from sys.modules, and their udfs from the registry.
 
-    Removing project modules allows us to have them re-imported, in response to changes to the source files.
+    Removing these modules allows us to have them re-imported, in response to changes to the source files. Also
+    clear importlib's directory caches, so an import finds a newly created module file.
 
-    The standard library and installed packages stay loaded, including when the environment sits inside the
-    project root (eg, a .venv).
+    The standard library and installed packages stay loaded, including when the environment sits inside root
+    (eg, a .venv).
     """
-    root = Config.get().project_root
-    assert root is not None  # module_name() refuses a file outside a project root
+    importlib.invalidate_caches()
     registry = FunctionRegistry.get()
     for name, module in list(sys.modules.items()):
         module_file = getattr(module, '__file__', None)
@@ -1118,7 +1117,16 @@ def validate_models(models: dict[str, model.TableModelMeta], base_path: str) -> 
 def check_report(file: str, bases: list[model.TableModelMeta]) -> CheckReport:
     """What checking a file on its own reports: whether it is valid, and what to fix or to know about."""
     errors = check_udf_references(bases)
-    return CheckReport(file=file, valid=len(errors) == 0, errors=errors, warnings=shadowed_project_modules())
+    warnings = [
+        f'{cls.__name__}.{name} references no column, so every row computes it from the same inputs: {value!s}. '
+        'Python code in a model body, such as str(), % or `is None`, runs once, at class definition. '
+        'Use == None instead of `is None`, and + or pxtf.string.format() instead of str() or %.'
+        for base in bases
+        for cls in base.defined_models()
+        for name, value in cls.constant_columns().items()
+    ]
+    warnings.extend(shadowed_project_modules())
+    return CheckReport(file=file, valid=len(errors) == 0, errors=errors, warnings=warnings)
 
 
 def check_udf_references(bases: list[model.TableModelMeta]) -> list[str]:
@@ -1135,16 +1143,7 @@ def check_udf_references(bases: list[model.TableModelMeta]) -> list[str]:
         file = getattr(resolved, '__file__', None)
         if file is None or not Path(file).resolve().is_relative_to(project_root):
             continue  # an installed module
-        top_level = fn_path.split('.', maxsplit=1)[0]
-        if _first_on_path(top_level) is None:
-            errors.append(f'{fn_path}: {top_level!r} is not on sys.path')
-    return errors
-
-
-def udf_source_files(bases: list[model.TableModelMeta]) -> set[str]:
-    """The local project files containing the udfs referenced by bases, relative to the project root."""
-    project_root = Config.get().project_root
-    assert project_ro
+        top_level = fn_
 ```
 
 
@@ -1153,13 +1152,11 @@ def udf_source_files(bases: list[model.TableModelMeta]) -> set[str]:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1942** (2026-11-13): **Run 10 minutes of random-ops on pull requests**
-  *Symptoms*: ## Why  Random-ops runs only in the merge queue (30 minutes) and in the nightly stress-tests workflow, so concurrency bugs it would catch surface only after a PR is queued. A shorter run on every PR push finds them earlier.  ## What  - `tool/ci_tool.py`: the `pull_request` matrix gains `random-ops, ubuntu-24.04, 3.11`. It is the merge queue's random-ops config (minimal `--no-dev` install, 12 workers in read/write mode, then the file cache stress test) with a 600-second run instead of 1800. The duration is a new `random_ops_seconds` matrix field, default 1800, so the merge queue, scheduled and dispatch runs are unchanged. - `.github/workflows/pytest.yml`: the "Run stress tests" step reads `matrix.random-ops-seconds` instead of a hard-coded `1800`, and the header comment lists the new PR job.  Expected cost per PR push: about 11-12 minutes on one free ubuntu-24.04 runner (setup took about 1 minute and the file cache stress test 15 seconds in today's merge queue run). As in the merge queue, the job prints random-ops stats to the console but does not upload `random-ops.log` as an artifact.  ## Validation  - `ruff format --check`, `ruff check` and `mypy` on `tool/ci_tool.py` and `tests/tool/test_ci_tool.py` - `pytest tests/tool/test_ci_tool.py`: 18 passed - `python tool/ci_tool.py generate-matrix`: `pull_request` yields 8 entries, including random-ops at 600 seconds; `merge_group` yields 18, with random-ops at 1800 - This PR's own checks run the new job  🤖 Generated with [Claude 
-  **Post-Mortem & Fix Analysis**:
-  > subsumed by #1900 
+- **Issue #1957** (2026-11-13): **Rename TableDataConduit to SourceAdapter**
+  *Symptoms*: **Stacked on #1956.** Until #1956 merges, this PR also shows its commits; the rename is only the last commit, https://github.com/pixeltable/pixeltable/pull/1957/commits/fff442aedc4e8cf21c23aa06c3f0e434168a173d.  `TableDataConduit` adapts a user-supplied `TableDataSource` for Pixeltable: it infers a schema for `create_table()`, validates the source against a target table, and yields its rows (`valid_rows()`, after #1956). "Conduit" only says that data flows through it; this renames it after its role.  | Before | After | |---|---| | `pixeltable/io/table_data_conduit.py` | `pixeltable/io/source_adapter.py` | | `TableDataConduit` | `SourceAdapter` | | `TableDataConduitFormat` | `SourceFormat` | | `QueryTableDataConduit`, `RowDataTableDataConduit`, `PandasTableDataConduit`, `CSVTableDataConduit`, `ExcelTableDataConduit`, `JsonTableDataConduit`, `HFTableDataConduit`, `ParquetTableDataConduit`, `PydanticTableDataConduit` | `QueryAdapter`, `RowDataAdapter`, `PandasAdapter`, `CSVAdapter`, `ExcelAdapter`, `JsonAdapter`, `HFAdapter`, `ParquetAdapter`, `PydanticAdapter` |  Names with "DataSource" were avoided because `TableDataSource` and `SqlDataSource` already name the raw input. The classes are internal (not exported from `pixeltable` or `pixeltable.io`), so there is no public API change.  No behavior change. Local runs with `-k "not cloud"`: `test_table`, `test_view`, `tests/io/`, `test_types`, `test_query`, `test_proxy_daemon`, `serving/test_fastapi` (888 passed).  🤖 Generated with
 
-- **Issue #1940** (2026-11-12): **PXT-1768: Poll VLM Run generations instead of holding chat open**
-  *Symptoms*: <!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary  Stop holding one HTTP request open for an entire VLM Run `generate_*` job. Submit via `POST /v1/agent/execute` (`batch=true`) and poll `GET /v1/agent/executions/{id}` until completion. A connection drop after the request has left this process is a non-retried `ExternalServiceError`. Mock the gateway `capability_violation` test so it does not depend on which inputs the live gateway currently rejects.  Jira: [PXT-1768](https://pixeltable.atlassian.net/browse/PXT-1768) Failing run: https://github.com/pixeltable/pixeltable/actions/runs/42735604741  #1931 was closed as overengineered. This is the same two nightly failures with a smaller diff: one `execute()` poll loop, no per-call deadline state, and two mocked `generate_document` tests plus the gateway mock.  ## Root cause  1. `generate_document` `POST`ed `openai/chat/completions` and waited on that single request. The vendor front end (`via: 1.1 google`) now closes idle requests after ~5 minutes with `httpx.ReadError('')`. That was `PROVIDER_ERROR`, which the scheduler retried (another billed job). 2. `TestVlmrunGateway.test_errors` assumed the live gateway would reject a `document_url` part for `qwen/qwen3.5-0.8b`. It now accepts that input.  ## Fix  `generate_*` uses submit-then-poll, bounded by the existing `deadline()` / `VLMRUN_TIMEOUT`. Artifacts are fetched with `execution_id`. `chat_completions` is unchanged. Retryable poll GET failures stay in the poll loop so they do not 
+- **Issue #1955** (2026-11-13): **Write the default config atomically and require init_env for tests that reach Env**
+  *Symptoms*: ## Problem  [Run 43480825714](https://github.com/pixeltable/pixeltable/actions/runs/43480825714/job/132076789915) (`standard, macos-15, 3.11`, the merge group for #1945) failed in `TestAnthropicTypedDictAdherence::test_mirrors` with `pixeltable/file_cache_size_g is missing from configuration`. Two things combined:  1. **The default config isn't written atomically.** When `config.toml` doesn't exist, `Config` creates it with `open(path, 'w')` followed by `toml.dump()`. A process that reads it between the two sees an empty file and caches a config with no `file_cache_size_g`. On a fresh runner, the xdist workers all start at once and race on `~/.pixeltable/config.toml`. 2. **#1855 added 9 tests that reach `Env.get()` without `init_env`**, through `skip_test_if_not_installed()`. `test_mirrors` was gw2's first test, so it read the shared config outside `init_env`'s file lock while gw0 and gw1 were creating it. #1855's own merge-queue run passed because a different test ran first.  Locally, with 3 processes starting at once against an empty home, 25 of 180 processes read an empty config.  ## Changes  - `Config` writes the default config with `atomic_write()` (a unique temp file renamed into place), so no process reads a partial file. Users who start several Pixeltable processes on a fresh install could hit the same race. Because `atomic_write()` uses `mkstemp`, a new default config is created with mode 0600 rather than 0644. - `tests/conftest.py` fails any test that reaches `Env.g
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1176,256 +1173,455 @@ def udf_source_files(bases: list[model.TableModelMeta]) -> set[str]:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `11fbb87a` (2026-11-12)
-**Commit Message**: Fix import block spacing in CI planner tests (#1936)
+### Incident Patch 1: `b907dcb3` (2026-11-13)
+**Commit Message**: Write the default config atomically and require init_env for tests that reach Env (#1955)
 
-**File**: `.github/scripts/test_plan_claude_ci_fix.py` (modified, +0/-1)
+## Problem
+
+[Run
+43480825714](https://github.com/pixeltable/pixeltable/actions/runs/43480825714/job/132076789915)
+(`standard, macos-15, 3.11`, the merge group for #1945) failed in
+`TestAnthropicTypedDictAdherence::test_mirrors` with
+`pixeltable/file_cache_size_g is missing from configuration`. Two things
+combined:
+
+1. **The default config isn't written atomically.** When `config.toml`
+doesn't exist, `Config` creates it with `open(path, 'w')` followed by
+`toml.dump()`. A process that reads it between the two sees an empty
+file and caches a config with no `file_cache_size_g`. On a fresh runner,
+the xdist workers all start at once and race on
+`~/.pixeltable/config.toml`.
+2. **#1855 added 9 tests that reach `Env.get()` without `init_env`**,
+through `skip_test_if_not_installed()`. `test_mirrors` was gw2's first
+test, so it read the shared config outside `init_env`'s file lock while
+gw0 and gw1 were creating it. #1855's own merge-queue run passed because
+a different test ran first.
+
+Locally, with 3 processes starting at once against an empty home, 25 of
+180 processes read an empty config.
+
+## Chang
+
+**File**: `.github/instructions/tests.instructions.md` (modified, +4/-0)
 ```diff
-@@ -11,7 +11,6 @@
+@@ -10,6 +10,10 @@ applyTo: "tests/**"
+ - Prefer `db_root: DatabaseRoot` and `db_root.make_catalog_path()` for portable catalog tests.
+   `uses_db` and plain paths are valid for in-process tests; they require
+   `@pytest.mark.db_roots('local', reason='...')`. The reason explains the restriction or is `TODO: convert`.
++- A test that reaches `Env.get()`, directly or through a helper such as `skip_test_if_not_installed()`,
++  requests `init_env`; `uses_db` and `db_root` include it. Without it, the test would use whatever an earlier
++  test on its xdist worker set up, or the developer's real Pixeltable home and database when it runs first, so
++  `tests/conftest.py` fails such a test.
+ - Use `pxt_raises(..., match=...)` for Pixeltable errors, and `pytest.raises(..., match=...)` for other
+   exceptions. Verify meaningful error text.
+ - New tests making live third-party model/service calls need `remote_api` and `very_expensive`; mocked
+```
+
+**File**: `pixeltable/config.py` (modified, +3/-1)
+```diff
+@@ -20,6 +20,7 @@
  
- import plan_claude_ci_fix as plan
+ from pixeltable import exceptions as excs
+ from pixeltable.service.resources import DatabaseCapacity, ServiceResources, UdfResources
++from pixeltable.utils.file_io import atomic_write
  
--
- RUN_9 = 'https://github.com/o/r/actions/runs/9'
+ if TYPE_CHECKING:
+     from pixeltable import catalog
+@@ -597,7 +598,8 @@ def __load_home_config(self) -> dict[str, dict[str, tuple[Any, Path]]]:
+ 
+         else:
+             config_dict = self.__create_default_config(self.__config_file)
+-            with open(self.__config_file, 'w', encoding='utf-8') as stream:
++            # a process starting at the same time must never read a partial file
++            with atomic_write(self.__config_file, mode='w', encoding='utf-8') as stream:
+                 try:
+                     toml.dump(config_dict, stream)
+                 except Exception as exc:
+```
+
+**File**: `tests/conftest.py` (modified, +34/-1)
+```diff
+@@ -1,3 +1,4 @@
++import contextlib
+ import ctypes
+ import faulthandler
+ import functools
+@@ -102,10 +103,42 @@ def pytest_collection_modifyitems(items: list[pytest.Item]) -> None:
+         )
  
  
+-def pytest_runtest_setup(item: pytest.Item) -> None:
++@contextlib.contextmanager
++def _requires_init_env(item: pytest.Item) -> Iterator[None]:
++    """Fails a test that reaches Env.get() on its own thread without requesting init_env.
++
++    Such a test uses whatever environment an earlier test on its worker set up, or the developer's real home and
++    database when it runs first, so CI catches it only when it happens to run first.
++    """
++    if not isinstance(item, pytest.Function) or 'init_env' in item.fixturenames:
++        yield
++        return
++    get = Env.__dict__['get'].__func__
++    test_thread = threading.current_thread()
++
++    def guarded_get(cls: type[Env]) -> Env:
++        if threading.current_thread() is test_thread:
++            pytest.fail(f'{item.nodeid} reaches Env.get() without requesting the init_env fixture')
++        return get(cls)
++
++    with pytest.MonkeyPatch.context() as mp:
++        mp.setattr(Env, 'get', classmethod(guarded_get))
++        yield
++
++
++@pytest.hookimpl(wrapper=True)
++def pytest_runtest_setup(item: pytest.Item) -> Generator[None, None, None]:
+     current_test = os.environ.get('PYTEST_CURRENT_TEST')
+     _logger.info(f'Running Pixeltable test: {current_test}')
+     _clear_model_caches()
++    with _requires_init_env(item):
++        yield
++
++
++@pytest.hookimpl(wrapper=True)
++def pytest_runtest_call(item: pytest.Item) -> Generator[None, None, None]:
++    with _requires_init_env(item):
++        yield
+ 
+ 
+ def _clear_model_caches() -> None:
+```
+
+**File**: `tests/functions/test_anthropic.py` (modified, +1/-1)
+```diff
+@@ -89,7 +89,7 @@ def make_table(tools: pxt.Tools, tool_choice: pxt.ToolChoice) -> pxt.Table:
+ class TestAnthropicTypedDictAdherence:
+     """Detect drift between the TypedDict mirrors and the SDK Pydantic models. Doesn't need credentials."""
+ 
+-    def test_mirrors(self) -> None:
++    def test_mirrors(self, init_env: None) -> None:
+         skip_test_if_not_installed('anthropic')
+         from anthropic.types import ContentBlock, Message, Usage
+ 
+```
+
+**File**: `tests/functions/test_openai.py` (modified, +8/-8)
+```diff
+@@ -972,7 +972,7 @@ def test_typed_paths(self, uses_db: None) -> None:
+         for col in (t.chat_text, t.tool_name, t.resp_text, t.item_text):
+             assert_type_eq(col.col_type, pxt.String | None)
+ 
+-    def test_chat_completion(self) -> None:
++    def test_chat_completion(self, init_env: None) -> None:
+         skip_test_if_not_installed('openai')
+         from openai.types import completion_usage
+         from openai.types.chat import (
+@@ -1017,7 +1017,7 @@ def test_chat_completion(self) -> None:
+             ]
+         )
+ 
+-    def test_response(self) -> None:
++    def test_response(self, init_env: None) -> None:
+         skip_test_if_not_installed('openai')
+         import typing
+ 
+@@ -1054,7 +1054,7 @@ def test_response(self) -> None:
+             synth=frozenset({'output_text'}),
+         )
+ 
+-    def test_exact_mirror_types(self) -> None:
++    def test_exact_mirror_types(self, init_env: None) -> None:
+         """JsonType equality for TypedDicts that are exact mirrors of an SDK Pydantic model."""
+         skip_test_if_not_installed('openai')
+         from openai.types import (
+@@ -1096,7 +1096,7 @@ def test_exact_mirror_types(self) -> None:
+                 f'{ours.__name__} drifted from {sdk.__module__}.{sdk.__name__}:\n  ours: {ours_jt}\n  sdk:  {sdk_jt}'
+             )
+ 
+-    def test_transcription_response(self) -> None:
++    def test_transcription_response(self, init_env: None) -> None:
+         """TranscriptionResponse unions Transcription + TranscriptionVerbose; we add synth srt/vtt and
+         re-type usage as plain dict to avoid committing to one variant of the SDK Usage union."""
+         skip_test_if_not_installed('openai')
+@@ -1134,7 +1134,7 @@ def test_transcription_response(self) -> None:
+         # every field is path-dependent
+         assert ours_optional == frozenset(ours_fields.keys())
+ 
+-    def test_translation_response(self) -> None:
++    def test_translation_response(self, init_env: None) -> None:
+         """TranslationResponse unions Translation + TranslationVerbose; we add synth srt/vtt."""
+         skip_test_if_not_installed('openai')
+         from openai.types.audio.translation import Translation
+@@ -1160,7 +1160,7 @@ def test_translation_response(self) -> None:
+ 
+         assert ours_optional == frozenset(ours_fields.keys())
+ 
+-    def test_decision_response(self) -> None:
++    def test_decision_response(self, init_env: None) -> None:
+         """DecisionResponse mirrors Decision except for its flattened answer variants."""
+         skip_test_if_not_installed('openai')
+         from openai.types.decision import Decision
+@@ -1177,7 +1177,7 @@ def test_decision_response(self) -> None:
+                 f'DecisionResponse field {name!r} drifted: ours={ours_fields[name]} sdk={sdk_fields[name]}'
+             )
+ 
+-    def test_decision_answer(self) -> None:
++    def test_decision_answer(self, init_env: None) -> None:
+         """DecisionAnswer flattens the SDK's four answer variants into one TypedDict."""
+         skip_test_if_not_installed('openai')
+         from openai.types import decision as sdk_decision
+@@ -1212,7 +1212,7 @@ def test_decision_answer(self) -> None:
+         assert set(ours_fields) == set().union(*(v.model_fields for v in probability_variants))
+         assert ours_optional == {'label'}
+ 
+-    def test_images_response(self) -> None:
++    def test_images_response(self, init_env: None) -> None:
+         """ImagesResponse mirrors SDK ImagesResponse field-for-field, except data is non-null
+         (we guarantee a populated list in _decode_image_response), and fields that newer SDKs added are optional."""
+         skip_test_if_not_installed('openai')
+```
+
+**File**: `tests/pixeltable_cli/test_service.py` (modified, +1/-0)
+```diff
+@@ -2150,6 +2150,7 @@ class TestServiceOtel:
+     )
+     def test_run_otel(
+         self,
++        init_env: None,
+         tmp_path: pathlib.Path,
+         monkeypatch: pytest.MonkeyPatch,
+         excluded_urls_env: dict[str, str],
+```
+
+**File**: `tests/serving/test_hosted_openapi.py` (modified, +1/-1)
+```diff
+@@ -2,7 +2,7 @@
+ 
+ 
+ class TestHostedOpenapi:
+-    def test_gateway_security_only_on_hosted_schema(self) -> None:
++    def test_gateway_security_only_on_hosted_schema(self, init_env: None) -> None:
+         skip_test_if_not_installed('fastapi')
+         import fastapi
+         from fastapi.security import HTTPBasic
+```
+
+**File**: `tests/serving/test_prepare_project.py` (modified, +1/-1)
+```diff
+@@ -184,7 +184,7 @@ def test_pinned_release(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -
+ 
+ 
+ class TestUnpack:
+-    def test_round_trip(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
++    def test_round_trip(self, init_env: None, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+         """Unpacking an archive yields the project it was packaged from, whatever shapes its files take.
+ 
+         unpack_project_archive() checks the unpacked project against the served digest, so serving this
 ```
 
 ---
 
-### Incident Patch 2: `a002e949` (2026-11-12)
-**Commit Message**: [1.0] Remove deprecated Required type marker (#1918)
+### Incident Patch 2: `42be2c00` (2026-11-13)
+**Commit Message**: Fix diffusers pipeline placement on CUDA in text_to_image and image_to_image (#1953)
 
-Remove the deprecated `pxt.Required[T]` marker. Bare `T` already
-declares a non-nullable column; use `T | None` for nullable columns.
-Remove the marker's type-resolution branch and special mypy handling,
-and delete its obsolete test assertions. Standard-library
-`typing.Required` and `typing.NotRequired` continue to support TypedDict
-fields.
+## Summary
 
-UDFs pickled with `pxt.Required[...]` annotations by earlier versions no
-longer load.
+`text_to_image()` and `image_to_image()` failed on every GPU with
+`NotImplementedError: auto not supported. Supported strategies are:
+balanced, cuda, cpu`. This PR removes `device_map` from their
+`from_pretrained` calls and passes `torch_dtype` instead of `dtype`.
+These UDFs now load their pipelines the same way `image_to_video()`
+already does.
 
-Backward compatibility is not a goal. This PR is part of the 1.0 API
-cleanup, so it may break existing user code without a deprecation path.
+Without `device_map`, `enable_model_cpu_offload()` is the only thing
+that puts these pipelines on CUDA. In all three diffusers UDFs it ran
+inside `try: ... except Exception: pass`, so a failure would leave the
+pipeline on CPU. It now runs outside any `try`. The `try` also guarded
+`enable_memory_efficient_attention()`, which no diffusers class defines,
+so that call is gone.
 
-Validation:
-- 30 existing type/array tests passed against local and proxy catalogs;
-cloud variants excluded.
-- Ruff lint, import sorting, formatting, and checks of all 102 notebooks
-passed.
-- The separate model-definition mypy check passed. Full mypy reports the
-same 28 installed dependency/stub errors as the baseline; the
-OpenTelemetry check reports one missing typing marker.
+This bug isn't new for GPU users. It showed up because #1900 runs the
+Hugging Face tests on the weekly `ubuntu-small-t4` job, where
+`test_text_to_image` and `test_image_to_image` failed in run
+43367048923. CPU runners never pass a `device_map`, so they passed.
 
-Context:
-https://pixeltable.slack.com/archives/C06T5MVJBSB/p1793897457834769
+## Why
 
----------
+In diffusers 0.39.0 (the `uv.lock` version):
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+- **`'auto'` is never accepted.** `DiffusionPipeline.from_pre
 
-**File**: `pixeltable/__init__.py` (modified, +0/-1)
+**File**: `pixeltable/functions/huggingface.py` (modified, +8/-25)
 ```diff
-@@ -61,7 +61,6 @@
-     Image,
-     Int,
-     Json,
--    Required,
-     String,
-     Timestamp,
-     Video,
+@@ -1706,19 +1706,13 @@ def text_to_image(
+         model_id,
+         AutoPipelineForText2Image.from_pretrained,
+         device=device,
+-        dtype=torch.float16 if device == 'cuda' else torch.float32,
+-        device_map='auto' if device == 'cuda' else None,
++        torch_dtype=torch.float16 if device == 'cuda' else torch.float32,
+         safety_checker=None,
+         requires_safety_checker=False,
+     )
+ 
+-    try:
+-        if device == 'cuda' and hasattr(pipeline, 'enable_model_cpu_offload'):
+-            pipeline.enable_model_cpu_offload()
+-        if hasattr(pipeline, 'enable_memory_efficient_attention'):
+-            pipeline.enable_memory_efficient_attention()
+-    except Exception:
+-        pass  # Ignore optimization failures
++    if device == 'cuda':
++        pipeline.enable_model_cpu_offload()
+ 
+     generator = None if seed is None else torch.Generator(device=device).manual_seed(seed)
+ 
+@@ -1906,19 +1900,13 @@ def image_to_image(
+         model_id,
+         AutoPipelineForImage2Image.from_pretrained,
+         device=device,
+-        dtype=torch.float16 if device == 'cuda' else torch.float32,
+-        device_map='auto' if device == 'cuda' else None,
++        torch_dtype=torch.float16 if device == 'cuda' else torch.float32,
+         safety_checker=None,
+         requires_safety_checker=False,
+     )
+ 
+-    try:
+-        if device == 'cuda' and hasattr(pipeline, 'enable_model_cpu_offload'):
+-            pipeline.enable_model_cpu_offload()
+-        if hasattr(pipeline, 'enable_memory_efficient_attention'):
+-            pipeline.enable_memory_efficient_attention()
+-    except Exception:
+-        pass  # Ignore optimization failures
++    if device == 'cuda':
++        pipeline.enable_model_cpu_offload()
+ 
+     generator = None if seed is None else torch.Generator(device=device).manual_seed(seed)
+ 
+@@ -2162,13 +2150,8 @@ def image_to_video(
+         variant='fp16' if device == 'cuda' else None,
+     )
+ 
+-    try:
+-        if device == 'cuda' and hasattr(pipe, 'enable_model_cpu_offload'):
+-            pipe.enable_model_cpu_offload()
+-        if hasattr(pipe, 'enable_memory_efficient_attention'):
+-            pipe.enable_memory_efficient_attention()
+-    except Exception:
+-        pass  # Ignore optimization failures
++    if device == 'cuda':
++        pipe.enable_model_cpu_offload()
+ 
+     generator = None if seed is None else torch.Generator(device=device).manual_seed(seed)
+ 
 ```
 
-**File**: `pixeltable/mypy/mypy_plugin.py` (modified, +0/-22)
+**File**: `tests/functions/test_huggingface.py` (modified, +7/-8)
 ```diff
-@@ -53,8 +53,6 @@ def get_type_analyze_hook(self, fullname: str) -> Callable[[AnalyzeTypeContext],
-         if fullname in self.__FULLNAME_MAP:
-             subst_name = self.__FULLNAME_MAP[fullname]
-             return lambda ctx: self.adjust_pxt_type(ctx, subst_name)
--        if fullname == _REQUIRED_FULLNAME:
--            return adjust_required_type
-         return None
+@@ -655,10 +655,9 @@ def test_text_to_image(self, uses_db: None) -> None:
+         )
  
-     def get_base_class_hook(self, fullname: str) -> Callable[[ClassDefContext], None] | None:
-@@ -115,7 +113,6 @@ def plugin(version: str) -> type:
- _PXTITERATOR_FULLNAME = f'{pxt.PxtIterator.__module__}.{pxt.PxtIterator.__name__}'
- _FN_CALL_FULLNAME = f'{exprs.Expr.__module__}.{exprs.Expr.__name__}'
- _PXT_TYPE_FULLNAME = f'{_PxtType.__module__}.{_PxtType.__name__}'
--_REQUIRED_FULLNAME = f'{pxt.Required.__module__}.{pxt.Required.__name__}'
- _TABLE_MODEL_META_FULLNAME = f'{TableModelMeta.__module__}.{TableModelMeta.__name__}'
- 
- 
-@@ -127,10 +124,6 @@ def make_pxt_type_subscriptable(ctx: ClassDefContext) -> None:
-     type-check (as `Any`) in value positions such as schema dicts, we synthesize a metaclass whose
-     `__getitem__(item) -> Any` mypy resolves the subscript through (only a *metaclass* `__getitem__` is honored for
-     `Class[...]`; `__class_getitem__` and instance/classmethod `__getitem__` are not).
+         validate_update_status(t.insert(prompt=test_prompt), expected_rows=1)
+-        result = t.select(t.image).collect()[0]
 -
--    `Required` additionally must appear non-generic: while generic, mypy parses its argument as a type, so
--    `Required[Image[(300, 300)]]` fails ("Type expected within [...]") on the tuple before any hook runs. We clear
--    its type variables here; `adjust_required_type` keeps `Required[...]` working in annotation positions.
-     """
-     info = ctx.cls.info
-     meta = ctx.api.basic_new_typeinfo('_PxtSubscriptMeta', ctx.api.named_type('builtins.type'), ctx.cls.line)
-@@ -152,21 +145,6 @@ def make_pxt_type_subscriptable(ctx: ClassDefContext) -> None:
-     meta_inst = Instance(meta, [])
-     info.metaclass_type = meta_inst
-     info.declared_metaclass = meta_inst
--    if info.fullname == _REQUIRED_FULLNAME:
--        info.type_vars = []
--        info.defn.type_vars = []
--        info.add_type_vars()
--
--
--def adjust_required_type(ctx: AnalyzeTypeContext) -> Type:
--    """
--    In an annotation position, resolve `Required[T]` to `T` (the marker only signifies non-nullability, which has no
--    bearing on mypy's view); a bare `Required` resolves to `Any`. This complements `make_pxt_type_subscriptable`,
--    which makes `Required` non-generic (so mypy no longer interprets `Required[...]` natively).
--    """
--    if ctx.type.args:
--        return ctx.api.analyze_type(ctx.type.args[0])
--    return AnyType(TypeOfAny.special_form)
+-        # Verify we got an image
+-        assert result['image'] is not None
++        img = t.select(t.image).collect()[0]['image']
++        assert img.size == (256, 256)
++        assert np.asarray(img).std() > 0
  
+     @pytest.mark.xdist_group('large_model')
+     def test_image_to_image(self, uses_db: None, sample_file_server: SampleFileServer) -> None:
+@@ -683,10 +682,10 @@ def test_image_to_image(self, uses_db: None, sample_file_server: SampleFileServe
+         validate_update_status(
+             t.insert(img=sample_file_server.url(SAMPLE_IMAGE_FILE_PATH), prompt=test_prompt), expected_rows=1
+         )
+-        result = t.select(t.modified_image).collect()[0]
+-
+-        # Verify we got a modified image
+-        assert result['modified_image'] is not None
++        res = t.select(t.modified_image, width=t.img.width, height=t.img.height).collect()[0]
++        img = res['modified_image']
++        assert img.size == (res['width'], res['height'])
++        assert np.asarray(img).std() > 0
  
- def create_model_base_class(ctx: DynamicClassDefContext) -> None:
+     @pytest.mark.xdist_group('large_model')
+     def test_image_to_video(self, uses_db: None, sample_file_server: SampleFileServer) -> None:
 ```
 
-**File**: `pixeltable/type_system.py` (modified, +1/-34)
+---
+
+### Incident Patch 3: `dbe8f8b1` (2026-11-13)
+**Commit Message**: [PXT-1767] Fix the notebooks++ and T4 failures in the weekly test run (#1934)
+
+Fixes [PXT-1767](https://pixeltable.atlassian.net/browse/PXT-1767).
+Supersedes #1929.
+
+Fixes two failures in the weekly `tests` run on 2026-11-10 ([run
+42735604741](https://github.com/pixeltable/pixeltable/actions/runs/42735604741)).
+
+## notebooks++: invalid notebook JSON
+
+The job failed on `video-generate-ai.ipynb` with "Notebook does not
+appear to be JSON". Its setup cell ran `%pip install -qU pixeltable
+"google-genai>=2.22"`. `scripts/prepare-nb-tests.sh --no-pip` strips pip
+lines with `sed -E 's/%pip install [^"]*//'`, which stops at the escaped
+quote and leaves invalid JSON.
+
+The bound isn't needed. `-U` already installs the latest google-genai
+(3.2.0 today), and `gemini.generate_video()` enforces the minimum itself
+with `require_package('google.genai', min_version=[2, 22])`. The
+notebook now installs `pixeltable google-genai` and lists `pip install
+google-genai` under Requirements.
+
+## standard, ubuntu-small-t4: `test_db_migration`
+
+`test_db_migration` took 16 minutes on the T4 runner in the 2026-11-03
+run. On 2026-11-10 it was still running at the 10-minute faulthandler
+dump, its xdist worker went
+
+**File**: `docs/release/howto/cookbooks/video/video-generate-ai.ipynb` (modified, +2/-2)
 ```diff
-@@ -11,7 +11,6 @@
- import typing
- import urllib.request
- import uuid
--import warnings
- from pathlib import Path
- from typing import Any, ClassVar, Iterable, Literal, Mapping, Sequence, Union, is_typeddict
- 
-@@ -360,19 +359,6 @@ def from_python_type(
-                 )
-                 if underlying is not None:
-                     return underlying.copy(nullable=True)
--        elif origin is Required:
--            assert len(type_args) == 1
--            warnings.warn(
--                '`Required[T]` is deprecated and will be removed in a future version; use `T` instead. '
--                'Bare types such as `pxt.Int` are now non-nullable by default; use `pxt.Int | None` for a '
--                'nullable column.',
--                excs.PixeltableDeprecationWarning,
--                stacklevel=2,
--            )
--            underlying = cls.from_python_type(type_args[0], allow_builtin_types=allow_builtin_types)
--            if underlying is None:
--                return None
--            return underlying.copy(nullable=False)
-         elif origin is typing.Required or origin is typing.NotRequired:
-             # Required[T]/NotRequired[T] mark a TypedDict field's key presence (recorded in __optional_keys__), so
-             # the field's value type is simply T
-@@ -384,7 +370,7 @@ def from_python_type(
-             if isinstance(parameters, ColumnType):
-                 return parameters.copy(nullable=False)
-         else:
--            # It's something other than T | None, Required[T], or an explicitly annotated type.
-+            # It's something other than T | None, a TypedDict field qualifier, or an explicitly annotated type.
-             # for non-generic types, get_origin returns None, so we use the type itself as the origin
-             origin = origin or t
-             if isinstance(origin, type):
-@@ -1926,9 +1912,6 @@ def validate_media(self, val: Any) -> None:
-         DocumentHandle.validate(val)
- 
- 
--T = typing.TypeVar('T')
--
--
- class _PxtType:
-     """
-     Base class for the Pixeltable type-hint family. Subclasses of this class are meant to be used as type hints, both
-@@ -1950,22 +1933,6 @@ def as_col_type(cls, nullable: bool) -> ColumnType:
-         raise NotImplementedError()
- 
- 
--class Required(_PxtType, typing.Generic[T]):
--    """
--    Deprecated marker class to indicate that a column is non-nullable in a schema definition.
--
--    Bare types such as `pxt.Int` are non-nullable, so `Required[T]` is equivalent to `T`. Use `T | None` to declare a
--    nullable column.
--    """
--
--    @classmethod
--    def as_col_type(cls, nullable: bool) -> ColumnType:
--        raise excs.RequestError(
--            excs.ErrorCode.INVALID_TYPE,
--            'Bare `Required` is not a valid type; use `Required[T]` for some valid type `T`.',
--        )
--
--
- String = typing.Annotated[str, StringType(nullable=False)]
- Int = typing.Annotated[int, IntType(nullable=False)]
- Float = typing.Annotated[float, FloatType(nullable=False)]
+@@ -53,7 +53,7 @@
+    "metadata": {},
+    "outputs": [],
+    "source": [
+-    "%pip install -qU pixeltable \"google-genai>=2.22\""
++    "%pip install -qU pixeltable google-genai"
+    ]
+   },
+   {
+@@ -327,7 +327,7 @@
+     "**Requirements:**\n",
+     "\n",
+     "- Google AI Studio API key (set `GEMINI_API_KEY`); Gemini Omni requires the Gemini Developer API\n",
+-    "- `pip install \"google-genai>=2.22\"`"
++    "- `pip install google-genai`"
+    ]
+   },
+   {
 ```
 
-**File**: `tests/serving/test_fastapi.py` (modified, +2/-2)
+**File**: `tests/test_migration.py` (modified, +1/-0)
 ```diff
-@@ -688,7 +688,7 @@ def test_add_insert_route_image(
-             orig_w, orig_h = img.size
-         pxt.create_dir(p('test_serve'))
-         # Unlike video.resize (which tolerates None width/height and preserves aspect ratio),
--        # image.resize requires concrete ints - so width and height must be Required, and every
-+        # image.resize requires concrete ints - so width and height must be non-nullable, and every
-         # insert (even the /rotate one, which doesn't care about them) has to supply them.
-         t = pxt.create_table(
-             p('test_serve/images'),
-@@ -834,7 +834,7 @@ def test_add_insert_route_audio(
-         # Use sample-16-bit.wav specifically so the mime type in upload mode is deterministic.
-         audio_path = next(f for f in get_audio_files() if f.endswith('sample-16-bit.wav'))
-         pxt.create_dir(p('test_serve'))
--        # factor and end_time are Required because multiply_volume's `factor` param must be non-None
-+        # factor and end_time are non-nullable because multiply_volume's `factor` param must be non-None
-         # on every insert (the `scaled` computed column runs on every row).
-         t = pxt.create_table(
-             p('test_serve/audios'),
-```
-
-**File**: `tests/test_types.py` (modified, +0/-7)
-```diff
-@@ -38,7 +38,6 @@
-     IntType,
-     Json,
-     JsonType,
--    Required,
-     String,
-     StringType,
-     Timestamp,
-@@ -339,10 +338,6 @@ def test_from_python_type(self, init_env: None) -> None:
-             assert ColumnType.from_python_type(py_type | None) == nullable_pxt_type
-             assert ColumnType.from_python_type(None | py_type) == nullable_pxt_type  # noqa: RUF036
+@@ -95,6 +95,7 @@ def test_convert_53_normalize(self) -> None:
  
--            # `Required[T]` is deprecated, but still resolves to a non-nullable `T`
--            with pytest.warns(excs.PixeltableDeprecationWarning, match=r'`Required\[T\]` is deprecated'):
--                assert ColumnType.from_python_type(Required[py_type]) == non_nullable_pxt_type
--
-             assert str(non_nullable_pxt_type) == string
-             assert str(nullable_pxt_type) == f'{string} | None'
- 
-@@ -657,8 +652,6 @@ def test_json_type_errors(self, init_env: None) -> None:
-     def test_type_errors(self, init_env: None) -> None:
-         from .module_with_future_annotations import make_unresolvable_typed_dict
- 
--        with pytest.raises(excs.RequestError, match='Bare `Required` is not a valid type'):
--            ColumnType.from_python_type(Required)
-         with pxt_raises(
-             pxt.ErrorCode.INVALID_TYPE,
-             match=r"Cannot resolve the field types of TypedDict `Unresolvable`: name 'LocalFloat' is not defined",
+     @rerun(reruns=3, reruns_delay=8)  # Deal with occasional concurrency issues
+     @pytest.mark.skipif(platform.system() == 'Windows', reason='Does not run on Windows')
++    @pytest.mark.skipif('t4' in os.environ.get('PXTTEST_CI_OS', ''), reason='Too slow on t4 CI instances')
+     def test_db_migration(self, init_env: None) -> None:
+         skip_test_if_not_installed('transformers')
+         # the dumps contain a sentence-mode string_splitter view, which needs spacy to compute inserted rows
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1942** (closed): Run 10 minutes of random-ops on pull requests (@aaron-siegel)
-- **PR #1940** (closed): PXT-1768: Poll VLM Run generations instead of holding chat open (@pierrebrunelle)
-- **PR #1939** (closed): Create one table version per insert, regardless of batch count (@sergey-mkhitaryan)
-- **PR #1936** (2026-11-12): Fix import block spacing in CI planner tests (@sergey-mkhitaryan)
-- **PR #1931** (closed): PXT-1768: Poll VLM Run generations instead of holding chat open (@pierrebrunelle)
-- **PR #1930** (closed): PXT-1769: deselect test_db_migration on T4 and pin pytest-rerunfailures (@pierrebrunelle)
+- **PR #1957** (closed): Rename TableDataConduit to SourceAdapter (@sergey-mkhitaryan)
+- **PR #1955** (2026-11-13): Write the default config atomically and require init_env for tests that reach Env (@aaron-siegel)
+- **PR #1954** (2026-11-13): Dump the Postgres server's state before the CI test step times out (@aaron-siegel)
+- **PR #1953** (2026-11-13): Fix diffusers pipeline placement on CUDA in text_to_image and image_to_image (@aaron-siegel)
+- **PR #1952** (2026-11-13): Raise faulthandler_timeout to 30 minutes to stop macOS worker hangs (@aaron-siegel)
+- **PR #1950** (2026-11-14): Make int % in SQL follow Python's sign convention (@sohailshk)
 
 ---
 
@@ -1439,3 +1635,37 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. Write the default config atomically and require init_env for tests that reach En
+
+**RULE**:
+When implementing operations in `.github/instructions/tests.instructions.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pixeltable/pixeltable. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `b907dcb3`: Write the default config atomically and require init_env for tests that reach Env. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/instructions/tests.instructions.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+- A test that reaches `Env.get()`, directly or through a helper such as `skip_test_if_not_installed()`,
+  requests `init_env`; `uses_db` and `db_root` include it. Without it, the test would use whatever an earlier
+  test on its xdist worker set up, or the developer's real Pixeltable home and database when it runs first, so
+  `tests/conftest.py` fails such a test.
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `b907dcb3` are properly handled with clean fallback behavior.

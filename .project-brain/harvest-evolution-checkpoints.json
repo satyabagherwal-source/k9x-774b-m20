@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T05:32:16.931Z",
+  "last_updated": "2026-11-14T05:47:18.986Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-14T05:32:15.509Z",
@@ -1523,9 +1523,9 @@
       "staged_for_review": 0
     },
     "pixeltable-pixeltable-learnings.md": {
-      "processed_at": "2026-11-13T04:13:41.916Z",
+      "processed_at": "2026-11-14T05:47:18.185Z",
       "promoted_canonical": 0,
-      "staged_for_review": 0
+      "staged_for_review": 1
     },
     "hf-orcarouter-orcacyber-nano-1.0-learnings.md": {
       "processed_at": "2026-11-13T04:31:52.288Z",
@@ -2421,9 +2421,19 @@
       "processed_at": "2026-11-14T05:32:15.140Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-aleph-alpha-kolibri-1-learnings.md": {
+      "processed_at": "2026-11-14T05:47:17.078Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "builderio-builder-learnings.md": {
+      "processed_at": "2026-11-14T05:47:17.445Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 774,
-  "total_canonical_promoted": 169,
-  "total_staged_for_review": 602
+  "total_dossiers_evaluated": 777,
+  "total_canonical_promoted": 170,
+  "total_staged_for_review": 604
 }

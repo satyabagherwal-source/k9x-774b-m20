@@ -9757,3 +9757,7 @@
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T05:09:43.684Z` | `authzed-spicedb` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-6B875983` [Domain K] | Yes (`d10747bc...`) |
 | `CYCLE-20261114-X4JM` | `2026-11-14T05:31:29.986Z` | `baidu/Unlimited-OCR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md` | Yes (`bd2dea14...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T05:32:15.140Z` | `hf-baidu-unlimited-ocr` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-2A203D84` [Domain D] | Yes (`e482db8f...`) |
+| `CYCLE-20261114-GCC5` | `2026-11-14T05:46:26.549Z` | `Aleph-Alpha/Kolibri-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1-learnings.md` | Yes (`e50f0c4b...`) |
+| `CYCLE-20261114-GHQJ` | `2026-11-14T05:46:33.547Z` | `BuilderIO/builder` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8453` | Yes (`76eb9d0b...`) |
+| `CYCLE-20261114-GNDL` | `2026-11-14T05:46:40.857Z` | `pixeltable/pixeltable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8454` | Yes (`88a46480...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T05:47:17.077Z` | `hf-aleph-alpha-kolibri-1` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-2C3ED23B` [Domain D] | Yes (`664d6ff1...`) |

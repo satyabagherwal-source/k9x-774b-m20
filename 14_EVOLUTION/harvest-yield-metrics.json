@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T05:31:29.996Z",
-  "total_cycles_completed": 9466,
-  "total_learnings_persisted": 9466,
-  "total_rules_promoted": 9173,
+  "last_updated": "2026-11-14T05:46:40.867Z",
+  "total_cycles_completed": 9469,
+  "total_learnings_persisted": 9469,
+  "total_rules_promoted": 9175,
   "history": [
-    {
-      "timestamp": "2026-11-13T14:33:40.310Z",
-      "repository": "SupersonicLabs/Julia-1",
-      "learningId": "learn-huggingface-supersoniclabs-julia-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T14:34:00.185Z",
-      "repository": "tauri-apps/tauri",
-      "learningId": "learn-github-tauri-apps-tauri",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T14:34:03.414Z",
-      "repository": "infracost/infracost",
-      "learningId": "learn-github-infracost-infracost",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T14:34:08.277Z",
       "repository": "dragonflydb/dragonfly",
@@ -1403,6 +1382,27 @@
       "repository": "baidu/Unlimited-OCR",
       "learningId": "learn-huggingface-baidu-unlimited-ocr",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T05:46:26.560Z",
+      "repository": "Aleph-Alpha/Kolibri-1",
+      "learningId": "learn-huggingface-aleph-alpha-kolibri-1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T05:46:33.557Z",
+      "repository": "BuilderIO/builder",
+      "learningId": "learn-github-builderio-builder",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T05:46:40.867Z",
+      "repository": "pixeltable/pixeltable",
+      "learningId": "learn-github-pixeltable-pixeltable",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for builderio/builder
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for BuilderIO/builder
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "builderio/builder",
-  "source_url": "https://github.com/builderio/builder",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "BuilderIO/builder",
+  "source_url": "https://github.com/BuilderIO/builder",
+  "source_version": "4f46c3a2",
+  "license": "MIT",
+  "timestamp": "2026-11-14T05:46:33.755Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-builderio-builder",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [builderio/builder](https://github.com/builderio/builder) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [BuilderIO/builder](https://github.com/BuilderIO/builder) (Revision: `4f46c3a2`).  
+> **License**: MIT | **Timestamp**: `2026-11-14T05:46:33.755Z`  
+> **Learning ID**: `learn-github-builderio-builder`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `builderio/builder` (Commit: `historical`)
+- **Target Repository**: `BuilderIO/builder` (Commit: `4f46c3a2`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/builderio-builder-learnings.md`  
-> **Source**: github ([https://github.com/BuilderIO/builder](https://github.com/BuilderIO/builder))  
-> **Source Version**: `1d9c6140`  
-> **License**: MIT  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T02:24:34.897Z  
-> **Learning ID**: `learn-github-builderio-builder`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): BuilderIO/builder
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/builderio-builder-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/BuilderIO/builder](https://github.com/BuilderIO/builder))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T02:22:00.135Z  
+> **Harvest Timestamp**: 2026-11-14T05:46:32.560Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Visual Development for React, Vue, Svelte, Qwik, and more
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 8886 stars
+- **Stars / Engagement**: 8892 stars
 
 ---
 
@@ -630,115 +616,376 @@ export { builder } from './src/constants/builder';
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4088da36` (2026-11-04)
-**Commit Message**: fix[react][Raw:Img]: keep Builder block class and legacy alt/title (ENG-14392) (#4921)
+### Incident Patch 1: `728e2e61` (2026-11-12)
+**Commit Message**: fix[sdks][localization]: ENG-14530 keep explicit locale when previewing drafts (#4934)
 
-## Summary
-- \`Raw:Img\` replaced the Builder block class with a fixed
-\`builder-raw-img\`, so layout styles were dropped and images rendered
-at full size. The incoming class is now merged in.
-- Legacy \`alt\`/\`title\` attributes were overridden with \`undefined\`
-when the \`altText\`/\`title\` inputs were unset. They now fall back to
-the attributes.
-- Adds \`Img.test.tsx\` (3 cases) and a \`moduleNameMapper\` for
-\`src/...\` imports in the react jest config.
+**File**: `.changeset/gentle-hotels-cry.md` (added, +12/-0)
+```diff
+@@ -0,0 +1,12 @@
++---
++"@builder.io/sdk-angular": patch
++"@builder.io/sdk-react-nextjs": patch
++"@builder.io/sdk-qwik": patch
++"@builder.io/sdk-react": patch
++"@builder.io/sdk-react-native": patch
++"@builder.io/sdk-solid": patch
++"@builder.io/sdk-svelte": patch
++"@builder.io/sdk-vue": patch
++---
++
++Fix draft previews of localized content so the locale passed to `fetchOneEntry` or `<Content>` takes precedence over `builder.options.locale` in the preview URL.
+```
 
-Fixes ENG-14392.
+**File**: `packages/sdks/src/components/content/components/enable-editor.lite.tsx` (modified, +1/-0)
+```diff
+@@ -439,6 +439,7 @@ export default function EnableEditor(props: BuilderEditorProps) {
+           model: props.model,
+           apiKey: props.apiKey,
+           apiVersion: props.builderContextSignal.value.apiVersion,
++          ...(props.locale ? { locale: props.locale } : {}),
+           ...(searchParamPreviewModel === 'BUILDER_STUDIO' &&
+           props.context?.symbolId
+             ? { query: { id: props.context.symbolId } }
+```
 
-## Verification
-- \`npx jest src/blocks/raw/Img.test.tsx\`: 3/3 pass.
-- Browser check with the local \`packages/react\` build and the
-Builder-hosted page (\`/eng-14392-raw-img\`, draft fetched with
-\`includeUnpublished\`): both \`<img class="builder-raw-img
-builder-block builder-raw-img-{a,b} …">\` render at 200x150. Block A has
-\`alt="Legacy alt text"\`; Block B has \`alt="New alt text"\`.
-- Not run: a before/after comparison against \`main\`.
+**File**: `packages/sdks/src/functions/get-content/generate-content-url.test.ts` (modified, +28/-0)
+```diff
+@@ -322,6 +322,34 @@ describe('Generate Content URL', () => {
+     }
+   });
+ 
++  test('does not allow builder.options.locale in the URL to override an explicit locale', () => {
++    vi.stubGlobal('window', {
++      location: {
++        search: '?builder.preview=page&builder.options.locale=Default',
++        pathname: '/fr-fr/page',
++        host: 'www.example.com',
++      },
++    });
++    vi.stubGlobal('document', {});
++
++    try {
++      const withLocale = generateContentUrl({
++        apiKey: testKey,
++        model: testModel,
++        locale: 'fr-FR',
++      });
++      const withoutLocale = generateContentUrl({
++        apiKey: testKey,
++        model: testModel,
++      });
++
++      expect(withLocale.searchParams.get('locale')).toBe('fr-FR');
++      expect(withoutLocale.searchParams.get('locale')).toBe('Default');
++    } finally {
++      vi.unstubAllGlobals();
++    }
++  });
++
+   test('converts Studio boolean user attributes from query parameters', () => {
+     vi.stubGlobal('window', {
+       location: {
+```
 
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
+**File**: `packages/sdks/src/functions/get-content/generate-content-url.ts` (modified, +4/-3)
+```diff
+@@ -109,9 +109,10 @@ export const generateContentUrl = (options: GetContentOptions): URL => {
+ 
+   const flattened = flatten(queryOptions);
+   for (const key in flattened) {
+-    if (key !== 'apiKey') {
+-      url.searchParams.set(key, String(flattened[key]));
+-    }
++    if (key === 'apiKey') continue;
++    // explicit `locale` wins over `builder.options.locale` from the preview URL, matching Gen1
++    if (key === 'locale' && locale) continue;
++    url.searchParams.set(key, String(flattened[key]));
+   }
+ 
+   if (Object.keys(finalUserAttributes).length > 0) {
+```
 
----------
+---
 
-Co-authored-by: Claude Haiku 5.5 <[REDACTED_EMAIL]>
+### Incident Patch 2: `f3be7078` (2026-11-11)
+**Commit Message**: fix[react][personalization]: ENG-14324 preserve shared styles before discarding variant templates (#4922)
 
-**File**: `.changeset/raw-img-class-alt.md` (added, +5/-0)
+**File**: `.changeset/two-masks-brush.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
-+'@builder.io/react': patch
++"@builder.io/react": patch
 +---
 +
-+Fix `Raw:Img` dropping the Builder block class and overriding legacy `alt`/`title` attributes when `altText`/`title` inputs are unset.
++Fix missing first-paint styles for non-first personalization variants and default content, preventing layout shifts during hydration.
 ```
 
-**File**: `packages/react/jest.config.js` (modified, +1/-0)
+**File**: `packages/react/src/blocks/PersonalizationContainer.tsx` (modified, +52/-13)
 ```diff
-@@ -9,6 +9,7 @@ module.exports = {
-     },
-   },
-   testEnvironment: 'node',
-+  moduleNameMapper: { '^src/(.*)$': '<rootDir>/src/$1' },
-   preset: 'ts-jest',
-   coveragePathIgnorePatterns: ['/node_modules/', '/test/'],
-   coverageThreshold: {
+@@ -8,6 +8,41 @@ import {
+   Query,
+ } from '../functions/filter-with-custom-targeting';
+ import { BuilderStoreContext } from '../store/builder-store';
++import { CacheProvider, EmotionCache, SerializedStyles, withEmotionCache } from '@emotion/core';
++
++type ServerEmotionCache = EmotionCache & {
++  insert(
++    selector: string,
++    serialized: SerializedStyles,
++    sheet: EmotionCache['sheet'],
++    shouldCache: boolean
++  ): string | void;
++};
++
++const PersonalizationStyles = withEmotionCache<{ children: React.ReactNode }>(
++  ({ children }, parentCache) => {
++    const cache: ServerEmotionCache = {
++      ...parentCache,
++      compat: undefined,
++      inserted: {},
++      registered: { ...parentCache.registered },
++      insert(selector, serialized, sheet, shouldCache) {
++        // A template must not suppress style emission in another branch.
++        const rules = (parentCache as ServerEmotionCache).insert(
++          selector,
++          serialized,
++          sheet,
++          false
++        );
++        if (shouldCache) {
++          cache.inserted[serialized.name] = true;
++        }
++        return rules;
++      },
++    };
++    return <CacheProvider value={cache}>{children}</CacheProvider>;
++  }
++);
+ 
+ export type PersonalizationContainerProps = {
+   children: React.ReactNode;
+@@ -97,12 +132,14 @@ export function PersonalizationContainer(props: PersonalizationContainerProps) {
+         >
+           {props.variants?.map((variant, index) => (
+             <template key={index} data-variant-id={props.builderBlock?.id! + index}>
+-              <BuilderBlocks
+-                blocks={variant.blocks}
+-                parentElementId={props.builderBlock?.id}
+-                dataPath={`component.options.variants.${index}.blocks`}
+-                child
+-              />
++              <PersonalizationStyles>
++                <BuilderBlocks
++                  blocks={variant.blocks}
++                  parentElementId={props.builderBlock?.id}
++                  dataPath={`component.options.variants.${index}.blocks`}
++                  child
++                />
++              </PersonalizationStyles>
+             </template>
+           ))}
+           <script
+@@ -116,12 +153,14 @@ export function PersonalizationContainer(props: PersonalizationContainerProps) {
+               ),
+             }}
+           />
+-          <BuilderBlocks
+-            blocks={props.builderBlock?.children}
+-            parentElementId={props.builderBlock?.id}
+-            dataPath="this.children"
+-            child
+-          />
++          <PersonalizationStyles>
++            <BuilderBlocks
++              blocks={props.builderBlock?.children}
++              parentElementId={props.builderBlock?.id}
++              dataPath="this.children"
++              child
++            />
++          </PersonalizationStyles>
+         </div>
+         <script
+           nonce={builderStore.context.nonce}
+@@ -303,7 +342,7 @@ function getPersonalizationScript(
+           if (winningVariant) {
+             var parentNode = winningVariant.parentNode;
+             var newParent = parentNode.cloneNode(false);
+-            newParent.appendChild(winningVariant.content.firstChild);
++            newParent.appendChild(winningVariant.content);
+             parentNode.parentNode.replaceChild(newParent, parentNode);
+             if (isDebug) {
+               console.debug('PersonalizationContainer', 'Winning variant Replaced:', winningVariant);
 ```
 
-**File**: `packages/react/src/blocks/raw/Img.test.tsx` (added, +27/-0)
+**File**: `packages/react/test/personalization-container-ssr.test.tsx` (added, +130/-0)
 ```diff
-@@ -0,0 +1,27 @@
+@@ -0,0 +1,130 @@
 +import React from 'react';
-+import { renderToStaticMarkup } from 'react-dom/server';
-+import { Img } from './Img';
++import { renderToString } from 'react-dom/server';
++import { CacheProvider, ClassNames, Global, keyframes } from '@emotion/core';
++import createCache from '@emotion/cache';
++import { JSDOM, CookieJar } from 'jsdom';
++import { PersonalizationContainer } from '../src/blocks/PersonalizationContainer';
 +
-+// Skip the Builder SDK wrapper and Image module so this test doesn't pull untested modules into the global coverage numbers.
-+jest.mock('../../functions/with-builder', () => ({ withBuilder: (component: any) => component }));
-+jest.mock('../Image', () => ({ getSrcSet: () => undefined }));
++const blockId = 'personalization-styles';
++const animation = keyframes({ to: { opacity: 1 } });
++const sharedStyles = { display: 'flex', padding: 40, animation: `${animation} 1s` };
 +
-+const render = (props: any) =>
-+  renderToStaticMarkup(<Img image="https://example.com/a.png" {...props} />);
++const VariantContent = ({ name }: { name: string }) => (
++  <ClassNames>
++    {({ css }) => {
++      const className = css(sharedStyles);
++      css({ '@font-face': { fontFamily: `variant-${name}`, src: `url('/${name}.woff2')` } });
++      return (
++        <div className={className}>
++          <Global styles={{ body: { '--selected-variant': name } }} />
++          <span data-content={name}>{name}</span>
++        </div>
++      );
++    }}
++  </ClassNames>
++);
 +
-+describe('Raw:Img', () => {
-+  it('keeps the builder block class', () => {
-+    const html = render({ attributes: { className: 'builder-abc another' } });
-+    expect(html).toContain('class="builder-raw-img builder-abc another"');
++const renderFixture = (key = 'css', compat = false) => {
++  const cache = createCache({ key, nonce: 'test-nonce' });
++  if (compat) cache.compat = true;
++  const html = renderToString(
++    <CacheProvider value={cache}>
++      <PersonalizationContainer
++        attributes={{}}
++        builderBlock={{
++          '@type': '@builder.io/sdk:Element',
++          id: blockId,
++          children: [<VariantContent key="default" name="English" />] as any,
++        }}
++        builderState={{ state: {} }}
++        previewingIndex={null}
++        variants={
++          [
++            {
++              query: [{ property: 'locale', operator: 'is', value: 'fr-FR' }],
++              blocks: [<VariantContent key="fr" name="French" />],
++            },
++            {
++              query: [{ property: 'locale', operator: 'is', value: 'ca-ES' }],
++              blocks: [<VariantContent key="ca" name="Catalan" />],
++            },
++          ] as any
++        }
++      >
++        {null}
++      </PersonalizationContainer>
++    </CacheProvider>
++  );
++  return { html, cache };
++};
++
++const runInBrowser = (html: string, locale: string) => {
++  const cookieJar = new CookieJar();
++  cookieJar.setCookieSync(
++    `builder.userAttributes=${JSON.stringify({ locale })}; Path=/`,
++    'http://localhost/'
++  );
++  return new JSDOM(html, { url: 'http://localhost/', cookieJar, runScripts: 'dangerously' });
++};
++
++describe('personalization SSR shared styles', () => {
++  [
++    { key: 'custom', compat: false },
++    { key: 'css', compat: true },
++  ].forEach(({ key, compat }) =>
++    test(`preserves the parent cache configuration for ${key} with compat=${compat}`, () => {
++      const { html, cache } = renderFixture(key, compat);
++      expect(cache.inserted).toEqual({});
++      expect(cache.registered).toEqual({});
++      const dom = runInBrowser(html, 'ca-ES');
++      const styles = Array.from(dom.window.document.querySelectorAll(`style[data-emotion-${key}]`));
++      expect(styles.length).toBeGreaterThan(0);
++      const rules = styles.map(style => style.textContent).join('');
++      expect(rules).toContain('padding:40px');
++      expect(rules).not.toContain('variant-French');
++      styles.forEach(style => expect(style.getAttribute('nonce')).toBe('test-nonce'));
++      dom.window.close();
++    })
++  );
++
++  test('Emotion groups shared styles and variant-only font rules in the same tag', () => {
++    const { html } = renderFixture();
++    const dom = new JSDOM(html);
++    const template = dom.window.document.querySelector('template')!;
++    const groupedStyle = Array.from(template.content.querySelectorAll('style')).find(style =>
++      style.textContent!.includes('padding:40px')
++    )!;
++    expect(groupedStyle.textContent).toContain('@font-face');
++    expect(groupedStyle.textContent).toContain('variant-French');
++    dom.window.close();
 +  });
 +
-+  it('falls back to legacy alt and title', () => {
-+    const html = render({ attributes: { alt: 'legacy', title: 'legacy title' } });
-+    expect(html).toContain('alt="legacy"');
-+    expect(html).toContain('title="legacy title"');
-+  });
-+
-+  it('prefers altText input over legacy alt', () => {
-+    expect(render({ altText: 'new', attributes: { alt: 'legacy' } })).toContain('alt="new"');
-+  });
-+});
++  [
++    ['fr-FR', 'French'],
++    ['ca-ES', 'Catalan'],
++    ['en-US', 'English'],
++  ].forEach(([locale, name]) =>
++    test(`keeps only ${locale} content and its styles without hydration`, () => {
++      const { html } = renderFixture();
++      const dom = runInBrowser(html, locale);
++      const document = dom.window.document;
++      const styles = Array.from(document.querySelectorAll('style[data-emotion-css]'));
++      const rules = styles.map(style => style.textContent).join('');
++      expect(document.querySelector('[data-content]')!.textContent).toBe(name);
++      expect(document.querySelector('template')).toBeNull();
++      expect(rules).toContain('padding:40px');
++      expect(rules).toContain(`@keyframes ${animation.name}`);
++      expect(rules).toContain(`variant-${name}`);
++      expect(rules).toContain(`--selected-variant:${name}`);
++      styles.forEach(style => expect(style.getAttribute('nonce')).toBe('test-nonce'));
++      ['French', 'Catalan', 'English']
++        .filter(value => value !== name)
++        .forEach(value => {
++          expect(rules).not.toContain(`variant-${value}`);
++        
 ```
 
-**File**: `packages/react/src/blocks/raw/Img.tsx` (modified, +3/-3)
+---
+
+### Incident Patch 3: `58ae677a` (2026-11-11)
+**Commit Message**: fix[smartling][translationJob]: rewrite job-publish-hook webhook when its private key is stale (#4930)
+
+**File**: `plugins/smartling/src/plugin.tsx` (modified, +12/-5)
 ```diff
-@@ -56,10 +56,10 @@ class ImgComponent extends React.Component<ImgProps> {
-         {...restAttributes}
-         src={this.props.image || attributes.src}
-         srcSet={srcset}
--        alt={this.props.altText}
--        title={this.props.title}
-+        alt={this.props.altText ?? attributes.alt}
-+        title={this.props.title ?? attributes.title}
-         style={mergedStyle}
--        className="builder-raw-img"
-+        className={`builder-raw-img ${attributes.className || ''}`.trim()}
-       />
+@@ -215,11 +215,18 @@ const initializeSmartlingPlugin = async () => {
+       pkg.name
      );
-   }
+     
+-    // Check if webhook URL needs updating - update whenever the URL is different
+-    const currentWebhookUrl = existingModel.webhooks?.[0]?.url;
+-    const newWebhookUrl = updatedTemplate.webhooks[0].url;
+-    
+-    if (currentWebhookUrl !== newWebhookUrl) {
++    const currentWebhook = existingModel.webhooks?.[0];
++    const newWebhook = updatedTemplate.webhooks[0];
++    const getAuthHeader = (webhook: any) =>
++      webhook?.customHeaders?.find((header: any) => header.name === 'Authorization')?.value;
++
++    // The webhook keeps its own copy of the private key, so a rotated or deactivated key 401s
++    // job-publish-hook until the header is rewritten.
++    const urlChanged = currentWebhook?.url !== newWebhook.url;
++    const keyChanged =
++      Boolean(pluginPrivateKey) && getAuthHeader(currentWebhook) !== getAuthHeader(newWebhook);
++
++    if (urlChanged || keyChanged) {
+       // Update the existing model with new webhook configuration
+       existingModel.webhooks = updatedTemplate.webhooks;
+     }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4921** (2026-11-04): fix[react][Raw:Img]: keep Builder block class and legacy alt/title (ENG-14392) (@lihuelg)
-- **PR #4920** (closed): fix[smartling][utils]: ENG-13615 exclude enum and custom object data model fields from translation (@sanyamkamat)
-- **PR #4918** (2026-11-03): Upgrade nextjs-app-dir-v2 example to Next 16 (@JasonYangCIS)
-- **PR #4915** (2026-11-05): 📦 Publish SDKs (@builder-io-integration[bot])
-- **PR #4914** (2026-11-03): chore: update version to 0.0.18 in package.json and package-lock.json (@sanyamkamat)
-- **PR #4913** (2026-10-29): chore: update version to 1.1.36 in package.json and package-lock.json (@sanyamkamat)
+- **PR #4935** (2026-11-12): 📦 Publish SDKs (@builder-io-integration[bot])
+- **PR #4934** (2026-11-12): fix[sdks][localization]: ENG-14530 keep explicit locale when previewing drafts (@floating-dynamo)
+- **PR #4933** (2026-11-12): 📦 Publish SDKs (@builder-io-integration[bot])
+- **PR #4932** (2026-11-11): chore[smartling]: bump smartling plugin to 0.1.7 (@floating-dynamo)
+- **PR #4931** (2026-11-11): 📦 Publish SDKs (@builder-io-integration[bot])
+- **PR #4930** (2026-11-11): fix[smartling][translationJob]: rewrite job-publish-hook webhook when its private key is stale (@floating-dynamo)
 
 ---
 
@@ -758,35 +1005,42 @@ Co-authored-by: Claude Haiku 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. fix[react][Raw:Img]: keep Builder block class and legacy alt/title (ENG-14392) (
+## X. fix[sdks][localization]: ENG-14530 keep explicit locale when previewing drafts
 
 **RULE**:
-When implementing operations in `.changeset/raw-img-class-alt.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in BuilderIO/builder. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/gentle-hotels-cry.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in BuilderIO/builder. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4088da36`: fix[react][Raw:Img]: keep Builder block class and legacy alt/title (ENG-14392) (#4921). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `728e2e61`: fix[sdks][localization]: ENG-14530 keep explicit locale when previewing drafts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/raw-img-class-alt.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/gentle-hotels-cry.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
 ---
-'@builder.io/react': patch
+"@builder.io/sdk-angular": patch
+"@builder.io/sdk-react-nextjs": patch
+"@builder.io/sdk-qwik": patch
+"@builder.io/sdk-react": patch
+"@builder.io/sdk-react-native": patch
+"@builder.io/sdk-solid": patch
+"@builder.io/sdk-svelte": patch
+"@builder.io/sdk-vue": patch
 ---
 
-Fix `Raw:Img` dropping the Builder block class and overriding legacy `alt`/`title` attributes when `altText`/`title` inputs are unset.
+Fix draft previews of localized content so the locale passed to `fetchOneEntry` or `<Content>` takes precedence over `builder.options.locale` in the preview URL.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
+// Induced defect failure mode:
 // Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4088da36` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `728e2e61` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

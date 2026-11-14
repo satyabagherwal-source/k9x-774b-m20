@@ -1015,8 +1015,8 @@
     "sourceUrl": "https://huggingface.co/Aleph-Alpha/Kolibri-1",
     "sourceVersion": "hf-aleph-alpha-kolibri-1",
     "license": "Open-Source",
-    "contentHash": "eb4f7a7ee38106bf5550151823059a6faf0e4a001181ae103ab4d6198d0a5048",
-    "lastHarvestedAt": "2026-11-09T00:54:13.019Z",
+    "contentHash": "e50f0c4bbffc10169da00d7df4b7fb2a0c2d85da4efa1ed6e2677ee555efbb8f",
+    "lastHarvestedAt": "2026-11-14T05:46:26.554Z",
     "learningId": "learn-huggingface-aleph-alpha-kolibri-1"
   },
   "hf-speridlabs-iris-3b": {
@@ -3713,10 +3713,10 @@
     "repository": "pixeltable/pixeltable",
     "platform": "github",
     "sourceUrl": "https://github.com/pixeltable/pixeltable",
-    "sourceVersion": "506e2f7d",
+    "sourceVersion": "941d38df",
     "license": "Apache-2.0",
-    "contentHash": "ebd571bb4392b7b18f62e14fdfe0e68e30c698ca5cd2bc2f9569b98016a240fa",
-    "lastHarvestedAt": "2026-11-13T04:13:25.714Z",
+    "contentHash": "88a46480e707494b5f8db2eca7d1068ca8d253326063787f86f458cb7ee4e912",
+    "lastHarvestedAt": "2026-11-14T05:46:40.861Z",
     "learningId": "learn-github-pixeltable-pixeltable"
   },
   "honojs-hono": {
@@ -4503,10 +4503,10 @@
     "repository": "BuilderIO/builder",
     "platform": "github",
     "sourceUrl": "https://github.com/BuilderIO/builder",
-    "sourceVersion": "1d9c6140",
+    "sourceVersion": "4f46c3a2",
     "license": "MIT",
-    "contentHash": "016e4f708af2cac371d36dac59bf92528364d2ce9511b7ca3beb9d2b2645e57a",
-    "lastHarvestedAt": "2026-11-07T02:24:36.110Z",
+    "contentHash": "76eb9d0b5a8cde616e610db26e852104dab50d5c32f7fe6c241244983835ecb4",
+    "lastHarvestedAt": "2026-11-14T05:46:33.551Z",
     "learningId": "learn-github-builderio-builder"
   },
   "gocrane-crane": {

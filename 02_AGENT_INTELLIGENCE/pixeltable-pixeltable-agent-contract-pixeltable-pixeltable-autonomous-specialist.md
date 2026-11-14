@@ -4,18 +4,18 @@
 {
   "source_repository": "pixeltable/pixeltable",
   "source_url": "https://github.com/pixeltable/pixeltable",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "941d38df",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-14T05:46:41.071Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-pixeltable-pixeltable",
   "canonical_classification": "agent_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [pixeltable/pixeltable](https://github.com/pixeltable/pixeltable) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [pixeltable/pixeltable](https://github.com/pixeltable/pixeltable) (Revision: `941d38df`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-14T05:46:41.071Z`  
+> **Learning ID**: `learn-github-pixeltable-pixeltable`
 
 
 ## 1. Agent Role & Persona Contract
@@ -24,26 +24,12 @@ PROVENANCE_END -->
 - **Trust Boundary**: Reads and modifies only authorized workspace resources.
 
 ## 2. Operational Capabilities
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md`  
-> **Source**: github ([https://github.com/pixeltable/pixeltable](https://github.com/pixeltable/pixeltable))  
-> **Source Version**: `df52b4fe`  
-> **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T17:46:13.826Z  
-> **Learning ID**: `learn-github-pixeltable-pixeltable`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): pixeltable/pixeltable
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pixeltable/pixeltable](https://github.com/pixeltable/pixeltable))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T17:46:13.819Z  
+> **Harvest Timestamp**: 2026-11-14T05:46:39.862Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -53,7 +39,7 @@ PROVENANCE_END -->
 - **Description**: The backend agents build with - Multimodal database, orchestration, and serving in one file
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 1660 stars
+- **Stars / Engagement**: 1662 stars
 
 ---
 
@@ -967,6 +953,7 @@ from pixeltable.catalog.model import diff
 from pixeltable.config import Config
 from pixeltable.env import Env
 from pixeltable.func import FunctionRegistry
+from pixeltable.func.symbols import load_error_msg
 from pixeltable.utils.project import in_environment
 from pixeltable_cli.types import CheckReport, RouteSpec, ServiceSpec
 
@@ -1014,19 +1001,17 @@ def load_app_module(file: str, *, subject: str) -> ModuleType:
     try:
         registry = FunctionRegistry.get()
         with _lock, Catalog.freeze():
-            _evict_project_modules()
-            # a file written after this process started is invisible to a finder that cached its directory
-            importlib.invalidate_caches()
+            root = Config.get().project_root
+            assert root is not None  # module_name() refuses a file outside a project root
+            # evict before importing: importlib returns a module in sys.modules without reading its file again
+            evict_modules(root)
             return registry.import_module(name)
     except ProhibitedWriteError as e:
         raise excs.RequestError(
             excs.ErrorCode.UNSUPPORTED_OPERATION, _prohibited_write_msg(str(path), subject, e)
         ) from e
-    except excs.Error as e:
-        raise excs.RequestError(excs.ErrorCode.INVALID_ARGUMENT, f'error loading {file}: {e}') from e
     except Exception as e:
-        reason = f'{type(e).__name__}: {e}' if str(e) else type(e).__name__
-        raise excs.RequestError(excs.ErrorCode.INVALID_ARGUMENT, f'error loading {file}: {reason}') from e
+        raise excs.RequestError(excs.ErrorCode.INVALID_ARGUMENT, load_error_msg(file, e)) from e
 
 
 def _no_root_msg(path: Path, subject: str, root: Path | None) -> str:
@@ -1050,16 +1035,16 @@ def _no_root_msg(path: Path, subject: str, root: Path | None) -> str:
     )
 
 
-def _evict_project_modules() -> None:
-    """Remove the project's own modules from sys.modules, and their udfs from the registry.
+def evict_modules(root: Path) -> None:
+    """Remove the modules under root from sys.modules, and their udfs from the registry.
 
-    Removing project modules allows us to have them re-imported, in response to changes to the source files.
+    Removing these modules allows us to have them re-imported, in response to changes to the source files. Also
+    clear importlib's directory caches, so an import finds a newly created module file.
 
-    The standard library and installed packages stay loaded, including when the environment sits inside the
-    project root (eg, a .venv).
+    The standard library and installed packages stay loaded, including when the environment sits inside root
+    (eg, a .venv).
     """
-    root = Config.get().project_root
-    assert root is not None  # module_name() refuses a file outside a project root
+    importlib.invalidate_caches()
     registry = FunctionRegistry.get()
     for name, module in list(sys.modules.items()):
         module_file = getattr(module, '__file__', None)
@@ -1144,7 +1129,16 @@ def validate_models(models: dict[str, model.TableModelMeta], base_path: str) -> 
 def check_report(file: str, bases: list[model.TableModelMeta]) -> CheckReport:
     """What checking a file on its own reports: whether it is valid, and what to fix or to know about."""
     errors = check_udf_references(bases)
-    return CheckReport(file=file, valid=len(errors) == 0, errors=errors, warnings=shadowed_project_modules())
+    warnings = [
+        f'{cls.__name__}.{name} references no column, so every row computes it from the same inputs: {value!s}. '
+        'Python code in a model body, such as str(), % or `is None`, runs once, at class definition. '
+        'Use == None instead of `is None`, and + or pxtf.string.format() instead of str() or %.'
+        for base in bases
+        for cls in base.defined_models()
+        for name, value in cls.constant_columns().items()
+    ]
+    warnings.extend(shadowed_project_modules())
+    return CheckReport(file=file, valid=len(errors) == 0, errors=errors, warnings=warnings)
 
 
 def check_udf_references(bases: list[model.TableModelMeta]) -> list[str]:
@@ -1161,16 +1155,7 @@ def check_udf_references(bases: list[model.TableModelMeta]) -> list[str]:
         file = getattr(resolved, '__file__', None)
         if file is None or not Path(file).resolve().is_relative_to(project_root):
             continue  # an installed module
-        top_level = fn_path.split('.', maxsplit=1)[0]
-        if _first_on_path(top_level) is None:
-            errors.append(f'{fn_path}: {top_level!r} is not on sys.path')
-    return errors
-
-
-def udf_source_files(bases: list[model.TableModelMeta]) -> set[str]:
-    """The local project files containing the udfs referenced by bases, relative to the project root."""
-    project_root = Config.get().project_root
-    assert project_ro
+        top_level = fn_
 ```
 
 
@@ -1179,11 +1164,11 @@ def udf_source_files(bases: list[model.TableModelMeta]) -> set[str]:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1925** (2026-11-10): **PXT-1755: Pin generate_video's Interactions API call to v1beta (google-genai 3.0 defaults to v1)**
-  *Symptoms*: <!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Root cause  Scheduled nightly run https://github.com/pixeltable/pixeltable/actions/runs/42550768976 (tested release tag v0.7.24, `a9e0d7bd`) failed only in `isolated-nb-tests (3.11 and 3.13)`. The cookbook `docs/release/howto/cookbooks/video/video-generate-ai.ipynb` calls `gemini.generate_video(prompt, model='gemini-omni-1.1-flash', ...)` and raised `NotFoundError: Model 'gemini-omni-1.1-flash' not found` from `client.aio.interactions.create(...)`.  The notebook env installs `google-genai>=2.22`, which now resolves [google-genai 3.0.0](https://github.com/googleapis/python-genai/releases/tag/v3.0.0) (released 2026-11-05). That release changes the default Gemini Developer API version from `v1beta` to `v1`. The Interactions client posts to `/{api_version}/interactions`, so requests go to `/v1/interactions`, where Gemini Omni is not served (Google documents only `POST /v1beta/interactions`). The model id itself is valid (GA).  `interactions.create` already accepts `api_version` in google-genai 2.22 (the current min in `require_package('google.genai', min_version=[2, 22])`), 2.34, and 3.0, so the min version was not bumped.  ## Fix  In `pixeltable/functions/gemini.py::generate_video`, pass `api_version='v1beta'` to `client.aio.interactions.create(...)`. The client-wide API version in the `@env.register_client('gemini')` factory is unchanged, so the other Gemini UDFs keep the SDK default.  A repo-wide search found no other `interactions.` call
+- **Issue #1957** (2026-11-13): **Rename TableDataConduit to SourceAdapter**
+  *Symptoms*: **Stacked on #1956.** Until #1956 merges, this PR also shows its commits; the rename is only the last commit, https://github.com/pixeltable/pixeltable/pull/1957/commits/fff442aedc4e8cf21c23aa06c3f0e434168a173d.  `TableDataConduit` adapts a user-supplied `TableDataSource` for Pixeltable: it infers a schema for `create_table()`, validates the source against a target table, and yields its rows (`valid_rows()`, after #1956). "Conduit" only says that data flows through it; this renames it after its role.  | Before | After | |---|---| | `pixeltable/io/table_data_conduit.py` | `pixeltable/io/source_adapter.py` | | `TableDataConduit` | `SourceAdapter` | | `TableDataConduitFormat` | `SourceFormat` | | `QueryTableDataConduit`, `RowDataTableDataConduit`, `PandasTableDataConduit`, `CSVTableDataConduit`, `ExcelTableDataConduit`, `JsonTableDataConduit`, `HFTableDataConduit`, `ParquetTableDataConduit`, `PydanticTableDataConduit` | `QueryAdapter`, `RowDataAdapter`, `PandasAdapter`, `CSVAdapter`, `ExcelAdapter`, `JsonAdapter`, `HFAdapter`, `ParquetAdapter`, `PydanticAdapter` |  Names with "DataSource" were avoided because `TableDataSource` and `SqlDataSource` already name the raw input. The classes are internal (not exported from `pixeltable` or `pixeltable.io`), so there is no public API change.  No behavior change. Local runs with `-k "not cloud"`: `test_table`, `test_view`, `tests/io/`, `test_types`, `test_query`, `test_proxy_daemon`, `serving/test_fastapi` (888 passed).  🤖 Generated with
 
-- **Issue #1924** (2026-11-10): **docs: replace retired Claude 3.x model IDs in docstrings, sample apps and tooling**
-  *Symptoms*: Replaces retired Claude 3.x model IDs in docstring examples and sample apps with a current one.  **Cause.** `pixeltable.functions.anthropic.messages` shows `claude-3-5-sonnet-20241022` in its docstring example (which also omits `max_tokens`, required by the signature), and the trading-insight and reddit-agentic-bot sample apps default to `claude-3-5-sonnet-20241022` / `claude-3-5-sonnet-latest`. Those models are retired, so copying the examples or running the sample apps fails at the API. The `openrouter` docstrings, `tool/perftest_providers.py` and the cookbook guidelines also reference retired Claude 3.x IDs.  **Fix.** The `anthropic.messages` docstring uses `claude-sonnet-5-5` with `max_tokens=1024`. Both sample-app configs use `claude-sonnet-4-6` rather than 5.5: the apps read `content[0].text`, which stays valid without extended thinking, and the trading app no longer passes `temperature`/`top_p`/`top_k` (rejected by newer models). OpenRouter docstrings use `anthropic/claude-sonnet-5.5`. `tool/perftest_providers.py` and `GUIDELINES_FOR_COOKBOOKS.md` move to `claude-haiku-4-5` / `anthropic.claude-haiku-4-5-20251001-v1:0` / `anthropic/claude-sonnet-5.5`.  **Test.** No runtime change in the library; `grep -rlnI "claude-3" . --exclude-dir=.git` lists 6 files before and none after. `ruff format --check` and `py_compile` pass on touched Python files.  --- This pull request was prepared with the assistance of an AI coding agent (Claude Code) and submitted by Alex Castillo, who 
+- **Issue #1955** (2026-11-13): **Write the default config atomically and require init_env for tests that reach Env**
+  *Symptoms*: ## Problem  [Run 43480825714](https://github.com/pixeltable/pixeltable/actions/runs/43480825714/job/132076789915) (`standard, macos-15, 3.11`, the merge group for #1945) failed in `TestAnthropicTypedDictAdherence::test_mirrors` with `pixeltable/file_cache_size_g is missing from configuration`. Two things combined:  1. **The default config isn't written atomically.** When `config.toml` doesn't exist, `Config` creates it with `open(path, 'w')` followed by `toml.dump()`. A process that reads it between the two sees an empty file and caches a config with no `file_cache_size_g`. On a fresh runner, the xdist workers all start at once and race on `~/.pixeltable/config.toml`. 2. **#1855 added 9 tests that reach `Env.get()` without `init_env`**, through `skip_test_if_not_installed()`. `test_mirrors` was gw2's first test, so it read the shared config outside `init_env`'s file lock while gw0 and gw1 were creating it. #1855's own merge-queue run passed because a different test ran first.  Locally, with 3 processes starting at once against an empty home, 25 of 180 processes read an empty config.  ## Changes  - `Config` writes the default config with `atomic_write()` (a unique temp file renamed into place), so no process reads a partial file. Users who start several Pixeltable processes on a fresh install could hit the same race. Because `atomic_write()` uses `mkstemp`, a new default config is created with mode 0600 rather than 0644. - `tests/conftest.py` fails any test that reaches `Env.g
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1200,227 +1185,455 @@ def udf_source_files(bases: list[model.TableModelMeta]) -> set[str]:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b7661983` (2026-11-10)
-**Commit Message**: Fix Iceberg replace cleanup after catalog swap failure (#1889)
+### Incident Patch 1: `b907dcb3` (2026-11-13)
+**Commit Message**: Write the default config atomically and require init_env for tests that reach Env (#1955)
+
+## Problem
+
+[Run
+43480825714](https://github.com/pixeltable/pixeltable/actions/runs/43480825714/job/132076789915)
+(`standard, macos-15, 3.11`, the merge group for #1945) failed in
+`TestAnthropicTypedDictAdherence::test_mirrors` with
+`pixeltable/file_cache_size_g is missing from configuration`. Two things
+combined:
+
+1. **The default config isn't written atomically.** When `config.toml`
+doesn't exist, `Config` creates it with `open(path, 'w')` followed by
+`toml.dump()`. A process that reads it between the two sees an empty
+file and caches a config with no `file_cache_size_g`. On a fresh runner,
+the xdist workers all start at once and race on
+`~/.pixeltable/config.toml`.
+2. **#1855 added 9 tests that reach `Env.get()` without `init_env`**,
+through `skip_test_if_not_installed()`. `test_mirrors` was gw2's first
+test, so it read the shared config outside `init_env`'s file lock while
+gw0 and gw1 were creating it. #1855's own merge-queue run passed because
+a different test ran first.
+
+Locally, with 3 processes starting at once against an empty home, 25 of
+180 processes read an empty config.
+
+## Chang
+
+**File**: `.github/instructions/tests.instructions.md` (modified, +4/-0)
+```diff
+@@ -10,6 +10,10 @@ applyTo: "tests/**"
+ - Prefer `db_root: DatabaseRoot` and `db_root.make_catalog_path()` for portable catalog tests.
+   `uses_db` and plain paths are valid for in-process tests; they require
+   `@pytest.mark.db_roots('local', reason='...')`. The reason explains the restriction or is `TODO: convert`.
++- A test that reaches `Env.get()`, directly or through a helper such as `skip_test_if_not_installed()`,
++  requests `init_env`; `uses_db` and `db_root` include it. Without it, the test would use whatever an earlier
++  test on its xdist worker set up, or the developer's real Pixeltable home and database when it runs first, so
++  `tests/conftest.py` fails such a test.
+ - Use `pxt_raises(..., match=...)` for Pixeltable errors, and `pytest.raises(..., match=...)` for other
+   exceptions. Verify meaningful error text.
+ - New tests making live third-party model/service calls need `remote_api` and `very_expensive`; mocked
+```
+
+**File**: `pixeltable/config.py` (modified, +3/-1)
+```diff
+@@ -20,6 +20,7 @@
+ 
+ from pixeltable import exceptions as excs
+ from pixeltable.service.resources import DatabaseCapacity, ServiceResources, UdfResources
++from pixeltable.utils.file_io import atomic_write
+ 
+ if TYPE_CHECKING:
+     from pixeltable import catalog
+@@ -597,7 +598,8 @@ def __load_home_config(self) -> dict[str, dict[str, tuple[Any, Path]]]:
+ 
+         else:
+             config_dict = self.__create_default_config(self.__config_file)
+-            with open(self.__config_file, 'w', encoding='utf-8') as stream:
++            # a process starting at the same time must never read a partial file
++            with atomic_write(self.__config_file, mode='w', encoding='utf-8') as stream:
+                 try:
+                     toml.dump(config_dict, stream)
+                 except Exception as exc:
+```
+
+**File**: `tests/conftest.py` (modified, +34/-1)
+```diff
+@@ -1,3 +1,4 @@
++import contextlib
+ import ctypes
+ import faulthandler
+ import functools
+@@ -102,10 +103,42 @@ def pytest_collection_modifyitems(items: list[pytest.Item]) -> None:
+         )
+ 
+ 
+-def pytest_runtest_setup(item: pytest.Item) -> None:
++@contextlib.contextmanager
++def _requires_init_env(item: pytest.Item) -> Iterator[None]:
++    """Fails a test that reaches Env.get() on its own thread without requesting init_env.
++
++    Such a test uses whatever environment an earlier test on its worker set up, or the developer's real home and
++    database when it runs first, so CI catches it only when it happens to run first.
++    """
++    if not isinstance(item, pytest.Function) or 'init_env' in item.fixturenames:
++        yield
++        return
++    get = Env.__dict__['get'].__func__
++    test_thread = threading.current_thread()
++
++    def guarded_get(cls: type[Env]) -> Env:
++        if threading.current_thread() is test_thread:
++            pytest.fail(f'{item.nodeid} reaches Env.get() without requesting the init_env fixture')
++        return get(cls)
++
++    with pytest.MonkeyPatch.context() as mp:
++        mp.setattr(Env, 'get', classmethod(guarded_get))
++        yield
++
++
++@pytest.hookimpl(wrapper=True)
++def pytest_runtest_setup(item: pytest.Item) -> Generator[None, None, None]:
+     current_test = os.environ.get('PYTEST_CURRENT_TEST')
+     _logger.info(f'Running Pixeltable test: {current_test}')
+     _clear_model_caches()
++    with _requires_init_env(item):
++        yield
++
++
++@pytest.hookimpl(wrapper=True)
++def pytest_runtest_call(item: pytest.Item) -> Generator[None, None, None]:
++    with _requires_init_env(item):
++        yield
+ 
+ 
+ def _clear_model_caches() -> None:
+```
+
+**File**: `tests/functions/test_anthropic.py` (modified, +1/-1)
+```diff
+@@ -89,7 +89,7 @@ def make_table(tools: pxt.Tools, tool_choice: pxt.ToolChoice) -> pxt.Table:
+ class TestAnthropicTypedDictAdherence:
+     """Detect drift between the TypedDict mirrors and the SDK Pydantic models. Doesn't need credentials."""
+ 
+-    def test_mirrors(self) -> None:
++    def test_mirrors(self, init_env: None) -> None:
+         skip_test_if_not_installed('anthropic')
+         from anthropic.types import ContentBlock, Message, Usage
+ 
+```
+
+**File**: `tests/functions/test_openai.py` (modified, +8/-8)
+```diff
+@@ -972,7 +972,7 @@ def test_typed_paths(self, uses_db: None) -> None:
+         for col in (t.chat_text, t.tool_name, t.resp_text, t.item_text):
+             assert_type_eq(col.col_type, pxt.String | None)
+ 
+-    def test_chat_completion(self) -> None:
++    def test_chat_completion(self, init_env: None) -> None:
+         skip_test_if_not_installed('openai')
+         from openai.types import completion_usage
+         from openai.types.chat import (
+@@ -1017,7 +1017,7 @@ def test_chat_completion(self) -> None:
+             ]
+         )
+ 
+-    def test_response(self) -> None:
++    def test_response(self, init_env: None) -> None:
+         skip_test_if_not_installed('openai')
+         import typing
+ 
+@@ -1054,7 +1054,7 @@ def test_response(self) -> None:
+             synth=frozenset({'output_text'}),
+         )
+ 
+-    def test_exact_mirror_types(self) -> None:
++    def test_exact_mirror_types(self, init_env: None) -> None:
+         """JsonType equality for TypedDicts that are exact mirrors of an SDK Pydantic model."""
+         skip_test_if_not_installed('openai')
+         from openai.types import (
+@@ -1096,7 +1096,7 @@ def test_exact_mirror_types(self) -> None:
+                 f'{ours.__name__} drifted from {sdk.__module__}.{sdk.__name__}:\n  ours: {ours_jt}\n  sdk:  {sdk_jt}'
+             )
+ 
+-    def test_transcription_response(self) -> None:
++    def test_transcription_response(self, init_env: None) -> None:
+         """TranscriptionResponse unions Transcription + TranscriptionVerbose; we add synth srt/vtt and
+         re-type usage as plain dict to avoid committing to one variant of the SDK Usage union."""
+         skip_test_if_not_installed('openai')
+@@ -1134,7 +1134,7 @@ def test_transcription_response(self) -> None:
+         # every field is path-dependent
+         assert ours_optional == frozenset(ours_fields.keys())
+ 
+-    def test_translation_response(self) -> None:
++    def test_translation_response(self, init_env: None) -> None:
+         """TranslationResponse unions Translation + TranslationVerbose; we add synth srt/vtt."""
+         skip_test_if_not_installed('openai')
+         from openai.types.audio.translation import Translation
+@@ -1160,7 +1160,7 @@ def test_translation_response(self) -> None:
+ 
+         assert ours_optional == frozenset(ours_fields.keys())
+ 
+-    def test_decision_response(self) -> None:
++    def test_decision_response(self, init_env: None) -> None:
+         """DecisionResponse mirrors Decision except for its flattened answer variants."""
+         skip_test_if_not_installed('openai')
+         from openai.types.decision import Decision
+@@ -1177,7 +1177,7 @@ def test_decision_response(self) -> None:
+                 f'DecisionResponse field {name!r} drifted: ours={ours_fields[name]} sdk={sdk_fields[name]}'
+             )
+ 
+-    def test_decision_answer(self) -> None:
++    def test_decision_answer(self, init_env: None) -> None:
+         """DecisionAnswer flattens the SDK's four answer variants into one TypedDict."""
+         skip_test_if_not_installed('openai')
+         from openai.types import decision as sdk_decision
+@@ -1212,7 +1212,7 @@ def test_decision_answer(self) -> None:
+         assert set(ours_fields) == set().union(*(v.model_fields for v in probability_variants))
+         assert ours_optional == {'label'}
+ 
+-    def test_images_response(self) -> None:
++    def test_images_response(self, init_env: None) -> None:
+         """ImagesResponse mirrors SDK ImagesResponse field-for-field, except data is non-null
+         (we guarantee a populated list in _decode_image_response), and fields that newer SDKs added are optional."""
+         skip_test_if_not_installed('openai')
+```
+
+**File**: `tests/pixeltable_cli/test_service.py` (modified, +1/-0)
+```diff
+@@ -2150,6 +2150,7 @@ class TestServiceOtel:
+     )
+     def test_run_otel(
+         self,
++        init_env: None,
+         tmp_path: pathlib.Path,
+         monkeypatch: pytest.MonkeyPatch,
+         excluded_urls_env: dict[str, str],
+```
+
+**File**: `tests/serving/test_hosted_openapi.py` (modified, +1/-1)
+```diff
+@@ -2,7 +2,7 @@
+ 
+ 
+ class TestHostedOpenapi:
+-    def test_gateway_security_only_on_hosted_schema(self) -> None:
++    def test_gateway_security_only_on_hosted_schema(self, init_env: None) -> None:
+         skip_test_if_not_installed('fastapi')
+         import fastapi
+         from fastapi.security import HTTPBasic
+```
+
+**File**: `tests/serving/test_prepare_project.py` (modified, +1/-1)
+```diff
+@@ -184,7 +184,7 @@ def test_pinned_release(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -
+ 
+ 
+ class TestUnpack:
+-    def test_round_trip(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
++    def test_round_trip(self, init_env: None, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+         """Unpacking an archive yields the project it was packaged from, whatever shapes its files take.
+ 
+         unpack_project_archive() checks the unpacked project against the served digest, so serving this
+```
+
+---
+
+### Incident Patch 2: `42be2c00` (2026-11-13)
+**Commit Message**: Fix diffusers pipeline placement on CUDA in text_to_image and image_to_image (#1953)
 
 ## Summary
 
-Fixes #1885.
+`text_to_image()` and `image_to_image()` failed on every GPU with
+`NotImplementedError: auto not supported. Supported strategies are:
+balanced, cuda, cpu`. This PR removes `device_map` from their
+`from_pretrained` calls and passes `torch_dtype` instead of `dtype`.
+These UDFs now load their pipelines the same way `image_to_video()`
+already does.
 
-Preserve the fully written temporary Iceberg table if the
-`if_exists='replace'` catalog swap fails. The current implementation
-drops the old target and then renames the temporary table; its
-unconditional `finally` cleanup can delete the remaining export after
-either catalog operation fails.
+Without `device_map`, `enable_model_cpu_offload()` is the only thing
+that puts these pipelines on CUDA. In all three diffusers UDFs it ran
+inside `try: ... except Exception: pass`, so a failure would leave the
+pipeline on CPU. It now runs outside any `try`. The `try` also guarded
+`enable_memory_efficient_attention()`, which no diffusers class defines,
+so that call is gone.
 
-Track whether this invocation successfully created the temporary table
-and whether the non-transactional swap is in progress. Once the swap
-starts, leave the temporary identifier untouched on failure; after a
-successful rename, retain the existing cleanup behavior. The error
-message identifies the target and temporary identifier to inspect before
-retrying.
+This bug isn't new for GPU users. It showed up because #1900 runs the
+Hugging Face tests on the weekly `ubuntu-small-t4` job, where
+`test_text_to_image` and `test_image_to_image` failed in run
+43367048923. CPU runners never pass a `device_map`, so they passed.
 
-This prevents the exporter from deleting the remaining temporary table
-after a swap failure; it does not make drop/rename atomic or restore the
-old target. A catalog operation may take effect before reporting
-failure, so the message asks callers to inspect both identifiers rather
-than assuming the temporary table still exists.
+## Why
 
-## Tests
+In diffusers 0.39.0 (the `uv.lock` version):
 
-- Add local SQLite `SqlCatalog` regression coverage for rename failure
-with and without an existing target.
-- Add a p
+- **`'auto'` is never accepted.** `DiffusionPipeline.from_pre
 
-**File**: `pixeltable/io/iceberg.py` (modified, +29/-10)
+**File**: `pixeltable/functions/huggingface.py` (modified, +8/-25)
 ```diff
-@@ -47,7 +47,9 @@ def export_iceberg(
-         if_exists: Determines the behavior if the table already exists. Must be one of the following:
+@@ -1706,19 +1706,13 @@ def text_to_image(
+         model_id,
+         AutoPipelineForText2Image.from_pretrained,
+         device=device,
+-        dtype=torch.float16 if device == 'cuda' else torch.float32,
+-        device_map='auto' if device == 'cuda' else None,
++        torch_dtype=torch.float16 if device == 'cuda' else torch.float32,
+         safety_checker=None,
+         requires_safety_checker=False,
+     )
  
-             - `'error'`: raise an error
--            - `'replace'`: drop the existing table and create a new one
-+            - `'replace'`: drop the existing table and create a new one. If the catalog swap fails, the new data
-+              may be kept for recovery in a table named `<table_name>__pxt_tmp_<suffix>`. When the target is absent
-+              or its status cannot be checked, the error message gives the exact temporary identifier to inspect.
-             - `'append'`: append to the existing table (source schema must be compatible)
-         schema_overrides: If specified, then for each (name, type) pair in `schema_overrides`, the column with
-             name `name` will be given type `type`, instead of being inferred from the Pixeltable schema. The keys in
-@@ -175,9 +177,12 @@ def export_iceberg(
-     # original untouched. Drop-then-rename is two catalog calls and not truly atomic; a crash
-     # between them leaves the original gone but the data preserved under the temp name.
-     temp_name = f'{table_name}__pxt_tmp_{uuid.uuid4().hex[:8]}'
-+    temp_created = False
-+    preserve_temp = False
+-    try:
+-        if device == 'cuda' and hasattr(pipeline, 'enable_model_cpu_offload'):
+-            pipeline.enable_model_cpu_offload()
+-        if hasattr(pipeline, 'enable_memory_efficient_attention'):
+-            pipeline.enable_memory_efficient_attention()
+-    except Exception:
+-        pass  # Ignore optimization failures
++    if device == 'cuda':
++        pipeline.enable_model_cpu_offload()
  
-     try:
-         temp_tbl = catalog.create_table(temp_name, schema=arrow_schema)
-+        temp_created = True
-         fault_injection.process_fault(FaultLocation.IO_EXPORT_ICEBERG_WRITE_TEMP)
+     generator = None if seed is None else torch.Generator(device=device).manual_seed(seed)
  
-         with temp_tbl.transaction() as tx:
-@@ -186,20 +191,34 @@ def export_iceberg(
+@@ -1906,19 +1900,13 @@ def image_to_image(
+         model_id,
+         AutoPipelineForImage2Image.from_pretrained,
+         device=device,
+-        dtype=torch.float16 if device == 'cuda' else torch.float32,
+-        device_map='auto' if device == 'cuda' else None,
++        torch_dtype=torch.float16 if device == 'cuda' else torch.float32,
+         safety_checker=None,
+         requires_safety_checker=False,
+     )
  
-         fault_injection.process_fault(FaultLocation.IO_EXPORT_ICEBERG_BEFORE_SWAP)
+-    try:
+-        if device == 'cuda' and hasattr(pipeline, 'enable_model_cpu_offload'):
+-            pipeline.enable_model_cpu_offload()
+-        if hasattr(pipeline, 'enable_memory_efficient_attention'):
+-            pipeline.enable_memory_efficient_attention()
+-    except Exception:
+-        pass  # Ignore optimization failures
++    if device == 'cuda':
++        pipeline.enable_model_cpu_offload()
  
-+        # Catalog drop/rename are not transactional. Preserve the completed export on failure
-+        # unless we can confirm that the target is available.
-+        preserve_temp = True
-         if existing_tbl is not None:
-             catalog.drop_table(table_name)
-         catalog.rename_table(temp_name, table_name)
-+        preserve_temp = False
+     generator = None if seed is None else torch.Generator(device=device).manual_seed(seed)
  
-     except excs.Error:
-         raise
-     except Exception as e:
--        raise excs.InternalError(
--            excs.ErrorCode.INTERNAL_ERROR, f'export_iceberg(): failed to write Iceberg table {table_name!r}: {e}'
--        ) from e
-+        if preserve_temp:
-+            try:
-+                preserve_temp = not catalog.table_exists(table_name)
-+            except Exception:
-+                # If the catalog is unavailable, keep the possible recovery copy.
-+                pass
-+        message = f'export_iceberg(): failed to write Iceberg table {table_name!r}: {e}'
-+        if preserve_temp:
-+            message += (
-+                f'; the catalog swap may be incomplete. Inspect {table_name!r} and temporary identifier '
-+                f'{temp_name!r} before retrying.'
-+            )
-+        raise excs.InternalError(excs.ErrorCode.INTERNAL_ERROR, message) from e
-     finally:
--        # Drop temp if it still exists; covers mid-stream errors and BaseException paths
--        # like KeyboardInterrupt. On success, rename consumed temp_name, so swallow NoSuchTableError.
--        try:
--            catalog.drop_table(temp_name)
--        except NoSuchTableError:
--            pass
-+        # Clean up only a temp table we know this call created and do not need for recovery.
-+        if temp_created and not preserve_temp:
-+            try:
-+                catalog.drop_table(temp_name)
-+            except NoSuchTableError:
-+                pass
+@@ -2162,13 +2150,8 @@ def image_to_video(
+         variant='fp16' if device == 'cuda' else None,
+     )
+ 
+-    try:
+-        if device == 'cuda' and hasattr(pipe, 'enable_model_cpu_offload'):
+-            pipe.enable_model_cpu_offload()
+-        if hasattr(pipe, 'enable_memory_efficient_attention'):
+-            pipe.enable_memory_efficient_attention()
+-    except Exception:
+-        pass  # Ignore optimization failures
++    if device == 'cuda':
++        pipe.enable_model_cpu_offload()
+ 
+     generator = None if seed is None else torch.Generator(device=device).manual_seed(seed)
+ 
 ```
 
-**File**: `tests/io/test_iceberg.py` (modified, +118/-2)
+**File**: `tests/functions/test_huggingface.py` (modified, +7/-8)
 ```diff
-@@ -1,5 +1,5 @@
- import pathlib
--from typing import Any
-+from typing import TYPE_CHECKING, Any
+@@ -655,10 +655,9 @@ def test_text_to_image(self, uses_db: None) -> None:
+         )
  
- import numpy as np
- import pyarrow as pa
-@@ -19,6 +19,9 @@
-     validate_update_status,
- )
+         validate_update_status(t.insert(prompt=test_prompt), expected_rows=1)
+-        result = t.select(t.image).collect()[0]
+-
+-        # Verify we got an image
+-        assert result['image'] is not None
++        img = t.select(t.image).collect()[0]['image']
++        assert img.size == (256, 256)
++        assert np.asarray(img).std() > 0
  
-+if TYPE_CHECKING:
-+    from pyiceberg.catalog import Catalog
-+
+     @pytest.mark.xdist_group('large_model')
+     def test_image_to_image(self, uses_db: None, sample_file_server: SampleFileServer) -> None:
+@@ -683,10 +682,10 @@ def test_image_to_image(self, uses_db: None, sample_file_server: SampleFileServe
+         validate_update_status(
+             t.insert(img=sample_file_server.url(SAMPLE_IMAGE_FILE_PATH), prompt=test_prompt), expected_rows=1
+         )
+-        result = t.select(t.modified_image).collect()[0]
+-
+-        # Verify we got a modified image
+-        assert result['modified_image'] is not None
++        res = t.select(t.modified_image, width=t.img.width, height=t.img.height).collect()[0]
++        img = res['modified_image']
++        assert img.size == (res['width'], res['height'])
++        assert np.asarray(img).std() > 0
  
- class TestIceberg:
-     @classmethod
-@@ -190,9 +193,11 @@ def test_if_exists(self, db_root: DatabaseRoot, tmp_path: pathlib.Path) -> None:
-         with pxt_raises(pxt.ErrorCode.PATH_ALREADY_EXISTS, match='already exists'):
-             pxt.io.export_iceberg(t, catalog, 'pxt.if_exists')
- 
--        # Replace: drops + recreates, ends with same row count
-+        # Replace: drops + recreates, ends with same row count and leaves no temp table.
-         pxt.io.export_iceberg(t.where(t.c_int < 3), catalog, 'pxt.if_exists', if_exists='replace')
-         assert catalog.load_table('pxt.if_exists').scan().to_arrow().num_rows == 3
-+        leftover = [name for _, name in catalog.list_tables('pxt') if name.startswith('if_exists__pxt_tmp_')]
-+        assert leftover == []
- 
-         # Append: doubles the row count
-         pxt.io.export_iceberg(t.where(t.c_int < 3), catalog, 'pxt.if_exists', if_exists='append')
-@@ -248,6 +253,117 @@ def test_failure_handling(self, db_root: DatabaseRoot, fault_injection: None, tm
-         fault.assert_count(1)
-         assert catalog.load_table('pxt.faults').scan().to_arrow().num_rows == 5
- 
-+    @pytest.mark.db_roots('local', reason='Uses a local SQLite Iceberg catalog and does not need a hosted database.')
-+    @pytest.mark.parametrize(
-+        ('target_exists', 'fail_stage', 'check_fails'),
-+        [
-+            (False, 'rename', False),
-+            (True, 'drop', False),
-+            (True, 'rename', False),
-+            (False, 'rename', True),
-+            (True, 'drop_before', True),
-+        ],
-+    )
-+    def test_replace_swap_failure_preserves_temp(
-+        self, db_root: DatabaseRoot, tmp_path: pathlib.Path, target_exists: bool, fail_stage: str, check_fails: bool
-+    ) -> None:
-+        """A failed catalog swap must not let cleanup remove the completed export."""
-+        skip_test_if_not_installed('pyiceberg')
-+        p = db_root.make_catalog_path
-+
-+        t = pxt.create_table(p('test_iceberg_swap_failure'), {'c_int': pxt.Int | None, 'c_string': pxt.String | None})
-+        expected_rows = [{'c_int': i, 'c_string': f'row_{i}'} for i in range(3)]
-+        t.insert(expected_rows)
-+
-+        catalog = TestIceberg._catalog(tmp_path)
-+        if target_exists:
-+            pxt.io.export_iceberg(t.where(t.c_int == 0), catalog, 'pxt.swap_failure')
-+            assert catalog.load_table('pxt.swap_failure').scan().to_arrow().num_rows == 1
-+
-+        class FailingCatalog:
-+            def __init__(self, inner: 'Catalog') -> None:
-+                self._inner = inner
-+
-+            def __getattr__(self, name: str) -> Any:
-+                return getattr(self._inner, name)
-+
-+            def drop_table(self, identifier: str, *args: Any, **kwargs: Any) -> Any:
-+                if fail_stage == 'drop_before' and identifier == 'pxt.swap_failure':
-+                    raise PermissionError('synthetic failure before dropping target')
-+                result = self._inner.drop_table(identifier, *args, **kwargs)
-+                if fail_stage == 'drop' and identifier == 'pxt.swap_failure':
-+                    raise OSError('synthetic failure after dropping target')
-+                return result
-+
-+            def table_exists(self, identifier: str) -> bool:
-+                if check_fails:
-+                    raise OSError('synthetic target lookup failure')
-+                return self._inner.table_exists(identifier)
-+
-+            def rename_table(self, *args: Any, **kwargs: Any) -> None:
-+                if fail_stage == 'rename':
-+                    raise OSError('synthetic rename failure')
-+                self._inner.rename_table(*args, **kwargs)
-+
-+        catalog_with_failure: Any = FailingCatalog(catalog)
-+        with pxt_raises(pxt.ErrorCode.INTERNAL_ERROR, match='failed to write') as failure:
-+            pxt.io.export_iceberg(t, catalog_with_failure, 'pxt.swap_failure', if_exists='replace')
-+
-+        from pyiceberg.exceptions import NoSuchTableError
-+
-+        if fail_stage == 'drop_before':
-+            assert catalog.load_table('pxt.swap_failure').scan().to_arrow().to_pylist() == expected_rows[:1]
-+        else:
-+            with pytest.raises(NoSuchTableError):
-+                catalog.load_table('pxt.swap_failure')
-+
-+        temp_names = [name for _, name in catalog.list_tables('pxt') if name.startswith('swap_failure__pxt_tmp_')]
-+        assert len(temp_names) == 1
-+        assert temp_names[0] in failure.value.message
-+        temp_rows = catalog.load_table(f'pxt.{temp_names[0]}').scan().to_arrow().to_pylist()
-+        assert sorted(temp_rows, key=lambda row: row['c_int']) == expected_rows
-+
-+    @pytest.mark.db_roots('local', reason='Uses a local SQLite Iceberg catalog and does not need a hosted database.')
+     @pytest.mark.xdist_group('large_model')
+     def test_image_to_video(self, uses_db: None, sample_file_server: SampleFileServer) -> None:
+```
 
+---
+
+### Incident Patch 3: `dbe8f8b1` (2026-11-13)
+**Commit Message**: [PXT-1767] Fix the notebooks++ and T4 failures in the weekly test run (#1934)
+
+Fixes [PXT-1767](https://pixeltable.atlassian.net/browse/PXT-1767).
+Supersedes #1929.
+
+Fixes two failures in the weekly `tests` run on 2026-11-10 ([run
+42735604741](https://github.com/pixeltable/pixeltable/actions/runs/42735604741)).
+
+## notebooks++: invalid notebook JSON
+
+The job failed on `video-generate-ai.ipynb` with "Notebook does not
+appear to be JSON". Its setup cell ran `%pip install -qU pixeltable
+"google-genai>=2.22"`. `scripts/prepare-nb-tests.sh --no-pip` strips pip
+lines with `sed -E 's/%pip install [^"]*//'`, which stops at the escaped
+quote and leaves invalid JSON.
+
+The bound isn't needed. `-U` already installs the latest google-genai
+(3.2.0 today), and `gemini.generate_video()` enforces the minimum itself
+with `require_package('google.genai', min_version=[2, 22])`. The
+notebook now installs `pixeltable google-genai` and lists `pip install
+google-genai` under Requirements.
+
+## standard, ubuntu-small-t4: `test_db_migration`
+
+`test_db_migration` took 16 minutes on the T4 runner in the 2026-11-03
+run. On 2026-11-10 it was still running at the 10-minute faulthandler
+dump, its xdist worker went
+
+**File**: `docs/release/howto/cookbooks/video/video-generate-ai.ipynb` (modified, +2/-2)
+```diff
+@@ -53,7 +53,7 @@
+    "metadata": {},
+    "outputs": [],
+    "source": [
+-    "%pip install -qU pixeltable \"google-genai>=2.22\""
++    "%pip install -qU pixeltable google-genai"
+    ]
+   },
+   {
+@@ -327,7 +327,7 @@
+     "**Requirements:**\n",
+     "\n",
+     "- Google AI Studio API key (set `GEMINI_API_KEY`); Gemini Omni requires the Gemini Developer API\n",
+-    "- `pip install \"google-genai>=2.22\"`"
++    "- `pip install google-genai`"
+    ]
+   },
+   {
+```
+
+**File**: `tests/test_migration.py` (modified, +1/-0)
+```diff
+@@ -95,6 +95,7 @@ def test_convert_53_normalize(self) -> None:
+ 
+     @rerun(reruns=3, reruns_delay=8)  # Deal with occasional concurrency issues
+     @pytest.mark.skipif(platform.system() == 'Windows', reason='Does not run on Windows')
++    @pytest.mark.skipif('t4' in os.environ.get('PXTTEST_CI_OS', ''), reason='Too slow on t4 CI instances')
+     def test_db_migration(self, init_env: None) -> None:
+         skip_test_if_not_installed('transformers')
+         # the dumps contain a sentence-mode string_splitter view, which needs spacy to compute inserted rows
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1925** (closed): PXT-1755: Pin generate_video's Interactions API call to v1beta (google-genai 3.0 defaults to v1) (@pierrebrunelle)
-- **PR #1924** (2026-11-10): docs: replace retired Claude 3.x model IDs in docstrings, sample apps and tooling (@pcbeingused333)
-- **PR #1920** (2026-11-07): docs: make the README hero the homepage's slider, readable in any theme (@pierrebrunelle)
-- **PR #1915** (2026-11-07): Add VLM Run Gateway integration (OCR, VQA, segmentation, embeddings, transcription) (takes over #1893) (@aaron-siegel)
-- **PR #1914** (closed): Fix is_deterministic default when @pxt.udf() has keyword arguments (@sergey-mkhitaryan)
-- **PR #1913** (2026-11-07): Fix UDF and iterator issues found during #1907 review (@sergey-mkhitaryan)
+- **PR #1957** (closed): Rename TableDataConduit to SourceAdapter (@sergey-mkhitaryan)
+- **PR #1955** (2026-11-13): Write the default config atomically and require init_env for tests that reach Env (@aaron-siegel)
+- **PR #1954** (2026-11-13): Dump the Postgres server's state before the CI test step times out (@aaron-siegel)
+- **PR #1953** (2026-11-13): Fix diffusers pipeline placement on CUDA in text_to_image and image_to_image (@aaron-siegel)
+- **PR #1952** (2026-11-13): Raise faulthandler_timeout to 30 minutes to stop macOS worker hangs (@aaron-siegel)
+- **PR #1950** (2026-11-14): Make int % in SQL follow Python's sign convention (@sohailshk)
 
 ---
 
@@ -1440,62 +1653,34 @@ with and without an existing target.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Iceberg replace cleanup after catalog swap failure (#1889)
+## X. Write the default config atomically and require init_env for tests that reach En
 
 **RULE**:
-When implementing operations in `pixeltable/io/iceberg.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pixeltable/pixeltable. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/instructions/tests.instructions.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pixeltable/pixeltable. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b7661983`: Iceberg replace cleanup after catalog swap failure (#1889). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b907dcb3`: Write the default config atomically and require init_env for tests that reach Env. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pixeltable/io/iceberg.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/instructions/tests.instructions.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-            - `'replace'`: drop the existing table and create a new one. If the catalog swap fails, the new data
-              may be kept for recovery in a table named `<table_name>__pxt_tmp_<suffix>`. When the target is absent
-              or its status cannot be checked, the error message gives the exact temporary identifier to inspect.
-    temp_created = False
-    preserve_temp = False
-        temp_created = True
-        # Catalog drop/rename are not transactional. Preserve the completed export on failure
-        # unless we can confirm that the target is available.
-        preserve_temp = True
-        preserve_temp = False
-        if preserve_temp:
-            try:
-                preserve_temp = not catalog.table_exists(table_name)
-            except Exception:
-                # If the catalog is unavailable, keep the possible recovery copy.
-                pass
-        message = f'export_iceberg(): failed to write Iceberg table {table_name!r}: {e}'
-        if preserve_temp:
-            message += (
-                f'; the catalog swap may be incomplete. Inspect {table_name!r} and temporary identifier '
-                f'{temp_name!r} before retrying.'
-            )
-        
+- A test that reaches `Env.get()`, directly or through a helper such as `skip_test_if_not_installed()`,
+  requests `init_env`; `uses_db` and `db_root` include it. Without it, the test would use whatever an earlier
+  test on its xdist worker set up, or the developer's real Pixeltable home and database when it runs first, so
+  `tests/conftest.py` fails such a test.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-// Anti-pattern to NEVER write (induced failure mode):
-            - `'replace'`: drop the existing table and create a new one
-        raise excs.InternalError(
-            excs.ErrorCode.INTERNAL_ERROR, f'export_iceberg(): failed to write Iceberg table {table_name!r}: {e}'
-        ) from e
-        # Drop temp if it still exists; covers mid-stream errors and BaseException paths
-        # like KeyboardInterrupt. On success, rename consumed temp_name, so swallow NoSuchTableError.
-        try:
-            catalog.drop_table(temp_name)
-        except NoSuchTableError:
-            pass
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b7661983` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b907dcb3` are properly handled with clean fallback behavior.
 
 
 ## 3. Decision Protocol & Boundary Restrictions

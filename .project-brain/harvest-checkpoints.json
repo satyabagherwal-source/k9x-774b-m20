@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-14T05:31:30.001Z",
+  "last_updated": "2026-11-14T05:46:40.872Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1340,14 +1340,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-aleph-alpha-kolibri-1",
-      "content_hash": "eb4f7a7ee38106bf5550151823059a6faf0e4a001181ae103ab4d6198d0a5048",
-      "verified_at": "2026-11-09T00:54:13.038Z",
+      "content_hash": "e50f0c4bbffc10169da00d7df4b7fb2a0c2d85da4efa1ed6e2677ee555efbb8f",
+      "verified_at": "2026-11-14T05:46:26.563Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T00:54:13.038Z"
+      "last_updated": "2026-11-14T05:46:26.563Z"
     },
     "Qwen/Qwen3-4B": {
       "repository": "Qwen/Qwen3-4B",
@@ -5691,14 +5691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pixeltable-pixeltable",
-      "content_hash": "ebd571bb4392b7b18f62e14fdfe0e68e30c698ca5cd2bc2f9569b98016a240fa",
-      "verified_at": "2026-11-13T04:13:25.722Z",
+      "content_hash": "88a46480e707494b5f8db2eca7d1068ca8d253326063787f86f458cb7ee4e912",
+      "verified_at": "2026-11-14T05:46:40.871Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T04:13:25.722Z"
+      "last_updated": "2026-11-14T05:46:40.871Z"
     },
     "honojs/hono": {
       "repository": "honojs/hono",
@@ -6876,14 +6876,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-builderio-builder",
-      "content_hash": "016e4f708af2cac371d36dac59bf92528364d2ce9511b7ca3beb9d2b2645e57a",
-      "verified_at": "2026-11-07T02:24:36.121Z",
+      "content_hash": "76eb9d0b5a8cde616e610db26e852104dab50d5c32f7fe6c241244983835ecb4",
+      "verified_at": "2026-11-14T05:46:33.561Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T02:24:36.121Z"
+      "last_updated": "2026-11-14T05:46:33.561Z"
     },
     "gocrane/crane": {
       "repository": "gocrane/crane",

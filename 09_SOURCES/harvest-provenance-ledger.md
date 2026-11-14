@@ -9790,3 +9790,7 @@ Every entry in this ledger must capture:
 | `learn-dom-k-6b875983` | `project://authzed-spicedb` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/authzed-spicedb-learnings.md` | 2026-11-14T05:09:43.684Z |
 | `learn-huggingface-baidu-unlimited-ocr` | `https://huggingface.co/baidu/Unlimited-OCR` | `hf-baidu-u` | Multi-dimensional audit evidence | 2026-11-14T05:31:29.990Z |
 | `learn-dom-d-2a203d84` | `project://hf-baidu-unlimited-ocr` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md` | 2026-11-14T05:32:15.140Z |
+| `learn-huggingface-aleph-alpha-kolibri-1` | `https://huggingface.co/Aleph-Alpha/Kolibri-1` | `hf-aleph-a` | Multi-dimensional audit evidence | 2026-11-14T05:46:26.554Z |
+| `learn-github-builderio-builder` | `https://github.com/BuilderIO/builder` | `4f46c3a2` | Multi-dimensional audit evidence | 2026-11-14T05:46:33.551Z |
+| `learn-github-pixeltable-pixeltable` | `https://github.com/pixeltable/pixeltable` | `941d38df` | Multi-dimensional audit evidence | 2026-11-14T05:46:40.861Z |
+| `learn-dom-d-2c3ed23b` | `project://hf-aleph-alpha-kolibri-1` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1-learnings.md` | 2026-11-14T05:47:17.077Z |
