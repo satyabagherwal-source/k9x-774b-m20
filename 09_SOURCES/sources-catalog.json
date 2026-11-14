@@ -90,13 +90,13 @@
     "learningId": "learn-huggingface-jialinyyzz-humanizer"
   },
   "hf-autotrust-jev-27b-vl": {
-    "repository": "autotrust/JEV-27B-VL",
+    "repository": "autotrust/AutoTrust-Decider-Pro-Vision-27B",
     "platform": "huggingface",
     "sourceUrl": "https://huggingface.co/autotrust/JEV-27B-VL",
     "sourceVersion": "hf-autotrust-jev-27b-vl",
     "license": "Open-Source",
-    "contentHash": "af35dc33957c72b02139fea8a777439056285f45e20f6ca2db18c1f80e89f44a",
-    "lastHarvestedAt": "2026-11-09T05:40:36.690Z",
+    "contentHash": "3a005cb391aab9fcb892ae95a29c266a79abc7fbdec01e72dd59605b80f189f7",
+    "lastHarvestedAt": "2026-11-14T16:43:18.388Z",
     "learningId": "learn-huggingface-autotrust-jev-27b-vl"
   },
   "hf-autotrust-gev-26b-decide": {
@@ -5223,10 +5223,10 @@
     "repository": "StarRocks/starrocks",
     "platform": "github",
     "sourceUrl": "https://github.com/StarRocks/starrocks",
-    "sourceVersion": "9a755b9e",
+    "sourceVersion": "72c16b08",
     "license": "Apache-2.0",
-    "contentHash": "e187fa50a38c537d4406a6d19eb6bbb2a368c0709d1e604b6d3289745a3607f4",
-    "lastHarvestedAt": "2026-11-13T11:24:44.041Z",
+    "contentHash": "dd85706414b35386a2205a1f40544cfe5888fa264c19427c50d61f2535892b18",
+    "lastHarvestedAt": "2026-11-14T16:38:37.133Z",
     "learningId": "learn-github-starrocks-starrocks"
   },
   "lobehub-lobe-ui": {
@@ -7763,10 +7763,10 @@
     "repository": "tokio-rs/tokio",
     "platform": "github",
     "sourceUrl": "https://github.com/tokio-rs/tokio",
-    "sourceVersion": "ab0814fc",
+    "sourceVersion": "f3e855fa",
     "license": "MIT",
-    "contentHash": "5829ab15b90b34b402f806e599fba41d637d48dffbb2033f598605f777823025",
-    "lastHarvestedAt": "2026-11-11T09:28:49.580Z",
+    "contentHash": "5a32608da0e49143da8447e93f57c2b0a0ce3235319d689f56e33024dd8b330f",
+    "lastHarvestedAt": "2026-11-14T16:38:26.786Z",
     "learningId": "learn-github-tokio-rs-tokio"
   },
   "simonschubert-linuxcommandlibrary": {

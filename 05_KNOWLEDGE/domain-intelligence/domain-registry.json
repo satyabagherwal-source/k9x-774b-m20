@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T16:23:48.023Z",
-  "total_records": 740,
+  "last_updated": "2026-11-14T16:43:51.804Z",
+  "total_records": 747,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 364,
+      "total": 367,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -401,7 +401,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-mudler-locate-anything-cpp-gguf-learnings-cor",
         "domain_intelligence-research-knowledge-intelligence-jialinyyzz-humanizer-core-invariants",
         "DOM-D-80D6B779",
-        "domain_intelligence-research-knowledge-intelligence-hf-jialinyyzz-humanizer-learnings-core-invariant"
+        "domain_intelligence-research-knowledge-intelligence-hf-jialinyyzz-humanizer-learnings-core-invariant",
+        "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-vision-27b-core-",
+        "DOM-D-65E545AD",
+        "domain_intelligence-research-knowledge-intelligence-hf-autotrust-jev-27b-vl-learnings-core-invariant"
       ]
     },
     "E": {
@@ -553,7 +556,7 @@
       ]
     },
     "H": {
-      "total": 154,
+      "total": 158,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -708,7 +711,11 @@
         "domain_intelligence-technical-construction-intelligence-agent-field-agentfield-learnings-core-invari",
         "domain_intelligence-technical-construction-intelligence-react-native-webrtc-react-native-webrtc-core",
         "DOM-H-305CEBA3",
-        "domain_intelligence-technical-construction-intelligence-react-native-webrtc-react-native-webrtc-lear"
+        "domain_intelligence-technical-construction-intelligence-react-native-webrtc-react-native-webrtc-lear",
+        "domain_intelligence-technical-construction-intelligence-tokio-rs-tokio-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-starrocks-starrocks-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-tokio-rs-tokio-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-starrocks-starrocks-learnings-core-invariant"
       ]
     },
     "I": {
@@ -15285,6 +15292,102 @@
       "repository": "react-native-webrtc-react-native-webrtc-learnings",
       "content_hash": "1cbda9ae453d3e640c6efc35ae2462aaca3cc6e63762a22c6a20f2c4544887f9",
       "created_at": "2026-11-14T16:23:48.023Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-tokio-rs-tokio-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-tokio-rs-tokio-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: tokio-rs/tokio Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tokio-rs-tokio-technical-construction-intelligence-tokio-rs-tokio-core-invariant.md",
+      "repository": "tokio-rs/tokio",
+      "content_hash": "4016ec25c2e10f17e7818a33033e53097480e1cb2b92dc5f75c004abe6b1871d",
+      "created_at": "2026-11-14T16:38:27.074Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-starrocks-starrocks-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-starrocks-starrocks-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: StarRocks/starrocks Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-starrocks-starrocks-technical-construction-intelligence-starrocks-starrocks-core.md",
+      "repository": "StarRocks/starrocks",
+      "content_hash": "3b08f720ffd7247483a6096529a5a62f172fa5cfb43618e516e4940192cdb4a6",
+      "created_at": "2026-11-14T16:38:37.396Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-vision-27b-core-": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-vision-27b-core-",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: autotrust/AutoTrust-Decider-Pro-Vision-27B Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-jev-27b-vl-research-knowledge-intelligence-autotrust-autotrust-deci.md",
+      "repository": "autotrust/AutoTrust-Decider-Pro-Vision-27B",
+      "content_hash": "3b1e5ae2cef228a90ed8e709b420bb314cd8039a8cb05f4ac4e8b0dc2ebddb49",
+      "created_at": "2026-11-14T16:43:18.539Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-tokio-rs-tokio-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-tokio-rs-tokio-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: tokio-rs-tokio-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tokio-rs-tokio-learnings-technical-construction-intelligence-tokio-rs-tokio-lear.md",
+      "repository": "tokio-rs-tokio-learnings",
+      "content_hash": "b80337bbf7cd2686f9b0455c4962b04d399ea3f9ba632d60318e695aef7a8199",
+      "created_at": "2026-11-14T16:43:21.636Z"
+    },
+    "DOM-D-65E545AD": {
+      "record_id": "DOM-D-65E545AD",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): autotrust/AutoTrust-Decider-Pro-Vision-27B",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/autotrust/JEV-27B-VL](https://huggingface.co/autotrust/JEV-27B-VL))  \n> **Source Version**: `hf-autotrust`  \n> **License**: Open-Source  \n> **Synthesized",
+      "content_hash": "8c3de9cf033b6b66ff46ea6e84204ed6aeefcb33c0fd263200e0aaf2b2847e39",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md`  \n> **Source**: huggingface ([https://huggingf -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md`  \n> **Source**: huggingface ([https://huggingf",
+      "provenance": {
+        "source_uri": "project://hf-autotrust-jev-27b-vl/hf-autotrust-jev-27b-vl-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T16:43:21.839Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-autotrust-jev-27b-vl)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-autotrust-jev-27b-vl"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T16:43:51.081Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-autotrust-jev-27b-vl-learnings-core-invariant": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-autotrust-jev-27b-vl-learnings-core-invariant",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-autotrust-jev-27b-vl-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-jev-27b-vl-learnings-research-knowledge-intelligence-hf-autotrust-j.md",
+      "repository": "hf-autotrust-jev-27b-vl-learnings",
+      "content_hash": "6cba7b1db1b8d4a59c311b2428d20a9a12690d7d7ac37d7422460f6e778521e5",
+      "created_at": "2026-11-14T16:43:51.275Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-starrocks-starrocks-learnings-core-invariant": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-starrocks-starrocks-learnings-core-invariant",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: starrocks-starrocks-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-starrocks-starrocks-learnings-technical-construction-intelligence-starrocks-star.md",
+      "repository": "starrocks-starrocks-learnings",
+      "content_hash": "445ecbcbb8a528ed05e7abcbb913495c41bdb2666bb17a53275028e5b6fa61e7",
+      "created_at": "2026-11-14T16:43:51.804Z"
     }
   }
 }

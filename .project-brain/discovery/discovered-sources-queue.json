@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T16:23:47.760Z",
+  "updated_at": "2026-11-14T16:43:51.103Z",
   "stats": {
-    "total_discovered": 3334,
-    "approved_pending_harvest": 3129,
+    "total_discovered": 3339,
+    "approved_pending_harvest": 3134,
     "harvested_count": 0,
     "rejected_count": 205,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3113,
-      "OFFICIAL_DOCUMENTATION": 120,
+      "COMMUNITY_AND_EXPERT": 3116,
+      "OFFICIAL_DOCUMENTATION": 122,
       "STANDARDS_AND_SPECIFICATIONS": 87,
       "ENGINEERING_BLOGS": 1,
       "SECURITY_ADVISORIES": 10,
@@ -71933,6 +71933,116 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-native-webrtc-react-native-webrtc-learnings.md",
         "fileName": "react-native-webrtc-react-native-webrtc-learnings.md"
+      }
+    },
+    "SRC-F4648552F7BA": {
+      "id": "SRC-F4648552F7BA",
+      "url": "https://github.com/tokio-rs/tokio",
+      "title": "https://github.com/tokio-rs/tokio",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T16:43:21.288Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md",
+        "fileName": "tokio-rs-tokio-learnings.md"
+      }
+    },
+    "SRC-391679C287A3": {
+      "id": "SRC-391679C287A3",
+      "url": "https://docs.rs/tokio-stream/latest/tokio_stream/trait.StreamExt.html",
+      "title": "https://docs.rs/tokio-stream/latest/tokio_stream/trait.StreamExt.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T16:43:21.314Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md",
+        "fileName": "tokio-rs-tokio-learnings.md"
+      }
+    },
+    "SRC-0E5FBAA65677": {
+      "id": "SRC-0E5FBAA65677",
+      "url": "https://docs.rs/futures/0.3/futures/stream/trait.StreamExt.html",
+      "title": "https://docs.rs/futures/0.3/futures/stream/trait.StreamExt.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T16:43:21.339Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md",
+        "fileName": "tokio-rs-tokio-learnings.md"
+      }
+    },
+    "SRC-0E3B26651E61": {
+      "id": "SRC-0E3B26651E61",
+      "url": "https://github.com/tokio-rs/tokio/issues/3976",
+      "title": "https://github.com/tokio-rs/tokio/issues/3976",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T16:43:21.360Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md",
+        "fileName": "tokio-rs-tokio-learnings.md"
+      }
+    },
+    "SRC-7073395C0F94": {
+      "id": "SRC-7073395C0F94",
+      "url": "https://huggingface.co/autotrust/JEV-27B-VL",
+      "title": "https://huggingface.co/autotrust/JEV-27B-VL",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T16:43:51.103Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md",
+        "fileName": "hf-autotrust-jev-27b-vl-learnings.md"
       }
     }
   }

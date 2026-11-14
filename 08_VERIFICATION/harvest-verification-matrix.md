@@ -9879,3 +9879,7 @@
 | `CYCLE-20261114-6TFO` | `2026-11-14T16:22:53.316Z` | `react-native-webrtc/react-native-webrtc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8506` | Yes (`9355cea5...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T16:23:20.240Z` | `hf-jialinyyzz-humanizer` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-80D6B779` [Domain D] | Yes (`0e5b473d...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T16:23:47.626Z` | `react-native-webrtc-react-native-webrtc` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-305CEBA3` [Domain H] | Yes (`036d9e3d...`) |
+| `CYCLE-20261114-QTPA` | `2026-11-14T16:38:26.782Z` | `tokio-rs/tokio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8507` | Yes (`5a32608d...`) |
+| `CYCLE-20261114-R1OQ` | `2026-11-14T16:38:37.130Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8508` | Yes (`dd857064...`) |
+| `CYCLE-20261114-X2PC` | `2026-11-14T16:43:18.384Z` | `autotrust/AutoTrust-Decider-Pro-Vision-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md` | Yes (`3a005cb3...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T16:43:51.092Z` | `hf-autotrust-jev-27b-vl` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-65E545AD` [Domain D] | Yes (`8c3de9cf...`) |

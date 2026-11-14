@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T16:23:47.903Z",
+  "last_updated": "2026-11-14T16:43:51.702Z",
   "directives": [
     {
       "id": "CD-001",
@@ -12913,6 +12913,48 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-14",
       "domain_letter": "H"
+    },
+    {
+      "id": "CD-QTU5",
+      "directive_title": "remove +atomics flags from wasm32-wasip1 job",
+      "source_repo": "tokio-rs/tokio",
+      "source_commit": "f3e855fa",
+      "staged_file": "11_INBOX/candidate-directives/CD-QTU5-remove-atomics-flags-from-wasm32-wasip1-job.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-14",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-XSEI",
+      "directive_title": "[BugFix][RB-1649] Grow the parquet plain binary decode buffer geometrically acro",
+      "source_repo": "starrocks-starrocks-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-XSEI-bugfix-rb-1649-grow-the-parquet-plain-binary-decode-buffer-geometrically-acro.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-14",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-X54T",
+      "directive_title": "ci: remove +atomics flags from wasm32-wasip1 job",
+      "source_repo": "tokio-rs-tokio-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-X54T-ci-remove-atomics-flags-from-wasm32-wasip1-job.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-14",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-F8782A",
+      "directive_title": "[BugFix][RB-1649] Grow the parquet plain binary decode buffer geometrically acro",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "starrocks-starrocks",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-F8782A--bugfix-rb-1649-grow-the-parquet-plain-b.md",
+      "staged_date": "2026-11-14"
     }
   ]
 }

@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:45:10.527Z",
+  "timestamp": "2026-11-14T16:43:51.584Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-starrocks-starrocks-learnings",
+  "learning_id": "LEARN-EVO-starrocks-starrocks-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [starrocks-starrocks-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:45:10.527Z`  
-> **Learning ID**: `LEARN-REEXTRACT-starrocks-starrocks-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-14T16:43:51.584Z`  
+> **Learning ID**: `LEARN-EVO-starrocks-starrocks-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source**: github ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
-> **Source Version**: `bf73116b`  
+> **Source Version**: `72c16b08`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T04:24:00.441Z  
+> **Timestamp**: 2026-11-14T16:38:36.341Z  
 > **Learning ID**: `learn-github-starrocks-starrocks`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T04:24:00.258Z  
+> **Harvest Timestamp**: 2026-11-14T16:38:36.336Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: The world's fastest open query engine for sub-second analytics both on and off the data lakehouse. With the flexibility to support nearly any scenario, StarRocks provides best-in-class performance for multi-dimensional analytics, real-time analytics, and ad-hoc queries. A Linux Foundation project.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 12248 stars
+- **Stars / Engagement**: 12253 stars
 
 ---
 
@@ -1843,758 +1843,117 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bf73116b` (2026-11-12)
-**Commit Message**: [BugFix] Add the fractional seconds of an INTERVAL ... SECOND exactly (#81371)
+### Incident Patch 1: `72c16b08` (2026-11-14)
+**Commit Message**: [BugFix][RB-1649] Grow the parquet plain binary decode buffer geometrically across pages (#83259)
 
-Signed-off-by: Karol Sobczak <[REDACTED_EMAIL]>
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/sql/analyzer/ExpressionAnalyzer.java` (modified, +10/-0)
-```diff
-@@ -123,6 +123,7 @@
- import com.starrocks.type.TypeFactory;
- import com.starrocks.type.VarcharType;
- 
-+import java.math.BigDecimal;
- import java.math.BigInteger;
- import java.util.ArrayList;
- import java.util.Arrays;
-@@ -825,6 +826,15 @@ public Void visitTimestampArithmeticExpr(TimestampArithmeticExpr node, Scope sco
-                         .join(Arrays.stream(argumentTypes).map(Type::toSql).collect(Collectors.toList())));
-                 throw new SemanticException(msg, node.getPos());
-             }
-+            String fnName = fn.getFunctionName().getFunction();
-+            if (FunctionSet.SECONDS_ADD.equals(fnName) || FunctionSet.SECONDS_SUB.equals(fnName)) {
-+                // A literal amount with more than 6 decimals is refused here already, so that a definition that uses it,
-+                // such as a generated column or a view, is refused when it is created rather than each time it is used
-+                BigDecimal seconds = IntervalSeconds.literalValue(node.getChild(1));
-+                if (seconds != null) {
-+                    IntervalSeconds.split(seconds, node.getPos());
-+                }
-+            }
-             node.setType(fn.getReturnType());
-             return null;
-         }
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/sql/analyzer/IntervalSeconds.java` (added, +79/-0)
-```diff
-@@ -0,0 +1,79 @@
-+// Copyright 2021-present StarRocks, Inc. All rights reserved.
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     https://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package com.starrocks.sql.analyzer;
-+
-+import com.starrocks.sql.ast.expression.DecimalLiteral;
-+import com.starrocks.sql.ast.expression.Expr;
-+import com.starrocks.sql.ast.expression.FloatLiteral;
-+import com.starrocks.sql.ast.expression.StringLiteral;
-+import com.starrocks.sql.parser.NodePosition;
-+
-+import java.math.BigDecimal;
-+
-+/**
-+ * The amount of an INTERVAL in SECOND. seconds_add and seconds_sub take it as an INT, so a fraction of a second would be
-+ * lost; such an amount is added as whole seconds and microseconds instead.
-+ */
-+public final class IntervalSeconds {
-+    private IntervalSeconds() {
-+    }
-+
-+    /**
-+     * Splits an amount of seconds into whole seconds and microseconds.
-+     *
-+     * @return {whole seconds, microseconds}, or null if the amount doesn't fit in an INT, which leaves it to the INT cast
-+     * @throws SemanticException if the amount has more than 6 decimals: a datetime has no digits below microseconds
-+     */
-+    public static int[] split(BigDecimal seconds, NodePosition pos) {
-+        // An INT holds at most 10 digits before the point, so a larger amount is left to the INT cast. This also keeps
-+        // the arithmetic below away from the huge numbers a short exponent can describe, as in '1e100000000'.
-+        if ((long) seconds.precision() - seconds.scale() > 10) {
-+            return null;
-+        }
-+        BigDecimal exact = seconds.stripTrailingZeros();
-+        if (exact.scale() > 6) {
-+            // BigDecimal.toString() writes a long fraction such as '1e-100000000' with an exponent, so the message stays
-+            // short
-+            throw new SemanticException("The amount of an INTERVAL in SECOND can have at most 6 decimals "
-+                    + "because a datetime has no digits below microseconds: " + seconds, pos);
-+        }
-+        BigDecimal[] wholeAndFraction = exact.divideAndRemainder(BigDecimal.ONE);
-+        try {
-+            return new int[] {wholeAndFraction[0].intValueExact(), wholeAndFraction[1].movePointRight(6).intValueExact()};
-+        } catch (ArithmeticException e) {
-+            // doesn't fit in an INT, which is what the function takes
-+            return null;
-+        }
-+    }
-+
-+    /**
-+     * The value of a decimal, floating point or string literal, or null for any other expression (also for a string that
-+     * is not a number, which is left to the INT cast)
-+     */
-+    public static BigDecimal literalValue(Expr amount) {
-+        try {
-+            if (amount instanceof DecimalLiteral) {
-+                return ((DecimalLiteral) amount).getValue();
-+            } else if (amount instanceof FloatLiteral) {
-+                return BigDecimal.valueOf(((FloatLiteral) amount).getValue());
-+            } else if (amount instanceof StringLiteral) {
-+                return new BigDecimal(((StringLiteral) amount).getValue().trim());
-+            }
-+        } catch (NumberFormatException e) {
-+            return null;
-+        }
-+        return null;
-+    }
-+}
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/sql/optimizer/rewrite/scalar/SimplifiedPredicateRule.java` (modified, +29/-35)
-```diff
-@@ -48,39 +48,33 @@
- 
- import java.util.Arrays;
- import java.util.List;
--import java.util.Objects;
-+import java.util.Map;
- import java.util.Set;
- import java.util.function.Predicate;
- import java.util.stream.Collectors;
- 
- public class SimplifiedPredicateRule extends BottomUpScalarOperatorRewriteRule {
--    private static final ImmutableMap<String, List<String>> TIME_FNS = ImmutableMap.<String, List<String>>builder()
--            .put("years_", ImmutableList.of(FunctionSet.YEARS_ADD, FunctionSet.YEARS_SUB))
--            .put("quarters_", ImmutableList.of(FunctionSet.QUARTERS_ADD, FunctionSet.QUARTERS_SUB))
--            .put("months_", ImmutableList.of(FunctionSet.MONTHS_ADD, FunctionSet.MONTHS_SUB))
--            .put("weeks_", ImmutableList.of(FunctionSet.WEEKS_ADD, FunctionSet.WEEKS_SUB))
--            .put("days_", ImmutableList.of(FunctionSet.DAYS_ADD, FunctionSet.DAYS_SUB))
--            .put("hours_", ImmutableList.of(FunctionSet.HOURS_ADD, FunctionSet.HOURS_SUB))
--            .put("minutes_", ImmutableList.of(FunctionSet.MINUTES_ADD, FunctionSet.MINUTES_SUB))
--            .put("seconds_", ImmutableList.of(FunctionSet.SECONDS_ADD, FunctionSet.SECONDS_SUB))
--            .put("milliseconds_", ImmutableList.of(FunctionSet.MILLISECONDS_ADD, FunctionSet.MILLISECONDS_SUB))
--            .put("microseconds_", ImmutableList.of(FunctionSet.MICROSECONDS_ADD, FunctionSet.MICROSECONDS_SUB))
--            .put("date", ImmutableList.of(FunctionSet.DATE_ADD, FunctionSet.DATE_SUB))
--            .build();
--    private static final Set<String> MONTH_BASED_TIME_FNS = ImmutableSet.of("years_", "quarters_", "months_");
--    private static final List<String> TIME_FN_NAMES = ImmutableList.<String>builder()
--            .add(FunctionSet.YEARS_ADD).add(FunctionSet.YEARS_SUB)
--            .add(FunctionSet.QUARTERS_ADD).add(FunctionSet.QUARTERS_SUB)
--            .add(FunctionSet.MONTHS_ADD).add(FunctionSet.MONTHS_SUB)
--            .add(FunctionSet.WEEKS_ADD).add(FunctionSet.WEEKS_SUB)
--            .add(FunctionSet.DAYS_ADD).add(FunctionSet.DAYS_SUB)
--            .add(FunctionSet.HOURS_ADD).add(FunctionSet.HOURS_SUB)
--            .add(FunctionSet.MINUTES_ADD).add(FunctionSet.MINUTES_SUB)
--            .add(FunctionSet.SECONDS_ADD).add(FunctionSet.SECONDS_SUB)
--            .add(FunctionSet.MILLISECONDS_ADD).add(FunctionSet.MILLISECONDS_SUB)
--            .add(FunctionSet.MICROSECONDS_ADD).add(FunctionSet.MICROSECONDS_SUB)
--            .add(FunctionSet.DATE_ADD).add(FunctionSet.DATE_SUB)
--            .build();
-+    // The {add, sub} functions of each time unit. Only calls of the same unit are merged.
-+    private static final List<List<String>> TIME_FN_UNITS = ImmutableList.of(
-+            ImmutableList.of(FunctionSet.YEARS_ADD, FunctionSet.YEARS_SUB),
-+            ImmutableList.of(FunctionSet.QUARTERS_ADD, FunctionSet.QUARTERS_SUB),
-+            ImmutableList.of(FunctionSet.MONTHS_ADD, FunctionSet.MONTHS_SUB),
-+            ImmutableList.of(FunctionSet.WEEKS_ADD, FunctionSet.WEEKS_SUB),
-+            ImmutableList.of(FunctionSet.DAYS_ADD, FunctionSet.DAYS_SUB),
-+            ImmutableList.of(FunctionSet.HOURS_ADD, FunctionSet.HOURS_SUB),
-+            ImmutableList.of(FunctionSet.MINUTES_ADD, FunctionSet.MINUTES_SUB),
-+            ImmutableList.of(FunctionSet.SECONDS_ADD, FunctionSet.SECONDS_SUB),
-+            ImmutableList.of(FunctionSet.MILLISECONDS_ADD, FunctionSet.MILLISECONDS_SUB),
-+            ImmutableList.of(FunctionSet.MICROSECONDS_ADD, FunctionSet.MICROSECONDS_SUB),
-+            ImmutableList.of(FunctionSet.DATE_ADD, FunctionSet.DATE_SUB));
-+    // Each time function and the {add, sub} functions of its unit
-+    private static final Map<String, List<String>> TIME_FNS = TIME_FN_UNITS.stream()
-+            .flatMap(unit -> unit.stream().map(fn -> Map.entry(fn, unit)))
-+            .collect(ImmutableMap.toImmutableMap(Map.Entry::getKey, Map.Entry::getValue));
-+    // years, quarters and months clamp to the month end, so they do not compose
-+    private static final Set<String> MONTH_BASED_TIME_FNS = ImmutableSet.of(FunctionSet.YEARS_ADD,
-+            FunctionSet.YEARS_SUB, FunctionSet.QUARTERS_ADD, FunctionSet.QUARTERS_SUB, FunctionSet.MONTHS_ADD,
-+            FunctionSet.MONTHS_SUB);
- 
-     private static final EliminateNegationsRewriter ELIMINATE_NEGATIONS_REWRITER = new EliminateNegationsRewriter();
- 
-@@ -398,7 +392,7 @@ public ScalarOperator visitCall(CallOperator call, ScalarOperatorRewriteContext
-             return ifNull(call);
-         } else if (FunctionSet.ARRAY_MAP.equals(call.getFnName())) {
-             return arrayMap(call);
--        } else if (TIME_FN_NAMES.contains(call.getFnName())) {
-+        } else if (TIME_FNS.containsKey(call.getFnName())) {
-             return simplifiedTimeFns(call);
-         } else if (FunctionSet.DATE_TRUNC.equalsIgnoreCase(call.getFnName())) {
-             return simplifiedDateTrunc(call);
-@@ -443,8 +437,7 @@ public ScalarOperator visitLikePredicateOperator(LikePredicateOperator predicate
-
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/sql/optimizer/transformer/SqlToScalarOperatorTranslator.java` (modified, +80/-1)
-```diff
-@@ -24,6 +24,7 @@
- import com.starrocks.qe.ConnectContext;
- import com.starrocks.server.GlobalStateMgr;
- import com.starrocks.sql.analyzer.ExpressionAnalyzer;
-+import com.starrocks.sql.analyzer.IntervalSeconds;
- import com.starrocks.sql.analyzer.RelationFields;
- import com.starrocks.sql.analyzer.RelationId;
- import com.starrocks.sql.analyzer.ResolvedField;
-@@ -109,12 +110,17 @@
- import com.starrocks.sql.optimizer.operator.scalar.SubfieldOperator;
- import com.starrocks.sql.optimizer.operator.scalar.SubqueryOperator;
- import com.starrocks.sql.optimizer.rewrite.ScalarOperatorRewriter;
-+import com.starrocks.sql.parser.NodePosition;
-+import com.starrocks.type.DateType;
- import com.starrocks.type.FunctionType;
-+import com.starrocks.type.IntegerType;
- import com.starrocks.type.InvalidType;
- import com.starrocks.type.JsonType;
-+import com.starrocks.type.Type;
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
- 
-+import java.math.BigDecimal;
- import java.util.ArrayList;
- import java.util.Collections;
- import java.util.List;
-@@ -563,7 +569,80 @@ public ScalarOperator visitTimestampArithmeticExpr(TimestampArithmeticExpr node,
- 
-             Function fn = ExprUtils.getTimestampArithmeticFunction(node);
-             Preconditions.checkNotNull(fn, "TimestampArithmeticExpr must resolve to a function");
--            return new CallOperator(fn.getFunctionName().getFunction(), node.getType(), arguments, fn);
-+            String fnName = fn.getFunctionName().getFunction();
-+            ScalarOperator fractionalSeconds = splitFractionalSeconds(fnName, node.getType(), arguments, node.getPos());
-+            if (fractionalSeconds != null) {
-+                return fractionalSeconds;
-+            }
-+            return new CallOperator(fnName, node.getType(), arguments, fn);
-+        }
-+
-+        // seconds_add and seconds_sub take the amount as an INT, so `ts + INTERVAL '0.5' SECOND` would add NULL and
-+        // `ts + INTERVAL 1.5 SECOND` one second. A constant amount that is a decimal, a floating point number or a
-+        // string is added as whole seconds and microseconds instead:
-+        // `ts + INTERVAL 1.5 SECOND` is `microseconds_add(seconds_add(ts, 1), 500000)`.
-+        // Returns null if the call is not such an interval, and then it is built as it is.
-+        private static ScalarOperator splitFractionalSeconds(String fnName, Type returnType,
-+                                                             List<ScalarOperator> arguments, NodePosition pos) {
-+            boolean add = FunctionSet.SECONDS_ADD.equals(fnName);
-+            if (!add && !FunctionSet.SECONDS_SUB.equals(fnName)) {
-+                return null;
-+            }
-+            ScalarOperator amount = arguments.get(1);
-+            if (!amount.isConstantRef() && amount.isConstant()) {
-+                // A constant expression, as in `TIMESTAMPADD(SECOND, 0.25 + 0.25, ts)`, is folded here. Later on the
-+                // amount is cast to INT before constants are folded, which would drop the fraction.
-+                ScalarOperatorRewriter rewriter = new ScalarOperatorRewriter();
-+                amount = rewriter.rewrite(rewriter.rewrite(amount, ScalarOperatorRewriter.DEFAULT_TYPE_CAST_RULE),
-+                        ScalarOperatorRewriter.FOLD_CONSTANT_RULES);
-+            }
-+            BigDecimal seconds = constantSeconds(amount);
-+            if (seconds == null) {
-+                return null;
-+            }
-+            int[] wholeSecondsAndMicroseconds = IntervalSeconds.split(seconds, pos);
-+            if (wholeSecondsAndMicroseconds == null) {
-+                return null;
-+            }
-+            int wholeSeconds = wholeSecondsAndMicroseconds[0];
-+            int wholeMicroseconds = wholeSecondsAndMicroseconds[1];
-+
-+            String microsecondsFn = add ? FunctionSet.MICROSECONDS_ADD : FunctionSet.MICROSECONDS_SUB;
-+            Type[] argTypes = {DateType.DATETIME, IntegerType.INT};
-+            ScalarOperator result = arguments.get(0);
-+            if (wholeSeconds != 0 || wholeMicroseconds == 0) {
-+                result = new CallOperator(fnName, returnType,
-+                        Lists.newArrayList(result, ConstantOperator.createInt(wholeSeconds)),
-+                        ExprUtils.getBuiltinFunction(fnName, argTypes, Function.CompareMode.IS_IDENTICAL));
-+            }
-+            if (wholeMicroseconds != 0) {
-+                result = new CallOperator(microsecondsFn, returnType,
-+                        Lists.newArrayList(result, ConstantOperator.createInt(wholeMicroseconds)),
-+                        ExprUtils.getBuiltinFunction(microsecondsFn, argTypes, Function.CompareMode.IS_IDENTICAL));
-+            }
-+            return result;
-+        }
-+
-+        // The value of a constant decimal, floating point or string amount, or null for any other amount (also for a
-+        // string that is not a number, which is left to the cast to INT of the function argument)
-+        private static Bi
-```
-
-**File**: `fe/fe-core/src/test/java/com/starrocks/sql/optimizer/rewrite/scalar/SimplifiedPredicateRuleTest.java` (modified, +104/-1)
-```diff
-@@ -16,21 +16,30 @@
- package com.starrocks.sql.optimizer.rewrite.scalar;
- 
- import com.google.common.collect.Lists;
-+import com.starrocks.catalog.Function;
-+import com.starrocks.catalog.FunctionSet;
- import com.starrocks.sql.ast.expression.BinaryType;
-+import com.starrocks.sql.ast.expression.ExprUtils;
- import com.starrocks.sql.optimizer.operator.OperatorType;
- import com.starrocks.sql.optimizer.operator.scalar.BinaryPredicateOperator;
-+import com.starrocks.sql.optimizer.operator.scalar.CallOperator;
- import com.starrocks.sql.optimizer.operator.scalar.CaseWhenOperator;
- import com.starrocks.sql.optimizer.operator.scalar.ColumnRefOperator;
- import com.starrocks.sql.optimizer.operator.scalar.ConstantOperator;
- import com.starrocks.sql.optimizer.operator.scalar.LikePredicateOperator;
- import com.starrocks.sql.optimizer.operator.scalar.ScalarOperator;
- import com.starrocks.sql.plan.PlanTestBase;
- import com.starrocks.type.BooleanType;
-+import com.starrocks.type.DateType;
- import com.starrocks.type.IntegerType;
-+import com.starrocks.type.Type;
- import com.starrocks.type.VarcharType;
- import org.junit.jupiter.api.BeforeAll;
- import org.junit.jupiter.api.Test;
- 
-+import java.util.Arrays;
-+import java.util.List;
-+
- import static org.junit.jupiter.api.Assertions.assertEquals;
- 
- public class SimplifiedPredicateRuleTest extends PlanTestBase {
-@@ -42,6 +51,24 @@ public class SimplifiedPredicateRuleTest extends PlanTestBase {
-     private static final ConstantOperator OB_FALSE = ConstantOperator.createBoolean(false);
-     private static final ConstantOperator OB_TRUE = ConstantOperator.createBoolean(true);
- 
-+    // The {add, sub} functions of each unit whose nested calls with constant amounts are merged
-+    private static final String[][] TIME_FN_UNITS = {
-+            {FunctionSet.WEEKS_ADD, FunctionSet.WEEKS_SUB},
-+            {FunctionSet.DAYS_ADD, FunctionSet.DAYS_SUB},
-+            {FunctionSet.HOURS_ADD, FunctionSet.HOURS_SUB},
-+            {FunctionSet.MINUTES_ADD, FunctionSet.MINUTES_SUB},
-+            {FunctionSet.SECONDS_ADD, FunctionSet.SECONDS_SUB},
-+            {FunctionSet.MILLISECONDS_ADD, FunctionSet.MILLISECONDS_SUB},
-+            {FunctionSet.MICROSECONDS_ADD, FunctionSet.MICROSECONDS_SUB},
-+            {FunctionSet.DATE_ADD, FunctionSet.DATE_SUB},
-+    };
-+    // Years, quarters and months clamp to the month end, so their nested calls are not merged
-+    private static final String[][] MONTH_BASED_TIME_FN_UNITS = {
-+            {FunctionSet.YEARS_ADD, FunctionSet.YEARS_SUB},
-+            {FunctionSet.QUARTERS_ADD, FunctionSet.QUARTERS_SUB},
-+            {FunctionSet.MONTHS_ADD, FunctionSet.MONTHS_SUB},
-+    };
-+
-     private SimplifiedPredicateRule rule = new SimplifiedPredicateRule();
- 
-     @BeforeAll
-@@ -163,4 +190,80 @@ public void applyHourToDatetimeRewrite() throws Exception {
-         starRocksAssert.query("SELECT hour(to_datetime(ts, 4)) FROM test_timestamp")
-                 .explainWithout("hour_from_unixtime");
-     }
--}
-\ No newline at end of file
-+
-+    private static CallOperator timeFn(String name, ScalarOperator datetime, int amount) {
-+        Function fn = ExprUtils.getBuiltinFunction(name, new Type[] {DateType.DATETIME, IntegerType.INT},
-+                Function.CompareMode.IS_IDENTICAL);
-+        return new CallOperator(name, DateType.DATETIME,
-+                Lists.newArrayList(datetime, ConstantOperator.createInt(amount)), fn);
-+    }
-+
-+    @Test
-+    public void mergeTimeFnsOfTheSameUnit() {
-+        ColumnRefOperator ts = new ColumnRefOperator(1, DateType.DATETIME, "ts", true);
-+        for (String[] unit : TIME_FN_UNITS) {
-+            String add = unit[0];
-+            String sub = unit[1];
-+            assertEquals(add + "(1: ts, 7)", rule.apply(timeFn(add, timeFn(add, ts, 3), 4), null).toString());
-+            assertEquals(sub + "(1: ts, 2)", rule.apply(timeFn(sub, timeFn(add, ts, 3), 5), null).toString());
-+            assertEquals(add + "(1: ts, 2)", rule.apply(timeFn(add, timeFn(sub, ts, 3), 5), null).toString());
-+            assertEquals(sub + "(1: ts, 7)", rule.apply(timeFn(sub, timeFn(sub, ts, 3), 4), null).toString());
-+            // the amounts cancel out
-+            assertEquals("1: ts", rule.apply(timeFn(sub, timeFn(add, ts, 3), 3), null).toString());
-+        }
-+        for (String[] unit : MONTH_BASED_TIME_FN_UNITS) {
-+            for (String outerFn : unit) {
-+                for (String innerFn : unit) {
-+                    CallOperator call = timeFn(outerFn, timeFn(innerFn, ts, 3), 4);
-+                    assertEquals(call.toString(), rule.apply(call, null).toString(), outerFn + " over " + innerFn);
-+                }
-+            }
-+        }
-+    }
-+
-+    @Test
-+    public void doNotMergeTimeFnsOfDifferentUnits() {
-+        ColumnRefOperator ts = new ColumnRefOperator(1, DateType.DATETIME, "ts", true);
-+        List<String[]> units = Lists.newArrayList(TIME_FN_UNITS);
-+        units.addAll(Arrays.asList(MONTH_BASED_TIME_FN_UNITS));
-+        for 
-```
-
-**File**: `fe/fe-core/src/test/java/com/starrocks/sql/plan/ExpressionTest.java` (modified, +81/-0)
-```diff
-@@ -257,6 +257,87 @@ public void testTimestampArithmeticExpr() throws Exception {
-                 + "  |  <slot 14> : days_sub(15: cast, 3)\n"));
-     }
- 
-+    // seconds_add takes its amount as an INT, so a fraction of a second is added with microseconds_add
-+    @Test
-+    public void testIntervalWithFractionalSeconds() throws Exception {
-+        String[][] cases = {
-+                {"id_datetime + interval '0.5' second", "microseconds_add(8: id_datetime, 500000)"},
-+                {"id_datetime + interval 1.5 second", "microseconds_add(seconds_add(8: id_datetime, 1), 500000)"},
-+                {"id_datetime - interval 1.5 second", "microseconds_sub(seconds_sub(8: id_datetime, 1), 500000)"},
-+                {"interval 1.5 second + id_datetime", "microseconds_add(seconds_add(8: id_datetime, 1), 500000)"},
-+                {"id_datetime + interval -0.25 second", "microseconds_add(8: id_datetime, -250000)"},
-+                {"id_datetime + interval -1.5 second", "microseconds_add(seconds_add(8: id_datetime, -1), -500000)"},
-+                {"id_datetime + interval 0.000001 second", "microseconds_add(8: id_datetime, 1)"},
-+                {"id_datetime + interval 1e0 second", "seconds_add(8: id_datetime, 1)"},
-+                {"id_datetime + interval 0.5e0 second", "microseconds_add(8: id_datetime, 500000)"},
-+                {"date_add(id_datetime, interval '3000.000001' second)",
-+                        "microseconds_add(seconds_add(8: id_datetime, 3000), 1)"},
-+                {"timestampadd(second, 2.5, id_datetime)", "microseconds_add(seconds_add(8: id_datetime, 2), 500000)"},
-+                // the amount is still a number of seconds when it has a fraction of zero
-+                {"id_datetime + interval '5.0' second", "seconds_add(8: id_datetime, 5)"},
-+                {"id_datetime + interval 5.00 second", "seconds_add(8: id_datetime, 5)"},
-+                // amounts without a fraction are as before
-+                {"id_datetime + interval 2 second", "seconds_add(8: id_datetime, 2)"},
-+                {"id_datetime + interval '2' second", "seconds_add(8: id_datetime, 2)"},
-+                {"id_datetime - interval 2 second", "seconds_sub(8: id_datetime, 2)"},
-+                // and the other calls on the same value are not merged with it
-+                {"id_datetime + interval 1.5 second + interval 1 second",
-+                        "seconds_add(microseconds_add(seconds_add(8: id_datetime, 1), 500000), 1)"},
-+                {"id_datetime + interval 1.5 second + interval 250 millisecond",
-+                        "milliseconds_add(microseconds_add(seconds_add(8: id_datetime, 1), 500000), 250)"},
-+                // a constant expression is folded first
-+                {"timestampadd(second, 0.25 + 0.25, id_datetime)", "microseconds_add(8: id_datetime, 500000)"},
-+                {"id_datetime + interval cast('1.5' as decimal(10, 1)) second",
-+                        "microseconds_add(seconds_add(8: id_datetime, 1), 500000)"},
-+                {"date_sub(id_datetime, interval cast(3 as double) / 4 second)", "microseconds_sub(8: id_datetime, 750000)"},
-+        };
-+        for (String[] c : cases) {
-+            String plan = getFragmentPlan("select " + c[0] + " from test_all_type");
-+            assertContains(plan, c[1]);
-+        }
-+    }
-+
-+    @Test
-+    public void testIntervalWithSecondsFinerThanMicroseconds() {
-+        // DATETIME has no digits below microseconds
-+        SemanticException e = assertThrows(SemanticException.class,
-+                () -> getFragmentPlan("select id_datetime + interval 0.1234567 second from test_all_type"));
-+        assertContains(e.getMessage(), "0.1234567");
-+        assertThrows(SemanticException.class,
-+                () -> getFragmentPlan("select id_datetime + interval '1.0000001' second from test_all_type"));
-+        // also when the amount is a constant expression
-+        assertThrows(SemanticException.class,
-+                () -> getFragmentPlan("select timestampadd(second, 0.0000001 + 0, id_datetime) from test_all_type"));
-+    }
-+
-+    // A literal amount is checked when the expression is analyzed, so a definition that uses it is refused when it is
-+    // created, rather than each time it is used
-+    @Test
-+    public void testDefinitionWithSecondsFinerThanMicroseconds() {
-+        Exception e = assertThrows(Exception.class, () -> starRocksAssert.withTable("CREATE TABLE t_interval_generated (\n" +
-+                "  k1 INT NOT NULL,\n" +
-+                "  ts DATETIME NOT NULL,\n" +
-+                "  ts2 DATETIME NULL AS ts + INTERVAL 0.1234567 SECOND\n" +
-+                ") DUPLICATE KEY(k1) DISTRIBUTED BY HASH(k1) BUCKETS 1 PROPERTIES ('replication_num' = '1')"));
-+        assertContains(e.getMessage(), "at most 6 decimals");
-+
-+        e = assertThrows(Exception.class, () -> starRocksAssert.withView(
-+                "create view v_interval_finer as select id_datetime + interval '0.1234567' second from test_all_type"));
-
-```
-
----
-
-### Incident Patch 2: `dcd391a9` (2026-11-12)
-**Commit Message**: [BugFix][RB-817] Skip statistics lookup for struct fields of expressions to avoid Unknown column errors (#82995)
-
-Co-authored-by: tqqq <[REDACTED_EMAIL]>
+Signed-off-by: tqqq <[REDACTED_EMAIL]>
 Co-authored-by: tqqq <[REDACTED_EMAIL]>
 
-**File**: `fe/fe-core/src/main/java/com/starrocks/sql/optimizer/statistics/StatisticsCalculator.java` (modified, +15/-6)
+**File**: `be/src/formats/parquet/encoding_plain.h` (modified, +6/-1)
 ```diff
-@@ -312,9 +312,11 @@ public Void visitOperator(Operator node, ExpressionContext context) {
-             Map<ColumnRefOperator, SubfieldOperator> subfieldColumns = Maps.newHashMap();
-             Preconditions.checkState(projection.getCommonSubOperatorMap().isEmpty());
-             for (Map.Entry<ColumnRefOperator, ScalarOperator> entry : projection.getColumnRefMap().entrySet()) {
--                if (entry.getValue() instanceof SubfieldOperator && (node instanceof LogicalScanOperator ||
--                        node instanceof PhysicalScanOperator)) {
--                    subfieldColumns.put(entry.getKey(), (SubfieldOperator) entry.getValue());
-+                if (entry.getValue() instanceof SubfieldOperator subfieldOperator &&
-+                        (node instanceof LogicalScanOperator ||
-+                        node instanceof PhysicalScanOperator) &&
-+                        canUseSubfieldStatistics(subfieldOperator)) {
-+                    subfieldColumns.put(entry.getKey(), subfieldOperator);
-                 } else {
-                     statisticsBuilder.addColumnStatistic(entry.getKey(),
-                             ExpressionStatisticCalculator.calculate(entry.getValue(), statisticsBuilder.build()));
-@@ -329,6 +331,12 @@ public Void visitOperator(Operator node, ExpressionContext context) {
-         return null;
-     }
- 
-+    private static boolean canUseSubfieldStatistics(SubfieldOperator subfieldOperator) {
-+        // Persistent subfield statistics paths must be rooted directly at a table column. Expression roots such as
-+        // array_col[1] cannot be represented by a persistent STRUCT path.
-+        return subfieldOperator.getChild(0) instanceof ColumnRefOperator;
-+    }
-+
-     private void addSubFiledStatistics(Operator node, Map<ColumnRefOperator, SubfieldOperator> subfieldColumns,
-                                        Statistics.Builder statisticsBuilder) {
-         if (!(node instanceof LogicalScanOperator) && !(node instanceof PhysicalScanOperator)) {
-@@ -1230,11 +1238,12 @@ private Void computeProjectNode(ExpressionContext context,
- 
-         for (ColumnRefOperator requiredColumnRefOperator : columnRefMap.keySet()) {
-             ScalarOperator mapOperator = columnRefMap.get(requiredColumnRefOperator);
--            if (mapOperator instanceof SubfieldOperator && context.getOptExpression() != null) {
-+            if (mapOperator instanceof SubfieldOperator subfieldOperator &&
-+                    canUseSubfieldStatistics(subfieldOperator) &&
-+                    context.getOptExpression() != null) {
-                 Operator child = context.getOptExpression().inputAt(0).getOp();
-                 if (child instanceof LogicalScanOperator || child instanceof PhysicalScanOperator) {
--                    addSubFiledStatistics(child, ImmutableMap.of(requiredColumnRefOperator,
--                            (SubfieldOperator) mapOperator), builder);
-+                    addSubFiledStatistics(child, ImmutableMap.of(requiredColumnRefOperator, subfieldOperator), builder);
-                     continue;
+@@ -296,7 +296,12 @@ class PlainDecoder<Slice> final : public Decoder {
                  }
-             }
+             });
+ 
+-            binary_column->get_bytes().reserve(final_offset);
++            // This runs once per page into the same column. An exact reserve(final_offset) would
++            // reallocate and copy the whole column on every page (quadratic for large values),
++            // so grow geometrically like the vector itself would.
++            if (bytes.capacity() < final_offset) {
++                bytes.reserve(std::max(final_offset, 2 * bytes.capacity()));
++            }
+         }
+ 
+         if (read_count == 0) {
 ```
 
-**File**: `fe/fe-core/src/test/java/com/starrocks/sql/optimizer/statistics/StatisticsCalculatorTest.java` (modified, +217/-0)
+**File**: `be/test/formats/parquet/encoding_test.cpp` (modified, +47/-0)
 ```diff
-@@ -33,6 +33,7 @@
- import com.starrocks.qe.ConnectContext;
- import com.starrocks.server.GlobalStateMgr;
- import com.starrocks.server.MetadataMgr;
-+import com.starrocks.sql.analyzer.SemanticException;
- import com.starrocks.sql.ast.JoinOperator;
- import com.starrocks.sql.ast.expression.BinaryType;
- import com.starrocks.sql.common.StarRocksPlannerException;
-@@ -51,27 +52,37 @@
- import com.starrocks.sql.optimizer.dump.MockDumpInfo;
- import com.starrocks.sql.optimizer.dump.QueryDumpInfo;
- import com.starrocks.sql.optimizer.operator.AggType;
-+import com.starrocks.sql.optimizer.operator.Projection;
- import com.starrocks.sql.optimizer.operator.UKFKConstraints;
- import com.starrocks.sql.optimizer.operator.logical.LogicalAggregationOperator;
- import com.starrocks.sql.optimizer.operator.logical.LogicalEsScanOperator;
- import com.starrocks.sql.optimizer.operator.logical.LogicalIcebergScanOperator;
- import com.starrocks.sql.optimizer.operator.logical.LogicalJoinOperator;
- import com.starrocks.sql.optimizer.operator.logical.LogicalKuduScanOperator;
- import com.starrocks.sql.optimizer.operator.logical.LogicalOlapScanOperator;
-+import com.starrocks.sql.optimizer.operator.logical.LogicalProjectOperator;
- import com.starrocks.sql.optimizer.operator.logical.LogicalUnionOperator;
- import com.starrocks.sql.optimizer.operator.logical.LogicalValuesOperator;
- import com.starrocks.sql.optimizer.operator.logical.LogicalWindowOperator;
- import com.starrocks.sql.optimizer.operator.scalar.BinaryPredicateOperator;
- import com.starrocks.sql.optimizer.operator.scalar.CallOperator;
- import com.starrocks.sql.optimizer.operator.scalar.CastOperator;
-+import com.starrocks.sql.optimizer.operator.scalar.CollectionElementOperator;
- import com.starrocks.sql.optimizer.operator.scalar.ColumnRefOperator;
- import com.starrocks.sql.optimizer.operator.scalar.CompoundPredicateOperator;
- import com.starrocks.sql.optimizer.operator.scalar.ConstantOperator;
- import com.starrocks.sql.optimizer.operator.scalar.InPredicateOperator;
- import com.starrocks.sql.optimizer.operator.scalar.ScalarOperator;
-+import com.starrocks.sql.optimizer.operator.scalar.SubfieldOperator;
- import com.starrocks.sql.plan.ConnectorPlanTestBase;
-+import com.starrocks.statistic.StatisticUtils;
-+import com.starrocks.thrift.TExplainLevel;
-+import com.starrocks.type.ArrayType;
- import com.starrocks.type.DateType;
- import com.starrocks.type.IntegerType;
-+import com.starrocks.type.StructField;
-+import com.starrocks.type.StructType;
-+import com.starrocks.type.Type;
- import com.starrocks.type.VarcharType;
- import com.starrocks.utframe.StarRocksAssert;
- import com.starrocks.utframe.UtFrameUtils;
-@@ -315,6 +326,212 @@ public void testLogicalOlapTableScan() throws Exception {
-         }
+@@ -1334,6 +1334,53 @@ TEST_F(ParquetEncodingTest, PlainFixedLengthWithNulls) {
      }
+ }
  
-+    /**
-+     * Operator level test for both call sites that ask the statistics storage for a subfield path: the projection of a
-+     * scan operator, and a LogicalProject on top of a scan. A query reaches the first one, see
-+     * {@link #testQueryWithSubfieldOfArrayElement()}, but not the second one, because the project is merged into the
-+     * scan projection before statistics are estimated. That branch is therefore covered by a hand built operator tree.
-+     */
-+    @Test
-+    public void testSkipStatisticsForSubfieldOfArrayElement() {
-+        GlobalStateMgr globalStateMgr = connectContext.getGlobalStateMgr();
-+        OlapTable table = (OlapTable) globalStateMgr.getLocalMetastore().getDb("statistics_test")
-+                .getTable("test_all_type");
-+        List<Long> partitionIds = table.getPartitions().stream()
-+                .mapToLong(Partition::getId).boxed().collect(Collectors.toList());
++// A chunk is filled page by page into the same column. Large values mean few rows per page and many
++// pages, so the byte buffer must grow geometrically across pages instead of reallocating on each one.
++TEST_F(ParquetEncodingTest, PlainStringWithNullsGrowsGeometricallyAcrossPages) {
++    const EncodingInfo* encoding = nullptr;
++    ASSERT_OK(EncodingInfo::get(tparquet::Type::BYTE_ARRAY, tparquet::Encoding::PLAIN, &encoding));
++    std::unique_ptr<Decoder> decoder;
++    ASSERT_OK(encoding->create_decoder(&decoder));
 +
-+        Type structType = new StructType(
-+                new ArrayList<>(List.of(new StructField("bucket_id", IntegerType.INT))));
-+        Type arrayType = new ArrayType(structType);
-+        Column arrayColumn = new Column("bucket_array", arrayType, true);
-+        ColumnRefOperator arrayRef = columnRefFactory.create("bucket_array", arrayType, true);
-+        ColumnRefOperator outputRef = columnRefFactory.create("bucket_id", IntegerType.INT, true);
-+        CollectionElementOperator arrayElement = new CollectionElementOperator(
-+                structType, arrayRef, ConstantOperator.createInt(1), false);
-+        SubfieldOperator subfield = new SubfieldOperator(
-+                arrayElement, IntegerType.INT, List.of("bucket_id"));
++    constexpr size_t kNumPages = 256;
++    constexpr size_t kValueSize = 1000; // > 128, so values go through BinaryColumn::append_bytes
++    const std::vector<uint8_t> nulls = {0, 1};
 +
-+        LogicalOlapScanOperator scanOperator = new LogicalOlapScanOperator(table,
-+                ImmutableMap.of(arrayRef, arrayColumn),
-+                ImmutableMap.of(arrayColumn, arrayRef),
-+                null, -1, null,
-+                table.getBaseIndexMetaId(),
-+                partitionIds,
-+                null,
-+                false,
-+                Lists.newArrayList(),
-+                Lists.newArrayList(),
-+                Lists.newArrayList(),
-+                false);
-+        scanOperator.setProjection(new Projection(ImmutableMap.of(outputRe
++    auto dst = NullableColumn::create(BinaryColumn::create(), NullColumn::create());
++    auto* binary = down_cast<BinaryColumn*>(dst->data_column_raw_ptr());
++    std::vector<std::string> expected;
++    size_t num_reallocs = 0;
++    NullInfos infos;
++    for (size_t page = 0; page < kNumPages; page++) {
++        std::string value(kValueSize, static_cast<char>('a' + page % 26));
++        value[0] = static_cast<char>(page % 251);
++        Slice slice(value);
++        std::unique_ptr<Encoder> encoder;
++        ASSERT_OK(encoding->create_encoder(&encoder));
++        ASSERT_OK(encoder->append(reinterpret_cast<const uint8_t*>(&slice), 1));
++        Slice data = encoder->build();
++        ASSERT_OK(decoder->set_data(data));
++
++        fill_null_infos(nulls, 0, nulls.size(), &infos);
++        size_t capacity = binary->get_bytes().capacity();
++        ASSERT_OK(decoder->next_batch_with_nulls(nulls.size(), infos, ColumnContentType::VALUE, dst.get(), nullptr));
++        num_reallocs += binary->get_bytes().capacity() != capacity;
++        expected.push_back(std::move(value));
++    }
++
++    ASSERT_EQ(kNumPages * nulls.size(), dst->size());
++    for (size_t i = 0; i < dst->size(); i++) {
++        if (i % 2 == 1) {
++            ASSERT_TRUE(dst->is_null(i)) << "row " << i;
++        } else {
++            ASSERT_FALSE(dst->is_null(i)) << "row " << i;
++            ASSERT_EQ(Slice(expected[i / 2]), binary->get_slice(i)) << "row " << i;
++        }
++    }
++    // An exact reserve reallocates on every page (256 times); geometric growth needs about log2(256).
++    ASSERT_LE(num_reallocs, 16);
++}
++
+ TEST_F(ParquetEncodingTest, AssignNullsFromDefLevels) {
+     std::mt19937 rng(3);
+     std::uniform_int_distribution<int> pct(0, 99);
 ```
 
 ---
 
-### Incident Patch 3: `234fea95` (2026-11-12)
-**Commit Message**: [BugFix] Keep constant columns in MAP casts (#82964)
+### Incident Patch 2: `e1eeaa0c` (2026-11-13)
+**Commit Message**: [Doc] Fix doubled words in the Tableau and AWS network pages (#83247)
 
-Signed-off-by: Viktor Gnidenko <[REDACTED_EMAIL]>
+Signed-off-by: Dan Roscigno <[REDACTED_EMAIL]>
+Co-authored-by: Dan Roscigno <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `be/src/exprs/cast_nested.cpp` (modified, +3/-0)
+**File**: `docs/en/integrations/BI_integrations/Tableau_Desktop.md` (modified, +1/-1)
 ```diff
-@@ -57,6 +57,9 @@ StatusOr<ColumnPtr> CastMapExpr::evaluate_checked(ExprContext* context, Chunk* p
-     auto casted_map = MapColumn::create(casted_key_column, casted_value_column,
-                                         ColumnHelper::as_column<UInt32Column>(std::move(*src_offsets_column).mutate()));
-     RETURN_IF_ERROR(down_cast<MapColumn*>(casted_map->as_mutable_raw_ptr())->unfold_const_children(_type));
-+    if (orig_column->is_constant()) {
-+        return ConstColumn::create(std::move(casted_map), orig_column->size());
-+    }
-     if (!orig_column->is_nullable()) {
-         return casted_map;
-     }
-```
-
-**File**: `be/test/exprs/cast_expr_core_test.cpp` (modified, +59/-0)
-```diff
-@@ -14,8 +14,13 @@
+@@ -65,7 +65,7 @@ Before proceeding, make sure the following requirements are met:
+       sudo cp /<path_to_driver_file_name>.jar /opt/tableau/tableau_driver/jdbc
+       ```
+   
+-   2. Grant permission to the the "Tableau" user.
++   2. Grant permission to the "Tableau" user.
  
- #include <gtest/gtest.h>
- 
-+#include "column/chunk.h"
-+#include "column/column_helper.h"
-+#include "column/const_column.h"
-+#include "column/map_column.h"
- #include "common/object_pool.h"
- #include "exprs/cast_expr.h"
-+#include "exprs/column_ref.h"
- 
- namespace starrocks {
- 
-@@ -39,6 +44,21 @@ TypeDescriptor make_array_type(LogicalType elem_type) {
-     return array_type;
- }
- 
-+const auto int_map_type = TypeDescriptor::create_map_type(TYPE_INT_DESC, TYPE_INT_DESC);
-+const auto bigint_key_map_type = TypeDescriptor::create_map_type(TYPE_BIGINT_DESC, TYPE_INT_DESC);
-+
-+StatusOr<ColumnPtr> cast_map(ColumnPtr input) {
-+    ObjectPool pool;
-+    auto* input_expr = pool.add(new ColumnRef(int_map_type, 0));
-+    auto* expr = VectorizedCastExprFactory::from_type(int_map_type, bigint_key_map_type, input_expr, &pool);
-+    if (expr == nullptr) {
-+        return Status::InternalError("Failed to create MAP cast expression");
-+    }
-+    Chunk chunk;
-+    chunk.append_column(std::move(input), 0);
-+    return expr->evaluate_checked(nullptr, &chunk);
-+}
-+
- } // namespace
- 
- TEST(CastExprCoreTest, from_thrift_succeeds_for_primitive_cast) {
-@@ -59,4 +79,43 @@ TEST(CastExprCoreTest, from_thrift_returns_null_for_unsupported_cast) {
-     EXPECT_EQ(nullptr, expr);
- }
- 
-+TEST(CastExprCoreTest, map_cast_preserves_constant) {
-+    auto input = ColumnHelper::create_column(int_map_type, false);
-+    input->append_datum(DatumMap{{int32_t{1}, int32_t{7}}});
-+    auto result = cast_map(ConstColumn::create(std::move(input), 4));
-+    ASSERT_TRUE(result.ok()) << result.status();
-+    ASSERT_EQ(4, result.value()->size());
-+    ASSERT_TRUE(result.value()->is_constant());
-+
-+    const auto* map = down_cast<const MapColumn*>(ColumnHelper::get_data_column(result.value().get()));
-+    EXPECT_EQ(1, map->size());
-+    EXPECT_EQ("{1:7}", map->debug_item(0));
-+    EXPECT_NE(nullptr, dynamic_cast<const Int64Column*>(ColumnHelper::get_data_column(map->keys_column().get())));
-+}
-+
-+TEST(CastExprCoreTest, map_cast_preserves_nullable_rows) {
-+    auto input = ColumnHelper::create_column(int_map_type, true);
-+    input->append_datum(DatumMap{{int32_t{1}, int32_t{7}}});
-+    input->append_nulls(1);
-+    input->append_datum(DatumMap{});
-+    input->append_datum(DatumMap{{int32_t{2}, int32_t{9}}});
-+    auto result = cast_map(std::move(input));
-+    ASSERT_TRUE(result.ok()) << result.status();
-+    const auto& output = result.value();
-+    ASSERT_EQ(4, output->size());
-+    EXPECT_FALSE(output->is_constant());
-+    ASSERT_TRUE(output->is_nullable());
-+    EXPECT_EQ("{1:7}", output->debug_item(0));
-+    EXPECT_TRUE(output->is_null(1));
-+    EXPECT_EQ("{}", output->debug_item(2));
-+    EXPECT_EQ("{2:9}", output->debug_item(3));
-+}
-+
-+TEST(CastExprCoreTest, map_cast_preserves_constant_null) {
-+    auto result = cast_map(ColumnHelper::create_const_null_column(4));
-+    ASSERT_TRUE(result.ok()) << result.status();
-+    EXPECT_EQ(4, result.value()->size());
-+    EXPECT_TRUE(result.value()->only_null());
-+}
-+
- } // namespace starrocks
-```
-
-**File**: `test/sql/test_map/R/test_cast_constant_map` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+-- name: test_cast_constant_map
-+WITH t AS (
-+    SELECT generate_series AS id, CAST(parse_json('{"1":7}') AS MAP<INT,INT>) AS m
-+    FROM TABLE(generate_series(1,4))
-+)
-+SELECT CAST(m AS MAP<BIGINT,INT>) AS m FROM t;
-+-- result:
-+{1:7}
-+{1:7}
-+{1:7}
-+{1:7}
-+-- !result
-```
-
-**File**: `test/sql/test_map/T/test_cast_constant_map` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
-+-- name: test_cast_constant_map
-+WITH t AS (
-+    SELECT generate_series AS id, CAST(parse_json('{"1":7}') AS MAP<INT,INT>) AS m
-+    FROM TABLE(generate_series(1,4))
-+)
-+SELECT CAST(m AS MAP<BIGINT,INT>) AS m FROM t;
+       ```Bash
+       # Replace <driver_file_name> with the name of the driver file.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #83011** (2026-11-12): [BugFix][RB-817] Skip statistics lookup for struct fields of expressions to avoid Unknown column errors (backport #82995) (@mergify[bot])
-- **PR #83010** (2026-11-12): [BugFix][RB-817] Skip statistics lookup for struct fields of expressions to avoid Unknown column errors (backport #82995) (@mergify[bot])
-- **PR #83009** (2026-11-12): [BugFix][RB-817] Skip statistics lookup for struct fields of expressions to avoid Unknown column errors (backport #82995) (@mergify[bot])
-- **PR #83007** (2026-11-12): [BugFix] Keep constant columns in MAP casts (backport #82964) (@mergify[bot])
-- **PR #83004** (2026-11-12): [Doc] Merge the warehouse and privilege partials into their pages (backport #82999) (@mergify[bot])
-- **PR #83003** (2026-11-12): [Doc] Merge the warehouse and privilege partials into their pages (backport #82999) (@mergify[bot])
+- **PR #83266** (closed): [UT] Fix URI-encoded BE tab assertion in proc profile SQL test (@starrocks-bot[bot])
+- **PR #83265** (closed): [BugFix] Fail FE startup when the BDB environment becomes invalid (@starrocks-bot[bot])
+- **PR #83264** (closed): [BugFix] Reset ORC compression state when suppressing PRESENT streams (@starrocks-bot[bot])
+- **PR #83263** (closed): [BugFix] Keep version-valid replicas queryable during balance (@starrocks-bot[bot])
+- **PR #83262** (2026-11-14): [BugFix][RB-1649] Grow the parquet plain binary decode buffer geometrically across pages (backport #83259) (@mergify[bot])
+- **PR #83261** (2026-11-14): [BugFix][RB-1649] Grow the parquet plain binary decode buffer geometrically across pages (backport #83259) (@mergify[bot])
 
 ---
 
@@ -2614,40 +1973,36 @@ Signed-off-by: Viktor Gnidenko <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [BugFix] Add the fractional seconds of an INTERVAL ... SECOND exactly (#81371)
+## X. [BugFix][RB-1649] Grow the parquet plain binary decode buffer geometrically acro
 
 **RULE**:
-When implementing operations in `fe/fe-core/src/main/java/com/starrocks/sql/analyzer/ExpressionAnalyzer.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `be/src/formats/parquet/encoding_plain.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bf73116b`: [BugFix] Add the fractional seconds of an INTERVAL ... SECOND exactly (#81371). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `72c16b08`: [BugFix][RB-1649] Grow the parquet plain binary decode buffer geometrically across pages. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `fe/fe-core/src/main/java/com/starrocks/sql/analyzer/ExpressionAnalyzer.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `be/src/formats/parquet/encoding_plain.h`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-import java.math.BigDecimal;
-            String fnName = fn.getFunctionName().getFunction();
-            if (FunctionSet.SECONDS_ADD.equals(fnName) || FunctionSet.SECONDS_SUB.equals(fnName)) {
-                // A literal amount with more than 6 decimals is refused here already, so that a definition that uses it,
-                // such as a generated column or a view, is refused when it is created rather than each time it is used
-                BigDecimal seconds = IntervalSeconds.literalValue(node.getChild(1));
-                if (seconds != null) {
-                    IntervalSeconds.split(seconds, node.getPos());
-                }
+            // This runs once per page into the same column. An exact reserve(final_offset) would
+            // reallocate and copy the whole column on every page (quadratic for large values),
+            // so grow geometrically like the vector itself would.
+            if (bytes.capacity() < final_offset) {
+                bytes.reserve(std::max(final_offset, 2 * bytes.capacity()));
             }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+            binary_column->get_bytes().reserve(final_offset);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bf73116b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `72c16b08` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

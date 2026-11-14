@@ -3,7 +3,7 @@
 > **Source Version**: `hf-autotrust`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T05:40:36.422Z  
+> **Timestamp**: 2026-11-14T16:43:18.022Z  
 > **Learning ID**: `learn-huggingface-autotrust-jev-27b-vl`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,22 +12,22 @@
 
 ---
 
-# Forensic Learning Record (Deep Inspection): autotrust/JEV-27B-VL
+# Forensic Learning Record (Deep Inspection): autotrust/AutoTrust-Decider-Pro-Vision-27B
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/autotrust/JEV-27B-VL](https://huggingface.co/autotrust/JEV-27B-VL))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T05:40:35.698Z  
+> **Harvest Timestamp**: 2026-11-14T16:38:22.450Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
-- **Repository / Resource**: `autotrust/JEV-27B-VL`
+- **Repository / Resource**: `autotrust/AutoTrust-Decider-Pro-Vision-27B`
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 1565174 downloads | 3529 likes
+- **Stars / Engagement**: 1462022 downloads | 4856 likes
 
 ---
 

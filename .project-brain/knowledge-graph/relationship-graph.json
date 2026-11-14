@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-14T16:23:47.625Z",
+  "updated_at": "2026-11-14T16:43:51.091Z",
   "statistics": {
-    "total_nodes": 202,
-    "total_edges": 110,
+    "total_nodes": 203,
+    "total_edges": 111,
     "domain_distribution": {
-      "D": 156,
+      "D": 157,
       "M": 1,
       "H": 18,
       "J": 8,
@@ -18,7 +18,7 @@
       "B": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 110
+      "CONSTRAINED_BY_ARCHITECTURE": 111
     }
   },
   "nodes": {
@@ -4530,6 +4530,29 @@
       ],
       "created_at": "2026-11-14T16:23:47.625Z",
       "updated_at": "2026-11-14T16:23:47.625Z"
+    },
+    "DOM-D-65E545AD": {
+      "id": "DOM-D-65E545AD",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): autotrust/AutoTrust-Decider-Pro-Vision-27B",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md`  \n> **Source**: huggingface ([https://huggingf -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md`  \n> **Source**: huggingface ([https://huggingf",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-autotrust-jev-27b-vl/hf-autotrust-jev-27b-vl-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T16:43:21.839Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-autotrust-jev-27b-vl)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-14T16:43:51.091Z",
+      "updated_at": "2026-11-14T16:43:51.091Z"
     }
   },
   "edges": [
@@ -5632,6 +5655,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-80D6B779 [D] with Domain M",
       "created_at": "2026-11-14T16:23:20.239Z"
+    },
+    {
+      "id": "EDGE-B6A520A27B8E",
+      "sourceId": "DOM-D-65E545AD",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-65E545AD [D] with Domain M",
+      "created_at": "2026-11-14T16:43:51.091Z"
     }
   ]
 }

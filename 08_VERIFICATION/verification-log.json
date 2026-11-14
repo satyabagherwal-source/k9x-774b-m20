@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-FRBK",
-    "timestamp": "2026-11-09T10:59:33.776Z",
-    "repository": "krishhgg/Insomnia",
-    "learningId": "learn-github-krishhgg-insomnia",
-    "contentHash": "f0bc9a12bf5221da8a1a71f92ebbde4cf6e79ba90a6c5669be5e56b7d464b3af",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-FT13",
-    "timestamp": "2026-11-09T10:59:35.991Z",
-    "repository": "goharbor/harbor",
-    "learningId": "learn-github-goharbor-harbor",
-    "contentHash": "49c27c60d7cff5f590f82d41c4b9152e961fa1b125dd67b31a0f16ef19e5df07",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-FXNS",
-    "timestamp": "2026-11-09T10:59:41.992Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "97bddb16a5647a464aacaab17dc75629f70f360ca51b2b2b898e9630d898d356",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-LII7",
     "timestamp": "2026-11-09T11:04:02.287Z",
     "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
@@ -7492,6 +7447,51 @@
     "contentHash": "9355cea507c6edd4fca6e1eae4e0cc0f0c56864b7acdcf1ebb2f7f9817c150bb",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-QTPA",
+    "timestamp": "2026-11-14T16:38:26.782Z",
+    "repository": "tokio-rs/tokio",
+    "learningId": "learn-github-tokio-rs-tokio",
+    "contentHash": "5a32608da0e49143da8447e93f57c2b0a0ce3235319d689f56e33024dd8b330f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-R1OQ",
+    "timestamp": "2026-11-14T16:38:37.130Z",
+    "repository": "StarRocks/starrocks",
+    "learningId": "learn-github-starrocks-starrocks",
+    "contentHash": "dd85706414b35386a2205a1f40544cfe5888fa264c19427c50d61f2535892b18",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-X2PC",
+    "timestamp": "2026-11-14T16:43:18.384Z",
+    "repository": "autotrust/AutoTrust-Decider-Pro-Vision-27B",
+    "learningId": "learn-huggingface-autotrust-jev-27b-vl",
+    "contentHash": "3a005cb391aab9fcb892ae95a29c266a79abc7fbdec01e72dd59605b80f189f7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -9912,3 +9912,7 @@ Every entry in this ledger must capture:
 | `learn-github-react-native-webrtc-react-native-webrtc` | `https://github.com/react-native-webrtc/react-native-webrtc` | `7b9b451b` | Multi-dimensional audit evidence | 2026-11-14T16:22:53.319Z |
 | `learn-dom-d-80d6b779` | `project://hf-jialinyyzz-humanizer` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md` | 2026-11-14T16:23:20.240Z |
 | `learn-dom-h-305ceba3` | `project://react-native-webrtc-react-native-webrtc` | `7b9b451b` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-native-webrtc-react-native-webrtc-learnings.md` | 2026-11-14T16:23:47.626Z |
+| `learn-github-tokio-rs-tokio` | `https://github.com/tokio-rs/tokio` | `f3e855fa` | Multi-dimensional audit evidence | 2026-11-14T16:38:26.786Z |
+| `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `72c16b08` | Multi-dimensional audit evidence | 2026-11-14T16:38:37.133Z |
+| `learn-huggingface-autotrust-jev-27b-vl` | `https://huggingface.co/autotrust/JEV-27B-VL` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-14T16:43:18.388Z |
+| `learn-dom-d-65e545ad` | `project://hf-autotrust-jev-27b-vl` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md` | 2026-11-14T16:43:51.092Z |

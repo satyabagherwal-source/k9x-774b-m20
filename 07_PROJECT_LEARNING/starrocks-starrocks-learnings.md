@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source**: github ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
-> **Source Version**: `9a755b9e`  
+> **Source Version**: `72c16b08`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T11:24:31.668Z  
+> **Timestamp**: 2026-11-14T16:38:36.341Z  
 > **Learning ID**: `learn-github-starrocks-starrocks`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T11:24:31.662Z  
+> **Harvest Timestamp**: 2026-11-14T16:38:36.336Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1818,836 +1818,117 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `28f9a91c` (2026-11-13)
-**Commit Message**: [BugFix] Fix BatchRunCounter unsigned filter comparison and delta decode signed overflow UB (#82015)
+### Incident Patch 1: `72c16b08` (2026-11-14)
+**Commit Message**: [BugFix][RB-1649] Grow the parquet plain binary decode buffer geometrically across pages (#83259)
 
-Signed-off-by: James Lamb <[REDACTED_EMAIL]>
+Signed-off-by: tqqq <[REDACTED_EMAIL]>
+Co-authored-by: tqqq <[REDACTED_EMAIL]>
 
-**File**: `be/src/base/simd/batch_run_counter.h` (modified, +10/-9)
+**File**: `be/src/formats/parquet/encoding_plain.h` (modified, +6/-1)
 ```diff
-@@ -62,15 +62,15 @@ class BatchRunCounter {
+@@ -296,7 +296,12 @@ class PlainDecoder<Slice> final : public Decoder {
+                 }
+             });
  
-         if (batch_size >= 32 && _left >= 32) {
-             __m256i f = _mm256_loadu_si256(reinterpret_cast<const __m256i*>(_filter + _offset));
--            uint32_t mask = _mm256_movemask_epi8(_mm256_cmpgt_epi8(f, all0));
-+            uint32_t zero_mask = _mm256_movemask_epi8(_mm256_cmpeq_epi8(f, all0));
-             _offset += 32;
-             _left -= 32;
- 
--            if (mask == 0) {
-+            if (zero_mask == 0xffffffff) {
-                 // all zero
-                 return BatchCount(32, 0, true);
--            } else if (mask == 0xffffffff) {
--                // all one
-+            } else if (zero_mask == 0) {
-+                // all non-zero
-                 return BatchCount(32, 32, true);
-             } else {
-                 return BatchCount(32, 0, false);
-@@ -83,15 +83,15 @@ class BatchRunCounter {
- 
-         if (batch_size >= 16 && _left >= 16) {
-             const auto f = _mm_loadu_si128(reinterpret_cast<const __m128i*>(_filter + _offset));
--            const auto mask = _mm_movemask_epi8(_mm_cmpgt_epi8(f, zero16));
-+            const auto zero_mask = _mm_movemask_epi8(_mm_cmpeq_epi8(f, zero16));
-             _offset += 16;
-             _left -= 16;
- 
--            if (mask == 0) {
-+            if (zero_mask == 0xffff) {
-                 // all zero
-                 return BatchCount(16, 0, true);
--            } else if (mask == 0xffff) {
--                // all one
-+            } else if (zero_mask == 0) {
-+                // all non-zero
-                 return BatchCount(16, 16, true);
-             } else {
-                 return BatchCount(16, 0, false);
-@@ -137,7 +137,8 @@ class BatchRunCounter {
-             _left -= 8;
-             if (partital_value == 0) {
-                 return BatchCount(8, 0, true);
--            } else if (partital_value == 0x0101010101010101) {
-+            } else if (partital_value == 0x0101010101010101ULL ||
-+                       (((partital_value - 0x0101010101010101ULL) & ~partital_value & 0x8080808080808080ULL) == 0)) {
-                 return BatchCount(8, 8, true);
-             } else {
-                 return BatchCount(8, 0, false);
-```
-
-**File**: `be/src/base/simd/delta_decode.cpp` (modified, +26/-10)
-```diff
-@@ -80,8 +80,10 @@ DD_TARGET_AVX2 void delta_decode_chain_int32_avx2(int32_t* buf, int n, int32_t m
-     }
- 
-     for (int i = sz; i < n; i++) {
--        buf[i] += last_value + min_delta;
--        last_value = buf[i];
-+        uint32_t val =
-+                static_cast<uint32_t>(buf[i]) + static_cast<uint32_t>(last_value) + static_cast<uint32_t>(min_delta);
-+        buf[i] = static_cast<int32_t>(val);
-+        last_value = static_cast<int32_t>(val);
-     }
- }
- 
-@@ -118,8 +120,10 @@ DD_TARGET_AVX512VL void delta_decode_chain_int32_avx2x(int32_t* buf, int n, int3
-     }
- 
-     for (int i = sz; i < n; i++) {
--        buf[i] += last_value + min_delta;
--        last_value = buf[i];
-+        uint32_t val =
-+                static_cast<uint32_t>(buf[i]) + static_cast<uint32_t>(last_value) + static_cast<uint32_t>(min_delta);
-+        buf[i] = static_cast<int32_t>(val);
-+        last_value = static_cast<int32_t>(val);
-     }
- }
- 
-@@ -160,8 +164,10 @@ DD_TARGET_AVX512F void delta_decode_chain_int32_avx512(int32_t* buf, int n, int3
-     }
- 
-     for (int i = sz; i < n; i++) {
--        buf[i] += last_value + min_delta;
--        last_value = buf[i];
-+        uint32_t val =
-+                static_cast<uint32_t>(buf[i]) + static_cast<uint32_t>(last_value) + static_cast<uint32_t>(min_delta);
-+        buf[i] = static_cast<int32_t>(val);
-+        last_value = static_cast<int32_t>(val);
-     }
- }
- 
-@@ -202,8 +208,10 @@ DD_TARGET_AVX512F void delta_decode_chain_int64_avx512(int64_t* buf, int n, int6
-     }
- 
-     for (int i = sz; i < n; i++) {
--        buf[i] += last_value + min_delta;
--        last_value = buf[i];
-+        uint64_t val =
-+                static_cast<uint64_t>(buf[i]) + static_cast<uint64_t>(last_value) + static_cast<uint64_t>(min_delta);
-+        buf[i] = static_cast<int64_t>(val);
-+        last_value = static_cast<int64_t>(val);
-     }
- }
- 
-@@ -308,6 +316,14 @@ void delta_decode_chain_int64_neon(int64_t* buf, int n, int64_t min_delta, int64
- // The AVX-512 path is skipped under ASan: it spills zmm registers to a stack slot ASan aligns to 32
- // (not 64) bytes, so the store touches the redzone and traps. See https://github.com/llvm/llvm-project/issues/91565.
- 
-+void delta_decode_chain_int32_scalar(int32_t* buf, int n, int32_t min_delta, int32_t& last_value) {
-+    delta_decode_chain_scalar_prefetch<int32_t>(buf, n, min_delta, last_value);
-+}
-+
-+void delta_decode_chain_int64_scalar(int64_t* buf, int n, int64_t min_delta, int64_t& last_value) {
-+    delta_decode_chain_scalar_prefetch<int64_t>(buf, n, min_delta, last_value);
-+}
-+
- void delta_decode_chain_int32(int32_t* buf, int n, int32_t min_delta, int32_t& last_value) {
- #if defined(__x86_64__)
- #if !defined(ADDRESS_SANITIZER)
-@@ -324,7 +340,7 @@ void delta_decode_chain_int32(int32_t* buf, int n, int32_t min_delta, int32_t& l
-     delta_decode_chain_int32_neon(buf, n, min_delta, last_value);
-     return;
- #endif
--    delta_decode_chain_scalar_prefetch<int32_t>(buf, n, min_delta, last_value);
-+    delta_decode_chain_int32_scalar(buf, n, min_delta, last_value);
- }
- 
- void delta_decode_chain_int64(int64_t* buf, int n, int64_t min_delta, int64_t& last_value) {
-@@ -337,7 +353,7 @@ void delta_decode_chain_int64(int64_t* buf, int n, int64_t min_delta, int64_t& l
-     delta_decode_chain_int64_neon(buf, n, min_delta, last_value);
-     return;
- #endif
--    delta_decode_chain_scalar_prefetch<int64_t>(buf, n, min_delta, last_value);
-+    delta_decode_chain_int64_scalar(buf, n, min_delta, last_value);
- }
- 
- } // namespace starrocks
-```
-
-**File**: `be/src/base/simd/delta_decode.h` (modified, +16/-11)
-```diff
-@@ -16,6 +16,7 @@
- 
- #include <cstddef>
- #include <cstdint>
-+#include <type_traits>
- 
- #if defined(__x86_64__) && defined(__AVX2__)
- #include <immintrin.h>
-@@ -36,11 +37,9 @@ inline bool contains_negative_value_scalar(const int32_t* buf, int n) {
- static inline bool contains_negative_value(const int32_t* data, size_t size) {
-     size_t i = 0;
- #ifdef __AVX2__
--    __m256i v_zero = _mm256_setzero_si256();
-     for (; i + 8 <= size; i += 8) {
--        __m256i v = _mm256_loadu_si256((__m256i*)(data + i));
--        __m256i cmp = _mm256_cmpgt_epi32(v_zero, v);
--        if (_mm256_movemask_epi8(cmp)) return true;
-+        __m256i v = _mm256_loadu_si256(reinterpret_cast<const __m256i*>(data + i));
-+        if (_mm256_movemask_ps(_mm256_castsi256_ps(v))) return true;
-     }
- #elif defined(__ARM_NEON) && defined(__aarch64__)
-     int32x4_t v_or0 = vdupq_n_s32(0);
-@@ -58,21 +57,27 @@ static inline bool contains_negative_value(const int32_t* data, size_t size) {
- }
- 
- template <typename T>
--static inline void delta_decode_chain_scalar_prefetch(T* buf, int n, T min_delta, T& last_value) noexcept {
--    T acc = last_value;
-+inline void delta_decode_chain_scalar_prefetch(T* buf, int n, T min_delta, T& last_value) noexcept {
-+    using U = std::make_unsigned_t<T>;
-+    U acc = static_cast<U>(last_value);
-+    const U u_min_delta = static_cast<U>(min_delta);
-     int i = 0;
-     for (i = 0; (i + 8) < n; ++i) {
-         __builtin_prefetch(buf + i + 8);
--        acc += buf[i] + min_delta;
--        buf[i] = acc;
-+        acc += static_cast<U>(buf[i]) + u_min_delta;
-+        buf[i] = static_cast<T>(acc);
-     }
-     for (; i < n; ++i) {
--        acc += buf[i] + min_delta;
--        buf[i] = acc;
-+        acc += static_cast<U>(buf[i]) + u_min_delta;
-+        buf[i] = static_cast<T>(acc);
-     }
--    last_value = acc;
-+    last_value = static_cast<T>(acc);
- }
- 
-+// Portable scalar reference implementations, defined in delta_decode.cpp.
-+void delta_decode_chain_int32_scalar(int32_t* buf, int n, int32_t min_delta, int32_t& last_value);
-+void delta_decode_chain_int64_scalar(int64_t* buf, int n, int64_t min_delta, int64_t& last_value);
-+
- // ISA-specific implementations, defined in delta_decode.cpp. Each kernel carries a per-function
- // `target` attribute so its AVX2 / AVX-512 intrinsics are available even when the global build
- // targets a lower baseline (e.g. USE_AVX512=OFF). Declared here for the runtime dispatchers below
-```
-
-**File**: `be/test/base/simd/batch_run_counter_test.cpp` (modified, +157/-0)
-```diff
-@@ -215,4 +215,161 @@ TEST_F(BatchRunCounterTest, deterministic_all_zero_all_one_and_single_flip) {
-     }
- }
- 
-+TEST_F(BatchRunCounterTest, unsigned_filter_values) {
-+    // 1. All 0xFF (values with high bit set, previously broken by signed cmpgt_epi8)
-+    {
-+        std::vector<uint8_t> filter_ff(test_size, 0xFF);
-+        BatchRunCounter<32> counter32(filter_ff.data(), 0, test_size);
-+        BatchCount b32 = counter32.next_batch();
-+        EXPECT_TRUE(b32.AllSet());
-+        EXPECT_FALSE(b32.NoneSet());
-+
-+        BatchRunCounter<16> counter16(filter_ff.data(), 0, test_size);
-+        BatchCount b16 = counter16.next_batch();
-+        EXPECT_TRUE(b16.AllSet());
-+        EXPECT_FALSE(b16.NoneSet());
-+
-+        BatchRunCounter<8> counter8(filter_ff.data(), 0, test_size);
-+        BatchCount b8 = counter8.next_batch();
-+        EXPECT_TRUE(b8.AllSet());
-+        EXPECT_FALSE(b8.NoneSet());
-+    }
-+
-+    // 2. All 0x80 (int8_t -128)
-+    {
-+        std::vector<uint8_t> filter_80(test_size, 0x80);
-+        BatchRunCounter<32> counter32(filter_80.data(), 0, test_size);
-+        BatchCount b32 = counter32.next_batch();
-+        EXPECT_TRUE(b32.AllSet());
-+        EXPECT_FALSE(b32.NoneSet());
-+
-+        BatchRunCounter<16> counter16(filter_80.data(), 0, test_size);
-+        BatchCount b16 = counter16.next_batch();
-+        EXPECT_TRUE(b16.AllSet());
-+        EXPECT_FALSE(b16.NoneSet());
-+
-+        BatchRunCounter<8> counter8(filter_80.data(), 0, test_size);
-+        BatchCount b8 = counter8.next_batch();
-+        EXPECT_TRUE(b8.AllSet());
-+        EXPECT_FALSE(b8.NoneSet());
-+    }
-+
-+    // 3. Mixed unsigned values {0, 0xFF, 0x80, 1, 42}
-+    {
-+        std::vector<uint8_t> filter(test_size);
-+        const uint8_t choices[] = {0, 0xFF, 0x80, 1, 42};
-+        for (size_t i = 0; i < test_size; i++) {
-+            filter[i] = choices[rand() % 5];
-+        }
-+
-+        size_t zero_count = SIMD::count_zero(filter.data(), test_size);
-+
-+        auto count_zeros = [&](auto counter) {
-+            size_t count = 0;
-+            size_t index = 0;
-+            auto batch = counter.next_batch();
-+            while (batch.length > 0) {
-+                if (batch.AllSet()) {
-+                    // all non-zero
-+                } else if (batch.NoneSet()) {
-+                    count += batch.length;
-+                } else {
-+                    for (int i = 0; i < batch.length; i++) {
-+                        if (filter[index + i] == 0) {
-+                            count++;
-+                        }
-+                    }
-+                }
-+                index += batch.length;
-+                batch = counter.next_batch();
+-            binary_column->get_bytes().reserve(final_offset);
++            // This runs once per page into the same column. An exact reserve(final_offset) would
++            // reallocate and copy the whole column on every page (quadratic for large values),
++            // so grow geometrically like the vector itself would.
++            if (bytes.capacity() < final_offset) {
++                bytes.reserve(std::max(final_offset, 2 * bytes.capacity()));
 +            }
-+            return count;
-+        };
-+
-+        EXPECT_EQ(count_zeros(BatchRunCounter<32>(filter.data(), 0, test_size)), zero_count);
-+        EXPECT_EQ(count_zeros(BatchRunCounter<16>(filter.data(), 0, test_size)), zero_count);
-+        EXPECT_EQ(count_zeros(BatchRunCounter<8>(filter.data(), 0, test_size)), zero_count);
-+    }
-+}
-+
-+TEST_F(BatchRunCounterTest, tail_sizes_and_patterns) {
-+    const std::vector<size_t> sizes = {0, 1, 3, 7, 8, 11, 15, 16, 23, 24, 31, 32, 40, 48, 55, 63, 64, 75, 127};
-+
-+    auto run_test = [](const std::vector<uint8_t>& filter) {
-+        size_t expected_zeros = 0;
-+        for (uint8_t b : filter) {
-+            if (b == 0) expected_zeros++;
-+        }
-+
-+        auto count_zeros = [&](auto counter) {
-+            size_t count = 0;
-+            size_t index = 0;
-+            auto batch = counter.next_batch();
-+            while (batch.length > 0) {
-+                if (batch.AllSet()) {
-+                    // all non-zero
-+                } else if (batch.NoneSet()) {
-+                    count += batch.length;
-+                } else {
-+                    for (size_t i = 0; i < batch.length; i++) {
-+                        if (filter[index + i] == 0) {
-+                            count++;
-+                        }
-+                    }
-+                }
-+                index += batch.length;
-+                batch = counter.next_batch();
-+            }
-+            return count;
-+        };
-+
-+        EXPECT_EQ(count_zeros(BatchRunCounter<32>(filter.data(), 0, filter.size())), expected_zeros);
-+        EXPECT_EQ(count_zeros(BatchRunCounter<16>(filter.data(), 0, filter.size())), expected_zeros);
-+        EXPECT_EQ(count_zeros(BatchRunCounter<8>(filter.data(), 0, filter.size())), expected_zeros);
-+    };
-+
-+    for (size_t sz : sizes) {
-+        // 1. All zeros
-+        std::vector<uint8_t> all_zeros(sz, 0);
-+        run_test(all_zeros);
-+
-+        // 2. All 1s
-+        std::vector<uint8_t> all_ones(sz, 1);
-+        run_test(all_ones);
-+
-+        // 3. All 0xFF (unsigned high bit set)
-+        std::vector<uint8_t> all_ff(sz, 0xFF);
-+        run_test(all_ff);
-+
-+        // 4. All 0x80 (int8_t -128)
-+        std::vector<uint8_t> all_80(sz, 0x80);
-+        run_test(all_80);
-+
-+        // 5. Alternating 0 and 1
-+        std::vector<uint8_t> al
-```
-
-**File**: `be/test/base/simd/delta_decode_test.cpp` (modified, +185/-1)
-```diff
-@@ -17,6 +17,7 @@
- #include <gtest/gtest.h>
- 
- #include <climits>
-+#include <limits>
- #include <vector>
- 
- namespace starrocks {
-@@ -53,6 +54,15 @@ TEST_F(DeltaDecodeTest, test_int32) {
-         ASSERT_EQ(v.back(), last_value);
-     }
- 
-+    // scalar entry point
-+    {
-+        std::vector<int32_t> v(values);
-+        int32_t last_value = 10;
-+        delta_decode_chain_int32_scalar(v.data(), v.size(), 10, last_value);
-+        ASSERT_EQ(v, expected);
-+        ASSERT_EQ(v.back(), last_value);
-+    }
-+
- #if defined(__ARM_NEON) && defined(__aarch64__)
-     {
-         std::vector<int32_t> v(values);
-@@ -111,6 +121,15 @@ TEST_F(DeltaDecodeTest, test_int64) {
-         ASSERT_EQ(v.back(), last_value);
-     }
- 
-+    // scalar entry point
-+    {
-+        std::vector<int64_t> v(values);
-+        int64_t last_value = 10;
-+        delta_decode_chain_int64_scalar(v.data(), v.size(), 10, last_value);
-+        ASSERT_EQ(v, expected);
-+        ASSERT_EQ(v.back(), last_value);
-+    }
-+
- #if defined(__ARM_NEON) && defined(__aarch64__)
-     {
-         std::vector<int64_t> v(values);
-@@ -184,8 +203,173 @@ TEST_F(DeltaDecodeTest, test_boundary_sizes_and_negative_deltas) {
-     }
- }
- 
-+TEST_F(DeltaDecodeTest, test_int32_wrapping_overflow) {
-+    // Deliberately test values that wrap across INT32_MAX and INT32_MIN.
-+    // In standard C++, signed overflow is UB unless unsigned cast is used.
-+    // Under UBSan (-fsanitize=undefined), this verifies zero traps occur.
-+    const size_t sz = 137;
-+    std::vector<int32_t> values(sz);
-+    int32_t start_val = std::numeric_limits<int32_t>::max() - 50;
-+    int32_t min_delta = 100;
-+    for (size_t i = 0; i < sz; i++) {
-+        values[i] = static_cast<int32_t>(i * 1000);
-+    }
-+    // Force a signed underflow in the scalar tail (index 136) as well as the SIMD loop (index 0).
-+    values[sz - 1] = std::numeric_limits<int32_t>::min();
-+
-+    std::vector<int32_t> expected(values);
-+    int32_t expected_last = start_val;
-+    delta_decode_chain_scalar_prefetch<int32_t>(expected.data(), expected.size(), min_delta, expected_last);
-+    ASSERT_EQ(expected.back(), expected_last);
-+
-+    {
-+        std::vector<int32_t> v(values);
-+        int32_t last_val = start_val;
-+        delta_decode_chain_int32(v.data(), v.size(), min_delta, last_val);
-+        ASSERT_EQ(v, expected);
-+        ASSERT_EQ(v.back(), last_val);
-+    }
-+
-+    {
-+        std::vector<int32_t> v(values);
-+        int32_t last_val = start_val;
-+        delta_decode_chain_int32_scalar(v.data(), v.size(), min_delta, last_val);
-+        ASSERT_EQ(v, expected);
-+        ASSERT_EQ(v.back(), last_val);
-+    }
-+
-+#if defined(__ARM_NEON) && defined(__aarch64__)
-+    {
-+        std::vector<int32_t> v(values);
-+        int32_t last_val = start_val;
-+        delta_decode_chain_int32_neon(v.data(), v.size(), min_delta, last_val);
-+        ASSERT_EQ(v, expected);
-+        ASSERT_EQ(v.back(), last_val);
-+    }
-+#endif
-+
-+#if defined(__x86_64__)
-+    if (__builtin_cpu_supports("avx2")) {
-+        std::vector<int32_t> v(values);
-+        int32_t last_val = start_val;
-+        delta_decode_chain_int32_avx2(v.data(), v.size(), min_delta, last_val);
-+        ASSERT_EQ(v, expected);
-+        ASSERT_EQ(v.back(), last_val);
-+    }
-+#if !defined(ADDRESS_SANITIZER)
-+    if (__builtin_cpu_supports("avx512f") && __builtin_cpu_supports("avx512vl")) {
-+        std::vector<int32_t> v(values);
-+        int32_t last_val = start_val;
-+        delta_decode_chain_int32_avx2x(v.data(), v.size(), min_delta, last_val);
-+        ASSERT_EQ(v, expected);
-+        ASSERT_EQ(v.back(), last_val);
-+    }
-+    if (__builtin_cpu_supports("avx512f")) {
-+        std::vector<int32_t> v(values);
-+        int32_t last_val = start_val;
-+        delta_decode_chain_int32_avx512(v.data(), v.size(), min_delta, last_val);
-+        ASSERT_EQ(v, expected);
-+        ASSERT_EQ(v.back(), last_val);
-+    }
-+#endif
-+#endif
-+}
-+
-+TEST_F(DeltaDecodeTest, test_int64_wrapping_overflow) {
-+    const size_t sz = 137;
-+    std::vector<int64_t> values(sz);
-+    int64_t start_val = std::numeric_limits<int64_t>::max() - 50;
-+    int64_t min_delta = 100;
-+    for (size_t i = 0; i < sz; i++) {
-+        values[i] = static_cast<int64_t>(i * 1000);
-+    }
-+    // Force a signed underflow in the scalar tail (index 136) as well as the SIMD loop (index 0).
-+    values[sz - 1] = std::numeric_limits<int64_t>::min();
-+
-+    std::vector<int64_t> expected(values);
-+    int64_t expected_last = start_val;
-+    delta_decode_chain_scalar_prefetch<int64_t>(expected.data(), expected.size(), min_delta, expected_last);
-+    ASSERT_EQ(expected.back(), expected_last);
-+
-+    {
-+        std::vector<int64_t> v(values);
-+        int64_t last_val = start_val;
-+        delta_decode_chain_int64(v.data(), v.size(), min_delta, last_val);
-+        ASSERT_EQ(v, expected);
-+        ASSERT_EQ(v.back(), last_val);
-+    }
-+
-+    {
-+        std::vector<int64_t> v(values);
-+        int64_t last_val = start_val;
-+        delta_decode_chai
-```
-
----
-
-### Incident Patch 2: `6536a1d7` (2026-11-12)
-**Commit Message**: [BugFix] Fix parquet bloom filter pruning for string struct subfield equality (#82844)
-
-Signed-off-by: kyle-goodale-klaviyo <[REDACTED_EMAIL]>
-
-**File**: `be/src/formats/parquet/complex_column_reader.cpp` (modified, +1/-1)
-```diff
-@@ -647,7 +647,7 @@ StatusOr<bool> StructColumnReader::row_group_bloom_filter(const std::vector<cons
-         if (!val || !val->is_constant()) {
-             return false;
          }
--        auto val_str = down_cast<const ConstColumn*>(val.get())->data_column()->debug_item(0);
-+        auto val_str = down_cast<const ConstColumn*>(val.get())->data_column()->raw_item_value(0);
-         auto t = get_type_info(root->get_child(1)->type().type);
-         ColumnPredicate* pred = nullptr;
-         pred = new_column_eq_predicate(t, rewritten_subfield_predicate->column_id(), val_str);
+ 
+         if (read_count == 0) {
 ```
 
-**File**: `be/test/formats/parquet/file_reader_test.cpp` (modified, +55/-0)
+**File**: `be/test/formats/parquet/encoding_test.cpp` (modified, +47/-0)
 ```diff
-@@ -3280,6 +3280,61 @@ TEST_F(FileReaderTest, bloom_filter_reader_test_hit) {
-     EXPECT_EQ(file_reader->row_group_size(), 1);
+@@ -1334,6 +1334,53 @@ TEST_F(ParquetEncodingTest, PlainFixedLengthWithNulls) {
+     }
  }
  
-+/*
-+    c1 = [f"a{i:04d}" for i in range(1000) if i != 500] + ["a0999"] + [f"b{i:04d}" for i in range(1000)]
-+    table = pa.table({
-+        "c0": pa.array(range(len(c1)), pa.int32()),
-+        "c_struct": pa.StructArray.from_arrays(
-+                [pa.array(range(len(c1)), pa.int32()), pa.array(c1, pa.string())], ["c0", "c1"]),
-+    })
-+    pq.write_table(table, path, row_group_size=1000, use_dictionary=False, write_page_index=False,
-+                   bloom_filter_options={"c_struct.c1": {"ndv": 1000, "fpp": 0.01}})
-+ */
-+TEST_F(FileReaderTest, StructSubfieldStringBloomFilter) {
-+    const std::string file_path = "./be/test/formats/parquet/test_data/struct_subfield_bloom_filter.parquet";
-+    TypeDescriptor type_struct = TypeDescriptor::create_struct_type({"c0", "c1"}, {TYPE_INT_DESC, TYPE_VARCHAR_DESC});
-+    Utils::SlotDesc slot_descs[] = {{"c0", TYPE_INT_DESC}, {"c_struct", type_struct}, {""}};
++// A chunk is filled page by page into the same column. Large values mean few rows per page and many
++// pages, so the byte buffer must grow geometrically across pages instead of reallocating on each one.
++TEST_F(ParquetEncodingTest, PlainStringWithNullsGrowsGeometricallyAcrossPages) {
++    const EncodingInfo* encoding = nullptr;
++    ASSERT_OK(EncodingInfo::get(tparquet::Type::BYTE_ARRAY, tparquet::Encoding::PLAIN, &encoding));
++    std::unique_ptr<Decoder> decoder;
++    ASSERT_OK(encoding->create_decoder(&decoder));
 +
-+    auto scan = [&](const std::string& value, size_t* total_rows, int* bloom_filtered_row_groups) {
-+        auto* ctx = _create_scan_context(slot_descs, file_path);
-+        auto& conjunct_ctxs = ctx->format_scan_context.conjunct_ctxs_by_slot[1];
-+        _create_struct_subfield_predicate_conjunct_ctxs(TExprOpcode::EQ, 1, type_struct, {"c1"}, value, &conjunct_ctxs);
-+        TupleDescriptor* tuple_desc = Utils::create_tuple_descriptor(_runtime_state, &_pool, slot_descs);
-+        ParquetUTBase::setup_conjuncts_manager(conjunct_ctxs, nullptr, tuple_desc, _runtime_state, ctx);
-+        FormatScannerStats stats;
-+        ctx->format_scan_context.stats = &stats;
++    constexpr size_t kNumPages = 256;
++    constexpr size_t kValueSize = 1000; // > 128, so values go through BinaryColumn::append_bytes
++    const std::vector<uint8_t> nulls = {0, 1};
 +
-+        auto file_reader = _create_file_reader(file_path);
-+        Status status = file_reader->init(&ctx->format_scan_context);
-+        ASSERT_OK(status);
++    auto dst = NullableColumn::create(BinaryColumn::create(), NullColumn::create());
++    auto* binary = down_cast<BinaryColumn*>(dst->data_column_raw_ptr());
++    std::vector<std::string> expected;
++    size_t num_reallocs = 0;
++    NullInfos infos;
++    for (size_t page = 0; page < kNumPages; page++) {
++        std::string value(kValueSize, static_cast<char>('a' + page % 26));
++        value[0] = static_cast<char>(page % 251);
++        Slice slice(value);
++        std::unique_ptr<Encoder> encoder;
++        ASSERT_OK(encoding->create_encoder(&encoder));
++        ASSERT_OK(encoder->append(reinterpret_cast<const uint8_t*>(&slice), 1));
++        Slice data = encoder->build();
++        ASSERT_OK(decoder->set_data(data));
 +
-+        auto chunk = std::make_shared<Chunk>();
-+        chunk->append_column(ColumnHelper::create_column(TYPE_INT_DESC, true), chunk->num_columns());
-+        chunk->append_column(ColumnHelper::create_column(type_struct, true), chunk->num_columns());
-+        *total_rows = 0;
-+        while (!status.is_end_of_file()) {
-+            chunk->reset();
-+            status = file_reader->get_next(&chunk);
-+            chunk->check_or_die();
-+            *total_rows += chunk->num_rows();
++        fill_null_infos(nulls, 0, nulls.size(), &infos);
++        size_t capacity = binary->get_bytes().capacity();
++        ASSERT_OK(decoder->next_batch_with_nulls(nulls.size(), infos, ColumnContentType::VALUE, dst.get(), nullptr));
++        num_reallocs += binary->get_bytes().capacity() != capacity;
++        expected.push_back(std::move(value));
++    }
++
++    ASSERT_EQ(kNumPages * nulls.size(), dst->size());
++    for (size_t i = 0; i < dst->size(); i++) {
++        if (i % 2 == 1) {
++            ASSERT_TRUE(dst->is_null(i)) << "row " << i;
++        } else {
++            ASSERT_FALSE(dst->is_null(i)) << "row " << i;
++            ASSERT_EQ(Slice(expected[i / 2]), binary->get_slice(i)) << "row " << i;
 +        }
-+        *bloom_filtered_row_groups = stats.bloom_filter_success_counter;
-+    };
-+
-+    size_t total_rows = 0;
-+    int bloom_filtered_row_groups = 0;
-+
-+    // Row group 0 holds 'a0400' and its bloom filter contains it, so it must not be pruned.
-+    scan("a0400", &total_rows, &bloom_filtered_row_groups);
-+    EXPECT_EQ(1, total_rows);
-+    EXPECT_EQ(0, bloom_filtered_row_groups);
-+
-+    // 'a0500' is inside row group 0's min/max but absent, so only the bloom filter can prune it.
-+    scan("a0500", &total_rows, &bloom_filtered_row_groups);
-+    EXPECT_EQ(0, total_rows);
-+    EXPECT_EQ(1, bloom_filtered_row_groups);
++    }
++    // An exact reserve reallocates on every page (256 times); geometric growth needs about log2(256).
++    ASSERT_LE(num_reallocs, 16);
 +}
 +
- TEST_F(FileReaderTest, read_parquet_bloom_filter_by_parquet_hadoop) {
-     Utils::SlotDesc slot_descs[] = {{"c0", TYPE_VARCHAR_DESC}, {"c1", TYPE_INT_DESC}, {"c2", TYPE_DATETIME_DESC}, {""}};
-     const std::string bloom_filter_file =
+ TEST_F(ParquetEncodingTest, AssignNullsFromDefLevels) {
+     std::mt19937 rng(3);
+     std::uniform_int_distribution<int> pct(0, 99);
 ```
 
 ---
 
-### Incident Patch 3: `1cd80a91` (2026-11-12)
-**Commit Message**: [Doc] Fix docs that contradict the source on memory limits, resource groups, MVs, shared-data, FE and Iceberg (#82971)
+### Incident Patch 2: `e1eeaa0c` (2026-11-13)
+**Commit Message**: [Doc] Fix doubled words in the Tableau and AWS network pages (#83247)
 
-Signed-off-by: Binglin Chang <[REDACTED_EMAIL]>
+Signed-off-by: Dan Roscigno <[REDACTED_EMAIL]>
+Co-authored-by: Dan Roscigno <[REDACTED_EMAIL]>
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Co-authored-by: docs-automation[bot] <docs-automation[bot]@starrocks.io>
 
-**File**: `docs/en/administration/Meta_recovery.md` (modified, +1/-1)
+**File**: `docs/en/integrations/BI_integrations/Tableau_Desktop.md` (modified, +1/-1)
 ```diff
-@@ -77,7 +77,7 @@ You can follow these steps to fix this issue:
- :::tip
+@@ -65,7 +65,7 @@ Before proceeding, make sure the following requirements are met:
+       sudo cp /<path_to_driver_file_name>.jar /opt/tableau/tableau_driver/jdbc
+       ```
+   
+-   2. Grant permission to the the "Tableau" user.
++   2. Grant permission to the "Tableau" user.
  
- - This bug has been fixed in StarRocks v3.1. You can avoid this issue by upgrading your cluster to v3.1 or later. 
--- This solution does not apply if more than half of the FE nodes have encountered this issue. You must follow the instructions provided in [Measure of the last resort](#7-measure-of-the-last-resort) to fix the issue.
-+- This solution does not apply if more than half of the FE nodes have encountered this issue. You must follow the instructions provided in [Measure of the last resort](#10-measure-of-the-last-resort) to fix the issue.
- 
- :::
- 
-```
-
-**File**: `docs/en/administration/configuration/BE_parameters/shared_lake_other.md` (modified, +5/-5)
-```diff
-@@ -587,7 +587,7 @@ Enable this option only after **all target CNs** support it. A normalized replic
- - Type: String
- - Unit: -
- - Is mutable: Yes
--- Description: The maximum amount of data that can be cached on a single disk. You can set it as a percentage (for example, `80%`) or a physical limit (for example, `2T`, `500G`). For example, if you use two disks and set the value of the `datacache_disk_size` parameter as `21474836480` (20 GB), a maximum of 40 GB data can be cached on these two disks. The default value is `0`, which indicates that only memory is used to cache data.
-+- Description: The maximum amount of data that can be cached on a single disk. You can set it as a percentage (for example, `80%`) or a physical limit (for example, `2T`, `500G`). For example, if you use two disks and set the value of the `datacache_disk_size` parameter as `21474836480` (20 GB), a maximum of 40 GB data can be cached on these two disks. A percentage is relative to the capacity of the disk that holds each `storage_root_path`. The default value is `100%`. When `enable_datacache_disk_auto_adjust` is `true` (default), the system adjusts the actual disk cache quota based on disk usage, and this item only sets the upper limit of that quota. `0` disables the disk cache.
- - Introduced in: -
- 
- ### datacache_enable
-@@ -886,7 +886,7 @@ Enable this option only after **all target CNs** support it. A normalized replic
- - Type: Int
- - Unit: -
- - Is mutable: No
--- Description: The maximum concurrency (per BE node) of the materialized view refresh tasks in the resource group `default_mv_wg`. The default value `0` indicates no limits.
-+- Description: The maximum concurrency (per BE node) of the materialized view refresh tasks in the resource group `default_mv_wg`. The default value `0` indicates no limits. Deprecated: from v3.4 onwards, this item no longer takes effect because the FE stores `default_mv_wg` and sends it to the BEs. Use `ALTER RESOURCE GROUP default_mv_wg WITH (...)` instead.
- - Introduced in: v3.1
- 
- ### default_mv_resource_group_cpu_limit
-@@ -895,7 +895,7 @@ Enable this option only after **all target CNs** support it. A normalized replic
- - Type: Int
- - Unit: -
- - Is mutable: No
--- Description: The maximum number of CPU cores (per BE node) that can be used by the materialized view refresh tasks in the resource group `default_mv_wg`.
-+- Description: The maximum number of CPU cores (per BE node) that can be used by the materialized view refresh tasks in the resource group `default_mv_wg`. Deprecated: from v3.4 onwards, this item no longer takes effect because the FE stores `default_mv_wg` and sends it to the BEs. Use `ALTER RESOURCE GROUP default_mv_wg WITH (...)` instead.
- - Introduced in: v3.1
- 
- ### default_mv_resource_group_memory_limit
-@@ -904,7 +904,7 @@ Enable this option only after **all target CNs** support it. A normalized replic
- - Type: Double
- - Unit:
- - Is mutable: No
--- Description: The maximum memory proportion (per BE node) that can be used by the materialized view refresh tasks in the resource group `default_mv_wg`. The default value indicates 80% of the memory.
-+- Description: The maximum memory proportion (per BE node) that can be used by the materialized view refresh tasks in the resource group `default_mv_wg`. The default value indicates 80% of the memory. Deprecated: from v3.4 onwards, this item no longer takes effect because the FE stores `default_mv_wg` and sends it to the BEs. Use `ALTER RESOURCE GROUP default_mv_wg WITH (...)` instead.
- - Introduced in: v3.1
- 
- ### default_mv_resource_group_spill_mem_limit_threshold
-@@ -913,7 +913,7 @@ Enable this option only after **all target CNs** support it. A normalized replic
- - Type: Double
- - Unit: -
- - Is mutable: No
--- Description: The memory usage threshold before a materialized view refresh task in the resource group `default_mv_wg` triggers intermediate result spilling. The default value indicates 80% of the memory.
-+- Description: The memory usage threshold before a materialized view refresh task in the resource group `default_mv_wg` triggers intermediate result spilling. The default value indicates 80% of the memory. Deprecated: from v3.4 onwards, this item no longer takes effect because the FE stores `default_mv_wg` and sends it to the BEs. Use `ALTER RESOURCE GROUP default_mv_wg WITH (...)` instead.
- - Introduced in: v3.1
- 
- ### enable_resolve_hostname_to_ip_in_load_error_url
-```
-
-**File**: `docs/en/administration/configuration/FE_parameters/log_server_meta.md` (modified, +3/-3)
-```diff
-@@ -1594,7 +1594,7 @@ This topic introduces the following types of FE configurations:
- - Type: Int
- - Unit: -
- - Is mutable: Yes
--- Description: The maximum number of metadata log entries that can be written before a log file is created for these log entries. This parameter is used to control the size of log files. The new log file is written to the BDBJE database.
-+- Description: The maximum number of metadata log entries that can be written before a log file is created for these log entries. This parameter is used to control the size of log files. The new log file is written to the BDBJE database. This parameter also controls how often a metadata image (checkpoint) can be created, because a checkpoint only covers log entries in log files that have already been rolled.
- - Introduced in: -
- 
- ### `edit_log_type`
-@@ -1856,7 +1856,7 @@ This topic introduces the following types of FE configurations:
- - Unit: Milliseconds
- - Is mutable: Yes
- - Description: The interval at which a Follower or Observer FE re-evaluates whether its metadata is still fresh enough to serve reads, as defined by `meta_delay_toleration_second`. Values outside the range [10, 5000] are clamped. This check runs on a dedicated thread rather than on the metadata replay thread, so that the node still stops serving stale metadata while a single journal entry is taking a long time to apply, for example when a replay operation is waiting for a database lock.
--- Introduced in: v4.2
-+- Introduced in: v4.1.6, v4.2
- 
- ### `metadata_replay_stuck_warn_threshold_second`
- 
-@@ -1865,7 +1865,7 @@ This topic introduces the following types of FE configurations:
- - Unit: Seconds
- - Is mutable: Yes
- - Description: A metadata journal entry that has been applying for longer than this duration is reported in **fe.log** as a stuck replay, together with the stack of the replay thread, so that you can identify what is blocking metadata replay. Set this item to `0` to disable the report.
--- Introduced in: v4.2
-+- Introduced in: v4.1.6, v4.2
- 
- ### `meta_dir`
- 
-```
-
-**File**: `docs/en/administration/configuration/FE_parameters/shared_lake_other.md` (modified, +11/-2)
-```diff
-@@ -1658,7 +1658,7 @@ Use `ADMIN SET FRONTEND CONFIG` for dynamic changes; you do not need to edit eac
- - Type: Long
- - Unit:
- - Is mutable: Yes
--- Description: The maximum size of materialized view plan cache (which is used for materialized view rewrite). If there are many materialized views used for transparent query rewrite, you may increase this value.
-+- Description: The maximum size of materialized view plan cache (which is used for materialized view rewrite). If there are many materialized views used for transparent query rewrite, you may increase this value. The value is read only once, when the cache is created at FE startup, so a value changed at runtime takes effect only after the FE restarts.
- - Introduced in: v3.2
- 
- ### `mv_plan_cache_thread_pool_size`
-@@ -1667,7 +1667,7 @@ Use `ADMIN SET FRONTEND CONFIG` for dynamic changes; you do not need to edit eac
- - Type: Int
- - Unit: -
- - Is mutable: Yes
--- Description: The default thread pool size of materialized view plan cache (which is used for materialized view rewrite).
-+- Description: Deprecated. From v3.5.14, v4.0.7, and v4.1 onwards, this parameter no longer takes effect. The size of the thread pool that loads the materialized view plan cache (which is used for materialized view rewrite) is fixed at the larger of 2 and three quarters of the number of CPU cores.
- - Introduced in: v3.2
- 
- ### `mv_refresh_default_planner_optimize_timeout`
-@@ -1688,6 +1688,15 @@ Use `ADMIN SET FRONTEND CONFIG` for dynamic changes; you do not need to edit eac
- - Description: Mv refresh fails if there is filtered data in refreshing, true by default, otherwise return success by ignoring the filtered data.
- - Introduced in: -
- 
-+### `mv_refresh_force_partition_type`
-+
-+- Default: 0
-+- Type: Int
-+- Unit: -
-+- Is mutable: Yes
-+- Description: Forces materialized view refreshes of the specified partition types to refresh regardless of whether the base tables have changed. This is useful for materialized views on external tables, where data changes cannot be accurately detected. The value is a bitmap: `0` disables this behavior, `1` applies it to non-partitioned materialized views, `2` to range-partitioned materialized views, and `4` to list-partitioned materialized views. Add the values to combine types, for example, `7` applies to all three. It does not apply to a materialized view whose `refresh_mode` is `INCREMENTAL`.
-+- Introduced in: v3.5.16, v4.0.9, v4.1
-+
- ### `mv_refresh_try_lock_timeout_ms`
- 
- - Default: 30000
-```
-
-**File**: `docs/en/administration/configuration/FE_parameters/user_query_loading.md` (modified, +1/-1)
-```diff
-@@ -1259,7 +1259,7 @@ Starting from version 3.3.0, the system defaults to refreshing one partition at
- - Type: Int
- - Unit: Seconds
- - Is mutable: Yes
--- Description: The timeout duration for the INSERT INTO statement that is used to load data.
-+- Description: Deprecated. This item does not control the timeout of INSERT statements. Use the session variable `insert_timeout` instead.
- - Introduced in: -
- 
- ### `label_clean_interval_second`
-```
-
-**File**: `docs/en/administration/management/cluster_snapshot.md` (modified, +20/-5)
-```diff
-@@ -51,18 +51,33 @@ Syntax:
- 
- ```SQL
- ADMIN SET AUTOMATED CLUSTER SNAPSHOT ON
-+[INTERVAL <value> <unit>]
- [STORAGE VOLUME <storage_volume_name>]
- ```
- 
--Parameter:
-+Parameters:
- 
--`storage_volume_name`: Specifies the storage volume used to store the snapshot. If this parameter is not specified, the default storage volume will be used. For details on creating a storage volume, see [CREATE STORAGE VOLUME](../../sql-reference/sql-statements/cluster-management/storage_volume/CREATE_STORAGE_VOLUME.md).
-+`INTERVAL <value> <unit>`: The interval at which automated snapshots are created. `value` must be a positive integer, and `unit` must be one of `SECOND`, `MINUTE`, `HOUR`, `DAY`, and `WEEK`. If this parameter is not specified, the interval is controlled by the FE configuration item `automated_cluster_snapshot_interval_seconds`.
- 
--Each time FE creates a new metadata image after completing a metadata checkpoint, it automatically creates a snapshot. The name of the snapshot is generated by the system, following the format `automated_cluster_snapshot_{timestamp}`.
-+`storage_volume_name`: Specifies the storage volume used to store the snapshot. If this parameter is not specified, the built-in storage volume `builtin_storage_volume` is used, even if another storage volume is set as the default. If `builtin_storage_volume` does not exist (for example, because `enable_load_volume_from_conf` is `false`), the statement fails, and you must specify a storage volume. For details on creating a storage volume, see [CREATE STORAGE VOLUME](../../sql-reference/sql-statements/cluster-management/storage_volume/CREATE_STORAGE_VOLUME.md).
-+
-+Each time the snapshot interval has elapsed since the previous automated snapshot started, the Leader FE performs a metadata checkpoint to create a new metadata image, and creates a snapshot from it. The name of the snapshot is generated by the system, following the format `automated_cluster_snapshot_{timestamp}`.
- 
- Metadata snapshots are stored under `/{storage_volume_locations}/{service_id}/meta/image/automated_cluster_snapshot_timestamp`. Data snapshots are stored in the same location as the original data.
- 
--FE configuration item `automated_cluster_snapshot_interval_seconds` controls the snapshot automation cycle. The default value is 600 seconds (10 minutes).
-+FE configuration item `automated_cluster_snapshot_interval_seconds` controls the snapshot automation cycle when no `INTERVAL` is specified for the feature. The default value is 600 seconds (10 minutes).
-+
-+Use the following statement to change the interval while the feature is enabled (supported from v4.0.5 onwards, as is the `INTERVAL` clause):
-+
-+```SQL
-+ADMIN ALTER AUTOMATED CLUSTER SNAPSHOT SET INTERVAL <value> <unit>
-+```
-+
-+Use the following statement to view whether the feature is enabled, the effective interval, the storage volume, and the time of the last and the next snapshot (supported from v4.0.6 onwards):
-+
-+```SQL
-+ADMIN SHOW AUTOMATED CLUSTER SNAPSHOT
-+```
- 
- ### Disable automated cluster snapshot
- 
-@@ -87,7 +102,7 @@ Return:
- | Field              | Description                                                  |
- | ------------------ | ------------------------------------------------------------ |
- | snapshot_name      | The name of the snapshot.                                    |
--| snapshot_type      | The type of the snapshot. Valid values: `automated` and `manual`. |
-+| snapshot_type      | The type of the snapshot. Currently, the value is always `AUTOMATED`. |
- | created_time       | The time at which the snapshot was created.                  |
- | fe_journal_id      | The ID of the FE journal.                                    |
- | starmgr_journal_id | The ID of the StarManager journal.                           |
-```
-
-**File**: `docs/en/administration/management/graceful_exit.md` (modified, +2/-6)
-```diff
-@@ -49,12 +49,8 @@ Upon receiving the signal:
- 
- **Leader FE**
- 
--- Read request handling is identical to the of Followers.
--- Write request handling requires:
--
--  - Closing BDBJE.
--  - Allowing a new Leader election to complete.
--  - Redirecting subsequent writes to the newly elected Leader.
-+- Request handling is identical to that of Followers: the Leader FE waits for its connections to drain and then exits.
-+- The Leader FE does not hand over leadership before it exits. A new Leader is elected from the remaining FEs after the process exits.
- 
- #### Timeout Control
- 
-```
-
-**File**: `docs/en/administration/management/monitoring/metric_details/s.md` (modified, +6/-0)
-```diff
-@@ -6,6 +6,12 @@ description: "Alphabetical s"
- 
- # Metrics s
- 
-+## `scheduled_tablet_num`
-+
-+- Unit: Count
-+- Type: Instantaneous
-+- Description: The number of tablets that are being scheduled by the tablet scheduler of the Leader FE, that is, the total of the tablets in Pending and Running states, including both BALANCE and REPAIR types. Non-Leader FEs report `0`.
-+
- ## `schema_change_mem_bytes`
- 
- - Unit: Bytes
+       ```Bash
+       # Replace <driver_file_name> with the name of the driver file.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #83209** (2026-11-13): [BugFix] Reject unsupported GEO arguments in sum_map and to_json (backport #83106) (@mergify[bot])
-- **PR #83208** (2026-11-13): [Enhancement][RB-533] Scope connector scan EOS to independent drivers (backport #83197) (@mergify[bot])
-- **PR #83206** (2026-11-13): [Tool] Support single quotes in assert_query_contains of SQL-tester (@trueeyu)
-- **PR #83205** (2026-11-13): [BugFix] Support RLE-encoded BOOLEAN values in the parquet reader (backport #78691) (@mergify[bot])
-- **PR #83204** (2026-11-13): [BugFix] Support RLE-encoded BOOLEAN values in the parquet reader (backport #78691) (@mergify[bot])
-- **PR #83201** (2026-11-13): [BugFix][RB-225] Skip the storage stat on Iceberg metadata reads that do not need it (backport #83182) (@mergify[bot])
+- **PR #83266** (closed): [UT] Fix URI-encoded BE tab assertion in proc profile SQL test (@starrocks-bot[bot])
+- **PR #83265** (closed): [BugFix] Fail FE startup when the BDB environment becomes invalid (@starrocks-bot[bot])
+- **PR #83264** (closed): [BugFix] Reset ORC compression state when suppressing PRESENT streams (@starrocks-bot[bot])
+- **PR #83263** (closed): [BugFix] Keep version-valid replicas queryable during balance (@starrocks-bot[bot])
+- **PR #83262** (2026-11-14): [BugFix][RB-1649] Grow the parquet plain binary decode buffer geometrically across pages (backport #83259) (@mergify[bot])
+- **PR #83261** (2026-11-14): [BugFix][RB-1649] Grow the parquet plain binary decode buffer geometrically across pages (backport #83259) (@mergify[bot])
 
 ---
 
@@ -2667,45 +1948,33 @@ Co-authored-by: docs-automation[bot] <docs-automation[bot]@starrocks.io>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [BugFix] Fix BatchRunCounter unsigned filter comparison and delta decode signed 
+## X. [BugFix][RB-1649] Grow the parquet plain binary decode buffer geometrically acro
 
 **RULE**:
-When implementing operations in `be/src/base/simd/batch_run_counter.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `be/src/formats/parquet/encoding_plain.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `28f9a91c`: [BugFix] Fix BatchRunCounter unsigned filter comparison and delta decode signed overflow UB (#82015). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `72c16b08`: [BugFix][RB-1649] Grow the parquet plain binary decode buffer geometrically across pages. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `be/src/base/simd/batch_run_counter.h`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `be/src/formats/parquet/encoding_plain.h`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-            uint32_t zero_mask = _mm256_movemask_epi8(_mm256_cmpeq_epi8(f, all0));
-            if (zero_mask == 0xffffffff) {
-            } else if (zero_mask == 0) {
-                // all non-zero
-            const auto zero_mask = _mm_movemask_epi8(_mm_cmpeq_epi8(f, zero16));
-            if (zero_mask == 0xffff) {
-            } else if (zero_mask == 0) {
-                // all non-zero
-            } else if (partital_value == 0x0101010101010101ULL ||
-                       (((partital_value - 0x0101010101010101ULL) & ~partital_value & 0x8080808080808080ULL) == 0)) {
+            // This runs once per page into the same column. An exact reserve(final_offset) would
+            // reallocate and copy the whole column on every page (quadratic for large values),
+            // so grow geometrically like the vector itself would.
+            if (bytes.capacity() < final_offset) {
+                bytes.reserve(std::max(final_offset, 2 * bytes.capacity()));
+            }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
-// Anti-pattern to NEVER write (induced failure mode):
-            uint32_t mask = _mm256_movemask_epi8(_mm256_cmpgt_epi8(f, all0));
-            if (mask == 0) {
-            } else if (mask == 0xffffffff) {
-                // all one
-            const auto mask = _mm_movemask_epi8(_mm_cmpgt_epi8(f, zero16));
-            if (mask == 0) {
-            } else if (mask == 0xffff) {
-                // all one
-            } else if (partital_value == 0x0101010101010101) {
+// Induced defect failure mode:
+            binary_column->get_bytes().reserve(final_offset);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `28f9a91c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `72c16b08` are properly handled with clean fallback behavior.

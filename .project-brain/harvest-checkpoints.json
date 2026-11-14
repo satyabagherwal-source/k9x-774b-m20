@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-14T16:22:53.326Z",
+  "last_updated": "2026-11-14T16:43:18.397Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7956,14 +7956,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-starrocks-starrocks",
-      "content_hash": "e187fa50a38c537d4406a6d19eb6bbb2a368c0709d1e604b6d3289745a3607f4",
-      "verified_at": "2026-11-13T11:24:44.336Z",
+      "content_hash": "dd85706414b35386a2205a1f40544cfe5888fa264c19427c50d61f2535892b18",
+      "verified_at": "2026-11-14T16:38:37.142Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T11:24:44.336Z"
+      "last_updated": "2026-11-14T16:38:37.142Z"
     },
     "lobehub/lobe-ui": {
       "repository": "lobehub/lobe-ui",
@@ -11691,14 +11691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tokio-rs-tokio",
-      "content_hash": "5829ab15b90b34b402f806e599fba41d637d48dffbb2033f598605f777823025",
-      "verified_at": "2026-11-11T09:28:49.601Z",
+      "content_hash": "5a32608da0e49143da8447e93f57c2b0a0ce3235319d689f56e33024dd8b330f",
+      "verified_at": "2026-11-14T16:38:26.793Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T09:28:49.601Z"
+      "last_updated": "2026-11-14T16:38:26.793Z"
     },
     "SimonSchubert/LinuxCommandLibrary": {
       "repository": "SimonSchubert/LinuxCommandLibrary",
@@ -18944,6 +18944,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-14T15:34:30.273Z"
+    },
+    "autotrust/AutoTrust-Decider-Pro-Vision-27B": {
+      "repository": "autotrust/AutoTrust-Decider-Pro-Vision-27B",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-autotrust-jev-27b-vl",
+      "content_hash": "3a005cb391aab9fcb892ae95a29c266a79abc7fbdec01e72dd59605b80f189f7",
+      "verified_at": "2026-11-14T16:43:18.397Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-14T16:43:18.397Z"
     }
   },
   "repos": {
