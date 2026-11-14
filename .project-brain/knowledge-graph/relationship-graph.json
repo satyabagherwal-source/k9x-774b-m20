@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-14T16:00:17.851Z",
+  "updated_at": "2026-11-14T16:23:47.625Z",
   "statistics": {
-    "total_nodes": 200,
-    "total_edges": 109,
+    "total_nodes": 202,
+    "total_edges": 110,
     "domain_distribution": {
-      "D": 155,
+      "D": 156,
       "M": 1,
-      "H": 17,
+      "H": 18,
       "J": 8,
       "K": 10,
       "L": 3,
@@ -18,7 +18,7 @@
       "B": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 109
+      "CONSTRAINED_BY_ARCHITECTURE": 110
     }
   },
   "nodes": {
@@ -4485,6 +4485,51 @@
       ],
       "created_at": "2026-11-14T16:00:17.851Z",
       "updated_at": "2026-11-14T16:00:17.851Z"
+    },
+    "DOM-D-80D6B779": {
+      "id": "DOM-D-80D6B779",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): jialinyyzz/humanizer",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md`  \n> **Source**: huggingface ([https://huggingf -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md`  \n> **Source**: huggingface ([https://huggingf",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-jialinyyzz-humanizer/hf-jialinyyzz-humanizer-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T16:22:59.179Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-jialinyyzz-humanizer)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-14T16:23:20.239Z",
+      "updated_at": "2026-11-14T16:23:20.239Z"
+    },
+    "DOM-H-305CEBA3": {
+      "id": "DOM-H-305CEBA3",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "ios): convert degradationPreference between its name and the enum",
+      "summary": "Prevents defects observed in production commit `21ee6597`: ios): convert degradationPreference between its name and the enum. Unvalidated ex -> When implementing operations in `ios/RCTWebRTC/SerializeUtils.h`, engineers MUST enforce rigorous boundary validation, safe state transition",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://react-native-webrtc-react-native-webrtc/react-native-webrtc-react-native-webrtc-learnings.md",
+        "source_version": "7b9b451b",
+        "observed_at": "2026-11-14T16:22:52.673Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (react-native-webrtc-react-native-webrtc)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-14T16:23:47.625Z",
+      "updated_at": "2026-11-14T16:23:47.625Z"
     }
   },
   "edges": [
@@ -5577,6 +5622,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-293047DE [D] with Domain M",
       "created_at": "2026-11-14T15:50:17.293Z"
+    },
+    {
+      "id": "EDGE-52647FA426E0",
+      "sourceId": "DOM-D-80D6B779",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-80D6B779 [D] with Domain M",
+      "created_at": "2026-11-14T16:23:20.239Z"
     }
   ]
 }

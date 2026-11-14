@@ -85,8 +85,8 @@
     "sourceUrl": "https://huggingface.co/jialinyyzz/humanizer",
     "sourceVersion": "hf-jialinyyzz-humanizer",
     "license": "Open-Source",
-    "contentHash": "b46f90753f79f5ea2e7fa14ae296a30295cc24307166dc8092abd39eabcb8899",
-    "lastHarvestedAt": "2026-11-09T05:28:50.643Z",
+    "contentHash": "ff6d2d4c983501a1630b888e32b6539ad51b6198e4cb2bd5dc612da48b1d2767",
+    "lastHarvestedAt": "2026-11-14T16:22:46.684Z",
     "learningId": "learn-huggingface-jialinyyzz-humanizer"
   },
   "hf-autotrust-jev-27b-vl": {
@@ -5953,10 +5953,10 @@
     "repository": "react-native-webrtc/react-native-webrtc",
     "platform": "github",
     "sourceUrl": "https://github.com/react-native-webrtc/react-native-webrtc",
-    "sourceVersion": "103af812",
+    "sourceVersion": "7b9b451b",
     "license": "MIT",
-    "contentHash": "7be113e6b09c6113db8cf1f9eadd3312409b674da02ac8123f183e98d7e2e1e7",
-    "lastHarvestedAt": "2026-11-11T06:33:33.890Z",
+    "contentHash": "9355cea507c6edd4fca6e1eae4e0cc0f0c56864b7acdcf1ebb2f7f9817c150bb",
+    "lastHarvestedAt": "2026-11-14T16:22:53.319Z",
     "learningId": "learn-github-react-native-webrtc-react-native-webrtc"
   },
   "rook-rook": {
@@ -7623,10 +7623,10 @@
     "repository": "astral-sh/ruff",
     "platform": "github",
     "sourceUrl": "https://github.com/astral-sh/ruff",
-    "sourceVersion": "e1ce434f",
+    "sourceVersion": "a3a3ebb5",
     "license": "MIT",
-    "contentHash": "33e4087819fac83be25a115be35104ee16bef05fcc50cb2493de3698b035b268",
-    "lastHarvestedAt": "2026-11-13T02:32:02.099Z",
+    "contentHash": "2d3d83990f4b3d7704110ed0d30ab49135649d6274218a90992f5ec66ade1193",
+    "lastHarvestedAt": "2026-11-14T16:22:50.210Z",
     "learningId": "learn-github-astral-sh-ruff"
   },
   "touchlab-kampkit": {

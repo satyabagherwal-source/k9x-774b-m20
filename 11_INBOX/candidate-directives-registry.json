@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T16:00:18.308Z",
+  "last_updated": "2026-11-14T16:23:47.903Z",
   "directives": [
     {
       "id": "CD-001",
@@ -12871,6 +12871,48 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-6A81CF-puppet-fix-postgresql-failing-to-start-o.md",
       "staged_date": "2026-11-14"
+    },
+    {
+      "id": "CD-6XSJ",
+      "directive_title": "Use the shared diagnostic rendering order in Ruff",
+      "source_repo": "astral-sh-ruff-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-6XSJ-use-the-shared-diagnostic-rendering-order-in-ruff.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-14",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-6TJ9",
+      "directive_title": "convert degradationPreference between its name and the enum",
+      "source_repo": "react-native-webrtc/react-native-webrtc",
+      "source_commit": "7b9b451b",
+      "staged_file": "11_INBOX/candidate-directives/CD-6TJ9-convert-degradationpreference-between-its-name-and-the-enum.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-14",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-22D3EF",
+      "directive_title": "Use the shared diagnostic rendering order in Ruff",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "astral-sh-ruff",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-22D3EF-use-the-shared-diagnostic-rendering-orde.md",
+      "staged_date": "2026-11-14"
+    },
+    {
+      "id": "CD-7ZJZ",
+      "directive_title": "ios): convert degradationPreference between its name and the enum",
+      "source_repo": "react-native-webrtc-react-native-webrtc-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-7ZJZ-ios-convert-degradationpreference-between-its-name-and-the-enum.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-14",
+      "domain_letter": "H"
     }
   ]
 }

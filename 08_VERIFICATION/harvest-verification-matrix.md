@@ -9874,3 +9874,8 @@
 | `CYCLE-20261114-D0W3` | `2026-11-14T15:59:43.299Z` | `mudler/locate-anything.cpp-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md` | Yes (`531710f3...`) |
 | `CYCLE-20261114-D5JE` | `2026-11-14T15:59:49.322Z` | `zed-industries/zed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8504` | Yes (`ff5c53b9...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T16:00:17.852Z` | `hf-mudler-locate-anything.cpp-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-C9202D2F` [Domain D] | Yes (`3e8a94f5...`) |
+| `CYCLE-20261114-6OBA` | `2026-11-14T16:22:46.678Z` | `jialinyyzz/humanizer` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md` | Yes (`ff6d2d4c...`) |
+| `CYCLE-20261114-6R1B` | `2026-11-14T16:22:50.207Z` | `astral-sh/ruff` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8505` | Yes (`2d3d8399...`) |
+| `CYCLE-20261114-6TFO` | `2026-11-14T16:22:53.316Z` | `react-native-webrtc/react-native-webrtc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8506` | Yes (`9355cea5...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T16:23:20.240Z` | `hf-jialinyyzz-humanizer` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-80D6B779` [Domain D] | Yes (`0e5b473d...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T16:23:47.626Z` | `react-native-webrtc-react-native-webrtc` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-305CEBA3` [Domain H] | Yes (`036d9e3d...`) |

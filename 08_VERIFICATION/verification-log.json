@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-LDVX",
-    "timestamp": "2026-11-09T10:07:57.069Z",
-    "repository": "risingwavelabs/risingwave",
-    "learningId": "learn-github-risingwavelabs-risingwave",
-    "contentHash": "93ac4478492c476e8f54a52c3c4efc0b0435a5840fb7b6fe3327909952863a90",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-FHRI",
-    "timestamp": "2026-11-09T10:31:21.774Z",
-    "repository": "NervJS/taro",
-    "learningId": "learn-github-nervjs-taro",
-    "contentHash": "385071d303d68c9378b2d0b8b383ec703f30bbc3230054783ed6419e99fc2a1d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-FIPI",
-    "timestamp": "2026-11-09T10:31:22.998Z",
-    "repository": "FrancisRing/Prism",
-    "learningId": "learn-huggingface-francisring-prism",
-    "contentHash": "98ed1dfa8f19aaee246d3a4813ff52400f053e8a8ccf740ada9c0962e957d850",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-FRBK",
     "timestamp": "2026-11-09T10:59:33.776Z",
     "repository": "krishhgg/Insomnia",
@@ -7490,6 +7445,51 @@
     "repository": "zed-industries/zed",
     "learningId": "learn-github-zed-industries-zed",
     "contentHash": "ff5c53b9a582464d161f7a7bc0c0c0943126f93d3fefccaede506a3ab680288d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-6OBA",
+    "timestamp": "2026-11-14T16:22:46.678Z",
+    "repository": "jialinyyzz/humanizer",
+    "learningId": "learn-huggingface-jialinyyzz-humanizer",
+    "contentHash": "ff6d2d4c983501a1630b888e32b6539ad51b6198e4cb2bd5dc612da48b1d2767",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-6R1B",
+    "timestamp": "2026-11-14T16:22:50.207Z",
+    "repository": "astral-sh/ruff",
+    "learningId": "learn-github-astral-sh-ruff",
+    "contentHash": "2d3d83990f4b3d7704110ed0d30ab49135649d6274218a90992f5ec66ade1193",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-6TFO",
+    "timestamp": "2026-11-14T16:22:53.316Z",
+    "repository": "react-native-webrtc/react-native-webrtc",
+    "learningId": "learn-github-react-native-webrtc-react-native-webrtc",
+    "contentHash": "9355cea507c6edd4fca6e1eae4e0cc0f0c56864b7acdcf1ebb2f7f9817c150bb",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

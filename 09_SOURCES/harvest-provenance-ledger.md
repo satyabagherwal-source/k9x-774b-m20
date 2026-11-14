@@ -9907,3 +9907,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-mudler-locate-anything-cpp-gguf` | `https://huggingface.co/mudler/locate-anything.cpp-gguf` | `hf-mudler-` | Multi-dimensional audit evidence | 2026-11-14T15:59:43.302Z |
 | `learn-github-zed-industries-zed` | `https://github.com/zed-industries/zed` | `99c890d3` | Multi-dimensional audit evidence | 2026-11-14T15:59:49.325Z |
 | `learn-dom-d-c9202d2f` | `project://hf-mudler-locate-anything.cpp-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md` | 2026-11-14T16:00:17.852Z |
+| `learn-huggingface-jialinyyzz-humanizer` | `https://huggingface.co/jialinyyzz/humanizer` | `hf-jialiny` | Multi-dimensional audit evidence | 2026-11-14T16:22:46.684Z |
+| `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `a3a3ebb5` | Multi-dimensional audit evidence | 2026-11-14T16:22:50.210Z |
+| `learn-github-react-native-webrtc-react-native-webrtc` | `https://github.com/react-native-webrtc/react-native-webrtc` | `7b9b451b` | Multi-dimensional audit evidence | 2026-11-14T16:22:53.319Z |
+| `learn-dom-d-80d6b779` | `project://hf-jialinyyzz-humanizer` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md` | 2026-11-14T16:23:20.240Z |
+| `learn-dom-h-305ceba3` | `project://react-native-webrtc-react-native-webrtc` | `7b9b451b` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-native-webrtc-react-native-webrtc-learnings.md` | 2026-11-14T16:23:47.626Z |

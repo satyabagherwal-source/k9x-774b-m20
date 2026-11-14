@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md`  
 > **Source**: github ([https://github.com/astral-sh/ruff](https://github.com/astral-sh/ruff))  
-> **Source Version**: `e1ce434f`  
+> **Source Version**: `a3a3ebb5`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T02:31:53.485Z  
+> **Timestamp**: 2026-11-14T16:22:49.591Z  
 > **Learning ID**: `learn-github-astral-sh-ruff`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/astral-sh/ruff](https://github.com/astral-sh/ruff))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T02:31:53.296Z  
+> **Harvest Timestamp**: 2026-11-14T16:22:49.587Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An extremely fast Python linter and code formatter, written in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 51234 stars
+- **Stars / Engagement**: 51232 stars
 
 ---
 
@@ -2116,13 +2116,14 @@ impl<'a> Diff<'a> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #30293** (2026-11-12): **[ty] Infer value types for bare `Final` and `ClassVar`**
-  *Symptoms*: A bare `Final` or `ClassVar` leaves the value type to inference. Previously, ty passed `Unknown` as the expected type of the initializer. This could change the result of a generic call and let assignments to a mutable class variable accept values incompatible with its initializer.  Track whether a qualifier has a type argument. For example, `header: ClassVar = bytes.fromhex("fd")` exposes `bytes` on the class and accepts subsequent `bytes` assignments through the class. An explicit `ClassVar[Unknown]` still exposes `Unknown`.  A bare `Final` instance attribute gets its type from the declaring class's initializer. A subclass cannot initialize that same final attribute. For a bare final dataclass field with an ordinary default, the generated constructor accepts the inferred field type.  A generic call can infer its type arguments from its inputs when it appears in `yield` or `yield from` in a generator without a return annotation. The same applies when the call is passed to a callable with an unknown signature. An explicit parameter or yielded element type of `Any` still supplies type context.  Split from #30244, which changes generic type-argument inference. The ordinary dataclass default case overlaps #29576, which also handles field specifiers and missing defaults. #30255 covers public reads of module-level finals with an explicit type argument.  Fixes astral-sh/ty#4989.  ## Ecosystem report  At [`28a3e59`](https://github.com/astral-sh/ruff/commit/28a3e5901958260777e605b2ce2
-
-- **Issue #30279** (2026-11-10): **[ty] Preserve type context kind when propagating to nested expressions**
-  *Symptoms*: TBD.
+- **Issue #30404** (2026-11-13): **[ty] Avoid spurious syntax warnings when applying fixes**
+  *Symptoms*: `ty check --fix` can emit a spurious syntax warning for a valid `pyproject.toml`. An applicable fix in one Python file starts the fix pass, which then tries to parse other files with diagnostics as Python. That includes configuration files with a `renamed-rule` warning.  The fix loop now checks each file for applicable fixes before parsing it. When a Python syntax error blocks a fix, the warning follows the diagnostic renderer’s path convention. It shows paths relative to the working directory for files under it and absolute paths for files outside it. 
   **Post-Mortem & Fix Analysis**:
-  > <!-- generated-comment typing-conformance --> <!-- report-run:42891821318:1 -->   ## [Typing conformance results](https://github.com/python/typing/blob/d06c5dd6bbae4a39eb7cb0210c5b2099aafd8032/conformance/)  ### No changes detected ✅  <details> <summary>Current numbers</summary>  <br> The percentage of diagnostics emitted that were expected errors held steady at <b>98.60%</b>. The percentage of expected errors that received a diagnostic held steady at <b>98.86%</b>. The number of fully passing files held steady at <b>137/146</b>.  </details>  ---  Results for [a75f443](https://github.com/astral-sh/ruff/commit/a75f4437e8f671fffbc83c05eed25c5089ecba5f) · [Workflow run](https://github.com/astral-sh/ruff/actions/runs/42891821318/attempts/1) 
+  > <!-- generated-comment typing-conformance --> <!-- report-run:43413964620:1 -->   ## [Typing conformance results](https://github.com/python/typing/blob/d06c5dd6bbae4a39eb7cb0210c5b2099aafd8032/conformance/)  ### No changes detected ✅  <details> <summary>Current numbers</summary>  <br> The percentage of diagnostics emitted that were expected errors held steady at <b>98.60%</b>. The percentage of expected errors that received a diagnostic held steady at <b>98.86%</b>. The number of fully passing files held steady at <b>137/146</b>.  </details>  ---  Results for [733da98](https://github.com/astral-sh/ruff/commit/733da988af5c7f3d2ea36de3be76fc3ddd4ebff1) · [Workflow run](https://github.com/astral-sh/ruff/actions/runs/43413964620/attempts/1) 
+  > <!-- generated-comment memory --> <!-- report-run:43413964673:1 -->  ## Memory usage report  Memory usage unchanged ✅  ---  Results for [733da98](https://github.com/astral-sh/ruff/commit/733da988af5c7f3d2ea36de3be76fc3ddd4ebff1) · [Workflow run](https://github.com/astral-sh/ruff/actions/runs/43413964673/attempts/1) 
+
+- **Issue #30399** (2026-11-13): **[ty] Fix a panic checking class decorators with inferred return types**
+  *Symptoms*: ty could panic when checking a decorated class if it inferred the return type of an inner decorator and an outer decorator returned a class from another module. During cycle recovery, ty could use that replacement class's scope to look up names in the file that defined the original class.  Preserve the original class before applying decorators and use it for class-definition checks. The decorated name still takes the type returned by the outer decorator.  Fixes astral-sh/ty#5021.  ## Test plan  Checked the reported `EnumCheck` example with return type inference enabled. Before this change it panicked. With the fix, ty reports the invalid argument to `@d2` and finishes checking the file. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2139,763 +2140,738 @@ impl<'a> Diff<'a> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `650401ca` (2026-11-12)
-**Commit Message**: [ty] Show failure kinds and timeout timings in py-fuzzer reports (#30367)
+### Incident Patch 1: `1267effe` (2026-11-13)
+**Commit Message**: Use the shared diagnostic rendering order in Ruff (#30291)
 
-**File**: `.github/workflows/ci.yaml` (modified, +1/-0)
+Summary
+--
+
+This is another supporting change for #30269. Diagnostic sorting is the
+last place where we `expect` to have a Ruff file. This PR swaps out the
+`ruff_start_ordering` helper for the `rendering_sort_key` version used
+in ty. We previously opted not to make this change
+(https://github.com/astral-sh/ruff/pull/19179#discussion_r2190586209)
+because it changes the sort order of diagnostics (obviously) in a way
+that looks a bit bad when rule codes are displayed. I think this is
+probably more palatable, and actually preferable, now that
+human-readable names are in preview. It also changes the sort order of
+panic diagnostics added in
+https://github.com/astral-sh/ruff/pull/20258#discussion_r2349077788, but
+I think that's okay as it also matches ty.
+
+The second commit has the snapshot changes to make it a little easier to
+isolate the code changes.
+
+Test Plan
+--
+
+New and updated tests
+
+**File**: `crates/mdtest/src/matcher.rs` (modified, +1/-1)
 ```diff
-@@ -1036,6 +1036,7 @@ jobs:
-           name: ty-fuzz-failures
-           path: |
-             ty-fuzz-failures/*.py
-+            ty-fuzz-failures/*.json
-             ty-new
-             ty-old
-           compression-level: 1
+@@ -196,7 +196,7 @@ pub fn match_file(
+     if failures.is_empty() {
+         // We need to re-sort the diagnostics because matching uses `swap_remove` internally, which can change ordering.
+         snapshot_diagnostics
+-            .sort_unstable_by(|a, b| a.rendering_sort_key(db).cmp(&b.rendering_sort_key(db)));
++            .sort_unstable_by(|a, b| a.rendering_sort_key(&db).cmp(&b.rendering_sort_key(&db)));
+         Ok(snapshot_diagnostics)
+     } else {
+         Err(failures)
 ```
 
-**File**: `python/py-fuzzer/fuzz.py` (modified, +161/-73)
+**File**: `crates/ruff/src/commands/check.rs` (modified, +6/-5)
 ```diff
-@@ -38,6 +38,7 @@
- import ast
- import concurrent.futures
- import contextlib
-+import dataclasses
- import enum
- import json
- import multiprocessing
-@@ -50,7 +51,7 @@
- import tempfile
- import threading
- import time
--from collections.abc import Sequence
-+from collections.abc import Collection, Sequence
- from dataclasses import KW_ONLY, dataclass
- from pathlib import Path
- from typing import Final, NamedTuple, NewType, NoReturn, assert_never
-@@ -65,6 +66,7 @@
- ExitCode = NewType("ExitCode", int)
+@@ -9,11 +9,10 @@ use ignore::Error;
+ use log::{debug, warn};
+ #[cfg(not(target_family = "wasm"))]
+ use rayon::prelude::*;
+-use ruff_linter::message::create_panic_diagnostic;
++use ruff_linter::message::{RenderContext, create_panic_diagnostic};
+ use ruff_python_ast::{SourceType, TomlSourceType};
+ use rustc_hash::FxHashMap;
  
- TY_TARGET_PLATFORM: Final = "linux"
-+CHECK_TIMEOUT_SECONDS: Final = 5
+-use ruff_db::diagnostic::Diagnostic;
+ use ruff_db::panic::catch_unwind;
+ use ruff_linter::package::PackageRoot;
+ use ruff_linter::registry::Rule;
+@@ -177,9 +176,11 @@ pub(crate) fn check(
+             |a, b| (a.0 + b.0, a.1 + b.1),
+         );
  
- # Reserve time within the budget for CI job setup before the first step,
- # the final summary and any issue report, and steps after fuzzing.
-@@ -89,15 +91,34 @@ class MinimizationTimedOut(Exception):
-     """The fuzzing deadline was reached or the run was cancelled during minimization."""
+-    all_diagnostics
+-        .inner
+-        .sort_by(Diagnostic::ruff_start_ordering);
++    let context = RenderContext::new(&all_diagnostics.notebook_indexes);
++    all_diagnostics.inner.sort_by(|a, b| {
++        a.rendering_sort_key(&context)
++            .cmp(&b.rendering_sort_key(&context))
++    });
  
- 
--def run_executable(command: Sequence[str | Path], *, input: str | None = None) -> int:
--    """Run a command with a five-second timeout and return its exit code.
-+@dataclass(slots=True, kw_only=True, frozen=True)
-+class Success:
-+    elapsed_seconds: float
-+
-+
-+class Failure(enum.Enum):
-+    ERROR = "error"
-+    TIMEOUT = "timeout"
-+
-+
-+def run_executable(
-+    command: Sequence[str | Path],
-+    *,
-+    successful_exit_codes: Collection[int],
-+    input: str | None = None,
-+) -> Success | Failure:
-+    """Run a command with a five-second timeout and classify its outcome.
-+
-+    Return `Success` with the elapsed time for exit codes in
-+    `successful_exit_codes`, `Failure.ERROR` for other exit codes, and
-+    `Failure.TIMEOUT` if the command times out. The elapsed time excludes
-+    process startup.
- 
-     Send `input` to standard input if provided; otherwise, inherit standard
-     input from the caller. Standard output and standard error are discarded.
-     On POSIX, start the command in a new session and, on timeout, kill its
-     process group to terminate any children in that group without killing
--    the caller. On other platforms, kill only the command. Then raise
--    `subprocess.TimeoutExpired`.
-+    the caller. On other platforms, kill only the command.
- 
-     For other errors or interruptions while communicating with the command,
-     terminate it if it is still running and wait for it to exit, then re-raise
-@@ -115,16 +136,18 @@ def run_executable(command: Sequence[str | Path], *, input: str | None = None) -
-         text=True,
-         start_new_session=os.name == "posix",
-     ) as process:
-+        started = time.monotonic()
-         try:
--            process.communicate(input=input, timeout=5)
-+            process.communicate(input=input, timeout=CHECK_TIMEOUT_SECONDS)
-         except BaseException as error:
-+            timed_out = isinstance(error, subprocess.TimeoutExpired)
-             # Ctrl+C can interrupt communicate() while the checker is still running;
-             # on POSIX, the checker is in a separate session and doesn't receive the signal.
-             # `poll()` returns `None` when the checker is still running, so we can kill it
-             # before re-raising the interruption.
-             # On POSIX, a timeout may leave children in the checker's process group
-             # even after the checker exits, so we try to kill the group regardless.
--            if isinstance(error, subprocess.TimeoutExpired) or process.poll() is None:
-+            if timed_out or process.poll() is None:
-                 if os.name == "posix":
-                     # The process group may have disappeared
-                     # if its members exited, leaving nothing in the group to kill.
-@@ -137,12 +160,19 @@ def run_executable(command: Sequence[str | Path], *, input: str | None = None) -
-                     # https://github.com/python/cpython/blob/v3.12.0/Lib/subprocess.py#L1518-L1532
-                     process.kill()
-                 process.wait()
-+            if timed_out:
-+                return Failure.TIMEOUT
-             raise
--        return process.wait()
-+        if process.returncode in successful_exit_codes:
-+            return Success(elapsed_seconds=time.monotonic() - started)
-+        return Failure.ERROR
-+
- 
-+def check_ty(code: str, *, ty_executable: Path) -> Success | Failure:
-+    """Type-check the input with ty and return its outcome.
- 
--def ty_contains_bug(code: str, *, ty_executable: Path) -> bool:
--    """Return `True` if the code triggers a panic in type-checking code."""
-+    A completed check can report diagnostics and still count as successful.
-+    """
-     with tempfile.TemporaryDirectory() as tempdir:
-         input_file = Path(tempdir, "input.py")
-         input_file.write_text(code)
-@@ -155,15 +185,11 @@ def ty_contains_bug(code: str, *, ty_executable: Path) -> bool:
-             "--python-platform",
-             TY_TARGET_PLATFORM,
-         ]
--        try:
--            returncode = run_executable(command)
--        except subprocess.TimeoutExpired:
--            return True
--    return returncode not in {0, 1, 2}
-
+     // Store the caches.
+     caches.persist()?;
 ```
 
-**File**: `python/py-fuzzer/fuzz_reproducers.md.jinja` (modified, +11/-7)
+**File**: `crates/ruff/src/commands/check_stdin.rs` (modified, +6/-4)
 ```diff
-@@ -1,20 +1,24 @@
- {% block introduction %}{% endblock %}
- {% for reproducer in reproducers %}
--{% if reproducer.bug.minimization_succeeded %}
+@@ -1,7 +1,7 @@
+ use std::path::Path;
  
--### Seed: {{ reproducer.seed }}
-+### Seed {{ reproducer.seed }}
+ use anyhow::Result;
+-use ruff_db::diagnostic::Diagnostic;
++use ruff_linter::message::RenderContext;
+ use ruff_linter::package::PackageRoot;
+ use ruff_linter::packaging;
+ use ruff_linter::settings::flags;
+@@ -53,8 +53,10 @@ pub(crate) fn check_stdin(
+         noqa,
+         fix_mode,
+     )?;
+-    diagnostics
+-        .inner
+-        .sort_unstable_by(Diagnostic::ruff_start_ordering);
++    let context = RenderContext::new(&diagnostics.notebook_indexes);
++    diagnostics.inner.sort_unstable_by(|a, b| {
++        a.rendering_sort_key(&context)
++            .cmp(&b.rendering_sort_key(&context))
++    });
+     Ok(diagnostics)
+ }
+```
+
+**File**: `crates/ruff/src/commands/format.rs` (modified, +16/-13)
+```diff
+@@ -591,14 +591,17 @@ impl<'a> FormatResults<'a> {
+                 }
+             })
+             .collect();
+-        let diagnostics: Vec<_> = errors
++        let mut diagnostics: Vec<_> = errors
+             .iter()
+             .map(Diagnostic::from)
+             .chain(self.to_diagnostics(&mut notebook_index))
+-            .sorted_unstable_by(Diagnostic::ruff_start_ordering)
+             .collect();
  
--{{ reproducer.fence }}python
--{{ reproducer.bug.source }}
--{{ reproducer.fence }}
--{% else %}
-+{% if reproducer.failure_description %}
-+{{ reproducer.failure_description }}
+         let context = RenderContext::new(&notebook_index);
++        diagnostics.sort_unstable_by(|a, b| {
++            a.rendering_sort_key(&context)
++                .cmp(&b.rendering_sort_key(&context))
++        });
+         let config = DisplayDiagnosticConfig::new("ruff")
+             .hide_severity(true)
+             .color(!cfg!(test) && colored::control::SHOULD_COLORIZE.should_colorize());
+@@ -1345,19 +1348,19 @@ mod tests {
+         let _s = settings.bind_to_scope();
  
-+{% endif %}
-+{% if reproducer.bug.minimization_succeeded %}
-+Minimized reproducer
+         assert_snapshot!(str::from_utf8(&buf)?, @"
+-        io: test.py: Permission denied
+-        --> test.py:1:1
+-
+-        io: File not found
++        panic: Panicked at <location> when checking `test.py`: `Test panic for FormatCommandError`
+         --> test.py:1:1
++        info: This indicates a bug in Ruff.
++        info: If you could open an issue at https://github.com/astral-sh/ruff/issues/new?title=%5Bpanic%5D, we'd be very appreciative!
++        info: run with `RUST_BACKTRACE=1` environment variable to show the full backtrace information
+ 
+-        internal-error: Expected index or slice expression
++        io: Cannot write to file
+         --> test.py:1:1
+ 
+-        io: Cannot write to file
++        io: File not found
+         --> test.py:1:1
+ 
+-        invalid-cli-option: Range formatting is only supported for Python files.
++        io: test.py: Permission denied
+         --> test.py:1:1
+ 
+         invalid-syntax: Unexpected indentation
+@@ -1366,11 +1369,11 @@ mod tests {
+         1 | 1
+           | ^
+ 
+-        panic: Panicked at <location> when checking `test.py`: `Test panic for FormatCommandError`
++        invalid-cli-option: Range formatting is only supported for Python files.
++        --> test.py:1:1
 +
-+{% else %}
- <details>
--<summary>Seed: {{ reproducer.seed }} (original source; minimization did not complete)</summary>
-+<summary>Original source (minimization did not complete)</summary>
- 
-+{% endif %}
- {{ reproducer.fence }}python
- {{ reproducer.bug.source }}
- {{ reproducer.fence }}
-+{% if not reproducer.bug.minimization_succeeded %}
- 
- </details>
- {% endif %}
-```
-
----
-
-### Incident Patch 2: `71479629` (2026-11-12)
-**Commit Message**: [ty] Resolve pytest fixtures registered through pytest_plugins (#29588)
-
-## Summary
-
-#27444 added "Go to definition" for pytest fixtures, which I was happy
-to see. However its description lists a limitation - fixtures that are
-only available through `pytest_plugins` are not discovered.
-
-In large codebases fixtures typically live in separate modules and
-pytest
-[recommends](https://docs.pytest.org/en/stable/how-to/fixtures.html#using-fixtures-from-other-projects)
-registering them via `pytest_plugins` or entry points, actively
-discouraging from importing them directly. My project registers its
-fixtures via `pytest_plugins`, so navigation didn't work.
-
-This PR adds fixture resolution via pytest_plugins:
-```python
-# conftest.py
-pytest_plugins = ["tests.fixtures.database"]
-
-# tests/fixtures/database.py
-import pytest
-
-@pytest.fixture
-def database(): ...
-
-# tests/test_users.py
-def test_users(database): ...  # Go to definition now jumps to `tests/fixtures/database.py`
-```
-Plugin names resolve like an import from the registering module, using
-ty's existing fallback search of parent directories, rather than
-emulating pytest's sys.path handling.
-
-Related: https://github.com/astral-sh/ty/issues
-
-**File**: `crates/ty_ide/src/find_references.rs` (modified, +215/-0)
-```diff
-@@ -3005,6 +3005,221 @@ class C:
++        internal-error: Expected index or slice expression
+         --> test.py:1:1
+-        info: This indicates a bug in Ruff.
+-        info: If you could open an issue at https://github.com/astral-sh/ruff/issues/new?title=%5Bpanic%5D, we'd be very appreciative!
+-        info: run with `RUST_BACKTRACE=1` environment variable to show the full backtrace information
          ");
+ 
+         Ok(())
+```
+
+**File**: `crates/ruff/src/lib.rs` (modified, +3/-4)
+```diff
+@@ -480,10 +480,9 @@ pub fn check(args: CheckCommand, global_options: GlobalConfigArgs) -> Result<Exi
+             .unwrap_or(Severity::Info);
+         if max_severity.is_fatal() {
+             // When a panic/fatal error is reported, prompt the user to open an issue on github.
+-            // Diagnostics with severity `fatal` will be sorted to the bottom, and printing the
+-            // message here instead of attaching it to the diagnostic ensures that we only print
+-            // it once instead of repeating it for each diagnostic. Prints to stderr to prevent
+-            // the message from being captured by tools parsing the normal output.
++            // Printing the message here instead of attaching it to the diagnostic ensures that we
++            // only print it once instead of repeating it for each diagnostic. Prints to stderr to
++            // prevent the message from being captured by tools parsing the normal output.
+             let message = "Panic during linting indicates a bug in Ruff. If you could open an issue at:
+ 
+ https://github.com/astral-sh/ruff/issues/new?title=%5BLinter%20panic%5D
+```
+
+**File**: `crates/ruff/tests/cli/lint.rs` (modified, +17/-17)
+```diff
+@@ -4794,12 +4794,12 @@ fn rule_panic_mixed_results_concise() -> Result<()> {
+     success: false
+     exit_code: 2
+     ----- stdout -----
++    normal.py:1:1: preview-test-rule: Hey this is a preview test rule.
++    normal.py:1:1: redirected-to-test-rule: Hey this is a test rule that was redirected from another.
+     normal.py:1:1: stable-test-rule: Hey this is a stable test rule.
++    normal.py:1:1: stable-test-rule-display-only-fix: Hey this is a stable test rule with a display only fix.
+     normal.py:1:1: stable-test-rule-safe-fix: [*] Hey this is a stable test rule with a safe fix.
+     normal.py:1:1: stable-test-rule-unsafe-fix: Hey this is a stable test rule with an unsafe fix.
+-    normal.py:1:1: stable-test-rule-display-only-fix: Hey this is a stable test rule with a display only fix.
+-    normal.py:1:1: preview-test-rule: Hey this is a preview test rule.
+-    normal.py:1:1: redirected-to-test-rule: Hey this is a test rule that was redirected from another.
+     panic.py: panic: Panicked at <location> when checking `[TMP]/panic.py`: `This is a fake panic for testing.`
+     Found 7 errors.
+     [*] 1 fixable with `--fix` (1 unsafe fix available with `--fix --unsafe-fixes`).
+@@ -4829,23 +4829,14 @@ fn rule_panic_mixed_results_full() -> Result<()> {
+     success: false
+     exit_code: 2
+     ----- stdout -----
+-    stable-test-rule: Hey this is a stable test rule.
++    preview-test-rule: Hey this is a preview test rule.
+     --> normal.py:1:1
+ 
+-    stable-test-rule-safe-fix: [*] Hey this is a stable test rule with a safe fix.
++    redirected-to-test-rule: Hey this is a test rule that was redirected from another.
+     --> normal.py:1:1
+-      |
+-    1 + # fix from stable-test-rule-safe-fix
+-    2 | import os
+-      |
+ 
+-    stable-test-rule-unsafe-fix: Hey this is a stable test rule with an unsafe fix.
++    stable-test-rule: Hey this is a stable test rule.
+     --> normal.py:1:1
+-      |
+-    1 + # fix from stable-test-rule-unsafe-fix
+-    2 | import os
+-      |
+-    note: This is an unsafe fix and may change runtime behavior
+ 
+     stable-test-rule-display-only-fix: Hey this is a stable test rule with a display only fix.
+     --> normal.py:1:1
+@@ -4855,11 +4846,20 @@ fn rule_panic_mixed_results_full() -> Result<()> {
+       |
+     note: This suggestion may be incorrect or produce invalid syntax. It requires manual review and cannot be applied automatically
+ 
+-    preview-test-rule: Hey this is a preview test rule.
++    stable-test-rule-safe-fix: [*] Hey this is a stable test rule with a safe fix.
+     --> normal.py:1:1
++      |
++    1 + # fix from stable-test-rule-safe-fix
++    2 | import os
++      |
+ 
+-    redirected-to-test-rule: Hey this is a test rule that was redirected from another.
++    stable-test-rule-unsafe-fix: Hey this is a stable test rule with an unsafe fix.
+     --> normal.py:1:1
++      |
++    1 + # fix from stable-test-rule-unsafe-fix
++    2 | import os
++      |
++    note: This is an unsafe fix and may change runtime behavior
+ 
+     panic: Panicked at <location> when checking `[TMP]/panic.py`: `This is a fake panic for testing.`
+     --> panic.py:1:1
+```
+
+**File**: `crates/ruff/tests/integration_test.rs` (modified, +23/-23)
+```diff
+@@ -1308,12 +1308,12 @@ fn preview_enabled_prefix() {
+     success: false
+     exit_code: 1
+     ----- stdout -----
++    -:1:1: preview-test-rule: Hey this is a preview test rule.
++    -:1:1: redirected-to-test-rule: Hey this is a test rule that was redirected from another.
+     -:1:1: stable-test-rule: Hey this is a stable test rule.
++    -:1:1: stable-test-rule-display-only-fix: Hey this is a stable test rule with a display only fix.
+     -:1:1: stable-test-rule-safe-fix: [*] Hey this is a stable test rule with a safe fix.
+     -:1:1: stable-test-rule-unsafe-fix: Hey this is a stable test rule with an unsafe fix.
+-    -:1:1: stable-test-rule-display-only-fix: Hey this is a stable test rule with a display only fix.
+-    -:1:1: preview-test-rule: Hey this is a preview test rule.
+-    -:1:1: redirected-to-test-rule: Hey this is a test rule that was redirected from another.
+     Found 6 errors.
+     [*] 1 fixable with `--fix` (1 unsafe fix available with `--fix --unsafe-fixes`).
+ 
+@@ -1330,14 +1330,14 @@ fn preview_enabled_all() {
+     success: false
+     exit_code: 1
+     ----- stdout -----
+-    -:1:1: undocumented-public-module: Missing docstring in public module
+     -:1:1: missing-copyright-notice: Missing copyright notice at top of file
++    -:1:1: preview-test-rule: Hey this is a preview test rule.
++    -:1:1: redirected-to-test-rule: Hey this is a test rule that was redirected from another.
+     -:1:1: stable-test-rule: Hey this is a stable test rule.
++    -:1:1: stable-test-rule-display-only-fix: Hey this is a stable test rule with a display only fix.
+     -:1:1: stable-test-rule-safe-fix: [*] Hey this is a stable test rule with a safe fix.
+     -:1:1: stable-test-rule-unsafe-fix: Hey this is a stable test rule with an unsafe fix.
+-    -:1:1: stable-test-rule-display-only-fix: Hey this is a stable test rule with a display only fix.
+-    -:1:1: preview-test-rule: Hey this is a preview test rule.
+-    -:1:1: redirected-to-test-rule: Hey this is a test rule that was redirected from another.
++    -:1:1: undocumented-public-module: Missing docstring in public module
+     Found 8 errors.
+     [*] 1 fixable with `--fix` (1 unsafe fix available with `--fix --unsafe-fixes`).
+ 
+@@ -1470,12 +1470,12 @@ fn preview_enabled_group_ignore() {
+     success: false
+     exit_code: 1
+     ----- stdout -----
++    -:1:1: preview-test-rule: Hey this is a preview test rule.
++    -:1:1: redirected-to-test-rule: Hey this is a test rule that was redirected from another.
+     -:1:1: stable-test-rule: Hey this is a stable test rule.
++    -:1:1: stable-test-rule-display-only-fix: Hey this is a stable test rule with a display only fix.
+     -:1:1: stable-test-rule-safe-fix: [*] Hey this is a stable test rule with a safe fix.
+     -:1:1: stable-test-rule-unsafe-fix: Hey this is a stable test rule with an unsafe fix.
+-    -:1:1: stable-test-rule-display-only-fix: Hey this is a stable test rule with a display only fix.
+-    -:1:1: preview-test-rule: Hey this is a preview test rule.
+-    -:1:1: redirected-to-test-rule: Hey this is a test rule that was redirected from another.
+     Found 6 errors.
+     [*] 1 fixable with `--fix` (1 unsafe fix available with `--fix --unsafe-fixes`).
+ 
+@@ -1677,10 +1677,10 @@ fn deprecated_multiple_direct() {
+     success: false
+     exit_code: 1
+     ----- stdout -----
+-    RUF920 Hey this is a deprecated test rule.
++    RUF921 Hey this is another deprecated test rule.
+     --> -:1:1
+ 
+-    RUF921 Hey this is another deprecated test rule.
++    RUF920 Hey this is a deprecated test rule.
+     --> -:1:1
+ 
+     Found 2 errors.
+@@ -2461,34 +2461,34 @@ extend-safe-fixes = ["RUF9"]
+     success: false
+     exit_code: 1
+     ----- stdout -----
++    RUF950 Hey this is a test rule that was redirected from another.
++    --> -:1:1
++
+     RUF900 Hey this is a stable test rule.
+     --> -:1:1
+ 
+-    RUF901 Hey this is a stable test rule with a safe fix.
++    RUF903 Hey this is a stable test rule with a display only fix.
+     --> -:1:1
+       |
+-    1 + # fix from stable-test-rule-safe-fix
++    1 + # fix from stable-test-rule-display-only-fix
+     2 | x = {'a': 1, 'a': 1}
+       |
+-    note: This is an unsafe fix and may change runtime behavior
++    note: This suggestion may be incorrect or produce invalid syntax. It requires manual review and cannot be applied automatically
+ 
+-    RUF902 [*] Hey this is a stable test rule with an unsafe fix.
++    RUF901 Hey this is a stable test rule with a safe fix.
+     --> -:1:1
+       |
+-    1 + # fix from stable-test-rule-unsafe-fix
++    1 + # fix from stable-test-rule-safe-fix
+     2 | x = {'a': 1, 'a': 1}
+       |
++    note: This is an unsafe fix and may change runtime behavior
+ 
+-    RUF903 Hey this is a stable test rule with a display only fix.
++    RUF902 [*] Hey this is a stable test rule with an unsafe fix.
+     --> -:1:1
+       |
+-    1 + # fix from stable-test-rule-display-only-fix
++    1 + # fix from stable-test-rule-unsafe-fix
+     2 | x = {'a': 1, 'a': 1}
+       |
+-  
+```
+
+**File**: `crates/ruff_db/src/diagnostic/mod.rs` (modified, +7/-39)
+```diff
+@@ -13,7 +13,7 @@ pub use self::render::{DummyFileResolver, FileResolver, Input};
+ use self::render::{FullRenderer, Renderer};
+ pub use self::stylesheet::{DiagnosticStylesheet, fmt_with_hyperlink};
+ use crate::cancellation::CancellationToken;
+-use crate::{Db, files::File};
++use crate::files::File;
+ 
+ pub mod render;
+ mod stylesheet;
+@@ -342,19 +342,16 @@ impl Diagnostic {
+ 
+     /// Returns the "primary" span of this diagnostic, panicking if it does not exist.
+     ///
+-    /// This should typically only be used when working with diagnostics in Ruff, where diagnostics
+-    /// are currently required to have a primary span.
+-    ///
+     /// See [`Diagnostic::primary_span`] for more details.
+     pub fn expect_primary_span(&self) -> Span {
+         self.primary_span().expect("Expected a primary span")
      }
  
-+    #[test]
-+    fn references_pytest_fixture_from_registered_plugin() {
-+        let mut builder = pytest_cursor_test_builder();
-+        let test = builder
-+            .source(
-+                "conftest.py",
-+                r#"
-+                pytest_plugins = ["plugin"]
-+                "#,
-+            )
-+            .site_packages(
-+                "plugin.py",
-+                r#"
-+                import pytest
-+
-+                @pytest.fixture
-+                def resource(): ...
-+                "#,
-+            )
-+            .source(
-+                "test_example.py",
-+                r#"
-+                def test_use(resource<CURSOR>):
-+                    print(resource)
-+                "#,
-+            )
-+            .build();
-+
-+        assert_snapshot!(test.references(), @"
-+        info[references]: Found 3 references
-+         --> site-packages/plugin.py:5:5
-+          |
-+        5 | def resource(): ...
-+          |     --------
-+          |
-+         ::: src/test_example.py:2:14
-+          |
-+        2 | def test_use(resource):
-+          |              --------
-+        3 |     print(resource)
-+          |           --------
-+        ");
-+    }
-+
-+    #[test]
-+    fn references_pytest_fixture_declared_in_registered_plugin() {
-+        let mut builder = pytest_cursor_test_builder();
-+        let test = builder
-+            .source(
-+                "conftest.py",
-+                r#"
-+                pytest_plugins = ["plugin"]
-+                "#,
-+            )
-+            .source(
-+                "plugin.py",
-+                r#"
-+                import pytest
-+
-+                @pytest.fixture
-+                def resource<CURSOR>(): ...
-+                "#,
-+            )
-+            .source(
-+                "test_example.py",
-+                r#"
-+                def test_use(resource):
-+                    print(resource)
-+                "#,
-+            )
-+            .source(
-+                "nested/conftest.py",
-+                r#"
-+                import pytest
-+
-+                @pytest.fixture
-+                def resource(): ...
-+                "#,
-+            )
-+            .source(
-+                "nested/test_nested.py",
-+                r#"
-+                def test_nested(resource): ...
-+                "#,
-+            )
-+            .build();
-+
-+        assert_snapshot!(test.references(), @"
-+        info[references]: Found 3 references
-+         --> src/plugin.py:5:5
-+          |
-+        5 | def resource(): ...
-+          |     --------
-+          |
-+         ::: src/test_example.py:2:14
-+          |
-+        2 | def test_use(resource):
-+          |              --------
-+        3 |     print(resource)
-+          |           --------
-+        ");
-+    }
-+
-+    #[test]
-+    fn references_pytest_fixture_reexported_by_registered_plugin() {
-+        let mut builder = pytest_cursor_test_builder();
-+        let test = builder
-+            .source(
-+                "conftest.py",
-+                r#"
-+                pytest_plugins = ["plugin"]
-+                "#,
-+            )
-+            .source(
-+                "plugin.py",
-+                r#"
-+                from fixtures import resource
-+                "#,
-+            )
-+            .source(
-+                "fixtures.py",
-+                r#"
-+                import pytest
-+
-+                @pytest.fixture
-+                def resource(): ...
-+                "#,
-+            )
-+            .source(
-+                "test_example.py",
-+                r#"
-+                def test_use(resource<CURSOR>):
-+                    print(resource)
-+                "#,
-+            )
-+            .build();
-+
-+        assert_snapshot!(test.references(), @"
-+        info[references]: Found 4 references
-+         --> src/fixtures.py:5:5
-+          |
-+        5 | def resource(): ...
-+          |     --------
-+          |
-+         ::: src/plugin.py:2:22
-+          |
-+        2 | from fixtures import resource
-+          |                      --------
-+          |
-+         ::: src/test_example.py:2:14
-+          |
-+        2 | def test_use(resource):
-+          |              --------
-+        3 |     print(resource)
-+          |           --------
-+        ");
-+    }
-+
-+    #[test]
-+    fn references_pytest_fixture_requested_by_registered_plugin() {
-+        let mut builder = pytest_cursor_test_builder();
-+        let test = builder
-+            .source(
-+                "conftest.py",
-+                r#"
-+                pytest_plugins = ["consumer"]
-+                "#,
-+            )
-+            .site_packages(
-+                "consumer.py",
-+                r#"
-+                import pytest
-+
-+                pytest_plugins = ["provider"]
-+
-+                @pytest.fixture
-+                def consumer(resource): ...
-+                "#,
-+            )
-+            .site_packages(
-+                "provider.py",
-+                r#"
-+      
-```
-
-**File**: `crates/ty_ide/src/goto_definition.rs` (modified, +48/-5)
-```diff
-@@ -34,7 +34,7 @@ pub fn goto_definition(
- #[cfg(test)]
- pub(super) mod test {
- 
--    use crate::tests::{CursorTest, IntoDiagnostic, cursor_test};
-+    use crate::tests::{CursorTest, IntoDiagnostic, SitePackagesCursorTestBuilder, cursor_test};
-     use crate::{NavigationTargets, RangedValue, goto_definition};
-     use insta::assert_snapshot;
-     use ruff_db::diagnostic::{
-@@ -133,10 +133,9 @@ def f(items):
-         ");
-     }
- 
--    #[test]
--    fn goto_definition_uses_pytest_fixture_binding() {
-+    fn pytest_cursor_test_builder() -> SitePackagesCursorTestBuilder {
-         let mut builder = CursorTest::builder().with_site_packages();
--        let test = builder
-+        builder
-             .site_packages(
-                 "_pytest/__init__.pyi",
-                 r#"
-@@ -159,7 +158,13 @@ def f(items):
-                 r#"
-                 from _pytest.fixtures import fixture as fixture
-                 "#,
--            )
-+            );
-+        builder
-+    }
-+
-+    #[test]
-+    fn goto_definition_uses_pytest_fixture_binding() {
-+        let test = pytest_cursor_test_builder()
-             .source(
-                 "test_example.py",
-                 r#"
-@@ -187,6 +192,44 @@ def f(items):
-         ");
-     }
- 
-+    #[test]
-+    fn goto_definition_uses_pytest_plugins() {
-+        let test = pytest_cursor_test_builder()
-+            .source(
-+                "conftest.py",
-+                r#"
-+                pytest_plugins = ["tests.fixtures"]
-+                "#,
-+            )
-+            .source(
-+                "tests/fixtures.py",
-+                r#"
-+                import pytest
-+
-+                @pytest.fixture
-+                def resource(): ...
-+                "#,
-+            )
-+            .source(
-+                "tests/test_example.py",
-+                "def test_use(resource<CURSOR>): ...",
-+            )
-+            .build();
-+
-+        assert_snapshot!(test.goto_definition(), @"
-+        info[goto-definition]: Go to definition
-+         --> src/tests/test_example.py:1:14
-+          |
-+        1 | def test_use(resource): ...
-+          |              ^^^^^^^^ Clicking here
-+        info: Found 1 definition
-+         --> src/tests/fixtures.py:5:5
-+          |
-+        5 | def resource(): ...
-+          |     --------
-+        ");
-+    }
-+
-     #[test]
-     fn goto_definition_parameter_declaration() {
-         let test = cursor_test(
-```
-
-**File**: `crates/ty_ide/src/references.rs` (modified, +8/-1)
-```diff
-@@ -32,7 +32,7 @@ use ty_python_core::scope::{FileScopeId, NodeWithScopeKind, ScopeKind};
- use ty_python_semantic::{
-     Db as SemanticDb, FixtureExposure, FixtureNameSource, ImportAliasResolution,
-     ResolvedDefinition, SemanticModel, fixture_bindings_for_parameter,
--    fixture_exposures_for_definition, pytest_global_plugin_files,
-+    fixture_exposures_for_definition, pytest_global_plugin_files, pytest_registered_plugin_files,
- };
- 
- /// Salsa snapshots coordinate clone and drop through shared state. For cached files that don't
-@@ -167,6 +167,13 @@ fn references_for_search(
-                     .iter()
-                     .map(|file| file.file(db)),
-             );
-+            // Fixtures in plugins registered through `pytest_plugins` can request the target
-+            // fixture, and those plugins can be outside the project.
-+            files.extend(
-+                pytest_registered_plugin_files(db, file)
-+                    .iter()
-+                    .map(|plugin| plugin.file(db)),
-+            );
-             files.remove(&source_file);
-             files.into_iter().collect()
-         } else {
-```
-
-**File**: `crates/ty_python_semantic/src/lib.rs` (modified, +1/-1)
-```diff
-@@ -50,7 +50,7 @@ pub use types::ide_support::{
- pub use types::{
-     DisplaySettings, FixtureBinding, FixtureExposure, FixtureNameSource, ProgramEnvironment,
-     PytestTest, TypeQualifiers, fixture_bindings_for_parameter, fixture_exposures_for_definition,
--    pytest_global_plugin_files, pytest_tests_in_file,
-+    pytest_global_plugin_files, pytest_registered_plugin_files, pytest_tests_in_file,
- };
- 
- mod db;
-```
-
-**File**: `crates/ty_python_semantic/src/types.rs` (modified, +2/-1)
-```diff
-@@ -34,7 +34,8 @@ pub(crate) use self::cyclic::TypeTransformer;
- use self::cyclic::{ActiveRecursionDetector, HasIdentity, TypeIdentity};
- pub use self::dedicated::pytest::{
-     FixtureBinding, FixtureExposure, FixtureNameSource, PytestTest, fixture_bindings_for_parameter,
--    fixture_exposures_for_definition, pytest_global_plugin_files, pytest_tests_in_file,
-+    fixture_exposures_for_definition, pytest_global_plugin_files, pytest_registered_plugin_files,
-+    pytest_tests_in_file,
- };
- pub(crate) use self::diagnostic::TypeCheckDiagnostics;
- pub(crate) use self::diagnostic::register_lints;
-```
-
-**File**: `crates/ty_python_semantic/src/types/dedicated/pytest.rs` (modified, +1/-1)
-```diff
-@@ -11,7 +11,7 @@ mod fixtures;
- pub use collection::{PytestTest, pytest_tests_in_file};
- pub use fixtures::{
-     FixtureBinding, FixtureExposure, FixtureNameSource, fixture_bindings_for_parameter,
--    fixture_exposures_for_definition, pytest_global_plugin_files,
-+    fixture_exposures_for_definition, pytest_global_plugin_files, pytest_registered_plugin_files,
- };
- 
- /// Returns whether `definition` remains bound in its defining scope and may exist at runtime.
-```
-
-**File**: `crates/ty_python_semantic/src/types/dedicated/pytest/fixtures.rs` (modified, +937/-29)
-```diff
-@@ -53,7 +53,7 @@ use ruff_text_size::TextRange;
- use rustc_hash::FxHashSet;
- use ty_module_resolver::{
-     ImportingFile, KnownModule, ModuleName, file_to_module, resolve_module_for_import_from,
--    resolve_real_module_confident, stub_file_to_real_module,
-+    resolve_real_module, resolve_real_module_confident, stub_file_to_real_module,
- };
- use ty_python_core::ast_node_ref::AstNodeRef;
- use ty_python_core::definition::{Definition, DefinitionKind, ParameterDefinitionNodeKind};
-@@ -65,7 +65,7 @@ use ty_python_core::{
- use super::collection::{PytestTestKind, pytest_test_for_binding};
- use super::is_available_definition;
- use crate::lexical_name_path::lexical_name_path_for_definition;
--use crate::place::definitions::DefinitionResolution;
-+use crate::place::definitions::{DefinitionResolution, definitions_for_module_global};
- use crate::types::function::{FunctionType, KnownFunction};
- use crate::types::infer::{function_known_decorators, infer_definition_types, original_class_type};
- use crate::types::signatures::Parameter as SignatureParameter;
-@@ -94,8 +94,8 @@ use crate::{Db, FxIndexMap, FxIndexSet};
- /// ```
- ///
- /// At present, we search the parameter's class hierarchy, module, enclosing
--/// conftest hierarchy, and installed core pytest plugins. Fixtures from other
--/// plugins are not yet supported.
-+/// conftest hierarchy, plugins registered through `pytest_plugins`, and installed
-+/// core pytest plugins. Fixtures from other plugins are not yet supported.
- ///
- /// The resolution implemented here matches what pytest will actually resolve at
- /// runtime for context A, but not necessarily for context B. To see why,
-@@ -191,14 +191,36 @@ pub fn fixture_bindings_for_parameter<'db>(
+     /// Returns a key that can be used to sort two diagnostics into the canonical order
+     /// in which they should appear when rendered.
+-    pub fn rendering_sort_key<'a>(&'a self, db: &'a dyn Db) -> impl Ord + 'a {
++    pub fn rendering_sort_key<'a>(&'a self, resolver: &'a dyn FileResolver) -> impl Ord + 'a {
+         RenderingSortKey {
+-            db,
++            resolver,
+             diagnostic: self,
          }
      }
- 
--    // Finally, search installed core plugins in reverse registration order. The legacy
--    // temporary-directory plugin is registered after the static core plugins, so it comes first.
-+    // Fourth, search the legacy temporary-directory plugin. Pytest registers it during
-+    // configuration, after the default plugins and the plugins named by initial conftests, so it
-+    // takes precedence over both. Plugins registered later during collection, such as those named
-+    // by test modules, take precedence over it. As an approximation, we search it before all
-+    // plugins named through `pytest_plugins`.
-     if let Some(plugin) = pytest_legacy_tmpdir_plugin(db, request_file.program(db)) {
-         let bindings = bindings_in_search_scope(db, &request, FixtureSearchScope::Class(plugin));
-         if !bindings.is_empty() {
-             return bindings;
-         }
+@@ -487,42 +484,11 @@ impl Diagnostic {
+             .map(|sub| sub.inner.message.as_str())
      }
-+
-+    // Fifth, search plugins registered through `pytest_plugins` in reverse registration order.
-+    // Their fixtures are visible to the whole session, so conftest fixtures take precedence.
-+    // https://github.com/pytest-dev/pytest/blob/9.1.1/src/_pytest/fixtures.py#L1776-L1792
-+    for plugin in pytest_registered_plugin_files(db, request_file)
-+        .iter()
-+        .rev()
-+    {
-+        let bindings = bindings_in_search_scope(
-+            db,
-+            &request,
-+            FixtureSearchScope::Scope(global_scope(db, *plugin)),
-+        );
-+        if !bindings.is_empty() {
-+            return bindings;
-+        }
-+    }
-+
-+    // Finally, search installed core plugins in reverse registration order.
-     for plugin in pytest_global_plugin_files(db, request_file.program(db))
-         .iter()
-         .rev()
-@@ -302,26 +324,270 @@ pub fn fixture_exposures_for_definition<'db>(
-     exposures_contributed_by_definition(db, definition, name)
+ 
+-    /// Returns the [`SourceFile`] which the message belongs to.
+-    fn ruff_source_file(&self) -> Option<&SourceFile> {
+-        self.primary_span_ref()?.as_ruff_file()
+-    }
+-
+-    /// Returns the [`SourceFile`] which the message belongs to.
+-    ///
+-    /// Panics if the diagnostic has no primary span, or if its file is not a `SourceFile`.
+-    fn expect_ruff_source_file(&self) -> &SourceFile {
+-        self.ruff_source_file()
+-            .expect("Expected a ruff source file")
+-    }
+-
+     /// Returns the [`TextRange`] for the diagnostic.
+     pub fn range(&self) -> Option<TextRange> {
+         self.primary_span()?.range()
+     }
+ 
+-    /// Returns the ordering of diagnostics based on the start of their ranges, if they have any.
+-    ///
+-    /// Panics if either diagnostic has no primary span, or if its file is not a `SourceFile`.
+-    pub fn ruff_start_ordering(&self, other: &Self) -> std::cmp::Ordering {
+-        let a = (
+-            self.severity().is_fatal(),
+-            self.expect_ruff_source_file(),
+-            self.range().map(|r| r.start()),
+-        );
+-        let b = (
+-            other.severity().is_fatal(),
+-            other.expect_ruff_source_file(),
+-            other.range().map(|r| r.start()),
+-        );
+-
+-        a.cmp(&b)
+-    }
+-
+     /// Add an offset for aligning the header sigil with the line number separators in a diff.
+     pub fn set_header_offset(&mut self, offset: usize) {
+         Arc::make_mut(&mut self.inner).header_offset = offset;
+@@ -546,7 +512,7 @@ struct DiagnosticInner {
  }
  
--/// Returns the installed core pytest plugin files in registration order.
--pub fn pytest_global_plugin_files<'db>(
-+/// Returns the plugins registered through `pytest_plugins` by `request_file` and its conftest
-+/// hierarchy, in registration order.
-+///
-+/// Plugins registered by unrelated conftests or test modules can also be visible at runtime,
-+/// depending on collection order, but we don't consider them.
-+pub fn pytest_registered_plugin_files<'db>(
-     db: &'db dyn Db,
--    program: Program<'db>,
-+    request_file: ProgramFile<'db>,
- ) -> &'db [ProgramFile<'db>] {
--    let Some(config_module) = resolve_real_module_confident(
-+    // A file without registrations of its own sees the same plugins as its nearest conftest.
-+    // Selecting that conftest before entering the tracked query lets the test modules that share a
-+    // conftest also share its cached registrations.
-+    let registration_file = if pytest_plugin_names(db, request_file).is_empty() {
-+        conftest_files(db, request_file).into_iter().next()
-+    } else {
-+        Some(request_file)
-+    };
-+
-+    registration_file
-+        .map(|file| pytest_registered_plugin_files_from(db, file))
-+        .unwrap_or_default()
-+}
-+
-+/// Returns the plugins registered through `pytest_plugins` by `registration_file` and its conftest
-+/// hierarchy, in registration order.
-+///
-+/// Pytest imports conftests from the outermos
+ struct RenderingSortKey<'a> {
+-    db: &'a dyn Db,
++    resolver: &'a dyn FileResolver,
+     diagnostic: &'a Diagnostic,
+ }
+ 
+@@ -565,7 +531,9 @@ impl Ord for RenderingSortKey<'_> {
+             let left_file = left_span.file();
+             let right_file = right_span.file();
+             if left_file != right_file {
+-                let order = left_file.path(&self.db).cmp(right_file.path(&self.db));
++                let order = left_file
++                    .path(self.resolver)
++                    .cmp(right_file.path(self.resolver));
+                 if order.is_ne() {
+                     return order;
+                 }
 ```
 
 ---
 
-### Incident Patch 3: `10878c02` (2026-11-12)
-**Commit Message**: Decode in-memory notebooks directly from their source string (#30385)
+### Incident Patch 2: `837da15e` (2026-11-13)
+**Commit Message**: [ty] Fix a panic checking class decorators with inferred return types (#30399)
+
+ty could panic when checking a decorated class if it inferred the return
+type of an inner decorator and an outer decorator returned a class from
+another module. During cycle recovery, ty could use that replacement
+class's scope to look up names in the file that defined the original
+class.
+
+Preserve the original class before applying decorators and use it for
+class-definition checks. The decorated name still takes the type
+returned by the outer decorator.
+
+Fixes astral-sh/ty#5021.
+
+## Test plan
+
+Checked the reported `EnumCheck` example with return type inference
+enabled. Before this change it panicked. With the fix, ty reports the
+invalid argument to `@d2` and finishes checking the file.
+
+**File**: `crates/ty_python_semantic/resources/mdtest/function/return_type_inference.md` (modified, +22/-0)
+```diff
+@@ -453,6 +453,28 @@ def returns_4_but_will_be_replaced():
+ reveal_type(returns_4_but_will_be_replaced())  # revealed: Literal["a"]
+ ```
+ 
++## Decorated classes
++
++When the inner decorator's return type is inferred, we still check the original class body. The
++decorated name takes the type returned by the outer decorator.
++
++```py
++from typing import Final
++
++def identity(cls: type):
++    return cls
++
++def replace(cls: type) -> type[bool]:
++    return bool
++
++@replace
++@identity
++class C:
++    value: Final[int]  # error: [final-without-value]
++
++reveal_type(C)  # revealed: <class 'bool'>
++```
++
+ ## Methods
+ 
+ ### Overrides
+```
+
+**File**: `crates/ty_python_semantic/src/types/infer/builder.rs` (modified, +5/-7)
+```diff
+@@ -1295,16 +1295,14 @@ impl<'db, 'ast> TypeInferenceBuilder<'db, 'ast> {
+                             definition,
+                             &class_node.node(self.module()).decorator_list,
+                         );
+-                        let original_ty = match self.region {
+-                            InferenceRegion::Definition(current) if current == definition => {
+-                                self.undecorated_type
+-                            }
+-                            _ => original_class_type(self.db(), definition).map(Type::ClassLiteral),
++                        let Some(ClassLiteral::Static(class)) =
++                            original_class_type(self.db(), definition)
++                        else {
++                            continue;
+                         };
+-                        let ty = original_ty.unwrap_or(ty);
+                         post_inference::static_class::check_static_class_definitions(
+                             &self.context,
+-                            ty,
++                            class,
+                             class_node.node(self.module()),
+                             self.index,
+                             &|expr| self.file_expression_type(expr),
+```
+
+**File**: `crates/ty_python_semantic/src/types/infer/builder/class.rs` (modified, +5/-9)
+```diff
+@@ -337,20 +337,18 @@ impl<'db> TypeInferenceBuilder<'db, '_> {
+             ));
+         }
+ 
+-        let mut inferred_ty = infer_original_class_ty(
++        let original_class_ty = infer_original_class_ty(
+             deprecated,
+             type_check_only,
+             dataclass_params,
+             dataclass_transformer_params,
+             total_ordering,
+         );
+ 
+-        let original_class_ty = inferred_ty;
+-        let mut undecorated_ty = None;
+-
+         // In the second pass, apply class decorators from inner to outer and use their return types
+         // to update the public binding. `original_class_ty` remains the class object whose body and
+         // metadata were inferred above.
++        let mut inferred_ty = original_class_ty;
+         for (decorator_ty, decorator_node, application) in decorators_to_apply {
+             let precomputed_result = match application {
+                 ClassDecoratorApplication::Ordinary(precomputed_result) => precomputed_result,
+@@ -425,15 +423,13 @@ impl<'db> TypeInferenceBuilder<'db, '_> {
+                     decorated_ty,
+                 )
+             } else {
+-                // Only record an undecorated type once a decorator actually replaces the public
+-                // binding. If all decorators preserve the class, there is no alternate class type
+-                // to expose.
+-                undecorated_ty.get_or_insert(inferred_ty);
+                 decorated_ty
+             };
+         }
+ 
+-        self.undecorated_type = undecorated_ty;
++        // An intermediate decorator result can contain a cycle marker. Class-body checks need
++        // the original class even while the public binding is still being inferred.
++        self.undecorated_type = (inferred_ty != original_class_ty).then_some(original_class_ty);
+ 
+         // A decorator can replace a nested class with a writable value, including another class.
+         let qualifiers = if self.scope().scope(db).kind().is_class()
+```
+
+**File**: `crates/ty_python_semantic/src/types/infer/builder/post_inference/static_class.rs` (modified, +1/-5)
+```diff
+@@ -143,17 +143,13 @@ fn check_class_slots<'db>(
+ /// [metaclass]: https://docs.python.org/3/reference/datamodel.html#metaclasses
+ pub(crate) fn check_static_class_definitions<'db>(
+     context: &InferContext<'db, '_>,
+-    ty: Type<'db>,
++    class: StaticClassLiteral<'db>,
+     class_node: &ast::StmtClassDef,
+     index: &SemanticIndex<'db>,
+     file_expression_type: &impl Fn(&ast::Expr) -> Type<'db>,
+ ) {
+     let db = context.db();
+ 
+-    let Type::ClassLiteral(ClassLiteral::Static(class)) = ty else {
+-        return;
+-    };
+-
+     // Check that the class does not have a cyclic definition
+     if let Some(inheritance_cycle) = class.inheritance_cycle(context.db()) {
+         if inheritance_cycle.is_participant()
+```
+
+---
+
+### Incident Patch 3: `f11d1825` (2026-11-13)
+**Commit Message**: [ty] Fix completion after an alias in a parenthesized import (#30394)
 
 ## Summary
 
-`Notebook::from_source_code` already has the full notebook as a `&str`.
-Wrapping it in a `Cursor` makes `serde_json` read that string one byte
-at a time. Use `serde_json::from_str` to decode the existing buffer
-directly. Notebooks opened from disk still stream through a
-`BufReader<File>`. Both paths share error classification and notebook
-construction.
+With the cursor after `timede` in the import below, accepting the
+`timedelta` suggestion now changes that line to `timedelta`. Previously,
+ty offered to auto-import `timedelta`, which could leave `timede` in
+place and add a separate entry to the import list.
 
-Whole-command Callgrind instructions for one uncached, single-worker
-`ruff check --stdin-filename <path> -` per JAX documentation notebook.
-The median reduction per notebook was 7.23%. [JAX
-notebooks](https://github.com/jax-ml/jax/tree/55029b8f7e65adb79764103871ec0357fa440227/docs)
+```python
+from datetime import (
+    date as _date,
+    timede
+)
+```
 
-| Workload | Before (`1236ea23b4`) | With this change |
-| --- | ---: | ---: |
-| All 33 notebooks | 854,584,702 | 683,911,138 (−19.97%) |
-| Excluding the largest notebook | 713,864,545 | 640,770,508 (−10.24%) |
+Fixes https://github.com/astral-sh/ty/issues/5018.
+
+## Approach
+
+`ImportStatement::detect` scans tokens backward from the cursor to
+identify the import statement and determine which module to suggest
+names from. In the example above, the scan used to stop at the opening
+parenthesis after reading `date as _date`. It now continues through the
+parenthesis to find `from datetime import` and suggest members of
+`datetime`. The `completing_alias` guard limits that transition to cases
+where the cursor is outside the alias name.
 
 ## Test Plan
 
-The notebook tests and Clippy passed, and diagnostics matched byte for
-byte across all 33 JAX notebooks.
+See included tests.
 
-**File**: `crates/ruff_notebook/src/notebook.rs` (modified, +16/-13)
+**File**: `crates/ty_ide/src/completion.rs` (modified, +39/-1)
 ```diff
-@@ -5,7 +5,7 @@ use std::cmp::Ordering;
- use std::collections::HashSet;
- use std::fs::File;
- use std::io;
--use std::io::{BufReader, Cursor, Read, Seek, SeekFrom, Write};
-+use std::io::{BufReader, Read, Seek, SeekFrom, Write};
- use std::path::Path;
- use std::sync::OnceLock;
- use thiserror::Error;
-@@ -80,30 +80,33 @@ pub struct Notebook {
- }
+@@ -2830,6 +2830,8 @@ impl<'a> ImportStatement<'a> {
+         // Usually either `from foo imp<CURSOR>`
+         // or `import foo a<CURSOR>`.
+         let mut incomplete_as_or_import = false;
++        // Whether the cursor is at the name being defined by `as`.
++        let mut completing_alias = false;
+         for token in cursor.tokens_before.iter().rev().take(Self::LIMIT) {
+             if token.kind().is_trivia() {
+                 continue;
+@@ -2854,7 +2856,10 @@ impl<'a> ImportStatement<'a> {
+                 (S::Start | S::FirstName | S::AdjacentName, TK::Comma) => S::NameList,
+                 (S::Start | S::FirstName | S::AdjacentName, TK::Dot) => S::InitialDot,
+                 (S::Start | S::FirstName | S::AdjacentName, TK::Ellipsis) => S::FromEllipsisName,
+-                (S::Start | S::FirstName, TK::As) => S::As,
++                (S::Start | S::FirstName, TK::As) => {
++                    completing_alias = true;
++                    S::As
++                }
+                 (S::Start | S::AdjacentName, TK::From) => S::From,
+                 (S::FirstName, TK::From) => S::From,
+                 (S::FirstName, TK::Identifier) => S::AdjacentName,
+@@ -2903,6 +2908,7 @@ impl<'a> ImportStatement<'a> {
+                 (S::AsName, TK::Dot) => S::AsDottedNameDot,
+                 (S::AsName, TK::Import) => S::Import,
+                 (S::AsName, TK::Comma) => S::NameList,
++                (S::AsName, TK::Lpar) if !completing_alias => S::FromLpar,
  
- impl Notebook {
--    /// Read the Jupyter Notebook from the given [`Path`].
--    pub fn from_path(path: &Path) -> Result<Self, NotebookError> {
--        Self::from_reader(BufReader::new(File::open(path)?))
--    }
--
-     /// Read the Jupyter Notebook from its JSON string.
-     pub fn from_source_code(source_code: &str) -> Result<Self, NotebookError> {
--        Self::from_reader(Cursor::new(source_code))
-+        Self::from_json(
-+            serde_json::from_str(source_code),
-+            source_code.ends_with('\n'),
-+        )
+                 // This is the mini state machine for handling
+                 // `dotted_as_names`. We enter it when we see
+@@ -3423,6 +3429,7 @@ mod tests {
+     use ruff_python_ast::helpers::is_dunder;
+     use ruff_python_ast::token::{TokenKind, Tokens};
+     use ruff_python_parser::{Mode, ParseOptions};
++    use ruff_python_trivia::textwrap::dedent;
+     use ty_module_resolver::ModuleName;
+ 
+     use crate::CompletionCapabilities;
+@@ -6727,6 +6734,37 @@ from sys import (
+         builder.build().contains("getsizeof");
      }
  
--    /// Read a Jupyter Notebook from a [`Read`] implementer.
-+    /// Read the Jupyter Notebook from the given [`Path`].
-     ///
-     /// See also the black implementation
-     /// <https://github.com/psf/black/blob/69ca0a4c7a365c5f5eea519a90980bab72cab764/src/black/__init__.py#L1017-L1046>
--    fn from_reader<R>(mut reader: R) -> Result<Self, NotebookError>
--    where
--        R: Read + Seek,
--    {
-+    pub fn from_path(path: &Path) -> Result<Self, NotebookError> {
-+        let mut reader = BufReader::new(File::open(path)?);
-         let trailing_newline = reader.seek(SeekFrom::End(-1)).is_ok_and(|_| {
-             let mut buf = [0; 1];
-             reader.read_exact(&mut buf).is_ok_and(|()| buf[0] == b'\n')
-         });
-         reader.rewind()?;
--        let raw_notebook: RawNotebook = match serde_json::from_reader(reader) {
-+        Self::from_json(serde_json::from_reader(reader), trailing_newline)
++    #[test]
++    fn parenthesized_import_after_alias_completes_without_import_edit() {
++        let builder = completion_test_builder(&dedent(
++            "
++            from datetime import (
++                date as _date,
++                timede<CURSOR>
++            )
++            ",
++        ))
++        .imports()
++        .filter(|completion| completion.name == "timedelta");
++
++        assert_snapshot!(builder.build().snapshot(), @"timedelta :: <no import edit>");
 +    }
 +
-+    fn from_json(
-+        raw: serde_json::Result<RawNotebook>,
-+        trailing_newline: bool,
-+    ) -> Result<Self, NotebookError> {
-+        let raw_notebook = match raw {
-             Ok(notebook) => notebook,
-             Err(err) => {
-                 // Translate the error into a diagnostic
++    #[test]
++    fn parenthesized_import_alias_on_next_line_does_not_complete_members() {
++        let builder = completion_test_builder(&dedent(
++            "
++            from datetime import (
++                date as
++                timede<CURSOR>
++            )
++            ",
++        ))
++        .skip_auto_import();
++
++        builder.build().not_contains("timedelta");
++    }
++
+     #[test]
+     fn from_import_with_bare_annotation() {
+         let builder = CursorTest::builder()
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #30392** (2026-11-12): Avoid multipart uploads for release artifacts (@zanieb)
-- **PR #30385** (2026-11-12): Decode in-memory notebooks directly from their source string (@MichaReiser)
-- **PR #30384** (2026-11-12): Stream JSON diagnostics to the output writer (@MichaReiser)
-- **PR #30380** (2026-11-12): Bump version to 0.17.5 (@astral-automations-bot[bot])
-- **PR #30379** (2026-11-12): Speed up streaming notebook reads (@MichaReiser)
-- **PR #30377** (closed): Borrow flat tuple keys when checking for duplicate dictionary keys (@MichaReiser)
+- **PR #30431** (closed): [ty] Avoid rechecking whether a statement call's callee is reachable (@charliermarsh)
+- **PR #30429** (2026-11-14): [ty] Skip union comparisons for unrelated nominal classes (@charliermarsh)
+- **PR #30426** (closed): [ty] Measure ecosystem impact of removing solver declared-type preference (@carljm)
+- **PR #30417** (closed): fix(flake8-simplify): omit redundant bool wrapper in double-negation fix (SIM208) (@GautamKumarOffical)
+- **PR #30409** (2026-11-13): Update dependency soupsieve to v4 (@renovate[bot])
+- **PR #30408** (closed): [UP030] Fix touching format specifiers leaving numeric index (#30345) (@viliamgonda)
 
 ---
 
@@ -2915,28 +2891,28 @@ byte across all 33 JAX notebooks.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [ty] Show failure kinds and timeout timings in py-fuzzer reports (#30367)
+## X. Use the shared diagnostic rendering order in Ruff
 
 **RULE**:
-When implementing operations in `.github/workflows/ci.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/mdtest/src/matcher.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `650401ca`: [ty] Show failure kinds and timeout timings in py-fuzzer reports (#30367). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1267effe`: Use the shared diagnostic rendering order in Ruff. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yaml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/mdtest/src/matcher.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            ty-fuzz-failures/*.json
+            .sort_unstable_by(|a, b| a.rendering_sort_key(&db).cmp(&b.rendering_sort_key(&db)));
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+            .sort_unstable_by(|a, b| a.rendering_sort_key(db).cmp(&b.rendering_sort_key(db)));
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `650401ca` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1267effe` are properly handled with clean fallback behavior.

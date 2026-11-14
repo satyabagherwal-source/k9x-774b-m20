@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T16:00:18.386Z",
-  "total_records": 732,
+  "last_updated": "2026-11-14T16:23:48.023Z",
+  "total_records": 740,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 361,
+      "total": 364,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -398,7 +398,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-zai-org-glm-5-3-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-mudler-locate-anything-cpp-gguf-core-invariants",
         "DOM-D-C9202D2F",
-        "domain_intelligence-research-knowledge-intelligence-hf-mudler-locate-anything-cpp-gguf-learnings-cor"
+        "domain_intelligence-research-knowledge-intelligence-hf-mudler-locate-anything-cpp-gguf-learnings-cor",
+        "domain_intelligence-research-knowledge-intelligence-jialinyyzz-humanizer-core-invariants",
+        "DOM-D-80D6B779",
+        "domain_intelligence-research-knowledge-intelligence-hf-jialinyyzz-humanizer-learnings-core-invariant"
       ]
     },
     "E": {
@@ -550,7 +553,7 @@
       ]
     },
     "H": {
-      "total": 151,
+      "total": 154,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -702,7 +705,10 @@
         "domain_intelligence-technical-construction-intelligence-arangodb-arangodb-core-invariants",
         "domain_intelligence-technical-construction-intelligence-arangodb-arangodb-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-agent-field-agentfield-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-agent-field-agentfield-learnings-core-invari"
+        "domain_intelligence-technical-construction-intelligence-agent-field-agentfield-learnings-core-invari",
+        "domain_intelligence-technical-construction-intelligence-react-native-webrtc-react-native-webrtc-core",
+        "DOM-H-305CEBA3",
+        "domain_intelligence-technical-construction-intelligence-react-native-webrtc-react-native-webrtc-lear"
       ]
     },
     "I": {
@@ -751,7 +757,7 @@
       ]
     },
     "K": {
-      "total": 23,
+      "total": 25,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -775,7 +781,9 @@
         "DOM-K-2852CE47",
         "domain_intelligence-quality-verification-intelligence-kgateway-dev-kgateway-learnings-core-invariant",
         "domain_intelligence-quality-verification-intelligence-apple-foundationdb-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-apple-foundationdb-learnings-core-invariants"
+        "domain_intelligence-quality-verification-intelligence-apple-foundationdb-learnings-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-astral-sh-ruff-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-astral-sh-ruff-learnings-core-invariants"
       ]
     },
     "L": {
@@ -15139,6 +15147,144 @@
       "repository": "hf-mudler-locate-anything.cpp-gguf-learnings",
       "content_hash": "70628f3a3a02835a6775b9d18e6f97223136fc5ec973784b6d8743e1a75481d4",
       "created_at": "2026-11-14T16:00:18.012Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-jialinyyzz-humanizer-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-jialinyyzz-humanizer-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: jialinyyzz/humanizer Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-jialinyyzz-humanizer-research-knowledge-intelligence-jialinyyzz-humanizer-cor.md",
+      "repository": "jialinyyzz/humanizer",
+      "content_hash": "a2d3cd9d9a04743677c002d748b54010a9d15822d5af9d2e420ac36abf25ffd6",
+      "created_at": "2026-11-14T16:22:46.810Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-astral-sh-ruff-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-astral-sh-ruff-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: astral-sh/ruff Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-astral-sh-ruff-quality-verification-intelligence-astral-sh-ruff-core-invariants.md",
+      "repository": "astral-sh/ruff",
+      "content_hash": "7dbcab9a133f792bc14c7cff52d1dab05d088f074bddc5fea6513f95c9643ad5",
+      "created_at": "2026-11-14T16:22:50.409Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-react-native-webrtc-react-native-webrtc-core": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-react-native-webrtc-react-native-webrtc-core",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: react-native-webrtc/react-native-webrtc Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-native-webrtc-react-native-webrtc-technical-construction-intelligence-reac.md",
+      "repository": "react-native-webrtc/react-native-webrtc",
+      "content_hash": "e91351535b91262740ab4208f26255f6d9808bacee9a9611dd79b7ca39bd18f4",
+      "created_at": "2026-11-14T16:22:53.532Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-astral-sh-ruff-learnings-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-astral-sh-ruff-learnings-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: astral-sh-ruff-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-astral-sh-ruff-learnings-quality-verification-intelligence-astral-sh-ruff-learni.md",
+      "repository": "astral-sh-ruff-learnings",
+      "content_hash": "a801569514392487e56b363cb33f212d47c65bd9f5bc2206542ce9de5bb89b45",
+      "created_at": "2026-11-14T16:22:59.037Z"
+    },
+    "DOM-D-80D6B779": {
+      "record_id": "DOM-D-80D6B779",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): jialinyyzz/humanizer",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/jialinyyzz/humanizer](https://huggingface.co/jialinyyzz/humanizer))  \n> **Source Version**: `hf-jialinyyz`  \n> **License**: Open-Source  \n> **Synthesized",
+      "content_hash": "0e5b473d67aa03750f6fa7f7e27c6ae53250ca451103b6914583933cfe707de2",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md`  \n> **Source**: huggingface ([https://huggingf -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md`  \n> **Source**: huggingface ([https://huggingf",
+      "provenance": {
+        "source_uri": "project://hf-jialinyyzz-humanizer/hf-jialinyyzz-humanizer-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T16:22:59.179Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-jialinyyzz-humanizer)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-jialinyyzz-humanizer"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T16:23:20.231Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-jialinyyzz-humanizer-learnings-core-invariant": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-jialinyyzz-humanizer-learnings-core-invariant",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-jialinyyzz-humanizer-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-jialinyyzz-humanizer-learnings-research-knowledge-intelligence-hf-jialinyyzz-.md",
+      "repository": "hf-jialinyyzz-humanizer-learnings",
+      "content_hash": "c01b8d26b1f013707149c71e0e3e3688fbb64a6f5e4d68e013e1049eaf04f7ed",
+      "created_at": "2026-11-14T16:23:20.383Z"
+    },
+    "DOM-H-305CEBA3": {
+      "record_id": "DOM-H-305CEBA3",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "H",
+          "id": "technical_construction",
+          "name": "Technical Construction Intelligence"
+        }
+      ],
+      "title": "ios): convert degradationPreference between its name and the enum",
+      "content": "When implementing operations in `ios/RCTWebRTC/SerializeUtils.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react-native-webrtc/react-native-webrtc. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "036d9e3dcb36ba4cc704c9f7efe2a9e4632bedabc4a3c5313d60f515fbee785c",
+      "summary": "Prevents defects observed in production commit `21ee6597`: ios): convert degradationPreference between its name and the enum. Unvalidated ex -> When implementing operations in `ios/RCTWebRTC/SerializeUtils.h`, engineers MUST enforce rigorous boundary validation, safe state transition",
+      "provenance": {
+        "source_uri": "project://react-native-webrtc-react-native-webrtc/react-native-webrtc-react-native-webrtc-learnings.md",
+        "source_version": "7b9b451b",
+        "observed_at": "2026-11-14T16:22:52.673Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (react-native-webrtc-react-native-webrtc)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of react-native-webrtc-react-native-webrtc"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "H"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T16:23:47.618Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-react-native-webrtc-react-native-webrtc-lear": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-react-native-webrtc-react-native-webrtc-lear",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: react-native-webrtc-react-native-webrtc-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-native-webrtc-react-native-webrtc-learnings-technical-construction-intelli.md",
+      "repository": "react-native-webrtc-react-native-webrtc-learnings",
+      "content_hash": "1cbda9ae453d3e640c6efc35ae2462aaca3cc6e63762a22c6a20f2c4544887f9",
+      "created_at": "2026-11-14T16:23:48.023Z"
     }
   }
 }
