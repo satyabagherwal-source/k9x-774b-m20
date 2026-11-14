@@ -9785,3 +9785,6 @@
 | `CYCLE-20261114-HJBN` | `2026-11-14T07:39:20.723Z` | `lingyired/status-trio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8465` | Yes (`ccd11aaf...`) |
 | `CYCLE-20261114-JOML` | `2026-11-14T07:41:00.909Z` | `NaiveAI/Naive-N0.5-Flash` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8466, Rule 8467, Rule 8468` | Yes (`c4e811c5...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T07:41:29.773Z` | `hf-naiveai-naive-n0.5-flash` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-87566B56` [Domain H] | Yes (`d7e4a53e...`) |
+| `CYCLE-20261114-ZKIK` | `2026-11-14T07:53:22.076Z` | `openai/clip-vit-base-patch32` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md` | Yes (`dd81e331...`) |
+| `CYCLE-20261114-ZRSA` | `2026-11-14T07:53:31.498Z` | `beclab/Olares` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/beclab-olares-learnings.md` | Yes (`303f6140...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T07:54:01.819Z` | `hf-openai-clip-vit-base-patch32` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-01385688` [Domain D] | Yes (`a258f01e...`) |

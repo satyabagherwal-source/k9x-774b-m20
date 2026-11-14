@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-1OKD",
-    "timestamp": "2026-11-13T10:55:17.917Z",
-    "repository": "sentence-transformers/all-MiniLM-L6-v2",
-    "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
-    "contentHash": "dd739cfecd4f9bd6af950cd5c5c3379f7e3412ea256dbd042e57a8afb5b5dbb5",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-20WA",
-    "timestamp": "2026-11-13T10:55:33.898Z",
-    "repository": "fallow-rs/fallow",
-    "learningId": "learn-github-fallow-rs-fallow",
-    "contentHash": "a7fb2a6d83fb552be369d41d9b6af602cca6279d2b8e77fe642005b8ffac9201",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-PHYP",
     "timestamp": "2026-11-13T11:13:49.105Z",
     "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
@@ -7492,6 +7462,36 @@
     "contentHash": "c4e811c5ba05978cb2cb571fec6687e42dbc82335081e233194a89112bcf4f64",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-ZKIK",
+    "timestamp": "2026-11-14T07:53:22.076Z",
+    "repository": "openai/clip-vit-base-patch32",
+    "learningId": "learn-huggingface-openai-clip-vit-base-patch32",
+    "contentHash": "dd81e331e74fabe42c76419f76b1d1c6898408a3ffe2d7e3c7272bf2bd511580",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-ZRSA",
+    "timestamp": "2026-11-14T07:53:31.498Z",
+    "repository": "beclab/Olares",
+    "learningId": "learn-github-beclab-olares",
+    "contentHash": "303f6140b1a862f02b585a81beb5b0c1be90014f0c90fcc6c32cfec1392e9acd",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-14T07:41:04.178Z",
-    "lastVerified": "2026-11-14T07:41:04.178Z",
+    "lastChecked": "2026-11-14T07:53:34.532Z",
+    "lastVerified": "2026-11-14T07:53:34.532Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -155,8 +155,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-14T06:57:04.905Z",
-    "lastVerified": "2026-11-14T06:57:04.905Z",
+    "lastChecked": "2026-11-14T07:53:33.966Z",
+    "lastVerified": "2026-11-14T07:53:33.966Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1211,12 +1211,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "provablehq-snarkos": {
-    "name": "aleo-labs-protocol/snarkOS",
+    "name": "snarkOS",
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-14T00:08:11.353Z",
-    "lastVerified": "2026-11-14T00:08:11.353Z",
+    "lastChecked": "2026-11-14T07:53:28.978Z",
+    "lastVerified": "2026-11-14T07:53:28.978Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
@@ -1225,7 +1225,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "1f0ceab5"
   },
   "chroma-core-chroma": {
     "name": "chroma",
@@ -3334,14 +3335,14 @@
     "officialUrl": "https://github.com/beclab/Olares",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-13T06:58:19.818Z",
-    "lastVerified": "2026-11-13T06:58:19.818Z",
+    "lastChecked": "2026-11-14T07:53:31.160Z",
+    "lastVerified": "2026-11-14T07:53:31.160Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-beclab-olares",
-    "contentHash": "efb445f7d58280df1cbe1d3ca62b763b1c3eed04a0f932b707ab2f970f862333",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "contentHash": "303f6140b1a862f02b585a81beb5b0c1be90014f0c90fcc6c32cfec1392e9acd",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4686,8 +4687,8 @@
     "officialUrl": "https://github.com/midudev/preguntas-entrevista-react",
     "sourceType": "github",
     "technology": "Astro",
-    "lastChecked": "2026-11-10T00:31:45.802Z",
-    "lastVerified": "2026-11-10T00:31:45.802Z",
+    "lastChecked": "2026-11-14T07:53:23.928Z",
+    "lastVerified": "2026-11-14T07:53:23.928Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-midudev-preguntas-entrevista-react",
@@ -4973,9 +4974,9 @@
   "malisper-pgrust": {
     "name": "pgrust",
     "officialUrl": "https://github.com/malisper/pgrust",
-    "lastChecked": "2026-11-13T05:43:56.159Z",
+    "lastChecked": "2026-11-14T07:53:31.349Z",
     "revisionIdentifier": "38634b40",
-    "lastVerified": "2026-11-13T05:43:56.159Z"
+    "lastVerified": "2026-11-14T07:53:31.349Z"
   },
   "gitui-org-gitui": {
     "name": "gitui",
@@ -6298,12 +6299,12 @@
     "officialUrl": "https://huggingface.co/openai/clip-vit-base-patch32",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-09T01:53:10.512Z",
-    "lastVerified": "2026-11-09T01:53:10.512Z",
+    "lastChecked": "2026-11-14T07:53:21.553Z",
+    "lastVerified": "2026-11-14T07:53:21.553Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-openai-clip-vit-base-patch32",
-    "contentHash": "0414e4041dd3836fcb89cdb9818803ede93cf09f0b66b4d6f066b064ff2a0036",
+    "contentHash": "dd81e331e74fabe42c76419f76b1d1c6898408a3ffe2d7e3c7272bf2bd511580",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -8125,9 +8126,9 @@
   "bgreenwell-doxx": {
     "name": "doxx",
     "officialUrl": "https://github.com/bgreenwell/doxx",
-    "lastChecked": "2026-11-12T23:16:31.463Z",
+    "lastChecked": "2026-11-14T07:53:18.853Z",
     "revisionIdentifier": "062819a1",
-    "lastVerified": "2026-11-12T23:16:31.463Z"
+    "lastVerified": "2026-11-14T07:53:18.853Z"
   },
   "hf-unsloth-embeddinggemma-2-gguf": {
     "name": "unsloth/embeddinggemma-2-GGUF",

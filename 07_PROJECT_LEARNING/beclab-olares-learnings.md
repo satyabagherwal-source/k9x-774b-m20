@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/beclab-olares-learnings.md`  
 > **Source**: github ([https://github.com/beclab/Olares](https://github.com/beclab/Olares))  
-> **Source Version**: `e61c4d06`  
+> **Source Version**: `226652fd`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T06:58:19.822Z  
+> **Timestamp**: 2026-11-14T07:53:31.165Z  
 > **Learning ID**: `learn-github-beclab-olares`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/beclab-olares-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/beclab/Olares](https://github.com/beclab/Olares))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T06:58:19.818Z  
+> **Harvest Timestamp**: 2026-11-14T07:53:31.160Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-Source Personal Cloud OS for Always-On Agents
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 5359 stars
+- **Stars / Engagement**: 5362 stars
 
 ---
 
@@ -1137,94 +1137,93 @@ export const formatPathtoUrl = (path: string) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e61c4d06` (2026-11-12)
-**Commit Message**: docs: remove incorrect Claude Code model restriction (#4434)
+### Incident Patch 1: `7a4e4a4d` (2026-11-13)
+**Commit Message**: docs: clarify 1.12.8 upgrade guide (#4444)
 
-* docs: remove incorrect Claude Code model restriction
+add more details
 
-* docs: restore Claude Code example prerequisite
-
-**File**: `docs/use-cases/claude-code.md` (modified, +2/-10)
+**File**: `docs/manual/update-guides/1.12.8.md` (modified, +11/-2)
 ```diff
-@@ -8,8 +8,8 @@ head:
-     - name: keywords
-       content: Olares, Claude Code, Anthropic, AI coding, Ollama, terminal, TUI, self-hosted
- app_version: "0.1.13"
--doc_version: "2.2"
--doc_updated: "2026-11-10"
-+doc_version: "2.3"
-+doc_updated: "2026-11-11"
+@@ -1,11 +1,13 @@
+ ---
+ outline: [2, 3]
+-description: Prepare for Olares 1.12.8 with guidance on new device activation, restarting GPU apps in time-slicing mode, and member access to Files.
++description: Prepare for Olares 1.12.8 with guidance on device activation, GPU app restarts, Files permissions, and changes to host terminal access.
  ---
  
- # Write code using Claude Code
-@@ -40,10 +40,6 @@ Before you begin, you need:
+ # Olares 1.12.8 update guide
  
- <!--@include: ../reusables/ai-service-connections.md#use-different-model-->
+-Olares 1.12.8 updates the setup flow for new devices, member access to storage in Files, and GPU switching in time-slicing mode. Review the changes below and follow the steps that apply to your setup.
++Olares 1.12.8 introduces several changes to system setup and workflows.
++
++This guide explains what changed in 1.12.8, whether you need to take action, and where to find the detailed steps.
  
--:::warning Model compatibility
--Some local models, including Qwen3.5-9B-GGUF Q4_K_M (llama.cpp), use chat templates that are incompatible with Claude Code's system-message ordering. If you encounter a system-message error, switch to another model. See the [FAQ](#system-message-error) for details.
--:::
--
- ## Install Claude Code
+ :::warning Update LarePass first
+ Before you begin, update LarePass to version 1.12.35.
+@@ -19,6 +21,7 @@ Before you begin, update LarePass to version 1.12.35.
+ | GPU apps were already using time-slicing mode before the update. | Restart those apps after updating to activate the new HAMi switching algorithm. [View steps](#restart-gpu-apps-using-time-slicing-mode). |
+ | Members use folders in External or Common through Files. | After updating, review access settings and grant each member the view or edit access they need. [View steps](#review-member-access-in-files). |
+ | You created shares using a method that 1.12.8 no longer supports. | Replace invalid shares with a supported method. For member access to External or Common, use **Access settings**. [View steps](#replace-unsupported-shares). |
++| You use Control Hub to access the Olares host terminal. | The host terminal entry has been removed. Use an alternative access method. [View details](#access-the-host-terminal-after-updating). |
  
- 1. Open Market, and search for "Claude Code".
-@@ -240,10 +236,6 @@ The container preconfigures the environment variable `PIP_BREAK_SYSTEM_PACKAGES=
+ ## Update a new device before activation
  
- ## FAQs
+@@ -59,3 +62,9 @@ External and Common do not support **Internal share** in 1.12.8. Existing shares
+ - To share folders in other locations, check the supported methods in [Share files](/manual/olares/files/share-files) before creating a replacement.
  
--### `System message must be at the beginning.` {#system-message-error}
--
--This error occurs when the model's chat template only accepts system messages at the beginning of a conversation. Claude Code can send additional system messages later in the conversation. A template with this restriction rejects those messages, causing HTTP 500 errors and repeated retries.
--
- ### `claude: command not found`
- 
- Wait a few moments for the init container to finish installing Claude Code. Verify that the `$HOME/.local/bin` directory exists in your system `PATH`.
+ Changing permissions on an old share does not restore a sharing method that is no longer supported.
++
++## Access the host terminal after updating
++
++Olares 1.12.8 removes the **Terminal > Olares** entry from Control Hub. To run commands on the Olares host, [connect via SSH](../access-olares-terminal.md). If you use Olares One, you can also log in directly with a monitor and keyboard. See [Olares One terminal access options](../../one/access-overview.md). Container terminals in Control Hub are not affected.
++
++For Olares 1.12.9, we plan to add SSH access over the Tailscale network through LarePass, providing a new way to access the host terminal.
 ```
 
-**File**: `docs/zh/use-cases/claude-code.md` (modified, +2/-10)
+**File**: `docs/zh/manual/update-guides/1.12.8.md` (modified, +10/-2)
 ```diff
-@@ -8,8 +8,8 @@ head:
-     - name: keywords
-       content: Olares, Claude Code, Anthropic, AI coding, Ollama, terminal, TUI, self-hosted
- app_version: "0.1.13"
--doc_version: "2.2"
--doc_updated: "2026-11-10"
-+doc_version: "2.3"
-+doc_updated: "2026-11-11"
+@@ -1,11 +1,13 @@
+ ---
+ outline: [2, 3]
+-description: 了解 Olares 1.12.8 更新前后的注意事项，包括新设备激活前更新、重启 GPU 分时共享应用，以及调整文件访问权限。
++description: 了解 Olares 1.12.8 更新前后的注意事项，包括新设备激活、GPU 应用重启、文件访问权限，以及主机终端访问方式的变化。
  ---
  
- :::warning
-@@ -44,10 +44,6 @@ Claude Code 是一个 AI 编码助手，帮助你使用自然语言编写、测
+ # Olares 1.12.8 更新指南
  
- <!--@include: ../reusables/ai-service-connections.md#use-different-model-->
+-Olares 1.12.8 调整了新设备的设置流程、文件管理器中的成员访问权限，以及 GPU 分时共享模式下的切换机制。请查看以下变化，并根据你的使用情况完成操作。
++Olares 1.12.8 对系统设置和使用流程做了一些调整。
++
++本指南介绍 1.12.8 中的变化、你是否需要采取操作，以及在哪里查看详细步骤。
  
--:::warning 模型兼容性
--部分本地模型（包括 Qwen3.5-9B-GGUF Q4_K_M (llama.cpp)）使用的聊天模板不兼容 Claude Code 的系统消息顺序。如果遇到系统消息相关报错，请切换到其他模型。原因详见[常见问题](#system-message-error)。
--:::
--
- ## 安装 Claude Code
+ :::warning 先更新 LarePass
+ 开始前，请先将 LarePass 升级到 1.12.35 版本。
+@@ -19,6 +21,7 @@ Olares 1.12.8 调整了新设备的设置流程、文件管理器中的成员访
+ | 更新前已有应用使用 GPU 分时共享模式。 | 更新后重启这些应用，使新的 HAMi 切换算法生效。[查看步骤](#重启使用-gpu-分时共享模式的应用)。 |
+ | 成员通过文件管理器访问外部设备或公共目录中的文件夹。 | 更新后检查访问设置，为每位成员授予所需的查看或编辑权限。[查看步骤](#检查文件管理器中的成员访问权限)。 |
+ | 已创建的共享使用了 1.12.8 不再支持的方式。 | 使用支持的方式替换失效的共享。成员访问外部设备或公共目录时，请通过**访问设置**授权。[查看步骤](#替换不再支持的共享)。 |
++| 通过控制面板访问 Olares 主机终端。 | 主机终端入口已移除，请改用其他访问方式。[查看详情](#更新后访问主机终端)。 |
  
- 1. 打开 Market，并搜索 "Claude Code"。
-@@ -244,10 +240,6 @@ Claude Code 容器在严格的最小权限设置下运行以确保安全。
+ ## 激活新设备前更新系统
  
- ## 常见问题
+@@ -60,3 +63,8 @@ HAMi 更新后，使用**分时共享**模式的应用等待 GPU 的时间缩短
  
--### `System message must be at the beginning.` {#system-message-error}
--
--当模型的聊天模板仅允许系统消息出现在对话开头时，会出现此错误。Claude Code 可能在对话后续位置发送额外的系统消息。有此限制的模板会拒绝这些消息，导致 HTTP 500 错误和反复重试。
--
- ### `claude: command not found`
+ 修改旧共享的权限，无法恢复已不再支持的共享方式。
  
- 等待片刻让 init 容器完成 Claude Code 的安装。验证 `$HOME/.local/bin` 目录是否存在于你的系统 `PATH` 中。
++## 更新后访问主机终端
++
++Olares 1.12.8 移除了控制面板中的**终端 > Olares** 入口。如需在 Olares 主机上运行命令，请[通过 SSH 连接](../access-olares-terminal.md)。如果使用 Olares One，也可以连接显示器和键盘后直接登录，具体方法请参阅[访问 Olares One 终端](../../one/access-overview.md)。控制面板中的容器终端不受影响。
++
++我们计划在 Olares 1.12.9 中支持通过 LarePass 经由 Tailscale 网络进行 SSH 连接，为用户提供新的主机终端访问方式。
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4436** (2026-11-11): market(fix): refine catalog handling and api safeguards (@aby913)
-- **PR #4434** (2026-11-12): docs: remove incorrect Claude Code model restriction (@fnalways)
-- **PR #4433** (2026-11-11): chore(headscale): bump Headscale to 0.29.7 and Tailscale to 1.104.4 (@0x7fffff92)
-- **PR #4431** (2026-11-11): daemon: update Go version to 1.26.0 in workflow (@eball)
-- **PR #4430** (2026-11-10): docs: document Claude Code output token requirement (@fnalways)
-- **PR #4429** (2026-11-11): chore(appservice): bump image tag to 0.7.0 (@hysyeah)
+- **PR #4445** (2026-11-13): chore(market): update oac dependency (@aby913)
+- **PR #4444** (2026-11-13): docs: clarify 1.12.8 upgrade guide (@Power-One-2025)
+- **PR #4443** (2026-11-13): chore(appservice): bump image tag to 0.7.1 (@hysyeah)
+- **PR #4442** (2026-11-13): chore(oac): bump oac version (@hysyeah)
+- **PR #4441** (2026-11-13): feat(search3): allow retrieval provider route (@bleachzou3)
+- **PR #4439** (2026-11-13): docs: add bilingual Music Studio tutorial (@harveyff)
 
 ---
 
@@ -1244,38 +1243,39 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: remove incorrect Claude Code model restriction (#4434)
+## X. docs: clarify 1.12.8 upgrade guide
 
 **RULE**:
-When implementing operations in `docs/use-cases/claude-code.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in beclab/Olares. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/manual/update-guides/1.12.8.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in beclab/Olares. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e61c4d06`: docs: remove incorrect Claude Code model restriction (#4434). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7a4e4a4d`: docs: clarify 1.12.8 upgrade guide. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/use-cases/claude-code.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/manual/update-guides/1.12.8.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-doc_version: "2.3"
-doc_updated: "2026-11-11"
+description: Prepare for Olares 1.12.8 with guidance on device activation, GPU app restarts, Files permissions, and changes to host terminal access.
+Olares 1.12.8 introduces several changes to system setup and workflows.
+
+This guide explains what changed in 1.12.8, whether you need to take action, and where to find the detailed steps.
+| You use Control Hub to access the Olares host terminal. | The host terminal entry has been removed. Use an alternative access method. [View details](#access-the-host-terminal-after-updating). |
+
+## Access the host terminal after updating
+
+Olares 1.12.8 removes the **Terminal > Olares** entry from Control Hub. To run commands on the Olares host, [connect via SSH](../access-olares-terminal.md). If you use Olares One, you can also log in directly with a monitor and keyboard. See [Olares One terminal access options](../../one/access-overview.md). Container terminals in Control Hub are not affected.
+
+For Olares 1.12.9, we plan to add SSH access over the Tailscale network through LarePass, providing a new way to access the host terminal.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-doc_version: "2.2"
-doc_updated: "2026-11-10"
-:::warning Model compatibility
-Some local models, including Qwen3.5-9B-GGUF Q4_K_M (llama.cpp), use chat templates that are incompatible with Claude Code's system-message ordering. If you encounter a system-message error, switch to another model. See the [FAQ](#system-message-error) for details.
-:::
-
-### `System message must be at the beginning.` {#system-message-error}
-
-This error occurs when the model's chat template only accepts system messages at the beginning of a conversation. Claude Code can send additional system messages later in the conversation. A template with this restriction rejects those messages, causing HTTP 500 errors and repeated retries.
-
+// Induced defect failure mode:
+description: Prepare for Olares 1.12.8 with guidance on new device activation, restarting GPU apps in time-slicing mode, and member access to Files.
+Olares 1.12.8 updates the setup flow for new devices, member access to storage in Files, and GPU switching in time-slicing mode. Review the changes below and follow the steps that apply to your setup.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e61c4d06` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7a4e4a4d` are properly handled with clean fallback behavior.

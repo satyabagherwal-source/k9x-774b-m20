@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T07:41:29.786Z",
+  "updated_at": "2026-11-14T07:54:01.831Z",
   "stats": {
-    "total_discovered": 3193,
-    "approved_pending_harvest": 2988,
+    "total_discovered": 3194,
+    "approved_pending_harvest": 2989,
     "harvested_count": 0,
     "rejected_count": 205,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2982,
+      "COMMUNITY_AND_EXPERT": 2983,
       "OFFICIAL_DOCUMENTATION": 116,
       "STANDARDS_AND_SPECIFICATIONS": 81,
       "ENGINEERING_BLOGS": 1,
@@ -68831,6 +68831,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-naiveai-naive-n0.5-flash-learnings.md",
         "fileName": "hf-naiveai-naive-n0.5-flash-learnings.md"
+      }
+    },
+    "SRC-411B182EC6A5": {
+      "id": "SRC-411B182EC6A5",
+      "url": "https://huggingface.co/openai/clip-vit-base-patch32",
+      "title": "https://huggingface.co/openai/clip-vit-base-patch32",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T07:54:01.831Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md",
+        "fileName": "hf-openai-clip-vit-base-patch32-learnings.md"
       }
     }
   }

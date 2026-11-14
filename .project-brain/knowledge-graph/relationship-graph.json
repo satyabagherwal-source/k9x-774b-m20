@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-14T07:41:29.772Z",
+  "updated_at": "2026-11-14T07:54:01.818Z",
   "statistics": {
-    "total_nodes": 174,
+    "total_nodes": 175,
     "total_edges": 94,
     "domain_distribution": {
-      "D": 133,
+      "D": 134,
       "M": 1,
       "H": 15,
       "J": 8,
@@ -3898,6 +3898,28 @@
       ],
       "created_at": "2026-11-14T07:41:29.772Z",
       "updated_at": "2026-11-14T07:41:29.772Z"
+    },
+    "DOM-D-01385688": {
+      "id": "DOM-D-01385688",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): openai/clip-vit-base-patch32",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md`  \n> **Source**: huggingface ([https:// -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md`  \n> **Source**: huggingface ([https://",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-openai-clip-vit-base-patch32/hf-openai-clip-vit-base-patch32-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T07:53:34.624Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-openai-clip-vit-base-patch32)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-14T07:54:01.817Z",
+      "updated_at": "2026-11-14T07:54:01.817Z"
     }
   },
   "edges": [

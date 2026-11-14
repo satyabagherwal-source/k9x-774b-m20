@@ -1095,8 +1095,8 @@
     "sourceUrl": "https://huggingface.co/openai/clip-vit-base-patch32",
     "sourceVersion": "hf-openai-clip-vit-base-patch32",
     "license": "Open-Source",
-    "contentHash": "0414e4041dd3836fcb89cdb9818803ede93cf09f0b66b4d6f066b064ff2a0036",
-    "lastHarvestedAt": "2026-11-09T01:53:11.348Z",
+    "contentHash": "dd81e331e74fabe42c76419f76b1d1c6898408a3ffe2d7e3c7272bf2bd511580",
+    "lastHarvestedAt": "2026-11-14T07:53:22.080Z",
     "learningId": "learn-huggingface-openai-clip-vit-base-patch32"
   },
   "hf-sentence-transformers-all-mpnet-base-v2": {
@@ -2973,10 +2973,10 @@
     "repository": "beclab/Olares",
     "platform": "github",
     "sourceUrl": "https://github.com/beclab/Olares",
-    "sourceVersion": "e61c4d06",
+    "sourceVersion": "226652fd",
     "license": "AGPL-3.0",
-    "contentHash": "efb445f7d58280df1cbe1d3ca62b763b1c3eed04a0f932b707ab2f970f862333",
-    "lastHarvestedAt": "2026-11-13T06:58:30.062Z",
+    "contentHash": "303f6140b1a862f02b585a81beb5b0c1be90014f0c90fcc6c32cfec1392e9acd",
+    "lastHarvestedAt": "2026-11-14T07:53:31.518Z",
     "learningId": "learn-github-beclab-olares"
   },
   "cryfs-cryfs": {

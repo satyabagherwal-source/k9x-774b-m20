@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T07:41:30.712Z",
-  "total_records": 599,
+  "last_updated": "2026-11-14T07:54:03.060Z",
+  "total_records": 604,
   "domains": {
     "A": {
       "total": 5,
@@ -35,7 +35,7 @@
       ]
     },
     "D": {
-      "total": 291,
+      "total": 294,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -327,7 +327,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-pablodawson-minimax-h3-360-orbit-lora-learnin",
         "domain_intelligence-research-knowledge-intelligence-venastine-research-xing4-0-29b-a4b-gguf-core-inv",
         "DOM-D-C8957CC0",
-        "domain_intelligence-research-knowledge-intelligence-hf-venastine-research-xing4-0-29b-a4b-gguf-learn"
+        "domain_intelligence-research-knowledge-intelligence-hf-venastine-research-xing4-0-29b-a4b-gguf-learn",
+        "domain_intelligence-research-knowledge-intelligence-openai-clip-vit-base-patch32-core-invariants",
+        "DOM-D-01385688",
+        "domain_intelligence-research-knowledge-intelligence-hf-openai-clip-vit-base-patch32-learnings-core-i"
       ]
     },
     "E": {
@@ -450,7 +453,7 @@
       ]
     },
     "H": {
-      "total": 128,
+      "total": 130,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -579,7 +582,9 @@
         "domain_intelligence-technical-construction-intelligence-shopify-react-native-skia-learnings-core-inv",
         "domain_intelligence-technical-construction-intelligence-lingyired-status-trio-core-invariants",
         "domain_intelligence-technical-construction-intelligence-lingyired-status-trio-learnings-core-invaria",
-        "DOM-H-87566B56"
+        "DOM-H-87566B56",
+        "domain_intelligence-technical-construction-intelligence-beclab-olares-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-beclab-olares-learnings-core-invariants"
       ]
     },
     "I": {
@@ -6369,8 +6374,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "c9d5ba4ac54feaec5072c027879133ab17ef9bf64f4567f6efff9e07eadc8380",
-      "created_at": "2026-11-14T07:41:30.712Z"
+      "content_hash": "a53bf741c3b21f4d48cb11cee4505a7e0b39f6c4fc0fbec02bf928f6d7cc99b3",
+      "created_at": "2026-11-14T07:54:03.060Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -12967,6 +12972,84 @@
       "repository": "hf-naiveai-naive-n0.5-flash-learnings",
       "content_hash": "db120cb6d002ddd8478f13a634e6ee5b913bb20e64db7adc5e3470961c8dd0bc",
       "created_at": "2026-11-14T07:41:30.228Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-openai-clip-vit-base-patch32-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-openai-clip-vit-base-patch32-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: openai/clip-vit-base-patch32 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openai-clip-vit-base-patch32-research-knowledge-intelligence-openai-clip-vit-.md",
+      "repository": "openai/clip-vit-base-patch32",
+      "content_hash": "d77b47cf7a50b5c74c257115aba884a05cc6e3b88b4fd9d4af4febfcfde6f9e0",
+      "created_at": "2026-11-14T07:53:22.245Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-beclab-olares-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-beclab-olares-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: beclab/Olares Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-beclab-olares-technical-construction-intelligence-beclab-olares-core-invariants.md",
+      "repository": "beclab/Olares",
+      "content_hash": "27ec26b9e4faa2c3bb743355fddc901e46e65799c2babb14de3983d603aa6da6",
+      "created_at": "2026-11-14T07:53:31.820Z"
+    },
+    "DOM-D-01385688": {
+      "record_id": "DOM-D-01385688",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): openai/clip-vit-base-patch32",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/openai/clip-vit-base-patch32](https://huggingface.co/openai/clip-vit-base-patch32))  \n> **Source Version**: `hf-openai-cl`  \n> **License**: Open-",
+      "content_hash": "a258f01ec258712aaffc9735d9d4b617ab8a9b26007dd73eb12c7818652063af",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md`  \n> **Source**: huggingface ([https:// -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md`  \n> **Source**: huggingface ([https://",
+      "provenance": {
+        "source_uri": "project://hf-openai-clip-vit-base-patch32/hf-openai-clip-vit-base-patch32-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T07:53:34.624Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-openai-clip-vit-base-patch32)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-openai-clip-vit-base-patch32"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T07:54:01.808Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-openai-clip-vit-base-patch32-learnings-core-i": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-openai-clip-vit-base-patch32-learnings-core-i",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-openai-clip-vit-base-patch32-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openai-clip-vit-base-patch32-learnings-research-knowledge-intelligence-hf-ope.md",
+      "repository": "hf-openai-clip-vit-base-patch32-learnings",
+      "content_hash": "a3770c3afa9f7deb04592659326d4edad3f751a3f9ab45df5e214989a21a69e7",
+      "created_at": "2026-11-14T07:54:02.026Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-beclab-olares-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-beclab-olares-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: beclab-olares-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-beclab-olares-learnings-technical-construction-intelligence-beclab-olares-learni.md",
+      "repository": "beclab-olares-learnings",
+      "content_hash": "ee2fed3214682bf9c0fe16f65341421f1596e0a368d02dd029c2a43e91315111",
+      "created_at": "2026-11-14T07:54:02.497Z"
     }
   }
 }

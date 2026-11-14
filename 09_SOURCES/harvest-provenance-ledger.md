@@ -9818,3 +9818,6 @@ Every entry in this ledger must capture:
 | `learn-github-lingyired-status-trio` | `https://github.com/lingyired/status-trio` | `a0ebb92d` | Multi-dimensional audit evidence | 2026-11-14T07:39:20.726Z |
 | `learn-huggingface-naiveai-naive-n0-5-flash` | `https://huggingface.co/NaiveAI/Naive-N0.5-Flash` | `hf-naiveai` | Multi-dimensional audit evidence | 2026-11-14T07:41:00.913Z |
 | `learn-dom-h-87566b56` | `project://hf-naiveai-naive-n0.5-flash` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-naiveai-naive-n0.5-flash-learnings.md` | 2026-11-14T07:41:29.773Z |
+| `learn-huggingface-openai-clip-vit-base-patch32` | `https://huggingface.co/openai/clip-vit-base-patch32` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-14T07:53:22.080Z |
+| `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `226652fd` | Multi-dimensional audit evidence | 2026-11-14T07:53:31.518Z |
+| `learn-dom-d-01385688` | `project://hf-openai-clip-vit-base-patch32` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md` | 2026-11-14T07:54:01.819Z |
