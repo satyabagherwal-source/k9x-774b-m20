@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T15:35:10.863Z",
+  "last_updated": "2026-11-14T15:50:17.936Z",
   "directives": [
     {
       "id": "CD-001",
@@ -12785,6 +12785,61 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-43B0BB-flaky-test-testsampling.md",
       "staged_date": "2026-11-14"
+    },
+    {
+      "id": "CD-ZWMC",
+      "directive_title": "preserve catch and var binding identities",
+      "source_repo": "oxc-project/oxc",
+      "source_commit": "93140429",
+      "staged_file": "11_INBOX/candidate-directives/CD-ZWMC-preserve-catch-and-var-binding-identities.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-14",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-01S9",
+      "directive_title": "finish harness cleanup before propagating cancellation",
+      "source_repo": "Agent-Field/agentfield",
+      "source_commit": "7205812b",
+      "staged_file": "11_INBOX/candidate-directives/CD-01S9-finish-harness-cleanup-before-propagating-cancellation.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-14",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-069E",
+      "directive_title": "Use stage plan endpoint in Web UI live plan",
+      "source_repo": "trinodb/trino",
+      "source_commit": "9b4b9cfc",
+      "staged_file": "11_INBOX/candidate-directives/CD-069E-use-stage-plan-endpoint-in-web-ui-live-plan.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-14",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-08SG",
+      "directive_title": "semantic): preserve catch and var binding identities",
+      "source_repo": "oxc-project-oxc-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-08SG-semantic-preserve-catch-and-var-binding-identities.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-14",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-0WN7",
+      "directive_title": "python): finish harness cleanup before propagating cancellation",
+      "source_repo": "agent-field-agentfield-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-0WN7-python-finish-harness-cleanup-before-propagating-cancellation.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-14",
+      "domain_letter": "H"
     }
   ]
 }

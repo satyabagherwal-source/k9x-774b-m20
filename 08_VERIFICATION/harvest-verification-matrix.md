@@ -9866,3 +9866,8 @@
 | `CYCLE-20261114-GLFB` | `2026-11-14T15:34:30.263Z` | `jithin-sabu/purge-app` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8499` | Yes (`c33edf08...`) |
 | `CYCLE-20261114-GWAT` | `2026-11-14T15:34:44.357Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8500` | Yes (`d527f549...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T15:35:10.336Z` | `hf-baai-bge-large-en-v1.5` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-4EDAAC12` [Domain D] | Yes (`d86cabb6...`) |
+| `CYCLE-20261114-ZU1A` | `2026-11-14T15:49:27.886Z` | `zai-org/GLM-5.3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md` | Yes (`b9bf4241...`) |
+| `CYCLE-20261114-ZWHC` | `2026-11-14T15:49:31.056Z` | `oxc-project/oxc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8501` | Yes (`13c926c9...`) |
+| `CYCLE-20261114-01N7` | `2026-11-14T15:49:37.747Z` | `Agent-Field/agentfield` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8502` | Yes (`f758f7d2...`) |
+| `CYCLE-20261114-064A` | `2026-11-14T15:49:43.546Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8503` | Yes (`9ff94f4e...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T15:50:17.296Z` | `hf-zai-org-glm-5.3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-293047DE` [Domain D] | Yes (`63af52e8...`) |

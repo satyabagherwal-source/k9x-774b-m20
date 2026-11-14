@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-14T15:34:44.367Z",
+  "last_updated": "2026-11-14T15:49:43.559Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1730,14 +1730,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-zai-org-glm-5-3",
-      "content_hash": "a8205af389f86ef22b2c5fcb078d354a556aa104d6a1806b3f08bea3c33f3c42",
-      "verified_at": "2026-11-09T05:07:03.546Z",
+      "content_hash": "b9bf42419290a6dd6597206a7cd78379d9824266d90b0c24c8025f8bb264cf52",
+      "verified_at": "2026-11-14T15:49:27.899Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T05:07:03.546Z"
+      "last_updated": "2026-11-14T15:49:27.899Z"
     },
     "mudler/locate-anything.cpp-gguf": {
       "repository": "mudler/locate-anything.cpp-gguf",
@@ -6591,14 +6591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-agent-field-agentfield",
-      "content_hash": "d2e5370f1a35e2ca8eb2455c38e979b49c7d7e6d0ef1b58f11656ea97b059569",
-      "verified_at": "2026-11-13T12:08:21.275Z",
+      "content_hash": "f758f7d23bad84fefedf03f14baea7b5ce5db0bdfe9f5d022da3391366465acc",
+      "verified_at": "2026-11-14T15:49:37.761Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T12:08:21.275Z"
+      "last_updated": "2026-11-14T15:49:37.761Z"
     },
     "typedb/typedb": {
       "repository": "typedb/typedb",
@@ -7731,14 +7731,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trinodb-trino",
-      "content_hash": "690743a6f4d6aa8c3b8d3898b0a950ec9feaa3ce4861442c27501326e23bafbb",
-      "verified_at": "2026-11-13T10:26:49.200Z",
+      "content_hash": "9ff94f4e1c9ac67b995f02e82cfd78b595c0573910c10b438793041c9cc42b47",
+      "verified_at": "2026-11-14T15:49:43.558Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T10:26:49.200Z"
+      "last_updated": "2026-11-14T15:49:43.558Z"
     },
     "pinterest/gestalt": {
       "repository": "pinterest/gestalt",
@@ -11631,14 +11631,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-oxc-project-oxc",
-      "content_hash": "5cc3fa55a4eee08d0f3a368e6e1240cfd5eb1b6b215d73cdc50d8b570daf9e20",
-      "verified_at": "2026-11-13T02:05:49.691Z",
+      "content_hash": "13c926c924afdab21050788673608207881ac7d5e6a77f6fffe413e65e5bd8c3",
+      "verified_at": "2026-11-14T15:49:31.069Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T02:05:49.691Z"
+      "last_updated": "2026-11-14T15:49:31.069Z"
     },
     "pointfreeco/swift-composable-architecture": {
       "repository": "pointfreeco/swift-composable-architecture",

@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-14T15:35:10.335Z",
+  "updated_at": "2026-11-14T15:50:17.294Z",
   "statistics": {
-    "total_nodes": 198,
-    "total_edges": 108,
+    "total_nodes": 199,
+    "total_edges": 109,
     "domain_distribution": {
-      "D": 153,
+      "D": 154,
       "M": 1,
       "H": 17,
       "J": 8,
@@ -18,7 +18,7 @@
       "B": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 108
+      "CONSTRAINED_BY_ARCHITECTURE": 109
     }
   },
   "nodes": {
@@ -4440,6 +4440,29 @@
       ],
       "created_at": "2026-11-14T15:35:10.335Z",
       "updated_at": "2026-11-14T15:35:10.335Z"
+    },
+    "DOM-D-293047DE": {
+      "id": "DOM-D-293047DE",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): zai-org/GLM-5.3",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md`  \n> **Source**: huggingface ([https://huggingface.c -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md`  \n> **Source**: huggingface ([https://huggingface.c",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-zai-org-glm-5.3/hf-zai-org-glm-5.3-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T15:49:47.338Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-zai-org-glm-5.3)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-14T15:50:17.293Z",
+      "updated_at": "2026-11-14T15:50:17.293Z"
     }
   },
   "edges": [
@@ -5522,6 +5545,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-4EDAAC12 [D] with Domain M",
       "created_at": "2026-11-14T15:35:10.335Z"
+    },
+    {
+      "id": "EDGE-7F83851D1463",
+      "sourceId": "DOM-D-293047DE",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-293047DE [D] with Domain M",
+      "created_at": "2026-11-14T15:50:17.293Z"
     }
   ]
 }

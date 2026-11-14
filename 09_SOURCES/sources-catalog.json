@@ -65,8 +65,8 @@
     "sourceUrl": "https://huggingface.co/zai-org/GLM-5.3",
     "sourceVersion": "hf-zai-org-glm-5.3",
     "license": "Open-Source",
-    "contentHash": "a8205af389f86ef22b2c5fcb078d354a556aa104d6a1806b3f08bea3c33f3c42",
-    "lastHarvestedAt": "2026-11-09T05:07:03.537Z",
+    "contentHash": "b9bf42419290a6dd6597206a7cd78379d9824266d90b0c24c8025f8bb264cf52",
+    "lastHarvestedAt": "2026-11-14T15:49:27.890Z",
     "learningId": "learn-huggingface-zai-org-glm-5-3"
   },
   "hf-mudler-locate-anything.cpp-gguf": {
@@ -4313,10 +4313,10 @@
     "repository": "Agent-Field/agentfield",
     "platform": "github",
     "sourceUrl": "https://github.com/Agent-Field/agentfield",
-    "sourceVersion": "cb1ba113",
+    "sourceVersion": "7205812b",
     "license": "Apache-2.0",
-    "contentHash": "d2e5370f1a35e2ca8eb2455c38e979b49c7d7e6d0ef1b58f11656ea97b059569",
-    "lastHarvestedAt": "2026-11-13T12:08:21.258Z",
+    "contentHash": "f758f7d23bad84fefedf03f14baea7b5ce5db0bdfe9f5d022da3391366465acc",
+    "lastHarvestedAt": "2026-11-14T15:49:37.751Z",
     "learningId": "learn-github-agent-field-agentfield"
   },
   "typedb-typedb": {
@@ -5073,10 +5073,10 @@
     "repository": "trinodb/trino",
     "platform": "github",
     "sourceUrl": "https://github.com/trinodb/trino",
-    "sourceVersion": "8ce4b111",
+    "sourceVersion": "9b4b9cfc",
     "license": "Apache-2.0",
-    "contentHash": "690743a6f4d6aa8c3b8d3898b0a950ec9feaa3ce4861442c27501326e23bafbb",
-    "lastHarvestedAt": "2026-11-13T10:26:49.176Z",
+    "contentHash": "9ff94f4e1c9ac67b995f02e82cfd78b595c0573910c10b438793041c9cc42b47",
+    "lastHarvestedAt": "2026-11-14T15:49:43.550Z",
     "learningId": "learn-github-trinodb-trino"
   },
   "pinterest-gestalt": {
@@ -7723,10 +7723,10 @@
     "repository": "oxc-project/oxc",
     "platform": "github",
     "sourceUrl": "https://github.com/oxc-project/oxc",
-    "sourceVersion": "8a6e0c14",
+    "sourceVersion": "93140429",
     "license": "MIT",
-    "contentHash": "5cc3fa55a4eee08d0f3a368e6e1240cfd5eb1b6b215d73cdc50d8b570daf9e20",
-    "lastHarvestedAt": "2026-11-13T02:05:49.681Z",
+    "contentHash": "13c926c924afdab21050788673608207881ac7d5e6a77f6fffe413e65e5bd8c3",
+    "lastHarvestedAt": "2026-11-14T15:49:31.059Z",
     "learningId": "learn-github-oxc-project-oxc"
   },
   "pointfreeco-swift-composable-architecture": {

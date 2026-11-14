@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T15:35:10.707Z",
+  "updated_at": "2026-11-14T15:50:17.724Z",
   "stats": {
-    "total_discovered": 3309,
-    "approved_pending_harvest": 3104,
+    "total_discovered": 3314,
+    "approved_pending_harvest": 3109,
     "harvested_count": 0,
     "rejected_count": 205,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3095,
+      "COMMUNITY_AND_EXPERT": 3099,
       "OFFICIAL_DOCUMENTATION": 117,
-      "STANDARDS_AND_SPECIFICATIONS": 83,
+      "STANDARDS_AND_SPECIFICATIONS": 84,
       "ENGINEERING_BLOGS": 1,
       "SECURITY_ADVISORIES": 10,
       "LEGAL_AND_REGULATORY": 1,
@@ -71383,6 +71383,116 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
         "fileName": "arangodb-arangodb-learnings.md"
+      }
+    },
+    "SRC-F5B1C67DAC35": {
+      "id": "SRC-F5B1C67DAC35",
+      "url": "https://tc39.es/ecma262",
+      "title": "https://tc39.es/ecma262",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T15:49:46.788Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
+        "fileName": "oxc-project-oxc-learnings.md"
+      }
+    },
+    "SRC-AD48DA9005A0": {
+      "id": "SRC-AD48DA9005A0",
+      "url": "https://github.com/oxc-project/oxc/issues/27269",
+      "title": "https://github.com/oxc-project/oxc/issues/27269",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T15:49:46.812Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
+        "fileName": "oxc-project-oxc-learnings.md"
+      }
+    },
+    "SRC-4424584EE706": {
+      "id": "SRC-4424584EE706",
+      "url": "https://huggingface.co/zai-org/GLM-5.3",
+      "title": "https://huggingface.co/zai-org/GLM-5.3",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T15:50:17.308Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md",
+        "fileName": "hf-zai-org-glm-5.3-learnings.md"
+      }
+    },
+    "SRC-6F83DDCA4F91": {
+      "id": "SRC-6F83DDCA4F91",
+      "url": "https://control-plane.test/",
+      "title": "https://control-plane.test/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T15:50:17.701Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
+        "fileName": "agent-field-agentfield-learnings.md"
+      }
+    },
+    "SRC-A1D99E662C37": {
+      "id": "SRC-A1D99E662C37",
+      "url": "https://control-plane.test/api/v1/agents/test-node/executions/exec-1/approval-status",
+      "title": "https://control-plane.test/api/v1/agents/test-node/executions/exec-1/approval-status",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T15:50:17.724Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
+        "fileName": "agent-field-agentfield-learnings.md"
       }
     }
   }

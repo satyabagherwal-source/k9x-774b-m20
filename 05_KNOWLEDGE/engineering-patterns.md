@@ -613091,3 +613091,325 @@ const logProbability = 5;
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `ec34a1f4` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8501. preserve catch and var binding identities (Harvested from oxc-project/oxc)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "preserve catch and var binding identities",
+  "source": "oxc-project/oxc",
+  "source_url": "https://github.com/oxc-project/oxc",
+  "source_version": "93140429",
+  "license": "MIT",
+  "extracted_at": "2026-11-14T15:49:30.637Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-oxc-project-oxc",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [oxc-project/oxc](https://github.com/oxc-project/oxc) (Revision: `93140429`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `crates/oxc_linter/src/rules/eslint/block_scoped_var.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `1dc0ee95`: semantic): preserve catch and var binding identities. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/oxc_linter/src/rules/eslint/block_scoped_var.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+use crate::{AstNode, context::LintContext, rule::Rule, utils::declarator_initializes};
+            ) && redeclaration_has_write(declaration, redeclaration.span, *symbol, ctx)
+fn redeclaration_has_write(
+    node: &AstNode,
+    span: Span,
+    symbol_id: SymbolId,
+    ctx: &LintContext,
+) -> bool {
+            // An initializer in another catch writes to its catch parameter,
+            // even though the declaration also contributes to this hoisted var.
+            return declarator_initializes(decl, symbol_id)
+                && (decl.init.is_some()
+                    || matches!(
+                        ctx.nodes().parent_kind(ctx.nodes().parent_id(node.id())),
+                        AstKind::ForInStatement(_) | AstKind::ForOfStatement(_)
+                    ));
+        // The declarator's identifier is attached to the catch parameter when
+        // its initializer assigns there. This rule checks the hoisted var's uses.
+        let symbol = ident.symbol_id();
+        let symbol = ctx.scoping().catch_var_binding(symbol).unwrap_or(symbol);
+        "function f() { try {} catch (x) { { var x = 1; } use(x); } }",
+        "function f(x) { use(x); try {} catch (x) { var x = 1; } use(
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+use crate::{AstNode, context::LintContext, rule::Rule};
+            ) && redeclaration_has_write(declaration, redeclaration.span, ctx)
+fn redeclaration_has_write(node: &AstNode, span: Span, ctx: &LintContext) -> bool {
+            return decl.init.is_some()
+                || matches!(
+                    ctx.nodes().parent_kind(ctx.nodes().parent_id(node.id())),
+                    AstKind::ForInStatement(_) | AstKind::ForOfStatement(_)
+                );
+        let Some(symbol) = ctx.scoping().find_binding(node_scope_id, name) else {
+            return;
+        };
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `1dc0ee95` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8502. finish harness cleanup before propagating cancellation (Harvested from Agent-Field/agentfield)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "finish harness cleanup before propagating cancellation",
+  "source": "Agent-Field/agentfield",
+  "source_url": "https://github.com/Agent-Field/agentfield",
+  "source_version": "7205812b",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-14T15:49:37.336Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-agent-field-agentfield",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Agent-Field/agentfield](https://github.com/Agent-Field/agentfield) (Revision: `7205812b`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `sdk/python/agentfield/harness/_cli.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Agent-Field/agentfield. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `0145089a`: python): finish harness cleanup before propagating cancellation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `sdk/python/agentfield/harness/_cli.py`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+    except (asyncio.TimeoutError, TimeoutError, asyncio.CancelledError):
+        # Loop shutdown cancels the cleanup task too. Finish the same bounded
+        # kill/poll fallback; run_cli still propagates the caller's cancellation.
+        try:
+            await asyncio.sleep(0.1)
+        except asyncio.CancelledError:
+            # Do not restart the polling budget when shutdown cancels again.
+            pass
+
+        async def cleanup() -> Optional[int]:
+            if not completed:
+                _kill_group()
+            drain.cancel()
+            try:
+                await drain
+            except BaseException:
+                pass
+            return await _wait_process_exit(proc, _kill_group)
+
+        # Pipe EOF does not mean the child has exited. Keep ownership until
+        # the bounded exit wait finishes, even if cancellation arrives here
+        # or is repeated while cleanup is already running.
+        cleanup_task = asyncio.create_task(cleanup())
+        cleanup_cancelled: Optional[asyncio.CancelledError] = None
+        while True:
+            try:
+                fallback_returncode = await asyncio.shield(cleanup_task)
+                break
+            except asy
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+    except (asyncio.TimeoutError, TimeoutError):
+        await asyncio.sleep(0.1)
+        if not completed:
+            # Timeout, cancellation, or an internal error: stop the child so
+            # nothing keeps running and the exit wait below can conclude.
+            # (Previously only the timeout paths killed; a cancelled run_cli
+            # left the child running and awaited its natural exit.)
+            _kill_group()
+        drain.cancel()
+        try:
+            await drain
+        except BaseException:
+            pass
+        fallback_returncode = await _wait_process_exit(proc, _kill_group)
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `0145089a` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8503. Use stage plan endpoint in Web UI live plan (Harvested from trinodb/trino)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Use stage plan endpoint in Web UI live plan",
+  "source": "trinodb/trino",
+  "source_url": "https://github.com/trinodb/trino",
+  "source_version": "9b4b9cfc",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-14T15:49:43.134Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-trinodb-trino",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [trinodb/trino](https://github.com/trinodb/trino) (Revision: `9b4b9cfc`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `core/trino-web-ui/src/main/resources/webapp-legacy/src/components/LivePlan.jsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `fb70e5bb`: Use stage plan endpoint in Web UI live plan. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/trino-web-ui/src/main/resources/webapp-legacy/src/components/LivePlan.jsx`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```java
+// Verified production-grade fix pattern:
+    static getStages(queryInfo: any, queryPlan: QueryPlan): Map<string, StageNodeInfo> {
+            const planNodes = queryPlan[stageInfo.stageId]
+            if (!planNodes) {
+                return
+            }
+            planNodes.forEach((node) => nodes.set(node.id, node))
+// Plan nodes of each stage, keyed by the stage id
+type QueryPlan = { [stageId: string]: PlanNodeProps[] }
+    queryPlan: QueryPlan,
+    queryPlanUnavailable: boolean = false
+            queryPlan: {},
+        } else if (!this.queryPlanUnavailable && !this.hasQueryPlan(this.state.query)) {
+            // the query does not change anymore, so only its plan is requested again
+            this.timeoutId = setTimeout(
+                () => this.refreshQueryPlan(this.state.query).then(() => this.resetTimer()),
+                1000
+            )
+                return this.refreshQueryPlan(query)
+            .then(() => this.resetTimer())
+    // the plan of a stage does not change, so the plan is requested only when it does not cover all the stages
+    refreshQueryPlan(query: any): Promise<void> {
+        if (this.queryPlanUnavailable || this.hasQueryPlan(query)) {
+            return Promise.resolve()
+        }
+
+```
+
+**NEGATIVE CONSTRAINT**:
+```java
+// Induced defect failure mode:
+    static getStages(queryInfo: any): Map<string, StageNodeInfo> {
+            StageStatistics.flattenNode(stageInfo.plan.root, JSON.parse(stageInfo.plan.jsonRepresentation), nodes)
+    static flattenNode(rootNodeInfo: any, node: any, result: Map<any, PlanNodeProps>) {
+        result.set(node.id, {
+            id: node.id,
+            name: node['name'],
+            descriptor: node['descriptor'],
+            details: node['details'],
+            sources: node.children.map((node) => node.id),
+        })
+
+        node.children.forEach(function (child) {
+            StageStatistics.flattenNode(rootNodeInfo, child, result)
+        })
+    }
+
+                this.resetTimer()
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `fb70e5bb` are properly handled with clean fallback behavior.

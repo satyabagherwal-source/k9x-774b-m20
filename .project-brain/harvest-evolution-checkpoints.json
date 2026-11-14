@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T15:35:11.112Z",
+  "last_updated": "2026-11-14T15:50:18.328Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-14T14:28:36.612Z",
@@ -58,9 +58,9 @@
       "staged_for_review": 0
     },
     "oxc-project-oxc-learnings.md": {
-      "processed_at": "2026-11-13T02:10:54.155Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-14T15:49:46.740Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "zed-industries-zed-learnings.md": {
       "processed_at": "2026-11-13T02:25:05.160Z",
@@ -878,7 +878,7 @@
       "staged_for_review": 1
     },
     "agent-field-agentfield-learnings.md": {
-      "processed_at": "2026-11-13T12:09:03.846Z",
+      "processed_at": "2026-11-14T15:50:17.630Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2636,9 +2636,14 @@
       "processed_at": "2026-11-14T15:35:10.336Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-zai-org-glm-5.3-learnings.md": {
+      "processed_at": "2026-11-14T15:50:17.296Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 855,
-  "total_canonical_promoted": 202,
-  "total_staged_for_review": 652
+  "total_dossiers_evaluated": 858,
+  "total_canonical_promoted": 203,
+  "total_staged_for_review": 654
 }

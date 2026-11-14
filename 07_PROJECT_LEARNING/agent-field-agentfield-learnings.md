@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/agent-field-agentfield-learnings.md`  
 > **Source**: github ([https://github.com/Agent-Field/agentfield](https://github.com/Agent-Field/agentfield))  
-> **Source Version**: `cb1ba113`  
+> **Source Version**: `7205812b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T12:08:20.853Z  
+> **Timestamp**: 2026-11-14T15:49:36.838Z  
 > **Learning ID**: `learn-github-agent-field-agentfield`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/agent-field-agentfield-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Agent-Field/agentfield](https://github.com/Agent-Field/agentfield))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T12:08:20.846Z  
+> **Harvest Timestamp**: 2026-11-14T15:49:36.833Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Build, run and scale AI agents like API and microservices
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2655 stars
+- **Stars / Engagement**: 2656 stars
 
 ---
 
@@ -1418,338 +1418,679 @@ func (ds *DefaultDevService) GetDevStatus(path string) (*domain.DevStatus, error
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cb1ba113` (2026-11-12)
-**Commit Message**: chore(release): v0.1.146-rc.29 [skip ci]
+### Incident Patch 1: `0145089a` (2026-11-13)
+**Commit Message**: fix(python): finish harness cleanup before propagating cancellation (#1180)
 
-**File**: `CHANGELOG.md` (modified, +27/-0)
+* fix(python): finish harness cleanup before propagating cancellation
+
+* fix(python): retain harness cleanup during loop shutdown
+
+* test(python): respect cancellation message version contract
+
+**File**: `sdk/python/agentfield/harness/_cli.py` (modified, +38/-14)
 ```diff
-@@ -6,6 +6,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
- 
- <!-- changelog:entries -->
- 
-+## [0.1.146-rc.29] - 2026-11-12
-+
-+
-+### Other
-+
-+- Repair a workflow row left running after a failed terminal event; optional control plane bind host (#1187)
-+
-+* fix(sdk/go): apply default token and timeout caps to partial AI config (#1184)
-+
-+* fix: recover terminal event delivery and workflow projection writes (#1182)
-+
-+* fix(control-plane): allow selecting the HTTP and admin gRPC bind host (#1185)
-+
-+* Keep partial AI configs uncapped by default (withdraws the #1184 change)
-+
-+The #1184 change gave a partial ai.Config the SDK's default limits (4096
-+output tokens, 30 seconds). Nodes that build a partial config today run with
-+no cap, and a 30-second limit would cut off completions that succeed now.
-+Existing deployments must keep their behaviour, so the default stays as it
-+is; #1184 remains open for an explicit, opt-in way to ask for the caps.
-+
-+Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>
-+
-+---------
-+
-+Co-authored-by: Claude Fable 5.2 <noreply@anthropic.com> (4fb8f0d)
-+
- ## [0.1.146-rc.28] - 2026-11-11
+@@ -250,7 +250,9 @@ async def _wait_process_exit(
+     """
+     try:
+         return await asyncio.wait_for(proc.wait(), timeout=_PROC_EXIT_GRACE_SECONDS)
+-    except (asyncio.TimeoutError, TimeoutError):
++    except (asyncio.TimeoutError, TimeoutError, asyncio.CancelledError):
++        # Loop shutdown cancels the cleanup task too. Finish the same bounded
++        # kill/poll fallback; run_cli still propagates the caller's cancellation.
+         pass
+     # The notification may have landed while we grace-waited (in which case
+     # the transport finalizer may already have dropped its Popen reference —
+@@ -267,7 +269,11 @@ async def _wait_process_exit(
+         returncode = popen.poll()
+         if returncode is not None:
+             return returncode
+-        await asyncio.sleep(0.1)
++        try:
++            await asyncio.sleep(0.1)
++        except asyncio.CancelledError:
++            # Do not restart the polling budget when shutdown cancels again.
++            pass
+     return proc.returncode
  
  
+@@ -402,18 +408,36 @@ def _kill_group() -> None:
+                     break
+                 # Spurious wakeup (progress reset the idle window): loop again.
+     finally:
+-        if not completed:
+-            # Timeout, cancellation, or an internal error: stop the child so
+-            # nothing keeps running and the exit wait below can conclude.
+-            # (Previously only the timeout paths killed; a cancelled run_cli
+-            # left the child running and awaited its natural exit.)
+-            _kill_group()
+-        drain.cancel()
+-        try:
+-            await drain
+-        except BaseException:
+-            pass
+-        fallback_returncode = await _wait_process_exit(proc, _kill_group)
++
++        async def cleanup() -> Optional[int]:
++            if not completed:
++                _kill_group()
++            drain.cancel()
++            try:
++                await drain
++            except BaseException:
++                pass
++            return await _wait_process_exit(proc, _kill_group)
++
++        # Pipe EOF does not mean the child has exited. Keep ownership until
++        # the bounded exit wait finishes, even if cancellation arrives here
++        # or is repeated while cleanup is already running.
++        cleanup_task = asyncio.create_task(cleanup())
++        cleanup_cancelled: Optional[asyncio.CancelledError] = None
++        while True:
++            try:
++                fallback_returncode = await asyncio.shield(cleanup_task)
++                break
++            except asyncio.CancelledError as exc:
++                if cleanup_cancelled is None:
++                    cleanup_cancelled = exc
++                    _kill_group()
++                if cleanup_task.cancelled():
++                    # Shutdown can cancel a task before its coroutine starts.
++                    fallback_returncode = await _wait_process_exit(proc, _kill_group)
++                    break
++        if cleanup_cancelled is not None:
++            raise cleanup_cancelled
+ 
+     if idle_timed_out:
+         raise TimeoutError(
 ```
 
-**File**: `VERSION` (modified, +1/-1)
+**File**: `sdk/python/tests/test_harness_cli.py` (modified, +146/-0)
 ```diff
-@@ -1 +1 @@
--0.1.146-rc.28
-+0.1.146-rc.29
-```
-
-**File**: `control-plane/internal/templates/go/go.mod.tmpl` (modified, +1/-1)
-```diff
-@@ -2,4 +2,4 @@ module {{.GoModule}}
+@@ -218,6 +218,152 @@ async def never_ready(_n):
+     process.kill.assert_called()
  
- go 1.23
  
--require github.com/Agent-Field/agentfield/sdk/go v0.1.146-rc.28
-+require github.com/Agent-Field/agentfield/sdk/go v0.1.146-rc.29
-```
-
-**File**: `sdk/python/agentfield/__init__.py` (modified, +1/-1)
-```diff
-@@ -197,4 +197,4 @@
-     "reasoner",
- ]
- 
--__version__ = "0.1.146-rc.28"
-+__version__ = "0.1.146-rc.29"
-```
-
-**File**: `sdk/python/pyproject.toml` (modified, +1/-1)
-```diff
-@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
- 
- [project]
- name = "agentfield"
--version = "0.1.146-rc.28"
-+version = "0.1.146-rc.29"
- description = "Python SDK for the AgentField control plane"
- readme = "README.md"
- license = {text = "Apache-2.0"}
-```
-
-**File**: `sdk/python/uv.lock` (modified, +1/-1)
-```diff
-@@ -8,7 +8,7 @@ resolution-markers = [
- 
- [[package]]
- name = "agentfield"
--version = "0.1.146rc28"
-+version = "0.1.146rc29"
- source = { editable = "." }
- dependencies = [
-     { name = "aiohttp" },
-```
-
-**File**: `sdk/typescript/package.json` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "@agentfield/sdk",
--  "version": "0.1.146-rc.28",
-+  "version": "0.1.146-rc.29",
-   "description": "AgentField TypeScript SDK",
-   "type": "module",
-   "main": "dist/index.js",
++@pytest.mark.asyncio
++@pytest.mark.parametrize("repeat_cancel", [False, True])
++async def test_run_cli_cancellation_after_pipe_eof_reaps_child(
++    monkeypatch, repeat_cancel
++):
++    """Cancellation must still own the child after its output pipes close."""
++    create_process = asyncio.create_subprocess_exec
++    waiting_for_exit = asyncio.Event()
++    reaped = asyncio.Event()
++    release_wait = asyncio.Event()
++    process = None
++
++    async def spawn(*args, **kwargs):
++        nonlocal process
++        process = await create_process(*args, **kwargs)
++        wait = process.wait
++
++        async def observed_wait():
++            waiting_for_exit.set()
++            result = await wait()
++            reaped.set()
++            if repeat_cancel:
++                await release_wait.wait()
++            return result
++
++        process.wait = observed_wait
++        return process
++
++    monkeypatch.setattr(asyncio, "create_subprocess_exec", spawn)
++    task = asyncio.create_task(
++        run_cli(
++            [
++                sys.executable,
++                "-c",
++                "import os, time; os.close(1); os.close(2); time.sleep(60)",
++            ],
++            timeout=30,
++            idle_seconds=0,
++        )
++    )
++    try:
++        await asyncio.wait_for(waiting_for_exit.wait(), timeout=5)
++        task.cancel("stop after EOF")
++        if repeat_cancel:
++            await asyncio.wait_for(reaped.wait(), timeout=2)
++            task.cancel("stop again")
++            await asyncio.sleep(0)
++            assert not task.done()
++            release_wait.set()
++        with pytest.raises(asyncio.CancelledError) as cancelled:
++            await asyncio.wait_for(task, timeout=2)
++        # Task cancellation messages reach awaiters starting with Python 3.11.
++        if sys.version_info >= (3, 11):
++            assert str(cancelled.value) == "stop after EOF"
++        assert process is not None
++        assert process.returncode is not None
++    finally:
++        release_wait.set()
++        if not task.done():
++            task.cancel()
++            await asyncio.gather(task, return_exceptions=True)
++        if process is not None and process.returncode is None:
++            process.kill()
++            await process.wait()
++
++
++@pytest.mark.asyncio
++async def test_run_cli_returns_exit_status_after_pipe_eof():
++    stdout, stderr, returncode = await run_cli(
++        [
++            sys.executable,
++            "-c",
++            "import os, sys, time; print('done', flush=True); "
++            "os.close(1); os.close(2); time.sleep(0.05); sys.exit(7)",
++        ],
++        timeout=2,
++        idle_seconds=0,
++    )
++    assert (stdout, stderr, returncode) == ("done\n", "", 7)
++
++
++def test_run_cli_reaps_child_during_event_loop_shutdown(monkeypatch):
++    """asyncio.run cancels the runner and any cleanup tasks together."""
++    create_process = asyncio.create_subprocess_exec
++    process = None
++    runner = None
++    observed = {}
++
++    class ObservedPolicy(asyncio.DefaultEventLoopPolicy):
++        def new_event_loop(self):
++            loop = super().new_event_loop()
++            close = loop.close
++
++            def observed_close():
++                try:
++                    if process is not None:
++                        observed["child_alive"] = process.returncode is None
++                        observed["runner_cancelled"] = runner.cancelled()
++                        if process.returncode is None:
++                            process.kill()
++                            loop.run_until_complete(process.wait())
++                finally:
++                    close()
++
++            loop.close = observed_close
++            return loop
++
++    async def main():
++        nonlocal runner
++        waiting_for_exit = asyncio.Event()
++
++        async def spawn(*args, **kwargs):
++            nonlocal process
++            process = await create_process(*args, **kwargs)
++            wait = process.wait
++
++            async def observed_wait():
++                waiting_for_exit.set()
++                return await wait()
++
++            process.wait = observed_wait
++            return process
++
++        monkeypatch.setattr(asyncio, "create_subprocess_exec", spawn)
++        runner = asyncio.create_task(
++            run_cli(
++                [
++                    sys.executable,
++                    "-c",
++                    "import os, time; os.close(1); os.close(2); time.sleep(60)",
++                ],
++                timeout=30,
++                idle_seconds=0,
++            )
++        )
++        await asyncio.wait_for(waiting_for_exit.wait(), timeout=5)
++
++    policy = asyncio.get_event_loop_policy()
++    asyncio.set_event_loop_policy(ObservedPolicy())
++    try:
++        asyncio.run(main())
++    finally:
++        asyncio.set_event_loop_policy(policy)
++    assert observed == {"child_alive": False, "runner_cancelled": True}
 ```
 
 ---
 
-### Incident Patch 2: `4fb8f0d5` (2026-11-12)
-**Commit Message**: Repair a workflow row left running after a failed terminal event; optional control plane bind host (#1187)
+### Incident Patch 2: `c148bb54` (2026-11-14)
+**Commit Message**: fix(python): enforce total timeout while awaiting approval (#1198)
 
-* fix(sdk/go): apply default token and timeout caps to partial AI config (#1184)
+* fix(python): enforce total timeout while awaiting approval
 
-* fix: recover terminal event delivery and workflow projection writes (#1182)
+Signed-off-by: Steven Huang <[REDACTED_EMAIL]>
 
-* fix(control-plane): allow selecting the HTTP and admin gRPC bind host (#1185)
+* fix(python): preserve approval wait cancellation on supported runtimes
 
-* Keep partial AI configs uncapped by default (withdraws the #1184 change)
+Signed-off-by: Steven Huang <[REDACTED_EMAIL]>
 
-The #1184 change gave a partial ai.Config the SDK's default limits (4096
-output tokens, 30 seconds). Nodes that build a partial config today run with
-no cap, and a 30-second limit would cut off completions that succeed now.
-Existing deployments must keep their behaviour, so the default stays as it
-is; #1184 remains open for an explicit, opt-in way to ask for the caps.
+* style(python): format approval polling additions
 
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+Signed-off-by: Steven Huang <[REDACTED_EMAIL]>
 
 ---------
 
-Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
+Signed-off-by: Steven Huang <[REDACTED_EMAIL]>
 
-**File**: `control-plane/.env.example` (modified, +2/-0)
+**File**: `sdk/python/agentfield/client.py` (modified, +37/-18)
 ```diff
-@@ -3,6 +3,8 @@
+@@ -2167,7 +2167,8 @@ async def wait_for_approval(
+             execution_id: Execution ID to wait for.
+             poll_interval: Initial polling interval in seconds.
+             max_interval: Maximum polling interval in seconds.
+-            timeout: Total timeout in seconds (None = wait indefinitely).
++            timeout: Total timeout including polling delays and requests, in seconds
++                (None = wait indefinitely).
  
- # Core AgentField Configuration
- AGENTFIELD_PORT=8080
-+# Optional bind host for HTTP and admin gRPC (default: all interfaces).
-+# AGENTFIELD_HOST=127.0.0.1
- AGENTFIELD_CONFIG_FILE=./config/agentfield.yaml
+         Returns:
+             ApprovalStatusResponse with the final approval status (approved/rejected/expired).
+@@ -2176,29 +2177,47 @@ async def wait_for_approval(
+             AgentFieldClientError: If polling encounters a non-retryable error.
+             ExecutionTimeoutError: If timeout is reached.
+         """
+-        start_time = time.time()
+-        interval = poll_interval
+-        backoff_factor = 2.0
  
- # Agent restarts and orderly drains (YAML: agentfield.node_health.agent_*_grace).
-```
-
-**File**: `control-plane/README.md` (modified, +9/-1)
-```diff
-@@ -50,11 +50,19 @@ The server runs at `http://localhost:8080` and will automatically reload when yo
- Environment variables override `config/agentfield.yaml`. Common options:
+-        while True:
+-            if timeout is not None and (time.time() - start_time) >= timeout:
+-                raise ExecutionTimeoutError(
+-                    f"Approval for execution {execution_id} timed out after {timeout}s"
+-                )
++        async def poll() -> ApprovalStatusResponse:
++            interval = poll_interval
++            backoff_factor = 2.0
  
- - `AGENTFIELD_DATABASE_URL` – PostgreSQL DSN
--- `AGENTFIELD_HTTP_ADDR` – HTTP listen address (`0.0.0.0:8080` by default)
-+- `AGENTFIELD_HOST` – bind host for HTTP and admin gRPC (empty by default: all interfaces)
-+- `AGENTFIELD_PORT` – HTTP port (`8080` by default)
- - `AGENTFIELD_LOG_LEVEL` – log verbosity (`info`, `debug`, etc.)
- 
- Sample config files live in `config/`.
- 
-+Set `agentfield.host: 127.0.0.1` in YAML to restrict both listeners to loopback,
-+or select a host with `af server --host 127.0.0.1 --open=false`. The standalone
-+`agentfield-server` accepts the same flag. Precedence is `--host` over
-+`AGENTFIELD_HOST` over YAML, including an explicit empty value to bind all
-+interfaces. Use an unbracketed IPv6 address such as `::1`. HTTP and admin gRPC
-+keep their existing port settings (admin defaults to HTTP port + 100).
+-            await asyncio.sleep(interval)
++            while True:
++                await asyncio.sleep(interval)
 +
- ## Web UI Development
++                try:
++                    result = await self.get_approval_status(execution_id)
++                except AgentFieldClientError:
++                    # Transient failure — back off and retry
++                    interval = min(interval * backoff_factor, max_interval)
++                    continue
++
++                if result.status != "pending":
++                    return result
  
- ```bash
+-            try:
+-                result = await self.get_approval_status(execution_id)
+-            except AgentFieldClientError:
+-                # Transient failure — back off and retry
+                 interval = min(interval * backoff_factor, max_interval)
+-                continue
+ 
+-            if result.status != "pending":
+-                return result
++        if timeout is None:
++            return await poll()
++
++        timeout_message = (
++            f"Approval for execution {execution_id} timed out after {timeout}s"
++        )
++        if timeout <= 0:
++            raise ExecutionTimeoutError(timeout_message)
+ 
+-            interval = min(interval * backoff_factor, max_interval)
++        loop = asyncio.get_running_loop()
++        deadline = loop.time() + timeout
++        polling = asyncio.create_task(poll())
++        try:
++            done, _ = await asyncio.wait({polling}, timeout=timeout)
++            if not done or loop.time() >= deadline:
++                raise ExecutionTimeoutError(timeout_message)
++            return polling.result()
++        finally:
++            if not polling.done():
++                polling.cancel()
++            await asyncio.gather(polling, return_exceptions=True)
+ 
+     async def post_execution_logs(
+         self,
 ```
 
-**File**: `control-plane/cmd/af/main.go` (modified, +1/-0)
+**File**: `sdk/python/tests/test_approval.py` (modified, +1/-12)
 ```diff
-@@ -70,6 +70,7 @@ func loadServerConfig(cmd *cobra.Command) (*config.Config, error) {
- 	// env var and logging.level in agentfield.yaml are only visible once the
- 	// config has been read.
- 	cli.ApplyConfiguredLogLevel(cmd, cfg.Logging.Level)
-+	cli.ApplyServerHostFlag(cmd, cfg)
- 	return cfg, nil
+@@ -188,20 +188,9 @@ async def no_sleep(_: float) -> None:
+ 
+ 
+ @pytest.mark.asyncio
+-async def test_wait_for_approval_times_out(
+-    client: AgentFieldClient, monkeypatch: pytest.MonkeyPatch
+-):
+-    import agentfield.client as client_module
+-
++async def test_wait_for_approval_times_out(client: AgentFieldClient):
+     client.get_approval_status = AsyncMock(return_value=ApprovalStatusResponse(status="pending"))
+ 
+-    async def no_sleep(_: float) -> None:
+-        return None
+-
+-    times = iter([0.0, 0.02, 0.06])
+-    monkeypatch.setattr("agentfield.client.asyncio.sleep", no_sleep)
+-    monkeypatch.setattr(client_module.time, "time", lambda: next(times))
+-
+     with pytest.raises(ExecutionTimeoutError, match="timed out"):
+         await client.wait_for_approval(
+             EXECUTION_ID,
+```
+
+**File**: `sdk/python/tests/test_approval_timeout.py` (added, +215/-0)
+```diff
+@@ -0,0 +1,215 @@
++"""Approval polling deadlines through the public client API."""
++
++import asyncio
++from unittest.mock import AsyncMock
++
++import httpx
++import pytest
++import respx
++
++from agentfield.client import AgentFieldClient
++from agentfield.exceptions import ExecutionTimeoutError
++
++
++@pytest.fixture
++def router():
++    return respx.MockRouter(assert_all_mocked=True)
++
++
++@pytest.fixture
++async def client(router, monkeypatch):
++    client = AgentFieldClient(base_url="https://control-plane.test")
++    client.caller_agent_id = "test-node"
++    async with httpx.AsyncClient(
++        transport=httpx.MockTransport(router.async_handler)
++    ) as http_client:
++        monkeypatch.setattr(
++            client, "get_async_http_client", AsyncMock(return_value=http_client)
++        )
++        yield client
++    await client.aclose()
++
++
++@pytest.mark.asyncio
++async def test_timeout_interrupts_initial_poll_delay(client, router):
++    route = router.get(
++        "https://control-plane.test/api/v1/agents/test-node/executions/exec-1/approval-status"
++    ).respond(200, json={"status": "approved"})
++
++    with pytest.raises(ExecutionTimeoutError, match="exec-1 timed out after 0.01s"):
++        await asyncio.wait_for(
++            client.wait_for_approval("exec-1", poll_interval=1, timeout=0.01),
++            timeout=0.5,
++        )
++
++    assert not route.called
++
++
++@pytest.mark.asyncio
++async def test_timeout_cancels_in_flight_status_request(client, router):
++    started = asyncio.Event()
++    cancelled = asyncio.Event()
++
++    async def slow_response(request):
++        started.set()
++        try:
++            await asyncio.Event().wait()
++        finally:
++            await asyncio.sleep(0)
++            cancelled.set()
++
++    router.get(
++        "https://control-plane.test/api/v1/agents/test-node/executions/exec-1/approval-status"
++    ).mock(side_effect=slow_response)
++
++    with pytest.raises(ExecutionTimeoutError, match="timed out"):
++        await asyncio.wait_for(
++            client.wait_for_approval("exec-1", poll_interval=0, timeout=0.05),
++            timeout=0.5,
++        )
++
++    assert started.is_set()
++    assert cancelled.is_set()
++
++
++@pytest.mark.asyncio
++@pytest.mark.parametrize("first_status", [200, 503])
++async def test_timeout_interrupts_pending_or_error_backoff(
++    client, router, first_status
++):
++    route = router.get(
++        "https://control-plane.test/api/v1/agents/test-node/executions/exec-1/approval-status"
++    ).mock(
++        side_effect=[
++            httpx.Response(first_status, json={"status": "pending"}),
++            httpx.Response(200, json={"status": "approved"}),
++        ]
++    )
++
++    with pytest.raises(ExecutionTimeoutError, match="timed out"):
++        await asyncio.wait_for(
++            client.wait_for_approval("exec-1", poll_interval=0.05, timeout=0.08),
++            timeout=0.5,
++        )
++
++    assert route.call_count <= 1
++
++
++@pytest.mark.asyncio
++@pytest.mark.parametrize("timeout", [0, -1])
++async def test_elapsed_deadline_does_not_poll(client, router, timeout):
++    route = router.get(
++        "https://control-plane.test/api/v1/agents/test-node/executions/exec-1/approval-status"
++    ).respond(200, json={"status": "approved"})
++
++    with pytest.raises(ExecutionTimeoutError, match="timed out"):
++        await client.wait_for_approval("exec-1", poll_interval=0, timeout=timeout)
++
++    assert not route.called
++
++
++@pytest.mark.asyncio
++@pytest.mark.parametrize("timeout", [None, 1])
++@pytest.mark.parametrize(
++    "status", ["approved", "rejected", "expired", "request_changes"]
++)
++async def test_resolved_status_before_deadline_is_unchanged(
++    client, router, timeout, status
++):
++    route = router.get(
++        "https://control-plane.test/api/v1/agents/test-node/executions/exec-1/approval-status"
++    ).respond(200, json={"status": status, "feedback": "human response"})
++
++    result = await asyncio.wait_for(
++        client.wait_for_approval("exec-1", poll_interval=0, timeout=timeout),
++        timeout=0.5,
++    )
++
++    assert result.status == status
++    assert result.feedback == "human response"
++    assert route.call_count == 1
++
++
++@pytest.mark.asyncio
++async def test_caller_cancellation_cleans_up_status_request(client, router):
++    started = asyncio.Event()
++    cancelled = asyncio.Event()
++
++    async def slow_response(request):
++        started.set()
++        try:
++            await asyncio.Event().wait()
++        finally:
++            cancelled.set()
++
++    router.get(
++        "https://control-plane.test/api/v1/agents/test-node/executions/exec-1/approval-status"
++    ).mock(side_effect=slow_response)
++    task = asyncio.create_task(
++        client.wait_for_approval("exec-1", poll_interval=0, timeout=10)
++    )
++    try:
++        await asyncio.wait_for(started.wait(), timeout=0.5)
++        task.cancel()
++        with pytest.raises(asyncio.CancelledError):
++            await task
++        assert cancelled.is_set()
++    finally:
++        ta
+```
+
+**File**: `sdk/python/tests/test_client_laser_push.py` (modified, +1/-6)
+```diff
+@@ -765,7 +765,6 @@ async def test_approval_helpers_and_wait_for_approval(client, monkeypatch):
+     async def fake_sleep(_):
+         return None
+ 
+-    times = iter([0.0, 0.0, 1.0, 2.0, 3.0])
+     responses = [
+         AgentFieldClientError("transient"),
+         SimpleNamespace(status="pending"),
+@@ -779,17 +778,13 @@ async def fake_get_status(execution_id):
+         return result
+ 
+     monkeypatch.setattr(client_mod.asyncio, "sleep", fake_sleep)
+-    monkeypatch.setattr(client_mod.time, "time", lambda: next(times))
+     monkeypatch.setattr(client, "get_approval_status", fake_get_status)
+ 
+     waited = await client.wait_for_approval("exec-2", poll_interval=0.1, max_interval=0.2, timeout=5.0)
+     assert waited.status == "approved"
+ 
+-    times_timeout = iter([0.0, 10.0])
+-    monkeypatch.setattr(client_mod.time, "time", lambda: next(times_timeout))
+-
+     with pytest.raises(ExecutionTimeoutError, match="timed out"):
+-        await client.wait_for_approval("exec-3", poll_interval=0.1, timeout=1.0)
++        await client.wait_for_approval("exec-3", poll_interval=0.1, timeout=0)
+ 
+ 
+ @pytest.mark.asyncio
+```
+
+---
+
+### Incident Patch 3: `fef65a5c` (2026-11-14)
+**Commit Message**: fix(sdk/go): surface in-stream error events from StreamComplete (#1194)
+
+An SSE data event of the form {"error":{...}} was unmarshalled into an
+empty StreamChunk and yielded as a normal chunk, so the caller never saw
+the provider failure. Return it as an error so it reaches errCh.
+
+Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+**File**: `sdk/go/ai/client.go` (modified, +30/-0)
+```diff
+@@ -404,6 +404,12 @@ func (d *SSEDecoder) Decode() (StreamChunk, error) {
+ 				if err := json.Unmarshal([]byte(jsonData), &chunk); err != nil {
+ 					continue // Skip malformed chunks
+ 				}
++				// Providers (e.g. OpenRouter) report mid-stream failures as a
++				// {"error":{...}} data event on an HTTP 200 stream. Surface it
++				// instead of yielding an empty chunk.
++				if streamErr := parseStreamError([]byte(jsonData)); streamErr != nil {
++					return StreamChunk{}, streamErr
++				}
+ 				chunk.normalizeNativeCost()
+ 
+ 				return chunk, nil
+@@ -427,6 +433,30 @@ func (d *SSEDecoder) Decode() (StreamChunk, error) {
+ 	}
  }
  
++// parseStreamError returns an error when an SSE data payload is an in-stream
++// {"error":{...}} event, or nil for ordinary chunks.
++func parseStreamError(data []byte) error {
++	var probe struct {
++		Error *struct {
++			Message string          `json:"message"`
++			Type    string          `json:"type"`
++			Code    json.RawMessage `json:"code"`
++		} `json:"error"`
++	}
++	if err := json.Unmarshal(data, &probe); err != nil || probe.Error == nil {
++		return nil
++	}
++	msg := probe.Error.Message
++	if msg == "" {
++		msg = "unknown error"
++	}
++	code := strings.Trim(string(probe.Error.Code), `"`)
++	if code != "" && code != "null" {
++		return fmt.Errorf("stream error (code %s): %s", code, msg)
++	}
++	return fmt.Errorf("stream error: %s", msg)
++}
++
+ // Convenience functions for common patterns
+ 
+ // SimpleAI makes a simple AI call with just a prompt.
 ```
 
-**File**: `control-plane/cmd/af/main_test.go` (modified, +31/-0)
+**File**: `sdk/go/ai/client_test.go` (modified, +41/-0)
 ```diff
-@@ -14,6 +14,7 @@ import (
- 	"github.com/spf13/cobra"
- 	"github.com/spf13/viper"
- 	"github.com/stretchr/testify/require"
-+	"gopkg.in/yaml.v3"
- )
- 
- func TestWaitForShutdownReturnsWhenContextIsCancelled(t *testing.T) {
-@@ -188,3 +189,33 @@ func TestDrainOnShutdownZeroDelayStopsImmediately(t *testing.T) {
- 	require.NoError(t, drainOnShutdown(ctx, nil, func() {}, 0, func() error { return nil }))
- 	require.Less(t, time.Since(started), 40*time.Millisecond)
+@@ -799,3 +799,44 @@ func TestSSEDecoder_CRLFAndNoSpaceDataField(t *testing.T) {
+ 		})
+ 	}
  }
 +
-+func TestServerConfigHostPrecedence(t *testing.T) {
-+	for _, tc := range []struct {
-+		name, env, flag, want string
-+		useFlag               bool
-+	}{
-+		{name: "yaml", want: "127.0.0.1"},
-+		{name: "environment", env: "127.0.0.2", want: "127.0.0.2"},
-+		{name: "flag", env: "127.0.0.2", flag: "::1", want: "::1", useFlag: true},
-+		{name: "empty flag restores wildcard", env: "127.0.0.2", useFlag: true},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			if tc.env != "" {
-+				t.Setenv("AGENTFIELD_HOST", tc.env)
-+			}
-+			var args []string
-+			if tc.useFlag {
-+				args = append(args, "--host="+tc.flag)
-+			}
-+			cmd := serverCommandWithConfig(t, "agentfield:\n  host: 127.0.0.1\n", args...)
-+			cfg, err := loadServerConfig(cmd)
-+			require.NoError(t, err)
-+			encoded, err := yaml.Marshal(cfg)
-+			require.NoError(t, err)
-+			var value map[string]map[string]any
-+			require.NoError(t, yaml.Unmarshal(encoded, &value))
-+			require.Equal(t, tc.want, value["agentfield"]["host"])
-+		})
++func TestSSEDecoder_InStreamError(t *testing.T) {
++	input := "data: {\"id\":\"a\"}\n\n" +
++		"data: {\"error\":{\"message\":\"upstream overloaded\",\"code\":429}}\n\n" +
++		"data: [DONE]\n\n"
++	decoder := NewSSEDecoder(strings.NewReader(input))
++
++	if chunk, err := decoder.Decode(); err != nil || chunk.ID != "a" {
++		t.Fatalf("expected first chunk a, got %+v err=%v", chunk, err)
++	}
++	_, err := decoder.Decode()
++	if err == nil || err == io.EOF {
++		t.Fatalf("expected in-stream error, got %v", err)
++	}
++	if !strings.Contains(err.Error(), "upstream overloaded") {
++		t.Fatalf("error should carry provider message, got %q", err.Error())
 +	}
 +}
-```
-
-**File**: `control-plane/cmd/agentfield-server/main.go` (modified, +1/-0)
-```diff
-@@ -74,6 +74,7 @@ func runServer(cmd *cobra.Command, args []string) {
- 		log.Fatalf("Failed to load configuration: %v", err)
- 	}
- 	cfg.Telemetry.AgentFieldVersion = version
-+	cli.ApplyServerHostFlag(cmd, cfg)
- 
- 	// Re-initialize logger with configured level now that config is loaded.
- 	// The CLI root command sets a default (info/debug based on --verbose);
-```
-
-**File**: `control-plane/cmd/agentfield-server/main_test.go` (modified, +17/-0)
-```diff
-@@ -17,6 +17,7 @@ import (
- 
- 	"github.com/spf13/cobra"
- 	"github.com/spf13/viper"
-+	"gopkg.in/yaml.v3"
- )
- 
- func TestFinishShutdownTreatsTimeoutAsSuccessfulExit(t *testing.T) {
-@@ -318,6 +319,10 @@ func TestRunServer_AppliesFlagOverrides(t *testing.T) {
- 	cmd.Flags().Bool("ui-dev", false, "")
- 	cmd.Flags().Bool("open", true, "")
- 	cmd.Flags().Int("port", 0, "")
-+	cmd.Flags().String("host", "", "")
-+	if err := cmd.Flags().Set("host", "127.0.0.1"); err != nil {
-+		t.Fatal(err)
-+	}
- 	cmd.Flags().Bool("no-vc-execution", false, "")
- 
- 	if err := cmd.Flags().Set("backend-only", "true"); err != nil {
-@@ -331,6 +336,7 @@ func TestRunServer_AppliesFlagOverrides(t *testing.T) {
- 	}
- 
- 	t.Setenv("AGENTFIELD_PORT", "12345")
-+	t.Setenv("AGENTFIELD_HOST", "127.0.0.2")
- 
- 	runServer(cmd, nil)
- 
-@@ -342,6 +348,17 @@ func TestRunServer_AppliesFlagOverrides(t *testing.T) {
- 	if gotCfg.AgentField.Port != 12345 {
- 		t.Fatalf("expected env override port 12345, got %d", gotCfg.AgentField.Port)
- 	}
-+	encoded, err := yaml.Marshal(gotCfg)
++
++func TestStreamComplete_InStreamErrorReachesErrCh(t *testing.T) {
++	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		w.Header().Set("Content-Type", "text/event-stream")
++		fmt.Fprint(w, "data: {\"error\":{\"message\":\"boom\",\"type\":\"server_error\"}}\n\n")
++	}))
++	defer server.Close()
++
++	client, err := NewClient(&Config{APIKey: "k", BaseURL: server.URL, Model: "m"})
 +	if err != nil {
 +		t.Fatal(err)
 +	}
-+	var value map[string]map[string]any
-+	if err := yaml.Unmarshal(encoded, &value); err != nil {
-+		t.Fatal(err)
++	chunks, errs := client.StreamComplete(context.Background(), "hi")
++	for range chunks {
 +	}
-+	if got := value["agentfield"]["host"]; got != "127.0.0.1" {
-+		t.Fatalf("host flag must reach server config, got %v", got)
++	var got error
++	for e := range errs {
++		got = e
 +	}
- 	if gotCfg.Telemetry.AgentFieldVersion != version {
- 		t.Fatalf("expected telemetry build version %q, got %q", version, gotCfg.Telemetry.AgentFieldVersion)
- 	}
-```
-
-**File**: `control-plane/config/agentfield.yaml` (modified, +1/-0)
-```diff
-@@ -1,4 +1,5 @@
- agentfield:
-+  # host: ""  # HTTP and admin gRPC bind host; empty binds all interfaces. Use 127.0.0.1 for local-only access.
-   port: 8080
-   shutdown_timeout: 30s  # Graceful shutdown drain timeout for in-flight requests
-   registration:
-```
-
-**File**: `control-plane/internal/cli/root.go` (modified, +9/-0)
-```diff
-@@ -90,6 +90,7 @@ AI Agent? Run "af agent help" for structured JSON output optimized for programma
- 	RootCmd.PersistentFlags().BoolVar(&uiDevFlag, "ui-dev", false, "Run with UI development server (proxies to backend)")
- 	RootCmd.PersistentFlags().BoolVar(&backendOnlyFlag, "backend-only", false, "Run only backend APIs, UI served separately")
- 	RootCmd.PersistentFlags().IntVar(&portFlag, "port", 0, "Port for the af server (overrides config if set)")
-+	RootCmd.PersistentFlags().String("host", "", "Bind host for HTTP and admin gRPC (empty binds all interfaces; overrides config and AGENTFIELD_HOST)")
- 	RootCmd.PersistentFlags().BoolVar(&noVCExecution, "no-vc-execution", false, "Disable generating verifiable credentials for executions")
- 	RootCmd.PersistentFlags().BoolVar(&forceVCExecution, "vc-execution", false, "Force-enable generating verifiable credentials for executions")
- 	RootCmd.PersistentFlags().StringVar(&storageModeFlag, "storage-mode", "", "Override the storage backend (local or postgres)")
-@@ -218,6 +219,14 @@ func GetBackendOnlyFlag() bool {
- 	return backendOnlyFlag
- }
- 
-+// ApplyServerHostFlag applies an explicitly selected bind host after YAML/env
-+// loading. An explicitly empty flag restores the default wildcard bind.
-+func ApplyServerHostFlag(cmd *cobra.Command, cfg *config.Config) {
-+	if flag := cmd.Flags().Lookup("host"); flag != nil && flag.Changed {
-+		cfg.AgentField.Host, _ = cmd.Flags().GetString("host")
++	if got == nil || !strings.Contains(got.Error(), "boom") {
++		t.Fatalf("expected stream error containing boom, got %v", got)
 +	}
 +}
-+
- func GetPortFlag() int {
- 	return portFlag
- }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1187** (2026-11-12): Repair a workflow row left running after a failed terminal event; optional control plane bind host (@AbirAbbas)
-- **PR #1179** (2026-11-11): control-plane: an offline node keeps its executions until it comes back (@AbirAbbas)
-- **PR #1178** (2026-11-10): control-plane: an offline node keeps its executions until it comes back (@santoshkumarradha)
-- **PR #1177** (2026-11-10): fix(storage): create the relay and approval tables with the schema, never cache a failed create (@AbirAbbas)
-- **PR #1176** (2026-11-09): ci: move macOS jobs from macos-14 to macos-15 (@AbirAbbas)
-- **PR #1174** (2026-11-09): WorkAF harness watch: node link, relay pipe and steer, streamed only for owned runs (@AbirAbbas)
+- **PR #1198** (2026-11-14): fix(python): enforce total timeout while awaiting approval (@remote-controlled-man)
+- **PR #1197** (2026-11-14): fix(go-sdk): parse data fields in SSE events (@remote-controlled-man)
+- **PR #1194** (2026-11-14): fix(sdk/go): surface in-stream error events from StreamComplete (@pcbeingused333)
+- **PR #1193** (2026-11-13): fix(sdk-typescript): omit temperature for models that reject it (@pcbeingused333)
+- **PR #1192** (2026-11-13): fix(memory): honor legacy vector delete body scope (@remote-controlled-man)
+- **PR #1189** (2026-11-13): fix(sdk-ts): keep memory scope ids with their own scope (@remote-controlled-man)
 
 ---
 
@@ -1769,54 +2110,69 @@ Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. release): v0.1.146-rc.29 [skip ci]
+## X. python): finish harness cleanup before propagating cancellation
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Agent-Field/agentfield. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `sdk/python/agentfield/harness/_cli.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Agent-Field/agentfield. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cb1ba113`: release): v0.1.146-rc.29 [skip ci]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0145089a`: python): finish harness cleanup before propagating cancellation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `sdk/python/agentfield/harness/_cli.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-## [0.1.146-rc.29] - 2026-11-12
+    except (asyncio.TimeoutError, TimeoutError, asyncio.CancelledError):
+        # Loop shutdown cancels the cleanup task too. Finish the same bounded
+        # kill/poll fallback; run_cli still propagates the caller's cancellation.
+        try:
+            await asyncio.sleep(0.1)
+        except asyncio.CancelledError:
+            # Do not restart the polling budget when shutdown cancels again.
+            pass
 
+        async def cleanup() -> Optional[int]:
+            if not completed:
+                _kill_group()
+            drain.cancel()
+            try:
+                await drain
+            except BaseException:
+                pass
+            return await _wait_process_exit(proc, _kill_group)
 
-### Other
-
-- Repair a workflow row left running after a failed terminal event; optional control plane bind host (#1187)
-
-* fix(sdk/go): apply default token and timeout caps to partial AI config (#1184)
-
-* fix: recover terminal event delivery and workflow projection writes (#1182)
-
-* fix(control-plane): allow selecting the HTTP and admin gRPC bind host (#1185)
-
-* Keep partial AI configs uncapped by default (withdraws the #1184 change)
-
-The #1184 change gave a partial ai.Config the SDK's default limits (4096
-output tokens, 30 seconds). Nodes that build a partial config today run with
-no cap, and a 30-second limit would cut off completions that succeed now.
-Existing deployments must keep their behaviour, so the default stays as it
-is; #1184 remains open for an explicit, opt-in way to ask for the caps.
-
-Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>
-
----------
-
-Co-authored-by: Claude Fable 5.2 <noreply@anthropic.com> (4fb8f0d)
-
+        # Pipe EOF does not mean the child has exited. Keep ownership until
+        # the bounded exit wait finishes, even if cancellation arrives here
+        # or is repeated while cleanup is already running.
+        cleanup_task = asyncio.create_task(cleanup())
+        cleanup_cancelled: Optional[asyncio.CancelledError] = None
+        while True:
+            try:
+                fallback_returncode = await asyncio.shield(cleanup_task)
+                break
+            except asy
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+    except (asyncio.TimeoutError, TimeoutError):
+        await asyncio.sleep(0.1)
+        if not completed:
+            # Timeout, cancellation, or an internal error: stop the child so
+            # nothing keeps running and the exit wait below can conclude.
+            # (Previously only the timeout paths killed; a cancelled run_cli
+            # left the child running and awaited its natural exit.)
+            _kill_group()
+        drain.cancel()
+        try:
+            await drain
+        except BaseException:
+            pass
+        fallback_returncode = await _wait_process_exit(proc, _kill_group)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cb1ba113` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0145089a` are properly handled with clean fallback behavior.

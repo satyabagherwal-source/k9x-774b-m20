@@ -9899,3 +9899,8 @@ Every entry in this ledger must capture:
 | `learn-github-jithin-sabu-purge-app` | `https://github.com/jithin-sabu/purge-app` | `8d64ee60` | Multi-dimensional audit evidence | 2026-11-14T15:34:30.266Z |
 | `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `7d980299` | Multi-dimensional audit evidence | 2026-11-14T15:34:44.360Z |
 | `learn-dom-d-4edaac12` | `project://hf-baai-bge-large-en-v1.5` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-baai-bge-large-en-v1.5-learnings.md` | 2026-11-14T15:35:10.336Z |
+| `learn-huggingface-zai-org-glm-5-3` | `https://huggingface.co/zai-org/GLM-5.3` | `hf-zai-org` | Multi-dimensional audit evidence | 2026-11-14T15:49:27.890Z |
+| `learn-github-oxc-project-oxc` | `https://github.com/oxc-project/oxc` | `93140429` | Multi-dimensional audit evidence | 2026-11-14T15:49:31.059Z |
+| `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `7205812b` | Multi-dimensional audit evidence | 2026-11-14T15:49:37.751Z |
+| `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `9b4b9cfc` | Multi-dimensional audit evidence | 2026-11-14T15:49:43.550Z |
+| `learn-dom-d-293047de` | `project://hf-zai-org-glm-5.3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md` | 2026-11-14T15:50:17.296Z |

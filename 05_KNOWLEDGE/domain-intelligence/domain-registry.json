@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T15:35:10.936Z",
-  "total_records": 719,
+  "last_updated": "2026-11-14T15:50:18.041Z",
+  "total_records": 727,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 355,
+      "total": 358,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -392,7 +392,10 @@
         "domain_intelligence-research-knowledge-intelligence-lilylilith-qi_2-1_anyangle-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-baai-bge-large-en-v1-5-core-invariants",
         "DOM-D-4EDAAC12",
-        "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-large-en-v1-5-learnings-core-invaria"
+        "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-large-en-v1-5-learnings-core-invaria",
+        "domain_intelligence-research-knowledge-intelligence-zai-org-glm-5-3-core-invariants",
+        "DOM-D-293047DE",
+        "domain_intelligence-research-knowledge-intelligence-hf-zai-org-glm-5-3-learnings-core-invariants"
       ]
     },
     "E": {
@@ -425,7 +428,7 @@
       ]
     },
     "G": {
-      "total": 111,
+      "total": 114,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -537,11 +540,14 @@
         "domain_intelligence-architecture-intelligence-biomejs-biome-core-invariants",
         "domain_intelligence-architecture-intelligence-biomejs-biome-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-jithin-sabu-purge-app-core-invariants",
-        "domain_intelligence-architecture-intelligence-jithin-sabu-purge-app-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-jithin-sabu-purge-app-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-oxc-project-oxc-core-invariants",
+        "domain_intelligence-architecture-intelligence-trinodb-trino-core-invariants",
+        "domain_intelligence-architecture-intelligence-oxc-project-oxc-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 149,
+      "total": 151,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -691,7 +697,9 @@
         "domain_intelligence-technical-construction-intelligence-nucleoidai-nucleoid-core-invariants",
         "domain_intelligence-technical-construction-intelligence-nucleoidai-nucleoid-learnings-core-invariant",
         "domain_intelligence-technical-construction-intelligence-arangodb-arangodb-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-arangodb-arangodb-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-arangodb-arangodb-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-agent-field-agentfield-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-agent-field-agentfield-learnings-core-invari"
       ]
     },
     "I": {
@@ -14943,6 +14951,111 @@
       "repository": "arangodb-arangodb-learnings",
       "content_hash": "7fcd0e42f38014c9dcde0c2db24f9d626d3885a5e94d3d5c15c5e7097d5df1dc",
       "created_at": "2026-11-14T15:35:10.936Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-zai-org-glm-5-3-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-zai-org-glm-5-3-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: zai-org/GLM-5.3 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-zai-org-glm-5-3-research-knowledge-intelligence-zai-org-glm-5-3-core-invarian.md",
+      "repository": "zai-org/GLM-5.3",
+      "content_hash": "d377cbcbd63a6c0a70eb30152b09bb35b52a475c940d7d8e728e32afad0174b7",
+      "created_at": "2026-11-14T15:49:28.062Z"
+    },
+    "domain_intelligence-architecture-intelligence-oxc-project-oxc-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-oxc-project-oxc-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: oxc-project/oxc Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-oxc-project-oxc-architecture-intelligence-oxc-project-oxc-core-invariants.md",
+      "repository": "oxc-project/oxc",
+      "content_hash": "afba7aa3fcc4079cec3e210937be6825c64d6bc457334ae658da111c8dce8aee",
+      "created_at": "2026-11-14T15:49:31.341Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-agent-field-agentfield-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-agent-field-agentfield-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: Agent-Field/agentfield Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-agent-field-agentfield-technical-construction-intelligence-agent-field-agentfiel.md",
+      "repository": "Agent-Field/agentfield",
+      "content_hash": "8b542b4cd914721d39e134c8a774ec6149196794df48a48b8027effcb455edcb",
+      "created_at": "2026-11-14T15:49:38.035Z"
+    },
+    "domain_intelligence-architecture-intelligence-trinodb-trino-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-trinodb-trino-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: trinodb/trino Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trinodb-trino-architecture-intelligence-trinodb-trino-core-invariants.md",
+      "repository": "trinodb/trino",
+      "content_hash": "8cc70c464222ea8141dd178881c607300aea58dc7fc6e9db7a6e51297accb3a1",
+      "created_at": "2026-11-14T15:49:43.862Z"
+    },
+    "domain_intelligence-architecture-intelligence-oxc-project-oxc-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-oxc-project-oxc-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: oxc-project-oxc-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-oxc-project-oxc-learnings-architecture-intelligence-oxc-project-oxc-learnings-co.md",
+      "repository": "oxc-project-oxc-learnings",
+      "content_hash": "85a5a71440d6c1b33dbc5a4f7b3db2f2c35100d39bbdeec63434a659951bc7cf",
+      "created_at": "2026-11-14T15:49:47.134Z"
+    },
+    "DOM-D-293047DE": {
+      "record_id": "DOM-D-293047DE",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): zai-org/GLM-5.3",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/zai-org/GLM-5.3](https://huggingface.co/zai-org/GLM-5.3))  \n> **Source Version**: `hf-zai-org-g`  \n> **License**: Open-Source  \n> **Synthesized By**: zero-clo",
+      "content_hash": "63af52e8df3867a4cbbbb5a1b7cc05f10ac72f48a4e840f1f553ca24743d7253",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md`  \n> **Source**: huggingface ([https://huggingface.c -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md`  \n> **Source**: huggingface ([https://huggingface.c",
+      "provenance": {
+        "source_uri": "project://hf-zai-org-glm-5.3/hf-zai-org-glm-5.3-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T15:49:47.338Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-zai-org-glm-5.3)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-zai-org-glm-5.3"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T15:50:17.283Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-zai-org-glm-5-3-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-zai-org-glm-5-3-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-zai-org-glm-5.3-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-zai-org-glm-5-3-learnings-research-knowledge-intelligence-hf-zai-org-glm-5-3-.md",
+      "repository": "hf-zai-org-glm-5.3-learnings",
+      "content_hash": "a699dfccf85c00c78d7562ed3c0dab52058734d279c47d1208b6edbef75dfbf3",
+      "created_at": "2026-11-14T15:50:17.487Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-agent-field-agentfield-learnings-core-invari": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-agent-field-agentfield-learnings-core-invari",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: agent-field-agentfield-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-agent-field-agentfield-learnings-technical-construction-intelligence-agent-field.md",
+      "repository": "agent-field-agentfield-learnings",
+      "content_hash": "1f4066a13d72d21d522a2f2fdb02d293a0921dc9dbbfbc2182a798a8ccc87eea",
+      "created_at": "2026-11-14T15:50:18.041Z"
     }
   }
 }

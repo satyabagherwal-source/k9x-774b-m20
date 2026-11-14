@@ -4,45 +4,31 @@
 {
   "source_repository": "trinodb/trino",
   "source_url": "https://github.com/trinodb/trino",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "9b4b9cfc",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-14T15:49:43.734Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-trinodb-trino",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [trinodb/trino](https://github.com/trinodb/trino) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [trinodb/trino](https://github.com/trinodb/trino) (Revision: `9b4b9cfc`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-14T15:49:43.734Z`  
+> **Learning ID**: `learn-github-trinodb-trino`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `trinodb/trino` (Commit: `historical`)
+- **Target Repository**: `trinodb/trino` (Commit: `9b4b9cfc`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
-> **Source**: github ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
-> **Source Version**: `d1c0035f`  
-> **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T03:30:46.373Z  
-> **Learning ID**: `learn-github-trinodb-trino`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): trinodb/trino
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T03:30:46.368Z  
+> **Harvest Timestamp**: 2026-11-14T15:49:42.682Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Official repository of Trino, the distributed SQL query engine for big data, formerly known as PrestoSQL (https://trino.io)
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13504 stars
+- **Stars / Engagement**: 13511 stars
 
 ---
 
@@ -507,11 +493,15 @@ type StageNodeInfo = {
 }
 
 class StageStatistics extends React.Component<StageStatisticsProps, StageStatisticsState> {
-    static getStages(queryInfo: any): Map<string, StageNodeInfo> {
+    static getStages(queryInfo: any, queryPlan: QueryPlan): Map<string, StageNodeInfo> {
         const stages: Map<string, StageNodeInfo> = new Map()
         queryInfo.stages.stages.forEach(function (stageInfo) {
+            const planNodes = queryPlan[stageInfo.stageId]
+            if (!planNodes) {
+                return
+            }
             const nodes = new Map<any, PlanNodeProps>()
-            StageStatistics.flattenNode(stageInfo.plan.root, JSON.parse(stageInfo.plan.jsonRepresentation), nodes)
+            planNodes.forEach((node) => nodes.set(node.id, node))
             stages.set(stageInfo.plan.id, {
                 stageId: stageInfo.stageId,
                 id: stageInfo.plan.id,
@@ -523,20 +513,6 @@ class StageStatistics extends React.Component<StageStatisticsProps, StageStatist
             })
         })
         return stages
-    }
-
-    static flattenNode(rootNodeInfo: any, node: any, result: Map<any, PlanNodeProps>) {
-        result.set(node.id, {
-            id: node.id,
-            name: node['name'],
-            descriptor: node['descriptor'],
-            details: node['details'],
-            sources: node.children.map((node) => node.id),
-        })
-
-        node.children.forEach(function (child) {
-            StageStatistics.flattenNode(rootNodeInfo, child, result)
-        })
     }
 
     render(): any {
@@ -579,6 +555,8 @@ type PlanNodeProps = {
     details: string[],
     sources: string[],
 }
+// Plan nodes of each stage, keyed by the stage id
+type QueryPlan = { [stageId: string]: PlanNodeProps[] }
 type PlanNodeState = {}
 
 class PlanNode extends React.Component<PlanNodeProps, PlanNodeState> {
@@ -625,6 +603,7 @@ type LivePlanState = {
     ended: boolean,
 
     query: ?any,
+    queryPlan: QueryPlan,
 
     graph: any,
     svg: any,
@@ -633,6 +612,7 @@ type LivePlanState = {
 
 export class LivePlan extends React.Component<LivePlanProps, LivePlanState> {
     timeoutId: TimeoutID
+    queryPlanUnavailable: boolean = false
 
     constructor(props: LivePlanProps) {
         super(props)
@@ -641,6 +621,7 @@ export class LivePlan extends React.Component<LivePlanProps, LivePlanState> {
             ended: false,
 
             query: null,
+            queryPlan: {},
 
             graph: initializeGraph(),
             svg: null,
@@ -653,6 +634,12 @@ export class LivePlan extends React.Component<LivePlanProps, LivePlanState> {
         // stop refreshing when query finishes or fails
         if (this.state.query === null || !this.state.ended) {
             this.timeoutId = setTimeout(this.refreshLoop.bind(this), 1000)
+        } else if (!this.queryPlanUnavailable && !this.hasQueryPlan(this.state.query)) {
+            // the query does not change anymore, so only its plan is requested again
+            this.timeoutId = setTimeout(
+                () => this.refreshQueryPlan(this.state.query).then(() => this.resetTimer()),
+                1000
+            )
         }
     }
 
@@ -667,14 +654,42 @@ export class LivePlan extends React.Component<LivePlanProps, LivePlanState> {
                     initialized: true,
                     ended: query.finalQueryInfo,
                 })
-                this.resetTimer()
+                return this.refreshQueryPlan(query)
             })
+            .then(() => this.resetTimer())
             .catch(() => {
                 this.setState({
                     initialized: true,
                 })
                 this.resetTimer()
             })
+    }
+
+    // the plan of a stage does not change, so the plan is requested only when it does not cover all the stages
+    refreshQueryPlan(query: any): Promise<void> {
+        if (this.queryPlanUnavailable || this.hasQueryPlan(query)) {
+            return Promise.resolve()
+        }
+        return fetch('/ui/api/query/' + this.props.queryId + '/plan')
+            .then((response) => {
+                // asking again does not help when the query cannot be viewed or is gone
+                this.queryPlanUnavailable = response.status === 403 || response.status === 410
+                if (!response.ok) {
+                    throw new Error(response.statusText)
+                }
+                return response.json()
+            })
+            .then((queryPlan) => this.setState({ queryPlan: queryPlan }))
+            .catch(() => {
+                // the plan is requested again with the next refresh
+            })
+    }
+
+    hasQueryPlan(query: any): boolean {
+        const queryPlan = this.state.queryPlan
+        return (
+            !query.stages || query.stages.stages.every((stageInfo) => !stageInfo.plan || stageInfo.stageId in queryPlan)
+        )
     }
 
     static handleStageClick(stageCssId: string) {
@@ -731,44 +746,7 @@ export class LivePlan extends React.Component<LivePlanProps, LivePlanState> {
             if (sourceFragmentIds) {
                 var remoteSources = sourceFragmentIds.replace('[', '').replace(']', '').split(', ')
                 if (remoteSources.length > 0) {
-                    graph.setNode(nodeId, { label: '', shape: 'circle' })
-
-                    remoteSources.forEach((sourceId) => {
-                        const source = allStages.get(sourceId)
-                        if (source) {
-                            const sourceStats = source.stageStats
-                            graph.setEdge('stage-' + sourceId + '-root', nodeId, {
-                                class: 'plan-edge',
-                                style: 'stroke-width: 4px',
-                                arrowheadClass: 'plan-arrowhead',
-                                label:
-                                    parseAndFormatDataSize(sourceStats.outputDataSize) +
-                                    ' / ' +
-                                    formatRows(sourceStats.outputPositions),
-                                labelStyle: 'color: #fff; font-weight: bold; font-size: 24px;',
-                                labelType: 'html',
-                            })
-                        }
-                    })
-                }
-            }
-        })
-    }
-
-    updateD3Graph() {
-        if (!this.state.svg) {
-            this.setState({
-                svg: initializeSvg('#plan-canvas'),
-            })
-            return
-        }
-
-        if (!this.state.query) {
-            return
-        }
-
-        const graph = this.state.graph
-        const stages = StageStatistics.getSta
+     
 ```
 
 ### Core Architecture Module: `core/trino-web-ui/src/main/resources/webapp-legacy/src/components/PageTitle.jsx`
@@ -1887,386 +1865,946 @@ export const SqlBlock = ({ language, code }) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `336c2e0c` (2026-11-11)
-**Commit Message**: Fix short decimal cast overflow when increasing scale
+### Incident Patch 1: `fb70e5bb` (2026-11-13)
+**Commit Message**: Use stage plan endpoint in Web UI live plan
 
-Casting a short decimal to a short decimal with a larger scale
-multiplied the value in a plain long. When the product wrapped, it
-could land within the target precision and pass the overflow check,
-returning a wrong value instead of failing.
+The plan of a stage does not change, so it is fetched again only
+when the stages of the query do. A stage is drawn once its plan is
+fetched.
 
-**File**: `core/trino-main/src/test/java/io/trino/type/TestDecimalToDecimalCasts.java` (modified, +15/-0)
+**File**: `core/trino-web-ui/src/main/resources/webapp-legacy/src/components/LivePlan.jsx` (modified, +47/-18)
 ```diff
-@@ -129,6 +129,21 @@ public void testShortDecimalToShortDecimalCasts()
-                 .binding("a", "DECIMAL '-12345.6'").evaluate())
-                 .hasMessage("Cannot cast DECIMAL(6, 1) '-12345.6' to DECIMAL(4, 2)")
-                 .hasErrorCode(NUMERIC_VALUE_OUT_OF_RANGE);
-+
-+        assertTrinoExceptionThrownBy(() -> assertions.expression("cast(a as DECIMAL(18, 17))")
-+                .binding("a", "DECIMAL '175'").evaluate())
-+                .hasMessage("Cannot cast DECIMAL(3, 0) '175' to DECIMAL(18, 17)")
-+                .hasErrorCode(NUMERIC_VALUE_OUT_OF_RANGE);
-+
-+        assertTrinoExceptionThrownBy(() -> assertions.expression("cast(a as DECIMAL(18, 17))")
-+                .binding("a", "DECIMAL '-175'").evaluate())
-+                .hasMessage("Cannot cast DECIMAL(3, 0) '-175' to DECIMAL(18, 17)")
-+                .hasErrorCode(NUMERIC_VALUE_OUT_OF_RANGE);
-+
-+        assertTrinoExceptionThrownBy(() -> assertions.expression("cast(a as DECIMAL(18, 2))")
-+                .binding("a", "DECIMAL '184467440737095516'").evaluate())
-+                .hasMessage("Cannot cast DECIMAL(18, 0) '184467440737095516' to DECIMAL(18, 2)")
-+                .hasErrorCode(NUMERIC_VALUE_OUT_OF_RANGE);
+@@ -43,11 +43,15 @@ type StageNodeInfo = {
+ }
+ 
+ class StageStatistics extends React.Component<StageStatisticsProps, StageStatisticsState> {
+-    static getStages(queryInfo: any): Map<string, StageNodeInfo> {
++    static getStages(queryInfo: any, queryPlan: QueryPlan): Map<string, StageNodeInfo> {
+         const stages: Map<string, StageNodeInfo> = new Map()
+         queryInfo.stages.stages.forEach(function (stageInfo) {
++            const planNodes = queryPlan[stageInfo.stageId]
++            if (!planNodes) {
++                return
++            }
+             const nodes = new Map<any, PlanNodeProps>()
+-            StageStatistics.flattenNode(stageInfo.plan.root, JSON.parse(stageInfo.plan.jsonRepresentation), nodes)
++            planNodes.forEach((node) => nodes.set(node.id, node))
+             stages.set(stageInfo.plan.id, {
+                 stageId: stageInfo.stageId,
+                 id: stageInfo.plan.id,
+@@ -61,20 +65,6 @@ class StageStatistics extends React.Component<StageStatisticsProps, StageStatist
+         return stages
      }
  
-     @Test
-```
-
-**File**: `core/trino-spi/src/main/java/io/trino/spi/type/DecimalConversions.java` (modified, +7/-1)
-```diff
-@@ -31,6 +31,7 @@
- import static java.lang.Math.abs;
- import static java.lang.Math.fma;
- import static java.lang.Math.min;
-+import static java.lang.Math.multiplyExact;
- import static java.lang.Math.nextDown;
- import static java.lang.Math.nextUp;
- import static java.lang.Math.rint;
-@@ -360,7 +361,12 @@ public static long shortToShortCast(
-     {
-         long returnValue;
-         if (resultScale >= sourceScale) {
--            returnValue = value * scalingFactor;
-+            try {
-+                returnValue = multiplyExact(value, scalingFactor);
-+            }
-+            catch (ArithmeticException _) {
-+                throw throwCastException(value, sourcePrecision, sourceScale, resultPrecision, resultScale);
-+            }
-         }
-         else {
-             returnValue = value / scalingFactor;
-```
-
----
-
-### Incident Patch 2: `f0dcb88c` (2026-11-11)
-**Commit Message**: Bump the web-ui-dependencies group
-
-Bumps the web-ui-dependencies group in /core/trino-web-ui/src/main/resources/webapp with 44 updates:
-
-| Package | From | To |
-| --- | --- | --- |
-| [@mui/x-charts](https://github.com/mui/mui-x/tree/HEAD/packages/x-charts) | `9.15.0` | `9.16.0` |
-| [@xyflow/react](https://github.com/xyflow/xyflow/tree/HEAD/packages/react) | `12.12.0` | `12.12.1` |
-| [sass](https://github.com/sass/dart-sass) | `1.105.2` | `1.106.0` |
-| [@typescript-eslint/eslint-plugin](https://github.com/typescript-eslint/typescript-eslint/tree/HEAD/packages/eslint-plugin) | `8.71.2` | `8.72.0` |
-| [@typescript-eslint/parser](https://github.com/typescript-eslint/typescript-eslint/tree/HEAD/packages/parser) | `8.71.2` | `8.72.0` |
-| [typescript-eslint](https://github.com/typescript-eslint/typescript-eslint/tree/HEAD/packages/typescript-eslint) | `8.71.2` | `8.72.0` |
-| [@babel/generator](https://github.com/babel/babel/tree/HEAD/packages/babel-generator) | `7.29.8` | `7.29.13` |
-| [@babel/traverse](https://github.com/babel/babel/tree/HEAD/packages/babel-traverse) | `7.29.10` | `7.29.13` |
-| [@base-ui/utils](https://github.com/mui/base-ui/tree/HEAD/packages/utils) | `0.4.0` | `0.5.0`
-
-**File**: `core/trino-web-ui/src/main/resources/webapp/bun.lock` (modified, +59/-51)
-```diff
-@@ -12,16 +12,16 @@
-         "@monaco-editor/react": "^4.7.0",
-         "@mui/icons-material": "^9.5.0",
-         "@mui/material": "^9.5.0",
--        "@mui/x-charts": "^9.15.0",
--        "@xyflow/react": "^12.12.0",
-+        "@mui/x-charts": "^9.16.0",
-+        "@xyflow/react": "^12.12.1",
-         "axios": "^1.20.0",
-         "lodash": "^4.18.1",
-         "monaco-editor": "^0.57.0",
-         "react": "^19.3.1",
-         "react-calendar-timeline": "^0.30.0-beta.4",
-         "react-dom": "^19.3.1",
-         "react-router-dom": "^7.18.5",
--        "sass": "^1.105.2",
-+        "sass": "^1.106.0",
-         "zustand": "^5.0.16",
-       },
-       "devDependencies": {
-@@ -30,8 +30,8 @@
-         "@types/lodash.merge": "^4.6.9",
-         "@types/react": "^19.3.0",
-         "@types/react-dom": "^19.3.0",
--        "@typescript-eslint/eslint-plugin": "^8.71.2",
--        "@typescript-eslint/parser": "^8.71.2",
-+        "@typescript-eslint/eslint-plugin": "^8.72.0",
-+        "@typescript-eslint/parser": "^8.72.0",
-         "@vitejs/plugin-react": "^5.2.0",
-         "eslint": "^9.39.5",
-         "eslint-plugin-react": "^7.37.5",
-@@ -40,7 +40,7 @@
-         "globals": "^16.5.0",
-         "prettier": "^3.9.10",
-         "typescript": "^6.0.3",
--        "typescript-eslint": "^8.71.2",
-+        "typescript-eslint": "^8.72.0",
-         "vite": "npm:rolldown-vite@^7.3.1",
-       },
-     },
-@@ -55,7 +55,7 @@
- 
-     "@babel/core": ["@babel/core@7.29.7", "", { "dependencies": { "@babel/code-frame": "^7.29.7", "@babel/generator": "^7.29.7", "@babel/helper-compilation-targets": "^7.29.7", "@babel/helper-module-transforms": "^7.29.7", "@babel/helpers": "^7.29.7", "@babel/parser": "^7.29.7", "@babel/template": "^7.29.7", "@babel/traverse": "^7.29.7", "@babel/types": "^7.29.7", "@jridgewell/remapping": "^2.3.5", "convert-source-map": "^2.0.0", "debug": "^4.1.0", "gensync": "^1.0.0-beta.2", "json5": "^2.2.3", "semver": "^6.3.1" } }, "sha512-RgHBCvtjbOK2gXSNBNIkNoEc9qoVEtau3hj8gEqKQuL3HZAibKarWFEI3Lfm6EYKkLalOh8eSrj9b+ch9H/VBA=="],
- 
--    "@babel/generator": ["@babel/generator@7.29.8", "", { "dependencies": { "@babel/parser": "^7.29.8", "@babel/types": "^7.29.8", "@jridgewell/gen-mapping": "^0.3.12", "@jridgewell/trace-mapping": "^0.3.28", "jsesc": "^3.0.2" } }, "sha512-gZbepsdh3WDtgZKWL+vTPh71LSBrm/Y4/QDZBVCcYfmeTEEuoOYwlSy+G1StfJg+/Zy550u/3TATbm7qDbbMtg=="],
-+    "@babel/generator": ["@babel/generator@7.29.13", "", { "dependencies": { "@babel/parser": "^7.29.13", "@babel/types": "^7.29.11", "@jridgewell/gen-mapping": "^0.3.12", "@jridgewell/trace-mapping": "^0.3.28", "jsesc": "^3.0.2" } }, "sha512-T5FRo+RzVHvGjWOuF1Ljc44b+NXAOazodHkGUHp4I3zCkQ4/sNVJm56h1S278LMR0bY5xBhztGziSbli8zObIw=="],
- 
-     "@babel/helper-compilation-targets": ["@babel/helper-compilation-targets@7.29.7", "", { "dependencies": { "@babel/compat-data": "^7.29.7", "@babel/helper-validator-option": "^7.29.7", "browserslist": "^4.24.0", "lru-cache": "^5.1.1", "semver": "^6.3.1" } }, "sha512-wem6WaBj4NaVYVdNhLPPVacES6ZJ+KBBfSkTMD3YZxbP3rm3Di85tJU5ljaUNhaOynt+Aj0xruhYuzQBt8n71g=="],
- 
-@@ -85,11 +85,11 @@
- 
-     "@babel/template": ["@babel/template@7.29.7", "", { "dependencies": { "@babel/code-frame": "^7.29.7", "@babel/parser": "^7.29.7", "@babel/types": "^7.29.7" } }, "sha512-puq+Gf35oI24FeN11LkoUQFqv9uwNeWpxXZi/Ji3rRIoKAzKnxRaZ+Gkj0vKS9ZCiTESfng1N9LyOyXvo+m+Gg=="],
- 
--    "@babel/traverse": ["@babel/traverse@7.29.10", "", { "dependencies": { "@babel/code-frame": "^7.29.7", "@babel/generator": "^7.29.8", "@babel/helper-globals": "^7.29.7", "@babel/parser": "^7.29.9", "@babel/template": "^7.29.7", "@babel/types": "^7.29.8", "debug": "^4.3.1" } }, "sha512-B3lYAs2nkKskbgQ1nfy8Ma9ao9Q1rntTAQHrzzyDuj+TSO+X3le6PfWwqDvodsb+OumE10eMFfuMCTQSQ5iuIQ=="],
-+    "@babel/traverse": ["@babel/traverse@7.29.13", "", { "dependencies": { "@babel/code-frame": "^7.29.7", "@babel/generator": "^7.29.13", "@babel/helper-globals": "^7.29.7", "@babel/parser": "^7.29.13", "@babel/template": "^7.29.7", "@babel/types": "^7.29.11", "debug": "^4.3.1" } }, "sha512-0ve0xMlFA73dgY1oyJRY6RoW+/bncdcOQqg6jjYcVfXBK90OdLXjm9R6lmRetdZVrPjXkKIoMVBqYFPjcAlZ4Q=="],
- 
-     "@babel/types": ["@babel/types@7.29.11", "", { "dependencies": { "@babel/helper-string-parser": "^7.29.11", "@babel/helper-validator-identifier": "^7.29.7" } }, "sha512-WCsemW40Cpc6gouC1SrY6PBaZ+oLRlEVY9XBvZBI7il/HyUrb2nJ505wE1MHEFyDZNnrWDEuy4jL50WVHfTTSQ=="],
- 
--    "@base-ui/utils": ["@base-ui/utils@0.4.0", "", { "dependencies": { "@babel/runtime": "^7.29.7", "@floating-ui/utils": "^0.2.12", "reselect": "^5.2.0", "use-sync-external-store": "^1.6.0" }, "peerDependencies": { "@types/react": "^17 || ^18 || ^19", "react": "^17 || ^18 || ^19", "react-dom": "^17 || ^18 || ^19" }, "optionalPeers": ["@types/react"] }, "sha512-bO9fz25kKtPf+aZVyfQrC0PDmJdmVni31W2hCS5/Owb+inwdIL3XU26pCPRPlt4LSxZrBgLwubXQXQlKaFEZzw=="],
-+    "@base-ui/utils": ["@base-ui/utils@0.5.0", "", { "dependencies": { "@babel/runtime": "^7.29.7 || ^8.0.0", "@floating-ui/utils": "^0.2.1
-```
-
-**File**: `core/trino-web-ui/src/main/resources/webapp/package.json` (modified, +6/-6)
-```diff
-@@ -24,16 +24,16 @@
-     "@monaco-editor/react": "^4.7.0",
-     "@mui/icons-material": "^9.5.0",
-     "@mui/material": "^9.5.0",
--    "@mui/x-charts": "^9.15.0",
--    "@xyflow/react": "^12.12.0",
-+    "@mui/x-charts": "^9.16.0",
-+    "@xyflow/react": "^12.12.1",
-     "axios": "^1.20.0",
-     "lodash": "^4.18.1",
-     "monaco-editor": "^0.57.0",
-     "react": "^19.3.1",
-     "react-calendar-timeline": "^0.30.0-beta.4",
-     "react-dom": "^19.3.1",
-     "react-router-dom": "^7.18.5",
--    "sass": "^1.105.2",
-+    "sass": "^1.106.0",
-     "zustand": "^5.0.16"
-   },
-   "devDependencies": {
-@@ -42,8 +42,8 @@
-     "@types/lodash.merge": "^4.6.9",
-     "@types/react": "^19.3.0",
-     "@types/react-dom": "^19.3.0",
--    "@typescript-eslint/eslint-plugin": "^8.71.2",
--    "@typescript-eslint/parser": "^8.71.2",
-+    "@typescript-eslint/eslint-plugin": "^8.72.0",
-+    "@typescript-eslint/parser": "^8.72.0",
-     "@vitejs/plugin-react": "^5.2.0",
-     "eslint": "^9.39.5",
-     "eslint-plugin-react": "^7.37.5",
-@@ -52,7 +52,7 @@
-     "globals": "^16.5.0",
-     "prettier": "^3.9.10",
-     "typescript": "^6.0.3",
--    "typescript-eslint": "^8.71.2",
-+    "typescript-eslint": "^8.72.0",
-     "vite": "npm:rolldown-vite@^7.3.1"
-   },
-   "overrides": {
-```
-
----
-
-### Incident Patch 3: `d1c0035f` (2026-11-10)
-**Commit Message**: Fix path caching in Iceberg position delete reader
-
-A block returns a new `Slice` per position, so a cache keyed on it
-missed.
-
-Results of BenchmarkPositionDeleteReader, which reads a Parquet position
-delete file with 1000 deletes for each of 1000 data files, in ms/op:
-
-```
-                          before            after
-readPositionDeletes        6.426 ± 0.379     1.908 ± 0.040
-readAllPositionDeletes    47.670 ± 0.733    11.754 ± 0.085
-```
-
-**File**: `plugin/trino-iceberg/src/main/java/io/trino/plugin/iceberg/delete/PositionDeleteReader.java` (modified, +17/-41)
-```diff
-@@ -47,7 +47,6 @@
- import static io.trino.plugin.iceberg.IcebergUtil.getColumnHandle;
- import static io.trino.spi.type.BigintType.BIGINT;
- import static io.trino.spi.type.VarcharType.VARCHAR;
--import static java.util.Objects.requireNonNull;
- import static org.apache.iceberg.MetadataColumns.DELETE_FILE_PATH;
- import static org.apache.iceberg.MetadataColumns.DELETE_FILE_POS;
- 
-@@ -144,7 +143,6 @@ private static void readMultiFilePositionDeletes(ConnectorPageSource pageSource,
-         // Use a linear search since we expect most deletion files to only contain
-         // entries for a single path. The comparison cost is minimal if the
-         // path values are dictionary encoded, since we only do the comparison once.
--        CachingVarcharComparator comparator = new CachingVarcharComparator(targetPath);
-         while (!pageSource.isFinished()) {
-             getFutureValue(pageSource.isBlocked());
-             SourcePage page = pageSource.getNextSourcePage();
-@@ -156,8 +154,17 @@ private static void readMultiFilePositionDeletes(ConnectorPageSource pageSource,
-             Block block = page.getBlock(1);
- 
-             // TODO: add specialized code for RLE and dictionary blocks
-+            int lastPathPosition = -1;
-+            int result = 0;
-             for (int position = 0; position < page.getPositionCount(); position++) {
--                int result = comparator.compare(pathBlock, position);
-+                // The expected case is a dictionary block with many entries for the
-+                // same path. Only perform a comparison if the path has changed.
-+                int pathPosition = pathBlock.getUnderlyingValuePosition(position);
-+                if (lastPathPosition != pathPosition) {
-+                    checkArgument(!pathBlock.isNull(position), "position is null");
-+                    lastPathPosition = pathPosition;
-+                    result = VARCHAR.getSlice(pathBlock, position).compareTo(targetPath);
-+                }
-                 if (result > 0) {
-                     // deletion files are sorted by path, so we're done
-                     return;
-@@ -181,50 +188,19 @@ public static void readMultiFilePositionDeletes(ConnectorPageSource pageSource,
-             Block pathBlock = page.getBlock(0);
-             Block posBlock = page.getBlock(1);
- 
--            Slice lastPath = null;
-+            int lastPathPosition = -1;
-             String pathString = null;
-             for (int position = 0; position < page.getPositionCount(); position++) {
--                Slice path = VARCHAR.getSlice(pathBlock, position);
--                // We expect that paths are dictionary or RLE encoded, and thus getSlice()
--                // will return the same object for each delete position for a data file,
-+                // We expect that paths are dictionary or RLE encoded, and thus the delete
-+                // positions for a data file share the same underlying value position,
-                 // so this caches the conversion to string.
--                if (lastPath != path) {
--                    lastPath = path;
--                    pathString = path.toStringUtf8();
-+                int pathPosition = pathBlock.getUnderlyingValuePosition(position);
-+                if (lastPathPosition != pathPosition) {
-+                    lastPathPosition = pathPosition;
-+                    pathString = VARCHAR.getSlice(pathBlock, position).toStringUtf8();
-                 }
-                 filePositionConsumer.accept(pathString, BIGINT.getLong(posBlock, position));
-             }
-         }
-     }
+-    static flattenNode(rootNodeInfo: any, node: any, result: Map<any, PlanNodeProps>) {
+-        result.set(node.id, {
+-            id: node.id,
+-            name: node['name'],
+-            descriptor: node['descriptor'],
+-            details: node['details'],
+-            sources: node.children.map((node) => node.id),
+-        })
 -
--    private static final class CachingVarcharComparator
--    {
--        private final Slice reference;
--        private int result;
--        private Slice value;
--
--        public CachingVarcharComparator(Slice reference)
--        {
--            this.reference = requireNonNull(reference, "reference is null");
--        }
--
--        @SuppressWarnings({"ObjectEquality", "ReferenceEquality"})
--        public int compare(Block block, int position)
--        {
--            checkArgument(!block.isNull(position), "position is null");
--            Slice next = VARCHAR.getSlice(block, position);
--            return compare(next);
--        }
--
--        public int compare(Slice next)
--        {
--            // The expected case is a dictionary block with many entries for the
--            // same path. Only perform a comparison if the object has changed.
--            if (value != next) {
--                value = next;
--                result = value.compareTo(reference);
--            }
--            return result;
--        }
+-        node.children.forEach(function (child) {
+-            StageStatistics.flattenNode(rootNodeInfo, child, result)
+-        })
 -    }
+-
+     render(): any {
+         const stage = this.props.stage
+         const stats = this.props.stage.stageStats
+@@ -115,6 +105,8 @@ type PlanNodeProps = {
+     details: string[],
+     sources: string[],
+ }
++// Plan nodes of each stage, keyed by the stage id
++type QueryPlan = { [stageId: string]: PlanNodeProps[] }
+ type PlanNodeState = {}
+ 
+ class PlanNode extends React.Component<PlanNodeProps, PlanNodeState> {
+@@ -161,6 +153,7 @@ type LivePlanState = {
+     ended: boolean,
+ 
+     query: ?any,
++    queryPlan: QueryPlan,
+ 
+     graph: any,
+     svg: any,
+@@ -169,6 +162,7 @@ type LivePlanState = {
+ 
+ export class LivePlan extends React.Component<LivePlanProps, LivePlanState> {
+     timeoutId: TimeoutID
++    queryPlanUnavailable: boolean = false
+ 
+     constructor(props: LivePlanProps) {
+         super(props)
+@@ -177,6 +171,7 @@ export class LivePlan extends React.Component<LivePlanProps, LivePlanState> {
+             ended: false,
+ 
+             query: null,
++            queryPlan: {},
+ 
+             graph: initializeGraph(),
+             svg: null,
+@@ -189,6 +184,12 @@ export class LivePlan extends React.Component<LivePlanProps, LivePlanState> {
+         // stop refreshing when query finishes or fails
+         if (this.state.query === null || !this.state.ended) {
+             this.timeoutId = setTimeout(this.refreshLoop.bind(this), 1000)
++        } else if (!this.queryPlanUnavailable && !this.hasQueryPlan(this.state.query)) {
++            // the query does not change anymore, so only its plan is requested again
++            this.timeoutId = setTimeout(
++                () => this.refreshQueryPlan(this.state.query).then(() => this.resetTimer()),
++                1000
++            )
+         }
+     }
+ 
+@@ -203,8 +204,9 @@ export class LivePlan extends React.Component<LivePlanProps, LivePlanState> {
+                     initialized: true,
+                     ended: query.finalQueryInfo,
+                 })
+-                this.resetTimer()
++                return this.refreshQueryPlan(query)
+             })
++            .then(() => this.resetTimer())
+             .catch(() => {
+                 this.setState({
+                     initialized: true,
+@@ -213,6 +215,33 @@ export class LivePlan extends React.Component<LivePlanProps, LivePlanState> {
+             })
+     }
+ 
++    // the plan of a stage does not change, so the plan is requested only when it does not cover all the stages
++    refreshQueryPlan(query: any): Promise<void> {
++        if (this.queryPlanUnavailable || this.hasQueryPlan(query)) {
++            return Promise.resolve()
++        }
++        return fetch('/ui/api/query/' + this.props.queryId + '/plan')
++            .then((response) => {
++                // asking again does not help when the query cannot be viewed or is gone
++                this.queryPlanUnavailable = response.status === 403 || response.status === 410
++                if (!response.ok) {
++                    throw new Error(response.statusText)
++                }
++                return response.json()
++            })
++            .then((queryPlan) => this.setState({ queryPlan: queryPlan }))
++            .catch(() => {
++                // the plan is requested again with the next refresh
++            })
++    }
++
++    hasQueryPlan(query: any): boolean {
++        const queryPlan = this.state.queryPlan
++        return (
++            !query.stages || query.stages.stages.every((stageInfo) => !stageInfo.plan || stageInfo.stageI
+```
+
+**File**: `core/trino-web-ui/src/main/resources/webapp/src/api/webapp/api.ts` (modified, +15/-1)
+```diff
+@@ -255,10 +255,20 @@ export interface QueryStageNodeInfo {
+ 
+ export interface QueryStagePlan {
+     id: string
+-    jsonRepresentation: string
+     root: QueryStageNodeInfo
+ }
+ 
++export interface QueryPlanNode {
++    id: string
++    name: string
++    descriptor: Record<string, string>
++    details: string[]
++    sources: string[]
++}
++
++// Plan nodes of each stage, keyed by the stage id
++export type QueryPlan = Record<string, QueryPlanNode[]>
++
+ export interface QueryStageOperatorSummary {
+     pipelineId: number
+     planNodeId: string
+@@ -409,6 +419,10 @@ export async function queryStatusApi(queryId: string, pruned: boolean = false):
+     return await api.get<QueryStatusInfo>(`/ui/api/query/${queryId}${pruned ? '?pruned=true' : ''}`)
+ }
+ 
++export async function queryPlanApi(queryId: string): Promise<ApiResponse<QueryPlan>> {
++    return await api.get<QueryPlan>(`/ui/api/query/${queryId}/plan`)
++}
++
+ export async function killQueryApi(queryId: string): Promise<ApiResponse<void>> {
+     return await api.put<void>(`/ui/api/query/${queryId}/killed`, 'Canceled via web UI')
  }
 ```
 
-**File**: `plugin/trino-iceberg/src/test/java/io/trino/plugin/iceberg/delete/TestDeleteManager.java` (modified, +47/-0)
+**File**: `core/trino-web-ui/src/main/resources/webapp/src/components/QueryLivePlan.tsx` (modified, +58/-2)
 ```diff
-@@ -25,6 +25,7 @@
- import io.trino.spi.Page;
- import io.trino.spi.TrinoException;
- import io.trino.spi.block.BlockBuilder;
-+import io.trino.spi.block.DictionaryBlock;
- import io.trino.spi.block.LongArrayBlock;
- import io.trino.spi.connector.ConnectorPageSource;
- import io.trino.spi.connector.FixedPageSource;
-@@ -44,6 +45,7 @@
+@@ -15,6 +15,9 @@ import { useEffect, useRef, useState } from 'react'
+ import { Alert, Box, CircularProgress, Grid, Typography } from '@mui/material'
+ import { ReactFlow, type Edge, type Node, useNodesState, useEdgesState, type Viewport } from '@xyflow/react'
+ import '@xyflow/react/dist/style.css'
++import { queryPlanApi, QueryPlan } from '../api/webapp/api.ts'
++import { ApiResponse } from '../api/base.ts'
++import { Texts } from '../constant.ts'
+ import { QueryProgressBar } from './QueryProgressBar'
+ import { nodeTypes, getLayoutedPlanFlowElements, getViewportFocusedOnNode } from './flow/layout'
+ import { HelpMessage } from './flow/HelpMessage'
+@@ -25,16 +28,68 @@ import { useQueryStatus } from './QueryStatusContext'
+ export const QueryLivePlan = () => {
+     const { queryStatusInfo, loading, error } = useQueryStatus()
  
- import java.io.IOException;
- import java.io.UncheckedIOException;
-+import java.util.ArrayList;
++    const [queryPlan, setQueryPlan] = useState<QueryPlan>({})
++    const [queryPlanError, setQueryPlanError] = useState<string | null>(null)
+     const [nodes, setNodes, onNodesChange] = useNodesState<Node>([])
+     const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([])
+     const [layoutDirection, setLayoutDirection] = useState<LayoutDirectionType>('BT')
+     const [viewport, setViewport] = useState<Viewport>()
+ 
+     const containerRef = useRef<HTMLDivElement>(null)
+ 
++    const queryId = queryStatusInfo?.queryId
++    // The plan of a stage does not change, so the plan is fetched again only when the stages do
++    const stageIds = queryStatusInfo?.stages?.stages
++        .filter((stage) => stage.plan)
++        .map((stage) => stage.stageId)
++        .join(',')
++
++    useEffect(() => {
++        setQueryPlan({})
++        setQueryPlanError(null)
++        setNodes([])
++        setEdges([])
++        // eslint-disable-next-line react-hooks/exhaustive-deps
++    }, [queryId])
++
++    useEffect(() => {
++        if (!queryId || !stageIds) {
++            return
++        }
++
++        let cancelled = false
++
++        const fetchPlan = () => {
++            if (cancelled) {
++                return
++            }
++            queryPlanApi(queryId).then((apiResponse: ApiResponse<QueryPlan>) => {
++                if (cancelled) {
++                    return
++                }
++                if (apiResponse.status === 200 && apiResponse.data) {
++                    setQueryPlan(apiResponse.data)
++                    setQueryPlanError(null)
++                    return
++                }
++                setQueryPlanError(`${Texts.Error.Communication} ${apiResponse.status}: ${apiResponse.message}`)
++                // asking again does not help when the query cannot be viewed or is gone
++                if (apiResponse.status !== 403 && apiResponse.status !== 410) {
++                    setTimeout(fetchPlan, 3000)
++                }
++            })
++        }
++
++        fetchPlan()
++
++        return () => {
++            cancelled = true
++        }
++    }, [queryId, stageIds])
++
+     useEffect(() => {
+         if (queryStatusInfo?.stages) {
+-            const flowElements = getPlanFlowElements(queryStatusInfo.stages, layoutDirection)
++            const flowElements = getPlanFlowElements(queryStatusInfo.stages, queryPlan, layoutDirection)
+             const layoutedElements = getLayoutedPlanFlowElements(flowElements.nodes, flowElements.edges, {
+                 direction: layoutDirection,
+             })
+@@ -43,7 +98,7 @@ export const QueryLivePlan = () => {
+             setEdges(layoutedElements.edges)
+         }
+         // eslint-disable-next-line react-hooks/exhaustive-deps
+-    }, [queryStatusInfo, layoutDirection])
++    }, [queryStatusInfo, queryPlan, layoutDirection])
+ 
+     const focusViewportToFirstStage = () => {
+         const viewportTarget = getViewportFocusedOnNode(nodes, {
+@@ -59,6 +114,7 @@ export const QueryLivePlan = () => {
+         <>
+             {loading && <CircularProgress />}
+             {error && <Alert severity="error">{error}</Alert>}
++            {!error && queryPlanError && <Alert severity="error">{queryPlanError}</Alert>}
+ 
+             {!loading && !error && queryStatusInfo && (
+                 <Grid container spacing={0}>
+```
+
+**File**: `core/trino-web-ui/src/main/resources/webapp/src/components/flow/flowUtils.ts` (modified, +37/-34)
+```diff
+@@ -12,9 +12,17 @@
+  * limitations under the License.
+  */
+ import { MarkerType, type Edge, type Node } from '@xyflow/react'
+-import { QueryStage, QueryStages, QueryStageNodeInfo, QueryStageOperatorSummary, QueryTask } from '../../api/webapp/api'
++import {
++    QueryPlan,
++    QueryPlanNode,
++    QueryStage,
++    QueryStages,
++    QueryStageNodeInfo,
++    QueryStageOperatorSummary,
++    QueryTask,
++} from '../../api/webapp/api'
+ import { formatRows, parseAndFormatDataSize } from '../../utils/utils'
+-import { IFlowElements, IPlanFragmentNodeInfo, IPlanNodeProps, LayoutDirectionType } from './types'
++import { IFlowElements, IPlanFragmentNodeInfo, LayoutDirectionType } from './types'
+ 
+ // Constants for ID generation
+ const ID_PREFIXES = {
+@@ -83,7 +91,7 @@ export const createPlanFragmentNode = (
+     },
+ })
+ 
+-export const createChildNode = (stageId: string, key: string, node: IPlanNodeProps, index: number): Node => {
++export const createChildNode = (stageId: string, key: string, node: QueryPlanNode, index: number): Node => {
+     const remoteSources = parseRemoteSources(node.descriptor?.['sourceFragmentIds'])
+     return {
+         id: IdGenerator.node(key),
+@@ -139,30 +147,19 @@ export const createStageOperatorNode = (
+     extent: 'parent',
+ })
+ 
+-export const flattenNode = (
+-    rootNodeInfo: QueryStageNodeInfo,
+-    node: IPlanNodeProps,
+-    result: Map<string, IPlanNodeProps>
+-) => {
+-    result.set(node.id, {
+-        id: node.id,
+-        name: node.name,
+-        descriptor: node.descriptor,
+-        details: node.details,
+-        sources: node.children.map((child: IPlanNodeProps) => child.id),
+-        children: node.children,
+-    })
+-    if (node.children) {
+-        node.children.forEach((child: IPlanNodeProps) => flattenNode(rootNodeInfo, child, result))
+-    }
+-}
+-
+-export const getPlanFragmentsNodeInfo = (queryStages: QueryStages): Map<string, IPlanFragmentNodeInfo> => {
++export const getPlanFragmentsNodeInfo = (
++    queryStages: QueryStages,
++    queryPlan: QueryPlan
++): Map<string, IPlanFragmentNodeInfo> => {
+     const planFragments: Map<string, IPlanFragmentNodeInfo> = new Map()
+ 
+     queryStages.stages.forEach((queryStage: QueryStage) => {
+-        const nodes: Map<string, IPlanNodeProps> = new Map()
+-        flattenNode(queryStage.plan.root, JSON.parse(queryStage.plan.jsonRepresentation), nodes)
++        // a stage is not drawn until its plan is fetched
++        const planNodes = queryPlan[queryStage.stageId]
++        if (!planNodes) {
++            return
++        }
++        const nodes: Map<string, QueryPlanNode> = new Map(planNodes.map((node: QueryPlanNode) => [node.id, node]))
+ 
+         planFragments.set(queryStage.plan.id, {
+             stageId: queryStage.stageId,
+@@ -177,8 +174,12 @@ export const getPlanFragmentsNodeInfo = (queryStages: QueryStages): Map<string,
+     return planFragments
+ }
+ 
+-export const getPlanFlowElements = (queryStages: QueryStages, layoutDirection: LayoutDirectionType): IFlowElements => {
+-    const stages: Map<string, IPlanFragmentNodeInfo> = getPlanFragmentsNodeInfo(queryStages)
++export const getPlanFlowElements = (
++    queryStages: QueryStages,
++    queryPlan: QueryPlan,
++    layoutDirection: LayoutDirectionType
++): IFlowElements => {
++    const stages: Map<string, IPlanFragmentNodeInfo> = getPlanFragmentsNodeInfo(queryStages, queryPlan)
+ 
+     const nodes: Node[] = Array.from(stages).flatMap(([key, planFragmentNodeInfo]) => {
+         const stageId: string = IdGenerator.stage(key)
+@@ -199,14 +200,16 @@ export const getPlanFlowElements = (queryStages: QueryStages, layoutDirection: L
+             )
+ 
+             const remoteSources = parseRemoteSources(node.descriptor?.['sourceFragmentIds'])
+-            const remoteSourceEdges: Edge[] = remoteSources.map((sourceKey) =>
+-                createEdge(IdGenerator.stage(sourceKey), targetNodeId, {
+-                    isAnimated: true,
+-                    hasArrow: false,
+-                    label: `${parseAndFormatDataSize(planFragmentNodeInfo.stageStats.outputDataSize)} / ${formatRows(planFragmentNodeInfo.stageStats.outputPositions)}`,
+-                    remoteEdge: { targetStageId: stageId },
+-                })
+-            )
++            const remoteSourceEdges: Edge[] = remoteSources
++                .filter((sourceKey) => stages.has(sourceKey))
++                .map((sourceKey) =>
++                    createEdge(IdGenerator.stage(sourceKey), targetNodeId, {
++                        isAnimated: true,
++                        hasArrow: false,
++                        label: `${parseAndFormatDataSize(planFragmentNodeInfo.stageStats.outputDataSize)} / ${formatRows(planFragmentNodeInfo.stageStats.outputPositions)}`,
++                        remoteEdge: { targetStageId: stageId },
++                    })
++                )
+ 
+             return [...sourceEdges, ...remoteSourceEdges]
+         })
+```
+
+**File**: `core/trino-web-ui/src/main/resources/webapp/src/components/flow/types.ts` (modified, +2/-11)
+```diff
+@@ -12,7 +12,7 @@
+  * limitations under the License.
+  */
+ import { type Edge, type Node } from '@xyflow/react'
+-import { QueryStageStats, QueryStatusInfo } from '../../api/webapp/api'
++import { QueryPlanNode, QueryStageStats, QueryStatusInfo } from '../../api/webapp/api'
+ 
+ export type LayoutDirectionType = 'BT' | 'RL'
+ 
+@@ -26,20 +26,11 @@ export interface IFlowElements {
+     edges: Edge[]
+ }
+ 
+-export interface IPlanNodeProps {
+-    id: string
+-    name: string
+-    descriptor: Record<string, string>
+-    details: string[]
+-    sources: string[]
+-    children: IPlanNodeProps[]
+-}
+-
+ export interface IPlanFragmentNodeInfo {
+     stageId: string
+     id: string
+     root: string
+     stageStats: QueryStageStats
+     state: string
+-    nodes: Map<string, IPlanNodeProps>
++    nodes: Map<string, QueryPlanNode>
+ }
+```
+
+---
+
+### Incident Patch 2: `77612225` (2026-11-13)
+**Commit Message**: Add Web UI endpoint for flattened stage plans
+
+The endpoint renders the plan of every stage of a query when asked
+and returns the nodes of a stage next to each other, each naming its
+sources. This is the shape the live plan of the Web UI is drawn from.
+
+**File**: `core/trino-main/src/main/java/io/trino/server/ui/FlattenedPlanNode.java` (added, +67/-0)
+```diff
+@@ -0,0 +1,67 @@
++/*
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++package io.trino.server.ui;
++
++import com.google.common.collect.ImmutableList;
++import com.google.common.collect.ImmutableMap;
++import io.trino.sql.planner.planprinter.JsonRenderer.JsonRenderedNode;
++
++import java.util.LinkedHashMap;
++import java.util.List;
++import java.util.Map;
++
++import static com.google.common.collect.ImmutableList.toImmutableList;
++import static java.util.Objects.requireNonNull;
++
++/**
++ * Plan node in the shape the Web UI draws the live plan from: nodes of a plan fragment
++ * are listed next to each other and refer to their sources by identifier.
++ */
++public record FlattenedPlanNode(
++        String id,
++        String name,
++        Map<String, String> descriptor,
++        List<String> details,
++        List<String> sources)
++{
++    public FlattenedPlanNode
++    {
++        requireNonNull(id, "id is null");
++        requireNonNull(name, "name is null");
++        descriptor = ImmutableMap.copyOf(requireNonNull(descriptor, "descriptor is null"));
++        details = ImmutableList.copyOf(requireNonNull(details, "details is null"));
++        sources = ImmutableList.copyOf(requireNonNull(sources, "sources is null"));
++    }
++
++    public static List<FlattenedPlanNode> flatten(JsonRenderedNode root)
++    {
++        // The initial and the current plan of an adaptive plan share node identifiers. The node visited last wins.
++        Map<String, FlattenedPlanNode> nodes = new LinkedHashMap<>();
++        flatten(root, nodes);
++        return ImmutableList.copyOf(nodes.values());
++    }
++
++    private static void flatten(JsonRenderedNode node, Map<String, FlattenedPlanNode> nodes)
++    {
++        nodes.put(node.getId(), new FlattenedPlanNode(
++                node.getId(),
++                node.getName(),
++                node.getDescriptor(),
++                node.getDetails(),
++                node.getChildren().stream()
++                        .map(JsonRenderedNode::getId)
++                        .collect(toImmutableList())));
++        node.getChildren().forEach(child -> flatten(child, nodes));
++    }
++}
+```
+
+**File**: `core/trino-main/src/main/java/io/trino/server/ui/UiQueryResource.java` (modified, +70/-19)
+```diff
+@@ -17,12 +17,19 @@
+ import com.fasterxml.jackson.databind.cfg.ContextAttributes;
+ import com.fasterxml.jackson.databind.json.JsonMapper;
+ import com.google.common.collect.ImmutableList;
++import com.google.common.collect.ImmutableMap;
+ import com.google.inject.Inject;
+ import io.airlift.json.JsonCodec;
+ import io.airlift.json.JsonCodecFactory;
+ import io.trino.dispatcher.DispatchManager;
+ import io.trino.execution.QueryInfo;
+ import io.trino.execution.QueryState;
++import io.trino.execution.StageId;
++import io.trino.execution.StageInfo;
++import io.trino.execution.StagesInfo;
++import io.trino.metadata.FunctionManager;
++import io.trino.metadata.Metadata;
++import io.trino.metadata.SessionPropertyManager;
+ import io.trino.operator.OperatorInfo;
+ import io.trino.plugin.base.metrics.TDigestHistogram;
+ import io.trino.security.AccessControl;
+@@ -36,6 +43,9 @@
+ import io.trino.spi.metrics.Metric;
+ import io.trino.spi.security.AccessDeniedException;
+ import io.trino.spi.security.Identity;
++import io.trino.sql.planner.plan.PlanFragmentId;
++import io.trino.sql.planner.planprinter.JsonRenderer.JsonRenderedNode;
++import io.trino.sql.planner.planprinter.NoOpAnonymizer;
+ import jakarta.servlet.http.HttpServletRequest;
+ import jakarta.ws.rs.ForbiddenException;
+ import jakarta.ws.rs.GET;
+@@ -50,11 +60,12 @@
+ 
  import java.util.List;
- import java.util.Map;
- import java.util.Optional;
-@@ -1042,6 +1044,51 @@ private static List<Page> positionDeletePages(long... deletedPositions)
-         return ImmutableList.of(new Page(pathBuilder.build(), positionBuilder.build()));
+ import java.util.Locale;
++import java.util.Map;
+ import java.util.NoSuchElementException;
+-import java.util.Optional;
+ import java.util.function.Function;
+ 
+ import static com.fasterxml.jackson.annotation.JsonIgnoreProperties.Value.forIgnoredProperties;
++import static com.google.common.collect.ImmutableMap.toImmutableMap;
+ import static io.trino.connector.system.KillQueryProcedure.createKillQueryException;
+ import static io.trino.connector.system.KillQueryProcedure.createPreemptQueryException;
+ import static io.trino.plugin.base.metrics.TDigestHistogram.DIGEST_PROPERTY;
+@@ -63,6 +74,7 @@
+ import static io.trino.security.AccessControlUtil.filterQueries;
+ import static io.trino.server.DataSizeSerializer.SUCCINCT_DATA_SIZE_ENABLED;
+ import static io.trino.server.security.ResourceSecurity.AccessType.WEB_UI;
++import static io.trino.sql.planner.planprinter.PlanPrinter.renderDistributedPlan;
+ import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
+ import static java.util.Objects.requireNonNull;
+ 
+@@ -76,15 +88,28 @@ public class UiQueryResource
+     private final DispatchManager dispatchManager;
+     private final AccessControl accessControl;
+     private final HttpRequestSessionContextFactory sessionContextFactory;
++    private final Metadata metadata;
++    private final FunctionManager functionManager;
++    private final SessionPropertyManager sessionPropertyManager;
+ 
+     @Inject
+-    public UiQueryResource(JsonMapper jsonMapper, DispatchManager dispatchManager, AccessControl accessControl, HttpRequestSessionContextFactory sessionContextFactory)
++    public UiQueryResource(
++            JsonMapper jsonMapper,
++            DispatchManager dispatchManager,
++            AccessControl accessControl,
++            HttpRequestSessionContextFactory sessionContextFactory,
++            Metadata metadata,
++            FunctionManager functionManager,
++            SessionPropertyManager sessionPropertyManager)
+     {
+         this.queryInfoCodec = buildQueryInfoCodec(jsonMapper, false);
+         this.prettyQueryInfoCodec = buildQueryInfoCodec(jsonMapper, true);
+         this.dispatchManager = requireNonNull(dispatchManager, "dispatchManager is null");
+         this.accessControl = requireNonNull(accessControl, "accessControl is null");
+         this.sessionContextFactory = requireNonNull(sessionContextFactory, "sessionContextFactory is null");
++        this.metadata = requireNonNull(metadata, "metadata is null");
++        this.functionManager = requireNonNull(functionManager, "functionManager is null");
++        this.sessionPropertyManager = requireNonNull(sessionPropertyManager, "sessionPropertyManager is null");
      }
  
-+    @Test
-+    void testReadPositionDeletesAcrossDictionaries()
-+    {
-+        List<Page> pages = ImmutableList.of(
-+                positionDeletePage(ImmutableList.of("a", "b"), new int[] {0, 1, 1}, 10, 11, 12),
-+                positionDeletePage(ImmutableList.of("b", "c"), new int[] {1, 1}, 13, 14));
-+        DeletionVector deletionVector = getFutureValue(PositionDeleteReader.readPositionDeletes(
-+                "b",
-+                ImmutableList.of(positionDeleteFile("delete-1", 1L)),
-+                OptionalLong.empty(),
-+                OptionalLong.empty(),
-+                (_, _, _) -> new FixedPageSource(pages, NO_LIMIT),
-+                TESTING_TYPE_MANAGER,
-+                directExecutor(),
-+                directExecutor(),
-+                NO_LIMIT)).orElseThrow();
-+        List<Long> deletedRows = new ArrayList<>();
-+        deletionVector.forEachDeletedRow(deletedRows::add);
-+        assertThat(deletedRows).containsExactly(11L, 12L);
-+    }
-+
-+    @Test
-+    void testReadMultiFilePositionDeletesAcrossDictionaries()
-+    {
-+        List<Page> pages = ImmutableList.of(
-+                positionDeletePage(ImmutableList.of("a", "b"), new int[] {0, 1}, 1, 2),
-+                positionDeletePage(ImmutableList.of("c", "d"), new int[] {1, 1}, 3, 4));
-+        List<String> deletes = new ArrayList<>();
-+        PositionDeleteReader.readMultiFilePositionDeletes(
-+                new FixedPageSource(pages, NO_LIMIT),
-+                (path, position) -> deletes.add(path + ":" + position));
-+        assertThat(deletes).containsExactly("a:1", "b:2", "d:3", "d:4");
-+    }
-+
-+    private static Page positionDeletePage(List<String> dictionary, int[] ids, long... positions)
-+    {
-+        BlockBuilder dictionaryBuilder = VARCHAR.createBlockBuilder(null, dictionary.size());
-+        for (String path : dictionary) {
-+            VARCHAR.writeSlice(dictionaryBuilder, utf8Slice(path));
-+        }
-+        return new Page(
-+                DictionaryBlock.create(ids.length, dictionaryBuilder.build(), ids),
-+                new LongArrayBlock(positions.length, Optional.empty(), positions));
-+    }
-+
-     private static int filterRowPositions(PageFilter pageFilter, long... rowPositions)
+     @GET
+@@ -108,25 +133,37 @@ public List<TrimmedBasicQueryInfo> getAllQueryInfo(@QueryParam("state") String s
+     @Path("{queryId}")
+     public Response getQueryInfo(@PathParam("queryId") QueryId queryId, @Context HttpServletRequest servletRequest, @Context HttpHeaders httpHeaders)
      {
-         BlockBuilder positionBuilder = BIGINT.createBlockBuilder(null, rowPositions.length);
+-        requireNonNull(queryId, "queryId is null");
++        QueryInfo queryInfo = fetchViewableQueryInfo(queryId, servletRequest, httpHeaders);
+ 
+-        Optional<QueryInfo> queryInfo = dispatchManager.getFullQueryInfo(queryId);
+-        if (queryInfo.isPresent()) {
+-            try {
+-                checkCanViewQueryOwnedBy(sessionContextFactory.extractAuthorizedIdentity(servletRequest, httpHeaders), queryInfo.get().getSession().toIdentity(), accessControl);
+-
+-                String queryString = servletRequest.getQueryString();
+-                if (queryString != null && queryString.contains("pretty")) {
+-                    // Use pretty JSON codec that reduces noise
+-               
+```
+
+**File**: `core/trino-main/src/main/java/io/trino/sql/planner/planprinter/PlanPrinter.java` (modified, +15/-6)
+```diff
+@@ -284,6 +284,16 @@ public static String jsonDistributedPlan(
+             Metadata metadata,
+             FunctionManager functionManager,
+             Anonymizer anonymizer)
++    {
++        return DISTRIBUTED_PLAN_CODEC.toJson(renderDistributedPlan(stages, session, metadata, functionManager, anonymizer));
++    }
++
++    public static Map<PlanFragmentId, JsonRenderedNode> renderDistributedPlan(
++            StagesInfo stages,
++            Session session,
++            Metadata metadata,
++            FunctionManager functionManager,
++            Anonymizer anonymizer)
+     {
+         Map<PlanNodeId, TableInfo> tableInfos = stages.getStages().stream()
+                 .map(StageInfo::tables)
+@@ -297,7 +307,7 @@ public static String jsonDistributedPlan(
+                 .filter(Objects::nonNull)
+                 .collect(toImmutableList());
+ 
+-        return jsonDistributedPlan(
++        return renderDistributedPlan(
+                 planFragments,
+                 tableScanNode -> tableInfos.get(tableScanNode.getId()),
+                 valuePrinter,
+@@ -308,20 +318,20 @@ public static String jsonDistributedPlan(SubPlan plan, Metadata metadata, Functi
+     {
+         TableInfoSupplier tableInfoSupplier = new TableInfoSupplier(metadata, session);
+         ValuePrinter valuePrinter = new ValuePrinter(metadata, functionManager, session);
+-        return jsonDistributedPlan(
++        return DISTRIBUTED_PLAN_CODEC.toJson(renderDistributedPlan(
+                 plan.getAllFragments(),
+                 tableInfoSupplier,
+                 valuePrinter,
+-                new NoOpAnonymizer());
++                new NoOpAnonymizer()));
+     }
+ 
+-    private static String jsonDistributedPlan(
++    private static Map<PlanFragmentId, JsonRenderedNode> renderDistributedPlan(
+             List<PlanFragment> fragments,
+             Function<TableScanNode, TableInfo> tableInfoSupplier,
+             ValuePrinter valuePrinter,
+             Anonymizer anonymizer)
+     {
+-        Map<PlanFragmentId, JsonRenderedNode> anonymizedPlan = fragments.stream()
++        return fragments.stream()
+                 .collect(toImmutableMap(
+                         PlanFragment::getId,
+                         planFragment -> new PlanPrinter(
+@@ -335,7 +345,6 @@ private static String jsonDistributedPlan(
+                                 ImmutableMap.of(),
+                                 anonymizer)
+                                 .toJsonRenderedNode()));
+-        return DISTRIBUTED_PLAN_CODEC.toJson(anonymizedPlan);
+     }
+ 
+     public static String textLogicalPlan(
+```
+
+**File**: `core/trino-main/src/test/java/io/trino/server/TestQueryResource.java` (modified, +10/-0)
+```diff
+@@ -319,6 +319,11 @@ private String getFailureMessage(String queryId)
+     }
+ 
+     private String runToCompletion(String sql)
++    {
++        return runToCompletion(client, server, sql);
++    }
++
++    public static String runToCompletion(HttpClient client, TestingTrinoServer server, String sql)
+     {
+         URI uri = uriBuilderFrom(server.getBaseUrl().resolve("/v1/statement")).build();
+         Request request = preparePost()
+@@ -338,6 +343,11 @@ private String runToCompletion(String sql)
+     }
+ 
+     private String startQuery(String sql)
++    {
++        return startQuery(client, server, sql);
++    }
++
++    public static String startQuery(HttpClient client, TestingTrinoServer server, String sql)
+     {
+         URI uri = uriBuilderFrom(server.getBaseUrl()).replacePath("/v1/statement").build();
+         Request request = preparePost()
+```
+
+**File**: `core/trino-main/src/test/java/io/trino/server/ui/TestFlattenedPlanNode.java` (added, +88/-0)
+```diff
+@@ -0,0 +1,88 @@
++/*
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++package io.trino.server.ui;
++
++import com.google.common.collect.ImmutableList;
++import com.google.common.collect.ImmutableMap;
++import io.trino.sql.planner.planprinter.JsonRenderer.JsonRenderedNode;
++import org.junit.jupiter.api.Test;
++
++import java.util.List;
++import java.util.Map;
++
++import static io.trino.server.ui.FlattenedPlanNode.flatten;
++import static org.assertj.core.api.Assertions.assertThat;
++
++class TestFlattenedPlanNode
++{
++    @Test
++    void testFlatten()
++    {
++        JsonRenderedNode plan = node(
++                "1",
++                "Output",
++                ImmutableMap.of("columnNames", "[name]"),
++                ImmutableList.of("name := name_1"),
++                node(
++                        "2",
++                        "InnerJoin",
++                        ImmutableMap.of("criteria", "(nationkey = nationkey_0)"),
++                        ImmutableList.of("Distribution: PARTITIONED"),
++                        node("3", "TableScan", ImmutableMap.of("table", "tpch:tiny:nation"), ImmutableList.of()),
++                        node("4", "RemoteSource", ImmutableMap.of("sourceFragmentIds", "[1]"), ImmutableList.of())));
++
++        assertThat(flatten(plan)).containsExactly(
++                new FlattenedPlanNode("1", "Output", ImmutableMap.of("columnNames", "[name]"), ImmutableList.of("name := name_1"), ImmutableList.of("2")),
++                new FlattenedPlanNode("2", "InnerJoin", ImmutableMap.of("criteria", "(nationkey = nationkey_0)"), ImmutableList.of("Distribution: PARTITIONED"), ImmutableList.of("3", "4")),
++                new FlattenedPlanNode("3", "TableScan", ImmutableMap.of("table", "tpch:tiny:nation"), ImmutableList.of(), ImmutableList.of()),
++                new FlattenedPlanNode("4", "RemoteSource", ImmutableMap.of("sourceFragmentIds", "[1]"), ImmutableList.of(), ImmutableList.of()));
++    }
++
++    @Test
++    void testFlattenAdaptivePlan()
++    {
++        // the initial plan is rendered before the current one, and both use the same node identifiers
++        JsonRenderedNode plan = node(
++                "1",
++                "AdaptivePlan",
++                ImmutableMap.of(),
++                ImmutableList.of(),
++                node(
++                        "2",
++                        "InnerJoin",
++                        ImmutableMap.of("distribution", "PARTITIONED"),
++                        ImmutableList.of(),
++                        node("3", "RemoteSource", ImmutableMap.of("sourceFragmentIds", "[1]"), ImmutableList.of()),
++                        node("4", "RemoteSource", ImmutableMap.of("sourceFragmentIds", "[2]"), ImmutableList.of())),
++                node(
++                        "2",
++                        "InnerJoin",
++                        ImmutableMap.of("distribution", "REPLICATED"),
++                        ImmutableList.of(),
++                        node("4", "RemoteSource", ImmutableMap.of("sourceFragmentIds", "[2]"), ImmutableList.of()),
++                        node("5", "RemoteSource", ImmutableMap.of("sourceFragmentIds", "[3]"), ImmutableList.of())));
++
++        assertThat(flatten(plan)).containsExactly(
++                new FlattenedPlanNode("1", "AdaptivePlan", ImmutableMap.of(), ImmutableList.of(), ImmutableList.of("2", "2")),
++                new FlattenedPlanNode("2", "InnerJoin", ImmutableMap.of("distribution", "REPLICATED"), ImmutableList.of(), ImmutableList.of("4", "5")),
++                new FlattenedPlanNode("3", "RemoteSource", ImmutableMap.of("sourceFragmentIds", "[1]"), ImmutableList.of(), ImmutableList.of()),
++                new FlattenedPlanNode("4", "RemoteSource", ImmutableMap.of("sourceFragmentIds", "[2]"), ImmutableList.of(), ImmutableList.of()),
++                new FlattenedPlanNode("5", "RemoteSource", ImmutableMap.of("sourceFragmentIds", "[3]"), ImmutableList.of(), ImmutableList.of()));
++    }
++
++    private static JsonRenderedNode node(String id, String name, Map<String, String> descriptor, List<String> details, JsonRenderedNode... children)
++    {
++        return new JsonRenderedNode(id, name, descriptor, ImmutableList.of(), details, ImmutableList.of(), ImmutableList.copyOf(children));
++    }
++}
+```
+
+**File**: `core/trino-main/src/test/java/io/trino/server/ui/TestUiQueryResource.java` (added, +177/-0)
+```diff
+@@ -0,0 +1,177 @@
++/*
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++package io.trino.server.ui;
++
++import com.google.common.collect.ImmutableMap;
++import io.airlift.http.client.HttpClient;
++import io.airlift.http.client.Request;
++import io.airlift.http.client.UnexpectedResponseException;
++import io.airlift.http.client.jetty.JettyHttpClient;
++import io.airlift.json.JsonCodec;
++import io.trino.plugin.tpch.TpchPlugin;
++import io.trino.server.testing.TestingTrinoServer;
++import io.trino.spi.QueryId;
++import org.junit.jupiter.api.AfterAll;
++import org.junit.jupiter.api.BeforeAll;
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.TestInstance;
++import org.junit.jupiter.api.parallel.Execution;
++
++import java.util.List;
++import java.util.Map;
++import java.util.Set;
++
++import static com.google.common.collect.ImmutableSet.toImmutableSet;
++import static io.airlift.http.client.JsonResponseHandler.createJsonResponseHandler;
++import static io.airlift.http.client.Request.Builder.prepareGet;
++import static io.airlift.json.JsonCodec.listJsonCodec;
++import static io.airlift.json.JsonCodec.mapJsonCodec;
++import static io.airlift.testing.Closeables.closeAll;
++import static io.trino.server.TestQueryResource.runToCompletion;
++import static io.trino.server.TestQueryResource.startQuery;
++import static io.trino.testing.TestingAccessControlManager.TestingPrivilegeType.VIEW_QUERY;
++import static io.trino.testing.TestingAccessControlManager.privilege;
++import static org.assertj.core.api.Assertions.assertThat;
++import static org.assertj.core.api.Assertions.assertThatThrownBy;
++import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
++import static org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD;
++
++@TestInstance(PER_CLASS)
++@Execution(SAME_THREAD) // access control is changed by a test
++class TestUiQueryResource
++{
++    private static final JsonCodec<Map<String, List<FlattenedPlanNode>>> QUERY_PLAN_CODEC = mapJsonCodec(String.class, listJsonCodec(FlattenedPlanNode.class));
++
++    private HttpClient client;
++    private TestingTrinoServer server;
++
++    @BeforeAll
++    void setup()
++    {
++        client = new JettyHttpClient();
++        server = TestingTrinoServer.builder()
++                .setProperties(ImmutableMap.of(
++                        "web-ui.authentication.type", "fixed",
++                        "web-ui.user", "test-user"))
++                .build();
++        server.installPlugin(new TpchPlugin());
++        server.createCatalog("tpch", "tpch");
++    }
++
++    @AfterAll
++    void teardown()
++            throws Exception
++    {
++        closeAll(server, client);
++        server = null;
++        client = null;
++    }
++
++    @Test
++    void testQueryPlan()
++    {
++        String queryId = runToCompletion(client, server, "SELECT * FROM tpch.tiny.nation");
++
++        // a table scan needs no remote exchange, so the query has a single stage
++        Map<String, List<FlattenedPlanNode>> plan = queryPlan(queryId);
++        assertThat(plan).containsOnlyKeys(queryId + ".0");
++
++        List<FlattenedPlanNode> stage = plan.get(queryId + ".0");
++        assertThat(stage).extracting(FlattenedPlanNode::name).containsExactly("Output", "TableScan");
++        FlattenedPlanNode output = stage.get(0);
++        FlattenedPlanNode tableScan = stage.get(1);
++        assertThat(output.descriptor()).containsEntry("columnNames", "[nationkey, name, regionkey, comment]");
++        assertThat(output.sources()).containsExactly(tableScan.id());
++        assertThat(tableScan.descriptor()).containsEntry("table", "tpch:tiny:nation");
++        assertThat(tableScan.details()).contains("nationkey := tpch:nationkey");
++        assertThat(tableScan.sources()).isEmpty();
++    }
++
++    @Test
++    void testQueryPlanOfMultiStageQuery()
++    {
++        String queryId = runToCompletion(client, server, "SELECT regionkey, count(*) FROM tpch.tiny.nation GROUP BY regionkey");
++
++        Map<String, List<FlattenedPlanNode>> plan = queryPlan(queryId);
++        Set<String> stageIds = server.getDispatchManager().getFullQueryInfo(new QueryId(queryId)).orElseThrow()
++                .getStages().orElseThrow()
++                .getStages().stream()
++                .map(stage -> stage.stageId().toString())
++                .collect(toImmutableSet());
++        assertThat(stageIds).hasSizeGreaterThan(1);
++        assertThat(plan).containsOnlyKeys(stageIds);
++
++        // the output stage reads the stage of the fragment its remo
+```
+
+---
+
+### Incident Patch 3: `5eec42ba` (2026-11-13)
+**Commit Message**: Fix stale String.format modernizer comment
+
+The comment on the String.format exclusion said that the code style
+mandates the static format() over String.formatted() and pointed to
+.github/DEVELOPMENT.md. The guide has preferred String.formatted()
+since 8e042a2312d, so the comment sent readers to a rule that says the
+opposite. Describe the exclusion the way the neighboring entries do.
+
+**File**: `.mvn/modernizer/exclusions.txt` (modified, +1/-1)
+```diff
+@@ -39,7 +39,7 @@ java/io/File."<init>":(Ljava/io/File;Ljava/lang/String;)V
+ # Modernizer emits false-positive warnings even when presence is guaranteed
+ java/util/Optional.get:()Ljava/lang/Object;
+ 
+-# Trino's code style mandates the static format() over String.formatted(); see .github/DEVELOPMENT.md
++# String.format is allowed alongside String.formatted(), which .github/DEVELOPMENT.md prefers
+ java/lang/String.format:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+ 
+ # Collections.singletonList is allowed; the List/Set/Map.of() analogues have different semantics (e.g. null handling)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #32093** (2026-11-12): Fix short decimal cast overflow when increasing scale (@findepi)
-- **PR #32090** (closed): Reuse decompressors in Parquet reader (@wendigo)
-- **PR #32088** (2026-11-11): Bump the web-ui-dependencies group in /core/trino-web-ui/src/main/resources/webapp with 44 updates (@dependabot[bot])
-- **PR #32087** (2026-11-11): Bump net.minidev:json-smart from 2.6.0 to 2.6.1 (@dependabot[bot])
-- **PR #32086** (2026-11-11): Bump actions/setup-java from 6.1.0 to 6.2.0 in /.github/actions/setup (@dependabot[bot])
-- **PR #32085** (2026-11-11): Bump zizmorcore/zizmor-action from 0.8.0 to 0.8.1 (@dependabot[bot])
+- **PR #32146** (closed): Fix temporary variable reuse in IN predicates (@ViktorBystrov72)
+- **PR #32139** (2026-11-13): Use signed year instead of year-of-era for hive dates (@JohnFitzpatrick44)
+- **PR #32134** (2026-11-14): Remove JSON representation from PlanFragment (@wendigo)
+- **PR #32133** (2026-11-13): Fix stale String.format modernizer comment (@chenjian2664)
+- **PR #32130** (closed): Remove unused single-argument process overloads (@chenjian2664)
+- **PR #32129** (2026-11-13): Bump software.amazon.awssdk:bom from 2.57.9 to 2.57.10 (@dependabot[bot])
 
 ---
 
@@ -2286,45 +2824,71 @@ readAllPositionDeletes    47.670 ± 0.733    11.754 ± 0.085
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. short decimal cast overflow when increasing scale
+## X. Use stage plan endpoint in Web UI live plan
 
 **RULE**:
-When implementing operations in `core/trino-main/src/test/java/io/trino/type/TestDecimalToDecimalCasts.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/trino-web-ui/src/main/resources/webapp-legacy/src/components/LivePlan.jsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `336c2e0c`: short decimal cast overflow when increasing scale. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fb70e5bb`: Use stage plan endpoint in Web UI live plan. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/trino-main/src/test/java/io/trino/type/TestDecimalToDecimalCasts.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/trino-web-ui/src/main/resources/webapp-legacy/src/components/LivePlan.jsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
+    static getStages(queryInfo: any, queryPlan: QueryPlan): Map<string, StageNodeInfo> {
+            const planNodes = queryPlan[stageInfo.stageId]
+            if (!planNodes) {
+                return
+            }
+            planNodes.forEach((node) => nodes.set(node.id, node))
+// Plan nodes of each stage, keyed by the stage id
+type QueryPlan = { [stageId: string]: PlanNodeProps[] }
+    queryPlan: QueryPlan,
+    queryPlanUnavailable: boolean = false
+            queryPlan: {},
+        } else if (!this.queryPlanUnavailable && !this.hasQueryPlan(this.state.query)) {
+            // the query does not change anymore, so only its plan is requested again
+            this.timeoutId = setTimeout(
+                () => this.refreshQueryPlan(this.state.query).then(() => this.resetTimer()),
+                1000
+            )
+                return this.refreshQueryPlan(query)
+            .then(() => this.resetTimer())
+    // the plan of a stage does not change, so the plan is requested only when it does not cover all the stages
+    refreshQueryPlan(query: any): Promise<void> {
+        if (this.queryPlanUnavailable || this.hasQueryPlan(query)) {
+            return Promise.resolve()
+        }
 
-        assertTrinoExceptionThrownBy(() -> assertions.expression("cast(a as DECIMAL(18, 17))")
-                .binding("a", "DECIMAL '175'").evaluate())
-                .hasMessage("Cannot cast DECIMAL(3, 0) '175' to DECIMAL(18, 17)")
-                .hasErrorCode(NUMERIC_VALUE_OUT_OF_RANGE);
-
-        assertTrinoExceptionThrownBy(() -> assertions.expression("cast(a as DECIMAL(18, 17))")
-                .binding("a", "DECIMAL '-175'").evaluate())
-                .hasMessage("Cannot cast DECIMAL(3, 0) '-175' to DECIMAL(18, 17)")
-                .hasErrorCode(NUMERIC_VALUE_OUT_OF_RANGE);
-
-        assertTrinoExceptionThrownBy(() -> assertions.expression("cast(a as DECIMAL(18, 2))")
-                .binding("a", "DECIMAL '184467440737095516'").evaluate())
-                .hasMessage("Cannot cast DECIMAL(18, 0) '184467440737095516' to DECIMAL(18, 2)")
-                .hasErrorCode(NUMERIC_VALUE_OUT_OF_RANGE);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+    static getStages(queryInfo: any): Map<string, StageNodeInfo> {
+            StageStatistics.flattenNode(stageInfo.plan.root, JSON.parse(stageInfo.plan.jsonRepresentation), nodes)
+    static flattenNode(rootNodeInfo: any, node: any, result: Map<any, PlanNodeProps>) {
+        result.set(node.id, {
+            id: node.id,
+            name: node['name'],
+            descriptor: node['descriptor'],
+            details: node['details'],
+            sources: node.children.map((node) => node.id),
+        })
+
+        node.children.forEach(function (child) {
+            StageStatistics.flattenNode(rootNodeInfo, child, result)
+        })
+    }
+
+                this.resetTimer()
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `336c2e0c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fb70e5bb` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
