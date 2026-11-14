@@ -9904,3 +9904,6 @@ Every entry in this ledger must capture:
 | `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `7205812b` | Multi-dimensional audit evidence | 2026-11-14T15:49:37.751Z |
 | `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `9b4b9cfc` | Multi-dimensional audit evidence | 2026-11-14T15:49:43.550Z |
 | `learn-dom-d-293047de` | `project://hf-zai-org-glm-5.3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md` | 2026-11-14T15:50:17.296Z |
+| `learn-huggingface-mudler-locate-anything-cpp-gguf` | `https://huggingface.co/mudler/locate-anything.cpp-gguf` | `hf-mudler-` | Multi-dimensional audit evidence | 2026-11-14T15:59:43.302Z |
+| `learn-github-zed-industries-zed` | `https://github.com/zed-industries/zed` | `99c890d3` | Multi-dimensional audit evidence | 2026-11-14T15:59:49.325Z |
+| `learn-dom-d-c9202d2f` | `project://hf-mudler-locate-anything.cpp-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md` | 2026-11-14T16:00:17.852Z |

@@ -9871,3 +9871,6 @@
 | `CYCLE-20261114-01N7` | `2026-11-14T15:49:37.747Z` | `Agent-Field/agentfield` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8502` | Yes (`f758f7d2...`) |
 | `CYCLE-20261114-064A` | `2026-11-14T15:49:43.546Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8503` | Yes (`9ff94f4e...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T15:50:17.296Z` | `hf-zai-org-glm-5.3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-293047DE` [Domain D] | Yes (`63af52e8...`) |
+| `CYCLE-20261114-D0W3` | `2026-11-14T15:59:43.299Z` | `mudler/locate-anything.cpp-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md` | Yes (`531710f3...`) |
+| `CYCLE-20261114-D5JE` | `2026-11-14T15:59:49.322Z` | `zed-industries/zed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8504` | Yes (`ff5c53b9...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T16:00:17.852Z` | `hf-mudler-locate-anything.cpp-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-C9202D2F` [Domain D] | Yes (`3e8a94f5...`) |

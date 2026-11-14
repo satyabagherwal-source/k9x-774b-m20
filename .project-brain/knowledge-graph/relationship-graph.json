@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-14T15:50:17.294Z",
+  "updated_at": "2026-11-14T16:00:17.851Z",
   "statistics": {
-    "total_nodes": 199,
+    "total_nodes": 200,
     "total_edges": 109,
     "domain_distribution": {
-      "D": 154,
+      "D": 155,
       "M": 1,
       "H": 17,
       "J": 8,
@@ -4463,6 +4463,28 @@
       ],
       "created_at": "2026-11-14T15:50:17.293Z",
       "updated_at": "2026-11-14T15:50:17.293Z"
+    },
+    "DOM-D-C9202D2F": {
+      "id": "DOM-D-C9202D2F",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): mudler/locate-anything.cpp-gguf",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md`  \n> **Source**: huggingface ([https -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md`  \n> **Source**: huggingface ([https",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-mudler-locate-anything.cpp-gguf/hf-mudler-locate-anything.cpp-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T15:59:55.886Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-mudler-locate-anything.cpp-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-14T16:00:17.851Z",
+      "updated_at": "2026-11-14T16:00:17.851Z"
     }
   },
   "edges": [

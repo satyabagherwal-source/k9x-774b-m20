@@ -75,8 +75,8 @@
     "sourceUrl": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
     "sourceVersion": "hf-mudler-locate-anything.cpp-gguf",
     "license": "Open-Source",
-    "contentHash": "dbed6810991d3fed6003cb2fb9e0b6392abb730e2bb4e4587da6d0a2de62f79b",
-    "lastHarvestedAt": "2026-11-09T05:19:09.224Z",
+    "contentHash": "531710f3247700d62e17f75e89647ea35d00481b5f3adb15f7bd7bba27b03c7a",
+    "lastHarvestedAt": "2026-11-14T15:59:43.302Z",
     "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf"
   },
   "hf-jialinyyzz-humanizer": {
@@ -7783,10 +7783,10 @@
     "repository": "zed-industries/zed",
     "platform": "github",
     "sourceUrl": "https://github.com/zed-industries/zed",
-    "sourceVersion": "27bbbc1c",
+    "sourceVersion": "99c890d3",
     "license": "NOASSERTION",
-    "contentHash": "18f6ccaf0ed7b898152ce2e2c995514a3dc3136d8c25f7f2bcb085f16d8bab54",
-    "lastHarvestedAt": "2026-11-13T02:24:48.291Z",
+    "contentHash": "ff5c53b9a582464d161f7a7bc0c0c0943126f93d3fefccaede506a3ab680288d",
+    "lastHarvestedAt": "2026-11-14T15:59:49.325Z",
     "learningId": "learn-github-zed-industries-zed"
   },
   "mohamedrejeb-compose-rich-editor": {

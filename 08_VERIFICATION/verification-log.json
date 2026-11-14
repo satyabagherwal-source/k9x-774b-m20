@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-L4XQ",
-    "timestamp": "2026-11-09T10:07:45.470Z",
-    "repository": "microsoft/FrogNano-4B-2609",
-    "learningId": "learn-huggingface-microsoft-frognano-4b-2609",
-    "contentHash": "e68472edce66cac423e9b21dadc20b1e6db2d39ad61ad5c49d853cf6c329efd5",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-L82C",
-    "timestamp": "2026-11-09T10:07:49.524Z",
-    "repository": "mattermost/mattermost",
-    "learningId": "learn-github-mattermost-mattermost",
-    "contentHash": "0078134c12a8632c7ad10088d2126c9bf3f23836d9fd83fc36ca72acc84d87f2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-LDVX",
     "timestamp": "2026-11-09T10:07:57.069Z",
     "repository": "risingwavelabs/risingwave",
@@ -7490,6 +7460,36 @@
     "repository": "trinodb/trino",
     "learningId": "learn-github-trinodb-trino",
     "contentHash": "9ff94f4e1c9ac67b995f02e82cfd78b595c0573910c10b438793041c9cc42b47",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-D0W3",
+    "timestamp": "2026-11-14T15:59:43.299Z",
+    "repository": "mudler/locate-anything.cpp-gguf",
+    "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf",
+    "contentHash": "531710f3247700d62e17f75e89647ea35d00481b5f3adb15f7bd7bba27b03c7a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-D5JE",
+    "timestamp": "2026-11-14T15:59:49.322Z",
+    "repository": "zed-industries/zed",
+    "learningId": "learn-github-zed-industries-zed",
+    "contentHash": "ff5c53b9a582464d161f7a7bc0c0c0943126f93d3fefccaede506a3ab680288d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

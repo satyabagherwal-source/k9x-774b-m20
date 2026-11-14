@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T15:49:43.555Z",
-  "total_cycles_completed": 9546,
-  "total_learnings_persisted": 9546,
-  "total_rules_promoted": 9226,
+  "last_updated": "2026-11-14T15:59:49.329Z",
+  "total_cycles_completed": 9548,
+  "total_learnings_persisted": 9548,
+  "total_rules_promoted": 9227,
   "history": [
-    {
-      "timestamp": "2026-11-13T19:39:54.415Z",
-      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T19:39:57.475Z",
-      "repository": "NervJS/taro",
-      "learningId": "learn-github-nervjs-taro",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T19:39:58.598Z",
       "repository": "rook/rook",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-14T15:49:43.555Z",
       "repository": "trinodb/trino",
       "learningId": "learn-github-trinodb-trino",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T15:59:43.306Z",
+      "repository": "mudler/locate-anything.cpp-gguf",
+      "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T15:59:49.329Z",
+      "repository": "zed-industries/zed",
+      "learningId": "learn-github-zed-industries-zed",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

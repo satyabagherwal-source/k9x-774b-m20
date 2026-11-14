@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T15:50:18.041Z",
-  "total_records": 727,
+  "last_updated": "2026-11-14T16:00:18.386Z",
+  "total_records": 732,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 358,
+      "total": 361,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -395,7 +395,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-large-en-v1-5-learnings-core-invaria",
         "domain_intelligence-research-knowledge-intelligence-zai-org-glm-5-3-core-invariants",
         "DOM-D-293047DE",
-        "domain_intelligence-research-knowledge-intelligence-hf-zai-org-glm-5-3-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-hf-zai-org-glm-5-3-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-mudler-locate-anything-cpp-gguf-core-invariants",
+        "DOM-D-C9202D2F",
+        "domain_intelligence-research-knowledge-intelligence-hf-mudler-locate-anything-cpp-gguf-learnings-cor"
       ]
     },
     "E": {
@@ -703,7 +706,7 @@
       ]
     },
     "I": {
-      "total": 23,
+      "total": 25,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -727,7 +730,9 @@
         "domain_intelligence-content-information-intelligence-higress-group-higress-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-okteto-okteto-core-invariants",
         "domain_intelligence-content-information-intelligence-okteto-okteto-learnings-core-invariants",
-        "domain_intelligence-content-information-intelligence-peerdb-io-peerdb-core-invariants"
+        "domain_intelligence-content-information-intelligence-peerdb-io-peerdb-core-invariants",
+        "domain_intelligence-content-information-intelligence-zed-industries-zed-core-invariants",
+        "domain_intelligence-content-information-intelligence-zed-industries-zed-learnings-core-invariants"
       ]
     },
     "J": {
@@ -6542,8 +6547,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "8ae536e3220c92a2b2f2040ea18b2c1b1513a24ba75bcf2e05722b40e026ab9a",
-      "created_at": "2026-11-14T14:28:36.984Z"
+      "content_hash": "6da8f91fcb572ee9aaab4c1857c5d667c143c2f6cd6ce1e8a3125582aa18f64b",
+      "created_at": "2026-11-14T16:00:18.386Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -15056,6 +15061,84 @@
       "repository": "agent-field-agentfield-learnings",
       "content_hash": "1f4066a13d72d21d522a2f2fdb02d293a0921dc9dbbfbc2182a798a8ccc87eea",
       "created_at": "2026-11-14T15:50:18.041Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-mudler-locate-anything-cpp-gguf-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-mudler-locate-anything-cpp-gguf-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: mudler/locate-anything.cpp-gguf Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-mudler-locate-anything-cpp-gguf-research-knowledge-intelligence-mudler-locate.md",
+      "repository": "mudler/locate-anything.cpp-gguf",
+      "content_hash": "f8813e22f2d0e1c8bdae60786c4eb4bef71c61500354611e817a7936f93cf629",
+      "created_at": "2026-11-14T15:59:43.440Z"
+    },
+    "domain_intelligence-content-information-intelligence-zed-industries-zed-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-zed-industries-zed-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: zed-industries/zed Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zed-industries-zed-content-information-intelligence-zed-industries-zed-core-inva.md",
+      "repository": "zed-industries/zed",
+      "content_hash": "5bf0c7f1f69b0b880f09366b06ecf97e751130e62ceb0a2d92826b52c5eaad2c",
+      "created_at": "2026-11-14T15:59:49.560Z"
+    },
+    "domain_intelligence-content-information-intelligence-zed-industries-zed-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-zed-industries-zed-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: zed-industries-zed-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zed-industries-zed-learnings-content-information-intelligence-zed-industries-zed.md",
+      "repository": "zed-industries-zed-learnings",
+      "content_hash": "0ecb3bf4c0cbff198a13c70c193e8ea1a083e0727a001e3dd098958434911553",
+      "created_at": "2026-11-14T15:59:55.731Z"
+    },
+    "DOM-D-C9202D2F": {
+      "record_id": "DOM-D-C9202D2F",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): mudler/locate-anything.cpp-gguf",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/mudler/locate-anything.cpp-gguf](https://huggingface.co/mudler/locate-anything.cpp-gguf))  \n> **Source Version**: `hf-mudler-lo`  \n> **License",
+      "content_hash": "3e8a94f5dc9717ecd3a88026c024a303fd06902a222471afe2b749d01b1f4d19",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md`  \n> **Source**: huggingface ([https -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md`  \n> **Source**: huggingface ([https",
+      "provenance": {
+        "source_uri": "project://hf-mudler-locate-anything.cpp-gguf/hf-mudler-locate-anything.cpp-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T15:59:55.886Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-mudler-locate-anything.cpp-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-mudler-locate-anything.cpp-gguf"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T16:00:17.842Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-mudler-locate-anything-cpp-gguf-learnings-cor": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-mudler-locate-anything-cpp-gguf-learnings-cor",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-mudler-locate-anything.cpp-gguf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-mudler-locate-anything-cpp-gguf-learnings-research-knowledge-intelligence-hf-.md",
+      "repository": "hf-mudler-locate-anything.cpp-gguf-learnings",
+      "content_hash": "70628f3a3a02835a6775b9d18e6f97223136fc5ec973784b6d8743e1a75481d4",
+      "created_at": "2026-11-14T16:00:18.012Z"
     }
   }
 }

@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T15:50:18.328Z",
+  "last_updated": "2026-11-14T16:00:18.611Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-14T14:28:36.612Z",
+      "processed_at": "2026-11-14T16:00:18.132Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -63,7 +63,7 @@
       "staged_for_review": 1
     },
     "zed-industries-zed-learnings.md": {
-      "processed_at": "2026-11-13T02:25:05.160Z",
+      "processed_at": "2026-11-14T15:59:55.436Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2641,9 +2641,14 @@
       "processed_at": "2026-11-14T15:50:17.296Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-mudler-locate-anything.cpp-gguf-learnings.md": {
+      "processed_at": "2026-11-14T16:00:17.852Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 858,
-  "total_canonical_promoted": 203,
-  "total_staged_for_review": 654
+  "total_dossiers_evaluated": 861,
+  "total_canonical_promoted": 204,
+  "total_staged_for_review": 656
 }

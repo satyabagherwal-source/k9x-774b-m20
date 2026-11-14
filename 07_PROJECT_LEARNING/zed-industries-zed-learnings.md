@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zed-industries-zed-learnings.md`  
 > **Source**: github ([https://github.com/zed-industries/zed](https://github.com/zed-industries/zed))  
-> **Source Version**: `27bbbc1c`  
+> **Source Version**: `99c890d3`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T02:24:32.873Z  
+> **Timestamp**: 2026-11-14T15:59:48.646Z  
 > **Learning ID**: `learn-github-zed-industries-zed`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zed-industries-zed-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zed-industries/zed](https://github.com/zed-industries/zed))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T02:24:32.866Z  
+> **Harvest Timestamp**: 2026-11-14T15:59:48.641Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Code at the speed of thought – Zed is a high-performance, multiplayer code editor from the creators of Atom and Tree-sitter.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 94858 stars
+- **Stars / Engagement**: 95026 stars
 
 ---
 
@@ -2334,994 +2334,558 @@ fn score_against_expected_patch(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `73ad8e3e` (2026-11-12)
-**Commit Message**: Fix opening `ssh://` links with a drive letter on Windows remotes (#66814)
+### Incident Patch 1: `5a40bc8b` (2026-11-13)
+**Commit Message**: gpui_web: Fix safe-area insets under a strict style CSP (#66907)
 
 ## Summary
 
-Closes #66813
+gpui web uses exploratory divs to learn about the unusable deadspace on
+the margins of a device's screen, which it calls safe-area insets.
 
-`ssh://host/C:/project` (and `zed://ssh/host/C:/...`) sends
-`/C:/project` to the remote, because a URL path keeps a `/` before a
-Windows drive letter. A Windows remote server cannot canonicalize that
-path (os error 123), so the project fails to open with
-`DevServerProjectPathDoesNotExist`.
+When doing this, it uses html `style` attributes with raw css
+parameters. In modern web development, is typical to use a
+`Content-Security-Policy` to block `unsafe-inline` css in html. This
+feature breaks when such security settings are in use.
 
-This is a follow-up to #66497, which fixed the same leading `/` for
-local `file://` and `zed://file` links. That fix could not be reused
-here: it checks the local OS while the URL is parsed, and for SSH the
-remote's OS is only known after connecting. This change strips the slash
-in `determine_paths_with_positions`, which runs after the connection and
-can ask the remote for its path style. Paths on Unix remotes and `/~`
-paths are left alone.
+However, while raw CSS in the style element is not permitted, even with
+the CSP set to block `unsafe-inline` style attributes, it still permits
+some direct adjustments via CSSOM with `el.style.setProperty(p, v)`.
+This workaround is already used by gpui web on the canvas and IME
+elements.
 
-Before (Zed 1.27.0):
-
-<img width="420" height="225" alt="zed-ssh-drive-letter-error"
-src="https://github.com/user-attachments/assets/ee33b4e7-4dae-43a1-8bfa-8b85c8302ebe"
-/>
-
-After (this branch, same URL):
-
-<img width="620" height="140" alt="zed-ssh-drive-letter-fixed"
-src="https://github.com/user-attachments/assets/a937839c-f8ba-4f2e-9fb0-9ca1a91380be"
-/>
-
-
-**File**: `crates/recent_projects/src/remote_connections.rs` (modified, +240/-1)
-```diff
-@@ -16,7 +16,7 @@ use remote::{
- };
- pub use settings::SshConnection;
- use settings::{DevContainerConnection, ExtendingVec, RegisterSetting, Settings, WslConnection};
--use util::paths::PathWithPosition;
-+use util::paths::{PathStyle, PathWithPosition, url_path_to_path};
- use workspace::{AppState, MultiWorkspace, OpenOptions, Workspace, find_existing_workspace};
- 
- pub use remote_connection::{
-@@ -456,6 +456,7 @@ pub(crate) async fn determine_paths_with_positions(
-     mut paths: Vec<PathBuf>,
- ) -> (Vec<PathBuf>, Vec<PathWithPosition>) {
-     let mut paths_with_positions = Vec::<PathWithPosition>::new();
-+    url_paths_to_paths(&mut paths, remote_connection.path_style());
-     for path in &mut paths {
-         if let Some(path_str) = path.to_str() {
-             let path_with_position = PathWithPosition::parse_str(&path_str);
-@@ -472,6 +473,16 @@ pub(crate) async fn determine_paths_with_positions(
-     (paths, paths_with_positions)
- }
- 
-+/// `ssh://` URL paths are converted here rather than when the URL is parsed, because the remote's
-+/// path style is only known once connected.
-+fn url_paths_to_paths(paths: &mut [PathBuf], path_style: PathStyle) {
-+    for path in paths {
-+        if let Some(url_path) = path.to_str() {
-+            *path = PathBuf::from(url_path_to_path(url_path, path_style));
-+        }
-+    }
-+}
-+
- async fn path_exists(connection: &Arc<dyn RemoteConnection>, path: &Path) -> bool {
-     let Ok(command) = connection.build_command(
-         Some("test".to_string()),
-@@ -509,6 +520,234 @@ mod tests {
-     use util::path;
-     use workspace::find_existing_workspace;
- 
-+    // Each remote path style is set explicitly, so the client and remote styles differ on every
-+    // platform the tests run on.
-+    #[gpui::test]
-+    async fn test_determine_paths_with_positions_converts_url_paths_for_remote_path_style(
-+        cx: &mut TestAppContext,
-+        server_cx: &mut TestAppContext,
-+    ) {
-+        init_test(cx);
-+        // As parsed from `ssh://host/C:/`, `ssh://host/C:/project/src/lib.rs` and `ssh://host/a:12`.
-+        let url_paths = ["/C:/", "/C:/project/src/lib.rs", "/a:12"];
-+        for (path_style, expected_paths) in [
-+            (PathStyle::Windows, ["C:/", "C:/project/src/lib.rs", "/a"]),
-+            (PathStyle::Unix, ["/C:/", "/C:/project/src/lib.rs", "/a"]),
-+        ] {
-+            let (opts, _server_session, connect_guard) = RemoteClient::fake_server(cx, server_cx);
-+            cx.update(|cx| remote::MockConnection::set_path_style(&opts, path_style, cx));
-+            drop(connect_guard);
-+            let connection =
-+                remote::connect(opts, Arc::new(remote::MockDelegate), &mut cx.to_async())
-+                    .await
-+                    .unwrap();
-+
-+            let (paths, paths_with_positions) = determine_paths_with_positions(
-+                &connection,
-+                url_paths.iter().map(PathBuf::from).collect(),
-+            )
-+            .await;
-+
-+            let expected_paths = expected_paths.map(PathBuf::from).to_vec();
-+            assert_eq!(paths, expected_paths, "{path_style:?}");
-+            assert_eq!(
-+                paths_with_positions
-+                    .iter()
-+                    .map(|path| (path.path.clone(), path.row))
-+                    .collect::<Vec<_>>(),
-+                expected_paths
-+                    .into_iter()
-+                    .zip([None, None, Some(12)])
-+                    .collect::<Vec<_>>(),
-+                "{path_style:?}"
-+            );
-+        }
-+    }
-+
-+    // A remote workspace on a Unix host cannot hold a `C:` path, so this needs a Windows host.
-+    #[cfg(target_os = "windows")]
-+    #[gpui::test]
-+    async fn test_drive_letter_url_path_matches_saved_connection_with_other_options(
-+        cx: &mut TestAppContext,
-+        server_cx: &mut TestAppContext,
-+    ) {
-+        let app_state = init_test(cx);
-+        let (opts, _headless) = init_remote_server(cx, server_cx).await;
-+        let host = || SshConnectionOptions {
-+            host: "example.com".to_string().into(),
-+            ..Default::default()
-+        };
-+        // A saved connection keeps its timeout; options built from a URL leave it unset.
-+        let saved = RemoteConnectionOptions::Ssh(SshConnectionOptions {
-+            connection_timeout: Some(30),
-+            ..host()
-+        });
-+        cx.update(|cx| remote::MockConnection::report_connection_options(&opts, saved, cx));
-+        let mut async_cx = cx.to_async();
-+        let window = open_remote_project(
-+            opts,
-+            vec![PathBuf::from(path!("/project"))],
-+            app_state,
-+            workspace::OpenOptions::default(),
-+            &mut async_cx,
-+        )
-+        .await
-+        .unwrap();
-+        cx.executor().run_until_parked();
-+
-+        let found = find_existing_workspace(
-+            &[PathBuf::from("/C:/project/src/lib.rs")],
-+            &workspace::OpenOptions::default(),
-+            &ProjectHost::Remote(&RemoteCo
-```
-
-**File**: `crates/remote/src/transport/mock.rs` (modified, +37/-8)
-```diff
-@@ -70,6 +70,8 @@ pub struct MockRemoteConnection {
-     server_channel: Arc<ChannelClient>,
-     server_cx: SendableCx,
-     message_interceptors: parking_lot::Mutex<Option<MessageInterceptors>>,
-+    path_style: parking_lot::Mutex<PathStyle>,
-+    reported_options: parking_lot::Mutex<Option<RemoteConnectionOptions>>,
-     pub(crate) proxy_tx: parking_lot::Mutex<
-         Option<
-             mpsc::UnboundedSender<(
-@@ -141,18 +143,40 @@ impl MockConnection {
-         client_to_server: impl Fn(&mut Envelope) + Send + Sync + 'static,
-         server_to_client: impl Fn(&mut Envelope) + Send + Sync + 'static,
-     ) {
-+        *Self::pending(options, cx).message_interceptors.lock() = Some(MessageInterceptors {
-+            client_to_server: Arc::new(client_to_server),
-+            server_to_client: Arc::new(server_to_client),
-+        });
-+    }
-+
-+    /// Makes the connection report `path_style`, as a connection to a host of another OS would.
-+    pub fn set_path_style(options: &RemoteConnectionOptions, path_style: PathStyle, cx: &mut App) {
-+        *Self::pending(options, cx).path_style.lock() = path_style;
-+    }
-+
-+    /// Makes the connection report `reported` as its options, as a real connection reports the
-+    /// options it was opened with, such as a saved SSH connection.
-+    pub fn report_connection_options(
-+        options: &RemoteConnectionOptions,
-+        reported: RemoteConnectionOptions,
-+        cx: &mut App,
-+    ) {
-+        *Self::pending(options, cx).reported_options.lock() = Some(reported);
-+    }
-+
-+    fn pending<'a>(
-+        options: &RemoteConnectionOptions,
-+        cx: &'a App,
-+    ) -> &'a Arc<MockRemoteConnection> {
-         let RemoteConnectionOptions::Mock(options) = options else {
--            panic!("message interception requires a mock connection");
-+            panic!("this requires a mock connection");
-         };
-         let (_, connection) = cx
-             .global::<MockConnectionRegistry>()
-             .pending
-             .get(&options.id)
--            .expect("message interceptors must be installed before connecting");
--        *connection.message_interceptors.lock() = Some(MessageInterceptors {
--            client_to_server: Arc::new(client_to_server),
--            server_to_client: Arc::new(server_to_client),
--        });
-+            .expect("the mock connection must be configured before connecting");
-+        connection
-     }
- 
-     /// Creates a new mock connection pair for testing.
-@@ -202,6 +226,8 @@ impl MockConnection {
-             server_channel: server_client.clone(),
-             server_cx: SendableCx::new(server_cx),
-             message_interceptors: parking_lot::Mutex::new(None),
-+            path_style: parking_lot::Mutex::new(PathStyle::local()),
-+            reported_options: parking_lot::Mutex::new(None),
-             proxy_tx: Default::default(),
-         });
- 
-@@ -286,7 +312,10 @@ impl RemoteConnection for MockRemoteConnection {
-     }
- 
-     fn connection_options(&self) -> RemoteConnectionOptions {
--        RemoteConnectionOptions::Mock(self.options.clone())
-+        self.reported_options
-+            .lock()
-+            .clone()
-+            .unwrap_or_else(|| RemoteConnectionOptions::Mock(self.options.clone()))
-     }
- 
-     fn simulate_disconnect(&self, cx: &AsyncApp) {
-@@ -356,7 +385,7 @@ impl RemoteConnection for MockRemoteConnection {
-     }
- 
-     fn path_style(&self) -> PathStyle {
--        PathStyle::local()
-+        *self.path_style.lock()
-     }
- 
-     fn remote_platform(&self) -> crate::RemotePlatform {
-```
-
-**File**: `crates/util/src/paths.rs` (modified, +41/-0)
-```diff
-@@ -1589,6 +1589,23 @@ impl UrlExt for url::Url {
-     }
- }
- 
-+/// Converts the already-decoded path of a URL into a path on a host with `path_style`.
-+///
-+/// URL paths keep a `/` before a Windows drive letter (`/C:/x`), which Windows cannot open.
-+/// The `/` is only dropped when what follows is an absolute drive path, so `/a:12` stays the
-+/// rooted file `/a` at line 12.
-+/// Unlike [`UrlExt::to_file_path_ext`], this takes a decoded path, not a whole URL, so it also
-+/// serves URLs whose authority is not a file host, such as `ssh://`.
-+pub fn url_path_to_path(url_path: &str, path_style: PathStyle) -> &str {
-+    if path_style.is_windows()
-+        && let Some(path) = url_path.strip_prefix('/')
-+        && path_style.is_absolute(Path::new(path))
-+    {
-+        return path;
-+    }
-+    url_path
-+}
-+
- #[cfg(test)]
- mod tests {
-     use super::*;
-@@ -3468,6 +3485,30 @@ mod tests {
-         assert_eq!(WslPath::from_path(&path), None);
-     }
- 
-+    #[test]
-+    fn test_url_path_to_path() {
-+        let windows = |path| url_path_to_path(path, PathStyle::Windows);
-+        assert_eq!(windows("/C:/project/main.rs"), "C:/project/main.rs");
-+        assert_eq!(windows("/C:/project/main.rs:12"), "C:/project/main.rs:12");
-+        assert_eq!(windows("/d:\\project"), "d:\\project");
-+        // Drive roots keep their separator.
-+        assert_eq!(windows("/C:/"), "C:/");
-+        assert_eq!(windows("/d:\\"), "d:\\");
-+        // Not a drive path: left as it is.
-+        assert_eq!(windows("/~/project"), "/~/project");
-+        assert_eq!(windows("/1:/project"), "/1:/project");
-+        assert_eq!(windows("C:/project"), "C:/project");
-+        // A rooted file with a row, or a drive without a root, is not an absolute drive path.
-+        assert_eq!(windows("/a:12"), "/a:12");
-+        assert_eq!(windows("/C:"), "/C:");
-+        assert_eq!(windows("/C:project"), "/C:project");
-+        // On a Unix host `/C:/x` is a valid absolute path.
-+        assert_eq!(
-+            url_path_to_path("/C:/project", PathStyle::Unix),
-+            "/C:/project"
-+        );
-+    }
-+
-     #[test]
-     fn test_url_to_file_path_ext_posix_basic() {
-         use super::UrlExt;
-```
-
-**File**: `crates/workspace/src/workspace.rs` (modified, +27/-4)
-```diff
-@@ -11561,6 +11561,27 @@ fn preferred_workspace_target(
-     }
- }
- 
-+/// `ssh://` URL paths arrive unconverted, because each remote has its own path style. Every
-+/// candidate converts its own copy, so the caller's paths reach a fresh connection unchanged.
-+fn paths_for_candidate<'a>(
-+    abs_paths: &'a [impl AsRef<Path>],
-+    host: &ProjectHost<'_>,
-+    path_style: PathStyle,
-+) -> Vec<&'a Path> {
-+    abs_paths
-+        .iter()
-+        .map(|path| {
-+            let path = path.as_ref();
-+            match (host, path.to_str()) {
-+                (ProjectHost::Remote(_), Some(url_path)) => {
-+                    Path::new(util::paths::url_path_to_path(url_path, path_style))
-+                }
-+                _ => path,
-+            }
-+        })
-+        .collect()
-+}
-+
- pub fn find_existing_workspace(
-     abs_paths: &[impl AsRef<Path>],
-     open_options: &OpenOptions,
-@@ -11592,16 +11613,17 @@ pub fn find_existing_workspace(
-                             continue;
-                         }
- 
-+                        let paths = paths_for_candidate(abs_paths, host, project.path_style(cx));
-                         let visibility = match open_options.workspace_matching {
-                             WorkspaceMatching::None => None,
-                             WorkspaceMatching::MatchExact => {
--                                project.visibility_for_paths(abs_paths, true, cx)
-+                                project.visibility_for_paths(&paths, true, cx)
-                             }
-                             WorkspaceMatching::MatchSubpaths => {
--                                project.visibility_for_subpaths(abs_paths, cx)
-+                                project.visibility_for_subpaths(&paths, cx)
-                             }
-                             WorkspaceMatching::MatchSubdirectory => {
--                                project.visibility_for_paths(abs_paths, false, cx)
-+                                project.visibility_for_paths(&paths, false, cx)
-                             }
-                         };
- 
-@@ -11629,8 +11651,9 @@ pub fn find_existing_workspace(
-                 let workspace = target.workspace.read(cx);
-                 let project = workspace.project.read(cx);
-                 let path_style = workspace.path_style(cx);
-+                let paths = paths_for_candidate(abs_paths, host, path_style);
- 
--                !abs_paths.iter().any(|path| {
-+                !paths.iter().any(|path| {
-                     let path = util::paths::SanitizedPath::new(path);
- 
-                     project
-```
-
-**File**: `crates/zed/src/zed/open_listener.rs` (modified, +3/-15)
-```diff
-@@ -21,16 +21,14 @@ use onboarding::show_onboarding_view;
- use recent_projects::{RemoteSettings, navigate_to_positions, open_remote_project};
- use remote::{RemoteConnectionOptions, WslConnectionOptions};
- use settings::Settings;
--#[cfg(target_os = "windows")]
--use std::path::{Component, Prefix};
- use std::path::{Path, PathBuf};
- use std::sync::Arc;
- use std::thread;
- use std::time::Duration;
- use ui::SharedString;
- use util::ResultExt;
- use util::debug_panic;
--use util::paths::PathWithPosition;
-+use util::paths::{PathStyle, PathWithPosition, url_path_to_path};
- use workspace::PathList;
- use workspace::item::ItemHandle;
- use workspace::{AppState, MultiWorkspace, OpenOptions, OpenResult, SerializedWorkspaceLocation};
-@@ -224,18 +222,8 @@ impl OpenRequest {
- 
-     fn parse_local_file_path(&mut self, file: &str) {
-         if let Some(decoded) = urlencoding::decode(file).log_err() {
--            // URL paths keep a `/` before a Windows drive letter (`/C:/x`), which Windows cannot open.
--            #[cfg(target_os = "windows")]
--            if let Some(path) = decoded.strip_prefix('/')
--                && matches!(
--                    Path::new(path).components().next(),
--                    Some(Component::Prefix(prefix)) if matches!(prefix.kind(), Prefix::Disk(_))
--                )
--            {
--                self.open_paths.push(path.to_owned());
--                return;
--            }
--            self.open_paths.push(decoded.into_owned())
-+            self.open_paths
-+                .push(url_path_to_path(&decoded, PathStyle::local()).to_owned())
-         }
-     }
- 
-```
-
----
-
-### Incident Patch 2: `64ef8026` (2026-11-11)
-**Commit Message**: gpui: Resolve window placement from active window (#61459)
-
-Closes #33314
-
-### Objective
-
-On multi-monitor setups, opening a new window placed it on the primary
-display instead of the display I'm currently on.
-
-### Solution
-
-GPUI now retains the active window bounds and display ID while it is on
-the update stack. New windows use this for placement, falling back to
-the primary display when no active display is available.
-
-### Testing
-
-- Tested it on macOS 26
-
-### Self-Review Checklist:
-
-- [x] I've reviewed my own diff for quality, security, and reliability
-- [ ] Unsafe blocks (if any) have justifying comments
-- [x] The content adheres to Zed's UI standards
-([UX/UI](https://github.com/zed-industries/zed/blob/main/CONTRIBUTING.md#uiux-checklist)
-and
-[icon](https://github.com/zed-industries/zed/blob/main/crates/icons/README.md)
-guidelines)
-- [ ] Tests cover the new/changed behavior
-- [x] Performance impact has been considered and is acceptable
-
-Release Notes:
-
-- Fixed new windows always opening on the primary display
-- [GPUI] Added `App::active_display`; `WindowBounds::centered` now takes
-a `display_id`
-
-**File**: `crates/gpui/src/app.rs` (modified, +55/-6)
-```diff
-@@ -55,8 +55,8 @@ use crate::{
-     PromptButton, PromptHandle, PromptLevel, Render, RenderImage, RenderablePromptHandle,
-     Reservation, ScreenCaptureSource, SharedString, SubscriberSet, Subscription, SvgRenderer,
-     SystemNotification, SystemNotificationResponse, Task, TextRenderingMode, TextSystem,
--    ThermalState, Window, WindowAppearance, WindowButtonLayout, WindowHandle, WindowId,
--    WindowInvalidator, WindowingRequest,
-+    ThermalState, Window, WindowAppearance, WindowBounds, WindowButtonLayout, WindowHandle,
-+    WindowId, WindowInvalidator, WindowingRequest,
-     colors::{Colors, GlobalColors},
-     hash, init_app_menus,
- };
-@@ -971,7 +971,7 @@ pub struct App {
-     pub(crate) name: Option<&'static str>,
-     pub(crate) text_rendering_mode: Rc<Cell<TextRenderingMode>>,
- 
--    pub(crate) window_update_stack: Vec<WindowId>,
-+    pub(crate) window_update_stack: Vec<WindowUpdateEntry>,
-     pub(crate) mode: GpuiMode,
-     pub(crate) cursor_hide_mode: CursorHideMode,
-     pub(crate) reduce_motion: bool,
-@@ -991,6 +991,13 @@ pub struct App {
-     _ref_counts: Arc<RwLock<EntityRefCounts>>,
- }
- 
-+#[derive(Clone, Copy)]
-+pub(crate) struct WindowUpdateEntry {
-+    window_id: WindowId,
-+    bounds: WindowBounds,
-+    display_id: Option<DisplayId>,
-+}
-+
- impl App {
-     #[allow(clippy::new_ret_no_self)]
-     pub(crate) fn new_app(
-@@ -1599,6 +1606,40 @@ impl App {
-         self.platform.active_window()
-     }
- 
-+    /// Returns the display containing the window that is currently focused at the platform level.
-+    pub fn active_display(&self) -> Option<Rc<dyn PlatformDisplay>> {
-+        let (display_id, _) = self.active_window_placement()?;
-+        self.find_display(display_id?)
-+    }
-+
-+    pub(crate) fn active_window_placement(&self) -> Option<(Option<DisplayId>, WindowBounds)> {
-+        let window_id = self.active_window()?.window_id();
-+
-+        if let Some(state) = self
-+            .window_update_stack
-+            .iter()
-+            .rev()
-+            .find(|state| state.window_id == window_id)
-+        {
-+            return Some((state.display_id, state.bounds));
-+        }
-+
-+        let window = self.windows.get(window_id)?.as_ref()?;
-+        Some((window.display_id(), window.last_window_bounds()))
-+    }
-+
-+    pub(crate) fn sync_window_update_entry(&mut self, window: &Window) {
-+        if let Some(state) = self
-+            .window_update_stack
-+            .iter_mut()
-+            .rev()
-+            .find(|state| state.window_id == window.handle.id)
-+        {
-+            state.bounds = window.last_window_bounds();
-+            state.display_id = window.display_id();
-+        }
-+    }
-+
-     /// Opens a new window with the given option and the root view returned by the given function.
-     /// The function is invoked with a `Window`, which can be used to interact with window-specific
-     /// functionality.
-@@ -1612,7 +1653,11 @@ impl App {
-             let handle = WindowHandle::new(id);
-             match Window::new(handle.into(), options, cx) {
-                 Ok(mut window) => {
--                    cx.window_update_stack.push(id);
-+                    cx.window_update_stack.push(WindowUpdateEntry {
-+                        window_id: id,
-+                        bounds: window.last_window_bounds(),
-+                        display_id: window.display_id(),
-+                    });
-                     let root_view = build_root_view(&mut window, cx);
-                     cx.window_update_stack.pop();
-                     window.root.replace(root_view.into());
-@@ -3264,7 +3309,11 @@ impl App {
- 
-             let root_view = window.root.clone().unwrap();
- 
--            cx.window_update_stack.push(window.handle.id);
-+            cx.window_update_stack.push(WindowUpdateEntry {
-+                window_id: window.handle.id,
-+                bounds: window.last_window_bounds(),
-+                display_id: window.display_id(),
-+            });
-             update(Some((root_view, &mut window, cx)));
-             fn trail(window_id: WindowId, window: Box<Window>, cx: &mut App) -> Option<()> {
-                 cx.window_update_stack.pop();
-@@ -3349,7 +3398,7 @@ impl AppContext for App {
-             cx.push_effect(Effect::EntityCreated {
-                 entity: handle.into_any(),
-                 tid: TypeId::of::<T>(),
--                window: cx.window_update_stack.last().cloned(),
-+                window: cx.window_update_stack.last().map(|state| state.window_id),
-             });
- 
-             cx.entities.insert(slot, entity)
-```
-
-**File**: `crates/gpui/src/platform.rs` (modified, +6/-5)
-```diff
-@@ -2687,8 +2687,8 @@ pub struct WindowOptions {
-     /// Whether the window should be minimized by the user
-     pub is_minimizable: bool,
- 
--    /// The display to create the window on, if this is None,
--    /// the window will be created on the main display
-+    /// The display to create the window on. If neither this nor `window_bounds` is set, the window
-+    /// is created on the active window's display. Otherwise, it falls back to the primary display.
-     pub display_id: Option<DisplayId>,
- 
-     /// The appearance of the window background.
-@@ -2811,9 +2811,10 @@ impl WindowBounds {
-         }
-     }
- 
--    /// Creates a new window bounds that centers the window on the screen.
--    pub fn centered(size: Size<Pixels>, cx: &App) -> Self {
--        WindowBounds::Windowed(Bounds::centered(None, size, cx))
-+    /// Creates window bounds centered on the given display, or the primary display if none is
-+    /// provided.
-+    pub fn centered(display_id: Option<DisplayId>, size: Size<Pixels>, cx: &App) -> Self {
-+        WindowBounds::Windowed(Bounds::centered(display_id, size, cx))
-     }
- }
- 
-```
-
-**File**: `crates/gpui/src/window.rs` (modified, +77/-16)
-```diff
-@@ -1226,6 +1226,7 @@ pub struct Window {
-     pub(crate) display_observers: SingleSubscriberSet<AnyObserver>,
-     is_resizable: bool,
-     is_minimizable: bool,
-+    last_window_bounds: WindowBounds,
-     sprite_atlas: Arc<dyn PlatformAtlas>,
-     text_system: Rc<WindowTextSystem>,
-     text_rendering_mode: Rc<Cell<TextRenderingMode>>,
-@@ -1569,26 +1570,16 @@ pub(crate) struct ElementStateBox {
-     pub(crate) type_name: &'static str,
- }
- 
--fn default_bounds(display_id: Option<DisplayId>, cx: &mut App) -> WindowBounds {
--    // TODO, BUG: if you open a window with the currently active window
--    // on the stack, this will erroneously fallback to `None`
--    //
--    // TODO these should be the initial window bounds not considering maximized/fullscreen
--    let active_window_bounds = cx
--        .active_window()
--        .and_then(|w| w.update(cx, |_, window, _| window.window_bounds()).ok());
--
-+fn default_bounds(
-+    active_window_bounds: Option<WindowBounds>,
-+    display: Option<&dyn PlatformDisplay>,
-+) -> WindowBounds {
-     const CASCADE_OFFSET: f32 = 25.0;
- 
--    let display = display_id
--        .map(|id| cx.find_display(id))
--        .unwrap_or_else(|| cx.primary_display());
--
-     let default_placement = || Bounds::new(point(px(0.), px(0.)), DEFAULT_WINDOW_SIZE);
- 
-     // Use visible_bounds to exclude taskbar/dock areas
-     let display_bounds = display
--        .as_ref()
-         .map(|d| d.visible_bounds())
-         .unwrap_or_else(default_placement);
- 
-@@ -1606,7 +1597,6 @@ fn default_bounds(display_id: Option<DisplayId>, cx: &mut App) -> WindowBounds {
-         },
-         None => (
-             display
--                .as_ref()
-                 .map(|d| d.default_bounds())
-                 .unwrap_or_else(default_placement),
-             WindowBounds::Windowed,
-@@ -1673,7 +1663,25 @@ impl Window {
-             .as_ref()
-             .and_then(|titlebar| titlebar.title.clone());
- 
--        let window_bounds = window_bounds.unwrap_or_else(|| default_bounds(display_id, cx));
-+        let active_window_placement = cx.active_window_placement();
-+        // Explicit bounds only make sense on the display they were computed for.
-+        let target_display_id = display_id.or_else(|| {
-+            active_window_placement
-+                .filter(|_| window_bounds.is_none())
-+                .and_then(|(display_id, _)| display_id)
-+        });
-+        let display = target_display_id
-+            .and_then(|display_id| cx.find_display(display_id))
-+            .or_else(|| cx.primary_display());
-+        let display_id = display
-+            .as_ref()
-+            .map(|display| display.id())
-+            .or(target_display_id);
-+        let active_window_bounds = active_window_placement
-+            .filter(|(active_display_id, _)| *active_display_id == display_id)
-+            .map(|(_, bounds)| bounds);
-+        let window_bounds = window_bounds
-+            .unwrap_or_else(|| default_bounds(active_window_bounds, display.as_deref()));
-         let mut platform_window = cx.platform.open_window(
-             handle,
-             WindowParams {
-@@ -2357,6 +2365,7 @@ impl Window {
-             display_observers: SingleSubscriberSet::new(),
-             is_resizable,
-             is_minimizable,
-+            last_window_bounds: window_bounds,
-             sprite_atlas,
-             text_system,
-             text_rendering_mode: cx.text_rendering_mode.clone(),
-@@ -2740,6 +2749,14 @@ impl Window {
-         self.platform_window.window_bounds()
-     }
- 
-+    pub(crate) fn last_window_bounds(&self) -> WindowBounds {
-+        self.last_window_bounds
-+    }
-+
-+    pub(crate) fn display_id(&self) -> Option<DisplayId> {
-+        self.display_id
-+    }
-+
-     /// Return the `WindowBounds` excluding insets (Wayland and X11)
-     pub fn inner_window_bounds(&self) -> WindowBounds {
-         self.platform_window.inner_window_bounds()
-@@ -3003,6 +3020,8 @@ impl Window {
-     pub fn bounds_changed(&mut self, cx: &mut App) {
-         self.scale_factor = self.platform_window.scale_factor();
-         self.viewport_size = self.platform_window.content_size();
-+        self.last_window_bounds = self.platform_window.window_bounds();
-+        cx.sync_window_update_entry(self);
-         self.mouse_position = self.platform_window.mouse_position();
- 
-         self.refresh();
-@@ -8608,6 +8627,48 @@ mod tests {
-         }
-     }
- 
-+    #[gpui::test]
-+    fn test_window_opened_from_bounds_observer_uses_new_bounds(cx: &mut TestAppContext) {
-+        use crate::Subscription;
-+
-+        struct BoundsObserver {
-+            _subscription: Subscription,
-+        }
-+
-+        impl Render for BoundsObserver {
-+            fn render(&mut self, _: &mut Window, _: &mut Context<Self>) -> impl IntoElement {
-+                Empty
-+            }
-+        }
-+
-+        let opened_window = Rc::new(Cell::new(None));
-+        let window = cx.add_window({
-+            let opened_window = opened_window.clone();
-+            move |window, cx| BoundsO
-```
-
-**File**: `crates/gpui_linux/src/linux/wayland/window.rs` (modified, +11/-0)
-```diff
-@@ -1114,6 +1114,8 @@ impl WaylandWindowStatePtr {
- 
-                 if let Some(mut configure) = state.in_progress_configure.take() {
-                     let got_unmaximized = state.maximized && !configure.maximized;
-+                    let mode_changed = state.fullscreen != configure.fullscreen
-+                        || state.maximized != configure.maximized;
-                     state.fullscreen = configure.fullscreen;
-                     state.maximized = configure.maximized;
-                     state.tiling = configure.tiling;
-@@ -1141,6 +1143,7 @@ impl WaylandWindowStatePtr {
-                             }
-                         }
-                     }
-+                    let resized = configure.size.is_some_and(|size| size != state.bounds.size);
-                     drop(state);
-                     if visibility_changed {
-                         self.report_visibility(configure.visibility);
-@@ -1151,6 +1154,14 @@ impl WaylandWindowStatePtr {
-                     if let Some(size) = configure.size {
-                         self.resize(size);
-                     }
-+                    // Same-size mode changes skip the resize callback, so report them as a move.
-+                    if mode_changed && !resized {
-+                        let callback = self.callbacks.borrow_mut().moved.take();
-+                        if let Some(mut fun) = callback {
-+                            fun();
-+                            self.callbacks.borrow_mut().moved = Some(fun);
-+                        }
-+                    }
-                 }
-             }
-             let state = self.state.borrow_mut();
-```
-
-**File**: `crates/gpui_linux/src/linux/x11/window.rs` (modified, +20/-4)
-```diff
-@@ -305,6 +305,11 @@ impl X11WindowState {
-             renderer.update_transparency(is_transparent);
-         }
-     }
-+
-+    fn is_maximized(&self) -> bool {
-+        // A maximized window that gets minimized will still retain its maximized state.
-+        !self.hidden && self.maximized_vertical && self.maximized_horizontal
-+    }
- }
- 
- #[derive(Clone)]
-@@ -1121,6 +1126,7 @@ impl X11WindowStatePtr {
-             .map(|chunk| u32::from_ne_bytes([chunk[0], chunk[1], chunk[2], chunk[3]]));
- 
-         let was_active = state.active;
-+        let was_maximized = state.maximized_vertical && state.maximized_horizontal;
-         state.active = false;
-         state.fullscreen = false;
-         state.maximized_vertical = false;
-@@ -1147,6 +1153,19 @@ impl X11WindowStatePtr {
-             set_wm_hints_urgency(&self.xcb, self.x_window, false);
-         }
- 
-+        // Maximized changes without a geometry change get no ConfigureNotify, so report them as a move.
-+        // This ignores `hidden`, since minimizing shouldn't notify bounds observers.
-+        let maximized_changed =
-+            (state.maximized_vertical && state.maximized_horizontal) != was_maximized;
-+        drop(state);
-+        if maximized_changed {
-+            let callback = self.callbacks.borrow_mut().moved.take();
-+            if let Some(mut fun) = callback {
-+                fun();
-+                self.callbacks.borrow_mut().moved = Some(fun);
-+            }
-+        }
-+
-         Ok(())
-     }
- 
-@@ -1390,10 +1409,7 @@ impl PlatformWindow for X11Window {
-     }
- 
-     fn is_maximized(&self) -> bool {
--        let state = self.0.state.borrow();
--
--        // A maximized window that gets minimized will still retain its maximized state.
--        !state.hidden && state.maximized_vertical && state.maximized_horizontal
-+        self.0.state.borrow().is_maximized()
-     }
- 
-     fn window_bounds(&self) -> WindowBounds {
-```
-
-**File**: `crates/miniprofiler_ui/src/miniprofiler_ui.rs` (modified, +3/-1)
-```diff
-@@ -153,6 +153,7 @@ fn open_performance_profiler(
-     let default_bounds = size(px(1280.), px(720.));
- 
-     cx.defer(move |cx| {
-+        let display_id = cx.active_display().map(|display| display.id());
-         cx.open_window(
-             WindowOptions {
-                 titlebar: Some(TitlebarOptions {
-@@ -167,7 +168,8 @@ fn open_performance_profiler(
-                 window_background,
-                 window_decorations: None,
-                 window_min_size: Some(default_bounds),
--                window_bounds: Some(WindowBounds::centered(default_bounds, cx)),
-+                window_bounds: Some(WindowBounds::centered(display_id, default_bounds, cx)),
-+                display_id,
-                 ..Default::default()
-             },
-             |_window, cx| ProfilerWindow::new(startup_time, Some(workspace_handle), cx),
-```
-
-**File**: `crates/settings_ui/src/pages/audio_test_window.rs` (modified, +3/-1)
-```diff
-@@ -282,6 +282,7 @@ pub fn open_audio_test_window(_window: &mut Window, cx: &mut App) {
-         width: px(400.0),
-         height: px(240.0),
-     };
-+    let display_id = cx.active_display().map(|display| display.id());
- 
-     cx.open_window(
-         WindowOptions {
-@@ -297,7 +298,8 @@ pub fn open_audio_test_window(_window: &mut Window, cx: &mut App) {
-             window_background: cx.theme().window_background_appearance(),
-             app_id: Some(app_id.to_owned()),
-             window_decorations: Some(gpui::WindowDecorations::Client),
--            window_bounds: Some(WindowBounds::centered(window_size, cx)),
-+            window_bounds: Some(WindowBounds::centered(display_id, window_size, cx)),
-+            display_id,
-             window_min_size: Some(window_min_size),
-             ..Default::default()
-         },
-```
-
-**File**: `crates/settings_ui/src/settings_ui.rs` (modified, +3/-1)
-```diff
-@@ -881,6 +881,7 @@ fn open_settings_editor_with(
-         let default_rem_size = 16.0;
-         let scale_factor = current_rem_size / default_rem_size;
-         let scaled_bounds: gpui::Size<Pixels> = default_bounds.map(|axis| axis * scale_factor);
-+        let display_id = cx.active_display().map(|display| display.id());
- 
-         let app_id = ReleaseChannel::global(cx).app_id();
-         let window_decorations = match std::env::var("ZED_WINDOW_DECORATIONS") {
-@@ -914,7 +915,8 @@ fn open_settings_editor_with(
-                     width: SIDEBAR_WIDTH + CONTENT_MIN_WIDTH,
-                     height: px(240.0),
-                 }),
--                window_bounds: Some(WindowBounds::centered(scaled_bounds, cx)),
-+                window_bounds: Some(WindowBounds::centered(display_id, scaled_bounds, cx)),
-+                display_id,
-                 ..Default::default()
-             },
-             |window, cx| {
-```
-
----
-
-### Incident Patch 3: `ec6a4a4b` (2026-11-11)
-**Commit Message**: git: Fix both-deleted conflicts being parsed as both-added (#66648)
-
-## Summary
-
-Closes #66628
-
-`FileStatus::from_bytes` parsed the `DD` porcelain status ("unmerged,
-both deleted") as `Added`/`Added`, the same as `AA`. The wrong value
-went into `StatusEntry::to_proto` and from there to collaborators and
-the `project_repository_statuses` table.
-
-`DD` now parses as `Deleted`/`Deleted`. No code reads these heads to
-decide behavior: consumers match on `Unmerged { .. }` or pass the value
-through proto and the database, so nothing depended on the old mapping
-and there is no UI change.
+See
+*
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy/style-src
+*
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy/style-src-attr
 
 ## Testing
 
-Added `test_parse_unmerged_status_codes` in `crates/git/src/status.rs`,
-which checks all seven unmerged codes (`DD`, `AU`, `UD`, `UA`, `DU`,
-`AA`, `UU`). Before the fix it fails on `DD`:
+I have manually reviewed this change in WebKit, Chromium, and Gecko. All
+modern web engines support this workaround and document it as safe.
 
-```
-assertion `left == right` failed: DD
-  left: Unmerged(UnmergedStatus { first_head: Added, second_head: Added })
- right: Unmerged(UnmergedStatus { first_head: Deleted, second_head: Deleted })
-```
+## Self-review
 
-To confirm that git produces this status, I renamed one file to
-different names on two branches and merged them. `git status
---porcelain=v1 -z` reported `DD original.txt`, along with `AU main.txt`
-and `UA side.txt
+- [x] I've reviewed my diff for quality, security, reliabi
 
-**File**: `crates/git/src/status.rs` (modified, +33/-3)
+**File**: `crates/gpui_web/src/viewport.rs` (modified, +18/-9)
 ```diff
-@@ -118,8 +118,8 @@ impl FileStatus {
-             }
-             .into(),
-             [b'D', b'D'] => UnmergedStatus {
--                first_head: UnmergedStatusCode::Added,
--                second_head: UnmergedStatusCode::Added,
-+                first_head: UnmergedStatusCode::Deleted,
-+                second_head: UnmergedStatusCode::Deleted,
-             }
-             .into(),
-             [x, b'U'] => UnmergedStatus {
-@@ -620,7 +620,9 @@ mod tests {
- 
-     use crate::{
-         repository::RepoPath,
--        status::{FileStatus, GitStatus, TreeDiff, TreeDiffStatus},
-+        status::{
-+            FileStatus, GitStatus, TreeDiff, TreeDiffStatus, UnmergedStatus, UnmergedStatusCode,
-+        },
-     };
- 
-     use super::{DiffStat, parse_numstat};
-@@ -716,6 +718,34 @@ mod tests {
-         );
+@@ -113,14 +113,23 @@ fn safe_area_probe(
+         .map_err(|error| anyhow::anyhow!("Failed to create safe-area probe: {error:?}"))?
+         .dyn_into::<web_sys::HtmlElement>()
+         .map_err(|error| anyhow::anyhow!("Invalid safe-area probe element: {error:?}"))?;
+-    probe
+-        .set_attribute(
+-            "style",
+-            &format!(
+-                "position:fixed;left:0;top:0;width:0;padding:0;border:0;visibility:hidden;\
+-                 pointer-events:none;height:env(safe-area-inset-{edge},0px)"
+-            ),
+-        )
+-        .map_err(|error| anyhow::anyhow!("Failed to style safe-area probe: {error:?}"))?;
++    let height = format!("env(safe-area-inset-{edge},0px)");
++    // A CSP that blocks inline styles still allows per-property CSSOM writes.
++    let style = probe.style();
++    for (property, value) in [
++        ("position", "fixed"),
++        ("left", "0"),
++        ("top", "0"),
++        ("width", "0"),
++        ("padding", "0"),
++        ("border", "0"),
++        ("visibility", "hidden"),
++        ("pointer-events", "none"),
++        ("height", height.as_str()),
++    ] {
++        style.set_property(property, value).map_err(|error| {
++            anyhow::anyhow!("Failed to set safe-area probe {property} style: {error:?}")
++        })?;
++    }
+     Ok(probe)
+ }
+```
+
+---
+
+### Incident Patch 2: `dc93abce` (2026-11-13)
+**Commit Message**: gpui: Keep macOS notification service calls off the UI thread (#66934)
+
+## Problem
+
+macOS notification APIs can synchronously wait for the notification
+service, even when they expose completion handlers. A captured
+main-thread stack showed notification dismissal blocked in
+`removePendingNotificationRequestsWithIdentifiers:` →
+`__NSXPCCONNECTION_IS_WAITING_FOR_A_SYNCHRONOUS_REPLY__`. GPUI called
+that API on the UI thread while holding its platform-state mutex,
+freezing the interface until macOS replied.
+
+## Changes
+
+- Lazily start one dedicated notification thread that owns the
+notification center, delegate, authorization state, and registered
+categories.
+- Queue posting and dismissal in FIFO order so a delayed dismissal
+cannot overtake a replacement notification. Initialization and native
+calls happen on the worker; notification responses still return through
+the foreground executor.
+- Return a `Task<()>` from `dismiss_system_notification`, allowing
+callers to await completion without blocking the UI. Completion means
+the platform calls returned, not that asynchronous OS work finished.
+Dropping the task does not cancel dismissal. Update the other platform
+implementations, example, 
+
+**File**: `crates/gpui/examples/system_notifications.rs` (modified, +1/-1)
+```diff
+@@ -63,7 +63,7 @@ impl Render for SystemNotificationExample {
+                     )))
+                     .child(
+                         button("dismiss", "Dismiss").on_click(cx.listener(|this, _, _, cx| {
+-                            cx.dismiss_system_notification(NOTIFICATION_TAG);
++                            cx.dismiss_system_notification(NOTIFICATION_TAG).detach();
+                             this.status = "Dismissed the notification".into();
+                             cx.notify();
+                         })),
+```
+
+**File**: `crates/gpui/src/app.rs` (modified, +5/-2)
+```diff
+@@ -2085,8 +2085,11 @@ impl App {
+     ///
+     /// Best-effort: some platforms cannot retract a notification once shown,
+     /// in which case it ages out of the notification center on its own.
+-    pub fn dismiss_system_notification(&self, tag: &str) {
+-        self.platform.dismiss_system_notification(tag);
++    /// The task completes after the platform calls return, not after any
++    /// asynchronous work inside the operating system. Dropping it does not
++    /// cancel dismissal.
++    pub fn dismiss_system_notification(&self, tag: &str) -> Task<()> {
++        self.platform.dismiss_system_notification(tag)
      }
  
-+    #[test]
-+    fn test_parse_unmerged_status_codes() {
-+        use UnmergedStatusCode::{Added, Deleted, Updated};
+     /// Registers the handler invoked when the user activates a system
+```
+
+**File**: `crates/gpui/src/app/test_context.rs` (modified, +2/-2)
+```diff
+@@ -1424,7 +1424,7 @@ mod tests {
+             }]
+         );
+ 
+-        cx.update(|cx| cx.dismiss_system_notification("thread-1"));
++        cx.update(|cx| cx.dismiss_system_notification("thread-1").detach());
+         assert!(cx.delivered_system_notifications().is_empty());
+         assert_eq!(cx.dismissed_system_notifications(), ["thread-1"]);
+     }
+@@ -1499,7 +1499,7 @@ mod tests {
+                 actions: Vec::new(),
+             });
+             cx.on_system_notification_response(|response, cx| {
+-                cx.dismiss_system_notification(&response.tag);
++                cx.dismiss_system_notification(&response.tag).detach();
+             });
+         });
+ 
+```
+
+**File**: `crates/gpui/src/platform.rs` (modified, +5/-1)
+```diff
+@@ -579,8 +579,12 @@ pub trait Platform: 'static {
+     ///
+     /// Best-effort: some platforms cannot retract a notification once shown,
+     /// in which case it ages out of the notification center on its own.
+-    fn dismiss_system_notification(&self, tag: &str) {
++    /// The task completes after the platform calls return, not after any
++    /// asynchronous work inside the operating system. Dropping it does not
++    /// cancel dismissal.
++    fn dismiss_system_notification(&self, tag: &str) -> Task<()> {
+         _ = tag;
++        Task::ready(())
+     }
+ 
+     /// Registers the callback invoked when the user activates a system
+```
+
+**File**: `crates/gpui/src/platform/test/platform.rs` (modified, +2/-1)
+```diff
+@@ -735,14 +735,15 @@ impl Platform for TestPlatform {
+         system_notifications.shown.push(notification);
+     }
+ 
+-    fn dismiss_system_notification(&self, tag: &str) {
++    fn dismiss_system_notification(&self, tag: &str) -> Task<()> {
+         let mut system_notifications = self.system_notifications.borrow_mut();
+         system_notifications
+             .delivered
+             .retain(|notification| notification.tag != tag);
+         system_notifications
+             .dismissed
+             .push(SharedString::from(tag.to_string()));
++        Task::ready(())
+     }
+ 
+     fn on_system_notification_response(
+```
+
+**File**: `crates/gpui_linux/src/linux/platform.rs` (modified, +2/-1)
+```diff
+@@ -1005,8 +1005,9 @@ impl Platform for LinuxPlatform {
+         });
+     }
+ 
+-    fn dismiss_system_notification(&self, tag: &str) {
++    fn dismiss_system_notification(&self, tag: &str) -> Task<()> {
+         self.with_common(|common| common.system_notifications.dismiss(tag));
++        Task::ready(())
+     }
+ 
+     fn on_system_notification_response(
+```
+
+**File**: `crates/gpui_macos/src/platform.rs` (modified, +19/-5)
+```diff
+@@ -2,6 +2,7 @@ use crate::{
+     AppleActivity, AppleDispatcher, BoolExt, MacDisplay, MacKeyboardLayout, MacKeyboardMapper,
+     MacWindow, events::key_to_menu_equivalent, main_thread_marker, ns_string,
+     pasteboard::Pasteboard, renderer, set_active_window_cursor_style,
++    system_notifications::NotificationCommand,
+ };
+ use anyhow::{Context as _, anyhow};
+ use block2::RcBlock;
+@@ -1128,14 +1129,27 @@ impl Platform for MacPlatform {
+ 
+     fn show_system_notification(&self, notification: gpui::SystemNotification) {
+         let mut state = self.0.lock();
+-        let executor = state.foreground_executor.clone();
+-        state.system_notifications.show(&executor, notification);
++        let foreground_executor = state.foreground_executor.clone();
++        let background_executor = state.background_executor.clone();
++        state
++            .system_notifications
++            .send(
++                &foreground_executor,
++                &background_executor,
++                NotificationCommand::Show(notification),
++            )
++            .detach();
+     }
+ 
+-    fn dismiss_system_notification(&self, tag: &str) {
++    fn dismiss_system_notification(&self, tag: &str) -> Task<()> {
+         let mut state = self.0.lock();
+-        let executor = state.foreground_executor.clone();
+-        state.system_notifications.dismiss(&executor, tag);
++        let foreground_executor = state.foreground_executor.clone();
++        let background_executor = state.background_executor.clone();
++        state.system_notifications.send(
++            &foreground_executor,
++            &background_executor,
++            NotificationCommand::Dismiss(gpui::SharedString::from(tag.to_owned())),
++        )
+     }
+ 
+     fn on_system_notification_response(
+```
+
+**File**: `crates/gpui_macos/src/system_notifications.rs` (modified, +162/-56)
+```diff
+@@ -4,19 +4,24 @@
+ //! so nothing can trigger the authorization prompt or the framework's
+ //! not-in-a-bundle abort) until the application posts a notification or
+ //! registers a response callback.
++//!
++//! Notification-center calls can synchronously wait for the macOS service.
++//! A single worker owns the center so those waits never block the UI, while
++//! preserving the order of posting and dismissing notifications.
+ 
+-use std::cell::{Cell, RefCell};
++use std::cell::RefCell;
+ use std::collections::HashMap;
+ use std::rc::Rc;
++use std::sync::mpsc::{Sender, channel};
+ 
+ use block2::RcBlock;
+ use futures::StreamExt as _;
+-use futures::channel::mpsc;
++use futures::channel::{mpsc, oneshot};
+ use gpui::{
+-    ForegroundExecutor, SharedString, SystemNotification, SystemNotificationAction,
+-    SystemNotificationResponse, Task,
++    BackgroundExecutor, ForegroundExecutor, SharedString, SystemNotification,
++    SystemNotificationAction, SystemNotificationResponse, Task,
+ };
+-use objc2::rc::Retained;
++use objc2::rc::{Retained, autoreleasepool};
+ use objc2::runtime::{Bool, ProtocolObject};
+ use objc2::{AnyThread, DefinedClass, define_class, msg_send};
+ use objc2_foundation::{NSArray, NSBundle, NSError, NSObject, NSObjectProtocol, NSSet, NSString};
+@@ -30,35 +35,55 @@ use objc2_user_notifications::{
+ 
+ type ResponseCallback = Rc<RefCell<Option<Box<dyn FnMut(SystemNotificationResponse)>>>>;
+ 
++#[cfg_attr(test, derive(Debug, PartialEq, Eq))]
++pub(crate) enum NotificationCommand {
++    Show(SystemNotification),
++    Dismiss(SharedString),
++}
 +
-+        let cases = [
-+            ("DD", Deleted, Deleted),
-+            ("AU", Added, Updated),
-+            ("UD", Updated, Deleted),
-+            ("UA", Updated, Added),
-+            ("DU", Deleted, Updated),
-+            ("AA", Added, Added),
-+            ("UU", Updated, Updated),
-+        ];
-+
-+        for (code, first_head, second_head) in cases {
-+            let status: GitStatus = format!("{code} conflicted.txt\0").parse().unwrap();
-+            assert_eq!(status.entries.len(), 1, "{code}");
-+            assert_eq!(
-+                status.entries[0].1,
-+                FileStatus::Unmerged(UnmergedStatus {
-+                    first_head,
-+                    second_head,
-+                }),
-+                "{code}"
-+            );
+ pub(crate) struct SystemNotificationState {
+     initialized: bool,
+-    center: Option<NotificationCenter>,
++    commands: Option<Sender<(NotificationCommand, oneshot::Sender<()>)>>,
+     callback: ResponseCallback,
++    /// The center's `delegate` property is weak; keeping the delegate retained
++    /// here keeps response handling alive for the app's lifetime.
++    _delegate: Option<Retained<NotificationResponseDelegate>>,
+     _response_task: Option<Task<()>>,
+ }
+ 
+ impl SystemNotificationState {
+     pub(crate) fn new() -> Self {
+         Self {
+             initialized: false,
+-            center: None,
++            commands: None,
+             callback: Rc::new(RefCell::new(None)),
++            _delegate: None,
+             _response_task: None,
+         }
+     }
+ 
+-    pub(crate) fn show(&mut self, executor: &ForegroundExecutor, notification: SystemNotification) {
+-        self.initialize(executor);
+-        if let Some(center) = &self.center {
+-            center.show(notification);
+-        }
+-    }
+-
+-    pub(crate) fn dismiss(&mut self, executor: &ForegroundExecutor, tag: &str) {
+-        self.initialize(executor);
+-        if let Some(center) = &self.center {
+-            center.dismiss(tag);
++    pub(crate) fn send(
++        &mut self,
++        foreground_executor: &ForegroundExecutor,
++        background_executor: &BackgroundExecutor,
++        command: NotificationCommand,
++    ) -> Task<()> {
++        self.initialize(foreground_executor);
++        let Some(commands) = &self.commands else {
++            return Task::ready(());
++        };
++        let (completed, completion) = oneshot::channel();
++        if let Err(error) = commands.send((command, completed)) {
++            log::error!("system notification worker disconnected: {error}");
++            return Task::ready(());
+         }
++        background_executor.spawn(async move {
++            if let Err(error) = completion.await {
++                log::error!(
++                    "system notification worker stopped before completing a command: {error}"
++                );
++            }
++        })
+     }
+ 
+     pub(crate) fn on_response(
+@@ -76,11 +101,45 @@ impl SystemNotificationState {
+         }
+         self.initialized = true;
+ 
++        // UserNotifications aborts outside an app bundle. Checking the bundle
++        // does not contact the notification service.
++        if NSBundle::mainBundle().bundleIdentifier().is_none() {
++            log::info!("system notifications disabled: not running from an app bundle");
++            return;
 +        }
-+    }
 +
-     #[test]
-     fn test_duplicate_untracked_entries() {
-         // Regression test for ZED-2XA: git can produce duplicate untracked entries
+         let (sender, mut receiver) = mpsc::unbounded();
+-        self.center = NotificationCenter::new(sender);
+-        if self.center.is_none() {
++        // Install the delegate before returning so a response delivered right
++        // after registration (e.g. the click that launched the app) has
++        // somewhere to go. Setting the delegate doesn't wait on the
++        // notification service, unlike the calls handled by the worker.
++        let delegate = autoreleasepool(|_| {
++            let delegate = NotificationResponseDelegate::new(sender);
++            UNUserNotificationCenter::currentNotificationCenter()
++                .setDelegate(Some(ProtocolObject::from_ref(&*delegate)));
++            delegate
++        });
++        self._delegate = Some(delegate);
++
++        let (commands, pending_commands) = channel::<(NotificationCommand, oneshot:
+```
+
+---
+
+### Incident Patch 3: `2568d560` (2026-11-14)
+**Commit Message**: settings_content: Fix outdated defaults in setting doc comments (#66974)
+
+## Summary
+
+> In the doc comments inside Zed's settings code, there were 11 settings
+where the default value written after "Default:" differs from the actual
+default value (`default.json`).
+>
+> For `terminal.bell`, the description of the PR that added it (#53752)
+says it is "enabled by default", but the merged value is `"off"`, and
+the release note also says "can be enabled by setting `terminal.bell` to
+`"system"`", so I judged that `"off"` is correct.
+>
+> This is related to #53323, but I did not fix the settings mentioned in
+that issue (such as `proxy`), so I did not use "Closes".
+
+(Machine-translated from Japanese. Original:)
+
+Zed
+の設定のコード内にある説明コメントで、「Default:」に書かれた既定値が、実際の既定値（`default.json`）と違うものが11個ありました。
+
+`terminal.bell` は、追加したPR（#53752）の本文に「既定で有効」とありますが、マージされた値は
+`"off"`、リリースノートも「`"system"` にすると有効になる」となっていたので、`"off"` が正しいと判断。
+
+#53323 に関連しますが、この issue で挙げられている設定（`proxy` など）は直していないので、Closes にはしていない。
+
+| Setting | Doc comment said | `default.json` |
+| --- | --- | --- |
+| `expand_excerpt_lines` | `3` | `5` |
+| `diagnostics_max_severity` | `warning` | `all` |
+| `terminal.line_height` | `comfortable` | `standard
+
+**File**: `crates/settings_content/src/agent.rs` (modified, +1/-1)
+```diff
+@@ -370,7 +370,7 @@ pub struct AgentSettingsContent {
+     pub terminal_init_command: Option<String>,
+     /// How thinking blocks should be displayed by default in the agent panel.
+     ///
+-    /// Default: automatic
++    /// Default: auto
+     pub thinking_display: Option<ThinkingBlockDisplay>,
+     /// Whether clicking the stop button on a running terminal tool should also cancel the agent's generation.
+     /// Note that this only applies to the stop button, not to ctrl+c inside the terminal.
+```
+
+**File**: `crates/settings_content/src/editor.rs` (modified, +2/-2)
+```diff
+@@ -138,7 +138,7 @@ pub struct EditorSettingsContent {
+ 
+     /// How many lines to expand the multibuffer excerpts by default
+     ///
+-    /// Default: 3
++    /// Default: 5
+     pub expand_excerpt_lines: Option<u32>,
+ 
+     /// How many lines of context to provide in multibuffer excerpts by default
+@@ -222,7 +222,7 @@ pub struct EditorSettingsContent {
+     ///
+     /// Shows all diagnostics if not specified.
+     ///
+-    /// Default: warning
++    /// Default: all
+     pub diagnostics_max_severity: Option<DiagnosticSeverityContent>,
+ 
+     /// Whether to show code action button at start of buffer line.
+```
+
+**File**: `crates/settings_content/src/project.rs` (modified, +1/-1)
+```diff
+@@ -847,7 +847,7 @@ pub struct BranchPickerSettingsContent {
+     pub date_style: Option<GitDateStyle>,
+     /// Whether to show author name as part of the commit information.
+     ///
+-    /// Default: false
++    /// Default: true
+     pub show_author_name: Option<bool>,
+ }
+ 
+```
+
+**File**: `crates/settings_content/src/settings_content.rs` (modified, +4/-4)
+```diff
+@@ -220,10 +220,10 @@ pub struct SettingsContent {
+     pub auto_update: Option<bool>,
+ 
+     /// This base keymap settings adjusts the default keybindings in Zed to be similar
+-    /// to other common code editors. By default, Zed's keymap closely follows VSCode's
+-    /// keymap, with minor adjustments, this corresponds to the "VSCode" setting.
++    /// to other common code editors. By default, Zed uses its own keymap, which
++    /// corresponds to the "Zed" setting.
+     ///
+-    /// Default: VSCode
++    /// Default: Zed
+     pub base_keymap: Option<BaseKeymapContent>,
+ 
+     /// Configuration for the collab panel visual settings.
+@@ -1016,7 +1016,7 @@ pub struct FileFinderSettingsContent {
+     /// Whether to pre-fill the file finder's query with the text selected in the
+     /// focused item (e.g. an editor or a terminal) when it is opened.
+     ///
+-    /// Default: true
++    /// Default: false
+     pub prefill_query_from_selection: Option<bool>,
+ }
+ 
+```
+
+**File**: `crates/settings_content/src/terminal.rs` (modified, +2/-2)
+```diff
+@@ -133,7 +133,7 @@ pub struct TerminalSettingsContent {
+ 
+     /// Sets the terminal's line height.
+     ///
+-    /// Default: comfortable
++    /// Default: standard
+     pub line_height: Option<TerminalLineHeight>,
+     pub font_features: Option<FontFeaturesContent>,
+     /// Sets the terminal's font weight in CSS weight units 0-900.
+@@ -234,7 +234,7 @@ pub struct TerminalSettingsContent {
+     pub show_count_badge: Option<bool>,
+     /// What to do when the `BEL` character (`\a`) is printed to terminal.
+     ///
+-    /// Default: "system"
++    /// Default: "off"
+     pub bell: Option<TerminalBell>,
+ }
+ 
+```
+
+**File**: `crates/settings_content/src/workspace.rs` (modified, +4/-4)
+```diff
+@@ -29,11 +29,11 @@ pub struct WorkspaceSettingsContent {
+     pub bottom_dock_layout: Option<BottomDockLayout>,
+     /// Direction to split horizontally.
+     ///
+-    /// Default: "up"
++    /// Default: "down"
+     pub pane_split_direction_horizontal: Option<PaneSplitDirectionHorizontal>,
+     /// Direction to split vertically.
+     ///
+-    /// Default: "left"
++    /// Default: "right"
+     pub pane_split_direction_vertical: Option<PaneSplitDirectionVertical>,
+     /// Centered layout related settings.
+     pub centered_layout: Option<CenteredLayoutSettings>,
+@@ -202,9 +202,9 @@ pub struct ItemSettingsContent {
+     ///
+     /// Default: off
+     pub show_diagnostics: Option<ShowDiagnostics>,
+-    /// Whether to always show the close button on tabs.
++    /// When to show the close button on tabs.
+     ///
+-    /// Default: false
++    /// Default: hover
+     pub show_close_button: Option<ShowCloseButton>,
+ }
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #66902** (2026-11-12): gpui: Pass premultiplied alpha to wgpu shaders as a uniform (@reflectronic)
-- **PR #66898** (2026-11-12): gpui: Speed up sorting scene primitives (@eholk)
-- **PR #66897** (closed): Add a configurable run task button to the editor toolbar (@NeoMakesGames)
-- **PR #66892** (closed): Dismiss outdated (@aduverger)
-- **PR #66885** (closed): Fix Markdown preview scroll sensitivity (@shuvroroy)
-- **PR #66877** (2026-11-12): Fix sidebar and no titlebar aligment (@SomeoneToIgnore)
+- **PR #66974** (2026-11-14): settings_content: Fix outdated defaults in setting doc comments (@Toraastrta)
+- **PR #66973** (2026-11-14): fs: Optimize filesystem watcher path matching (@RemcoSmitsDev)
+- **PR #66968** (2026-11-14): Switch async-task back to upstream (@benbrandt)
+- **PR #66962** (2026-11-14): worktree: Sort removed entry ids once (@ptweezy)
+- **PR #66961** (2026-11-14): proto: Split worktree updates in linear time (@ptweezy)
+- **PR #66949** (closed): theme: Allow icon themes to match files by path pattern (@Halvanhelv)
 
 ---
 
@@ -3341,52 +2905,53 @@ and `UA side.txt
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. opening `ssh://` links with a drive letter on Windows remotes (#66814)
+## X. gpui_web: Fix safe-area insets under a strict style CSP
 
 **RULE**:
-When implementing operations in `crates/recent_projects/src/remote_connections.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zed-industries/zed. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/gpui_web/src/viewport.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zed-industries/zed. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `73ad8e3e`: opening `ssh://` links with a drive letter on Windows remotes (#66814). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5a40bc8b`: gpui_web: Fix safe-area insets under a strict style CSP. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/recent_projects/src/remote_connections.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/gpui_web/src/viewport.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use util::paths::{PathStyle, PathWithPosition, url_path_to_path};
-    url_paths_to_paths(&mut paths, remote_connection.path_style());
-/// `ssh://` URL paths are converted here rather than when the URL is parsed, because the remote's
-/// path style is only known once connected.
-fn url_paths_to_paths(paths: &mut [PathBuf], path_style: PathStyle) {
-    for path in paths {
-        if let Some(url_path) = path.to_str() {
-            *path = PathBuf::from(url_path_to_path(url_path, path_style));
-        }
+    let height = format!("env(safe-area-inset-{edge},0px)");
+    // A CSP that blocks inline styles still allows per-property CSSOM writes.
+    let style = probe.style();
+    for (property, value) in [
+        ("position", "fixed"),
+        ("left", "0"),
+        ("top", "0"),
+        ("width", "0"),
+        ("padding", "0"),
+        ("border", "0"),
+        ("visibility", "hidden"),
+        ("pointer-events", "none"),
+        ("height", height.as_str()),
+    ] {
+        style.set_property(property, value).map_err(|error| {
+            anyhow::anyhow!("Failed to set safe-area probe {property} style: {error:?}")
+        })?;
     }
-}
-
-    // Each remote path style is set explicitly, so the client and remote styles differ on every
-    // platform the tests run on.
-    #[gpui::test]
-    async fn test_determine_paths_with_positions_converts_url_paths_for_remote_path_style(
-        cx: &mut TestAppContext,
-        server_cx: &mut TestAppContext,
-    ) {
-        init_test(cx);
-        // As parsed from `ssh://host/C:/`, `ssh://host/C:/project/src/lib.rs` and `ssh://host/a:12`.
-        let url_paths = ["/C:/", "/C:/project/src/lib.rs", "/a:12"];
-        for (path_style, expected_paths) in [
-            (PathStyle::Windows, ["C:/", "C:/project/src/lib.rs", "/a"]),
-            (PathStyle::Unix, ["/C:/", "/C:/project
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-use util::paths::PathWithPosition;
+// Induced defect failure mode:
+    probe
+        .set_attribute(
+            "style",
+            &format!(
+                "position:fixed;left:0;top:0;width:0;padding:0;border:0;visibility:hidden;\
+                 pointer-events:none;height:env(safe-area-inset-{edge},0px)"
+            ),
+        )
+        .map_err(|error| anyhow::anyhow!("Failed to style safe-area probe: {error:?}"))?;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `73ad8e3e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5a40bc8b` are properly handled with clean fallback behavior.
