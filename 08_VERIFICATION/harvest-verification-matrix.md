@@ -9788,3 +9788,7 @@
 | `CYCLE-20261114-ZKIK` | `2026-11-14T07:53:22.076Z` | `openai/clip-vit-base-patch32` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md` | Yes (`dd81e331...`) |
 | `CYCLE-20261114-ZRSA` | `2026-11-14T07:53:31.498Z` | `beclab/Olares` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/beclab-olares-learnings.md` | Yes (`303f6140...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T07:54:01.819Z` | `hf-openai-clip-vit-base-patch32` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-01385688` [Domain D] | Yes (`a258f01e...`) |
+| `CYCLE-20261114-F0Z4` | `2026-11-14T08:05:23.248Z` | `sentence-transformers/all-mpnet-base-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md` | Yes (`66574738...`) |
+| `CYCLE-20261114-LSKD` | `2026-11-14T08:10:38.941Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8469` | Yes (`a710a6f1...`) |
+| `CYCLE-20261114-LUER` | `2026-11-14T08:10:41.331Z` | `typedb/typedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8470` | Yes (`a3e5fcac...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T08:11:05.089Z` | `hf-sentence-transformers-all-mpnet-base-v2` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-6D95F34C` [Domain D] | Yes (`7cf59763...`) |

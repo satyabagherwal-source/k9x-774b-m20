@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T07:54:03.060Z",
-  "total_records": 604,
+  "last_updated": "2026-11-14T08:11:06.045Z",
+  "total_records": 609,
   "domains": {
     "A": {
       "total": 5,
@@ -35,7 +35,7 @@
       ]
     },
     "D": {
-      "total": 294,
+      "total": 297,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -330,7 +330,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-venastine-research-xing4-0-29b-a4b-gguf-learn",
         "domain_intelligence-research-knowledge-intelligence-openai-clip-vit-base-patch32-core-invariants",
         "DOM-D-01385688",
-        "domain_intelligence-research-knowledge-intelligence-hf-openai-clip-vit-base-patch32-learnings-core-i"
+        "domain_intelligence-research-knowledge-intelligence-hf-openai-clip-vit-base-patch32-learnings-core-i",
+        "domain_intelligence-research-knowledge-intelligence-sentence-transformers-all-mpnet-base-v2-core-inv",
+        "DOM-D-6D95F34C",
+        "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-all-mpnet-base-v2-learn"
       ]
     },
     "E": {
@@ -453,7 +456,7 @@
       ]
     },
     "H": {
-      "total": 130,
+      "total": 132,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -584,7 +587,9 @@
         "domain_intelligence-technical-construction-intelligence-lingyired-status-trio-learnings-core-invaria",
         "DOM-H-87566B56",
         "domain_intelligence-technical-construction-intelligence-beclab-olares-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-beclab-olares-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-beclab-olares-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-typedb-typedb-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-typedb-typedb-learnings-core-invariants"
       ]
     },
     "I": {
@@ -7970,8 +7975,8 @@
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "repository": "freenet/freenet-core",
-      "content_hash": "a0c32f146ce0e4e32b9f58cf518919c4468fba9b9d2bb9d274743eaa3addcc1e",
-      "created_at": "2026-11-14T00:25:13.315Z"
+      "content_hash": "d9d076b054a1f453a7f5cc7865a4632a322ac0c684d32bd58e8c78f3b1231d90",
+      "created_at": "2026-11-14T08:10:39.142Z"
     },
     "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants",
@@ -8048,8 +8053,8 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-learnings-technical-construction-intelligence-freenet-freen.md",
       "repository": "freenet-freenet-core-learnings",
-      "content_hash": "09a671fc2002f4dabca432e3622c145cf728344127b062b06569c61dcef40f08",
-      "created_at": "2026-11-13T18:35:49.274Z"
+      "content_hash": "b526fdd9aa10fc3641f85eae2176591f57bf880b0deead580d1b032835d5fb95",
+      "created_at": "2026-11-14T08:11:05.612Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -13050,6 +13055,84 @@
       "repository": "beclab-olares-learnings",
       "content_hash": "ee2fed3214682bf9c0fe16f65341421f1596e0a368d02dd029c2a43e91315111",
       "created_at": "2026-11-14T07:54:02.497Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-sentence-transformers-all-mpnet-base-v2-core-inv": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-sentence-transformers-all-mpnet-base-v2-core-inv",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: sentence-transformers/all-mpnet-base-v2 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sentence-transformers-all-mpnet-base-v2-research-knowledge-intelligence-sente.md",
+      "repository": "sentence-transformers/all-mpnet-base-v2",
+      "content_hash": "95a78a6075f587a4ac0fa62df7960f1b85e99260713122249a0aca73d42d634e",
+      "created_at": "2026-11-14T08:05:23.381Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-typedb-typedb-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-typedb-typedb-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: typedb/typedb Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-typedb-typedb-technical-construction-intelligence-typedb-typedb-core-invariants.md",
+      "repository": "typedb/typedb",
+      "content_hash": "d1e5ef6c4a3f9b6bc6a46009e04d9b716f347c3e9ffc6bd6c4d902cac8ec593f",
+      "created_at": "2026-11-14T08:10:41.533Z"
+    },
+    "DOM-D-6D95F34C": {
+      "record_id": "DOM-D-6D95F34C",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): sentence-transformers/all-mpnet-base-v2",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/sentence-transformers/all-mpnet-base-v2](https://huggingface.co/sentence-transformers/all-mpnet-base-v2))  \n> **Source Version**: `hf-",
+      "content_hash": "7cf59763ba757f42268b745a442bd30d0584658777e8053ed361fb636fe36666",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md`  \n> **Source**: huggingface -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md`  \n> **Source**: huggingface",
+      "provenance": {
+        "source_uri": "project://hf-sentence-transformers-all-mpnet-base-v2/hf-sentence-transformers-all-mpnet-base-v2-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T08:10:44.292Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-sentence-transformers-all-mpnet-base-v2)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-sentence-transformers-all-mpnet-base-v2"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T08:11:05.080Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-all-mpnet-base-v2-learn": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-all-mpnet-base-v2-learn",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-sentence-transformers-all-mpnet-base-v2-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sentence-transformers-all-mpnet-base-v2-learnings-research-knowledge-intellig.md",
+      "repository": "hf-sentence-transformers-all-mpnet-base-v2-learnings",
+      "content_hash": "4e3843bf8bc722745db6bc41341102fba49b461ba0f5fad1bf46dc1b863a29f1",
+      "created_at": "2026-11-14T08:11:05.253Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-typedb-typedb-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-typedb-typedb-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: typedb-typedb-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-typedb-typedb-learnings-technical-construction-intelligence-typedb-typedb-learni.md",
+      "repository": "typedb-typedb-learnings",
+      "content_hash": "7a7a15195ce6350cec0888dbe5ac2f1284c271742ec58fed277f9a45a026bf36",
+      "created_at": "2026-11-14T08:11:06.045Z"
     }
   }
 }

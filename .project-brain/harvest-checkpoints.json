@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-14T07:53:31.534Z",
+  "last_updated": "2026-11-14T08:10:41.341Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1460,14 +1460,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
-      "content_hash": "9e0170ef78910af4491e03bd2e9ad41b535f38b7316eef7beefb818dbab75126",
-      "verified_at": "2026-11-09T02:01:10.171Z",
+      "content_hash": "66574738b74ad9ecc10243822004d51f94036a46ea8f0e496208e8dd827c26a1",
+      "verified_at": "2026-11-14T08:05:23.258Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T02:01:10.171Z"
+      "last_updated": "2026-11-14T08:05:23.258Z"
     },
     "BAAI/bge-reranker-v2-m3": {
       "repository": "BAAI/bge-reranker-v2-m3",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "69ccf0417d267af116c6449252a9869ec23f747b8c4022f131b18375f30eebcf",
-      "verified_at": "2026-11-14T00:25:13.015Z",
+      "content_hash": "a710a6f16d73ae5afc1ac7f0b22a1d64e99031580252451fa3ff6fb9012550e3",
+      "verified_at": "2026-11-14T08:10:38.950Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T00:25:13.015Z"
+      "last_updated": "2026-11-14T08:10:38.950Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -6606,14 +6606,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-typedb-typedb",
-      "content_hash": "a8866ed67004dcfff840c2bc13c614265e78006156da17edee33935621a07baa",
-      "verified_at": "2026-11-13T05:51:35.698Z",
+      "content_hash": "a3e5fcac56e0368773727705f8cea83f4230791a7d93374e2b9a99d69e67b49d",
+      "verified_at": "2026-11-14T08:10:41.340Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T05:51:35.698Z"
+      "last_updated": "2026-11-14T08:10:41.340Z"
     },
     "mfontanini/presenterm": {
       "repository": "mfontanini/presenterm",

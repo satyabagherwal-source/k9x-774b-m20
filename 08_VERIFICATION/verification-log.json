@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-PHYP",
-    "timestamp": "2026-11-13T11:13:49.105Z",
-    "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
-    "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
-    "contentHash": "6dc88efa261b1eee917e20df05bc2d98592f44e0fa396c901d6368826d2f511a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-2XRO",
-    "timestamp": "2026-11-13T11:24:16.117Z",
-    "repository": "BAAI/bge-small-en-v1.5",
-    "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
-    "contentHash": "0b32eff5b765c42e3520bca816c2cbe68d91375e4e064fc5d13fbad0c7ebbdbb",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-38L0",
-    "timestamp": "2026-11-13T11:24:30.132Z",
-    "repository": "flox/flox",
-    "learningId": "learn-github-flox-flox",
-    "contentHash": "8feb434e98741e501d644f894526fce3055ad4124c54f00033cc13e1347ea80c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-3EOL",
     "timestamp": "2026-11-13T11:24:38.037Z",
     "repository": "argoproj/argo-events",
@@ -7492,6 +7447,51 @@
     "contentHash": "303f6140b1a862f02b585a81beb5b0c1be90014f0c90fcc6c32cfec1392e9acd",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-F0Z4",
+    "timestamp": "2026-11-14T08:05:23.248Z",
+    "repository": "sentence-transformers/all-mpnet-base-v2",
+    "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
+    "contentHash": "66574738b74ad9ecc10243822004d51f94036a46ea8f0e496208e8dd827c26a1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-LSKD",
+    "timestamp": "2026-11-14T08:10:38.941Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "a710a6f16d73ae5afc1ac7f0b22a1d64e99031580252451fa3ff6fb9012550e3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-LUER",
+    "timestamp": "2026-11-14T08:10:41.331Z",
+    "repository": "typedb/typedb",
+    "learningId": "learn-github-typedb-typedb",
+    "contentHash": "a3e5fcac56e0368773727705f8cea83f4230791a7d93374e2b9a99d69e67b49d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

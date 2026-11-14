@@ -9821,3 +9821,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-openai-clip-vit-base-patch32` | `https://huggingface.co/openai/clip-vit-base-patch32` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-14T07:53:22.080Z |
 | `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `226652fd` | Multi-dimensional audit evidence | 2026-11-14T07:53:31.518Z |
 | `learn-dom-d-01385688` | `project://hf-openai-clip-vit-base-patch32` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md` | 2026-11-14T07:54:01.819Z |
+| `learn-huggingface-sentence-transformers-all-mpnet-base-v2` | `https://huggingface.co/sentence-transformers/all-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-11-14T08:05:23.251Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `cfed3caa` | Multi-dimensional audit evidence | 2026-11-14T08:10:38.943Z |
+| `learn-github-typedb-typedb` | `https://github.com/typedb/typedb` | `43f63ec0` | Multi-dimensional audit evidence | 2026-11-14T08:10:41.334Z |
+| `learn-dom-d-6d95f34c` | `project://hf-sentence-transformers-all-mpnet-base-v2` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md` | 2026-11-14T08:11:05.089Z |

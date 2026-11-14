@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-14T07:54:03.283Z",
-  "total_verified_learnings": 8507,
+  "last_updated": "2026-11-14T08:11:06.127Z",
+  "total_verified_learnings": 8509,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 17244,
+  "total_items": 17257,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114614,10 +114614,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "repository": "freenet/freenet-core",
-      "source_version": "3e505b65",
-      "content_hash": "a0c32f146ce0e4e32b9f58cf518919c4468fba9b9d2bb9d274743eaa3addcc1e",
+      "source_version": "cfed3caa",
+      "content_hash": "d9d076b054a1f453a7f5cc7865a4632a322ac0c684d32bd58e8c78f3b1231d90",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T00:25:13.315Z"
+      "persisted_at": "2026-11-14T08:10:39.142Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core",
@@ -114626,10 +114626,10 @@
       "relative_path": "08_VERIFICATION/freenet-freenet-core-verification-protocol-empirical-defect-shield-for-freenet-f.md",
       "title": "Verification Protocol: Empirical Defect Shield for freenet/freenet-core",
       "repository": "freenet/freenet-core",
-      "source_version": "3e505b65",
-      "content_hash": "0a6d4feae87ca8238f52ae39b79ec20c7cbd401018266011ab701374d36e6372",
+      "source_version": "cfed3caa",
+      "content_hash": "77d460f371834a027b5f8d535bcf7da9d15617d112f8a6066652ffa1914c1845",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T00:25:13.432Z"
+      "persisted_at": "2026-11-14T08:10:39.222Z"
     },
     "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674": {
       "item_id": "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674",
@@ -114711,9 +114711,9 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "09a671fc2002f4dabca432e3622c145cf728344127b062b06569c61dcef40f08",
+      "content_hash": "b526fdd9aa10fc3641f85eae2176591f57bf880b0deead580d1b032835d5fb95",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T18:35:49.274Z"
+      "persisted_at": "2026-11-14T08:11:05.612Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings",
@@ -114723,9 +114723,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for freenet-freenet-core-learnings",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "240c51c903b67e827e0a523fd58537230de1adb5e38a7b3aa72d4a9bb84b7438",
+      "content_hash": "4929cd7d9dc4ae13d8e5a192bf78258d201b63076400de7a5ab3d365cf329ae2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T18:35:49.414Z"
+      "persisted_at": "2026-11-14T08:11:05.694Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -218977,14 +218977,19 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "3e505b65",
-      "content_hash": "69ccf0417d267af116c6449252a9869ec23f747b8c4022f131b18375f30eebcf",
+      "source_version": "cfed3caa",
+      "content_hash": "a710a6f16d73ae5afc1ac7f0b22a1d64e99031580252451fa3ff6fb9012550e3",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
         {
           "number": 8411,
           "title": "raise the QUIC-native wire floor to 0.2.158",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8469,
+          "title": "release 0.2.157",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -218993,7 +218998,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T00:25:12.847Z",
+      "verified_at": "2026-11-14T08:10:38.842Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -225546,6 +225551,202 @@
       "content_hash": "f35355fee21348fb824dc3b22d801ad37bb1ab3d6f073994e8b78a53f8cd9e6a",
       "domain_letter": "K",
       "persisted_at": "2026-11-14T07:54:02.611Z"
+    },
+    "learn-huggingface-sentence-transformers-all-mpnet-base-v2": {
+      "learning_id": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "sentence-transformers/all-mpnet-base-v2",
+      "repository": "sentence-transformers/all-mpnet-base-v2",
+      "slug": "hf-sentence-transformers-all-mpnet-base-v2",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/sentence-transformers/all-mpnet-base-v2",
+      "source_version": "hf-sentence-transformers-all-mpnet-base-v2",
+      "content_hash": "66574738b74ad9ecc10243822004d51f94036a46ea8f0e496208e8dd827c26a1",
+      "dossier_path": "07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T08:05:23.086Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-sentence-transformers-all-mpnet-base-v2-core-inv": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-sentence-transformers-all-mpnet-base-v2-core-inv",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sentence-transformers-all-mpnet-base-v2-research-knowledge-intelligence-sente.md",
+      "title": "Research & Knowledge Intelligence: sentence-transformers/all-mpnet-base-v2 Core Invariants",
+      "repository": "sentence-transformers/all-mpnet-base-v2",
+      "source_version": "hf-sentence-transformers-all-mpnet-base-v2",
+      "content_hash": "95a78a6075f587a4ac0fa62df7960f1b85e99260713122249a0aca73d42d634e",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T08:05:23.381Z"
+    },
+    "rule-8469": {
+      "learning_id": "rule-8469",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8469,
+      "title": "release 0.2.157",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "cfed3caa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T08:10:38.842Z"
+    },
+    "candidate_directive-release-0-2-157": {
+      "item_id": "candidate_directive-release-0-2-157",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-LSNZ-release-0-2-157.md",
+      "title": "release 0.2.157",
+      "repository": "freenet/freenet-core",
+      "source_version": "cfed3caa",
+      "content_hash": "56ddd9c110de39416ac854ce86045559b270fc11eeb8e68916389c194d271628",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T08:10:39.076Z"
+    },
+    "learn-github-typedb-typedb": {
+      "learning_id": "learn-github-typedb-typedb",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "typedb/typedb",
+      "repository": "typedb/typedb",
+      "slug": "typedb-typedb",
+      "platform": "github",
+      "source_url": "https://github.com/typedb/typedb",
+      "source_version": "43f63ec0",
+      "content_hash": "a3e5fcac56e0368773727705f8cea83f4230791a7d93374e2b9a99d69e67b49d",
+      "dossier_path": "07_PROJECT_LEARNING/typedb-typedb-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/typedb-typedb-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8470,
+          "title": "Update error messages & a missed warning on usages of try blocks in write stages",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T08:10:41.225Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8470": {
+      "learning_id": "rule-8470",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8470,
+      "title": "Update error messages & a missed warning on usages of try blocks in write stages",
+      "source_url": "https://github.com/typedb/typedb",
+      "source_version": "43f63ec0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T08:10:41.225Z"
+    },
+    "candidate_directive-update-error-messages-a-missed-warning-on-usages-of-try-blocks-in-write-stages": {
+      "item_id": "candidate_directive-update-error-messages-a-missed-warning-on-usages-of-try-blocks-in-write-stages",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MDEZ-update-error-messages-a-missed-warning-on-usages-of-try-blocks-in-write-stages.md",
+      "title": "Update error messages & a missed warning on usages of try blocks in write stages",
+      "repository": "typedb-typedb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "90f90eb4400e6d496f9b7b6da3825baaee7cebbb5a97fbc9033a20270b479513",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T08:11:05.975Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-typedb-typedb-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-typedb-typedb-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-typedb-typedb-technical-construction-intelligence-typedb-typedb-core-invariants.md",
+      "title": "Technical Construction Intelligence: typedb/typedb Core Invariants",
+      "repository": "typedb/typedb",
+      "source_version": "43f63ec0",
+      "content_hash": "d1e5ef6c4a3f9b6bc6a46009e04d9b716f347c3e9ffc6bd6c4d902cac8ec593f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T08:10:41.533Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-typedb-typedb": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-typedb-typedb",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/typedb-typedb-verification-protocol-empirical-defect-shield-for-typedb-typedb.md",
+      "title": "Verification Protocol: Empirical Defect Shield for typedb/typedb",
+      "repository": "typedb/typedb",
+      "source_version": "43f63ec0",
+      "content_hash": "b57338b1fbc9e4e2e8023c0acd05199972961b3726953bf5eb46b7bcfa517e0e",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T08:10:41.603Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-all-mpnet-base-v2-learn": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-all-mpnet-base-v2-learn",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sentence-transformers-all-mpnet-base-v2-learnings-research-knowledge-intellig.md",
+      "title": "Research & Knowledge Intelligence: hf-sentence-transformers-all-mpnet-base-v2-learnings Core Invariants",
+      "repository": "hf-sentence-transformers-all-mpnet-base-v2-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4e3843bf8bc722745db6bc41341102fba49b461ba0f5fad1bf46dc1b863a29f1",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T08:11:05.253Z"
+    },
+    "candidate_directive-build-release-0-2-157": {
+      "item_id": "candidate_directive-build-release-0-2-157",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MD2O-build-release-0-2-157.md",
+      "title": "build: release 0.2.157",
+      "repository": "freenet-freenet-core-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4c0a4939c07090c1ca842560c388da8757c391ade3bebe34b86fe8f94aab1a53",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T08:11:05.532Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-typedb-typedb-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-typedb-typedb-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-typedb-typedb-learnings-technical-construction-intelligence-typedb-typedb-learni.md",
+      "title": "Technical Construction Intelligence: typedb-typedb-learnings Core Invariants",
+      "repository": "typedb-typedb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7a7a15195ce6350cec0888dbe5ac2f1284c271742ec58fed277f9a45a026bf36",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T08:11:06.045Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-typedb-typedb-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-typedb-typedb-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/typedb-typedb-learnings-verification-protocol-empirical-defect-shield-for-typedb.md",
+      "title": "Verification Protocol: Empirical Defect Shield for typedb-typedb-learnings",
+      "repository": "typedb-typedb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3c188fe3b5ce2da63b7d66bdcc459435470b52f9c6e92e8316e98c9b2972617c",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T08:11:06.127Z"
     }
   },
   "ai-builder-brain": {

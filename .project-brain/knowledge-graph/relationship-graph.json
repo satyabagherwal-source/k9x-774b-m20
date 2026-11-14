@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-14T07:54:01.818Z",
+  "updated_at": "2026-11-14T08:11:05.088Z",
   "statistics": {
-    "total_nodes": 175,
+    "total_nodes": 176,
     "total_edges": 94,
     "domain_distribution": {
-      "D": 134,
+      "D": 135,
       "M": 1,
       "H": 15,
       "J": 8,
@@ -3920,6 +3920,28 @@
       ],
       "created_at": "2026-11-14T07:54:01.817Z",
       "updated_at": "2026-11-14T07:54:01.817Z"
+    },
+    "DOM-D-6D95F34C": {
+      "id": "DOM-D-6D95F34C",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): sentence-transformers/all-mpnet-base-v2",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md`  \n> **Source**: huggingface -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md`  \n> **Source**: huggingface",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-sentence-transformers-all-mpnet-base-v2/hf-sentence-transformers-all-mpnet-base-v2-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T08:10:44.292Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-sentence-transformers-all-mpnet-base-v2)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-14T08:11:05.087Z",
+      "updated_at": "2026-11-14T08:11:05.087Z"
     }
   },
   "edges": [

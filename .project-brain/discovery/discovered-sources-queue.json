@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T07:54:01.831Z",
+  "updated_at": "2026-11-14T08:11:05.827Z",
   "stats": {
-    "total_discovered": 3194,
-    "approved_pending_harvest": 2989,
+    "total_discovered": 3196,
+    "approved_pending_harvest": 2991,
     "harvested_count": 0,
     "rejected_count": 205,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2983,
+      "COMMUNITY_AND_EXPERT": 2985,
       "OFFICIAL_DOCUMENTATION": 116,
       "STANDARDS_AND_SPECIFICATIONS": 81,
       "ENGINEERING_BLOGS": 1,
@@ -68853,6 +68853,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md",
         "fileName": "hf-openai-clip-vit-base-patch32-learnings.md"
+      }
+    },
+    "SRC-E93F0F3439C0": {
+      "id": "SRC-E93F0F3439C0",
+      "url": "https://huggingface.co/sentence-transformers/all-mpnet-base-v2",
+      "title": "https://huggingface.co/sentence-transformers/all-mpnet-base-v2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T08:11:05.098Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md",
+        "fileName": "hf-sentence-transformers-all-mpnet-base-v2-learnings.md"
+      }
+    },
+    "SRC-4283761D674F": {
+      "id": "SRC-4283761D674F",
+      "url": "https://cloudsmith.io/~typedb/repos/public-release/packages/?q=name%3A%5Etypedb-all+version%3A3.15.0-rc1",
+      "title": "https://cloudsmith.io/~typedb/repos/public-release/packages/?q=name%3A%5Etypedb-all+version%3A3.15.0-rc1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T08:11:05.827Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/typedb-typedb-learnings.md",
+        "fileName": "typedb-typedb-learnings.md"
       }
     }
   }

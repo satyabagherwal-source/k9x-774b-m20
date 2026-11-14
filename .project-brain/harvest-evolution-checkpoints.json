@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T07:54:03.390Z",
+  "last_updated": "2026-11-14T08:11:06.208Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-14T05:32:15.509Z",
@@ -558,9 +558,9 @@
       "staged_for_review": 1
     },
     "typedb-typedb-learnings.md": {
-      "processed_at": "2026-11-13T05:52:03.014Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-14T08:11:05.776Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "simonschubert-linuxcommandlibrary-learnings.md": {
       "processed_at": "2026-11-11T19:53:51.695Z",
@@ -603,7 +603,7 @@
       "staged_for_review": 1
     },
     "freenet-freenet-core-learnings.md": {
-      "processed_at": "2026-11-13T18:35:48.934Z",
+      "processed_at": "2026-11-14T08:11:05.366Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2491,9 +2491,14 @@
       "processed_at": "2026-11-14T07:54:01.819Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-sentence-transformers-all-mpnet-base-v2-learnings.md": {
+      "processed_at": "2026-11-14T08:11:05.089Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 798,
-  "total_canonical_promoted": 179,
-  "total_staged_for_review": 616
+  "total_dossiers_evaluated": 801,
+  "total_canonical_promoted": 180,
+  "total_staged_for_review": 618
 }
