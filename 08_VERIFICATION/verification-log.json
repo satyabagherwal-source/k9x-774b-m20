@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-79C4",
-    "timestamp": "2026-11-13T05:23:42.724Z",
-    "repository": "sxyazi/yazi",
-    "learningId": "learn-github-sxyazi-yazi",
-    "contentHash": "fe63c50f1962d6b6a21be4c84c66a3913f469d60b79943934756c16da89d6efd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-X2BI",
-    "timestamp": "2026-11-13T05:43:46.686Z",
-    "repository": "unsloth/flint-GGUF",
-    "learningId": "learn-huggingface-unsloth-flint-gguf",
-    "contentHash": "db2e3a5ac711b87b256d7d21ef335acb754b70695d0578089b5cb09d4fc027a5",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-6SU2",
-    "timestamp": "2026-11-13T05:51:20.954Z",
-    "repository": "MiniMaxAI/MiniMax-M3.1-Flash",
-    "learningId": "learn-huggingface-minimaxai-minimax-m3-1-flash",
-    "contentHash": "40caac05bfc42611dbe3bc0b8ed7da109700e55433cb68448742e5a2a12d7a80",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-7478",
-    "timestamp": "2026-11-13T05:51:35.684Z",
-    "repository": "typedb/typedb",
-    "learningId": "learn-github-typedb-typedb",
-    "contentHash": "a8866ed67004dcfff840c2bc13c614265e78006156da17edee33935621a07baa",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-QW2H",
     "timestamp": "2026-11-13T06:06:58.265Z",
     "repository": "wquguru/cicada",
@@ -7490,6 +7430,66 @@
     "repository": "zeromicro/go-zero",
     "learningId": "learn-github-zeromicro-go-zero",
     "contentHash": "c58b3d29bd53a77cdb91ea087fbcda7e67caeec076ec97b37c1fd0db261a8eb0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-L3CN",
+    "timestamp": "2026-11-14T02:06:11.255Z",
+    "repository": "deepseek-ai/DeepSeek-V4-Pro",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
+    "contentHash": "0a5da3600d6f3df933a3008ce9624754965d0d993ede8a7becb21aafb22814c5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-L689",
+    "timestamp": "2026-11-14T02:06:14.985Z",
+    "repository": "graphprotocol/graph-node",
+    "learningId": "learn-github-graphprotocol-graph-node",
+    "contentHash": "7362ec6ae50c3795bce5247a109e3c554d50d06afb5a77c419ab26839756e8d6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-LBH0",
+    "timestamp": "2026-11-14T02:06:21.780Z",
+    "repository": "goharbor/harbor",
+    "learningId": "learn-github-goharbor-harbor",
+    "contentHash": "173d139b7688e07773db8f38e0327249cc97e27760e8d1623c687afb6eba5c46",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-LFOP",
+    "timestamp": "2026-11-14T02:06:27.241Z",
+    "repository": "lioensky/VCPToolBox",
+    "learningId": "learn-github-lioensky-vcptoolbox",
+    "contentHash": "bf8378e742a8e5153646614e05b65cbdfbb6d09d964f59658103fdbc259c583e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

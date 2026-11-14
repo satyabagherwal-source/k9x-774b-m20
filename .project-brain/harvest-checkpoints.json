@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-14T01:48:42.091Z",
+  "last_updated": "2026-11-14T02:06:27.252Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1145,14 +1145,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
-      "content_hash": "a29506c7ea5027b30fdc5b570fa3ca7557219e38c11a023519c492cd312fc528",
-      "verified_at": "2026-11-08T22:36:31.450Z",
+      "content_hash": "0a5da3600d6f3df933a3008ce9624754965d0d993ede8a7becb21aafb22814c5",
+      "verified_at": "2026-11-14T02:06:11.266Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T22:36:31.450Z"
+      "last_updated": "2026-11-14T02:06:11.266Z"
     },
     "Tongyi-MAI/Z-Image-Turbo": {
       "repository": "Tongyi-MAI/Z-Image-Turbo",
@@ -4611,14 +4611,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lioensky-vcptoolbox",
-      "content_hash": "d88fc978d7070c1d898b0bc2d20a7b2af30cab812d3d1048f1a678e40887b2b8",
-      "verified_at": "2026-11-13T01:01:36.083Z",
+      "content_hash": "bf8378e742a8e5153646614e05b65cbdfbb6d09d964f59658103fdbc259c583e",
+      "verified_at": "2026-11-14T02:06:27.251Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T01:01:36.083Z"
+      "last_updated": "2026-11-14T02:06:27.251Z"
     },
     "Megabit/Blazorise": {
       "repository": "Megabit/Blazorise",
@@ -9756,14 +9756,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-graphprotocol-graph-node",
-      "content_hash": "d1eb4826ef58785d11a6851393d41b2474564a4db76d782ce4a1002a20605df4",
-      "verified_at": "2026-11-09T22:55:27.053Z",
+      "content_hash": "7362ec6ae50c3795bce5247a109e3c554d50d06afb5a77c419ab26839756e8d6",
+      "verified_at": "2026-11-14T02:06:14.995Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T22:55:27.053Z"
+      "last_updated": "2026-11-14T02:06:14.995Z"
     },
     "hungps/flutter_pokedex": {
       "repository": "hungps/flutter_pokedex",
@@ -10821,14 +10821,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-goharbor-harbor",
-      "content_hash": "3b35e68ee600c29af308e51a03367308387e658024111782a1d0bf088f717a47",
-      "verified_at": "2026-11-11T16:55:57.496Z",
+      "content_hash": "173d139b7688e07773db8f38e0327249cc97e27760e8d1623c687afb6eba5c46",
+      "verified_at": "2026-11-14T02:06:21.790Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T16:55:57.496Z"
+      "last_updated": "2026-11-14T02:06:21.790Z"
     },
     "joreilly/PeopleInSpace": {
       "repository": "joreilly/PeopleInSpace",

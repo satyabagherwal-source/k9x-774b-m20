@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T01:49:14.578Z",
+  "last_updated": "2026-11-14T02:06:56.528Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T21:28:54.085Z",
@@ -433,9 +433,9 @@
       "staged_for_review": 1
     },
     "goharbor-harbor-learnings.md": {
-      "processed_at": "2026-11-11T16:56:20.049Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-14T02:06:55.933Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "unhappychoice-gitlogue-learnings.md": {
       "processed_at": "2026-11-11T17:13:20.305Z",
@@ -2311,9 +2311,19 @@
       "processed_at": "2026-11-14T01:49:13.881Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "graphprotocol-graph-node-learnings.md": {
+      "processed_at": "2026-11-14T02:06:30.258Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "hf-deepseek-ai-deepseek-v4-pro-learnings.md": {
+      "processed_at": "2026-11-14T02:06:55.661Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 735,
-  "total_canonical_promoted": 152,
-  "total_staged_for_review": 578
+  "total_dossiers_evaluated": 738,
+  "total_canonical_promoted": 153,
+  "total_staged_for_review": 580
 }

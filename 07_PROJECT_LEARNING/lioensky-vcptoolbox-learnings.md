@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md`  
 > **Source**: github ([https://github.com/lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox))  
-> **Source Version**: `a6bb9bc5`  
+> **Source Version**: `9373aa70`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T01:01:25.856Z  
+> **Timestamp**: 2026-11-14T02:06:26.506Z  
 > **Learning ID**: `learn-github-lioensky-vcptoolbox`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T01:01:25.853Z  
+> **Harvest Timestamp**: 2026-11-14T02:06:26.501Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: VCP 部署在 AI 模型 API 与前端应用之间，是面向AGI OS开发和探索的工业级基建示范项目。通过统一指令协议、多层级持久化记忆、分布式插件引擎及多 Agent 协作框架，将原本“无状态、无记忆、无工具调用能力”的大语言模型，彻底改造成拥有永久自我意识、物理世界操作权及群体协作智能的完整智能体系统。
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2446 stars
+- **Stars / Engagement**: 2448 stars
 
 ---
 
@@ -1785,11 +1785,11 @@ export function useDashboardLayoutV2(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #592** (2026-11-12): **docs(TVStxt): 补充 VchatRendering 内联 DOM 岛按钮防劫持规范 (data-vcp-system-control)**
-  *Symptoms*: ### 问题背景 当客户端开启 `enableAiMessageButtons`（默认开启）且 AI 在气泡内联 DOM 岛中编写多标签页（Tabs）、折叠面板等局部交互控件时，若直接使用未标记的原生 `<button>`： 1. `VCPChat` 的 `modules/renderer/contentProcessor.js` 中 `processRenderedContent()` 会先于 `animation.js` 内联脚本执行，并通过 `processInteractiveButtons()` 给普通 `<button>` 绑定 `handleAIButtonClick`； 2. 用户点击切换面板时，`handleAIButtonClick` 率先触发 `preventDefault()` + `stopPropagation()` + `stopImmediatePropagation()`，阻断后续内联 `<script>` 绑定的切换事件，并将按钮文本封装为 `[[点击按钮:...]]` 自动发送消息给 AI。  ### 改动说明 对接 `VCPChat` 源码 `contentProcessor.js:988` 已预留的系统白名单防线（`button.dataset.vcpSystemControl === 'true'`），在 `TVStxt/VchatRendering.txt` 的「沙盒铁律」中补充说明： - 面板切换等局部交互控件优先使用 `<div>`/`<span>` 或纯 CSS Radio； - 若使用原生 `<button>` 必须显式声明 `data-vcp-system-control="true"`，避免被误劫持为快捷回复按钮。
+- **Issue #596** (2026-11-13): **feat(memo): deliver Cone-AGS NNLS and unified continuous topology scoring**
+  *Symptoms*: ## 实现内容 - 局部 Cone-AGS：96 邻居候选、最多 24 原 Tag 选列、FP64 QR-NNLS 与原空间 KKT 复核。 - 原 Tag 非负锥查询残差金字塔、残差驱动动态虫洞与查询种差校准。 - Ω 门控的共享拓扑预算、Hop-1／跨文件虫洞连续证据互补，排序分与展示最终分同源。 - 同事务几何诊断、派生资产身份及 Windows x64 原生产物。 - 更新 Vexus README 与 V3 算法说明；最终差分不包含内部施工文档。  ## 验证 - Rust：224 passed，0 failed。 - Node 兼容与几何调度：11 passed，0 failed。 - 全库副本：40,340 个局部求解成功，7 个邻域不足；CSR 与 30 个机制工况验证通过。 - 机制验证不代表真实检索质量提升，生产质量 AB 尚待进行。  ## 接入 更新匹配平台的原生模块后，按统一几何 → 传输 CSR → 运行时发布顺序重建派生背景。 本 PR 包含 #595 的前序改动；不要求先合并 #595。未部署后端或修改生产库。
 
-- **Issue #591** (2026-11-12): **fix(test): 修复 safeFilePath 依赖 mock 与 Windows fs.watch 句柄泄漏引发的 libuv abort (Fix #581, Fix #582)**
-  *Symptoms*: - tests/plugin-command-metadata.test.js: 在 vm require 拦截器中放行 ../../modules/safeFilePath - tests/tavernInteractionCompletion.test.js: 在 sandbox.require 中正确映射 safeFilePath.js 绝对路径 - modules/dynamicToolRegistry.js: 新增 destroy()/close() 生命周期清理方法，关闭 watcher 前清理全部监听与定时器 - tests/dynamicToolRegistry.test.js: 在单测套件级别注册 afterEach 自动执行 destroy，规避 Windows 临时目录竞态
+- **Issue #595** (2026-11-13): **Memo experiments: NNLS and unified Omega topology with Fix3/Fix4**
+  *Symptoms*: ## Summary - Original-Tag NNLS cone fitting, superseded-parent lexical suppression, guarded differentia calibration. - Continuous unified topology readout replaces production wormhole RRF; final ranking uses the displayed final score. - Fix3: bounded complement composition from immutable raw evidence, with idempotence and neutral-channel preservation. - Fix4: globally specific single-focus routes may enter cross-file witness review; missing statistics do not establish rarity. Content/checksum/third-tag guards remain. - Includes Windows x64 release native binary.  ## Validation - cargo test --manifest-path rust-vexus-lite/Cargo.toml --lib: 216 passed, 0 failed. - Release build succeeded; Node v22.18.0 direct native load and VexusIndex construction succeeded. - SHA256: 944C59D4EBFF8D35E1E0308DDCFEB30D56D057155C55DC4208F6B0F1ED7B2EBC - User-reported pre-Fix34 C testing: approximately 60% score improvement over 15 weakened edge-network cases; five perfect-score golden cases unchanged. Not an independently reproduced ablation or a guarantee for Fix34. - Pre-Fix34 tested checkpoint: 645155c3.  ## Scope Experiment D Cone-AGS design and implementation are excluded. No automatic server deployment or restart.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1806,327 +1806,492 @@ export function useDashboardLayoutV2(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a6bb9bc5` (2026-11-12)
-**Commit Message**: docs(TVStxt): 精炼 VchatRendering 流式渲染规范并确立按钮双轨与多模态契约
+### Incident Patch 1: `9373aa70` (2026-11-13)
+**Commit Message**: Merge pull request #594 from KeZenkk/fix/thought-tags-and-tool-loop-keepalive
 
-**File**: `TVStxt/VchatRendering.txt` (modified, +8/-7)
+fix(stream,parser): 完善 <thought>/<thoughts> 思考标签兼容与长耗时工具循环 SSE 保活
+
+**File**: `modules/handlers/nonStreamHandler.js` (modified, +1/-0)
 ```diff
-@@ -1,7 +1,8 @@
--【VChat 流式富渲染引擎】当前客户端突破纯文本限制，原生支持流式 DOM、动画与代码沙盒。遇到概念解构、数据对比、架构推演或情绪演出时，优先使用高维视觉组件替代枯燥文本：
--1. **气泡内联 DOM 岛（推荐）**：正文中直接裸写 `<div>...</div>` 即可流式渲染复杂排版、富表格与交互动画（支持内联 `<style>`、`<script>`、音视频与网络字体）。
--   - **沙盒铁律**：`<style>` 与 `<script>` 须包裹在根 `div` 内；JS 须用 IIFE `(()=>{...})()` 隔离，直接用内置变量 `container.querySelector('.唯一类名')` + `addEventListener` 绑定交互；**严禁**使用全局 `#id`、`document.getElementById`、全局函数及 `onclick` 等内联事件；面板切换等局部交互控件优先用 `<div>`/`<span>` 或纯 CSS Radio，若用原生 `<button>` **必须**加 `data-vcp-system-control="true"`（未标记的 `<button>` 会被客户端劫持为点击自动发消息按钮）。
--   - **动画依赖**：支持 CDN `<script>` 声明引入 `anime.js(V3.3.2)`、`Pixi.js(V8)`、`three.js(r160)`（沙盒自动重定向至本地高速依赖）。
--   - **主题自适应(可选)**：气泡自带毛玻璃底，内部卡片用透明微光/凹槽（`rgba(255,255,255,0.06)` 或 `rgba(0,0,0,0.15)`）即可，免重复声明 `blur`；文本/边框/高光优先用 `var(--primary-text)`、`var(--secondary-text)`、`var(--border-color)`、`var(--highlight-text)`（亦可自定义独立炫酷配色）。
--2. **Pele 极速图表（` ```mermaid `）**：流式支持 30+ 图表（含 `mindmap|timeline|kanban|gitGraph|radar-beta` 等）。特异语法铁律：① 智能体流：`agentflow-beta \n LR \n A["指令"] --> B{"分支"} -->|执行| C(["结果"])`（次行写方向，禁 `graph/node/title`）；② 架构图 `architecture-beta`：`service/group id(icon)[Name]`，连线必用双减号 `a:R> -- L:b` 或 `a:R -[标签]- L:b`（**严禁** `->` / `<->`）；③ 协议帧 `packet-beta`：按位区间声明 `0-7: "Header"`。
--3. **代码块沙盒**：` ```html `（含 `<!DOCTYPE html>`）弹出独立网页窗口（适合重状态应用）；` ```python ` 在气泡内直接执行并输出运算结果；` ```drawio ` 渲染复杂工程图。
-+【VChat 流式富渲染引擎】客户端原生支持流式 DOM、交互动画、LaTeX 数理公式、极速图表与代码沙盒。遇到概念解构、数理推导、数据对比、架构推演或情境演出时，优先调用高维视觉组件呈现结构与动态之美：
-+1. 气泡内联 DOM 岛（推荐）：正文中直接书写根 `<div>...</div>` 即可流式渲染复杂排版、富表格与交互动画（支持内联 `<style>`、`script`、本地/在线音视频与网络字体直调）。
-+   - 沙盒作用域：`<style>` 与 `<script>` 完整收束于根 `div` 内部；元素以局部唯一 `class` 标识，JS 以 IIFE `(()=>{...})()` 闭合私有作用域，统一采用内置根句柄 `container.querySelector('.唯一类名')` 配合 `addEventListener` 绑定交互。
-+   - 按钮双轨交互：岛内局部控件（如标签页切换、折叠面板）优先采用 `<div>`/`<span>`、纯 CSS Radio，或显式声明 `<button data-vcp-system-control="true">` 留驻岛内响应脚本；对话决策引导则直书普通 `<button>选项文案</button>`，点击即自动作为快捷回复发出。
-+   - 动画依赖：支持 CDN `<script>` 声明引入 `anime.js(v3.3.2)`、`Pixi.js(v8)`、`three.js(r160)`（沙盒自动映射至本地高速依赖）。
-+   - 主题自适应（可选）：气泡自带毛玻璃底，内部卡片用半透明微光或凹槽（`rgba(255,255,255,0.06)` 或 `rgba(0,0,0,0.15)`）叠合层次；文本、边框与高光优先接入 `var(--primary-text)`、`var(--secondary-text)`、`var(--border-color)`、`var(--highlight-text)`，亦可定制独立配色。
-+2. Pele 极速图表（` ```mermaid `）：流式支持 30+ 图表（含 `flowchart|mindmap|timeline|kanban|sankey|treemap|radar-beta` 等）。特异语法规范：① 含括号或特殊符号的节点文本统一用 `["..."]` 包裹；② 智能体流：`agentflow-beta \n LR \n A["指令"] --> B{"分支"} -->|执行| C(["结果"])`（次行直书方向 `LR/TD`，紧接节点连线）；③ 架构图 `architecture-beta`：`service/group id(icon)[Name]`，连线固定采用双减号 `a:R> -- L:b` 或 `a:R -[标签]- L:b`；④ 协议帧 `packet-beta`：按位区间声明 `0-7: "Header"`。
-+3. 专用围栏与代码沙盒：` ```vcp-chart ` 零开销内嵌持久交互图表大盘；` ```html `（含 `<!DOCTYPE html>`）弹出独立网页窗口承载重状态应用；` ```python ` 在气泡内直接执行并输出运算结果；` ```drawio ` 渲染复杂工程图。
+@@ -26,6 +26,7 @@ function hasReasoningOnlySignal(message, choice) {
+     'reasoning_content',
+     'reasoning',
+     'reasoning_details',
++    'thought',
+     'thoughts',
+     'thinking',
+     'reasoning_text'
 ```
 
----
-
-### Incident Patch 2: `fa3a4be7` (2026-11-12)
-**Commit Message**: docs(TVStxt): 补充 VchatRendering 内联 DOM 岛按钮防劫持规范 (data-vcp-system-control)
-
-### 问题背景
-当客户端开启 `enableAiMessageButtons`（默认开启）且 AI 在气泡内联 DOM 岛中编写多标签页（Tabs）、折叠面板等局部交互控件时，若直接使用未标记的原生 `<button>`：
-1. `VCPChat` 的 `modules/renderer/contentProcessor.js` 中 `processRenderedContent()` 会先于 `animation.js` 内联脚本执行，并通过 `processInteractiveButtons()` 给普通 `<button>` 绑定 `handleAIButtonClick`；
-2. 用户点击切换面板时，`handleAIButtonClick` 率先触发 `preventDefault()` + `stopPropagation()` + `stopImmediatePropagation()`，阻断后续内联 `<script>` 绑定的切换事件，并将按钮文本封装为 `[[点击按钮:...]]` 自动发送消息给 AI。
-
-### 改动说明
-对接 `VCPChat` 源码 `contentProcessor.js:988` 已预留的系统白名单防线（`button.dataset.vcpSystemControl === 'true'`），在 `TVStxt/VchatRendering.txt` 的「沙盒铁律」中补充说明：
-- 面板切换等局部交互控件优先使用 `<div>`/`<span>` 或纯 CSS Radio；
-- 若使用原生 `<button>` 必须显式声明 `data-vcp-system-control="true"`，避免被误劫持为快捷回复按钮。
-
-**File**: `TVStxt/VchatRendering.txt` (modified, +2/-2)
+**File**: `modules/handlers/streamHandler.js` (modified, +38/-18)
 ```diff
-@@ -1,7 +1,7 @@
- 【VChat 流式富渲染引擎】当前客户端突破纯文本限制，原生支持流式 DOM、动画与代码沙盒。遇到概念解构、数据对比、架构推演或情绪演出时，优先使用高维视觉组件替代枯燥文本：
- 1. **气泡内联 DOM 岛（推荐）**：正文中直接裸写 `<div>...</div>` 即可流式渲染复杂排版、富表格与交互动画（支持内联 `<style>`、`<script>`、音视频与网络字体）。
--   - **沙盒铁律**：`<style>` 与 `<script>` 须包裹在根 `div` 内；JS 须用 IIFE `(()=>{...})()` 隔离，直接用内置变量 `container.querySelector('.唯一类名')` + `addEventListener` 绑定交互；**严禁**使用全局 `#id`、`document.getElementById`、全局函数及 `onclick` 等内联事件。
-+   - **沙盒铁律**：`<style>` 与 `<script>` 须包裹在根 `div` 内；JS 须用 IIFE `(()=>{...})()` 隔离，直接用内置变量 `container.querySelector('.唯一类名')` + `addEventListener` 绑定交互；**严禁**使用全局 `#id`、`document.getElementById`、全局函数及 `onclick` 等内联事件；面板切换等局部交互控件优先用 `<div>`/`<span>` 或纯 CSS Radio，若用原生 `<button>` **必须**加 `data-vcp-system-control="true"`（未标记的 `<button>` 会被客户端劫持为点击自动发消息按钮）。
-    - **动画依赖**：支持 CDN `<script>` 声明引入 `anime.js(V3.3.2)`、`Pixi.js(V8)`、`three.js(r160)`（沙盒自动重定向至本地高速依赖）。
-    - **主题自适应(可选)**：气泡自带毛玻璃底，内部卡片用透明微光/凹槽（`rgba(255,255,255,0.06)` 或 `rgba(0,0,0,0.15)`）即可，免重复声明 `blur`；文本/边框/高光优先用 `var(--primary-text)`、`var(--secondary-text)`、`var(--border-color)`、`var(--highlight-text)`（亦可自定义独立炫酷配色）。
- 2. **Pele 极速图表（` ```mermaid `）**：流式支持 30+ 图表（含 `mindmap|timeline|kanban|gitGraph|radar-beta` 等）。特异语法铁律：① 智能体流：`agentflow-beta \n LR \n A["指令"] --> B{"分支"} -->|执行| C(["结果"])`（次行写方向，禁 `graph/node/title`）；② 架构图 `architecture-beta`：`service/group id(icon)[Name]`，连线必用双减号 `a:R> -- L:b` 或 `a:R -[标签]- L:b`（**严禁** `->` / `<->`）；③ 协议帧 `packet-beta`：按位区间声明 `0-7: "Header"`。
--3. **代码块沙盒**：` ```html `（含 `<!DOCTYPE html>`）弹出独立网页窗口（适合重状态应用）；` ```python ` 在气泡内直接执行并输出运算结果；` ```drawio ` 渲染复杂工程图。
-\ No newline at end of file
-+3. **代码块沙盒**：` ```html `（含 `<!DOCTYPE html>`）弹出独立网页窗口（适合重状态应用）；` ```python ` 在气泡内直接执行并输出运算结果；` ```drawio ` 渲染复杂工程图。
+@@ -188,7 +188,8 @@ class StreamHandler {
+         let streamAborted = false;
+         let keepAliveTimer = null;
+         let chunkIdleTimer = null;
+-        const CHUNK_IDLE_TIMEOUT = 90000; // 90 秒无新 chunk 则判定上游流冻结
++        const configuredIdleTimeout = Number(process.env.STREAM_CHUNK_IDLE_TIMEOUT_MS);
++        const CHUNK_IDLE_TIMEOUT = Number.isFinite(configuredIdleTimeout) && configuredIdleTimeout > 0 ? configuredIdleTimeout : 90000; // 默认 90 秒（可通过 STREAM_CHUNK_IDLE_TIMEOUT_MS 配置）
+         let message = { content: '', reasoning_content: '' };
+         let clientReasoningBlockOpen = false;
+         let clientReasoningEndsWithNewline = false;
+@@ -655,8 +656,22 @@ class StreamHandler {
+         break;
+       }
+ 
+-      // 执行普通调用
+-      const toolResults = await toolExecutor.executeAll(normalCalls, clientIp, currentMessagesForLoop);
++      // 执行普通调用（启动 SSE 保活心跳，防止长耗时工具/RAG刷新/下轮首字等待期间连接空闲断开）
++      const loopKeepAliveTimer = setInterval(() => {
++        if (!res.writableEnded && !res.destroyed) {
++          try {
++            res.write(': vcp-tool-keepalive\n\n');
++          } catch (e) { /* ignore */ }
++        }
++      }, 5000);
++      loopKeepAliveTimer.unref?.();
++      let toolResults;
++      try {
++        toolResults = await toolExecutor.executeAll(normalCalls, clientIp, currentMessagesForLoop);
++      } catch (toolExecErr) {
++        clearInterval(loopKeepAliveTimer);
++        throw toolExecErr;
++      }
+       const combinedToolResultsForAI = toolResults.map(r => r.content).flat();
+       if (archeryErrorContents.length > 0) combinedToolResultsForAI.push(...archeryErrorContents);
+ 
+@@ -742,22 +757,27 @@ class StreamHandler {
+         } catch (e) { }
+       }
+ 
+-      if (this.context.handoffGate?.isReady()) await waitForHandoff();
+-      if (abortController.signal.aborted || res.writableEnded || res.destroyed) break;
+-      const nextAiAPIResponse = await fetchWithRetry(
+-        `${apiUrl}/v1/chat/completions`,
+-        {
+-          method: 'POST',
+-          headers: {
+-            'Content-Type': 'application/json',
+-            Authorization: `Bearer ${apiKey}`,
+-            Accept: 'text/event-stream',
++      let nextAiAPIResponse;
++      try {
++        if (this.context.handoffGate?.isReady()) await waitForHandoff();
++        if (abortController.signal.aborted || res.writableEnded || res.destroyed) break;
++        nextAiAPIResponse = await fetchWithRetry(
++          `${apiUrl}/v1/chat/completions`,
++          {
++            method: 'POST',
++            headers: {
++              'Content-Type': 'application/json',
++              Authorization: `Bearer ${apiKey}`,
++              Accept: 'text/event-stream',
++            },
++            body: JSON.stringify(projectToolBatchForUpstream({ ...originalBody, messages: currentMessagesForLoop, stream: true })),
++            signal: abortController.signal,
+           },
+-          body: JSON.stringify(projectToolBatchForUpstream({ ...originalBody, messages: currentMessagesForLoop, stream: true })),
+-          signal: abortController.signal,
+-        },
+-        { retries: apiRetries, delay: apiRetryDelay, debugMode: DEBUG_MODE, connectionTimeout: apiConnectionTimeoutMs, modelFallbackCandidates: semanticModelFallbackCandidates }
+-      );
++          { retries: apiRetries, delay: apiRetryDelay, debugMode: DEBUG_MODE, connectionTimeout: apiConnectionTimeoutMs, modelFallbackCandidates: semanticModelFallbackCandidates }
++        );
++      } finally {
++        clearInterval(loopKeepAliveTimer);
++      }
+ 
+       if (!nextAiAPIResponse.ok) {
+         await streamUpstreamErrorAndEnd(res, nextAiAPIResponse, originalBody?.model, 'Normal Tool Loop');
 ```
 
----
-
-### Incident Patch 3: `dc1028a3` (2026-11-12)
-**Commit Message**: Merge pull request #591 from infinite-vector/fix/issues-581-582-test-mocks-and-fs-watch-abort
-
-fix(test): 修复 safeFilePath 依赖 mock 与 Windows fs.watch 句柄泄漏引发的 libuv abort (Fix #581, Fix #582)
-
-**File**: `modules/dynamicToolRegistry.js` (modified, +50/-2)
+**File**: `modules/reasoningContentAdapter.js` (modified, +9/-4)
 ```diff
-@@ -276,6 +276,7 @@ class DynamicToolRegistry {
-         await this._loadCatalog();
-         await this._loadCategories();
-         this._bindPluginManagerEvents(this.pluginManager);
-+        this._closeConfigWatchers();
-         if (watchConfigFiles) this._watchConfigFiles();
-         this.initialized = true;
-         return this;
-@@ -1407,6 +1408,20 @@ class DynamicToolRegistry {
-         if (delay === 0 && this.classificationTimer.unref) this.classificationTimer.unref();
-     }
+@@ -10,6 +10,7 @@ const REASONING_KEYS = Object.freeze([
+   'reasoning_text',
+   'reasoningText',
+   'thinking',
++  'thought',
+   'thoughts'
+ ]);
  
-+    _resolveWatchDir(dirPath) {
-+        try {
-+            if (typeof fsSync.realpathSync?.native === 'function') {
-+                return fsSync.realpathSync.native(dirPath);
-+            }
-+            if (typeof fsSync.realpathSync === 'function') {
-+                return fsSync.realpathSync(dirPath);
-+            }
-+        } catch {
-+            // Fall back to the original path if canonical resolution fails.
-+        }
-+        return dirPath;
-+    }
-+
-     _watchConfigFiles() {
-         this._closeConfigWatchers();
-         const watchTargets = [
-@@ -1417,8 +1432,16 @@ class DynamicToolRegistry {
-         for (const target of watchTargets) {
-             try {
-                 if (!fsSync.existsSync(target.dir)) continue;
--                const watcher = fsSync.watch(target.dir, (eventType, filename) => {
--                    if (!filename || !target.names.has(String(filename))) return;
-+                const watchDir = this._resolveWatchDir(target.dir);
-+                const matchNames = process.platform === 'win32'
-+                    ? new Set(Array.from(target.names, (item) => item.toLowerCase()))
-+                    : target.names;
-+                const watcher = fsSync.watch(watchDir, (eventType, filename) => {
-+                    if (!filename) return;
-+                    const normalized = process.platform === 'win32'
-+                        ? String(filename).toLowerCase()
-+                        : String(filename);
-+                    if (!matchNames.has(normalized)) return;
-                     if (eventType !== 'change' && eventType !== 'rename') return;
-                     this._scheduleConfigReload(`config_${eventType}`);
-                 });
-@@ -1450,6 +1473,13 @@ class DynamicToolRegistry {
-     _closeConfigWatchers() {
-         for (const watcher of this._configWatchers) {
-             try {
-+                if (typeof watcher.removeAllListeners === 'function') {
-+                    watcher.removeAllListeners('change');
-+                    watcher.removeAllListeners('error');
-+                }
-+                if (typeof watcher.on === 'function') {
-+                    watcher.on('error', () => {});
-+                }
-                 watcher.close();
-             } catch {
-                 // Ignore watcher close failures during reinitialization.
-@@ -1462,6 +1492,24 @@ class DynamicToolRegistry {
-         }
-     }
+@@ -19,13 +20,17 @@ const TEXT_VALUE_KEYS = new Set([
+   'summary',
+   'value',
+   'reasoning',
+-  'thinking'
++  'thinking',
++  'thought',
++  'thoughts'
+ ]);
  
-+    destroy() {
-+        this._closeConfigWatchers();
-+        if (this.classificationTimer) {
-+            clearTimeout(this.classificationTimer);
-+            this.classificationTimer = null;
-+        }
-+        if (this._boundPluginManager && typeof this._boundPluginManager.removeListener === 'function') {
-+            if (this._toolsChangedHandler) this._boundPluginManager.removeListener('tools_changed', this._toolsChangedHandler);
-+            if (this._distributedOfflineHandler) this._boundPluginManager.removeListener('distributed_tools_offline', this._distributedOfflineHandler);
-+            this._boundPluginManager = null;
-+        }
-+        this.initialized = false;
-+    }
-+
-+    close() {
-+        this.destroy();
-+    }
-+
-     async _loadCatalog() {
-         const data = await this._readJson(this.catalogPath, { version: 1, snapshotId: 0, plugins: {} });
-         this.snapshotId = Number(data.snapshotId || 0);
-```
-
-**File**: `tests/dynamicToolRegistry.test.js` (modified, +122/-2)
-```diff
-@@ -1,16 +1,64 @@
- const test = require('node:test');
- const assert = require('node:assert/strict');
-+const fsSync = require('node:fs');
- const fs = require('node:fs/promises');
- const os = require('node:os');
- const path = require('node:path');
-+const { execSync } = require('node:child_process');
- const EventEmitter = require('node:events');
- 
- const dynamicToolRegistryModule = require('../modules/dynamicToolRegistry.js');
- const { DynamicToolRegistry } = dynamicToolRegistryModule;
- const messageProcessor = require('../modules/messageProcessor.js');
- 
--async function makeProjectRoot() {
--  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'vcp-dynamic-tools-'));
-+const activeRegistries = new Set();
-+const tempProjectRoots = new Set();
-+const originalInitialize = DynamicToolRegistry.prototype.initialize;
-+DynamicToolRegistry.prototype.initialize = async function wrappedInitialize(...args) {
-+  activeRegistries.add(this);
-+  return originalInitialize.apply(this, args);
-+};
-+
-+const originalDestroy = DynamicToolRegistry.prototype.destroy;
-+DynamicToolRegistry.prototype.destroy = function wrappedDestroy(...args) {
-+  activeRegistries.delete(this);
-+  if (typeof originalDestroy === 'function') {
-+    return originalDestroy.apply(this, args);
+ function normalizeReasoningTag(value) {
+-  return String(value || '').trim().toLowerCase() === 'thinking'
+-    ? 'thinking'
+-    : 'think';
++  const normalized = String(value || '').trim().toLowerCase();
++  if (normalized === 'thinking' || normalized === 'thought' || normalized === 'thoughts') {
++    return normalized;
 +  }
-+};
-+
-+test.afterEach(async () => {
-+  const registries = Array.from(activeRegistries);
-+  for (const registry of registries) {
-+    try {
-+      registry.destroy();
-+    } catch {
-+      // Ignore destroy failures in test teardown.
-+    }
-+  }
-+  await Promise.allSettled(
-+    registries.flatMap((registry) => [
-+      registry.syncPromise,
-+      registry.classificationPromise,
-+      registry._configReloadPromise,
-+      registry.writePromise
-+    ].filter(Boolean))
-+  );
-+  activeRegistries.clear();
-+
-+  for (const root of Array.from(tempProjectRoots)) {
-+    try {
-+      await fs.rm(root, { recursive: true, force: true });
-+    } catch {
-+      // Ignore transient cleanup failures on Windows.
-+    }
-+  }
-+  tempProjectRoots.clear();
-+});
-+
-+async function makeProjectRoot(prefix = 'vcp-dynamic-tools-') {
-+  const root = await fs.mkdtemp(path.join(os.tmpdir(), prefix));
-+  tempProjectRoots.add(root);
-   await fs.mkdir(path.join(root, 'ToolConfigs'), { recursive: true });
-   return root;
++  return 'think';
  }
-@@ -1206,3 +1254,75 @@ test('dynamic fold expansion matches toolbox legacy blocks without descriptions'
-   assert.match(injection, /LEGACY BASIC USAGE/);
-   assert.match(injection, /LEGACY ADVANCED USAGE WITH TERMS THAT DO NOT MATCH QUERY/);
+ 
+ function normalizeReasoningModelFilters(value) {
+```
+
+**File**: `modules/vcpLoop/toolCallParser.js` (modified, +1/-1)
+```diff
+@@ -315,7 +315,7 @@ class ToolCallParser {
+     };
+ 
+     // 严格单行无尖括号思考标签正则（动态构造以避免自指）：
+-    const TAG_PATTERN = '<[ \\t]*(\\/?)[ \\t]*(think(?:ing)?|thought|antthinking)\\b(?:[ \\t]+[^>\\r\\n<]*?)?[ \\t]*>';
++    const TAG_PATTERN = '<[ \\t]*(\\/?)[ \\t]*(think(?:ing)?|thought(?:s)?|antthinking)\\b(?:[ \\t]+[^>\\r\\n<]*?)?[ \\t]*>';
+     const tagRegex = new RegExp(TAG_PATTERN, 'gi');
+ 
+     // 预检某个句中内联开标签（!lineStart）在后续非保护域中是否存在配对的闭合标签：
+```
+
+**File**: `tests/reasoningAndSelfReference.test.js` (modified, +20/-0)
+```diff
+@@ -399,3 +399,23 @@ test('M19 & M20 [前端协同] EmotionTagScanner：行内反引号与句中提
+   assert.equal(tagEvents2.length, 1);
+   assert.equal(tagEvents2[0].emotion, 'calm');
  });
 +
-+test('config file watcher canonicalizes Windows 8.3 short paths and survives hot reload writes', async () => {
-+  const longRoot = await makeProjectRoot('vcp-dynamic-tools-long-8dot3-watch-path-');
-+  const privateConfigDir = path.join(longRoot, 'Plugin', 'DynamicToolBridge');
-+  await fs.mkdir(privateConfigDir, { recursive: true });
++test('M21 [外测度与适配器] 支持复数 <thoughts> 思考标签剥离与 reasoningContentAdapter 单复数归一化', () => {
++  const { extractReasoningText, normalizeReasoningTag, wrapReasoningText } = require('../modules/reasoningContentAdapter');
++  const input = [
++    openTag('thoughts'),
++    buildToolBlock('FakeToolInsideThoughts'),
++    closeTag('thoughts'),
++    buildToolBlock('RealToolAfterThoughts')
++  ].join('\n');
 +
-+  let watchProjectRoot = longRoot;
-+  if (process.platform === 'win32') {
-+    try {
-+      const candidate = execSync(
-+        `for %I in ("${longRoot}") do @echo %~sI`,
-+        { shell: 'cmd.exe', encoding: 'utf8' }
-+      ).trim();
-+      if (candidate && fsSync.existsSync(candidate)) {
-+        watchProjectRoot = candidate;
++  const calls = ToolCallParser.parse(input);
++  assert.equal(calls.length, 1);
++  assert.equal(calls[0].name, 'RealToolAfterThoughts');
++
++  assert.equal(extractReasoningText({ thought: 'step-1' }), 'step-1');
++  assert.equal(extractReasoningText({ thoughts: [{ thought: 'step-2' }] }), 'step-2');
++  assert.equal(normalizeReasoningTag('thought'), 'thought');
++  assert.equal(normalizeReasoningTag('thoughts'), 'thoughts');
++  assert.equal(wrapReasoningText('abc', 'thought'), '<thought>\nabc\n</thought>\n');
++});
+```
+
+---
+
+### Incident Patch 2: `dce07f44` (2026-11-13)
+**Commit Message**: fix(memo): compose bounded topology evidence and admit witnessed rare single focus
+
+**File**: `docs/MEMO_EXPERIMENT_C_UNIFIED_OMEGA_PLAN.md` (modified, +10/-1)
+```diff
+@@ -70,4 +70,13 @@
+ - 正交种差采用 FP64 双遍正交化、相对残差护栏；仅在存在受遮蔽父词时启用。真实案例排序需主人实测，不预承诺名次或零退化。
+ - NNLS 解释率由 pyramid 原始能量闭合读出，独立保存在请求快照；不把多层非正交投影的逐 Tag 系数平方冒充能量。
+ - Ω 为候选无关结构授权；Hop-1 与 XW 连续读出共享结构预算，直锚保留独立通道。ranking_score 与 final_score 同源。
+-- 单焦点见证保留不同 checksum、跨文件共现与第三桥标签要求；这些只证明关联，不宣称独立证据或真实上下位关系。
+\ No newline at end of file
++- 单焦点见证保留不同 checksum、跨文件共现与第三桥标签要求；这些只证明关联，不宣称独立证据或真实上下位关系。
++
++## 5. C 检查点与 Fix3 / Fix4 验收
++- 已上机测试的 C 检查点：`645155c3`；Windows x64 SHA256 `36F305A20221945105B655467C37FA56AF54ABD0E708A97AE7F78846B3B89C0B`。
++- 主人报告：15 组弱化边缘河网测试跑分提升约 60%，5 组黄金满分组无衰退。属于主人实测汇报；未在此附录中提供逐组原始分数、指标定义与消融，不能据此认定每一机制的独立贡献。
++- Fix3：普通 Hop-1 与 XW 仍取最大包络；该输运证据与原始 `v2_bonus * Omega^gamma` 采用共享预算内的有界互补合成，不作统计独立性声明；从原始证据重算以保证幂等；零输运保留原奖励逐位不变。
++- Fix4：唯一显式焦点为路由源，且已触发种差校准，或已知全局特异性 `1-sqrt(inbound/maxInbound) >= 0.65` 时，可进入单焦点见证审查。统计缺失、非有限或无效全局分母不能作为稀有依据；仍要求两文件不同非空 checksum 与共享第三非焦点桥标签；截断证据拒绝。
++- 全量 Rust 单测：216 passed / 0 failed / 0 ignored，117.97s，`FIX34_TEST_EXIT=0`（主人提供完成终端结果）。
++- Fix1（缩写/上位词判别）和 Fix2（双场去母体）未纳入本次发布，交实验 D 源码调查与消融决定，不顺手扩大改动。
++- 实验 D 的性能数字必须实测；此前“额外20ms/零成本边张力/NNLS直接证明父子关系”均非已验证结论。小核求解的等价性仅覆盖实际保留的原始生成列；不能把选轴后的近似说成完整邻域锥最优解。
+\ No newline at end of file
+```
+
+**File**: `rust-vexus-lite/src/rivermemo_topology_v3.rs` (modified, +1/-1)
+```diff
+@@ -2928,7 +2928,7 @@ pub(crate) fn run_native_with_observation(
+     let query_and_seed_tag_vectors = tag_vectors;
+     let mut wormhole_model = wormhole::build(&input, &query_and_seed_tag_vectors, &artifact);
+     let mut wormhole_gate = wormhole::gate(&mut wormhole_model, connection)?;
+-    wormhole::refine(&mut wormhole_model, &mut wormhole_gate, connection, &input)?;
++    wormhole::refine(&mut wormhole_model, &mut wormhole_gate, connection, &input, &artifact)?;
+     let load_ms = load_started.elapsed().as_secs_f64() * 1000.0;
+ 
+     let compute_started = Instant::now();
+```
+
+**File**: `rust-vexus-lite/src/rivermemo_wormhole.rs` (modified, +97/-10)
+```diff
+@@ -57,7 +57,7 @@ pub(super) fn gate(model: &mut Model, connection: &Connection)
+ }
+  
+ pub(super) fn refine(model: &mut Model, decisions: &mut [GateDecision],
+-    connection: &Connection, input: &NativeInput)
++    connection: &Connection, input: &NativeInput, artifact: &NativeArtifact)
+     -> std::result::Result<(), String> {
+     const FILE_LIMIT: usize = 128;
+     const TAG_LIMIT: usize = 128;
+@@ -97,10 +97,16 @@ pub(super) fn refine(model: &mut Model, decisions: &mut [GateDecision],
+                     let other_focus = focus.iter().copied().filter(|id|
+                         *id != decision.source_id && *id != decision.target_id
+                         && (left.2.contains(id) || right.2.contains(id))).min();
++                    // Missing global statistics are not evidence of rarity.
++                    let specificity = artifact.inbound.get(&decision.source_id)
++                        .filter(|mass| mass.is_finite() && **mass >= 0.0)
++                        .filter(|_| artifact.max_inbound.is_finite() && artifact.max_inbound > 0.0)
++                        .map(|mass| 1.0 - clamp01(*mass / artifact.max_inbound).sqrt());
++                    let calibrated = !input.calibration.superseded_ids.is_empty()
++                        && input.calibration.differentia_confidence > 0.0;
+                     let single_specific = focus.len() == 1
+                         && focus.contains(&decision.source_id)
+-                        && !input.calibration.superseded_ids.is_empty()
+-                        && input.calibration.differentia_confidence > 0.0;
++                        && (calibrated || specificity.is_some_and(|value| value >= 0.65));
+                     if other_focus.is_none() && !single_specific { continue; }
+                     let anchor = other_focus;
+                     let bridge = left.2.intersection(&right.2).copied().filter(|id|
+@@ -109,7 +115,8 @@ pub(super) fn refine(model: &mut Model, decisions: &mut [GateDecision],
+                     if let Some(bridge) = bridge {
+                         witness = Some(serde_json::json!({
+                             "fileIds": [left.0, right.0], "focusId": anchor,
+-                            "bridgeTagId": bridge, "differentChecksums": true
++                            "bridgeTagId": bridge, "differentChecksums": true,
++                            "sourceSpecificity": specificity, "singleFocusAdmission": single_specific
+                         }));
+                         break 'pairs;
+                     }
+@@ -381,7 +388,7 @@ mod gate_regressions {
+         let check = |db: &Connection| {
+             let mut m = model();
+             let mut d = gate(&mut m, db).unwrap();
+-            refine(&mut m, &mut d, db, &input).unwrap();
++            refine(&mut m, &mut d, db, &input, &NativeArtifact::default()).unwrap();
+             d[0].accepted
+         };
+         assert!(!check(&db), "same content cannot qualify");
+@@ -409,7 +416,7 @@ mod gate_regressions {
+         let check = |input: &NativeInput| {
+             let mut m = model();
+             let mut decisions = gate(&mut m, &db).unwrap();
+-            refine(&mut m, &mut decisions, &db, input).unwrap();
++            refine(&mut m, &mut decisions, &db, input, &NativeArtifact::default()).unwrap();
+             decisions[0].accepted
+         };
+         assert!(!check(&input), "ordinary single focus must not bypass the firewall");
+@@ -423,6 +430,42 @@ mod gate_regressions {
+         assert!(!check(&input), "endpoints alone are not a bridge");
+     }
+ 
++    #[test]
++    fn rare_single_focus_requires_known_statistics_and_full_witness() {
++        let db = Connection::open_in_memory().unwrap();
++        db.execute_batch("CREATE TABLE file_tags(file_id INTEGER, tag_id INTEGER);
++            CREATE TABLE files(id INTEGER PRIMARY KEY, checksum TEXT);
++            INSERT INTO files VALUES (10,'a'),(11,'b');
++            INSERT INTO file_tags VALUES (10,1),(10,2),(10,9),(11,1),(11,2),(11,9);").unwrap();
++        let input: NativeInput = serde_json::from_value(serde_json::json!({
++            "query":{"vector":[1,0]}, "queryState":{"fieldProvenance":[
++                {"id":1,"hop":0,"sourceType":"lexical_seed"}
++            ]}
++        })).unwrap();
++        let check = |graph: &NativeArtifact| {
++            let mut m = model();
++            let mut d = gate(&mut m, &db).unwrap();
++            refine(&mut m, &mut d, &db, &input, graph).unwrap();
++            d[0].accepted
++        };
++        let mut graph = NativeArtifact { max_inbound:100.0,
++            inbound:HashMap::from([(1,4.0)]), ..NativeArtifact::default() };
++        assert!(check(&graph), "known rare focus qualifies without superseded parents");
++        graph.inbound.insert(1,100.0);
++        assert!(!check(&graph), "hub cannot use rarity admission");
++        graph.inbound.clear();
++        assert!(!check(&graph), "missing is not rare");
++        graph.inbound.insert(1,4.0);
++        graph.max_inbound=0.0;
++        assert!(
+```
+
+---
+
+### Incident Patch 3: `980d3db1` (2026-11-13)
+**Commit Message**: fix(stream,parser): support <thought>/<thoughts> reasoning tags and keep SSE stream alive during long tool loops
+
+**File**: `modules/handlers/nonStreamHandler.js` (modified, +1/-0)
+```diff
+@@ -26,6 +26,7 @@ function hasReasoningOnlySignal(message, choice) {
+     'reasoning_content',
+     'reasoning',
+     'reasoning_details',
++    'thought',
+     'thoughts',
+     'thinking',
+     'reasoning_text'
+```
+
+**File**: `modules/handlers/streamHandler.js` (modified, +38/-18)
+```diff
+@@ -188,7 +188,8 @@ class StreamHandler {
+         let streamAborted = false;
+         let keepAliveTimer = null;
+         let chunkIdleTimer = null;
+-        const CHUNK_IDLE_TIMEOUT = 90000; // 90 秒无新 chunk 则判定上游流冻结
++        const configuredIdleTimeout = Number(process.env.STREAM_CHUNK_IDLE_TIMEOUT_MS);
++        const CHUNK_IDLE_TIMEOUT = Number.isFinite(configuredIdleTimeout) && configuredIdleTimeout > 0 ? configuredIdleTimeout : 90000; // 默认 90 秒（可通过 STREAM_CHUNK_IDLE_TIMEOUT_MS 配置）
+         let message = { content: '', reasoning_content: '' };
+         let clientReasoningBlockOpen = false;
+         let clientReasoningEndsWithNewline = false;
+@@ -655,8 +656,22 @@ class StreamHandler {
+         break;
+       }
+ 
+-      // 执行普通调用
+-      const toolResults = await toolExecutor.executeAll(normalCalls, clientIp, currentMessagesForLoop);
++      // 执行普通调用（启动 SSE 保活心跳，防止长耗时工具/RAG刷新/下轮首字等待期间连接空闲断开）
++      const loopKeepAliveTimer = setInterval(() => {
++        if (!res.writableEnded && !res.destroyed) {
++          try {
++            res.write(': vcp-tool-keepalive\n\n');
++          } catch (e) { /* ignore */ }
++        }
++      }, 5000);
++      loopKeepAliveTimer.unref?.();
++      let toolResults;
++      try {
++        toolResults = await toolExecutor.executeAll(normalCalls, clientIp, currentMessagesForLoop);
++      } catch (toolExecErr) {
++        clearInterval(loopKeepAliveTimer);
++        throw toolExecErr;
 +      }
-+    } catch {
-+      watchProjectRoot = longRoot;
-+    }
+       const combinedToolResultsForAI = toolResults.map(r => r.content).flat();
+       if (archeryErrorContents.length > 0) combinedToolResultsForAI.push(...archeryErrorContents);
+ 
+@@ -742,22 +757,27 @@ class StreamHandler {
+         } catch (e) { }
+       }
+ 
+-      if (this.context.handoffGate?.isReady()) await waitForHandoff();
+-      if (abortController.signal.aborted || res.writableEnded || res.destroyed) break;
+-      const nextAiAPIResponse = await fetchWithRetry(
+-        `${apiUrl}/v1/chat/completions`,
+-        {
+-          method: 'POST',
+-          headers: {
+-            'Content-Type': 'application/json',
+-            Authorization: `Bearer ${apiKey}`,
+-            Accept: 'text/event-stream',
++      let nextAiAPIResponse;
++      try {
++        if (this.context.handoffGate?.isReady()) await waitForHandoff();
++        if (abortController.signal.aborted || res.writableEnded || res.destroyed) break;
++        nextAiAPIResponse = await fetchWithRetry(
++          `${apiUrl}/v1/chat/completions`,
++          {
++            method: 'POST',
++            headers: {
++              'Content-Type': 'application/json',
++              Authorization: `Bearer ${apiKey}`,
++              Accept: 'text/event-stream',
++            },
++            body: JSON.stringify(projectToolBatchForUpstream({ ...originalBody, messages: currentMessagesForLoop, stream: true })),
++            signal: abortController.signal,
+           },
+-          body: JSON.stringify(projectToolBatchForUpstream({ ...originalBody, messages: currentMessagesForLoop, stream: true })),
+-          signal: abortController.signal,
+-        },
+-        { retries: apiRetries, delay: apiRetryDelay, debugMode: DEBUG_MODE, connectionTimeout: apiConnectionTimeoutMs, modelFallbackCandidates: semanticModelFallbackCandidates }
+-      );
++          { retries: apiRetries, delay: apiRetryDelay, debugMode: DEBUG_MODE, connectionTimeout: apiConnectionTimeoutMs, modelFallbackCandidates: semanticModelFallbackCandidates }
++        );
++      } finally {
++        clearInterval(loopKeepAliveTimer);
++      }
+ 
+       if (!nextAiAPIResponse.ok) {
+         await streamUpstreamErrorAndEnd(res, nextAiAPIResponse, originalBody?.model, 'Normal Tool Loop');
+```
+
+**File**: `modules/reasoningContentAdapter.js` (modified, +9/-4)
+```diff
+@@ -10,6 +10,7 @@ const REASONING_KEYS = Object.freeze([
+   'reasoning_text',
+   'reasoningText',
+   'thinking',
++  'thought',
+   'thoughts'
+ ]);
+ 
+@@ -19,13 +20,17 @@ const TEXT_VALUE_KEYS = new Set([
+   'summary',
+   'value',
+   'reasoning',
+-  'thinking'
++  'thinking',
++  'thought',
++  'thoughts'
+ ]);
+ 
+ function normalizeReasoningTag(value) {
+-  return String(value || '').trim().toLowerCase() === 'thinking'
+-    ? 'thinking'
+-    : 'think';
++  const normalized = String(value || '').trim().toLowerCase();
++  if (normalized === 'thinking' || normalized === 'thought' || normalized === 'thoughts') {
++    return normalized;
 +  }
-+
-+  const watchedDirs = [];
-+  const originalWatch = fsSync.watch;
-+  fsSync.watch = function patchedWatch(targetDir, ...rest) {
-+    watchedDirs.push(String(targetDir));
-+    return originalWatch.call(this, targetDir, ...rest);
-+  };
-+
-+  const registry = new DynamicToolRegistry();
-+  try {
-+    const pluginManager = makePluginManager([
-+      makeManifest('ShortPathWatchTool', 'Verify canonicalized directory watching.')
-+    ]);
-+    await registry.initialize({
-+      pluginManager,
-+      projectBasePath: watchProjectRoot,
-+      watchConfigFiles: true,
-+      config: testConfig({ maxBriefListItems: 5 })
-+    });
-+
-+    const canonicalToolConfigsDir = fsSync.realpathSync.native(path.join(longRoot, 'ToolConfigs'));
-+    const canonicalPrivateDir = fsSync.realpathSync.native(privateConfigDir);
-+    assert.equal(watchedDirs.includes(canonicalToolConfigsDir), true);
-+    assert.equal(watchedDirs.includes(canonicalPrivateDir), true);
-+    for (const dir of watchedDirs) {
-+      assert.equal(dir.includes('~'), false, `watched directory should not retain 8.3 short segment: ${dir}`);
-+    }
-+
-+    const configPath = path.join(watchProjectRoot, 'ToolConfigs', 'dynamic_tool_bridge.config.json');
-+    await fs.writeFile(configPath, JSON.stringify({
-+      ...registry.getAdminState().config,
-+      maxBriefListItems: 19
-+    }, null, 2), 'utf8');
-+
-+    const deadline = Date.now() + 1500;
-+    while (Date.now() < deadline && registry.getAdminState().config.maxBriefListItems !== 19) {
-+      await new Promise((resolve) => setTimeout(resolve, 40));
-+    }
-+    assert.equal(registry.getAdminState().config.maxBriefListItems, 19);
-+
-+    await registry.initialize({
-+      pluginManager,
-+      projectBasePath: watchPr
++  return 'think';
+ }
+ 
+ function normalizeReasoningModelFilters(value) {
 ```
 
-**File**: `tests/plugin-command-metadata.test.js` (modified, +1/-0)
+**File**: `modules/vcpLoop/toolCallParser.js` (modified, +1/-1)
 ```diff
-@@ -46,6 +46,7 @@ function createHarness(blocked = false) {
-             if (name === 'fs') return { promises: mockFs };
-             if (name === 'path') return path;
-             if (name === './lib/dashboardCards') return { readPluginDashboardCards: () => [] };
-+            if (name === '../../modules/safeFilePath') return require('../modules/safeFilePath');
-             throw new Error(`Unexpected dependency: ${name}`);
-         }
-     });
+@@ -315,7 +315,7 @@ class ToolCallParser {
+     };
+ 
+     // 严格单行无尖括号思考标签正则（动态构造以避免自指）：
+-    const TAG_PATTERN = '<[ \\t]*(\\/?)[ \\t]*(think(?:ing)?|thought|antthinking)\\b(?:[ \\t]+[^>\\r\\n<]*?)?[ \\t]*>';
++    const TAG_PATTERN = '<[ \\t]*(\\/?)[ \\t]*(think(?:ing)?|thought(?:s)?|antthinking)\\b(?:[ \\t]+[^>\\r\\n<]*?)?[ \\t]*>';
+     const tagRegex = new RegExp(TAG_PATTERN, 'gi');
+ 
+     // 预检某个句中内联开标签（!lineStart）在后续非保护域中是否存在配对的闭合标签：
 ```
 
-**File**: `tests/tavernInteractionCompletion.test.js` (modified, +1/-1)
+**File**: `tests/reasoningAndSelfReference.test.js` (modified, +20/-0)
 ```diff
-@@ -140,7 +140,7 @@ test('插件：预处理只读、请求隔离、一次提交、取消防抖及
-   const sandbox = {
-     module: { exports: {} }, __dirname: path.dirname(filename), console,
-     process: { env: {} },
--    require: name => name === 'fs' ? { promises: fakeFs } : name === 'express' ? {} : require(name)
-+    require: name => name === 'fs' ? { promises: fakeFs } : name === 'express' ? {} : name === '../../modules/safeFilePath' ? require(path.resolve(__dirname, '../modules/safeFilePath.js')) : require(name)
-   };
-   vm.runInNewContext(fs.readFileSync(filename, 'utf8'), sandbox, { filename });
-   const plugin = sandbox.module.exports;
+@@ -399,3 +399,23 @@ test('M19 & M20 [前端协同] EmotionTagScanner：行内反引号与句中提
+   assert.equal(tagEvents2.length, 1);
+   assert.equal(tagEvents2[0].emotion, 'calm');
+ });
++
++test('M21 [外测度与适配器] 支持复数 <thoughts> 思考标签剥离与 reasoningContentAdapter 单复数归一化', () => {
++  const { extractReasoningText, normalizeReasoningTag, wrapReasoningText } = require('../modules/reasoningContentAdapter');
++  const input = [
++    openTag('thoughts'),
++    buildToolBlock('FakeToolInsideThoughts'),
++    closeTag('thoughts'),
++    buildToolBlock('RealToolAfterThoughts')
++  ].join('\n');
++
++  const calls = ToolCallParser.parse(input);
++  assert.equal(calls.length, 1);
++  assert.equal(calls[0].name, 'RealToolAfterThoughts');
++
++  assert.equal(extractReasoningText({ thought: 'step-1' }), 'step-1');
++  assert.equal(extractReasoningText({ thoughts: [{ thought: 'step-2' }] }), 'step-2');
++  assert.equal(normalizeReasoningTag('thought'), 'thought');
++  assert.equal(normalizeReasoningTag('thoughts'), 'thoughts');
++  assert.equal(wrapReasoningText('abc', 'thought'), '<thought>\nabc\n</thought>\n');
++});
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #596** (2026-11-13): feat(memo): deliver Cone-AGS NNLS and unified continuous topology scoring (@lioensky)
+- **PR #595** (closed): Memo experiments: NNLS and unified Omega topology with Fix3/Fix4 (@lioensky)
+- **PR #594** (2026-11-13): fix(stream,parser): 完善 <thought>/<thoughts> 思考标签兼容与长耗时工具循环 SSE 保活 (@KeZenkk)
+- **PR #593** (2026-11-13): fix(interrupt): 贯通预处理管线AbortSignal级联中断并拦截中止请求污染ResponseReplayCache (@infinite-vector)
 - **PR #592** (2026-11-12): docs(TVStxt): 补充 VchatRendering 内联 DOM 岛按钮防劫持规范 (data-vcp-system-control) (@zardkon)
 - **PR #591** (2026-11-12): fix(test): 修复 safeFilePath 依赖 mock 与 Windows fs.watch 句柄泄漏引发的 libuv abort (Fix #581, Fix #582) (@infinite-vector)
-- **PR #590** (2026-11-12): perf(RAGDiary): 日记日期零点按日期字符串复用，::Time 不再每次请求逐篇换算时区 (@CI-IISATO)
-- **PR #589** (2026-11-12): fix(RAGDiary): ::TimeDecay 不再被识别为 ::Time (@CI-IISATO)
-- **PR #588** (closed): fix(LightMemo): 语义组按组下发、每组按一个关键词打分，修复 LIGHTMEMO_INVALID_PLAN (@CI-IISATO)
-- **PR #586** (2026-11-12): feat(ssh/linux-shell): hosts.json变为不写入内存 (@awei807-wei)
 
 ---
 
@@ -2146,39 +2311,28 @@ fix(test): 修复 safeFilePath 依赖 mock 与 Windows fs.watch 句柄泄漏引�
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(TVStxt): 精炼 VchatRendering 流式渲染规范并确立按钮双轨与多模态契约
+## X. Empirical Invariant Guard in nonStreamHandler.js
 
 **RULE**:
-When implementing operations in `TVStxt/VchatRendering.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `modules/handlers/nonStreamHandler.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a6bb9bc5`: docs(TVStxt): 精炼 VchatRendering 流式渲染规范并确立按钮双轨与多模态契约. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9373aa70`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `TVStxt/VchatRendering.txt`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `modules/handlers/nonStreamHandler.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-【VChat 流式富渲染引擎】客户端原生支持流式 DOM、交互动画、LaTeX 数理公式、极速图表与代码沙盒。遇到概念解构、数理推导、数据对比、架构推演或情境演出时，优先调用高维视觉组件呈现结构与动态之美：
-1. 气泡内联 DOM 岛（推荐）：正文中直接书写根 `<div>...</div>` 即可流式渲染复杂排版、富表格与交互动画（支持内联 `<style>`、`script`、本地/在线音视频与网络字体直调）。
-   - 沙盒作用域：`<style>` 与 `<script>` 完整收束于根 `div` 内部；元素以局部唯一 `class` 标识，JS 以 IIFE `(()=>{...})()` 闭合私有作用域，统一采用内置根句柄 `container.querySelector('.唯一类名')` 配合 `addEventListener` 绑定交互。
-   - 按钮双轨交互：岛内局部控件（如标签页切换、折叠面板）优先采用 `<div>`/`<span>`、纯 CSS Radio，或显式声明 `<button data-vcp-system-control="true">` 留驻岛内响应脚本；对话决策引导则直书普通 `<button>选项文案</button>`，点击即自动作为快捷回复发出。
-   - 动画依赖：支持 CDN `<script>` 声明引入 `anime.js(v3.3.2)`、`Pixi.js(v8)`、`three.js(r160)`（沙盒自动映射至本地高速依赖）。
-   - 主题自适应（可选）：气泡自带毛玻璃底，内部卡片用半透明微光或凹槽（`rgba(255,255,255,0.06)` 或 `rgba(0,0,0,0.15)`）叠合层次；文本、边框与高光优先接入 `var(--primary-text)`、`var(--secondary-text)`、`var(--border-color)`、`var(--highlight-text)`，亦可定制独立配色。
-2. Pele 极速图表（` ```mermaid `）：流式支持 30+ 图表（含 `flowchart|mindmap|timeline|kanban|sankey|treemap|radar-beta` 等）。特异语法规范：① 含括号或特殊符号的节点文本统一用 `["..."]` 包裹；② 智能体流：`agentflow-beta \n LR \n A["指令"] --> B{"分支"} -->|执行| C(["结果"])`（次行直书方向 `LR/TD`，紧接节点连线）；③ 架构图 `architecture-beta`：`service/group id(icon)[Name]`，连线固定采用双减号 `a:R> -- L:b` 或 `a:R -[标签]- L:
+    'thought',
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
-// Anti-pattern to NEVER write (induced failure mode):
-【VChat 流式富渲染引擎】当前客户端突破纯文本限制，原生支持流式 DOM、动画与代码沙盒。遇到概念解构、数据对比、架构推演或情绪演出时，优先使用高维视觉组件替代枯燥文本：
-1. **气泡内联 DOM 岛（推荐）**：正文中直接裸写 `<div>...</div>` 即可流式渲染复杂排版、富表格与交互动画（支持内联 `<style>`、`<script>`、音视频与网络字体）。
-   - **沙盒铁律**：`<style>` 与 `<script>` 须包裹在根 `div` 内；JS 须用 IIFE `(()=>{...})()` 隔离，直接用内置变量 `container.querySelector('.唯一类名')` + `addEventListener` 绑定交互；**严禁**使用全局 `#id`、`document.getElementById`、全局函数及 `onclick` 等内联事件；面板切换等局部交互控件优先用 `<div>`/`<span>` 或纯 CSS Radio，若用原生 `<button>` **必须**加 `data-vcp-system-control="true"`（未标记的 `<button>` 会被客户端劫持为点击自动发消息按钮）。
-   - **动画依赖**：支持 CDN `<script>` 声明引入 `anime.js(V3.3.2)`、`Pixi.js(V8)`、`three.js(r160)`（沙盒自动重定向至本地高速依赖）。
-   - **主题自适应(可选)**：气泡自带毛玻璃底，内部卡片用透明微光/凹槽（`rgba(255,255,255,0.06)` 或 `rgba(0,0,0,0.15)`）即可，免重复声明 `blur`；文本/边框/高光优先用 `var(--primary-text)`、`var(--secondary-text)`、`var(--border-color)`、`var(--highlight-text)`（亦可自定义独立炫酷配色）。
-2. **Pele 极速图表（` ```mermaid `）**：流式支持 30+ 图表（含 `mindmap|timeline|kanban|gitGraph|radar-beta` 等）。特异语法铁律：① 智能体流：`agentflow-beta \n LR \n A["指令"] --> B{"分支"} -->|执行| C(["结果"])`（次行写方向，禁 `graph/node/title`）；② 架构图 `architecture-beta`：`service/group id(icon)[Name]`，连线必用双减号 `a:R> -- L:b` 或 `a:R -[标签]- L:b`（**严禁** `->` / `<->`）；③ 协议帧 `pa
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a6bb9bc5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9373aa70` are properly handled with clean fallback behavior.

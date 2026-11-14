@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-14T01:49:12.905Z",
+  "updated_at": "2026-11-14T02:06:55.660Z",
   "statistics": {
-    "total_nodes": 144,
+    "total_nodes": 145,
     "total_edges": 78,
     "domain_distribution": {
-      "D": 117,
+      "D": 118,
       "M": 1,
       "H": 11,
       "J": 4,
@@ -3222,6 +3222,28 @@
       ],
       "created_at": "2026-11-14T01:49:12.905Z",
       "updated_at": "2026-11-14T01:49:12.905Z"
+    },
+    "DOM-D-53028CD5": {
+      "id": "DOM-D-53028CD5",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): deepseek-ai/DeepSeek-V4-Pro",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md`  \n> **Source**: huggingface ([https://h -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md`  \n> **Source**: huggingface ([https://h",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-deepseek-ai-deepseek-v4-pro/hf-deepseek-ai-deepseek-v4-pro-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T02:06:30.673Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-deepseek-ai-deepseek-v4-pro)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-14T02:06:55.660Z",
+      "updated_at": "2026-11-14T02:06:55.660Z"
     }
   },
   "edges": [

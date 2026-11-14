@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/goharbor-harbor-learnings.md`  
 > **Source**: github ([https://github.com/goharbor/harbor](https://github.com/goharbor/harbor))  
-> **Source Version**: `fac9abd1`  
+> **Source Version**: `e7dbdea2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T16:55:57.140Z  
+> **Timestamp**: 2026-11-14T02:06:21.053Z  
 > **Learning ID**: `learn-github-goharbor-harbor`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/goharbor-harbor-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/goharbor/harbor](https://github.com/goharbor/harbor))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T16:55:57.133Z  
+> **Harvest Timestamp**: 2026-11-14T02:06:21.049Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An open source trusted cloud native registry project that stores, signs, and scans content.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 29719 stars
+- **Stars / Engagement**: 29726 stars
 
 ---
 
@@ -655,15 +655,13 @@ def prepare_job_service(config_dict):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #24382** (2026-11-12): **Retention policy API panics with 500 when scope or trigger is missing**
+  *Symptoms*: ### Expected behavior and actual behavior  `POST /api/v2.0/retentions` and `PUT /api/v2.0/retentions/{id}` should answer 400 when the body has no `scope` or no `trigger`.  Both return 500 instead, and core logs a nil pointer panic. The handlers read `p.Scope.Level` and `p.Scope.Reference` for the access check without checking `scope` is set, and `CreateRetention` in the retention controller reads `p.Trigger.Kind` the same way.  ``` Handler crashed with error runtime error: invalid memory address or nil pointer dereference github.com/goharbor/harbor/src/server/v2.0/handler/retention.go:409 github.com/goharbor/harbor/src/server/v2.0/handler/retention.go:169 ```  ### Steps to reproduce the problem  ```sh R=$HARBOR/api/v2.0/retentions curl -su admin:$PASS -X POST $R -H 'Content-Type: application/json' -d '{"algorithm":"or","rules":[]}' curl -su admin:$PASS -X POST $R -H 'Content-Type: application/json' -d '{"algorithm":"or","rules":[],"scope":{"level":"project","ref":2}}' curl -su admin:$PASS -X PUT $R/1 -H 'Content-Type: application/json' -d '{"algorithm":"or","rules":[]}' ```  All three return `500 {"errors":[{"code":"UNKNOWN","message":"internal server error"}]}`.  ### Versions  - harbor version: main (fac9abd1f1e2) 
+
 - **Issue #24361** (2026-11-11): **Bump Trivy adapter and distribution for release-2.15.0**
   *Symptoms*: Bump Trivy adapter to v0.40.1 and distribution to v2.8.3-harbor.4.  Reference: #24316.  Validation: release tags verified; Makefile pins and download URL checked; git diff --check passed.
   **Post-Mortem & Fix Analysis**:
   > ## [Codecov](https://app.codecov.io/gh/goharbor/harbor/pull/24361?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=goharbor) Report :white_check_mark: All modified and coverable lines are covered by tests. :warning: Please [upload](https://docs.codecov.com/docs/codecov-uploader) report for BASE (`release-2.15.0@47f3055`). [Learn more](https://docs.codecov.io/docs/error-reference?utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=goharbor#section-missing-base-commit) about missing BASE report.  <details><summary>Additional details and impacted files</summary>    [![Impacted file tree graph](https://app.codecov.io/gh/goharbor/harbor/pull/24361/graphs/tree.svg?width=650&height=150&src=pr&token=6SOPrJGDVW&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=goharbor)](https://app.codecov.io/gh/goharbor/harbor/pull/24361?src=pr&el=tree&utm
-
-- **Issue #24360** (2026-11-11): **(cherry-pick): preserve artifact type for multi-tier accessories**
-  *Symptoms*: Backports #24200 to release-2.15.0.  Both affected Go test suites passed. Required Signed-off-by included.
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/goharbor/harbor/pull/24360?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=goharbor) Report :white_check_mark: All modified and coverable lines are covered by tests. :warning: Please [upload](https://docs.codecov.com/docs/codecov-uploader) report for BASE (`release-2.15.0@41a8398`). [Learn more](https://docs.codecov.io/docs/error-reference?utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=goharbor#section-missing-base-commit) about missing BASE report.  <details><summary>Additional details and impacted files</summary>    [![Impacted file tree graph](https://app.codecov.io/gh/goharbor/harbor/pull/24360/graphs/tree.svg?width=650&height=150&src=pr&token=6SOPrJGDVW&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=goharbor)](https://app.codecov.io/gh/goharbor/harbor/pull/24360?src=pr&el=tree&utm
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -680,240 +678,118 @@ def prepare_job_service(config_dict):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fac9abd1` (2026-11-10)
-**Commit Message**: skip copy online package for all release because it is not include in the rc package (#24341)
+### Incident Patch 1: `54a9dc30` (2026-11-13)
+**Commit Message**: fix(replication): ignore 401 when listing labels of a Harbor registry (#24357)
 
-skip copy online package for all release
+Adapter.Info lists the global labels of the remote Harbor to fill the label
+filter values. Earlier Harbor versions allowed a Harbor registry endpoint to
+be configured without an access key and secret; for such endpoints the labels
+API returns 401, and the error was propagated from Info, which broke
+replication that used to work.
+
+When ListLabels fails with 401, log a warning and continue with empty label
+values instead of returning the error. Other errors are still returned.
 
 Signed-off-by: stonezdj <[REDACTED_EMAIL]>
-Co-authored-by: Prasanth Baskar <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/publish_release.yml` (modified, +0/-6)
+**File**: `src/pkg/reg/adapter/harbor/base/adapter.go` (modified, +13/-1)
 ```diff
-@@ -51,12 +51,6 @@ jobs:
-             dst_offline=harbor-offline-installer-${cur}-${arch}.tgz
-             dst_online=
-             aws s3 cp s3://${bucket}/${branch}/${src_offline} s3://${bucket}/${branch}/${dst_offline}
--
--            if [ "${{ env.PRERELEASE }}" = "false" ]; then
--              src_online=harbor-online-installer-${base}-${{ env.BUILD_NO }}-${arch}.tgz
--              dst_online=harbor-online-installer-${cur}-${arch}.tgz
--              aws s3 cp s3://${bucket}/${branch}/${src_online} s3://${bucket}/${branch}/${dst_online}
--            fi
-             source tools/release/release_utils.sh && getAssets "$bucket" "$branch" "$dst_offline" "$dst_online" "${{ env.PRERELEASE }}" "$assets_path"
-           done
+@@ -126,7 +126,19 @@ func (a *Adapter) Info() (*model.RegistryInfo, error) {
  
+ 	labels, err := a.Client.ListLabels()
+ 	if err != nil {
+-		return nil, err
++		// Registries may be configured without an access key and secret, which
++		// earlier versions allowed. Listing labels then fails with 401; log it
++		// and continue with no label values instead of failing Info, which
++		// would break replication for such registries.
++		if e, ok := err.(*common_http.Error); !ok || e.Code != http.StatusUnauthorized {
++			return nil, err
++		}
++		url := ""
++		if a.Registry != nil {
++			url = a.Registry.URL
++		}
++		log.Warningf("failed to list labels of the Harbor registry %s, unauthorized, continue with empty labels: %v", url, err)
++		labels = nil
+ 	}
+ 	info.SupportedResourceFilters = append(info.SupportedResourceFilters,
+ 		&model.FilterStyle{
 ```
 
----
-
-### Incident Patch 2: `45c12df3` (2026-11-10)
-**Commit Message**: add prepare migraion script for 2.16.0 (#24346)
-
-Signed-off-by: my036811 <[REDACTED_EMAIL]>
-
-**File**: `make/harbor.yml.tmpl` (modified, +1/-1)
+**File**: `src/pkg/reg/adapter/harbor/base/adapter_test.go` (modified, +47/-0)
 ```diff
-@@ -181,7 +181,7 @@ log:
-   #   port: 5140
+@@ -16,7 +16,9 @@ package base
  
- #This attribute is for migrator to detect the version of the .cfg file, DO NOT MODIFY!
--_version: 2.15.0
-+_version: 2.16.0
+ import (
+ 	"net/http"
++	"net/http/httptest"
+ 	"strconv"
++	"strings"
+ 	"testing"
  
- # Uncomment external_database if using external database.
- # external_database:
-```
-
-**File**: `make/photon/prepare/commands/migrate.py` (modified, +1/-1)
-```diff
-@@ -10,7 +10,7 @@
- @click.command()
- @click.option('-i', '--input', 'input_', required=True, help="The path of original config file")
- @click.option('-o', '--output', default='', help="the path of output config file")
--@click.option('-t', '--target', default='2.15.0', help="target version of input path")
-+@click.option('-t', '--target', default='2.16.0', help="target version of input path")
- def migrate(input_, output, target):
-     """
-     migrate command will migrate config file style to specific version
-```
-
-**File**: `make/photon/prepare/migrations/__init__.py` (modified, +1/-1)
-```diff
-@@ -2,4 +2,4 @@
+ 	"github.com/stretchr/testify/assert"
+@@ -75,6 +77,51 @@ func TestInfo(t *testing.T) {
+ 	server.Close()
+ }
  
- MIGRATION_BASE_DIR = os.path.dirname(__file__)
- 
--accept_versions = {'1.9.0', '1.10.0', '2.0.0', '2.1.0', '2.2.0', '2.3.0', '2.4.0', '2.5.0', '2.6.0', '2.7.0', '2.8.0', '2.9.0','2.10.0', '2.11.0', '2.12.0', '2.13.0', '2.14.0', '2.15.0'}
-\ No newline at end of file
-+accept_versions = {'1.9.0', '1.10.0', '2.0.0', '2.1.0', '2.2.0', '2.3.0', '2.4.0', '2.5.0', '2.6.0', '2.7.0', '2.8.0', '2.9.0','2.10.0', '2.11.0', '2.12.0', '2.13.0', '2.14.0', '2.15.0', '2.16.0'}
-\ No newline at end of file
-```
-
-**File**: `make/photon/prepare/migrations/version_2_16_0/__init__.py` (added, +21/-0)
-```diff
-@@ -0,0 +1,21 @@
-+import os
-+from jinja2 import Environment, FileSystemLoader, StrictUndefined, select_autoescape
-+from utils.migration import read_conf
++func newLabelsStatusServer(status int) *httptest.Server {
++	return test.NewServer(
++		&test.RequestHandlerMapping{
++			Method:  http.MethodGet,
++			Pattern: "/api/systeminfo",
++			Handler: func(w http.ResponseWriter, r *http.Request) {},
++		},
++		&test.RequestHandlerMapping{
++			Method:  http.MethodGet,
++			Pattern: "/api",
++			Handler: func(w http.ResponseWriter, r *http.Request) {
++				if strings.HasSuffix(r.URL.Path, "/labels") {
++					w.WriteHeader(status)
++					return
++				}
++				w.WriteHeader(http.StatusNotFound)
++			},
++		},
++	)
++}
 +
-+revision = '2.16.0'
-+down_revisions = ['2.15.0']
++func TestInfoListLabelsUnauthorized(t *testing.T) {
++	server := newLabelsStatusServer(http.StatusUnauthorized)
++	defer server.Close()
 +
-+def migrate(input_cfg, output_cfg):
-+    current_dir = os.path.dirname(__file__)
-+    tpl = Environment(
-+        loader=FileSystemLoader(current_dir),
-+        undefined=StrictUndefined,
-+        trim_blocks=True,
-+        lstrip_blocks=True,
-+        autoescape = select_autoescape()
-+        ).get_template('harbor.yml.jinja')
++	adapter, err := New(&model.Registry{URL: server.URL})
++	require.Nil(t, err)
++	info, err := adapter.Info()
++	require.Nil(t, err)
++	require.Equal(t, 3, len(info.SupportedResourceFilters))
++	labelFilter := info.SupportedResourceFilters[2]
++	assert.Equal(t, model.FilterTypeLabel, labelFilter.Type)
++	assert.Empty(t, labelFilter.Values)
++}
 +
-+    config_dict = read_conf(input_cfg)
++func TestInfoListLabelsOtherError(t *testing.T) {
++	server := newLabelsStatusServer(http.StatusInternalServerError)
++	defer server.Close()
 +
-+    with open(output_cfg, 'w') as f:
-+        f.write(tpl.render(**config_dict))
-```
-
-**File**: `make/photon/prepare/migrations/version_2_16_0/harbor.yml.jinja` (added, +817/-0)
-```diff
-@@ -0,0 +1,817 @@
-+# Configuration file of Harbor
++	adapter, err := New(&model.Registry{URL: server.URL})
++	require.Nil(t, err)
++	_, err = adapter.Info()
++	assert.NotNil(t, err)
++}
 +
-+# The IP address or hostname to access admin UI and registry service.
-+# DO NOT use localhost or 127.0.0.1, because Harbor needs to be accessed by external clients.
-+hostname: {{ hostname }}
-+
-+# http related config
-+{% if http is defined %}
-+http:
-+  # port for http, default is 80. If https enabled, this port will redirect to https port
-+  port: {{ http.port }}
-+{% else %}
-+# http:
-+#   # port for http, default is 80. If https enabled, this port will redirect to https port
-+#   port: 80
-+{% endif %}
-+
-+{% if https is defined %}
-+# https related config
-+https:
-+  # https port for harbor, default is 443
-+  port: {{ https.port }}
-+  # The path of cert and key files for nginx
-+  certificate: {{ https.certificate }}
-+  private_key: {{ https.private_key }}
-+  # enable strong ssl ciphers (default: false)
-+  {% if strong_ssl_ciphers is defined %}
-+  strong_ssl_ciphers: {{ strong_ssl_ciphers | lower }}
-+  {% else %}
-+  strong_ssl_ciphers: false
-+  {% endif %}
-+{% else %}
-+# https related config
-+# https:
-+#   # https port for harbor, default is 443
-+#   port: 443
-+#   # The path of cert and key files for nginx
-+#   certificate: /your/certificate/path
-+#   private_key: /your/private/key/path
-+#   enable strong ssl ciphers (default: false)
-+#   strong_ssl_ciphers: false
-+{% endif %}
-+
-+# # Harbor will set ipv4 enabled only by default if this block is not configured
-+# # Otherwise, please uncomment this block to configure your own ip_family stacks
-+{% if ip_family is defined %}
-+ip_family:
-+  # ipv6Enabled set to true if ipv6 is enabled in docker network, currently it affected the nginx related component
-+  {% if ip_family.ipv6 is defined %}
-+  ipv6:
-+    enabled: {{ ip_family.ipv6.enabled | lower }}
-+  {% else %}
-+  ipv6:
-+    enabled: false
-+  {% endif %}
-+  # ipv4Enabled set to true by default, currently it affected the nginx related component
-+  {% if ip_family.ipv4 is defined %}
-+  ipv4:
-+    enabled: {{ ip_family.ipv4.enabled | lower }}
-+  {% else %}
-+  ipv4:
-+    enabled: true
-+  {% endif %}
-+{% else %}
-+# ip_family:
-+#   # ipv6Enabled set to true if ipv6 is enabled in docker network, currently it affected the nginx related component
-+#   ipv6:
-+#     enabled: false
-+#   # ipv4Enabled set to true by default, currently it affected the nginx related component
-+#   ipv4:
-+#     enabled: true
-+{% endif %}
-+
-+{% if internal_tls is defined %}
-+# Uncomment following will enable tls communication between all harbor components
-+internal_tls:
-+  # set enabled to true means internal tls is enabled
-+  enabled: {{ internal_tls.enabled | lower }}
-+  {% if internal_tls.dir is defined %}
-+  # put your cert and key files on dir
-+  dir: {{ internal_tls.dir }}
-+  {% endif %}
-+{% else %}
-+# internal_tls:
-+#   # set enabled to true means internal tls is enabled
-+#   enabled: true
-+#   # put your cert and key files on dir
-+#   dir: /etc/harbor/tls/internal
-+{% endif %}
-+
-+# Uncomment external_url if you want to enable external proxy
-+# And when it enabled the hostname will no longer used
-+{% if external_url is defined %}
-+external_url: {{ external_url }}
-+{% else %}
-+# external_url: https://reg.mydomain.com:8433
-+{% endif %}
-+
-+# The initial password of Harbor admin
-+# It only works in first time to install harbor
-+# Remember Change the admin password from UI after launching Harbor.
-+{% if harbor_admin_password is defined %}
-+harbor_admin_password: {{ harbor_admin_password }}
-+{% else %}
-+harbor_admin_password: Harbor12345
-+{% endif %}
-+
-+# Harbor DB configuration
-+database:
-+{% if database is defined %}
-+  # The password for the root user of Harbor DB. Change this before any production use.
-+  password: {{ database.password}}
-+  # The maximum number of connections in the idle connection pool. If it <=0, no idle connections are retained.
-+  max_idle_conns: {{ database.max_idle_conns }}
-+  # The maximum number of open connections to the database. If it <= 0, then there is no limit on the number of open connections.
-+  # Note: the default number of connections is 1024 for postgres of harbor.
-+  max_open_conns: {{ database.max_open_conns }}
-+  # The maximum amount of time a connection may be reused. Expired connections may be closed lazily before reuse. If it <= 0, connections are not closed due to a connection's age.
-+  # The value is a duration string. A duration string is a possibly signed sequence of decimal numbers, each with optional fraction and a unit suffix, such as "300ms", "-1.5h" or "2h45m". Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h".
-+  {% if database.conn_max_lifetime is defined %}
-+  conn_max_lifetime: {{ database.conn_max_lifetime }}
-+  {% else %}
-+  conn_max_lifetime: 5m
-+  {% endif %}
-+  # The maximum amount of time a connection may be idle. Expired connections may be closed lazily before reuse. If it <= 0, connections are not closed due to a connection's idle time.
-+  # The value is a duration string. A duration string is a possibly signed seque
+ func TestPrepareForPush(t *testing.T) {
+ 	server := test.NewServer(&test.RequestHandlerMapping{
+ 		Method:  http.MethodPost,
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #24361** (2026-11-11): Bump Trivy adapter and distribution for release-2.15.0 (@stonezdj)
 - **PR #24360** (2026-11-11): (cherry-pick): preserve artifact type for multi-tier accessories (@stonezdj)
 - **PR #24359** (2026-11-11): (cherry-pick): ignore 401 when listing labels of a Harbor registry (@stonezdj)
-- **PR #24353** (2026-11-10): (cherry-pick) Publish online installer package for RC releases (@stonezdj)
-- **PR #24351** (2026-11-10): Bump up distribution to v2.8.3-harbor.4-rc1 and bump up golang to 1.27.3 (@stonezdj)
-- **PR #24348** (2026-11-10): (cherry-pick) Skip copying online package during release (@stonezdj)
+- **PR #24358** (2026-11-13): (cherry-pick): ignore 401 when listing labels of a Harbor registry (@stonezdj)
+- **PR #24357** (2026-11-13): fix(replication): ignore 401 when listing labels of a Harbor registry (@stonezdj)
+- **PR #24354** (2026-11-13): Publish online installer package for RC releases (@stonezdj)
 
 ---
 
@@ -927,3 +803,46 @@ Signed-off-by: my036811 <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. replication): ignore 401 when listing labels of a Harbor registry
+
+**RULE**:
+When implementing operations in `src/pkg/reg/adapter/harbor/base/adapter.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goharbor/harbor. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `54a9dc30`: replication): ignore 401 when listing labels of a Harbor registry. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/pkg/reg/adapter/harbor/base/adapter.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+		// Registries may be configured without an access key and secret, which
+		// earlier versions allowed. Listing labels then fails with 401; log it
+		// and continue with no label values instead of failing Info, which
+		// would break replication for such registries.
+		if e, ok := err.(*common_http.Error); !ok || e.Code != http.StatusUnauthorized {
+			return nil, err
+		}
+		url := ""
+		if a.Registry != nil {
+			url = a.Registry.URL
+		}
+		log.Warningf("failed to list labels of the Harbor registry %s, unauthorized, continue with empty labels: %v", url, err)
+		labels = nil
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+		return nil, err
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `54a9dc30` are properly handled with clean fallback behavior.

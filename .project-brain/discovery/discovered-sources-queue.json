@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T01:49:14.110Z",
+  "updated_at": "2026-11-14T02:06:55.672Z",
   "stats": {
-    "total_discovered": 3061,
-    "approved_pending_harvest": 2860,
+    "total_discovered": 3063,
+    "approved_pending_harvest": 2862,
     "harvested_count": 0,
     "rejected_count": 201,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2857,
+      "COMMUNITY_AND_EXPERT": 2859,
       "OFFICIAL_DOCUMENTATION": 109,
       "STANDARDS_AND_SPECIFICATIONS": 81,
       "ENGINEERING_BLOGS": 1,
@@ -65955,6 +65955,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md",
         "fileName": "zeromicro-go-zero-learnings.md"
+      }
+    },
+    "SRC-DF963A98A0DE": {
+      "id": "SRC-DF963A98A0DE",
+      "url": "https://github.com/graphprotocol/graph-node",
+      "title": "https://github.com/graphprotocol/graph-node",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T02:06:30.271Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/graphprotocol-graph-node-learnings.md",
+        "fileName": "graphprotocol-graph-node-learnings.md"
+      }
+    },
+    "SRC-A0D5AAF3B3E5": {
+      "id": "SRC-A0D5AAF3B3E5",
+      "url": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro",
+      "title": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T02:06:55.672Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md",
+        "fileName": "hf-deepseek-ai-deepseek-v4-pro-learnings.md"
       }
     }
   }

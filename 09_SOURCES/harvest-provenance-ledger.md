@@ -9731,3 +9731,8 @@ Every entry in this ledger must capture:
 | `learn-github-software-mansion-react-native-reanimated` | `https://github.com/software-mansion/react-native-reanimated` | `1b66ac4d` | Multi-dimensional audit evidence | 2026-11-14T01:48:38.664Z |
 | `learn-github-zeromicro-go-zero` | `https://github.com/zeromicro/go-zero` | `74651def` | Multi-dimensional audit evidence | 2026-11-14T01:48:42.083Z |
 | `learn-dom-d-79605cee` | `project://hf-qwen-qwen3.8-flash-next` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md` | 2026-11-14T01:49:12.906Z |
+| `learn-huggingface-deepseek-ai-deepseek-v4-pro` | `https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-14T02:06:11.258Z |
+| `learn-github-graphprotocol-graph-node` | `https://github.com/graphprotocol/graph-node` | `796ace3f` | Multi-dimensional audit evidence | 2026-11-14T02:06:14.988Z |
+| `learn-github-goharbor-harbor` | `https://github.com/goharbor/harbor` | `e7dbdea2` | Multi-dimensional audit evidence | 2026-11-14T02:06:21.783Z |
+| `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `9373aa70` | Multi-dimensional audit evidence | 2026-11-14T02:06:27.244Z |
+| `learn-dom-d-53028cd5` | `project://hf-deepseek-ai-deepseek-v4-pro` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md` | 2026-11-14T02:06:55.661Z |

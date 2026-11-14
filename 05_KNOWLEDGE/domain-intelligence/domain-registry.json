@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T01:49:14.371Z",
-  "total_records": 465,
+  "last_updated": "2026-11-14T02:06:56.328Z",
+  "total_records": 473,
   "domains": {
     "A": {
       "total": 5,
@@ -33,7 +33,7 @@
       ]
     },
     "D": {
-      "total": 237,
+      "total": 240,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -271,7 +271,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant",
         "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants",
         "DOM-D-79605CEE",
-        "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-8-flash-next-learnings-core-invari"
+        "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-8-flash-next-learnings-core-invari",
+        "domain_intelligence-research-knowledge-intelligence-deepseek-ai-deepseek-v4-pro-core-invariants",
+        "DOM-D-53028CD5",
+        "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v4-pro-learnings-core-in"
       ]
     },
     "E": {
@@ -296,7 +299,7 @@
       ]
     },
     "G": {
-      "total": 67,
+      "total": 69,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -364,11 +367,13 @@
         "domain_intelligence-architecture-intelligence-software-mansion-react-native-reanimated-core-invarian",
         "domain_intelligence-architecture-intelligence-zeromicro-go-zero-core-invariants",
         "domain_intelligence-architecture-intelligence-software-mansion-react-native-reanimated-learnings-cor",
-        "domain_intelligence-architecture-intelligence-zeromicro-go-zero-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-zeromicro-go-zero-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-goharbor-harbor-core-invariants",
+        "domain_intelligence-architecture-intelligence-goharbor-harbor-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 96,
+      "total": 97,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -465,7 +470,8 @@
         "domain_intelligence-technical-construction-intelligence-openreplay-openreplay-learnings-core-invaria",
         "domain_intelligence-technical-construction-intelligence-invertase-react-native-firebase-core-invaria",
         "DOM-H-E98BDD0E",
-        "domain_intelligence-technical-construction-intelligence-invertase-react-native-firebase-learnings-co"
+        "domain_intelligence-technical-construction-intelligence-invertase-react-native-firebase-learnings-co",
+        "domain_intelligence-technical-construction-intelligence-lioensky-vcptoolbox-core-invariants"
       ]
     },
     "I": {
@@ -519,13 +525,15 @@
       ]
     },
     "L": {
-      "total": 5,
+      "total": 7,
       "record_ids": [
         "DOM-L-1B851132",
         "DOM-L-80D1F65C",
         "DOM-L-2A739777",
         "domain_intelligence-deployment-operations-intelligence-gardener-gardener-core-invariants",
-        "domain_intelligence-deployment-operations-intelligence-gardener-gardener-learnings-core-invariants"
+        "domain_intelligence-deployment-operations-intelligence-gardener-gardener-learnings-core-invariants",
+        "domain_intelligence-deployment-operations-intelligence-graphprotocol-graph-node-core-invariants",
+        "domain_intelligence-deployment-operations-intelligence-graphprotocol-graph-node-learnings-core-invar"
       ]
     },
     "M": {
@@ -10689,6 +10697,111 @@
       "repository": "zeromicro-go-zero-learnings",
       "content_hash": "c5bb32b698fda011b1e29b700d5cbc54bff9115d6804b9e08a013456b4303912",
       "created_at": "2026-11-14T01:49:14.371Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-deepseek-ai-deepseek-v4-pro-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-deepseek-ai-deepseek-v4-pro-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: deepseek-ai/DeepSeek-V4-Pro Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-deepseek-ai-deepseek-v4-pro-research-knowledge-intelligence-deepseek-ai-deeps.md",
+      "repository": "deepseek-ai/DeepSeek-V4-Pro",
+      "content_hash": "65c8d04e8af302adc6baeee65857a529f4efe94b74739fbf8fb3c357e7bbce13",
+      "created_at": "2026-11-14T02:06:11.406Z"
+    },
+    "domain_intelligence-deployment-operations-intelligence-graphprotocol-graph-node-core-invariants": {
+      "record_id": "domain_intelligence-deployment-operations-intelligence-graphprotocol-graph-node-core-invariants",
+      "domain_letter": "L",
+      "title": "Deployment & Operations Intelligence: graphprotocol/graph-node Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-graphprotocol-graph-node-deployment-operations-intelligence-graphprotocol-graph-.md",
+      "repository": "graphprotocol/graph-node",
+      "content_hash": "e4c6b2744ea035d7a5291e4fe00e6379b57194fb6d8662ab91ea96a5ab39bfce",
+      "created_at": "2026-11-14T02:06:15.240Z"
+    },
+    "domain_intelligence-architecture-intelligence-goharbor-harbor-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-goharbor-harbor-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: goharbor/harbor Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-goharbor-harbor-architecture-intelligence-goharbor-harbor-core-invariants.md",
+      "repository": "goharbor/harbor",
+      "content_hash": "472d0331dc29aea11f4c4ced332a4aaf9b669a4bbe821938c7e7dddcfd463189",
+      "created_at": "2026-11-14T02:06:22.016Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-lioensky-vcptoolbox-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-lioensky-vcptoolbox-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: lioensky/VCPToolBox Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lioensky-vcptoolbox-technical-construction-intelligence-lioensky-vcptoolbox-core.md",
+      "repository": "lioensky/VCPToolBox",
+      "content_hash": "e12d65ec51414377c10c7b56dca67b18859cb3ac3ac27d5a9f1225e2d1e6ba39",
+      "created_at": "2026-11-14T02:06:27.478Z"
+    },
+    "domain_intelligence-deployment-operations-intelligence-graphprotocol-graph-node-learnings-core-invar": {
+      "record_id": "domain_intelligence-deployment-operations-intelligence-graphprotocol-graph-node-learnings-core-invar",
+      "domain_letter": "L",
+      "title": "Deployment & Operations Intelligence: graphprotocol-graph-node-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-graphprotocol-graph-node-learnings-deployment-operations-intelligence-graphproto.md",
+      "repository": "graphprotocol-graph-node-learnings",
+      "content_hash": "f9666f5a96e187a60ed445521ac65bfad2bab8c4f2e1ea50dc00edbdd07ee11d",
+      "created_at": "2026-11-14T02:06:30.507Z"
+    },
+    "DOM-D-53028CD5": {
+      "record_id": "DOM-D-53028CD5",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): deepseek-ai/DeepSeek-V4-Pro",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro](https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro))  \n> **Source Version**: `hf-deepseek-`  \n> **License**: Open-Sou",
+      "content_hash": "41e1bc5ad6fec6d0afe0b1841e2e79f3413e3d78200172726350c011148dc613",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md`  \n> **Source**: huggingface ([https://h -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md`  \n> **Source**: huggingface ([https://h",
+      "provenance": {
+        "source_uri": "project://hf-deepseek-ai-deepseek-v4-pro/hf-deepseek-ai-deepseek-v4-pro-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T02:06:30.673Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-deepseek-ai-deepseek-v4-pro)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-deepseek-ai-deepseek-v4-pro"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T02:06:55.652Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v4-pro-learnings-core-in": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v4-pro-learnings-core-in",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-deepseek-ai-deepseek-v4-pro-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-deepseek-ai-deepseek-v4-pro-learnings-research-knowledge-intelligence-hf-deep.md",
+      "repository": "hf-deepseek-ai-deepseek-v4-pro-learnings",
+      "content_hash": "be3ec0e1bbd9dbda57c5ab051097424c87ba0721701e628c0f66d7f2699555c6",
+      "created_at": "2026-11-14T02:06:55.826Z"
+    },
+    "domain_intelligence-architecture-intelligence-goharbor-harbor-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-goharbor-harbor-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: goharbor-harbor-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-goharbor-harbor-learnings-architecture-intelligence-goharbor-harbor-learnings-co.md",
+      "repository": "goharbor-harbor-learnings",
+      "content_hash": "8b751b47691a064f07ae0e9d3fa4afd35a2e83fd58fdeaac236eba875e46d84f",
+      "created_at": "2026-11-14T02:06:56.328Z"
     }
   }
 }

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/graphprotocol-graph-node-learnings.md`  
 > **Source**: github ([https://github.com/graphprotocol/graph-node](https://github.com/graphprotocol/graph-node))  
-> **Source Version**: `3b2f05d4`  
+> **Source Version**: `796ace3f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T22:55:25.899Z  
+> **Timestamp**: 2026-11-14T02:06:14.214Z  
 > **Learning ID**: `learn-github-graphprotocol-graph-node`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/graphprotocol-graph-node-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/graphprotocol/graph-node](https://github.com/graphprotocol/graph-node))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T22:55:24.916Z  
+> **Harvest Timestamp**: 2026-11-14T02:06:14.209Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -881,229 +881,126 @@ impl<S> Drop for GraphmanExecutionTracker<S> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3b2f05d4` (2026-11-09)
-**Commit Message**: core: Hash each WASM module once instead of once per data source (#6732)
+### Incident Patch 1: `796ace3f` (2026-11-13)
+**Commit Message**: gnd: Don't unset nullable primitive fields set to 0 or false (#6760)
 
-* core: Hash each WASM module once instead of once per data source
+`gnd codegen` took an accessor's nullability from the GraphQL field, so a
+nullable `Int`, `Boolean`, `Int8` or `Timestamp` field, or a nullable
+reference to an entity with `id: Int8!`, got a setter that unsets the
+field when it is given 0 or false, and the store held null. graph-cli
+decides from the AssemblyScript type, which `type_from_field` already
+keeps non-nullable for all of these, and generates the non-nullable
+getter and setter. Take nullability from the type expression in both, as
+graph-cli does.
 
-`SubgraphInstance::new_host` computed keccak256 over the full module bytes
-for every data source before looking up `module_cache`. Data sources
-created from the same template share one `Arc` of module bytes, so on a
-subgraph with millions of dynamic data sources this rehashed the same
-bytes millions of times at every runner start.
+Fixes #6759
 
-Memoize the hash by the identity of the `Arc` holding the bytes, keeping a
-clone of the `Arc` so its address cannot be reused while the entry exists.
-The `module_cache` key is still the keccak256 of the module contents.
-
-* core: Keep ModuleCache as plain data
-
-Drop the `Arc::ptr_eq` check and the `hashes_computed` test counter, and
-move spawning back to `new_host`. The memo keeps its clone of the `Arc`,
-which is what makes the address a safe key.
-
-* core: Drop module cache test checks that don't exercise the memo
-
-**File**: `core/src/subgraph/context/instance/mod.rs` (modified, +5/-5)
+**File**: `gnd/src/codegen/schema.rs` (modified, +66/-8)
 ```diff
-@@ -1,7 +1,7 @@
- mod hosts;
-+mod module_cache;
+@@ -494,7 +494,8 @@ impl SchemaCodeGenerator {
  
- use anyhow::ensure;
--use graph::futures01::sync::mpsc::Sender;
- use graph::{
-     blockchain::{Blockchain, TriggerData as _},
-     data_source::{
-@@ -11,7 +11,7 @@ use graph::{
-     prelude::*,
- };
- use hosts::{OffchainHosts, OnchainHosts};
--use std::collections::HashMap;
-+use module_cache::ModuleCache;
+         let value_type = self.value_type_from_field(field);
+         let return_type = self.type_from_field(field);
+-        let nullable = field.is_nullable;
++        // AS primitives can't be nullable, so take nullability from the AS type.
++        let nullable = matches!(return_type, TypeExpr::Nullable(_));
  
- pub(crate) struct SubgraphInstance<C: Blockchain, T: RuntimeHostBuilder<C>> {
-     subgraph_id: DeploymentHash,
-@@ -36,7 +36,7 @@ pub(crate) struct SubgraphInstance<C: Blockchain, T: RuntimeHostBuilder<C>> {
-     offchain_hosts: OffchainHosts<C, T>,
+         let primitive_default = match &return_type {
+             TypeExpr::Named(t) => t.get_primitive_default(),
+@@ -575,13 +576,8 @@ impl SchemaCodeGenerator {
+         let safe_name = handle_reserved_word(&field.name);
+         let value_type = self.value_type_from_field(field);
+         let param_type = self.type_from_field(field);
+-        let nullable = field.is_nullable;
+-
+-        let set_code = if nullable {
+-            let inner_type = match &param_type {
+-                TypeExpr::Nullable(n) => n.inner.to_string(),
+-                other => other.to_string(),
+-            };
++        let set_code = if let TypeExpr::Nullable(n) = &param_type {
++            let inner_type = n.inner.to_string();
+             format!(
+                 r#"
+       if (!value) {{
+@@ -762,6 +758,68 @@ mod tests {
+         assert!(method_names.contains(&"set symbol"));
+     }
  
-     /// Maps the hash of a module to a channel to the thread in which the module is instantiated.
--    module_cache: HashMap<[u8; 32], Sender<T::Req>>,
-+    module_cache: ModuleCache<T::Req>,
- 
-     /// This manages the sequence of causality regions for the subgraph.
-     causality_region_seq: CausalityRegionSeq,
-@@ -85,7 +85,7 @@ where
-             onchain_hosts: OnchainHosts::new(),
-             subgraph_hosts: OnchainHosts::new(),
-             offchain_hosts: OffchainHosts::new(),
--            module_cache: HashMap::new(),
-+            module_cache: ModuleCache::new(),
-             templates,
-             host_metrics,
-             causality_region_seq,
-@@ -104,7 +104,7 @@ where
-         };
- 
-         let mapping_request_sender = {
--            let module_hash = alloy::primitives::keccak256(module_bytes.as_ref()).0;
-+            let module_hash = self.module_cache.hash(&module_bytes);
-             if let Some(sender) = self.module_cache.get(&module_hash) {
-                 sender.clone()
-             } else {
-```
-
-**File**: `core/src/subgraph/context/instance/module_cache.rs` (added, +181/-0)
-```diff
-@@ -0,0 +1,181 @@
-+use graph::futures01::sync::mpsc::Sender;
-+use std::collections::HashMap;
-+use std::sync::Arc;
-+
-+/// Maps the hash of a module to a channel to the thread in which the module
-+/// is instantiated.
-+///
-+/// Hashing a module reads all of its bytes, and a subgraph can have millions
-+/// of data sources that share a handful of modules. The hash is therefore
-+/// memoized by the identity of the `Arc` that holds the bytes: every data
-+/// source created from the same manifest mapping or template shares that
-+/// mapping's `Arc`. The memo holds a clone of the `Arc`, so the allocation
-+/// lives as long as the entry and an address found in the memo always
-+/// designates that same `Arc`. Bytes in another `Arc` are hashed again: equal
-+/// contents give the same hash, hence the same module.
-+pub(super) struct ModuleCache<R> {
-+    senders: HashMap<[u8; 32], Sender<R>>,
-+    hashes: HashMap<usize, (Arc<Vec<u8>>, [u8; 32])>,
-+}
-+
-+impl<R> ModuleCache<R> {
-+    pub fn new() -> Self {
-+        ModuleCache {
-+            senders: HashMap::new(),
-+            hashes: HashMap::new(),
-+        }
-+    }
-+
-+    /// The keccak256 hash of `module_bytes`, computed once per `Arc`.
-+    pub fn hash(&mut self, module_bytes: &Arc<Vec<u8>>) -> [u8; 32] {
-+        let key = Arc::as_ptr(module_bytes) as usize;
-+        if let Some((_, hash)) = self.hashes.get(&key) {
-+            return *hash;
-+        }
-+        let hash = alloy::primitives::keccak256(module_bytes.as_slice()).0;
-+        self.hashes.insert(key, (module_bytes.clone(), hash));
-+        hash
-+    }
-+
-+    pub fn get(&self, module_hash: &[u8; 32]) -> Option<&Sender<R>> {
-+        self.senders.get(module_hash)
-+    }
-+
-+    pub fn insert(&mut self, module_hash: [u8; 32], sender: Sender<R>) {
-+        self.senders.insert(module_hash, sender);
-+    }
-+}
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+    use graph::futures01::sync::mpsc::{Receiver, channel};
-+
-+    /// A cache used like `new_host` uses it, whose spawns are recorded: the
-+    /// receivers, by spawn order.
-+    struct Spawns {
-+        cache: ModuleCache<u32>,
-+        receivers: Vec<Receiver<u32>>,
-+    }
-+
-+    impl Spawns {
-+        fn new() -> Self {
-+            Spawns {
-+                cache: ModuleCache::new(),
-+                receivers: Vec::new(),
++    #[test]
++    fn test_nullable_primitive_fields() {
++        // Nullable primitives, incl. Int8-id entity refs, get non-nullable accessors.
++        let schema = r#"
++            type Example @entity(immutable: true) {
++                id: ID!
++                side: Int
++                flag: Boolean
++                big: Int8
++                at: Timestamp
++                counter: Counter
++                name: String
 +            }
-+        }
 +
-+        /// Memoize `mark` as the hash of `bytes`.
-+        fn seed(&mut self, bytes: &Arc<Vec<u8>>, mark: [u8; 32]) {
-+            let key = Arc::as_ptr(bytes) as usize;
-+            self.cache.hashes.insert(key, (bytes.clone(), mark));
-+        }
-+
-+        fn sender(&mut self, bytes: &Arc<Vec<u8>>) -> Sender<u32> {
-+            let module_hash = self.cache.hash(bytes);
-+            if let Some(sender) = self.cache.get(&module_hash) {
-+                return sender.clone();
++            type Counter @entity(immutable: true) {
++                id: Int8!
 +            }
-+            let (tx, rx) = channel(1);
-+            self.receivers.push(rx);
-+            self.cache.insert(module_hash, tx.clone());
-+            tx
++        "#;
++        let doc = parse_schema::<String>(schema).unwrap();
++        let generator = SchemaCodeGenerator::new(&doc).unwrap();
++
++        let classes = generator.generate_types(true);
++        assert_eq!(classes.len(), 2);
++
++        let example = &classes[0];
++        let body = |name: &str| -> String {
++            example
++                .methods
++                .iter()
++                .find(|m| m.name == name)
++                .unwrap_or_else(|| panic!("no method `{name}`"))
++                .body
++                .clone()
++        };
++
++        for (field, default) in [
++            ("side", "0"),
++            ("flag", "false"),
++            ("big", "0"),
++            ("at", "0"),
++            ("counter", "0"),
++        ] {
++            let getter = body(&format!("get {field}"));
++            assert!(
++                getter.contains(&format!("return {default}")) && !getter.contains("return null"),
++                "nullable primitive `{field}` should return its default, got: {getter}"
++            );
++
++            let setter = body(&format!("set {field}"));
++            assert!(
++                setter.contains(&format!("this.set('{field}'")) && !setter.contains("unset"),
++                "nullable primitive `{field}` should always be set, got: {setter}"
++            );
 +        }
++
++        // A nullable field of a non-primitive type keeps the nullable accessors
++        let getter = body("get name");
++        assert!(getter.contains("return null"), "got: {getter}");
++        let setter = body("set name");
++        assert!(setter.contains("this.unset('name')"), "got: {setter}");
 +    }
 +
-+    /// Whether `sender` sends to the receiver of spawn `idx`: drop that
-+    /// receiver and see if the sender is disconnected.
-+    fn sends_to(mut spawns: Spawns, sender: &mut Sender<u32>, idx: usize) -> bool {
-+        drop(spawns.receivers.remove(idx));
-+        sender.try_send(0).is_err_and(|e| e.is_disconnected())
-+    }
-+
-+    fn module(n: u8) -> Vec<u8> {
-+        (0..66_000u32).map(|i| (i as u8) ^ n).collect()
-+    }
-+
-+    #[test]
-+    fn two_templates_two_hashes() {
-+        let a = Arc::new(module(1));
-+        let b = Arc::new(module(2));
-+        let mut s = Spawns::new();
-+        let ha = s.cache.hash(&a);
-+        let hb = s.cache.hash(&b);
-+        assert_eq!(ha, alloy::primitives::keccak256(a.as_slice()).0);
-+        assert_eq!(hb, alloy::primitives::keccak256(b.as_slice()).0);
-+
-+        s.sender(&a);
-+        let mut sb = s.sender(&b);
-+        assert_eq!(s.receivers.len(), 2, "one module per template");
-+        assert!(sends_to(s, &mut sb, 1));
-+    }
-+
-+    #[test]
-+    fn sources_of_one_template_share_hash_and_sender() {
-+        let template = Arc::new(module(1));
-+        let other = Arc::new(module(2));
-+        let mut s = Spawns::new();
-+        s.sender(&other);
-+        s.sender(&template);
-+        let mut second = s.sender(&template.clone());
-+        assert_eq!(s.cache.hashes.len(), 2);
-+        assert_eq!(s.receivers.len(), 2);
-+        assert!(sends_to(s, &mut second, 1), "the template's sender");
-+    }
-+
-+    #[test]
-+    fn many_sources_hash_once_per_template() {
-+        const N: usize = 100_000;
-+        // A recomputed hash overwrites its entry, which `hashes.len()` can't
-+        // show. Marks are not real hashes on purpose: only a hit returns them.
-+        let (mark_a, mark_b) = ([0xaa; 32], [0xbb; 32]);
-+        let a = Arc::new(module(1));
-+        let b = Arc::new(module(2));
-+        let mut s = Spawns::new();
-+        s.seed(&a, mark_a);
-+        s.seed(&b, mark_b);
-+        for i in 0..N {
-+      
+     #[test]
+     fn test_id_field_types() {
+         assert_eq!(IdFieldKind::String.type_name(), "string");
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6743** (closed): fix(ethereum): default missing sha3Uncles for pre-Gingerbread Celo blocks (@HusseinAdeiza)
-- **PR #6737** (2026-10-20): graph, chain/ethereum, gnd, store: default a missing sha3Uncles in block headers (@tmigone)
-- **PR #6733** (closed): ci: Build a CI image with the toolchain and system packages (@mangas)
-- **PR #6732** (2026-11-09): core: Hash each WASM module once instead of once per data source (@madumas)
-- **PR #6730** (closed): core: Keep the subgraph runner alive through transient store errors (@cargopete)
-- **PR #6729** (2026-10-19): Restore eth_getLogs range reduction after alloy migration (@datanexus-vincent)
+- **PR #6760** (2026-11-13): gnd: Don't unset nullable primitive fields set to 0 or false (@taiyangc)
+- **PR #6758** (closed): store: create a copy's attribute indexes from the source's index list (@lx3133584)
+- **PR #6757** (closed): core: keep the full trigger filter when a template handler is address-scoped (@lx3133584)
+- **PR #6756** (closed): store: keep postponed attribute indexes pending when a graft copies from an unsynced base (@lx3133584)
+- **PR #6755** (closed): store: reject write batches that overlap the deployment head (@lx3133584)
+- **PR #6754** (closed): store: refuse a proof of indexing for a pruned block (@lx3133584)
 
 ---
 
@@ -1123,36 +1020,68 @@ which is what makes the address a safe key.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. core: Hash each WASM module once instead of once per data source (#6732)
+## X. gnd: Don't unset nullable primitive fields set to 0 or false
 
 **RULE**:
-When implementing operations in `core/src/subgraph/context/instance/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in graphprotocol/graph-node. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `gnd/src/codegen/schema.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in graphprotocol/graph-node. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3b2f05d4`: core: Hash each WASM module once instead of once per data source (#6732). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `796ace3f`: gnd: Don't unset nullable primitive fields set to 0 or false. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/src/subgraph/context/instance/mod.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `gnd/src/codegen/schema.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-mod module_cache;
-use module_cache::ModuleCache;
-    module_cache: ModuleCache<T::Req>,
-            module_cache: ModuleCache::new(),
-            let module_hash = self.module_cache.hash(&module_bytes);
+        // AS primitives can't be nullable, so take nullability from the AS type.
+        let nullable = matches!(return_type, TypeExpr::Nullable(_));
+        let set_code = if let TypeExpr::Nullable(n) = &param_type {
+            let inner_type = n.inner.to_string();
+    #[test]
+    fn test_nullable_primitive_fields() {
+        // Nullable primitives, incl. Int8-id entity refs, get non-nullable accessors.
+        let schema = r#"
+            type Example @entity(immutable: true) {
+                id: ID!
+                side: Int
+                flag: Boolean
+                big: Int8
+                at: Timestamp
+                counter: Counter
+                name: String
+            }
+
+            type Counter @entity(immutable: true) {
+                id: Int8!
+            }
+        "#;
+        let doc = parse_schema::<String>(schema).unwrap();
+        let generator = SchemaCodeGenerator::new(&doc).unwrap();
+
+        let classes = generator.generate_types(true);
+        assert_eq!(classes.len(), 2);
+
+        let example = &classes[0];
+        let body = |name: &str| -> String {
+            example
+                .methods
+                .iter()
+                .find(|m| m.na
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-use graph::futures01::sync::mpsc::Sender;
-use std::collections::HashMap;
-    module_cache: HashMap<[u8; 32], Sender<T::Req>>,
-            module_cache: HashMap::new(),
-            let module_hash = alloy::primitives::keccak256(module_bytes.as_ref()).0;
+// Induced defect failure mode:
+        let nullable = field.is_nullable;
+        let nullable = field.is_nullable;
+
+        let set_code = if nullable {
+            let inner_type = match &param_type {
+                TypeExpr::Nullable(n) => n.inner.to_string(),
+                other => other.to_string(),
+            };
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3b2f05d4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `796ace3f` are properly handled with clean fallback behavior.

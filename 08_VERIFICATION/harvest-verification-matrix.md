@@ -9698,3 +9698,8 @@
 | `CYCLE-20261114-YJ5W` | `2026-11-14T01:48:38.660Z` | `software-mansion/react-native-reanimated` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8416` | Yes (`e9fd7e5c...`) |
 | `CYCLE-20261114-YLSV` | `2026-11-14T01:48:42.079Z` | `zeromicro/go-zero` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8417` | Yes (`c58b3d29...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T01:49:12.906Z` | `hf-qwen-qwen3.8-flash-next` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-79605CEE` [Domain D] | Yes (`493c8036...`) |
+| `CYCLE-20261114-L3CN` | `2026-11-14T02:06:11.255Z` | `deepseek-ai/DeepSeek-V4-Pro` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md` | Yes (`0a5da360...`) |
+| `CYCLE-20261114-L689` | `2026-11-14T02:06:14.985Z` | `graphprotocol/graph-node` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8418` | Yes (`7362ec6a...`) |
+| `CYCLE-20261114-LBH0` | `2026-11-14T02:06:21.780Z` | `goharbor/harbor` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8419` | Yes (`173d139b...`) |
+| `CYCLE-20261114-LFOP` | `2026-11-14T02:06:27.241Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8420` | Yes (`bf8378e7...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T02:06:55.661Z` | `hf-deepseek-ai-deepseek-v4-pro` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-53028CD5` [Domain D] | Yes (`41e1bc5a...`) |
