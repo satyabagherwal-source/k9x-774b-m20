@@ -9933,3 +9933,7 @@
 | `CYCLE-20261114-40KW` | `2026-11-14T20:32:39.152Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`b2657f28...`) |
 | `CYCLE-20261114-8385` | `2026-11-14T20:35:49.205Z` | `Qwen/Qwen-Image-2.1-Turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8530, Rule 8531` | Yes (`5d545727...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T20:36:22.260Z` | `hf-qwen-qwen-image-2.1-turbo` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-ADE4819D` [Domain H] | Yes (`78fcc11d...`) |
+| `CYCLE-20261114-SX2M` | `2026-11-14T20:52:01.006Z` | `autotrust/Qwen3.8-Flash-Next-E384-FP4-V2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-qwen3.8-flash-next-e384-fp4-v2-learnings.md` | Yes (`74089310...`) |
+| `CYCLE-20261114-SYRC` | `2026-11-14T20:52:03.192Z` | `iii-hq/iii` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8532` | Yes (`e1212943...`) |
+| `CYCLE-20261114-T4MW` | `2026-11-14T20:52:10.808Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8533` | Yes (`8687381d...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T20:52:48.097Z` | `hf-autotrust-qwen3.8-flash-next-e384-fp4-v2` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-73A9B4FE` [Domain D] | Yes (`bb7329d0...`) |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/iii-hq-iii-learnings.md`  
 > **Source**: github ([https://github.com/iii-hq/iii](https://github.com/iii-hq/iii))  
-> **Source Version**: `fd9719fa`  
+> **Source Version**: `8279fa0d`  
 > **License**: PERMISSIVE_OPEN_SOURCE  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T06:20:27.604Z  
+> **Timestamp**: 2026-11-14T20:52:02.100Z  
 > **Learning ID**: `learn-github-iii-hq-iii`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/iii-hq-iii-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/iii-hq/iii](https://github.com/iii-hq/iii))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T06:20:27.597Z  
+> **Harvest Timestamp**: 2026-11-14T20:52:02.092Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Effortlessly compose, extend, observe, discover, and react to every service in real-time for the first time ever.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 18936 stars
+- **Stars / Engagement**: 18935 stars
 
 ---
 
@@ -2237,844 +2237,894 @@ pub use tui::run;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `175858b5` (2026-11-12)
-**Commit Message**: fix(docs): point the 0.21.x reference tab at the existing reference pages (#2539)
+### Incident Patch 1: `8279fa0d` (2026-11-14)
+**Commit Message**: fix(compose): supervise VM workers from their log stream instead of polling worker::status (#2557)
+
+**File**: `crates/iii-compose/src/logs.rs` (modified, +10/-0)
+```diff
+@@ -120,6 +120,16 @@ pub(crate) struct LogSink {
+ }
+ 
+ impl LogSink {
++    /// A sink that writes nowhere, for a VM log read only to learn when the
++    /// VM ends: its writer is gone, so every record is dropped.
++    pub(crate) fn discard() -> Self {
++        let (sender, _) = tokio::sync::mpsc::channel(1);
++        Self {
++            container: String::new(),
++            sender,
++        }
++    }
++
+     /// One VM log record, cleaned and split as [`pump_stream`] cleans and
+     /// splits a pipe. A `\n` inside it starts a new entry, so the guest cannot
+     /// forge a record in the log file.
+```
+
+**File**: `crates/iii-compose/src/sandbox.rs` (modified, +165/-58)
+```diff
+@@ -712,14 +712,18 @@ const INFO_RETRY: Duration = Duration::from_secs(if cfg!(test) { 1 } else { 10 }
+ const RECONNECT_GRACE: Duration = Duration::from_secs(if cfg!(test) { 5 } else { 10 });
+ /// `worker::destroy` removes a VM's whole state, rootfs included.
+ const DESTROY_TIMEOUT: Duration = Duration::from_secs(60);
+-/// `worker::status` cadence, and the pause between unanswered stops.
+-const POLL_INTERVAL: Duration = Duration::from_secs(1);
++/// How long after a log stream closed on a running VM (or would not open) it
++/// is asked for again, and the pause between unanswered stops.
++const RETRY_INTERVAL: Duration = Duration::from_secs(1);
+ /// A status call's budget, and what a stop call gets beyond its grace.
+ const CALL_SLACK: Duration = Duration::from_secs(10);
+ 
+ /// A VM container, supervised through its adapter's `worker::*` functions. A
+-/// task polls `worker::status` every second into a watch, so `poll` never
+-/// blocks; it ends at an exit, or when this handle drops.
++/// task keeps the VM's `worker::logs` stream open. The adapter closes it once
++/// the VM has exited and its log is drained, and it also ends when the adapter
++/// or the engine goes away. Only then does the task ask `worker::status`, so a
++/// running VM costs no call. The answer goes into a watch, so `poll` never
++/// blocks; the task ends at an exit, or when this handle drops.
+ pub struct RemoteVm {
+     pub record: VmRecord,
+     client: IIIClient,
+@@ -730,59 +734,83 @@ pub struct RemoteVm {
+ }
+ 
+ impl RemoteVm {
+-    /// With `logs`, the poller also keeps the VM's `worker::logs` stream open
+-    /// into it.
++    /// The VM's output goes to `logs`. Without it (a VM adopted from an
++    /// earlier daemon), the stream starts at the log's end and its records are
++    /// dropped: it is read only to learn when the VM ends.
+     pub(crate) fn spawn(
+         client: IIIClient,
+         record: VmRecord,
+         token: String,
+         logs: Option<LogSink>,
+     ) -> Self {
+         let (sender, outcome) = watch::channel(Outcome::Running);
+-        let (poller, vm, auth, sink) =
+-            (client.clone(), record.clone(), token.clone(), logs.clone());
++        let (poller, vm, auth, kept) = (
++            client.clone(),
++            record.clone(),
++            token.clone(),
++            logs.is_some(),
++        );
++        let sink = logs.clone().unwrap_or_else(LogSink::discard);
+         tokio::spawn(async move {
+-            let (mut capture, mut cursor) = (None, None);
+-            // A boot that fails at once can be `Exited` by the first tick, so
+-            // its stream opens now; the adapter drains it before closing.
+-            if let Some(sink) = &sink {
+-                follow_logs(&poller, &vm, &auth, sink, &mut capture, &mut cursor).await;
+-            }
++            let (mut capture, mut cursor, mut from_end) = (None, None, !kept);
++            let mut pause = Duration::ZERO;
+             loop {
+-                let tick = async {
+-                    tokio::time::sleep(POLL_INTERVAL).await;
++                let pass = async {
++                    tokio::time::sleep(pause).await;
++                    follow_logs(
++                        &poller,
++                        &vm,
++                        &auth,
++                        &sink,
++                        &mut capture,
++                        &mut cursor,
++                        &mut from_end,
++                    )
++                    .await;
++                    stream_end(&mut capture, &mut cursor).await;
+                     let mut reply = worker_status(&poller, &vm, &auth).await;
+                     if let Some(live) = superseded_by(&reply, &vm) {
+                         let _ = worker_stop(&poller, &live, &auth, DEFAULT_STOP_GRACE).await;
+                         reply = worker_status(&poller, &vm, &auth).await;
+                     }
+-                    outcome_of(reply)
++                    let outcome = outcome_of(reply);
++                    // If the stream was down when the VM exited (a dropped
++                    // bus), the VM's last lines were missed, and its next boot
++                    // truncates them: they are read once more before the exit
++                    // is published.
++                    if kept && matches!(outcome, Outcome::Exited(_)) {
++                        follow_logs(
++                            &poller,
++                            &vm,
++                            &auth,
++                            &sink,
++                            &mut capture,
++                            &mut cursor,
++                            &mut from_end,
++                        )
++                        .await;
++                        if let Some(draining) = capture.take() {
++                            let _ = tokio::time::timeout(CALL_SLACK, draining).await;
++                        }
++                    }
++                    outcome
+                 };
+                 tokio::select! {
+                     // Eve
+```
+
+**File**: `crates/iii-compose/src/sandbox_cli.rs` (modified, +67/-14)
+```diff
+@@ -96,8 +96,9 @@ const PREPARE_TIMEOUT: Duration = Duration::from_secs(20 * 60);
+ const START_TIMEOUT: Duration = Duration::from_secs(5 * 60);
+ /// Every other call's budget.
+ const CALL_TIMEOUT: Duration = Duration::from_secs(10);
+-/// `worker::status` cadence.
+-const POLL_INTERVAL: Duration = Duration::from_millis(if cfg!(test) { 100 } else { 1000 });
++/// How long after a log stream closed on a running VM (or would not open) it is asked for
++/// again, and the pause between unanswered stops.
++const RETRY_INTERVAL: Duration = Duration::from_millis(if cfg!(test) { 100 } else { 1000 });
+ /// How long `worker::status` may go unanswered before this command gives the VM up: the
+ /// adapter's reattach grace, after which its lease has stopped a VM no client follows.
+ const LOST_AFTER: Duration = Duration::from_secs(if cfg!(test) { 1 } else { 45 });
+@@ -593,11 +594,13 @@ fn unreachable_or(function: &str, error: &iii_sdk::Error, target: &Target) -> St
+ 
+ enum Tick {
+     Stop(Instant),
+-    Polled(Outcome),
++    /// What `worker::status` said, and whether a log stream stayed open before it, which only a
++    /// live adapter does.
++    Polled(Outcome, bool),
+ }
+ 
+-/// Polls `vm` until it exits, printing its output, or stops it once `shutdown` resolves. The
+-/// whole tick races the signal, so a slow or restarting engine never delays a stop.
++/// Follows `vm` until it exits, printing its output, or stops it once `shutdown` resolves. The
++/// whole pass races the signal, so a slow or restarting engine never delays a stop.
+ async fn supervise(
+     ctx: &Context,
+     client: &IIIClient,
+@@ -607,17 +610,25 @@ async fn supervise(
+ ) -> Result<ExitStatus, String> {
+     let token = &ctx.target.token;
+     let mut unanswered_since: Option<Instant> = None;
++    let mut pause = Duration::ZERO;
+     loop {
+         let tick = tokio::select! {
+             biased;
+             (_, at) = shutdown.requested() => Tick::Stop(at),
+-            outcome = poll(client, vm, token, logs) => Tick::Polled(outcome),
++            (outcome, followed) = poll(client, vm, token, logs, pause) => {
++                Tick::Polled(outcome, followed)
++            }
+         };
++        pause = RETRY_INTERVAL;
++        // A stream the adapter kept open is an answer, so the wait for one starts over.
++        if matches!(tick, Tick::Polled(_, true)) {
++            unanswered_since = None;
++        }
+         match tick {
+             Tick::Stop(at) => {
+                 return Ok(stop(client, vm, token, ctx.stop_deadline(at), logs).await);
+             }
+-            Tick::Polled(Outcome::Exited(status)) => {
++            Tick::Polled(Outcome::Exited(status), _) => {
+                 // The VM is gone: its last lines are read, unless a stop request cuts that short.
+                 tokio::select! {
+                     biased;
+@@ -626,8 +637,8 @@ async fn supervise(
+                 }
+                 return Ok(status);
+             }
+-            Tick::Polled(Outcome::Running) => unanswered_since = None,
+-            Tick::Polled(Outcome::Unknown) => {
++            Tick::Polled(Outcome::Running, _) => unanswered_since = None,
++            Tick::Polled(Outcome::Unknown, _) => {
+                 let since = *unanswered_since.get_or_insert_with(Instant::now);
+                 if since.elapsed() >= LOST_AFTER {
+                     return Err(format!(
+@@ -644,11 +655,25 @@ async fn supervise(
+     }
+ }
+ 
+-/// One tick: keeps the log stream open, waits a poll interval, then asks how the VM is.
+-async fn poll(client: &IIIClient, vm: &VmRecord, token: &str, logs: &mut Logs) -> Outcome {
++/// One pass: after `pause`, keeps the log stream open and waits for it to close, then asks how
++/// the VM is. The adapter closes the stream once the VM has exited and its log is drained, and
++/// it also ends when the adapter or the engine goes away, so a running VM costs no call. With no
++/// stream open, it asks at once.
++async fn poll(
++    client: &IIIClient,
++    vm: &VmRecord,
++    token: &str,
++    logs: &mut Logs,
++    pause: Duration,
++) -> (Outcome, bool) {
++    tokio::time::sleep(pause).await;
+     logs.follow(client, vm, token).await;
+-    tokio::time::sleep(POLL_INTERVAL).await;
+-    sandbox::outcome_of(sandbox::worker_status(client, vm, token).await)
++    let opened = Instant::now();
++    // One that closed at once says nothing about the adapter.
++    let followed = sandbox::stream_end(&mut logs.capture, &mut logs.cursor).await
++        && opened.elapsed() >= RETRY_INTERVAL;
++    let outcome = sandbox::outcome_of(sandbox::worker_status(client, vm, token).await);
++    (outcome, followed)
+ }
+ 
+ /// `worker::stop`, asked again until the adapter confirms the VM ended or `deadline` passes;
+@@ -693,7 +718,7 @@ async fn stop(
+             return status;
+         }
+         let left = deadline.saturating_duration_since(Instant::now());
+-        tokio::time::sleep(POLL_INTERVAL.min(left)).await;
++        tokio::time::sleep(RETRY_INTERVAL.min(left)).await;
+     }
+ 
+```
+
+---
+
+### Incident Patch 2: `95d5de8d` (2026-11-13)
+**Commit Message**: fix(sdk-go): infer a schema for interface and recursive types (#2566)
+
+**File**: `docs/next/reference/sdk-go.mdx` (modified, +2/-0)
+```diff
+@@ -1198,6 +1198,8 @@ func Identity(_ context.Context, data json.RawMessage) (any, error)
+ 
+ InferSchema reflects a JSON Schema for T, exposed for callers that want to build a registration manually or inspect the schema the typed API would send.
+ 
++Nested types are written out where they appear. A type that contains itself (a tree node with Children []Node, a struct with a pointer to its own type, two structs that point at each other) is described once under "$defs" and referenced with "$ref": "#/$defs/&lt;Name&gt;". An interface type, such as any, accepts any JSON value. A type with no JSON Schema, such as a chan or func field, is an error.
++
+ **Signature**
+ 
+ ```go
+```
+
+**File**: `docs/next/reference/sdk-go.mdx.skill.md` (modified, +2/-0)
+```diff
+@@ -1196,6 +1196,8 @@ func Identity(_ context.Context, data json.RawMessage) (any, error)
+ 
+ InferSchema reflects a JSON Schema for T, exposed for callers that want to build a registration manually or inspect the schema the typed API would send.
+ 
++Nested types are written out where they appear. A type that contains itself (a tree node with Children []Node, a struct with a pointer to its own type, two structs that point at each other) is described once under "$defs" and referenced with "$ref": "#/$defs/&lt;Name&gt;". An interface type, such as any, accepts any JSON value. A type with no JSON Schema, such as a chan or func field, is an error.
++
+ **Signature**
+ 
+ ```go
+```
+
+**File**: `sdk/packages/go/iii/schema.go` (modified, +285/-9)
+```diff
+@@ -4,6 +4,10 @@ import (
+ 	"context"
+ 	"encoding/json"
+ 	"fmt"
++	"reflect"
++	"slices"
++	"strconv"
++	"strings"
+ 
+ 	"github.com/invopop/jsonschema"
+ )
+@@ -88,20 +92,292 @@ func RegisterFunctionTyped[Req any, Resp any](c *Client, id string, handler Type
+ 
+ // InferSchema reflects a JSON Schema for T, exposed for callers that want to build a
+ // registration manually or inspect the schema the typed API would send.
++//
++// Nested types are written out where they appear. A type that contains itself (a tree
++// node with Children []Node, a struct with a pointer to its own type, two structs that
++// point at each other) is described once under "$defs" and referenced with
++// "$ref": "#/$defs/<Name>". An interface type, such as any, accepts any JSON value. A
++// type with no JSON Schema, such as a chan or func field, is an error.
+ func InferSchema[T any]() (json.RawMessage, error) {
+-	return reflectSchema[T]()
++	schema, err := reflectSchema[T]()
++	if err != nil {
++		return nil, fmt.Errorf("iii: InferSchema: %w", err)
++	}
++	return schema, nil
+ }
+ 
+-// reflectSchema produces the JSON Schema for T as raw JSON. A reflector configured to
+-// inline definitions keeps the schema self-contained (no external $ref), matching what
+-// the engine expects on the wire.
++// reflectSchema produces the JSON Schema for T as raw JSON: one self-contained document
++// whose only references are local ("#/$defs/..."), which the engine resolves.
+ func reflectSchema[T any]() (json.RawMessage, error) {
++	// The type comes from a nil *T, not from a zero T: a zero interface value (T = any)
++	// has no dynamic type, and reflect.TypeOf would return nil.
++	return schemaOf(reflect.TypeOf((*T)(nil)).Elem())
++}
++
++// schemaOf is reflectSchema for a reflect.Type.
++func schemaOf(t reflect.Type) (schema json.RawMessage, err error) {
++	defer func() {
++		// The reflector panics on a type it cannot describe (a chan, a func, a complex
++		// number); report it rather than crash the worker at registration.
++		if r := recover(); r != nil {
++			schema, err = nil, fmt.Errorf("no JSON Schema for %s: %v", t, r)
++		}
++	}()
++	return json.Marshal(buildSchema(t))
++}
++
++// buildSchema reflects t into one schema document. Every type is inlined where it
++// appears, as the reflector does with DoNotReference, except the recursive types:
++// inlining one would never end, so each occurrence becomes a "$ref" to the type's entry
++// in the root's "$defs". Without recursive types the result is exactly the reflector's
++// DoNotReference output. When t itself is recursive, its body is inlined at the root and
++// also listed in "$defs" for the inner references, as the Rust SDK's schemars does.
++func buildSchema(t reflect.Type) *jsonschema.Schema {
++	b := &schemaBuilder{
++		recursive: recursiveTypes(t),
++		names:     map[reflect.Type]string{},
++		taken:     map[string]bool{},
++	}
++	root := b.reflect(t)
++	// Each body can reference recursive types not seen before, which append to pending.
++	for i := 0; i < len(b.pending); i++ {
++		def := b.pending[i]
++		body := b.reflect(def)
++		body.Version, body.ID = "", jsonschema.EmptyID
++		if root.Definitions == nil {
++			root.Definitions = jsonschema.Definitions{}
++		}
++		root.Definitions[b.names[def]] = body
++	}
++	return root
++}
++
++// schemaBuilder holds the state of one buildSchema call.
++type schemaBuilder struct {
++	recursive map[reflect.Type]bool
++	names     map[reflect.Type]string // the $defs name of each referenced recursive type
++	taken     map[string]bool
++	pending   []reflect.Type // referenced recursive types, in order of first reference
++}
++
++// reflect inlines t, and references every recursive type nested in it.
++func (b *schemaBuilder) reflect(t reflect.Type) *jsonschema.Schema {
++	outer := true
+ 	reflector := &jsonschema.Reflector{
+-		// Inline rather than emitting a $defs/$ref graph, so the engine receives a single
+-		// self-contained schema object.
++		// Inline every type, as this SDK always has, so the schema of a type without
++		// recursion does not change.
+ 		DoNotReference: true,
++		// The reflector asks the Mapper about every type it is about to describe, the
++		// outer type first (after pointers and JSONSchemaAlias are followed), then each
++		// type nested in it.
++		Mapper: func(t reflect.Type) *jsonschema.Schema {
++			first := outer
++			outer = false
++			if first || !b.recursive[t] {
++				return nil
++			}
++			return &jsonschema.Schema{Ref: "#/$defs/" + b.name(t)}
++		},
++	}
++	return reflector.ReflectFromType(t)
++}
++
++// name returns the $defs name of the recursive type t: its Go name, with characters
++// outside [A-Za-z0-9_.-] (from type arguments) replaced, and a number appended when
++// another type already has it.
++func (b *schemaBuilder) name(t reflect.Type) string {
++	if name, ok := b.names[t]; ok {
++		return name
++	}
++	base := strings.Map(func(r rune) rune {
++		if r == '_' || r == '.' || r == '-' || ('0' <= r && r <= '9') || ('a' <= r && r <= 'z') || ('A' <= r && r <= 'Z') {
++			return r
++		}
++		return '_'
+
+```
+
+**File**: `sdk/packages/go/iii/schema_test.go` (modified, +509/-0)
+```diff
+@@ -3,10 +3,16 @@ package iii
+ import (
+ 	"context"
+ 	"encoding/json"
++	"io"
++	"reflect"
++	"sort"
++	"strings"
+ 	"testing"
+ 	"time"
+ 
+ 	"github.com/coder/websocket"
++	"github.com/google/uuid"
++	"github.com/invopop/jsonschema"
+ )
+ 
+ type greetReq struct {
+@@ -159,6 +165,509 @@ func TestRegisterFunctionTypedDeliversMetadata(t *testing.T) {
+ 	}
+ }
+ 
++type pinnedStatus string
++
++type pinnedAddress struct {
++	Street string `json:"street" jsonschema:"required,minLength=1"`
++	Zip    string `json:"zip,omitempty" jsonschema:"pattern=^[0-9]{5}$"`
++}
++
++type PinnedTrace struct {
++	TraceID string `json:"trace_id,omitempty"`
++}
++
++// pinnedOrder covers what an existing schema is made of: scalars, tags, an embedded
++// struct, slices, maps, arrays, a nested struct used three times (inlined each time,
++// not moved to $defs), interface fields, json.RawMessage, []byte, time.Time and a
++// nullable pointer.
++type pinnedOrder struct {
++	PinnedTrace
++	ID        string            `json:"id" jsonschema:"required,description=Order id"`
++	Status    pinnedStatus      `json:"status" jsonschema:"enum=open,enum=closed"`
++	Quantity  int               `json:"quantity" jsonschema:"minimum=1"`
++	Price     float64           `json:"price"`
++	Paid      bool              `json:"paid"`
++	Tags      []string          `json:"tags,omitempty"`
++	Labels    map[string]string `json:"labels,omitempty"`
++	Counts    map[int]int64     `json:"counts,omitempty"`
++	Shipping  *pinnedAddress    `json:"shipping,omitempty"`
++	Billing   pinnedAddress     `json:"billing"`
++	History   []pinnedAddress   `json:"history,omitempty"`
++	Extra     any               `json:"extra,omitempty"`
++	Attrs     map[string]any    `json:"attrs,omitempty"`
++	Raw       json.RawMessage   `json:"raw,omitempty"`
++	Blob      []byte            `json:"blob,omitempty"`
++	Grid      [2][2]int         `json:"grid"`
++	CreatedAt time.Time         `json:"created_at"`
++	Note      *string           `json:"note,omitempty" jsonschema:"nullable"`
++	Skipped   string            `json:"-"`
++}
++
++// pinnedHiddenParent points at its own type only through fields the schema skips, so it
++// is not recursive and stays inline.
++type pinnedHiddenParent struct {
++	Name   string              `json:"name"`
++	Parent *pinnedHiddenParent `json:"-"`
++	Shadow *pinnedHiddenParent `jsonschema:"-"`
++	parent *pinnedHiddenParent
++}
++
++var _ = pinnedHiddenParent{}.parent
++
++// pinnedHiddenHolder nests pinnedHiddenParent, which is inlined there too.
++type pinnedHiddenHolder struct {
++	Item pinnedHiddenParent `json:"item"`
++}
++
++type pinnedTags []string
++
++// pinnedExtended has a JSONSchemaExtend hook that reads a nested schema, which must be
++// the inline one (a $ref in its place has no Items).
++type pinnedExtended struct {
++	Tags pinnedTags `json:"tags"`
++}
++
++func (pinnedExtended) JSONSchemaExtend(s *jsonschema.Schema) {
++	tags, _ := s.Properties.Get("tags")
++	tags.Items.Pattern = "^[a-z]+$"
++}
++
++// pinnedAliasInterface has the JSONSchemaAlias method, which the reflector cannot call on
++// an interface; it never tries for the values of a string-keyed map.
++type pinnedAliasInterface interface{ JSONSchemaAlias() any }
++
++// TestInferSchemaKeepsExistingSchemas pins the exact bytes of schemas for types without
++// recursion: support for recursive and interface types must not change them.
++func TestInferSchemaKeepsExistingSchemas(t *testing.T) {
++	cases := []struct {
++		name  string
++		infer func() (json.RawMessage, error)
++		want  string
++	}{
++		{"greetReq", InferSchema[greetReq], `{"$schema":"https://json-schema.org/draft/2020-12/schema","$id":"https://github.com/iii-hq/iii/sdk/packages/go/iii/greet-req","properties":{"name":{"type":"string"},"count":{"type":"integer"}},"additionalProperties":false,"type":"object","required":["name","count"]}`},
++		{"pinnedOrder", InferSchema[pinnedOrder], `{"$schema":"https://json-schema.org/draft/2020-12/schema","$id":"https://github.com/iii-hq/iii/sdk/packages/go/iii/pinned-order","properties":{"trace_id":{"type":"string"},"id":{"type":"string","description":"Order id"},"status":{"type":"string","enum":["open","closed"]},"quantity":{"type":"integer","minimum":1},"price":{"type":"number"},"paid":{"type":"boolean"},"tags":{"items":{"type":"string"},"type":"array"},"labels":{"additionalProperties":{"type":"string"},"type":"object"},"counts":{"patternProperties":{"^[0-9]+$":{"type":"integer"}},"additionalProperties":false,"type":"object"},"shipping":{"properties":{"street":{"type":"string","minLength":1},"zip":{"type":"string","pattern":"^[0-9]{5}$"}},"additionalProperties":false,"type":"object","required":["street"]},"billing":{"properties":{"street":{"type":"string","minLength":1},"zip":{"type":"string","pattern":"^[0-9]{5}$"}},"additionalProperties":false,"type":"object","required":["street"]},"history":{"items":{"properties":{"street":{"type":"string","minLength":1},"zip":{"type":"string","pattern":"^[0-9]{5}$"}},"additionalProperties":false,"type":"object","required":["street"]},"type":"ar
+```
+
+---
+
+### Incident Patch 3: `cab9a8bc` (2026-11-13)
+**Commit Message**: fix(observability): redact credentials in every span the engine stores or exports (#2564)
 
 Co-authored-by: iii harness (claude-opus-5-5) <[REDACTED_EMAIL]>
 
-**File**: `docs/0-21-0/reference/helpers-python.mdx` (modified, +1/-1)
+**File**: `engine/src/workers/observability/README.md` (modified, +20/-0)
 ```diff
-@@ -363,7 +363,7 @@ redact_and_truncate(value: Any, max_bytes: Optional[int] = None) -> tuple[str, b
- </ParamField>
+@@ -168,6 +168,26 @@ commit them to config files.
+ To keep the iii console useful while exporting to an external collector, use `exporter: both` for
+ traces and `logs_exporter: both` for logs.
  
- <ParamField body="max_bytes" type="Optional[int]">
--  Optional cap on the serialized byte length; unset or <= 0 means no cap.
-+  Optional cap on the serialized byte length; unset, zero, or negative means no cap.
- </ParamField>
++### Credential redaction
++
++The engine redacts credentials in every span before it stores or exports it: worker spans when they
++arrive (so the SDK span forwarder only ships redacted spans), the engine's own spans before the OTLP
++exporter, and anything that lands in the in-memory store. Worker SDKs redact payloads too, but
++the engine applies its own rule to every span, including spans from older SDKs.
++
++- A span, event or link attribute with a sensitive key has its whole value replaced by
++  `[REDACTED]`.
++- In a captured payload (`iii.payload.json`), the value of every sensitive key, at any depth, becomes
++  `"[REDACTED]"`. The JSON text is rewritten in place, so key order and formatting are kept and a
++  truncated payload is still redacted. A payload the engine cannot read as JSON is replaced as a
++  whole.
++
++A key is sensitive when, lowercased and with every character that is not a letter or digit removed,
++it ends in `token` or contains `password`, `passwd`, `secret`, `credential`, `authorization`,
++`apikey`, `privatekey`, `bearer`, `cookie`, `signature`, `accesstoken`, `refreshtoken` or
++`authtoken`. So `Cookie`, `set-cookie`, `http.request.header.set-cookie`, `idToken`, `X-CSRF-Token`
++and `x-hub-signature-256` are redacted, while counts such as `max_tokens` or `token_count` are kept.
++
+ ### Alert Rule Fields
  
- 
+ | Field              | Type        | Description                                                                                             |
 ```
 
-**File**: `docs/0-21-0/reference/helpers-python.mdx.skill.md` (modified, +1/-1)
+**File**: `engine/src/workers/observability/mod.rs` (modified, +3/-2)
 ```diff
-@@ -360,7 +360,7 @@ redact_and_truncate(value: Any, max_bytes: Optional[int] = None) -> tuple[str, b
- </ParamField>
- 
- <ParamField body="max_bytes" type="Optional[int]">
--  Optional cap on the serialized byte length; unset or <= 0 means no cap.
-+  Optional cap on the serialized byte length; unset, zero, or negative means no cap.
- </ParamField>
- 
- 
-```
-
-**File**: `docs/docs.json` (modified, +8/-8)
-```diff
-@@ -1002,26 +1002,26 @@
-               {
-                 "group": "Engine protocol",
-                 "pages": [
--                  "0-21-0/sdk-reference/engine-sdk"
-+                  "0-21-0/reference/engine-protocol"
-                 ]
-               },
-               {
-                 "group": "Language SDKs",
-                 "expanded": true,
-                 "pages": [
--                  "0-21-0/api-reference/sdk-node",
--                  "0-21-0/api-reference/sdk-python",
--                  "0-21-0/api-reference/sdk-rust",
--                  "0-21-0/api-reference/sdk-browser"
-+                  "0-21-0/reference/sdk-node",
-+                  "0-21-0/reference/sdk-python",
-+                  "0-21-0/reference/sdk-rust",
-+                  "0-21-0/reference/sdk-browser"
-                 ]
-               },
-               {
-                 "group": "Helpers",
-                 "expanded": true,
-                 "pages": [
--                  "0-21-0/api-reference/helpers-node",
--                  "0-21-0/api-reference/helpers-python",
--                  "0-21-0/api-reference/helpers-rust"
-+                  "0-21-0/reference/helpers-node",
-+                  "0-21-0/reference/helpers-python",
-+                  "0-21-0/reference/helpers-rust"
-                 ]
-               },
-               {
-```
-
----
-
-### Incident Patch 2: `e6b09eea` (2026-11-12)
-**Commit Message**: perf: take the fixed waits out of the quickstart (curl → "Press b") (#2555)
-
-**File**: `crates/iii-compose/src/daemon.rs` (modified, +45/-38)
-```diff
-@@ -767,45 +767,52 @@ impl Daemon {
-             crate::sandbox::require_declared_adapter(&compose, &namespace)?;
-             (prepared, None)
-         } else {
--            let mut prepared =
--                crate::lockfile::prepare_metadata(&mut compose, &BTreeSet::new()).await?;
--            let path = compose.path.clone();
--            let change = crate::sandbox::apply_adapter_change(
--                &path,
--                &mut edited,
--                &mut compose,
--                &namespace,
--                &mut prepared,
--                &mut BTreeSet::new(),
--                &mut BTreeMap::new(),
--                false,
--                false,
--            )
--            .await?;
--            let ahead = if vms_ahead {
--                crate::sandbox::ahead(&compose, &namespace)?
--            } else {
--                None
--            };
--            match &ahead {
--                Some((adapter, bundles)) => {
--                    let first = bundles.iter().chain([adapter]).cloned().collect();
--                    prepared.install_only(&package_cache, &first).await?;
--                }
--                None => prepared.install(&package_cache).await?,
--            }
--            if let Some(crate::sandbox::AdapterChange::Upsert(adapter)) = change {
--                let needs = crate::sandbox::needs(&compose, &namespace);
--                crate::report::daemon_line(
--                    &format!(
--                        "{}: sandbox adapter for: {}",
--                        adapter.key,
--                        crate::sandbox::needed_by(&needs).join(", ")
--                    ),
-+            // A first lock-less start learns only from this pass that a VM
-+            // needs the adapter: resolving the adapter beside it saves the
-+            // round trip that would follow it.
-+            crate::registry::remembering(async {
-+                let mut prepared =
-+                    crate::sandbox::prepare_metadata_with_adapter_ahead(&mut compose, &namespace)
-+                        .await?;
-+                let path = compose.path.clone();
-+                let change = crate::sandbox::apply_adapter_change(
-+                    &path,
-+                    &mut edited,
-+                    &mut compose,
-+                    &namespace,
-+                    &mut prepared,
-+                    &mut BTreeSet::new(),
-+                    &mut BTreeMap::new(),
-                     false,
--                );
--            }
--            (prepared, ahead)
-+                    false,
-+                )
-+                .await?;
-+                let ahead = if vms_ahead {
-+                    crate::sandbox::ahead(&compose, &namespace)?
-+                } else {
-+                    None
-+                };
-+                match &ahead {
-+                    Some((adapter, bundles)) => {
-+                        let first = bundles.iter().chain([adapter]).cloned().collect();
-+                        prepared.install_only(&package_cache, &first).await?;
-+                    }
-+                    None => prepared.install(&package_cache).await?,
-+                }
-+                if let Some(crate::sandbox::AdapterChange::Upsert(adapter)) = change {
-+                    let needs = crate::sandbox::needs(&compose, &namespace);
-+                    crate::report::daemon_line(
-+                        &format!(
-+                            "{}: sandbox adapter for: {}",
-+                            adapter.key,
-+                            crate::sandbox::needed_by(&needs).join(", ")
-+                        ),
-+                        false,
-+                    );
-+                }
-+                Ok::<_, ComposeError>((prepared, ahead))
-+            })
-+            .await?
+@@ -10,6 +10,7 @@ pub mod logs_layer;
+ pub mod metrics;
+ pub mod otel;
+ pub(crate) mod otlp_exporter;
++pub(crate) mod redaction;
+ mod sampler;
+ pub(crate) mod trace_store;
+ pub(crate) mod ui;
+@@ -9238,7 +9239,7 @@ mod tests {
+         let event = otel::StoredSpanEvent {
+             name: "invocation".to_string(),
+             timestamp_unix_nano: 1,
+-            attributes: vec![("iii.payload.json".to_string(), "x".repeat(1024))],
++            attributes: vec![("iii.payload.json".to_string(), "1".repeat(1024))],
          };
-         let project = self.project(file).await?;
-         if edited != text {
+         let mut ok = make_span("t-1", "s-1", None, "turn", "svc", 1, 10, "ok", vec![]);
+         ok.events = vec![event.clone()];
+@@ -9297,7 +9298,7 @@ mod tests {
+         root.events = vec![otel::StoredSpanEvent {
+             name: "invocation".to_string(),
+             timestamp_unix_nano: 1,
+-            attributes: vec![("iii.payload.json".to_string(), "x".repeat(64 * 1024))],
++            attributes: vec![("iii.payload.json".to_string(), "1".repeat(64 * 1024))],
+         }];
+         let child = make_span(
+             "t-1",
 ```
 
-**File**: `crates/iii-compose/src/lockfile.rs` (modified, +3/-3)
+**File**: `engine/src/workers/observability/otel.rs` (modified, +298/-32)
 ```diff
-@@ -430,7 +430,7 @@ where
-             }
-         }))
-         // Overlap registry requests without changing which declared failure is reported first.
--        .buffered(crate::parallelism::max_parallel_workers());
-+        .buffered(crate::parallelism::max_parallel_resolves());
- 
-     while let Some(result) = resolutions.next().await {
-         let (key, entry) = result?;
-@@ -897,11 +897,11 @@ mod tests {
-     }
- 
-     #[tokio::test]
--    async fn metadata_resolution_overlaps_requests_with_the_compose_limit() {
-+    async fn metadata_resolution_overlaps_requests_with_the_resolve_limit() {
-         use std::cell::Cell;
- 
-         let dir = tempfile::tempdir().unwrap();
--        let limit = crate::parallelism::max_parallel_workers();
-+        let limit = crate::parallelism::max_parallel_resolves();
-         let count = limit + 1;
-         let mut yaml = String::from("containers:\n");
-         for index in 0..count {
-```
-
-**File**: `crates/iii-compose/src/parallelism.rs` (modified, +24/-1)
-```diff
-@@ -14,10 +14,26 @@ pub(crate) fn max_parallel_workers() -> usize {
+@@ -17,6 +17,7 @@ use super::config::{
+     LogsExporterType, ObservabilityWorkerConfig, OtelExporterType, TraceStorageConfig,
+ };
+ use super::otlp_exporter::build_span_exporter;
++use super::redaction::{self, PAYLOAD_ATTRIBUTE_KEY};
+ use super::sampler::AdvancedSampler;
+ use opentelemetry::propagation::{TextMapCompositePropagator, TextMapPropagator};
+ use opentelemetry::{
+@@ -630,36 +631,15 @@ fn approx_span_size(span: &StoredSpan) -> u64 {
+     total as u64
  }
  
- fn parse_max_parallel_workers(value: Option<&str>) -> usize {
-+    parse(value).unwrap_or(DEFAULT_MAX_PARALLEL_WORKERS)
-+}
-+
-+/// A registry `/resolve` is one small request: a whole project's go out at
-+/// once, not eight at a time, unless the operator set the limit.
-+const DEFAULT_MAX_PARALLEL_RESOLVES: usize = 32;
-+
-+pub(crate) fn max_parallel_resolves() -> usize {
-+    let value = std::env::var(MAX_PARALLEL_WORKERS_ENV).ok();
-+    parse_max_parallel_resolves(value.as_deref())
-+}
-+
-+fn parse_max_parallel_resolves(value: Option<&str>) -> usize {
-+    parse(value).unwrap_or(DEFAULT_MAX_PARALLEL_RESOLVES)
-+}
-+
-+fn parse(value: Option<&str>) -> Option<usize> {
-     value
-         .and_then(|value| value.trim().parse::<usize>().ok())
-         .filter(|value| *value > 0)
--        .unwrap_or(DEFAULT_MAX_PARALLEL_WORKERS)
+-fn sensitive_attribute_key(key: &str) -> bool {
+-    matches!(
+-        key.to_ascii_lowercase().as_str(),
+-        "authorization"
+-            | "proxy-authorization"
+-            | "cookie"
+-            | "set-cookie"
+-            | "x-api-key"
+-            | "api-key"
+-            | "api_key"
+-            | "access_token"
+-            | "refresh_token"
+-            | "password"
+-            | "secret"
+-            | "credential"
+-    )
+-}
+-
+ fn sanitize_attributes(attributes: &mut [(String, String)]) {
+     for (key, value) in attributes {
+-        if sensitive_attribute_key(key) {
+-            *value = "[REDACTED]".to_string();
+-        }
++        redaction::redact_attribute(key, value);
+     }
  }
  
- #[cfg(test)]
-@@ -29,6 +45,13 @@ mod tests {
-         assert_eq!(parse_max_parallel_workers(None), 8);
-     }
+-/// Attribute the SDKs use for a captured invocation payload, and the flag they
+-/// set when they truncated it themselves. The engine raises the same flag when
+-/// its own cap cuts the payload, so readers see one signal either way.
+-const PAYLOAD_ATTRIBUTE_KEY: &str = "iii.payload.json";
++/// Flag the SDKs set on a captured payload (`PAYLOAD_ATTRIBUTE_KEY`) they
++/// truncated themselves. The engine raises the same flag when its own cap cuts
++/// the payload, so readers see one signal either way.
+ const PAYLOAD_TRUNCATED_KEY: &str = "iii.payload.truncated";
  
-+    #[test]
-+    fn resolves_default_to_thirty_two_and_follow_the_operator_limit() {
-+        assert_eq!(parse_max_parallel_resolves(None), 32);
-+        assert_eq!(parse_max_parallel_resolves(Some("2")), 2);
-+        assert_eq!(parse_max_parallel_resolves(Some("0")), 32);
+ /// Marker appended to a cut attribute value: `…[truncated <N> bytes]`.
+@@ -721,9 +701,9 @@ fn truncate_attributes(attributes: &mut Vec<(String, String)>, max_bytes: usize)
+     }
+ }
+ 
+-/// Redact sensitive attributes and cap every attribute value at
+-/// `max_attribute_bytes` (zero = uncapped). Runs once per span at ingest,
+-/// before the span is measured or stored.
++/// Redact sensitive attributes and the credentials inside captured payloads,
++/// then cap every attribute value at `max_attribute_bytes` (zero = uncapped).
++/// Runs once per span at ingest, before the span is measured or stored.
+ fn sanitize_span(span: &mut StoredSpan, max_attribute_bytes: usize) {
+     sanitize_attributes(&mut span.attributes);
+     truncate_attributes(&mut span.attributes, max_attribute_bytes);
+@@ -2622,8 +2602,11 @@ impl TeeSpanExporter {
+ impl SpanExporter for TeeSpanExporter {
+     fn export(
+         &self,
+-        batch: Vec<SpanData>,
++        mut batch: Vec<SpanData>,
+     ) -> impl std::future::Future<Output = OTelSdkResult> + Send {
++        // Both halves get the redacted batch: the memory side re-checks at
++        // ingest, the OTLP half ships what it is given.
++        batch.iter_mut().for_each(redact_span_data);
+         // Store in memory first (for `observability::on-span` and API access).
+         let stored: Vec<StoredSpan> = batch
+             .iter()
+@@ -2648,6 +2631,60 @@ impl SpanExporter for TeeSpanExporter {
+     }
+ }
+ 
++/// Redacts the engine's own spans before an OTLP exporter ships them. The
++/// memory store redacts at ingest (`sanitize_span`) and worker spans are
++/// redacted as they arrive (`redact_otlp_request`); this covers what the
++/// engine exports itself, such as invocations of SDK workers it runs
++/// in-process.
++#[derive(Debug)]
++struct RedactingSpanExporter<E>(E);
++
++impl<E: SpanExporter> SpanExporter for RedactingSpanExporter<E> {
++    fn export(
++        &self,
++        mut batch: Vec<SpanData>,
++    ) -> impl std::future::Future<Output = OTelSdkResult> + Send {
++        batch.iter_mut().for_each(redact_span_data);
++        self.0.export(batch)
 +    }
 +
-     #[test]
-     fn parallel_worker_limit_accepts_a_positive_environment_value() {
-         assert_eq!(parse_max_parallel_workers(Some("16")), 16);
-```
-
-**File**: `crates/iii-compose/src/registry.rs` (modified, +200/-33)
-```diff
-@@ -48,6 +48,19 @@ const RESOLVE_RETRY_DELAY: Duration = Duration::from_millis(250);
- /// Downloads get their own budget: an artefact is megabytes over a link we do
- /// not control.
- const DOWNLOAD_TIMEOUT: Duration = Duration::from_secs(300);
-+/// A download whose connection fails or breaks off mid-body (a CDN reset reads
-+/// as "error decoding response body"), or that gets a 5xx, starts over: one
-+/// such break no longer fails a whole `up`.
-+const DOWNLOAD_ATTEMPTS: usize = 3;
-+const DOWNLOAD_RETRY_DELAY: Duration = Duration::from_millis(500);
-+/// A body that sends nothing for this long counts as broken off: a stalled CDN
-+/// connection otherwise sat about 30 s before it reset. Even a slow link
-+/// delivers some bytes every fraction of a second.
-+const DOWNLOAD_STALL_TIMEOUT: Duration = Duration::from_secs(10);
-+/// How long one attempt waits for the response headers: a server that took
-+/// the connection and answers nothing is tried again, not waited out for the
-+/// whole [`DOWNLOAD_TIMEOUT`] three times.
-+const DOWNLOAD_HEADERS_TIMEOUT: Duration = Duration::from_secs(if cfg!(test) { 1 } else { 30 });
- const INTEGRITY_FILE: &str = ".iii-compose-integrity.json";
- 
- #[derive(Debug, Serialize, Deserialize)]
-@@ -74,7 +87,7 @@ struct ResolvedEdge {
-     to: String,
- }
- 
--#[derive(Debug, Deserialize)]
-+#[derive(Debug, Clone, Deserialize)]
- struct ResolvedWorker {
-     name: String,
-     #[serde(default)]
-@@ -565,6 +578,26 @@ tokio::task_local! {
-     pub(crate) static TEST_REGISTRY: String;
- }
- 
-+tokio::task_local! {
-+    /// The workers [`resolve`] already received inside [`remembering`], by
-+    /// `(registry, name, range)`.
-+    static RESOLVED: std::sync::Mutex<std::collections::HashMap<(String, String, String), ResolvedWorker>>;
++    fn shutdown_with_timeout(&self, timeout: std::time::Duration) -> OTelSdkResult {
++        self.0.shutdown_with_timeout(timeout)
++    }
++
++    fn force_flush(&self) -> OTelSdkResult {
++        self.0.force_flush()
++    }
++
++    // Forwarded for the same reason as `TeeSpanExporter::set_resource`.
++    fn set_resource(&mut self, resource: &Resource) {
++        self.0.set_resource(resource);
++    }
 +}
 +
-+/// Runs `future` with [`resolve`] answering again from what it already
-+/// received in it: the same worker and range, or the exact version an earlier
-+/// answer chose, makes no second request. Inside another `remembering`, it
-+/// shares that one.
++fn redact_span_data(span: &mut SpanData) {
++    redact_key_values(&mut span.attributes);
++    for event in &mut span.events.events {
++        redact_key_values(&mut event.attributes);
++    }
++    for link in &mut span.links.links {
++        redact_key_values(&mut link.attributes);
++    }
++}
++
++fn redact_key_values(attributes: &mut [KeyValue]) {
++    for attribute in attributes {
++        if redaction::is_sensitive_key(attribute.key.as_str()) {
++            attribute.value = opentelemetry::Value::from(redaction::REDACTED);
++        } else if attribute.key.as_str() == PAYLOAD_ATTRIBUTE_KEY
++            && let opentelemetry::Value::String(payload) = &attribute.value
++            && let Some(redacted) = redacti
+```
+
+**File**: `engine/src/workers/observability/redaction.rs` (added, +667/-0)
+```diff
+@@ -0,0 +1,667 @@
++// Copyright Motia LLC and/or licensed to Motia LLC under one or more
++// contributor license agreements. Licensed under the Elastic License 2.0;
++// you may not use this file except in compliance with the Elastic License 2.0.
++// This software is patent protected. We welcome discussions - reach out at team@iii.dev
++// See LICENSE and PATENTS files for details.
++
++//! Credential redaction for span data, applied by the engine to every span it
++//! stores or exports.
++//!
++//! Worker SDKs redact captured invocation payloads (`iii.payload.json`) before
++//! they export, but each SDK carries its own copy of the rule and a worker on
++//! an older SDK keeps an older rule. Every span crosses the engine (worker
++//! spans arrive over the telemetry connection and are stored and forwarded to
++//! the collector from there), so the engine applies the current rule to all
++//! of them.
++//!
++//! Both passes are idempotent:
++//! - an attribute whose key is sensitive has its whole value replaced;
++//! - in the JSON text of `iii.payload.json`, the value of every sensitive key
++//!   at any depth is replaced. The text is rewritten in place instead of
++//!   parsed and re-serialized, so key order and formatting survive and a
++//!   truncated payload is still redacted. A text that is not JSON is replaced
++//!   as a whole (fail closed).
++
++use std::borrow::Cow;
++
++/// What a redacted value becomes; the SDKs use the same placeholder.
++pub(crate) const REDACTED: &str = "[REDACTED]";
++
++/// [`REDACTED`] as a JSON string, the form it takes inside a payload.
++const REDACTED_JSON: &str = "\"[REDACTED]\"";
++
++/// Attribute the SDKs record a captured invocation payload under.
++pub(crate) const PAYLOAD_ATTRIBUTE_KEY: &str = "iii.payload.json";
++
++/// Marker every SDK appends to a payload it cut at `III_TRACE_PAYLOAD_MAX_BYTES`.
++const SDK_TRUNCATION_MARKER: &str = "...\"[TRUNCATED]\"";
++
++/// A key is sensitive when its normalized form contains one of these.
++const SENSITIVE_FRAGMENTS: &[&str] = &[
++    "password",
++    "passwd",
++    "secret",
++    "credential",
++    "authorization",
++    "apikey",
++    "privatekey",
++    "bearer",
++    "cookie",
++    "signature",
++    "accesstoken",
++    "refreshtoken",
++    "authtoken",
++];
++
++/// Bit per lowercase letter that starts a [`SENSITIVE_FRAGMENTS`] entry, so
++/// the search skips positions where no fragment can begin. Building it also
++/// checks at compile time that every fragment starts with one.
++const FRAGMENT_FIRST_LETTERS: u32 = {
++    let mut mask = 0u32;
++    let mut i = 0;
++    while i < SENSITIVE_FRAGMENTS.len() {
++        mask |= 1 << (SENSITIVE_FRAGMENTS[i].as_bytes()[0] - b'a');
++        i += 1;
++    }
++    mask
++};
++
++/// Longest normalized key kept on the stack; longer keys go to the heap.
++const STACK_KEY_BYTES: usize = 64;
++
++/// Whether the value under `key` must not leave the engine.
 +///
-+/// Scoped to one preparation, so a daemon that runs for days still sees a
-+/// release published after its last operation.
-+pub(crate) async fn remembering<F: std::future::Future>(future: F) -> F::Output {
-+    if RESOLVED.try_with(|_| ()).is_ok() {
-+        return future.await;
++/// The key is lowercased and stripped of everything but ASCII letters and
++/// digits, so `Set-Cookie`, `set_cookie` and `http.request.header.set-cookie`
++/// match alike. It is sensitive when the result contains a
++/// [`SENSITIVE_FRAGMENTS`] entry or ends in `token` (`idToken`, `csrf_token`,
++/// `X-CSRF-Token`); counts such as `max_tokens` or `token_count` stay visible.
++///
++/// It runs for every attribute of every span and every key of every payload,
++/// so the key is normalized on the stack rather than allocated.
++pub(crate) fn is_sensitive_key(key: &str) -> bool {
++    let mut buf = [0u8; STACK_KEY_BYTES];
++    let mut len = 0;
++    for byte in key.bytes() {
++        if byte.is_ascii_alphanumeric() {
++            if len == buf.len() {
++                let normalized: Vec<u8> = key
++                    .bytes()
++                    .filter(u8::is_ascii_alphanumeric)
++                    .map(|byte| byte.to_ascii_lowercase())
++                    .collect();
++                return is_sensitive_normalized(&normalized);
++            }
++            buf[len] = byte.to_ascii_lowercase();
++            len += 1;
++        }
 +    }
-+    RESOLVED.scope(Default::default(), future).await
++    is_sensitive_normalized(&buf[..len])
 +}
 +
- /// Everything a worker needs, resolved in one request.
- ///
- /// The registry answers `/resolve` with the whole graph, not just the worker
-@@ -1073,8 +1106,22 @@ async fn resolve(
-     version_range: &str,
-     candidates: &[&str],
- ) -> Result<ResolvedWorker> {
-+    let key = |range: &str| (registry.to_string(), name.to_string(), range.to_string());
-+    let remembered = RESOLVED
-+        .try_with(|resolved| {
-+            resolved
-+                .lock()
-+                .unwrap_or_else(|poisoned| poisoned.into_inner())
-+                .get(&key(version_range))
-+                .cloned()
++/// [`is_sensitive_key`] for a key already lowercased and stripped to ASCII
++/// letters and digits.
++fn is_sensitive_normalized(key: &[u8]) -> bool {
++    key.ends_with(b"token")
++        || (0..key.len()).any(|start| {
++            let first = key[start];
++            first.is_ascii_lowercase()
++                && FRAGMENT_FIRST_LETTERS & (1 << (first - b'a')) != 0
++                && SENSITIVE_FRAGMENTS
++                    .iter()
++                    .any(|fragment| key[start..].starts_with(fragment.as_bytes()))
 +        })
-+        .ok()
-+        .flatten();
-+    if let Some(worker) = remembered {
-+        return Ok(worker);
-+    }
-     let resolved = resolve_response(container, registry, name, version_range, candidates).await?;
--    resolved
-+    let worker = resolved
-         .graph
-         .into_iter()
-         .find(|worker| worker.name == name)
-@@ -1083,7 +1130,15 @@ async fn resolve(
-             name: name.to_string(),
-             range: version_range.to_string(),
-             message: "the registry resolved a graph that does not contain it".to_string(),
--        })
-+        })?;
-+    let _ = RESOLVED.try_with(|resolved| {
-+        let mut resolved = resolved
-+            .lock()
-+            .unwrap_or_else(|poisoned| poisoned.into_inner());
-+        resolved.insert(key(&worker.version), worker.clone());
-+        resolved.insert(key(version_range), worker.clone());
-+    });
-+    Ok(worker)
- }
- 
- /// Turns the registry's failure body into one sentence.
-@@ -1149,38 +1204,20 @@ async fn download_and_extract(
-         .build()
-         .map_err(|err| download_error(container, &artifact.url, &err.to_string()))?;
- 
--    let mut response = client
--        .get(&artifact.url)
--        .send()
--        .await
--        .and_then(|response| response.error_for_status())
--        .map_err(|err| download_error(container, &artifact.url, &err.to_string()))?;
--    crate::report::download_started(container, response.content_length());
--
--    let capacity = response
--        .content_length()
--        .and_then(|length| usize::try_from(length).ok())
--        .unwrap_or_default()
--        .min(8 * 1024 * 1024);
--    let mut bytes = Vec::with_capacity(capacity);
--    let mut hasher = Sha256::new();
--    let mut downloaded = 0_u64;
--    loop {
--        let chunk = match response.chunk().await {
--            Ok(Some(chunk)) => chunk,
--            Ok(None) => break,
--            Err(err) => {
-+    let mut attempt = 1;
-+    let (bytes, digest, downloaded) = loop {
-+        match fetch_artifact(&client, co
-```
-
-**File**: `crates/iii-compose/src/sandbox.rs` (modified, +246/-34)
-```diff
-@@ -309,6 +309,63 @@ pub(crate) async fn adapter_request(adapter: &str) -> Result<NewContainer> {
-     Ok(request)
- }
- 
-+/// The first pass ([`crate::lockfile::prepare_metadata`]), with the adapter a
-+/// project with no lock yet would add resolved alongside it, so that inside
-+/// [`crate::registry::remembering`] adding it costs no round trip after the
-+/// pass.
-+///
-+/// It is waited for only when the pass succeeded and the adapter is to be
-+/// added: a failed pass, or a project that needs no adapter, does not wait on
-+/// it. A failure of it is the later, real request's to report.
-+pub(crate) async fn prepare_metadata_with_adapter_ahead(
-+    compose: &mut ComposeFile,
-+    project_namespace: &str,
-+) -> Result<crate::lockfile::PreparedLock> {
-+    let adapter = adapter_to_resolve_ahead(compose);
-+    let ahead = async move {
-+        if let Some(adapter) = adapter {
-+            let _ = adapter_request(&adapter).await;
-+        }
-+    };
-+    tokio::pin!(ahead);
-+    let mut resolved_ahead = false;
-+    let prepared = {
-+        let none = BTreeSet::new();
-+        let first = crate::lockfile::prepare_metadata(compose, &none);
-+        tokio::pin!(first);
-+        loop {
-+            tokio::select! {
-+                prepared = &mut first => break prepared?,
-+                () = &mut ahead, if !resolved_ahead => resolved_ahead = true,
-+            }
-+        }
-+    };
-+    let adds = !needs(compose, project_namespace).is_empty()
-+        && adapter_key(compose, adapter_name(compose))?.is_none();
-+    if adds && !resolved_ahead {
-+        ahead.await;
-+    }
-+    Ok(prepared)
 +}
 +
-+/// The adapter [`prepare_metadata_with_adapter_ahead`] resolves for `file`, if
-+/// any.
-+pub(crate) fn adapter_to_resolve_ahead(file: &ComposeFile) -> Option<String> {
-+    let adapter = adapter_name(file);
-+    // The first pass goes to the registry only for a package with no lock, and
-+    // the adapter takes a resolve slot of its own: only a spare one, so the
-+    // two never exceed the operator's limit.
-+    let packages = file
-+        .containers
-+        .values()
-+        .filter(|container| matches!(container.worker, WorkerSource::Package { .. }))
-+        .count();
-+    let spare = packages < crate::parallelism::max_parallel_resolves();
-+    let undeclared = adapter_key(file, adapter).ok()?.is_none();
-+    (packages > 0 && spare && undeclared && !crate::lockfile::lock_path(&file.path).exists())
-+        .then(|| adapter.to_string())
-+}
-+
- /// What the sandbox step does to the file.
- #[derive(Debug, Clone, PartialEq, Eq)]
- pub(crate) enum AdapterChange {
-@@ -418,43 +475,47 @@ pub(crate) async fn apply_adapter_change(
-     refresh: bool,
-     allow_remove: bool,
- ) -> Result<Option<AdapterChange>> {
--    let Some(change) =
--        adapter_change(edited, current, project_namespace, refresh, allow_remove).await?
--    else {
--        return Ok(None);
--    };
--    let next = match &change {
--        AdapterChange::Upsert(request) => {
--            if let Source::Package {
--                version: Some(version),
--                ..
--            } = &request.source
--            {
--                force.insert(request.key.clone());
--                selected.insert(request.key.clone(), version.clone());
--            }
--            match edit::upsert_container(edited, request)? {
--                edit::Outcome::Added(text) | edit::Outcome::Replaced { text, .. } => Some(text),
--                edit::Outcome::Unchanged => None,
-+    // The adapter's range and then its exact version: one request, not two.
-+    crate::registry::remembering(async move {
-+        let Some(change) =
-+            adapter_change(edited, current, project_namespace, refresh, allow_remove).await?
-+        else {
-+            return Ok(None);
-+        };
-+        let next = match &change {
-+            AdapterChange::Upsert(request) => {
-+                if let Source::Package {
-+                    version: Some(version),
-+                    ..
-+                } = &request.source
-+                {
-+                    force.insert(request.key.clone());
-+                    selected.insert(request.key.clone(), version.clone());
-+                }
-+                match edit::upsert_container(edited, request)? {
-+                    edit::Outcome::Added(text) | edit::Outcome::Replaced { text, .. } => Some(text),
-+                    edit::Outcome::Unchanged => None,
-+                }
-             }
-+            AdapterChange::Remove(key) => edit::remove_container(edited, key)?,
-+        };
-+        if let Some(next) = next {
-+            *edited = next;
-         }
--        AdapterChange::Remove(key) => edit::remove_container(edited, key)?,
--    };
--    if let Some(next) = next {
--        *edited = next;
--    }
--    *current = ComposeFile::parse(edited, path)?;
--    let mut versions = selected.clone();
--    for key in current.containers.keys() {
--        if let Some(version) = prepared.resolved_version(key) {
--            versions
--              
++/// Redacts one span, event or link attribute in place: the whole value when
++/// the key is sensitive, the sensitive values inside it when it is the
++/// captured payload.
++pub(crate) fn redact_attribute(key: &str, value: &mut String) {
++    if is_sensitive_key(key) {
++        if value != REDACTED {
++            // A fresh string: reusing the buffer would keep 
 ```
 
-**File**: `engine/install.sh` (modified, +22/-8)
+**File**: `engine/src/workers/observability/trace_store.rs` (modified, +5/-5)
 ```diff
-@@ -118,6 +118,15 @@ iii_emit_event() {
-     >/dev/null 2>&1 || true
- }
- 
-+# The success path's events go out while the install carries on: the binary
-+# sends each on its own and gives up after 3 s, and nothing here waits for the
-+# network. The telemetry IDs exist before the first one (see below), so these
-+# sends only read them and race nothing. A non-interactive shell runs them
-+# with SIGINT ignored, so a Ctrl+C at the next prompt does not cut them short.
-+iii_emit_event_in_background() {
-+  iii_emit_event "$1" "$2" &
-+}
-+
- # ---------------------------------------------------------------------------
- # GitHub API
- # ---------------------------------------------------------------------------
-@@ -634,16 +643,20 @@ fi
- # ---------------------------------------------------------------------------
- 
- telemetry_emitter="$bin_file"
-+# Best-effort: have the binary initialize its telemetry IDs, in the foreground
-+# and with no network, before any event is sent beside the install.
-+# Older binaries won't have this flag — silently skip.
-+"$bin_file" --install-only-generate-ids >/dev/null 2>&1 || true
- if [ "$install_event_prefix" = "upgrade" ]; then
-   payload=$(printf '{"from_version":%s,"to_version":%s,"install_method":"sh","target_binary":%s}' \
-     "$(json_str "$from_version")" "$(json_str "$release_version")" "$(json_str "$BIN_NAME")")
--  iii_emit_event "upgrade_started" "$payload"
-+  iii_emit_event_in_background "upgrade_started" "$payload"
- else
-   payload=$(printf '{"install_method":"sh","target_binary":%s,"os":%s,"arch":%s}' \
-     "$(json_str "$BIN_NAME")" \
-     "$(json_str "$(echo "$uname_s" | tr '[:upper:]' '[:lower:]')")" \
-     "$(json_str "$uname_m")")
--  iii_emit_event "install_started" "$payload"
-+  iii_emit_event_in_background "install_started" "$payload"
- fi
- 
- install_bin "$bin_file" "$bin_dir/$BIN_NAME" \
-@@ -661,20 +674,21 @@ fi
- # Telemetry: success
- # ---------------------------------------------------------------------------
- 
-+# Sent from the installed binary: the one in $tmpdir goes with the EXIT trap,
-+# maybe before a job started this late has run it. A `*_started` job was
-+# started before the copy, and the only early exit after it (`err`) first
-+# runs a synchronous event from that same binary.
-+telemetry_emitter="$bin_dir/$BIN_NAME"
- if [ "$install_event_prefix" = "upgrade" ]; then
-   payload=$(printf '{"from_version":%s,"to_version":%s,"install_method":"sh","target_binary":%s}' \
-     "$(json_str "$from_version")" "$(json_str "$installed_version")" "$(json_str "$BIN_NAME")")
--  iii_emit_event "upgrade_succeeded" "$payload"
-+  iii_emit_event_in_background "upgrade_succeeded" "$payload"
- else
-   payload=$(printf '{"installed_version":%s,"install_method":"sh","target_binary":%s}' \
-     "$(json_str "$installed_version")" "$(json_str "$BIN_NAME")")
--  iii_emit_event "install_succeeded" "$payload"
-+  iii_emit_event_in_background "install_succeeded" "$payload"
- fi
- 
--# Best-effort: have the binary initialize its telemetry IDs.
--# Older binaries won't have this flag — silently skip.
--"$bin_dir/$BIN_NAME" --install-only-generate-ids >/dev/null 2>&1 || true
--
- # ---------------------------------------------------------------------------
- # Post-install verification
- # ---------------------------------------------------------------------------
-```
-
-**File**: `engine/src/cli/project/mod.rs` (modified, +36/-14)
-```diff
-@@ -124,7 +124,14 @@ async fn run_init(args: InitArgs) -> i32 {
-         return run_learn_iii(args).await;
-     }
-     if template_flow_requested(&args) {
--        return run_init_with_template(args).await;
-+        let docker = args.docker;
-+        return match run_init_with_template(args).await {
-+            Ok(project_id) => {
-+                crate::cli::telemetry::send_project_init_succeeded(docker, &project_id).await;
-+                0
-+            }
-+            Err(code) => code,
-+        };
+@@ -3728,7 +3728,7 @@ mod tests {
+                 .map(|part| {
+                     let mut span =
+                         test_span(&format!("cap-{index:04}-{part:02}"), "span", "cap-load");
+-                    span.attributes = vec![("iii.payload.json".to_string(), "x".repeat(64 * 1024))];
++                    span.attributes = vec![("iii.payload.json".to_string(), "1".repeat(64 * 1024))];
+                     span
+                 })
+                 .collect();
+@@ -3774,7 +3774,7 @@ mod tests {
+                 .map(|part| {
+                     let mut span =
+                         test_span(&format!("reuse-{index:04}-{part:02}"), "span", "reuse");
+-                    span.attributes = vec![("iii.payload.json".to_string(), "x".repeat(64 * 1024))];
++                    span.attributes = vec![("iii.payload.json".to_string(), "1".repeat(64 * 1024))];
+                     span
+                 })
+                 .collect();
+@@ -3845,7 +3845,7 @@ mod tests {
+             let spans = (0..63)
+                 .map(|part| {
+                     let mut span = test_span(&format!("kept-{index:04}-{part:02}"), "span", "kept");
+-                    span.attributes = vec![("iii.payload.json".to_string(), "x".repeat(64 * 1024))];
++                    span.attributes = vec![("iii.payload.json".to_string(), "1".repeat(64 * 1024))];
+                     span
+                 })
+                 .collect();
+@@ -4091,7 +4091,7 @@ mod tests {
+         root.events = vec![crate::workers::observability::otel::StoredSpanEvent {
+             name: "invocation".to_string(),
+             timestamp_unix_nano: 1_000_000_001,
+-            attributes: vec![("iii.payload.json".to_string(), "x".repeat(64 * 1024))],
++            attributes: vec![("iii.payload.json".to_string(), "1".repeat(64 * 1024))],
+         }];
+         root.instrumentation_scope_name = Some("iii-sdk".to_string());
+         root.flags = Some(1);
+@@ -4637,7 +4637,7 @@ mod tests {
      }
  
-     let target = args.target_dir().map(|s| s.to_string());
-@@ -252,7 +259,10 @@ async fn run_init(args: InitArgs) -> i32 {
-     0
- }
- 
--async fn run_init_with_template(args: InitArgs) -> i32 {
-+/// The template flow up to its `project_init_succeeded`, which is the
-+/// caller's to send: the id it reports for, or the exit code of a failure
-+/// already reported.
-+async fn run_init_with_template(args: InitArgs) -> Result<String, i32> {
-     // Restore terminal cursor on panic and on Ctrl+C — scaffolder runs an
-     // interactive TUI via cliclack and we don't want to leave the cursor hidden.
-     let default_panic = std::panic::take_hook();
-@@ -298,7 +308,7 @@ async fn run_init_with_template(args: InitArgs) -> i32 {
-             "see scaffolder output above",
-         );
-         crate::cli::telemetry::send_project_init_failed("scaffolder", &e.to_string()).await;
--        return code;
-+        return Err(code);
+     fn payload_attribute(len: usize) -> Vec<(String, String)> {
+-        vec![("iii.payload.json".to_string(), "x".repeat(len))]
++        vec![("iii.payload.json".to_string(), "1".repeat(len))]
      }
  
-     let project_id_for_event = if let Some(root) = target_dir.as_ref() {
-@@ -326,7 +336,7 @@ async fn run_init_with_template(args: InitArgs) -> i32 {
-                         );
-                         crate::cli::telemetry::send_project_init_failed("fetcher", &e.to_string())
-                             .await;
--                        return code;
-+                        return Err(code);
-                     }
-                 };
-                 if let Err(e) = apply_docker(&mut fetcher, root, &device_id).await {
-@@ -337,7 +347,7 @@ async fn run_init_with_template(args: InitArgs) -> i32 {
-                     );
-                     crate::cli::telemetry::send_project_init_failed("apply_docker", &e.to_string())
-                         .await;
--                    return code;
-+                    return Err(code);
-                 }
-             }
- 
-@@ -350,8 +360,7 @@ async fn run_init_with_template(args: InitArgs) -> i32 {
-         String::new()
-     };
- 
--    crate::cli::telemetry::send_project_init_succeeded(args.docker, &project_id_for_event).await;
--    0
-+    Ok(project_id_for_event)
- }
- 
- const LEARN_III_TEMPLATE: &str = "harness";
-@@ -369,14 +378,25 @@ async fn run_learn_iii(mut args: InitArgs) -> i32 {
-     args.template = Some(LEARN_III_TEMPLATE.to_string());
-     args.directory = Some(dir.to_string_lossy().into_owned());
- 
--    let code = run_init_with_template(args).await;
--    if code != 0 {
--        return code;
--    }
-+    let docker = args.docker;
-+    // Sent while the tour runs, and waited for only once it ends: the process
-+    // stays up for the whole tour, so nothing is lost by not holding the tour
-+    // for it.
-+    let succeeded = match run_init_with_template(args).await {
-+        Ok(project_id) => crate::cli::telemetry::spawn_project_init_succeeded(docker, &project_id),
-+        Err(code) => return code,
-+    };
-+    let code = run_tour(&dir).await;
-+    crate::cli::telemetry::wait_for_report(succeeded).await;
-+    code
-+}
- 
-+/// Seeds the tour's container into the project at `dir` and runs
-+/// `iii compose --up` there, for as long as the tour lasts.
-+async fn run_tour(dir: &Path) -> i32 {
-     // The tour's own worker is declared in the compose file, not added at
-     // runtime.
--    seed_onboarding_container(&dir);
-+    seed_onboarding_container(dir);
- 
-     let exe = match std::env::current_exe() {
-         Ok(p) => p,
-@@ -405,7 +425,7 @@ async fn run_learn_iii(mut args: InitArgs) -> i32 {
- 
-     let code = match tokio::process::Command::new(exe)
-         .args(["compose", "--up"])
--        .current_dir(&dir)
-+        .current_dir(dir)
-         .status()
-         .await
-     {
-@@ -496,7 +516,9 @@ static CHILD_OWNS_TERMINAL: AtomicBool = AtomicBool::new(false);
- /// its own default port for when that entry has no `http_port` yet.
- const CONSOLE_CONFIG: &str = "console";
- const DEFAULT_CONSOLE_PORT: u16 = 3113;
--const READY_POLL_INTERVAL: std::time::Duration = std::time::Duration::from_millis(500);
-+/// A local `compose::status` call: polled often, so the console link follows
-+/// the project's last container by tens of milliseconds, not half a second.
-+const READY_POLL_INTERVAL: std::time::Duration = std::time::Duration::from_millis(100);
- /// Room for compose's startup renderer to print its closing line and stop
- /// repainting before anything else writes to the terminal.
- const BLOCK_SETTLE: std::time::Duration = std::time::Duration::from_millis(1_000);
-```
-
-**File**: `engine/src/cli/telemetry.rs` (modified, +56/-4)
-```diff
-@@ -249,17 +249,32 @@ pub async fn send_cli_update_failed(target_binary: &str, from_version: &str, err
- }
- 
- pub async fn send_project_init_succeeded(with_docker: bool, project_id: &str) {
--    if let Some(event) = build_event(
-+    if let Some(event) = project_init_succeeded(with_docker, project_id) {
-+        send_before_exit(event).await;
-+    }
-+}
-+
-+/// [`send_project_init_succeeded`] on a task of its own, for a command that
-+/// goes on running after it: wait for it with [`wait_for_report`] before the
-+/// command exits.
-+pub(crate) fn spawn_project_init_succeeded(
-+    with_docker: bool,
-+    project_id: &str,
-+) -> Option<tokio::task::JoinHandle<()>> {
-+    let event = project_init_succeeded(with_docker, project_id)?;
-+    Some(tokio::spawn(send_direct(event)))
-+}
-+
-+fn project_init_succeeded(with_docker: bool, project_id: &str) -> Option<ProductEvent> {
-+    build_event(
-         "project_init_succeeded",
-         serde_json::json!({
-             "with_docker": with_docker,
-             "project_id": project_id,
-             "install_method": environment::detect_install_method(),
-         }),
-         None,
--    ) {
--        send_before_exit(event).await;
--    }
-+    )
- }
- 
- pub async fn send_project_init_failed(stage: &str, error: &str) {
-@@ -460,6 +475,43 @@ mod tests {
-         assert_eq!(delivered, vec![1, 2, 3, 4]);
-     }
- 
-+    #[tokio::test]
-+    #[serial]
-+    async fn a_success_sent_beside_the_tour_holds_nothing_and_still_arrives() {
-+        use wiremock::matchers::{method, path};
-+        use wiremock::{Mock, MockServer, ResponseTemplate};
-+
-+        clear_opt_out_vars();
-+        let _home = isolated_home();
-+        let server = MockServer::start().await;
-+        Mock::given(method("POST"))
-+            .and(path("/batch/"))
-+            .respond_with(
-+                ResponseTemplate::new(200).set_delay(std::time::Duration::from_millis(500)),
-+            )
-+            .mount(&server)
-+            .await;
-+        unsafe {
-+            env::set_var("POSTHOG_HOST", server.uri());
-+        }
-+
-+        let began = std::time::Instant::now();
-+        let sending = spawn_project_init_succeeded(false, "project-1");
-+        let held = began.elapsed();
-+        wait_for_report(sending).await;
-+        let delivered = server.received_requests().await.unwrap_or_default().len();
-+
-+        unsafe {
-+            env::remove_var("POSTHOG_HOST");
-+        }
-+        restore_home();
-+        assert!(
-+            held < std::time::Duration::from_millis(100),
-+            "held for {held:?}"
-+        );
-+        assert_eq!(delivered, 1);
-+    }
-+
-     #[tokio::test]
-     #[serial]
-     async fn project_init_events_to_an_unreachable_host_release_within_the_report_timeout() {
-```
-
----
-
-### Incident Patch 3: `8715eb66` (2026-11-11)
-**Commit Message**: fix(website): center the subscribe pages and give them a full screen (#2529)
-
-**File**: `website/app/(site)/subscribe-expired/page.tsx` (modified, +1/-1)
-```diff
-@@ -15,7 +15,7 @@ export default function SubscribeExpiredPage() {
-       <p>
-         This confirmation link has expired or is no longer valid. Enter your email again and we'll send you a new one.
-       </p>
--      <EmailSignup location="subscribe-expired" className="max-w-md" />
-+      <EmailSignup location="subscribe-expired" className="w-full max-w-md" />
-     </SubscribeStatus>
-   )
- }
-```
-
-**File**: `website/components/site/confirm-subscription.tsx` (modified, +1/-1)
-```diff
-@@ -36,7 +36,7 @@ export function ConfirmSubscription() {
-   }
- 
-   return (
--    <div className="space-y-3">
-+    <div className="flex flex-col items-center space-y-3">
-       <Button size="lg" className="px-4" onClick={confirm} disabled={!token || state === 'sending'}>
-         {state === 'sending' ? 'Confirming…' : 'Confirm subscription'}
-       </Button>
-```
-
-**File**: `website/components/site/subscribe-status.tsx` (modified, +7/-3)
-```diff
-@@ -14,12 +14,16 @@ export function SubscribeStatus({ title, children }: { title: string; children:
-   return (
-     <>
-       <SiteHeader />
--      <main className={cn(wideContainer, 'py-40')}>
--        <div className="max-w-xl">
-+      {/* At least a full screen, so the footer starts below the fold; the message sits in its middle (the header is
-+          fixed over it). */}
-+      <main className={cn(wideContainer, 'flex min-h-svh items-center justify-center py-32')}>
-+        <div className="flex w-full max-w-xl flex-col items-center text-center">
-           <PixelHeading as="h1" className="text-[40px]">
-             {title}
-           </PixelHeading>
--          <div className="mt-6 space-y-6 text-pretty text-[15px] text-muted-foreground leading-relaxed">{children}</div>
-+          <div className="mt-6 flex flex-col items-center space-y-6 text-balance text-[15px] text-muted-foreground leading-relaxed">
-+            {children}
-+          </div>
-         </div>
-       </main>
-       <Footer container={wideContainer} />
+     fn hot_cache(max_spans: usize, max_bytes: u64) -> Arc<InMemorySpanStorage> {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2566** (2026-11-13): fix(sdk-go): infer a schema for interface and recursive types (@sergiofilhowz)
+- **PR #2564** (2026-11-13): fix(observability): redact credentials in every span the engine stores or exports (@guibeira)
+- **PR #2562** (2026-11-13): feat: deprecate iii-http-functions and HttpInvocationConfig (@guibeira)
 - **PR #2558** (2026-11-12): ci: warn about unused dependencies (Rust, Node, Python, Go) (@guibeira)
+- **PR #2557** (2026-11-14): fix(compose): supervise VM workers from their log stream instead of polling worker::status (@ytallo)
 - **PR #2556** (2026-11-12): feat(subscribe): accept server-to-server signups from ade (@arihantcodes)
-- **PR #2555** (2026-11-12): perf: take the fixed waits out of the quickstart (curl → "Press b") (@ytallo)
-- **PR #2554** (2026-11-12): chore: mirror the browser SDK, Go SDK and iii-filter CI checks in make ci-local (@guibeira)
-- **PR #2546** (closed): chore(deps): bump the actions group across 1 directory with 22 updates (@dependabot[bot])
-- **PR #2541** (2026-11-12): chore(cli): remove the iii console stub (@guibeira)
 
 ---
 
@@ -3094,28 +3144,37 @@ Co-authored-by: iii harness (claude-opus-5-5) <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs): point the 0.21.x reference tab at the existing reference pages (#2539)
+## X. compose): supervise VM workers from their log stream instead of polling worker::
 
 **RULE**:
-When implementing operations in `docs/0-21-0/reference/helpers-python.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iii-hq/iii. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/iii-compose/src/logs.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iii-hq/iii. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `175858b5`: docs): point the 0.21.x reference tab at the existing reference pages (#2539). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8279fa0d`: compose): supervise VM workers from their log stream instead of polling worker::status. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/0-21-0/reference/helpers-python.mdx`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/iii-compose/src/logs.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  Optional cap on the serialized byte length; unset, zero, or negative means no cap.
+    /// A sink that writes nowhere, for a VM log read only to learn when the
+    /// VM ends: its writer is gone, so every record is dropped.
+    pub(crate) fn discard() -> Self {
+        let (sender, _) = tokio::sync::mpsc::channel(1);
+        Self {
+            container: String::new(),
+            sender,
+        }
+    }
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-  Optional cap on the serialized byte length; unset or <= 0 means no cap.
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `175858b5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8279fa0d` are properly handled with clean fallback behavior.

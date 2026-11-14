@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T20:36:23.923Z",
+  "last_updated": "2026-11-14T20:52:48.700Z",
   "directives": [
     {
       "id": "CD-001",
@@ -13521,6 +13521,50 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-4DD9DE-empirical-invariant-guard-in-gemfile-loc.md",
       "staged_date": "2026-11-14"
+    },
+    {
+      "id": "CD-SYXY",
+      "directive_title": "supervise VM workers from their log stream instead of polling worker::",
+      "source_repo": "iii-hq/iii",
+      "source_commit": "8279fa0d",
+      "staged_file": "11_INBOX/candidate-directives/CD-SYXY-supervise-vm-workers-from-their-log-stream-instead-of-polling-worker.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-14",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-T4SK",
+      "directive_title": "keep breadcrumb trail on one row with spaced separators",
+      "source_repo": "meshery/meshery",
+      "source_commit": "c5d2dbe7",
+      "staged_file": "11_INBOX/candidate-directives/CD-T4SK-keep-breadcrumb-trail-on-one-row-with-spaced-separators.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-14",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-T7EK",
+      "directive_title": "compose): supervise VM workers from their log stream instead of polling worker::",
+      "source_repo": "iii-hq-iii-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-T7EK-compose-supervise-vm-workers-from-their-log-stream-instead-of-polling-worker.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-14",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-TXVF",
+      "directive_title": "docs): keep breadcrumb trail on one row with spaced separators",
+      "source_repo": "meshery-meshery-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-TXVF-docs-keep-breadcrumb-trail-on-one-row-with-spaced-separators.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-14",
+      "domain_letter": "H"
     }
   ]
 }

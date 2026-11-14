@@ -2173,10 +2173,10 @@
     "repository": "iii-hq/iii",
     "platform": "github",
     "sourceUrl": "https://github.com/iii-hq/iii",
-    "sourceVersion": "fd9719fa",
+    "sourceVersion": "8279fa0d",
     "license": "PERMISSIVE_OPEN_SOURCE",
-    "contentHash": "27212f9b0afa4bd23247e0c29f6a4f1522803cdb250d26b4aa5fcc3a7f0f158c",
-    "lastHarvestedAt": "2026-11-13T06:20:42.330Z",
+    "contentHash": "e1212943d42cc89f797c14be000035c5cc4901972ef39015130eee2ac1f125d9",
+    "lastHarvestedAt": "2026-11-14T20:52:03.196Z",
     "learningId": "learn-github-iii-hq-iii"
   },
   "crawlseo-crawlseo": {
@@ -5003,10 +5003,10 @@
     "repository": "meshery/meshery",
     "platform": "github",
     "sourceUrl": "https://github.com/meshery/meshery",
-    "sourceVersion": "20743f10",
+    "sourceVersion": "c5d2dbe7",
     "license": "Apache-2.0",
-    "contentHash": "d10f14e5db10cd1a087754de2ed93287735096dd7c7631e8f55b61967062c6a9",
-    "lastHarvestedAt": "2026-11-13T15:38:17.470Z",
+    "contentHash": "8687381d246d5bc6cbbe0f62b0ea2994e0de035a208ad3609d8a470e66676da8",
+    "lastHarvestedAt": "2026-11-14T20:52:10.812Z",
     "learningId": "learn-github-meshery-meshery"
   },
   "arangodb-arangodb": {
@@ -12245,8 +12245,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/Qwen3.8-Flash-Next-E384-FP4-V2",
     "sourceVersion": "hf-autotrust-qwen3.8-flash-next-e384-fp4-v2",
     "license": "Open-Source",
-    "contentHash": "42906348cd1161935f00e13753bc17c06b97f2c358cdd2ce2b651dcb0984cf1e",
-    "lastHarvestedAt": "2026-11-09T09:24:13.903Z",
+    "contentHash": "740893104f1e788717e8a44ad8dc0f59e5208c788688d2e96e87869a4b37d703",
+    "lastHarvestedAt": "2026-11-14T20:52:01.011Z",
     "learningId": "learn-huggingface-autotrust-qwen3-8-flash-next-e384-fp4-v2"
   },
   "sceneview-sceneview": {

@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:39:27.971Z",
+  "timestamp": "2026-11-14T20:52:14.277Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-iii-hq-iii-learnings",
+  "learning_id": "LEARN-EVO-iii-hq-iii-learnings",
   "canonical_classification": "agent_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [iii-hq-iii-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:39:27.971Z`  
-> **Learning ID**: `LEARN-REEXTRACT-iii-hq-iii-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-14T20:52:14.277Z`  
+> **Learning ID**: `LEARN-EVO-iii-hq-iii-learnings`
 
 
 ## 1. Agent Role & Persona Contract
@@ -26,10 +26,10 @@ PROVENANCE_END -->
 ## 2. Operational Capabilities
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/iii-hq-iii-learnings.md`  
 > **Source**: github ([https://github.com/iii-hq/iii](https://github.com/iii-hq/iii))  
-> **Source Version**: `bb5390b6`  
+> **Source Version**: `8279fa0d`  
 > **License**: PERMISSIVE_OPEN_SOURCE  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T12:53:16.438Z  
+> **Timestamp**: 2026-11-14T20:52:02.100Z  
 > **Learning ID**: `learn-github-iii-hq-iii`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -43,17 +43,17 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/iii-hq-iii-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/iii-hq/iii](https://github.com/iii-hq/iii))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T12:53:16.247Z  
+> **Harvest Timestamp**: 2026-11-14T20:52:02.092Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `iii-hq/iii`
-- **Description**: Effortlessly compose, extend, and observe every service in real-time for the first time ever.
+- **Description**: Effortlessly compose, extend, observe, discover, and react to every service in real-time for the first time ever.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 18936 stars
+- **Stars / Engagement**: 18935 stars
 
 ---
 
@@ -2137,10 +2137,6 @@ pub fn print_err(problem: &str, cause: &str, fix: &str) -> i32 {
 //! definition. Constants are also drawn from [`runtime::tool::iii_tool`]
 //! where possible to keep docs/install URLs in a single place.
 //!
-//! See `crates/motia-tools/src/main.rs` for the parallel `MotiaConfig` impl
-//! (which lives in its own binary because that binary is published
-//! separately as `motia-tools`).
-//!
 //! [`ProductConfig`]: crate::ProductConfig
 
 use crate::product::ProductConfig;
@@ -2212,7 +2208,7 @@ mod tests {
 //! Scaffolder Core - Shared library for project scaffolding CLIs
 //!
 //! This library provides the core functionality for scaffolding projects from templates.
-//! It is designed to be used by multiple CLI binaries (e.g., `motia`, `iii`) that share
+//! It is designed to be used by multiple CLI binaries (e.g., `iii`) that share
 //! the same underlying scaffolding logic but have different product configurations.
 //!
 //! # Architecture
@@ -2267,427 +2263,894 @@ pub use tui::run;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `69f3520b` (2026-11-10)
-**Commit Message**: fix(subscribe): install from bun.lock before the worker starts (#2511)
+### Incident Patch 1: `8279fa0d` (2026-11-14)
+**Commit Message**: fix(compose): supervise VM workers from their log stream instead of polling worker::status (#2557)
 
-**File**: `services/subscribe/README.md` (modified, +6/-5)
+**File**: `crates/iii-compose/src/logs.rs` (modified, +10/-0)
 ```diff
-@@ -30,13 +30,14 @@ Set in `worker-compose.yaml`, except the key:
+@@ -120,6 +120,16 @@ pub(crate) struct LogSink {
+ }
  
- ## Develop
- 
--Bun, not pnpm: this directory is deployed on its own (iii Cloud installs at the environment's root
--directory), so it keeps its own `bun.lock` outside the pnpm workspace.
-+Bun, not pnpm: the worker is deployed on its own, so it keeps its own `package.json` and
-+`bun.lock` in `workers/subscribe/`, outside the pnpm workspace. Its start command installs from
-+that lockfile before running, both on iii Cloud and in a local compose VM (which sees only the
-+worker's directory).
- 
- ```bash
--bun install
--bun test
--RESEND_API_KEY=re_... iii compose --up   # engine + http worker + this worker
-+cd workers/subscribe && bun install && bun test
-+RESEND_API_KEY=re_... iii compose --up   # from services/subscribe: engine + http worker + this worker
- ```
- 
- ## Deploy
+ impl LogSink {
++    /// A sink that writes nowhere, for a VM log read only to learn when the
++    /// VM ends: its writer is gone, so every record is dropped.
++    pub(crate) fn discard() -> Self {
++        let (sender, _) = tokio::sync::mpsc::channel(1);
++        Self {
++            container: String::new(),
++            sender,
++        }
++    }
++
+     /// One VM log record, cleaned and split as [`pump_stream`] cleans and
+     /// splits a pipe. A `\n` inside it starts a new entry, so the guest cannot
+     /// forge a record in the log file.
 ```
 
-**File**: `services/subscribe/workers/subscribe/iii.worker.yaml` (modified, +7/-1)
+**File**: `crates/iii-compose/src/sandbox.rs` (modified, +165/-58)
 ```diff
-@@ -3,4 +3,10 @@ description: iii.dev email signup, POST /api/subscribe (Resend contact + welcome
- runtime:
-   base_image: oven/bun:1.3
- scripts:
--  start: bun run index.ts
-+  # Install from bun.lock before starting. Without node_modules, Bun falls back to
-+  # auto-install, which fetches the latest versions and leaves peer dependencies
-+  # unresolved: iii-sdk's OpenTelemetry packages then fail on '@opentelemetry/api'.
-+  # The manifest and lockfile live in this directory, so this works wherever the
-+  # worker runs: iii Cloud's image, or the /workspace of a local compose VM, which
-+  # holds this directory alone. When node_modules is current this is a no-op.
-+  start: bun install --frozen-lockfile --production && exec bun run index.ts
+@@ -712,14 +712,18 @@ const INFO_RETRY: Duration = Duration::from_secs(if cfg!(test) { 1 } else { 10 }
+ const RECONNECT_GRACE: Duration = Duration::from_secs(if cfg!(test) { 5 } else { 10 });
+ /// `worker::destroy` removes a VM's whole state, rootfs included.
+ const DESTROY_TIMEOUT: Duration = Duration::from_secs(60);
+-/// `worker::status` cadence, and the pause between unanswered stops.
+-const POLL_INTERVAL: Duration = Duration::from_secs(1);
++/// How long after a log stream closed on a running VM (or would not open) it
++/// is asked for again, and the pause between unanswered stops.
++const RETRY_INTERVAL: Duration = Duration::from_secs(1);
+ /// A status call's budget, and what a stop call gets beyond its grace.
+ const CALL_SLACK: Duration = Duration::from_secs(10);
+ 
+ /// A VM container, supervised through its adapter's `worker::*` functions. A
+-/// task polls `worker::status` every second into a watch, so `poll` never
+-/// blocks; it ends at an exit, or when this handle drops.
++/// task keeps the VM's `worker::logs` stream open. The adapter closes it once
++/// the VM has exited and its log is drained, and it also ends when the adapter
++/// or the engine goes away. Only then does the task ask `worker::status`, so a
++/// running VM costs no call. The answer goes into a watch, so `poll` never
++/// blocks; the task ends at an exit, or when this handle drops.
+ pub struct RemoteVm {
+     pub record: VmRecord,
+     client: IIIClient,
+@@ -730,59 +734,83 @@ pub struct RemoteVm {
+ }
+ 
+ impl RemoteVm {
+-    /// With `logs`, the poller also keeps the VM's `worker::logs` stream open
+-    /// into it.
++    /// The VM's output goes to `logs`. Without it (a VM adopted from an
++    /// earlier daemon), the stream starts at the log's end and its records are
++    /// dropped: it is read only to learn when the VM ends.
+     pub(crate) fn spawn(
+         client: IIIClient,
+         record: VmRecord,
+         token: String,
+         logs: Option<LogSink>,
+     ) -> Self {
+         let (sender, outcome) = watch::channel(Outcome::Running);
+-        let (poller, vm, auth, sink) =
+-            (client.clone(), record.clone(), token.clone(), logs.clone());
++        let (poller, vm, auth, kept) = (
++            client.clone(),
++            record.clone(),
++            token.clone(),
++            logs.is_some(),
++        );
++        let sink = logs.clone().unwrap_or_else(LogSink::discard);
+         tokio::spawn(async move {
+-            let (mut capture, mut cursor) = (None, None);
+-            // A boot that fails at once can be `Exited` by the first tick, so
+-            // its stream opens now; the adapter drains it before closing.
+-            if let Some(sink) = &sink {
+-                follow_logs(&poller, &vm, &auth, sink, &mut capture, &mut cursor).await;
+-            }
++            let (mut capture, mut cursor, mut from_end) = (None, None, !kept);
++            let mut pause = Duration::ZERO;
+             loop {
+-                let tick = async {
+-                    tokio::time::sleep(POLL_INTERVAL).await;
++                let pass = async {
++                    tokio::time::sleep(pause).await;
++                    follow_logs(
++                        &poller,
++                        &vm,
++                        &auth,
++                        &sink,
++                        &mut capture,
++                        &mut cursor,
++                        &mut from_end,
++                    )
++                    .await;
++                    stream_end(&mut capture, &mut cursor).await;
+                     let mut reply = worker_status(&poller, &vm, &auth).await;
+                     if let Some(live) = superseded_by(&reply, &vm) {
+                         let _ = worker_stop(&poller, &live, &auth, DEFAULT_STOP_GRACE).await;
+                         reply = worker_status(&poller, &vm, &auth).await;
+                     }
+-                    outcome_of(reply)
++                    let outcome = outcome_of(reply);
++                    // If the stream was down when the VM exited (a dropped
++                    // bus), the VM's last lines were missed, and its next boot
++                    // truncates them: they are read once more before the exit
++                    // is published.
++                    if kept && matches!(outcome, Outcome::Exited(_)) {
++                        follow_logs(
++                            &poller,
++                            &vm,
++                            &auth,
++                            &sink,
++                            &mut capture,
++                            &mut cursor,
++                            &mut from_end,
++                        )
++                        .await;
++                        if let Some(draining) = capture.take() {
++                            let _ = tokio::time::timeout(CALL_SLACK, draining).await;
++                        }
++                    }
++                    outcome
+                 };
+                 tokio::select! {
+                     // Eve
+```
+
+**File**: `crates/iii-compose/src/sandbox_cli.rs` (modified, +67/-14)
+```diff
+@@ -96,8 +96,9 @@ const PREPARE_TIMEOUT: Duration = Duration::from_secs(20 * 60);
+ const START_TIMEOUT: Duration = Duration::from_secs(5 * 60);
+ /// Every other call's budget.
+ const CALL_TIMEOUT: Duration = Duration::from_secs(10);
+-/// `worker::status` cadence.
+-const POLL_INTERVAL: Duration = Duration::from_millis(if cfg!(test) { 100 } else { 1000 });
++/// How long after a log stream closed on a running VM (or would not open) it is asked for
++/// again, and the pause between unanswered stops.
++const RETRY_INTERVAL: Duration = Duration::from_millis(if cfg!(test) { 100 } else { 1000 });
+ /// How long `worker::status` may go unanswered before this command gives the VM up: the
+ /// adapter's reattach grace, after which its lease has stopped a VM no client follows.
+ const LOST_AFTER: Duration = Duration::from_secs(if cfg!(test) { 1 } else { 45 });
+@@ -593,11 +594,13 @@ fn unreachable_or(function: &str, error: &iii_sdk::Error, target: &Target) -> St
+ 
+ enum Tick {
+     Stop(Instant),
+-    Polled(Outcome),
++    /// What `worker::status` said, and whether a log stream stayed open before it, which only a
++    /// live adapter does.
++    Polled(Outcome, bool),
+ }
+ 
+-/// Polls `vm` until it exits, printing its output, or stops it once `shutdown` resolves. The
+-/// whole tick races the signal, so a slow or restarting engine never delays a stop.
++/// Follows `vm` until it exits, printing its output, or stops it once `shutdown` resolves. The
++/// whole pass races the signal, so a slow or restarting engine never delays a stop.
+ async fn supervise(
+     ctx: &Context,
+     client: &IIIClient,
+@@ -607,17 +610,25 @@ async fn supervise(
+ ) -> Result<ExitStatus, String> {
+     let token = &ctx.target.token;
+     let mut unanswered_since: Option<Instant> = None;
++    let mut pause = Duration::ZERO;
+     loop {
+         let tick = tokio::select! {
+             biased;
+             (_, at) = shutdown.requested() => Tick::Stop(at),
+-            outcome = poll(client, vm, token, logs) => Tick::Polled(outcome),
++            (outcome, followed) = poll(client, vm, token, logs, pause) => {
++                Tick::Polled(outcome, followed)
++            }
+         };
++        pause = RETRY_INTERVAL;
++        // A stream the adapter kept open is an answer, so the wait for one starts over.
++        if matches!(tick, Tick::Polled(_, true)) {
++            unanswered_since = None;
++        }
+         match tick {
+             Tick::Stop(at) => {
+                 return Ok(stop(client, vm, token, ctx.stop_deadline(at), logs).await);
+             }
+-            Tick::Polled(Outcome::Exited(status)) => {
++            Tick::Polled(Outcome::Exited(status), _) => {
+                 // The VM is gone: its last lines are read, unless a stop request cuts that short.
+                 tokio::select! {
+                     biased;
+@@ -626,8 +637,8 @@ async fn supervise(
+                 }
+                 return Ok(status);
+             }
+-            Tick::Polled(Outcome::Running) => unanswered_since = None,
+-            Tick::Polled(Outcome::Unknown) => {
++            Tick::Polled(Outcome::Running, _) => unanswered_since = None,
++            Tick::Polled(Outcome::Unknown, _) => {
+                 let since = *unanswered_since.get_or_insert_with(Instant::now);
+                 if since.elapsed() >= LOST_AFTER {
+                     return Err(format!(
+@@ -644,11 +655,25 @@ async fn supervise(
+     }
+ }
+ 
+-/// One tick: keeps the log stream open, waits a poll interval, then asks how the VM is.
+-async fn poll(client: &IIIClient, vm: &VmRecord, token: &str, logs: &mut Logs) -> Outcome {
++/// One pass: after `pause`, keeps the log stream open and waits for it to close, then asks how
++/// the VM is. The adapter closes the stream once the VM has exited and its log is drained, and
++/// it also ends when the adapter or the engine goes away, so a running VM costs no call. With no
++/// stream open, it asks at once.
++async fn poll(
++    client: &IIIClient,
++    vm: &VmRecord,
++    token: &str,
++    logs: &mut Logs,
++    pause: Duration,
++) -> (Outcome, bool) {
++    tokio::time::sleep(pause).await;
+     logs.follow(client, vm, token).await;
+-    tokio::time::sleep(POLL_INTERVAL).await;
+-    sandbox::outcome_of(sandbox::worker_status(client, vm, token).await)
++    let opened = Instant::now();
++    // One that closed at once says nothing about the adapter.
++    let followed = sandbox::stream_end(&mut logs.capture, &mut logs.cursor).await
++        && opened.elapsed() >= RETRY_INTERVAL;
++    let outcome = sandbox::outcome_of(sandbox::worker_status(client, vm, token).await);
++    (outcome, followed)
+ }
+ 
+ /// `worker::stop`, asked again until the adapter confirms the VM ended or `deadline` passes;
+@@ -693,7 +718,7 @@ async fn stop(
+             return status;
+         }
+         let left = deadline.saturating_duration_since(Instant::now());
+-        tokio::time::sleep(POLL_INTERVAL.min(left)).await;
++        tokio::time::sleep(RETRY_INTERVAL.min(left)).await;
+     }
+ 
 ```
 
 ---
 
-### Incident Patch 2: `6806db60` (2026-11-09)
-**Commit Message**: fix(deps): bump zstd chain, rusqlite and async-executor for Supply Chain advisories (#2498)
+### Incident Patch 2: `95d5de8d` (2026-11-13)
+**Commit Message**: fix(sdk-go): infer a schema for interface and recursive types (#2566)
 
-Fix the Rust advisories job of the Supply Chain workflow:
+**File**: `docs/next/reference/sdk-go.mdx` (modified, +2/-0)
+```diff
+@@ -1198,6 +1198,8 @@ func Identity(_ context.Context, data json.RawMessage) (any, error)
+ 
+ InferSchema reflects a JSON Schema for T, exposed for callers that want to build a registration manually or inspect the schema the typed API would send.
+ 
++Nested types are written out where they appear. A type that contains itself (a tree node with Children []Node, a struct with a pointer to its own type, two structs that point at each other) is described once under "$defs" and referenced with "$ref": "#/$defs/&lt;Name&gt;". An interface type, such as any, accepts any JSON value. A type with no JSON Schema, such as a chan or func field, is an error.
++
+ **Signature**
+ 
+ ```go
+```
 
-- zstd 0.13.4, zstd-safe 7.4.0 and zstd-sys 2.1.2 (RUSTSEC-2026-0391,
-  -0398, -0403, -0410) with a lockfile-only update; msb_krun stays
-  pinned at =0.1.16.
-- rusqlite 0.41.1 / libsqlite3-sys 0.39.1 (RUSTSEC-2026-0459, bundled
-  SQLite).
-- async-executor 1.14.1 (1.14.0 was yanked).
-- Both CONTRIBUTING.md guides now ask for Rust 1.91+.
+**File**: `docs/next/reference/sdk-go.mdx.skill.md` (modified, +2/-0)
+```diff
+@@ -1196,6 +1196,8 @@ func Identity(_ context.Context, data json.RawMessage) (any, error)
+ 
+ InferSchema reflects a JSON Schema for T, exposed for callers that want to build a registration manually or inspect the schema the typed API would send.
+ 
++Nested types are written out where they appear. A type that contains itself (a tree node with Children []Node, a struct with a pointer to its own type, two structs that point at each other) is described once under "$defs" and referenced with "$ref": "#/$defs/&lt;Name&gt;". An interface type, such as any, accepts any JSON value. A type with no JSON Schema, such as a chan or func field, is an error.
++
+ **Signature**
+ 
+ ```go
+```
+
+**File**: `sdk/packages/go/iii/schema.go` (modified, +285/-9)
+```diff
+@@ -4,6 +4,10 @@ import (
+ 	"context"
+ 	"encoding/json"
+ 	"fmt"
++	"reflect"
++	"slices"
++	"strconv"
++	"strings"
+ 
+ 	"github.com/invopop/jsonschema"
+ )
+@@ -88,20 +92,292 @@ func RegisterFunctionTyped[Req any, Resp any](c *Client, id string, handler Type
+ 
+ // InferSchema reflects a JSON Schema for T, exposed for callers that want to build a
+ // registration manually or inspect the schema the typed API would send.
++//
++// Nested types are written out where they appear. A type that contains itself (a tree
++// node with Children []Node, a struct with a pointer to its own type, two structs that
++// point at each other) is described once under "$defs" and referenced with
++// "$ref": "#/$defs/<Name>". An interface type, such as any, accepts any JSON value. A
++// type with no JSON Schema, such as a chan or func field, is an error.
+ func InferSchema[T any]() (json.RawMessage, error) {
+-	return reflectSchema[T]()
++	schema, err := reflectSchema[T]()
++	if err != nil {
++		return nil, fmt.Errorf("iii: InferSchema: %w", err)
++	}
++	return schema, nil
+ }
+ 
+-// reflectSchema produces the JSON Schema for T as raw JSON. A reflector configured to
+-// inline definitions keeps the schema self-contained (no external $ref), matching what
+-// the engine expects on the wire.
++// reflectSchema produces the JSON Schema for T as raw JSON: one self-contained document
++// whose only references are local ("#/$defs/..."), which the engine resolves.
+ func reflectSchema[T any]() (json.RawMessage, error) {
++	// The type comes from a nil *T, not from a zero T: a zero interface value (T = any)
++	// has no dynamic type, and reflect.TypeOf would return nil.
++	return schemaOf(reflect.TypeOf((*T)(nil)).Elem())
++}
++
++// schemaOf is reflectSchema for a reflect.Type.
++func schemaOf(t reflect.Type) (schema json.RawMessage, err error) {
++	defer func() {
++		// The reflector panics on a type it cannot describe (a chan, a func, a complex
++		// number); report it rather than crash the worker at registration.
++		if r := recover(); r != nil {
++			schema, err = nil, fmt.Errorf("no JSON Schema for %s: %v", t, r)
++		}
++	}()
++	return json.Marshal(buildSchema(t))
++}
++
++// buildSchema reflects t into one schema document. Every type is inlined where it
++// appears, as the reflector does with DoNotReference, except the recursive types:
++// inlining one would never end, so each occurrence becomes a "$ref" to the type's entry
++// in the root's "$defs". Without recursive types the result is exactly the reflector's
++// DoNotReference output. When t itself is recursive, its body is inlined at the root and
++// also listed in "$defs" for the inner references, as the Rust SDK's schemars does.
++func buildSchema(t reflect.Type) *jsonschema.Schema {
++	b := &schemaBuilder{
++		recursive: recursiveTypes(t),
++		names:     map[reflect.Type]string{},
++		taken:     map[string]bool{},
++	}
++	root := b.reflect(t)
++	// Each body can reference recursive types not seen before, which append to pending.
++	for i := 0; i < len(b.pending); i++ {
++		def := b.pending[i]
++		body := b.reflect(def)
++		body.Version, body.ID = "", jsonschema.EmptyID
++		if root.Definitions == nil {
++			root.Definitions = jsonschema.Definitions{}
++		}
++		root.Definitions[b.names[def]] = body
++	}
++	return root
++}
++
++// schemaBuilder holds the state of one buildSchema call.
++type schemaBuilder struct {
++	recursive map[reflect.Type]bool
++	names     map[reflect.Type]string // the $defs name of each referenced recursive type
++	taken     map[string]bool
++	pending   []reflect.Type // referenced recursive types, in order of first reference
++}
++
++// reflect inlines t, and references every recursive type nested in it.
++func (b *schemaBuilder) reflect(t reflect.Type) *jsonschema.Schema {
++	outer := true
+ 	reflector := &jsonschema.Reflector{
+-		// Inline rather than emitting a $defs/$ref graph, so the engine receives a single
+-		// self-contained schema object.
++		// Inline every type, as this SDK always has, so the schema of a type without
++		// recursion does not change.
+ 		DoNotReference: true,
++		// The reflector asks the Mapper about every type it is about to describe, the
++		// outer type first (after pointers and JSONSchemaAlias are followed), then each
++		// type nested in it.
++		Mapper: func(t reflect.Type) *jsonschema.Schema {
++			first := outer
++			outer = false
++			if first || !b.recursive[t] {
++				return nil
++			}
++			return &jsonschema.Schema{Ref: "#/$defs/" + b.name(t)}
++		},
++	}
++	return reflector.ReflectFromType(t)
++}
++
++// name returns the $defs name of the recursive type t: its Go name, with characters
++// outside [A-Za-z0-9_.-] (from type arguments) replaced, and a number appended when
++// another type already has it.
++func (b *schemaBuilder) name(t reflect.Type) string {
++	if name, ok := b.names[t]; ok {
++		return name
++	}
++	base := strings.Map(func(r rune) rune {
++		if r == '_' || r == '.' || r == '-' || ('0' <= r && r <= '9') || ('a' <= r && r <= 'z') || ('A' <= r && r <= 'Z') {
++			return r
++		}
++		return '_'
+
+```
+
+**File**: `sdk/packages/go/iii/schema_test.go` (modified, +509/-0)
+```diff
+@@ -3,10 +3,16 @@ package iii
+ import (
+ 	"context"
+ 	"encoding/json"
++	"io"
++	"reflect"
++	"sort"
++	"strings"
+ 	"testing"
+ 	"time"
+ 
+ 	"github.com/coder/websocket"
++	"github.com/google/uuid"
++	"github.com/invopop/jsonschema"
+ )
+ 
+ type greetReq struct {
+@@ -159,6 +165,509 @@ func TestRegisterFunctionTypedDeliversMetadata(t *testing.T) {
+ 	}
+ }
+ 
++type pinnedStatus string
++
++type pinnedAddress struct {
++	Street string `json:"street" jsonschema:"required,minLength=1"`
++	Zip    string `json:"zip,omitempty" jsonschema:"pattern=^[0-9]{5}$"`
++}
++
++type PinnedTrace struct {
++	TraceID string `json:"trace_id,omitempty"`
++}
++
++// pinnedOrder covers what an existing schema is made of: scalars, tags, an embedded
++// struct, slices, maps, arrays, a nested struct used three times (inlined each time,
++// not moved to $defs), interface fields, json.RawMessage, []byte, time.Time and a
++// nullable pointer.
++type pinnedOrder struct {
++	PinnedTrace
++	ID        string            `json:"id" jsonschema:"required,description=Order id"`
++	Status    pinnedStatus      `json:"status" jsonschema:"enum=open,enum=closed"`
++	Quantity  int               `json:"quantity" jsonschema:"minimum=1"`
++	Price     float64           `json:"price"`
++	Paid      bool              `json:"paid"`
++	Tags      []string          `json:"tags,omitempty"`
++	Labels    map[string]string `json:"labels,omitempty"`
++	Counts    map[int]int64     `json:"counts,omitempty"`
++	Shipping  *pinnedAddress    `json:"shipping,omitempty"`
++	Billing   pinnedAddress     `json:"billing"`
++	History   []pinnedAddress   `json:"history,omitempty"`
++	Extra     any               `json:"extra,omitempty"`
++	Attrs     map[string]any    `json:"attrs,omitempty"`
++	Raw       json.RawMessage   `json:"raw,omitempty"`
++	Blob      []byte            `json:"blob,omitempty"`
++	Grid      [2][2]int         `json:"grid"`
++	CreatedAt time.Time         `json:"created_at"`
++	Note      *string           `json:"note,omitempty" jsonschema:"nullable"`
++	Skipped   string            `json:"-"`
++}
++
++// pinnedHiddenParent points at its own type only through fields the schema skips, so it
++// is not recursive and stays inline.
++type pinnedHiddenParent struct {
++	Name   string              `json:"name"`
++	Parent *pinnedHiddenParent `json:"-"`
++	Shadow *pinnedHiddenParent `jsonschema:"-"`
++	parent *pinnedHiddenParent
++}
++
++var _ = pinnedHiddenParent{}.parent
++
++// pinnedHiddenHolder nests pinnedHiddenParent, which is inlined there too.
++type pinnedHiddenHolder struct {
++	Item pinnedHiddenParent `json:"item"`
++}
++
++type pinnedTags []string
++
++// pinnedExtended has a JSONSchemaExtend hook that reads a nested schema, which must be
++// the inline one (a $ref in its place has no Items).
++type pinnedExtended struct {
++	Tags pinnedTags `json:"tags"`
++}
++
++func (pinnedExtended) JSONSchemaExtend(s *jsonschema.Schema) {
++	tags, _ := s.Properties.Get("tags")
++	tags.Items.Pattern = "^[a-z]+$"
++}
++
++// pinnedAliasInterface has the JSONSchemaAlias method, which the reflector cannot call on
++// an interface; it never tries for the values of a string-keyed map.
++type pinnedAliasInterface interface{ JSONSchemaAlias() any }
++
++// TestInferSchemaKeepsExistingSchemas pins the exact bytes of schemas for types without
++// recursion: support for recursive and interface types must not change them.
++func TestInferSchemaKeepsExistingSchemas(t *testing.T) {
++	cases := []struct {
++		name  string
++		infer func() (json.RawMessage, error)
++		want  string
++	}{
++		{"greetReq", InferSchema[greetReq], `{"$schema":"https://json-schema.org/draft/2020-12/schema","$id":"https://github.com/iii-hq/iii/sdk/packages/go/iii/greet-req","properties":{"name":{"type":"string"},"count":{"type":"integer"}},"additionalProperties":false,"type":"object","required":["name","count"]}`},
++		{"pinnedOrder", InferSchema[pinnedOrder], `{"$schema":"https://json-schema.org/draft/2020-12/schema","$id":"https://github.com/iii-hq/iii/sdk/packages/go/iii/pinned-order","properties":{"trace_id":{"type":"string"},"id":{"type":"string","description":"Order id"},"status":{"type":"string","enum":["open","closed"]},"quantity":{"type":"integer","minimum":1},"price":{"type":"number"},"paid":{"type":"boolean"},"tags":{"items":{"type":"string"},"type":"array"},"labels":{"additionalProperties":{"type":"string"},"type":"object"},"counts":{"patternProperties":{"^[0-9]+$":{"type":"integer"}},"additionalProperties":false,"type":"object"},"shipping":{"properties":{"street":{"type":"string","minLength":1},"zip":{"type":"string","pattern":"^[0-9]{5}$"}},"additionalProperties":false,"type":"object","required":["street"]},"billing":{"properties":{"street":{"type":"string","minLength":1},"zip":{"type":"string","pattern":"^[0-9]{5}$"}},"additionalProperties":false,"type":"object","required":["street"]},"history":{"items":{"properties":{"street":{"type":"string","minLength":1},"zip":{"type":"string","pattern":"^[0-9]{5}$"}},"additionalProperties":false,"type":"object","required":["street"]},"type":"ar
+```
+
+---
+
+### Incident Patch 3: `cab9a8bc` (2026-11-13)
+**Commit Message**: fix(observability): redact credentials in every span the engine stores or exports (#2564)
 
 Co-authored-by: iii harness (claude-opus-5-5) <[REDACTED_EMAIL]>
 
-**File**: `CONTRIBUTING.md` (modified, +1/-1)
+**File**: `engine/src/workers/observability/README.md` (modified, +20/-0)
 ```diff
-@@ -61,7 +61,7 @@ their behalf, or your employer must have waived such rights for your contributio
+@@ -168,6 +168,26 @@ commit them to config files.
+ To keep the iii console useful while exporting to an external collector, use `exporter: both` for
+ traces and `logs_exporter: both` for logs.
  
- ### Prerequisites
++### Credential redaction
++
++The engine redacts credentials in every span before it stores or exports it: worker spans when they
++arrive (so the SDK span forwarder only ships redacted spans), the engine's own spans before the OTLP
++exporter, and anything that lands in the in-memory store. Worker SDKs redact payloads too, but
++the engine applies its own rule to every span, including spans from older SDKs.
++
++- A span, event or link attribute with a sensitive key has its whole value replaced by
++  `[REDACTED]`.
++- In a captured payload (`iii.payload.json`), the value of every sensitive key, at any depth, becomes
++  `"[REDACTED]"`. The JSON text is rewritten in place, so key order and formatting are kept and a
++  truncated payload is still redacted. A payload the engine cannot read as JSON is replaced as a
++  whole.
++
++A key is sensitive when, lowercased and with every character that is not a letter or digit removed,
++it ends in `token` or contains `password`, `passwd`, `secret`, `credential`, `authorization`,
++`apikey`, `privatekey`, `bearer`, `cookie`, `signature`, `accesstoken`, `refreshtoken` or
++`authtoken`. So `Cookie`, `set-cookie`, `http.request.header.set-cookie`, `idToken`, `X-CSRF-Token`
++and `x-hub-signature-256` are redacted, while counts such as `max_tokens` or `token_count` are kept.
++
+ ### Alert Rule Fields
  
--- Rust 1.80+ (edition 2024)
-+- Rust 1.91+ (edition 2024)
- - Redis (only if you enable the event/cron/stream workers)
- 
- ### Setting Up Your Development Environment
+ | Field              | Type        | Description                                                                                             |
 ```
 
-**File**: `Cargo.lock` (modified, +24/-24)
+**File**: `engine/src/workers/observability/mod.rs` (modified, +3/-2)
 ```diff
-@@ -151,7 +151,7 @@ version = "1.1.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "40c48f72fd53cd289104fc64099abca73db4166ad86ea0b4341abe65af83dadc"
- dependencies = [
-- "windows-sys 0.60.2",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -162,7 +162,7 @@ checksum = "291e6a250ff86cd4a820112fb8898808a366d8f9f58ce16d1f538353ad55747d"
- dependencies = [
-  "anstyle",
-  "once_cell_polyfill",
-- "windows-sys 0.60.2",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -271,9 +271,9 @@ dependencies = [
- 
- [[package]]
- name = "async-executor"
--version = "1.14.0"
-+version = "1.14.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "c96bf972d85afc50bf5ab8fe2d54d1586b4e0b46c97c50a0c9e71e2f7bcd812a"
-+checksum = "f426a31126c735126297bc5ea7a521263c9faff4f63ca415267ee625651c4f37"
- dependencies = [
-  "async-task",
-  "concurrent-queue",
-@@ -989,7 +989,7 @@ version = "3.1.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "faf9468729b8cbcea668e36183cb69d317348c2e08e994829fb56ebfdfbaac34"
- dependencies = [
-- "windows-sys 0.48.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -1648,7 +1648,7 @@ dependencies = [
-  "libc",
-  "option-ext",
-  "redox_users 0.5.2",
-- "windows-sys 0.59.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -1767,7 +1767,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
- dependencies = [
-  "libc",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -3213,7 +3213,7 @@ checksum = "3640c1c38b8e4e43584d8df18be5fc6b0aa314ce6ebf51b53313d4306cca8e46"
- dependencies = [
-  "hermit-abi",
-  "libc",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -3561,9 +3561,9 @@ dependencies = [
- 
- [[package]]
- name = "libsqlite3-sys"
--version = "0.38.2"
-+version = "0.39.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f1d20bef17f513b9b3004532233187769cd072d790971f4e4da0e346eb6401e8"
-+checksum = "14a5f01b87b92705d07b433c06f96cbc764637d81a0bffb5734ce17cf0f9a2b3"
- dependencies = [
-  "cc",
-  "pkg-config",
-@@ -4090,7 +4090,7 @@ version = "0.50.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "7957b9740744892f114936ab4a57b3f487491bbeafaf8083688b16841a4240e5"
- dependencies = [
-- "windows-sys 0.59.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -5332,9 +5332,9 @@ dependencies = [
- 
- [[package]]
- name = "rusqlite"
--version = "0.40.2"
-+version = "0.41.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "23f2a97da3e3873c73cb2a2e71b35c40ff95e0b1eefa8d72d8499a6928c3b5b3"
-+checksum = "da9bba6f3506135e120a6586df05be18b48d18896600646a4bec8f993d91a594"
- dependencies = [
-  "bitflags 2.11.1",
-  "fallible-iterator",
-@@ -5379,7 +5379,7 @@ dependencies = [
-  "errno",
-  "libc",
-  "linux-raw-sys",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -5462,7 +5462,7 @@ dependencies = [
-  "security-framework",
-  "security-framework-sys",
-  "webpki-root-certs",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -5957,7 +5957,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "3a766e1110788c36f4fa1c2b71b387a7815aa65f88ce0229841826633d93723e"
- dependencies = [
-  "libc",
-- "windows-sys 0.60.2",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -6209,7 +6209,7 @@ dependencies = [
-  "getrandom 0.4.2",
-  "once_cell",
-  "rustix",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -7278,7 +7278,7 @@ version = "0.1.11"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
- dependencies = [
-- "windows-sys 0.48.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -8018,27 +8018,27 @@ checksum = "b8848ee67ecc8aedbaf3e4122217aff892639231befc6a1b58d29fff4c2cabaa"
- 
- [[package]]
- name = "zstd"
--version = "0.13.3"
-+version = "0.13.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "e91ee311a569c327171651566e07972200e76fcfe2242a4fa446149a3881c08a"
-+checksum = "cdb02c3132d251ab1606e9fc913a7da6c6ed08cc263df15edf082e1dc497d157"
- dependencies = [
-  "zstd-safe",
- ]
- 
- [[package]]
- name = "zstd-safe"
--version = "7.2.4"
-+version = "7.4.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "8f49c4d5f0abb602a93fb8736af2a4f4dd9512e36f7f570d66e65ff867ed3b9d"
-+checksum = "1c8ea04668f5de8d8d51051714ba560c9536519cadcdb8829bba4fe2ad159b03"
- dependencies = [
-  "zstd-sys",
- ]
- 
- [[package]]
- name = "zstd-sys"
--version = "2.0.16+zstd.1.5.7"
-+version = "2.1.2+zstd.1.5.7"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "91e19ebc2adc8f83e43039e79776e3fda8ca919132d68a1fed6a5faca2683748"
-+checksum = "481ada9c543b2323cbb7bbdbb5249177fbf0188ed959ed2c15e4b22421c84ed3"
- dependencies = [
-  "cc",
-  "pkg-config",
+@@ -10,6 +10,7 @@ pub mod logs_layer;
+ pub mod metrics;
+ pub mod otel;
+ pub(crate) mod otlp_exporter;
++pub(crate) mod redaction;
+ mod sampler;
+ pub(crate) mod trace_store;
+ pub(crate) mod ui;
+@@ -9238,7 +9239,7 @@ mod tests {
+         let event = otel::StoredSpanEvent {
+             name: "invocation".to_string(),
+             timestamp_unix_nano: 1,
+-            attributes: vec![("iii.payload.json".to_string(), "x".repeat(1024))],
++            attributes: vec![("iii.payload.json".to_string(), "1".repeat(1024))],
+         };
+         let mut ok = make_span("t-1", "s-1", None, "turn", "svc", 1, 10, "ok", vec![]);
+         ok.events = vec![event.clone()];
+@@ -9297,7 +9298,7 @@ mod tests {
+         root.events = vec![otel::StoredSpanEvent {
+             name: "invocation".to_string(),
+             timestamp_unix_nano: 1,
+-            attributes: vec![("iii.payload.json".to_string(), "x".repeat(64 * 1024))],
++            attributes: vec![("iii.payload.json".to_string(), "1".repeat(64 * 1024))],
+         }];
+         let child = make_span(
+             "t-1",
 ```
 
-**File**: `engine/CONTRIBUTING.md` (modified, +1/-1)
+**File**: `engine/src/workers/observability/otel.rs` (modified, +298/-32)
 ```diff
-@@ -26,7 +26,7 @@ respectful and constructive in all interactions.
+@@ -17,6 +17,7 @@ use super::config::{
+     LogsExporterType, ObservabilityWorkerConfig, OtelExporterType, TraceStorageConfig,
+ };
+ use super::otlp_exporter::build_span_exporter;
++use super::redaction::{self, PAYLOAD_ATTRIBUTE_KEY};
+ use super::sampler::AdvancedSampler;
+ use opentelemetry::propagation::{TextMapCompositePropagator, TextMapPropagator};
+ use opentelemetry::{
+@@ -630,36 +631,15 @@ fn approx_span_size(span: &StoredSpan) -> u64 {
+     total as u64
+ }
  
- ### Prerequisites
+-fn sensitive_attribute_key(key: &str) -> bool {
+-    matches!(
+-        key.to_ascii_lowercase().as_str(),
+-        "authorization"
+-            | "proxy-authorization"
+-            | "cookie"
+-            | "set-cookie"
+-            | "x-api-key"
+-            | "api-key"
+-            | "api_key"
+-            | "access_token"
+-            | "refresh_token"
+-            | "password"
+-            | "secret"
+-            | "credential"
+-    )
+-}
+-
+ fn sanitize_attributes(attributes: &mut [(String, String)]) {
+     for (key, value) in attributes {
+-        if sensitive_attribute_key(key) {
+-            *value = "[REDACTED]".to_string();
+-        }
++        redaction::redact_attribute(key, value);
+     }
+ }
  
--- **Rust 1.80+** - Install via [rustup](https://rustup.rs/)
-+- **Rust 1.91+** - Install via [rustup](https://rustup.rs/)
- - **Redis** (optional) - Required for event bus, state, and cron modules
- - **RabbitMQ** (optional) - Alternative event bus adapter
- - **pre-commit** - For Git hooks (`pip install pre-commit`)
+-/// Attribute the SDKs use for a captured invocation payload, and the flag they
+-/// set when they truncated it themselves. The engine raises the same flag when
+-/// its own cap cuts the payload, so readers see one signal either way.
+-const PAYLOAD_ATTRIBUTE_KEY: &str = "iii.payload.json";
++/// Flag the SDKs set on a captured payload (`PAYLOAD_ATTRIBUTE_KEY`) they
++/// truncated themselves. The engine raises the same flag when its own cap cuts
++/// the payload, so readers see one signal either way.
+ const PAYLOAD_TRUNCATED_KEY: &str = "iii.payload.truncated";
+ 
+ /// Marker appended to a cut attribute value: `…[truncated <N> bytes]`.
+@@ -721,9 +701,9 @@ fn truncate_attributes(attributes: &mut Vec<(String, String)>, max_bytes: usize)
+     }
+ }
+ 
+-/// Redact sensitive attributes and cap every attribute value at
+-/// `max_attribute_bytes` (zero = uncapped). Runs once per span at ingest,
+-/// before the span is measured or stored.
++/// Redact sensitive attributes and the credentials inside captured payloads,
++/// then cap every attribute value at `max_attribute_bytes` (zero = uncapped).
++/// Runs once per span at ingest, before the span is measured or stored.
+ fn sanitize_span(span: &mut StoredSpan, max_attribute_bytes: usize) {
+     sanitize_attributes(&mut span.attributes);
+     truncate_attributes(&mut span.attributes, max_attribute_bytes);
+@@ -2622,8 +2602,11 @@ impl TeeSpanExporter {
+ impl SpanExporter for TeeSpanExporter {
+     fn export(
+         &self,
+-        batch: Vec<SpanData>,
++        mut batch: Vec<SpanData>,
+     ) -> impl std::future::Future<Output = OTelSdkResult> + Send {
++        // Both halves get the redacted batch: the memory side re-checks at
++        // ingest, the OTLP half ships what it is given.
++        batch.iter_mut().for_each(redact_span_data);
+         // Store in memory first (for `observability::on-span` and API access).
+         let stored: Vec<StoredSpan> = batch
+             .iter()
+@@ -2648,6 +2631,60 @@ impl SpanExporter for TeeSpanExporter {
+     }
+ }
+ 
++/// Redacts the engine's own spans before an OTLP exporter ships them. The
++/// memory store redacts at ingest (`sanitize_span`) and worker spans are
++/// redacted as they arrive (`redact_otlp_request`); this covers what the
++/// engine exports itself, such as invocations of SDK workers it runs
++/// in-process.
++#[derive(Debug)]
++struct RedactingSpanExporter<E>(E);
++
++impl<E: SpanExporter> SpanExporter for RedactingSpanExporter<E> {
++    fn export(
++        &self,
++        mut batch: Vec<SpanData>,
++    ) -> impl std::future::Future<Output = OTelSdkResult> + Send {
++        batch.iter_mut().for_each(redact_span_data);
++        self.0.export(batch)
++    }
++
++    fn shutdown_with_timeout(&self, timeout: std::time::Duration) -> OTelSdkResult {
++        self.0.shutdown_with_timeout(timeout)
++    }
++
++    fn force_flush(&self) -> OTelSdkResult {
++        self.0.force_flush()
++    }
++
++    // Forwarded for the same reason as `TeeSpanExporter::set_resource`.
++    fn set_resource(&mut self, resource: &Resource) {
++        self.0.set_resource(resource);
++    }
++}
++
++fn redact_span_data(span: &mut SpanData) {
++    redact_key_values(&mut span.attributes);
++    for event in &mut span.events.events {
++        redact_key_values(&mut event.attributes);
++    }
++    for link in &mut span.links.links {
++        redact_key_values(&mut link.attributes);
++    }
++}
++
++fn redact_key_values(attributes: &mut [KeyValue]) {
++    for attribute in attributes {
++        if redaction::is_sensitive_key(attribute.key.as_str()) {
++            attribute.value = opentelemetry::Value::from(redaction::REDACTED);
++        } else if attribute.key.as_str() == PAYLOAD_ATTRIBUTE_KEY
++            && let opentelemetry::Value::String(payload) = &attribute.value
++            && let Some(redacted) = redacti
 ```
 
-**File**: `engine/Cargo.toml` (modified, +1/-1)
+**File**: `engine/src/workers/observability/redaction.rs` (added, +667/-0)
 ```diff
-@@ -110,7 +110,7 @@ hyper = { version = "1", features = ["http1", "server"] }
- hyper-util = { version = "0.1", features = ["tokio", "service"] }
- serde = { version = "1", features = ["derive", "rc"] }
- serde_json = "1"
--rusqlite = { version = "0.40.2", features = ["bundled", "hooks"] }
-+rusqlite = { version = "0.41.1", features = ["bundled", "hooks"] }
- schemars = "0.8"
- serde_yaml = "0.9"
- url = { workspace = true }
-```
-
----
-
-### Incident Patch 3: `bb5390b6` (2026-11-11)
-**Commit Message**: fix: license headers on two observer tests and a stale state event in the Python SDK (#2523)
-
-**File**: `engine/src/observer/dispatch/metadata_tests.rs` (modified, +6/-0)
-```diff
-@@ -1,3 +1,9 @@
+@@ -0,0 +1,667 @@
 +// Copyright Motia LLC and/or licensed to Motia LLC under one or more
 +// contributor license agreements. Licensed under the Elastic License 2.0;
 +// you may not use this file except in compliance with the Elastic License 2.0.
 +// This software is patent protected. We welcome discussions - reach out at team@iii.dev
 +// See LICENSE and PATENTS files for details.
 +
- //! Decision 62: a call's metadata is shared (`Arc<Value>`), not deep-copied,
- //! by the observed call that keeps it and by the activation envelopes built
- //! from it, and what the observers receive is unchanged.
++//! Credential redaction for span data, applied by the engine to every span it
++//! stores or exports.
++//!
++//! Worker SDKs redact captured invocation payloads (`iii.payload.json`) before
++//! they export, but each SDK carries its own copy of the rule and a worker on
++//! an older SDK keeps an older rule. Every span crosses the engine (worker
++//! spans arrive over the telemetry connection and are stored and forwarded to
++//! the collector from there), so the engine applies the current rule to all
++//! of them.
++//!
++//! Both passes are idempotent:
++//! - an attribute whose key is sensitive has its whole value replaced;
++//! - in the JSON text of `iii.payload.json`, the value of every sensitive key
++//!   at any depth is replaced. The text is rewritten in place instead of
++//!   parsed and re-serialized, so key order and formatting survive and a
++//!   truncated payload is still redacted. A text that is not JSON is replaced
++//!   as a whole (fail closed).
++
++use std::borrow::Cow;
++
++/// What a redacted value becomes; the SDKs use the same placeholder.
++pub(crate) const REDACTED: &str = "[REDACTED]";
++
++/// [`REDACTED`] as a JSON string, the form it takes inside a payload.
++const REDACTED_JSON: &str = "\"[REDACTED]\"";
++
++/// Attribute the SDKs record a captured invocation payload under.
++pub(crate) const PAYLOAD_ATTRIBUTE_KEY: &str = "iii.payload.json";
++
++/// Marker every SDK appends to a payload it cut at `III_TRACE_PAYLOAD_MAX_BYTES`.
++const SDK_TRUNCATION_MARKER: &str = "...\"[TRUNCATED]\"";
++
++/// A key is sensitive when its normalized form contains one of these.
++const SENSITIVE_FRAGMENTS: &[&str] = &[
++    "password",
++    "passwd",
++    "secret",
++    "credential",
++    "authorization",
++    "apikey",
++    "privatekey",
++    "bearer",
++    "cookie",
++    "signature",
++    "accesstoken",
++    "refreshtoken",
++    "authtoken",
++];
++
++/// Bit per lowercase letter that starts a [`SENSITIVE_FRAGMENTS`] entry, so
++/// the search skips positions where no fragment can begin. Building it also
++/// checks at compile time that every fragment starts with one.
++const FRAGMENT_FIRST_LETTERS: u32 = {
++    let mut mask = 0u32;
++    let mut i = 0;
++    while i < SENSITIVE_FRAGMENTS.len() {
++        mask |= 1 << (SENSITIVE_FRAGMENTS[i].as_bytes()[0] - b'a');
++        i += 1;
++    }
++    mask
++};
++
++/// Longest normalized key kept on the stack; longer keys go to the heap.
++const STACK_KEY_BYTES: usize = 64;
++
++/// Whether the value under `key` must not leave the engine.
++///
++/// The key is lowercased and stripped of everything but ASCII letters and
++/// digits, so `Set-Cookie`, `set_cookie` and `http.request.header.set-cookie`
++/// match alike. It is sensitive when the result contains a
++/// [`SENSITIVE_FRAGMENTS`] entry or ends in `token` (`idToken`, `csrf_token`,
++/// `X-CSRF-Token`); counts such as `max_tokens` or `token_count` stay visible.
++///
++/// It runs for every attribute of every span and every key of every payload,
++/// so the key is normalized on the stack rather than allocated.
++pub(crate) fn is_sensitive_key(key: &str) -> bool {
++    let mut buf = [0u8; STACK_KEY_BYTES];
++    let mut len = 0;
++    for byte in key.bytes() {
++        if byte.is_ascii_alphanumeric() {
++            if len == buf.len() {
++                let normalized: Vec<u8> = key
++                    .bytes()
++                    .filter(u8::is_ascii_alphanumeric)
++                    .map(|byte| byte.to_ascii_lowercase())
++                    .collect();
++                return is_sensitive_normalized(&normalized);
++            }
++            buf[len] = byte.to_ascii_lowercase();
++            len += 1;
++        }
++    }
++    is_sensitive_normalized(&buf[..len])
++}
++
++/// [`is_sensitive_key`] for a key already lowercased and stripped to ASCII
++/// letters and digits.
++fn is_sensitive_normalized(key: &[u8]) -> bool {
++    key.ends_with(b"token")
++        || (0..key.len()).any(|start| {
++            let first = key[start];
++            first.is_ascii_lowercase()
++                && FRAGMENT_FIRST_LETTERS & (1 << (first - b'a')) != 0
++                && SENSITIVE_FRAGMENTS
++                    .iter()
++                    .any(|fragment| key[start..].starts_with(fragment.as_bytes()))
++        })
++}
++
++/// Redacts one span, event or link attribute in place: the whole value when
++/// the key is sensitive, the sensitive values inside it when it is the
++/// captured payload.
++pub(crate) fn redact_attribute(key: &str, value: &mut String) {
++    if is_sensitive_key(key) {
++        if value != REDACTED {
++            // A fresh string: reusing the buffer would keep 
 ```
 
-**File**: `engine/src/observer/legacy_matrix_tests.rs` (modified, +6/-0)
+**File**: `engine/src/workers/observability/trace_store.rs` (modified, +5/-5)
 ```diff
-@@ -1,3 +1,9 @@
-+// Copyright Motia LLC and/or licensed to Motia LLC under one or more
-+// contributor license agreements. Licensed under the Elastic License 2.0;
-+// you may not use this file except in compliance with the Elastic License 2.0.
-+// This software is patent protected. We welcome discussions - reach out at team@iii.dev
-+// See LICENSE and PATENTS files for details.
-+
- //! Decision 60: an older SDK's `source.on` / `source.deliver` are translated
- //! at registration instead of refused, and every one of the 528 old
- //! `on` x `deliver` x `capture` combinations fires on exactly the outcomes it
-```
-
-**File**: `sdk/packages/python/iii/src/iii/observer_handle.py` (modified, +23/-11)
-```diff
-@@ -57,7 +57,8 @@ def __init__(
-         self._reason: ObserveReason | None = None
-         self._listeners: list[StateListener] = []
-         self._schedule = schedule
--        self._undelivered: deque[tuple[ObserverState, ObserveReason | None]] = deque()
-+        # Each change with the listeners subscribed when it happened.
-+        self._undelivered: deque[tuple[ObserverState, ObserveReason | None, tuple[StateListener, ...]]] = deque()
-         self._delivering = False
-         self._changed = threading.Condition()
-         #: Sent on some connection: the engine may hold it, so disposing it needs an ``unobserve``.
-@@ -155,15 +156,18 @@ def wake(_state: ObserverState, _reason: ObserveReason | None) -> None:
-             raise error
+@@ -3728,7 +3728,7 @@ mod tests {
+                 .map(|part| {
+                     let mut span =
+                         test_span(&format!("cap-{index:04}-{part:02}"), "span", "cap-load");
+-                    span.attributes = vec![("iii.payload.json".to_string(), "x".repeat(64 * 1024))];
++                    span.attributes = vec![("iii.payload.json".to_string(), "1".repeat(64 * 1024))];
+                     span
+                 })
+                 .collect();
+@@ -3774,7 +3774,7 @@ mod tests {
+                 .map(|part| {
+                     let mut span =
+                         test_span(&format!("reuse-{index:04}-{part:02}"), "span", "reuse");
+-                    span.attributes = vec![("iii.payload.json".to_string(), "x".repeat(64 * 1024))];
++                    span.attributes = vec![("iii.payload.json".to_string(), "1".repeat(64 * 1024))];
+                     span
+                 })
+                 .collect();
+@@ -3845,7 +3845,7 @@ mod tests {
+             let spans = (0..63)
+                 .map(|part| {
+                     let mut span = test_span(&format!("kept-{index:04}-{part:02}"), "span", "kept");
+-                    span.attributes = vec![("iii.payload.json".to_string(), "x".repeat(64 * 1024))];
++                    span.attributes = vec![("iii.payload.json".to_string(), "1".repeat(64 * 1024))];
+                     span
+                 })
+                 .collect();
+@@ -4091,7 +4091,7 @@ mod tests {
+         root.events = vec![crate::workers::observability::otel::StoredSpanEvent {
+             name: "invocation".to_string(),
+             timestamp_unix_nano: 1_000_000_001,
+-            attributes: vec![("iii.payload.json".to_string(), "x".repeat(64 * 1024))],
++            attributes: vec![("iii.payload.json".to_string(), "1".repeat(64 * 1024))],
+         }];
+         root.instrumentation_scope_name = Some("iii-sdk".to_string());
+         root.flags = Some(1);
+@@ -4637,7 +4637,7 @@ mod tests {
+     }
  
-     def on_state_change(self, listener: StateListener) -> Callable[[], None]:
--        """Calls ``listener(state, reason)`` on every state change, in order,
--        on the SDK's callback thread. Returns the unsubscribe function."""
--        self._listeners.append(listener)
-+        """Calls ``listener(state, reason)`` on every state change after it
-+        subscribes, in order, on the SDK's callback thread. Returns the
-+        unsubscribe function; a change still queued then is not delivered to it."""
-+        with self._changed:
-+            self._listeners.append(listener)
+     fn payload_attribute(len: usize) -> Vec<(String, String)> {
+-        vec![("iii.payload.json".to_string(), "x".repeat(len))]
++        vec![("iii.payload.json".to_string(), "1".repeat(len))]
+     }
  
-         def off() -> None:
--            try:
--                self._listeners.remove(listener)
--            except ValueError:
--                pass
-+            with self._changed:
-+                try:
-+                    self._listeners.remove(listener)
-+                except ValueError:
-+                    pass
- 
-         return off
- 
-@@ -194,7 +198,12 @@ def _set_state(self, state: ObserverState, reason: ObserveReason | None = None)
-                 return
-             # Delivered later, in order: a listener never runs on the read path
-             # (or inside dispose()), so it may call the client freely.
--            self._undelivered.append((state, reason))
-+            # The listeners now: one that subscribes after this change, before
-+            # it is delivered, must not hear it.
-+            listeners = tuple(self._listeners)
-+            if not listeners:
-+                return
-+            self._undelivered.append((state, reason, listeners))
-             if self._delivering:
-                 return
-             self._delivering = True
-@@ -206,8 +215,11 @@ def _deliver(self) -> None:
-                 if not self._undelivered:
-                     self._delivering = False
-                     return
--                state, reason = self._undelivered.popleft()
--            for listener in list(self._listeners):
-+                state, reason, listeners = self._undelivered.popleft()
-+            for listener in listeners:
-+                with self._changed:
-+                    if listener not in self._listeners:
-+                        continue
-                 try:
-                     listener(state, reason)
-                 except Exception:
-```
-
-**File**: `sdk/packages/python/iii/tests/test_observe_observer.py` (modified, +21/-0)
-```diff
-@@ -385,6 +385,27 @@ def bad(state: str, reason: Any) -> None:
-     wait_until(lambda: seen == ["active"], what="the second listener")
- 
- 
-+def test_a_listener_hears_only_the_changes_made_after_it_subscribed() -> None:
-+    from iii.observer_handle import ObserverHandle
-+
-+    queued: list[Any] = []  # the callback thread, run by hand
-+    handle = ObserverHandle("x", {}, lambda handle: None, lambda: False, queued.append)
-+    early: list[str] = []
-+    handle.on_state_change(lambda state, reason: early.append(state))
-+    handle._set_state("active")
-+    late: list[str] = []
-+    handle.on_state_change(lambda state, reason: late.append(state))  # before "active" is delivered
-+    gone: list[str] = []
-+    off = handle.on_state_change(lambda state, reason: gone.append(state))
-+    handle._set_state("suspended")
-+    off()  # before "suspended" is delivered
-+    for deliver in queued:
-+        deliver()
-+    assert early == ["active", "suspended"]
-+    assert late == ["suspended"]
-+    assert gone == []
-+
-+
- def test_ready_from_the_sdk_loop_thread_is_refused(engine: FakeEngine, connect: Any) -> None:
-     client = connect(engine)
-     handle = client.observe({"function_id": "f::a"}, "t::a")
+     fn hot_cache(max_spans: usize, max_bytes: u64) -> Arc<InMemorySpanStorage> {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2524** (2026-11-11): feat(compose)!: explicit VM mode replaces the implicit VM path (@guibeira)
-- **PR #2523** (2026-11-11): fix: license headers on two observer tests and a stale state event in the Python SDK (@ytallo)
-- **PR #2518** (2026-11-11): chore(compose): scaffold the explicit VM mode interfaces (@guibeira)
-- **PR #2517** (2026-11-11): feat(sandbox-contract): contract 1.3 with worker::build (@guibeira)
-- **PR #2514** (2026-11-10): fix(subscribe): bind the route with observe for the iii 0.26 engine (@arihantcodes)
-- **PR #2513** (2026-11-10): docs(tech-specs): explicit VM mode for Compose (@guibeira)
+- **PR #2566** (2026-11-13): fix(sdk-go): infer a schema for interface and recursive types (@sergiofilhowz)
+- **PR #2564** (2026-11-13): fix(observability): redact credentials in every span the engine stores or exports (@guibeira)
+- **PR #2562** (2026-11-13): feat: deprecate iii-http-functions and HttpInvocationConfig (@guibeira)
+- **PR #2558** (2026-11-12): ci: warn about unused dependencies (Rust, Node, Python, Go) (@guibeira)
+- **PR #2557** (2026-11-14): fix(compose): supervise VM workers from their log stream instead of polling worker::status (@ytallo)
+- **PR #2556** (2026-11-12): feat(subscribe): accept server-to-server signups from ade (@arihantcodes)
 
 ---
 
@@ -2707,40 +3170,40 @@ Co-authored-by: iii harness (claude-opus-5-5) <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. subscribe): install from bun.lock before the worker starts (#2511)
+## X. compose): supervise VM workers from their log stream instead of polling worker::
 
 **RULE**:
-When implementing operations in `services/subscribe/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iii-hq/iii. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/iii-compose/src/logs.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iii-hq/iii. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `69f3520b`: subscribe): install from bun.lock before the worker starts (#2511). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8279fa0d`: compose): supervise VM workers from their log stream instead of polling worker::status. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `services/subscribe/README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/iii-compose/src/logs.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-Bun, not pnpm: the worker is deployed on its own, so it keeps its own `package.json` and
-`bun.lock` in `workers/subscribe/`, outside the pnpm workspace. Its start command installs from
-that lockfile before running, both on iii Cloud and in a local compose VM (which sees only the
-worker's directory).
-cd workers/subscribe && bun install && bun test
-RESEND_API_KEY=re_... iii compose --up   # from services/subscribe: engine + http worker + this worker
+    /// A sink that writes nowhere, for a VM log read only to learn when the
+    /// VM ends: its writer is gone, so every record is dropped.
+    pub(crate) fn discard() -> Self {
+        let (sender, _) = tokio::sync::mpsc::channel(1);
+        Self {
+            container: String::new(),
+            sender,
+        }
+    }
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-Bun, not pnpm: this directory is deployed on its own (iii Cloud installs at the environment's root
-directory), so it keeps its own `bun.lock` outside the pnpm workspace.
-bun install
-bun test
-RESEND_API_KEY=re_... iii compose --up   # engine + http worker + this worker
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `69f3520b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8279fa0d` are properly handled with clean fallback behavior.
 
 
 ## 3. Decision Protocol & Boundary Restrictions

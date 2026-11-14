@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T20:36:23.750Z",
+  "updated_at": "2026-11-14T20:52:48.122Z",
   "stats": {
-    "total_discovered": 3408,
-    "approved_pending_harvest": 3202,
+    "total_discovered": 3411,
+    "approved_pending_harvest": 3205,
     "harvested_count": 0,
     "rejected_count": 206,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3182,
+      "COMMUNITY_AND_EXPERT": 3185,
       "OFFICIAL_DOCUMENTATION": 123,
       "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
@@ -73554,6 +73554,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
         "fileName": "vespa-engine-vespa-learnings.md"
+      }
+    },
+    "SRC-765A79F64B49": {
+      "id": "SRC-765A79F64B49",
+      "url": "https://github.com/iii-hq/iii/sdk/packages/go/iii/greet-req",
+      "title": "https://github.com/iii-hq/iii/sdk/packages/go/iii/greet-req",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T20:52:14.148Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iii-hq-iii-learnings.md",
+        "fileName": "iii-hq-iii-learnings.md"
+      }
+    },
+    "SRC-939732938D86": {
+      "id": "SRC-939732938D86",
+      "url": "https://github.com/iii-hq/iii/sdk/packages/go/iii/pinned-order",
+      "title": "https://github.com/iii-hq/iii/sdk/packages/go/iii/pinned-order",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T20:52:14.185Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iii-hq-iii-learnings.md",
+        "fileName": "iii-hq-iii-learnings.md"
+      }
+    },
+    "SRC-365D2C4D7576": {
+      "id": "SRC-365D2C4D7576",
+      "url": "https://huggingface.co/autotrust/Qwen3.8-Flash-Next-E384-FP4-V2",
+      "title": "https://huggingface.co/autotrust/Qwen3.8-Flash-Next-E384-FP4-V2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T20:52:48.122Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-autotrust-qwen3.8-flash-next-e384-fp4-v2-learnings.md",
+        "fileName": "hf-autotrust-qwen3.8-flash-next-e384-fp4-v2-learnings.md"
       }
     }
   }

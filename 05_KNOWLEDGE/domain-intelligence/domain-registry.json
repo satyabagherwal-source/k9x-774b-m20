@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T20:36:24.027Z",
-  "total_records": 828,
+  "last_updated": "2026-11-14T20:52:48.840Z",
+  "total_records": 833,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 404,
+      "total": 407,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -441,7 +441,10 @@
         "DOM-D-E0561FD8",
         "domain_intelligence-research-knowledge-intelligence-hf-conwayresearch-underdog-saluki-27b-1-0-learni",
         "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co",
-        "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b"
+        "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
+        "domain_intelligence-research-knowledge-intelligence-autotrust-qwen3-8-flash-next-e384-fp4-v2-core-in",
+        "DOM-D-73A9B4FE",
+        "domain_intelligence-research-knowledge-intelligence-hf-autotrust-qwen3-8-flash-next-e384-fp4-v2-lear"
       ]
     },
     "E": {
@@ -474,7 +477,7 @@
       ]
     },
     "G": {
-      "total": 132,
+      "total": 134,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -607,7 +610,9 @@
         "domain_intelligence-architecture-intelligence-sqldelight-sqldelight-core-invariants",
         "domain_intelligence-architecture-intelligence-vespa-engine-vespa-core-invariants",
         "domain_intelligence-architecture-intelligence-sqldelight-sqldelight-learnings-core-invariants",
-        "domain_intelligence-architecture-intelligence-vespa-engine-vespa-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-vespa-engine-vespa-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-iii-hq-iii-core-invariants",
+        "domain_intelligence-architecture-intelligence-iii-hq-iii-learnings-core-invariants"
       ]
     },
     "H": {
@@ -6925,8 +6930,8 @@
       "title": "Technical Construction Intelligence: meshery/meshery Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-meshery-meshery-technical-construction-intelligence-meshery-meshery-core-invaria.md",
       "repository": "meshery/meshery",
-      "content_hash": "458e5153e86227059868cb6eb507a10c56e8bd207d361e496f40230ec7ff7dcc",
-      "created_at": "2026-11-13T15:38:17.812Z"
+      "content_hash": "17dced8963c740887c55796469d05ccd1ba8a6c308b0006bec2016b5dca8968c",
+      "created_at": "2026-11-14T20:52:11.145Z"
     },
     "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
@@ -7003,8 +7008,8 @@
       "title": "Technical Construction Intelligence: meshery-meshery-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-meshery-meshery-learnings-technical-construction-intelligence-meshery-meshery-le.md",
       "repository": "meshery-meshery-learnings",
-      "content_hash": "43efd8b4bd7732553825d35683af9cd0f8e8183ec1d0be9796fc2ad0f0c32224",
-      "created_at": "2026-11-13T15:39:04.287Z"
+      "content_hash": "14e8fe754d40b5f1c4bb047ff4d1db25120a9bdd1414a437e97835275c873d69",
+      "created_at": "2026-11-14T20:52:48.840Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hemmingwayai-hemmingway-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hemmingwayai-hemmingway-1-core-invariants",
@@ -16586,6 +16591,84 @@
       "repository": "vespa-engine-vespa-learnings",
       "content_hash": "ac075e329b4705e4a91298beb5a25ece9882791d586efff19fabcd4a0ce8f607",
       "created_at": "2026-11-14T20:36:24.027Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-autotrust-qwen3-8-flash-next-e384-fp4-v2-core-in": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-qwen3-8-flash-next-e384-fp4-v2-core-in",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: autotrust/Qwen3.8-Flash-Next-E384-FP4-V2 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-qwen3-8-flash-next-e384-fp4-v2-research-knowledge-intelligence-auto.md",
+      "repository": "autotrust/Qwen3.8-Flash-Next-E384-FP4-V2",
+      "content_hash": "3feff2aedb42645409380da58f6ed917cd8f6561fd99b76af6a2e1df87c86e33",
+      "created_at": "2026-11-14T20:52:01.228Z"
+    },
+    "domain_intelligence-architecture-intelligence-iii-hq-iii-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-iii-hq-iii-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: iii-hq/iii Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-iii-hq-iii-architecture-intelligence-iii-hq-iii-core-invariants.md",
+      "repository": "iii-hq/iii",
+      "content_hash": "a3f9a51ca2574317b9957faa5a35f52d0e173f8099db3d1f126999199808294e",
+      "created_at": "2026-11-14T20:52:03.556Z"
+    },
+    "domain_intelligence-architecture-intelligence-iii-hq-iii-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-iii-hq-iii-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: iii-hq-iii-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-iii-hq-iii-learnings-architecture-intelligence-iii-hq-iii-learnings-core-invaria.md",
+      "repository": "iii-hq-iii-learnings",
+      "content_hash": "c465af70194deeabb426acc787613ef69d5b128d3f3c25df2aa5942a75f8f902",
+      "created_at": "2026-11-14T20:52:14.524Z"
+    },
+    "DOM-D-73A9B4FE": {
+      "record_id": "DOM-D-73A9B4FE",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): autotrust/Qwen3.8-Flash-Next-E384-FP4-V2",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-autotrust-qwen3.8-flash-next-e384-fp4-v2-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/autotrust/Qwen3.8-Flash-Next-E384-FP4-V2](https://huggingface.co/autotrust/Qwen3.8-Flash-Next-E384-FP4-V2))  \n> **Source Version**: `",
+      "content_hash": "bb7329d0514733fb76db677a9c4d9de91deed49afd8ef5a04529c761c8b054cd",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-autotrust-qwen3.8-flash-next-e384-fp4-v2-learnings.md`  \n> **Source**: huggingfac -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-autotrust-qwen3.8-flash-next-e384-fp4-v2-learnings.md`  \n> **Source**: huggingfac",
+      "provenance": {
+        "source_uri": "project://hf-autotrust-qwen3.8-flash-next-e384-fp4-v2/hf-autotrust-qwen3.8-flash-next-e384-fp4-v2-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T20:52:14.890Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-autotrust-qwen3.8-flash-next-e384-fp4-v2)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-autotrust-qwen3.8-flash-next-e384-fp4-v2"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T20:52:48.081Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-autotrust-qwen3-8-flash-next-e384-fp4-v2-lear": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-autotrust-qwen3-8-flash-next-e384-fp4-v2-lear",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-autotrust-qwen3.8-flash-next-e384-fp4-v2-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-qwen3-8-flash-next-e384-fp4-v2-learnings-research-knowledge-intelli.md",
+      "repository": "hf-autotrust-qwen3.8-flash-next-e384-fp4-v2-learnings",
+      "content_hash": "24bac4e5d2b26ba662f9aeaef7d5449008ce22847782d39903031ceaf102f77c",
+      "created_at": "2026-11-14T20:52:48.328Z"
     }
   }
 }

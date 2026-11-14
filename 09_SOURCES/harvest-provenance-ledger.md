@@ -9966,3 +9966,7 @@ Every entry in this ledger must capture:
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `a3c23355` | Multi-dimensional audit evidence | 2026-11-14T20:32:39.155Z |
 | `learn-huggingface-qwen-qwen-image-2-1-turbo` | `https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-14T20:35:49.208Z |
 | `learn-dom-h-ade4819d` | `project://hf-qwen-qwen-image-2.1-turbo` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-turbo-learnings.md` | 2026-11-14T20:36:22.260Z |
+| `learn-huggingface-autotrust-qwen3-8-flash-next-e384-fp4-v2` | `https://huggingface.co/autotrust/Qwen3.8-Flash-Next-E384-FP4-V2` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-14T20:52:01.011Z |
+| `learn-github-iii-hq-iii` | `https://github.com/iii-hq/iii` | `8279fa0d` | Multi-dimensional audit evidence | 2026-11-14T20:52:03.196Z |
+| `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `c5d2dbe7` | Multi-dimensional audit evidence | 2026-11-14T20:52:10.812Z |
+| `learn-dom-d-73a9b4fe` | `project://hf-autotrust-qwen3.8-flash-next-e384-fp4-v2` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-autotrust-qwen3.8-flash-next-e384-fp4-v2-learnings.md` | 2026-11-14T20:52:48.097Z |
