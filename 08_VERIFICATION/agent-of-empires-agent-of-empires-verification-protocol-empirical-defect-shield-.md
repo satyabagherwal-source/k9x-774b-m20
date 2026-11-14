@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for agent/of/empires/agent/of/empires
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for agent-of-empires/agent-of-empires
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "agent/of/empires/agent/of/empires",
-  "source_url": "https://github.com/agent/of/empires/agent/of/empires",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "agent-of-empires/agent-of-empires",
+  "source_url": "https://github.com/agent-of-empires/agent-of-empires",
+  "source_version": "0dedf44e",
+  "license": "MIT",
+  "timestamp": "2026-11-14T12:33:54.200Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-agent-of-empires-agent-of-empires",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [agent/of/empires/agent/of/empires](https://github.com/agent/of/empires/agent/of/empires) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires) (Revision: `0dedf44e`).  
+> **License**: MIT | **Timestamp**: `2026-11-14T12:33:54.200Z`  
+> **Learning ID**: `learn-github-agent-of-empires-agent-of-empires`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `agent/of/empires/agent/of/empires` (Commit: `historical`)
+- **Target Repository**: `agent-of-empires/agent-of-empires` (Commit: `0dedf44e`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md`  
-> **Source**: github ([https://github.com/agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires))  
-> **Source Version**: `ff0a5e36`  
-> **License**: MIT  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-10T05:21:50.187Z  
-> **Learning ID**: `learn-github-agent-of-empires-agent-of-empires`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): agent-of-empires/agent-of-empires
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-10T05:21:46.673Z  
+> **Harvest Timestamp**: 2026-11-14T12:33:53.149Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Manage multiple Claude Code, OpenCode agents from either TUI or Web for easy access on mobile. Also supports Mistral Vibe, Codex CLI, Gemini CLI, Pi.dev, Copilot CLI, Factory Droid Coding.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3991 stars
+- **Stars / Engagement**: 4340 stars
 
 ---
 
@@ -61,6 +47,27 @@ PROVENANCE_END -->
 ### D1: Architecture & Structural Boundaries
 - Entry configurations inspected via direct stream: Cargo.toml, README.md.
 - Evaluated system abstractions and modular contracts.
+
+### Core Architecture Module: `acp-worker/aoe-agent/src/aoeMeta.ts`
+```
+/**
+ * `_meta.aoe` v1 for outgoing updates, see
+ * docs/development/internals/acp-primitive-contract.md. Its own module so it
+ * is testable without connecting to stdio.
+ */
+
+/** The idempotency key makes a re-sent tool call a no-op in core. */
+export function toolCallMeta(toolCallId: string, label: string) {
+  return {
+    aoe: {
+      v: 1,
+      key: `tool-call:${toolCallId}`,
+      tool_presentation: { label },
+    },
+  };
+}
+
+```
 
 ### Core Architecture Module: `acp-worker/aoe-agent/src/index.ts`
 ```
@@ -88,6 +95,7 @@ import { openai } from "@ai-sdk/openai";
 import { google } from "@ai-sdk/google";
 import { z } from "zod";
 import { appendTurn, createTranscript, loadTranscript } from "./transcript.ts";
+import { toolCallMeta } from "./aoeMeta.ts";
 import { classifyKind } from "./toolKind.ts";
 import { createAgentStream } from "./transport.ts";
 
@@ -169,6 +177,7 @@ async function handlePrompt(
             kind: classifyKind(name),
             status: "pending",
             rawInput: part.input as Record<string, unknown>,
+            _meta: toolCallMeta(part.toolCallId, name),
           });
           break;
         }
@@ -367,9 +376,7 @@ function main() {
   acp
     .agent({ name: "aoe-agent" })
     .onRequest("initialize", ({ params }) => ({
-      protocolVersion: params.protocolVersion ?? acp.PROTOCOL_VERSION,
-      agentCapabilities: {
-        loadSession: Boolean
+      protocolVersion: pa
 ```
 
 ### Core Architecture Module: `acp-worker/aoe-agent/src/toolKind.ts`
@@ -671,10 +678,11 @@ use crate::acp::acp_client::between_prompt::{
 use crate::acp::acp_client::commands::ClientCmd;
 use crate::acp::acp_client::config_options::{
     config_option_failure_event, config_options_event, dispatch_set_config_option,
-    dispatch_set_mode, mode_config_id, model_option, modes_available_event,
+    dispatch_set_mode, mode_config_id, model_config_values, model_option, modes_available_event,
     thought_level_config_id, ConfigOptionDispatchPurpose, SessionChannels,
 };
 use crate::acp::acp_client::control::DaemonControlClient;
+use crate::acp::acp_client::control::{control_outcome_reason, prompt_outcome_to_response};
 use crate::acp::acp_client::delete::handle_delete_session_cmd;
 use crate::acp::acp_client::errors::acp_internal_error;
 use crate::acp::acp_client::lifecycle::LifecycleEnvelope;
@@ -699,6 +707,7 @@ pub(super) struct Session {
     pub(super) close_capable: bool,
     pub(super) source_profile: Option<String>,
     pub(super) default_effort: Option<String>,
+    pub(super) default_model_config: std::collections::BTreeMap<String, String>,
     pub(super) default_mode: Option<String>,
     pub(super) default_model: Option<String>,
     pub(super) agent_cwd: PathBuf,
@@ -713,6 +722,8 @@ pub(super) struct Session {
 
 impl Session {
     pub(super) async fn send_cancel(&self) -> Result<(), agent_client_protocol::Error> {
+        #[cfg(test)]
+        let _gate = self.shared.cancel_send_gate.read().await;
         match self.control.as_ref() {
             Some(control) => {
                 control.cancel().await;
@@ -724,7 +735,33 @@ impl Session {
         }
     }
 
-    pub(super) fn dispatch_config_option(&mut self, config_id: String, value: String) {
+    /// A subagent session only honours `session/cancel` when it announced the
+    /// capability; the root turn is unaffected either way.
+    pub(super) async fn cancel_child(&self, session_id: String) -> bool {
+        let child = SessionId::from(session_id.clone());
+        if !self
+            .shared
+            .ingress
+            .child_route(&child)
+            .is_some_and(|route| route.cancel_capable)
+        {
+            return false;
+        }
+        match self.control.as_ref() {
+            Some(control) => control.cancel_session(session_id).await,
+            None => self
+                .connection
+                .send_notification(CancelNotification::new(child))
+                .is_ok(),
+        }
+    }
+
+    pub(super) fn dispatch_config_option(
+        &mut self,
+        config_id: String,
+        value: String,
+        remember: bool,
+    ) {
         // A reset re-applies `default_model`, so it follows the live pick.
         if self
             .channels
@@ -733,6 +770,10 @@ impl Session {
             .is_some_and(|option| option.id == config_id)
         {
             self.default_model = Some(value.clone());
+        }
+        if remember {
+            self.default_model_config
+                .insert(config_id.clone(), value.clone());
         }
         dispatch_set_config_option(
             &self.connection,
@@ -761,16 +802,46 @@ impl Session {
         // is serialized with every command.
         let mut idle_tick = tokio::time::interval(BETWEEN_PROMPT_IDLE_CHECK_INTERVAL);
         idle_tick.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Skip);
+        let shared = self.shared.clone();
+        let mut completion = shared.adopted_completion_tx.subscribe();
         loop {
             self.acp_session_id =
                 self.shared.ingress.current().ok_or_else(|| {
                     acp_internal_error("native session is not established".into())
                 })?;
+            let cancel_deadline = *shared.cancel_deadline.lock().unwrap();
             // Fallback prompts go first so later messages cannot overtake them.
             let cmd = match self.pending_prompts.pop_front() {
                 Some(blocks) => Some(ClientCmd::Prompt(blocks)),
                 None => tokio::select! {
+                    biased;
+                    outcome = async {
+                        completion.wait_for(Option::is_some).await.expect("shared owns the completion sender").clone().unwrap()
+                    } => {
+                        shared.adopted_completion_tx.send_replace(None);
+                        if self.finish_adopted_turn(outcome).await {
+                            break;
+                        }
+                        continue;
+                    }
                     cmd = self.cmd_rx.recv() => cmd,
+                    _ = async {
+                        match cancel_deadline {
+                            Some(deadline) => tokio::time::sleep_until(deadline).await,
+                            None => std::future::pending().await,
+                        }
+                    } => {
+                        if shared.prompt_in_flight.swap(false, Ordering::Relaxed)
+                            && shared.terminal_claim.claim()
+                        {
+                            self.stand_down_idle_completion();
+                            *shared.cancel_deadline.lock().unwrap() = None;
+                            shared.publish_terminal("agent_unresponsive".into(), vec![]).await;
+                            break;
+                        }
+                        *shared.cancel_deadline.lock().unwrap() = None;
+                        continue;
+                    }
                     _ = idle_tick.tick() => {
                         if self.between_prompt_idle_tick().await {
                             break;
@@ -785,7 +856,22 @@ impl Session {
                         break;
                     }
                 }
+                Some(ClientCmd::CancelChild {
+                    session_id,
+                    respond_to,
+                }) => {
+                    let _ = respond_to.send(self.cancel_child(session_id).await);
+                }
                 Some(ClientCmd::Cancel) => {
+                    if shared.adopted_turn_active.load(Ordering::Relaxed)
+                        && shared.prompt_in_flight.load(Ordering::Relaxed)
+                        && !shared.terminal_claim.claimed()
+                    {
+                        // Arm first: a control loss during the send keeps the deadline.
+                        self.request_cancel().await;
+                        self.send_cancel().await?;
+                        continue;
+                    }
                     info!(target: "acp.protocol", "sending session/cancel (no prompt in flight)");
                     // Not `?`: a dead connection is when the UI most needs
                     // the synthetic Stopped below.
@@ -798,83 +884,7 @@ impl Session {
                     }
                     // The UI thinks a turn is running but none is owned here;
                     // a spurious Stopped while idle is a reducer no-op (#2237).
-                    self.stand_down_idle_completion();
-                    self.shared
-                        .emit(Event::Stopped {
-                            reason: "cancelled".into(),
-                        })
-                        .await;
-                }
-                Some(ClientCmd::ForceStop) => {
-                    // The supervisor publishes the terminal here (#1100).
-                    info!(target: "acp.protocol", "force-stop requested with no prompt in flight; best-effort cancel only");
-                    self.stand_down_idle_completion();
-                    if let Err(error) = self.send_cancel().await {
-                        debug!(target: "acp.protocol", %error, "cancel notification failed");
-                    }
-                }
-                Some(ClientCmd::SetMode(mode_id)) => self.dispatch_mode(mode_id, false),
-                Some(ClientCmd::DeleteSession {
-                    acp_session_id,
-                    respond_to,
-                }) => handle_delete_session_cmd(&self.connection, acp_session_id, respond_to),
-                Some(ClientCmd::SetConfigOption { config_id, value }) => {
-                    self.dispatch_config_option(config_id, value)
-                }
-                Some(ClientCmd::ResumeBackgroundTailing(launches)) => {
-                    self.shared.resume_background_tailing(launches)
-                }
-                Some(ClientCmd::ResumeTaskTailing(task_ids)) => {
-                    self.shared
-                        .resume_task_tailing(&self.acp_session_id.0, task_ids)
-                        .await
-                }
-                Some(ClientCmd::ResetSession {
-                    text,
-                    deadline,
-                    respond_to,
-                }) => self.reset_session(text, deadline, respond_to).await?,
-                #[cfg(test)]
-                Some(ClientCmd::FlushForTest(done)) => {
-                    let _ = done.send(());
-                }
-                Some(ClientCmd::CloseSession(respond_to)) => {
-                    crate::acp::acp_client::close::dispatch_close(
-                        &self.connection,
-                        self.acp_session_id.clone(),
-                        self.close_capable,
-                        respond_to,
-                    );
-                }
-                Some(ClientCmd::Shutdown) | None => {
-                    info!(target: "acp.protocol", "shutdown received, exiting connection loop");
-                    break;
-                }
-            }
-        }
-        Ok(())
-    }
-
-    /// This path owns the turn's terminal, so the other idle-completion
-    /// paths must not add a duplicate (#2899).
-    fn stand_down_idle_completion(&self) {
-        self.shared.terminal_claim.claim();
-        self.shared
-            .adopted_turn_active
-            .store(false, Ordering::Relaxed);
-        self.shared.between_prompt.deactivate();
-    }
-
-    /// Returns true when the turn ended on a rate limit: the connection must
-    /// then end so the drain loop drops the worker and the reaper can resume it.
-    async fn between_prompt_idle_tick(&self) -> bool {
-        let shared = &self.shared;
-        let Some(cost_seen) = shared.between_prompt.take_idle_fire(now_ms()) else {
-            return false;
-        };
-        // An adopted turn races the detached resume-idle task for its
-        // terminal; state is reset either way.
-        let adopted = shared.adopted_turn_active.swap(false, Ordering::Relaxed)
+                    self.stand_down_
 ```
 
 ### Core Architecture Module: `src/acp/acp_client/lifecycle.rs`
@@ -917,6 +927,9 @@ pub(crate) enum LifecycleSignal {
     WakeupPending {
         at: chrono::DateTime<chrono::Utc>,
     },
+    /// Validated traffic from a subagent session: liveness only, so it keeps
+    /// any end-of-turn accounting already seen.
+    SubagentActivity,
     CompactionStarted,
     CompactionCompleted,
     /// The adapter emits this after the turn's own terminal on a cancel, so
@@ -1109,6 +1122,9 @@ pub(super) async fn forward_lifecycle_signals(
     }
 }
 
+/// The SDK's acknowledgement of a background `Agent` launch.
+pub(super) const ASYNC_AGENT_LAUNCHED: &str = "Async agent launched successfully";
+
 /// Matches SDK markers only at line starts so echoed output does not extend
 /// watchdog grace.
 pub(super) fn detect_off_protocol_work_completed(
@@ -1126,7 +1142,7 @@ pub(super) fn detect_off_protocol_work_completed(
         .flat_map(str::lines)
         .find_map(|line| {
             let line = line.trim_start();
-            if line.starts_with("Async agent launched successfully") {
+            if line.starts_with(ASYNC_AGENT_LAUNCHED) {
                 Some(OffProtocolWorkKind::AsyncAgent)
             } else if line.starts_with("Command running in background with ID: ") {
                 Some(OffProtocolWorkKind::BackgroundCommand)
@@ -1137,12 +1153,7 @@ pub(super) fn detect_off_protocol_work_completed(
 }
 
 /// Wake signal from a non-failed `ScheduleWakeup` tool update. The initial
-/// `ToolCall` is excluded because the tool may still fail; `InProgress` is
-/// accepted because the adapter strips `raw_input` from `Completed`.
-/// `restored_title` names an update that arrived without a title.
-pub(super) fn wakeup_lifecycle_signal_from_update(
-    update: &SessionUpdate,
-    restored_title: Option<&str>,
+/// `ToolCall` is excluded because the tool m
 ```
 
 ### Core Architecture Module: `src/acp/runner_lifecycle.rs`
@@ -1305,6 +1316,8 @@ struct Construction {
     idle_baseline_ms: std::sync::atomic::AtomicI64,
     /// Prompts admitted to this epoch; an idle stop observed before one is void.
     admissions: std::sync::atomic::AtomicU64,
+    /// A rate limit rejecting this launch belongs to its caller, which reads it from the error.
+    defers_rate_limit_rejection: std::sync::atomic::AtomicBool,
 }
 
 impl Default for Construction {
@@ -1329,6 +1342,7 @@ impl Default for Construction {
                 chrono::Utc::now().timestamp_millis(),
             ),
             admissions: std::sync::atomic::AtomicU64::new(0),
+            defers_rate_limit_rejection: std::sync::atomic::AtomicBool::new(false),
         }
     }
 }
@@ -1432,16 +1446,7 @@ impl Lease {
             .stop_completion
             .lock()
             .unwrap_or_else(|error| error.into_inner())
-            .as_ref()
-            .is_some_and(|debt| !debt.done)
-    }
-
-    pub(crate) fn stop_completion_done(&self) {
-        if let Some(debt) = self
-            .construction
-            .stop_completion
-            .lock()
-            .unwrap_or_else(|error|
+            .as_ref
 ```
 
 ### Core Architecture Module: `src/acp/state.rs`
@@ -1494,6 +1499,9 @@ pub struct Todo {
     pub completed: bool,
 }
 
+/// Ends an `args_preview` that was cut at the ingest cap.
+pub(crate) const ARGS_CUT_MARKER: &str = "\u{2026}[truncated]";
+
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ToolCall {
     pub id: String,
@@ -1503,6 +1511,9 @@ pub struct ToolCall {
     pub kind: String,
     /// Capped at 16 KB at ingest, control chars stripped.
     pub args_preview: String,
+    /// The `prompt` argument in full, set only when `args_preview` was cut.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub prompt: Option<String>,
     pub started_at: DateTime<Utc>,
     /// The sub-agent `Task` call this call runs under, from `_meta.claudeCode.parentToolUseId`.
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1710,7 +1721,13 @@ pub struct AvailableCommand {
     pub description: String,
     #[serde(default)]
     pub accepts_input: bool,
+    /// Argument hint the agent advertises, e.g. `[reconnect|enable|disable]`.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub input_hint: Option<String>,
 }
+
+/// The `Other` category claude-agent-acp uses for Fast mode and Ultracode.
+pub const MODEL_CONFIG_CATEGORY: &str = "model_config";
 
 /// Semantic category of an ACP `SessionConfigOption`; unknown values round-trip as `Other`.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -1743,236 +1760,9 @@ pub struct ConfigOptionDescriptor {
     pub options: Vec<ConfigOptionChoice>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-pub struct ConfigOptionSwitchFailure {
-    pub config_id: String,
-    pub value: String,
-    pub reason: String,
-}
-
-/// Why aoe refused a session whose adapter failed the compatibility check
-/// after `initialize`. `auto_install` means "Update & restart" can fix it.
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-#[serde(tag = "kind", rename_all = "snake_case")]
-pub enum StartupErrorDetail {
-    IncompatibleAgentVersion {
-        package_name: String,
-        installed: String,
-        required: String,
-        install_command: String,
-        #[serde(default)]
-        auto_install: bool,
-    },
-    MissingAgentInfo {
-        expecte
-```
-
-### Core Architecture Module: `src/cli/hooks.rs`
-```
-//! `aoe hooks` subcommands: record your approval for AoE to write agent hooks
-//! into each agent's own config, and show what that approval covers.
-//!
-//! The approval is the same install-wide flag the TUI dialog writes.
-//! `--trust-hooks` is a different surface: per-repository trust for hooks the
-//! repo declares itself.
-
-use anyhow::Result;
-use clap::Subcommand;
-
-use crate::session::{host_hook_agent, host_hook_disclosure, update_app_state, Config};
-
-#[derive(Subcommand)]
-pub enum HooksCommands {
-    /// Show whether AoE may write agent hooks, and what they resolve for a profile
-    Status,
-    /// Let AoE write agent hooks for every agent, on every profile
-    Approve,
-}
-
-#[tracing::instrument(target = "cli.hooks", skip_all, fields(profile = %profile))]
-pub fn run(profile: &str, command: HooksCommands) -> Result<()> {
-    match command {
-        HooksCommands::Status => print_status(profile),
-        HooksCommands::Approve => approve(profile),
-    }
-}
-
-/// A corrupt `state.toml` is an error here rather than a silent "not approved",
-/// which would point the user at an approve that cannot succeed either.
-fn approved() -> Result<bool> {
-    Ok(Config::load()?.app_state.has_acknowledged_agent_hooks)
-}
-
-fn print_status(profile: &str) -> Result<()> {
-    if approved()? {
-        println!("Agent hooks: approved for this installation");
-    } else {
-        println!("Agent hooks: not approved");
-        println!("  Run `aoe hooks approve` to let AoE write them, or accept the");
-        println!("  dialog the TUI shows when you create a host session.");
-    }
-    print_disclosure(profile);
-    Ok(())
-}
-
-fn approve(profile: &str) -> Result<()> {
-    // Always disclose, even on a repeat run, so the output can be used to
-    // review what the standing approval covers for another profile.
-    print_disclosure(profile);
-    if approved()? {
-        println!();
-        println!("Agent hooks already approved for this installation");
-        return Ok(());
-    }
-    update_app_state(|state| {
-        state.has_acknowledged_agent_hooks = true;
-    })?;
-    println!();
-    println!("✓ Agent hooks approved for this installation");
-    Ok(())
-}
-
-/// Print the files and hook commands this profile resolves, for every tool it
-/// installs hooks for. The printed caveat is the bound on that list.
-fn print_disclosure(profile: &str) {
-    let profile = crate::session::config::effective_profile(profile);
-    let config = crate::session::config::profile_config::resolve_config_or_warn(&profile);
-    let status_hooks = config.session.agent_status_hooks;
-
-    let mut tool_names = crate::agents::agent_names();
-    tool_names.extend(config.session.custom_agents.keys().map(String::as_str));
-    tool_names.sort_unstable();
-    tool_names.dedup();
-
-    // A configured tool that resolves to no agent is dropped here, so it would
-    // vanish from the enumeration without a trace. Keep its name: the user
-    // cannot otherwise tell "no extra agent" from "an agent I could not name".
-    let mut unresolved: Vec<&str> = Vec::new();
-    let disclosures: Vec<_> = tool_names
-        .into_iter()
-        .filter_map(|tool_name| {
-            let agent = host_hook_agent(
-                tool_name,
-                &config.session.launch_command_for(tool_name),
-                &config.session,
-            );
-            let Some(agent) = agent else {
-                unresolved.push(tool_name);
-                return None;
-            };
-            if !crate::agents::hook_install_required(agent, status_hooks) {
-                return None;
-            }
-            let disclosure = host_hook_disclosure(tool_name, agent, &config);
-            (!disclosure.settings_paths.is_empty()).then_some((tool_name, disclosure))
-        })
-        .collect();
-
-    let status_hooks_active = disclosures
-        .iter()
-        .any(|(_, disclosure)| disclosure.status_hooks_enabled);
-    if disclosures.is_empty() {
-        println!("No agent under this profile installs hooks, so there is nothing to");
-        println!("approve.");
-    } else if status_hooks_active {
-        println!("AoE installs agent hooks into each agent's own config. The status");
-        println!("hooks detect session status (running/waiting/idle); the identity hooks");
-        println!("record the conversation id native resume needs.");
-    } else {
-        println!("No status hook survives this profile, so AoE installs only the");
-        println!("identity hooks native resume needs.");
-    }
-    println!();
-    println!("Profile: {profile}");
-    println!();
-    println!("Files AoE targets:");
-    for (tool_name, disclosure) in &disclosures {
-        for path in &disclosure.settings_paths {
-            println!("  {tool_name}: {path}");
-        }
-        for (label, path) in &disclosure.extra_settings_paths {
-            println!("  {tool_name}: {path}");
-            println!("    ({label})");
-        }
-        if let Some(config) = &disclosure.disabled_by_agent {
-            println!(
-                "    (this agent's own config turns its hooks off: {})",
-                config.display()
-            );
-        }
-    }
-
-    if !unresolved.is_empty() {
-        println!();
-        println!("Configured but not named here:");
-        for tool_name in &unresolved {
-            println!("  {tool_name}");
-        }
-        println!("  A repository can set session.agent_detect_as, and this command has");
-        println!("  no project directory, so a launch inside one may resolve those to a");
-        println!("  different agent. Declaring agent_execution_as and agent_config_dir for");
-        println!("  them in this profile pins the file, because a repository cannot move");
-        println!("  either of those.");
-    }
-
-    let events: Vec<_> = disclosures
-        .iter()
-        .filter(|(_, disclosure)| !disclosure.hook_commands.is_empty())
-        .collect();
-    let notes = crate::session::host_hook_post_install_notes();
-    if !notes.is_empty() {
-        println!();
-        println!("This approval covers every agent and profile. Besides the files");
-        println!("above, installing hooks for these agents also changes launcher state:");
-        for (agent, note) in &notes {
-            println!("  {agent}: {note}");
-        }
-    }
-
-    if !events.is_empty() {
-        println!();
-        println!("Hook events a launch would install:");
-        for (tool_name, disclosure) in events {
-            println!("  {tool_name}:");
-            for (event, effect) in &disclosure.hook_commands {
-                println!("    {event} -> {effect}");
-            }
-        }
-    }
-    if status_hooks_active {
-        println!();
-        println!("A status event writes under the session's own directory, named by");
-        println!(
-            "  printf {{status}} > {}/$AOE_INSTANCE_ID/status",
-            crate::hooks::hook_base_path().display()
-        );
-    }
-    println!();
-    println!("Hooks are guarded by $AOE_INSTANCE_ID and are a");
-    println!("no-op outside of AoE sessions.");
-    println!();
-    println!("This is what the effective profile resolves, not a manifest of every");
-    println!("write a launch can make. A launch that routes through a native store,");
-    println!("merges into a selected agent, or targets a selected or recorded Claude");
-    println!("conversation store resolves that target at launch time.");
-    println!();
-    println!("A session launched with its own command resolves the file that command");
-    println!("names; the creation dialog describes such a session exactly.");
-    println!();
-    println!("The approval is per installation and is not bound to this profile, so");
-    println!("another profile resolves its own paths under the same approval.");
-    if disclosures
-        .iter()
-        .any(|(_, d)| d.needs_codex_trust_note && d.disabled_by_agent.is_none())
-    {
-        println!();
-        println!("Codex may ask you to review and trust these hooks in /hooks.");
-        if status_hooks_active {
-            println!("Until then, AoE falls back to pane-based status detection.");
-        }
-    }
-}
-
+impl ConfigOptionDescriptor {
+    /// A `model_config` option whose only choices are `on` and `off`.
+    pub fn 
 ```
 
 
@@ -1981,11 +1771,11 @@ fn print_disclosure(profile: &str) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5477** (2026-11-08): **Can't resume sandboxes after a stop with Codex**
-  *Symptoms*: ### What happened?  I used to be able to resume a Codex session in a sandbox after the sandbox had stopped. This no longer works and I'm not sure what changed. I get:  ``` Cannot attest execution context for managed conversation 01a1bbfe-4006-73e2-849e-139baf24402c; launch refused without replacing it. Restore the original agent configuration and store, or rebind with aoe session set-session-id bd9668fecc064d78 01a1bbfe-4006-73e2-849e-139baf24402c. Codex is not authenticated with a local OpenAI API key (a ChatGPT login cannot be attested, because it may select cloud-managed requirements); replace the credentials with an OpenAI API key (OPENAI_API_KEY, no ChatGPT tokens) in the auth.json of its resolved configuration directory and re-run. ```  I'm on MacOS, Aoe version 1.22.1 and Codex 0.166.0 and aoe-dev-sandbox:2.0.0.  My agent may have found some related documented change: "AoE v1.19.0’s guide says automatic restarts still tried to resume a stored conversation when its execution context couldn’t be verified. The v1.22.1 guide says AoE now refuses that launch."  I'm not using API keys but a GPT subscription.  I can't find anything online about this - which makes me think that something is special in my situation, but I don't know what else to try.  ### aoe version and OS  Aoe 1.22.1, MacOS 26.6.2  ### AI usage  Only the quoted bit
+- **Issue #5677** (2026-11-14): **Purge and an e2e helper still count a zombie runner as running**
+  *Symptoms*: ### What happened?  Follow-up from #5667 (review by @Seluj78). #5667 made `is_record_live` treat a zombie runner as not live, and named two other checks that still count a zombie as running. Both fail closed:  - `worker::is_process_group_alive` (`killpg`/`kill` with signal 0), used by `session::purge_owners`. Purging a Session whose runner is a zombie stays refused until the zombie is reaped, which never happens when PID 1 doesn't reap (a container without an init). - `pid_alive` in `tests/e2e/systemd_scope.rs` only checks that `/proc/<pid>` exists. Those tests skip without a user systemd manager.  Proposed: read the same `/proc` state #5667 uses on Linux in both places, with a test for a zombie owner.  Evidence strength: from #5667's description and review; not reproduced separately.  ### aoe version and OS  main after #5667, Linux.  ### AI usage  Drafted by Claude Code (Claude Opus 5.5) from the review comment, reviewed by a human before filing. 
 
-- **Issue #5454** (2026-11-08): **Show failed Trash reads when opening a retained Session**
-  *Symptoms*: ### What happened?  P3 follow-up from #5355. A failed Trash read is indistinguishable from an unfinished load when opening a retained Session.  Source-derived scenario, not dynamically reproduced: 1. Open a direct link to a trashed Session. 2. Let `GET /api/sessions?state=untrashed` succeed, while the scoped Trash reads fail or time out. 3. The main pane remains a skeleton without a Trash error/retry state. Later automatic retries may recover, but a persistent failure stays unexplained.  `syncTrash` silently returns on a failed read and never sets `trashEpoch`; `openedSessionSettled` continues waiting while the untrashed poll has no error.  Expected: expose the scoped read failure and a retry path, preserve known rows, and do not treat an unread Session as deleted. Cover failure, retry and recovery with a deterministic regression and the applicable coverage entry.  Evidence: [failed read](https://github.com/agent-of-empires/agent-of-empires/blob/a7ccc0e5384f1f5247b29a8db5fb098b7320ead1/web/src/hooks/useSessions.ts#L171), [route settlement](https://github.com/agent-of-empires/agent-of-empires/blob/a7ccc0e5384f1f5247b29a8db5fb098b7320ead1/web/src/App.tsx#L461). #5278 concerns unfinished Trash transitions, not this read failure.  ### aoe version and OS  `main@a7ccc0e5384f1f5247b29a8db5fb098b7320ead1`; web dashboard. Static analysis only, no OS/browser reproduction claimed.  ### AI usage  Prepared with Codex, two independent sequential source reviews and a paginated search of ope
+- **Issue #5663** (2026-11-13): **Worker registry treats a zombie runner as live when PID 1 doesn't reap**
+  *Symptoms*: ### What problem does this solve?  `is_record_live` (`src/process/worker_registry.rs:589`) treats a runner as live when three checks pass: its recorded birth matches, `is_pid_alive` succeeds, and its socket file exists. `is_pid_alive` (`src/process/worker.rs:21`) is `kill(pid, 0)`, which succeeds on a zombie. The birth check reads the start time from `/proc` and ignores the process state.  A runner is spawned detached with `setsid`, so when the daemon exits its runners are re-parented to PID 1. If PID 1 doesn't reap, as in a container started without `--init` whose PID 1 is a shell or `sleep`, a runner that exits after that stays a zombie. Its socket file also stays. So all three checks read true for a dead runner.  Reproduced at the level of these checks in a container whose PID 1 is `sleep infinity`. The dead runner reads `state=Z ppid=1` with an unchanged start time, `kill(pid, 0)` succeeds, the socket file exists, and `connect` returns `ECONNREFUSED`. It has not been reproduced end to end through a daemon restart.  Callers that would then act on a dead runner (read, not run): - `src/server/acp_reconciler/resume.rs:169` picks Attach over a fresh spawn. - `src/acp/supervisor/launch.rs:191` counts it towards runner capacity. - `src/acp/supervisor/drain.rs:566` keeps retrying the reattach.  The runner guard's `executing()` (`src/process/mod.rs:1141`) already tells a zombie apart, so the registry and the guard can disagree about the same process.  **Proposed change**  Treat a 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2002,579 +1792,1373 @@ fn print_disclosure(profile: &str) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ec5be5a6` (2026-11-09)
-**Commit Message**: fix(tui): lock Yolo in the new-session dialog for the agent each view runs (#5412)
+### Incident Patch 1: `5b6d208f` (2026-11-13)
+**Commit Message**: fix(tui): flash deletion cleanup notes instead of a blocking dialog (#5641)
 
-* fix(tui): lock Yolo in the new-session dialog for the agent each view runs
+* fix(tui): flash deletion cleanup notes instead of a blocking dialog
 
-A custom agent inherits always-Yolo from the base it actually runs: the
-agent_detect_as base in a terminal session, and in a structured one its own
-adapter when it has one, else the base's. The dialog now uses
-acp::runs_always_yolo for the selected view, and re-checks the lock when the
-Structured toggle changes or is inherited.
+A committed purge opened a "Runtime change" dialog for its cleanup notes,
+which rendered under permission and agent-question dialogs while handle_key
+consulted it first, so an invisible modal swallowed keys until Enter.
 
-Fixes #5366
+🤖 Generated with Codebuff
+Co-Authored-By: Codebuff <[REDACTED_EMAIL]>
 
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+* fix(tui): keep every deletion note and promote dialogs after a draw
 
-* fix(tui): refresh the agent's Yolo lock and view when the path changes
+Each purge outcome now contributes its cleanup notes to one status line that
+names the session, so a group delete no longer keeps only the last note. The
+flash window starts when the status bar actually draws, so a note arriving
+behind settings or the diff view cannot expire unseen, and runtime dialogs are
+promoted from the tick path only, where a draw always precedes the next key.
 
-A repo config can map a custom agent onto a base with agent_detect_as,
-which changes whether Yolo is forced and whether Structured is offered.
-Typing or picking a path, a path set while the sandbox env is edited,
-and turning scratch on now re-read that map when it differs, recompute
-the Structured capability, and reset Yolo when the lock moves.
+🤖 Generated with Codebuff
+Co-Authored-By: Codebuff <[REDACTED_EMAIL]>
 
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+* test(tui): hold a runtime note while another dialog owns the keyboard
 
-* fix(tui): keep a click and focus on their row when a path change moves rows
+Extends the promotion test to cover the queued-message gate: an open confirm
+dialog keeps the note queued and it is shown once that dialog closes.
 
-The path refresh can show or hide the Structured and Yolo rows,
+🤖 Genera
 
-**File**: `src/tui/dialogs/new_session/mod.rs` (modified, +100/-14)
+**File**: `src/tui/app.rs` (modified, +4/-3)
 ```diff
-@@ -216,6 +216,10 @@ pub struct NewSessionDialog {
-     /// every tool or profile change. Gates the Structured field's visibility
-     /// like `has_yolo` / `has_sandbox`.
-     pub(super) structured_capable: bool,
-+    /// The profile's custom-agent maps, which decide whether a custom tool always
-+    /// runs in Yolo mode in the chosen view.
-+    pub(super) agent_acp_cmd: std::collections::HashMap<String, String>,
-+    pub(super) agent_detect_as: std::collections::HashMap<String, String>,
-     pub(super) workspace_repos: Vec<String>,
-     pub(super) workspace_repos_expanded: bool,
-     pub(super) workspace_repo_selected_index: usize,
-@@ -465,6 +469,25 @@ pub(super) struct FieldIndices {
- impl FieldIndices {
-     /// Stands in for a field the current layout hides.
-     pub const ABSENT: usize = usize::MAX;
-+
-+    /// Where the row at `index` in the `before` layout sits now, or `None` if it is hidden.
-+    fn follow(&self, before: &FieldIndices, index: usize) -> Option<usize> {
-+        [
-+            (before.profile, self.profile),
-+            (before.path, self.path),
-+            (before.title, self.title),
-+            (before.tool, self.tool),
-+            (before.structured, self.structured),
-+            (before.yolo, self.yolo),
-+            (before.worktree, self.worktree),
-+            (before.sandbox, self.sandbox),
-+            (before.group, self.group),
-+        ]
-+        .into_iter()
-+        .find(|(old, _)| *old == index)
-+        .map(|(_, new)| new)
-+        .filter(|new| *new != Self::ABSENT)
-+    }
- }
+@@ -726,7 +726,8 @@ impl App {
  
- impl NewSessionDialog {
-@@ -600,6 +623,8 @@ impl NewSessionDialog {
-             structured_default,
-             structured_choice: None,
-             structured_capable,
-+            agent_acp_cmd: config.session.agent_acp_cmd.clone(),
-+            agent_detect_as: config.session.agent_detect_as.clone(),
-             extra_env,
-             extra_env_overridden: false,
-             env_list_expanded: false,
-@@ -638,6 +663,9 @@ impl NewSessionDialog {
-         self.path = Input::new(path);
-         if !self.extra_env_overridden {
-             self.reload_config_defaults();
-+        } else {
-+            let config = self.resolve_config_for_path(self.selected_profile());
-+            self.refresh_path_agent_config(&config);
-         }
-     }
+             tokio::select! {
+                 event = self.event_stream.as_mut().expect("event_stream missing").next() => {
+-                    self.home.apply_session_feed();
++                    // Keys reach the view before the next draw, so no dialog is promoted here.
++                    self.home.apply_session_feed_before_input();
+                     self.home.enforce_trash_read_only();
+                     if self.home.selected_is_trashed() {
+                         self.close_embedded_structured();
+@@ -3206,7 +3207,7 @@ impl App {
  
-@@ -681,17 +709,28 @@ impl NewSessionDialog {
-             return;
-         }
-         self.tool_index = index;
--        if self.selected_tool_always_yolo() {
--            self.yolo_mode = true;
--        } else {
--            self.yolo_mode = self.yolo_mode_default;
--        }
-         if self.selected_tool_host_only() {
-             self.sandbox_enabled = false;
-             self.worktree_enabled = false;
-             self.worktree_branch.reset();
-         }
-         self.reload_tool_config();
-+        self.reset_yolo();
+         self.needs_redraw = true;
+         crate::tmux::refresh_session_cache();
+-        self.home.apply_session_feed();
++        self.home.apply_session_feed_before_input();
+         let result = self.home.reload();
+         self.home.reload_failure_state.record_storage(&result);
+         self.home.try_present_reload_failure_dialog();
+@@ -3278,7 +3279,7 @@ impl App {
+             }),
+         )?;
+         self.needs_redraw = true;
+-        self.home.apply_session_feed();
++        self.home.apply_session_feed_before_input();
+         self.select_after_attach(&ready.id);
+         if let Err(error) = attach_result {
+             tracing::warn!(target: "tui.input", %error, "Native tmux attach failed");
+```
+
+**File**: `src/tui/home/mod.rs` (modified, +1/-1)
+```diff
+@@ -349,7 +349,7 @@ pub struct HomeView {
+     pub(super) live_send_resize_retry_at: Option<std::time::Instant>,
+     pub(super) live_send_pending_leader: bool,
+     pub(super) hover_cell: Option<(u16, u16)>,
+-    pub(super) status_flash: Option<(String, std::time::Instant)>,
++    pub(super) status_flash: Option<overlays::StatusFlash>,
+     pub(super) live_send_ctrl_c_flash_until: Option<std::time::Instant>,
+     /// Session whose live control another window took, until the selection moves or live
+     /// mode starts again.
+```
+
+**File**: `src/tui/home/overlays.rs` (modified, +26/-4)
+```diff
+@@ -5,6 +5,15 @@ use std::time::{Duration, Instant};
+ 
+ const FLASH_WINDOW: Duration = Duration::from_secs(3);
+ 
++/// A status-bar message and the window it is shown for. `until` stays `None`
++/// until a draw can actually show the text: a takeover view (settings, diff)
++/// returns before the status bar renders, so a window armed when the message
++/// arrived would run out unseen.
++pub(in crate::tui) struct StatusFlash {
++    pub(super) text: String,
++    pub(super) until: Option<Instant>,
++}
++
+ impl HomeView {
+     /// Expire the settings view's transient "Settings saved" toast when its
+     /// window passes, so it fades even while the keyboard is idle. Returns true
+@@ -162,15 +171,28 @@ impl HomeView {
+     /// Matches the Ctrl+C hint's window so the two read as the same kind of
+     /// thing.
+     pub(in crate::tui) fn flash_status(&mut self, text: impl Into<String>) {
+-        self.status_flash = Some((text.into(), Instant::now() + FLASH_WINDOW));
++        self.status_flash = Some(StatusFlash {
++            text: text.into(),
++            until: None,
++        });
 +    }
 +
-+    fn reset_yolo(&mut self) {
-+        self.yolo_mode = self.selected_tool_always_yolo() || self.yolo_mode_default;
-+    }
-+
-+    /// The Yolo choice resets only when the view moves the session onto or off an
-+    /// always-Yolo agent.
-+    fn set_structured(&mut self, enabled: bool) {
-+        let was_locked = self.selected_tool_always_yolo();
-+        self.structured_enabled = enabled;
-+        self.structured_choice = Some(enabled);
-+        if self.selected_tool_always_yolo() != was_locked {
-+            self.reset_yolo();
++    /// Start the display window of a flash that has not been drawn yet. Called
++    /// by the status bar render so the window measures time on screen.
++    pub(in crate::tui) fn arm_status_flash(&mut self) {
++        if let Some(flash) = self.status_flash.as_mut() {
++            flash
++                .until
++                .get_or_insert_with(|| Instant::now() + FLASH_WINDOW);
 +        }
      }
  
-     /// Carry a session's agent, view and sandbox, each only as far as this form allows.
-@@ -706,8 +745,7 @@ impl NewSessionDialog {
+     /// The flash text while it is still within its window.
+     pub(in crate::tui) fn status_flash_text(&self) -> Option<&str> {
+         self.status_flash
+             .as_ref()
+-            .filter(|(_, deadline)| Instant::now() < *deadline)
+-            .map(|(text, _)| text.as_str())
++            .filter(|flash| flash.until.is_none_or(|until| Instant::now() < until))
++            .map(|flash| flash.text.as_str())
+     }
  
-     fn inherit_modes(&mut self, structured: bool, sandboxed: bool) {
-         if self.structured_capable {
--            self.structured_enabled = structured;
--            self.structured_choice = Some(structured);
-+            self.set_structured(structured);
+     /// Drop a flash whose window has closed, reporting whether anything
+@@ -179,7 +201,7 @@ impl HomeView {
+         if self
+             .status_flash
+             .as_ref()
+-            .is_some_and(|(_, deadline)| Instant::now() >= *deadline)
++            .is_some_and(|flash| flash.until.is_some_and(|until| Instant::now() >= until))
+         {
+             self.status_flash = None;
+             return true;
+```
+
+**File**: `src/tui/home/render.rs` (modified, +2/-0)
+```diff
+@@ -4246,6 +4246,8 @@ impl HomeView {
+     }
+ 
+     fn render_status_bar(&mut self, frame: &mut Frame, area: Rect, theme: &Theme) {
++        // The bar is on screen from here, so a queued flash can start counting.
++        self.arm_status_flash();
+         // Action feedback takes precedence over a hovered link target.
+         let hovered = (!self.live_send_pending_leader)
+             .then(|| self.hovered_link())
+```
+
+**File**: `src/tui/home/status.rs` (modified, +58/-7)
+```diff
+@@ -765,6 +765,18 @@ impl HomeView {
+     /// Apply a pending session-list result from the daemon. Returns true if
+     /// the caller should redraw.
+     pub fn apply_session_feed(&mut self) -> bool {
++        self.apply_session_feed_with_dialogs(true)
++    }
++
++    /// Apply a pending session-list result without promoting a runtime dialog.
++    /// The event loop dispatches the key that woke it before the next draw, so
++    /// a dialog promoted here would eat a key the user never saw. The tick path
++    /// promotes instead, always ahead of a draw.
++    pub fn apply_session_feed_before_input(&mut self) -> bool {
++        self.apply_session_feed_with_dialogs(false)
++    }
++
++    fn apply_session_feed_with_dialogs(&mut self, promote_dialogs: bool) -> bool {
+         use crate::tui::session_feed::{SessionFeedResult, SidebarSource};
+         use std::sync::mpsc::TryRecvError;
+ 
+@@ -907,7 +919,7 @@ impl HomeView {
+                 self.clear_unread_on_view(&id);
+             }
          }
-         if sandboxed && self.docker_available && !self.selected_tool_host_only() {
-             self.set_sandbox_enabled(true);
-@@ -837,12 +875,13 @@ impl NewSessionDialog {
-             return;
-         }
-         let profile = self.selected_profile().to_string();
-+        let config = self.resolve_config_for_path(&profile);
-+        self.refresh_path_agent_config(&config);
-         // Unknown overrides leave the toggles alone: a guess could disable a sandbox the project asks for.
-         let ProjectOverridesLookup::Known(overrides) = self.resolve_overrides(&profile) else {
-             return;
-         };
-         let host_only = self.selected_tool_host_only();
--        let config = self.resolve_config_for_path(&profile);
-         if !self.worktree_dirty {
-             let on = overrides
-                 .as_ref()
-@@ -922,6 +961,28 @@ impl NewSessionDialog {
+-        let outcomes_changed = self.apply_runtime_outcomes();
++        let outcomes_changed = self.apply_runtime_outcomes(promote_dialogs);
+         let pending_after =
+             self.session_feed.any_pending() || self.pending_namespace_intent.is_some();
+         updated
+@@ -1088,14 +1100,23 @@ impl HomeView {
+         self.runtime_outcome_messages.push(message);
+     }
+ 
+-    fn record_purge_outcome(&mut self, id: &str, outcome: crate::daemon::PurgeOutcome) {
++    pub(super) fn record_purge_outcome(
++        &mut self,
++        id: &str,
++        outcome: crate::daemon::PurgeOutcome,
++        notes: &mut Vec<(String, String)>,
++    ) {
+         match outcome {
+             crate::daemon::PurgeOutcome::Deleted {
+                 messages,
+                 cleanup_errors,
+             } => {
++                // A committed deletion needs no acknowledgement, and a modal here
++                // can land under a permission or question dialog and swallow keys.
++                // Its cleanup notes belong in the status line and the log.
+                 for message in messages {
+-                    self.record_runtime_message(format!("{id}: {message}"));
++                    tracing::info!(target: "tui.runtime_outcome", session = %id, message = %message, "Session deletion cleanup");
++                    notes.push((id.to_owned(), message));
+                 }
+                 for error in cleanup_errors {
+                     self.record_runtime_message(format!(
+@@ -1122,12 +1143,13 @@ impl HomeView {
          }
      }
  
-+    /// A path's repo config changes the agent only through `agent_detect_as`. When it does,
-+    /// re-read whether the agent can run structured and re-check the Yolo lock.
-+    fn refresh_path_agent_config(&mut self, config: &crate::session::Config) {
-+        if config.session.agent_detect_as
+-    fn apply_runtime_outcomes(&mut self) -> bool {
++    fn apply_runtime_outcomes(&mut self, promote_dialogs: bool) -> bool {
+         use crate::daemon::{NamespaceOutcome, ReorderOutcome};
+         use crate::tui::session_feed::{CommandFailure, SessionCommandOutcome};
+         let row_outcomes = self.session_feed.drain_session_outcomes();
+         let namespace = self.session_feed.drain_namespace_result();
+         let mut changed = !row_outcomes.is_empty() || namespace.is_some();
++        let mut purge_notes: Vec<(String, String)> = Vec::new();
+         for (id, outcome) in row_outcomes {
+             match outcome {
+                 SessionCommandOutcome::Trashed(receipt) => match receipt.outcome.relocation {
+@@ -1144,7 +1166,7 @@ impl HomeView {
+                     | crate::daemon::TrashRelocationOutcome::Skipped => {}
+                 },
+                 SessionCommandOutcome::Purged(receipt) => {
+-                    self.record_purge_outcome(&id, receipt.outcome)
++                    self.record_purge_outcome(&id, receipt.outcome, &mut purge_notes)
+                 }
+                 SessionCommandOutcome::Renamed(receipt) => {
+                     for warning in receipt.outcome.warnings {
+@@ -1247,7 +1269,11 @@ impl HomeView {
+                             );
+                         }
+                         for session in outcome.sessions {
+-                            self.record_purge_outcome(&session.id, session.outcome);
++                            self.record_purge_outcome(
++                                &session.id,
++                                session.outcome,
++                                &mut purge_notes,
++                            );
+                         }
+                         for failure in outcome.failures {
+                             self.record_runtime_message(format!(
+@@ -1315,7 +1341,14 @@ impl HomeView {
+                 },
+             }
+         }
+-        if self.info_dialog.is_none() && !self.runtime_outcome_messages.is_empty() {
++        if !purge_notes.is_empty() {
++            self.flash_status(purge_flash_text(&purge_notes));
++            changed = true;
++        }
++        if promote_dialogs
++            && !self.has_non_live_send_overlay()
++            && !self.runtime_outcome_messages.is_empty()
++        {
+             let messages = std::mem::take(&mut self.runtime_outcome_messages);
+             self.info_dialog = Some(InfoDialog::sized_to_fit(
+ 
 ```
 
-**File**: `src/tui/dialogs/new_session/tests.rs` (modified, +143/-0)
+**File**: `src/tui/home/tests/preview_links.rs` (modified, +4/-4)
 ```diff
-@@ -957,6 +957,149 @@ fn the_structured_row_appears_only_for_an_acp_capable_tool() {
-     assert!(!submitted(dialog.build_submit_result()).structured);
- }
+@@ -171,10 +171,10 @@ fn status_flash_shows_then_expires_without_acknowledgement() {
+     assert!(!env.view.expire_status_flash());
  
-+#[test]
-+fn a_custom_agent_locks_yolo_only_in_the_views_that_run_an_always_yolo_base() {
-+    // (terminal locked, structured locked), with a Yolo the user turned on beforehand.
-+    for (name, expected) in [
-+        ("my-pi", (true, true)),
-+        ("own-pi", (true, false)),
-+        ("my-claude", (false, false)),
-+    ] {
-+        let mut dialog = NewSessionDialog::new_with_tools(vec![name], TEST_PATH.to_string());
-+        let base = name.trim_start_matches("my-").trim_start_matches("own-");
-+        dialog
-+            .agent_detect_as
-+            .insert(name.to_string(), base.to_string());
-+        dialog
-+            .agent_acp_cmd
-+            .insert("own-pi".to_string(), "own-pi-acp".to_string());
-+        dialog.set_structured_capable(true);
-+        dialog.yolo_mode = true;
-+        let locked = |d: &NewSessionDialog| d.field_indices().yolo == FieldIndices::ABSENT;
-+        assert_eq!(locked(&dialog), expected.0, "{name} terminal");
+     // Reach the deadline without sleeping through it.
+-    env.view.status_flash = Some((
+-        "opened https://example.com/aoe".to_string(),
+-        std::time::Instant::now(),
+-    ));
++    env.view.status_flash = Some(crate::tui::home::overlays::StatusFlash {
++        text: "opened https://example.com/aoe".to_string(),
++        until: Some(std::time::Instant::now()),
++    });
+     assert_eq!(env.view.status_flash_text(), None, "window has closed");
+     assert!(
+         env.view.expire_status_flash(),
+```
+
+**File**: `src/tui/home/tests/session_feed_tests.rs` (modified, +156/-0)
+```diff
+@@ -3795,3 +3795,159 @@ async fn keyboard_palette_recovery_executes_captured_commands_and_preserves_file
+         assert_eq!(std::fs::read(sentinel).unwrap(), b"keep recovery files");
+     }
+ }
 +
-+        dialog.focused_field = dialog.field_indices().structured;
-+        dialog.handle_key(key(KeyCode::Char(' ')));
-+        assert!(dialog.structured_enabled, "{name}");
-+        assert_eq!(locked(&dialog), expected.1, "{name} structured");
-+        // Leaving the lock resets Yolo to the default; an unchanged lock keeps the choice.
-+        let yolo = expected.1 || expected.0 == expected.1;
-+        assert_eq!(dialog.yolo_mode, yolo, "{name}");
-+        assert_eq!(
-+            submitted(dialog.build_submit_result()).yolo_mode,
-+            yolo,
-+            "{name}"
-+        );
-+    }
++/// A committed deletion reports its cleanup notes without a modal: the delete
++/// already happened, and an InfoDialog here can land underneath a permission or
++/// question dialog and swallow every keystroke until it is acknowledged.
++#[test]
++#[serial]
++fn purge_cleanup_messages_flash_instead_of_opening_a_modal() {
++    let mut env = create_test_env_with_sessions(1);
++    let id = env.view.instance_at(0).id.clone();
++    let mut notes = Vec::new();
++    env.view.record_purge_outcome(
++        &id,
++        crate::daemon::PurgeOutcome::Deleted {
++            messages: vec!["Branch 'aoe/work' deleted".to_string()],
++            cleanup_errors: Vec::new(),
++        },
++        &mut notes,
++    );
++    assert!(env.view.info_dialog.is_none());
++    assert_eq!(
++        super::super::status::purge_flash_text(&notes),
++        format!("{id}: Branch 'aoe/work' deleted")
++    );
++
++    env.view.record_purge_outcome(
++        &id,
++        crate::daemon::PurgeOutcome::Deleted {
++            messages: Vec::new(),
++            cleanup_errors: vec!["Branch: not fully merged".to_string()],
++        },
++        &mut Vec::new(),
++    );
++    assert!(
++        env.view.info_dialog.is_none(),
++        "the modal opens on the next apply_session_feed"
++    );
++    env.view.apply_session_feed();
++    assert_eq!(
++        env.view.info_dialog.as_ref().map(|d| d.title()),
++        Some("Runtime change"),
++        "an incomplete cleanup still needs an acknowledgement"
++    );
 +}
 +
++/// A group delete reports one note per session in one pass. Every note has to
++/// reach the single status line that replaces the old modal, with the session
++/// it belongs to, so nothing is lost to the last write winning.
 +#[test]
-+#[serial_test::serial]
-+fn moving_between_repos_that_map_the_agent_differently_refreshes_its_lock_and_view() {
-+    let temp_home = tempfile::tempdir().expect("temp home");
-+    let _home = crate::session::test_support::isolate_home(temp_home.path());
-+    let repo_mapping = |base: &str| {
-+        let repo = tempfile::tempdir().expect("repo dir");
-+        fs::create_dir_all(repo.path().join(".agent-of-empires")).expect("repo config dir");
-+        fs::write(
-+            repo.path().join(".agent-of-empires/config.toml"),
-+            format!("[session]\nagent_detect_as = {{ wrap = \"{base}\" }}\n"),
-+        )
-+        .expect("repo config");
-+        repo
-+    };
-+    let (pi, claude) = (repo_mapping("pi"), repo_mapping("claude"));
-+    type Arrive = fn(&mut NewSessionDialog, String);
-+    let arrivals: &[(&str, Arrive)] = &[
-+        ("typed", |d, path| {
-+            d.focused_field = d.path_field();
-+            d.path = Input::new(String::new());
-+            type_str(d, &path);
-+            d.handle_key(key(KeyCode::Tab));
-+        }),
-+        ("picked", |d, path| {
-+            d.focused_field = d.path_field();
-+            d.path = Input::new(path);
-+            d.handle_key(ctrl_key(KeyCode::Char('p')));
-+            d.handle_key(key(KeyCode::Enter));
-+            assert!(!d.dir_picker.is_active());
-+        }),
-+        ("clicked away", |d, path| {
-+            d.focused_field = d.path_field();
-+            d.path = Input::new(path);
-+            let worktree = d.field_indices().worktree;
-+            d.focusable_rects
-+                .push((worktree, ratatui::layout::Rect::new(0, 9, 30, 1)));
-+            d.handle_click(10, 9);
-+            assert!(d.worktree_enabled, "the click must toggle the row it hit");
-+        }),
-+        ("sandbox env edited", |d, path| {
-+            d.extra_env_overridden = true;
-+            d.set_path(path);
-+        }),
-+        ("back-tabbed", |d, path| {
-+            d.focused_field = d.path_field();
-+            d.path = Input::new(path);
-+            d.handle_key(key(KeyCode::BackTab));
-+            assert_eq!(
-+                d.focused_field,
-+                d.field_indices().group,
-+                "BackTab wraps to Group"
-+            );
-+        }),
-+        ("scratch", |d, _| {
-+            d.focused_field = d.field_indices().worktree;
-+            d.handle_key(ctrl_key(KeyCode::Char('t')));
-+            assert_eq!(
-+                d.focused_field,
-+                d.field_indices().worktree,
-+                "focus stays on Worktree"
-+            );
-+        }),
-+    ];
-+    let locked = |d: &NewSessionDialog| d.field_indices().yolo == FieldIndices::ABSENT;
-+    // Leaving the `pi` lock must drop the forced Yolo, not submit it.
-+    for (from, to, to_locked) in [(&pi, &claude, false), (&claude, &pi, true)] {
-+        for (name, arrive) in arrivals {
-+            let mut dialog = NewSessionDialog::new_with_tools(vec!["wrap"], TEST_PATH.to_string());
-+            dialog.set_path(from.path().to_string_lossy().to_string());
-+            assert!(dialog.structured_capable, "{name}");
-+            assert_eq!(locked(&dialog), !to_locked, "{name}");
-+            arrive(&mut dialog, to.path().to_string_lossy().to_string());
-+            // Scratch has no re
++#[serial]
++fn purge_cleanup_notes_survive_a_multi_session_delete_in_one_flash() {
++    let mut env = create_test_env_with_sessions(2);
++    let first = env.view.instance_at(0).id.clone();
++    let second = env.view.instance_at(1).id.clone();
++    let mut notes = Vec::new();
++    for id in [&first, &second] {
++        env.view.record_purge_outcome(
++            id,
++            crate::daemon::PurgeOutcome::Deleted {
++                messages: vec![
++                    "Worktree removed".to_string(),
++                    format!("Branch 'aoe/{id}' deleted"),
++                ],
++                cleanup_errors: Vec::new(),
++            },
++            &mut notes,
++        );
++    }
++    assert_eq!(
++        super::super::status::purge_flash_text(&notes),
++        format!(
++            "{first}, {second}: Worktree removed; {first}: Branch 'aoe/{first}' deleted; \
++             {second}: Branch 'aoe/{second}' deleted"
++        ),
++        "a shared note names both sessions and no session's note is dropped"
++    );
++}
++
++/// The flash window measures time on screen. A takeover view renders before the
++/// status bar, so a note that arrives behind settings must not count down there
++/// and expire before it is ever shown.
++#[test]
++#[serial]
++fn status_flash_window_starts_when_the_bar_is_drawn() {
++    let mut env = create_test_env_with_sessions(1);
++    env.view.flash_status("Copied selection");
++    assert!(
++        env.view.status_flash.as_ref().unwrap().until.is_none(),
++        "a fresh flash has not started counting down"
++    );
++    assert!(!env.view.expire_status_flash());
++
++    env.view.settings_view = Some(crate::tui::settings::SettingsView::new("test", None).unwrap());
++    render_home_to_string(&mut env.view, 120, 24);
++    assert!(
++        env.view.status_flash.as_ref().unwrap().until.is_none(),
++        "settings covers the status bar, so the window cannot have started"
++    );
++
++    env.view.settings_view = None;
++    render_home_to_string(&mut env.view, 120, 24);
++    assert!(
++        env.view.status_flash.as_ref().unwrap().until.is_some(),
++        "the bar is drawn, so the window starts now"
++    );
++    assert_eq!(env.view.status_flash_text(), Some("Copied selection"));
++    assert!(!env.view.expire_status_flash());
++}
++
++/// A dialog promoted while a key event is being handled would consume that same
++/// key before the user ever sees it. Only the tick path promotes, and it always
++/// draws first.
++#[test]
++#[serial]
++fn runtime_change_dialog_is_promoted_only_before_a_draw() {
++    let mut env = create_test_env_with_sessions(1);
++    env.view
++        .record_runtime_message("Reveal cancelled: no such session".to_string());
++    env.view.apply_session_feed_before_input();
++    assert!(
++        env.view.info_dialog.is_none(),
++        "the key that woke the loop must reach the view, not a dialog"
++    );
++    assert_eq!(
++        env.view.runtime_outcome_messages.len(),
++        1,
++        "the note waits for a draw instead of being dropped"
++    );
++
++    env.view.apply_session_feed();
++    assert_eq!(
++
+```
+
+**File**: `src/tui/home/tests/shortcut_bar.rs` (modified, +1/-1)
+```diff
+@@ -77,7 +77,7 @@ fn hidden_bar_preserves_temporary_feedback_and_keyboard_actions() {
+     let screen = render_home_to_string(&mut env.view, 120, 24);
+     assert!(screen.contains("Copied selection"));
+     assert_eq!(env.view.preview_outer_area.bottom(), 23);
+-    env.view.status_flash.as_mut().unwrap().1 = std::time::Instant::now();
++    env.view.status_flash.as_mut().unwrap().until = Some(std::time::Instant::now());
+     assert!(env.view.expire_status_flash());
+     render_home_to_string(&mut env.view, 120, 24);
+     assert_eq!(env.view.preview_outer_area.bottom(), 24);
 ```
 
 ---
 
-### Incident Patch 2: `08635740` (2026-11-08)
-**Commit Message**: fix(session): resume verified Codex rollouts without attested policy (#5446)
+### Incident Patch 2: `7a8fa6a3` (2026-11-13)
+**Commit Message**: fix(serve): resolve session config once per repo across linked worktrees (#5616)
 
-* fix(session): resume verified Codex rollouts without attested policy
+* chore(file-watch): log why the dispatcher stops and who created the service
 
-Since #4942, a Default restart refuses when AoE cannot attest Codex's
-execution context. That always fails on a macOS host, where managed
-preferences are unreadable, and with a ChatGPT login, so existing sessions
-went to Error. The suggested set-session-id rebind fails for the same reason.
+The v1.23.0 daemon logs dispatcher_loop_exit at startup without a panic.
+That reason only means the dispatcher future was dropped. Record the
+creation site, the thread, and whether a runtime is still current when
+the future is dropped before run_dispatcher returns.
 
-Exact-UUID lookup still spans all of CODEX_HOME, so it does not by itself
-rule out #4941's cross-project resume. Admit an unpinned Default resume only
-when every rollout of that UUID in the store records this session's working
-directory. Everything else stays refused, with a new cause whose recovery
-does not suggest the rebind.
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-Fixes #5415
+* fix(serve): resolve session config once per repo across linked worktrees
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+list_sessions and publish resolved config per (profile, worktree path),
+and each miss reopened the main repo through libgit2 to find the repo
+config. In a repo with hundreds of worktrees that parse dominated the
+daemon, so every session mutation waited about a second behind publish.
 
-* fix(session): apply one Codex refusal policy on every host
+find_main_repo now reads the worktree gitdir file before opening the
+repo, and the per-request cache keys on the repo config source so
+worktrees of one repo share an entry.
 
-The macOS gate ran before the config checks, so macOS admitted profile and
-remote-store contexts that Linux refused, while Linux refused keyring and
-missing auth.json. Admit only credential and managed-preference gaps
-everywhere; refuse unreadable routing everywhere, with recovery that fits.
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-Match 
+* fix(serve): memoize repo config source discovery per request
 
-**File**: `Cargo.lock` (modified, +2/-0)
+Discovery opens the repo through libgit2 for a main checkout, and
+
+**File**: `src/file_watch.rs` (modified, +55/-3)
 ```diff
-@@ -103,6 +103,8 @@ dependencies = [
-  "chrono",
-  "clap",
-  "clap_complete",
-+ "core-foundation",
-+ "core-foundation-sys",
-  "crossterm",
-  "dirs",
-  "dotenv-ng-core",
-```
-
-**File**: `Cargo.toml` (modified, +4/-0)
-```diff
-@@ -201,6 +201,10 @@ schemars = { version = "1", features = ["chrono04"] }
- libc = "0.2"
- nix = { version = "0.31", features = ["signal", "process", "net", "fs", "resource", "dir", "user", "poll", "hostname"] }
+@@ -254,6 +254,7 @@ impl FileWatchService {
+     }
  
-+[target.'cfg(target_os = "macos")'.dependencies]
-+core-foundation = "0.10.1"
-+core-foundation-sys = "0.8.7"
-+
- [features]
- # The daemon (REST/WS API, auth, Web Push, ACP, structured view) is core: a
- # plain `cargo build` ships it and needs no Node. `web` adds the embedded
-```
-
-**File**: `docs/api.md` (modified, +3/-1)
-```diff
-@@ -777,7 +777,9 @@ The `omp_transcript_binding_required` cause identifies an absent OMP conversatio
- binding or exact transcript path. `pi_transcript_binding_required` identifies
- the refusal when a matching Pi binding lacks the required transcript path
- after permitted discovery. Neither cause identifies a missing file on disk or
--another failed attestation. Missing, unknown, or ambiguous cause metadata keeps
-+another failed attestation. `codex_conversation_unverified` identifies a Codex
-+context AoE cannot attest whose conversation could not be verified from its
-+local rollout either. Missing, unknown, or ambiguous cause metadata keeps
- the refusal generic; native clients do not read response bodies to derive that
- reason. See
- [managed resume recovery](guides/session-resume.md#common-managed-resume-and-fork-refusals).
-```
-
-**File**: `docs/guides/session-resume.md` (modified, +3/-3)
-```diff
-@@ -41,7 +41,7 @@ Shell pipelines, remote launchers, redirections, expansion, and unrecognized con
- ## Supported managed contexts
+     /// Falls back to `noop()` when the backend fails or `AOE_FILE_WATCH=off`.
++    #[track_caller]
+     pub fn new() -> Result<Arc<Self>, WatchError> {
+         if std::env::var("AOE_FILE_WATCH").as_deref() == Ok("off") {
+             tracing::info!(
+@@ -325,7 +326,11 @@ impl FileWatchService {
+         crate::task_util::spawn_supervised(
+             "file_watch.dispatcher",
+             crate::task_util::PanicPolicy::Log,
+-            dispatcher_loop(Arc::downgrade(&svc), tokio_rx),
++            dispatcher_loop(
++                Arc::downgrade(&svc),
++                tokio_rx,
++                std::panic::Location::caller(),
++            ),
+         );
  
- - **Claude:** on a host launch, the store its conversation recorded, a declared `agent_config_dir`, the resolved `CLAUDE_CONFIG_DIR`, or the default Claude store; a sandboxed session takes a per-session child of the entry instead. A recorded conversation store outranks a conflicting configuration-directory setting; see [Swapping the engine on a restart](#swapping-the-engine-on-a-restart). Managed arguments allow namespace-neutral `--mcp-config` with one or more files or JSON strings, and zero-arity `--strict-mcp-config`, per the [Claude CLI reference](https://code.claude.com/docs/en/cli-reference). Extra native session selectors and unsupported configuration-routing options remain refused.
--- **Codex:** a local host-readable `CODEX_HOME`, file-backed API-key authentication, and local SQLite/thread storage. Cloud, keyring, profile, project-routing, managed-policy, and host macOS contexts are not currently proven.
-+- **Codex:** a local host-readable `CODEX_HOME`, file-backed API-key authentication, and local SQLite/thread storage. Cloud, keyring, profile, project-routing, managed-policy, and host macOS contexts are not currently proven. On a host whose only gap is macOS managed preferences or its credentials (ChatGPT login, keyring, no `auth.json`), a Default restart still runs `codex resume <uuid>` when every rollout of that exact ID found under the store's `sessions/YYYY/MM/DD` directories is a root thread (not a subagent) that records the session's working directory. A `config_toml_base64` or `requirements_toml_base64` value in the `com.openai.codex` preference domain, forced or not, can route the store, so it refuses, as do `session.agent_config_dir`, a profile, project routing, and a remote thread store.
- - **OpenCode:** an explicit `OPENCODE_DB`, or the common database when `OPENCODE_DISABLE_CHANNEL_DB` is already enabled. Sandboxed explicit resume requires a host-readable database mount; the target working directory is still validated inside the container. Target routing is read only from the session table selected by the prepared executable's verified release/build identity. An inactive table cannot supply a missing target or override its working directory or workspace. A workspace-routed target or different stored working directory is refused. Managed current-generation launches and resumes use `--standalone` so an existing background service cannot redirect them to another database.
- - **Pi and OMP:** the verified transcript and exact store. Recovery uses `--store` with the transcript file. A Pi row that has an id but no recorded transcript path looks for `<timestamp>_<id>.jsonl` in the store, then resumes it with `--session <path>`. OMP also verifies its stored working directory and pins the resolved profile.
- - **Gemini, Cursor, Kimi, and Copilot:** their native config/share/home store inputs. AoE does not combine unrelated environment roots.
-@@ -90,8 +90,8 @@ Local diagnostics include the native refusal chain and any scope-retirement erro
- 
- | Context | `set-session-id` | Fork | Remedy |
- |---------|------------------|------|--------|
--| Unsandboxed Codex on a macOS host | Refused | Refused | None yet; run Codex in a managed container |
--| Codex signed in with a ChatGPT login | Refused | Refused | A local OpenAI API key, per [Codex](#supported-managed-contexts) |
-+| Unsandboxed Codex on a macOS host | Refused | Refused | Default restarts resume a [verified rollout](#supported-managed-contexts); otherwise clear the ID, restart, and run `/resume <id>` in Codex. A managed container with a local OpenAI API key supports all three |
-+| Codex with a ChatGPT login, keyring, or no `auth.json` | Refused | Refused | Default host restarts resume a [verified rollout](#supported-managed-contexts); a local OpenAI API key supports all three |
- | OpenCode with no provable durable database | Refused | Refused | Point `OPENCODE_DB` at a durable database (`opencode debug paths` prints the current one); otherwise `OPENCODE_DISABLE_CHANNEL_DB` must be exactly `1` or `true`, and `:memory:` never qualifies, per [OpenCode](#supported-managed-contexts) |
- | OpenCode with an unlisted release/build identity | May be recorded; resume refused | Refused | Use a listed identity; Default restarts also refuse without guessing the active schema |
- | Sandboxed OpenCode fork, or a current-generation wrapper-mediated store fork | n/a | Refused | Disable the sandbox; for a current-generation store fork, launch `opencode` directly |
-```
-
-**File**: `src/daemon/error.rs` (modified, +2/-0)
-```diff
-@@ -187,6 +187,7 @@ fn managed_resume_cause(headers: &HeaderMap) -> ManagedResumeCause {
-             b"opencode_schema_unattested" => ManagedResumeCause::OpenCodeSchemaUnattested,
-             b"pi_transcript_binding_required" => ManagedResumeCause::PiTranscriptBindingRequired,
-             b"omp_transcript_binding_required" => ManagedResumeCause::OmpTranscriptBindingRequired,
-+            b"codex_conversation_unverified" => ManagedResumeCause::CodexConversationUnverified,
-             _ => ManagedResumeCause::ExecutionContextUnattested,
-         },
-         _ => ManagedResumeCause::ExecutionContextUnattested,
-@@ -336,6 +337,7 @@ mod tests {
-                 "omp_transcript_binding_required",
-                 OmpTranscriptBindingRequired,
-             ),
-+            ("codex_conversation_unverified", CodexConversationUnverified),
-             ("execution_context_unattested", ExecutionContextUnattested),
-             ("secret-token", ExecutionContextUnattested),
-             (
-```
-
-**File**: `src/process/linux.rs` (modified, +6/-1)
-```diff
-@@ -1,6 +1,5 @@
- //! Linux-specific process utilities.
- 
--pub(crate) const HAS_CODEX_MANAGED_PREFERENCES: bool = false;
- use anyhow::Context as _;
- use std::collections::HashMap;
- use std::fs;
-@@ -12,6 +11,12 @@ pub(super) use super::unix::{
-     restore_environment_value, terminate_process_group, try_wait_status_hook,
- };
- 
-+pub(crate) const HAS_CODEX_MANAGED_PREFERENCES: bool = false;
-+
-+pub(crate) fn codex_managed_preferences_present() -> bool {
-+    false
-+}
-+
- struct LegacyRuntimeDirectories {
-     run: std::os::fd::OwnedFd,
-     user: Option<std::os::fd::OwnedFd>,
-```
-
-**File**: `src/process/macos.rs` (modified, +55/-1)
-```diff
-@@ -1,6 +1,5 @@
- //! macOS-specific process utilities.
- 
--pub(crate) const HAS_CODEX_MANAGED_PREFERENCES: bool = true;
- use anyhow::Context as _;
- use std::collections::HashMap;
- use std::process::Command;
-@@ -9,6 +8,43 @@ pub(super) use super::unix::{
-     close_frozen_payload, configure_process_group, exec_command, kill_process_group,
-     restore_environment_value, terminate_process_group, try_wait_status_hook,
- };
-+
-+pub(crate) const HAS_CODEX_MANAGED_PREFERENCES: bool = true;
-+
-+const CODEX_PREFERENCES_DOMAIN: &str = "com.openai.codex";
-+
-+/// Whether CFPreferences holds a Codex managed configuration or requirements
-+/// value. Forced or not: Codex before openai/codex#46032 read either.
-+pub(crate) fn codex_managed_preferences_present() -> bool {
-+    codex_managed_preferences_present_with(|key| {
-+        preference_value_present(key, CODEX_PREFERENCES_DOMAIN)
-+    })
-+}
-+
-+fn codex_managed_preferences_present_with(present: impl Fn(&str) -> bool) -> bool {
-+    ["config_toml_base64", "requirements_toml_base64"]
-+        .into_iter()
-+        .any(present)
-+}
-+
-+fn preference_value_present(key: &str, application: &str) -> bool {
-+    use core_foundation::base::{CFType, TCFType as _};
-+    use core_foundation::string::CFString;
-+    let (key, application) = (CFString::new(key), CFString::new(application));
-+    // SAFETY: both arguments are live CFStrings.
-+    let value = unsafe {
-+        core_foundation_sys::preferences::CFPreferencesCopyAppValue(
-+            key.as_concrete_TypeRef(),
-+            application.as_concrete_TypeRef(),
-+        )
+         Ok(svc)
+@@ -652,20 +657,45 @@ fn classify_event_kind(ev: &notify::Event) -> Option<FileEventKind> {
+ async fn dispatcher_loop(
+     svc: Weak<FileWatchService>,
+     mut rx: mpsc::UnboundedReceiver<DispatchMsg>,
++    origin: &'static std::panic::Location<'static>,
+ ) {
+-    // Flips `dispatcher_dead` on every exit path of `run_dispatcher`, including panic.
++    tracing::debug!(
++        target: "file_watch.service",
++        %origin,
++        thread = ?std::thread::current().name(),
++        "file watch dispatcher started"
++    );
++    // Flips `dispatcher_dead` on every exit path of `run_dispatcher`, including panic and
++    // the future being dropped (runtime shutdown or task abort).
+     struct ExitLatch<'a> {
+         svc: &'a Weak<FileWatchService>,
++        origin: &'static std::panic::Location<'static>,
++        returned: bool,
+     }
+     impl Drop for ExitLatch<'_> {
+         fn drop(&mut self) {
++            if !self.returned {
++                tracing::error!(
++                    target: "file_watch.service",
++                    origin = %self.origin,
++                    thread = ?std::thread::current().name(),
++                    panicking = std::thread::panicking(),
++                    in_runtime = tokio::runtime::Handle::try_current().is_ok(),
++                    "file watch dispatcher future dropped before run_dispatcher returned"
++                );
++            }
+             if let Some(arc) = self.svc.upgrade() {
+                 log_dispatcher_dead_once(&arc, "dispatcher_loop_exit", None);
+             }
+         }
+     }
+-    let _guard = ExitLatch { svc: &svc };
++    let mut guard = ExitLatch {
++        svc: &svc,
++        origin,
++        returned: false,
 +    };
-+    if value.is_null() {
-+        return false;
-+    }
-+    // SAFETY: the copy rule hands ownership of a non-null result to the wrapper.
-+    drop(unsafe { CFType::wrap_under_create_rule(value) });
-+    true
-+}
- /// Prove only the absence of the Linux scope backend on this kernel.
- /// Native process, worker and tmux custody must still pass their own guards.
- pub(super) fn legacy_scope_inventory_clear(
-@@ -1158,6 +1194,24 @@ impl super::SleepInhibit for CaffeinateInhibitor {
- mod tests {
-     use super::*;
+     let exit_reason = run_dispatcher(svc.clone(), &mut rx).await;
++    guard.returned = true;
+     if let Some(arc) = svc.upgrade() {
+         log_dispatcher_dead_once(&arc, exit_reason, None);
+     }
+@@ -1349,6 +1379,28 @@ mod tests {
+         }
+     }
  
 +    #[test]
-+    fn codex_managed_preferences_refuse_either_key() {
-+        for (config, requirements, expected) in [
-+            (false, false, false),
-+            (true, false, true),
-+            (false, true, true),
-+        ] {
-+            let present = codex_managed_preferences_present_with(|key| match key {
-+                "config_toml_base64" => config,
-+                "requirements_toml_base64" => requirements,
-+                _ => unreachable!("{key}"),
-+            });
-+            assert_eq!(present, expected, "{config} {requirements}");
++    fn dispatcher_dead_when_its_runtime_shuts_down() {
++        let runtime = tokio::runtime::Builder::new_current_thread()
++            .enable_time()
++            .build()
++            .unwrap();
++        let svc = runtime.block_on(async {
++            let svc = FileWatchService::new().expect("init");
++            // The barrier ack proves the dispatcher was polled, so its exit guard exists.
++            tokio::time::timeout(
++                Duration::from_secs(5),
++                super::test_support::dispatch_barrier(&svc),
++            )
++            .await
++            .expect("dispatcher acknowledges the barrier");
++            svc
++        });
++        assert!(!svc.dispatcher_dead.load(Ordering::Acquire));
++        drop(runtime);
++        assert!(svc.dispatcher_dead.load(Ordering::Acquire));
++    }
++
+     #[tokio::test]
+     async fn dispatcher_dead_latch_is_one_way() {
+         let svc = FileWatchService::new().expect("init");
+```
+
+**File**: `src/git/worktree/mod.rs` (modified, +6/-4)
+```diff
+@@ -127,10 +127,12 @@ impl GitWorktree {
+     }
+ 
+     pub fn find_main_repo(path: &Path) -> Result<PathBuf> {
+-        let Ok(repo) = open_repo_at(path) else {
+-            return Self::find_main_repo_from_linked_worktree_gitfile(path)
+-                .ok_or(GitError::NotAGitRepo);
+-        };
++        // Opening a linked worktree parses the shared repo config, which is costly in a repo
++        // with many worktrees, so read the gitdir file first.
++        if let Some(main_repo) = Self::find_main_repo_from_linked_worktree_gitfile(path) {
++            return Ok(main_repo);
 +        }
-+        let unused = format!("dev.aoe.test.{}", uuid::Uuid::new_v4());
-+        assert!(!preference_value_present("config_toml_base64", &unused));
++        let repo = open_repo_at(path).map_err(|_| GitError::NotAGitRepo)?;
+         if let Some(main_repo) = Self::find_main_repo_from_worktree_gitdir(repo.path()) {
+             return Ok(main_repo);
+         }
+```
+
+**File**: `src/server/api/sessions/model.rs` (modified, +29/-3)
+```diff
+@@ -382,11 +382,15 @@ pub(super) fn custom_agent_acp_capable(
+         || crate::acp::inherited_acp_base(tool, &session.agent_detect_as).is_some()
+ }
+ 
+-/// Per-request cache for `(profile, project_path)` config resolution, shared
++/// Per-request cache for `(profile, repo config source)` config resolution, shared
+ /// across the `list_sessions` overlays so a repo-local override is read from
+ /// disk once per unique pair rather than once per row. See #2603.
+ pub(super) struct SessionCfgCache<'a> {
+-    entries: HashMap<(String, String), (SessionConfig, StructuredView)>,
++    entries: HashMap<(String, std::path::PathBuf), (SessionConfig, StructuredView)>,
++    /// `project_path` to its repo config source; discovery can open the repo through libgit2.
++    sources: HashMap<String, std::path::PathBuf>,
++    #[cfg(test)]
++    pub(super) discoveries: usize,
+     /// Where this cache reports its disk reads. The counter belongs to the
+     /// request, not to the cache, so every cache the request opens adds to
+     /// one total: splitting the shared cache per overlay then shows up as
+@@ -399,14 +403,36 @@ impl<'a> SessionCfgCache<'a> {
+     pub(super) fn new(misses: &'a std::sync::atomic::AtomicUsize) -> Self {
+         Self {
+             entries: HashMap::new(),
++            sources: HashMap::new(),
++            #[cfg(test)]
++            discoveries: 0,
+             misses,
+         }
+     }
++
++    fn source(&mut self, project_path: &str) -> std::path::PathBuf {
++        if let Some(source) = self.sources.get(project_path) {
++            return source.clone();
++        }
++        #[cfg(test)]
++        {
++            self.discoveries += 1;
++        }
++        let source = crate::session::config::repo_config::repo_config_source_path(
++            std::path::Path::new(project_path),
++        );
++        self.sources
++            .insert(project_path.to_string(), source.clone());
++        source
++    }
++
+     /// Resolve `(profile, project_path)`, reading from disk on first miss only.
+     fn entry(&mut self, profile: &str, project_path: &str) -> &(SessionConfig, StructuredView) {
+         let misses = self.misses;
++        // Linked worktrees read their repo config from the main repo, so they share an entry.
++        let source = self.source(project_path);
+         self.entries
+-            .entry((profile.to_string(), project_path.to_string()))
++            .entry((profile.to_string(), source))
+             .or_insert_with(|| {
+                 misses.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                 let config = crate::session::config::repo_config::resolve_config_with_repo_or_warn(
+```
+
+**File**: `src/server/api/sessions/tests.rs` (modified, +135/-0)
+```diff
+@@ -4375,6 +4375,141 @@ async fn list_sessions_shares_config_resolution_across_overlays() {
+     );
+ }
+ 
++fn run_git(dir: &std::path::Path, args: &[&str]) {
++    let out = std::process::Command::new("git")
++        .args([
++            "-c",
++            "user.name=t",
++            "-c",
++            "user.email=t@t",
++            "-c",
++            "init.defaultBranch=main",
++        ])
++        .args(args)
++        .current_dir(dir)
++        .output()
++        .expect("run git");
++    assert!(out.status.success(), "git {args:?}: {out:?}");
++}
++
++// Source discovery can open the repo through libgit2, so a main checkout shared by many
++// sessions must be discovered once per request, not on every cache hit.
++#[test]
++#[serial_test::serial]
++fn session_cfg_cache_discovers_a_repeated_main_checkout_once() {
++    use std::sync::atomic::{AtomicUsize, Ordering};
++
++    let tmp_home = tempfile::tempdir().expect("tempdir HOME");
++    let _home = crate::session::test_support::isolate_app_dir_at(tmp_home.path());
++    let repo = tempfile::tempdir().expect("tempdir repo");
++    run_git(repo.path(), &["init", "-q"]);
++    let path = repo.path().to_str().unwrap();
++
++    let misses = AtomicUsize::new(0);
++    let mut cache = super::model::SessionCfgCache::new(&misses);
++    for _ in 0..3 {
++        cache.resolve("default", path);
++        cache.structured_view("default", path);
++    }
++
++    assert_eq!(cache.discoveries, 1);
++    assert_eq!(misses.load(Ordering::Relaxed), 1);
++}
++
++// Repo roots that differ only in non-UTF-8 bytes must not share a config. APFS rejects such names.
++#[cfg(target_os = "linux")]
++#[test]
++#[serial_test::serial]
++fn session_cfg_cache_keeps_non_utf8_repo_roots_apart() {
++    use std::os::unix::ffi::OsStrExt;
++    use std::sync::atomic::{AtomicUsize, Ordering};
++
++    let tmp_home = tempfile::tempdir().expect("tempdir HOME");
++    let _home = crate::session::test_support::isolate_app_dir_at(tmp_home.path());
++    let tmp = tempfile::tempdir().expect("tempdir repos");
++    let paths: Vec<String> = [b"r\xff".as_slice(), b"r\xfe".as_slice()]
++        .iter()
++        .enumerate()
++        .map(|(i, name)| {
++            let main = tmp.path().join(std::ffi::OsStr::from_bytes(name));
++            std::fs::create_dir(&main).unwrap();
++            run_git(&main, &["init", "-q"]);
++            run_git(&main, &["commit", "-q", "--allow-empty", "-m", "init"]);
++            let worktree = tmp.path().join(format!("wt{i}"));
++            run_git(
++                &main,
++                &[
++                    "worktree",
++                    "add",
++                    "-q",
++                    "-b",
++                    "b",
++                    worktree.to_str().unwrap(),
++                ],
++            );
++            worktree.to_str().unwrap().to_owned()
++        })
++        .collect();
++
++    let misses = AtomicUsize::new(0);
++    let mut cache = super::model::SessionCfgCache::new(&misses);
++    for path in &paths {
++        cache.resolve("default", path);
++    }
++
++    assert_eq!(misses.load(Ordering::Relaxed), 2);
++}
++
++// Regression witness for #5610: sessions in linked worktrees of one repo read the
++// same repo config, so they must share one resolution instead of one per worktree.
++#[tokio::test]
++#[serial_test::serial]
++async fn list_sessions_resolves_config_once_per_repo_across_linked_worktrees() {
++    use std::sync::atomic::Ordering;
++
++    let tmp_home = tempfile::tempdir().expect("tempdir HOME");
++    let _home = crate::session::test_support::isolate_app_dir_at(tmp_home.path());
++    let repo = tempfile::tempdir().expect("tempdir repo");
++    let main = repo.path().join("main");
++    std::fs::create_dir(&main).unwrap();
++    run_git(&main, &["init", "-q"]);
++    run_git(&main, &["commit", "-q", "--allow-empty", "-m", "init"]);
++    let sessions: Vec<Instance> = (0..3)
++        .map(|i| {
++            let worktree = repo.path().join(format!("wt{i}"));
++            run_git(
++                &main,
++                &[
++                    "worktree",
++                    "add",
++                    "-q",
++                    "-b",
++                    &format!("b{i}"),
++                    worktree.to_str().unwrap(),
++                ],
++            );
++            let mut inst = Instance::new("test-session", worktree.to_str().unwrap());
++            inst.tool = "custom-tool-5610".to_string();
++            inst.source_profile = "default".to_string();
++            inst
++        })
++        .collect();
++
++    let state = crate::server::test_support::build_test_app_state(sessions);
++    let _envelope = list_sessions(
++        axum::extract::State(state.clone()),
++        axum::extract::Query(ListSessionsQuery { state: None }),
++        axum::http::HeaderMap::new(),
++    )
++    .await;
++    let misses = state.list_sessions_resolver_misses.load(Ordering::Relaxed);
++
++    assert_eq!(
++        misses, 1,
++        "linked worktrees of one repo must share one resolution; got {misses}",
++    );
++}
++
+```
+
+**File**: `src/session/config/profile_config.rs` (modified, +7/-0)
+```diff
+@@ -174,8 +174,15 @@ pub fn apply_cityhall_overrides(config: &mut Config) {
+     config.worktree.enabled = true;
+ }
+ 
++#[cfg(test)]
++thread_local! {
++    pub(crate) static RESOLVES: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
++}
++
+ /// Load effective config for a profile (global + profile overrides merged)
+ pub fn resolve_config(profile: &str) -> Result<Config> {
++    #[cfg(test)]
++    RESOLVES.with(|n| n.set(n.get() + 1));
+     let global = Config::load()?;
+     let profile_config = load_profile_config(profile)?;
+     let mut config = merge_configs(global, &profile_config);
+```
+
+**File**: `src/session/instance/accessors.rs` (modified, +21/-7)
+```diff
+@@ -337,8 +337,16 @@ impl Instance {
+     /// Whether a resume selector appended to this launch reaches the agent.
+     /// Only a verified direct invocation or an explicit wrapper contract carries selectors.
+     pub(crate) fn launch_can_carry_resume_selector(&self, agent: &crate::agents::AgentDef) -> bool {
+-        self.execution_agent()
+-            .is_ok_and(|actual| actual.name == agent.name)
++        self.launch_carries_selector(self.resolved_agent(), agent)
++    }
++
++    /// [`Self::launch_can_carry_resume_selector`] for a caller that already holds the execution identity.
++    pub(super) fn launch_carries_selector(
++        &self,
++        native: Option<&crate::agents::AgentDef>,
++        agent: &crate::agents::AgentDef,
++    ) -> bool {
++        native.is_some_and(|actual| actual.name == agent.name)
+             && self.managed_user_argv(agent).is_ok()
+     }
+ 
+@@ -471,18 +479,24 @@ impl Instance {
+ 
+     /// Bare wrappers can receive fresh-session selectors without attesting execution.
+     pub(super) fn legacy_default_selector_agent(&self) -> Option<&'static crate::agents::AgentDef> {
++        let config = crate::session::config::profile_config::resolve_config_or_warn(
++            &self.effective_profile(),
++        );
++        self.legacy_default_selector_agent_in(&config.session)
++    }
++
++    pub(super) fn legacy_default_selector_agent_in(
++        &self,
++        config: &crate::session::config::SessionConfig,
++    ) -> Option<&'static crate::agents::AgentDef> {
+         if matches!(
+             self.resume_intent,
+             ResumeIntent::Use(_) | ResumeIntent::Fork { .. }
+         ) {
+             return None;
+         }
+         let agent = resolved_agent_for(&self.effective_profile(), &self.tool, &self.detect_as)?;
+-        if crate::session::config::profile_config::resolve_config_or_warn(&self.effective_profile())
+-            .session
+-            .agent_execution_as
+-            .contains_key(&self.tool)
+-        {
++        if config.agent_execution_as.contains_key(&self.tool) {
+             return None;
+         }
+         let command = self.get_tool_command();
+```
+
+**File**: `src/session/instance/session_id.rs` (modified, +49/-4)
+```diff
+@@ -621,15 +621,29 @@ impl Instance {
+     /// refuses, so the availability the API and TUI render cannot drift from
+     /// the launch line.
+     fn terminal_resume_static_unavailable(&self) -> Option<ResumeStaticUnavailable> {
+-        let Some(agent) = self
+-            .default_selector_agent()
++        // One resolve serves every check; a projection runs this per session.
++        let profile = self.effective_profile();
++        let resolved = crate::session::config::profile_config::resolve_config(&profile);
++        let fallback;
++        let config = match &resolved {
++            Ok(config) => &config.session,
++            Err(_) => {
++                fallback = crate::session::config::profile_config::resolve_config_or_warn(&profile);
++                &fallback.session
++            }
++        };
++        let native = resolved.as_ref().ok().and_then(|resolved| {
++            Self::execution_agent_for(&self.tool, self.get_tool_command(), &resolved.session).ok()
++        });
++        let Some(agent) = native
++            .or_else(|| self.legacy_default_selector_agent_in(config))
+             .filter(|agent| agent.session_support.is_some())
+         else {
+             return Some(ResumeStaticUnavailable::Agent);
+         };
+-        if !self.launch_can_carry_resume_selector(agent)
++        if !self.launch_carries_selector(native, agent)
+             && !self.can_attempt_default_resume(agent)
+-            && self.legacy_default_selector_agent().is_none()
++            && self.legacy_default_selector_agent_in(config).is_none()
+         {
+             return Some(ResumeStaticUnavailable::Command);
+         }
+@@ -1275,6 +1289,37 @@ mod tests {
+             .unwrap());
+     }
+ 
++    #[test]
++    #[serial]
++    fn resume_availability_resolves_config_once_per_session() {
++        const PROFILE: &str = "resume-resolve-once";
++        let root = tempdir().unwrap();
++        let _app = crate::session::test_support::isolate_app_dir_at(&root.path().join("app"));
++        let profile_path =
++            crate::session::config::profile_config::get_profile_config_path(PROFILE).unwrap();
++        std::fs::create_dir_all(profile_path.parent().unwrap()).unwrap();
++        std::fs::write(
++            profile_path,
++            "[session.agent_detect_as]\nwork-claude = \"claude\"\n",
++        )
++        .unwrap();
++        let _registry = crate::tmux::status_rules::ProfileRegistryGuard::take(PROFILE);
++        // Direct launch, bare wrapper, and a tool with no session support.
++        for (tool, command) in [
++            ("claude", "claude"),
++            ("work-claude", "work-claude"),
++            ("shell", ""),
++        ] {
++            let mut inst = tool_instance(tool, root.path().to_str().unwrap());
++            inst.source_profile = PROFILE.into();
++            inst.command = command.into();
++            crate::session::config::profile_config::RESOLVES.with(|n| n.set(0));
++            inst.terminal_context_resume_cached();
++            let resolves = crate::session::config::profile_config::RESOLVES.with(|n| n.get());
++            assert_eq!(resolves, 1, "{tool} resolved config {resolves} times");
++        }
 +    }
 +
      #[test]
-     fn foreign_runner_probe_requires_an_empty_original_group_and_keeps_native_tokens_strict() {
-         use std::io::BufRead as _;
-```
-
-**File**: `src/process/mod.rs` (modified, +5/-1)
-```diff
-@@ -261,9 +261,13 @@ pub(crate) fn throttle_child(cmd: &mut std::process::Command) {
- }
- 
- #[cfg(any(target_os = "linux", target_os = "macos"))]
--pub(crate) use platform::HAS_CODEX_MANAGED_PREFERENCES;
-+pub(crate) use platform::{codex_managed_preferences_present, HAS_CODEX_MANAGED_PREFERENCES};
- #[cfg(not(any(target_os = "linux", target_os = "macos")))]
- pub(crate) const HAS_CODEX_MANAGED_PREFERENCES: bool = true;
-+#[cfg(not(any(target_os = "linux", target_os = "macos")))]
-+pub(crate) fn codex_managed_preferences_present() -> bool {
-+    true
-+}
- 
- /// System memory + agent-count sampling for the TUI diagnostics strip.
- pub(crate) mod metrics;
+     #[serial(hook_base)]
+     fn default_detect_as_wrappers_capture_published_conversations() {
 ```
 
 ---
 
-### Incident Patch 3: `c7494f74` (2026-11-09)
-**Commit Message**: fix(deps): bump rusqlite to 0.41 for bundled SQLite 3.54 (RUSTSEC-2026-0459) (#5506)
+### Incident Patch 3: `3c5d95f6` (2026-11-13)
+**Commit Message**: feat(web): guided /setup wizard with progress from real config and a setup banner (#5399)
 
-libsqlite3-sys 0.38.2 bundles SQLite 3.53.2, affected by CVE-2026-119375.
-rusqlite 0.41 pulls libsqlite3-sys 0.39.1 (SQLite 3.54.1).
+* feat(serve): report agent binary path and adapter install command
 
-Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+The setup wizard's Agents step shows where each Agent resolved and the
+command that installs a missing ACP adapter, taken from the existing
+install hint table so the copy stays in one place.
 
-**File**: `Cargo.lock` (modified, +4/-4)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* feat(serve): add /api/setup for the web setup wizard
+
+Step progress is derived from real config on each read: telemetry
+answered, an installed Agent, any Project, and recognized keys present in
+the global config.toml for worktrees, sandbox and notifications. Only
+skips, finish, defer and banner dismissal persist, in state.toml. Agents
+can't be skipped and finishing re-checks it server-side. Container
+runtimes are probed in a separate request since docker info can be slow.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* feat(web): add setup client, policy and inline elevation save
+
+Setup status and patch calls, the redirect and banner policy, and a
+machine-settings save that asks for the passphrase in place and retries
+the same write once. A request header keeps the global elev
+
+**File**: `docs/guides/web/dashboard.md` (modified, +2/-2)
 ```diff
-@@ -2616,9 +2616,9 @@ dependencies = [
+@@ -47,9 +47,9 @@ Individual settings appear under `Settings`: a writable toggle flips inline with
  
- [[package]]
- name = "libsqlite3-sys"
--version = "0.38.2"
-+version = "0.39.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f1d20bef17f513b9b3004532233187769cd072d790971f4e4da0e346eb6401e8"
-+checksum = "14a5f01b87b92705d07b433c06f96cbc764637d81a0bffb5734ce17cf0f9a2b3"
- dependencies = [
-  "cc",
-  "pkg-config",
-@@ -4114,9 +4114,9 @@ dependencies = [
+ ## First-run onboarding
  
- [[package]]
- name = "rusqlite"
--version = "0.40.2"
-+version = "0.41.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "23f2a97da3e3873c73cb2a2e71b35c40ff95e0b1eefa8d72d8499a6928c3b5b3"
-+checksum = "da9bba6f3506135e120a6586df05be18b48d18896600646a4bec8f993d91a594"
- dependencies = [
-  "bitflags 2.13.2",
-  "fallible-iterator",
+-The first time you open the dashboard in a browser, a **Choose your theme** card appears before anything else. Picking a theme applies it live and saves it to your default profile; you can switch freely, then click **Continue**. Change it later in Settings > Appearance. The card is skipped in read-only mode and for anyone who already finished the tutorial.
++Opening `/` on a writable dashboard sends you to the setup wizard at `/setup` until you finish it or click **Go to dashboard**. Its steps edit the regular settings, so a step shows as done once one of its settings differs from the default, wherever it was changed (the TUI, Settings or a hand-edited `config.toml`), or once you keep its defaults with **Next**. Only the Agents step is required. Skips, finishing, leaving early and dismissing the dashboard's **Finish setting up** banner are stored as the `setup_*` keys in `state.toml` (see [Configuration Reference](../configuration.md#statetoml)). Open `/setup` again at any time. Read-only and CityHall dashboards never show it.
+ 
+-After the theme card, an interactive walkthrough highlights the major regions (command bar, sidebar, starting a session, settings, and inside a session the diff panel and composer). Two of its steps open Settings for you: the Worktree tab, explaining the per-session path templates, and the Plugins tab, explaining how to find, install, and trust plugins. Each step lists its keyboard shortcuts and has a **Skip** button.
++Once setup is out of the way, an interactive walkthrough highlights the major regions (command bar, sidebar, starting a session, settings, and inside a session the diff panel and composer). Two of its steps open Settings for you: the Worktree tab, explaining the per-session path templates, and the Plugins tab, explaining how to find, install, and trust plugins. Each step lists its keyboard shortcuts and has a **Skip** button.
+ 
+ Completing or skipping the tour records `app_state.has_seen_web_tour` on the server, so it does not relaunch on reload or on another device pointed at the same server. That flag persists in the server's `state.toml` (a sibling of `config.toml`, see [Configuration Reference](../configuration.md#statetoml)); the `GET /api/settings` JSON key is unchanged, still `app_state.has_seen_web_tour`. To replay it, open the overflow menu and choose **Show tutorial**; re-triggering adapts to where you are (dashboard regions, or composer / mode picker / send controls inside a session). It does not auto-launch on touch devices, where it is menu-only.
+ 
 ```
 
-**File**: `Cargo.toml` (modified, +1/-1)
+**File**: `src/server/access.rs` (modified, +2/-0)
 ```diff
-@@ -140,7 +140,7 @@ tempfile = "3.14"
- which = "8.0"
+@@ -456,6 +456,8 @@ pub(super) const CITYHALL_MUTATION_ALLOW: &[(&str, &str)] = &[
+ /// Mutating routes deliberately unavailable in CityHall.
+ #[cfg(test)]
+ pub(super) const CITYHALL_MUTATION_DENY: &[(&str, &str)] = &[
++    // The setup wizard never shows in CityHall mode.
++    ("PATCH", "/api/setup"),
+     ("POST", "/api/sandbox/image-pull"),
+     ("POST", "/api/sandbox/image-dismiss"),
+     ("POST", "/api/sessions/creation-trust"),
+```
+
+**File**: `src/server/api/mod.rs` (modified, +3/-0)
+```diff
+@@ -19,6 +19,7 @@ mod projects;
+ mod queue;
+ mod sandbox_image;
+ pub(crate) mod sessions;
++mod setup;
+ mod skills;
+ pub(crate) mod system;
+ mod telemetry;
+@@ -75,6 +76,7 @@ pub(crate) use sessions::{
+     lifecycle_rejection, persist_session_update, purge_expired_trash, reconcile_trashed_worktrees,
+     reconcile_worktree_paths, trash_sweep_interval,
+ };
++pub use setup::{get_setup, get_setup_runtimes, patch_setup};
+ pub use skills::{
+     adopt_skill, create_skill, delete_skill, edit_skill, list_skills, read_skill, sync_skills,
+ };
+@@ -509,6 +511,7 @@ mod tests {
+             include_str!("sandbox_image.rs"),
+             &["sandbox_image_pull", "sandbox_image_dismiss"],
+         ),
++        ("setup.rs", include_str!("setup.rs"), &["patch_setup"]),
+         (
+             "system.rs",
+             include_str!("system.rs"),
+```
+
+**File**: `src/server/api/setup.rs` (added, +562/-0)
+```diff
+@@ -0,0 +1,562 @@
++//! Web setup wizard state. Step progress is derived from real configuration on
++//! every read; `state.toml` only records which steps were skipped or confirmed
++//! and whether the wizard was finished, deferred, or its banner dismissed.
++
++use std::sync::Arc;
++
++use axum::{extract::State, http::StatusCode, response::IntoResponse, Json};
++use serde::{Deserialize, Serialize};
++
++use super::{api_error, AppState};
++use crate::session::config::AppStateConfig;
++
++/// The closed step catalog, in wizard order: `(key, required)`.
++const STEPS: [(&str, bool); 6] = [
++    ("theme_telemetry", false),
++    ("agents", true),
++    ("project", false),
++    ("worktrees", false),
++    ("sandbox", false),
++    ("notifications", false),
++];
++
++/// Global `config.toml` keys that configure a step. Every config write saves
++/// the whole file, so a step counts as configured only when one of these
++/// differs from its default; keeping a default is recorded by confirming it.
++const CONFIG_KEYS: [(&str, &str, &[&str]); 3] = [
++    (
++        "worktrees",
++        "worktree",
++        &[
++            "enabled",
++            "path_template",
++            "default_base_branch",
++            "auto_cleanup",
++        ],
++    ),
++    (
++        "sandbox",
++        "sandbox",
++        &["enabled_by_default", "container_runtime", "default_image"],
++    ),
++    (
++        "notifications",
++        "web",
++        &[
++            "notifications_enabled",
++            "notify_on_waiting",
++            "notify_on_idle",
++            "notify_on_error",
++        ],
++    ),
++];
++
++#[derive(Debug, Default)]
++struct SetupInputs {
++    telemetry_answered: bool,
++    agent_installed: bool,
++    project_exists: bool,
++    config: toml::Table,
++    defaults: toml::Table,
++}
++
++fn step_configured(key: &str, inputs: &SetupInputs) -> bool {
++    match key {
++        "theme_telemetry" => inputs.telemetry_answered,
++        "agents" => inputs.agent_installed,
++        "project" => inputs.project_exists,
++        _ => CONFIG_KEYS
++            .iter()
++            .find(|(step, _, _)| *step == key)
++            .is_some_and(|(_, section, keys)| {
++                let table =
++                    |t: &toml::Table| t.get(*section).and_then(toml::Value::as_table).cloned();
++                let (set, defaults) = (table(&inputs.config), table(&inputs.defaults));
++                set.is_some_and(|set| {
++                    keys.iter().any(|k| {
++                        set.get(*k)
++                            .is_some_and(|v| defaults.as_ref().and_then(|d| d.get(*k)) != Some(v))
++                    })
++                })
++            }),
++    }
++}
++
++#[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
++pub struct SetupStep {
++    pub key: String,
++    pub required: bool,
++    /// Set up, from config or by keeping the defaults in the wizard.
++    pub configured: bool,
++    /// The user kept this optional step's defaults in the wizard.
++    pub confirmed: bool,
++    pub skipped: bool,
++}
++
++#[derive(Debug, Serialize, Deserialize)]
++pub struct SetupAccess {
++    pub serve_mode: String,
++    #[serde(skip_serializing_if = "Option::is_none")]
++    pub tunnel_url: Option<String>,
++}
++
++#[derive(Debug, Serialize, Deserialize)]
++pub struct SetupStatus {
++    pub finished: bool,
++    pub deferred: bool,
++    pub banner_dismissed: bool,
++    pub steps: Vec<SetupStep>,
++    pub tmux: bool,
++    pub git: bool,
++    pub access: SetupAccess,
++}
++
++fn build_steps(inputs: &SetupInputs, app: &AppStateConfig) -> Vec<SetupStep> {
++    let skipped = known_steps(&app.setup_skipped_steps);
++    let confirmed = known_steps(&app.setup_confirmed_steps);
++    STEPS
++        .iter()
++        .map(|(key, required)| {
++            // A required step is only ever done by being configured.
++            let confirmed = !required && confirmed.contains(key);
++            SetupStep {
++                key: key.to_string(),
++                required: *required,
++                configured: confirmed || step_configured(key, inputs),
++                confirmed,
++                skipped: skipped.contains(key),
++            }
++        })
++        .collect()
++}
++
++/// Stored skip keys a newer or older build no longer knows are dropped.
++fn known_steps(stored: &[String]) -> Vec<&'static str> {
++    STEPS
++        .iter()
++        .filter(|(key, _)| stored.iter().any(|s| s == key))
++        .map(|(key, _)| *key)
++        .collect()
++}
++
++/// Validate a client-sent optional step key.
++fn optional_step(key: &str) -> Result<String, String> {
++    match STEPS.iter().find(|(step, _)| *step == key) {
++        None => Err(format!("unknown setup step '{key}'")),
++        Some((_, true)) => Err(format!("setup step '{key}' is required")),
++        Some(_) => Ok(key.to_string()),
++    }
++}
++
++/// The first required step that isn't set up, which blocks finishing.
++fn open_required_step(inputs: &SetupInputs) -> Option<&'static str> {
++    STEPS
++        .iter()
++        .find(|(key, required)| *r
+```
+
+**File**: `src/server/api/system.rs` (modified, +53/-0)
+```diff
+@@ -134,6 +134,19 @@ pub struct AgentInfo {
+     /// deprecated badge in the wizard picker and switch-agent modal.
+     #[serde(skip_serializing_if = "crate::agents::AgentLifecycle::is_active")]
+     pub lifecycle: crate::agents::AgentLifecycle,
++    /// Resolved binary on the daemon's PATH, for installed built-in agents.
++    #[serde(skip_serializing_if = "Option::is_none")]
++    pub path: Option<String>,
++    /// Command that installs the ACP adapter, when it is missing and known.
++    #[serde(skip_serializing_if = "Option::is_none")]
++    pub acp_install_command: Option<String>,
++}
++
++/// The install command for an ACP adapter, keyed on its binary name since the
++/// registry command may be a data-dir path (`aoe-agent`).
++fn adapter_install_command(acp_command: Option<&str>) -> Option<String> {
++    let binary = std::path::Path::new(acp_command?).file_name()?.to_str()?;
++    crate::acp::install_hints::install_hint_for(binary).map(str::to_string)
+ }
  
- # SQLite
--rusqlite = "0.40"
-+rusqlite = "0.41"
+ /// Resolve the acp launch command + args for a built-in agent from
+@@ -209,6 +222,8 @@ fn build_custom_agent_infos(
+                 // serialized here; they can hold hostnames or secrets.
+                 acp_command: None,
+                 acp_args: Vec::new(),
++                path: None,
++                acp_install_command: None,
+             }
+         })
+         .collect();
+@@ -305,6 +320,8 @@ pub async fn list_agents(
+                     acp_allowed: policy.allows(a.name),
+                     acp_command,
+                     acp_args,
++                    path: None,
++                    acp_install_command: None,
+                 }
+             })
+             .collect::<Vec<_>>();
+@@ -346,6 +363,8 @@ pub async fn list_agents(
+                 acp_command: None,
+                 acp_args: Vec::new(),
+                 lifecycle: crate::agents::AgentLifecycle::Active,
++                path: None,
++                acp_install_command: None,
+             });
+         }
+         agents.extend(build_custom_agent_infos(
+@@ -376,6 +395,10 @@ pub async fn list_agents(
+             if agent.acp_capable {
+                 agent.acp_installed =
+                     adapter_installed(&agent.name, &config, &host_environment, &|| false);
++                if !agent.acp_installed {
++                    agent.acp_install_command =
++                        adapter_install_command(agent.acp_command.as_deref());
++                }
+             }
+             // Every row, since the repository may give a profile-terminal agent an ACP base.
+             agent.acp_create_ready = adapter_installed(
+@@ -385,6 +408,14 @@ pub async fn list_agents(
+                 &hooks_apply,
+             );
+         }
++        for agent in agents
++            .iter_mut()
++            .filter(|a| a.kind == "builtin" && a.installed)
++        {
++            agent.path = which::which(&agent.binary)
++                .ok()
++                .map(|p| p.display().to_string());
++        }
+         agents
+     })
+     .await
+@@ -3748,6 +3779,28 @@ mod tests {
+         }
+     }
  
- axum = { version = "0.8", features = ["ws"] }
- # hyper/TokioIo reuse the UID/PID-verified UnixStream, including builds without `web`.
++    #[test]
++    fn adapter_install_command_resolves_by_binary_name() {
++        for (command, expected) in [
++            (
++                Some("codex-acp"),
++                Some("npm install -g @agentclientprotocol/codex-acp@latest"),
++            ),
++            (
++                Some("/data/aoe/bin/aoe-agent"),
++                Some("aoe acp doctor --fix --adapter aoe-agent"),
++            ),
++            (Some("unknown-acp"), None),
++            (None, None),
++        ] {
++            assert_eq!(
++                adapter_install_command(command).as_deref(),
++                expected,
++                "{command:?}"
++            );
++        }
++    }
++
+     /// The wizard names the runtime that isn't running, so it's reported
+     /// whether or not it's available.
+     #[tokio::test]
+```
+
+**File**: `src/server/auth.rs` (modified, +5/-0)
+```diff
+@@ -143,6 +143,9 @@ fn is_machine_endpoint(path: &str) -> bool {
+ fn is_login_session_exempt(path: &str) -> bool {
+     path == "/"
+         || path == "/login"
++        // Page shell only: /api/setup stays session-gated, and
++        // patch_setup checks read_only and CityHall itself.
++        || path == "/setup"
+         || path.starts_with("/session/")
+         || path.starts_with("/plugins/")
+         || path == "/api/login"
+@@ -1083,6 +1086,7 @@ mod tests {
+         let exempt = [
+             "/",
+             "/login",
++            "/setup",
+             "/session/abc",
+             "/session/2626c6af68754732",
+             "/plugins/github/prs",
+@@ -1211,6 +1215,7 @@ mod tests {
+             // Cosmetic UI state and the update banner grant no capability; the
+             // handlers still enforce read_only.
+             (Method::POST, "/api/app-state/web-tour-seen"),
++            (Method::PATCH, "/api/setup"),
+             (Method::POST, "/api/app-state/dismiss-update"),
+             (Method::PATCH, "/api/app-state/web-ui-state"),
+             // Read-only GETs, even on settings and profile paths.
+```
+
+**File**: `src/server/router.rs` (modified, +2/-0)
+```diff
+@@ -337,6 +337,8 @@ pub(super) fn build_router(state: Arc<AppState>) -> Router {
+             "/api/app-state/web-tour-seen",
+             post(api::mark_web_tour_seen),
+         )
++        .route("/api/setup", get(api::get_setup).patch(api::patch_setup))
++        .route("/api/setup/runtimes", get(api::get_setup_runtimes))
+         .route("/api/app-state/dismiss-update", post(api::dismiss_update))
+         .route(
+             "/api/app-state/web-ui-state",
+```
+
+**File**: `src/session/config/mod.rs` (modified, +16/-0)
+```diff
+@@ -1062,6 +1062,22 @@ pub struct AppStateConfig {
+     #[serde(default)]
+     pub used_system_health: bool,
+ 
++    /// Web setup wizard steps the user chose to skip. See `GET /api/setup`.
++    #[serde(default, skip_serializing_if = "Vec::is_empty")]
++    pub setup_skipped_steps: Vec<String>,
++    /// Optional web setup steps whose defaults the user kept.
++    #[serde(default, skip_serializing_if = "Vec::is_empty")]
++    pub setup_confirmed_steps: Vec<String>,
++    /// The user finished the web setup wizard.
++    #[serde(default)]
++    pub setup_finished: bool,
++    /// The user left the wizard for the dashboard, so `/` stops redirecting.
++    #[serde(default)]
++    pub setup_deferred: bool,
++    /// The user closed the dashboard's "Finish setting up" banner.
++    #[serde(default)]
++    pub setup_banner_dismissed: bool,
++
+     /// Server-side mirror of the web dashboard's syncable UI state, keyed by
+     /// the frontend's localStorage key (the value is the opaque string the
+     /// browser stored). Single-tenant: there is one user, so these prefs
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5521** (closed): ci: split compile from run in build-and-test steps (@Seluj78)
-- **PR #5520** (2026-11-09): ci: 4cpu jobs on Spot, split build/test steps, faster cargo builds (@Seluj78)
-- **PR #5519** (2026-11-09): chore(castellan): use Sonnet 4.6 and Haiku 4.5 on Bedrock (@Seluj78)
-- **PR #5511** (2026-11-09): chore(castellan): add code review findings rules to the review prompt (@athal7)
-- **PR #5510** (2026-11-09): ci: add castellan shadow config and needs-triage labeler (@Seluj78)
-- **PR #5506** (2026-11-09): fix(deps): bump rusqlite to 0.41 for patched bundled SQLite (RUSTSEC-2026-0459) (@Seluj78)
+- **PR #5684** (2026-11-14): fix(acp): keep owner stop that lands before failover locks (@cwrau)
+- **PR #5672** (2026-11-13): feat(web): show Retry's progress as the startup line, and a plain empty state while the Agent isn't running (@klubrake)
+- **PR #5670** (closed): test(acp): record shim calls synchronously so order matches arrival (@Seluj78)
+- **PR #5667** (2026-11-13): fix(process): treat a zombie runner as not live (@klubrake)
+- **PR #5666** (2026-11-13): feat(acp): report a sandbox container removed mid-run as a typed startup cause (@klubrake)
+- **PR #5664** (2026-11-13): feat(plugins): pin plugin-linear 0.1.0 in featured.toml (@athal7)
 
 ---
 
@@ -2594,64 +3178,36 @@ Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tui): lock Yolo in the new-session dialog for the agent each view runs (#5412)
+## X. tui): flash deletion cleanup notes instead of a blocking dialog
 
 **RULE**:
-When implementing operations in `src/tui/dialogs/new_session/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in agent-of-empires/agent-of-empires. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/tui/app.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in agent-of-empires/agent-of-empires. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ec5be5a6`: tui): lock Yolo in the new-session dialog for the agent each view runs (#5412). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5b6d208f`: tui): flash deletion cleanup notes instead of a blocking dialog. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/tui/dialogs/new_session/mod.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/tui/app.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /// The profile's custom-agent maps, which decide whether a custom tool always
-    /// runs in Yolo mode in the chosen view.
-    pub(super) agent_acp_cmd: std::collections::HashMap<String, String>,
-    pub(super) agent_detect_as: std::collections::HashMap<String, String>,
-
-    /// Where the row at `index` in the `before` layout sits now, or `None` if it is hidden.
-    fn follow(&self, before: &FieldIndices, index: usize) -> Option<usize> {
-        [
-            (before.profile, self.profile),
-            (before.path, self.path),
-            (before.title, self.title),
-            (before.tool, self.tool),
-            (before.structured, self.structured),
-            (before.yolo, self.yolo),
-            (before.worktree, self.worktree),
-            (before.sandbox, self.sandbox),
-            (before.group, self.group),
-        ]
-        .into_iter()
-        .find(|(old, _)| *old == index)
-        .map(|(_, new)| new)
-        .filter(|new| *new != Self::ABSENT)
-    }
-            agent_acp_cmd: config.session.agent_acp_cmd.clone(),
-            agent_detect_as: config.session.agent_detect_as.clone(),
-        } else {
-            let config = self.resolve_config_for_path(self.sele
+                    // Keys reach the view before the next draw, so no dialog is promoted here.
+                    self.home.apply_session_feed_before_input();
+        self.home.apply_session_feed_before_input();
+        self.home.apply_session_feed_before_input();
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-        if self.selected_tool_always_yolo() {
-            self.yolo_mode = true;
-        } else {
-            self.yolo_mode = self.yolo_mode_default;
-        }
-            self.structured_enabled = structured;
-            self.structured_choice = Some(structured);
-        let config = self.resolve_config_for_path(&profile);
+// Induced defect failure mode:
+                    self.home.apply_session_feed();
+        self.home.apply_session_feed();
+        self.home.apply_session_feed();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ec5be5a6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5b6d208f` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-14T12:04:15.384Z",
+  "last_updated": "2026-11-14T12:34:03.358Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1580,14 +1580,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-intfloat-multilingual-e5-small",
-      "content_hash": "d7aa62006b1a76aa9a2b0ea4617319a1ba5407fa8d663cb1eb5c91bb7d87827f",
-      "verified_at": "2026-11-09T03:35:18.023Z",
+      "content_hash": "0edcbcffce489376ef5b65d364f7b24844fbc55d4dcaccdc305f9a287cb2e7d8",
+      "verified_at": "2026-11-14T12:33:50.939Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T03:35:18.023Z"
+      "last_updated": "2026-11-14T12:33:50.939Z"
     },
     "argmaxinc/whisperkit-coreml": {
       "repository": "argmaxinc/whisperkit-coreml",
@@ -5301,14 +5301,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectdiscovery-nuclei",
-      "content_hash": "5759c9dec1226de28145439dbb8610563a538338cf73617a37fe83f6433b964b",
-      "verified_at": "2026-11-11T09:39:45.580Z",
+      "content_hash": "8623fa0e5a0a432aef845dc342d50c4f0a755f79528cdeaf6ce2c8bc95a413b3",
+      "verified_at": "2026-11-14T12:34:03.357Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T09:39:45.580Z"
+      "last_updated": "2026-11-14T12:34:03.357Z"
     },
     "okteto/okteto": {
       "repository": "okteto/okteto",
@@ -5571,14 +5571,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-koderover-zadig",
-      "content_hash": "a3fb031f67a5c54c2db1da31b5f2fc90ca4dfd44201f6e69fc2b5015ca8407ec",
-      "verified_at": "2026-11-13T08:55:59.896Z",
+      "content_hash": "d9bafbfd77ad9298548e2d61abdacdc35d3800d7cb751c63a357c0b550c9102f",
+      "verified_at": "2026-11-14T12:34:01.949Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T08:55:59.896Z"
+      "last_updated": "2026-11-14T12:34:01.949Z"
     },
     "trufflesecurity/trufflehog": {
       "repository": "trufflesecurity/trufflehog",
@@ -11211,14 +11211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-agent-of-empires-agent-of-empires",
-      "content_hash": "7b75fb4cf40af49ebe9d55c7276c5dc0b6b13cb121f965ac71245a6c9e97bdb0",
-      "verified_at": "2026-11-13T00:23:59.375Z",
+      "content_hash": "b509aef91c3b969410d2e53ca2a8f9daf1cd3f8deddea5984e5a6f92f5b23780",
+      "verified_at": "2026-11-14T12:33:54.024Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T00:23:59.375Z"
+      "last_updated": "2026-11-14T12:33:54.024Z"
     },
     "NativeScript/NativeScript": {
       "repository": "NativeScript/NativeScript",

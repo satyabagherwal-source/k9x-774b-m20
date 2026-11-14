@@ -9825,3 +9825,8 @@
 | `CYCLE-20261114-Y6IL` | `2026-11-14T12:04:13.821Z` | `czy0729/Bangumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8484` | Yes (`2af58ca9...`) |
 | `CYCLE-20261114-Y7PK` | `2026-11-14T12:04:15.368Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8485` | Yes (`b8cb8c17...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T12:04:53.000Z` | `hf-google-gemma-4-26b-a4b-it` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-5A7FBD90` [Domain D] | Yes (`f62cea94...`) |
+| `CYCLE-20261114-09Q8` | `2026-11-14T12:33:50.912Z` | `intfloat/multilingual-e5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md` | Yes (`0edcbcff...`) |
+| `CYCLE-20261114-0C4B` | `2026-11-14T12:33:54.011Z` | `agent-of-empires/agent-of-empires` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8486` | Yes (`b509aef9...`) |
+| `CYCLE-20261114-0I8G` | `2026-11-14T12:34:01.936Z` | `koderover/zadig` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8487` | Yes (`d9bafbfd...`) |
+| `CYCLE-20261114-0JBL` | `2026-11-14T12:34:03.345Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8488` | Yes (`8623fa0e...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T12:34:36.271Z` | `hf-intfloat-multilingual-e5-small` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-C580DAE3` [Domain D] | Yes (`3f274a40...`) |

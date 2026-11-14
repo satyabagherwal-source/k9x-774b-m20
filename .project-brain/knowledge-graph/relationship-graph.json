@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-14T12:04:52.998Z",
+  "updated_at": "2026-11-14T12:34:36.269Z",
   "statistics": {
-    "total_nodes": 186,
+    "total_nodes": 187,
     "total_edges": 99,
     "domain_distribution": {
-      "D": 143,
+      "D": 144,
       "M": 1,
       "H": 17,
       "J": 8,
@@ -4167,6 +4167,28 @@
       ],
       "created_at": "2026-11-14T12:04:52.998Z",
       "updated_at": "2026-11-14T12:04:52.998Z"
+    },
+    "DOM-D-C580DAE3": {
+      "id": "DOM-D-C580DAE3",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): intfloat/multilingual-e5-small",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md`  \n> **Source**: huggingface ([https: -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md`  \n> **Source**: huggingface ([https:",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-intfloat-multilingual-e5-small/hf-intfloat-multilingual-e5-small-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T12:34:06.968Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-intfloat-multilingual-e5-small)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-14T12:34:36.269Z",
+      "updated_at": "2026-11-14T12:34:36.269Z"
     }
   },
   "edges": [

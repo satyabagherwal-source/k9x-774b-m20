@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:40:13.058Z",
+  "timestamp": "2026-11-14T12:34:36.732Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-koderover-zadig-learnings",
+  "learning_id": "LEARN-EVO-koderover-zadig-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [koderover-zadig-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:40:13.058Z`  
-> **Learning ID**: `LEARN-REEXTRACT-koderover-zadig-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-14T12:34:36.732Z`  
+> **Learning ID**: `LEARN-EVO-koderover-zadig-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/koderover-zadig-learnings.md`  
 > **Source**: github ([https://github.com/koderover/zadig](https://github.com/koderover/zadig))  
-> **Source Version**: `e00d4622`  
+> **Source Version**: `1174b8c7`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T03:56:12.366Z  
+> **Timestamp**: 2026-11-14T12:34:01.088Z  
 > **Learning ID**: `learn-github-koderover-zadig`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/koderover-zadig-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/koderover/zadig](https://github.com/koderover/zadig))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T03:56:12.036Z  
+> **Harvest Timestamp**: 2026-11-14T12:34:01.083Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Zadig: An AI-powered, cloud-native, distributed DevOps platform designed for developers
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 3276 stars
+- **Stars / Engagement**: 3278 stars
 
 ---
 
@@ -1183,57 +1183,442 @@ func FileExists(filePath string) (bool, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e00d4622` (2026-11-12)
-**Commit Message**: fix(workflow): honor runtime commit source for builds (#5053)
+### Incident Patch 1: `5c56cc50` (2026-11-13)
+**Commit Message**: fix: avoid unnecessary agent rollouts on scheduling strategy updates (#5065)
+
+* fix: preserve valid hub-agent tokens during cluster updates
+
+Reuse the deployed HUB_AGENT_TOKEN when it decrypts to the current cluster ID so random AES IVs do not roll the agent on every scheduling strategy update. Keep resource reconciliation, real agent configuration changes, and credential migration intact.
 
 Signed-off-by: huanghongbo-hhb <[REDACTED_EMAIL]>
 
-**File**: `pkg/microservice/aslan/core/common/service/service.go` (modified, +6/-0)
-```diff
-@@ -1039,6 +1039,12 @@ func replaceVariable(customRule *template.CustomRule, candidate *candidate) stri
- 			return fmt.Sprintf("%s:%s-%d-%s", candidate.ImageName, candidate.Timestamp, candidate.TaskID, candidate.Branch)
- 		}
- 		currentRule = customRule.BranchRule
-+	} else if candidate.CommitID != "" {
-+		// commit-only source without a branch
-+		if customRule == nil {
-+			return fmt.Sprintf("%s:%s-%d-%s", candidate.ImageName, candidate.Timestamp, candidate.TaskID, candidate.CommitID)
-+		}
-+		currentRule = customRule.BranchRule
- 	}
- 
- 	currentRule = ReplaceRuleVariable(currentRule, &Variable{
-```
+* fix: validate rendered hub-agent token fields
 
-**File**: `pkg/microservice/aslan/core/workflow/service/workflow/controller/job/utils.go` (modified, +11/-0)
+Signed-off-by: huanghongbo-hhb <[REDACTED_EMAIL]>
+
+* fix: simplify rendered hub-agent manifest errors
+
+The rendered manifest comes from our own template, so report any
+unexpected structure with one error.
+
+Signed-off-by: huanghongbo-hhb <[REDACTED_EMAIL]>
+
+* fix: wrap hub-agent manifest errors with context
+
+Restore the specific manifest errors and wrap NestedSlice and
+SetNestedSlice failures so the failing step stays visible.
+
+Signed-off-by: huanghongbo-hhb <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: huanghongbo-hhb <[REDACTED_EMAIL]>
+
+**File**: `pkg/microservice/aslan/core/multicluster/service/clusters.go` (modified, +71/-0)
 ```diff
-@@ -290,6 +290,17 @@ func applyRepos(base, input []*types.Repository) []*types.Repository {
- 			item.SSHKey = cv.SSHKey
- 			item.PrivateAccessToken = cv.PrivateAccessToken
+@@ -56,6 +56,7 @@ import (
+ 	"github.com/koderover/zadig/v2/pkg/shared/client/plutusenterprise"
+ 	"github.com/koderover/zadig/v2/pkg/shared/handler"
+ 	"github.com/koderover/zadig/v2/pkg/tool/clientmanager"
++	"github.com/koderover/zadig/v2/pkg/tool/crypto"
+ 	e "github.com/koderover/zadig/v2/pkg/tool/errors"
+ 	"github.com/koderover/zadig/v2/pkg/tool/kube/serializer"
+ 	"github.com/koderover/zadig/v2/pkg/tool/kube/updater"
+@@ -916,6 +917,71 @@ func GetClusterByAgentToken(token string, logger *zap.SugaredLogger) (*commonmod
+ 	return s.GetClusterByAgentToken(token, logger)
+ }
  
-+			// an explicit runtime source decides the commit mode; otherwise keep the configured mode
-+			if cv.EnableCommit && cv.CommitID != "" {
-+				item.EnableCommit = true
-+				// keep the configured branch for image tag naming, the checkout still uses the commit
-+				if cv.Branch == "" {
-+					item.Branch = repo.Branch
-+				}
-+			} else if cv.CommitID == "" && (cv.Branch != "" || cv.Tag != "" || cv.PR > 0 || len(cv.PRs) > 0) {
-+				item.EnableCommit = false
-+			}
++func preserveHubAgentToken(agent *unstructured.Unstructured, clusterID string, clientset kubernetes.Interface) error {
++	current, err := clientset.AppsV1().Deployments(agent.GetNamespace()).Get(context.Background(), agent.GetName(), metav1.GetOptions{})
++	if apierrors.IsNotFound(err) {
++		return nil
++	}
++	if err != nil {
++		return fmt.Errorf("failed to get existing hub-agent deployment: %w", err)
++	}
 +
- 			if item.Address == "" {
- 				item.Address = cv.Address
++	token := ""
++	for _, container := range current.Spec.Template.Spec.Containers {
++		if container.Name != "agent" {
++			continue
++		}
++		for _, env := range container.Env {
++			if env.Name == setting.HubAgentToken {
++				token = env.Value
++				break
++			}
++		}
++		break
++	}
++	// Random AES IVs change the ciphertext on every render; retain a token only while it authenticates this cluster.
++	id, err := crypto.AesDecrypt(token)
++	if err != nil || id != clusterID {
++		return nil
++	}
++
++	containers, exists, err := unstructured.NestedSlice(agent.Object, "spec", "template", "spec", "containers")
++	if err != nil {
++		return fmt.Errorf("failed to get containers from rendered hub-agent deployment: %w", err)
++	}
++	if !exists {
++		return fmt.Errorf("rendered hub-agent deployment is missing containers")
++	}
++	for _, item := range containers {
++		container, ok := item.(map[string]interface{})
++		if !ok {
++			return fmt.Errorf("rendered hub-agent deployment contains an invalid container")
++		}
++		if container["name"] != "agent" {
++			continue
++		}
++		envs, ok := container["env"].([]interface{})
++		if !ok {
++			return fmt.Errorf("rendered hub-agent container env is missing or not a list")
++		}
++		for _, item := range envs {
++			env, ok := item.(map[string]interface{})
++			if !ok {
++				return fmt.Errorf("rendered hub-agent container contains an invalid env entry")
++			}
++			if env["name"] == setting.HubAgentToken {
++				env["value"] = token
++				break
++			}
++		}
++		break
++	}
++	if err := unstructured.SetNestedSlice(agent.Object, containers, "spec", "template", "spec", "containers"); err != nil {
++		return fmt.Errorf("failed to set containers on rendered hub-agent deployment: %w", err)
++	}
++	return nil
++}
++
+ func UpgradeAgent(id string, logger *zap.SugaredLogger) error {
+ 	s, err := kube.NewService("")
+ 	if err != nil {
+@@ -1019,6 +1085,11 @@ func UpgradeAgent(id string, logger *zap.SugaredLogger) error {
+ 				}
+ 			} else if u.GetKind() == "Service" && u.GetName() == types.DindStatefulSetName {
+ 				err = kube.EnsureDindServiceTLS(kubeClient, dindNamespace)
++			} else if u.GetKind() == "Deployment" && u.GetName() == "koderover-agent-node-agent" {
++				err = preserveHubAgentToken(u, id, clientset)
++				if err == nil {
++					err = updater.CreateOrPatchUnstructured(u, kubeClient)
++				}
+ 			} else {
+ 				err = updater.CreateOrPatchUnstructured(u, kubeClient)
  			}
 ```
 
+---
+
+### Incident Patch 2: `55afbdf8` (2026-11-13)
+**Commit Message**: fix: preserve CLI OAuth target after sign-in (#5069)
+
+* fix: preserve OAuth authorization target through third-party login
+
+Signed-off-by: huanghongbo-hhb <[REDACTED_EMAIL]>
+
+* fix(login): restore CLI authorization after local sign-in
+
+Signed-off-by: leozhang2018 <[REDACTED_EMAIL]>
+Signed-off-by: huanghongbo-hhb <[REDACTED_EMAIL]>
+
+* fix(login): pass the saved return target to Dex
+
+Signed-off-by: huanghongbo-hhb <[REDACTED_EMAIL]>
+
+* fix(oauth): shorten device authorization lifetime to five minutes
+
+Signed-off-by: huanghongbo-hhb <[REDACTED_EMAIL]>
+
+* revert(login): withdraw Dex return-target signaling
+
+Signed-off-by: huanghongbo-hhb <[REDACTED_EMAIL]>
+
+* fix(login): forward the saved return target to Dex
+
+Signed-off-by: huanghongbo-hhb <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: huanghongbo-hhb <[REDACTED_EMAIL]>
+Signed-off-by: leozhang2018 <[REDACTED_EMAIL]>
+Co-authored-by: leozhang2018 <[REDACTED_EMAIL]>
+
+**File**: `pkg/microservice/user/core/handler/login/third_party.go` (modified, +46/-4)
+```diff
+@@ -87,12 +87,13 @@ func Login(c *gin.Context) {
+ 		ctx.RespErr = err
+ 		return
+ 	}
+-	state, browserToken, err := login.CreateThirdPartyLoginState()
++	state, browserToken, err := login.CreateThirdPartyLoginState(c.Query("redirect"))
+ 	if err != nil {
+ 		ctx.RespErr = err
+ 		return
+ 	}
+-	authCodeURL := oauth2Config.AuthCodeURL(state, oauth2.AccessTypeOffline)
++	authCodeURL := oauth2Config.AuthCodeURL(state, oauth2.AccessTypeOffline,
++		oauth2.SetAuthURLParam("redirect", c.Query("redirect")))
+ 	defaultLogin := ""
+ 	replaceURL := configbase.SystemAddress() + "/dex/auth"
+ 	if systemConfig.DefaultLogin != setting.DefaultLoginLocal {
+@@ -107,6 +108,46 @@ func Login(c *gin.Context) {
+ 	c.Redirect(http.StatusSeeOther, authCodeURL)
+ }
+ 
++type completeLocalLoginArgs struct {
++	State string `json:"state"`
++}
++
++// CompleteLocalLogin restores the saved redirect after a local password or MFA login.
++func CompleteLocalLogin(c *gin.Context) {
++	c.Header("Cache-Control", "no-store")
++	authorization := strings.Fields(c.GetHeader(setting.AuthorizationHeader))
++	if len(authorization) != 2 || !strings.EqualFold(authorization[0], "Bearer") {
++		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
++		return
++	}
++	claims, valid, err := permission.ValidateWebSessionToken(authorization[1])
++	if err != nil || !valid || claims == nil || claims.UID == "" {
++		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
++		return
++	}
++
++	args := new(completeLocalLoginArgs)
++	if err := c.ShouldBindJSON(args); err != nil || strings.TrimSpace(args.State) == "" {
++		c.JSON(http.StatusBadRequest, gin.H{"error": "state is required"})
++		return
++	}
++
++	cookie := thirdPartyLoginCookie()
++	browserToken, err := c.Cookie(cookie.Name)
++	if err != nil || browserToken == "" {
++		c.JSON(http.StatusBadRequest, gin.H{"error": "login browser cookie is required"})
++		return
++	}
++	redirectPath, err := login.ConsumeThirdPartyLoginState(args.State, browserToken)
++	if err != nil {
++		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid or expired login state"})
++		return
++	}
++	cookie.MaxAge = -1
++	http.SetCookie(c.Writer, cookie)
++	c.JSON(http.StatusOK, gin.H{"redirect": redirectPath})
++}
++
+ // @Summary 查询第三方登录是否开启
+ // @Description 返回系统当前是否配置了可用的第三方登录连接器
+ // @Tags user
+@@ -177,7 +218,8 @@ func Callback(c *gin.Context) {
+ 		return
+ 	}
+ 	// Atomically validate and consume state before exchanging the authorization code.
+-	if err := login.ConsumeThirdPartyLoginState(c.Query("state"), browserToken); err != nil {
++	redirectPath, err := login.ConsumeThirdPartyLoginState(c.Query("state"), browserToken)
++	if err != nil {
+ 		ctx.RespErr = err
+ 		return
+ 	}
+@@ -212,7 +254,7 @@ func Callback(c *gin.Context) {
+ 		return
+ 	}
+ 
+-	redirectURL, err := login.HandleThirdPartyLoginSuccess(user, ctx.Logger)
++	redirectURL, err := login.HandleThirdPartyLoginSuccess(user, redirectPath, ctx.Logger)
+ 	if err != nil {
+ 		ctx.RespErr = err
+ 		return
+```
+
+**File**: `pkg/microservice/user/core/handler/router.go` (modified, +1/-0)
+```diff
+@@ -86,6 +86,7 @@ func (*Router) Inject(router *gin.RouterGroup) {
+ 		general.GET("/callback", login.Callback)
+ 		general.GET("/login", login.Login)
+ 		general.POST("/login", login.LocalLogin)
++		general.POST("/login/complete", login.CompleteLocalLogin)
+ 		general.POST("/login/mfa/setup", login.MFASetup)
+ 		general.POST("/login/mfa/enroll", login.MFAEnroll)
+ 		general.POST("/login/mfa/verify", login.MFAVerify)
+```
+
+**File**: `pkg/microservice/user/core/service/login/mfa.go` (modified, +4/-1)
+```diff
+@@ -721,12 +721,15 @@ func mfaChallengeKey(challengeToken string) string {
+ 	return fmt.Sprintf("%s:%s", mfaChallengePrefix, challengeToken)
+ }
+ 
+-func buildMFARedirectURL(challengeToken string, action MFARequiredAction, expiresAt int64) string {
++func buildMFARedirectURL(challengeToken string, action MFARequiredAction, expiresAt int64, redirectPath string) string {
+ 	query := url.Values{}
+ 	query.Set("mfa_required", "true")
+ 	query.Set("required_action", string(action))
+ 	query.Set("mfa_challenge_token", challengeToken)
+ 	query.Set("mfa_expires_at", fmt.Sprintf("%d", expiresAt))
++	if redirectPath != "" {
++		query.Set("redirect", redirectPath)
++	}
+ 	return "/mfa-enroll?" + query.Encode()
+ }
+ 
+```
+
+**File**: `pkg/microservice/user/core/service/login/oauth.go` (modified, +1/-1)
+```diff
+@@ -51,7 +51,7 @@ const (
+ 	oauthErrorAccessDenied         = "access_denied"
+ 	oauthErrorExpiredToken         = "expired_token"
+ 
+-	oauthDeviceAuthorizationTTL = 10 * time.Minute
++	oauthDeviceAuthorizationTTL = 5 * time.Minute
+ 	oauthDevicePollInterval     = 5 * time.Second
+ 	oauthAccessTokenTTL         = 2 * time.Hour
+ 	oauthRefreshTokenTTL        = 7 * 24 * time.Hour
+```
+
+**File**: `pkg/microservice/user/core/service/login/third_party.go` (modified, +34/-10)
+```diff
+@@ -17,10 +17,13 @@ limitations under the License.
+ package login
+ 
+ import (
++	"errors"
+ 	"fmt"
+ 	"net/url"
++	"strings"
+ 	"time"
+ 
++	"github.com/redis/go-redis/v9"
+ 	"go.uber.org/zap"
+ 
+ 	"github.com/koderover/zadig/v2/pkg/microservice/user/config"
+@@ -32,7 +35,14 @@ import (
+ 
+ const ThirdPartyLoginStateTTL = 5 * time.Minute
+ 
+-func CreateThirdPartyLoginState() (state, browserToken string, err error) {
++func CreateThirdPartyLoginState(redirectPath string) (state, browserToken string, err error) {
++	if redirectPath != "" {
++		target, parseErr := url.ParseRequestURI(redirectPath)
++		if parseErr != nil || target.IsAbs() || !strings.HasPrefix(target.Path, "/") ||
++			strings.HasPrefix(target.Path, "//") || strings.Contains(target.Path, "\\") {
++			return "", "", fmt.Errorf("login redirect must be a site-relative path")
++		}
++	}
+ 	state, err = randomOAuthValue(32)
+ 	if err != nil {
+ 		log.Errorf("Failed to generate random state for third-party login, err: %s", err)
+@@ -43,7 +53,13 @@ func CreateThirdPartyLoginState() (state, browserToken string, err error) {
+ 		log.Errorf("Failed to generate random browser token for third-party login, err: %s", err)
+ 		return "", "", err
+ 	}
+-	err = cache.NewRedisCache(config.RedisUserTokenDB()).Write(
++	redisCache := cache.NewRedisCache(config.RedisUserTokenDB())
++	if redirectPath != "" {
++		if err = redisCache.Write(oauthKey("login-redirect", hashOAuthValue(state)), redirectPath, ThirdPartyLoginStateTTL); err != nil {
++			return "", "", err
++		}
++	}
++	err = redisCache.Write(
+ 		oauthKey("login-state", hashOAuthValue(state)), hashOAuthValue(browserToken), ThirdPartyLoginStateTTL,
+ 	)
+ 	if err != nil {
+@@ -53,20 +69,25 @@ func CreateThirdPartyLoginState() (state, browserToken string, err error) {
+ 	return state, browserToken, nil
+ }
+ 
+-func ConsumeThirdPartyLoginState(state, browserToken string) error {
++func ConsumeThirdPartyLoginState(state, browserToken string) (string, error) {
+ 	if state == "" || browserToken == "" {
+-		return fmt.Errorf("missing login state or browser cookie")
++		return "", fmt.Errorf("missing login state or browser cookie")
+ 	}
+-	consumed, err := cache.NewRedisCache(config.RedisUserTokenDB()).CompareAndDelete(
++	redisCache := cache.NewRedisCache(config.RedisUserTokenDB())
++	consumed, err := redisCache.CompareAndDelete(
+ 		oauthKey("login-state", hashOAuthValue(state)), hashOAuthValue(browserToken),
+ 	)
+ 	if err != nil {
+-		return err
++		return "", err
+ 	}
+ 	if !consumed {
+-		return fmt.Errorf("invalid or expired login state")
++		return "", fmt.Errorf("invalid or expired login state")
++	}
++	redirectPath, err := redisCache.GetString(oauthKey("login-redirect", hashOAuthValue(state)))
++	if errors.Is(err, redis.Nil) {
++		return "", nil
+ 	}
+-	return nil
++	return redirectPath, err
+ }
+ 
+ type enabledStatus struct {
+@@ -83,7 +104,7 @@ func ThirdPartyLoginEnabled() *enabledStatus {
+ 	}
+ }
+ 
+-func HandleThirdPartyLoginSuccess(user *models.User, logger *zap.SugaredLogger) (string, error) {
++func HandleThirdPartyLoginSuccess(user *models.User, redirectPath string, logger *zap.SugaredLogger) (string, error) {
+ 	if user == nil {
+ 		return "", fmt.Errorf("user not found")
+ 	}
+@@ -104,12 +125,15 @@ func HandleThirdPartyLoginSuccess(user *models.User, logger *zap.SugaredLogger)
+ 		}
+ 		v := url.Values{}
+ 		v.Add("token", resp.Token)
++		if redirectPath != "" {
++			v.Set("redirect", redirectPath)
++		}
+ 		return "/?" + v.Encode(), nil
+ 	}
+ 
+ 	action, challengeToken, expiresAt, err := PrepareMFALoginChallengeForUser(user.UID, logger)
+ 	if err != nil {
+ 		return "", err
+ 	}
+-	return buildMFARedirectURL(challengeToken, action, expiresAt), nil
++	return buildMFARedirectURL(challengeToken, action, expiresAt, redirectPath), nil
+ }
+```
+
+---
+
+### Incident Patch 3: `9fa343e1` (2026-11-13)
+**Commit Message**: fix: strengthen deployment rollout readiness checks (#5087)
+
+Signed-off-by: Cynthia <[REDACTED_EMAIL]>
+
+**File**: `pkg/shared/kube/wrapper/deployment.go` (modified, +8/-1)
+```diff
+@@ -46,7 +46,14 @@ func (w *deployment) Unwrap() *appsv1.Deployment {
+ }
+ 
+ func (w *deployment) Ready() bool {
+-	return w.Status.Replicas == w.Status.AvailableReplicas && w.Status.UnavailableReplicas == 0
++	// UpdatedReplicas counts pods matching the latest template; old available pods do not imply a completed rollout.
++	return w.Spec.Replicas != nil &&
++		w.Status.ObservedGeneration >= w.Generation &&
++		w.Status.UpdatedReplicas == *w.Spec.Replicas &&
++		w.Status.Replicas == *w.Spec.Replicas &&
++		w.Status.ReadyReplicas == *w.Spec.Replicas &&
++		w.Status.AvailableReplicas == *w.Spec.Replicas &&
++		w.Status.UnavailableReplicas == 0
+ }
+ 
+ func (w *deployment) WorkloadResource(pods []*corev1.Pod) *resource.Workload {
+```
+
 #### Recent Merged Pull Requests:
+- **PR #5088** (closed): test: AI review sample with intentional issues (@huanghongbo-hhb)
+- **PR #5087** (2026-11-13): fix: strengthen deployment rollout readiness checks (@Cynthia-0203)
+- **PR #5083** (2026-11-13): fix(k8s): make YAML deployment and deletion order deterministic (@PetrusZ)
+- **PR #5081** (2026-11-13): fix(helm): prevent panic with empty service orchestration (@PetrusZ)
+- **PR #5079** (closed): fix(login): restore CLI authorization after local sign-in. (@leozhang2018)
 - **PR #5072** (closed): fix(openapi): keep template defaults and accept new service variable keys (@huanghongbo-hhb)
-- **PR #5071** (closed): feat(openapi): query K8s YAML service templates (@huanghongbo-hhb)
-- **PR #5058** (2026-11-06): fix: preserve runtime environment selection in restart jobs (@Cynthia-0203)
-- **PR #5057** (2026-11-05): fix(security): harden authentication, callbacks and resource access (@Cynthia-0203)
-- **PR #5055** (2026-11-03): fix(workflow): validate freestyle variables by job type (@Cynthia-0203)
-- **PR #5053** (2026-11-12): fix(workflow): honor runtime commit source for builds (@huanghongbo-hhb)
 
 ---
 
@@ -1253,36 +1638,65 @@ Signed-off-by: huanghongbo-hhb <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. workflow): honor runtime commit source for builds (#5053)
+## X. avoid unnecessary agent rollouts on scheduling strategy updates
 
 **RULE**:
-When implementing operations in `pkg/microservice/aslan/core/common/service/service.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in koderover/zadig. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/microservice/aslan/core/multicluster/service/clusters.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in koderover/zadig. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e00d4622`: workflow): honor runtime commit source for builds (#5053). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5c56cc50`: avoid unnecessary agent rollouts on scheduling strategy updates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/microservice/aslan/core/common/service/service.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/microservice/aslan/core/multicluster/service/clusters.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	} else if candidate.CommitID != "" {
-		// commit-only source without a branch
-		if customRule == nil {
-			return fmt.Sprintf("%s:%s-%d-%s", candidate.ImageName, candidate.Timestamp, candidate.TaskID, candidate.CommitID)
+	"github.com/koderover/zadig/v2/pkg/tool/crypto"
+func preserveHubAgentToken(agent *unstructured.Unstructured, clusterID string, clientset kubernetes.Interface) error {
+	current, err := clientset.AppsV1().Deployments(agent.GetNamespace()).Get(context.Background(), agent.GetName(), metav1.GetOptions{})
+	if apierrors.IsNotFound(err) {
+		return nil
+	}
+	if err != nil {
+		return fmt.Errorf("failed to get existing hub-agent deployment: %w", err)
+	}
+
+	token := ""
+	for _, container := range current.Spec.Template.Spec.Containers {
+		if container.Name != "agent" {
+			continue
 		}
-		currentRule = customRule.BranchRule
+		for _, env := range container.Env {
+			if env.Name == setting.HubAgentToken {
+				token = env.Value
+				break
+			}
+		}
+		break
+	}
+	// Random AES IVs change the ciphertext on every render; retain a token only while it authenticates this cluster.
+	id, err := crypto.AesDecrypt(token)
+	if err != nil || id != clusterID {
+		return nil
+	}
+
+	containers, exists, err := unstructured.NestedSlice(agent.Object, "spec", "template", "spec", "containers")
+	if err != nil {
+		return fmt.Errorf("failed to get containers from rendered hub-agent deployment: %w", err)
+	}
+	if !exists {
+		return fmt.Errorf("rendered hub-agent deployment i
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
+// Induced defect failure mode:
 // Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e00d4622` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5c56cc50` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

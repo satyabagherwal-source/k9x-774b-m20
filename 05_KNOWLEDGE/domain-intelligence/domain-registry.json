@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T12:04:53.861Z",
-  "total_records": 662,
+  "last_updated": "2026-11-14T12:34:36.937Z",
+  "total_records": 670,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 323,
+      "total": 326,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -360,7 +360,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-nomic-ai-nomic-embed-text-v1-5-learnings-core",
         "domain_intelligence-research-knowledge-intelligence-google-gemma-4-26b-a4b-it-core-invariants",
         "DOM-D-5A7FBD90",
-        "domain_intelligence-research-knowledge-intelligence-hf-google-gemma-4-26b-a4b-it-learnings-core-inva"
+        "domain_intelligence-research-knowledge-intelligence-hf-google-gemma-4-26b-a4b-it-learnings-core-inva",
+        "domain_intelligence-research-knowledge-intelligence-intfloat-multilingual-e5-small-core-invariants",
+        "DOM-D-C580DAE3",
+        "domain_intelligence-research-knowledge-intelligence-hf-intfloat-multilingual-e5-small-learnings-core"
       ]
     },
     "E": {
@@ -392,7 +395,7 @@
       ]
     },
     "G": {
-      "total": 96,
+      "total": 101,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -489,7 +492,12 @@
         "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-core-invariants",
         "domain_intelligence-architecture-intelligence-slatedb-slatedb-core-invariants",
         "domain_intelligence-architecture-intelligence-nucleoidai-nucleoid-core-invariants",
-        "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-agent-of-empires-agent-of-empires-core-invariants",
+        "domain_intelligence-architecture-intelligence-koderover-zadig-core-invariants",
+        "domain_intelligence-architecture-intelligence-projectdiscovery-nuclei-core-invariants",
+        "domain_intelligence-architecture-intelligence-agent-of-empires-agent-of-empires-learnings-core-invar",
+        "domain_intelligence-architecture-intelligence-koderover-zadig-learnings-core-invariants"
       ]
     },
     "H": {
@@ -13977,6 +13985,111 @@
       "repository": "czy0729-bangumi-learnings",
       "content_hash": "849d581155296051ba2ab6fde12ea6bd8fabda56d44f31edc0d0165ab729ddf9",
       "created_at": "2026-11-14T12:04:53.861Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-intfloat-multilingual-e5-small-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-intfloat-multilingual-e5-small-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: intfloat/multilingual-e5-small Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-intfloat-multilingual-e5-small-research-knowledge-intelligence-intfloat-multi.md",
+      "repository": "intfloat/multilingual-e5-small",
+      "content_hash": "6f3b8553a1eb49c3881e743c2b8085e2a5652cfb87b25bbc56cf329819944699",
+      "created_at": "2026-11-14T12:33:51.096Z"
+    },
+    "domain_intelligence-architecture-intelligence-agent-of-empires-agent-of-empires-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-agent-of-empires-agent-of-empires-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: agent-of-empires/agent-of-empires Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-agent-of-empires-agent-of-empires-architecture-intelligence-agent-of-empires-age.md",
+      "repository": "agent-of-empires/agent-of-empires",
+      "content_hash": "ed40320661b756da97e1a9c9345d8beb6e00e5c56a4a0882275bf9285b417b71",
+      "created_at": "2026-11-14T12:33:54.301Z"
+    },
+    "domain_intelligence-architecture-intelligence-koderover-zadig-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-koderover-zadig-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: koderover/zadig Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-koderover-zadig-architecture-intelligence-koderover-zadig-core-invariants.md",
+      "repository": "koderover/zadig",
+      "content_hash": "d979ebd734126115bdd834dbb4e95c40e15ac015f3fa6cd5563133c26ca31456",
+      "created_at": "2026-11-14T12:34:02.229Z"
+    },
+    "domain_intelligence-architecture-intelligence-projectdiscovery-nuclei-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-projectdiscovery-nuclei-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: projectdiscovery/nuclei Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-projectdiscovery-nuclei-architecture-intelligence-projectdiscovery-nuclei-core-i.md",
+      "repository": "projectdiscovery/nuclei",
+      "content_hash": "bd316659a3b625225e916f5c6376586fb89ee6d888dcadd49a67e7cb66b17755",
+      "created_at": "2026-11-14T12:34:03.625Z"
+    },
+    "domain_intelligence-architecture-intelligence-agent-of-empires-agent-of-empires-learnings-core-invar": {
+      "record_id": "domain_intelligence-architecture-intelligence-agent-of-empires-agent-of-empires-learnings-core-invar",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: agent-of-empires-agent-of-empires-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-agent-of-empires-agent-of-empires-learnings-architecture-intelligence-agent-of-e.md",
+      "repository": "agent-of-empires-agent-of-empires-learnings",
+      "content_hash": "f4f943104bf6fc8a974348d7b5cb55705c519fc640a1ee1798f9c6acaa271388",
+      "created_at": "2026-11-14T12:34:06.770Z"
+    },
+    "DOM-D-C580DAE3": {
+      "record_id": "DOM-D-C580DAE3",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): intfloat/multilingual-e5-small",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/intfloat/multilingual-e5-small](https://huggingface.co/intfloat/multilingual-e5-small))  \n> **Source Version**: `hf-intfloat-`  \n> **License**:",
+      "content_hash": "3f274a406e22f61a4fd48cbae8e766a5c3f72b4b10f2a22716bdd03ef2f64166",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md`  \n> **Source**: huggingface ([https: -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md`  \n> **Source**: huggingface ([https:",
+      "provenance": {
+        "source_uri": "project://hf-intfloat-multilingual-e5-small/hf-intfloat-multilingual-e5-small-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T12:34:06.968Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-intfloat-multilingual-e5-small)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-intfloat-multilingual-e5-small"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T12:34:36.259Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-intfloat-multilingual-e5-small-learnings-core": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-intfloat-multilingual-e5-small-learnings-core",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-intfloat-multilingual-e5-small-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-intfloat-multilingual-e5-small-learnings-research-knowledge-intelligence-hf-i.md",
+      "repository": "hf-intfloat-multilingual-e5-small-learnings",
+      "content_hash": "5ebe283baad455aa3fdb7e5cd135799a889cd471d211c4f978c01f6b6eba908d",
+      "created_at": "2026-11-14T12:34:36.456Z"
+    },
+    "domain_intelligence-architecture-intelligence-koderover-zadig-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-koderover-zadig-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: koderover-zadig-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-koderover-zadig-learnings-architecture-intelligence-koderover-zadig-learnings-co.md",
+      "repository": "koderover-zadig-learnings",
+      "content_hash": "f7264e96d7cb2aa0d017fff1af3dde947705bda6d0d2048ef22e81f73c3bf5b5",
+      "created_at": "2026-11-14T12:34:36.937Z"
     }
   }
 }

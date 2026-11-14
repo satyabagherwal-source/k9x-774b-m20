@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source**: github ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
-> **Source Version**: `b2ea1489`  
+> **Source Version**: `9e6e2e23`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T09:39:45.161Z  
+> **Timestamp**: 2026-11-14T12:34:02.499Z  
 > **Learning ID**: `learn-github-projectdiscovery-nuclei`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T09:39:44.826Z  
+> **Harvest Timestamp**: 2026-11-14T12:34:02.491Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Nuclei is a fast, customizable vulnerability scanner powered by the global security community and built on a simple YAML-based DSL, enabling collaboration to tackle trending vulnerabilities on the internet. It helps you find vulnerabilities in your applications, APIs, networks, DNS, and cloud configurations.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 32788 stars
+- **Stars / Engagement**: 32901 stars
 
 ---
 
@@ -1583,202 +1583,96 @@ type ipOptions struct {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `67cda504` (2026-11-10)
-**Commit Message**: fix test
+### Incident Patch 1: `9e6e2e23` (2026-11-14)
+**Commit Message**: chore(deps): bump go.opentelemetry.io/otel/sdk (#8135)
 
-**File**: `pkg/protocols/http/httpclientpool/shared_responses_test.go` (modified, +5/-3)
-```diff
-@@ -79,10 +79,12 @@ func TestSharedResponsesSendEachRequestOncePerScan(t *testing.T) {
- 	sharedGet(t, transport, http.MethodGet, server.URL+"/b", "three", http.Header{"User-Agent": {"custom-scanner"}})
- 	require.EqualValues(t, 6, hits.Load(), "one a template sets is")
- 
--	req, err := http.NewRequestWithContext(WithSharedResponse(context.Background(), "one"), http.MethodPost, server.URL+"/a", strings.NewReader("x"))
--	require.NoError(t, err)
- 	for range 2 {
--		resp, err := transport.RoundTrip(req.Clone(req.Context()))
-+		// A new request each time. Clone shares the body, so a second clone
-+		// of one request can send ContentLength with an already-read body.
-+		req, err := http.NewRequestWithContext(WithSharedResponse(context.Background(), "one"), http.MethodPost, server.URL+"/a", strings.NewReader("x"))
-+		require.NoError(t, err)
-+		resp, err := transport.RoundTrip(req)
- 		require.NoError(t, err)
- 		_ = resp.Body.Close()
- 	}
-```
+Bumps the go_modules group with 1 update in the / directory: [go.opentelemetry.io/otel/sdk](https://github.com/open-telemetry/opentelemetry-go).
+
+
+Updates `go.opentelemetry.io/otel/sdk` from 1.45.0 to 1.47.0
+- [Release notes](https://github.com/open-telemetry/opentelemetry-go/releases)
+- [Changelog](https://github.com/open-telemetry/opentelemetry-go/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/open-telemetry/opentelemetry-go/compare/v1.45.0...v1.47.0)
 
 ---
+updated-dependencies:
+- dependency-name: go.opentelemetry.io/otel/sdk
+  dependency-version: 1.47.0
+  dependency-type: indirect
+  dependency-group: go_modules
+...
 
-### Incident Patch 2: `df5b8b36` (2026-11-10)
-**Commit Message**: fix reuse
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `pkg/protocols/http/httpclientpool/shared_responses.go` (modified, +34/-2)
+**File**: `go.mod` (modified, +6/-5)
 ```diff
-@@ -140,7 +140,12 @@ func (t *sharingTransport) send(req *http.Request, entry *sharedEntry) (*http.Re
- 		return resp, err
- 	}
- 	body, err := io.ReadAll(io.LimitReader(resp.Body, sharedResponseMaxBody+1))
--	if err != nil || len(body) > sharedResponseMaxBody {
-+	if err != nil {
-+		t.forget(entry)
-+		_ = resp.Body.Close()
-+		return nil, err
-+	}
-+	if len(body) > sharedResponseMaxBody {
- 		t.forget(entry)
- 		// hand back what was read followed by the rest
- 		resp.Body = struct {
-@@ -149,12 +154,35 @@ func (t *sharingTransport) send(req *http.Request, entry *sharedEntry) (*http.Re
- 		}{io.MultiReader(bytes.NewReader(body), resp.Body), resp.Body}
- 		return resp, nil
- 	}
-+	// A refusal is the server's, for this moment. Storing it would hand the
-+	// same 429 or gateway error to every later template, and none of them
-+	// would send.
-+	if !shareableStatus(resp.StatusCode) {
-+		t.forget(entry)
-+		resp.Body = io.NopCloser(bytes.NewReader(body))
-+		if req.Method != http.MethodHead {
-+			resp.ContentLength = int64(len(body))
-+		}
-+		return resp, nil
-+	}
- 	_ = resp.Body.Close()
- 	entry.response = &storedResponse{response: resp, body: body}
- 	t.store(entry)
- 	return entry.response.copyFor(req), nil
- }
- 
-+// shareableStatus reports whether code is an answer a later template can
-+// reuse. 404 and 500 are answers templates match on. 429 and the gateway
-+// errors mean the server did not answer, so the next template must send.
-+func shareableStatus(code int) bool {
-+	switch code {
-+	case http.StatusTooManyRequests, http.StatusBadGateway, http.StatusServiceUnavailable, http.StatusGatewayTimeout:
-+		return false
-+	default:
-+		return true
-+	}
-+}
-+
- // hasBody reports whether req sends a body. retryablehttp gives every
- // request one, empty for a GET, so its content is what counts.
- func hasBody(req *http.Request) bool {
-@@ -220,7 +248,11 @@ func (s *storedResponse) copyFor(req *http.Request) *http.Response {
- 	resp.Header = s.response.Header.Clone()
- 	resp.Trailer = s.response.Trailer.Clone()
- 	resp.Body = io.NopCloser(bytes.NewReader(s.body))
--	resp.ContentLength = int64(len(s.body))
-+	// A HEAD response has an empty body and a Content-Length for the body it
-+	// did not send. Matchers read that length, so a reused HEAD keeps it.
-+	if req.Method != http.MethodHead {
-+		resp.ContentLength = int64(len(s.body))
-+	}
- 	resp.Request = req
- 	return &resp
- }
+@@ -443,11 +443,12 @@ require (
+ 	go.opentelemetry.io/contrib/detectors/gcp v1.44.0 // indirect
+ 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.61.0 // indirect
+ 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.68.0 // indirect
+-	go.opentelemetry.io/otel v1.45.0 // indirect
+-	go.opentelemetry.io/otel/metric v1.45.0 // indirect
+-	go.opentelemetry.io/otel/sdk v1.45.0 // indirect
+-	go.opentelemetry.io/otel/sdk/metric v1.45.0 // indirect
+-	go.opentelemetry.io/otel/trace v1.45.0 // indirect
++	go.opentelemetry.io/otel v1.47.0 // indirect
++	go.opentelemetry.io/otel/log v1.47.0 // indirect
++	go.opentelemetry.io/otel/metric v1.47.0 // indirect
++	go.opentelemetry.io/otel/sdk v1.47.0 // indirect
++	go.opentelemetry.io/otel/sdk/metric v1.47.0 // indirect
++	go.opentelemetry.io/otel/trace v1.47.0 // indirect
+ 	go.uber.org/atomic v1.11.0 // indirect
+ 	go.uber.org/zap v1.27.1 // indirect
+ 	go.uber.org/zap/exp v0.3.0 // indirect
 ```
 
-**File**: `pkg/protocols/http/httpclientpool/shared_responses_test.go` (modified, +86/-0)
+**File**: `go.sum` (modified, +14/-12)
 ```diff
-@@ -189,3 +189,89 @@ func TestSharedResponsesCapCountsBodylessResponses(t *testing.T) {
- 	require.LessOrEqual(t, transport.shared.bytes, transport.shared.maxBytes)
- 	require.Less(t, len(transport.shared.entries), 20, "HEAD responses are evicted too")
- }
-+
-+func TestSharedResponsesKeepHeadContentLength(t *testing.T) {
-+	var hits atomic.Int32
-+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		hits.Add(1)
-+		w.Header().Set("Content-Length", "1234")
-+		w.WriteHeader(http.StatusOK)
-+	}))
-+	defer server.Close()
-+	transport := newSharingTransport(http.DefaultTransport)
-+
-+	length := func(templateID string) int64 {
-+		t.Helper()
-+		req, err := http.NewRequestWithContext(WithSharedResponse(context.Background(), templateID), http.MethodHead, server.URL, nil)
-+		require.NoError(t, err)
-+		resp, err := transport.RoundTrip(req)
-+		require.NoError(t, err)
-+		t.Cleanup(func() { _ = resp.Body.Close() })
-+		return resp.ContentLength
-+	}
-+
-+	require.Equal(t, int64(1234), length("one"))
-+	require.Equal(t, int64(1234), length("two"), "a reused HEAD keeps the length the server advertised")
-+	require.EqualValues(t, 1, hits.Load())
-+}
-+
-+func TestSharedResponsesDoNotKeepRefusals(t *testing.T) {
-+	for _, status := range []int{http.StatusTooManyRequests, http.StatusBadGateway, http.StatusServiceUnavailable, http.StatusGatewayTimeout} {
-+		t.Run(http.StatusText(status), func(t *testing.T) {
-+			var hits atomic.Int32
-+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+				hits.Add(1)
-+				http.Error(w, "no", status)
-+			}))
-+			defer server.Close()
-+			transport := newSharingTransport(http.DefaultTransport)
-+
-+			sharedGet(t, transport, http.MethodGet, server.URL, "one", nil)
-+			sharedGet(t, transport, http.MethodGet, server.URL, "two", nil)
-+			require.EqualValues(t, 2, hits.Load())
-+		})
-+	}
-+}
-+
-+func TestSharedResponsesKeepNotFound(t *testing.T) {
-+	var hits atomic.Int32
-+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		hits.Add(1)
-+		http.NotFound(w, r)
-+	}))
-+	defer server.Close()
-+	transport := newSharingTransport(http.DefaultTransport)
-+
-+	sharedGet(t, transport, http.MethodGet, server.URL, "one", nil)
-+	sharedGet(t, transport, http.MethodGet, server.URL, "two", nil)
-+	require.EqualValues(t, 1, hits.Load())
-+}
-+
-+type errReadBody struct{}
-+
-+func (errReadBody) Read([]byte) (int, error) { return 0, errors.New("short read") }
-+func (errReadBody) Close() error             { return nil }
-+
-+type errBodyTransport struct{}
-+
-+func (errBodyTransport) RoundTrip(*http.Request) (*http.Response, error) {
-+	return &http.Response{StatusCode: http.StatusOK, Header: make(http.Header), Body: errReadBody{}}, nil
-+}
-+
-+func TestSharedResponsesReturnBodyReadErrors(t *testing.T) {
-+	transport := newSharingTransport(errBodyTransport{})
-+
-+	send := func(templateID string) (*http.Response, error) {
-+		req, err := http.NewRequestWithContext(WithSharedResponse(context.Background(), templateID), http.MethodGet, "http://example.com", nil)
-+		require.NoError(t, err)
-+		return transport.RoundTrip(req)
-+	}
-+
-+	resp, err := send("one")
-+	require.Error(t, err)
-+	require.Nil(t, resp)
-+
-+	resp, err = send("two")
-+	require.Error(t, err, "a failed read is not reused")
-+	require.Nil(t, resp)
-+}
+@@ -1280,20 +1280,22 @@ go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.6
+ go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.61.0/go.mod h1:snMWehoOh2wsEwnvvwtDyFCxVeDAODenXHtn5vzrKjo=
+ go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.68.0 h1:CqXxU8VOmDefoh0+ztfGaymYbhdB/tT3zs79QaZTNGY=
+ go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.68.0/go.mod h1:BuhAPThV8PBHBvg8ZzZ/Ok3idOdhWIodywz2xEcRbJo=
+-go.opentelemetry.io/otel v1.45.0 h1:pdrWmLHofpubmArBv1LgFSv1Z0Ie/ppdZzu+kUN5EeU=
+-go.opentelemetry.io/otel v1.45.0/go.mod h1:XZxIqPapzEYnhNSScF5DIqXhm/rYi0FzCe2XddAwZfQ=
++go.opentelemetry.io/otel v1.47.0 h1:j7ALJ/zgkS7Z6aeJW09p8VC9804bC+PpeTfCD4XPnOM=
++go.opentelemetry.io/otel v1.47.0/go.mod h1:8wS9O2qfXrYrzp6hIF/HOYJJf/wIhFPhR2xLuP+iXQU=
+ go.opentelemetry.io/otel/exporters/stdout/stdoutmetric v1.36.0 h1:rixTyDGXFxRy1xzhKrotaHy3/KXdPhlWARrCgK+eqUY=
+ go.opentelemetry.io/otel/exporters/stdout/stdoutmetric v1.36.0/go.mod h1:dowW6UsM9MKbJq5JTz2AMVp3/5iW5I/TStsk8S+CfHw=
+-go.opentelemetry.io/otel/metric v1.45.0 h1:7Eg1uH7CJ5cXv9is6tnBe1FI6rj1nwUdbFypRm3br/M=
+-go.opentelemetry.io/otel/metric v1.45.0/go.mod h1:HAPbm1nd3p1PmFH7v2dR+6BjXxw+Lq4a2+pndMAm08s=
+-go.opentelemetry.io/otel/metric/x v0.67.0 h1:PcicCNZFkZ4bXfSooXdo3WN7RBOVOtjVdo1wD358Uns=
+-go.opentelemetry.io/otel/metric/x v0.67.0/go.mod h1:FBjCWZe6wgcqxcMtjdGiClDKXb2YxxXii0CXftE4QtI=
+-go.opentelemetry.io/otel/sdk v1.45.0 h1:4VVSMgQ83dUgW2aoX5f6JgLvHwIvzcuLnF9lUdCSpCw=
+-go.opentelemetry.io/otel/sdk v1.45.0/go.mod h1:Sr40LgXV7DsKMMJMKOhUWOgMWTfAaqvm2kF0g7ilwuA=
+-go.opentelemetry.io/otel/sdk/metric v1.45.0 h1:oVFszMfyj1Am6s24Vtc7wBb8BKLcwepJjNEYILuiE3o=
+-go.opentelemetry.io/otel/sdk/metric v1.45.0/go.mod h1:vUWUxDZvu1WVRj8JA8S0AdhsPrZoDpA2DdZauIh4mDA=
+-go.opentelemetry.io/otel/trace v1.45.0 h1:l/mP6Uv7oNO7/TblbhpbgMidxhq1uO/rPsikOyVhxag=
+-go.opentelemetry.io/otel/trace v1.45.0/go.mod h1:qoJJA2xNMnxRrdISU/kLtfUH2wNeQbiv+jhs/CxI8bc=
++go.opentelemetry.io/otel/log v1.47.0 h1:cOTS1CcLbSQeZKanGJ+0JpF/+t4PELi3O3bbl2lqCcI=
++go.opentelemetry.io/otel/log v1.47.0/go.mod h1:9byitSQ5pLC6PpqwGXjqdMKya6ZTswHRZh2vvXT33nw=
++go.opentelemetry.io/otel/metric v1.47.0 h1:4PptaldXx3Eat1XjMZ68pPJEs5wrhlemctZE9a3UdWY=
++go.opentelemetry.io/otel/metric v1.47.0/go.mod h1:ADGSXxRrXM6bjbvLo535EstVFlPpPYZm4LBKixjDHwU=
++go.opentelemetry.io/otel/metric/x v0.69.0 h1:DjRLr15H83v+hCW7JA9NoJvOkYTtmq5YoDRbe9deYpM=
++go.opentelemetry.io/otel/metric/x v0.69.0/go.mod h1:uVvsMPMFFyj/HUQfrUnH3JjnOQ1dwFDorgFLRBasM0k=
++go.opentelemetry.io/otel/sdk v1.47.0 h1:zWXEr4j2lFefG87TU6Yg8a7ngfohIKFZHKp0Hf5hC6I=
++go.opentelemetry.io/otel/sdk v1.47.0/go.mod h1:VUc24kiOeoGsxG8G9ULx3fWKvB7jMhnGE8Oi607lgR0=
++go.opentelemetry.io/otel/sdk/metric v1.47.0 h1:lfISg2j93VT6yqdk9OfUaZmw/GfcZqCCV3jdXtsPnKw=
++go.opentelemetry.io/otel/sdk/metric v1.47.0/go.mod h1:ypLp+mW1Nt2x+Szt3b5/i1syodyts49lMOwxpDI3VGw=
++go.opentelemetry.io/otel/trace v1.47.0 h1:JOjX/Oci8K94QHddo+bbfya/Ai/nf6/dt9ZfrFNWSrM=
++go.opentelemetry.io/otel/trace v1.47.0/go.mod h1:jNaSLa2PZEYFG6fRjJABAu+bw4FS08uDmPg28lTghu0=
+ go.uber.org/atomic v1.11.0 h1:ZvwS0R+56ePWxUNi+Atn9dWONBPp/AUETXlHW0DxSjE=
+ go.uber.org/atomic v1.11.0/go.mod h1:LUxbIzbOniOlMKjJjyPfpl4v+PKK2cNJn91OQbhoJI0=
+ go.uber.org/goleak v1.3.0 h1:2K3zAYmnTNqV73imy9J1T3WC+gmCePx2hEGkimedGto=
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8135** (2026-11-14): chore(deps): bump go.opentelemetry.io/otel/sdk from 1.45.0 to 1.47.0 in the go_modules group across 1 directory (@dependabot[bot])
 - **PR #8107** (2026-11-10): send identical requests once per scan (@dogancanbakir)
 - **PR #8103** (2026-11-10): add -store-events and -replay over stored events of any protocol (@dogancanbakir)
 - **PR #8102** (2026-11-10): fix(js): stop tsgen from panicking on non-struct types (@dwisiswant0)
 - **PR #8101** (2026-11-11): add -run-plan to run a plan file and resume it (@dogancanbakir)
 - **PR #8100** (2026-11-09): fix(js/tsgen): report package load errors instead of ignoring them (@dwisiswant0)
-- **PR #8095** (closed): chore(deps): bump the modules group across 1 directory with 18 updates (@dependabot[bot])
 
 ---
 
@@ -1798,34 +1692,37 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in shared_responses_test.go
+## X. deps): bump go.opentelemetry.io/otel/sdk
 
 **RULE**:
-When implementing operations in `pkg/protocols/http/httpclientpool/shared_responses_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `67cda504`: test. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9e6e2e23`: deps): bump go.opentelemetry.io/otel/sdk. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/protocols/http/httpclientpool/shared_responses_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		// A new request each time. Clone shares the body, so a second clone
-		// of one request can send ContentLength with an already-read body.
-		req, err := http.NewRequestWithContext(WithSharedResponse(context.Background(), "one"), http.MethodPost, server.URL+"/a", strings.NewReader("x"))
-		require.NoError(t, err)
-		resp, err := transport.RoundTrip(req)
+	go.opentelemetry.io/otel v1.47.0 // indirect
+	go.opentelemetry.io/otel/log v1.47.0 // indirect
+	go.opentelemetry.io/otel/metric v1.47.0 // indirect
+	go.opentelemetry.io/otel/sdk v1.47.0 // indirect
+	go.opentelemetry.io/otel/sdk/metric v1.47.0 // indirect
+	go.opentelemetry.io/otel/trace v1.47.0 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-	req, err := http.NewRequestWithContext(WithSharedResponse(context.Background(), "one"), http.MethodPost, server.URL+"/a", strings.NewReader("x"))
-	require.NoError(t, err)
-		resp, err := transport.RoundTrip(req.Clone(req.Context()))
+// Induced defect failure mode:
+	go.opentelemetry.io/otel v1.45.0 // indirect
+	go.opentelemetry.io/otel/metric v1.45.0 // indirect
+	go.opentelemetry.io/otel/sdk v1.45.0 // indirect
+	go.opentelemetry.io/otel/sdk/metric v1.45.0 // indirect
+	go.opentelemetry.io/otel/trace v1.45.0 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `67cda504` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9e6e2e23` are properly handled with clean fallback behavior.

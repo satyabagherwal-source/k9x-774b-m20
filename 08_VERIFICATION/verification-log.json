@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-BDNG",
-    "timestamp": "2026-11-13T12:54:48.796Z",
-    "repository": "Orange-OpenSource/hurl",
-    "learningId": "learn-github-orange-opensource-hurl",
-    "contentHash": "1aaa6cad4a3452bab5d7e76540d5caf32d04cd3b683319b4822ce8790867a5ce",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-L5EH",
-    "timestamp": "2026-11-13T13:02:24.665Z",
-    "repository": "XingChen-AGI/TeleOCR",
-    "learningId": "learn-huggingface-xingchen-agi-teleocr",
-    "contentHash": "f2b1ff8ab0b6f333c48ed67bf043d9100ff9a360425690ff1e52b60bfede0044",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-LKWH",
-    "timestamp": "2026-11-13T13:02:44.753Z",
-    "repository": "TypeWhisper/typewhisper-mac",
-    "learningId": "learn-github-typewhisper-typewhisper-mac",
-    "contentHash": "a00b4d0b55648780b660baac82be6226e2f621e8be60975a389ba351d1569bb0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-LMT3",
-    "timestamp": "2026-11-13T13:02:47.223Z",
-    "repository": "clastix/kamaji",
-    "learningId": "learn-github-clastix-kamaji",
-    "contentHash": "96844938badb6f83c9974b9529223b504538e15d48e4d7c4a471451e86ecf6d1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-LU8C",
     "timestamp": "2026-11-13T13:02:56.844Z",
     "repository": "dathere/qsv",
@@ -7490,6 +7430,66 @@
     "repository": "PeerDB-io/peerdb",
     "learningId": "learn-github-peerdb-io-peerdb",
     "contentHash": "b8cb8c17cccf90583618339b5ce4506db782b48aeaa05d3c8b8bbaf0c2f26042",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-09Q8",
+    "timestamp": "2026-11-14T12:33:50.912Z",
+    "repository": "intfloat/multilingual-e5-small",
+    "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
+    "contentHash": "0edcbcffce489376ef5b65d364f7b24844fbc55d4dcaccdc305f9a287cb2e7d8",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-0C4B",
+    "timestamp": "2026-11-14T12:33:54.011Z",
+    "repository": "agent-of-empires/agent-of-empires",
+    "learningId": "learn-github-agent-of-empires-agent-of-empires",
+    "contentHash": "b509aef91c3b969410d2e53ca2a8f9daf1cd3f8deddea5984e5a6f92f5b23780",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-0I8G",
+    "timestamp": "2026-11-14T12:34:01.936Z",
+    "repository": "koderover/zadig",
+    "learningId": "learn-github-koderover-zadig",
+    "contentHash": "d9bafbfd77ad9298548e2d61abdacdc35d3800d7cb751c63a357c0b550c9102f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-0JBL",
+    "timestamp": "2026-11-14T12:34:03.345Z",
+    "repository": "projectdiscovery/nuclei",
+    "learningId": "learn-github-projectdiscovery-nuclei",
+    "contentHash": "8623fa0e5a0a432aef845dc342d50c4f0a755f79528cdeaf6ce2c8bc95a413b3",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

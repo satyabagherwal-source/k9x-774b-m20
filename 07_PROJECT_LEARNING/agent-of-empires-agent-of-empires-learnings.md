@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md`  
 > **Source**: github ([https://github.com/agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires))  
-> **Source Version**: `7ad6f46d`  
+> **Source Version**: `0dedf44e`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T00:23:38.687Z  
+> **Timestamp**: 2026-11-14T12:33:53.155Z  
 > **Learning ID**: `learn-github-agent-of-empires-agent-of-empires`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T00:23:38.336Z  
+> **Harvest Timestamp**: 2026-11-14T12:33:53.149Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Manage multiple Claude Code, OpenCode agents from either TUI or Web for easy access on mobile. Also supports Mistral Vibe, Codex CLI, Gemini CLI, Pi.dev, Copilot CLI, Factory Droid Coding.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4240 stars
+- **Stars / Engagement**: 4340 stars
 
 ---
 
@@ -916,6 +916,9 @@ pub(crate) enum LifecycleSignal {
     WakeupPending {
         at: chrono::DateTime<chrono::Utc>,
     },
+    /// Validated traffic from a subagent session: liveness only, so it keeps
+    /// any end-of-turn accounting already seen.
+    SubagentActivity,
     CompactionStarted,
     CompactionCompleted,
     /// The adapter emits this after the turn's own terminal on a cancel, so
@@ -1108,6 +1111,9 @@ pub(super) async fn forward_lifecycle_signals(
     }
 }
 
+/// The SDK's acknowledgement of a background `Agent` launch.
+pub(super) const ASYNC_AGENT_LAUNCHED: &str = "Async agent launched successfully";
+
 /// Matches SDK markers only at line starts so echoed output does not extend
 /// watchdog grace.
 pub(super) fn detect_off_protocol_work_completed(
@@ -1125,7 +1131,7 @@ pub(super) fn detect_off_protocol_work_completed(
         .flat_map(str::lines)
         .find_map(|line| {
             let line = line.trim_start();
-            if line.starts_with("Async agent launched successfully") {
+            if line.starts_with(ASYNC_AGENT_LAUNCHED) {
                 Some(OffProtocolWorkKind::AsyncAgent)
             } else if line.starts_with("Command running in background with ID: ") {
                 Some(OffProtocolWorkKind::BackgroundCommand)
@@ -1136,12 +1142,7 @@ pub(super) fn detect_off_protocol_work_completed(
 }
 
 /// Wake signal from a non-failed `ScheduleWakeup` tool update. The initial
-/// `ToolCall` is excluded because the tool may still fail; `InProgress` is
-/// accepted because the adapter strips `raw_input` from `Completed`.
-/// `restored_title` names an update that arrived without a title.
-pub(super) fn wakeup_lifecycle_signal_from_update(
-    update: &SessionUpdate,
-    restored_title: Option<&str>,
+/// `ToolCall` is excluded because the tool m
 ```
 
 ### Core Architecture Module: `src/acp/runner_lifecycle.rs`
@@ -1759,11 +1760,11 @@ impl ConfigOptionDescriptor {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5615** (2026-11-12): **Structured view: session shows Running instead of Waiting while a question is pending, subagent events overwrite the status**
-  *Symptoms*: **Note:** Claude handled the investigation and prose via back-and-forth. Idea, decisions, and everything else are mine. — @Seluj78  ## Problem  A structured-view session that is blocked on an AskUserQuestion / elicitation card shows green (Running) in the web UI instead of orange (Waiting). The user is not told the agent needs an answer.  Seen on session `a77f4ac5809f4d4b`: the parent agent launched about 8 review subagents, then asked an AskUserQuestion. The subagents kept running and the row went back to green.  ## Evidence from the affected session  `ElicitationRequested` at seq 2255 (nonce `8b428dc4…`) never gets an `ElicitationResolved`. The three earlier elicitations (seq 667, 1526, 1731) each resolved.  After seq 2255 there are 166 more events:  ``` ToolCallCompleted 104, ToolCallStarted 104, UsageUpdated 4, SubagentUpdated 3, ToolCallUpdated 3 ```  All 106 `ToolCallStarted` events after 2255 carry a `parent_tool_call_id`, so every one is a subagent tool call. The parent emitted no message or thought chunk after the question. Subagents legitimately keep working while the parent waits on the user.  ## Root cause  `sidebar_status()` derives status from a single `sidebar_phase` field and ignores the pending lists (`src/acp/state.rs:1066`):  ```rust match self.sidebar_phase {     SidebarPhase::Error => Status::Error,     SidebarPhase::Waiting => Status::Waiting,     SidebarPhase::Active => Status::Running,     ... ```  `ElicitationRequested` sets `Waiting` (`state.rs:1152`
+- **Issue #5677** (2026-11-14): **Purge and an e2e helper still count a zombie runner as running**
+  *Symptoms*: ### What happened?  Follow-up from #5667 (review by @Seluj78). #5667 made `is_record_live` treat a zombie runner as not live, and named two other checks that still count a zombie as running. Both fail closed:  - `worker::is_process_group_alive` (`killpg`/`kill` with signal 0), used by `session::purge_owners`. Purging a Session whose runner is a zombie stays refused until the zombie is reaped, which never happens when PID 1 doesn't reap (a container without an init). - `pid_alive` in `tests/e2e/systemd_scope.rs` only checks that `/proc/<pid>` exists. Those tests skip without a user systemd manager.  Proposed: read the same `/proc` state #5667 uses on Linux in both places, with a test for a zombie owner.  Evidence strength: from #5667's description and review; not reproduced separately.  ### aoe version and OS  main after #5667, Linux.  ### AI usage  Drafted by Claude Code (Claude Opus 5.5) from the review comment, reviewed by a human before filing. 
 
-- **Issue #5608** (2026-11-12): **Terminal sends can type into a shell pane when a stale hook status exists**
-  *Symptoms*: `ready_agent_session` (`src/server/api/sessions/ensure.rs`) skips the pane-command shell check whenever `read_hook_status` returns a value. If an agent exits to a shell and the hook status file is stale, the pane counts as ready, so a terminal send or the initial-prompt drain (#5594) can type into a bare shell.  Found by CodeRabbit in review of #5594. Pre-existing behavior shared by every terminal send; not introduced there.  Fix direction: verify `pane_current_command` even when a hook status exists, while keeping readiness for agents whose command does not name them (needs a reliable shell-vs-agent distinction, so removing the skip alone is not enough).  > AI disclosure: filed by Claude Code on behalf of the maintainer.
+- **Issue #5663** (2026-11-13): **Worker registry treats a zombie runner as live when PID 1 doesn't reap**
+  *Symptoms*: ### What problem does this solve?  `is_record_live` (`src/process/worker_registry.rs:589`) treats a runner as live when three checks pass: its recorded birth matches, `is_pid_alive` succeeds, and its socket file exists. `is_pid_alive` (`src/process/worker.rs:21`) is `kill(pid, 0)`, which succeeds on a zombie. The birth check reads the start time from `/proc` and ignores the process state.  A runner is spawned detached with `setsid`, so when the daemon exits its runners are re-parented to PID 1. If PID 1 doesn't reap, as in a container started without `--init` whose PID 1 is a shell or `sleep`, a runner that exits after that stays a zombie. Its socket file also stays. So all three checks read true for a dead runner.  Reproduced at the level of these checks in a container whose PID 1 is `sleep infinity`. The dead runner reads `state=Z ppid=1` with an unchanged start time, `kill(pid, 0)` succeeds, the socket file exists, and `connect` returns `ECONNREFUSED`. It has not been reproduced end to end through a daemon restart.  Callers that would then act on a dead runner (read, not run): - `src/server/acp_reconciler/resume.rs:169` picks Attach over a fresh spawn. - `src/acp/supervisor/launch.rs:191` counts it towards runner capacity. - `src/acp/supervisor/drain.rs:566` keeps retrying the reattach.  The runner guard's `executing()` (`src/process/mod.rs:1141`) already tells a zombie apart, so the registry and the guard can disagree about the same process.  **Proposed change**  Treat a 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1780,1657 +1781,1373 @@ impl ConfigOptionDescriptor {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ecbf52ef` (2026-11-12)
-**Commit Message**: fix(trash): expose safe unfinished-trash retry (#5472)
+### Incident Patch 1: `5b6d208f` (2026-11-13)
+**Commit Message**: fix(tui): flash deletion cleanup notes instead of a blocking dialog (#5641)
 
-* fix(tui): inspect trash transcripts read-only
+* fix(tui): flash deletion cleanup notes instead of a blocking dialog
 
-* fix(tui): close remaining trash input paths
+A committed purge opened a "Runtime change" dialog for its cleanup notes,
+which rendered under permission and agent-question dialogs while handle_key
+consulted it first, so an invisible modal swallowed keys until Enter.
 
-* fix(tui): fence stale trash continuations
+🤖 Generated with Codebuff
+Co-Authored-By: Codebuff <[REDACTED_EMAIL]>
 
-* perf(tui): avoid retained replay remerge
+* fix(tui): keep every deletion note and promote dialogs after a draw
 
-* fix(tui): fence stale dialogs and preview input
+Each purge outcome now contributes its cleanup notes to one status line that
+names the session, so a group delete no longer keeps only the last note. The
+flash window starts when the status bar actually draws, so a note arriving
+behind settings or the diff view cannot expire unseen, and runtime dialogs are
+promoted from the tick path only, where a draw always precedes the next key.
 
-Bind pending session dialogs to their opening identity so snapshots
-cannot retarget edits. Refuse stale preview owners and revoked native
-grants, and cancel gestures when their target changes.
+🤖 Generated with Codebuff
+Co-Authored-By: Codebuff <[REDACTED_EMAIL]>
 
-Keep terminal permission delivery under the existing lifecycle input
-lock. Backend lifecycle refusals remain unchanged.
+* test(tui): hold a runtime note while another dialog owns the keyboard
 
-* fix(tui): preserve state across retained replay pages
+Extends the promotion test to cover the queued-message gate: an open confirm
+dialog keeps the note queued and it is shown once that dialog closes.
 
-Fold raw retained events through one reducer so page boundaries cannot
-merge replies or discard tool output and removals. Detect unavailable
-sequence ranges even when old metadata remains pinned.
+🤖 Genera
 
-Keep live raw reset and active row replay behavior unchanged.
-
-* fix(tui): reject stale trash confirmations
-
-Bind confirmations to their original profile and lifecycle generation,
-independent of sidebar selection. Cancel stale targets before submission
-and check generation under the daemon lifecycle lock before reservation
-and pane teard
-
-**File**: `docs/api.md` (modified, +14/-0)
+**File**: `src/tui/app.rs` (modified, +4/-3)
 ```diff
-@@ -586,6 +586,12 @@ reservation returns `409`, and a missing conversation or incompatible provider
- returns `400`. CityHall mode refuses canonical forks with `403`. An idempotent
- replay still succeeds when the parent row has since been removed.
+@@ -726,7 +726,8 @@ impl App {
  
-+At creation admission, an `import_acp_session_id` found already owned is refused
-+with `400 create_failed` and the safe message “Import source is already owned by
-+an AoE session”. Frozen cleanup ownership covers all tools' current and parked
-+ACP IDs, even after an ordinary purge removes the visible row. Unrelated failures
-+remain sanitized rather than exposing their internal causes.
-+
- **Worktree fields**
+             tokio::select! {
+                 event = self.event_stream.as_mut().expect("event_stream missing").next() => {
+-                    self.home.apply_session_feed();
++                    // Keys reach the view before the next draw, so no dialog is promoted here.
++                    self.home.apply_session_feed_before_input();
+                     self.home.enforce_trash_read_only();
+                     if self.home.selected_is_trashed() {
+                         self.close_embedded_structured();
+@@ -3206,7 +3207,7 @@ impl App {
  
- | Field | Notes |
-@@ -872,6 +878,7 @@ Move a session to Trash. Optional JSON fields:
- | --- | --- | --- |
- | `kill_pane` | `true` | Stop the session's terminal panes during the transition. |
- | `expected_generation` | omitted | Require the selected session's `lifecycle_generation`; a mismatch returns `409 lifecycle_superseded` without mutation. |
-+| `expected_profile` | omitted | Require the selected profile as well as the generation; a mismatch returns `409 lifecycle_superseded` without mutation. |
- 
- Repeating a completed request for an already-trashed session succeeds without
- repeating teardown or relocation. A fresh lifecycle reservation returns
-@@ -887,6 +894,13 @@ preventing explicit Restore or Purge. A retry also settles the transition when
- all known worktree paths are proven absent. Unverified existing paths, unknown
- original locations, and filesystem lookup errors keep the transition protected.
- 
-+Unfinished Trash exposes Retry and read-only inspection, not record-only removal.
-+Retry retains existing lifecycle, native ownership, and filesystem checks. An
-+unverified checkout stays visible in Trash until those checks can settle it.
-+UI requests capture their original profile, generation, and runtime epoch;
-+replacement state requires fresh consent.
-+
-+
- ## Explicit structured worker stop
- 
- `DELETE /api/sessions/:id/acp` is a durable user stop, not a daemon detach. It commits the native stopped/dormant generation before retiring the captured original worker and returns `204` only after retirement is proven. Generic `POST /api/sessions/:id/stop` uses the same structured-worker stop boundary.
+         self.needs_redraw = true;
+         crate::tmux::refresh_session_cache();
+-        self.home.apply_session_feed();
++        self.home.apply_session_feed_before_input();
+         let result = self.home.reload();
+         self.home.reload_failure_state.record_storage(&result);
+         self.home.try_present_reload_failure_dialog();
+@@ -3278,7 +3279,7 @@ impl App {
+             }),
+         )?;
+         self.needs_redraw = true;
+-        self.home.apply_session_feed();
++        self.home.apply_session_feed_before_input();
+         self.select_after_attach(&ready.id);
+         if let Err(error) = attach_result {
+             tracing::warn!(target: "tui.input", %error, "Native tmux attach failed");
 ```
 
-**File**: `docs/development/internals/structured-view.md` (modified, +13/-0)
+**File**: `src/tui/home/mod.rs` (modified, +1/-1)
 ```diff
-@@ -90,6 +90,19 @@ Per-ID mutation exclusion stays shared with every held or queued operation. Reus
- 
- Live owner references include missing descendants and symlink traversal dependencies. Permission errors, symlink loops and non-directory traversal refuse cleanup instead of being treated as absent owners.
- 
-+### Unfinished Trash recovery
-+
-+Retry uses the existing Trash lifecycle, not a second cleanup authority.
-+An expired reservation can be retried, but a fresh owner remains busy.
-+Unknown or unverified checkout ownership remains protected and visible in Trash;
-+neither Retry nor read-only inspection authorizes purge or deletes the record.
-+Record-only removal is outside this change's scope.
-+
-+TUI confirmation and palette requests retain original targets and runtime epochs.
-+Tests dequeue the actual captured command before dispatching it through the real
-+router; expected fixtures are assertions, never substitute operations. Web Restore
-+receipts use per-row revisions so an older Retry cannot overwrite restored state.
-+
- ## Who owns the state
- 
- The daemon folds the event stream once per WebSocket connection into two projections, so clients do not re-derive them:
+@@ -349,7 +349,7 @@ pub struct HomeView {
+     pub(super) live_send_resize_retry_at: Option<std::time::Instant>,
+     pub(super) live_send_pending_leader: bool,
+     pub(super) hover_cell: Option<(u16, u16)>,
+-    pub(super) status_flash: Option<(String, std::time::Instant)>,
++    pub(super) status_flash: Option<overlays::StatusFlash>,
+     pub(super) live_send_ctrl_c_flash_until: Option<std::time::Instant>,
+     /// Session whose live control another window took, until the selection moves or live
+     /// mode starts again.
 ```
 
-**File**: `docs/structured-view.md` (modified, +19/-2)
+**File**: `src/tui/home/overlays.rs` (modified, +26/-4)
 ```diff
-@@ -192,8 +192,25 @@ reload. See [retained history internals](development/internals/structured-view.m
- for the storage and migration contract.
+@@ -5,6 +5,15 @@ use std::time::{Duration, Instant};
  
- Dialogs close when their target session changes or disappears. Trash context
--menus reject actions if the original session, profile, or lifecycle generation
--changes. Restore and permanent deletion never target a replacement selection.
-+menus reject actions if their original session, profile, lifecycle generation,
-+or runtime epoch changes. Restore and permanent deletion never target a
-+replacement selection.
-+
-+An unfinished Trash transition offers **Retry Trash** in the TUI context menu and
-+web Trash controls. A fresh owner remains busy; an unverified retained checkout
-+can still prevent completion. Retry is an explicit management action, never part
-+of opening the transcript.
-+The TUI command palette exposes Restore and Retry Trash using
-+the same lifecycle-gated actions as the context menu. Opening Trash confirmation
-+captures its runtime epoch; a daemon replacement invalidates the confirmation.
-+Trash remains read-only without discarding untargeted pending composer paste.
-+Web recovery lists unfinished members of mixed live/Trash workspaces separately.
-+It never retries or restores a live sibling. Restore receipts keep their native
-+revision so a late older Retry cannot replace the restored row.
-+
-+If Retry cannot verify the checkout, keep the record in Trash and inspect its
-+retained history read-only. There is no record-only removal action. A fresh
-+runtime, profile, or lifecycle generation requires fresh recovery consent.
+ const FLASH_WINDOW: Duration = Duration::from_secs(3);
  
- The reader shows retained ACP history, including events
- recorded before a switch to terminal view. Missing or unreadable event ranges
++/// A status-bar message and the window it is shown for. `until` stays `None`
++/// until a draw can actually show the text: a takeover view (settings, diff)
++/// returns before the status bar renders, so a window armed when the message
++/// arrived would run out unseen.
++pub(in crate::tui) struct StatusFlash {
++    pub(super) text: String,
++    pub(super) until: Option<Instant>,
++}
++
+ impl HomeView {
+     /// Expire the settings view's transient "Settings saved" toast when its
+     /// window passes, so it fades even while the keyboard is idle. Returns true
+@@ -162,15 +171,28 @@ impl HomeView {
+     /// Matches the Ctrl+C hint's window so the two read as the same kind of
+     /// thing.
+     pub(in crate::tui) fn flash_status(&mut self, text: impl Into<String>) {
+-        self.status_flash = Some((text.into(), Instant::now() + FLASH_WINDOW));
++        self.status_flash = Some(StatusFlash {
++            text: text.into(),
++            until: None,
++        });
++    }
++
++    /// Start the display window of a flash that has not been drawn yet. Called
++    /// by the status bar render so the window measures time on screen.
++    pub(in crate::tui) fn arm_status_flash(&mut self) {
++        if let Some(flash) = self.status_flash.as_mut() {
++            flash
++                .until
++                .get_or_insert_with(|| Instant::now() + FLASH_WINDOW);
++        }
+     }
+ 
+     /// The flash text while it is still within its window.
+     pub(in crate::tui) fn status_flash_text(&self) -> Option<&str> {
+         self.status_flash
+             .as_ref()
+-            .filter(|(_, deadline)| Instant::now() < *deadline)
+-            .map(|(text, _)| text.as_str())
++            .filter(|flash| flash.until.is_none_or(|until| Instant::now() < until))
++            .map(|flash| flash.text.as_str())
+     }
+ 
+     /// Drop a flash whose window has closed, reporting whether anything
+@@ -179,7 +201,7 @@ impl HomeView {
+         if self
+             .status_flash
+             .as_ref()
+-            .is_some_and(|(_, deadline)| Instant::now() >= *deadline)
++            .is_some_and(|flash| flash.until.is_some_and(|until| Instant::now() >= until))
+         {
+             self.status_flash = None;
+             return true;
 ```
 
-**File**: `src/daemon/wire.rs` (modified, +4/-0)
+**File**: `src/tui/home/render.rs` (modified, +2/-0)
 ```diff
-@@ -546,6 +546,8 @@ pub struct TrashSessionBody {
-     /// Reject a lifecycle change after the caller captured its target.
-     #[serde(default, skip_serializing_if = "Option::is_none")]
-     pub expected_generation: Option<u64>,
-+    #[serde(default, skip_serializing_if = "Option::is_none")]
-+    pub expected_profile: Option<String>,
- }
+@@ -4246,6 +4246,8 @@ impl HomeView {
+     }
  
- #[derive(Debug, Serialize, Deserialize)]
-@@ -580,9 +582,11 @@ impl Default for TrashSessionBody {
-         Self {
-             kill_pane: default_kill_pane(),
-             expected_generation: None,
-+            expected_profile: None,
+     fn render_status_bar(&mut self, frame: &mut Frame, area: Rect, theme: &Theme) {
++        // The bar is on screen from here, so a queued flash can start counting.
++        self.arm_status_flash();
+         // Action feedback takes precedence over a hovered link target.
+         let hovered = (!self.live_send_pending_leader)
+             .then(|| self.hovered_link())
+```
+
+**File**: `src/tui/home/status.rs` (modified, +58/-7)
+```diff
+@@ -765,6 +765,18 @@ impl HomeView {
+     /// Apply a pending session-list result from the daemon. Returns true if
+     /// the caller should redraw.
+     pub fn apply_session_feed(&mut self) -> bool {
++        self.apply_session_feed_with_dialogs(true)
++    }
++
++    /// Apply a pending session-list result without promoting a runtime dialog.
++    /// The event loop dispatches the key that woke it before the next draw, so
++    /// a dialog promoted here would eat a key the user never saw. The tick path
++    /// promotes instead, always ahead of a draw.
++    pub fn apply_session_feed_before_input(&mut self) -> bool {
++        self.apply_session_feed_with_dialogs(false)
++    }
++
++    fn apply_session_feed_with_dialogs(&mut self, promote_dialogs: bool) -> bool {
+         use crate::tui::session_feed::{SessionFeedResult, SidebarSource};
+         use std::sync::mpsc::TryRecvError;
+ 
+@@ -907,7 +919,7 @@ impl HomeView {
+                 self.clear_unread_on_view(&id);
+             }
          }
+-        let outcomes_changed = self.apply_runtime_outcomes();
++        let outcomes_changed = self.apply_runtime_outcomes(promote_dialogs);
+         let pending_after =
+             self.session_feed.any_pending() || self.pending_namespace_intent.is_some();
+         updated
+@@ -1088,14 +1100,23 @@ impl HomeView {
+         self.runtime_outcome_messages.push(message);
+     }
+ 
+-    fn record_purge_outcome(&mut self, id: &str, outcome: crate::daemon::PurgeOutcome) {
++    pub(super) fn record_purge_outcome(
++        &mut self,
++        id: &str,
++        outcome: crate::daemon::PurgeOutcome,
++        notes: &mut Vec<(String, String)>,
++    ) {
+         match outcome {
+             crate::daemon::PurgeOutcome::Deleted {
+                 messages,
+                 cleanup_errors,
+             } => {
++                // A committed deletion needs no acknowledgement, and a modal here
++                // can land under a permission or question dialog and swallow keys.
++                // Its cleanup notes belong in the status line and the log.
+                 for message in messages {
+-                    self.record_runtime_message(format!("{id}: {message}"));
++                    tracing::info!(target: "tui.runtime_outcome", session = %id, message = %message, "Session deletion cleanup");
++                    notes.push((id.to_owned(), message));
+                 }
+                 for error in cleanup_errors {
+                     self.record_runtime_message(format!(
+@@ -1122,12 +1143,13 @@ impl HomeView {
+         }
+     }
+ 
+-    fn apply_runtime_outcomes(&mut self) -> bool {
++    fn apply_runtime_outcomes(&mut self, promote_dialogs: bool) -> bool {
+         use crate::daemon::{NamespaceOutcome, ReorderOutcome};
+         use crate::tui::session_feed::{CommandFailure, SessionCommandOutcome};
+         let row_outcomes = self.session_feed.drain_session_outcomes();
+         let namespace = self.session_feed.drain_namespace_result();
+         let mut changed = !row_outcomes.is_empty() || namespace.is_some();
++        let mut purge_notes: Vec<(String, String)> = Vec::new();
+         for (id, outcome) in row_outcomes {
+             match outcome {
+                 SessionCommandOutcome::Trashed(receipt) => match receipt.outcome.relocation {
+@@ -1144,7 +1166,7 @@ impl HomeView {
+                     | crate::daemon::TrashRelocationOutcome::Skipped => {}
+                 },
+                 SessionCommandOutcome::Purged(receipt) => {
+-                    self.record_purge_outcome(&id, receipt.outcome)
++                    self.record_purge_outcome(&id, receipt.outcome, &mut purge_notes)
+                 }
+                 SessionCommandOutcome::Renamed(receipt) => {
+                     for warning in receipt.outcome.warnings {
+@@ -1247,7 +1269,11 @@ impl HomeView {
+                             );
+                         }
+                         for session in outcome.sessions {
+-                            self.record_purge_outcome(&session.id, session.outcome);
++                            self.record_purge_outcome(
++                                &session.id,
++                                session.outcome,
++                                &mut purge_notes,
++                            );
+                         }
+                         for failure in outcome.failures {
+                             self.record_runtime_message(format!(
+@@ -1315,7 +1341,14 @@ impl HomeView {
+                 },
+             }
+         }
+-        if self.info_dialog.is_none() && !self.runtime_outcome_messages.is_empty() {
++        if !purge_notes.is_empty() {
++            self.flash_status(purge_flash_text(&purge_notes));
++            changed = true;
++        }
++        if promote_dialogs
++            && !self.has_non_live_send_overlay()
++            && !self.runtime_outcome_messages.is_empty()
++        {
+             let messages = std::mem::take(&mut self.runtime_outcome_messages);
+             self.info_dialog = Some(InfoDialog::sized_to_fit(
+ 
+```
+
+**File**: `src/tui/home/tests/preview_links.rs` (modified, +4/-4)
+```diff
+@@ -171,10 +171,10 @@ fn status_flash_shows_then_expires_without_acknowledgement() {
+     assert!(!env.view.expire_status_flash());
+ 
+     // Reach the deadline without sleeping through it.
+-    env.view.status_flash = Some((
+-        "opened https://example.com/aoe".to_string(),
+-        std::time::Instant::now(),
+-    ));
++    env.view.status_flash = Some(crate::tui::home::overlays::StatusFlash {
++        text: "opened https://example.com/aoe".to_string(),
++        until: Some(std::time::Instant::now()),
++    });
+     assert_eq!(env.view.status_flash_text(), None, "window has closed");
+     assert!(
+         env.view.expire_status_flash(),
+```
+
+**File**: `src/tui/home/tests/session_feed_tests.rs` (modified, +156/-0)
+```diff
+@@ -3795,3 +3795,159 @@ async fn keyboard_palette_recovery_executes_captured_commands_and_preserves_file
+         assert_eq!(std::fs::read(sentinel).unwrap(), b"keep recovery files");
      }
  }
 +
- #[derive(Debug, Default, Clone, Serialize, Deserialize)]
- pub struct DeleteSessionBody {
-     #[serde(default)]
-```
-
-**File**: `src/server/api/sessions/lifecycle.rs` (modified, +3/-0)
-```diff
-@@ -752,6 +752,9 @@ pub async fn trash_session(
-             if worker_state.cityhall_mode && !row.is_structured() {
-                 return Err(LifecycleTargetError::CityHall.into());
-             }
-+            if body.expected_profile.as_deref().is_some_and(|profile| profile != store.storage().profile()) {
-+                return Err(crate::session::LifecycleReservationError::Superseded.into());
-+            }
-             if body.expected_generation.is_some_and(|generation| generation != row.lifecycle_generation) {
-                 return Err(crate::session::LifecycleReservationError::Superseded.into());
-             }
-```
-
-**File**: `src/server/api/sessions/tests.rs` (modified, +42/-15)
-```diff
-@@ -1,5 +1,23 @@
- use super::*;
- 
-+async fn assert_response_status(
-+    response: axum::response::Response,
-+    expected: StatusCode,
-+    context: &str,
-+) -> axum::response::Response {
-+    if response.status() != expected {
-+        let actual = response.status();
-+        let body = axum::body::to_bytes(response.into_body(), usize::MAX)
-+            .await
-+            .unwrap();
-+        panic!(
-+            "{context}: expected {expected}, got {actual}; sanitized response body: {}",
-+            String::from_utf8_lossy(&body)
++/// A committed deletion reports its cleanup notes without a modal: the delete
++/// already happened, and an InfoDialog here can land underneath a permission or
++/// question dialog and swallow every keystroke until it is acknowledged.
++#[test]
++#[serial]
++fn purge_cleanup_messages_flash_instead_of_opening_a_modal() {
++    let mut env = create_test_env_with_sessions(1);
++    let id = env.view.instance_at(0).id.clone();
++    let mut notes = Vec::new();
++    env.view.record_purge_outcome(
++        &id,
++        crate::daemon::PurgeOutcome::Deleted {
++            messages: vec!["Branch 'aoe/work' deleted".to_string()],
++            cleanup_errors: Vec::new(),
++        },
++        &mut notes,
++    );
++    assert!(env.view.info_dialog.is_none());
++    assert_eq!(
++        super::super::status::purge_flash_text(&notes),
++        format!("{id}: Branch 'aoe/work' deleted")
++    );
++
++    env.view.record_purge_outcome(
++        &id,
++        crate::daemon::PurgeOutcome::Deleted {
++            messages: Vec::new(),
++            cleanup_errors: vec!["Branch: not fully merged".to_string()],
++        },
++        &mut Vec::new(),
++    );
++    assert!(
++        env.view.info_dialog.is_none(),
++        "the modal opens on the next apply_session_feed"
++    );
++    env.view.apply_session_feed();
++    assert_eq!(
++        env.view.info_dialog.as_ref().map(|d| d.title()),
++        Some("Runtime change"),
++        "an incomplete cleanup still needs an acknowledgement"
++    );
++}
++
++/// A group delete reports one note per session in one pass. Every note has to
++/// reach the single status line that replaces the old modal, with the session
++/// it belongs to, so nothing is lost to the last write winning.
++#[test]
++#[serial]
++fn purge_cleanup_notes_survive_a_multi_session_delete_in_one_flash() {
++    let mut env = create_test_env_with_sessions(2);
++    let first = env.view.instance_at(0).id.clone();
++    let second = env.view.instance_at(1).id.clone();
++    let mut notes = Vec::new();
++    for id in [&first, &second] {
++        env.view.record_purge_outcome(
++            id,
++            crate::daemon::PurgeOutcome::Deleted {
++                messages: vec![
++                    "Worktree removed".to_string(),
++                    format!("Branch 'aoe/{id}' deleted"),
++                ],
++                cleanup_errors: Vec::new(),
++            },
++            &mut notes,
 +        );
 +    }
-+    response
++    assert_eq!(
++        super::super::status::purge_flash_text(&notes),
++        format!(
++            "{first}, {second}: Worktree removed; {first}: Branch 'aoe/{first}' deleted; \
++             {second}: Branch 'aoe/{second}' deleted"
++        ),
++        "a shared note names both sessions and no session's note is dropped"
++    );
 +}
 +
- #[tokio::test]
- #[serial_test::serial]
- async fn structured_purge_waits_for_a_pending_runner_retirement() -> anyhow::Result<()> {
-@@ -1278,17 +1296,22 @@ async fn metadata_commit_rejects_partial_rows_without_rewriting_them() -> anyhow
- 
- #[tokio::test]
- #[serial_test::serial]
--async fn trash_preserves_idempotency_and_rejects_stale_generations() -> anyhow::Result<()> {
-+async fn trash_preserves_idempotency_and_rejects_stale_generations_or_profiles(
-+) -> anyhow::Result<()> {
-     use crate::session::LifecycleOperation;
--    for (already_trashed, precondition, omit_body, peer) in [
--        (false, true, false, None),
--        (true, true, false, None),
--        (true, false, false, None),
--        (true, false, true, None),
--        (true, false, false, Some(LifecycleOperation::Purge)),
--        (true, false, false, Some(LifecycleOperation::Trash)),
-+    for (already_trashed, precondition, omit_body, peer, wrong_profile) in [
-+        (false, true, false, None, false),
-+        (true, true, false, None, false),
-+        (true, false, false, None, false),
-+        (true, false, true, None, false),
-+        (true, false, false, Some(LifecycleOperation::Purge), false),
-+        (true, false, false, Some(LifecycleOperation::Trash), false),
-+        (false, false, false, None, true),
-+        (true, false, false, None, true),
-     ] {
-         let _guard = crate::session::test_support::isolate_app_dir();
-+        crate::session::purge_owners::initialize(&crate::session::get_app_dir()?)?;
-+        crate::tmux::tool_retirement::initialize(&crate::session::get_app_dir()?)?;
-         let mut row = Instance::new("stale trash", "/tmp/stale-trash");
-         row.source_profile = "receipt".into();
-         let expected_generation = row.lifecycle_generation;
-@@ -1319,19 +1342,22 @@ async fn trash_preserves_idempotency_and_rejects_stale_generations() -> anyhow::
-             (!omit_body).then_some(Json(TrashSessionBody {
-                 kill_pane: true,
-                 expected_generation: precondition.then_some(expected_generation),
-+                expected_profile: wrong_profile.then(|| "different-profile".into()),
-             })),
-         )
-         .await
-         .into_response();
--        assert_eq!(
--            response.status(),
--            if precondition || peer.is_some() {
-+        let response = assert_response_status(
-+            response,
-+            if precondition || peer.is_some() || wrong_profile {
-                 StatusCode::CONFLICT
-             } else {
-                 StatusCode::OK
--            }
--        );
--        if precondition {
-+            },
-+            "Trash generation/idempotency",
-+        )
-+        .await;
-+        if precondition || wrong_profile {
-             assert_eq!(
-                 response.headers()[crate::daemon::ERROR_CODE_HEADER],
-                 crate::daemon::ApiErrorCode::LifecycleSuperseded.as_str()
-@@ -1344,7 +1370,7 @@ async fn trash_preserves_idempotency_and_rejects_stale_generations() -> anyhow::
-             );
-         }
-         assert_eq!(std::fs::read(storage.sessions_path())?, before);
--        if precondition || peer.is_some() {
-+        if precondition || peer.is_some() || wrong_profile {
-             assert!(!response
-                 .headers()
-                 .contains_key(crate::daemon::RUNTIME_REVISION_HEADER));
-@@ -1790,6 +1816,7 @@ async fn trash_retry_finishes_expired_transition_after_startup() -> anyhow::Resu
-             Some(Json(TrashSessionBody {
-                 kill_pane: true,
-                 expected_generation: Some(generation),
-+                expected_profile: None,
-             })),
-         )
-         .await
-```
-
-**File**: `src/tui/dialogs/context_menu.rs` (modified, +34/-12)
-```diff
-@@ -1,5 +1,4 @@
--//! Small popup menu anchored at a screen position, used for right-click
--//! context actions on the sidebar list (Rename / Delete).
-+//! Context actions anchored to a sidebar row.
- 
- use crossterm::event::{KeyCode, KeyEvent};
- use ratatui::prelude::*;
-@@ -49,6 +48,14 @@ pub enum ContextMenuAction {
-     ToggleSectionCollapse,
-     /// Restore a trashed session.
-     Restore,
-+    RetryTrash,
++/// The flash window measures time on screen. A takeover view renders before the
++/// status bar, so a note that arrives behind settings must not count down there
++/// and expire before it is ever shown.
++#[test]
++#[serial]
++fn status_flash_window_starts_when_the_bar_is_drawn() {
++    let mut env = create_test_env_with_sessions(1);
++    env.view.flash_status("Copied selection");
++    assert!(
++        env.view.status_flash.as_ref().unwrap().until.is_none(),
++        "a fresh flash has not started counting down"
++    );
++    assert!(!env.view.expire_status_flash());
++
++    env.view.settings_view = Some(crate::tui::settings::SettingsView::new("test", None).unwrap());
++    render_home_to_string(&mut env.view, 120, 24);
++    assert!(
++        env.view.status_flash.as_ref().unwrap().until.is_none(),
++        "settings covers the status bar, so the window cannot have started"
++    );
++
++    env.view.settings_view = None;
++    render_home_to_string(&mut env.view, 120, 24);
++    assert!(
++        env.view.status_flash.as_ref().unwrap().until.is_some(),
++        "the bar is drawn, so the window starts now"
++    );
++    assert_eq!(env.view.status_flash_text(), Some("Copied selection"));
++    assert!(!env.view.expire_status_flash());
 +}
 +
-+pub struct SessionMenuTarget {
-+    pub id: String,
-+    pub profile: String,
-+    pub generation: u64,
-+    pub epoch: Option<String>,
- }
- 
- pub struct ContextMenuDialog {
-@@ -61,7 +68,7 @@ pub struct ContextMenuDialog {
-     anchor: (u16, u16),
-     /// Last rendered rect, so click-outside needs no layout math.
-     last_area: Rect,
--    session_target: Option<(String, String, u64)>,
-+    session_target: Option<SessionMenuTarget>,
- }
- 
- /// The menu item at `(col, row)`, or `None` on any border, past the last item,
-@@ -142,23 +149,37 @@ impl ContextMenuDialog {
-         self
-     }
- 
--    /// A trashed row can only come back out or be deleted for good.
--    pub fn for_trashed_session(anchor: (u16, u16)) -> Self {
-+    pub fn for_trashed_session(anchor: (u16, u16), unfinished: bool) -> Self {
-         Self::new(
-             anchor,
--            vec![
--                (ContextMenuAction::Restore, "Restore"),
--                (ContextMenuAction::Delete, "Delete"),
--            ],
-+            if unfinished {
-+                vec![(ContextMenuAction::RetryTrash, "Retry Trash")]
-+            } else {
-+                vec![
-+                    (ContextMenuAction::Restore, "Restore"),
-+                    (ContextMenuAction::Delete, "Delete"),
-+                ]
-+            },
-         )
-     }
- 
--    pub fn with_session_target(mut self, id: &str, profile: &str, generation: u64) -> Self {
--        self.session_target = Some((id.to_owned(), profile.to_owned(), generation));
-+    pub fn with_session_target(
-+        mut self,
-+        id: &str,
-+        profile: &str,
-+        generation: u64,
-+        epoch: Option<&str>,
-+    ) -> Self {
-+        self.session_target = Some(SessionMenuTarget {
-+            id: id.to_owned(),
-+            profile: profile.to_owned(),
-+            generation,
-+            epoch: epoch.map(str::to_owned),
-+        });
-         self
-     }
- 
--    pub fn session_target(&self) -> Option<&(String, String, u64)> {
-+    pub fn session_target(&self) -> Option<&SessionMenuTarget> {
-         self.session_target.as_ref()
-     }
- 
-@@ -168,6 +189,7 @@ impl ContextMenuDialog {
-                 action,
-                 ContextMenuAction::Restore
-                     | ContextMenuAction::Delete
-+                    | ContextMenuAction::RetryTrash
-                     | ContextMenuAction::NewSession
-                     | ContextMenuAction::OpenSortPicker
-                     | ContextMenuAction::OpenGroupPicker
++/// A dialog promoted while a key event is being handled would consume that same
++/// key before the user ever sees it. Only the tick path promotes, and it always
++/// draws first.
++#[test]
++#[serial]
++fn runtime_change_dialog_is_promoted_only_before_a_draw() {
++    let mut env = create_test_env_with_sessions(1);
++    env.view
++        .record_runtime_message("Reveal cancelled: no such session".to_string());
++    env.view.apply_session_feed_before_input();
++    assert!(
++        env.view.info_dialog.is_none(),
++        "the key that woke the loop must reach the view, not a dialog"
++    );
++    assert_eq!(
++        env.view.runtime_outcome_messages.len(),
++        1,
++        "the note waits for a draw instead of being dropped"
++    );
++
++    env.view.apply_session_feed();
++    assert_eq!(
++
 ```
 
-**File**: `src/tui/home/bindings.rs` (modified, +30/-0)
+**File**: `src/tui/home/tests/shortcut_bar.rs` (modified, +1/-1)
 ```diff
-@@ -99,6 +99,8 @@ pub enum ActionId {
-     AutoName,
-     /// Permanently purge every trashed session after a confirm (palette only; no chord).
-     EmptyTrash,
-+    RestoreTrash,
-+    RetryTrash,
-     ToggleSplitTerminal,
-     /// Open the command palette (any hotkey mode).
-     OpenCommandPalette,
-@@ -127,6 +129,8 @@ impl ActionId {
-                 | Self::RespondToPermission
-                 | Self::Stop
-                 | Self::Delete
-+                | Self::RestoreTrash
-+                | Self::RetryTrash
-                 | Self::Rename
-                 | Self::SetWorktreeName
-                 | Self::AddProject
-@@ -1253,6 +1257,30 @@ pub static BINDINGS: &[Binding] = &[
-             group: PaletteGroup::Actions,
-         }),
-     },
-+    Binding {
-+        id: ActionId::RestoreTrash,
-+        non_strict: &[],
-+        strict: &[],
-+        context: Context::Always,
-+        help: None,
-+        palette: Some(PaletteMeta {
-+            title: "Restore selected Trash session",
-+            keywords: &["trash", "restore", "recovery"],
-+            group: PaletteGroup::Actions,
-+        }),
-+    },
-+    Binding {
-+        id: ActionId::RetryTrash,
-+        non_strict: &[],
-+        strict: &[],
-+        context: Context::Always,
-+        help: None,
-+        palette: Some(PaletteMeta {
-+            title: "Retry selected unfinished Trash session",
-+            keywords: &["trash", "retry", "recovery"],
-+            group: PaletteGroup::Actions,
-+        }),
-+    },
-     // The mnemonic keys (a/A, n/N, r/R, t/T) are taken and the home keyspace is saturated
-     // (see Fork), so "Auto-name now" lands on the free v/V pair. Gated to a
-     // still-default-named session by the daemon handler.
-@@ -1338,6 +1366,8 @@ pub fn palette_id(id: ActionId) -> &'static str {
-         ActionId::Fork => "fork",
-         ActionId::AutoName => "auto-name",
-         ActionId::EmptyTrash => "empty-trash",
-+        ActionId::RestoreTrash => "restore-trash",
-+        ActionId::RetryTrash => "retry-trash",
-         ActionId::OpenCommandPalette => "command-palette",
-         ActionId::DismissUpdateBanner => "dismiss-update-banner",
-         ActionId::PreviewScrollUp => "preview-scroll-up",
+@@ -77,7 +77,7 @@ fn hidden_bar_preserves_temporary_feedback_and_keyboard_actions() {
+     let screen = render_home_to_string(&mut env.view, 120, 24);
+     assert!(screen.contains("Copied selection"));
+     assert_eq!(env.view.preview_outer_area.bottom(), 23);
+-    env.view.status_flash.as_mut().unwrap().1 = std::time::Instant::now();
++    env.view.status_flash.as_mut().unwrap().until = Some(std::time::Instant::now());
+     assert!(env.view.expire_status_flash());
+     render_home_to_string(&mut env.view, 120, 24);
+     assert_eq!(env.view.preview_outer_area.bottom(), 24);
 ```
 
 ---
 
-### Incident Patch 2: `6bccd48f` (2026-11-12)
-**Commit Message**: fix(acp): preserve live runners across control channel loss (#5254)
+### Incident Patch 2: `7a8fa6a3` (2026-11-13)
+**Commit Message**: fix(serve): resolve session config once per repo across linked worktrees (#5616)
 
-* fix(acp): reattach a live runner after only its control channel closes
+* chore(file-watch): log why the dispatcher stops and who created the service
 
-When the runner side closed the daemon's control connection while the runner
-and its agent stayed alive, the daemon reported a generic transport closure,
-ended the in-flight turn as complete, and the drain replaced the runner, which
-killed the agent and its running command.
+The v1.23.0 daemon logs dispatcher_loop_exit at startup without a panic.
+That reason only means the dispatcher future was dropped. Record the
+creation site, the thread, and whether a runtime is still current when
+the future is dropped before run_dispatcher returns.
 
-The daemon now records that the runner ended the channel (EOF or I/O error,
-not a local close or an undecodable frame), keeps the turn open, and the drain
-redials the same runner under the same lease when its exact identity is live,
-bounded by attempts, a per-attempt deadline and the respawn budget. A dead or
-replaced runner, a protocol failure, a stop or a lost lease keeps the existing
-stop, park or replacement path. The runner's write failure now reports timeout
-versus I/O error kind, frame size and queue depth, without payloads.
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* fix(serve): resolve session config once per repo across linked worktrees
+
+list_sessions and publish resolved config per (profile, worktree path),
+and each miss reopened the main repo through libgit2 to find the repo
+config. In a repo with hundreds of worktrees that parse dominated the
+daemon, so every session mutation waited about a second behind publish.
+
+find_main_repo now reads the worktree gitdir file before opening the
+repo, and the per-request cache keys on the repo config source so
+worktrees of one repo share an entry.
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* fix(serve): memoize repo config source discovery per request
+
+Discovery opens the repo through libgit2 for a main checkout, and
+
+**File**: `src/file_watch.rs` (modified, +55/-3)
+```diff
+@@ -254,6 +254,7 @@ impl FileWatchService {
+     }
+ 
+     /// Falls back to `noop()` when the backend fails or `AOE_FILE_WATCH=off`.
++    #[track_caller]
+     pub fn new() -> Result<Arc<Self>, WatchError> {
+         if std::env::var("AOE_FILE_WATCH").as_deref() == Ok("off") {
+             tracing::info!(
+@@ -325,7 +326,11 @@ impl FileWatchService {
+         crate::task_util::spawn_supervised(
+             "file_watch.dispatcher",
+             crate::task_util::PanicPolicy::Log,
+-            dispatcher_loop(Arc::downgrade(&svc), tokio_rx),
++            dispatcher_loop(
++                Arc::downgrade(&svc),
++                tokio_rx,
++                std::panic::Location::caller(),
++            ),
+         );
+ 
+         Ok(svc)
+@@ -652,20 +657,45 @@ fn classify_event_kind(ev: &notify::Event) -> Option<FileEventKind> {
+ async fn dispatcher_loop(
+     svc: Weak<FileWatchService>,
+     mut rx: mpsc::UnboundedReceiver<DispatchMsg>,
++    origin: &'static std::panic::Location<'static>,
+ ) {
+-    // Flips `dispatcher_dead` on every exit path of `run_dispatcher`, including panic.
++    tracing::debug!(
++        target: "file_watch.service",
++        %origin,
++        thread = ?std::thread::current().name(),
++        "file watch dispatcher started"
++    );
++    // Flips `dispatcher_dead` on every exit path of `run_dispatcher`, including panic and
++    // the future being dropped (runtime shutdown or task abort).
+     struct ExitLatch<'a> {
+         svc: &'a Weak<FileWatchService>,
++        origin: &'static std::panic::Location<'static>,
++        returned: bool,
+     }
+     impl Drop for ExitLatch<'_> {
+         fn drop(&mut self) {
++            if !self.returned {
++                tracing::error!(
++                    target: "file_watch.service",
++                    origin = %self.origin,
++                    thread = ?std::thread::current().name(),
++                    panicking = std::thread::panicking(),
++                    in_runtime = tokio::runtime::Handle::try_current().is_ok(),
++                    "file watch dispatcher future dropped before run_dispatcher returned"
++                );
++            }
+             if let Some(arc) = self.svc.upgrade() {
+                 log_dispatcher_dead_once(&arc, "dispatcher_loop_exit", None);
+             }
+         }
+     }
+-    let _guard = ExitLatch { svc: &svc };
++    let mut guard = ExitLatch {
++        svc: &svc,
++        origin,
++        returned: false,
++    };
+     let exit_reason = run_dispatcher(svc.clone(), &mut rx).await;
++    guard.returned = true;
+     if let Some(arc) = svc.upgrade() {
+         log_dispatcher_dead_once(&arc, exit_reason, None);
+     }
+@@ -1349,6 +1379,28 @@ mod tests {
+         }
+     }
+ 
++    #[test]
++    fn dispatcher_dead_when_its_runtime_shuts_down() {
++        let runtime = tokio::runtime::Builder::new_current_thread()
++            .enable_time()
++            .build()
++            .unwrap();
++        let svc = runtime.block_on(async {
++            let svc = FileWatchService::new().expect("init");
++            // The barrier ack proves the dispatcher was polled, so its exit guard exists.
++            tokio::time::timeout(
++                Duration::from_secs(5),
++                super::test_support::dispatch_barrier(&svc),
++            )
++            .await
++            .expect("dispatcher acknowledges the barrier");
++            svc
++        });
++        assert!(!svc.dispatcher_dead.load(Ordering::Acquire));
++        drop(runtime);
++        assert!(svc.dispatcher_dead.load(Ordering::Acquire));
++    }
++
+     #[tokio::test]
+     async fn dispatcher_dead_latch_is_one_way() {
+         let svc = FileWatchService::new().expect("init");
+```
+
+**File**: `src/git/worktree/mod.rs` (modified, +6/-4)
+```diff
+@@ -127,10 +127,12 @@ impl GitWorktree {
+     }
+ 
+     pub fn find_main_repo(path: &Path) -> Result<PathBuf> {
+-        let Ok(repo) = open_repo_at(path) else {
+-            return Self::find_main_repo_from_linked_worktree_gitfile(path)
+-                .ok_or(GitError::NotAGitRepo);
+-        };
++        // Opening a linked worktree parses the shared repo config, which is costly in a repo
++        // with many worktrees, so read the gitdir file first.
++        if let Some(main_repo) = Self::find_main_repo_from_linked_worktree_gitfile(path) {
++            return Ok(main_repo);
++        }
++        let repo = open_repo_at(path).map_err(|_| GitError::NotAGitRepo)?;
+         if let Some(main_repo) = Self::find_main_repo_from_worktree_gitdir(repo.path()) {
+             return Ok(main_repo);
+         }
+```
+
+**File**: `src/server/api/sessions/model.rs` (modified, +29/-3)
+```diff
+@@ -382,11 +382,15 @@ pub(super) fn custom_agent_acp_capable(
+         || crate::acp::inherited_acp_base(tool, &session.agent_detect_as).is_some()
+ }
+ 
+-/// Per-request cache for `(profile, project_path)` config resolution, shared
++/// Per-request cache for `(profile, repo config source)` config resolution, shared
+ /// across the `list_sessions` overlays so a repo-local override is read from
+ /// disk once per unique pair rather than once per row. See #2603.
+ pub(super) struct SessionCfgCache<'a> {
+-    entries: HashMap<(String, String), (SessionConfig, StructuredView)>,
++    entries: HashMap<(String, std::path::PathBuf), (SessionConfig, StructuredView)>,
++    /// `project_path` to its repo config source; discovery can open the repo through libgit2.
++    sources: HashMap<String, std::path::PathBuf>,
++    #[cfg(test)]
++    pub(super) discoveries: usize,
+     /// Where this cache reports its disk reads. The counter belongs to the
+     /// request, not to the cache, so every cache the request opens adds to
+     /// one total: splitting the shared cache per overlay then shows up as
+@@ -399,14 +403,36 @@ impl<'a> SessionCfgCache<'a> {
+     pub(super) fn new(misses: &'a std::sync::atomic::AtomicUsize) -> Self {
+         Self {
+             entries: HashMap::new(),
++            sources: HashMap::new(),
++            #[cfg(test)]
++            discoveries: 0,
+             misses,
+         }
+     }
++
++    fn source(&mut self, project_path: &str) -> std::path::PathBuf {
++        if let Some(source) = self.sources.get(project_path) {
++            return source.clone();
++        }
++        #[cfg(test)]
++        {
++            self.discoveries += 1;
++        }
++        let source = crate::session::config::repo_config::repo_config_source_path(
++            std::path::Path::new(project_path),
++        );
++        self.sources
++            .insert(project_path.to_string(), source.clone());
++        source
++    }
++
+     /// Resolve `(profile, project_path)`, reading from disk on first miss only.
+     fn entry(&mut self, profile: &str, project_path: &str) -> &(SessionConfig, StructuredView) {
+         let misses = self.misses;
++        // Linked worktrees read their repo config from the main repo, so they share an entry.
++        let source = self.source(project_path);
+         self.entries
+-            .entry((profile.to_string(), project_path.to_string()))
++            .entry((profile.to_string(), source))
+             .or_insert_with(|| {
+                 misses.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                 let config = crate::session::config::repo_config::resolve_config_with_repo_or_warn(
+```
+
+**File**: `src/server/api/sessions/tests.rs` (modified, +135/-0)
+```diff
+@@ -4375,6 +4375,141 @@ async fn list_sessions_shares_config_resolution_across_overlays() {
+     );
+ }
+ 
++fn run_git(dir: &std::path::Path, args: &[&str]) {
++    let out = std::process::Command::new("git")
++        .args([
++            "-c",
++            "user.name=t",
++            "-c",
++            "user.email=t@t",
++            "-c",
++            "init.defaultBranch=main",
++        ])
++        .args(args)
++        .current_dir(dir)
++        .output()
++        .expect("run git");
++    assert!(out.status.success(), "git {args:?}: {out:?}");
++}
++
++// Source discovery can open the repo through libgit2, so a main checkout shared by many
++// sessions must be discovered once per request, not on every cache hit.
++#[test]
++#[serial_test::serial]
++fn session_cfg_cache_discovers_a_repeated_main_checkout_once() {
++    use std::sync::atomic::{AtomicUsize, Ordering};
++
++    let tmp_home = tempfile::tempdir().expect("tempdir HOME");
++    let _home = crate::session::test_support::isolate_app_dir_at(tmp_home.path());
++    let repo = tempfile::tempdir().expect("tempdir repo");
++    run_git(repo.path(), &["init", "-q"]);
++    let path = repo.path().to_str().unwrap();
++
++    let misses = AtomicUsize::new(0);
++    let mut cache = super::model::SessionCfgCache::new(&misses);
++    for _ in 0..3 {
++        cache.resolve("default", path);
++        cache.structured_view("default", path);
++    }
++
++    assert_eq!(cache.discoveries, 1);
++    assert_eq!(misses.load(Ordering::Relaxed), 1);
++}
++
++// Repo roots that differ only in non-UTF-8 bytes must not share a config. APFS rejects such names.
++#[cfg(target_os = "linux")]
++#[test]
++#[serial_test::serial]
++fn session_cfg_cache_keeps_non_utf8_repo_roots_apart() {
++    use std::os::unix::ffi::OsStrExt;
++    use std::sync::atomic::{AtomicUsize, Ordering};
++
++    let tmp_home = tempfile::tempdir().expect("tempdir HOME");
++    let _home = crate::session::test_support::isolate_app_dir_at(tmp_home.path());
++    let tmp = tempfile::tempdir().expect("tempdir repos");
++    let paths: Vec<String> = [b"r\xff".as_slice(), b"r\xfe".as_slice()]
++        .iter()
++        .enumerate()
++        .map(|(i, name)| {
++            let main = tmp.path().join(std::ffi::OsStr::from_bytes(name));
++            std::fs::create_dir(&main).unwrap();
++            run_git(&main, &["init", "-q"]);
++            run_git(&main, &["commit", "-q", "--allow-empty", "-m", "init"]);
++            let worktree = tmp.path().join(format!("wt{i}"));
++            run_git(
++                &main,
++                &[
++                    "worktree",
++                    "add",
++                    "-q",
++                    "-b",
++                    "b",
++                    worktree.to_str().unwrap(),
++                ],
++            );
++            worktree.to_str().unwrap().to_owned()
++        })
++        .collect();
++
++    let misses = AtomicUsize::new(0);
++    let mut cache = super::model::SessionCfgCache::new(&misses);
++    for path in &paths {
++        cache.resolve("default", path);
++    }
++
++    assert_eq!(misses.load(Ordering::Relaxed), 2);
++}
++
++// Regression witness for #5610: sessions in linked worktrees of one repo read the
++// same repo config, so they must share one resolution instead of one per worktree.
++#[tokio::test]
++#[serial_test::serial]
++async fn list_sessions_resolves_config_once_per_repo_across_linked_worktrees() {
++    use std::sync::atomic::Ordering;
++
++    let tmp_home = tempfile::tempdir().expect("tempdir HOME");
++    let _home = crate::session::test_support::isolate_app_dir_at(tmp_home.path());
++    let repo = tempfile::tempdir().expect("tempdir repo");
++    let main = repo.path().join("main");
++    std::fs::create_dir(&main).unwrap();
++    run_git(&main, &["init", "-q"]);
++    run_git(&main, &["commit", "-q", "--allow-empty", "-m", "init"]);
++    let sessions: Vec<Instance> = (0..3)
++        .map(|i| {
++            let worktree = repo.path().join(format!("wt{i}"));
++            run_git(
++                &main,
++                &[
++                    "worktree",
++                    "add",
++                    "-q",
++                    "-b",
++                    &format!("b{i}"),
++                    worktree.to_str().unwrap(),
++                ],
++            );
++            let mut inst = Instance::new("test-session", worktree.to_str().unwrap());
++            inst.tool = "custom-tool-5610".to_string();
++            inst.source_profile = "default".to_string();
++            inst
++        })
++        .collect();
++
++    let state = crate::server::test_support::build_test_app_state(sessions);
++    let _envelope = list_sessions(
++        axum::extract::State(state.clone()),
++        axum::extract::Query(ListSessionsQuery { state: None }),
++        axum::http::HeaderMap::new(),
++    )
++    .await;
++    let misses = state.list_sessions_resolver_misses.load(Ordering::Relaxed);
++
++    assert_eq!(
++        misses, 1,
++        "linked worktrees of one repo must share one resolution; got {misses}",
++    );
++}
++
+```
+
+**File**: `src/session/config/profile_config.rs` (modified, +7/-0)
+```diff
+@@ -174,8 +174,15 @@ pub fn apply_cityhall_overrides(config: &mut Config) {
+     config.worktree.enabled = true;
+ }
+ 
++#[cfg(test)]
++thread_local! {
++    pub(crate) static RESOLVES: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
++}
++
+ /// Load effective config for a profile (global + profile overrides merged)
+ pub fn resolve_config(profile: &str) -> Result<Config> {
++    #[cfg(test)]
++    RESOLVES.with(|n| n.set(n.get() + 1));
+     let global = Config::load()?;
+     let profile_config = load_profile_config(profile)?;
+     let mut config = merge_configs(global, &profile_config);
+```
+
+**File**: `src/session/instance/accessors.rs` (modified, +21/-7)
+```diff
+@@ -337,8 +337,16 @@ impl Instance {
+     /// Whether a resume selector appended to this launch reaches the agent.
+     /// Only a verified direct invocation or an explicit wrapper contract carries selectors.
+     pub(crate) fn launch_can_carry_resume_selector(&self, agent: &crate::agents::AgentDef) -> bool {
+-        self.execution_agent()
+-            .is_ok_and(|actual| actual.name == agent.name)
++        self.launch_carries_selector(self.resolved_agent(), agent)
++    }
++
++    /// [`Self::launch_can_carry_resume_selector`] for a caller that already holds the execution identity.
++    pub(super) fn launch_carries_selector(
++        &self,
++        native: Option<&crate::agents::AgentDef>,
++        agent: &crate::agents::AgentDef,
++    ) -> bool {
++        native.is_some_and(|actual| actual.name == agent.name)
+             && self.managed_user_argv(agent).is_ok()
+     }
+ 
+@@ -471,18 +479,24 @@ impl Instance {
+ 
+     /// Bare wrappers can receive fresh-session selectors without attesting execution.
+     pub(super) fn legacy_default_selector_agent(&self) -> Option<&'static crate::agents::AgentDef> {
++        let config = crate::session::config::profile_config::resolve_config_or_warn(
++            &self.effective_profile(),
++        );
++        self.legacy_default_selector_agent_in(&config.session)
++    }
++
++    pub(super) fn legacy_default_selector_agent_in(
++        &self,
++        config: &crate::session::config::SessionConfig,
++    ) -> Option<&'static crate::agents::AgentDef> {
+         if matches!(
+             self.resume_intent,
+             ResumeIntent::Use(_) | ResumeIntent::Fork { .. }
+         ) {
+             return None;
+         }
+         let agent = resolved_agent_for(&self.effective_profile(), &self.tool, &self.detect_as)?;
+-        if crate::session::config::profile_config::resolve_config_or_warn(&self.effective_profile())
+-            .session
+-            .agent_execution_as
+-            .contains_key(&self.tool)
+-        {
++        if config.agent_execution_as.contains_key(&self.tool) {
+             return None;
+         }
+         let command = self.get_tool_command();
+```
+
+**File**: `src/session/instance/session_id.rs` (modified, +49/-4)
+```diff
+@@ -621,15 +621,29 @@ impl Instance {
+     /// refuses, so the availability the API and TUI render cannot drift from
+     /// the launch line.
+     fn terminal_resume_static_unavailable(&self) -> Option<ResumeStaticUnavailable> {
+-        let Some(agent) = self
+-            .default_selector_agent()
++        // One resolve serves every check; a projection runs this per session.
++        let profile = self.effective_profile();
++        let resolved = crate::session::config::profile_config::resolve_config(&profile);
++        let fallback;
++        let config = match &resolved {
++            Ok(config) => &config.session,
++            Err(_) => {
++                fallback = crate::session::config::profile_config::resolve_config_or_warn(&profile);
++                &fallback.session
++            }
++        };
++        let native = resolved.as_ref().ok().and_then(|resolved| {
++            Self::execution_agent_for(&self.tool, self.get_tool_command(), &resolved.session).ok()
++        });
++        let Some(agent) = native
++            .or_else(|| self.legacy_default_selector_agent_in(config))
+             .filter(|agent| agent.session_support.is_some())
+         else {
+             return Some(ResumeStaticUnavailable::Agent);
+         };
+-        if !self.launch_can_carry_resume_selector(agent)
++        if !self.launch_carries_selector(native, agent)
+             && !self.can_attempt_default_resume(agent)
+-            && self.legacy_default_selector_agent().is_none()
++            && self.legacy_default_selector_agent_in(config).is_none()
+         {
+             return Some(ResumeStaticUnavailable::Command);
+         }
+@@ -1275,6 +1289,37 @@ mod tests {
+             .unwrap());
+     }
+ 
++    #[test]
++    #[serial]
++    fn resume_availability_resolves_config_once_per_session() {
++        const PROFILE: &str = "resume-resolve-once";
++        let root = tempdir().unwrap();
++        let _app = crate::session::test_support::isolate_app_dir_at(&root.path().join("app"));
++        let profile_path =
++            crate::session::config::profile_config::get_profile_config_path(PROFILE).unwrap();
++        std::fs::create_dir_all(profile_path.parent().unwrap()).unwrap();
++        std::fs::write(
++            profile_path,
++            "[session.agent_detect_as]\nwork-claude = \"claude\"\n",
++        )
++        .unwrap();
++        let _registry = crate::tmux::status_rules::ProfileRegistryGuard::take(PROFILE);
++        // Direct launch, bare wrapper, and a tool with no session support.
++        for (tool, command) in [
++            ("claude", "claude"),
++            ("work-claude", "work-claude"),
++            ("shell", ""),
++        ] {
++            let mut inst = tool_instance(tool, root.path().to_str().unwrap());
++            inst.source_profile = PROFILE.into();
++            inst.command = command.into();
++            crate::session::config::profile_config::RESOLVES.with(|n| n.set(0));
++            inst.terminal_context_resume_cached();
++            let resolves = crate::session::config::profile_config::RESOLVES.with(|n| n.get());
++            assert_eq!(resolves, 1, "{tool} resolved config {resolves} times");
++        }
++    }
++
+     #[test]
+     #[serial(hook_base)]
+     fn default_detect_as_wrappers_capture_published_conversations() {
+```
+
+---
+
+### Incident Patch 3: `3c5d95f6` (2026-11-13)
+**Commit Message**: feat(web): guided /setup wizard with progress from real config and a setup banner (#5399)
+
+* feat(serve): report agent binary path and adapter install command
+
+The setup wizard's Agents step shows where each Agent resolved and the
+command that installs a missing ACP adapter, taken from the existing
+install hint table so the copy stays in one place.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* fix(acp): drain replay while confirming runner reattachment
+* feat(serve): add /api/setup for the web setup wizard
 
-Return the reattached event receiver before resume publishes retained output. Keep the supervisor pumping while it waits for th
+Step progress is derived from real config on each read: telemetry
+answered, an installed Agent, any Project, and recognized keys present in
+the global config.toml for worktrees, sandbox and notifications. Only
+skips, finish, defer and banner dismissal persist, in state.toml. Agents
+can't be skipped and finishing re-checks it server-side. Container
+runtimes are probed in a separate request since docker info can be slow.
 
-**File**: `docs/development/internals/structured-view.md` (modified, +2/-1)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* feat(web): add setup client, policy and inline elevation save
+
+Setup status and patch calls, the redirect and banner policy, and a
+machine-settings save that asks for the passphrase in place and retries
+the same write once. A request header keeps the global elev
+
+**File**: `docs/guides/web/dashboard.md` (modified, +2/-2)
 ```diff
-@@ -23,7 +23,8 @@ Invariants worth knowing before touching this code:
- - **Borrowed attachment.** Before installation, timeout or waiter drop releases only the attempted connection and reservation. Retry preserves the original runner and turn. Explicit stop claims the captured original before waking its handshake. A captured stop may displace an uninstalled observer, never an installed replacement.
- - **Exact scope retirement.** Scoped runners persist their exact transient unit alongside PID and generation; unscoped and unresolved ownership are distinct. Explicit stop waits for only the captured unit to stop and become empty before settling. Rejected or timed-out scope retirement keeps its lease and retry debt, even after the leader exits. A SID wildcard never authorizes ACP retirement or recovered purge cleanup.
- - **Callback parity and replay accounting.** Session-scoped filesystem, terminal, and permission callbacks wait for that announcement with either named or positional parameters, while request-scoped elicitation stays independent of session authority. Pending replay charges each original control frame, its four-byte prefix included, against the runner's 4096-frame / 128 MiB budget; typed re-serialization can expand native JSON and is not a substitute.
--- **Mid-turn reattach.** `ResumeSession` adopts the runner's committed session identity and never sends ACP `session/new` or `session/load`. A new local prompt supersedes adoption, and only the matching canonical request id may resolve it; a 30-second resume-idle watchdog is the fallback.
-+- **Mid-turn reattach.** `ResumeSession` adopts the runner's committed session identity and never sends ACP `session/new` or `session/load`. A new local prompt supersedes adoption, and only the matching canonical request id may resolve it. After a daemon restart, a 30-second resume-idle watchdog is the fallback; a same-runner recovery (below) does not arm it, because the reattached runner still reports the turn's real completion. Cancel on an adopted turn follows the normal 10-second escalation: if the turn has not ended by then, it stops as `agent_unresponsive` and the drain kills the runner.
-+- **Control-channel recovery.** When a live runner closes only its control channel, the drain dials the same runner under the same lease instead of replacing it, so the agent and its turn survive. Recovery requires the registry record to still belong to the captured runner identity and be live; Native Prime runners, explicit stops and connections that ended with `agent_unresponsive`, `prompt_orphaned` or `user_forced` keep the existing replacement or stop path. Starting a recovery records one restart in the shared respawn window (3 per 60 seconds) and is refused when the window is full, so a channel that keeps closing ends in the ordinary park. Each recovery makes at most 3 attempts, each bounded by a 3-second resume deadline, with the respawn backoff between them. A confirmed resume publishes its whole replay without the attempt deadline cutting it off, and a refused resume consumes an attempt. When recovery is refused or exhausted, the session publishes the original loss: `Stopped { reason: "runner_control_lost" }` if a turn was in flight, then an `AgentStartupError`.
- - **Subagent sessions.** A profile with `supports_subagents` declares the ACP subagents capability, so each subagent is a child session on the same connection. `SessionIngress` admits a child only after a `subagent_update` on an admitted session names it, and answers its permission and elicitation requests but refuses its fs and terminal requests, which assume the root session's workspace. Child traffic takes `handle_child_notification`, never the root's dedup, compaction or watchdog path. The adapter hides the Agent/Task call, so aoe synthesizes the card from the parent-to-child delegation `session_message` (its message id is the card id and the child's `parent_tool_call_id`); the child's reply or hand-back `session_message` completes it, while a background child has none and its card follows the roster state. Only child tool calls and its model reach the transcript, and the tool calls nest under that card via `parent_tool_call_id`. `SubagentUpdated` carries a full merged snapshot, so replay is last-write-wins, and its state replaces the transcript tailer's heuristics for that agent. Stop sends `session/cancel` with the child id over `POST /api/sessions/{id}/acp/subagents/{child_id}/cancel`, or `ControlBody::CancelSession` through a runner (control protocol 4), and only for a child that announced `capabilities.cancel`. A child's own delegations (grandchildren) are not rendered: their `session_message`s are dropped. A conversation reset is refused while a child runs, since it would drop the child routes. Restoring children after `session/load` is not implemented, so an async agent left open by a restart is still resolved by the resumed tailer below.
- - **Background sub-agents across a restart.** The async-Ta
+@@ -47,9 +47,9 @@ Individual settings appear under `Settings`: a writable toggle flips inline with
+ 
+ ## First-run onboarding
+ 
+-The first time you open the dashboard in a browser, a **Choose your theme** card appears before anything else. Picking a theme applies it live and saves it to your default profile; you can switch freely, then click **Continue**. Change it later in Settings > Appearance. The card is skipped in read-only mode and for anyone who already finished the tutorial.
++Opening `/` on a writable dashboard sends you to the setup wizard at `/setup` until you finish it or click **Go to dashboard**. Its steps edit the regular settings, so a step shows as done once one of its settings differs from the default, wherever it was changed (the TUI, Settings or a hand-edited `config.toml`), or once you keep its defaults with **Next**. Only the Agents step is required. Skips, finishing, leaving early and dismissing the dashboard's **Finish setting up** banner are stored as the `setup_*` keys in `state.toml` (see [Configuration Reference](../configuration.md#statetoml)). Open `/setup` again at any time. Read-only and CityHall dashboards never show it.
+ 
+-After the theme card, an interactive walkthrough highlights the major regions (command bar, sidebar, starting a session, settings, and inside a session the diff panel and composer). Two of its steps open Settings for you: the Worktree tab, explaining the per-session path templates, and the Plugins tab, explaining how to find, install, and trust plugins. Each step lists its keyboard shortcuts and has a **Skip** button.
++Once setup is out of the way, an interactive walkthrough highlights the major regions (command bar, sidebar, starting a session, settings, and inside a session the diff panel and composer). Two of its steps open Settings for you: the Worktree tab, explaining the per-session path templates, and the Plugins tab, explaining how to find, install, and trust plugins. Each step lists its keyboard shortcuts and has a **Skip** button.
+ 
+ Completing or skipping the tour records `app_state.has_seen_web_tour` on the server, so it does not relaunch on reload or on another device pointed at the same server. That flag persists in the server's `state.toml` (a sibling of `config.toml`, see [Configuration Reference](../configuration.md#statetoml)); the `GET /api/settings` JSON key is unchanged, still `app_state.has_seen_web_tour`. To replay it, open the overflow menu and choose **Show tutorial**; re-triggering adapts to where you are (dashboard regions, or composer / mode picker / send controls inside a session). It does not auto-launch on touch devices, where it is menu-only.
+ 
 ```
 
-**File**: `src/acp/acp_client/commands.rs` (modified, +3/-0)
+**File**: `src/server/access.rs` (modified, +2/-0)
 ```diff
-@@ -95,5 +95,8 @@ pub(super) enum ConnectMode {
-     Resume {
-         acp_session_id: String,
-         in_flight_turn: bool,
-+        /// Confirmation deadline for recovery of the same verified runner.
-+        /// Once confirmed, replay and silence belong to the runner's live turn.
-+        live_recovery: Option<tokio::time::Instant>,
-     },
- }
-```
-
-**File**: `src/acp/acp_client/connection/command_loop.rs` (modified, +77/-12)
-```diff
-@@ -27,6 +27,7 @@ use crate::acp::acp_client::config_options::{
-     thought_level_config_id, ConfigOptionDispatchPurpose, SessionChannels,
- };
- use crate::acp::acp_client::control::DaemonControlClient;
-+use crate::acp::acp_client::control::{control_outcome_reason, prompt_outcome_to_response};
- use crate::acp::acp_client::delete::handle_delete_session_cmd;
- use crate::acp::acp_client::errors::acp_internal_error;
- use crate::acp::acp_client::lifecycle::LifecycleEnvelope;
-@@ -66,6 +67,8 @@ pub(super) struct Session {
- 
- impl Session {
-     pub(super) async fn send_cancel(&self) -> Result<(), agent_client_protocol::Error> {
-+        #[cfg(test)]
-+        let _gate = self.shared.cancel_send_gate.read().await;
-         match self.control.as_ref() {
-             Some(control) => {
-                 control.cancel().await;
-@@ -144,16 +147,46 @@ impl Session {
-         // is serialized with every command.
-         let mut idle_tick = tokio::time::interval(BETWEEN_PROMPT_IDLE_CHECK_INTERVAL);
-         idle_tick.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Skip);
-+        let shared = self.shared.clone();
-+        let mut completion = shared.adopted_completion_tx.subscribe();
-         loop {
-             self.acp_session_id =
-                 self.shared.ingress.current().ok_or_else(|| {
-                     acp_internal_error("native session is not established".into())
-                 })?;
-+            let cancel_deadline = *shared.cancel_deadline.lock().unwrap();
-             // Fallback prompts go first so later messages cannot overtake them.
-             let cmd = match self.pending_prompts.pop_front() {
-                 Some(blocks) => Some(ClientCmd::Prompt(blocks)),
-                 None => tokio::select! {
-+                    biased;
-+                    outcome = async {
-+                        completion.wait_for(Option::is_some).await.expect("shared owns the completion sender").clone().unwrap()
-+                    } => {
-+                        shared.adopted_completion_tx.send_replace(None);
-+                        if self.finish_adopted_turn(outcome).await {
-+                            break;
-+                        }
-+                        continue;
-+                    }
-                     cmd = self.cmd_rx.recv() => cmd,
-+                    _ = async {
-+                        match cancel_deadline {
-+                            Some(deadline) => tokio::time::sleep_until(deadline).await,
-+                            None => std::future::pending().await,
-+                        }
-+                    } => {
-+                        if shared.prompt_in_flight.swap(false, Ordering::Relaxed)
-+                            && shared.terminal_claim.claim()
-+                        {
-+                            self.stand_down_idle_completion();
-+                            *shared.cancel_deadline.lock().unwrap() = None;
-+                            shared.publish_terminal("agent_unresponsive".into(), vec![]).await;
-+                            break;
-+                        }
-+                        *shared.cancel_deadline.lock().unwrap() = None;
-+                        continue;
-+                    }
-                     _ = idle_tick.tick() => {
-                         if self.between_prompt_idle_tick().await {
-                             break;
-@@ -175,6 +208,15 @@ impl Session {
-                     let _ = respond_to.send(self.cancel_child(session_id).await);
-                 }
-                 Some(ClientCmd::Cancel) => {
-+                    if shared.adopted_turn_active.load(Ordering::Relaxed)
-+                        && shared.prompt_in_flight.load(Ordering::Relaxed)
-+                        && !shared.terminal_claim.claimed()
-+                    {
-+                        // Arm first: a control loss during the send keeps the deadline.
-+                        self.request_cancel().await;
-+                        self.send_cancel().await?;
-+                        continue;
-+                    }
-                     info!(target: "acp.protocol", "sending session/cancel (no prompt in flight)");
-                     // Not `?`: a dead connection is when the UI most needs
-                     // the synthetic Stopped below.
-@@ -189,9 +231,7 @@ impl Session {
-                     // a spurious Stopped while idle is a reducer no-op (#2237).
-                     self.stand_down_idle_completion();
-                     self.shared
--                        .emit(Event::Stopped {
--                            reason: "cancelled".into(),
--                        })
-+                        .publish_terminal("cancelled".into(), vec![])
-                         .await;
-                 }
-                 Some(ClientCmd::ForceStop) => {
-@@ -246,6 +286,38 @@ impl Session {
-         Ok(())
-     }
- 
-+    /// Ends an adopted turn with the runner's reported outcome. Returns `false`
-+    /// when the turn was already superseded, ended or claimed elsewhere.
-+    async fn finish_adopted_
-```
-
-**File**: `src/acp/acp_client/connection/establish.rs` (modified, +45/-14)
-```diff
-@@ -210,16 +210,17 @@ pub(super) async fn establish(
-             "agent supports _session/steering; mid-turn prompts will be injected into the running turn"
-         );
-     }
--    let arm_resume_watchdog = matches!(
--        &ctx.mode,
-+    let (adopted_turn, live_recovery) = match &ctx.mode {
-         ConnectMode::Resume {
--            in_flight_turn: true,
-+            in_flight_turn,
-+            live_recovery,
-             ..
--        }
--    );
-+        } => (*in_flight_turn, *live_recovery),
-+        ConnectMode::Fresh { .. } => (false, None),
-+    };
-     shared
-         .adopted_turn_active
--        .store(arm_resume_watchdog, Ordering::Relaxed);
-+        .store(adopted_turn, Ordering::Relaxed);
-     info!(
-         target: "acp.protocol",
-         session = %label,
-@@ -259,7 +260,9 @@ pub(super) async fn establish(
-         pending_prompts: VecDeque::new(),
-     };
-     session.acp_session_id = match ctx.mode {
--        ConnectMode::Resume { acp_session_id, .. } => session.resume(acp_session_id).await?,
-+        ConnectMode::Resume { acp_session_id, .. } => {
-+            session.resume(acp_session_id, live_recovery).await?
-+        }
-         ConnectMode::Fresh {
-             stored_acp_session_id,
-             seed_history_replay,
-@@ -283,8 +286,14 @@ pub(super) async fn establish(
-     session.apply_default_model().await;
-     session.apply_default_effort().await;
-     session.apply_default_model_config().await;
--    if arm_resume_watchdog {
--        spawn_resume_idle_watchdog(shared);
-+    if adopted_turn && live_recovery.is_none() {
-+        spawn_resume_idle_watchdog(
-+            shared,
-+            session
-+                .control
-+                .as_ref()
-+                .map(|control| control.disconnected.clone()),
-+        );
-     }
-     Ok(Some(session))
- }
-@@ -303,12 +312,24 @@ fn resume_idle_expired(
- /// Fallback when an adopted turn neither completes nor shows activity, so the
- /// UI cannot stay "thinking" forever. Once the turn is observable, completion
- /// belongs to the between-prompt watchdog.
--fn spawn_resume_idle_watchdog(shared: Arc<Shared>) {
-+fn spawn_resume_idle_watchdog(
-+    shared: Arc<Shared>,
-+    disconnected: Option<tokio_util::sync::CancellationToken>,
-+) {
-     let grace_ms = resume_idle_grace().as_millis() as i64;
-     let interval = resume_idle_check_interval();
-     tokio::spawn(async move {
-         loop {
--            tokio::time::sleep(interval).await;
-+            tokio::select! {
-+                biased;
-+                _ = async {
-+                    match &disconnected {
-+                        Some(token) => token.cancelled().await,
-+                        None => std::future::pending().await,
-+                    }
-+                } => return,
-+                _ = tokio::time::sleep(interval) => {}
-+            }
-             if shared.terminal_claim.claimed()
-                 || shared.prompt_sent_since_attach.load(Ordering::Relaxed)
-             {
-@@ -375,9 +396,18 @@ impl Session {
-     /// The agent still owns the live session, so no load/new is sent. A prior
-     /// daemon's reset may commit after our registry snapshot, so a runner's
-     /// cached identity wins.
--    async fn resume(&self, stored: String) -> Result<SessionId, agent_client_protocol::Error> {
-+    async fn resume(
-+        &self,
-+        stored: String,
-+        resume_by: Option<tokio::time::Instant>,
-+    ) -> Result<SessionId, agent_client_protocol::Error> {
-         let runner = match self.control.as_ref() {
--            Some(control) => control.resume_session().await?,
-+            Some(control) => match resume_by {
-+                Some(deadline) => tokio::time::timeout_at(deadline, control.resume_session())
-+                    .await
-+                    .map_err(|_| acp_internal_error("runner control resume timed out".into()))??,
-+                None => control.resume_session().await?,
-+            },
-             None => stored.clone(),
-         };
-         info!(
-@@ -397,7 +427,8 @@ impl Session {
-                 })
-                 .await;
-         }
--        // Clears a sticky startup error in the UI; same-id is a no-op server-side.
-+        // Confirmed replay must finish despite backpressure or the reattach attempt deadline.
-+        // Same-id assignment clears a sticky UI error without a server-side reset.
-         let id = SessionId::from(runner);
-         self.shared.commit_session(id.clone()).await?;
-         Ok(id)
-```
-
-**File**: `src/acp/acp_client/connection/mod.rs` (modified, +16/-15)
-```diff
-@@ -39,7 +39,6 @@ use super::commands::{ClientCmd, ConnectMode};
- use super::control::DaemonControlClient;
- use super::errors::{acp_internal_error, AcpError};
- use super::fs_handlers::{handle_read_text_file, handle_write_text_file};
--use super::lifecycle::TerminalClaim;
- use super::pending::PendingResponders;
- use super::permission_handlers::{handle_elicitation_request, handle_permission_request};
- use super::rate_limit::{captured_rate_limit_resets_at, classify_rate_limit_from_message};
-@@ -48,7 +47,7 @@ use super::terminal_handlers::{
-     handle_create_terminal, handle_kill_terminal, handle_release_terminal, handle_terminal_output,
-     handle_wait_for_terminal_exit,
- };
--use super::SessionResources;
-+use super::{SessionResources, SessionState};
- use notifications::Shared;
- 
- /// After a cancel, declare the adapter unresponsive if no prompt response
-@@ -62,9 +61,7 @@ pub(super) type ReadyTx = Mutex<Option<oneshot::Sender<Result<(), AcpError>>>>;
- 
- pub(super) struct RunnerLink {
-     pub(super) control: Arc<DaemonControlClient>,
--    /// Shared with the control reader, which claims an adopted turn's
--    /// completion so the fallback watchdogs stand down.
--    pub(super) terminal_claim: Arc<TerminalClaim>,
-+    pub(super) state: Arc<SessionState>,
-     pub(super) prompt_in_flight: Arc<AtomicBool>,
- }
- 
-@@ -163,13 +160,9 @@ pub(super) async fn run_connection_task<W, R>(
-     } = params;
-     let label = resources.label.clone();
-     let (lifecycle_tx, lifecycle_rx) = mpsc::channel(128);
--    let (control, terminal_claim, prompt_in_flight) = match runner {
--        Some(r) => (Some(r.control), r.terminal_claim, r.prompt_in_flight),
--        None => (
--            None,
--            Arc::new(TerminalClaim::new()),
--            Arc::new(AtomicBool::new(false)),
--        ),
-+    let (control, state, prompt_in_flight) = match runner {
-+        Some(r) => (Some(r.control), r.state, r.prompt_in_flight),
-+        None => (None, Arc::default(), Arc::new(AtomicBool::new(false))),
-     };
-     let _control_shutdown = super::control::ShutdownControlOnDrop(control.clone());
-     // A runner owns identity across daemons, so its ingress is the one that
-@@ -194,7 +187,7 @@ pub(super) async fn run_connection_task<W, R>(
-         label.clone(),
-         profile,
-         lifecycle_tx,
--        terminal_claim,
-+        state,
-         prompt_in_flight,
-         resources.sandbox.as_ref(),
-         ingress.clone(),
-@@ -232,7 +225,10 @@ pub(super) async fn run_connection_task<W, R>(
-                             }
-                             SessionIngressNotification::PromptCompleted(marker) => {
-                                 if let Some(control) = control.as_ref() {
--                                    control.deliver_prompt_completion(marker);
-+                                    if let Some(outcome) = control.deliver_prompt_completion(marker)
-+                                    {
-+                                        shared.adopted_completion_tx.send_replace(Some(outcome));
-+                                    }
-                                 }
-                                 return Ok(());
-                             }
-@@ -409,6 +405,7 @@ pub(super) async fn run_connection_task<W, R>(
-         ),
-     );
- 
-+    let control_for_report = control.clone();
-     let establish_ctx = establish::EstablishCtx {
-         shared: shared.clone(),
-         control: control.clone(),
-@@ -449,8 +446,9 @@ pub(super) async fn run_connection_task<W, R>(
-         )
-         .await;
- 
-+    let control_lost = control_for_report.is_some_and(|control| control.lost());
-     if let Err(e) = &result {
--        report_connection_error(e, &shared, &ready_tx).await;
-+        report_connection_error(e, &shared, &ready_tx, control_lost).await;
-     } else {
-         info!(target: "acp.protocol", session = %label, "ACP connection task ended cleanly");
-     }
-@@ -481,6 +479,7 @@ async fn report_connection_error(
-     e: &agent_client_protocol::Error,
-     shared: &Shared,
-     ready_tx: &ReadyTx,
-+    control_lost: bool,
- ) {
-     let label = &shared.session_label;
-     let event_tx = &shared.event_tx;
-@@ -510,6 +509,8 @@ async fn report_connection_error(
-             None => AcpError::Spawn(message),
-         };
-         let _ = tx.send(Err(err));
-+    } else if control_lost {
-+        // The supervisor decides between reattaching and reporting the loss.
-     } else if let Some(info) = rate_limit {
-         info!(
-             target: "acp.protocol",
-```
-
-**File**: `src/acp/acp_client/connection/notifications.rs` (modified, +28/-6)
-```diff
-@@ -11,7 +11,7 @@ use agent_client_protocol::v1::schema::{
- use std::collections::HashMap;
- use std::sync::atomic::{AtomicBool, AtomicI64, AtomicU64, Ordering};
- use std::sync::Arc;
--use tokio::sync::mpsc;
-+use tokio::sync::{mpsc, watch};
- use tracing::debug;
- 
- use crate::acp::acp_client::aoe_ingress::{AoeIngress, Ingested};
-@@ -32,6 +32,8 @@ use crate::acp::acp_client::update_events::{
-     CompactionFold, CompactionTracker,
- };
- use crate::acp::acp_client::watchdog::classify_watchdog_notification_signals;
-+use crate::acp::acp_client::SessionState;
-+use crate::acp::control_protocol::PromptOutcome;
- 
- pub(super) fn now_ms() -> i64 {
-     chrono::Utc::now().timestamp_millis()
-@@ -75,7 +77,11 @@ pub(super) struct Shared {
-     /// Reset epochs (unix seconds) per rejected quota window. Cleared at each
-     /// prompt and drained when a turn parks; a window that later reports a
-     /// non-rejected status is removed (#3028, #3152).
--    pub(super) rate_limit_rejections: std::sync::Mutex<HashMap<String, i64>>,
-+    pub(super) rate_limit_rejections: Arc<std::sync::Mutex<std::collections::HashMap<String, i64>>>,
-+    pub(super) cancel_deadline: Arc<std::sync::Mutex<Option<tokio::time::Instant>>>,
-+    #[cfg(test)]
-+    pub(super) cancel_send_gate: Arc<tokio::sync::RwLock<()>>,
-+    pub(super) adopted_completion_tx: watch::Sender<Option<PromptOutcome>>,
-     /// A stored-session rejection already emitted its context reset.
-     pub(super) context_reset_emitted: AtomicBool,
-     /// Scoped to one turn; see `AgentMessageDedup` (#2281).
-@@ -97,7 +103,7 @@ impl Shared {
-         session_label: String,
-         profile: &'static AgentProfile,
-         lifecycle_tx: mpsc::Sender<LifecycleEnvelope>,
--        terminal_claim: Arc<TerminalClaim>,
-+        state: Arc<SessionState>,
-         prompt_in_flight: Arc<AtomicBool>,
-         sandbox: Option<&SessionSandbox>,
-         ingress: Arc<SessionIngress>,
-@@ -122,13 +128,17 @@ impl Shared {
-             last_event_at: AtomicI64::new(now_ms()),
-             first_event_after_attach: AtomicBool::new(false),
-             prompt_sent_since_attach: AtomicBool::new(false),
--            terminal_claim,
-+            terminal_claim: state.terminal_claim.clone(),
-             adopted_turn_active: AtomicBool::new(false),
-             prompt_in_flight,
-             prompt_epoch: AtomicU64::new(0),
-             lifecycle_tx,
-             between_prompt: BetweenPromptTracker::default(),
--            rate_limit_rejections: Default::default(),
-+            rate_limit_rejections: state.rate_limit_rejections.clone(),
-+            cancel_deadline: state.cancel_deadline.clone(),
-+            #[cfg(test)]
-+            cancel_send_gate: state.cancel_send_gate.clone(),
-+            adopted_completion_tx: watch::channel(None).0,
-             context_reset_emitted: AtomicBool::new(false),
-             agent_msg_dedup: Default::default(),
-             compaction: Default::default(),
-@@ -145,6 +155,18 @@ impl Shared {
-         let _ = self.event_tx.send(event).await;
-     }
- 
-+    /// A claimed terminal must reach the drain even if SDK teardown cancels its caller.
-+    pub(super) async fn publish_terminal(&self, reason: String, preceding: Vec<Event>) {
-+        let event_tx = self.event_tx.clone();
-+        let publication = tokio::spawn(async move {
-+            for event in preceding {
-+                let _ = event_tx.send(event).await;
-+            }
-+            let _ = event_tx.send(Event::Stopped { reason }).await;
-+        });
-+        let _ = publication.await;
-+    }
-+
-     /// Publish the native session the lifecycle selected and apply the
-     /// updates buffered while it was still pending.
-     pub(super) async fn commit_session(
-@@ -526,7 +548,7 @@ mod tests {
-             "s-echo".to_string(),
-             &crate::acp::agent_profiles::CLAUDE,
-             lifecycle_tx,
--            Arc::new(TerminalClaim::new()),
-+            Arc::new(SessionState::default()),
-             Arc::new(AtomicBool::new(prompt_in_flight)),
-             None,
-             Arc::new(SessionIngress::new(Some(SessionId::from("native")))),
-```
-
-**File**: `src/acp/acp_client/connection/prompt.rs` (modified, +81/-57)
-```diff
-@@ -9,6 +9,7 @@ use std::collections::VecDeque;
- use std::future::Future;
- use std::pin::Pin;
- use std::sync::atomic::Ordering;
-+use std::sync::Arc;
- use std::time::Duration;
- use tokio::time::{Instant, Sleep};
- use tracing::{debug, info, trace, warn};
-@@ -76,7 +77,7 @@ enum Flow {
- #[derive(Default)]
- struct TurnFlags {
-     shutdown: bool,
--    rate_limited: bool,
-+    rate_limit: Option<RateLimitInfo>,
-     force_stopped: bool,
-     prompt_orphaned: bool,
-     agent_unresponsive: bool,
-@@ -109,11 +110,9 @@ impl Turn {
-             .apply_signal(signal, Instant::now(), chrono::Utc::now(), self.cfg);
-     }
- 
--    fn start_cancel_grace(&mut self) {
-+    fn start_cancel_grace(&mut self, deadline: Instant) {
-         self.flags.cancelling = true;
--        self.cancel_grace
--            .as_mut()
--            .reset(Instant::now() + CANCEL_ESCALATION_GRACE);
-+        self.cancel_grace.as_mut().reset(deadline);
-     }
- }
- 
-@@ -183,6 +182,7 @@ impl Session {
-         shared.terminal_claim.begin_turn();
-         shared.between_prompt.reset_for_prompt();
-         clear_captured_rejections(&shared.rate_limit_rejections);
-+        *shared.cancel_deadline.lock().unwrap() = None;
-         info!(target: "acp.protocol", "sending prompt ({} content blocks)", blocks.len());
-         // Bump the epoch before sending so envelopes from a handler parked on
-         // the previous prompt are discarded.
-@@ -283,10 +283,18 @@ impl Session {
-         match serde_json::to_value(request) {
-             Ok(params) => {
-                 let rx = control.prompt(params).await;
-+                let control = Arc::clone(control);
-                 Box::pin(async move {
--                    // A closed channel ends the turn; the dying connection
--                    // surfaces the underlying failure.
--                    prompt_outcome_to_response(rx.await.unwrap_or(PromptOutcome::Aborted))
-+                    match rx.await {
-+                        Ok(outcome) => prompt_outcome_to_response(outcome),
-+                        // The runner may still own the turn, so it stays open
-+                        // for a reattach instead of ending here.
-+                        Err(_) if control.lost() => {
-+                            Err(acp_internal_error("runner control channel lost".into()))
-+                        }
-+                        // The dying connection surfaces the underlying failure.
-+                        Err(_) => prompt_outcome_to_response(PromptOutcome::Aborted),
-+                    }
-                 })
-             }
-             Err(e) => {
-@@ -320,38 +328,20 @@ impl Session {
-         turn: &mut Turn,
-         res: AcpResult<PromptResponse>,
-     ) -> AcpResult<Flow> {
-+        if let Ok(response) = &res {
-+            turn.flags.prompt_cancelled = matches!(response.stop_reason, StopReason::Cancelled);
-+            turn.flags.agent_stop_reason = Some(response.stop_reason);
-+        }
-+        if let Some(info) = self.completion_rate_limit(&res) {
-+            turn.flags.rate_limit = Some(info);
-+            turn.flags.shutdown = true;
-+            return Ok(Flow::Break);
-+        }
-         let e = match res {
--            Ok(resp) => {
--                turn.flags.prompt_cancelled = matches!(resp.stop_reason, StopReason::Cancelled);
--                turn.flags.agent_stop_reason = Some(resp.stop_reason);
--                if !turn.flags.prompt_cancelled {
--                    if let Some(info) = self.take_parking_rejection() {
--                        self.shared.emit(Event::RateLimit { info }).await;
--                        turn.flags.rate_limited = true;
--                        turn.flags.shutdown = true;
--                    }
--                }
--                return Ok(Flow::Break);
--            }
-+            Ok(_) => return Ok(Flow::Break),
-             Err(e) => e,
-         };
-         let label = &self.shared.session_label;
--        // A rate limit parks the session rather than burning restart budget
--        // on a worker that would hit it again (#1281).
--        let resets_at =
--            captured_rate_limit_resets_at(&self.shared.rate_limit_rejections, chrono::Utc::now());
--        if let Some(info) = classify_rate_limit_error(&e, resets_at) {
--            info!(
--                target: "acp.protocol",
--                session = %label,
--                resets_at = ?info.resets_at,
--                "session/prompt returned rate_limit; parking session"
--            );
--            self.shared.emit(Event::RateLimit { info }).await;
--            turn.flags.rate_limited = true;
--            turn.flags.shutdown = true;
--            return Ok(Flow::Break);
--        }
-         // A resumed id the agent dropped: reset context so the respawn opens
-         // a fresh session instead of terminating the runner (#3560).
-         if self.session_from_storage && is_unsupported_session_error(&e) {
-@@ -375,8 +365,24 @@ impl Session {
- 
-     /// The adapter can end a limited turn normally, so a still-future reje
-```
-
-**File**: `src/acp/acp_client/connection/subagents.rs` (modified, +4/-4)
-```diff
-@@ -283,8 +283,8 @@ impl Shared {
+@@ -456,6 +456,8 @@ pub(super) const CITYHALL_MUTATION_ALLOW: &[(&str, &str)] = &[
+ /// Mutating routes deliberately unavailable in CityHall.
  #[cfg(test)]
- mod tests {
-     use super::*;
--    use crate::acp::acp_client::lifecycle::TerminalClaim;
-     use crate::acp::acp_client::session_identity::SessionIngress;
-+    use crate::acp::acp_client::SessionState;
-     use crate::acp::agent_profiles::CLAUDE;
-     use agent_client_protocol::v1::schema::SessionNotification;
-     use std::sync::atomic::AtomicBool;
-@@ -347,7 +347,7 @@ mod tests {
-             "test".into(),
-             &CLAUDE,
-             lifecycle_tx,
--            Arc::new(TerminalClaim::new()),
-+            Arc::new(SessionState::default()),
-             Arc::new(AtomicBool::new(false)),
-             None,
-             ingress.clone(),
-@@ -536,7 +536,7 @@ mod tests {
-             "test".into(),
-             &CLAUDE,
-             lifecycle_tx,
--            Arc::new(TerminalClaim::new()),
-+            Arc::new(SessionState::default()),
-             Arc::new(AtomicBool::new(false)),
-             None,
-             ingress.clone(),
-@@ -593,7 +593,7 @@ mod tests {
-             "test".into(),
-             &CLAUDE,
-             lifecycle_tx,
--            Arc::new(TerminalClaim::new()),
-+            Arc::new(SessionState::default()),
-             Arc::new(AtomicBool::new(false)),
-             None,
-             ingress.clone(),
+ pub(super) const CITYHALL_MUTATION_DENY: &[(&str, &str)] = &[
++    // The setup wizard never shows in CityHall mode.
++    ("PATCH", "/api/setup"),
+     ("POST", "/api/sandbox/image-pull"),
+     ("POST", "/api/sandbox/image-dismiss"),
+     ("POST", "/api/sessions/creation-trust"),
 ```
 
----
-
-### Incident Patch 3: `a4a7d3aa` (2026-11-12)
-**Commit Message**: fix(tui): keep Serve work off the event loop (#5442)
-
-* fix(tui): keep Serve work off the event loop
-
-Run Serve observations and recovery commands through a bounded, attempt-scoped executor. Keep admitted mutations owned through completion and verify captured Daemon identity under the lifecycle transaction before stop or reset effects.
-
-Capture launch diagnostics on their existing owner and keep errors visible while recovery identity loads. Bound probe/reset subprocesses and cover held work, supersession, channel closure and restart reconfirmation.
-
-Fixes #4779
-
-Refs #2734, #3898
-
-* fix(tui): restore recovery after a failed stop
-
-A reopened owned launch has not populated its recovery target. After S-stop fails, load missing identity in the background while retaining the failure. Keep a known identity unchanged so retry cannot adopt a successor.
-
-Cover P and R recovery after stop failure on a reopened launch.
-
-* test(tui): wait for restart confirmation
-
-The Local restart helper's RR batch confirms before the asynchronous assessment has produced a confirmation. Send R without a synthetic input fence, observe confirmation, then confirm.
-
-Keep successor and credential assertions intact
-
-**File**: `.github/workflows/tests.yml` (modified, +1/-1)
+**File**: `src/server/api/mod.rs` (modified, +3/-0)
 ```diff
-@@ -125,7 +125,7 @@ jobs:
-           cargo test --features web,e2e-tests \
-             --test integration -- daemon_core_web_optional plugin_install
-           cargo test --features web,e2e-tests --lib -- \
--            server::assets:: tui::dialogs::serve::qr_seam \
-+            server::assets:: tui::dialogs::serve::tests::held_work_leaves_keys_clicks_ticks_and_render_usable \
-             session::config::tests::web_plugin_changes_do_not_cross_lifecycle_transactions
-       # macOS reaches its per-user temp root through a symlink, so a test that
-       # compares `TempDir::path()` against a path that has been through
+@@ -19,6 +19,7 @@ mod projects;
+ mod queue;
+ mod sandbox_image;
+ pub(crate) mod sessions;
++mod setup;
+ mod skills;
+ pub(crate) mod system;
+ mod telemetry;
+@@ -75,6 +76,7 @@ pub(crate) use sessions::{
+     lifecycle_rejection, persist_session_update, purge_expired_trash, reconcile_trashed_worktrees,
+     reconcile_worktree_paths, trash_sweep_interval,
+ };
++pub use setup::{get_setup, get_setup_runtimes, patch_setup};
+ pub use skills::{
+     adopt_skill, create_skill, delete_skill, edit_skill, list_skills, read_skill, sync_skills,
+ };
+@@ -509,6 +511,7 @@ mod tests {
+             include_str!("sandbox_image.rs"),
+             &["sandbox_image_pull", "sandbox_image_dismiss"],
+         ),
++        ("setup.rs", include_str!("setup.rs"), &["patch_setup"]),
+         (
+             "system.rs",
+             include_str!("system.rs"),
 ```
 
-**File**: `docs/development.md` (modified, +11/-0)
+**File**: `src/server/api/setup.rs` (added, +562/-0)
 ```diff
-@@ -23,6 +23,17 @@ The core-rest CI leg requires the scoped cancellation case to run with
- may skip the scoped case when no usable user manager exists; unscoped
- cancellation still runs.
- 
-+The process-inspection executor test is ignored by default on Linux because it
-+requires Python 3 and private user, mount and PID namespaces. Run it explicitly
-+on a host that supports `unshare`:
+@@ -0,0 +1,562 @@
++//! Web setup wizard state. Step progress is derived from real configuration on
++//! every read; `state.toml` only records which steps were skipped or confirmed
++//! and whether the wizard was finished, deferred, or its banner dismissed.
 +
-+```sh
-+cargo test --lib cli::serve::tests::tui_control_inspection_keeps_the_async_executor_reactive -- --exact --ignored --nocapture
-+```
++use std::sync::Arc;
 +
-+Missing prerequisites fail explicit Linux runs. On macOS this test runs by
-+default and requires Python 3, so a missing `python3` also fails normal test runs.
++use axum::{extract::State, http::StatusCode, response::IntoResponse, Json};
++use serde::{Deserialize, Serialize};
 +
- Creation-progress events are advisory and publish independently of session
- snapshots. Tests that need a published session must wait for its ID in the
- canonical snapshot. Hold in-flight fixture gates until explicit release, with
-```
-
-**File**: `docs/guides/web-dashboard.md` (modified, +18/-2)
-```diff
-@@ -67,11 +67,27 @@ An explicit `aoe serve` request enables Web serving by replacing a managed priva
- 
- An absent daemon is different from a restart: the next autostart resolves current configuration, not the vanished daemon's recorded exposure flags. It does not restore a previous LAN bind or tunnel. Persisted Web serving and Tunnel settings remain tracked separately in [#4476](https://github.com/agent-of-empires/agent-of-empires/issues/4476).
- 
--Local restarts from the TUI preserve the running dashboard's effective passphrase, including when a newly opened TUI has no `AOE_SERVE_PASSPHRASE` variable. Restart refuses before stopping the running Daemon if its required credential cannot be recovered. Generating a new Tunnel passphrase explicitly replaces that credential.
-+TUI restarts preserve the running dashboard's effective passphrase, including when a newly opened TUI has no `AOE_SERVE_PASSPHRASE` variable. A temporarily unavailable runtime credential never substitutes a saved launch default. Restart refuses before stopping the running Daemon if its required credential cannot be recovered. Generating a new Tunnel passphrase saves the new default only after successful startup or verification that a running Daemon uses it. Failed startup without such a Daemon preserves the saved default.
- 
- The retained launch and credential stay private (`0600`). Restart or rollback consumes them only after readiness; failed replay retains them. Promotion to Web serving does not consume the private-API recovery pair. Stop foreground or service-supervised processes through their owning shell or manager before rollback replaces them.
- 
--When the TUI starts or restarts a dashboard, its Remote Access view stays open while the Daemon changes. The TUI accepts exactly one verified successor connection for that request. Existing form and paste drafts stay in memory; native attach and live-send continuations stop. Pending changes with an unknown outcome stay blocked and are never replayed automatically. A failed start remains visible in Remote Access; close it and reconnect explicitly after repairing the cause. Stop remains responsive while startup settles: the TUI stops asynchronously afterward and does not reconnect or queue another start. Closing Remote Access does not discard other drafts.
-+When the TUI starts, restarts or reconnects to a dashboard, Remote Access stays responsive during process-identity checks and its elapsed clock keeps advancing. The TUI accepts one verified successor connection and binds the launch result's URLs and credentials to that incarnation. Existing form and paste drafts stay in memory; native attach and live-send continuations stop. Pending changes with an unknown outcome stay blocked and never replay automatically. Closing Remote Access preserves these drafts and does not cancel an owned launch. A failed start remains visible; repair the cause and reconnect explicitly. Stop during startup waits for launch settlement, then stops only its verified incarnation without reconnecting or queueing another start. A Client reconnect failure retains any verified receipt. Reopening during an App-owned Stop follows the same operation to completion.
++use super::{api_error, AppState};
++use crate::session::config::AppStateConfig;
 +
-+`S` requires verified control identity: the current view's observation or its owned launch receipt. A replaced or unverified target produces a stop error, not a fresh namespace lookup. Without a verified target or an App-owned launch, refusal leaves the existing runtime connection intact.
++/// The closed step catalog, in wizard order: `(key, required)`.
++const STEPS: [(&str, bool); 6] = [
++    ("theme_telemetry", false),
++    ("agents", true),
++    ("project", false),
++    ("worktrees", false),
++    ("sandbox", false),
++    ("notifications", false),
++];
 +
-+Reopening Remote Access reads the current Daemon's runtime credential, not a saved launch default. Observations reject replacement Daemons. A verified startup exit searches current and retained rotated logs for that process's physical start marker. Without a match, recent context is labelled unattributed and may include earlier runs. The context is shared with other AoE processes, not exclusively that Daemon's output. It does not establish a bind failure or invalidate the saved port for future launches. Error recovery offers Funnel reset only for a known Tailscale transport, never based on shared text. The bounded error excerpt keeps entry beginnings, not complete oversized lines. Use `aoe logs` to inspect the shared log.
++/// Global `config.toml` keys that configure a step. Every config write saves
++/// the whole file, so a step counts as configured only when one of these
++/// differs from its default; keeping a default is recorded by confirming it.
++const CONFIG_KEYS: [(&str, &str, &[&str]); 3] = [
++    (
++        "worktrees",
++        "worktree",
++        &[
++            "enabled",
++            "path_template",
++            "default_base_branch",
++            "auto_cleanup",
++        ],
++    ),
++    (
++        "sandbox",
++        "sandbox",
++        &["enabled_by_default", "container_runtime", "default_image"],
++    ),
++    (
++        "notifications",
++        "web",
++        &[
++            "notifications_enabled",
++            "notify_on_waiting",
++            "notify_on_idle",
++            "notify_on_error",
++        ],
++    ),
++];
 +
-+If a Tunnel runtime credential is temporarily unavailable, Remote Access retries in the background for the same Daemon incarnation. Published URLs stay usable; recovering the credential does not require closing the dialog.
-+
-+When Remote Access opens or returns to the mode picker, it re-observes the Daemon after checking availability. A dashboard started by another Client during those checks opens directly instead of offering another start.
-+
-+Nonregular `serve.pid` metadata is preserved as unverifiable state, not treated as an absent Daemon. Repair it before retrying control.
-+
-+Availability, provider and restart checks run in the background. Current links, credentials, copy controls and any QR code stay visible during restart and help assessments. `Esc` 
-```
-
-**File**: `src/acp/client/autostart.rs` (modified, +315/-15)
-```diff
-@@ -1,9 +1,20 @@
- //! Port selection and startup log diagnostics.
- 
- use rand::RngExt;
-+use std::collections::VecDeque;
-+use std::fs::File;
-+use std::io::{BufRead, BufReader, Read, Seek, SeekFrom};
- use std::path::Path;
-+use tokio_util::sync::CancellationToken;
- 
- const LOG_TAIL_LINES: usize = 200;
-+const LOG_LINE_BYTES: usize = 8 * 1024;
-+
-+#[derive(Clone, Debug, Default)]
-+pub(crate) struct LogContext {
-+    pub(crate) lines: Vec<String>,
-+    pub(crate) has_process_marker: bool,
++#[derive(Debug, Default)]
++struct SetupInputs {
++    telemetry_answered: bool,
++    agent_installed: bool,
++    project_exists: bool,
++    config: toml::Table,
++    defaults: toml::Table,
 +}
- 
- pub(crate) fn load_or_generate_port() -> u16 {
-     match crate::session::get_app_dir() {
-@@ -38,22 +49,157 @@ fn random_port() -> u16 {
-     rand::rng().random_range(MIN_PORT..65535)
++
++fn step_configured(key: &str, inputs: &SetupInputs) -> bool {
++    match key {
++        "theme_telemetry" => inputs.telemetry_answered,
++        "agents" => inputs.agent_installed,
++        "project" => inputs.project_exists,
++        _ => CONFIG_KEYS
++            .iter()
++            .find(|(step, _, _)| *step == key)
++            .is_some_and(|(_, section, keys)| {
++                let table =
++                    |t: &toml::Table| t.get(*section).and_then(toml::Value::as_table).cloned();
++                let (set, defaults) = (table(&inputs.config), table(&inputs.defaults));
++                set.is_some_and(|set| {
++                    keys.iter().any(|k| {
++                        set.get(*k)
++                            .is_some_and(|v| defaults.as_ref().and_then(|d| d.get(*k)) != Some(v))
++                    })
++                })
++            }),
++    }
++}
++
++#[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
++pub struct SetupStep {
++    pub key: String,
++    pub required: bool,
++    /// Set up, from config or by keeping the defaults in the wizard.
++    pub configured: bool,
++    /// The user kept this optional step's defaults in the wizard.
++    pub confirmed: bool,
++    pub skipped: bool,
++}
++
++#[derive(Debug, Serialize, Deserialize)]
++pub struct SetupAccess {
++    pub serve_mode: String,
++    #[serde(skip_serializing_if = "Option::is_none")]
++    pub tunnel_url: Option<String>,
++}
++
++#[derive(Debug, Serialize, Deserialize)]
++pub struct SetupStatus {
++    pub finished: bool,
++    pub deferred: bool,
++    pub banner_dismissed: bool,
++    pub steps: Vec<SetupStep>,
++    pub tmux: bool,
++    pub git: bool,
++    pub access: SetupAccess,
++}
++
++fn build_steps(inputs: &SetupInputs, app: &AppStateConfig) -> Vec<SetupStep> {
++    let skipped = known_steps(&app.setup_skipped_steps);
++    let confirmed = known_steps(&app.setup_confirmed_steps);
++    STEPS
++        .iter()
++        .map(|(key, required)| {
++            // A required step is only ever done by being configured.
++            let confirmed = !required && confirmed.contains(key);
++            SetupStep {
++                key: key.to_string(),
++                required: *required,
++                configured: confirmed || step_configured(key, inputs),
++                confirmed,
++                skipped: skipped.contains(key),
++            }
++        })
++        .collect()
++}
++
++/// Stored skip keys a newer or older build no longer knows are dropped.
++fn known_steps(stored: &[String]) -> Vec<&'static str> {
++    STEPS
++        .iter()
++        .filter(|(key, _)| stored.iter().any(|s| s == key))
++        .map(|(key, _)| *key)
++        .collect()
++}
++
++/// Validate a client-sent optional step key.
++fn optional_step(key: &str) -> Result<String, String> {
++    match STEPS.iter().find(|(step, _)| *step == key) {
++        None => Err(format!("unknown setup step '{key}'")),
++        Some((_, true)) => Err(format!("setup step '{key}' is required")),
++        Some(_) => Ok(key.to_string()),
++    }
++}
++
++/// The first required step that isn't set up, which blocks finishing.
++fn open_required_step(inputs: &SetupInputs) -> Option<&'static str> {
++    STEPS
++        .iter()
++        .find(|(key, required)| *r
+```
+
+**File**: `src/server/api/system.rs` (modified, +53/-0)
+```diff
+@@ -134,6 +134,19 @@ pub struct AgentInfo {
+     /// deprecated badge in the wizard picker and switch-agent modal.
+     #[serde(skip_serializing_if = "crate::agents::AgentLifecycle::is_active")]
+     pub lifecycle: crate::agents::AgentLifecycle,
++    /// Resolved binary on the daemon's PATH, for installed built-in agents.
++    #[serde(skip_serializing_if = "Option::is_none")]
++    pub path: Option<String>,
++    /// Command that installs the ACP adapter, when it is missing and known.
++    #[serde(skip_serializing_if = "Option::is_none")]
++    pub acp_install_command: Option<String>,
++}
++
++/// The install command for an ACP adapter, keyed on its binary name since the
++/// registry command may be a data-dir path (`aoe-agent`).
++fn adapter_install_command(acp_command: Option<&str>) -> Option<String> {
++    let binary = std::path::Path::new(acp_command?).file_name()?.to_str()?;
++    crate::acp::install_hints::install_hint_for(binary).map(str::to_string)
  }
  
--/// The current run's lines: the log is shared, so start at the last `[AOE_START_MARKER]`.
--pub(crate) fn initial_log_tail() -> Vec<String> {
--    let Some(contents) = crate::cli::serve::stdio_redirect_path()
--        .ok()
--        .and_then(|p| std::fs::read_to_string(p).ok())
--    else {
--        return Vec::new();
-+/// Recent shared context, without a claimed process association.
-+pub(crate) fn initial_log_tail() -> LogContext {
-+    log_tail(None, None)
-+}
-+
-+/// A matching physical marker bounds context, but never attributes individual lines.
-+pub(crate) fn startup_log_tail(
-+    pid: u32,
-+    birth: &crate::process::ProcessBirthIdentity,
-+    cancel: &CancellationToken,
-+) -> LogContext {
-+    log_tail(Some((pid, birth)), Some(cancel))
-+}
-+
-+fn log_tail(
-+    expected: Option<(u32, &crate::process::ProcessBirthIdentity)>,
-+    cancel: Option<&CancellationToken>,
-+) -> LogContext {
-+    if cancel.is_some_and(CancellationToken::is_cancelled) {
-+        return LogContext::default();
-+    }
-+    let Ok((path, config)) = crate::cli::serve::stdio_redirect_logging() else {
-+        return LogContext::default();
-+    };
-+    let policy = crate::logging::RotationPolicy::from(&config);
-+    let keep = if expected.is_some()
-+        && !matches!(policy.kind, crate::session::config::RotationKind::Never)
-+    {
-+        policy.keep_count
-+    } else {
-+        0
-+    };
-+    let mut newer = VecDeque::new();
-+    for index in 0..=keep {
-+        if cancel.is_some_and(CancellationToken::is_cancelled) {
-+            return LogContext::default();
-+        }
-+        let rotated =
-+            (index != 0).then(|| crate::logging::path_with_suffix(&path, &format!(".{index}")));
-+        let candidate = rotated.as_deref().unwrap_or(&path);
-+        let Ok(Some((file, length))) = crate::session::ResolvedDataFile::open(candidate)
-+            .and_then(|file| file.open_read_snapshot())
-+        else {
-+            continue;
-+        };
-+        let remaining = LOG_TAIL_LINES - newer.len();
-+        let (mut older, found) = match scan_log_file(file, length, expected, remaining, cancel) {
-+            Ok(context) => context,
-+            Err(error) if error.kind() == std::io::ErrorKind::Interrupted => {
-+                return LogContext::default();
-+            }
-+            Err(_) => continue,
-+        };
-+        if !older.is_empty() {
-+            older.append(&mut newer);
-+            newer = older;
-+        }
-+        if found || expected.is_none() {
-+            return LogContext {
-+                lines: newer.into(),
-+                has_process_marker: found && expected.is_some(),
-+            };
-+        }
-+    }
-+    LogContext {
-+        lines: newer.into(),
-+        has_process_marker: false,
-+    }
-+}
-+
-+fn scan_log_file(
-+    mut file: File,
-+    length: u64,
-+    expected: Option<(u32, &crate::process::ProcessBirthIdentity)>,
-+    limit: usize,
-+    cancel: Option<&CancellationToken>,
-+) -> std::io::Result<(VecDeque<String>, bool)> {
-+    let start = if expected.is_none() {
-+        length.saturating_sub((LOG_TAIL_LINES * LOG_LINE_BYTES) as u64)
-+    } else {
-+        0
-+    };
-+    let mut continuation = false;
-+    if start != 0 {
-+        file.seek(SeekFrom::Start(start - 1))?;
-+        let mut previous = [0_u8];
-+        file.read_exact(&mut previous)?;
-+        continuation = previous[0] != b'\n';
-+    }
-+    let mut reader = BufReader::new(file.take(length - start));
-+    let mut bytes = Vec::with_capacity(LOG_LINE_BYTES);
-+    let mut tail = VecDeque::with_capacity(if limit == 0 { 0 } else { LOG_TAIL_LINES });
-+    let mut found = false;
-+    loop {
-+        if cancel.is_some_and(CancellationToken::is_cancelled) {
-+            return Err(std::io::ErrorKind::Interrupted.into());
-+        }
-+        bytes.clear();
-+        if reader
-+            .by_ref()
-+            .take(LOG_LINE_BYTES as u64)
-+            .read_until(b'\n', &mut bytes)?
-+            == 0
-+        {
-+            break;
-+        }
-+        let complete = bytes.last() == Some(&b'\n');
-+        if !continuation {
-+            if let Ok(line) = std::str::from_utf8(&bytes) {
-+                let line = line.trim_end_matches('\n');
-+                if matches_start_marker(line, expected) {
-+                    found = true;
-+                    tail.clear();
-+       
-```
-
-**File**: `src/cli/serve.rs` (modified, +966/-123)
-```diff
-@@ -2,6 +2,7 @@
- 
- use anyhow::{bail, Context, Result};
- use clap::{Args, ValueEnum};
-+use std::future::Future;
- use std::path::PathBuf;
- use std::sync::Mutex;
- 
-@@ -557,15 +558,19 @@ pub async fn lock_for_startup(profile: &str, args: &mut ServeArgs) -> Result<Opt
-         LaunchMode::Tcp
-     };
-     args.resolve_launch(Some(requested))?;
--    match daemon_status() {
-+    match tokio::task::spawn_blocking(daemon_status).await? {
-         DaemonStatus::Verified(pid) if pid != std::process::id() => {
-             transaction = migrate_managed_launch(transaction, false).await?;
--            let launch = managed_launch(pid)?;
-+            let launch = tokio::task::spawn_blocking(move || managed_launch(pid)).await??;
-             if !launch.core_only || args.core_only || args.daemon_child {
-                 return Err(daemon_running_error(pid));
+ /// Resolve the acp launch command + args for a built-in agent from
+@@ -209,6 +222,8 @@ fn build_custom_agent_infos(
+                 // serialized here; they can hold hostnames or secrets.
+                 acp_command: None,
+                 acp_args: Vec::new(),
++                path: None,
++                acp_install_command: None,
              }
-             validate_launch_args(profile, args).await?;
--            let passphrase = recall_serve_passphrase(&launch)?;
-+            let (launch, passphrase) = tokio::task::spawn_blocking(move || {
-+                let passphrase = recall_serve_passphrase(&launch)?;
-+                Ok::<_, anyhow::Error>((launch, passphrase))
-+            })
-+            .await??;
-             retain_rollback_launch(&transaction, &launch, passphrase.as_deref())?;
-             tracing::info!(
-                 target: "serve.lifecycle",
-@@ -926,12 +931,16 @@ fn live_daemon_instance_matches(pid: u32, instance_id: &str) -> bool {
-             .is_some_and(|environment| environment_has_daemon_instance(&environment, instance_id));
-     }
- 
--    std::process::Command::new("ps")
--        .args(["-ww", "-E", "-o", "command=", "-p", &pid.to_string()])
--        .output()
--        .ok()
--        .filter(|output| output.status.success())
--        .is_some_and(|output| environment_has_daemon_instance(&output.stdout, instance_id))
-+    crate::process::run_with_timeout_process_group(
-+        std::process::Command::new("ps")
-+            .args(["-ww", "-E", "-o", "command=", "-p", &pid.to_string()])
-+            .stdin(std::process::Stdio::null()),
-+        std::time::Duration::from_secs(3),
-+    )
-+    .ok()
-+    .flatten()
-+    .filter(|output| output.status.success())
-+    .is_some_and(|output| environment_has_daemon_instance(&output.stdout, instance_id))
- }
- 
- fn recall_serve_passphrase(launch: &ServeLaunch) -> Result<Option<String>> {
-@@ -979,10 +988,10 @@ pub struct ServeUrl {
- /// empty. The primary URL gets `label: None` for rendering; alternates
- /// carry their label.
- pub fn read_serve_urls() -> Vec<ServeUrl> {
--    let Ok(dir) = crate::session::get_app_dir() else {
--        return Vec::new();
--    };
--    let Ok(raw) = std::fs::read_to_string(dir.join("serve.url")) else {
-+    let Some(raw) = launch_file("serve.url")
-+        .ok()
-+        .and_then(|file| file.read().ok().flatten())
-+    else {
-         return Vec::new();
-     };
-     let mut out: Vec<ServeUrl> = Vec::new();
-@@ -1098,17 +1107,19 @@ fn inspect_daemon_process(pid: i32) -> DaemonProcessIdentity {
-     // macOS / other: shell out to `ps`. `-o command=` prints the full
-     // command (path + args) with no header, and `-ww` stops it being clipped
-     // at the terminal width before `serve` shows up.
--    match std::process::Command::new("ps")
--        .args(["-ww", "-o", "command=", "-p", &pid.to_string()])
--        .output()
--    {
--        Ok(out) if !out.status.success() => DaemonProcessIdentity::Indeterminate,
--        Ok(out) if command_is_aoe_serve(&out.stdout) => DaemonProcessIdentity::Verified,
--        Ok(out) if command_mentions_aoe_executable(&out.stdout) => {
-+    match crate::process::run_with_timeout_process_group(
-+        std::process::Command::new("ps")
-+            .args(["-ww", "-o", "command=", "-p", &pid.to_string()])
-+            .stdin(std::process::Stdio::null()),
-+        std::time::Duration::from_secs(3),
-+    ) {
-+        Ok(Some(out)) if !out.status.success() => DaemonProcessIdentity::Indeterminate,
-+        Ok(Some(out)) if command_is_aoe_serve(&out.stdout) => DaemonProcessIdentity::Verified,
-+        Ok(Some(out)) if command_mentions_aoe_executable(&out.stdout) => {
-             DaemonProcessIdentity::Indeterminate
+         })
+         .collect();
+@@ -305,6 +320,8 @@ pub async fn list_agents(
+                     acp_allowed: policy.allows(a.name),
+                     acp_command,
+                     acp_args,
++                    path: None,
++                    acp_install_command: None,
+                 }
+             })
+             .collect::<Vec<_>>();
+@@ -346,6 +363,8 @@ pub async fn list_agents(
+                 acp_command: None,
+                 acp_args: Vec::new(),
+                 lifecycle: crate::agents::AgentLifecycle::Active,
++                path: None,
++                acp_install_command: None,
+             });
          }
--        Ok(_) => DaemonProcessIdentity::Foreign,
--        Err(_) => DaemonProcessIdentity::Indeterminate,
-+        Ok(Some(_)) => DaemonProcessIdentity::Foreign,
-+        Ok(None) | Err(_) => DaemonProcessIdentity::Indeterminate,
-     }
- }
- 
-@@ -1179,8 +1190,10 @@ fn clear_serve_state(expected_pid: i32) -> bool {
-     ) else {
-         return false;
-     };
--    let recorded = std::fs::read_to_string(&pid_path)
-+    let recorded = crate::session::ResolvedDataFile::open(&pid_path)
-+        .and_then(|file| file.read())
-         .ok()
-+        .flatten()
-         .and_then(|raw| parse_positive_pid(&raw));
-     if recorded != Some(expected_pid) {
-         return false;
-@@ -1215,12 +1228,9 @@ fn daemon_status_with(
-     probe: impl FnOnce(i32) -> DaemonProbeDi
-```
-
-**File**: `src/logging.rs` (modified, +9/-4)
-```diff
-@@ -636,12 +636,17 @@ fn write_raw_startup_marker(writer: &mut dyn Write) {
-     let exe = std::env::current_exe()
-         .map(|p| p.display().to_string())
-         .unwrap_or_default();
-+    let pid = std::process::id();
-+    let birth = crate::process::process_birth_identity(pid).ok().flatten();
-+    let (boot_id, start_id) = birth
-+        .as_ref()
-+        .map_or(("unavailable", "unavailable"), |birth| {
-+            (birth.boot_id.as_str(), birth.start_id.as_str())
-+        });
-     let line = format!(
--        "{} INFO log.runtime [AOE_START_MARKER] version={} pid={} exe={}\n",
-+        "{} INFO log.runtime [AOE_START_MARKER] version={} pid={pid} boot_id={boot_id} start_id={start_id} exe={exe}\n",
-         chrono::Utc::now().to_rfc3339(),
-         env!("CARGO_PKG_VERSION"),
--        std::process::id(),
--        exe,
-     );
-     let _ = writer.write_all(line.as_bytes());
-     let _ = writer.flush();
-@@ -825,7 +830,7 @@ impl Drop for SizeRotatingWriter {
-     }
- }
- 
--fn path_with_suffix(path: &Path, suffix: &str) -> PathBuf {
-+pub(crate) fn path_with_suffix(path: &Path, suffix: &str) -> PathBuf {
-     let mut s = path.as_os_str().to_os_string();
-     s.push(suffix);
-     PathBuf::from(s)
-```
-
-**File**: `src/process/macos.rs` (modified, +61/-11)
-```diff
-@@ -993,19 +993,26 @@ Pages wired down:                        300000.
- 
- /// `kern.boottime` shifts on clock steps; the session UUID does not.
- pub(super) fn boot_id() -> Option<String> {
--    let out = Command::new("sysctl")
--        .args(["-n", "kern.bootsessionuuid"])
--        .output()
--        .ok()?;
--    if !out.status.success() {
-+    let mut uuid = [0u8; 37];
-+    let mut length = uuid.len();
-+    // SAFETY: the name is NUL-terminated; buffer and length match its capacity.
-+    if unsafe {
-+        libc::sysctlbyname(
-+            c"kern.bootsessionuuid".as_ptr(),
-+            uuid.as_mut_ptr().cast(),
-+            &mut length,
-+            std::ptr::null_mut(),
-+            0,
-+        )
-+    } != 0
-+    {
-         return None;
-     }
--    let s = String::from_utf8_lossy(&out.stdout).trim().to_string();
--    if s.is_empty() {
--        None
--    } else {
--        Some(s)
--    }
-+    let value = std::ffi::CStr::from_bytes_with_nul(uuid.get(..length)?)
-+        .ok()?
-+        .to_str()
-+        .ok()?;
-+    (!value.is_empty()).then(|| value.to_owned())
- }
- 
- pub(super) fn foreground_arguments(shell_pid: u32) -> Vec<super::ProcessArguments> {
-@@ -1419,4 +1426,47 @@ mod tests {
-             assert_eq!(roots(&guard), 1, "root duplicated by refresh");
+         agents.extend(build_custom_agent_infos(
+@@ -376,6 +395,10 @@ pub async fn list_agents(
+             if agent.acp_capable {
+                 agent.acp_installed =
+                     adapter_installed(&agent.name, &config, &host_environment, &|| false);
++                if !agent.acp_installed {
++                    agent.acp_install_command =
++                        adapter_install_command(agent.acp_command.as_deref());
++                }
+             }
+             // Every row, since the repository may give a profile-terminal agent an ACP base.
+             agent.acp_create_ready = adapter_installed(
+@@ -385,6 +408,14 @@ pub async fn list_agents(
+                 &hooks_apply,
+             );
          }
-     }
-+
-+    #[test]
-+    #[serial_test::serial]
-+    fn captured_process_custody_survives_an_unavailable_sysctl_command() {
-+        use std::io::{BufRead as _, Write as _};
-+        use std::os::unix::fs::PermissionsExt as _;
-+
-+        struct OwnedChild(std::process::Child);
-+        impl Drop for OwnedChild {
-+            fn drop(&mut self) {
-+                let _ = self.0.kill();
-+                let _ = self.0.wait();
-+            }
++        for agent in agents
++            .iter_mut()
++            .filter(|a| a.kind == "builtin" && a.installed)
++        {
++            agent.path = which::which(&agent.binary)
++                .ok()
++                .map(|p| p.display().to_string());
 +        }
-+        let mut child = OwnedChild(
-+            Command::new("sh")
-+                .args(["-c", "printf 'ready\\n'; IFS= read -r line"])
-+                .stdin(std::process::Stdio::piped())
-+                .stdout(std::process::Stdio::piped())
-+                .spawn()
-+                .unwrap(),
-+        );
-+        let mut ready = String::new();
-+        std::io::BufReader::new(child.0.stdout.take().unwrap())
-+            .read_line(&mut ready)
-+            .unwrap();
-+        assert_eq!(ready, "ready\n");
-+        let birth = super::super::process_birth_identity(child.0.id())
-+            .unwrap()
-+            .unwrap();
-+        let tools = tempfile::tempdir().unwrap();
-+        let sysctl = tools.path().join("sysctl");
-+        std::fs::write(&sysctl, "#!/bin/sh\nexit 1\n").unwrap();
-+        std::fs::set_permissions(&sysctl, std::fs::Permissions::from_mode(0o755)).unwrap();
-+        let _path = crate::session::test_support::path_prepended(tools.path());
-+        let captured = super::super::CapturedProcess::capture(child.0.id(), &birth)
-+            .unwrap()
-+            .expect("an unavailable utility must not discard custody of a live process");
-+        assert!(!captured.exited().unwrap());
-+        child.0.stdin.as_mut().unwrap().write_all(b"\n").unwrap();
-+        assert!(child.0.wait().unwrap().success());
-+        assert!(captured.exited().unwrap());
-+    }
- }
-```
-
-**File**: `src/server/tunnel.rs` (modified, +75/-49)
-```diff
-@@ -1219,14 +1219,17 @@ pub fn print_qr_code(url: &str) {
- }
- 
- /// Check if cloudflared is installed and accessible on PATH.
--pub fn check_cloudflared() -> anyhow::Result<()> {
--    match std::process::Command::new("cloudflared")
--        .arg("--version")
--        .stdout(std::process::Stdio::null())
--        .stderr(std::process::Stdio::null())
--        .status()
--    {
--        Ok(status) if status.success() => Ok(()),
-+pub fn check_cloudflared(cancel: &tokio_util::sync::CancellationToken) -> anyhow::Result<()> {
-+    match crate::process::run_status_with_timeout_process_group(
-+        std::process::Command::new("cloudflared")
-+            .arg("--version")
-+            .stdin(std::process::Stdio::null())
-+            .stdout(std::process::Stdio::null())
-+            .stderr(std::process::Stdio::null()),
-+        PROBE_TIMEOUT,
-+        Some(cancel),
-+    ) {
-+        Ok(Some(status)) if status.success() => Ok(()),
-         _ => anyhow::bail!(
-             "cloudflared is not installed or not on PATH.\n\
-              Install it: https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/\n\
-@@ -1244,20 +1247,18 @@ pub fn check_cloudflared() -> anyhow::Result<()> {
- /// opens the view, or hold the Daemon's tunnel selection until its startup deadline.
- const PROBE_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(3);
- 
--/// Sync counterpart of `tailscale_probe()` for use from the TUI (which avoids spinning
--/// up a tokio runtime just to probe for a CLI).
--pub fn tailscale_probe_sync() -> TailscaleProbe {
--    tailscale_probe_sync_with(std::ffi::OsStr::new("tailscale"), PROBE_TIMEOUT)
-+/// Synchronous availability check for the cancellable Serve worker.
-+pub fn tailscale_probe_sync(cancel: &tokio_util::sync::CancellationToken) -> TailscaleProbe {
-+    tailscale_probe_sync_with(std::ffi::OsStr::new("tailscale"), PROBE_TIMEOUT, cancel)
- }
- 
- fn tailscale_probe_sync_with(
-     program: &std::ffi::OsStr,
-     timeout: std::time::Duration,
-+    cancel: &tokio_util::sync::CancellationToken,
- ) -> TailscaleProbe {
--    // Unlike the async path, this runs on the TUI render hot path, so we keep it cheap and
--    // quiet on the happy path.
-     for arg in ["--version", "status"] {
--        match probe_succeeds(program, arg, timeout) {
-+        match probe_succeeds(program, arg, timeout, cancel) {
-             Some(true) => {}
-             Some(false) => return TailscaleProbe::Unavailable,
-             None => return TailscaleProbe::TimedOut,
-@@ -1266,36 +1267,33 @@ fn tailscale_probe_sync_with(
-     TailscaleProbe::Available
- }
- 
--/// Whether `program arg` exits zero within `timeout`, or `None` when it is still running, in
--/// which case it is killed.
- fn probe_succeeds(
-     program: &std::ffi::OsStr,
-     arg: &str,
-     timeout: std::time::Duration,
-+    cancel: &tokio_util::sync::CancellationToken,
- ) -> Option<bool> {
--    let spawned = std::process::Command::new(program)
--        .arg(arg)
--        .stdin(std::process::Stdio::null())
--        .stdout(std::process::Stdio::null())
--        .stderr(std::process::Stdio::null())
--        .spawn();
--    let status =
--        spawned.and_then(|mut child| crate::process::wait_with_timeout(&mut child, timeout));
-+    let status = crate::process::run_status_with_timeout_process_group(
-+        std::process::Command::new(program)
-+            .arg(arg)
-+            .stdin(std::process::Stdio::null())
-+            .stdout(std::process::Stdio::null())
-+            .stderr(std::process::Stdio::null()),
-+        timeout,
-+        Some(cancel),
-+    );
-     match status {
-         Ok(Some(status)) if status.success() => Some(true),
-         Ok(Some(status)) => {
--            debug!(exit = ?status.code(), "tailscale_probe_sync: `tailscale {arg}` failed");
-+            debug!(target: "serve.tunnel", exit = ?status.code(), "tailscale_probe_sync: `tailscale {arg}` failed");
-             Some(false)
-         }
-         Ok(None) => {
--            debug!(
--                timeout_s = timeout.as_secs_f32(),
--                "tailscale_probe_sync: `tailscale {arg}` timed out"
--            );
-+            debug!(target: "serve.tunnel", timeout_s = timeout.as_secs_f32(), "tailscale_probe_sync: `tailscale {arg}` timed out or cancelled");
-             None
-         }
-         Err(error) => {
--            debug!(%error, "tailscale_probe_sync: `tailscale {arg}` could not run");
-+            debug!(target: "serve.tunnel", %error, "tailscale_probe_sync: `tailscale {arg}` could not run");
-             Some(false)
+         agents
+     })
+     .await
+@@ -3748,6 +3779,28 @@ mod tests {
          }
      }
-@@ -1311,44 +1309,63 @@ pub enum FunnelCapability {
-     TimedOut,
- }
  
--/// Sync counterpart of `check_funnel_capability()`.
--pub fn tailscale_funnel_cap_sync() -> FunnelCapability {
--    tailscale_funnel_cap_sync_with(std::ffi::OsStr::new("tailscale"), PROBE_TIMEOUT)
-+/// Synchronous capability check for the cancellable Serve worker.
-+pub fn tailscale_funnel_cap_sync(cancel: &tokio_util::sync::CancellationToken) -> Funn
++    #[test]
++    fn adapter_install_command_resolves_by_binary_name() {
++        for (command, expected) in [
++            (
++                Some("codex-acp"),
++                Some("npm install -g @agentclientprotocol/codex-acp@latest"),
++            ),
++            (
++                Some("/data/aoe/bin/aoe-agent"),
++                Some("aoe acp doctor --fix --adapter aoe-agent"),
++            ),
++            (Some("unknown-acp"), None),
++            (None, None),
++        ] {
++            assert_eq!(
++                adapter_install_command(command).as_deref(),
++                expected,
++                "{command:?}"
++            );
++        }
++    }
++
+     /// The wizard names the runtime that isn't running, so it's reported
+     /// whether or not it's available.
+     #[tokio::test]
+```
+
+**File**: `src/server/auth.rs` (modified, +5/-0)
+```diff
+@@ -143,6 +143,9 @@ fn is_machine_endpoint(path: &str) -> bool {
+ fn is_login_session_exempt(path: &str) -> bool {
+     path == "/"
+         || path == "/login"
++        // Page shell only: /api/setup stays session-gated, and
++        // patch_setup checks read_only and CityHall itself.
++        || path == "/setup"
+         || path.starts_with("/session/")
+         || path.starts_with("/plugins/")
+         || path == "/api/login"
+@@ -1083,6 +1086,7 @@ mod tests {
+         let exempt = [
+             "/",
+             "/login",
++            "/setup",
+             "/session/abc",
+             "/session/2626c6af68754732",
+             "/plugins/github/prs",
+@@ -1211,6 +1215,7 @@ mod tests {
+             // Cosmetic UI state and the update banner grant no capability; the
+             // handlers still enforce read_only.
+             (Method::POST, "/api/app-state/web-tour-seen"),
++            (Method::PATCH, "/api/setup"),
+             (Method::POST, "/api/app-state/dismiss-update"),
+             (Method::PATCH, "/api/app-state/web-ui-state"),
+             // Read-only GETs, even on settings and profile paths.
+```
+
+**File**: `src/server/router.rs` (modified, +2/-0)
+```diff
+@@ -337,6 +337,8 @@ pub(super) fn build_router(state: Arc<AppState>) -> Router {
+             "/api/app-state/web-tour-seen",
+             post(api::mark_web_tour_seen),
+         )
++        .route("/api/setup", get(api::get_setup).patch(api::patch_setup))
++        .route("/api/setup/runtimes", get(api::get_setup_runtimes))
+         .route("/api/app-state/dismiss-update", post(api::dismiss_update))
+         .route(
+             "/api/app-state/web-ui-state",
+```
+
+**File**: `src/session/config/mod.rs` (modified, +16/-0)
+```diff
+@@ -1062,6 +1062,22 @@ pub struct AppStateConfig {
+     #[serde(default)]
+     pub used_system_health: bool,
+ 
++    /// Web setup wizard steps the user chose to skip. See `GET /api/setup`.
++    #[serde(default, skip_serializing_if = "Vec::is_empty")]
++    pub setup_skipped_steps: Vec<String>,
++    /// Optional web setup steps whose defaults the user kept.
++    #[serde(default, skip_serializing_if = "Vec::is_empty")]
++    pub setup_confirmed_steps: Vec<String>,
++    /// The user finished the web setup wizard.
++    #[serde(default)]
++    pub setup_finished: bool,
++    /// The user left the wizard for the dashboard, so `/` stops redirecting.
++    #[serde(default)]
++    pub setup_deferred: bool,
++    /// The user closed the dashboard's "Finish setting up" banner.
++    #[serde(default)]
++    pub setup_banner_dismissed: bool,
++
+     /// Server-side mirror of the web dashboard's syncable UI state, keyed by
+     /// the frontend's localStorage key (the value is the opaque string the
+     /// browser stored). Single-tenant: there is one user, so these prefs
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5632** (2026-11-12): fix(ci): report Codecov through commit statuses, not check runs (@Seluj78)
-- **PR #5629** (2026-11-12): fix(serve): don't take over a live Tailscale Funnel, and notice a takeover (@klubrake)
-- **PR #5622** (2026-11-12): docs(mcp): scope send's capture-failure refusal to agents with a manifest (@klubrake)
-- **PR #5617** (2026-11-12): fix(acp): keep a session Waiting while a question or approval is pending (@Seluj78)
-- **PR #5606** (2026-11-12): test(web): read the live control messages with one parser (@klubrake)
-- **PR #5605** (2026-11-12): feat(server): add skip_on_create to create a session without setup (@klubrake)
+- **PR #5684** (2026-11-14): fix(acp): keep owner stop that lands before failover locks (@cwrau)
+- **PR #5672** (2026-11-13): feat(web): show Retry's progress as the startup line, and a plain empty state while the Agent isn't running (@klubrake)
+- **PR #5670** (closed): test(acp): record shim calls synchronously so order matches arrival (@Seluj78)
+- **PR #5667** (2026-11-13): fix(process): treat a zombie runner as not live (@klubrake)
+- **PR #5666** (2026-11-13): feat(acp): report a sandbox container removed mid-run as a typed startup cause (@klubrake)
+- **PR #5664** (2026-11-13): feat(plugins): pin plugin-linear 0.1.0 in featured.toml (@athal7)
 
 ---
 
@@ -3450,41 +3167,33 @@ Keep successor and credential assertions intact
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. trash): expose safe unfinished-trash retry (#5472)
+## X. tui): flash deletion cleanup notes instead of a blocking dialog
 
 **RULE**:
-When implementing operations in `docs/api.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in agent-of-empires/agent-of-empires. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/tui/app.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in agent-of-empires/agent-of-empires. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ecbf52ef`: trash): expose safe unfinished-trash retry (#5472). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5b6d208f`: tui): flash deletion cleanup notes instead of a blocking dialog. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/api.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/tui/app.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-At creation admission, an `import_acp_session_id` found already owned is refused
-with `400 create_failed` and the safe message “Import source is already owned by
-an AoE session”. Frozen cleanup ownership covers all tools' current and parked
-ACP IDs, even after an ordinary purge removes the visible row. Unrelated failures
-remain sanitized rather than exposing their internal causes.
-
-| `expected_profile` | omitted | Require the selected profile as well as the generation; a mismatch returns `409 lifecycle_superseded` without mutation. |
-Unfinished Trash exposes Retry and read-only inspection, not record-only removal.
-Retry retains existing lifecycle, native ownership, and filesystem checks. An
-unverified checkout stays visible in Trash until those checks can settle it.
-UI requests capture their original profile, generation, and runtime epoch;
-replacement state requires fresh consent.
-
-
+                    // Keys reach the view before the next draw, so no dialog is promoted here.
+                    self.home.apply_session_feed_before_input();
+        self.home.apply_session_feed_before_input();
+        self.home.apply_session_feed_before_input();
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+                    self.home.apply_session_feed();
+        self.home.apply_session_feed();
+        self.home.apply_session_feed();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ecbf52ef` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5b6d208f` are properly handled with clean fallback behavior.
