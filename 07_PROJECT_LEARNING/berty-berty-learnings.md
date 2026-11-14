@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/berty-berty-learnings.md`  
 > **Source**: github ([https://github.com/berty/berty](https://github.com/berty/berty))  
-> **Source Version**: `de4ae482`  
+> **Source Version**: `85c32792`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T23:27:14.092Z  
+> **Timestamp**: 2026-11-14T04:32:17.727Z  
 > **Learning ID**: `learn-github-berty-berty`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/berty-berty-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/berty/berty](https://github.com/berty/berty))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T23:27:12.862Z  
+> **Harvest Timestamp**: 2026-11-14T04:32:17.566Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Berty is a secure peer-to-peer messaging app that works with or without internet access, cellular data or trust in the network
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 9344 stars
+- **Stars / Engagement**: 9352 stars
 
 ---
 
@@ -578,7 +578,7 @@ export const getUserMessageState = (
 
 ### Core Architecture Module: `berty-bridge-expo/mobile/src/components/hooks.ts`
 ```
-import { useState, useCallback, useRef, useEffect } from 'react'
+import { useState, useCallback } from 'react'
 import { LayoutChangeEvent, LayoutRectangle } from 'react-native'
 
 export const useLayout = (): [LayoutRectangle, (e: LayoutChangeEvent) => void] => {
@@ -600,15 +600,6 @@ export const useLayout = (): [LayoutRectangle, (e: LayoutChangeEvent) => void] =
 		[],
 	)
 	return [layout, onLayout]
-}
-
-export function usePrevious<T>(value: T) {
-	// https://blog.logrocket.com/how-to-get-previous-props-state-with-react-hooks/
-	const ref = useRef<T>()
-	useEffect(() => {
-		ref.current = value
-	})
-	return ref.current
 }
 
 ```
@@ -666,59 +657,383 @@ export const ErrorUnaryNotImplemented = new Error('unary method not implemented'
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `de4ae482` (2026-11-06)
-**Commit Message**: Merge pull request #5278 from berty/dependabot/npm_and_yarn/berty-bridge-expo/mobile/undici-6.29.1
+### Incident Patch 1: `a597044c` (2026-11-09)
+**Commit Message**: chore(bridge-expo): upgrade to Expo SDK 58, fix iOS camera permission review (#5286)
 
-chore(deps): bump undici from 6.29.0 to 6.29.1 in /berty-bridge-expo/mobile
+* fix(ios): address camera permission App Review rejection
 
-**File**: `berty-bridge-expo/mobile/package-lock.json` (modified, +3/-3)
+Signed-off-by: D4ryl00 <[REDACTED_EMAIL]>
+
+* fix(bridge-expo/plugin): raise iOS deployment target of pod resource bundles
+
+React Native's post_install only updates each pod's main target, so
+resource bundle targets keep their podspec's older iOS minimum. Raise any
+Pods target below the app's deployment target.
+
+Temporary workaround until RN >= 0.89 (facebook/react-native#58687).
+
+Signed-off-by: D4ryl00 <[REDACTED_EMAIL]>
+
+* chore(mobile): remove unused expo-router
+
+The app boots from expo/AppEntry.js with React Navigation; expo-router was
+only used by a stub app/_layout.tsx. From SDK 56, @react-navigation/*
+imports stop working when expo-router is installed, so drop it before the
+SDK upgrade.
+
+- add @react-navigation/native-stack as a direct dependency (it was only
+  provided transitively by expo-router), pinned to the version in use
+- switch web.output from static to single (static requires expo-router)
+
+Signed-off-by: D4ryl00 <[REDACTED_EMAIL]>
+
+* chore: bump Node.js to 22.23.2
+
+Expo SDK 55+ requires Node.js ^22.13.0.
+
+Signed-off-by: D4
+
+**File**: `.github/workflows/ios.yml` (modified, +5/-2)
 ```diff
-@@ -18864,9 +18864,9 @@
-       }
-     },
-     "node_modules/undici": {
--      "version": "6.29.0",
--      "resolved": "https://registry.npmjs.org/undici/-/undici-6.29.0.tgz",
--      "integrity": "sha512-R+RODBqp6i2pPflGdq+xIOUkl+RNfGgHwoinecKu/JCuf2uO06cOKoDbI2P7Dn6KcswdKwrczbU6IYJ6K8X+wg==",
-+      "version": "6.29.1",
-+      "resolved": "https://registry.npmjs.org/undici/-/undici-6.29.1.tgz",
-+      "integrity": "sha512-EvRlUt/QqAEvXdQeRMYUfwOQsfzpDztykrG2owGEE/rBOBoYv9uF39ZzsNDh4lTFHhTr2XOZjKkYgueD12ZmGA==",
-       "license": "MIT",
-       "engines": {
-         "node": ">=18.17"
+@@ -34,8 +34,11 @@ jobs:
+           name: ${{ inputs.app-json-artifact }}
+           path: berty-bridge-expo/mobile
+ 
+-      - name: Select Xcode 26
+-        run: sudo xcode-select -s /Applications/Xcode_26.3.0.app
++      # Expo SDK 56+ requires Xcode >= 26.4. Xcode 27 (iOS 27 SDK) is only on the
++      # `xcode-27` runner image, still in preview: move to it once it is GA
++      # (https://github.com/berty/berty/issues/5287).
++      - name: Select Xcode 26.6
++        run: sudo xcode-select -s /Applications/Xcode_26.6.app
+ 
+       - name: Setup asdf
+         uses: asdf-vm/actions/setup@9cd779f40fe38688dd19505ccbc4eaaf018b44e7
+```
+
+**File**: `.tool-versions` (modified, +1/-1)
+```diff
+@@ -15,7 +15,7 @@ golang 1.26.4
+ # prevent our project from building.
+ # More info here: https://github.com/webpack/webpack/issues/14532
+ #-----
+-nodejs 22.12.0
++nodejs 22.23.2
+ 
+ #-----
+ # This is simply the most recent xcodegen version available to date.
+```
+
+**File**: `berty-bridge-expo/.gitignore` (modified, +3/-0)
+```diff
+@@ -63,3 +63,6 @@ yarn-error.log
+ android/libs
+ ios/Frameworks
+ plugin/src/NotificationService/Bertypush.xcframework
++
++# TypeScript incremental build cache (plugin/build is ignored too)
++*.tsbuildinfo
+```
+
+**File**: `berty-bridge-expo/Makefile` (modified, +6/-2)
+```diff
+@@ -13,7 +13,11 @@ gomobile_cache_abs := $(abspath $(gomobile_cache))
+ IOS_OUTPUT_BERTYPUSH_FRAMEWORK ?= $(make_dir)/plugin/src/NotificationService/Bertypush.xcframework
+ IOS_OUTPUT_BERTYBRIDGE_FRAMEWORK ?= $(make_dir)/ios/Frameworks/Bertybridge.xcframework
+ ANDROID_OUTPUT_LIBS ?= $(make_dir)/android/libs/gobridge.aar
+-ext_ldflags = -ldflags="-checklinkname=0 -X berty.tech/berty/v2/go/pkg/bertyversion.VcsRef=$$VCS_REF -X berty.tech/berty/v2/go/pkg/bertyversion.Version=$$VERSION"
++common_ldflags = -checklinkname=0 -X berty.tech/berty/v2/go/pkg/bertyversion.VcsRef=$$VCS_REF -X berty.tech/berty/v2/go/pkg/bertyversion.Version=$$VERSION
++ext_ldflags = -ldflags="$(common_ldflags)"
++# Align ELF LOAD segments on 16 KB, required by Google Play for Android 15+ devices
++# with 16 KB pages. Android only: Apple's linker does not support -z.
++android_ext_ldflags = -ldflags="$(common_ldflags) -extldflags=-Wl,-z,max-page-size=16384"
+ minimum_ios_ver = 12.0
+ minimum_android_ver = 21
+ go_modcacherw_flags = GOFLAGS="$(strip $(GOFLAGS) -modcacherw)"
+@@ -94,7 +98,7 @@ $(ANDROID_OUTPUT_LIBS): $(bridge_src)
+ 		$(gomobile_version) && \
+ 		GO111MODULE=on $(go_modcacherw_flags) $(GO) run golang.org/x/mobile/cmd/gomobile bind \
+ 		-o $(abspath $@) \
+-		-v $(ext_ldflags) \
++		-v $(android_ext_ldflags) \
+ 		$(GO_TAGS) \
+ 		-cache $(gomobile_cache_abs)/android_bertybridge \
+ 		-target $(GOMOBILE_ANDROID_TARGET) \
+```
+
+**File**: `berty-bridge-expo/README.md` (modified, +1/-1)
+```diff
+@@ -4,7 +4,7 @@ This is the bertybridge Expo module.
+ 
+ ## Prerequisites
+ 
+-* Required on macOS: Xcode 26+ (macOS 15+)
++* Required on macOS: Xcode 26.4+ (macOS 26.2+), the minimum for Expo SDK 58
+ * Required to build for Android: Android Studio
+ 
+ Berty is based on weshnet. Follow its [install instructions](https://github.com/berty/weshnet/blob/main/INSTALL.md)
+```
+
+**File**: `berty-bridge-expo/android/build.gradle` (modified, +11/-7)
+```diff
+@@ -11,13 +11,17 @@ if (skipGomobile) {
+     logger.lifecycle("bertybridgeexpo: skipping Go bridge build (-PskipGomobile=true)")
+ } else {
+     logger.lifecycle("bertybridgeexpo: building Go bridge (make android.gomobile), this can take several minutes on first build...")
+-    exec {
+-        workingDir '..'
+-        if (forceGomobile) {
+-            commandLine 'make', '-B', 'android.gomobile'
+-        } else {
+-            commandLine 'make', 'android.gomobile'
+-        }
++    // Project.exec was removed in Gradle 9; providers.exec is the supported replacement.
++    def gomobile = providers.exec {
++        workingDir = projectDir.parentFile
++        commandLine(forceGomobile ? ['make', '-B', 'android.gomobile'] : ['make', 'android.gomobile'])
++        ignoreExitValue = true
++    }
++    def gomobileExitValue = gomobile.result.get().exitValue
++    logger.lifecycle(gomobile.standardOutput.asText.get())
++    if (gomobileExitValue != 0) {
++        logger.error(gomobile.standardError.asText.get())
++        throw new GradleException("bertybridgeexpo: 'make android.gomobile' failed with exit code ${gomobileExitValue}")
+     }
+ }
+ 
+```
+
+**File**: `berty-bridge-expo/ios/BertyBridgeExpo.podspec` (modified, +2/-2)
+```diff
+@@ -11,8 +11,8 @@ Pod::Spec.new do |s|
+   s.author         = package['author']
+   s.homepage       = package['homepage']
+   s.platforms      = {
+-    :ios => '15.1',
+-    :tvos => '15.1'
++    :ios => '16.4',
++    :tvos => '16.4'
+   }
+   s.swift_version  = '5.4'
+   s.source         = { git: 'https://github.com/berty/berty' }
+```
+
+**File**: `berty-bridge-expo/ios/BertyBridgeExpoModule.swift` (modified, +4/-0)
+```diff
+@@ -46,6 +46,10 @@ public class BertyBridgeExpoModule: Module {
+     }
+       
+     OnDestroy {
++      // Detach the static logger before closing the bridge so native logs
++      // fall back to os_log instead of hitting a closed Go bridge.
++      BertyLogger.useBridge(nil)
++
+       do {
+           if self.bridgeMessenger != nil {
+               try self.bridgeMessenger?.close()
 ```
 
 ---
 
-### Incident Patch 2: `8903b567` (2026-11-06)
-**Commit Message**: Merge pull request #5277 from berty/dependabot/npm_and_yarn/berty-bridge-expo/example/undici-6.29.1
+### Incident Patch 2: `9e40b29e` (2026-11-10)
+**Commit Message**: chore(deps): bump go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp
 
-chore(deps): bump undici from 6.29.0 to 6.29.1 in /berty-bridge-expo/example
+Bumps [go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp](https://github.com/open-telemetry/opentelemetry-go) from 1.43.0 to 1.45.0.
+- [Release notes](https://github.com/open-telemetry/opentelemetry-go/releases)
+- [Changelog](https://github.com/open-telemetry/opentelemetry-go/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/open-telemetry/opentelemetry-go/compare/v1.43.0...v1.45.0)
 
-**File**: `berty-bridge-expo/example/package-lock.json` (modified, +3/-3)
+---
+updated-dependencies:
+- dependency-name: go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp
+  dependency-version: 1.45.0
+  dependency-type: indirect
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -8028,9 +8028,9 @@
-       }
-     },
-     "node_modules/undici": {
--      "version": "6.29.0",
--      "resolved": "https://registry.npmjs.org/undici/-/undici-6.29.0.tgz",
--      "integrity": "sha512-R+RODBqp6i2pPflGdq+xIOUkl+RNfGgHwoinecKu/JCuf2uO06cOKoDbI2P7Dn6KcswdKwrczbU6IYJ6K8X+wg==",
-+      "version": "6.29.1",
-+      "resolved": "https://registry.npmjs.org/undici/-/undici-6.29.1.tgz",
-+      "integrity": "sha512-EvRlUt/QqAEvXdQeRMYUfwOQsfzpDztykrG2owGEE/rBOBoYv9uF39ZzsNDh4lTFHhTr2XOZjKkYgueD12ZmGA==",
-       "license": "MIT",
-       "engines": {
-         "node": ">=18.17"
+@@ -448,7 +448,7 @@ require (
+ 	go.opentelemetry.io/otel v1.45.0 // indirect
+ 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 // indirect
+ 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 // indirect
+-	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.43.0 // indirect
++	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.45.0 // indirect
+ 	go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.42.0 // indirect
+ 	go.opentelemetry.io/otel/metric v1.45.0 // indirect
+ 	go.opentelemetry.io/otel/sdk v1.45.0 // indirect
+```
+
+**File**: `go.sum` (modified, +2/-2)
+```diff
+@@ -1630,8 +1630,8 @@ go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 h1:QRefszxJmfPdjXUUm3j
+ go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0/go.mod h1:Tiz03lTBVBrm7eWZBOidzEaYaJa8tjwGUGv6d8mlTyk=
+ go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 h1:fG5MCxGz8+2VtrN/WgqSpJFctVz24gpxj8CxkKmc8Ww=
+ go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0/go.mod h1:BmAYTn+3ysbRe+IU2msxmf5Rx3g6DHvex+tWI3LdhYI=
+-go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.43.0 h1:3iZJKlCZufyRzPzlQhUIWVmfltrXuGyfjREgGP3UUjc=
+-go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.43.0/go.mod h1:/G+nUPfhq2e+qiXMGxMwumDrP5jtzU+mWN7/sjT2rak=
++go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.45.0 h1:QBajQ2SrwQijzHyZbQlPsuIzpl/ll8DY6wPWsajeGcI=
++go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.45.0/go.mod h1:08ZQLjrPLQ6R4kAXvuOvODEer5Yh4CoFvll5qB2BCI8=
+ go.opentelemetry.io/otel/exporters/stdout/stdoutmetric v1.36.0 h1:rixTyDGXFxRy1xzhKrotaHy3/KXdPhlWARrCgK+eqUY=
+ go.opentelemetry.io/otel/exporters/stdout/stdoutmetric v1.36.0/go.mod h1:dowW6UsM9MKbJq5JTz2AMVp3/5iW5I/TStsk8S+CfHw=
+ go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.42.0 h1:s/1iRkCKDfhlh1JF26knRneorus8aOwVIDhvYx9WoDw=
+```
+
+---
+
+### Incident Patch 3: `8fd0f519` (2026-11-10)
+**Commit Message**: chore(deps): bump go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc
+
+Bumps [go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc](https://github.com/open-telemetry/opentelemetry-go) from 1.42.0 to 1.45.0.
+- [Release notes](https://github.com/open-telemetry/opentelemetry-go/releases)
+- [Changelog](https://github.com/open-telemetry/opentelemetry-go/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/open-telemetry/opentelemetry-go/compare/v1.42.0...v1.45.0)
+
+---
+updated-dependencies:
+- dependency-name: go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc
+  dependency-version: 1.45.0
+  dependency-type: indirect
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+
+**File**: `go.mod` (modified, +14/-14)
+```diff
+@@ -72,11 +72,11 @@ require (
+ 	go.uber.org/goleak v1.3.0
+ 	go.uber.org/multierr v1.11.0
+ 	go.uber.org/zap v1.28.0
+-	golang.org/x/crypto v0.52.0
++	golang.org/x/crypto v0.54.0
+ 	golang.org/x/mobile v0.0.0-20231127183840-76ac6878050a
+-	golang.org/x/net v0.55.0
+-	golang.org/x/text v0.37.0
+-	golang.org/x/tools v0.45.0
++	golang.org/x/net v0.57.0
++	golang.org/x/text v0.40.0
++	golang.org/x/tools v0.47.0
+ 	golang.org/x/xerrors v0.0.0-20240903120638-7835f813f4da
+ 	google.golang.org/api v0.264.0
+ 	google.golang.org/grpc v1.83.1
+@@ -249,7 +249,7 @@ require (
+ 	github.com/gopherjs/gopherwasm v1.1.0 // indirect
+ 	github.com/gorilla/mux v1.8.1 // indirect
+ 	github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674 // indirect
+-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.28.0 // indirect
++	github.com/grpc-ecosystem/grpc-gateway/v2 v2.29.0 // indirect
+ 	github.com/guillaumemichel/reservedpool v0.3.0 // indirect
+ 	github.com/hanwen/go-fuse/v2 v2.9.1-0.20260323175136-8b5aa92e8e7c // indirect
+ 	github.com/hashicorp/go-version v1.9.0 // indirect
+@@ -446,15 +446,15 @@ require (
+ 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.61.0 // indirect
+ 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.68.0 // indirect
+ 	go.opentelemetry.io/otel v1.45.0 // indirect
+-	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.43.0 // indirect
+-	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.42.0 // indirect
++	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 // indirect
++	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 // indirect
+ 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.43.0 // indirect
+ 	go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.42.0 // indirect
+ 	go.opentelemetry.io/otel/metric v1.45.0 // indirect
+ 	go.opentelemetry.io/otel/sdk v1.45.0 // indirect
+ 	go.opentelemetry.io/otel/sdk/metric v1.45.0 // indirect
+ 	go.opentelemetry.io/otel/trace v1.45.0 // indirect
+-	go.opentelemetry.io/proto/otlp v1.10.0 // indirect
++	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
+ 	go.uber.org/dig v1.19.0 // indirect
+ 	go.uber.org/fx v1.24.0 // indirect
+ 	go.uber.org/mock v0.5.2 // indirect
+@@ -464,18 +464,18 @@ require (
+ 	go4.org v0.0.0-20230225012048-214862532bf5 // indirect
+ 	golang.org/x/exp v0.0.0-20260508232706-74f9aab9d74a // indirect
+ 	golang.org/x/image v0.41.0 // indirect
+-	golang.org/x/mod v0.36.0 // indirect
++	golang.org/x/mod v0.37.0 // indirect
+ 	golang.org/x/oauth2 v0.36.0 // indirect
+-	golang.org/x/sync v0.20.0 // indirect
++	golang.org/x/sync v0.22.0 // indirect
+ 	golang.org/x/sys v0.47.0 // indirect
+-	golang.org/x/telemetry v0.0.0-20260508192327-42602be52be6 // indirect
+-	golang.org/x/term v0.43.0 // indirect
++	golang.org/x/telemetry v0.0.0-20260625142307-59b4966ccb57 // indirect
++	golang.org/x/term v0.45.0 // indirect
+ 	golang.org/x/time v0.14.0 // indirect
+ 	gonum.org/v1/gonum v0.17.0 // indirect
+ 	google.golang.org/appengine/v2 v2.0.2 // indirect
+ 	google.golang.org/genproto v0.0.0-20260128011058-8636f8732409 // indirect
+-	google.golang.org/genproto/googleapis/api v0.0.0-20260526163538-3dc84a4a5aaa // indirect
+-	google.golang.org/genproto/googleapis/rpc v0.0.0-20260526163538-3dc84a4a5aaa // indirect
++	google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d // indirect
++	google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d // indirect
+ 	gopkg.in/yaml.v2 v2.4.0 // indirect
+ 	gopkg.in/yaml.v3 v3.0.1 // indirect
+ 	lukechampine.com/blake3 v1.4.1 // indirect
+```
+
+**File**: `go.sum` (modified, +28/-28)
+```diff
+@@ -704,8 +704,8 @@ github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0/go.mod h1:8NvIoxWQoOIhqOTXgf
+ github.com/grpc-ecosystem/grpc-gateway v1.9.5/go.mod h1:vNeuVxBJEsws4ogUvrchl83t/GYV9WGTSLVdBhOQFDY=
+ github.com/grpc-ecosystem/grpc-gateway v1.16.0 h1:gmcG1KaJ57LophUzW0Hy8NmPhnMZb4M0+kPpLofRdBo=
+ github.com/grpc-ecosystem/grpc-gateway v1.16.0/go.mod h1:BDjrQk3hbvj6Nolgz8mAMFbcEtjT1g+wF4CSlocrBnw=
+-github.com/grpc-ecosystem/grpc-gateway/v2 v2.28.0 h1:HWRh5R2+9EifMyIHV7ZV+MIZqgz+PMpZ14Jynv3O2Zs=
+-github.com/grpc-ecosystem/grpc-gateway/v2 v2.28.0/go.mod h1:JfhWUomR1baixubs02l85lZYYOm7LV6om4ceouMv45c=
++github.com/grpc-ecosystem/grpc-gateway/v2 v2.29.0 h1:5VipnvEpbqr2gA2VbM+nYVbkIF28c5ZQfqCBQ5g2xfk=
++github.com/grpc-ecosystem/grpc-gateway/v2 v2.29.0/go.mod h1:Hyl3n6Twe1hvtd9XUXDec4pTvgMSEixRuQKPTMH2bNs=
+ github.com/guillaumemichel/reservedpool v0.3.0 h1:eqqO/QvTllLBrit7LVtVJBqw4cD0WdV9ajUe7WNTajw=
+ github.com/guillaumemichel/reservedpool v0.3.0/go.mod h1:sXSDIaef81TFdAJglsCFCMfgF5E5Z5xK1tFhjDhvbUc=
+ github.com/gxed/hashland/keccakpg v0.0.1/go.mod h1:kRzw3HkwxFU1mpmPP8v1WyQzwdGfmKFJ6tItnhQ67kU=
+@@ -1626,10 +1626,10 @@ go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.68.0 h1:CqXxU8V
+ go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.68.0/go.mod h1:BuhAPThV8PBHBvg8ZzZ/Ok3idOdhWIodywz2xEcRbJo=
+ go.opentelemetry.io/otel v1.45.0 h1:pdrWmLHofpubmArBv1LgFSv1Z0Ie/ppdZzu+kUN5EeU=
+ go.opentelemetry.io/otel v1.45.0/go.mod h1:XZxIqPapzEYnhNSScF5DIqXhm/rYi0FzCe2XddAwZfQ=
+-go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.43.0 h1:88Y4s2C8oTui1LGM6bTWkw0ICGcOLCAI5l6zsD1j20k=
+-go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.43.0/go.mod h1:Vl1/iaggsuRlrHf/hfPJPvVag77kKyvrLeD10kpMl+A=
+-go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.42.0 h1:zWWrB1U6nqhS/k6zYB74CjRpuiitRtLLi68VcgmOEto=
+-go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.42.0/go.mod h1:2qXPNBX1OVRC0IwOnfo1ljoid+RD0QK3443EaqVlsOU=
++go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 h1:QRefszxJmfPdjXUUm3j6iDzY03mTPXMjqErFqQ67vUg=
++go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0/go.mod h1:Tiz03lTBVBrm7eWZBOidzEaYaJa8tjwGUGv6d8mlTyk=
++go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 h1:fG5MCxGz8+2VtrN/WgqSpJFctVz24gpxj8CxkKmc8Ww=
++go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0/go.mod h1:BmAYTn+3ysbRe+IU2msxmf5Rx3g6DHvex+tWI3LdhYI=
+ go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.43.0 h1:3iZJKlCZufyRzPzlQhUIWVmfltrXuGyfjREgGP3UUjc=
+ go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.43.0/go.mod h1:/G+nUPfhq2e+qiXMGxMwumDrP5jtzU+mWN7/sjT2rak=
+ go.opentelemetry.io/otel/exporters/stdout/stdoutmetric v1.36.0 h1:rixTyDGXFxRy1xzhKrotaHy3/KXdPhlWARrCgK+eqUY=
+@@ -1646,8 +1646,8 @@ go.opentelemetry.io/otel/sdk/metric v1.45.0 h1:oVFszMfyj1Am6s24Vtc7wBb8BKLcwepJj
+ go.opentelemetry.io/otel/sdk/metric v1.45.0/go.mod h1:vUWUxDZvu1WVRj8JA8S0AdhsPrZoDpA2DdZauIh4mDA=
+ go.opentelemetry.io/otel/trace v1.45.0 h1:l/mP6Uv7oNO7/TblbhpbgMidxhq1uO/rPsikOyVhxag=
+ go.opentelemetry.io/otel/trace v1.45.0/go.mod h1:qoJJA2xNMnxRrdISU/kLtfUH2wNeQbiv+jhs/CxI8bc=
+-go.opentelemetry.io/proto/otlp v1.10.0 h1:IQRWgT5srOCYfiWnpqUYz9CVmbO8bFmKcwYxpuCSL2g=
+-go.opentelemetry.io/proto/otlp v1.10.0/go.mod h1:/CV4QoCR/S9yaPj8utp3lvQPoqMtxXdzn7ozvvozVqk=
++go.opentelemetry.io/proto/otlp v1.11.0 h1:5rrYs0Ykyj50sdU/JU0x8etU+LubXWb+gED6TbEdMIk=
++go.opentelemetry.io/proto/otlp v1.11.0/go.mod h1:SmVizdCOAm3XBtG1g1NnOdhW6jtddT72hLMhv8VwA8E=
+ go.uber.org/atomic v1.3.2/go.mod h1:gD2HeocX3+yG+ygLZcrzQJaqmWj9AIm7n08wl/qW/PE=
+ go.uber.org/atomic v1.4.0/go.mod h1:gD2HeocX3+yG+ygLZcrzQJaqmWj9AIm7n08wl/qW/PE=
+ go.uber.org/atomic v1.5.0/go.mod h1:sABNBOSYdrvTF6hTgEIbc7YasKWGhgEQZyfxyTvoXHQ=
+@@ -1720,8 +1720,8 @@ golang.org/x/crypto v0.13.0/go.mod h1:y6Z2r+Rw4iayiXXAIxJIDAJ1zMW4yaTpebo8fPOliY
+ golang.org/x/crypto v0.19.0/go.mod h1:Iy9bg/ha4yyC70EfRS8jz+B6ybOBKMaSxLj6P6oBDfU=
+ golang.org/x/crypto v0.23.0/go.mod h1:CKFgDieR+mRhux2Lsu27y0fO304Db0wZe70UKqHu0v8=
+ golang.org/x/crypto v0.31.0/go.mod h1:kDsLvtWBEx7MV9tJOj9bnXsPbxwJQ6csT/x4KIN4Ssk=
+-golang.org/x/crypto v0.52.0 h1:RMs7fP2rXdep0CftQlK8Uf+kibLm7qkCcradZWYz988=
+-golang.org/x/crypto v0.52.0/go.mod h1:1QgfPxDqh0T2M/elOJtp9RvuR95kVjir0e6/BvEmGbc=
++golang.org/x/crypto v0.54.0 h1:YLIA59K4fiNzHzjnZt2tUJQjQtUWfWbeHBqKtk3eScw=
++golang.org/x/crypto v0.54.0/go.mod h1:KWL8ny2AZdGR2cWmzeHrp2azQPGogOv+HeQaVEXC2dk=
+ golang.org/x/exp v0.0.0-20190121172915-509febef88a4/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
+ golang.org/x/exp v0.0.0-20190510132918-efd6b22b2522/go.mod h1:ZjyILWgesfNpC6sMxTJOJm9Kp84zZh5NQWvqDGG3Qr8=
+ golang.org/x/exp v0.0.0-20190731235908-ec7cb31e5a56/go.mod h1:JhuoJpWY28nO4Vef9tZUw9qufEGTyX1+7lmHxV5q5G4=
+@@ -1769,8 +1769,8 @@ golang.org/x/mod v0.11.0/go.mod h1:iBbtSCu2XBx23ZKBPSOrRkjjQPZFPuis4dIYUhu/chs=
+ golang.org/x/mod v0.12.0/go.mod h1:iBbtSCu2XBx23ZKBPSOrRkjjQPZFPuis4dIYUhu/chs=
+ golang
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5290** (closed): chore(deps): bump joi from 17.6.0 to 17.13.9 in /tool/game-utils/game-dev-app (@dependabot[bot])
+- **PR #5289** (2026-11-10): feat(pushrelay): support APNs auth keys (.p8) (@D4ryl00)
+- **PR #5286** (2026-11-09): chore(bridge-expo): upgrade to Expo SDK 58, fix iOS camera permission review (@D4ryl00)
 - **PR #5285** (closed): chore(deps): bump qs from 6.9.4 to 6.17.1 in /tool/tyber/js (@dependabot[bot])
 - **PR #5284** (closed): chore(deps): bump joi from 17.6.0 to 17.13.9 in /js/web (@dependabot[bot])
 - **PR #5283** (closed): fix(deps): bump lodash.omit from 4.5.0 to 4.18.0 in /js (@dependabot[bot])
-- **PR #5282** (closed): fix(deps): bump joi from 17.4.2 to 17.13.9 in /js (@dependabot[bot])
-- **PR #5281** (closed): chore(deps): bump qs, appium, appium-uiautomator2-driver and appium-xcuitest-driver in /js/e2e-tests (@dependabot[bot])
-- **PR #5279** (closed): chore(deps): bump zod and expo in /berty-bridge-expo/example (@dependabot[bot])
 
 ---
 
@@ -738,32 +1053,33 @@ chore(deps): bump undici from 6.29.0 to 6.29.1 in /berty-bridge-expo/example
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #5278 from berty/dependabot/npm_and_yarn/berty-bridge-expo/mo
+## X. bridge-expo): upgrade to Expo SDK 58, fix iOS camera permission review
 
 **RULE**:
-When implementing operations in `berty-bridge-expo/mobile/package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in berty/berty. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ios.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in berty/berty. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `de4ae482`: Merge pull request #5278 from berty/dependabot/npm_and_yarn/berty-bridge-expo/mobile/undici-6.29.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a597044c`: bridge-expo): upgrade to Expo SDK 58, fix iOS camera permission review. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `berty-bridge-expo/mobile/package-lock.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ios.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-      "version": "6.29.1",
-      "resolved": "https://registry.npmjs.org/undici/-/undici-6.29.1.tgz",
-      "integrity": "sha512-EvRlUt/QqAEvXdQeRMYUfwOQsfzpDztykrG2owGEE/rBOBoYv9uF39ZzsNDh4lTFHhTr2XOZjKkYgueD12ZmGA==",
+      # Expo SDK 56+ requires Xcode >= 26.4. Xcode 27 (iOS 27 SDK) is only on the
+      # `xcode-27` runner image, still in preview: move to it once it is GA
+      # (https://github.com/berty/berty/issues/5287).
+      - name: Select Xcode 26.6
+        run: sudo xcode-select -s /Applications/Xcode_26.6.app
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-      "version": "6.29.0",
-      "resolved": "https://registry.npmjs.org/undici/-/undici-6.29.0.tgz",
-      "integrity": "sha512-R+RODBqp6i2pPflGdq+xIOUkl+RNfGgHwoinecKu/JCuf2uO06cOKoDbI2P7Dn6KcswdKwrczbU6IYJ6K8X+wg==",
+// Induced defect failure mode:
+      - name: Select Xcode 26
+        run: sudo xcode-select -s /Applications/Xcode_26.3.0.app
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `de4ae482` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a597044c` are properly handled with clean fallback behavior.

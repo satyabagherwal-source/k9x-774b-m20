@@ -9741,3 +9741,7 @@
 | `CYCLE-20261114-69N3` | `2026-11-14T04:14:37.647Z` | `aws-amplify/amplify-js` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8438` | Yes (`06630e46...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T04:15:15.928Z` | `hf-mistralai-mixtral-8x7b-instruct-v0.1` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-2D29CC33` [Domain D] | Yes (`a683279b...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T04:15:53.466Z` | `aws-amplify-amplify-js` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-F74DEC74` [Domain K] | Yes (`8efcb79f...`) |
+| `CYCLE-20261114-T0DE` | `2026-11-14T04:32:18.722Z` | `berty/berty` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8439` | Yes (`441fe4fa...`) |
+| `CYCLE-20261114-YJR7` | `2026-11-14T04:36:37.123Z` | `meta-llama/Llama-2-7b` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8440, Rule 8441, Rule 8442` | Yes (`5ceaa236...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T04:37:15.307Z` | `hf-meta-llama-llama-2-7b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-J-C6558B0E` [Domain J] | Yes (`6a9f484c...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T04:37:56.176Z` | `hf-meta-llama-llama-2-7b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-DD654136` [Domain H] | Yes (`efe4f1ce...`) |

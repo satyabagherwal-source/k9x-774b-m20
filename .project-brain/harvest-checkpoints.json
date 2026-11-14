@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-14T04:14:37.661Z",
+  "last_updated": "2026-11-14T04:36:37.139Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1280,14 +1280,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meta-llama-llama-2-7b",
-      "content_hash": "9421bf83a05c4410be2bd765016f6fb69ff207f4a4935595b99ba4dc1c11f4af",
-      "verified_at": "2026-11-09T00:13:34.507Z",
+      "content_hash": "5ceaa23623aeb9495fbb3cabce34c09d175b18688eb0c2397cb1a1a163a1dbaf",
+      "verified_at": "2026-11-14T04:36:37.138Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T00:13:34.507Z"
+      "last_updated": "2026-11-14T04:36:37.138Z"
     },
     "mistralai/Mixtral-8x7B-Instruct-v0.1": {
       "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
@@ -6576,14 +6576,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-berty-berty",
-      "content_hash": "bc9684ce0fc35df02d6870c7c3f1cc89d53152ab0e845b0ab31ae156884d1895",
-      "verified_at": "2026-11-06T23:27:15.521Z",
+      "content_hash": "441fe4faca8bd26557449975ffe6c627f7196e5e1391a0476c1cbe30e17c8fc0",
+      "verified_at": "2026-11-14T04:32:18.737Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T23:27:15.521Z"
+      "last_updated": "2026-11-14T04:32:18.737Z"
     },
     "Agent-Field/agentfield": {
       "repository": "Agent-Field/agentfield",

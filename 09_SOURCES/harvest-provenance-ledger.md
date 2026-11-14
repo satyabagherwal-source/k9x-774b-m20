@@ -9774,3 +9774,7 @@ Every entry in this ledger must capture:
 | `learn-github-aws-amplify-amplify-js` | `https://github.com/aws-amplify/amplify-js` | `6a065b17` | Multi-dimensional audit evidence | 2026-11-14T04:14:37.651Z |
 | `learn-dom-d-2d29cc33` | `project://hf-mistralai-mixtral-8x7b-instruct-v0.1` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md` | 2026-11-14T04:15:15.928Z |
 | `learn-dom-k-f74dec74` | `project://aws-amplify-amplify-js` | `6a065b17` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-amplify-amplify-js-learnings.md` | 2026-11-14T04:15:53.466Z |
+| `learn-github-berty-berty` | `https://github.com/berty/berty` | `85c32792` | Multi-dimensional audit evidence | 2026-11-14T04:32:18.726Z |
+| `learn-huggingface-meta-llama-llama-2-7b` | `https://huggingface.co/meta-llama/Llama-2-7b` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-14T04:36:37.128Z |
+| `learn-dom-j-c6558b0e` | `project://hf-meta-llama-llama-2-7b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md` | 2026-11-14T04:37:15.307Z |
+| `learn-dom-h-dd654136` | `project://hf-meta-llama-llama-2-7b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md` | 2026-11-14T04:37:56.176Z |

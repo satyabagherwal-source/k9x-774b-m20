@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-14T04:14:42.660Z",
-    "lastVerified": "2026-11-14T04:14:42.660Z",
+    "lastChecked": "2026-11-14T04:36:40.660Z",
+    "lastVerified": "2026-11-14T04:36:40.660Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -120,8 +120,8 @@
     "officialUrl": "https://github.com/gravitl/netmaker",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-13T21:16:10.854Z",
-    "lastVerified": "2026-11-13T21:16:10.854Z",
+    "lastChecked": "2026-11-14T04:32:15.938Z",
+    "lastVerified": "2026-11-14T04:32:15.938Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gravitl-netmaker",
@@ -256,8 +256,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-14T03:32:23.061Z",
-    "lastVerified": "2026-11-14T03:32:23.061Z",
+    "lastChecked": "2026-11-14T04:32:21.014Z",
+    "lastVerified": "2026-11-14T04:32:21.014Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -2502,12 +2502,12 @@
     "lastVerified": "2026-11-13T22:30:44.462Z"
   },
   "kubeedge-kubeedge": {
-    "name": "kubeedge/kubeedge",
+    "name": "kubeedge",
     "officialUrl": "https://github.com/kubeedge/kubeedge",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-13T04:43:07.620Z",
-    "lastVerified": "2026-11-13T04:43:07.620Z",
+    "lastChecked": "2026-11-14T04:32:13.450Z",
+    "lastVerified": "2026-11-14T04:32:13.450Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kubeedge-kubeedge",
@@ -2516,7 +2516,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "65659fb7"
   },
   "aleo-labs-protocol-snarkos": {
     "name": "snarkOS",
@@ -3911,22 +3912,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "berty-berty": {
-    "name": "berty",
+    "name": "berty/berty",
     "officialUrl": "https://github.com/berty/berty",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-09T22:14:47.241Z",
-    "lastVerified": "2026-11-09T22:14:47.241Z",
+    "lastChecked": "2026-11-14T04:32:17.566Z",
+    "lastVerified": "2026-11-14T04:32:17.566Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-berty-berty",
-    "contentHash": "bc9684ce0fc35df02d6870c7c3f1cc89d53152ab0e845b0ab31ae156884d1895",
+    "contentHash": "441fe4faca8bd26557449975ffe6c627f7196e5e1391a0476c1cbe30e17c8fc0",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "de4ae482"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "peerdb-io-peerdb": {
     "name": "PeerDB-io/peerdb",
@@ -4213,9 +4213,9 @@
   "parthsarthi03-raptor": {
     "name": "raptor",
     "officialUrl": "https://github.com/parthsarthi03/raptor",
-    "lastChecked": "2026-11-13T03:18:50.894Z",
+    "lastChecked": "2026-11-14T04:32:18.271Z",
     "revisionIdentifier": "7da1d48a",
-    "lastVerified": "2026-11-13T03:18:50.894Z"
+    "lastVerified": "2026-11-14T04:32:18.271Z"
   },
   "svenstaro-miniserve": {
     "name": "miniserve",
@@ -5655,12 +5655,12 @@
     "officialUrl": "https://huggingface.co/meta-llama/Llama-2-7b",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-09T00:13:21.248Z",
-    "lastVerified": "2026-11-09T00:13:21.248Z",
+    "lastChecked": "2026-11-14T04:32:08.472Z",
+    "lastVerified": "2026-11-14T04:32:08.472Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-meta-llama-llama-2-7b",
-    "contentHash": "9421bf83a05c4410be2bd765016f6fb69ff207f4a4935595b99ba4dc1c11f4af",
+    "contentHash": "5ceaa23623aeb9495fbb3cabce34c09d175b18688eb0c2397cb1a1a163a1dbaf",
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -7524,12 +7524,12 @@
     "lastVerified": "2026-11-13T14:05:51.404Z"
   },
   "topgrade-rs-topgrade": {
-    "name": "topgrade-rs/topgrade",
+    "name": "topgrade",
     "officialUrl": "https://github.com/topgrade-rs/topgrade",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-12T21:41:27.857Z",
-    "lastVerified": "2026-11-12T21:41:27.857Z",
+    "lastChecked": "2026-11-14T04:32:05.869Z",
+    "lastVerified": "2026-11-14T04:32:05.869Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-topgrade-rs-topgrade",
@@ -7538,7 +7538,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "b7ae844e"
   },
   "hf-baai-bge-large-en-v1.5": {
     "name": "BAAI/bge-large-en-v1.5",

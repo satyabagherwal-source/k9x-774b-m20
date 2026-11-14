@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T04:15:53.823Z",
+  "last_updated": "2026-11-14T04:37:58.325Z",
   "directives": [
     {
       "id": "CD-001",
@@ -7427,11 +7427,11 @@
       "staged_date": "2026-11-12"
     },
     {
-      "id": "CD-0X4T",
+      "id": "CD-0AED",
       "directive_title": "engine): restore text fallback for unknown file extensions (#394)",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-0X4T-engine-restore-text-fallback-for-unknown-file-extensions-394.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-0AED-engine-restore-text-fallback-for-unknown-file-extensions-394.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-14",
@@ -11527,6 +11527,70 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-14",
       "domain_letter": "K"
+    },
+    {
+      "id": "CD-T0J6",
+      "directive_title": "upgrade to Expo SDK 58, fix iOS camera permission review",
+      "source_repo": "berty/berty",
+      "source_commit": "85c32792",
+      "staged_file": "11_INBOX/candidate-directives/CD-T0J6-upgrade-to-expo-sdk-58-fix-ios-camera-permission-review.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-14",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-08Y7",
+      "directive_title": "Invariant Preservation in Non-Saturating Fused RMSNorm Kernels",
+      "source_repo": "hf-meta-llama-llama-2-7b-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-08Y7-invariant-preservation-in-non-saturating-fused-rmsnorm-kernels.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-14",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-08Y8",
+      "directive_title": "Contiguous Interleaved Rotary Positional Embedding (RoPE) Invariant",
+      "source_repo": "hf-meta-llama-llama-2-7b-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-08Y8-contiguous-interleaved-rotary-positional-embedding-rope-invariant.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-14",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-08Y9",
+      "directive_title": "SentencePiece Byte-Fallback Deterministic BOS/EOS Injection Invariant",
+      "source_repo": "hf-meta-llama-llama-2-7b-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-08Y9-sentencepiece-byte-fallback-deterministic-bos-eos-injection-invariant.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-14",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-09UE",
+      "directive_title": "bridge-expo): upgrade to Expo SDK 58, fix iOS camera permission review",
+      "source_repo": "berty-berty-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-09UE-bridge-expo-upgrade-to-expo-sdk-58-fix-ios-camera-permission-review.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-14",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-4F07CA",
+      "directive_title": "engine): restore text fallback for unknown file extensions (#394)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-4F07CA-engine-restore-text-fallback-for-unknown.md",
+      "staged_date": "2026-11-14"
     }
   ]
 }

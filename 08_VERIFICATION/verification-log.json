@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-MDS9",
-    "timestamp": "2026-11-13T07:55:26.409Z",
-    "repository": "skyhook-io/radar",
-    "learningId": "learn-github-skyhook-io-radar",
-    "contentHash": "72b34d1ff00f85ef0e34efab68f9724758327cf0358e611bd0e62144ceeae87f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-Z5AG",
-    "timestamp": "2026-11-13T08:05:21.928Z",
-    "repository": "FastVideo/FastH3-Omni-Comfy",
-    "learningId": "learn-huggingface-fastvideo-fasth3-omni-comfy",
-    "contentHash": "1bf42b6e6e45cc0f3eb28a9af194fe7291fa68d5128d5127551831ca2350db2a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-8Z3L",
     "timestamp": "2026-11-13T08:13:00.465Z",
     "repository": "sqlpage/SQLPage",
@@ -7492,6 +7462,36 @@
     "contentHash": "06630e46362c4e8c45d5d3fd2358c945277380674206480f853f2afab3c18fbe",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-T0DE",
+    "timestamp": "2026-11-14T04:32:18.722Z",
+    "repository": "berty/berty",
+    "learningId": "learn-github-berty-berty",
+    "contentHash": "441fe4faca8bd26557449975ffe6c627f7196e5e1391a0476c1cbe30e17c8fc0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-YJR7",
+    "timestamp": "2026-11-14T04:36:37.123Z",
+    "repository": "meta-llama/Llama-2-7b",
+    "learningId": "learn-huggingface-meta-llama-llama-2-7b",
+    "contentHash": "5ceaa23623aeb9495fbb3cabce34c09d175b18688eb0c2397cb1a1a163a1dbaf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

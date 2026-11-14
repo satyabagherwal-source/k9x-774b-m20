@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T04:15:53.621Z",
+  "updated_at": "2026-11-14T04:37:57.392Z",
   "stats": {
-    "total_discovered": 3124,
-    "approved_pending_harvest": 2921,
+    "total_discovered": 3134,
+    "approved_pending_harvest": 2931,
     "harvested_count": 0,
     "rejected_count": 203,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2913,
+      "COMMUNITY_AND_EXPERT": 2923,
       "OFFICIAL_DOCUMENTATION": 116,
       "STANDARDS_AND_SPECIFICATIONS": 81,
       "ENGINEERING_BLOGS": 1,
@@ -67327,6 +67327,226 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-amplify-amplify-js-learnings.md",
         "fileName": "aws-amplify-amplify-js-learnings.md"
+      }
+    },
+    "SRC-E0C304C992DA": {
+      "id": "SRC-E0C304C992DA",
+      "url": "https://huggingface.co/meta-llama/Llama-2-7b",
+      "title": "https://huggingface.co/meta-llama/Llama-2-7b",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T04:37:56.202Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md",
+        "fileName": "hf-meta-llama-llama-2-7b-learnings.md"
+      }
+    },
+    "SRC-E2C0895D6D9A": {
+      "id": "SRC-E2C0895D6D9A",
+      "url": "https://github.com/berty/berty",
+      "title": "https://github.com/berty/berty",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T04:37:57.151Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/berty-berty-learnings.md",
+        "fileName": "berty-berty-learnings.md"
+      }
+    },
+    "SRC-E7819361CCB7": {
+      "id": "SRC-E7819361CCB7",
+      "url": "https://github.com/berty/berty/issues/5287",
+      "title": "https://github.com/berty/berty/issues/5287",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T04:37:57.192Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/berty-berty-learnings.md",
+        "fileName": "berty-berty-learnings.md"
+      }
+    },
+    "SRC-105D6EF89B7B": {
+      "id": "SRC-105D6EF89B7B",
+      "url": "https://github.com/webpack/webpack/issues/14532",
+      "title": "https://github.com/webpack/webpack/issues/14532",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T04:37:57.219Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/berty-berty-learnings.md",
+        "fileName": "berty-berty-learnings.md"
+      }
+    },
+    "SRC-30F07AD712B9": {
+      "id": "SRC-30F07AD712B9",
+      "url": "https://github.com/berty/weshnet/blob/main/INSTALL.md",
+      "title": "https://github.com/berty/weshnet/blob/main/INSTALL.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T04:37:57.245Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/berty-berty-learnings.md",
+        "fileName": "berty-berty-learnings.md"
+      }
+    },
+    "SRC-792F8C5A23A5": {
+      "id": "SRC-792F8C5A23A5",
+      "url": "https://github.com/open-telemetry/opentelemetry-go",
+      "title": "https://github.com/open-telemetry/opentelemetry-go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T04:37:57.272Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/berty-berty-learnings.md",
+        "fileName": "berty-berty-learnings.md"
+      }
+    },
+    "SRC-D1132DFE816D": {
+      "id": "SRC-D1132DFE816D",
+      "url": "https://github.com/open-telemetry/opentelemetry-go/releases",
+      "title": "https://github.com/open-telemetry/opentelemetry-go/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T04:37:57.298Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/berty-berty-learnings.md",
+        "fileName": "berty-berty-learnings.md"
+      }
+    },
+    "SRC-8E07CCD14CB2": {
+      "id": "SRC-8E07CCD14CB2",
+      "url": "https://github.com/open-telemetry/opentelemetry-go/blob/main/CHANGELOG.md",
+      "title": "https://github.com/open-telemetry/opentelemetry-go/blob/main/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T04:37:57.338Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/berty-berty-learnings.md",
+        "fileName": "berty-berty-learnings.md"
+      }
+    },
+    "SRC-C59CA6031015": {
+      "id": "SRC-C59CA6031015",
+      "url": "https://github.com/open-telemetry/opentelemetry-go/compare/v1.43.0...v1.45.0",
+      "title": "https://github.com/open-telemetry/opentelemetry-go/compare/v1.43.0...v1.45.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T04:37:57.366Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/berty-berty-learnings.md",
+        "fileName": "berty-berty-learnings.md"
+      }
+    },
+    "SRC-9265B40320D9": {
+      "id": "SRC-9265B40320D9",
+      "url": "https://github.com/open-telemetry/opentelemetry-go/compare/v1.42.0...v1.45.0",
+      "title": "https://github.com/open-telemetry/opentelemetry-go/compare/v1.42.0...v1.45.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T04:37:57.392Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/berty-berty-learnings.md",
+        "fileName": "berty-berty-learnings.md"
       }
     }
   }

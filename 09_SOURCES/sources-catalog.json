@@ -975,8 +975,8 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Llama-2-7b",
     "sourceVersion": "hf-meta-llama-llama-2-7b",
     "license": "Open-Source",
-    "contentHash": "9421bf83a05c4410be2bd765016f6fb69ff207f4a4935595b99ba4dc1c11f4af",
-    "lastHarvestedAt": "2026-11-09T00:13:34.488Z",
+    "contentHash": "5ceaa23623aeb9495fbb3cabce34c09d175b18688eb0c2397cb1a1a163a1dbaf",
+    "lastHarvestedAt": "2026-11-14T04:36:37.128Z",
     "learningId": "learn-huggingface-meta-llama-llama-2-7b"
   },
   "hf-mistralai-mixtral-8x7b-instruct-v0.1": {
@@ -4303,10 +4303,10 @@
     "repository": "berty/berty",
     "platform": "github",
     "sourceUrl": "https://github.com/berty/berty",
-    "sourceVersion": "de4ae482",
+    "sourceVersion": "85c32792",
     "license": "NOASSERTION",
-    "contentHash": "bc9684ce0fc35df02d6870c7c3f1cc89d53152ab0e845b0ab31ae156884d1895",
-    "lastHarvestedAt": "2026-11-06T23:27:15.511Z",
+    "contentHash": "441fe4faca8bd26557449975ffe6c627f7196e5e1391a0476c1cbe30e17c8fc0",
+    "lastHarvestedAt": "2026-11-14T04:32:18.726Z",
     "learningId": "learn-github-berty-berty"
   },
   "agent-field-agentfield": {

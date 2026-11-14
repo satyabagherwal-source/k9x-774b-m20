@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T04:15:53.955Z",
-  "total_records": 531,
+  "last_updated": "2026-11-14T04:37:58.448Z",
+  "total_records": 537,
   "domains": {
     "A": {
       "total": 5,
@@ -329,7 +329,7 @@
       ]
     },
     "G": {
-      "total": 73,
+      "total": 75,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -403,11 +403,13 @@
         "domain_intelligence-architecture-intelligence-trufflesecurity-trufflehog-core-invariants",
         "domain_intelligence-architecture-intelligence-moby-buildkit-core-invariants",
         "domain_intelligence-architecture-intelligence-moby-buildkit-learnings-core-invariants",
-        "domain_intelligence-architecture-intelligence-tailscale-tailscale-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-tailscale-tailscale-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-berty-berty-core-invariants",
+        "domain_intelligence-architecture-intelligence-berty-berty-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 111,
+      "total": 114,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -519,7 +521,10 @@
         "domain_intelligence-technical-construction-intelligence-siderolabs-talos-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-doobidoo-mcp-memory-service-core-invariants",
         "domain_intelligence-technical-construction-intelligence-aws-amplify-amplify-js-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-aws-amplify-amplify-js-learnings-core-invari"
+        "domain_intelligence-technical-construction-intelligence-aws-amplify-amplify-js-learnings-core-invari",
+        "domain_intelligence-technical-construction-intelligence-meta-llama-llama-2-7b-core-invariants",
+        "DOM-H-DD654136",
+        "domain_intelligence-technical-construction-intelligence-hf-meta-llama-llama-2-7b-learnings-core-inva"
       ]
     },
     "I": {
@@ -548,7 +553,7 @@
       ]
     },
     "J": {
-      "total": 9,
+      "total": 10,
       "record_ids": [
         "DOM-J-C14FC2D6",
         "DOM-J-B305372A",
@@ -558,7 +563,8 @@
         "DOM-J-44A35728",
         "DOM-J-B241A1ED",
         "DOM-J-37B3B4A9",
-        "DOM-J-2672FCA2"
+        "DOM-J-2672FCA2",
+        "DOM-J-C6558B0E"
       ]
     },
     "K": {
@@ -6301,8 +6307,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "d9b115d85d1790bdf83492f5cdb084ed3be489d83b4bcb39a178c3a227eefb97",
-      "created_at": "2026-11-14T02:46:29.409Z"
+      "content_hash": "4afe29e6d7681c004fecc30b7fd13878c784762b09447629e0a8333270e53d7b",
+      "created_at": "2026-11-14T04:37:58.448Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -11774,6 +11780,118 @@
       "repository": "aws-amplify-amplify-js-learnings",
       "content_hash": "23597a12bdb502a3b7f5c0d98a126124f7be327a9b645d4fee3d3e7825b952ed",
       "created_at": "2026-11-14T04:15:53.955Z"
+    },
+    "domain_intelligence-architecture-intelligence-berty-berty-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-berty-berty-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: berty/berty Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-berty-berty-architecture-intelligence-berty-berty-core-invariants.md",
+      "repository": "berty/berty",
+      "content_hash": "6d80089246083d76b9cb87c26c35e186c456bbad68d37561a8b13fc428462262",
+      "created_at": "2026-11-14T04:32:19.051Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-meta-llama-llama-2-7b-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-meta-llama-llama-2-7b-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: meta-llama/Llama-2-7b Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-meta-llama-llama-2-7b-technical-construction-intelligence-meta-llama-llama-2-.md",
+      "repository": "meta-llama/Llama-2-7b",
+      "content_hash": "7fba3cc9d8ced77d3cf8a1d206a2f1038db5ea3cd3e14f49d2b2b78584b486e1",
+      "created_at": "2026-11-14T04:36:37.586Z"
+    },
+    "DOM-J-C6558B0E": {
+      "record_id": "DOM-J-C6558B0E",
+      "domain_letter": "J",
+      "domain_id": "search_distribution",
+      "domain_name": "Search & Distribution Intelligence",
+      "secondary_domains": [],
+      "title": "Attention Mask Inversion & Broadcasting Failure in FlashAttention Integration (BUG-LLAMA2-01)",
+      "content": "Never use hardcoded arbitrary negative numbers (`-1e4`, `-1e9`) for attention logit masking. Always use `torch.finfo(tensor.dtype).min` or native boolean flags with `is_causal=True`.",
+      "content_hash": "6a9f484cc3497d95f37a31e46175a9a0dff9667795e1b5a12b9da16a8eb404aa",
+      "summary": "`scaled_dot_product_attention` handles boolean masks and float additive masks differently. In FP16, `-10000.0` leaves residual probability $ -> Never use hardcoded arbitrary negative numbers (`-1e4`, `-1e9`) for attention logit masking. Always use `torch.finfo(tensor.dtype).min` or n",
+      "provenance": {
+        "source_uri": "project://hf-meta-llama-llama-2-7b/hf-meta-llama-llama-2-7b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T04:36:40.790Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-meta-llama-llama-2-7b)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `935661b`, PR resolving causal mask representation in Hugging Face Transformers."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T04:37:15.295Z"
+    },
+    "DOM-H-DD654136": {
+      "record_id": "DOM-H-DD654136",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Dynamic Dynamic-Cache Reallocation Index Drift in Autoregressive Loop (BUG-LLAMA2-02)",
+      "content": "Do not deduce token positions from tensor shapes in memory pools. Decouple buffer capacity from logical sequence length via an explicit `seen_tokens` monotonic counter.",
+      "content_hash": "efe4f1ce9d6dc3c7dd4d83ff8a711a6baf930ea295c4fa9c485170b2a8e75375",
+      "summary": "KV cache size was implicitly assumed to equal `past_key_values[0][0].shape[-2]`. However, static pre-allocated KV caches have a fixed sequen -> Do not deduce token positions from tensor shapes in memory pools. Decouple buffer capacity from logical sequence length via an explicit `see",
+      "provenance": {
+        "source_uri": "project://hf-meta-llama-llama-2-7b/hf-meta-llama-llama-2-7b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T04:36:40.790Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-meta-llama-llama-2-7b)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Transformers `Cache` redesign PR #26558."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T04:37:56.165Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-hf-meta-llama-llama-2-7b-learnings-core-inva": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-hf-meta-llama-llama-2-7b-learnings-core-inva",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: hf-meta-llama-llama-2-7b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-meta-llama-llama-2-7b-learnings-technical-construction-intelligence-hf-meta-l.md",
+      "repository": "hf-meta-llama-llama-2-7b-learnings",
+      "content_hash": "5ebdbac1912958f3f24d2dd466e1b61f91f4a0d43300c1aafdf04f53c7fe82ad",
+      "created_at": "2026-11-14T04:37:56.859Z"
+    },
+    "domain_intelligence-architecture-intelligence-berty-berty-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-berty-berty-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: berty-berty-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-berty-berty-learnings-architecture-intelligence-berty-berty-learnings-core-invar.md",
+      "repository": "berty-berty-learnings",
+      "content_hash": "92357373a78144d751bf20357deb781b12f8cf757181cb6844ee2eb8b598aa33",
+      "created_at": "2026-11-14T04:37:57.730Z"
     }
   }
 }

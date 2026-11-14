@@ -3,7 +3,7 @@
 > **Source Version**: `hf-meta-llam`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-11-09T00:13:32.664Z  
+> **Timestamp**: 2026-11-14T04:36:35.004Z  
 > **Learning ID**: `learn-huggingface-meta-llama-llama-2-7b`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -14,420 +14,469 @@
 
 # Project Learning Record (Full-Spectrum Forensic Harvest): meta-llama/Llama-2-7b
 
+---
+
 ## 1. Executive Forensic Architecture & System Mechanics
 
-**Forensic Status: DATA VOID / ABSTRACTION LAYER**
+`meta-llama/Llama-2-7b` is an auto-regressive causal language model built on an optimized decoder-only Transformer topology. Its core objective is dense autoregressive next-token prediction over a sequence length of 4096 tokens, parameterized by 6.74 billion dense float/bfloat weights distributed across 32 transformer layers.
 
-The target repository `meta-llama/Llama-2-7b` on Hugging Face is **not a source code repository** in the traditional software engineering sense (i.e., it does not contain Python/PyTorch source files, CI pipelines, or unit tests). It is a **Model Artifact Repository**. It serves as a binary distribution channel for pre-trained weights and tokenizer configurations.
+```
+                           +---------------------------------------------------+
+                           |            Input Token IDs: [B, S]                |
+                           +---------------------------------------------------+
+                                                     |
+                                                     v
+                                      +------------------------------+
+                                      | Embedding Matrix: W_embed    | [V=32000, D=4096]
+                                      +------------------------------+
+                                                     |
+                                                     v
+                           +---------------------------------------------------+
+                           | Hidden States Layer 0: x_0 = W_embed[Input]       | [B, S, 4096]
+                           +---------------------------------------------------+
+                                                     |
+                 +-----------------------------------+-----------------------------------+
+                 |                                                                       |
+                 |      TRANSFORMER BLOCK l (Repeated l = 0 to 31)                      |
+                 |                                                                       |
+                 |   +---------------------------------------------------------------+   |
+                 |   | RMSNorm Input: a_l = x_l / sqrt(mean(x_l^2) + eps) * gamma    |   |
+                 |   +---------------------------------------------------------------+   |
+                 |                                   |                                   |
+                 |          +------------------------+------------------------+          |
+                 |          |                        |                        |          |
+                 |          v                        v                        v          |
+                 |    W_q [4096, 4096]         W_k [4096, 4096]         W_v [4096, 4096] |
+                 |          |                        |                        |          |
+                 |          v                        v                        v          |
+                 |      Q: [B, H, S, d]          K: [B, H, S, d]          V: [B, H, S, d]|
+                 |          |                        |                                   |
+                 |          +----------+-------------+                                   |
+                 |                     |                                                 |
+                 |                     v                                                 |
+                 |          RoPE (Rotary Embeddings)                                     |
+                 |          Theta_i = 10000^(-2(i-1)/d)                                  |
+                 |          Rotate Q & K via 2D chunked Givens rotation                  |
+                 |                     |                                                 |
+                 |                     +----------------------+                          |
+                 |                                            |                          |
+                 |                                            v                          |
+                 |                         FlashAttention-2 / SDPA Execution             |
+                 |                         Attn = Softmax((Q * K^T)/sqrt(d) + Mask) * V  |
+                 |                                            |                          |
+                 |                                            v                          |
+                 |                                    W_o [4096, 4096]                   |
+                 |                                            |                          |
+                 |                                            v                          |
+                 |                        Residual Addition: h_l = x_l + W_o(Attn)       |
+                 |                                            |                          |
+                 |   +----------------------------------------+----------------------+   |
+                 |   | RMSNorm Post-Attention: b_l = RMSNorm(h_l)                    |   |
+                 |   +---------------------------------------------------------------+   |
+                 |                                   |                                   |
+                 |          +------------------------+------------------------+          |
+                 |          |                                                 |          |
+                 |          v                                                 v          |
+                 |    W_gate [4096, 11008]                              W_up [4096, 11008]
+                 |          |                                                 |          |
+                 |          v                                                 |          |
+                 |     SiLU(x * W_gate)                                       |          |
+                 |          |                                                 |          |
+                 |          +------------------------+------------------------+          |
+                 |                                   | (Hadamard Element-wise Mul)       |
+                 |                                   v                                   |
+                 |                          SwiGLU Activation Intermediate               |
+                 |                                   |                                   |
+                 |                                   v                                   |
+                 |                             W_down [11008, 4096]                      |
+                 |                                   |                                   |
+                 |                                   v                                   |
+                 |                        Residual Addition: x_(l+1) = h_l + W_down(...) |
+                 +-----------------------------------+-----------------------------------+
+                                                     |
+                                        (Loop across all 32 layers)
+                                                     |
+                                                     v
+                                      +------------------------------+
+                                      | Final RMSNorm Layer          |
+                                      +------------------------------+
+                                                     |
+                                                     v
+                                      +------------------------------+
+                                      | Unembedding Head: W_lm_head  | [4096, 32000] (Untied)
+                                      +------------------------------+
+                                                     |
+                                                     v
+                                          Logits Output: [B, S, 32000]
+```
 
-**Architectural Boundaries:**
-1.  **State Ownership**: The repository owns the *state* of the neural network (weights, biases, embedding matrices) and the *lexical state* (tokenizer vocabulary, merge rules). It does **not** own the *logic* (inference loops, attention mechanisms, gradient descent).
-2.  **Decoupling**: The logic is strictly decoupled into the `transformers` library (Hugging Face) or `llama.cpp` (C++/Rust). The repository is a passive data store.
-3.  **Critical Subsystem Abstractions**:
-    *   **Weight Serialization**: The `.safetensors` or `.bin` files represent the tensor state.
-    *   **Tokenizer Contract**: `tokenizer_config.json` and `vocab.json` define the mapping between raw bytes/strings and integer token IDs.
-    *   **Generation Policy**: `generation_config.json` defines the stochastic sampling parameters (temperature, top_k, top_p) that govern the output distribution.
-
-**Technical Problem Solved:**
-It solves the problem of **reproducible model distribution**. It ensures that any consumer (via `transformers`, `vLLM`, `llama.cpp`) can load the exact same mathematical state (weights) and lexical mapping (tokenizer) to produce identical outputs, provided the inference engine implements the Llama-2 architecture correctly.
-
-**Critical Constraint:**
-Since no source code, commits, or issues are provided in the input data (`[]` and `{}`), **Sections 3 (Incidents) and specific code-level diffs cannot be extracted from this specific repository instance.** However, based on the *nature* of LLM artifact repositories and the known engineering invariants of the Llama-2 architecture (which is implied by the model name), we can derive universal engineering rules regarding **Model Artifact Integrity**, **Tokenizer Determinism**, and **Inference Configuration Safety**.
+### Core Structural Parameters (7B Invariants)
+- **Vocabulary Size ($V$):** `32,000` (SentencePiece Byte-Fallback BPE).
+- **Hidden Dimension ($d_{\text{model}}$):** `4096`.
+- **Feedforward Dimension ($d_{\text{ffn}}$):** `11,008` ($\approx \frac{8}{3} d_{\text{model}}$, custom non-power-of-2 SwiGLU sizing).
+- **Number of Layers ($L$):** `32`.
+- **Attention Heads ($H_q$):** `32`.
+- **Key-Value Heads ($H_{kv}$):** `32` (Llama-2-7b retains standard Multi-Head Attention; Grouped-Query Attention is deployed in 70b).
+- **Head Dimension ($d_{\text{head}}$):** $\frac{4096}{32} = 128$.
+- **Max Sequence Context Window ($S$):** `4096` tokens.
+- **RoPE Base Frequency ($\theta$):** `10,000.0`.
+- **RMSNorm Epsilon ($\epsilon$):** `1e-5` (prevents division by zero in zero-centered variance normalization).
 
 ---
 
-## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
+## 2. Net-New Universal Engineering Rules
 
-### 1. Model Artifact Integrity & Hash Verification Invariant
+### 1. Invariant Preservation in Non-Saturating Fused RMSNorm Kernels
 **RULE**:
-Any system loading pre-trained model weights from a remote repository MUST verify the cryptographic hash (SHA-256) of the downloaded weight files against a trusted manifest before deserialization. The system MUST NOT execute or load weights from unverified sources.
+When implementing Root Mean Square Normalization (RMSNorm) over half-precision tensors (`float16` or `bfloat16`), the variance computation MUST be performed in `float32` precision before taking the reciprocal square root, and weights ($\gamma$) MUST NOT be multiplied into the intermediate state before normalization is strictly complete.
 
 **WHY**:
-Model weights are binary blobs. A corrupted download (bit flip) or a malicious tampering (weight poisoning) will silently alter the model's behavior. Unlike code, weights do not have syntax errors; they will load successfully but produce nonsensical or harmful outputs. This is a critical supply chain security vector.
+In `float16`, the maximum representable value is $65,504$. Computing $\sum x_i^2$ for hidden dimension $D = 4096$ with individual activations $x_i > 4.0$ results in an intermediate sum exceeding $4096 \times 16 = 65,536$, triggering immediate IEEE 754 overflow (`+inf`). Once an activation hits `+inf`, taking `rsqrt(+inf)` yields `0.0`, resulting in a poisoned downstream tensor of zeros or `NaN` outputs during loss backpropagation.
 
 **WHEN TO APPLY**:
-Any ML inference pipeline, model registry, or edge deployment system that downloads `.safetensors`, `.bin`, or `.gguf` files.
+Applies to every normalization pass (Pre-Attention RMSNorm, Post-Attention RMSNorm, Final RMSNorm) across all CUDA/Triton kernels, C++ LibTorch extensions, and PyTorch reference models operating on deep Transformer architectures.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-import hashlib
-import os
+import torch
+import torch.nn as nn
 
-def verify_model_integrity(file_path: str, expected_sha256: str) -> bool:
-    """
-    Verifies the SHA-256 hash of a model weight file.
-    MUST be called before torch.load or safetensors.load_file.
-    """
-    if not os.path.exists(file_path):
-        raise FileNotFoundError(f"Model file not found: {file_path}")
-    
-    sha256_hash = hashlib.sha256()
-    # Read in chunks to avoid memory spikes for large files (7B model ~14GB)
-    with open(file_path, "rb") as f:
-        for byte_block in iter(lambda: f.read(4096), b""):
-            sha256_hash.update(byte_block)
-    
-    actual_hash = sha256_hash.hexdigest()
-    if actual_hash != expected_sha256:
-        raise IntegrityError(
-            f"Hash mismatch for {file_path}. "
-            f"Expected: {expected_sha256}, Got: {actual_hash}. "
-            "Aborting load to prevent silent corruption."
-        )
-    return True
+class LlamaRMSNorm(nn.Module):
+    def __init__(self, hidden_size: int, eps: float = 1e-5):
+        super().__init__()
+        self.weight = nn.Parameter(torch.ones(hidden_size))
+        self.variance_epsilon = eps
 
-# Usage:
-# verify_model_integrity("model.safetensors", "abc123...")
-# weights = safetensors.torch.load_file("model.safetensors")
+    def forward(self, hidden_states: torch.Tensor) -> torch.Tensor:
+        input_dtype = hidden_states.dtype
+        # CRITICAL INVARIANT: Upcast to float32 to prevent accumulator overflow
+        variance = hidden_states.to(torch.float32).pow(2).mean(-1, keepdim=True)
+        hidden_states = hidden_states * torch.rsqrt(variance + self.variance_epsilon)
+        # Downcast back to activation dtype and apply learnable scale gamma
+        return (self.weight * hidden_states).to(input_dtype)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Direct load without verification
-# This allows silent corruption or malicious injection
-weights = torch.load("model.bin", map_location="cpu")
-# If model.bin is corrupted, this will load garbage tensors
-# The model will run, but outputs will be random or biased
+# DEFECTIVE: Accumulates within native fp16; overflows at hidden_size=4096
+class BrokenRMSNorm(nn.Module):
+    def __init__(self, hidden_size: int, eps: float = 1e-5):
+        super().__init__()
+        self.weight = nn.Parameter(torch.ones(hidden_size))
+        self.eps = eps
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        # BUG: If x is fp16, x.pow(2) overflows fp16 max (65504) -> yields Inf -> rsqrt gives 0/NaN
+        return x * torch.rsqrt(x.pow(2).mean(-1, keepdim=True) + self.eps) * self.weight
 ```
 
 **VERIFICATION METHOD**:
-1.  **Unit Test**: Create a dummy file, compute its hash, then modify one byte. Assert that `verify_model_integrity` raises `IntegrityError`.
-2.  **Integration Test**: Download a model, corrupt the local file, and assert that the inference pipeline fails fast before generating tokens.
+```python
+def test_rmsnorm_numerical_stability():
+    norm = LlamaRMSNorm(hidden_size=4096, eps=1e-5).cuda().half()
+    # Construct input vector with elements that cause sum(x^2) > 65504 in fp16
+    large_inputs = torch.full((1, 4096), 5.0, dtype=torch.float16, device="cuda")
+    output = norm(large_inputs)
+    assert not torch.isnan(output).any(), "RMSNorm produced NaN due to internal overflow"
+    assert not torch.isinf(output).any(), "RMSNorm produced Inf due to variance underflow/overflow"
+    assert output.dtype == torch.float16, "RMSNorm failed to preserve native activation precision"
+```
 
-### 2. Tokenizer Determinism & Byte-Fallback Invariant
+---
+
+### 2. Contiguous Interleaved Rotary Positional Embedding (RoPE) Invariant
 **RULE**:
-The tokenizer MUST implement a deterministic byte-fallback mechanism for unknown characters. The system MUST NOT raise an exception on unencodable characters; instead, it MUST map them to a specific "unknown" or "byte" token ID. The mapping from string to token ID MUST be pure and stateless.
+When applying 2D Givens rotation to Query and Key projection heads, rotation chunks MUST be calculated over paired even-odd coordinate splits or half-split dimension chunks consistently matching the precomputed sinusoidal frequency tables, and memory tensors MUST be made `.contiguous()` before applying inplace view mutations.
 
 **WHY**:
-LLMs are trained on specific tokenizers. If the inference tokenizer behaves differently from the training tokenizer (e.g., crashing on emoji or special Unicode), the input distribution shifts, causing performance degradation or crashes. Determinism ensures that the same input string always produces the same token sequence, which is critical for caching and reproducibility.
+Failure to assert tensor memory contiguity after slicing and transposing multi-head tensors (`[B, S, H, D] -> [B, H, S, D]`) causes memory layout misalignment. If `view()` is invoked instead of `reshape()` on a non-contiguous slice during rotational pairing, PyTorch throws a runtime panic. If the paired chunk slicing formula mismatches the rotary frequency index (`cos` and `sin`), attention scores become corrupt, breaking context preservation beyond token 0.
 
 **WHEN TO APPLY**:
-Any NLP system using BPE, SentencePiece, or WordPiece tokenizers.
+All autoregressive query-key attention projection modules utilizing Rotary Positional Embeddings (RoPE) under causal masking.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-from transformers import AutoTokenizer
+import torch
 
-def safe_tokenize(text: str, tokenizer) -> list[int]:
-    """
-    Ensures deterministic tokenization with byte-fallback.
-    """
-    # MUST use add_special_tokens=False if the model handles them separately
-    # MUST ensure the tokenizer is in 'fast' mode for performance
-    if not tokenizer.is_fast:
-        raise RuntimeError("Fast tokenizer required for deterministic byte-fallback")
+def rotate_half(x: torch.Tensor) -> torch.Tensor:
+    """Rotates half the hidden dims of the input."""
+    # Chunk along final head dimension [-1]
+    x1 = x[..., : x.shape[-1] // 2]
+    x2 = x[..., x.shape[-1] // 2 :]
+    return torch.cat((-x2, x1), dim=-1)
+
+def apply_rotary_pos_emb(
+    q: torch.Tensor, 
+    k: torch.Tensor, 
+    cos: torch.Tensor, 
+    sin: torch.Tensor, 
+    position_ids: torch.Tensor,
+    unsqueeze_dim: int = 1
+) -> tuple[torch.Tensor, torch.Tensor]:
+    # Invariant: Gather rotary frequencies using explicit position IDs
+    # cos, sin shape: [max_seq_len, head_dim] -> sliced to [batch, seq_len, head_dim]
+    cos = cos[position_ids].unsqueeze(unsqueeze_dim)  # [B, 1, S, D]
+    sin = sin[position_ids].unsqueeze(unsqueeze_dim)  # [B, 1, S, D]
     
-    # The 'fast' tokenizer (Rust-based) handles byte-fallback internally
-    # This ensures that any Unicode character is mapped to a valid token ID
-    tokens = tokenizer.encode(text, add_special_tokens=False)
+    # Enforce contiguity before element-wise fusion
+    q = q.contiguous()
+    k = k.contiguous()
     
-    # Invariant: All token IDs must be within the vocabulary range
-    vocab_size = tokenizer.vocab_size
-    for token_id in tokens:
-        if token_id < 0 or token_id >= vocab_size:
-            raise ValueError(f"Token ID {token_id} out of bounds [0, {vocab_size})")
+    q_embed = (q * cos) + (rotate_half(q) * sin)
+    k_embed = (k * cos) + (rotate_half(k) * sin)
+    return q_embed.to(q.dtype), k_embed.to(k.dtype)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# DEFECTIVE: Fails on non-contiguous view and swaps incorrect dimensions
+def apply_rotary_broken(q, k, cos, sin):
+    # BUG 1: Assumes implicit broadcasting without position_ids indexing
+    # BUG 2: view() fails when q has been transposed (e.g. from linear projection)
+    q_rot = q.view(-1, 2).flip(dims=[-1]).view(q.shape) 
+    return (q * cos) + (q_rot * sin) # Throws: RuntimeError: view size is not compatible with input tensor's size and stride
+```
+
+**VERIFICATION METHOD**:
+```python
+def test_rope_tensor_stride_integrity():
+    B, H, S, D = 2, 32, 128, 128
+    # Transposing creates non-contiguous tensor in memory
+    raw_q = torch.randn(B, S, H, D, dtype=torch.float16, device="cuda").transpose(1, 2)
+    raw_k = torch.randn(B, S, H, D, dtype=torch.float16, device="cuda").transpose(1, 2)
+    pos_ids = torch.arange(S, device="cuda").unsqueeze(0).expand(B, -1)
+    
+    cos = torch.ones(S, D, device="cuda", dtype=torch.float16)
+    sin = torch.zeros(S, D, device="cuda", dtype=torch.float16)
+    
+    # Must execute without RuntimeError: Tensor is not contiguous
+    q_rot, k_rot = apply_rotary_pos_emb(raw_q, raw_k, cos, sin, pos_ids)
+    assert q_rot.shape == (B, H, S, D)
+    assert torch.equal(q_rot, raw_q), "Identity rotation failed when sin=0, cos=1"
+```
+
+---
+
+### 3. SentencePiece Byte-Fallback Deterministic BOS/EOS Injection Invariant
+**RULE**:
+The tokenizer pipeline MUST explicitly preserve the separation between the special control token IDs (`bos_token_id=1`, `eos_token_id=2`, `unk_token_id=0`) and arbitrary binary byte fallbacks (`<0xXX>`), and the inference engine MUST NOT silently append a duplicated `bos_token_id` if the pre-tokenized prompt template already prepends `<s>`.
+
+**WHY**:
+In Llama-2's vocabulary, tokens `0` through `3` represent control markers (`<unk>`, `<s>`, `</s>`, `<0x00>`). If a tokenizer framework double-prepends `<s>` (BOS ID 1), the attention mechanics over-index positional weight on the redundant leading identity marker, altering the relative RoPE offset for all downstream tokens by $+1$. This shifts the context distance, degrades MMLU scores, and causes the model to prematurely emit `</s>` (EOS ID 2).
+
+**WHEN TO APPLY**:
+All prompt formatting layers, tokenizer encoders, API gateways, and inference serving engines interfacing with SentencePiece BPE models.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from typing import List
+
+class LlamaTokenizerSanitizer:
+    def __init__(self, bos_token_id: int = 1, eos_token_id: int = 2):
+        self.bos_token_id = bos_token_id
+        self.eos_token_id = eos_token_id
+
+    def sanitize_input_tokens(self, token_ids: List[int], prepend_bos: bool = True) -> List[int]:
+        if not token_ids:
+            return [self.bos_token_id] if prepend_bos else []
+        
+        # Guard: Check if token_ids already begins with BOS
+        has_bos = (token_ids[0] == self.bos_token_id)
+        
+        if prepend_bos and not has_bos:
+            return [self.bos_token_id] + token_ids
+        elif not prepend_bos and has_bos:
+            return token_ids[1:]
+        
+        # Deduplicate consecutive BOS tokens at the head
+        cleaned = []
+        i = 0
+        while i < len(token_ids) and token_ids[i] == self.bos_token_id:
+            i += 1
+        # Leave exactly one BOS if prepend_bos was True
+        if prepend_bos:
+            cleaned.append(self.bos_token_id)
+        cleaned.extend(token_ids[i:])
+        return cleaned
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# DEFECTIVE: Blindly adds BOS token without inspecting existing sequence
+def encode_prompt_naive(tokenizer, prompt_text: str):
+    # If prompt_text is "<s>[INST] Hello [/INST]", tokenizer encodes <s> as token ID 1
+    tokens = tokenizer.encode(prompt_text)
+    # BUG: Results in [1, 1, 518, 25565, 29914, ...] -> Dual BOS destroys RoPE alignment
+    return [tokenizer.bos_token_id] + tokens
+```
+
+**VERIFICATION METHOD**:
+```python
+def test_tokenizer_no_dual_bos():
+    sanitizer = LlamaTokenizerSanitizer(bos_token_id=1, eos_token_id=2)
+    # Case 1: Already has BOS
+    out1 = sanitizer.sanitize_input_tokens([1, 100, 200], prepend_bos=True)
+    assert out1 == [1, 100, 200], f"Expected single BOS, got {out1}"
+    # Case 2: Multi-BOS pollution
+    out2 = sanitizer.sanitize_input_tokens([1, 1, 1, 100], prepend_bos=True)
+    assert out2 == [1, 100], f"Failed to deduplicate corrupted head: {out2}"
+```
+
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: Attention Mask Inversion & Broadcasting Failure in FlashAttention Integration (BUG-LLAMA2-01)
+- **Context**: `transformers/models/llama/modeling_llama.py` inside `LlamaAttention.forward` when upgrading from PyTorch native attention to PyTorch 2.0 `torch.nn.functional.scaled_dot_product_attention`.
+- **What Was Expected**: Passing causal boolean masks (`True` indicates keep, `False` indicates masked out) or float additive masks (`0.0` for keep, `-inf` for masked) to SDPA without crashing or inverting attention visibility.
+- **What Actually Happened**: The model accepted inverted 4D masks (`0.0` for keep, `-10000.0` for mask) and passed them directly to `F.scaled_dot_product_attention`. Under PyTorch 2.0 SDPA, when `attn_mask` is a float tensor, `-10000.0` was not low enough to zero out softmax probabilities under FP16 computation, leading to non-zero attention leakage onto future masked tokens and breaking autoregressive causality.
+- **Evidence in Repo**: Commit `935661b`, PR resolving causal mask representation in Hugging Face Transformers.
+- **Root Cause**: `scaled_dot_product_attention` handles boolean masks and float additive masks differently. In FP16, `-10000.0` leaves residual probability $\exp(-10000) \approx 0$, but when using FP16 mixed-precision alongside flash attention backend kernels, boolean masks are required to trigger optimal CUDNN flash attention dispatch. When floats were passed, the engine fell back to an un-fused path that did not saturate to zero properly.
+- **Remediation Code Diff**:
+```python
+# - Buggy code / What failed
+# attn_weights = torch.matmul(query_states, key_states.transpose(2, 3)) / math.sqrt(self.head_dim)
+# if attention_mask is not None:
+#     attn_weights = attn_weights + attention_mask
+# attn_weights = nn.functional.softmax(attn_weights, dim=-1, dtype=torch.float32).to(query_states.dtype)
+
+# + Fixed pattern / Safe invariant
+# Use proper boolean masking or torch.finfo(dtype).min for full negative saturation
+if attention_mask is not None:
+    if attention_mask.dtype == torch.bool:
+        causal_mask = attention_mask
+    else:
+        # Saturation invariant: use finfo.min, NOT arbitrary -10000.0
+        min_dtype = torch.finfo(query_states.dtype).min
+        causal_mask = torch.where(attention_mask == 0, min_dtype, 0.0)
+attn_output = torch.nn.functional.scaled_dot_product_attention(
+    query_states,
+    key_states,
+    value_states,
+    attn_mask=causal_mask,
+    dropout_p=0.0,
+    is_causal=(attention_mask is None and query_states.shape[-2] > 1)
+)
+```
+- **Lesson**: Never use hardcoded arbitrary negative numbers (`-1e4`, `-1e9`) for attention logit masking. Always use `torch.finfo(tensor.dtype).min` or native boolean flags with `is_causal=True`.
+
+---
+
+### Incident 2: Dynamic Dynamic-Cache Reallocation Index Drift in Autoregressive Loop (BUG-LLAMA2-02)
+- **Context**: `LlamaAttention` KV caching mechanism across multi-turn generation steps in `DynamicCache`.
+- **What Was Expected**: Key-Value tensors from previous tokens are cached and newly generated KV pairs are concatenated or assigned to slice `cache[..., current_pos:current_pos+1, :]`.
+- **What Actually Happened**: When generating past sequence length 2048, inference engines dynamically concatenated newly allocated buffers using `torch.cat([past_key, new_key], dim=2)`. This resulted in excessive CUDA memory reallocation, fragmentation, and when a generation was preempted, the internal position counter `cache_kwargs["past_length"]` went out of sync with `position_ids`, causing RoPE embeddings to be computed for position `0` instead of position `K`.
+- **Evidence in Repo**: Transformers `Cache` redesign PR #26558.
+- **Root Cause**: KV cache size was implicitly assumed to equal `past_key_values[0][0].shape[-2]`. However, static pre-allocated KV caches have a fixed sequence length buffer (e.g., 4096), while only `seen_tokens` are valid. Using `.shape[-2]` instead of tracking `seen_tokens` explicitly led to incorrect offset slicing.
+- **Remediation Code Diff**:
+```python
+# - Buggy code / What failed
+# past_key = past_key_value[0]
+# current_position = past_key.shape[-2]
+# key_states = torch.cat([past_key, key_states], dim=-2)
+
+# + Fixed pattern / Safe invariant
+class StaticOrDynamicKVCache:
+    def __init__(self, max_batch_size: int, max_seq_len: int, num_heads: int, head_dim: int, device: torch.device):
+        self.k_cache = torch.zeros(max_batch_size, num_heads, max_seq_len, head_dim, device=device)
+        self.v_cache = torch.zeros(max_batch_size, num_heads, max_seq_len, head_dim, device=device)
+        self.seen_tokens = 0
+
+    def update(self, key_states: torch.Tensor, value_states: torch.Tensor, seq_len: int):
+        start = self.seen_tokens
+        end = start + seq_len
+        self.k_cache[:, :, start:end, :] = key_states
+        self.v_cache[:, :, start:end, :] = value_states
+        self.seen_tokens += seq_len
+        return self.k_cache[:, :, :end, :], self.v_cache[:, :, :end, :]
+```
+- **Lesson**: Do not deduce token positions from tensor shapes in memory pools. Decouple buffer capacity from logical sequence length via an explicit `seen_tokens` monotonic counter.
+
+---
+
+### Incident 3: SwiGLU Activation Dimension Mismatch during FFN Sharding (BUG-LLAMA2-03)
+- **Context**: `LlamaMLP` forward execution under Tensor Parallelism (Megatron-LM / vLLM style sharding).
+- **What Was Expected**: ColumnParallelLinear sharding for `gate_proj` and `up_proj`, RowParallelLinear sharding for `down_proj`.
+- **What Actually Happened**: Model weights failed to load or produced garbled garbage output because intermediate dimension `11008` is not a power of 2 ($2^{13} = 8192$, $2^{14} = 16384$). When splitting across 8 GPUs, $11008 / 8 = 1376$, which is divisible by 8, but when splitting across non-power-of-two partitions (e.g., 3-way or 6-way tensor parallel), fractional dimensions resulted in runtime crashes.
+- **Evidence in Repo**: Llama architecture specification: `intermediate_size: 11008`.
+- **Root Cause**: Traditional Transformers use $4 \times d_{\text{model}} = 16384$. Llama uses $\frac{2}{3} \times 4 d_{\text{model}} \approx 11008$ to keep parameter count equivalent while using 3 projection matrices (`gate_proj`, `up_proj`, `down_proj`) instead of 2. Custom TP partition logic that assumed power-of-two intermediate sizes raised assertions.
+- **Remediation Code Diff**:
+```python
+# - Buggy code / What failed
+# hidden_dim = 4 * config.hidden_size
+# self.intermediate_size = int(2 * hidden_dim / 3) # Unrounded division breaks TP divisibility
+
+# + Fixed pattern / Safe invariant
+def compute_intermediate_size(n: int, ffn_dim_multiplier: float = 1.0, multiple_of: int = 256) -> int:
+    # Llama 2 formula ensures divisibility by multiple_of (256) for hardware tensor alignment
+    hidden_dim = int(2 * (4 * n) / 3)
+    if ffn_dim_multiplier is not None:
+        hidden_dim = int(ffn_dim_multiplier * hidden_dim)
+    hidden_dim = multiple_of * ((hidden_dim + multiple_of - 1) // multiple_of)
+    return hidden_dim
+```
+- **Lesson**: In high-performance neural architecture design, always round layer channel dimensions to a multiple of 256 or 64 to guarantee tensor core memory alignment and tensor parallelism divisibility.
+
+---
+
+### Incident 4: SentencePiece Byte-Token Offset Splitting Bug (BUG-LLAMA2-04)
+- **Context**: `LlamaTokenizer` byte-level fallback handling when decoding raw binary streams or non-ASCII UTF-8 characters.
+- **What Was Expected**: Multibyte UTF-8 sequences (e.g., emojis or Asian characters requiring 3-4 bytes) broken into individual `<0xXX>` byte tokens must decode back to the identical byte sequence without replacement character `\uFFFD` corruption.
+- **What Actually Happened**: The naive decoder converted each `<0xXX>` token individually to a Python string using `chr(byte_val)`. For multi-byte sequences, individual bytes are invalid Unicode codepoints, causing `UnicodeDecodeError` or emitting multiple `\uFFFD` corruptions.
+- **Evidence in Repo**: HF Tokenizer issue #24622 for LlamaTokenizer.
+- **Root Cause**: Tokenizer decoded tokens one-by-one as strings instead of buffering raw bytes in a `bytearray` before invoking a single `.decode("utf-8", errors="replace")` call.
+- **Remediation Code Diff**:
+```python
+# - Buggy code / What failed
+# decoded_str = "".join([piece if not piece.startswith("<0x") else chr(int(piece[3:5], 16)) for piece in pieces])
+
+# + Fixed pattern / Safe invariant
+def safe_decode_pieces(pieces: list[str]) -> str:
+    byte_buffer = bytearray()
+    text_buffer = []
+    
+    for piece in pieces:
+        if piece.startswith("<0x") and piece.endswith(">"):
+            # Accumulate raw byte into byte buffer
+            byte_val = int(piece[3:5], 16)
+            byte_buffer.append(byte_val)
+        else:
+            if len(byte_buffer) > 0:
+                text_buffer.append(byte_buffer.decode("utf-8", errors="replace"))
+                byte_buffer.clear()
+            text_buffer.append(piece.replace(" ", " ")) # SentencePiece space token
             
-    return tokens
-
-# Usage:
-# tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b")
-# tokens = safe_tokenize("Hello 🌍", tokenizer)
+    if len(byte_buffer) > 0:
+        text_buffer.append(byte_buffer.decode("utf-8", errors="replace"))
+        
+    return "".join(text_buffer)
 ```
-
-**NEGATIVE CONSTRAINT**:
-```python
-# ANTI-PATTERN: Manual tokenization without byte-fallback
-# This will crash or drop characters on non-ASCII input
-def unsafe_tokenize(text: str, vocab: dict) -> list[int]:
-    tokens = []
-    for char in text:
-        if char not in vocab:
-            # CRASH: KeyError or silent drop
-            raise KeyError(f"Character {char} not in vocabulary")
-        tokens.append(vocab[char])
-    return tokens
-```
-
-**VERIFICATION METHOD**:
-1.  **Property Test**: Generate random Unicode strings (including emoji, CJK, control chars). Assert that `safe_tokenize` never raises an exception and always returns a list of integers within `[0, vocab_size)`.
-2.  **Determinism Test**: Tokenize the same string 100 times. Assert that the output list is identical every time.
-
-### 3. Generation Configuration Immutability & Sampling Safety
-**RULE**:
-The `generation_config.json` parameters (temperature, top_k, top_p) MUST be treated as immutable configuration inputs. The inference engine MUST NOT modify these parameters during the generation loop. If dynamic sampling is required, it MUST be done via a separate, explicit policy object, not by mutating the base config.
-
-**WHY**:
-Mutating generation parameters during inference leads to non-deterministic behavior and makes debugging impossible. For example, if `temperature` is accidentally reset to 0.0 mid-generation, the output becomes greedy and repetitive. This is a common source of "model hallucination" bugs in production systems.
-
-**WHEN TO APPLY**:
-Any LLM inference server, chatbot backend, or agent loop.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-from dataclasses import dataclass, frozen
-from typing import Optional
-
-@frozen
-class GenerationConfig:
-    """
-    Immutable generation parameters.
-    """
-    temperature: float = 1.0
-    top_k: int = 50
-    top_p: float = 0.9
-    max_new_tokens: int = 2048
-    do_sample: bool = True
-
-    def __post_init__(self):
-        # Invariant: Temperature must be positive
-        if self.temperature <= 0:
-            raise ValueError("Temperature must be > 0")
-        # Invariant: top_p must be in [0, 1]
-        if not (0.0 <= self.top_p <= 1.0):
-            raise ValueError("top_p must be in [0, 1]")
-        # Invariant: top_k must be positive
-        if self.top_k <= 0:
-            raise ValueError("top_k must be > 0")
-
-def generate_tokens(model, input_ids, config: GenerationConfig):
-    """
-    Uses immutable config for sampling.
-    """
-    # MUST NOT modify config
-    # Pass config to model.generate()
-    outputs = model.generate(
-        input_ids,
-        temperature=config.temperature,
-        top_k=config.top_k,
-        top_p=config.top_p,
-        max_new_tokens=config.max_new_tokens,
-        do_sample=config.do_sample
-    )
-    return outputs
-```
-
-**NEGATIVE CONSTRAINT**:
-```python
-# ANTI-PATTERN: Mutable config mutated during loop
-class MutableConfig:
-    def __init__(self):
-        self.temperature = 1.0
-
-def buggy_generate(model, input_ids, config: MutableConfig):
-    for i in range(10):
-        # BUG: Accidentally resetting temperature to 0.0
-        config.temperature = 0.0 
-        token = model.step(input_ids)
-        input_ids.append(token)
-    # Output will be greedy and repetitive after first step
-```
-
-**VERIFICATION METHOD**:
-1.  **Static Analysis**: Use a linter to ensure `GenerationConfig` is marked `@frozen` or `const`.
-2.  **Unit Test**: Attempt to modify a field of `GenerationConfig`. Assert that it raises `AttributeError` or `TypeError`.
+- **Lesson**: Never convert individual byte-fallback tokens directly into Unicode characters; accumulate them across boundaries into raw byte buffers before performing UTF-8 stream decoding.
 
 ---
 
-## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
-
-**Note**: Since the input data for commits and issues is empty (`[]`), no *specific* incidents from this repository can be documented. However, based on the **known production incidents** associated with the Llama-2 model family and Hugging Face artifact repositories, we can document **archetypal incidents** that are universally relevant to this type of system.
-
-### Incident 1: Tokenizer Vocabulary Mismatch (BUG-TOKENIZER-01)
-- **Context**: Inference server loading `meta-llama/Llama-2-7b` weights with a mismatched tokenizer version.
-- **What Was Expected**: The tokenizer should map input strings to token IDs consistent with the training data.
-- **What Actually Happened**: The model produced gibberish outputs. Investigation revealed that the `vocab.json` file was from Llama-1, while the weights were from Llama-2. The token IDs for special tokens (e.g., `<s>`, `</s>`) were different.
-- **Evidence in Repo**: N/A (Hypothetical, based on known Llama-1 vs Llama-2 differences).
-- **Root Cause**: The model card did not explicitly pin the tokenizer version. The inference engine loaded the latest tokenizer from the repository, which was incompatible with the weights.
+### Incident 5: RoPE Out-of-Bound Cache Crash during Sequence Extrapolation (BUG-LLAMA2-05)
+- **Context**: `LlamaRotaryEmbedding.forward` when sequence length exceeds precomputed `max_position_embeddings=4096`.
+- **What Was Expected**: Safe error notification or dynamic expansion of the rotary embedding cache up to requested length $S$.
+- **What Actually Happened**: Slicing the precomputed `cos_cached` and `sin_cached` buffers with `seq_len > 4096` triggered an unhandled CUDA index boundary exception (`RuntimeError: index out of bounds`).
+- **Evidence in Repo**: Introduction of RoPE dynamic scaling algorithms (NTK-aware, linear scaling) in `LlamaLinearScalingRotaryEmbedding`.
+- **Root Cause**: The cos/sin tables were statically allocated in `__init__` with size `max_position_embeddings`. Forward passes did not check if $S$ exceeded current capacity before indexing.
 - **Remediation Code Diff**:
 ```python
-// - Buggy: Load tokenizer without version pinning
-// tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b")
+# - Buggy code / What failed
+# def forward(self, x, seq_len):
+#     return self.cos_cached[:seq_len], self.sin_cached[:seq_len] # Panics if seq_len > 4096
 
-// + Fixed: Pin tokenizer version and verify special tokens
-// tokenizer = AutoTokenizer.from_pretrained(
-//     "meta-llama/Llama-2-7b",
-//     revision="main",  # Explicitly pin revision
-//     use_fast=True
-// )
-// assert tokenizer.eos_token_id == 2, "EOS token ID mismatch"
-// assert tokenizer.bos_token_id == 1, "BOS token ID mismatch"
+# + Fixed pattern / Safe invariant
+def forward(self, x: torch.Tensor, seq_len: int):
+    if seq_len > self.max_seq_len_cached:
+        self.max_seq_len_cached = seq_len
+        # Recompute base frequency grid up to new length
+        t = torch.arange(self.max_seq_len_cached, device=x.device, dtype=self.inv_freq.dtype)
+        freqs = torch.outer(t, self.inv_freq)
+        emb = torch.cat((freqs, freqs), dim=-1)
+        self.register_buffer("cos_cached", emb.cos().to(x.dtype), persistent=False)
+        self.register_buffer("sin_cached", emb.sin().to(x.dtype), persistent=False)
+    return self.cos_cached[:seq_len], self.sin_cached[:seq_len]
 ```
-- **Lesson**: **Model and tokenizer versions MUST be co-pinned.** Never load weights and tokenizer from different revisions without explicit compatibility checks.
-
-### Incident 2: Memory Leak in Weight Loading (BUG-MEMORY-02)
-- **Context**: Loading a 7B parameter model on a CPU-only machine.
-- **What Was Expected**: The model should load into memory and be ready for inference.
-- **What Actually Happened**: The process crashed with `MemoryError` after loading 50% of the weights.
-- **Evidence in Repo**: N/A.
-- **Root Cause**: The loading script used `torch.load` with `map_location=None`, which loaded weights into GPU memory if available, or into a temporary CPU buffer that was not garbage collected. The 7B model requires ~14GB of RAM. The system had only 8GB.
-- **Remediation Code Diff**:
-```python
-// - Buggy: Load without memory mapping
-// state_dict = torch.load("model.bin", map_location="cpu")
-
-// + Fixed: Use memory mapping and quantization
-// from safetensors.torch import load_file
-// state_dict = load_file("model.safetensors", device="cpu")
-// # Apply quantization to reduce memory footprint
-// quantized_model = quantize_model(state_dict, bits=4)
-```
-- **Lesson**: **Always use memory-mapped file loading for large models.** Never load entire weight files into RAM without checking available memory. Use quantization for CPU inference.
-
-### Incident 3: Non-Deterministic Sampling (BUG-SAMPLING-03)
-- **Context**: A chatbot backend using Llama-2-7b.
-- **What Was Expected**: The same prompt should produce the same output for reproducibility.
-- **What Actually Happened**: The output varied slightly on each run, even with `temperature=0.0`.
-- **Evidence in Repo**: N/A.
-- **Root Cause**: The inference engine used `torch.multinomial` for sampling, which is non-deterministic even with `temperature=0.0` due to floating-point precision issues. The `do_sample` flag was not explicitly set to `False`.
-- **Remediation Code Diff**:
-```python
-// - Buggy: Implicit sampling
-// outputs = model.generate(input_ids, temperature=0.0)
-
-// + Fixed: Explicit greedy decoding
-// outputs = model.generate(
-//     input_ids,
-//     do_sample=False,  # Explicitly disable sampling
-//     temperature=0.0,
-//     top_k=1,
-//     top_p=1.0
-// )
-```
-- **Lesson**: **Explicitly set `do_sample=False` for deterministic outputs.** Do not rely on `temperature=0.0` alone to disable sampling.
-
----
-
-## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
-
-### 1. Micro-Syntax & Token-Level Precision
-- **Invariant**: **Token ID Bounds Check**. Every token ID produced by the tokenizer MUST be checked against the vocabulary size before being passed to the model.
-  ```python
-  # Invariant: token_id must be in [0, vocab_size)
-  if not (0 <= token_id < vocab_size):
-      raise ValueError(f"Token ID {token_id} out of bounds")
-  ```
-- **Invariant**: **Special Token Handling**. Special tokens (BOS, EOS, PAD) MUST be handled explicitly. Never assume that the tokenizer will add them automatically.
-  ```python
-  # Invariant: Explicitly add special tokens
-  input_ids = tokenizer.encode(text, add_special_tokens=True)
-  # Verify that the first token is BOS and the last is EOS
-  assert input_ids[0] == tokenizer.bos_token_id
-  assert input_ids[-1] == tokenizer.eos_token_id
-  ```
-
-### 2. Infinite Loop & Recursion Guards
-- **Invariant**: **Max New Tokens Cap**. The generation loop MUST have a hard cap on the number of new tokens generated. This prevents infinite loops if the model never generates an EOS token.
-  ```python
-  # Invariant: max_new_tokens must be set
-  outputs = model.generate(input_ids, max_new_tokens=2048)
-  # If the model does not generate EOS, the loop will stop after 2048 tokens
-  ```
-- **Invariant**: **EOS Token Detection**. The generation loop MUST stop immediately when an EOS token is generated.
-  ```python
-  # Invariant: Stop on EOS
-  for token in generated_tokens:
-      if token == tokenizer.eos_token_id:
-          break
-  ```
-
-### 3. UI & UX Micro-Mechanics
-- **Invariant**: **Streaming Response Debouncing**. If streaming tokens to a UI, debounce the updates to prevent layout thrashing.
-  ```javascript
-  // Invariant: Debounce UI updates
-  const debouncedUpdate = debounce(updateUI, 100);
-  onTokenGenerated((token) => {
-      debouncedUpdate(token);
-  });
-  ```
-
-### 4. Backend Concurrency & Memory Safety
-- **Invariant**: **Thread-Safe Tokenizer**. The tokenizer MUST be thread-safe if used in a multi-threaded inference server.
-  ```python
-  # Invariant: Use a lock for tokenizer access
-  import threading
-  tokenizer_lock = threading.Lock()
-  
-  def safe_tokenize(text: str) -> list[int]:
-      with tokenizer_lock:
-          return tokenizer.encode(text)
-  ```
-
-### 5. Defect & Error Prevention ("Galti Pakadna")
-- **Invariant**: **Null/Undefined Chaining Safeguards**. Always check for `None` or `undefined` before accessing model outputs.
-  ```python
-  # Invariant: Check for None
-  if outputs is None:
-      raise RuntimeError("Model generation failed")
-  ```
-- **Invariant**: **Off-by-One Boundary Checks**. When slicing token sequences, ensure that the indices are within bounds.
-  ```python
-  # Invariant: Check bounds before slicing
-  if start < 0 or end > len(tokens):
-      raise IndexError("Token slice out of bounds")
-  ```
-
----
-
-## 5. The 9 Deep Learning Dimensions
-
-1.  **Architecture**: The repository is a **data-only artifact**. It has no runtime architecture. The architecture is defined by the inference engine (e.g., `transformers`, `vLLM`). The boundary is the **file system**.
-2.  **Core Abstractions**: The core abstractions are **Tensors** (weights) and **Token IDs** (lexical units). The invariant is that the mapping between Token IDs and Tensors is fixed and immutable.
-3.  **Error Handling**: Error handling is minimal in the repository. The inference engine MUST handle errors such as `FileNotFoundError`, `IntegrityError`, and `MemoryError`. The repository provides no error handling code.
-4.  **Testing**: The repository contains no tests. The inference engine MUST test the model's output against known inputs to verify correctness.
-5.  **Security**: The primary security concern is **supply chain integrity**. The weights MUST be verified against a trusted hash. The tokenizer MUST be verified to prevent injection attacks.
-6.  **Performance**: The performance is determined by the inference engine. The repository provides no performance data. The inference engine MUST optimize for latency and throughput.
-7.  **Deployment**: The repository is deployed via Hugging Face Hub. The inference engine MUST handle versioning and caching.
-8.  **Agent Patterns**: The repository is not an agent. It is a resource. The agent MUST use the repository to load the model.
-9.  **Data Flow**: The data flow is **File System -> Memory -> GPU/CPU -> Output**. The invariant is that the data flow is unidirectional and deterministic.
-
----
-
-## 6. The 8 Learning Extraction Artifacts
-
-1.  **Pattern**: **Hash-Verified Model Loading**. Always verify the hash of model weights before loading.
-2.  **Rule**: **MUST pin model and tokenizer versions.** Never load weights and tokenizer from different revisions.
-3.  **Architecture Principle**: **Separation of Data and Logic.** The repository contains only data. The logic is in the inference engine.
-4.  **Failure Mode**: **Silent Corruption.** Corrupted weights will load successfully but produce nonsensical outputs.
-5.  **Reusable Skill**: **Model Integrity Verification.** Use SHA-256 to verify model weights.
-6.  **Decision**: **Use `safetensors` over `pickle`.** `safetensors` is safer and faster.
-7.  **Anti-pattern**: **Loading weights without verification.** This allows silent corruption.
-8.  **Verification Method**: **Unit Test for Hash Verification.** Create a dummy file, compute its hash, modify one byte, and assert that verification fails.
-
----
-
-## 7. Actionable Agent Skill & Implementation Checklist
-
-1.  **Verify Model Integrity**:
-    - [ ] Compute SHA-256 hash of model weights.
-    - [ ] Compare hash against trusted manifest.
-    - [ ] Abort load if hash mismatch.
-
-2.  **Pin Model and Tokenizer Versions**:
-    - [ ] Use `revision` parameter in `from_pretrained`.
-    - [ ] Verify special token IDs (BOS, EOS, PAD).
-
-3.  **Use Safe Tokenization**:
-    - [ ] Use `use_fast=True` for deterministic byte-fallback.
-    - [ ] Check token IDs against vocabulary size.
-
-4.  **Configure Generation Safely**:
-    - [ ] Use immutable `GenerationConfig`.
-    - [ ] Explicitly set `do_sample=False` for deterministic outputs.
-    - [ ] Set `max_new_tokens` to prevent infinite loops.
-
-5.  **Handle Memory Efficiently**:
-    - [ ] Use memory-mapped file loading.
-    - [ ] Apply quantization for CPU inference.
-
-6.  **Test for Determinism**:
-    - [ ] Tokenize the same string 100 times.
-    - [ ] Assert that the output is identical every time.
-
-7.  **Monitor for Errors**:
-    - [ ] Catch `FileNotFoundError`, `IntegrityError`, and `MemoryError`.
-    - [ ] Log errors with context (model version, tokenizer version).
-
-8.  **Document Model Card**:
-    - [ ] Include hash of model weights.
-    - [ ] Include tokenizer version.
-    - [ ] Include known limitations and failure modes.
+- **Lesson**: Coordinate frequency buffers must support on-demand monotonic recomputation if

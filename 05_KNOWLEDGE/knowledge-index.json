@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-14T04:15:54.086Z",
-  "total_verified_learnings": 8478,
+  "last_updated": "2026-11-14T04:37:58.721Z",
+  "total_verified_learnings": 8480,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 17043,
+  "total_items": 17062,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112007,13 +112007,13 @@
       "item_id": "candidate_directive-engine-restore-text-fallback-for-unknown-file-extensions-394",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-0X4T-engine-restore-text-fallback-for-unknown-file-extensions-394.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-0AED-engine-restore-text-fallback-for-unknown-file-extensions-394.md",
       "title": "engine): restore text fallback for unknown file extensions (#394)",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "df4bd7f247901750ea795567797fc592a76be4f0423a4a851996eddcabf42b75",
+      "content_hash": "98392b401950ae12a96819dee89cd3b9cb71e432e7db30ddb9364507f01eb61e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T02:46:29.320Z"
+      "persisted_at": "2026-11-14T04:37:58.325Z"
     },
     "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -112023,9 +112023,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "d9b115d85d1790bdf83492f5cdb084ed3be489d83b4bcb39a178c3a227eefb97",
+      "content_hash": "4afe29e6d7681c004fecc30b7fd13878c784762b09447629e0a8333270e53d7b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T02:46:29.409Z"
+      "persisted_at": "2026-11-14T04:37:58.448Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112035,9 +112035,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "c3569a785268729515f5945e7a8186c889cc7325492a17c624b7db225fd1b65a",
+      "content_hash": "82e06ce7b9af3cf9ccee62f1fec5d0bd350bb3a388e795834a73e44fa1f0b9c2",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T02:46:29.506Z"
+      "persisted_at": "2026-11-14T04:37:58.589Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112047,9 +112047,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "0f6b404f378c50f835ef6c4337a72850a18f65735d7d1791ff6105ef012276b1",
+      "content_hash": "fc89bb6ee92740ef16a9bea1c96f8742371dada472b41d0a86d6b1e234dd7230",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T02:46:29.599Z"
+      "persisted_at": "2026-11-14T04:37:58.721Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -222463,6 +222463,294 @@
       "content_hash": "6faecc50a1c0e6455d7d5285dab32720ec3528d2b6a96e6bb01c3cdc7bcc6261",
       "domain_letter": "K",
       "persisted_at": "2026-11-14T04:15:54.086Z"
+    },
+    "learn-github-berty-berty": {
+      "learning_id": "learn-github-berty-berty",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "berty/berty",
+      "repository": "berty/berty",
+      "slug": "berty-berty",
+      "platform": "github",
+      "source_url": "https://github.com/berty/berty",
+      "source_version": "85c32792",
+      "content_hash": "441fe4faca8bd26557449975ffe6c627f7196e5e1391a0476c1cbe30e17c8fc0",
+      "dossier_path": "07_PROJECT_LEARNING/berty-berty-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/berty-berty-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8439,
+          "title": "upgrade to Expo SDK 58, fix iOS camera permission review",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T04:32:18.558Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8439": {
+      "learning_id": "rule-8439",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8439,
+      "title": "upgrade to Expo SDK 58, fix iOS camera permission review",
+      "source_url": "https://github.com/berty/berty",
+      "source_version": "85c32792",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T04:32:18.558Z"
+    },
+    "candidate_directive-upgrade-to-expo-sdk-58-fix-ios-camera-permission-review": {
+      "item_id": "candidate_directive-upgrade-to-expo-sdk-58-fix-ios-camera-permission-review",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-T0J6-upgrade-to-expo-sdk-58-fix-ios-camera-permission-review.md",
+      "title": "upgrade to Expo SDK 58, fix iOS camera permission review",
+      "repository": "berty/berty",
+      "source_version": "85c32792",
+      "content_hash": "19e9965154ad621b7aa1904b8a303495c9dc2798e53aebf00c4bb6ec8a1eaef4",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T04:32:18.931Z"
+    },
+    "domain_intelligence-architecture-intelligence-berty-berty-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-berty-berty-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-berty-berty-architecture-intelligence-berty-berty-core-invariants.md",
+      "title": "Architecture Intelligence: berty/berty Core Invariants",
+      "repository": "berty/berty",
+      "source_version": "85c32792",
+      "content_hash": "6d80089246083d76b9cb87c26c35e186c456bbad68d37561a8b13fc428462262",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T04:32:19.051Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-berty-berty": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-berty-berty",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/berty-berty-verification-protocol-empirical-defect-shield-for-berty-berty.md",
+      "title": "Verification Protocol: Empirical Defect Shield for berty/berty",
+      "repository": "berty/berty",
+      "source_version": "85c32792",
+      "content_hash": "04f75805ab149b02537ea33264498d8e3359fd7f5a24745300a1f4c218c31afb",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T04:32:19.170Z"
+    },
+    "learn-huggingface-meta-llama-llama-2-7b": {
+      "learning_id": "learn-huggingface-meta-llama-llama-2-7b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "meta-llama/Llama-2-7b",
+      "repository": "meta-llama/Llama-2-7b",
+      "slug": "hf-meta-llama-llama-2-7b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/meta-llama/Llama-2-7b",
+      "source_version": "hf-meta-llama-llama-2-7b",
+      "content_hash": "5ceaa23623aeb9495fbb3cabce34c09d175b18688eb0c2397cb1a1a163a1dbaf",
+      "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8440,
+          "title": "Invariant Preservation in Non-Saturating Fused RMSNorm Kernels",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8441,
+          "title": "Contiguous Interleaved Rotary Positional Embedding (RoPE) Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8442,
+          "title": "SentencePiece Byte-Fallback Deterministic BOS/EOS Injection Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T04:36:36.960Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8440": {
+      "learning_id": "rule-8440",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8440,
+      "title": "Invariant Preservation in Non-Saturating Fused RMSNorm Kernels",
+      "source_url": "https://huggingface.co/meta-llama/Llama-2-7b",
+      "source_version": "hf-meta-llama-llama-2-7b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T04:36:36.960Z"
+    },
+    "rule-8441": {
+      "learning_id": "rule-8441",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8441,
+      "title": "Contiguous Interleaved Rotary Positional Embedding (RoPE) Invariant",
+      "source_url": "https://huggingface.co/meta-llama/Llama-2-7b",
+      "source_version": "hf-meta-llama-llama-2-7b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T04:36:36.960Z"
+    },
+    "rule-8442": {
+      "learning_id": "rule-8442",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8442,
+      "title": "SentencePiece Byte-Fallback Deterministic BOS/EOS Injection Invariant",
+      "source_url": "https://huggingface.co/meta-llama/Llama-2-7b",
+      "source_version": "hf-meta-llama-llama-2-7b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T04:36:36.960Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-meta-llama-llama-2-7b-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-meta-llama-llama-2-7b-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-meta-llama-llama-2-7b-technical-construction-intelligence-meta-llama-llama-2-.md",
+      "title": "Technical Construction Intelligence: meta-llama/Llama-2-7b Core Invariants",
+      "repository": "meta-llama/Llama-2-7b",
+      "source_version": "hf-meta-llama-llama-2-7b",
+      "content_hash": "7fba3cc9d8ced77d3cf8a1d206a2f1038db5ea3cd3e14f49d2b2b78584b486e1",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T04:36:37.586Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-meta-llama-llama-2-7b": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-meta-llama-llama-2-7b",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/hf-meta-llama-llama-2-7b-verification-protocol-empirical-defect-shield-for-meta-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for meta-llama/Llama-2-7b",
+      "repository": "meta-llama/Llama-2-7b",
+      "source_version": "hf-meta-llama-llama-2-7b",
+      "content_hash": "28b15cd1c1f6f9af95a131afd655bfae051f5ade35a821536b0af8e83dc826c9",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T04:36:37.703Z"
+    },
+    "candidate_directive-invariant-preservation-in-non-saturating-fused-rmsnorm-kernels": {
+      "item_id": "candidate_directive-invariant-preservation-in-non-saturating-fused-rmsnorm-kernels",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-08Y7-invariant-preservation-in-non-saturating-fused-rmsnorm-kernels.md",
+      "title": "Invariant Preservation in Non-Saturating Fused RMSNorm Kernels",
+      "repository": "hf-meta-llama-llama-2-7b-learnings",
+      "source_version": "HEAD",
+      "content_hash": "dc75eb9c8c537a3ada59152598d60cf4dec183408fd6646dfe9980236a72d9be",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T04:37:56.434Z"
+    },
+    "candidate_directive-contiguous-interleaved-rotary-positional-embedding-rope-invariant": {
+      "item_id": "candidate_directive-contiguous-interleaved-rotary-positional-embedding-rope-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-08Y8-contiguous-interleaved-rotary-positional-embedding-rope-invariant.md",
+      "title": "Contiguous Interleaved Rotary Positional Embedding (RoPE) Invariant",
+      "repository": "hf-meta-llama-llama-2-7b-learnings",
+      "source_version": "HEAD",
+      "content_hash": "fa5c4fcd359198dae8315872b8f4cb2673a80c176489a063fccd983e7ebddb7c",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T04:37:56.581Z"
+    },
+    "candidate_directive-sentencepiece-byte-fallback-deterministic-bos-eos-injection-invariant": {
+      "item_id": "candidate_directive-sentencepiece-byte-fallback-deterministic-bos-eos-injection-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-08Y9-sentencepiece-byte-fallback-deterministic-bos-eos-injection-invariant.md",
+      "title": "SentencePiece Byte-Fallback Deterministic BOS/EOS Injection Invariant",
+      "repository": "hf-meta-llama-llama-2-7b-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2bfc8eaef100a7936c0bc88a42f305dcc26512de6922648150818e461090b6e8",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T04:37:56.721Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-hf-meta-llama-llama-2-7b-learnings-core-inva": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-hf-meta-llama-llama-2-7b-learnings-core-inva",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-meta-llama-llama-2-7b-learnings-technical-construction-intelligence-hf-meta-l.md",
+      "title": "Technical Construction Intelligence: hf-meta-llama-llama-2-7b-learnings Core Invariants",
+      "repository": "hf-meta-llama-llama-2-7b-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5ebdbac1912958f3f24d2dd466e1b61f91f4a0d43300c1aafdf04f53c7fe82ad",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T04:37:56.859Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-hf-meta-llama-llama-2-7b-learn": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-hf-meta-llama-llama-2-7b-learn",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/hf-meta-llama-llama-2-7b-learnings-verification-protocol-empirical-defect-shield.md",
+      "title": "Verification Protocol: Empirical Defect Shield for hf-meta-llama-llama-2-7b-learnings",
+      "repository": "hf-meta-llama-llama-2-7b-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a91678df2d1d42409a3153d590ce25f05ff5cbd6f7506fb2e4e80f094a8d6345",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T04:37:56.998Z"
+    },
+    "candidate_directive-bridge-expo-upgrade-to-expo-sdk-58-fix-ios-camera-permission-review": {
+      "item_id": "candidate_directive-bridge-expo-upgrade-to-expo-sdk-58-fix-ios-camera-permission-review",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-09UE-bridge-expo-upgrade-to-expo-sdk-58-fix-ios-camera-permission-review.md",
+      "title": "bridge-expo): upgrade to Expo SDK 58, fix iOS camera permission review",
+      "repository": "berty-berty-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e667a1a9e02aca0e110db8f36a3ff21e68ae7932f9c22dbc5f7f3c81b983c096",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T04:37:57.591Z"
+    },
+    "domain_intelligence-architecture-intelligence-berty-berty-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-berty-berty-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-berty-berty-learnings-architecture-intelligence-berty-berty-learnings-core-invar.md",
+      "title": "Architecture Intelligence: berty-berty-learnings Core Invariants",
+      "repository": "berty-berty-learnings",
+      "source_version": "HEAD",
+      "content_hash": "92357373a78144d751bf20357deb781b12f8cf757181cb6844ee2eb8b598aa33",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T04:37:57.730Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-berty-berty-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-berty-berty-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/berty-berty-learnings-verification-protocol-empirical-defect-shield-for-berty-be.md",
+      "title": "Verification Protocol: Empirical Defect Shield for berty-berty-learnings",
+      "repository": "berty-berty-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3a9b95c3acf4c3f1588fad4303e742353c20284695b018519e56c0f7840f8413",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T04:37:57.870Z"
     }
   },
   "ai-builder-brain": {

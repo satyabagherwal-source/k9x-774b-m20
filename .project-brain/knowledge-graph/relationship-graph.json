@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-14T04:15:53.465Z",
+  "updated_at": "2026-11-14T04:37:56.175Z",
   "statistics": {
-    "total_nodes": 157,
-    "total_edges": 86,
+    "total_nodes": 159,
+    "total_edges": 87,
     "domain_distribution": {
       "D": 125,
       "M": 1,
-      "H": 11,
-      "J": 7,
+      "H": 12,
+      "J": 8,
       "K": 6,
       "L": 2,
       "G": 1,
@@ -18,7 +18,7 @@
       "B": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 86
+      "CONSTRAINED_BY_ARCHITECTURE": 87
     }
   },
   "nodes": {
@@ -3516,6 +3516,51 @@
       ],
       "created_at": "2026-11-14T04:15:53.465Z",
       "updated_at": "2026-11-14T04:15:53.465Z"
+    },
+    "DOM-J-C6558B0E": {
+      "id": "DOM-J-C6558B0E",
+      "domain": "J",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Attention Mask Inversion & Broadcasting Failure in FlashAttention Integration (BUG-LLAMA2-01)",
+      "summary": "`scaled_dot_product_attention` handles boolean masks and float additive masks differently. In FP16, `-10000.0` leaves residual probability $ -> Never use hardcoded arbitrary negative numbers (`-1e4`, `-1e9`) for attention logit masking. Always use `torch.finfo(tensor.dtype).min` or n",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-meta-llama-llama-2-7b/hf-meta-llama-llama-2-7b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T04:36:40.790Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-meta-llama-llama-2-7b)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "J",
+        "Search & Distribution Intelligence"
+      ],
+      "created_at": "2026-11-14T04:37:15.305Z",
+      "updated_at": "2026-11-14T04:37:15.305Z"
+    },
+    "DOM-H-DD654136": {
+      "id": "DOM-H-DD654136",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Dynamic Dynamic-Cache Reallocation Index Drift in Autoregressive Loop (BUG-LLAMA2-02)",
+      "summary": "KV cache size was implicitly assumed to equal `past_key_values[0][0].shape[-2]`. However, static pre-allocated KV caches have a fixed sequen -> Do not deduce token positions from tensor shapes in memory pools. Decouple buffer capacity from logical sequence length via an explicit `see",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-meta-llama-llama-2-7b/hf-meta-llama-llama-2-7b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T04:36:40.790Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-meta-llama-llama-2-7b)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-14T04:37:56.175Z",
+      "updated_at": "2026-11-14T04:37:56.175Z"
     }
   },
   "edges": [
@@ -4378,6 +4423,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-J-2672FCA2 [J] with Domain D",
       "created_at": "2026-11-14T04:06:54.221Z"
+    },
+    {
+      "id": "EDGE-7D7F268A24BF",
+      "sourceId": "DOM-H-DD654136",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-H-DD654136 [H] with Domain M",
+      "created_at": "2026-11-14T04:37:56.175Z"
     }
   ]
 }
