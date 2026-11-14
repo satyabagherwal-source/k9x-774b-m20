@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-D8FJ",
-    "timestamp": "2026-11-09T12:49:34.447Z",
-    "repository": "pubkey/rxdb",
-    "learningId": "learn-github-pubkey-rxdb",
-    "contentHash": "74b9be778f20e07180013cbec7b888f0de52a29bf104536fb13e58bffda877be",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-DAN8",
-    "timestamp": "2026-11-09T12:49:37.316Z",
-    "repository": "higress-group/higress",
-    "learningId": "learn-github-higress-group-higress",
-    "contentHash": "8339467fd1dada35e40655e7edeb5d1efd26295945e270603fadf2c8bc0b145a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-HA7U",
     "timestamp": "2026-11-09T12:52:43.386Z",
     "repository": "openbmb/MiniCPM-V-4.7-1B",
@@ -7490,6 +7460,36 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "57be43664ac49a77f4a8b672af17832866bbc6cff146fd41aea1d79430ca7e08",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-W67A",
+    "timestamp": "2026-11-14T18:34:34.726Z",
+    "repository": "Cactus-Compute/whistle",
+    "learningId": "learn-huggingface-cactus-compute-whistle",
+    "contentHash": "964cfe29d9e2b644ca6af4f1d76098cd62a18e251cb7deb586e5731210538a35",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-WD9R",
+    "timestamp": "2026-11-14T18:34:43.887Z",
+    "repository": "hashicorp/terraform",
+    "learningId": "learn-github-hashicorp-terraform",
+    "contentHash": "b7254f41efe982fbc954c71332cb7411e64ed2d817ff2980a901085786778ca7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

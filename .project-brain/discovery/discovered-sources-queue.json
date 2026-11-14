@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T18:27:16.723Z",
+  "updated_at": "2026-11-14T18:35:10.793Z",
   "stats": {
-    "total_discovered": 3381,
-    "approved_pending_harvest": 3175,
+    "total_discovered": 3382,
+    "approved_pending_harvest": 3176,
     "harvested_count": 0,
     "rejected_count": 206,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3156,
+      "COMMUNITY_AND_EXPERT": 3157,
       "OFFICIAL_DOCUMENTATION": 122,
       "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
@@ -72960,6 +72960,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-ani-animeko-learnings.md",
         "fileName": "open-ani-animeko-learnings.md"
+      }
+    },
+    "SRC-2D9C5E9E87EF": {
+      "id": "SRC-2D9C5E9E87EF",
+      "url": "https://huggingface.co/Cactus-Compute/whistle",
+      "title": "https://huggingface.co/Cactus-Compute/whistle",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T18:35:10.793Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md",
+        "fileName": "hf-cactus-compute-whistle-learnings.md"
       }
     }
   }

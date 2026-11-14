@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T18:27:17.065Z",
-  "total_records": 790,
+  "last_updated": "2026-11-14T18:35:11.823Z",
+  "total_records": 795,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 386,
+      "total": 389,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -423,7 +423,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-autotrust-glm5-3-flash-e224-dgx-spark-learnin",
         "domain_intelligence-research-knowledge-intelligence-liquidai-d1-3b-core-invariants",
         "DOM-D-301C83AD",
-        "domain_intelligence-research-knowledge-intelligence-hf-liquidai-d1-3b-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-hf-liquidai-d1-3b-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-cactus-compute-whistle-core-invariants",
+        "DOM-D-666917A5",
+        "domain_intelligence-research-knowledge-intelligence-hf-cactus-compute-whistle-learnings-core-invaria"
       ]
     },
     "E": {
@@ -456,7 +459,7 @@
       ]
     },
     "G": {
-      "total": 124,
+      "total": 126,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -581,7 +584,9 @@
         "domain_intelligence-architecture-intelligence-meta-folly-core-invariants",
         "domain_intelligence-architecture-intelligence-gkd-kit-gkd-core-invariants",
         "domain_intelligence-architecture-intelligence-facebook-folly-learnings-core-invariants",
-        "domain_intelligence-architecture-intelligence-gkd-kit-gkd-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-gkd-kit-gkd-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-hashicorp-terraform-core-invariants",
+        "domain_intelligence-architecture-intelligence-hashicorp-terraform-learnings-core-invariants"
       ]
     },
     "H": {
@@ -6605,8 +6610,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "1377ba30718706f5d8271ae7364b6e74bec5450739d7cfba798daab68ce25e76",
-      "created_at": "2026-11-14T17:04:27.370Z"
+      "content_hash": "f16845f3a8638fe40187717c55f653ae78e382a395b4fece9197e5ec5c39ffbf",
+      "created_at": "2026-11-14T18:35:11.823Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -16049,6 +16054,84 @@
       "repository": "open-ani-animeko-learnings",
       "content_hash": "1d66ed9c917dc9c002c8b5ab9c199fb3bf54503b912adba234d716f75947196d",
       "created_at": "2026-11-14T18:27:17.065Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-cactus-compute-whistle-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-cactus-compute-whistle-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: Cactus-Compute/whistle Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-cactus-compute-whistle-research-knowledge-intelligence-cactus-compute-whistle.md",
+      "repository": "Cactus-Compute/whistle",
+      "content_hash": "aeabb5ea82a0d46c87a0b5f5fb824c31d8dca35ad6d5d68c98e095a0112f971c",
+      "created_at": "2026-11-14T18:34:34.879Z"
+    },
+    "domain_intelligence-architecture-intelligence-hashicorp-terraform-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-hashicorp-terraform-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: hashicorp/terraform Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hashicorp-terraform-architecture-intelligence-hashicorp-terraform-core-invariant.md",
+      "repository": "hashicorp/terraform",
+      "content_hash": "a4e565bf28c25de0e70669e827464c8e2405e68334bef99479e0ec8c9efc87ee",
+      "created_at": "2026-11-14T18:34:44.138Z"
+    },
+    "DOM-D-666917A5": {
+      "record_id": "DOM-D-666917A5",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Cactus-Compute/whistle",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/Cactus-Compute/whistle](https://huggingface.co/Cactus-Compute/whistle))  \n> **Source Version**: `hf-cactus-co`  \n> **License**: Open-Source  \n> **Synth",
+      "content_hash": "8a96b5a2b7593559c6e09d3506d4a7cc4a2278d81e47810b56b8726b8351d928",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md`  \n> **Source**: huggingface ([https://huggin -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md`  \n> **Source**: huggingface ([https://huggin",
+      "provenance": {
+        "source_uri": "project://hf-cactus-compute-whistle/hf-cactus-compute-whistle-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T18:34:46.904Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-cactus-compute-whistle)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-cactus-compute-whistle"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T18:35:10.769Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-cactus-compute-whistle-learnings-core-invaria": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-cactus-compute-whistle-learnings-core-invaria",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-cactus-compute-whistle-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-cactus-compute-whistle-learnings-research-knowledge-intelligence-hf-cactus-co.md",
+      "repository": "hf-cactus-compute-whistle-learnings",
+      "content_hash": "835a3ae1511b265a344d01d047090d38f578b4aed9987dca3236623f448a712d",
+      "created_at": "2026-11-14T18:35:10.950Z"
+    },
+    "domain_intelligence-architecture-intelligence-hashicorp-terraform-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-hashicorp-terraform-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: hashicorp-terraform-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hashicorp-terraform-learnings-architecture-intelligence-hashicorp-terraform-lear.md",
+      "repository": "hashicorp-terraform-learnings",
+      "content_hash": "f394f710dd938c132602f6a24fe272d8633ec40479ce91223a62946ce60374c5",
+      "created_at": "2026-11-14T18:35:11.353Z"
     }
   }
 }

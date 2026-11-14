@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-14T18:27:16.267Z",
+  "updated_at": "2026-11-14T18:35:10.780Z",
   "statistics": {
-    "total_nodes": 210,
-    "total_edges": 115,
+    "total_nodes": 211,
+    "total_edges": 116,
     "domain_distribution": {
-      "D": 164,
+      "D": 165,
       "M": 1,
       "H": 18,
       "J": 8,
@@ -18,7 +18,7 @@
       "B": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 115
+      "CONSTRAINED_BY_ARCHITECTURE": 116
     }
   },
   "nodes": {
@@ -4711,6 +4711,29 @@
       ],
       "created_at": "2026-11-14T18:27:16.266Z",
       "updated_at": "2026-11-14T18:27:16.266Z"
+    },
+    "DOM-D-666917A5": {
+      "id": "DOM-D-666917A5",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): Cactus-Compute/whistle",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md`  \n> **Source**: huggingface ([https://huggin -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md`  \n> **Source**: huggingface ([https://huggin",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-cactus-compute-whistle/hf-cactus-compute-whistle-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T18:34:46.904Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-cactus-compute-whistle)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-14T18:35:10.779Z",
+      "updated_at": "2026-11-14T18:35:10.779Z"
     }
   },
   "edges": [
@@ -5863,6 +5886,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-301C83AD [D] with Domain M",
       "created_at": "2026-11-14T18:27:16.266Z"
+    },
+    {
+      "id": "EDGE-4A59C089FF7A",
+      "sourceId": "DOM-D-666917A5",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-666917A5 [D] with Domain M",
+      "created_at": "2026-11-14T18:35:10.779Z"
     }
   ]
 }

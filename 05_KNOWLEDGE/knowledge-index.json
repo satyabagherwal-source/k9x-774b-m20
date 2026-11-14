@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-14T18:27:17.205Z",
-  "total_verified_learnings": 8586,
+  "last_updated": "2026-11-14T18:35:11.918Z",
+  "total_verified_learnings": 8588,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 17699,
+  "total_items": 17709,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112155,9 +112155,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "1377ba30718706f5d8271ae7364b6e74bec5450739d7cfba798daab68ce25e76",
+      "content_hash": "f16845f3a8638fe40187717c55f653ae78e382a395b4fece9197e5ec5c39ffbf",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T17:04:27.370Z"
+      "persisted_at": "2026-11-14T18:35:11.823Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112167,9 +112167,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "7ad8aafd9ca679bb233f34552a39c17eb8bf22d8a0d846d4a45a3ea89f39c122",
+      "content_hash": "9954de6ac256e28ae3831b0e69031f00a96f4fea921eb919404ed1ee6af0b3d9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T17:04:27.485Z"
+      "persisted_at": "2026-11-14T18:35:11.918Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -214751,13 +214751,13 @@
       "item_id": "candidate_directive-puppet-fix-postgresql-failing-to-start-on-new-installs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-O9RP-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-WYR0-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
       "title": "puppet: Fix PostgreSQL failing to start on new installs.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "1508b01e99433a8ae5f24f631ff7aa8b272c15069ccbff623a0ed04059046be1",
+      "content_hash": "d924161673937ef8a607893ca397ee501525705fba35836fd412757320aa035f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T17:04:27.269Z"
+      "persisted_at": "2026-11-14T18:35:11.731Z"
     },
     "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
@@ -232610,6 +232610,164 @@
       "content_hash": "685dca99a26df78b977274eae2e63b262271857e8d8c6ac5706b66dd81de2adf",
       "domain_letter": "K",
       "persisted_at": "2026-11-14T18:27:17.205Z"
+    },
+    "learn-huggingface-cactus-compute-whistle": {
+      "learning_id": "learn-huggingface-cactus-compute-whistle",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Cactus-Compute/whistle",
+      "repository": "Cactus-Compute/whistle",
+      "slug": "hf-cactus-compute-whistle",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Cactus-Compute/whistle",
+      "source_version": "hf-cactus-compute-whistle",
+      "content_hash": "964cfe29d9e2b644ca6af4f1d76098cd62a18e251cb7deb586e5731210538a35",
+      "dossier_path": "07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T18:34:34.600Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-cactus-compute-whistle-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-cactus-compute-whistle-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-cactus-compute-whistle-research-knowledge-intelligence-cactus-compute-whistle.md",
+      "title": "Research & Knowledge Intelligence: Cactus-Compute/whistle Core Invariants",
+      "repository": "Cactus-Compute/whistle",
+      "source_version": "hf-cactus-compute-whistle",
+      "content_hash": "aeabb5ea82a0d46c87a0b5f5fb824c31d8dca35ad6d5d68c98e095a0112f971c",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T18:34:34.879Z"
+    },
+    "learn-github-hashicorp-terraform": {
+      "learning_id": "learn-github-hashicorp-terraform",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "hashicorp/terraform",
+      "repository": "hashicorp/terraform",
+      "slug": "hashicorp-terraform",
+      "platform": "github",
+      "source_url": "https://github.com/hashicorp/terraform",
+      "source_version": "7b843103",
+      "content_hash": "b7254f41efe982fbc954c71332cb7411e64ed2d817ff2980a901085786778ca7",
+      "dossier_path": "07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8521,
+          "title": "Make solaris version of `(c *ConsoleCommand) modeInteractive` use views",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T18:34:43.763Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8521": {
+      "learning_id": "rule-8521",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8521,
+      "title": "Make solaris version of `(c *ConsoleCommand) modeInteractive` use views",
+      "source_url": "https://github.com/hashicorp/terraform",
+      "source_version": "7b843103",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T18:34:43.764Z"
+    },
+    "candidate_directive-make-solaris-version-of-c-consolecommand-modeinteractive-use-views": {
+      "item_id": "candidate_directive-make-solaris-version-of-c-consolecommand-modeinteractive-use-views",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WYDZ-make-solaris-version-of-c-consolecommand-modeinteractive-use-views.md",
+      "title": "Make solaris version of `(c *ConsoleCommand) modeInteractive` use views",
+      "repository": "hashicorp-terraform-learnings",
+      "source_version": "HEAD",
+      "content_hash": "de9ee74061c499a00ac8fdb917ba9099b069c1b7534919479b163fe1f0df31b8",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T18:35:11.263Z"
+    },
+    "domain_intelligence-architecture-intelligence-hashicorp-terraform-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-hashicorp-terraform-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hashicorp-terraform-architecture-intelligence-hashicorp-terraform-core-invariant.md",
+      "title": "Architecture Intelligence: hashicorp/terraform Core Invariants",
+      "repository": "hashicorp/terraform",
+      "source_version": "7b843103",
+      "content_hash": "a4e565bf28c25de0e70669e827464c8e2405e68334bef99479e0ec8c9efc87ee",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T18:34:44.138Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-hashicorp-terraform": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-hashicorp-terraform",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/hashicorp-terraform-verification-protocol-empirical-defect-shield-for-hashicorp-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for hashicorp/terraform",
+      "repository": "hashicorp/terraform",
+      "source_version": "7b843103",
+      "content_hash": "69e0e71a04ff18797f5743450e87948e1e7379b2ea8032b127df2bf8bd0c3b43",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T18:34:44.223Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-cactus-compute-whistle-learnings-core-invaria": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-cactus-compute-whistle-learnings-core-invaria",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-cactus-compute-whistle-learnings-research-knowledge-intelligence-hf-cactus-co.md",
+      "title": "Research & Knowledge Intelligence: hf-cactus-compute-whistle-learnings Core Invariants",
+      "repository": "hf-cactus-compute-whistle-learnings",
+      "source_version": "HEAD",
+      "content_hash": "835a3ae1511b265a344d01d047090d38f578b4aed9987dca3236623f448a712d",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T18:35:10.950Z"
+    },
+    "domain_intelligence-architecture-intelligence-hashicorp-terraform-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-hashicorp-terraform-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hashicorp-terraform-learnings-architecture-intelligence-hashicorp-terraform-lear.md",
+      "title": "Architecture Intelligence: hashicorp-terraform-learnings Core Invariants",
+      "repository": "hashicorp-terraform-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f394f710dd938c132602f6a24fe272d8633ec40479ce91223a62946ce60374c5",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T18:35:11.353Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-hashicorp-terraform-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-hashicorp-terraform-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/hashicorp-terraform-learnings-verification-protocol-empirical-defect-shield-for-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for hashicorp-terraform-learnings",
+      "repository": "hashicorp-terraform-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a4f58dcd5ad13aa70b4eaa2a586a4cf783dac20a96fd93c4a854558e3db84777",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T18:35:11.450Z"
     }
   },
   "ai-builder-brain": {

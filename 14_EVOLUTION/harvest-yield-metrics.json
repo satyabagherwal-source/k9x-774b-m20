@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T18:26:37.125Z",
-  "total_cycles_completed": 9574,
-  "total_learnings_persisted": 9574,
-  "total_rules_promoted": 9244,
+  "last_updated": "2026-11-14T18:34:43.894Z",
+  "total_cycles_completed": 9576,
+  "total_learnings_persisted": 9576,
+  "total_rules_promoted": 9245,
   "history": [
-    {
-      "timestamp": "2026-11-13T20:54:33.207Z",
-      "repository": "langchain4j/langchain4j",
-      "learningId": "learn-github-langchain4j-langchain4j",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T21:07:07.102Z",
-      "repository": "google-bert/bert-base-uncased",
-      "learningId": "learn-huggingface-google-bert-bert-base-uncased",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T21:07:15.362Z",
       "repository": "pubkey/rxdb",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-14T18:26:37.125Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T18:34:34.734Z",
+      "repository": "Cactus-Compute/whistle",
+      "learningId": "learn-huggingface-cactus-compute-whistle",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T18:34:43.894Z",
+      "repository": "hashicorp/terraform",
+      "learningId": "learn-github-hashicorp-terraform",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

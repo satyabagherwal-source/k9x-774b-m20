@@ -9943,3 +9943,6 @@ Every entry in this ledger must capture:
 | `learn-github-open-ani-animeko` | `https://github.com/open-ani/animeko` | `d54ba004` | Multi-dimensional audit evidence | 2026-11-14T18:26:28.369Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `f8229156` | Multi-dimensional audit evidence | 2026-11-14T18:26:37.119Z |
 | `learn-dom-d-301c83ad` | `project://hf-liquidai-d1-3b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md` | 2026-11-14T18:27:16.269Z |
+| `learn-huggingface-cactus-compute-whistle` | `https://huggingface.co/Cactus-Compute/whistle` | `hf-cactus-` | Multi-dimensional audit evidence | 2026-11-14T18:34:34.730Z |
+| `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `7b843103` | Multi-dimensional audit evidence | 2026-11-14T18:34:43.890Z |
+| `learn-dom-d-666917a5` | `project://hf-cactus-compute-whistle` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md` | 2026-11-14T18:35:10.781Z |

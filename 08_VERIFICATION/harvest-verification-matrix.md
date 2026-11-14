@@ -9910,3 +9910,6 @@
 | `CYCLE-20261114-LQX9` | `2026-11-14T18:26:28.365Z` | `open-ani/animeko` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8520` | Yes (`f551be58...`) |
 | `CYCLE-20261114-LXOB` | `2026-11-14T18:26:37.115Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`57be4366...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T18:27:16.269Z` | `hf-liquidai-d1-3b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-301C83AD` [Domain D] | Yes (`150937cb...`) |
+| `CYCLE-20261114-W67A` | `2026-11-14T18:34:34.726Z` | `Cactus-Compute/whistle` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md` | Yes (`964cfe29...`) |
+| `CYCLE-20261114-WD9R` | `2026-11-14T18:34:43.887Z` | `hashicorp/terraform` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8521` | Yes (`b7254f41...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T18:35:10.781Z` | `hf-cactus-compute-whistle` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-666917A5` [Domain D] | Yes (`8a96b5a2...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-14T18:26:37.130Z",
+  "last_updated": "2026-11-14T18:34:43.898Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -185,14 +185,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-cactus-compute-whistle",
-      "content_hash": "b1e2f8691f034fe24784421378b955d7809772b9106cbdccff07d835e5dccfa3",
-      "verified_at": "2026-11-09T07:13:17.803Z",
+      "content_hash": "964cfe29d9e2b644ca6af4f1d76098cd62a18e251cb7deb586e5731210538a35",
+      "verified_at": "2026-11-14T18:34:34.737Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T07:13:17.803Z"
+      "last_updated": "2026-11-14T18:34:34.737Z"
     },
     "Open-Source-Legal/OpenContracts": {
       "repository": "Open-Source-Legal/OpenContracts",
@@ -7041,14 +7041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-hashicorp-terraform",
-      "content_hash": "99e14902ebffd36c54fdd6a0bc262db327cbc6719203b856f12d27567aa8a505",
-      "verified_at": "2026-11-13T13:42:27.449Z",
+      "content_hash": "b7254f41efe982fbc954c71332cb7411e64ed2d817ff2980a901085786778ca7",
+      "verified_at": "2026-11-14T18:34:43.897Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T13:42:27.449Z"
+      "last_updated": "2026-11-14T18:34:43.897Z"
     },
     "TaKO8Ki/gobang": {
       "repository": "TaKO8Ki/gobang",
