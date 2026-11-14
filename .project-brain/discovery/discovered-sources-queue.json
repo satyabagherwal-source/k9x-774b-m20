@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T03:16:47.387Z",
+  "updated_at": "2026-11-14T03:33:01.166Z",
   "stats": {
-    "total_discovered": 3091,
-    "approved_pending_harvest": 2890,
+    "total_discovered": 3097,
+    "approved_pending_harvest": 2895,
     "harvested_count": 0,
-    "rejected_count": 201,
+    "rejected_count": 202,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2886,
+      "COMMUNITY_AND_EXPERT": 2892,
       "OFFICIAL_DOCUMENTATION": 110,
       "STANDARDS_AND_SPECIFICATIONS": 81,
       "ENGINEERING_BLOGS": 1,
@@ -66615,6 +66615,131 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
         "fileName": "siderolabs-talos-learnings.md"
+      }
+    },
+    "SRC-3F4B219A9FAA": {
+      "id": "SRC-3F4B219A9FAA",
+      "url": "https://huggingface.co/bigscience/bloom",
+      "title": "https://huggingface.co/bigscience/bloom",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T03:33:00.063Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md",
+        "fileName": "hf-bigscience-bloom-learnings.md"
+      }
+    },
+    "SRC-98873AFB8582": {
+      "id": "SRC-98873AFB8582",
+      "url": "https://github.com/docker/buildx/issues/4209",
+      "title": "https://github.com/docker/buildx/issues/4209",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T03:33:00.529Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/moby-buildkit-learnings.md",
+        "fileName": "moby-buildkit-learnings.md"
+      }
+    },
+    "SRC-43A0F93C23AF": {
+      "id": "SRC-43A0F93C23AF",
+      "url": "https://github.com/moby/buildkit/issues/7411",
+      "title": "https://github.com/moby/buildkit/issues/7411",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T03:33:00.551Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/moby-buildkit-learnings.md",
+        "fileName": "moby-buildkit-learnings.md"
+      }
+    },
+    "SRC-B7834706DEB9": {
+      "id": "SRC-B7834706DEB9",
+      "url": "https://github.com/moby/buildkit/pull/7417",
+      "title": "https://github.com/moby/buildkit/pull/7417",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T03:33:00.585Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/moby-buildkit-learnings.md",
+        "fileName": "moby-buildkit-learnings.md"
+      }
+    },
+    "SRC-FDC09468AA7C": {
+      "id": "SRC-FDC09468AA7C",
+      "url": "https://github.com/tailscale/tailscale",
+      "title": "https://github.com/tailscale/tailscale",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T03:33:01.131Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
+        "fileName": "tailscale-tailscale-learnings.md"
+      }
+    },
+    "SRC-4BF8BC3AFCA4": {
+      "id": "SRC-4BF8BC3AFCA4",
+      "url": "http://${nodeipv4/",
+      "title": "http://${nodeipv4/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-14T03:33:01.166Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
+        "fileName": "tailscale-tailscale-learnings.md"
       }
     }
   }

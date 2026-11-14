@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T03:16:47.744Z",
-  "total_records": 504,
+  "last_updated": "2026-11-14T03:33:01.453Z",
+  "total_records": 510,
   "domains": {
     "A": {
       "total": 5,
@@ -33,7 +33,7 @@
       ]
     },
     "D": {
-      "total": 254,
+      "total": 257,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -288,7 +288,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-meta-llama-3-8b-instruct-learnings",
         "domain_intelligence-research-knowledge-intelligence-zai-org-glm-5-2-core-invariants",
         "DOM-D-78E4F99B",
-        "domain_intelligence-research-knowledge-intelligence-hf-zai-org-glm-5-2-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-hf-zai-org-glm-5-2-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-bigscience-bloom-core-invariants",
+        "DOM-D-F2B017DF",
+        "domain_intelligence-research-knowledge-intelligence-hf-bigscience-bloom-learnings-core-invariants"
       ]
     },
     "E": {
@@ -314,7 +317,7 @@
       ]
     },
     "G": {
-      "total": 70,
+      "total": 73,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -385,7 +388,10 @@
         "domain_intelligence-architecture-intelligence-zeromicro-go-zero-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-goharbor-harbor-core-invariants",
         "domain_intelligence-architecture-intelligence-goharbor-harbor-learnings-core-invariants",
-        "domain_intelligence-architecture-intelligence-trufflesecurity-trufflehog-core-invariants"
+        "domain_intelligence-architecture-intelligence-trufflesecurity-trufflehog-core-invariants",
+        "domain_intelligence-architecture-intelligence-moby-buildkit-core-invariants",
+        "domain_intelligence-architecture-intelligence-moby-buildkit-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-tailscale-tailscale-learnings-core-invariants"
       ]
     },
     "H": {
@@ -6391,8 +6397,8 @@
       "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
       "repository": "tailscale/tailscale",
-      "content_hash": "71cf0b77674e4479e3175f05c37382e2d78b7809f3d84d165227fe98ca62dca5",
-      "created_at": "2026-11-13T15:18:37.114Z"
+      "content_hash": "be9e37e4220eeafad8a0adf4cb22c51f33072eb6f12f6923f1f5fc44ea311c71",
+      "created_at": "2026-11-14T03:32:25.848Z"
     },
     "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants",
@@ -11333,6 +11339,93 @@
       "repository": "siderolabs-talos-learnings",
       "content_hash": "b50b40fe3bb5ce1b418886d4873a5f19bab9eb169056ba5683ba8af836d555e5",
       "created_at": "2026-11-14T03:16:47.744Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-bigscience-bloom-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-bigscience-bloom-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: bigscience/bloom Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-bigscience-bloom-research-knowledge-intelligence-bigscience-bloom-core-invari.md",
+      "repository": "bigscience/bloom",
+      "content_hash": "33523b81c05bf52953d6b4d0ee8fe88366cea300736bb91ccb177cfe7c4cb663",
+      "created_at": "2026-11-14T03:32:11.234Z"
+    },
+    "domain_intelligence-architecture-intelligence-moby-buildkit-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-moby-buildkit-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: moby/buildkit Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-moby-buildkit-architecture-intelligence-moby-buildkit-core-invariants.md",
+      "repository": "moby/buildkit",
+      "content_hash": "b62fbf8c51524fe229bbe3f56d5272a3eb54f632d064a08b384bf08b9f4fa4f6",
+      "created_at": "2026-11-14T03:32:23.373Z"
+    },
+    "DOM-D-F2B017DF": {
+      "record_id": "DOM-D-F2B017DF",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): bigscience/bloom",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/bigscience/bloom](https://huggingface.co/bigscience/bloom))  \n> **Source Version**: `hf-bigscienc`  \n> **License**: Open-Source  \n> **Synthesized By**: zero-",
+      "content_hash": "e30e2cc50bb8298123a47c62fa2734bada44ff9aa634a79662f259d2a3f8d09b",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md`  \n> **Source**: huggingface ([https://huggingface. -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md`  \n> **Source**: huggingface ([https://huggingface.",
+      "provenance": {
+        "source_uri": "project://hf-bigscience-bloom/hf-bigscience-bloom-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T03:32:28.721Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-bigscience-bloom)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-bigscience-bloom"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T03:33:00.029Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-bigscience-bloom-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-bigscience-bloom-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-bigscience-bloom-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-bigscience-bloom-learnings-research-knowledge-intelligence-hf-bigscience-bloo.md",
+      "repository": "hf-bigscience-bloom-learnings",
+      "content_hash": "787ff3fb4938daceba385303049bf01e723e0e220f4a19b7e006e9d5506e962a",
+      "created_at": "2026-11-14T03:33:00.256Z"
+    },
+    "domain_intelligence-architecture-intelligence-moby-buildkit-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-moby-buildkit-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: moby-buildkit-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-moby-buildkit-learnings-architecture-intelligence-moby-buildkit-learnings-core-i.md",
+      "repository": "moby-buildkit-learnings",
+      "content_hash": "0214f6d495e4b3e5433882a5d817f32642b2c2f397fd253fd87e796f8beff851",
+      "created_at": "2026-11-14T03:33:00.884Z"
+    },
+    "domain_intelligence-architecture-intelligence-tailscale-tailscale-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-tailscale-tailscale-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: tailscale-tailscale-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-learnings-architecture-intelligence-tailscale-tailscale-lear.md",
+      "repository": "tailscale-tailscale-learnings",
+      "content_hash": "99454cb3e6de58f7ebaf97e3e04338b9c9857afd9f4897e3eb180b85bf6230e9",
+      "created_at": "2026-11-14T03:33:01.453Z"
     }
   }
 }

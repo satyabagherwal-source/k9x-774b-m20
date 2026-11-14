@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/moby-buildkit-learnings.md`  
 > **Source**: github ([https://github.com/moby/buildkit](https://github.com/moby/buildkit))  
-> **Source Version**: `d667ec05`  
+> **Source Version**: `e4d319d7`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T03:48:13.681Z  
+> **Timestamp**: 2026-11-14T03:32:22.230Z  
 > **Learning ID**: `learn-github-moby-buildkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/moby-buildkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/moby/buildkit](https://github.com/moby/buildkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T03:48:13.676Z  
+> **Harvest Timestamp**: 2026-11-14T03:32:22.224Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: concurrent, cache-efficient, and Dockerfile-agnostic builder toolkit
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 10414 stars
+- **Stars / Engagement**: 10417 stars
 
 ---
 
@@ -2295,11 +2295,11 @@ func isPathEscapesRootError(err error) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7408** (2026-11-11): **Cache export (mode=max) silently exports records without results when a step was matched only through later steps**
-  *Symptoms*: ### Description  `--cache-to type=registry,mode=max` can export a cache record with its key and links but without a result. This happens when a step was only matched through the cache key of a later step and the builder no longer holds that step's result, for example after garbage collection. The build reports the step as `CACHED`, and the export finishes without a warning. A consumer that later needs that step's result (because a later step changed) has to run it again.  Builds that import the previous registry cache (`--cache-from` the same tag) keep exporting the gap. Only a build that runs the step again fills the record. We saw a CUDA extension stage stay key-only across several consecutive cache exports on CI after the registry cache was briefly unavailable.  As far as I can tell from v0.33.1, `edge.makeExportable` builds the exporter with the records whose results exist (`cacheManager.Records` filters by `results.Exists`). When there are none, `exporter.ExportTo` still calls `t.Add(recKey, srcs, results)` with empty results.  ### Reproducer (BuildKit v0.34.2, `docker-container` driver)  ```dockerfile FROM alpine:3.20 AS base RUN echo base > /base.txt  FROM base AS wheel RUN mkdir /out && echo wheel > /out/wheel  FROM base AS final RUN --mount=from=wheel,source=/out,target=/tmp/out cp /tmp/out/wheel /wheel ```  ```sh docker buildx create --name repro --driver docker-container --bootstrap docker buildx build --builder repro --output type=cacheonly . # Simulate garbage co
+- **Issue #7420** (2026-11-13): **session: allow large filesync pattern lists in go1.27**
+  *Symptoms*: Lift Go 1.27's header value count limit for session connections while preserving the header byte limit and compatibility with earlier Go versions.  Add regression coverage for large include and exclude pattern lists.  fixes https://github.com/docker/buildx/issues/4209  @viiqswim
 
-- **Issue #7407** (2026-11-11): **[v0.35] vendor: update policy helpers to 6acab594b423**
-  *Symptoms*: (cherry picked from commit f6ea96500d7dd43bb1093cdba6249120c83be009)
+- **Issue #7419** (2026-11-13): **exporter: skip empty attestation manifests**
+  *Symptoms*: - closes https://github.com/moby/buildkit/issues/7411 - closes https://github.com/moby/buildkit/pull/7417  Skip attestation export when unbundling produces no entries. An empty bundle has nothing to attest, so avoid writing its manifest and config.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2316,53 +2316,445 @@ func isPathEscapesRootError(err error) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `32eca340` (2026-11-12)
-**Commit Message**: Merge pull request #7397 from moby/dependabot/github_actions/docker/github-builder/dot-github/workflows/bake.yml-1.19.0
+### Incident Patch 1: `447bca32` (2026-11-13)
+**Commit Message**: fix(session): allow large filesync pattern lists
 
-build(deps): bump docker/github-builder/.github/workflows/bake.yml from 1.18.1 to 1.19.0
+Lift Go 1.27's header value count limit for session connections while
+preserving the header byte limit and compatibility with earlier Go versions.
 
-**File**: `.github/workflows/buildkit.yml` (modified, +2/-2)
+Add regression coverage for large include and exclude pattern lists.
+
+Signed-off-by: Tonis Tiigi <[REDACTED_EMAIL]>
+
+**File**: `client/client_local_source_test.go` (modified, +59/-0)
 ```diff
-@@ -49,7 +49,7 @@ jobs:
-           fields: platforms
- 
-   binaries:
--    uses: docker/github-builder/.github/workflows/bake.yml@cbc9d42f8c89a55623392aadd03600965b80e963 # v1.18.1
-+    uses: docker/github-builder/.github/workflows/bake.yml@a31d2311da4d55e21b978c1c52bab82ba97d51ee # v1.19.0
-     permissions:
-       contents: read # same as global permission
-       id-token: write # for signing attestation(s) with GitHub OIDC Token
-@@ -222,7 +222,7 @@ jobs:
-             core.setOutput('includes', JSON.stringify(matrix));
- 
-   image:
--    uses: docker/github-builder/.github/workflows/bake.yml@cbc9d42f8c89a55623392aadd03600965b80e963 # v1.18.1
-+    uses: docker/github-builder/.github/workflows/bake.yml@a31d2311da4d55e21b978c1c52bab82ba97d51ee # v1.19.0
-     needs:
-       - image-prepare
-       - test
+@@ -433,3 +433,62 @@ func testParallelLocalBuilds(t *testing.T, sb integration.Sandbox) {
+ 	err = eg.Wait()
+ 	require.NoError(t, err)
+ }
++
++// testLocalSourceManyPatterns checks that filesync patterns are not limited by
++// the HTTP/2 header value count. Every pattern is sent as a separate gRPC
++// metadata value and Go 1.27 net/http rejects requests with more than 500 of
++// them by default.
++func testLocalSourceManyPatterns(t *testing.T, sb integration.Sandbox) {
++	c, err := New(sb.Context(), sb.Address())
++	require.NoError(t, err)
++	defer c.Close()
++
++	dir := integration.Tmpdir(
++		t,
++		fstest.CreateFile("foo", []byte("foo"), 0600),
++		fstest.CreateFile("ignored-1", []byte("ignored"), 0600),
++	)
++
++	const n = 1000
++	excludes := make([]string, 0, n)
++	includes := make([]string, 0, n+1)
++	for i := 1; i <= n; i++ {
++		excludes = append(excludes, fmt.Sprintf("ignored-%d", i))
++		includes = append(includes, fmt.Sprintf("included-%d", i))
++	}
++	includes = append(includes, "foo")
++
++	for _, tc := range []struct {
++		name string
++		opt  llb.LocalOption
++	}{
++		{name: "exclude", opt: llb.ExcludePatterns(excludes)},
++		{name: "include", opt: llb.IncludePatterns(includes)},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			def, err := llb.Local("mylocal", tc.opt).Marshal(sb.Context())
++			require.NoError(t, err)
++
++			destDir := t.TempDir()
++			_, err = c.Solve(sb.Context(), def, SolveOpt{
++				Exports: []ExportEntry{
++					{
++						Type:      ExporterLocal,
++						OutputDir: destDir,
++					},
++				},
++				LocalMounts: map[string]fsutil.FS{
++					"mylocal": dir,
++				},
++			}, nil)
++			require.NoError(t, err)
++
++			dt, err := os.ReadFile(filepath.Join(destDir, "foo"))
++			require.NoError(t, err)
++			require.Equal(t, "foo", string(dt))
++
++			_, err = os.Stat(filepath.Join(destDir, "ignored-1"))
++			require.ErrorIs(t, err, os.ErrNotExist)
++		})
++	}
++}
 ```
 
-**File**: `.github/workflows/frontend.yml` (modified, +1/-1)
+**File**: `client/client_test.go` (modified, +1/-0)
 ```diff
-@@ -125,7 +125,7 @@ jobs:
-             core.setOutput('includes', JSON.stringify(matrix));
+@@ -192,6 +192,7 @@ var allTests = []func(t *testing.T, sb integration.Sandbox){
+ 	testLocalSymlinkEscape,
+ 	testMetadataOnlyLocal,
+ 	testParallelLocalBuilds,
++	testLocalSourceManyPatterns,
  
-   image:
--    uses: docker/github-builder/.github/workflows/bake.yml@cbc9d42f8c89a55623392aadd03600965b80e963 # v1.18.1
-+    uses: docker/github-builder/.github/workflows/bake.yml@a31d2311da4d55e21b978c1c52bab82ba97d51ee # v1.19.0
-     needs:
-       - prepare
-       - test
+ 	// client_mergeop_test.go
+ 	testMergeOp,
+```
+
+**File**: `session/grpc.go` (modified, +1/-1)
+```diff
+@@ -63,7 +63,7 @@ func serve(ctx context.Context, grpcServer *grpc.Server, conn net.Conn) {
+ 		conn.Close()
+ 	}()
+ 	bklog.G(ctx).Debugf("serving grpc connection")
+-	(&http2.Server{}).ServeConn(conn, &http2.ServeConnOpts{Handler: grpcServer}) //nolint:staticcheck // This existing HTTP/2 connection is already established.
++	newHTTP2Server(ctx).ServeConn(conn, &http2.ServeConnOpts{Handler: grpcServer}) //nolint:staticcheck // This existing HTTP/2 connection is already established.
+ }
+ 
+ func grpcClientConn(ctx context.Context, conn net.Conn, opts map[string][]string) (context.Context, *grpc.ClientConn, error) {
+```
+
+**File**: `session/http2server_go127.go` (added, +29/-0)
+```diff
+@@ -0,0 +1,29 @@
++//go:build go1.27
++
++package session
++
++import (
++	"context"
++	"math"
++	"net/http"
++
++	"github.com/moby/buildkit/util/bklog"
++	"golang.org/x/net/http2"
++)
++
++// newHTTP2Server returns the HTTP/2 server for session connections.
++//
++// Since Go 1.27, x/net/http2 is backed by net/http, which limits requests to
++// http.DefaultMaxHeaderValueCount (500) header values. Session metadata, such
++// as filesync include/exclude patterns, uses one value per item and can exceed
++// that. The total header size is still bounded by http.DefaultMaxHeaderBytes.
++func newHTTP2Server(ctx context.Context) *http2.Server { //nolint:staticcheck // ServeConn on an established connection needs x/net/http2.
++	h2 := &http2.Server{} //nolint:staticcheck // ServeConn on an established connection needs x/net/http2.
++	// h1 only carries config for h2 connections and never serves on its own.
++	h1 := &http.Server{MaxHeaderValueCount: math.MaxInt}  //nolint:gosec // G112: session streams are long-lived, no read timeouts.
++	if err := http2.ConfigureServer(h1, h2); err != nil { //nolint:staticcheck // h1 is never served, Protocols does not apply.
++		bklog.G(ctx).WithError(err).Warn("failed to configure session http2 server")
++		return &http2.Server{} //nolint:staticcheck // ServeConn on an established connection needs x/net/http2.
++	}
++	return h2
++}
+```
+
+**File**: `session/http2server_legacy.go` (added, +15/-0)
+```diff
+@@ -0,0 +1,15 @@
++//go:build !go1.27
++
++package session
++
++import (
++	"context"
++
++	"golang.org/x/net/http2"
++)
++
++// newHTTP2Server returns the HTTP/2 server for session connections. Before Go
++// 1.27 x/net/http2 has no header value count limit, so no extra setup is needed.
++func newHTTP2Server(_ context.Context) *http2.Server { //nolint:staticcheck // ServeConn on an established connection needs x/net/http2.
++	return &http2.Server{} //nolint:staticcheck // ServeConn on an established connection needs x/net/http2.
++}
+```
+
+---
+
+### Incident Patch 2: `e4d319d7` (2026-11-13)
+**Commit Message**: Merge pull request #7419 from crazy-max/fix-attestation-empty-layers
+
+exporter: skip empty attestation manifests
+
+**File**: `client/client_export_metadata_test.go` (modified, +79/-0)
+```diff
+@@ -195,6 +195,85 @@ func testAttestationBundle(t *testing.T, sb integration.Sandbox) {
+ 	}
+ }
+ 
++func testAttestationEmptyBundle(t *testing.T, sb integration.Sandbox) {
++	workers.CheckFeatureCompat(t, sb, workers.FeatureOCIExporter)
++	requiresLinux(t)
++	c, err := New(sb.Context(), sb.Address())
++	require.NoError(t, err)
++	defer c.Close()
++
++	frontend := func(ctx context.Context, c gateway.Client) (*gateway.Result, error) {
++		p := platforms.MustParse("linux/amd64")
++		pk := platforms.Format(p)
++		// An empty bundle unpacks to zero statements in the image exporter.
++		def, err := llb.Scratch().File(llb.Mkdir("/bundle", 0700)).Marshal(ctx, llb.Platform(p))
++		if err != nil {
++			return nil, err
++		}
++		r, err := c.Solve(ctx, gateway.SolveRequest{Definition: def.ToPB()})
++		if err != nil {
++			return nil, err
++		}
++		ref, err := r.SingleRef()
++		if err != nil {
++			return nil, err
++		}
++		res := gateway.NewResult()
++		res.AddRef(pk, ref)
++		res.AddAttestation(pk, gateway.Attestation{
++			Kind: gatewaypb.AttestationKind_Bundle,
++			Ref:  ref,
++			Path: "/bundle",
++		})
++		dt, err := json.Marshal(exptypes.Platforms{
++			Platforms: []exptypes.Platform{
++				{
++					ID:       pk,
++					Platform: p,
++				},
++			},
++		})
++		if err != nil {
++			return nil, err
++		}
++		res.AddMeta(exptypes.ExporterPlatformsKey, dt)
++		return res, nil
++	}
++
++	for _, ociArtifact := range []bool{false, true} {
++		t.Run("oci-artifact="+strconv.FormatBool(ociArtifact), func(t *testing.T) {
++			out := filepath.Join(t.TempDir(), "out.tar")
++			outW, err := os.Create(out)
++			require.NoError(t, err)
++			_, err = c.Build(sb.Context(), SolveOpt{
++				Exports: []ExportEntry{
++					{
++						Type: ExporterOCI,
++						Attrs: map[string]string{
++							"oci-artifact": strconv.FormatBool(ociArtifact),
++						},
++						Output: fixedWriteCloser(outW),
++					},
++				},
++			}, "", frontend, nil)
++			require.NoError(t, err)
++			dt, err := os.ReadFile(out)
++			require.NoError(t, err)
++			m, err := testutil.ReadTarToMap(dt, false)
++			require.NoError(t, err)
++			var index ocispecs.Index
++			require.NoError(t, json.Unmarshal(m[ocispecs.ImageIndexFile].Data, &index))
++			require.Len(t, index.Manifests, 1)
++			require.NoError(t, json.Unmarshal(m[ocispecs.ImageBlobsDir+"/sha256/"+index.Manifests[0].Digest.Hex()].Data, &index))
++			require.Len(t, index.Manifests, 1)
++			desc := index.Manifests[0]
++			require.NotNil(t, desc.Platform)
++			require.Equal(t, "linux/amd64", platforms.Format(*desc.Platform))
++			require.NotContains(t, desc.Annotations, attestation.DockerAnnotationReferenceType)
++		})
++	}
++}
++
+ func testAttestationDefaultSubject(t *testing.T, sb integration.Sandbox) {
+ 	workers.CheckFeatureCompat(t, sb, workers.FeatureDirectPush)
+ 	c, err := New(sb.Context(), sb.Address())
+```
+
+**File**: `client/client_test.go` (modified, +1/-0)
+```diff
+@@ -116,6 +116,7 @@ var allTests = []func(t *testing.T, sb integration.Sandbox){
+ 
+ 	// client_export_metadata_test.go
+ 	testAttestationBundle,
++	testAttestationEmptyBundle,
+ 	testAttestationDefaultSubject,
+ 	testExportAnnotations,
+ 	testExportAnnotationsMediaTypes,
+```
+
+**File**: `exporter/containerimage/writer.go` (modified, +3/-0)
+```diff
+@@ -319,6 +319,9 @@ func (ic *ImageWriter) Commit(ctx context.Context, inp *exporter.Source, session
+ 			if err != nil {
+ 				return nil, nil, err
+ 			}
++			if len(attestations) == 0 {
++				continue
++			}
+ 
+ 			eg, ctx2 := errgroup.WithContext(ctx)
+ 			for i, att := range attestations {
+```
+
+---
+
+### Incident Patch 3: `f24a1f50` (2026-11-13)
+**Commit Message**: Merge pull request #7420 from tonistiigi/go127-big-pattern-fix
+
+session: allow large filesync pattern lists in go1.27
+
+**File**: `client/client_local_source_test.go` (modified, +59/-0)
+```diff
+@@ -433,3 +433,62 @@ func testParallelLocalBuilds(t *testing.T, sb integration.Sandbox) {
+ 	err = eg.Wait()
+ 	require.NoError(t, err)
+ }
++
++// testLocalSourceManyPatterns checks that filesync patterns are not limited by
++// the HTTP/2 header value count. Every pattern is sent as a separate gRPC
++// metadata value and Go 1.27 net/http rejects requests with more than 500 of
++// them by default.
++func testLocalSourceManyPatterns(t *testing.T, sb integration.Sandbox) {
++	c, err := New(sb.Context(), sb.Address())
++	require.NoError(t, err)
++	defer c.Close()
++
++	dir := integration.Tmpdir(
++		t,
++		fstest.CreateFile("foo", []byte("foo"), 0600),
++		fstest.CreateFile("ignored-1", []byte("ignored"), 0600),
++	)
++
++	const n = 1000
++	excludes := make([]string, 0, n)
++	includes := make([]string, 0, n+1)
++	for i := 1; i <= n; i++ {
++		excludes = append(excludes, fmt.Sprintf("ignored-%d", i))
++		includes = append(includes, fmt.Sprintf("included-%d", i))
++	}
++	includes = append(includes, "foo")
++
++	for _, tc := range []struct {
++		name string
++		opt  llb.LocalOption
++	}{
++		{name: "exclude", opt: llb.ExcludePatterns(excludes)},
++		{name: "include", opt: llb.IncludePatterns(includes)},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			def, err := llb.Local("mylocal", tc.opt).Marshal(sb.Context())
++			require.NoError(t, err)
++
++			destDir := t.TempDir()
++			_, err = c.Solve(sb.Context(), def, SolveOpt{
++				Exports: []ExportEntry{
++					{
++						Type:      ExporterLocal,
++						OutputDir: destDir,
++					},
++				},
++				LocalMounts: map[string]fsutil.FS{
++					"mylocal": dir,
++				},
++			}, nil)
++			require.NoError(t, err)
++
++			dt, err := os.ReadFile(filepath.Join(destDir, "foo"))
++			require.NoError(t, err)
++			require.Equal(t, "foo", string(dt))
++
++			_, err = os.Stat(filepath.Join(destDir, "ignored-1"))
++			require.ErrorIs(t, err, os.ErrNotExist)
++		})
++	}
++}
+```
+
+**File**: `client/client_test.go` (modified, +1/-0)
+```diff
+@@ -192,6 +192,7 @@ var allTests = []func(t *testing.T, sb integration.Sandbox){
+ 	testLocalSymlinkEscape,
+ 	testMetadataOnlyLocal,
+ 	testParallelLocalBuilds,
++	testLocalSourceManyPatterns,
+ 
+ 	// client_mergeop_test.go
+ 	testMergeOp,
+```
+
+**File**: `session/grpc.go` (modified, +1/-1)
+```diff
+@@ -63,7 +63,7 @@ func serve(ctx context.Context, grpcServer *grpc.Server, conn net.Conn) {
+ 		conn.Close()
+ 	}()
+ 	bklog.G(ctx).Debugf("serving grpc connection")
+-	(&http2.Server{}).ServeConn(conn, &http2.ServeConnOpts{Handler: grpcServer}) //nolint:staticcheck // This existing HTTP/2 connection is already established.
++	newHTTP2Server(ctx).ServeConn(conn, &http2.ServeConnOpts{Handler: grpcServer}) //nolint:staticcheck // This existing HTTP/2 connection is already established.
+ }
+ 
+ func grpcClientConn(ctx context.Context, conn net.Conn, opts map[string][]string) (context.Context, *grpc.ClientConn, error) {
+```
+
+**File**: `session/http2server_go127.go` (added, +29/-0)
+```diff
+@@ -0,0 +1,29 @@
++//go:build go1.27
++
++package session
++
++import (
++	"context"
++	"math"
++	"net/http"
++
++	"github.com/moby/buildkit/util/bklog"
++	"golang.org/x/net/http2"
++)
++
++// newHTTP2Server returns the HTTP/2 server for session connections.
++//
++// Since Go 1.27, x/net/http2 is backed by net/http, which limits requests to
++// http.DefaultMaxHeaderValueCount (500) header values. Session metadata, such
++// as filesync include/exclude patterns, uses one value per item and can exceed
++// that. The total header size is still bounded by http.DefaultMaxHeaderBytes.
++func newHTTP2Server(ctx context.Context) *http2.Server { //nolint:staticcheck // ServeConn on an established connection needs x/net/http2.
++	h2 := &http2.Server{} //nolint:staticcheck // ServeConn on an established connection needs x/net/http2.
++	// h1 only carries config for h2 connections and never serves on its own.
++	h1 := &http.Server{MaxHeaderValueCount: math.MaxInt}  //nolint:gosec // G112: session streams are long-lived, no read timeouts.
++	if err := http2.ConfigureServer(h1, h2); err != nil { //nolint:staticcheck // h1 is never served, Protocols does not apply.
++		bklog.G(ctx).WithError(err).Warn("failed to configure session http2 server")
++		return &http2.Server{} //nolint:staticcheck // ServeConn on an established connection needs x/net/http2.
++	}
++	return h2
++}
+```
+
+**File**: `session/http2server_legacy.go` (added, +15/-0)
+```diff
+@@ -0,0 +1,15 @@
++//go:build !go1.27
++
++package session
++
++import (
++	"context"
++
++	"golang.org/x/net/http2"
++)
++
++// newHTTP2Server returns the HTTP/2 server for session connections. Before Go
++// 1.27 x/net/http2 has no header value count limit, so no extra setup is needed.
++func newHTTP2Server(_ context.Context) *http2.Server { //nolint:staticcheck // ServeConn on an established connection needs x/net/http2.
++	return &http2.Server{} //nolint:staticcheck // ServeConn on an established connection needs x/net/http2.
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7420** (2026-11-13): session: allow large filesync pattern lists in go1.27 (@tonistiigi)
+- **PR #7419** (2026-11-13): exporter: skip empty attestation manifests (@crazy-max)
+- **PR #7417** (closed): fix attestation manifest serializing layers as null with zero statements (@ToniAdreal)
 - **PR #7407** (2026-11-11): [v0.35] vendor: update policy helpers to 6acab594b423 (@tonistiigi)
 - **PR #7406** (2026-11-11): vendor: update policy helpers to 6acab594b423 (@tonistiigi)
 - **PR #7405** (2026-11-12): build(deps): bump vmactions/freebsd-vm from 1.5.9 to 1.6.0 (@dependabot[bot])
-- **PR #7402** (2026-11-10): vendor: golang.org/x/sys v0.50.0 (@thaJeztah)
-- **PR #7401** (2026-11-10): session: only log healthcheck recovery after a failure (@thaJeztah)
-- **PR #7400** (2026-11-10): [v0.35] cherry-picks for v0.35.0-rc2 (@tonistiigi)
 
 ---
 
@@ -2382,30 +2774,65 @@ build(deps): bump docker/github-builder/.github/workflows/bake.yml from 1.18.1 t
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #7397 from moby/dependabot/github_actions/docker/github-build
+## X. session): allow large filesync pattern lists
 
 **RULE**:
-When implementing operations in `.github/workflows/buildkit.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in moby/buildkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `client/client_local_source_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in moby/buildkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `32eca340`: Merge pull request #7397 from moby/dependabot/github_actions/docker/github-builder/dot-github/workflows/bake.yml-1.19.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `447bca32`: session): allow large filesync pattern lists. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/buildkit.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `client/client_local_source_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-    uses: docker/github-builder/.github/workflows/bake.yml@a31d2311da4d55e21b978c1c52bab82ba97d51ee # v1.19.0
-    uses: docker/github-builder/.github/workflows/bake.yml@a31d2311da4d55e21b978c1c52bab82ba97d51ee # v1.19.0
+
+// testLocalSourceManyPatterns checks that filesync patterns are not limited by
+// the HTTP/2 header value count. Every pattern is sent as a separate gRPC
+// metadata value and Go 1.27 net/http rejects requests with more than 500 of
+// them by default.
+func testLocalSourceManyPatterns(t *testing.T, sb integration.Sandbox) {
+	c, err := New(sb.Context(), sb.Address())
+	require.NoError(t, err)
+	defer c.Close()
+
+	dir := integration.Tmpdir(
+		t,
+		fstest.CreateFile("foo", []byte("foo"), 0600),
+		fstest.CreateFile("ignored-1", []byte("ignored"), 0600),
+	)
+
+	const n = 1000
+	excludes := make([]string, 0, n)
+	includes := make([]string, 0, n+1)
+	for i := 1; i <= n; i++ {
+		excludes = append(excludes, fmt.Sprintf("ignored-%d", i))
+		includes = append(includes, fmt.Sprintf("included-%d", i))
+	}
+	includes = append(includes, "foo")
+
+	for _, tc := range []struct {
+		name string
+		opt  llb.LocalOption
+	}{
+		{name: "exclude", opt: llb.ExcludePatterns(excludes)},
+		{name: "include", opt: llb.IncludePatterns(includes)},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			def, err := llb.Local("mylocal", tc.opt).Marshal(sb.Context())
+			require.NoError(t, err)
+
+			destDir := t.TempDir()
+			_, err = c.Solve
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-    uses: docker/github-builder/.github/workflows/bake.yml@cbc9d42f8c89a55623392aadd03600965b80e963 # v1.18.1
-    uses: docker/github-builder/.github/workflows/bake.yml@cbc9d42f8c89a55623392aadd03600965b80e963 # v1.18.1
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `32eca340` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `447bca32` are properly handled with clean fallback behavior.

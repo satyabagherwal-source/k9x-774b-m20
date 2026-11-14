@@ -9756,3 +9756,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-openai-gpt-oss-20b` | `https://huggingface.co/openai/gpt-oss-20b` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-14T03:15:21.650Z |
 | `learn-dom-f-f89a3b28` | `project://hf-openai-gpt-oss-20b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md` | 2026-11-14T03:16:01.655Z |
 | `learn-dom-j-37b3b4a9` | `project://hf-openai-gpt-oss-20b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md` | 2026-11-14T03:16:45.270Z |
+| `learn-huggingface-bigscience-bloom` | `https://huggingface.co/bigscience/bloom` | `hf-bigscie` | Multi-dimensional audit evidence | 2026-11-14T03:32:11.065Z |
+| `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `e4d319d7` | Multi-dimensional audit evidence | 2026-11-14T03:32:23.106Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `0d822c9d` | Multi-dimensional audit evidence | 2026-11-14T03:32:25.581Z |
+| `learn-dom-d-f2b017df` | `project://hf-bigscience-bloom` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md` | 2026-11-14T03:33:00.049Z |

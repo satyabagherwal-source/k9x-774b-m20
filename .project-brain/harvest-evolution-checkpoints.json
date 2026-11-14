@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T03:16:48.027Z",
+  "last_updated": "2026-11-14T03:33:01.701Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-14T02:46:28.602Z",
@@ -118,7 +118,7 @@
       "staged_for_review": 1
     },
     "tailscale-tailscale-learnings.md": {
-      "processed_at": "2026-11-11T10:00:26.533Z",
+      "processed_at": "2026-11-14T03:33:01.120Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -493,7 +493,7 @@
       "staged_for_review": 1
     },
     "moby-buildkit-learnings.md": {
-      "processed_at": "2026-11-11T18:36:00.960Z",
+      "processed_at": "2026-11-14T03:33:00.473Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2361,9 +2361,14 @@
       "processed_at": "2026-11-14T03:16:46.393Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-bigscience-bloom-learnings.md": {
+      "processed_at": "2026-11-14T03:33:00.050Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 753,
-  "total_canonical_promoted": 160,
-  "total_staged_for_review": 589
+  "total_dossiers_evaluated": 756,
+  "total_canonical_promoted": 161,
+  "total_staged_for_review": 591
 }

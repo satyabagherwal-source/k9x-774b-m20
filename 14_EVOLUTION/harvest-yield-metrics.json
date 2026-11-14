@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T03:15:21.657Z",
-  "total_cycles_completed": 9445,
-  "total_learnings_persisted": 9445,
-  "total_rules_promoted": 9151,
+  "last_updated": "2026-11-14T03:32:25.586Z",
+  "total_cycles_completed": 9448,
+  "total_learnings_persisted": 9448,
+  "total_rules_promoted": 9153,
   "history": [
-    {
-      "timestamp": "2026-11-13T13:34:22.608Z",
-      "repository": "mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF",
-      "learningId": "learn-huggingface-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-i1-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T13:42:19.184Z",
-      "repository": "nvidia/Nemotron-3-Diarization",
-      "learningId": "learn-huggingface-nvidia-nemotron-3-diarization",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T13:42:27.446Z",
-      "repository": "hashicorp/terraform",
-      "learningId": "learn-github-hashicorp-terraform",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T13:42:44.692Z",
       "repository": "MariaDB/server",
@@ -1403,6 +1382,27 @@
       "repository": "openai/gpt-oss-20b",
       "learningId": "learn-huggingface-openai-gpt-oss-20b",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T03:32:11.071Z",
+      "repository": "bigscience/bloom",
+      "learningId": "learn-huggingface-bigscience-bloom",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T03:32:23.111Z",
+      "repository": "moby/buildkit",
+      "learningId": "learn-github-moby-buildkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T03:32:25.586Z",
+      "repository": "tailscale/tailscale",
+      "learningId": "learn-github-tailscale-tailscale",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

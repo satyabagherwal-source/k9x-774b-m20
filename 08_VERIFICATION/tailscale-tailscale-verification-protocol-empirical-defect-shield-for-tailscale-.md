@@ -4,22 +4,22 @@
 {
   "source_repository": "tailscale/tailscale",
   "source_url": "https://github.com/tailscale/tailscale",
-  "source_version": "e0d532cc",
+  "source_version": "0d822c9d",
   "license": "BSD-3-Clause",
-  "timestamp": "2026-11-13T15:18:37.040Z",
+  "timestamp": "2026-11-14T03:32:25.748Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-tailscale-tailscale",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [tailscale/tailscale](https://github.com/tailscale/tailscale) (Revision: `e0d532cc`).  
-> **License**: BSD-3-Clause | **Timestamp**: `2026-11-13T15:18:37.040Z`  
+> **Provenance**: Harvested from [tailscale/tailscale](https://github.com/tailscale/tailscale) (Revision: `0d822c9d`).  
+> **License**: BSD-3-Clause | **Timestamp**: `2026-11-14T03:32:25.748Z`  
 > **Learning ID**: `learn-github-tailscale-tailscale`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `tailscale/tailscale` (Commit: `e0d532cc`)
+- **Target Repository**: `tailscale/tailscale` (Commit: `0d822c9d`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T15:18:36.455Z  
+> **Harvest Timestamp**: 2026-11-14T03:32:24.749Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39056 stars
+- **Stars / Engagement**: 39065 stars
 
 ---
 
@@ -814,8 +814,10 @@ export const sessionStateStorage: IPNStateStorage = {
 - **Issue #22334** (2026-11-13): **ipn/ipnlocal: home DERP change writes the netmap cache without CacheNetworkMaps**
   *Symptoms*: ### What is the issue?  `onHomeDERPUpdateLocked` writes the self-only netmap cache without checking the `CacheNetworkMaps` node capability. The full netmap and peer delta paths both check it, and a full netmap deletes the cache when the capability is missing.  So on a node without the capability, each home DERP change recreates a cache with no peers. On the next start the node logs `loaded netmap from disk cache; 0 peers` and goes Running before control sends any peers. A tsnet app that sets an exit node by IP when the backend becomes Running gets `no node found in netmap with IP` on those starts.  ### Steps to reproduce  1. Run a tsnet node whose node lacks `CacheNetworkMaps`. 2. Restart it on the same state dir.  After a run that logs `updating netmap in disk cache`, the next start loads a cache with 0 peers. With the capability check added, the cache is never recreated.  ### Are there any recent changes that introduced the issue?  #19491 / #19818. The cache write they added came after the capability gate from #19117.  ### OS  _No response_  ### OS version  15.8.1 (arm64)  ### Tailscale version  main @ 1f6259a88 (tsnet, userspace)  ### Other software  _No response_  ### Bug report  _No response_ 
 
-- **Issue #22274** (2026-11-10): **Logout can leave the node Stopped with its old IPs**
-  *Symptoms*: `LocalBackend.Logout` deletes the profile and resets the backend, which then ends up in `NeedsLogin` with no netmap.  If a netmap update is being processed at the same time, the state then moves to `Stopped`, [logging](https://github.com/tailscale/tailscale/blob/62d055f4c38b610d63a8cee7fa4a7e65b01564eb/ipn/ipnlocal/local.go#L7124-L7125):  ``` Switching ipn state NeedsLogin -> Stopped (WantRunning=false, nm=true) ```  The logged-out profile now holds the old netmap, reporting `Stopped` instead of `NeedsLogin`, and `tsnet.Server.TailscaleIPs` returns the old addresses until the next login completes.  Seems to be due to `setControlClientStatusLocked` checking that the status is from the current control client, but then releases `b.mu` around `tkaSyncIfNeeded` and does not check again, so it can apply the old client's netmap after `Logout` has reset the backend.  Hit this intermittently in automated tests where a tsnet client logs out shortly after reaching `Running`. It shows up more often on slower (Android) devices.
+- **Issue #22307** (2026-11-13): **eventbus: some subscribers use pointer types for events published by value and never run**
+  *Symptoms*: The `eventbus` routes events by exact `reflect.Type`, so a subscriber of `*T` never receives events published as `T`.  - `(*ipnlocal.LocalBackend).onClientVersion` subscribes to `*tailcfg.ClientVersion`, but `controlclient` publishes `tailcfg.ClientVersion`. `lastClientVersion` is never set, `health.SetLatestVersion` is never called, and update-available notifications are never sent to clients. - `(*logtail.Logger).onChangeDelta` subscribes to `*netmon.ChangeDelta`, but `netmon` publishes `netmon.ChangeDelta`. In `tailscaled`, which gives the logger both an `eventbus` and a `netmon.Monitor`, `awaitInternetUp` waits only on a signal this handler sets, so after an upload fails while the host has no IP addresses, log uploads never resume until shutdown. - `netmon.LinkChangeLogLimiter` subscribes to `*netmon.ChangeDelta`, so the portmapper log limiter in `magicsock` never resets its seen-message cache after a major link change.
+  **Post-Mortem & Fix Analysis**:
+  > Fixed by #22308 and #22322.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -832,748 +834,148 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e0d532cc` (2026-11-13)
-**Commit Message**: ipn/ipnlocal: don't write a netmap cache without CacheNetworkMaps (#22335)
+### Incident Patch 1: `283569e7` (2026-11-13)
+**Commit Message**: derp/derpserver: fix data race on sclient.keepAliveTimer
 
-onHomeDERPUpdateLocked wrote the netmap cache without checking the
-CacheNetworkMaps capability, unlike the full netmap and peer delta
-paths. On a node without it, each home DERP change recreated a cache
-with no peers, and the next start went Running from it before control
-sent any peers.
+run assigned keepAliveTimer after AfterFunc had already armed it, and
+the timer's func uses the field (writePending resets it), so nothing
+ordered the assignment before the first keepalive. Assign it first and
+arm it with Reset, which does.
 
-Check the capability before that write. A cache written before this
-fix can still be loaded once; the first netmap from control without
-the capability then discards it.
+No existing test ran long enough for a keepalive to fire. The new
+TestKeepAlive waits for three under synctest; with the race detector it
+fails without this fix.
 
-Fixes #22334
+Updates #13038
 
-Change-Id: I2f49a6617e6756e36316605995b171f6d7b3ff28
+Signed-off-by: Brad Fitzpatrick <[REDACTED_EMAIL]>
+Change-Id: I8f2c4e6a1b3d5f7091a2c3e4d5f6a7b8c9d0e1f2
 
-Signed-off-by: Andy Tian <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `ipn/ipnlocal/diskcache_test.go` (modified, +32/-1)
+**File**: `derp/derpserver/derpserver.go` (modified, +5/-1)
 ```diff
-@@ -11,16 +11,19 @@ import (
- 	"tailscale.com/ipn"
- 	"tailscale.com/ipn/ipnlocal/netmapcache"
- 	"tailscale.com/tailcfg"
-+	"tailscale.com/tailcfg/nodecap"
- 	"tailscale.com/tstest"
- 	"tailscale.com/types/netmap"
- 	"tailscale.com/util/eventbus"
-+	"tailscale.com/util/set"
- 	"tailscale.com/wgengine/magicsock"
- )
- 
- // newCacheTestNetmap returns a minimal valid netmap suitable for testing disk
--// cache operations.
-+// cache operations, for a node that is allowed to cache netmaps.
- func newCacheTestNetmap() *netmap.NetworkMap {
- 	return &netmap.NetworkMap{
-+		AllCaps: set.Of(nodecap.CacheNetworkMaps),
- 		SelfNode: (&tailcfg.Node{
- 			Name: "test-node.ts.net",
- 			User: tailcfg.UserID(1),
-@@ -113,6 +116,34 @@ func TestOnHomeDERPUpdate(t *testing.T) {
- 			t.Errorf("cached SelfNode.HomeDERP() = %d, want %d", got, wantDERP)
- 		}
- 	})
-+	t.Run("no_cache_cap", func(t *testing.T) {
-+		b := newTestBackend(t)
-+		done := make(chan struct{})
-+		tstest.Replace(t, &testOnlyHomeDERPUpdate, func() { close(done) })
-+
-+		nm := newCacheTestNetmap()
-+		nm.AllCaps = nil
-+		b.currentNode().SetNetMap(nm)
-+
-+		bus := b.Sys().Bus.Get()
-+		ec := bus.Client("test.TestOnHomeDERPUpdate")
-+		pub := eventbus.Publish[magicsock.HomeDERPChanged](ec)
-+
-+		const wantDERP = 11
-+		pub.Publish(magicsock.HomeDERPChanged{Old: 0, New: wantDERP})
-+		<-done
-+
-+		if got := b.currentNode().homeDERP.Load(); got != wantDERP {
-+			t.Errorf("b.homeDERP = %d, want %d", got, wantDERP)
-+		}
-+
-+		// Without the capability, the update must not create a cache.
-+		b.mu.Lock()
-+		defer b.mu.Unlock()
-+		if _, ok := b.loadDiskCacheLocked(); ok {
-+			t.Fatal("loadDiskCacheLocked returned ok=true; want no cache without the CacheNetworkMaps capability")
-+		}
-+	})
- 	t.Run("old_does_not_match", func(t *testing.T) {
- 		b := newTestBackend(t)
- 		done := make(chan struct{})
-```
-
-**File**: `ipn/ipnlocal/local.go` (modified, +4/-0)
-```diff
-@@ -836,6 +836,10 @@ func (b *LocalBackend) onHomeDERPUpdateLocked(du magicsock.HomeDERPChanged) {
- 		return
+@@ -1265,7 +1265,11 @@ func (c *sclient) run(ctx context.Context) error {
+ 		c.startStatsLoop(ctx)
  	}
  
-+	if !cn.SelfHasCap(nodecap.CacheNetworkMaps) || !envknob.BoolDefaultTrue("TS_USE_CACHED_NETMAP") {
-+		return
-+	}
+-	c.keepAliveTimer = c.s.clock.AfterFunc(keepAliveInterval(), c.onKeepAliveTimer)
++	// Assign keepAliveTimer before arming it with Reset: its func
++	// resets it (in writePending), and Reset is what orders this
++	// assignment before the func runs.
++	c.keepAliveTimer = c.s.clock.AfterFunc(365*24*time.Hour, c.onKeepAliveTimer)
++	c.keepAliveTimer.Reset(keepAliveInterval())
+ 
+ 	for {
+ 		ft, fl, err := derp.ReadFrameHeader(c.br)
+```
+
+**File**: `derp/derpserver/handler_test.go` (modified, +36/-0)
+```diff
+@@ -4,6 +4,7 @@
+ package derpserver
+ 
+ import (
++	"bufio"
+ 	"bytes"
+ 	"context"
+ 	"crypto/tls"
+@@ -158,3 +159,38 @@ func TestHandlerTLSReaderSize(t *testing.T) {
+ 		})
+ 	}
+ }
 +
- 	// Update the relevant parts of the cached copy of the network map, notably
- 	// not including the peers.
- 	if err := b.writeNetmapToDiskLockedWithoutPeers(b.NetMapNoPeers()); err != nil {
++// TestKeepAlive verifies that the server sends a client keepalives. Run
++// with the race detector, it also verifies that the keepalive timer's
++// func (which resets the timer) is ordered after the timer is assigned.
++func TestKeepAlive(t *testing.T) {
++	synctest.Test(t, func(t *testing.T) {
++		s := New(key.NewNode(), t.Logf)
++		defer s.Close()
++		ctx, cancel := context.WithCancel(context.Background())
++		defer cancel()
++		connIn, connOut := memnet.NewConn("derp", 64<<10)
++		defer connIn.Close()
++		defer connOut.Close()
++		go s.Accept(ctx, connIn, bufio.NewReadWriter(bufio.NewReader(connIn), bufio.NewWriter(connIn)), "test-client")
++
++		brw := bufio.NewReadWriter(bufio.NewReader(connOut), bufio.NewWriter(connOut))
++		c, err := derp.NewClient(key.NewNode(), connOut, brw, t.Logf)
++		if err != nil {
++			t.Fatal(err)
++		}
++		start := time.Now()
++		for got := 0; got < 3; {
++			m, err := c.Recv()
++			if err != nil {
++				t.Fatal(err)
++			}
++			if _, ok := m.(derp.KeepAliveMessage); ok {
++				got++
++			}
++		}
++		if d := time.Since(start); d < 3*derp.KeepAlive {
++			t.Errorf("got 3 keepalives in %v; want at least %v", d, 3*derp.KeepAlive)
++		}
++	})
++}
 ```
 
 ---
 
-### Incident Patch 2: `c687660a` (2026-11-13)
-**Commit Message**: ipn/ipnlocal{,/netmapcache}: extract file store in prep for new stores (#22266)
+### Incident Patch 2: `027c2a82` (2026-11-13)
+**Commit Message**: clientupdate: stop requesting the -winui MSI variant on Windows
 
+The Windows installers no longer come in a separate -winui variant.
+Remove the temporary qualifier.
 
-The filestore was the only implemented store but we want to be able to
-add other stores depending on the platform.
+Updates tailscale/corp#50987
 
-Make space for compiling on more stores, though keep the file store as
-the default option.
+Signed-off-by: Nick Khyl <[REDACTED_EMAIL]>
 
-Updates #22265
-
-Signed-off-by: Claus Lensbøl <[REDACTED_EMAIL]>
-
-**File**: `ipn/ipnlocal/diskcache.go` (modified, +54/-23)
+**File**: `clientupdate/clientupdate_windows.go` (modified, +1/-19)
 ```diff
-@@ -78,7 +78,12 @@ func (b *LocalBackend) ensureDiskCacheLocked() error {
+@@ -91,17 +91,6 @@ func verifyAuthenticode(path string) error {
+ 	return authenticode.Verify(path, certSubjectTailscale)
+ }
+ 
+-func isTSGUIPresent() bool {
+-	us, err := os.Executable()
+-	if err != nil {
+-		return false
+-	}
+-
+-	tsgui := filepath.Join(filepath.Dir(us), "tsgui.dll")
+-	_, err = os.Stat(tsgui)
+-	return err == nil
+-}
+-
+ func (up *Updater) updateWindows() error {
+ 	if msi := os.Getenv(winMSIEnv); msi != "" {
+ 		// stdout/stderr from this part of the install could be lost since the
+@@ -156,14 +145,7 @@ you can run the command prompt as Administrator one of these ways:
+ 	}
+ 	up.cleanupOldDownloads(filepath.Join(msiDir, "*.msi"))
+ 
+-	qualifiers := []string{ver, arch}
+-	// TODO(aaron): Temporary hack so autoupdate still works on winui builds;
+-	// remove when we enable winui by default on the unstable track.
+-	if isTSGUIPresent() {
+-		qualifiers = append(qualifiers, "winui")
+-	}
+-
+-	pkgsPath := fmt.Sprintf("%s/tailscale-setup-%s.msi", up.Track, strings.Join(qualifiers, "-"))
++	pkgsPath := fmt.Sprintf("%s/tailscale-setup-%s-%s.msi", up.Track, ver, arch)
+ 	msiTarget := filepath.Join(msiDir, path.Base(pkgsPath))
+ 	if err := up.downloadURLToFile(pkgsPath, msiTarget); err != nil {
  		return err
- 	}
- 	if c := b.diskCache; c.cache == nil || c.dir != dir {
--		b.diskCache.cache = netmapcache.NewCache(netmapcache.FileStore(dir))
-+		b.closeDiskCacheLocked() // if we changed the dir, close the previous cache.
-+		store, err := netmapcache.NewStore(b.ctx, dir)
-+		if err != nil {
-+			return fmt.Errorf("unable to open store: %s", err)
-+		}
-+		b.diskCache.cache = netmapcache.NewCache(store)
- 		b.diskCache.dir = dir
- 	}
- 	return nil
-@@ -94,7 +99,13 @@ func (b *LocalBackend) loadDiskCacheLocked() (om *netmap.NetworkMap, ok bool) {
- 		return nil, false
- 	}
- 	if c := b.diskCache; c.cache == nil || c.dir != dir {
--		b.diskCache.cache = netmapcache.NewCache(netmapcache.FileStore(dir))
-+		b.closeDiskCacheLocked() // if we changed the dir, close the previous cache.
-+		store, err := netmapcache.NewStore(b.currentNode().Context(), dir)
-+		if err != nil {
-+			b.logf("unable to open store: %s", err)
-+			return nil, false
-+		}
-+		b.diskCache.cache = netmapcache.NewCache(store)
- 		b.diskCache.dir = dir
- 	}
- 	nm, err := b.diskCache.cache.Load(b.currentNode().Context())
-@@ -114,28 +125,30 @@ func (b *LocalBackend) discardDiskCacheLocked() {
- 	if b.diskCache.cache == nil {
- 		return // nothing to do, we do not have a cache
- 	}
--	// Reaching here, we have a cache directory that needs to be purged.
--	// Log errors but do not fail for them.
-+	// Reaching here, we have a cache that needs to be purged.
-+	// Log errors but do not fail for them. Clear both the configured store and
-+	// the fallback FileStore. This could be the same store twice, in which case
-+	// the second clear will do nothing. We do this so that clients built with
-+	// only the default FileStore support will not persist stale cache data after
-+	// switching to a different storage implementation.
-+	if err := b.diskCache.cache.Clear(b.ctx); err != nil {
-+		b.logf("clearing netmap cache: %v", err)
-+	}
- 	store := netmapcache.FileStore(b.diskCache.dir)
--	if err := b.clearStoreLocked(b.currentNode().Context(), store); err != nil {
-+	if err := store.Clear(b.ctx); err != nil {
- 		b.logf("clearing netmap cache: %v", err)
- 	}
-+	b.closeDiskCacheLocked()
- 	b.diskCache = diskCache{} // drop in-memory state
- }
- 
--// clearStoreLocked discards all the keys in the specified store.
--func (b *LocalBackend) clearStoreLocked(ctx context.Context, store netmapcache.Store) error {
--	var errs []error
--	for key, err := range store.List(ctx, "") {
--		if err != nil {
--			errs = append(errs, fmt.Errorf("list cache contest: %w", err))
--			break
--		}
--		if err := store.Remove(ctx, key); err != nil {
--			errs = append(errs, fmt.Errorf("discard cache key %q: %w", key, err))
--		}
-+func (b *LocalBackend) closeDiskCacheLocked() {
-+	if b.diskCache.cache == nil {
-+		return // nothing to do, we do not have a cache
-+	}
-+	if err := b.diskCache.cache.Close(b.ctx); err != nil {
-+		b.logf("error closing cache: %v", err)
- 	}
--	return errors.Join(errs...)
- }
- 
- // ClearNetmapCache discards stored netmap caches (if any) for profiles for the
-@@ -149,15 +162,33 @@ func (b *LocalBackend) ClearNetmapCache(ctx context.Context) error {
- 	b.mu.Lock()
- 	defer b.mu.Unlock()
- 
-+	// Close the active cache before clearing profiles so we can safely re-open
-+	// each profile's store. We hold the lock here to ensure no writes happens to
-+	// the active profile while clearing profiles.
-+	b.closeDiskCacheLocked()
-+	b.diskCache = diskCache{}
-+
- 	var errs []error
- 	for _, p := range b.pm.Profiles() {
--		store := netmapcache.FileStore(b.profileDataPathLocked(p.ID(), "netmap-cache"))
--		err := b.clearStoreLocked(ctx, store)
--		if err != nil {
--			errs = append(errs, fmt.Errorf("clear netmap cache for profile %q: %w", p.ID(), err))
-+		dir := b.profileDataPathLocked(p.ID(), "netmap-cache")
-+
-+		// Open and clear the configured store for this profile.
-+		if store, err := netmapcache.OpenStore(ctx, dir); err != nil {
-+			errs = append(errs, fmt.Errorf("open store for profile %q: %w", p.ID(), err))
-+		} else if store == nil {
-+			continue // store does not exist
-+		} else {
-+			if err := store.Clear(ctx); err != nil {
-+				errs = append(errs, fmt.Errorf("clear netmap cache for profile %q: %w", p.ID(), err))
-+			}
-+			store.Close(ctx)
- 		}
--	}
- 
--	b.diskCache = diskCache{} // drop in-memory state
-+		// Also clear the FileStore as a fallback for file-based entries left over
-+		// from instances running without a no-file backend.
-+		if err := netmapcache.FileStore(dir).Clear(ctx); err != nil {
-+			errs = append(errs, fmt.Errorf("clear file cache for profile %q: %w", p.ID(), err))
-+		}
-+	}
- 	return errors.Join(errs...)
- }
-```
-
-**File**: `ipn/ipnlocal/diskcache_test.go` (modified, +112/-0)
-```diff
-@@ -5,8 +5,11 @@ package ipnlocal
- 
- import (
- 	"net/netip"
-+	"os"
- 	"testing"
- 
-+	"tailscale.com/ipn"
-+	"tailscale.com/ipn/ipnlocal/netmapcache"
- 	"tailscale.com/tailcfg"
- 	"tailscale.com/tstest"
- 	"tailscale.com/types/netmap"
-@@ -204,6 +207,115 @@ func TestOnHomeDERPUpdate(t *testing.T) {
- 	})
- }
- 
-+func TestDiscardDiskCacheLocked(t *testing.T) {
-+	b := newTestBackend(t)
-+	nm := newCacheTestNetmap()
-+	b.currentNode().SetNetMap(nm)
-+
-+	b.mu.Lock()
-+	defer b.mu.Unlock()
-+
-+	if err := b.writeNetmapToDiskLockedWithPeers(nm); err != nil {
-+		t.Fatalf("write: %v", err)
-+	}
-+	if _, ok := b.loadDiskCacheLocked(); !ok {
-+		t.Fatal("expected cache to be loadable after write")
-+	}
-+
-+	b.discardDiskCacheLocked()
-+
-+	if _, ok := b.loadDiskCacheLocked(); ok {
-+		t.Fatal("expected cache to be gone after discard")
-+	}
-+}
-+
-+func TestClearNetmapCache(t *testing.T) {
-+	b := newTestBackend(t)
-+	nm := newCacheTestNetmap()
-+	b.currentNode().SetNetMap(nm)
-+
-+	// Add the current profile to knownProfiles so ClearNetmapCache can iterate
-+	// over it later.
-+	cp := b.pm.CurrentProfile()
-+	b.pm.knownProfiles[cp.ID()] = cp
-+
-+	b.mu.Lock()
-+	if err := b.writeNetmapToDiskLockedWithPeers(nm); err != nil {
-+		b.mu.Unlock()
-+		t.Fatalf("write: %v", err)
-+	}
-+	b.mu.Unlock()
-+
-+	if err := b.ClearNetmapCache(t.Context()); err != nil {
-+		t.Fatalf("ClearNetmapCache: %v", err)
-+	}
-+
-+	b.mu.Lock()
-+	defer b.mu.Unlock()
-+	if _, ok := b.loadDiskCacheLocked(); ok {
-+		t.Error("expected cache to be gone after ClearNetmapCache")
-+	}
-+}
-+
-+func TestClearNetmapCacheMultiProfile(t *testing.T) {
-+	b := newTestBackend(t)
-+	nm := newCacheTestNetmap()
-+	b.currentNode().SetNetMap(nm)
-+
-+	// Register two profiles so ClearNetmapCache sees both.
-+	profile2 := (&ipn.LoginProfile{ID: "id-extra"}).View()
-+
-+	// Add the profiles to knownProfiles so ClearNetmapCache can iterate
-+	// over them later.
-+	cp := b.pm.CurrentProfile()
-+	b.pm.knownProfiles[cp.ID()] = cp
-+	b.pm.knownProfiles[profile2.ID()] = profile2
-+
-+	b.mu.Lock()
-+
-+	// Write netmap for the active profile.
-+	if err := b.writeNetmapToDiskLockedWithPeers(nm); err != nil {
-+		b.mu.Unlock()
-+		t.Fatalf("write profile1: %v", err)
-+	}
-+
-+	// Seed the second profile's cache directory directly emulating another
-+	// configured profile.
-+	dir2, err := b.profileMkdirAllLocked(profile2.ID(), "netmap-cache")
-+	if err != nil {
-+		b.mu.Unlock()
-+		t.Fatalf("mkdir profile2: %v", err)
-+	}
-+	store2 := netmapcache.FileStore(dir2)
-+	if err := store2.Store(t.Context(), "self", []byte(`{"Node":{}}`)); err != nil {
-+		b.mu.Unlock()
-+		t.Fatalf("seed profile2: %v", err)
-+	}
-+
-+	b.mu.Unlock()
-+
-+	if err := b.ClearNetmapCache(t.Context()); err != nil {
-+		t.Fatalf("ClearNetmapCache: %v", err)
-+	}
-+
-+	// Verify that the active profile is cleared.
-+	b.mu.Lock()
-+	_, ok := b.loadDiskCacheLocked()
-+	b.mu.Unlock()
-+	if ok {
-+		t.Error("profile1 cache still present after ClearNetmapCache")
-+	}
-+
-+	// Verify that the directory for the simulated cached profile is empty.
-+	entries, err := os.ReadDir(dir2)
-+	if err != nil && !os.IsNotExist(err) {
-+		t.Fatalf("ReadDir cached profile: %v", err)
-+	}
-+	if len(entries) > 0 {
-+		t.Errorf("directory for cached profile not cleared: %d entries remain", len(entries))
-+	}
-+}
-+
- func TestWriteNetmapDoesNotMutateOriginal(t *testing.T) {
- 	b := newTestBackend(t)
- 
-```
-
-**File**: `ipn/ipnlocal/local.go` (modified, +2/-0)
-```diff
-@@ -1406,6 +1406,7 @@ func (b *LocalBackend) shutdown() {
- 		b.notifyCancel()
- 	}
- 	b.appConnector.Close()
-+	b.closeDiskCacheLocked()
- 	b.mu.Unlock()
- 
- 	// These shutdown methods wait for goroutines that can acquire b.mu. The
-@@ -8783,6 +8784,7 @@ func (b *LocalBackend) resetForProfileChangeLocked() error {
- 		// down, so no need to do any work.
- 		return nil
- 	}
-+	b.closeDiskCacheLocked()
- 	if buildfeatures.HasDNS {
- 		if dm, ok := b.sys.DNSManager.GetOK(); ok {
- 			dm.Resolver().ClearNegativeCache()
-```
-
-**File**: `ipn/ipnlocal/netmapcache/default_store.go` (added, +29/-0)
-```diff
-@@ -0,0 +1,29 @@
-+// Copyright (c) Tailscale Inc & contributors
-+// SPDX-License-Identifier: BSD-3-Clause
-+
-+package netmapcache
-+
-+import (
-+	"context"
-+	"errors"
-+	"os"
-+)
-+
-+// TODO(cmol): Add compiler flags when having more stores
-+
-+// NewStore creates [Store] for backing the netmapcache. If the [Store] already
-+// exists, open the existing [Store].
-+func NewStore(_ context.Context, dir string) (Store, error) {
-+	return FileStore(dir), nil
-+}
-+
-+// OpenStore opens an existing [Store]. Returns nil, nil, if the store does not
-+// exist.
-+func OpenStore(_ context.Context, dir string) (Store, error) {
-+	if _, err := os.Stat(dir); errors.Is(err, os.ErrNotExist) {
-+		return nil, nil
-+	} else if err != nil {
-+		return nil, err
-+	}
-+	return FileStore(dir), nil
-+}
-```
-
-**File**: `ipn/ipnlocal/netmapcache/file_store.go` (added, +94/-0)
-```diff
-@@ -0,0 +1,94 @@
-+// Copyright (c) Tailscale Inc & contributors
-+// SPDX-License-Identifier: BSD-3-Clause
-+
-+package netmapcache
-+
-+import (
-+	"context"
-+	"encoding/hex"
-+	"errors"
-+	"fmt"
-+	"io/fs"
-+	"iter"
-+	"os"
-+	"path/filepath"
-+	"strings"
-+)
-+
-+// FileStore implements the [Store] interface using a directory of files, in
-+// which each key is encoded as a filename in the directory.
-+// The caller is responsible to ensure the directory path exists before
-+// using the store methods. The string is the absolute path to the directory.
-+type FileStore string
-+
-+// List implements part of the [Store] interface.
-+func (s FileStore) List(ctx context.Context, prefix string) iter.Seq2[string, error] {
-+	return func(yield func(string, error) bool) {
-+		des, err := os.ReadDir(string(s))
-+		if os.IsNotExist(err) {
-+			return // nothing to read
-+		} else if err != nil {
-+			yield("", err)
-+			return
-+		}
-+
-+		// os.ReadDir reports entries already sorted, and the encoding preserves that.
-+		for _, de := range des {
-+			if de.IsDir() {
-+				continue
-+			}
-+			key, err := hex.DecodeString(de.Name())
-+			if err != nil {
-+				yield("", err)
-+				return
-+			}
-+			name := string(key)
-+			if !strings.HasPrefix(name, prefix) {
-+				continue
-+			} else if !yield(name, nil) {
-+				return
-+			}
-+		}
-+	}
-+}
-+
-+// Load implements part of the [Store] interface.
-+func (s FileStore) Load(ctx context.Context, key string) ([]byte, error) {
-+	data, err := os.ReadFile(filepath.Join(string(s), hex.EncodeToString([]byte(key))))
-+	if errors.Is(err, os.ErrNotExist) {
-+		return nil, fmt.Errorf("key %q not found: %w", key, ErrKeyNotFound)
-+	}
-+	return data, err
-+}
-+
-+// Store implements part of the [Store] interface.
-+func (s FileStore) Store(ctx context.Context, key string, value []byte) error {
-+	return os.WriteFile(filepath.Join(string(s), hex.EncodeToString([]byte(key))), value, 0600)
-+}
-+
-+// Remove implements part of the [Store] interface.
-+func (s FileStore) Remove(ctx context.Context, key string) error {
-+	err := os.Remove(filepath.Join(string(s), hex.EncodeToString([]byte(key))))
-+	if errors.Is(err, fs.ErrNotExist) {
-+		return nil
-+	}
-+	return err
-+}
-+
-+// Close implements part of the [Store] interface.
-+func (s FileStore) Close(context.Context) error { return nil }
-+
-+// Clear implements part of the [Store] interface.
-+func (s FileStore) Clear(ctx context.Context) error {
-+	var errs []error
-+	for key, err := range s.List(ctx, "") {
-+		if err != nil {
-+			errs = append(errs, fmt.Errorf("list cache contents: %w", err))
-+			break
-+		}
-+		if err := s.Remove(ctx, key); err != nil {
-+			errs = append(errs, fmt.Errorf("discard cache key %q: %w", key, err))
-+		}
-+	}
-+	return errors.Join(errs...)
-+}
-```
-
-**File**: `ipn/ipnlocal/netmapcache/netmapcache.go` (modified, +20/-62)
-```diff
-@@ -10,16 +10,11 @@ import (
- 	"cmp"
- 	"context"
- 	"crypto/sha256"
--	"encoding/hex"
- 	jsonv1 "encoding/json"
- 	"errors"
- 	"fmt"
--	"io/fs"
- 	"iter"
--	"os"
--	"path/filepath"
- 	"slices"
--	"strings"
- 	"time"
- 
- 	"tailscale.com/feature/buildfeatures"
-@@ -123,63 +118,6 @@ func (c *Cache) removeUnwantedKeys(ctx context.Context) error {
- 	return errors.Join(errs...)
- }
- 
--// FileStore implements the [Store] interface using a directory of files, in
--// which each key is encoded as a filename in the directory.
--// The caller is responsible to ensure the directory path exists before
--// using the store methods.
--type FileStore string
--
--// List implements part of the [Store] interface.
--func (s FileStore) List(ctx context.Context, prefix string) iter.Seq2[string, error] {
--	return func(yield func(string, error) bool) {
--		des, err := os.ReadDir(string(s))
--		if os.IsNotExist(err) {
--			return // nothing to read
--		} else if err != nil {
--			yield("", err)
--			return
--		}
--
--		// os.ReadDir reports entries already sorted, and the encoding preserves that.
--		for _, de := range des {
--			key, err := hex.DecodeString(de.Name())
--			if err != nil {
--				yield("", err)
--				return
--			}
--			name := string(key)
--			if !strings.HasPrefix(name, prefix) {
--				continue
--			} else if !yield(name, nil) {
--				return
--			}
--		}
--	}
--}
--
--// Load implements part of the [Store] interface.
--func (s FileStore) Load(ctx context.Context, key string) ([]byte, error) {
--	data, err := os.ReadFile(filepath.Join(string(s), hex.EncodeToString([]byte(key))))
--	if errors.Is(err, os.ErrNotExist) {
--		return nil, fmt.Errorf("key %q not found: %w", key, ErrKeyNotFound)
--	}
--	return data, err
--}
--
--// Store implements part of the [Store] interface.
--func (s FileStore) Store(ctx context.Context, key string, value []byte) error {
--	return os.WriteFile(filepath.Join(string(s), hex.EncodeToString([]byte(key))), value, 0600)
--}
--
--// Remove implements part of the [Store] interface.
--func (s FileStore) Remove(ctx context.Context, key string) error {
--	err := os.Remove(filepath.Join(string(s), hex.EncodeToString([]byte(key))))
--	if errors.Is(err, fs.ErrNotExist) {
--		return nil
--	}
--	return err
--}
--
- // cacheKey is a type wrapper for strings used as cache keys.
- type cacheKey string
- 
-@@ -424,6 +362,14 @@ func (c *Cache) readJSON(ctx context.Context, key cacheKey, value any) error {
- 	return nil
- }
- 
-+func (c *Cache) Clear(ctx context.Context) error {
-+	return c.store.Clear(ctx)
-+}
-+
-+func (c *Cache) Close(ctx context.Context) error {
-+	return c.store.Close(ctx)
-+}
-+
- // Store is the interface to persistent key-value storage used by a [Cache].
- type Store interface {
- 	// List lists all the stored keys having the specified prefixes, in
-@@ -445,6 +391,18 @@ type Store interface {
- 	// Remove removes the specified key from the store. If the key does not exist,
- 	// Remove reports success (nil).
- 	Remove(ctx context.Context, key string) error
-+
-+	// Clear removes all entries from the store. On success, the store must
-+	// contain no keys. In case of error, the implementation should attempt
-+	// to remove as much as possible before giving up and reporting an error.
-+	Clear(ctx context.Context) error
-+
-+	// Close closes the Store, releasing any resources held by the
-+	// implementation, but retaining all data previously written.
-+	// After caling Close, the cache will not apply any further
-+	// operations to the receiver. If the implementation does not
-+	// require any cleanup, Close must return nil.
-+	Close(ctx context.Context) error
- }
- 
- // cacheDigest computes a string digest of the specified data, for use in
-```
-
-**File**: `ipn/ipnlocal/netmapcache/netmapcache_test.go` (modified, +55/-1)
-```diff
-@@ -206,7 +206,6 @@ func TestRoundTrip(t *testing.T) {
- 			if diff := diffNetMaps(cmap, testMap); diff != "" {
- 				t.Fatalf("Cached map differs (-got, +want):\n%s", diff)
- 			}
--
- 		})
- 	}
- 
-@@ -468,6 +467,58 @@ func TestPartial(t *testing.T) {
- 	})
- }
- 
-+func TestClearStore(t *testing.T) {
-+	s := make(testStore)
-+	c := netmapcache.NewCache(s)
-+
-+	// Initialize the cache with the test map so we get a baseline.
-+	if err := c.Store(t.Context(), testMap); err != nil {
-+		t.Fatalf("Store initial netmap: %s", err)
-+	}
-+
-+	if got, err := c.Load(t.Context()); err != nil {
-+		t.Errorf("error loading netmap: %s", err)
-+	} else if len(got.Peers) == 0 {
-+		t.Errorf("expected peers in netmap, got none. Loaded netmap: %+v", got)
-+	}
-+
-+	if err := c.Clear(t.Context()); err != nil {
-+		t.Errorf("error clearing netmap: %s", err)
-+	}
-+
-+	if len(s) > 0 {
-+		t.Errorf("expected testStore to be empty, got: %+v", s)
-+	}
-+}
-+
-+func TestOpenStore(t *testing.T) {
-+	t.Run("non_exist", func(t *testing.T) {
-+		if store, err := netmapcache.OpenStore(t.Context(), "/not/here"); store != nil || err != nil {
-+			t.Errorf("expected a nil store and a nil error, got store: %+v, err: %s", store, err)
-+		}
-+	})
-+
-+	t.Run("exist", func(t *testing.T) {
-+		dir := t.TempDir()
-+		store, err := netmapcache.NewStore(t.Context(), dir)
-+		if err != nil {
-+			t.Fatalf("error creating store: %s", err)
-+		}
-+		if err := store.Store(t.Context(), "key", []byte("value")); err != nil {
-+			t.Fatalf("error storing data in store: %s", err)
-+		}
-+		if err := store.Close(t.Context()); err != nil {
-+			t.Fatalf("error closing store: %s", err)
-+		}
-+		if store, err := netmapcache.OpenStore(t.Context(), dir); store == nil || err != nil {
-+			t.Errorf("expected a store and a nil error, got store: %+v, err: %s", store, err)
-+		}
-+		if err := store.Close(t.Context()); err != nil {
-+			t.Fatalf("error closing store: %s", err)
-+		}
-+	})
-+}
-+
- // testStore is an in-memory implementation of the [netmapcache.Store] interface.
- type testStore map[string][]byte
- 
-@@ -513,6 +564,9 @@ func diffNetMaps(got, want *netmap.NetworkMap) string {
- 	)
- }
- 
-+func (t testStore) Clear(context.Context) error { clear(t); return nil }
-+func (t testStore) Close(context.Context) error { return nil }
-+
- func eqViewsSlice[T any](eqVal func(x, y T) bool) func(a, b views.Slice[T]) bool {
- 	return func(a, b views.Slice[T]) bool {
- 		if a.Len() != b.Len() {
-```
-
-**File**: `ipn/ipnlocal/serve_test.go` (modified, +3/-1)
-```diff
-@@ -1364,12 +1364,14 @@ func newTestBackend(t *testing.T, opts ...any) *LocalBackend {
- 	sys.Set(e)
- 	sys.Set(new(mem.Store))
- 
-+	// Create temp dir before setting up the backend and the shutdown to ensure
-+	// cleanup can happen nicely with the full file system.
-+	dir := t.TempDir()
- 	b, err := NewLocalBackend(logf, logid.PublicID{}, sys, 0)
- 	if err != nil {
- 		t.Fatal(err)
- 	}
- 	t.Cleanup(b.Shutdown)
--	dir := t.TempDir()
- 	b.SetVarRoot(dir)
- 
- 	pm := must.Get(newProfileManager(new(mem.Store), logf, health.NewTracker(bus)))
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22393** (2026-11-14): cmd/testwrapper, .github/workflows: bound hung CI test jobs (@bradfitz)
+- **PR #22392** (2026-11-13): clientupdate: stop requesting the -winui MSI variant on Windows (@nickkhyl)
+- **PR #22382** (2026-11-13): derp/derpserver: fix data race on sclient.keepAliveTimer (@bradfitz)
 - **PR #22375** (2026-11-13): ipn/ipnlocal: add stub for LocalBackend.SetLogUploader (@dsnet)
 - **PR #22372** (2026-11-12): ipn/ipnstate,tailcfg: fix comment (@franbull)
 - **PR #22371** (2026-11-12): cmd/k8s-proxy: listen on the PORT that the operator sets (@ChaosInTheCRD)
-- **PR #22370** (2026-11-12): tstest/natlab/vnet: check PCP nonces in renewals and deletes (@fmarier)
-- **PR #22364** (2026-11-12): k8s-operator/api-proxy: only use the remote address for WhoIs (@ChaosInTheCRD)
-- **PR #22361** (2026-11-12): go.toolchain.rev: bump to Go 1.27.4 [release-branch] (@bradfitz)
 
 ---
 
@@ -1593,62 +995,35 @@ Signed-off-by: Claus Lensbøl <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ipn/ipnlocal: don't write a netmap cache without CacheNetworkMaps (#22335)
+## X. derp/derpserver: fix data race on sclient.keepAliveTimer
 
 **RULE**:
-When implementing operations in `ipn/ipnlocal/diskcache_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `derp/derpserver/derpserver.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e0d532cc`: ipn/ipnlocal: don't write a netmap cache without CacheNetworkMaps (#22335). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `283569e7`: derp/derpserver: fix data race on sclient.keepAliveTimer. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ipn/ipnlocal/diskcache_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `derp/derpserver/derpserver.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"tailscale.com/tailcfg/nodecap"
-	"tailscale.com/util/set"
-// cache operations, for a node that is allowed to cache netmaps.
-		AllCaps: set.Of(nodecap.CacheNetworkMaps),
-	t.Run("no_cache_cap", func(t *testing.T) {
-		b := newTestBackend(t)
-		done := make(chan struct{})
-		tstest.Replace(t, &testOnlyHomeDERPUpdate, func() { close(done) })
-
-		nm := newCacheTestNetmap()
-		nm.AllCaps = nil
-		b.currentNode().SetNetMap(nm)
-
-		bus := b.Sys().Bus.Get()
-		ec := bus.Client("test.TestOnHomeDERPUpdate")
-		pub := eventbus.Publish[magicsock.HomeDERPChanged](ec)
-
-		const wantDERP = 11
-		pub.Publish(magicsock.HomeDERPChanged{Old: 0, New: wantDERP})
-		<-done
-
-		if got := b.currentNode().homeDERP.Load(); got != wantDERP {
-			t.Errorf("b.homeDERP = %d, want %d", got, wantDERP)
-		}
-
-		// Without the capability, the update must not create a cache.
-		b.mu.Lock()
-		defer b.mu.Unlock()
-		if _, ok := b.loadDiskCacheLocked(); ok {
-			t.Fatal("loadDiskCacheLocked returned ok=true; want no cache without the CacheNetworkMaps capability")
-		}
-	})
+	// Assign keepAliveTimer before arming it with Reset: its func
+	// resets it (in writePending), and Reset is what orders this
+	// assignment before the func runs.
+	c.keepAliveTimer = c.s.clock.AfterFunc(365*24*time.Hour, c.onKeepAliveTimer)
+	c.keepAliveTimer.Reset(keepAliveInterval())
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-// cache operations.
+// Induced defect failure mode:
+	c.keepAliveTimer = c.s.clock.AfterFunc(keepAliveInterval(), c.onKeepAliveTimer)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e0d532cc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `283569e7` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

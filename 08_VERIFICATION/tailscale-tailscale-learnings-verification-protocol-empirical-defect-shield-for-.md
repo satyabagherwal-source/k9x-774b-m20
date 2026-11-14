@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:45:32.981Z",
+  "timestamp": "2026-11-14T03:33:01.247Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-tailscale-tailscale-learnings",
+  "learning_id": "LEARN-EVO-tailscale-tailscale-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [tailscale-tailscale-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:45:32.981Z`  
-> **Learning ID**: `LEARN-REEXTRACT-tailscale-tailscale-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-14T03:33:01.247Z`  
+> **Learning ID**: `LEARN-EVO-tailscale-tailscale-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `e3ecbb98`  
+> **Source Version**: `0d822c9d`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T09:55:04.640Z  
+> **Timestamp**: 2026-11-14T03:32:24.754Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T09:55:04.633Z  
+> **Harvest Timestamp**: 2026-11-14T03:32:24.749Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 38975 stars
+- **Stars / Engagement**: 39065 stars
 
 ---
 
@@ -825,11 +825,13 @@ export const sessionStateStorage: IPNStateStorage = {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #22274** (2026-11-10): **Logout can leave the node Stopped with its old IPs**
-  *Symptoms*: `LocalBackend.Logout` deletes the profile and resets the backend, which then ends up in `NeedsLogin` with no netmap.  If a netmap update is being processed at the same time, the state then moves to `Stopped`, [logging](https://github.com/tailscale/tailscale/blob/62d055f4c38b610d63a8cee7fa4a7e65b01564eb/ipn/ipnlocal/local.go#L7124-L7125):  ``` Switching ipn state NeedsLogin -> Stopped (WantRunning=false, nm=true) ```  The logged-out profile now holds the old netmap, reporting `Stopped` instead of `NeedsLogin`, and `tsnet.Server.TailscaleIPs` returns the old addresses until the next login completes.  Seems to be due to `setControlClientStatusLocked` checking that the status is from the current control client, but then releases `b.mu` around `tkaSyncIfNeeded` and does not check again, so it can apply the old client's netmap after `Logout` has reset the backend.  Hit this intermittently in automated tests where a tsnet client logs out shortly after reaching `Running`. It shows up more often on slower (Android) devices.
+- **Issue #22334** (2026-11-13): **ipn/ipnlocal: home DERP change writes the netmap cache without CacheNetworkMaps**
+  *Symptoms*: ### What is the issue?  `onHomeDERPUpdateLocked` writes the self-only netmap cache without checking the `CacheNetworkMaps` node capability. The full netmap and peer delta paths both check it, and a full netmap deletes the cache when the capability is missing.  So on a node without the capability, each home DERP change recreates a cache with no peers. On the next start the node logs `loaded netmap from disk cache; 0 peers` and goes Running before control sends any peers. A tsnet app that sets an exit node by IP when the backend becomes Running gets `no node found in netmap with IP` on those starts.  ### Steps to reproduce  1. Run a tsnet node whose node lacks `CacheNetworkMaps`. 2. Restart it on the same state dir.  After a run that logs `updating netmap in disk cache`, the next start loads a cache with 0 peers. With the capability check added, the cache is never recreated.  ### Are there any recent changes that introduced the issue?  #19491 / #19818. The cache write they added came after the capability gate from #19117.  ### OS  _No response_  ### OS version  15.8.1 (arm64)  ### Tailscale version  main @ 1f6259a88 (tsnet, userspace)  ### Other software  _No response_  ### Bug report  _No response_ 
 
-- **Issue #22259** (2026-11-09): **macOS (App Store, IPNExtension): direct UDP still never re-established after network change on 1.104.5 (follow-up to #22082)**
-  *Symptoms*: ### What is the issue?  Follow-up to #22082, which was closed with the statement that 1.104.5 fixes the problem (https://github.com/tailscale/tailscale/issues/22082#issuecomment-6664887117). **It does not.**  Re-tested on 1.104.5 (2026-11-07) with `tailscale ping` against two peers. Same result for both; output below for one of them. After a network change the connection falls back to DERP and direct UDP is never re-established, **not even after switching back to the original Wi-Fi** where it worked a few minutes earlier. Only quitting and relaunching the Tailscale app restores the direct connection.  **Expected:** after the network change (at the latest after switching back), a direct connection is re-established, as it is immediately after an app relaunch.  **1. Wi-Fi (home), initial state: direct** ``` $ tailscale ping muc-xxx pong from jeff (xxx.xxx.xxx.xxx) via xx.xx.xx.xx:41641 in 29ms ```  **2. Switched to mobile hotspot: DERP only** ``` $ tailscale ping muc-xxx pong from jeff (xxx.xxx.xxx.xxx) via DERP(fra) in 29ms [... 8 more pongs via DERP(fra) ...] pong from jeff (xxx.xxx.xxx.xxx) via DERP(fra) in 45ms 2026/11/07 12:59:36 direct connection not established ```  **3. Switched back to the same home Wi-Fi: still DERP only** ``` $ tailscale ping muc-xxx pong from jeff (xxx.xxx.xxx.xxx) via DERP(fra) in 29ms [... 8 more pongs via DERP(fra) ...] pong from jeff (xxx.xxx.xxx.xxx) via DERP(fra) in 45ms 2026/11/07 13:03:36 direct connection not established ```  **4. Quit Tail
+- **Issue #22307** (2026-11-13): **eventbus: some subscribers use pointer types for events published by value and never run**
+  *Symptoms*: The `eventbus` routes events by exact `reflect.Type`, so a subscriber of `*T` never receives events published as `T`.  - `(*ipnlocal.LocalBackend).onClientVersion` subscribes to `*tailcfg.ClientVersion`, but `controlclient` publishes `tailcfg.ClientVersion`. `lastClientVersion` is never set, `health.SetLatestVersion` is never called, and update-available notifications are never sent to clients. - `(*logtail.Logger).onChangeDelta` subscribes to `*netmon.ChangeDelta`, but `netmon` publishes `netmon.ChangeDelta`. In `tailscaled`, which gives the logger both an `eventbus` and a `netmon.Monitor`, `awaitInternetUp` waits only on a signal this handler sets, so after an upload fails while the host has no IP addresses, log uploads never resume until shutdown. - `netmon.LinkChangeLogLimiter` subscribes to `*netmon.ChangeDelta`, so the portmapper log limiter in `magicsock` never resets its seen-message cache after a major link change.
+  **Post-Mortem & Fix Analysis**:
+  > Fixed by #22308 and #22322.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -846,115 +848,148 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e3ecbb98` (2026-10-23)
-**Commit Message**: tstime: fold fractional ParseDuration cases into TestParseDuration
+### Incident Patch 1: `283569e7` (2026-11-13)
+**Commit Message**: derp/derpserver: fix data race on sclient.keepAliveTimer
 
-Updates #21552
+run assigned keepAliveTimer after AfterFunc had already armed it, and
+the timer's func uses the field (writePending resets it), so nothing
+ordered the assignment before the first keepalive. Assign it first and
+arm it with Reset, which does.
 
-Signed-off-by: Aniket <[REDACTED_EMAIL]>
+No existing test ran long enough for a keepalive to fire. The new
+TestKeepAlive waits for three under synctest; with the race detector it
+fails without this fix.
 
-**File**: `tstime/tstime_test.go` (modified, +3/-7)
+Updates #13038
+
+Signed-off-by: Brad Fitzpatrick <[REDACTED_EMAIL]>
+Change-Id: I8f2c4e6a1b3d5f7091a2c3e4d5f6a7b8c9d0e1f2
+
+**File**: `derp/derpserver/derpserver.go` (modified, +5/-1)
 ```diff
-@@ -30,24 +30,20 @@ func TestParseDuration(t *testing.T) {
- 		{"1w1d1h", 8*24*time.Hour + time.Hour},
- 		{"1y", 0},
- 		{"", 0},
-+		{"1.5h", 90 * time.Minute},
+@@ -1265,7 +1265,11 @@ func (c *sclient) run(ctx context.Context) error {
+ 		c.startStatsLoop(ctx)
  	}
- 	for _, tt := range tests {
- 		if got, _ := ParseDuration(tt.in); got != tt.want {
- 			t.Errorf("ParseDuration(%q) = %d; want %d", tt.in, got, tt.want)
- 		}
- 	}
--}
  
--func TestParseDurationFractionalDaysAndWeeks(t *testing.T) {
--	for _, in := range []string{"0.5d", "1.5d", "1.5w", ".5d", "2.25w", "1d0.5d"} {
-+	errTests := []string{"0.5d", "1.5d", "1.5w", ".5d", "2.25w", "1d0.5d"}
-+	for _, in := range errTests {
- 		if d, err := ParseDuration(in); err == nil {
- 			t.Errorf("ParseDuration(%q) = %v, want error", in, d)
- 		}
+-	c.keepAliveTimer = c.s.clock.AfterFunc(keepAliveInterval(), c.onKeepAliveTimer)
++	// Assign keepAliveTimer before arming it with Reset: its func
++	// resets it (in writePending), and Reset is what orders this
++	// assignment before the func runs.
++	c.keepAliveTimer = c.s.clock.AfterFunc(365*24*time.Hour, c.onKeepAliveTimer)
++	c.keepAliveTimer.Reset(keepAliveInterval())
+ 
+ 	for {
+ 		ft, fl, err := derp.ReadFrameHeader(c.br)
+```
+
+**File**: `derp/derpserver/handler_test.go` (modified, +36/-0)
+```diff
+@@ -4,6 +4,7 @@
+ package derpserver
+ 
+ import (
++	"bufio"
+ 	"bytes"
+ 	"context"
+ 	"crypto/tls"
+@@ -158,3 +159,38 @@ func TestHandlerTLSReaderSize(t *testing.T) {
+ 		})
  	}
--	// Fractional standard units are still fine.
--	if got, _ := ParseDuration("1.5h"); got != 90*time.Minute {
--		t.Errorf("ParseDuration(%q) = %v, want %v", "1.5h", got, 90*time.Minute)
--	}
  }
- 
- func TestGoDuration(t *testing.T) {
++
++// TestKeepAlive verifies that the server sends a client keepalives. Run
++// with the race detector, it also verifies that the keepalive timer's
++// func (which resets the timer) is ordered after the timer is assigned.
++func TestKeepAlive(t *testing.T) {
++	synctest.Test(t, func(t *testing.T) {
++		s := New(key.NewNode(), t.Logf)
++		defer s.Close()
++		ctx, cancel := context.WithCancel(context.Background())
++		defer cancel()
++		connIn, connOut := memnet.NewConn("derp", 64<<10)
++		defer connIn.Close()
++		defer connOut.Close()
++		go s.Accept(ctx, connIn, bufio.NewReadWriter(bufio.NewReader(connIn), bufio.NewWriter(connIn)), "test-client")
++
++		brw := bufio.NewReadWriter(bufio.NewReader(connOut), bufio.NewWriter(connOut))
++		c, err := derp.NewClient(key.NewNode(), connOut, brw, t.Logf)
++		if err != nil {
++			t.Fatal(err)
++		}
++		start := time.Now()
++		for got := 0; got < 3; {
++			m, err := c.Recv()
++			if err != nil {
++				t.Fatal(err)
++			}
++			if _, ok := m.(derp.KeepAliveMessage); ok {
++				got++
++			}
++		}
++		if d := time.Since(start); d < 3*derp.KeepAlive {
++			t.Errorf("got 3 keepalives in %v; want at least %v", d, 3*derp.KeepAlive)
++		}
++	})
++}
 ```
 
 ---
 
-### Incident Patch 2: `5e444c9f` (2026-09-30)
-**Commit Message**: tstime: reject fractional day and week values in ParseDuration
+### Incident Patch 2: `027c2a82` (2026-11-13)
+**Commit Message**: clientupdate: stop requesting the -winui MSI variant on Windows
 
-ParseDuration rewrites the digits before a d or w unit as hours, but only
-looked at the digits after the decimal point, so 0.5d quietly returned
-7m12s. Return an error for fractional day and week values instead.
+The Windows installers no longer come in a separate -winui variant.
+Remove the temporary qualifier.
 
-Fixes #21552
+Updates tailscale/corp#50987
 
-Signed-off-by: Aniket <[REDACTED_EMAIL]>
+Signed-off-by: Nick Khyl <[REDACTED_EMAIL]>
 
-**File**: `tstime/tstime.go` (modified, +7/-2)
+**File**: `clientupdate/clientupdate_windows.go` (modified, +1/-19)
 ```diff
-@@ -7,6 +7,7 @@ package tstime
- import (
- 	"context"
- 	"encoding"
-+	"fmt"
- 	"strconv"
- 	"strings"
- 	"time"
-@@ -34,8 +35,12 @@ func ParseDuration(s string) (time.Duration, error) {
- 		if end < 0 {
- 			break
- 		}
--		start := end - (len(s[:end]) - len(strings.TrimRight(s[:end], "0123456789")))
--		n, err := strconv.Atoi(s[start:end])
-+		start := end - (len(s[:end]) - len(strings.TrimRight(s[:end], "0123456789.")))
-+		num := s[start:end]
-+		if strings.Contains(num, ".") {
-+			return 0, fmt.Errorf("tstime: fractional %q value %q is not supported", string(s[end]), num)
-+		}
-+		n, err := strconv.Atoi(num)
- 		if err != nil {
- 			return 0, err
- 		}
-```
-
-**File**: `tstime/tstime_test.go` (modified, +12/-0)
-```diff
-@@ -38,6 +38,18 @@ func TestParseDuration(t *testing.T) {
- 	}
+@@ -91,17 +91,6 @@ func verifyAuthenticode(path string) error {
+ 	return authenticode.Verify(path, certSubjectTailscale)
  }
  
-+func TestParseDurationFractionalDaysAndWeeks(t *testing.T) {
-+	for _, in := range []string{"0.5d", "1.5d", "1.5w", ".5d", "2.25w", "1d0.5d"} {
-+		if d, err := ParseDuration(in); err == nil {
-+			t.Errorf("ParseDuration(%q) = %v, want error", in, d)
-+		}
-+	}
-+	// Fractional standard units are still fine.
-+	if got, _ := ParseDuration("1.5h"); got != 90*time.Minute {
-+		t.Errorf("ParseDuration(%q) = %v, want %v", "1.5h", got, 90*time.Minute)
-+	}
-+}
-+
- func TestGoDuration(t *testing.T) {
- 	wantDur := GoDuration{time.Hour + time.Minute + time.Second + time.Millisecond + time.Microsecond + time.Nanosecond}
- 	gotJSON := string(must.Get(json.Marshal(wantDur)))
+-func isTSGUIPresent() bool {
+-	us, err := os.Executable()
+-	if err != nil {
+-		return false
+-	}
+-
+-	tsgui := filepath.Join(filepath.Dir(us), "tsgui.dll")
+-	_, err = os.Stat(tsgui)
+-	return err == nil
+-}
+-
+ func (up *Updater) updateWindows() error {
+ 	if msi := os.Getenv(winMSIEnv); msi != "" {
+ 		// stdout/stderr from this part of the install could be lost since the
+@@ -156,14 +145,7 @@ you can run the command prompt as Administrator one of these ways:
+ 	}
+ 	up.cleanupOldDownloads(filepath.Join(msiDir, "*.msi"))
+ 
+-	qualifiers := []string{ver, arch}
+-	// TODO(aaron): Temporary hack so autoupdate still works on winui builds;
+-	// remove when we enable winui by default on the unstable track.
+-	if isTSGUIPresent() {
+-		qualifiers = append(qualifiers, "winui")
+-	}
+-
+-	pkgsPath := fmt.Sprintf("%s/tailscale-setup-%s.msi", up.Track, strings.Join(qualifiers, "-"))
++	pkgsPath := fmt.Sprintf("%s/tailscale-setup-%s-%s.msi", up.Track, ver, arch)
+ 	msiTarget := filepath.Join(msiDir, path.Base(pkgsPath))
+ 	if err := up.downloadURLToFile(pkgsPath, msiTarget); err != nil {
+ 		return err
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #22333** (2026-11-11): go.mod,wgengine/wgcfg: bump wg-go & configure staged global limit on iOS (@jwhited)
-- **PR #22332** (2026-11-11): go.toolchain.rev: bump Go toolchain (Go 1.27.4) (@tailscale-code-updater[bot])
-- **PR #22331** (2026-11-11): net,ipn,cmd: migrate dialer hooks to ControlContext (@raggi)
-- **PR #22323** (closed): feature/acme: distinguish invalid cached certs from expired ones (@pcbeingused333)
-- **PR #22322** (2026-11-11): util/eventbus/eventbuscheck: add whole-program `T` vs `*T` event check (@bradfitz)
-- **PR #22320** (2026-11-11): net/netns: compose caller ControlContext with namespace setup (@raggi)
+- **PR #22393** (2026-11-14): cmd/testwrapper, .github/workflows: bound hung CI test jobs (@bradfitz)
+- **PR #22392** (2026-11-13): clientupdate: stop requesting the -winui MSI variant on Windows (@nickkhyl)
+- **PR #22382** (2026-11-13): derp/derpserver: fix data race on sclient.keepAliveTimer (@bradfitz)
+- **PR #22375** (2026-11-13): ipn/ipnlocal: add stub for LocalBackend.SetLogUploader (@dsnet)
+- **PR #22372** (2026-11-12): ipn/ipnstate,tailcfg: fix comment (@franbull)
+- **PR #22371** (2026-11-12): cmd/k8s-proxy: listen on the PORT that the operator sets (@ChaosInTheCRD)
 
 ---
 
@@ -974,39 +1009,35 @@ Signed-off-by: Aniket <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tstime: fold fractional ParseDuration cases into TestParseDuration
+## X. derp/derpserver: fix data race on sclient.keepAliveTimer
 
 **RULE**:
-When implementing operations in `tstime/tstime_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `derp/derpserver/derpserver.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e3ecbb98`: tstime: fold fractional ParseDuration cases into TestParseDuration. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `283569e7`: derp/derpserver: fix data race on sclient.keepAliveTimer. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tstime/tstime_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `derp/derpserver/derpserver.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		{"1.5h", 90 * time.Minute},
-	errTests := []string{"0.5d", "1.5d", "1.5w", ".5d", "2.25w", "1d0.5d"}
-	for _, in := range errTests {
+	// Assign keepAliveTimer before arming it with Reset: its func
+	// resets it (in writePending), and Reset is what orders this
+	// assignment before the func runs.
+	c.keepAliveTimer = c.s.clock.AfterFunc(365*24*time.Hour, c.onKeepAliveTimer)
+	c.keepAliveTimer.Reset(keepAliveInterval())
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-}
-func TestParseDurationFractionalDaysAndWeeks(t *testing.T) {
-	for _, in := range []string{"0.5d", "1.5d", "1.5w", ".5d", "2.25w", "1d0.5d"} {
-	// Fractional standard units are still fine.
-	if got, _ := ParseDuration("1.5h"); got != 90*time.Minute {
-		t.Errorf("ParseDuration(%q) = %v, want %v", "1.5h", got, 90*time.Minute)
-	}
+// Induced defect failure mode:
+	c.keepAliveTimer = c.s.clock.AfterFunc(keepAliveInterval(), c.onKeepAliveTimer)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e3ecbb98` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `283569e7` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

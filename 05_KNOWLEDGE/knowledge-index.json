@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-14T03:16:47.888Z",
-  "total_verified_learnings": 8465,
+  "last_updated": "2026-11-14T03:33:01.567Z",
+  "total_verified_learnings": 8468,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 16975,
+  "total_items": 16991,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112370,10 +112370,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
       "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
       "repository": "tailscale/tailscale",
-      "source_version": "e0d532cc",
-      "content_hash": "71cf0b77674e4479e3175f05c37382e2d78b7809f3d84d165227fe98ca62dca5",
+      "source_version": "0d822c9d",
+      "content_hash": "be9e37e4220eeafad8a0adf4cb22c51f33072eb6f12f6923f1f5fc44ea311c71",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T15:18:37.114Z"
+      "persisted_at": "2026-11-14T03:32:25.848Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale",
@@ -112382,10 +112382,10 @@
       "relative_path": "08_VERIFICATION/tailscale-tailscale-verification-protocol-empirical-defect-shield-for-tailscale-.md",
       "title": "Verification Protocol: Empirical Defect Shield for tailscale/tailscale",
       "repository": "tailscale/tailscale",
-      "source_version": "e0d532cc",
-      "content_hash": "492dab73319de323d26a1ea92dea02ff12ffd1839c4bbff040fe0b3c197bfd7d",
+      "source_version": "0d822c9d",
+      "content_hash": "980aa6a46632294780c76354e16c948fe80ec9d2c156bf9847cb0b95da3eb02b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T15:18:37.183Z"
+      "persisted_at": "2026-11-14T03:32:25.980Z"
     },
     "candidate_directive-order-small-runtime-filter-builds-before-filtered-and-nested-scans-28768": {
       "item_id": "candidate_directive-order-small-runtime-filter-builds-before-filtered-and-nested-scans-28768",
@@ -221388,6 +221388,259 @@
       "content_hash": "36a70b844c1ced6c1ec2f83c651864f36055587501e2aa7408a2dcb8288ddd01",
       "domain_letter": "K",
       "persisted_at": "2026-11-14T03:16:47.888Z"
+    },
+    "learn-huggingface-bigscience-bloom": {
+      "learning_id": "learn-huggingface-bigscience-bloom",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "bigscience/bloom",
+      "repository": "bigscience/bloom",
+      "slug": "hf-bigscience-bloom",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/bigscience/bloom",
+      "source_version": "hf-bigscience-bloom",
+      "content_hash": "104ff53eb19ec684da31512cfef702e8c094d0f5527cedf4eb1009567c6f08d2",
+      "dossier_path": "07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T03:32:10.919Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-bigscience-bloom-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-bigscience-bloom-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-bigscience-bloom-research-knowledge-intelligence-bigscience-bloom-core-invari.md",
+      "title": "Research & Knowledge Intelligence: bigscience/bloom Core Invariants",
+      "repository": "bigscience/bloom",
+      "source_version": "hf-bigscience-bloom",
+      "content_hash": "33523b81c05bf52953d6b4d0ee8fe88366cea300736bb91ccb177cfe7c4cb663",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T03:32:11.234Z"
+    },
+    "learn-github-moby-buildkit": {
+      "learning_id": "learn-github-moby-buildkit",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "moby/buildkit",
+      "repository": "moby/buildkit",
+      "slug": "moby-buildkit",
+      "platform": "github",
+      "source_url": "https://github.com/moby/buildkit",
+      "source_version": "e4d319d7",
+      "content_hash": "0544bb2b619d8d14d67701c79391860830f0f991c18dce6b07b97b0d9f0a4d4a",
+      "dossier_path": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8431,
+          "title": "allow large filesync pattern lists",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T03:32:22.936Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8431": {
+      "learning_id": "rule-8431",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8431,
+      "title": "allow large filesync pattern lists",
+      "source_url": "https://github.com/moby/buildkit",
+      "source_version": "e4d319d7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T03:32:22.936Z"
+    },
+    "candidate_directive-allow-large-filesync-pattern-lists": {
+      "item_id": "candidate_directive-allow-large-filesync-pattern-lists",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NY3Y-allow-large-filesync-pattern-lists.md",
+      "title": "allow large filesync pattern lists",
+      "repository": "moby/buildkit",
+      "source_version": "e4d319d7",
+      "content_hash": "2c700d69d12f06f3adb46fbb40bacb2113db26232675dc2836e3854c239679c4",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T03:32:23.280Z"
+    },
+    "domain_intelligence-architecture-intelligence-moby-buildkit-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-moby-buildkit-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-moby-buildkit-architecture-intelligence-moby-buildkit-core-invariants.md",
+      "title": "Architecture Intelligence: moby/buildkit Core Invariants",
+      "repository": "moby/buildkit",
+      "source_version": "e4d319d7",
+      "content_hash": "b62fbf8c51524fe229bbe3f56d5272a3eb54f632d064a08b384bf08b9f4fa4f6",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T03:32:23.373Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-moby-buildkit": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-moby-buildkit",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/moby-buildkit-verification-protocol-empirical-defect-shield-for-moby-buildkit.md",
+      "title": "Verification Protocol: Empirical Defect Shield for moby/buildkit",
+      "repository": "moby/buildkit",
+      "source_version": "e4d319d7",
+      "content_hash": "7a2465296a4b695cfbf119c83f1f738ffe5f348f199fd0a2e456a265edaddb45",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T03:32:23.473Z"
+    },
+    "learn-github-tailscale-tailscale": {
+      "learning_id": "learn-github-tailscale-tailscale",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "tailscale/tailscale",
+      "repository": "tailscale/tailscale",
+      "slug": "tailscale-tailscale",
+      "platform": "github",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "0d822c9d",
+      "content_hash": "f5163ec5c888c88508c879ce7a8c9fa63a0490a7de09ad09381888cd5397f12f",
+      "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8432,
+          "title": "derp/derpserver: fix data race on sclient.keepAliveTimer",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T03:32:25.443Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8432": {
+      "learning_id": "rule-8432",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8432,
+      "title": "derp/derpserver: fix data race on sclient.keepAliveTimer",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "0d822c9d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T03:32:25.443Z"
+    },
+    "candidate_directive-derp-derpserver-fix-data-race-on-sclient-keepalivetimer": {
+      "item_id": "candidate_directive-derp-derpserver-fix-data-race-on-sclient-keepalivetimer",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ORH6-derp-derpserver-fix-data-race-on-sclient-keepalivetimer.md",
+      "title": "derp/derpserver: fix data race on sclient.keepAliveTimer",
+      "repository": "tailscale-tailscale-learnings",
+      "source_version": "HEAD",
+      "content_hash": "92f7397077fc22808f14f00403727dbf1eeb883b883315c80c150af037a3a958",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T03:33:01.338Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-bigscience-bloom-learnings-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-bigscience-bloom-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-bigscience-bloom-learnings-research-knowledge-intelligence-hf-bigscience-bloo.md",
+      "title": "Research & Knowledge Intelligence: hf-bigscience-bloom-learnings Core Invariants",
+      "repository": "hf-bigscience-bloom-learnings",
+      "source_version": "HEAD",
+      "content_hash": "787ff3fb4938daceba385303049bf01e723e0e220f4a19b7e006e9d5506e962a",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T03:33:00.256Z"
+    },
+    "candidate_directive-session-allow-large-filesync-pattern-lists": {
+      "item_id": "candidate_directive-session-allow-large-filesync-pattern-lists",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-OR1C-session-allow-large-filesync-pattern-lists.md",
+      "title": "session): allow large filesync pattern lists",
+      "repository": "moby-buildkit-learnings",
+      "source_version": "HEAD",
+      "content_hash": "294c8a70bbe7c64fce7cb1d786cc7830cfa61f8020fd4cf0e18a59d3eb65e613",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T03:33:00.782Z"
+    },
+    "domain_intelligence-architecture-intelligence-moby-buildkit-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-moby-buildkit-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-moby-buildkit-learnings-architecture-intelligence-moby-buildkit-learnings-core-i.md",
+      "title": "Architecture Intelligence: moby-buildkit-learnings Core Invariants",
+      "repository": "moby-buildkit-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0214f6d495e4b3e5433882a5d817f32642b2c2f397fd253fd87e796f8beff851",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T03:33:00.884Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-moby-buildkit-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-moby-buildkit-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/moby-buildkit-learnings-verification-protocol-empirical-defect-shield-for-moby-b.md",
+      "title": "Verification Protocol: Empirical Defect Shield for moby-buildkit-learnings",
+      "repository": "moby-buildkit-learnings",
+      "source_version": "HEAD",
+      "content_hash": "841ce323ab2008f768b413e1d3a5187af4491336590f30e323f63890b70a7f8e",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T03:33:01.002Z"
+    },
+    "domain_intelligence-architecture-intelligence-tailscale-tailscale-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-tailscale-tailscale-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-learnings-architecture-intelligence-tailscale-tailscale-lear.md",
+      "title": "Architecture Intelligence: tailscale-tailscale-learnings Core Invariants",
+      "repository": "tailscale-tailscale-learnings",
+      "source_version": "HEAD",
+      "content_hash": "99454cb3e6de58f7ebaf97e3e04338b9c9857afd9f4897e3eb180b85bf6230e9",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T03:33:01.453Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/tailscale-tailscale-learnings-verification-protocol-empirical-defect-shield-for-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for tailscale-tailscale-learnings",
+      "repository": "tailscale-tailscale-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4f1a3b24995370d799e9c54c7aadee90711c9d2d5b1474a2630a2bb7ec65a882",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T03:33:01.567Z"
     }
   },
   "ai-builder-brain": {

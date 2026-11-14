@@ -9723,3 +9723,7 @@
 | `CYCLE-20261114-21TA` | `2026-11-14T03:15:21.646Z` | `openai/gpt-oss-20b` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8428, Rule 8429, Rule 8430` | Yes (`52ea2eb1...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T03:16:01.655Z` | `hf-openai-gpt-oss-20b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-F89A3B28` [Domain F] | Yes (`483c72d2...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T03:16:45.270Z` | `hf-openai-gpt-oss-20b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-J-37B3B4A9` [Domain J] | Yes (`e5b902d9...`) |
+| `CYCLE-20261114-NOOL` | `2026-11-14T03:32:11.061Z` | `bigscience/bloom` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md` | Yes (`104ff53e...`) |
+| `CYCLE-20261114-NXZ2` | `2026-11-14T03:32:23.102Z` | `moby/buildkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8431` | Yes (`0544bb2b...`) |
+| `CYCLE-20261114-NZVT` | `2026-11-14T03:32:25.577Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8432` | Yes (`f5163ec5...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T03:33:00.049Z` | `hf-bigscience-bloom` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-F2B017DF` [Domain D] | Yes (`e30e2cc5...`) |

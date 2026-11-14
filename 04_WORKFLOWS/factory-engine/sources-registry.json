@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-14T03:15:25.337Z",
-    "lastVerified": "2026-11-14T03:15:25.337Z",
+    "lastChecked": "2026-11-14T03:32:28.617Z",
+    "lastVerified": "2026-11-14T03:32:28.617Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -256,8 +256,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-14T02:37:10.092Z",
-    "lastVerified": "2026-11-14T02:37:10.092Z",
+    "lastChecked": "2026-11-14T03:32:23.061Z",
+    "lastVerified": "2026-11-14T03:32:23.061Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -2132,14 +2132,14 @@
     "officialUrl": "https://github.com/moby/buildkit",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-13T03:48:13.676Z",
-    "lastVerified": "2026-11-13T03:48:13.676Z",
+    "lastChecked": "2026-11-14T03:32:22.224Z",
+    "lastVerified": "2026-11-14T03:32:22.224Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-moby-buildkit",
-    "contentHash": "cb4b786957dd2966cf56883abee56463569fa541c7f947c9f4bceba784bc3638",
+    "contentHash": "0544bb2b619d8d14d67701c79391860830f0f991c18dce6b07b97b0d9f0a4d4a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2353,22 +2353,21 @@
     "revisionIdentifier": "8152c961"
   },
   "tailscale-tailscale": {
-    "name": "tailscale",
+    "name": "tailscale/tailscale",
     "officialUrl": "https://github.com/tailscale/tailscale",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-13T20:36:50.471Z",
-    "lastVerified": "2026-11-13T20:36:50.471Z",
+    "lastChecked": "2026-11-14T03:32:24.749Z",
+    "lastVerified": "2026-11-14T03:32:24.749Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "45ea91e4e73ceae47284b3095a08cf21857db91bbdb590d944b1b31153319edf",
+    "contentHash": "f5163ec5c888c88508c879ce7a8c9fa63a0490a7de09ad09381888cd5397f12f",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "e0d532cc"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "oramasearch-orama": {
     "name": "orama",
@@ -3695,9 +3694,9 @@
   "oblador-react-native-animatable": {
     "name": "react-native-animatable",
     "officialUrl": "https://github.com/oblador/react-native-animatable",
-    "lastChecked": "2026-11-09T21:05:47.756Z",
+    "lastChecked": "2026-11-14T03:32:12.884Z",
     "revisionIdentifier": "dfd74137",
-    "lastVerified": "2026-11-09T21:05:47.756Z"
+    "lastVerified": "2026-11-14T03:32:12.884Z"
   },
   "skyhook-io-radar": {
     "name": "skyhook-io/radar",
@@ -3949,9 +3948,9 @@
   "featureform-featureform": {
     "name": "featureform",
     "officialUrl": "https://github.com/featureform/featureform",
-    "lastChecked": "2026-11-13T02:24:39.915Z",
+    "lastChecked": "2026-11-14T03:32:20.480Z",
     "revisionIdentifier": "dc8b9fca",
-    "lastVerified": "2026-11-13T02:24:39.915Z"
+    "lastVerified": "2026-11-14T03:32:20.480Z"
   },
   "mfontanini-presenterm": {
     "name": "presenterm",
@@ -5392,12 +5391,12 @@
     "officialUrl": "https://huggingface.co/bigscience/bloom",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-08T23:36:19.961Z",
-    "lastVerified": "2026-11-08T23:36:19.961Z",
+    "lastChecked": "2026-11-14T03:32:10.578Z",
+    "lastVerified": "2026-11-14T03:32:10.578Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-bigscience-bloom",
-    "contentHash": "13133dc38181f49e514442d74ec208a9d4a19168e053dbe11e87ec1229ffb6bb",
+    "contentHash": "104ff53eb19ec684da31512cfef702e8c094d0f5527cedf4eb1009567c6f08d2",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -7320,9 +7319,9 @@
   "pauljuliusmartinez-jless": {
     "name": "jless",
     "officialUrl": "https://github.com/PaulJuliusMartinez/jless",
-    "lastChecked": "2026-11-12T21:10:19.668Z",
+    "lastChecked": "2026-11-14T03:32:07.844Z",
     "revisionIdentifier": "e6cdef71",
-    "lastVerified": "2026-11-12T21:10:19.668Z"
+    "lastVerified": "2026-11-14T03:32:07.844Z"
   },
   "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2": {
     "name": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
