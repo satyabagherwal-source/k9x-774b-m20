@@ -2503,10 +2503,10 @@
     "repository": "authzed/spicedb",
     "platform": "github",
     "sourceUrl": "https://github.com/authzed/spicedb",
-    "sourceVersion": "602ce24e",
+    "sourceVersion": "558b84d7",
     "license": "Apache-2.0",
-    "contentHash": "44469fedfade3260079501bfa347e110c4f45933feebb22e46880aaa9c360897",
-    "lastHarvestedAt": "2026-11-13T05:07:53.964Z",
+    "contentHash": "4e709b2001e2f937e757485bd90fdad99763b024cc390709f641233926ebef57",
+    "lastHarvestedAt": "2026-11-14T05:07:01.703Z",
     "learningId": "learn-github-authzed-spicedb"
   },
   "hashicorp-boundary": {
@@ -6983,10 +6983,10 @@
     "repository": "restatedev/restate",
     "platform": "github",
     "sourceUrl": "https://github.com/restatedev/restate",
-    "sourceVersion": "b8c2a10f",
+    "sourceVersion": "7dd495f7",
     "license": "NOASSERTION",
-    "contentHash": "9e6dba947a6a661a7312164893db8827f9464e812b413e7dce99b809b972377b",
-    "lastHarvestedAt": "2026-11-12T21:56:36.897Z",
+    "contentHash": "10c1c542c53b889824cf179d681f0a498b71488fa3f78f6d3b651a2683e8b533",
+    "lastHarvestedAt": "2026-11-14T05:07:04.581Z",
     "learningId": "learn-github-restatedev-restate"
   },
   "kong-kubernetes-ingress-controller": {
@@ -11665,8 +11665,8 @@
     "sourceUrl": "https://huggingface.co/Edge0/Audio8-TTS-Realistic-0.6b",
     "sourceVersion": "hf-edge0-audio8-tts-realistic-0.6b",
     "license": "Open-Source",
-    "contentHash": "0136818ac131ae7e23171866b99eb45be0fec3d9e60b8288cd7560688f045a25",
-    "lastHarvestedAt": "2026-11-09T00:31:10.846Z",
+    "contentHash": "1f461fb5197df286cf1e679d720e3d0fae602ac804029978d6d6bdf12e840e9d",
+    "lastHarvestedAt": "2026-11-14T05:05:33.402Z",
     "learningId": "learn-huggingface-edge0-audio8-tts-realistic-0-6b"
   },
   "dagoste-squadra": {

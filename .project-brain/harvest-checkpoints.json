@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-14T04:50:35.538Z",
+  "last_updated": "2026-11-14T05:07:04.589Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3891,14 +3891,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-authzed-spicedb",
-      "content_hash": "44469fedfade3260079501bfa347e110c4f45933feebb22e46880aaa9c360897",
-      "verified_at": "2026-11-13T05:07:53.996Z",
+      "content_hash": "4e709b2001e2f937e757485bd90fdad99763b024cc390709f641233926ebef57",
+      "verified_at": "2026-11-14T05:07:01.710Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T05:07:53.996Z"
+      "last_updated": "2026-11-14T05:07:01.710Z"
     },
     "hashicorp/boundary": {
       "repository": "hashicorp/boundary",
@@ -10536,14 +10536,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-restatedev-restate",
-      "content_hash": "9e6dba947a6a661a7312164893db8827f9464e812b413e7dce99b809b972377b",
-      "verified_at": "2026-11-12T21:56:36.924Z",
+      "content_hash": "10c1c542c53b889824cf179d681f0a498b71488fa3f78f6d3b651a2683e8b533",
+      "verified_at": "2026-11-14T05:07:04.588Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T21:56:36.924Z"
+      "last_updated": "2026-11-14T05:07:04.588Z"
     },
     "Kong/kubernetes-ingress-controller": {
       "repository": "Kong/kubernetes-ingress-controller",
@@ -17585,15 +17585,15 @@
       "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-edge0-audio8-tts-realistic-air",
-      "content_hash": "192dddb81799e3a03fb164c65c08241a0faa00e35af45e5b23094d405dfc7fab",
-      "verified_at": "2026-11-09T17:49:08.113Z",
+      "learning_id": "learn-huggingface-edge0-audio8-tts-realistic-0-6b",
+      "content_hash": "1f461fb5197df286cf1e679d720e3d0fae602ac804029978d6d6bdf12e840e9d",
+      "verified_at": "2026-11-14T05:05:33.409Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T17:49:08.113Z"
+      "last_updated": "2026-11-14T05:05:33.409Z"
     },
     "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated": {
       "repository": "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",

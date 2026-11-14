@@ -9748,3 +9748,10 @@
 | `CYCLE-20261114-GCN7` | `2026-11-14T04:50:27.715Z` | `deepseek-ai/DeepSeek-V3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3-learnings.md` | Yes (`d74a22ca...`) |
 | `CYCLE-20261114-GIO6` | `2026-11-14T04:50:35.526Z` | `keybase/client` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8443` | Yes (`5bdf6aca...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T04:51:07.657Z` | `hf-deepseek-ai-deepseek-v3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-C791DEC9` [Domain D] | Yes (`3deb3134...`) |
+| `CYCLE-20261114-ZRH2` | `2026-11-14T05:05:33.398Z` | `Edge0/Audio8-TTS-Realistic-Air` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8444, Rule 8445, Rule 8446` | Yes (`1f461fb5...`) |
+| `CYCLE-20261114-1NLV` | `2026-11-14T05:07:01.699Z` | `authzed/spicedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8447, Rule 8448, Rule 8449` | Yes (`4e709b20...`) |
+| `CYCLE-20261114-1PTT` | `2026-11-14T05:07:04.577Z` | `restatedev/restate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8450, Rule 8451, Rule 8452` | Yes (`10c1c542...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T05:07:36.706Z` | `restatedev-restate` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-948029CF` [Domain H] | Yes (`38258941...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T05:08:13.697Z` | `restatedev-restate` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-325B6346` [Domain K] | Yes (`0593febf...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T05:08:56.536Z` | `hf-edge0-audio8-tts-realistic-0.6b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-C33FF226` [Domain H] | Yes (`acff2736...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T05:09:43.684Z` | `authzed-spicedb` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-6B875983` [Domain K] | Yes (`d10747bc...`) |

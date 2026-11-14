@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T04:51:09.129Z",
-  "total_records": 542,
+  "last_updated": "2026-11-14T05:09:43.680Z",
+  "total_records": 551,
   "domains": {
     "A": {
       "total": 5,
@@ -316,7 +316,7 @@
       ]
     },
     "F": {
-      "total": 11,
+      "total": 13,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -328,11 +328,13 @@
         "domain_intelligence-design-intelligence-hf-openai-whisper-large-v3-learnings-core-invariants",
         "domain_intelligence-design-intelligence-dathere-qsv-core-invariants",
         "domain_intelligence-design-intelligence-dathere-qsv-learnings-core-invariants",
-        "DOM-F-F89A3B28"
+        "DOM-F-F89A3B28",
+        "domain_intelligence-design-intelligence-edge0-audio8-tts-realistic-air-core-invariants",
+        "domain_intelligence-design-intelligence-hf-edge0-audio8-tts-realistic-0-6b-learnings-core-invariants"
       ]
     },
     "G": {
-      "total": 77,
+      "total": 79,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -410,11 +412,13 @@
         "domain_intelligence-architecture-intelligence-berty-berty-core-invariants",
         "domain_intelligence-architecture-intelligence-berty-berty-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-keybase-client-core-invariants",
-        "domain_intelligence-architecture-intelligence-keybase-client-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-keybase-client-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-restatedev-restate-core-invariants",
+        "domain_intelligence-architecture-intelligence-restatedev-restate-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 114,
+      "total": 116,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -529,7 +533,9 @@
         "domain_intelligence-technical-construction-intelligence-aws-amplify-amplify-js-learnings-core-invari",
         "domain_intelligence-technical-construction-intelligence-meta-llama-llama-2-7b-core-invariants",
         "DOM-H-DD654136",
-        "domain_intelligence-technical-construction-intelligence-hf-meta-llama-llama-2-7b-learnings-core-inva"
+        "domain_intelligence-technical-construction-intelligence-hf-meta-llama-llama-2-7b-learnings-core-inva",
+        "DOM-H-948029CF",
+        "DOM-H-C33FF226"
       ]
     },
     "I": {
@@ -573,7 +579,7 @@
       ]
     },
     "K": {
-      "total": 14,
+      "total": 17,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -588,7 +594,10 @@
         "domain_intelligence-quality-verification-intelligence-nginx-kubernetes-ingress-learnings-core-invari",
         "domain_intelligence-quality-verification-intelligence-sceneview-sceneview-core-invariants",
         "domain_intelligence-quality-verification-intelligence-sceneview-sceneview-learnings-core-invariants",
-        "DOM-K-F74DEC74"
+        "DOM-K-F74DEC74",
+        "domain_intelligence-quality-verification-intelligence-authzed-spicedb-core-invariants",
+        "DOM-K-325B6346",
+        "DOM-K-6B875983"
       ]
     },
     "L": {
@@ -11975,6 +11984,187 @@
       "repository": "keybase-client-learnings",
       "content_hash": "bbdcbfcc4824e7ce97d4dce2e0d72bcc79a5024cd724e6dc9da6365ea0a0f7c1",
       "created_at": "2026-11-14T04:51:08.613Z"
+    },
+    "domain_intelligence-design-intelligence-edge0-audio8-tts-realistic-air-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-edge0-audio8-tts-realistic-air-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: Edge0/Audio8-TTS-Realistic-Air Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-hf-edge0-audio8-tts-realistic-0-6b-design-intelligence-edge0-audio8-tts-realisti.md",
+      "repository": "Edge0/Audio8-TTS-Realistic-Air",
+      "content_hash": "5fd23f87bca6a988dec306bc0fff04367f4e85f5e9835dad8ff10d524e0601a5",
+      "created_at": "2026-11-14T05:05:33.807Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-authzed-spicedb-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-authzed-spicedb-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: authzed/spicedb Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-authzed-spicedb-quality-verification-intelligence-authzed-spicedb-core-invariant.md",
+      "repository": "authzed/spicedb",
+      "content_hash": "f67292e2e44d3eb7a207bf88fb15c2d2028930998657fc3f5d221ba679dc1385",
+      "created_at": "2026-11-14T05:07:02.147Z"
+    },
+    "domain_intelligence-architecture-intelligence-restatedev-restate-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-restatedev-restate-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: restatedev/restate Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-restatedev-restate-architecture-intelligence-restatedev-restate-core-invariants.md",
+      "repository": "restatedev/restate",
+      "content_hash": "bf06ab22f63d99e1486e3e29e6865bd8cce7753088da68770f73d79efa5fe6b8",
+      "created_at": "2026-11-14T05:07:05.026Z"
+    },
+    "DOM-H-948029CF": {
+      "record_id": "DOM-H-948029CF",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "Snapshot Download Ignores Processor Manager Cancellation (BUG-SNAPSHOT-01)",
+      "content": "I/O boundaries must accept cancellation tokens directly; never wrap a non-cancellable blocking/long-running async pipeline in an outer check after execution completes.",
+      "content_hash": "3825894153a696002e4a78c7a404c95a1086c2fdb617065e1f8963c3131b10db",
+      "summary": "`download_latest_snapshot` and `SnapshotRepository::get_latest_inner` lacked cancellation checks within their download loops and `JoinSet` a -> I/O boundaries must accept cancellation tokens directly; never wrap a non-cancellable blocking/long-running async pipeline in an outer check",
+      "provenance": {
+        "source_uri": "project://restatedev-restate/restatedev-restate-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T05:07:07.945Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (restatedev-restate)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "GitHub Issue #5666, closed via PR #5692."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T05:07:36.696Z"
+    },
+    "DOM-K-325B6346": {
+      "record_id": "DOM-K-325B6346",
+      "domain_letter": "K",
+      "domain_id": "quality_verification",
+      "domain_name": "Quality & Verification Intelligence",
+      "secondary_domains": [],
+      "title": "Inconsistent Virtual Queue Metadata Triggers Cascading Panics (BUG-VQUEUE-02)",
+      "content": "Diagnostic counters and cached stage tallies must degrade gracefully with structured warnings rather than panicking inside consensus-critical loops, preventing localized data discrepancies from converting into node-wide outages.",
+      "content_hash": "0593febf480e85cb58c324351cec76fadc5aadde7cbd0337bdadfd6971c96a76",
+      "summary": "The storage metadata counter was treated as a strictly authoritative invariant. When corrupted or drifting, assertions triggered process unw -> Diagnostic counters and cached stage tallies must degrade gracefully with structured warnings rather than panicking inside consensus-critica",
+      "provenance": {
+        "source_uri": "project://restatedev-restate/restatedev-restate-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T05:07:07.945Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (restatedev-restate)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "GitHub Issue #5597, Commit `f92b93fd`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T05:08:13.689Z"
+    },
+    "domain_intelligence-architecture-intelligence-restatedev-restate-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-restatedev-restate-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: restatedev-restate-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-restatedev-restate-learnings-architecture-intelligence-restatedev-restate-learni.md",
+      "repository": "restatedev-restate-learnings",
+      "content_hash": "095c6a738d55ad0c8394523ff7e05e0948707df12d5523d8f9bfb0d7a8ffd67a",
+      "created_at": "2026-11-14T05:08:14.257Z"
+    },
+    "DOM-H-C33FF226": {
+      "record_id": "DOM-H-C33FF226",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "Grouped-Query Attention Ratio Mismatch in Fast AR (BUG-GQA-02)",
+      "content": "In dual-loop autoregressive architectures, the inner loop must use aggressive Grouped Query Attention (or Multi-Query Attention) to minimize KV cache memory movement during per-step generation.",
+      "content_hash": "acff2736b1412f9f2c79e7e9e122ff66808c4e35d8bd387ded2813c1d1eaff20",
+      "summary": "Fast AR executes autoregressively 9 times per audio frame. Using full multi-head attention inside a 9-step inner loop caused repetitive memo -> In dual-loop autoregressive architectures, the inner loop must use aggressive Grouped Query Attention (or Multi-Query Attention) to minimize",
+      "provenance": {
+        "source_uri": "project://hf-edge0-audio8-tts-realistic-0.6b/hf-edge0-audio8-tts-realistic-0.6b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T05:08:14.603Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-edge0-audio8-tts-realistic-0.6b)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "`config.json`:"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T05:08:56.528Z"
+    },
+    "domain_intelligence-design-intelligence-hf-edge0-audio8-tts-realistic-0-6b-learnings-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-hf-edge0-audio8-tts-realistic-0-6b-learnings-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: hf-edge0-audio8-tts-realistic-0.6b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-hf-edge0-audio8-tts-realistic-0-6b-learnings-design-intelligence-hf-edge0-audio8.md",
+      "repository": "hf-edge0-audio8-tts-realistic-0.6b-learnings",
+      "content_hash": "06d08772a8ce0a4a4ddbae347945209b836bd339316cf5a9b03b8c668d35bd0b",
+      "created_at": "2026-11-14T05:08:57.087Z"
+    },
+    "DOM-K-6B875983": {
+      "record_id": "DOM-K-6B875983",
+      "domain_letter": "K",
+      "domain_id": "quality_verification",
+      "domain_name": "Quality & Verification Intelligence",
+      "secondary_domains": [],
+      "title": "Test Suite Thread Contention & Fixture Allocation Bottleneck (BUG-TEST-01)",
+      "content": "Parsing formatted text representations in performance test harnesses creates an allocation bottleneck that distorts profiling. Domain primitives should be instantiated directly as structs, and read-only fixtures must be shared across concurrent subtests.",
+      "content_hash": "d10747bca80bfcc2b26a6f608692412bbd2d0d323901cb4e5be5ba873cec32d3",
+      "summary": "1. `TestDispatchChunking` initialized 131,072 tuples using `tuple.MustParse(fmt.Sprintf(...))`. Under `-race`, string parsing and memory all -> Parsing formatted text representations in performance test harnesses creates an allocation bottleneck that distorts profiling. Domain primit",
+      "provenance": {
+        "source_uri": "project://authzed-spicedb/authzed-spicedb-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T05:08:57.432Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (authzed-spicedb)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit SHA `558b84d7`, PR #3485."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.95,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T05:09:43.676Z"
     }
   }
 }

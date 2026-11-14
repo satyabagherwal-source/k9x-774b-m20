@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-14T04:51:07.656Z",
+  "updated_at": "2026-11-14T05:09:43.683Z",
   "statistics": {
-    "total_nodes": 160,
+    "total_nodes": 164,
     "total_edges": 88,
     "domain_distribution": {
       "D": 126,
       "M": 1,
-      "H": 12,
+      "H": 14,
       "J": 8,
-      "K": 6,
+      "K": 8,
       "L": 2,
       "G": 1,
       "F": 3,
@@ -3584,6 +3584,94 @@
       ],
       "created_at": "2026-11-14T04:51:07.655Z",
       "updated_at": "2026-11-14T04:51:07.655Z"
+    },
+    "DOM-H-948029CF": {
+      "id": "DOM-H-948029CF",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Snapshot Download Ignores Processor Manager Cancellation (BUG-SNAPSHOT-01)",
+      "summary": "`download_latest_snapshot` and `SnapshotRepository::get_latest_inner` lacked cancellation checks within their download loops and `JoinSet` a -> I/O boundaries must accept cancellation tokens directly; never wrap a non-cancellable blocking/long-running async pipeline in an outer check",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://restatedev-restate/restatedev-restate-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T05:07:07.945Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (restatedev-restate)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-14T05:07:36.704Z",
+      "updated_at": "2026-11-14T05:07:36.704Z"
+    },
+    "DOM-K-325B6346": {
+      "id": "DOM-K-325B6346",
+      "domain": "K",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Inconsistent Virtual Queue Metadata Triggers Cascading Panics (BUG-VQUEUE-02)",
+      "summary": "The storage metadata counter was treated as a strictly authoritative invariant. When corrupted or drifting, assertions triggered process unw -> Diagnostic counters and cached stage tallies must degrade gracefully with structured warnings rather than panicking inside consensus-critica",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://restatedev-restate/restatedev-restate-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T05:07:07.945Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (restatedev-restate)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "K",
+        "Quality & Verification Intelligence"
+      ],
+      "created_at": "2026-11-14T05:08:13.696Z",
+      "updated_at": "2026-11-14T05:08:13.696Z"
+    },
+    "DOM-H-C33FF226": {
+      "id": "DOM-H-C33FF226",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Grouped-Query Attention Ratio Mismatch in Fast AR (BUG-GQA-02)",
+      "summary": "Fast AR executes autoregressively 9 times per audio frame. Using full multi-head attention inside a 9-step inner loop caused repetitive memo -> In dual-loop autoregressive architectures, the inner loop must use aggressive Grouped Query Attention (or Multi-Query Attention) to minimize",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-edge0-audio8-tts-realistic-0.6b/hf-edge0-audio8-tts-realistic-0.6b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T05:08:14.603Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-edge0-audio8-tts-realistic-0.6b)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-14T05:08:56.535Z",
+      "updated_at": "2026-11-14T05:08:56.535Z"
+    },
+    "DOM-K-6B875983": {
+      "id": "DOM-K-6B875983",
+      "domain": "K",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Test Suite Thread Contention & Fixture Allocation Bottleneck (BUG-TEST-01)",
+      "summary": "1. `TestDispatchChunking` initialized 131,072 tuples using `tuple.MustParse(fmt.Sprintf(...))`. Under `-race`, string parsing and memory all -> Parsing formatted text representations in performance test harnesses creates an allocation bottleneck that distorts profiling. Domain primit",
+      "confidence": 0.95,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://authzed-spicedb/authzed-spicedb-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T05:08:57.432Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (authzed-spicedb)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "K",
+        "Quality & Verification Intelligence"
+      ],
+      "created_at": "2026-11-14T05:09:43.683Z",
+      "updated_at": "2026-11-14T05:09:43.683Z"
     }
   },
   "edges": [

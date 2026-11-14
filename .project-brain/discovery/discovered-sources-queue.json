@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T04:51:08.312Z",
+  "updated_at": "2026-11-14T05:08:56.550Z",
   "stats": {
-    "total_discovered": 3150,
-    "approved_pending_harvest": 2947,
+    "total_discovered": 3151,
+    "approved_pending_harvest": 2948,
     "harvested_count": 0,
     "rejected_count": 203,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2939,
+      "COMMUNITY_AND_EXPERT": 2940,
       "OFFICIAL_DOCUMENTATION": 116,
       "STANDARDS_AND_SPECIFICATIONS": 81,
       "ENGINEERING_BLOGS": 1,
@@ -67899,6 +67899,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/keybase-client-learnings.md",
         "fileName": "keybase-client-learnings.md"
+      }
+    },
+    "SRC-CA03E77E0082": {
+      "id": "SRC-CA03E77E0082",
+      "url": "https://huggingface.co/Edge0/Audio8-TTS-Realistic-0.6b",
+      "title": "https://huggingface.co/Edge0/Audio8-TTS-Realistic-0.6b",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T05:08:56.550Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-0.6b-learnings.md",
+        "fileName": "hf-edge0-audio8-tts-realistic-0.6b-learnings.md"
       }
     }
   }

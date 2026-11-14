@@ -9781,3 +9781,10 @@ Every entry in this ledger must capture:
 | `learn-huggingface-deepseek-ai-deepseek-v3` | `https://huggingface.co/deepseek-ai/DeepSeek-V3` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-14T04:50:27.719Z |
 | `learn-github-keybase-client` | `https://github.com/keybase/client` | `c241b403` | Multi-dimensional audit evidence | 2026-11-14T04:50:35.530Z |
 | `learn-dom-d-c791dec9` | `project://hf-deepseek-ai-deepseek-v3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3-learnings.md` | 2026-11-14T04:51:07.657Z |
+| `learn-huggingface-edge0-audio8-tts-realistic-0-6b` | `https://huggingface.co/Edge0/Audio8-TTS-Realistic-0.6b` | `hf-edge0-a` | Multi-dimensional audit evidence | 2026-11-14T05:05:33.402Z |
+| `learn-github-authzed-spicedb` | `https://github.com/authzed/spicedb` | `558b84d7` | Multi-dimensional audit evidence | 2026-11-14T05:07:01.703Z |
+| `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `7dd495f7` | Multi-dimensional audit evidence | 2026-11-14T05:07:04.581Z |
+| `learn-dom-h-948029cf` | `project://restatedev-restate` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/restatedev-restate-learnings.md` | 2026-11-14T05:07:36.706Z |
+| `learn-dom-k-325b6346` | `project://restatedev-restate` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/restatedev-restate-learnings.md` | 2026-11-14T05:08:13.697Z |
+| `learn-dom-h-c33ff226` | `project://hf-edge0-audio8-tts-realistic-0.6b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-0.6b-learnings.md` | 2026-11-14T05:08:56.536Z |
+| `learn-dom-k-6b875983` | `project://authzed-spicedb` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/authzed-spicedb-learnings.md` | 2026-11-14T05:09:43.684Z |

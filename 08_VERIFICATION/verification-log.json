@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-KL7R",
-    "timestamp": "2026-11-13T08:22:02.343Z",
-    "repository": "iziz/libPhoneNumber-iOS",
-    "learningId": "learn-github-iziz-libphonenumber-ios",
-    "contentHash": "3bb6d0abf031ad0e02d3731225220952ab60e19d3178d6fbfd0ba029fe3849f0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-KM80",
-    "timestamp": "2026-11-13T08:22:03.648Z",
-    "repository": "cachix/devenv",
-    "learningId": "learn-github-cachix-devenv",
-    "contentHash": "91700e308434dea7f19b85a54945b892f30e52c32f9906a98fa1a7b8618924f0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-KOBU",
-    "timestamp": "2026-11-13T08:22:06.378Z",
-    "repository": "dragonflyoss/dragonfly",
-    "learningId": "learn-github-dragonflyoss-dragonfly",
-    "contentHash": "9114cfef656a1eba3b0e7a6e6aabfda58ca50441b033db3585fa87a0275b95a8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-KR4I",
     "timestamp": "2026-11-13T08:22:10.002Z",
     "repository": "etcd-io/etcd",
@@ -7492,6 +7447,51 @@
     "contentHash": "5bdf6aca9f8919b627c7fb5d539f4567407dcc393544e95ec99655d6b437b52f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-ZRH2",
+    "timestamp": "2026-11-14T05:05:33.398Z",
+    "repository": "Edge0/Audio8-TTS-Realistic-Air",
+    "learningId": "learn-huggingface-edge0-audio8-tts-realistic-0-6b",
+    "contentHash": "1f461fb5197df286cf1e679d720e3d0fae602ac804029978d6d6bdf12e840e9d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-1NLV",
+    "timestamp": "2026-11-14T05:07:01.699Z",
+    "repository": "authzed/spicedb",
+    "learningId": "learn-github-authzed-spicedb",
+    "contentHash": "4e709b2001e2f937e757485bd90fdad99763b024cc390709f641233926ebef57",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-1PTT",
+    "timestamp": "2026-11-14T05:07:04.577Z",
+    "repository": "restatedev/restate",
+    "learningId": "learn-github-restatedev-restate",
+    "contentHash": "10c1c542c53b889824cf179d681f0a498b71488fa3f78f6d3b651a2683e8b533",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
