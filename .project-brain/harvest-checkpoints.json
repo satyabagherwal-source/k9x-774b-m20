@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T23:44:16.439Z",
+  "last_updated": "2026-11-14T00:08:17.992Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "496e828588f077f8f0de650a17a53a07c3f502d8a45be017fc92ad2aa6be84a9",
-      "verified_at": "2026-11-13T20:54:30.721Z",
+      "content_hash": "b37b0b840dbec9eb452838a83acd8b9a2b75d5d2407bef62fe4b6b5bf13667be",
+      "verified_at": "2026-11-14T00:08:12.057Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T20:54:30.721Z"
+      "last_updated": "2026-11-14T00:08:12.057Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "909b9c492801b2b201dd0e378a0122cc6b19e7cea387d6157ebf5559f8bb5ee3",
-      "verified_at": "2026-11-13T15:04:01.235Z",
+      "content_hash": "398275f30687510a94bb33b3f1bbe8aec3241391610eeaedcb19239be7970226",
+      "verified_at": "2026-11-14T00:08:17.992Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T15:04:01.235Z"
+      "last_updated": "2026-11-14T00:08:17.992Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -17541,14 +17541,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf",
-      "content_hash": "3fc1d5687fb6beaddf551cf805365ffefd30a80c3ce691a93acc0c2977955751",
-      "verified_at": "2026-11-08T21:46:50.765Z",
+      "content_hash": "cda1720f1870f6d7789fb20363434c0ba0dc9af262e98c5eaf0da1bf314c47f1",
+      "verified_at": "2026-11-14T00:07:59.749Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T21:46:50.765Z"
+      "last_updated": "2026-11-14T00:07:59.749Z"
     },
     "Edge0/Audio8-TTS-Realistic-0.6b": {
       "repository": "Edge0/Audio8-TTS-Realistic-0.6b",

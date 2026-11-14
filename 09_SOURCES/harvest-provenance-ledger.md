@@ -9707,3 +9707,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-openai-whisper-large-v3` | `https://huggingface.co/openai/whisper-large-v3` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-13T23:44:16.430Z |
 | `learn-dom-b-a33663ae` | `project://hf-openai-whisper-large-v3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md` | 2026-11-13T23:44:48.370Z |
 | `learn-dom-f-3f2eac2e` | `project://hf-openai-whisper-large-v3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md` | 2026-11-13T23:45:19.455Z |
+| `learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf` | `https://huggingface.co/AtomicChat/LFM3-1.7B-Uncensored-GGUF` | `hf-atomicc` | Multi-dimensional audit evidence | 2026-11-14T00:07:59.739Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `1f0ceab5` | Multi-dimensional audit evidence | 2026-11-14T00:08:12.047Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `892e7223` | Multi-dimensional audit evidence | 2026-11-14T00:08:17.982Z |
+| `learn-dom-d-bebc2172` | `project://hf-atomicchat-lfm3-1.7b-uncensored-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-atomicchat-lfm3-1.7b-uncensored-gguf-learnings.md` | 2026-11-14T00:08:54.196Z |

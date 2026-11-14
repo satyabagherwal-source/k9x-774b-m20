@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-13T23:45:21.547Z",
-  "total_verified_learnings": 8434,
+  "last_updated": "2026-11-14T00:08:56.269Z",
+  "total_verified_learnings": 8436,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 16796,
+  "total_items": 16806,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112094,10 +112094,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "ce4f6857",
-      "content_hash": "6d74e88b06587f79e941739844cfa6466a9531535190108ea7b2c51937abe49f",
+      "source_version": "892e7223",
+      "content_hash": "46707d5cd72d908d4ceeb081b383a0eee4c19a71eccb4d78d0bd59e4a488b710",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T15:04:01.639Z"
+      "persisted_at": "2026-11-14T00:08:18.413Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -112131,9 +112131,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dathere-qsv-learnings",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "d4a4976c6679c7eea24dae43a00c1aaefaff225eaedd0f6e340860d7f4519826",
+      "content_hash": "042f278506d084490459ca2965db6d518744c7e0d52d830bba741149fdff8190",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T15:04:05.468Z"
+      "persisted_at": "2026-11-14T00:08:56.269Z"
     },
     "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels": {
       "item_id": "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels",
@@ -112775,25 +112775,25 @@
       "item_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "repository": "aleo-labs-protocol/snarkOS",
       "source_version": "1f0ceab5",
-      "content_hash": "7ff4b3550337afde913cb6f8907a730bc5b5e9018db863b59f12174daf7f0a32",
+      "content_hash": "374343aa8d8ce8343913f8452ece2f68947e8520e607678d6d6b48ef4c3ac62a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T20:54:30.994Z"
+      "persisted_at": "2026-11-14T00:08:12.375Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/aleo-labs-protocol-snarkos-verification-protocol-empirical-defect-shield-for-ale.md",
+      "relative_path": "08_VERIFICATION/provablehq-snarkos-verification-protocol-empirical-defect-shield-for-aleo-labs-p.md",
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
       "source_version": "1f0ceab5",
-      "content_hash": "5a5a9052c6fbeaf3753a5019bb3286d1137f6fb4156557d8961dbb97479971df",
+      "content_hash": "6749ced1da481ebc662e1c53e64302cc945caeeeb223d2aff840d13c9dcf1f30",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T20:54:31.086Z"
+      "persisted_at": "2026-11-14T00:08:12.487Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar",
@@ -114555,9 +114555,9 @@
       "title": "Architecture Intelligence: provablehq-snarkos-learnings Core Invariants",
       "repository": "provablehq-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "14f38af618d0daaba70bf88fe40fd622d73de95b25ecca1172678b94768cebd4",
+      "content_hash": "98a0f2fcf658e9bffeb3d84aaccf7477f35b8519e4fa6411c0f58f1c2a13f530",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T18:26:52.372Z"
+      "persisted_at": "2026-11-14T00:08:54.991Z"
     },
     "candidate_directive-server-security-check-the-token-on-the-account-confirmation-page-when-confirm_": {
       "item_id": "candidate_directive-server-security-check-the-token-on-the-account-confirmation-page-when-confirm_",
@@ -215246,13 +215246,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "aleo-labs-protocol-snarkos",
+      "slug": "provablehq-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
       "source_version": "1f0ceab5",
-      "content_hash": "496e828588f077f8f0de650a17a53a07c3f502d8a45be017fc92ad2aa6be84a9",
-      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "content_hash": "b37b0b840dbec9eb452838a83acd8b9a2b75d5d2407bef62fe4b6b5bf13667be",
+      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 8012,
@@ -215265,7 +215265,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T20:54:30.575Z",
+      "verified_at": "2026-11-14T00:08:11.883Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -215279,26 +215279,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 8012,
       "title": "Empirical Invariant Guard in Cargo.lock",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
       "source_version": "1f0ceab5",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-13T20:54:30.575Z"
+      "verified_at": "2026-11-14T00:08:11.883Z"
     },
     "candidate_directive-empirical-invariant-guard-in-cargo-lock": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-cargo-lock",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-GA28-empirical-invariant-guard-in-cargo-lock.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-EA1A-empirical-invariant-guard-in-cargo-lock.md",
       "title": "Empirical Invariant Guard in Cargo.lock",
-      "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "1f0ceab5",
-      "content_hash": "52519998d4f5477c0e1799931682b31a62eec71109e7fb331ba16bd3fb5d216a",
+      "repository": "provablehq-snarkos-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4632e67c39e901ba541959c2f8f8603cb56237bd9f5872ba7cbe918b74994185",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T20:54:30.900Z"
+      "persisted_at": "2026-11-14T00:08:54.875Z"
     },
     "learn-github-langchain4j-langchain4j": {
       "learning_id": "learn-github-langchain4j-langchain4j",
@@ -218603,6 +218603,164 @@
       "content_hash": "99381db1a992a7ad1114f212c925dc45a72f4e66034284f34ac44852b5784516",
       "domain_letter": "K",
       "persisted_at": "2026-11-13T23:45:20.955Z"
+    },
+    "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf": {
+      "learning_id": "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "AtomicChat/LFM3-1.7B-Uncensored-GGUF",
+      "repository": "AtomicChat/LFM3-1.7B-Uncensored-GGUF",
+      "slug": "hf-atomicchat-lfm3-1.7b-uncensored-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/AtomicChat/LFM3-1.7B-Uncensored-GGUF",
+      "source_version": "hf-atomicchat-lfm3-1.7b-uncensored-gguf",
+      "content_hash": "cda1720f1870f6d7789fb20363434c0ba0dc9af262e98c5eaf0da1bf314c47f1",
+      "dossier_path": "07_PROJECT_LEARNING/hf-atomicchat-lfm3-1.7b-uncensored-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-atomicchat-lfm3-1.7b-uncensored-gguf-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T00:07:59.580Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-atomicchat-lfm3-1-7b-uncensored-gguf-core-invari": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-atomicchat-lfm3-1-7b-uncensored-gguf-core-invari",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-atomicchat-lfm3-1-7b-uncensored-gguf-research-knowledge-intelligence-atomicch.md",
+      "title": "Research & Knowledge Intelligence: AtomicChat/LFM3-1.7B-Uncensored-GGUF Core Invariants",
+      "repository": "AtomicChat/LFM3-1.7B-Uncensored-GGUF",
+      "source_version": "hf-atomicchat-lfm3-1.7b-uncensored-gguf",
+      "content_hash": "9c8974422206e72f50917774fe6d2565f44b9e7c6f5572c57e43f2223e478b4d",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T00:07:59.937Z"
+    },
+    "learn-github-dathere-qsv": {
+      "learning_id": "learn-github-dathere-qsv",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "dathere/qsv",
+      "repository": "dathere/qsv",
+      "slug": "dathere-qsv",
+      "platform": "github",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "892e7223",
+      "content_hash": "398275f30687510a94bb33b3f1bbe8aec3241391610eeaedcb19239be7970226",
+      "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8409,
+          "title": "category-axis tickvals are category names, not positions",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T00:08:17.820Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8409": {
+      "learning_id": "rule-8409",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8409,
+      "title": "category-axis tickvals are category names, not positions",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "892e7223",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T00:08:17.820Z"
+    },
+    "candidate_directive-category-axis-tickvals-are-category-names-not-positions": {
+      "item_id": "candidate_directive-category-axis-tickvals-are-category-names-not-positions",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DHQF-category-axis-tickvals-are-category-names-not-positions.md",
+      "title": "category-axis tickvals are category names, not positions",
+      "repository": "dathere/qsv",
+      "source_version": "892e7223",
+      "content_hash": "8f4d38d78cc8759e105d47dff64569c56a798017d46e56a710313bdb943799b3",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-14T00:08:18.190Z"
+    },
+    "domain_intelligence-design-intelligence-dathere-qsv-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-dathere-qsv-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-dathere-qsv-design-intelligence-dathere-qsv-core-invariants.md",
+      "title": "Design Intelligence: dathere/qsv Core Invariants",
+      "repository": "dathere/qsv",
+      "source_version": "892e7223",
+      "content_hash": "4fe59826b2b7773a2e2f6e44bbf0a0324ed8fc736f614d1952a805802e37a9b5",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-14T00:08:18.299Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-atomicchat-lfm3-1-7b-uncensored-gguf-learning": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-atomicchat-lfm3-1-7b-uncensored-gguf-learning",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-atomicchat-lfm3-1-7b-uncensored-gguf-learnings-research-knowledge-intelligenc.md",
+      "title": "Research & Knowledge Intelligence: hf-atomicchat-lfm3-1.7b-uncensored-gguf-learnings Core Invariants",
+      "repository": "hf-atomicchat-lfm3-1.7b-uncensored-gguf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3c832eb28c69dbf3be5d393d9a2762a89cd73c1ca3f6863516646ab669780b1b",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T00:08:54.409Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-provablehq-snarkos-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-provablehq-snarkos-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/provablehq-snarkos-learnings-verification-protocol-empirical-defect-shield-for-p.md",
+      "title": "Verification Protocol: Empirical Defect Shield for provablehq-snarkos-learnings",
+      "repository": "provablehq-snarkos-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7fb418e95bba4c4ef41b96c356bacb844acfb90997cdb5afa1ca63c86b5de79c",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T00:08:55.120Z"
+    },
+    "candidate_directive-viz-category-axis-tickvals-are-category-names-not-positions": {
+      "item_id": "candidate_directive-viz-category-axis-tickvals-are-category-names-not-positions",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-EAX9-viz-category-axis-tickvals-are-category-names-not-positions.md",
+      "title": "viz): category-axis tickvals are category names, not positions",
+      "repository": "dathere-qsv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b879be0aea4cd082dd779c59d81b4572fc0f9b9d887228daddf52586a6461e74",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-14T00:08:56.025Z"
+    },
+    "domain_intelligence-design-intelligence-dathere-qsv-learnings-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-dathere-qsv-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-dathere-qsv-learnings-design-intelligence-dathere-qsv-learnings-core-invariants.md",
+      "title": "Design Intelligence: dathere-qsv-learnings Core Invariants",
+      "repository": "dathere-qsv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "29267e219367323a46ffe951be4da035def8c2834c83704935c469fdb7d5a151",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-14T00:08:56.142Z"
     }
   },
   "ai-builder-brain": {

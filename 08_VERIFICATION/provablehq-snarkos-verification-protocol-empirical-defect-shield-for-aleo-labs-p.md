@@ -4,22 +4,22 @@
 {
   "source_repository": "aleo-labs-protocol/snarkOS",
   "source_url": "https://github.com/ProvableHQ/snarkOS",
-  "source_version": "1637f0cc",
+  "source_version": "1f0ceab5",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-13T18:26:01.325Z",
+  "timestamp": "2026-11-14T00:08:12.264Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-aleo-labs-protocol-snarkos",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [aleo-labs-protocol/snarkOS](https://github.com/ProvableHQ/snarkOS) (Revision: `1637f0cc`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-13T18:26:01.325Z`  
+> **Provenance**: Harvested from [aleo-labs-protocol/snarkOS](https://github.com/ProvableHQ/snarkOS) (Revision: `1f0ceab5`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-14T00:08:12.264Z`  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `aleo-labs-protocol/snarkOS` (Commit: `1637f0cc`)
+- **Target Repository**: `aleo-labs-protocol/snarkOS` (Commit: `1f0ceab5`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T18:26:00.520Z  
+> **Harvest Timestamp**: 2026-11-14T00:08:11.353Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1999,107 +1999,241 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e3b97728` (2026-11-13)
-**Commit Message**: Merge pull request #4603 from aleo-labs-protocol/fix/propose-drain-skip
+### Incident Patch 1: `1f0ceab5` (2026-11-13)
+**Commit Message**: Merge pull request #4666 from aleo-labs-protocol/ci/bump-snarkvm
 
-Skip a transaction that fails to deserialize when proposing, instead of dropping the batch
-
-**File**: `node/bft/src/primary.rs` (modified, +58/-9)
+**File**: `Cargo.lock` (modified, +61/-63)
 ```diff
-@@ -677,6 +677,13 @@ impl<N: Network> proposal_task::BatchPropose for Primary<N> {
-             return Ok(false);
-         }
+@@ -5892,7 +5892,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm"
+ version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=dc6863ed328de51478a4f59b256a725c97dec076#dc6863ed328de51478a4f59b256a725c97dec076"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5c39efdc1459a103b2b1e5ed5a00b6458890ce3b#5c39efdc1459a103b2b1e5ed5a00b6458890ce3b"
+ dependencies = [
+  "anyhow",
+  "dotenvy",
+@@ -5914,7 +5914,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-algorithms"
+ version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=dc6863ed328de51478a4f59b256a725c97dec076#dc6863ed328de51478a4f59b256a725c97dec076"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5c39efdc1459a103b2b1e5ed5a00b6458890ce3b#5c39efdc1459a103b2b1e5ed5a00b6458890ce3b"
+ dependencies = [
+  "ahash",
+  "aleo-std",
+@@ -5942,7 +5942,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-algorithms-cuda"
+ version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=dc6863ed328de51478a4f59b256a725c97dec076#dc6863ed328de51478a4f59b256a725c97dec076"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5c39efdc1459a103b2b1e5ed5a00b6458890ce3b#5c39efdc1459a103b2b1e5ed5a00b6458890ce3b"
+ dependencies = [
+  "blst",
+  "cc",
+@@ -5955,7 +5955,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit"
+ version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=dc6863ed328de51478a4f59b256a725c97dec076#dc6863ed328de51478a4f59b256a725c97dec076"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5c39efdc1459a103b2b1e5ed5a00b6458890ce3b#5c39efdc1459a103b2b1e5ed5a00b6458890ce3b"
+ dependencies = [
+  "snarkvm-circuit-account",
+  "snarkvm-circuit-algorithms",
+@@ -5969,7 +5969,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-account"
+ version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=dc6863ed328de51478a4f59b256a725c97dec076#dc6863ed328de51478a4f59b256a725c97dec076"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5c39efdc1459a103b2b1e5ed5a00b6458890ce3b#5c39efdc1459a103b2b1e5ed5a00b6458890ce3b"
+ dependencies = [
+  "snarkvm-circuit-network",
+  "snarkvm-circuit-types",
+@@ -5979,7 +5979,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-algorithms"
+ version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=dc6863ed328de51478a4f59b256a725c97dec076#dc6863ed328de51478a4f59b256a725c97dec076"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5c39efdc1459a103b2b1e5ed5a00b6458890ce3b#5c39efdc1459a103b2b1e5ed5a00b6458890ce3b"
+ dependencies = [
+  "snarkvm-circuit-types",
+  "snarkvm-console-algorithms",
+@@ -5989,7 +5989,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-collections"
+ version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=dc6863ed328de51478a4f59b256a725c97dec076#dc6863ed328de51478a4f59b256a725c97dec076"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5c39efdc1459a103b2b1e5ed5a00b6458890ce3b#5c39efdc1459a103b2b1e5ed5a00b6458890ce3b"
+ dependencies = [
+  "snarkvm-circuit-algorithms",
+  "snarkvm-circuit-types",
+@@ -5999,7 +5999,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-environment"
+ version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=dc6863ed328de51478a4f59b256a725c97dec076#dc6863ed328de51478a4f59b256a725c97dec076"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5c39efdc1459a103b2b1e5ed5a00b6458890ce3b#5c39efdc1459a103b2b1e5ed5a00b6458890ce3b"
+ dependencies = [
+  "anyhow",
+  "indexmap 2.14.2",
+@@ -6019,12 +6019,12 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-environment-witness"
+ version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=dc6863ed328de51478a4f59b256a725c97dec076#dc6863ed328de51478a4f59b256a725c97dec076"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5c39efdc1459a103b2b1e5ed5a00b6458890ce3b#5c39efdc1459a103b2b1e5ed5a00b6458890ce3b"
  
-+        // Fetch the current block height and consensus version.
-+        let current_block_height = self.ledger.latest_block_height();
-+        let consensus_version = N::CONSENSUS_VERSION(current_block_height)?;
-+        // Compute the batch proposal spend limit.
-+        let proposal_spend_limit = BatchHeader::<N>::batch_spend_limit(current_block_height)
-+            .saturating_mul(self.proposal_spent_limit_multiplier);
-+
-         // Initialize the map of transmissions.
-         let mut transmissions: IndexMap<_, _> = Default::default();
-         // Track the total execution costs of the batch proposal as it is being constructed.
-@@ -686,6 +693,8 @@ impl<N: Network> proposal_task::BatchPropose for Primary<N> {
-         // provided by one worker (FIFO) is no longer guaranteed with multiple workers.
-         debug_assert_eq!(MAX_WORKERS, 1);
+ [[package]]
+ name = "snarkvm-circuit-network"
+ version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=dc6863ed328de51478a4f59b256a725c97dec076#dc6863ed328de51478a4f59b256a725c97dec076"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5c39efdc1459a103b2b1e5ed5a00b6458890ce3b#5c39efdc1459a103b2b1e5ed5a00b6458890ce3b"
+ dependencies = [
+  "snarkvm-circuit-algorithms",
+  "snarkvm-circuit-collections",
+@@ -6035,7 +6035,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-program"
+ version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=dc6863ed328de51478a4f59b256a725c97dec076#dc6863ed328de51478a4f59b256a725c97dec076"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5c39efdc1459a103b2b1e5ed5a00b6458890ce3b#5c39efdc14
+```
+
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -49,7 +49,7 @@ default-features = false
+ [workspace.dependencies.snarkvm]
+ #path = "../snarkVM"
+ git = "https://github.com/aleo-labs-protocol/snarkVM.git"
+-rev = "dc6863ed328de51478a4f59b256a725c97dec076" #staging
++rev = "5c39efdc1459a103b2b1e5ed5a00b6458890ce3b" #staging
+ #version = "=4.12.0"
+ default-features = false
  
-+        // Note: a drained transmission is held only in `transmissions` or the local variables below,
-+        // so an early return (e.g. `?`) in this loop drops every transmission drained so far.
-         'outer: for worker in self.workers().iter() {
-             let mut num_worker_transmissions = 0usize;
+```
+
+---
+
+### Incident Patch 2: `f3602819` (2026-11-13)
+**Commit Message**: Bump snarkVM to aleo-labs-protocol/snarkVM@5c39efdc1
+
+**File**: `Cargo.lock` (modified, +61/-63)
+```diff
+@@ -5892,7 +5892,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm"
+ version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=dc6863ed328de51478a4f59b256a725c97dec076#dc6863ed328de51478a4f59b256a725c97dec076"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5c39efdc1459a103b2b1e5ed5a00b6458890ce3b#5c39efdc1459a103b2b1e5ed5a00b6458890ce3b"
+ dependencies = [
+  "anyhow",
+  "dotenvy",
+@@ -5914,7 +5914,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-algorithms"
+ version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=dc6863ed328de51478a4f59b256a725c97dec076#dc6863ed328de51478a4f59b256a725c97dec076"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5c39efdc1459a103b2b1e5ed5a00b6458890ce3b#5c39efdc1459a103b2b1e5ed5a00b6458890ce3b"
+ dependencies = [
+  "ahash",
+  "aleo-std",
+@@ -5942,7 +5942,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-algorithms-cuda"
+ version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=dc6863ed328de51478a4f59b256a725c97dec076#dc6863ed328de51478a4f59b256a725c97dec076"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5c39efdc1459a103b2b1e5ed5a00b6458890ce3b#5c39efdc1459a103b2b1e5ed5a00b6458890ce3b"
+ dependencies = [
+  "blst",
+  "cc",
+@@ -5955,7 +5955,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit"
+ version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=dc6863ed328de51478a4f59b256a725c97dec076#dc6863ed328de51478a4f59b256a725c97dec076"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5c39efdc1459a103b2b1e5ed5a00b6458890ce3b#5c39efdc1459a103b2b1e5ed5a00b6458890ce3b"
+ dependencies = [
+  "snarkvm-circuit-account",
+  "snarkvm-circuit-algorithms",
+@@ -5969,7 +5969,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-account"
+ version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=dc6863ed328de51478a4f59b256a725c97dec076#dc6863ed328de51478a4f59b256a725c97dec076"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5c39efdc1459a103b2b1e5ed5a00b6458890ce3b#5c39efdc1459a103b2b1e5ed5a00b6458890ce3b"
+ dependencies = [
+  "snarkvm-circuit-network",
+  "snarkvm-circuit-types",
+@@ -5979,7 +5979,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-algorithms"
+ version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=dc6863ed328de51478a4f59b256a725c97dec076#dc6863ed328de51478a4f59b256a725c97dec076"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5c39efdc1459a103b2b1e5ed5a00b6458890ce3b#5c39efdc1459a103b2b1e5ed5a00b6458890ce3b"
+ dependencies = [
+  "snarkvm-circuit-types",
+  "snarkvm-console-algorithms",
+@@ -5989,7 +5989,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-collections"
+ version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=dc6863ed328de51478a4f59b256a725c97dec076#dc6863ed328de51478a4f59b256a725c97dec076"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5c39efdc1459a103b2b1e5ed5a00b6458890ce3b#5c39efdc1459a103b2b1e5ed5a00b6458890ce3b"
+ dependencies = [
+  "snarkvm-circuit-algorithms",
+  "snarkvm-circuit-types",
+@@ -5999,7 +5999,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-environment"
+ version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=dc6863ed328de51478a4f59b256a725c97dec076#dc6863ed328de51478a4f59b256a725c97dec076"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5c39efdc1459a103b2b1e5ed5a00b6458890ce3b#5c39efdc1459a103b2b1e5ed5a00b6458890ce3b"
+ dependencies = [
+  "anyhow",
+  "indexmap 2.14.2",
+@@ -6019,12 +6019,12 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-environment-witness"
+ version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=dc6863ed328de51478a4f59b256a725c97dec076#dc6863ed328de51478a4f59b256a725c97dec076"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5c39efdc1459a103b2b1e5ed5a00b6458890ce3b#5c39efdc1459a103b2b1e5ed5a00b6458890ce3b"
  
-@@ -751,12 +760,17 @@ impl<N: Network> proposal_task::BatchPropose for Primary<N> {
-                             continue;
-                         }
+ [[package]]
+ name = "snarkvm-circuit-network"
+ version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=dc6863ed328de51478a4f59b256a725c97dec076#dc6863ed328de51478a4f59b256a725c97dec076"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5c39efdc1459a103b2b1e5ed5a00b6458890ce3b#5c39efdc1459a103b2b1e5ed5a00b6458890ce3b"
+ dependencies = [
+  "snarkvm-circuit-algorithms",
+  "snarkvm-circuit-collections",
+@@ -6035,7 +6035,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-program"
+ version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=dc6863ed328de51478a4f59b256a725c97dec076#dc6863ed328de51478a4f59b256a725c97dec076"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5c39efdc1459a103b2b1e5ed5a00b6458890ce3b#5c39efdc14
+```
+
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -49,7 +49,7 @@ default-features = false
+ [workspace.dependencies.snarkvm]
+ #path = "../snarkVM"
+ git = "https://github.com/aleo-labs-protocol/snarkVM.git"
+-rev = "dc6863ed328de51478a4f59b256a725c97dec076" #staging
++rev = "5c39efdc1459a103b2b1e5ed5a00b6458890ce3b" #staging
+ #version = "=4.12.0"
+ default-features = false
  
--                        // Deserialize the transaction. If the transaction exceeds the maximum size, then return an error.
--                        let transaction = spawn_blocking!(deserialize_transaction_strict(transaction))?;
--
--                        // Fetch the current block height and consensus version.
--                        let current_block_height = self.ledger.latest_block_height();
--                        let consensus_version = N::CONSENSUS_VERSION(current_block_height)?;
-+                        // Deserialize the transaction. If it is oversized or malformed, skip it.
-+                        let transaction = match spawn_blocking!(deserialize_transaction_strict(transaction)) {
-+                            Ok(transaction) => transaction,
-+                            Err(e) => {
-+                                debug!(
-+                                    "Proposing - Skipping and discarding transaction '{}' - Unable to deserialize transaction - {e}",
-+                                    fmt_id(transaction_id)
-+                                );
-+                                continue;
-+                            }
-+                        };
- 
-                         // Compute the transaction spent cost (in microcredits).
-                         // Note: We purposefully discard this transaction if we are unable to compute the spent cost.
-@@ -791,9 +805,6 @@ impl<N: Network> proposal_task::BatchPropose for Primary<N> {
-                         };
- 
-                         // Check if the next proposal cost exceeds the batch proposal spend limit.
--                        let batch_spend_limit = BatchHeader::<N>::batch_spend_limit(current_block_height);
--                        let proposal_spend_limit =
--                            batch_spend_limit.saturating_mul(self.proposal_spent_limit_multiplier);
-                         if next_proposal_cost > proposal_spend_limit {
-                             debug!(
-                                 "Proposing - Skipping transaction '{}' - Batch spend limit surpassed ({next_proposal_cost} > {proposal_spend_limit})",
-@@ -2541,6 +2552,44 @@ mod tests {
-         assert_eq!(primary.workers()[0].num_transmissions(), 0);
-     }
- 
-+    #[test_log::test(tokio::test)]
-+    async fn test_propose_batch_skips_an_undeserializable_transaction() {
-+        let mut rng = TestRng::default();
-+        let (primary, accounts) = primary_without_handlers(&mut rng);
-+        let peer_ip = accounts[1].0;
-+
-+        // Queue a valid transaction, a transaction buffer with a trailing byte, and another valid transaction.
-+        let bad_transaction = sample_execution_transaction_with_fee(false, &mut rng, 0);
-+        // A sampled transaction always serializes.
-+        let mut bad_bytes = bad_transaction.to_bytes_le().unwrap();
-+        bad_bytes.push(0);
-+        let transactions = [
-+            sample_unconfirmed_transaction(&mut rng),
-+            (bad_transaction.id(), Data::Buffer(Bytes::from(bad_bytes))),
-+            sample_unconfirmed_transaction(&mut rng),
-+        ];
-+        let [first_id, _, last_id] = transactions.map(|(transaction_id, transaction)| {
-+            // Hashing serialized transaction data does not fail.
-+            let checksum = transaction.to_checksum::<CurrentNetwork>().unwrap();
-+            let transmission_id = (&transaction_id, &checksum).into();
-+            primary.workers()[0].process_transmission_from_peer(
-+                peer_ip,
-+                transmission_id,
-+                Transmission::Transacti
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #4669** (closed): test: do not merge - documentation-only CI probe (@cbeck88)
+- **PR #4666** (2026-11-13): Bump snarkVM to aleo-labs-protocol/snarkVM@5c39efdc1 (@aleo-labs-merge-bot[bot])
 - **PR #4665** (2026-11-13): Open the snarkVM bump pull request with gh-actions' bump-pr (@cbeck88)
 - **PR #4663** (2026-11-12): Bump snarkVM to aleo-labs-protocol/snarkVM@dc6863ed3 (@aleo-labs-merge-bot[bot])
 - **PR #4661** (2026-11-11): Merge testnet into staging (@aleo-labs-merge-bot[bot])
 - **PR #4660** (2026-11-11): Relock only the snarkVM crates when bumping snarkVM (@cbeck88)
-- **PR #4659** (2026-11-11): Bump snarkVM to aleo-labs-protocol/snarkVM@a78dd20b3 (@aleo-labs-merge-bot[bot])
 
 ---
 
@@ -2119,56 +2253,45 @@ Skip a transaction that fails to deserialize when proposing, instead of dropping
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #4603 from aleo-labs-protocol/fix/propose-drain-skip
+## X. Empirical Invariant Guard in Cargo.lock
 
 **RULE**:
-When implementing operations in `node/bft/src/primary.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e3b97728`: Merge pull request #4603 from aleo-labs-protocol/fix/propose-drain-skip. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1f0ceab5`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `node/bft/src/primary.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        // Fetch the current block height and consensus version.
-        let current_block_height = self.ledger.latest_block_height();
-        let consensus_version = N::CONSENSUS_VERSION(current_block_height)?;
-        // Compute the batch proposal spend limit.
-        let proposal_spend_limit = BatchHeader::<N>::batch_spend_limit(current_block_height)
-            .saturating_mul(self.proposal_spent_limit_multiplier);
-
-        // Note: a drained transmission is held only in `transmissions` or the local variables below,
-        // so an early return (e.g. `?`) in this loop drops every transmission drained so far.
-                        // Deserialize the transaction. If it is oversized or malformed, skip it.
-                        let transaction = match spawn_blocking!(deserialize_transaction_strict(transaction)) {
-                            Ok(transaction) => transaction,
-                            Err(e) => {
-                                debug!(
-                                    "Proposing - Skipping and discarding transaction '{}' - Unable to deserialize transaction - {e}",
-                                    fmt_id(transaction_id)
-                                );
-  
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5c39efdc1459a103b2b1e5ed5a00b6458890ce3b#5c39efdc1459a103b2b1e5ed5a00b6458890ce3b"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5c39efdc1459a103b2b1e5ed5a00b6458890ce3b#5c39efdc1459a103b2b1e5ed5a00b6458890ce3b"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5c39efdc1459a103b2b1e5ed5a00b6458890ce3b#5c39efdc1459a103b2b1e5ed5a00b6458890ce3b"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5c39efdc1459a103b2b1e5ed5a00b6458890ce3b#5c39efdc1459a103b2b1e5ed5a00b6458890ce3b"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5c39efdc1459a103b2b1e5ed5a00b6458890ce3b#5c39efdc1459a103b2b1e5ed5a00b6458890ce3b"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5c39efdc1459a103b2b1e5ed5a00b6458890ce3b#5c39efdc1459a103b2b1e5ed5a00b6458890ce3b"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5c39efdc1459a103b2b1e5ed5a00b6458890ce3b#5c39efdc1459a103b2b1e5ed5a00b6458890ce3b"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=5c39efdc1459a103b2b1e5ed5a00b6458890ce3b#5c39efdc1459a103b2b1e5ed5a00b64588
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-                        // Deserialize the transaction. If the transaction exceeds the maximum size, then return an error.
-                        let transaction = spawn_blocking!(deserialize_transaction_strict(transaction))?;
-
-                        // Fetch the current block height and consensus version.
-                        let current_block_height = self.ledger.latest_block_height();
-                        let consensus_version = N::CONSENSUS_VERSION(current_block_height)?;
-                        let batch_spend_limit = BatchHeader::<N>::batch_spend_limit(current_block_height);
-                        let proposal_spend_limit =
-                            batch_spend_limit.saturating_mul(self.proposal_spent_limit_multiplier);
+// Induced defect failure mode:
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=dc6863ed328de51478a4f59b256a725c97dec076#dc6863ed328de51478a4f59b256a725c97dec076"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=dc6863ed328de51478a4f59b256a725c97dec076#dc6863ed328de51478a4f59b256a725c97dec076"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=dc6863ed328de51478a4f59b256a725c97dec076#dc6863ed328de51478a4f59b256a725c97dec076"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=dc6863ed328de51478a4f59b256a725c97dec076#dc6863ed328de51478a4f59b256a725c97dec076"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=dc6863ed328de51478a4f59b256a725c97dec076#dc6863ed328de51478a4f59b256a725c97dec076"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=dc6863ed328de51478a4f59b256a725c97dec076#dc6863ed328de51478a4f59b256a725c97dec076"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=dc6863ed328de51478a4f59b256a725c97dec076#dc6863ed328de51478a4f59b256a725c97dec076"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=dc6863ed328de51478a4f59b256a725c97dec076#dc6863ed328de51478a4f59b256a725c97
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e3b97728` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1f0ceab5` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

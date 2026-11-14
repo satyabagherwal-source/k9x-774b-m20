@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T23:45:21.653Z",
+  "last_updated": "2026-11-14T00:08:56.392Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T21:28:54.085Z",
@@ -748,7 +748,7 @@
       "staged_for_review": 1
     },
     "dathere-qsv-learnings.md": {
-      "processed_at": "2026-11-13T15:04:04.762Z",
+      "processed_at": "2026-11-14T00:08:55.250Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2058,7 +2058,7 @@
       "staged_for_review": 1
     },
     "provablehq-snarkos-learnings.md": {
-      "processed_at": "2026-11-13T18:26:52.024Z",
+      "processed_at": "2026-11-14T00:08:54.547Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2266,9 +2266,14 @@
       "processed_at": "2026-11-13T23:45:19.455Z",
       "promoted_canonical": 2,
       "staged_for_review": 0
+    },
+    "hf-atomicchat-lfm3-1.7b-uncensored-gguf-learnings.md": {
+      "processed_at": "2026-11-14T00:08:54.197Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 717,
-  "total_canonical_promoted": 145,
-  "total_staged_for_review": 566
+  "total_dossiers_evaluated": 720,
+  "total_canonical_promoted": 146,
+  "total_staged_for_review": 568
 }

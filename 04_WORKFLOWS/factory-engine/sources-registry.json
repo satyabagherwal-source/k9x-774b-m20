@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-13T23:44:19.754Z",
-    "lastVerified": "2026-11-13T23:44:19.754Z",
+    "lastChecked": "2026-11-14T00:08:21.068Z",
+    "lastVerified": "2026-11-14T00:08:21.068Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -251,22 +251,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-13T22:43:07.866Z",
-    "lastVerified": "2026-11-13T22:43:07.866Z",
+    "lastChecked": "2026-11-14T00:08:16.970Z",
+    "lastVerified": "2026-11-14T00:08:16.970Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "909b9c492801b2b201dd0e378a0122cc6b19e7cea387d6157ebf5559f8bb5ee3",
+    "contentHash": "398275f30687510a94bb33b3f1bbe8aec3241391610eeaedcb19239be7970226",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "ce4f6857"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1016,9 +1015,9 @@
   "devspace-sh-devspace": {
     "name": "devspace",
     "officialUrl": "https://github.com/devspace-sh/devspace",
-    "lastChecked": "2026-11-13T01:01:14.956Z",
+    "lastChecked": "2026-11-14T00:08:04.045Z",
     "revisionIdentifier": "8ff62607",
-    "lastVerified": "2026-11-13T01:01:14.956Z"
+    "lastVerified": "2026-11-14T00:08:04.045Z"
   },
   "bee-san-ciphey": {
     "name": "Ciphey",
@@ -1213,14 +1212,14 @@
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-13T18:26:00.520Z",
-    "lastVerified": "2026-11-13T18:26:00.520Z",
+    "lastChecked": "2026-11-14T00:08:11.353Z",
+    "lastVerified": "2026-11-14T00:08:11.353Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "93c78f56607fc2f2722a5454fb96056347a38abb46044f722870beb4002965e7",
+    "contentHash": "b37b0b840dbec9eb452838a83acd8b9a2b75d5d2407bef62fe4b6b5bf13667be",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2883,9 +2882,9 @@
   "boardgameio-boardgame.io": {
     "name": "boardgame.io",
     "officialUrl": "https://github.com/boardgameio/boardgame.io",
-    "lastChecked": "2026-11-09T16:04:15.946Z",
+    "lastChecked": "2026-11-14T00:08:01.653Z",
     "revisionIdentifier": "47adef2b",
-    "lastVerified": "2026-11-09T16:04:15.946Z"
+    "lastVerified": "2026-11-14T00:08:01.653Z"
   },
   "permify-permify": {
     "name": "permify",
@@ -3146,9 +3145,9 @@
   "zilliztech-attu": {
     "name": "attu",
     "officialUrl": "https://github.com/zilliztech/attu",
-    "lastChecked": "2026-11-12T23:54:48.125Z",
+    "lastChecked": "2026-11-14T00:08:09.070Z",
     "revisionIdentifier": "d51e1c78",
-    "lastVerified": "2026-11-12T23:54:48.125Z"
+    "lastVerified": "2026-11-14T00:08:09.070Z"
   },
   "asciinema-asciinema": {
     "name": "asciinema",
@@ -6584,9 +6583,9 @@
   "golutra-golutra": {
     "name": "golutra",
     "officialUrl": "https://github.com/golutra/golutra",
-    "lastChecked": "2026-11-12T12:57:48.342Z",
+    "lastChecked": "2026-11-14T00:07:56.565Z",
     "revisionIdentifier": "8b68a141",
-    "lastVerified": "2026-11-12T12:57:48.342Z"
+    "lastVerified": "2026-11-14T00:07:56.565Z"
   },
   "hf-facebookai-xlm-roberta-base": {
     "name": "FacebookAI/xlm-roberta-base",
@@ -13815,12 +13814,12 @@
     "officialUrl": "https://huggingface.co/AtomicChat/LFM3-1.7B-Uncensored-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-08T21:46:49.399Z",
-    "lastVerified": "2026-11-08T21:46:49.399Z",
+    "lastChecked": "2026-11-14T00:07:59.129Z",
+    "lastVerified": "2026-11-14T00:07:59.129Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf",
-    "contentHash": "3fc1d5687fb6beaddf551cf805365ffefd30a80c3ce691a93acc0c2977955751",
+    "contentHash": "cda1720f1870f6d7789fb20363434c0ba0dc9af262e98c5eaf0da1bf314c47f1",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

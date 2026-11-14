@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-BIYR",
-    "timestamp": "2026-11-13T04:31:02.595Z",
-    "repository": "orcarouter/OrcaCyber-Nano-1.0",
-    "learningId": "learn-huggingface-orcarouter-orcacyber-nano-1-0",
-    "contentHash": "ceee6b1d81d9f822bc97f014f582ce36857c34e110dbe3bddca47f86c4874b59",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-BSJZ",
-    "timestamp": "2026-11-13T04:31:15.023Z",
-    "repository": "google/tcmalloc",
-    "learningId": "learn-github-google-tcmalloc",
-    "contentHash": "784ca6a9311391c11fc6faf4a47b8f2d0165a2d423e59ad221e4527496e3f689",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-C1MR",
-    "timestamp": "2026-11-13T04:31:26.787Z",
-    "repository": "chaos-mesh/chaos-mesh",
-    "learningId": "learn-github-chaos-mesh-chaos-mesh",
-    "contentHash": "f402f5f7cea915d8a26e28aac3c53aaa289eb3bed4ac5ad4d5505d6f278c2904",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-C3T5",
     "timestamp": "2026-11-13T04:31:29.609Z",
     "repository": "microsoft/agent-governance-toolkit",
@@ -7492,6 +7447,51 @@
     "contentHash": "e068d55c8bc4121f85281a36416c01039b7791f99680e7d2e99edfd6c9a6f740",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-D3HZ",
+    "timestamp": "2026-11-14T00:07:59.735Z",
+    "repository": "AtomicChat/LFM3-1.7B-Uncensored-GGUF",
+    "learningId": "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf",
+    "contentHash": "cda1720f1870f6d7789fb20363434c0ba0dc9af262e98c5eaf0da1bf314c47f1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-DCZV",
+    "timestamp": "2026-11-14T00:08:12.043Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "b37b0b840dbec9eb452838a83acd8b9a2b75d5d2407bef62fe4b6b5bf13667be",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-DHKQ",
+    "timestamp": "2026-11-14T00:08:17.978Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "398275f30687510a94bb33b3f1bbe8aec3241391610eeaedcb19239be7970226",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

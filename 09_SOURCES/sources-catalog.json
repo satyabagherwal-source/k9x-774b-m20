@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "ce4f6857",
+    "sourceVersion": "892e7223",
     "license": "NOASSERTION",
-    "contentHash": "909b9c492801b2b201dd0e378a0122cc6b19e7cea387d6157ebf5559f8bb5ee3",
-    "lastHarvestedAt": "2026-11-13T15:04:01.205Z",
+    "contentHash": "398275f30687510a94bb33b3f1bbe8aec3241391610eeaedcb19239be7970226",
+    "lastHarvestedAt": "2026-11-14T00:08:17.982Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -2923,10 +2923,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/ProvableHQ/snarkOS",
-    "sourceVersion": "1637f0cc",
+    "sourceVersion": "1f0ceab5",
     "license": "Apache-2.0",
-    "contentHash": "93c78f56607fc2f2722a5454fb96056347a38abb46044f722870beb4002965e7",
-    "lastHarvestedAt": "2026-11-13T18:26:01.106Z",
+    "contentHash": "b37b0b840dbec9eb452838a83acd8b9a2b75d5d2407bef62fe4b6b5bf13667be",
+    "lastHarvestedAt": "2026-11-14T00:08:12.047Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "vasu-devs-justhireme": {
@@ -11655,8 +11655,8 @@
     "sourceUrl": "https://huggingface.co/AtomicChat/LFM3-1.7B-Uncensored-GGUF",
     "sourceVersion": "hf-atomicchat-lfm3-1.7b-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "3fc1d5687fb6beaddf551cf805365ffefd30a80c3ce691a93acc0c2977955751",
-    "lastHarvestedAt": "2026-11-08T21:46:50.754Z",
+    "contentHash": "cda1720f1870f6d7789fb20363434c0ba0dc9af262e98c5eaf0da1bf314c47f1",
+    "lastHarvestedAt": "2026-11-14T00:07:59.739Z",
     "learningId": "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf"
   },
   "hf-edge0-audio8-tts-realistic-0.6b": {

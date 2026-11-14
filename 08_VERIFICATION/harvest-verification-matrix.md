@@ -9674,3 +9674,7 @@
 | `CYCLE-20261113-IL9N` | `2026-11-13T23:44:16.427Z` | `openai/whisper-large-v3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8407, Rule 8408` | Yes (`e068d55c...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T23:44:48.370Z` | `hf-openai-whisper-large-v3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-B-A33663AE` [Domain B] | Yes (`d271d010...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T23:45:19.455Z` | `hf-openai-whisper-large-v3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-3F2EAC2E` [Domain F] | Yes (`ecc14b75...`) |
+| `CYCLE-20261114-D3HZ` | `2026-11-14T00:07:59.735Z` | `AtomicChat/LFM3-1.7B-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-atomicchat-lfm3-1.7b-uncensored-gguf-learnings.md` | Yes (`cda1720f...`) |
+| `CYCLE-20261114-DCZV` | `2026-11-14T00:08:12.043Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8012` | Yes (`b37b0b84...`) |
+| `CYCLE-20261114-DHKQ` | `2026-11-14T00:08:17.978Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8409` | Yes (`398275f3...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T00:08:54.196Z` | `hf-atomicchat-lfm3-1.7b-uncensored-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-BEBC2172` [Domain D] | Yes (`472b8ede...`) |

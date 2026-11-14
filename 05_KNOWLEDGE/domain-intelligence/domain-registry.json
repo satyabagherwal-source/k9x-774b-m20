@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T23:45:21.437Z",
-  "total_records": 430,
+  "last_updated": "2026-11-14T00:08:56.142Z",
+  "total_records": 435,
   "domains": {
     "A": {
       "total": 5,
@@ -33,7 +33,7 @@
       ]
     },
     "D": {
-      "total": 219,
+      "total": 222,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -253,7 +253,10 @@
         "DOM-D-AB4CCCBB",
         "domain_intelligence-research-knowledge-intelligence-hf-hexgrad-kokoro-82m-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-meta-llama-meta-llama-3-8b-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-meta-llama-3-8b-learnings-core-inv"
+        "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-meta-llama-3-8b-learnings-core-inv",
+        "domain_intelligence-research-knowledge-intelligence-atomicchat-lfm3-1-7b-uncensored-gguf-core-invari",
+        "DOM-D-BEBC2172",
+        "domain_intelligence-research-knowledge-intelligence-hf-atomicchat-lfm3-1-7b-uncensored-gguf-learning"
       ]
     },
     "E": {
@@ -263,7 +266,7 @@
       ]
     },
     "F": {
-      "total": 8,
+      "total": 10,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -272,7 +275,9 @@
         "domain_intelligence-design-intelligence-callstack-react-native-paper-learnings-core-invariants",
         "domain_intelligence-design-intelligence-openai-whisper-large-v3-core-invariants",
         "DOM-F-3F2EAC2E",
-        "domain_intelligence-design-intelligence-hf-openai-whisper-large-v3-learnings-core-invariants"
+        "domain_intelligence-design-intelligence-hf-openai-whisper-large-v3-learnings-core-invariants",
+        "domain_intelligence-design-intelligence-dathere-qsv-core-invariants",
+        "domain_intelligence-design-intelligence-dathere-qsv-learnings-core-invariants"
       ]
     },
     "G": {
@@ -6534,10 +6539,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "7ff4b3550337afde913cb6f8907a730bc5b5e9018db863b59f12174daf7f0a32",
-      "created_at": "2026-11-13T20:54:30.994Z"
+      "content_hash": "374343aa8d8ce8343913f8452ece2f68947e8520e607678d6d6b48ef4c3ac62a",
+      "created_at": "2026-11-14T00:08:12.375Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -7769,8 +7774,8 @@
       "title": "Architecture Intelligence: provablehq-snarkos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-learnings-architecture-intelligence-provablehq-snarkos-learni.md",
       "repository": "provablehq-snarkos-learnings",
-      "content_hash": "14f38af618d0daaba70bf88fe40fd622d73de95b25ecca1172678b94768cebd4",
-      "created_at": "2026-11-13T18:26:52.372Z"
+      "content_hash": "98a0f2fcf658e9bffeb3d84aaccf7477f35b8519e4fa6411c0f58f1c2a13f530",
+      "created_at": "2026-11-14T00:08:54.991Z"
     },
     "domain_intelligence-research-knowledge-intelligence-prithivmlmods-gender-classifier-mini-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-prithivmlmods-gender-classifier-mini-core-invari",
@@ -10116,6 +10121,84 @@
       "repository": "gardener-gardener-learnings",
       "content_hash": "16e7281a31b72a33b3f8381e37d2141a70f1506f1fdbd5d654f7217ba2b4ee84",
       "created_at": "2026-11-13T23:45:20.841Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-atomicchat-lfm3-1-7b-uncensored-gguf-core-invari": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-atomicchat-lfm3-1-7b-uncensored-gguf-core-invari",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: AtomicChat/LFM3-1.7B-Uncensored-GGUF Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-atomicchat-lfm3-1-7b-uncensored-gguf-research-knowledge-intelligence-atomicch.md",
+      "repository": "AtomicChat/LFM3-1.7B-Uncensored-GGUF",
+      "content_hash": "9c8974422206e72f50917774fe6d2565f44b9e7c6f5572c57e43f2223e478b4d",
+      "created_at": "2026-11-14T00:07:59.937Z"
+    },
+    "domain_intelligence-design-intelligence-dathere-qsv-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-dathere-qsv-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: dathere/qsv Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-dathere-qsv-design-intelligence-dathere-qsv-core-invariants.md",
+      "repository": "dathere/qsv",
+      "content_hash": "4fe59826b2b7773a2e2f6e44bbf0a0324ed8fc736f614d1952a805802e37a9b5",
+      "created_at": "2026-11-14T00:08:18.299Z"
+    },
+    "DOM-D-BEBC2172": {
+      "record_id": "DOM-D-BEBC2172",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): AtomicChat/LFM3-1.7B-Uncensored-GGUF",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-atomicchat-lfm3-1.7b-uncensored-gguf-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/AtomicChat/LFM3-1.7B-Uncensored-GGUF](https://huggingface.co/AtomicChat/LFM3-1.7B-Uncensored-GGUF))  \n> **Source Version**: `hf-atomiccha",
+      "content_hash": "472b8edecd3759dc386743c9cf9d1aae80476b60b5f021342289c73c13ce2a06",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-atomicchat-lfm3-1.7b-uncensored-gguf-learnings.md`  \n> **Source**: huggingface ([ -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-atomicchat-lfm3-1.7b-uncensored-gguf-learnings.md`  \n> **Source**: huggingface ([",
+      "provenance": {
+        "source_uri": "project://hf-atomicchat-lfm3-1.7b-uncensored-gguf/hf-atomicchat-lfm3-1.7b-uncensored-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T00:08:21.185Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-atomicchat-lfm3-1.7b-uncensored-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-atomicchat-lfm3-1.7b-uncensored-gguf"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T00:08:54.186Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-atomicchat-lfm3-1-7b-uncensored-gguf-learning": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-atomicchat-lfm3-1-7b-uncensored-gguf-learning",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-atomicchat-lfm3-1.7b-uncensored-gguf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-atomicchat-lfm3-1-7b-uncensored-gguf-learnings-research-knowledge-intelligenc.md",
+      "repository": "hf-atomicchat-lfm3-1.7b-uncensored-gguf-learnings",
+      "content_hash": "3c832eb28c69dbf3be5d393d9a2762a89cd73c1ca3f6863516646ab669780b1b",
+      "created_at": "2026-11-14T00:08:54.409Z"
+    },
+    "domain_intelligence-design-intelligence-dathere-qsv-learnings-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-dathere-qsv-learnings-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: dathere-qsv-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-dathere-qsv-learnings-design-intelligence-dathere-qsv-learnings-core-invariants.md",
+      "repository": "dathere-qsv-learnings",
+      "content_hash": "29267e219367323a46ffe951be4da035def8c2834c83704935c469fdb7d5a151",
+      "created_at": "2026-11-14T00:08:56.142Z"
     }
   }
 }

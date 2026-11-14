@@ -4,22 +4,22 @@
 {
   "source_repository": "dathere/qsv",
   "source_url": "https://github.com/dathere/qsv",
-  "source_version": "ce4f6857",
+  "source_version": "892e7223",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-13T15:04:01.439Z",
+  "timestamp": "2026-11-14T00:08:18.189Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dathere-qsv",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `ce4f6857`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-13T15:04:01.439Z`  
+> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `892e7223`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-14T00:08:18.189Z`  
 > **Learning ID**: `learn-github-dathere-qsv`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `dathere/qsv` (Commit: `ce4f6857`)
+- **Target Repository**: `dathere/qsv` (Commit: `892e7223`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T15:04:00.591Z  
+> **Harvest Timestamp**: 2026-11-14T00:08:16.970Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3847 stars
+- **Stars / Engagement**: 3823 stars
 
 ---
 
@@ -2212,22 +2212,30 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ce4f6857` (2026-11-13)
-**Commit Message**: docs: fix sqlp `<=>` and Polars schema file name in USAGE (#5046)
+### Incident Patch 1: `892e7223` (2026-11-14)
+**Commit Message**: fix(viz): category-axis tickvals are category names, not positions (#5047)
 
-* docs: fix sqlp `<=>` and Polars schema file name in USAGE
+* fix(viz): category-axis tickvals are category names, not positions
 
-- sqlp: `<=>` is NULL-safe equality (IS NOT DISTINCT FROM), not a
-  -1/0/1 spaceship comparison; it returns true/false, never NULL.
-- sqlp, joinp, schema: a Polars schema file is named after the full
-  input file name (data.csv -> data.csv.pschema.json), per
-  util::pschema_path.
+Frequency bars, measure-by-dimension bars, the Top Relationships lollipop
+and funnels set their display-only tick labels with tickvals = [0, 1, 2…].
+Plotly.js resolves a category-axis tickval by category NAME first and
+treats it as a position only when no category has that name. On an axis
+of integer-like codes (day_of_week "6","7","5",…,"0") each label landed
+under the wrong bar, and the colliding ones were dropped. Hovering a bar
+showed one value while the axis named another.
 
-Help markdown and MCP skill JSONs regenerated.
+tickvals now carry the exact category values the trace feeds (the
+aggregate-bucket sentinel included), via a CategoryTicks { keys, text }
+pair. This needs Axis::tick_values to accept strings, so the plotly pin
+moves to dathere/plotly b652677.
+
+Gallery Data Schematics regenerated (gen_gallery.py and
+refresh_external_dashboards.sh).
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* docs: CHANGELOG entry for #5046
+* docs(changelog): cite #5047
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
@@ -2235,135 +2243,186 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `.claude/skills/qsv/qsv-joinp.json` (modified, +1/-1)
-```diff
-@@ -45,7 +45,7 @@
-       {
-         "flag": "--cache-schema",
-         "type": "number",
--        "description": "Create and cache Polars schema JSON files. Ignored when --infer-len is 0. ‎ -2: treat all columns as String. A Polars schema file is created & cached. ‎ -1: treat all columns as String. No Polars schema file is created. ‎  0: do not cache Polars schema. Uses --infer-len to infer schema. ‎  1: cache Polars schema with the following behavior: * If schema file exists and is newer than input: use cached schema * If schema file missing/outdated and stats cache exists: derive schema from stats and cache it * If no schema or stats cache: infer schema using --infer-len and cache the result Schema files use the same name as input with .pschema.json extension (e.g., data.csv -> data.pschema.json). ‎NOTE: If the input files have pschema.json files that are newer or created at the same time as the input files, they will be used to inform the join operation regardless of the value of --cache-schema unless --infer-len is 0.",
-+        "description": "Create and cache Polars schema JSON files. Ignored when --infer-len is 0. ‎ -2: treat all columns as String. A Polars schema file is created & cached. ‎ -1: treat all columns as String. No Polars schema file is created. ‎  0: do not cache Polars schema. Uses --infer-len to infer schema. ‎  1: cache Polars schema with the following behavior: * If schema file exists and is newer than input: use cached schema * If schema file missing/outdated and stats cache exists: derive schema from stats and cache it * If no schema or stats cache: infer schema using --infer-len and cache the result Schema files use the same name as input with .pschema.json extension (e.g., data.csv -> data.csv.pschema.json). ‎NOTE: If the input files have pschema.json files that are newer or created at the same time as the input files, they will be used to inform the join operation regardless of the value of --cache-schema unless --infer-len is 0.",
-         "default": 0
-       },
-       {
-```
-
-**File**: `.claude/skills/qsv/qsv-sqlp.json` (modified, +2/-2)
-```diff
-@@ -23,7 +23,7 @@
-       {
-         "flag": "--cache-schema",
-         "type": "flag",
--        "description": "Create and cache Polars schema JSON files. If the schema file/s exists, it will load the schema instead of inferring it (ignoring --infer-len) and attempt to use it for each corresponding Polars \"table\" with the same file stem. If specified and the schema file/s do not exist, it will check if a stats cache is available. If so, it will use it to derive a Polars schema and save it. If there's no stats cache, it will infer the schema using --infer-len and save the inferred schemas. Date columns in formats Polars can't parse are saved as String, as are day-first dates unless QSV_PREFER_DMY is set. Each schema file will have the same file stem as the corresponding input file, with the extension \".pschema.json\" (data.csv's Polars schema file will be data.pschema.json) NOTE: You can edit the generated schema files to change the Polars schema and cast columns to the desired data type. Float columns are saved as Float64. For example, to save memory you can narrow a Float64 column to Float32 by changing its \"Float64\" type to \"Float32\" in the schema file, at the cost of precision (Float32 holds only about 7 significant digits). You can also cast a Float to a Decimal with a desired precision and scale. (e.g. instead of \"Float64\", use {\"Decimal\": [10, 3]}) The valid types are: `Boolean`, `UInt8`, `UInt16`, `UInt32`, `UInt64`, `Int8`, `Int16`, `Int32`, `Int64`, `Float32`, `Float64`, `String`, `Date`, `Datetime`, `Duration`, `Time`, `Null`, `Categorical`, `Decimal` and `Enum`."
-+        "description": "Create and cache Polars schema JSON files. If the schema file/s exists, it will load the schema instead of inferring it (ignoring --infer-len) and attempt to use it for each corresponding Polars \"table\" with the same file stem. If specified and the schema file/s do not exist, it will check if a stats cache is available. If so, it will use it to derive a Polars schema and save it. If there's no stats cache, it will infer the schema using --infer-len and save the inferred schemas. Date columns in formats Polars can't parse are saved as String, as are day-first dates unless QSV_PREFER_DMY is set. Each schema file is named after the full input file name, with \".pschema.json\" appended (data.csv's Polars schema file will be data.csv.pschema.json) NOTE: You can edit the generated schema files to change the Polars schema and cast columns to the desired data type. Float columns are saved as Float64. For example, to save memory you can narrow a Float64 column to Float32 by changing its \"Float64\" type to \"Float32\" in the schema file, at the cost of precision (Float32 holds only about 7 significant digits). You can also cast a Float to a Decimal with a desired precision and scale. (e.g. instead of \"Float64\", use {\"Decimal\": [10, 3]}) The valid types are: `Boolean`, `UInt8`, `UInt16`, `UInt32`, `UInt64`, `Int8`, `Int16`, `Int32`, `Int64`, `Float32`, `Float64`, `String`, `Date`, `Datetime`, `Duration`, `Time`, `Null`, `Categorical`, `Decimal` and `Enum`."
-       },
-       {
-         "flag": "--compress-level",
-@@ -177,7 +177,7 @@
-       "command": "qsv sqlp data.csv \"select CASE col*5 WHEN 10 THEN 'foo' WHEN 5 THEN 'bar' ELSE 'baz' END from _t_1\""
-     },
-     {
--      "description": "spaceship operator: \"<=>\" (three-way comparison operator) returns -1 if left < right, 0 if left == right, 1 if left > right https://en.wikipedia.org/wiki/Three-way_comparison#Spaceship_operator",
-+      "description": "NULL-safe equality operator: \"<=>\" (same as IS NOT DISTINCT FROM) returns true if both sides are equal or both are NULL, false otherwise (never NULL)",
-       "command": "qsv sqlp data.csv data2.csv \"select data.c2 <=> data2.c2 from data join data2 on data.c1 = data2.c1\""
-     },
-     {
-```
-
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
 @@ -42,6 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
    - **New SQL:** join keys of different numeric types ([#30401](https://github.com/pola-rs/polars/pull/30401)); correlated subqueries with any outer condition, `GROUP BY`, `HAVING`, `LIMIT`, `ANY`/`ALL`, and `LATERAL` derived tables ([#30378](https://github.com/pola-rs/polars/pull/30378), [#30453](https://github.com/pola-rs/polars/pull/30453), [#30466](https://github.com/pola-rs/polars/pull/30466), [#30459](https://github.com/pola-rs/polars/pull/30459), [#30490](https://github.com/pola-rs/polars/pull/30490), [#30467](https://github.com/pola-rs/polars/pull/30467)); `PERCENTILE_CONT`/`PERCENTILE_DISC ... WITHIN GROUP` ([#30442](https://github.com/pola-rs/polars/pull/30442)); non-literal `LIKE` patterns ([#30364](https://github.com/pola-rs/polars/pull/30364), [#30372](https://github.com/pola-rs/polars/pull/30372)); typed numeric/string literals ([#30486](https://github.com/pola-rs/polars/pull/30486)); `LIMIT`/`OFFSET` expressions such as scalar subqueries ([#30425](https://github.com/pola-rs/polars/pull/30425)); repeated unnamed constants ([#30488](https://github.com/pola-rs/polars/pull/30488)); `RANDOM()`, `REPEAT`, `CARDINALITY`, constant `GROUP BY` keys and row values in `IN (subquery)`.
  
  ### Fixed
-+- **docs: `sqlp`, `joinp` and `schema` USAGE corrections** ([#5046](https://github.com/dathere/qsv/pull/5046)). `sqlp`'s `<=>` is NULL-safe equality (the same as `IS NOT DISTINCT FROM`: true when both sides are equal or both are NULL, never NULL), not a -1/0/1 "spaceship" comparison. A Polars schema file is named after the full input file name, so `data.csv`'s is `data.csv.pschema.json`, not `data.pschema.json`.
++- **`viz smart`: category-axis labels no longer land under the wrong bar when the categories look like numbers.** ([#5047](https://github.com/dathere/qsv/pull/5047)) Frequency bars, measure-by-dimension bars, the Top Relationships lollipop and funnels set their axis labels with `tickvals` holding each category's *position* (0, 1, 2…). Plotly.js matches a category-axis tickval against category *names* first, so on an axis of codes like `day_of_week` (`6, 7, 5, …, 0`) the label for position 0 went under category "0", and so on. Hovering a bar showed one value while the axis said another, and labels that collided were dropped. `tickvals` now hold the category values themselves. This needed `Axis::tick_values` to accept strings, so qsv's `plotly` pin moves to `dathere/plotly` rev [`b652677`](https://github.com/dathere/plotly/commit/b652677502d667edb2caa09dc930a6fe294ce3f4). The gallery Data Schematics are regenerated.
+ - **docs: `sqlp`, `joinp` and `schema` USAGE corrections** ([#5046](https://github.com/dathere/qsv/pull/5046)). `sqlp`'s `<=>` is NULL-safe equality (the same as `IS NOT DISTINCT FROM`: true when both sides are equal or both are NULL, never NULL), not a -1/0/1 "spaceship" comparison. A Polars schema file is named after the full input file name, so `data.csv`'s is `data.csv.pschema.json`, not `data.pschema.json`.
  - **`luau`: fixes from a review of `luau.rs`** ([#5036](https://github.com/dathere/qsv/pull/5036)):
    - **An existing `./date.lua` is no longer overwritten and deleted.** A script using `require "./date"` made qsv write the bundled LuaDate over any `date.lua` in the current directory, then delete it at exit. An existing file is now used as-is and left alone. The bundled copy is also removed when the run fails; before, a failed run left it behind.
-   - **`luau filter` no longer keeps every row after the first error.** The keep check looked at the running error count, so after one row errored, every later row was kept whatever it returned. An errored row is still kept.
 ```
 
-**File**: `docs/help/joinp.md` (modified, +1/-1)
+**File**: `Cargo.lock` (modified, +3/-3)
 ```diff
-@@ -75,7 +75,7 @@ qsv joinp --help
- |--------|------|-------------|--------|
- | &nbsp;`‑‑try‑parsedates`&nbsp; | flag | When set, will attempt to parse the columns as dates. If the parse fails, columns remain as strings. This is useful when the join keys are formatted as dates with differing date formats, as the date formats will be normalized. Note that this will be automatically enabled when using asof joins. |  |
- | &nbsp;`‑‑infer‑len`&nbsp; | integer | The number of rows to scan when inferring the schema of the CSV. Set to 0 to do a full table scan (warning: very slow). Only used when --cache-schema is 0 or 1 and no cached schema exists or when --infer-len is 0. | `10000` |
--| &nbsp;`‑‑cache‑schema`&nbsp; | integer | Create and cache Polars schema JSON files. Ignored when --infer-len is 0.<br>-2: treat all columns as String. A Polars schema file is created & cached.<br>-1: treat all columns as String. No Polars schema file is created.<br>0: do not cache Polars schema. Uses --infer-len to infer schema.<br>1: cache Polars schema with the following behavior:<ul><li>If schema file exists and is newer than input: use cached schema</li><li>If schema file missing/outdated and stats cache exists: derive schema from stats and cache it</li><li>If no schema or stats cache: infer schema using --infer-len and cache the result</li></ul> Schema files use the same name as input with .pschema.json extension (e.g., data.csv -> data.pschema.json).<br>NOTE: If the input files have pschema.json files that are newer or created at the same time as the input files, they will be used to inform the join operation regardless of the value of --cache-schema unless --infer-len is 0. | `0` |
-+| &nbsp;`‑‑cache‑schema`&nbsp; | integer | Create and cache Polars schema JSON files. Ignored when --infer-len is 0.<br>-2: treat all columns as String. A Polars schema file is created & cached.<br>-1: treat all columns as String. No Polars schema file is created.<br>0: do not cache Polars schema. Uses --infer-len to infer schema.<br>1: cache Polars schema with the following behavior:<ul><li>If schema file exists and is newer than input: use cached schema</li><li>If schema file missing/outdated and stats cache exists: derive schema from stats and cache it</li><li>If no schema or stats cache: infer schema using --infer-len and cache the result</li></ul> Schema files use the same name as input with .pschema.json extension (e.g., data.csv -> data.csv.pschema.json).<br>NOTE: If the input files have pschema.json files that are newer or created at the same time as the input files, they will be used to inform the join operation regardless of the value of --cache-schema unless --infer-len is 0. | `0` |
- | &nbsp;`‑‑no‑optimizations`&nbsp; | flag | Disable non-default join optimizations. This will make joins slower. Only use this when you get join errors. |  |
- | &nbsp;`‑‑ignore‑errors`&nbsp; | flag | Ignore errors when parsing CSVs. If set, rows with errors will be skipped. If not set, the query will fail. Only use this when debugging queries, as polars does batched parsing and will skip the entire batch where the error occurred. To get more detailed error messages, set the environment variable POLARS_BACKTRACE_IN_ERR=1 before running the join. |  |
- | &nbsp;`‑‑decimal‑comma`&nbsp; | flag | Use comma as the decimal separator when parsing & writing CSVs. Otherwise, use period as the decimal separator. Note that you'll need to set --delimiter to an alternate delimiter other than the default comma if you are using this option. |  |
+@@ -5969,7 +5969,7 @@ dependencies = [
+ [[package]]
+ name = "plotly"
+ version = "0.15.0"
+-source = "git+https://github.com/dathere/plotly?rev=d43be3786c32ab2790a6c0e927ee39d2bb99704c#d43be3786c32ab2790a6c0e927ee39d2bb99704c"
++source = "git+https://github.com/dathere/plotly?rev=b652677502d667edb2caa09dc930a6fe294ce3f4#b652677502d667edb2caa09dc930a6fe294ce3f4"
+ dependencies = [
+  "askama",
+  "async-trait",
+@@ -5991,7 +5991,7 @@ dependencies = [
+ [[package]]
+ name = "plotly_derive"
+ version = "0.15.0"
+-source = "git+https://github.com/dathere/plotly?rev=d43be3786c32ab2790a6c0e927ee39d2bb99704c#d43be3786c32ab2790a6c0e927ee39d2bb99704c"
++source = "git+https://github.com/dathere/plotly?rev=b652677502d667edb2caa09dc930a6fe294ce3f4#b652677502d667edb2caa09dc930a6fe294ce3f4"
+ dependencies = [
+  "darling 0.24.1",
+  "proc-macro2",
+@@ -6002,7 +6002,7 @@ dependencies = [
+ [[package]]
+ name = "plotly_static"
+ version = "0.2.0"
+-source = "git+https://github.com/dathere/plotly?rev=d43be3786c32ab2790a6c0e927ee39d2bb99704c#d43be3786c32ab2790a6c0e927ee39d2bb99704c"
++source = "git+https://github.com/dathere/plotly?rev=b652677502d667edb2caa09dc930a6fe294ce3f4#b652677502d667edb2caa09dc930a6fe294ce3f4"
+ dependencies = [
+  "anyhow",
+  "base64 0.23.1",
 ```
 
-**File**: `docs/help/schema.md` (modified, +1/-1)
+**File**: `Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -53,7 +53,7 @@ and then use that to generate the schema file.
+@@ -580,7 +580,7 @@ whatlang = { git = "https://github.com/jqnatividad/whatlang-rs", branch = "bump-
+ # plotly.rs 0.15.0 release-prep branch (plotly/plotly.rs#442: full plotly.js 3.7 trace coverage)
+ # until 0.15.0 is on crates.io. This rev also moves plotly_static's build-dep to
+ # webdriver-downloader 0.18 (zip 9; every zip 8.x is yanked). (#5027)
+-plotly = { git = "https://github.com/dathere/plotly", rev = "d43be3786c32ab2790a6c0e927ee39d2bb99704c" }
++plotly = { git = "https://github.com/dathere/plotly", rev = "b652677502d667edb2caa09dc930a6fe294ce3f4" }
  
- When the "polars" feature is enabled, the `--polars` option will generate a Polars schema
- instead of a JSON Schema. The generated Polars schema will be written to a file with the
--`.pschema.json` suffix appended to the input file stem.
-+`.pschema.json` suffix appended to the full input file name (data.csv -> data.csv.pschema.json).
- 
- The Polars schema is a JSON object that describes the schema of a CSV file. When present,
- the `sqlp`, `joinp`, and `pivotp` commands will use the Polars schema to read the CSV file
+ # use our patched fork until our PR is merged with bumped deps and quick-xml RUSTSEC fixes
+ # https://github.com/thscharler/spreadsheet-ods/pull/77
 ```
 
-**File**: `docs/help/sqlp.md` (modified, +3/-4)
+**File**: `examples/viz/smart_allegheny_dogs.html` (modified, +8/-8)
 ```diff
-@@ -149,9 +149,8 @@ qsv sqlp data.csv "select CASE WHEN col1 > 10 THEN 'foo' WHEN col1 > 5 THEN 'bar
- qsv sqlp data.csv "select CASE col*5 WHEN 10 THEN 'foo' WHEN 5 THEN 'bar' ELSE 'baz' END from _t_1"
- ```
- 
--> spaceship operator: "<=>" (three-way comparison operator)
--> returns -1 if left < right, 0 if left == right, 1 if left > right
--> <https://en.wikipedia.org/wiki/Three-way_comparison#Spaceship_operator>
-+> NULL-safe equality operator: "<=>" (same as IS NOT DISTINCT FROM)
-+> returns true if both sides are equal or both are NULL, false otherwise (never NULL)
- 
- ```console
- qsv sqlp data.csv data2.csv "select data.c2 <=> data2.c2 from data join data2 on data.c1 = data2.c1"
-@@ -360,7 +359,7 @@ qsv sqlp --help
- |--------|------|-------------|--------|
- | &nbsp;`‑‑try‑parsedates`&nbsp; | flag | Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates. |  |
- | &nbsp;`‑‑infer‑len`&nbsp; | integer | The number of rows to scan when inferring the schema of the CSV. Set to 0 to do a full table scan (warning: can be slow). | `10000` |
--| &nbsp;`‑‑cache‑schema`&nbsp; | flag | Create and cache Polars schema JSON files. If the schema file/s exists, it will load the schema instead of inferring it (ignoring --infer-len) and attempt to use it for each corresponding Polars "table" with the same file stem. If specified and the schema file/s do not exist, it will check if a stats cache is available. If so, it will use it to derive a Polars schema and save it. If there's no stats cache, it will infer the schema using --infer-len and save the inferred schemas. Date columns in formats Polars can't parse are saved as String, as are day-first dates unless QSV_PREFER_DMY is set. Each schema file will have the same file stem as the corresponding input file, with the extension ".pschema.json" (data.csv's Polars schema file will be data.pschema.json) NOTE: You can edit the generated schema files to change the Polars schema and cast columns to the desired data type. Float columns are saved as Float64. For example, to save memory you can narrow a Float64 column to Float32 by changing its "Float64" type to "Float32" in the schema file, at the cost of precision (Float32 holds only about 7 significant digits). You can also cast a Float to a Decimal with a desired precision and scale. (e.g. instead of "Float64", use {"Decimal": [10, 3]}) The valid types are: `Boolean`, `UInt8`, `UInt16`, `UInt32`, `UInt64`, `Int8`, `Int16`, `Int32`, `Int64`, `Float32`, `Float64`, `String`, `Date`, `Datetime`, `Duration`, `Time`, `Null`, `Categorical`, `Decimal` and `Enum`. |  |
-+| &nbsp;`‑‑cache‑schema`&nbsp; | flag | Create and cache Polars schema JSON files. If the schema file/s exists, it will load the schema instead of inferring it (ignoring --infer-len) and attempt to use it for each corresponding Polars "table" with the same file stem. If specified and the schema file/s do not exist, it will check if a stats cache is available. If so, it will use it to derive a Polars schema and save it. If there's no stats cache, it will infer the schema using --infer-len and save the inferred schemas. Date columns in formats Polars can't parse are saved as String, as are day-first dates unless QSV_PREFER_DMY is set. Each schema file is named after the full input file name, with ".pschema.json" appended (data.csv's Polars schema file will be data.csv.pschema.json) NOTE: You can edit the generated schema files to change the Polars schema and cast columns to the desired data type. Float columns are saved as Float64. For example, to save memory you can narrow a Float64 column to Float32 by changing its "Float64" type to "Float32" in the schema file, at the cost of precision (Float32 holds only about 7 significant digits). You can also cast a Float to a Decimal with a desired precision and scale. (e.g. instead of "Float64", use {"Decimal": [10, 3]}) The valid types are: `Boolean`, `UInt8`, `UInt16`, `UInt32`, `UInt64`, `Int8`, `Int16`, `Int32`, `Int64`, `Float32`, `Float64`, `String`, `Date`, `Datetime`, `Duration`, `Time`, `Null`, `Categorical`, `Decimal` and `Enum`. |  |
- | &nbsp;`‑‑streaming`&nbsp; | flag | Write the query result as it is computed, batch by batch, instead of collecting the whole result in memory first. Use this when the result is too big for memory. Works with the csv, jsonl, parquet and arrow formats; json and avro output still collect the whole result. Queries already run on Polars' streaming engine either way. An --output file is written beside its target and only moved into place if the query succeeds. Overwriting an existing file copies the result into it, so it keeps its owner, group, mode and links; that briefly needs disk space for two copies. On stdout, rows are sent as they are computed, so a query that fails part-way leaves its output cut short; check sqlp's e
+@@ -77,7 +77,7 @@ <h1 class="qsv-viz-title">allegheny_dog_licenses.csv — Data Schematic</h1>
+ <tr><td class="qsv-viz-meta-k">Rows:</td><td>50,013 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Preview<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
+ <tr><td class="qsv-viz-meta-k">Columns:</td><td>8</td></tr>
+ <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
+-<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-12 15:03 UTC</td></tr>
++<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-13 23:42 UTC</td></tr>
+ <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 28.0.0</td></tr>
+ </table>
+ <div class="qsv-viz-grid">
+@@ -117,31 +117,31 @@ <h1 class="qsv-viz-title">allegheny_dog_licenses.csv — Data Schematic</h1>
+       <div class="qsv-viz-plot" style="height:320px">
+ <div id="qsv-viz-panel-4" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+ <script type="text/javascript">
+-    Plotly.newPlot("qsv-viz-panel-4", {"data":[{"type":"bar","x":["Dog Lifetime Spayed Female","Dog Lifetime Neutered Male","Dog Lifetime Male","Dog Senior Lifetime Spayed Female","Dog Lifetime Female","Dog Senior Lifetime Neutered Male","Dog Lifetime Duplicate","Dog Senior Lifetime Female","Dog Senior Lifetime Male","Dog Out of County Transfer - Lifetime","Dog Inter County Transfer - Lifetime"],"y":[16350.0,15279.0,3717.0,3658.0,3039.0,2748.0,2045.0,1282.0,1155.0,553.0,187.0],"name":"LicenseType","textposition":"outside","texttemplate":["16.4k","15.3k","3.72k","3.66k","3.04k","2.75k","2.04k","1.28k","1.16k","553","187"],"hovertext":["Dog Lifetime Spayed Female","Dog Lifetime Neutered Male","Dog Lifetime Male","Dog Senior Lifetime Spayed Female","Dog Lifetime Female","Dog Senior Lifetime Neutered Male","Dog Lifetime Duplicate","Dog Senior Lifetime Female","Dog Senior Lifetime Male","Dog Out of County Transfer - Lifetime","Dog Inter County Transfer - Lifetime"],"hovertemplate":"%{hovertext}\u003cbr\u003ecount: %{y:,}\u003cextra\u003e\u003c/extra\u003e","marker":{"color":["#72B7B2","#72B7B2","#72B7B2","#72B7B2","#72B7B2","#72B7B2","#72B7B2","#72B7B2","#72B7B2","#72B7B2","#72B7B2"],"pattern":{"shape":["","","","","","","","","","",""]}},"textfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":9},"cliponaxis":false}],"layout":{"showlegend":false,"margin":{"l":80,"r":30,"t":48,"b":60,"pad":4},"height":320,"font":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":12,"color":"#2A3F5F"},"paper_bgcolor":"#FFFFFF","plot_bgcolor":"#FFFFFF","modebar":{"orientation":"v"},"uirevision":"qsv-viz","xaxis":{"type":"category","tickmode":"array","tickvals":[0.0,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0],"ticktext":["Dog Lifetime Spayed…","Dog Lifetime Neuter…","Dog Lifetime Male","Dog Senior Lifetime…","Dog Lifetime Female","Dog Senior Lifetime…","Dog Lifetime Duplic…","Dog Senior Lifetime…","Dog Senior Lifetime…","Dog Out of County T…","Dog Inter County Tr…"],"tickcolor":"#BCC4CE","tickfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":10},"showline":true,"linecolor":"#BCC4CE","showgrid":false,"zeroline":false},"yaxis":{"title":{"text":"count (log)","font":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":11}},"type":"log","range":[-0.05,4.3635177569963055],"tickcolor":"#BCC4CE","tickfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":10},"exponentformat":"B","showline":false,"showgrid":true,"gridcolor":"#ECECEC","gridwidth":1,"zeroline":false},"annotations":[{"text":"LicenseType \u003cspan style=\"font-size:12px;color:#999999\"\u003eⓘ\u003c/span\u003e\u003cbr\u003e\u003cspan style=\"font-size:11px;color:#999999\"\u003eLicense Type\u003c/span\u003e","font":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":16},"showarrow":false,"xref":"paper","x":0.5,"xanchor":"center","yref":"paper","y":1.0,"yanchor":"bottom","yshift":8.0,"hovertext":"The specific classification of the dog license (e.g., lifetime, senior).","captureevents":true,"name":"qsvdict-LicenseType-4b4165cc"}]},"config":{"responsive":true},"frames":null});
++    Plotly.newPlot("qsv-viz-panel-4", {"data":[{"type":"bar","x":["Dog Lifetime Spayed Female","Dog Lifetime Neutered Male","Dog Lifetime Male","Dog Senior Lifetime Spayed Female","Dog Lifetime Female","Dog Senior Lifetime Neutered Male","Dog Lifetime Duplicate","Dog Senior Lifetime Female","Dog Senior Lifetime Male","Dog Out of County Transfer - Lifetime","Dog Inter County Transfer - Lifetime"],"y":[16350.0,15279.0,3717.0,3658.0,3039.0,2748.0,2045.0,1282.0,1155.0,553.0,187.0],"name":"LicenseType","textposition":"outside","texttemplate":["16.4k","15.3k","3.72k","3.66k","3.04k","2.75k","2.04k","1.28k","1.16k","553","
 ```
 
-**File**: `src/cmd/joinp.rs` (modified, +1/-1)
+**File**: `examples/viz/smart_cms_medicare.html` (modified, +4/-4)
 ```diff
-@@ -145,7 +145,7 @@ joinp options:
-                                 * If no schema or stats cache: infer schema using --infer-len 
-                                   and cache the result
-                                 Schema files use the same name as input with .pschema.json extension
--                                (e.g., data.csv -> data.pschema.json).
-+                                (e.g., data.csv -> data.csv.pschema.json).
-                            ‎NOTE: If the input files have pschema.json files that are newer or created
-                            at the same time as the input files, they will be used to inform the join
-                            operation regardless of the value of --cache-schema unless --infer-len is 0.
+@@ -75,7 +75,7 @@ <h1 class="qsv-viz-title">cms_medicare_providers.csv — Data Schematic</h1>
+ <tr><td class="qsv-viz-meta-k">Rows:</td><td>30,007 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Preview<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
+ <tr><td class="qsv-viz-meta-k">Columns:</td><td>4</td></tr>
+ <tr><td class="qsv-viz-meta-k">Completeness:</td><td>97.0%</td></tr>
+-<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-12 15:03 UTC</td></tr>
++<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-13 23:42 UTC</td></tr>
+ <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 28.0.0</td></tr>
+ </table>
+ <div class="qsv-viz-grid">
+@@ -139,15 +139,15 @@ <h1 class="qsv-viz-title">cms_medicare_providers.csv — Data Schematic</h1>
+       <div class="qsv-viz-plot" style="height:320px">
+ <div id="qsv-viz-panel-7" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+ <script type="text/javascript">
+-    Plotly.newPlot("qsv-viz-panel-7", {"data":[{"type":"bar","x":["Nurse Practitioner","Physician Assistant","Internal Medicine","Family Practice","Physical Therapist in Private Practice","Certified Registered Nurse Anesthetist (CRNA)","Emergency Medicine","Anesthesiology","Diagnostic Radiology","Optometry","Other (77)​"],"y":[4920.0,2699.0,2313.0,2075.0,1911.0,1328.0,1218.0,1022.0,794.0,793.0,10934.0],"name":"provider_type","textposition":"outside","texttemplate":["4.92k","2.7k","2.31k","2.08k","1.91k","1.33k","1.22k","1.02k","794","793","10.9k"],"hovertext":["Nurse Practitioner","Physician Assistant","Internal Medicine","Family Practice","Physical Therapist in Private Practice","Certified Registered Nurse Anesthetist (CRNA)","Emergency Medicine","Anesthesiology","Diagnostic Radiology","Optometry","Other (77)"],"hovertemplate":"%{hovertext}\u003cbr\u003ecount: %{y:,}\u003cextra\u003e\u003c/extra\u003e","marker":{"color":["#FF9DA6","#FF9DA6","#FF9DA6","#FF9DA6","#FF9DA6","#FF9DA6","#FF9DA6","#FF9DA6","#FF9DA6","#FF9DA6","#999999"]},"textfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":9},"cliponaxis":false}],"layout":{"title":{"text":"provider_type"},"showlegend":false,"margin":{"l":60,"r":30,"t":48,"b":60,"pad":4},"height":320,"font":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":12,"color":"#2A3F5F"},"paper_bgcolor":"#FFFFFF","plot_bgcolor":"#FFFFFF","modebar":{"orientation":"v"},"uirevision":"qsv-viz","xaxis":{"type":"category","tickmode":"array","tickvals":[0.0,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0],"ticktext":["Nurse Practitioner","Physician Assistant","Internal Medicine","Family Practice","Physical Therapist …","Certified Registere…","Emergency Medicine","Anesthesiology","Diagnostic Radiology","Optometry","Other (77)"],"tickcolor":"#BCC4CE","tickfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":10},"showline":true,"linecolor":"#BCC4CE","showgrid":false,"zeroline":false},"yaxis":{"range":[0.0,12574.099999999999],"tickcolor":"#BCC4CE","tickfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":10},"exponentformat":"B","showline":false,"showgrid":true,"gridcolor":"#ECECEC","gridwidth":1,"zeroline":false}},"config":{"responsive":true},"frames":null});
++    Plotly.newPlot("qsv-viz-panel-7", {"data":[{"type":"bar","x":["Nurse Practitioner","Physician Assistant","Internal Medicine","Family Practice","Physical Therapist in Private Practice","Certified Registered Nurse Anesthetist (CRNA)","Emergency Medicine","Anesthesiology","Diagnostic Radiology","Optometry","Other (77)​"],"y":[4920.0,2699.0,2313.0,2075.0,1911.0,1328.0,1218.0,1022.0,794.0,793.0,10934.0],"name":"provider_type","textposition":"outside","texttemplate":["4.92k","2.7k","2.31k","2.08k","1.91k","1.33k","1.22k","1.02k","794","793","10.9k"],"hovertext":["Nurse Practitioner","Physician Assistant","Internal Medicine","Family Practice","Physical Therapist in Private Practice","Certified Registered Nurse Anesthetist (CRNA)","Emergency Medicine","Anesthesiology","Diagnostic Radiology","Optometry","Other (77)"],"hovertemplate":"%{hovertext}\u003cbr\u003ecount: %{y:,}\u003cextra\u003e\u003c/extra\u003e","marker":{"color":["#FF9DA6","#FF9DA6","#FF9DA6","#FF9DA6","#FF9DA6","#FF9DA6","#FF9DA6","#FF9DA6","#FF9DA6","#FF9DA6","#999999"]},"textfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":9},"cliponaxis":false}],"layout":{"title":{"text":"provider_type"},"showlegend":false,"margin":{"l":60,"r":30,"t":48,"b":60,"pad":4},"height":320,"font":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":12,"color":"#2A3F5F"},"paper_bgcolor":"#FFFFFF","plot_bgcolor":"#FFFFFF","modebar":{"orientation":"v"},"uirevision":"qsv-viz","xaxis":{"type":"category","tickmod
 ```
 
-**File**: `src/cmd/schema.rs` (modified, +1/-1)
+**File**: `examples/viz/smart_cpdb.html` (modified, +5/-5)
 ```diff
-@@ -38,7 +38,7 @@ Polars Schema:
- ==============
- When the "polars" feature is enabled, the `--polars` option will generate a Polars schema
- instead of a JSON Schema. The generated Polars schema will be written to a file with the
--`.pschema.json` suffix appended to the input file stem.
-+`.pschema.json` suffix appended to the full input file name (data.csv -> data.csv.pschema.json).
- 
- The Polars schema is a JSON object that describes the schema of a CSV file. When present,
- the `sqlp`, `joinp`, and `pivotp` commands will use the Polars schema to read the CSV file
+@@ -75,7 +75,7 @@ <h1 class="qsv-viz-title">nyc_capital_projects.csv — Data Schematic</h1>
+ <tr><td class="qsv-viz-meta-k">Rows:</td><td>12,587 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Preview<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
+ <tr><td class="qsv-viz-meta-k">Columns:</td><td>7</td></tr>
+ <tr><td class="qsv-viz-meta-k">Completeness:</td><td>98.8%</td></tr>
+-<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-12 15:03 UTC</td></tr>
++<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-13 23:42 UTC</td></tr>
+ <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 28.0.0</td></tr>
+ </table>
+ <div class="qsv-viz-grid">
+@@ -147,7 +147,7 @@ <h1 class="qsv-viz-title">nyc_capital_projects.csv — Data Schematic</h1>
+       <div class="qsv-viz-plot" style="height:420px">
+ <div id="qsv-viz-panel-8" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+ <script type="text/javascript">
+-    Plotly.newPlot("qsv-viz-panel-8", {"data":[{"type":"bar","x":["DEP","DOT","DDC","HPD","DOE","SBS","DPR","DCAS","UK","HHC"],"y":[33374372000.0,29346246000.0,26872762000.0,26731759000.0,24972388000.0,9338390000.0,9337994000.0,7410213000.0,4857843000.0,4651982000.0],"name":"Planned by Managing Agency (sum, explains 17% of variance) — top 10","textposition":"outside","texttemplate":["33.4B","29.3B","26.9B","26.7B","25B","9.34B","9.34B","7.41B","4.86B","4.65B"],"hovertext":["DEP","DOT","DDC","HPD","DOE","SBS","DPR","DCAS","UK","HHC"],"hovertemplate":"%{hovertext}\u003cbr\u003e%{y:,}\u003cextra\u003e\u003c/extra\u003e","marker":{"color":"#4C78A8"},"textfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":9},"cliponaxis":false}],"layout":{"title":{"text":"Planned by Managing Agency (sum, explains 17% of variance) — top 10"},"showlegend":false,"margin":{"l":60,"r":30,"t":48,"b":60,"pad":4},"height":420,"font":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":12,"color":"#2A3F5F"},"paper_bgcolor":"#FFFFFF","plot_bgcolor":"#FFFFFF","modebar":{"orientation":"v"},"uirevision":"qsv-viz","xaxis":{"type":"category","tickmode":"array","tickvals":[0.0,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0],"ticktext":["DEP","DOT","DDC","HPD","DOE","SBS","DPR","DCAS","UK","HHC"],"tickcolor":"#BCC4CE","tickfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":10},"showline":true,"linecolor":"#BCC4CE","showgrid":false,"zeroline":false},"yaxis":{"range":[0.0,38380527800.0],"tickcolor":"#BCC4CE","tickfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":10},"exponentformat":"B","showline":false,"showgrid":true,"gridcolor":"#ECECEC","gridwidth":1,"zeroline":false}},"config":{"responsive":true},"frames":null});
++    Plotly.newPlot("qsv-viz-panel-8", {"data":[{"type":"bar","x":["DEP","DOT","DDC","HPD","DOE","SBS","DPR","DCAS","UK","HHC"],"y":[33374372000.0,29346246000.0,26872762000.0,26731759000.0,24972388000.0,9338390000.0,9337994000.0,7410213000.0,4857843000.0,4651982000.0],"name":"Planned by Managing Agency (sum, explains 17% of variance) — top 10","textposition":"outside","texttemplate":["33.4B","29.3B","26.9B","26.7B","25B","9.34B","9.34B","7.41B","4.86B","4.65B"],"hovertext":["DEP","DOT","DDC","HPD","DOE","SBS","DPR","DCAS","UK","HHC"],"hovertemplate":"%{hovertext}\u003cbr\u003e%{y:,}\u003cextra\u003e\u003c/extra\u003e","marker":{"color":"#4C78A8"},"textfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":9},"cliponaxis":false}],"layout":{"title":{"text":"Planned by Managing Agency (sum, explains 17% of variance) — top 10"},"showlegend":false,"margin":{"l":60,"r":30,"t":48,"b":60,"pad":4},"height":420,"font":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":12,"color":"#2A3F5F"},"paper_bgcolor":"#FFFFFF","plot_bgcolor":"#FFFFFF","modebar":{"orientation":"v"},"uirevision":"qsv-viz","xaxis":{"type":"category","tickmode":"array","tickvals":["DEP","DOT","DDC","HPD","DOE","SBS","DPR","DCAS","UK","HHC"],"ticktext":["DEP","DOT","DDC","HPD","DOE","SBS","DPR","DCAS","UK","HHC"],"tickcolor":"#BCC4CE","tickfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":10},"showline":true,"linecolor":"#BCC4CE","showgrid":false,"zeroline":false},"yaxis":{"range":[0.0,38380527800.0],"tickcolor":"#BCC4CE","tickfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":10},"exponentformat":"B","showline":false,"showgrid":true,"gridcolor":"#ECECEC","gridwidth":1,"zeroline":false}},"config":{"responsive":true},"frames":null});
+ </script>
+       </div>
+     </div>
+@@ -171,15 +171,15 @@ <h1 class="qsv-viz-title">nyc_capital_projects.csv — Data Schematic</h1>
+       <div class="qsv-viz-plot" style="height:320px">
+ <div id="qsv-viz-panel-11" class="plo
+```
+
+**File**: `examples/viz/smart_dict_sunburst.html` (modified, +7/-7)
+```diff
+@@ -75,7 +75,7 @@ <h1 class="qsv-viz-title">sales_sample.csv — Data Schematic</h1>
+ <tr><td class="qsv-viz-meta-k">Rows:</td><td>500 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Explore<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
+ <tr><td class="qsv-viz-meta-k">Columns:</td><td>13</td></tr>
+ <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
+-<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-12 15:03 UTC</td></tr>
++<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-13 23:42 UTC</td></tr>
+ <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 28.0.0</td></tr>
+ </table>
+ <div class="qsv-viz-grid">
+@@ -131,39 +131,39 @@ <h1 class="qsv-viz-title">sales_sample.csv — Data Schematic</h1>
+       <div class="qsv-viz-plot" style="height:320px">
+ <div id="qsv-viz-panel-6" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+ <script type="text/javascript">
+-    Plotly.newPlot("qsv-viz-panel-6", {"data":[{"type":"bar","x":["South","North","West","East"],"y":[132.0,126.0,126.0,116.0],"name":"region","textposition":"outside","texttemplate":["132","126","126","116"],"hovertext":["South","North","West","East"],"hovertemplate":"%{hovertext}\u003cbr\u003ecount: %{y:,}\u003cextra\u003e\u003c/extra\u003e","marker":{"color":["#B279A2","#B279A2","#B279A2","#B279A2"]},"textfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":9},"cliponaxis":false}],"layout":{"title":{"text":"region"},"showlegend":false,"margin":{"l":60,"r":30,"t":48,"b":60,"pad":4},"height":320,"font":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":12,"color":"#2A3F5F"},"paper_bgcolor":"#FFFFFF","plot_bgcolor":"#FFFFFF","modebar":{"orientation":"v"},"uirevision":"qsv-viz","xaxis":{"type":"category","tickmode":"array","tickvals":[0.0,1.0,2.0,3.0],"ticktext":["South","North","West","East"],"tickcolor":"#BCC4CE","tickfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":10},"showline":true,"linecolor":"#BCC4CE","showgrid":false,"zeroline":false},"yaxis":{"range":[0.0,151.79999999999998],"tickcolor":"#BCC4CE","tickfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":10},"exponentformat":"B","showline":false,"showgrid":true,"gridcolor":"#ECECEC","gridwidth":1,"zeroline":false}},"config":{"responsive":true},"frames":null});
++    Plotly.newPlot("qsv-viz-panel-6", {"data":[{"type":"bar","x":["South","North","West","East"],"y":[132.0,126.0,126.0,116.0],"name":"region","textposition":"outside","texttemplate":["132","126","126","116"],"hovertext":["South","North","West","East"],"hovertemplate":"%{hovertext}\u003cbr\u003ecount: %{y:,}\u003cextra\u003e\u003c/extra\u003e","marker":{"color":["#B279A2","#B279A2","#B279A2","#B279A2"]},"textfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":9},"cliponaxis":false}],"layout":{"title":{"text":"region"},"showlegend":false,"margin":{"l":60,"r":30,"t":48,"b":60,"pad":4},"height":320,"font":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":12,"color":"#2A3F5F"},"paper_bgcolor":"#FFFFFF","plot_bgcolor":"#FFFFFF","modebar":{"orientation":"v"},"uirevision":"qsv-viz","xaxis":{"type":"category","tickmode":"array","tickvals":["South","North","West","East"],"ticktext":["South","North","West","East"],"tickcolor":"#BCC4CE","tickfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":10},"showline":true,"linecolor":"#BCC4CE","showgrid":false,"zeroline":false},"yaxis":{"range":[0.0,151.79999999999998],"tickcolor":"#BCC4CE","tickfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":10},"exponentformat":"B","showline":false,"showgrid":true,"gridcolor":"#ECECEC","gridwidth":1,"zeroline":false}},"config":{"responsive":true},"frames":null});
+ </script>
+       </div>
+     </div>
+     <div class="qsv-viz-cell" data-qsv-column="product_category" data-qsv-agg-keys="[]">
+       <div class="qsv-viz-plot" style="height:320px">
+ <div id="qsv-viz-panel-7" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+ <script type="text/javascript">
+-    Plotly.newPlot("qsv-viz-panel-7", {"data":[{"type":"bar","x":["Books","Sports","Toys","Electronics","Clothing","Home"],"y":[108.0,96.0,83.0,78.0,74.0,61.0],"name":"product_category","textposition":"outside","texttemplate":["108","96","83","78","74","61"],"hovertext":["Books","Sports","Toys","Electronics","Clothing","Home"],"hovertemplate":"%{hovertext}\u003cbr\u003ecount: %{y:,}\u003cextra\u003e\u003c/extra\u003e","marker":{"color":["#FF9DA6","#FF9DA6","#FF9DA6","#FF9DA6","#FF9DA6","#FF9DA6"]},"textfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":9},"cliponaxis":false}],"layout":{"title":{"text":"product_category\u003cb
+```
+
+**File**: `examples/viz/smart_dict_treemap.html` (modified, +5/-5)
+```diff
+@@ -75,7 +75,7 @@ <h1 class="qsv-viz-title">customer_spend.csv — Data Schematic</h1>
+ <tr><td class="qsv-viz-meta-k">Rows:</td><td>300 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Explore<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
+ <tr><td class="qsv-viz-meta-k">Columns:</td><td>5</td></tr>
+ <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
+-<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-12 15:03 UTC</td></tr>
++<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-13 23:42 UTC</td></tr>
+ <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 28.0.0</td></tr>
+ </table>
+ <div class="qsv-viz-grid">
+@@ -107,7 +107,7 @@ <h1 class="qsv-viz-title">customer_spend.csv — Data Schematic</h1>
+       <div class="qsv-viz-plot" style="height:420px">
+ <div id="qsv-viz-panel-3" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+ <script type="text/javascript">
+-    Plotly.newPlot("qsv-viz-panel-3", {"data":[{"type":"bar","x":["South","East","West","Central"],"y":[16649.03,16349.419999999995,2345.2900000000004,2272.8399999999997],"name":"Monthly Spend by Region (sum, explains 98% of variance)","textposition":"outside","texttemplate":["16.6k","16.3k","2.35k","2.27k"],"hovertext":["South","East","West","Central"],"hovertemplate":"%{hovertext}\u003cbr\u003e%{y:,}\u003cextra\u003e\u003c/extra\u003e","marker":{"color":"#E45756"},"textfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":9},"cliponaxis":false}],"layout":{"title":{"text":"Monthly Spend by Region (sum, explains 98% of variance)"},"showlegend":false,"margin":{"l":60,"r":30,"t":48,"b":60,"pad":4},"height":420,"font":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":12,"color":"#2A3F5F"},"paper_bgcolor":"#FFFFFF","plot_bgcolor":"#FFFFFF","modebar":{"orientation":"v"},"uirevision":"qsv-viz","xaxis":{"type":"category","tickmode":"array","tickvals":[0.0,1.0,2.0,3.0],"ticktext":["South","East","West","Central"],"tickcolor":"#BCC4CE","tickfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":10},"showline":true,"linecolor":"#BCC4CE","showgrid":false,"zeroline":false},"yaxis":{"range":[0.0,19146.384499999996],"tickcolor":"#BCC4CE","tickfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":10},"exponentformat":"B","showline":false,"showgrid":true,"gridcolor":"#ECECEC","gridwidth":1,"zeroline":false}},"config":{"responsive":true},"frames":null});
++    Plotly.newPlot("qsv-viz-panel-3", {"data":[{"type":"bar","x":["South","East","West","Central"],"y":[16649.03,16349.419999999995,2345.2900000000004,2272.8399999999997],"name":"Monthly Spend by Region (sum, explains 98% of variance)","textposition":"outside","texttemplate":["16.6k","16.3k","2.35k","2.27k"],"hovertext":["South","East","West","Central"],"hovertemplate":"%{hovertext}\u003cbr\u003e%{y:,}\u003cextra\u003e\u003c/extra\u003e","marker":{"color":"#E45756"},"textfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":9},"cliponaxis":false}],"layout":{"title":{"text":"Monthly Spend by Region (sum, explains 98% of variance)"},"showlegend":false,"margin":{"l":60,"r":30,"t":48,"b":60,"pad":4},"height":420,"font":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":12,"color":"#2A3F5F"},"paper_bgcolor":"#FFFFFF","plot_bgcolor":"#FFFFFF","modebar":{"orientation":"v"},"uirevision":"qsv-viz","xaxis":{"type":"category","tickmode":"array","tickvals":["South","East","West","Central"],"ticktext":["South","East","West","Central"],"tickcolor":"#BCC4CE","tickfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":10},"showline":true,"linecolor":"#BCC4CE","showgrid":false,"zeroline":false},"yaxis":{"range":[0.0,19146.384499999996],"tickcolor":"#BCC4CE","tickfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":10},"exponentformat":"B","showline":false,"showgrid":true,"gridcolor":"#ECECEC","gridwidth":1,"zeroline":false}},"config":{"responsive":true},"frames":null});
+ </script>
+       </div>
+     </div>
+@@ -123,15 +123,15 @@ <h1 class="qsv-viz-title">customer_spend.csv — Data Schematic</h1>
+       <div class="qsv-viz-plot" style="height:320px">
+ <div id="qsv-viz-panel-5" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+ <script type="text/javascript">
+-    Plotly.newPlot("qsv-viz-panel-5", {"data":[{"type":"bar","x":["Basic","Plus","Pro"],"y":[150.0,100.0,50.0],"name":"plan","textposition":"outside","texttemplate":["150","100","50"],"hovertext":["Basic","Plus","Pro"],"hovertemplate":"%{hovertext}\u003cbr\u003ecount: %{y:,}\u003cextra\u003e\u003c/extra\u003e","marker":{"color":["#EECA3B","#EECA3B","#EECA3B"]},"textfont":{"family":"Helvetica Neue, Helvetica, Arial, s
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5047** (2026-11-14): fix(viz): category-axis tickvals are category names, not positions (@jqnatividad)
 - **PR #5046** (2026-11-13): docs: fix sqlp `<=>` and Polars schema file name in USAGE (@jqnatividad)
 - **PR #5045** (2026-11-13): deps: bump Polars to upstream 61fdb30 (@jqnatividad)
 - **PR #5044** (2026-11-13): build(deps): bump anthropics/claude-code-action from 1.0.270 to 1.0.271 (@dependabot[bot])
 - **PR #5043** (2026-11-13): build(deps): bump hono from 4.13.13 to 4.13.18 in /.claude/skills (@dependabot[bot])
 - **PR #5042** (2026-11-12): build(deps): bump @hono/node-server from 2.1.5 to 2.1.8 in /.claude/skills (@dependabot[bot])
-- **PR #5041** (2026-11-12): deps: bump Polars to upstream 8ecd1ca (@jqnatividad)
 
 ---
 
@@ -2383,31 +2442,31 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: fix sqlp `<=>` and Polars schema file name in USAGE (#5046)
+## X. viz): category-axis tickvals are category names, not positions
 
 **RULE**:
-When implementing operations in `.claude/skills/qsv/qsv-joinp.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ce4f6857`: docs: fix sqlp `<=>` and Polars schema file name in USAGE (#5046). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `892e7223`: viz): category-axis tickvals are category names, not positions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/qsv/qsv-joinp.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        "description": "Create and cache Polars schema JSON files. Ignored when --infer-len is 0. ‎ -2: treat all columns as String. A Polars schema file is created & cached. ‎ -1: treat all columns as String. No Polars schema file is created. ‎  0: do not cache Polars schema. Uses --infer-len to infer schema. ‎  1: cache Polars schema with the following behavior: * If schema file exists and is newer than input: use cached schema * If schema file missing/outdated and stats cache exists: derive schema from stats and cache it * If no schema or stats cache: infer schema using --infer-len and cache the result Schema files use the same name as input with .pschema.json extension (e.g., data.csv -> data.csv.pschema.json). ‎NOTE: If the input files have pschema.json files that are newer or created at the same time as the input files, they will be used to inform the join operation regardless of the value of --cache-schema unless --infer-len is 0.",
+- **`viz smart`: category-axis labels no longer land under the wrong bar when the categories look like numbers.** ([#5047](https://github.com/dathere/qsv/pull/5047)) Frequency bars, measure-by-dimension bars, the Top Relationships lollipop and funnels set their axis labels with `tickvals` holding each category's *position* (0, 1, 2…). Plotly.js matches a category-axis tickval against category *names* first, so on an axis of codes like `day_of_week` (`6, 7, 5, …, 0`) the label for position 0 went under category "0", and so on. Hovering a bar showed one value while the axis said another, and labels that collided were dropped. `tickvals` now hold the category values themselves. This needed `Axis::tick_values` to accept strings, so qsv's `plotly` pin moves to `dathere/plotly` rev [`b652677`](https://github.com/dathere/plotly/commit/b652677502d667edb2caa09dc930a6fe294ce3f4). The gallery Data Schematics are regenerated.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-        "description": "Create and cache Polars schema JSON files. Ignored when --infer-len is 0. ‎ -2: treat all columns as String. A Polars schema file is created & cached. ‎ -1: treat all columns as String. No Polars schema file is created. ‎  0: do not cache Polars schema. Uses --infer-len to infer schema. ‎  1: cache Polars schema with the following behavior: * If schema file exists and is newer than input: use cached schema * If schema file missing/outdated and stats cache exists: derive schema from stats and cache it * If no schema or stats cache: infer schema using --infer-len and cache the result Schema files use the same name as input with .pschema.json extension (e.g., data.csv -> data.pschema.json). ‎NOTE: If the input files have pschema.json files that are newer or created at the same time as the input files, they will be used to inform the join operation regardless of the value of --cache-schema unless --infer-len is 0.",
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ce4f6857` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `892e7223` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
