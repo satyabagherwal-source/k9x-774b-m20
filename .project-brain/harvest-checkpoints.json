@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-14T10:16:40.735Z",
+  "last_updated": "2026-11-14T10:30:13.007Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1520,14 +1520,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openai-community-gpt2",
-      "content_hash": "e1f6b610da00de1f9cd151c70cb8d5a030defb65d2175d132ac19aa4792eb499",
-      "verified_at": "2026-11-09T02:34:44.095Z",
+      "content_hash": "cea713da4450d70d04c30d0e2a60f58b8d2343504758d4141f526b549dea0755",
+      "verified_at": "2026-11-14T10:30:03.436Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T02:34:44.095Z"
+      "last_updated": "2026-11-14T10:30:03.436Z"
     },
     "Qwen/Qwen3-VL-8B-Instruct": {
       "repository": "Qwen/Qwen3-VL-8B-Instruct",
@@ -5211,14 +5211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-skyhook-io-radar",
-      "content_hash": "72b34d1ff00f85ef0e34efab68f9724758327cf0358e611bd0e62144ceeae87f",
-      "verified_at": "2026-11-13T07:55:26.448Z",
+      "content_hash": "fcb78a5266b3d57487fada90b1d9576a21ceaa76274eab6710143049f6a2c909",
+      "verified_at": "2026-11-14T10:30:13.007Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T07:55:26.448Z"
+      "last_updated": "2026-11-14T10:30:13.007Z"
     },
     "mitmproxy/mitmproxy": {
       "repository": "mitmproxy/mitmproxy",
@@ -18899,6 +18899,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-14T10:16:31.352Z"
+    },
+    "deepseek-ai/DeepSeek-V3.2": {
+      "repository": "deepseek-ai/DeepSeek-V3.2",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-deepseek-ai-deepseek-v3-2",
+      "content_hash": "2f735245cb5977ba11c6be9993868f8493ddf88e731decaca9e8bc820689ce0e",
+      "verified_at": "2026-11-14T10:30:01.057Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-14T10:30:01.057Z"
     }
   },
   "repos": {

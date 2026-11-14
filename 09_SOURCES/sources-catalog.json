@@ -1145,8 +1145,8 @@
     "sourceUrl": "https://huggingface.co/openai-community/gpt2",
     "sourceVersion": "hf-openai-community-gpt2",
     "license": "Open-Source",
-    "contentHash": "e1f6b610da00de1f9cd151c70cb8d5a030defb65d2175d132ac19aa4792eb499",
-    "lastHarvestedAt": "2026-11-09T02:34:44.079Z",
+    "contentHash": "cea713da4450d70d04c30d0e2a60f58b8d2343504758d4141f526b549dea0755",
+    "lastHarvestedAt": "2026-11-14T10:30:03.427Z",
     "learningId": "learn-huggingface-openai-community-gpt2"
   },
   "hf-qwen-qwen3-vl-8b-instruct": {
@@ -3393,10 +3393,10 @@
     "repository": "skyhook-io/radar",
     "platform": "github",
     "sourceUrl": "https://github.com/skyhook-io/radar",
-    "sourceVersion": "e7a377fa",
+    "sourceVersion": "148a70c8",
     "license": "Apache-2.0",
-    "contentHash": "72b34d1ff00f85ef0e34efab68f9724758327cf0358e611bd0e62144ceeae87f",
-    "lastHarvestedAt": "2026-11-13T07:55:26.414Z",
+    "contentHash": "fcb78a5266b3d57487fada90b1d9576a21ceaa76274eab6710143049f6a2c909",
+    "lastHarvestedAt": "2026-11-14T10:30:12.997Z",
     "learningId": "learn-github-skyhook-io-radar"
   },
   "mitmproxy-mitmproxy": {
@@ -12558,5 +12558,15 @@
     "contentHash": "b341513ce2f8c9a693175b7f06d075bede692503bbef50ff19bfa9137a133469",
     "lastHarvestedAt": "2026-11-14T10:16:31.342Z",
     "learningId": "learn-huggingface-adventists-ai-sophon-realtime-v1"
+  },
+  "hf-deepseek-ai-deepseek-v3.2": {
+    "repository": "deepseek-ai/DeepSeek-V3.2",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V3.2",
+    "sourceVersion": "hf-deepseek-ai-deepseek-v3.2",
+    "license": "Open-Source",
+    "contentHash": "2f735245cb5977ba11c6be9993868f8493ddf88e731decaca9e8bc820689ce0e",
+    "lastHarvestedAt": "2026-11-14T10:30:01.048Z",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-v3-2"
   }
 }

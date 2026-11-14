@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source**: github ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
-> **Source Version**: `e7a377fa`  
+> **Source Version**: `148a70c8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T07:55:11.418Z  
+> **Timestamp**: 2026-11-14T10:30:12.136Z  
 > **Learning ID**: `learn-github-skyhook-io-radar`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T07:55:11.408Z  
+> **Harvest Timestamp**: 2026-11-14T10:30:12.128Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The missing open-source Kubernetes UI with a built-in MCP server for AI agents. See what's broken, why, and what changed. Issues, Topology, event timeline, Helm, GitOps, live service traffic, and cluster audits - all in one Go binary.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 4113 stars
+- **Stars / Engagement**: 4121 stars
 
 ---
 
@@ -2447,76 +2447,57 @@ func (s *Server) refreshAIEngine(ctx context.Context) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b236f3ba` (2026-11-12)
-**Commit Message**: docs: add NVIDIA desktop rendering workaround (#2636)
+### Incident Patch 1: `148a70c8` (2026-11-13)
+**Commit Message**: Fix Linux desktop packaging with verified nfpm 2.49.0 binary (#2663)
 
-Linux desktop users who see black flashes or icons on NVIDIA currently
-have no rendering workaround in the README or configuration guide. Add
-the launch commands to opt out of forced shared-memory rendering for
-installed packages and AppImages, with instructions to return to the
-default and a browser fallback for the separate upstream crash.
+Linux desktop releases fail before packaging because `go install
+.../nfpm@latest` now selects nfpm 2.49.0, which requires Go 1.27.4 while
+the runner uses Go 1.26.10. The last successful release, v1.20.2, used
+the same command and compiler but resolved nfpm 2.48.0.
 
-The README links to the new section beside desktop window behavior. Both
-commands match the current package names and preserve the explicit
-renderer setting through startup.
+Install the official nfpm 2.49.0 Linux amd64 binary instead, pinned to
+its published SHA-256. This upgrades the packaging tool without changing
+the application compiler. The archive is verified before extraction and
+the tool directory is added to subsequent steps through GITHUB_PATH.
 
-Validation: existing renderer-default tests passed, including the
-explicit `0` override. Both documented commands preserved `0` in a
-launch harness using the extracted AppRun. The approved wording, section
-placement and README anchor were checked. No NVIDIA hardware rendering
-test was performed.
+Validation: workflow syntax, extracted installer Bash syntax and
+ShellCheck passed. [Linux
+recovery](https://github.com/skyhook-io/radar/actions/runs/43419721215)
+built the original v1.20.3 source on ubuntu-22.04 and produced the
+tarball, deb, rpm and AppImage with nfpm 2.49.0. All PR checks passed,
+including the AppImage build-and-launch test. Apple notarization remains
+blocked independently by the account agreement.
 
-Related: #1360.
-
-**File**: `README.md` (modified, +2/-0)
+**File**: `.github/workflows/release-desktop.yml` (modified, +11/-1)
 ```diff
-@@ -200,6 +200,8 @@ chmod +x radar-desktop_*_linux_amd64.AppImage
- ```
- The AppImage doesn't update itself. When a new version is out, Radar links to the download.
+@@ -267,7 +267,17 @@ jobs:
+         run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
  
-+If the Linux desktop app flashes black, shows black icons or crashes on NVIDIA, see [Linux desktop rendering](docs/configuration.md#linux-desktop-rendering).
-+
- Kubeconfig login plugins (`exec`) run from inside the AppImage, not from the folder you started it in. If a plugin's `args` name a file by a relative path, such as `--token-file token.json`, the plugin can't find it and Radar shows "Authentication Failed". Give the full path instead, such as `--token-file /home/you/.kube/token.json`. A relative `command`, such as `./token.sh`, works: it's looked up next to the kubeconfig file.
+       - name: Install nfpm
+-        run: go install github.com/goreleaser/nfpm/v2/cmd/nfpm@latest
++        env:
++          NFPM_VERSION: '2.49.0'
++          NFPM_SHA256: '2afaa5ffb5e3493402e31e7c67a5a1fb42133e3f66fc315ca0051934125561c7'
++        run: |
++          curl --fail --location --retry 3 --output "$RUNNER_TEMP/nfpm.tar.gz" \
++            "https://github.com/goreleaser/nfpm/releases/download/v${NFPM_VERSION}/nfpm_${NFPM_VERSION}_Linux_x86_64.tar.gz"
++          echo "${NFPM_SHA256}  $RUNNER_TEMP/nfpm.tar.gz" | sha256sum --check --strict
++          mkdir -p "$RUNNER_TEMP/nfpm-bin"
++          tar -xzf "$RUNNER_TEMP/nfpm.tar.gz" -C "$RUNNER_TEMP/nfpm-bin" nfpm
++          echo "$RUNNER_TEMP/nfpm-bin" >> "$GITHUB_PATH"
++          "$RUNNER_TEMP/nfpm-bin/nfpm" --version
  
- **Scoop (Windows):**
-```
-
-**File**: `docs/configuration.md` (modified, +18/-0)
-```diff
-@@ -269,6 +269,24 @@ On Linux and Windows, closing the window always quits. Neither gives Radar
- anything to reopen from — no Dock, and Wails v2 ships no tray icon — so hiding
- there would leave a running process with no way to reach it.
- 
-+## Linux desktop rendering
-+
-+On some NVIDIA systems, the desktop app may flash black when switching views or show black icons. To fix it, quit the app and launch it with this setting:
-+
-+```bash
-+WEBKIT_DMABUF_RENDERER_FORCE_SHM=0 radar-desktop
-+```
-+
-+For an AppImage:
-+
-+```bash
-+WEBKIT_DMABUF_RENDERER_FORCE_SHM=0 ./radar-desktop_*_linux_amd64.AppImage
-+```
-+
-+This setting applies only to that launch. If the window opens black or the app closes, launch normally to return to the default.
-+
-+For the separate [upstream NVIDIA crash](https://bugs.webkit.org/show_bug.cgi?id=327542), run `kubectl radar` and open the printed URL in your browser.
-+
- ## AI Investigations Agent CLI
- 
- Built-in AI investigations run an agent CLI installed on the machine Radar runs
+       - name: Build frontend
+         run: make frontend embed
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2663** (2026-11-13): Fix Linux desktop packaging with verified nfpm 2.49.0 binary (@hisco)
+- **PR #2660** (closed): Pin Linux desktop packager to a Go-compatible version (@hisco)
+- **PR #2656** (2026-11-13): Add an optional copy-on-select terminal preference (@hisco)
 - **PR #2637** (2026-11-12): Match resource sidebar icons to Topology kind colors (@hisco)
 - **PR #2636** (2026-11-12): docs: add NVIDIA desktop rendering workaround (@hisco)
 - **PR #2635** (2026-11-12): Delete the auth proxy's session cookies on logout (@hisco)
-- **PR #2606** (2026-11-11): Refuse to restart a paused Deployment, and show toasts above dialogs (@hisco)
-- **PR #2605** (2026-11-11): docs: drop WSL from the shared listener list (@hisco)
-- **PR #2604** (2026-11-11): Say when a Cursor policy turns off Run Everything (@hisco)
 
 ---
 
@@ -2536,29 +2517,38 @@ Related: #1360.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: add NVIDIA desktop rendering workaround (#2636)
+## X. Linux desktop packaging with verified nfpm 2.49.0 binary
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/release-desktop.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b236f3ba`: docs: add NVIDIA desktop rendering workaround (#2636). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `148a70c8`: Linux desktop packaging with verified nfpm 2.49.0 binary. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release-desktop.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-If the Linux desktop app flashes black, shows black icons or crashes on NVIDIA, see [Linux desktop rendering](docs/configuration.md#linux-desktop-rendering).
-
+        env:
+          NFPM_VERSION: '2.49.0'
+          NFPM_SHA256: '2afaa5ffb5e3493402e31e7c67a5a1fb42133e3f66fc315ca0051934125561c7'
+        run: |
+          curl --fail --location --retry 3 --output "$RUNNER_TEMP/nfpm.tar.gz" \
+            "https://github.com/goreleaser/nfpm/releases/download/v${NFPM_VERSION}/nfpm_${NFPM_VERSION}_Linux_x86_64.tar.gz"
+          echo "${NFPM_SHA256}  $RUNNER_TEMP/nfpm.tar.gz" | sha256sum --check --strict
+          mkdir -p "$RUNNER_TEMP/nfpm-bin"
+          tar -xzf "$RUNNER_TEMP/nfpm.tar.gz" -C "$RUNNER_TEMP/nfpm-bin" nfpm
+          echo "$RUNNER_TEMP/nfpm-bin" >> "$GITHUB_PATH"
+          "$RUNNER_TEMP/nfpm-bin/nfpm" --version
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+        run: go install github.com/goreleaser/nfpm/v2/cmd/nfpm@latest
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b236f3ba` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `148a70c8` are properly handled with clean fallback behavior.

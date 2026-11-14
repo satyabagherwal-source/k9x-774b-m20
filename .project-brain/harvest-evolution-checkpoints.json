@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T10:17:20.411Z",
+  "last_updated": "2026-11-14T10:31:23.258Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-14T05:32:15.509Z",
@@ -1658,7 +1658,7 @@
       "staged_for_review": 1
     },
     "skyhook-io-radar-learnings.md": {
-      "processed_at": "2026-11-13T07:55:50.177Z",
+      "processed_at": "2026-11-14T10:31:22.620Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2541,9 +2541,19 @@
       "processed_at": "2026-11-14T10:17:19.782Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-deepseek-ai-deepseek-v3.2-learnings.md": {
+      "processed_at": "2026-11-14T10:30:45.869Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "hf-openai-community-gpt2-learnings.md": {
+      "processed_at": "2026-11-14T10:31:22.260Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 813,
-  "total_canonical_promoted": 185,
-  "total_staged_for_review": 627
+  "total_dossiers_evaluated": 816,
+  "total_canonical_promoted": 187,
+  "total_staged_for_review": 628
 }

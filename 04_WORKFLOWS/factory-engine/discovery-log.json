@@ -21139,5 +21139,17 @@
     "downloads": 0,
     "qualityScore": 2530,
     "discoveredAt": "2026-11-14T10:14:14.261Z"
+  },
+  {
+    "name": "deepseek-ai/DeepSeek-V3.2",
+    "fullName": "deepseek-ai/DeepSeek-V3.2",
+    "url": "https://huggingface.co/deepseek-ai/DeepSeek-V3.2",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: deepseek-ai/DeepSeek-V3.2 (1599 likes, 8656286 downloads)",
+    "likes": 1599,
+    "downloads": 8656286,
+    "qualityScore": 17990,
+    "discoveredAt": "2026-11-14T10:27:46.487Z"
   }
 ]

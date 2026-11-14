@@ -9807,3 +9807,8 @@
 | `CYCLE-20261114-3TEI` | `2026-11-14T10:16:38.298Z` | `software-mansion/react-native-gesture-handler` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8478` | Yes (`75f613d0...`) |
 | `CYCLE-20261114-3V92` | `2026-11-14T10:16:40.694Z` | `kumahq/kuma` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/kumahq-kuma-learnings.md` | Yes (`f04197cf...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T10:17:19.424Z` | `hf-adventists-ai-sophon-realtime-v1` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-BDCABDC2` [Domain D] | Yes (`22b2d16f...`) |
+| `CYCLE-20261114-L0T0` | `2026-11-14T10:30:01.044Z` | `deepseek-ai/DeepSeek-V3.2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3.2-learnings.md` | Yes (`2f735245...`) |
+| `CYCLE-20261114-L2N4` | `2026-11-14T10:30:03.424Z` | `openai-community/gpt2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md` | Yes (`cea713da...`) |
+| `CYCLE-20261114-LA0Y` | `2026-11-14T10:30:12.994Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8479` | Yes (`fcb78a52...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T10:30:45.869Z` | `hf-deepseek-ai-deepseek-v3.2` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-694FEEFE` [Domain D] | Yes (`053e194f...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T10:31:22.259Z` | `hf-openai-community-gpt2` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-E4E3EE21` [Domain D] | Yes (`2d4f1188...`) |

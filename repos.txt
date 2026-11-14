@@ -5080,3 +5080,7 @@ https://huggingface.co/laion/clap-htsat-fused
 https://github.com/onehumanbeing/esp32-iphone-agent
 # [HUGGINGFACE-AI-MODELS] adventists-ai/Sophon-Realtime-v1 (2530 score) - Verified Hugging Face Model: adventists-ai/Sophon-Realtime-v1 (253 likes, 0 down
 https://huggingface.co/adventists-ai/Sophon-Realtime-v1
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-14T10:29:54.296Z] ---
+# [HUGGINGFACE-AI-MODELS] deepseek-ai/DeepSeek-V3.2 (17990 score) - Verified Hugging Face Model: deepseek-ai/DeepSeek-V3.2 (1599 likes, 8656286 down
+https://huggingface.co/deepseek-ai/DeepSeek-V3.2

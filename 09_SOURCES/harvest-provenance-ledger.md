@@ -9840,3 +9840,8 @@ Every entry in this ledger must capture:
 | `learn-github-software-mansion-react-native-gesture-handler` | `https://github.com/software-mansion/react-native-gesture-handler` | `b9b1140e` | Multi-dimensional audit evidence | 2026-11-14T10:16:38.302Z |
 | `learn-github-kumahq-kuma` | `https://github.com/kumahq/kuma` | `e3849aea` | Multi-dimensional audit evidence | 2026-11-14T10:16:40.700Z |
 | `learn-dom-d-bdcabdc2` | `project://hf-adventists-ai-sophon-realtime-v1` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-adventists-ai-sophon-realtime-v1-learnings.md` | 2026-11-14T10:17:19.424Z |
+| `learn-huggingface-deepseek-ai-deepseek-v3-2` | `https://huggingface.co/deepseek-ai/DeepSeek-V3.2` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-14T10:30:01.048Z |
+| `learn-huggingface-openai-community-gpt2` | `https://huggingface.co/openai-community/gpt2` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-14T10:30:03.427Z |
+| `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `148a70c8` | Multi-dimensional audit evidence | 2026-11-14T10:30:12.997Z |
+| `learn-dom-d-694feefe` | `project://hf-deepseek-ai-deepseek-v3.2` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3.2-learnings.md` | 2026-11-14T10:30:45.869Z |
+| `learn-dom-d-e4e3ee21` | `project://hf-openai-community-gpt2` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md` | 2026-11-14T10:31:22.259Z |

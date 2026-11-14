@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T10:16:40.731Z",
-  "total_cycles_completed": 9500,
-  "total_learnings_persisted": 9500,
-  "total_rules_promoted": 9200,
+  "last_updated": "2026-11-14T10:30:13.003Z",
+  "total_cycles_completed": 9503,
+  "total_learnings_persisted": 9503,
+  "total_rules_promoted": 9201,
   "history": [
-    {
-      "timestamp": "2026-11-13T16:39:42.850Z",
-      "repository": "microsoft/agent-governance-toolkit",
-      "learningId": "learn-github-microsoft-agent-governance-toolkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T16:48:55.754Z",
-      "repository": "Comfy-Org/Qwen-Image-2.1",
-      "learningId": "learn-huggingface-comfy-org-qwen-image-2-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T16:49:03.237Z",
-      "repository": "makecindy/cindy",
-      "learningId": "learn-github-makecindy-cindy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T16:49:10.635Z",
       "repository": "volcengine/OpenViking",
@@ -1403,6 +1382,27 @@
       "repository": "kumahq/kuma",
       "learningId": "learn-github-kumahq-kuma",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T10:30:01.053Z",
+      "repository": "deepseek-ai/DeepSeek-V3.2",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-v3-2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T10:30:03.432Z",
+      "repository": "openai-community/gpt2",
+      "learningId": "learn-huggingface-openai-community-gpt2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T10:30:13.003Z",
+      "repository": "skyhook-io/radar",
+      "learningId": "learn-github-skyhook-io-radar",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T10:17:20.152Z",
-  "total_records": 634,
+  "last_updated": "2026-11-14T10:31:23.012Z",
+  "total_records": 642,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 308,
+      "total": 314,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -345,7 +345,13 @@
         "domain_intelligence-research-knowledge-intelligence-hf-facebookai-xlm-roberta-base-learnings-core-in",
         "domain_intelligence-research-knowledge-intelligence-adventists-ai-sophon-realtime-v1-core-invariants",
         "DOM-D-BDCABDC2",
-        "domain_intelligence-research-knowledge-intelligence-hf-adventists-ai-sophon-realtime-v1-learnings-co"
+        "domain_intelligence-research-knowledge-intelligence-hf-adventists-ai-sophon-realtime-v1-learnings-co",
+        "domain_intelligence-research-knowledge-intelligence-deepseek-ai-deepseek-v3-2-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-openai-community-gpt2-core-invariants",
+        "DOM-D-694FEEFE",
+        "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v3-2-learnings-core-inva",
+        "DOM-D-E4E3EE21",
+        "domain_intelligence-research-knowledge-intelligence-hf-openai-community-gpt2-learnings-core-invarian"
       ]
     },
     "E": {
@@ -377,7 +383,7 @@
       ]
     },
     "G": {
-      "total": 90,
+      "total": 92,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -468,7 +474,9 @@
         "domain_intelligence-architecture-intelligence-helixdb-helix-db-core-invariants",
         "domain_intelligence-architecture-intelligence-helixdb-helix-db-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-software-mansion-react-native-gesture-handler-core-inv",
-        "domain_intelligence-architecture-intelligence-software-mansion-react-native-gesture-handler-learning"
+        "domain_intelligence-architecture-intelligence-software-mansion-react-native-gesture-handler-learning",
+        "domain_intelligence-architecture-intelligence-skyhook-io-radar-core-invariants",
+        "domain_intelligence-architecture-intelligence-skyhook-io-radar-learnings-core-invariants"
       ]
     },
     "H": {
@@ -13532,6 +13540,144 @@
       "repository": "software-mansion-react-native-gesture-handler-learnings",
       "content_hash": "33b531bf143f347d81e4a1df34900784910b50f16e09e790e07b5aabad122847",
       "created_at": "2026-11-14T10:17:20.152Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-deepseek-ai-deepseek-v3-2-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-deepseek-ai-deepseek-v3-2-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: deepseek-ai/DeepSeek-V3.2 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-deepseek-ai-deepseek-v3-2-research-knowledge-intelligence-deepseek-ai-deepsee.md",
+      "repository": "deepseek-ai/DeepSeek-V3.2",
+      "content_hash": "a0f7537ff940bc1f37ec5c579134cab6c7236fd6cca5aec18284053884cdd3d2",
+      "created_at": "2026-11-14T10:30:01.213Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-openai-community-gpt2-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-openai-community-gpt2-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: openai-community/gpt2 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openai-community-gpt2-research-knowledge-intelligence-openai-community-gpt2-c.md",
+      "repository": "openai-community/gpt2",
+      "content_hash": "5af374569c30b47cdc24116813d9397ed9c870a29bf775ca06701d05a5041bfd",
+      "created_at": "2026-11-14T10:30:03.594Z"
+    },
+    "domain_intelligence-architecture-intelligence-skyhook-io-radar-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-skyhook-io-radar-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: skyhook-io/radar Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-skyhook-io-radar-architecture-intelligence-skyhook-io-radar-core-invariants.md",
+      "repository": "skyhook-io/radar",
+      "content_hash": "464a79cf7a12adcbbceb361ef5f227141f092a499dc6eae8ace3fc1cb7043f84",
+      "created_at": "2026-11-14T10:30:13.318Z"
+    },
+    "DOM-D-694FEEFE": {
+      "record_id": "DOM-D-694FEEFE",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): deepseek-ai/DeepSeek-V3.2",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3.2-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/deepseek-ai/DeepSeek-V3.2](https://huggingface.co/deepseek-ai/DeepSeek-V3.2))  \n> **Source Version**: `hf-deepseek-`  \n> **License**: Open-Source",
+      "content_hash": "053e194ff76e4192257c9824e8db0cb25e8eaa4b389571b094621f39d432917c",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3.2-learnings.md`  \n> **Source**: huggingface ([https://hug -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3.2-learnings.md`  \n> **Source**: huggingface ([https://hug",
+      "provenance": {
+        "source_uri": "project://hf-deepseek-ai-deepseek-v3.2/hf-deepseek-ai-deepseek-v3.2-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T10:30:16.147Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-deepseek-ai-deepseek-v3.2)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-deepseek-ai-deepseek-v3.2"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T10:30:45.858Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v3-2-learnings-core-inva": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v3-2-learnings-core-inva",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-deepseek-ai-deepseek-v3.2-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-deepseek-ai-deepseek-v3-2-learnings-research-knowledge-intelligence-hf-deepse.md",
+      "repository": "hf-deepseek-ai-deepseek-v3.2-learnings",
+      "content_hash": "0bf934258b9bfccfcd83431f81e2566c319ce46f95fdca7a6dd11e6b86d7e409",
+      "created_at": "2026-11-14T10:30:46.075Z"
+    },
+    "DOM-D-E4E3EE21": {
+      "record_id": "DOM-D-E4E3EE21",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): openai-community/gpt2",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/openai-community/gpt2](https://huggingface.co/openai-community/gpt2))  \n> **Source Version**: `hf-openai-co`  \n> **License**: Open-Source  \n> **Synthesi",
+      "content_hash": "2d4f11881810cfb0025a6df5366152c13a3d2948d56607814335cb7e0e041d0f",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md`  \n> **Source**: huggingface ([https://hugging -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md`  \n> **Source**: huggingface ([https://hugging",
+      "provenance": {
+        "source_uri": "project://hf-openai-community-gpt2/hf-openai-community-gpt2-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T10:30:46.219Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-openai-community-gpt2)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-openai-community-gpt2"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T10:31:22.250Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-openai-community-gpt2-learnings-core-invarian": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-openai-community-gpt2-learnings-core-invarian",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-openai-community-gpt2-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openai-community-gpt2-learnings-research-knowledge-intelligence-hf-openai-com.md",
+      "repository": "hf-openai-community-gpt2-learnings",
+      "content_hash": "c2bd8eac27d7162d5ad3f57fc2641b953cb2ee922388e05a1e13cf8f91f27f3c",
+      "created_at": "2026-11-14T10:31:22.454Z"
+    },
+    "domain_intelligence-architecture-intelligence-skyhook-io-radar-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-skyhook-io-radar-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: skyhook-io-radar-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-skyhook-io-radar-learnings-architecture-intelligence-skyhook-io-radar-learnings-.md",
+      "repository": "skyhook-io-radar-learnings",
+      "content_hash": "8b7f6aeb9535daf6106d643c88d0bd36488423b94f8b4ed2944cabe78de9d64d",
+      "created_at": "2026-11-14T10:31:23.012Z"
     }
   }
 }

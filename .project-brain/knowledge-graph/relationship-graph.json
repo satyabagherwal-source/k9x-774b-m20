@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-14T10:17:19.422Z",
+  "updated_at": "2026-11-14T10:31:22.258Z",
   "statistics": {
-    "total_nodes": 181,
-    "total_edges": 95,
+    "total_nodes": 183,
+    "total_edges": 97,
     "domain_distribution": {
-      "D": 138,
+      "D": 140,
       "M": 1,
       "H": 17,
       "J": 8,
@@ -18,7 +18,7 @@
       "B": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 95
+      "CONSTRAINED_BY_ARCHITECTURE": 97
     }
   },
   "nodes": {
@@ -4053,6 +4053,52 @@
       ],
       "created_at": "2026-11-14T10:17:19.422Z",
       "updated_at": "2026-11-14T10:17:19.422Z"
+    },
+    "DOM-D-694FEEFE": {
+      "id": "DOM-D-694FEEFE",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): deepseek-ai/DeepSeek-V3.2",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3.2-learnings.md`  \n> **Source**: huggingface ([https://hug -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3.2-learnings.md`  \n> **Source**: huggingface ([https://hug",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-deepseek-ai-deepseek-v3.2/hf-deepseek-ai-deepseek-v3.2-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T10:30:16.147Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-deepseek-ai-deepseek-v3.2)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-14T10:30:45.867Z",
+      "updated_at": "2026-11-14T10:30:45.867Z"
+    },
+    "DOM-D-E4E3EE21": {
+      "id": "DOM-D-E4E3EE21",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): openai-community/gpt2",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md`  \n> **Source**: huggingface ([https://hugging -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md`  \n> **Source**: huggingface ([https://hugging",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-openai-community-gpt2/hf-openai-community-gpt2-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T10:30:46.219Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-openai-community-gpt2)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-14T10:31:22.258Z",
+      "updated_at": "2026-11-14T10:31:22.258Z"
     }
   },
   "edges": [
@@ -5005,6 +5051,26 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-7AAC58BB [D] with Domain M",
       "created_at": "2026-11-14T09:18:32.950Z"
+    },
+    {
+      "id": "EDGE-AFA0947DABB0",
+      "sourceId": "DOM-D-694FEEFE",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-694FEEFE [D] with Domain M",
+      "created_at": "2026-11-14T10:30:45.868Z"
+    },
+    {
+      "id": "EDGE-69A15A3FFC25",
+      "sourceId": "DOM-D-E4E3EE21",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-E4E3EE21 [D] with Domain M",
+      "created_at": "2026-11-14T10:31:22.258Z"
     }
   ]
 }
