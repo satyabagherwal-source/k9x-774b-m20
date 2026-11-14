@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T10:31:22.680Z",
+  "updated_at": "2026-11-14T11:05:15.455Z",
   "stats": {
-    "total_discovered": 3217,
-    "approved_pending_harvest": 3012,
+    "total_discovered": 3222,
+    "approved_pending_harvest": 3017,
     "harvested_count": 0,
     "rejected_count": 205,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3006,
+      "COMMUNITY_AND_EXPERT": 3011,
       "OFFICIAL_DOCUMENTATION": 116,
       "STANDARDS_AND_SPECIFICATIONS": 81,
       "ENGINEERING_BLOGS": 1,
@@ -69359,6 +69359,116 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
         "fileName": "skyhook-io-radar-learnings.md"
+      }
+    },
+    "SRC-90AE002DBF09": {
+      "id": "SRC-90AE002DBF09",
+      "url": "https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct",
+      "title": "https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T11:05:14.850Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md",
+        "fileName": "hf-qwen-qwen3-vl-8b-instruct-learnings.md"
+      }
+    },
+    "SRC-A510C7087CC9": {
+      "id": "SRC-A510C7087CC9",
+      "url": "https://github.com/renovatebot/github-action",
+      "title": "https://github.com/renovatebot/github-action",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T11:05:15.365Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/okteto-okteto-learnings.md",
+        "fileName": "okteto-okteto-learnings.md"
+      }
+    },
+    "SRC-305A3D3E304C": {
+      "id": "SRC-305A3D3E304C",
+      "url": "https://github.com/renovatebot/github-action/releases",
+      "title": "https://github.com/renovatebot/github-action/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T11:05:15.392Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/okteto-okteto-learnings.md",
+        "fileName": "okteto-okteto-learnings.md"
+      }
+    },
+    "SRC-EB92DDE8527A": {
+      "id": "SRC-EB92DDE8527A",
+      "url": "https://github.com/renovatebot/github-action/blob/main/CHANGELOG.md",
+      "title": "https://github.com/renovatebot/github-action/blob/main/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T11:05:15.428Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/okteto-okteto-learnings.md",
+        "fileName": "okteto-okteto-learnings.md"
+      }
+    },
+    "SRC-0C2D7318BA6F": {
+      "id": "SRC-0C2D7318BA6F",
+      "url": "https://github.com/renovatebot/github-action/compare/v46.3.12...v46.3.13",
+      "title": "https://github.com/renovatebot/github-action/compare/v46.3.12...v46.3.13",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T11:05:15.455Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/okteto-okteto-learnings.md",
+        "fileName": "okteto-okteto-learnings.md"
       }
     }
   }

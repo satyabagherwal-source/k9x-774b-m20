@@ -9845,3 +9845,9 @@ Every entry in this ledger must capture:
 | `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `148a70c8` | Multi-dimensional audit evidence | 2026-11-14T10:30:12.997Z |
 | `learn-dom-d-694feefe` | `project://hf-deepseek-ai-deepseek-v3.2` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3.2-learnings.md` | 2026-11-14T10:30:45.869Z |
 | `learn-dom-d-e4e3ee21` | `project://hf-openai-community-gpt2` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md` | 2026-11-14T10:31:22.259Z |
+| `learn-huggingface-qwen-qwen3-vl-8b-instruct` | `https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-14T11:04:20.731Z |
+| `learn-github-zenbu-labs-terminal-browser` | `https://github.com/zenbu-labs/terminal-browser` | `e459febc` | Multi-dimensional audit evidence | 2026-11-14T11:04:22.042Z |
+| `learn-github-okteto-okteto` | `https://github.com/okteto/okteto` | `cb2419f7` | Multi-dimensional audit evidence | 2026-11-14T11:04:31.362Z |
+| `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `0a6a032b` | Multi-dimensional audit evidence | 2026-11-14T11:04:34.785Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `120db05d` | Multi-dimensional audit evidence | 2026-11-14T11:04:37.985Z |
+| `learn-dom-d-2f30eb65` | `project://hf-qwen-qwen3-vl-8b-instruct` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md` | 2026-11-14T11:05:14.835Z |

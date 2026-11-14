@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-Y3B3",
-    "timestamp": "2026-11-13T12:16:29.247Z",
-    "repository": "GreptimeTeam/greptimedb",
-    "learningId": "learn-github-greptimeteam-greptimedb",
-    "contentHash": "e727c601191752f2c267d552e8c5ec9fb0990271cb8bd707d81e6bf0e9815a77",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-808K",
-    "timestamp": "2026-11-13T12:24:11.828Z",
-    "repository": "deepseek-ai/DeepSeek-R1",
-    "learningId": "learn-huggingface-deepseek-ai-deepseek-r1",
-    "contentHash": "0367de8ee5a632def34ac95b926db50359632d42b8cd4327841affcb96dc7ae1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-88WM",
-    "timestamp": "2026-11-13T12:24:23.062Z",
-    "repository": "ratatui/ratatui",
-    "learningId": "learn-github-ratatui-ratatui",
-    "contentHash": "21c27e878fbaacf8e5baf73ed4cfd47379f937da72af17e2c73b4c55a4e812b1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-8LS4",
-    "timestamp": "2026-11-13T12:24:39.748Z",
-    "repository": "ydb-platform/ydb",
-    "learningId": "learn-github-ydb-platform-ydb",
-    "contentHash": "8260bfd80a6bb4010a0c06d4c67916b61d128d722394ca713345500abf265092",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-IOX4",
-    "timestamp": "2026-11-13T12:32:30.376Z",
-    "repository": "moonshotai/Kimi-K3",
-    "learningId": "learn-huggingface-moonshotai-kimi-k3",
-    "contentHash": "f38998a919c0e86e5117bc06c65a47ef4d467cad420d8440ba0bbea751ebe40a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-IZY8",
     "timestamp": "2026-11-13T12:32:44.672Z",
     "repository": "1jehuang/jcode",
@@ -7490,6 +7415,81 @@
     "repository": "skyhook-io/radar",
     "learningId": "learn-github-skyhook-io-radar",
     "contentHash": "fcb78a5266b3d57487fada90b1d9576a21ceaa76274eab6710143049f6a2c909",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-T62F",
+    "timestamp": "2026-11-14T11:04:20.727Z",
+    "repository": "Qwen/Qwen3-VL-8B-Instruct",
+    "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
+    "contentHash": "e486097125cac99d7028f760b9a58e49ca7f3016f38a23e74b0ba34ed305dc6c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-T72U",
+    "timestamp": "2026-11-14T11:04:22.038Z",
+    "repository": "zenbu-labs/terminal-browser",
+    "learningId": "learn-github-zenbu-labs-terminal-browser",
+    "contentHash": "534c4d3311007b7508fec808c3f7abb6052016e609a1323b8ca9cce7a7bfc2a2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-TE9Q",
+    "timestamp": "2026-11-14T11:04:31.358Z",
+    "repository": "okteto/okteto",
+    "learningId": "learn-github-okteto-okteto",
+    "contentHash": "ab7f5d884ffb207daff2aad15968d43e1b73320a30836041c8540431c7c4f22c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-TGWT",
+    "timestamp": "2026-11-14T11:04:34.781Z",
+    "repository": "slatedb/slatedb",
+    "learningId": "learn-github-slatedb-slatedb",
+    "contentHash": "e894f3e3548bea2d101852b65693a75ac61b2bc44d40f3438eca799fffb0b81e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-TJDP",
+    "timestamp": "2026-11-14T11:04:37.981Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "4f4cd7f38124f76537d32c2468a0053f2de7f81181c43394d1f9aaf60f22bf3d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

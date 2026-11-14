@@ -1,55 +1,41 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for nucleoidai/nucleoid
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "nucleoidai/nucleoid",
-  "source_url": "https://github.com/nucleoidai/nucleoid",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "NucleoidAI/Nucleoid",
+  "source_url": "https://github.com/NucleoidAI/Nucleoid",
+  "source_version": "120db05d",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-14T11:04:38.190Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-nucleoidai-nucleoid",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [nucleoidai/nucleoid](https://github.com/nucleoidai/nucleoid) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `120db05d`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-14T11:04:38.190Z`  
+> **Learning ID**: `learn-github-nucleoidai-nucleoid`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `nucleoidai/nucleoid` (Commit: `historical`)
+- **Target Repository**: `NucleoidAI/Nucleoid` (Commit: `120db05d`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
-> **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `cc21315a`  
-> **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T03:48:43.030Z  
-> **Learning ID**: `learn-github-nucleoidai-nucleoid`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): NucleoidAI/Nucleoid
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T03:48:43.027Z  
+> **Harvest Timestamp**: 2026-11-14T11:04:36.973Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `NucleoidAI/Nucleoid`
-- **Description**: World Model 🌱🐋🌍
+- **Description**: Logic Language for World Models 🌱🐋🌍
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
 - **Stars / Engagement**: 770 stars
@@ -1237,37 +1223,134 @@ export async function instances({
   return { instances: dataset[0].instances };
 }
 
-export async function synthetize({
-  puzzle_id,
-  only_puzzle_dataset,
-  train_dataset,
-}) {
-  const { dataset } = await llm.generate({
-    puzzle_id,
-    only_puzzle_dataset,
-    messages: [
-      {
-        role: "user",
-        content: `
-          query:
-          ${JSON.stringify(train_dataset)}
-          json_format:
-          {
-            "dataset": [{
-              "input_matrix": <INPUT_MATRIX>,
-              "output_matrix": <OUTPUT_MATRIX>,
-              "instances": [{
-                "input_instance_matrix": <INPUT_INSTANCE_MATRIX>,
-                "output_instance_matrix": <OUTPUT_INSTANCE_MATRIX>
-              }]
-            }]
-          }
-        `,
-      },
-    ],
-  });
+// Each synthesis turns the extracted instances of a training pair by its
+// rotation, clockwise when positive and counterclockwise when negative, and
+// moves them by its offset, so every training pair gains six synthesized pairs.
+const SYNTHESES = [
+  { rotation: 90, offset: { x: 1, y: 1 } },
+  { rotation: 90, offset: { x: -1, y: 1 } },
+  { rotation: 90, offset: { x: -1, y: -1 } },
+  { rotation: -90, offset: { x: 2, y: 2 } },
+  { rotation: -90, offset: { x: -2, y: 2 } },
+  { rotation: -90, offset: { x: -2, y: -2 } },
+];
 
-  return dataset.map((pair) => ({ ...pair, accuracy: 0.8 }));
+// Draws the object of an instance matrix turned by the rotation, clockwise when
+// positive, about the pivot, the bounding box the instance turns about, which
+// keeps its top-left corner, and moved by the offset, on a canvas of the
+// matrix's size that grows as needed. The gaps between the object's and the
+// pivot's edges turn with them, so the object keeps its place relative to the
+// pivot. An object without cells stays an all-zero canvas.
+function turn(matrix, pivot, rotation: number, offset) {
+  const object = Matrix.locate(matrix);
+  const rows: number = matrix.length;
+  const cols: number = matrix[0]?.length ?? 0;
+  if (object.width === 0) {
+    return Matrix.draw([], rows, cols, 0, 0);
+  }
+
+  const turned = Matrix.rotate(object.matrix, rotation);
+  const left: number = object.x - pivot.x;
+  const top: number = object.y - pivot.y;
+  const right: number = pivot.x + pivot.width - (object.x + object.width);
+  const bottom: number = pivot.y + pivot.height - (object.y + object.height);
+  const [x, y] = [
+    [left, top],
+    [bottom, left],
+    [right, bottom],
+    [top, right],
+  ][(((rotation / 90) % 4) + 4) % 4];
+
+  return Matrix.draw(
+    turned,
+    rows,
+    cols,
+    pivot.x + offset.x + x,
+    pivot.y + offset.y + y
+  );
+}
+
+// Draws the drawing on the frame that covers every drawing, so their grids line
+// up, and returns its grid, which starts at the frame's top-left cell.
+function frame(drawing, drawings) {
+  const blanks = drawings.map((other) => ({
+    ...other,
+    matrix: other.matrix.map((row) => row.map(() => 0)),
+  }));
+  return Matrix.merge(drawing, ...blanks).matrix;
+}
+
+// The training pair that one synthesis makes of a training pair's extracted
+// instances: each instance's input and output objects turn together about its
+// input object's bounding box, or its output object's when the input is empty,
+// and move by the offset, so each keeps its place relative to the other. Every
+// grid of the pair shares one frame, which covers the instances' canvas and
+// every turned object and starts at its top-left cell, so the pair's positions
+// are never negative. The pair's input and output matrices merge its
+// instances' grids, the output under the output canvas, so a later object wins
+// where turned objects overlap.
+function synthesized_pair(instances, { rotation, offset }, output_canvas) {
+  const drawings = instances.map((instance) => {
+    const input = Matrix.locate(instance.input_instance_matrix);
+    const pivot =
+      input.width > 0 ? input : Matrix.locate(instance.output_instance_matrix);
+
+    return {
+      source: instance.instance_name,
+      input: turn(instance.input_instance_matrix, pivot, rotation, offset),
+      output: turn(instance.output_instance_matrix, pivot, rotation, offset),
+    };
+  });
+  const drawn = drawings.flatMap(({ input, output }) => [input, output]);
+  const synthesized = drawings.map(({ source, input, output }) => ({
+    input_instance_matrix: frame(input, drawn),
+    output_instance_matrix: frame(output, drawn),
+    synthesis: { source, rotation, offset: { ...offset } },
+  }));
+
+  const input_matrix = Matrix.merge(
+    ...synthesized.map(({ input_instance_matrix }) => input_instance_matrix)
+  ).matrix;
+  const output_matrix = Matrix.merge(
+    ...synthesized.map(({ output_instance_matrix }) => output_instance_matrix)
+  ).matrix;
+
+  return {
+    input_matrix,
+    output_matrix: Matrix.canvas(output_matrix, output_canvas),
+    instances: synthesized,
+  };
+}
+
+// Synthesizes six training pairs from a training pair's extracted instances,
+// one per synthesis, each holding every instance turned and moved by it. A
+// pair without instances synthesizes none.
+export function synthesize({ instances, output_canvas }) {
+  const dataset =
+    instances.length > 0
+      ? SYNTHESES.map((synthesis) =>
+          synthesized_pair(instances, synthesis, output_canvas)
+        )
+      : [];
+
+  milestone.training_objects_synthesized({ dataset });
+
+  return { dataset };
+}
+
+// Runs an implementation after the world model's class on the pair's canvas
+// and returns the object it constructs.
+async function evaluate(train_dataset, input_matrix, implementation: string) {
+  const canvas_width: number = input_matrix[0].length;
+  const canvas_height: number = input_matrix.length;
+  return nucleoid.run(
+    [
+      `canvas_width = ${canvas_width}`,
+      `canvas_height = ${canvas_height}`,
+      train_dataset.declarations[0],
+      implementation,
+    ].join("\n\n")
+  );
 }
 
 export async function value({
@@ -1385,73 +1468,7 @@ export async function value({
             "dataset": [{
               "instances": [{
                 "implementation": <IMPLEMENTATION>
-              }]
-            }]
-          }  
-        `,
-      },
-    ],
-  });
-
-  const implementation = dataset[0].instances[0].implementation;
-
-  milestone.evaluating_rules({ instance_name: instance.instance_name });
-
-  const canvas_width: number = input_matrix[0].length;
-  const canvas_height: number = input_matrix.length;
-  const input_value = await nucleoid.run(
-    [
-      `canvas_width = ${canvas_width}`,
-      `canvas_height = ${canvas_height}`,
-      train_dataset.declarations[0],
-      implementation,
-    ].join("\n\n")
-  );
-
-  milestone.instance_constructed({
-    instance_name: instance.instance_name,
-    input_instance_matrix: instance.input_instance_matrix,
-    output_instance_matrix: instance.output_instance_matrix,
-    implementation,
-    input_value,
-  });
-
-  return { implementation, input_value };
-}
-
-export async function state(train_dataset) {
-  const objects = [];
-
-  for (const dataset of train_dataset.dataset) {
-    const implementations = dataset.instances.map(
-      ({ implementation }) => implementation
-    );
-
-    const canvas_width: number = dataset.input_matrix[0].length;
-    const canvas_height: number = dataset.input_matrix.length;
-    const obj_list = await nucleoid.run(
-      [
-        `canvas_width = ${canvas_width}`,
-        `canvas_height = ${canvas_height}`,
-        ...train_dataset.declarations,
-        ...implementations,
-        "Obj[:]",
-      ].join("\n\n")
-    );
-
-    objects.push(...obj_list);
-
-    [...obj_list].forEach((instance) => {
-      const found_instance = dataset.instances.find(
-        ({ instance_name }) => instance.id === instance_name
-      );
-      found_instance.output_value = instance;
-    });
-  }
-
-  milestone.state({ phase: "analysis", obj_list: objects });
-}
-
+              }
 ```
 
 ### Core Architecture Module: `arc/src/app.ts`
@@ -1477,7 +1494,6 @@ export async function start(
       input_matrix: input,
       output_matrix: output,
       instances: undefined,
-      accuracy: 1,
     })),
     declarations: undefined,
     output_canvas: undefined,
@@ -1496,6 +1512,8 @@ export async function start(
   milestone.analysis();
 
   let instance_index: number = 0;
+  const next_instance_name = (): string =>
+    `obj${String(instance_index++).padStart(12, "0")}`;
 
   const { declarations, output_canvas } = await analyzer.declarations({
     puzzle_id,
@@ -1506,32 +1524,9 @@ export async function start(
   train_dataset.declarations = declarations;
   train_dataset.output_canvas = output_canvas;
 
-  for (const dataset of train_dataset.dataset) {
-    if (dataset.accuracy === 1) {
-      const { instances } = await analyzer.instances({
-        puzzle_id,
-        only_puzzle_dataset,
-        train_dataset: { ...train_dataset, dataset: [dataset] },
-      });
-
-      dataset.instances = instances;
-
-      train_dataset.dataset.push(
-        ...(await analyzer.synthetize({
-          puzzle_id,
-          only_puzzle_dataset,
-          train_dataset: { ...train_dataset, dataset: [dataset] },
-        }))
-      );
-    }
-
+  const construct = async (dataset, build): Promise<void> => {
     for (const instance of dataset.instances) {
-      instance.instance_name = `obj${String(instance_index++).padStart(
-        12,
-        "0"
-      )}`;
-
-      const { implementation, input_value } = await analyzer.value({
+      const { implementation, input_value } = await build({
         puzzle_id,
         only_puzzle_dataset,
         train_dataset,
@@ -1542,6 +1537,43 @@ export async function start(
       instance.implementation = implementation;
       instance.input_value = input_value;
     }
+  };
+
+  const synthesized_dataset = [];
+
+  for (const dataset of train_dataset.dataset) {
+    const { instances } = await analyzer.instances({
+      puzzle_id,
+      only_puzzle_dataset,
+      train_dataset: { ...train_dataset, dataset: [dataset] },
+    });
+
+    for (const instance of instances) {
+      instance.instance_name = next_instance_name();
+    }
+
+    const { dataset: synthesized } = analyzer.synthesize({
+      instances,
+      output_canvas,
+    });
+
+    synthesized_dataset.push(...synthesized);
+
+    dataset.instances = instances;
+
+    await construct(dataset, analyzer.value);
+  }
+
+  // The synthesized pairs follow the training pairs, and their instances are
+  // derived from their sources without an LLM call.
+  for (const dataset of synthesized_dataset) {
+    for (const instance of dataset.instances) {
+      instance.instance_name = next_instance_name();
+    }
+
+    train_dataset.dataset.push(dataset);
+
+    await construct(dataset, analyzer.derive);
   }
 
   await analyzer.state(train_dataset);
@@ -1555,17 +1587,18 @@ export async function start(
     test_input_matrix,
   });
 
-  let result_matrix = Array.from({ length: test_input_matrix.length }, () =>
-    Array(test_input_matrix[0].length).fill(0)
+  let result_drawing = Matrix.draw(
+    [],
+    test_input_matrix.length,
+    test_input_matrix[0].length,
+    0,
+    0
   );
 
   const input_instances = [];
 
   for (const { input_instance_matrix } of instances) {
-    const instance_name: string = `obj${String(instance_index++).padStart(
-      12,
-      "0"
-    )}`;
+    const instance_name: string = next_instance_name();
 
     const { implementation, input_value } = await visualizer.value({
       puzzle_id,
@@ -1587,20 +1620,23 @@ export async function start(
   await visualizer.state({ declarations, test_input_matrix, input_instances });
 
   for (const input_instance of input_instances) {
-    const { output_instance_matrix } = await visualizer.output_instance_matrix({
-      puzzle_id,
-      only_puzzle_dataset,
-      test_input_matrix,
-      train_dataset,
-      instance: input_instance,
-    });
+    const { output_instance_drawing } = await visualizer.output_instance_matrix(
+      {
+        puzzle_id,
+        only_puzzle_dataset,
+        test_input_matrix,
+        train_dataset,
+        instance: input_instance,
+      }
+    );
 
-    input_instance.output_instance_matrix = output_instance_matrix;
+    input_instance.output_instance_matrix = output_instance_drawing.matrix;
+    input_instance.output_instance_epoch = output_instance_drawing.epoch;
 
-    result_matrix = Matrix.merge(result_matrix, output_instance_matrix);
+    result_drawing = Matrix.merge(result_drawing, output_instance_drawing);
   }
 
-  result_matrix = Matrix.canvas(result_matrix, output_canvas);
+  const result_matrix = Matrix.canvas(result_drawing.matrix, output_canvas);
 
   milestone.comparison({ test_output_matrix, result_matrix });
 
@@ -1707,148 +1743,292 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cc21315a` (2026-11-12)
-**Commit Message**: Draft NUC 106 Intersect and Except Reasoning Selections
+### Incident Patch 1: `120db05d` (2026-11-14)
+**Commit Message**: Resume NUC 105 List and Population Sorting by Key
 
-Category: Reasoning enhancement, drawn uniformly at random (index 3 of the
-five eligible categories in NUC 1's registry, p = 1/5, no redraw) for a
-continuous /nuc-proposal cycle, so token comparison is required.
-
-Requested change: add the pipeline stages `SELECTION |> intersect(OTHER)`
-and `SELECTION |> except(OTHER)`. They keep the steps of SELECTION whose
-node OTHER also selects, or does not select, in SELECTION's order with
-every field, the walk direction and NUC 82 distances unchanged, so they
-compose with stated, derived, depth, diff, path and each other. OTHER is a
-selection written as a pipeline source or pipeline and evaluated in place.
-Both names stay ordinary identifiers and a binding shadows its stage. No
-union stage, keyword, token or error type is added. Only inputs that raised
-the parse-time TypeError("intersect is not an operation") or
-TypeError("except is not an operation") change.
-
-This allocation changes only the Draft and its two index rows.
+Claims the stale Draft allocated in e2ade2a2 (Draft NUC 105 List and
+Population Sorting by Key, 2026-11-10T19:07:10-05:00). It waited 3 days,
+9 hours and 51 minutes without an allocation or claim commit. This
+continuous cycle completes it with a fresh baseline, candidate worktree,
+proposer and evaluator, under its Utility enhancement category.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01AJtz8dK76dRFHqR3mPaGA6
+Claude-Session: https://claude.ai/code/session_01AJtz8gLvp2aQjMS8yXtmh6
 
-**File**: `docs/nuc-0000.md` (modified, +2/-0)
+
+
+---
+
+### Incident Patch 2: `c9839532` (2026-11-14)
+**Commit Message**: Resume stale NUC drafts in continuous cycles
+
+Prioritize abandoned allocated drafts using pushed claims, with renewal and takeover rules. Pin resumed proposals to their claim commits and update the proposal workflow documentation.
+
+**File**: `.claude/CLAUDE.md` (modified, +2/-2)
 ```diff
-@@ -138,6 +138,7 @@ Created: 31-Jul-2026
- | [83](nuc-0083.md) | Hypothetical Difference Selections | Accepted |
- | [88](nuc-0088.md) | Derivation Path Selections | Accepted |
- | [101](nuc-0101.md) | Exact-Depth Reasoning Selections | Rejected: existing selector-case audit fails |
-+| [106](nuc-0106.md) | Intersect and Except Reasoning Selections | Draft |
+@@ -17,9 +17,9 @@ not a replacement for the policies it links to.
+ | [rust-guidelines.instructions.md](rules/rust-guidelines.instructions.md) | The Rust API Guidelines, Google's Rust Style Guide, Microsoft's Pragmatic Rust Guidelines and Clippy, always followed under the Power of 10 adaptation: their precedence, a digest for the crate, comment-free Rust source, deliberate divergences and known gaps |
+ | [documents.instructions.md](rules/documents.instructions.md) | Authoritative specification, executable documents, and dataset synchronization |
+ | [versions.instructions.md](rules/versions.instructions.md) | Human-owned version numbers; no AI version changes |
+-| [proposals.instructions.md](rules/proposals.instructions.md) | Independent NUC proposal preparation and evaluation, the token policy, automatic acceptance on the hard criteria (no compile errors, every test passing, backward compatibility) with the `Automatic-Accepted` status, ARC- and user-requested bases, the pushed `Draft NUC <number> <Title>` allocation of each new NUC before its details, after a pull that claims the next free number or skips a concept already proposed, and `NUC <number> <Title>` outcome commit messages |
++| [proposals.instructions.md](rules/proposals.instructions.md) | Independent NUC proposal preparation and evaluation, the token policy, automatic acceptance on the hard criteria (no compile errors, every test passing, backward compatibility) with the `Automatic-Accepted` status, ARC- and user-requested bases, the pushed `Draft NUC <number> <Title>` allocation of each new NUC before its details, after a pull that claims the next free number or skips a concept already proposed, continuous cycles that first pick up allocated Drafts idle for 24 hours under a pushed `Resume NUC <number> <Title>` claim, and `NUC <number> <Title>` outcome commit messages |
+ | [rust-improvement.instructions.md](rules/rust-improvement.instructions.md) | Focused Rust improvements and the required post-change agent |
+-| [git.instructions.md](rules/git.instructions.md) | Only `/nuc-proposal` (NUC allocations and outcomes) and `/arc-purposal` (its own ARC changes, when it is done) commit and push; every agent pulls before it starts (fast-forward only, except those callers before a commit or push), pull before commit/push, push after every commit, resolve conflicts and push |
++| [git.instructions.md](rules/git.instructions.md) | Only `/nuc-proposal` (NUC allocations, claims and outcomes) and `/arc-purposal` (its own ARC changes, when it is done) commit and push; every agent pulls before it starts (fast-forward only, except those callers before a commit or push), pull before commit/push, push after every commit, resolve conflicts and push |
  
- ### Language compatibility
- 
-@@ -265,6 +266,7 @@ Created: 31-Jul-2026
- | [103](nuc-0103.md) | Reactive List Flattening | Standards Track | Utility enhancement | Accepted |
- | [104](nuc-0104.md) | Any and All Class References | Standards Track | Syntax enhancement | Accepted |
- | [105](nuc-0105.md) | List and Population Sorting by Key | Standards Track | Utility enhancement | Draft |
-+| [106](nuc-0106.md) | Intersect and Except Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
- 
- ## Copyright
+ All instruction files use `applyTo: "**"` to preserve their repository-wide scope.
  
 ```
 
-**File**: `docs/nuc-0106.md` (added, +113/-0)
+**File**: `.claude/agents/nuc-proposal.agent.md` (modified, +6/-4)
 ```diff
-@@ -0,0 +1,113 @@
-+# NUC 106 -- Intersect and Except Reasoning Selections
+@@ -16,10 +16,12 @@ You draft and prototype exactly one added or updated NUC revision. Follow
+   supplied candidate worktree, and report the commits it brought in. Keep
+   drafting against the caller's pinned baseline revision.
+ - For a new NUC, the caller has already allocated it under the skill's
+-  [allocation rule](../skills/nuc-proposal/SKILL.md#allocate-the-nuc-first-caller-only):
+-  the pinned revision is the pushed allocation, whose Draft document carries
+-  the number, confirmed category and proposal details. Complete that draft in
+-  the candidate, keeping its number and category.
++  [allocation rule](../skills/nuc-proposal/SKILL.md#allocate-the-nuc-first-caller-only),
++  or claimed an allocated Draft under the
++  [stale-Draft rule](../skills/nuc-proposal/SKILL.md#pick-up-stale-drafts-first-caller-only):
++  the pinned revision is that pushed allocation or claim, whose Draft document
++  carries the number, confirmed category and proposal details. Complete that
++  draft in the candidate, keeping its number and category.
+ - Follow the caller-owned [enhancement selection rule](../skills/nuc-proposal/SKILL.md#select-an-unspecified-enhancement);
+   do not redraw the selected category.
+ - Apply any caller-supplied hint under the skill's
+```
+
+**File**: `.claude/rules/git.instructions.md` (modified, +5/-2)
+```diff
+@@ -17,6 +17,9 @@ pulling before it starts.
+     [nuc-proposal skill](../skills/nuc-proposal/SKILL.md), commits each new
+     NUC's Draft allocation before working on its details, under the
+     [allocation step](../skills/nuc-proposal/SKILL.md#allocate-the-nuc-first-caller-only),
++    the empty `Resume NUC <number> <Title>` claims that pick up a stale Draft
++    or keep a NUC in progress claimed, under the
++    [stale-Draft rule](../skills/nuc-proposal/SKILL.md#pick-up-stale-drafts-first-caller-only),
+     and NUC outcomes (Accepted, Automatic-Accepted, Rejected), which carry the
+     final version, under the [proposal rules](proposals.instructions.md),
+     including those of NUCs that `/arc-purposal` requests and of cycles that
+@@ -63,8 +66,8 @@ pulling before it starts.
+ 
+ - Every `/nuc-proposal` and `/arc-purposal` commit is followed immediately by
+   `git push` of the same branch. This includes NUC allocation commits, NUC
+-  outcome commits (Accepted, Automatic-Accepted, Rejected), those for NUCs
+-  that `/arc-purposal` requests,
++  claim commits, NUC outcome commits (Accepted, Automatic-Accepted, Rejected),
++  those for NUCs that `/arc-purposal` requests,
+   `/arc-purposal`'s own commit of its ARC changes, and merge commits. A commit
+   is not finished until it is pushed.
+ - If the push is rejected because the remote moved, pull, resolve, and push
+```
+
+**File**: `.claude/rules/proposals.instructions.md` (modified, +41/-9)
+```diff
+@@ -256,12 +256,13 @@ undergo independent behavior, integrity, compatibility, and development checks.
+ 
+ Pin the accepted Git revision and record its token baseline before editing
+ runtime behavior or executable cases. For a new NUC, that revision is its
+-pushed [allocation](#allocate-new-nucs-first-caller-only). Give the proposer
+-its requested change, proposal path and confirmed category, execution mode
+-and runtime applicability with supporting rationale, baseline revision and
+-immutable JSON artifact, and candidate worktree. When configured, also supply
+-the pre-draft strategy receipt and policy paths/raw pins, trial identity and
+-actionable approach.
++pushed [allocation](#allocate-new-nucs-first-caller-only), or the pushed claim
++of a [picked-up Draft](#pick-up-stale-drafts-first-caller-only). Give the
++proposer its requested change, proposal path and confirmed category, execution
++mode and runtime applicability with supporting rationale, baseline revision
++and immutable JSON artifact, and candidate worktree. When configured, also
++supply the pre-draft strategy receipt and policy paths/raw pins, trial
++identity and actionable approach.
+ Use `.claude/agents/nuc-proposal.agent.md` and
+ `.claude/skills/nuc-proposal/SKILL.md` for drafting, prototyping, equivalent
+ case rewrites, synchronization, and development checks. It must not run the
+@@ -346,6 +347,34 @@ to that evaluation and must not recursively launch another agent.
+   [nuc-proposal skill](../skills/nuc-proposal/SKILL.md#allocate-the-nuc-first-caller-only)
+   has the steps.
+ 
++## Pick up stale Drafts first (caller only)
 +
-+```
-+NUC: 106
-+Title: Intersect and Except Reasoning Selections
-+Author: Can Mingir <canmingir@gmail.com>
-+Status: Draft
-+Type: Standards Track
-+Category: Reasoning enhancement
-+Created: 11-Nov-2026
-+Requires: 48, 82, 83, 88
-+```
++- In continuous mode, every cycle, the first one included, completes an
++  abandoned NUC before it drafts a new one. A Draft on `main` is stale when it
++  has a pushed `Draft NUC <number> <Title>` allocation and the latest of that
++  commit and any `Resume NUC <number> <Title>` claim is more than 24 hours
++  old. A Draft without an allocation commit, such as the reference NUCs 2–7
++  and 9–11, is never picked up.
++- The cycle takes the lowest-numbered stale Draft, keeps its number, title,
++  category and requested change, and skips the selection and allocation.
++  Right after a pull that confirms the Draft is still stale, it claims it with
++  an empty `Resume NUC <number> <Title>` commit that leaves anything staged
++  out, and pushes it right away. The pushed claim restarts the 24 hours, so
++  concurrent sessions leave the NUC alone.
++- The claim is the accepted revision the NUC pins. Fresh agents, baselines
++  and a fresh candidate complete it like a new NUC, under the
++  [automatic acceptance rule](#automatic-acceptance-caller-only) directly and
++  the continuous token policy of its category; the ARC-requested and
++  user-requested bases do not carry over.
++- Every task working on an allocated NUC renews its claim once the latest
++  allocation or claim is 12 hours old, and claims a Blocked or paused NUC
++  before resuming it. Another session's claim takes the NUC over only when it
++  came more than 24 hours after the task's own; on a takeover, or an outcome
++  already on `main`, the task records nothing for that NUC.
++- A claim records no outcome and needs no evaluation of its own. The
++  [nuc-proposal skill](../skills/nuc-proposal/SKILL.md#pick-up-stale-drafts-first-caller-only)
++  has the steps.
 +
-+## Abstract
+ ## Outcome commit messages (caller only)
+ 
+ - Every commit that records a NUC outcome, Accepted, Automatic-Accepted or
+@@ -374,7 +403,7 @@ to that evaluation and must not recursively launch another agent.
+ - Keep rejected implementation changes isolated in the candidate worktree; do not apply its full diff merely to record the NUC.
+ - Stage explicit proposal/index paths and use a path-limited commit. Verify the resulting commit contains only the rejection documentation and directly related metadata. Never use repository-wide staging or `git commit -a`, or include unrelated files already staged.
+ - Preserve unrelated staged and unstaged changes. If the rejection documentation is already committed, verify and report that commit instead of creating an empty duplicate.
+-- Proposal and evaluation agents must not commit, push or merge; the rejection commit belongs solely to the `/nuc-proposal` caller, the only flow that commits NUC allocations and outcomes, which pulls before committing and pushes right after under the [git synchronization policy](git.instructions.md).
++- Proposal and evaluation agents must not commit, push or merge; the rejection commit belongs solely to the `/nuc-proposal` caller, the only flow that commits NUC allocations, claims and outcomes, which pulls before committing and pushes right after under the [git synchronization policy](git.instructions.md).
+ 
+ ## ARC-requested proposals (caller only)
+ 
+@@ -465,8 +494,11 @@ In continuous mode, after finalizing and committing an `Accepted`,
+ `Automatic-Accepted` or `Rejected` outcome for a new NUC, the caller
+ immediately starts a distinct new proposal under
+ the [continu
+```
+
+**File**: `.claude/skills/nuc-evaluate/SKILL.md` (modified, +5/-3)
+```diff
+@@ -29,9 +29,11 @@ explicit branch even in single mode.
+ Confirm that the current proposal blob matches the handoff and the baseline
+ matches the accepted revision. For a new NUC, that revision is its pushed
+ [allocation](../nuc-proposal/SKILL.md#allocate-the-nuc-first-caller-only),
+-which adds only the Draft document and its index rows, so it is not a
+-revision containing the candidate. Missing prerequisites block evaluation;
+-never invent measurements or guess an uncertain category.
++which adds only the Draft document and its index rows, or the empty pushed
++claim of a
++[picked-up Draft](../nuc-proposal/SKILL.md#pick-up-stale-drafts-first-caller-only),
++so it is not a revision containing the candidate. Missing prerequisites block
++evaluation; never invent measurements or guess an uncertain category.
+ 
+ Treat candidate sources, generated exports, and the baseline as read-only.
+ Apart from the pull of the primary checkout before you start, under the
+```
+
+**File**: `.claude/skills/nuc-proposal/SKILL.md` (modified, +102/-20)
+```diff
+@@ -24,7 +24,12 @@ repeats it:
+    [git synchronization policy](../../rules/git.instructions.md#pull-first),
+    so the task runs against the most current remote state. Report the commits
+    it brought in.
+-2. **Draft first.** Once the
++2. **Pick up a stale Draft first.** In continuous mode, look for an allocated
++   Draft that has gone 24 hours without an allocation or claim commit. When
++   one exists, the cycle claims and completes it under the
++   [stale-Draft rule](#pick-up-stale-drafts-first-caller-only) instead of
++   starting a new NUC, and continues at step 6 with that claim pinned.
++3. **Draft first.** Once the
+    [execution mode](#choose-execution-mode-caller-only), the confirmed
+    [category](#classify-every-proposal) and the requested change are chosen,
+    number the new NUC as the highest NUC recorded in `docs/` plus one. In the
+@@ -33,7 +38,7 @@ repeats it:
+    details: the Abstract and Motivation of the requested change, followed by
+    the remaining required sections for the proposer to complete. Add its Draft
+    rows to both indexes in `docs/nuc-0000.md`, and change nothing else.
+-3. **Check before submitting.** Right before the allocation commit, pull
++4. **Check before submitting.** Right before the allocation commit, pull
+    again and compare the draft with every NUC that `main` now records:
+    - **Same number:** when another NUC already uses the drafted number,
+      claim the next one, the highest number recorded plus one, and renumber
+@@ -44,18 +49,18 @@ repeats it:
+      nothing, and start again at step 1 with a new selection under the
+      [selection rule](#select-an-unspecified-enhancement). A request that
+      names that concept stops instead and reports the existing NUC.
+-4. **Allocate.** Commit those two paths alone, with the subject
++5. **Allocate.** Commit those two paths alone, with the subject
+    `Draft NUC <number> <Title>` and the category and requested change in the
+    body, and push right away. The pushed commit allocates the proposal and its
+    number, so concurrent sessions number their NUCs after it.
+-5. **Work on the details as usual.** Pin the `HEAD` just pushed, which holds
+-   the allocation, as the accepted revision, record its baseline, and create
+-   the candidate worktree from it. Then
++6. **Work on the details as usual.** Pin the `HEAD` just pushed, which holds
++   the allocation or the claim, as the accepted revision, record its baseline,
++   and create the candidate worktree from it. Then
+    [select the strategy](#select-and-consume-a-proposal-strategy) and run the
+    fresh proposer, which completes the draft and prototypes the change, the
+    Rust improvement pass and the fresh evaluator, as the rest of this skill
+    describes.
+-6. **Commit and push the final version.** Record the outcome in a new commit,
++7. **Commit and push the final version.** Record the outcome in a new commit,
+    `NUC <number> <Title>`, that holds the final proposal along with its code
+    changes when it is accepted, and push it right after, under the
+    [outcome commit rule](#name-outcome-commits-caller-only).
+@@ -86,8 +91,78 @@ repeats it:
+ - A revision of an existing NUC, including a revisited Rejected NUC, already
+   holds its number: skip the draft and allocation steps, and leave its text
+   and status on `main` unchanged until the outcome commit. A Blocked or paused
+-  NUC keeps its pushed Draft and number, and a later task resumes it under
+-  that number instead of allocating another.
++  NUC keeps its pushed Draft and number, and a later task claims and resumes
++  it under that number, under the
++  [stale-Draft rule](#pick-up-stale-drafts-first-caller-only), instead of
++  allocating another.
 +
-+- Adds two pipeline stages that compare one reasoning selection with
-+  another:
-+  - `SELECTION |> intersect(OTHER)` keeps the steps of `SELECTION` whose
-+    node `OTHER` also selects;
-+  - `SELECTION |> except(OTHER)` keeps the steps of `SELECTION` whose node
-+    `OTHER` does not select.
-+- Both keep the steps they keep in `SELECTION`'s order, with their `node`,
-+  `holds`, `rule`, `state` and `from` fields unchanged. With
-+  `subtotal = price * quantity`, `tax = subtotal * rate` and
-+  `shipping = quantity * 2`:
-+  - `tax |> why |> intersect(shipping |> why)` selects `quantity`, the one
-+    node both values rest on;
-+  - `tax |> why |> except(shipping |> why)` selects `tax`, `subtotal`,
-+    `rate` and `price`, what the tax rests on and the shipping does not;
-+  - with `total = subtotal + tax + shipping`,
-+    `price |> affects |> intersect(rate |> affects)` selects `tax` and
-+    `total`, what both inputs move.
-+- `OTHER` is one expression in parentheses that denotes a selection, as the
-+  source of a pipeline does: a reference, `model`, a prefix stage such as
-+  `why b`, or a pipeline such as `b |> why |> stated`. It is evaluated in
-+  place each time the stage applies, after the source selection and the
-+  stages before it.
-+- The kept steps keep the direction of `SELECTION`'s most recent walk and
-+  their [NUC 82](nuc-0082.md) distances. Both stages therefore compose with
-+  `stated`, `derived`, `depth`, `diff`, `path` and each other in either
-+  order, and a later `why` or `affects` walks from the kept steps as usual.
-+- A standing selection that holds either stage stays live through every
-+  value and structural observation of both `SELECTION` and `OTHER`,
-+  including the steps each one drops. It renders as
-+  `SOURCE|>intersect(OTHER)` or `SOURCE|>except(OTHER)`.
-+- Only `|>` followed by the name `intersect` or `except` and then a `(`
-+  token is a stage. Both names stay ordinary identifiers everywhere else,
-+  and a binding of either name shadows its stage, as bindings shadow
-+  [NUC 48](nuc-0048.md)'s `stated` and `derived`, `depth`, `diff` and
-+  `path`. An invalid `OTHER` keeps the diagnostics of a pipeline source,
-+  such as `TypeError("Cannot explain 1")`.
-+- No keyword, lexer token or error type is added, and no union stage is
-+  added. Every accepted program keeps its parse and behavior. Only inputs
-+  that were errors at the accepted revision change: a `|>` followed by
-+  `intersect` or `except` raised the parse-time
-+  `TypeError("intersect is not an operation")` or
-+  `TypeError("except is not an operation")`.
++## Pick up stale Drafts first (caller only)
 +
-+## Motivation
++In continuous mode, every cycle, the first one included, completes an
++abandoned NUC before it starts a new one. A single-proposal request still does
++only what it asks.
 +
-+- Diagnosis asks what two observations have in common. When two alarms
-+  fire, the stated facts behind both are the candidate root causes, and the
-+  facts behind one but not the other tell them apart. Impact analysis asks
-+  the dual question: what do two inputs both move? Each answer is the
-+  intersection or the difference of two explanations or impact selections.
-+- The accepted stages each narrow a single selection: `stated` and
-+  `derived` by a step's state, `depth` by distance, `path` by reachability
-+  of one target and `diff` by change since a `suppose` block began. None
-+  compares a selection with another one.
-+- Accepted Nucleoid can spell the comparison only as a membership test that
-+  walks the second selection inside a lambda:
-+  `(tax |> why).filter(s -> s.node in (shipping |> why).map(t -> t.node))`
-+  is 29 lexer tokens, against 10 for
-+  `tax |> why |> intersect(shipping |> why)`. That spelling:
-+  - walks the second selection again for every step of the first, so one
-+    question costs time quadratic in the size of the explanations;
-+  - compares nodes by their names as strings rather than as graph nodes;
-+  - returns a plain list instead of a selection, so it cannot be chained:
-+    appending `|> affects` raises
-+    `TypeError("Cannot explain tax|>why.filter(function())")`.
-+- Prior art: Bazel query's `intersect` and `except` operators over target
-+  sets, as in `deps(//a) intersect deps(//b)`; SQL's `INTERSECT` and
-+  `EXCEPT`; C# LINQ's `Intersect` and `Except`; Kotlin's `intersect` and
-+  `subtract`; Python's set `&` and `-`; and JavaScript's
-+  `Set.prototype.intersection` and `Set.prototype.difference`.
-+- Draft [NUC 11](nuc-0011.md) plans the stages `why`, `why not`, `affects`,
-+  `rules`, `conflicts`, `describe`, `export` and `depth(n)` and filters over
-+  a single selection; none combines two selections.
-+  [NUC 83](nuc-0083.md)'s `diff` compares a selection with the world before
-+  a `suppose` block, not with another selection.
++1. **Find.** After the cycle's pull, a NUC is a stale Draft when its header on
++   `main` still reads `Status: Draft`, it has a pushed
++   `Draft NUC <number> <Title>` allocation commit, and the latest of that
++   commit and any `Resume NUC <number> <Title>` claim commit is more than
++   24 hours old by committer date, which
++   `git log -1 --format=%cI -E --grep='^(Draft|Resume) NUC <number> '` shows.
++   A Draft without an allocation commit, such as the reference NUCs 2–7 and
++   9–11, is never picked up. When the request names a category, only Drafts
++   of that category count.
++2. **Pick the lowest-numbered stale Draft,** one per cycle. The cycle skips
++   the [selection](#select-an-unspecified-enhancement) and steps 3–5 of the
++   [allocation order](#allocate-the-nuc-first-caller-only). Its confirmed
++   inputs are the Draft's number, `Title` and `Category`, and the requested
++   change that its Abstract, Motivation and allocation commit body record. An
++   uncertain category still goes to the user under the
++   [classification rule](#classify-eve
+```
+
+**File**: `CONTRIBUTING.md` (modified, +11/-1)
+```diff
+@@ -131,6 +131,15 @@ uses the drafted one, and skips the proposal and starts again when a NUC on
+ changes; see the
+ [allocation step](.claude/skills/nuc-proposal/SKILL.md#allocate-the-nuc-first-caller-only).
+ 
++In continuous mode, every cycle first completes an abandoned NUC: a Draft
++whose latest `Draft NUC <number> <Title>` allocation or
++`Resume NUC <number> <Title>` claim is more than 24 hours old. The caller
++claims the lowest-numbered one with an empty, pushed
++`Resume NUC <number> <Title>` commit, pins that claim, and completes the NUC
++like a new one. Only a cycle that finds no such Draft selects a new NUC; see
++the
++[stale-Draft rule](.claude/skills/nuc-proposal/SKILL.md#pick-up-stale-drafts-first-caller-only).
 +
-+## Rationale
-+
-+- Pending: the proposer completes this section.
-+
-+## Spec
+ Outcomes follow the
+ [automatic acceptance rule](.claude/rules/proposals.instructions.md#automatic-acceptance-caller-only).
+ A candidate is accepted when it meets three hard criteria: no compile errors
+@@ -219,7 +228,8 @@ a runtime that differs from it. Use a separate baseline worktree if candidate
+ runtime edits already exist. `HEAD` is suitable only when it is the accepted
+ revision, not a commit containing unevaluated candidate changes. A new NUC's
+ allocation commit, which adds only its Draft document and index rows, is
+-still the accepted revision, and the proposal pins it.
++still the accepted revision, and the proposal pins it. A picked-up Draft pins
++its empty claim commit the same way.
+ 
+ Example PowerShell commands, using fresh artifact paths outside the repository:
+ 
 ```
 
 #### Recent Merged Pull Requests:
@@ -1877,32 +2057,33 @@ Claude-Session: https://claude.ai/code/session_01AJtz8dK76dRFHqR3mPaGA6
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Draft NUC 106 Intersect and Except Reasoning Selections
+## X. Resume stale NUC drafts in continuous cycles
 
 **RULE**:
-When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/CLAUDE.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cc21315a`: Draft NUC 106 Intersect and Except Reasoning Selections. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c9839532`: Resume stale NUC drafts in continuous cycles. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/CLAUDE.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [106](nuc-0106.md) | Intersect and Except Reasoning Selections | Draft |
-| [106](nuc-0106.md) | Intersect and Except Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
+| [proposals.instructions.md](rules/proposals.instructions.md) | Independent NUC proposal preparation and evaluation, the token policy, automatic acceptance on the hard criteria (no compile errors, every test passing, backward compatibility) with the `Automatic-Accepted` status, ARC- and user-requested bases, the pushed `Draft NUC <number> <Title>` allocation of each new NUC before its details, after a pull that claims the next free number or skips a concept already proposed, continuous cycles that first pick up allocated Drafts idle for 24 hours under a pushed `Resume NUC <number> <Title>` claim, and `NUC <number> <Title>` outcome commit messages |
+| [git.instructions.md](rules/git.instructions.md) | Only `/nuc-proposal` (NUC allocations, claims and outcomes) and `/arc-purposal` (its own ARC changes, when it is done) commit and push; every agent pulls before it starts (fast-forward only, except those callers before a commit or push), pull before commit/push, push after every commit, resolve conflicts and push |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+| [proposals.instructions.md](rules/proposals.instructions.md) | Independent NUC proposal preparation and evaluation, the token policy, automatic acceptance on the hard criteria (no compile errors, every test passing, backward compatibility) with the `Automatic-Accepted` status, ARC- and user-requested bases, the pushed `Draft NUC <number> <Title>` allocation of each new NUC before its details, after a pull that claims the next free number or skips a concept already proposed, and `NUC <number> <Title>` outcome commit messages |
+| [git.instructions.md](rules/git.instructions.md) | Only `/nuc-proposal` (NUC allocations and outcomes) and `/arc-purposal` (its own ARC changes, when it is done) commit and push; every agent pulls before it starts (fast-forward only, except those callers before a commit or push), pull before commit/push, push after every commit, resolve conflicts and push |
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cc21315a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c9839532` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T10:31:23.258Z",
+  "last_updated": "2026-11-14T11:05:16.035Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-14T05:32:15.509Z",
@@ -738,7 +738,7 @@
       "staged_for_review": 0
     },
     "okteto-okteto-learnings.md": {
-      "processed_at": "2026-11-12T03:24:10.789Z",
+      "processed_at": "2026-11-14T11:05:15.201Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1353,7 +1353,7 @@
       "staged_for_review": 1
     },
     "zenbu-labs-terminal-browser-learnings.md": {
-      "processed_at": "2026-11-12T23:55:11.555Z",
+      "processed_at": "2026-11-14T11:04:41.225Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2551,9 +2551,14 @@
       "processed_at": "2026-11-14T10:31:22.260Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-qwen-qwen3-vl-8b-instruct-learnings.md": {
+      "processed_at": "2026-11-14T11:05:14.835Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 816,
-  "total_canonical_promoted": 187,
-  "total_staged_for_review": 628
+  "total_dossiers_evaluated": 819,
+  "total_canonical_promoted": 188,
+  "total_staged_for_review": 630
 }

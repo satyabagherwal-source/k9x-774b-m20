@@ -9812,3 +9812,9 @@
 | `CYCLE-20261114-LA0Y` | `2026-11-14T10:30:12.994Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8479` | Yes (`fcb78a52...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T10:30:45.869Z` | `hf-deepseek-ai-deepseek-v3.2` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-694FEEFE` [Domain D] | Yes (`053e194f...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T10:31:22.259Z` | `hf-openai-community-gpt2` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-E4E3EE21` [Domain D] | Yes (`2d4f1188...`) |
+| `CYCLE-20261114-T62F` | `2026-11-14T11:04:20.727Z` | `Qwen/Qwen3-VL-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md` | Yes (`e4860971...`) |
+| `CYCLE-20261114-T72U` | `2026-11-14T11:04:22.038Z` | `zenbu-labs/terminal-browser` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8480` | Yes (`534c4d33...`) |
+| `CYCLE-20261114-TE9Q` | `2026-11-14T11:04:31.358Z` | `okteto/okteto` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8481` | Yes (`ab7f5d88...`) |
+| `CYCLE-20261114-TGWT` | `2026-11-14T11:04:34.781Z` | `slatedb/slatedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8482` | Yes (`e894f3e3...`) |
+| `CYCLE-20261114-TJDP` | `2026-11-14T11:04:37.981Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8483` | Yes (`4f4cd7f3...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T11:05:14.835Z` | `hf-qwen-qwen3-vl-8b-instruct` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-2F30EB65` [Domain D] | Yes (`3d0d98b8...`) |

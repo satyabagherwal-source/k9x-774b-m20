@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T10:30:13.003Z",
-  "total_cycles_completed": 9503,
-  "total_learnings_persisted": 9503,
-  "total_rules_promoted": 9201,
+  "last_updated": "2026-11-14T11:04:37.991Z",
+  "total_cycles_completed": 9508,
+  "total_learnings_persisted": 9508,
+  "total_rules_promoted": 9205,
   "history": [
-    {
-      "timestamp": "2026-11-13T16:49:10.635Z",
-      "repository": "volcengine/OpenViking",
-      "learningId": "learn-github-volcengine-openviking",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T16:58:40.352Z",
-      "repository": "akhilaaa3/Jev-Omni",
-      "learningId": "learn-huggingface-akhilaaa3-jev-omni",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T16:58:55.109Z",
-      "repository": "Mintplex-Labs/anything-llm",
-      "learningId": "learn-github-mintplex-labs-anything-llm",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T17:10:52.293Z",
-      "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
-      "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T17:11:04.718Z",
-      "repository": "nolabs-ai/nono",
-      "learningId": "learn-github-nolabs-ai-nono",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T17:11:08.523Z",
       "repository": "meilisearch/meilisearch",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-11-14T10:30:13.003Z",
       "repository": "skyhook-io/radar",
       "learningId": "learn-github-skyhook-io-radar",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T11:04:20.737Z",
+      "repository": "Qwen/Qwen3-VL-8B-Instruct",
+      "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T11:04:22.048Z",
+      "repository": "zenbu-labs/terminal-browser",
+      "learningId": "learn-github-zenbu-labs-terminal-browser",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T11:04:31.368Z",
+      "repository": "okteto/okteto",
+      "learningId": "learn-github-okteto-okteto",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T11:04:34.791Z",
+      "repository": "slatedb/slatedb",
+      "learningId": "learn-github-slatedb-slatedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T11:04:37.991Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

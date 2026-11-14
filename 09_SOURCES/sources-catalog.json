@@ -1155,8 +1155,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct",
     "sourceVersion": "hf-qwen-qwen3-vl-8b-instruct",
     "license": "Open-Source",
-    "contentHash": "b45ba5693895f9ae65a2d276b81dbe287e7298ccbbc7b0fc2b41bf7f04f03182",
-    "lastHarvestedAt": "2026-11-09T02:43:57.061Z",
+    "contentHash": "e486097125cac99d7028f760b9a58e49ca7f3016f38a23e74b0ba34ed305dc6c",
+    "lastHarvestedAt": "2026-11-14T11:04:20.731Z",
     "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct"
   },
   "hf-nomic-ai-nomic-embed-text-v1.5": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "66059605",
+    "sourceVersion": "120db05d",
     "license": "Apache-2.0",
-    "contentHash": "bc46a91a442a11833df32c972446e26e84585f3f31500ed2944fe0dc3edcc7e7",
-    "lastHarvestedAt": "2026-11-12T22:33:51.114Z",
+    "contentHash": "4f4cd7f38124f76537d32c2468a0053f2de7f81181c43394d1f9aaf60f22bf3d",
+    "lastHarvestedAt": "2026-11-14T11:04:37.985Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -3463,10 +3463,10 @@
     "repository": "okteto/okteto",
     "platform": "github",
     "sourceUrl": "https://github.com/okteto/okteto",
-    "sourceVersion": "037d6597",
+    "sourceVersion": "cb2419f7",
     "license": "Apache-2.0",
-    "contentHash": "1403f6b6db9ec1c67e802ca0eced1e557614dc0fb95aa0a6bcdbfc144f78db8c",
-    "lastHarvestedAt": "2026-11-12T03:23:54.786Z",
+    "contentHash": "ab7f5d884ffb207daff2aad15968d43e1b73320a30836041c8540431c7c4f22c",
+    "lastHarvestedAt": "2026-11-14T11:04:31.362Z",
     "learningId": "learn-github-okteto-okteto"
   },
   "supervc-stack-vectorchord": {
@@ -4573,10 +4573,10 @@
     "repository": "slatedb/slatedb",
     "platform": "github",
     "sourceUrl": "https://github.com/slatedb/slatedb",
-    "sourceVersion": "e19ff24f",
+    "sourceVersion": "0a6a032b",
     "license": "Apache-2.0",
-    "contentHash": "e9a7f8e66a68b2716865b1fefbd929c74c73b4633ec093fc9d52ba411d5f6e38",
-    "lastHarvestedAt": "2026-11-13T07:06:49.574Z",
+    "contentHash": "e894f3e3548bea2d101852b65693a75ac61b2bc44d40f3438eca799fffb0b81e",
+    "lastHarvestedAt": "2026-11-14T11:04:34.785Z",
     "learningId": "learn-github-slatedb-slatedb"
   },
   "react-component-slider": {
@@ -7303,10 +7303,10 @@
     "repository": "zenbu-labs/terminal-browser",
     "platform": "github",
     "sourceUrl": "https://github.com/zenbu-labs/terminal-browser",
-    "sourceVersion": "d09e97c4",
+    "sourceVersion": "e459febc",
     "license": "MIT",
-    "contentHash": "e1d02459c4c857a5f66ff0401c9b11bb0fe51a26c563526a19fa3f5de820e2ff",
-    "lastHarvestedAt": "2026-11-12T23:54:54.624Z",
+    "contentHash": "534c4d3311007b7508fec808c3f7abb6052016e609a1323b8ca9cce7a7bfc2a2",
+    "lastHarvestedAt": "2026-11-14T11:04:22.042Z",
     "learningId": "learn-github-zenbu-labs-terminal-browser"
   },
   "kosi-libs-kodein": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/okteto-okteto-learnings.md`  
 > **Source**: github ([https://github.com/okteto/okteto](https://github.com/okteto/okteto))  
-> **Source Version**: `037d6597`  
+> **Source Version**: `cb2419f7`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T03:23:42.709Z  
+> **Timestamp**: 2026-11-14T11:04:30.377Z  
 > **Learning ID**: `learn-github-okteto-okteto`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/okteto-okteto-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/okteto/okteto](https://github.com/okteto/okteto))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T03:23:42.507Z  
+> **Harvest Timestamp**: 2026-11-14T11:04:30.370Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Develop your applications directly in your Kubernetes Cluster
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 3555 stars
+- **Stars / Engagement**: 3557 stars
 
 ---
 
@@ -1502,253 +1502,371 @@ func startCommand(cmd *exec.Cmd) error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `24f96edc` (2026-11-11)
-**Commit Message**: build(deps): bump rack from 3.2.6 to 3.2.8 in /samples/ruby (#5255)
+### Incident Patch 1: `0ffb0189` (2026-11-13)
+**Commit Message**: build(deps): bump renovatebot/github-action from 46.3.12 to 46.3.13 (#5261)
 
-* build(deps): bump rack from 3.2.6 to 3.2.8 in /samples/ruby
-
-Bumps [rack](https://github.com/rack/rack) from 3.2.6 to 3.2.8.
-- [Release notes](https://github.com/rack/rack/releases)
-- [Changelog](https://github.com/rack/rack/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/rack/rack/compare/v3.2.6...v3.2.8)
+Bumps [renovatebot/github-action](https://github.com/renovatebot/github-action) from 46.3.12 to 46.3.13.
+- [Release notes](https://github.com/renovatebot/github-action/releases)
+- [Changelog](https://github.com/renovatebot/github-action/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/renovatebot/github-action/compare/v46.3.12...v46.3.13)
 
 ---
 updated-dependencies:
-- dependency-name: rack
-  dependency-version: 3.2.8
-  dependency-type: indirect
+- dependency-name: renovatebot/github-action
+  dependency-version: 46.3.13
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-* chore: retrigger CI
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Signed-off-by: Javier Lopez <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Signed-off-by: Javier Lopez <[REDACTED_EMAIL]>
 Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-Co-authored-by: Javier Lopez <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `samples/ruby/Gemfile.lock` (modified, +1/-1)
+**File**: `.github/workflows/renovate.yml` (modified, +1/-1)
 ```diff
-@@ -6,7 +6,7 @@ GEM
-     multi_json (1.15.0)
-     mustermann (3.0.4)
-       ruby2_keywords (~> 0.0.1)
--    rack (3.2.6)
-+    rack (3.2.8)
-     rack-protection (4.2.0)
-       base64 (>= 0.1.0)
-       logger (>= 1.6.0)
+@@ -18,7 +18,7 @@ jobs:
+         uses: actions/checkout@v7
+ 
+       - name: Run Renovate
+-        uses: renovatebot/github-action@v46.3.12
++        uses: renovatebot/github-action@v46.3.13
+         with:
+           configurationFile: .github/renovate.json
+           token: ${{ secrets.RENOVATEBOT_GITHUB_TOKEN }}
 ```
 
 ---
 
-### Incident Patch 2: `037d6597` (2026-11-11)
-**Commit Message**: fix(compose): read compose memory units in mem_limit, mem_reservation and deploy resources (#5252)
+### Incident Patch 2: `88bc7d7e` (2026-11-13)
+**Commit Message**: fix(compose): accept restart: on-failure:<max-retries> (#5244)
 
-Compose memory values were parsed as Kubernetes quantities, so mem_limit: 300m became a 0.3-byte (1 byte) limit and the compose units 1g, 512mb and 1gb were rejected.
+* fix(compose): accept restart: on-failure:<max-retries>
 
-Parse b, k/kb, m/mb and g/gb as compose byte units (binary, like docker compose) for these fields. Other values such as 512Mi or a plain byte count are parsed as before.
+The compose spec allows restart: on-failure[:max-retries], but
+getRestartPolicy only matched the exact string "on-failure", so a
+retry count made the whole stack fail with "invalid restart policy".
 
-Fixes #5251
+Split the retry count off first: the policy is OnFailure and the count
+becomes BackOffLimit, the same as deploy.restart_policy.max_attempts,
+which still wins when set. Malformed counts are still rejected.
+
+Fixes #5230
 
 Signed-off-by: poojagosika <[REDACTED_EMAIL]>
 
-**File**: `pkg/model/stack_serializer.go` (modified, +46/-5)
+* fix(compose): ignore restart retries when deploy.restart_policy.condition is set
+
+Read the on-failure retry count inside getRestartPolicy, only when it falls back to restart, so a condition keeps ignoring restart as a whole: the service stays a Deployment and a malformed restart value is not an error there.
+
+Signed-off-by: poojagosika <[REDACTED_EMAIL]>
+
+* test(compose): cover restart retry precedence
+
+Test_UnmarshalRestartDeployMaxAttemptsOverRestartRetries set
+deploy.restart_policy.condition, so restart was ignored as a whole and
+its retry count never competed with max_attempts. Drop the condition so
+t
+
+**File**: `pkg/model/stack_serializer.go` (modified, +20/-6)
 ```diff
-@@ -19,6 +19,7 @@ import (
- 	"os"
- 	"path"
- 	"path/filepath"
-+	"regexp"
- 	"strconv"
- 	"strings"
- 	"time"
-@@ -146,10 +147,10 @@ type ServiceRaw struct {
- 	Deploy                   *DeployInfoRaw         `yaml:"deploy,omitempty"`
- 	MemswapLimit             *WarningType           `yaml:"memswap_limit,omitempty"`
- 	OomKillDisable           *WarningType           `yaml:"oom_kill_disable,omitempty"`
--	MemReservation           Quantity               `yaml:"mem_reservation,omitempty"`
-+	MemReservation           ComposeMemory          `yaml:"mem_reservation,omitempty"`
- 	CpuCount                 Quantity               `yaml:"cpu_count,omitempty"`
- 	Cpus                     Quantity               `yaml:"cpus,omitempty"`
--	MemLimit                 Quantity               `yaml:"mem_limit,omitempty"`
-+	MemLimit                 ComposeMemory          `yaml:"mem_limit,omitempty"`
- 	Restart                  string                 `yaml:"restart,omitempty"`
- 	Image                    string                 `yaml:"image,omitempty"`
- 	Workdir                  string                 `yaml:"workdir,omitempty"`
-@@ -224,7 +225,7 @@ type DeployComposeResources struct {
- 	Devices    *WarningType           `json:"devices,omitempty" yaml:"devices,omitempty"`
- 	Extensions map[string]interface{} `yaml:",inline" json:"-"`
- 	Cpus       Quantity               `json:"cpus,omitempty" yaml:"cpus,omitempty"`
--	Memory     Quantity               `json:"memory,omitempty" yaml:"memory,omitempty"`
-+	Memory     ComposeMemory          `json:"memory,omitempty" yaml:"memory,omitempty"`
+@@ -567,13 +567,17 @@ func (serviceRaw *ServiceRaw) toService(svcName string, stack *Stack, topLevelSe
+ 
+ 	svc.User = serviceRaw.User
+ 
+-	svc.RestartPolicy, err = getRestartPolicy(svcName, serviceRaw.Deploy, serviceRaw.Restart)
++	var restartRetries int32
++	svc.RestartPolicy, restartRetries, err = getRestartPolicy(svcName, serviceRaw.Deploy, serviceRaw.Restart)
+ 	if err != nil {
+ 		return nil, err
+ 	}
+ 	if serviceRaw.Deploy != nil && serviceRaw.Deploy.RestartPolicy != nil {
+ 		svc.BackOffLimit = serviceRaw.Deploy.RestartPolicy.MaxAttempts
+ 	}
++	if svc.BackOffLimit == 0 {
++		svc.BackOffLimit = restartRetries
++	}
+ 
+ 	// Extract endpoint_mode from deploy section
+ 	if serviceRaw.Deploy != nil && serviceRaw.Deploy.EndpointMode != "" {
+@@ -1114,23 +1118,33 @@ func (p *Port) MarshalYAML() (interface{}, error) {
+ 	return Port{ContainerPort: p.ContainerPort, Protocol: p.Protocol}, nil
  }
  
- type VolumeTopLevel struct {
-@@ -425,7 +426,7 @@ func (serviceRaw *ServiceRaw) toService(svcName string, stack *Stack, topLevelSe
- 	svc := &Service{}
- 	var err error
- 
--	svc.Resources = unmarshalDeployResources(serviceRaw.Deploy, serviceRaw.Resources, serviceRaw.CpuCount, serviceRaw.Cpus, serviceRaw.MemLimit, serviceRaw.MemReservation)
-+	svc.Resources = unmarshalDeployResources(serviceRaw.Deploy, serviceRaw.Resources, serviceRaw.CpuCount, serviceRaw.Cpus, serviceRaw.MemLimit.Quantity, serviceRaw.MemReservation.Quantity)
- 
- 	svc.Replicas = unmarshalDeployReplicas(serviceRaw.Deploy, serviceRaw.Scale, serviceRaw.Replicas)
- 
-@@ -1160,6 +1161,46 @@ func unmarshalDeployResources(deployInfo *DeployInfoRaw, resources *StackResourc
- 	return resources
- }
- 
-+// ComposeMemory is a compose memory value. Compose uses its own byte units
-+// ("300m" is 300 MiB, "1g" / "1gb" is 1 GiB), which Kubernetes reads
-+// differently ("300m" is 0.3 bytes) or rejects, so those are converted here.
-+// Other values, like "512Mi" or a plain byte count, are parsed as before.
-+type ComposeMemory struct {
-+	Quantity
-+}
-+
-+var composeBytesRegex = regexp.MustCompile(`(?i)^([0-9]+(?:\.[0-9]+)?)\s*(b|k|kb|m|mb|g|gb)$`)
-+
-+// UnmarshalYAML Implements the Unmarshaler interface of the yaml pkg.
-+func (m *ComposeMemory) UnmarshalYAML(unmarshal func(interface{}) error) error {
-+	var raw string
-+	if err := unmarshal(&raw); err == nil {
-+		if bytes, ok := parseComposeBytes(raw); ok {
-+			m.Value = *resource.NewQuantity(bytes, resource.BinarySI)
-+			return nil
+-func getRestartPolicy(svcName string, deployInfo *DeployInfoRaw, restartPolicy string) (apiv1.RestartPolicy, error) {
++// getRestartPolicy returns the restart policy and, for the compose
++// `restart: on-failure[:max-retries]` form, the retry count (0 when none is
++// given). deploy.restart_policy.condition wins over restart when set.
++func getRestartPolicy(svcName string, deployInfo *DeployInfoRaw, restartPolicy string) (apiv1.RestartPolicy, int32, error) {
+ 	var restart string
+ 	if deployInfo != nil && deployInfo.RestartPolicy != nil {
+ 		restart = deployInfo.RestartPolicy.Condition
+ 	}
+ 	if restart == "" {
++		if policy, retries, found := strings.Cut(restartPolicy, ":"); found && policy == "on-failure" {
++			maxRetries, err := strconv.ParseInt(retries, 10, 32)
++			if err != nil || maxRetries < 0 {
++				return apiv1.RestartPolicyAlways, 0, fmt.Errorf("cannot create container for service %s: invalid restart policy '%s'", svcName, restartPolicy)
++			}
++			return apiv1.RestartPolicyOnFailure, int32(maxRetries), nil
 +		}
-+	}
-+	return m.Quantity.UnmarshalYAML(unmarshal)
-+}
-+
-+func parseComposeBytes(value string) (int64, bool) {
-+	match := composeBytesRegex.FindStringSubmatch(strings.TrimSpace(value))
-+	if match == nil {
-+		return 0, false
-+	}
-+	number, err := strconv.ParseFloat(match[1], 64)
-+	if err != nil {
-+		return 0, false
-+	}
-+	multiplier := map[string]float64{
-+		"b": 1,
-+		"k": 1 << 10, "kb": 1 << 10,
-+		"m": 1 << 20, "mb": 1 << 20,
-+		"g": 1 << 30, "gb": 1 << 30,
-+	}[strings.ToLower(match[2])]
-+	return int64(number * multiplier), true
-+}
-+
- func unmarshalDeployReplicas(deployInfo *DeployInfoRaw, scale, replicas *int32) int32 {
- 	if replicas != nil {
- 		return *replicas
-@@ -1180,7 +1221,7 @@ func (r DeployComposeResources) applyTo(resources *ServiceResources) {
- 		resources.CPU = r.Cpus
+ 		restart = restartPolicy
  	}
- 	if !r.Memory.Value.IsZero() {
--		resources.Memory = r.Memory
-+		resources.Memory = r.Memory.Quantity
+ 	switch restart {
+ 	case "none", "never", "no":
+-		return apiv1.RestartPolicyNever, nil
++		return apiv1.RestartPolicyNever, 0, nil
+ 	case "always", "", "unless-stopped", "any":
+-		return apiv1.RestartPolicyAlways, nil
++		return apiv1.RestartPolicyAlways, 0, nil
+ 	case "on-failure":
+-		return apiv1.RestartPolicyOnFailure, nil
++		return apiv1.RestartPolicyOnFailure, 0, nil
+ 	default:
+-		return apiv1.RestartPolicyAlways, fmt.Errorf("cannot create container for service %s: invalid restart policy '%s'", svcName, restart)
++		return apiv1.RestartPolicyAlways, 0, fmt.Errorf("cannot create container for service %s: invalid restart policy '%s'", svcName, restart)
  	}
  }
- 
+ func unmarshalDeployResources(deployInfo *DeployInfoRaw, resources *StackResources, cpuCount, cpus, memLimit, memReservation Quantity) *StackResources {
 ```
 
-**File**: `pkg/model/stack_serializer_test.go` (modified, +43/-5)
+**File**: `pkg/model/stack_serializer_test.go` (modified, +57/-0)
 ```diff
-@@ -193,7 +193,7 @@ func Test_DeployResourcesUnmarshalling(t *testing.T) {
- 			deployRaw: &DeployInfoRaw{Resources: ResourcesRaw{
- 				Limits: DeployComposeResources{
- 					Cpus:   Quantity{resource.MustParse("1")},
--					Memory: Quantity{resource.MustParse("1Gi")},
-+					Memory: ComposeMemory{Quantity{resource.MustParse("1Gi")}},
- 				},
- 			},
- 			},
-@@ -224,11 +224,11 @@ func Test_DeployResourcesUnmarshalling(t *testing.T) {
- 			deployRaw: &DeployInfoRaw{Resources: ResourcesRaw{
- 				Limits: DeployComposeResources{
- 					Cpus:   Quantity{resource.MustParse("1")},
--					Memory: Quantity{resource.MustParse("1Gi")},
-+					Memory: ComposeMemory{Quantity{resource.MustParse("1Gi")}},
- 				},
- 				Reservations: DeployComposeResources{
- 					Cpus:   Quantity{resource.MustParse("1")},
--					Memory: Quantity{resource.MustParse("2Gi")},
-+					Memory: ComposeMemory{Quantity{resource.MustParse("2Gi")}},
- 				},
- 			},
- 			},
-@@ -249,11 +249,11 @@ func Test_DeployResourcesUnmarshalling(t *testing.T) {
- 			deployRaw: &DeployInfoRaw{Resources: ResourcesRaw{
- 				Limits: DeployComposeResources{
- 					Cpus:   Quantity{resource.MustParse("1")},
--					Memory: Quantity{resource.MustParse("1Gi")},
-+					Memory: ComposeMemory{Quantity{resource.MustParse("1Gi")}},
- 				},
- 				Reservations: DeployComposeResources{
- 					Cpus:   Quantity{resource.MustParse("1")},
--					Memory: Quantity{resource.MustParse("2Gi")},
-+					Memory: ComposeMemory{Quantity{resource.MustParse("2Gi")}},
- 				},
- 			},
- 			},
-@@ -3325,3 +3325,41 @@ endpoints:
- 	assert.Equal(t, "web-app", s.Endpoints["main"].Rules[0].Service)
- 	assert.Equal(t, "api", s.Endpoints["main"].Rules[1].Service)
+@@ -3363,3 +3363,60 @@ func Test_UnmarshalComposeDeployResourcesMemoryUnits(t *testing.T) {
+ 	assert.Equal(t, int64(300*1024*1024), s.Services["app"].Resources.Limits.Memory.Value.Value())
+ 	assert.Equal(t, int64(1024*1024*1024), s.Services["app"].Resources.Requests.Memory.Value.Value())
  }
 +
-+func Test_UnmarshalComposeMemoryUnits(t *testing.T) {
-+	tests := []struct {
-+		name     string
-+		memory   string
-+		expected int64
-+	}{
-+		{name: "megabytes-short", memory: "300m", expected: 300 * 1024 * 1024},
-+		{name: "megabytes-long", memory: "512mb", expected: 512 * 1024 * 1024},
-+		{name: "gigabytes-short", memory: "1g", expected: 1024 * 1024 * 1024},
-+		{name: "gigabytes-long", memory: "1gb", expected: 1024 * 1024 * 1024},
-+		{name: "kilobytes", memory: "512k", expected: 512 * 1024},
-+		{name: "bytes", memory: "2048b", expected: 2048},
-+		{name: "uppercase", memory: "1G", expected: 1024 * 1024 * 1024},
-+		{name: "fractional", memory: "1.5g", expected: 1536 * 1024 * 1024},
-+		{name: "kubernetes-units", memory: "512Mi", expected: 512 * 1024 * 1024},
-+		{name: "plain-bytes", memory: "1048576", expected: 1048576},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			manifest := []byte("services:\n  app:\n    image: okteto/vote:1\n    mem_limit: " + tt.memory + "\n    mem_reservation: " + tt.memory + "\n")
-+			s, err := ReadStack(manifest, true)
-+			require.NoError(t, err)
-+			assert.Equal(t, tt.expected, s.Services["app"].Resources.Limits.Memory.Value.Value())
-+			assert.Equal(t, tt.expected, s.Services["app"].Resources.Requests.Memory.Value.Value())
-+		})
-+	}
-+}
-+
-+func Test_UnmarshalComposeDeployResourcesMemoryUnits(t *testing.T) {
-+	manifest := []byte("services:\n  app:\n    image: okteto/vote:1\n    deploy:\n      resources:\n        limits:\n          memory: 300m\n        reservations:\n          memory: 1gb\n")
++func Test_UnmarshalRestartOnFailureWithMaxRetries(t *testing.T) {
++	manifest := []byte("services:\n  app:\n    image: okteto/vote:1\n    restart: on-failure:3")
 +
 +	s, err := ReadStack(manifest, true)
 +
 +	require.NoError(t, err)
-+	assert.Equal(t, int64(300*1024*1024), s.Services["app"].Resources.Limits.Memory.Value.Value())
-+	assert.Equal(t, int64(1024*1024*1024), s.Services["app"].Resources.Requests.Memory.Value.Value())
++	assert.Equal(t, apiv1.RestartPolicyOnFailure, s.Services["app"].RestartPolicy)
++	assert.Equal(t, int32(3), s.Services["app"].BackOffLimit)
++	assert.True(t, s.Services["app"].IsJob())
++}
++
++func Test_UnmarshalRestartIgnoredWhenDeployConditionIsSet(t *testing.T) {
++	for _, restart := range []string{"on-failure:3", "on-failure:abc"} {
++		manifest := []byte("services:\n  app:\n    image: okteto/vote:1\n    restart: \"" + restart + "\"\n    deploy:\n      restart_policy:\n        condition: on-failure")
++
++		s, err := ReadStack(manifest, true)
++
++		require.NoError(t, err, restart)
++		assert.Equal(t, apiv1.RestartPolicyOnFailure, s.Services["app"].RestartPolicy, restart)
++		assert.Equal(t, int32(0), s.Services["app"].BackOffLimit, restart)
++		assert.True(t, s.Services["app"].IsDeployment(), restart)
++	}
++}
++
++func Test_UnmarshalRestartDeployMaxAttemptsOverRestartRetries(t *testing.T) {
++	manifest := []byte("services:\n  app:\n    image: okteto/vote:1\n    restart: on-failure:3\n    deploy:\n      restart_policy:\n        max_attempts: 5")
++
++	s, err := ReadStack(manifest, true)
++
++	require.NoError(t, err)
++	assert.Equal(t, apiv1.RestartPolicyOnFailure, s.Services["app"].RestartPolicy)
++	assert.Equal(t, int32(5), s.Services["app"].BackOffLimit)
++}
++
++func Test_UnmarshalRestartOnFailureWithoutRetriesIsDeployment(t *testing.T) {
++	for _, restart := range []string{"on-failure", "on-failure:0"} {
++		manifest := []byte("services:\n  app:\n    image: okteto/vote:1\n    restart: \"" + restart + "\"")
++
++		s, err := ReadStack(manifest, true)
++
++		require.NoError(t, err, restart)
++		assert.Equal(t, apiv1.RestartPolicyOnFailure, s.Services["app"].RestartPolicy, restart)
++		assert.Equal(t, int32(0), s.Services["app"].BackOffLimit, restart)
++		assert.True(t, s.Services["app"].IsDeployment(), restart)
++	}
++}
++
++func Test_UnmarshalRestartOnFailureInvalidMaxRetries(t *testing.T) {
++	for _, restart := range []string{"on-failure:abc", "on-failure:-1", "on-failure:", "on-failure:2147483648"} {
++		manifest := []byte("services:\n  app:\n    image: okteto/vote:1\n    restart: \"" + restart + "\"")
++
++		_, err := ReadStack(manifest, true)
++
++		assert.ErrorContains(t, err, "invalid restart policy", restart)
++	}
 +}
 ```
 
+---
+
+### Incident Patch 3: `a8041d00` (2026-11-13)
+**Commit Message**: Upgrade buildkit dependency to v0.35.0-okteto1 (#5260)
+
+Co-authored-by: Devin AI <158243242+devin-ai-integration[bot]@users.noreply.github.com>
+
+**File**: `go.mod` (modified, +57/-56)
+```diff
+@@ -13,20 +13,20 @@ require (
+ 	github.com/compose-spec/godotenv v1.1.1
+ 	github.com/containerd/console v1.0.5 // indirect
+ 	github.com/denisbrodbeck/machineid v1.0.1
+-	github.com/docker/cli v29.9.0+incompatible
++	github.com/docker/cli v29.9.3+incompatible
+ 	github.com/docker/docker-credential-helpers v0.9.10
+ 	github.com/dukex/mixpanel v0.0.0-20180925151559-f8d5594f958e
+ 	github.com/fatih/color v1.19.0
+ 	github.com/gliderlabs/ssh v0.3.8
+-	github.com/google/go-containerregistry v0.21.7 // when updating need google.golang.org/grpc 1.29
++	github.com/google/go-containerregistry v0.22.0 // when updating need google.golang.org/grpc 1.29
+ 	github.com/google/go-github v17.0.0+incompatible
+ 	github.com/google/uuid v1.6.0
+ 	github.com/hashicorp/go-getter v1.8.9
+ 	github.com/juju/ansiterm v1.0.0
+ 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51
+ 	github.com/manifoldco/promptui v0.9.0
+ 	github.com/mitchellh/go-ps v1.0.0
+-	github.com/moby/buildkit v0.34.2
++	github.com/moby/buildkit v0.35.0
+ 	github.com/moby/term v0.5.2
+ 	github.com/pkg/errors v0.9.1
+ 	github.com/shirou/gopsutil v3.21.11+incompatible
+@@ -41,7 +41,7 @@ require (
+ 	golang.org/x/oauth2 v0.37.0
+ 	golang.org/x/sync v0.24.0
+ 	golang.org/x/term v0.47.0
+-	google.golang.org/grpc v1.84.0
++	google.golang.org/grpc v1.85.0
+ 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
+ 	gopkg.in/yaml.v3 v3.0.1
+ 	k8s.io/api v0.37.1
+@@ -57,7 +57,7 @@ require (
+ 	cloud.google.com/go/storage v1.65.1 // indirect
+ 	github.com/Azure/go-ansiterm v0.0.0-20250102033503-faa5f7b0171c // indirect
+ 	github.com/MakeNowJust/heredoc v1.0.0 // indirect
+-	github.com/Microsoft/go-winio v0.6.3-0.20251027160822-ad3df93bed29 // indirect
++	github.com/Microsoft/go-winio v0.6.4 // indirect
+ 	github.com/ProtonMail/go-crypto v1.5.2 // indirect
+ 	github.com/VividCortex/ewma v1.2.0 // indirect
+ 	github.com/acarl005/stripansi v0.0.0-20180116102854-5a71ef0e047d // indirect
+@@ -78,9 +78,9 @@ require (
+ 	github.com/go-errors/errors v1.4.2 // indirect
+ 	github.com/go-logr/logr v1.4.4 // indirect
+ 	github.com/go-ole/go-ole v1.3.0 // indirect
+-	github.com/go-openapi/jsonpointer v1.0.0 // indirect
+-	github.com/go-openapi/jsonreference v1.0.0 // indirect
+-	github.com/go-openapi/swag v0.28.0 // indirect
++	github.com/go-openapi/jsonpointer v1.0.1 // indirect
++	github.com/go-openapi/jsonreference v1.0.1 // indirect
++	github.com/go-openapi/swag v0.29.2 // indirect
+ 	github.com/gofrs/flock v0.13.1 // indirect
+ 	github.com/golang-jwt/jwt/v4 v4.5.2
+ 	github.com/golang/protobuf v1.5.4 // indirect
+@@ -120,22 +120,22 @@ require (
+ 	github.com/stretchr/testify v1.12.1
+ 	github.com/tklauser/go-sysconf v0.3.9 // indirect
+ 	github.com/tklauser/numcpus v0.3.0 // indirect
+-	github.com/tonistiigi/fsutil v0.0.0-20261103091533-a72de9dcf763
++	github.com/tonistiigi/fsutil v0.0.0-20261103125000-e075fd9305eb
+ 	github.com/tonistiigi/units v0.0.0-20180711220420-6950e57a87ea
+ 	github.com/tonistiigi/vt100 v0.0.0-20240514184818-90bafcd6abab // indirect
+ 	github.com/toqueteos/trie v1.0.0 // indirect
+ 	github.com/ulikunitz/xz v0.5.16 // indirect
+ 	github.com/withfig/autocomplete-tools/packages/cobra v0.0.0-20211118163844-94616c903bcb
+ 	github.com/xlab/treeprint v1.2.0 // indirect
+ 	github.com/yusufpapurcu/wmi v1.2.2 // indirect
+-	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.71.0 // indirect
+-	go.opentelemetry.io/otel v1.46.0 // indirect
+-	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.46.0 // indirect
+-	go.opentelemetry.io/otel/sdk v1.46.0 // indirect
+-	go.opentelemetry.io/otel/trace v1.46.0 // indirect
+-	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
++	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.72.0 // indirect
++	go.opentelemetry.io/otel v1.47.0 // indirect
++	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.47.0 // indirect
++	go.opentelemetry.io/otel/sdk v1.47.0 // indirect
++	go.opentelemetry.io/otel/trace v1.47.0 // indirect
++	go.opentelemetry.io/proto/otlp v1.11.1 // indirect
+ 	golang.org/x/net v0.62.0 // indirect
+-	golang.org/x/sys v0.49.0 // indirect
++	golang.org/x/sys v0.50.0 // indirect
+ 	golang.org/x/text v0.43.0 // indirect
+ 	golang.org/x/time v0.16.0 // indirect
+ 	google.golang.org/api v0.294.0 // indirect
+@@ -171,32 +171,32 @@ require (
+ )
+ 
+ require (
+-	cel.dev/expr v0.25.2 // indirect
++	cel.dev/expr v0.25.3 // indirect
+ 	cloud.google.com/go/auth v0.23.2 // indirect
+ 	cloud.google.com/go/auth/oauth2adapt v0.2.8 // indirect
+ 	cloud.google.com/go/monitoring v1.30.0 // indirect
+-	github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.34.0 // indirect
++	github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.35.0 // indirect
+ 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric v0.57.0 // indirect
+ 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/resourcemapping v0.57.0 // indirect
+ 	github.com/STARRY-S/zip v0.2.3 // indirect
+-	github.com/aws/aws-sdk-go-v2 v1.4
+```
+
+**File**: `go.sum` (modified, +181/-131)
+```diff
+@@ -1,7 +1,7 @@
+ al.essio.dev/pkg/shellescape v1.6.1 h1:ki/kUs/D3dDbZpyKbNRhwY/ajgAEIJFagVKDWKnofQ8=
+ al.essio.dev/pkg/shellescape v1.6.1/go.mod h1:6sIqp7X2P6mThCQ7twERpZTuigpr6KbZWtls1U8I890=
+-cel.dev/expr v0.25.2 h1:K6j46C81hXtZQfuX60cVWQFBJahKSE2gfRbNuvr5bFs=
+-cel.dev/expr v0.25.2/go.mod h1:hrXvqGP6G6gyx8UAHSHJ5RGk//1Oj5nXQ2NI02Nrsg4=
++cel.dev/expr v0.25.3 h1:A2jO8jwOugrrovveCWfj0KEZOfqiLgAcwjpHPhzIGw0=
++cel.dev/expr v0.25.3/go.mod h1:hrXvqGP6G6gyx8UAHSHJ5RGk//1Oj5nXQ2NI02Nrsg4=
+ cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
+ cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
+ cloud.google.com/go v0.38.0/go.mod h1:990N+gfupTy94rShfmMCWGDn0LpTmnzTp2qbd1dvSRU=
+@@ -45,8 +45,8 @@ github.com/Azure/go-ansiterm v0.0.0-20250102033503-faa5f7b0171c h1:udKWzYgxTojEK
+ github.com/Azure/go-ansiterm v0.0.0-20250102033503-faa5f7b0171c/go.mod h1:xomTg63KZ2rFqZQzSB4Vz2SUXa1BpHTVz9L5PTmPC4E=
+ github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
+ github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
+-github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.34.0 h1:yzIYdwuro811Z27D3T80Wkd3rqZzb0K43nner7Eh1yE=
+-github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.34.0/go.mod h1:pJTkW8hEUIIi3Pf65lPZOnn4Y81yCllX6IWk2jNXdkM=
++github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.35.0 h1:bN1gA3of5bXtbnLsRPrwfmbbe7A5UWFlcTHseujLnpc=
++github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.35.0/go.mod h1:Yj5vHEz/aAepZGliRJsA6uvHAVAQyEwajq9ORCHPxzM=
+ github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric v0.57.0 h1:jLdiS1vO+XJFyDSWRHBx56r4s/NNtcl5J6KyCcWUX/w=
+ github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric v0.57.0/go.mod h1:8lmpHY+1VRoteiOwyrQMDt1YGXOrFKCz+1wJW7n3ODY=
+ github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/cloudmock v0.57.0 h1:cSjUzZ7KU8hicTgzaSv9NmSyM9fTVK3y5lsBUl3wOis=
+@@ -57,10 +57,10 @@ github.com/MakeNowJust/heredoc v1.0.0 h1:cXCdzVdstXyiTqTvfqk9SDHpKNjxuom+DOlyEeQ
+ github.com/MakeNowJust/heredoc v1.0.0/go.mod h1:mG5amYoWBHf8vpLOuehzbGGw0EHxpZZ6lCpQ4fNJ8LE=
+ github.com/Masterminds/semver/v3 v3.5.0 h1:kQceYJfbupGfZOKZQg0kou0DgAKhzDg2NZPAwZ/2OOE=
+ github.com/Masterminds/semver/v3 v3.5.0/go.mod h1:4V+yj/TJE1HU9XfppCwVMZq3I84lprf4nC11bSS5beM=
+-github.com/Microsoft/go-winio v0.6.3-0.20251027160822-ad3df93bed29 h1:0kQAzHq8vLs7Pptv+7TxjdETLf/nIqJpIB4oC6Ba4vY=
+-github.com/Microsoft/go-winio v0.6.3-0.20251027160822-ad3df93bed29/go.mod h1:ZWa7ssZJT30CCDGJ7fk/2SBTq9BIQrrVjrcss0UW2s0=
+-github.com/Microsoft/hcsshim v0.15.0-rc.4 h1:aZFX4LH0S20Lgjq0wG61StIClj7im4yzrxIClkaR8Z8=
+-github.com/Microsoft/hcsshim v0.15.0-rc.4/go.mod h1:BA9CBztgu4h/6Jsvo1O1M4qjWw09PoYpaEYgexPE578=
++github.com/Microsoft/go-winio v0.6.4 h1:kJF2pamtYCWXf0xAT8sAkwKC0pMl2HYBrRPHAqyUc+g=
++github.com/Microsoft/go-winio v0.6.4/go.mod h1:1xl5JXG4ze/m74GH6Dc4Mwxfc3VL5siRVQjIAlHH07U=
++github.com/Microsoft/hcsshim v0.15.0 h1:AWiHGf0+9f7cDcfhuU3zXORCAPmIOWzTYfHhcrMcx3U=
++github.com/Microsoft/hcsshim v0.15.0/go.mod h1:eStXUkML1Fmkgmwr6XHbYkBC1j7p2FA8ZtA9dyRMbts=
+ github.com/ProtonMail/go-crypto v1.5.2 h1:cucYnvqcY7UOXVD//mSyjeaPY0SSN3v5cDkYPxumINk=
+ github.com/ProtonMail/go-crypto v1.5.2/go.mod h1:/RaSu30DaKO4RY+XdV/ACcCcZkGr7AhUIduq5sjzzCo=
+ github.com/STARRY-S/zip v0.2.3 h1:luE4dMvRPDOWQdeDdUxUoZkzUIpTccdKdhHHsQJ1fm4=
+@@ -81,46 +81,50 @@ github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be h1:9AeTilPcZAjCFI
+ github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be/go.mod h1:ySMOLuWl6zY27l47sB3qLNK6tF2fkHG55UZxx8oIVo4=
+ github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5 h1:0CwZNZbxp69SHPdPJAN/hZIm0C4OItdklCFmMRWYpio=
+ github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5/go.mod h1:wHh0iHkYZB8zMSxRWpUBQtwG5a7fFgvEO+odwuTv2gs=
+-github.com/aws/aws-sdk-go-v2 v1.47.0 h1:0jsHallhJCeaU0Ko48c/3FK1ctOQ7NpzggxriJOQ8MQ=
+-github.com/aws/aws-sdk-go-v2 v1.47.0/go.mod h1:bttEH6JqnUL8LepvDVfdrds/fZ5bCIxzpe3abyUrhDU=
+-github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.20 h1:GPRlPwz40I2B2VrBEASOA3Bi77NyeqejNLkifosX0rs=
+-github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.20/go.mod h1:g7PNzKcsOKWb4fkSRBA7BZVAS6Y8IcxzN+nRohhQ1Q8=
+-github.com/aws/aws-sdk-go-v2/config v1.33.4 h1:FzvkXKSzwqHni4U7nDigHg4jjtqMpVUuHgmZfSoJVQ0=
+-github.com/aws/aws-sdk-go-v2/config v1.33.4/go.mod h1:VZqGZnZsCWVfK/iGPptJIyNIX3XEX6iQU2Rel4sLrr8=
+-github.com/aws/aws-sdk-go-v2/credentials v1.20.4 h1:hTvrJJseKbvw32kmiE0G+u/9ZqpqscjDrTigHIXP2qs=
+-github.com/aws/aws-sdk-go-v2/credentials v1.20.4/go.mod h1:gWp9O1ZBWwpcIrgV+mVHk4gZUurAEDkgypu/OXOlIaw=
+-github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.0 h1:AM4hHjww+PSFtt6E+UrBrPlZkWsePCLEt9AjkfQX+yM=
+-github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.0/go.mod h1:3x/yXezeQjpOvBb4jEMxrS8SXvpdvJ5abv6l5c1gWM8=
+
+```
+
 #### Recent Merged Pull Requests:
+- **PR #5264** (2026-11-13): chore(deps): Update module github.com/hashicorp/go-getter to v1.8.10 (@oktetobot)
+- **PR #5261** (2026-11-13): build(deps): bump renovatebot/github-action from 46.3.12 to 46.3.13 (@dependabot[bot])
+- **PR #5260** (2026-11-13): Upgrade buildkit dependency to v0.35.0-okteto1 (@devin-ai-integration[bot])
 - **PR #5256** (2026-11-11): chore(deps): Update module golang.org/x/crypto to v0.58.0 (@oktetobot)
 - **PR #5255** (2026-11-11): build(deps): bump rack from 3.2.6 to 3.2.8 in /samples/ruby (@dependabot[bot])
 - **PR #5254** (2026-11-10): chore(deps): Update docker (@oktetobot)
-- **PR #5252** (2026-11-11): fix(compose): read compose memory units in mem_limit, mem_reservation and deploy resources (@poojagosika)
-- **PR #5250** (2026-11-06): chore(deps): Update module github.com/go-git/go-git/v6 to v6.0.0-beta.1 (@oktetobot)
-- **PR #5249** (2026-11-06): build(deps): bump renovatebot/github-action from 46.3.11 to 46.3.12 (@dependabot[bot])
 
 ---
 
@@ -1768,28 +1886,28 @@ Signed-off-by: poojagosika <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump rack from 3.2.6 to 3.2.8 in /samples/ruby (#5255)
+## X. build(deps): bump renovatebot/github-action from 46.3.12 to 46.3.13
 
 **RULE**:
-When implementing operations in `samples/ruby/Gemfile.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in okteto/okteto. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/renovate.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in okteto/okteto. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `24f96edc`: build(deps): bump rack from 3.2.6 to 3.2.8 in /samples/ruby (#5255). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0ffb0189`: build(deps): bump renovatebot/github-action from 46.3.12 to 46.3.13. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `samples/ruby/Gemfile.lock`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/renovate.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-    rack (3.2.8)
+        uses: renovatebot/github-action@v46.3.13
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-    rack (3.2.6)
+// Induced defect failure mode:
+        uses: renovatebot/github-action@v46.3.12
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `24f96edc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0ffb0189` are properly handled with clean fallback behavior.

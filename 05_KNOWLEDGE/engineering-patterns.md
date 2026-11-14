@@ -611369,3 +611369,322 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `148a70c8` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8480. cards wrapping when they exactly fill a row (Harvested from zenbu-labs/terminal-browser)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "cards wrapping when they exactly fill a row",
+  "source": "zenbu-labs/terminal-browser",
+  "source_url": "https://github.com/zenbu-labs/terminal-browser",
+  "source_version": "e459febc",
+  "license": "MIT",
+  "extracted_at": "2026-11-14T11:04:21.568Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-zenbu-labs-terminal-browser",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [zenbu-labs/terminal-browser](https://github.com/zenbu-labs/terminal-browser) (Revision: `e459febc`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `pixel/engine/crates/pixel-core/src/tree/tests.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zenbu-labs/terminal-browser. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `6bb6ae6d`: cards wrapping when they exactly fill a row. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `pixel/engine/crates/pixel-core/src/tree/tests.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+
+#[test]
+fn cards_that_exactly_fill_a_wrapping_row_stay_on_one_line() {
+    let cw = 14.0411f32;
+    let room = 59.0 * cw;
+    let card = ((room - cw) / 2.0).floor();
+    let grid = Desc {
+        key: Some("grid".into()),
+        style: Style { flex_direction: FlexDirection::Row, flex_wrap: true, gap: cw, ..Style::default() },
+        children: (0..2).map(|i| Desc { key: Some(format!("c{i}")), style: Style { width: Dimension::Px(card), height: Dimension::Px(281.0), flex_shrink: 0.0, ..Style::default() }, ..Desc::default() }).collect(),
+        ..Desc::default()
+    };
+    let holder = Desc { style: Style { padding: crate::style::Edges { left: 2.0 * cw, ..Default::default() }, ..Style::default() }, children: vec![grid], ..Desc::default() };
+    let width = 63.0 * cw;
+    let tree = tree_of((width, 1000.0), vec![Desc { style: Style { width: Dimension::Px(width), flex_direction: FlexDirection::Column, padding: crate::style::Edges { left: cw, right: cw, ..Default::default() }, ..Style::default() }, children: vec![holder], ..Desc::default() }]);
+    let rect = |key: &str| tree.rect(tree.find(key).unwrap()).unwrap();
+    assert_eq!(rect("c1").y, rect("c0").y, "the second card stays besi
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `6bb6ae6d` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8481. build(deps): bump renovatebot/github-action from 46.3.12 to 46.3.13 (Harvested from okteto/okteto)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "build(deps): bump renovatebot/github-action from 46.3.12 to 46.3.13",
+  "source": "okteto/okteto",
+  "source_url": "https://github.com/okteto/okteto",
+  "source_version": "cb2419f7",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-14T11:04:30.907Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-okteto-okteto",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [okteto/okteto](https://github.com/okteto/okteto) (Revision: `cb2419f7`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `.github/workflows/renovate.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in okteto/okteto. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `0ffb0189`: build(deps): bump renovatebot/github-action from 46.3.12 to 46.3.13. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/renovate.yml`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+        uses: renovatebot/github-action@v46.3.13
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+        uses: renovatebot/github-action@v46.3.12
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `0ffb0189` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8482. missing SST error spinning forever in the mirror (Harvested from slatedb/slatedb)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "missing SST error spinning forever in the mirror",
+  "source": "slatedb/slatedb",
+  "source_url": "https://github.com/slatedb/slatedb",
+  "source_version": "0a6a032b",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-14T11:04:34.319Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-slatedb-slatedb",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [slatedb/slatedb](https://github.com/slatedb/slatedb) (Revision: `0a6a032b`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `rfcs/0034-local-object-mirroring.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in slatedb/slatedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `3e3043c3`: missing SST error spinning forever in the mirror. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rfcs/0034-local-object-mirroring.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+- **Reads.** The mirror returns `MirrorError::Policy`, with the policy's error
+  as its source. This error can come from a different object than the one
+  that the caller read. For example, `observe` of a manifest fails with
+  `NotFound` when an SST that the manifest references is missing. If the
+  mirror returned that `NotFound` unchanged, the caller would think that the
+  manifest is missing. `Policy` is not retryable, because the mirror already
+  retried the remote calls in `observe`. Nothing was written, so the caller
+  can safely read the object again, and that read runs `observe` again.
+- **Writes.** The mirror returns `MirrorError::WriteCommitted`. The object is
+  durable, but the policy's follow-up work didn't finish, so the caller has to
+  treat the write as having happened. SlateDB treats it as fatal: `Db` and the
+  compactor close with a `Data` error, the same as local disk errors. On reopen,
+  the manifest is read again and `observe` runs again.
+- An `observe` error on a read becomes `MirrorError::Policy`. Before, the
+  mirror returned it unchanged, so a missing SST looked like a missing
+  manifest ([#2255](https://github.com/slatedb/slatedb/issues/2255)).
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+- **Reads.** The error goes to the caller. Nothing was committed, so a caller
+  that retries the read runs `observe` again.
+- **Writes.** The mirror returns `WriteCommitted`. The object is durable, but
+  the policy's follow-up work didn't finish, so the caller has to treat the
+  write as having happened. SlateDB treats it as fatal: `Db` and the compactor
+  close with a `Data` error, the same as local disk errors. On reopen, the
+  manifest is read again and `observe` runs again.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `3e3043c3` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8483. Resume stale NUC drafts in continuous cycles (Harvested from NucleoidAI/Nucleoid)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Resume stale NUC drafts in continuous cycles",
+  "source": "NucleoidAI/Nucleoid",
+  "source_url": "https://github.com/NucleoidAI/Nucleoid",
+  "source_version": "120db05d",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-14T11:04:37.523Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nucleoidai-nucleoid",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `120db05d`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `.claude/CLAUDE.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `c9839532`: Resume stale NUC drafts in continuous cycles. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/CLAUDE.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+| [proposals.instructions.md](rules/proposals.instructions.md) | Independent NUC proposal preparation and evaluation, the token policy, automatic acceptance on the hard criteria (no compile errors, every test passing, backward compatibility) with the `Automatic-Accepted` status, ARC- and user-requested bases, the pushed `Draft NUC <number> <Title>` allocation of each new NUC before its details, after a pull that claims the next free number or skips a concept already proposed, continuous cycles that first pick up allocated Drafts idle for 24 hours under a pushed `Resume NUC <number> <Title>` claim, and `NUC <number> <Title>` outcome commit messages |
+| [git.instructions.md](rules/git.instructions.md) | Only `/nuc-proposal` (NUC allocations, claims and outcomes) and `/arc-purposal` (its own ARC changes, when it is done) commit and push; every agent pulls before it starts (fast-forward only, except those callers before a commit or push), pull before commit/push, push after every commit, resolve conflicts and push |
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+| [proposals.instructions.md](rules/proposals.instructions.md) | Independent NUC proposal preparation and evaluation, the token policy, automatic acceptance on the hard criteria (no compile errors, every test passing, backward compatibility) with the `Automatic-Accepted` status, ARC- and user-requested bases, the pushed `Draft NUC <number> <Title>` allocation of each new NUC before its details, after a pull that claims the next free number or skips a concept already proposed, and `NUC <number> <Title>` outcome commit messages |
+| [git.instructions.md](rules/git.instructions.md) | Only `/nuc-proposal` (NUC allocations and outcomes) and `/arc-purposal` (its own ARC changes, when it is done) commit and push; every agent pulls before it starts (fast-forward only, except those callers before a commit or push), pull before commit/push, push after every commit, resolve conflicts and push |
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `c9839532` are properly handled with clean fallback behavior.

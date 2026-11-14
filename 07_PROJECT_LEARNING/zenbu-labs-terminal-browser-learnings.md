@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md`  
 > **Source**: github ([https://github.com/zenbu-labs/terminal-browser](https://github.com/zenbu-labs/terminal-browser))  
-> **Source Version**: `d09e97c4`  
+> **Source Version**: `e459febc`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T23:54:40.203Z  
+> **Timestamp**: 2026-11-14T11:04:21.033Z  
 > **Learning ID**: `learn-github-zenbu-labs-terminal-browser`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zenbu-labs/terminal-browser](https://github.com/zenbu-labs/terminal-browser))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T23:54:39.978Z  
+> **Harvest Timestamp**: 2026-11-14T11:04:21.024Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A real browser inside your terminal
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4615 stars
+- **Stars / Engagement**: 4638 stars
 
 ---
 
@@ -1550,797 +1550,71 @@ impl Bridge {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6a8ffb26` (2026-11-11)
-**Commit Message**: Cell-grid renderer  (#267)
+### Incident Patch 1: `6bb6ae6d` (2026-11-13)
+**Commit Message**: fix cards wrapping when they exactly fill a row (#281)
 
-* Cell-grid renderer for terminals without kitty graphics
+* keep items that exactly fill a wrapping flex line on it
 
-The engine can now hand a backend a per-view display list (Scene) instead of
-pixels: paint.rs draws through a Painter trait that Canvas implements with
-the same calls as before (kitty frames are byte-identical) and that a scene
-recorder implements for cell mode. In grid mode text is measured in cells,
-style lengths snap to whole cells, scrolling moves whole rows and the caret
-is reported rather than painted.
+* break flex lines with the same sum the content size uses
 
-New crate pixel-cells: CellGrid, the scene-to-grid painter, the diffing ANSI
-encoder, color tiers and a TestBackend. pixel-terminal uses it when
-PIXEL_RENDERER=cells, which the launcher sets when the graphics probe fails.
-Path and Image take a fallback text for grids; root.info reports grid.
-
-* Device: text metrics, layout lattice and scrolling come from the backend
-
-HostInfo carries a Device instead of a grid flag. Its TextMetrics measure
-every advance and line (FontMetrics, over the fonts' glyphs, is the default),
-placed boxes round their edges to its lattice from absolute positions, a box
-or border that paints keeps at least one lattice unit, and the backend picks
-the scroll profile (a ge
-
-**File**: `pixel/AGENT-DOCS.md` (modified, +39/-14)
+**File**: `pixel/engine/crates/pixel-core/src/tree/tests.rs` (modified, +19/-0)
 ```diff
-@@ -29,11 +29,13 @@ Paths are relative to this directory (`pixel/`). Source: `packages/pixel/src/`.
- | `packages/pixel/src/preload/index.ts` | `@zenbu-labs/pixel/preload` types for `window.pixel` |
- | `packages/pixel/src/electron/index.ts` | `@zenbu-labs/pixel/electron`, re-exports `electron` |
- | `packages/pixel/src/bin.ts` | the `pixel` CLI |
--| `engine/crates/pixel-core/` | Rust engine: layout, painting, compositing, input model; `src/backend.rs` is the backend trait |
--| `engine/crates/pixel-terminal/` | the terminal backend: tty, kitty/iTerm2/rex/tmux/herdr frames, cell and color probing, macOS native scroll |
-+| `engine/crates/pixel-core/` | Rust engine: tree, layout, text, scrolling, input; records each view as a `Scene` (`src/scene.rs`); `src/backend.rs` is the backend trait, `src/device.rs` the device it draws for |
-+| `engine/crates/pixel-raster/` | turns scenes into pixels: canvas, glyph and image rasterizing, compositing views, damage, opaque areas, scroll-layer canvases |
-+| `engine/crates/pixel-cells/` | turns scenes into a cell grid and minimal ANSI for terminals without graphics |
-+| `engine/crates/pixel-terminal/` | the terminal backend's shared layer: tty, input parsing, probing, colors, hosted and embedded panes, tmux wrapper, session env, window size; it holds one renderer (`src/presenter.rs`) |
-+| `engine/crates/pixel-kitty/` | the pixel kitty renderer: kitty graphics frames for kitty, Ghostty, iTerm2, rex, tmux and herdr, the frame transports (shared memory, files, inline), macOS native scroll |
- | `engine/crates/pixel-bridge/` | the JSON op/event protocol between JS and the engine, shared by every host |
- | `engine/crates/pixel-node/` | the node addon; `register_backend` adds backends, `PixelEngine.withBackend` makes one |
--| `engine/crates/pixel-node/` | Node binding for the engine |
- 
- ## Examples
- 
-@@ -102,7 +104,6 @@ function createRoot(options?: RootOptions): Root
- | `onKey?(event: EngineKeyEvent): boolean \| void` | called for every key; return `true` to stop it reaching the focused WebView or Input |
- | `onQuit?(view: WebViewHandle \| null)` | called when a page navigates to `pixel://quit` or calls `pixel.quit()`; default stops the root |
- | `onExit?(code: number)` | called after the root stops; default `app.exit(code)` |
--| `onUnsupportedTerminal?(terminal: Terminal \| null): string` | text written to the terminal when `pixel` found no graphics support; the process then exits 1 |
- | `onRightClick?({ x, y })` | right click outside a WebView |
- | `onPaste?(text)` | text paste |
- | `onPasteImage?(image: PastedImage)` | image paste |
-@@ -126,7 +127,7 @@ function createRoot(options?: RootOptions): Root
- | `loadURL(url, options?: LoadOptions): WebViewHandle` | renders a full size WebView, or navigates the mounted one |
- | `loadFile(path, options?: LoadOptions): WebViewHandle` | same for a local file |
- | `stop(code?)` | unmounts, restores the terminal, calls `onExit` |
--| `info: EngineInfo` | `{ width, height, cellWidth, cellHeight, basePx, kittyKeyboard, hosted, colors }` |
-+| `info: EngineInfo` | `{ width, height, cellWidth, cellHeight, basePx, device, renderer?, kittyKeyboard, hosted, colors }` (`renderer`: `"kitty"` or `"cells"` in a terminal); `device` is `{ name, lattice, colors, pointer }` (`name` `"pixels"` or `"cells"`, `lattice` the step layout edges land on: `[1, 1]` for pixels, the cell size for cells) |
- | `displayScale: number` | device pixel ratio |
- | `hosted: boolean` | true when running as a guest tab or embedded |
- | `setTitle(text)` | sets the terminal title |
-@@ -206,8 +207,8 @@ Props: `packages/pixel/src/react/reconciler-config.ts`. Definitions: `packages/p
- | `Box` | `BoxProps` `:78`. `style`, `id`, `hidden`, `onClick(ClickEvent)`, `onClickOutside`, `modal` (while shown only this subtree takes clicks, hover, wheel, selection and keys; a click outside lands on it), `onPointer(PointerEvent)`, `onMouseEnter`, `onMouseLeave`, `onMouseMove({ x, y })`, `onDrag(DragEvent)`, `onScroll(ScrollEvent)`, `onStick(stuck)` (sticky boxes: called when one starts or stops being held at the top), `onWheel(WheelEvent)`, `onSelection(ContainerSelection)`, `contentHeight`, `surface: Surface` |
- | `Text` | `TextProps` `:128`. children must be strings or numbers. `spans: { start, end, color, background?, bold?, italic?, underline?, strikethrough? }[]`, `onClick`, `onMouseEnter`, `onMouseLeave` |
- | `Input` | `InputProps` `:177`. multi-line editor; with `style.wrap: false` it is single-line and its text is vertically centered when the box is taller than one line. `value`, `defaultValue`, `autoFocus` (only inputs take focus on click; clicking or selecting other content leaves focus where it is, so call `blur()` from `onClickOutside` to drop it), `onChange(text, ChangeInfo)`, `onSubmit(text, marks)`, `onCaret(CaretInfo)`, `onPasteImage`, `caretColor`, `caretShape: "bar" | "block" | "underscore"` (block and underscore are one character wide; block redraws the character under it in black 
-```
-
-**File**: `pixel/engine/Cargo.lock` (modified, +38/-2)
-```diff
-@@ -786,6 +786,15 @@ dependencies = [
-  "tree-sitter-typescript",
- ]
- 
-+[[package]]
-+name = "pixel-cells"
-+version = "0.1.0"
-+dependencies = [
-+ "pixel-core",
-+ "unicode-segmentation",
-+ "unicode-width",
-+]
-+
- [[package]]
- name = "pixel-core"
- version = "0.1.0"
-@@ -804,6 +813,20 @@ dependencies = [
-  "unicode-width",
- ]
- 
-+[[package]]
-+name = "pixel-kitty"
-+version = "0.1.0"
-+dependencies = [
-+ "base64",
-+ "libc",
-+ "miniz_oxide",
-+ "pixel-core",
-+ "pixel-raster",
-+ "rayon",
-+ "rustix",
-+ "serde_json",
-+]
-+
- [[package]]
- name = "pixel-node"
- version = "0.1.0"
-@@ -817,6 +840,7 @@ dependencies = [
-  "openh264",
-  "pixel-bridge",
-  "pixel-core",
-+ "pixel-raster",
-  "pixel-terminal",
-  "png",
-  "rustix",
-@@ -825,16 +849,28 @@ dependencies = [
-  "tiny-skia",
- ]
- 
-+[[package]]
-+name = "pixel-raster"
-+version = "0.1.0"
-+dependencies = [
-+ "fontdue",
-+ "image",
-+ "pixel-core",
-+ "tiny-skia",
-+ "ttf-parser",
-+]
-+
- [[package]]
- name = "pixel-terminal"
- version = "0.1.0"
- dependencies = [
-  "arboard",
-  "base64",
-  "libc",
-- "miniz_oxide",
-+ "pixel-cells",
-  "pixel-core",
-- "rayon",
-+ "pixel-kitty",
-+ "pixel-raster",
-  "rustix",
-  "serde_json",
- ]
-```
-
-**File**: `pixel/engine/Cargo.toml` (modified, +4/-1)
-```diff
-@@ -1,6 +1,6 @@
- [workspace]
- resolver = "3"
--members = ["crates/pixel-core", "crates/pixel-terminal", "crates/pixel-bridge", "crates/pixel-node"]
-+members = ["crates/pixel-core", "crates/pixel-cells", "crates/pixel-raster", "crates/pixel-kitty", "crates/pixel-terminal", "crates/pixel-bridge", "crates/pixel-node"]
- exclude = ["vendor"]
- 
- [workspace.package]
-@@ -10,6 +10,9 @@ publish = false
- 
- [workspace.dependencies]
- pixel-core = { path = "crates/pixel-core" }
-+pixel-cells = { path = "crates/pixel-cells" }
-+pixel-raster = { path = "crates/pixel-raster" }
-+pixel-kitty = { path = "crates/pixel-kitty" }
- pixel-terminal = { path = "crates/pixel-terminal" }
- pixel-bridge = { path = "crates/pixel-bridge" }
- rustix = { version = "1", features = ["termios", "stdio", "event", "fs", "shm", "mm", "process", "pipe"] }
-```
-
-**File**: `pixel/engine/crates/pixel-bridge/src/lib.rs` (modified, +18/-0)
-```diff
-@@ -48,6 +48,7 @@ pub fn engine_info(engine: &Engine) -> serde_json::Value {
-         "cellWidth": cell_w,
-         "cellHeight": cell_h,
-         "basePx": engine.base_px,
-+        "device": device_json(&engine.device),
-         "colors": colors_json(&engine.colors),
-         "protocol": PROTOCOL_VERSION,
-         "backendApi": pixel_core::backend::API_VERSION,
-@@ -56,6 +57,23 @@ pub fn engine_info(engine: &Engine) -> serde_json::Value {
-     info
- }
- 
-+pub fn device_json(device: &pixel_core::Device) -> serde_json::Value {
-+    json!({
-+        "name": device.name,
-+        "lattice": [device.lattice.0, device.lattice.1],
-+        "colors": match device.colors {
-+            pixel_core::ColorDepth::TrueColor => "truecolor",
-+            pixel_core::ColorDepth::Indexed256 => "256",
-+            pixel_core::ColorDepth::Indexed16 => "16",
-+            pixel_core::ColorDepth::Monochrome => "mono",
-+        },
-+        "pointer": match device.pointer {
-+            pixel_core::Pointer::Precise => "precise",
-+            pixel_core::Pointer::Coarse => "coarse",
-+        },
-+    })
-+}
-+
- pub fn colors_json(colors: &HostColors) -> serde_json::Value {
-     json!({
-         "foreground": colors.foreground,
-```
-
-**File**: `pixel/engine/crates/pixel-bridge/src/ops.rs` (modified, +7/-1)
-```diff
-@@ -314,13 +314,16 @@ struct ShapeDto {
-     stroke: StrokeDto,
-     #[serde(default)]
-     view_box: Option<f32>,
-+    #[serde(default)]
-+    glyph: Option<String>,
- }
- 
- impl ShapeDto {
-     fn into_props(self) -> ShapeProps {
-         ShapeProps {
-             cmds: parse_path_data(&self.d),
-             view_box: self.view_box,
-+            glyph: self.glyph,
-             stroke: ShapeStroke {
-                 width: self.stroke.width,
-                 color: self.stroke.color,
-@@ -363,6 +366,8 @@ struct ImageDto {
-     src: String,
-     #[serde(default)]
-     confirmed_equal_to: Vec<String>,
-+    #[serde(default)]
-+    glyph: Option<String>,
- }
- 
- #[derive(Deserialize, Default)]
-@@ -765,6 +770,7 @@ impl PropsDto {
-             image: self.image.map(|i| ImageProps {
-                 src: i.src,
-                 equal_to: i.confirmed_equal_to,
-+                glyph: i.glyph,
-             }),
-             surface: self.surface,
-             slot: match self.slot.as_deref() {
-@@ -1196,7 +1202,7 @@ mod blur_tests {
- 
-     impl Backend for Quiet {
-         fn start(&mut self) -> io::Result<HostInfo> {
--            Ok(HostInfo { metrics: Metrics { window: (400, 200), cell: (10, 20) }, colors: HostColors::default() })
-+            Ok(HostInfo { metrics: Metrics { window: (400, 200), cell: (10, 20) }, colors: HostColors::default(), device: pixel_core::Device::default() })
-         }
-         fn waker(&mut self) -> io::Result<Waker> {
-             Ok(Waker::new(|| {}))
-```
-
-**File**: `pixel/engine/crates/pixel-cells/Cargo.toml` (added, +16/-0)
-```diff
-@@ -0,0 +1,16 @@
-+[package]
-+name = "pixel-cells"
-+version.workspace = true
-+edition.workspace = true
-+publish.workspace = true
-+
-+[dependencies]
-+pixel-core = { workspace = true }
-+unicode-segmentation = "1"
-+unicode-width = "0.2"
-+
-+[lints]
-+workspace = true
-+
-+[dev-dependencies]
-+unicode-width = "0.2"
-```
-
-**File**: `pixel/engine/crates/pixel-cells/src/color.rs` (added, +237/-0)
-```diff
-@@ -0,0 +1,237 @@
-+use pixel_core::HostColors;
-+
-+use crate::grid::Rgb;
-+
-+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
-+pub enum CellColor {
-+    #[default]
-+    Default,
-+    Indexed(u8),
-+    Rgb(u8, u8, u8),
-+}
-+
-+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+pub enum ColorTier {
-+    TrueColor,
-+    Ansi256,
-+    Ansi16,
-+    Mono,
-+}
-+
-+impl ColorTier {
-+    pub fn detect(var: impl Fn(&str) -> Option<String>) -> Self {
-+        if var("NO_COLOR").is_some_and(|v| !v.is_empty()) {
-+            return ColorTier::Mono;
-+        }
-+        if let Some(forced) = var("PIXEL_COLORS") {
-+            match forced.trim() {
-+                "truecolor" | "24bit" => return ColorTier::TrueColor,
-+                "256" => return ColorTier::Ansi256,
-+                "16" => return ColorTier::Ansi16,
-+                "mono" | "none" => return ColorTier::Mono,
-+                _ => {}
-+            }
-+        }
-+        let colorterm = var("COLORTERM").unwrap_or_default().to_lowercase();
-+        if colorterm == "truecolor" || colorterm == "24bit" {
-+            return ColorTier::TrueColor;
-+        }
-+        let term = var("TERM").unwrap_or_default().to_lowercase();
-+        let program = var("TERM_PROGRAM").unwrap_or_default();
-+        if term.contains("direct") || term.contains("truecolor") || term == "xterm-kitty" || term == "xterm-ghostty" {
-+            return ColorTier::TrueColor;
-+        }
-+        if matches!(program.as_str(), "iTerm.app" | "WezTerm" | "ghostty" | "vscode" | "Hyper" | "WarpTerminal") {
-+            return ColorTier::TrueColor;
-+        }
-+        if term.contains("256") || program == "Apple_Terminal" {
-+            return ColorTier::Ansi256;
-+        }
-+        if term == "dumb" {
-+            return ColorTier::Mono;
-+        }
-+        ColorTier::Ansi16
-+    }
-+
-+    pub fn name(self) -> &'static str {
-+        match self {
-+            ColorTier::TrueColor => "truecolor",
-+            ColorTier::Ansi256 => "256",
-+            ColorTier::Ansi16 => "16",
-+            ColorTier::Mono => "mono",
-+        }
-+    }
-+}
-+
-+const XTERM_16: [Rgb; 16] = [
-+    [0, 0, 0],
-+    [205, 0, 0],
-+    [0, 205, 0],
-+    [205, 205, 0],
-+    [0, 0, 238],
-+    [205, 0, 205],
-+    [0, 205, 205],
-+    [229, 229, 229],
-+    [127, 127, 127],
-+    [255, 0, 0],
-+    [0, 255, 0],
-+    [255, 255, 0],
-+    [92, 92, 255],
-+    [255, 0, 255],
-+    [0, 255, 255],
-+    [255, 255, 255],
-+];
-+
-+const CUBE: [u8; 6] = [0, 95, 135, 175, 215, 255];
-+
-+#[derive(Debug, Clone)]
-+pub struct Palette {
-+    pub tier: ColorTier,
-+    pub foreground: Rgb,
-+    pub background: Rgb,
-+    ansi: [Rgb; 16],
-+    known_defaults: bool,
-+}
-+
-+impl Palette {
-+    pub fn new(tier: ColorTier, host: &HostColors) -> Self {
-+        let rgb = |c: [u8; 4]| [c[0], c[1], c[2]];
-+        let mut ansi = XTERM_16;
-+        for (slot, color) in ansi.iter_mut().zip(host.palette.iter()) {
-+            if let Some(color) = color {
-+                *slot = rgb(*color);
-+            }
-+        }
-+        Self {
-+            tier,
-+            foreground: host.foreground.map_or([229, 229, 229], rgb),
-+            background: host.background.map_or([30, 30, 30], rgb),
-+            ansi,
-+            known_defaults: host.foreground.is_some() && host.background.is_some(),
-+        }
-+    }
-+
-+    pub fn ansi(&self, index: u8) -> Rgb {
-+        self.ansi[index as usize & 15]
-+    }
-+
-+    pub fn fg(&self, rgb: Rgb) -> CellColor {
-+        if self.known_defaults && rgb == self.foreground {
-+            return CellColor::Default;
-+        }
-+        self.quantize(rgb, self.foreground)
-+    }
-+
-+    pub fn bg(&self, rgb: Rgb) -> CellColor {
-+        if self.known_defaults && rgb == self.background || self.tier == ColorTier::Mono {
-+            return CellColor::Default;
-+        }
-+        self.quantize(rgb, self.background)
-+    }
-+
-+    fn quantize(&self, rgb: Rgb, default: Rgb) -> CellColor {
-+        match self.tier {
-+            ColorTier::TrueColor => CellColor::Rgb(rgb[0], rgb[1], rgb[2]),
-+            ColorTier::Ansi256 => CellColor::Indexed(nearest_256(rgb)),
-+            ColorTier::Ansi16 => self.nearest_16(rgb, default),
-+            ColorTier::Mono => CellColor::Default,
-+        }
-+    }
-+
-+    fn nearest_16(&self, rgb: Rgb, default: Rgb) -> CellColor {
-+        let best = (0..16u8).min_by_key(|&i| distance(rgb, self.ansi[i as usize])).unwrap_or(7);
-+        if distance(rgb, default) <= distance(rgb, self.ansi[best as usize]) {
-+            CellColor::Default
-+        } else {
-+            CellColor::Indexed(best)
-+        }
-+    }
-+}
-+
-+pub fn distance(a: Rgb, b: Rgb) -> u32 {
-+    let mean_r = (a[0] as i32 + b[0] as i32) / 2;
-+    let dr = a[0] as i32 - b[0] as i32;
-+    let dg = a[1] as i32 - b[1] as i32;
-+    let db = a[2] as i32 - b[2] as i32;
-+    ((((512 + mean_r) * dr * dr) >> 8) + 4 * dg * dg + (((767 - mean_r) * db * db) >> 8)) as u32
-+}
-+
-+pub fn nearest_256(rgb: Rgb) -> u8 {
-+    let step = |v: u8| -> usize {
-+        if v < 48 {
-+      
-```
-
-**File**: `pixel/engine/crates/pixel-cells/src/device.rs` (added, +50/-0)
-```diff
-@@ -0,0 +1,50 @@
-+use std::sync::Arc;
-+
-+use pixel_core::fonts::Font;
-+use pixel_core::text_metrics::{LineMetrics, TextMetrics};
-+use pixel_core::{ColorDepth, Device, Pointer, Step};
-+
-+use crate::ColorTier;
-+
-+#[derive(Debug, Clone, Copy)]
-+pub struct CellMetrics {
-+    pub cell: (f32, f32),
-+}
-+
-+pub fn columns(ch: char) -> usize {
-+    match ch {
-+        '\u{FE0F}' | '\t' => 1,
-+        _ if ch.is_control() => 0,
-+        _ => unicode_width::UnicodeWidthChar::width(ch).unwrap_or(0),
-+    }
-+}
-+
-+impl TextMetrics for CellMetrics {
-+    fn advance(&self, _font: &Font, ch: char, _px: f32) -> f32 {
-+        columns(ch) as f32 * self.cell.0
-+    }
-+
-+    fn line(&self, _font: &Font, _px: f32) -> LineMetrics {
-+        let height = self.cell.1;
-+        LineMetrics { ascent: height * 0.8, descent: -height * 0.2, line_gap: 0.0, new_line_size: height }
-+    }
-+}
-+
-+pub const WHEEL_LINES: f32 = 3.0;
-+
-+pub fn cell_device(cell: (u32, u32), tier: ColorTier) -> Device {
-+    let cell = (cell.0.max(1) as f32, cell.1.max(1) as f32);
-+    Device {
-+        name: "cells".into(),
-+        text: Arc::new(CellMetrics { cell }),
-+        lattice: cell,
-+        scroll: Arc::new(Step { per_tick: WHEEL_LINES }),
-+        colors: match tier {
-+            ColorTier::TrueColor => ColorDepth::TrueColor,
-+            ColorTier::Ansi256 => ColorDepth::Indexed256,
-+            ColorTier::Ansi16 => ColorDepth::Indexed16,
-+            ColorTier::Mono => ColorDepth::Monochrome,
-+        },
-+        pointer: Pointer::Coarse,
-+    }
-+}
-```
-
----
-
-### Incident Patch 2: `d09e97c4` (2026-11-12)
-**Commit Message**: fix list rows drawn over a grown row (#280)
-
-* measure rows below a tall row at the top of a list
-
-* measure the last row of a list following its end
-
-**File**: `pixel/engine/crates/pixel-core/src/tree/mod.rs` (modified, +1/-1)
-```diff
-@@ -1410,7 +1410,7 @@ impl Tree {
-         let (ahead, behind) = if follow_end { (0.25, 1.25) } else { (1.25, 0.25) };
-         let (mut below, mut above) = (anchor, anchor);
-         let ahead_until = Instant::now() + LOOK_AHEAD_BUDGET;
--        let mut reach = 0.0;
-+        let mut reach = if follow_end { 0.0 } else { anchor_y - position };
-         while below < rows.len() && reach < view * ahead {
-             if !follow_end && reach >= view && Instant::now() > ahead_until {
-                 break;
-```
-
-**File**: `pixel/engine/crates/pixel-core/src/tree/tests.rs` (modified, +41/-0)
-```diff
-@@ -1996,3 +1996,44 @@ fn laying_out_images_reads_their_headers_and_decodes_none() {
-     assert!(!drained.landed && !drained.redraw, "layout decoded nothing");
-     std::fs::remove_dir_all(&dir).unwrap();
+@@ -2037,3 +2037,22 @@ fn a_list_following_its_end_measures_its_last_row_again_when_it_grows() {
+     tree.flush_layout(&mut crate::fonts::FontRegistry::bundled(), 16.0);
+     assert_eq!(tree.rect(tree.find("row19").unwrap()).unwrap().h, 60.0);
  }
 +
 +#[test]
-+fn rows_on_screen_below_a_row_taller_than_the_screen_are_measured_again() {
-+    let rows = |grown: usize, added: bool| {
-+        let block = |key: &str, lines: usize| Desc {
-+            key: Some(key.into()),
-+            style: Style { flex_direction: FlexDirection::Column, flex_shrink: 0.0, ..Style::default() },
-+            children: (0..lines).map(|k| Desc { key: Some(format!("{key}-{k}")), style: Style { height: Dimension::Px(10.0), ..Style::default() }, ..Desc::default() }).collect(),
-+            ..Desc::default()
-+        };
-+        let mut children = vec![block("tall", 20), block("cards", 2 + grown)];
-+        if added {
-+            children.push(block("sent", 3));
-+        }
-+        vec![Desc {
-+            style: Style { width: Dimension::Px(40.0), height: Dimension::Px(100.0), overflow: Overflow::Scroll, layout: Layout::List, ..Style::default() },
-+            key: Some("list".into()),
-+            children,
-+            ..Desc::default()
-+        }]
++fn cards_that_exactly_fill_a_wrapping_row_stay_on_one_line() {
++    let cw = 14.0411f32;
++    let room = 59.0 * cw;
++    let card = ((room - cw) / 2.0).floor();
++    let grid = Desc {
++        key: Some("grid".into()),
++        style: Style { flex_direction: FlexDirection::Row, flex_wrap: true, gap: cw, ..Style::default() },
++        children: (0..2).map(|i| Desc { key: Some(format!("c{i}")), style: Style { width: Dimension::Px(card), height: Dimension::Px(281.0), flex_shrink: 0.0, ..Style::default() }, ..Desc::default() }).collect(),
++        ..Desc::default()
 +    };
-+    let mut tree = tree_of((40.0, 100.0), rows(0, false));
-+    scroll_list(&mut tree, 150.0);
-+    tree.reconcile(Desc { children: rows(4, false), ..Desc::default() });
-+    tree.flush_layout(&mut crate::fonts::FontRegistry::bundled(), 16.0);
-+    tree.reconcile(Desc { children: rows(4, true), ..Desc::default() });
-+    tree.flush_layout(&mut crate::fonts::FontRegistry::bundled(), 16.0);
-+    let cards = tree.rect(tree.find("cards").unwrap()).unwrap();
-+    let sent = tree.rect(tree.find("sent").unwrap()).unwrap();
-+    assert_eq!(cards.h, 60.0, "the grown row is drawn at its new height");
-+    assert_eq!(sent.y, cards.y + cards.h, "the row after it starts where it ends, not over it");
-+}
-+
-+#[test]
-+fn a_list_following_its_end_measures_its_last_row_again_when_it_grows() {
-+    let rows = |last: f32| list_of(20, move |i| if i == 19 { last } else { 20.0 }, Style { scroll_anchor: ScrollAnchor::End, ..Style::default() });
-+    let mut tree = tree_of((40.0, 100.0), rows(20.0));
-+    tree.reconcile(Desc { children: rows(60.0), ..Desc::default() });
-+    tree.flush_layout(&mut crate::fonts::FontRegistry::bundled(), 16.0);
-+    assert_eq!(tree.rect(tree.find("row19").unwrap()).unwrap().h, 60.0);
++    let holder = Desc { style: Style { padding: crate::style::Edges { left: 2.0 * cw, ..Default::default() }, ..Style::default() }, children: vec![grid], ..Desc::default() };
++    let width = 63.0 * cw;
++    let tree = tree_of((width, 1000.0), vec![Desc { style: Style { width: Dimension::Px(width), flex_direction: FlexDirection::Column, padding: crate::style::Edges { left: cw, right: cw, ..Default::default() }, ..Style::default() }, children: vec![holder], ..Desc::default() }]);
++    let rect = |key: &str| tree.rect(tree.find(key).unwrap()).unwrap();
++    assert_eq!(rect("c1").y, rect("c0").y, "the second card stays beside the first");
++    assert!(rect("c1").y + rect("c1").h <= rect("grid").y + rect("grid").h, "the row is as tall as its cards");
 +}
 ```
 
----
-
-### Incident Patch 3: `72ba8d60` (2026-11-11)
-**Commit Message**: Webview scroll & build (#274)
-
-* pixel: scrollBy, and a WebView can pass the wheel to what's around it
-
-scrollBy(delta) moves a scroll box from where the engine has it, so quick calls add up instead of each starting from a position the app last heard about. WebView passWheel leaves the wheel to the scroll box around the page.
-
-* pixel: release builds strip with Apple's strip
-
-rustc's own strip leaves a Mach-O string table that macOS 27.2's dyld refuses to load ("mis-aligned LINKEDIT string pool"), so the release profile no longer strips and build-native.mjs runs /usr/bin/strip -x instead.
-
-* pixel: drop the passWheel comment
-
-**File**: `pixel/AGENT-DOCS.md` (modified, +1/-1)
+**File**: `pixel/engine/vendor/taffy/src/compute/flexbox.rs` (modified, +3/-6)
 ```diff
-@@ -200,7 +200,7 @@ Mounting thousands of rows in one commit still costs seconds of React and engine
- 
- ## Components
- 
--Props: `packages/pixel/src/react/reconciler-config.ts`. Definitions: `packages/pixel/src/react/components.ts`. Every component takes `ref` → `NodeHandle` (`components.ts:23`): `focus()`, `blur()`, `scrollTo(offset, smooth?)`, `scrollIntoView(smooth?)`, `splice(start, end, text)`, `selectAll()`, `addMark(mark, offset?)`, `removeMark(mark)`.
-+Props: `packages/pixel/src/react/reconciler-config.ts`. Definitions: `packages/pixel/src/react/components.ts`. Every component takes `ref` → `NodeHandle` (`components.ts:23`): `focus()`, `blur()`, `scrollTo(offset, smooth?)`, `scrollBy(delta)`, `scrollIntoView(smooth?)`, `splice(start, end, text)`, `selectAll()`, `addMark(mark, offset?)`, `removeMark(mark)`.
- 
- | component | props (file:line) |
- | --- | --- |
-```
-
-**File**: `pixel/engine/Cargo.toml` (modified, +7/-0)
-```diff
-@@ -52,5 +52,12 @@ opt-level = 2
- # Full debuginfo is rarely needed and slows linking; backtraces still work.
- debug = "line-tables-only"
- 
-+[profile.release]
-+# rustc strips with its bundled rust-objcopy, whose Mach-O writer leaves the
-+# string table 4-byte aligned; macOS 27.2's dyld refuses to load that
-+# ("mis-aligned LINKEDIT string pool"). Leave the linker output alone and let
-+# scripts/build-native.mjs strip with Apple's strip instead.
-+strip = "none"
-+
- [patch.crates-io]
- taffy = { path = "vendor/taffy" }
-```
-
-**File**: `pixel/engine/crates/pixel-bridge/src/ops.rs` (modified, +9/-0)
-```diff
-@@ -105,6 +105,10 @@ enum Op {
-         #[serde(default)]
-         smooth: bool,
-     },
-+    ScrollBy {
-+        id: u32,
-+        delta: f32,
-+    },
-     SetClearColor {
-         color: Color,
-     },
-@@ -926,6 +930,11 @@ fn apply_op(
-                 engine.scroll_to(view, node, offset, smooth);
-             }
-         }
-+        Op::ScrollBy { id, delta } => {
-+            if let Some(node) = map.live(tree, id) {
-+                engine.scroll_by(view, node, delta);
-+            }
-+        }
-         Op::ScrollIntoView { id, smooth } => {
-             if let Some(node) = map.live(tree, id) {
-                 engine.scroll_into_view(view, node, smooth);
-```
-
-**File**: `pixel/engine/crates/pixel-core/src/engine/scroll.rs` (modified, +36/-0)
-```diff
-@@ -165,6 +165,10 @@ impl Engine {
-         self.scroll_requests.push((view, ScrollRequest::To(id, offset), smooth));
-     }
- 
-+    pub fn scroll_by(&mut self, view: usize, id: NodeId, delta: f32) {
-+        self.scroll_requests.push((view, ScrollRequest::By(id, delta), false));
-+    }
-+
-     pub(super) fn apply_scroll_requests(&mut self) {
-         for (view, request, smooth) in std::mem::take(&mut self.scroll_requests) {
-             if view >= self.comp.views.len() {
-@@ -181,6 +185,7 @@ impl Engine {
-                     }
-                 }
-                 ScrollRequest::To(id, offset) => set_scroll(tree, id, offset, smooth),
-+                ScrollRequest::By(id, delta) => scroll_by(tree, id, delta),
-             }
-         }
-     }
-@@ -271,6 +276,7 @@ impl Engine {
- pub(super) enum ScrollRequest {
-     IntoView(NodeId),
-     To(NodeId, f32),
-+    By(NodeId, f32),
- }
- 
- fn scroll_ancestor_offset(tree: &crate::tree::Tree, id: NodeId) -> Option<(NodeId, f32)> {
-@@ -284,6 +290,12 @@ fn scroll_ancestor_offset(tree: &crate::tree::Tree, id: NodeId) -> Option<(NodeI
-     None
- }
- 
-+fn scroll_by(tree: &mut crate::tree::Tree, id: NodeId, delta: f32) {
-+    if let Some(position) = tree.scroll_state(id).map(|state| state.position) {
-+        set_scroll(tree, id, position + delta, false);
-+    }
-+}
-+
- fn set_scroll(tree: &mut crate::tree::Tree, id: NodeId, offset: f32, smooth: bool) {
-     let offset = offset.clamp(0.0, tree.scroll_max(id));
-     let view = tree.rect(id).map_or(0.0, |r| r.h);
-@@ -332,4 +344,28 @@ mod tests {
-         set_scroll(&mut tree, list, 1850.0, true);
-         assert_eq!(tree.scroll_state(list).unwrap().position, 1800.0, "near targets animate the whole way");
-     }
-+
-+    #[test]
-+    fn scrolls_by_add_up_from_where_the_list_is() {
-+        let mut tree = crate::tree::Tree::new((40.0, 100.0));
-+        let row = |i: usize| Desc { style: Style { height: Dimension::Px(20.0), ..Style::default() }, key: Some(format!("row{i}")), ..Desc::default() };
-+        tree.reconcile(Desc {
-+            children: vec![Desc {
-+                style: Style { width: Dimension::Px(40.0), height: Dimension::Px(100.0), overflow: Overflow::Scroll, layout: Layout::List, ..Style::default() },
-+                key: Some("list".into()),
-+                children: (0..10).map(row).collect(),
-+                ..Desc::default()
-+            }],
-+            ..Desc::default()
-+        });
-+        let mut fonts = crate::fonts::FontRegistry::bundled();
-+        tree.flush_layout(&mut fonts, 16.0);
-+        let list = tree.find("list").unwrap();
-+        set_scroll(&mut tree, list, 30.0, false);
-+        scroll_by(&mut tree, list, 25.0);
-+        scroll_by(&mut tree, list, 25.0);
-+        assert_eq!(tree.scroll_state(list).unwrap().position, 80.0);
-+        scroll_by(&mut tree, list, 500.0);
-+        assert_eq!(tree.scroll_state(list).unwrap().position, 100.0, "stops at the end");
-+    }
- }
-```
-
-**File**: `pixel/packages/pixel/scripts/build-native.mjs` (modified, +3/-0)
-```diff
-@@ -22,6 +22,9 @@ fs.rmSync(path.join(outDir, "pixel.node"), { force: true });
- fs.copyFileSync(built, path.join(outDir, "pixel.node"));
- 
- if (process.platform === "darwin") {
-+  // Apple's strip pads the LINKEDIT string table correctly; rust-objcopy
-+  // (what rustc would use) does not, and macOS 27.2's dyld rejects the result.
-+  if (release) execFileSync("/usr/bin/strip", ["-x", path.join(outDir, "pixel.node")], { stdio: "inherit" });
-   const arch = process.arch === "arm64" ? "arm64" : "x86_64";
-   execFileSync(
-     "swiftc",
-```
-
-**File**: `pixel/packages/pixel/src/react/components.ts` (modified, +1/-0)
-```diff
-@@ -25,6 +25,7 @@ export interface NodeHandle {
-   focus(): void;
-   blur(): void;
-   scrollTo(offset: number, smooth?: boolean): void;
-+  scrollBy(delta: number): void;
-   scrollIntoView(smooth?: boolean): void;
-   splice(start: number, end: number, text: string): void;
-   selectAll(): void;
-```
-
-**File**: `pixel/packages/pixel/src/react/reconciler-config.ts` (modified, +5/-0)
-```diff
-@@ -655,6 +655,11 @@ const hostConfig = {
-         b.push(instance.view, { op: "scrollTo", id: instance.id, offset, smooth });
-         b.flush();
-       },
-+      scrollBy: (delta: number) => {
-+        const b = instance.bridge;
-+        b.push(instance.view, { op: "scrollBy", id: instance.id, delta });
-+        b.flush();
-+      },
-       scrollIntoView: (smooth = false) => {
-         const b = instance.bridge;
-         b.push(instance.view, { op: "scrollIntoView", id: instance.id, smooth });
-```
-
-**File**: `pixel/packages/pixel/src/webview.tsx` (modified, +9/-4)
-```diff
-@@ -70,6 +70,7 @@ export interface WebViewProps {
-   proxy?: string;
-   browserWindowOptions?: BrowserWindowOptions;
-   autoFocus?: boolean;
-+  passWheel?: boolean;
-   devtools?: boolean | DevtoolsDock;
-   hidden?: boolean;
-   keepFrame?: boolean;
-@@ -568,10 +569,14 @@ export const WebView = forwardRef<WebViewHandle, WebViewProps>(function WebView(
-             hostRef.current?.pointer(event);
-             propsRef.current.onPointer?.(event);
-           }}
--          onWheel={(event: WheelEvent) => {
--            registry.focus(entry);
--            hostRef.current?.wheel(event);
--          }}
-+          onWheel={
-+            props.passWheel
-+              ? undefined
-+              : (event: WheelEvent) => {
-+                  registry.focus(entry);
-+                  hostRef.current?.wheel(event);
-+                }
-+          }
-         />
-       )}
-       {devtoolsRect && surfaces.current && (
+@@ -903,16 +903,13 @@ fn collect_flex_lines<'a>(
+                 while !flex_items.is_empty() {
+                     // Find index of the first item in the next line
+                     // (or the last item if all remaining items are in the current line)
+-                    let mut line_length = 0.0;
++                    let mut items_length = 0.0;
+                     let index = flex_items
+                         .iter()
+                         .enumerate()
+                         .find(|&(idx, child)| {
+-                            // Gaps only occur between items (not before the first one or after the last one)
+-                            // So first item in the line does not contribute a gap to the line length
+-                            let gap_contribution = if idx == 0 { 0.0 } else { main_axis_gap };
+-                            line_length += child.hypothetical_outer_size.main(constants.dir) + gap_contribution;
+-                            line_length > main_axis_available_space && idx != 0
++                            items_length += child.hypothetical_outer_size.main(constants.dir);
++                            items_length + sum_axis_gaps(main_axis_gap, idx + 1) > main_axis_available_space && idx != 0
+                         })
+                         .map(|(idx, _)| idx)
+                         .unwrap_or(flex_items.len());
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #286** (2026-11-13): fix phone crashes from reserved address space (@RobPruzan)
+- **PR #285** (2026-11-13): link targets in text layout (@RobPruzan)
+- **PR #284** (2026-11-13): keep list text in place when width changes (@RobPruzan)
+- **PR #281** (2026-11-13): fix cards wrapping when they exactly fill a row (@RobPruzan)
 - **PR #280** (2026-11-12): fix list rows drawn over a grown row (@RobPruzan)
 - **PR #279** (2026-11-12): fix perf issues (@RobPruzan)
-- **PR #276** (2026-11-12): Tree::text_layout (@RobPruzan)
-- **PR #274** (2026-11-11): Webview scroll & build (@RobPruzan)
-- **PR #269** (2026-11-11): pixel electron: webContents.setHidden (@RobPruzan)
-- **PR #267** (2026-11-11): Cell-grid renderer  (@RobPruzan)
 
 ---
 
@@ -2360,37 +1634,44 @@ rustc's own strip leaves a Mach-O string table that macOS 27.2's dyld refuses to
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Cell-grid renderer  (#267)
+## X. cards wrapping when they exactly fill a row
 
 **RULE**:
-When implementing operations in `pixel/AGENT-DOCS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zenbu-labs/terminal-browser. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pixel/engine/crates/pixel-core/src/tree/tests.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zenbu-labs/terminal-browser. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6a8ffb26`: Cell-grid renderer  (#267). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6bb6ae6d`: cards wrapping when they exactly fill a row. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `pixel/AGENT-DOCS.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `pixel/engine/crates/pixel-core/src/tree/tests.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-| `engine/crates/pixel-core/` | Rust engine: tree, layout, text, scrolling, input; records each view as a `Scene` (`src/scene.rs`); `src/backend.rs` is the backend trait, `src/device.rs` the device it draws for |
-| `engine/crates/pixel-raster/` | turns scenes into pixels: canvas, glyph and image rasterizing, compositing views, damage, opaque areas, scroll-layer canvases |
-| `engine/crates/pixel-cells/` | turns scenes into a cell grid and minimal ANSI for terminals without graphics |
-| `engine/crates/pixel-terminal/` | the terminal backend's shared layer: tty, input parsing, probing, colors, hosted and embedded panes, tmux wrapper, session env, window size; it holds one renderer (`src/presenter.rs`) |
-| `engine/crates/pixel-kitty/` | the pixel kitty renderer: kitty graphics frames for kitty, Ghostty, iTerm2, rex, tmux and herdr, the frame transports (shared memory, files, inline), macOS native scroll |
-| `info: EngineInfo` | `{ width, height, cellWidth, cellHeight, basePx, device, renderer?, kittyKeyboard, hosted, colors }` (`renderer`: `"kitty"` or `"cells"` in a terminal); `device` is `{ name, lattice, colors, pointer }` (`name` `"pixels"` or `"cells"`, `lattice` the step layout e
+
+#[test]
+fn cards_that_exactly_fill_a_wrapping_row_stay_on_one_line() {
+    let cw = 14.0411f32;
+    let room = 59.0 * cw;
+    let card = ((room - cw) / 2.0).floor();
+    let grid = Desc {
+        key: Some("grid".into()),
+        style: Style { flex_direction: FlexDirection::Row, flex_wrap: true, gap: cw, ..Style::default() },
+        children: (0..2).map(|i| Desc { key: Some(format!("c{i}")), style: Style { width: Dimension::Px(card), height: Dimension::Px(281.0), flex_shrink: 0.0, ..Style::default() }, ..Desc::default() }).collect(),
+        ..Desc::default()
+    };
+    let holder = Desc { style: Style { padding: crate::style::Edges { left: 2.0 * cw, ..Default::default() }, ..Style::default() }, children: vec![grid], ..Desc::default() };
+    let width = 63.0 * cw;
+    let tree = tree_of((width, 1000.0), vec![Desc { style: Style { width: Dimension::Px(width), flex_direction: FlexDirection::Column, padding: crate::style::Edges { left: cw, right: cw, ..Default::default() }, ..Style::default() }, children: vec![holder], ..Desc::default() }]);
+    let rect = |key: &str| tree.rect(tree.find(key).unwrap()).unwrap();
+    assert_eq!(rect("c1").y, rect("c0").y, "the second card stays besi
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-| `engine/crates/pixel-core/` | Rust engine: layout, painting, compositing, input model; `src/backend.rs` is the backend trait |
-| `engine/crates/pixel-terminal/` | the terminal backend: tty, kitty/iTerm2/rex/tmux/herdr frames, cell and color probing, macOS native scroll |
-| `engine/crates/pixel-node/` | Node binding for the engine |
-| `onUnsupportedTerminal?(terminal: Terminal \| null): string` | text written to the terminal when `pixel` found no graphics support; the process then exits 1 |
-| `info: EngineInfo` | `{ width, height, cellWidth, cellHeight, basePx, kittyKeyboard, hosted, colors }` |
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6a8ffb26` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6bb6ae6d` are properly handled with clean fallback behavior.

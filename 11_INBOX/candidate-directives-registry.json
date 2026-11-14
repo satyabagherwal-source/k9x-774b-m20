@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T10:31:22.906Z",
+  "last_updated": "2026-11-14T11:05:15.643Z",
   "directives": [
     {
       "id": "CD-001",
@@ -12268,6 +12268,68 @@
       "source_repo": "skyhook-io-radar",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-42FD4C-linux-desktop-packaging-with-verified-nf.md",
+      "staged_date": "2026-11-14"
+    },
+    {
+      "id": "CD-TM2S",
+      "directive_title": "cards wrapping when they exactly fill a row",
+      "source_repo": "zenbu-labs-terminal-browser-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-TM2S-cards-wrapping-when-they-exactly-fill-a-row.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-14",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-UCFV",
+      "directive_title": "build(deps): bump renovatebot/github-action from 46.3.12 to 46.3.13",
+      "source_repo": "okteto-okteto-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-UCFV-build-deps-bump-renovatebot-github-action-from-46-3-12-to-46-3-13.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-14",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-TH2L",
+      "directive_title": "missing SST error spinning forever in the mirror",
+      "source_repo": "slatedb/slatedb",
+      "source_commit": "0a6a032b",
+      "staged_file": "11_INBOX/candidate-directives/CD-TH2L-missing-sst-error-spinning-forever-in-the-mirror.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-14",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-TJJE",
+      "directive_title": "Resume stale NUC drafts in continuous cycles",
+      "source_repo": "NucleoidAI/Nucleoid",
+      "source_commit": "120db05d",
+      "staged_file": "11_INBOX/candidate-directives/CD-TJJE-resume-stale-nuc-drafts-in-continuous-cycles.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-14",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-4380CA",
+      "directive_title": "cards wrapping when they exactly fill a row",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zenbu-labs-terminal-browser",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-4380CA-cards-wrapping-when-they-exactly-fill-a-.md",
+      "staged_date": "2026-11-14"
+    },
+    {
+      "id": "CD-REV-1B2FEF",
+      "directive_title": "build(deps): bump renovatebot/github-action from 46.3.12 to 46.3.13",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "okteto-okteto",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-1B2FEF-build-deps-bump-renovatebot-github-actio.md",
       "staged_date": "2026-11-14"
     }
   ]

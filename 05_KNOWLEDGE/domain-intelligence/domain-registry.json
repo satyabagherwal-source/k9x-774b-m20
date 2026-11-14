@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T10:31:23.012Z",
-  "total_records": 642,
+  "last_updated": "2026-11-14T11:05:15.775Z",
+  "total_records": 651,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 314,
+      "total": 317,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -351,7 +351,10 @@
         "DOM-D-694FEEFE",
         "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v3-2-learnings-core-inva",
         "DOM-D-E4E3EE21",
-        "domain_intelligence-research-knowledge-intelligence-hf-openai-community-gpt2-learnings-core-invarian"
+        "domain_intelligence-research-knowledge-intelligence-hf-openai-community-gpt2-learnings-core-invarian",
+        "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-vl-8b-instruct-core-invariants",
+        "DOM-D-2F30EB65",
+        "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-vl-8b-instruct-learnings-core-inva"
       ]
     },
     "E": {
@@ -383,7 +386,7 @@
       ]
     },
     "G": {
-      "total": 92,
+      "total": 96,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -476,7 +479,11 @@
         "domain_intelligence-architecture-intelligence-software-mansion-react-native-gesture-handler-core-inv",
         "domain_intelligence-architecture-intelligence-software-mansion-react-native-gesture-handler-learning",
         "domain_intelligence-architecture-intelligence-skyhook-io-radar-core-invariants",
-        "domain_intelligence-architecture-intelligence-skyhook-io-radar-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-skyhook-io-radar-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-core-invariants",
+        "domain_intelligence-architecture-intelligence-slatedb-slatedb-core-invariants",
+        "domain_intelligence-architecture-intelligence-nucleoidai-nucleoid-core-invariants",
+        "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants"
       ]
     },
     "H": {
@@ -626,7 +633,7 @@
       ]
     },
     "I": {
-      "total": 20,
+      "total": 22,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -647,7 +654,9 @@
         "domain_intelligence-content-information-intelligence-pingcap-tidb-core-invariants",
         "domain_intelligence-content-information-intelligence-pingcap-tidb-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-higress-group-higress-core-invariants",
-        "domain_intelligence-content-information-intelligence-higress-group-higress-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-higress-group-higress-learnings-core-invariants",
+        "domain_intelligence-content-information-intelligence-okteto-okteto-core-invariants",
+        "domain_intelligence-content-information-intelligence-okteto-okteto-learnings-core-invariants"
       ]
     },
     "J": {
@@ -13678,6 +13687,120 @@
       "repository": "skyhook-io-radar-learnings",
       "content_hash": "8b7f6aeb9535daf6106d643c88d0bd36488423b94f8b4ed2944cabe78de9d64d",
       "created_at": "2026-11-14T10:31:23.012Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-vl-8b-instruct-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-vl-8b-instruct-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: Qwen/Qwen3-VL-8B-Instruct Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-vl-8b-instruct-research-knowledge-intelligence-qwen-qwen3-vl-8b-in.md",
+      "repository": "Qwen/Qwen3-VL-8B-Instruct",
+      "content_hash": "56efd98e06394533aa87200c6e4c41fa493c05d2c4886c3474e330f70633fa3a",
+      "created_at": "2026-11-14T11:04:20.925Z"
+    },
+    "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: zenbu-labs/terminal-browser Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zenbu-labs-terminal-browser-architecture-intelligence-zenbu-labs-terminal-browse.md",
+      "repository": "zenbu-labs/terminal-browser",
+      "content_hash": "2d7d571964dedbe1a2a3fea0546e9b87f8330b500c6f68a9553b824acb272805",
+      "created_at": "2026-11-14T11:04:22.375Z"
+    },
+    "domain_intelligence-content-information-intelligence-okteto-okteto-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-okteto-okteto-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: okteto/okteto Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-okteto-okteto-content-information-intelligence-okteto-okteto-core-invariants.md",
+      "repository": "okteto/okteto",
+      "content_hash": "810a0a78d9992e171c4056fc6034e98cc8ba223c1328cbadb3e5cbade0c22cb5",
+      "created_at": "2026-11-14T11:04:31.702Z"
+    },
+    "domain_intelligence-architecture-intelligence-slatedb-slatedb-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-slatedb-slatedb-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: slatedb/slatedb Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-slatedb-slatedb-architecture-intelligence-slatedb-slatedb-core-invariants.md",
+      "repository": "slatedb/slatedb",
+      "content_hash": "c0a3fc89b6779137c593529d9a35f77b696782ca070c842fee23e84baabf98a7",
+      "created_at": "2026-11-14T11:04:35.109Z"
+    },
+    "domain_intelligence-architecture-intelligence-nucleoidai-nucleoid-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-nucleoidai-nucleoid-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
+      "repository": "NucleoidAI/Nucleoid",
+      "content_hash": "ab9a35728f2062d00602eead014bc78c3cc9f33f182738655c26b9e211cbdb07",
+      "created_at": "2026-11-14T11:04:38.306Z"
+    },
+    "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: zenbu-labs-terminal-browser-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zenbu-labs-terminal-browser-learnings-architecture-intelligence-zenbu-labs-termi.md",
+      "repository": "zenbu-labs-terminal-browser-learnings",
+      "content_hash": "0ba507d1fafe303e3815d03cea6266202cb6c567f276da9696d683b014b7b962",
+      "created_at": "2026-11-14T11:04:41.596Z"
+    },
+    "DOM-D-2F30EB65": {
+      "record_id": "DOM-D-2F30EB65",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Qwen/Qwen3-VL-8B-Instruct",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct](https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct))  \n> **Source Version**: `hf-qwen-qwen`  \n> **License**: Open-Source",
+      "content_hash": "3d0d98b8ef607f851b6a1bc5278d79abe27992571d4eb3cb282067bb901fd831",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md`  \n> **Source**: huggingface ([https://hug -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md`  \n> **Source**: huggingface ([https://hug",
+      "provenance": {
+        "source_uri": "project://hf-qwen-qwen3-vl-8b-instruct/hf-qwen-qwen3-vl-8b-instruct-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T11:04:41.829Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-qwen-qwen3-vl-8b-instruct)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-qwen-qwen3-vl-8b-instruct"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T11:05:14.814Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-vl-8b-instruct-learnings-core-inva": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-vl-8b-instruct-learnings-core-inva",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-qwen-qwen3-vl-8b-instruct-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-vl-8b-instruct-learnings-research-knowledge-intelligence-hf-qwen-q.md",
+      "repository": "hf-qwen-qwen3-vl-8b-instruct-learnings",
+      "content_hash": "0c808412ba504d413e908550b8548768560ca25e3c78169b805c9b18619dc341",
+      "created_at": "2026-11-14T11:05:15.057Z"
+    },
+    "domain_intelligence-content-information-intelligence-okteto-okteto-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-okteto-okteto-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: okteto-okteto-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-okteto-okteto-learnings-content-information-intelligence-okteto-okteto-learnings.md",
+      "repository": "okteto-okteto-learnings",
+      "content_hash": "cad2ac2f341e472181aae3954abd8a6ea73b3aa0311adbfc09fd6130e0b94eb5",
+      "created_at": "2026-11-14T11:05:15.775Z"
     }
   }
 }

@@ -4,45 +4,31 @@
 {
   "source_repository": "slatedb/slatedb",
   "source_url": "https://github.com/slatedb/slatedb",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "0a6a032b",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-14T11:04:34.994Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-slatedb-slatedb",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [slatedb/slatedb](https://github.com/slatedb/slatedb) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [slatedb/slatedb](https://github.com/slatedb/slatedb) (Revision: `0a6a032b`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-14T11:04:34.994Z`  
+> **Learning ID**: `learn-github-slatedb-slatedb`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `slatedb/slatedb` (Commit: `historical`)
+- **Target Repository**: `slatedb/slatedb` (Commit: `0a6a032b`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/slatedb-slatedb-learnings.md`  
-> **Source**: github ([https://github.com/slatedb/slatedb](https://github.com/slatedb/slatedb))  
-> **Source Version**: `9aedb400`  
-> **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T00:58:32.922Z  
-> **Learning ID**: `learn-github-slatedb-slatedb`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): slatedb/slatedb
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/slatedb-slatedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/slatedb/slatedb](https://github.com/slatedb/slatedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T00:58:32.912Z  
+> **Harvest Timestamp**: 2026-11-14T11:04:33.773Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A cloud native embedded storage engine built on object storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3640 stars
+- **Stars / Engagement**: 3644 stars
 
 ---
 
@@ -2350,11 +2336,11 @@ func uniffiCheckChecksums() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #2255** (2026-11-13): **Reading a manifest through ObjectStoreMirror spins forever when a referenced SST is missing remotely**
+  *Symptoms*: **Describe the bug** If the latest manifest references an SST that is missing from both the mirror's local directory and object storage (real data loss), reading that manifest through `ObjectStoreMirror` with `SlateDbMirrorPolicy` never returns. It spins at 100% CPU.  **To Reproduce** Dependencies: `slatedb`, `slatedb-mirror`, `tempfile`, `tokio`.  ```rust use std::sync::Arc;  use slatedb::admin::Admin; use slatedb::config::{FlushOptions, FlushType}; use slatedb::object_store::{local::LocalFileSystem, ObjectStore}; use slatedb::{Db, SlateDbMirrorPolicy}; use slatedb_mirror::ObjectStoreMirror; use tempfile::TempDir;  #[tokio::test] async fn test_missing_sst_spins() {     let remote_dir = TempDir::new().unwrap();     let mirror_dir = TempDir::new().unwrap();     let remote: Arc<dyn ObjectStore> =         Arc::new(LocalFileSystem::new_with_prefix(remote_dir.path()).unwrap());      // Write one compacted SST.     let db = Db::open("db", remote.clone()).await.unwrap();     db.put(b"key", b"value").await.unwrap();     db.flush_with_options(FlushOptions { flush_type: FlushType::MemTable })         .await         .unwrap();     db.close().await.unwrap();      // Lose the SST that the latest manifest references.     for sst in std::fs::read_dir(remote_dir.path().join("db/compacted")).unwrap() {         std::fs::remove_file(sst.unwrap().path()).unwrap();     }      let mirror = ObjectStoreMirror::builder(         mirror_dir.path(),         remote,         SlateDbMirrorPolicy::builder()
+
 - **Issue #2086** (2026-09-09): **`foyer = "0.22.4"` floor breaks musl builds (foyer-rs/foyer#1338)**
   *Symptoms*: **Describe the bug**  SlateDB cannot be built for `*-unknown-linux-musl` targets. The workspace requires `foyer = "0.22.4"`, and `foyer-storage` 0.22.4 and 0.22.5 do not compile for musl.  This failure can be fixed either by lowering the required foyer version to 0.22.3, or by waiting for foyer upstream to fix it.  There is an open issue, foyer-rs/foyer#1338, opened 2026-09-05, but it has no PR yet.  **To Reproduce**  1. `rustup target add x86_64-unknown-linux-musl` 2. `apt-get install musl-dev` (or an equivalent musl toolchain) 3. From the SlateDB workspace root, with the default features that include `foyer`: `cargo build -p slatedb --target x86_64-unknown-linux-musl`  The same failure reaches any downstream crate that depends on SlateDB and builds for musl.  **Expected behavior**  SlateDB builds for `*-unknown-linux-musl`.  **Screenshots**  Not applicable. The compiler output is provided.  **Build**  - `uname -a`: `Darwin 25.6.0 Darwin Kernel Version 25.6.0 arm64` locally. The failing target is `x86_64-unknown-linux-musl`, built on Linux CI. - OS: Linux, building the musl target. Cross-compiling from macOS does not reach this error, because the `zstd-sys` and `lz4-sys` build scripts fail first looking for `x86_64-linux-musl-gcc`. - SlateDB Version: 0.16.0, at `4478eb907b98c0a52299f359127ccba82c2716b9` - Object Store: S3  **Additional context**  `foyer-storage/src/io/device/utils.rs` declares four ioctl request constants as `u64`. It selects a platform branch with `cfg!()` 
-
-- **Issue #2055** (2026-08-27): **Make with_wal_object_store safe for incremental deployment**
-  *Symptoms*: **Describe the bug**    `with_wal_object_store()` is unusable for incremental deployment on v0.15.0. When a writer creates a new DB with `with_wal_object_store()`, the manifest persists `wal_object_store_uri = Some("")`. Any subsequent reader opening that DB without `with_wal_object_store()` configured gets `WalStoreReconfigurationError`.   The root cause is that `FlatBufferManifestCodec::encode` writes V1 (which preserves the `wal_object_store_uri` field) unless segment state requires V2. PR #1473 dropped the field from V2, but normal databases without segments still write V1 — so the validation remains active even on 0.15.0.    **To Reproduce**    1. Create a new DB using `DbBuilder` with `with_wal_object_store()` configured   2. Open the same DB using `DbReaderBuilder` without `with_wal_object_store()`   3. Reader fails with `WalStoreReconfigurationError`    **Expected behavior**    On v0.15.0 (which includes the ManifestV2 codec from PR #1473), `wal_object_store_uri` should not block readers from opening a database — either by defaulting to V2 manifest format, or by stripping the field before persisting.    **Screenshots**    N/A    **Build**    - OS: Linux   - SlateDB Version: 0.15.0   - Object Store: S3-compatible (custom)    **Additional context**    - Discord thread: https://discord.com/channels/1232385660460204122/1542581454280851466   - The fix is to default to V2 manifest format in 0.16 (per RFC 0004's phased rollout plan: write V1 → write V2 universally → deprecat
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2371,171 +2357,253 @@ func uniffiCheckChecksums() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3492ae1b` (2026-11-11)
-**Commit Message**: Share one clock in compactor test fixture (#2250)
+### Incident Patch 1: `3e3043c3` (2026-11-13)
+**Commit Message**: Fix missing SST error spinning forever in the mirror (#2256)
 
-**File**: `slatedb/src/compactor.rs` (modified, +8/-6)
+**File**: `rfcs/0034-local-object-mirroring.md` (modified, +16/-7)
 ```diff
-@@ -5168,11 +5168,14 @@ mod tests {
-             let compactor_options = Arc::new(compactor_options());
-             let worker_options = Arc::new(CompactionWorkerOptions::default());
-             let options = db_options(None);
-+            // Share a clock so output SST timestamps cannot precede their compaction job timestamps.
-+            let system_clock = Arc::new(DefaultSystemClock::new());
+@@ -530,13 +530,19 @@ already been retried.
  
-             let os = Arc::new(InMemory::new());
-             let (manifest_store, compactions_store, table_store) = build_test_stores(os.clone());
-             let db = Db::builder(PATH, os.clone())
-                 .with_settings(options.clone())
-+                .with_system_clock(system_clock.clone())
-                 .build()
-                 .await
-                 .unwrap();
-@@ -5195,7 +5198,7 @@ mod tests {
-                     rand: rand.clone(),
-                     stats: compactor_stats.clone(),
-                     worker_stats: stats::WorkerStats::new(&recorder, "test-worker"),
--                    clock: Arc::new(DefaultSystemClock::new()),
-+                    clock: system_clock.clone(),
-                     merge_operator: None,
-                     #[cfg(feature = "compaction_filters")]
-                     compaction_filter_supplier: None,
-@@ -5208,16 +5211,15 @@ mod tests {
-                 scheduler.clone(),
-                 rand.clone(),
-                 compactor_stats.clone(),
--                Arc::new(DefaultSystemClock::new()),
-+                system_clock.clone(),
-                 MetricsRecorderHelper::noop(),
-                 None,
-             )
-             .await
-             .unwrap();
--            let manifest =
--                StoredManifest::load(manifest_store.clone(), Arc::new(DefaultSystemClock::new()))
--                    .await
--                    .unwrap();
-+            let manifest = StoredManifest::load(manifest_store.clone(), system_clock)
-+                .await
-+                .unwrap();
-             Self {
-                 manifest,
-                 manifest_store,
+ `observe` failures are handled by call type:
+ 
+-- **Reads.** The error goes to the caller. Nothing was committed, so a caller
+-  that retries the read runs `observe` again.
+-- **Writes.** The mirror returns `WriteCommitted`. The object is durable, but
+-  the policy's follow-up work didn't finish, so the caller has to treat the
+-  write as having happened. SlateDB treats it as fatal: `Db` and the compactor
+-  close with a `Data` error, the same as local disk errors. On reopen, the
+-  manifest is read again and `observe` runs again.
++- **Reads.** The mirror returns `MirrorError::Policy`, with the policy's error
++  as its source. This error can come from a different object than the one
++  that the caller read. For example, `observe` of a manifest fails with
++  `NotFound` when an SST that the manifest references is missing. If the
++  mirror returned that `NotFound` unchanged, the caller would think that the
++  manifest is missing. `Policy` is not retryable, because the mirror already
++  retried the remote calls in `observe`. Nothing was written, so the caller
++  can safely read the object again, and that read runs `observe` again.
++- **Writes.** The mirror returns `MirrorError::WriteCommitted`. The object is
++  durable, but the policy's follow-up work didn't finish, so the caller has to
++  treat the write as having happened. SlateDB treats it as fatal: `Db` and the
++  compactor close with a `Data` error, the same as local disk errors. On reopen,
++  the manifest is read again and `observe` runs again.
+ 
+ ### Ordering
+ 
+@@ -1186,6 +1192,9 @@ There is, however, an open question around the CPU cost of computing the MD5 pre
+ 
+ ## Updates
+ 
++- An `observe` error on a read becomes `MirrorError::Policy`. Before, the
++  mirror returned it unchanged, so a missing SST looked like a missing
++  manifest ([#2255](https://github.com/slatedb/slatedb/issues/2255)).
+ - Added clone support to `SlateDbMirrorPolicy`. Manifest and `.compactions`
+   calls under a parent root in the newest manifest's `external_dbs` take the
+   `Remote` route instead of failing. This lets a mirrored clone detach from
 ```
 
----
-
-### Incident Patch 2: `9aedb400` (2026-11-11)
-**Commit Message**: Fix startup synchronization in writer fencing tests (#2253)
-
-**File**: `slatedb/src/fence.rs` (modified, +12/-13)
+**File**: `slatedb-mirror/src/mirror.rs` (modified, +27/-6)
 ```diff
-@@ -147,8 +147,7 @@ mod tests {
-     use crate::wal::slatedb::store::{WalFileId, WalTableStore};
-     use crate::{CloseReason, Db, ErrorKind, Settings};
-     use bytes::Bytes;
--    use fail_parallel::fail_point_channel;
--    use fail_parallel::FailPointRegistry;
-+    use fail_parallel::{fail_point_channel, FailGuard, FailPointRegistry};
-     use object_store::memory::InMemory;
-     use object_store::path::Path;
-     use object_store::ObjectStore;
-@@ -251,15 +250,15 @@ mod tests {
-                 .build()
-                 .await
-                 .unwrap();
--            // wait for initial manifest poll using "manifest_refresh_count" stat
--            // so the db has settled before the test starts fencing it.
-+            // Wait for the replay validation refresh and the first timer poll.
-+            // The timer must finish its first poll before the test starts fencing.
-             for _ in 0..600 {
--                if lookup_metric(&recorder, MANIFEST_REFRESH_COUNT).unwrap_or(0) > 0 {
-+                if lookup_metric(&recorder, MANIFEST_REFRESH_COUNT).unwrap_or(0) >= 2 {
-                     return db;
-                 }
-                 tokio::time::sleep(Duration::from_millis(10)).await;
-             }
--            panic!("manifest writer did not perform initial poll");
-+            panic!("manifest writer did not complete both startup refreshes");
-         }
+@@ -46,8 +46,8 @@ pub const DEFAULT_DOWNLOAD_CONCURRENCY: usize = 8;
+ /// The default for [`ObjectStoreMirrorBuilder::with_remote_scan_interval`].
+ pub const DEFAULT_REMOTE_SCAN_INTERVAL: Duration = Duration::from_secs(600);
  
-         async fn db(&self) -> Db {
-@@ -337,7 +336,7 @@ mod tests {
-                 );
-             } else {
-                 self.data.insert(k, v);
--                assert!(result.is_ok());
-+                assert!(result.is_ok(), "expected write to succeed, got {result:?}");
-             }
-         }
+-/// Wraps a route error from the policy in `MirrorError::Policy`, unless it's
+-/// already a mirror error.
++/// Wraps a route error or a read's `observe` error from the policy in
++/// `MirrorError::Policy`, unless it's already a mirror error.
+ fn policy_error(err: object_store::Error) -> object_store::Error {
+     if MirrorError::find(&err).is_some() {
+         err
+@@ -258,10 +258,14 @@ impl ObjectStoreMirror {
+             Some(range) => range.as_range(bytes.len() as u64).map_err(range_error)?,
+             None => 0..bytes.len() as u64,
+         };
++        // An `observe` error can be about another object that `observe`
++        // fetched. Wrap it, so that an error like `NotFound` is not read as a
++        // missing `location`.
+         inner
+             .policy
+             .observe(location, &bytes, &self.handle())
+-            .await?;
++            .await
++            .map_err(policy_error)?;
+         Ok(GetResult {
+             payload: bytes_payload(bytes.slice(range.start as usize..range.end as usize)),
+             meta,
+@@ -1403,10 +1407,27 @@ mod tests {
+         ));
+         assert!(fixture.store.head(&manifest).await.is_ok());
  
-@@ -553,15 +552,15 @@ mod tests {
-         // write a wal file
-         h.put(&db, 0, false).await;
+-        // Reads return the policy's error unchanged.
++        // Reads wrap the policy's error.
+         let err = fixture.mirror.get(&manifest).await.unwrap_err();
+-        assert!(MirrorError::find(&err).is_none());
+-        assert!(err.to_string().contains("observe failed"));
++        assert!(matches!(mirror_error(&err), MirrorError::Policy { .. }));
++        assert!(format!("{err:?}").contains("observe failed"));
++    }
++
++    #[tokio::test]
++    async fn should_not_report_missing_object_as_missing_observed_read() {
++        let fixture = Fixture::new().await;
++        fixture
++            .put_remote(MANIFEST, b"db/compacted/01A.sst\n")
++            .await;
++
++        let err = fixture.mirror.get(&Path::from(MANIFEST)).await.unwrap_err();
++        let MirrorError::Policy { source } = mirror_error(&err) else {
++            panic!("expected MirrorError::Policy, got {err:?}");
++        };
++        assert!(matches!(
++            source.downcast_ref::<object_store::Error>(),
++            Some(object_store::Error::NotFound { path, .. }) if path.contains(SST)
++        ));
+     }
  
--        // configure the fencer to pause
--        fail_parallel::cfg(h.fp_registry.clone(), case.event, "pause").unwrap();
-+        // Release the pause if an assertion fails, so runtime shutdown cannot hang.
-+        let pause = FailGuard::new(h.fp_registry.clone(), case.event, "pause").unwrap();
- 
-         // spawn WriterFencer on another task
-         let fencer = h.fencer.take().unwrap();
-         let stored_manifest = h.stored_manifest.take().unwrap();
-         let jh = tokio::task::spawn(async move { fencer.fence(stored_manifest, None).await });
--        // wait for fencer to load empty wal id and pause
--        h.event_rx.recv().await.unwrap();
-+        // Each failpoint sends an event, so wait for the configured pause.
-+        while h.event_rx.recv().await.unwrap() != case.event {}
- 
-         // write 2 new wal files to fenced db (write with await durable twice)
-         h.put(&db, 1, case.write_fenced).await;
-@@ -593,8 +592,8 @@ mod tests {
-             h.run_gc(replay_after_wal_id).await;
-         }
- 
--        // unpause WriterFencer
--        fail_parallel::cfg(h.fp_registry.clone(), case.event, "off").unwrap();
-+        // Resume the fencer.
-+        drop(pause);
-         // verify it returns successfully
-         let mut result = jh.await.unwrap().unwrap();
-         // The fencer's stale empty_wal_id was retried above the fenced writer's possibly
+     #[tokio::test]
 ```
 
----
-
-### Incident Patch 3: `b547b9ab` (2026-11-11)
-**Commit Message**: Reduce build time for nightly pprof benchmarks (#2249)
-
-**File**: `.github/workflows/nightly.yaml` (modified, +4/-6)
+**File**: `slatedb-mirror/src/policy.rs` (modified, +10/-5)
 ```diff
-@@ -71,13 +71,11 @@ jobs:
+@@ -58,14 +58,19 @@ pub enum MultipartRoute {
+ /// [`ReadRoute::Local`], [`ReadRoute::Refetch`], [`WriteRoute::Mirror`], or
+ /// [`MultipartRoute::Mirror`].
+ ///
+-/// Errors from the policy reach the caller in three ways:
++/// The mirror wraps errors from the policy, so that callers can tell them
++/// apart from errors of the wrapped store:
+ ///
+-/// - A route error becomes `MirrorError::Policy`. If the error already
+-///   contains a `MirrorError`, the mirror returns it unchanged.
+-/// - An `observe` error on a read is returned unchanged. Nothing was written,
+-///   so the caller can retry the read.
++/// - A route error becomes `MirrorError::Policy`.
++/// - An `observe` error on a read becomes `MirrorError::Policy`. This error
++///   can be about another object. For example, `observe` fails with
++///   `NotFound` when it fetches an object that is missing. Unwrapped, that
++///   `NotFound` would tell the caller that the object it read is missing.
+ /// - An `observe` error on a write becomes `MirrorError::WriteCommitted`,
+ ///   because the remote write already succeeded.
++///
++/// A route error or a read's `observe` error that already contains a
++/// `MirrorError` is returned unchanged.
+ #[async_trait]
+ pub trait MirrorPolicy: Send + Sync + 'static {
+     /// Runs on every GET and HEAD. `options.head` is true for HEAD. Must be
+```
+
+**File**: `slatedb/src/error.rs` (modified, +21/-1)
+```diff
+@@ -711,6 +711,17 @@ impl From<SlateDBError> for Error {
+                     // close with this error, and reopening runs `observe`
+                     // again (RFC 0034).
+                     Some(MirrorError::WriteCommitted { .. }) => Error::data(msg),
++                    // `observe` did not find an object that the read object
++                    // references, such as an SST of a manifest. The data is
++                    // lost.
++                    Some(MirrorError::Policy { source })
++                        if matches!(
++                            source.downcast_ref::<object_store::Error>(),
++                            Some(object_store::Error::NotFound { .. })
++                        ) =>
++                    {
++                        Error::data(msg)
++                    }
+                     Some(
+                         MirrorError::Policy { .. }
+                         | MirrorError::Unsupported { .. }
+@@ -871,11 +882,20 @@ mod tests {
+         );
+         assert_eq!(
+             mirror_error_kind(MirrorError::WriteCommitted {
+-                path,
++                path: path.clone(),
+                 source: Box::new(std::io::Error::other("disk full")),
+             }),
+             ErrorKind::Data
+         );
++        assert_eq!(
++            mirror_error_kind(MirrorError::Policy {
++                source: Box::new(object_store::Error::NotFound {
++                    path: path.to_string(),
++                    source: Box::new(std::io::Error::other("missing")),
++                }),
++            }),
++            ErrorKind::Data
++        );
+         assert_eq!(
+             mirror_error_kind(MirrorError::Local {
+                 source: std::io::Error::other("disk full"),
+```
+
+**File**: `slatedb/src/mirror_policy.rs` (modified, +42/-1)
+```diff
+@@ -770,7 +770,7 @@ mod tests {
+     use crate::manifest::{ExternalDb, LsmTreeState, ManifestCore, Segment};
+     use crate::object_store_tag::TableStoreKind;
+     use crate::subcompaction::Subcompaction;
+-    use crate::{CloneSourceSpec, Db, DbReader, DbReaderMode};
++    use crate::{CloneSourceSpec, Db, DbReader, DbReaderMode, ErrorKind};
  
-       - name: Generate pprofs
-         env:
--          CARGO_PROFILE_BENCH_DEBUG: true
--          SLATE_BENCH_PROFILE: true
-+          # Keep source lines in profiles and reduce link time.
-+          CARGO_PROFILE_BENCH_DEBUG: line-tables-only
-+          CARGO_PROFILE_BENCH_LTO: thin
-         run: |
--          BENCHMARKS=$(cargo bench --no-run --message-format=json | jq -r 'select(.profile.test == true and (.target.kind | contains(["bench"]))) | .target.name' | sort -u)
--          for bench in $BENCHMARKS; do
--            cargo bench --bench $bench -- --profile-time 10
--          done
-+          cargo bench -p slatedb --benches -- --profile-time 10
-           find . -name "*.pb" -exec gzip {} \;
+     const ROOT: &str = "db";
  
-       # install instructions from https://github.com/polarsignals/pprofme/tree/main
+@@ -1438,6 +1438,47 @@ mod tests {
+         db.close().await.unwrap();
+     }
+ 
++    #[tokio::test]
++    async fn test_read_manifest_fails_when_sst_is_missing_remotely() {
++        let remote: Arc<dyn ObjectStore> = Arc::new(InMemory::new());
++        let db = Db::builder(ROOT, Arc::clone(&remote))
++            .build()
++            .await
++            .unwrap();
++        db.put(b"a", b"1").await.unwrap();
++        db.flush_with_options(FlushOptions {
++            flush_type: FlushType::MemTable,
++        })
++        .await
++        .unwrap();
++        db.close().await.unwrap();
++        let ssts = latest_ssts(&remote, ROOT).await;
++        for sst in &ssts {
++            remote.delete(sst).await.unwrap();
++        }
++
++        let dir = tempfile::tempdir().unwrap();
++        let mirror = ObjectStoreMirror::builder(
++            dir.path(),
++            Arc::clone(&remote),
++            SlateDbMirrorPolicy::builder().build(),
++        )
++        .with_remote_scan_interval(None)
++        .build()
++        .await
++        .unwrap();
++        let admin = Admin::builder(ROOT, mirror as Arc<dyn ObjectStore>).build();
++        // Before #2255 was fixed, the reader took the missing SST for a
++        // missing manifest and listed the manifests again without a limit.
++        let err = tokio::time::timeout(Duration::from_secs(10), admin.read_manifest(None))
++            .await
++            .expect("read_manifest did not return")
++            .unwrap_err();
++        assert_eq!(err.kind(), ErrorKind::Data);
++        let err = format!("{err:?}");
++        assert!(ssts.iter().any(|sst| err.contains(sst.as_ref())), "{err}");
++    }
++
+     #[tokio::test]
+     async fn test_clone_detaches_from_parent_through_mirror() {
+         const PARENT: &str = "parent";
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2262** (2026-11-14): Add JayJamieson to VOUCHED list (@criccomini)
+- **PR #2256** (2026-11-13): Fix missing SST error spinning forever in the mirror (@nomiero)
 - **PR #2253** (2026-11-11): Fix startup synchronization in writer fencing tests (@criccomini)
 - **PR #2251** (2026-11-11): Allow committers to vouch via issue comments (@criccomini)
 - **PR #2250** (2026-11-11): Share one clock in compactor test fixture (@criccomini)
 - **PR #2249** (2026-11-11): Reduce build time for nightly pprof benchmarks (@criccomini)
-- **PR #2245** (closed): Dispatch row entry iterators statically instead of boxing every next (@KKould)
-- **PR #2238** (2026-11-10): Remove unused time-based retention (@siddontang)
 
 ---
 
@@ -2555,43 +2623,52 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Share one clock in compactor test fixture (#2250)
+## X. missing SST error spinning forever in the mirror
 
 **RULE**:
-When implementing operations in `slatedb/src/compactor.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in slatedb/slatedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rfcs/0034-local-object-mirroring.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in slatedb/slatedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3492ae1b`: Share one clock in compactor test fixture (#2250). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3e3043c3`: missing SST error spinning forever in the mirror. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `slatedb/src/compactor.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rfcs/0034-local-object-mirroring.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            // Share a clock so output SST timestamps cannot precede their compaction job timestamps.
-            let system_clock = Arc::new(DefaultSystemClock::new());
-                .with_system_clock(system_clock.clone())
-                    clock: system_clock.clone(),
-                system_clock.clone(),
-            let manifest = StoredManifest::load(manifest_store.clone(), system_clock)
-                .await
-                .unwrap();
+- **Reads.** The mirror returns `MirrorError::Policy`, with the policy's error
+  as its source. This error can come from a different object than the one
+  that the caller read. For example, `observe` of a manifest fails with
+  `NotFound` when an SST that the manifest references is missing. If the
+  mirror returned that `NotFound` unchanged, the caller would think that the
+  manifest is missing. `Policy` is not retryable, because the mirror already
+  retried the remote calls in `observe`. Nothing was written, so the caller
+  can safely read the object again, and that read runs `observe` again.
+- **Writes.** The mirror returns `MirrorError::WriteCommitted`. The object is
+  durable, but the policy's follow-up work didn't finish, so the caller has to
+  treat the write as having happened. SlateDB treats it as fatal: `Db` and the
+  compactor close with a `Data` error, the same as local disk errors. On reopen,
+  the manifest is read again and `observe` runs again.
+- An `observe` error on a read becomes `MirrorError::Policy`. Before, the
+  mirror returned it unchanged, so a missing SST looked like a missing
+  manifest ([#2255](https://github.com/slatedb/slatedb/issues/2255)).
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-                    clock: Arc::new(DefaultSystemClock::new()),
-                Arc::new(DefaultSystemClock::new()),
-            let manifest =
-                StoredManifest::load(manifest_store.clone(), Arc::new(DefaultSystemClock::new()))
-                    .await
-                    .unwrap();
+// Induced defect failure mode:
+- **Reads.** The error goes to the caller. Nothing was committed, so a caller
+  that retries the read runs `observe` again.
+- **Writes.** The mirror returns `WriteCommitted`. The object is durable, but
+  the policy's follow-up work didn't finish, so the caller has to treat the
+  write as having happened. SlateDB treats it as fatal: `Db` and the compactor
+  close with a `Data` error, the same as local disk errors. On reopen, the
+  manifest is read again and `observe` runs again.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3492ae1b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3e3043c3` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
