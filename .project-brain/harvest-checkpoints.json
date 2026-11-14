@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-14T13:38:52.509Z",
+  "last_updated": "2026-11-14T13:57:11.096Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1655,14 +1655,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baai-bge-base-en-v1-5",
-      "content_hash": "ebf192f45e7c24afc14c9ae8ad6e3dc93980ff536ce13d1cdb3b095dd5265928",
-      "verified_at": "2026-11-09T04:12:34.206Z",
+      "content_hash": "5fd29a34c759bfc6cc9dbb64d0f00f1c688bbf03d059a8bb62410f2cc2167a44",
+      "verified_at": "2026-11-14T13:57:11.095Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T04:12:34.206Z"
+      "last_updated": "2026-11-14T13:57:11.095Z"
     },
     "sentence-transformers/paraphrase-multilingual-mpnet-base-v2": {
       "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",

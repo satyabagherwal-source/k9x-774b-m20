@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T13:39:27.092Z",
+  "last_updated": "2026-11-14T13:57:45.437Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-14T11:34:37.198Z",
+      "processed_at": "2026-11-14T13:57:45.019Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-14T06:28:27.516Z",
+      "processed_at": "2026-11-14T13:57:44.508Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2601,9 +2601,14 @@
       "processed_at": "2026-11-14T13:39:24.794Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-baai-bge-base-en-v1.5-learnings.md": {
+      "processed_at": "2026-11-14T13:57:44.188Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 837,
-  "total_canonical_promoted": 195,
-  "total_staged_for_review": 641
+  "total_dossiers_evaluated": 840,
+  "total_canonical_promoted": 196,
+  "total_staged_for_review": 643
 }

@@ -9875,3 +9875,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-google-vit-base-patch16-224` | `https://huggingface.co/google/vit-base-patch16-224` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-14T13:38:46.598Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `b0d8deec` | Multi-dimensional audit evidence | 2026-11-14T13:38:52.499Z |
 | `learn-dom-d-d7ad2a79` | `project://hf-google-vit-base-patch16-224` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md` | 2026-11-14T13:39:24.436Z |
+| `learn-huggingface-baai-bge-base-en-v1-5` | `https://huggingface.co/BAAI/bge-base-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-14T13:57:11.089Z |
+| `learn-dom-d-641f7d27` | `project://hf-baai-bge-base-en-v1.5` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md` | 2026-11-14T13:57:44.188Z |

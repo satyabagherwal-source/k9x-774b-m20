@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-14T13:38:55.563Z",
-    "lastVerified": "2026-11-14T13:38:55.564Z",
+    "lastChecked": "2026-11-14T13:57:22.887Z",
+    "lastVerified": "2026-11-14T13:57:22.887Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -368,8 +368,8 @@
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-14T12:34:02.737Z",
-    "lastVerified": "2026-11-14T12:34:02.737Z",
+    "lastChecked": "2026-11-14T13:57:22.877Z",
+    "lastVerified": "2026-11-14T13:57:22.877Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-synalinks-synalinks-skills",
@@ -2525,8 +2525,8 @@
     "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-14T04:06:15.385Z",
-    "lastVerified": "2026-11-14T04:06:15.385Z",
+    "lastChecked": "2026-11-14T13:57:18.067Z",
+    "lastVerified": "2026-11-14T13:57:18.067Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
@@ -4207,9 +4207,9 @@
   "go-dev-frame-sponge": {
     "name": "sponge",
     "officialUrl": "https://github.com/go-dev-frame/sponge",
-    "lastChecked": "2026-11-13T10:26:28.953Z",
+    "lastChecked": "2026-11-14T13:57:15.367Z",
     "revisionIdentifier": "beef9eec",
-    "lastVerified": "2026-11-13T10:26:28.953Z"
+    "lastVerified": "2026-11-14T13:57:15.367Z"
   },
   "parthsarthi03-raptor": {
     "name": "raptor",
@@ -5625,9 +5625,9 @@
   "thecodingmachine-react-native-boilerplate": {
     "name": "react-native-boilerplate",
     "officialUrl": "https://github.com/thecodingmachine/react-native-boilerplate",
-    "lastChecked": "2026-11-10T04:59:10.541Z",
+    "lastChecked": "2026-11-14T13:57:12.967Z",
     "revisionIdentifier": "1a8b1d5b",
-    "lastVerified": "2026-11-10T04:59:10.542Z"
+    "lastVerified": "2026-11-14T13:57:12.967Z"
   },
   "infracost-infracost": {
     "name": "infracost",
@@ -5921,12 +5921,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "etcd-io-etcd": {
-    "name": "etcd-io/etcd",
+    "name": "etcd",
     "officialUrl": "https://github.com/etcd-io/etcd",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-13T08:21:52.786Z",
-    "lastVerified": "2026-11-13T08:21:52.786Z",
+    "lastChecked": "2026-11-14T13:57:20.645Z",
+    "lastVerified": "2026-11-14T13:57:20.645Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-etcd-io-etcd",
@@ -5935,7 +5935,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "1b969e26"
   },
   "cloudwego-volo": {
     "name": "volo",
@@ -7220,13 +7221,13 @@
     "officialUrl": "https://huggingface.co/BAAI/bge-base-en-v1.5",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-09T04:10:22.145Z",
-    "lastVerified": "2026-11-09T04:10:22.145Z",
+    "lastChecked": "2026-11-14T13:57:10.627Z",
+    "lastVerified": "2026-11-14T13:57:10.627Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-baai-bge-base-en-v1-5",
-    "contentHash": "ebf192f45e7c24afc14c9ae8ad6e3dc93980ff536ce13d1cdb3b095dd5265928",
-    "promotedRulesCount": 3,
+    "contentHash": "5fd29a34c759bfc6cc9dbb64d0f00f1c688bbf03d059a8bb62410f2cc2167a44",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -8599,9 +8600,9 @@
   "imsnif-diskonaut": {
     "name": "diskonaut",
     "officialUrl": "https://github.com/imsnif/diskonaut",
-    "lastChecked": "2026-11-13T01:14:02.314Z",
+    "lastChecked": "2026-11-14T13:57:07.862Z",
     "revisionIdentifier": "65cd8290",
-    "lastVerified": "2026-11-13T01:14:02.314Z"
+    "lastVerified": "2026-11-14T13:57:07.862Z"
   },
   "hf-phocinae-phocinae-largha-150m-v1": {
     "name": "Phocinae/Phocinae-Largha-150M-v1",

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T13:39:26.868Z",
-  "total_records": 685,
+  "last_updated": "2026-11-14T13:57:45.271Z",
+  "total_records": 688,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 338,
+      "total": 341,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -375,7 +375,10 @@
         "domain_intelligence-research-knowledge-intelligence-dosco-graphjin-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-google-vit-base-patch16-224-core-invariants",
         "DOM-D-D7AD2A79",
-        "domain_intelligence-research-knowledge-intelligence-hf-google-vit-base-patch16-224-learnings-core-in"
+        "domain_intelligence-research-knowledge-intelligence-hf-google-vit-base-patch16-224-learnings-core-in",
+        "domain_intelligence-research-knowledge-intelligence-baai-bge-base-en-v1-5-core-invariants",
+        "DOM-D-641F7D27",
+        "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-base-en-v1-5-learnings-core-invarian"
       ]
     },
     "E": {
@@ -6500,8 +6503,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "60224a6b21ab6318830c5782fa5b132496c47cb0386dfecff176931e39eef694",
-      "created_at": "2026-11-14T11:34:37.580Z"
+      "content_hash": "6e6430f2edf57da2a176d663094484472865038bc42c81b6b28f6f150619be06",
+      "created_at": "2026-11-14T13:57:45.271Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -7418,8 +7421,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "f6bcc4bef3879366cf24eef4b09c7b07361ef171933d608e85f9dc5e0cbcfae3",
-      "created_at": "2026-11-14T06:28:27.966Z"
+      "content_hash": "f740d8f1224ecbb8e711916714e17cb3d8638625b1e141d4add9a16c197ecf45",
+      "created_at": "2026-11-14T13:57:44.844Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -14372,6 +14375,66 @@
       "repository": "react-metro-learnings",
       "content_hash": "7e88e6345fa079e393e227ed61d3f2bfefca5aacc979159ae85bb74b58b38fa6",
       "created_at": "2026-11-14T13:39:25.323Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-baai-bge-base-en-v1-5-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-baai-bge-base-en-v1-5-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: BAAI/bge-base-en-v1.5 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baai-bge-base-en-v1-5-research-knowledge-intelligence-baai-bge-base-en-v1-5-c.md",
+      "repository": "BAAI/bge-base-en-v1.5",
+      "content_hash": "f2b389f83210f3587bda44ac1694eceba7741328fc51d65f858ac67789f9ca92",
+      "created_at": "2026-11-14T13:57:11.214Z"
+    },
+    "DOM-D-641F7D27": {
+      "record_id": "DOM-D-641F7D27",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): BAAI/bge-base-en-v1.5",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/BAAI/bge-base-en-v1.5](https://huggingface.co/BAAI/bge-base-en-v1.5))  \n> **Source Version**: `hf-baai-bge-`  \n> **License**: Open-Source  \n> **Synthesi",
+      "content_hash": "6b271c140a61f3bac393da67decb45dbc34c3a9741de2db8fac3e8cdf1bd6a61",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md`  \n> **Source**: huggingface ([https://hugging -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md`  \n> **Source**: huggingface ([https://hugging",
+      "provenance": {
+        "source_uri": "project://hf-baai-bge-base-en-v1.5/hf-baai-bge-base-en-v1.5-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T13:57:22.955Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-baai-bge-base-en-v1.5)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-baai-bge-base-en-v1.5"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T13:57:44.179Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-base-en-v1-5-learnings-core-invarian": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-base-en-v1-5-learnings-core-invarian",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-baai-bge-base-en-v1.5-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baai-bge-base-en-v1-5-learnings-research-knowledge-intelligence-hf-baai-bge-b.md",
+      "repository": "hf-baai-bge-base-en-v1.5-learnings",
+      "content_hash": "029d07ef7c9315fa3a0e34cd008333a5a4ced8af44e5560d4ba28ee10a557828",
+      "created_at": "2026-11-14T13:57:44.407Z"
     }
   }
 }
