@@ -9905,3 +9905,8 @@
 | `CYCLE-20261114-6NKC` | `2026-11-14T18:14:44.172Z` | `gkd-kit/gkd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8517` | Yes (`fe4dedeb...`) |
 | `CYCLE-20261114-6TAE` | `2026-11-14T18:14:51.590Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8518` | Yes (`b87b3fc0...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T18:15:25.153Z` | `hf-autotrust-glm5.3-flash-e224-dgx-spark` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-5DB2A72D` [Domain D] | Yes (`9d9951ec...`) |
+| `CYCLE-20261114-LKGK` | `2026-11-14T18:26:19.988Z` | `LiquidAI/d1-3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md` | Yes (`1b4f6565...`) |
+| `CYCLE-20261114-LMDR` | `2026-11-14T18:26:22.479Z` | `google/tcmalloc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8519` | Yes (`b002fa6b...`) |
+| `CYCLE-20261114-LQX9` | `2026-11-14T18:26:28.365Z` | `open-ani/animeko` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8520` | Yes (`f551be58...`) |
+| `CYCLE-20261114-LXOB` | `2026-11-14T18:26:37.115Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`57be4366...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T18:27:16.269Z` | `hf-liquidai-d1-3b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-301C83AD` [Domain D] | Yes (`150937cb...`) |

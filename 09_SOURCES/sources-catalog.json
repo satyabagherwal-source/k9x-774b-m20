@@ -185,8 +185,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/d1-3B",
     "sourceVersion": "hf-liquidai-d1-3b",
     "license": "Open-Source",
-    "contentHash": "6b2c784ab1976a56c7a4fe1fcdf4917b1b4543f34444d6e1d24291618b6d208b",
-    "lastHarvestedAt": "2026-11-09T07:05:52.164Z",
+    "contentHash": "1b4f6565e67037ac6c56ae90bf85a8368170e29f33d88e17fe3a1a9c9f54e56d",
+    "lastHarvestedAt": "2026-11-14T18:26:19.993Z",
     "learningId": "learn-huggingface-liquidai-d1-3b"
   },
   "hf-cactus-compute-whistle": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "5332623c",
+    "sourceVersion": "f8229156",
     "license": "NOASSERTION",
-    "contentHash": "961c19e8a43bf7c6e0f934b6f6115066b900a84352fb905e49ca2df3ff295a68",
-    "lastHarvestedAt": "2026-11-14T15:03:59.619Z",
+    "contentHash": "57be43664ac49a77f4a8b672af17832866bbc6cff146fd41aea1d79430ca7e08",
+    "lastHarvestedAt": "2026-11-14T18:26:37.119Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -6303,10 +6303,10 @@
     "repository": "open-ani/animeko",
     "platform": "github",
     "sourceUrl": "https://github.com/open-ani/animeko",
-    "sourceVersion": "2e22f49a",
+    "sourceVersion": "d54ba004",
     "license": "AGPL-3.0",
-    "contentHash": "a03f15f24e63d3df3171479c672d9b6635f4d76313da92f9753327791ef36d4c",
-    "lastHarvestedAt": "2026-11-11T09:15:42.085Z",
+    "contentHash": "f551be5841118e97752eae7982d7d70953a5e68b5b090df8be402b4beefa6a4b",
+    "lastHarvestedAt": "2026-11-14T18:26:28.369Z",
     "learningId": "learn-github-open-ani-animeko"
   },
   "k3s-io-k3s": {
@@ -7683,10 +7683,10 @@
     "repository": "google/tcmalloc",
     "platform": "github",
     "sourceUrl": "https://github.com/google/tcmalloc",
-    "sourceVersion": "54de7997",
+    "sourceVersion": "f69a26d2",
     "license": "Apache-2.0",
-    "contentHash": "784ca6a9311391c11fc6faf4a47b8f2d0165a2d423e59ad221e4527496e3f689",
-    "lastHarvestedAt": "2026-11-13T04:31:15.032Z",
+    "contentHash": "b002fa6bd2b10becd88ee4fafea443e6a9094e1c9bead9e11b73cd73a3fdd2cb",
+    "lastHarvestedAt": "2026-11-14T18:26:22.483Z",
     "learningId": "learn-github-google-tcmalloc"
   },
   "russhwolf-multiplatform-settings": {

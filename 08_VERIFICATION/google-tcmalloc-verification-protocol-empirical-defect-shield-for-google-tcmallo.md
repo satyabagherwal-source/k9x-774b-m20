@@ -4,45 +4,31 @@
 {
   "source_repository": "google/tcmalloc",
   "source_url": "https://github.com/google/tcmalloc",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "f69a26d2",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-14T18:26:22.692Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-google-tcmalloc",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [google/tcmalloc](https://github.com/google/tcmalloc) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [google/tcmalloc](https://github.com/google/tcmalloc) (Revision: `f69a26d2`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-14T18:26:22.692Z`  
+> **Learning ID**: `learn-github-google-tcmalloc`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `google/tcmalloc` (Commit: `historical`)
+- **Target Repository**: `google/tcmalloc` (Commit: `f69a26d2`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/google-tcmalloc-learnings.md`  
-> **Source**: github ([https://github.com/google/tcmalloc](https://github.com/google/tcmalloc))  
-> **Source Version**: `065aed87`  
-> **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T10:27:03.674Z  
-> **Learning ID**: `learn-github-google-tcmalloc`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): google/tcmalloc
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/google-tcmalloc-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/google/tcmalloc](https://github.com/google/tcmalloc))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T10:26:29.927Z  
+> **Harvest Timestamp**: 2026-11-14T18:26:21.436Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: 
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 5398 stars
+- **Stars / Engagement**: 5403 stars
 
 ---
 
@@ -879,6 +865,7 @@ GOOGLE_MALLOC_SECTION_END
 #include <sys/types.h>
 #include <time.h>
 
+#include "absl/base/nullability.h"
 #include "absl/strings/string_view.h"
 #include "absl/time/time.h"
 #include "absl/types/span.h"
@@ -939,6 +926,20 @@ ssize_t signal_safe_write(int fd, const char* buf, size_t count,
 // read before any error.
 [[nodiscard]] ssize_t signal_safe_read(int fd, char* buf, size_t count,
                                        size_t* bytes_read);
+
+// signal_safe_pread() - a wrapper for pread(2) which ignores signals
+// Semantics equivalent to pread(2):
+//   returns number of bytes read, -1 on failure, error in errno
+//   additionally, (if not nullptr) total bytes read in *bytes_read
+//
+// In the interrupted (EINTR) or partial-read case, signal_safe_pread will
+// continue attempting to read into buf from offset + total_bytes without
+// modifying fd's file offset.  If an error occurs after a partial read,
+// signal_safe_pread returns -1 and (when bytes_read is non-null) stores the
+// total bytes read before the error in *bytes_read.
+[[nodiscard]] ssize_t signal_safe_pread(int fd, char* absl_nonnull buf,
+                                        size_t count, off_t offset,
+                                        size_t* absl_nullable bytes_read);
 
 // signal_safe_poll() - a wrapper for poll(2) which ignores signals
 // Semantics equivalent to poll(2):
@@ -1257,13 +1258,11 @@ GOOGLE_MALLOC_SECTION_END
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1897** (2026-11-10): **Include fallback stats in HugetlbRegionFactory::GetStats.**
-  *Symptoms*: Include fallback stats in HugetlbRegionFactory::GetStats.  It previously skipped fallback_->GetStats when the output buffer was already exhausted, omitting fallback bytes from the returned size.  This allows zero-length buffers in Printer and forwards the remaining subspan to fallback_->GetStats.  Co-authored-by: Chris Kennelly <ckennelly@google.com> 
-  **Post-Mortem & Fix Analysis**:
-  > Thanks for your pull request! It looks like this may be your first contribution to a Google open source project. Before we can look at your pull request, you'll need to sign a Contributor License Agreement (CLA).  View this [failed invocation](https://github.com/google/tcmalloc/pull/1897/checks?check_run_id=130138440171) of the CLA check for more information.  For the most up to date status, view the checks section at the bottom of the pull request.
+- **Issue #1921** (2026-11-13): **Use small-model RIP-relative addressing for tc_globals on x86-64.**
+  *Symptoms*: Use small-model RIP-relative addressing for tc_globals on x86-64.  Under `-mcmodel=medium` PIC builds, Clang treats objects larger than `-mlarge-data-threshold` (64 KiB) as potentially residing in .lbss (>2 GiB away) and materializes `&tc_globals` (sizeof(Static) ~ 719 KiB) via a 3-instruction, 20-byte GOTPC64 + GOTOFF64 sequence (`leaq _GLOBAL_OFFSET_TABLE_(%rip)` + 10-byte movabsq + addq) in every allocation and deallocation fast path. However, GOOGLE_MALLOC_SECTION_BEGIN on Clang/Linux explicitly places tc_globals in google_malloc_bss (a standard small BSS section without SHF_X86_64_LARGE), so 32-bit RIP-relative addressing is always in range.  Annotate tc_globals declarations and its definition with `__attribute__((model("small")))` on Clang/Linux x86-64 so `&tc_globals` collapses to a single 7-byte `leaq tc_globals(%rip), %reg`, removing 2 instructions, 2 uOps, 13 bytes, and 1 serial address-generation cycle from the SizeMap and PageMap critical paths. 
 
-- **Issue #1896** (2026-11-11): **Add NoopResidency for test fakes and remove unused FakeResidency.**
-  *Symptoms*: Add NoopResidency for test fakes and remove unused FakeResidency.  This provides a common base class for Residency test stubs and removes the unused FakePageFlags and FakeResidency definitions. 
+- **Issue #1920** (2026-11-13): **Automated Code Change**
+  *Symptoms*: Automated Code Change 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1280,62 +1279,195 @@ GOOGLE_MALLOC_SECTION_END
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0ecaf3d4` (2026-11-10)
-**Commit Message**: Avoid 32-bit shift overflow when computing alignment in ReportCorruptedFree.
+### Incident Patch 1: `f69a26d2` (2026-11-13)
+**Commit Message**: Use small-model RIP-relative addressing for tc_globals on x86-64.
 
-`ReportCorruptedFree` computed pointer alignment as `1u << absl::countr_zero(absl::bit_cast<uintptr_t>(ptr))`. When a corrupted pointer is `>= 4 GiB`-aligned (`countr_zero >= 32`) on 64-bit platforms, shifting a 32-bit `1u` literal invokes undefined behavior and reports `got alignment 1`. Use `addr & -addr` on the `uintptr_t` address in both `ReportCorruptedFree` overloads.
+Under `-mcmodel=medium` PIC builds, Clang treats objects larger than `-mlarge-data-threshold` (64 KiB) as potentially residing in .lbss (>2 GiB away) and materializes `&tc_globals` (sizeof(Static) ~ 719 KiB) via a 3-instruction, 20-byte GOTPC64 + GOTOFF64 sequence (`leaq _GLOBAL_OFFSET_TABLE_(%rip)` + 10-byte movabsq + addq) in every allocation and deallocation fast path. However, GOOGLE_MALLOC_SECTION_BEGIN on Clang/Linux explicitly places tc_globals in google_malloc_bss (a standard small BSS section without SHF_X86_64_LARGE), so 32-bit RIP-relative addressing is always in range.
 
-PiperOrigin-RevId: 1018619289
+Annotate tc_globals declarations and its definition with `__attribute__((model("small")))` on Clang/Linux x86-64 so `&tc_globals` collapses to a single 7-byte `leaq tc_globals(%rip), %reg`, removing 2 instructions, 2 uOps, 13 bytes, and 1 serial address-generation cycle from the SizeMap and PageMap critical paths.
 
-**File**: `tcmalloc/error_reporting.cc` (modified, +6/-9)
+PiperOrigin-RevId: 1021207831
+
+**File**: `tcmalloc/internal/config.h` (modified, +11/-0)
 ```diff
-@@ -22,7 +22,6 @@
- #include "absl/base/attributes.h"
- #include "absl/base/casts.h"
- #include "absl/debugging/stacktrace.h"
--#include "absl/numeric/bits.h"
- #include "absl/types/span.h"
- #include "tcmalloc/internal/config.h"
- #include "tcmalloc/internal/logging.h"
-@@ -172,11 +171,10 @@ ABSL_ATTRIBUTE_NOINLINE void ReportCorruptedFree(
-   const size_t depth = absl::GetStackTrace(stack, kMaxStackDepth, 1);
+@@ -77,6 +77,17 @@
+ #define GOOGLE_MALLOC_SECTION
+ #endif
  
-   RecordCrash("GWP-ASan", "invalid-free");
-+  const uintptr_t addr = absl::bit_cast<uintptr_t>(ptr);
-   state.gwp_asan_state().RecordInvalidFree(
--      ptr,
--      static_cast<std::align_val_t>(
--          1u << absl::countr_zero(absl::bit_cast<uintptr_t>(ptr))),
--      expected_alignment, std::nullopt, absl::MakeSpan(stack, depth));
-+      ptr, static_cast<std::align_val_t>(addr & -addr), expected_alignment,
-+      std::nullopt, absl::MakeSpan(stack, depth));
++// GOOGLE_MALLOC_SECTION_BEGIN places globals in google_malloc_data /
++// google_malloc_bss (normal small sections, not .ldata / .lbss), so
++// RIP-relative small-model addressing is safe even under -mcmodel=medium when
++// the object exceeds -mlarge-data-threshold.
++#if defined(__clang__) && defined(__linux__) && defined(__x86_64__) && \
++    ABSL_HAVE_ATTRIBUTE(model)
++#define TCMALLOC_SMALL_MODEL __attribute__((model("small")))
++#else
++#define TCMALLOC_SMALL_MODEL
++#endif
++
+ // TCMALLOC_ATTRIBUTE_NO_DESTROY is defined when clang::no_destroy attribute is
+ // present.
+ #if ABSL_HAVE_CPP_ATTRIBUTE(clang::no_destroy)
+```
+
+**File**: `tcmalloc/static_forwarder.h` (modified, +1/-1)
+```diff
+@@ -57,7 +57,7 @@ namespace tcmalloc_internal {
  
-   TC_BUG("Attempted to free corrupted pointer %p.  Expected alignment %v", ptr,
-          expected_alignment);
-@@ -190,11 +188,10 @@ ABSL_ATTRIBUTE_NOINLINE void ReportCorruptedFree(
-   const size_t depth = absl::GetStackTrace(stack, kMaxStackDepth, 1);
+ class PageTracker;
+ class Static;
+-extern Static tc_globals;
++extern Static tc_globals TCMALLOC_SMALL_MODEL;
  
-   RecordCrash("GWP-ASan", "invalid-free");
-+  const uintptr_t addr = absl::bit_cast<uintptr_t>(ptr);
-   state.gwp_asan_state().RecordInvalidFree(
--      ptr,
--      static_cast<std::align_val_t>(
--          1u << absl::countr_zero(absl::bit_cast<uintptr_t>(ptr))),
--      expected_alignment, allocation_stack, absl::MakeSpan(stack, depth));
-+      ptr, static_cast<std::align_val_t>(addr & -addr), expected_alignment,
-+      allocation_stack, absl::MakeSpan(stack, depth));
+ // StaticForwarder provides the caches and page allocator with access to the
+ // global allocator state, `state`.
+```
+
+**File**: `tcmalloc/static_vars.cc` (modified, +2/-1)
+```diff
+@@ -63,7 +63,8 @@ alignas(ABSL_CACHELINE_SIZE)
+ // ABSL_ATTRIBUTE_SECTION_VARIABLE(google_malloc_bss). So instead,
+ // we check this in arena_test.cc (a random test) by declaring another
+ // global Static variable with ABSL_ATTRIBUTE_SECTION_VARIABLE(.bss).
+-TCMALLOC_ATTRIBUTE_NO_DESTROY ABSL_CONST_INIT Static tc_globals;
++TCMALLOC_ATTRIBUTE_NO_DESTROY ABSL_CONST_INIT Static tc_globals
++    TCMALLOC_SMALL_MODEL;
  
-   TC_BUG("Attempted to free corrupted pointer %p.  Expected alignment %v", ptr,
-          expected_alignment);
+ size_t Static::metadata_bytes() {
+   const size_t internal_dependencies_size = sizeof(pageheap_lock) +
+```
+
+**File**: `tcmalloc/static_vars.h` (modified, +1/-1)
+```diff
+@@ -67,7 +67,7 @@ using SampledAllocationRecorder = ::tcmalloc::tcmalloc_internal::SampleRecorder<
+     MetadataObjectAllocator<SampledAllocation, ArenaAlloc::kSampledAllocation>>;
+ 
+ class Static;
+-extern Static tc_globals;
++extern Static tc_globals TCMALLOC_SMALL_MODEL;
+ 
+ class Static final {
+  public:
+```
+
+**File**: `tcmalloc/testing/fast_path.insecure.golden` (modified, +2/-2)
+```diff
+@@ -15,6 +15,6 @@ new(cold)->size            -    1   4     31   -   4   -    7   -   -    -   2
+ new(cold,token_1)->size    -    1   4     31   -   4   -    7   -   -    -   2   -     1
+ new(nothrow)               -    -   3     27   -   4   -    5   -   -    -   2   -     1
+ new(token_1)               -    -   3     27   -   4   -    5   -   -    -   2   -     1
+-new(token_1)->size         -    -   3     27   -   4   -    6   -   -    -   2   -     1
+-new->size                  -    -   3     27   -   4   -    6   -   -    -   2   -     1
++new(token_1)->size         -    -   3     25   -   4   -    6   -   -    -   2   -     1
++new->size                  -    -   3     25   -   4   -    6   -   -    -   2   -     1
+ posix_memalign             -    -   8     29   -   8   -    6   -   1    1   2   3     2
+```
+
+**File**: `tcmalloc/testing/fast_path.release+insecure.golden` (modified, +2/-2)
+```diff
+@@ -15,6 +15,6 @@ new(cold)->size            -    1   4     31   -   4   -    7   -   -    -   2
+ new(cold,token_1)->size    -    1   4     31   -   4   -    7   -   -    -   2   -     1
+ new(nothrow)               -    -   3     27   -   4   -    5   -   -    -   2   -     1
+ new(token_1)               -    -   3     27   -   4   -    5   -   -    -   2   -     1
+-new(token_1)->size         -    -   3     27   -   4   -    6   -   -    -   2   -     1
+-new->size                  -    -   3     27   -   4   -    6   -   -    -   2   -     1
++new(token_1)->size         -    -   3     25   -   4   -    6   -   -    -   2   -     1
++new->size                  -    -   3     25   -   4   -    6   -   -    -   2   -     1
+ posix_memalign             -    -   8     29   -   8   -    6   -   1    1   2   3     2
+```
+
+**File**: `tcmalloc/testing/fast_path.release.golden` (modified, +6/-6)
+```diff
+@@ -1,18 +1,18 @@
+ func                    call cmov cmp cycles div jcc jmp load mul pop push rmw rsp store
+-aligned_alloc              -    -   6     30   -   7   -    6   -   1    1   2   1     1
++aligned_alloc              -    -   6     29   -   7   -    6   -   1    1   2   1     1
+ calloc                     -    -   4     31   -   6   -    6   1   1    1   2   3     1
+-delete                     -    -   5     33   -   6   -    5   -   -    -   -   -     3
+-delete(size)               -    -   4     25   -   5   -    3   -   -    -   -   -     3
++delete                     -    -   5     32   -   6   -    5   -   -    -   -   -     3
++delete(size)               -    -   4     24   -   5   -    3   -   -    -   -   -     3
+ delete(size,align)         -    -   6     25   -   7   -    4   -   -    -   -   -     3
+ malloc                     -    -   4     27   -   5   -    6   -   -    -   2   -     1
+ malloc(token_1)            -    -   4     27   -   5   -    6   -   -    -   2   -     1
+ new                        -    -   3     27   -   4   -    5   -   -    -   2   -     1
+ new(align)                 -    -   5     28   -   6   -    6   -   -    -   2   -     1
+ new(align)->size           -    -   5     28   -   6   -    7   -   -    -   2   -     1
+-new(align,cold)->size      -    1   6     33   -   6   -    8   -   -    -   2   -     1
++new(align,cold)->size      -    1   6     32   -   6   -    8   -   -    -   2   -     1
+ new(align,nothrow)         -    -   5     28   -   6   -    6   -   -    -   2   -     1
+-new(cold)->size            -    1   4     31   -   4   -    7   -   -    -   2   -     1
+-new(cold,token_1)->size    -    1   4     31   -   4   -    7   -   -    -   2   -     1
++new(cold)->size            -    1   4     30   -   4   -    7   -   -    -   2   -     1
++new(cold,token_1)->size    -    1   4     30   -   4   -    7   -   -    -   2   -     1
+ new(nothrow)               -    -   3     27   -   4   -    5   -   -    -   2   -     1
+ new(token_1)               -    -   3     27   -   4   -    5   -   -    -   2   -     1
+ new(token_1)->size         -    -   3     27   -   4   -    6   -   -    -   2   -     1
+```
+
+---
+
+### Incident Patch 2: `685cae7c` (2026-11-13)
+**Commit Message**: Automated Code Change
+
+PiperOrigin-RevId: 1021178560
+
+**File**: `tcmalloc/internal/affinity_test.cc` (modified, +1/-1)
+```diff
+@@ -77,7 +77,7 @@ TEST(AffinityInternalTest, ScopedAffinityTamper) {
+ }
+ 
+ TEST(AffinityInternalTest, ScopedAffinityMask) {
+-  auto original_cpus = AllowedCpus();
++  [[maybe_unused]] auto original_cpus = AllowedCpus();
+ 
+ restart:
+   std::vector<int> original_affinity = AllowedCpus(), temporary_affinity;
+```
+
+**File**: `tcmalloc/mock_transfer_cache.h` (modified, +0/-1)
+```diff
+@@ -439,7 +439,6 @@ class FakeShardedTransferCacheEnvironment {
+ 
+   void Remove(int cpu, int n) {
+     cpu_layout_.SetCurrentCpu(cpu);
+-    std::vector<void*> bufs;
+     for (int i = 0; i < n; ++i) {
+       void* ptr = sharded_manager_.Pop(kSizeClass);
+       // Ensure we make progress.
+```
+
+**File**: `tcmalloc/testing/get_stats_test.cc` (modified, +0/-1)
+```diff
+@@ -664,7 +664,6 @@ TEST_F(GetStatsTest, RequiredBufferSizes) {
+     GTEST_SKIP() << "Not linked against malloc";
+   }
+ 
+-  std::string stats;
+   const int kLargeBufferSize = 3 << 20;
+   const int kSmallBufferSize = 16 << 10;
+   std::string buf;
+```
+
+**File**: `tcmalloc/testing/profile_drop_frames_test.cc` (modified, +0/-1)
+```diff
+@@ -325,7 +325,6 @@ TEST(AllocationSampleTest, ProfileDropFrames) {
+       tcmalloc::tcmalloc_internal::kProfileDropFrames.end());
+   absl::flat_hash_map<void*, std::string> symbol_cache;
+   absl::flat_hash_map<std::string, bool> drop_cache;
+-  std::vector<char> symbol_name(4 << 10);
+   bool failed = false;
+   int got_stacks = 0;
+   constexpr absl::string_view kOurFunction =
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1897** (2026-11-10): Include fallback stats in HugetlbRegionFactory::GetStats. (@copybara-service[bot])
-- **PR #1896** (2026-11-11): Add NoopResidency for test fakes and remove unused FakeResidency. (@copybara-service[bot])
-- **PR #1894** (2026-11-11): Unify UpdateMaxCapacities() and ResizeSlabs(). (@copybara-service[bot])
-- **PR #1893** (2026-11-10): Remove PerSizeClassMaxCapacity. (@copybara-service[bot])
-- **PR #1892** (closed): No public description (@copybara-service[bot])
-- **PR #1891** (2026-11-11): Replace the candidate selection heap with a buffered nth_element selector. (@copybara-service[bot])
+- **PR #1921** (2026-11-13): Use small-model RIP-relative addressing for tc_globals on x86-64. (@copybara-service[bot])
+- **PR #1920** (2026-11-13): Automated Code Change (@copybara-service[bot])
+- **PR #1918** (closed): No public description (@copybara-service[bot])
+- **PR #1917** (closed): No public description (@copybara-service[bot])
+- **PR #1916** (2026-11-12): Revert: percpu helper change (@copybara-service[bot])
+- **PR #1914** (2026-11-12): Use pread in PageFlags. (@copybara-service[bot])
 
 ---
 
@@ -1355,44 +1487,41 @@ PiperOrigin-RevId: 1018619289
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Avoid 32-bit shift overflow when computing alignment in ReportCorruptedFree.
+## X. Use small-model RIP-relative addressing for tc_globals on x86-64.
 
 **RULE**:
-When implementing operations in `tcmalloc/error_reporting.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/tcmalloc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tcmalloc/internal/config.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/tcmalloc. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0ecaf3d4`: Avoid 32-bit shift overflow when computing alignment in ReportCorruptedFree.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f69a26d2`: Use small-model RIP-relative addressing for tc_globals on x86-64.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tcmalloc/error_reporting.cc`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tcmalloc/internal/config.h`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-  const uintptr_t addr = absl::bit_cast<uintptr_t>(ptr);
-      ptr, static_cast<std::align_val_t>(addr & -addr), expected_alignment,
-      std::nullopt, absl::MakeSpan(stack, depth));
-  const uintptr_t addr = absl::bit_cast<uintptr_t>(ptr);
-      ptr, static_cast<std::align_val_t>(addr & -addr), expected_alignment,
-      allocation_stack, absl::MakeSpan(stack, depth));
+// GOOGLE_MALLOC_SECTION_BEGIN places globals in google_malloc_data /
+// google_malloc_bss (normal small sections, not .ldata / .lbss), so
+// RIP-relative small-model addressing is safe even under -mcmodel=medium when
+// the object exceeds -mlarge-data-threshold.
+#if defined(__clang__) && defined(__linux__) && defined(__x86_64__) && \
+    ABSL_HAVE_ATTRIBUTE(model)
+#define TCMALLOC_SMALL_MODEL __attribute__((model("small")))
+#else
+#define TCMALLOC_SMALL_MODEL
+#endif
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
-// Anti-pattern to NEVER write (induced failure mode):
-#include "absl/numeric/bits.h"
-      ptr,
-      static_cast<std::align_val_t>(
-          1u << absl::countr_zero(absl::bit_cast<uintptr_t>(ptr))),
-      expected_alignment, std::nullopt, absl::MakeSpan(stack, depth));
-      ptr,
-      static_cast<std::align_val_t>(
-          1u << absl::countr_zero(absl::bit_cast<uintptr_t>(ptr))),
-      expected_alignment, allocation_stack, absl::MakeSpan(stack, depth));
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0ecaf3d4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f69a26d2` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

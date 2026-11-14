@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T18:15:26.281Z",
-  "total_records": 783,
+  "last_updated": "2026-11-14T18:27:17.065Z",
+  "total_records": 790,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 383,
+      "total": 386,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -420,7 +420,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-unsloth-embeddinggemma-2-gguf-learnings-core-",
         "domain_intelligence-research-knowledge-intelligence-autotrust-glm5-3-flash-e224-dgx-spark-core-invar",
         "DOM-D-5DB2A72D",
-        "domain_intelligence-research-knowledge-intelligence-hf-autotrust-glm5-3-flash-e224-dgx-spark-learnin"
+        "domain_intelligence-research-knowledge-intelligence-hf-autotrust-glm5-3-flash-e224-dgx-spark-learnin",
+        "domain_intelligence-research-knowledge-intelligence-liquidai-d1-3b-core-invariants",
+        "DOM-D-301C83AD",
+        "domain_intelligence-research-knowledge-intelligence-hf-liquidai-d1-3b-learnings-core-invariants"
       ]
     },
     "E": {
@@ -582,7 +585,7 @@
       ]
     },
     "H": {
-      "total": 163,
+      "total": 167,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -746,7 +749,11 @@
         "domain_intelligence-technical-construction-intelligence-oven-sh-bun-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-callstack-agent-device-core-invariants",
         "domain_intelligence-technical-construction-intelligence-callstack-agent-device-learnings-core-invari",
-        "domain_intelligence-technical-construction-intelligence-ydb-platform-ydb-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-ydb-platform-ydb-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-google-tcmalloc-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-open-ani-animeko-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-google-tcmalloc-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-open-ani-animeko-learnings-core-invariants"
       ]
     },
     "I": {
@@ -10840,8 +10847,8 @@
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "2b031af5f06c7ec3f0a0b41bf458919aaec2b88f295481f88684602f9a284771",
-      "created_at": "2026-11-14T15:03:59.837Z"
+      "content_hash": "37cc78362f358c90ee3cb3cf9ef6f524d5f235f9a2fbe1c1ec75740986b57c9c",
+      "created_at": "2026-11-14T18:26:37.468Z"
     },
     "DOM-D-F5645095": {
       "record_id": "DOM-D-F5645095",
@@ -15946,6 +15953,102 @@
       "repository": "gkd-kit-gkd-learnings",
       "content_hash": "9b5bb46180f21da24e8d75fadf10119ccae28e9dafdb85717a68934ddc4cb90c",
       "created_at": "2026-11-14T18:15:26.281Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-liquidai-d1-3b-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-liquidai-d1-3b-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: LiquidAI/d1-3B Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-d1-3b-research-knowledge-intelligence-liquidai-d1-3b-core-invariants.md",
+      "repository": "LiquidAI/d1-3B",
+      "content_hash": "7cba17b48c205e199e0b0dbfc924aa9f007e9b064fa3a94863f69e21368036c8",
+      "created_at": "2026-11-14T18:26:20.186Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-google-tcmalloc-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-google-tcmalloc-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: google/tcmalloc Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-google-tcmalloc-technical-construction-intelligence-google-tcmalloc-core-invaria.md",
+      "repository": "google/tcmalloc",
+      "content_hash": "70acdba3375195ca9b9941aa3efac8c876637b07be928a312bbef4ee1ed017c1",
+      "created_at": "2026-11-14T18:26:22.818Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-open-ani-animeko-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-open-ani-animeko-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: open-ani/animeko Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-open-ani-animeko-technical-construction-intelligence-open-ani-animeko-core-invar.md",
+      "repository": "open-ani/animeko",
+      "content_hash": "92d9bc25dce4fe61415092767db12dbe83da0cabcb29a78e1bafda592fa681b3",
+      "created_at": "2026-11-14T18:26:28.729Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-google-tcmalloc-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-google-tcmalloc-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: google-tcmalloc-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-google-tcmalloc-learnings-technical-construction-intelligence-google-tcmalloc-le.md",
+      "repository": "google-tcmalloc-learnings",
+      "content_hash": "f00c888b618e0db10e7c816be3d47d9c9f80703e24211a037f1168908bb1362d",
+      "created_at": "2026-11-14T18:26:40.759Z"
+    },
+    "DOM-D-301C83AD": {
+      "record_id": "DOM-D-301C83AD",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): LiquidAI/d1-3B",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/LiquidAI/d1-3B](https://huggingface.co/LiquidAI/d1-3B))  \n> **Source Version**: `hf-liquidai-`  \n> **License**: Open-Source  \n> **Synthesized By**: zero-clone-",
+      "content_hash": "150937cb1a7bf8c98a2b143e1d8acd00a3e8e9b9679dedd20e4f8612b3dbf8c0",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co",
+      "provenance": {
+        "source_uri": "project://hf-liquidai-d1-3b/hf-liquidai-d1-3b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T18:26:41.005Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-liquidai-d1-3b)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-liquidai-d1-3b"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T18:27:16.252Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-liquidai-d1-3b-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-d1-3b-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-liquidai-d1-3b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-d1-3b-learnings-research-knowledge-intelligence-hf-liquidai-d1-3b-le.md",
+      "repository": "hf-liquidai-d1-3b-learnings",
+      "content_hash": "1f14fae2176fa974d98a3907b25aece889a55ef8e1c56aafb4be055cbb20b84b",
+      "created_at": "2026-11-14T18:27:16.486Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-open-ani-animeko-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-open-ani-animeko-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: open-ani-animeko-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-open-ani-animeko-learnings-technical-construction-intelligence-open-ani-animeko-.md",
+      "repository": "open-ani-animeko-learnings",
+      "content_hash": "1d66ed9c917dc9c002c8b5ab9c199fb3bf54503b912adba234d716f75947196d",
+      "created_at": "2026-11-14T18:27:17.065Z"
     }
   }
 }

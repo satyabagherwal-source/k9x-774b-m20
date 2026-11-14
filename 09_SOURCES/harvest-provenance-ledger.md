@@ -9938,3 +9938,8 @@ Every entry in this ledger must capture:
 | `learn-github-gkd-kit-gkd` | `https://github.com/gkd-kit/gkd` | `301e7e0a` | Multi-dimensional audit evidence | 2026-11-14T18:14:44.176Z |
 | `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `7d522757` | Multi-dimensional audit evidence | 2026-11-14T18:14:51.594Z |
 | `learn-dom-d-5db2a72d` | `project://hf-autotrust-glm5.3-flash-e224-dgx-spark` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md` | 2026-11-14T18:15:25.153Z |
+| `learn-huggingface-liquidai-d1-3b` | `https://huggingface.co/LiquidAI/d1-3B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-14T18:26:19.993Z |
+| `learn-github-google-tcmalloc` | `https://github.com/google/tcmalloc` | `f69a26d2` | Multi-dimensional audit evidence | 2026-11-14T18:26:22.483Z |
+| `learn-github-open-ani-animeko` | `https://github.com/open-ani/animeko` | `d54ba004` | Multi-dimensional audit evidence | 2026-11-14T18:26:28.369Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `f8229156` | Multi-dimensional audit evidence | 2026-11-14T18:26:37.119Z |
+| `learn-dom-d-301c83ad` | `project://hf-liquidai-d1-3b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md` | 2026-11-14T18:27:16.269Z |

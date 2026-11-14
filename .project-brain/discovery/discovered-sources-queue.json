@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T18:15:25.973Z",
+  "updated_at": "2026-11-14T18:27:16.723Z",
   "stats": {
-    "total_discovered": 3377,
-    "approved_pending_harvest": 3171,
+    "total_discovered": 3381,
+    "approved_pending_harvest": 3175,
     "harvested_count": 0,
     "rejected_count": 206,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3152,
+      "COMMUNITY_AND_EXPERT": 3156,
       "OFFICIAL_DOCUMENTATION": 122,
       "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
@@ -72872,6 +72872,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gkd-kit-gkd-learnings.md",
         "fileName": "gkd-kit-gkd-learnings.md"
+      }
+    },
+    "SRC-5AA0A3190245": {
+      "id": "SRC-5AA0A3190245",
+      "url": "https://huggingface.co/LiquidAI/d1-3B",
+      "title": "https://huggingface.co/LiquidAI/d1-3B",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T18:27:16.284Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md",
+        "fileName": "hf-liquidai-d1-3b-learnings.md"
+      }
+    },
+    "SRC-1FA8FA654EA1": {
+      "id": "SRC-1FA8FA654EA1",
+      "url": "https://github.com/open-ani/animeko",
+      "title": "https://github.com/open-ani/animeko",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T18:27:16.664Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-ani-animeko-learnings.md",
+        "fileName": "open-ani-animeko-learnings.md"
+      }
+    },
+    "SRC-BF9F27644D76": {
+      "id": "SRC-BF9F27644D76",
+      "url": "https://github.com/open-ani/ani/blob/main/LICENSE",
+      "title": "https://github.com/open-ani/ani/blob/main/LICENSE",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T18:27:16.694Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-ani-animeko-learnings.md",
+        "fileName": "open-ani-animeko-learnings.md"
+      }
+    },
+    "SRC-35B72BAFA873": {
+      "id": "SRC-35B72BAFA873",
+      "url": "https://github.com/open-ani/animeko/pull/1439",
+      "title": "https://github.com/open-ani/animeko/pull/1439",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T18:27:16.723Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-ani-animeko-learnings.md",
+        "fileName": "open-ani-animeko-learnings.md"
       }
     }
   }

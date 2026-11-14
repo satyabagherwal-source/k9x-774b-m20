@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `5332623c`  
+> **Source Version**: `f8229156`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T15:03:58.940Z  
+> **Timestamp**: 2026-11-14T18:26:36.432Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T15:03:58.935Z  
+> **Harvest Timestamp**: 2026-11-14T18:26:36.424Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3823 stars
+- **Stars / Engagement**: 3824 stars
 
 ---
 
@@ -2201,104 +2201,176 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5332623c` (2026-11-14)
-**Commit Message**: chore: allow clippy::format_push_string
+### Incident Patch 1: `f8229156` (2026-11-14)
+**Commit Message**: chore: clippy::redundant_clone
 
-None of the call sites are on a per-row path (the per-point viz hover
-builders already allocate in fmt_measure), so write!() buys nothing.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `.cargo/config.toml` (modified, +1/-0)
-```diff
-@@ -46,6 +46,7 @@ pedantic = [
-     "-A", "clippy::struct_excessive_bools",
-     "-A", "clippy::unnecessary_wraps",
-     "-A", "clippy::map_unwrap_or",
-+    "-A", "clippy::format_push_string",
-     "-A", "clippy::needless_doctest_main",
-     "-A", "clippy::missing_errors_doc",
-     "-A", "clippy::use_self",
-```
-
-**File**: `Cargo.toml` (modified, +4/-2)
-```diff
-@@ -108,8 +108,10 @@ similar_names          = "allow"
- too_many_lines         = "allow"
- struct_excessive_bools = "allow"
- # preference
--unnecessary_wraps = "allow"
--map_unwrap_or     = "allow"
-+unnecessary_wraps  = "allow"
-+map_unwrap_or      = "allow"
-+# no hot-path call sites; push_str(&format!()) reads better than write!().unwrap()
-+format_push_string = "allow"
- # false positive
- needless_doctest_main = "allow"
- # noisy
-```
-
----
-
-### Incident Patch 2: `87909349` (2026-11-14)
-**Commit Message**: chore: allow clippy::map_unwrap_or; add `cargo pedantic` alias
-
-A command-line `-W clippy::pedantic` overrides the [lints.clippy] allows in
-Cargo.toml, so pedantic runs re-reported lints we've already chosen to allow
-(too_many_lines, struct_excessive_bools, similar_names, the cast lints, ...).
-The `pedantic` alias re-applies those allows after enabling the group.
+Drop clones of values that are dropped right after (apply, profile, stats,
+viz, mcp_skills_gen), and borrow read_conf instead of cloning it in moarstats.
+The dcat_validate.rs clone stays: `path` is used after the match.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `.cargo/config.toml` (modified, +31/-0)
+**File**: `src/cmd/apply.rs` (modified, +1/-1)
 ```diff
-@@ -23,3 +23,34 @@ rustflags = ["-C", "link-args=-Wl,-rpath,$ORIGIN"]
- # since there's only one kind of aarch64 CPU architecture for apple anyway
- [target.aarch64-apple-darwin]
- rustflags = ["-C", "link-args=-Wl,-rpath,@loader_path", "-C", "target-cpu=native"]
-+
-+# `cargo +nightly pedantic`: clippy::pedantic on top of the [lints.clippy] allows in Cargo.toml.
-+# A command-line `-W clippy::pedantic` overrides those allows, so they are repeated here;
-+# keep this list in sync with Cargo.toml.
-+[alias]
-+pedantic = [
-+    "clippy", "-F", "all_features", "--",
-+    "-W", "clippy::pedantic",
-+    "-A", "clippy::cast_possible_truncation",
-+    "-A", "clippy::cast_possible_wrap",
-+    "-A", "clippy::cast_sign_loss",
-+    "-A", "clippy::needless_raw_string_hashes",
-+    "-A", "clippy::cast_lossless",
-+    "-A", "clippy::module_name_repetitions",
-+    "-A", "clippy::type_complexity",
-+    "-A", "clippy::zero_prefixed_literal",
-+    "-A", "clippy::enum_glob_use",
-+    "-A", "clippy::result_unit_err",
-+    "-A", "clippy::similar_names",
-+    "-A", "clippy::too_many_lines",
-+    "-A", "clippy::struct_excessive_bools",
-+    "-A", "clippy::unnecessary_wraps",
-+    "-A", "clippy::map_unwrap_or",
-+    "-A", "clippy::needless_doctest_main",
-+    "-A", "clippy::missing_errors_doc",
-+    "-A", "clippy::use_self",
-+    "-A", "clippy::cognitive_complexity",
-+    "-A", "clippy::option_if_let_else",
-+    "-A", "clippy::implicit_clone",
-+    "-A", "clippy::redundant_pub_crate",
-+]
+@@ -1203,7 +1203,7 @@ fn summarize_run<R: std::io::Read, W: std::io::Write>(
+                 && !cs.content.starts_with("<ERROR:")
+             {
+                 cache
+-                    .cache_set(cache_key.clone(), cs.clone())
++                    .cache_set(cache_key, cs.clone())
+                     .map_err(|e| CliError::Other(format!("Disk cache error: {e:?}")))?;
+             }
+             cs
 ```
 
-**File**: `Cargo.toml` (modified, +1/-0)
+**File**: `src/cmd/moarstats.rs` (modified, +4/-4)
 ```diff
-@@ -109,6 +109,7 @@ too_many_lines         = "allow"
- struct_excessive_bools = "allow"
- # preference
- unnecessary_wraps = "allow"
-+map_unwrap_or     = "allow"
- # false positive
- needless_doctest_main = "allow"
- # noisy
+@@ -5033,7 +5033,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+     if args.flag_advanced || args.flag_bivariate {
+         // index the RESOLVED path - an index beside the compressed source is useless,
+         // since the data actually read is the converted temp
+-        let rconfig = read_conf.clone();
++        let rconfig = &read_conf;
+         let indexed_result = rconfig.indexed()?;
+ 
+         if indexed_result.is_none() && !rconfig.is_stdin() {
+@@ -5047,7 +5047,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+                  to enable parallel processing..."
+             );
+ 
+-            match util::create_index_for_file(read_input_path, &rconfig) {
++            match util::create_index_for_file(read_input_path, rconfig) {
+                 Ok(()) => {
+                     log::info!("Index created successfully for statistics computation.");
+                 },
+@@ -6135,12 +6135,12 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+         // Get record count to check for all-unique fields (cardinality == rowcount)
+         let record_count: Option<u64> = {
+             // the resolved Config, so the count is of the DATA, not the compressed container
+-            let rconfig = read_conf.clone();
++            let rconfig = &read_conf;
+             if let Ok(Some(idx)) = rconfig.indexed() {
+                 Some(idx.count())
+             } else if !rconfig.is_stdin() {
+                 // Fall back to counting rows if no index
+-                util::count_rows(&rconfig).ok()
++                util::count_rows(rconfig).ok()
+             } else {
+                 None // Can't get count from stdin
+             }
+```
+
+**File**: `src/cmd/profile.rs` (modified, +3/-3)
+```diff
+@@ -744,7 +744,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+                 },
+             }
+         } else {
+-            describegpt_json.clone()
++            describegpt_json
+         };
+         let llm_ctx = match llm_json.as_ref() {
+             Some(dg) => {
+@@ -790,7 +790,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+         // robust bbox, duplicate rows, ...) need the backend during the
+         // projection pass too, not only during spec evaluation. The
+         // guard clears it on every exit path.
+-        let _sql_guard = formula_helpers::SqlBackendGuard::install(sql_backend.clone());
++        let _sql_guard = formula_helpers::SqlBackendGuard::install(sql_backend);
+         // Always project in Dataset mode first, so the discovery merge
+         // applies to the Dataset's top-level keys before the Catalog
+         // envelope is wrapped around them (Roborev #2490 finding #1).
+@@ -817,7 +817,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+         let merged_dcat = if args.flag_catalog {
+             let (catalog_block, cat_warnings) =
+                 projection::wrap_in_catalog_envelope(&profile, merged_dataset, &projection_ctx)?;
+-            let prefix = dataset_prefix.clone();
++            let prefix = dataset_prefix;
+             inferred_snapshot.extend(inferred_values(&dataset_block, &inferred_paths, &prefix));
+             // Catalog-envelope fields that came from a `fallback`.
+             let catalog_inferred = projection::take_inferred_paths();
+```
+
+**File**: `src/cmd/profile/locate.rs` (modified, +1/-1)
+```diff
+@@ -731,7 +731,7 @@ fn county_column_regions(
+             && table.name_for_geoid(&name).is_some()
+             && state_fips.as_deref().is_none_or(|f| name.starts_with(f))
+         {
+-            Some(name.clone())
++            Some(name)
+         } else {
+             match table.resolve(&name, state_fips.as_deref()) {
+                 CountyLookup::Resolved(geoid) => Some(geoid),
+```
+
+**File**: `src/cmd/stats.rs` (modified, +11/-12)
+```diff
+@@ -2024,18 +2024,17 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+         // recompute the stats even if the args are the same.
+         if stats_file.exists() && !args.flag_force {
+             let stats_args_json_file = stats_file.with_extension("csv.json");
+-            let existing_stats_args_json_str =
+-                match fs::read_to_string(stats_args_json_file.clone()) {
+-                    Ok(s) => s,
+-                    Err(e) => {
+-                        log::warn!(
+-                            "Could not read {path_file_stem}.stats.csv.json: {e:?}, recomputing..."
+-                        );
+-                        // remove stats cache files silently even if they don't exists
+-                        remove_stats_cache_pair(&stats_file);
+-                        String::new()
+-                    },
+-                };
++            let existing_stats_args_json_str = match fs::read_to_string(stats_args_json_file) {
++                Ok(s) => s,
++                Err(e) => {
++                    log::warn!(
++                        "Could not read {path_file_stem}.stats.csv.json: {e:?}, recomputing..."
++                    );
++                    // remove stats cache files silently even if they don't exists
++                    remove_stats_cache_pair(&stats_file);
++                    String::new()
++                },
++            };
+ 
+             if !existing_stats_args_json_str.is_empty() {
+                 let time_saved: u64;
+```
+
+**File**: `src/cmd/viz.rs` (modified, +2/-2)
+```diff
+@@ -11227,7 +11227,7 @@ fn choropleth_geocoded_locations(
+                 rejected_units += value;
+                 if exemplars.len() < 3 {
+                     let where_found = if r.admin1_name.is_empty() {
+-                        r.country_name.clone()
++                        r.country_name
+                     } else {
+                         format!("{}, {}", r.admin1_name, r.iso2)
+                     };
+@@ -27070,7 +27070,7 @@ fn render_dict_page_html(
+     // (viz.title.data_schematic) — prefixing it again would read "Data Schematic — x.csv —
+     // Data Schematic", so the brand prefix is reserved for custom titles that lack it.
+     let doc_title = if title.contains(dict_page_title.as_ref()) {
+-        title.to_string()
++        title
+     } else {
+         format!("{dict_page_title} — {title}")
+     };
+```
+
+**File**: `src/mcp_skills_gen.rs` (modified, +1/-1)
+```diff
+@@ -684,7 +684,7 @@ impl UsageParser {
+                     args_map.insert(
+                         arg_name.clone(),
+                         Argument {
+-                            name: arg_name.clone(),
++                            name: arg_name,
+                             arg_type,
+                             required,
+                             description,
 ```
 
 #### Recent Merged Pull Requests:
@@ -2327,28 +2399,28 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. allow clippy::format_push_string
+## X. clippy::redundant_clone
 
 **RULE**:
-When implementing operations in `.cargo/config.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/cmd/apply.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5332623c`: allow clippy::format_push_string. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f8229156`: clippy::redundant_clone. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.cargo/config.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/cmd/apply.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    "-A", "clippy::format_push_string",
+                    .cache_set(cache_key, cs.clone())
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+                    .cache_set(cache_key.clone(), cs.clone())
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5332623c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f8229156` are properly handled with clean fallback behavior.

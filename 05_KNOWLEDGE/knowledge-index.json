@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-14T18:15:26.421Z",
-  "total_verified_learnings": 8583,
+  "last_updated": "2026-11-14T18:27:17.205Z",
+  "total_verified_learnings": 8586,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 17680,
+  "total_items": 17699,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112094,10 +112094,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "5332623c",
-      "content_hash": "466878d133830890485a230f95e61ea0b875bcbe331a51bba00351e8a7dccc47",
+      "source_version": "f8229156",
+      "content_hash": "b5ebc08e31260f7abef40888024a985ae5c97d114d087923b26808332b363a96",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T15:03:59.915Z"
+      "persisted_at": "2026-11-14T18:26:37.596Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -218661,8 +218661,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "5332623c",
-      "content_hash": "961c19e8a43bf7c6e0f934b6f6115066b900a84352fb905e49ca2df3ff295a68",
+      "source_version": "f8229156",
+      "content_hash": "57be43664ac49a77f4a8b672af17832866bbc6cff146fd41aea1d79430ca7e08",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -218685,6 +218685,11 @@
           "number": 8495,
           "title": "allow clippy::format_push_string",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": "EXISTING",
+          "title": "redundant_clone",
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -218692,7 +218697,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T15:03:59.507Z",
+      "verified_at": "2026-11-14T18:26:36.941Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -219522,10 +219527,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "repository": "dathere/qsv",
-      "source_version": "5332623c",
-      "content_hash": "2b031af5f06c7ec3f0a0b41bf458919aaec2b88f295481f88684602f9a284771",
+      "source_version": "f8229156",
+      "content_hash": "37cc78362f358c90ee3cb3cf9ef6f524d5f235f9a2fbe1c1ec75740986b57c9c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T15:03:59.837Z"
+      "persisted_at": "2026-11-14T18:26:37.468Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant",
@@ -232316,6 +232321,295 @@
       "content_hash": "e336ef4521ec7c8ca12d979c2e6ad321d1e48d29010b540ef6866be3bd8b1f52",
       "domain_letter": "K",
       "persisted_at": "2026-11-14T18:15:26.421Z"
+    },
+    "learn-huggingface-liquidai-d1-3b": {
+      "learning_id": "learn-huggingface-liquidai-d1-3b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "LiquidAI/d1-3B",
+      "repository": "LiquidAI/d1-3B",
+      "slug": "hf-liquidai-d1-3b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/LiquidAI/d1-3B",
+      "source_version": "hf-liquidai-d1-3b",
+      "content_hash": "1b4f6565e67037ac6c56ae90bf85a8368170e29f33d88e17fe3a1a9c9f54e56d",
+      "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T18:26:19.817Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-liquidai-d1-3b-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-liquidai-d1-3b-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-d1-3b-research-knowledge-intelligence-liquidai-d1-3b-core-invariants.md",
+      "title": "Research & Knowledge Intelligence: LiquidAI/d1-3B Core Invariants",
+      "repository": "LiquidAI/d1-3B",
+      "source_version": "hf-liquidai-d1-3b",
+      "content_hash": "7cba17b48c205e199e0b0dbfc924aa9f007e9b064fa3a94863f69e21368036c8",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T18:26:20.186Z"
+    },
+    "learn-github-google-tcmalloc": {
+      "learning_id": "learn-github-google-tcmalloc",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "google/tcmalloc",
+      "repository": "google/tcmalloc",
+      "slug": "google-tcmalloc",
+      "platform": "github",
+      "source_url": "https://github.com/google/tcmalloc",
+      "source_version": "f69a26d2",
+      "content_hash": "b002fa6bd2b10becd88ee4fafea443e6a9094e1c9bead9e11b73cd73a3fdd2cb",
+      "dossier_path": "07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8519,
+          "title": "Use small-model RIP-relative addressing for tc_globals on x86-64.",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T18:26:22.307Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8519": {
+      "learning_id": "rule-8519",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8519,
+      "title": "Use small-model RIP-relative addressing for tc_globals on x86-64.",
+      "source_url": "https://github.com/google/tcmalloc",
+      "source_version": "f69a26d2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T18:26:22.307Z"
+    },
+    "candidate_directive-use-small-model-rip-relative-addressing-for-tc_globals-on-x86-64": {
+      "item_id": "candidate_directive-use-small-model-rip-relative-addressing-for-tc_globals-on-x86-64",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-M0E3-use-small-model-rip-relative-addressing-for-tc_globals-on-x86-64.md",
+      "title": "Use small-model RIP-relative addressing for tc_globals on x86-64.",
+      "repository": "google-tcmalloc-learnings",
+      "source_version": "HEAD",
+      "content_hash": "02ad60e59dc5304f0be3b273f89a29daf16eadc1b2e9643d50eb619c18d4f9cb",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T18:26:40.636Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-google-tcmalloc-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-google-tcmalloc-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-google-tcmalloc-technical-construction-intelligence-google-tcmalloc-core-invaria.md",
+      "title": "Technical Construction Intelligence: google/tcmalloc Core Invariants",
+      "repository": "google/tcmalloc",
+      "source_version": "f69a26d2",
+      "content_hash": "70acdba3375195ca9b9941aa3efac8c876637b07be928a312bbef4ee1ed017c1",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T18:26:22.818Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-google-tcmalloc": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-google-tcmalloc",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/google-tcmalloc-verification-protocol-empirical-defect-shield-for-google-tcmallo.md",
+      "title": "Verification Protocol: Empirical Defect Shield for google/tcmalloc",
+      "repository": "google/tcmalloc",
+      "source_version": "f69a26d2",
+      "content_hash": "be211804cfdfd191fdf354c9c7d867a735ce1147218b7ceb3ffeae7760e919df",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T18:26:22.952Z"
+    },
+    "learn-github-open-ani-animeko": {
+      "learning_id": "learn-github-open-ani-animeko",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "open-ani/animeko",
+      "repository": "open-ani/animeko",
+      "slug": "open-ani-animeko",
+      "platform": "github",
+      "source_url": "https://github.com/open-ani/animeko",
+      "source_version": "d54ba004",
+      "content_hash": "f551be5841118e97752eae7982d7d70953a5e68b5b090df8be402b4beefa6a4b",
+      "dossier_path": "07_PROJECT_LEARNING/open-ani-animeko-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/open-ani-animeko-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8520,
+          "title": "prevent iOS video enhancement menu crash",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T18:26:28.196Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8520": {
+      "learning_id": "rule-8520",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8520,
+      "title": "prevent iOS video enhancement menu crash",
+      "source_url": "https://github.com/open-ani/animeko",
+      "source_version": "d54ba004",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T18:26:28.196Z"
+    },
+    "candidate_directive-prevent-ios-video-enhancement-menu-crash": {
+      "item_id": "candidate_directive-prevent-ios-video-enhancement-menu-crash",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-LR3N-prevent-ios-video-enhancement-menu-crash.md",
+      "title": "prevent iOS video enhancement menu crash",
+      "repository": "open-ani/animeko",
+      "source_version": "d54ba004",
+      "content_hash": "5ac5757f869c182bc90c32001df6e562d1ed613f8259841d7d486ff346f4a388",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T18:26:28.597Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-open-ani-animeko-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-open-ani-animeko-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-open-ani-animeko-technical-construction-intelligence-open-ani-animeko-core-invar.md",
+      "title": "Technical Construction Intelligence: open-ani/animeko Core Invariants",
+      "repository": "open-ani/animeko",
+      "source_version": "d54ba004",
+      "content_hash": "92d9bc25dce4fe61415092767db12dbe83da0cabcb29a78e1bafda592fa681b3",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T18:26:28.729Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-open-ani-animeko": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-open-ani-animeko",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/open-ani-animeko-verification-protocol-empirical-defect-shield-for-open-ani-anim.md",
+      "title": "Verification Protocol: Empirical Defect Shield for open-ani/animeko",
+      "repository": "open-ani/animeko",
+      "source_version": "d54ba004",
+      "content_hash": "7180a9dee5c1444edbead4802e228fb26c2fc5a86b69e1145e713dda6ff637c6",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T18:26:28.870Z"
+    },
+    "candidate_directive-redundant_clone": {
+      "item_id": "candidate_directive-redundant_clone",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-LXUI-redundant_clone.md",
+      "title": "redundant_clone",
+      "repository": "dathere/qsv",
+      "source_version": "f8229156",
+      "content_hash": "e2950af9756ec0fd9f0b7a2f304288f9e471c0cb783662f94a10f5a4e5a07827",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T18:26:37.344Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-google-tcmalloc-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-google-tcmalloc-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-google-tcmalloc-learnings-technical-construction-intelligence-google-tcmalloc-le.md",
+      "title": "Technical Construction Intelligence: google-tcmalloc-learnings Core Invariants",
+      "repository": "google-tcmalloc-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f00c888b618e0db10e7c816be3d47d9c9f80703e24211a037f1168908bb1362d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T18:26:40.759Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-google-tcmalloc-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-google-tcmalloc-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/google-tcmalloc-learnings-verification-protocol-empirical-defect-shield-for-goog.md",
+      "title": "Verification Protocol: Empirical Defect Shield for google-tcmalloc-learnings",
+      "repository": "google-tcmalloc-learnings",
+      "source_version": "HEAD",
+      "content_hash": "27185f53950f77fed2e0962bd1b739eac1a054a0c1060d4dbea74dbc8bf7de0a",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T18:26:40.887Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-liquidai-d1-3b-learnings-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-d1-3b-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-d1-3b-learnings-research-knowledge-intelligence-hf-liquidai-d1-3b-le.md",
+      "title": "Research & Knowledge Intelligence: hf-liquidai-d1-3b-learnings Core Invariants",
+      "repository": "hf-liquidai-d1-3b-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1f14fae2176fa974d98a3907b25aece889a55ef8e1c56aafb4be055cbb20b84b",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T18:27:16.486Z"
+    },
+    "candidate_directive-player-prevent-ios-video-enhancement-menu-crash": {
+      "item_id": "candidate_directive-player-prevent-ios-video-enhancement-menu-crash",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MSEJ-player-prevent-ios-video-enhancement-menu-crash.md",
+      "title": "player): prevent iOS video enhancement menu crash",
+      "repository": "open-ani-animeko-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d6f4a4120962fb41ba59edf8d095a95a36cf88b2460a0daceb5052e06b4207e0",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T18:27:16.940Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-open-ani-animeko-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-open-ani-animeko-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-open-ani-animeko-learnings-technical-construction-intelligence-open-ani-animeko-.md",
+      "title": "Technical Construction Intelligence: open-ani-animeko-learnings Core Invariants",
+      "repository": "open-ani-animeko-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1d66ed9c917dc9c002c8b5ab9c199fb3bf54503b912adba234d716f75947196d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T18:27:17.065Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-open-ani-animeko-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-open-ani-animeko-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/open-ani-animeko-learnings-verification-protocol-empirical-defect-shield-for-ope.md",
+      "title": "Verification Protocol: Empirical Defect Shield for open-ani-animeko-learnings",
+      "repository": "open-ani-animeko-learnings",
+      "source_version": "HEAD",
+      "content_hash": "685dca99a26df78b977274eae2e63b262271857e8d8c6ac5706b66dd81de2adf",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T18:27:17.205Z"
     }
   },
   "ai-builder-brain": {

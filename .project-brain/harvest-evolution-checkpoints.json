@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T18:15:26.540Z",
+  "last_updated": "2026-11-14T18:27:17.335Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-14T17:04:27.051Z",
@@ -153,7 +153,7 @@
       "staged_for_review": 1
     },
     "google-tcmalloc-learnings.md": {
-      "processed_at": "2026-11-13T04:31:39.215Z",
+      "processed_at": "2026-11-14T18:26:40.400Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2691,9 +2691,19 @@
       "processed_at": "2026-11-14T18:15:25.154Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-liquidai-d1-3b-learnings.md": {
+      "processed_at": "2026-11-14T18:27:16.269Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "open-ani-animeko-learnings.md": {
+      "processed_at": "2026-11-14T18:27:16.638Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 882,
-  "total_canonical_promoted": 213,
-  "total_staged_for_review": 668
+  "total_dossiers_evaluated": 885,
+  "total_canonical_promoted": 214,
+  "total_staged_for_review": 670
 }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-14T18:14:51.603Z",
+  "last_updated": "2026-11-14T18:26:37.130Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -170,14 +170,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-d1-3b",
-      "content_hash": "6b2c784ab1976a56c7a4fe1fcdf4917b1b4543f34444d6e1d24291618b6d208b",
-      "verified_at": "2026-11-09T07:05:52.174Z",
+      "content_hash": "1b4f6565e67037ac6c56ae90bf85a8368170e29f33d88e17fe3a1a9c9f54e56d",
+      "verified_at": "2026-11-14T18:26:20.003Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T07:05:52.174Z"
+      "last_updated": "2026-11-14T18:26:20.003Z"
     },
     "Cactus-Compute/whistle": {
       "repository": "Cactus-Compute/whistle",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "961c19e8a43bf7c6e0f934b6f6115066b900a84352fb905e49ca2df3ff295a68",
-      "verified_at": "2026-11-14T15:03:59.626Z",
+      "content_hash": "57be43664ac49a77f4a8b672af17832866bbc6cff146fd41aea1d79430ca7e08",
+      "verified_at": "2026-11-14T18:26:37.129Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T15:03:59.626Z"
+      "last_updated": "2026-11-14T18:26:37.129Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -9576,14 +9576,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-open-ani-animeko",
-      "content_hash": "a03f15f24e63d3df3171479c672d9b6635f4d76313da92f9753327791ef36d4c",
-      "verified_at": "2026-11-11T09:15:42.108Z",
+      "content_hash": "f551be5841118e97752eae7982d7d70953a5e68b5b090df8be402b4beefa6a4b",
+      "verified_at": "2026-11-14T18:26:28.380Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T09:15:42.108Z"
+      "last_updated": "2026-11-14T18:26:28.380Z"
     },
     "k3s-io/k3s": {
       "repository": "k3s-io/k3s",
@@ -11571,14 +11571,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-google-tcmalloc",
-      "content_hash": "784ca6a9311391c11fc6faf4a47b8f2d0165a2d423e59ad221e4527496e3f689",
-      "verified_at": "2026-11-13T04:31:15.045Z",
+      "content_hash": "b002fa6bd2b10becd88ee4fafea443e6a9094e1c9bead9e11b73cd73a3fdd2cb",
+      "verified_at": "2026-11-14T18:26:22.494Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T04:31:15.045Z"
+      "last_updated": "2026-11-14T18:26:22.494Z"
     },
     "russhwolf/multiplatform-settings": {
       "repository": "russhwolf/multiplatform-settings",
