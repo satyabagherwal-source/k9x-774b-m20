@@ -5050,3 +5050,7 @@ https://github.com/mixelpixx/KiCAD-MCP-Server
 # --- Automatically Discovered by AI Scout Engine [2026-11-13T18:17:08.679Z] ---
 # [AI-AGENTS] ForeactLabs/OpenExecutive (3256 score) - AI-powered virtual executive team — a single coherent executive persona backed b
 https://github.com/ForeactLabs/OpenExecutive
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-14T02:36:49.182Z] ---
+# [HUGGINGFACE-AI-MODELS] meituan-longcat/LongCat-2.5 (3361 score) - Verified Hugging Face Model: meituan-longcat/LongCat-2.5 (239 likes, 971 downloa
+https://huggingface.co/meituan-longcat/LongCat-2.5

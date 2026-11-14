@@ -9738,3 +9738,8 @@ Every entry in this ledger must capture:
 | `learn-dom-d-53028cd5` | `project://hf-deepseek-ai-deepseek-v4-pro` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md` | 2026-11-14T02:06:55.661Z |
 | `learn-huggingface-tongyi-mai-z-image-turbo` | `https://huggingface.co/Tongyi-MAI/Z-Image-Turbo` | `hf-tongyi-` | Multi-dimensional audit evidence | 2026-11-14T02:21:24.968Z |
 | `learn-dom-d-38e3b6c2` | `project://hf-tongyi-mai-z-image-turbo` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md` | 2026-11-14T02:22:03.067Z |
+| `learn-huggingface-meituan-longcat-longcat-2-5` | `https://huggingface.co/meituan-longcat/LongCat-2.5` | `hf-meituan` | Multi-dimensional audit evidence | 2026-11-14T02:36:55.741Z |
+| `learn-huggingface-openai-gpt-oss-120b` | `https://huggingface.co/openai/gpt-oss-120b` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-14T02:36:58.176Z |
+| `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `6993500c` | Multi-dimensional audit evidence | 2026-11-14T02:37:06.878Z |
+| `learn-dom-d-3a6226d8` | `project://hf-meituan-longcat-longcat-2.5` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-meituan-longcat-longcat-2.5-learnings.md` | 2026-11-14T02:37:44.784Z |
+| `learn-dom-d-0d55db0b` | `project://hf-openai-gpt-oss-120b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md` | 2026-11-14T02:38:23.554Z |

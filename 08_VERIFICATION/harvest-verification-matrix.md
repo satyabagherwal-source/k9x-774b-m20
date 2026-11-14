@@ -9705,3 +9705,8 @@
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T02:06:55.661Z` | `hf-deepseek-ai-deepseek-v4-pro` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-53028CD5` [Domain D] | Yes (`41e1bc5a...`) |
 | `CYCLE-20261114-4ODG` | `2026-11-14T02:21:24.964Z` | `Tongyi-MAI/Z-Image-Turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md` | Yes (`a552e111...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T02:22:03.067Z` | `hf-tongyi-mai-z-image-turbo` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-38E3B6C2` [Domain D] | Yes (`a6103327...`) |
+| `CYCLE-20261114-OMK9` | `2026-11-14T02:36:55.737Z` | `meituan-longcat/LongCat-2.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meituan-longcat-longcat-2.5-learnings.md` | Yes (`469fe2c8...`) |
+| `CYCLE-20261114-OOFW` | `2026-11-14T02:36:58.172Z` | `openai/gpt-oss-120b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md` | Yes (`8766f5c7...`) |
+| `CYCLE-20261114-OV5M` | `2026-11-14T02:37:06.874Z` | `nats-io/nats-server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8421` | Yes (`2987ceee...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T02:37:44.784Z` | `hf-meituan-longcat-longcat-2.5` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-3A6226D8` [Domain D] | Yes (`d20bf6ba...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T02:38:23.554Z` | `hf-openai-gpt-oss-120b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-0D55DB0B` [Domain D] | Yes (`3ba95273...`) |

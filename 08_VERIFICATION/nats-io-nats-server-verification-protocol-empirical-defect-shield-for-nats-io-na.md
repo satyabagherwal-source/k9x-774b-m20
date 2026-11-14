@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for nats/io/nats/server
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for nats-io/nats-server
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "nats/io/nats/server",
-  "source_url": "https://github.com/nats/io/nats/server",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "nats-io/nats-server",
+  "source_url": "https://github.com/nats-io/nats-server",
+  "source_version": "6993500c",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-14T02:37:07.075Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-nats-io-nats-server",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [nats/io/nats/server](https://github.com/nats/io/nats/server) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [nats-io/nats-server](https://github.com/nats-io/nats-server) (Revision: `6993500c`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-14T02:37:07.075Z`  
+> **Learning ID**: `learn-github-nats-io-nats-server`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `nats/io/nats/server` (Commit: `historical`)
+- **Target Repository**: `nats-io/nats-server` (Commit: `6993500c`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nats-io-nats-server-learnings.md`  
-> **Source**: github ([https://github.com/nats-io/nats-server](https://github.com/nats-io/nats-server))  
-> **Source Version**: `0d4956f3`  
-> **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T17:51:21.272Z  
-> **Learning ID**: `learn-github-nats-io-nats-server`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): nats-io/nats-server
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nats-io-nats-server-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nats-io/nats-server](https://github.com/nats-io/nats-server))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T17:46:09.625Z  
+> **Harvest Timestamp**: 2026-11-14T02:37:05.871Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: High-Performance server for NATS.io, the cloud and edge native messaging system.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 21037 stars
+- **Stars / Engagement**: 21040 stars
 
 ---
 
@@ -2751,689 +2737,127 @@ func (l *Logger) Tracef(format string, v ...any) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `89e1f329` (2026-11-11)
-**Commit Message**: [FIXED] Filestore metadata and new directories not crash-safe (#8887)
+### Incident Patch 1: `6993500c` (2026-11-13)
+**Commit Message**: De-flake TestPSEmulationCPU (#8892)
 
-`writeStreamMeta` and `writeConsumerMeta` wrote `meta.inf` and
-`meta.sum` as two separate atomic writes. A crash between them left
-`meta.inf` without a matching `meta.sum`, so recovery skipped the stream
-with `Missing stream checksum file`. Re-creating the stream didn't help:
-`newFileStoreWithCreated` only rewrote the meta files if `meta.inf` was
-missing or empty, so the next restart skipped the stream again, along
-with every message acked since.
-
-This PR fixes that by:
-- Rewriting `meta.inf`/`meta.sum` on stream and consumer create whenever
-the checksum is missing or doesn't match.
-- Staging `meta.inf` as `meta.inf.new` until `meta.sum` is written. On
-recovery, `recoverStagedMeta` renames it into place if it matches
-`meta.sum`, and discards it otherwise. `Delete` removes the staged file
-first, so a deleted stream can't be revived.
-- Staging a newly generated `meta.key` as `meta.key.new` in the same
-way. It's renamed into place before `meta.inf.new`, so a crash while
-encryption is being turned on (or during a consumer cipher conversion)
-can't leave a new key next to the old `meta.inf`.
-- Verifying `meta.sum` on 
-
-**File**: `server/filestore.go` (modified, +201/-51)
+**File**: `server/pse/pse_test.go` (modified, +9/-22)
 ```diff
-@@ -334,6 +334,8 @@ const (
- 	consumerState = "o.dat"
- 	// The suffix that will be given to a new temporary block for compression or when rewriting the full file.
- 	blkTmpSuffix = ".tmp"
-+	// The suffix of a meta file that is staged until its checksum is written.
-+	metaTmpSuffix = ".new"
- 	// default cache buffer expiration
- 	defaultCacheBufferExpiration = 10 * time.Second
- 	// default sync interval
-@@ -434,10 +436,11 @@ func newFileStoreWithCreatedAndMode(fcfg FileStoreConfig, cfg StreamConfig, crea
- 		fcfg.SyncInterval = defaultSyncInterval
- 	}
- 	dios := fcfg.srv.diskIOSemaphore()
-+	syncDirs := fcfg.SyncAlways || fcfg.SyncOnFlush
+@@ -20,38 +20,25 @@ import (
+ 	"runtime"
+ 	"runtime/debug"
+ 	"testing"
++	"time"
+ )
  
- 	// Check the directory
- 	if stat, err := os.Stat(fcfg.StoreDir); os.IsNotExist(err) {
--		if err := os.MkdirAll(fcfg.StoreDir, defaultDirPerms); err != nil {
-+		if err := mkdirAllWithOptionalSync(dios, fcfg.StoreDir, defaultDirPerms, syncDirs); err != nil {
- 			return nil, fmt.Errorf("could not create storage directory - %v", err)
- 		}
- 	} else if stat == nil || !stat.IsDir() {
-@@ -488,10 +491,10 @@ func newFileStoreWithCreatedAndMode(fcfg FileStoreConfig, cfg StreamConfig, crea
- 	// Check if this is a new setup.
- 	mdir := filepath.Join(fcfg.StoreDir, msgDir)
- 	odir := filepath.Join(fcfg.StoreDir, consumerDir)
--	if err := os.MkdirAll(mdir, defaultDirPerms); err != nil {
-+	if err := mkdirAllWithOptionalSync(dios, mdir, defaultDirPerms, syncDirs); err != nil {
- 		return nil, fmt.Errorf("could not create message storage directory - %v", err)
+ func TestPSEmulationCPU(t *testing.T) {
+ 	if runtime.GOOS == "windows" {
+ 		t.Skipf("Skipping this test on Windows")
  	}
--	if err := os.MkdirAll(odir, defaultDirPerms); err != nil {
-+	if err := mkdirAllWithOptionalSync(dios, odir, defaultDirPerms, syncDirs); err != nil {
- 		return nil, fmt.Errorf("could not create consumer storage directory - %v", err)
- 	}
- 
-@@ -636,10 +639,11 @@ func newFileStoreWithCreatedAndMode(fcfg FileStoreConfig, cfg StreamConfig, crea
- 		}
- 	}
- 
--	// Write our meta data if it does not exist or is zero'd out.
-+	// Write our meta data if it does not exist, is zero'd out, or doesn't match its checksum.
- 	meta := filepath.Join(fcfg.StoreDir, JetStreamMetaFile)
--	fi, err := os.Stat(meta)
--	if err != nil && os.IsNotExist(err) || fi != nil && fi.Size() == 0 {
-+	if match, err := metaFilesMatch(meta, filepath.Join(fcfg.StoreDir, JetStreamMetaFileSum), key[:]); err != nil {
-+		return nil, err
-+	} else if !match {
- 		if err := fs.writeStreamMeta(); err != nil {
- 			return nil, err
- 		}
-@@ -1009,34 +1013,9 @@ func (fs *fileStore) recoverAEK() error {
- 	return nil
- }
- 
--// Lock should be held.
--func (fs *fileStore) setupAEK() error {
--	if fs.prf != nil && fs.aek == nil {
--		key, _, _, encrypted, err := fs.genEncryptionKeys(fs.cfg.Name)
--		if err != nil {
--			return err
--		}
--		keyFile := filepath.Join(fs.fcfg.StoreDir, JetStreamMetaFileKey)
--		if _, err := os.Stat(keyFile); err != nil && !os.IsNotExist(err) {
--			return err
--		}
--		err = fs.writeFileWithOptionalSync(keyFile, encrypted, defaultFilePerms)
--		if err != nil {
--			return err
--		}
--		// Set our aek.
--		fs.aek = key
--	}
--	return nil
--}
+ 	var rss, vss int64
+-	var pcpu, psPcpu float64
 -
- // Write out meta and the checksum.
- // Lock should be held.
- func (fs *fileStore) writeStreamMeta() error {
--	if err := fs.setupAEK(); err != nil {
--		return err
+-	debug.FreeOSMemory()
+-
+-	// PS version first
+-	pidStr := fmt.Sprintf("%d", os.Getpid())
+-	out, err := exec.Command("ps", "o", "pcpu=", "-p", pidStr).Output()
+-	if err != nil {
+-		t.Fatalf("Failed to execute ps command: %v\n", err)
 -	}
 -
- 	meta := filepath.Join(fs.fcfg.StoreDir, JetStreamMetaFile)
- 	if _, err := os.Stat(meta); err != nil && !os.IsNotExist(err) {
- 		return err
-@@ -1045,18 +1024,37 @@ func (fs *fileStore) writeStreamMeta() error {
- 	if err != nil {
- 		return err
- 	}
-+
-+	// Generate our key if encrypted and we don't have one yet.
-+	// Stage it like meta.inf, since the current meta.inf may still need the current key.
-+	aek, stagedKey := fs.aek, false
-+	if fs.prf != nil && aek == nil {
-+		key, _, _, encrypted, err := fs.genEncryptionKeys(fs.cfg.Name)
-+		if err != nil {
-+			return err
-+		}
-+		keyFile := filepath.Join(fs.fcfg.StoreDir, JetStreamMetaFileKey)
-+		if err = fs.writeFileWithOptionalSync(keyFile+metaTmpSuffix, encrypted, defaultFilePerms); err != nil {
-+			return err
-+		}
-+		aek, stagedKey = key, true
-+	}
-+
- 	// Encrypt if needed.
--	if fs.aek != nil {
--		nonce := make([]byte, fs.aek.NonceSize(), fs.aek.NonceSize()+len(b)+fs.aek.Overhead())
-+	if aek != nil {
-+		nonce := make([]byte, aek.NonceSize(), aek.NonceSize()+len(b)+aek.Overhead())
- 		if n, err := rand.Read(nonce); err != nil {
- 			return err
- 		} else if n != len(nonce) {
- 			return fmt.Errorf("not enough nonce bytes read (%d != %d)", n, len(nonce))
- 		}
--		b = fs.aek.Seal(nonce, nonce, b, nil)
-+		b = aek.Seal(nonce, nonce, b, nil)
- 	}
+-	// Our internal version
+-	ProcUsage(&pcpu, &rss, &vss)
+-
+-	fmt.Sscanf(string(out), "%f", &psPcpu)
++	var pcpu float64
  
--	err = fs.writeFileWithOptionalSync(meta, b, defaultFilePerms)
-+	// Stage meta.inf until meta.sum is written, so a crash can't leave them out of sync.
-+	// After a crash, recoverStagedMeta finishes or discards it.
-+	tmp := meta + metaTmpSuffix
-+	err = fs.writeFileWithOptionalSync(tmp, b, defaultFilePerms)
- 	if err != nil {
- 		return err
- 	}
-@@ -1069,7 +1067,75 @@ func (fs *fileStore) writeStreamMeta() error {
- 	if err != nil {
- 		return err
- 	}
--	return nil
-+	// The new key is in use once meta.sum is written,
-```
-
-**File**: `server/filestore_test.go` (modified, +95/-0)
-```diff
-@@ -1806,6 +1806,48 @@ func TestFileStoreMeta(t *testing.T) {
- 	if mychecksum != string(checksum) {
- 		t.Fatalf("Checksums do not match, got %q vs %q", mychecksum, checksum)
- 	}
-+
-+	// A missing or mismatched checksum must be rewritten when opened again.
-+	skey, okey := sha256.Sum256([]byte(mconfig.Name)), sha256.Sum256([]byte(mconfig.Name+"/"+oname))
-+	for _, corrupt := range []func(sum string){
-+		func(sum string) { require_NoError(t, os.Remove(sum)) },
-+		func(sum string) { require_NoError(t, os.WriteFile(sum, []byte("bad"), defaultFilePerms)) },
-+	} {
-+		require_NoError(t, obs.Stop())
-+		fs.Stop()
-+		corrupt(metasum)
-+		corrupt(ometasum)
-+
-+		fs, err = newFileStore(fcfg, mconfig)
-+		require_NoError(t, err)
-+		obs, err = fs.ConsumerStore(oname, time.Time{}, &oconfig)
-+		require_NoError(t, err)
-+		match, err := metaFilesMatch(metafile, metasum, skey[:])
-+		require_NoError(t, err)
-+		require_True(t, match)
-+		match, err = metaFilesMatch(ometafile, ometasum, okey[:])
-+		require_NoError(t, err)
-+		require_True(t, match)
-+	}
-+
-+	// A plaintext consumer with a mismatched checksum must keep its state when converted to encrypted.
-+	require_NoError(t, obs.UpdateDelivered(1, 1, 1, time.Now().UnixNano()))
-+	state, err := obs.State()
-+	require_NoError(t, err)
-+	require_NoError(t, obs.Stop())
-+	fs.Stop()
-+	require_NoError(t, os.WriteFile(ometasum, []byte("bad"), defaultFilePerms))
-+
-+	fcfg.Cipher = AES
-+	fs, err = newFileStoreWithCreated(fcfg, mconfig, time.Now(), prf(&fcfg), nil)
-+	require_NoError(t, err)
-+	obs, err = fs.ConsumerStore(oname, time.Time{}, &oconfig)
-+	require_NoError(t, err)
-+	nstate, err := obs.State()
-+	require_NoError(t, err)
-+	require_Equal(t, nstate.Delivered, state.Delivered)
-+	require_NoError(t, obs.Stop())
-+	fs.Stop()
- }
- 
- func TestFileStoreWriteAndReadSameBlock(t *testing.T) {
-@@ -10575,6 +10617,36 @@ func TestFileStoreStoreRawMessageThrowsPermissionErrorIfFSModeReadOnly(t *testin
- 	require_Error(t, err, os.ErrPermission)
- }
- 
-+func TestFileStoreSyncsNewDirectoriesWithSyncAlways(t *testing.T) {
-+	if !canFsyncDirectories || os.Geteuid() == 0 {
-+		t.Skip("Requires directory syncs and permission checks")
-+	}
-+
-+	// A parent that can't be opened makes syncing the new directory's entry fail.
-+	sd := t.TempDir()
-+	require_NoError(t, os.Chmod(sd, 0o300))
-+	t.Cleanup(func() { os.Chmod(sd, defaultDirPerms) })
-+	fcfg := FileStoreConfig{StoreDir: filepath.Join(sd, "zzz"), SyncAlways: true}
-+	cfg := StreamConfig{Name: "zzz", Storage: FileStorage}
-+	_, err := newFileStore(fcfg, cfg)
-+	require_Error(t, err, os.ErrPermission)
-+	// The new directory is removed, so a retry creates and syncs it again.
-+	_, err = os.Stat(fcfg.StoreDir)
-+	require_True(t, os.IsNotExist(err))
-+	require_NoError(t, os.Chmod(sd, defaultDirPerms))
-+
-+	fs, err := newFileStore(fcfg, cfg)
-+	require_NoError(t, err)
-+	defer fs.Stop()
-+	odir := filepath.Join(fcfg.StoreDir, consumerDir)
-+	require_NoError(t, os.Chmod(odir, 0o300))
-+	t.Cleanup(func() { os.Chmod(odir, defaultDirPerms) })
-+	_, err = fs.ConsumerStore("C", time.Time{}, &ConsumerConfig{AckPolicy: AckExplicit})
-+	require_Error(t, err, os.ErrPermission)
-+	_, err = os.Stat(filepath.Join(odir, "C"))
-+	require_True(t, os.IsNotExist(err))
-+}
-+
- func TestFileStoreWriteFullStateThrowsPermissionErrorIfFSModeReadOnly(t *testing.T) {
- 	// Test fails in Buildkite environment. Skip it.
- 	skipIfBuildkite(t)
-@@ -16700,6 +16772,29 @@ func TestFileStoreUpdateConfigSyncAlwaysRace(t *testing.T) {
- 	wg.Wait()
- }
- 
-+func TestFileStoreSyncsNewBlockWithSyncAlways(t *testing.T) {
-+	if !canFsyncDirectories || os.Geteuid() == 0 {
-+		t.Skip("Requires directory syncs and permission checks")
-+	}
-+
-+	testFileStoreAllPermutations(t, func(t *testing.T, fcfg FileStoreConfig) {
-+		fcfg.BlockSize, fcfg.SyncAlways = 128, true
-+		cfg := StreamConfig{Name: "zzz", Subjects: []string{"foo"}, Storage: FileStorage}
-+		fs, err := newFileStoreWithCreated(fcfg, cfg, time.Now(), prf(&fcfg), nil)
-+		require_NoError(t, err)
-+		defer fs.Stop()
-+
-+		// A directory that can't be opened makes syncing a new block's entry fail.
-+		mdir := filepath.Join(fcfg.StoreDir, msgDir)
-+		require_NoError(t, os.Chmod(mdir, 0o300))
-+		t.Cleanup(func() { os.Chmod(mdir, defaultDirPerms) })
-+		for i := 0; i < 10 && err == nil; i++ {
-+			_, _, err = fs.StoreMsg("foo", nil, []byte("ok"), 0)
-+		}
-+		require_Error(t, err, os.ErrPermission)
-+	})
-+}
-+
- // Must be run with -race.
- func TestFileStoreStoreRawMsgTTLsRace(t *testing.T) {
- 	sd := t.TempDir()
-```
-
-**File**: `server/jetstream.go` (modified, +24/-19)
-```diff
-@@ -18,7 +18,6 @@ import (
- 	"crypto/hmac"
- 	"crypto/sha256"
- 	"encoding/binary"
--	"encoding/hex"
- 	"fmt"
- 	"math"
- 	"os"
-@@ -29,7 +28,6 @@ import (
- 	"sync/atomic"
- 	"time"
- 
--	"github.com/minio/highwayhash"
- 	"github.com/nats-io/nats-server/v2/server/gsl"
- 	"github.com/nats-io/nats-server/v2/server/sysmem"
- 	"github.com/nats-io/nats-server/v2/server/tpm"
-@@ -445,7 +443,7 @@ func (s *Server) enableJetStream(cfg JetStreamConfig) error {
- 
- 	// FIXME(dlc) - Allow memory only operation?
- 	if stat, err := os.Stat(cfg.StoreDir); os.IsNotExist(err) {
--		if err := os.MkdirAll(cfg.StoreDir, defaultDirPerms); err != nil {
-+		if err := mkdirAllWithOptionalSync(s.diskIOSemaphore(), cfg.StoreDir, defaultDirPerms, cfg.SyncAlways); err != nil {
- 			return fmt.Errorf("could not create storage directory - %v", err)
- 		}
- 	} else {
-@@ -1257,7 +1255,7 @@ func (a *Account) EnableJetStream(limits map[string]JetStreamAccountLimits, tq c
- 	if _, err := os.Stat(sdir); err == nil {
- 		hasState = true
- 	} else if os.IsNotExist(err) {
--		if err := os.MkdirAll(sdir, defaultDirPerms); err != nil {
-+		if err := mkdirAllWithOptionalSync(s.diskIOSemaphore(), sdir, defaultDirPerms, js.config.SyncAlways); err != nil {
- 			js.mu.Unlock()
- 			return fmt.Errorf("could not create storage streams directory - %v", err)
- 		}
-@@ -1320,6 +1318,11 @@ func (a *Account) EnableJetStream(limits map[string]JetStreamAccountLimits, tq c
- 		for _, ofi := range ofis {
- 			metafile := filepath.Join(odir, ofi.Name(), JetStreamMetaFile)
- 			metasum := filepath.Join(odir, ofi.Name(), JetStreamMetaFileSum)
-+			key := sha256.Sum256([]byte(mset.name() + "/" + ofi.Name()))
-+			if err := recoverStagedMeta(s.diskIOSemaphore(), filepath.Join(odir, ofi.Name()), key[:], js.config.SyncAlways); err != nil {
-+				s.Warnf("    Error recovering consumer metafile %q: %v", metafile, err)
-+				continue
-+			}
- 			if _, err := os.Stat(metafile); os.IsNotExist(err) {
- 				s.Warnf("    Missing consumer metafile %q", metafile)
- 				continue
-@@ -1333,13 +1336,20 @@ func (a *Account) EnableJetStream(limits map[string]JetStreamAccountLimits, tq c
- 				s.Warnf("    Missing consumer checksum for %q", metasum)
- 				continue
- 			}
-+			if match, err := metaFilesMatch(metafile, metasum, key[:]); err != nil {
-+				s.Warnf("    Error checking consumer metafile checksum %q: %v", metasum, err)
-+				continue
-+			} else if !match {
-+				s.Warnf("    Consumer metafile %q: checksums do not match", metafile)
-+				continue
-+			}
- 
- 			// Check if we are encrypted.
--			if key, err := os.ReadFile(filepath.Join(odir, ofi.Name(), JetStreamMetaFileKey)); err == nil {
-+			if keyBuf, err := os.ReadFile(filepath.Join(odir, ofi.Name(), JetStreamMetaFileKey)); err == nil {
- 				s.Debugf("  Consumer metafile is encrypted, reading encrypted keyfile")
- 				// Decode the buffer before proceeding.
- 				ctxName := mset.name() + tsep + ofi.Name()
--				nbuf, _, err := s.decryptMeta(sc, key, buf, a.Name, ctxName)
-+				nbuf, _, err := s.decryptMeta(sc, keyBuf, buf, a.Name, ctxName)
- 				if err != nil {
- 					s.Warnf("  Error decrypting our consumer metafile: %v", err)
- 					continue
-@@ -1444,12 +1454,12 @@ func (a *Account) EnableJetStream(limits map[string]JetStreamAccountLimits, tq c
- 			return nil
- 		}
- 		key := sha256.Sum256([]byte(fi.Name()))
--		hh, err := highwayhash.NewDigest64(key[:])
--		if err != nil {
--			return err
+-	if pcpu != psPcpu {
+-		delta := int64(pcpu - psPcpu)
+-		if delta < 0 {
+-			delta = -delta
 -		}
- 		metafile := filepath.Join(mdir, JetStreamMetaFile)
- 		metasum := filepath.Join(mdir, JetStreamMetaFileSum)
-+		if err := recoverStagedMeta(s.diskIOSemaphore(), mdir, key[:], js.config.SyncAlways); err != nil {
-+			s.Warnf("  Error recovering stream metafile %q: %v", metafile, err)
-+			return nil
-+		}
- 		if _, err := os.Stat(metafile); os.IsNotExist(err) {
- 			s.Warnf("  Missing stream metafile for %q", metafile)
- 			return nil
-@@ -1463,16 +1473,11 @@ func (a *Account) EnableJetStream(limits map[string]JetStreamAccountLimits, tq c
- 			s.Warnf("  Missing stream checksum file %q", metasum)
- 			return nil
+-		if delta > 30 { // 30%?
+-			t.Fatalf("CPUs did not match close enough: %f vs %f", pcpu, psPcpu)
++	// Burn CPU until the background sampler reports usage.
++	for deadline := time.Now().Add(5 * time.Second); pcpu <= 0 && time.Now().Before(deadline); {
++		if err := ProcUsage(&pcpu, &rss, &vss); err != nil {
++			t.Fatalf("Failed to get process usage: %v", err)
  		}
--		sum, err := os.ReadFile(metasum)
--		if err != nil {
--			s.Warnf("  Error reading Stream metafile checksum %q: %v", metasum, err)
-+		if match, err := metaFilesMatch(metafile, metasum, key[:]); err != nil {
-+			s.Warnf("  Error checking stream metafile checksum %q: %v", metasum, err)
- 			return nil
--		}
--		hh.Write(buf)
--		var hb [highwayhash.Size64]byte
--		checksum := hex.EncodeToString(hh.Sum(hb[:0]))
--		if checksum != string(sum) {
--			s.Warnf("  Stream metafile %q: checksums do not match %q vs %q", metafile, sum, checksum)
-+		} else if !match {
-+			s.Warnf("  Stream metafile %q: checksums do not match", metafile)
- 			return nil
- 		}
- 
-```
-
-**File**: `server/jetstream_test.go` (modified, +106/-1)
-```diff
-@@ -8032,28 +8032,41 @@ func TestJetStreamFileStreamCreatedTimePreservedAfterRestartAndUpdate(t *testing
- 	s.Shutdown()
- 	time.Sleep(10 * time.Millisecond)
- 
-+	// A staged meta.inf that meta.sum wasn't written for must be discarded.
-+	metafile := filepath.Join(sd, globalAccountName, streamsDir, "TEST", JetStreamMetaFile)
-+	require_NoError(t, os.WriteFile(metafile+metaTmpSuffix, []byte("{}"), defaultFilePerms))
-+
- 	s = RunJetStreamServerOnPort(-1, sd)
- 	nc, js = jsClientConnect(t, s)
- 	si, err = js.StreamInfo("TEST")
- 	require_NoError(t, err)
- 	if !si.Created.Equal(created) {
- 		t.Fatalf("Expected created time %v after restart, got %v", created, si.Created)
  	}
-+	_, err = os.Stat(metafile + metaTmpSuffix)
-+	require_True(t, os.IsNotExist(err))
- 
-+	meta, err := os.ReadFile(metafile)
-+	require_NoError(t, err)
- 	cfg := si.Config
- 	cfg.MaxMsgs = 1
- 	_, err = js.UpdateStream(&cfg)
- 	require_NoError(t, err)
- 	nc.Close()
- 	s.Shutdown()
- 
-+	// A staged meta.inf that meta.sum was written for must be finished.
-+	require_NoError(t, os.Rename(metafile, metafile+metaTmpSuffix))
-+	require_NoError(t, os.WriteFile(metafile, meta, defaultFilePerms))
-+
- 	s = RunJetStreamServerOnPort(-1, sd)
- 	nc, js = jsClientConnect(t, s)
- 	si, err = js.StreamInfo("TEST")
- 	require_NoError(t, err)
- 	if !si.Created.Equal(created) {
- 		t.Fatalf("Expected created time %v after restart and update, got %v", created, si.Created)
- 	}
-+	require_Equal(t, si.Config.MaxMsgs, 1)
++	if pcpu <= 0 {
++		t.Fatalf("Expected positive CPU usage, got %f", pcpu)
++	}
  }
  
- func TestJetStreamFileConsumerCreatedTimePreservedAfterRestartAndUpdate(t *testing.T) {
-@@ -8087,20 +8100,108 @@ func TestJetStreamFileConsumerCreatedTimePreservedAfterRestartAndUpdate(t *testi
- 		t.Fatalf("Expected created time %v after restart, got %v", created, ci.Created)
- 	}
- 
-+	metafile := filepath.Join(sd, globalAccountName, streamsDir, "TEST", consumerDir, "DUR", JetStreamMetaFile)
-+	meta, err := os.ReadFile(metafile)
-+	require_NoError(t, err)
- 	cfg := ci.Config
- 	cfg.AckWait = 45 * time.Second
- 	_, err = js.UpdateConsumer("TEST", &cfg)
- 	require_NoError(t, err)
- 	nc.Close()
- 	s.Shutdown()
- 
-+	// A staged meta.inf that meta.sum was written for must be finished.
-+	require_NoError(t, os.Rename(metafile, metafile+metaTmpSuffix))
-+	require_NoError(t, os.WriteFile(metafile, meta, defaultFilePerms))
-+
- 	s = RunJetStreamServerOnPort(-1, sd)
- 	nc, js = jsClientConnect(t, s)
- 	ci, err = js.ConsumerInfo("TEST", "DUR")
- 	require_NoError(t, err)
- 	if !ci.Created.Equal(created) {
- 		t.Fatalf("Expected created time %v after restart and update, got %v", created, ci.Created)
- 	}
-+	require_Equal(t, ci.Config.AckWait, 45*time.Second)
-+	nc.Close()
-+	s.Shutdown()
-+
-+	// A consumer whose meta.sum doesn't match must not be recovered.
-+	metasum := filepath.Join(filepath.Dir(metafile), JetStreamMetaFileSum)
-+	require_NoError(t, os.WriteFile(metasum, []byte("bad"), defaultFilePerms))
-+
-+	s = RunJetStreamServerOnPort(-1, sd)
-+	nc, js = jsClientConnect(t, s)
-+	_, err = js.ConsumerInfo("TEST", "DUR")
-+	require_Error(t, err, nats.ErrConsumerNotFound)
-+}
-+
-+func TestJetStreamEncryptedStagedMetaKeyRecovery(t *testing.T) {
-+	storeDir := t.TempDir()
-+	conf := createConfFile(t, []byte(fmt.Sprintf(`
-+		listen: 127.0.0.1:-1
-+		jetstream: {key: "s3cr3t!!", store_dir: '%s'}
-+	`, storeDir)))
-+
-+	s, _ := RunServerWithConfig(conf)
-+	defer func() { s.Shutdown() }()
-+	nc, js := jsClientConnect(t, s)
-+	defer func() { nc.Close() }()
-+
-+	_, err := js.AddStream(&nats.StreamConfig{Name: "TEST", Subjects: []string{"foo"}})
-+	require_NoError(t, err)
-+	_, err = js.AddConsumer("TEST", &nats.ConsumerConfig{Durable: "DUR", AckPolicy: nats.AckExplicitPolicy})
-+	require_NoError(t, err)
-+	_, err = js.Publish("foo", nil)
-+	require_NoError(t, err)
-+
-+	sdir := filepath.Join(storeDir, JetStreamStoreDir, globalAccountName, streamsDir, "TEST")
-+	odir := filepath.Join(sdir, consumerDir, "DUR")
-+	bogusKey := make([]byte, minMetaKeySize)
-+	_, err = crand.Read(bogusKey)
-+	require_NoError(t, err)
-+
-+	restartAndCheck := func() {
-+		t.Helper()
-+		nc.Close()
-+		s.Shutdown()
-+		s.WaitForShutdown()
-+		s, _ = RunServerWithConfig(conf)
-+		nc, js = jsClientConnect(t, s)
-+		si, err := js.StreamInfo("TEST")
-+		require_NoError(t, err)
-+		require_Equal(t, si.State.Msgs, 1)
-+		_, err = js.ConsumerInfo("TEST", "DUR")
-+		require_NoError(t, err)
-+		for _, dir := range []string{sdir, odir} {
-+			for _, f := range []string{JetStreamMetaFile, JetStreamMetaFileKey} {
-+				_, err = os.Stat(filepath.Join(dir, f+metaTmpSuffix))
-+				require_True(t, os.IsNotExist(err))
-+			}
-+		}
-+	}
-+
-+	// A staged meta.key that meta.sum wasn't written for must be discarded.
-+	nc.Close()
-+	s.Shutdown()
-+	s.WaitForShutdown()
-+	require_NoError(t, os.WriteFile(filepath.Join(sdir, JetStreamMetaFileKey+metaTmpSuffix), bogusKey, defaultFilePerms))
-+	require_NoError(t, os.WriteFile(filepath.Join(sdir, JetStreamMetaFile+metaTmpSuffix), []byte("{}"), defaultFilePerms))
-+	require_NoError(t, os.WriteFile(filepath.Join(odir, JetStreamMetaFileKey+metaTmpSuffix), bogusKey, defaultFileP
+ func TestPSEmulationMem(t *testing.T) {
 ```
 
 ---
 
-### Incident Patch 2: `be46ba4f` (2026-11-11)
-**Commit Message**: [FIXED] New message block entry not synced with sync_always
+### Incident Patch 2: `53f337e1` (2026-11-12)
+**Commit Message**: De-flake TestPSEmulationCPU
 
 Signed-off-by: Maurice van Veen <[REDACTED_EMAIL]>
 
-**File**: `server/filestore.go` (modified, +12/-0)
+**File**: `server/pse/pse_test.go` (modified, +9/-22)
 ```diff
-@@ -5335,6 +5335,18 @@ func (fs *fileStore) newMsgBlockForWrite() (*msgBlock, error) {
- 	}
- 	mb.mfd = mfd
+@@ -20,38 +20,25 @@ import (
+ 	"runtime"
+ 	"runtime/debug"
+ 	"testing"
++	"time"
+ )
  
-+	// Sync the new block's entry if writes are synced, otherwise the periodic sync covers it.
-+	// If encrypted, writing the block's key file below already syncs the directory.
-+	if fs.prf == nil && (fs.syncAlways.Load() || fs.syncOnFlush.Load()) && canFsyncDirectories {
-+		fs.dios.acquire()
-+		err = syncDir(filepath.Dir(mb.mfn))
-+		fs.dios.release()
-+		if err != nil {
-+			_ = mb.dirtyCloseWithRemove(true)
-+			return nil, err
-+		}
+ func TestPSEmulationCPU(t *testing.T) {
+ 	if runtime.GOOS == "windows" {
+ 		t.Skipf("Skipping this test on Windows")
+ 	}
+ 	var rss, vss int64
+-	var pcpu, psPcpu float64
+-
+-	debug.FreeOSMemory()
+-
+-	// PS version first
+-	pidStr := fmt.Sprintf("%d", os.Getpid())
+-	out, err := exec.Command("ps", "o", "pcpu=", "-p", pidStr).Output()
+-	if err != nil {
+-		t.Fatalf("Failed to execute ps command: %v\n", err)
+-	}
+-
+-	// Our internal version
+-	ProcUsage(&pcpu, &rss, &vss)
+-
+-	fmt.Sscanf(string(out), "%f", &psPcpu)
++	var pcpu float64
+ 
+-	if pcpu != psPcpu {
+-		delta := int64(pcpu - psPcpu)
+-		if delta < 0 {
+-			delta = -delta
+-		}
+-		if delta > 30 { // 30%?
+-			t.Fatalf("CPUs did not match close enough: %f vs %f", pcpu, psPcpu)
++	// Burn CPU until the background sampler reports usage.
++	for deadline := time.Now().Add(5 * time.Second); pcpu <= 0 && time.Now().Before(deadline); {
++		if err := ProcUsage(&pcpu, &rss, &vss); err != nil {
++			t.Fatalf("Failed to get process usage: %v", err)
+ 		}
+ 	}
++	if pcpu <= 0 {
++		t.Fatalf("Expected positive CPU usage, got %f", pcpu)
 +	}
-+
- 	// Check if encryption is enabled.
- 	if fs.prf != nil {
- 		if err := fs.genEncryptionKeysForBlock(mb); err != nil {
-```
-
-**File**: `server/filestore_test.go` (modified, +23/-0)
-```diff
-@@ -16772,6 +16772,29 @@ func TestFileStoreUpdateConfigSyncAlwaysRace(t *testing.T) {
- 	wg.Wait()
  }
  
-+func TestFileStoreSyncsNewBlockWithSyncAlways(t *testing.T) {
-+	if !canFsyncDirectories || os.Geteuid() == 0 {
-+		t.Skip("Requires directory syncs and permission checks")
-+	}
-+
-+	testFileStoreAllPermutations(t, func(t *testing.T, fcfg FileStoreConfig) {
-+		fcfg.BlockSize, fcfg.SyncAlways = 128, true
-+		cfg := StreamConfig{Name: "zzz", Subjects: []string{"foo"}, Storage: FileStorage}
-+		fs, err := newFileStoreWithCreated(fcfg, cfg, time.Now(), prf(&fcfg), nil)
-+		require_NoError(t, err)
-+		defer fs.Stop()
-+
-+		// A directory that can't be opened makes syncing a new block's entry fail.
-+		mdir := filepath.Join(fcfg.StoreDir, msgDir)
-+		require_NoError(t, os.Chmod(mdir, 0o300))
-+		t.Cleanup(func() { os.Chmod(mdir, defaultDirPerms) })
-+		for i := 0; i < 10 && err == nil; i++ {
-+			_, _, err = fs.StoreMsg("foo", nil, []byte("ok"), 0)
-+		}
-+		require_Error(t, err, os.ErrPermission)
-+	})
-+}
-+
- // Must be run with -race.
- func TestFileStoreStoreRawMsgTTLsRace(t *testing.T) {
- 	sd := t.TempDir()
-```
-
----
-
-### Incident Patch 3: `96e22f7e` (2026-10-29)
-**Commit Message**: [FIXED] Duplicate auth callout replies blocking the sender's read loop
-
-Signed-off-by: Maurice van Veen <[REDACTED_EMAIL]>
-
-**File**: `server/auth_callout.go` (modified, +6/-0)
-```diff
-@@ -19,6 +19,7 @@ import (
- 	"encoding/pem"
- 	"errors"
- 	"fmt"
-+	"sync/atomic"
- 	"time"
- 	"unicode"
- 
-@@ -105,6 +106,7 @@ func (s *Server) processClientOrLeafCallout(c *client, opts *Options, proxyRequi
- 	reply := s.newRespInbox()
- 	s.mu.RUnlock()
- 	respCh := make(chan string, 1)
-+	var replied atomic.Bool
- 
- 	decodeResponse := func(rc *client, rmsg []byte, acc *Account) (*jwt.UserClaims, error) {
- 		account := acc.Name
-@@ -272,6 +274,10 @@ func (s *Server) processClientOrLeafCallout(c *client, opts *Options, proxyRequi
- 	}
- 
- 	processReply := func(_ *subscription, rc *client, racc *Account, subject, reply string, rmsg []byte) {
-+		// Only handle the first reply, later ones would block on respCh or override the result.
-+		if !replied.CompareAndSwap(false, true) {
-+			return
-+		}
- 		arc, err := decodeResponse(rc, rmsg, racc)
- 		if err != nil {
- 			c.authViolation()
-```
-
-**File**: `server/auth_callout_test.go` (modified, +37/-0)
-```diff
-@@ -4943,3 +4943,40 @@ func TestAuthCalloutUserLimits(t *testing.T) {
- 	at.srv.UpdateAccountClaims(acc, authClaim)
- 	requireClientLimits(t, at.srv, nc, 64, 2)
- }
-+
-+func TestAuthCalloutOnlyFirstReplyHandled(t *testing.T) {
-+	conf := `
-+		listen: "127.0.0.1:-1"
-+		server_name: A
-+		authorization {
-+			timeout: 1s
-+			users: [ { user: "auth", password: "pwd" } ]
-+			auth_callout {
-+				issuer: "ABJHLOVMPA4CI6R5KLNGOB4GSLNIY7IOUPAJC4YFNDLQVIOBYQGUWVLA"
-+				auth_users: [ auth ]
-+			}
-+		}
-+	`
-+	handler := func(m *nats.Msg) {
-+		user, si, _, _, _ := decodeAuthRequest(t, m.Data)
-+		ujwt := createAuthUser(t, user, _EMPTY_, globalAccountName, _EMPTY_, nil, 10*time.Minute, nil)
-+		m.Respond(serviceResponse(t, user, si.ID, ujwt, _EMPTY_, 0))
-+		// Duplicate replies, like a second service would send, must be ignored.
-+		m.Respond(nil)
-+		m.Respond(nil)
-+	}
-+	at := NewAuthTest(t, conf, handler, nats.UserInfo("auth", "pwd"))
-+	defer at.Cleanup()
-+
-+	for i := range 5 {
-+		nc, err := at.NewClient(nats.UserInfo(fmt.Sprintf("user%d", i), "pwd"))
-+		require_NoError(t, err)
-+		// The duplicate rejects must not close the connection.
-+		time.Sleep(20 * time.Millisecond)
-+		require_True(t, nc.IsConnected())
-+		nc.Close()
-+	}
-+
-+	// The service's connection must not be blocked by its ignored replies.
-+	require_NoError(t, at.authClient.FlushTimeout(time.Second))
-+}
+ func TestPSEmulationMem(t *testing.T) {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8892** (2026-11-13): De-flake TestPSEmulationCPU (@MauriceVanVeen)
+- **PR #8891** (2026-11-12): Switch to GitHub Actions lockfile (@neilalexander)
+- **PR #8890** (2026-11-12): [FIXED] Filtered consumer interest & dangling WorkQueue messages (@MauriceVanVeen)
 - **PR #8888** (closed): Rewrite stream meta.sum when missing on recovery (@amalsaidov)
 - **PR #8887** (2026-11-11): [FIXED] Filestore metadata and new directories not crash-safe (@MauriceVanVeen)
 - **PR #8886** (2026-11-11): [FIXED] Account reserved storage ignores replicas for un-tiered limits (@MauriceVanVeen)
-- **PR #8885** (2026-11-11): Update dependencies (@neilalexander)
-- **PR #8883** (2026-11-11): Update to Go 1.27.4/1.26.11 (@neilalexander)
-- **PR #8882** (2026-11-10): Cherry-picks for 2.14.10-RC.3 (@neilalexander)
 
 ---
 
@@ -3453,89 +2877,60 @@ Signed-off-by: Maurice van Veen <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [FIXED] Filestore metadata and new directories not crash-safe (#8887)
+## X. De-flake TestPSEmulationCPU
 
 **RULE**:
-When implementing operations in `server/filestore.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats-server. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/pse/pse_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats-server. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `89e1f329`: [FIXED] Filestore metadata and new directories not crash-safe (#8887). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6993500c`: De-flake TestPSEmulationCPU. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/filestore.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/pse/pse_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// The suffix of a meta file that is staged until its checksum is written.
-	metaTmpSuffix = ".new"
-	syncDirs := fcfg.SyncAlways || fcfg.SyncOnFlush
-		if err := mkdirAllWithOptionalSync(dios, fcfg.StoreDir, defaultDirPerms, syncDirs); err != nil {
-	if err := mkdirAllWithOptionalSync(dios, mdir, defaultDirPerms, syncDirs); err != nil {
-	if err := mkdirAllWithOptionalSync(dios, odir, defaultDirPerms, syncDirs); err != nil {
-	// Write our meta data if it does not exist, is zero'd out, or doesn't match its checksum.
-	if match, err := metaFilesMatch(meta, filepath.Join(fcfg.StoreDir, JetStreamMetaFileSum), key[:]); err != nil {
-		return nil, err
-	} else if !match {
-
-	// Generate our key if encrypted and we don't have one yet.
-	// Stage it like meta.inf, since the current meta.inf may still need the current key.
-	aek, stagedKey := fs.aek, false
-	if fs.prf != nil && aek == nil {
-		key, _, _, encrypted, err := fs.genEncryptionKeys(fs.cfg.Name)
-		if err != nil {
-			return err
-		}
-		keyFile := filepath.Join(fs.fcfg.StoreDir, JetStreamMetaFileKey)
-		if err = fs.writeFileWithOptionalSync(keyFile+metaTmpSuffix, encrypted, defaultFilePerms); err != nil {
-			return err
-		}
-		aek, stagedKey = key,
+	"time"
+	var pcpu float64
+	// Burn CPU until the background sampler reports usage.
+	for deadline := time.Now().Add(5 * time.Second); pcpu <= 0 && time.Now().Before(deadline); {
+		if err := ProcUsage(&pcpu, &rss, &vss); err != nil {
+			t.Fatalf("Failed to get process usage: %v", err)
+	if pcpu <= 0 {
+		t.Fatalf("Expected positive CPU usage, got %f", pcpu)
+	}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-		if err := os.MkdirAll(fcfg.StoreDir, defaultDirPerms); err != nil {
-	if err := os.MkdirAll(mdir, defaultDirPerms); err != nil {
-	if err := os.MkdirAll(odir, defaultDirPerms); err != nil {
-	// Write our meta data if it does not exist or is zero'd out.
-	fi, err := os.Stat(meta)
-	if err != nil && os.IsNotExist(err) || fi != nil && fi.Size() == 0 {
-// Lock should be held.
-func (fs *fileStore) setupAEK() error {
-	if fs.prf != nil && fs.aek == nil {
-		key, _, _, encrypted, err := fs.genEncryptionKeys(fs.cfg.Name)
-		if err != nil {
-			return err
-		}
-		keyFile := filepath.Join(fs.fcfg.StoreDir, JetStreamMetaFileKey)
-		if _, err := os.Stat(keyFile); err != nil && !os.IsNotExist(err) {
-			return err
-		}
-		err = fs.writeFileWithOptionalSync(keyFile, encrypted, defaultFilePerms)
-		if err != nil {
-			return err
-		}
-		// Set our aek.
-		fs.aek = key
-	}
-	return nil
-}
+// Induced defect failure mode:
+	var pcpu, psPcpu float64
 
-	if err := fs.setupAEK(); err != nil {
-		return err
+	debug.FreeOSMemory()
+
+	// PS version first
+	pidStr := fmt.Sprintf("%d", os.Getpid())
+	out, err := exec.Command("ps", "o", "pcpu=", "-p", pidStr).Output()
+	if err != nil {
+		t.Fatalf("Failed to execute ps command: %v\n", err)
 	}
 
-	if fs.aek != nil {
-		nonce := make([]byte, fs.aek.NonceSize(), fs.aek.NonceSize()+len(b)+fs.aek.Overhead())
-		b = fs.aek.Seal(nonce, nonce, b, nil)
-	err = fs.writeFileWithOptionalSync(meta, b, defaultFilePerms)
-	return nil
+	// Our internal version
+	ProcUsage(&pcpu, &rss, &vss)
+
+	fmt.Sscanf(string(out), "%f", &psPcpu)
+	if pcpu != psPcpu {
+		delta := int64(pcpu - psPcpu)
+		if delta < 0 {
+			delta = -delta
+		}
+		if delta > 30 { // 30%?
+			t.Fatalf("CPUs did not match close enough: %f vs %f", pcpu, psPcpu)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `89e1f329` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6993500c` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

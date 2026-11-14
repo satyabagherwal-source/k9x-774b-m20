@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-QXYV",
-    "timestamp": "2026-11-13T06:07:00.727Z",
-    "repository": "karmada-io/karmada",
-    "learningId": "learn-github-karmada-io-karmada",
-    "contentHash": "d60a676ad0e775d9c7572f2c84b38893fd8728b1ae484a811b6d69b31295db53",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-QZO7",
-    "timestamp": "2026-11-13T06:07:02.935Z",
-    "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf",
-    "contentHash": "93acd0c7211a785f554f2c987517f6c3a02286de52632b3187a06328f95142ac",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-87YC",
-    "timestamp": "2026-11-13T06:20:26.820Z",
-    "repository": "Comfy-Org/Fibo-2.0",
-    "learningId": "learn-huggingface-comfy-org-fibo-2-0",
-    "contentHash": "b602c78e67d3185f3b5daa04a6ee151d5f67e703320f599b628ebc5a0a5302f9",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-8JWT",
     "timestamp": "2026-11-13T06:20:42.317Z",
     "repository": "iii-hq/iii",
@@ -7492,6 +7447,51 @@
     "contentHash": "a552e111f94720176bbfa8bbcb80b6ce17ce4df60ed2115bb44c589bd34424b8",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-OMK9",
+    "timestamp": "2026-11-14T02:36:55.737Z",
+    "repository": "meituan-longcat/LongCat-2.5",
+    "learningId": "learn-huggingface-meituan-longcat-longcat-2-5",
+    "contentHash": "469fe2c8df64e94fb0df84f2ede759b0802c80101f5167fdd2df554f8991bf96",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-OOFW",
+    "timestamp": "2026-11-14T02:36:58.172Z",
+    "repository": "openai/gpt-oss-120b",
+    "learningId": "learn-huggingface-openai-gpt-oss-120b",
+    "contentHash": "8766f5c729567346130c181db3245eee6951c1ea2218d1f1d9a971f647684ce1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-OV5M",
+    "timestamp": "2026-11-14T02:37:06.874Z",
+    "repository": "nats-io/nats-server",
+    "learningId": "learn-github-nats-io-nats-server",
+    "contentHash": "2987ceee5ba9511baf33add2d3c0d82973294339ed7961776ea8c5dd7b80ac65",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

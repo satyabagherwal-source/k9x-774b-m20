@@ -21037,5 +21037,17 @@
     "qualityScore": 3256,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-13T18:13:52.528Z"
+  },
+  {
+    "name": "meituan-longcat/LongCat-2.5",
+    "fullName": "meituan-longcat/LongCat-2.5",
+    "url": "https://huggingface.co/meituan-longcat/LongCat-2.5",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: meituan-longcat/LongCat-2.5 (239 likes, 971 downloads)",
+    "likes": 239,
+    "downloads": 971,
+    "qualityScore": 3361,
+    "discoveredAt": "2026-11-14T02:34:41.084Z"
   }
 ]

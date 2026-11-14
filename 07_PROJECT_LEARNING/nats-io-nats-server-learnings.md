@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nats-io-nats-server-learnings.md`  
 > **Source**: github ([https://github.com/nats-io/nats-server](https://github.com/nats-io/nats-server))  
-> **Source Version**: `79d1d2c1`  
+> **Source Version**: `6993500c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T03:02:46.569Z  
+> **Timestamp**: 2026-11-14T02:37:05.878Z  
 > **Learning ID**: `learn-github-nats-io-nats-server`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nats-io-nats-server-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nats-io/nats-server](https://github.com/nats-io/nats-server))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T02:57:45.844Z  
+> **Harvest Timestamp**: 2026-11-14T02:37:05.871Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: High-Performance server for NATS.io, the cloud and edge native messaging system.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 21049 stars
+- **Stars / Engagement**: 21040 stars
 
 ---
 
@@ -2726,893 +2726,127 @@ func (l *Logger) Tracef(format string, v ...any) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `79d1d2c1` (2026-11-12)
-**Commit Message**: [FIXED] Filtered consumer interest & dangling WorkQueue messages (#8890)
+### Incident Patch 1: `6993500c` (2026-11-13)
+**Commit Message**: De-flake TestPSEmulationCPU (#8892)
 
-A consumer whose filter equals the stream's subjects was treated as
-unfiltered, so it kept interest in messages stored under other subjects
-(via subject transforms, sources or subject updates) that it would never
-receive. Those messages were never removed on Interest and WorkQueue
-streams after being acked. Consumers with a filter now always check the
-message's subject, looked up at most once per interest check.
-
-Filtered consumers also no longer lose interest when their state can't
-be loaded, or when the message can't be read (only an actually removed
-message means no interest). Dangling messages are now also cleaned up on
-restart for WorkQueue streams, not just Interest streams.
-
-**File**: `server/consumer.go` (modified, +11/-55)
+**File**: `server/pse/pse_test.go` (modified, +9/-22)
 ```diff
-@@ -4009,57 +4009,10 @@ func (o *consumer) moveAckFloor(dseq, sseq uint64) {
- 	}
- }
+@@ -20,38 +20,25 @@ import (
+ 	"runtime"
+ 	"runtime/debug"
+ 	"testing"
++	"time"
+ )
  
--// Determine if this is a truly filtered consumer. Modern clients will place filtered subjects
--// even if the stream only has a single non-wildcard subject designation.
--// Read lock should be held.
--func (o *consumer) isFiltered() bool {
--	if o.subjf == nil {
--		return false
--	}
--	// If we are here we want to check if the filtered subject is
--	// a direct match for our only listed subject.
--	mset := o.mset
--	if mset == nil {
--		return true
+ func TestPSEmulationCPU(t *testing.T) {
+ 	if runtime.GOOS == "windows" {
+ 		t.Skipf("Skipping this test on Windows")
+ 	}
+ 	var rss, vss int64
+-	var pcpu, psPcpu float64
+-
+-	debug.FreeOSMemory()
+-
+-	// PS version first
+-	pidStr := fmt.Sprintf("%d", os.Getpid())
+-	out, err := exec.Command("ps", "o", "pcpu=", "-p", pidStr).Output()
+-	if err != nil {
+-		t.Fatalf("Failed to execute ps command: %v\n", err)
 -	}
 -
--	// Protect access to mset.cfg with the cfgMu mutex.
--	mset.cfgMu.RLock()
--	msetSubjects := mset.cfg.Subjects
--	mset.cfgMu.RUnlock()
+-	// Our internal version
+-	ProcUsage(&pcpu, &rss, &vss)
 -
--	// `isFiltered` need to be performant, so we do
--	// as any checks as possible to avoid unnecessary work.
--	// Here we avoid iteration over slices if there is only one subject in stream
--	// and one filter for the consumer.
--	if len(msetSubjects) == 1 && len(o.subjf) == 1 {
--		return msetSubjects[0] != o.subjf[0].subject
--	}
--
--	// if the list is not equal length, we can return early, as this is filtered.
--	if len(msetSubjects) != len(o.subjf) {
--		return true
--	}
--
--	// if in rare case scenario that user passed all stream subjects as consumer filters,
--	// we need to do a more expensive operation.
--	// reflect.DeepEqual would return false if the filters are the same, but in different order
--	// so it can't be used here.
--	cfilters := make(map[string]struct{}, len(o.subjf))
--	for _, val := range o.subjf {
--		cfilters[val.subject] = struct{}{}
--	}
--	for _, val := range msetSubjects {
--		if _, ok := cfilters[val]; !ok {
--			return true
+-	fmt.Sscanf(string(out), "%f", &psPcpu)
++	var pcpu float64
+ 
+-	if pcpu != psPcpu {
+-		delta := int64(pcpu - psPcpu)
+-		if delta < 0 {
+-			delta = -delta
 -		}
--	}
--	return false
--}
--
- // Check if we need an ack for this store seq.
--// This is called for interest based retention streams to remove messages.
--func (o *consumer) needAck(sseq uint64, subj string) bool {
-+// This is called for interest and workqueue retention streams to remove messages.
-+// An empty subj is looked up if needed and stored, so callers can share it across consumers.
-+func (o *consumer) needAck(sseq uint64, subj *string) bool {
- 	var needAck bool
- 	var asflr, osseq uint64
- 	var pending map[uint64]*Pending
-@@ -4068,20 +4021,23 @@ func (o *consumer) needAck(sseq uint64, subj string) bool {
- 	o.mu.RLock()
- 	defer o.mu.RUnlock()
- 
--	isFiltered := o.isFiltered()
-+	isFiltered := o.subjf != nil
- 	if isFiltered && o.mset == nil {
- 		return false
- 	}
- 
- 	// Check if we are filtered, and if so check if this is even applicable to us.
- 	if isFiltered {
--		if subj == _EMPTY_ {
-+		if *subj == _EMPTY_ {
- 			var err error
--			if subj, err = o.mset.store.SubjectForSeq(sseq); err != nil {
-+			if *subj, err = o.mset.store.SubjectForSeq(sseq); err == ErrStoreMsgNotFound {
- 				return false
-+			} else if err != nil {
-+				// We can't tell if the message matches, so keep it.
-+				return true
- 			}
- 		}
--		if !o.isFilteredMatch(subj) {
-+		if !o.isFilteredMatch(*subj) {
- 			return false
+-		if delta > 30 { // 30%?
+-			t.Fatalf("CPUs did not match close enough: %f vs %f", pcpu, psPcpu)
++	// Burn CPU until the background sampler reports usage.
++	for deadline := time.Now().Add(5 * time.Second); pcpu <= 0 && time.Now().Before(deadline); {
++		if err := ProcUsage(&pcpu, &rss, &vss); err != nil {
++			t.Fatalf("Failed to get process usage: %v", err)
  		}
  	}
-@@ -4095,7 +4051,7 @@ func (o *consumer) needAck(sseq uint64, subj string) bool {
- 		state, err := o.store.BorrowState()
- 		if err != nil || state == nil {
- 			// Fall back to what we track internally for now.
--			return sseq > o.asflr && !o.isFiltered()
-+			return sseq > o.asflr
- 		}
- 		// If loading state as here, the osseq is +1.
- 		asflr, osseq, pending, rdc = state.AckFloor.Stream, state.Delivered.Stream+1, state.Pending, state.Redelivered
-```
-
-**File**: `server/filestore.go` (modified, +5/-1)
-```diff
-@@ -9649,7 +9649,7 @@ func (fs *fileStore) SubjectForSeq(seq uint64) (string, error) {
- 	fs.mu.RUnlock()
- 	if mb != nil {
- 		mb.mu.Lock()
--		sm, _, _ := mb.fetchMsgNoCopyLocked(seq, &smv)
-+		sm, _, err := mb.fetchMsgNoCopyLocked(seq, &smv)
- 		var subj string
- 		if sm != nil {
- 			// Copy the subject, as it's used elsewhere, and the backing cache could be reused in the meantime.
-@@ -9660,6 +9660,10 @@ func (fs *fileStore) SubjectForSeq(seq uint64) (string, error) {
- 		if sm != nil {
- 			return subj, nil
- 		}
-+		// A deleted message is not found, other errors mean we couldn't read it.
-+		if err != nil && err != errDeletedMsg {
-+			return _EMPTY_, err
-+		}
- 	}
- 	return _EMPTY_, ErrStoreMsgNotFound
- }
-```
-
-**File**: `server/filestore_test.go` (modified, +10/-0)
-```diff
-@@ -11421,6 +11421,16 @@ func TestFileStoreSubjectForSeq(t *testing.T) {
- 
- 	_, err = fs.SubjectForSeq(2)
- 	require_Error(t, err, ErrStoreMsgNotFound)
-+
-+	// A deleted message is not found either.
-+	_, _, err = fs.StoreMsg("foo.bar", nil, nil, 0)
-+	require_NoError(t, err)
-+	_, _, err = fs.StoreMsg("foo.baz", nil, nil, 0)
-+	require_NoError(t, err)
-+	_, err = fs.RemoveMsg(2)
-+	require_NoError(t, err)
-+	_, err = fs.SubjectForSeq(2)
-+	require_Error(t, err, ErrStoreMsgNotFound)
++	if pcpu <= 0 {
++		t.Fatalf("Expected positive CPU usage, got %f", pcpu)
++	}
  }
  
- func BenchmarkFileStoreSubjectAccesses(b *testing.B) {
-```
-
-**File**: `server/jetstream.go` (modified, +1/-1)
-```diff
-@@ -1698,7 +1698,7 @@ func (a *Account) EnableJetStream(limits map[string]JetStreamAccountLimits, tq c
- 
- 		// Collect to check for dangling messages.
- 		// TODO(dlc) - Can be removed eventually.
--		if cfg.StreamConfig.Retention == InterestPolicy {
-+		if cfg.StreamConfig.Retention != LimitsPolicy {
- 			mset.checkForOrphanMsgs()
- 			mset.checkConsumerReplication()
- 		}
-```
-
-**File**: `server/jetstream_consumer_test.go` (modified, +63/-54)
-```diff
-@@ -8025,65 +8025,74 @@ func TestJetStreamConsumerAckFloorWithExpired(t *testing.T) {
- 	require_True(t, ci.NumRedelivered == 0)
- }
- 
--func TestJetStreamConsumerIsFiltered(t *testing.T) {
-+func TestJetStreamConsumerNeedAckFallbackWithFilter(t *testing.T) {
- 	s := RunBasicJetStreamServer(t)
- 	defer s.Shutdown()
--	acc := s.GlobalAccount()
- 
--	tests := []struct {
--		name           string
--		streamSubjects []string
--		filters        []string
--		isFiltered     bool
--	}{
--		{
--			name:           "single_subject",
--			streamSubjects: []string{"one"},
--			filters:        []string{"one"},
--			isFiltered:     false,
--		},
--		{
--			name:           "single_subject_filtered",
--			streamSubjects: []string{"one.>"},
--			filters:        []string{"one.filter"},
--			isFiltered:     true,
--		},
--		{
--			name:           "multi_subject_non_filtered",
--			streamSubjects: []string{"multi", "foo", "bar.>"},
--			filters:        []string{"multi", "bar.>", "foo"},
--			isFiltered:     false,
--		},
--		{
--			name:           "multi_subject_filtered_wc",
--			streamSubjects: []string{"events", "data"},
--			filters:        []string{"data"},
--			isFiltered:     true,
--		},
--		{
--			name:           "multi_subject_filtered",
--			streamSubjects: []string{"machines", "floors"},
--			filters:        []string{"machines"},
--			isFiltered:     true,
--		},
--	}
--	for _, test := range tests {
--		t.Run(test.name, func(t *testing.T) {
--			mset, err := acc.addStream(&StreamConfig{
--				Name:     test.name,
--				Subjects: test.streamSubjects,
--			})
--			require_NoError(t, err)
-+	mset, err := s.globalAccount().addStream(&StreamConfig{
-+		Name:      "TEST",
-+		Subjects:  []string{"foo", "bar"},
-+		Retention: InterestPolicy,
-+	})
-+	require_NoError(t, err)
-+	o, err := mset.addConsumer(&ConsumerConfig{Durable: "CONSUMER", FilterSubject: "foo", AckPolicy: AckExplicit})
-+	require_NoError(t, err)
- 
--			o, err := mset.addConsumer(&ConsumerConfig{
--				FilterSubjects: test.filters,
--				Durable:        test.name,
--			})
--			require_NoError(t, err)
-+	_, _, err = mset.store.StoreMsg("foo", nil, nil, 0)
-+	require_NoError(t, err)
-+	_, _, err = mset.store.StoreMsg("bar", nil, nil, 0)
-+	require_NoError(t, err)
- 
--			require_True(t, o.isFiltered() == test.isFiltered)
--		})
--	}
-+	// A follower whose consumer state can't be loaded falls back to its in-memory ack floor.
-+	require_NoError(t, o.setLeader(false, 0))
-+	require_NoError(t, o.store.Stop())
-+
-+	// The matching message is still needed, the other one isn't.
-+	subj := _EMPTY_
-+	require_True(t, o.needAck(1, &subj))
-+	subj = _EMPTY_
-+	require_False(t, o.needAck(2, &subj))
-+}
-+
-+type subjectForSeqErrStore struct {
-+	StreamStore
-+	err error
-+}
-+
-+func (s *subjectForSeqErrStore) SubjectForSeq(seq uint64) (string, error) {
-+	return _EMPTY_, s.err
-+}
-+
-+func TestJetStreamConsumerNeedAckSubjectLookupError(t *testing.T) {
-+	s := RunBasicJetStreamServer(t)
-+	defer s.Shutdown()
-+
-+	mset, err := s.globalAccount().addStream(&StreamConfig{
-+		Name:      "TEST",
-+		Subjects:  []string{"foo"},
-+		Retention: InterestPolicy,
-+	})
-+	require_NoError(t, err)
-+	o, err := mset.addConsumer(&ConsumerConfig{Durable: "CONSUMER", FilterSubject: "foo", AckPolicy: AckExplicit})
-+	require_NoError(t, err)
-+
-+	_, _, err = mset.store.StoreMsg("foo", nil, nil, 0)
-+	require_NoError(t, err)
-+
-+	es := &subjectForSeqErrStore{StreamStore: mset.store}
-+	mset.mu.Lock()
-+	mset.store = es
-+	mset.mu.Unlock()
-+
-+	// The message can't be read, so we can't tell if it matches and must keep it.
-+	es.err = errors.New("read failed")
-+	subj := _EMPTY_
-+	require_True(t, o.needAck(1, &subj))
-+
-+	// The message is gone, so it's not needed.
-+	es.err = ErrStoreMsgNotFound
-+	subj = _EMPTY_
-+	require_False(t, o.needAck(1, &subj))
- }
- 
- func TestJetStreamConsumerWithFormattingSymbol(t *testing.T) {
-```
-
-**File**: `server/jetstream_test.go` (modified, +108/-48)
-```diff
-@@ -16877,70 +16877,74 @@ func TestJetStreamAccountPurge(t *testing.T) {
- // For issue https://github.com/nats-io/nats-server/issues/3612
- // Do auto cleanup.
- func TestJetStreamDanglingMessageAutoCleanup(t *testing.T) {
--	s := RunBasicJetStreamServer(t)
--	defer s.Shutdown()
-+	for _, rp := range []nats.RetentionPolicy{nats.InterestPolicy, nats.WorkQueuePolicy} {
-+		t.Run(rp.String(), func(t *testing.T) {
-+			s := RunBasicJetStreamServer(t)
-+			defer s.Shutdown()
- 
--	// Client for API requests.
--	nc, js := jsClientConnect(t, s)
--	defer nc.Close()
-+			// Client for API requests.
-+			nc, js := jsClientConnect(t, s)
-+			defer nc.Close()
- 
--	_, err := js.AddStream(&nats.StreamConfig{
--		Name:      "TEST",
--		Subjects:  []string{"foo"},
--		Retention: nats.InterestPolicy,
--	})
--	require_NoError(t, err)
-+			_, err := js.AddStream(&nats.StreamConfig{
-+				Name:      "TEST",
-+				Subjects:  []string{"foo"},
-+				Retention: rp,
-+			})
-+			require_NoError(t, err)
- 
--	sub, err := js.PullSubscribe("foo", "dlc", nats.MaxAckPending(10))
--	require_NoError(t, err)
-+			sub, err := js.PullSubscribe("foo", "dlc", nats.MaxAckPending(10))
-+			require_NoError(t, err)
- 
--	// Send 100 msgs
--	n := 100
--	for i := 0; i < n; i++ {
--		sendStreamMsg(t, nc, "foo", "msg")
--	}
-+			// Send 100 msgs
-+			n := 100
-+			for i := 0; i < n; i++ {
-+				sendStreamMsg(t, nc, "foo", "msg")
-+			}
- 
--	// Grab and ack 10 messages.
--	for _, m := range fetchMsgs(t, sub, 10, time.Second) {
--		m.AckSync()
--	}
-+			// Grab and ack 10 messages.
-+			for _, m := range fetchMsgs(t, sub, 10, time.Second) {
-+				m.AckSync()
-+			}
- 
--	ci, err := sub.ConsumerInfo()
--	require_NoError(t, err)
--	require_True(t, ci.AckFloor.Stream == 10)
-+			ci, err := sub.ConsumerInfo()
-+			require_NoError(t, err)
-+			require_True(t, ci.AckFloor.Stream == 10)
- 
--	// Stop current
--	sd := s.JetStreamConfig().StoreDir
--	s.Shutdown()
-+			// Stop current
-+			sd := s.JetStreamConfig().StoreDir
-+			s.Shutdown()
- 
--	// We will hand move the ackfloor to simulate dangling message condition.
--	cstore := filepath.Join(sd, "$G", "streams", "TEST", "obs", "dlc", "o.dat")
-+			// We will hand move the ackfloor to simulate dangling message condition.
-+			cstore := filepath.Join(sd, "$G", "streams", "TEST", "obs", "dlc", "o.dat")
- 
--	buf, err := os.ReadFile(cstore)
--	require_NoError(t, err)
-+			buf, err := os.ReadFile(cstore)
-+			require_NoError(t, err)
- 
--	state, err := decodeConsumerState(buf)
--	require_NoError(t, err)
-+			state, err := decodeConsumerState(buf)
-+			require_NoError(t, err)
- 
--	// Update from 10 for delivered and ack to 90.
--	state.Delivered.Stream, state.Delivered.Consumer = 90, 90
--	state.AckFloor.Stream, state.AckFloor.Consumer = 90, 90
-+			// Update from 10 for delivered and ack to 90.
-+			state.Delivered.Stream, state.Delivered.Consumer = 90, 90
-+			state.AckFloor.Stream, state.AckFloor.Consumer = 90, 90
- 
--	err = os.WriteFile(cstore, encodeConsumerState(state), defaultFilePerms)
--	require_NoError(t, err)
-+			err = os.WriteFile(cstore, encodeConsumerState(state), defaultFilePerms)
-+			require_NoError(t, err)
- 
--	// Restart.
--	s = RunJetStreamServerOnPort(-1, sd)
--	defer s.Shutdown()
-+			// Restart.
-+			s = RunJetStreamServerOnPort(-1, sd)
-+			defer s.Shutdown()
- 
--	nc, js = jsClientConnect(t, s)
--	defer nc.Close()
-+			nc, js = jsClientConnect(t, s)
-+			defer nc.Close()
- 
--	si, err := js.StreamInfo("TEST")
--	require_NoError(t, err)
-+			si, err := js.StreamInfo("TEST")
-+			require_NoError(t, err)
- 
--	if si.State.Msgs != 10 {
--		t.Fatalf("Expected auto-cleanup to have worked but got %d msgs vs 10", si.State.Msgs)
-+			if si.State.Msgs != 10 {
-+				t.Fatalf("Expected auto-cleanup to have worked but got %d msgs vs 10", si.State.Msgs)
-+			}
-+		})
- 	}
- }
- 
-@@ -21531,6 +21535,62 @@ func TestJetStreamWQMaxDeliveryReached(t *testing.T) {
- 	require_Equal(t, sm.subj, "foo")
- }
- 
-+func TestJetStreamInterestAndWorkQueueSubjectsOutsideStream(t *testing.T) {
-+	for _, retention := range []nats.RetentionPolicy{nats.InterestPolicy, nats.WorkQueuePolicy} {
-+		for _, title := range []string{"transform", "sources", "subject-update"} {
-+			t.Run(fmt.Sprintf("%s/%s", retention, title), func(t *testing.T) {
-+				s := RunBasicJetStreamServer(t)
-+				defer s.Shutdown()
-+
-+				nc, js := jsClientConnect(t, s)
-+				defer nc.Close()
-+
-+				// The stream has subject "foo", but stores a message under "bar".
-+				cfg := &nats.StreamConfig{Name: "TEST", Subjects: []string{"foo"}, Retention: retention}
-+				pubSubj := "bar"
-+				switch title {
-+				case "transform":
-+					cfg.SubjectTransform = &nats.SubjectTransformConfig{Source: "foo", Destination: "bar"}
-+					pubSubj = "foo"
-+				case "sources":
-+					_, err := js.AddStream(&nats.StreamConfig{Name: "SOURCE", Subjects: []string{"bar"}})
-+					require_NoError(t, err)
-+					cfg.Sources = []*nats.StreamSource{{Name: "SOURCE"}}
-+				case "subject-update":
-+					cfg.Subjects = []string{"foo", "bar"}
-+				}
-+				_, err := js.AddStream(cfg)
-+				require_NoError(t, err)
-+
-+			
-```
-
-**File**: `server/stream.go` (modified, +8/-35)
-```diff
-@@ -9303,18 +9303,6 @@ func (mset *stream) partitionUnique(name string, partitions []string) bool {
- 	return true
- }
- 
--// Lock should be held.
--func (mset *stream) potentialFilteredConsumers() bool {
--	numSubjects := len(mset.cfg.Subjects)
--	if len(mset.consumers) == 0 || numSubjects == 0 {
--		return false
--	}
--	if numSubjects > 1 || subjectHasWildcard(mset.cfg.Subjects[0]) {
--		return true
--	}
--	return false
--}
--
- // Check if there is no interest in this sequence number across our consumers.
- // The consumer passed is optional if we are processing the ack for that consumer.
- // Write lock should be held.
-@@ -9331,23 +9319,8 @@ func (mset *stream) noInterestWithSubject(seq uint64, subj string, obs *consumer
- 
- // Write lock should be held here for the stream to avoid race conditions on state.
- func (mset *stream) checkForInterest(seq uint64, obs *consumer) bool {
--	var subj string
--	if mset.potentialFilteredConsumers() {
--		pmsg := getJSPubMsgFromPool()
--		defer pmsg.returnToPool()
--		sm, err := mset.store.LoadMsg(seq, &pmsg.StoreMsg)
--		if err != nil {
--			if err == ErrStoreEOF {
--				// Register this as a preAck.
--				mset.registerPreAck(obs, seq)
--				return true
--			}
--			mset.clearAllPreAcks(seq)
--			return false
--		}
--		subj = sm.subj
--	}
--	return mset.checkForInterestWithSubject(seq, subj, obs)
-+	// Filtered consumers look up the subject when needed.
-+	return mset.checkForInterestWithSubject(seq, _EMPTY_, obs)
- }
- 
- // Checks for interest given a sequence and subject.
-@@ -9358,7 +9331,7 @@ func (mset *stream) checkForInterestWithSubject(seq uint64, subj string, obs *co
- 			continue
- 		}
- 		// Check if we need an ack.
--		if o.needAck(seq, subj) {
-+		if o.needAck(seq, &subj) {
- 			return true
- 		}
- 	}
-@@ -9766,7 +9739,7 @@ func (a *Account) RestoreStream(ncfg *StreamConfig, r io.Reader) (*stream, error
- 	return mset, nil
- }
- 
--// This is to check for dangling messages on interest retention streams. Only called on account enable.
-+// This is to check for dangling messages on interest and workqueue retention streams. Only called on account enable.
- // Issue https://github.com/nats-io/nats-server/issues/3612
- func (mset *stream) checkForOrphanMsgs() {
- 	mset.mu.RLock()
-@@ -9795,12 +9768,12 @@ func (mset *stream) checkForOrphanMsgs() {
- }
- 
- // Check on startup to make sure that consumers replication matches us.
--// Interest retention requires replication matches.
-+// Interest and workqueue retention require replication matches.
- func (mset *stream) checkConsumerReplication() {
- 	mset.mu.RLock()
- 	defer mset.mu.RUnlock()
- 
--	if mset.cfg.Retention != InterestPolicy {
-+	if mset.cfg.Retention == LimitsPolicy {
- 		return
- 	}
- 
-@@ -9810,8 +9783,8 @@ func (mset *stream) checkConsumerReplication() {
- 		// Consumer replicas 0 can be a legit config for the replicas and we will inherit from the stream
- 		// when this is the case.
- 		if mset.cfg.Replicas != o.cfg.Replicas && o.cfg.Replicas != 0 {
--			s.Errorf("consumer '%s > %s > %s' MUST match replication (%d vs %d) of stream with interest policy",
--				acc, mset.cfg.Name, o.cfg.Name, mset.cfg.Replicas, o.cfg.Replicas)
-+			s.Errorf("consumer '%s > %s > %s' MUST match replication (%d vs %d) of stream with %s policy",
-+				acc, mset.cfg.Name, o.cfg.Name, mset.cfg.Replicas, o.cfg.Replicas, strings.ToLower(mset.cfg.Retention.String()))
- 		}
- 		o.mu.RUnlock()
- 	}
+ func TestPSEmulationMem(t *testing.T) {
 ```
 
 ---
 
-### Incident Patch 2: `693b1f47` (2026-11-12)
-**Commit Message**: [FIXED] Dangling WorkQueue messages not cleaned up on restart
+### Incident Patch 2: `53f337e1` (2026-11-12)
+**Commit Message**: De-flake TestPSEmulationCPU
 
 Signed-off-by: Maurice van Veen <[REDACTED_EMAIL]>
 
-**File**: `server/consumer.go` (modified, +1/-1)
+**File**: `server/pse/pse_test.go` (modified, +9/-22)
 ```diff
-@@ -4010,7 +4010,7 @@ func (o *consumer) moveAckFloor(dseq, sseq uint64) {
- }
+@@ -20,38 +20,25 @@ import (
+ 	"runtime"
+ 	"runtime/debug"
+ 	"testing"
++	"time"
+ )
  
- // Check if we need an ack for this store seq.
--// This is called for interest based retention streams to remove messages.
-+// This is called for interest and workqueue retention streams to remove messages.
- // An empty subj is looked up if needed and stored, so callers can share it across consumers.
- func (o *consumer) needAck(sseq uint64, subj *string) bool {
- 	var needAck bool
-```
-
-**File**: `server/jetstream.go` (modified, +1/-1)
-```diff
-@@ -1698,7 +1698,7 @@ func (a *Account) EnableJetStream(limits map[string]JetStreamAccountLimits, tq c
- 
- 		// Collect to check for dangling messages.
- 		// TODO(dlc) - Can be removed eventually.
--		if cfg.StreamConfig.Retention == InterestPolicy {
-+		if cfg.StreamConfig.Retention != LimitsPolicy {
- 			mset.checkForOrphanMsgs()
- 			mset.checkConsumerReplication()
- 		}
-```
-
-**File**: `server/jetstream_test.go` (modified, +52/-48)
-```diff
-@@ -16877,70 +16877,74 @@ func TestJetStreamAccountPurge(t *testing.T) {
- // For issue https://github.com/nats-io/nats-server/issues/3612
- // Do auto cleanup.
- func TestJetStreamDanglingMessageAutoCleanup(t *testing.T) {
--	s := RunBasicJetStreamServer(t)
--	defer s.Shutdown()
-+	for _, rp := range []nats.RetentionPolicy{nats.InterestPolicy, nats.WorkQueuePolicy} {
-+		t.Run(rp.String(), func(t *testing.T) {
-+			s := RunBasicJetStreamServer(t)
-+			defer s.Shutdown()
- 
--	// Client for API requests.
--	nc, js := jsClientConnect(t, s)
--	defer nc.Close()
-+			// Client for API requests.
-+			nc, js := jsClientConnect(t, s)
-+			defer nc.Close()
- 
--	_, err := js.AddStream(&nats.StreamConfig{
--		Name:      "TEST",
--		Subjects:  []string{"foo"},
--		Retention: nats.InterestPolicy,
--	})
--	require_NoError(t, err)
-+			_, err := js.AddStream(&nats.StreamConfig{
-+				Name:      "TEST",
-+				Subjects:  []string{"foo"},
-+				Retention: rp,
-+			})
-+			require_NoError(t, err)
- 
--	sub, err := js.PullSubscribe("foo", "dlc", nats.MaxAckPending(10))
--	require_NoError(t, err)
-+			sub, err := js.PullSubscribe("foo", "dlc", nats.MaxAckPending(10))
-+			require_NoError(t, err)
- 
--	// Send 100 msgs
--	n := 100
--	for i := 0; i < n; i++ {
--		sendStreamMsg(t, nc, "foo", "msg")
+ func TestPSEmulationCPU(t *testing.T) {
+ 	if runtime.GOOS == "windows" {
+ 		t.Skipf("Skipping this test on Windows")
+ 	}
+ 	var rss, vss int64
+-	var pcpu, psPcpu float64
+-
+-	debug.FreeOSMemory()
+-
+-	// PS version first
+-	pidStr := fmt.Sprintf("%d", os.Getpid())
+-	out, err := exec.Command("ps", "o", "pcpu=", "-p", pidStr).Output()
+-	if err != nil {
+-		t.Fatalf("Failed to execute ps command: %v\n", err)
 -	}
-+			// Send 100 msgs
-+			n := 100
-+			for i := 0; i < n; i++ {
-+				sendStreamMsg(t, nc, "foo", "msg")
-+			}
+-
+-	// Our internal version
+-	ProcUsage(&pcpu, &rss, &vss)
+-
+-	fmt.Sscanf(string(out), "%f", &psPcpu)
++	var pcpu float64
  
--	// Grab and ack 10 messages.
--	for _, m := range fetchMsgs(t, sub, 10, time.Second) {
--		m.AckSync()
--	}
-+			// Grab and ack 10 messages.
-+			for _, m := range fetchMsgs(t, sub, 10, time.Second) {
-+				m.AckSync()
-+			}
- 
--	ci, err := sub.ConsumerInfo()
--	require_NoError(t, err)
--	require_True(t, ci.AckFloor.Stream == 10)
-+			ci, err := sub.ConsumerInfo()
-+			require_NoError(t, err)
-+			require_True(t, ci.AckFloor.Stream == 10)
- 
--	// Stop current
--	sd := s.JetStreamConfig().StoreDir
--	s.Shutdown()
-+			// Stop current
-+			sd := s.JetStreamConfig().StoreDir
-+			s.Shutdown()
- 
--	// We will hand move the ackfloor to simulate dangling message condition.
--	cstore := filepath.Join(sd, "$G", "streams", "TEST", "obs", "dlc", "o.dat")
-+			// We will hand move the ackfloor to simulate dangling message condition.
-+			cstore := filepath.Join(sd, "$G", "streams", "TEST", "obs", "dlc", "o.dat")
- 
--	buf, err := os.ReadFile(cstore)
--	require_NoError(t, err)
-+			buf, err := os.ReadFile(cstore)
-+			require_NoError(t, err)
- 
--	state, err := decodeConsumerState(buf)
--	require_NoError(t, err)
-+			state, err := decodeConsumerState(buf)
-+			require_NoError(t, err)
- 
--	// Update from 10 for delivered and ack to 90.
--	state.Delivered.Stream, state.Delivered.Consumer = 90, 90
--	state.AckFloor.Stream, state.AckFloor.Consumer = 90, 90
-+			// Update from 10 for delivered and ack to 90.
-+			state.Delivered.Stream, state.Delivered.Consumer = 90, 90
-+			state.AckFloor.Stream, state.AckFloor.Consumer = 90, 90
- 
--	err = os.WriteFile(cstore, encodeConsumerState(state), defaultFilePerms)
--	require_NoError(t, err)
-+			err = os.WriteFile(cstore, encodeConsumerState(state), defaultFilePerms)
-+			require_NoError(t, err)
- 
--	// Restart.
--	s = RunJetStreamServerOnPort(-1, sd)
--	defer s.Shutdown()
-+			// Restart.
-+			s = RunJetStreamServerOnPort(-1, sd)
-+			defer s.Shutdown()
- 
--	nc, js = jsClientConnect(t, s)
--	defer nc.Close()
-+			nc, js = jsClientConnect(t, s)
-+			defer nc.Close()
- 
--	si, err := js.StreamInfo("TEST")
--	require_NoError(t, err)
-+			si, err := js.StreamInfo("TEST")
-+			require_NoError(t, err)
- 
--	if si.State.Msgs != 10 {
--		t.Fatalf("Expected auto-cleanup to have worked but got %d msgs vs 10", si.State.Msgs)
-+			if si.State.Msgs != 10 {
-+				t.Fatalf("Expected auto-cleanup to have worked but got %d msgs vs 10", si.State.Msgs)
-+			}
-+		})
- 	}
- }
- 
-```
-
-**File**: `server/stream.go` (modified, +5/-5)
-```diff
-@@ -9739,7 +9739,7 @@ func (a *Account) RestoreStream(ncfg *StreamConfig, r io.Reader) (*stream, error
- 	return mset, nil
- }
- 
--// This is to check for dangling messages on interest retention streams. Only called on account enable.
-+// This is to check for dangling messages on interest and workqueue retention streams. Only called on account enable.
- // Issue https://github.com/nats-io/nats-server/issues/3612
- func (mset *stream) checkForOrphanMsgs() {
- 	mset.mu.RLock()
-@@ -9768,12 +9768,12 @@ func (mset *stream) checkForOrphanMsgs() {
- }
- 
- // Check on startup to make sure that consumers replication matches us.
--// Interest retention requires replication matches.
-+// Interest and workqueue retention require replication matches.
- func (mset *stream) checkConsumerReplication() {
- 	mset.mu.RLock()
- 	defer mset.mu.RUnlock()
- 
--	if mset.cfg.Retention != InterestPolicy {
-+	if mset.cfg.Retention == LimitsPolicy {
- 		return
- 	}
- 
-@@ -9783,8 +9783,8 @@ func (mset *stream) checkConsumerReplication() {
- 		// Consumer replicas 0 can be a legit config for the replicas and we will inherit from the stream
- 		// when this is the case.
- 		if mset.cfg.Replicas != o.cfg.Replicas && o.cfg.Replicas != 0 {
--			s.Errorf("consumer '%s > %s > %s' MUST match replication (%d vs %d) of stream with interest policy",
--				acc, mset.cfg.Name, o.cfg.Name, mset.cfg.Replicas, o.cfg.Replicas)
-+			s.Errorf("consumer '%s > %s > %s' MUST match replication (%d vs %d) of stream with %s policy",
-+				acc, mset.cfg.Name, o.cfg.Name, mset.cfg.Replicas, o.cfg.Replicas, strings.ToLower(mset.cfg.Retention.String()))
+-	if pcpu != psPcpu {
+-		delta := int64(pcpu - psPcpu)
+-		if delta < 0 {
+-			delta = -delta
+-		}
+-		if delta > 30 { // 30%?
+-			t.Fatalf("CPUs did not match close enough: %f vs %f", pcpu, psPcpu)
++	// Burn CPU until the background sampler reports usage.
++	for deadline := time.Now().Add(5 * time.Second); pcpu <= 0 && time.Now().Before(deadline); {
++		if err := ProcUsage(&pcpu, &rss, &vss); err != nil {
++			t.Fatalf("Failed to get process usage: %v", err)
  		}
- 		o.mu.RUnlock()
  	}
-```
-
----
-
-### Incident Patch 3: `043ac350` (2026-11-12)
-**Commit Message**: [FIXED] Filtered consumer losing interest when a message can't be read
-
-Signed-off-by: Maurice van Veen <[REDACTED_EMAIL]>
-
-**File**: `server/consumer.go` (modified, +4/-1)
-```diff
-@@ -4030,8 +4030,11 @@ func (o *consumer) needAck(sseq uint64, subj *string) bool {
- 	if isFiltered {
- 		if *subj == _EMPTY_ {
- 			var err error
--			if *subj, err = o.mset.store.SubjectForSeq(sseq); err != nil {
-+			if *subj, err = o.mset.store.SubjectForSeq(sseq); err == ErrStoreMsgNotFound {
- 				return false
-+			} else if err != nil {
-+				// We can't tell if the message matches, so keep it.
-+				return true
- 			}
- 		}
- 		if !o.isFilteredMatch(*subj) {
-```
-
-**File**: `server/filestore.go` (modified, +5/-1)
-```diff
-@@ -9649,7 +9649,7 @@ func (fs *fileStore) SubjectForSeq(seq uint64) (string, error) {
- 	fs.mu.RUnlock()
- 	if mb != nil {
- 		mb.mu.Lock()
--		sm, _, _ := mb.fetchMsgNoCopyLocked(seq, &smv)
-+		sm, _, err := mb.fetchMsgNoCopyLocked(seq, &smv)
- 		var subj string
- 		if sm != nil {
- 			// Copy the subject, as it's used elsewhere, and the backing cache could be reused in the meantime.
-@@ -9660,6 +9660,10 @@ func (fs *fileStore) SubjectForSeq(seq uint64) (string, error) {
- 		if sm != nil {
- 			return subj, nil
- 		}
-+		// A deleted message is not found, other errors mean we couldn't read it.
-+		if err != nil && err != errDeletedMsg {
-+			return _EMPTY_, err
-+		}
- 	}
- 	return _EMPTY_, ErrStoreMsgNotFound
- }
-```
-
-**File**: `server/filestore_test.go` (modified, +10/-0)
-```diff
-@@ -11421,6 +11421,16 @@ func TestFileStoreSubjectForSeq(t *testing.T) {
- 
- 	_, err = fs.SubjectForSeq(2)
- 	require_Error(t, err, ErrStoreMsgNotFound)
-+
-+	// A deleted message is not found either.
-+	_, _, err = fs.StoreMsg("foo.bar", nil, nil, 0)
-+	require_NoError(t, err)
-+	_, _, err = fs.StoreMsg("foo.baz", nil, nil, 0)
-+	require_NoError(t, err)
-+	_, err = fs.RemoveMsg(2)
-+	require_NoError(t, err)
-+	_, err = fs.SubjectForSeq(2)
-+	require_Error(t, err, ErrStoreMsgNotFound)
++	if pcpu <= 0 {
++		t.Fatalf("Expected positive CPU usage, got %f", pcpu)
++	}
  }
  
- func BenchmarkFileStoreSubjectAccesses(b *testing.B) {
-```
-
-**File**: `server/jetstream_consumer_test.go` (modified, +41/-0)
-```diff
-@@ -8054,6 +8054,47 @@ func TestJetStreamConsumerNeedAckFallbackWithFilter(t *testing.T) {
- 	require_False(t, o.needAck(2, &subj))
- }
- 
-+type subjectForSeqErrStore struct {
-+	StreamStore
-+	err error
-+}
-+
-+func (s *subjectForSeqErrStore) SubjectForSeq(seq uint64) (string, error) {
-+	return _EMPTY_, s.err
-+}
-+
-+func TestJetStreamConsumerNeedAckSubjectLookupError(t *testing.T) {
-+	s := RunBasicJetStreamServer(t)
-+	defer s.Shutdown()
-+
-+	mset, err := s.globalAccount().addStream(&StreamConfig{
-+		Name:      "TEST",
-+		Subjects:  []string{"foo"},
-+		Retention: InterestPolicy,
-+	})
-+	require_NoError(t, err)
-+	o, err := mset.addConsumer(&ConsumerConfig{Durable: "CONSUMER", FilterSubject: "foo", AckPolicy: AckExplicit})
-+	require_NoError(t, err)
-+
-+	_, _, err = mset.store.StoreMsg("foo", nil, nil, 0)
-+	require_NoError(t, err)
-+
-+	es := &subjectForSeqErrStore{StreamStore: mset.store}
-+	mset.mu.Lock()
-+	mset.store = es
-+	mset.mu.Unlock()
-+
-+	// The message can't be read, so we can't tell if it matches and must keep it.
-+	es.err = errors.New("read failed")
-+	subj := _EMPTY_
-+	require_True(t, o.needAck(1, &subj))
-+
-+	// The message is gone, so it's not needed.
-+	es.err = ErrStoreMsgNotFound
-+	subj = _EMPTY_
-+	require_False(t, o.needAck(1, &subj))
-+}
-+
- func TestJetStreamConsumerWithFormattingSymbol(t *testing.T) {
- 	s := RunBasicJetStreamServer(t)
- 	defer s.Shutdown()
+ func TestPSEmulationMem(t *testing.T) {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8892** (2026-11-13): De-flake TestPSEmulationCPU (@MauriceVanVeen)
 - **PR #8891** (2026-11-12): Switch to GitHub Actions lockfile (@neilalexander)
 - **PR #8890** (2026-11-12): [FIXED] Filtered consumer interest & dangling WorkQueue messages (@MauriceVanVeen)
 - **PR #8888** (closed): Rewrite stream meta.sum when missing on recovery (@amalsaidov)
 - **PR #8887** (2026-11-11): [FIXED] Filestore metadata and new directories not crash-safe (@MauriceVanVeen)
 - **PR #8886** (2026-11-11): [FIXED] Account reserved storage ignores replicas for un-tiered limits (@MauriceVanVeen)
-- **PR #8885** (2026-11-11): Update dependencies (@neilalexander)
 
 ---
 
@@ -3632,72 +2866,57 @@ Signed-off-by: Maurice van Veen <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [FIXED] Filtered consumer interest & dangling WorkQueue messages (#8890)
+## X. De-flake TestPSEmulationCPU
 
 **RULE**:
-When implementing operations in `server/consumer.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats-server. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/pse/pse_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats-server. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `79d1d2c1`: [FIXED] Filtered consumer interest & dangling WorkQueue messages (#8890). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6993500c`: De-flake TestPSEmulationCPU. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/consumer.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/pse/pse_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// This is called for interest and workqueue retention streams to remove messages.
-// An empty subj is looked up if needed and stored, so callers can share it across consumers.
-func (o *consumer) needAck(sseq uint64, subj *string) bool {
-	isFiltered := o.subjf != nil
-		if *subj == _EMPTY_ {
-			if *subj, err = o.mset.store.SubjectForSeq(sseq); err == ErrStoreMsgNotFound {
-			} else if err != nil {
-				// We can't tell if the message matches, so keep it.
-				return true
-		if !o.isFilteredMatch(*subj) {
-			return sseq > o.asflr
+	"time"
+	var pcpu float64
+	// Burn CPU until the background sampler reports usage.
+	for deadline := time.Now().Add(5 * time.Second); pcpu <= 0 && time.Now().Before(deadline); {
+		if err := ProcUsage(&pcpu, &rss, &vss); err != nil {
+			t.Fatalf("Failed to get process usage: %v", err)
+	if pcpu <= 0 {
+		t.Fatalf("Expected positive CPU usage, got %f", pcpu)
+	}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-// Determine if this is a truly filtered consumer. Modern clients will place filtered subjects
-// even if the stream only has a single non-wildcard subject designation.
-// Read lock should be held.
-func (o *consumer) isFiltered() bool {
-	if o.subjf == nil {
-		return false
-	}
-	// If we are here we want to check if the filtered subject is
-	// a direct match for our only listed subject.
-	mset := o.mset
-	if mset == nil {
-		return true
+// Induced defect failure mode:
+	var pcpu, psPcpu float64
+
+	debug.FreeOSMemory()
+
+	// PS version first
+	pidStr := fmt.Sprintf("%d", os.Getpid())
+	out, err := exec.Command("ps", "o", "pcpu=", "-p", pidStr).Output()
+	if err != nil {
+		t.Fatalf("Failed to execute ps command: %v\n", err)
 	}
 
-	// Protect access to mset.cfg with the cfgMu mutex.
-	mset.cfgMu.RLock()
-	msetSubjects := mset.cfg.Subjects
-	mset.cfgMu.RUnlock()
+	// Our internal version
+	ProcUsage(&pcpu, &rss, &vss)
 
-	// `isFiltered` need to be performant, so we do
-	// as any checks as possible to avoid unnecessary work.
-	// Here we avoid iteration over slices if there is only one subject in stream
-	// and one filter for the consumer.
-	if len(msetSubjects) == 1 && len(o.subjf) == 1 {
-		return msetSubjects[0] != o.subjf[0].subject
-	}
-
-	// if the list is not equal length, we can return early, as this is filtered.
-	if len(msetSubjects) != len(o.subjf) {
-		return true
-	}
-
-	// if in rare case scenario that user passed all stream subjects as consumer filters,
-	// we need to do a more expensive operation.
-	// reflect.DeepEqual would return fa
+	fmt.Sscanf(string(out), "%f", &psPcpu)
+	if pcpu != psPcpu {
+		delta := int64(pcpu - psPcpu)
+		if delta < 0 {
+			delta = -delta
+		}
+		if delta > 30 { // 30%?
+			t.Fatalf("CPUs did not match close enough: %f vs %f", pcpu, psPcpu)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `79d1d2c1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6993500c` are properly handled with clean fallback behavior.

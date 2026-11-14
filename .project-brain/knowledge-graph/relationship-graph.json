@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-14T02:22:03.066Z",
+  "updated_at": "2026-11-14T02:38:23.552Z",
   "statistics": {
-    "total_nodes": 146,
-    "total_edges": 79,
+    "total_nodes": 148,
+    "total_edges": 80,
     "domain_distribution": {
-      "D": 119,
+      "D": 121,
       "M": 1,
       "H": 11,
       "J": 4,
@@ -18,7 +18,7 @@
       "B": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 79
+      "CONSTRAINED_BY_ARCHITECTURE": 80
     }
   },
   "nodes": {
@@ -3267,6 +3267,51 @@
       ],
       "created_at": "2026-11-14T02:22:03.065Z",
       "updated_at": "2026-11-14T02:22:03.065Z"
+    },
+    "DOM-D-3A6226D8": {
+      "id": "DOM-D-3A6226D8",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): meituan-longcat/LongCat-2.5",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-meituan-longcat-longcat-2.5-learnings.md`  \n> **Source**: huggingface ([https://h -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-meituan-longcat-longcat-2.5-learnings.md`  \n> **Source**: huggingface ([https://h",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-meituan-longcat-longcat-2.5/hf-meituan-longcat-longcat-2.5-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T02:37:10.218Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-meituan-longcat-longcat-2.5)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-14T02:37:44.782Z",
+      "updated_at": "2026-11-14T02:37:44.782Z"
+    },
+    "DOM-D-0D55DB0B": {
+      "id": "DOM-D-0D55DB0B",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): openai/gpt-oss-120b",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md`  \n> **Source**: huggingface ([https://huggingfa -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md`  \n> **Source**: huggingface ([https://huggingfa",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-openai-gpt-oss-120b/hf-openai-gpt-oss-120b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T02:37:45.149Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-openai-gpt-oss-120b)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-14T02:38:23.552Z",
+      "updated_at": "2026-11-14T02:38:23.552Z"
     }
   },
   "edges": [
@@ -4059,6 +4104,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-38E3B6C2 [D] with Domain M",
       "created_at": "2026-11-14T02:22:03.065Z"
+    },
+    {
+      "id": "EDGE-F507A105310C",
+      "sourceId": "DOM-D-0D55DB0B",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-0D55DB0B [D] with Domain M",
+      "created_at": "2026-11-14T02:38:23.552Z"
     }
   ]
 }

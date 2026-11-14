@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-14T02:21:24.977Z",
+  "last_updated": "2026-11-14T02:37:06.888Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1190,14 +1190,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openai-gpt-oss-120b",
-      "content_hash": "4ca7e58b32372b50861b8858fb380f2e36eb8c29ab316b3cecf39d8519db1e35",
-      "verified_at": "2026-11-08T23:03:34.371Z",
+      "content_hash": "8766f5c729567346130c181db3245eee6951c1ea2218d1f1d9a971f647684ce1",
+      "verified_at": "2026-11-14T02:36:58.186Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T23:03:34.371Z"
+      "last_updated": "2026-11-14T02:36:58.186Z"
     },
     "zai-org/GLM-5.2": {
       "repository": "zai-org/GLM-5.2",
@@ -10941,14 +10941,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nats-io-nats-server",
-      "content_hash": "e750dd4a621335b1dc2bb2375cb68620000a8e0507225107c8d8b2b91cbe8455",
-      "verified_at": "2026-11-13T03:03:02.253Z",
+      "content_hash": "2987ceee5ba9511baf33add2d3c0d82973294339ed7961776ea8c5dd7b80ac65",
+      "verified_at": "2026-11-14T02:37:06.887Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T03:03:02.253Z"
+      "last_updated": "2026-11-14T02:37:06.887Z"
     },
     "str4d/rage": {
       "repository": "str4d/rage",
@@ -18779,6 +18779,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-13T18:17:14.955Z"
+    },
+    "meituan-longcat/LongCat-2.5": {
+      "repository": "meituan-longcat/LongCat-2.5",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-meituan-longcat-longcat-2-5",
+      "content_hash": "469fe2c8df64e94fb0df84f2ede759b0802c80101f5167fdd2df554f8991bf96",
+      "verified_at": "2026-11-14T02:36:55.750Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-14T02:36:55.750Z"
     }
   },
   "repos": {

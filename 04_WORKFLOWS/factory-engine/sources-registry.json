@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-14T02:21:35.723Z",
-    "lastVerified": "2026-11-14T02:21:35.723Z",
+    "lastChecked": "2026-11-14T02:37:10.106Z",
+    "lastVerified": "2026-11-14T02:37:10.106Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -252,12 +252,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-14T01:26:26.696Z",
-    "lastVerified": "2026-11-14T01:26:26.696Z",
+    "lastChecked": "2026-11-14T02:37:10.092Z",
+    "lastVerified": "2026-11-14T02:37:10.092Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -266,7 +266,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "9e86198d"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1747,14 +1748,14 @@
     "officialUrl": "https://github.com/nats-io/nats-server",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-13T02:57:45.844Z",
-    "lastVerified": "2026-11-13T02:57:45.844Z",
+    "lastChecked": "2026-11-14T02:37:05.871Z",
+    "lastVerified": "2026-11-14T02:37:05.871Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nats-io-nats-server",
-    "contentHash": "e750dd4a621335b1dc2bb2375cb68620000a8e0507225107c8d8b2b91cbe8455",
+    "contentHash": "2987ceee5ba9511baf33add2d3c0d82973294339ed7961776ea8c5dd7b80ac65",
     "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1942,8 +1943,8 @@
     "officialUrl": "https://github.com/sigstore/cosign",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-13T19:52:53.524Z",
-    "lastVerified": "2026-11-13T19:52:53.524Z",
+    "lastChecked": "2026-11-14T02:37:05.077Z",
+    "lastVerified": "2026-11-14T02:37:05.077Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sigstore-cosign",
@@ -3452,9 +3453,9 @@
   "jhen0409-react-native-debugger": {
     "name": "react-native-debugger",
     "officialUrl": "https://github.com/jhen0409/react-native-debugger",
-    "lastChecked": "2026-11-09T17:34:52.767Z",
+    "lastChecked": "2026-11-14T02:37:00.107Z",
     "revisionIdentifier": "bd3435a4",
-    "lastVerified": "2026-11-09T17:34:52.767Z"
+    "lastVerified": "2026-11-14T02:37:00.107Z"
   },
   "sorintlab-stolon": {
     "name": "stolon",
@@ -3663,9 +3664,9 @@
   "vasu-devs-justhireme": {
     "name": "JustHireMe",
     "officialUrl": "https://github.com/vasu-devs/JustHireMe",
-    "lastChecked": "2026-11-13T01:31:27.484Z",
+    "lastChecked": "2026-11-14T02:37:07.854Z",
     "revisionIdentifier": "accdcdb5",
-    "lastVerified": "2026-11-13T01:31:27.484Z"
+    "lastVerified": "2026-11-14T02:37:07.854Z"
   },
   "ekzhang-bore": {
     "name": "bore",
@@ -5117,13 +5118,13 @@
     "officialUrl": "https://huggingface.co/openai/gpt-oss-120b",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-08T22:59:26.798Z",
-    "lastVerified": "2026-11-08T22:59:26.798Z",
+    "lastChecked": "2026-11-14T02:36:57.773Z",
+    "lastVerified": "2026-11-14T02:36:57.773Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-openai-gpt-oss-120b",
-    "contentHash": "4ca7e58b32372b50861b8858fb380f2e36eb8c29ab316b3cecf39d8519db1e35",
-    "promotedRulesCount": 3,
+    "contentHash": "8766f5c729567346130c181db3245eee6951c1ea2218d1f1d9a971f647684ce1",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -15186,6 +15187,23 @@
     "promotedRulesCount": 1,
     "recentFixesCount": 19,
     "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-meituan-longcat-longcat-2.5": {
+    "name": "meituan-longcat/LongCat-2.5",
+    "officialUrl": "https://huggingface.co/meituan-longcat/LongCat-2.5",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-14T02:36:55.116Z",
+    "lastVerified": "2026-11-14T02:36:55.116Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-meituan-longcat-longcat-2-5",
+    "contentHash": "469fe2c8df64e94fb0df84f2ede759b0802c80101f5167fdd2df554f8991bf96",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   }

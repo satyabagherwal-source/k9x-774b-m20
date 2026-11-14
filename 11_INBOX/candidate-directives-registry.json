@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T02:22:04.287Z",
+  "last_updated": "2026-11-14T02:38:24.284Z",
   "directives": [
     {
       "id": "CD-001",
@@ -11194,6 +11194,26 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-869023-puppet-fix-postgresql-failing-to-start-o.md",
+      "staged_date": "2026-11-14"
+    },
+    {
+      "id": "CD-QIVI",
+      "directive_title": "De-flake TestPSEmulationCPU",
+      "source_repo": "nats-io-nats-server-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-QIVI-de-flake-testpsemulationcpu.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-14",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-0E5052",
+      "directive_title": "De-flake TestPSEmulationCPU",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nats-io-nats-server",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0E5052-de-flake-testpsemulationcpu.md",
       "staged_date": "2026-11-14"
     }
   ]
