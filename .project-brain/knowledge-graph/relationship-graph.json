@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-14T00:08:54.195Z",
+  "updated_at": "2026-11-14T00:26:26.592Z",
   "statistics": {
-    "total_nodes": 138,
+    "total_nodes": 140,
     "total_edges": 75,
     "domain_distribution": {
-      "D": 112,
+      "D": 113,
       "M": 1,
-      "H": 10,
+      "H": 11,
       "J": 4,
       "K": 5,
       "L": 2,
@@ -3087,6 +3087,50 @@
       ],
       "created_at": "2026-11-14T00:08:54.195Z",
       "updated_at": "2026-11-14T00:08:54.195Z"
+    },
+    "DOM-D-BCB68B52": {
+      "id": "DOM-D-BCB68B52",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): ricursiveAI/Ripple-65B-Preview",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ricursiveai-ripple-65b-preview-learnings.md`  \n> **Source**: huggingface ([https: -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ricursiveai-ripple-65b-preview-learnings.md`  \n> **Source**: huggingface ([https:",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-ricursiveai-ripple-65b-preview/hf-ricursiveai-ripple-65b-preview-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T00:25:17.023Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-ricursiveai-ripple-65b-preview)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-14T00:25:49.427Z",
+      "updated_at": "2026-11-14T00:25:49.427Z"
+    },
+    "DOM-H-E98BDD0E": {
+      "id": "DOM-H-E98BDD0E",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "`void`: Fire-and-forget remove await  then",
+      "summary": "Fire-and-forget; remove `await` / `.then()` -> Fire-and-forget; remove `await` / `.then()`",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://invertase-react-native-firebase/invertase-react-native-firebase-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "`logEvent(analytics, …)`",
+        "author_or_entity": "AI-Builder-Brain Project Learning (invertase-react-native-firebase)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-14T00:26:26.592Z",
+      "updated_at": "2026-11-14T00:26:26.592Z"
     }
   },
   "edges": [

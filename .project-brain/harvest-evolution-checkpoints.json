@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T00:08:56.392Z",
+  "last_updated": "2026-11-14T00:26:27.464Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T21:28:54.085Z",
@@ -1128,7 +1128,7 @@
       "staged_for_review": 1
     },
     "yvgude-lean-ctx-learnings.md": {
-      "processed_at": "2026-11-12T13:15:12.695Z",
+      "processed_at": "2026-11-14T00:25:16.218Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2271,9 +2271,19 @@
       "processed_at": "2026-11-14T00:08:54.197Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-ricursiveai-ripple-65b-preview-learnings.md": {
+      "processed_at": "2026-11-14T00:25:49.429Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "invertase-react-native-firebase-learnings.md": {
+      "processed_at": "2026-11-14T00:26:26.593Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 720,
-  "total_canonical_promoted": 146,
-  "total_staged_for_review": 568
+  "total_dossiers_evaluated": 723,
+  "total_canonical_promoted": 148,
+  "total_staged_for_review": 570
 }

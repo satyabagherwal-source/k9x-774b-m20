@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T00:08:55.806Z",
+  "updated_at": "2026-11-14T00:26:26.840Z",
   "stats": {
-    "total_discovered": 3018,
-    "approved_pending_harvest": 2819,
+    "total_discovered": 3028,
+    "approved_pending_harvest": 2828,
     "harvested_count": 0,
-    "rejected_count": 199,
+    "rejected_count": 200,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2818,
+      "COMMUNITY_AND_EXPERT": 2828,
       "OFFICIAL_DOCUMENTATION": 106,
       "STANDARDS_AND_SPECIFICATIONS": 80,
       "ENGINEERING_BLOGS": 1,
@@ -65023,6 +65023,219 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
         "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-D49902D84887": {
+      "id": "SRC-D49902D84887",
+      "url": "https://github.com/user-attachments/assets/3ca05e06-bb75-492e-b913-b3e71d978ff6",
+      "title": "https://github.com/user-attachments/assets/3ca05e06-bb75-492e-b913-b3e71d978ff6",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T00:25:16.258Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md",
+        "fileName": "yvgude-lean-ctx-learnings.md"
+      }
+    },
+    "SRC-63AF103FEEE7": {
+      "id": "SRC-63AF103FEEE7",
+      "url": "https://github.com/yvgude/lean-ctx/releases/download/v$pkgver/lean-ctx-$pkgver-source.tar.gz",
+      "title": "https://github.com/yvgude/lean-ctx/releases/download/v$pkgver/lean-ctx-$pkgver-source.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T00:25:16.312Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md",
+        "fileName": "yvgude-lean-ctx-learnings.md"
+      }
+    },
+    "SRC-F395BCFCD8CA": {
+      "id": "SRC-F395BCFCD8CA",
+      "url": "https://models/",
+      "title": "https://models/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T00:25:16.336Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md",
+        "fileName": "yvgude-lean-ctx-learnings.md"
+      }
+    },
+    "SRC-2442DEA1774D": {
+      "id": "SRC-2442DEA1774D",
+      "url": "https://huggingface.co/ricursiveAI/Ripple-65B-Preview",
+      "title": "https://huggingface.co/ricursiveAI/Ripple-65B-Preview",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T00:25:49.442Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-ricursiveai-ripple-65b-preview-learnings.md",
+        "fileName": "hf-ricursiveai-ripple-65b-preview-learnings.md"
+      }
+    },
+    "SRC-3681504D2FDD": {
+      "id": "SRC-3681504D2FDD",
+      "url": "https://github.com/invertase/react-native-firebase",
+      "title": "https://github.com/invertase/react-native-firebase",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T00:26:26.606Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
+        "fileName": "invertase-react-native-firebase-learnings.md"
+      }
+    },
+    "SRC-68B9CD94588D": {
+      "id": "SRC-68B9CD94588D",
+      "url": "https://www.npmjs.com/package/react-native-codegen",
+      "title": "https://www.npmjs.com/package/react-native-codegen",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T00:26:26.659Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
+        "fileName": "invertase-react-native-firebase-learnings.md"
+      }
+    },
+    "SRC-728E60F093CC": {
+      "id": "SRC-728E60F093CC",
+      "url": "http://stackoverflow.com/questions/8489993/check-android-application-is-in-foreground-or-not",
+      "title": "http://stackoverflow.com/questions/8489993/check-android-application-is-in-foreground-or-not",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-14T00:26:26.685Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
+        "fileName": "invertase-react-native-firebase-learnings.md"
+      }
+    },
+    "SRC-FBC6D7B24464": {
+      "id": "SRC-FBC6D7B24464",
+      "url": "https://github.com/amannn/action-seman",
+      "title": "https://github.com/amannn/action-seman",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T00:26:26.789Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
+        "fileName": "invertase-react-native-firebase-learnings.md"
+      }
+    },
+    "SRC-A144D94674F9": {
+      "id": "SRC-A144D94674F9",
+      "url": "https://github.com/androidx/androidx/blob/androidx-main/core/core/src/main/java/androidx/core/app/FrameMetricsAggregator.java",
+      "title": "https://github.com/androidx/androidx/blob/androidx-main/core/core/src/main/java/androidx/core/app/FrameMetricsAggregator.java",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T00:26:26.815Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
+        "fileName": "invertase-react-native-firebase-learnings.md"
+      }
+    },
+    "SRC-F792FCE64110": {
+      "id": "SRC-F792FCE64110",
+      "url": "https://developer.android.com/reference/androidx/core/app/FrameMetricsAggregator",
+      "title": "https://developer.android.com/reference/androidx/core/app/FrameMetricsAggregator",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T00:26:26.840Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
+        "fileName": "invertase-react-native-firebase-learnings.md"
       }
     }
   }

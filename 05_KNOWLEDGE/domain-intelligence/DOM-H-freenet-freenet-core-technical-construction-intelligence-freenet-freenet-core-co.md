@@ -4,24 +4,24 @@
 {
   "source_repository": "freenet/freenet-core",
   "source_url": "https://github.com/freenet/freenet-core",
-  "source_version": "f26a5e1f",
+  "source_version": "3e505b65",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-13T18:34:57.163Z",
+  "timestamp": "2026-11-14T00:25:13.198Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-freenet-freenet-core",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [freenet/freenet-core](https://github.com/freenet/freenet-core) (Revision: `f26a5e1f`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-13T18:34:57.163Z`  
+> **Provenance**: Harvested from [freenet/freenet-core](https://github.com/freenet/freenet-core) (Revision: `3e505b65`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-14T00:25:13.198Z`  
 > **Learning ID**: `learn-github-freenet-freenet-core`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), B (Product Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 78%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 83%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from freenet/freenet-core:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T18:34:56.279Z  
+> **Harvest Timestamp**: 2026-11-14T00:25:12.019Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1752,14 +1752,14 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #6228** (2026-11-13): **chore(release): raise the QUIC-native wire floor to 0.2.158**
+  *Symptoms*: ## Problem  The 0.2.157 release bump fails `p2p_protoc::quic_native_floor_tests::quic_native_floor_tracks_the_shipping_release`. `QUIC_NATIVE_MIN_VERSION` is `(0, 2, 157)` and `QUIC_NATIVE_SHIPPED_IN` is `None`, and the test requires a floor that has not shipped to be strictly above the crate version.  ## Solution  Raise the floor to `(0, 2, 158)`. 0.2.157 still carries the decoder for the appended native `ConnectMsg` variants (`RequestNative`, `ResponseNative`). With the floor above it, though, 0.2.157 never sends them: its connect wire behaviour is the same as 0.2.156's. Raising the floor only delays the offer, which is the safe direction for this floor (`docs/RELEASING.md`). The `docs/RELEASING.md` entry is updated to name 0.2.158.  ## Testing  - `cargo test -p freenet --lib` with `crates/core/Cargo.toml` temporarily at 0.2.157 (not committed): 8718 passed, 0 failed, including the floor test that blocked the release. - The same at the current version (0.2.156): 8718 passed, 0 failed. - `cargo fmt --check` and `cargo clippy --locked --all-targets -- -D warnings` are clean.  ## Fixes  Unblocks the 0.2.157 release. Part of #5940.  [AI-assisted - Claude] 
+
 - **Issue #6225** (2026-11-13): **docs(config): --transport-quic help says prefer is the default**
   *Symptoms*: ## Problem  `freenet --help` describes `--transport-quic` as "Unset means `shadow` on Linux, macOS and Windows". Since #6207 an unset value means `prefer` there. The same text says `prefer` uses "this release's share, which is 0". That stops being true once a release sets a data ramp (`QUIC_DATA_RAMP_START`). Operators read this text when deciding whether to set the key.  ## Approach  The help text now says `prefer` is the default on Linux, macOS and Windows, and that the release's share is its data ramp, or 0 when it has none. This wording holds both before and after the ramp release. One test doc comment in `driver/tests.rs` made the same claim that shadow is the default, and it is corrected too.  ## Testing  Comment and help text only. `cargo fmt --check` is clean.  Found in review of #6224.  [AI-assisted - Claude] 
   **Post-Mortem & Fix Analysis**:
   > <!-- claude-rule-review --> ### Rule Review: No issues found  **Rules checked:** git-workflow.md, code-style.md, testing.md, transport.md **Files reviewed:** 2  The diff only changes comments, in two places: - The `--transport-quic` help text in `crates/core/src/config.rs`. - A doc comment in `crates/core/src/transport/quic/upgrade/driver/tests.rs`.  No logic, tests or APIs change, so none of the rules on `.unwrap()`, spawns, retries, `biased;`, cleanup, push-before-send or regression tests apply.  - **The new wording is accurate.** The `quic_is_prefer_by_default_on_linux_macos_and_windows` test at `config.rs:7703` asserts that an unset value gives `QuicMode::Prefer` on Linux, macOS and Windows and `Off` elsewhere. `transport/quic.rs:118` already says the same. - **Related docs are not stale.** `.claude/rules/transport.md:1974` ("Step 2: shadow on by default…") is the rollout plan, not a statement of today's default. The next step in the plan describes the data ramp. Nothing else I fou
   > ## ⚠️ Extended Benchmark Regressions Detected  Some extended benchmarks show performance regressions.  **Note**: Extended benchmarks include high-latency and packet-loss scenarios which have higher variance than standard CI benchmarks.  [View full results](https://github.com/freenet/freenet-core/actions/runs/43461625242)  [View full benchmark summary](https://github.com/freenet/freenet-core/actions/runs/43461625242)
-
-- **Issue #6223** (2026-11-13): **fix(test): a lost VirtualTime wakeup and drive_on_threads advancing over busy workers**
-  *Symptoms*: ## Problem  `many_tasks_send_while_the_path_closes_and_nothing_goes_twice` failed intermittently. Running 24 copies of it in parallel reproduced the failure in 7 of 880 runs. Instrumenting `drive_on_threads` (each clock advance logged with which workers were busy and the global queue depth) showed two independent causes:  1. **A lost wakeup in `VirtualTime`** (5 of the 7 instrumented failures, "the multi-thread test did not finish"). `sleep_until` and `sleep_cancelable` checked `deadline > now` and then took the `pending_wakeups` lock to push. If another thread's `advance_to` ran in between, it stored the new time and popped the expired wakeups before the push. The pushed wakeup then had a deadline at or before the current time, so no later `advance_to` popped it. That sleep never ended, and `advance_to_next_wakeup` peeked it on every call and stopped there: the logs show 20,000 to 50,000 advances at one unchanging time, with every worker parked. 2. **`drive_on_threads` advanced the clock over busy workers** ("virtual time passed 30s"). It moved the clock whenever the driven future was unfinished after 64 yields and a 1 ms real-time sleep. In a debug build under load, a worker can still be computing the handshake after that. The log of the remaining failure shows `0 -> 999 ms -> 1998 ms -> 86,400,000 ms`, each advance with worker 3 busy: the handshake's timers fired before it ran, up to the 24 h idle timeout, and the server's handshake timed out.  ## Approach  1. `VirtualTime
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1776,624 +1776,52 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f26a5e1f` (2026-11-13)
-**Commit Message**: fix(test): a lost VirtualTime wakeup and drive_on_threads advancing over busy workers (#6223)
+### Incident Patch 1: `3e505b65` (2026-11-13)
+**Commit Message**: chore(release): raise the QUIC-native wire floor to 0.2.158 (#6228)
 
-**File**: `crates/core/src/simulation/time.rs` (modified, +91/-15)
+**File**: `crates/core/src/node/network_bridge/p2p_protoc.rs` (modified, +1/-1)
 ```diff
-@@ -318,15 +318,18 @@ impl VirtualTime {
-     ///
-     /// Returns the list of wakeup IDs that were triggered, in order.
-     pub fn advance_to(&self, target_nanos: u64) -> Vec<WakeupId> {
--        let current = self.state.current_nanos.load(AtomicOrdering::SeqCst);
--        if target_nanos <= current {
-+        // One atomic step, so two threads advancing at once cannot move the
-+        // clock backwards (a load then a store could store the smaller
-+        // target last). The time is stored before `pending_wakeups` is taken
-+        // below, which `register_future_wakeup` relies on.
-+        let previous = self
-+            .state
-+            .current_nanos
-+            .fetch_max(target_nanos, AtomicOrdering::SeqCst);
-+        if target_nanos <= previous {
-             return Vec::new();
-         }
+@@ -1171,7 +1171,7 @@ use crate::operations::connect::native::NativeWire;
+ /// `docs/RELEASING.md`, this is the release that first ships the decoder, then
+ /// frozen. Bias HIGH: too low closes connections to the release below it, too
+ /// high only delays the offer.
+-pub(crate) const QUIC_NATIVE_MIN_VERSION: (u8, u8, u16) = (0, 2, 157);
++pub(crate) const QUIC_NATIVE_MIN_VERSION: (u8, u8, u16) = (0, 2, 158);
  
--        self.state
--            .current_nanos
--            .store(target_nanos, AtomicOrdering::SeqCst);
--
-         let mut triggered = Vec::new();
-         let mut wakers_to_wake = Vec::new();
- 
-@@ -387,7 +390,9 @@ impl VirtualTime {
-             .map(|w| w.deadline)
-     }
- 
--    /// Registers a wakeup and returns its ID.
-+    /// Registers a wakeup and returns its ID, whatever its deadline. Tests
-+    /// only; sleeps use [`Self::register_future_wakeup`].
-+    #[cfg(test)]
-     fn register_wakeup(&self, deadline: u64) -> WakeupId {
-         let id = WakeupId::new(
-             self.state
-@@ -400,6 +405,32 @@ impl VirtualTime {
-         id
-     }
- 
-+    /// Registers a wakeup for `deadline` if it is still in the future, and
-+    /// returns its ID; `None` if the clock has already reached it.
-+    ///
-+    /// The check and the push are one step under the `pending_wakeups` lock.
-+    /// [`Self::advance_to`] stores the new time before it takes that lock to
-+    /// pop expired wakeups, so a registration either sees the new time (and
-+    /// registers nothing) or is pushed before the pop (and is popped). Checked
-+    /// outside the lock, a thread that read the time just before another
-+    /// thread's advance could push a wakeup the advance had already passed:
-+    /// its deadline is then at or before the current time, which no later
-+    /// `advance_to` pops, so the sleep never ends and
-+    /// [`Self::advance_to_next_wakeup`] stops at it for good (#6220).
-+    fn register_future_wakeup(&self, deadline: u64) -> Option<WakeupId> {
-+        let mut pending = self.state.pending_wakeups.lock().unwrap();
-+        if deadline <= self.state.current_nanos.load(AtomicOrdering::SeqCst) {
-+            return None;
-+        }
-+        let id = WakeupId::new(
-+            self.state
-+                .next_wakeup_id
-+                .fetch_add(1, AtomicOrdering::SeqCst),
-+        );
-+        pending.push(Wakeup::new(deadline, id));
-+        Some(id)
-+    }
-+
-     /// Registers a waker for a wakeup ID.
-     #[allow(dead_code)]
-     fn register_waker(&self, id: WakeupId, waker: Waker) {
-@@ -508,23 +539,19 @@ impl TimeSource for VirtualTime {
-     }
- 
-     fn sleep_until(&self, deadline_nanos: u64) -> Pin<Box<dyn Future<Output = ()> + Send>> {
--        let current = self.now_nanos();
--        if deadline_nanos <= current {
-+        let Some(id) = self.register_future_wakeup(deadline_nanos) else {
-             return Box::pin(std::future::ready(()));
--        }
--
--        let id = self.register_wakeup(deadline_nanos);
-+        };
-         let state = self.state.clone();
- 
-         Box::pin(VirtualSleep { id, state })
-     }
- 
-     fn sleep_cancelable(&self, duration: Duration) -> Pin<Box<dyn Future<Output = ()> + Send>> {
-         let deadline = self.now_nanos().saturating_add(duration.as_nanos() as u64);
--        if deadline <= self.now_nanos() {
-+        let Some(id) = self.register_future_wakeup(deadline) else {
-             return Box::pin(std::future::ready(()));
--        }
--        let id = self.register_wakeup(deadline);
-+        };
-         let state = self.state.clone();
-         Box::pin(CancelableVirtualSleep {
-             inner: VirtualSleep { id, state },
-@@ -902,6 +929,55 @@ mod tests {
-         assert_eq!(triggered[2], id3);
-     }
- 
-+    /// A sleep registered while another thread advances the clock is never
-+    /// left pending with a deadline the clock has already passed: no later
-+    /// advance would pop it, so the sleep would never end and
-+    /// `advance_to_next_wakeup` would stop at it for good (#6220).
-+    #[test]
-+    fn a_sleep_registered_during_an_advance_is_never_left_behind() {
-+        let vt = VirtualTime::new();
-+        std::thread::scope(|scope| {
-+            scope.spawn(|| {
-+                for _ in 0..200_000 {
-+                    vt.advance(Duration::from_nanos(1));
-+                }
-+            });
-+            for _ in 0..3 {
-+                scope.spawn(|| {
-+                    for _ in 0..200_000 {
-+                        drop(vt.sleep_until(vt.now_nanos() + 1));
-+                    }
-+                });
-+            }
-+        });
-+        let now = vt.now
+ /// Has the decoder for the QUIC-native `ConnectMsg` variants shipped, and in
+ /// which release?
 ```
 
-**File**: `crates/core/src/transport/peer_connection/ack_policy_tests/quic_send.rs` (modified, +4/-1)
+**File**: `docs/RELEASING.md` (modified, +6/-4)
 ```diff
-@@ -1727,7 +1727,10 @@ fn many_tasks_send_while_the_path_closes_and_nothing_goes_twice() {
-     match finished.recv_timeout(Duration::from_secs(120)) {
-         Ok(Ok(())) => {}
-         Ok(Err(panic)) => std::panic::resume_unwind(panic),
--        Err(_) => panic!("the multi-thread test did not finish"),
-+        Err(_) => panic!(
-+            "the multi-thread test did not finish (a `drive_on_threads:` line above says whether \
-+             the runtime never went idle or went idle with nothing to wake)"
-+        ),
-     }
- }
+@@ -491,12 +491,14 @@ Current wire-gated floors:
+   and `ResponseNative` at indices 5 and 6 of
+   `operations/connect/wire.rs::ConnectMsgWire`, #5940).
  
-```
-
-**File**: `crates/core/src/transport/quic/tests.rs` (modified, +84/-7)
-```diff
-@@ -138,10 +138,32 @@ where
-     }
- }
- 
--/// [`drive`] on a multi-thread runtime. There, a task can still be running on
--/// another worker when this one runs out of things to poll, so after its turns it
--/// pauses briefly in real time, and moves the clock only to a wakeup that is
--/// armed. A stuck test is caught by the caller's real-time limit.
-+/// [`drive`] on a multi-thread runtime. The clock moves to the next wakeup
-+/// only when the runtime is idle ([`idle_workers`]): every worker parked
-+/// and nothing in the global queue, the same on two readings a real-time
-+/// millisecond apart (a worker that ran in between changes its park count).
-+/// Moving it while a worker is still busy (a handshake's crypto in a debug
-+/// build, say) fires that work's timers before it has had a chance to run,
-+/// up to quinn's idle timeout (#6220). A stuck test is caught by the
-+/// caller's real-time limit.
-+///
-+/// Must run on the thread that called `block_on`, not on a worker: its own
-+/// worker would never read as parked.
-+///
-+/// Limits: idleness is read from the workers only. Work elsewhere is
-+/// invisible to it: `spawn_blocking` and `block_in_place` threads, a
-+/// `std::thread` that wakes tasks, real I/O or real-time timers. So is a
-+/// worker preempted between parking and taking a task another thread just
-+/// queued for it, for as long as the global queue is not read. A caller with
-+/// any of those can still have the clock advanced over busy work; the QUIC
-+/// tests here use none (in-memory sockets on virtual time).
-+///
-+/// A run that cannot go on prints why once, so a caller's real-time watchdog
-+/// failure shows it: the runtime never read as idle for
-+/// [`DRIVE_DIAGNOSTIC_CHECKS`] checks in a row (busy work it cannot see the
-+/// end of, or a task that never parks), or it was idle with no wakeup left
-+/// to advance to for as many (a lost wakeup, or a task waiting on something
-+/// no timer will bring).
- pub(in crate::transport) async fn drive_on_threads<F>(
-     time: &VirtualTime,
-     limit: Duration,
-@@ -151,27 +173,82 @@ where
-     F: std::future::Future + Send + 'static,
-     F::Output: Send + 'static,
- {
-+    assert_ne!(
-+        std::thread::current().name(),
-+        Some("tokio-rt-worker"),
-+        "drive_on_threads runs on the block_on thread, not on a worker"
-+    );
-     let task = tokio::spawn(fut);
-     let limit_ns = time.now_nanos() + limit.as_nanos() as u64;
-+    // Checks in a row that found the runtime busy, and that found it idle
-+    // with nothing to advance to.
-+    let (mut busy, mut stuck) = (0u32, 0u32);
-     loop {
-         for _ in 0..64 {
-             if task.is_finished() {
-                 return task.await.expect("the driven future panicked");
-             }
-             tokio::task::yield_now().await;
-         }
--        tokio::time::sleep(Duration::from_millis(1)).await;
-+        let before = idle_workers();
-+        // Blocks only this thread (not a worker), and sets no runtime timer
-+        // that would wake the worker holding the time driver and change its
-+        // park count.
-+        std::thread::sleep(Duration::from_millis(1));
-         if task.is_finished() {
-             return task.await.expect("the driven future panicked");
-         }
--        time.advance_to_next_wakeup();
-+        if before.is_none() || before != idle_workers() {
-+            busy += 1;
-+            if busy == DRIVE_DIAGNOSTIC_CHECKS {
-+                eprintln!(
-+                    "drive_on_threads: the runtime has not been idle for {busy} checks in a row \
-+                     at {} ns: work it cannot see the end of, or a task that never parks",
-+                    time.now_nanos()
-+                );
-+            }
-+            continue;
-+        }
-+        busy = 0;
-+        if time.advance_to_next_wakeup().is_none() {
-+            stuck += 1;
-+            if stuck == DRIVE_DIAGNOSTIC_CHECKS {
-+                eprintln!(
-+                    "drive_on_threads: the runtime is idle and no wakeup is left to advance to \
-+                     at {} ns: a lost wakeup, or a task waiting on something no timer brings",
-+                    time.now_nanos()
-+                );
-+            }
-+            continue;
-+        }
-+        stuck = 0;
-         assert!(
-             time.now_nanos() <= limit_ns,
--            "virtual time passed {limit:?} before the future finished"
-+            "virtual time passed {limit:?} before the future finished, advancing only while \
-+             the runtime was idle"
-         );
-     }
- }
- 
-+/// Checks in a row of one kind after which [`drive_on_threads`] prints why
-+/// it cannot go on: about a second or more of real time.
-+const DRIVE_DIAGNOSTIC_CHECKS: u32 = 1000;
-+
-+/// Each worker's park count if the runtime is idle (every worker parked,
-+/// none queued globally), else `None`. Two equal readings mean no worker
-+/// ran between them.
-+fn idle_workers() -> Option<Vec<u64>> {
-+    let metrics = tokio::runtime::Handle::current().metric
-```
-
----
-
-### Incident Patch 2: `4ee2c161` (2026-11-13)
-**Commit Message**: fix: validate transaction type at decode; call status providers outside the status lock (#6219)
-
-**File**: `crates/core/src/message.rs` (modified, +68/-4)
-```diff
-@@ -32,13 +32,37 @@ use ulid::Ulid;
- ///
- /// A transaction may span different messages sent across the network.
- #[derive(Serialize, Deserialize, PartialEq, Eq, Hash, Clone, Copy)]
-+#[serde(try_from = "TransactionWire")]
- pub struct Transaction {
-     id: Ulid,
-     /// Parent transaction ID for child operations spawned by this transaction.
-     /// Enables atomicity tracking for composite operations (e.g., PUT with SUBSCRIBE).
-     parent: Option<Ulid>,
- }
- 
-+/// Wire shape of [`Transaction`]. Identical field layout, so the encoding is
-+/// unchanged; exists so decoding can validate the type byte, which a peer
-+/// otherwise controls entirely.
-+#[derive(Deserialize)]
-+struct TransactionWire {
-+    id: Ulid,
-+    parent: Option<Ulid>,
-+}
-+
-+impl TryFrom<TransactionWire> for Transaction {
-+    type Error = String;
-+
-+    fn try_from(w: TransactionWire) -> Result<Self, Self::Error> {
-+        let id_byte = (w.id.0 & 0xFFu128) as u8;
-+        TransactionType::try_from(id_byte)
-+            .map_err(|_| format!("invalid transaction type byte {id_byte}"))?;
-+        Ok(Transaction {
-+            id: w.id,
-+            parent: w.parent,
-+        })
-+    }
-+}
-+
- impl Transaction {
-     pub const NULL: &'static Transaction = &Transaction {
-         id: Ulid(0),
-@@ -71,9 +95,15 @@ impl Transaction {
- 
-     pub(crate) fn transaction_type(&self) -> TransactionType {
-         let id_byte = (self.id.0 & 0xFFu128) as u8;
--        TransactionType::try_from(id_byte).expect(
--            "Transaction ID contains invalid type byte; this is a bug in Transaction construction",
--        )
-+        // Deserialization rejects unknown type bytes and every constructor
-+        // (including `ttl_transaction_with_multiplier`) sets a valid one, so
-+        // the fallback is unreachable. It exists so that a value built some
-+        // other way can never panic the network event loop; the debug_assert
-+        // makes such a value visible in tests instead of silently
-+        // misclassifying it.
-+        let ty = TransactionType::try_from(id_byte);
-+        debug_assert!(ty.is_ok(), "Transaction with invalid type byte {id_byte}");
-+        ty.unwrap_or(TransactionType::Connect)
-     }
- 
-     pub fn timed_out(&self) -> bool {
-@@ -148,7 +178,10 @@ impl Transaction {
- 
-         // Clear the timestamp bits and replace with the cutoff timestamp.
-         const TIMESTAMP_MASK: u128 = 0x00000000000000000000FFFFFFFFFFFFFFFF;
--        let new_ulid = (id.0 & TIMESTAMP_MASK) | ((ttl_epoch as u128) << 80);
-+        // Keep the low byte a valid type byte (Connect = 0): the cutoff id is
-+        // only compared against, but it must still satisfy the invariant that
-+        // every Transaction carries a valid type.
-+        let new_ulid = (id.0 & TIMESTAMP_MASK & !0xFFu128) | ((ttl_epoch as u128) << 80);
-         Self {
-             id: Ulid(new_ulid),
-             parent: None,
-@@ -1500,6 +1533,37 @@ mod tests {
-         assert_eq!(msg.version(), semver::Version::new(1, 3, 0));
-     }
- 
-+    /// A peer chooses every bit of a decoded transaction id; an unknown type
-+    /// byte must be a decode error, never a later panic.
-+    #[test]
-+    fn deserialize_rejects_unknown_transaction_type_byte() {
-+        for byte in 0u8..=255 {
-+            let id = Ulid((Ulid::generate().0 & !0xFFu128) | byte as u128);
-+            let wire = bincode::serialize(&(id, None::<Ulid>)).unwrap();
-+            let decoded = bincode::deserialize::<Transaction>(&wire);
-+            if byte <= 4 {
-+                let tx = decoded.expect("valid type byte must decode");
-+                assert_eq!(tx.id, id);
-+                assert_eq!(tx.transaction_type() as u8, byte);
-+                // Encoding is unchanged by validation.
-+                assert_eq!(bincode::serialize(&tx).unwrap(), wire);
-+            } else {
-+                assert!(decoded.is_err(), "type byte {byte} must be rejected");
-+            }
-+        }
-+    }
-+
-+    #[test]
-+    fn ttl_transactions_carry_a_valid_type_byte() {
-+        for _ in 0..512 {
-+            for m in [1u64, 2, 5] {
-+                let tx = Transaction::ttl_transaction_with_multiplier(m);
-+                assert!(TransactionType::try_from((tx.id.0 & 0xFF) as u8).is_ok());
-+                let _ = tx.transaction_type();
-+            }
-+        }
-+    }
-+
-     #[test]
-     fn pack_transaction_type() {
-         let ts_0 = Ulid::generate();
-```
-
-**File**: `crates/core/src/node/network_status.rs` (modified, +106/-58)
-```diff
-@@ -2497,6 +2497,70 @@ pub fn get_snapshot() -> Option<NetworkStatusSnapshot> {
- /// `Instant` in the past (which can underflow on a freshly booted machine).
- fn snapshot_at(now: Instant) -> Option<NetworkStatusSnapshot> {
-     let status = NETWORK_STATUS.get()?;
-+    // Call every registered provider BEFORE taking the NETWORK_STATUS read
-+    // guard. Providers lock ring/connection state (e.g. the ring-stats provider
-+    // takes `ConnectionManager::own_addr`), while `set_own_addr` holds that
-+    // lock and then takes the NETWORK_STATUS write lock. Calling them under
-+    // the guard is a lock-order inversion that deadlocks the node.
-+    // Read subscribed contracts from the registered provider, which in
-+    // production points at the canonical lease map in `HostingManager`.
-+    // Sort order is set inside the provider (most recently updated first;
-+    // never-updated entries fall to the end with a deterministic key
-+    // tie-break).
-+    let contracts: Vec<ContractSnapshot> = SUBSCRIPTION_PROVIDER
-+        .read()
-+        .as_ref()
-+        .map(|provider| {
-+            provider()
-+                .into_iter()
-+                .map(|c| {
-+                    let key_full = c.key.to_string();
-+                    let instance_id = c.key.id().to_string();
-+                    // Use char boundary for safe truncation (contract keys
-+                    // are base58/ASCII, but be defensive against future
-+                    // encoding changes).
-+                    let key_short = if key_full.chars().count() > 12 {
-+                        let trunc: String = key_full.chars().take(12).collect();
-+                        format!("{trunc}...")
-+                    } else {
-+                        key_full.clone()
-+                    };
-+                    ContractSnapshot {
-+                        key_short,
-+                        key_full,
-+                        instance_id,
-+                        subscribed_secs: c.subscribed_secs,
-+                        last_updated_secs: c.last_updated_secs,
-+                        is_receiving_updates: c.is_receiving_updates,
-+                        in_use: c.in_use,
-+                    }
-+                })
-+                .collect()
-+        })
-+        .unwrap_or_default();
-+
-+    let ring_stats = RING_STATS_PROVIDER
-+        .read()
-+        .as_ref()
-+        .map(|provider| provider())
-+        .unwrap_or_default();
-+
-+    let governance = GOVERNANCE_PROVIDER
-+        .read()
-+        .as_ref()
-+        .map(|provider| provider())
-+        .unwrap_or_default();
-+    let ban_list = BAN_LIST_PROVIDER
-+        .read()
-+        .as_ref()
-+        .map(|provider| provider())
-+        .unwrap_or_default();
-+    let hosting = HOSTING_PROVIDER
-+        .read()
-+        .as_ref()
-+        .map(|provider| provider())
-+        .unwrap_or_default();
-+
-     let s = status.read().ok()?;
- 
-     let failures = s
-@@ -2577,43 +2641,6 @@ fn snapshot_at(now: Instant) -> Option<NetworkStatusSnapshot> {
-     let gateway_only_persisting =
-         gateway_only && gateway_only_is_persisting(s.gateway_only_since, now);
- 
--    // Read subscribed contracts from the registered provider, which in
--    // production points at the canonical lease map in `HostingManager`.
--    // Sort order is set inside the provider (most recently updated first;
--    // never-updated entries fall to the end with a deterministic key
--    // tie-break).
--    let contracts: Vec<ContractSnapshot> = SUBSCRIPTION_PROVIDER
--        .read()
--        .as_ref()
--        .map(|provider| {
--            provider()
--                .into_iter()
--                .map(|c| {
--                    let key_full = c.key.to_string();
--                    let instance_id = c.key.id().to_string();
--                    // Use char boundary for safe truncation (contract keys
--                    // are base58/ASCII, but be defensive against future
--                    // encoding changes).
--                    let key_short = if key_full.chars().count() > 12 {
--                        let trunc: String = key_full.chars().take(12).collect();
--                        format!("{trunc}...")
--                    } else {
--                        key_full.clone()
--                    };
--                    ContractSnapshot {
--                        key_short,
--                        key_full,
--                        instance_id,
--                        subscribed_secs: c.subscribed_secs,
--                        last_updated_secs: c.last_updated_secs,
--                        is_receiving_updates: c.is_receiving_updates,
--                        in_use: c.in_use,
--                    }
--                })
--                .collect()
--        })
--        .unwrap_or_default();
--
-     let elapsed_secs = now.saturating_duration_since(s.started_at).as_secs();
-     let has_version_mismatch = s
-         .gateway_failures
-@@ -2644,12 +2671,6 @@ fn snapshot_at(now: Instant) -> Option<NetworkStatusSnapshot> {
-     le
-```
-
-**File**: `crates/core/src/operations/connect/op_ctx_task.rs` (modified, +40/-1)
-```diff
-@@ -424,6 +424,10 @@ async fn drive_client_connect(
-     // Standard join at zero connections, but its first hop is no gateway.
-     let started = Instant::now();
-     let mut heard_gateway = false;
-+    // The first relay sends exactly one `ObservedAddress` per CONNECT, so only
-+    // the first one is acted on; repeats would otherwise let any sender keep
-+    // rewriting this node's own address until the TTL.
-+    let mut applied_observed_address = false;
-     let through_gateway = op_manager
-         .configured_gateways
-         .iter()
-@@ -939,12 +943,21 @@ async fn drive_client_connect(
-                 collection_end = Some((CollectionEnd::Rejected, Instant::now()));
-                 continue;
-             }
-+            ConnectMsg::ObservedAddress { address, .. } if applied_observed_address => {
-+                tracing::debug!(
-+                    tx = %tx,
-+                    observed_address = %address,
-+                    "connect driver: ignoring repeated ObservedAddress"
-+                );
-+            }
-             ConnectMsg::ObservedAddress { address, .. } => {
-+                applied_observed_address = true;
-                 // The joiner doesn't know its external IP behind NAT;
-                 // the gateway observes it from the UDP packet source
-                 // and ships it back. Update both `own_addr` (for
-                 // diagnostics) and `own_location` (for routing).
--                // Idempotent: subsequent observations overwrite.
-+                // Only the first ObservedAddress per transaction is applied
-+                // (see the guard arm above); repeats are ignored.
-                 let location = Location::from_address(&address);
-                 // GLOBAL-ADDR-WRITE-OK: production. A real node learning its
-                 // peer-observed address is exactly what the external_address
-@@ -1962,6 +1975,32 @@ mod tests {
-         );
-     }
- 
-+    /// Source-literal guard: the joiner driver applies only the first
-+    /// `ObservedAddress` per CONNECT transaction. Repeats must hit the
-+    /// ignoring arm BEFORE the applying arm, and the applying arm must set the
-+    /// flag, so a peer cannot keep rewriting this node's own address.
-+    #[test]
-+    fn joiner_driver_applies_only_first_observed_address() {
-+        const SOURCE: &str = include_str!("op_ctx_task.rs");
-+        let guard = SOURCE
-+            .find("ConnectMsg::ObservedAddress { address, .. } if applied_observed_address =>")
-+            .expect("repeat-ignoring ObservedAddress arm removed");
-+        let apply = SOURCE
-+            .find("ConnectMsg::ObservedAddress { address, .. } => {\n                applied_observed_address = true;")
-+            .expect("applying arm must set applied_observed_address first");
-+        assert!(
-+            guard < apply,
-+            "the ignoring arm must precede the applying arm"
-+        );
-+        let body_end = SOURCE[apply..]
-+            .find("set_own_addr(address)")
-+            .expect("set_own_addr call");
-+        assert!(
-+            body_end < 2000,
-+            "set_own_addr must stay in the applying arm"
-+        );
-+    }
-+
-     /// Source-literal guard: the relay driver runs the full re-entry
-     /// state machine (Response/Rejected/ObservedAddress/ConnectFailed)
-     /// on its inbox receiver. Removing any of these branches would
-```
-
----
-
-### Incident Patch 3: `af79d38e` (2026-11-13)
-**Commit Message**: docs(config): --transport-quic help says prefer is the default (#6225)
-
-**File**: `crates/core/src/config.rs` (modified, +3/-2)
-```diff
-@@ -2588,13 +2588,14 @@ pub struct NetworkArgs {
-     pub bbr_startup_rate: Option<u64>,
- 
-     /// QUIC transport (#5940): `off`, `shadow` or `prefer`. Unset means
--    /// `shadow` on Linux, macOS and Windows, and `off` elsewhere.
-+    /// `prefer` on Linux, macOS and Windows, and `off` elsewhere.
-     ///
-     /// `shadow` builds a QUIC endpoint on the network port and upgrades
-     /// connections to peers that also run it to a QUIC path. The path carries
-     /// control frames only, so all traffic stays on the existing transport.
-     /// `prefer` also negotiates data with a share of pairs (`quic-data-percent`,
--    /// or this release's share, which is 0), and a pair where both sides did
-+    /// or this release's share: its data ramp, or 0 when it has none), and a
-+    /// pair where both sides did
-     /// sends its traffic on the path. `off` builds no endpoint. An unknown value is treated as `off`,
-     /// with a warning in the log.
-     #[arg(long, env = "FREENET_TRANSPORT_QUIC", value_name = "off|shadow|prefer")]
-```
-
-**File**: `crates/core/src/transport/quic/upgrade/driver/tests.rs` (modified, +4/-2)
-```diff
-@@ -1038,8 +1038,10 @@ fn data_route_takes_no_lock(session: &Arc<Session>) -> bool {
- }
- 
- /// With no route, as on a path without both data bits, a send reads one atomic
--/// and never waits for the session's lock, which the driver also takes. Shadow is
--/// the default on Linux, macOS and Windows, so this is every connection there.
-+/// and never waits for the session's lock, which the driver also takes. With no
-+/// data ramp, a `prefer` path carries no data, so this is every connection on
-+/// Linux, macOS and Windows, where `prefer` is the default; with a ramp, every
-+/// pair outside its share.
- #[test]
- fn a_connection_without_a_route_takes_no_lock_to_send() {
-     bounded(|| async move {
+-  Set to **`(0, 2, 157)`**, the release intended to first ship the decoder,
++  Set to **`(0, 2, 158)`**, the release intended to first ship the decoder,
+   and guarded by `QUIC_NATIVE_SHIPPED_IN`, currently `None`, checked by
+   `p2p_protoc::quic_native_floor_tests::quic_native_floor_tracks_the_shipping_release`.
+-  When the 0.2.157 bump fails that test, set the marker to the literal
+-  `Some((0, 2, 157))` if the release carries the decoder, otherwise raise the
+-  floor. Same failure mode as the application-message floors above: a peer at
++  0.2.157 carries the decoder but was cut with the floor raised past it, so
++  it never emits the native variants. When the 0.2.158 bump fails that test,
++  set the marker to the literal `Some((0, 2, 158))` if the release carries
++  the decoder, otherwise raise the floor. Same failure mode as the
++  application-message floors above: a peer at
+   or above the floor without the decoder closes the connection on the variant,
+   so bias high. Only `connect::wire::encode_for_peer`, at the one peer-bound
+   serialize in `handle_peer_channel_message`, emits the variants; every other
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6228** (2026-11-13): chore(release): raise the QUIC-native wire floor to 0.2.158 (@sanity)
 - **PR #6225** (2026-11-13): docs(config): --transport-quic help says prefer is the default (@sanity)
 - **PR #6223** (2026-11-13): fix(test): a lost VirtualTime wakeup and drive_on_threads advancing over busy workers (@sanity)
 - **PR #6222** (2026-11-13): fix: validate guest buffer and result offsets against linear memory (@sanity)
 - **PR #6221** (2026-11-13): fix(transport): sweep Established entries whose connection has ended (@sanity)
 - **PR #6219** (2026-11-13): fix: validate transaction type at decode; call status providers outside the status lock (@sanity)
-- **PR #6217** (2026-11-13): fix: bound guest-supplied error text and delegate result size (@sanity)
 
 ---
 
@@ -2413,65 +1841,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test): a lost VirtualTime wakeup and drive_on_threads advancing over busy worker
+## X. release): raise the QUIC-native wire floor to 0.2.158
 
 **RULE**:
-When implementing operations in `crates/core/src/simulation/time.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/core/src/node/network_bridge/p2p_protoc.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f26a5e1f`: test): a lost VirtualTime wakeup and drive_on_threads advancing over busy workers (#6223). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3e505b65`: release): raise the QUIC-native wire floor to 0.2.158. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/simulation/time.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/node/network_bridge/p2p_protoc.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        // One atomic step, so two threads advancing at once cannot move the
-        // clock backwards (a load then a store could store the smaller
-        // target last). The time is stored before `pending_wakeups` is taken
-        // below, which `register_future_wakeup` relies on.
-        let previous = self
-            .state
-            .current_nanos
-            .fetch_max(target_nanos, AtomicOrdering::SeqCst);
-        if target_nanos <= previous {
-    /// Registers a wakeup and returns its ID, whatever its deadline. Tests
-    /// only; sleeps use [`Self::register_future_wakeup`].
-    #[cfg(test)]
-    /// Registers a wakeup for `deadline` if it is still in the future, and
-    /// returns its ID; `None` if the clock has already reached it.
-    ///
-    /// The check and the push are one step under the `pending_wakeups` lock.
-    /// [`Self::advance_to`] stores the new time before it takes that lock to
-    /// pop expired wakeups, so a registration either sees the new time (and
-    /// registers nothing) or is pushed before the pop (and is popped). Checked
-    /// outside the lock, a thread that read the time just before another
-    /// thread's advance could push a wakeup the
+pub(crate) const QUIC_NATIVE_MIN_VERSION: (u8, u8, u16) = (0, 2, 158);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-        let current = self.state.current_nanos.load(AtomicOrdering::SeqCst);
-        if target_nanos <= current {
-        self.state
-            .current_nanos
-            .store(target_nanos, AtomicOrdering::SeqCst);
-
-    /// Registers a wakeup and returns its ID.
-        let current = self.now_nanos();
-        if deadline_nanos <= current {
-        }
-
-        let id = self.register_wakeup(deadline_nanos);
-        if deadline <= self.now_nanos() {
-        }
-        let id = self.register_wakeup(deadline);
+// Induced defect failure mode:
+pub(crate) const QUIC_NATIVE_MIN_VERSION: (u8, u8, u16) = (0, 2, 157);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f26a5e1f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3e505b65` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

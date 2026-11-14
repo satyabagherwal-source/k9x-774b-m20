@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-C3T5",
-    "timestamp": "2026-11-13T04:31:29.609Z",
-    "repository": "microsoft/agent-governance-toolkit",
-    "learningId": "learn-github-microsoft-agent-governance-toolkit",
-    "contentHash": "7cea22288f14180c8ca1e5e4f6cef03f6fc6bd482358e41204305f190df22dca",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-C5LM",
-    "timestamp": "2026-11-13T04:31:31.930Z",
-    "repository": "risingwavelabs/risingwave",
-    "learningId": "learn-github-risingwavelabs-risingwave",
-    "contentHash": "b7b6bfaa783e7d7c8017dd1ba8f4e1a7909f61e49533ac91aa6d3011a0110ed7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-QVR1",
-    "timestamp": "2026-11-13T04:42:59.005Z",
-    "repository": "RecursiveSI/flint",
-    "learningId": "learn-huggingface-recursivesi-flint",
-    "contentHash": "f3e7d189378d552319d6069006654ce36df08cced5ea568fe52a06123691bb69",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-RAEF",
-    "timestamp": "2026-11-13T04:43:17.991Z",
-    "repository": "kubeedge/kubeedge",
-    "learningId": "learn-github-kubeedge-kubeedge",
-    "contentHash": "0285b275d2a7374af91b5b50e98669ba911929bb62d750c922dc85612ada7cd7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-028O",
     "timestamp": "2026-11-13T04:50:07.320Z",
     "repository": "XHToken/Spark-X2.6-4B",
@@ -7490,6 +7430,66 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "398275f30687510a94bb33b3f1bbe8aec3241391610eeaedcb19239be7970226",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-YZBZ",
+    "timestamp": "2026-11-14T00:25:00.767Z",
+    "repository": "ricursiveAI/Ripple-65B-Preview",
+    "learningId": "learn-huggingface-ricursiveai-ripple-65b-preview",
+    "contentHash": "1acf871590ba5b06e6124dcf1ecbbd044a5b60a4999be52ff10090ccd28120e5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-Z16J",
+    "timestamp": "2026-11-14T00:25:03.163Z",
+    "repository": "yvgude/lean-ctx",
+    "learningId": "learn-github-yvgude-lean-ctx",
+    "contentHash": "4e9bd0a2bd5cef8313547b27230a3e5094e3e598cdfc39e28186cb18fd7b37b5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-Z55Y",
+    "timestamp": "2026-11-14T00:25:08.326Z",
+    "repository": "invertase/react-native-firebase",
+    "learningId": "learn-github-invertase-react-native-firebase",
+    "contentHash": "9fe8c5e367a33b23cfd1cff3a16c70cd0e7a74f4ee6c39bd745f8bd2c84aaa7a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-Z8RU",
+    "timestamp": "2026-11-14T00:25:13.002Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "69ccf0417d267af116c6449252a9869ec23f747b8c4022f131b18375f30eebcf",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

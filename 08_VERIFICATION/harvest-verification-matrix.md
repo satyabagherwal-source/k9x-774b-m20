@@ -9678,3 +9678,9 @@
 | `CYCLE-20261114-DCZV` | `2026-11-14T00:08:12.043Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8012` | Yes (`b37b0b84...`) |
 | `CYCLE-20261114-DHKQ` | `2026-11-14T00:08:17.978Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8409` | Yes (`398275f3...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T00:08:54.196Z` | `hf-atomicchat-lfm3-1.7b-uncensored-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-BEBC2172` [Domain D] | Yes (`472b8ede...`) |
+| `CYCLE-20261114-YZBZ` | `2026-11-14T00:25:00.767Z` | `ricursiveAI/Ripple-65B-Preview` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ricursiveai-ripple-65b-preview-learnings.md` | Yes (`1acf8715...`) |
+| `CYCLE-20261114-Z16J` | `2026-11-14T00:25:03.163Z` | `yvgude/lean-ctx` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md` | Yes (`4e9bd0a2...`) |
+| `CYCLE-20261114-Z55Y` | `2026-11-14T00:25:08.326Z` | `invertase/react-native-firebase` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8410` | Yes (`9fe8c5e3...`) |
+| `CYCLE-20261114-Z8RU` | `2026-11-14T00:25:13.002Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8411` | Yes (`69ccf041...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T00:25:49.428Z` | `hf-ricursiveai-ripple-65b-preview` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-BCB68B52` [Domain D] | Yes (`2e61c01c...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T00:26:26.593Z` | `invertase-react-native-firebase` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-E98BDD0E` [Domain H] | Yes (`a7fc56ed...`) |

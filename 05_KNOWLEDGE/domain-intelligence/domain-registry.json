@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T00:08:56.142Z",
-  "total_records": 435,
+  "last_updated": "2026-11-14T00:26:27.206Z",
+  "total_records": 443,
   "domains": {
     "A": {
       "total": 5,
@@ -33,7 +33,7 @@
       ]
     },
     "D": {
-      "total": 222,
+      "total": 225,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -256,7 +256,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-meta-llama-3-8b-learnings-core-inv",
         "domain_intelligence-research-knowledge-intelligence-atomicchat-lfm3-1-7b-uncensored-gguf-core-invari",
         "DOM-D-BEBC2172",
-        "domain_intelligence-research-knowledge-intelligence-hf-atomicchat-lfm3-1-7b-uncensored-gguf-learning"
+        "domain_intelligence-research-knowledge-intelligence-hf-atomicchat-lfm3-1-7b-uncensored-gguf-learning",
+        "domain_intelligence-research-knowledge-intelligence-ricursiveai-ripple-65b-preview-core-invariants",
+        "DOM-D-BCB68B52",
+        "domain_intelligence-research-knowledge-intelligence-hf-ricursiveai-ripple-65b-preview-learnings-core"
       ]
     },
     "E": {
@@ -281,7 +284,7 @@
       ]
     },
     "G": {
-      "total": 57,
+      "total": 59,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -339,11 +342,13 @@
         "domain_intelligence-architecture-intelligence-infiniflow-infinity-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-crate-crate-core-invariants",
         "domain_intelligence-architecture-intelligence-ontos-ai-knowhere-core-invariants",
-        "domain_intelligence-architecture-intelligence-ontos-ai-knowhere-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-ontos-ai-knowhere-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-yvgude-lean-ctx-core-invariants",
+        "domain_intelligence-architecture-intelligence-yvgude-lean-ctx-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 93,
+      "total": 96,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -437,7 +442,10 @@
         "domain_intelligence-technical-construction-intelligence-u-root-u-root-core-invariants",
         "domain_intelligence-technical-construction-intelligence-openreplay-openreplay-core-invariants",
         "domain_intelligence-technical-construction-intelligence-u-root-u-root-learnings-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-openreplay-openreplay-learnings-core-invaria"
+        "domain_intelligence-technical-construction-intelligence-openreplay-openreplay-learnings-core-invaria",
+        "domain_intelligence-technical-construction-intelligence-invertase-react-native-firebase-core-invaria",
+        "DOM-H-E98BDD0E",
+        "domain_intelligence-technical-construction-intelligence-invertase-react-native-firebase-learnings-co"
       ]
     },
     "I": {
@@ -7801,8 +7809,8 @@
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "repository": "freenet/freenet-core",
-      "content_hash": "d12d7fcd3f98b6789c14ad8d0176bd605a482f84ec2732cb475c84bcd71791c3",
-      "created_at": "2026-11-13T18:34:57.278Z"
+      "content_hash": "a0c32f146ce0e4e32b9f58cf518919c4468fba9b9d2bb9d274743eaa3addcc1e",
+      "created_at": "2026-11-14T00:25:13.315Z"
     },
     "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants",
@@ -10199,6 +10207,136 @@
       "repository": "dathere-qsv-learnings",
       "content_hash": "29267e219367323a46ffe951be4da035def8c2834c83704935c469fdb7d5a151",
       "created_at": "2026-11-14T00:08:56.142Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-ricursiveai-ripple-65b-preview-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-ricursiveai-ripple-65b-preview-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: ricursiveAI/Ripple-65B-Preview Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ricursiveai-ripple-65b-preview-research-knowledge-intelligence-ricursiveai-ri.md",
+      "repository": "ricursiveAI/Ripple-65B-Preview",
+      "content_hash": "b2ed9792f0668fea79ec3e5ab870b27f7577a15cf2b4aa4ac5f28f9a82103380",
+      "created_at": "2026-11-14T00:25:00.974Z"
+    },
+    "domain_intelligence-architecture-intelligence-yvgude-lean-ctx-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-yvgude-lean-ctx-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: yvgude/lean-ctx Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-yvgude-lean-ctx-architecture-intelligence-yvgude-lean-ctx-core-invariants.md",
+      "repository": "yvgude/lean-ctx",
+      "content_hash": "27a4a35ae5b8e97e66c6e540aeb74865b2989ccf0927ee3e48a92b4c5219d2e8",
+      "created_at": "2026-11-14T00:25:03.523Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-invertase-react-native-firebase-core-invaria": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-invertase-react-native-firebase-core-invaria",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: invertase/react-native-firebase Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-invertase-react-native-firebase-technical-construction-intelligence-invertase-re.md",
+      "repository": "invertase/react-native-firebase",
+      "content_hash": "8b727f4eb9eb299bffb7889c02a9578a263cbf1b5f039020b03374cefa631f61",
+      "created_at": "2026-11-14T00:25:08.659Z"
+    },
+    "domain_intelligence-architecture-intelligence-yvgude-lean-ctx-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-yvgude-lean-ctx-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: yvgude-lean-ctx-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-yvgude-lean-ctx-learnings-architecture-intelligence-yvgude-lean-ctx-learnings-co.md",
+      "repository": "yvgude-lean-ctx-learnings",
+      "content_hash": "78f1a6e92f833b48339f7e819581e3bdc9f7080b67dfa6decda3d6e1069d57da",
+      "created_at": "2026-11-14T00:25:16.689Z"
+    },
+    "DOM-D-BCB68B52": {
+      "record_id": "DOM-D-BCB68B52",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): ricursiveAI/Ripple-65B-Preview",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ricursiveai-ripple-65b-preview-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/ricursiveAI/Ripple-65B-Preview](https://huggingface.co/ricursiveAI/Ripple-65B-Preview))  \n> **Source Version**: `hf-ricursive`  \n> **License**:",
+      "content_hash": "2e61c01c40d7136da1e6b17fd333342fe7b11ef3331459d389deb04a3480a91d",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ricursiveai-ripple-65b-preview-learnings.md`  \n> **Source**: huggingface ([https: -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ricursiveai-ripple-65b-preview-learnings.md`  \n> **Source**: huggingface ([https:",
+      "provenance": {
+        "source_uri": "project://hf-ricursiveai-ripple-65b-preview/hf-ricursiveai-ripple-65b-preview-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T00:25:17.023Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-ricursiveai-ripple-65b-preview)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-ricursiveai-ripple-65b-preview"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T00:25:49.417Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-ricursiveai-ripple-65b-preview-learnings-core": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-ricursiveai-ripple-65b-preview-learnings-core",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-ricursiveai-ripple-65b-preview-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ricursiveai-ripple-65b-preview-learnings-research-knowledge-intelligence-hf-r.md",
+      "repository": "hf-ricursiveai-ripple-65b-preview-learnings",
+      "content_hash": "a04d3f16afb580b12db6baf811c900ac16b5b71e0f6d67971d4c5359abb49d7e",
+      "created_at": "2026-11-14T00:25:49.643Z"
+    },
+    "DOM-H-E98BDD0E": {
+      "record_id": "DOM-H-E98BDD0E",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "`void`: Fire-and-forget remove await  then",
+      "content": "Fire-and-forget; remove `await` / `.then()`",
+      "content_hash": "a7fc56ed951d3b765715febd47b519629d790a76f7c9e6a0b94e5567eb72ff40",
+      "summary": "Fire-and-forget; remove `await` / `.then()` -> Fire-and-forget; remove `await` / `.then()`",
+      "provenance": {
+        "source_uri": "project://invertase-react-native-firebase/invertase-react-native-firebase-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "`logEvent(analytics, …)`",
+        "author_or_entity": "AI-Builder-Brain Project Learning (invertase-react-native-firebase)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of invertase-react-native-firebase"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T00:26:26.584Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-invertase-react-native-firebase-learnings-co": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-invertase-react-native-firebase-learnings-co",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: invertase-react-native-firebase-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-invertase-react-native-firebase-learnings-technical-construction-intelligence-in.md",
+      "repository": "invertase-react-native-firebase-learnings",
+      "content_hash": "d395c3f2ef13597d970fa72bfe191d6d9fe467440b4f7e69bd89f248485f8ed5",
+      "created_at": "2026-11-14T00:26:27.206Z"
     }
   }
 }

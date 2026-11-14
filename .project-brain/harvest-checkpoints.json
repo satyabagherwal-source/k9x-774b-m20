@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-14T00:08:17.992Z",
+  "last_updated": "2026-11-14T00:25:13.016Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "64bcc67eae947a93447d7150d76f694d523b19038f2df83a07a49c7cf98b571c",
-      "verified_at": "2026-11-13T18:34:56.943Z",
+      "content_hash": "69ccf0417d267af116c6449252a9869ec23f747b8c4022f131b18375f30eebcf",
+      "verified_at": "2026-11-14T00:25:13.015Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T18:34:56.943Z"
+      "last_updated": "2026-11-14T00:25:13.015Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -5466,14 +5466,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-invertase-react-native-firebase",
-      "content_hash": "ff6c2d0cb4fea86f59fede11acdff45c8a4ae770dc6ebd2f83d1ba16d616b121",
-      "verified_at": "2026-11-09T16:11:00.717Z",
+      "content_hash": "9fe8c5e367a33b23cfd1cff3a16c70cd0e7a74f4ee6c39bd745f8bd2c84aaa7a",
+      "verified_at": "2026-11-14T00:25:08.339Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T16:11:00.717Z"
+      "last_updated": "2026-11-14T00:25:08.339Z"
     },
     "PeerDB-io/peerdb": {
       "repository": "PeerDB-io/peerdb",
@@ -9471,14 +9471,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yvgude-lean-ctx",
-      "content_hash": "8e6f0e6191946d471dd56d6030d08491d01d98cc03155ee4c704e5f3cfb8ef8f",
-      "verified_at": "2026-11-12T13:10:23.056Z",
+      "content_hash": "4e9bd0a2bd5cef8313547b27230a3e5094e3e598cdfc39e28186cb18fd7b37b5",
+      "verified_at": "2026-11-14T00:25:03.188Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T13:10:23.056Z"
+      "last_updated": "2026-11-14T00:25:03.188Z"
     },
     "gkd-kit/gkd": {
       "repository": "gkd-kit/gkd",
@@ -17991,14 +17991,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ricursiveai-ripple-65b-preview",
-      "content_hash": "21084baf6101d3986553f10dcd47fb2f7a261948dd5534e071d05bb1498f4202",
-      "verified_at": "2026-11-08T22:00:46.436Z",
+      "content_hash": "1acf871590ba5b06e6124dcf1ecbbd044a5b60a4999be52ff10090ccd28120e5",
+      "verified_at": "2026-11-14T00:25:00.783Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T22:00:46.436Z"
+      "last_updated": "2026-11-14T00:25:00.783Z"
     },
     "apache/pinot": {
       "repository": "apache/pinot",

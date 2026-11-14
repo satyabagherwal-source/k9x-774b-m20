@@ -9711,3 +9711,9 @@ Every entry in this ledger must capture:
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `1f0ceab5` | Multi-dimensional audit evidence | 2026-11-14T00:08:12.047Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `892e7223` | Multi-dimensional audit evidence | 2026-11-14T00:08:17.982Z |
 | `learn-dom-d-bebc2172` | `project://hf-atomicchat-lfm3-1.7b-uncensored-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-atomicchat-lfm3-1.7b-uncensored-gguf-learnings.md` | 2026-11-14T00:08:54.196Z |
+| `learn-huggingface-ricursiveai-ripple-65b-preview` | `https://huggingface.co/ricursiveAI/Ripple-65B-Preview` | `hf-ricursi` | Multi-dimensional audit evidence | 2026-11-14T00:25:00.772Z |
+| `learn-github-yvgude-lean-ctx` | `https://github.com/yvgude/lean-ctx` | `b6de365b` | Multi-dimensional audit evidence | 2026-11-14T00:25:03.168Z |
+| `learn-github-invertase-react-native-firebase` | `https://github.com/invertase/react-native-firebase` | `439611d7` | Multi-dimensional audit evidence | 2026-11-14T00:25:08.330Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `3e505b65` | Multi-dimensional audit evidence | 2026-11-14T00:25:13.006Z |
+| `learn-dom-d-bcb68b52` | `project://hf-ricursiveai-ripple-65b-preview` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-ricursiveai-ripple-65b-preview-learnings.md` | 2026-11-14T00:25:49.428Z |
+| `learn-dom-h-e98bdd0e` | `project://invertase-react-native-firebase` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md` | 2026-11-14T00:26:26.593Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md`  
 > **Source**: github ([https://github.com/invertase/react-native-firebase](https://github.com/invertase/react-native-firebase))  
-> **Source Version**: `bfddcf25`  
+> **Source Version**: `439611d7`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T16:10:59.427Z  
+> **Timestamp**: 2026-11-14T00:25:07.302Z  
 > **Learning ID**: `learn-github-invertase-react-native-firebase`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/invertase/react-native-firebase](https://github.com/invertase/react-native-firebase))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T16:10:59.422Z  
+> **Harvest Timestamp**: 2026-11-14T00:25:07.295Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1569,11 +1569,11 @@ extern NSString *const DEFAULT_APP_NAME;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #9448** (2026-11-08): **fix(e2e): harden shared-host e2e scripts for slots, foreign Jet ports and TMPDIR**
-  *Symptoms*: **Stack position: 4 of 4. Stacked on #9444; merge after it.** Stack order: #9446 (cpuset-aware build concurrency) → #9447 (tooling and test fixes) → #9444 (recorded-only e2e release) → this PR. The base is #9444's branch, so the diff shows only this PR's eight commits.  ### Description  Three fixes and two doc changes for e2e scripts on a host shared with other checkouts or users, plus three test-only commits ((5), (6) and (8)). They build on #9444's run record and owner labels. No package source or public API changes.  1. **`fix(e2e): re-apply the selected slot's env for check and release --slot=N`**: `yarn tests:e2e:check --slot=N` and `release --slot=N`, run without that slot's env loaded, used to probe the serial identity (`emulator-5554`, `TestingAVD`, `:8081`). They now load slot N's env first, keep a caller's `RNFB_E2E_PLATFORM` (or `--platform=`) narrowing, and exit 2 before touching anything when `--slot=N` disagrees with an already-loaded slot env. `--all-slots` stays unscoped. 2. **`fix(e2e): fail fast when another user's process holds the Jet port`**: `lsof` only sees the current user's processes, so another user's listener on a Jet port looked free, and the harness waited for a port it could never get. The Android/iOS Detox harness now fails fast in its Jet host-clear and retry drain when the port accepts connections but has no listener it can attribute, naming `owner=unrecorded` and the free-slot hint. `yarn tests:e2e:check` reports the same case as BUSY on ever
+- **Issue #9483** (2026-11-13): **build(deps): bump amannn/action-semantic-pull-request from 6.1.1 to 6.1.2 in the github-actions-minor-patch group across 1 directory**
+  *Symptoms*: Bumps the github-actions-minor-patch group with 1 update in the / directory: [amannn/action-semantic-pull-request](https://github.com/amannn/action-semantic-pull-request).  Updates `amannn/action-semantic-pull-request` from 6.1.1 to 6.1.2 <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/amannn/action-semantic-pull-request/releases">amannn/action-semantic-pull-request's releases</a>.</em></p> <blockquote> <h2>v6.1.2</h2> <h2><a href="https://github.com/amannn/action-semantic-pull-request/compare/v6.1.1...v6.1.2">6.1.2</a> (2026-11-05)</h2> <h3>Bug Fixes</h3> <ul> <li>Release accumulated dependency updates (closes <a href="https://redirect.github.com/amannn/action-semantic-pull-request/issues/321">#321</a>) (<a href="https://github.com/amannn/action-semantic-pull-request/commit/fc7da0cece3e8512e50240b0619a03bdd946db1c">fc7da0c</a>)</li> </ul> </blockquote> </details> <details> <summary>Changelog</summary> <p><em>Sourced from <a href="https://github.com/amannn/action-semantic-pull-request/blob/main/CHANGELOG.md">amannn/action-semantic-pull-request's changelog</a>.</em></p> <blockquote> <h1>Changelog</h1> <h2><a href="https://github.com/amannn/action-semantic-pull-request/compare/v6.1.1...v6.1.2">6.1.2</a> (2026-11-05)</h2> <h3>Bug Fixes</h3> <ul> <li>Release accumulated dependency updates (closes <a href="https://redirect.github.com/amannn/action-semantic-pull-request/issues/321">#321</a>) (<a href="https://github.com/amannn/action-seman
 
-- **Issue #9447** (2026-11-08): **fix: harden ruby:install, lint:android and host-dependent app tests**
-  *Symptoms*: **Stack position: 2 of 4. Stacked on #9446; merge after it.** Stack order: #9446 (cpuset-aware build concurrency) → this PR → #9444 (recorded-only e2e release) → #9448 (shared-host e2e hardening). The base is #9446's branch, so the diff shows only this PR's four commits.  ### Description  Four small fixes for contributor tooling and tests that broke on ordinary hosts. No package source or public API changes.  1. **`fix(scripts): skip ruby:install when host Ruby is too old or bundler cannot run`** — On a stock Mac `/usr/bin/bundle` (system Ruby 2.6) is on `PATH`, so the existing "skip when no bundle" rule never applied and root `yarn` failed with `Could not find 'bundler'`. `yarn ruby:install` now also skips, with one `ruby:install:` line naming why, when the `ruby` on `PATH` is older than 3.3.1 or `bundle --version` fails. A failed `bundle install` still fails. CI is unchanged (Ubuntu jobs have no bundle; macOS jobs use setup-ruby 3). `CONTRIBUTING.md` gains a "Ruby for iOS and macOS work" section; the e2e prerequisites and the agent command docs state the same floor. 2. **`fix(lint): skip the android git diff check outside a git work tree`** — `lint:android`'s `git diff` step failed in a copy of the checkout that is not a git repo (for example an rsync copy). `google-java-format --set-exit-if-changed` still fails on formatting changes. 3. **`fix(tests): skip native build dirs in harness default scan`** — the committed-harness Jest scan walked `tests/ios/build` and other nati
+- **Issue #9482** (2026-11-13): **fix(perf): remove the frame metrics listener when a screen trace stops**
+  *Symptoms*: ### Description  On Android, every custom screen trace leaves a frame metrics listener attached to the Activity window after the trace is stopped.  `ScreenTrace.recordScreenTrace()` creates a new `FrameMetricsAggregator` and calls `add(activity)`, which registers an `OnFrameMetricsAvailableListener` on the window. `sendScreenTrace()` then reads the metrics with `reset()`. In androidx, `reset()` only swaps the metrics array and returns the old one; it does not remove the listener. `stop()` removes the listener from every tracked Activity and returns the same metrics. Reference: [`FrameMetricsAggregator.java`](https://github.com/androidx/androidx/blob/androidx-main/core/core/src/main/java/androidx/core/app/FrameMetricsAggregator.java) (`FrameMetricsApi24Impl.reset()` / `stop()`), [API docs](https://developer.android.com/reference/androidx/core/app/FrameMetricsAggregator).  So each start/stop pair leaves one more listener receiving every frame for the life of the Activity. In a single-Activity React Native app that is the whole session, and with one screen trace per navigation the listener count grows with every screen change. Nothing breaks visibly (the reported metrics are correct, since each trace has its own aggregator), which is probably why it hasn't come up.  The fix is the one-line change to `stop()`. The comment above that line already describes `stop()` ("Stops recording metrics for this Activity and returns the currently-collected metrics").  ### Related iss
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1590,1160 +1590,219 @@ extern NSString *const DEFAULT_APP_NAME;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `37a17e7f` (2026-11-08)
-**Commit Message**: build: cap lerna prepare concurrency by memory as well as CPUs
+### Incident Patch 1: `66f977c3` (2026-11-12)
+**Commit Message**: fix(messaging, ios): refresh the Podfile.lock checksum for the public header
 
-Lerna runs one prepare task per CPU by default. Each task runs bob build (tsc and babel) and can hold well over 1 GiB, and during a cold yarn install the Yarn process itself holds several GiB. On a 16-CPU / 8 GiB Linux machine or container the kernel OOM killer then kills Yarn mid-prepare. Yarn's yarnPath launcher reports a signal-killed child as a bare exit 1, so yarn install --immutable failed with no error text.
+The podspec header lists changed, so the RNFBMessaging checksum no longer
+matches main. Keep every other checksum on current main.
 
-scripts/lerna-prepare-concurrency.js replaces the inline node -p in lerna:prepare. It keeps RNFB_LERNA_CONCURRENCY and os.availableParallelism(), and adds a cap of one task per 2.5 GiB of memory (the cgroup limit when one is set), with a floor of 1. Machines with plenty of memory per CPU keep one task per CPU.
-
-**File**: `okf-bundle/monorepo-tooling/prepare-and-cache.md` (modified, +1/-1)
+**File**: `tests/ios/Podfile.lock` (modified, +1/-1)
 ```diff
-@@ -97,7 +97,7 @@ Add `nx.json`; keep the `yarn lerna:prepare` entrypoint name, with `NX_NO_CLOUD`
- - **`inputs: ["jsSource"]`** scopes the cache key to what `prepare` actually consumes (JS source + plugin sources + the package/base tsconfig + `package.json`, which carries the bob config, plus workspace `yarn.lock` so lockfile-only toolchain bumps bust the cache). Without this, Nx defaults inputs to the whole `{projectRoot}`, so unrelated edits to `__tests__/**`, `e2e/**`, `android/**`, `ios/**`, or docs would needlessly bust the `prepare` cache and — via `^prepare` — every dependent. See [MonoTool-AD-11](architecture-decisions.md#monotool-ad-11--scope-prepare-cache-inputs-with-a-jssource-namedinput--accepted). (`lib/version.ts` is gitignored, so Nx's file hasher excludes it from inputs even though it matches the `lib/**` glob — no self-invalidation.)
- - **`outputs` must list every file `prepare` writes**, including the _generated, gitignored_ ones, or a cache **hit** restores `dist/**` but leaves those files missing on a clean tree. `genversion` writes `lib/version.ts` in every package (imported by 18 packages' `lib` source), so it is a shared output. See [generated-file outputs](#generated-file-outputs-cache-correctness) and [MonoTool-AD-10](architecture-decisions.md#monotool-ad-10--generated-version-files-are-declared-cache-outputs-not-committed--accepted).
- - **No-cloud everywhere:** see [MonoTool-AD-1](architecture-decisions.md#monotool-ad-1--nx-local-cache-via-the-lerna-runner-no-turborepo-no-nx-cloud--accepted) + [MonoTool-AD-8](architecture-decisions.md#monotool-ad-8--nxcache-shared-on-ci-not-on-publish--accepted) — `NX_NO_CLOUD=true` on the local entrypoint and every CI job that runs Nx.
--- **Concurrency:** `lerna:prepare` passes `--concurrency` from `RNFB_LERNA_CONCURRENCY` when it is a positive integer (no leading zero), otherwise from `os.availableParallelism()`, which honours the CPU affinity mask (cpusets). Other values are ignored.
-+- **Concurrency:** `lerna:prepare` passes `--concurrency` from `scripts/lerna-prepare-concurrency.js`, which only prints a number (the entrypoint is still the inline `lerna run prepare`). The value is `RNFB_LERNA_CONCURRENCY` when it is a positive integer (no leading zero); other values are ignored. Otherwise it is the smaller of `os.availableParallelism()`, which honours the CPU affinity mask (cpusets), and one task per 2.5 GiB of memory (the cgroup limit when there is one, else total RAM), and at least 1. Lerna's own default is one task per CPU. Each `bob build` task can hold well over 1 GiB, and a cold `yarn install` keeps several GiB resident in Yarn itself, so a 16-CPU / 8 GiB Linux VM or container ran out of memory during `yarn install` and the kernel killed Yarn. Yarn's `yarnPath` launcher turns that signal into a bare exit 1 with no message.
- - **`patch-package` prepare is not cacheable** — see [below](#patch-package-prepare-must-not-be-nx-cached) and [MonoTool-AD-12](architecture-decisions.md#monotool-ad-12--never-nx-cache-prepare-when-the-script-is-patch-package--accepted).
- 
- <a id="patch-package-prepare-must-not-be-nx-cached"></a>
-```
-
-**File**: `package.json` (modified, +1/-1)
-```diff
-@@ -6,7 +6,7 @@
-     "postinstallDev": "yarn prepare && yarn lerna:prepare && yarn ruby:install",
-     "ruby:install": "bash ./scripts/ruby-install.sh",
-     "prepare": "patch-package",
--    "lerna:prepare": "cross-env NX_NO_CLOUD=true NX_CACHE_DIRECTORY=.nx/cache NX_WORKSPACE_DATA_DIRECTORY=.nx/workspace-data lerna run prepare --concurrency \"$(node -p 'const n = process.env.RNFB_LERNA_CONCURRENCY, os = require(\"os\"); /^[1-9][0-9]*$/.test(n) ? n : os.availableParallelism?.() ?? os.cpus().length')\"",
-+    "lerna:prepare": "cross-env NX_NO_CLOUD=true NX_CACHE_DIRECTORY=.nx/cache NX_WORKSPACE_DATA_DIRECTORY=.nx/workspace-data lerna run prepare --concurrency \"$(node scripts/lerna-prepare-concurrency.js)\"",
-     "lerna:clean": "lerna clean",
-     "build:all:clean": "lerna run build:clean",
-     "build:all:build": "lerna run build",
-```
-
-**File**: `packages/app/__tests__/lernaPrepareConcurrency.test.js` (added, +44/-0)
-```diff
-@@ -0,0 +1,44 @@
-+const { execFileSync } = require('child_process');
-+const path = require('path');
-+
-+const {
-+  lernaPrepareConcurrency,
-+  MEMORY_PER_TASK_BYTES,
-+} = require('../../../scripts/lerna-prepare-concurrency');
-+
-+const GiB = 1024 ** 3;
-+
-+describe('lerna-prepare-concurrency', function () {
-+  it('uses one task per CPU when memory allows it', function () {
-+    expect(lernaPrepareConcurrency({ override: undefined, cpus: 4, memory: 16 * GiB })).toBe(4);
-+  });
-+
-+  it('caps tasks by memory on a many-CPU, low-memory machine', function () {
-+    expect(lernaPrepareConcurrency({ override: undefined, cpus: 16, memory: 8 * GiB })).toBe(
-+      Math.floor((8 * GiB) / MEMORY_PER_TASK_BYTES),
-+    );
-+  });
-+
-+  it('never goes below one task', function () {
-+    expect(lernaPrepareConcurrency({ override: undefined, cpus: 8, memory: 1 * GiB })).toBe(1);
-+  });
-+
-+  it('uses RNFB_LERNA_CONCURRENCY when it is a positive integer', function () {
-+    expect(lernaPrepareConcurrency({ override: '12', cpus: 2, memory: 1 * GiB })).toBe(12);
-+  });
-+
-+  it('ignores RNFB_LERNA_CONCURRENCY values that are not positive integers', function () {
-+    for (const override of ['', '0', '07', '-1', '2.5', 'four']) {
-+      expect(lernaPrepareConcurrency({ override, cpus: 2, memory: 64 * GiB })).toBe(2);
-+    }
-+  });
-+
-+  it('prints a positive integer when run as a script', function () {
-+    const out = execFileSync(
-+      process.execPath,
-+      [path.resolve(__dirname, '../../../scripts/lerna-prepare-concurrency.js')],
-+      { encoding: 'utf8', env: { ...process.env, RNFB_LERNA_CONCURRENCY: '3' } },
-+    );
-+    expect(out).toBe('3\n');
-+  });
-+});
-```
-
-**File**: `scripts/lerna-prepare-concurrency.js` (added, +41/-0)
-```diff
-@@ -0,0 +1,41 @@
-+// Prints the --concurrency value for `yarn lerna:prepare`.
-+//
-+// Each prepare task runs `bob build` (tsc + babel) and can hold well over 1 GiB,
-+// on top of Yarn and Lerna themselves during `yarn install`. Running one task per
-+// CPU on a many-core, low-memory machine (a 16-CPU / 8 GiB Linux VM or container)
-+// gets the install killed by the kernel OOM killer.
-+const os = require('os');
-+
-+const MEMORY_PER_TASK_BYTES = 2.5 * 1024 ** 3;
-+
-+function cpuCount() {
-+  return typeof os.availableParallelism === 'function'
-+    ? os.availableParallelism()
-+    : os.cpus().length;
-+}
-+
-+// process.constrainedMemory() reports a cgroup memory limit; it returns 0 (or a
-+// huge number) when there is none.
-+function memoryBytes() {
-+  const total = os.totalmem();
-+  const constrained =
-+    typeof process.constrainedMemory === 'function' ? process.constrainedMemory() : 0;
-+  return constrained > 0 && constrained < total ? constrained : total;
-+}
-+
-+function lernaPrepareConcurrency({
-+  override = process.env.RNFB_LERNA_CONCURRENCY,
-+  cpus = cpuCount(),
-+  memory = memoryBytes(),
-+} = {}) {
-+  if (typeof override === 'string' && /^[1-9][0-9]*$/.test(override)) {
-+    return Number(override);
-+  }
-+  return Math.max(1, Math.min(cpus, Math.floor(memory / MEMORY_PER_TASK_BYTES)));
-+}
-+
-+module.exports = { lernaPrepareConcurrency, MEMORY_PER_TASK_BYTES };
-+
-+if (require.main === module) {
-+  process.stdout.write(`${lernaPrepareConcurrency()}\n`);
-+}
+@@ -3644,7 +3644,7 @@ SPEC CHECKSUMS:
+   RNFBFunctions: 5674d9db94a55163a7fa1b53c4208fd2a00137a1
+   RNFBInAppMessaging: 43c1ae54f8751ce517bcc2c720aa6b8f118f7dc2
+   RNFBInstallations: a4a1dbb0057882089a5a337e97201a10279b096c
+-  RNFBMessaging: dd86392ae250f39b626e1d3ee117457055d6739b
++  RNFBMessaging: a3a316146df4f06f2fc580c5874d44f19a06b91d
+   RNFBPerf: c6ae8130823ffc1396da90785d726ba9ad20ac49
+   RNFBRemoteConfig: 55e59d4ff61b1c1f1cf0d515ccd029f613a85d5f
+   RNFBStorage: e58d9cb2215738fb2fbd3fd2d0bcd6d264d6155f
 ```
 
 ---
 
-### Incident Patch 2: `bcde2f45` (2026-11-08)
-**Commit Message**: fix(e2e): bound the drain's terminateApp and keep a drained attempt off the next device
+### Incident Patch 2: `431338d7` (2026-11-10)
+**Commit Message**: fix(app-check): report provider setup failures and align Android provider readiness with iOS (#9405)
 
-- A drained attempt's launch retry now checks for abandonment first, before
-  an Android cold boot, so it cannot reboot the emulator the next attempt
-  uses. Its late launch-ok and orchestrate-failed posts are skipped too.
-- The drain's terminateApp is bounded (15 s, RNFB_DRAIN_TERMINATE_TIMEOUT_MS).
-  Detox's terminateApp has no timeout; on iOS it ran 81 s before the 30 s
-  orchestrate wait could start.
-- e2eRunRecord.test.js no longer reads the host's devices: ps, pgrep and
-  pkill hide qemu and launchd_sim processes this run did not start, and adb
-  and simctl list no devices. Another run of the suite, or a real emulator
-  on an identity serial, changed its results, and release's pkill could stop
-  a same-AVD emulator it did not start.
-- The orphan-listener tests kill their listener by pid, even when they fail.
-
-**File**: `packages/app/__tests__/e2eRunRecord.test.js` (modified, +162/-8)
+**File**: `.github/scripts/compare-types/configs/app-check.ts` (modified, +3/-3)
 ```diff
-@@ -69,18 +69,21 @@ function settle(promise, ms) {
- 
- /** Long-lived process whose args carry a device token needle (qemu @AVD / launchd_sim UDID). */
- function startTokenProcess(...tokenArgs) {
--  const child = spawn(process.execPath, ['-e', 'setTimeout(() => {}, 60000)', ...tokenArgs], {
--    stdio: 'ignore',
--  });
-+  const child = spawn(
-+    process.execPath,
-+    ['-e', 'setTimeout(() => {}, 60000)', ...tokenArgs, HOST_MARK],
-+    { stdio: 'ignore' },
-+  );
-   const exited = new Promise(resolve => child.once('exit', (_code, signal) => resolve(signal)));
-   return { child, exited };
- }
- 
- function startTokenProcessIn(cwd, ...tokenArgs) {
--  const child = spawn(process.execPath, ['-e', 'setTimeout(() => {}, 60000)', ...tokenArgs], {
--    stdio: 'ignore',
--    cwd,
--  });
-+  const child = spawn(
-+    process.execPath,
-+    ['-e', 'setTimeout(() => {}, 60000)', ...tokenArgs, HOST_MARK],
-+    { stdio: 'ignore', cwd },
-+  );
-   const exited = new Promise(resolve => child.once('exit', (_code, signal) => resolve(signal)));
-   return { child, exited };
- }
-@@ -110,9 +113,10 @@ async function waitGone(pid, ms) {
-  * Jest worker: ownership must then come from the run record alone.
-  */
- function startDetached(argv, cwd = os.tmpdir()) {
-+  const marked = argv[0] === process.execPath ? [...argv, HOST_MARK] : argv;
-   const out = execFileSync(
-     '/bin/sh',
--    ['-c', '"$@" >/dev/null 2>&1 </dev/null & echo $!', 'sh', ...argv],
-+    ['-c', '"$@" >/dev/null 2>&1 </dev/null & echo $!', 'sh', ...marked],
+@@ -52,12 +52,12 @@ const config: PackageConfig = {
      {
-       encoding: 'utf8',
-       cwd,
-@@ -164,6 +168,78 @@ function realBin(name) {
-   return execFileSync('/bin/sh', ['-c', `command -v ${name}`], { encoding: 'utf8' }).trim();
- }
- 
-+/*
-+ * Host device discovery sees only the fake devices this run started (they carry
-+ * HOST_MARK): a real emulator or simulator, or another run of this suite (same fake
-+ * names, same cwd), must not change results. ps -ax / pgrep / pkill hide unmarked
-+ * qemu-system and launchd_sim processes; adb and simctl list no devices. Tests that
-+ * need other answers put their own adb / xcrun earlier on PATH.
-+ */
-+const HOST_MARK = `rnfb-run-record-test=${process.pid}-${Date.now()}`;
-+const hostStubDir = fs.mkdtempSync(path.join(os.tmpdir(), 'rnfb-run-record-host-'));
-+const hostPath = process.env.PATH;
-+const deviceFilter = `re='qemu-system|launchd_sim'
-+foreign_device() { [[ "$1" =~ $re && "$1" != *${JSON.stringify(HOST_MARK)}* ]]; }`;
-+writeExecutable(
-+  path.join(hostStubDir, 'ps'),
-+  `#!/bin/bash
-+case " $* " in
-+  *" -ax"*) ;;
-+  *) exec ${realBin('ps')} "$@" ;;
-+esac
-+${deviceFilter}
-+${realBin('ps')} "$@" | while IFS= read -r line; do
-+  foreign_device "$line" || printf '%s\\n' "$line"
-+done
-+exit "\${PIPESTATUS[0]}"
-+`,
-+);
-+writeExecutable(
-+  path.join(hostStubDir, 'pgrep'),
-+  `#!/bin/bash
-+${deviceFilter}
-+out="$(${realBin('pgrep')} "$@")" || exit
-+kept=1
-+while IFS= read -r line; do
-+  [[ -n "$line" ]] || continue
-+  foreign_device "$(${realBin('ps')} -p "\${line%% *}" -o args= 2>/dev/null)" && continue
-+  printf '%s\\n' "$line"
-+  kept=0
-+done <<<"$out"
-+exit "$kept"
-+`,
-+);
-+writeExecutable(
-+  path.join(hostStubDir, 'pkill'),
-+  `#!/bin/bash
-+sig=TERM
-+args=()
-+for a in "$@"; do
-+  case "$a" in
-+    -f) args+=("$a") ;;
-+    -[0-9]* | -[A-Z]*) sig="\${a#-}" ;;
-+    *) args+=("$a") ;;
-+  esac
-+done
-+pids="$(${JSON.stringify(path.join(hostStubDir, 'pgrep'))} "\${args[@]}")" || exit 1
-+kill -s "$sig" $pids
-+`,
-+);
-+writeExecutable(
-+  path.join(hostStubDir, 'adb'),
-+  `#!/bin/bash\n[[ "$1" == devices ]] && printf 'List of devices attached\\n\\n' && exit 0\nexit 1\n`,
-+);
-+writeExecutable(
-+  path.join(hostStubDir, 'xcrun'),
-+  `#!/bin/bash\n[[ "$*" == *-j* ]] && printf '{"devices":{}}\\n'\nexit 0\n`,
-+);
-+process.env.PATH = `${hostStubDir}:${hostPath}`;
-+
-+afterAll(function () {
-+  process.env.PATH = hostPath;
-+  fs.rmSync(hostStubDir, { recursive: true, force: true });
-+});
-+
- describe('e2e run record (shell)', function () {
-   let dir;
- 
-@@ -501,6 +577,7 @@ exit 0
-       '@TestingAVD-1',
-       '-port',
-       '16224',
-+      HOST_MARK,
-     ]);
-     const parent = spawn(
-       process.execPath,
-@@ -964,6 +1041,83 @@ setTimeout(() => {}, 60000);`,
-   });
- });
- 
-+describe('host device discovery in this suite', function () {
-+  let dir;
-+  const unmarked = [];
-+
-+  beforeEach(function () {
-+    dir = fs.mkdtempSync(path.join(os.tmpdir(), 'rnfb-run-record-host-test-'));
-+  });
-+
-+  afterEach(async function () {
-+    for (const p of unmarked.splice(0)) {
-+      p.child.kill('SIGKILL');
-+      await p.exited;
-+    }
-+    fs.rmSync(dir, { recursive: true, force: true });
-+  });
-+
-+  // What another run of this suite, or a real emulator / simulator, looks like.
-+  function startUnmarked(...args) {
-+    const child = spawn(process.execPath, ['-e', 'setTimeout(() => {}, 60000)', ...args], {
-+      stdio: 'ignore',
-+      cwd: path.join(repoRoot, 'tests'),
-+    });
-+    const p = { child, exited: new Promise(resolve => child.o
+       name: 'ReactNativeFirebaseAppCheckProviderWebOptions',
+       reason:
+-        'RN Firebase-specific web provider config shape used by `ReactNativeFirebaseAppCheckProvider.configure()`.',
++        'Deprecated RN Firebase-specific web provider config shape; accepted by `ReactNativeFirebaseAppCheckProvider.configure()` for compatibility but not read at runtime (other platforms use `CustomProvider`).',
+     },
+     {
+       name: 'ReactNativeFirebaseAppCheckProviderAppleOptions',
+       reason:
+-        'RN Firebase-specific Apple provider config shape used to select native iOS/macOS App Check providers.',
++        'RN Firebase-specific provider config shape for the iOS (`apple` key) options, used to select native iOS App Check providers.',
+     },
+     {
+       name: 'ReactNativeFirebaseAppCheckProviderAndroidOptions',
+@@ -67,7 +67,7 @@ const config: PackageConfig = {
+     {
+       name: 'ReactNativeFirebaseAppCheckProviderOptionsMap',
+       reason:
+-        'RN Firebase-specific cross-platform provider options map used to configure Android, Apple, and web providers together.',
++        'RN Firebase-specific cross-platform provider options map used to configure Android and iOS (`apple` key) native providers together (the `web` key is deprecated and not read).',
+     },
+     {
+       name: 'ReactNativeFirebaseAppCheckProviderConfig',
 ```
 
-**File**: `packages/app/__tests__/jetAttemptDrain.test.js` (modified, +85/-13)
+**File**: `docs/app-check/usage/index.mdx` (modified, +5/-3)
 ```diff
-@@ -14,7 +14,7 @@ const {
-   killJetAfterOrchestrateFailure,
-   killJetForRetry,
-   stopAttemptJet,
--  waitForOrchestrate,
-+  waitAtMost,
- } = require('../../../tests/e2e/jetAttemptDrain');
- const { createJetAttemptSession } = require('../../../tests/e2e/jetSession');
+@@ -222,6 +222,8 @@ rnfbProvider.configure({
  
-@@ -88,6 +88,19 @@ function killTree(proc) {
-   }
- }
+ ### Install the Custom Provider
  
-+// Orphaned listeners have no ChildProcess handle; a failed assertion must not leak them.
-+function killPids(pids) {
-+  for (const pid of pids.splice(0)) {
-+    try {
-+      process.kill(pid, 'SIGKILL');
-+    } catch (err) {
-+      if (err.code !== 'ESRCH') {
-+        throw err;
-+      }
-+    }
-+  }
-+}
++`initializeAppCheck` returns the App Check instance synchronously and provider setup continues in the background: invalid options still throw synchronously, and a failure during provider setup is reported with `console.warn` instead of an unhandled promise rejection.
 +
- function exited(proc) {
-   return new Promise(resolve => {
-     if (!jetProcessAlive(proc)) {
-@@ -125,11 +138,13 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+ Once you have the custom provider configured, install it in app-check using the firebase-js-sdk compatible API, while saving the returned instance for usage:
  
- describe('Jet attempt drain', function () {
-   const procs = [];
-+  const pids = [];
+ ```javascript
+@@ -300,11 +302,11 @@ const { token } = await appCheckInstance.getToken(true);
  
-   afterEach(function () {
-     for (const proc of procs.splice(0)) {
-       killTree(proc);
-     }
-+    killPids(pids);
-   });
+ ## Automatic Data Collection
  
-   it('stops the Jet a launch retry respawned, not only the one the attempt started with', async function () {
-@@ -167,6 +182,7 @@ describe('Jet attempt drain', function () {
-     expect(await waitFor(() => portOpen(port))).toBe(true);
-     const listener = execSync(`pgrep -P ${root.pid}`, { encoding: 'utf8' }).trim();
-     expect(listener).toMatch(/^\d+$/);
-+    pids.push(Number(listener));
+-App Check has an "tokenAutoRefreshEnabled" setting. This may cause App Check to attempt a remote App Check token fetch prior to user consent. In certain scenarios, like those that exist in GDPR-compliant apps running for the first time, this may be unwanted.
++App Check has a "tokenAutoRefreshEnabled" setting. This may cause App Check to attempt a remote App Check token fetch prior to user consent. In certain scenarios, like those that exist in GDPR-compliant apps running for the first time, this may be unwanted.
  
-     expect(stopAttemptJet({ process: root, abandon() {} }, { killTree })).toBe(root.pid);
+-You may configure this setting in `firebase.json` such that your desired configuration is in place even before you the react-native javascript bundle begins executing and allows for runtime configuration.
++You may configure this setting with `app_check_token_auto_refresh` in `firebase.json`. On Android, the native module also applies this value as the startup default when it is created, before `initializeAppCheck` runs (in debug builds, this startup default is `false` unless `app_check_token_auto_refresh` is set to `true` in `firebase.json`); on iOS, it only takes effect through the `initializeAppCheck` fallback below.
  
-@@ -185,11 +201,11 @@ describe('Jet attempt drain', function () {
-   it('treats a Jet that was signalled but has not exited as alive', async function () {
-     const proc = spawn(
-       process.execPath,
--      ['-e', "process.on('SIGTERM', () => {}); setInterval(() => {}, 1000)"],
--      { stdio: 'ignore' },
-+      ['-e', "process.on('SIGTERM', () => {}); console.log('ready'); setInterval(() => {}, 1000)"],
-+      { stdio: ['ignore', 'pipe', 'ignore'] },
-     );
-     procs.push(proc);
--    await sleep(300);
-+    await new Promise(resolve => proc.stdout.once('data', resolve));
-     proc.kill('SIGTERM');
-     await sleep(200);
-     expect(proc.killed).toBe(true);
-@@ -376,11 +392,13 @@ describe('a late attempt-1 orchestrate after the drain', function () {
+-If unset, the "tokenAutoRefreshEnabled" setting will defer to the app's "automatic data collection" setting, which may be set in `firebase.json`, or if you wish directly in the Info.plist or AndroidManifest.xml according to the Firebase native SDK documentation. Unless otherwise configured, it will default to true implying there will be automatic data collection and app check token refresh attempts.
++On Android and iOS, if `isTokenAutoRefreshEnabled` is omitted from `initializeAppCheck`, it falls back to `app_check_token_auto_refresh` in `firebase.json`, then `app_data_collection_default_enabled` in `firebase.json`, then `true`. Values set only in Info.plist or AndroidManifest.xml are not read by this fallback. On other platforms (macOS, web), this fallback is not applied.
  
- describe('killJetForRetry', function () {
-   const procs = [];
-+  const pids = [];
+ ## Using App Check tokens for non-firebase services
  
-   afterEach(function () {
-     for (const proc of procs.splice(0)) {
-       killTree(proc);
-     }
-+    killPids(pids);
-   });
- 
-   it('leaves the port alone when the Jet exited by itself (never signalled)', async function () {
-@@ -413,6 +431,8 @@ describe('killJetForRetry', function () {
-     procs.push(root);
-     expect(await waitFor(() => portOpen(port))).toBe(true);
-     const listener = Number(execSync(`pgrep -P ${root.pid}`, { encoding: 'utf8' }).trim());
-+    expect(listener).toBeGreaterThan(0);
-+    pids.push(listener);
-     const closePort = jest.fn(async () => {});
- 
-     expect(await killJetForRetry(root, { killTree, closePort })).toBe(true);
-@@ -431,25 +451,46 @@ describe('killJetForRetry', function () {
-   });
- });
- 
--describe('waitForOrchestrate', function () {
-+describe('waitAtMost', function () {
-   afterEach(function () {
-     jest.useRealTimers();
-   });
- 
--  it('clears its timer when the orchestrate settles first', async function () {
-+  it('clears its timer when the promise settles first', async function () {
-     jest.useFakeTimers();
--    expect(await waitForOrchestrate(Promise.resolve(), 30000)).toBe(false);
--    expect(await waitForOrchestrate(Promise.reject(new Error('launch')), 30000)).toBe(false);
-+    expect(await waitAtMost(Promise.resolve(), 30000)).toBe(false);
-+    expect(await waitAtMost(Promise.reject(new Error('launch')), 30000)).toBe(false);
-     expect(jest.getTimerCount()).toBe(0);
-   });
- 
--  it('reports a timeout when the orchestrate is still running', async function () {
-+  it('reports a timeout when the promise is still running', async function () {
-     jest.useFakeTimers();
--    const pending = waitForOrchestrate(new Promise(() => {}), 30000);
-+    const pending = waitAtMost(new Promise(() => {}), 30000);
-     jest.advanceTimersByTime(30000);
-     expect(await pending).toBe(true);
-     expect(jest.getTimerCount()).toBe(0);
-   });
-+
-+  it('stops waiting for a hung terminateApp and handles its later rejection', async function () {
-+    jest.useFakeTimers();
-+    let rejectTerminate;
-+    const terminate = new Promise((_, reject) => {
-+      rejectTerminate = reject;
-+    });
-+    const pending = waitAtMost(terminate, 15000);
-+    jest.advanceTimersByTime(15000);
-+    expect(await pending).toBe(true);
-+    const unhandled = jest.fn();
-+    process.on('unhandledRejection', unhandled);
-+    try {
-+      rejectTerminate(new Error('detox disconnected'));
-+      jest.useRealTimers();
-+      await sleep(50);
-+      expect(unhandled).not.toHaveBeenCalled();
-+    } finally {
-+      process.off('unhandledRejection', unhandled);
-+    }
-+  
 ```
 
-**File**: `tests/e2e/firebase.test.js` (modified, +27/-17)
+**File**: `docs/migrating-to-v26.mdx` (modified, +2/-2)
 ```diff
-@@ -46,7 +46,7 @@ const {
-   killJetAfterOrchestrateFailure,
-   killJetForRetry,
-   stopAttemptJet,
--  waitForOrchestrate,
-+  waitAtMost,
- } = require('./jetAttemptDrain');
- const { createJetAttemptSession } = require('./jetSession');
- const {
-@@ -214,6 +214,10 @@ const ANDROID_AVD_NAME =
- const ANDROID_EMULATOR_COLD_BOOT_ARGS = (
-   process.env.RNFB_ANDROID_EMULATOR_BOOT_ARGS || '-no-snapshot-load -no-snapshot-save'
- ).trim();
-+const DRAIN_TERMINATE_TIMEOUT_MS = parseInt(
-+  process.env.RNFB_DRAIN_TERMINATE_TIMEOUT_MS || '15000',
-+  10,
-+);
- const DRAIN_ORCHESTRATE_TIMEOUT_MS = parseInt(
-   process.env.RNFB_DRAIN_ORCHESTRATE_TIMEOUT_MS || '30000',
-   10,
-@@ -996,24 +1000,22 @@ async function drainJetAttempt(platform) {
-   // Before the orchestrate wait: a launch retry still running must not respawn Jet.
-   ctx?.jetSession?.abandon();
+@@ -141,7 +141,7 @@ v26 aligns React Native Firebase modular types and several runtime signatures wi
+ | Method | Before | After | Notes |
+ | ------ | ------ | ----- | ----- |
+ | `logEvent(analytics, …)` | `Promise<void>` | `void` | Fire-and-forget; remove `await` / `.then()` |
+-| `initializeAppCheck(app?, options?)` | `Promise<AppCheck>` | `AppCheck` | Returns handle immediately; provider setup continues natively |
++| `initializeAppCheck(app?, options?)` | `Promise<AppCheck>` | `AppCheck` | Returns handle immediately; provider setup continues in the background (native SDK, or firebase-js-sdk web interop on macOS and web); setup failures are reported with `console.warn` |
+ | `initializeFirestore(app, settings, databaseId?)` | `Promise<Firestore>` | `Firestore` | Returns instance immediately; `settings()` runs on native bridge |
+ | `getRemoteConfig(app?, options?)` | `(app?)` only | `(app?, options?: RemoteConfigOptions)` | `options` accepted for parity; no-op on native |
+ | `aggregateFieldEqual()` | Not exported | Exported | Aggregate query helper |
+@@ -554,7 +554,7 @@ The namespaced API for `@react-native-firebase/app-check` has been **removed**.
  
-+  // Detox terminateApp has no timeout of its own and may already be disconnected.
-+  if (
-+    await waitAtMost(
-+      Promise.resolve().then(() => device.terminateApp()),
-+      DRAIN_TERMINATE_TIMEOUT_MS,
-+    )
-+  ) {
-+    console.warn(`[rnfb-e2e] drain terminateApp timed out after ${DRAIN_TERMINATE_TIMEOUT_MS}ms`);
-+  }
-   if (platform === 'android') {
--    try {
--      await device.terminateApp();
--    } catch (_) {
--      // Detox may already be disconnected.
--    }
-     forceStopAndroidTestingApps('drain');
--  } else {
--    try {
--      await device.terminateApp();
--    } catch (_) {
--      // No-op
--    }
-   }
+ ## Signature changes
  
-   if (
-     ctx?.orchestratePromise &&
--    (await waitForOrchestrate(ctx.orchestratePromise, DRAIN_ORCHESTRATE_TIMEOUT_MS))
-+    (await waitAtMost(ctx.orchestratePromise, DRAIN_ORCHESTRATE_TIMEOUT_MS))
-   ) {
-     console.warn(`[rnfb-e2e] drain orchestrate timed out after ${DRAIN_ORCHESTRATE_TIMEOUT_MS}ms`);
-   }
-@@ -1478,14 +1480,19 @@ async function killJetForLaunchRetry(jetProcess, reason = 'launch-retry') {
-   });
- }
+-- `initializeAppCheck(app?, options?)` returns `AppCheck` synchronously (previously `Promise<AppCheck>`). Native provider setup continues in the background — remove `await` and do not chain `.then()`.
++- `initializeAppCheck(app?, options?)` returns `AppCheck` synchronously (previously `Promise<AppCheck>`). Provider setup continues in the background (native SDK, or firebase-js-sdk web interop on macOS and web) — remove `await` and do not chain `.then()`. A failure while configuring the provider is reported with `console.warn` instead of an unhandled promise rejection; invalid options still throw synchronously.
  
--async function launchAppWithRetry(launchArgs, { testsDir, onBeforeRelaunch } = {}) {
-+async function launchAppWithRetry(
-+  launchArgs,
-+  { testsDir, onBeforeRelaunch, throwIfAbandoned } = {},
-+) {
-   const liveMetro = usesLiveMetro();
-   let lastLaunchFailure;
-   let deleteAppAfterColdBoot = false;
+ # Analytics
  
-   for (let launchAttempt = 1; launchAttempt <= LAUNCH_APP_MAX_ATTEMPTS; launchAttempt++) {
-     try {
-       if (launchAttempt > 1) {
-+        // Before the cold boot: a drained attempt must not reboot the next attempt's device.
-+        throwIfAbandoned?.();
-         console.warn(
-           `[rnfb-e2e] Retrying launchApp after launch failure (attempt ${launchAttempt}/${LAUNCH_APP_MAX_ATTEMPTS}) liveMetro=${liveMetro}`,
-         );
-@@ -1635,14 +1642,15 @@ async function runJetE2eAttempt(attempt) {
-       },
-       {
-         testsDir,
-+        throwIfAbandoned: () => jetSession.throwIfAbandoned(),
-         onBeforeRelaunch: async () => {
-           await jetSession.respawnAfterLaunchRetry();
-         },
-       },
-     );
--    logOrchestrateState('launch-ok');
--    // A launch that finishes after the drain must not start the next attempt's Jet run.
-+    // A launch that finishes after the drain must not post to or start the next attempt's Jet.
-     jetSession.throwIfAbandoned();
-+    logOrchestrateState('launch-ok');
-     await signalJetLaunchReady();
-     logOrchestrateState('tests-run-permitted');
-   };
-@@ -1657,7 +1665,9 @@ async function runJetE2eAttempt(attempt) {
-         return awaitJetExitWithStallGuard(jetSession);
-       })
-       .catch(async err => {
--        logOrchestrateState('orchestrate-failed');
-+        if (!jetSession.abandoned) {
-+          logOrchestrateState('orchestrate-failed');
-+        }
-         await killJetAfterOrchestrateFailure(jetSession, err, killJetForLaunchRetry);
-         err.jetOutput = jetSession.output;
-         throw err;
 ```
 
-**File**: `tests/e2e/jetAttemptDrain.js` (modified, +7/-4)
+**File**: `okf-bundle/packages/app-check/architecture-decisions.md` (modified, +12/-4)
 ```diff
-@@ -68,15 +68,18 @@ async function killJetAfterOrchestrateFailure(session, err, killJet) {
-   return true;
- }
+@@ -103,14 +103,22 @@ While pending, token completions must use an **actionable** error that mentions
  
--/** Wait at most `timeoutMs` for an orchestrate to settle; true when the wait timed out. */
--async function waitForOrchestrate(orchestratePromise, timeoutMs) {
-+/**
-+ * Wait at most `timeoutMs` for a promise (orchestrate, terminateApp) to settle; true when
-+ * the wait timed out. A rejection counts as settled.
-+ */
-+async function waitAtMost(promise, timeoutMs) {
-   let timer;
-   const timedOut = new Promise(resolve => {
-     timer = setTimeout(() => resolve(true), timeoutMs);
-   });
-   try {
-     return await Promise.race([
--      orchestratePromise.then(
-+      promise.then(
-         () => false,
-         () => false,
-       ),
-@@ -93,5 +96,5 @@ module.exports = {
-   killJetAfterOrchestrateFailure,
-   killJetForRetry,
-   stopAttemptJet,
--  waitForOrchestrate,
-+  waitAtMost,
- };
+ | Layer | Value |
+ | ----- | ----- |
+-| Provider `NSError` domain | `RNFBErrorDomain` (same as `RNFBSharedUtils`) |
+-| Provider `NSError` code | `666` (RNFB promise-error convention) |
+-| `userInfo[@"code"]` | `provider-not-ready` |
++| Provider `NSError` domain (iOS) | `RNFBErrorDomain` (same as `RNFBSharedUtils`) |
++| Provider `NSError` code (iOS) | `666` (RNFB promise-error convention) |
++| Provider exception (Android) | `ProviderNotReadyException`, same message |
++| `userInfo[@"code"]` (iOS) | `provider-not-ready` |
+ | Message | `App Check provider is not ready. Call initializeAppCheck before requesting tokens.` |
+ | JS / TurboModule reject `code` | `provider-not-ready` |
+ | Full `NativeFirebaseError` | `appCheck/provider-not-ready` |
+ 
+-Map pending in `RNFBAppCheckModule` (`getToken` / `getLimitedUseToken`) so provider errors do not collapse to generic `token-error`. Detect via `userInfo[@"code"] == provider-not-ready` or nil `delegateProvider` before calling the SDK.
++Map pending in the token entry points (`getToken` / `getLimitedUseToken`) on both platforms so provider errors do not collapse to generic `token-error`:
++
++- **Pre-check (before the SDK):** reject `provider-not-ready` when the app has no RNFB provider or its delegate is null. iOS: `RNFBAppCheckRejectIfProviderNotReady` (`RNFBAppCheckHelper.m`). Android: `rejectIfProviderNotReady` in `NativeRNFBTurboAppCheck`, via `ReactNativeFirebaseAppCheckProviderFactory.isProviderReady`.
++- **Completion mapping (reconfigure fails after the check passes):** iOS matches `userInfo[@"code"] == provider-not-ready` along the error chain (`RNFBAppCheckRejectCodeMapper`). Android walks the cause chain for `ProviderNotReadyException` (`tokenErrorCode` / `tokenErrorMessage`).
++
++An app that installs its own native provider factory without calling `initializeAppCheck` gets `provider-not-ready` on both platforms.
++
++Platform difference: the Android `providerFactory` belongs to one `NativeRNFBTurboAppCheck` instance, while iOS uses the process-wide `RNFBAppCheckSharedProviderFactory()`. After a JS reload or module invalidation, Android rejects `provider-not-ready` until `initializeAppCheck` runs again; apps normally re-run it on reload.
+ 
+ **Rejected:** Reusing `FIRAppCheckErrorCodeInvalidConfiguration` (or other `FIRAppCheckErrorDomain` codes) for pending — those mean SDK invalid-config / network / keychain, not “JS has not configured yet,” and would still surface as today’s generic `token-error` path without an explicit module map.
+ 
+```
+
+**File**: `okf-bundle/testing/agent-command-policy.md` (modified, +1/-1)
+```diff
+@@ -206,7 +206,7 @@ Local e2e (`yarn tests:*:test-cover`), the packager, emulator start, native buil
+ 
+ - There is **no** `yarn google-java-format` script. Invented `google-java-format` / `npx google-java-format` invocations are forbidden.
+ - **Canonical:** `yarn lint:android` (repo root) — wraps `google-java-format --set-exit-if-changed --replace` on **Java** under `packages/*/android/src` and fails if the tree would change. Outside a git work tree (for example an rsync copy of the checkout) it skips the `git diff` step and relies on the formatter exit alone. It does **not** format Kotlin.
+-- **Needs JDK 21+:** the bundled `google-java-format` 1.35.0 jar runs on whatever `java` is first on `PATH` (not Gradle's JDK). On JDK < 21 it fails many files, untouched ones included, with `NoClassDefFoundError: com/sun/tools/javac/tree/JCTree$JCAnyPattern`. This is a host JDK problem, not a formatting failure. Put a JDK 21 first on `PATH` for the same command, e.g. `PATH="$(/usr/libexec/java_home -v 21)/bin:$PATH" yarn lint:android` (macOS).
++- **Needs JDK 21+:** the bundled `google-java-format` 1.35.0 jar runs on whatever `java` is first on `PATH` (not Gradle's JDK). On JDK < 21 it fails many files, untouched ones included, with `NoClassDefFoundError: com/sun/tools/javac/tree/JCTree$JCAnyPattern`. This is a host JDK problem, not a formatting failure. Put a JDK 21 first on `PATH` for the same command, e.g. `J21="$(/usr/libexec/java_home -v 21 -F)" && PATH="$J21/bin:$PATH" yarn lint:android` (macOS; stops if no JDK 21 is found. Without `-F`, `java_home` returns another installed JDK instead of failing; a Homebrew `/opt/homebrew/opt/openjdk@21/bin` works as the `PATH` entry instead).
+ 
+ <a id="android-kotlin-format"></a>
+ 
+```
+
+**File**: `okf-bundle/testing/android-architecture-decisions.md` (modified, +1/-0)
+```diff
+@@ -41,6 +41,7 @@ Prefer **plain JUnit4** for Android Java state-machine / bridge logic that e2e c
+ | `@Config` | Omit unless the test **fails without it**. Keep the smallest working annotation (for example `application = …` when a custom `Application` is required). **Never pin `sdk` unless that test fails without the pin** — an `sdk` pin triggers a large on-demand Robolectric `android-all` download. Do not treat an `sdk` pin as a general requirement. |
+ | Doubles | Mockito (`mock`, `mockStatic`, etc.) for RN host/context and Firebase SDK types (for example `ReactApplicationContext`, `Arguments`, `FirebaseMessaging`); prefer a small mock over pulling in Robolectric. Production classes that extend or call RN/Firebase types **may be instantiated** in JVM tests with those collaborators mocked |
+ | Test seams | A package-private (no `public`) method on the production class may wrap a collaborator lookup (for example `FirebaseMessaging.getInstance()`) so a test subclass can substitute it. Use this when a `mockStatic` would be thread-bound but the code under test runs on another thread (module executor) |
++| Framework stubs | Plain JUnit4 runs against `android.jar` stubs that throw (no `testOptions.unitTests.returnDefaultValues`). `new FirebaseException(…)` (shipped in `play-services-basement`) fails because its constructor calls `Preconditions.checkNotEmpty`, which calls `TextUtils.isEmpty`; simulate SDK failures with a plain `Exception` carrying the same message, or `mockStatic(TextUtils.class)` as tests already do for `Log` (for example `ReactNativeFirebaseAppCheckProviderTest`) |
+ | Dependencies | Per-package `android/build.gradle` `testImplementation` for JUnit, Robolectric (`4.14.1`) and Mockito (`5.14.2`) where its tests need them |
+ | Entry command | `yarn tests:android:unit` → `tests/android` `./gradlew rnfbDebugUnitTests` |
+ | Coverage artifact | Module Jacoco `*.exec` (merged into Codecov via `jacocoTestReport` — [coverage design](coverage-design.md)) |
+```
+
+**File**: `okf-bundle/testing/running-e2e.md` (modified, +3/-1)
+```diff
+@@ -854,6 +854,8 @@ Slotted mode: no e2e retries (fail-fast). Serial mode: up to 3 `:test-cover` att
+ 
+ **First use of a slot:** `yarn tests:e2e:setup-android-avds [count]` / `yarn tests:e2e:setup-ios-sims [count]` — [setup count](#e2e-slot-index). Both scripts are **create/reuse-only** — an existing device is reported and reused; neither deletes, renames, or erases anything. Serial unslotted devices stay `TestingAVD` / `iPhone 17`. iOS simulators are created on **`RNFB_IOS_SIM_RUNTIME`** (default `iOS 27.0`); CI/Jet reboot paths use **UDID** + selected-Xcode **Device Hub** — see [iOS CI simulator reliability](../ci-workflows/ios.md#simulator-reliability). Naming and host migration: [iOS slot simulators](#ios-slot-simulators).
+ 
++**Base `TestingAVD` prerequisite (Android):** `yarn tests:e2e:setup-android-avds` does **not** create the serial `TestingAVD`; [`scripts/e2e/create-android-avds.sh`](../../scripts/e2e/create-android-avds.sh) only clones an existing base (`RNFB_ANDROID_BASE_AVD`, default `TestingAVD`) into `TestingAVD-N` and fails with `base AVD 'TestingAVD' not found` otherwise. A human creates it once in Android Studio Device Manager; CI uses API **36**, `google_apis`, `x86_64` ([`tests_e2e_android.yml`](../../.github/workflows/tests_e2e_android.yml) matrix). If the script reports it missing, agents stop and ask the user — `avdmanager` is not on the [agent allowlist](agent-command-policy.md). Match the CI API level: the readiness probe in [`tests/e2e/firebase.test.js`](../../tests/e2e/firebase.test.js) runs `adb shell cmd package wait-for-handler`, which API 33 does not support (`Unknown command: wait-for-handler`), so an older image stalls retrying `android-ready package handler wait` until `RNFB_REBOOT_ANDROID_EMULATOR_TIMEOUT_MS` (default 5 min) and the app never launches.
++
+ Keep exported env in the **same shell**. `export-slot-env` loads full `RNFB_{ANDROID,IOS,MACOS}_*` carry-in, `ANDROID_SERIAL=emulator-$((5556+2*N))`, `RNFB_ANDROID_CONSOLE_PORT` (Detox must not FreePortFinder **10000–20000**), `RNFB_MACOS_PRODUCT_NAME=io.invertase.testing.sN`. Does not set `GRADLE_USER_HOME`.
+ 
+ **Serial leftover env + Jest transform cache:** `tests/.babelrc` / `tests-macos/.babelrc` `babel-plugin-transform-inline-environment-variables` inlines `RNFB_*` at transform time. Jest’s transform cache does **not** include those env values, so a prior slotted shell can make serial `:test-cover` wait on android slot-0 Metro **`:12007`**. Mitigations: `eval "$(yarn tests:e2e:clear-slot-env)"` before a serial Law run; `e2e_sanitize_serial_env` inside packager / emulator / `:build` / `:test-cover` when `RNFB_E2E_SLOT` is unset (then **pins** `RNFB_ANDROID_CONSOLE_PORT=5554` / `ANDROID_SERIAL=emulator-5554` so Detox does not FreePortFinder **10000–20000**); `cache: false` in `tests/e2e/jest.config.js` so Detox Jest cannot replay a slotted transform. Host Metro wait is not the only leftover: a **slot-baked APK** (`react_native_dev_server_port=12007`) on serial `:test-cover` still launches `TestingAVD`/`emulator-5554` then fails Detox `isReady` / APP_STATUS — `e2e_assert_android_apk_metro_port` fail-fasts that mismatch.
+@@ -885,7 +887,7 @@ Keep exported env in the **same shell**. `export-slot-env` loads full `RNFB_{AND
+ | `RNFB_{ANDROID,IOS,MACOS}_JET_CONTROL_PORT`                                                                                                                              | Per-platform Jet HTTP control (preferred); `RNFB_JET_CONTROL_PORT` remains a process-local fallback                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+ | `RNFB_JET_CONTROL_PORT`                                                                                                                                                  | Process-local Jet HTTP control plane fallback (default `JET_REMOTE_PORT + 1`)                                                                                                                                                                                                                                                                                                                                                                                               
+```
+
+**File**: `okf-bundle/testing/validation-checklist.md` (modified, +3/-0)
+```diff
+@@ -78,6 +78,9 @@ yarn tests:jest --watchman=false packages/firestore/__tests__/pipelines.test.ts
+ 
+ Optional: `yarn tests:jest-coverage`.
+ 
++<a id="jest-unhandled-rejections"></a>
++**Unhandled rejections:** on Node 24 an unhandled promise rejection crashes the Jest process (`triggerUncaughtException`), aborting the file so other tests report nothing; a `process.on('unhandledRejection')` listener in a test cannot reliably observe it (Jest sandboxes `process`). Assert the handler is attached instead: spy the method returning the promise, wrap the returned promise's `then` to capture the derived promise, and assert that resolves (pattern: `packages/app-check/__tests__/initializeAppCheck.test.ts`). When proving such tests fail on old code, run them one at a time (`-t`) so each failure is reported.
++
+ ## Android JVM unit tests
+ 
+ When `packages/*/android/**` Java bridge/state-machine logic changed (or added under `src/test/java`):
 ```
 
 ---
 
-### Incident Patch 3: `164ea54f` (2026-11-08)
-**Commit Message**: fix(e2e): keep a late Jet attempt from killing the next attempt's Jet
+### Incident Patch 3: `439611d7` (2026-11-13)
+**Commit Message**: fix(perf): remove the frame metrics listener when a screen trace stops (#9482)
 
-The drain waits a bounded time for the failed attempt's orchestrate, so that orchestrate can still be running when the next attempt starts. It could then kill the Jet holding the Jet port, which is the next attempt's: a launch retry killed the old Jet before checking whether the attempt was abandoned, the orchestrate failure handler killed it whatever the error, and the kill only skipped a Jet that had been signalled, so a Jet that exited by itself went on to the port cleanup. A launch finishing late also told the next attempt's Jet to start its run.
-
-The Jet session moves to tests/e2e/jetSession.js with its spawn, kill and respawn wait injected. An abandoned session refuses to respawn before it kills anything and throws before signalling launch-ready. The failure handler skips the kill once the attempt is abandoned. The launch-retry and stall kill goes through killJetForRetry, which acts only on a Jet that is still running and kills its process tree first, with no SIGTERM to the root that would orphan the listener.
-
-The drain's orchestrate wait clears its timer, so it no longer logs a timeout after the orchestr
-
-**File**: `packages/app/__tests__/e2eStartupFailFast.test.js` (modified, +3/-1)
+**File**: `packages/perf/android/src/main/java/io/invertase/firebase/perf/ScreenTrace.java` (modified, +1/-1)
 ```diff
-@@ -232,7 +232,9 @@ describe('9-way overlap and latency tolerance (UNI-9way-latency)', function () {
-     const src = fs.readFileSync(path.join(repoRoot, 'tests/e2e/firebase.test.js'), 'utf8');
-     const killJetAt = src.indexOf('async function killJetForLaunchRetry');
-     const drainAt = src.indexOf("await ensureTcpPortClosed(jetRemotePort(), 'drain')");
--    const retryAt = src.indexOf('await ensureTcpPortClosed(\n      jetRemotePort(),');
-+    const retryAt = src.indexOf(
-+      'await ensureTcpPortClosed(jetRemotePort(), label, KILL_JET_FOR_LAUNCH_RETRY_TIMEOUT_MS)',
-+    );
-     const portOwnership = fs.readFileSync(
-       path.join(repoRoot, 'tests/e2e/portOwnership.js'),
-       'utf8',
-```
-
-**File**: `packages/app/__tests__/jetAttemptDrain.test.js` (modified, +258/-4)
-```diff
-@@ -11,8 +11,12 @@ jest.setTimeout(30000);
- const {
-   JetAttemptAbandonedError,
-   jetProcessAlive,
-+  killJetAfterOrchestrateFailure,
-+  killJetForRetry,
-   stopAttemptJet,
-+  waitForOrchestrate,
- } = require('../../../tests/e2e/jetAttemptDrain');
-+const { createJetAttemptSession } = require('../../../tests/e2e/jetSession');
+@@ -102,7 +102,7 @@ public void sendScreenTrace() {
+     int frozenFrames = 0;
  
- function freePort() {
-   return new Promise((resolve, reject) => {
-@@ -219,6 +223,235 @@ describe('Jet attempt drain', function () {
-   });
- });
+     // Stops recording metrics for this Activity and returns the currently-collected metrics
+-    SparseIntArray[] arr = frameMetricsAggregator.reset();
++    SparseIntArray[] arr = frameMetricsAggregator.stop();
  
-+// Like the harness ensureTcpPortClosed for this run's own listeners: kills whatever
-+// listens on the port, which after the drain is the next attempt's Jet.
-+function killPortHolders(port) {
-+  const pids = execSync(`lsof -nP -iTCP:${port} -sTCP:LISTEN -t 2>/dev/null || true`, {
-+    encoding: 'utf8',
-+  })
-+    .split(/\s+/)
-+    .filter(Boolean);
-+  for (const pid of pids) {
-+    try {
-+      process.kill(Number(pid), 'SIGKILL');
-+    } catch (_) {
-+      // already gone
-+    }
-+  }
-+}
-+
-+// The harness always races exitPromise; a killed stand-in Jet rejects it.
-+function jetAttemptSession(deps) {
-+  const session = createJetAttemptSession(deps);
-+  session.exitPromise.catch(() => {});
-+  return session;
-+}
-+
-+function orphaningRoot(port) {
-+  return spawn(
-+    '/bin/sh',
-+    [
-+      '-c',
-+      `${JSON.stringify(process.execPath)} -e "require('net').createServer().listen(${port}, '127.0.0.1'); setInterval(() => {}, 1000)" & wait`,
-+    ],
-+    { stdio: 'ignore' },
-+  );
-+}
-+
-+describe('a late attempt-1 orchestrate after the drain', function () {
-+  const procs = [];
-+
-+  afterEach(function () {
-+    for (const proc of procs.splice(0)) {
-+      killTree(proc);
-+    }
-+  });
-+
-+  // Attempt 1's session, drained, with attempt 2's Jet now holding the same port.
-+  async function drainedAttemptWithNextJet() {
-+    const port = await freePort();
-+    const killJet = jest.fn(proc =>
-+      killJetForRetry(proc, { killTree, closePort: async () => killPortHolders(port) }),
-+    );
-+    const spawned = [];
-+    const session = jetAttemptSession({
-+      spawnProcess: () => {
-+        const proc = spawnStandInJet(port);
-+        spawned.push(proc);
-+        procs.push(proc);
-+        return proc;
-+      },
-+      killJet,
-+      afterRespawn: async () => {},
-+    });
-+    expect(await waitFor(() => portOpen(port))).toBe(true);
-+    const attempt1Jet = session.process;
-+    expect(stopAttemptJet(session, { killTree })).toBe(attempt1Jet.pid);
-+    await exited(attempt1Jet);
-+    expect(await waitFor(async () => !(await portOpen(port)))).toBe(true);
-+
-+    const attempt2Jet = spawnStandInJet(port);
-+    procs.push(attempt2Jet);
-+    expect(await waitFor(() => portOpen(port))).toBe(true);
-+    return { port, session, killJet, spawned, attempt2Jet };
-+  }
-+
-+  it('does not respawn: a launch retry throws before killing anything', async function () {
-+    const { port, session, killJet, spawned, attempt2Jet } = await drainedAttemptWithNextJet();
-+
-+    await expect(session.respawnAfterLaunchRetry()).rejects.toBeInstanceOf(
-+      JetAttemptAbandonedError,
-+    );
-+
-+    expect(killJet).not.toHaveBeenCalled();
-+    expect(spawned).toHaveLength(1);
-+    await sleep(300);
-+    expect(jetProcessAlive(attempt2Jet)).toBe(true);
-+    expect(await portOpen(port)).toBe(true);
-+  });
-+
-+  it('kills nothing when its orchestrate then fails', async function () {
-+    const { port, session, killJet, attempt2Jet } = await drainedAttemptWithNextJet();
-+
-+    expect(
-+      await killJetAfterOrchestrateFailure(session, new Error('launch timeout'), killJet),
-+    ).toBe(false);
-+    expect(
-+      await killJetAfterOrchestrateFailure(session, new JetAttemptAbandonedError(), killJet),
-+    ).toBe(false);
-+
-+    expect(killJet).not.toHaveBeenCalled();
-+    await sleep(300);
-+    expect(jetProcessAlive(attempt2Jet)).toBe(true);
-+    expect(await portOpen(port)).toBe(true);
-+  });
-+
-+  it('does not start the next attempt’s Jet run when its launch finishes late', async function () {
-+    const { session } = await drainedAttemptWithNextJet();
-+    expect(() => session.throwIfAbandoned()).toThrow(JetAttemptAbandonedError);
-+  });
-+
-+  it('does not spawn when the drain abandons it during the respawn kill', async function () {
-+    const port = await freePort();
-+    const spawned = [];
-+    let session;
-+    session = jetAttemptSession({
-+      spawnProcess: () => {
-+        const proc = spawnStandInJet(port);
-+        spawned.push(proc);
-+        procs.push(proc);
-+        return proc;
-+      },
-+      killJet: async proc => {
-+        session.abandon();
-+        killTree(proc);
-+      },
-+      afterRespawn: async () => {},
-+    });
-+
-+    await expect(session.respawnAfterLaunchRetry()).rejects.toBeInstanceOf(
-+      JetAttemptAbandonedError,
-+    );
-+    expect(spawned).toHaveLength(1);
-+  });
-+
-+  it('still cleans up its own Jet when its orchestrate fails before any drain', async function () {
-+    const port = await freePort();
-+    const killJet = jest.fn(async () 
-```
-
-**File**: `packages/app/__tests__/jetExitIgnoreKill.test.js` (modified, +3/-2)
-```diff
-@@ -71,8 +71,9 @@ describe('jetExitIgnoreKill (await-exit stall vs exitPromise race)', function ()
-     const guardBody = src.slice(guardStart, guardEnd);
-     expect(guardBody).toMatch(/jetSession\.killIgnoringExit\(/);
-     expect(guardBody).not.toMatch(/killJetForLaunchRetry\(/);
--    expect(src).toMatch(/require\('\.\/jetExitIgnoreKill'\)/);
--    expect(src).toMatch(/async killIgnoringExit\(/);
-+    const sessionSrc = fs.readFileSync(path.join(repoRoot, 'tests/e2e/jetSession.js'), 'utf8');
-+    expect(sessionSrc).toMatch(/require\('\.\/jetExitIgnoreKill'\)/);
-+    expect(sessionSrc).toMatch(/async killIgnoringExit\(/);
-     expect(src).toMatch(/stall-kill-jet/);
-     expect(src).toMatch(/stall-diagnostics/);
-   });
-```
-
-**File**: `tests/e2e/firebase.test.js` (modified, +43/-133)
-```diff
-@@ -42,8 +42,13 @@ const {
-   androidAdbSerialAppearTimeoutMs,
-   jetAwaitExitStallTimeoutMs,
- } = require('./detoxLatencyPolicy');
--const { killJetIgnoringExit } = require('./jetExitIgnoreKill');
--const { JetAttemptAbandonedError, stopAttemptJet } = require('./jetAttemptDrain');
-+const {
-+  killJetAfterOrchestrateFailure,
-+  killJetForRetry,
-+  stopAttemptJet,
-+  waitForOrchestrate,
-+} = require('./jetAttemptDrain');
-+const { createJetAttemptSession } = require('./jetSession');
- const {
-   recordAndroidDevice,
-   recordIosSimulator,
-@@ -1006,15 +1011,11 @@ async function drainJetAttempt(platform) {
-     }
-   }
- 
--  if (ctx?.orchestratePromise) {
--    await Promise.race([
--      ctx.orchestratePromise.catch(() => {}),
--      sleep(DRAIN_ORCHESTRATE_TIMEOUT_MS).then(() => {
--        console.warn(
--          `[rnfb-e2e] drain orchestrate timed out after ${DRAIN_ORCHESTRATE_TIMEOUT_MS}ms`,
--        );
--      }),
--    ]);
-+  if (
-+    ctx?.orchestratePromise &&
-+    (await waitForOrchestrate(ctx.orchestratePromise, DRAIN_ORCHESTRATE_TIMEOUT_MS))
-+  ) {
-+    console.warn(`[rnfb-e2e] drain orchestrate timed out after ${DRAIN_ORCHESTRATE_TIMEOUT_MS}ms`);
-   }
- 
-   const stoppedPid = stopAttemptJet(ctx?.jetSession, { killTree: killSpawnedProcessTree });
-@@ -1455,32 +1456,26 @@ async function awaitJetExitWithStallGuard(jetSession, stallMs = jetAwaitExitStal
- }
- 
- async function killJetForLaunchRetry(jetProcess, reason = 'launch-retry') {
--  if (!jetProcess || jetProcess.killed) {
--    return;
--  }
--
-   const fromStall = reason === 'stall';
--  logOrchestrateState(fromStall ? 'stall-kill-jet' : 'launch-retry-kill-jet');
--  console.warn(
--    fromStall
--      ? '[rnfb-e2e] stall-kill: killing Jet after await-exit stall'
--      : '[rnfb-e2e] launch-retry: killing Jet before terminateApp/reboot',
--  );
--  jetProcess.kill('SIGTERM');
--  await sleep(500);
--  killSpawnedProcessTree(jetProcess);
--
--  try {
--    await ensureTcpPortClosed(
--      jetRemotePort(),
--      fromStall ? 'stall-kill' : 'launch-retry',
--      KILL_JET_FOR_LAUNCH_RETRY_TIMEOUT_MS,
--    );
--  } catch (err) {
--    console.warn(
--      `[rnfb-e2e] ${fromStall ? 'stall-kill' : 'launch-retry'}: Jet port still open after kill: ${err?.message || err}`,
--    );
--  }
-+  const label = fromStall ? 'stall-kill' : 'launch-retry';
-+  await killJetForRetry(jetProcess, {
-+    killTree: killSpawnedProcessTree,
-+    onKill: () => {
-+      logOrchestrateState(fromStall ? 'stall-kill-jet' : 'launch-retry-kill-jet');
-+      console.warn(
-+        fromStall
-+          ? '[rnfb-e2e] stall-kill: killing Jet after await-exit stall'
-+          : '[rnfb-e2e] launch-retry: killing Jet before terminateApp/reboot',
-+      );
-+    },
-+    closePort: async () => {
-+      try {
-+        await ensureTcpPortClosed(jetRemotePort(), label, KILL_JET_FOR_LAUNCH_RETRY_TIMEOUT_MS);
-+      } catch (err) {
-+        console.warn(`[rnfb-e2e] ${label}: Jet port still open after kill: ${err?.message || err}`);
-+      }
-+    },
-+  });
- }
- 
- async function launchAppWithRetry(launchArgs, { testsDir, onBeforeRelaunch } = {}) {
-@@ -1557,58 +1552,7 @@ function recordJetListeners() {
- }
- 
- function createJetSession(jetArgs, testsDir) {
--  let output = '';
--  let jetProcess;
--  let ignoreExit = false;
--  let abandoned = false;
--  let resolveExit;
--  let rejectExit;
--
--  const exitPromise = new Promise((resolve, reject) => {
--    resolveExit = resolve;
--    rejectExit = reject;
--  });
--
--  const bindProcess = proc => {
--    jetProcess = proc;
--    proc.stdout.on('data', chunk => {
--      const text = chunk.toString();
--      output += text;
--      process.stdout.write(text);
--    });
--    proc.stderr.on('data', chunk => {
--      const text = chunk.toString();
--      output += text;
--      process.stderr.write(text);
--    });
--    proc.on('error', err => {
--      if (ignoreExit) {
--        console.warn(`[rnfb-e2e] ignoring Jet error during launch-retry: ${err?.message || err}`);
--        return;
--      }
--      err.jetOutput = output;
--      rejectExit(err);
--    });
--    proc.on('close', code => {
--      if (ignoreExit) {
--        console.warn(`[rnfb-e2e] ignoring Jet exit code=${code} during launch-retry`);
--        return;
--      }
--      if (code !== 0) {
--        const err = new Error('Jet tests failed!');
--        err.jetOutput = output;
--        err.jetExitCode = code;
--        rejectExit(err);
--        return;
--      }
--      resolveExit({ output });
--    });
--  };
--
--  const spawnJet = () => {
--    if (abandoned) {
--      throw new JetAttemptAbandonedError();
--    }
-+  const spawnProcess = () => {
-     const jp = jetRemotePort();
-     const mp = metroPortForHost();
-     const jcp = jetControlPort();
-@@ -1625,56 +1569,20 @@ function createJetSession(jetArgs, testsDir) {
-         RNFB_JET_CONTROL_PORT: String(jcp),
-       },
-     });
--    bindProcess(proc);
-     // Recorded at spawn so its listeners stay owned even if this process dies first.
-     recordPid(proc.pid, `jet:${jp}`);
-     return proc;
- 
-```
-
-**File**: `tests/e2e/jetAttemptDrain.js` (modified, +51/-0)
-```diff
-@@ -39,8 +39,59 @@ function stopAttemptJet(session, { killTree }) {
-   return proc.pid;
- }
- 
-+/**
-+ * Stop a Jet this run spawned (launch retry, stall) and wait for the Jet port to close.
-+ * A Jet that has already exited is left alone: its pid may be reused, and the Jet port
-+ * may already belong to the next attempt's Jet. Tree first, as in stopAttemptJet.
-+ * Returns whether a Jet was stopped.
-+ */
-+async function killJetForRetry(proc, { killTree, closePort, onKill }) {
-+  if (!jetProcessAlive(proc)) {
-+    return false;
-+  }
-+  onKill?.();
-+  killTree(proc);
-+  await closePort();
-+  return true;
-+}
-+
-+/**
-+ * Cleanup when an attempt's orchestrate fails. Once the drain has abandoned the attempt,
-+ * its Jet is already stopped and the Jet port may be the next attempt's, so a late
-+ * failure of the old orchestrate kills nothing.
-+ */
-+async function killJetAfterOrchestrateFailure(session, err, killJet) {
-+  if (err?.jetAttemptAbandoned || session.abandoned) {
-+    return false;
-+  }
-+  await killJet(session.process);
-+  return true;
-+}
-+
-+/** Wait at most `timeoutMs` for an orchestrate to settle; true when the wait timed out. */
-+async function waitForOrchestrate(orchestratePromise, timeoutMs) {
-+  let timer;
-+  const timedOut = new Promise(resolve => {
-+    timer = setTimeout(() => resolve(true), timeoutMs);
-+  });
-+  try {
-+    return await Promise.race([
-+      orchestratePromise.then(
-+        () => false,
-+        () => false,
-+      ),
-+      timedOut,
-+    ]);
-+  } finally {
-+    clearTimeout(timer);
-+  }
-+}
-+
- module.exports = {
-   JetAttemptAbandonedError,
-   jetProcessAlive,
-+  killJetAfterOrchestrateFailure,
-+  killJetForRetry,
-   stopAttemptJet,
-+  waitForOrchestrate,
- };
-```
-
-**File**: `tests/e2e/jetSession.js` (added, +128/-0)
-```diff
-@@ -0,0 +1,128 @@
-+/* eslint-disable no-console */
-+/*
-+ * One Jet attempt's Jet process: output capture, exit promise, launch-retry respawn.
-+ *
-+ * The harness injects how Jet is spawned, killed and waited for after a respawn. Once the
-+ * drain abandons the attempt, its orchestrate may still be running (the drain waits for
-+ * it only so long); nothing it does may kill or respawn Jet from then on, because the Jet
-+ * port belongs to the next attempt.
-+ */
-+const { JetAttemptAbandonedError } = require('./jetAttemptDrain');
-+const { killJetIgnoringExit } = require('./jetExitIgnoreKill');
-+
-+/**
-+ * @param {{
-+ *   spawnProcess: () => import('child_process').ChildProcess,
-+ *   killJet: (proc: import('child_process').ChildProcess, reason: string) => Promise<void>,
-+ *   afterRespawn: () => Promise<void>,
-+ * }} deps
-+ */
-+function createJetAttemptSession({ spawnProcess, killJet, afterRespawn }) {
-+  let output = '';
-+  let jetProcess;
-+  let ignoreExit = false;
-+  let abandoned = false;
-+  let resolveExit;
-+  let rejectExit;
-+
-+  const exitPromise = new Promise((resolve, reject) => {
-+    resolveExit = resolve;
-+    rejectExit = reject;
-+  });
-+
-+  const bindProcess = proc => {
-+    jetProcess = proc;
-+    proc.stdout?.on('data', chunk => {
-+      const text = chunk.toString();
-+      output += text;
-+      process.stdout.write(text);
-+    });
-+    proc.stderr?.on('data', chunk => {
-+      const text = chunk.toString();
-+      output += text;
-+      process.stderr.write(text);
-+    });
-+    proc.on('error', err => {
-+      if (ignoreExit) {
-+        console.warn(`[rnfb-e2e] ignoring Jet error during launch-retry: ${err?.message || err}`);
-+        return;
-+      }
-+      err.jetOutput = output;
-+      rejectExit(err);
-+    });
-+    proc.on('close', code => {
-+      if (ignoreExit) {
-+        console.warn(`[rnfb-e2e] ignoring Jet exit code=${code} during launch-retry`);
-+        return;
-+      }
-+      if (code !== 0) {
-+        const err = new Error('Jet tests failed!');
-+        err.jetOutput = output;
-+        err.jetExitCode = code;
-+        rejectExit(err);
-+        return;
-+      }
-+      resolveExit({ output });
-+    });
-+  };
-+
-+  const throwIfAbandoned = () => {
-+    if (abandoned) {
-+      throw new JetAttemptAbandonedError();
-+    }
-+  };
-+
-+  const spawnJet = () => {
-+    throwIfAbandoned();
-+    const proc = spawnProcess();
-+    bindProcess(proc);
-+    return proc;
-+  };
-+
-+  const setIgnoreExit = value => {
-+    ignoreExit = value;
-+  };
-+
-+  spawnJet();
-+
-+  return {
-+    get process() {
-+      return jetProcess;
-+    },
-+    get output() {
-+      return output;
-+    },
-+    get abandoned() {
-+      return abandoned;
-+    },
-+    exitPromise,
-+    abandon() {
-+      abandoned = true;
-+    },
-+    throwIfAbandoned,
-+    /**
-+     * Kill Jet with ignoreExit held so exitPromise does not reject and steal an
-+     * outer Promise.race from a retryable caller error (await-exit stall).
-+     * Leaves ignoreExit true — session is abandoned or respawned next.
-+     */
-+    async killIgnoringExit(reason = 'launch-retry') {
-+      await killJetIgnoringExit({ setIgnoreExit, kill: () => killJet(jetProcess, reason) });
-+    },
-+    async respawnAfterLaunchRetry() {
-+      throwIfAbandoned();
-+      try {
-+        await killJetIgnoringExit({
-+          setIgnoreExit,
-+          kill: () => killJet(jetProcess, 'launch-retry'),
-+        });
-+        output += '\n[rnfb-e2e] --- jet respawn after launch retry ---\n';
-+        spawnJet();
-+        await afterRespawn();
-+      } finally {
-+        ignoreExit = false;
-+      }
-+    },
-+  };
-+}
-+
-+module.exports = { createJetAttemptSession };
+     if (arr != null) {
+       SparseIntArray frameTimes = arr[FrameMetricsAggregator.TOTAL_INDEX];
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #9448** (2026-11-08): fix(e2e): harden shared-host e2e scripts for slots, foreign Jet ports and TMPDIR (@mikehardy)
-- **PR #9447** (2026-11-08): fix: harden ruby:install, lint:android and host-dependent app tests (@mikehardy)
-- **PR #9446** (2026-11-08): build: size lerna prepare and gradle workers to the CPUs and memory the build can use (@mikehardy)
-- **PR #9444** (2026-11-08): fix(e2e): release only resources a run recorded; machine wipe is manual-only (@mikehardy)
-- **PR #9442** (2026-11-06): chore: remove accidentally committed .agents/reports/pr-9093 (@mikehardy)
-- **PR #9427** (2026-11-05): ci(android): bump remove-unwanted-software to v5.1 for the ubuntu-26.04 runner (@Mastersam07)
+- **PR #9483** (closed): build(deps): bump amannn/action-semantic-pull-request from 6.1.1 to 6.1.2 in the github-actions-minor-patch group across 1 directory (@dependabot[bot])
+- **PR #9482** (2026-11-13): fix(perf): remove the frame metrics listener when a screen trace stops (@MagicDocJr)
+- **PR #9481** (closed): build(deps): bump the github-actions-minor-patch group across 1 directory with 3 updates (@dependabot[bot])
+- **PR #9480** (closed): build(deps): dependency updates 20261111 (@russellwheatley)
+- **PR #9478** (closed): build(deps): bump proxy-addr from 2.0.7 to 2.0.8 (@dependabot[bot])
+- **PR #9477** (closed): build(deps): bump node-forge from 1.3.3 to 1.4.3 (@dependabot[bot])
 
 ---
 
@@ -2763,28 +1822,28 @@ The drain's orchestrate wait clears its timer, so it no longer logs a timeout af
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build: cap lerna prepare concurrency by memory as well as CPUs
+## X. messaging, ios): refresh the Podfile.lock checksum for the public header
 
 **RULE**:
-When implementing operations in `okf-bundle/monorepo-tooling/prepare-and-cache.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in invertase/react-native-firebase. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tests/ios/Podfile.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in invertase/react-native-firebase. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `37a17e7f`: build: cap lerna prepare concurrency by memory as well as CPUs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `66f977c3`: messaging, ios): refresh the Podfile.lock checksum for the public header. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `okf-bundle/monorepo-tooling/prepare-and-cache.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/ios/Podfile.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-- **Concurrency:** `lerna:prepare` passes `--concurrency` from `scripts/lerna-prepare-concurrency.js`, which only prints a number (the entrypoint is still the inline `lerna run prepare`). The value is `RNFB_LERNA_CONCURRENCY` when it is a positive integer (no leading zero); other values are ignored. Otherwise it is the smaller of `os.availableParallelism()`, which honours the CPU affinity mask (cpusets), and one task per 2.5 GiB of memory (the cgroup limit when there is one, else total RAM), and at least 1. Lerna's own default is one task per CPU. Each `bob build` task can hold well over 1 GiB, and a cold `yarn install` keeps several GiB resident in Yarn itself, so a 16-CPU / 8 GiB Linux VM or container ran out of memory during `yarn install` and the kernel killed Yarn. Yarn's `yarnPath` launcher turns that signal into a bare exit 1 with no message.
+  RNFBMessaging: a3a316146df4f06f2fc580c5874d44f19a06b91d
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-- **Concurrency:** `lerna:prepare` passes `--concurrency` from `RNFB_LERNA_CONCURRENCY` when it is a positive integer (no leading zero), otherwise from `os.availableParallelism()`, which honours the CPU affinity mask (cpusets). Other values are ignored.
+// Induced defect failure mode:
+  RNFBMessaging: dd86392ae250f39b626e1d3ee117457055d6739b
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `37a17e7f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `66f977c3` are properly handled with clean fallback behavior.

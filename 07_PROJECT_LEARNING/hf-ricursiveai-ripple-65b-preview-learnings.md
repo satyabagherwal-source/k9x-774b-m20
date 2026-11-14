@@ -3,7 +3,7 @@
 > **Source Version**: `hf-ricursive`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T22:00:46.154Z  
+> **Timestamp**: 2026-11-14T00:25:00.374Z  
 > **Learning ID**: `learn-huggingface-ricursiveai-ripple-65b-preview`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-ricursiveai-ripple-65b-preview-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/ricursiveAI/Ripple-65B-Preview](https://huggingface.co/ricursiveAI/Ripple-65B-Preview))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T22:00:45.369Z  
+> **Harvest Timestamp**: 2026-11-14T00:25:00.025Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ML Foundation Model
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 5087 downloads | 399 likes
+- **Stars / Engagement**: 8500 downloads | 564 likes
 
 ---
 

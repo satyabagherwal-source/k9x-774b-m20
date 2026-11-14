@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "f26a5e1f",
+    "sourceVersion": "3e505b65",
     "license": "NOASSERTION",
-    "contentHash": "64bcc67eae947a93447d7150d76f694d523b19038f2df83a07a49c7cf98b571c",
-    "lastHarvestedAt": "2026-11-13T18:34:56.924Z",
+    "contentHash": "69ccf0417d267af116c6449252a9869ec23f747b8c4022f131b18375f30eebcf",
+    "lastHarvestedAt": "2026-11-14T00:25:13.006Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -3563,10 +3563,10 @@
     "repository": "invertase/react-native-firebase",
     "platform": "github",
     "sourceUrl": "https://github.com/invertase/react-native-firebase",
-    "sourceVersion": "bfddcf25",
+    "sourceVersion": "439611d7",
     "license": "NOASSERTION",
-    "contentHash": "ff6c2d0cb4fea86f59fede11acdff45c8a4ae770dc6ebd2f83d1ba16d616b121",
-    "lastHarvestedAt": "2026-11-09T16:11:00.711Z",
+    "contentHash": "9fe8c5e367a33b23cfd1cff3a16c70cd0e7a74f4ee6c39bd745f8bd2c84aaa7a",
+    "lastHarvestedAt": "2026-11-14T00:25:08.330Z",
     "learningId": "learn-github-invertase-react-native-firebase"
   },
   "peerdb-io-peerdb": {
@@ -6233,10 +6233,10 @@
     "repository": "yvgude/lean-ctx",
     "platform": "github",
     "sourceUrl": "https://github.com/yvgude/lean-ctx",
-    "sourceVersion": "013ddb1c",
+    "sourceVersion": "b6de365b",
     "license": "Apache-2.0",
-    "contentHash": "8e6f0e6191946d471dd56d6030d08491d01d98cc03155ee4c704e5f3cfb8ef8f",
-    "lastHarvestedAt": "2026-11-12T13:10:23.048Z",
+    "contentHash": "4e9bd0a2bd5cef8313547b27230a3e5094e3e598cdfc39e28186cb18fd7b37b5",
+    "lastHarvestedAt": "2026-11-14T00:25:03.168Z",
     "learningId": "learn-github-yvgude-lean-ctx"
   },
   "gkd-kit-gkd": {
@@ -11955,8 +11955,8 @@
     "sourceUrl": "https://huggingface.co/ricursiveAI/Ripple-65B-Preview",
     "sourceVersion": "hf-ricursiveai-ripple-65b-preview",
     "license": "Open-Source",
-    "contentHash": "21084baf6101d3986553f10dcd47fb2f7a261948dd5534e071d05bb1498f4202",
-    "lastHarvestedAt": "2026-11-08T22:00:46.429Z",
+    "contentHash": "1acf871590ba5b06e6124dcf1ecbbd044a5b60a4999be52ff10090ccd28120e5",
+    "lastHarvestedAt": "2026-11-14T00:25:00.772Z",
     "learningId": "learn-huggingface-ricursiveai-ripple-65b-preview"
   },
   "apache-pinot": {

@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T00:08:17.988Z",
-  "total_cycles_completed": 9414,
-  "total_learnings_persisted": 9414,
-  "total_rules_promoted": 9130,
+  "last_updated": "2026-11-14T00:25:13.012Z",
+  "total_cycles_completed": 9418,
+  "total_learnings_persisted": 9418,
+  "total_rules_promoted": 9132,
   "history": [
-    {
-      "timestamp": "2026-11-13T11:40:06.098Z",
-      "repository": "pointfreeco/sqlite-data",
-      "learningId": "learn-github-pointfreeco-sqlite-data",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T11:40:21.070Z",
-      "repository": "krakend/krakend-ce",
-      "learningId": "learn-github-krakend-krakend-ce",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T11:55:29.229Z",
-      "repository": "tencent/Hy-SimulMT-30B-A3B-FP8",
-      "learningId": "learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T11:55:43.271Z",
-      "repository": "Kuddev/pebrel",
-      "learningId": "learn-github-kuddev-pebrel",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T11:55:45.278Z",
       "repository": "apache/pinot",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-14T00:08:17.988Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T00:25:00.779Z",
+      "repository": "ricursiveAI/Ripple-65B-Preview",
+      "learningId": "learn-huggingface-ricursiveai-ripple-65b-preview",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T00:25:03.184Z",
+      "repository": "yvgude/lean-ctx",
+      "learningId": "learn-github-yvgude-lean-ctx",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T00:25:08.336Z",
+      "repository": "invertase/react-native-firebase",
+      "learningId": "learn-github-invertase-react-native-firebase",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T00:25:13.012Z",
+      "repository": "freenet/freenet-core",
+      "learningId": "learn-github-freenet-freenet-core",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
