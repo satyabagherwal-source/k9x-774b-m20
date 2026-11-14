@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md`  
 > **Source**: github ([https://github.com/bahdotsh/wrkflw](https://github.com/bahdotsh/wrkflw))  
-> **Source Version**: `9889b7da`  
+> **Source Version**: `7b284277`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T00:16:07.388Z  
+> **Timestamp**: 2026-11-14T12:04:07.231Z  
 > **Learning ID**: `learn-github-bahdotsh-wrkflw`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/bahdotsh/wrkflw](https://github.com/bahdotsh/wrkflw))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T00:16:07.125Z  
+> **Harvest Timestamp**: 2026-11-14T12:04:07.224Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Validate and Run GitHub Actions locally.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3341 stars
+- **Stars / Engagement**: 3342 stars
 
 ---
 
@@ -180,6 +180,11 @@ use crate::dependency;
 use crate::docker;
 use crate::environment;
 use crate::events::{step_display_name, EXIT_CODE_LABEL, STDERR_HEADER, STDOUT_HEADER};
+use crate::image_build::{
+    ahead_build_permits, build_image_checked, ensure_shared_layers, failed_image_build,
+    remember_failed_image_build, with_images_built_ahead, with_run_image_builds, AHEAD_BUILDS,
+    IMAGES_BUILT_AHEAD,
+};
 use crate::job_session;
 use crate::kubernetes::{self, KubernetesConfig};
 use crate::live_step::LiveStep;
@@ -238,7 +243,10 @@ pub async fn execute_workflow(
         std::sync::Arc::new(state),
         crate::workspace::with_workflow_file(
             workflow_path,
-            Box::pin(execute_github_workflow(workflow_path, config.clone())),
+            Box::pin(with_run_image_builds(execute_github_workflow(
+                workflow_path,
+                config.clone(),
+            ))),
         ),
     ))
     .await;
@@ -415,19 +423,7 @@ async fn execute_github_workflow(
                     if step.status == StepStatus::Failure {
                         failure_details.push_str(&format!(
                             "  {} {}: {}\n",
-                            wrkflw_logging::symbols::FAILURE,
-                            step.name,
-                            step.output
-                        ));
-                    }
-                }
-            }
-        }
-
-        results.extend(job_results);
-    }
-
-    // If there were failures, add detailed failure
+                       
 ```
 
 ### Core Architecture Module: `crates/ui/src/app/state.rs`
@@ -2185,11 +2181,13 @@ impl ResultStore {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #169** (2026-11-11): **perf: run the legs of a new matrix together, and fit light jobs side by side again**
-  *Symptoms*: Two scheduling changes for small Docker VMs, found by rerunning the pallets/click benchmark on main after #167 and #168.  ## Results  pallets/click at `1077444`, compared with GitHub run 42384079679 (11 jobs, 65 s on GitHub), Docker Desktop VM with 7.7 GB:  | | main (`a9943e3`) | this PR | |---|---|---| | First compare in a fresh clone | 877 s | 91 s | | Warm compare | 49, 48, 46 s | 33, 37, 42 s | | Jobs agreeing with GitHub | 11/11 | 11/11 |  These numbers were measured before `fe977d6`, which put a margin of an eighth on the highest-peak floor. They have not been re-run since. Click's legs peak at 276–552 MiB, where the recent-runs estimate is above the floor anyway, so I don't expect a change, but that isn't measured.  ## A leg never measured takes its siblings' measurement  Measurements are keyed by the clone's path, so in a fresh clone every matrix leg was unmeasured and ran alone, one after another.  - Each leg's peak is now also kept under an id for the matrix as a whole. A leg with no measurement of its own is given what the matrix was measured at. - Only the first leg of a new matrix runs alone. Legs waiting unmeasured look at the store again whenever a job of the run keeps its measurement, then share the VM. Each look puts the leg at the back of the pool's queue; that is deliberate and commented. - A leg keeps its place in the pool until its measurement is written, so the next leg reads it before taking the place. Without this the second leg would take the whole VM
+- **Issue #171** (2026-11-13): **fix: agree with GitHub on real repositories, and build job images faster**
+  *Symptoms*: ## Problem  Running real repositories was slow and sometimes wrong:  - Each leg of a matrix rebuilt the same packages in its own image. - An image that failed to build was built a second time at the job's turn. - A busy engine failed container creation at 15 seconds. - A few parsing rules disagreed with GitHub.  ## Changes  **Image builds** - The job image is split into a shared packages layer plus one layer per runtime. The shared layers are built once, as an image of their own, where the runtime reuses build layers (Docker, Podman; not Kubernetes). - Images are built ahead while a job waits for its turn, capped at four across the process, and one at a time where the run limits its jobs. - BuildKit is used through the `docker` CLI where it builds into the same engine; otherwise the engine's own builder is used. `WRKFLW_IMAGE_BUILDER=classic` skips BuildKit. - A build that failed on its own is remembered for the run and not repeated. A build that timed out or lost its connection is tried again. - The runner's Node.js comes from nodejs.org, checked against its published checksum, with the distribution's package as the fallback. - Each runtime's install refreshes the package lists first, since it is now a layer of its own.  **Containers** - The engine gets 120 seconds to create or start a container. One whose creation timed out is tracked by name and removed later. - Cleanup passes quietly over a container that was never created, and removes by force one that didn't stop in tim
 
-- **Issue #168** (2026-11-11): **fix: address the review findings from #167**
-  *Symptoms*: Follow-up to #167: fixes the findings from its review.  ## Workspace volume (macOS) — `f85d661` - **Orphan cleanup never found anything on Docker.** The `volume ls` template indexed `.Labels`, which is a string there, so the call failed and every `wrkflw-ws-*` volume leaked. Cleanup now lists by label filter and reads labels with `volume inspect`. Reproduced on local Docker. - **Hard links came back as empty files.** `fetch` now uses tar `--hard-dereference`. - **A kept name stayed kept forever.** Once nothing on the host goes by that name, it is released and fetched again. - **A directory a step made read-only couldn't take its changes back.** The parent is opened for the write, and its mode restored, only when the volume holds it read-only too. Pending-write behaviour for a directory only the host locks is unchanged. - **A preserved container's volume was removed under it.** `release` keeps a volume that stopped containers still use, and gives it up after 5 s of holds when no stopped container is involved. - `with.args` is parsed before the volume sync, so a bad `args` doesn't leave a sync half done.  ## Floating setup versions — `d0f17b7` - The week was written as a Dockerfile comment, which doesn't change the image, so the weekly rebuild never happened. It is now part of the `RUN` line. - `3`/`1` alone count as floating for Python and Go. - Runtime `ENV` (such as `UV_PYTHON_INSTALL_DIR`) is written into the image.  ## Setup verdicts — `6515e0a` - `setup-uv`'s `python-vers
+- **Issue #170** (2026-11-13): **perf: build job images faster, and start no container for a step that only prints**
+  *Symptoms*: ## Summary  On pallets/click (11 jobs, 65 s on GitHub), a first run with no images took 327 s and a warm run 52–72 s. Most of that was not the tests. This cuts the cold run to about 130 s and the warm run to 36–38 s, with all 11 jobs still agreeing with GitHub.  | Run on click (GitHub: 65 s) | Before | After | |---|---|---| | No images, no build cache | 327 s | 125 s, 135 s | | Fresh clone, images present | 65–73 s | 64 s | | Warm, second run onward | 52–72 s | 36–38 s |  ## What changed  - **Shared image layers.** A job's runtime image was one `RUN` with the apt packages, Node.js, uv and the interpreter, so nine matrix legs each spent a minute and 800 MB on the same packages. The packages now have their own layer and each runtime follows in its own. - **BuildKit for runtime images.** The engine's own builder saves a layer after every instruction, which took about as long as the installs. Runtime images are now built through `docker buildx build`. If that doesn't produce the image, the old build runs and reports as before. `WRKFLW_IMAGE_BUILDER=classic` keeps to the old builder. - **Runner Node.js from nodejs.org**, checked against its published checksum: 3.7 s instead of 14.5 s and a second `apt-get update`. - **Images built ahead.** A job used to build its image only once it had room in the VM. Images are now built while jobs wait. The first build of a set of shared packages goes alone and the rest start when its layers exist. - **No container for a step that only prints.**
+  **Post-Mortem & Fix Analysis**:
+  > Closing: both commits here (2e4dfab, 55556cf) landed on main through #171, which was stacked on this branch and merged as 7b28427. Nothing left to merge.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2206,927 +2204,781 @@ impl ResultStore {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e418eebc` (2026-11-11)
-**Commit Message**: fix: report what a local pass didn't check, and make local runs match GitHub's (#167)
+### Incident Patch 1: `7b284277` (2026-11-13)
+**Commit Message**: fix: agree with GitHub on real repositories, and build job images faster (#171)
 
-* fix: report what a local pass did not check, and install Python via uv
+* perf(executor): build job images faster, and start no container for a step that only prints
 
-Benchmarking against pallets/click (GitHub run 42384079679) found the
-local run disagreeing on every job while reporting `verified`. All the
-causes were generic:
+A first run with no images took 327 s for pallets/click's 11 jobs, and a
+warm run 52-72 s, against 65 s on GitHub. Most of it was not the tests.
 
-- A `uses:` step whose action wrkflw cannot run was stubbed and passed
-  silently. It is now recorded as `actions_not_run` on the job, listed
-  under `unverified` as `{job, step, uses, reason}`, makes the verdict
-  `partial`, warns in the log, is marked in the TUI and noted by
-  `compare`.
-- `setup-python` built interpreters from the deadsnakes PPA, which has
-  no `3.15t`, `pypy-3.11` or `3.14` on the default base. Python is now
-  installed through `uv python install`, `astral-sh/setup-uv` is a
-  setup action, and `*-version-file` inputs are read.
-- `compare` on a detached HEAD skipped the workflow. `run` and `plan`
-  take `--branch`, which `compare` sets from the run's head branch;
-  `--event` and `--branch` also set GITHUB_EVENT_NAME and GITHUB_REF.
-- Action metadata for SHA-pinned refs is cached on disk, and
-  `action.yaml` is only tried when `action.yml` is a 
+Each job's runtime image was one RUN holding the apt packages, Node.js,
+uv and the interpreter, so nine matrix legs each spent a minute and
+800 MB on the same packages. The packages now have a layer of their own
+and each runtime follows in its own, so legs differ only in the
+interpreter.
 
-**File**: `.cargo/config.toml` (modified, +6/-0)
+The engine's own builder saves a layer after every instruction, which
+took about as long as the installs. Runtime images are now built with
+BuildKit through `docker buildx build`; if that doesn't produce the
+image, the old build runs and reports as before.
+WRKFLW_IMAGE_BUILDER=classic keeps to the old builder.
+
+The runner's Node.js comes from nodejs.org's own build, checked against
+its published checksum: 3.7 s where the distribution's package took
+14.5 s and a second `apt-get update`.
+
+A job built its image only once it had room in the VM, so builds ran
+one after another behind th
+
+**File**: `INDEX.md` (modified, +136/-19)
 ```diff
-@@ -5,3 +5,9 @@
- # so `WRKFLW_FRESH_WORKSPACE=0 cargo run -- run ...` keeps workspaces.
- [env]
- WRKFLW_FRESH_WORKSPACE = "1"
-+# Likewise for the memory each job was measured to use: tests keep none, so
-+# they never change how a real run on this machine schedules its jobs. This
-+# applies to `cargo run` too, which then schedules every job as unmeasured.
-+# An existing value wins, so name a file to measure, as in
-+# `WRKFLW_JOB_MEMORY_FILE=/tmp/job-memory.json cargo run -- run ...`.
-+WRKFLW_JOB_MEMORY_FILE = ""
-```
-
-**File**: `AGENTS.md` (modified, +8/-7)
-```diff
-@@ -5,11 +5,11 @@ wrkflw validates and runs GitHub Actions and GitLab CI workflows locally. Use it
- ## Loop
- 
- 1. After editing YAML, run `wrkflw --format json validate`.
--2. Run `wrkflw --format json plan <file>` to see job order, matrix legs, whether a trigger fires, and under `unverified` which jobs would run as another OS than `runs-on` asks for. Pass the `--runtime` you will run with.
-+2. Run `wrkflw --format json plan <file>` to see job order, matrix legs, whether a trigger fires, and under `unverified` which jobs would run as another OS than `runs-on` asks for. Pass the `--runtime` you will run with, and `--branch` when the checkout is detached or the push is to another branch, or `--tag` for a tag push. The MCP `run_workflow` and `plan_workflow` tools take the same as `branch` and `tag`.
- 3. Run `wrkflw --format json run <file> --intent "why you are running this"`.
- 4. On failure, read the `failure` object in the final `run_finished` line. Don't rerun to see the error again.
- 5. For earlier runs, use `wrkflw runs list`, `runs failure <id>` and `runs logs <id> --step <name>`.
--6. Before calling a pass done, read `verdict` on `run_finished`, not only `status`. `verified` means every job that ran did so as the OS its `runs-on` asked for. `partial` means some didn't: they are listed under `unverified`, such as `windows-latest` run as Linux, so steps gated on `runner.os` and OS-specific behaviour were not checked. `nothing_checked` means it passed because no job ran. Say which, instead of claiming CI will pass.
-+6. Before calling a pass done, read `verdict` on `run_finished`, not only `status`. `verified` means every job that ran did so as the OS its `runs-on` asked for, and every `uses:` step ran its action. `partial` means some didn't: they are listed under `unverified`, such as `windows-latest` run as Linux, so steps gated on `runner.os` and OS-specific behaviour were not checked, or a step whose action wrkflw can't run (an entry of `kind` `action_not_run`), so whatever that action installs or checks is missing. `nothing_checked` means it passed because no job ran. Say which, instead of claiming CI will pass.
- 
- Prefer the MCP server if your client supports MCP. `wrkflw mcp install` registers it with Claude Code, Codex, Cursor, Windsurf, VS Code, Gemini CLI, opencode, Claude Desktop, GitHub Copilot CLI, Grok Build, Kiro CLI, pi and Zed. Pass a name, such as `wrkflw mcp install codex`, for one agent, and `--dry-run` to see the change first. By hand:
- 
-@@ -29,7 +29,7 @@ Add `--reuse-results` to `wrkflw run`, or `reuse_results` to the MCP `run_workfl
- 
- ## Checking wrkflw against GitHub
- 
--`wrkflw compare <run id or URL>` runs a workflow locally as a finished GitHub Actions run did, for the same event, and lists each job's result on both sides. The working tree must be the commit the run tested: check it out first, in a worktree if you like. It prints one `compare` object: `agree`, `disagreements`, `basis` (`jobs` when jobs were paired by name, `run` when only the run's result could be compared, `none` when nothing could), a `problem` saying why the comparison says less than a per-job one would, the GitHub run, the local run's `status` and `verdict`, and per job `github_name`, `local_name`, `github`, `local`, `agree` (`null` when GitHub cancelled or skipped it before running) and a `note` on why they may differ, such as a job run as another OS or killed for lack of memory. It exits 0 only when something was compared and nothing differed: a local run that errored, ran no job, or can't be compared at all never agrees. A job only one side has a result for, such as a called workflow's job, is named in `problem`: a failure there counts as a disagreement, and the runs' own results are compared too, so a run GitHub failed in a job wrkflw couldn't pair never agrees with a local pass. It reads the API with `GITHUB_TOKEN`, or the token `gh auth token` prints, or none for a public repository.
-+`wrkflw compare <run id or URL>` runs a workflow locally as a finished GitHub Actions run did, for the same event, and lists each job's result on both sides. The working tree must be the commit the run tested: check it out first, in a worktree if you like. It prints one `compare` object: `agree`, `disagreements`, `basis` (`jobs` when jobs were paired by name, `run` when only the run's result could be compared, `none` when nothing could), a `problem` saying why the comparison says less than a per-job one would, `ref_unsure` when `origin` couldn't be asked whether the run's ref is a tag (it is then run as a branch), the GitHub run, the local run's `status` and `verdict`, and per job `github_name`, `local_name`, `github`, `local`, `agree` (`null` when GitHub cancelled or skipped it before running) and a `note` on why they may differ, such as a job run as another OS, an action wrkflw did not run, or a process killed for lack of memory. The run's branch is passed as `--branch`, or its tag as `--tag` for a run a tag push started, s
-```
-
-**File**: `BREAKING_CHANGES.md` (modified, +37/-1)
-```diff
-@@ -1,5 +1,33 @@
- # Breaking Changes
- 
-+## A pass that skipped an action is `partial`, and library API changes (unreleased)
-+
-+A `uses:` step whose action wrkflw didn't run now makes a passing run's `verdict` `partial` instead of `verified`, with an entry `{kind: "action_not_run", job, step, uses, reason}` under `unverified`. Every `unverified` entry now has a `kind`, and the entries for a job run as another OS have `kind: "runner"`. That covers a JavaScript action wrkflw has no implementation of, such as `codecov/codecov-action`, `actions/github-script` or a local `./` action whose `action.yml` runs on Node, and a setup action whose runtime isn't in the job's image: one in a job with `container:`, one inside a composite action whose runtime the job's own steps didn't set up, one whose version wrkflw can't install, and every setup action under emulation. `node-version` and `.nvmrc` aliases such as `lts/*`, `lts/iron` and `node` are now installed rather than ignored, and an `lts/` codename wrkflw doesn't know is refused, as setup-node refuses it, instead of installing the newest LTS. A `go-version` or `go.mod` that names a line such as `1.22` installs that line's newest release. A `*-version-file` must be a path inside the repository. An action inside a composite action is reported on the step that calls the composite action. Workflows that use such actions and used to report `verified` now report `partial`, and `wrkflw gate` prints its partial warning for them. Its exit code is unchanged.
-+
-+`actions/setup-python` installs Python with uv instead of the deadsnakes PPA, under `/opt/uv/python` so steps that run as another user or set `HOME` find it, and a `python-version-file` pointing at `pyproject.toml` installs the newest release `requires-python` allows, as the hosted action does. `pip install` works in it, as on GitHub. The image built for a job with setup actions also gets `less` and, unless the job sets up Node or the base image has it, Node.js 22, as GitHub's Ubuntu runners have. Combined runtime images get new tags, so the first run after upgrading builds them again, and that build takes a little longer.
-+
-+`wrkflw run` and `wrkflw plan` take `--branch` and `--tag`, the branch or tag the event is for, and the MCP `run_workflow` and `plan_workflow` tools take `branch` and `tag`. `wrkflw compare` passes the run's branch, or its tag for a run a tag push started, so a detached checkout of the run's commit fires the same `branches:` and `tags:` filters.
-+
-+`wrkflw compare` and `wrkflw gate` pass `--platform` on to the runs they start, and the pre-push hook that `gate --install-hook` writes keeps it. Both used to accept the flag and ignore it, so their runs used the built-in images.
-+
-+A job that fails before any step runs, because its image can't be built or pulled or its job container or network doesn't start, gets `cause: {kind: "setup_failed"}` in the failure digest, and `compare` says so in its note instead of reporting a plain failure.
-+
-+For crates that use wrkflw as a library:
-+
-+- `wrkflw_runtime::container::ContainerRuntime` requires `Sync`, and gains `image_id` and `identifies_images`, both with defaults. An implementation that isn't `Sync` no longer compiles.
-+- `wrkflw_executor::ExecutionConfig` gains `event_name`, `git_ref` (a full ref such as `refs/heads/main` or `refs/tags/v1.0`) and `base_branch`, and `StepResult` gains `actions_not_run`. Struct literals need the new fields.
-+- `wrkflw_executor::environment::create_github_context` takes a `RunRef`. Without `--event`, a workflow whose first trigger is a pull request now gets `GITHUB_HEAD_REF` and `GITHUB_BASE_REF` like one run with `--event pull_request`.
-+- `ExecutionEvent` gains `ActionNotRun`. An exhaustive `match` on it needs an arm.
-+- `wrkflw_executor::workspace::CleanReport` gains `volumes`, and `clean`'s JSON line a `volumes` count.
-+
-+A job reused with `--reuse-results`, as `wrkflw gate` does, reports the actions it passed without running again, so a pass that was `partial` stays `partial`. Stored results from earlier versions can't say, so they aren't reused and the job runs once more. A step whose action ran its `command` input in its place, and one whose `action.yml` couldn't be fetched, are reported as not run too.
-+
-+`wrkflw run` and `wrkflw plan` refuse `--tag` with a pull request `--event`, which is always for a branch. `--branch` and `--tag` drop a leading `refs/heads/` or `refs/tags/`, and refuse a name git wouldn't allow for a ref instead of quietly missing every `branches:` filter.
-+
-+`actions/setup-python` with neither `python-version` nor `python-version-file` reads `.python-version`, as the hosted action does. `actions/setup-node` with no version keeps the runner's Node 22 instead of installing 20. An empty `*-version` input, as an unset workflow input leaves it, reads the version file. A `node-version` or `.nvmrc` that pins a full release such as `20.11.0` installs that release from nodejs.org instead of that major's 
-```
-
-**File**: `Cargo.lock` (modified, +1/-0)
-```diff
-@@ -4561,6 +4561,7 @@ dependencies = [
-  "windows-sys 0.59.0",
-  "wrkflw-executor",
-  "wrkflw-logging",
-+ "wrkflw-runtime",
- ]
- 
- [[package]]
-```
-
-**File**: `README.md` (modified, +17/-6)
-```diff
-@@ -20,7 +20,7 @@ A command-line tool for validating and executing GitHub Actions workflows locall
- - **Job selection** — run individual jobs with `--job` or via TUI job selection mode
- - **Job dependency resolution** — automatic ordering based on `needs` with parallel execution of independent jobs
- - **Expression evaluator** — evaluates `${{ ... }}` expressions including `toJSON`, `fromJSON`, `contains`, `startsWith`, etc.
--- **Action support** — Docker container actions, JavaScript actions, composite actions (with output propagation), and local actions
-+- **Action support** — Docker container actions, composite actions (with output propagation), local actions, and built-in versions of `actions/checkout`, `actions/cache`, the artifact actions and the common setup actions (`setup-node`, `setup-python`, `setup-go`, `setup-java`, `setup-dotnet`, `setup-php`, `rust-toolchain`, `setup-uv`), which install the runtime into the job's image, honouring `*-version-file` inputs. Any other JavaScript action is not run: its step passes and is reported under `unverified`
- - **Reusable workflows** — execute caller jobs via `jobs.<id>.uses` (local or `owner/repo/path@ref`) with output propagation
- - **Artifacts, cache, and inter-job outputs** — `actions/upload-artifact`, `actions/download-artifact`, `actions/cache`, and `needs.<id>.outputs.*`
- - **GitHub context emulation** — environment variables, `GITHUB_OUTPUT`, `GITHUB_ENV`, `GITHUB_PATH`, `GITHUB_STEP_SUMMARY`
-@@ -37,6 +37,7 @@ A command-line tool for validating and executing GitHub Actions workflows locall
- 
- - GitHub encrypted secrets and fine-grained permissions
- - Event triggers other than `workflow_dispatch` for the remote `trigger` command
-+- JavaScript actions outside the built-in set — a step such as `uses: some-org/setup-tool@v1`, or a local `uses: ./my-action`, whose action runs on Node is not executed. The step passes, prints that it would have run the action, and is listed under `unverified` in `run_finished`, the `gate` result and `compare`, with a warning in the log and a mark on the step in the TUI, so the run's verdict is `partial` rather than `verified`. Whatever the action would have installed or checked is missing from the job, so later steps may fail with `command not found`. Pass `--platform ubuntu-latest=IMAGE` with an image that has the tool, or install it in a `run:` step
- - Absolute-URL actions such as `uses: https://gitea.com/actions/checkout@v4` — they pass validation, but at run time the URL is not resolved and the step falls back to built-in handling
- - Private repos for remote `uses:` — reusable workflows clone over unauthenticated HTTPS
- - `cancel-in-progress` and workflow-level `concurrency:` — job-level groups are enforced within a run, but a local run has nothing earlier to cancel
-@@ -168,7 +169,7 @@ export WRKFLW_PLATFORM=ubuntu-latest=catthehacker/ubuntu:act-latest
- Two defaults make a rerun cheaper than a hosted runner's cold start. Both work the same for any language or toolchain.
- 
- - **Each GitHub Actions job keeps its workspace.** GitLab pipelines still start each run in an empty workspace. Checkout syncs the source files into it, and leaves alone anything the repository ignores, such as build output, `node_modules` or a virtualenv. The second run of a build is therefore incremental. Unchanged files keep their timestamps, and files deleted from the repository are deleted from the workspace too. Workspaces live under your cache directory in `wrkflw/workspaces` (`~/Library/Caches` on macOS, `~/.cache` on Linux), one per repository, workflow file and job. Set `WRKFLW_WORKSPACES_DIR` to keep them somewhere else, such as a larger disk. `--fresh-workspace` or `WRKFLW_FRESH_WORKSPACE=1` gives every job an empty workspace, as a hosted runner does.
--- **Matrix legs that only pick a runner run once.** Locally, `runs-on: ${{ matrix.os }}` maps every OS to the same image. If a leg differs from another only in values that `runs-on` reads, and the two would run in the same image, that leg reports the other's result instead of repeating it. Its history record and its `job_finished` event carry `repeated_from` with the leg it repeats. A leg whose workflow reads the value, or which runs in a different image (see `--platform`), still runs. Only the workflow file is read: a script that reads `$MATRIX_OS` from a file of its own isn't seen, so pass `--every-matrix-leg` for such a job. `--every-matrix-leg` or `WRKFLW_EVERY_MATRIX_LEG=1` runs them all.
-+- **Matrix legs that only pick a runner run once.** Locally, `runs-on: ${{ matrix.os }}` maps every OS to the same image. If a leg differs from another only in values that `runs-on` reads, or that nothing in the job reads, such as a `name` the job's display name uses, and at least one of them picks the runner, and the two would run in the same image, that leg reports the other's result instead of repeating it. Legs on the same runner always run, so `attempt: [1, 2, 3]` still repeats a job. Its history
-```
-
-**File**: `crates/executor/src/acceleration.rs` (modified, +2/-0)
-```diff
-@@ -790,6 +790,8 @@ pub(crate) async fn decide(lookup: Lookup<'_>) -> Decision {
-                     name: lookup.job_name.to_string(),
-                     canonical_name: lookup.job_name.to_string(),
-                     outputs: HashMap::new(),
-+                    actions_not_run: Vec::new(),
-+                    repeated_from: None,
-                 }],
-                 why: Reused::Unaffected,
-             };
-```
-
-**File**: `crates/executor/src/acceleration/store.rs` (modified, +33/-1)
-```diff
-@@ -9,7 +9,10 @@ use std::collections::HashMap;
- use std::path::{Path, PathBuf};
- use std::sync::atomic::{AtomicBool, Ordering};
- 
--const ENTRY_SCHEMA: u32 = 1;
-+/// 2: jobs carry the actions they passed without running, and the leg a
-+/// folded matrix leg repeated. Entries from 1 can't say, so they are not
-+/// reused.
-+const ENTRY_SCHEMA: u32 = 2;
- /// Images and floating action tags aren't in the key, so a hit must not live
- /// forever. A week bounds that drift.
- const DEFAULT_TTL_SECS: i64 = 7 * 24 * 60 * 60;
-@@ -21,6 +24,14 @@ pub(crate) struct StoredJob {
-     pub name: String,
-     pub canonical_name: String,
-     pub outputs: HashMap<String, String>,
-+    /// Steps that passed without running their action. A reused job reports
-+    /// them again, so reuse never turns a partial pass into a verified one.
-+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
-+    pub actions_not_run: Vec<crate::action_fidelity::UnexecutedAction>,
-+    /// The leg this matrix leg only repeated when the result was stored. A
-+    /// reused fold still never ran, and says so.
-+    #[serde(default, skip_serializing_if = "Option::is_none")]
-+    pub repeated_from: Option<String>,
- }
- 
- #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-@@ -363,6 +374,8 @@ mod tests {
-             name: "build".to_string(),
-             canonical_name: "build".to_string(),
-             outputs: HashMap::from([("v".to_string(), "1".to_string())]),
-+            actions_not_run: Vec::new(),
-+            repeated_from: None,
-         }]
-     }
- 
-@@ -580,6 +593,25 @@ mod tests {
-         assert!(unrelated.exists());
-     }
- 
-+    #[test]
-+    fn an_entry_from_before_unrun_actions_were_kept_is_a_miss() {
-+        // Schema 1 didn't record the actions a pass skipped, so reusing it
-+        // could turn a partial pass into a verified one.
-+        let old: Entry = serde_json::from_value(serde_json::json!({
-+            "schema": 1,
-+            "key": "k",
-+            "created_at": 100,
-+            "jobs": [{"name": "a", "canonical_name": "a", "outputs": {}}],
-+        }))
-+        .unwrap();
-+        assert!(!old.is_usable("k", 100));
-+        let current = Entry {
-+            schema: ENTRY_SCHEMA,
-+            ..old
-+        };
-+        assert!(current.is_usable("k", 100));
-+    }
-+
-     #[test]
-     fn the_ttl_comes_from_the_environment_or_the_default() {
-         assert_eq!(parse_ttl(None), DEFAULT_TTL_SECS);
-```
-
-**File**: `crates/executor/src/action_fidelity.rs` (added, +67/-0)
-```diff
-@@ -0,0 +1,67 @@
-+//! Steps whose action wrkflw did not run.
-+//!
-+//! wrkflw implements some actions itself, such as `actions/checkout`,
-+//! `actions/cache` and the setup actions that install a language runtime
-+//! into the job's image. A JavaScript action outside that set has no
-+//! implementation here, and a setup action does nothing when its runtime
-+//! isn't in the job's image: in a job `container:`, inside a composite
-+//! action, or under emulation. Either way the step prints that it would
-+//! have run the action, reports success, and does nothing. The next steps
-+//! then run without whatever the action would have installed, configured
-+//! or checked. Such a step is reported, so a pass isn't read as proof of
-+//! what GitHub would do.
-+
-+use serde::{Deserialize, Serialize};
-+
-+/// A `uses:` step that reported success without running its action.
-+/// Run records store it as is.
-+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-+pub struct UnexecutedAction {
-+    /// The step's name, as `step_finished` reports it.
-+    pub step: String,
-+    /// The `uses:` reference, as written.
-+    pub uses: String,
-+}
-+
-+impl UnexecutedAction {
-+    /// Why a pass of a job with this step doesn't stand for GitHub's.
-+    pub fn reason(&self) -> String {
-+        format!(
-+            "{} did not run here, so the step ran nothing and passed: anything it \
-+             would have installed, configured or checked was not",
-+            self.uses
-+        )
-+    }
-+
-+    /// `job`'s entry in an `unverified` list, as `run_finished` and `gate`
-+    /// report it, next to the entries for jobs run as another OS.
-+    pub fn unverified_entry(&self, job: &str) -> serde_json::Value {
-+        serde_json::json!({
-+            "kind": "action_not_run",
-+            "job": job,
-+            "step": self.step,
-+            "uses": self.uses,
-+            "reason": self.reason(),
-+        })
-+    }
-+}
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+
-+    #[test]
-+    fn the_unverified_entry_names_the_job_the_step_and_the_action() {
-+        let skipped = UnexecutedAction {
-+            step: "Install uv".to_string(),
-+            uses: "astral-sh/setup-uv@v9".to_string(),
-+        };
-+        let entry = skipped.unverified_entry("tests (python: 3.13)");
-+        assert_eq!(entry["job"], "tests (python: 3.13)");
-+        assert_eq!(entry["step"], "Install uv");
-+        assert_eq!(entry["uses"], "astral-sh/setup-uv@v9");
-+        let reason = entry["reason"].as_str().unwrap();
-+        assert!(reason.contains("astral-sh/setup-uv@v9"));
-+        assert!(reason.contains("ran nothing"));
-+    }
-+}
-```
-
----
-
-### Incident Patch 2: `a9943e38` (2026-11-11)
-**Commit Message**: fix: address the review findings from #167 (#168)
-
-* fix(executor): make the workspace volume safe to copy back and clean up
-
-- `wrkflw clean` found no workspace volume on Docker: `docker volume ls`
-  gives `.Labels` as a string, so the `index` template failed and the
-  failure was skipped. Labels are now read with `volume inspect`.
-- A hard-linked file whose other name the host already had wasn't copied
-  back; tar now sends each name as a file (`--hard-dereference`).
-- A Docker action whose `with.args` can't be parsed failed after the copy
-  in, leaving the step marked as in the volume, so a later timeout could
-  copy back over what host-side steps wrote. Args are parsed first.
-- A name kept in the volume because the host had it in another case is
-  copied back once that other name is gone.
-- A step's change inside a directory it left read-only reaches the host:
-  the directory is opened for the write and closed again. One that is
-  read-only on the host alone is still left alone.
-- A volume held by a container kept for inspection no longer stalls the
-  end of the run for 30 s; it is named and left for `wrkflw clean`.
-
-* fix(executor): really rebuild images for floating setup ver
-
-**File**: `BREAKING_CHANGES.md` (modified, +2/-0)
-```diff
-@@ -12,6 +12,8 @@ A `uses:` step whose action wrkflw didn't run now makes a passing run's `verdict
- 
- A job that fails before any step runs, because its image can't be built or pulled or its job container or network doesn't start, gets `cause: {kind: "setup_failed"}` in the failure digest, and `compare` says so in its note instead of reporting a plain failure.
- 
-+A job whose setup action image can't be built is now a failed job, as other setup failures are, instead of ending the whole run with an error: the run's status is `failure` unless the job has `continue-on-error`, the jobs that need it are skipped, and the rest of the run goes on. `--branch` or `--tag` without `--event` is a push for a workflow with a `push` trigger, so its push filters are checked and its `pull_request` filters no longer apply; a workflow without one, such as a `workflow_dispatch` one, runs as before. `astral-sh/setup-uv` with `python-version` installs that Python and sets `UV_PYTHON`; one with `activate-environment: true`, or a version file and no `version`, is refused and reported as not run, as is a `graalpy-` release. A setup step under `if:` that would change a version set earlier is refused, since wrkflw can't know whether it runs; each of these refusals is reported with its own reason. A setup step inside a composite action is reported as run only when the image holds the version it asks for. A `go.mod` with a `toolchain` line installs that toolchain. The weekly rebuild of images with floating versions now happens: the week is part of the image, and `3` or `1` alone counts as floating for Python and Go. The pre-push hook that `gate --install-hook` writes keeps only the flags given on the command line, not values read from `WRKFLW_*` variables. `compare` gives up on `git ls-remote` after 30 seconds and adds `ref_unsure`. On macOS, a volume a preserved container still uses is kept, and `wrkflw clean` now finds and removes orphaned workspace volumes on Docker, where it found none before.
-+
- For crates that use wrkflw as a library:
- 
- - `wrkflw_runtime::container::ContainerRuntime` requires `Sync`, and gains `image_id` and `identifies_images`, both with defaults. An implementation that isn't `Sync` no longer compiles.
-```
-
-**File**: `INDEX.md` (modified, +56/-18)
-```diff
-@@ -1,6 +1,6 @@
+@@ -1,7 +1,7 @@
  # Codebase Index: wrkflw
  
--> Generated: 2026-11-11 10:03:40 UTC | Files: 260 | Lines: 115230
-+> Generated: 2026-11-11 11:07:47 UTC | Files: 260 | Lines: 116241
- > Languages: JSON (4), Markdown (26), Rust (167), Shell (6), TOML (19), YAML (38)
+-> Generated: 2026-11-11 17:02:11 UTC | Files: 260 | Lines: 117213
+-> Languages: JSON (4), Markdown (26), Rust (167), Shell (6), TOML (19), YAML (38)
++> Generated: 2026-11-13 12:17:35 UTC | Files: 262 | Lines: 118189
++> Languages: JSON (4), Markdown (26), Rust (169), Shell (6), TOML (19), YAML (38)
  
  ## Directory Structure
-@@ -1762,7 +1762,7 @@ wrkflw/
  
- ## BREAKING_CHANGES.md
- 
--**Language:** Markdown | **Size:** 29.9 KB | **Lines:** 382
-+**Language:** Markdown | **Size:** 31.3 KB | **Lines:** 384
- 
- **Declarations:**
- 
-@@ -1786,7 +1786,7 @@ wrkflw/
+@@ -34,6 +34,7 @@ wrkflw/
+         action_fidelity.rs
+         action_resolver.rs
+         artifacts.rs
++        buildkit.rs
+         cache.rs
+         checkout_sync.rs
+         container_guard.rs
+@@ -44,6 +45,7 @@ wrkflw/
+         events.rs
+         expression.rs
+         github_env_files.rs
++        image_build.rs
+         job_memory.rs
+         job_session.rs
+         kubernetes/
+@@ -1786,7 +1788,7 @@ wrkflw/
  
  ## INDEX.md
  
--**Language:** Markdown | **Size:** 268.9 KB | **Lines:** 9997
-+**Language:** Markdown | **Size:** 273.8 KB | **Lines:** 10156
+-**Language:** Markdown | **Size:** 275.9 KB | **Lines:** 10209
++**Language:** Markdown | **Size:** 275.7 KB | **Lines:** 10197
  
  **Declarations:**
  
-@@ -2908,7 +2908,7 @@ wrkflw/
+@@ -2362,6 +2364,59 @@ wrkflw/
+   `pub async fn list(&self) -> Vec<String>`
  
- ## crates/executor/src/job_memory.rs
  
--**Language:** Rust | **Size:** 21.3 KB | **Lines:** 588
-+**Language:** Rust | **Size:** 22.5 KB | **Lines:** 621
- 
- **Imports:**
- - `std::collections::HashMap`
-@@ -3763,7 +3763,7 @@ wrkflw/
- 
- ## crates/executor/src/setup_actions.rs
- 
--**Language:** Rust | **Size:** 38.5 KB | **Lines:** 962
-+**Language:** Rust | **Size:** 46.8 KB | **Lines:** 1149
- 
- **Imports:**
- - `std::collections::HashMap`
-@@ -3776,7 +3776,7 @@ wrkflw/
- `pub(crate) const NO_IMPLEMENTATION: &str = "no implementation in wrkflw"`
- 
- `pub(crate) struct BuiltRuntimes`
--> Fields: `installed: Vec<String>`, `not_built: Vec<(usize, NotBuilt)>`
-+> Fields: `installed: Vec<String>`, `not_built: Vec<(usize, NotBuilt)>`, `runtimes: Vec<SetupRuntime>`, `in_composite: bool`
- 
- `pub(crate) enum NotBuilt`
- > Variants: `Refused`, `Superseded`
-@@ -3791,7 +3791,9 @@ wrkflw/
- > Fields: `runtimes: Vec<SetupRuntime>`, `not_built: Vec<(usize, NotBuilt)>`
- 
- `pub(crate) struct SetupRuntime`
--> Fields: `language: String`, `version: String`, `install_script: String`
-+> Fields: `language: String`, `version: String`, `install_script: String`, `floating: bool`, `env: Vec<(String, String)>`
++`mod tests`
 +
-+`pub(crate) fn is_floating_version(language: &str, version: &str) -> bool`
- 
- `pub(crate) struct SetupActionDef`
- > Fields: `repos: &'static [&'static str]`, `with_key: &'static str`, `default_version: &'static str`, `language: &'static str`, `version_from_ref: bool`, `version_file_key: Option<&'static str>`
-@@ -3802,7 +3804,13 @@ wrkflw/
- 
- `pub(crate) fn version_from_file(root: &Path, file: &str) -> Option<String>`
- 
--`pub(crate) fn unrun_action_cause( repository: &str, built: &BuiltRuntimes, container_runtime: bool, step_idx: usize, ) -> Option<&'static str>`
-+`pub(crate) fn unrun_action_cause( repository: &str, built: &BuiltRuntimes, container_runtime: bool, step_idx: usize, step: Option<&Step>, ) -> Option<&'static str>`
++---
 +
-+`fn composite_setup_cause( def: &SetupActionDef, built: &BuiltRuntimes, step: Option<&Step>, ) -> Option<&'static str>`
++## crates/executor/src/buildkit.rs
 +
-+`fn uv_python<'a>(input: impl Fn(&str) -> Option<&'a String>) -> Result<Option<String>, String>`
++**Language:** Rust | **Size:** 16.9 KB | **Lines:** 427
 +
-+`fn go_version(text: &str) -> Option<String>`
- 
- `fn contained_path(root: &Path, file: &str) -> Option<PathBuf>`
- 
-@@ -3970,7 +3978,7 @@ wrkflw/
- 
- ## crates/executor/src/vm_workspace.rs
- 
--**Language:** Rust | **Size:** 91.4 KB | **Lines:** 2536
-+**Language:** Rust | **Size:** 104.3 KB | **Lines:** 2873
- 
- **Imports:**
- - `std::collections::{HashMap, HashSet}`
-@@ -4106,7 +4114,11 @@ wrkflw/
- 
- `fn without_unreadable(volume: &Listing, unreadable: &[PathBuf]) -> Listing`
- 
--`fn remove_host_entry(target: &Path) -> io::Result<()>`
-+`fn remove_host_entry(target: &Path, parent_read_only: bool) -> io::Result<()>`
++**Imports:**
++- `bollard::Docker`
++- `std::path::Path`
++- `wrkflw_runtime::container::ContainerError`
 +
-+`fn read_only_in(volume: &Listing, dir: &Path) -> bool`
++**Declarations:**
 +
-+`fn with_writable_dir<T>(dir: &Path, op: impl FnOnce() -> io::Result<T>) -> io::Result<T>`
- 
- `fn make_writable(path: &Path)`
- 
-@@ -4123,6 +4135,8 @@ wrkflw/
- 
- `fn spelled_otherwise_on_host( host: &Path, rel: &Path, names: &mut HashMap<PathBuf, Option<HashSet<std::ffi::OsString>>>, ) -> bool`
- 
-+`fn release_kept(host: &Path, kept: &mut HashSet<PathBuf>) -> Vec<PathBuf>`
++`const IMAGE_BUILDER_ENV: &str = "WRKFLW_IMAGE_BUILDER"`
 +
- `fn unpack<R: Read>(reader: R, host: &Path, volume: &Listing) -> io::Result<Unpacked>`
- 
- `fn unlisted_entries(stderr: &[u8]) -> Result<HashSet<PathBuf>, String>`
-@@ -4194,14 +4208,24 @@ wrkflw/
- 
- `pub(crate) fn release(host: &Path, kept: bool)`
- 
-+`fn held_by_stopped_containers(cli: &str, volume: &str) -> bool`
++`fn buildkit_wanted(setting: Option<&str>) -> bool`
 +
-+`fn stopped_state(state: &str) -> bool`
++`static BUILDKIT_IMAGES_UNSEEN: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false)`
 +
- `const VOLUME_REMOVAL_TRIES: usize = 120`
- 
-+`const HELD_TRIES: usize = 20`
++`pub(crate) async fn builds_here(docker: &Docker) -> bool`
 +
- `static PENDING_REMOVALS: Mutex<Vec<std::thread::JoinHandle<()>>> = Mutex::new(Vec::new())`
- 
- `pub(crate) fn remove_now(host: &Path)`
- 
- `pub(crate) async fn wait_for_released_volumes()`
- 
-+`fn labelled_volumes(cli: &str) -> Vec<String>`
++`async fn buildkit_available(docker: &Docker) -> bool`
 +
-+`fn inspect_format() -> String`
++`async fn buildkit_builds_here(docker: &Docker) -> bool`
 +
- `pub(crate) fn remove_orphaned_volumes() -> usize`
- 
++`fn warn_buildkit_elsewhere(why: &str)`
++
++`async fn docker_cli(args: &[&str]) -> Option<String>`
++
++`fn buildx_driver(inspect: &str) -> Option<&str>`
++
++`fn same_engine(cli: Option<&str>, api: Option<&str>) -> Option<bool>`
++
++`pub(crate) enum Next`
++> Variants: `Built`, `EngineBuilds`, `Failed`
++
++`pub(crate) async fn build( dockerfile: &Path, tag: &str, context_dir: &Path, image_exists: impl std::future::Future<Output = Result<bool, ContainerError>>, ) -> Next`
++
++`fn after_build( tag: &str, engine_has_it: Result<bool, ContainerError>, unseen: &std::sync::atomic::AtomicBool, ) -> Next`
++
++`fn after_failure(tag: &str, error: BuildKitError) -> Next`
++
++`async fn build_with_buildkit( dockerfile: &Path, tag: &str, context_dir: &Path, ) -> Result<(), BuildKitError>`
++
++`fn failed_instruction_output(stderr: &str) -> Option<String>`
++
++`enum BuildKitError`
++> Variants: `StepFailed`, `NotBuilt`
++
++`fn an_instruction_failed(stderr: &str) -> bool`
++
  `mod tests`
-@@ -4921,7 +4945,7 @@ wrkflw/
  
- ## crates/runs/src/digest.rs
+ ---
+@@ -2557,9 +2612,10 @@ wrkflw/
  
--**Language:** Rust | **Size:** 47.9 KB | **Lines:** 1218
-+**Language:** Rust | **Size:** 48.9 KB | **Lines:** 1234
+ ## crates/executor/src/docker.rs
+ 
+-**Language:** Rust | **Size:** 65.1 KB | **Lines:** 1742
++**Language:** Rust | **Size:** 69.9 KB | **Lines:** 1854
  
  **Imports:**
- - `crate::record::{JobRecord, RunRecord, RunStatus, StepRecord, SCHEMA_VERSION}`
-@@ -4950,6 +
-```
-
-**File**: `crates/executor/src/docker.rs` (modified, +1/-0)
-```diff
-@@ -1381,6 +1381,7 @@ impl DockerRuntime {
-             ));
-             // Still untrack it from the automatic cleanup system to prevent it from being cleaned up later
-             untrack_container(&container.id);
-+            crate::vm_workspace::note_preserved(&container.id);
-         }
-         guard.disarm();
++- `crate::buildkit`
+ - `crate::container_guard::ContainerGuard`
+ - `async_trait::async_trait`
+ - `bollard::{
+@@ -2574,11 +2630,7 @@ wrkflw/
+ - `std::path::Path`
+ - `std::sync::Mutex`
+ - `wrkflw_logging`
+-- `wrkflw_runtime::container::{
+-    container_env, container_path, path_from_image_env, ContainerError, ContainerOutput,
+-    ContainerRuntime, COMBINED_IMAGE_PREFIX, LOCAL_IMAGE_PREFIX,
+-}`
+-- *... and 2 more imports*
++- *... and 3 more imports*
  
-```
-
-**File**: `crates/executor/src/engine.rs` (modified, +565/-106)
-```diff
-@@ -1256,6 +1256,33 @@ impl JobResult {
-         self
-     }
+ **Declarations:**
  
-+    /// A job wrkflw couldn't set up, as when its image doesn't build: it
-+    /// fails with no step, and `error` as its log. The run's record then
-+    /// holds a failed job whose log names the setup error, which the
-+    /// failure digest reports as `setup_failed`, instead of a run that
-+    /// stopped with no job to show. `failure_allowed` is the job's
-+    /// `continue-on-error`, as for any other failure of it. The caller
-+    /// tells the run's observers, once each, that it started and ended.
-+    fn setup_failed(
-+        name: impl Into<String>,
-+        canonical_name: impl Into<String>,
-+        error: &ExecutionError,
-+        failure_allowed: bool,
-+    ) -> Self {
-+        let logs = error.to_string();
-+        wrkflw_logging::error(&logs);
-+        JobResult {
-+            name: name.into(),
-+            canonical_name: canonical_name.into(),
-+            status: JobStatus::Failure,
-+            steps: Vec::new(),
-+            logs,
-+            outputs: HashMap::new(),
-+            failure_allowed,
-+            repeated_from: None,
-+        }
-+    }
+@@ -2643,6 +2695,8 @@ wrkflw/
+ 
+ `pub(crate) fn tracked_containers() -> Vec<String>`
+ 
++`fn is_not_found(error: &bollard::errors::Error) -> bool`
 +
-     /// A job that failed before any of its steps ran. The reason is carried on a
-     /// failed step because failure summaries are built from failed steps.
-     fn failed_before_steps(
-@@ -1718,6 +1745,23 @@ async fn execute_native_docker_step(
-         }
-     }
+ **`impl ContainerRuntime for DockerRuntime`**
+   `fn session_cli(&self) -> Option<&'static str>`
  
-+    // Before the copy in: nothing may fail between it and the copy back,
-+    // or a later timeout would copy back a volume no step wrote to.
-+    // Determine container CMD: workflow `with.args` overrides action.yml `runs.args`.
-+    // If neither is specified, the image's built-in CMD takes effect.
-+    let effective_args: Vec<String> = if let Some(ref wa) = with_args_override {
-+        shlex::split(wa).ok_or_else(|| {
-+            ExecutionError::Execution(format!(
-+                "Failed to parse 'with.args' for action '{}': \
-+                 unmatched quote in {:?}",
-+                uses, wa
-+            ))
-+        })?
-+    } else {
-+        args
+@@ -2660,6 +2714,8 @@ wrkflw/
+ 
+   `fn identifies_images(&self) -> bool`
+ 
++  `fn reuses_build_layers(&self) -> bool`
++
+ 
+ `fn build_container_config( image: &str, cmd: Vec<String>, env: Vec<String>, working_dir: &Path, host_config: HostConfig, is_windows_image: bool, entrypoint: Option<&str>, ) -> Config<String>`
+ 
+@@ -2673,6 +2729,10 @@ wrkflw/
+   `async fn build_image_inner( &self, dockerfile: &Path, tag: &str, context_dir: &Path, ) -> Result<(), ContainerError>`
+ 
+ 
++`async fn remove_once_created(docker: Docker, name: String, after: std::time::Duration)`
++
++`const ENGINE_ANSWER_LIMIT: std::time::Duration = std::time::Duration::from_secs(120)`
++
+ `mod tests`
+ 
+ ---
+@@ -2906,6 +2966,51 @@ wrkflw/
+ 
+ ---
+ 
++## crates/executor/src/image_build.rs
++
++**Language:** Rust | **Size:** 9.3 KB | **Lines:** 246
++
++**Imports:**
++- `futures::future`
++- `once_cell::sync::Lazy`
++- `std::collections::HashMap`
++- `std::path::Path`
++- `std::sync::{Arc, Mutex}`
++- `wrkflw_runtime::container::{ContainerError, ContainerRuntime, COMBINED_IMAGE_PREFIX}`
++- `crate::engine::fnv1a_hash`
++
++**Declarations:**
++
++`static SHARED_LAYER_BUILDS: Lazy<Mutex<HashMap<String, Arc<tokio::sync::Mutex<()>>>>> = Lazy::new(|| Mutex::new(HashMap::new()))`
++
++`pub(crate) async fn with_run_image_builds<F: std::future::Future>(future: F) -> F::Output`
++
++`pub(crate) fn failed_image_build(tag: &str) -> Option<String>`
++
++`pub(crate)
+```
+
+**File**: `crates/executor/src/buildkit.rs` (added, +427/-0)
+```diff
+@@ -0,0 +1,427 @@
++//! Building a job's runtime image with BuildKit, through the `docker` CLI,
++//! where that builds into the engine wrkflw talks to.
++
++use bollard::Docker;
++use std::path::Path;
++use wrkflw_runtime::container::ContainerError;
++
++/// Chooses the builder for a job's runtime image: `classic` keeps to the
++/// engine's own builder.
++const IMAGE_BUILDER_ENV: &str = "WRKFLW_IMAGE_BUILDER";
++
++fn buildkit_wanted(setting: Option<&str>) -> bool {
++    setting.map(str::trim) != Some("classic")
++}
++
++/// Set once BuildKit built an image this engine couldn't find: the `docker`
++/// CLI uses another engine, and BuildKit isn't used again in this process.
++static BUILDKIT_IMAGES_UNSEEN: std::sync::atomic::AtomicBool =
++    std::sync::atomic::AtomicBool::new(false);
++
++/// Whether a job's runtime image is built with BuildKit: unless it was
++/// asked not to be, built an image elsewhere before, or can't build into
++/// this engine.
++pub(crate) async fn builds_here(docker: &Docker) -> bool {
++    buildkit_wanted(std::env::var(IMAGE_BUILDER_ENV).ok().as_deref())
++        && !BUILDKIT_IMAGES_UNSEEN.load(std::sync::atomic::Ordering::Relaxed)
++        && buildkit_available(docker).await
++}
++
++/// Whether the `docker` CLI builds with BuildKit into this engine, asked
++/// once a process.
++async fn buildkit_available(docker: &Docker) -> bool {
++    static AVAILABLE: tokio::sync::OnceCell<bool> = tokio::sync::OnceCell::const_new();
++    *AVAILABLE.get_or_init(|| buildkit_builds_here(docker)).await
++}
++
++/// Whether the `docker` CLI's builder builds into this engine's own images.
++///
++/// Its driver must be `docker`: another, such as `docker-container`, keeps
++/// its own cache and takes a base image from the registry rather than the
++/// one this engine has, which the image's tag names. And the CLI must talk
++/// to this engine, or each image would be built in the other and then again
++/// here. Where the engines can't be told apart, BuildKit is used, and the
++/// check after the first build still catches an image built elsewhere.
++async fn buildkit_builds_here(docker: &Docker) -> bool {
++    let Some(inspect) = docker_cli(&["buildx", "inspect"]).await else {
++        return false;
 +    };
-+    let args_refs: Vec<&str> = effective_args.iter().map(|s| s.as_str()).collect();
++    let driver = buildx_driver(&inspect);
++    if driver != Some("docker") {
++        wrkflw_logging::debug(&format!(
++            "The `docker` CLI's builder uses the {} driver, not docker, so job images are \
++             built by the engine's own builder",
++            driver.unwrap_or("unknown")
++        ));
++        return false;
++    }
++    let cli_engine = docker_cli(&["info", "--format", "{{.ID}}"]).await;
++    let api_engine = docker.info().await.ok().and_then(|info| info.id);
++    if same_engine(cli_engine.as_deref(), api_engine.as_deref()) == Some(false) {
++        warn_buildkit_elsewhere("The `docker` CLI talks to another engine than wrkflw does");
++        return false;
++    }
++    true
++}
 +
-     let container_workspace = Path::new(environment::CONTAINER_WORKSPACE);
-     let mount_ctx = prepare_step_container_context(
-         step_env,
-@@ -1742,21 +1786,6 @@ async fn execute_native_docker_step(
-         uses, image
-     ));
++/// Say once why BuildKit isn't used, and what to do about it.
++fn warn_buildkit_elsewhere(why: &str) {
++    wrkflw_logging::warning(&format!(
++        "{}, as when it uses another context; job images are built by the engine's own \
++         builder, which is slower. Point the CLI at the same engine, or set {}=classic to \
++         skip BuildKit",
++        why, IMAGE_BUILDER_ENV
++    ));
++}
++
++/// What `docker <args>` printed, when it ran in time and succeeded.
++async fn docker_cli(args: &[&str]) -> Option<String> {
++    let output = tokio::time::timeout(
++        std::time::Duration::from_secs(10),
++        tokio::process::Command::new("docker")
++            .args(args)
++            .stdin(std::process::Stdio::null())
++            .stderr(std::process::Stdio::null())
++            .kill_on_drop(true)
++            .output(),
++    )
++    .await
++    .ok()?
++    .ok()?;
++    output
++        .status
++        .success()
++        .then(|| String::from_utf8_lossy(&output.stdout).into_owned())
++}
++
++/// The driver `docker buildx inspect` names for the builder in use.
++fn buildx_driver(inspect: &str) -> Option<&str> {
++    inspect
++        .lines()
++        .find_map(|line| line.strip_prefix("Driver:"))
++        .map(str::trim)
++        .filter(|driver| !driver.is_empty())
++}
++
++/// Whether the CLI's engine and the API's are one, by their IDs. `None`
++/// when either didn't give one.
++fn same_engine(cli: Option<&str>, api: Option<&str>) -> Option<bool> {
++    let cli = cli.map(str::trim).filter(|id| !id.is_empty())?;
++    let api = api.map(str::trim).filter(|id| !id.is_empty())?;
++    Some(cli == api)
++}
++
++/// What is left to do for an image after BuildKit was asked to build it.
++#[derive(Debug)]
++pub(crate) enum Next {
++    /// The engine has the image.
++    Built,
++    /// BuildKit didn't give the image; the engine's own builder may.
++    EngineBuilds,
++    /// The build failed, and the engine's own builder would fail the same.
++    Failed(ContainerError),
++}
++
++/// Build `tag` with BuildKit, and say what is left to do for it.
++
+```
+
+**File**: `crates/executor/src/docker.rs` (modified, +120/-8)
+```diff
+@@ -1,3 +1,4 @@
++use crate::buildkit;
+ use crate::container_guard::ContainerGuard;
+ use async_trait::async_trait;
+ use bollard::{
+@@ -654,6 +655,17 @@ pub async fn cleanup_resources(docker: &Docker) {
+     }
+ }
  
--    // Determine container CMD: workflow `with.args` overrides action.yml `runs.args`.
--    // If neither is specified, the image's built-in CMD takes effect.
--    let effective_args: Vec<String> = if let Some(ref wa) = with_args_override {
--        shlex::split(wa).ok_or_else(|| {
--            ExecutionError::Execution(format!(
--                "Failed to parse 'with.args' for action '{}': \
--                 unmatched quote in {:?}",
--                uses, wa
--            ))
--        })?
--    } else {
--        args
--    };
--    let args_refs: Vec<&str> = effective_args.iter().map(|s| s.as_str()).collect();
--
-     let output = ctx
-         .runtime
-         .run_container(
-@@ -2082,10 +2111,15 @@ fn report_action_not_run(uses: &str, cause: Option<&str>) -> Option<String> {
- /// re-pulled or rebuilt base would keep serving the old combined image.
++/// Whether the engine answered that the container doesn't exist.
++fn is_not_found(error: &bollard::errors::Error) -> bool {
++    matches!(
++        error,
++        bollard::errors::Error::DockerResponseServerError {
++            status_code: 404,
++            ..
++        }
++    )
++}
++
+ // Clean up all tracked containers, in the order they are tracked. Job sessions
+ // rely on that order: `job_session::Containers::add` keeps a job container
+ // behind its services, which Podman won't let go of it before.
+@@ -697,6 +709,13 @@ pub async fn cleanup_containers(docker: &Docker) -> Result<(), String> {
+         .await
+         {
+             Ok(Ok(_)) => wrkflw_logging::debug(&format!("Stopped container: {}", container_id)),
++            // Never created, as a container whose creation timed out may
++            // be, or already gone: there is nothing to remove.
++            Ok(Err(e)) if is_not_found(&e) => {
++                wrkflw_logging::debug(&format!("No container to clean up: {}", container_id));
++                untrack_container(&container_id);
++                continue;
++            }
+             Ok(Err(e)) => wrkflw_logging::warning(&format!(
+                 "Error stopping container {}: {}",
+                 container_id, e
+@@ -706,14 +725,21 @@ pub async fn cleanup_containers(docker: &Docker) -> Result<(), String> {
+             }
+         }
+ 
+-        // Then try to remove it
++        // Then remove it, by force where it didn't stop in time.
++        let force = bollard::container::RemoveContainerOptions {
++            force: true,
++            ..Default::default()
++        };
+         match tokio::time::timeout(
+             std::time::Duration::from_millis(1000),
+-            docker.remove_container(&container_id, None),
++            docker.remove_container(&container_id, Some(force)),
+         )
+         .await
+         {
+             Ok(Ok(_)) => wrkflw_logging::debug(&format!("Removed container: {}", container_id)),
++            Ok(Err(e)) if is_not_found(&e) => {
++                wrkflw_logging::debug(&format!("Container already gone: {}", container_id))
++            }
+             Ok(Err(e)) => wrkflw_logging::warning(&format!(
+                 "Error removing container {}: {}",
+                 container_id, e
+@@ -886,7 +912,7 @@ impl ContainerRuntime for DockerRuntime {
+                     tag,
+                     timeout_duration.as_secs()
+                 ));
+-                Err(ContainerError::ImageBuild(
++                Err(ContainerError::ImageBuildTimeout(
+                     "Operation timed out".to_string(),
+                 ))
+             }
+@@ -1053,6 +1079,10 @@ impl ContainerRuntime for DockerRuntime {
+     fn identifies_images(&self) -> bool {
+         true
+     }
++
++    fn reuses_build_layers(&self) -> bool {
++        true
++    }
+ }
+ 
+ // Move the actual implementation to internal methods
+@@ -1162,8 +1192,9 @@ impl DockerRuntime {
+             || image.contains("nanoserver");
+ 
+         // Create appropriate container options based on platform
++        let container_name = format!("wrkflw-{}", uuid::Uuid::new_v4());
+         let options = Some(CreateContainerOptions {
+-            name: format!("wrkflw-{}", uuid::Uuid::new_v4()),
++            name: container_name.clone(),
+             platform: if is_windows_image {
+                 Some("windows".to_string())
+             } else {
+@@ -1195,9 +1226,8 @@ impl DockerRuntime {
+             entrypoint,
+         );
+ 
+-        // Create container with a shorter timeout
+         let create_result = tokio::time::timeout(
+-            std::time::Duration::from_secs(15),
++            ENGINE_ANSWER_LIMIT,
+             self.docker.create_container(options, config),
+         )
+         .await;
+@@ -1206,9 +1236,23 @@ impl DockerRuntime {
+             Ok(Ok(container)) => container,
+             Ok(Err(e)) => return Err(ContainerError::ContainerStart(e.to_string())),
+             Err(_) => {
++                // The engine may still create it after this gives up. It is
++                // tracked by name, which the engine takes where it takes an
++                // id, so the cleanup at the end of the run removes it if it
++                // is there by then, and passes over it quietly if not; a
++                // process that lives on removes it once the engine has had
++                // time to finish creating it. One the engine creates after
++                // the process has exited is left behind, with its
++                // `wrkflw-` name to find it by.
++                track_container(&container_name);
++                tokio::spawn(remove_once_created(
++                    self.docker.clone(),
++                    container_name,
++                    ENGINE_ANSWER_LIMIT,
++                ));
+                 return
+```
+
+**File**: `crates/executor/src/engine.rs` (modified, +797/-226)
+```diff
+@@ -17,6 +17,11 @@ use crate::dependency;
+ use crate::docker;
+ use crate::environment;
+ use crate::events::{step_display_name, EXIT_CODE_LABEL, STDERR_HEADER, STDOUT_HEADER};
++use crate::image_build::{
++    ahead_build_permits, build_image_checked, ensure_shared_layers, failed_image_build,
++    remember_failed_image_build, with_images_built_ahead, with_run_image_builds, AHEAD_BUILDS,
++    IMAGES_BUILT_AHEAD,
++};
+ use crate::job_session;
+ use crate::kubernetes::{self, KubernetesConfig};
+ use crate::live_step::LiveStep;
+@@ -75,7 +80,10 @@ pub async fn execute_workflow(
+         std::sync::Arc::new(state),
+         crate::workspace::with_workflow_file(
+             workflow_path,
+-            Box::pin(execute_github_workflow(workflow_path, config.clone())),
++            Box::pin(with_run_image_builds(execute_github_workflow(
++                workflow_path,
++                config.clone(),
++            ))),
+         ),
+     ))
+     .await;
+@@ -2103,6 +2111,9 @@ fn report_action_not_run(uses: &str, cause: Option<&str>) -> Option<String> {
+     Some(uses.to_string())
+ }
+ 
++/// Ends a `RUN` that fetched the package lists by removing them.
++const REMOVE_PACKAGE_LISTS: &str = " && \\\n    rm -rf /var/lib/apt/lists/*";
++
+ /// Generate a Dockerfile that installs multiple language runtimes on an Ubuntu base.
+ ///
+ /// `base_id` is the base image's local content ID, when known. It goes into
+@@ -2112,9 +2123,17 @@ fn report_action_not_run(uses: &str, cause: Option<&str>) -> Option<String> {
  ///
  /// Extracted as a pure function so the output can be unit-tested without Docker.
-+/// `week` names the week floating versions are resolved in, when any is;
-+/// it goes into the one `RUN` instruction, so a new week misses the build
-+/// cache and installs the releases out then. A comment would change the
-+/// image's tag but not its layers, which the builder would reuse.
+ /// `week` names the week floating versions are resolved in, when any is;
+-/// it goes into the one `RUN` instruction, so a new week misses the build
+-/// cache and installs the releases out then. A comment would change the
+-/// image's tag but not its layers, which the builder would reuse.
++/// it goes into the first `RUN` instruction, so a new week misses the build
++/// cache there and in every layer after it, and installs the releases out
++/// then. A comment would change the image's tag but not its layers, which
++/// the builder would reuse.
++///
++/// The packages every image gets come first, in a `RUN` of their own, and
++/// each runtime follows in its own. The builder reuses a layer whose
++/// instruction and parent it has built before, so the legs of a matrix
++/// over Python versions install the packages, Node.js and uv once between
++/// them and differ only in the interpreter. In one `RUN`, each of nine
++/// legs spent a minute and 800 MB on the same packages.
  fn generate_combined_dockerfile(
      runtimes: &[SetupRuntime],
      base_image: &str,
-     base_id: Option<&str>,
-+    week: Option<&str>,
- ) -> String {
-     let mut dockerfile = format!("FROM {}\n", base_image);
-     if let Some(id) = base_id {
-@@ -2108,10 +2142,31 @@ fn generate_combined_dockerfile(
-     // uv keeps the interpreters it installs under `$HOME`, which is root's
-     // and closed to a step that runs as another user, and which a job that
-     // sets `HOME` moves. Somewhere fixed and readable serves every step.
-+    let mut env: Vec<(String, String)> = Vec::new();
-     if runtimes.iter().any(|rt| rt.language == "python") {
--        dockerfile.push_str(&format!("ENV UV_PYTHON_INSTALL_DIR={}\n", UV_PYTHON_DIR));
-+        env.push((
-+            "UV_PYTHON_INSTALL_DIR".to_string(),
-+            UV_PYTHON_DIR.to_string(),
-+        ));
-+    }
-+    // What a setup action sets for the rest of the job, such as setup-uv's
-+    // `UV_PYTHON`. Values were checked to be plain versions and paths.
-+    for pair in runtimes.iter().flat_map(|rt| &rt.env) {
-+        if !env.iter().any(|(name, _)| *name == pair.0) {
-+            env.push(pair.clone());
-+        }
-+    }
-+    for (name, value) in &env {
-+        dockerfile.push_str(&format!("ENV {}={}\n", name, value));
-+    }
-+    dockerfile.push_str("RUN ");
-+ 
-```
-
-**File**: `crates/executor/src/job_memory.rs` (modified, +35/-2)
-```diff
-@@ -133,11 +133,16 @@ impl JobMeter {
+@@ -2126,9 +2145,6 @@ fn generate_combined_dockerfile(
+         dockerfile.push_str(&format!("# base image id: {}\n", id));
      }
  
-     /// A container ended as the out-of-memory killer ends one. Every job
--    /// running beside it may be the one that used the memory.
-+    /// running beside it may be the one that used the memory. A job still
-+    /// waiting for its slot has used none: it names itself with
-+    /// [`measure_as`] only once it holds one, so it is left alone.
-     pub(crate) fn killed(&self) {
-         self.killed.store(true, Ordering::Relaxed);
-         for meter in ACTIVE.lock().unwrap_or_else(|e| e.into_inner()).iter() {
--            if let Some(meter) = meter.upgrade() {
-+            let Some(meter) = meter.upgrade() else {
-+                continue;
-+            };
-+            if meter.id.lock().unwrap_or_else(|e| e.into_inner()).is_some() {
-                 meter.neighbour_killed.store(true, Ordering::Relaxed);
-             }
-         }
-@@ -561,6 +566,7 @@ mod tests {
-         let (neighbour, finished) = tokio::join!(
-             metered(
-                 async {
-+                    measure_as("light");
-                     let mine = meter().unwrap();
-                     mine.sample("light", 1);
-                     // Still running when the other job's step is killed.
-@@ -585,4 +591,31 @@ mod tests {
-         later.sample("step", 1);
-         assert_eq!(later.outcome(), Outcome::Peak(1));
+-    // Combine base packages and all runtime install scripts into a single
+-    // RUN directive so there is only one `apt-get update` call and the Docker
+-    // layer cache works as a single unit.
+     let scripts: Vec<&str> = runtimes
+         .iter()
+         .filter(|rt| !rt.install_script.is_empty())
+@@ -2139,26 +2155,6 @@ fn generate_combined_dockerfile(
+     // and Rust build scripts, node-gyp, Python C extensions and cgo all
+     // expect one. `less` because they have a pager, which tests of CLI
+     // tools run.
+-    // uv keeps the interpreters it installs under `$HOME`, which is root's
+-    // and closed to a step that runs as another user, and which a job that
+-    // sets `HOME` moves. Somewhere fixed and readable serves every step.
+-    let mut env: Vec<(String, String)> = Vec::new();
+-    if runtimes.iter().any(|rt| rt.language == "python") {
+-        env.push((
+-            "UV_PYTHON_INSTALL_DIR".to_string(),
+-            UV_PYTHON_DIR.to_string(),
+-        ));
+-    }
+-    // What a setup action sets for the rest of the job, such as setup-uv's
+-    // `UV_PYTHON`. Values were checked to be plain versions and paths.
+-    for pair in runtimes.iter().flat_map(|rt| &rt.env) {
+-        if !env.iter().any(|(name, _)| *name == pair.0) {
+-            env.push(pair.clone());
+-        }
+-    }
+-    for (name, value) in &env {
+-        dockerfile.push_str(&format!("ENV {}={}\n", name, value));
+-    }
+     dockerfile.push_str("RUN ");
+     if let Some(week) = week {
+         dockerfile.push_str(&format!(
+@@ -2179,13 +2175,45 @@ fn generate_combined_dockerfile(
+         dockerfile.push_str(" && \\\n");
+         dockerfile.push_str(&format!("    {}", runner_node_install()));
      }
++    dockerfile.push_str(REMOVE_PACKAGE_LISTS);
++    dockerfile.push('\n');
+ 
+-    for script in &scripts {
+-        dockerfile.push_str(" && \\\n");
+-        dockerfile.push_str(&format!("    {}", script));
++    // After the shared packages, so a variable that differs between the
++    // legs of a matrix, such as `UV_PYTHON`, doesn't give each leg packages
++    // of its own, and before the runtimes, whose installs read them.
++    // uv keeps the interpreters it installs under `$
+```
+
+**File**: `crates/executor/src/image_build.rs` (added, +246/-0)
+```diff
+@@ -0,0 +1,246 @@
++//! Building the images jobs run in: the layers images on one base share,
++//! the builds started ahead of a job's turn, and what a run remembers of a
++//! build that failed. The Dockerfile itself, and which image a job gets,
++//! are the engine's.
 +
-+    #[tokio::test]
-+    async fn a_kill_spares_a_job_still_waiting_for_its_slot() {
-+        let (killed_tx, killed_rx) = tokio::sync::oneshot::channel::<()>();
-+        let (waiting, _) = tokio::join!(
-+            metered(
-+                async {
-+                    // Queued: no slot yet, so not named.
-+                    let _ = killed_rx.await;
-+                    measure_as("queued");
-+                    let mine = meter().unwrap();
-+                    mine.sample("step", 1);
-+                    mine
-+                },
-+                |_| true
-+            ),
-+            metered(
-+                async {
-+                    measure_as("killer");
-+                    meter().unwrap().killed();
-+                    let _ = killed_tx.send(());
-+                },
-+                |_| true
-+            )
-+        );
-+        assert_eq!(waiting.outcome(), Outcome::Peak(1));
-+    }
- }
-```
-
-**File**: `crates/executor/src/podman.rs` (modified, +1/-0)
-```diff
-@@ -919,6 +919,7 @@ impl PodmanRuntime {
-                             container_name, output.exit_code, container_name
-                         ));
-                         untrack_container(&container_name);
-+                        crate::vm_workspace::note_preserved(&container_name);
-                     } else {
-                         // Failed but we don't want to preserve - container was auto-removed with --rm
-                         untrack_container(&container_name);
-```
-
-**File**: `crates/executor/src/setup_actions.rs` (modified, +223/-9)
-```diff
-@@ -23,6 +23,12 @@ pub(crate) struct BuiltRuntimes {
-     /// holds, and why. Empty inside a composite action, whose steps these
-     /// indices don't name.
-     pub(crate) not_built: Vec<(usize, NotBuilt)>,
-+    /// The runtimes the image holds, with the version and settings of each,
-+    /// so a setup step inside a composite action can be judged on them.
-+    pub(crate) runtimes: Vec<SetupRuntime>,
-+    /// Set for the steps of a composite action: the image was built from
-+    /// the job's own setup steps, which aren't these.
-+    pub(crate) in_composite: bool,
- }
- 
- /// Why a setup step's version is not in the job's image.
-@@ -34,6 +40,13 @@ pub(crate) enum NotBuilt {
-     /// Another setup step of the same language set the version the image
-     /// holds: an image has one version of each, the job's last.
-     Superseded,
-+    /// It has an `if:` and would replace the version an earlier setup step
-+    /// of the same language put in the image, which can't depend on
-+    /// whether it runs.
-+    Conditional,
-+    /// It asks for something besides a version that wrkflw doesn't carry
-+    /// out, such as setup-uv's `activate-environment`.
-+    UnsupportedInput,
- }
- 
- impl BuiltRuntimes {
-@@ -47,6 +60,8 @@ impl BuiltRuntimes {
-         BuiltRuntimes {
-             installed: self.installed.clone(),
-             not_built: Vec::new(),
-+            runtimes: self.runtimes.clone(),
-+            in_composite: true,
-         }
-     }
- }
-@@ -60,14 +75,40 @@ pub(crate) struct SetupDetection {
- }
- 
- /// A runtime detected from a setup action step (e.g., `actions/setup-node@v3`).
--#[derive(Clone)]
-+#[derive(Debug, Clone, PartialEq)]
- pub(crate) struct SetupRuntime {
-     /// Language identifier (e.g., "node", "php", "python")
-     pub(crate) language: String,
-     /// Sanitized version string (e.g., "20", "8.2")
-     pub(crate) version: String,
-     /// Shell commands to install this runtime on an Ubuntu base image
-     pub(crate) install_script: String,
-+    /// The step asked for a channel or a range, so what it installs changes
-+    /// as releases come out. Judged on the version as the step wrote it:
-+    /// `version` may have lost what made it float, as `3.x` becomes `3`.
-+    pub(crate) floating: bool,
-+    /// Variables the image sets for every step, as the action sets them for
-+    /// the rest of the job: `UV_PYTHON` for setup-uv's `python-version`.
-+    pub(crate) env: Vec<(String, String)>,
++use futures::future;
++use once_cell::sync::Lazy;
++use std::collections::HashMap;
++use std::path::Path;
++use std::sync::{Arc, Mutex};
++use wrkflw_runtime::container::{ContainerError, ContainerRuntime, COMBINED_IMAGE_PREFIX};
++
++use crate::engine::fnv1a_hash;
++
++/// One lock per image of shared layers, by its tag: the first build of
++/// those layers goes alone. See `ensure_shared_layers`.
++static SHARED_LAYER_BUILDS: Lazy<Mutex<HashMap<String, Arc<tokio::sync::Mutex<()>>>>> =
++    Lazy::new(|| Mutex::new(HashMap::new()));
++
++tokio::task_local! {
++    /// The combined images whose build failed in this run, by tag, with
++    /// the error. A job's image is built ahead while it waits, and again
++    /// at its turn if that didn't produce it: a build that fails on its
++    /// own would fail the same way, and take as long, so the job is given
++    /// the first failure instead. The next run tries again.
++    static FAILED_IMAGE_BUILDS: Mutex<HashMap<String, String>>;
 +}
 +
-+/// Whether `version`, as a `language` setup step wrote it, names a channel
-+/// or a range rather than a release, so what it installs changes as
-+/// releases come out: `latest`, `stable`, `oldstable`, `lts/*`, `3.x`,
-+/// `>=3.10`, `^18 || >=20`. A partial release such as `3.12` drifts only
-+/// by patch releases and counts as fixed, as does Node's `20`, a release
-+/// line of its own; Python's and Go's `3` and `1` take every minor release.
-+pub(crate) fn is_floating_version(language: &str, version: &str) -> bool {
-+    let version = version.trim().to_ascii_lowercase();
-+    let channel = version.chars().any(|c| c.is_ascii_alphabetic())
-+        && !version.chars().next().is_some_and(|c| c.is_ascii_digit());
-+    let major_only = matches!(language, "python" | "go")
-+        && !version.is_empty()
-+        && version.chars().all(|c| c.is_ascii_digit());
-+    channel
-+        || major_only
-+        || version.contains(['x', '*', '>', '<', '^', '~', '|', ' '])
-+        || version.ends_with("-dev")
- }
- 
- /// Definition of a known setup action for runtime detection.
-@@ -260,12 +301,29 @@ pub(crate) fn version_from_file(root: &Path, file: &str) -> Option<String> {
-                 .get("volta")
-                 .and_then(|v| v.get("node"))
-                 .or_else(|| json.get("engines").and_then(|e| e.get("node")))?;
--            node_major_for_range(range.as_str()?)
-+            let range = range.as_str()?.trim();
-+            // A full release, as `volta.node` pins one, is installed as is,
-+            // like the same pin in `.nvmrc`.
-+            let release = range.trim_start_matches('v');
-+            if release.split('.').count() == 3 && is_safe_version(release) {
-+                Some(release.to_string())
-+            } else {
-+                node_major_for_range(range)
-+            }
-+        }
-+        // setup-go prefers the `toolchain` line, which names the release
-+        // the module is built with, to the `go` line's minimum. A go.work
-+        // file has the same two lines.
-+        "go.mod" | "go.work" => {
-+            let directive = |name: &str| {
-+                text.lines()
-+                    .find_map(|l| l.trim().strip_prefix(name))
-+                    .map(str::trim)
-+            };
-+            directive("toolchain go")
-+                .or_else(|| directive("go "))
-+                .and_then(go_version)
-         }
--        "go.mod" => text
--            .lines()
--            .find_map(|l| l.trim().strip_prefix("go "))
--            .and_then(first_number),
-         _ => text
-  
++/// Run `future` as one run, with no image build failed yet.
++pub(crate) async fn with_run_image_builds<F: std::future::Future>(future: F) -> F::Output {
++    FAILED_IMAGE_BUILDS
++        .scope(Mutex::new(HashMap::new()), future)
++        .await
++}
++
++/// Why `tag` failed to build earlier in this run, if it did.
++pub(crate) fn failed_image_build(tag: &str) -> Option<String> {
++    FAILED_IMAGE_BUILDS
++        .try_with(|failed| failed.lock().unwrap().get(tag).cloned())
++        .ok()
++        .flatten()
++}
++
++/// Remember for the rest of the run that `tag` failed to build, unless
++/// the same build [may work on another try](may_build_on_another_try).
++pub(crate) fn remember_failed_image_build(tag: &str, error: &ContainerError) {
++    if may_build_on_another_try(error) {
++        return;
++    }
++    let _ = FAILED_IMAGE_BUILDS.try_with(|failed| {
++        failed
++            .lock()
++            .unwrap()
++            .insert(tag.to_string(), error.to_string())
++    });
++}
++
++/// Whether `error` says nothing of the build itself, so the same build may
++/// well work when it is tried again: the connection to the engine was
++/// lost, or the build ran out of time. A build ahead shares the engine
++/// with the jobs running and with other builds, and one that ran out of
++/// time there is built again by its job, at its turn.
++fn may_build_on_another_try(error: &ContainerError) -> bool {
++    matches!(error, ContainerError::ImageBuildTimeout(_)) || is_transport_error(&error.to_string())
++}
++
++/// Build the layers a combined image shares with every image on the same
++/// base, as an image of their own, unless the engine has it already.
++///
++/// Images that start with the same packages build them once: the first
++/// build of those layers goes alone, and the builds waiting on it go on to
++/// their own runtimes as soon as it is over, built or failed. Started
++/// together, five BuildKit builds took 67 s to give the first image where
++/// one alone took 43 s. Only the shared layers are waited for, not another
++/// job's runtimes, and an engine that has the shared image from an earlier
++/// run waits for nothing.
++///
++/// Only where a build [reuses the layers](ContainerRuntime::reuses_build_layers)
++/// an earlier one left: no step runs in the shared image, so a runtime
++/// that ships every image it builds to a registry, as Kubernetes does,
++/// would build and ship it on every run for nothing.
++pub(crate) async fn ensure_shared_layers(
++    dockerfile: &str,
++    runtime: &dyn ContainerRuntime,
++) -> Result<(), String> {
++    if !runtime.reuses_build_layers() {
++        return Ok(());
++    }
++    let shared = shared_layers(dockerfile);
++    if shared.len() == dockerfile.len() {
++        return Ok(());
++    }
++    let tag = shared_layers_tag(shared);
++    if runtime.image_exists(&tag).await.unwrap_or(false) {
++        return Ok(());
++    }
++    let lock = {
++        let mut locks = SHARED_LAYER_BUILDS.lock().unwrap();
++        locks
++            .entry(tag.clone())
++            .or_insert_with(|| Arc::new(tokio::sync::Mutex::new(())))
++            .clone()
++    };
++    let _first = lock.lock().await;
++    // Whoever held the lock before built these layers, or failed to: the
++    // same build would fail the same way.
++    if let Some(error) = failed_image_build(&tag) {
++        return Err(error);
++    }
++    if runtime.image_exists(&tag).await.unwrap_or(false) {
++        return Ok(());
++    }
++    let temp_dir =
++        tempfile::tempdir().map_err(|e| format!("Failed to create temp directory: {}", e))?;
++    let dockerfile_path = temp_dir.path().join("Dockerfile");
++    std::fs::write(&dockerfile_path, shared)
++        .map_err(|e| format!("Failed to write Dockerfile: {}", e))?;
++  
 ```
 
-**File**: `crates/executor/src/vm_workspace.rs` (modified, +434/-32)
+**File**: `crates/executor/src/kubernetes/mod.rs` (modified, +9/-1)
 ```diff
-@@ -128,6 +128,10 @@ struct State {
-     host: Option<Listing>,
-     /// Volume entries the host could not hold.
-     kept: HashSet<PathBuf>,
-+    /// Those of `kept` the host couldn't hold only because it held the
-+    /// name in another case. Once nothing on the host goes by it, they are
-+    /// fetched again; the others never fit.
-+    kept_for_case: HashSet<PathBuf>,
-     /// Volume entries the host refused for a reason that may pass. The next
-     /// copy in leaves them alone, and the next copy out tries them again.
-     pending: HashSet<PathBuf>,
-@@ -160,6 +164,7 @@ impl State {
-             volume: None,
-             host: None,
-             kept: HashSet::new(),
-+            kept_for_case: HashSet::new(),
-             pending: HashSet::new(),
-             unlisted: HashSet::new(),
-             unusable: false,
-@@ -174,6 +179,10 @@ impl State {
-     fn for_volume(volume: &str) -> Self {
-         let mut state = State::new();
-         state.kept = load_paths(kept_file(volume).as_deref());
-+        state.kept_for_case = load_paths(case_file(volume).as_deref())
-+            .into_iter()
-+            .filter(|path| state.kept.contains(path))
-+            .collect();
-         state.pending = load_paths(pending_file(volume).as_deref());
-         state
+@@ -1125,7 +1125,7 @@ impl KubernetesRuntime {
+         )
+         .await
+         .map_err(|_| {
+-            ContainerError::ImageBuild(format!(
++            ContainerError::ImageBuildTimeout(format!(
+                 "{} timed out after {} seconds",
+                 what,
+                 timeout.as_secs()
+@@ -1586,6 +1586,14 @@ mod tests {
+         assert!(!rt.image_exists("wrkflw-python-3.11").await.unwrap());
      }
-@@ -458,12 +467,32 @@ impl VmWorkspace {
-         for path in &plan.delete {
-             // Left on the host, the next sync would copy it back into the
-             // volume as if the step had never removed it.
--            remove_host_entry(&self.host.join(path))?;
-+            let parent_read_only = path.parent().is_some_and(|p| read_only_in(&volume, p));
-+            remove_host_entry(&self.host.join(path), parent_read_only)?;
-         }
-         let kept_before = state.kept.clone();
-+        let for_case_before = state.kept_for_case.clone();
-+        // After the deletes: a name kept for the case of another one fits
-+        // once a step has removed that other one.
-+        let released = release_kept(&self.host, &mut state.kept, &mut state.kept_for_case);
-+        let mut fetch = plan.fetch;
-+        if !released.is_empty() {
-+            fetch.extend(
-+                volume
-+                    .keys()
-+                    .filter(|path| under_any(&released, path))
-+                    .cloned(),
-+            );
-+            fetch.sort();
-+            fetch.dedup();
-+        }
-         let mut pending = HashSet::new();
--        if !plan.fetch.is_empty() {
--            let Unpacked { refused, failed } = self.fetch(&helper, &plan.fetch, &volume)?;
-+        if !fetch.is_empty() {
-+            let Unpacked {
-+                refused,
-+                refused_for_case,
-+                failed,
-+            } = self.fetch(&helper, &fetch, &volume)?;
-             if !failed.is_empty() {
-                 let mut names: Vec<String> = failed
-                     .iter()
-@@ -506,6 +535,7 @@ impl VmWorkspace {
-                     names.join(", ")
-                 ));
-                 state.kept.extend(refused);
-+                state.kept_for_case.extend(refused_for_case);
-             }
-         }
-         if state.pending != pending {
-@@ -515,9 +545,14 @@ impl VmWorkspace {
-         }
-         state.pending = pending;
-         state.kept.retain(|path| volume.contains_key(path));
-+        let kept = &state.kept;
-+        state.kept_for_case.retain(|path| kept.contains(path));
-         if state.kept != kept_before {
-             save_paths(kept_file(&self.volume).as_deref(), &state.kept);
-         }
-+        if state.kept_for_case != for_case_before {
-+            save_paths(case_file(&self.volume).as_deref(), &state.kept_for_case);
-+        }
-         state.volume = Some(volume);
-         // The host as this copy left it. An entry that differs from the
-         // volume's here, such as a file that grew while it was copied, is
-@@ -681,6 +716,9 @@ impl VmWorkspace {
-                 ROOT,
-                 "--null",
-                 "--no-recursion",
-+                // Each name as its own file: a hard link to a name sent
-+                // earlier can't be unpacked over a file the host has.
-+                "--hard-dereference",
-                 "-T",
-                 "-",
-                 "-cf",
-@@ -1008,7 +1046,12 @@ fn without_unreadable(volume: &Listing, unreadable: &[PathBuf]) -> Listing {
  
- /// Remove `target` from the host, making read-only directories in it
- /// writable first if that is what stops it.
--fn remove_host_entry(target: &Path) -> io::Result<()> {
-+///
-+/// `parent_read_only` says the volume holds the directory `target` is in
-+/// read-only too, as a step left it: the host only mirrors that mode, so
-+/// it is opened for the removal and closed again. A directory read-only on
-+/// the host alone is the host's to keep.
-+fn remove_host_entry(target: &Path, parent_read_only: bool) -> io::Result<()> {
-     let remove = || match std::fs::symlink_metadata(target) {
-         Ok(meta) if meta.is_dir() => std::fs::remove_dir_all(target),
++    /// Every image built is pushed to the registry, and a later build's
++    /// cache is the local builder's business: nothing is gained by building
++    /// shared layers as an image of their own, which would be pushed too.
++    #[test]
++    fn a_built_image_is_shipped_so_no_layers_are_built_to_share() {
++        assert!(!KubernetesRuntime::new(cfg(), false).reuses_build_layers());
++    }
++
+     #[tokio::test]
+     async fn build_image_without_registry_explains_the_flag() {
+         let rt = KubernetesRuntime::new(cfg(), false);
+```
+
+**File**: `crates/executor/src/lib.rs` (modified, +2/-0)
+```diff
+@@ -6,6 +6,7 @@ pub mod acceleration;
+ pub mod action_fidelity;
+ pub mod action_resolver;
+ pub(crate) mod artifacts;
++pub(crate) mod buildkit;
+ pub(crate) mod cache;
+ pub(crate) mod checkout_sync;
+ mod container_guard;
+@@ -16,6 +17,7 @@ pub mod environment;
+ pub mod events;
+ pub mod expression;
+ pub mod github_env_files;
++pub(crate) mod image_build;
+ pub(crate) mod job_memory;
+ pub(crate) mod job_session;
+ pub mod kubernetes;
+```
+
+**File**: `crates/executor/src/podman.rs` (modified, +5/-1)
+```diff
+@@ -550,7 +550,7 @@ impl ContainerRuntime for PodmanRuntime {
+                     "Building image {} timed out after 120 seconds",
+                     tag
+                 ));
+-                Err(ContainerError::ImageBuild(
++                Err(ContainerError::ImageBuildTimeout(
+                     "Operation timed out".to_string(),
+                 ))
+             }
+@@ -723,6 +723,10 @@ impl ContainerRuntime for PodmanRuntime {
+     fn identifies_images(&self) -> bool {
+         true
+     }
++
++    fn reuses_build_layers(&self) -> bool {
++        true
++    }
+ }
+ 
+ /// The PATH `image` sets in its config, pulling the image first if it isn't
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #171** (2026-11-13): fix: agree with GitHub on real repositories, and build job images faster (@bahdotsh)
+- **PR #170** (closed): perf: build job images faster, and start no container for a step that only prints (@bahdotsh)
 - **PR #169** (2026-11-11): perf: run the legs of a new matrix together, and fit light jobs side by side again (@bahdotsh)
 - **PR #168** (2026-11-11): fix: address the review findings from #167 (@bahdotsh)
 - **PR #167** (2026-11-11): fix: report what a local pass didn't check, and make local runs match GitHub's (@bahdotsh)
 - **PR #166** (2026-11-09): fix: make local verdicts match what GitHub would say (@bahdotsh)
-- **PR #165** (2026-11-06): Make wrkflw a trustworthy feedback loop for agents (@bahdotsh)
-- **PR #164** (2026-11-06): fix: address the review of #163 (@bahdotsh)
 
 ---
 
@@ -3146,33 +2998,79 @@ causes were generic:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. report what a local pass didn't check, and make local runs match GitHub's (#167)
+## X. agree with GitHub on real repositories, and build job images faster
 
 **RULE**:
-When implementing operations in `.cargo/config.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bahdotsh/wrkflw. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `INDEX.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bahdotsh/wrkflw. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e418eebc`: report what a local pass didn't check, and make local runs match GitHub's (#167). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7b284277`: agree with GitHub on real repositories, and build job images faster. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.cargo/config.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `INDEX.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# Likewise for the memory each job was measured to use: tests keep none, so
-# they never change how a real run on this machine schedules its jobs. This
-# applies to `cargo run` too, which then schedules every job as unmeasured.
-# An existing value wins, so name a file to measure, as in
-# `WRKFLW_JOB_MEMORY_FILE=/tmp/job-memory.json cargo run -- run ...`.
-WRKFLW_JOB_MEMORY_FILE = ""
+> Generated: 2026-11-13 12:17:35 UTC | Files: 262 | Lines: 118189
+> Languages: JSON (4), Markdown (26), Rust (169), Shell (6), TOML (19), YAML (38)
+        buildkit.rs
+        image_build.rs
+**Language:** Markdown | **Size:** 275.7 KB | **Lines:** 10197
+`mod tests`
+
+---
+
+## crates/executor/src/buildkit.rs
+
+**Language:** Rust | **Size:** 16.9 KB | **Lines:** 427
+
+**Imports:**
+- `bollard::Docker`
+- `std::path::Path`
+- `wrkflw_runtime::container::ContainerError`
+
+**Declarations:**
+
+`const IMAGE_BUILDER_ENV: &str = "WRKFLW_IMAGE_BUILDER"`
+
+`fn buildkit_wanted(setting: Option<&str>) -> bool`
+
+`static BUILDKIT_IMAGES_UNSEEN: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false)`
+
+`pub(crate) async fn builds_here(docker: &Docker) -> bool`
+
+`async fn buildkit_available(docker: &Docker) -> bool`
+
+`async fn buildkit_builds_here(docker: &Docker) -> bool`
+
+`fn warn_buildkit_elsewhere(why: &str)`
+
+`async fn docker_cli(args: &[&str]) -> Option<String>`
+
+`fn buildx_driver(inspect: &str) -> Option<&str>`
+
+`fn same_engine(cli: Option<&str>, api: Option<&str>) -> Option<bool>`
+
+`pub(crate) enum Next`
+> Variants: `Built`, `EngineBuilds`, `Failed`
+
+`pub(crate) async fn build( docke
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+> Generated: 2026-11-11 17:02:11 UTC | Files: 260 | Lines: 117213
+> Languages: JSON (4), Markdown (26), Rust (167), Shell (6), TOML (19), YAML (38)
+**Language:** Markdown | **Size:** 275.9 KB | **Lines:** 10209
+**Language:** Rust | **Size:** 65.1 KB | **Lines:** 1742
+- `wrkflw_runtime::container::{
+    container_env, container_path, path_from_image_env, ContainerError, ContainerOutput,
+    ContainerRuntime, COMBINED_IMAGE_PREFIX, LOCAL_IMAGE_PREFIX,
+}`
+- *... and 2 more imports*
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e418eebc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7b284277` are properly handled with clean fallback behavior.

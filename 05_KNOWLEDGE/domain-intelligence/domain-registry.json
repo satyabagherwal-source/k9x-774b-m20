@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T11:34:38.257Z",
-  "total_records": 654,
+  "last_updated": "2026-11-14T12:04:53.861Z",
+  "total_records": 662,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 320,
+      "total": 323,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -357,7 +357,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-vl-8b-instruct-learnings-core-inva",
         "domain_intelligence-research-knowledge-intelligence-nomic-ai-nomic-embed-text-v1-5-core-invariants",
         "DOM-D-BFA5A06D",
-        "domain_intelligence-research-knowledge-intelligence-hf-nomic-ai-nomic-embed-text-v1-5-learnings-core"
+        "domain_intelligence-research-knowledge-intelligence-hf-nomic-ai-nomic-embed-text-v1-5-learnings-core",
+        "domain_intelligence-research-knowledge-intelligence-google-gemma-4-26b-a4b-it-core-invariants",
+        "DOM-D-5A7FBD90",
+        "domain_intelligence-research-knowledge-intelligence-hf-google-gemma-4-26b-a4b-it-learnings-core-inva"
       ]
     },
     "E": {
@@ -490,7 +493,7 @@
       ]
     },
     "H": {
-      "total": 141,
+      "total": 143,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -632,11 +635,13 @@
         "domain_intelligence-technical-construction-intelligence-wix-react-native-ui-lib-learnings-core-invar",
         "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co",
         "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
-        "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-learnings-c"
+        "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-learnings-c",
+        "domain_intelligence-technical-construction-intelligence-czy0729-bangumi-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-czy0729-bangumi-learnings-core-invariants"
       ]
     },
     "I": {
-      "total": 22,
+      "total": 23,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -659,7 +664,8 @@
         "domain_intelligence-content-information-intelligence-higress-group-higress-core-invariants",
         "domain_intelligence-content-information-intelligence-higress-group-higress-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-okteto-okteto-core-invariants",
-        "domain_intelligence-content-information-intelligence-okteto-okteto-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-okteto-okteto-learnings-core-invariants",
+        "domain_intelligence-content-information-intelligence-peerdb-io-peerdb-core-invariants"
       ]
     },
     "J": {
@@ -704,7 +710,7 @@
       ]
     },
     "L": {
-      "total": 9,
+      "total": 11,
       "record_ids": [
         "DOM-L-1B851132",
         "DOM-L-80D1F65C",
@@ -714,7 +720,9 @@
         "domain_intelligence-deployment-operations-intelligence-graphprotocol-graph-node-core-invariants",
         "domain_intelligence-deployment-operations-intelligence-graphprotocol-graph-node-learnings-core-invar",
         "domain_intelligence-deployment-operations-intelligence-loft-sh-vcluster-core-invariants",
-        "domain_intelligence-deployment-operations-intelligence-loft-sh-vcluster-learnings-core-invariants"
+        "domain_intelligence-deployment-operations-intelligence-loft-sh-vcluster-learnings-core-invariants",
+        "domain_intelligence-deployment-operations-intelligence-bahdotsh-wrkflw-core-invariants",
+        "domain_intelligence-deployment-operations-intelligence-bahdotsh-wrkflw-learnings-core-invariants"
       ]
     },
     "M": {
@@ -13864,6 +13872,111 @@
       "repository": "hf-nomic-ai-nomic-embed-text-v1.5-learnings",
       "content_hash": "55bf85277cf5ab047352efdeb9c6b26a39612696bd130370a76a7efd9f352c41",
       "created_at": "2026-11-14T11:34:37.055Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-google-gemma-4-26b-a4b-it-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-google-gemma-4-26b-a4b-it-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: google/gemma-4-26B-A4B-it Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-gemma-4-26b-a4b-it-research-knowledge-intelligence-google-gemma-4-26b-.md",
+      "repository": "google/gemma-4-26B-A4B-it",
+      "content_hash": "51036255f4e8c602ed32450af7787d5fb2bfa9d3e66f11f4a0c7c2d7593cf95e",
+      "created_at": "2026-11-14T12:04:05.279Z"
+    },
+    "domain_intelligence-deployment-operations-intelligence-bahdotsh-wrkflw-core-invariants": {
+      "record_id": "domain_intelligence-deployment-operations-intelligence-bahdotsh-wrkflw-core-invariants",
+      "domain_letter": "L",
+      "title": "Deployment & Operations Intelligence: bahdotsh/wrkflw Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-bahdotsh-wrkflw-deployment-operations-intelligence-bahdotsh-wrkflw-core-invarian.md",
+      "repository": "bahdotsh/wrkflw",
+      "content_hash": "86754c1736013c9305f001e804597df4e94b282fec8360e00adbf066cf52a589",
+      "created_at": "2026-11-14T12:04:08.031Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-czy0729-bangumi-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-czy0729-bangumi-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: czy0729/Bangumi Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-czy0729-bangumi-technical-construction-intelligence-czy0729-bangumi-core-invaria.md",
+      "repository": "czy0729/Bangumi",
+      "content_hash": "16d525aca4a0689151b3ac3d2eb1d7383a3e1529fb326b1f4fbbfaba2d85e647",
+      "created_at": "2026-11-14T12:04:14.167Z"
+    },
+    "domain_intelligence-content-information-intelligence-peerdb-io-peerdb-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-peerdb-io-peerdb-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: PeerDB-io/peerdb Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-peerdb-io-peerdb-content-information-intelligence-peerdb-io-peerdb-core-invarian.md",
+      "repository": "PeerDB-io/peerdb",
+      "content_hash": "6c259f6d0292203a41bf61d12035acc48d161e01b313472d3c62feb8d7a4d5f5",
+      "created_at": "2026-11-14T12:04:15.703Z"
+    },
+    "domain_intelligence-deployment-operations-intelligence-bahdotsh-wrkflw-learnings-core-invariants": {
+      "record_id": "domain_intelligence-deployment-operations-intelligence-bahdotsh-wrkflw-learnings-core-invariants",
+      "domain_letter": "L",
+      "title": "Deployment & Operations Intelligence: bahdotsh-wrkflw-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-bahdotsh-wrkflw-learnings-deployment-operations-intelligence-bahdotsh-wrkflw-lea.md",
+      "repository": "bahdotsh-wrkflw-learnings",
+      "content_hash": "b9dcead133007aec71e3af9b9407bbbe8d94182c2431285c9b5843b508b96577",
+      "created_at": "2026-11-14T12:04:18.958Z"
+    },
+    "DOM-D-5A7FBD90": {
+      "record_id": "DOM-D-5A7FBD90",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): google/gemma-4-26B-A4B-it",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-google-gemma-4-26b-a4b-it-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/google/gemma-4-26B-A4B-it](https://huggingface.co/google/gemma-4-26B-A4B-it))  \n> **Source Version**: `hf-google-ge`  \n> **License**: Open-Source",
+      "content_hash": "f62cea94260112f7ead576f2b6a66d4b11e68920429a195791df965881532921",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-google-gemma-4-26b-a4b-it-learnings.md`  \n> **Source**: huggingface ([https://hug -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-google-gemma-4-26b-a4b-it-learnings.md`  \n> **Source**: huggingface ([https://hug",
+      "provenance": {
+        "source_uri": "project://hf-google-gemma-4-26b-a4b-it/hf-google-gemma-4-26b-a4b-it-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T12:04:19.315Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-google-gemma-4-26b-a4b-it)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-google-gemma-4-26b-a4b-it"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T12:04:52.986Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-google-gemma-4-26b-a4b-it-learnings-core-inva": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-google-gemma-4-26b-a4b-it-learnings-core-inva",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-google-gemma-4-26b-a4b-it-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-gemma-4-26b-a4b-it-learnings-research-knowledge-intelligence-hf-google.md",
+      "repository": "hf-google-gemma-4-26b-a4b-it-learnings",
+      "content_hash": "952a22e6b609fb14c942beae3a7039ffe33db1f2c8cd1ad80018ecbad9e01e24",
+      "created_at": "2026-11-14T12:04:53.216Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-czy0729-bangumi-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-czy0729-bangumi-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: czy0729-bangumi-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-czy0729-bangumi-learnings-technical-construction-intelligence-czy0729-bangumi-le.md",
+      "repository": "czy0729-bangumi-learnings",
+      "content_hash": "849d581155296051ba2ab6fde12ea6bd8fabda56d44f31edc0d0165ab729ddf9",
+      "created_at": "2026-11-14T12:04:53.861Z"
     }
   }
 }

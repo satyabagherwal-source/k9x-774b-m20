@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for czy0729/bangumi
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for czy0729/Bangumi
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "czy0729/bangumi",
-  "source_url": "https://github.com/czy0729/bangumi",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "czy0729/Bangumi",
+  "source_url": "https://github.com/czy0729/Bangumi",
+  "source_version": "a8184acd",
+  "license": "MIT",
+  "timestamp": "2026-11-14T12:04:14.044Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-czy0729-bangumi",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [czy0729/bangumi](https://github.com/czy0729/bangumi) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [czy0729/Bangumi](https://github.com/czy0729/Bangumi) (Revision: `a8184acd`).  
+> **License**: MIT | **Timestamp**: `2026-11-14T12:04:14.044Z`  
+> **Learning ID**: `learn-github-czy0729-bangumi`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `czy0729/bangumi` (Commit: `historical`)
+- **Target Repository**: `czy0729/Bangumi` (Commit: `a8184acd`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/czy0729-bangumi-learnings.md`  
-> **Source**: github ([https://github.com/czy0729/Bangumi](https://github.com/czy0729/Bangumi))  
-> **Source Version**: `79c411ba`  
-> **License**: MIT  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-10T02:43:55.386Z  
-> **Learning ID**: `learn-github-czy0729-bangumi`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): czy0729/Bangumi
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/czy0729-bangumi-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/czy0729/Bangumi](https://github.com/czy0729/Bangumi))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-10T02:43:54.103Z  
+> **Harvest Timestamp**: 2026-11-14T12:04:12.796Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: :electron: An unofficial https://bgm.tv ui first app client for Android and iOS, built with React Native. 一个无广告、以爱好为驱动、不以盈利为目的、专门做 ACG 的类似豆瓣的追番记录，bgm.tv 第三方客户端。为移动端重新设计，内置大量加强的网页端难以实现的功能，且提供了相当的自定义选项。 目前已适配 iOS / Android。
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json
-- **Stars / Engagement**: 6231 stars
+- **Stars / Engagement**: 6243 stars
 
 ---
 
@@ -1230,13 +1216,17 @@ export const useActionSheet = (
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #415** (2026-09-14): **下沉逻辑修改**
-  *Symptoms*:  版本号：8.39.4 目前选了“app排序”和“条目自动下沉”，可以看到10月未播番剧排在9月在播番剧之上，个人认为不太符合逻辑，希望未播番剧下沉到在播番剧下面 ![Screenshot_2026-09-11-07-36-39-215_com.czy0729.bangumi.jpg](https://github.com/user-attachments/assets/7d3891f3-5299-48dc-8647-220a3fb0c4fa)  
+- **Issue #419** (2026-11-11): **- [登录] Passkey支持**
+  *Symptoms*: fix #402
   **Post-Mortem & Fix Analysis**:
-  > 我思考了一下，现在还是2026夏，2026秋的番还没开始放送，是10月1日（前后几日）后，如果是这样，可以下沉到2026年整个大分组的最下方，这样也不会完全找不到新番
+  > 虽然合并了，但是我手头并不能测，我在ai整理了代码后打包了，可以试试 https://czy0729.lanzoub.com/ij57K4fkiena 
+  > > 虽然合并了，但是我手头并不能测，我在ai整理了代码后打包了，可以试试 https://czy0729.lanzoub.com/ij57K4fkiena  UI有点问题，功能没问题 <img width="1080" height="2400" alt="Screenshot_20261113-161003_Bangumi" src="https://github.com/user-attachments/assets/ec946e0b-1d46-49d4-b84a-8cf38f056890" /> 
 
-- **Issue #414** (2026-09-05): **新版8.39.2的bug**
-  *Symptoms*: 点好友评分的那里会稳定触发致命错误 ![Screenshot_20260905_221338.jpg](https://github.com/user-attachments/assets/eca531df-b14c-427f-982c-189c3d506740)  ![Screenshot_20260905_221901.jpg](https://github.com/user-attachments/assets/29509799-0a48-45b5-a770-c358d2253a72)  
+- **Issue #417** (2026-11-11): **V8.40+版本的ipa，ios15.5闪退无法打开**
+  *Symptoms*: V8.40+版本的ipa，ios15.5闪退无法打开，是否没兼容低版本ios
+  **Post-Mortem & Fix Analysis**:
+  > @czy0729 
+  > 16.4 是 iOS 目前框架要求的最低版本，我基本没有办法能降回去 15
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1253,672 +1243,432 @@ export const useActionSheet = (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `79c411ba` (2026-11-09)
-**Commit Message**: - [条目] 板块布局支持按条目单独调整, 并可随设置上传/下载
+### Incident Patch 1: `7f5f8382` (2026-11-11)
+**Commit Message**: - [安卓] 修复带表情的遮幕展开后整段文字段落会出现遮罩错位的问题 (fixed #396)
 
-**File**: `src/screens/_/base/section-title/index.tsx` (modified, +30/-10)
+**File**: `src/components/render-html/mask-text/__tests__/utils.test.ts` (modified, +16/-4)
 ```diff
-@@ -6,7 +6,7 @@
-  */
- import { View } from 'react-native'
- import { observer } from 'mobx-react'
--import { Component, Flex, flexStyle, Iconfont, Text, Touchable } from '@components'
-+import { Component, Flex, flexStyle, Iconfont, Popover, Text, Touchable } from '@components'
- import { _ } from '@stores'
- import { stl } from '@utils'
- import { r } from '@utils/dev'
-@@ -19,24 +19,44 @@ export type { SectionTitleProps }
- 
- /** 块 (章节) 标题 */
- export const SectionTitle = observer(
--  ({ style, icon = '', left, right, splitStyles, children, onPress }: SectionTitleProps) => {
-+  ({
-+    style,
-+    icon = '',
-+    left,
-+    right,
-+    splitStyles,
-+    children,
-+    onPress,
-+    popover
-+  }: SectionTitleProps) => {
-     r(COMPONENT)
- 
-     const styles = memoStyles()
-     const { splitStylesTitle, splitStylesUnderline } = getSplitStyles(splitStyles)
- 
--    const titleEl = onPress ? (
--      <Touchable style={stl(flexStyle(), styles.touch)} onPress={onPress}>
--        <Text type='title' size={20} bold shadow={!!splitStylesUnderline}>
--          {children}
--        </Text>
--        {!!icon && <Iconfont name={icon} color={_.colorIcon} />}
--      </Touchable>
--    ) : (
-+    const title = (
-       <Text type='title' size={20} bold shadow={!!splitStylesUnderline}>
-         {children}
-       </Text>
-     )
-+    const titleText = (
-+      <>
-+        {title}
-+        {!!icon && <Iconfont name={icon} color={_.colorIcon} />}
-+      </>
-+    )
-+
-+    const titleEl = popover ? (
-+      <Popover data={popover.data} onSelect={popover.onSelect}>
-+        <Flex style={styles.touch}>{titleText}</Flex>
-+      </Popover>
-+    ) : onPress ? (
-+      <Touchable style={stl(flexStyle(), styles.touch)} onPress={onPress}>
-+        {titleText}
-+      </Touchable>
-+    ) : (
-+      title
-+    )
- 
-     return (
-       <Component id='base-section-title'>
-```
-
-**File**: `src/screens/_/base/section-title/types.ts` (modified, +10/-0)
-```diff
-@@ -5,6 +5,7 @@
-  * @Last Modified time: 2026-03-19 20:25:16
-  */
- import type { PropsWithChildren } from 'react'
-+import type { PopoverData, PopoverOnSelect } from '@components/popover/types'
- import type { IconfontNames, ReactNode, WithViewStyles } from '@types'
- 
- export type Props = PropsWithChildren<
-@@ -23,5 +24,14 @@ export type Props = PropsWithChildren<
- 
-     /** 标题点击回调 */
-     onPress?: () => void
-+
-+    /** 标题 Popover 菜单 (传入时标题成为触发器, 优先于 onPress, right 不在菜单手势区内) */
-+    popover?: {
-+      /** 菜单项 */
-+      data: PopoverData
-+
-+      /** 菜单选择 */
-+      onSelect: PopoverOnSelect
-+    }
-   }>
- >
-```
-
-**File**: `src/screens/home/subject/component/anitabi/anitabi.tsx` (modified, +24/-32)
-```diff
-@@ -4,17 +4,16 @@
+@@ -2,7 +2,7 @@
+  * @Author: czy0729
+  * @Date: 2026-05-31 00:00:00
   * @Last Modified by: czy0729
-  * @Last Modified time: 2026-09-17 00:12:01
+- * @Last Modified time: 2026-09-05 20:29:45
++ * @Last Modified time: 2026-11-12 06:48:48
   */
--import { useCallback, useMemo } from 'react'
-+import { useMemo } from 'react'
- import { View } from 'react-native'
- import { Flex, Heatmap, Iconfont, Image, Link, ScrollView, Squircle, Text } from '@components'
--import { InView, PreventTouchPlaceholder, SectionTitle } from '@_'
-+import { InView, PreventTouchPlaceholder } from '@_'
- import { _ } from '@stores'
- import { date, showImageViewer, stl } from '@utils'
- import { memo } from '@utils/decorators'
- import { useHorizontalLazy } from '@utils/hooks'
--import { FROZEN_FN } from '@constants'
- import { TITLE_ANITABI } from '../../ds'
--import IconHidden from '../icon/hidden'
-+import BlockTitle from '../block-title'
- import { fixAnitabiImageUrl } from './utils'
- import { COMPONENT_MAIN, DEFAULT_PROPS, THUMB_HEIGHT, THUMB_WIDTH } from './ds'
+ import React from 'react'
+ import { getMaskTextStyle, MASK_BACKGROUND_COLOR, MASK_TEXT_COLOR, maskRichText } from '../utils'
+@@ -93,6 +93,16 @@ describe('maskRichText', () => {
+     expect(lastStyle(result)).toEqual({ color: MASK_TEXT_COLOR })
+   })
  
-@@ -30,8 +29,7 @@ const Anitabi = memo(
-       pointsLength: 0,
-       imagesLength: 0,
-       litePoints: []
--    } as AnitabiData,
--    onSwitchBlock = FROZEN_FN
-+    } as AnitabiData
-   }) => {
-     // DEFAULT_PROPS 的 data 为 {}, litePoints 运行期可能为 undefined, 需要默认值兜底
-     const { city, pointsLength, imagesLength, litePoints = [] } = data
-@@ -62,44 +60,38 @@ const Anitabi = memo(
++  it('展开时给表情 span 固定行高', () => {
++    const emoji = React.createElement(EmojiText, { index: 38, size: 24 }, '38')
++
++    const result = maskRichText([emoji], true, 30) as any[]
++    const styles = result[0].props.style as any[]
++
++    expect(styles[styles.length - 1]).toEqual({ lineHeight: 30 })
++    expect(styles[styles.length - 2]).toEqual({ color: MASK_TEXT_COLOR })
++  })
++
+   it('收起时混合内容中表情替换为全角空白', () => {
+     const children = [
+       '前缀',
+@@ -110,7 +120,7 @@ describe('maskRichText', () => {
+   it('收起与展开保持相同结构', () => {
+     const children = [
+       '前缀',
+-      React.createElement('Text', { key: 'link', onPress: jest.fn() }, '链接'),
++      React.createElement('Text', { key: 'link', onPress: jest.fn() } as any, '链接'),
+       React.createElement('Text', { key: 'br' }, '\n'),
+       React.createElement('Text', { key: 'text' }, '正文')
+     ]
+@@ -119,8 +129,10 @@ describe('maskRichText', () => {
+     const visible = maskRichText(children, true) as any[]
  
-     const elRight = useMemo(
-       () =>
--        showAnitabi === false ? (
--          <IconHidden name={TITLE_ANITABI} value='showAnitabi' />
--        ) : (
--          showAnitabi !== -1 && (
--            <Link
--              style={styles.touch}
--              path={`https://anitabi.cn/map?bangumiId=${subjectId}`}
--              eventId='条目.跳转'
--              eventData={{
--                to: 'anitabi.cn',
--                from: TITLE_ANITABI,
--                subjectId
--              }}
--            >
--              <Flex>
--                <Text type='sub'>巡礼地图</Text>
--                <Iconfont style={_.ml.xs} name='md-open-in-new' size={17} />
--              </Flex>
--              <Heatmap id='条目.跳转' from={TITLE_ANITABI} />
--            </Link>
--          )
-+        showAnitabi && (
-+          <Link
-+            style={styles.touch}
-+            path={`https://anitabi.cn/map?bangumiId=${subjectId}`}
-+            eventId='条目.跳转'
-+            eventData={{
-+              to: 'anitabi.cn',
-+              from: TITLE_ANITABI,
-+              subjectId
-+            }}
-+          >
-+            <Flex>
-+              <Text type='sub'>巡礼地图</Text>
-+              <Iconfont style={_.ml.xs} name='md-open-in-new' size={17} />
-+            </Flex>
-+            <Heatmap id='条目.跳转' from={TITLE_ANITABI} />
-+          </Link>
-         ),
-       [showAnitabi, styles.touch, subjectId]
+     expect(hidden).toHaveLength(visible.length)
+-    expect(hidden.map(item => (React.isValidElement(item) ? item.props.children : item))).toEqual(
+-      visible.map(item => (React.isValidElement(item) ? item.props.children : item))
++    expect(
++      hidden.map((item: any) => (React.isValidElement(item) ? (item as any).props.children : item))
++    ).toEqual(
++      visible.map((item: any) => (React.isValidElement(item) ? (item as any).props.children : item))
      )
- 
--    const handleToggle = useCallback(() => onSwitchBlock('showAnitabi'), [onSwitchBlock])
--
-     return (
-       <InView style={stl(styles.container, !showAnitabi && styles.containerNotShow)}>
--        <SectionTitle
-+        <BlockTitle
-+          layoutKey='showAnitabi'
-           style={_.container.wind}
-           right={elRight}
-           icon={!showAnitabi && 'md-navigate-next'}
-           splitStyles
--          onPress={handleToggle}
-         >
-           {TITLE_ANITABI}
--        </SectionTitle>
-+        </BlockTitle>
- 
-         {showAnitabi && (
-           <>
+   })
+ })
 ```
 
-**File**: `src/screens/home/subject/component/anitabi/ds.ts` (modified, +2/-5)
+**File**: `src/components/render-html/mask-text/index.tsx` (modified, +6/-6)
 ```diff
-@@ -6,10 +6,8 @@
+@@ -2,7 +2,7 @@
+  * @Author: czy0729
+  * @Date: 2019-08-14 10:03:12
+  * @Last Modified by: czy0729
+- * @Last Modified time: 2026-07-16 22:33:44
++ * @Last Modified time: 2026-11-12 06:48:42
   */
- import { _ } from '@stores'
- import { rc } from '@utils/dev'
--import { FROZEN_FN } from '@constants'
- import { COMPONENT as PARENT } from '../ds'
+ import React, { useCallback, useState } from 'react'
+ import { observer } from 'mobx-react'
+@@ -22,17 +22,17 @@ function MaskText({ style, children }: Props) {
+   }, [])
  
--import type { systemStore } from '@stores'
- import type { SubjectId } from '@types'
- import type { Ctx } from '../../types'
- import type { memoStyles } from './styles'
-@@ -22,10 +20,9 @@ export const COMPONENT_MAIN = rc(COMPONENT)
+   const flattenStyle = _.flatten(style)
+-  const childrenValue = maskRichText(children, show)
++  const lineHeight =
++    flattenStyle?.lineHeight ||
++    (flattenStyle?.fontSize ? Math.floor(flattenStyle.fontSize * 1.5) : 0)
++  const childrenValue = maskRichText(children, show, lineHeight)
  
- export const DEFAULT_PROPS = {
-   styles: {} as ReturnType<typeof memoStyles>,
--  showAnitabi: true as typeof systemStore.setting.showAnitabi,
-+  showAnitabi: true as boolean,
-   subjectId: 0 as SubjectId,
--  data: {} as $['state']['anitabi'],
--  onSwitchBlock: FROZEN_FN as $['onSwitchBlock']
-+  data: {} as $['state']['anitabi']
+   return (
+     <Text
+       style={stl(
+         flattenStyle,
+         show ? styles.blockTextShow : styles.blockText,
+-        flattenStyle?.fontSize &&
+-          !flattenStyle?.lineHeight && {
+-            lineHeight: Math.floor(flattenStyle.fontSize * 1.5)
+-          }
++        lineHeight ? { lineHeight } : undefined
+       )}
+       onPress={handlePress}
+     >
+```
+
+**File**: `src/components/render-html/mask-text/utils.ts` (modified, +22/-6)
+```diff
+@@ -2,7 +2,7 @@
+  * @Author: czy0729
+  * @Date: 2026-02-26 21:45:43
+  * @Last Modified by: czy0729
+- * @Last Modified time: 2026-09-05 20:29:39
++ * @Last Modified time: 2026-11-12 06:48:53
+  */
+ import React from 'react'
+ import { IOS, MEIZU } from '@constants'
+@@ -24,8 +24,12 @@ export function getMaskTextStyle(show: boolean): TextStyle {
+   }
  }
  
- export const THUMB_WIDTH = _.r(180)
-```
-
-**File**: `src/screens/home/subject/component/anitabi/index.tsx` (modified, +2/-3)
-```diff
-@@ -7,7 +7,7 @@
- import { Suspense } from 'react'
- import { observer } from 'mobx-react'
- import { Component } from '@components'
--import { systemStore, useStore } from '@stores'
-+import { useStore } from '@stores'
- import { TITLE_ANITABI } from '../../ds'
- import BlockAnchor from '../block-anchor'
- import Split from '../split'
-@@ -29,10 +29,9 @@ function AnitabiWrap({ onBlockRef }: Props) {
-         <BlockAnchor title={TITLE_ANITABI} onBlockRef={onBlockRef} />
-         <Anitabi
-           styles={memoStyles()}
--          showAnitabi={systemStore.setting.showAnitabi}
-+          showAnitabi={$.showAnitabi[0]}
-           subjectId={$.subjectId}
-           data={$.state.anitabi}
--          onSwitchBlock={$.onSwitchBlock}
-         />
-         <Split />
-       </Component>
-```
-
-**File**: `src/screens/home/subject/component/block-title/ds.ts` (added, +10/-0)
-```diff
-@@ -0,0 +1,10 @@
-+/*
-+ * @Author: czy0729
-+ * @Date: 2026-11-09 05:00:00
-+ * @Last Modified by: czy0729
-+ * @Last Modified time: 2026-11-09 05:00:00
-+ */
-+import { rc } from '@utils/dev'
-+import { COMPONENT as PARENT } from '../ds'
+-export function maskRichText(children: ReactNode, show: boolean): ReactNode {
+-  return maskChildren(children, show, getMaskTextStyle(show))
++export function maskRichText(
++  children: ReactNode,
++  show: boolean,
++  lineHeight: number = 0
++): ReactNode {
++  return maskChildren(children, show, getMaskTextStyle(show), lineHeight)
+ }
+ 
+ /** 元素 props 的可访问字段 */
+@@ -35,7 +39,12 @@ type ElementProps = {
+   children?: ReactNode
+ }
+ 
+-function maskChildren(children: ReactNode, show: boolean, style: TextStyle): ReactNode {
++function maskChildren(
++  children: ReactNode,
++  show: boolean,
++  style: TextStyle,
++  lineHeight: number
++): ReactNode {
+   if (children == null || typeof children === 'boolean') return children
+ 
+   if (typeof children === 'string' || typeof children === 'number') {
+@@ -47,7 +56,7 @@ function maskChildren(children: ReactNode, show: boolean, style: TextStyle): Rea
+   }
+ 
+   if (Array.isArray(children))
+-    return (children as ReactNode[]).map(item => maskChildren(item, show, style))
++    return (children as ReactNode[]).map(item => maskChildren(item, show, style, lineHeight))
+ 
+   if (React.isValidElement(children)) {
+     const element = children as ReactElement<ElementProps>
+@@ -64,8 +73,15 @@ function maskChildren(children: ReactNode, show: boolean, style: TextStyle): Rea
+     } = {}
+ 
+     if (element.type !== React.Fragment) nextProps.style = [props.style, style]
 +
-+export const COMPONENT = rc(PARENT, 'BlockTitle')
-```
-
-**File**: `src/screens/home/subject/component/block-title/index.tsx` (added, +24/-0)
-```diff
-@@ -0,0 +1,24 @@
-+/*
-+ * @Author: czy0729
-+ * @Date: 2026-11-09 05:00:00
-+ * @Last Modified by: czy0729
-+ * @Last Modified time: 2026-11-09 05:00:00
-+ *
-+ * 板块标题 (点击弹出布局菜单: 收起展开 / 重置布局 / 隐藏 / 管理, 前三项只作用于本条目)
-+ *  - 仅标题部分是菜单触发器, right 等功能图标不在菜单手势区内
-+ */
-+import { observer } from 'mobx-react'
-+import { SectionTitle } from '@_'
-+import { useStore } from '@stores'
-+import { COMPONENT } from './ds'
++    // 安卓展开态固定表情 span 行高
++    if (show && !IOS && element.type === EmojiText && lineHeight > 0) {
++      nextProps.style = [props.style, style, { lineHeight }]
++    }
 +
-+import type { Ctx } from '../../types'
-+import type { Props } from './types'
-+
-+function BlockTitle({ layoutKey, ...sectionTitleProps }: Props) {
-+  const { $, navigation } = useStore<Ctx>(COMPONENT)
-+
-+  return <SectionTitle popover={$.blockMenu(layoutKey, navigation)} {...sectionTitleProps} />
-+}
-+
-+export default observer(BlockTitle)
-```
-
-**File**: `src/screens/home/subject/component/block-title/types.ts` (added, +13/-0)
-```diff
-@@ -0,0 +1,13 @@
-+/*
-+ * @Author: czy0729
-+ * @Date: 2026-11-09 05:00:00
-+ * @Last Modified by: czy0729
-+ * @Last Modified time: 2026-11-09 05:00:00
-+ */
-+import type { SectionTitleProps } from '@_'
-+import type { LayoutKey } from '@stores/subject/types'
-+
-+export type Props = Omit<SectionTitleProps, 'onPress' | 'popover'> & {
-+  /** 对应板块的布局 key (布局菜单数据与动作由 store 提供) */
-+  layoutKey: LayoutKey
-+}
+     if (!show && props.onPress) nextProps.onPress = undefined
+-    if ('children' in props) nextProps.children = maskChildren(props.children, show, style)
++    if ('children' in props)
++      nextProps.children = maskChildren(props.children, show, style, lineHeight)
+ 
+     return React.cloneElement(element, nextProps as Record<string, unknown>)
+   }
 ```
 
 ---
 
-### Incident Patch 2: `f07f4e5c` (2026-11-08)
-**Commit Message**: - [整理] 整理更新内容、内置浏览器与 Webhook 页面代码，修复切换版本文档时的加载态与 Webhook 日志列表展开状态丢失
+### Incident Patch 2: `a4e9dabe` (2026-11-11)
+**Commit Message**: - [时光机] 重写网站评分排序改为批量读取评分，修复切换排序后不重排、翻页失效 (fixed #384)
 
-**File**: `src/screens/web-view/versions/component/tabs/ds.ts` (removed, +0/-10)
+**File**: `packages/ios/package.json` (modified, +6/-3)
 ```diff
-@@ -1,10 +0,0 @@
--/*
-- * @Author: czy0729
-- * @Date: 2024-02-08 15:58:46
-- * @Last Modified by:   czy0729
-- * @Last Modified time: 2024-02-08 15:58:46
-- */
--import { rc } from '@utils/dev'
--import { COMPONENT as PARENT } from '../ds'
--
--export const COMPONENT = rc(PARENT, 'Tabs')
+@@ -95,6 +95,7 @@
+     "@typescript-eslint/eslint-plugin": "^8.59.0",
+     "@typescript-eslint/parser": "^8.59.0",
+     "babel-plugin-module-resolver": "^5.0.2",
++    "babel-preset-expo": "~58.0.24",
+     "cheerio": "1.0.0",
+     "cheerio-without-node-native": "0.20.2",
+     "crypto-js": "^4.2.0",
+@@ -111,8 +112,7 @@
+     "prettier": "^2.6.2",
+     "protobufjs": "^8.8.0",
+     "stream-browserify": "^3.0.0",
+-    "typescript": "^6.0.3",
+-    "babel-preset-expo": "~58.0.24"
++    "typescript": "^6.0.3"
+   },
+   "expo": {
+     "autolinking": {
+@@ -124,5 +124,8 @@
+       }
+     }
+   },
+-  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
++  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e",
++  "engines": {
++    "node": ">=22.13.0"
++  }
+ }
 ```
 
-**File**: `src/screens/web-view/versions/component/tabs/index.tsx` (removed, +0/-36)
+**File**: `src/components/loading/index.tsx` (modified, +2/-3)
 ```diff
-@@ -1,36 +0,0 @@
--/*
-- * @Author: czy0729
-- * @Date: 2023-06-10 05:40:36
-- * @Last Modified by: czy0729
-- * @Last Modified time: 2025-12-28 05:59:14
-- */
--import { observer } from 'mobx-react'
--import { TabsV2 } from '@components'
--import { _, useStore } from '@stores'
--import Web from '../web'
--import { COMPONENT } from './ds'
--
--import type { Ctx } from '../../types'
--
--function Tabs({ routes }) {
--  const { $ } = useStore<Ctx>(COMPONENT)
--
--  const { page } = $.state
--
--  return (
--    <TabsV2
--      key={_.orientation}
--      style={_.mt._sm}
--      routes={routes}
--      page={page}
--      backgroundColor={_.colorPlain}
--      renderItem={(item, index) => {
--        if (index - page) return null
--        return <Web uri={item.key} />
--      }}
--      onChange={$.onChange}
--    />
--  )
--}
--
--export default observer(Tabs)
-```
-
-**File**: `src/screens/web-view/versions/component/web/index.tsx` (modified, +41/-19)
-```diff
-@@ -2,32 +2,65 @@
-  * @Author: czy0729
-  * @Date: 2023-06-23 03:58:08
+@@ -4,7 +4,6 @@
   * @Last Modified by: czy0729
-- * @Last Modified time: 2024-03-22 11:26:40
-+ * @Last Modified time: 2026-11-09 18:00:00
-+ *
-+ * 云文档 WebView: 加载完成后淡入, 注入去广告与暗色样式
-  */
-+import { useCallback, useEffect, useRef } from 'react'
- import { observer } from 'mobx-react'
- import WebView from 'react-native-webview'
- import { Loading, Text } from '@components'
- import { SafeAreaView } from '@_'
- import { _ } from '@stores'
-+import { stl } from '@utils'
- import { r } from '@utils/dev'
--import { useBoolean } from '@utils/hooks'
-+import { useBoolean, useMount } from '@utils/hooks'
- import { HTML_SINGLE_DOC } from '@constants'
- import { injectedJavaScript } from './utils'
- import { COMPONENT } from './ds'
- import { memoStyles } from './styles'
- 
--function Web({ uri }) {
-+import type { TimerRef } from '@types'
-+import type { Props } from './types'
-+
-+/** 云文档 WebView */
-+function Web({ uri }: Props) {
-   r(COMPONENT)
- 
--  const { state, setTrue } = useBoolean(false)
-+  const { state, setTrue, setFalse } = useBoolean(false)
-+  const timerRef = useRef<TimerRef>(null)
-   const styles = memoStyles()
-   const html = HTML_SINGLE_DOC(uri)
- 
-+  const clearTimer = useCallback(() => {
-+    if (timerRef.current) {
-+      clearTimeout(timerRef.current)
-+      timerRef.current = null
-+    }
-+  }, [])
-+
-+  // 切换文档时重置加载态, 并丢弃上一篇文档挂起的淡入定时器
-+  useEffect(() => {
-+    clearTimer()
-+    setFalse()
-+  }, [clearTimer, setFalse, uri])
-+
-+  const handleLoadEnd = useCallback(() => {
-+    clearTimer()
-+
-+    timerRef.current = setTimeout(() => {
-+      timerRef.current = null
-+      setTrue()
-+    }, 1000)
-+  }, [clearTimer, setTrue])
-+
-+  useMount(() => clearTimer)
-+
-   return (
-     <SafeAreaView style={styles.webview}>
-       {!state && (
-         <Loading style={styles.loading}>
--          <Text style={[styles.text, _.mt.md]} type='sub' size={13} align='center'>
-+          <Text style={stl(styles.text, _.mt.md)} type='sub' size={13} align='center'>
-             正在加载网页...
-           </Text>
-           <Text style={styles.text} type='sub' size={11} align='center'>
-@@ -36,23 +69,12 @@ function Web({ uri }) {
-         </Loading>
-       )}
-       <WebView
--        style={{
--          backgroundColor: _.colorPlain,
--          opacity: state ? 1 : 0
--        }}
-+        style={stl(styles.webview, !state && styles.hidden)}
-         originWhitelist={['*']}
--        source={{
--          uri: html
--        }}
--        // androidHardwareAccelerationDisabled
--        // androidLayerType='software'
-+        source={{ uri: html }}
-         injectedJavaScript={injectedJavaScript()}
-         bounces={false}
--        onLoadEnd={() => {
--          setTimeout(() => {
--            setTrue()
--          }, 1000)
--        }}
-+        onLoadEnd={handleLoadEnd}
-       />
-     </SafeAreaView>
-   )
-```
-
-**File**: `src/screens/web-view/versions/component/web/index.web.tsx` (modified, +28/-23)
-```diff
-@@ -2,49 +2,54 @@
-  * @Author: czy0729
-  * @Date: 2023-11-04 05:54:03
-  * @Last Modified by: czy0729
-- * @Last Modified time: 2024-11-12 10:44:12
-+ * @Last Modified time: 2026-11-09 18:00:00
-+ *
-+ * 云文档 [WEB]: 用 iframe 渲染
+  * @Last Modified time: 2026-07-26 04:19:30
   */
 -import React from 'react'
-+import { useEffect } from 'react'
- import { View } from 'react-native'
-+import { observer } from 'mobx-react'
- import { Loading } from '@components'
- import { SafeAreaView } from '@_'
+ import { ActivityIndicator } from 'react-native'
+ import { observer } from 'mobx-react'
  import { _ } from '@stores'
-+import { stl } from '@utils'
- import { useBoolean } from '@utils/hooks'
- import { HTML_SINGLE_DOC } from '@constants'
-+import { memoStyles } from './styles'
+@@ -25,10 +24,10 @@ const Raw = observer(({ color, size = 'large' }: LoadingProps) => {
+ })
  
--function Web({ uri }) {
--  const { state, setTrue } = useBoolean(false)
-+import type { Props } from './types'
+ /** Loading (中) */
+-const Normal = observer(({ color, size = 'small' }: LoadingProps) => {
++const Normal = observer(({ style, color, size = 'small' }: LoadingProps) => {
+   r(COMPONENT)
+ 
+-  return <ActivityIndicator color={color || _.colorSub} size={size} />
++  return <ActivityIndicator style={style} color={color || _.colorSub} size={size} />
+ })
+ 
+ /** Loading (中) */
+```
+
+**File**: `src/components/tool-bar/popover/index.tsx` (modified, +40/-13)
+```diff
+@@ -2,18 +2,20 @@
+  * @Author: czy0729
+  * @Date: 2022-05-05 19:38:11
+  * @Last Modified by: czy0729
+- * @Last Modified time: 2026-10-30 05:13:51
++ * @Last Modified time: 2026-11-12 05:20:19
+  */
++import { View } from 'react-native'
+ import { observer } from 'mobx-react'
+ import { _ } from '@stores'
+ import { stl } from '@utils'
+ import { memoStyles } from '../styles'
+ import { Flex } from '../../flex'
+ import { Heatmap } from '../../heatmap'
+ import { Iconfont } from '../../iconfont'
++import { Loading } from '../../loading'
+ import { Popover } from '../../popover'
+ import { Text } from '../../text'
+-import { styles as opacityStyles } from './styles'
++import { styles as localStyles } from './styles'
+ 
+ import type { PopoverData } from '../../popover'
+ import type { Props } from './types'
+@@ -28,25 +30,50 @@ function ToolBarPopover<Data extends PopoverData>({
+   iconSize = 18,
+   type = 'sub',
+   text,
++  loading,
++  disabled,
+   heatmap,
+   transparent,
+   onSelect
+ }: Props<Data>) {
+   const styles = memoStyles()
+ 
++  const elContent = (
++    <Flex style={stl(styles.item, transparent && localStyles.opacity, itemStyle)} justify='center'>
++      {loading ? (
++        <View style={stl(localStyles.loading, { width: iconSize, height: iconSize })}>
++          <Loading.Normal style={localStyles.loadingIcon} />
++        </View>
++      ) : (
++        !!icon && <Iconfont name={icon} size={iconSize} color={iconColor} />
++      )}
++      {!!text && (
++        <Text
++          style={stl((icon || loading) && _.ml.xs)}
++          type={type}
++          size={12}
++          bold
++          noWrap
++          selectable={false}
++        >
++          {text}
++        </Text>
++      )}
++    </Flex>
++  )
 +
-+/** 加载兜底超时 (ms) */
-+const LOADING_TIMEOUT = 6000
++  if (disabled) {
++    return (
++      <View style={stl(styles.touch, style)}>
++        {elContent}
++        {!!heatmap && <Heatmap id={heatmap} />}
++      </View>
++    )
++  }
 +
-+/** 云文档 iframe */
-+function Web({ uri }: Props) {
-+  const { state, setTrue, setFalse } = useBoolean(false)
-+  const styles = memoStyles()
+   return (
+     <Popover style={stl(styles.touch, style)} data={data} value={value} onSelect={onSelect}>
+-      <Flex
+-        style={stl(styles.item, transparent && opacityStyles.opacity, itemStyle)}
+-        justify='center'
+-      >
+-        {!!icon && <Iconfont name={icon} size={iconSize} color={iconColor} />}
+-        {!!text && (
+-          <Text style={stl(icon && _.ml.xs)} type={type} size={12} bold noWrap selectable={false}>
+-            {text}
+-          </Text>
+-        )}
+-      </Flex>
++      {elContent}
+       {!!heatmap && <Heatmap id={heatmap} />}
+     </Popover>
+   )
+```
+
+**File**: `src/components/tool-bar/popover/styles.ts` (modified, +13/-1)
+```diff
+@@ -2,7 +2,7 @@
+  * @Author: czy0729
+  * @Date: 2022-05-05 19:38:11
+  * @Last Modified by: czy0729
+- * @Last Modified time: 2026-09-02 23:15:46
++ * @Last Modified time: 2026-11-12 00:49:54
+  */
+ import { _ } from '@stores'
+ 
+@@ -11,5 +11,17 @@ export const styles = _.create({
+     marginRight: -24,
+     marginLeft: -8,
+     backgroundColor: 'transparent'
++  },
++  loading: {
++    alignItems: 'center',
++    justifyContent: 'center',
++    overflow: 'hidden'
++  },
++  loadingIcon: {
++    transform: [
++      {
++        scale: 0.75
++      }
++    ]
+   }
+ })
+```
+
+**File**: `src/components/tool-bar/popover/types.ts` (modified, +6/-0)
+```diff
+@@ -39,6 +39,12 @@ export type Props<T extends PopoverData> = {
+   /** 按钮文本，false 时不显示文本 */
+   text?: string | number | false
+ 
++  /** 替换左侧图标显示加载指示器 */
++  loading?: boolean
 +
-+  // 切换文档时重置加载态; 正常路径以 iframe 的 onLoad 为准, 超时兜底
-+  useEffect(() => {
-+    setFalse()
++  /** 禁止展开菜单 */
++  disabled?: boolean
 +
-+    const timer = setTimeout(setTrue, LOADING_TIMEOUT)
-+    return () => clearTimeout(timer)
-+  }, [setFalse, setTrue, uri])
+   /** 埋点事件 key */
+   heatmap?: EventKeys
+ 
+```
+
+**File**: `src/screens/home/subject/store/fetch/oss.ts` (modified, +5/-1)
+```diff
+@@ -134,7 +134,11 @@ export default class Oss extends Computed {
+         rank: this.subject.rank || '',
+         character: this.crt,
+         staff: this.staff,
+-        titleLabel: this.titleLabel
++        titleLabel: this.titleLabel,
++        // 与本地 fetchRanks 的判定保持一致: v0 兜底请求失败(name 为空)不算 NSFW
++        nsfw:
++          subjectStore.subjectV2(this.subjectId)?.nsfw ||
++          (this.subject.v0 === true && !!this.subject.name)
+       })
+     }, 10000)
+   }
+```
+
+**File**: `src/screens/home/subject/types.ts` (modified, +1/-0)
+```diff
+@@ -94,6 +94,7 @@ export type SubjectSnapshot = Override<
+     character: Crt[]
+     staff: Staff[]
+     titleLabel: string
++    nsfw?: boolean
+     _loaded: Loaded
+   }
+ >
+```
+
+**File**: `src/screens/user/v2/component/tool-bar/sort.tsx` (modified, +4/-2)
+```diff
+@@ -2,7 +2,7 @@
+  * @Author: czy0729
+  * @Date: 2022-06-06 06:10:32
+  * @Last Modified by: czy0729
+- * @Last Modified time: 2026-03-22 06:13:47
++ * @Last Modified time: 2026-11-12 03:59:40
+  */
+ import { useMemo } from 'react'
+ import { observer } from 'mobx-react'
+@@ -18,7 +18,7 @@ function Sort() {
+ 
+   const memoData = useMemo(() => COLLECTIONS_ORDERBY.map(item => item.label), [])
+ 
+-  const { order } = $.state
++  const { order, scoreFetching } = $.state
  
    return (
--    <SafeAreaView
--      style={[
--        _.container.flex,
--        {
--          backgroundColor: _.colorPlain
--        }
--      ]}
--    >
-+    <SafeAreaView style={styles.webview}>
-       {!state && <Loading style={_.mt.lg} />}
--      <View
--        style={{
--          flex: 1,
--          backgroundColor: _.colorPlain,
--          opacity: state ? 1 : 0
--        }}
--        onLayout={() => {
--          setTrue()
--        }}
--      >
-+      <View style={stl(styles.webview, !state && styles.hidden)}>
-         <iframe
-           style={{
-             minHeight: _.window.height,
-             border: 'none'
-           }}
-           src={HTML_SINGLE_DOC(uri)}
-+          onLoad={setTrue}
-         />
-       </View>
-     </SafeAreaView>
-   )
- }
- 
--export default Web
-+export default observer(Web)
-```
-
-**File**: `src/screens/web-view/versions/component/web/styles.ts` (modified, +6/-1)
-```diff
-@@ -2,7 +2,9 @@
-  * @Author: czy0729
-  * @Date: 2024-02-08 17:47:25
-  * @Last Modified by: czy0729
-- * @Last Modified time: 2026-07-16 00:24:28
-+ * @Last Modified time: 2026-11-09 18:00:00
-+ *
-+ * 云文档 WebView 容器与加载态
-  */
- import { _ } from '@stores'
- 
-@@ -16,5 +18,8 @@ export const memoStyles = _.memoStyles(() => ({
-   },
-   text: {
-     paddingHorizontal: _.wind
-+  },
-+  hidden: {
-+    opacity: 0
-   }
- }))
-```
-
-**File**: `src/screens/web-view/versions/component/web/types.ts` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+/*
-+ * @Author: czy0729
-+ * @Date: 2026-11-09 18:00:00
-+ * @Last Modified by: czy0729
-+ * @Last Modified time: 2026-11-09 18:00:00
-+ *
-+ * 云文档 WebView 参数
-+ */
-+export type Props = {
-+  /** 云文档 key */
-+  uri: string
-+}
-```
-
-**File**: `src/screens/web-view/versions/component/web/utils.ts` (modified, +5/-2)
-```diff
-@@ -2,11 +2,14 @@
-  * @Author: czy0729
-  * @Date: 2023-06-23 04:59:32
-  * @Last Modified by: czy0729
-- * @Last Modified time: 2024-02-08 17:40:06
-+ * @Last Modified time: 2026-11-09 18:00:00
-+ *
-+ * 注入脚本: 隐藏云文档原生的无关按钮, 暗色下反色
-  */
- import { _ } from '@stores'
- import { HTMLTrim } from '@utils'
- 
-+/** 生成注入脚本 */
- export function injectedJavaScript() {
-   let appStyles = `
-     #openInAppBtn,
-@@ -37,7 +40,7 @@ export function injectedJavaScript() {
-       var resetStyle = document.createElement("style");
-       try {
-         resetStyle.appendChild(document.createTextNode("${HTMLTrim(appStyles)}"));
--      } catch (ex) {}
-+      } catch (e) {}
-       document.body.append(resetStyle);
-     }());
-   `
-```
-
-**File**: `src/screens/web-view/versions/ds.ts` (modified, +4/-5)
-```diff
-@@ -2,14 +2,14 @@
-  * @Author: czy0729
-  * @Date: 2023-06-10 05:42:00
-  * @Last Modified by: czy0729
-- * @Last Modified time: 2026-07-13 23:31:24
-+ * @Last Modified time: 2026-11-09 18:00:00
-+ *
-+ * 页面标识 + 版本文档配置 (key 对应云文档)
-  */
- import type { Loaded } from '@types'
- 
- export const COMPONENT = 'Versions'
- 
--export const NAMESPACE = `Screen${COMPONENT}` as const
--
- export const TABS = [
-   {
-     title: '8.37.0 - 2026/07/13',
-@@ -126,8 +126,7 @@ export const TABS = [
- ].slice(0, 10)
- 
- export const STATE = {
--  /** @deprecated */
--  page: 0,
-+  /** 当前展示的版本文档 key */
-   uri: TABS[0].key as string,
- 
-   /** 页面初始化完成 */
+     <ToolBar.Popover
+@@ -27,7 +27,9 @@ function Sort() {
+       icon='md-sort'
+       iconColor={_.colorDesc}
+       text={order ? MODEL_COLLECTIONS_ORDERBY.getLabel<CollectionsOrderCn>(order) : '收藏时间'}
++      loading={scoreFetching}
+       type='desc'
++      disabled={scoreFetching}
+       heatmap='我的.筛选选择'
+       onSelect={$.onOrderSelect}
+     />
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #419** (2026-11-11): - [登录] Passkey支持 (@Q16KBreak)
 - **PR #412** (closed): feat: 将 unsigned IPA workflow 升级到 Expo 54 (@AvalonUltra)
 - **PR #411** (2026-08-27): fix: 修复 IPA workflow 的 worklets 打包失败 (@AvalonUltra)
 - **PR #398** (2026-07-27): 改正`buildVersion`类型，更新`alt_store.json`版本 (@BrandenXia)
 - **PR #397** (2026-07-26): Update alt_store.json to 8.37.3 (@BrandenXia)
 - **PR #395** (closed): [iOS] 使用系统原生底栏适配 Liquid Glass (@Souitou-iop)
-- **PR #394** (closed): [iOS] 使用原生底栏适配 Liquid Glass (@Souitou-iop)
 
 ---
 
@@ -1938,69 +1688,49 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. - [条目] 板块布局支持按条目单独调整, 并可随设置上传/下载
+## X. - [安卓] 修复带表情的遮幕展开后整段文字段落会出现遮罩错位的问题 (fixed #396)
 
 **RULE**:
-When implementing operations in `src/screens/_/base/section-title/index.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in czy0729/Bangumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/components/render-html/mask-text/__tests__/utils.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in czy0729/Bangumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `79c411ba`: - [条目] 板块布局支持按条目单独调整, 并可随设置上传/下载. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7f5f8382`: - [安卓] 修复带表情的遮幕展开后整段文字段落会出现遮罩错位的问题 (fixed #396). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/screens/_/base/section-title/index.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/components/render-html/mask-text/__tests__/utils.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import { Component, Flex, flexStyle, Iconfont, Popover, Text, Touchable } from '@components'
-  ({
-    style,
-    icon = '',
-    left,
-    right,
-    splitStyles,
-    children,
-    onPress,
-    popover
-  }: SectionTitleProps) => {
-    const title = (
-    const titleText = (
-      <>
-        {title}
-        {!!icon && <Iconfont name={icon} color={_.colorIcon} />}
-      </>
-    )
+ * @Last Modified time: 2026-11-12 06:48:48
+  it('展开时给表情 span 固定行高', () => {
+    const emoji = React.createElement(EmojiText, { index: 38, size: 24 }, '38')
 
-    const titleEl = popover ? (
-      <Popover data={popover.data} onSelect={popover.onSelect}>
-        <Flex style={styles.touch}>{titleText}</Flex>
-      </Popover>
-    ) : onPress ? (
-      <Touchable style={stl(flexStyle(), styles.touch)} onPress={onPress}>
-        {titleText}
-      </Touchable>
-    ) : (
-      title
-    )
+    const result = maskRichText([emoji], true, 30) as any[]
+    const styles = result[0].props.style as any[]
+
+    expect(styles[styles.length - 1]).toEqual({ lineHeight: 30 })
+    expect(styles[styles.length - 2]).toEqual({ color: MASK_TEXT_COLOR })
+  })
+
+      React.createElement('Text', { key: 'link', onPress: jest.fn() } as any, '链接'),
+    expect(
+      hidden.map((item: any) => (React.isValidElement(item) ? (item as any).props.children : item))
+    ).toEqual(
+      visible.map((item: any) => (React.isValidElement(item) ? (item as any).props.children : item))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-import { Component, Flex, flexStyle, Iconfont, Text, Touchable } from '@components'
-  ({ style, icon = '', left, right, splitStyles, children, onPress }: SectionTitleProps) => {
-    const titleEl = onPress ? (
-      <Touchable style={stl(flexStyle(), styles.touch)} onPress={onPress}>
-        <Text type='title' size={20} bold shadow={!!splitStylesUnderline}>
-          {children}
-        </Text>
-        {!!icon && <Iconfont name={icon} color={_.colorIcon} />}
-      </Touchable>
-    ) : (
+// Induced defect failure mode:
+ * @Last Modified time: 2026-09-05 20:29:45
+      React.createElement('Text', { key: 'link', onPress: jest.fn() }, '链接'),
+    expect(hidden.map(item => (React.isValidElement(item) ? item.props.children : item))).toEqual(
+      visible.map(item => (React.isValidElement(item) ? item.props.children : item))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `79c411ba` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7f5f8382` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T11:34:36.836Z",
+  "updated_at": "2026-11-14T12:04:53.538Z",
   "stats": {
-    "total_discovered": 3223,
-    "approved_pending_harvest": 3018,
+    "total_discovered": 3230,
+    "approved_pending_harvest": 3025,
     "harvested_count": 0,
     "rejected_count": 205,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3012,
+      "COMMUNITY_AND_EXPERT": 3019,
       "OFFICIAL_DOCUMENTATION": 116,
       "STANDARDS_AND_SPECIFICATIONS": 81,
       "ENGINEERING_BLOGS": 1,
@@ -69491,6 +69491,160 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md",
         "fileName": "hf-nomic-ai-nomic-embed-text-v1.5-learnings.md"
+      }
+    },
+    "SRC-240E9C05B4D7": {
+      "id": "SRC-240E9C05B4D7",
+      "url": "https://huggingface.co/google/gemma-4-26B-A4B-it",
+      "title": "https://huggingface.co/google/gemma-4-26B-A4B-it",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T12:04:53.013Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-google-gemma-4-26b-a4b-it-learnings.md",
+        "fileName": "hf-google-gemma-4-26b-a4b-it-learnings.md"
+      }
+    },
+    "SRC-7D4A116DD6A5": {
+      "id": "SRC-7D4A116DD6A5",
+      "url": "https://github.com/czy0729/Bangumi",
+      "title": "https://github.com/czy0729/Bangumi",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T12:04:53.379Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/czy0729-bangumi-learnings.md",
+        "fileName": "czy0729-bangumi-learnings.md"
+      }
+    },
+    "SRC-29FFF010523F": {
+      "id": "SRC-29FFF010523F",
+      "url": "https://bgm.tv/",
+      "title": "https://bgm.tv/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T12:04:53.419Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/czy0729-bangumi-learnings.md",
+        "fileName": "czy0729-bangumi-learnings.md"
+      }
+    },
+    "SRC-315A8A2B3E5A": {
+      "id": "SRC-315A8A2B3E5A",
+      "url": "https://github.com/archriss/react-native-render-html/blob/v4.1.1/index.js",
+      "title": "https://github.com/archriss/react-native-render-html/blob/v4.1.1/index.js",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T12:04:53.447Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/czy0729-bangumi-learnings.md",
+        "fileName": "czy0729-bangumi-learnings.md"
+      }
+    },
+    "SRC-65B4DEB7F80C": {
+      "id": "SRC-65B4DEB7F80C",
+      "url": "https://github.com/archriss/react-native-render-html/pull/268/commits/8a61abcd0d900bbc58141f5cf7491fb0f09fbfe4",
+      "title": "https://github.com/archriss/react-native-render-html/pull/268/commits/8a61abcd0d900bbc58141f5cf7491fb0f09fbfe4",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T12:04:53.473Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/czy0729-bangumi-learnings.md",
+        "fileName": "czy0729-bangumi-learnings.md"
+      }
+    },
+    "SRC-79BFB8A86E6E": {
+      "id": "SRC-79BFB8A86E6E",
+      "url": "https://czy0729.lanzoub.com/ij57K4fkiena",
+      "title": "https://czy0729.lanzoub.com/ij57K4fkiena",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T12:04:53.500Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/czy0729-bangumi-learnings.md",
+        "fileName": "czy0729-bangumi-learnings.md"
+      }
+    },
+    "SRC-0DDA4840A48B": {
+      "id": "SRC-0DDA4840A48B",
+      "url": "https://github.com/user-attachments/assets/ec946e0b-1d46-49d4-b84a-8cf38f056890",
+      "title": "https://github.com/user-attachments/assets/ec946e0b-1d46-49d4-b84a-8cf38f056890",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T12:04:53.538Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/czy0729-bangumi-learnings.md",
+        "fileName": "czy0729-bangumi-learnings.md"
       }
     }
   }

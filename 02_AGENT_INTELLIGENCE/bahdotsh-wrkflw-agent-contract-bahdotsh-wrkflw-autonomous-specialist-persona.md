@@ -4,18 +4,18 @@
 {
   "source_repository": "bahdotsh/wrkflw",
   "source_url": "https://github.com/bahdotsh/wrkflw",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "7b284277",
+  "license": "MIT",
+  "timestamp": "2026-11-14T12:04:07.913Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-bahdotsh-wrkflw",
   "canonical_classification": "agent_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [bahdotsh/wrkflw](https://github.com/bahdotsh/wrkflw) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [bahdotsh/wrkflw](https://github.com/bahdotsh/wrkflw) (Revision: `7b284277`).  
+> **License**: MIT | **Timestamp**: `2026-11-14T12:04:07.913Z`  
+> **Learning ID**: `learn-github-bahdotsh-wrkflw`
 
 
 ## 1. Agent Role & Persona Contract
@@ -24,26 +24,12 @@ PROVENANCE_END -->
 - **Trust Boundary**: Reads and modifies only authorized workspace resources.
 
 ## 2. Operational Capabilities
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md`  
-> **Source**: github ([https://github.com/bahdotsh/wrkflw](https://github.com/bahdotsh/wrkflw))  
-> **Source Version**: `bcd6c848`  
-> **License**: MIT  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-10T05:14:14.986Z  
-> **Learning ID**: `learn-github-bahdotsh-wrkflw`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): bahdotsh/wrkflw
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/bahdotsh/wrkflw](https://github.com/bahdotsh/wrkflw))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-10T05:14:13.625Z  
+> **Harvest Timestamp**: 2026-11-14T12:04:07.224Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -53,7 +39,7 @@ PROVENANCE_END -->
 - **Description**: Validate and Run GitHub Actions locally.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3339 stars
+- **Stars / Engagement**: 3342 stars
 
 ---
 
@@ -200,17 +186,27 @@ use std::sync::{Arc, Mutex};
 use thiserror::Error;
 
 use crate::acceleration;
-use crate::action_resolver;
+use crate::action_resolver::{self, is_git_sha};
 use crate::checkout_sync::copy_directory_contents;
 use crate::dependency;
 use crate::docker;
 use crate::environment;
 use crate::events::{step_display_name, EXIT_CODE_LABEL, STDERR_HEADER, STDOUT_HEADER};
+use crate::image_build::{
+    ahead_build_permits, build_image_checked, ensure_shared_layers, failed_image_build,
+    remember_failed_image_build, with_images_built_ahead, with_run_image_builds, AHEAD_BUILDS,
+    IMAGES_BUILT_AHEAD,
+};
 use crate::job_session;
 use crate::kubernetes::{self, KubernetesConfig};
 use crate::live_step::LiveStep;
 use crate::matrix_fold::{matrix_twins, repeated_leg};
 use crate::podman;
+use crate::setup_actions::{
+    detect_setup, runner_node_install, rust_toolchain_extras, static_input, unrun_action_cause,
+    BuiltRuntimes, SetupDetection, SetupRuntime, NO_IMPLEMENTATION, PYTHON_SCRIPTS_DIR,
+    SETUP_ACTIONS, UV_PYTHON_DIR,
+};
 use wrkflw_logging;
 use wrkflw_matrix::MatrixCombination;
 use wrkflw_models::gitlab::Pipeline;
@@ -238,10 +234,12 @@ pub async fn execute_workflow(
     let is_gitlab = is_gitlab_pipeline(workflow_path);
 
     if is_gitlab {
-        return crate::vm_memory::with_run_pool(acceleration::without_run_state(
+        let result = crate::vm_memory::with_run_pool(acceleration::without_run_state(
             execute_gitlab_pipeline(workflow_path, config.clone()),
         ))
         .await;
+        crate::vm_workspace::wait_for_released_volumes().await;
+        return result;
     }
     let root = std::env::current_dir().map_err(|e| {
         ExecutionError::Execution(format!("Failed to get current directory: {}", e))
@@ -253,14 +251,21 @@ pub async fn execute_workflow(
     )
     .map_err(ExecutionError::Execution)?;
     // Each run gets its own job pool, sized once its runtime is known.
-    crate::vm_memory::with_run_pool(acceleration::with_run_state(
+    let result = crate::vm_memory::with_run_pool(acceleration::with_run_state(
         std::sync::Arc::new(state),
         crate::workspace::with_workflow_file(
             workflow_path,
-            Box::pin(execute_github_workflow(workflow_path, config.clone())),
+            Box::pin(with_run_image_builds(execute_github_workflow(
+                workflow_path,
+                config.clone(),
+            ))),
         ),
     ))
-    .await
+    .await;
+    // A fresh workspace's volume goes once its job container does; a run
+    // that ends here would otherwise leave the last ones behind.
+    crate::vm_workspace::wait_for_released_volumes().await;
+    result
 }
 
 /// Determine if a file is a GitLab CI/CD pipeline
@@ -327,8 +332,16 @@ async fn execute_github_workflow(
         .map_err(|e| ExecutionError::Execution(format!("Failed to create workspace: {}", e)))?;
 
     // 4. Set up GitHub-like environment
-    let (mut env_context, user_env) =
-        github_run_env(&workflow, workspace_dir.path(), &config.runtime_type)?;
+    let (mut env_context, user_env) = github_run_env(
+        &workflow,
+        workspace_dir.path(),
+        &config.runtime_type,
+        &environment::RunRef {
+            event_name: config.event_name.as_deref(),
+            git_ref: config.git_ref.as_deref(),
+            base_branch: config.base_branch.as_deref(),
+        },
+    )?;
 
     // show=true means hide=false (inverted for the env var)
     env_context.insert(
@@ -422,42 +435,7 @@ async fn execute_github_workflow(
                     if step.status == StepStatus::Failure {
                         failure_details.push_str(&format!(
                             "  {} {}: {}\n",
-                            wrkflw_logging::symbols::FAILURE,
-                            step.name,
-                            step.output
-                        ));
-                    }
-                }
-            }
-        }
-
-        results.extend(job_results);
-    }
-
-    // If there were failures, add detailed failure information to the result
-    if has_failures {
-        wrkflw_logging::error(&format!("Workflow execution failed:{}", failure_details));
-    }
-
-    Ok(ExecutionResult {
-        jobs: results,
-        failure_details: if has_failures {
-            Some(failure_details)
-        } else {
-            None
-        },
-    })
-}
-
-/// Record one batch's results for downstream jobs' `needs.*` context.
-///
-/// A matrix job yields one `JobResult` per combination, all sharing a
-/// `canonical_name`. Outputs follow GitHub Actions: the last combination to set
-/// a key wins, which is non-deterministic across combinations. The result is
-/// the aggregate, as on GitHub: `failure` if any combination failed, otherwise
-/// `success` if any succeeded, otherwise `skipped`.
-fn record_job_results(
-    job_results: &[JobR
+                       
 ```
 
 ### Core Architecture Module: `crates/ui/src/app/state.rs`
@@ -1935,7 +1913,10 @@ use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicBool, Ordering};
 
-const ENTRY_SCHEMA: u32 = 1;
+/// 2: jobs carry the actions they passed without running, and the leg a
+/// folded matrix leg repeated. Entries from 1 can't say, so they are not
+/// reused.
+const ENTRY_SCHEMA: u32 = 2;
 /// Images and floating action tags aren't in the key, so a hit must not live
 /// forever. A week bounds that drift.
 const DEFAULT_TTL_SECS: i64 = 7 * 24 * 60 * 60;
@@ -1947,6 +1928,14 @@ pub(crate) struct StoredJob {
     pub name: String,
     pub canonical_name: String,
     pub outputs: HashMap<String, String>,
+    /// Steps that passed without running their action. A reused job reports
+    /// them again, so reuse never turns a partial pass into a verified one.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub actions_not_run: Vec<crate::action_fidelity::UnexecutedAction>,
+    /// The leg this matrix leg only repeated when the result was stored. A
+    /// reused fold still never ran, and says so.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub repeated_from: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -2195,23 +2184,7 @@ impl ResultStore {
 
     /// Stop using the remote for this run, saying so once.
     fn remote_failed(&self, error: &str) {
-        if !self.remote_down.swap(true, Ordering::Relaxed) {
-            wrkflw_logging::warning(&format!(
-                "Remote cache failed ({}): not using it for the rest of this run",
-                error
-            ));
-        }
-    }
-
-    /// A usable entry for `key`, trying this machine before the remote.
-    pub(crate) async fn load(&self, key: &str) -> Option<Entry> {
-        let now = chrono::Utc::now().timestamp();
-        let local = tokio::fs::read_to_string(self.root.join(entry_file(key)))
-            .await
-            .ok()
-            .and_then(|text| serde_json::from_str::<Entry>(&text).ok())
-            .filter(|entry| entry.is_usable(key, now));
-        if local.is_some() {
+        if !self.remote_down.swa
 ```
 
 
@@ -2220,11 +2193,13 @@ impl ResultStore {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #166** (2026-11-09): **fix: make local verdicts match what GitHub would say**
-  *Symptoms*: ## Why  I checked wrkflw against GitHub on wrkflw's own CI history. It was fast: emulation took 73–93 s on a Mac, where GitHub took 160–269 s. It was not trustworthy:  | Finding | Effect | |---|---| | wrkflw agreed with GitHub on 2 of 6 commits | false passes and false failures | | `gate` on a feature branch or detached HEAD ran 0 workflows and passed | push "verified" with nothing checked | | Running from a git worktree lost `.git` | every git step failed, masking real failures | | Docker Desktop's 8 GB VM killed the linker | a failure GitHub's 16 GB runner never sees | | itsdangerous planned 6 matrix legs, GitHub ran 7 | `include` semantics differed | | `runs-on: ${{ matrix.os \|\| 'ubuntu-latest' }}` | windows and macOS legs were not flagged as unverified | | Workflows without `name:` failed to parse | | | Reused jobs looked like ordinary passes | | | Digests had colour codes, `thiserror` as an error line, duplicated legs and a canned cargo hint | |  ## What changes  - **Verdicts.** `run_finished` and `gate` gain `verdict`: `verified`, `partial`, or `nothing_checked`. The gate's `passed` is false when nothing ran. It still exits 0 then, so pushes that no CI covers aren't blocked. - **Gate event fallback.** Without `--event`, a workflow a push doesn't fire is checked as a `pull_request` into the default branch. Each workflow entry says which `event` and `base_branch` it was checked as. - **Matrix `include`** follows GitHub's documented rules. The documented example and itsd
+- **Issue #171** (2026-11-13): **fix: agree with GitHub on real repositories, and build job images faster**
+  *Symptoms*: ## Problem  Running real repositories was slow and sometimes wrong:  - Each leg of a matrix rebuilt the same packages in its own image. - An image that failed to build was built a second time at the job's turn. - A busy engine failed container creation at 15 seconds. - A few parsing rules disagreed with GitHub.  ## Changes  **Image builds** - The job image is split into a shared packages layer plus one layer per runtime. The shared layers are built once, as an image of their own, where the runtime reuses build layers (Docker, Podman; not Kubernetes). - Images are built ahead while a job waits for its turn, capped at four across the process, and one at a time where the run limits its jobs. - BuildKit is used through the `docker` CLI where it builds into the same engine; otherwise the engine's own builder is used. `WRKFLW_IMAGE_BUILDER=classic` skips BuildKit. - A build that failed on its own is remembered for the run and not repeated. A build that timed out or lost its connection is tried again. - The runner's Node.js comes from nodejs.org, checked against its published checksum, with the distribution's package as the fallback. - Each runtime's install refreshes the package lists first, since it is now a layer of its own.  **Containers** - The engine gets 120 seconds to create or start a container. One whose creation timed out is tracked by name and removed later. - Cleanup passes quietly over a container that was never created, and removes by force one that didn't stop in tim
 
-- **Issue #165** (2026-11-06): **Make wrkflw a trustworthy feedback loop for agents**
-  *Symptoms*: I ran wrkflw the way a coding agent does: through the JSON CLI and the MCP server, on a probe repo. These are the problems that turned up, and how this PR fixes each one.  ## Problems found  1. **False passes on OS matrices.** In a matrix over `[ubuntu-latest, macos-latest, windows-latest]`, a step gated on `runner.os == 'Windows'` that runs `exit 1` was reported as `success` on every leg, in both the CLI and MCP output. Locally those labels run as Linux (or as the host under emulation), so that step never ran. Nothing said so. 2. **`gate` sent agents to the wrong run.** `gate --format json` printed text. The recovery AGENTS.md documented, `runs failure latest`, reads the newest run. That's whichever workflow the gate ran last, which can be one that passed, so the agent got `failures: []` after a failed gate. 3. **The MCP server had no fast path.** There was no `gate` tool, and `run_workflow` couldn't reuse earlier passing results. MCP job results also dropped `repeated_from`. 4. **No live output.** In JSON mode a step's output only arrived when the step ended, so an agent couldn't tell a slow step from a hung one. 5. **Nothing flagged before a run.** `plan` didn't warn that some jobs would run as a different OS.  ## Commits  - **`feat(executor)`: flag jobs that ran as another OS than `runs-on` asked.** The engine compares the OS that `runs-on` names with the `runner.os` the job actually saw. On a mismatch it logs a warning, adds `runner: {requested, ran_as}` to `job_finished
+- **Issue #170** (2026-11-13): **perf: build job images faster, and start no container for a step that only prints**
+  *Symptoms*: ## Summary  On pallets/click (11 jobs, 65 s on GitHub), a first run with no images took 327 s and a warm run 52–72 s. Most of that was not the tests. This cuts the cold run to about 130 s and the warm run to 36–38 s, with all 11 jobs still agreeing with GitHub.  | Run on click (GitHub: 65 s) | Before | After | |---|---|---| | No images, no build cache | 327 s | 125 s, 135 s | | Fresh clone, images present | 65–73 s | 64 s | | Warm, second run onward | 52–72 s | 36–38 s |  ## What changed  - **Shared image layers.** A job's runtime image was one `RUN` with the apt packages, Node.js, uv and the interpreter, so nine matrix legs each spent a minute and 800 MB on the same packages. The packages now have their own layer and each runtime follows in its own. - **BuildKit for runtime images.** The engine's own builder saves a layer after every instruction, which took about as long as the installs. Runtime images are now built through `docker buildx build`. If that doesn't produce the image, the old build runs and reports as before. `WRKFLW_IMAGE_BUILDER=classic` keeps to the old builder. - **Runner Node.js from nodejs.org**, checked against its published checksum: 3.7 s instead of 14.5 s and a second `apt-get update`. - **Images built ahead.** A job used to build its image only once it had room in the VM. Images are now built while jobs wait. The first build of a set of shared packages goes alone and the rest start when its layers exist. - **No container for a step that only prints.**
+  **Post-Mortem & Fix Analysis**:
+  > Closing: both commits here (2e4dfab, 55556cf) landed on main through #171, which was stacked on this branch and merged as 7b28427. Nothing left to merge.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2241,432 +2216,781 @@ impl ResultStore {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bcd6c848` (2026-11-09)
-**Commit Message**: fix: make local verdicts match what GitHub would say (#166)
+### Incident Patch 1: `7b284277` (2026-11-13)
+**Commit Message**: fix: agree with GitHub on real repositories, and build job images faster (#171)
 
-* fix: make local verdicts match what GitHub would say
+* perf(executor): build job images faster, and start no container for a step that only prints
 
-A benchmark of wrkflw against its own GitHub CI history found it agreed on
-2 of 6 commits, and that the gate passed on feature branches having run
-nothing. This fixes each cause it found.
+A first run with no images took 327 s for pallets/click's 11 jobs, and a
+warm run 52-72 s, against 65 s on GitHub. Most of it was not the tests.
 
-- run_finished and the gate gain a verdict: verified, partial (jobs ran as
-  another OS) or nothing_checked. The gate's `passed` is false when no job
-  ran, and text mode no longer prints a plain pass for either case.
-- Without --event, the gate checks a workflow a push doesn't fire as a
-  pull request into the default branch, so feature-branch CI is checked.
-- Matrix include follows GitHub's rules: entries merge into every original
-  combination whose matrix values they keep, and never into combinations
-  another include created. itsdangerous now plans 7 legs, as GitHub runs.
-- A runs-on expression that reads only matrix is evaluated per leg, so
-  `${{ matrix.os || 'ubuntu-latest' }}` no longer hides unverified legs.
-- A checkout from a git worktree gets a real .git directory, on its branch.
-  Worktree runs used to fail on every step that ran git.
-- Docker and Podman runs warn whe
+Each job's runtime image was one RUN holding the apt packages, Node.js,
+uv and the interpreter, so nine matrix legs each spent a minute and
+800 MB on the same packages. The packages now have a layer of their own
+and each runtime follows in its own, so legs differ only in the
+interpreter.
 
-**File**: `AGENTS.md` (modified, +16/-4)
+The engine's own builder saves a layer after every instruction, which
+took about as long as the installs. Runtime images are now built with
+BuildKit through `docker buildx build`; if that doesn't produce the
+image, the old build runs and reports as before.
+WRKFLW_IMAGE_BUILDER=classic keeps to the old builder.
+
+The runner's Node.js comes from nodejs.org's own build, checked against
+its published checksum: 3.7 s where the distribution's package took
+14.5 s and a second `apt-get update`.
+
+A job built its image only once it had room in the VM, so builds ran
+one after another behind th
+
+**File**: `INDEX.md` (modified, +136/-19)
 ```diff
-@@ -9,7 +9,7 @@ wrkflw validates and runs GitHub Actions and GitLab CI workflows locally. Use it
- 3. Run `wrkflw --format json run <file> --intent "why you are running this"`.
- 4. On failure, read the `failure` object in the final `run_finished` line. Don't rerun to see the error again.
- 5. For earlier runs, use `wrkflw runs list`, `runs failure <id>` and `runs logs <id> --step <name>`.
--6. Before calling a pass done, check `unverified` on `run_finished`. A job listed there asked for another OS in `runs-on` than it ran as, such as `windows-latest` run as Linux, so steps gated on `runner.os` and OS-specific behaviour were not checked. Say so instead of claiming CI will pass.
-+6. Before calling a pass done, read `verdict` on `run_finished`, not only `status`. `verified` means every job that ran did so as the OS its `runs-on` asked for. `partial` means some didn't: they are listed under `unverified`, such as `windows-latest` run as Linux, so steps gated on `runner.os` and OS-specific behaviour were not checked. `nothing_checked` means it passed because no job ran. Say which, instead of claiming CI will pass.
+@@ -1,7 +1,7 @@
+ # Codebase Index: wrkflw
  
- Prefer the MCP server if your client supports MCP. `wrkflw mcp install` registers it with Claude Code, Codex, Cursor, Windsurf, VS Code, Gemini CLI, opencode, Claude Desktop, GitHub Copilot CLI, Grok Build, Kiro CLI, pi and Zed. Pass a name, such as `wrkflw mcp install codex`, for one agent, and `--dry-run` to see the change first. By hand:
+-> Generated: 2026-11-11 17:02:11 UTC | Files: 260 | Lines: 117213
+-> Languages: JSON (4), Markdown (26), Rust (167), Shell (6), TOML (19), YAML (38)
++> Generated: 2026-11-13 12:17:35 UTC | Files: 262 | Lines: 118189
++> Languages: JSON (4), Markdown (26), Rust (169), Shell (6), TOML (19), YAML (38)
  
-@@ -19,7 +19,17 @@ Prefer the MCP server if your client supports MCP. `wrkflw mcp install` register
+ ## Directory Structure
  
- ## Before pushing
+@@ -34,6 +34,7 @@ wrkflw/
+         action_fidelity.rs
+         action_resolver.rs
+         artifacts.rs
++        buildkit.rs
+         cache.rs
+         checkout_sync.rs
+         container_guard.rs
+@@ -44,6 +45,7 @@ wrkflw/
+         events.rs
+         expression.rs
+         github_env_files.rs
++        image_build.rs
+         job_memory.rs
+         job_session.rs
+         kubernetes/
+@@ -1786,7 +1788,7 @@ wrkflw/
  
--Run `wrkflw --format json gate`, or the MCP `gate` tool. It runs what a push would run, reusing jobs that already passed on the same files, and exits 1 if anything fails. It prints one `gate` object: `passed`, `failed` (paths), `unverified` (with `workflow`), `uncommitted_changes`, and per workflow its `status`, `run_id`, `jobs` and `failure` digest. Add `--reuse-results` to `wrkflw run`, or `reuse_results` to the MCP `run_workflow`, to get the same reuse while iterating. A reused job reports one `Reuse result` step and an unaffected job one `Not affected` step, so their output isn't there to read. See "Spending less on CI" in the README for `.wrkflw/affected.yml`.
-+Run `wrkflw --format json gate`, or the MCP `gate` tool. It runs what CI would run for your push, reusing jobs that already passed on the same files, and exits 1 if anything fails.
+ ## INDEX.md
+ 
+-**Language:** Markdown | **Size:** 275.9 KB | **Lines:** 10209
++**Language:** Markdown | **Size:** 275.7 KB | **Lines:** 10197
+ 
+ **Declarations:**
+ 
+@@ -2362,6 +2364,59 @@ wrkflw/
+   `pub async fn list(&self) -> Vec<String>`
+ 
+ 
++`mod tests`
 +
-+Without `--event`, each workflow is checked as a push. On a branch other than the default one, a workflow that runs no job for a push, because it doesn't fire or every job is skipped, such as CI that runs on pushes to `main` and on pull requests, is checked again as a pull request into the default branch (`origin/HEAD`, else `main` or `master`). Pass `--base-branch` for another target, or `--event` to check one event only.
++---
 +
-+It prints one `gate` object: `verdict`, `passed`, `failed` (paths), `unverified` (with `workflow`), `uncommitted_changes`, and per workflow its `status`, `verdict`, the `event` (and `base_branch`) it was checked as, `run_id`, `jobs` and `failure` digest. A workflow checked as a pull request because the push ran no job has `fell_back_from`: the push's `event`, `run_id` and `skip_reason`. `verdict` is `verified`, `partial` (passed, with jobs under `unverified`), `nothing_checked` (no job ran for any workflow) or `failed`. `passed` is true only when something ran and nothing failed. A gate that checked nothing exits 0, so a push that no CI runs for isn't blocked, and prints a warning on stderr. In text mode a `partial` gate says so in its summary line instead of the plain `gate passed`.
++## crates/executor/src/buildkit.rs
 +
-+Add `--reuse-results` to `wrkflw run`, or `reuse_results` to the MCP `run_workflow`, to get the same reuse while iterating. A job that didn't run because an earlier result stands has `reused` on its `job_finished` and `run_finished.jobs` entry: `stored` for a pass reused under the same fingerprint, `unaffected` for a job `--affected` found no change for. Its recorded run keeps one `Reuse result` or `Not affected` step, so its output isn't there to read. See "Spending less on CI" in the README for `.wrkflw/affected.yml`.
++**Language:** Rust | **Size:** 16.9 KB | **Lines:** 427
 +
-+## Checking wrkflw against GitHub
++**Imports:**
++- `bollard::Docker`
++- `std::path::Path`
++- `wrkflw_runtime::container::ContainerError`
 +
-+`wrkflw compare <run id or URL>` runs a workflow locally as a finished GitHub Actions run did, for the same event, and lists each job's result on both sides. The working tree must be the commit the run tested: check it out first, in a worktree if you like. It prints one `compare` object: `agree`, `disagreements`, `basis` (`jobs` when jobs were paired by name, `run` when only the run's result could be compared, `none` when nothing could), a `problem` saying why the comparison says less than a per-job one would, the GitHub run, the local run's `status` and `verdict`, and per job `github_name`, `local_name`, `github`, `local`, `agree` (`null` when GitHub cancelled or skipped it before running) and a `note` on why they may differ, such as a job r
++**Declarations:**
++
++`const IMAGE_BUILDER_ENV: &str = "WRKFLW_IMAGE_BUILDER"`
++
++`fn buildkit_wanted(setting: Option<&str>) -> bool`
++
++`static BUILDKIT_IMAGES_UNSEEN: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false)`
++
++`pub(crate) async fn builds_here(docker: &Docker) -> bool`
++
++`async fn buildkit_available(docker: &Docker) -> bool`
++
++`async fn buildkit_builds_here(docker: &Docker) -> bool`
++
++`fn warn_buildkit_elsewhere(why: &str)`
++
++`async fn docker_cli(args: &[&str]) -> Option<String>`
++
++`fn buildx_driver(inspect: &str) -> Option<&str>`
++
++`fn same_engine(cli: Option<&str>, api: Option<&str>) -> Option<bool>`
++
++`pub(crate) enum Next`
++> Variants: `Built`, `EngineBuilds`, `Failed`
++
++`pub(crate) async fn build( dockerfile: &Path, tag: &str, context_dir: &Path, image_exists: impl std::future::Future<Output = Result<bool, ContainerError>>, ) -> Next`
++
++`fn after_build( tag: &str, engine_has_it: Result<bool, ContainerError>, unseen: &std::sync::atomic::AtomicBool, ) -> Next`
++
++`fn after_failure(tag: &str, error: BuildKitError) -> Next`
++
++`async fn build_with_buildkit( dockerfile: &Path, tag: &str, context_dir: &Path, ) -> Result<(), BuildKitError>`
++
++`fn failed_instruction_output(stderr: &str) -> Option<String>`
++
++`enum BuildKitError`
++> Variants: `StepFailed`, `NotBuilt`
++
++`fn an_instruction_failed(stderr: &str) -> bool`
++
+ `mod tests`
+ 
+ ---
+@@ -2557,9 +2612,10 @@ wrkflw/
+ 
+ ## crates/executor/src/docker.rs
+ 
+-**Language:** Rust | **Size:** 65.1 KB | **Lines:** 1742
++**Language:** Rust | **Size:** 69.9 KB | **Lines:** 1854
+ 
+ **Imports:**
++- `crate::buildkit`
+ - `crate::container_guard::ContainerGuard`
+ - `async_trait::async_trait`
+ - `bollard::{
+@@ -2574,11 +2630,7 @@ wrkflw/
+ - `std::path::Path`
+ - `std::sync::Mutex`
+ - `wrkflw_logging`
+-- `wrkflw_runtime::container::{
+-    container_env, container_path, path_from_image_env, ContainerError, ContainerOutput,
+-    ContainerRuntime, COMBINED_IMAGE_PREFIX, LOCAL_IMAGE_PREFIX,
+-}`
+-- *... and 2 more imports*
++- *... and 3 more imports*
+ 
+ **Declarations:**
+ 
+@@ -2643,6 +2695,8 @@ wrkflw/
+ 
+ `pub(crate) fn tracked_containers() -> Vec<String>`
+ 
++`fn is_not_found(error: &bollard::errors::Error) -> bool`
++
+ **`impl ContainerRuntime for DockerRuntime`**
+   `fn session_cli(&self) -> Option<&'static str>`
+ 
+@@ -2660,6 +2714,8 @@ wrkflw/
+ 
+   `fn identifies_images(&self) -> bool`
+ 
++  `fn reuses_build_layers(&self) -> bool`
++
+ 
+ `fn build_container_config( image: &str, cmd: Vec<String>, env: Vec<String>, working_dir: &Path, host_config: HostConfig, is_windows_image: bool, entrypoint: Option<&str>, ) -> Config<String>`
+ 
+@@ -2673,6 +2729,10 @@ wrkflw/
+   `async fn build_image_inner( &self, dockerfile: &Path, tag: &str, context_dir: &Path, ) -> Result<(), ContainerError>`
+ 
+ 
++`async fn remove_once_created(docker: Docker, name: String, after: std::time::Duration)`
++
++`const ENGINE_ANSWER_LIMIT: std::time::Duration = std::time::Duration::from_secs(120)`
++
+ `mod tests`
+ 
+ ---
+@@ -2906,6 +2966,51 @@ wrkflw/
+ 
+ ---
+ 
++## crates/executor/src/image_build.rs
++
++**Language:** Rust | **Size:** 9.3 KB | **Lines:** 246
++
++**Imports:**
++- `futures::future`
++- `once_cell::sync::Lazy`
++- `std::collections::HashMap`
++- `std::path::Path`
++- `std::sync::{Arc, Mutex}`
++- `wrkflw_runtime::container::{ContainerError, ContainerRuntime, COMBINED_IMAGE_PREFIX}`
++- `crate::engine::fnv1a_hash`
++
++**Declarations:**
++
++`static SHARED_LAYER_BUILDS: Lazy<Mutex<HashMap<String, Arc<tokio::sync::Mutex<()>>>>> = Lazy::new(|| Mutex::new(HashMap::new()))`
++
++`pub(crate) async fn with_run_image_builds<F: std::future::Future>(future: F) -> F::Output`
++
++`pub(crate) fn failed_image_build(tag: &str) -> Option<String>`
++
++`pub(crate)
 ```
 
-**File**: `BREAKING_CHANGES.md` (modified, +26/-0)
+**File**: `crates/executor/src/buildkit.rs` (added, +427/-0)
 ```diff
-@@ -1,5 +1,31 @@
- # Breaking Changes
- 
-+## `wrkflw gate` checks pull request workflows, and fails when it checked nothing (unreleased)
+@@ -0,0 +1,427 @@
++//! Building a job's runtime image with BuildKit, through the `docker` CLI,
++//! where that builds into the engine wrkflw talks to.
 +
-+Without `--event`, the gate used to check every workflow as a push. On a feature branch, CI that only runs on pushes to `main` and on pull requests was skipped, and the gate passed with nothing run. Now a workflow that runs no job for a push, because it doesn't fire or every job is skipped by `if:`, is checked again as a pull request into the default branch, or into `--base-branch`. Pass `--event push` for the old behaviour.
++use bollard::Docker;
++use std::path::Path;
++use wrkflw_runtime::container::ContainerError;
 +
-+The gate's JSON gains `verdict`, and each workflow gains the `event` and `base_branch` it was checked as. `passed` is false when no job ran for any workflow, with `verdict: "nothing_checked"`. The exit code is still 0 then, so a push no CI runs for isn't blocked. A script that read `passed: true` as "safe to push" now sees `false` in that case. The gate's JSON hasn't been in a release, so `schema_version` stays 1: read `verdict` to tell why `passed` is false. A workflow checked as a pull request after the push ran no job carries `fell_back_from`, with the push's `event`, `run_id` and `skip_reason`.
++/// Chooses the builder for a job's runtime image: `classic` keeps to the
++/// engine's own builder.
++const IMAGE_BUILDER_ENV: &str = "WRKFLW_IMAGE_BUILDER";
 +
-+## `run_finished` says how much a pass proves (unreleased)
++fn buildkit_wanted(setting: Option<&str>) -> bool {
++    setting.map(str::trim) != Some("classic")
++}
 +
-+`run_finished` gains `verdict`: `verified`, `partial`, `nothing_checked`, `failed`, `error`, `skipped` or `interrupted`. `status` is unchanged. In text mode, a pass with jobs that ran as another OS, or with no job run, no longer prints the plain success line.
++/// Set once BuildKit built an image this engine couldn't find: the `docker`
++/// CLI uses another engine, and BuildKit isn't used again in this process.
++static BUILDKIT_IMAGES_UNSEEN: std::sync::atomic::AtomicBool =
++    std::sync::atomic::AtomicBool::new(false);
 +
-+A job that didn't run because an earlier result stands has `reused` on `job_finished` and in `run_finished.jobs`, `stored` or `unaffected`. Failure digests gain an optional `cause`, `out_of_memory` when the output says memory ran out or `killed` for a SIGKILL without a stated reason, and a matrix leg that repeated a failed leg is listed under the original's `also_failed_in` instead of as a failure of its own. `error_lines` and `output_tail` no longer hold terminal colour codes, and `error_lines` only keeps lines with a whole error word that isn't a count of zero.
++/// Whether a job's runtime image is built with BuildKit: unless it was
++/// asked not to be, built an image elsewhere before, or can't build into
++/// this engine.
++pub(crate) async fn builds_here(docker: &Docker) -> bool {
++    buildkit_wanted(std::env::var(IMAGE_BUILDER_ENV).ok().as_deref())
++        && !BUILDKIT_IMAGES_UNSEEN.load(std::sync::atomic::Ordering::Relaxed)
++        && buildkit_available(docker).await
++}
 +
-+The canned "Common causes for cargo command failures" text is gone from failed cargo steps. It blamed the code for failures that came from the machine.
++/// Whether the `docker` CLI builds with BuildKit into this engine, asked
++/// once a process.
++async fn buildkit_available(docker: &Docker) -> bool {
++    static AVAILABLE: tokio::sync::OnceCell<bool> = tokio::sync::OnceCell::const_new();
++    *AVAILABLE.get_or_init(|| buildkit_builds_here(docker)).await
++}
 +
-+## Matrix `include` follows GitHub's rules (unreleased)
-+
-+An `include` entry is now added to every original combination whose matrix values it doesn't overwrite, and becomes a combination of its own only when it fits none. Entries are never merged into combinations an earlier `include` created. An entry with only new keys used to become a combination of its own, and now adds its keys to every combination. A workflow planned with fewer or different legs than GitHub runs now gets the same ones.
-+
-+## Docker and Podman runs limit parallel jobs on a small VM (unreleased)
-+
-+When the Docker Desktop or Podman VM has less than 14 GB of memory, a run warns and runs at most one job or matrix leg per 4 GB at a time, counting every job of the run together. Runs can take longer there. A Docker or Podman daemon on Linux without a VM is warned about but keeps its parallelism. Set `WRKFLW_MAX_PARALLEL_JOBS` to choose the limit on either.
-+
-+## Smaller schema changes (unreleased)
-+
-+A workflow without `name:` is named by its path, such as `.github/workflows/ci.yml`. It used to fail to parse. `strategy:` no longer needs a `matrix`. A top-level `cache-mode`, `deployment` on an `environment`, the `code-quality` permission, an empty env value and an expression in `timeout-minutes` are accepted. An expression timeout runs under the default timeout.
-+
- ## An explicit `--runtime docker` or `--runtime podman` no longer falls back to the host (unreleased)
- 
- If Docker or Podman didn't answer within about a second, for example while Docker Desktop woke from Resource Saver, an explicit `--runtime docker` or `--runtime podman` ran every step on this machine and reported success. The TUI did the same after its runtime probe. Now the availability check waits longer, and a runtime you named that doesn't answer fails the run with a message saying what to start.
-```
-
-**File**: `Cargo.lock` (modified, +2/-0)
-```diff
-@@ -4474,6 +4474,7 @@ dependencies = [
-  "serde_json",
-  "serde_yaml",
-  "thiserror 1.0.69",
-+ "tokio",
-  "wrkflw-logging",
-  "wrkflw-models",
- ]
-@@ -4551,6 +4552,7 @@ dependencies = [
-  "chrono",
-  "dirs",
-  "nix 0.27.1",
-+ "regex",
-  "serde",
-  "serde_json",
-  "tempfile",
-```
-
-**File**: `README.md` (modified, +14/-1)
-```diff
-@@ -213,7 +213,10 @@ See [BREAKING_CHANGES.md](BREAKING_CHANGES.md) for full migration notes.
- All of this is opt-in. Without these flags a run behaves as it always has.
- 
- ```bash
--# Check everything a push would run, reusing what already passed
-+# Check everything CI would run for this push, reusing what already passed.
-+# On a feature branch, a workflow a push doesn't fire is checked as a pull
-+# request into the default branch. The result says how much the pass proves:
-+# verified, partial (some jobs ran as another OS) or nothing_checked.
- wrkflw gate
- 
- # Run it on every push (an existing hook is left alone). The hook keeps the
-@@ -365,10 +368,20 @@ wrkflw runs replay latest
- # Resume a job at a step
- wrkflw run .github/workflows/ci.yml --job test --from-step "Run tests"
- 
-+# Run a workflow as a finished GitHub run did, and list where the results differ.
-+# Check out the commit that run tested first.
-+wrkflw compare https://github.com/OWNER/REPO/actions/runs/123456789
-+
- # Serve all of this over the Model Context Protocol
- wrkflw mcp serve
- ```
- 
-+Every `run_finished`, and the gate result, carries a `verdict`. `verified` means every job ran as the OS it asked for. `partial` means some jobs ran as another OS and are listed under `unverified`. `nothing_checked` means no job ran, so the pass proves nothing. A failure digest names a likely `cause`: `out_of_memory` when the output says memory ran out, or `killed` when a process got SIGKILL without a stated reason.
-+
-+Docker Desktop and Podman machines often have half the 16 GB of a GitHub runner, and a Rust or C++ link can be killed there although it passes in CI. wrkflw warns when the VM has less than 14 GB and runs at most one job or matrix leg per 4 GB at a time, counting every job of the run together. On Linux without a VM it only warns. Set `WRKFLW_MAX_PARALLEL_JOBS` to choose the limit.
-+
-+`scripts/conformance/plan_corpus.sh` plans the last finished run of every workflow in a list of public repositories, and compares the number of jobs with what GitHub ran. It needs `gh` and `jq`, and runs nothing.
-+
- Register the MCP server with every coding agent installed on this machine, or name the ones you want. Running it again changes nothing, and an entry that launches a different command is left alone unless you pass `--force`.
- 
- ```bash
-```
-
-**File**: `crates/executor/src/acceleration.rs` (modified, +8/-0)
-```diff
-@@ -638,6 +638,14 @@ pub(crate) enum Reused {
- }
- 
- impl Reused {
-+    /// How reports name the reason: `stored` or `unaffected`.
-+    pub(crate) fn kind(&self) -> &'static str {
-+        match self {
-+            Reused::Unaffected => "unaffected",
-+            Reused::Stored { .. } => "stored",
-+        }
-+    }
-+
-     /// The one step reports show for the job.
-     pub(crate) fn step(&self) -> &'static str {
-         match self {
-```
-
-**File**: `crates/executor/src/checkout_sync.rs` (modified, +279/-16)
-```diff
-@@ -69,26 +69,135 @@ pub(crate) fn copy_directory_contents(from: &Path, to: &Path) -> Result<(), Exec
-     let rules = SyncRules::for_root(from, to)?;
-     copy_directory_contents_with_gitignore(from, to, &rules, &[], false)?;
-     // A checkout is a git repository, and steps run `git describe`, `git
--    // diff` and the like. A `.git` file (a worktree or submodule) points at a
--    // host path a container can't see, so only a directory is mirrored.
--    let git_dir = from.join(".git");
--    if git_dir.is_dir() && !git_dir.is_symlink() {
--        // Hooks stay out: a clone has none, and a step that commits must
--        // not run the developer's. Objects are never changed once written,
--        // so they are hard-linked where the filesystem allows instead of
--        // copied into every job's workspace.
--        //
--        // The config is written separately, without the settings that make
--        // git run a host program (`core.hooksPath`, `core.fsmonitor`) or
--        // point outside the workspace (`core.worktree`).
--        let to_git = to.join(".git");
--        mirror_directory(&git_dir, &to_git, false, &["hooks", "config"], &["objects"])?;
--        write_sanitized_git_config(&git_dir.join("config"), &to_git.join("config"))?;
--    }
-+    // diff` and the like. Without one they fail here and pass on GitHub, and
-+    // a test runner that stops at the first failure hides every real one.
-+    mirror_git_dir(from, &to.join(".git"))?;
-     rules.record_tracked();
-     Ok(())
- }
- 
-+/// Where the repository at `root` keeps its git data: the directory that
-+/// holds this checkout's own HEAD and index, and the one that holds the
-+/// objects and refs. They are the same for a plain clone.
++/// Whether the `docker` CLI's builder builds into this engine's own images.
 +///
-+/// A `.git` file says where the data is, as in a worktree (`git worktree
-+/// add`), which agents use to work on several branches at once, or in a
-+/// submodule. A worktree's own directory names the shared one in its
-+/// `commondir` file.
-+#[derive(Debug, PartialEq)]
-+struct GitDirs {
-+    own: PathBuf,
-+    common: PathBuf,
-+}
-+
-+fn git_dirs(root: &Path) -> Option<GitDirs> {
-+    let dot_git = root.join(".git");
-+    let meta = dot_git.symlink_metadata().ok()?;
-+    if meta.is_dir() {
-+        return Some(GitDirs {
-+            own: dot_git.clone(),
-+            common: dot_git,
-+        });
-+    }
-+    if !meta.is_file() {
-+        return None;
-+    }
-+    let text = std::fs::read_to_string(&dot_git).ok()?;
-+    let pointer = text
-+        .lines()
-+        .find_map(|line| line.strip_prefix("gitdir:"))?
-+        .trim();
-+    let own = root.join(pointer);
-+    let own = own.canonicalize().ok().filter(|dir| dir.is_dir())?;
-+    let common = match std::fs::read_to_string(own.join("commondir")) {
-+        Ok(relative) => own.join(relative.trim()).canonicalize().ok()?,
-+        Err(_) => own.clone(),
++/// Its driver must be `docker`: another, such as `docker-container`, keeps
++/// its own cache and takes a base image from the registry rather than the
++/// one this engine has, which the image's tag names. And the CLI must talk
++/// to this engine, or each image would be built in the other and then again
++/// here. Where the engines can't be told apart, BuildKit is used, and the
++/// check after the first build still catches an image built elsewhere.
++async fn buildkit_builds_here(docker: &Docker) -> bool {
++    let Some(inspect) = docker_cli(&["buildx", "inspect"]).await else {
++        return false;
 +    };
-+    Some(GitDirs { own, common })
-+}
-+
-+/// Bring `to_git` up to date with the git data of the repository at `root`,
-+/// as a real directory a container can see, whether `root` has a `.git`
-+/// directory or a `.git` file pointing elsewhere.
-+fn mirror_git_dir(root: &Path, to_git: &Path) -> Result<(), ExecutionError> {
-+    let dot_git = root.join(".git");
-+    if dot_git.is_symlink() || !dot_git.exists() {
-+        return Ok(());
-+    }
-+    let Some(dirs) = git_dirs(root) else {
-+        wrkflw_logging::warning(&format!(
-+            "{} doesn't point at git data wrkflw can read, so the job's workspace is not \
-+             a git repository: steps that run git will fail here though they pass on GitHub",
-+            dot_git.display()
++    let driver = buildx_driver(&inspect);
++    if driver != Some("docker") {
++        wrkflw_logging::debug(&format!(
++            "The `docker` CLI's builder uses the {} driver, not docker, so job images are \
++             built by the engine's own builder",
++            driver.unwrap_or("unknown")
 +        ));
-+        return Ok(());
-+    };
-+    // Hooks stay out: a clone has none, and a step that commits must not
-+    // run the developer's. Objects are never changed once written, so they
-+    // are hard-linked where the filesystem allows instead of copied into
-+    // every job's workspace. Other worktrees' state stays out too.
-+    //
-+    // The config is written separately, without the settings that make git
-+    // run a host program (`core.hooksPath`, `core.fsmonitor`) or point
-+    // outside the workspace (`core.worktree`).
-+    //
-+    // For a worktree, only what git shares between worktrees comes from the
-+    // common directory. The rest of it, such as `HEAD`, `index`, `ORIG_HEAD`
-+    // or a `MERGE_HEAD` left by a merge in progress, is the main checkout's
-+    // own state, and would make the job's checkout look mid-merge.
-+    let mut skip: Vec<String> = ["hooks", "config", "worktrees"].map(String::from).to_vec();
-+    if dirs.own != dirs.common {
-+        let entries = std::fs::read_dir(&dirs.common).map_err(|e| {
-+            ExecutionError::Execution(format!("Failed to read {}: {e}", dirs.common.display()))
-+        })?;
-+        skip.extend(
-+            entries
-+                .flatten()
-+                .map(|entry| entry.file_name().to_string_lossy().into_owned())
-+                .filter(|name| !SHARED_GIT_ENTRIES.contains(&name.as_str())
++        return false;
++    }
++    let cli_engine = docker_cli(&["info", "--format", "{{.ID}}"]).await;
++    let api_engine = docker.info().await.ok().and_then(|info| info.id);
++    if same_engine(cli_engine.as_deref(), api_engine.as_deref()) == Some(false) {
++        warn_buildkit_elsewhere("The `docker` CLI talks to another engine than wrkflw does");
++        return false;
++    }
++    true
++}
++
++/// Say once why BuildKit isn't used, and what to do about it.
++fn warn_buildkit_elsewhere(why: &str) {
++    wrkflw_logging::warning(&format!(
++        "{}, as when it uses another context; job images are built by the engine's own \
++         builder, which is slower. Point the CLI at the same engine, or set {}=classic to \
++         skip BuildKit",
++        why, IMAGE_BUILDER_ENV
++    ));
++}
++
++/// What `docker <args>` printed, when it ran in time and succeeded.
++async fn docker_cli(args: &[&str]) -> Option<String> {
++    let output = tokio::time::timeout(
++        std::time::Duration::from_secs(10),
++        tokio::process::Command::new("docker")
++            .args(args)
++            .stdin(std::process::Stdio::null())
++            .stderr(std::process::Stdio::null())
++            .kill_on_drop(true)
++            .output(),
++    )
++    .await
++    .ok()?
++    .ok()?;
++    output
++        .status
++        .success()
++        .then(|| String::from_utf8_lossy(&output.stdout).into_owned())
++}
++
++/// The driver `docker buildx inspect` names for the builder in use.
++fn buildx_driver(inspect: &str) -> Option<&str> {
++    inspect
++        .lines()
++        .find_map(|line| line.strip_prefix("Driver:"))
++        .map(str::trim)
++        .filter(|driver| !driver.is_empty())
++}
++
++/// Whether the CLI's engine and the API's are one, by their IDs. `None`
++/// when either didn't give one.
++fn same_engine(cli: Option<&str>, api: Option<&str>) -> Option<bool> {
++    let cli = cli.map(str::trim).filter(|id| !id.is_empty())?;
++    let api = api.map(str::trim).filter(|id| !id.is_empty())?;
++    Some(cli == api)
++}
++
++/// What is left to do for an image after BuildKit was asked to build it.
++#[derive(Debug)]
++pub(crate) enum Next {
++    /// The engine has the image.
++    Built,
++    /// BuildKit didn't give the image; the engine's own builder may.
++    EngineBuilds,
++    /// The build failed, and the engine's own builder would fail the same.
++    Failed(ContainerError),
++}
++
++/// Build `tag` with BuildKit, and say what is left to do for it.
++
 ```
 
-**File**: `crates/executor/src/engine.rs` (modified, +41/-47)
+**File**: `crates/executor/src/docker.rs` (modified, +120/-8)
 ```diff
-@@ -49,9 +49,8 @@ pub async fn execute_workflow(
-     let is_gitlab = is_gitlab_pipeline(workflow_path);
- 
-     if is_gitlab {
--        return acceleration::without_run_state(execute_gitlab_pipeline(
--            workflow_path,
--            config.clone(),
-+        return crate::vm_memory::with_run_pool(acceleration::without_run_state(
-+            execute_gitlab_pipeline(workflow_path, config.clone()),
-         ))
-         .await;
+@@ -1,3 +1,4 @@
++use crate::buildkit;
+ use crate::container_guard::ContainerGuard;
+ use async_trait::async_trait;
+ use bollard::{
+@@ -654,6 +655,17 @@ pub async fn cleanup_resources(docker: &Docker) {
      }
-@@ -64,13 +63,14 @@ pub async fn execute_workflow(
-         root,
-     )
-     .map_err(ExecutionError::Execution)?;
--    acceleration::with_run_state(
-+    // Each run gets its own job pool, sized once its runtime is known.
-+    crate::vm_memory::with_run_pool(acceleration::with_run_state(
+ }
+ 
++/// Whether the engine answered that the container doesn't exist.
++fn is_not_found(error: &bollard::errors::Error) -> bool {
++    matches!(
++        error,
++        bollard::errors::Error::DockerResponseServerError {
++            status_code: 404,
++            ..
++        }
++    )
++}
++
+ // Clean up all tracked containers, in the order they are tracked. Job sessions
+ // rely on that order: `job_session::Containers::add` keeps a job container
+ // behind its services, which Podman won't let go of it before.
+@@ -697,6 +709,13 @@ pub async fn cleanup_containers(docker: &Docker) -> Result<(), String> {
+         .await
+         {
+             Ok(Ok(_)) => wrkflw_logging::debug(&format!("Stopped container: {}", container_id)),
++            // Never created, as a container whose creation timed out may
++            // be, or already gone: there is nothing to remove.
++            Ok(Err(e)) if is_not_found(&e) => {
++                wrkflw_logging::debug(&format!("No container to clean up: {}", container_id));
++                untrack_container(&container_id);
++                continue;
++            }
+             Ok(Err(e)) => wrkflw_logging::warning(&format!(
+                 "Error stopping container {}: {}",
+                 container_id, e
+@@ -706,14 +725,21 @@ pub async fn cleanup_containers(docker: &Docker) -> Result<(), String> {
+             }
+         }
+ 
+-        // Then try to remove it
++        // Then remove it, by force where it didn't stop in time.
++        let force = bollard::container::RemoveContainerOptions {
++            force: true,
++            ..Default::default()
++        };
+         match tokio::time::timeout(
+             std::time::Duration::from_millis(1000),
+-            docker.remove_container(&container_id, None),
++            docker.remove_container(&container_id, Some(force)),
+         )
+         .await
+         {
+             Ok(Ok(_)) => wrkflw_logging::debug(&format!("Removed container: {}", container_id)),
++            Ok(Err(e)) if is_not_found(&e) => {
++                wrkflw_logging::debug(&format!("Container already gone: {}", container_id))
++            }
+             Ok(Err(e)) => wrkflw_logging::warning(&format!(
+                 "Error removing container {}: {}",
+                 container_id, e
+@@ -886,7 +912,7 @@ impl ContainerRuntime for DockerRuntime {
+                     tag,
+                     timeout_duration.as_secs()
+                 ));
+-                Err(ContainerError::ImageBuild(
++                Err(ContainerError::ImageBuildTimeout(
+                     "Operation timed out".to_string(),
+                 ))
+             }
+@@ -1053,6 +1079,10 @@ impl ContainerRuntime for DockerRuntime {
+     fn identifies_images(&self) -> bool {
+         true
+     }
++
++    fn reuses_build_layers(&self) -> bool {
++        true
++    }
+ }
+ 
+ // Move the actual implementation to internal methods
+@@ -1162,8 +1192,9 @@ impl DockerRuntime {
+             || image.contains("nanoserver");
+ 
+         // Create appropriate container options based on platform
++        let container_name = format!("wrkflw-{}", uuid::Uuid::new_v4());
+         let options = Some(CreateContainerOptions {
+-            name: format!("wrkflw-{}", uuid::Uuid::new_v4()),
++            name: container_name.clone(),
+             platform: if is_windows_image {
+                 Some("windows".to_string())
+             } else {
+@@ -1195,9 +1226,8 @@ impl DockerRuntime {
+             entrypoint,
+         );
+ 
+-        // Create container with a shorter timeout
+         let create_result = tokio::time::timeout(
+-            std::time::Duration::from_secs(15),
++            ENGINE_ANSWER_LIMIT,
+             self.docker.create_container(options, config),
+         )
+         .await;
+@@ -1206,9 +1236,23 @@ impl DockerRuntime {
+             Ok(Ok(container)) => container,
+             Ok(Err(e)) => return Err(ContainerError::ContainerStart(e.to_string())),
+             Err(_) => {
++                // The engine may still create it after this gives up. It is
++                // tracked by name, which the engine takes where it takes an
++                // id, so the cleanup at the end of the run removes it if it
++                // is there by then, and passes over it quietly if not; a
++                // process that lives on removes it once the engine has had
++                // time to finish creating it. One the engine creates after
++                // the process has exited is left behind, with its
++                // `wrkflw-` name to find it by.
++                track_container(&container_name);
++                tokio::spawn(remove_once_created(
++                    self.docker.clone(),
++                    container_name,
++                    ENGINE_ANSWER_LIMIT,
++                ));
+                 return
+```
+
+**File**: `crates/executor/src/engine.rs` (modified, +797/-226)
+```diff
+@@ -17,6 +17,11 @@ use crate::dependency;
+ use crate::docker;
+ use crate::environment;
+ use crate::events::{step_display_name, EXIT_CODE_LABEL, STDERR_HEADER, STDOUT_HEADER};
++use crate::image_build::{
++    ahead_build_permits, build_image_checked, ensure_shared_layers, failed_image_build,
++    remember_failed_image_build, with_images_built_ahead, with_run_image_builds, AHEAD_BUILDS,
++    IMAGES_BUILT_AHEAD,
++};
+ use crate::job_session;
+ use crate::kubernetes::{self, KubernetesConfig};
+ use crate::live_step::LiveStep;
+@@ -75,7 +80,10 @@ pub async fn execute_workflow(
          std::sync::Arc::new(state),
          crate::workspace::with_workflow_file(
              workflow_path,
-             Box::pin(execute_github_workflow(workflow_path, config.clone())),
+-            Box::pin(execute_github_workflow(workflow_path, config.clone())),
++            Box::pin(with_run_image_builds(execute_github_workflow(
++                workflow_path,
++                config.clone(),
++            ))),
          ),
--    )
-+    ))
-     .await
+     ))
+     .await;
+@@ -2103,6 +2111,9 @@ fn report_action_not_run(uses: &str, cause: Option<&str>) -> Option<String> {
+     Some(uses.to_string())
  }
  
-@@ -130,6 +130,7 @@ async fn execute_github_workflow(
-         &config.kubernetes,
-     )?;
-     config.runtime_type = effective_runtime;
-+    crate::vm_memory::check(vm_cli(&config.runtime_type)).await;
-     warn_if_overrides_unused(&config);
- 
-     // Create a temporary workspace directory
-@@ -397,6 +398,7 @@ async fn execute_gitlab_pipeline(
-         &config.kubernetes,
-     )?;
-     config.runtime_type = effective_runtime;
-+    crate::vm_memory::check(vm_cli(&config.runtime_type)).await;
-     warn_if_overrides_unused(&config);
- 
-     // Create a temporary workspace directory
-@@ -953,6 +955,15 @@ fn emulation_runtime() -> (Box<dyn ContainerRuntime>, RuntimeType) {
-     )
- }
- 
-+/// The CLI whose VM a run's jobs share memory in, for [`crate::vm_memory`].
-+fn vm_cli(runtime: &RuntimeType) -> Option<&'static str> {
-+    match runtime {
-+        RuntimeType::Docker => Some("docker"),
-+        RuntimeType::Podman => Some("podman"),
-+        _ => None,
-+    }
-+}
++/// Ends a `RUN` that fetched the package lists by removing them.
++const REMOVE_PACKAGE_LISTS: &str = " && \\\n    rm -rf /var/lib/apt/lists/*";
 +
- /// Set up the runtime to run on. `Auto` falls back to emulation when no
- /// container runtime answers. An explicit Docker or Podman request never
- /// does: emulation runs steps on this machine, which is not what someone who
-@@ -1211,6 +1222,7 @@ impl JobResult {
-             duration_ms: 0,
-             logs: self.logs.clone(),
-             repeated_from: self.repeated_from.clone(),
-+            reused: None,
-         });
-         self
+ /// Generate a Dockerfile that installs multiple language runtimes on an Ubuntu base.
+ ///
+ /// `base_id` is the base image's local content ID, when known. It goes into
+@@ -2112,9 +2123,17 @@ fn report_action_not_run(uses: &str, cause: Option<&str>) -> Option<String> {
+ ///
+ /// Extracted as a pure function so the output can be unit-tested without Docker.
+ /// `week` names the week floating versions are resolved in, when any is;
+-/// it goes into the one `RUN` instruction, so a new week misses the build
+-/// cache and installs the releases out then. A comment would change the
+-/// image's tag but not its layers, which the builder would reuse.
++/// it goes into the first `RUN` instruction, so a new week misses the build
++/// cache there and in every layer after it, and installs the releases out
++/// then. A comment would change the image's tag but not its layers, which
++/// the builder would reuse.
++///
++/// The packages every image gets come first, in a `RUN` of their own, and
++/// each runtime follows in its own. The builder reuses a layer whose
++/// instruction and parent it has built before, so the legs of a matrix
++/// over Python versions install the packages, Node.js and uv once between
++/// them and differ only in the interpreter. In one `RUN`, each of nine
++/// legs spent a minute and 800 MB on the same packages.
+ fn generate_combined_dockerfile(
+     runtimes: &[SetupRuntime],
+     base_image: &str,
+@@ -2126,9 +2145,6 @@ fn generate_combined_dockerfile(
+         dockerfile.push_str(&format!("# base image id: {}\n", id));
      }
-@@ -2558,6 +2570,9 @@ async fn execute_job_batch(
-     // and per-job state (needs context, secrets). JobServices is constructed
-     // per-job inside execute_job_with_matrix after resolving secrets.
  
-+    // All at once: each job, or each leg of a matrix job, waits for a place
-+    // in `vm_memory`'s pool before its steps run, so the VM's memory limit
-+    // holds across jobs and legs together.
-     let result_arrays = future::join_all(futures).await;
+-    // Combine base packages and all runtime install scripts into a single
+-    // RUN directive so there is only one `apt-get update` call and the Docker
+-    // layer cache works as a single unit.
+     let scripts: Vec<&str> = runtimes
+         .iter()
+         .filter(|rt| !rt.install_script.is_empty())
+@@ -2139,26 +2155,6 @@ fn generate_combined_dockerfile(
+     // and Rust build scripts, node-gyp, Python C extensions and cgo all
+     // expect one. `less` because they have a pager, which tests of CLI
+     // tools run.
+-    // uv keeps the interpreters it installs under `$HOME`, which is root's
+-    // and closed to a step that runs as another user, and which a job that
+-    // sets `HOME` moves. Somewhere fixed and readable serves every step.
+-    let mut env: Vec<(String, String)> = Vec::new();
+-    if runtimes.iter().any(|rt| rt.language == "python") {
+-        env.push((
+-            "UV_PYTHON_INSTALL_DIR".to_string(),
+-            UV_PYTHON_DIR.to_string(),
+-        ));
+-    }
+-    // What a setup action sets for the rest of the job, such as setup-uv's
+-    // `UV_PYTHON`. Values were checked to be plain versions and paths.
+-    for pair in runtimes.iter().flat_map(|rt| &rt.env) {
+-        if !env.iter().any(|(name, _)| *name == pair.0) {
+-            env.push(pair.clone());
+-        }
+-    }
+-    for (name, value) in &env {
+-        dockerfile.push_str(&format!("ENV {}={}\n", name, value));
+-    }
+     dockerfile.push_str("RUN ");
+     if let Some(week) = week {
+         dockerfile.push_str(&format!(
+@@ -2179,13 +2175,45 @@ fn generate_combined_dockerfile(
+         dockerfile.push_str(" && \\\n");
+         dockerfile.push_str(&format!("    {}", runner_node_install()));
+     }
++    dockerfile.push_str(REMOVE_PACKAGE_LISTS);
++    dockerfile.push('\n');
  
-     // Flatten the results from all jobs and their matrix combinations
-@@ -2683,7 +2698,7 @@ async fn execute_job_with_matrix(
-             if matches!(why, acceleration::Reused::Stored { .. }) {
-                 acceleration::mark_executed(job_name);
-             }
--            let (note, step) = (why.note(), why.step());
-+            let (note, step, kind) = (why.note(), why.step(), why.kind());
-             // A reused leg still ran as another OS when it passed, so it is
-             // reported the same way. Its matrix values come from its name.
-             let legs: Vec<MatrixCombination> = job
-@@ -2724,7 +2739,7 @@ async fn execute_job_with_matrix(
-                         env_context,
-                         platform_overrides,
-                     );
--                    announce_reused(&stored, &note, runner.as_ref());
-+                    announce_reused(&stored, &note, kind, runner.as_ref());
-                     JobResult::reused(stored, step, &note)
-                 })
-                 .collect());
-@@ -2787,11 +2802,13 @@ async fn execute_job_with_matrix(
-             combinations.len()
-         ));
- 
--        // Set maximum parallel jobs
--        let max_parallel = job.max_parallel().unwrap_or_else(|| {
--            // If not specified, use a reasonable default based on CPU cores
--            std::cmp::max(1, num_cpus::get())
--        });
-+        // The matrix's own limit, or the CPU count. The VM's memory limit
-+        // is applied per leg, in `execute_matrix_job`, from the pool every
-+        // job of the run shares.
-+        let max_parallel = job
-+            .max_parallel()
-+            .unwrap_or_else(|| std::cmp::max(1, num_cpus::get()))
-+            .max(1);
- 
-         let services = JobServices {
-             secret_manager,
-@@ -2855,6 +2872,7 @@ async fn execute_job_with_matrix(
- fn announce_reused(
-     stored: &acceleration::StoredJob,
-     note: &str,
-+    kind: &str,
-     runner: Option<&crate::runner_fidelity::RunnerSubstitution>,
- ) {
-     crate::events::emit(|| crate::events::ExecutionEvent::JobStarted {
-@@ -2869,6 +2887,7 @@ fn announce_reused(
-         duration_ms: 
+-    for script in &scripts {
+-        dockerfile.push_str(" && \\\n");
+-        dockerfile.push_str(&format!("    {}", script));
++    // After the shared packages, so a variable that differs between the
++    // legs of a matrix, such as `UV_PYTHON`, doesn't give each leg packages
++    // of its own, and before the runtimes, whose installs read them.
++    // uv keeps the interpreters it installs under `$
 ```
 
-**File**: `crates/executor/src/events.rs` (modified, +4/-0)
+**File**: `crates/executor/src/image_build.rs` (added, +246/-0)
 ```diff
-@@ -63,6 +63,10 @@ pub enum ExecutionEvent {
-         /// Set when this matrix leg did not run because it would only have
-         /// repeated the named leg; `status` is that leg's.
-         repeated_from: Option<String>,
-+        /// Set when the job did not run because an earlier result stands:
-+        /// `stored` for a pass reused with `--reuse-results`, `unaffected`
-+        /// for a job `--affected` found no change for.
-+        reused: Option<String>,
-     },
+@@ -0,0 +1,246 @@
++//! Building the images jobs run in: the layers images on one base share,
++//! the builds started ahead of a job's turn, and what a run remembers of a
++//! build that failed. The Dockerfile itself, and which image a job gets,
++//! are the engine's.
++
++use futures::future;
++use once_cell::sync::Lazy;
++use std::collections::HashMap;
++use std::path::Path;
++use std::sync::{Arc, Mutex};
++use wrkflw_runtime::container::{ContainerError, ContainerRuntime, COMBINED_IMAGE_PREFIX};
++
++use crate::engine::fnv1a_hash;
++
++/// One lock per image of shared layers, by its tag: the first build of
++/// those layers goes alone. See `ensure_shared_layers`.
++static SHARED_LAYER_BUILDS: Lazy<Mutex<HashMap<String, Arc<tokio::sync::Mutex<()>>>>> =
++    Lazy::new(|| Mutex::new(HashMap::new()));
++
++tokio::task_local! {
++    /// The combined images whose build failed in this run, by tag, with
++    /// the error. A job's image is built ahead while it waits, and again
++    /// at its turn if that didn't produce it: a build that fails on its
++    /// own would fail the same way, and take as long, so the job is given
++    /// the first failure instead. The next run tries again.
++    static FAILED_IMAGE_BUILDS: Mutex<HashMap<String, String>>;
++}
++
++/// Run `future` as one run, with no image build failed yet.
++pub(crate) async fn with_run_image_builds<F: std::future::Future>(future: F) -> F::Output {
++    FAILED_IMAGE_BUILDS
++        .scope(Mutex::new(HashMap::new()), future)
++        .await
++}
++
++/// Why `tag` failed to build earlier in this run, if it did.
++pub(crate) fn failed_image_build(tag: &str) -> Option<String> {
++    FAILED_IMAGE_BUILDS
++        .try_with(|failed| failed.lock().unwrap().get(tag).cloned())
++        .ok()
++        .flatten()
++}
++
++/// Remember for the rest of the run that `tag` failed to build, unless
++/// the same build [may work on another try](may_build_on_another_try).
++pub(crate) fn remember_failed_image_build(tag: &str, error: &ContainerError) {
++    if may_build_on_another_try(error) {
++        return;
++    }
++    let _ = FAILED_IMAGE_BUILDS.try_with(|failed| {
++        failed
++            .lock()
++            .unwrap()
++            .insert(tag.to_string(), error.to_string())
++    });
++}
++
++/// Whether `error` says nothing of the build itself, so the same build may
++/// well work when it is tried again: the connection to the engine was
++/// lost, or the build ran out of time. A build ahead shares the engine
++/// with the jobs running and with other builds, and one that ran out of
++/// time there is built again by its job, at its turn.
++fn may_build_on_another_try(error: &ContainerError) -> bool {
++    matches!(error, ContainerError::ImageBuildTimeout(_)) || is_transport_error(&error.to_string())
++}
++
++/// Build the layers a combined image shares with every image on the same
++/// base, as an image of their own, unless the engine has it already.
++///
++/// Images that start with the same packages build them once: the first
++/// build of those layers goes alone, and the builds waiting on it go on to
++/// their own runtimes as soon as it is over, built or failed. Started
++/// together, five BuildKit builds took 67 s to give the first image where
++/// one alone took 43 s. Only the shared layers are waited for, not another
++/// job's runtimes, and an engine that has the shared image from an earlier
++/// run waits for nothing.
++///
++/// Only where a build [reuses the layers](ContainerRuntime::reuses_build_layers)
++/// an earlier one left: no step runs in the shared image, so a runtime
++/// that ships every image it builds to a registry, as Kubernetes does,
++/// would build and ship it on every run for nothing.
++pub(crate) async fn ensure_shared_layers(
++    dockerfile: &str,
++    runtime: &dyn ContainerRuntime,
++) -> Result<(), String> {
++    if !runtime.reuses_build_layers() {
++        return Ok(());
++    }
++    let shared = shared_layers(dockerfile);
++    if shared.len() == dockerfile.len() {
++        return Ok(());
++    }
++    let tag = shared_layers_tag(shared);
++    if runtime.image_exists(&tag).await.unwrap_or(false) {
++        return Ok(());
++    }
++    let lock = {
++        let mut locks = SHARED_LAYER_BUILDS.lock().unwrap();
++        locks
++            .entry(tag.clone())
++            .or_insert_with(|| Arc::new(tokio::sync::Mutex::new(())))
++            .clone()
++    };
++    let _first = lock.lock().await;
++    // Whoever held the lock before built these layers, or failed to: the
++    // same build would fail the same way.
++    if let Some(error) = failed_image_build(&tag) {
++        return Err(error);
++    }
++    if runtime.image_exists(&tag).await.unwrap_or(false) {
++        return Ok(());
++    }
++    let temp_dir =
++        tempfile::tempdir().map_err(|e| format!("Failed to create temp directory: {}", e))?;
++    let dockerfile_path = temp_dir.path().join("Dockerfile");
++    std::fs::write(&dockerfile_path, shared)
++        .map_err(|e| format!("Failed to write Dockerfile: {}", e))?;
++  
+```
+
+**File**: `crates/executor/src/kubernetes/mod.rs` (modified, +9/-1)
+```diff
+@@ -1125,7 +1125,7 @@ impl KubernetesRuntime {
+         )
+         .await
+         .map_err(|_| {
+-            ContainerError::ImageBuild(format!(
++            ContainerError::ImageBuildTimeout(format!(
+                 "{} timed out after {} seconds",
+                 what,
+                 timeout.as_secs()
+@@ -1586,6 +1586,14 @@ mod tests {
+         assert!(!rt.image_exists("wrkflw-python-3.11").await.unwrap());
+     }
+ 
++    /// Every image built is pushed to the registry, and a later build's
++    /// cache is the local builder's business: nothing is gained by building
++    /// shared layers as an image of their own, which would be pushed too.
++    #[test]
++    fn a_built_image_is_shipped_so_no_layers_are_built_to_share() {
++        assert!(!KubernetesRuntime::new(cfg(), false).reuses_build_layers());
++    }
++
+     #[tokio::test]
+     async fn build_image_without_registry_explains_the_flag() {
+         let rt = KubernetesRuntime::new(cfg(), false);
+```
+
+**File**: `crates/executor/src/lib.rs` (modified, +2/-0)
+```diff
+@@ -6,6 +6,7 @@ pub mod acceleration;
+ pub mod action_fidelity;
+ pub mod action_resolver;
+ pub(crate) mod artifacts;
++pub(crate) mod buildkit;
+ pub(crate) mod cache;
+ pub(crate) mod checkout_sync;
+ mod container_guard;
+@@ -16,6 +17,7 @@ pub mod environment;
+ pub mod events;
+ pub mod expression;
+ pub mod github_env_files;
++pub(crate) mod image_build;
+ pub(crate) mod job_memory;
+ pub(crate) mod job_session;
+ pub mod kubernetes;
+```
+
+**File**: `crates/executor/src/podman.rs` (modified, +5/-1)
+```diff
+@@ -550,7 +550,7 @@ impl ContainerRuntime for PodmanRuntime {
+                     "Building image {} timed out after 120 seconds",
+                     tag
+                 ));
+-                Err(ContainerError::ImageBuild(
++                Err(ContainerError::ImageBuildTimeout(
+                     "Operation timed out".to_string(),
+                 ))
+             }
+@@ -723,6 +723,10 @@ impl ContainerRuntime for PodmanRuntime {
+     fn identifies_images(&self) -> bool {
+         true
+     }
++
++    fn reuses_build_layers(&self) -> bool {
++        true
++    }
  }
  
+ /// The PATH `image` sets in its config, pulling the image first if it isn't
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #171** (2026-11-13): fix: agree with GitHub on real repositories, and build job images faster (@bahdotsh)
+- **PR #170** (closed): perf: build job images faster, and start no container for a step that only prints (@bahdotsh)
+- **PR #169** (2026-11-11): perf: run the legs of a new matrix together, and fit light jobs side by side again (@bahdotsh)
+- **PR #168** (2026-11-11): fix: address the review findings from #167 (@bahdotsh)
+- **PR #167** (2026-11-11): fix: report what a local pass didn't check, and make local runs match GitHub's (@bahdotsh)
 - **PR #166** (2026-11-09): fix: make local verdicts match what GitHub would say (@bahdotsh)
-- **PR #165** (2026-11-06): Make wrkflw a trustworthy feedback loop for agents (@bahdotsh)
-- **PR #164** (2026-11-06): fix: address the review of #163 (@bahdotsh)
-- **PR #163** (2026-11-06): feat: secret-safe logs, incremental local reruns, live step output and a retro TUI (@bahdotsh)
-- **PR #162** (2026-11-04): feat(ui): upgrade to ratatui 0.30 and redesign the TUI (@bahdotsh)
-- **PR #161** (2026-11-04): docs: bring the docs up to date with everything since v0.8.0 (@bahdotsh)
 
 ---
 
@@ -2686,37 +3010,82 @@ nothing. This fixes each cause it found.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. make local verdicts match what GitHub would say (#166)
+## X. agree with GitHub on real repositories, and build job images faster
 
 **RULE**:
-When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bahdotsh/wrkflw. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `INDEX.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bahdotsh/wrkflw. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bcd6c848`: make local verdicts match what GitHub would say (#166). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7b284277`: agree with GitHub on real repositories, and build job images faster. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `INDEX.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-6. Before calling a pass done, read `verdict` on `run_finished`, not only `status`. `verified` means every job that ran did so as the OS its `runs-on` asked for. `partial` means some didn't: they are listed under `unverified`, such as `windows-latest` run as Linux, so steps gated on `runner.os` and OS-specific behaviour were not checked. `nothing_checked` means it passed because no job ran. Say which, instead of claiming CI will pass.
-Run `wrkflw --format json gate`, or the MCP `gate` tool. It runs what CI would run for your push, reusing jobs that already passed on the same files, and exits 1 if anything fails.
+> Generated: 2026-11-13 12:17:35 UTC | Files: 262 | Lines: 118189
+> Languages: JSON (4), Markdown (26), Rust (169), Shell (6), TOML (19), YAML (38)
+        buildkit.rs
+        image_build.rs
+**Language:** Markdown | **Size:** 275.7 KB | **Lines:** 10197
+`mod tests`
 
-Without `--event`, each workflow is checked as a push. On a branch other than the default one, a workflow that runs no job for a push, because it doesn't fire or every job is skipped, such as CI that runs on pushes to `main` and on pull requests, is checked again as a pull request into the default branch (`origin/HEAD`, else `main` or `master`). Pass `--base-branch` for another target, or `--event` to check one event only.
+---
 
-It prints one `gate` object: `verdict`, `passed`, `failed` (paths), `unverified` (with `workflow`), `uncommitted_changes`, and per workflow its `status
+## crates/executor/src/buildkit.rs
+
+**Language:** Rust | **Size:** 16.9 KB | **Lines:** 427
+
+**Imports:**
+- `bollard::Docker`
+- `std::path::Path`
+- `wrkflw_runtime::container::ContainerError`
+
+**Declarations:**
+
+`const IMAGE_BUILDER_ENV: &str = "WRKFLW_IMAGE_BUILDER"`
+
+`fn buildkit_wanted(setting: Option<&str>) -> bool`
+
+`static BUILDKIT_IMAGES_UNSEEN: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false)`
+
+`pub(crate) async fn builds_here(docker: &Docker) -> bool`
+
+`async fn buildkit_available(docker: &Docker) -> bool`
+
+`async fn buildkit_builds_here(docker: &Docker) -> bool`
+
+`fn warn_buildkit_elsewhere(why: &str)`
+
+`async fn docker_cli(args: &[&str]) -> Option<String>`
+
+`fn buildx_driver(inspect: &str) -> Option<&str>`
+
+`fn same_engine(cli: Option<&str>, api: Option<&str>) -> Option<bool>`
+
+`pub(crate) enum Next`
+> Variants: `Built`, `EngineBuilds`, `Failed`
+
+`pub(crate) async fn build( docke
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-6. Before calling a pass done, check `unverified` on `run_finished`. A job listed there asked for another OS in `runs-on` than it ran as, such as `windows-latest` run as Linux, so steps gated on `runner.os` and OS-specific behaviour were not checked. Say so instead of claiming CI will pass.
-Run `wrkflw --format json gate`, or the MCP `gate` tool. It runs what a push would run, reusing jobs that already passed on the same files, and exits 1 if anything fails. It prints one `gate` object: `passed`, `failed` (paths), `unverified` (with `workflow`), `uncommitted_changes`, and per workflow its `status`, `run_id`, `jobs` and `failure` digest. Add `--reuse-results` to `wrkflw run`, or `reuse_results` to the MCP `run_workflow`, to get the same reuse while iterating. A reused job reports one `Reuse result` step and an unaffected job one `Not affected` step, so their output isn't there to read. See "Spending less on CI" in the README for `.wrkflw/affected.yml`.
+// Induced defect failure mode:
+> Generated: 2026-11-11 17:02:11 UTC | Files: 260 | Lines: 117213
+> Languages: JSON (4), Markdown (26), Rust (167), Shell (6), TOML (19), YAML (38)
+**Language:** Markdown | **Size:** 275.9 KB | **Lines:** 10209
+**Language:** Rust | **Size:** 65.1 KB | **Lines:** 1742
+- `wrkflw_runtime::container::{
+    container_env, container_path, path_from_image_env, ContainerError, ContainerOutput,
+    ContainerRuntime, COMBINED_IMAGE_PREFIX, LOCAL_IMAGE_PREFIX,
+}`
+- *... and 2 more imports*
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bcd6c848` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7b284277` are properly handled with clean fallback behavior.
 
 
 ## 3. Decision Protocol & Boundary Restrictions

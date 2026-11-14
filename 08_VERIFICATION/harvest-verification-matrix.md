@@ -9820,3 +9820,8 @@
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T11:05:14.835Z` | `hf-qwen-qwen3-vl-8b-instruct` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-2F30EB65` [Domain D] | Yes (`3d0d98b8...`) |
 | `CYCLE-20261114-VAR1` | `2026-11-14T11:33:59.725Z` | `nomic-ai/nomic-embed-text-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md` | Yes (`b97d3d61...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T11:34:36.813Z` | `hf-nomic-ai-nomic-embed-text-v1.5` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-BFA5A06D` [Domain D] | Yes (`57cb3f42...`) |
+| `CYCLE-20261114-XZRL` | `2026-11-14T12:04:05.073Z` | `google/gemma-4-26B-A4B-it` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-gemma-4-26b-a4b-it-learnings.md` | Yes (`8d2ebb4f...`) |
+| `CYCLE-20261114-Y1RT` | `2026-11-14T12:04:07.673Z` | `bahdotsh/wrkflw` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md` | Yes (`e6d5d69f...`) |
+| `CYCLE-20261114-Y6IL` | `2026-11-14T12:04:13.821Z` | `czy0729/Bangumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8484` | Yes (`2af58ca9...`) |
+| `CYCLE-20261114-Y7PK` | `2026-11-14T12:04:15.368Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8485` | Yes (`b8cb8c17...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T12:04:53.000Z` | `hf-google-gemma-4-26b-a4b-it` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-5A7FBD90` [Domain D] | Yes (`f62cea94...`) |

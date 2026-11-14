@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for peerdb/io/peerdb
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for PeerDB-io/peerdb
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "peerdb/io/peerdb",
-  "source_url": "https://github.com/peerdb/io/peerdb",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "PeerDB-io/peerdb",
+  "source_url": "https://github.com/PeerDB-io/peerdb",
+  "source_version": "e0f79a20",
+  "license": "AGPL-3.0",
+  "timestamp": "2026-11-14T12:04:15.586Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-peerdb-io-peerdb",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [peerdb/io/peerdb](https://github.com/peerdb/io/peerdb) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb) (Revision: `e0f79a20`).  
+> **License**: AGPL-3.0 | **Timestamp**: `2026-11-14T12:04:15.586Z`  
+> **Learning ID**: `learn-github-peerdb-io-peerdb`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `peerdb/io/peerdb` (Commit: `historical`)
+- **Target Repository**: `PeerDB-io/peerdb` (Commit: `e0f79a20`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
-> **Source**: github ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
-> **Source Version**: `ca8ac478`  
-> **License**: AGPL-3.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T03:48:59.141Z  
-> **Learning ID**: `learn-github-peerdb-io-peerdb`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): PeerDB-io/peerdb
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T03:48:36.102Z  
+> **Harvest Timestamp**: 2026-11-14T12:04:14.357Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Fast, Simple and a cost effective tool to replicate data from Postgres to Data Warehouses, Queues and Storage
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3320 stars
+- **Stars / Engagement**: 3321 stars
 
 ---
 
@@ -1249,6 +1235,7 @@ func init() {
 package utils
 
 import (
+	"compress/flate"
 	"context"
 	"errors"
 	"fmt"
@@ -1261,7 +1248,7 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/feature/s3/transfermanager"
-	"github.com/hamba/avro/v2/ocf"
+	"github.com/twmb/avro/ocf"
 
 	"github.com/PeerDB-io/peerdb/flow/generated/protos"
 	"github.com/PeerDB-io/peerdb/flow/internal"
@@ -1281,11 +1268,27 @@ const (
 	AvroGCSStorage
 )
 
+// newOCFCodec returns a fresh codec, the OCF writer takes ownership and closes it
+func newOCFCodec(c protos.AvroCodec) (ocf.Codec, error) {
+	switch c {
+	case protos.AvroCodec_Null:
+		return nil, nil
+	case protos.AvroCodec_Deflate:
+		return ocf.DeflateCodec(flate.DefaultCompression), nil
+	case protos.AvroCodec_Snappy:
+		return ocf.SnappyCodec(), nil
+	case protos.AvroCodec_ZStandard:
+		return ocf.ZstdCodec(nil, nil)
+	default:
+		return nil, fmt.Errorf("unsupported Avro compression codec %s", c)
+	}
+}
+
 type peerDBOCFWriter struct {
 	stream               *model.QRecordStream
 	avroSchema           *model.QRecordAvroSchemaDefinition
 	sizeTracker          *model.QRecordAvroChunkSizeTracker
-	avroCompressionCodec ocf.CodecName
+	avroCompressionCodec protos.AvroCodec
 	targetDWH            protos.DBType
 }
 
@@ -1306,7 +1309,7 @@ func (l *AvroFile) Cleanup(ctx context.Context) {
 func NewPeerDBOCFWriter(
 	stream *model.QRecordStream,
 	avroSchema *model.QRecordAvroSchemaDefinition,
-	avroCompressionCodec ocf.CodecName,
+	avroCompressionCodec protos.AvroCodec,
 	targetDWH protos.DBType,
 	sizeTracker *model.QRecordAvroChunkSizeTracker,
 ) *peerDBOCFWriter {
@@ -1326,9 +1329,13 @@ func (p *peerDBOCFWriter) WriteOCF(
 	typeConversions map[string]types.TypeConversion,
 	numericTruncator model.SnapshotTableNumericTruncator,
 ) (int64, error) {
-	ocfWriter, err := ocf.NewEncoderWithSchema(
-		p.avroSchema.Schema, w, ocf.WithCodec(p.avroCompressionCodec),
-		ocf.WithBlockLength(8192), ocf.WithBlockSize(1<<26),
+	codec, err := newOCFCodec(p.avroCompressionCodec)
+	if err != nil {
+		return 0, fmt.Errorf("failed to create OCF codec: %w", err)
+	}
+	ocfWriter, err := ocf.NewWriter(
+		w, p.avroSchema.Schema, ocf.WithCodec(codec),
+		ocf.WithBlockCount(8192), ocf.WithBlockBytes(1<<26),
 	)
 	if err != nil {
 		return 0, fmt.Errorf("failed to create OCF writer: %w", err)
@@ -1444,10 +1451,10 @@ func (p *peerDBOCFWriter) WriteRecordsToAvroFile(ctx context.Context, env map[st
 }
 
 func (p *peerDBOCFWriter) getAvroFieldNamesFromSchema() []string {
-	fields := p.avroSchema.Schema.Fields()
+	fields := p.avroSchema.Schema.Root().Fields
 	avroFieldNames := make([]string, len(fields))
-	for i, field := range fields {
-		avroFieldNames[i] = field.Name()
+	for i := range fields {
+		avroFieldNames[i] = fields[i].Name
 	}
 	return avroFieldNames
 }
@@ -1455,7 +1462,7 @@ func (p *peerDBOCFWriter) getAvroFieldNamesFromSchema() []string {
 func (p *peerDBOCFWriter) writeRecordsToOCFWriter(
 	ctx context.Context,
 	env map[string]string,
-	ocfWriter *ocf.Encoder,
+	ocfWriter *ocf.Writer,
 	typeConversions map[string]types.TypeConversion,
 	numericTruncator model.SnapshotTableNumericTruncator,
 ) (int64, error) {
@@ -1483,7 +1490,7 @@ func (p *peerDBOCFWriter) writeRecordsToOCFWriter(
 			slog.Int64("records", numRows.Load()),
 			slog.Int("channelLen", len(p.stream.Records)),
 			slog.Float64("elapsedMinutes", time.Since(writeStart).Minutes()),
-			slog.String("compression", string(p.avroCompressionCodec)))
+			slog.String("compression", p.avroCompressionCodec.String()))
 	})
 	defer shutdown()
 
@@ -1519,7 +1526,7 @@ func (p *peerDBOCFWriter) writeRecordsToOCFWriter(
 	logger.Info("finished writing records to OCF",
 		slog.Int64("records", numRows.Load()),
 		slog.Float64("elapsedMinutes", time.Since(writeStart).Minutes()),
-		slog.String("compression", string(p.avroCompressionCodec)),
+		slog.String("compression", p.avroCompressionCodec.String()),
 	)
 
 	if avroConverter.NullMismatchTracker != nil {
@@ -1883,768 +1890,1121 @@ func getChainedRoleSessionName() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6951b76b` (2026-11-09)
-**Commit Message**: fix(snapshot): skip child tables dropped after the snapshot in CTID partitioning (#5044)
+### Incident Patch 1: `e0f79a20` (2026-11-13)
+**Commit Message**: Optionally honor Postgres child table schema when PEERDB_SOURCE_SCHEMA_AS_DESTINATION_COLUMN is enabled (#5028)
 
-Fixes
-[DBI-1316](https://linear.app/clickhouse/issue/DBI-1316/classify-unhandled-postgres-qrep-error-child-table-block-count-null)
+Based on top of https://github.com/PeerDB-io/peerdb/pull/4992. 
 
 ## Problem
 
-CTID partitioning of partitioned/inherited tables lists children through
-the exported snapshot, then reads each child's size with
-`pg_relation_size(oid)`. That function checks the current catalog and
-returns NULL for a relation that no longer exists. A child dropped after
-the snapshot was exported (e.g. by partition retention during a long
-initial load) is still listed, its size comes back NULL, and the scan
-into `int64` fails:
+With `PEERDB_SOURCE_SCHEMA_AS_DESTINATION_COLUMN`, rows of a Postgres
+inheritance child table carry the schema of the parent table. With all
+child tables replicated into one destination table in a
+schema-per-tenant setup, rows from different tenants with the same key
+collapse into one row, because `_peerdb_source_schema` is the first
+column of the sorting key.
 
-```
-failed to get child partitioned tables: failed to scan child table: can't scan into dest[3] (col: int8): cannot scan NULL into *int64
-```
+## Change
 
-The snapshot is fixed, so every retry fails the same way.
+This PR introduces an opt-in feature when
+`PEERDB_POSTGRES_SOURCE_SCHEMA_FROM_INHERITANCE_CHILD` is enabled, and
+would otherwise no-op. It takes effect only when
+`PEERDB_SOURCE_SCHEMA_AS_DESTINATION_COLUMN` and
+`PEERDB_POSTGRES_CDC_HANDLE_INHERITANCE_FOR_NON_PARTITIONED_TABLES` are
+also enabled. With the settings enabled, each row of an inherited table
+carries its own schema instead of the root table's schema:
+- snapshot: when processing child range partitions, each `FROM ONLY`
+query adds the table's schema as a constant `_peerdb_source_schema`
+column.
+- cdc (pg-side): `getSourceSchemaForDestinationColumn` returns the
+schema of
 
-## Fix
-
-`COALESCE` the block count to 0 in the child discovery queries. A
-dropped child is treated as empty and skipped, matching what a `SELECT`
-from the parent returns today.
-
-## Testing
-
-`TestCTIDPartitioningSkipsChildDroppedAfterSnapshot` (partitioned and
-inherited): export a snapshot, drop a child, run `GetQRepPartitions`
-wi
-
-**File**: `flow/connectors/postgres/qrep_partition.go` (modified, +6/-3)
+**File**: `flow/connectors/clickhouse/table_function.go` (modified, +5/-1)
 ```diff
-@@ -338,13 +338,16 @@ type tableBlockStats struct {
- 	blockCount   int64
- }
+@@ -160,6 +160,7 @@ func buildInsertFromTableFunctionQuery(
+ 	if err != nil {
+ 		return "", err
+ 	}
++	sourceSchemaColExists := false
  
-+// pg_relation_size is NULL for a child dropped after the snapshot, which pg_inherits still lists; count it as empty.
-+const childBlockCountExpr = `COALESCE(pg_relation_size(c.oid) / current_setting('block_size')::int, 0)::bigint`
+ 	selectedColumnNames := make([]string, 0, len(config.schema.Fields))
+ 	insertedColumnNames := make([]string, 0, len(config.schema.Fields))
+@@ -172,6 +173,9 @@ func buildInsertFromTableFunctionQuery(
+ 		if excluded {
+ 			continue
+ 		}
++		if !sourceSchemaColExists && colName == sourceSchemaColName {
++			sourceSchemaColExists = true
++		}
+ 
+ 		sourceFieldName := colName
+ 		if config.columnNameMap != nil {
+@@ -198,7 +202,7 @@ func buildInsertFromTableFunctionQuery(
+ 	}
+ 
+ 	// Add source schema column if needed
+-	if sourceSchemaAsDestinationColumn {
++	if sourceSchemaAsDestinationColumn && !sourceSchemaColExists {
+ 		qualifiedTable, err := common.ParseTableIdentifier(config.config.WatermarkTable)
+ 		if err != nil {
+ 			return "", err
+```
+
+**File**: `flow/connectors/clickhouse/table_function_test.go` (modified, +52/-0)
+```diff
+@@ -273,3 +273,55 @@ func TestBuildInsertFromTableFunctionQueryJSONOverride(t *testing.T) {
+ 			"FROM s3('s3://bucket/key', 'Avro')",
+ 		query)
+ }
 +
- // getPartitionedTables returns a map of partitioned child table names to their block stats,
- // recursively handle multi-level partitioned tables.
- // Uses OID-based join to avoid to_regclass which lowercases unquoted mixed-case identifiers.
- func getPartitionedTables(ctx context.Context, tx pgx.Tx, parentOID uint32) (map[string]tableBlockStats, error) {
- 	rows, err := tx.Query(ctx, `
- 		SELECT c.oid, format('%s.%s', n.nspname, c.relname), c.relkind::text,
--			(pg_relation_size(c.oid) / current_setting('block_size')::int)::bigint,
-+			`+childBlockCountExpr+`,
- 			(CASE WHEN c.relpages > 0 THEN c.reltuples::float / c.relpages ELSE 0 END)::float
- 		FROM pg_inherits i
- 		JOIN pg_class c ON i.inhrelid = c.oid
-@@ -410,7 +413,7 @@ func getInheritedTables(
- 	var numBlocks int64
- 	var blockDensity float64
- 	if err := tx.QueryRow(ctx, `
--			SELECT (pg_relation_size($1) / current_setting('block_size')::int)::bigint,
-+			SELECT `+childBlockCountExpr+`,
- 				(CASE WHEN c.relpages > 0 THEN c.reltuples::float / c.relpages ELSE 0 END)::float
- 			FROM pg_class c WHERE c.oid = $1
- 		`, parentOID).Scan(&numBlocks, &blockDensity); err != nil {
-@@ -425,7 +428,7 @@ func getInheritedTables(
- 
- 	rows, err := tx.Query(ctx, `
- 		SELECT c.oid, format('%s.%s', n.nspname, c.relname), c.relhassubclass,
--			(pg_relation_size(c.oid) / current_setting('block_size')::int)::bigint,
-+			`+childBlockCountExpr+`,
- 			(CASE WHEN c.relpages > 0 THEN c.reltuples::float / c.relpages ELSE 0 END)::float
- 		FROM pg_inherits i
- 		JOIN pg_class c ON i.inhrelid = c.oid
-```
-
-**File**: `flow/connectors/postgres/qrep_partition_test.go` (modified, +82/-0)
-```diff
-@@ -3,6 +3,7 @@
- package connpostgres
- 
- import (
-+	"context"
- 	"fmt"
- 	"log/slog"
- 	"strings"
-@@ -735,6 +736,87 @@ func TestCTIDPartitioningOnEmptyInheritedTable(t *testing.T) {
- 	require.Empty(t, partitions)
- }
- 
-+// A child dropped after the snapshot was exported is still listed by the snapshot's
-+// pg_inherits, but pg_relation_size of it is NULL; it must be skipped, not fail the scan.
-+func TestCTIDPartitioningSkipsChildDroppedAfterSnapshot(t *testing.T) {
-+	t.Parallel()
++// TestBuildInsertFromTableFunctionQuerySourceSchema checks who supplies _peerdb_source_schema:
++// when the source projected the column, the insert copies it from the file; otherwise the insert
++// adds the watermark table's schema.
++func TestBuildInsertFromTableFunctionQuerySourceSchema(t *testing.T) {
++	const tableFunctionExpr = "s3('s3://bucket/key', 'Avro')"
++	settingOn := map[string]string{"PEERDB_SOURCE_SCHEMA_AS_DESTINATION_COLUMN": "true"}
++	settingOff := map[string]string{"PEERDB_SOURCE_SCHEMA_AS_DESTINATION_COLUMN": "false"}
++	projectedFields := types.QRecordSchema{Fields: []types.QField{
++		{Name: "id", Type: types.QValueKindInt64},
++		{Name: sourceSchemaColName, Type: types.QValueKindString},
++	}}
++	sourceFields := types.QRecordSchema{Fields: []types.QField{
++		{Name: "id", Type: types.QValueKindInt64},
++	}}
 +
 +	for _, tc := range []struct {
-+		name        string
-+		createChild string
++		name     string
++		env      map[string]string
++		schema   types.QRecordSchema
++		expected string
 +	}{
-+		{name: "partitioned", createChild: `CREATE TABLE %[1]s PARTITION OF %[2]s FOR VALUES FROM (%[3]d) TO (%[3]d + 100)`},
-+		{name: "inherited", createChild: `CREATE TABLE %[1]s () INHERITS (%[2]s)`},
++		{
++			name:     "setting on + projected",
++			env:      settingOn,
++			schema:   projectedFields,
++			expected: "INSERT INTO `t1`(`id`,`_peerdb_source_schema`) SELECT `id`,`_peerdb_source_schema` FROM " + tableFunctionExpr,
++		},
++		{
++			name:     "setting on + not projected",
++			env:      settingOn,
++			schema:   sourceFields,
++			expected: "INSERT INTO `t1`(`id`,_peerdb_source_schema) SELECT `id`,'public' FROM " + tableFunctionExpr,
++		},
++		{
++			name:     "setting off",
++			env:      settingOff,
++			schema:   sourceFields,
++			expected: "INSERT INTO `t1`(`id`) SELECT `id` FROM " + tableFunctionExpr,
++		},
 +	} {
 +		t.Run(tc.name, func(t *testing.T) {
-+			t.Parallel()
-+			ctx := t.Context()
-+			schemaName, conn, connStr := setupTestSchema(t)
-+
-+			parentTable := schemaName + ".parent"
-+			createParent := `CREATE TABLE %s (id SERIAL, partition_key INT NOT NULL, value TEXT)`
-+			if tc.name == "partitioned" {
-+				createParent += ` PARTITION BY RANGE (partition_key)`
-+			}
-+			_, err := conn.Exec(ctx, fmt.Sprintf(createParent, parentTable))
++			query, err := buildInsertFromTableFunctionQuery(t.Context(), &insertFromTableFunctionConfig{
++				destinationTable: "t1",
++				schema:           tc.schema,
++				config:           &protos.QRepConfig{Env: tc.env, WatermarkTable: "public.parent"},
++			}, tableFunctionExpr, nil)
 +			require.NoError(t, err)
-+
-+			childTables := make([]string, 3)
-+			for i := range childTables {
-+				childTables[i] = fmt.Sprintf("%s.child_%d", schemaName, i)
-+				_, err = conn.Exec(ctx, fmt.Sprintf(tc.createChild, childTables[i], parentTable, i*100))
-+				require.NoError(t, err)
-+				_, err = conn.Exec(ctx, fmt.Sprintf(
-+					`INSERT INTO %s (partition_key, value) SELECT %d + g, 'v' FROM generate_series(0, 49) g`,
-+					childTables[i], i*100))
-+				require.NoError(t, err)
-+			}
-+
-+			exporter, err := NewPostgresConnector(ctx, nil, internal.GetCatalogPostgresConfigFromEnv(ctx))
-+			require.NoError(t, err)
-+			t.Cleanup(func() { exporter.Close() })
-+			exportTx, err := exporter.conn.BeginTx(ctx, pgx.TxOptions{IsoLevel: pgx.RepeatableRead})
-+			require.NoError(t, err)
-+			t.Cleanup(func() { _ = exportTx.Rollback(context.Background()) })
-+			var snapshot string
-+			require.NoError(t, exportTx.QueryRow(ctx, "SELECT pg_export_snapshot()").Scan(&snapshot))
-+
-+			_, err = conn.Exec(ctx, "DROP TABLE "+childTables[1])
-+			require.NoError(t, err)
-+
-+			c := &PostgresConnector{
-+				connStr: connStr,
-+				Config:  &protos.PostgresConfig{},
-+				conn:    conn,
-+				logger:  log.NewStructuredLogger(slog.With(slog.String(string(shared.FlowNameKey), "testDroppedChild"))),
-+			}
-+			// NumPartitionsOverride exercises CTIDBlockPartitioningFunc directly; without it,
-+			// ComputeNumPartitions sums per-child estimates first.
-+			for _, numPartitionsOverride := range []uint32{4, 0} {
-+				partitions, err := c.GetQRepPartitions(ctx, &protos.QRepConfig{
-+					FlowJobName:           "test_ctid_dropped_child",
-+					NumRowsPerPartition:   10,
-+					NumPartitionsOverride: numPartitionsOverride,
-+					WatermarkTable:        parentTable,
-+					WatermarkColumn:       "ctid",
-+					SnapshotName:          snapshot,
-+					Env:                   map[string]string{"PEERDB_POSTGRES_APPLY_CTID_BLOCK_PARTITIONING_OVERRIDE": "true"},
-+				}, nil)
-+				require.NoError(t, err)
-+
-+				covered := make(map[string]bool)
-+				for _, p := range partitions {
-+					for _, ctr := range p.ChildTableRanges {
-+						covered[ctr.Table] = true
-+					}
-+				}
-+				require.Equal(t, map[string]bool{childTables[0]: true, childTables[2]: true}, covered,
-+					"numPartitionsOverride=%d", numPartitionsOverride)
-+			}
++			require.Equal(t, tc.expected, query)
 +		})
 +	}
 +}
-+
- // analyzeTables runs ANALYZE on each table so that pg_class.reltuples/relpages are
- // populated; without this the density-based row estimate is 0 and ComputeNumPartitions
- // falls back to a precise COUNT(*) instead of exercising the estimation path.
 ```
 
----
-
-### Incident Patch 2: `c9627d46` (2026-11-11)
-**Commit Message**: fix(clickhouse) DBI-1323: validate column types and key expressions structurally (#5068)
-
-DBI-1323
-
-Custom column types (`destination_type`), `partition_by_expr` and
-`sharding_key` are written into ClickHouse's `CREATE TABLE` as SQL.
-Column types were checked with a regex when a mirror was created or
-resynced, but not when tables were added to it, and the content of the
-two expressions was not checked.
-
-This adds two validators to `flow/pkg/clickhouse`:
-- `ValidateColumnType` parses a single type made of names, parentheses,
-commas and integers, like `Decimal(38,10)` or `Array(Nullable(String))`.
-It rejects whitespace and column-option keywords such as `DEFAULT`.
-- `ValidateExpression` accepts names, numbers, arithmetic, commas and
-parentheses, and checks that parentheses never close more than they
-open. It rejects string literals, comments, statement separators,
-subqueries and aliases.
-
-They run:
-- in the API, when a mirror is created or resynced and when tables are
-added to it. Destination-specific checks go through a new
-`DestinationTableValidationConnector`;
-- when ClickHouse destination tables are created, since stored configs
-may have skipped API validation. Failures are class
-
-**File**: `flow/alerting/classifier.go` (modified, +23/-36)
+**File**: `flow/connectors/postgres/cdc.go` (modified, +17/-7)
 ```diff
-@@ -154,6 +154,10 @@ type ErrorInfo struct {
- 	Code                 string
+@@ -74,6 +74,7 @@ type PostgresCDCSource struct {
+ 	flowJobName                              string
+ 	fastProcessJsonColumns                   bool
+ 	handleInheritanceForNonPartitionedTables bool
++	sourceSchemaFromInheritanceChild         bool
+ 	originMetadataAsDestinationColumn        bool
+ 	internalVersion                          uint32
+ 	flags                                    []string
+@@ -96,6 +97,7 @@ type PostgresCDCConfig struct {
+ 	FastProcessJsonColumns                   bool
+ 	HandleInheritanceForNonPartitionedTables bool
+ 	SourceSchemaAsDestinationColumn          bool
++	SourceSchemaFromInheritanceChild         bool
+ 	OriginMetaAsDestinationColumn            bool
+ 	InternalVersion                          uint32
+ }
+@@ -195,25 +197,33 @@ func (c *PostgresConnector) NewPostgresCDCSource(ctx context.Context, cdcConfig
+ 		flowJobName:                              cdcConfig.FlowJobName,
+ 		fastProcessJsonColumns:                   cdcConfig.FastProcessJsonColumns,
+ 		handleInheritanceForNonPartitionedTables: cdcConfig.HandleInheritanceForNonPartitionedTables,
++		sourceSchemaFromInheritanceChild:         cdcConfig.SourceSchemaFromInheritanceChild,
+ 		originMetadataAsDestinationColumn:        cdcConfig.OriginMetaAsDestinationColumn,
+ 		internalVersion:                          cdcConfig.InternalVersion,
+ 		flags:                                    cdcConfig.Flags,
+ 		nativeJSONEnabled:                        cdcConfig.NativeJSONEnabled,
+ 	}, nil
  }
  
-+func unknownErrorInfo(source ErrorSource) ErrorInfo {
-+	return ErrorInfo{Source: source, Code: "UNKNOWN"}
-+}
-+
- type ErrorClass struct {
- 	Class  string
- 	action ErrorAction
-@@ -399,10 +403,7 @@ func GetErrorClass(ctx context.Context, err error) (ErrorClass, ErrorInfo) {
- 			if pgErr != nil {
- 				return errorClass, pgErrorInfo
- 			}
--			return errorClass, ErrorInfo{
--				Source: ErrorSourcePostgresCatalog,
--				Code:   "UNKNOWN",
--			}
-+			return errorClass, unknownErrorInfo(ErrorSourcePostgresCatalog)
- 		}
- 
- 		if _, ok := errors.AsType[*exceptions.DropFlowError](err); ok {
-@@ -411,21 +412,15 @@ func GetErrorClass(ctx context.Context, err error) (ErrorClass, ErrorInfo) {
- 				return errorClass, pgErrorInfo
- 			}
- 			// For now we are not making it as verbose, will take this up later
--			return errorClass, ErrorInfo{
--				Source: ErrorSourceOther,
--				Code:   "UNKNOWN",
--			}
-+			return errorClass, unknownErrorInfo(ErrorSourceOther)
- 		}
- 
- 		if _, ok := errors.AsType[*exceptions.PostgresSetupError](err); ok {
- 			errorClass := ErrorNotifyConnectivity
- 			if pgErr != nil {
- 				return errorClass, pgErrorInfo
- 			}
--			return errorClass, ErrorInfo{
--				Source: pgErrSource,
--				Code:   "UNKNOWN",
--			}
-+			return errorClass, unknownErrorInfo(pgErrSource)
- 		}
- 	}
- 
-@@ -588,10 +583,7 @@ func GetErrorClass(ctx context.Context, err error) (ErrorClass, ErrorInfo) {
- 	}
- 
- 	if _, ok := errors.AsType[*exceptions.SSHTunnelSetupError](err); ok {
--		return ErrorNotifyConnectivity, ErrorInfo{
--			Source: ErrorSourceSSH,
--			Code:   "UNKNOWN",
--		}
-+		return ErrorNotifyConnectivity, unknownErrorInfo(ErrorSourceSSH)
- 	}
- 
- 	if _, ok := errors.AsType[*net.DNSError](err); ok {
-@@ -645,10 +637,7 @@ func GetErrorClass(ctx context.Context, err error) (ErrorClass, ErrorInfo) {
- 	}
- 
- 	if _, ok := errors.AsType[*pgconn.ConnectError](err); ok {
--		return ErrorNotifyConnectivity, ErrorInfo{
--			Source: pgErrSource,
--			Code:   "UNKNOWN",
--		}
-+		return ErrorNotifyConnectivity, unknownErrorInfo(pgErrSource)
- 	}
- 
- 	// Consolidated PostgreSQL error handling
-@@ -1166,10 +1155,7 @@ func GetErrorClass(ctx context.Context, err error) (ErrorClass, ErrorInfo) {
- 	}
- 
- 	if _, ok := errors.AsType[*exceptions.BigQueryError](err); ok {
--		bqErrorInfo := ErrorInfo{
--			Source: ErrorSourceBigQuery,
--			Code:   "UNKNOWN",
--		}
-+		bqErrorInfo := unknownErrorInfo(ErrorSourceBigQuery)
- 		if apiErr, ok := errors.AsType[*googleapi.Error](err); ok {
- 			if apiErr.Code == 400 && strings.Contains(apiErr.Message, bigQueryChangeHistoryBeforeTimeTravel) {
- 				bqErrorInfo.Code = "CHANGE_HISTORY_BEFORE_TIME_TRAVEL"
-@@ -1210,10 +1196,7 @@ func GetErrorClass(ctx context.Context, err error) (ErrorClass, ErrorInfo) {
- 	}
- 
- 	if _, ok := errors.AsType[*exceptions.GCSError](err); ok {
--		gcsErrorInfo := ErrorInfo{
--			Source: ErrorSourceGCS,
--			Code:   "UNKNOWN",
--		}
-+		gcsErrorInfo := unknownErrorInfo(ErrorSourceGCS)
- 		// https://docs.cloud.google.com/storage/docs/retry-strategy#retryable
- 		gcsStatusErrorClass := func(statusCode int) ErrorClass {
- 			if statusCode == 408 || statusCode == 429 || statusCode >= 500 {
-@@ -1242,10 +1225,7 @@ func GetErrorClass(ctx context.Context, err error) (ErrorClass, ErrorInfo) {
- 
- 	if s3Err, ok := errors.AsType[*exceptions.S3Error](err); ok {
- 		s3ErrorClass := ErrorOther
--		s3ErrorInfo := ErrorInfo{
--			Source: ErrorSourceS3,
--			Code:   "UNKNOWN",
--		}
-+		s3ErrorInfo := unknownErrorInfo(ErrorSourceS3)
- 		if respErr, ok := errors.AsType[*awshttp.ResponseError](s3Err); ok {
- 			if _, ok := retry.DefaultRetryableHTTPStatusCodes[respErr.HTTPStatusCode()]; ok {
- 				s3ErrorClass = ErrorRetryRecoverable
-@@ -1434,6 +1414,16 @@ func GetErrorClass(ctx context.Context, err error) (ErrorClass, ErrorInfo) {
- 		return ErrorOther, chErrorInfo
- 	}
- 
-+	if _, ok := errors.AsType[*peerdb_clickhouse.InvalidFragmentError](err); ok {
-+		errInfo := unknownErrorInfo(ErrorSourceOther)
-+		if tableCreationErr, ok := errors.AsType[*exceptions.ClickHouseNormalizedTableCreationError](err); ok {
-+			errInfo.AdditionalAttributes = map[AdditionalErrorAttributeKey]string{
-+				ErrorAttributeKeyTable: tableCreationErr.DestinationTable,
-+			}
-+		}
-+		return ErrorNotifyInvalidDestinationTableDefinition, errInfo
+-func (p *PostgresCDCSource) getSourceSchemaForDestinationColumn(relID uint32, tableName string) (string, error) {
++func (p *PostgresCDCSource) getSourceSchemaForDestinationColumn(
++	mappedRelID uint32, tableName string, relNamespace string,
++) (string, error) {
+ 	if p.schemaNameForRelID == nil {
+ 		return "", nil
+-	} else if schema, ok := p.schemaNameForRelID[relID]; ok {
 +	}
-+
- 	if numericOutOfRangeError, ok := errors.AsType[*exceptions.NumericOutOfRangeError](err); ok {
- 		return ErrorLossyConversion, ErrorInfo{
- 			Source: "typeConversion",
-@@ -1612,8 +1602,5 @@ func GetErrorClass(ctx context.Context, err error) (ErrorClass, ErrorInfo) {
- 		}
++	//  p.idToRelKindMap[mappedRelID] == 'r' ensures it's not a partitioned table
++	if p.sourceSchemaFromInheritanceChild && p.idToRelKindMap[mappedRelID] == 'r' {
++		return relNamespace, nil
++	}
++	if schema, ok := p.schemaNameForRelID[mappedRelID]; ok {
+ 		return schema, nil
  	}
  
--	return ErrorOther, ErrorInfo{
--		Source: ErrorSourceOther,
--		Code:   "UNKNOWN",
--	}
-+	return ErrorOther, unknownErrorInfo(ErrorSourceOther)
- }
-```
-
-**File**: `flow/alerting/classifier_test.go` (modified, +15/-0)
-```diff
-@@ -1789,6 +1789,21 @@ func TestClickHouseTooManyTablesDuringTableCreationShouldNotifyUser(t *testing.T
- 	}, errInfo)
+ 	schemaTable, err := common.ParseTableIdentifier(tableName)
+ 	if err != nil {
+ 		return "", err
+ 	}
+-	p.schemaNameForRelID[relID] = schemaTable.Namespace
++	p.schemaNameForRelID[mappedRelID] = schemaTable.Namespace
+ 	return schemaTable.Namespace, nil
  }
  
-+func TestInvalidRawSQLSettingDuringTableCreationShouldNotifyUser(t *testing.T) {
+@@ -418,7 +428,7 @@ func processTuple[Items model.Items](
+ 	}
+ 
+ 	if schemaName != "" {
+-		processor.AddStringColumn(items, "_peerdb_source_schema", schemaName)
++		processor.AddStringColumn(items, sourceSchemaColumnName, schemaName)
+ 	}
+ 
+ 	if p.originMetadataAsDestinationColumn {
+@@ -1216,7 +1226,7 @@ func processInsertMessage[Items model.Items](
+ 		return nil, err
+ 	}
+ 
+-	schemaName, err := p.getSourceSchemaForDestinationColumn(relID, tableName)
++	schemaName, err := p.getSourceSchemaForDestinationColumn(relID, tableName, rel.Namespace)
+ 	if err != nil {
+ 		return nil, err
+ 	}
+@@ -1273,7 +1283,7 @@ func processUpdateMessage[Items model.Items](
+ 		return nil, err
+ 	}
+ 
+-	schemaName, err := p.getSourceSchemaForDestinationColumn(relID, tableName)
++	schemaName, err := p.getSourceSchemaForDestinationColumn(relID, tableName, rel.Namespace)
+ 	if err != nil {
+ 		return nil, err
+ 	}
+@@ -1336,7 +1346,7 @@ func processDeleteMessage[Items model.Items](
+ 		return nil, err
+ 	}
+ 
+-	schemaName, err := p.getSourceSchemaForDestinationColumn(relID, tableName)
++	schemaName, err := p.getSourceSchemaForDestinationColumn(relID, tableName, rel.Namespace)
+ 	if err != nil {
+ 		return nil, err
+ 	}
+```
+
+**File**: `flow/connectors/postgres/cdc_inheritance_test.go` (modified, +30/-0)
+```diff
+@@ -240,3 +240,33 @@ func TestInheritanceChildDDLsAreDeduped(t *testing.T) {
+ 	require.Same(t, relA, p.relationMessageMapping[inhChildARelID])
+ 	require.Same(t, relB, p.relationMessageMapping[inhChildBRelID])
+ }
++
++func TestSourceSchemaFromInheritanceChild(t *testing.T) {
 +	t.Parallel()
++	for name, tc := range map[string]struct {
++		fromChild     bool
++		parentRelKind byte
++		expected      string
++	}{
++		"off => the root schema":                    {fromChild: false, parentRelKind: 'r', expected: "public"},
++		"on => the child schema":                    {fromChild: true, parentRelKind: 'r', expected: "tenant_a"},
++		"on + partitioned table => the root schema": {fromChild: true, parentRelKind: 'p', expected: "public"},
++	} {
++		t.Run(name, func(t *testing.T) {
++			p := newInheritanceTestCDCSource(t)
++			p.schemaNameForRelID = map[uint32]string{}
++			p.handleInheritanceForNonPartitionedTables = true
++			p.sourceSchemaFromInheritanceChild = tc.fromChild
++			p.idToRelKindMap[inhParentRelID] = tc.parentRelKind
 +
-+	errorClass, errInfo := GetErrorClass(t.Context(), fmt.Errorf("error while generating create table sql: %w",
-+		exceptions.NewClickHouseNormalizedTableCreationError(peerdb_clickhouse.ValidateExpression("id) --"), "test")))
-+	assert.Equal(t, ErrorNotifyInvalidDestinationTableDefinition, errorClass)
-+	assert.Equal(t, ErrorInfo{
-+		Source: ErrorSourceOther,
-+		Code:   "UNKNOWN",
-+		AdditionalAttributes: map[AdditionalErrorAttributeKey]string{
-+			ErrorAttributeKeyTable: "test",
-+		},
-+	}, errInfo)
++			_, err := processRelationMessage[model.RecordItems](t.Context(), p, 1, childARelation(), inhParentRelID)
++			require.NoError(t, err)
++			insert, err := processInsertMessage(p, 2, &pglogrepl.InsertMessage{
++				RelationID: inhChildARelID, Tuple: tuple(str("1"), str("alice"), str("a-val"), str("7")),
++			}, qProcessor{}, p.customTypeMapping)
++			require.NoError(t, err)
++			require.Equal(t, types.QValueString{Val: tc.expected},
++				insert.(*model.InsertRecord[model.RecordItems]).Items.GetColumnValue(sourceSchemaColumnName))
++		})
++	}
 +}
-+
- func TestClickHouseTooManyPartsWithoutTableName(t *testing.T) {
- 	err := &clickhouse.Exception{
- 		Code: int32(chproto.ErrTooManyParts),
 ```
 
-**File**: `flow/cmd/handler.go` (modified, +11/-0)
+**File**: `flow/connectors/postgres/postgres_source.go` (modified, +5/-0)
 ```diff
-@@ -476,6 +476,17 @@ func (h *FlowRequestHandler) FlowStateChange(
- 		for _, tm := range tablesToNormalize {
- 			structured.NormalizeStructuredIngestionTypes(tm.StructuredIngestionConfig, tm.Columns)
- 		}
-+		if len(cdcUpdate.AdditionalTables) > 0 {
-+			config, err := h.getFlowConfigFromCatalog(ctx, req.FlowJobName)
-+			if err != nil {
-+				return nil, NewInternalApiError(fmt.Errorf("unable to get flow config: %w", err))
-+			}
-+			additionConfig := pconv.FlowConnectionConfigsToCore(config)
-+			additionConfig.TableMappings = cdcUpdate.AdditionalTables
-+			if apiErr := h.checkAdditionalTables(ctx, additionConfig); apiErr != nil {
-+				return nil, apiErr
-+			}
-+		}
- 		if len(cdcUpdate.ResyncTables) > 0 {
- 			if currState != protos.FlowStatus_STATUS_PAUSED {
- 				return nil, NewInvalidArgumentApiError(fmt.Errorf("table-level resync requires the mirror to be paused"))
-```
-
-**File**: `flow/cmd/validate_mirror.go` (modified, +33/-2)
-```diff
-@@ -13,6 +13,7 @@ import (
- 	"github.com/PeerDB-io/peerdb/flow/connectors/utils/structured"
- 	"github.com/PeerDB-io/peerdb/flow/generated/protos"
- 	"github.com/PeerDB-io/peerdb/flow/internal"
-+	chvalidate "github.com/PeerDB-io/peerdb/flow/pkg/clickhouse"
- 	"github.com/PeerDB-io/peerdb/flow/pkg/common"
- 	"github.com/PeerDB-io/peerdb/flow/proto_conversions"
- 	"github.com/PeerDB-io/peerdb/flow/shared"
-@@ -170,6 +171,12 @@ func (h *FlowRequestHandler) validateCDCMirrorImpl(
+@@ -330,6 +330,10 @@ func pullCore[Items model.Items](
+ 	if err != nil {
+ 		return fmt.Errorf("failed to get get setting for sourceSchemaAsDestinationColumn: %w", err)
  	}
- 	defer dstClose(ctx)
- 
-+	if tableValidationConn, ok := dstConn.(connectors.DestinationTableValidationConnector); ok {
-+		if err := tableValidationConn.ValidateDestinationTables(ctx, connectionConfigs.TableMappings); err != nil {
-+			return nil, NewInvalidArgumentApiError(err)
-+		}
-+	}
-+
- 	var tableSchemaMap map[string]*protos.TableSchema
- 	if validateTableSettings {
- 		var getTableSchemaError error
-@@ -222,6 +229,27 @@ func (h *FlowRequestHandler) checkTableMappings(
- 	return nil
- }
- 
-+// checkAdditionalTables validates the tables being added to a mirror, given as cfg's table mappings.
-+func (h *FlowRequestHandler) checkAdditionalTables(ctx context.Context, cfg *protos.FlowConnectionConfigsCore) APIError {
-+	if apiErr := h.checkTableMappings(ctx, cfg); apiErr != nil {
-+		return apiErr
-+	}
-+	dstConn, dstClose, err := connectors.GetByNameAs[connectors.DestinationTableValidationConnector](
-+		ctx, cfg.Env, h.pool, cfg.DestinationName,
-+	)
++	sourceSchemaFromInheritanceChild, err := internal.PeerDBPostgresSourceSchemaFromInheritanceChild(ctx, req.Env)
 +	if err != nil {
-+		if errors.Is(err, errors.ErrUnsupported) {
-+			return nil
-+		}
-+		return NewFailedPreconditionApiError(fmt.Errorf("failed to create destination connector: %w", err))
++		return fmt.Errorf("failed to get setting for sourceSchemaFromInheritanceChild: %w", err)
 +	}
-+	defer dstClose(ctx)
-+	if err := dstConn.ValidateDestinationTables(ctx, cfg.TableMappings); err != nil {
-+		return NewInvalidArgumentApiError(err)
-+	}
-+	return nil
-+}
-+
- // checkSourceTableConfig validates one table's columns.
- // If maybeStructuredIngestionConfig is non-nil, column types are validated too.
- func checkSourceTableConfig(
-@@ -244,8 +272,11 @@ func checkSourceTableConfig(
- 		return nil
- 	}
- 	for _, col := range columns {
--		if !structured.ColumnTypeRegex.MatchString(col.DestinationType) {
--			return NewInvalidArgumentApiError(fmt.Errorf("invalid custom column type %s", col.DestinationType))
-+		if col.DestinationType == "" {
-+			continue
-+		}
-+		if err := chvalidate.ValidateColumnType(col.DestinationType); err != nil {
-+			return NewInvalidArgumentApiError(fmt.Errorf("table %s: column %s: %w", tableIdentifier, col.SourceName, err))
- 		}
- 	}
- 	return nil
+ 	originMetaAsDestinationColumn, err := internal.PeerDBOriginMetaAsDestinationColumn(ctx, req.Env)
+ 	if err != nil {
+ 		return fmt.Errorf("failed to get get setting for originMetaAsDestinationColumn: %w", err)
+@@ -356,6 +360,7 @@ func pullCore[Items model.Items](
+ 		FastProcessJsonColumns:                   fastProcessJsonColumns,
+ 		HandleInheritanceForNonPartitionedTables: handleInheritanceForNonPartitionedTables,
+ 		SourceSchemaAsDestinationColumn:          sourceSchemaAsDestinationColumn,
++		SourceSchemaFromInheritanceChild:         sourceSchemaFromInheritanceChild,
+ 		OriginMetaAsDestinationColumn:            originMetaAsDestinationColumn,
+ 		InternalVersion:                          req.InternalVersion,
+ 		Flags:                                    req.Flags,
 ```
 
-**File**: `flow/connectors/clickhouse/normalize.go` (modified, +4/-3)
+**File**: `flow/connectors/postgres/qrep_source.go` (modified, +34/-3)
 ```diff
-@@ -104,6 +104,9 @@ func (c *ClickHouseConnector) generateCreateTableSQLForNormalizedTable(
- 	if tableMapping != nil {
- 		tmEngine = tableMapping.Engine
- 	}
-+	if err := validateRawSQLSettings(tableMapping); err != nil {
-+		return nil, exceptions.NewClickHouseNormalizedTableCreationError(err, tableIdentifier)
-+	}
- 
- 	isDeletedColumn := defaultIsDeletedColName
- 	isDeletedColumnPart := ""
-@@ -270,8 +273,7 @@ func (c *ClickHouseConnector) generateCreateTableSQLForNormalizedTable(
- 				peerdb_clickhouse.QuoteIdentifier(tableIdentifier+shardSuffix),
- 			)
- 			if tableMapping.ShardingKey != "" {
--				stmtBuilderDistributed.WriteByte(',')
--				stmtBuilderDistributed.WriteString(tableMapping.ShardingKey)
-+				fmt.Fprintf(&stmtBuilderDistributed, ",(%s)", tableMapping.ShardingKey)
- 				if tableMapping.PolicyName != "" {
- 					stmtBuilderDistributed.WriteByte(',')
- 					stmtBuilderDistributed.WriteString(peerdb_clickhouse.QuoteLiteral(tableMapping.PolicyName))
-@@ -737,7 +739,6 @@ func resolveClickHouseColumnType(
- 		return qvalue.ToDWHColumnType(ctx, colType, env, protos.DBType_CLICKHOUSE, chVersion, column, nullableEnabled, flags, version,
- 			sourceType)
- 	}
--	// TODO basic validation to avoid injection
- 	if nullableEnabled && column.Nullable && !colType.IsArray() && !strings.HasPrefix(clickHouseType, "Nullable(") {
- 		// a nullable-enabled column must be Nullable(...), or JSON nulls turn into the type's default value
- 		return fmt.Sprintf("Nullable(%s)", clickHouseType), nil
-```
-
-**File**: `flow/connectors/clickhouse/normalize_test.go` (modified, +84/-0)
-```diff
-@@ -7,7 +7,9 @@ import (
- 	"github.com/stretchr/testify/require"
- 
- 	"github.com/PeerDB-io/peerdb/flow/generated/protos"
-+	peerdb_clickhouse "github.com/PeerDB-io/peerdb/flow/pkg/clickhouse"
- 	"github.com/PeerDB-io/peerdb/flow/shared"
-+	"github.com/PeerDB-io/peerdb/flow/shared/exceptions"
- 	"github.com/PeerDB-io/peerdb/flow/shared/types"
+@@ -25,7 +25,10 @@ import (
+ 	"github.com/PeerDB-io/peerdb/flow/shared/exceptions"
  )
  
-@@ -522,6 +524,88 @@ func TestGenerateCreateTableSQLForNormalizedTable(t *testing.T) {
+-const ctidColumnName = "ctid"
++const (
++	ctidColumnName         = "ctid"
++	sourceSchemaColumnName = "_peerdb_source_schema"
++)
+ 
+ type QRepPullSink interface {
+ 	ExecuteQueryWithTx(context.Context, *QRepQueryExecutor, pgx.Tx, string, ...any) (int64, int64, error)
+@@ -398,7 +401,11 @@ func corePullQRepRecords(
  	}
+ 
+ 	if len(partition.ChildTableRanges) > 0 {
+-		return pullChildTableRanges(c, ctx, config, partition, sink, selectedColumns)
++		projectChildSchema, err := c.shouldProjectChildSchema(ctx, config, parsedSrcTable)
++		if err != nil {
++			return 0, 0, err
++		}
++		return pullChildTableRanges(c, ctx, config, partition, sink, selectedColumns, projectChildSchema)
+ 	}
+ 
+ 	c.logger.Info("Obtained ranges for partition for PullQRepStream", partitionIdLog)
+@@ -475,6 +482,23 @@ func corePullQRepRecords(
+ 	return numRecords, numBytes, nil
  }
  
-+func TestGenerateCreateTableSQLForNormalizedTableRawSQLSettings(t *testing.T) {
-+	tableIdentifier := "tbl"
-+	tableSchema := &protos.TableSchema{
-+		Columns: []*protos.FieldDescription{
-+			{Name: "id", Type: string(types.QValueKindInt64)},
-+			{Name: "doc", Type: string(types.QValueKindJSON)},
-+		},
-+		PrimaryKeyColumns: []string{"id"},
++func (c *PostgresConnector) shouldProjectChildSchema(
++	ctx context.Context,
++	config *protos.QRepConfig,
++	table *common.QualifiedTable,
++) (bool, error) {
++	if enabled, err := internal.PeerDBPostgresSourceSchemaFromInheritanceChild(ctx, config.Env); err != nil || !enabled {
++		return false, err
 +	}
-+	chVersion := &chproto.Version{Major: 25, Minor: 8, Patch: 0}
-+
-+	generate := func(t *testing.T, cluster string, tableMapping *protos.TableMapping) ([]string, error) {
-+		t.Helper()
-+		tableMapping.SourceTableIdentifier = tableIdentifier
-+		tableMapping.DestinationTableIdentifier = tableIdentifier
-+		c := &ClickHouseConnector{
-+			Config:    &protos.ClickhouseConfig{Database: "db", Cluster: cluster},
-+			chVersion: chVersion,
-+		}
-+		config := &protos.SetupNormalizedTableBatchInput{
-+			Env:           map[string]string{"PEERDB_SOURCE_SCHEMA_AS_DESTINATION_COLUMN": "false"},
-+			TableMappings: []*protos.TableMapping{tableMapping},
-+		}
-+		return c.generateCreateTableSQLForNormalizedTable(t.Context(), config, tableIdentifier, tableSchema, chVersion, nil,
-+			protos.DBType_DBTYPE_UNKNOWN)
++	var isInheritanceParent bool
++	if err := c.conn.QueryRow(ctx,
++		"SELECT relkind = 'r' AND relhassubclass FROM pg_catalog.pg_class WHERE oid = $1::regclass", table.String(),
++	).Scan(&isInheritanceParent); err != nil {
++		return false, fmt.Errorf("failed to check whether %s is an inheritance parent: %w", table, err)
 +	}
++	return isInheritanceParent, nil
++}
 +
-+	t.Run("valid settings are written as is", func(t *testing.T) {
-+		result, err := generate(t, "cluster", &protos.TableMapping{
-+			Columns:         []*protos.ColumnSetting{{SourceName: "doc", DestinationType: "Nullable(String)"}},
-+			PartitionByExpr: "id % 4",
-+			ShardingKey:     "cityHash64(id)",
-+		})
-+		require.NoError(t, err)
-+		require.Len(t, result, 2)
-+		require.Contains(t, result[0], "`doc` Nullable(String),")
-+		require.Contains(t, result[0], "PARTITION BY (id % 4)")
-+		require.Contains(t, result[1], ",(cityHash64(id)))")
-+	})
+ // pullChildTableRanges executes one query per ChildTableRange entry,
+ // building a query directly for each child table, and accumulates results.
+ func pullChildTableRanges(
+@@ -484,6 +508,7 @@ func pullChildTableRanges(
+ 	partition *protos.QRepPartition,
+ 	sink QRepPullSink,
+ 	selectedColumns string,
++	shouldProjectChildSchema bool,
+ ) (int64, int64, error) {
+ 	partitionIdLog := slog.String(string(shared.PartitionIDKey), partition.PartitionId)
+ 
+@@ -503,9 +528,15 @@ func pullChildTableRanges(
+ 			return 0, 0, fmt.Errorf("failed to parse child table %s: %w", child.Table, err)
+ 		}
+ 
++		childSelectedColumns := selectedColumns
++		if shouldProjectChildSchema {
++			childSelectedColumns += ", " + utils.QuoteLiteral(parsedChild.Namespace) + "::text AS " +
++				common.QuoteIdentifier(sourceSchemaColumnName)
++		}
 +
-+	for _, tc := range []struct {
-+		name         string
-+		tableMapping *protos.TableMapping
-+		wantErr      string
-+	}{
-+		{
-+			name:    "column type with extra column",
-+			wantErr: "column doc: invalid column type",
-+			tableMapping: &protos.TableMapping{Columns: []*protos.ColumnSetting{
-+				{SourceName: "doc", DestinationType: "JSON, extra String DEFAULT 'x'"},
-+			}},
-+		},
-+		{
-+			name:    "column type with column option",
-+			wantErr: "column doc: invalid column type",
-+			tableMapping: &protos.TableMapping{Columns: []*protos.ColumnSetting{
-+				{SourceName: "doc", DestinationType: "Nullable(String)DEFAULT(hostName())"},
-+			}},
-+		},
-+		{
-+			name:         "partition expression closing the clause",
-+			tableMapping: &protos.TableMapping{PartitionByExpr: "id) SETTINGS index_granularity = 1 --"},
-+			wantErr:      "partition_by_expr: invalid expression",
-+		},
-+		{
-+			name:         "sharding key with a string literal",
-+			tableMapping: &protos.TableMapping{ShardingKey: "rand(), 'policy'"},
-+			wantErr:      "sharding_key: invalid expression",
-+		},
+ 		// ONLY excludes rows from child tables, ensuring we don't double-count inherited rows.
+ 		query := fmt.Sprintf("SELECT %s FROM ONLY %s WHERE %s BETWEEN $1 AND $2",
+-			selectedColumns, parsedChild.String(), quotedWatermarkColumn)
++			childSelectedColumns, parsedChild.String(), quotedWatermarkColumn)
+ 
+ 		rangeStart := pgtype.TID{
+ 			BlockNumber:  child.Start,
+```
+
+**File**: `flow/e2e/clickhouse_inheritance_suite.go` (modified, +42/-0)
+```diff
+@@ -369,3 +369,45 @@ func (s ClickHouseSuite) Test_Partition_Divergent_Layout_Publish_Via_Root() {
+ func (s ClickHouseSuite) Test_Partition_Divergent_Layout_Publish_Leaf() {
+ 	s.inhPartitionDivergentLayout(false)
+ }
++
++func (s ClickHouseSuite) Test_Inheritance_Child_Schema_As_Column() {
++	s.inhRequirePostgres()
++	pSchema := "e2e_test_" + s.suffix
++	t1, t2 := s.inhTenantSchema("t1"), s.inhTenantSchema("t2")
++	p, c1, c2 := s.attachSchemaSuffix("p"), t1+".c1", t2+".c2"
++
++	s.inhExec(`CREATE TABLE %s (id BIGINT PRIMARY KEY, val TEXT)`, p)
++	s.inhExec(`INSERT INTO %s VALUES (1, 'root')`, p)
++	for _, child := range []string{c1, c2} {
++		s.inhExec(`CREATE TABLE %s () INHERITS (%s)`, child, p)
++		s.inhExec(`ALTER TABLE %s ADD PRIMARY KEY (id)`, child)
++	}
++	s.inhExec(`INSERT INTO %s VALUES (2, 'c1')`, c1)
++	s.inhExec(`INSERT INTO %s VALUES (3, 'c2')`, c2)
++
++	connectionGen := FlowConnectionGenerationConfig{
++		FlowJobName:      s.attachSuffix("inh_cs"),
++		TableNameMapping: map[string]string{p: "p_dst"},
++		Destination:      s.Peer().Name,
++	}
++	flowConnConfig := connectionGen.GenerateFlowConnectionConfigs(s)
++	flowConnConfig.DoInitialSnapshot = true
++	flowConnConfig.Env = map[string]string{
++		"PEERDB_SOURCE_SCHEMA_AS_DESTINATION_COLUMN":                        "true",
++		"PEERDB_POSTGRES_CDC_HANDLE_INHERITANCE_FOR_NON_PARTITIONED_TABLES": "true",
++		"PEERDB_POSTGRES_SOURCE_SCHEMA_FROM_INHERITANCE_CHILD":              "true",
++	}
++	tc := NewTemporalClient(s.t)
++	env := ExecutePeerflow(s.t, tc, flowConnConfig)
++	SetupCDCFlowStatusQuery(s.t, env, flowConnConfig)
++
++	EnvWaitForEqualTablesWithNames(env, s, "snapshot", "p", "p_dst", "id,val")
++
++	s.inhExec(`UPDATE %s SET val = 'c1_update' WHERE id = 2`, c1)
++
++	EnvWaitForEqualTablesWithNames(env, s, "cdc", "p", "p_dst", "id,val")
++	s.inhWaitForColumn(env, "p_dst", "_peerdb_source_schema", map[int64]string{1: pSchema, 2: t1, 3: t2})
++
++	env.Cancel(s.t.Context())
++	RequireEnvCanceled(s.t, env)
++}
+```
+
+**File**: `flow/internal/dynamicconf.go` (modified, +22/-0)
+```diff
+@@ -474,6 +474,16 @@ var DynamicSettings = [...]*protos.DynamicSetting{
+ 		ApplyMode:        protos.DynconfApplyMode_APPLY_MODE_NEW_MIRROR,
+ 		TargetForSetting: protos.DynconfTarget_ALL,
+ 	},
++	{
++		Name: "PEERDB_POSTGRES_SOURCE_SCHEMA_FROM_INHERITANCE_CHILD",
++		Description: "Experimental. Effective only with PEERDB_SOURCE_SCHEMA_AS_DESTINATION_COLUMN and " +
++			"PEERDB_POSTGRES_CDC_HANDLE_INHERITANCE_FOR_NON_PARTITIONED_TABLES enabled, rows of " +
++			"inheritance child tables propagate their own table's schema instead of the root table's. ",
++		DefaultValue:     "false",
++		ValueType:        protos.DynconfValueType_BOOL,
++		ApplyMode:        protos.DynconfApplyMode_APPLY_MODE_NEW_MIRROR,
++		TargetForSetting: protos.DynconfTarget_CLICKHOUSE,
++	},
+ 	{
+ 		Name:             "PEERDB_ORIGIN_METADATA_AS_DESTINATION_COLUMN",
+ 		Description:      "Ingest additional metadata fields",
+@@ -1108,6 +1118,18 @@ func PeerDBSourceSchemaAsDestinationColumn(ctx context.Context, env map[string]s
+ 	return dynamicConfBool(ctx, env, "PEERDB_SOURCE_SCHEMA_AS_DESTINATION_COLUMN")
+ }
+ 
++func PeerDBPostgresSourceSchemaFromInheritanceChild(ctx context.Context, env map[string]string) (bool, error) {
++	for _, required := range []func(context.Context, map[string]string) (bool, error){
++		PeerDBSourceSchemaAsDestinationColumn,
++		PeerDBPostgresCDCHandleInheritanceForNonPartitionedTables,
 +	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			_, err := generate(t, "cluster", tc.tableMapping)
-+			require.ErrorContains(t, err, tc.wantErr)
-+			var tableCreationErr *exceptions.ClickHouseNormalizedTableCreationError
-+			require.ErrorAs(t, err, &tableCreationErr)
-+			require.Equal(t, tableIdentifier, tableCreationErr.DestinationTable)
-+			var fragmentErr *peerdb_clickhouse.InvalidFragmentError
-+			require.ErrorAs(t, err, &fragmentErr)
++		if enabled, err := required(ctx, env); err != nil || !enabled {
++			return false, err
++		}
++	}
++	return dynamicConfBool(ctx, env, "PEERDB_POSTGRES_SOURCE_SCHEMA_FROM_INHERITANCE_CHILD")
++}
++
+ func PeerDBOriginMetaAsDestinationColumn(ctx context.Context, env map[string]string) (bool, error) {
+ 	return dynamicConfBool(ctx, env, "PEERDB_ORIGIN_METADATA_AS_DESTINATION_COLUMN")
+ }
+```
+
+---
+
+### Incident Patch 2: `563d209a` (2026-11-13)
+**Commit Message**: perf(avro): replace hamba/avro with twmb/avro (#4989)
+
+Replaces `hamba/avro` with `twmb/avro` for Avro OCF staging files. The
+main reason is encoding speed, which is a hot path for ClickHouse,
+Snowflake, BigQuery and S3 syncs. The changeset is kept small: records
+are still `map[string]any` and the converter logic is unchanged apart
+from two allocation cuts.
+
+## Commits
+1. **test(avro): add OCF write benchmark and Avro schema golden test.**
+Adds `BenchmarkWriteOCF`, which covers QRecord conversion plus OCF
+encoding through `NewPeerDBOCFWriter.WriteOCF` for a ClickHouse
+destination with size tracking. Also adds `TestAvroSchemaGolden`, which
+pins the OCF header schema JSON for every destination. The golden data
+was captured with hamba.
+2. **perf(avro): replace hamba/avro with twmb/avro.**
+- Schemas are built as `avro.SchemaNode`. `SchemaNode.Schema()`
+de-duplicates named types such as `int256`, so the manual `RefSchema`
+handling is gone.
+- Codecs are selected through `utils.AvroCompressionCodec` and created
+per file, because the twmb writer owns its codec and closes it.
+- twmb writes arrays as a single block with no byte-size header, so the
+Avro size estimate in `arraySize` is updated
+
+**File**: `flow/connectors/bigquery/qrep_avro_sync.go` (modified, +40/-52)
+```diff
+@@ -10,8 +10,8 @@ import (
+ 	"time"
+ 
+ 	"cloud.google.com/go/bigquery"
+-	"github.com/hamba/avro/v2"
+-	"github.com/hamba/avro/v2/ocf"
++	"github.com/twmb/avro"
++	"github.com/twmb/avro/atype"
+ 
+ 	"github.com/PeerDB-io/peerdb/flow/connectors/utils"
+ 	"github.com/PeerDB-io/peerdb/flow/generated/protos"
+@@ -227,7 +227,7 @@ func DefineAvroSchema(dstTableName string,
+ 	syncedAtCol string,
+ 	softDeleteCol string,
+ ) (*model.QRecordAvroSchemaDefinition, error) {
+-	avroFields := make([]*avro.Field, 0, len(dstTableMetadata.Schema))
++	avroFields := make([]avro.SchemaField, 0, len(dstTableMetadata.Schema))
+ 	qFields := make([]types.QField, 0, len(avroFields))
+ 	for _, bqField := range dstTableMetadata.Schema {
+ 		if bqField.Name == syncedAtCol || bqField.Name == softDeleteCol {
+@@ -241,7 +241,7 @@ func DefineAvroSchema(dstTableName string,
+ 		qFields = append(qFields, BigQueryFieldToQField(bqField))
+ 	}
+ 
+-	avroSchema, err := avro.NewRecordSchema(dstTableName, "", avroFields)
++	avroSchema, err := (&avro.SchemaNode{Type: atype.Record, Name: dstTableName, Fields: avroFields}).Schema()
+ 	if err != nil {
+ 		return nil, fmt.Errorf("failed to create Avro schema: %w", err)
+ 	}
+@@ -252,102 +252,90 @@ func DefineAvroSchema(dstTableName string,
+ 	}, nil
+ }
+ 
+-func GetAvroType(bqField *bigquery.FieldSchema) (avro.Schema, error) {
++func GetAvroType(bqField *bigquery.FieldSchema) (avro.SchemaNode, error) {
+ 	avroNumericPrecision, avroNumericScale := qvalue.DetermineNumericSettingForDWH(
+ 		int16(bqField.Precision), int16(bqField.Scale), protos.DBType_BIGQUERY)
+ 
+-	considerRepeated := func(typ avro.Type, repeated bool) avro.Schema {
++	considerRepeated := func(typ string, repeated bool) avro.SchemaNode {
+ 		if repeated {
+-			return avro.NewArraySchema(avro.NewPrimitiveSchema(typ, nil))
++			return qvalue.AvroArraySchema(avro.SchemaNode{Type: typ})
+ 		} else {
+-			return avro.NewPrimitiveSchema(typ, nil)
++			return avro.SchemaNode{Type: typ}
+ 		}
+ 	}
+ 
+ 	switch bqField.Type {
+ 	case bigquery.StringFieldType, bigquery.GeographyFieldType, bigquery.JSONFieldType:
+-		return considerRepeated(avro.String, bqField.Repeated), nil
++		return considerRepeated(atype.String, bqField.Repeated), nil
+ 	case bigquery.BytesFieldType:
+-		return avro.NewPrimitiveSchema(avro.Bytes, nil), nil
++		return avro.SchemaNode{Type: atype.Bytes}, nil
+ 	case bigquery.IntegerFieldType:
+-		return considerRepeated("long", bqField.Repeated), nil
++		return considerRepeated(atype.Long, bqField.Repeated), nil
+ 	case bigquery.FloatFieldType:
+-		return considerRepeated("double", bqField.Repeated), nil
++		return considerRepeated(atype.Double, bqField.Repeated), nil
+ 	case bigquery.BooleanFieldType:
+-		return considerRepeated("boolean", bqField.Repeated), nil
++		return considerRepeated(atype.Boolean, bqField.Repeated), nil
+ 	case bigquery.TimestampFieldType:
+-		timestampSchema := avro.NewPrimitiveSchema(avro.Long, avro.NewPrimitiveLogicalSchema(avro.TimestampMicros))
++		timestampSchema := avro.SchemaNode{Type: atype.Long, LogicalType: atype.TimestampMicros}
+ 		if bqField.Repeated {
+-			return avro.NewArraySchema(timestampSchema), nil
++			return qvalue.AvroArraySchema(timestampSchema), nil
+ 		}
+ 		return timestampSchema, nil
+ 	case bigquery.DateFieldType:
+-		dateSchema := avro.NewPrimitiveSchema(avro.Int, avro.NewPrimitiveLogicalSchema(avro.Date))
++		dateSchema := avro.SchemaNode{Type: atype.Int, LogicalType: atype.Date}
+ 		if bqField.Repeated {
+-			return avro.NewArraySchema(dateSchema), nil
++			return qvalue.AvroArraySchema(dateSchema), nil
+ 		}
+ 		return dateSchema, nil
+ 	case bigquery.TimeFieldType:
+-		timeSchema := avro.NewPrimitiveSchema(avro.Long, avro.NewPrimitiveLogicalSchema(avro.TimeMicros))
++		timeSchema := avro.SchemaNode{Type: atype.Long, LogicalType: atype.TimeMicros}
+ 		if bqField.Repeated {
+-			return avro.NewArraySchema(timeSchema), nil
++			return qvalue.AvroArraySchema(timeSchema), nil
+ 		}
+ 		return timeSchema, nil
+ 	case bigquery.DateTimeFieldType:
+-		dateField, err := avro.NewField("date",
+-			avro.NewPrimitiveSchema(avro.Int, avro.NewPrimitiveLogicalSchema(avro.Date)))
+-		if err != nil {
+-			return nil, err
+-		}
+-		timeField, err := avro.NewField("time",
+-			avro.NewPrimitiveSchema(avro.Long, avro.NewPrimitiveLogicalSchema(avro.TimeMicros)))
+-		if err != nil {
+-			return nil, err
+-		}
+-		return avro.NewRecordSchema("datetime", "", []*avro.Field{dateField, timeField})
++		return avro.SchemaNode{Type: atype.Record, Name: "datetime", Fields: []avro.SchemaField{
++			{Name: "date", Type: avro.SchemaNode{Type: atype.Int, LogicalType: atype.Date}},
++			{Name: "time", Type: avro.SchemaNode{Type: atype.Long, LogicalType: atype.TimeMicros}},
++		}}, nil
+ 	case bigquery.BigNumericFieldType:
+-		bigNumericSchema := avro.NewPrimitiveSchema(avro.Bytes, avro.NewDecimalLogicalSchema(int(avroNumericPrecision), int(avroNumericScale)))
++		bigNumericSchema := avro.SchemaNode{
++			Type:        atype.Bytes,
++			LogicalType: atype.Decimal,
++			Precision:   int(avroNumericPrecision),
+
+```
+
+**File**: `flow/connectors/clickhouse/avro_sync.go` (modified, +1/-2)
+```diff
+@@ -11,7 +11,6 @@ import (
+ 	"time"
+ 
+ 	"github.com/google/uuid"
+-	"github.com/hamba/avro/v2/ocf"
+ 
+ 	"github.com/PeerDB-io/peerdb/flow/connectors/utils"
+ 	"github.com/PeerDB-io/peerdb/flow/generated/protos"
+@@ -400,7 +399,7 @@ func (s *ClickHouseAvroSyncMethod) writeToAvroFile(
+ 	typeConversions map[string]types.TypeConversion,
+ 	numericTruncator model.SnapshotTableNumericTruncator,
+ ) (utils.AvroFile, error) {
+-	ocfWriter := utils.NewPeerDBOCFWriter(stream, avroSchema, ocf.ZStandard, protos.DBType_CLICKHOUSE, sizeTracker)
++	ocfWriter := utils.NewPeerDBOCFWriter(stream, avroSchema, protos.AvroCodec_ZStandard, protos.DBType_CLICKHOUSE, sizeTracker)
+ 	prefix := s.staging.KeyPrefix()
+ 
+ 	s3UuidPrefix, err := internal.PeerDBS3UuidPrefix(ctx, s.config.Env)
+```
+
+**File**: `flow/connectors/s3/qrep.go` (modified, +1/-16)
+```diff
+@@ -5,7 +5,6 @@ import (
+ 	"fmt"
+ 
+ 	"github.com/google/uuid"
+-	"github.com/hamba/avro/v2/ocf"
+ 
+ 	"github.com/PeerDB-io/peerdb/flow/connectors/utils"
+ 	"github.com/PeerDB-io/peerdb/flow/generated/protos"
+@@ -79,21 +78,7 @@ func (c *S3Connector) writeToAvroFile(
+ 		s3AvroFileKey = fmt.Sprintf("%s/%s/%s.avro", s3o.Prefix, jobName, partitionID)
+ 	}
+ 
+-	var codec ocf.CodecName
+-	switch c.codec {
+-	case protos.AvroCodec_Null:
+-		codec = ocf.Null
+-	case protos.AvroCodec_Deflate:
+-		codec = ocf.Deflate
+-	case protos.AvroCodec_Snappy:
+-		codec = ocf.Snappy
+-	case protos.AvroCodec_ZStandard:
+-		codec = ocf.ZStandard
+-	default:
+-		return 0, fmt.Errorf("unsupported codec %s", c.codec)
+-	}
+-
+-	writer := utils.NewPeerDBOCFWriter(stream, avroSchema, codec, protos.DBType_S3, nil)
++	writer := utils.NewPeerDBOCFWriter(stream, avroSchema, c.codec, protos.DBType_S3, nil)
+ 	avroFile, err := writer.WriteRecordsToS3(ctx, env, s3o.Bucket, s3AvroFileKey, c.credentialsProvider, nil, nil)
+ 	if err != nil {
+ 		return 0, fmt.Errorf("failed to write records to S3: %w", err)
+```
+
+**File**: `flow/connectors/snowflake/avro_file_writer_test.go` (modified, +5/-6)
+```diff
+@@ -7,7 +7,6 @@ import (
+ 	"time"
+ 
+ 	"github.com/google/uuid"
+-	"github.com/hamba/avro/v2/ocf"
+ 	"github.com/shopspring/decimal"
+ 	"github.com/stretchr/testify/require"
+ 
+@@ -157,7 +156,7 @@ func TestWriteRecordsToAvroFileHappyPath(t *testing.T) {
+ 	t.Logf("[test] avroSchema: %v", avroSchema)
+ 
+ 	// Call function
+-	writer := utils.NewPeerDBOCFWriter(records, avroSchema, ocf.Null, protos.DBType_SNOWFLAKE, nil)
++	writer := utils.NewPeerDBOCFWriter(records, avroSchema, protos.AvroCodec_Null, protos.DBType_SNOWFLAKE, nil)
+ 	_, err = writer.WriteRecordsToAvroFile(t.Context(), avroTestEnv, tmpfile.Name())
+ 	require.NoError(t, err, "expected WriteRecordsToAvroFile to complete without errors")
+ 
+@@ -184,7 +183,7 @@ func TestWriteRecordsToZstdAvroFileHappyPath(t *testing.T) {
+ 	t.Logf("[test] avroSchema: %v", avroSchema)
+ 
+ 	// Call function
+-	writer := utils.NewPeerDBOCFWriter(records, avroSchema, ocf.ZStandard, protos.DBType_SNOWFLAKE, nil)
++	writer := utils.NewPeerDBOCFWriter(records, avroSchema, protos.AvroCodec_ZStandard, protos.DBType_SNOWFLAKE, nil)
+ 	_, err = writer.WriteRecordsToAvroFile(t.Context(), avroTestEnv, tmpfile.Name())
+ 	require.NoError(t, err, "expected WriteRecordsToAvroFile to complete without errors")
+ 
+@@ -211,7 +210,7 @@ func TestWriteRecordsToDeflateAvroFileHappyPath(t *testing.T) {
+ 	t.Logf("[test] avroSchema: %v", avroSchema)
+ 
+ 	// Call function
+-	writer := utils.NewPeerDBOCFWriter(records, avroSchema, ocf.Deflate, protos.DBType_SNOWFLAKE, nil)
++	writer := utils.NewPeerDBOCFWriter(records, avroSchema, protos.AvroCodec_Deflate, protos.DBType_SNOWFLAKE, nil)
+ 	_, err = writer.WriteRecordsToAvroFile(t.Context(), avroTestEnv, tmpfile.Name())
+ 	require.NoError(t, err, "expected WriteRecordsToAvroFile to complete without errors")
+ 
+@@ -237,7 +236,7 @@ func TestWriteRecordsToAvroFileNonNull(t *testing.T) {
+ 	t.Logf("[test] avroSchema: %v", avroSchema)
+ 
+ 	// Call function
+-	writer := utils.NewPeerDBOCFWriter(records, avroSchema, ocf.Null, protos.DBType_SNOWFLAKE, nil)
++	writer := utils.NewPeerDBOCFWriter(records, avroSchema, protos.AvroCodec_Null, protos.DBType_SNOWFLAKE, nil)
+ 	_, err = writer.WriteRecordsToAvroFile(t.Context(), avroTestEnv, tmpfile.Name())
+ 	require.NoError(t, err, "expected WriteRecordsToAvroFile to complete without errors")
+ 
+@@ -264,7 +263,7 @@ func TestWriteRecordsToAvroFileAllNulls(t *testing.T) {
+ 	t.Logf("[test] avroSchema: %v", avroSchema)
+ 
+ 	// Call function
+-	writer := utils.NewPeerDBOCFWriter(records, avroSchema, ocf.Null, protos.DBType_SNOWFLAKE, nil)
++	writer := utils.NewPeerDBOCFWriter(records, avroSchema, protos.AvroCodec_Null, protos.DBType_SNOWFLAKE, nil)
+ 	_, err = writer.WriteRecordsToAvroFile(t.Context(), avroTestEnv, tmpfile.Name())
+ 	require.NoError(t, err, "expected WriteRecordsToAvroFile to complete without errors")
+ 
+```
+
+**File**: `flow/connectors/snowflake/qrep_avro_sync.go` (modified, +3/-4)
+```diff
+@@ -9,7 +9,6 @@ import (
+ 	"strings"
+ 	"time"
+ 
+-	"github.com/hamba/avro/v2/ocf"
+ 	_ "github.com/snowflakedb/gosnowflake/v2"
+ 
+ 	"github.com/PeerDB-io/peerdb/flow/connectors/utils"
+@@ -154,12 +153,12 @@ func (s *SnowflakeAvroSyncHandler) writeToAvroFile(
+ 	flowJobName string,
+ ) (utils.AvroFile, error) {
+ 	if s.config.StagingPath == "" {
+-		compression := ocf.ZStandard
++		compression := protos.AvroCodec_ZStandard
+ 		skipCompression, err := internal.PeerDBSnowflakeSkipCompression(ctx, s.config.Env)
+ 		if err != nil {
+ 			s.logger.Warn("Failed to load PEERDB_SNOWFLAKE_SKIP_COMPRESSION, proceeding without", slog.Any("error", err))
+ 		} else if skipCompression {
+-			compression = ocf.Null
++			compression = protos.AvroCodec_Null
+ 		}
+ 
+ 		ocfWriter := utils.NewPeerDBOCFWriter(stream, avroSchema, compression, protos.DBType_SNOWFLAKE, nil)
+@@ -178,7 +177,7 @@ func (s *SnowflakeAvroSyncHandler) writeToAvroFile(
+ 
+ 		return avroFile, nil
+ 	} else if strings.HasPrefix(s.config.StagingPath, "s3://") {
+-		ocfWriter := utils.NewPeerDBOCFWriter(stream, avroSchema, ocf.ZStandard, protos.DBType_SNOWFLAKE, nil)
++		ocfWriter := utils.NewPeerDBOCFWriter(stream, avroSchema, protos.AvroCodec_ZStandard, protos.DBType_SNOWFLAKE, nil)
+ 		s3o, err := utils.NewS3BucketAndPrefix(s.config.StagingPath)
+ 		if err != nil {
+ 			return utils.AvroFile{}, fmt.Errorf("failed to parse staging path: %w", err)
+```
+
+**File**: `flow/connectors/utils/avro_writer.go` (modified, +33/-12)
+```diff
+@@ -1,6 +1,7 @@
+ package utils
+ 
+ import (
++	"compress/flate"
+ 	"context"
+ 	"errors"
+ 	"fmt"
+@@ -13,7 +14,7 @@ import (
+ 
+ 	"github.com/aws/aws-sdk-go-v2/aws"
+ 	"github.com/aws/aws-sdk-go-v2/feature/s3/transfermanager"
+-	"github.com/hamba/avro/v2/ocf"
++	"github.com/twmb/avro/ocf"
+ 
+ 	"github.com/PeerDB-io/peerdb/flow/generated/protos"
+ 	"github.com/PeerDB-io/peerdb/flow/internal"
+@@ -33,11 +34,27 @@ const (
+ 	AvroGCSStorage
+ )
+ 
++// newOCFCodec returns a fresh codec, the OCF writer takes ownership and closes it
++func newOCFCodec(c protos.AvroCodec) (ocf.Codec, error) {
++	switch c {
++	case protos.AvroCodec_Null:
++		return nil, nil
++	case protos.AvroCodec_Deflate:
++		return ocf.DeflateCodec(flate.DefaultCompression), nil
++	case protos.AvroCodec_Snappy:
++		return ocf.SnappyCodec(), nil
++	case protos.AvroCodec_ZStandard:
++		return ocf.ZstdCodec(nil, nil)
++	default:
++		return nil, fmt.Errorf("unsupported Avro compression codec %s", c)
++	}
++}
++
+ type peerDBOCFWriter struct {
+ 	stream               *model.QRecordStream
+ 	avroSchema           *model.QRecordAvroSchemaDefinition
+ 	sizeTracker          *model.QRecordAvroChunkSizeTracker
+-	avroCompressionCodec ocf.CodecName
++	avroCompressionCodec protos.AvroCodec
+ 	targetDWH            protos.DBType
+ }
+ 
+@@ -58,7 +75,7 @@ func (l *AvroFile) Cleanup(ctx context.Context) {
+ func NewPeerDBOCFWriter(
+ 	stream *model.QRecordStream,
+ 	avroSchema *model.QRecordAvroSchemaDefinition,
+-	avroCompressionCodec ocf.CodecName,
++	avroCompressionCodec protos.AvroCodec,
+ 	targetDWH protos.DBType,
+ 	sizeTracker *model.QRecordAvroChunkSizeTracker,
+ ) *peerDBOCFWriter {
+@@ -78,9 +95,13 @@ func (p *peerDBOCFWriter) WriteOCF(
+ 	typeConversions map[string]types.TypeConversion,
+ 	numericTruncator model.SnapshotTableNumericTruncator,
+ ) (int64, error) {
+-	ocfWriter, err := ocf.NewEncoderWithSchema(
+-		p.avroSchema.Schema, w, ocf.WithCodec(p.avroCompressionCodec),
+-		ocf.WithBlockLength(8192), ocf.WithBlockSize(1<<26),
++	codec, err := newOCFCodec(p.avroCompressionCodec)
++	if err != nil {
++		return 0, fmt.Errorf("failed to create OCF codec: %w", err)
++	}
++	ocfWriter, err := ocf.NewWriter(
++		w, p.avroSchema.Schema, ocf.WithCodec(codec),
++		ocf.WithBlockCount(8192), ocf.WithBlockBytes(1<<26),
+ 	)
+ 	if err != nil {
+ 		return 0, fmt.Errorf("failed to create OCF writer: %w", err)
+@@ -196,18 +217,18 @@ func (p *peerDBOCFWriter) WriteRecordsToAvroFile(ctx context.Context, env map[st
+ }
+ 
+ func (p *peerDBOCFWriter) getAvroFieldNamesFromSchema() []string {
+-	fields := p.avroSchema.Schema.Fields()
++	fields := p.avroSchema.Schema.Root().Fields
+ 	avroFieldNames := make([]string, len(fields))
+-	for i, field := range fields {
+-		avroFieldNames[i] = field.Name()
++	for i := range fields {
++		avroFieldNames[i] = fields[i].Name
+ 	}
+ 	return avroFieldNames
+ }
+ 
+ func (p *peerDBOCFWriter) writeRecordsToOCFWriter(
+ 	ctx context.Context,
+ 	env map[string]string,
+-	ocfWriter *ocf.Encoder,
++	ocfWriter *ocf.Writer,
+ 	typeConversions map[string]types.TypeConversion,
+ 	numericTruncator model.SnapshotTableNumericTruncator,
+ ) (int64, error) {
+@@ -235,7 +256,7 @@ func (p *peerDBOCFWriter) writeRecordsToOCFWriter(
+ 			slog.Int64("records", numRows.Load()),
+ 			slog.Int("channelLen", len(p.stream.Records)),
+ 			slog.Float64("elapsedMinutes", time.Since(writeStart).Minutes()),
+-			slog.String("compression", string(p.avroCompressionCodec)))
++			slog.String("compression", p.avroCompressionCodec.String()))
+ 	})
+ 	defer shutdown()
+ 
+@@ -271,7 +292,7 @@ func (p *peerDBOCFWriter) writeRecordsToOCFWriter(
+ 	logger.Info("finished writing records to OCF",
+ 		slog.Int64("records", numRows.Load()),
+ 		slog.Float64("elapsedMinutes", time.Since(writeStart).Minutes()),
+-		slog.String("compression", string(p.avroCompressionCodec)),
++		slog.String("compression", p.avroCompressionCodec.String()),
+ 	)
+ 
+ 	if avroConverter.NullMismatchTracker != nil {
+```
+
+**File**: `flow/connectors/utils/avro_writer_bench_test.go` (added, +125/-0)
+```diff
+@@ -0,0 +1,125 @@
++//nolint:gosec // deterministic test-only random data
++package utils
++
++import (
++	"io"
++	"log/slog"
++	"math/big"
++	"math/rand/v2"
++	"strconv"
++	"testing"
++	"time"
++
++	"github.com/google/uuid"
++	"github.com/shopspring/decimal"
++	"github.com/stretchr/testify/require"
++
++	"github.com/PeerDB-io/peerdb/flow/generated/protos"
++	"github.com/PeerDB-io/peerdb/flow/model"
++	"github.com/PeerDB-io/peerdb/flow/shared/types"
++)
++
++const benchAvroNumRecords = 10_000
++
++var benchAvroEnv = map[string]string{
++	"PEERDB_CLICKHOUSE_UNBOUNDED_NUMERIC_AS_STRING": "false",
++	"PEERDB_CLICKHOUSE_BINARY_FORMAT":               "raw",
++}
++
++// benchAvroSchema mimics a typical ClickHouse destination table
++var benchAvroSchema = types.QRecordSchema{Fields: []types.QField{
++	{Name: "id", Type: types.QValueKindInt64},
++	{Name: "name", Type: types.QValueKindString, Nullable: true},
++	{Name: "status", Type: types.QValueKindEnum},
++	{Name: "qty", Type: types.QValueKindInt32, Nullable: true},
++	{Name: "score", Type: types.QValueKindFloat64, Nullable: true},
++	{Name: "active", Type: types.QValueKindBoolean},
++	{Name: "created_at", Type: types.QValueKindTimestampTZ},
++	{Name: "updated_at", Type: types.QValueKindTimestamp, Nullable: true},
++	{Name: "birthday", Type: types.QValueKindDate, Nullable: true},
++	{Name: "amount", Type: types.QValueKindNumeric, Nullable: true, Precision: 18, Scale: 4},
++	{Name: "big_amount", Type: types.QValueKindNumeric, Nullable: true},
++	{Name: "ext_id", Type: types.QValueKindUUID, Nullable: true},
++	{Name: "payload", Type: types.QValueKindBytes, Nullable: true},
++	{Name: "attrs", Type: types.QValueKindJSON, Nullable: true},
++	{Name: "tags", Type: types.QValueKindArrayString, Nullable: true},
++	{Name: "counters", Type: types.QValueKindArrayInt64, Nullable: true},
++}}
++
++func benchAvroRecords() [][]types.QValue {
++	rng := rand.New(rand.NewPCG(1, 2))
++	base := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
++	records := make([][]types.QValue, benchAvroNumRecords)
++	for i := range records {
++		ts := base.Add(time.Duration(rng.Int64N(int64(365 * 24 * time.Hour))))
++		var name types.QValue = types.QValueNull(types.QValueKindString)
++		if rng.IntN(10) != 0 {
++			name = types.QValueString{Val: "customer-" + strconv.FormatInt(rng.Int64N(1_000_000), 10)}
++		}
++		payload := make([]byte, 16+rng.IntN(48))
++		for j := range payload {
++			payload[j] = byte(rng.IntN(256))
++		}
++		records[i] = []types.QValue{
++			types.QValueInt64{Val: int64(i)},
++			name,
++			types.QValueEnum{Val: []string{"new", "paid", "shipped", "cancelled"}[rng.IntN(4)]},
++			types.QValueInt32{Val: rng.Int32N(10_000)},
++			types.QValueFloat64{Val: rng.Float64() * 1000},
++			types.QValueBoolean{Val: rng.IntN(2) == 0},
++			types.QValueTimestampTZ{Val: ts},
++			types.QValueTimestamp{Val: ts.Add(time.Hour)},
++			types.QValueDate{Val: ts.Truncate(24 * time.Hour)},
++			types.QValueNumeric{Val: decimal.New(rng.Int64N(1_000_000_000), -4)},
++			types.QValueNumeric{Val: decimal.NewFromBigInt(new(big.Int).SetUint64(rng.Uint64()), -6)},
++			types.QValueUUID{Val: uuid.UUID(rngBytes16(rng))},
++			types.QValueBytes{Val: payload},
++			types.QValueJSON{Val: `{"source":"web","visits":` + strconv.Itoa(rng.IntN(100)) + `,"flags":["a","b"]}`},
++			types.QValueArrayString{Val: []string{"alpha", "beta", "gamma"}[:1+rng.IntN(3)]},
++			types.QValueArrayInt64{Val: []int64{rng.Int64(), rng.Int64(), rng.Int64()}},
++		}
++	}
++	return records
++}
++
++func rngBytes16(rng *rand.Rand) [16]byte {
++	var b [16]byte
++	for i := range b {
++		b[i] = byte(rng.IntN(256))
++	}
++	return b
++}
++
++// BenchmarkWriteOCF measures QRecord to Avro conversion plus OCF encoding for a ClickHouse destination,
++// including size tracking.
++func BenchmarkWriteOCF(b *testing.B) {
++	avroSchema, err := model.GetAvroSchemaDefinition(b.Context(), benchAvroEnv, "bench_table",
++		benchAvroSchema, protos.DBType_CLICKHOUSE, model.ConstructColumnNameAvroFieldMap(benchAvroSchema.Fields))
++	require.NoError(b, err)
++	records := benchAvroRecords()
++
++	// keep WriteOCF progress logs out of the measurement and the benchmark output
++	defaultLogger := slog.Default()
++	slog.SetDefault(slog.New(slog.DiscardHandler))
++	b.Cleanup(func() { slog.SetDefault(defaultLogger) })
++
++	for _, codec := range []protos.AvroCodec{protos.AvroCodec_ZStandard, protos.AvroCodec_Null} {
++		b.Run(codec.String(), func(b *testing.B) {
++			b.ReportAllocs()
++			for b.Loop() {
++				b.StopTimer()
++				stream := model.NewQRecordStream(len(records))
++				for _, record := range records {
++					stream.Records <- record
++				}
++				stream.Close(nil)
++				b.StartTimer()
++
++				writer := NewPeerDBOCFWriter(stream, avroSchema, codec, protos.DBType_CLICKHOUSE, &model.QRecordAvroChunkSizeTracker{})
++				numRows, err := writer.WriteOCF(b.Context(), benchAvroEnv, io.Discard, nil, nil)
++				require.NoError(b, err)
++				require.Equal(b, int64(len(records)), numRows)
++			}
 +		})
 +	}
 +}
-+
- func TestResolveClickHouseColumnType(t *testing.T) {
- 	nullableInt := &protos.FieldDescription{Name: "id", Type: string(types.QValueKindInt64), Nullable: true}
- 	notNullInt := &protos.FieldDescription{Name: "id", Type: string(types.QValueKindInt64)}
 ```
 
-**File**: `flow/connectors/clickhouse/validate.go` (modified, +36/-3)
+**File**: `flow/connectors/utils/avro_writer_test.go` (added, +133/-0)
 ```diff
-@@ -83,9 +83,6 @@ func (c *ClickHouseConnector) ValidateMirrorDestination(
- 
- 	for _, tableMapping := range cfg.TableMappings {
- 		dstTableName := tableMapping.DestinationTableIdentifier
--		if dstTableName == "" {
--			return fmt.Errorf("destination table identifier is empty")
--		}
- 		processedSchema, ok := processedMapping[dstTableName]
- 		if !ok {
- 			// if destination table is not a key, that means source table was not a key in the original schema mapping(?)
-@@ -180,6 +177,42 @@ func (c *ClickHouseConnector) ValidateMirrorDestination(
- 	return nil
- }
- 
-+func (c *ClickHouseConnector) ValidateDestinationTables(_ context.Context, tableMappings []*protos.TableMapping) error {
-+	for _, tableMapping := range tableMappings {
-+		if tableMapping.DestinationTableIdentifier == "" {
-+			return fmt.Errorf("destination table identifier is empty for table %s", tableMapping.SourceTableIdentifier)
-+		}
-+		if err := validateRawSQLSettings(tableMapping); err != nil {
-+			return fmt.Errorf("table %s: %w", tableMapping.SourceTableIdentifier, err)
-+		}
+@@ -0,0 +1,133 @@
++package utils
++
++import (
++	"bytes"
++	"errors"
++	"io"
++	"testing"
++	"time"
++
++	"github.com/google/uuid"
++	"github.com/shopspring/decimal"
++	"github.com/stretchr/testify/require"
++	"github.com/twmb/avro/ocf"
++
++	"github.com/PeerDB-io/peerdb/flow/generated/protos"
++	"github.com/PeerDB-io/peerdb/flow/model"
++	"github.com/PeerDB-io/peerdb/flow/shared/types"
++)
++
++func writeTestOCF(t *testing.T, schema types.QRecordSchema, records [][]types.QValue) []byte {
++	t.Helper()
++	avroSchema, err := model.GetAvroSchemaDefinition(t.Context(), benchAvroEnv, "test_table",
++		schema, protos.DBType_CLICKHOUSE, model.ConstructColumnNameAvroFieldMap(schema.Fields))
++	require.NoError(t, err)
++
++	stream := model.NewQRecordStream(len(records))
++	stream.SetSchema(schema)
++	for _, record := range records {
++		stream.Records <- record
 +	}
-+	return nil
++	stream.Close(nil)
++
++	var buf bytes.Buffer
++	writer := NewPeerDBOCFWriter(stream, avroSchema, protos.AvroCodec_ZStandard, protos.DBType_CLICKHOUSE, nil)
++	numRows, err := writer.WriteOCF(t.Context(), benchAvroEnv, &buf, nil, nil)
++	require.NoError(t, err)
++	require.Equal(t, int64(len(records)), numRows)
++	return buf.Bytes()
 +}
 +
-+// validateRawSQLSettings checks the settings written unquoted into CREATE TABLE.
-+// Table creation checks them again, as stored configs may have skipped API validation.
-+func validateRawSQLSettings(tableMapping *protos.TableMapping) error {
-+	for _, col := range tableMapping.GetColumns() {
-+		if col.DestinationType == "" {
-+			continue
++func readTestOCF(t *testing.T, data []byte) []map[string]any {
++	t.Helper()
++	reader, err := ocf.NewReader(bytes.NewReader(data))
++	require.NoError(t, err)
++	defer reader.Close()
++
++	var records []map[string]any
++	for {
++		var record map[string]any
++		if err := reader.Decode(&record); errors.Is(err, io.EOF) {
++			return records
++		} else {
++			require.NoError(t, err)
 +		}
-+		if err := chvalidate.ValidateColumnType(col.DestinationType); err != nil {
-+			return fmt.Errorf("column %s: %w", col.SourceName, err)
-+		}
++		records = append(records, record)
 +	}
-+	if partitionByExpr := tableMapping.GetPartitionByExpr(); partitionByExpr != "" {
-+		if err := chvalidate.ValidateExpression(partitionByExpr); err != nil {
-+			return fmt.Errorf("partition_by_expr: %w", err)
-+		}
-+	}
-+	if shardingKey := tableMapping.GetShardingKey(); shardingKey != "" {
-+		if err := chvalidate.ValidateExpression(shardingKey); err != nil {
-+			return fmt.Errorf("sharding_key: %w", err)
-+		}
-+	}
-+	return nil
 +}
 +
- // checkNativeJSONSetting rejects a mirror that turns PEERDB_CLICKHOUSE_ENABLE_JSON on against a ClickHouse
- // without the native JSON type, which would otherwise silently fall back to String columns.
- func checkNativeJSONSetting(ctx context.Context, env map[string]string, chVersion *chproto.Version) error {
-```
-
-**File**: `flow/connectors/core.go` (modified, +9/-0)
-```diff
-@@ -57,6 +57,13 @@ type MirrorDestinationValidationConnector interface {
- 	ValidateMirrorDestination(context.Context, *protos.FlowConnectionConfigsCore, map[string]*protos.TableSchema) error
- }
- 
-+type DestinationTableValidationConnector interface {
-+	Connector
++// A typed nil slice in a nullable array column must be written as null, and an empty slice as an empty array
++func TestWriteOCFNullableArrays(t *testing.T) {
++	schema := types.QRecordSchema{Fields: []types.QField{
++		{Name: "a_int16", Type: types.QValueKindArrayInt16, Nullable: true},
++		{Name: "a_int32", Type: types.QValueKindArrayInt32, Nullable: true},
++		{Name: "a_int64", Type: types.QValueKindArrayInt64, Nullable: true},
++		{Name: "a_float32", Type: types.QValueKindArrayFloat32, Nullable: true},
++		{Name: "a_float64", Type: types.QValueKindArrayFloat64, Nullable: true},
++		{Name: "a_bool", Type: types.QValueKindArrayBoolean, Nullable: true},
++		{Name: "a_string", Type: types.QValueKindArrayString, Nullable: true},
++		{Name: "a_timestamp", Type: types.QValueKindArrayTimestamp, Nullable: true},
++		{Name: "a_date", Type: types.QValueKindArrayDate, Nullable: true},
++		{Name: "a_time", Type: types.QValueKindArrayTime, Nullable: true},
++		{Name: "a_uuid", Type: types.QValueKindArrayUUID, Nullable: true},
++		{Name: "a_numeric", Type: types.QValueKindArrayNumeric, Nullable: true, Precision: 18, Scale: 4},
++	}}
++	nilRecord := []types.QValue{
++		types.QValueArrayInt16{Val: []int16(nil)},
++		types.QValueArrayInt32{Val: []int32(nil)},
++		types.QValueArrayInt64{Val: []int64(nil)},
++		types.QValueArrayFloat32{Val: []float32(nil)},
++		types.QValueArrayFloat64{Val: []float64(nil)},
++		types.QValueArrayBoolean{Val: []bool(nil)},
++		types.QValueArrayString{Val: []string(nil)},
++		types.QValueArrayTimestamp{Val: []time.Time(nil)},
++		types.QValueArrayDate{Val: []time.Time(nil)},
++		types.QValueArrayTime{Val: []time.Duration(nil)},
++		types.QValueArrayUUID{Val: []uuid.UUID(nil)},
++		types.QValueArrayNumeric{Val: []decimal.Decimal(nil), Precision: 18, Scale: 4},
++	}
++	emptyRecord := []types.QValue{
++		types.QValueArrayInt16{Val: []int16{}},
++		types.QValueArrayInt32{Val: []int32{}},
++		types.QValueArrayInt64{Val: []int64{}},
++		types.QValueArrayFloat32{Val: []float32{}},
++		types.QValueArrayFloat64{Val: []float64{}},
++		types.QValueArrayBoolean{Val: []bool{}},
++		types.QValueArrayString{Val: []string{}},
++		types.QValueArrayTimestamp{Val: []time.Time{}},
++		types.QValueArrayDate{Val: []time.Time{}},
++		types.QValueArrayTime{Val: []time.Duration{}},
++		types.QValueArrayUUID{Val: []uuid.UUID{}},
++		types.QValueArrayNumeric{Val: []decimal.Decimal{}, Precision: 18, Scale: 4},
++	}
 +
-+	// ValidateDestinationTables checks table mapping settings that need neither the server nor source schemas.
-+	ValidateDestinationTables(context.Context, []*protos.TableMapping) error
-+}
++	records := readTestOCF(t, writeTestOCF(t, schema, [][]types.QValue{nilRecord, emptyRecord}))
++	require.Len(t, records, 2)
++	avroFieldNames := model.ConstructColumnNameAvroFieldMap(schema.Fields)
++	for _, field := range schema.Fields {
++		name := avroFieldNames[field.Name]
++		require.Contains(t, records[0], name)
++		if field.Type == types.QValueKindArrayNumeric {
++			// FIXME: https://linear.app/clickhouse/issue/DBI-1307
++			// processArrayNumeric lacks the nil guard the other array helpers have,
++			// so a typed nil slice is written as an empty array instead of null.
++			// We should align this with the behavior of the other array helpers but making sure
++			// existing functionality doesn't rely on the current behavior.
++			require.Equal(t, []any{}, records[0][name], "typed nil slice in %s", field.Name)
++		} else {
++			require.Nil(t, records[0][name], "typed nil slice in %s", field.Name)
++		}
++		require.Equal(t, []any{}, records[1][name], "empty slice in %s", field.Name)
++	}
 +
- type StatActivityConnector interface {
- 	Connector
- 
-@@ -887,6 +894,8 @@ var (
- 	_ MirrorDestinationValidationConnector = &connpostgres.PostgresConnector{}
- 	_ MirrorDestinationValidationConnector = &connbigquery.BigQueryConnector{}
- 
-+	_ DestinationTableValidationConnector = &connclickhouse.ClickHouseConnector{}
-+
- 	_ GetFlagsConnector = &connclickhouse.ClickHouseConnector{}
- 
- 	_ GetVersionConnector = &connclickhouse.ClickHouseConnector{}
-```
-
----
-
-### Incident Patch 3: `1805bda7` (2026-11-11)
-**Commit Message**: Update temporalio/ui Docker tag to v2.58.0 (#5056)
-
-This PR contains the following updates:
-
-| Package | Update | Change | Pending |
-|---|---|---|---|
-| [temporalio/ui](https://redirect.github.com/temporalio/ui-server) |
-minor | `2.57.0` → `2.58.0` | `2.58.1` |
-
----
-
-### Release Notes
-
-<details>
-<summary>temporalio/ui-server (temporalio/ui)</summary>
-
-###
-[`v2.58.0`](https://redirect.github.com/temporalio/ui-server/releases/tag/v2.58.0)
-
-[Compare
-Source](https://redirect.github.com/temporalio/ui-server/compare/v2.57.0...v2.58.0)
-
-Release synced from
-[ui@v2.58.0](https://redirect.github.com/temporalio/ui/releases/tag/v2.58.0)
-
-##### What's Changed
-
-- Read the Node version from the synced UI's package.json by
-[@&#8203;rossnelson](https://redirect.github.com/rossnelson) in
-[#&#8203;344](https://redirect.github.com/temporalio/ui-server/pull/344)
-
-**Full Changelog**:
-<https://github.com/temporalio/ui-server/compare/v2.57.0...v2.58.0>
-
-</details>
-
----
-
-### Configuration
-
-📅 **Schedule**: (in timezone Etc/UTC)
-
-- Branch creation
-  - "after 5pm on monday"
-- Automerge
-  - At any time (no schedule defined)
-
-🚦 **Automerge**: Enabled.
-
-♻ **Rebasing**: Whenever PR is behind base branch, or you
-
-**File**: `docker-compose-dev.yml` (modified, +1/-1)
-```diff
-@@ -144,7 +144,7 @@ services:
-       - TEMPORAL_ADDRESS=temporal:7233
-       - TEMPORAL_CORS_ORIGINS=http://localhost:3030
-       - TEMPORAL_CSRF_COOKIE_INSECURE=true
--    image: temporalio/ui:2.57.0@sha256:d944f959d0923c35cd991a17a0edbe087770eff843724b181933e0cfdd563ab2
-+    image: temporalio/ui:2.58.0@sha256:d36185e811d0ce1720b8d3ca4d9ac4dac504b67181e9b5e3d3ca72b2294f3590
-     ports:
-       - *temporal-ui-port
- 
-```
-
-**File**: `docker-compose.yml` (modified, +1/-1)
-```diff
-@@ -108,7 +108,7 @@ services:
-       - TEMPORAL_ADDRESS=temporal:7233
-       - TEMPORAL_CORS_ORIGINS=http://localhost:3000
-       - TEMPORAL_CSRF_COOKIE_INSECURE=true
--    image: temporalio/ui:2.57.0@sha256:d944f959d0923c35cd991a17a0edbe087770eff843724b181933e0cfdd563ab2
-+    image: temporalio/ui:2.58.0@sha256:d36185e811d0ce1720b8d3ca4d9ac4dac504b67181e9b5e3d3ca72b2294f3590
-     ports:
-       - 8085:8080
- 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5082** (2026-11-13): Move DNS error tests to .invalid TLD (@colton-clickhouse)
 - **PR #5077** (closed): Reshape mirror edit and overview screens (@jonathan-dualtech)
+- **PR #5075** (2026-11-12): Skip Claude dependency review when diff is unchanged (@dtunikov)
+- **PR #5071** (2026-11-12): perf(bigquery): read source table info from INFORMATION_SCHEMA and batch data-access checks (@dtunikov)
 - **PR #5070** (2026-11-11): ci: raise MySQL/MariaDB test max_connections to 1000 (@gheorghepucea)
 - **PR #5068** (2026-11-11): fix(clickhouse) DBI-1323: validate column types and key expressions structurally (@ilidemi)
-- **PR #5066** (2026-11-11): Drain pending state changes before setup/snapshot ContinueAsNew (@dtunikov)
-- **PR #5065** (2026-11-10): Renovate config: Enable self healing PRs on all updates (@pfcoperez)
-- **PR #5064** (closed): TEST DO NOT MERGE: Remove newline and add 'banana!' to flowable.go (@pfcoperez)
 
 ---
 
@@ -2664,38 +3024,35 @@ Release synced from
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. snapshot): skip child tables dropped after the snapshot in CTID partitioning (#5
+## X. Optionally honor Postgres child table schema when PEERDB_SOURCE_SCHEMA_AS_DESTIN
 
 **RULE**:
-When implementing operations in `flow/connectors/postgres/qrep_partition.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `flow/connectors/clickhouse/table_function.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6951b76b`: snapshot): skip child tables dropped after the snapshot in CTID partitioning (#5044). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e0f79a20`: Optionally honor Postgres child table schema when PEERDB_SOURCE_SCHEMA_AS_DESTINATION_COLUMN is enabled. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flow/connectors/postgres/qrep_partition.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flow/connectors/clickhouse/table_function.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// pg_relation_size is NULL for a child dropped after the snapshot, which pg_inherits still lists; count it as empty.
-const childBlockCountExpr = `COALESCE(pg_relation_size(c.oid) / current_setting('block_size')::int, 0)::bigint`
-
-			`+childBlockCountExpr+`,
-			SELECT `+childBlockCountExpr+`,
-			`+childBlockCountExpr+`,
+	sourceSchemaColExists := false
+		if !sourceSchemaColExists && colName == sourceSchemaColName {
+			sourceSchemaColExists = true
+		}
+	if sourceSchemaAsDestinationColumn && !sourceSchemaColExists {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-			(pg_relation_size(c.oid) / current_setting('block_size')::int)::bigint,
-			SELECT (pg_relation_size($1) / current_setting('block_size')::int)::bigint,
-			(pg_relation_size(c.oid) / current_setting('block_size')::int)::bigint,
+// Induced defect failure mode:
+	if sourceSchemaAsDestinationColumn {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6951b76b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e0f79a20` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

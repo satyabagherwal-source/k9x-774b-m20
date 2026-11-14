@@ -1185,8 +1185,8 @@
     "sourceUrl": "https://huggingface.co/google/gemma-4-26B-A4B-it",
     "sourceVersion": "hf-google-gemma-4-26b-a4b-it",
     "license": "Open-Source",
-    "contentHash": "4273a4968f708c6ff479c4b9575d9baa7d14bab876018f33f8455f9845e5efc1",
-    "lastHarvestedAt": "2026-11-09T03:21:52.649Z",
+    "contentHash": "8d2ebb4fe40d8be8db8c6ec333c989bf7de48e116ac26c3c8ee5c0b040bf7165",
+    "lastHarvestedAt": "2026-11-14T12:04:05.078Z",
     "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it"
   },
   "infisical-infisical": {
@@ -3573,10 +3573,10 @@
     "repository": "PeerDB-io/peerdb",
     "platform": "github",
     "sourceUrl": "https://github.com/PeerDB-io/peerdb",
-    "sourceVersion": "0fd0a1f1",
+    "sourceVersion": "e0f79a20",
     "license": "AGPL-3.0",
-    "contentHash": "578a7d959b7d3b76eb80410fd81d0b3eb6c7f55089ed4392bf99a9d56c9cdca9",
-    "lastHarvestedAt": "2026-11-13T08:40:40.147Z",
+    "contentHash": "b8cb8c17cccf90583618339b5ce4506db782b48aeaa05d3c8b8bbaf0c2f26042",
+    "lastHarvestedAt": "2026-11-14T12:04:15.372Z",
     "learningId": "learn-github-peerdb-io-peerdb"
   },
   "tailscale-tailscale": {
@@ -5303,10 +5303,10 @@
     "repository": "czy0729/Bangumi",
     "platform": "github",
     "sourceUrl": "https://github.com/czy0729/Bangumi",
-    "sourceVersion": "79c411ba",
+    "sourceVersion": "a8184acd",
     "license": "MIT",
-    "contentHash": "53cc0984fa2f3cb19f80818e47135b91b5eb308068ebcf02773f91e85cada8d8",
-    "lastHarvestedAt": "2026-11-10T02:43:56.843Z",
+    "contentHash": "2af58ca950b49fd840bfda2a184b49d215df4d524deedbf0cb2c434a637d4d28",
+    "lastHarvestedAt": "2026-11-14T12:04:13.826Z",
     "learningId": "learn-github-czy0729-bangumi"
   },
   "aquasecurity-tfsec": {
@@ -7413,10 +7413,10 @@
     "repository": "bahdotsh/wrkflw",
     "platform": "github",
     "sourceUrl": "https://github.com/bahdotsh/wrkflw",
-    "sourceVersion": "9889b7da",
+    "sourceVersion": "7b284277",
     "license": "MIT",
-    "contentHash": "f5732766e48793bff353c0b2509e1be0851e2758bba6619a84c55cbfce5baa62",
-    "lastHarvestedAt": "2026-11-13T00:16:17.831Z",
+    "contentHash": "e6d5d69f9731df5dec7baa3130d0c25200cfd992c48a081953ff4733eb5572b4",
+    "lastHarvestedAt": "2026-11-14T12:04:07.677Z",
     "learningId": "learn-github-bahdotsh-wrkflw"
   },
   "jordanbaird-ice": {

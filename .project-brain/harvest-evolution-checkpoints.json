@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T11:34:38.655Z",
+  "last_updated": "2026-11-14T12:04:54.127Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-14T11:34:37.198Z",
@@ -1373,7 +1373,7 @@
       "staged_for_review": 1
     },
     "bahdotsh-wrkflw-learnings.md": {
-      "processed_at": "2026-11-13T00:16:22.688Z",
+      "processed_at": "2026-11-14T12:04:18.611Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2561,9 +2561,19 @@
       "processed_at": "2026-11-14T11:34:36.813Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-google-gemma-4-26b-a4b-it-learnings.md": {
+      "processed_at": "2026-11-14T12:04:53.000Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "czy0729-bangumi-learnings.md": {
+      "processed_at": "2026-11-14T12:04:53.366Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 822,
-  "total_canonical_promoted": 189,
-  "total_staged_for_review": 632
+  "total_dossiers_evaluated": 825,
+  "total_canonical_promoted": 190,
+  "total_staged_for_review": 634
 }

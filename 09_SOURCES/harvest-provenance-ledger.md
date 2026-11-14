@@ -9853,3 +9853,8 @@ Every entry in this ledger must capture:
 | `learn-dom-d-2f30eb65` | `project://hf-qwen-qwen3-vl-8b-instruct` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md` | 2026-11-14T11:05:14.835Z |
 | `learn-huggingface-nomic-ai-nomic-embed-text-v1-5` | `https://huggingface.co/nomic-ai/nomic-embed-text-v1.5` | `hf-nomic-a` | Multi-dimensional audit evidence | 2026-11-14T11:33:59.729Z |
 | `learn-dom-d-bfa5a06d` | `project://hf-nomic-ai-nomic-embed-text-v1.5` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md` | 2026-11-14T11:34:36.813Z |
+| `learn-huggingface-google-gemma-4-26b-a4b-it` | `https://huggingface.co/google/gemma-4-26B-A4B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-14T12:04:05.078Z |
+| `learn-github-bahdotsh-wrkflw` | `https://github.com/bahdotsh/wrkflw` | `7b284277` | Multi-dimensional audit evidence | 2026-11-14T12:04:07.677Z |
+| `learn-github-czy0729-bangumi` | `https://github.com/czy0729/Bangumi` | `a8184acd` | Multi-dimensional audit evidence | 2026-11-14T12:04:13.826Z |
+| `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `e0f79a20` | Multi-dimensional audit evidence | 2026-11-14T12:04:15.372Z |
+| `learn-dom-d-5a7fbd90` | `project://hf-google-gemma-4-26b-a4b-it` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-google-gemma-4-26b-a4b-it-learnings.md` | 2026-11-14T12:04:53.000Z |

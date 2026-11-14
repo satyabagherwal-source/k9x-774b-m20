@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-14T11:33:59.740Z",
+  "last_updated": "2026-11-14T12:04:15.384Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1565,14 +1565,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-gemma-4-26b-a4b-it",
-      "content_hash": "4273a4968f708c6ff479c4b9575d9baa7d14bab876018f33f8455f9845e5efc1",
-      "verified_at": "2026-11-09T03:21:52.668Z",
+      "content_hash": "8d2ebb4fe40d8be8db8c6ec333c989bf7de48e116ac26c3c8ee5c0b040bf7165",
+      "verified_at": "2026-11-14T12:04:05.088Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T03:21:52.668Z"
+      "last_updated": "2026-11-14T12:04:05.088Z"
     },
     "intfloat/multilingual-e5-small": {
       "repository": "intfloat/multilingual-e5-small",
@@ -5481,14 +5481,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-peerdb-io-peerdb",
-      "content_hash": "578a7d959b7d3b76eb80410fd81d0b3eb6c7f55089ed4392bf99a9d56c9cdca9",
-      "verified_at": "2026-11-13T08:40:40.156Z",
+      "content_hash": "b8cb8c17cccf90583618339b5ce4506db782b48aeaa05d3c8b8bbaf0c2f26042",
+      "verified_at": "2026-11-14T12:04:15.383Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T08:40:40.156Z"
+      "last_updated": "2026-11-14T12:04:15.383Z"
     },
     "tailscale/tailscale": {
       "repository": "tailscale/tailscale",
@@ -8076,14 +8076,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-czy0729-bangumi",
-      "content_hash": "53cc0984fa2f3cb19f80818e47135b91b5eb308068ebcf02773f91e85cada8d8",
-      "verified_at": "2026-11-10T02:43:56.861Z",
+      "content_hash": "2af58ca950b49fd840bfda2a184b49d215df4d524deedbf0cb2c434a637d4d28",
+      "verified_at": "2026-11-14T12:04:13.836Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-10T02:43:56.861Z"
+      "last_updated": "2026-11-14T12:04:13.836Z"
     },
     "aquasecurity/tfsec": {
       "repository": "aquasecurity/tfsec",
@@ -11166,14 +11166,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bahdotsh-wrkflw",
-      "content_hash": "f5732766e48793bff353c0b2509e1be0851e2758bba6619a84c55cbfce5baa62",
-      "verified_at": "2026-11-13T00:16:17.855Z",
+      "content_hash": "e6d5d69f9731df5dec7baa3130d0c25200cfd992c48a081953ff4733eb5572b4",
+      "verified_at": "2026-11-14T12:04:07.696Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T00:16:17.855Z"
+      "last_updated": "2026-11-14T12:04:07.696Z"
     },
     "jordanbaird/Ice": {
       "repository": "jordanbaird/Ice",
