@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T06:28:27.966Z",
-  "total_records": 571,
+  "last_updated": "2026-11-14T06:57:54.824Z",
+  "total_records": 579,
   "domains": {
     "A": {
       "total": 5,
@@ -35,7 +35,7 @@
       ]
     },
     "D": {
-      "total": 279,
+      "total": 285,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -315,7 +315,13 @@
         "domain_intelligence-research-knowledge-intelligence-hf-aleph-alpha-kolibri-1-learnings-core-invarian",
         "domain_intelligence-research-knowledge-intelligence-fermionresearch-phonon-2-core-invariants",
         "DOM-D-683CD8F2",
-        "domain_intelligence-research-knowledge-intelligence-hf-fermionresearch-phonon-2-learnings-core-invar"
+        "domain_intelligence-research-knowledge-intelligence-hf-fermionresearch-phonon-2-learnings-core-invar",
+        "domain_intelligence-research-knowledge-intelligence-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-core-in",
+        "domain_intelligence-research-knowledge-intelligence-edge0-edge0-145b-nvfp4-core-invariants",
+        "DOM-D-AF708B11",
+        "domain_intelligence-research-knowledge-intelligence-hf-edge0-edge0-145b-nvfp4-learnings-core-invaria",
+        "DOM-D-302F93C6",
+        "domain_intelligence-research-knowledge-intelligence-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-lear"
       ]
     },
     "E": {
@@ -431,7 +437,7 @@
       ]
     },
     "H": {
-      "total": 123,
+      "total": 125,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -555,7 +561,9 @@
         "domain_intelligence-technical-construction-intelligence-risingwavelabs-risingwave-core-invariants",
         "domain_intelligence-technical-construction-intelligence-founded-labs-react-native-reusables-learning",
         "domain_intelligence-technical-construction-intelligence-risingwavelabs-risingwave-learnings-core-inv",
-        "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-wcandillon-react-native-skia-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-shopify-react-native-skia-learnings-core-inv"
       ]
     },
     "I": {
@@ -12464,6 +12472,144 @@
       "repository": "hf-openbmb-minicpm-ocr-1.0-learnings",
       "content_hash": "ac31fa6cf516febef975cab3315580d703442080cd1cc123923441caee462257",
       "created_at": "2026-11-14T06:28:27.282Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-core-in": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-core-in",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-research-knowledge-intelligence-infa.md",
+      "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+      "content_hash": "3025e6b7db6a8c403e2ce3957629032706120c5d6a8f6a437f89fa30f351935c",
+      "created_at": "2026-11-14T06:56:53.091Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-edge0-edge0-145b-nvfp4-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-edge0-edge0-145b-nvfp4-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: Edge0/Edge0-145B-NVFP4 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-edge0-edge0-145b-nvfp4-research-knowledge-intelligence-edge0-edge0-145b-nvfp4.md",
+      "repository": "Edge0/Edge0-145B-NVFP4",
+      "content_hash": "ec967835a7b058563155f5d7d335caf0b02978e5fc542998754554a440a29cf5",
+      "created_at": "2026-11-14T06:56:54.365Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-wcandillon-react-native-skia-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-wcandillon-react-native-skia-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: wcandillon/react-native-skia Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-shopify-react-native-skia-technical-construction-intelligence-wcandillon-react-n.md",
+      "repository": "wcandillon/react-native-skia",
+      "content_hash": "b03cfd8b53a042bf6bf747120a29716816348c1f569c53e9308032fcb125e72a",
+      "created_at": "2026-11-14T06:57:01.139Z"
+    },
+    "DOM-D-AF708B11": {
+      "record_id": "DOM-D-AF708B11",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Edge0/Edge0-145B-NVFP4",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-edge0-edge0-145b-nvfp4-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/Edge0/Edge0-145B-NVFP4](https://huggingface.co/Edge0/Edge0-145B-NVFP4))  \n> **Source Version**: `hf-edge0-edg`  \n> **License**: Open-Source  \n> **Synth",
+      "content_hash": "01e6370d0c2394d7364ff22c210d39a313bdd12aa70092ba7ef92549160fe1f7",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-edge0-edge0-145b-nvfp4-learnings.md`  \n> **Source**: huggingface ([https://huggin -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-edge0-edge0-145b-nvfp4-learnings.md`  \n> **Source**: huggingface ([https://huggin",
+      "provenance": {
+        "source_uri": "project://hf-edge0-edge0-145b-nvfp4/hf-edge0-edge0-145b-nvfp4-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T06:57:04.985Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-edge0-edge0-145b-nvfp4)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-edge0-edge0-145b-nvfp4"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T06:57:26.844Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-edge0-edge0-145b-nvfp4-learnings-core-invaria": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-edge0-edge0-145b-nvfp4-learnings-core-invaria",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-edge0-edge0-145b-nvfp4-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-edge0-edge0-145b-nvfp4-learnings-research-knowledge-intelligence-hf-edge0-edg.md",
+      "repository": "hf-edge0-edge0-145b-nvfp4-learnings",
+      "content_hash": "ef47d271bafb04bc14bc2d80dab9fc55137bd036db5933841e41466849062eab",
+      "created_at": "2026-11-14T06:57:27.002Z"
+    },
+    "DOM-D-302F93C6": {
+      "record_id": "DOM-D-302F93C6",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw](https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw))  \n> **Source Version**: `",
+      "content_hash": "f81c5c7a65b22f2568b56150aadb4bb012daa48668ab984be3d653cf7694d0c0",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md`  \n> **Source**: huggingfac -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md`  \n> **Source**: huggingfac",
+      "provenance": {
+        "source_uri": "project://hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T06:57:27.088Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T06:57:54.151Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-lear": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-lear",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-learnings-research-knowledge-intelli.md",
+      "repository": "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings",
+      "content_hash": "451a1151135204f43d8f177db33ab70e915c0373359971ce70983bf59b4df898",
+      "created_at": "2026-11-14T06:57:54.333Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-shopify-react-native-skia-learnings-core-inv": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-shopify-react-native-skia-learnings-core-inv",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: shopify-react-native-skia-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-shopify-react-native-skia-learnings-technical-construction-intelligence-shopify-.md",
+      "repository": "shopify-react-native-skia-learnings",
+      "content_hash": "828b63447d53935c12d81e3cb42705e033750a6b0e1a002ceab29d86297ff3ce",
+      "created_at": "2026-11-14T06:57:54.824Z"
     }
   }
 }

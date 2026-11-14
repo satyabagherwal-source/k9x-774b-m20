@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-K170",
-    "timestamp": "2026-11-13T09:17:35.628Z",
-    "repository": "SynaLinks/synalinks-skills",
-    "learningId": "learn-github-synalinks-synalinks-skills",
-    "contentHash": "2be2a9241c3f3c3ad03b07095ae19b2852ed34aead2d24ae2824cf76e1a8eb1b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-K2FN",
-    "timestamp": "2026-11-13T09:17:37.235Z",
-    "repository": "thinkingmachines/Inkling-2-Small",
-    "learningId": "learn-huggingface-thinkingmachines-inkling-2-small",
-    "contentHash": "845378fe300a1bc7082e0ed1793e7ab5c5b971692d0b0be7c4efded35cb1dce9",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-1TA8",
-    "timestamp": "2026-11-13T09:31:25.184Z",
-    "repository": "Michael-A-Kuykendall/shimmy",
-    "learningId": "learn-github-michael-a-kuykendall-shimmy",
-    "contentHash": "8e3a6872ae91976c15cdc66aada67d472402c256d45d7ad938c61a0673242270",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-22TE",
     "timestamp": "2026-11-13T09:31:37.538Z",
     "repository": "apple/foundationdb",
@@ -7492,6 +7447,51 @@
     "contentHash": "367415a8d88937d27a0e2b1223690a2ddacd8864bff99921b09b61db3530be31",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-YXGL",
+    "timestamp": "2026-11-14T06:56:52.965Z",
+    "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+    "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
+    "contentHash": "ecd9b8955be27d0e8ababaec9d28f067b61c73db86593e85907e0da6482ce2d8",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-YYFJ",
+    "timestamp": "2026-11-14T06:56:54.223Z",
+    "repository": "Edge0/Edge0-145B-NVFP4",
+    "learningId": "learn-huggingface-edge0-edge0-145b-nvfp4",
+    "contentHash": "af57149fde4636dcc6c1d3d5ba0a5c52eae36dfccd23af750459e6c792ebd29b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-Z3LZ",
+    "timestamp": "2026-11-14T06:57:00.935Z",
+    "repository": "wcandillon/react-native-skia",
+    "learningId": "learn-github-wcandillon-react-native-skia",
+    "contentHash": "fbfa20ead96b0f1b8c51423f7930b2c02b2a339bab1a5e1c848379963f98acd0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

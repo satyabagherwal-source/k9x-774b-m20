@@ -1055,8 +1055,8 @@
     "sourceUrl": "https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
     "sourceVersion": "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw",
     "license": "Open-Source",
-    "contentHash": "0b8c13a3f7b82f77c55ad07fb04b1c3380dcaaaa0b8c8d40a8d7d8e5599d9a7b",
-    "lastHarvestedAt": "2026-11-09T01:19:17.564Z",
+    "contentHash": "ecd9b8955be27d0e8ababaec9d28f067b61c73db86593e85907e0da6482ce2d8",
+    "lastHarvestedAt": "2026-11-14T06:56:52.968Z",
     "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw"
   },
   "hf-pablodawson-minimax-h3-360-orbit-lora": {
@@ -4753,10 +4753,10 @@
     "repository": "wcandillon/react-native-skia",
     "platform": "github",
     "sourceUrl": "https://github.com/Shopify/react-native-skia",
-    "sourceVersion": "7a9b20cd",
+    "sourceVersion": "c72569b3",
     "license": "MIT",
-    "contentHash": "5d4326814472d60debf7b25295bc11dc8001ff31ccc47adf15f14f665e242f6a",
-    "lastHarvestedAt": "2026-11-09T23:17:46.566Z",
+    "contentHash": "fbfa20ead96b0f1b8c51423f7930b2c02b2a339bab1a5e1c848379963f98acd0",
+    "lastHarvestedAt": "2026-11-14T06:57:00.938Z",
     "learningId": "learn-github-wcandillon-react-native-skia"
   },
   "saltstack-salt": {
@@ -12498,5 +12498,15 @@
     "contentHash": "6c59e1f427690f627ad9493f95c2deaf677683908cd397e694f6ec42ca8886d0",
     "lastHarvestedAt": "2026-11-14T04:06:06.109Z",
     "learningId": "learn-huggingface-chatrlabs-qwen-image-2-1-uncensored-omni-quantized"
+  },
+  "hf-edge0-edge0-145b-nvfp4": {
+    "repository": "Edge0/Edge0-145B-NVFP4",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Edge0/Edge0-145B-NVFP4",
+    "sourceVersion": "hf-edge0-edge0-145b-nvfp4",
+    "license": "Open-Source",
+    "contentHash": "af57149fde4636dcc6c1d3d5ba0a5c52eae36dfccd23af750459e6c792ebd29b",
+    "lastHarvestedAt": "2026-11-14T06:56:54.227Z",
+    "learningId": "learn-huggingface-edge0-edge0-145b-nvfp4"
   }
 }

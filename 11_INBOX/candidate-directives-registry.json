@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T06:28:27.851Z",
+  "last_updated": "2026-11-14T06:57:54.753Z",
   "directives": [
     {
       "id": "CD-001",
@@ -11867,6 +11867,26 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-8037F5-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-14"
+    },
+    {
+      "id": "CD-094H",
+      "directive_title": "🐙): drop an e2e reply that comes after its request timed out",
+      "source_repo": "shopify-react-native-skia-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-094H-drop-an-e2e-reply-that-comes-after-its-request-timed-out.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-14",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-EFA6C7",
+      "directive_title": "🐙): drop an e2e reply that comes after its request timed out",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "shopify-react-native-skia",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-EFA6C7--drop-an-e2e-reply-that-comes-after-its-.md",
       "staged_date": "2026-11-14"
     }
   ]

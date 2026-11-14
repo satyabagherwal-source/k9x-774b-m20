@@ -9800,3 +9800,8 @@ Every entry in this ledger must capture:
 | `learn-dom-d-683cd8f2` | `project://hf-fermionresearch-phonon-2` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md` | 2026-11-14T06:06:25.851Z |
 | `learn-github-zvec-ai-zvec-grep` | `https://github.com/zvec-ai/zvec-grep` | `2825dcfa` | Multi-dimensional audit evidence | 2026-11-14T06:23:35.964Z |
 | `learn-huggingface-openbmb-minicpm-ocr-1-0` | `https://huggingface.co/openbmb/MiniCPM-OCR-1.0` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-11-14T06:28:22.308Z |
+| `learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw` | `https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | `hf-infatos` | Multi-dimensional audit evidence | 2026-11-14T06:56:52.968Z |
+| `learn-huggingface-edge0-edge0-145b-nvfp4` | `https://huggingface.co/Edge0/Edge0-145B-NVFP4` | `hf-edge0-e` | Multi-dimensional audit evidence | 2026-11-14T06:56:54.227Z |
+| `learn-github-wcandillon-react-native-skia` | `https://github.com/Shopify/react-native-skia` | `c72569b3` | Multi-dimensional audit evidence | 2026-11-14T06:57:00.938Z |
+| `learn-dom-d-af708b11` | `project://hf-edge0-edge0-145b-nvfp4` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-edge0-edge0-145b-nvfp4-learnings.md` | 2026-11-14T06:57:26.852Z |
+| `learn-dom-d-302f93c6` | `project://hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md` | 2026-11-14T06:57:54.158Z |

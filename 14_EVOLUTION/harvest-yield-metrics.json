@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T06:28:22.315Z",
-  "total_cycles_completed": 9474,
-  "total_learnings_persisted": 9474,
-  "total_rules_promoted": 9181,
+  "last_updated": "2026-11-14T06:57:00.942Z",
+  "total_cycles_completed": 9477,
+  "total_learnings_persisted": 9477,
+  "total_rules_promoted": 9182,
   "history": [
-    {
-      "timestamp": "2026-11-13T15:10:49.287Z",
-      "repository": "SupersonicLabs/Julia-1",
-      "learningId": "learn-huggingface-supersoniclabs-julia-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T15:11:03.857Z",
-      "repository": "dragonflydb/dragonfly",
-      "learningId": "learn-github-dragonflydb-dragonfly",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T15:18:24.580Z",
-      "repository": "Comfy-Org/Wan-2.2",
-      "learningId": "learn-huggingface-comfy-org-wan-2-2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T15:18:32.581Z",
       "repository": "electron/electron",
@@ -1403,6 +1382,27 @@
       "repository": "openbmb/MiniCPM-OCR-1.0",
       "learningId": "learn-huggingface-openbmb-minicpm-ocr-1-0",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T06:56:52.972Z",
+      "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+      "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T06:56:54.241Z",
+      "repository": "Edge0/Edge0-145B-NVFP4",
+      "learningId": "learn-huggingface-edge0-edge0-145b-nvfp4",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T06:57:00.942Z",
+      "repository": "wcandillon/react-native-skia",
+      "learningId": "learn-github-wcandillon-react-native-skia",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

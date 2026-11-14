@@ -21061,5 +21061,17 @@
     "downloads": 68096,
     "qualityScore": 4390,
     "discoveredAt": "2026-11-14T04:03:50.581Z"
+  },
+  {
+    "name": "Edge0/Edge0-145B-NVFP4",
+    "fullName": "Edge0/Edge0-145B-NVFP4",
+    "url": "https://huggingface.co/Edge0/Edge0-145B-NVFP4",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: Edge0/Edge0-145B-NVFP4 (213 likes, 14134 downloads)",
+    "likes": 213,
+    "downloads": 14134,
+    "qualityScore": 4130,
+    "discoveredAt": "2026-11-14T06:54:36.202Z"
   }
 ]

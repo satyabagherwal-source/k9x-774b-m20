@@ -9767,3 +9767,8 @@
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T06:06:25.851Z` | `hf-fermionresearch-phonon-2` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-683CD8F2` [Domain D] | Yes (`4604ab0a...`) |
 | `CYCLE-20261114-S4K7` | `2026-11-14T06:23:35.959Z` | `zvec-ai/zvec-grep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8457` | Yes (`c794c8f7...`) |
 | `CYCLE-20261114-Y9I8` | `2026-11-14T06:28:22.304Z` | `openbmb/MiniCPM-OCR-1.0` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8458, Rule 8459, Rule 8460` | Yes (`367415a8...`) |
+| `CYCLE-20261114-YXGL` | `2026-11-14T06:56:52.965Z` | `Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md` | Yes (`ecd9b895...`) |
+| `CYCLE-20261114-YYFJ` | `2026-11-14T06:56:54.223Z` | `Edge0/Edge0-145B-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-edge0-edge0-145b-nvfp4-learnings.md` | Yes (`af57149f...`) |
+| `CYCLE-20261114-Z3LZ` | `2026-11-14T06:57:00.935Z` | `wcandillon/react-native-skia` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8346` | Yes (`fbfa20ea...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T06:57:26.852Z` | `hf-edge0-edge0-145b-nvfp4` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-AF708B11` [Domain D] | Yes (`01e6370d...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T06:57:54.158Z` | `hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-302F93C6` [Domain D] | Yes (`f81c5c7a...`) |

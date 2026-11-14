@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-14T06:28:22.319Z",
+  "last_updated": "2026-11-14T06:57:00.945Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1385,14 +1385,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
-      "content_hash": "0b8c13a3f7b82f77c55ad07fb04b1c3380dcaaaa0b8c8d40a8d7d8e5599d9a7b",
-      "verified_at": "2026-11-09T01:19:17.572Z",
+      "content_hash": "ecd9b8955be27d0e8ababaec9d28f067b61c73db86593e85907e0da6482ce2d8",
+      "verified_at": "2026-11-14T06:56:52.974Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T01:19:17.572Z"
+      "last_updated": "2026-11-14T06:56:52.974Z"
     },
     "pablodawson/MiniMax-H3-360-Orbit-LoRA": {
       "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
@@ -7251,14 +7251,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-wcandillon-react-native-skia",
-      "content_hash": "737dc8a2d4592d7909763ac11fefc35a0267188078cf33447755482c18c76681",
-      "verified_at": "2026-11-13T14:06:08.509Z",
+      "content_hash": "fbfa20ead96b0f1b8c51423f7930b2c02b2a339bab1a5e1c848379963f98acd0",
+      "verified_at": "2026-11-14T06:57:00.944Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T14:06:08.509Z"
+      "last_updated": "2026-11-14T06:57:00.944Z"
     },
     "saltstack/salt": {
       "repository": "saltstack/salt",
@@ -18809,6 +18809,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-14T04:06:06.119Z"
+    },
+    "Edge0/Edge0-145B-NVFP4": {
+      "repository": "Edge0/Edge0-145B-NVFP4",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-edge0-edge0-145b-nvfp4",
+      "content_hash": "af57149fde4636dcc6c1d3d5ba0a5c52eae36dfccd23af750459e6c792ebd29b",
+      "verified_at": "2026-11-14T06:56:54.243Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-14T06:56:54.243Z"
     }
   },
   "repos": {
