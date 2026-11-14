@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T03:02:23.688Z",
+  "last_updated": "2026-11-14T03:16:47.619Z",
   "directives": [
     {
       "id": "CD-001",
@@ -11274,6 +11274,90 @@
       "source_repo": "neuron-core-neuron-ai",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-7A7417-streaming-channel.md",
+      "staged_date": "2026-11-14"
+    },
+    {
+      "id": "CD-3VLD",
+      "directive_title": "docs(README): copyable one-prompt setup for coding agents",
+      "source_repo": "i18next-react-i18next-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-3VLD-docs-readme-copyable-one-prompt-setup-for-coding-agents.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-14",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-3W4Z",
+      "directive_title": "data race between test fixtures in tests",
+      "source_repo": "siderolabs-talos-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-3W4Z-data-race-between-test-fixtures-in-tests.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-14",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-VXNO",
+      "directive_title": "Add metrics and a follow-up log for detectors that ignore their timeout",
+      "source_repo": "trufflesecurity/trufflehog",
+      "source_commit": "32e87f4f",
+      "staged_file": "11_INBOX/candidate-directives/CD-VXNO-add-metrics-and-a-follow-up-log-for-detectors-that-ignore-their-timeout.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-14",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-W09G",
+      "directive_title": "support saved-result CTAS with current source privileges",
+      "source_repo": "matrixorigin/matrixone",
+      "source_commit": "71390fb3",
+      "staged_file": "11_INBOX/candidate-directives/CD-W09G-support-saved-result-ctas-with-current-source-privileges.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-14",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-3UJ4",
+      "directive_title": "Selective Quantization Partitioning for Grouped Attention & Router Networks",
+      "source_repo": "hf-openai-gpt-oss-20b-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-3UJ4-selective-quantization-partitioning-for-grouped-attention-router-networks.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-14",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-3UJ5",
+      "directive_title": "Alternating Windowed-Global Causal Attention Layering with Multi-Token EOS Termination",
+      "source_repo": "hf-openai-gpt-oss-20b-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-3UJ5-alternating-windowed-global-causal-attention-layering-with-multi-token-eos-termi.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-14",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-334D9F",
+      "directive_title": "docs(README): copyable one-prompt setup for coding agents",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "i18next-react-i18next",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-334D9F-docs-readme-copyable-one-prompt-setup-fo.md",
+      "staged_date": "2026-11-14"
+    },
+    {
+      "id": "CD-REV-CD2018",
+      "directive_title": "data race between test fixtures in tests",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "siderolabs-talos",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-CD2018-data-race-between-test-fixtures-in-tests.md",
       "staged_date": "2026-11-14"
     }
   ]

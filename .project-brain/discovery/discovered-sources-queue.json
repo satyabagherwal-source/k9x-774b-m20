@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T03:02:23.556Z",
+  "updated_at": "2026-11-14T03:16:47.387Z",
   "stats": {
-    "total_discovered": 3079,
-    "approved_pending_harvest": 2878,
+    "total_discovered": 3091,
+    "approved_pending_harvest": 2890,
     "harvested_count": 0,
     "rejected_count": 201,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2874,
+      "COMMUNITY_AND_EXPERT": 2886,
       "OFFICIAL_DOCUMENTATION": 110,
       "STANDARDS_AND_SPECIFICATIONS": 81,
       "ENGINEERING_BLOGS": 1,
@@ -66351,6 +66351,270 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md",
         "fileName": "neuron-core-neuron-ai-learnings.md"
+      }
+    },
+    "SRC-4FB7165743EE": {
+      "id": "SRC-4FB7165743EE",
+      "url": "https://huggingface.co/openai/gpt-oss-20b",
+      "title": "https://huggingface.co/openai/gpt-oss-20b",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T03:16:45.288Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md",
+        "fileName": "hf-openai-gpt-oss-20b-learnings.md"
+      }
+    },
+    "SRC-D16EC1C68FD1": {
+      "id": "SRC-D16EC1C68FD1",
+      "url": "https://github.com/i18next/react-i18next",
+      "title": "https://github.com/i18next/react-i18next",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T03:16:46.406Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/i18next-react-i18next-learnings.md",
+        "fileName": "i18next-react-i18next-learnings.md"
+      }
+    },
+    "SRC-B93814D730FA": {
+      "id": "SRC-B93814D730FA",
+      "url": "https://github.com/DefinitelyTyped/DefinitelyTyped/blob/5a1e9f91ed0143adede394adb3f540e650455f71/types/react/index.d.ts",
+      "title": "https://github.com/DefinitelyTyped/DefinitelyTyped/blob/5a1e9f91ed0143adede394adb3f540e650455f71/types/react/index.d.ts",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T03:16:46.449Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/i18next-react-i18next-learnings.md",
+        "fileName": "i18next-react-i18next-learnings.md"
+      }
+    },
+    "SRC-A426213DF487": {
+      "id": "SRC-A426213DF487",
+      "url": "https://www.i18next.com/",
+      "title": "https://www.i18next.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T03:16:46.476Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/i18next-react-i18next-learnings.md",
+        "fileName": "i18next-react-i18next-learnings.md"
+      }
+    },
+    "SRC-6DEACA0BF382": {
+      "id": "SRC-6DEACA0BF382",
+      "url": "https://react.i18next.com/",
+      "title": "https://react.i18next.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T03:16:46.502Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/i18next-react-i18next-learnings.md",
+        "fileName": "i18next-react-i18next-learnings.md"
+      }
+    },
+    "SRC-180019774646": {
+      "id": "SRC-180019774646",
+      "url": "https://stackoverflow.com/",
+      "title": "https://stackoverflow.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T03:16:46.528Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/i18next-react-i18next-learnings.md",
+        "fileName": "i18next-react-i18next-learnings.md"
+      }
+    },
+    "SRC-8D6975D7C36D": {
+      "id": "SRC-8D6975D7C36D",
+      "url": "https://github.com/Thanaen/repro-react-i18n-ts-bug",
+      "title": "https://github.com/Thanaen/repro-react-i18n-ts-bug",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T03:16:46.554Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/i18next-react-i18next-learnings.md",
+        "fileName": "i18next-react-i18next-learnings.md"
+      }
+    },
+    "SRC-5368E4E3163F": {
+      "id": "SRC-5368E4E3163F",
+      "url": "https://www.locize.com/?from=react-i18next_readme__localize",
+      "title": "https://www.locize.com/?from=react-i18next_readme__localize",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T03:16:46.596Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/i18next-react-i18next-learnings.md",
+        "fileName": "i18next-react-i18next-learnings.md"
+      }
+    },
+    "SRC-11A6D55A5FC4": {
+      "id": "SRC-11A6D55A5FC4",
+      "url": "https://www.locize.com/blog/i18next-cli-localize?from=react-i18next_readme__localize",
+      "title": "https://www.locize.com/blog/i18next-cli-localize?from=react-i18next_readme__localize",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T03:16:46.627Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/i18next-react-i18next-learnings.md",
+        "fileName": "i18next-react-i18next-learnings.md"
+      }
+    },
+    "SRC-17942AFCC3E6": {
+      "id": "SRC-17942AFCC3E6",
+      "url": "https://www.i18next.com/how-to/ai-coding-agents",
+      "title": "https://www.i18next.com/how-to/ai-coding-agents",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T03:16:46.654Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/i18next-react-i18next-learnings.md",
+        "fileName": "i18next-react-i18next-learnings.md"
+      }
+    },
+    "SRC-DEA06424AC07": {
+      "id": "SRC-DEA06424AC07",
+      "url": "https://www.locize.com/i18next?from=react-i18next_readme__ai",
+      "title": "https://www.locize.com/i18next?from=react-i18next_readme__ai",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T03:16:46.681Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/i18next-react-i18next-learnings.md",
+        "fileName": "i18next-react-i18next-learnings.md"
+      }
+    },
+    "SRC-B08F7476D94E": {
+      "id": "SRC-B08F7476D94E",
+      "url": "https://github.com/siderolabs/talos/issues/14948",
+      "title": "https://github.com/siderolabs/talos/issues/14948",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T03:16:47.387Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
+        "fileName": "siderolabs-talos-learnings.md"
       }
     }
   }

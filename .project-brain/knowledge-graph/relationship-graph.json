@@ -2,19 +2,19 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-14T03:02:22.640Z",
+  "updated_at": "2026-11-14T03:16:45.269Z",
   "statistics": {
-    "total_nodes": 150,
+    "total_nodes": 152,
     "total_edges": 83,
     "domain_distribution": {
       "D": 122,
       "M": 1,
       "H": 11,
-      "J": 5,
+      "J": 6,
       "K": 5,
       "L": 2,
       "G": 1,
-      "F": 2,
+      "F": 3,
       "B": 1
     },
     "relation_distribution": {
@@ -3359,6 +3359,50 @@
       ],
       "created_at": "2026-11-14T03:02:22.640Z",
       "updated_at": "2026-11-14T03:02:22.640Z"
+    },
+    "DOM-F-F89A3B28": {
+      "id": "DOM-F-F89A3B28",
+      "domain": "F",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "GQA Key-Value Head Dimension Mismatch in sliding_attention (BUG-GQA-SLIDING-01)",
+      "summary": "Developer implemented repeat/interleave after sequence slicing, but applied sliding window masking using standard tensor slicing `kv[:, :, - -> Tensor transformations in hybrid attention architectures must strictly order dimension expansion operations: Window truncation along sequenc",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-openai-gpt-oss-20b/hf-openai-gpt-oss-20b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T03:15:25.481Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-openai-gpt-oss-20b)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "F",
+        "Design Intelligence"
+      ],
+      "created_at": "2026-11-14T03:16:01.653Z",
+      "updated_at": "2026-11-14T03:16:01.653Z"
+    },
+    "DOM-J-37B3B4A9": {
+      "id": "DOM-J-37B3B4A9",
+      "domain": "J",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Router Logits Auxiliary Loss NaN under Top-4 Routing (BUG-MOE-AUX-NAN-02)",
+      "summary": "The auxiliary loss formula $\\sum_{i=1}^{E} f_i \\cdot P_i$ requires $P_i$ to be the unmasked continuous softmax probability distribution of a -> Never compute load-balancing auxiliary losses on top-k masked or truncated distributions; auxiliary losses require continuous, unmasked prob",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-openai-gpt-oss-20b/hf-openai-gpt-oss-20b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T03:15:25.481Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-openai-gpt-oss-20b)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "J",
+        "Search & Distribution Intelligence"
+      ],
+      "created_at": "2026-11-14T03:16:45.269Z",
+      "updated_at": "2026-11-14T03:16:45.269Z"
     }
   },
   "edges": [

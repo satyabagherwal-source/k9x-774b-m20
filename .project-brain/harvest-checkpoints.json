@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-14T03:01:54.876Z",
+  "last_updated": "2026-11-14T03:15:21.661Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1250,14 +1250,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openai-gpt-oss-20b",
-      "content_hash": "9a327b6e8bd02e516f784d98bba11093205f593f918e64ef84954d00ccecdc4e",
-      "verified_at": "2026-11-08T23:29:00.858Z",
+      "content_hash": "52ea2eb1583905ca240161dd3d4382dcfc64f89f98c5f2c2b110cc9507ebde58",
+      "verified_at": "2026-11-14T03:15:21.660Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T23:29:00.858Z"
+      "last_updated": "2026-11-14T03:15:21.660Z"
     },
     "meta-llama/Llama-2-7b-chat-hf": {
       "repository": "meta-llama/Llama-2-7b-chat-hf",
@@ -4881,14 +4881,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-matrixorigin-matrixone",
-      "content_hash": "9ca583dce4c1e12ecf0f9a7f17abba6cd21a9e0c669ad428250ac2c2541d0478",
-      "verified_at": "2026-11-13T02:06:03.978Z",
+      "content_hash": "03d8f4b9cdf177778c15cc53c02f6fa86054241b36f1d0533dc207817e8c4842",
+      "verified_at": "2026-11-14T03:10:39.476Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T02:06:03.978Z"
+      "last_updated": "2026-11-14T03:10:39.476Z"
     },
     "fallow-rs/fallow": {
       "repository": "fallow-rs/fallow",
@@ -5586,14 +5586,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trufflesecurity-trufflehog",
-      "content_hash": "a337642afd83803f42cf912750ac56b85dbb36129808d1871f63dba8aeeb3018",
-      "verified_at": "2026-11-13T20:27:08.229Z",
+      "content_hash": "956b2c00e671b988aea8550f12c96a049a4efa3eabca82cd48070d0a67b149d4",
+      "verified_at": "2026-11-14T03:10:36.110Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T20:27:08.229Z"
+      "last_updated": "2026-11-14T03:10:36.110Z"
     },
     "neural-maze/ava-whatsapp-agent-course": {
       "repository": "neural-maze/ava-whatsapp-agent-course",
@@ -6276,14 +6276,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-i18next-react-i18next",
-      "content_hash": "153d986f0d49404ac745d2e7ec8314061512b77018bde1d296932634b04aa76d",
-      "verified_at": "2026-11-09T18:11:21.896Z",
+      "content_hash": "91da2d06f39d26cb0da376f7b2352827d44e5a37bd5601de090f96ccd0888d1e",
+      "verified_at": "2026-11-14T03:10:30.633Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T18:11:21.896Z"
+      "last_updated": "2026-11-14T03:10:30.633Z"
     },
     "clastix/kamaji": {
       "repository": "clastix/kamaji",
@@ -11121,14 +11121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-siderolabs-talos",
-      "content_hash": "805988603f563738c987fcda77f21322d65cbf66e878e4ccb5dd2de09ff7cd07",
-      "verified_at": "2026-11-13T03:26:42.151Z",
+      "content_hash": "e19f48d3f0f61193b5a257b90d914f0f39c05e41415e4aedde57468deaf56998",
+      "verified_at": "2026-11-14T03:10:34.122Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T03:26:42.151Z"
+      "last_updated": "2026-11-14T03:10:34.122Z"
     },
     "zilliztech/claude-context": {
       "repository": "zilliztech/claude-context",

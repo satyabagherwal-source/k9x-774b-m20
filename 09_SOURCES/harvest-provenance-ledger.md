@@ -9749,3 +9749,10 @@ Every entry in this ledger must capture:
 | `learn-github-loft-sh-vcluster` | `https://github.com/loft-sh/vcluster` | `3a0085b6` | Multi-dimensional audit evidence | 2026-11-14T03:01:49.844Z |
 | `learn-github-neuron-core-neuron-ai` | `https://github.com/neuron-core/neuron-ai` | `0ee0f399` | Multi-dimensional audit evidence | 2026-11-14T03:01:54.868Z |
 | `learn-dom-d-78e4f99b` | `project://hf-zai-org-glm-5.2` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md` | 2026-11-14T03:02:22.641Z |
+| `learn-github-i18next-react-i18next` | `https://github.com/i18next/react-i18next` | `f97f5f82` | Multi-dimensional audit evidence | 2026-11-14T03:10:30.623Z |
+| `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `ba4a88b6` | Multi-dimensional audit evidence | 2026-11-14T03:10:34.110Z |
+| `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `32e87f4f` | Multi-dimensional audit evidence | 2026-11-14T03:10:36.099Z |
+| `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `71390fb3` | Multi-dimensional audit evidence | 2026-11-14T03:10:39.467Z |
+| `learn-huggingface-openai-gpt-oss-20b` | `https://huggingface.co/openai/gpt-oss-20b` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-14T03:15:21.650Z |
+| `learn-dom-f-f89a3b28` | `project://hf-openai-gpt-oss-20b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md` | 2026-11-14T03:16:01.655Z |
+| `learn-dom-j-37b3b4a9` | `project://hf-openai-gpt-oss-20b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md` | 2026-11-14T03:16:45.270Z |

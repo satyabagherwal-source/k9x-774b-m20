@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T03:01:54.873Z",
-  "total_cycles_completed": 9440,
-  "total_learnings_persisted": 9440,
-  "total_rules_promoted": 9144,
+  "last_updated": "2026-11-14T03:15:21.657Z",
+  "total_cycles_completed": 9445,
+  "total_learnings_persisted": 9445,
+  "total_rules_promoted": 9151,
   "history": [
-    {
-      "timestamp": "2026-11-13T13:10:51.765Z",
-      "repository": "Qwen/Qwen-Image-2.1",
-      "learningId": "learn-huggingface-qwen-qwen-image-2-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T13:11:20.097Z",
-      "repository": "apache/incubator-pegasus",
-      "learningId": "learn-github-apache-incubator-pegasus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T13:20:25.900Z",
-      "repository": "Contrastive-LM/CLM-v0.1-8B",
-      "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T13:20:39.065Z",
-      "repository": "ClementTsang/bottom",
-      "learningId": "learn-github-clementtsang-bottom",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T13:20:44.355Z",
-      "repository": "Planetable/Planet",
-      "learningId": "learn-github-planetable-planet",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T13:34:22.608Z",
       "repository": "mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF",
@@ -1403,6 +1368,41 @@
       "repository": "neuron-core/neuron-ai",
       "learningId": "learn-github-neuron-core-neuron-ai",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T03:10:30.630Z",
+      "repository": "i18next/react-i18next",
+      "learningId": "learn-github-i18next-react-i18next",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T03:10:34.118Z",
+      "repository": "siderolabs/talos",
+      "learningId": "learn-github-siderolabs-talos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T03:10:36.105Z",
+      "repository": "trufflesecurity/trufflehog",
+      "learningId": "learn-github-trufflesecurity-trufflehog",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T03:10:39.473Z",
+      "repository": "matrixorigin/matrixone",
+      "learningId": "learn-github-matrixorigin-matrixone",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T03:15:21.657Z",
+      "repository": "openai/gpt-oss-20b",
+      "learningId": "learn-huggingface-openai-gpt-oss-20b",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

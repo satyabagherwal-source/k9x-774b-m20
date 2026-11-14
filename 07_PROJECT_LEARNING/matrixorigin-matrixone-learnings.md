@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source**: github ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
-> **Source Version**: `437c6484`  
+> **Source Version**: `71390fb3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T02:05:50.359Z  
+> **Timestamp**: 2026-11-14T03:10:38.468Z  
 > **Learning ID**: `learn-github-matrixorigin-matrixone`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T02:05:50.348Z  
+> **Harvest Timestamp**: 2026-11-14T03:10:38.459Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2349,11 +2349,11 @@ func runWorker(ctx context.Context, r WorkerRequest, control *workerControl) (ou
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #32649** (2026-11-13): **fix(sql): reject column privileges and render granted object scopes**
-  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [x] BUG - [ ] Improvement - [ ] Documentation - [ ] Feature - [ ] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  Fixes #32443 Fixes #32446   ## What this PR does / why we need it:  - Reject column-qualified GRANT/REVOKE with error 20105 before role lookup/persistence, while keeping whole-object grants unchanged. - Render SHOW GRANTS from the current account’s real catalog object/logical relation and database IDs, preserving role/user membership, global/unresolved-token fallback, and stable ordering. - Keep the column-privilege admission and SHOW GRANTS paths separate; this PR does not introduce direct per-user object grants or column-level authorization semantics.  Verification: - `CGO_ENABLED=1 GOWORK=off STATIC_CHECK_PACKAGES=./... make static-check-selected`: 0 issues with pinned molint + golangci 2.14.0, covering the full graph and reverse consumers. - `make build` on the patched tree succeeded; ELF and native artifacts are byte-identical to the accepted baseline. - Six canonical native BVT scripts: 1010 total, 992 successful, 18 existing-issue SKIP, 0 failed/abnormal; no SKIP was counted as success. - Directed SHOW GRANTS: seven expected/actual groups match; invalid quoted database names still return 20101/HY000. - Historical B phase-1/overall-5 remains unchanged; the captured-B checker yields old=1, new=0, with four negative controls rejected and the legal no-`at-line` form accepted. - Reused fronten
+- **Issue #32742** (2026-11-14): **fileservice: TestDiskCacheReadOfDownloadStopsOnCancel flakes during TempDir cleanup**
+  *Symptoms*: ## Summary  `TestDiskCacheReadOfDownloadStopsOnCancel` failed during Go's automatic `TempDir` cleanup because a cache subdirectory was not empty.  ## Observed failure  - CI job: https://github.com/matrixorigin/matrixone/actions/runs/43526630231/job/132233966531?pr=32741 - Observed on: #32741, head `d456b5b5b41f67ed611f5e9adc6a7fc42787e8d3` - Package: `pkg/fileservice` - Test: [`TestDiskCacheReadOfDownloadStopsOnCancel`](https://github.com/matrixorigin/matrixone/blob/d456b5b5b41f67ed611f5e9adc6a7fc42787e8d3/pkg/fileservice/disk_cache_download_test.go#L124-L131)  ```text === RUN   TestDiskCacheReadOfDownloadStopsOnCancel 2026/11/14 00:24:37 ... INFO fileservice/disk_cache.go:408 disk cache info loaded ... 2026/11/14 00:24:37 ... INFO fileservice/disk_cache.go:422 disk cache evict done ...     testing.go:1617: TempDir RemoveAll cleanup:         unlinkat /tmp/TestDiskCacheReadOfDownloadStopsOnCancel1644607021/001/37a:         directory not empty --- FAIL: TestDiskCacheReadOfDownloadStopsOnCancel (0.00s) ```  The package subsequently failed and the UT step exited through `make: *** [Makefile:582: ut] Error 1`.  ## Hypothesis to verify  The test cancels the read context and returns immediately. An asynchronous download/cache writer may still be creating or renaming files while `testing.T.TempDir` cleanup runs, allowing `RemoveAll` to race with new directory entries.  This is currently a cleanup-lifecycle failure, not evidence of incorrect read results or data corruption. The exact 
 
-- **Issue #32647** (2026-11-13): **fix: reset int hashmap scratch before encoding**
-  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [x] BUG - [ ] Improvement - [ ] Documentation - [ ] Feature - [ ] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  Fixes #32568  ## What this PR does / why we need it:  `IntHashMap` reuses `keys` and `keyOffs`. In `HashBuild`'s `Insert -> Find -> Insert` path, `Find` left the offset advanced for a BIGINT; the next `Insert` wrote beyond its key slot and corrupted runtime-filter cleanup state. The surviving CN then retained a runtime-filter allocation and suspended account admission.  Reset both scratch slices inside `encodeHashKeys`, at the unsafe encoder's ownership boundary, before every encoding. This removes call-order dependence by centralizing the existing per-operation clears at encoder entry; `Insert` moves its reset from the defer. It adds no clearing pass. Add a deterministic regression test for the sequence with distinct keys.  Validation: - `go test ./pkg/common/hashmap -count=1` with Go 1.26.4. - Full `cmd/mo-service` build with Go 1.26.4 and CGO enabled. - Three-CN SQL reproduction with 100 prepared UPDATE clients over 1M rows; after pausing CN2 for 2 minutes, 85,373 updates succeeded with 0 errors. The table retained 1M rows and 1M distinct `b` values; no allocation-admission or panic signals appeared. 
+- **Issue #32741** (2026-11-14): **fix(stage): return an error for missing catalog context**
+  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [x] BUG - [ ] Improvement - [x] Documentation - [ ] Feature - [x] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  Related to #18534.  ## What this PR does / why we need it:  Main already supports host- and path-form Stage URIs, but resolving either through a Datalink with no process panics in `StageLoadCatalog`. For example, `ParseDatalink("stage:///a/b/c/1.txt?size=c", nil)` reaches the Stage cache before validating the range.  Return an internal error when the process, its base, or its Stage cache is missing. This propagates through Datalink, export, and nested Stage resolution without returning a partial result. Initialized callers retain the existing Stage resolution, access checks, and range validation. The ordinary SQL process initialization path is unchanged; this PR does not claim a normal SQL statement alone produces a nil process.  Clarify the existing Stage URI syntax and the 4.2.8 server compatibility boundary in the SDK guide. The companion 4.2 change is in #32723.  ### Validation  - Before the fix, the focused regression on main `5540b068209c` reproduced the nil pointer panic in `StageLoadCatalog`. - Linux/amd64, Go 1.27.1, CPU: complete `pkg/datalink` and `pkg/stage/stageutil` tests passed with coverage; the regressions cover three missing-context states, both URI forms, five Datalink entry points, export and nested Stage. Existing valid Stage and malformed-range controls pass. - Scoped `go v
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2370,850 +2370,382 @@ func runWorker(ctx context.Context, r WorkerRequest, control *workerControl) (ou
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4760bcaa` (2026-11-12)
-**Commit Message**: Fix native preparation and stabilize CI tests (#32574)
+### Incident Patch 1: `645219d3` (2026-11-14)
+**Commit Message**: fix(compile): support saved-result CTAS with current source privileges (#32727)
 
 ## What type of PR is this?
 
+- [ ] API-change
 - [x] BUG
+- [ ] Improvement
+- [ ] Documentation
+- [ ] Feature
 - [x] Test and CI
-
-## Which issue(s) this PR fixes:
-
-Fixes #32392
-Fixes #32420
-Fixes #32424
-Fixes #32561
-Fixes #32562
-Fixes #32563
-
-Refs #32324
-Refs #32544
-Refs #32570
-Refs #32185
-
-## What this PR does / why we need it:
-
-Native build preparation was skipped when GNU Make put a command-line
-variable assignment first in `MAKEFLAGS`, causing the final provenance
-record to fail. The preparation recipe now lets Make decide whether it
-runs in dry-run, touch and question modes, instead of parsing Make flags
-and assignments. Its cleanup sub-makes can fall back to serial execution
-and emit a jobserver warning with pipe-based GNU Make jobservers; the
-subsequent native build retains its existing recursion and parallelism.
-
-The real gossip bind-collision test now uses the same wildcard TCP
-address-family selection as memberlist and asserts that the collision is
-from the expected gossip TCP host and port. On macOS, the former
-IPv4-only injection could coexist with memberlist’s IPv6 listener, so
-the intended retry was never tested. The new native Make target
-regression also runs on the existing macOS n
-
-**File**: `.github/ci/native-provenance-makeflags.test.cjs` (added, +106/-0)
-```diff
-@@ -0,0 +1,106 @@
-+const assert = require('node:assert/strict');
-+const { spawnSync } = require('node:child_process');
-+const fs = require('node:fs');
-+const os = require('node:os');
-+const path = require('node:path');
-+const test = require('node:test');
-+
-+// Run the real target with only the external provenance program replaced.
-+function withFixture(t, run) {
-+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'mo-native-makeflags-'));
-+  t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
-+  fs.mkdirSync(path.join(dir, 'cgo'));
-+  fs.mkdirSync(path.join(dir, 'pkg'));
-+  fs.copyFileSync(path.join(__dirname, '..', '..', 'Makefile'), path.join(dir, 'Makefile'));
-+  const log = path.join(dir, 'events');
-+  const stub = path.join(dir, 'cgo', 'mo-native-provenance');
-+  fs.writeFileSync(stub, '#!/bin/sh\nprintf "%s\\n" "$1" >> "$MO_NATIVE_TEST_LOG"\n' +
-+    'case "$1" in prepare) echo "$MO_NATIVE_TEST_ACTION" ;; begin) ;; *) exit 1 ;; esac\n', { mode: 0o755 });
-+  fs.mkdirSync(path.join(dir, 'thirdparties'));
-+  for (const name of ['cgo', 'thirdparties']) {
-+    fs.writeFileSync(path.join(dir, name, 'Makefile'),
-+      `.PHONY: clean\nclean:\n\t@echo clean-${name} >> "$$MO_NATIVE_TEST_LOG"\n` +
-+      `\t@test "$$MO_NATIVE_TEST_FAIL" != ${name}\n`);
-+  }
-+  fs.writeFileSync(path.join(dir, 'parent.mk'),
-+    '.PHONY: parent\nparent:\n\t@$(MAKE) -f Makefile cgo-native-prepare-internal\n');
-+  const env = { ...process.env, MO_NATIVE_TEST_LOG: log };
-+  for (const name of ['MAKEFLAGS', 'MFLAGS', 'GNUMAKEFLAGS', 'MAKELEVEL',
-+    'GOOS', 'GOARCH', 'TARGET_OS', 'TARGET_ARCH', 'MO_CL_CUDA', 'MO_SIRIUS']) delete env[name];
-+
-+  run((args = [], { simulatedFlags = null, recursive = false, action = 'local', fail = '', status = 0 } = {}) => {
-+    fs.rmSync(log, { force: true });
-+    const makefiles = ['-f', recursive ? 'parent.mk' : 'Makefile'];
-+    if (simulatedFlags !== null) {
-+      fs.writeFileSync(path.join(dir, 'flags.mk'), `override MAKEFLAGS := ${simulatedFlags}\n`);
-+      makefiles.push('-f', 'flags.mk');
-+    }
-+    const target = recursive ? 'parent' : 'cgo-native-prepare-internal';
-+    const result = spawnSync('make', [...makefiles, ...args, target], {
-+      cwd: dir, env: { ...env, MO_NATIVE_TEST_ACTION: action, MO_NATIVE_TEST_FAIL: fail },
-+      encoding: 'utf8', timeout: 15000,
-+    });
-+    assert.equal(result.status, status, `${args} ${simulatedFlags}: ${result.stderr}`);
-+    return fs.existsSync(log) ? fs.readFileSync(log, 'utf8').trim().split('\n') : [];
-+  }, dir);
-+}
-+
-+test('native prepare runs for actual and assignment-only MAKEFLAGS', t => {
-+  withFixture(t, make => {
-+    for (const flags of [null, 'ONNX_PREBUILT_DIR=/tmp/onnx', 'QUESTION=none',
-+      'NATIVE_PROVENANCE_SIMSIMD=system', '-- ONNX_PREBUILT_DIR=/tmp/onnx']) {
-+      assert.deepEqual(make([], { simulatedFlags: flags }), ['prepare', 'begin'], String(flags));
-+    }
-+    for (const args of [['ONNX_PREBUILT_DIR=/tmp/onnx'], ['SOME=foo --touch'],
-+      ['SOME=foo --dry-run'], ['SOME=foo -n'], ['SOME=foo "bar'],
-+      ['-k'], ['-j2'], ['-I', '/tmp/name'], ['-I', '--touch'],
-+      ['--no-print-directory', 'MFLAGS=-n']]) {
-+      assert.deepEqual(make(args), ['prepare', 'begin'], String(args));
-+    }
-+    assert.deepEqual(make(['ONNX_PREBUILT_DIR=/tmp/onnx'], { recursive: true }), ['prepare', 'begin']);
-+  });
-+});
-+
-+test('native prepare does not run in dry-run, touch or question mode', t => {
-+  withFixture(t, make => {
-+    for (const args of [['-n'], ['--just-print'], ['-t'], ['--touch'],
-+      ['-kn', 'ONNX_PREBUILT_DIR=/tmp/onnx'], ['MAKEFLAGS=-n'],
-+      ['MAKEFLAGS=-t'], ['MAKEFLAGS=--dry-run'],
-+      ['MAKEFLAGS=--just-print'], ['MAKEFLAGS=--recon'], ['MAKEFLAGS=--touch'],
-+      ['MAKEFLAGS=-k --touch'], ['MAKEFLAGS=-kn'], ['-n', 'MAKEFLAGS='],
-+      ['--warn-undefined-variables', '-n'], ['--no-print-directory', '-n'],
-+      ['-I', '/tmp/name', '-n']]) {
-+      assert.deepEqual(make(args), [], String(args));
-+    }
-+    for (const args of [['-q'], ['--question'], ['MAKEFLAGS=-q'], ['MAKEFLAGS=--question']]) {
-+      assert.deepEqual(make(args, { status: 1 }), [], String(args));
-+    }
-+    assert.deepEqual(make(['-n', 'ONNX_PREBUILT_DIR=/tmp/onnx'], { recursive: true }), []);
-+  });
-+});
-+
-+test('native prepare preserves clean order and stops if a clean fails', t => {
-+  withFixture(t, (make, dir) => {
-+    const fatbin = path.join(dir, 'mocl_kernel64.fatbin');
-+    fs.writeFileSync(fatbin, 'fixture');
-+    assert.deepEqual(make([], { action: 'reuse' }), ['prepare', 'begin']);
-+    assert.ok(fs.existsSync(fatbin));
-+    assert.deepEqual(make([], { action: 'rebuild-cgo' }), ['prepare', 'clean-cgo', 'begin']);
-+    assert.equal(fs.existsSync(fatbin), false);
-+    fs.writeFileSync(fatbin, 'fixture');
-+    assert.deepEqual(make(['-j2'], { action: 'rebuild-all' }),
-+      ['prepare', 'clean-cgo', 'clean-thirdparties', 'begin']);
-+    assert.equal(fs.existsSync(fatbin), false);
-+    fs.writeFileSync(fa
-```
-
-**File**: `.github/workflows/native-dependency-check.yml` (modified, +5/-0)
-```diff
-@@ -46,6 +46,11 @@ jobs:
-           python3 -m unittest discover -s cgo -p 'test_gpu_toolchain.py' -v
-           python3 -m unittest discover -s optools/images -p 'test_go_toolchain.py' -v
-           python3 -m unittest discover -s optools/gpu -p 'test_sync_sirius_mo.py' -v
-+          if [ "$RUNNER_OS" = macOS ]; then
-+            node --version
-+            /usr/bin/make --version
-+            PATH="/usr/bin:/bin:$PATH" node --test .github/ci/native-provenance-makeflags.test.cjs
-+          fi
-           if [ "$RUNNER_OS" = Linux ]; then
-             python3 -m unittest discover -s optools/images/gpu -p 'test_stage_runtime_libs.py' -v
-           fi
-```
-
-**File**: `Makefile` (modified, +6/-10)
-```diff
-@@ -384,29 +384,25 @@ endif
- cgo-native-thirdparties-internal: cgo-native-prepare-internal
- 	$(BUILD_THIRDPARTIES)
- 
-+# Keep preparation nonrecursive so Make itself skips it under -n, -t, and -q.
-+# Clean sub-makes use this alias; pipe-based jobservers run those cleans serially.
-+NATIVE_PREPARE_CLEAN_MAKE = $(MAKE)
- cgo-native-prepare-internal:
- 	@set -eu; \
--		case "$(firstword $(MAKEFLAGS))" in \
--			-*) ;; \
--			*n*|*t*|*q*) exit 0 ;; \
--			esac; \
--		case " $(MAKEFLAGS) " in \
--			*" -n "*|*" -t "*|*" -q "*|*" --just-print "*|*" --dry-run "*|*" --recon "*|*" --touch "*|*" --question "*) exit 0 ;; \
--		esac; \
- 		action=$$(GO="$(GO)" ./cgo/mo-native-provenance prepare \
- 			"$(ROOT_DIR)" "$(NATIVE_PROVENANCE_ACCELERATOR)" \
- 			"$(NATIVE_PROVENANCE_OPTIMIZATION)" "$(NATIVE_PROVENANCE_SIMSIMD)"); \
- 		case "$$action" in \
- 			local|reuse) ;; \
- 			rebuild-cgo) \
- 				echo "native provenance: cleaning CGo outputs before rebuilding $(NATIVE_PROVENANCE_ACCELERATOR)/$(NATIVE_PROVENANCE_OPTIMIZATION)"; \
--				$(MAKE) -C cgo clean; \
-+				$(NATIVE_PREPARE_CLEAN_MAKE) -C cgo clean; \
- 				rm -f "$(ROOT_DIR)/mocl_kernel64.fatbin" ;; \
- 			rebuild-all) \
- 				echo "native provenance: cleaning thirdparty and CGo outputs before rebuilding $(NATIVE_PROVENANCE_ACCELERATOR)/$(NATIVE_PROVENANCE_OPTIMIZATION), simsimd=$(NATIVE_PROVENANCE_SIMSIMD)"; \
--				$(MAKE) -C cgo clean; \
-+				$(NATIVE_PREPARE_CLEAN_MAKE) -C cgo clean; \
- 				rm -f "$(ROOT_DIR)/mocl_kernel64.fatbin"; \
--				$(MAKE) -C thirdparties clean ;; \
-+				$(NATIVE_PREPARE_CLEAN_MAKE) -C thirdparties clean ;; \
- 			*) echo "invalid native rebuild action: $$action" >&2; exit 1 ;; \
- 		esac; \
- 		GO="$(GO)" ./cgo/mo-native-provenance begin \
-```
-
-**File**: `pkg/embed/async_datalink_admission_test.go` (modified, +13/-5)
-```diff
-@@ -54,7 +54,7 @@ func (c *classicAdmissionContext) CreateIndexCdcTask(_, _ string, _ uint64, _ st
- 	return nil
- }
- 
--func testClassicAsyncAdmissionResults(t *testing.T, conn *sql.Conn, service cnservice.Service, database, local, remote string) {
-+func testClassicAsyncAdmissionResults(t *testing.T, conn *sql.Conn, admin *sql.DB, service cnservice.Service, database, local, remote string) {
- 	// generate_series emits serial batches of at most 8192 rows. One extra row
- 	// proves full consumption without a large stored table or another cluster.
- 	const rows = 8193
-@@ -73,17 +73,23 @@ func testClassicAsyncAdmissionResults(t *testing.T, conn *sql.Conn, service cnse
- 		{name: "bad second column in later batch", rows: rows, value: local, badLast: true},
- 		{name: "canceled", rows: 1, canceled: true},
- 	} {
--		t.Run(tc.name, func(t *testing.T) {
-+		if !t.Run(tc.name, func(t *testing.T) {
- 			value := "NULL"
- 			if tc.value != "" {
- 				value = sqlquote.String(tc.value)
- 				if tc.badLast {
- 					value = fmt.Sprintf("case when result=%d then %s else NULL end", rows, value)
- 				}
- 			}
--			_, err := conn.ExecContext(t.Context(), fmt.Sprintf("create view %s as select result as id, cast(NULL as datalink) as p1, cast(%s as datalink) as p2 from generate_series(1,%d) g where result<=%d", source, value, rows, tc.rows))
-+			_, err := conn.ExecContext(t.Context(), fmt.Sprintf("create view %s as select result as id, cast(NULL as datalink) as p1, cast(%s as datalink) as p2 from generate_series(1,%d) g where result<=%d", source, value, max(1, tc.rows), tc.rows))
- 			require.NoError(t, err)
--			defer conn.ExecContext(t.Context(), "drop view "+source)
-+			defer func() {
-+				cleanupCtx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-+				defer cancel()
-+				if _, err := admin.ExecContext(cleanupCtx, "drop view "+sqlquote.QualifiedIdent(database, source)); err != nil {
-+					t.Errorf("drop admission source: %v", err)
-+				}
-+			}()
- 
- 			run := func(ctx context.Context, query string, inspect func(executor.Result)) error {
- 				return sqlexec.RunTxnWithSqlContext(ctx, service.GetEngine(), service.GetTxnClient(), service.ID(), 0, time.Minute, nil, nil, func(sp *sqlexec.SqlProcess, _ any) error {
-@@ -163,6 +169,8 @@ func testClassicAsyncAdmissionResults(t *testing.T, conn *sql.Conn, service cnse
- 				require.LessOrEqual(t, allocated, 512, "two fixed-width result vectors must not grow with source rows")
- 			}
- 			t.Logf("source rows=%d retained rows=%d batches=%d allocated vector bytes=%d", tc.rows, resultRows, batches, allocated)
--		})
-+		}) {
-+			return
-+		}
- 	}
- }
-```
-
-**File**: `pkg/embed/async_datalink_auth_test.go` (modified, +42/-8)
-```diff
-@@ -72,10 +72,11 @@ func testAsyncDatalinkSourceAdmission(t *testing.T, c Cluster, admin *sql.DB, en
- 	for _, q := range denied {
- 		_, err = conn.ExecContext(t.Context(), q)
- 		require.ErrorContains(t, err, "asynchronous indexes require remote Datalink sources", q)
--		require.NoError(t, conn.QueryRowContext(t.Context(), "select count(*) from docs where id=1 and path is null").Scan(&count))
--		require.Equal(t, 1, count)
--		require.NoError(t, conn.QueryRowContext(t.Context(), "select count(*) from docs").Scan(&count))
-+		var unchanged int
-+		require.NoError(t, conn.QueryRowContext(t.Context(),
-+			"select count(*), count(case when id=1 and path is null then 1 end) from docs").Scan(&count, &unchanged))
- 		require.Equal(t, 1, count)
-+		require.Equal(t, 1, unchanged)
- 	}
- 	prepared, err := conn.PrepareContext(t.Context(), "insert into docs values(?,?)")
- 	require.NoError(t, err)
-@@ -108,9 +109,11 @@ func testAsyncDatalinkSourceAdmission(t *testing.T, c Cluster, admin *sql.DB, en
- 	cn, err := c.GetCNService(0)
- 	require.NoError(t, err)
- 	service := cn.RawService().(cnservice.Service)
--	t.Run("bounded classic async admission", func(t *testing.T) {
--		testClassicAsyncAdmissionResults(t, conn, service, database, local, remote)
--	})
-+	if !t.Run("bounded classic async admission", func(t *testing.T) {
-+		testClassicAsyncAdmissionResults(t, conn, admin, service, database, local, remote)
-+	}) {
-+		return
-+	}
- 	exec("create user async_source_public identified by 'owned-async-source' default role public")
- 	defer admin.Exec("drop user if exists async_source_public")
- 	exec("grant insert on table " + database + ".docs to public")
-@@ -138,8 +141,9 @@ func testAsyncDatalinkSourceAdmission(t *testing.T, c Cluster, admin *sql.DB, en
- 		})
- 	}
- 	require.ErrorContains(t, backgroundRead(local), "only the sys account moadmin role")
--	// Deterministically change the provider between admission and the same
--	// background acquisition boundary; restoring the source permits normal retry.
-+	// Change the provider between admission and the background acquisition
-+	// boundary below. The live CDC job must not consume the temporarily invalid
-+	// source: exceeding max_bad_records makes that job permanently fail.
- 	var admitted bool
- 	require.NoError(t, conn.QueryRowContext(t.Context(), "select _check_async_datalink_source(cast("+sqlquote.String(remote)+" as datalink),true)").Scan(&admitted))
- 	require.True(t, admitted)
-@@ -162,6 +166,28 @@ func testAsyncDatalinkSourceAdmission(t *testing.T, c Cluster, admin *sql.DB, en
- 	require.NoError(t, conn.QueryRowContext(t.Context(), "select coalesce(min(job_id),0),count(*) from mo_catalog.mo_iscp_log where account_id=0 and table_id=? and job_name='index_changed_ft' and drop_at is null", changedTableID).Scan(&changedJobID, &activeJobs))
- 	require.Equal(t, 1, activeJobs, "the fixture must pin exactly one live index job")
- 	require.NotZero(t, changedJobID)
-+	indexExecutor, ready := iscp.GetExecutorRuntime(service.ID())
-+	require.True(t, ready, "the single CN must own the index executor")
-+	paused := true
-+	defer func() {
-+		if !paused {
-+			return
-+		}
-+		cleanupCtx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-+		defer cancel()
-+		if _, err := admin.ExecContext(cleanupCtx, "alter stage async_source_remote set url='s3://bucket/'"); err != nil {
-+			t.Errorf("restore async source before resuming index executor: %v", err)
-+			return
-+		}
-+		if err := indexExecutor.Resume(); err != nil {
-+			t.Errorf("resume index executor: %v", err)
-+		}
-+	}()
-+	require.NoError(t, indexExecutor.Pause())
-+	_, ready = iscp.GetExecutorRuntime(service.ID())
-+	require.False(t, ready, "Pause must drain and unpublish the index executor")
-+	var pausedTail int64
-+	require.NoError(t, conn.QueryRowContext(t.Context(), changedTailSQL).Scan(&pausedTail))
- 	exec("alter stage async_source_remote set url=" + sqlquote.String("file://"+dir+"/"))
- 	// Keeping an OLD source does not introduce a source or authorize a read.
- 	exec("update changed_sources set status=1")
-@@ -184,9 +210,17 @@ func testAsyncDatalinkSourceAdmission(t *testing.T, c Cluster, admin *sql.DB, en
- 	require.Equal(t, remote, storedP2)
- 	require.Equal(t, 2, status)
- 	require.ErrorContains(t, backgroundRead(remote), "only the sys account moadmin role")
-+	var tailWhilePaused int64
-+	require.NoError(t, conn.QueryRowContext(t.Context(), changedTailSQL).Scan(&tailWhilePaused))
-+	require.Equal(t, pausedTail, tailWhilePaused, "the CDC job must not consume the invalidated source")
- 	exec("alter stage async_source_remote set url='s3://bucket/'")
- 	require.NoError(t, backgroundRead(remote))
- 	require.Equal(t, "matrixone stage content", resolvedText)
-+	require.NoError(t, indexExecutor.Resume())
-+	paused = false
-+	restoredExecutor, ready := iscp.GetExecutorRuntime(service.ID())
-+	require.True(t, ready, "Resume must publish the index executor")
-+	require.Same(t, indexExecutor, restoredExecutor)
- 	exec("update changed_sources set p1='stage://async_source_stable/f
-```
-
-**File**: `pkg/embed/sql_file_access_auth_test.go` (modified, +5/-1)
-```diff
-@@ -285,7 +285,11 @@ func TestSQLFileAccessTenantStageCDC(t *testing.T) {
- 		defer server.Close()
- 		mustExec(t, tenant, fmt.Sprintf("create stage sql_file_access_stage URL='s3://bucket/' CREDENTIALS={'AWS_KEY_ID'='id','AWS_SECRET_KEY'='secret','AWS_REGION'='us-east-1','PROVIDER'='amazon','ENDPOINT'='%s'}", server.URL))
- 		defer func() { _, _ = tenant.Exec("drop stage if exists sql_file_access_stage") }()
--		t.Run("async source admission and local TEXT CDC", func(t *testing.T) { testAsyncDatalinkSourceAdmission(t, c, admin, server.URL, dir) })
-+		if !t.Run("async source admission and local TEXT CDC", func(t *testing.T) {
-+			testAsyncDatalinkSourceAdmission(t, c, admin, server.URL, dir)
-+		}) {
-+			return
-+		}
- 
- 		t.Run("file TVF and Hive planning admission", func(t *testing.T) {
- 			remote := fileservice.JoinPath("s3-opts,endpoint="+server.URL+",bucket=bucket,region=us-east-1,key=id,secret=secret", "content.txt")
-```
-
-**File**: `pkg/iscp/watermark_contention_test.go` (modified, +9/-3)
-```diff
-@@ -78,8 +78,16 @@ func TestWatermarkBatchYieldsToRetirement(t *testing.T) {
- 	db, err := sql.Open("mysql", fmt.Sprintf("dump:111@tcp(127.0.0.1:%d)/", peer.GetServiceConfig().CN.Frontend.Port))
- 	require.NoError(t, err)
- 	defer db.Close()
-+	_, err = db.ExecContext(ctx, "create database watermark_contention")
-+	require.NoError(t, err)
-+	defer func() {
-+		cleanupCtx, cleanupCancel := context.WithTimeout(context.WithoutCancel(ctx), 30*time.Second)
-+		defer cleanupCancel()
-+		if _, err := db.ExecContext(cleanupCtx, "drop database watermark_contention"); err != nil {
-+			t.Errorf("drop watermark contention database: %v", err)
-+		}
-+	}()
- 	for _, statement := range []string{
--		"create database watermark_contention",
- 		"create table watermark_contention.jobs(account_id int unsigned,table_id bigint unsigned,job_name varchar(100),job_id bigint unsigned,job_state int,watermark varchar(100),job_status json,drop_at timestamp null,primary key(account_id,table_id,job_name,job_id))",
- 		`insert into watermark_contention.jobs values(1,3,'first',1,3,'1-0','{"LSN":5,"Stage":1}',null),(1,4,'second',1,3,'1-0','{"LSN":5,"Stage":1}',null)`,
- 	} {
-@@ -147,6 +155,4 @@ func TestWatermarkBatchYieldsToRetirement(t *testing.T) {
- 	syncCommit(peerService, service)
- 	require.NoError(t, db.QueryRowContext(ctx, "select count(*) from watermark_contention.jobs where watermark='2-0' and cast(json_extract(job_status,'$.LSN') as unsigned)=6").Scan(&rows))
- 	require.Equal(t, 2, rows)
--	_, err = db.ExecContext(ctx, "drop database watermark_contention")
--	require.NoError(t, err)
- }
-```
-
-**File**: `pkg/logservice/gossip_fixture_test.go` (modified, +5/-1)
-```diff
-@@ -560,7 +560,8 @@ func TestGossipFixtureStartupRealBindCollision(t *testing.T) {
- 				// this node. Inject once in the first generation that gets here.
- 				if injectedAttempt == 0 && cfg.UUID == currentConfigs[1].UUID {
- 					var err error
--					occupied, err = net.Listen("tcp4", cfg.GossipListenAddr())
-+					// Match memberlist's address-family selection for wildcard listeners.
-+					occupied, err = net.Listen("tcp", cfg.GossipListenAddr())
- 					if err != nil {
- 						return nil, fmt.Errorf("collision injection failed: %w", err)
- 					}
-@@ -611,6 +612,9 @@ func TestGossipFixtureStartupRealBindCollision(t *testing.T) {
- 		require.LessOrEqual(t, attempts, maxGossipFixtureStartupAttempts)
- 		require.Error(t, collisionErr)
- 		require.True(t, isGossipFixtureBindCollision(collisionErr), "%v", collisionErr)
-+		host, port, err := net.SplitHostPort(injectedConfigs[1].GossipListenAddr())
-+		require.NoError(t, err)
-+		require.Contains(t, collisionErr.Error(), fmt.Sprintf("Failed to start TCP listener on %q port %s", host, port))
- 		require.True(t, reopenedNode)
- 		t.Logf("real memberlist collision on attempt %d, recovered on attempt %d: %v", injectedAttempt, attempts, collisionErr)
- 		require.Len(t, services, 2)
-```
-
----
-
-### Incident Patch 2: `75b1ad8a` (2026-11-11)
-**Commit Message**: fix(plan): reuse scalar CTEs under non-truncating limits (#32522)
-
-## What type of PR is this?
-
-- [ ] API-change
-- [x] BUG
-- [ ] Improvement
-- [ ] Documentation
-- [ ] Feature
-- [ ] Test and CI
 - [ ] Code Refactoring
 
 ## Which issue(s) this PR fixes:
 
-Related to https://github.com/matrixorigin/matrixflow/issues/21333.
+Fixes #31536
 
 ## What this PR does / why we need it:
 
-The four-row metrics query in the linked incident repeats an expensive
-common aggregation across `UNION ALL` branches. On main, an outer `LIMIT
-4` prevents CTE reuse even though the four scalar branches cannot
-produce more than four rows. The existing full-consumption proof
-conservatively treats this limit as potentially truncating the input.
+CTAS from a valid saved RESULT_SCAN reached the internal executor's
+unsupported metadata lookup and panicked. Delegate that lookup to the
+calling session compiler context; return a typed internal error when no
+delegate exists and propagate the delegate's errors unchanged.
 
-Extend that proof with a narrow structural row bound:
+Before CTAS creates its target, re-check the saved source plan using the
+current caller's privileges, as direct RESULT_SCAN does. This prevents
+the newly enabled CTAS path from bypassing source SELECT privileges
+after a role switch or REVOKE. Result metadata remains account-scoped;
+access is not tied to the producing connection.
 
-- A scalar aggregate contributes at most one row; projection, filter,
-ordinary window and sort preserve the bound; `UNION ALL` adds child
-bounds with overflow checks.
-- A positive literal limit covering the complete bound is
-non-truncating. Estimates, filters and limits themselves never tighten
-the structural bound, and OFFSET is not used to compensate for a smaller
-limit.
-- Unknown shapes retain the inline plan. Existing
-inner/zero/dy
+The maintained `save_query_result` case now exercises this public path
+in normal comparison mode. A really saved result populates the CTAS
+target through a prepared statement with data, count and schema
+assertions; after a live REVOKE that removes only the source read
+privil
 
-**File**: `pkg/sql/plan/cte_lazy_binding_test.go` (modified, +143/-0)
+**File**: `pkg/frontend/authenticate.go` (modified, +12/-0)
 ```diff
-@@ -15,6 +15,7 @@
- package plan
- 
- import (
-+	"fmt"
- 	"math"
- 	"strings"
- 	"testing"
-@@ -741,6 +742,39 @@ func TestCTEMultiReferenceReusesBelowBlockingAggregateLimit(t *testing.T) {
- 	require.Equal(t, 1, countReachableNodeType(query, planpb.Node_SINK))
- }
- 
-+func TestCTEMultiReferenceReusesBoundedScalarUnionLimit(t *testing.T) {
-+	for _, branches := range []int{2, 4, 8} {
-+		for _, limit := range []int{branches - 1, branches, branches + 1} {
-+			t.Run(fmt.Sprintf("branches_%d_limit_%d", branches, limit), func(t *testing.T) {
-+				consumers := make([]string, branches)
-+				for i := range consumers {
-+					consumers[i] = fmt.Sprintf("select %d as metric, mx, mn from totals", i)
-+				}
-+				mock := NewMockOptimizer(false, newPlanTestProcess(t))
-+				logicPlan, err := runOneStmt(mock, t, fmt.Sprintf(`
-+					with grouped as (
-+						select l_suppkey, sum(l_extendedprice) as total
-+						from lineitem group by l_suppkey
-+					), totals as (select max(total) as mx, min(total) as mn from grouped)
-+					select row_number() over () as rn, u.* from (%s) u limit %d`,
-+					strings.Join(consumers, " union all "), limit))
-+				require.NoError(t, err)
-+				query := logicPlan.GetQuery()
-+				wantScans := branches
-+				if limit >= branches {
-+					wantScans = 1
-+					require.Positive(t, countReachableNodeType(query, planpb.Node_SINK_SCAN))
-+				} else {
-+					require.Zero(t, countReachableNodeType(query, planpb.Node_SINK_SCAN),
-+						"a truncating LIMIT must retain the conservative inline plan")
-+				}
-+				require.Equal(t, wantScans, countReachableNodeType(query, planpb.Node_TABLE_SCAN),
-+					"a non-truncating LIMIT must not duplicate the common base scan")
-+			})
-+		}
-+	}
-+}
-+
- func TestCTEMultiReferencePrunesUnusedVariableWidthPayload(t *testing.T) {
- 	for _, tc := range []struct {
- 		name, payload, consumer string
-@@ -1498,6 +1532,115 @@ func TestCTEDrainProofRejectsZeroAndStreamingLimits(t *testing.T) {
+@@ -10178,6 +10178,18 @@ func authenticateCreateTableAsSelectSourcePrivilege(
+ 	if err != nil {
+ 		return false, stats, err
  	}
- }
- 
-+func TestCTEScalarUnionRowBound(t *testing.T) {
-+	for _, test := range []struct {
-+		name   string
-+		root   int32
-+		change func([]*planpb.Node)
-+		want   uint64
-+	}{
-+		{name: "scalar aggregate", root: 1, want: 1},
-+		{name: "transparent filter and window", root: 4, want: 1},
-+		{name: "union below sort", root: 6, want: 2},
-+		{name: "limit is not a tighter bound", root: 6, want: 2, change: func(nodes []*planpb.Node) {
-+			nodes[5].Limit = MakePlan2Uint64ConstExprWithType(1)
-+		}},
-+		{name: "zero limit is not an empty bound", root: 6, want: 2, change: func(nodes []*planpb.Node) {
-+			nodes[1].Limit = MakePlan2Uint64ConstExprWithType(0)
-+		}},
-+		{name: "scan estimate is not a proof", root: 0},
-+		{name: "scan limit is not a proof", root: 0, change: func(nodes []*planpb.Node) {
-+			nodes[0].Limit = MakePlan2Uint64ConstExprWithType(1)
-+		}},
-+		{name: "grouped aggregate", root: 6, change: func(nodes []*planpb.Node) {
-+			nodes[1].GroupBy = []*planpb.Expr{MakePlan2Int64ConstExprWithType(1)}
-+		}},
-+		{name: "grouping extension", root: 6, change: func(nodes []*planpb.Node) {
-+			nodes[1].GroupingFlag = []bool{true}
-+		}},
-+		{name: "unknown union sibling", root: 6, change: func(nodes []*planpb.Node) {
-+			nodes[5].Children[1] = 0
-+		}},
-+		{name: "union distinct", root: 6, change: func(nodes []*planpb.Node) {
-+			nodes[5].NodeType = planpb.Node_UNION
-+		}},
-+		{name: "join", root: 6, change: func(nodes []*planpb.Node) {
-+			nodes[5].NodeType = planpb.Node_JOIN
-+		}},
-+		{name: "aggregate arity", root: 1, change: func(nodes []*planpb.Node) {
-+			nodes[1].Children = nil
-+		}},
-+		{name: "transparent arity", root: 4, change: func(nodes []*planpb.Node) {
-+			nodes[4].Children = []int32{1, 1}
-+		}},
-+		{name: "union arity", root: 5, change: func(nodes []*planpb.Node) {
-+			nodes[5].Children = nil
-+		}},
-+		{name: "cycle", root: 4, change: func(nodes []*planpb.Node) {
-+			nodes[4].Children = []int32{4}
-+		}},
-+		{name: "nil node", root: 4, change: func(nodes []*planpb.Node) { nodes[4] = nil }},
-+		{name: "negative id", root: -1},
-+		{name: "out of range id", root: 7},
-+	} {
-+		t.Run(test.name, func(t *testing.T) {
-+			nodes := []*planpb.Node{
-+				{NodeType: planpb.Node_TABLE_SCAN, Stats: &planpb.Stats{Outcnt: 1}},
-+				{NodeType: planpb.Node_AGG, Children: []int32{0}},
-+				{NodeType: planpb.Node_PROJECT, Children: []int32{1}},
-+				{NodeType: planpb.Node_FILTER, Children: []int32{2}},
-+				{NodeType: planpb.Node_WINDOW, Children: []int32{3}},
-+				{NodeType: planpb.Node_UNION_ALL, Children: []int32{4, 1}},
-+				{NodeType: planpb.Node_SORT, Children: []int32{5}},
-+			}
-+			if test.change != nil {
-+				test.change(nodes)
-+			}
-+			builder := &QueryBuilder{qry: &planpb.Query{Nodes: nodes}}
-+			memo := make(map[int32]uint64)
-+			require.Equal(t, test.want, builder.cteScalarUnionRowBound(test.root, memo))
-+			require.Equal(t, test.want, builder.cteScalarUnionRowBound(test.root, memo))
-+		})
++	// A CTAS source over a saved query result carries no table-scan tips, and
++	// the CTAS follow-up INSERT ... SELECT runs through the internal executor,
++	// whose compile path does not re-verify result-query access. Apply the same
++	// saved-result source re-verification the direct SELECT path uses, so a
++	// role whose source SELECT privilege is missing or revoked cannot copy the
++	// saved result by CTAS. Plain sources have no result scans and return here
++	// with no extra cost.
++	resultStats, resultErr := checkResultQueryPrivilege(compilerContext.GetProcess(), sourcePlan, ctx, ses.GetService(), ses)
++	stats.Add(&resultStats)
++	if resultErr != nil {
++		return false, stats, resultErr
 +	}
-+
-+	// A compact DAG crosses the overflow boundary without an exponential tree.
-+	builder := &QueryBuilder{qry: &planpb.Query
+ 	if len(arr) == 0 {
+ 		return true, stats, nil
+ 	}
 ```
 
-**File**: `pkg/sql/plan/cte_reuse.go` (modified, +56/-7)
+**File**: `pkg/sql/compile/query_result_meta_delegate_test.go` (added, +110/-0)
 ```diff
-@@ -1143,6 +1143,7 @@ func (builder *QueryBuilder) proveCTEConsumerDrainRequirements(
- 	drainedOccurrences := make(map[int32]bool)
- 	requiredBuildChildByJoin := make(map[int32]int32)
- 	hasDrainWitness := false
-+	var scalarRowBounds map[int32]uint64
- 
- 	for _, occurrence := range occurrences {
- 		// replaceCTEOccurrences rewrites only the tree below rootID. An
-@@ -1188,13 +1189,23 @@ func (builder *QueryBuilder) proveCTEConsumerDrainRequirements(
- 			if path.inputDrained && len(node.Children) > 1 && node.NodeType != planpb.Node_JOIN {
- 				path.inputDrained = false
- 			}
--			// LIMIT can stop the subtree before it completes. Only a positive
--			// literal limit on a proven blocking operator is a witness: LIMIT 0 is
--			// compiled without its input steps, and a dynamic limit may be zero at
--			// execution time. OFFSET alone does not shorten a fully consumed stream.
--			if node.Limit != nil &&
--				(!cteLimitIsPositive(node.Limit) || !path.inputDrained && !cteLimitPreservesFullInput(node)) {
--				continue
-+			// LIMIT 0 is compiled without its input steps, and a dynamic limit
-+			// may be zero at execution time. A positive literal cannot truncate
-+			// a blocking input or a structurally bounded scalar UNION ALL whose
-+			// entire output fits. OFFSET is not used to relax the latter bound.
-+			if node.Limit != nil {
-+				if !cteLimitIsPositive(node.Limit) {
-+					continue
-+				}
-+				if !path.inputDrained && !cteLimitPreservesFullInput(node) {
-+					if scalarRowBounds == nil {
-+						scalarRowBounds = make(map[int32]uint64)
-+					}
-+					bound := builder.cteScalarUnionRowBound(path.nodeID, scalarRowBounds)
-+					if bound == 0 || bound > node.Limit.GetLit().GetU64Val() {
-+						continue
-+					}
-+				}
- 			}
- 			// APPLY may skip its right input when the left side is empty. Block
- 			// sampling can terminate successfully after a subset of its input.
-@@ -1370,6 +1381,44 @@ func (builder *QueryBuilder) cteInnerJoinGetsEquiCondition(
- 	return false
- }
- 
-+// cteScalarUnionRowBound proves a positive output bound rooted in blocking
-+// scalar aggregates. Zero means unknown, never an empty input. Do not tighten
-+// this bound with LIMIT, predicates or estimates: doing so could let an early
-+// consumer skip another branch's work/errors while appearing to fit the bound.
-+// Unsupported operators remain barriers, and the caller still proves every
-+// occurrence's path (including inner limits and conditional joins) separately.
-+func (builder *QueryBuilder) cteScalarUnionRowBound(nodeID int32, memo map[int32]uint64) uint64 {
-+	if bound, ok := memo[nodeID]; ok {
-+		return bound
-+	}
-+	memo[nodeID] = 0
-+	if nodeID < 0 || int(nodeID) >= len(builder.qry.Nodes) || builder.qry.Nodes[nodeID] == nil {
-+		return 0
-+	}
-+	node := builder.qry.Nodes[nodeID]
-+	var bound uint64
-+	switch node.NodeType {
-+	case planpb.Node_AGG:
-+		if len(node.Children) == 1 && len(node.GroupBy) == 0 && len(node.GroupingFlag) == 0 {
-+			bound = 1
-+		}
-+	case planpb.Node_PROJECT, planpb.Node_FILTER, planpb.Node_WINDOW, planpb.Node_SORT:
-+		if len(node.Children) == 1 {
-+			bound = builder.cteScalarUnionRowBound(node.Children[0], memo)
-+		}
-+	case planpb.Node_UNION_ALL:
-+		if len(node.Children) == 2 {
-+			left := builder.cteScalarUnionRowBound(node.Children[0], memo)
-+			right := builder.cteScalarUnionRowBound(node.Children[1], memo)
-+			if left > 0 && right > 0 && left <= math.MaxUint64-right {
-+				bound = left + right
-+			}
-+		}
-+	}
-+	memo[nodeID] = bound
-+	return bound
-+}
+@@ -0,0 +1,110 @@
++// Copyright 2021 - 2026 Matrix Origin
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
 +
- func cteLimitPreservesFullInput(node *planpb.Node) bool {
- 	if node == nil || node.Limit == nil {
- 		return true
-```
-
-**File**: `test/distributed/cases/cte/scalar_union_limit.result` (added, +95/-0)
-```diff
-@@ -0,0 +1,95 @@
-+drop database if exists cte_scalar_union_limit;
-+create database cte_scalar_union_limit;
-+use cte_scalar_union_limit;
-+create table measurements(period int, amount decimal(10,2), guard_value bigint);
-+insert into measurements values
-+(1,10,-9223372036854775808),(1,20,-9223372036854775808),
-+(2,60,-9223372036854775808),(2,null,-9223372036854775808);
-+create table metrics as
-+select row_number() over () as rn, u.* from (
-+with grouped as (
-+select period, sum(amount) as total from measurements group by period
-+), totals as (
-+select max(total) as mx, min(total) as mn from grouped
++package compile
++
++import (
++	"context"
++	"testing"
++
++	"github.com/stretchr/testify/require"
++
++	"github.com/matrixorigin/matrixone/pkg/common/moerr"
++	pbplan "github.com/matrixorigin/matrixone/pkg/pb/plan"
++	sqlplan "github.com/matrixorigin/matrixone/pkg/sql/plan"
 +)
-+select 'max' as metric, mx as amount from totals
-+union all select 'min', mn from totals
-+union all select 'sum', mx+mn from totals
-+union all select 'zero', mx/nullif(mn-mn,0) from totals
-+) u limit 4;
-+select metric, amount from metrics order by metric;
-+➤ metric[12,4,0]  ¦  amount[3,38,6]  𝄀
-+max  ¦  60.000000  𝄀
-+min  ¦  30.000000  𝄀
-+sum  ¦  90.000000  𝄀
-+zero  ¦  null
-+select count(*) as n, count(distinct rn) as distinct_rn, min(rn) as first_rn, max(rn) as last_rn from metrics;
-+➤ n[-5,64,0]  ¦  distinct_rn[-5,64,0]  ¦  first_rn[-5,64,0]  ¦  last_rn[-5,64,0]  𝄀
-+4  ¦  4  ¦  1  ¦  4
-+select column_name, data_type, numeric_precision, numeric_scale, is_nullable
-+from information_schema.columns
-+where table_schema='cte_scalar_union_limit' and table_name='metrics'
-+order by ordinal_position;
-+➤ column_name[12,256,0]  ¦  data_type[12,65535,0]  ¦  numeric_precision[-5,64,0]  ¦  numeric_scale[-5,64,0]  ¦  is_nullable[12,3,0]  𝄀
-+rn  ¦  bigint  ¦  20  ¦  0  ¦  NO  𝄀
-+metric  ¦  varchar  ¦  null  ¦  null  ¦  NO  𝄀
-+amount  ¦  decimal  ¦  38  ¦  6  ¦  YES
-+with totals as (select sum(amount) as total from measurements)
-+select total from totals union all select total from totals limit 2;
-+➤ total[3,32,2]  𝄀
-+90.00  𝄀
-+90.00
-+with totals as (select sum(amount) as total from measurements)
-+select total from totals union all select total from totals limit 2 offset 1;
-+➤ total[3,32,2]  𝄀
-+90.00
-+with totals as (select sum(amount) as total from measurements)
-+select total from totals union all select total from totals limit 1;
-+➤ total[3,32,2]  𝄀
-+90.00
-+with totals as (select sum(amount) as total from measurements)
-+select total from totals where total<0
-+union all select total from totals limit 2;
-+➤ total[3,32,2]  𝄀
-+90.00
-+prepare page from 'with totals as (select sum(amount) as total from measurements) select total from totals union all select total from totals limit ?';
-+set @page_limit=0;
-+execute page using @page_limit;
-+➤ total[3,32,2]
-+set @page_limit=2;
-+execute page using @page_limit;
-+➤ total[3,32,2]  𝄀
-+90.00  𝄀
-+90.00
-+deallocate prepare page;
-+with risky as (select abs(max(guard_value)) as v from measurements)
-+select v from risky union all select v from risky limit 0;
-+➤ v[-5,64,0]
-+with risky as (select abs(max(guard_value)) as v from measurements)
-+select v from risky union all select v from risky limit 2;
-+-- @regex("out of range", true)
-+Data truncation: data out of range: data type int, '-9223372036854775808'
-+update measurements set amount=null;
-+with totals as (select sum(amount) as total, count(amount) as n from measurements)
-+select total,n from totals union all select total,n from totals limit 2;
-+➤ total[3,32,2]  ¦  n[-5,64,0]  𝄀
-+null  ¦  0  𝄀
-+null  ¦  0
-+delete from measurements;
-+with grouped as (select period,sum(amount) as total from measurements group by period),
-+totals as (select max(total) as mx,min(total) as mn from grouped)
-+select mx,mn from totals union all select mx,mn from totals limit 2;
-+➤ mx[3,32,2]  ¦  mn[3,32,2]  𝄀
-+null  ¦  null  𝄀
-+null  ¦  null
-+create table empty_metrics as
-+with totals as (select sum(amount) as total,count(*) as n from measurements)
-+select total,n from totals union all select total,n from totals limit 2;
-+select * from empty_metrics;
-+➤ total[3,32,2]  ¦  n[-5,64,0]  𝄀
-+null  ¦  0  𝄀
-+null  ¦  0
-+with totals as (select count(*) as n from measurements having count(*)>0)
-+select n from totals union all select n from totals limit 2;
-+➤ n[-5,64,0]
-+drop database cte_scalar_union_limit;
++
++// queryResultMetaStub records saved-result metadata lookups so tests can
++// assert the internal executor forwards them to the owning session compiler
++// context instead of resolving them against the wrong identity.
++type queryResultMetaStub struct {
++	sqlplan.CompilerContext
++
++	requested []string
++	cols      []*pbplan.ColDef
++	path      string
++	err       error
++}
++
++func (s *queryResultMetaStub) GetQueryResultMeta(uuid string) ([]*pbplan.ColDef, string, error) {
++	s.requested = append(s.requested, uuid)
++	return s.cols, s.path, s.err
++}
++
++// An internal-executor query that reaches a saved-result source without a
++// frontend session delegate must fail with a clean typed error, never panic.
++func TestGetQueryResultMetaWithoutSessionDelegateFailsCleanly(t *testing.T) {
++	c := &compilerContext{ctx: context.Background()}
++
++	cols, path, err := c.GetQueryResultMeta("7f0e9d51-8bd9-4e0f-8d1e-3cddc1234567")
++	require.Error(t, err)
++	require.True(t, moerr.IsMoErrCode(err, moerr.ErrInternal),
++		"want typed internal error, got %v", err)
++	require.Nil(t, cols)
++	require.Empty(t, path)
++
++	// The message must identify the missing session plumbing so operators can
++	// tell an authorization/session-state gap from a missing result file.
++	require.Contains(t, err.Error(), "session compiler context")
++}
++
++// With the owning frontend session compiler context installed (as CTAS
++// populate does), a saved-result metadata lookup must be forwarded to that
++// delegate verbatim, with its columns and result path passed through.
++func TestGetQueryResultMetaDelegatesToSessionCompilerContext(t *testing.T) {
++	delegate := &queryResultMetaStub{
++		cols: []*pbplan.ColDef{{Name: "id"}},
++		path: "result-path",
++	}
++	ctx := attachInternalExecutorCompilerContext(context.Background(), delegate)
++	c := &compilerContext{ctx: ctx}
++
++	cols, path, err := c.GetQueryResultMeta("qid-1")
++	require.NoError(t, err)
++	require.Equal(t, []string{"qid-1"}, delegate.requested)
++	require.Len(t, cols, 1)
++	require.Equal(t, "id", cols[0].Name)
++	require.Equal(t, "result-path", path)
++}
++
++// View-description child contexts must forward saved-result metadata lookups
++// to their isolated delegate as well.
++func TestGetQueryResultMetaViewChildForwardsToViewDelegate(t *testing.T) {
++	delegate := &queryResultMetaStub{
++		cols: []*pbplan.ColDef{{Name: "v"}},
++		path: "view-path",
++	}
++	c := &compilerContext{ctx: context.Background(), viewChild: true, viewDelegate: delegate}
++
++	cols, path, err := c.GetQueryResultMeta("qid-2")
++	require.NoError(t, err)
++	require.Equal(t, []string{"qid-2"}, delegate.requested)
++	require.Len(t, cols, 1)
++	require.Equal(t, "view-path", path)
++}
++
++// A delegate error must be propagated verbatim - never wrapped or swallowed -
++// so the frontend session's typed result-file errors reach the caller intact.
++func TestGetQueryResultMetaDelegatesErrorVerbatim(t *testing.T) {
++	sentinel := moerr.NewResultFileNotFound(context.Background(), "deadbeef-qid")
++	delegate := &queryResultMetaStub{err: sentinel}
++	ctx := attachInternalExecutorCompilerContext(context.Background(), delegate)
++	c := &compilerContext{ctx: ctx}
++
++	cols, path, err := c.GetQueryResultMeta("deadbeef-qid")
++	require.ErrorIs(t, err, sentinel)
++	require.True(t, moerr.IsMoErrCode(err, moerr.ErrResultFileNotFound))
++	require.Nil(t, cols)
++	require.Empty(t, path)
++}
 ```
 
-**File**: `test/distributed/cases/cte/scalar_union_limit.sql` (added, +74/-0)
+**File**: `pkg/sql/compile/sql_executor_context.go` (modified, +19/-1)
 ```diff
-@@ -0,0 +1,74 @@
-+--- @metacmp(true)
-+drop database if exists cte_scalar_union_limit;
-+create database cte_scalar_union_limit;
-+use cte_scalar_union_limit;
-+create table measurements(period int, amount decimal(10,2), guard_value bigint);
-+insert into measurements values
-+(1,10,-9223372036854775808),(1,20,-9223372036854775808),
-+(2,60,-9223372036854775808),(2,null,-9223372036854775808);
+@@ -472,8 +472,26 @@ func (c *compilerContext) GetProcess() *process.Process {
+ 	return c.proc
+ }
+ 
++// GetQueryResultMeta resolves saved-result metadata for result_scan plans.
++// The stored metadata is account-scoped (frontend.BuildQueryResultMetaPath),
++// and access is authorized separately by re-checking the saved source AST/plan
++// against the CURRENT calling role (frontend checkResultQueryPrivilege); the
++// delegate below carries the calling session's compiler identity and imposes
++// no producer-session ownership on the saved result. The internal executor has
++// no account/session identity of its own, so it consults the calling frontend
++// session's compiler context, which CTAS populate installs via
++// attachInternalExecutorCompilerContext. Without such a delegate nothing can
++// be resolved here: return a clean typed error instead of panicking.
+ func (c *compilerContext) GetQueryResultMeta(uuid string) ([]*plan.ColDef, string, error) {
+-	panic("not supported in internal sql executor")
++	if delegate := c.sessionCompilerContextValue(); delegate != nil {
++		return delegate.GetQueryResultMeta(uuid)
++	}
++	errCtx := c.ctx
++	if errCtx == nil {
++		errCtx = context.Background()
++	}
++	return nil, "", moerr.NewInternalError(errCtx,
++		"query result metadata requires a session compiler context in internal sql executor")
+ }
+ 
+ func (c *compilerContext) DatabaseExists(name string, snapshot *plan.Snapshot) bool {
+```
+
+**File**: `pkg/sql/compile/sql_executor_context_test.go` (modified, +9/-4)
+```diff
+@@ -192,10 +192,15 @@ func TestCompilerContextUnsupportedOperations(t *testing.T) {
+ 		_, _ = c.ResolveAccountIds(nil)
+ 	}()
+ 
+-	func() {
+-		defer r()
+-		_, _, _ = c.GetQueryResultMeta("")
+-	}()
++	// GetQueryResultMeta is a delegated operation since CTAS-from-result_scan
++	// support: without a delegate - including the nil-context case above - it
++	// must return a clean typed internal error and no metadata, never panic.
++	cols, path, qerr := c.GetQueryResultMeta("")
++	require.Error(t, qerr)
++	require.True(t, moerr.IsMoErrCode(qerr, moerr.ErrInternal),
++		"want typed internal error, got %v", qerr)
++	require.Nil(t, cols)
++	require.Empty(t, path)
+ }
+ 
+ type recordingSessionCompilerContext struct {
+```
+
+**File**: `test/distributed/cases/save_query_result/save_query_result.result` (modified, +63/-0)
+```diff
+@@ -2465,3 +2465,66 @@ acc_save    admin    2024-11-21 07:19:49    open    null    5    65    0.0    0.
+ set save_query_result = off;
+ drop account acc_save;
+ set save_query_result = off;
++set @saved_enable_privilege_cache = @@global.enable_privilege_cache;
++set global enable_privilege_cache = off;
++drop database if exists db_save_ctas;
++create database db_save_ctas;
++use db_save_ctas;
++create table ctas_priv_src(a int, b varchar(20));
++insert into ctas_priv_src values (1, 'alpha'), (2, 'beta'), (3, 'gamma');
++drop role if exists r_ctas_src;
++create role r_ctas_src;
++drop user if exists u_ctas;
++create user u_ctas identified by '111' default role r_ctas_src;
++grant connect on account * to r_ctas_src;
++grant show databases on account * to r_ctas_src;
++grant show tables on database db_save_ctas to r_ctas_src;
++grant create table on database db_save_ctas to r_ctas_src;
++grant select on table db_save_ctas.ctas_priv_src to r_ctas_src;
++use db_save_ctas;
++set save_query_result = on;
++/* save_result */select a, b from ctas_priv_src order by a desc;
++a	b
++3	gamma
++2	beta
++1	alpha
++set @saved_qid = last_query_id();
++set @ctas_sql = concat('create table ctas_priv_ok as select a, b from result_scan(''', @saved_qid, ''') as t');
++prepare ctas_priv_p from @ctas_sql;
++execute ctas_priv_p;
++deallocate prepare ctas_priv_p;
++/* save_result */select a, b from ctas_priv_src order by a desc;
++a	b
++3	gamma
++2	beta
++1	alpha
++revoke select on table db_save_ctas.ctas_priv_src from r_ctas_src;
++create table ctas_priv_denied as select a, b from result_scan(last_query_id()) t;
++internal error: do not have privilege to execute the statement
++create table ctas_priv_probe(a int);
++select a from ctas_priv_src;
++internal error: do not have privilege to execute the statement
++select count(*) from ctas_priv_ok;
++count(*)
++3
++select a, b from ctas_priv_ok order by a;
++a	b
++1	alpha
++2	beta
++3	gamma
++show create table ctas_priv_ok;
++Table	Create Table
++ctas_priv_ok	CREATE TABLE `ctas_priv_ok` (\n  `a` int DEFAULT NULL,\n  `b` varchar(20) DEFAULT NULL\n)
++show tables;
++Tables_in_db_save_ctas
++ctas_priv_ok
++ctas_priv_probe
++ctas_priv_src
++set save_query_result = off;
++drop user if exists u_ctas;
++drop role if exists r_ctas_src;
++drop database if exists db_save_ctas;
++set global enable_privilege_cache = @saved_enable_privilege_cache;
++select @@global.enable_privilege_cache = @saved_enable_privilege_cache as cache_snapshot_restored;
++cache_snapshot_restored
++1
+```
+
+**File**: `test/distributed/cases/save_query_result/save_query_result.sql` (modified, +63/-0)
+```diff
+@@ -180,3 +180,66 @@ set save_query_result = off;
+ drop account acc_save;
+ -- reset to default(off)
+ set save_query_result = off;
 +
-+-- 无排序窗口与恰好覆盖四个标量分支的 LIMIT，不应重复执行公共聚合。
-+create table metrics as
-+select row_number() over () as rn, u.* from (
-+    with grouped as (
-+        select period, sum(amount) as total from measurements group by period
-+    ), totals as (
-+        select max(total) as mx, min(total) as mn from grouped
-+    )
-+    select 'max' as metric, mx as amount from totals
-+    union all select 'min', mn from totals
-+    union all select 'sum', mx+mn from totals
-+    union all select 'zero', mx/nullif(mn-mn,0) from totals
-+) u limit 4;
-+select metric, amount from metrics order by metric;
-+-- 无序 ROW_NUMBER 不约束指标与行号的对应关系，但必须完整且唯一。
-+select count(*) as n, count(distinct rn) as distinct_rn, min(rn) as first_rn, max(rn) as last_rn from metrics;
-+select column_name, data_type, numeric_precision, numeric_scale, is_nullable
-+from information_schema.columns
-+where table_schema='cte_scalar_union_limit' and table_name='metrics'
-+order by ordinal_position;
-+
-+-- 重复标量结果不得被去重；OFFSET 保留重复结果的正确重数。
-+with totals as (select sum(amount) as total from measurements)
-+select total from totals union all select total from totals limit 2;
-+with totals as (select sum(amount) as total from measurements)
-+select total from totals union all select total from totals limit 2 offset 1;
-+with totals as (select sum(amount) as total from measurements)
-+select total from totals union all select total from totals limit 1;
-+
-+-- 过滤只会降低保守上界；空的一个消费者不能制造额外行。
-+with totals as (select sum(amount) as total from measurements)
-+select total from totals where total<0
-+union all select total from totals limit 2;
-+
-+-- 动态 LIMIT 可能是零，prepare/execute 不得沿用不安全的消费证明。
-+prepare page from 'with totals as (select sum(amount) as total from measurements) select total from totals union all select total from totals limit ?';
-+set @page_limit=0;
-+execute page using @page_limit;
-+set @page_limit=2;
-+execute page using @page_limit;
-+deallocate prepare page;
-+
-+-- LIMIT 0 不得触发标量聚合中的错误表达式；真正消费时错误仍可见。
-+with risky as (select abs(max(guard_value)) as v from measurements)
-+select v from risky union all select v from risky limit 0;
-+-- @regex("out of range",true)
-+with risky as (select abs(max(guard_value)) as v from measurements)
-+select v from risky union all select v from risky limit 2;
-+
-+-- 全 NULL 的输入与空输入都保留标量聚合行，COUNT 与 SUM 的值不同。
-+update measurements set amount=null;
-+with totals as (select sum(amount) as total, count(amount) as n from measurements)
-+select total,n from totals union all select total,n from totals limit 2;
-+delete from measurements;
-+with grouped as (select period,sum(amount) as total from measurements group by period),
-+     totals as (select max(total) as mx,min(total) as mn from grouped)
-+select mx,mn from totals union all select mx,mn from totals limit 2;
-+create table empty_metrics as
-+with totals as (select sum(amount) as total,count(*) as n from measurements)
-+select total,n from totals union all select total,n from totals limit 2;
-+select * from empty_metrics;
-+with totals as (select count(*) as n from measurements having count(*)>0)
-+select n from totals union all select n from totals limit 2;
-+
-+drop database cte_scalar_union_limit;
++-- PR32727 maintained regression: saved-result CTAS with current source
++-- privileges. The allowed population path is asserted first; a live revoke
++-- then removes only the source read privilege while the target CREATE
++-- privilege stays granted, and reusing the same saved queryID must be
++-- denied before any denied target is created.
++set @saved_enable_privilege_cache = @@global.enable_privilege_cache;
++set global enable_privilege_cache = off;
++drop database if exists db_save_ctas;
++create database db_save_ctas;
++use db_save_ctas;
++create table ctas_priv_src(a int, b varchar(20));
++insert into ctas_priv_src values (1, 'alpha'), (2, 'beta'), (3, 'gamma');
++drop role if exists r_ctas_src;
++create role r_ctas_src;
++drop user if exists u_ctas;
++create user u_ctas identified by '111' default role r_ctas_src;
++grant connect on account * to r_ctas_src;
++grant show databases on account * to r_ctas_src;
++grant show tables on database db_save_ctas to r_ctas_src;
++grant create table on database db_save_ctas to r_ctas_src;
++grant select on table db_save_ctas.ctas_priv_src to r_ctas_src;
++-- @session:id=201&user=sys:u_ctas:r_ctas_src&password=111
++use db_save_ctas;
++set save_query_result = on;
++/* save_result */select a, b from ctas_priv_src order by a desc;
++-- allowed CTAS populated from the really saved result while the source is
++-- readable; the queryID is embedded into the prepared statement text with
++-- concat because the populate phase runs in the internal executor where
++-- last_query_id() is not visible and would resolve to the zero query id.
++set @saved_qid = last_query_id();
++set @ctas_sql = concat('create table ctas_priv_ok as select a, b from result_scan(''', @saved_qid, ''') as t');
++prepare ctas_priv_p from @ctas_sql;
++execute ctas_priv_p;
++deallocate prepare ctas_priv_p;
++-- re-save the same producer so it stays the ring top for the deny phase
++/* save_result */select a, b from ctas_priv_src order by a desc;
++-- @session
++-- live revoke of the source read privilege only; the target CREATE stays granted
++revoke select on table db_save_ctas.ctas_priv_src from r_ctas_src;
++-- @session:id=201&user=sys:u_ctas:r_ctas_src&password=111
++-- reusing the saved queryID must be denied by the current source privilege
++-- @ignore:0
++create table ctas_priv_denied as select a, b from result_scan(last_query_id()) t;
++-- witness after the revoke: the same live role keeps target CREATE
++create table ctas_priv_probe(a int);
++-- the direct source read is denied in this live session
++-- @ignore:0
++select a from ctas_priv_src;
++select count(*) from ctas_priv_ok;
++select a, b from ctas_priv_ok order by a;
++show create table ctas_priv_ok;
++-- no leftover denied target exists
++show tables;
++set save_query_result = off;
++-- @session
++drop user if exists u_ctas;
++drop role if exists r_ctas_src;
++drop database if exists db_save_ctas;
++-- restore the genuine original global value captured at case start
++set global enable_privilege_cache = @saved_enable_privilege_cache;
++-- equality with the case-start snapshot is the restoration oracle, valid for any initial value
++select @@global.enable_privilege_cache = @saved_enable_privilege_cache as cache_snapshot_restored;
 ```
 
 ---
 
-### Incident Patch 3: `c2f82ede` (2026-11-12)
-**Commit Message**: fix(lockservice): report all waiters in mo_locks (#32631)
+### Incident Patch 2: `2a42b3e9` (2026-11-13)
+**Commit Message**: fix(external): validate and normalize Parquet temporal LOAD values (#32722)
 
 ## What type of PR is this?
 
@@ -3227,93 +2759,132 @@ inner/zero/dy
 
 ## Which issue(s) this PR fixes:
 
-Fixes #32617
+Fixes #31519
+Fixes #31520
 
 ## What this PR does / why we need it:
 
-`Lock.IterWaiters` negates the callback result even though its queue iterator
-and callers use `true` to continue. `handleGetLockInfo` therefore records one
-waiter and silently stops, making `mo_locks()` and `mo_catalog.mo_locks`
-incomplete when multiple transactions wait on the same lock.
+Numeric Parquet columns loaded into DATE/TIMESTAMP/DATETIME targets via `LOAD` are now validated and normalized per logical consumed row values before assignment, instead of being trusted raw:
 
-Pass the callback result through unchanged and document early termination.
-This restores the existing contract without changing queue ownership,
-locking, notification, deadlock detection, RPC formats, or persisted data.
-Repository callers have been checked; actual deadlock detection traverses
-the underlying queue directly and is not affected by this wrapper defect.
+- Each consumed non-null dictionary-page value is checked against the target SQL calendar, so out-of-range carriers such as year 10000, DATE32 day 0 (owned by the existing INSERT-layer lower bound) and session-local display overflows are rejected with the engine's own temporal errors instead of silently persisting (issue 31519). The check honors the session time zone for local-wall calendars and keeps the existing foreign-table read mapping untouched - only the LOAD-only numeric temporal mappers changed.
+- Fractional-second carriers are staged at the source units/scale (micros) and then routed through the existing assign-cast semantics, so target-scale rounding, `TIME_T
 
-Regression coverage:
-
-- Seven iterator cases cover empty/single/multiple waiters, early stop, and
-  the committed-prefix boundary without consuming queue entries.
-- A real MySQL integration test uses one holder and two waiters on one row.
-  An
-
-**File**: `pkg/lockservice/lock.go` (modified, +2/-2)
+**File**: `pkg/sql/colexec/external/parquet.go` (modified, +56/-0)
 ```diff
-@@ -323,10 +323,10 @@ func (l Lock) IterHolders(fn func(holder pb.WaitTxn) bool) {
- 	}
- }
+@@ -1762,9 +1762,17 @@ func (h *ParquetHandler) getMapperWithStaging(sc *parquet.Column, dt plan.Type,
+ 				break
+ 			}
+ 			if lt.Timestamp != nil {
++				assignment := h.timeAssignment
+ 				mp.mapper = func(mp *columnMapper, page parquet.Page, proc *process.Process, vec *vector.Vector) error {
+ 					loc := parquetSessionLocation(proc)
+ 					return processParquetValuesToFixed(proc.Ctx, mp, page, proc, vec, types.Date(0), func(v parquet.Value) (types.Date, error) {
++						if assignment {
++							dt, err := parquetLoadTimestampValueToDatetime(proc.Ctx, st, v, loc)
++							if err != nil {
++								return 0, err
++							}
++							return dt.ToDate(), nil
++						}
+ 						dt, err := parquetTimestampValueToDatetime(proc.Ctx, st, v, loc)
+ 						if err != nil {
+ 							return 0, err
+@@ -1779,7 +1787,13 @@ func (h *ParquetHandler) getMapperWithStaging(sc *parquet.Column, dt plan.Type,
+ 			if dateT == nil {
+ 				break
+ 			}
++			assignment := h.timeAssignment
+ 			mp.mapper = func(mp *columnMapper, page parquet.Page, proc *process.Process, vec *vector.Vector) error {
++				if assignment {
++					return processParquetValuesToFixed(proc.Ctx, mp, page, proc, vec, types.Date(0), func(v parquet.Value) (types.Date, error) {
++						return parquetLoadDate32(proc.Ctx, v.Int32())
++					})
++				}
+ 				data := page.Data()
+ 				dict := page.Dictionary()
+ 				if dict == nil {
+@@ -1830,9 +1844,17 @@ func (h *ParquetHandler) getMapperWithStaging(sc *parquet.Column, dt plan.Type,
+ 				break
+ 			}
+ 			if lt.Date != nil {
++				assignment := h.timeAssignment
+ 				mp.mapper = func(mp *columnMapper, page parquet.Page, proc *process.Process, vec *vector.Vector) error {
+ 					loc := parquetSessionLocation(proc)
+ 					return processParquetValuesToFixed(proc.Ctx, mp, page, proc, vec, types.Timestamp(0), func(v parquet.Value) (types.Timestamp, error) {
++						if assignment {
++							date, err := parquetLoadDate32(proc.Ctx, v.Int32())
++							if err != nil {
++								return 0, err
++							}
++							return date.ToTimestamp(loc), nil
++						}
+ 						return types.DaysFromUnixEpochToDate(v.Int32()).ToTimestamp(loc), nil
+ 					})
+ 				}
+@@ -1845,7 +1867,23 @@ func (h *ParquetHandler) getMapperWithStaging(sc *parquet.Column, dt plan.Type,
+ 			}
+ 			// isAdjustedToUTC: true=UTC (use directly), false=local wall-clock time.
+ 			isAdjustedToUTC := tsT.IsAdjustedToUTC
++			assignment := h.timeAssignment
+ 			mp.mapper = func(mp *columnMapper, page parquet.Page, proc *process.Process, vec *vector.Vector) error {
++				if assignment {
++					// LOAD stages the true source precision (scale 6) and lets
++					// the standard assignment cast own target-scale rounding,
++					// SQL mode, and the final row-domain check.
++					loc := parquetSessionLocation(proc)
++					return processParquetTemporalAssignment[types.Timestamp](mp, page, proc, vec,
++						parquetTimestampStagingType,
++						func(v parquet.Value) (types.Timestamp, error) {
++							micros, err := parquetTimestampValueToMicros(proc.Ctx, v, lt)
++							if err != nil {
++								return 0, err
++							}
++							return parquetLoadTimestampMicrosToTimestamp(proc.Ctx, micros, isAdjustedToUTC, loc)
++						})
++				}
+ 				data := page.Data()
+ 				dict := page.Dictionary()
  
--// IterHolders iter which txn is waiting for this lock
-+// IterWaiters visits transactions waiting for this lock until fn returns false.
- func (l Lock) IterWaiters(fn func(waiter pb.WaitTxn) bool) {
- 	l.waiters.iter(func(w *waiter) bool {
--		return !fn(w.txn)
-+		return fn(w.txn)
- 	})
- }
- 
-```
-
-**File**: `pkg/lockservice/lock_test.go` (modified, +34/-0)
-```diff
-@@ -25,6 +25,40 @@ import (
- 	"github.com/stretchr/testify/require"
- )
- 
-+func TestLockIterWaiters(t *testing.T) {
-+	for _, tc := range []struct {
-+		name      string
-+		count     int
-+		committed int
-+		stopAfter int
-+		want      []string
-+	}{
-+		{name: "empty", committed: -1},
-+		{name: "one", count: 1, committed: -1, want: []string{"w1"}},
-+		{name: "all", count: 3, committed: -1, want: []string{"w1", "w2", "w3"}},
-+		{name: "stop-first", count: 3, committed: -1, stopAfter: 1, want: []string{"w1"}},
-+		{name: "stop-second", count: 3, committed: -1, stopAfter: 2, want: []string{"w1", "w2"}},
-+		{name: "uncommitted", count: 3, committed: 0},
-+		{name: "committed-prefix", count: 3, committed: 2, want: []string{"w1", "w2"}},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			// Only iteration is under test: these values own no pooled references
-+			// or notification channels. Match the queue's committed-prefix boundary.
-+			q := &sliceBasedWaiterQueue{beginChangeIdx: tc.committed}
-+			for _, id := range []string{"w1", "w2", "w3"}[:tc.count] {
-+				q.waiters = append(q.waiters, &waiter{txn: pb.WaitTxn{TxnID: []byte(id)}})
+@@ -1967,7 +2005,17 @@ func (h *ParquetHandler) getMapperWithStaging(sc *parquet.Column, dt plan.Type,
+ 			break
+ 		}
+ 		if lt.Date != nil {
++			assignment := h.timeAssignment
+ 			mp.mapper = func(mp *columnMapper, page parquet.Page, proc *process.Process, vec *vector.Vector) error {
++				if assignment {
++					return processParquetValuesToFixed(proc.Ctx, mp, page, proc, vec, types.Datetime(0), func(v parquet.Value) (types.Datetime, error) {
++						date, err := parquetLoadDate32(proc.Ctx, v.Int32())
++						if err != nil {
++							return 0, err
++						}
++						return date.ToDatetime(), nil
++					})
++				}
+ 				data := page.Data()
+ 				dict := page.Dictionary()
+ 				if dict == nil {
+@@ -2010,8 +2058,16 @@ func (h *ParquetHandler) getMapperWithStaging(sc *parquet.Column, dt plan.Type,
+ 		if lt.Timestamp == nil {
+ 			break
+ 		}
++		assignment := h.timeAssignment
+ 		mp.mapper = func(mp *columnMapper, page parquet.Page, proc *process.Process, vec *vector.Vector) error {
+ 			loc := parquetSessionLocation(proc)
++			if assignment {
++				return processParquetTemporalAssignment[types.Datetime](mp, page, proc, vec,
++					parquetDatetimeStagingType,
++					func(v parquet.Value) (types.Datetime, error) {
++						return parquetLoadTimestampValueToDatetime(proc.Ctx, st, v, loc)
++					})
 +			}
-+			var got []string
-+			Lock{waiters: q}.IterWaiters(func(w pb.WaitTxn) bool {
-+				got = append(got, string(w.TxnID))
-+				return tc.stopAfter == 0 || len(got) < tc.stopAfter
-+			})
-+			require.Equal(t, tc.want, got)
-+			require.Len(t, q.waiters, tc.count, "observation must not consume waiters")
-+		})
-+	}
-+}
-+
- func TestTryHoldEmptyLockReturnsError(t *testing.T) {
- 	l := Lock{
- 		holders: newHolders(),
+ 			return processParquetValuesToFixed(proc.Ctx, mp, page, proc, vec, types.Datetime(0), func(v parquet.Value) (types.Datetime, error) {
+ 				return parquetTimestampValueToDatetime(proc.Ctx, st, v, loc)
+ 			})
 ```
 
-**File**: `pkg/tests/sqlintegration/lock_waiters_test.go` (added, +172/-0)
+**File**: `pkg/sql/colexec/external/parquet_temporal_assignment.go` (added, +231/-0)
 ```diff
-@@ -0,0 +1,172 @@
+@@ -0,0 +1,231 @@
 +// Copyright 2026 Matrix Origin
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
@@ -3328,133 +2899,755 @@ Regression coverage:
 +// See the License for the specific language governing permissions and
 +// limitations under the License.
 +
-+package sqlintegration
++package external
 +
 +import (
 +	"context"
-+	"database/sql"
-+	"encoding/hex"
++	"math"
++	"time"
++
++	"github.com/matrixorigin/matrixone/pkg/common/moerr"
++	"github.com/matrixorigin/matrixone/pkg/container/types"
++	"github.com/matrixorigin/matrixone/pkg/container/vector"
++	"github.com/matrixorigin/matrixone/pkg/sql/plan/function"
++	"github.com/matrixorigin/matrixone/pkg/vm/process"
++	"github.com/parquet-go/parquet-go"
++)
++
++// Numeric Parquet DATE/TIMESTAMP sources that feed a temporal target under
++// LOAD receive the same SQL assignment contract as INSERT:
++//
++//   - values above the supported SQL calendar (year > 9999 in the target
++//     calendar) are rejected row by row, before any value reaches the target
++//     vector;
++//   - the carrier keeps the true source precision (scale 6) and the single
++//     target-scale normalization is the standard assignment cast, which owns
++//     half-step rounding, carry, TIME_TRUNCATE_FRACTIONAL, and
++//     statement-ignore semantics;
++//   - after that normalization the rows are re-checked, because rounding can
++//     carry 9999-12-31 23:59:59.999999 into 10000-01-01 00:00:00;
++//   - the lower bound and zero-date policies stay owned by the insert layer.
++//
++// Foreign-table reads never route through this path: their raw mapping policy
++// is unchanged.
++//
++// All checks are per consumed logical row. Dictionary pages are expanded per
++// referenced entry only, so an out-of-range entry that no consumed row
++// references does not fail the load, and NULL-only pages pass unchanged.
++
++var (
++	// parquetUnixEpochMicros is the numeric of 1970-01-01 in the year-0 based
++	// microsecond space shared by types.Timestamp and types.Datetime.
++	parquetUnixEpochMicros = int64(types.UnixMicroToTimestamp(0))
++	// parquetUnixEpochDays is the Date numeric of 1970-01-01.
++	parquetUnixEpochDays = int32(types.DaysFromUnixEpochToDate(0))
++	// The storable SQL calendar in days since the Unix epoch: 0001-01-01
++	// through 9999-12-31. A raw day count inside this interval can never wrap
++	// in the epoch add nor in any derived DATETIME/TIMESTAMP conversion.
++	parquetMinLoadDateDays = time.Date(1, 1, 1, 0, 0, 0, 0, time.UTC).Unix() / int64(86400)
++	parquetMaxLoadDateDays = time.Date(9999, 12, 31, 0, 0, 0, 0, time.UTC).Unix() / int64(86400)
++	// parquetMaxLoadDatetime is 9999-12-31 23:59:59.999999 in the shared
++	// year-0 based numeric space: the SQL-calendar upper bound.
++	parquetMaxLoadDatetime = types.FromClockUTC(9999, 12, 31, 23, 59, 59, 999999).ToDatetime(time.UTC)
++	// Staging carriers carry the true parquet source precision.
++	parquetTimestampStagingType = types.T_timestamp.ToTypeWithScale(6)
++	parquetDatetimeStagingType  = types.T_datetime.ToTypeWithScale(6)
++)
++
++// parquetLoadTemporalOffsetBudgetMicros bounds the timezone offset applied by
++// ToDatetime when a timestamp is displayed in the session timezone. Real
++// offsets stay within +-15h; the two-day headroom additionally keeps the
++// epoch-space guard below from covering every wrap exactly at its boundary.
++const parquetLoadTemporalOffsetBudgetMicros = int64(2 * 86400 * 1000000)
++
++// parquetGuardTimestampMicros rejects raw epoch microseconds that would
++// overflow the shared year-0 based numeric space when the epoch or a zone
++// offset is added. A wrapped value could otherwise look like a small valid
++// timestamp and slip past calendar validation.
++func parquetGuardTimestampMicros(ctx context.Context, micros int64) error {
++	if micros > math.MaxInt64-parquetUnixEpochMicros-parquetLoadTemporalOffsetBudgetMicros ||
++		micros < math.MinInt64+parquetUnixEpochMicros+parquetLoadTemporalOffsetBudgetMicros {
++		return moerr.NewInvalidInputf(ctx,
++			"parquet timestamp %d microseconds is out of range", micros)
++	}
++	return nil
++}
++
++// parquetLoadDate32 maps days since the Unix epoch into a Date value under
++// the storable SQL calendar. The raw-domain guard runs before the epoch add
++// and before any derived DATETIME/TIMESTAMP conversion, so extreme int32 day
++// counts cannot wrap into a small valid-looking value downstream. Zero-date
++// and TIMESTAMP lower-bound policies stay owned by the insert layer.
++func parquetLoadDate32(ctx context.Context, days int32) (types.Date, error) {
++	if int64(days) < parquetMinLoadDateDays || int64(days) > parquetMaxLoadDateDays {
++		return 0, moerr.NewInvalidInputf(ctx,
++			"parquet date is out of range for 
+```
+
+**File**: `pkg/sql/colexec/external/parquet_temporal_assignment_test.go` (added, +577/-0)
+```diff
+@@ -0,0 +1,577 @@
++// Copyright 2026 Matrix Origin
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package external
++
++import (
++	"bytes"
 +	"fmt"
-+	"sync"
++	"math"
 +	"testing"
 +	"time"
 +
-+	"github.com/matrixorigin/matrixone/pkg/embed"
-+	"github.com/matrixorigin/matrixone/pkg/lockservice"
++	"github.com/matrixorigin/matrixone/pkg/common/moerr"
++	"github.com/matrixorigin/matrixone/pkg/container/types"
++	"github.com/matrixorigin/matrixone/pkg/container/vector"
++	"github.com/matrixorigin/matrixone/pkg/pb/plan"
++	"github.com/matrixorigin/matrixone/pkg/testutil"
++	"github.com/matrixorigin/matrixone/pkg/vm/process"
++	"github.com/parquet-go/parquet-go"
 +	"github.com/stretchr/testify/require"
 +)
 +
-+func TestMoLocksListsAllWaiters(t *testing.T) {
-+	runSQLIntegration(t, func(c embed.Cluster) {
-+		cn, err := c.GetCNService(0)
-+		require.NoError(t, err)
-+		db, err := sql.Open("mysql", fmt.Sprintf("dump:111@tcp(127.0.0.1:%d)/", cn.GetServiceConfig().CN.Frontend.Port))
-+		require.NoError(t, err)
-+		defer db.Close()
-+		ctx, cancel := context.WithTimeout(t.Context(), 2*time.Minute)
-+		defer cancel()
-+		execSQLRequire(t, ctx, db, "create database lock_waiter_view")
-+		defer cleanupSQLIntegration(t, cn, "drop database lock_waiter_view")
-+		execSQLRequire(t, ctx, db, "create table lock_waiter_view.t(id int primary key, v int)")
-+		execSQLRequire(t, ctx, db, "insert into lock_waiter_view.t values (1,10)")
-+		var tableID uint64
-+		require.NoError(t, db.QueryRowContext(ctx, "select rel_id from mo_catalog.mo_tables where reldatabase='lock_waiter_view' and relname='t'").Scan(&tableID))
-+		tableFilter := fmt.Sprintf(" where table_id='%d'", tableID)
++// loadTemporalProc builds a process wired to the session timezone and SQL mode
++// used by the temporal assignment tests.
++func loadTemporalProc(t *testing.T, tz *time.Location, sqlMode string) *process.Process {
++	t.Helper()
++	proc := testutil.NewProcess(t)
++	proc.Base.SessionInfo.TimeZone = tz
++	proc.SetResolveVariableFunc(func(string, bool, bool) (interface{}, error) {
++		return sqlMode, nil
++	})
++	return proc
++}
 +
-+		// Reuse the canonical single-CN fixture: omission happens while the owner
-+		// builds its diagnostic RPC response, independent of the waiters' CNs.
-+		// Repeat on the same table to prove the observation does not consume or
-+		// retain queue entries and that normal lock handoff still completes.
-+		for round := 0; round < 2; round++ {
-+			func() {
-+				holder, err := db.BeginTx(ctx, nil)
-+				require.NoError(t, err)
-+				defer holder.Rollback()
-+				const query = "select v from lock_waiter_view.t where id=1 for update"
-+				var value int
-+				require.NoError(t, holder.QueryRowContext(ctx, query).Scan(&value))
-+				require.Equal(t, 10, value)
++// localTimestampMicrosModel writes an int64 TIMESTAMP(MICROS) leaf with
++// isAdjustedToUTC=false through the documented schema tag, so the local
++// wall-clock branch of the timestamp mappers can be exercised end to end.
++type localTimestampMicrosModel struct {
++	Value int64 `parquet:"local_ts,timestamp(microsecond:local)"`
++}
 +
-+				waitCtx, stop := context.WithCancel(ctx)
-+				var workers sync.WaitGroup
-+				defer func() {
-+					stop()
-+					_ = holder.Rollback()
-+					workers.Wait()
-+				}()
-+				type result struct {
-+					value       int
-+					queryErr    error
-+					rollbackErr error
-+				}
-+				done := make(chan result, 2)
-+				for i := 0; i < 2; i++ {
-+					waiter, err := db.BeginTx(waitCtx, nil)
-+					require.NoError(t, err)
-+					workers.Go(func() {
-+						var r result
-+						r.queryErr = waiter.QueryRowContext(waitCtx, query).Scan(&r.value)
-+						r.rollbackErr = waiter.Rollback()
-+						done <- r
-+					})
-+				}
++func writeLocalTimestampPage(t *testing.T, micros []int64) (*parquet.File, parquet.Page) {
++	t.Helper()
++	var buf bytes.Buffer
++	schema := parquet.SchemaOf(localTimestampMicrosModel{})
++	w := parquet.NewWriter(&buf, schema)
++	rows := make([]parquet.Row, 0, len(micros))
++	for _, m := range micros {
++		rows = append(rows, parquet.Row{parquet.Int64Value(m).Level(0, 0, 0)})
++	}
++	_, err := w.WriteRows(rows)
++	require.NoError(t, err)
++	require.NoError(t, w.Close())
++	f, err := parquet.OpenFile(bytes.NewReader(buf.Bytes()), int64(buf.Len()))
++	require.NoError(t, err)
++	col := f.Root().Column("local_ts")
++	require.NotNil(t, col)
++	lt := col.Type().LogicalType()
++	require.NotNil(t, lt)
++	require.NotNil(t, lt.Timestamp)
++	require.False(t, lt.Timestamp.IsAdjustedToUTC, "fixture must be a local wall-clock timestamp")
++	pages := col.Pages()
++	defer func() { require.NoError(t, pages.Close()) }()
++	page, err := pages.ReadPage()
++	require.NoError(t, err)
++	require.NotNil(t, page)
++	return f, page
++}
 +
-+				// Use the independent transaction view as the arrival barrier, not
-+				// the lock view being tested. Match the exact table and encoded key.
-+				waiting := func() map[string]string {
-+					arrivalCtx, cancel := context.WithTimeout(ctx, 10*time.Second)
-+					defer cancel()
-+					ticker := time.NewTicker(10 * time.Millisecond)
-+					defer ticker.Stop()
-+					for {
-+						waiting := func() map[string]string {
-+							rows, err := db.QueryContext(arrivalCtx, "select txn_id, lock_content from mo_transactions() as t"+tableFilter+" and lock_mode='Exclusive'")
-+							require.NoError(t, err)
-+							defer rows.Close()
-+							waiting := make(map[string]string)
-+							for rows.Next() {
-+								var id, key string
-+								require.NoError(t, rows.Scan(&id, &key))
-+								waiting[id] = key
-+							}
-+							require.NoError(t, rows.Err())
-+							return waiting
-+						}()
-+						if len(waiting) == 2 {
-+							return waiting
-+						}
-+						select {
-+						case <-ticker.C:
-+						case <-arrivalCtx.Done():
-+							t.Fatalf("both SQL transactions must be waiting: %v", arrivalCtx.Err())
-+						}
++// TestParquetLoadTemporalBounds pins the SQL calendar upper bound for numeric
++// Parquet DATE/TIMESTAMP sources under LOAD, mirroring the rejection the SQL
++// parser applies to year 10000 spellings. Lower-bound and zero-date policies
++// belong to the insert layer and are intentionally not re-enforced here.
++func TestParquetLoadTemporalBounds(t *testing.T) {
++	const (
++		// 9999-12-31 23:59:59.999999 UTC
++		microsMaxSqlCalendar = 253402300799999999
++		// 10000-01-01 00:00:00 UTC
++		microsYear10000 = 253402300800000000
++		// 9999-12-31 15:00:00 UTC: at +14:00 this is local 10000-01-01 05:00.
++		microsUtcTailPlus14 = 253402268000000000
++		// 10000-01-01 05:00:00 UTC: at -12:00 this is local 9999-12-31 17:00.
++		microsUtcHeadMinus12 = 253402322800000000
++	)
++	daysYear10000 := int32(time.Date(10000, 1, 1, 0, 0, 0, 0, time.UTC).Unix() / int64(86400))
++	daysMaxSqlCalendar := int32(time.Date(9999, 12, 31, 0, 0, 0, 0, time.UTC).Unix() / int64(86400))
++	days2024 := int32(time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC).Unix() / int64(86400))
++
++	utc := time.UTC
++	plus14 := time.FixedZone("+14:00", 14*3600)
++	minus12 := time.FixedZone("-12:00", -12*3600)
++
++	rowOfInt64 := func(values ...int64) []parquet.Row {
++		rows := make([]parquet.Row, 0, len(values))
++		for _, v := range values {
++			rows = append(rows, parquet.Row{parquet.Int64Value(v).Level(0, 0, 0)})
++		}
++		return rows
++	}
++	rowOfInt32 := func(values ...int32) []parquet.Row {
++		rows := make([]parquet.Row, 0, len(values))
++		for _, v := range values {
++			rows = append(rows, parquet.Row{parquet.Int32Value(v).Level(0, 0, 0)})
++		}
++		return rows
++	}
++
++	t.Run("adjusted micros max passes at utc", func(t *testing.T) {
++		proc := loadTemporalProc(t, utc, "")
++		f, page := writeColumnAndGetPage(t, parquet.Timestamp(parquet.Microsecond), rowOfInt64(microsMaxSqlCalendar))
++		var h ParquetHandler
++		h.timeAssignment = true
++		mp := h.getMapper(f.Root().Column("c"), plan.Type{Id: int32(types.T_timestamp), Scale: 6, NotNullable: true})
++		require.NotNil(t, mp)
++		vec := vector.NewVec(types.New(types.T_timestamp, 0, 6))
++		defer vec.Free(proc.Mp())
++		re
+```
+
+**File**: `test/distributed/cases/load_data/load_data_parquet.result` (modified, +15/-1)
+```diff
+@@ -218,8 +218,22 @@ select * from ts_test;
+ ➤ id[-5,64,0]  ¦  ts_no_tz_micros[93,64,0]  ¦  ts_no_tz_millis[93,64,0]  𝄀
+ 1  ¦  2023-10-27 10:00:00  ¦  2025-12-25 08:30:00  𝄀
+ 2  ¦  1960-01-01 12:00:00  ¦  2000-01-01 00:00:00  𝄀
+-3  ¦  null  ¦  2023-12-31 23:59:59
++3  ¦  null  ¦  2024-01-01 00:00:00
+ drop table ts_test;
++create table ts_test_ctl(id bigint, v datetime);
++insert into ts_test_ctl values (1, '2023-12-31 23:59:59.999');
++select * from ts_test_ctl;
++➤ id[-5,64,0]  ¦  v[93,64,0]  𝄀
++1  ¦  2024-01-01 00:00:00
++set @ts_saved_sql_mode = @@session.sql_mode;
++set session sql_mode = 'TIME_TRUNCATE_FRACTIONAL';
++insert into ts_test_ctl values (2, '2023-12-31 23:59:59.999');
++select * from ts_test_ctl;
++➤ id[-5,64,0]  ¦  v[93,64,0]  𝄀
++1  ¦  2024-01-01 00:00:00  𝄀
++2  ¦  2023-12-31 23:59:59
++set session sql_mode = @ts_saved_sql_mode;
++drop table ts_test_ctl;
+ drop table if exists none_compression;
+ CREATE TABLE none_compression (
+ id BIGINT,
+```
+
+**File**: `test/distributed/cases/load_data/load_data_parquet.sql` (modified, +10/-0)
+```diff
+@@ -140,6 +140,16 @@ load data infile {'filepath'='$resources/parquet/ts_no_tz_test.parquet', 'format
+ select * from ts_test;
+ drop table ts_test;
+ 
++create table ts_test_ctl(id bigint, v datetime);
++insert into ts_test_ctl values (1, '2023-12-31 23:59:59.999');
++select * from ts_test_ctl;
++set @ts_saved_sql_mode = @@session.sql_mode;
++set session sql_mode = 'TIME_TRUNCATE_FRACTIONAL';
++insert into ts_test_ctl values (2, '2023-12-31 23:59:59.999');
++select * from ts_test_ctl;
++set session sql_mode = @ts_saved_sql_mode;
++drop table ts_test_ctl;
++
+ -- compressed file load
+ drop table if exists none_compression;
+ CREATE TABLE none_compression (
+```
+
+---
+
+### Incident Patch 3: `c52d2deb` (2026-11-13)
+**Commit Message**: fix(frontend): combine compound privileges across inherited roles (#32687)
+
+## What type of PR is this?
+
+- [ ] API-change
+- [x] BUG
+- [ ] Improvement
+- [ ] Documentation
+- [ ] Feature
+- [ ] Test and CI
+- [ ] Code Refactoring
+
+## Which issue(s) this PR fixes:
+
+Related to matrixorigin/matrixflow#21538.
+
+## What this PR does / why we need it:
+
+This is the main-branch counterpart of #32663, adapted to main's single-active-role semantics. `SET SECONDARY ROLE ALL/NONE` remains a no-op; this change does not activate independently granted secondary roles.
+
+Compound authorization currently requires one role to satisfy every item. If the active role can SELECT from A and inherits a role that can SELECT from B, each table is readable separately but their JOIN is rejected with the privilege cache disabled. With caching enabled, the result can depend on traversal order.
+
+### Changes
+
+- Retain fully satisfied table/view compound items across the existing role sets and inheritance levels within one authorization attempt, independently of the session cache.
+- Continue checking other items after an individual miss, but authorize only when every required item is satisfied.
+- Keep each view chain ato
+
+**File**: `pkg/frontend/authenticate.go` (modified, +45/-6)
+```diff
+@@ -8493,9 +8493,38 @@ func verifyViewPrivilegeForRole(
+ 	return false, nil
+ }
+ 
++// newCompoundPrivilegeChecks retains complete table-access checks across inherited
++// roles for one authorization attempt, independently of the session cache.
++func newCompoundPrivilegeChecks(priv *privilege) map[*compoundEntry][]bool {
++	if priv.needMatchedRole {
++		return nil
++	}
++	var checks map[*compoundEntry][]bool
++	for _, entry := range priv.entries {
++		if entry.privilegeEntryTyp != privilegeEntryTypeCompound || entry.compound == nil || len(entry.compound.items) < 2 {
++			continue
++		}
++		canCombine := true
++		for _, item := range entry.compound.items {
++			if item.privilegeTyp == PrivilegeTypeCanGrantRoleToOthersInCreateUser ||
++				(item.objType != objectTypeTable && item.objType != objectTypeView) {
++				canCombine = false
++				break
++			}
++		}
++		if canCombine {
++			if checks == nil {
++				checks = make(map[*compoundEntry][]bool)
++			}
++			checks[entry.compound] = make([]bool, len(entry.compound.items))
++		}
++	}
++	return checks
++}
++
+ // determineRoleSetHasPrivilegeSet decides the role set has at least one privilege of the privilege set.
+ // The algorithm 2.
+-func determineRoleSetHasPrivilegeSet(ctx context.Context, bh BackgroundExec, ses *Session, roleIds *btree.Set[int64], priv *privilege, enableCache bool) (bool, int64, error) {
++func determineRoleSetHasPrivilegeSet(ctx context.Context, bh BackgroundExec, ses *Session, roleIds *btree.Set[int64], priv *privilege, enableCache bool, compoundChecks map[*compoundEntry][]bool) (bool, int64, error) {
+ 	var err error
+ 	var pls []privilegeLevelType
+ 	var yes bool
+@@ -8541,8 +8570,13 @@ func determineRoleSetHasPrivilegeSet(ctx context.Context, bh BackgroundExec, ses
+ 
+ 				allTrue := true
+ 				matchedRoleID := int64(0)
+-				// multi privileges take effect together
+-				for _, mi := range entry.compound.items {
++				checked := compoundChecks[entry.compound]
++				// All items are required, but different inherited roles may satisfy
++				// them. Each view chain remains a complete check in its own context.
++				for itemIndex, mi := range entry.compound.items {
++					if checked != nil && checked[itemIndex] {
++						continue
 +					}
-+				}()
-+				var key string
-+				for _, current := range waiting {
-+					require.NotEmpty(t, current)
-+					if key == "" {
-+						key = current
-+					}
-+					require.Equal(t, key, current, "both transactions must contend on the same key")
+ 					if mi.privilegeTyp == PrivilegeTypeCanGrantRoleToOthersInCreateUser {
+ 						yes, err = determineUserCanGrantRolesToOthersInternal(ctx, bh, ses, []*tree.Role{mi.role})
+ 						if err != nil {
+@@ -8650,7 +8684,11 @@ func determineRoleSetHasPrivilegeSet(ctx context.Context, bh BackgroundExec, ses
+ 					}
+ 					if !yes {
+ 						allTrue = false
+-						break
++						if checked == nil {
++							break
++						}
++					} else if checked != nil {
++						checked[itemIndex] = true
+ 					}
+ 				}
+ 
+@@ -8910,7 +8948,8 @@ func determineUserHasPrivilegeSetWithSelectLockBatch(ctx context.Context, ses *S
+ 
+ 	// Call the algorithm 2.
+ 	// If the result of the algorithm 2 is true, Then return true;
+-	yes, matchedRoleID, err = determineRoleSetHasPrivilegeSet(ctx, bh, ses, roleSetOfKthIteration, priv, enableCache)
++	compoundChecks := newCompoundPrivilegeChecks(priv)
++	yes, matchedRoleID, err = determineRoleSetHasPrivilegeSet(ctx, bh, ses, roleSetOfKthIteration, priv, enableCache, compoundChecks)
+ 	if err != nil {
+ 		return false, stats, err
+ 	}
+@@ -9005,7 +9044,7 @@ func determineUserHasPrivilegeSetWithSelectLockBatch(ctx context.Context, ses *S
+ 
+ 		// Call the algorithm 2.
+ 		// If the result of the algorithm 2 is true, Then return true;
+-		yes, matchedRoleID, err = determineRoleSetHasPrivilegeSet(ctx, bh, ses, roleSetOfKPlusOneThIteration, priv, enableCache)
++		yes, matchedRoleID, err = determineRoleSetHasPrivilegeSet(ctx, bh, ses, roleSetOfKPlusOneThIteration, priv, enableCache, compoundChecks)
+ 		if err != nil {
+ 			return false, stats, err
+ 		}
+```
+
+**File**: `pkg/frontend/authenticate_compound_test.go` (added, +183/-0)
+```diff
+@@ -0,0 +1,183 @@
++// Copyright 2026 Matrix Origin
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++// http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package frontend
++
++import (
++	"context"
++	"fmt"
++	"testing"
++
++	"github.com/golang/mock/gomock"
++	"github.com/prashantv/gostub"
++	"github.com/stretchr/testify/require"
++
++	"github.com/matrixorigin/matrixone/pkg/common/moerr"
++	"github.com/matrixorigin/matrixone/pkg/defines"
++)
++
++func TestCompoundPrivilegesAcrossInheritedRoles(t *testing.T) {
++	for _, cacheEnabled := range []bool{false, true} {
++		for _, tc := range []struct {
++			name      string
++			grants    map[int64][]string
++			inherited map[int64][]int64
++			reverse   bool
++			want      bool
++		}{
++			{name: "parent_and_child", grants: map[int64][]string{5: {"a"}, 7: {"b"}}, inherited: map[int64][]int64{5: {7}}, want: true},
++			{name: "reverse_grants", grants: map[int64][]string{5: {"b"}, 7: {"a"}}, inherited: map[int64][]int64{5: {7}}, want: true},
++			{name: "reverse_items", grants: map[int64][]string{5: {"a"}, 7: {"b"}}, inherited: map[int64][]int64{5: {7}}, reverse: true, want: true},
++			{name: "different_depths", grants: map[int64][]string{7: {"a"}, 9: {"b"}}, inherited: map[int64][]int64{5: {7}, 7: {9}}, want: true},
++			{name: "siblings", grants: map[int64][]string{7: {"a"}, 9: {"b"}}, inherited: map[int64][]int64{5: {7, 9}}, want: true},
++			{name: "reverse_siblings", grants: map[int64][]string{7: {"b"}, 9: {"a"}}, inherited: map[int64][]int64{5: {7, 9}}, want: true},
++			{name: "single_role", grants: map[int64][]string{5: {"a", "b"}}, want: true},
++			{name: "missing_permission", grants: map[int64][]string{5: {"a"}}, inherited: map[int64][]int64{5: {7}}},
++			{name: "not_inherited", grants: map[int64][]string{5: {"a"}, 7: {"b"}}},
++			{name: "cycle_missing_permission", grants: map[int64][]string{7: {"a"}}, inherited: map[int64][]int64{5: {7}, 7: {5}}},
++		} {
++			t.Run(fmt.Sprintf("cache_%t/%s", cacheEnabled, tc.name), func(t *testing.T) {
++				ctx := defines.AttachAccountId(t.Context(), 0)
++				priv := compoundTablePrivileges("a", "b")
++				if tc.reverse {
++					priv.entries[0].compound.items[0], priv.entries[0].compound.items[1] = priv.entries[0].compound.items[1], priv.entries[0].compound.items[0]
 +				}
-+				encoded, err := hex.DecodeString(key)
++				ses, _ := newCompoundPrivilegeSession(t, priv, tc.grants, tc.inherited, cacheEnabled)
++				ok, _, err := determineUserHasPrivilegeSet(ctx, ses, priv)
 +				require.NoError(t, err)
-+				// A transaction records its intent before enqueueing. Wait on the
-+				// underlying queue, not IterWaiters, to close that observation race.
-+				require.NoError(t, lockservice.WaitWaiters(lockservice.GetLockServiceByServiceID(cn.ServiceID()), 0, tableID, encoded, 2))
-+				for _, view := range []string{"mo_locks()", "mo_catalog.mo_locks"} {
-+					func() {
-+						rows, err := db.QueryContext(ctx, "select txn_id, lock_wait, lock_content from "+vi
++				require.Equal(t, tc.want, ok)
++			})
++		}
++	}
++}
++
++func TestCompoundPrivilegeCatalogError(t *testing.T) {
++	for _, want := range []error{moerr.NewInternalErrorNoCtx("catalog unavailable"), context.Canceled} {
++		t.Run(want.Error(), func(t *testing.T) {
++			ctx := defines.AttachAccountId(t.Context(), 0)
++			priv := compoundTablePrivileges("a", "b")
++			ses, bh := newCompoundPrivilegeSession(t, priv, map[int64][]string{5: {"a"}, 7: {"b"}}, map[int64][]int64{5: {7}}, false)
++			entry := privilegeEntriesMap[PrivilegeTypeSelect]
++			entry.databaseName, entry.tableName = "compound_db", "b"
++			levels, err := getPrivilegeLevelsOfObjectType(ctx, objectTypeTable)
++			require.NoError(t, err)
++			sql, err := getSqlForPrivilege(ctx, 7, entry, levels[0])
++			require.NoError(t, err)
++			bh.sql2err[sql] = want
++			ok, _, err := determineUserHasPrivilegeSet(ctx, ses, priv)
++			require.ErrorIs(t, err, want)
++			require.False(t, ok)
++			require.Contains(t, bh.executedSQLs, "rollback;")
++		})
++	}
++}
++
++func TestCompoundPrivilegeChecksAreStatementLocal(t *testing.T) {
++	ctx := defines.AttachAccountId(t.Context(), 0)
++	priv := compoundTablePrivileges("a", "b")
++	ses, _ := newCompoundPrivilegeSession(t, priv, map[int64][]string{5: {"a"}, 7: {"b"}}, map[int64][]int64{5: {7}}, false)
++	for _, role := range []uint32{5, 7, 5} {
++		ses.GetTenantInfo().SetDefaultRoleID(role)
++		ok, _, err := determineUserHasPrivilegeSet(ctx, ses, priv)
++		require.NoError(t, err)
++		require.Equal(t, role == 5, ok)
++	}
++}
++
++func TestCompoundPrivilegesPreserveMatchedRole(t *testing.T) {
++	priv := compoundTablePrivileges("a", "b")
++	priv.needMatchedRole = true
++	ses, _ := newCompoundPrivilegeSession(t, priv, map[int64][]string{5: {"a"}, 7: {"b"}}, map[int64][]int64{5: {7}}, true)
++	ok, _, err := determineUserHasPrivilegeSet(defines.AttachAccountId(t.Context(), 0), ses, priv)
++	require.NoError(t, err)
++	require.False(t, ok, "a statement requiring one matched role must not combine roles")
++}
++
++func TestCompoundPrivilegeChecksScope(t *testing.T) {
++	for _, tc := range []struct {
++		name str
+```
+
+**File**: `pkg/frontend/view_privilege_principal_test.go` (modified, +20/-1)
+```diff
+@@ -94,14 +94,33 @@ func TestViewPrivilegePrincipal(t *testing.T) {
+ 				convertPrivilegeTipsToPrivilege(priv, privilegeTipsArray{{typ: PrivilegeTypeSelect, objType: objectTypeTable, databaseName: "sub", tableName: "t", viewPath: []*plan.ViewStep{step("outer"), step("inner")}, objectRef: ref}})
+ 				roles := &btree.Set[int64]{}
+ 				roles.Insert(50)
+-				allowed, role, err := determineRoleSetHasPrivilegeSet(ctx, bh, ses, roles, priv, cached)
++				allowed, role, err := determineRoleSetHasPrivilegeSet(ctx, bh, ses, roles, priv, cached, nil)
+ 				require.NoError(t, err)
+ 				require.Equal(t, tc.allowed, allowed)
+ 				if allowed {
+ 					require.Equal(t, int64(50), role)
+ 				}
+ 				require.Equal(t, "sub", ref.SubscriptionName)
+ 				require.False(t, ses.GetPrivilegeCache().has(objectTypeTable, privilegeLevelDatabaseTable, "publisher", "t", PrivilegeTypeSelect))
++
++				// A complete view check cannot also authorize a direct table item,
++				// even when its database, table and numeric role IDs coincide.
++				priv.entries[0].compound.items = append(priv.entries[0].compound.items, privilegeItem{
++					privilegeTyp: PrivilegeTypeSelect, objType: objectTypeTable, dbName: "publisher", tableName: "t",
++				})
++				roles.Insert(51)
++				allowed, _, err = determineRoleSetHasPrivilegeSet(ctx, bh, ses, roles, priv, cached, newCompoundPrivilegeChecks(priv))
++				require.NoError(t, err)
++				require.False(t, allowed)
++
++				// Another caller role can supply the sibling grant, but it cannot
++				// repair an invalid DEFINER/INVOKER chain for the original item.
++				sql, err := getSqlForCheckRoleHasTableLevelPrivilegeWithObjType(ctx, objectTypeTable, 51, PrivilegeTypeSelect, "publisher", "t")
++				require.NoError(t, err)
++				results[queryKey{7, sql}] = positive
++				allowed, _, err = determineRoleSetHasPrivilegeSet(ctx, bh, ses, roles, priv, cached, newCompoundPrivilegeChecks(priv))
++				require.NoError(t, err)
++				require.Equal(t, tc.allowed, allowed)
+ 			})
+ 		}
+ 	}
+```
+
+**File**: `test/distributed/cases/zz_accesscontrol/inherited_role_compound.result` (added, +108/-0)
+```diff
+@@ -0,0 +1,108 @@
++drop database if exists inherited_compound_db;
++drop user if exists inherited_compound_reader;
++drop role if exists inherited_compound_a, inherited_compound_b, inherited_compound_parent, inherited_compound_unused;
++create database inherited_compound_db;
++create table inherited_compound_db.a (yr int, amount int);
++create table inherited_compound_db.b (yr int, amount int);
++create table inherited_compound_db.denied (amount int);
++insert into inherited_compound_db.a values (2024, 10), (2025, 20);
++insert into inherited_compound_db.b values (2024, 2), (2025, 4);
++insert into inherited_compound_db.denied values (99);
++create role inherited_compound_a, inherited_compound_b, inherited_compound_parent, inherited_compound_unused;
++grant connect on account * to inherited_compound_a;
++grant select, insert on table inherited_compound_db.a to inherited_compound_a;
++grant select on table inherited_compound_db.b to inherited_compound_b;
++grant select on table inherited_compound_db.denied to inherited_compound_unused;
++grant inherited_compound_b to inherited_compound_a;
++create user inherited_compound_reader identified by '123456' default role inherited_compound_a;
++grant inherited_compound_b, inherited_compound_unused to inherited_compound_reader;
++set enable_privilege_cache = off;
++select sum(amount) from inherited_compound_db.a;
++➤ sum(amount)[-5,64,0]  𝄀
++30
++select sum(amount) from inherited_compound_db.b;
++➤ sum(amount)[-5,64,0]  𝄀
++6
++select a.amount, b.amount from inherited_compound_db.a a join inherited_compound_db.b b on a.yr = b.yr order by a.yr;
++➤ amount[4,32,0]  ¦  amount[4,32,0]  𝄀
++10  ¦  2  𝄀
++20  ¦  4
++with a24 as (select sum(amount) v from inherited_compound_db.a where yr = 2024),
++a25 as (select sum(amount) v from inherited_compound_db.a where yr = 2025),
++b24 as (select sum(amount) v from inherited_compound_db.b where yr = 2024),
++b25 as (select sum(amount) v from inherited_compound_db.b where yr = 2025)
++select a24.v, a25.v, b24.v, b25.v from a24 cross join a25 cross join b24 cross join b25;
++➤ v[-5,64,0]  ¦  v[-5,64,0]  ¦  v[-5,64,0]  ¦  v[-5,64,0]  𝄀
++10  ¦  20  ¦  2  ¦  4
++select count(*) from (
++with a24 as (select sum(amount) v from inherited_compound_db.a where yr = 2024),
++a25 as (select sum(amount) v from inherited_compound_db.a where yr = 2025),
++b24 as (select sum(amount) v from inherited_compound_db.b where yr = 2024),
++b25 as (select sum(amount) v from inherited_compound_db.b where yr = 2025)
++select a25.v / b25.v as ratio from a24 cross join a25 cross join b24 cross join b25
++union all
++select a24.v / b24.v as ratio from a24 cross join a25 cross join b24 cross join b25
++) totals;
++➤ count(*)[-5,64,0]  𝄀
++2
++set secondary role all;
++select sum(a.amount + d.amount) from inherited_compound_db.a a cross join inherited_compound_db.denied d;
++internal error: do not have privilege to execute the statement
++set secondary role none;
++select sum(a.amount + b.amount) from inherited_compound_db.a a cross join inherited_compound_db.b b;
++➤ sum(a.amount + b.amount)[3,38,0]  𝄀
++72
++begin;
++insert into inherited_compound_db.a select * from inherited_compound_db.b;
++select count(*) from inherited_compound_db.a;
++➤ count(*)[-5,64,0]  𝄀
++4
++rollback;
++set enable_privilege_cache = on;
++set clear_privilege_cache = on;
++select sum(a.amount + b.amount) from inherited_compound_db.a a cross join inherited_compound_db.b b;
++➤ sum(a.amount + b.amount)[3,38,0]  𝄀
++72
++set clear_privilege_cache = on;
++select sum(b.amount + a.amount) from inherited_compound_db.b b cross join inherited_compound_db.a a;
++➤ sum(b.amount + a.amount)[3,38,0]  𝄀
++72
++set clear_privilege_cache = on;
++select sum(amount) from inherited_compound_db.a;
++➤ sum(amount)[-5,64,0]  𝄀
++30
++select sum(amount) from inherited_compound_db.b;
++➤ sum(amount)[-5,64,0]  𝄀
++6
++select sum(a.amount + b.amount) from inherited_compound_db.a a cross join inherited_compound_db.b b;
++➤ sum(a.amount + b.amount)[3,38,0]  𝄀
++72
++select sum(a.amount + b.amount) from inherited_compound_db.a a cross join inherited_compound_db.b b;
++➤ sum(a.amount + b.amount)[3,38,0]  𝄀
++72
++set role inherited_compound_b;
++select sum(a.amount + b.amount) from inherited_compound_db.a a cross join inherited_compound_db.b b;
++internal error: do not have privilege to execute the statement
++set secondary role all;
++select sum(amount) from inherited_compound_db.a;
++internal error: do not have privilege to execute the statement
++set role inherited_compound_a;
++select sum(a.amount + b.amount) from inherited_compound_db.a a cross join inherited_compound_db.b b;
++➤ sum(a.amount + b.amount)[3,38,0]  𝄀
++72
++revoke inherited_compound_b from inherited_compound_a;
++grant inherited_compound_b to inherited_compound_parent;
++grant inherited_compound_parent to inherited_compound_a;
++set enable_privilege_cache = off;
++select sum(a.amount + b.amount) from inherited_compound_db.a a cross join inherited_compound_db.b b;
++➤ sum(a.amount + b.amount)[3,38,0]  𝄀
++72
++revoke select o
+```
+
+**File**: `test/distributed/cases/zz_accesscontrol/inherited_role_compound.sql` (added, +90/-0)
+```diff
+@@ -0,0 +1,90 @@
++drop database if exists inherited_compound_db;
++drop user if exists inherited_compound_reader;
++drop role if exists inherited_compound_a, inherited_compound_b, inherited_compound_parent, inherited_compound_unused;
++create database inherited_compound_db;
++create table inherited_compound_db.a (yr int, amount int);
++create table inherited_compound_db.b (yr int, amount int);
++create table inherited_compound_db.denied (amount int);
++insert into inherited_compound_db.a values (2024, 10), (2025, 20);
++insert into inherited_compound_db.b values (2024, 2), (2025, 4);
++insert into inherited_compound_db.denied values (99);
++create role inherited_compound_a, inherited_compound_b, inherited_compound_parent, inherited_compound_unused;
++grant connect on account * to inherited_compound_a;
++grant select, insert on table inherited_compound_db.a to inherited_compound_a;
++grant select on table inherited_compound_db.b to inherited_compound_b;
++grant select on table inherited_compound_db.denied to inherited_compound_unused;
++grant inherited_compound_b to inherited_compound_a;
++create user inherited_compound_reader identified by '123456' default role inherited_compound_a;
++grant inherited_compound_b, inherited_compound_unused to inherited_compound_reader;
++
++-- 主角色和继承角色分别提供两张表的权限，关闭缓存仍应允许组合查询。
++-- @session:id=1&user=sys:inherited_compound_reader&password=123456
++set enable_privilege_cache = off;
++select sum(amount) from inherited_compound_db.a;
++select sum(amount) from inherited_compound_db.b;
++select a.amount, b.amount from inherited_compound_db.a a join inherited_compound_db.b b on a.yr = b.yr order by a.yr;
++with a24 as (select sum(amount) v from inherited_compound_db.a where yr = 2024),
++     a25 as (select sum(amount) v from inherited_compound_db.a where yr = 2025),
++     b24 as (select sum(amount) v from inherited_compound_db.b where yr = 2024),
++     b25 as (select sum(amount) v from inherited_compound_db.b where yr = 2025)
++select a24.v, a25.v, b24.v, b25.v from a24 cross join a25 cross join b24 cross join b25;
++select count(*) from (
++with a24 as (select sum(amount) v from inherited_compound_db.a where yr = 2024),
++     a25 as (select sum(amount) v from inherited_compound_db.a where yr = 2025),
++     b24 as (select sum(amount) v from inherited_compound_db.b where yr = 2024),
++     b25 as (select sum(amount) v from inherited_compound_db.b where yr = 2025)
++select a25.v / b25.v as ratio from a24 cross join a25 cross join b24 cross join b25
++union all
++select a24.v / b24.v as ratio from a24 cross join a25 cross join b24 cross join b25
++) totals;
++
++-- 仅直接授予用户但未被当前角色继承的权限不能参与合并；ALL/NONE 仍为无操作。
++set secondary role all;
++select sum(a.amount + d.amount) from inherited_compound_db.a a cross join inherited_compound_db.denied d;
++set secondary role none;
++select sum(a.amount + b.amount) from inherited_compound_db.a a cross join inherited_compound_db.b b;
++
++-- 合并目标写权限和源表读权限，随后回滚以保持后续预期数据不变。
++begin;
++insert into inherited_compound_db.a select * from inherited_compound_db.b;
++select count(*) from inherited_compound_db.a;
++rollback;
++
++-- 冷缓存、交换表顺序、单表预热及重复执行的判定保持一致。
++set enable_privilege_cache = on;
++set clear_privilege_cache = on;
++select sum(a.amount + b.amount) from inherited_compound_db.a a cross join inherited_compound_db.b b;
++set clear_privilege_cache = on;
++select sum(b.amount + a.amount) from inherited_compound_db.b b cross join inherited_compound_db.a a;
++set clear_privilege_cache = on;
++select sum(amount) from inherited_compound_db.a;
++select sum(amount) from inherited_compound_db.b;
++select sum(a.amount + b.amount) from inherited_compound_db.a a cross join inherited_compound_db.b b;
++select sum(a.amount + b.amount) from inherited_compound_db.a a cross join inherited_compound_db.b b;
++set role inherited_compound_b;
++select sum(a.amount + b.amount) from inherited_compound_db.a a cross join inherited_compound_db.b b;
++set secondary role all;
++select sum(amount) from inherited_compound_db.a;
++set role inherited_compound_a;
++select sum(a.amount + b.amount) from inherited_compound_db.a a cross join inherited_compound_db.b b;
++-- @session
++
++-- 将直接继承改为两层继承，权限需要跨不同深度保留。
++revoke inherited_compound_b from inherited_compound_a;
++grant inherited_compound_b to inherited_compound_parent;
++grant inherited_compound_parent to inherited_compound_a;
++-- @session:id=2&user=sys:inherited_compound_reader&password=123456
++set enable_privilege_cache = off;
++select sum(a.amount + b.amount) from inherited_compound_db.a a cross join inherited_compound_db.b b;
++-- @session
++
++-- 撤销底层表授权后，即使角色仍可达也不能读取该表。
++revoke select on table inherited_compound_db.b from inherited_compound_b;
++-- @session:id=3&user=sys:inherited_compound_reader&password=123456
++select sum(a.amount + b.amount) from inherited_compound_db.a a cross join inherited_compound_db.b b;
++select sum(amount) from inherited_compound_db.a;
++-- @session
++
++drop user inherited_compound_reader;
++drop role inherited_compound_a, inherited_compound_parent, inherited_compound_b, inher
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #32649** (2026-11-13): fix(sql): reject column privileges and render granted object scopes (@aptend)
-- **PR #32647** (2026-11-13): fix: reset int hashmap scratch before encoding (@XuPeng-SH)
-- **PR #32646** (2026-11-13): [4.2-dev] perf: backport COUNT(DISTINCT) optimizations (#27693, #28431) (@XuPeng-SH)
-- **PR #32643** (2026-11-12): test: stabilize CI fixtures and reduce test I/O (@XuPeng-SH)
-- **PR #32631** (2026-11-12): fix(lockservice): report all waiters in mo_locks (@LeftHandCold)
-- **PR #32629** (2026-11-12): Fix 4.1.6 fixture cleanup, test endpoints and WAL replay ordering (@XuPeng-SH)
+- **PR #32741** (2026-11-14): fix(stage): return an error for missing catalog context (@XuPeng-SH)
+- **PR #32740** (2026-11-14): [4.2-dev] backport #32734 and #32719 (@XuPeng-SH)
+- **PR #32739** (closed): fix(frontend): preserve long-running half-closed clients (4.2-dev) (@XuPeng-SH)
+- **PR #32738** (closed): fix(frontend): preserve replies after client write half-close (@XuPeng-SH)
+- **PR #32734** (2026-11-14): perf: reduce low-value DEBUG logging (@XuPeng-SH)
+- **PR #32730** (2026-11-13): fix(plan): preserve user-variable domains in INTERVAL arithmetic (@aptend)
 
 ---
 
@@ -3474,50 +3667,39 @@ Regression coverage:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. native preparation and stabilize CI tests (#32574)
+## X. compile): support saved-result CTAS with current source privileges
 
 **RULE**:
-When implementing operations in `.github/ci/native-provenance-makeflags.test.cjs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/frontend/authenticate.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4760bcaa`: native preparation and stabilize CI tests (#32574). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `645219d3`: compile): support saved-result CTAS with current source privileges. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/ci/native-provenance-makeflags.test.cjs`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/frontend/authenticate.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-const assert = require('node:assert/strict');
-const { spawnSync } = require('node:child_process');
-const fs = require('node:fs');
-const os = require('node:os');
-const path = require('node:path');
-const test = require('node:test');
-
-// Run the real target with only the external provenance program replaced.
-function withFixture(t, run) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'mo-native-makeflags-'));
-  t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
-  fs.mkdirSync(path.join(dir, 'cgo'));
-  fs.mkdirSync(path.join(dir, 'pkg'));
-  fs.copyFileSync(path.join(__dirname, '..', '..', 'Makefile'), path.join(dir, 'Makefile'));
-  const log = path.join(dir, 'events');
-  const stub = path.join(dir, 'cgo', 'mo-native-provenance');
-  fs.writeFileSync(stub, '#!/bin/sh\nprintf "%s\\n" "$1" >> "$MO_NATIVE_TEST_LOG"\n' +
-    'case "$1" in prepare) echo "$MO_NATIVE_TEST_ACTION" ;; begin) ;; *) exit 1 ;; esac\n', { mode: 0o755 });
-  fs.mkdirSync(path.join(dir, 'thirdparties'));
-  for (const name of ['cgo', 'thirdparties']) {
-    fs.writeFileSync(path.join(dir, name, 'Makefile'),
-      `.PHONY: clean\nclean:\n\t@echo clean-${name} >> "$$MO_NATIVE_TEST_LOG"\n` +
-      `\t@tes
+	// A CTAS source over a saved query result carries no table-scan tips, and
+	// the CTAS follow-up INSERT ... SELECT runs through the internal executor,
+	// whose compile path does not re-verify result-query access. Apply the same
+	// saved-result source re-verification the direct SELECT path uses, so a
+	// role whose source SELECT privilege is missing or revoked cannot copy the
+	// saved result by CTAS. Plain sources have no result scans and return here
+	// with no extra cost.
+	resultStats, resultErr := checkResultQueryPrivilege(compilerContext.GetProcess(), sourcePlan, ctx, ses.GetService(), ses)
+	stats.Add(&resultStats)
+	if resultErr != nil {
+		return false, stats, resultErr
+	}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
+// Induced defect failure mode:
 // Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4760bcaa` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `645219d3` are properly handled with clean fallback behavior.

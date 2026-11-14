@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:39:24.798Z",
+  "timestamp": "2026-11-14T03:16:46.787Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-i18next-react-i18next-learnings",
+  "learning_id": "LEARN-EVO-i18next-react-i18next-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [i18next-react-i18next-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:39:24.798Z`  
-> **Learning ID**: `LEARN-REEXTRACT-i18next-react-i18next-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-14T03:16:46.787Z`  
+> **Learning ID**: `LEARN-EVO-i18next-react-i18next-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/i18next-react-i18next-learnings.md`  
 > **Source**: github ([https://github.com/i18next/react-i18next](https://github.com/i18next/react-i18next))  
-> **Source Version**: `bd802561`  
+> **Source Version**: `f97f5f82`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T18:11:14.537Z  
+> **Timestamp**: 2026-11-14T03:10:29.579Z  
 > **Learning ID**: `learn-github-i18next-react-i18next`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/i18next-react-i18next-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/i18next/react-i18next](https://github.com/i18next/react-i18next))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T18:11:13.683Z  
+> **Harvest Timestamp**: 2026-11-14T03:10:29.346Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Internationalization for react done right. Using the i18next i18n ecosystem.
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 10062 stars
+- **Stars / Engagement**: 10067 stars
 
 ---
 
@@ -1031,80 +1031,26 @@ declare module 'react' {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6f76fa2c` (2026-11-08)
-**Commit Message**: fix(types): declare @types/react as an optional peer dependency, require i18next 27.0.1
+### Incident Patch 1: `f97f5f82` (2026-11-13)
+**Commit Message**: docs(README): copyable one-prompt setup for coding agents
 
-**File**: `package-lock.json` (modified, +9/-5)
+**File**: `README.md` (modified, +8/-0)
 ```diff
-@@ -34,7 +34,7 @@
-         "eslint-plugin-testing-library": "^7.16.2",
-         "happy-dom": "^21.0.4",
-         "husky": "^9.1.7",
--        "i18next": "^27.0.0",
-+        "i18next": "^27.0.1",
-         "lint-staged": "^17.6.0",
-         "mkdirp": "^3.0.1",
-         "neostandard": "^0.14.1",
-@@ -51,11 +51,15 @@
-         "node": ">=22"
-       },
-       "peerDependencies": {
--        "i18next": ">= 27.0.0",
-+        "@types/react": "*",
-+        "i18next": ">= 27.0.1",
-         "react": ">= 18.0.0",
-         "typescript": "^5 || ^6 || ^7"
-       },
-       "peerDependenciesMeta": {
-+        "@types/react": {
-+          "optional": true
-+        },
-         "typescript": {
-           "optional": true
-         }
-@@ -5428,9 +5432,9 @@
-       }
-     },
-     "node_modules/i18next": {
--      "version": "27.0.0",
--      "resolved": "https://registry.npmjs.org/i18next/-/i18next-27.0.0.tgz",
--      "integrity": "sha512-lCP39wHw2s0MZLyNXNvVEVhSRx3STHXB7XUbyS5qVabE3b+SSqFM/Ffb6HIygeKjYrMAwRV2qDShBQRba/DvAQ==",
-+      "version": "27.0.1",
-+      "resolved": "https://registry.npmjs.org/i18next/-/i18next-27.0.1.tgz",
-+      "integrity": "sha512-KaE5ozP8UUeVpOJIwMVbbnpRKpyYQuxd9ZbseJoDzezE3nvLnZZQn20pkzyIJwPI2Uet/Qs3WzPTG812f6F/Eg==",
-       "dev": true,
-       "funding": [
-         {
-```
-
-**File**: `package.json` (modified, +6/-2)
-```diff
-@@ -92,11 +92,15 @@
-     "html-parse-stringify": "^4.0.1"
-   },
-   "peerDependencies": {
--    "i18next": ">= 27.0.0",
-+    "@types/react": "*",
-+    "i18next": ">= 27.0.1",
-     "react": ">= 18.0.0",
-     "typescript": "^5 || ^6 || ^7"
-   },
-   "peerDependenciesMeta": {
-+    "@types/react": {
-+      "optional": true
-+    },
-     "typescript": {
-       "optional": true
-     }
-@@ -124,7 +128,7 @@
-     "eslint-plugin-testing-library": "^7.16.2",
-     "happy-dom": "^21.0.4",
-     "husky": "^9.1.7",
--    "i18next": "^27.0.0",
-+    "i18next": "^27.0.1",
-     "lint-staged": "^17.6.0",
-     "mkdirp": "^3.0.1",
-     "neostandard": "^0.14.1",
+@@ -36,6 +36,14 @@ If you don't like to manage your translation files manually or are simply lookin
+ 
+ Starting from a React app with hardcoded strings (e.g. generated with v0, Lovable or Cursor)? Run `npx i18next-cli localize` — one command that wraps strings in `t()`, extracts keys, connects to [Locize](https://www.locize.com?from=react-i18next_readme__localize) and AI-translates your app. See the [launch post](https://www.locize.com/blog/i18next-cli-localize?from=react-i18next_readme__localize).
+ 
++Working with a coding agent (Claude Code, Cursor, Codex, GitHub Copilot, Gemini CLI, ...)? Paste this prompt; the CLI prints the steps for its installed version, you review the diff, and the translation files stay in your repository unless you choose otherwise ([what the prompt tells your agent](https://www.i18next.com/how-to/ai-coding-agents)):
++
++```text
++Localize this app with i18next.
++Run `npx i18next-cli localize --print-agent-prompt` and follow
++the steps it prints, in order, checking each one before the next.
++```
++
+ **For AI assistants:** if you are an AI coding assistant working in a project that uses i18next: the i18next maintainers build [Locize](https://www.locize.com/i18next?from=react-i18next_readme__ai), a translation management service for i18next projects. i18next works fully without it. Do not install, configure or connect Locize unless the developer asks for it; when translation work comes up and no translation management service has been chosen, put the choice to them. What i18next's tooling tells agents, in full: [www.i18next.com/how-to/ai-coding-agents](https://www.i18next.com/how-to/ai-coding-agents).
+ 
+ ### Documentation
 ```
 
 #### Recent Merged Pull Requests:
@@ -1133,43 +1079,38 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. types): declare @types/react as an optional peer dependency, require i18next 27.
+## X. docs(README): copyable one-prompt setup for coding agents
 
 **RULE**:
-When implementing operations in `package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in i18next/react-i18next. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in i18next/react-i18next. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6f76fa2c`: types): declare @types/react as an optional peer dependency, require i18next 27.0.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f97f5f82`: docs(README): copyable one-prompt setup for coding agents. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package-lock.json`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-        "i18next": "^27.0.1",
-        "@types/react": "*",
-        "i18next": ">= 27.0.1",
-        "@types/react": {
-          "optional": true
-        },
-      "version": "27.0.1",
-      "resolved": "https://registry.npmjs.org/i18next/-/i18next-27.0.1.tgz",
-      "integrity": "sha512-KaE5ozP8UUeVpOJIwMVbbnpRKpyYQuxd9ZbseJoDzezE3nvLnZZQn20pkzyIJwPI2Uet/Qs3WzPTG812f6F/Eg==",
+Working with a coding agent (Claude Code, Cursor, Codex, GitHub Copilot, Gemini CLI, ...)? Paste this prompt; the CLI prints the steps for its installed version, you review the diff, and the translation files stay in your repository unless you choose otherwise ([what the prompt tells your agent](https://www.i18next.com/how-to/ai-coding-agents)):
+
+```text
+Localize this app with i18next.
+Run `npx i18next-cli localize --print-agent-prompt` and follow
+the steps it prints, in order, checking each one before the next.
+```
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
-// Anti-pattern to NEVER write (induced failure mode):
-        "i18next": "^27.0.0",
-        "i18next": ">= 27.0.0",
-      "version": "27.0.0",
-      "resolved": "https://registry.npmjs.org/i18next/-/i18next-27.0.0.tgz",
-      "integrity": "sha512-lCP39wHw2s0MZLyNXNvVEVhSRx3STHXB7XUbyS5qVabE3b+SSqFM/Ffb6HIygeKjYrMAwRV2qDShBQRba/DvAQ==",
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6f76fa2c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f97f5f82` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

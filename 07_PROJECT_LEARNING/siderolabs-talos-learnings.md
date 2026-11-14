@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source**: github ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
-> **Source Version**: `5cb1e1e3`  
+> **Source Version**: `ba4a88b6`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T03:26:30.289Z  
+> **Timestamp**: 2026-11-14T03:10:33.012Z  
 > **Learning ID**: `learn-github-siderolabs-talos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T03:26:30.281Z  
+> **Harvest Timestamp**: 2026-11-14T03:10:33.005Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Talos Linux is a modern Linux distribution built for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11520 stars
+- **Stars / Engagement**: 11521 stars
 
 ---
 
@@ -2111,14 +2111,11 @@ func a
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #14941** (2026-11-12): **fix: extend host namespace PID resolving to Talos containers**
-  *Symptoms*: Ensure that Talos containers PID is correctly resolved against the host PID namespace, which is specifically important for machined API access.  Extend the integration test to verify that not only connection is established, but machined authorizes the call.  Clean up the host PID resolving code overall across the code, as the PIDs of e.g. kubelet & etcd were incorrectly resolved in the status updates (but it was harmless).  This is only important with workload isolation feature being on. 
-  **Post-Mortem & Fix Analysis**:
-  > > The kernel we ship has SO_PEERPIDFD and pidfs, so this could be closed by taking the peer pidfd at handshake, a pidfd when recording the service PID, and comparing pidfs inodes (sandboxd already goes the pidfd route in hostPIDFromPidfd)  this seems valid, other are minor
-  > > > The kernel we ship has SO_PEERPIDFD and pidfs, so this could be closed by taking the peer pidfd at handshake, a pidfd when recording the service PID, and comparing pidfs inodes (sandboxd already goes the pidfd route in hostPIDFromPidfd) >  > this seems valid, other are minor  yes, I think this would be great hardening, but it's pre-existing, so I would rather do another PR to fix this.
+- **Issue #14949** (2026-11-13): **fix: WorkloadPidsController ENOENT /system/extensions on boot**
+  *Symptoms*:  Resolves https://github.com/siderolabs/talos/issues/14948  `/system/extensions/pids.max` did not exist at boot, and the `WorkloadPidsController` failed with `ENOENT` until a later container start under `/system` enabled pids there.  We now create the extensions cgroup with pids enabled. Created with no limit, like for the other workload roots, and the pids max value is later reconciled by the controller. Adds coverage in the cgroup resources test.  ---  From a local dev cluster, build from this PR: ```sh _out/talosctl-linux-amd64 --nodes 172.20.0.5 logs controller-runtime | grep WorkloadPids 172.20.0.5: 2026-11-13T13:27:55.918Z DEBUG controller starting {"component": "controller-runtime", "controller": "runtime.WorkloadPidsController"} 172.20.0.5: 2026-11-13T13:27:55.918Z INFO pids limit updated {"component": "controller-runtime", "controller": "runtime.WorkloadPidsController", "cgroup": "taloscontainers", "previous": "max", "limit": "32668", "capacity": 32768} 172.20.0.5: 2026-11-13T13:27:55.919Z INFO pids limit updated {"component": "controller-runtime", "controller": "runtime.WorkloadPidsController", "cgroup": "virtualmachines.partition", "previous": "max", "limit": "32668", "capacity": 32768} 172.20.0.5: 2026-11-13T13:27:55.919Z INFO pids limit updated {"component": "controller-runtime", "controller": "runtime.WorkloadPidsController", "cgroup": "system/extensions", "previous": "max", "limit": "32668", "capacity": 32768} 172.20.0.5: 2026-11-13T13:27:55.951
 
-- **Issue #14940** (2026-11-12): **feat: update runc 1.5.3, NVIDIA LTS and CNI plugins**
-  *Symptoms*: CNI plugins: 1.10.0  NVIDIA LTS: 620.x, and nonfree version dropped.  See https://github.com/siderolabs/extensions/pull/1349  Pulls in pkgs:  * https://github.com/siderolabs/pkgs/pull/1748 * https://github.com/siderolabs/pkgs/pull/1751 
+- **Issue #14948** (2026-11-13): **WorkloadPidsController fails with ENOENT on /system/extensions at boot**
+  *Symptoms*: ## Bug Report  ### What happened? What did you expect?  On boot, `runtime.WorkloadPidsController` fails twice on `/system/extensions` with ENOENT before it applies the limit on its third run (2026-11-13 11:54 UTC, node 172.16.0.2):  ``` 11:54:16.039Z ERROR controller failed {"controller": "runtime.WorkloadPidsController", "error": "error enforcing pids limit on cgroup \"system/extensions\": error reading /sys/fs/cgroup/system/extensions/pids.max: open /sys/fs/cgroup/system/extensions/pids.max: no such file or directory"} 11:54:16.039Z DEBUG restarting controller in 400.640779ms 11:54:16.442Z ERROR controller failed {... same error ...} 11:54:16.442Z DEBUG restarting controller in 1.06641896s 11:54:17.510Z INFO pids limit updated {"cgroup": "system/extensions", "previous": "max", "limit": "61649", "capacity": 61749} ```  I expected the first reconcile to set `pids.max` on all three roots without an error. `/taloscontainers` and `/virtualmachines.partition` were set on the first run.  `/system/extensions` is created with CPU resources only, so creating it doesn't enable `pids` in `/system/cgroup.subtree_control`. The file appears once something else enables `pids` on `/system`; I suspect runc starting the first container under `/system`, but haven't confirmed it. The workload roots don't hit this because #14911 creates them with `Pids: &cgroup2.Pids{}`. Doing the same for `constants.CgroupExtensions` in `internal/pkg/cgroup/cgroup.go` should fix it.  ### Steps to reproduce  1. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2135,605 +2132,782 @@ func a
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a8637940` (2026-11-12)
-**Commit Message**: fix: keep xfs.UnixRoot path resolution inside the root
+### Incident Patch 1: `768ed463` (2026-11-13)
+**Commit Message**: fix: data race between test fixtures in tests
 
-UnixRoot resolved names with plain openat, mkdirat, unlinkat and
-renameat relative to the mount fd. Absolute symlinks and ".." were
-followed out of the root, so a symlink planted in a detached tmpfs
-could redirect a machined write to any host path.
+We have observed data race in tests. Add locking to prevent it.
 
-Resolve names with openat2 and RESOLVE_BENEATH, and run mkdirat,
-unlinkat and renameat on the last element of a parent directory
-opened the same way. Remove now deletes a symlink itself instead of
-stat'ing its target, and RemoveAll no longer descends into a
-symlinked directory.
+Signed-off-by: Mateusz Urbanek <[REDACTED_EMAIL]>
 
-Names that are not clean fail with EINVAL. With RESOLVE_BENEATH an
-inner ".." returns EAGAIN whenever any rename or mount on the node
-races the lookup, and cleaning the name instead would change what a
-".." after a symlink resolves to.
-
-Reject EtcFileConfig paths that are not clean. A name such as
-"foo/../ssl/certs/bar" passed validation and was written into a
-Talos-managed directory.
-
-Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
-
-**File**: `pkg/machinery/config/types/runtime/etc_file.go` (modified, +2/-1)
+**File**: `internal/app/machined/pkg/controllers/storage/md_array_reconcile_test.go` (modified, +134/-101)
 ```diff
-@@ -168,7 +168,8 @@ var managedEtcPrefixes = []string{
+@@ -214,6 +214,15 @@ func (f *fakeMDProvisioner) grown(device string) (int, bool) {
+ 	return n, ok
  }
  
- func validateEtcFilePath(path string) error {
--	if !filepath.IsLocal(path) || strings.HasPrefix(path, ".") {
-+	// a non-clean path such as "foo/../ssl/x" would slip past the managed prefix checks below
-+	if !filepath.IsLocal(path) || strings.HasPrefix(path, ".") || path != filepath.Clean(path) {
- 		return fmt.Errorf("user etc file %q must be a local path", path)
- 	}
- 
-```
-
-**File**: `pkg/machinery/config/types/runtime/etc_file_test.go` (modified, +10/-0)
-```diff
-@@ -151,6 +151,16 @@ func TestEtcFileValidate(t *testing.T) {
- 			configName:    "foo/../../bar",
- 			expectedError: `user etc file "foo/../../bar" must be a local path`,
- 		},
-+		{
-+			name:          "inner dot-dot into managed prefix",
-+			configName:    "foo/../ssl/certs/bar",
-+			expectedError: `user etc file "foo/../ssl/certs/bar" must be a local path`,
-+		},
-+		{
-+			name:          "trailing slash",
-+			configName:    "foo/",
-+			expectedError: `user etc file "foo/" must be a local path`,
-+		},
- 		{
- 			name:          "absolute path",
- 			configName:    "/foo",
-```
-
-**File**: `pkg/xfs/root.go` (modified, +8/-20)
-```diff
-@@ -178,31 +178,19 @@ func Remove(root Root, name string) error {
- }
- 
- // RemoveAll is equivalent of os.RemoveAll acting on specified FileSystem.
--func RemoveAll(root Root, name string) (err error) {
--	var f fs.File
--
--	f, err = root.Open(name)
--	if err != nil {
--		if errors.Is(err, os.ErrNotExist) {
--			return nil
--		}
--
--		return err
--	}
--
--	stat, err := f.Stat()
--	if err != nil {
--		return err
-+//
-+// It removes a symlink itself and never descends into its target.
-+func RemoveAll(root Root, name string) error {
-+	err := root.Remove(name)
-+	if err == nil || errors.Is(err, fs.ErrNotExist) {
-+		return nil
- 	}
- 
--	if err := f.Close(); err != nil {
-+	// only a non-empty directory (ENOTEMPTY) needs its children removed first
-+	if !errors.Is(err, fs.ErrExist) {
- 		return err
- 	}
- 
--	if !stat.IsDir() {
--		return root.Remove(name)
--	}
--
- 	entries, err := ReadDir(root, name)
- 	if err != nil {
- 		return err
-```
-
-**File**: `pkg/xfs/root_linux.go` (modified, +88/-16)
-```diff
-@@ -7,10 +7,13 @@
- package xfs
- 
- import (
-+	"cmp"
- 	"context"
-+	"errors"
- 	"fmt"
- 	"io/fs"
- 	"os"
-+	"path/filepath"
- 	"strings"
- 
- 	"golang.org/x/sys/unix"
-@@ -72,55 +75,124 @@ func (root *UnixRoot) Fd() (int, error) {
- 	return root.mntfd, nil
- }
- 
-+// resolveBeneath keeps path resolution inside the root: absolute symlinks and
-+// ".." leaving the root fail with EXDEV.
-+const resolveBeneath = unix.RESOLVE_BENEATH | unix.RESOLVE_NO_MAGICLINKS
++// with runs fn under the fake's lock, for tests that seed or inspect fixture
++// state while the controller runtime is running.
++func (f *fakeMDProvisioner) with(fn func(f *fakeMDProvisioner)) {
++	f.mu.Lock()
++	defer f.mu.Unlock()
 +
- // Mkdir creates a new directory in the root filesystem with the specified name and permissions.
- func (root *UnixRoot) Mkdir(name string, perm os.FileMode) error {
--	return unix.Mkdirat(root.mntfd, strings.TrimLeft(name, "/"), uint32(perm))
-+	dirfd, base, err := root.parent(name)
-+	if err != nil {
-+		return err
-+	}
-+
-+	defer unix.Close(dirfd) //nolint:errcheck
-+
-+	return unix.Mkdirat(dirfd, base, uint32(perm))
- }
- 
- // Open opens a file in the root filesystem with the specified name in read-only mode.
- func (root *UnixRoot) Open(name string) (fs.File, error) {
--	return root.OpenFile(strings.TrimLeft(name, "/"), unix.O_RDONLY, 0)
-+	return root.OpenFile(name, unix.O_RDONLY, 0)
- }
- 
- // OpenFile opens a file in the root filesystem with the specified name, flags, and permissions.
- func (root *UnixRoot) OpenFile(name string, flags int, perm os.FileMode) (File, error) {
--	fd, err := unix.Openat(root.mntfd, strings.TrimLeft(name, "/"), flags|unix.O_CLOEXEC, uint32(perm))
-+	name, err := cleanName(name)
- 	if err != nil {
- 		return nil, err
- 	}
- 
--	return os.NewFile(uintptr(fd), strings.TrimLeft(name, "/")), nil
-+	how := unix.OpenHow{
-+		Flags:   uint64(flags | unix.O_CLOEXEC),
-+		Resolve: resolveBeneath,
-+	}
-+
-+	// openat2 rejects a mode unless the file may be created
-+	if flags&unix.O_CREAT != 0 || flags&unix.O_TMPFILE == unix.O_TMPFILE {
-+		how.Mode = uint64(perm.Perm())
-+	}
-+
-+	fd, err := unix.Openat2(root.mntfd, name, &how)
-+	if err != nil {
-+		return nil, err
-+	}
-+
-+	return os.NewFile(uintptr(fd), name), nil
- }
- 
- // Remove removes a file or directory from the root filesystem.
-+//
-+// A symlink is removed itself, not its target.
- func (root *UnixRoot) Remove(name string) error {
--	flags := 0
--
--	info, err := root.stat(strings.TrimLeft(name, "/"))
-+	dirfd, base, err := root.parent(name)
- 	if err != nil {
- 		return err
- 	}
- 
--	if info.IsDir() {
--		flags = unix.AT_REMOVEDIR
-+	defer unix.Close(dirfd) //nolint:errcheck
-+
-+	err = unix.Unlinkat(dirfd, base, 0)
-+	if errors.Is(err, unix.EISDIR) {
-+		err = unix.Unlinkat(dirfd, base, unix.AT_REMOVEDIR)
- 	}
- 
--	return unix.Unlinkat(root.mntfd, strings.TrimLeft(name, "/"), flags)
-+	return err
- }
- 
- // Rename renames a file or directory in the root filesystem from old to new.
- func (root *UnixRoot) Rename(oldname, newname string) error {
--	return unix.Renameat(root.mntfd, strings.TrimLeft(oldname, "/"), root.mntfd, strings.TrimLeft(newname, "/"))
-+	olddirfd, oldbase, err := root.parent(oldname)
-+	if err != nil {
-+		return err
-+	}
-+
-+	defer unix.Close(olddirfd) //nolint:errcheck
-+
-+	newdirfd, newbase, err := root.parent(newname)
-+	if err != nil {
-+		return err
-+	}
-+
-+	defer unix.Close(newdirfd) //nolint:errcheck
-+
-+	return unix.Renameat(olddirfd, oldbase, newdirfd, newbase)
- }
- 
--func (root *UnixRoot) stat(name string) (os.FileInfo, error) {
--	f, err := root.Open(strings.TrimLeft(name, "/"))
-+// parent opens the directory holding name beneath the root and returns it with
-+// the last path element, which *at syscalls do not follow.
-+func (root *UnixRoot) parent(name string) (int, string, error) {
-+	name, err := cleanName(name)
- 	if err != nil {
--		return nil, err
-+		return -1, "", err
-+	}
-+
-+	if !filepath.IsLocal(name) {
-+		return -1, "", fmt.Errorf("%q escapes the root: %w", name, unix.EXDEV)
-+	}
-+
-+	dir, base := filepath.Split(name)
-+
-+	dirfd, err := unix.Openat2(root.mntfd, cmp.Or(dir, "."), &unix.OpenHow{
-+		Flags:   unix.O_PATH | unix.O_DIRECTORY | unix.O_CLOEXEC,
-+		Resolve: resolveBeneath,
-+	})
-+	if err != nil {
-+		return -1, "", err
-+	}
-+
-+	return dirfd, base, nil
++	fn(f)
 +}
 +
-+// cleanName rejects names that are not clean: with RESOLVE_BENEATH, an inner ".."
-+// fails with EAGAIN whenever any rename or mount on the system races the lookup.
-+func cleanName(name string) (string, error) {
-+	name = strings.TrimLeft(name, "/")
-+	if name != filepath.Clean(name) {
-+		return "", fmt.Errorf("%q is not a clean path: %w", name, unix.EINVAL)
- 	}
--	defer f.Close() //nolint:errcheck
- 
--	return f.Stat()
-+	return name, nil
+ func (f *fakeMDProvisioner) reset() {
+ 	f.mu.Lock()
+ 	defer f.mu.Unlock()
+@@ -296,12 +305,14 @@ func (suite *MDArrayReconcileSuite) TestCreatesArrayFromScratch() {
  }
  
- // Source returns the source of the underlying filesystem.
+ func (suite *MDArrayReconcileSuite) TestExtendsExistingArray() {
+-	suite.md.findByMember["/dev/nvme0n1"] = "/dev/md0"
+-	suite.md.details["/dev/md0"] = md.Detail{
+-		Level:       "raid1",
+-		RaidDevices: 2,
+-		Members:     []string{"/dev/nvme0n1", "/dev/nvme1n1"},
+-	}
++	suite.md.with(func(f *fakeMDProvisioner) {
++		f.findByMember["/dev/nvme0n1"] = "/dev/md0"
++		f.details["/dev/md0"] = md.Detail{
++			Level:       "raid1",
++			RaidDevices: 2,
++			Members:     []string{"/dev/nvme0n1", "/dev/nvme1n1"},
++		}
++	})
+ 
+ 	createDisk(&suite.DefaultSuite, "nvme0n1", "/dev/nvme0n1", "nvme")
+ 	createDisk(&suite.DefaultSuite, "nvme1n1", "/dev/nvme1n1", "nvme")
+@@ -325,12 +336,14 @@ func (suite *MDArrayReconcileSuite) TestExtendsExistingArray() {
+ }
+ 
+ func (suite *MDArrayReconcileSuite) TestNoOpWhenObservedMatchesDesired() {
+-	suite.md.findByMember["/dev/nvme0n1"] = "/dev/md0"
+-	suite.md.details["/dev/md0"] = md.Detail{
+-		Level:       "raid1",
+-		RaidDevices: 2,
+-		Members:     []string{"/dev/nvme0n1", "/dev/nvme1n1"},
+-	}
++	suite.md.with(func(f *fakeMDProvisioner) {
++		f.findByMember["/dev/nvme0n1"] = "/dev/md0"
++		f.details["/dev/md0"] = md.Detail{
++			Level:       "raid1",
++			RaidDevices: 2,
++			Members:     []string{"/dev/nvme0n1", "/dev/nvme1n1"},
++		}
++	})
+ 
+ 	createDisk(&suite.DefaultSuite, "nvme0n1", "/dev/nvme0n1", "nvme")
+ 	createDisk(&suite.DefaultSuite, "nvme1n1", "/dev/nvme1n1", "nvme")
+@@ -349,13 +362,15 @@ func (suite *MDArrayReconcileSuite) TestNoOpWhenObservedMatchesDesired() {
+ }
+ 
+ func (suite *MDArrayReconcileSuite) TestRebuildingWhileSyncing() {
+-	suite.md.findByMember["/dev/nvme0n1"] = "/dev/md0"
+-	suite.md.details["/dev/md0"] = md.Detail{
+-		Level:       "raid1",
+-		RaidDevices: 2,
+-		Members:     []string{"/dev/nvme0n1", "/dev/nvme1n1"},
+-	}
+-	suite.md.syncAction["/dev/md0"] = md.SyncActionResync
++	suite.md.with(func(f *fakeMDProvisioner) {
++		f.findByMember["/dev/nvme0n1"] = "/dev/md0"
++		f.details["/dev/md0"] = md.Detail{
++			Level:       "raid1",
++			RaidDevices: 2,
++			Members:     []string{"/dev/nvme0n1", "/dev/nvme1n1"},
++		}
++		f.syncAction["/dev/md0"] = md.SyncActionResync
++	})
+ 
+ 	createDisk(&suite.DefaultSuite, "nvme0n1", "/dev/nvme0n1", "nvme")
+ 	createDisk(&suite.DefaultSuite, "nvme1n1", "/dev/nvme1n1", "nvme")
+@@ -371,13 +386,15 @@ func (suite *MDArrayReconcileSuite) TestRebuildingWhileSyncing() {
+ }
+ 
+ func (suite *MDArrayReconcileSuite) TestReportsSyncActionAsRebuilding() {
+-	suite.md.findByMember["/dev/nvme0n1"] = "/dev/md0"
+-	suite.md.details["/dev/md0"] = md.Detail{
+-		Level:       "raid1",
+-		RaidDevices: 2,
+-		Members:     []string{"/dev/nvme0n1", "/dev/nvme1n1"},
+-	}
+-	suite.md.syncAction["/dev/md0"] = md.SyncActionRecover
++	suite.md.with(func(f *fakeMDProvisioner) {
++		f.findByMember["/dev/nvme0n1"] = "/dev/md0"
++		f.details["/dev/md0"] = md.Detail{
++			Level:       "raid1",
++			RaidDevices: 2,
++			Members:     []string{"/dev/nvme0n1", "/dev/nvme1n1"},
++		}
++		f.syncAction["/dev/md0"] = md.SyncActionRecover
++	})
+ 
+ 	createDisk(&suite.DefaultSuite, "nvme0n1", "/dev/nvme0n1", "nvme")
+ 	createDisk(&suite.DefaultSuite, "nvme1n1", "/dev/nvme1n1", "nvme")
+@@ -470,33 +487,32 @@ func (suite *MDArrayReconcileSuite) createSerialMirrorSpecs() {
+ // observeSerialMirror changes only the simulated mdadm/sysfs observation. The
+ // production controller still decides whether to create, add, or grow an array.
+ func (suite *MDArrayReconcileSuite) observeSerialMirror(name, device string, members []string, action md.SyncAction) {
+-	suite.md.mu.Lock()
+-	defer suite.md.mu.Unlock()
+-
+-	metadata := "1.0"
+-	if name == "data" {
+-		metadata = "1.2"
+-	}
++	suite.md.with(func(f *fakeMDProvisioner) {
++		metadata := "1.0"
++		if name == "data" {
++			metadata = "1.2"
++		}
+ 
+-	suite.md.details[device] = md.Detail{
+-		Level:       "raid1",
+-		RaidDevices: 2,
+-		Members:     append([]string(nil), members...),
+-		Name:        "talos:" + name,
+-		UUID:        "test-" + name,
+-		Metadata:    metadata,
+-	}
+-	suite.md.syncAction[device] = action
++		f.details[device] = md.Detail{
++			Level:       "raid1",
++			RaidDevices: 2,
++			Members:     append([]string(nil), members...),
++			Name:        "talos:" + name,
++			UUID:        "test-" + name,
++			Metadata:    metadata,
++		}
++		f.syncAction[device] = action
+ 
+-	for member, arrayDevice := range suite.md.findByMember {
+-		if arrayDevice == device {
+-			delete(suite.md.findByMember, member)
++		for member, arrayDevice := range f.findByMember {
++			if arrayDevic
 ```
 
-**File**: `pkg/xfs/root_linux_test.go` (added, +86/-0)
+---
+
+### Incident Patch 2: `0cd2d52f` (2026-11-12)
+**Commit Message**: fix: write extension service config files to a detached tmpfs
+
+The controller wrote extension service config files with plain os
+calls into /system/overlays/extensions, a directory that stays
+writable for anything that can reach /system. Mount a detached 1M
+tmpfs instead, write the files only through its xfs root and bind it
+read-only at the old path, so only the controller can change them.
+
+Store each file at its mount path under the service directory
+instead of flattening the path into one file name. Flattening made
+"/etc/a/b" and "/etc/a-b" the same file, so one silently replaced
+the other. Mount paths must now be absolute and clean, and must not
+repeat or sit under another mount path of the same service, so a
+path like "../tailscale/etc/auth" can't reach another service's
+directory. The controller also writes each service's files through
+a root opened beneath its directory, so a mount path that slipped
+past validation still can't resolve outside of it.
+
+Remove stale files before writing, so a path that turns from a file
+into a directory can be written, and write the config status last,
+so its version changes only once the directory matches the config.
+
+Signed-off-by: Noel Georg
+
+**File**: `hack/release.toml` (modified, +11/-0)
 ```diff
-@@ -0,0 +1,86 @@
+@@ -1089,6 +1089,17 @@ Every connection to the endpoints is authenticated with TLS, and unreachable end
+ The `/virtualmachines.partition` cgroup has a `pids.max` limit, so virtual machines can't exhaust the host PID space.
+ Talos calculates it the same way the kubelet calculates the `kubepods` limit: the smaller of `kernel.pid_max` and `kernel.threads-max`, minus 100 reserved PIDs.
+ The limit follows changes to these sysctls without a reboot.
++"""
++
++    [notes.extension_service_config_mount_paths]
++        title = "Extension Service Config Mount Paths"
++        description = """\
++`ExtensionServiceConfig` mount paths must be absolute and clean (no `.`, `..`, repeated or trailing slashes),
++must not repeat, and must not sit under another mount path of the same extension service.
++Talos used to accept such paths, so fix them in the machine configuration before upgrading:
++a node with an invalid mount path in its saved machine configuration fails to load the configuration on boot.
++
++Config files are now stored on a dedicated 1 MiB tmpfs, which limits the total size of all extension service config files.
+ """
+ 
+ [make_deps]
+```
+
+**File**: `internal/app/machined/pkg/controllers/runtime/extension_service_config_files.go` (modified, +89/-27)
+```diff
+@@ -8,22 +8,23 @@ import (
+ 	"context"
+ 	"fmt"
+ 	"io/fs"
+-	"os"
+ 	"path/filepath"
+-	"strings"
+ 
+ 	"github.com/cosi-project/runtime/pkg/controller"
+ 	"github.com/cosi-project/runtime/pkg/safe"
+ 	"go.uber.org/zap"
+ 
+ 	v1alpha1runtime "github.com/siderolabs/talos/internal/app/machined/pkg/runtime"
++	"github.com/siderolabs/talos/pkg/machinery/config/types/runtime/extensions"
+ 	"github.com/siderolabs/talos/pkg/machinery/resources/runtime"
++	"github.com/siderolabs/talos/pkg/xfs"
++	"github.com/siderolabs/talos/pkg/xfs/opendir"
+ )
+ 
+ // ExtensionServiceConfigFilesController writes down the config files for extension services.
+ type ExtensionServiceConfigFilesController struct {
+-	V1Alpha1Mode            v1alpha1runtime.Mode
+-	ExtensionsConfigBaseDir string
++	V1Alpha1Mode         v1alpha1runtime.Mode
++	ExtensionsConfigRoot xfs.Root
+ }
+ 
+ // Name implements controller.Controller interface.
+@@ -74,27 +75,40 @@ func (ctrl *ExtensionServiceConfigFilesController) Run(ctx context.Context, r co
+ 
+ 		r.StartTrackingOutputs()
+ 
+-		touchedFiles := map[string]struct{}{}
++		// every path to keep in the root, and whether it is a directory
++		wanted := map[string]bool{}
+ 
+ 		for res := range list.All() {
+-			extensionConfigPath := filepath.Join(ctrl.ExtensionsConfigBaseDir, res.Metadata().ID())
+-
+-			if err = os.MkdirAll(extensionConfigPath, 0o755); err != nil {
+-				return fmt.Errorf("error creating directory %q: %w", extensionConfigPath, err)
+-			}
+-
+-			touchedFiles[extensionConfigPath] = struct{}{}
++			wanted[res.Metadata().ID()] = true
+ 
+ 			for _, file := range res.TypedSpec().Files {
+-				fileName := filepath.Join(extensionConfigPath, strings.ReplaceAll(strings.TrimPrefix(file.MountPath, "/"), "/", "-"))
++				fileName, err := extensions.ConfigFileName(res.Metadata().ID(), file.MountPath)
++				if err != nil {
++					return err
++				}
++
++				fileName = filepath.Join(res.Metadata().ID(), fileName)
+ 
+-				if err = updateFile(fileName, []byte(file.Content), 0o644); err != nil {
+-					return fmt.Errorf("error writing file %q: %w", fileName, err)
++				for dir := filepath.Dir(fileName); dir != "."; dir = filepath.Dir(dir) {
++					wanted[dir] = true
+ 				}
+ 
+-				touchedFiles[fileName] = struct{}{}
++				wanted[fileName] = false
+ 			}
++		}
+ 
++		// clean up first, so that a path which changed between a file and a directory can be written
++		if err = cleanupExtensionServiceConfigFiles(ctrl.ExtensionsConfigRoot, wanted); err != nil {
++			return err
++		}
++
++		for res := range list.All() {
++			if err = ctrl.writeConfigFiles(res); err != nil {
++				return err
++			}
++		}
++
++		for res := range list.All() {
+ 			if err = safe.WriterModify(ctx, r, runtime.NewExtensionServiceConfigStatusSpec(runtime.NamespaceName, res.Metadata().ID()), func(spec *runtime.ExtensionServiceConfigStatus) error {
+ 				spec.TypedSpec().SpecVersion = res.Metadata().Version().String()
+ 
+@@ -104,21 +118,69 @@ func (ctrl *ExtensionServiceConfigFilesController) Run(ctx context.Context, r co
+ 			}
+ 		}
+ 
+-		// remove all files not managed by us
+-		if err = filepath.WalkDir(ctrl.ExtensionsConfigBaseDir, func(path string, d fs.DirEntry, walkErr error) error {
+-			if _, ok := touchedFiles[path]; path != ctrl.ExtensionsConfigBaseDir && !ok {
+-				if err = os.RemoveAll(path); err != nil {
+-					return err
+-				}
+-			}
+-
+-			return nil
+-		}); err != nil {
++		if err = safe.CleanupOutputs[*runtime.ExtensionServiceConfigStatus](ctx, r); err != nil {
+ 			return err
+ 		}
++	}
++}
+ 
+-		if err = safe.CleanupOutputs[*runtime.ExtensionServiceConfigStatus](ctx, r); err != nil {
++// writeConfigFiles writes the config files of an extension service through a root opened beneath
++// its directory, so no mount path can resolve into another service's directory.
++func (ctrl *ExtensionServiceConfigFilesController) writeConfigFiles(res *runtime.ExtensionServiceConfig) error {
++	id := res.Metadata().ID()
++
++	if err := xfs.MkdirAll(ctrl.ExtensionsConfigRoot, id, 0o755); err != nil {
++		return fmt.Errorf("error creating directory %q: %w", id, err)
++	}
++
++	rootFd, err := ctrl.ExtensionsConfigRoot.Fd()
++	if err != nil {
++		return err
++	}
++
++	root := &xfs.UnixRoot{FS: opendir.NewBeneath(rootFd, id)}
++	if err = root.OpenFS(); err != nil {
++		return err
++	}
++
++	defer root.Close() //nolint:errcheck
++
++	for _, file := range res.TypedSpec().Files {
++		fileName, err := extensions.ConfigFileName(id, file.MountPath)
++		if err != nil {
+ 			return err
+ 		}
++
++		if err = xfs.MkdirAll(root, filepath.Dir(fileName), 0o755); err != nil {
++			return fmt.Errorf("error creating directory for %q of extension %q: %w", fileName, id, err)
++		}
++
++		if err = updateFile(root, fileName, []byte(file.Content), 0o644); err != nil {
++			return fmt.Errorf("error writing file %q of extension %q: %w", fileName, id, err)
++		}
+ 	}
++
++	return nil
++}
++
++func cleanupExtensionServiceConfigFiles(root xfs.Root, wanted map[string]bool) error {
++	return fs.WalkDir(root, ".", func(path string, d fs.DirEntry, err error) error {
++		if err != nil || p
+```
+
+**File**: `internal/app/machined/pkg/controllers/runtime/extension_service_config_files_test.go` (modified, +36/-7)
+```diff
+@@ -6,16 +6,18 @@ package runtime_test
+ import (
+ 	"os"
+ 	"path/filepath"
+-	"strings"
+ 	"testing"
+ 
++	"github.com/cosi-project/runtime/pkg/safe"
+ 	"github.com/siderolabs/gen/xslices"
+ 	"github.com/stretchr/testify/assert"
+ 	"github.com/stretchr/testify/suite"
+ 
+ 	"github.com/siderolabs/talos/internal/app/machined/pkg/controllers/ctest"
+ 	"github.com/siderolabs/talos/internal/app/machined/pkg/controllers/runtime"
+ 	runtimeres "github.com/siderolabs/talos/pkg/machinery/resources/runtime"
++	"github.com/siderolabs/talos/pkg/xfs"
++	"github.com/siderolabs/talos/pkg/xfs/opendir"
+ )
+ 
+ type ExtensionServiceConfigFilesSuite struct {
+@@ -27,12 +29,18 @@ type ExtensionServiceConfigFilesSuite struct {
+ func TestExtensionServiceConfigFilesSuite(t *testing.T) {
+ 	extensionsConfigDir := t.TempDir()
+ 
++	root := &xfs.UnixRoot{FS: opendir.NewFromPath(extensionsConfigDir)}
++
+ 	suite.Run(t, &ExtensionServiceConfigFilesSuite{
+ 		AfterSetup: func(suite *ctest.DefaultSuite) {
++			suite.Require().NoError(root.OpenFS())
+ 			suite.Require().NoError(suite.Runtime().RegisterController(&runtime.ExtensionServiceConfigFilesController{
+-				ExtensionsConfigBaseDir: extensionsConfigDir,
++				ExtensionsConfigRoot: root,
+ 			}))
+ 		},
++		AfterTearDown: func(*ctest.DefaultSuite) {
++			root.Close() //nolint:errcheck
++		},
+ 		extensionsConfigDir: extensionsConfigDir,
+ 	})
+ }
+@@ -96,7 +104,7 @@ func (suite *ExtensionServiceConfigFilesSuite) TestReconcileExtensionServiceConf
+ 		)
+ 
+ 		for _, file := range tt.configFiles {
+-			content, err := os.ReadFile(filepath.Join(suite.extensionsConfigDir, tt.extensionName, strings.ReplaceAll(strings.TrimPrefix(file.mountPath, "/"), "/", "-")))
++			content, err := os.ReadFile(filepath.Join(suite.extensionsConfigDir, tt.extensionName, file.mountPath))
+ 			suite.Require().NoError(err)
+ 
+ 			suite.Assert().Equal(file.content, string(content))
+@@ -109,7 +117,7 @@ func (suite *ExtensionServiceConfigFilesSuite) TestReconcileExtensionServiceConf
+ 	suite.Assert().NoError(os.Mkdir(filepath.Join(suite.extensionsConfigDir, "test"), 0o755))
+ 	suite.Assert().NoError(os.WriteFile(filepath.Join(suite.extensionsConfigDir, "test", "testdata"), []byte("{}"), 0o644))
+ 
+-	extensionAConfigFileInfo, err := os.Stat(filepath.Join(suite.extensionsConfigDir, "test-extension-a", "etc-test"))
++	extensionAConfigFileInfo, err := os.Stat(filepath.Join(suite.extensionsConfigDir, "test-extension-a", "etc", "test"))
+ 	suite.Assert().NoError(err)
+ 
+ 	// delete test-extension-b resource
+@@ -118,12 +126,33 @@ func (suite *ExtensionServiceConfigFilesSuite) TestReconcileExtensionServiceConf
+ 
+ 	suite.Assert().NoFileExists(filepath.Join(suite.extensionsConfigDir, "test", "testdata"))
+ 	suite.Assert().NoDirExists(filepath.Join(suite.extensionsConfigDir, "test"))
+-	suite.Assert().NoFileExists(filepath.Join(suite.extensionsConfigDir, "test-extension-b", "etc-bar"))
+-	suite.Assert().NoFileExists(filepath.Join(suite.extensionsConfigDir, "test-extension-b", "var-etc-foo"))
++	suite.Assert().NoFileExists(filepath.Join(suite.extensionsConfigDir, "test-extension-b", "etc", "bar"))
++	suite.Assert().NoFileExists(filepath.Join(suite.extensionsConfigDir, "test-extension-b", "var", "etc", "foo"))
+ 	suite.Assert().NoDirExists(filepath.Join(suite.extensionsConfigDir, "test-extension-b"))
+ 
+-	extensionAConfigFileInfoAfterUpdate, err := os.Stat(filepath.Join(suite.extensionsConfigDir, "test-extension-a", "etc-test"))
++	extensionAConfigFileInfoAfterUpdate, err := os.Stat(filepath.Join(suite.extensionsConfigDir, "test-extension-a", "etc", "test"))
+ 	suite.Require().NoError(err)
+ 
+ 	suite.Assert().Equal(extensionAConfigFileInfo.ModTime(), extensionAConfigFileInfoAfterUpdate.ModTime())
++
++	// a mount path which turns a config file into a directory replaces the file
++	extensionA, err := safe.StateUpdateWithConflicts(suite.Ctx(), suite.State(), runtimeres.NewExtensionServiceConfigSpec(runtimeres.NamespaceName, "test-extension-a").Metadata(),
++		func(res *runtimeres.ExtensionServiceConfig) error {
++			res.TypedSpec().Files = []runtimeres.ExtensionServiceConfigFile{{Content: "test-content-d", MountPath: "/etc/test/inner"}}
++
++			return nil
++		},
++	)
++	suite.Require().NoError(err)
++
++	ctest.AssertResource(
++		suite, "test-extension-a",
++		func(status *runtimeres.ExtensionServiceConfigStatus, asrt *assert.Assertions) {
++			asrt.Equal(extensionA.Metadata().Version().String(), status.TypedSpec().SpecVersion)
++		},
++	)
++
++	content, err := os.ReadFile(filepath.Join(suite.extensionsConfigDir, "test-extension-a", "etc", "test", "inner"))
++	suite.Require().NoError(err)
++	suite.Assert().Equal("test-content-d", string(content))
+ }
+```
+
+**File**: `internal/app/machined/pkg/controllers/runtime/utils.go` (modified, +5/-4)
+```diff
+@@ -15,6 +15,7 @@ import (
+ 	"github.com/siderolabs/gen/optional"
+ 
+ 	"github.com/siderolabs/talos/pkg/machinery/resources/runtime"
++	"github.com/siderolabs/talos/pkg/xfs"
+ )
+ 
+ // WaitForDevicesReady waits for devices to be ready.
+@@ -66,13 +67,13 @@ func WaitForDevicesReady(ctx context.Context, r controller.Runtime, nextInputs [
+ 	return nil
+ }
+ 
+-// updateFile is like `os.WriteFile`, but it will only update the file if the
++// updateFile is like `xfs.WriteFile`, but it will only update the file if the
+ // contents have changed.
+-func updateFile(filename string, contents []byte, mode os.FileMode) error {
+-	oldContents, err := os.ReadFile(filename)
++func updateFile(root xfs.Root, filename string, contents []byte, mode os.FileMode) error {
++	oldContents, err := xfs.ReadFile(root, filename)
+ 	if err == nil && bytes.Equal(oldContents, contents) {
+ 		return nil
+ 	}
+ 
+-	return os.WriteFile(filename, contents, mode)
++	return xfs.WriteFile(root, filename, contents, mode)
+ }
+```
+
+**File**: `internal/app/machined/pkg/runtime/v1alpha2/internal/extconfigroot/extconfigroot.go` (added, +80/-0)
+```diff
+@@ -0,0 +1,80 @@
++// This Source Code Form is subject to the terms of the Mozilla Public
++// License, v. 2.0. If a copy of the MPL was not distributed with this
++// file, You can obtain one at http://mozilla.org/MPL/2.0/.
++
++// Package extconfigroot mounts the tmpfs which holds rendered extension service config files.
++package extconfigroot
++
++import (
++	"errors"
++	"fmt"
++	"os"
++
++	"go.uber.org/zap"
++	"golang.org/x/sys/unix"
++
++	mountv3 "github.com/siderolabs/talos/internal/pkg/mount/v3"
++	"github.com/siderolabs/talos/internal/pkg/selinux"
++	"github.com/siderolabs/talos/pkg/machinery/constants"
++	"github.com/siderolabs/talos/pkg/xfs"
++	"github.com/siderolabs/talos/pkg/xfs/fsopen"
++)
++
++// Setup mounts a detached tmpfs and binds it read-only at target.
++//
++// The returned root is the only writable view.
++func Setup(target string, logger *zap.Logger) (xfs.Root, func() error, error) {
++	fsOptions := []fsopen.Option{
++		fsopen.WithStringParameter("mode", "0755"),
++		fsopen.WithStringParameter("size", "1M"),
++	}
++
++	if selinux.IsEnabled() {
++		fsOptions = append(fsOptions, fsopen.WithStringParameter("context", constants.SystemSelinuxLabel))
++	}
++
++	if err := os.MkdirAll(target, 0o755); err != nil {
++		return nil, nil, fmt.Errorf("failed to create extension service config mount target %q: %w", target, err)
++	}
++
++	mgr := mountv3.NewManager(
++		mountv3.WithDetached(),
++		mountv3.WithPrinter(logger.Sugar().Infof),
++		mountv3.WithFsopen("tmpfs", fsOptions...),
++	)
++
++	point, err := mgr.Mount()
++	if err != nil {
++		return nil, nil, fmt.Errorf("failed to mount anonymous tmpfs for extension service config: %w", err)
++	}
++
++	cleanup := func() {
++		mgr.Unmount() //nolint:errcheck
++	}
++
++	root := point.Root()
++
++	rootFD, err := root.Fd()
++	if err != nil {
++		cleanup()
++
++		return nil, nil, fmt.Errorf("failed to get extension service config root fd: %w", err)
++	}
++
++	if err = mountv3.BindReadonlyFd(rootFD, target); err != nil {
++		cleanup()
++
++		return nil, nil, fmt.Errorf("failed to bind extension service config root at %q: %w", target, err)
++	}
++
++	logger.Info("mounted extension service config tmpfs", zap.String("target", target))
++
++	unmount := func() error {
++		return errors.Join(
++			unix.Unmount(target, unix.MNT_DETACH),
++			mgr.Unmount(),
++		)
++	}
++
++	return root, unmount, nil
++}
+```
+
+**File**: `internal/app/machined/pkg/runtime/v1alpha2/internal/extconfigroot/extconfigroot_test.go` (added, +73/-0)
+```diff
+@@ -0,0 +1,73 @@
 +// This Source Code Form is subject to the terms of the Mozilla Public
 +// License, v. 2.0. If a copy of the MPL was not distributed with this
 +// file, You can obtain one at http://mozilla.org/MPL/2.0/.
 +
 +//go:build linux
 +
-+package xfs_test
++package extconfigroot_test
 +
 +import (
++	"errors"
 +	"os"
++	"path/filepath"
 +	"testing"
 +
 +	"github.com/stretchr/testify/assert"
 +	"github.com/stretchr/testify/require"
++	"go.uber.org/zap"
 +	"golang.org/x/sys/unix"
 +
++	"github.com/siderolabs/talos/internal/app/machined/pkg/runtime/v1alpha2/internal/extconfigroot"
++	mountv3 "github.com/siderolabs/talos/internal/pkg/mount/v3"
 +	"github.com/siderolabs/talos/pkg/xfs"
-+	"github.com/siderolabs/talos/pkg/xfs/fsopen"
 +)
 +
-+func TestUnixRootConfined(t *testing.T) {
-+	t.Parallel()
-+
-+	if uid := os.Getuid(); uid != 0 {
-+		t.Skipf("skipping test, not running as root (uid %d)", uid)
++func TestExtensionServiceConfigRoot(t *testing.T) {
++	if os.Geteuid() != 0 {
++		t.Skip("requires root for mount operations")
 +	}
 +
-+	root := &xfs.UnixRoot{FS: fsopen.New("tmpfs")}
-+	require.NoError(t, root.OpenFS())
++	target := filepath.Join(t.TempDir(), "extension-config")
 +
-+	t.Cleanup(func() { root.Close() }) //nolint:errcheck
-+
-+	fd, err := root.Fd()
++	root, unmount, err := extconfigroot.Setup(target, zap.NewNop())
 +	require.NoError(t, err)
 +
-+	require.NoError(t, xfs.MkdirAll(root, "dir", 0o755))
-+	require.NoError(t, xfs.WriteFile(root, "dir/file", []byte("inside"), 0o644))
++	unmounted := false
 +
-+	// the remove subtest gets its own symlinks, as parallel subtests run in any order
-+	for name, target := range map[string]string{
-+		"abs":       os.TempDir(),
-+		"up":        "../..",
-+		"inside":    "dir",
-+		"rm-abs":    os.TempDir(),
-+		"rm-inside": "dir",
-+	} {
-+		require.NoError(t, unix.Symlinkat(target, fd, name))
-+	}
-+
-+	contents, err := xfs.ReadFile(root, "inside/file")
-+	require.NoError(t, err)
-+	assert.Equal(t, "inside", string(contents))
-+
-+	for _, name := range []string{"abs/escape", "up/escape", "../escape"} {
-+		t.Run(name, func(t *testing.T) {
-+			t.Parallel()
-+
-+			assert.ErrorIs(t, xfs.WriteFile(root, name, []byte("escape"), 0o644), unix.EXDEV)
-+			assert.ErrorIs(t, root.Mkdir(name, 0o755), unix.EXDEV)
-+			assert.ErrorIs(t, root.Remove(name), unix.EXDEV)
-+			assert.ErrorIs(t, root.Rename("dir/file", name), unix.EXDEV)
-+		})
-+	}
-+
-+	for _, name := range []string{"dir/../dir/file", "dir/./file", "dir/"} {
-+		t.Run(name, func(t *testing.T) {
-+			t.Parallel()
-+
-+			_, err := xfs.ReadFile(root, name)
-+			assert.ErrorIs(t, err, unix.EINVAL)
-+			assert.ErrorIs(t, root.Remove(name), unix.EINVAL)
-+		})
-+	}
-+
-+	t.Run("remove symlink", func(t *testing.T) {
-+		t.Parallel()
-+
-+		// a symlink is removed itself, its target stays
-+		require.NoError(t, root.Remove("rm-abs"))
-+		require.NoError(t, xfs.RemoveAll(root, "rm-inside"))
-+
-+		contents, err := xfs.ReadFile(root, "dir/file")
-+		require.NoError(t, err)
-+		assert.Equal(t, "inside", string(contents))
++	t.Cleanup(func() {
++		if !unmounted {
++			unmount() //nolint:errcheck
++		}
 +	})
++
++	require.NoError(t, xfs.MkdirAll(root, "test-service", 0o755))
++	require.NoError(t, xfs.WriteFile(root, "test-service/etc-test", []byte("secret"), 0o600))
++
++	stableSource := filepath.Join(target, "test-service/etc-test")
++	contents, err := os.ReadFile(stableSource)
++	require.NoError(t, err)
++	assert.Equal(t, "secret", string(contents))
++
++	err = os.WriteFile(filepath.Join(target, "blocked"), []byte("blocked"), 0o600)
++	assert.True(t, errors.Is(err, unix.EROFS), "stable view should be read-only: %v", err)
++
++	bindTarget := filepath.Join(t.TempDir(), "bound-config")
++	require.NoError(t, os.WriteFile(bindTarget, nil, 0o600))
++	require.NoError(t, mountv3.BindReadonly(stableSource, bindTarget))
++
++	t.Cleanup(func() {
++		unix.Unmount(bindTarget, unix.MNT_DETACH) //nolint:errcheck
++	})
++
++	boundContents, err := os.ReadFile(bindTarget)
++	require.NoError(t, err)
++	assert.Equal(t, "secret", string(boundContents))
++
++	require.NoError(t, unix.Unmount(bindTarget, unix.MNT_DETACH))
++	require.NoError(t, unmount())
++
++	unmounted = true
++
++	_, err = os.Stat(stableSource)
++	assert.True(t, os.IsNotExist(err))
 +}
+```
+
+**File**: `internal/app/machined/pkg/runtime/v1alpha2/v1alpha2_controller.go` (modified, +17/-2)
+```diff
+@@ -43,6 +43,7 @@ import (
+ 	"github.com/siderolabs/talos/internal/app/machined/pkg/controllers/v1alpha1"
+ 	"github.com/siderolabs/talos/internal/app/machined/pkg/runtime"
+ 	runtimelogging "github.com/siderolabs/talos/internal/app/machined/pkg/runtime/logging"
++	"github.com/siderolabs/talos/internal/app/machined/pkg/runtime/v1alpha2/internal/extconfigroot"
+ 	"github.com/siderolabs/talos/internal/app/machined/pkg/system"
+ 	"github.com/siderolabs/talos/internal/pkg/ctrltrace"
+ 	"github.com/siderolabs/talos/internal/pkg/libvirt"
+@@ -54,6 +55,7 @@ import (
+ 	talosconfig "github.com/siderolabs/talos/pkg/machinery/config/config"
+ 	"github.com/siderolabs/talos/pkg/machinery/constants"
+ 	configresource "github.com/siderolabs/talos/pkg/machinery/resources/config"
++	"github.com/siderolabs/talos/pkg/xfs"
+ 	"github.com/siderolabs/talos/pkg/xfs/fsopen"
+ )
+ 
+@@ -154,6 +156,19 @@ func (ctrl *Controller) Run(ctx context.Context, drainer *runtime.Drainer) error
+ 		defer udevUnmount() //nolint:errcheck
+ 	}
+ 
++	var extensionServiceConfigRoot xfs.Root
++
++	if ctrl.v1alpha1Runtime.State().Platform().Mode() != runtime.ModeContainer {
++		var extensionServiceConfigUnmount func() error
++
++		extensionServiceConfigRoot, extensionServiceConfigUnmount, err = extconfigroot.Setup(constants.ExtensionServiceUserConfigPath, ctrl.logger)
++		if err != nil {
++			return fmt.Errorf("failed to set up extension service config root: %w", err)
++		}
++
++		defer extensionServiceConfigUnmount() //nolint:errcheck
++	}
++
+ 	lvmProvisioner, err := lvm.New()
+ 	if err != nil {
+ 		return fmt.Errorf("failed to initialize LVM: %w", err)
+@@ -539,8 +554,8 @@ func (ctrl *Controller) Run(ctx context.Context, drainer *runtime.Drainer) error
+ 		runtimecontrollers.NewRebootController(ctrl.v1alpha1Runtime, ctrl.reboot),
+ 		&runtimecontrollers.ExtensionServiceConfigController{},
+ 		&runtimecontrollers.ExtensionServiceConfigFilesController{
+-			V1Alpha1Mode:            ctrl.v1alpha1Runtime.State().Platform().Mode(),
+-			ExtensionsConfigBaseDir: constants.ExtensionServiceUserConfigPath,
++			V1Alpha1Mode:         ctrl.v1alpha1Runtime.State().Platform().Mode(),
++			ExtensionsConfigRoot: extensionServiceConfigRoot,
+ 		},
+ 		&runtimecontrollers.EventsSinkConfigController{
+ 			Cmdline:      procfs.ProcCmdline(),
+```
+
+**File**: `internal/app/machined/pkg/system/services/extension.go` (modified, +7/-2)
+```diff
+@@ -11,7 +11,6 @@ import (
+ 	"os"
+ 	"path/filepath"
+ 	"slices"
+-	"strings"
+ 
+ 	"github.com/containerd/containerd/v2/core/containers"
+ 	"github.com/containerd/containerd/v2/pkg/oci"
+@@ -31,6 +30,7 @@ import (
+ 	"github.com/siderolabs/talos/internal/pkg/environment"
+ 	"github.com/siderolabs/talos/internal/pkg/mount/v3"
+ 	"github.com/siderolabs/talos/pkg/conditions"
++	"github.com/siderolabs/talos/pkg/machinery/config/types/runtime/extensions"
+ 	"github.com/siderolabs/talos/pkg/machinery/constants"
+ 	extservices "github.com/siderolabs/talos/pkg/machinery/extensions/services"
+ 	"github.com/siderolabs/talos/pkg/machinery/resources/network"
+@@ -389,8 +389,13 @@ func (svc *Extension) applyExtensionServiceConfig(
+ 	}
+ 
+ 	for _, ext := range spec.Files {
++		fileName, err := extensions.ConfigFileName(svc.Spec.Name, ext.MountPath)
++		if err != nil {
++			return nil, nil, err
++		}
++
+ 		mounts = append(mounts, specs.Mount{
+-			Source:      filepath.Join(constants.ExtensionServiceUserConfigPath, svc.Spec.Name, strings.ReplaceAll(strings.TrimPrefix(ext.MountPath, "/"), "/", "-")),
++			Source:      filepath.Join(constants.ExtensionServiceUserConfigPath, svc.Spec.Name, fileName),
+ 			Destination: ext.MountPath,
+ 			Type:        "bind",
+ 			Options:     []string{"ro", "bind"},
 ```
 
 ---
 
-### Incident Patch 2: `47d103d4` (2026-11-10)
-**Commit Message**: test: speed up container suite short mode
+### Incident Patch 3: `f0a81e1b` (2026-11-13)
+**Commit Message**: fix: pids ctrl enoent on extension pids at boot
 
-Cuts down the execution time of ContainersSuite integration tests in
-short mode. Exact duration will vary, but the current ballpark duration
-is ~60s (down from ~160s).
+/system/extensions/pids.max did not exist at boot, and the WorkloadPidsController failed with ENOENT until a later container start under /system enabled pids there.
 
-The time savings come mostly from reducing idle time in the test scenarios: shorter timeouts, faster polling, shorter restart delay, shorter sleep values in dummy test containers. We now also skip `TestStopTimeout/default` in short mode.
+Create the extensions cgroup with pids enabled and no limit, like the other workload roots, and cover it in the resources test.
+
+Resolves https://github.com/siderolabs/talos/issues/14948
 
 Signed-off-by: Maja Bojarska <[REDACTED_EMAIL]>
 
-**File**: `internal/integration/api/containers.go` (modified, +67/-33)
+**File**: `internal/pkg/cgroup/cgroup.go` (modified, +1/-0)
 ```diff
-@@ -266,7 +266,14 @@ func (suite *ContainersSuite) TestRestartAfterTermination() {
- 		suite.Run(test.name, func() {
- 			ctx, name, _ := suite.setupContainer(test.name)
- 
--			suite.applyContainers(ctx, suite.shellContainer(name, test.command))
-+			// A short restart delay keeps the wait for the replacement short; the default delay is
-+			// exercised by TestContainerStatus.
-+			doc := suite.shellContainer(name, test.command)
-+			doc.LifecycleConfig = &containercfg.ContainerLifecycle{
-+				RestartConfig: &containercfg.ContainerRestart{RestartDelay: new(time.Second)},
-+			}
-+
-+			suite.applyContainers(ctx, doc)
- 
- 			firstID, first := suite.assertNewestInstance(ctx, name, "first exit",
- 				func(status *containers.ContainerInstanceStatusSpec, asrt *assert.Assertions) bool {
-@@ -308,17 +315,25 @@ func (suite *ContainersSuite) TestStopTimeout() {
- 	}{
- 		{name: "configured", stopTimeout: 2 * time.Second, minStop: 2 * time.Second, maxStop: constants.ContainerDefaultStopTimeout},
- 		{name: "default", minStop: constants.ContainerDefaultStopTimeout},
--		// a restarted container is started again 5s after it has exited
--		{name: "restart", restart: true, stopTimeout: 2 * time.Second, minStop: 7 * time.Second, maxStop: constants.ContainerDefaultStopTimeout + 5*time.Second},
-+		// a restarted container is started again one restart delay (1s here) after it has exited
-+		{name: "restart", restart: true, stopTimeout: 2 * time.Second, minStop: 3 * time.Second, maxStop: constants.ContainerDefaultStopTimeout + time.Second},
- 	} {
- 		suite.Run(test.name, func() {
-+			if test.stopTimeout == 0 && testing.Short() {
-+				suite.T().Skip("skipping the default stop timeout in short mode, it takes the whole default timeout")
-+			}
-+
- 			ctx, name, _ := suite.setupContainer("stop-timeout-" + test.name)
- 
- 			doc := suite.shellContainer(name, "date +start=%s; trap 'date +term=%s' TERM; while true; do sleep 1 & wait $!; done")
- 			if test.stopTimeout != 0 {
- 				doc.LifecycleConfig = &containercfg.ContainerLifecycle{StopTimeoutConfig: new(test.stopTimeout)}
- 			}
- 
-+			if test.restart {
-+				doc.LifecycleConfig.RestartConfig = &containercfg.ContainerRestart{RestartDelay: new(time.Second)}
-+			}
-+
- 			suite.applyContainers(ctx, doc)
- 
- 			instanceID, _ := suite.assertContainerRunning(ctx, name, "initial start")
-@@ -335,22 +350,7 @@ func (suite *ContainersSuite) TestStopTimeout() {
- 				suite.applyContainers(ctx, replaced)
- 			}
- 
--			var term, restart int64
--
--			suite.Require().EventuallyWithT(func(collect *assert.CollectT) {
--				log, err := suite.readContainerLog(ctx, name)
--				if !assert.NoError(collect, err) {
--					return
--				}
--
--				starts, terms := logTimes(log, "start="), logTimes(log, "term=")
--
--				if assert.Len(collect, starts, 2, "not started again yet:\n%s", log) && assert.Len(collect, terms, 1, "no SIGTERM logged:\n%s", log) {
--					term, restart = terms[0], starts[1]
--				}
--			}, containerStartTimeout, time.Second)
--
--			stopped := time.Duration(restart-term) * time.Second
-+			stopped := suite.stopDuration(ctx, name)
- 
- 			suite.Assert().GreaterOrEqual(stopped, test.minStop)
- 
-@@ -361,9 +361,33 @@ func (suite *ContainersSuite) TestStopTimeout() {
- 	}
- }
- 
-+// stopDuration waits for the container to log one SIGTERM and a second start, and returns the
-+// time between them.
-+func (suite *ContainersSuite) stopDuration(ctx context.Context, name string) time.Duration {
-+	var term, restart int64
-+
-+	suite.Require().EventuallyWithT(func(collect *assert.CollectT) {
-+		log, err := suite.readContainerLog(ctx, name)
-+		if !assert.NoError(collect, err) {
-+			return
-+		}
-+
-+		starts, terms := logTimes(log, "start="), logTimes(log, "term=")
-+
-+		if assert.Len(collect, starts, 2, "not started again yet:\n%s", log) && assert.Len(collect, terms, 1, "no SIGTERM logged:\n%s", log) {
-+			term, restart = terms[0], starts[1]
-+		}
-+	}, containerStartTimeout, time.Second)
-+
-+	return time.Duration(restart-term) * time.Second
-+}
-+
- // TestRestartPolicy verifies that a container which isn't restarted keeps its outcome, and that
- // on-failure restarts a failing container up to maxRetries.
- func (suite *ContainersSuite) TestRestartPolicy() {
-+	// Short, so that waiting out a few restart delays to see nothing happen stays cheap.
-+	const restartDelay = time.Second
-+
- 	for _, test := range []struct {
- 		name     string
- 		command  string
-@@ -375,24 +399,30 @@ func (suite *ContainersSuite) TestRestartPolicy() {
- 		{
- 			name:    "never",
- 			command: "exit 0",
--			restart: &containercfg.ContainerRestart{RestartPolicy: configcontainer.ContainerRestartPolicyNever},
--			state:   containers.ContainerStateCompleted,
--			runs:    1,
-+			restart: &containercfg.ContainerRestart{
-+				RestartPolicy: configcontainer.ContainerRestartPolicyNever,
-+				RestartDelay:  new(restartDelay),
-+			},
-+			state: containers.ContainerStateCompleted,
-+			runs:  1,
- 		},
- 		{
- 			name:    "on-failure-success",
- 			command: "exit 0",
--			restart: &containercfg.ContainerRestar
-```
-
----
-
-### Incident Patch 3: `b8f7d486` (2026-11-12)
-**Commit Message**: fix: reject ExtensionServiceConfig mount paths without a file name
-
-The config files controller flattens mountPath into one file name in
-the service config directory. Paths such as "/", "/." and "/.."
-flatten to "", "." or "..", which point at the service directory
-or its parent. Writing the file then fails with EISDIR and the
-controller retries forever.
-
-Reject these mount paths during validation.
-
-Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
-
-**File**: `pkg/machinery/config/types/runtime/extensions/service_config.go` (modified, +17/-2)
-```diff
-@@ -8,6 +8,7 @@ package extensions
- 
- import (
- 	"fmt"
-+	"strings"
- 
- 	"github.com/siderolabs/gen/xslices"
- 
-@@ -153,14 +154,28 @@ func (e *ServiceConfigV1Alpha1) Validate(validation.RuntimeMode, ...validation.O
- 			return nil, fmt.Errorf("extension content is required for extension %q", e.ServiceName)
- 		}
- 
--		if file.ConfigFileMountPath == "" {
--			return nil, fmt.Errorf("extension mount path is required for extension %q", e.ServiceName)
-+		if err := validateMountPath(file.ConfigFileMountPath, e.ServiceName); err != nil {
-+			return nil, err
- 		}
- 	}
- 
- 	return nil, nil
- }
- 
-+func validateMountPath(path, serviceName string) error {
-+	if path == "" {
-+		return fmt.Errorf("extension mount path is required for extension %q", serviceName)
-+	}
-+
-+	// the mount path is flattened into a single file name in the service config directory
-+	switch strings.ReplaceAll(strings.TrimPrefix(path, "/"), "/", "-") {
-+	case "", ".", "..":
-+		return fmt.Errorf("extension mount path %q is invalid for extension %q", path, serviceName)
-+	}
-+
-+	return nil
-+}
-+
- // Name implements config.ExtensionServiceConfig interface.
- func (e *ServiceConfigV1Alpha1) Name() string {
- 	return e.ServiceName
-```
-
-**File**: `pkg/machinery/config/types/runtime/extensions/service_config_test.go` (modified, +32/-0)
-```diff
-@@ -132,6 +132,38 @@ func TestExtensionServiceConfigValidate(t *testing.T) {
+@@ -121,6 +121,7 @@ func getCgroupV2Resources(name string) *cgroup2.Resources {
+ 			CPU: &cgroup2.CPU{
+ 				Weight: new(MillicoresToCPUWeight(MilliCores(constants.CgroupExtensionsMillicores))),
  			},
- 			expectedError: `no config files found for extension "foo"`,
- 		},
-+		{
-+			name: "mount path dot-dot",
-+			cfg: func() *extensions.ServiceConfigV1Alpha1 {
-+				cfg := extensions.NewServicesConfigV1Alpha1()
-+				cfg.ServiceName = "foo"
-+				cfg.ServiceConfigFiles = []extensions.ConfigFile{
-+					{
-+						ConfigFileContent:   "bar",
-+						ConfigFileMountPath: "/..",
-+					},
-+				}
-+
-+				return cfg
-+			},
-+			expectedError: `extension mount path "/.." is invalid for extension "foo"`,
-+		},
-+		{
-+			name: "mount path root",
-+			cfg: func() *extensions.ServiceConfigV1Alpha1 {
-+				cfg := extensions.NewServicesConfigV1Alpha1()
-+				cfg.ServiceName = "foo"
-+				cfg.ServiceConfigFiles = []extensions.ConfigFile{
-+					{
-+						ConfigFileContent:   "bar",
-+						ConfigFileMountPath: "/",
-+					},
-+				}
-+
-+				return cfg
-+			},
-+			expectedError: `extension mount path "/" is invalid for extension "foo"`,
-+		},
- 	} {
- 		t.Run(test.name, func(t *testing.T) {
++			Pids: workloadRootPids(),
+ 		}
+ 	case constants.CgroupInstaller:
+ 		return &cgroup2.Resources{
+```
+
+**File**: `internal/pkg/cgroup/resources_test.go` (modified, +1/-1)
+```diff
+@@ -20,7 +20,7 @@ import (
+ func TestWorkloadRootsEnablePidsUnlimited(t *testing.T) {
+ 	t.Parallel()
+ 
+-	for _, name := range []string{constants.CgroupTalosContainersRoot, constants.CgroupVirtualMachines} {
++	for _, name := range []string{constants.CgroupTalosContainersRoot, constants.CgroupVirtualMachines, constants.CgroupExtensions} {
+ 		t.Run(name, func(t *testing.T) {
  			t.Parallel()
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #14949** (2026-11-13): fix: WorkloadPidsController ENOENT /system/extensions on boot (@majabojarska)
+- **PR #14946** (2026-11-13): fix: data race between test fixtures in tests (@shanduur)
+- **PR #14942** (2026-11-13): fix: write extension service config files to a detached tmpfs (@frezbo)
 - **PR #14941** (2026-11-12): fix: extend host namespace PID resolving to Talos containers (@smira)
 - **PR #14940** (2026-11-12): feat: update runc 1.5.3, NVIDIA LTS and CNI plugins (@smira)
 - **PR #14939** (2026-11-12): fix(security): mount hardening (@frezbo)
-- **PR #14938** (2026-11-12): fix: reject ExtensionServiceConfig mount paths without a file name (@frezbo)
-- **PR #14937** (2026-11-12): fix: correct the schema examples URL in the cgroups command help (@immanuwell)
-- **PR #14935** (2026-11-12): feat: show io.weight, io.latency and io.max in the io cgroup preset (@frezbo)
 
 ---
 
@@ -2753,29 +2927,105 @@ Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. keep xfs.UnixRoot path resolution inside the root
+## X. data race between test fixtures in tests
 
 **RULE**:
-When implementing operations in `pkg/machinery/config/types/runtime/etc_file.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/app/machined/pkg/controllers/storage/md_array_reconcile_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a8637940`: keep xfs.UnixRoot path resolution inside the root. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `768ed463`: data race between test fixtures in tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/machinery/config/types/runtime/etc_file.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/app/machined/pkg/controllers/storage/md_array_reconcile_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// a non-clean path such as "foo/../ssl/x" would slip past the managed prefix checks below
-	if !filepath.IsLocal(path) || strings.HasPrefix(path, ".") || path != filepath.Clean(path) {
+// with runs fn under the fake's lock, for tests that seed or inspect fixture
+// state while the controller runtime is running.
+func (f *fakeMDProvisioner) with(fn func(f *fakeMDProvisioner)) {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+
+	fn(f)
+}
+
+	suite.md.with(func(f *fakeMDProvisioner) {
+		f.findByMember["/dev/nvme0n1"] = "/dev/md0"
+		f.details["/dev/md0"] = md.Detail{
+			Level:       "raid1",
+			RaidDevices: 2,
+			Members:     []string{"/dev/nvme0n1", "/dev/nvme1n1"},
+		}
+	})
+	suite.md.with(func(f *fakeMDProvisioner) {
+		f.findByMember["/dev/nvme0n1"] = "/dev/md0"
+		f.details["/dev/md0"] = md.Detail{
+			Level:       "raid1",
+			RaidDevices: 2,
+			Members:     []string{"/dev/nvme0n1", "/dev/nvme1n1"},
+		}
+	})
+	suite.md.with(func(f *fakeMDProvisioner) {
+		f.findByMember["/dev/nvme0n1"] = "/dev/md0"
+		f.details["/dev/md0"] = md.Detail{
+			Level:       "raid1",
+			RaidDevices: 2,
+			Members:     []string{"/dev/nvme0n1", "/dev/nvme1n1"},
+		}
+		f.syncAction["/dev/md0"] = md.SyncActionResync
+	})
+	suite.md.with(func(f *fakeMDProvisioner) {
+		f.findByMember["/dev/nvme0n1"] = "/dev/md0"
+		f.details["/dev/md0"] = md.Detail{
+			Level:       "raid1",
+			RaidDevices: 2,
+			Members:     []string{"/dev
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-	if !filepath.IsLocal(path) || strings.HasPrefix(path, ".") {
+// Induced defect failure mode:
+	suite.md.findByMember["/dev/nvme0n1"] = "/dev/md0"
+	suite.md.details["/dev/md0"] = md.Detail{
+		Level:       "raid1",
+		RaidDevices: 2,
+		Members:     []string{"/dev/nvme0n1", "/dev/nvme1n1"},
+	}
+	suite.md.findByMember["/dev/nvme0n1"] = "/dev/md0"
+	suite.md.details["/dev/md0"] = md.Detail{
+		Level:       "raid1",
+		RaidDevices: 2,
+		Members:     []string{"/dev/nvme0n1", "/dev/nvme1n1"},
+	}
+	suite.md.findByMember["/dev/nvme0n1"] = "/dev/md0"
+	suite.md.details["/dev/md0"] = md.Detail{
+		Level:       "raid1",
+		RaidDevices: 2,
+		Members:     []string{"/dev/nvme0n1", "/dev/nvme1n1"},
+	}
+	suite.md.syncAction["/dev/md0"] = md.SyncActionResync
+	suite.md.findByMember["/dev/nvme0n1"] = "/dev/md0"
+	suite.md.details["/dev/md0"] = md.Detail{
+		Level:       "raid1",
+		RaidDevices: 2,
+		Members:     []string{"/dev/nvme0n1", "/dev/nvme1n1"},
+	}
+	suite.md.syncAction["/dev/md0"] = md.SyncActionRecover
+	suite.md.mu.Lock()
+	defer suite.md.mu.Unlock()
+
+	metadata := "1.0"
+	if name == "data" {
+		metadata = "1.2"
+	}
+	suite.md.details[device] = md.Detail{
+		Level:       "raid1",
+		RaidDevices: 2,
+		Members:     append([]string(nil), members...),
+		Name:        "talos:" + name,
+		UUID:        "test-" + na
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a8637940` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `768ed463` are properly handled with clean fallback behavior.

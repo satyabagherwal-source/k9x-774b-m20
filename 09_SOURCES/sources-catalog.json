@@ -955,8 +955,8 @@
     "sourceUrl": "https://huggingface.co/openai/gpt-oss-20b",
     "sourceVersion": "hf-openai-gpt-oss-20b",
     "license": "Open-Source",
-    "contentHash": "9a327b6e8bd02e516f784d98bba11093205f593f918e64ef84954d00ccecdc4e",
-    "lastHarvestedAt": "2026-11-08T23:29:00.852Z",
+    "contentHash": "52ea2eb1583905ca240161dd3d4382dcfc64f89f98c5f2c2b110cc9507ebde58",
+    "lastHarvestedAt": "2026-11-14T03:15:21.650Z",
     "learningId": "learn-huggingface-openai-gpt-oss-20b"
   },
   "hf-meta-llama-llama-2-7b-chat-hf": {
@@ -3173,10 +3173,10 @@
     "repository": "matrixorigin/matrixone",
     "platform": "github",
     "sourceUrl": "https://github.com/matrixorigin/matrixone",
-    "sourceVersion": "437c6484",
+    "sourceVersion": "71390fb3",
     "license": "Apache-2.0",
-    "contentHash": "9ca583dce4c1e12ecf0f9a7f17abba6cd21a9e0c669ad428250ac2c2541d0478",
-    "lastHarvestedAt": "2026-11-13T02:06:03.968Z",
+    "contentHash": "03d8f4b9cdf177778c15cc53c02f6fa86054241b36f1d0533dc207817e8c4842",
+    "lastHarvestedAt": "2026-11-14T03:10:39.467Z",
     "learningId": "learn-github-matrixorigin-matrixone"
   },
   "fallow-rs-fallow": {
@@ -3643,10 +3643,10 @@
     "repository": "trufflesecurity/trufflehog",
     "platform": "github",
     "sourceUrl": "https://github.com/trufflesecurity/trufflehog",
-    "sourceVersion": "94dd9889",
+    "sourceVersion": "32e87f4f",
     "license": "AGPL-3.0",
-    "contentHash": "a337642afd83803f42cf912750ac56b85dbb36129808d1871f63dba8aeeb3018",
-    "lastHarvestedAt": "2026-11-13T20:27:08.206Z",
+    "contentHash": "956b2c00e671b988aea8550f12c96a049a4efa3eabca82cd48070d0a67b149d4",
+    "lastHarvestedAt": "2026-11-14T03:10:36.099Z",
     "learningId": "learn-github-trufflesecurity-trufflehog"
   },
   "neural-maze-ava-whatsapp-agent-course": {
@@ -4103,10 +4103,10 @@
     "repository": "i18next/react-i18next",
     "platform": "github",
     "sourceUrl": "https://github.com/i18next/react-i18next",
-    "sourceVersion": "bd802561",
+    "sourceVersion": "f97f5f82",
     "license": "MIT",
-    "contentHash": "153d986f0d49404ac745d2e7ec8314061512b77018bde1d296932634b04aa76d",
-    "lastHarvestedAt": "2026-11-09T18:11:21.804Z",
+    "contentHash": "91da2d06f39d26cb0da376f7b2352827d44e5a37bd5601de090f96ccd0888d1e",
+    "lastHarvestedAt": "2026-11-14T03:10:30.623Z",
     "learningId": "learn-github-i18next-react-i18next"
   },
   "clastix-kamaji": {
@@ -7383,10 +7383,10 @@
     "repository": "siderolabs/talos",
     "platform": "github",
     "sourceUrl": "https://github.com/siderolabs/talos",
-    "sourceVersion": "5cb1e1e3",
+    "sourceVersion": "ba4a88b6",
     "license": "MPL-2.0",
-    "contentHash": "805988603f563738c987fcda77f21322d65cbf66e878e4ccb5dd2de09ff7cd07",
-    "lastHarvestedAt": "2026-11-13T03:26:42.142Z",
+    "contentHash": "e19f48d3f0f61193b5a257b90d914f0f39c05e41415e4aedde57468deaf56998",
+    "lastHarvestedAt": "2026-11-14T03:10:34.110Z",
     "learningId": "learn-github-siderolabs-talos"
   },
   "zilliztech-claude-context": {

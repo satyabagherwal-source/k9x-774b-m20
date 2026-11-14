@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T03:02:23.777Z",
-  "total_records": 494,
+  "last_updated": "2026-11-14T03:16:47.744Z",
+  "total_records": 504,
   "domains": {
     "A": {
       "total": 5,
@@ -298,7 +298,7 @@
       ]
     },
     "F": {
-      "total": 10,
+      "total": 11,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -309,11 +309,12 @@
         "DOM-F-3F2EAC2E",
         "domain_intelligence-design-intelligence-hf-openai-whisper-large-v3-learnings-core-invariants",
         "domain_intelligence-design-intelligence-dathere-qsv-core-invariants",
-        "domain_intelligence-design-intelligence-dathere-qsv-learnings-core-invariants"
+        "domain_intelligence-design-intelligence-dathere-qsv-learnings-core-invariants",
+        "DOM-F-F89A3B28"
       ]
     },
     "G": {
-      "total": 69,
+      "total": 70,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -383,11 +384,12 @@
         "domain_intelligence-architecture-intelligence-software-mansion-react-native-reanimated-learnings-cor",
         "domain_intelligence-architecture-intelligence-zeromicro-go-zero-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-goharbor-harbor-core-invariants",
-        "domain_intelligence-architecture-intelligence-goharbor-harbor-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-goharbor-harbor-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-trufflesecurity-trufflehog-core-invariants"
       ]
     },
     "H": {
-      "total": 101,
+      "total": 108,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -489,7 +491,14 @@
         "domain_intelligence-technical-construction-intelligence-nats-io-nats-server-core-invariants",
         "domain_intelligence-technical-construction-intelligence-nats-io-nats-server-learnings-core-invariant",
         "domain_intelligence-technical-construction-intelligence-neuron-core-neuron-ai-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-neuron-core-neuron-ai-learnings-core-invaria"
+        "domain_intelligence-technical-construction-intelligence-neuron-core-neuron-ai-learnings-core-invaria",
+        "domain_intelligence-technical-construction-intelligence-i18next-react-i18next-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-siderolabs-talos-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-matrixorigin-matrixone-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-openai-gpt-oss-20b-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-hf-openai-gpt-oss-20b-learnings-core-invaria",
+        "domain_intelligence-technical-construction-intelligence-i18next-react-i18next-learnings-core-invaria",
+        "domain_intelligence-technical-construction-intelligence-siderolabs-talos-learnings-core-invariants"
       ]
     },
     "I": {
@@ -516,7 +525,7 @@
       ]
     },
     "J": {
-      "total": 7,
+      "total": 8,
       "record_ids": [
         "DOM-J-C14FC2D6",
         "DOM-J-B305372A",
@@ -524,7 +533,8 @@
         "DOM-J-F84C9E58",
         "DOM-J-782C1A9D",
         "DOM-J-44A35728",
-        "DOM-J-B241A1ED"
+        "DOM-J-B241A1ED",
+        "DOM-J-37B3B4A9"
       ]
     },
     "K": {
@@ -11183,6 +11193,146 @@
       "repository": "neuron-core-neuron-ai-learnings",
       "content_hash": "90c37658befbe65f078ef2038550450395ec45b47971a09a89fe662c8f621d06",
       "created_at": "2026-11-14T03:02:23.777Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-i18next-react-i18next-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-i18next-react-i18next-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: i18next/react-i18next Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-i18next-react-i18next-technical-construction-intelligence-i18next-react-i18next-.md",
+      "repository": "i18next/react-i18next",
+      "content_hash": "0ace05fc707c3e07576f4181d53cd1d9d787bf6bd5a14bba87345f043c5dab5a",
+      "created_at": "2026-11-14T03:10:30.955Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-siderolabs-talos-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-siderolabs-talos-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: siderolabs/talos Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-siderolabs-talos-technical-construction-intelligence-siderolabs-talos-core-invar.md",
+      "repository": "siderolabs/talos",
+      "content_hash": "a2831cf692f072ef211e849918750ee8da0de1ba0e997296acb9ae492bac2770",
+      "created_at": "2026-11-14T03:10:34.470Z"
+    },
+    "domain_intelligence-architecture-intelligence-trufflesecurity-trufflehog-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-trufflesecurity-trufflehog-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: trufflesecurity/trufflehog Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trufflesecurity-trufflehog-architecture-intelligence-trufflesecurity-trufflehog-.md",
+      "repository": "trufflesecurity/trufflehog",
+      "content_hash": "a43ca95b75ad105a05360de7a628a61d9a8cda8e39c3bb7b220eee01370ef9e8",
+      "created_at": "2026-11-14T03:10:36.454Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-matrixorigin-matrixone-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-matrixorigin-matrixone-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: matrixorigin/matrixone Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-matrixorigin-matrixone-technical-construction-intelligence-matrixorigin-matrixon.md",
+      "repository": "matrixorigin/matrixone",
+      "content_hash": "fc10a61230798626618922ab4d04f7ba0f3c50e1f64d52957aecb5ec4b366409",
+      "created_at": "2026-11-14T03:10:39.822Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-openai-gpt-oss-20b-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-openai-gpt-oss-20b-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: openai/gpt-oss-20b Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-openai-gpt-oss-20b-technical-construction-intelligence-openai-gpt-oss-20b-cor.md",
+      "repository": "openai/gpt-oss-20b",
+      "content_hash": "5696108ccc3cd2e00add09b1f39c5e8b40bb8a1c2792d82cd15433d6ab36ea9b",
+      "created_at": "2026-11-14T03:15:22.131Z"
+    },
+    "DOM-F-F89A3B28": {
+      "record_id": "DOM-F-F89A3B28",
+      "domain_letter": "F",
+      "domain_id": "design",
+      "domain_name": "Design Intelligence",
+      "secondary_domains": [],
+      "title": "GQA Key-Value Head Dimension Mismatch in sliding_attention (BUG-GQA-SLIDING-01)",
+      "content": "Tensor transformations in hybrid attention architectures must strictly order dimension expansion operations: Window truncation along sequence length MUST occur before or after repeating heads, but NEVER with unverified stride order.",
+      "content_hash": "483c72d21da493cecf03ab7b8e876af3a7286935b54c96f498fd9557e3a0c44a",
+      "summary": "Developer implemented repeat/interleave after sequence slicing, but applied sliding window masking using standard tensor slicing `kv[:, :, - -> Tensor transformations in hybrid attention architectures must strictly order dimension expansion operations: Window truncation along sequenc",
+      "provenance": {
+        "source_uri": "project://hf-openai-gpt-oss-20b/hf-openai-gpt-oss-20b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T03:15:25.481Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-openai-gpt-oss-20b)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "`config.json` specifications: `num_attention_heads: 64`, `num_key_value_heads: 8`, `head_dim: 64`, `sliding_window: 128`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T03:16:01.643Z"
+    },
+    "DOM-J-37B3B4A9": {
+      "record_id": "DOM-J-37B3B4A9",
+      "domain_letter": "J",
+      "domain_id": "search_distribution",
+      "domain_name": "Search & Distribution Intelligence",
+      "secondary_domains": [],
+      "title": "Router Logits Auxiliary Loss NaN under Top-4 Routing (BUG-MOE-AUX-NAN-02)",
+      "content": "Never compute load-balancing auxiliary losses on top-k masked or truncated distributions; auxiliary losses require continuous, unmasked probability distributions across all available expert slots.",
+      "content_hash": "e5b902d9aeed79060e87068d9da28c9bd7dc0e2f85983841da7ae83aecbf6705",
+      "summary": "The auxiliary loss formula $\\sum_{i=1}^{E} f_i \\cdot P_i$ requires $P_i$ to be the unmasked continuous softmax probability distribution of a -> Never compute load-balancing auxiliary losses on top-k masked or truncated distributions; auxiliary losses require continuous, unmasked prob",
+      "provenance": {
+        "source_uri": "project://hf-openai-gpt-oss-20b/hf-openai-gpt-oss-20b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T03:15:25.481Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-openai-gpt-oss-20b)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "`config.json`: `\"num_local_experts\": 32`, `\"experts_per_token\": 4`, `\"router_aux_loss_coef\": 0.9`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T03:16:45.259Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-hf-openai-gpt-oss-20b-learnings-core-invaria": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-hf-openai-gpt-oss-20b-learnings-core-invaria",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: hf-openai-gpt-oss-20b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-openai-gpt-oss-20b-learnings-technical-construction-intelligence-hf-openai-gp.md",
+      "repository": "hf-openai-gpt-oss-20b-learnings",
+      "content_hash": "e76805207acfb8660f08f2cae2bd97efef82bb81549da4ed8149aaa467eb90c4",
+      "created_at": "2026-11-14T03:16:45.961Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-i18next-react-i18next-learnings-core-invaria": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-i18next-react-i18next-learnings-core-invaria",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: i18next-react-i18next-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-i18next-react-i18next-learnings-technical-construction-intelligence-i18next-reac.md",
+      "repository": "i18next-react-i18next-learnings",
+      "content_hash": "0f7cf3266f160fe74c613a614608353623d0da3ec2771ad062787ebf0c215ac6",
+      "created_at": "2026-11-14T03:16:47.039Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-siderolabs-talos-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-siderolabs-talos-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: siderolabs-talos-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-siderolabs-talos-learnings-technical-construction-intelligence-siderolabs-talos-.md",
+      "repository": "siderolabs-talos-learnings",
+      "content_hash": "b50b40fe3bb5ce1b418886d4873a5f19bab9eb169056ba5683ba8af836d555e5",
+      "created_at": "2026-11-14T03:16:47.744Z"
     }
   }
 }

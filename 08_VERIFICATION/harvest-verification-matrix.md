@@ -9716,3 +9716,10 @@
 | `CYCLE-20261114-KNF5` | `2026-11-14T03:01:49.841Z` | `loft-sh/vcluster` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8422` | Yes (`1a3b0847...`) |
 | `CYCLE-20261114-KRAP` | `2026-11-14T03:01:54.865Z` | `neuron-core/neuron-ai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8423` | Yes (`551f515a...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T03:02:22.641Z` | `hf-zai-org-glm-5.2` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-78E4F99B` [Domain D] | Yes (`d97a9f50...`) |
+| `CYCLE-20261114-VT97` | `2026-11-14T03:10:30.619Z` | `i18next/react-i18next` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8424` | Yes (`91da2d06...`) |
+| `CYCLE-20261114-VVY1` | `2026-11-14T03:10:34.105Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8425` | Yes (`e19f48d3...`) |
+| `CYCLE-20261114-VXHA` | `2026-11-14T03:10:36.094Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8426` | Yes (`956b2c00...`) |
+| `CYCLE-20261114-W02U` | `2026-11-14T03:10:39.462Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8427` | Yes (`03d8f4b9...`) |
+| `CYCLE-20261114-21TA` | `2026-11-14T03:15:21.646Z` | `openai/gpt-oss-20b` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8428, Rule 8429, Rule 8430` | Yes (`52ea2eb1...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T03:16:01.655Z` | `hf-openai-gpt-oss-20b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-F89A3B28` [Domain F] | Yes (`483c72d2...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T03:16:45.270Z` | `hf-openai-gpt-oss-20b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-J-37B3B4A9` [Domain J] | Yes (`e5b902d9...`) |

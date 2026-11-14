@@ -4,22 +4,22 @@
 {
   "source_repository": "trufflesecurity/trufflehog",
   "source_url": "https://github.com/trufflesecurity/trufflehog",
-  "source_version": "94dd9889",
+  "source_version": "32e87f4f",
   "license": "AGPL-3.0",
-  "timestamp": "2026-11-13T20:27:08.481Z",
+  "timestamp": "2026-11-14T03:10:36.325Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-trufflesecurity-trufflehog",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog) (Revision: `94dd9889`).  
-> **License**: AGPL-3.0 | **Timestamp**: `2026-11-13T20:27:08.481Z`  
+> **Provenance**: Harvested from [trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog) (Revision: `32e87f4f`).  
+> **License**: AGPL-3.0 | **Timestamp**: `2026-11-14T03:10:36.325Z`  
 > **Learning ID**: `learn-github-trufflesecurity-trufflehog`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `trufflesecurity/trufflehog` (Commit: `94dd9889`)
+- **Target Repository**: `trufflesecurity/trufflehog` (Commit: `32e87f4f`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T20:27:07.807Z  
+> **Harvest Timestamp**: 2026-11-14T03:10:35.074Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Find, verify, and analyze leaked credentials
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 29289 stars
+- **Stars / Engagement**: 29299 stars
 
 ---
 
@@ -1151,293 +1151,365 @@ func (s Scanner) Description() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `94dd9889` (2026-11-13)
-**Commit Message**: Clean up Stdin source logging for per-source debug (#5542)
+### Incident Patch 1: `a4cb316c` (2026-11-13)
+**Commit Message**: Add metrics and a follow-up log for detectors that ignore their timeout (#5550)
 
-* Clean up Stdin source logging for per-source debug
+Detectors run on a fixed pool of workers. When a detector keeps
+working after its context timeout, it holds one of those workers, and
+enough held workers stall every source at once. Until now the only
+signal was one log line: it names the detector, but nothing counts
+the overruns, times them, or shows how many workers are held.
 
-Remove the unused stored logger, log init and a finish line with bytes
-read and duration at V(1), so support can tell empty input from no
-findings. Fix ChunkUnit dropping the error from Chunks: read and handler
-errors were lost and the scan looked clean. This path is the one the CLI
-uses, so this is a behavior change for the release notes. Add a debug
-logging test and a README Debug Logs section.
+Three metrics close that gap: a counter for overruns, a gauge of
+workers currently held, and a histogram of how long the held calls
+ran. The gauge and counter use the same detector-name label as the
+existing metrics, so the set of label values stays bounded. The
+histogram's buckets start at 10 seconds and reach about 85 minutes,
+because the existing duration histogram's buckets stop near 3 seconds
+and lose every overrun into its largest bucket.
 
-* Report stdin timeout as a scan error with a flag hint
+The gauge is counted up by the timeout's callback and counted down
+when the detector finishes. Those two moments happen in different
+goroutines, so the code pairs them through a channel: the callback
+closes the channel after counting up, and the return path waits for
+that close before counting down. That ordering keeps the gauge from
+dr
 
-**File**: `pkg/sources/stdin/README.md` (modified, +14/-2)
+**File**: `pkg/engine/engine.go` (modified, +34/-8)
 ```diff
-@@ -63,6 +63,8 @@ Results from this source do not include a file name, line number, or link. The s
+@@ -1252,20 +1252,46 @@ func (e *Engine) detectChunk(ctx context.Context, data detectableChunk) {
+ 		detectBytesPerMatch.Observe(float64(len(matchBytes)))
  
- The time limit set with `--archive-timeout` is 60 seconds by default. It is applied to the whole time TruffleHog spends processing the piped input, not only to unpacking archives. If your input takes longer than that to read and process, raise it with `--archive-timeout`.
- 
-+When the limit is hit, input not scanned by then is dropped, and the scan reports the error `stdin input was not fully scanned: it took longer than the --archive-timeout limit`. Like other scan errors, it only makes TruffleHog exit with a non-zero code when `--fail-on-scan-errors` is set. This matters for streams that never end on their own, like `docker logs -f` or `tail -f`.
-+
- ## Usage Examples
- 
- ### Scanning the Output of a Command
-@@ -89,6 +91,16 @@ docker logs my-container 2>&1 | trufflehog stdin
- cat config.yaml | trufflehog stdin --json
- ```
- 
-+## Debug Logs
-+
-+With debug on for this source, the scan logs:
-+
-+- `V(0)`: `scanning stdin for secrets` when the scan starts.
-+- `V(1)`: `Stdin source initialized` with whether verification is on, and `Finished scanning stdin` with `bytes_read` and its `duration`. A `bytes_read` of 0 means nothing was piped in.
-+- `V(5)`: `empty reader, skipping file` when the input is empty, and `skipping archive file` when an archive is piped in with `--force-skip-archives`.
-+
-+A failure to read or process the input, including hitting the `--archive-timeout` limit, is reported as a scan error in `encountered errors during scan`.
-+
- ## Troubleshooting
- 
- ### Common Issues
-@@ -108,5 +120,5 @@ cat config.yaml | trufflehog stdin --json
- 
- ---
- 
--**Issue**: A long running stream stops being scanned partway through
--**Solution**: Check the time limit. It defaults to 60 seconds and can be raised with `--archive-timeout`.
-+**Issue**: `stdin input was not fully scanned: it took longer than the --archive-timeout limit`
-+**Solution**: The input was still being read when the time limit ran out. It defaults to 60 seconds and can be raised with `--archive-timeout`.
+ 		ctx, cancel := context.WithTimeout(ctx, detectionTimeout)
++		// The callback and the deferred release below hand the worker off through fired. t.Stop() returning false
++		// means the callback started, not that it finished counting, so the release waits for the channel to close
++		// before it decrements the gauge. The release is deferred inside the closure that owns the FromData call,
++		// so it runs on normal return and on panic unwind alike (the common.Recover at the top of detectChunk
++		// catches panics) and a panic inside FromData cannot leave the gauge high. The overrun histogram and the
++		// return log stay on the normal-return path only: a panicked call never returns, so it has no duration to
++		// record.
++		fired := make(chan struct{})
+ 		t := time.AfterFunc(detectionTimeout+1*time.Second, func() {
++			detectorTimeoutIgnoredTotal.WithLabelValues(detectorNameStr).Inc()
++			detectorWorkersOverTimeout.WithLabelValues(detectorNameStr).Inc()
++			close(fired) // before the log: a slow log sink must not extend the worker hold
+ 			ctx.Logger().Error(nil, "a detector ignored the context timeout")
+ 		})
+ 		// detectorExecutionDuration covers one detector run, which is this single FromData call, so it is timed here
+ 		// regardless of printAvgDetectorTime.
+ 		matchStart := time.Now()
+-		results, err := e.verificationCache.FromData(
+-			ctx,
+-			data.detector.Detector,
+-			data.verify,
+-			data.chunk.SecretID != 0,
+-			matchBytes)
+-		matchElapsed := time.Since(matchStart)
+-		t.Stop()
++		var timerFired bool
++		results, matchElapsed, err := func() (results []detectors.Result, matchElapsed time.Duration, err error) {
++			defer func() {
++				timerFired = !t.Stop()
++				if timerFired {
++					<-fired
++					detectorWorkersOverTimeout.WithLabelValues(detectorNameStr).Dec()
++				}
++			}()
++			results, err = e.verificationCache.FromData(
++				ctx,
++				data.detector.Detector,
++				data.verify,
++				data.chunk.SecretID != 0,
++				matchBytes)
++			matchElapsed = time.Since(matchStart)
++			return results, matchElapsed, err
++		}()
++		if timerFired {
++			detectorOverrunDuration.WithLabelValues(detectorNameStr).Observe(matchElapsed.Seconds())
++			ctx.Logger().V(2).Info("detector returned after overrunning the context timeout",
++				"duration", matchElapsed.String())
++		}
+ 		cancel()
+ 		if err != nil {
+ 			ctx.Logger().Error(err, "error finding results in chunk")
 ```
 
-**File**: `pkg/sources/stdin/stdin.go` (modified, +38/-6)
+**File**: `pkg/engine/engine_overrun_test.go` (added, +252/-0)
 ```diff
-@@ -1,9 +1,13 @@
- package stdin
- 
- import (
-+	stdctx "context"
-+	"errors"
-+	"fmt"
-+	"io"
- 	"os"
-+	"time"
- 
--	"github.com/go-logr/logr"
- 	"google.golang.org/protobuf/types/known/anypb"
- 
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/context"
-@@ -20,7 +24,6 @@ type Source struct {
- 	sourceId sources.SourceID
- 	jobId    sources.JobID
- 	verify   bool
--	log      logr.Logger
- 	sources.Progress
- 	sources.CommonSourceUnitUnmarshaller
- }
-@@ -46,12 +49,25 @@ func (s *Source) Init(aCtx context.Context, name string, jobId sources.JobID, so
- 	s.jobId = jobId
- 	s.sourceId = sourceId
- 	s.verify = verify
--	s.log = aCtx.Logger()
-+	aCtx.Logger().V(1).Info("Stdin source initialized", "verify", verify)
- 	return nil
- }
- 
-+// byteCounter counts the bytes read through it, so the scan can log how much input
-+// came in. It never looks at the data.
-+type byteCounter struct {
-+	r io.Reader
-+	n int64
-+}
-+
-+func (b *byteCounter) Read(p []byte) (int, error) {
-+	n, err := b.r.Read(p)
-+	b.n += int64(n)
-+	return n, err
-+}
-+
- func (s *Source) Chunks(ctx context.Context, chunksChan chan *sources.Chunk, _ ...sources.ChunkingTarget) error {
--	stdin := os.Stdin
-+	stdin := &byteCounter{r: os.Stdin}
- 	chunkSkel := &sources.Chunk{
- 		SourceType: s.Type(),
- 		SourceName: s.name,
-@@ -64,7 +80,16 @@ func (s *Source) Chunks(ctx context.Context, chunksChan chan *sources.Chunk, _ .
- 	}
- 
- 	ctx.Logger().Info("scanning stdin for secrets")
--	return handlers.HandleFile(ctx, stdin, chunkSkel, sources.ChanReporter{Ch: chunksChan})
-+	start := time.Now()
-+	err := handlers.HandleFile(ctx, stdin, chunkSkel, sources.ChanReporter{Ch: chunksChan})
-+	ctx.Logger().V(1).Info("Finished scanning stdin", "bytes_read", stdin.n, "duration", time.Since(start))
-+	// HandleFile bounds the whole input by --archive-timeout. A deadline while the scan
-+	// itself is still running means that limit was hit, so say how to raise it.
-+	if errors.Is(err, stdctx.DeadlineExceeded) && ctx.Err() == nil {
-+		return fmt.Errorf("stdin input was not fully scanned: it took longer than the --archive-timeout limit "+
-+			"(default 60s), raise it with --archive-timeout: %w", err)
-+	}
-+	return err
- }
- 
- func (s *Source) Enumerate(ctx context.Context, reporter sources.UnitReporter) error {
-@@ -74,9 +99,10 @@ func (s *Source) Enumerate(ctx context.Context, reporter sources.UnitReporter) e
- 
- func (s *Source) ChunkUnit(ctx context.Context, unit sources.SourceUnit, reporter sources.ChunkReporter) error {
- 	ch := make(chan *sources.Chunk)
-+	var chunksErr error
- 	go func() {
- 		defer close(ch)
--		_ = s.Chunks(ctx, ch)
-+		chunksErr = s.Chunks(ctx, ch)
- 	}()
- 	for chunk := range ch {
- 		if chunk != nil {
-@@ -85,5 +111,11 @@ func (s *Source) ChunkUnit(ctx context.Context, unit sources.SourceUnit, reporte
- 			}
- 		}
- 	}
-+	// ch is closed only after Chunks returns, so chunksErr is set by now. It is
-+	// reported as a scan error, not returned, so it fails the run only with
-+	// --fail-on-scan-errors, like a failed unit in other sources.
-+	if chunksErr != nil {
-+		return reporter.ChunkErr(ctx, chunksErr)
-+	}
- 	return nil
- }
-```
-
-**File**: `pkg/sources/stdin/stdin_test.go` (added, +126/-0)
-```diff
-@@ -0,0 +1,126 @@
-+package stdin
+@@ -0,0 +1,252 @@
++package engine
 +
 +import (
-+	stdctx "context"
++	aCtx "context"
++	"fmt"
 +	"os"
-+	"strings"
++	"sync"
 +	"testing"
 +	"time"
 +
++	"github.com/go-logr/logr"
++	"github.com/prometheus/client_golang/prometheus/testutil"
 +	"github.com/stretchr/testify/assert"
 +	"github.com/stretchr/testify/require"
-+	"go.uber.org/zap/zaptest/observer"
 +
 +	"github.com/trufflesecurity/trufflehog/v3/pkg/context"
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/handlers"
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/log/logtest"
++	"github.com/trufflesecurity/trufflehog/v3/pkg/decoders"
++	"github.com/trufflesecurity/trufflehog/v3/pkg/detectors"
++	"github.com/trufflesecurity/trufflehog/v3/pkg/pb/detector_typepb"
 +	"github.com/trufflesecurity/trufflehog/v3/pkg/sources"
 +)
 +
-+// setStdin replaces os.Stdin with r until the test ends. Tests that call it must not
-+// run in parallel.
-+func setStdin(t *testing.T, r *os.File) {
-+	t.Helper()
-+	orig := os.Stdin
-+	os.Stdin = r
-+	t.Cleanup(func() { os.Stdin = orig })
++// Fakes and log capture for the timeout-overrun metrics in detectChunk. The overrun test changes the
++// package-global detectionTimeout, so neither test here may use t.Parallel(), and the overrun test must restore the
++// previous value before returning.
++
++const (
++	slowOverrunKeyword   = "slowoverruntest"
++	fastNoOverrunKeyword = "fastnooverruntest"
++)
++
++// slowOverrunDetector ignores its context on purpose: it sleeps past the detection timeout plus the one-second
++// grace, which is the behavior the overrun metrics exist to observe. With the test's 10ms timeout the timer fires
++// at about 1.01s and the sleep ends at 2s, so the callback always runs while FromData is still sleeping, with
++// about a second of margin for CI scheduling jitter.
++type slowOverrunDetector struct{}
++
++var _ detectors.Detector = (*slowOverrunDetector)(nil)
++var _ detectors.Versioner = (*slowOverrunDetector)(nil)
++
++func (f slowOverrunDetector) FromData(_ aCtx.Context, _ bool, _ []byte) ([]detectors.Result, error) {
++	time.Sleep(2 * time.Second)
++	return nil, nil
 +}
 +
-+// pipeStdin makes os.Stdin read data, then end.
-+func pipeStdin(t *testing.T, data string) {
-+	t.Helper()
-+	r, w, err := os.Pipe()
-+	require.NoError(t, err)
-+	t.Cleanup(func() { _ = r.Close() })
-+	go func() {
-+		_, _ = w.WriteString(data)
-+		_ = w.Close()
-+	}()
-+	setStdin(t, r)
++func (f slowOverrunDetector) Keywords() []string { return []string{slowOverrunKeyword} }
++
++func (f slowOverrunDetector) Type() detector_typepb.DetectorType {
++	return detector_typepb.DetectorType_Test
 +}
 +
-+func TestSource_DebugLogging(t *testing.T) {
-+	const testSecret = "stdindebuglogtestsecret"
++func (f slowOverrunDetector) Version() int { return 1 }
 +
-+	runSource := func(t *testing.T, debug bool) []observer.LoggedEntry {
-+		t.Helper()
-+		pipeStdin(t, "token = "+testSecret+"\n")
-+		ctx, logs := logtest.SourceContext(debug)
-+		s := new(Source)
-+		require.NoError(t, s.Init(ctx, "test source", 1, 1, false, nil, 1))
-+		if debug {
-+			logtest.CheckInitLine(t, logs.All())
-+		}
++func (f slowOverrunDetector) Description() string { return "slow detector for overrun tests" }
 +
-+		chunksCh := make(chan *sources.Chunk, 10)
-+		require.NoError(t, s.Chunks(ctx, chunksCh))
-+		close(chunksCh)
-+		var data strings.Builder
-+		for chunk := range chunksCh {
-+			data.Write(chunk.Data)
++// fastNoOverrunDetector returns immediately and stays well inside the default detection timeout.
++type fastNoOverrunDetector struct{}
++
++var _ detectors.Detector = (*fastNoOverrunDetector)(nil)
++var _ detectors.Versioner = (*fastNoOverrunDetector)(nil)
++
++func (f fastNoOverrunDetector) FromData(_ aCtx.Context, _ bool, _ []byte) ([]detectors.Result, error) {
++	return nil, nil
++}
++
++func (f fastNoOverrunDetector) Keywords() []string { return []string{fastNoOverrunKeyword} }
++
++func (f fastNoOverrunDetector) Type() detector_typepb.DetectorType {
++	return detector_typepb.DetectorType_TestingBot
++}
++
++func (f fastNoOverrunDetector) Version() int { return 1 }
++
++func (f fastNoOverrunDetector) Description() string { return "fast detector for overrun tests" }
++
++// logRecord is one entry captured by capturingLogSink.
++type logRecord struct {
++	msg   string
++	level int
++	isErr bool
++	kv    []any
++}
++
++// hasField reports whether the entry carries a key of the given name.
++func (r logRecord) hasField(key string) bool {
++	for i := 0; i+1 < len(r.kv); i += 2 {
++		if r.kv[i] == key {
++			return true
 +		}
-+		assert.Contains(t, data.String(), testSecret)
-+		return logs.All()
 +	}
-+
-+	t.Run("debug on", func(t *testing.T) {
-+		logtest.CheckSourceLines(t, runSource(t, true), testSecret)
-+	})
-+
-+	t.Run("debug off", func(t *testing.T) {
-+		logtest.CheckNoDebugLines(t, runSource(t, false))
-+	})
++	return false
 +}
 +
-+// errReporter records chunk errors, like the source manager does.
-+type errReporter struct {
-+	errs []error
++// capturingLogSink records every entry a context logger emits so tests can assert on specific log lines. It
++// reports every level as enabled and ignores the WithName/WithValues decorations, which the assertions do not
++// need.
++type capturingLogSink struct {
++	mu      sync.Mutex
++	records []logRecord
 +}
 +
-+func (r *errReporter) ChunkOk(context.Context, sources.Chunk) error { return nil }
++func (s *capturingLogSink) Init(_ logr.RuntimeInfo) {}
 +
-+func (r *errReporter) ChunkErr(_ context.Context, err error) error {
-+	r.errs = append(r.errs, err)
-+	return nil
++func (s *capturingLogSink) Enabled(_ int) bool { return true }
++
++func (s *capturingLogSink) WithName(_ string) logr.LogSink { return s }
++
++func (s *capturingLogSink) WithValues(_ ...any) logr.LogSink { return s }
++
++func (s *capturingLogSink) Info(level int, msg string, keysAndValues ...any) {
++	s.mu.Lock()
++	defer s.mu.Unlock()
++	s.records = append(s.records, logRecord{msg: msg, level: level, kv: keysAndValues})
 +}
 +
-+// ChunkUnit reports the error from reading stdin as a scan error instead of dropping
-+// it or failing the whole run.
-+func TestSource_ChunkUnitReportsReadError(t *testing.T) {
-+	r, w, err := os.Pipe()
-+	require.NoError(t, err)
-+	require.NoError(t, w.Close())
-+	require.NoError(t, r.Close())
-+	setStdin(t, r)
-+
-+	ctx := context.Background()
-+	s := new(Source)
-+	require.NoError(t, s.Init(ctx, "test source", 1, 1, false, nil, 1))
-+	reporter := &errReporter{}
-+	require.NoError(t, s.ChunkUnit(ctx, sources.CommonSourceUnit{ID: "<stdin>"}, reporter))
-+	assert.Len(t, reporter.errs, 1)
++func (s *capturingLogSink) Error(_ error, msg string, keysAndValues ...any) {
++	s.mu.Lock()
++	defer s.mu.Unlock()
++	s.records = append(s.records, logRecord{msg: msg, isErr: true, kv: keysAndValues})
 +}
 +
-+// Input that is still open when --archive-timeout runs out is reported with a hint
-+// about the flag.
-+func TestSource_ChunkUnitReportsArchiveTimeout(t *testing.T) {
-+	handlers.SetArchiveMaxTimeout(100 * time.Millisecond)
-+	t.Cleanup(func() { handlers.SetArchiveMaxTimeout(60 * time.Second) })
-+
-+	r, w, err := os.Pipe()
-+	require.NoError(t, err)
-+	t.Cleanup(func() { _ = w.Close(); _ = r.Close() })
-+	// Enough data for the type check, then the pipe stays open like a stream.
-+	_, err = w.WriteString(strings.Repeat("line of log output\n", 1000))
-+	require.NoError(t, err)
-+	setStdin(t, r)
-+
-+	ctx := context.Background()
-+	s := new(Source)
-+	require.NoError(t, s.Init(ctx, "test source", 1, 1, false, nil, 1))
-+	reporter := &errReporter{}
-+	require.NoError(t, s.ChunkUnit(ctx, sources.CommonSourceUnit{ID: "<stdin>"}, reporter))
-+	require.Len(t, reporter.errs, 1)
-+	assert.ErrorIs(t, reporter.errs[0], stdctx.DeadlineExceeded)
-+	assert.Contains(t, reporter.errs[0].Error(), "--archive-timeout")
++// find returns the first entry captured with the given message.
++func (s *capturingLogSink) find(msg string) (logRecord, bool) {
++	s.mu.Lock()
++	defer s.mu.Unlock()
++	for _, r := range s.records {
++		if r.msg == msg {
++			return r, true
++		}
++	}
++	return logRecord{}, false
 +}
++
++// TestEngine_DetectorOverrunsTimeout drives the overrun path end to end: a detector that keeps running past the
++// detection timeout plus its one-second grace trips the timer callback (counter up, gauge up, Error log), and its
++// return path brings the gauge back down, records the overrun duration, and logs the total hold time at V(2).
++func TestEngine_DetectorOverrunsTimeout(t *testing.T) {
++	previousTimeout := detectionTimeout
++	SetDetectorTimeout(10 * time.Millisecond)
++	defer SetDetectorTimeout(previousTimeout)
++
++	sink := &capturingLogSink{}
++	ctx, cancel
+```
+
+**File**: `pkg/engine/metrics.go` (modified, +37/-0)
+```diff
+@@ -35,6 +35,43 @@ var (
+ 		[]string{"detector_name"},
+ 	)
+ 
++	// Timeout-overrun metrics. The overrun timer in detectChunk arms at the detection timeout plus a one-second
++	// grace, so these count calls that ran past that grace deadline, not merely past the bare timeout. The
++	// histogram buckets start at 10 seconds because the execution-duration histogram above tops out near 3
++	// seconds and would drop every overrun into +Inf. That floor assumes the default 10 s detection timeout:
++	// SetDetectorTimeout is exported, and a smaller value lets overruns finish below 10 s, where they all land in
++	// the first bucket with no resolution between them.
++	detectorTimeoutIgnoredTotal = promauto.NewCounterVec(
++		prometheus.CounterOpts{
++			Namespace: common.MetricsNamespace,
++			Subsystem: common.MetricsSubsystem,
++			Name:      "detector_timeout_ignored_total",
++			Help:      "Total number of FromData calls whose overrun timer fired.",
++		},
++		[]string{"detector_name"},
++	)
++
++	detectorWorkersOverTimeout = promauto.NewGaugeVec(
++		prometheus.GaugeOpts{
++			Namespace: common.MetricsNamespace,
++			Subsystem: common.MetricsSubsystem,
++			Name:      "detector_workers_over_timeout",
++			Help:      "Workers currently inside a FromData call that kept running past the detection timeout plus its one-second grace.",
++		},
++		[]string{"detector_name"},
++	)
++
++	detectorOverrunDuration = promauto.NewHistogramVec(
++		prometheus.HistogramOpts{
++			Namespace: common.MetricsNamespace,
++			Subsystem: common.MetricsSubsystem,
++			Name:      "detector_overrun_duration_seconds",
++			Help:      "Duration in seconds of FromData calls that overran the detection timeout grace (total call duration, not just the overhang).",
++			Buckets:   prometheus.ExponentialBuckets(10, 2, 10),
++		},
++		[]string{"detector_name"},
++	)
++
+ 	jobBytesScanned = promauto.NewCounterVec(prometheus.CounterOpts{
+ 		Namespace: common.MetricsNamespace,
+ 		Subsystem: common.MetricsSubsystem,
+```
+
+---
+
+### Incident Patch 2: `32e87f4f` (2026-11-14)
+**Commit Message**: Update module go.opentelemetry.io/otel/sdk to v1.47.0 [SECURITY] (#5559)
+
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+
+**File**: `go.mod` (modified, +6/-5)
+```diff
+@@ -302,12 +302,13 @@ require (
+ 	go.opentelemetry.io/contrib/detectors/gcp v1.44.0 // indirect
+ 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.62.0 // indirect
+ 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.68.0 // indirect
+-	go.opentelemetry.io/otel v1.45.0 // indirect
++	go.opentelemetry.io/otel v1.47.0 // indirect
+ 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 // indirect
+-	go.opentelemetry.io/otel/metric v1.45.0 // indirect
+-	go.opentelemetry.io/otel/sdk v1.45.0 // indirect
+-	go.opentelemetry.io/otel/sdk/metric v1.45.0 // indirect
+-	go.opentelemetry.io/otel/trace v1.45.0 // indirect
++	go.opentelemetry.io/otel/log v1.47.0 // indirect
++	go.opentelemetry.io/otel/metric v1.47.0 // indirect
++	go.opentelemetry.io/otel/sdk v1.47.0 // indirect
++	go.opentelemetry.io/otel/sdk/metric v1.47.0 // indirect
++	go.opentelemetry.io/otel/trace v1.47.0 // indirect
+ 	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
+ 	go.uber.org/multierr v1.11.0 // indirect
+ 	go.yaml.in/yaml/v3 v3.0.5 // indirect
+```
+
+**File**: `go.sum` (modified, +14/-12)
+```diff
+@@ -746,24 +746,26 @@ go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.6
+ go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.62.0/go.mod h1:ru6KHrNtNHxM4nD/vd6QrLVWgKhxPYgblq4VAtNawTQ=
+ go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.68.0 h1:CqXxU8VOmDefoh0+ztfGaymYbhdB/tT3zs79QaZTNGY=
+ go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.68.0/go.mod h1:BuhAPThV8PBHBvg8ZzZ/Ok3idOdhWIodywz2xEcRbJo=
+-go.opentelemetry.io/otel v1.45.0 h1:pdrWmLHofpubmArBv1LgFSv1Z0Ie/ppdZzu+kUN5EeU=
+-go.opentelemetry.io/otel v1.45.0/go.mod h1:XZxIqPapzEYnhNSScF5DIqXhm/rYi0FzCe2XddAwZfQ=
++go.opentelemetry.io/otel v1.47.0 h1:j7ALJ/zgkS7Z6aeJW09p8VC9804bC+PpeTfCD4XPnOM=
++go.opentelemetry.io/otel v1.47.0/go.mod h1:8wS9O2qfXrYrzp6hIF/HOYJJf/wIhFPhR2xLuP+iXQU=
+ go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 h1:QRefszxJmfPdjXUUm3j6iDzY03mTPXMjqErFqQ67vUg=
+ go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0/go.mod h1:Tiz03lTBVBrm7eWZBOidzEaYaJa8tjwGUGv6d8mlTyk=
+ go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.33.0 h1:wpMfgF8E1rkrT1Z6meFh1NDtownE9Ii3n3X2GJYjsaU=
+ go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.33.0/go.mod h1:wAy0T/dUbs468uOlkT31xjvqQgEVXv58BRFWEgn5v/0=
+ go.opentelemetry.io/otel/exporters/stdout/stdoutmetric v1.36.0 h1:rixTyDGXFxRy1xzhKrotaHy3/KXdPhlWARrCgK+eqUY=
+ go.opentelemetry.io/otel/exporters/stdout/stdoutmetric v1.36.0/go.mod h1:dowW6UsM9MKbJq5JTz2AMVp3/5iW5I/TStsk8S+CfHw=
+-go.opentelemetry.io/otel/metric v1.45.0 h1:7Eg1uH7CJ5cXv9is6tnBe1FI6rj1nwUdbFypRm3br/M=
+-go.opentelemetry.io/otel/metric v1.45.0/go.mod h1:HAPbm1nd3p1PmFH7v2dR+6BjXxw+Lq4a2+pndMAm08s=
+-go.opentelemetry.io/otel/metric/x v0.67.0 h1:PcicCNZFkZ4bXfSooXdo3WN7RBOVOtjVdo1wD358Uns=
+-go.opentelemetry.io/otel/metric/x v0.67.0/go.mod h1:FBjCWZe6wgcqxcMtjdGiClDKXb2YxxXii0CXftE4QtI=
+-go.opentelemetry.io/otel/sdk v1.45.0 h1:4VVSMgQ83dUgW2aoX5f6JgLvHwIvzcuLnF9lUdCSpCw=
+-go.opentelemetry.io/otel/sdk v1.45.0/go.mod h1:Sr40LgXV7DsKMMJMKOhUWOgMWTfAaqvm2kF0g7ilwuA=
+-go.opentelemetry.io/otel/sdk/metric v1.45.0 h1:oVFszMfyj1Am6s24Vtc7wBb8BKLcwepJjNEYILuiE3o=
+-go.opentelemetry.io/otel/sdk/metric v1.45.0/go.mod h1:vUWUxDZvu1WVRj8JA8S0AdhsPrZoDpA2DdZauIh4mDA=
+-go.opentelemetry.io/otel/trace v1.45.0 h1:l/mP6Uv7oNO7/TblbhpbgMidxhq1uO/rPsikOyVhxag=
+-go.opentelemetry.io/otel/trace v1.45.0/go.mod h1:qoJJA2xNMnxRrdISU/kLtfUH2wNeQbiv+jhs/CxI8bc=
++go.opentelemetry.io/otel/log v1.47.0 h1:cOTS1CcLbSQeZKanGJ+0JpF/+t4PELi3O3bbl2lqCcI=
++go.opentelemetry.io/otel/log v1.47.0/go.mod h1:9byitSQ5pLC6PpqwGXjqdMKya6ZTswHRZh2vvXT33nw=
++go.opentelemetry.io/otel/metric v1.47.0 h1:4PptaldXx3Eat1XjMZ68pPJEs5wrhlemctZE9a3UdWY=
++go.opentelemetry.io/otel/metric v1.47.0/go.mod h1:ADGSXxRrXM6bjbvLo535EstVFlPpPYZm4LBKixjDHwU=
++go.opentelemetry.io/otel/metric/x v0.69.0 h1:DjRLr15H83v+hCW7JA9NoJvOkYTtmq5YoDRbe9deYpM=
++go.opentelemetry.io/otel/metric/x v0.69.0/go.mod h1:uVvsMPMFFyj/HUQfrUnH3JjnOQ1dwFDorgFLRBasM0k=
++go.opentelemetry.io/otel/sdk v1.47.0 h1:zWXEr4j2lFefG87TU6Yg8a7ngfohIKFZHKp0Hf5hC6I=
++go.opentelemetry.io/otel/sdk v1.47.0/go.mod h1:VUc24kiOeoGsxG8G9ULx3fWKvB7jMhnGE8Oi607lgR0=
++go.opentelemetry.io/otel/sdk/metric v1.47.0 h1:lfISg2j93VT6yqdk9OfUaZmw/GfcZqCCV3jdXtsPnKw=
++go.opentelemetry.io/otel/sdk/metric v1.47.0/go.mod h1:ypLp+mW1Nt2x+Szt3b5/i1syodyts49lMOwxpDI3VGw=
++go.opentelemetry.io/otel/trace v1.47.0 h1:JOjX/Oci8K94QHddo+bbfya/Ai/nf6/dt9ZfrFNWSrM=
++go.opentelemetry.io/otel/trace v1.47.0/go.mod h1:jNaSLa2PZEYFG6fRjJABAu+bw4FS08uDmPg28lTghu0=
+ go.opentelemetry.io/proto/otlp v1.11.0 h1:5rrYs0Ykyj50sdU/JU0x8etU+LubXWb+gED6TbEdMIk=
+ go.opentelemetry.io/proto/otlp v1.11.0/go.mod h1:SmVizdCOAm3XBtG1g1NnOdhW6jtddT72hLMhv8VwA8E=
+ go.uber.org/atomic v1.7.0/go.mod h1:fEN4uk6kAWBTFdckzkM89CLk9XfWZrxpCo0nPH17wJc=
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5560** (closed): Update module go.opentelemetry.io/otel/trace to v1.47.0 [SECURITY] - autoclosed (@renovate[bot])
+- **PR #5559** (2026-11-14): Update module go.opentelemetry.io/otel/sdk to v1.47.0 [SECURITY] (@renovate[bot])
 - **PR #5557** (closed): [DO NOT MERGE] Measure fork-PR timing for #5547 (@bryanbeverly)
 - **PR #5553** (2026-11-12): Add SOURCE_TYPE_GENERIC source type (@martinlocklear)
 - **PR #5552** (closed): Add SOURCE_TYPE_GENERIC source type (@martinlocklear)
-- **PR #5548** (2026-11-12): Fix GitHub GraphQL comment scan retries and paging (@kashifkhan0771)
-- **PR #5546** (2026-11-12): Update module pault.ag/go/debian to v0.21.3 (@renovate[bot])
-- **PR #5544** (2026-11-12): Update module golang.org/x/crypto to v0.59.0 [SECURITY] (@renovate[bot])
+- **PR #5550** (2026-11-13): Add metrics and a follow-up log for detectors that ignore their timeout (@martinlocklear)
 
 ---
 
@@ -1457,45 +1529,56 @@ logging test and a README Debug Logs section.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Clean up Stdin source logging for per-source debug
+## X. Add metrics and a follow-up log for detectors that ignore their timeout
 
 **RULE**:
-When implementing operations in `pkg/sources/stdin/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/engine/engine.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `94dd9889`: Clean up Stdin source logging for per-source debug. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a4cb316c`: Add metrics and a follow-up log for detectors that ignore their timeout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/sources/stdin/README.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/engine/engine.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-When the limit is hit, input not scanned by then is dropped, and the scan reports the error `stdin input was not fully scanned: it took longer than the --archive-timeout limit`. Like other scan errors, it only makes TruffleHog exit with a non-zero code when `--fail-on-scan-errors` is set. This matters for streams that never end on their own, like `docker logs -f` or `tail -f`.
-
-## Debug Logs
-
-With debug on for this source, the scan logs:
-
-- `V(0)`: `scanning stdin for secrets` when the scan starts.
-- `V(1)`: `Stdin source initialized` with whether verification is on, and `Finished scanning stdin` with `bytes_read` and its `duration`. A `bytes_read` of 0 means nothing was piped in.
-- `V(5)`: `empty reader, skipping file` when the input is empty, and `skipping archive file` when an archive is piped in with `--force-skip-archives`.
-
-A failure to read or process the input, including hitting the `--archive-timeout` limit, is reported as a scan error in `encountered errors during scan`.
-
-**Issue**: `stdin input was not fully scanned: it took longer than the --archive-timeout limit`
-**Solution**: The input was still being read when the time limit ran out. It defaults to 60 seconds and can
+		// The callback and the deferred release below hand the worker off through fired. t.Stop() returning false
+		// means the callback started, not that it finished counting, so the release waits for the channel to close
+		// before it decrements the gauge. The release is deferred inside the closure that owns the FromData call,
+		// so it runs on normal return and on panic unwind alike (the common.Recover at the top of detectChunk
+		// catches panics) and a panic inside FromData cannot leave the gauge high. The overrun histogram and the
+		// return log stay on the normal-return path only: a panicked call never returns, so it has no duration to
+		// record.
+		fired := make(chan struct{})
+			detectorTimeoutIgnoredTotal.WithLabelValues(detectorNameStr).Inc()
+			detectorWorkersOverTimeout.WithLabelValues(detectorNameStr).Inc()
+			close(fired) // before the log: a slow log sink must not extend the worker hold
+		var timerFired bool
+		results, matchElapsed, err := func() (results []detectors.Result, matchElapsed time.Duration, err error) {
+			defer func() {
+				timerFired = !t.Stop()
+				if timerFired {
+					<-fired
+					detectorWorkersOverTimeout.WithLabelValues(detectorNameStr).Dec()
+				
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-**Issue**: A long running stream stops being scanned partway through
-**Solution**: Check the time limit. It defaults to 60 seconds and can be raised with `--archive-timeout`.
+		results, err := e.verificationCache.FromData(
+			ctx,
+			data.detector.Detector,
+			data.verify,
+			data.chunk.SecretID != 0,
+			matchBytes)
+		matchElapsed := time.Since(matchStart)
+		t.Stop()
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `94dd9889` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a4cb316c` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
