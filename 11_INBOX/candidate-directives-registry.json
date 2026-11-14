@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T19:33:51.696Z",
+  "last_updated": "2026-11-14T19:47:14.687Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4835,11 +4835,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-0EDH",
+      "id": "CD-HMCZ",
       "directive_title": "editor): add scoped ios account deletion",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-0EDH-editor-add-scoped-ios-account-deletion.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-HMCZ-editor-add-scoped-ios-account-deletion.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-14",
@@ -13362,6 +13362,37 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-0FECBF-puppet-fix-postgresql-failing-to-start-o.md",
+      "staged_date": "2026-11-14"
+    },
+    {
+      "id": "CD-AH3Y",
+      "directive_title": "embed structured design context in synthesized templates (MetadataContext",
+      "source_repo": "aws/aws-cdk",
+      "source_commit": "708bee9a",
+      "staged_file": "11_INBOX/candidate-directives/CD-AH3Y-embed-structured-design-context-in-synthesized-templates-metadatacontext.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-14",
+      "domain_letter": "F"
+    },
+    {
+      "id": "CD-HLP1",
+      "directive_title": "core): embed structured design context in synthesized templates (MetadataContext",
+      "source_repo": "aws-aws-cdk-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-HLP1-core-embed-structured-design-context-in-synthesized-templates-metadatacontext.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-14",
+      "domain_letter": "F"
+    },
+    {
+      "id": "CD-REV-096F45",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-096F45-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-14"
     }
   ]

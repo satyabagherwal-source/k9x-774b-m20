@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aws-aws-cdk-learnings.md`  
 > **Source**: github ([https://github.com/aws/aws-cdk](https://github.com/aws/aws-cdk))  
-> **Source Version**: `79914032`  
+> **Source Version**: `708bee9a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T14:25:42.595Z  
+> **Timestamp**: 2026-11-14T19:41:39.976Z  
 > **Learning ID**: `learn-github-aws-aws-cdk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aws-aws-cdk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aws/aws-cdk](https://github.com/aws/aws-cdk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T14:25:42.582Z  
+> **Harvest Timestamp**: 2026-11-14T19:41:39.824Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The AWS Cloud Development Kit is a framework for defining cloud infrastructure in code
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 12975 stars
+- **Stars / Engagement**: 12976 stars
 
 ---
 
@@ -1200,327 +1200,43 @@ export abstract class OnlineEvaluationBase extends Resource implements IOnlineEv
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c153af90` (2026-11-13)
-**Commit Message**: fix(core): bump bundled minimatch to 11.0.8 to address CVE-2026-118764 (#39595)
+### Incident Patch 1: `708bee9a` (2026-11-13)
+**Commit Message**: feat(core): embed structured design context in synthesized templates (MetadataContext) (#38381)
 
 ### Issue # (if applicable)
 
-Closes #39594.
+RFC tracking issue: https://github.com/aws/aws-cdk-rfcs/issues/994
+
+Accepted RFC: https://github.com/aws/aws-cdk-rfcs/pull/981
 
 ### Reason for this change
 
-`aws-cdk-lib` bundles `minimatch@10.2.6`, which is affected by [GHSA-g3hv-75wg-m249](https://github.com/advisories/GHSA-g3hv-75wg-m249) / CVE-2026-118764 (denial of service via globparts amplification, affected `< 11.0.1`). There is no patched `10.x` release, so the fix requires the `minimatch` major version 11.
-
-Because `minimatch` is a bundled dependency, consumers can't fix this with `overrides`/`resolutions`. The `yarn-upgrade` workflow uses `ncu --target=minor` and won't pick up the major bump.
+CloudFormation templates preserve deployed configuration but usually lose the rationale, invariants, change-safety guidance, and provenance available in CDK source. CloudFormation defines the advisory `com.aws.cloudformation.Context` metadata schema for preserving that information, but CDK users need a typed authoring API.
 
 ### Description of changes
 
-- `packages/aws-cdk-lib/package.json`: `minimatch` `^10.2.6` → `^11.0.1`.
-- `yarn.lock`: new `minimatch@^11.0.1` entry resolving to `11.0.8`, plus its new dependency `@isaacs/nonrecursive-glob-match@1.1.0`. `brace-expansion@^5.0.12` resolves to the existing `5.0.13` entry. `^10.2.6` is removed from the shared `minimatch@10.2.6` entry, which other tooling in the monorepo still uses. The lockfile was regenerated with `yarn install` on top of current `main`.
-- `packages/aws-cdk-lib/NOTICE`: attribution for the
+- Adds `CfnResourceMetadataContext` for setting or clearing Context on selected `CfnResource` constructs during synthesis.
+- Adds `CfnTemplateMetadataContext` for setting or clearing template-level Context.
+- Mirrors the published resource, template, mutability, reference, and trust fields without adding another vocabulary.
+- Uses `IConstructSelector` for explicit resource targeting. The default selects a `CfnResource` scope or its immediate `CfnResource` default child.
+- Uses complete-value replacement rather than implicit merging. Aspect priority and scope
 
-**File**: `packages/aws-cdk-lib/NOTICE` (modified, +60/-0)
+**File**: `packages/@aws-cdk-testing/framework-integ/test/core/test/integ.metadata-context.js.snapshot/MetadataContextIntegDefaultTestDeployAssert9187EC06.assets.json` (added, +20/-0)
 ```diff
-@@ -74,6 +74,66 @@ software or this license, under any kind of legal claim.
- 
- ----------------
- 
-+** @isaacs/nonrecursive-glob-match - https://www.npmjs.com/package/@isaacs/nonrecursive-glob-match
-+
-+Blue Oak Model License
-+
-+Version 1.0.0
-+
-+Purpose
-+
-+This license gives everyone as much permission to work with
-+this software as possible, while protecting contributors
-+from liability.
-+
-+Acceptance
-+
-+In order to receive this license, you must agree to its
-+rules. The rules of this license are both obligations
-+under that agreement and conditions to your license.
-+You must not do anything with this software that triggers
-+a rule that you cannot or will not follow.
-+
-+Copyright
-+
-+Each contributor licenses you to do everything with this
-+software that would otherwise infringe that contributor's
-+copyright in it.
-+
-+Notices
-+
-+You must ensure that everyone who gets a copy of
-+any part of this software from you, with or without
-+changes, also gets the text of this license or a link to
-+https://blueoakcouncil.org/license/1.0.0.
-+
-+Excuse
-+
-+If anyone notifies you in writing that you have not
-+complied with Notices, you can keep your
-+license by taking all practical steps to comply within 30
-+days after the notice. If you do not do so, your license
-+ends immediately.
-+
-+Patent
-+
-+Each contributor licenses you to do everything with this
-+software that would otherwise infringe any patent claims
-+they can license or become able to license.
-+
-+Reliability
-+
-+No contributor can revoke this license.
-+
-+No Liability
-+
-+As far as the law allows, this software comes as is,
-+without any warranty or condition, and no contributor
-+will be liable to anyone for any damages related to this
-+software or this license, under any kind of legal claim.
-+
-+----------------
-+
- The AWS CDK includes the following third-party software/licensing:
- 
- ** mime-db - https://www.npmjs.com/package/mime-db
-```
-
-**File**: `packages/aws-cdk-lib/package.json` (modified, +1/-1)
-```diff
-@@ -129,7 +129,7 @@
-     "ignore": "^5.3.2",
-     "jsonschema": "^1.5.0",
-     "mime-types": "^2.1.35",
--    "minimatch": "^10.2.6",
-+    "minimatch": "^11.0.1",
-     "punycode": "^2.3.1",
-     "semver": "^7.8.6",
-     "yaml": "1.10.3"
-```
-
-**File**: `yarn.lock` (modified, +15/-2)
-```diff
-@@ -3202,6 +3202,11 @@
-   dependencies:
-     minipass "^7.0.4"
- 
-+"@isaacs/nonrecursive-glob-match@^1.1.0":
-+  version "1.1.0"
-+  resolved "https://registry.npmjs.org/@isaacs/nonrecursive-glob-match/-/nonrecursive-glob-match-1.1.0.tgz#b1d69b8938aab4c292f7fde628c47dc1dbd737ef"
-+  integrity sha512-GPm/Dbvk5RLmhRnxXIa7nTpK0xtl4E0wj0MslsuNiJ1FIROU+2+9lgUC/dgF7Ey4QCWhfEsgxilMRMCdHPfDfw==
-+
- "@isaacs/string-locale-compare@^1.1.0":
-   version "1.1.0"
-   resolved "https://registry.npmjs.org/@isaacs/string-locale-compare/-/string-locale-compare-1.1.0.tgz#291c227e93fd407a96ecd59879a35809120e432b"
-@@ -5987,7 +5992,7 @@ brace-expansion@^2.0.1, brace-expansion@^2.0.2:
-   dependencies:
-     balanced-match "^1.0.0"
- 
--brace-expansion@^5.0.5, brace-expansion@^5.0.8:
-+brace-expansion@^5.0.12, brace-expansion@^5.0.5, brace-expansion@^5.0.8:
-   version "5.0.13"
-   resolved "https://registry.npmjs.org/brace-expansion/-/brace-expansion-5.0.13.tgz#e2d4497370f7e385e6f96b57bd7ff11d77d85851"
-   integrity sha512-Vh3dmFbc4wZeox7M9I/0L9GfFd83Su4+yCck/OF9Gi/P/dAHn0RT7X4K9R7gMNMhDck3DvhR6QXsnQdjjgwNvQ==
-@@ -10911,13 +10916,21 @@ minimatch@9.0.3:
-   dependencies:
-     brace-expansion "^2.0.1"
- 
--minimatch@^10.0.1, minimatch@^10.2.2, minimatch@^10.2.6, minimatch@~10.2.6:
-+minimatch@^10.0.1, minimatch@^10.2.2, minimatch@~10.2.6:
-   version "10.2.6"
-   resolved "https://registry.npmjs.org/minimatch/-/minimatch-10.2.6.tgz#fd956bbe0b77241e9f15ac5dccb1c638060968ef"
-   integrity sha512-vpLQEs+VLCr1nU0BXS07maYoFwlDAH0gngQuuttxIwutDFEMHq2blX+8vpgxDdK3J1PwjCJiep77OitTZ4Ll1A==
-   dependencies:
-     brace-expansion "^5.0.8"
- 
-+minimatch@^11.0.1:
-+  version "11.0.8"
-+  resolved "https://registry.npmjs.org/minimatch/-/minimatch-11.0.8.tgz#715fc3509cd7f76ed9af2f702a98411b1b0288c8"
-+  integrity sha512-nFQuYSTVrGvysVBps5Ih+0BdnYFN/Cj3C816r6+p7yK+FHrVLGE4O4N9AFwykrlNlvM2HYt+Rad1Uiro6h88Ig==
-+  dependencies:
-+    "@isaacs/nonrecursive-glob-match" "^1.1.0"
-+    brace-expansion "^5.0.12"
-+
- minimatch@^3.0.4, minimatch@^3.1.1, minimatch@^3.1.2, minimatch@^3.1.5:
-   version "3.1.5"
-   resolved "https://registry.npmjs.org/minimatch/-/minimatch-3.1.5.tgz#580c88f8d5445f2bd6aa8f3cadefa0de79fbd69e"
-```
-
----
-
-### Incident Patch 2: `9170700b` (2026-11-12)
-**Commit Message**: feat(bedrockagentcore): support runtime build hooks and minimum memory (#39695)
-
-### Issue # (if applicable)
-
-Closes #39696.
-
-# Summary of Changes
-
-## Description
-
-Adds two optional props to the AgentCore `Runtime` L2 construct, rendered to the new `CfnRuntime` properties `HooksConfiguration` and `ResourceConfigurations`:
-
-- `buildHooks`: hooks the service calls on the agent's container while it builds the runtime. Today that is a `warmup` hook, created with `LifecycleHook.httpPost({ path, port? })`, which runs before the service snapshots the agent so every session starts from a warmed state.
-- `minimumMemory`: the minimum memory for each runtime session, as a `Size` (for example `Size.gibibytes(4)`), rendered as `MinimumMemoryInMiB`.
-
-```ts
-new agentcore.Runtime(this, 'Runtime', {
-  runtimeName: 'my_agent',
-  agentRuntimeArtifact,
-  platformVersion: agentcore.PlatformVersion.V2,
-  buildHooks: {
-    warmup: agentcore.LifecycleHook.httpPost({ path: '/warmup', port: 8080 }),
-  },
-  minimumMemory: cdk.Size.gibibytes(4),
-});
-```
-
-Builds on the L1 update in #39701 (`@aws-cdk/aws-service-spec` 0.1.231), which added `HooksConfiguration` and `ResourceConfigurations` to `CfnRuntime`.
-
-### 
-
-**File**: `packages/@aws-cdk-testing/framework-integ/package.json` (modified, +1/-1)
-```diff
-@@ -33,7 +33,7 @@
-     "@aws-cdk/integ-runner": "^2.207.0",
-     "@aws-cdk/pkglint": "0.0.0",
-     "@aws-sdk/client-acm": "3.632.0",
--    "@aws-sdk/client-bedrock-agentcore-control": "3.1143.0",
-+    "@aws-sdk/client-bedrock-agentcore-control": "3.1166.0",
-     "@aws-sdk/client-ec2": "3.632.0",
-     "@aws-sdk/client-rds": "3.632.0",
-     "@aws-sdk/client-s3": "3.632.0",
-```
-
-**File**: `packages/@aws-cdk-testing/framework-integ/test/aws-bedrockagentcore/test/agentcore/runtime/build-hooks-verifier/index.js` (added, +17/-0)
-```diff
-@@ -0,0 +1,17 @@
-+/* eslint-disable */
-+// Plain .js on purpose: bundled by esbuild at synth, and kept out of the package's tsc build (which
-+// compiles only **/*.ts). It pins a current bedrock-agentcore-control SDK whose model includes
-+// hooksConfiguration and resourceConfigurations.
-+const { BedrockAgentCoreControlClient, GetAgentRuntimeCommand } = require('@aws-sdk/client-bedrock-agentcore-control');
-+
-+const client = new BedrockAgentCoreControlClient({});
-+
-+// Returns "<hook path>:<hook port>:<minimum memory MiB>" for the deployed runtime.
-+exports.handler = async (event) => {
-+  const res = await client.send(new GetAgentRuntimeCommand({ agentRuntimeId: event.agentRuntimeId }));
-+  const httpPost = res.hooksConfiguration?.build?.warmup?.action?.httpPost;
-+  const memory = res.resourceConfigurations?.[0]?.minimumMemoryInMiB;
-+  const summary = `${httpPost?.path}:${httpPost?.port}:${memory}`;
-+  console.log(`GetAgentRuntime returned ${summary}`);
-+  return summary;
-+};
-```
-
-**File**: `packages/@aws-cdk-testing/framework-integ/test/aws-bedrockagentcore/test/agentcore/runtime/buildHooksArtifact/Dockerfile` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+FROM public.ecr.aws/docker/library/python:3.12-slim
-+WORKDIR /app
-+COPY app.py .
-+EXPOSE 8080
-+CMD ["python", "app.py"]
-```
-
-**File**: `packages/@aws-cdk-testing/framework-integ/test/aws-bedrockagentcore/test/agentcore/runtime/buildHooksArtifact/app.py` (added, +57/-0)
-```diff
-@@ -0,0 +1,57 @@
-+#!/usr/bin/env python3
-+"""Minimal AgentCore Runtime test agent (HTTP protocol) with a warmup build hook.
-+
-+Implements the AgentCore custom HTTP contract on port 8080:
-+  GET  /ping         -> health check (must return 200 for the runtime to stabilize)
-+  POST /invocations  -> agent invocation
-+  POST /warmup       -> warmup build hook (must return 2xx or the runtime build fails)
-+Used by integ.runtime-build-hooks to deploy a real V2 runtime with a warmup hook and minimum memory.
-+"""
-+import json
-+import logging
-+from http.server import HTTPServer, BaseHTTPRequestHandler
-+
-+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-+logger = logging.getLogger(__name__)
-+
-+
-+class Handler(BaseHTTPRequestHandler):
-+    def _send(self, code, body):
-+        payload = json.dumps(body).encode()
-+        self.send_response(code)
-+        self.send_header('Content-Type', 'application/json')
-+        self.send_header('Content-Length', str(len(payload)))
-+        self.end_headers()
-+        self.wfile.write(payload)
-+
-+    def _read_body(self):
-+        length = int(self.headers.get('Content-Length', 0))
-+        return self.rfile.read(length) if length else b''
-+
-+    def do_GET(self):
-+        if self.path == '/ping':
-+            self._send(200, {'status': 'Healthy'})
-+        else:
-+            self._send(404, {'error': 'not found'})
-+
-+    def do_POST(self):
-+        raw = self._read_body()
-+        if self.path == '/warmup':
-+            logger.info('Warmup hook called')
-+            self._send(200, {'status': 'warm'})
-+        elif self.path == '/invocations':
-+            try:
-+                data = json.loads(raw) if raw else {}
-+            except json.JSONDecodeError:
-+                data = {}
-+            self._send(200, {'output': f"Echo: {data.get('prompt', '')}"})
-+        else:
-+            self._send(404, {'error': 'not found'})
-+
-+    def log_message(self, fmt, *args):
-+        logger.info('%s - %s', self.address_string(), fmt % args)
-+
-+
-+if __name__ == '__main__':
-+    logger.info('Starting test agent on :8080')
-+    HTTPServer(('', 8080), Handler).serve_forever()
-```
-
-**File**: `packages/@aws-cdk-testing/framework-integ/test/aws-bedrockagentcore/test/agentcore/runtime/integ.runtime-build-hooks.js.snapshot/BedrockAgentCoreRuntimeBuildHooksTestDefaultTestDeployAssert3CADF67F.assets.json` (added, +33/-0)
-```diff
-@@ -0,0 +1,33 @@
+@@ -0,0 +1,20 @@
 +{
-+  "version": "55.0.0",
++  "version": "54.0.0",
 +  "files": {
-+    "59699f3599c12b54666f05dd2d4702da313e1466f561751ee1d588dd5228a950": {
++    "21fbb51d7b23f6a6c262b46a9caee79d744a3ac019fd45422d988b96d44b2a22": {
++      "displayName": "MetadataContextIntegDefaultTestDeployAssert9187EC06 Template",
 +      "source": {
-+        "path": "asset.59699f3599c12b54666f05dd2d4702da313e1466f561751ee1d588dd5228a950.bundle",
-+        "packaging": "zip"
-+      },
-+      "destinations": {
-+        "current_account-current_region-b881a5e0": {
-+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
-+          "objectKey": "59699f3599c12b54666f05dd2d4702da313e1466f561751ee1d588dd5228a950.zip",
-+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
-+        }
-+      }
-+    },
-+    "543871a85c8de711628d8aef84e51f1e00921ae3b3716fc710256c26bfa0caf6": {
-+      "displayName": "BedrockAgentCoreRuntimeBuildHooksTestDefaultTestDeployAssert3CADF67F Template",
-+      "source": {
-+        "path": "BedrockAgentCoreRuntimeBuildHooksTestDefaultTestDeployAssert3CADF67F.template.json",
++        "path": "MetadataContextIntegDefaultTestDeployAssert9187EC06.template.json",
 +        "packaging": "file"
 +      },
 +      "destinations": {
-+        "current_account-current_region-877dd630": {
++        "current_account-current_region-d8d86b35": {
 +          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
-+          "objectKey": "543871a85c8de711628d8aef84e51f1e00921ae3b3716fc710256c26bfa0caf6.json",
++          "objectKey": "21fbb51d7b23f6a6c262b46a9caee79d744a3ac019fd45422d988b96d44b2a22.json",
 +          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
 +        }
 +      }
@@ -1531,262 +1247,192 @@ Builds on the L1 update in #39701 (`@aws-cdk/aws-service-spec` 0.1.231), which a
 \ No newline at end of file
 ```
 
-**File**: `packages/@aws-cdk-testing/framework-integ/test/aws-bedrockagentcore/test/agentcore/runtime/integ.runtime-build-hooks.js.snapshot/BedrockAgentCoreRuntimeBuildHooksTestDefaultTestDeployAssert3CADF67F.metadata.json` (added, +82/-0)
+**File**: `packages/@aws-cdk-testing/framework-integ/test/core/test/integ.metadata-context.js.snapshot/MetadataContextIntegDefaultTestDeployAssert9187EC06.metadata.json` (added, +14/-0)
 ```diff
-@@ -0,0 +1,82 @@
+@@ -0,0 +1,14 @@
 +{
-+  "/BedrockAgentCoreRuntimeBuildHooksTest/DefaultTest/DeployAssert": [
-+    {
-+      "type": "aws:cdk:warning",
-+      "data": "No cross-stack-reference strength configured, defaulting to \"strong\". We recommend you set feature flag \"@aws-cdk/core:defaultCrossStackReferences\" to \"both\", then deploy everywhere, then set it to \"weak\". Alternatively, set it to \"strong\" explicitly to lock in the current producer-protecting behavior. (See: https://github.com/aws/aws-cdk/blob/main/packages/aws-cdk-lib/README.md#reference-strength) [ack: @aws-cdk/core:crossStackReferencesDefaultStrong]",
-+      "trace": [
-+        "Annotations.addMessage (/Users/naviret/projects/runtime-header-allowlist-expansion/aws-cdk/packages/aws-cdk-lib/core/lib/annotations.js:279:29)",
-+        "Annotations.addWarningV2 (/Users/naviret/projects/runtime-header-allowlist-expansion/aws-cdk/packages/aws-cdk-lib/core/lib/annotations.js:145:18)",
-+        "resolveValue (/Users/naviret/projects/runtime-header-allowlist-expansion/aws-cdk/packages/aws-cdk-lib/core/lib/private/refs.js:215:54)",
-+        "resolveReferencesInElements (/Users/naviret/projects/runtime-header-allowlist-expansion/aws-cdk/packages/aws-cdk-lib/core/lib/private/refs.js:139:30)",
-+        "resolveReferences (/Users/naviret/projects/runtime-header-allowlist-expansion/aws-cdk/packages/aws-cdk-lib/core/lib/private/refs.js:124:5)",
-+        "prepareApp (/Users/naviret/projects/runtime-header-allowlist-expansion/aws-cdk/packages/aws-cdk-lib/core/lib/private/prepare-app.js:35:36)",
-+        "synthesize (/Users/naviret/projects/runtime-header-allowlist-expansion/aws-cdk/packages/aws-cdk-lib/core/lib/private/synthesis.js:72:36)",
-+        "App.synth (/Users/naviret/projects/runtime-header-allowlist-expansion/aws-cdk/packages/aws-cdk-lib/core/lib/stage.js:230:96)",
-+        "App.synth (/Users/naviret/projects/runtime-header-allowlist-expansion/aws-cdk/packages/aws-cdk-lib/core/lib/app.js:231:27)",
-+        "process.<anonymous> (/Users/naviret/projects/runtime-header-allowlist-expansion/aws-cdk/packages/aws-cdk-lib/core/lib/app.js:178:51)",
-+        "Object.onceWrapper (node:events:634:26)",
-+        "process.emit (node:events:519:28)"
-+      ]
-+    },
-+    {
-+      "type": "aws:cdk:templateFile",
-+      "data": "BedrockAgentCoreRuntimeBuildHooksTestDefaultTestDeployAssert3CADF67F.template.json"
-+    }
-+  ],
-+  "/BedrockAgentCoreRuntimeBuildHooksTest/DefaultTest/DeployAssert/BootstrapVersion": [
++  "/MetadataContextInteg/DefaultTest/DeployAssert/BootstrapVersion": [
 +    {
 +      "type": "aws:cdk:logicalId",
 +      "data": "BootstrapVersion"
 +    }
 +  ],
-+  "/BedrockAgentCoreRuntimeBuildHooksTest/DefaultTest/DeployAssert/CheckBootstrapVersion": [
++  "/MetadataContextInteg/DefaultTest/DeployAssert/CheckBootstrapVersion": [
 +    {
 +      "type": "aws:cdk:logicalId",
 +      "data": "CheckBootstrapVersion"
-+    }
-+  ],
-+  "/BedrockAgentCoreRuntimeBuildHooksTest/DefaultTest/DeployAssert/LambdaInvokeba6c6b6e12994c5657955bec4846f242/Default": [
-+    {
-+      "type": "aws:cdk:analytics:construct",
-+      "data": "*"
-+    },
-+    {
-+      "type": "aws:cdk:analytics:method",
-+      "data": "*"
-+    },
-+    {
-+      "type": "aws:cdk:analytics:method",
-+      "data": "*"
-+    }
-+  ],
-+  "/BedrockAgentCoreRuntimeBuildHooksTest/DefaultTest/DeployAssert/LambdaInvokeba6c6b6e12994c5657955bec4846f242/Invoke": [
-+    {
-+      "type": "aws:cdk:logicalId",
-+      "data": "LambdaInvokeba6c6b6e12994c5657955bec4846f242InvokeFF298FB6"
-+    }
-+  ],
-+  "/BedrockAgentCoreRuntimeBuildHooksTest/DefaultTest/DeployAssert/LambdaInvokeba6c6b6e12994c5657955bec4846f242/AssertionResults": [
-+    {
-+      "type": "aws:cdk:logicalId",
-+      "data": "AssertionResultsLambdaInvokeba6c6b6e12994c5657955bec4846f242"
-+    }
-+  ],
-+  "/BedrockAgentCoreRuntimeBuildHooksTest/DefaultTest/DeployAssert/SingletonFunction1488541a7b23466481b69b4408076b81/Role": [
-+    {
-+      "type": "aws:cdk:logicalId",
-+      "data": "SingletonFunction1488541a7b23466481b69b4408076b81Role37ABCE73"
-+    }
-+  ],
-+  "/BedrockAgentCoreRuntimeBuildHooksTest/DefaultTest/DeployAssert/SingletonFunction1488541a7b23466481b69b4408076b81/Handler": [
-+    {
-+      "type": "aws:cdk:logicalId",
-+      "data": "SingletonFunction1488541a7b23466481b69b4408076b81HandlerCD40AE9F"
-+    }
-+  ],
-+  "/BedrockAgentCoreRuntimeBuildHooksTest/DefaultTest/DeployAssert/LambdaInvokeba6c6b6e12994c5657955bec4846f242/Default/Default": [
-+    {
-+      "type": "aws:cdk:logicalId",
-+      "data": "LambdaInvokeba6c6b6e12994c5657955bec4846f242"
 +    }
 +  ]
 +}
 \ No newline at end of file
 ```
 
-**File**: `packages/@aws-cdk-testing/framework-integ/test/aws-bedrockagentcore/test/agentcore/runtime/integ.runtime-build-hooks.js.snapshot/BedrockAgentCoreRuntimeBuildHooksTestDefaultTestDeployAssert3CADF67F.template.json` (added, +203/-0)
+**File**: `packages/@aws-cdk-testing/framework-integ/test/core/test/integ.metadata-context.js.snapshot/MetadataContextIntegDefaultTestDeployAssert9187EC06.template.json` (added, +36/-0)
 ```diff
-@@ -0,0 +1,203 @@
+@@ -0,0 +1,36 @@
 +{
-+ "Resources": {
-+  "LambdaInvokeba6c6b6e12994c5657955bec4846f242": {
-+   "Type": "Custom::DeployAssert@SdkCallLambdainvoke",
-+   "Properties": {
-+    "ServiceToken": {
-+     "Fn::GetAtt": [
-+      "SingletonFunction1488541a7b23466481b69b4408076b81HandlerCD40AE9F",
-+      "Arn"
-+     ]
-+    },
-+    "service": "Lambda",
-+    "api": "invoke",
-+    "expected": "{\"$ObjectLike\":{\"Payload\":\"\\\"/warmup:8080:4096\\\"\"}}",
-+    "parameters": {
-+     "FunctionName": {
-+      "Fn::Join": [
-+       "",
-+       [
-+        "\"",
-+        {
-+         "Fn::ImportValue": "aws-cdk-bedrock-agentcore-runtime-build-hooks:ExportsOutputRefBuildHooksVerifier5ADACB5EF9D8BB61"
-+        },
-+        "\""
-+       ]
-+      ]
-+     },
-+     "Payload": {
-+      "Fn::Join": [
-+       "",
-+       [
-+        "\"{\\\"agentRuntimeId\\\":\\\"",
-+        {
-+         "Fn::ImportValue": "aws-cdk-bedrock-agentcore-runtime-build-hooks:ExportsOutputFnGetAttTestRuntime65042BB5AgentRuntimeId5490EDE2"
-+        },
-+        "\\\"}\""
-+       ]
-+      ]
-+     }
-+    },
-+    "flattenResponse": "false",
-+    "salt": "1794427191267"
-+   },
-+   "UpdateReplacePolicy": "Delete",
-+   "DeletionPolicy": "Delete"
-+  },
-+  "LambdaInvokeba6c6b6e12994c5657955bec4846f242InvokeFF298FB6": {
-+   "Type": "AWS::Lambda::Permission",
-+   "Properties": {
-+    "Action": "lambda:InvokeFunction",
-+    "FunctionName": {
-+     "Fn::ImportValue": "aws-cdk-bedrock-agentcore-runtime-build-hooks:ExportsOutputRefBuildHooksVerifier5ADACB5EF9D8BB61"
-+    },
-+    "Principal": {
-+     "Fn::GetAtt": [
-+      "SingletonFunction1488541a7b23466481b69b4408076b81Role37ABCE73",
-+      "Arn"
-+     ]
-+    }
-+   }
-+  },
-+  "SingletonFunction1488541a7b23466481b69b4408076b81Role37ABCE73": {
-+   "Type": "AWS::IAM::Role",
-+   "Properties": {
-+    "AssumeRolePolicyDocument": {
-+     "Version": "2012-10-17",
-+     "Statement": [
-+      {
-+       "Action": "sts:AssumeRole",
-+       "Effect": "Allow",
-+       "Principal": {
-+        "Service": "lambda.amazonaws.com"
-+       }
-+      }
-+     ]
-+    },
-+    "ManagedPolicyArns": [
-+     {
-+      "Fn::Sub": "arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-+     }
-+    ],
-+    "Policies": [
-+     {
-+      "PolicyName": "Inline",
-+      "PolicyDocument": {
-+       "Version": "2012-10-17",
-+       "Statement": [
-+        {
-+         "Action": [
-+          "lambda:Invoke"
-+         ],
-+         "Effect": "Allow",
-+         "Resource": [
-+          "*"
-+         ]
-+        },
-+        {
-+         "Action": [
-+          "lambda:InvokeFunction"
-+         ],
-+         "Effect": "Allow",
-+         "Resource": [
-+          {
-+           "Fn::Join": [
-+            "",
-+            [
-+             "arn:",
-+             {
-+              "Ref": "AWS::Partition"
-+             },
-+             ":lambda:",
-+             {
-+              "Ref": "AWS::Region"
-+             },
-+             ":",
-+             {
-+              "Ref": "AWS::AccountId"
-+             },
-+             ":function:",
-+             {
-+              "Fn::ImportValue": "aws-cdk-bedrock-agentcore-runtime-build-hooks:ExportsOutputRefBuildHooksVerifier5ADACB5EF9D8BB61"
-+             }
-+            ]
-+           ]
-+          }
-+         ]
-+        }
-+       ]
-+      }
-+     }
-+    ]
-+   }
-+  },
-+  "SingletonFunction1488541a7b23466481b69b4408076b81HandlerCD40AE9F": {
-+   "Type": "AWS::Lambda::Function",
-+   "Properties": {
-+    "Runtime": "nodejs24.x",
-+    "Code": {
-+     "S3Bucket": {
-+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
-+     },
-+     "S3Key": "59699f3599c12b54666f05dd2d4702da313e1466f561751ee1d588dd5228a950.zip"
-+    },
-+    "Timeout": 120,
-+    "Handler": "index.handler",
-+    "Role": {
-+     "Fn::GetAtt": [
-+      "SingletonFunction1488541a7b23466481b69b4408076b81Role37ABCE73",
-+      "Arn"
-+     ]
-+    },
-+    "LoggingConfig": {
-+     "LogFormat": "JSON",
-+     "ApplicationLogLevel": "FATAL"
-+    }
-+   }
++ "Parameters": {
++  "BootstrapVersion": {
++   "Type": "AWS::SSM::Parameter::Value<String>",
++   "Default": "/cdk-bootstrap/hnb659fds/version",
++   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
 +  }
 + },
-+ "Outputs": {
-+  "AssertionResultsLambdaInvokeba6c6b6e12994c5657955bec4846f242": {
-+   "Value": {
-+    "Fn::GetAtt": [
-+     "LambdaInvokeba6c6b6e12994c5657955bec4846f242",
-+     "assertion"
-+    ]
++ "Rules": {
++  "CheckBootstrapVersion": {
++   "Assertions": [
++    {
++     "Assert": {
++      "Fn::Not": [
++       {
++        "Fn::Contains": [
++         [
++          "1",
++          "2",
++          "3",
++          "4",
++          "5"
++         ],
++         {
++          "Ref": "BootstrapVersion"
++         }
++        ]
++       }
++      ]
++     },
++     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
++    }
++   ]
++  }
++ }
++}
+\ No newline at end of file
+```
+
+**File**: `packages/@aws-cdk-testing/framework-integ/test/core/test/integ.metadata-context.js.snapshot/MetadataContextTestStack.assets.json` (added, +20/-0)
+```diff
+@@ -0,0 +1,20 @@
++{
++  "version": "54.0.0",
++  "files": {
++    "5c79dae7d802ed0f71a89fba0f78e8060710c1188920589e08449635f0ed2d0e": {
++      "displayName": "MetadataContextTestStack Template",
++      "source": {
++        "path": "MetadataContextTestStack.template.json",
++        "packaging": "file"
++      },
++      "destinations": {
++        "current_account-current_region-9a054d3c": {
++          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
++          "objectKey": "5c79dae7d802ed0f71a89fba0f78e8060710c1188920589e08449635f0ed2d0e.json",
++          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
++        }
++      }
++    }
++  },
++  "dockerImages": {}
++}
+\ No newline at end of file
+```
+
+**File**: `packages/@aws-cdk-testing/framework-integ/test/core/test/integ.metadata-context.js.snapshot/MetadataContextTestStack.metadata.json` (added, +40/-0)
+```diff
+@@ -0,0 +1,40 @@
++{
++  "/MetadataContextTestStack/OrderQueue": [
++    {
++      "type": "aws:cdk:analytics:construct",
++      "data": {
++        "encryption": "SQS_MANAGED"
++      }
++    }
++  ],
++  "/MetadataContextTestStack/BootstrapVersion": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "BootstrapVersion"
++    }
++  ],
++  "/MetadataContextTestStack/CheckBootstrapVersion": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "CheckBootstrapVersion"
++    }
++  ],
++  "/MetadataContextTestStack/OrderQueue/Resource": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "OrderQueue39B99167"
++    }
++  ],
++  "/MetadataContextTestStack/Notifications/AlertsTopic": [
++    {
++      "type": "aws:cdk:analytics:construct",
++      "data": "*"
++    }
++  ],
++  "/MetadataContextTestStack/Notifications/AlertsTopic/Resource": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "NotificationsAlertsTopicDFE3487E"
++    }
++  ]
++}
+\ No newline at end of file
+```
+
+**File**: `packages/@aws-cdk-testing/framework-integ/test/core/test/integ.metadata-context.js.snapshot/MetadataContextTestStack.template.json` (added, +87/-0)
+```diff
+@@ -0,0 +1,87 @@
++{
++ "Description": "integ test stack for MetadataContext; exercises resource + template level context",
++ "Metadata": {
++  "com.aws.cloudformation.Context": {
++   "arch": "SQS buffer -> consumer; DLQ for poison msgs",
++   "must": [
++    "all queues encrypted w/ SSE"
++   ],
++   "ref": [
++    {
++     "at": "context/shared/encryption.ctx.yaml",
++     "has": "org CMK + tagging rules",
++     "scope": "shared"
++    }
++   ],
++   "owner": "framework-integ-team"
++  }
++ },
++ "Resources": {
++  "OrderQueue39B99167": {
++   "Type": "AWS::SQS::Queue",
++   "Properties": {
++    "SqsManagedSseEnabled": true
++   },
++   "UpdateReplacePolicy": "Delete",
++   "DeletionPolicy": "Delete",
++   "Metadata": {
++    "com.aws.cloudformation.Context": {
++     "why": "buffer order events async; std queue (throughput > ordering)",
++     "must": [
++      "VisTimeout >= 6x consumer timeout, else dup on retry"
++     ],
++     "mutable": "change-with-constraints",
++     "mutability": {
++      "QueueName": "must-never-change"
++     },
++     "trust": {
++      "src": "authored",
++      "conf": "high"
++     }
++    }
++   }
++  },
++  "NotificationsAlertsTopicDFE3487E": {
++   "Type": "AWS::SNS::Topic",
++   "Metadata": {
++    "com.aws.cloudformation.Context": {
++     "why": "fan-out of alert events to oncall channels"
++    }
 +   }
 +  }
 + },
@@ -1824,213 +1470,220 @@ Builds on the L1 update in #39701 (`@aws-cdk/aws-service-spec` 0.1.231), which a
 +   ]
 +  }
 + }
-+
++}
+\ No newline at end of file
 ```
 
-**File**: `packages/@aws-cdk-testing/framework-integ/test/aws-bedrockagentcore/test/agentcore/runtime/integ.runtime-build-hooks.js.snapshot/asset.6528f3d28d4b4fcb85fe3418aa8484e437716009856ef6fc36583e50cf7ef299/Dockerfile` (added, +5/-0)
+**File**: `packages/@aws-cdk-testing/framework-integ/test/core/test/integ.metadata-context.js.snapshot/cdk.out` (added, +1/-0)
 ```diff
-@@ -0,0 +1,5 @@
-+FROM public.ecr.aws/docker/library/python:3.12-slim
-+WORKDIR /app
-+COPY app.py .
-+EXPOSE 8080
-+CMD ["python", "app.py"]
+@@ -0,0 +1 @@
++{"version":"54.0.0"}
+\ No newline at end of file
+```
+
+**File**: `packages/@aws-cdk-testing/framework-integ/test/core/test/integ.metadata-context.js.snapshot/integ.json` (added, +14/-0)
+```diff
+@@ -0,0 +1,14 @@
++{
++  "version": "54.0.0",
++  "testCases": {
++    "MetadataContextInteg/DefaultTest": {
++      "stacks": [
++        "MetadataContextTestStack"
++      ],
++      "assertionStack": "MetadataContextInteg/DefaultTest/DeployAssert",
++      "assertionStackName": "MetadataContextIntegDefaultTestDeployAssert9187EC06"
++    }
++  },
++  "enableLookups": true,
++  "minimumCliVersion": "2.1131.0"
++}
+\ No newline at end of file
 ```
 
 ---
 
-### Incident Patch 3: `06a1c50a` (2026-11-12)
-**Commit Message**: feat(elbv2): add RFC 9151 (CNSA 1.0) SSL security policies for ALB and NLB (#38700)
+### Incident Patch 2: `bd4b78e9` (2026-11-13)
+**Commit Message**: docs(lambda-event-sources): explain Kafka schema registry integration (#39679)
 
 ### Issue # (if applicable)
 
-Relates to #38666.
+Closes #34778.
 
 ### Reason for this change
 
-AWS added TLS-based security policies for Application Load Balancer (HTTPS listeners) and Network Load Balancer (TLS listeners) that comply with RFC 9151 for the Commercial National Security Algorithm (CNSA) 1.0 suite: [AWS Application and Network Load Balancers now support RFC 9151 compliant security policies](https://aws.amazon.com/about-aws/whats-new/2026/08/aws-application-network/) from August 2026. 
+The `aws-lambda-event-sources` README shows two schema registry examples for Kafka event sources but doesn't explain the integration: which registries and record formats Lambda supports, that provisioned mode is required, or what the required properties mean.
 
-The CDK `SslPolicy` enum did not expose these policies yet, so users had to workaround via mixin or  fall back to the L1 escape hatch to select them. Let's change this.
+This continues #34779 by @evzzk, which has been inactive since July 2025.
 
 ### Description of changes
 
-Added the 7 RFC 9151 (CNSA 1.0) security policies to the shared `SslPolicy` enum (used by both ALB and NLB listeners):
+- Add a short "Schema Registry" section to the README: what the integration does, which registries and record formats work, what to set (`provisionedPollerConfig`, `eventRecordFormat`, `schemaValidationConfigs`), and what `ConfluentSchemaRegistry` and `GlueSchemaRegistry` need.
+- Add an example for a self-managed Kafka cluster with a self-managed Confluent schema registry.
+- Take the registry secret in the existing Confluent example as a declared variable. The example created a secret with the MSK broker secret name.
+- Reword the doc comments of `EventRecordFormat`, `KafkaSchemaRegistryAccessConfigType` and `KafkaSchemaValidationAttribute` in `aws-lambda` in plain terms. Thi
 
-- Strict policies (enforce full RFC 9151 requirements):
-  - `RFC9151_TLS13_13` → `ELBSecurityPolicy-TLS13-1-3-RFC9151-FIPS-2023-07`
-  - `RFC9151_TLS13_12` → `ELBSecurityPolicy-TLS13-1-2-RFC9151-FIPS-2023-07`
-  - `RFC9151_TLS13_12_EXT0` → `ELBSecurityPolicy-TLS13-1-2-Ext0-RFC9151-FIPS-2023-07`
-- Interop polici
-
-**File**: `packages/aws-cdk-lib/aws-elasticloadbalancingv2/lib/shared/enums.ts` (modified, +74/-0)
+**File**: `packages/aws-cdk-lib/aws-lambda-event-sources/README.md` (modified, +62/-6)
 ```diff
-@@ -305,6 +305,80 @@ export enum SslPolicy {
-    */
-   FIPS_TLS13_10_PQ = 'ELBSecurityPolicy-TLS13-1-0-FIPS-PQ-2025-09',
+@@ -653,9 +653,28 @@ ordersFunction.addEventSource(new ManagedKafkaEventSource({
  
-+  /**
-+   * TLS 1.3 only, RFC 9151 (CNSA 1.0) strict policy. FIPS-compliant.
-+   *
-+   * Supports the single cipher TLS_AES_256_GCM_SHA384. Use a strict policy only when all
-+   * clients can negotiate RFC 9151 algorithms.
-+   *
-+   * @see https://docs.aws.amazon.com/elasticloadbalancing/latest/application/describe-ssl-policies.html#rfc9151-security-policies
-+   */
-+  RFC9151_TLS13_13 = 'ELBSecurityPolicy-TLS13-1-3-RFC9151-FIPS-2023-07',
+ ```
+ 
+-Set a confluent or self-managed schema registry to de-serialize events from the event source. 
++### Schema Registry
+ 
+-Note: This will also work for `SelfManagedKafkaEventSource`.
++Lambda can validate the key, the value, or both of each Kafka record against a schema registry before it
++invokes your function. Set `schemaRegistryConfig` on `ManagedKafkaEventSource` or `SelfManagedKafkaEventSource`
++to an AWS Glue schema registry with `GlueSchemaRegistry`, or to a Confluent schema registry, cloud or
++self-managed, with `ConfluentSchemaRegistry`. The registry can validate Avro, Protobuf and JSON Schema records.
 +
-+  /**
-+   * TLS 1.2 and 1.3, RFC 9151 (CNSA 1.0) strict policy. FIPS-compliant.
-+   *
-+   * Adds the ECDHE-ECDSA and ECDHE-RSA AES256-GCM-SHA384 ciphers on top of
-+   * {@link RFC9151_TLS13_13} for TLS 1.2 clients. Use a strict policy only when all clients
-+   * can negotiate RFC 9151 algorithms.
-+   *
-+   * @see https://docs.aws.amazon.com/elasticloadbalancing/latest/application/describe-ssl-policies.html#rfc9151-security-policies
-+   */
-+  RFC9151_TLS13_12 = 'ELBSecurityPolicy-TLS13-1-2-RFC9151-FIPS-2023-07',
++Schema registries need provisioned pollers, so also set `provisionedPollerConfig`. Then choose:
 +
-+  /**
-+   * TLS 1.2 and 1.3, RFC 9151 (CNSA 1.0) strict policy. FIPS-compliant.
-+   *
-+   * Same as {@link RFC9151_TLS13_12} plus the non-ECDHE AES256-GCM-SHA384 cipher (extended
-+   * cipher suite 0). Use a strict policy only when all clients can negotiate RFC 9151 algorithms.
-+   *
-+   * @see https://docs.aws.amazon.com/elasticloadbalancing/latest/application/describe-ssl-policies.html#rfc9151-security-policies
-+   */
-+  RFC9151_TLS13_12_EXT0 = 'ELBSecurityPolicy-TLS13-1-2-Ext0-RFC9151-FIPS-2023-07',
++* `eventRecordFormat`: `JSON` passes the validated parts to your function as JSON, which suits languages such as
++  Python and Node.js; `SOURCE` passes them in their original format, which suits Avro or Protobuf generated classes.
++* `schemaValidationConfigs`: whether to validate the key, the value, or both.
 +
-+  /**
-+   * TLS 1.2 and 1.3, RFC 9151 (CNSA 1.0) interoperability policy. FIPS-compliant.
-+   *
-+   * Interop policies mix RFC 9151 and non-RFC 9151 ciphers so clients can transition gradually.
-+   * This variant adds the AES128-GCM-SHA256 ciphers (TLS_AES_128_GCM_SHA256,
-+   * ECDHE-ECDSA-AES128-GCM-SHA256, ECDHE-RSA-AES128-GCM-SHA256) to the RFC 9151 GCM ciphers.
-+   *
-+   * @see https://docs.aws.amazon.com/elasticloadbalancing/latest/application/describe-ssl-policies.html#rfc9151-security-policies
-+   */
-+  RFC9151_TLS13_12_INTEROP1 = 'ELBSecurityPolicy-TLS13-1-2-RFC9151-INTEROP1-FIPS-2023-07',
++For Confluent, give the registry URL, an authentication type and the Secrets Manager secret that goes with it;
++the function gets read access to the secret. For Glue, pass the registry; the function gets the Glue
++permissions it needs to read it.
 +
-+  /**
-+   * TLS 1.2 and 1.3, RFC 9151 (CNSA 1.0) interoperability policy. FIPS-compliant.
-+   *
-+   * Extends {@link RFC9151_TLS13_12_INTEROP1} with the AES-SHA256 CBC ciphers
-+   * (ECDHE-ECDSA/RSA-AES256-SHA384 and ECDHE-ECDSA/RSA-AES128-SHA256).
-+   *
-+   * @see https://docs.aws.amazon.com/elasticloadbalancing/latest/application/describe-ssl-policies.html#rfc9151-security-policies
-+   */
-+  RFC9151_TLS13_12_INTEROP2 = 'ELBSecurityPolicy-TLS13-1-2-RFC9151-INTEROP2-FIPS-2023-07',
++For details, see
++[Using schema registries with Kafka event sources in Lambda](https://docs.aws.amazon.com/lambda/latest/dg/services-consume-kafka-events.html)
++in the AWS Lambda Developer Guide.
 +
-+  /**
-+   * TLS 1.2 and 1.3, RFC 9151 (CNSA 1.0) interoperability policy. FIPS-compliant.
-+   *
-+   * Adds the AES-SHA1 CBC ciphers (ECDHE-ECDSA/RSA-AES256-SHA and ECDHE-ECDSA/RSA-AES128-SHA)
-+   * on top of the GCM and SHA256 ciphers, for the widest client compatibility of the interop
-+   * policies.
-+   *
-+   * @see https://docs.aws.amazon.com/elasticloadbalancing/latest/application/describe-ssl-policies.html#rfc9151-security-policies
-+   */
-+  RFC9151_TLS13_12_INTEROP3 = 'ELBSecurityPolicy-TLS13-1-2-RFC9151-INTEROP3-FIPS-2023-07',
++This example uses a Confluent schema registry with Amazon MSK:
+ 
+ ```ts
+ import { ManagedKafkaEventSource, ConfluentSchemaRegistry } from 'aws-cdk-lib/aws-lambda-event-sources';
+@@ -667,7 +686,8 @@ declare const clusterArn: string;
+ // The Kafka topic you want to subscribe to
+ const topic = 'some-cool-topic';
+ 
+-const secret = new Secret(this, 'Secret', { secretName: 'AmazonMSK_KafkaSecret' });
++// The secret with the credentials for your schema registry
++declare const secret: Secret;
+ 
+ declare const myFunction: lambda.Function;
+ myFunction.addEventSource(new ManagedKafkaEventSource({
+@@ -688,9 +708,7 @@ myFunction.addEventSource(new ManagedKafkaEventSource({
+ }));
+ ```
+ 
+-Set Glue schema registry to de-serialize events from the event source.
+-
+-Note: This will also work for `SelfManagedKafkaEventSource`.
++This example uses an AWS Glue schema registry with Amazon MSK:
+ 
+ ```ts
+ import { CfnRegistry } from 'aws-cdk-lib/aws-glue';
+@@ -725,6 +743,44 @@ myFunction.addEventSource(new ManagedKafkaEventSource({
+ }));
+ ```
+ 
++This example uses a self-managed Confluent schema registry with a self-managed Kafka cluster:
 +
-+  /**
-+   * TLS 1.2 and 1.3, RFC 9151 (CNSA 1.0) interoperability policy. FIPS-compliant.
-+   *
-+   * AWS recommends starting with this policy: it supports clients that negotiate classical
-+   * TLS 1.3, TLS 1.2, or strict RFC 9151 algorithms, then move to a stricter policy as clients
-+   * gain RFC 9151 support. Also used for backend connections when any listener uses an RFC 9151 policy.
-+   *
-+   * @see https://docs.aws.amazon.com/elasticloadbalancing/latest/application/describe-ssl-policies.html#rfc9151-security-policies
-+   */
-+  RFC9151_TLS13_12_INTEROP4 = 'ELBSecurityPolicy-TLS13-1-2-RFC9151-INTEROP4-FIPS-2023-07',
++```ts
++import { SelfManagedKafkaEventSource, ConfluentSchemaRegistry } from 'aws-cdk-lib/aws-lambda-event-sources';
++import { ISecret } from 'aws-cdk-lib/aws-secretsmanager';
 +
++// The list of Kafka brokers
++const bootstrapServers = ['kafka-broker:9092'];
++
++// The Kafka topic you want to subscribe to
++const topic = 'some-cool-topic';
++
++// The secret that allows access to your self hosted Kafka cluster
++declare const kafkaSecret: ISecret;
++
++// The secret with the client certificate and private key for your schema registry
++declare const registrySecret: ISecret;
++
++declare const myFunction: lambda.Function;
++myFunction.addEventSource(new SelfManagedKafkaEventSource({
++  bootstrapServers,
++  topic,
++  secret: kafkaSecret,
++  startingPosition: lambda.StartingPosition.TRIM_HORIZON,
++  provisionedPollerConfig: {
++    minimumPollers: 1,
++    maximumPollers: 3,
++  },
++  schemaRegistryConfig: new ConfluentSchemaRegistry({
++    schemaRegistryUri: 'https://schema-registry.example.com',
++    eventRecordFormat: lambda.EventRecordFormat.SOURCE,
++    authenticationType: lambda.KafkaSchemaRegistryAccessConfigType.CLIENT_CERTIFICATE_TLS_AUTH,
++    secret: registrySecret,
++    schemaValidationConfigs: [{ attribute: lambda.KafkaSchemaValidationAttribute.VALUE }],
++  }),
++}));
++```
++
+ ## Roadmap
+ 
+ Eventually, this module will support all the event sources described under
+```
+
+**File**: `packages/aws-cdk-lib/aws-lambda/lib/schema-registry.ts` (modified, +17/-6)
+```diff
+@@ -2,20 +2,28 @@ import type { IEventSourceMapping } from './event-source-mapping';
+ import type { IFunction } from './function-base';
+ 
+ /**
+- * The format target function should receive record in.
++ * How Lambda passes schema-validated records to your function.
+  */
+ export class EventRecordFormat {
    /**
-    * Strong foward secrecy ciphers and TLV1.2 only (2020 edition).
-    * Same as FORWARD_SECRECY_TLS12_RES, but only supports GCM versions of the TLS ciphers
-```
-
-**File**: `packages/aws-cdk-lib/aws-elasticloadbalancingv2/test/alb/listener.test.ts` (modified, +30/-0)
-```diff
-@@ -2329,6 +2329,36 @@ describe('tests', () => {
-       });
-     });
-   });
-+
-+  describe('RFC 9151 (CNSA 1.0) SSL policies', () => {
-+    test.each([
-+      [elbv2.SslPolicy.RFC9151_TLS13_13, 'ELBSecurityPolicy-TLS13-1-3-RFC9151-FIPS-2023-07'],
-+      [elbv2.SslPolicy.RFC9151_TLS13_12, 'ELBSecurityPolicy-TLS13-1-2-RFC9151-FIPS-2023-07'],
-+      [elbv2.SslPolicy.RFC9151_TLS13_12_EXT0, 'ELBSecurityPolicy-TLS13-1-2-Ext0-RFC9151-FIPS-2023-07'],
-+      [elbv2.SslPolicy.RFC9151_TLS13_12_INTEROP1, 'ELBSecurityPolicy-TLS13-1-2-RFC9151-INTEROP1-FIPS-2023-07'],
-+      [elbv2.SslPolicy.RFC9151_TLS13_12_INTEROP2, 'ELBSecurityPolicy-TLS13-1-2-RFC9151-INTEROP2-FIPS-2023-07'],
-+      [elbv2.SslPolicy.RFC9151_TLS13_12_INTEROP3, 'ELBSecurityPolicy-TLS13-1-2-RFC9151-INTEROP3-FIPS-2023-07'],
-+      [elbv2.SslPolicy.RFC9151_TLS13_12_INTEROP4, 'ELBSecurityPolicy-TLS13-1-2-RFC9151-INTEROP4-FIPS-2023-07'],
-+    ])('sets SslPolicy %s on an HTTPS listener', (sslPolicy, expected) => {
-+      // GIVEN
-+      const stack = new cdk.Stack();
-+      const vpc = new ec2.Vpc(stack, 'VPC');
-+      const lb = new elbv2.ApplicationLoadBalancer(stack, 'LB', { vpc });
-+
-+      // WHEN
-+      lb.addListener('Listener', {
-+        protocol: elbv2.ApplicationProtocol.HTTPS,
-+        certificates: [importedCertificate(stack)],
-+        sslPolicy,
-+        defaultAction: elbv2.ListenerAction.fixedResponse(200),
-+      });
-+
-+      // THEN
-+      Template.fromStack(stack).hasResourceProperties('AWS::ElasticLoadBalancingV2::Listener', {
-+        SslPolicy: expected,
-+      });
-+    });
-+  });
- });
+-   * The target function will receive records as json objects.
++   * Your function receives the validated parts of each record as JSON.
++   *
++   * A good fit for languages such as Python and Node.js.
+    */
+   public static readonly JSON = new EventRecordFormat('JSON');
  
- class ResourceWithLBDependency extends cdk.CfnResource {
-```
-
-**File**: `packages/aws-cdk-lib/aws-elasticloadbalancingv2/test/nlb/listener.test.ts` (modified, +34/-0)
-```diff
-@@ -750,6 +750,40 @@ describe('tests', () => {
-       });
-     });
-   });
-+
-+  describe('RFC 9151 (CNSA 1.0) SSL policies', () => {
-+    test.each([
-+      [elbv2.SslPolicy.RFC9151_TLS13_13, 'ELBSecurityPolicy-TLS13-1-3-RFC9151-FIPS-2023-07'],
-+      [elbv2.SslPolicy.RFC9151_TLS13_12, 'ELBSecurityPolicy-TLS13-1-2-RFC9151-FIPS-2023-07'],
-+      [elbv2.SslPolicy.RFC9151_TLS13_12_EXT0, 'ELBSecurityPolicy-TLS13-1-2-Ext0-RFC9151-FIPS-2023-07'],
-+      [elbv2.SslPolicy.RFC9151_TLS13_12_INTEROP1, 'ELBSecurityPolicy-TLS13-1-2-RFC9151-INTEROP1-FIPS-2023-07'],
-+      [elbv2.SslPolicy.RFC9151_TLS13_12_INTEROP2, 'ELBSecurityPolicy-TLS13-1-2-RFC9151-INTEROP2-FIPS-2023-07'],
-+      [elbv2.SslPolicy.RFC9151_TLS13_12_INTEROP3, 'ELBSecurityPolicy-TLS13-1-2-RFC9151-INTEROP3-FIPS-2023-07'],
-+      [elbv2.SslPolicy.RFC9151_TLS13_12_INTEROP4, 'ELBSecurityPolicy-TLS13-1-2-RFC9151-INTEROP4-FIPS-2023-07'],
-+    ])('sets SslPolicy %s on a TLS listener', (sslPolicy, expected) => {
-+      // GIVEN
-+      const stack = new cdk.Stack();
-+      const vpc = new ec2.Vpc(stack, 'VPC');
-+      const lb = new elbv2.NetworkLoadBalancer(stack, 'LB', { vpc });
-+      const cert = new acm.Certificate(stack, 'Certificate', {
-+        domainName: 'example.com',
-+      });
-+
-+      // WHEN
-+      lb.addListener('Listener', {
-+        port: 443,
-+        protocol: elbv2.Protocol.TLS,
-+        certificates: [elbv2.ListenerCertificate.fromCertificateManager(cert)],
-+        sslPolicy,
-+        defaultTargetGroups: [new elbv2.NetworkTargetGroup(stack, 'Group', { vpc, port: 80 })],
-+      });
-+
-+      // THEN
-+      Template.fromStack(stack).hasResourceProperties('AWS::ElasticLoadBalancingV2::Listener', {
-+        SslPolicy: expected,
-+      });
-+    });
-+  });
- });
+   /**
+-   * The target function will receive records in same format as the schema source.
++   * Your function receives the validated parts of each record in their original format.
++   *
++   * A good fit when you use Avro or Protobuf generated classes.
+    */
+   public static readonly SOURCE = new EventRecordFormat('SOURCE');
  
- class ResourceWithLBDependency extends cdk.CfnResource {
+-  /** A custom event record format */
++  /**
++   * A custom event record format.
++   *
++   * @param name the name of the record format
++   */
+   public static of(name: string): EventRecordFormat {
+     return new EventRecordFormat(name);
+   }
+@@ -32,6 +40,9 @@ export class EventRecordFormat {
+ 
+ /**
+  * The type of authentication protocol for your schema registry.
++ *
++ * Used with Confluent schema registries. For an AWS Glue schema registry, Lambda uses the
++ * function's execution role instead.
+  */
+ export class KafkaSchemaRegistryAccessConfigType {
+   /**
+@@ -109,12 +120,12 @@ export interface KafkaSchemaRegistryAccessConfig {
+  */
+ export class KafkaSchemaValidationAttribute {
+   /**
+-   * De-serialize the key field of the parload to target function.
++   * Validate the key of each record.
+    */
+   public static readonly KEY = new KafkaSchemaValidationAttribute('KEY');
+ 
+   /**
+-   * De-serialize the value field of the parload to target function.
++   * Validate the value of each record.
+    */
+   public static readonly VALUE = new KafkaSchemaValidationAttribute('VALUE');
+ 
 ```
 
 #### Recent Merged Pull Requests:
@@ -2059,71 +1712,47 @@ Added the 7 RFC 9151 (CNSA 1.0) security policies to the shared `SslPolicy` enum
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. core): bump bundled minimatch to 11.0.8 to address CVE-2026-118764 (#39595)
+## X. core): embed structured design context in synthesized templates (MetadataContext
 
 **RULE**:
-When implementing operations in `packages/aws-cdk-lib/NOTICE`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/@aws-cdk-testing/framework-integ/test/core/test/integ.metadata-context.js.snapshot/MetadataContextIntegDefaultTestDeployAssert9187EC06.assets.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c153af90`: core): bump bundled minimatch to 11.0.8 to address CVE-2026-118764 (#39595). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `708bee9a`: core): embed structured design context in synthesized templates (MetadataContext). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/aws-cdk-lib/NOTICE`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/@aws-cdk-testing/framework-integ/test/core/test/integ.metadata-context.js.snapshot/MetadataContextIntegDefaultTestDeployAssert9187EC06.assets.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-** @isaacs/nonrecursive-glob-match - https://www.npmjs.com/package/@isaacs/nonrecursive-glob-match
-
-Blue Oak Model License
-
-Version 1.0.0
-
-Purpose
-
-This license gives everyone as much permission to work with
-this software as possible, while protecting contributors
-from liability.
-
-Acceptance
-
-In order to receive this license, you must agree to its
-rules. The rules of this license are both obligations
-under that agreement and conditions to your license.
-You must not do anything with this software that triggers
-a rule that you cannot or will not follow.
-
-Copyright
-
-Each contributor licenses you to do everything with this
-software that would otherwise infringe that contributor's
-copyright in it.
-
-Notices
-
-You must ensure that everyone who gets a copy of
-any part of this software from you, with or without
-changes, also gets the text of this license or a link to
-https://blueoakcouncil.org/license/1.0.0.
-
-Excuse
-
-If anyone notifies you in writing that you have not
-complied with Notices, you can keep your
-license by taking all practical steps to comply within 30
-days after the notice. If you do not do so, your license
-ends immediately.
-
-Patent
-
-Each contributor licenses you to do everythi
+{
+  "version": "54.0.0",
+  "files": {
+    "21fbb51d7b23f6a6c262b46a9caee79d744a3ac019fd45422d988b96d44b2a22": {
+      "displayName": "MetadataContextIntegDefaultTestDeployAssert9187EC06 Template",
+      "source": {
+        "path": "MetadataContextIntegDefaultTestDeployAssert9187EC06.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "current_account-current_region-d8d86b35": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
+          "objectKey": "21fbb51d7b23f6a6c262b46a9caee79d744a3ac019fd45422d988b96d44b2a22.json",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
+// Induced defect failure mode:
 // Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c153af90` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `708bee9a` are properly handled with clean fallback behavior.

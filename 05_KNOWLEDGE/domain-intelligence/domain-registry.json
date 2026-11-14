@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T19:33:51.798Z",
-  "total_records": 810,
+  "last_updated": "2026-11-14T19:47:14.839Z",
+  "total_records": 815,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 396,
+      "total": 399,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -433,7 +433,10 @@
         "DOM-D-CC7591B7",
         "domain_intelligence-research-knowledge-intelligence-hf-autotrust-gev-26b-decide-nvfp4-learnings-core",
         "domain_intelligence-research-knowledge-intelligence-sc117-qwen3-8-flash-next-gsq-rco-abliterated-ggu",
-        "domain_intelligence-research-knowledge-intelligence-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-"
+        "domain_intelligence-research-knowledge-intelligence-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-",
+        "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-4b-core-invariants",
+        "DOM-D-B7601B75",
+        "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-4b-learnings-core-invariants"
       ]
     },
     "E": {
@@ -599,7 +602,7 @@
       ]
     },
     "H": {
-      "total": 171,
+      "total": 173,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -771,7 +774,9 @@
         "domain_intelligence-technical-construction-intelligence-tw93-pake-core-invariants",
         "domain_intelligence-technical-construction-intelligence-aquasecurity-trivy-core-invariants",
         "domain_intelligence-technical-construction-intelligence-tw93-pake-learnings-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-aquasecurity-trivy-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-aquasecurity-trivy-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-aws-aws-cdk-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-aws-aws-cdk-learnings-core-invariants"
       ]
     },
     "I": {
@@ -7543,8 +7548,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "f4864d592999b3b22d2575dfeb3838cf096e303506b4a4eb850da0cd16f29254",
-      "created_at": "2026-11-14T19:33:51.303Z"
+      "content_hash": "0f94f697aeb25639487ec21f4472e360710a099e64abf85fcccadeb5861d710f",
+      "created_at": "2026-11-14T19:47:14.839Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -16315,6 +16320,84 @@
       "repository": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings",
       "content_hash": "6dfd84e9fc510259945c5068ad63e5866a4a4d9120b2ce2de5dbc332acaa2d59",
       "created_at": "2026-11-14T19:33:50.749Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-aws-aws-cdk-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-aws-aws-cdk-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: aws/aws-cdk Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aws-aws-cdk-technical-construction-intelligence-aws-aws-cdk-core-invariants.md",
+      "repository": "aws/aws-cdk",
+      "content_hash": "bb480446e6c20d50434d5db7af7ad6bb83c02122b93ffe225b93a0a0c49df3c8",
+      "created_at": "2026-11-14T19:41:41.460Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-4b-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-4b-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: Qwen/Qwen3-4B Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-4b-research-knowledge-intelligence-qwen-qwen3-4b-core-invariants.md",
+      "repository": "Qwen/Qwen3-4B",
+      "content_hash": "93dbc772bfeb07b54ef3c71de49c445e0891dcec60df35c7894980058d094aaf",
+      "created_at": "2026-11-14T19:46:34.313Z"
+    },
+    "DOM-D-B7601B75": {
+      "record_id": "DOM-D-B7601B75",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Qwen/Qwen3-4B",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/Qwen/Qwen3-4B](https://huggingface.co/Qwen/Qwen3-4B))  \n> **Source Version**: `hf-qwen-qwen`  \n> **License**: Open-Source  \n> **Synthesized By**: zero-clone-str",
+      "content_hash": "508a66fe7c0c82d42ce7d3b97ff20f5189be1959c023a99ef54a2c55d24d4c73",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/ -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/",
+      "provenance": {
+        "source_uri": "project://hf-qwen-qwen3-4b/hf-qwen-qwen3-4b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T19:46:37.146Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-qwen-qwen3-4b)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-qwen-qwen3-4b"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T19:47:12.979Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-4b-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-4b-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-qwen-qwen3-4b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-4b-learnings-research-knowledge-intelligence-hf-qwen-qwen3-4b-lear.md",
+      "repository": "hf-qwen-qwen3-4b-learnings",
+      "content_hash": "47f57f8f761c9c383e6195adc53389792f76fb0699c22aac09189776f8934e61",
+      "created_at": "2026-11-14T19:47:13.240Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-aws-aws-cdk-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-aws-aws-cdk-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: aws-aws-cdk-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aws-aws-cdk-learnings-technical-construction-intelligence-aws-aws-cdk-learnings-.md",
+      "repository": "aws-aws-cdk-learnings",
+      "content_hash": "aaa4bd57662e757a17d7785f775e3ed2ae38cdfa58aa5d124cd72a8ce1c2ab9c",
+      "created_at": "2026-11-14T19:47:13.959Z"
     }
   }
 }

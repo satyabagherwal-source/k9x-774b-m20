@@ -1035,8 +1035,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-4B",
     "sourceVersion": "hf-qwen-qwen3-4b",
     "license": "Open-Source",
-    "contentHash": "68e6609838e640fdd9d5d045bfba0cf98fcbbe80d2f6cb7207eb21c483c4e681",
-    "lastHarvestedAt": "2026-11-09T07:55:16.113Z",
+    "contentHash": "d09138b3e349f5a16b64ee80adffc51880f9ab87a92851c20a3b5028616ae5ba",
+    "lastHarvestedAt": "2026-11-14T19:46:34.102Z",
     "learningId": "learn-huggingface-qwen-qwen3-4b"
   },
   "hf-fermionresearch-phonon-2": {
@@ -4803,10 +4803,10 @@
     "repository": "aws/aws-cdk",
     "platform": "github",
     "sourceUrl": "https://github.com/aws/aws-cdk",
-    "sourceVersion": "79914032",
+    "sourceVersion": "708bee9a",
     "license": "Apache-2.0",
-    "contentHash": "81e86aa6c6f9b4a8cd98a346992aaaf481419fec3d68cf8a940d446cacbecfb5",
-    "lastHarvestedAt": "2026-11-13T14:26:01.150Z",
+    "contentHash": "3640b9590ab2d0ed2aad79dfbb40a5e99e73649898c6ceb59bc99b653fad5be8",
+    "lastHarvestedAt": "2026-11-14T19:41:41.065Z",
     "learningId": "learn-github-aws-aws-cdk"
   },
   "cockroachdb-cockroach": {

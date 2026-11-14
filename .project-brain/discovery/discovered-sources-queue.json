@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T19:33:50.582Z",
+  "updated_at": "2026-11-14T19:47:13.602Z",
   "stats": {
-    "total_discovered": 3393,
-    "approved_pending_harvest": 3187,
+    "total_discovered": 3398,
+    "approved_pending_harvest": 3192,
     "harvested_count": 0,
     "rejected_count": 206,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3168,
-      "OFFICIAL_DOCUMENTATION": 122,
+      "COMMUNITY_AND_EXPERT": 3172,
+      "OFFICIAL_DOCUMENTATION": 123,
       "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
       "SECURITY_ADVISORIES": 10,
@@ -73224,6 +73224,116 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md",
         "fileName": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md"
+      }
+    },
+    "SRC-6912E3A1FAFA": {
+      "id": "SRC-6912E3A1FAFA",
+      "url": "https://huggingface.co/Qwen/Qwen3-4B",
+      "title": "https://huggingface.co/Qwen/Qwen3-4B",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T19:47:13.015Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md",
+        "fileName": "hf-qwen-qwen3-4b-learnings.md"
+      }
+    },
+    "SRC-875B1077F197": {
+      "id": "SRC-875B1077F197",
+      "url": "https://github.com/aws/aws-cdk-rfcs/issues/994",
+      "title": "https://github.com/aws/aws-cdk-rfcs/issues/994",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T19:47:13.504Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
+        "fileName": "aws-aws-cdk-learnings.md"
+      }
+    },
+    "SRC-FA8A8C7BB8F4": {
+      "id": "SRC-FA8A8C7BB8F4",
+      "url": "https://github.com/aws/aws-cdk-rfcs/pull/981",
+      "title": "https://github.com/aws/aws-cdk-rfcs/pull/981",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T19:47:13.544Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
+        "fileName": "aws-aws-cdk-learnings.md"
+      }
+    },
+    "SRC-C3784268A5FD": {
+      "id": "SRC-C3784268A5FD",
+      "url": "https://docs.aws.amazon.com/lambda/latest/dg/services-consume-kafka-events.html",
+      "title": "https://docs.aws.amazon.com/lambda/latest/dg/services-consume-kafka-events.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T19:47:13.573Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
+        "fileName": "aws-aws-cdk-learnings.md"
+      }
+    },
+    "SRC-CCEA3188C9C9": {
+      "id": "SRC-CCEA3188C9C9",
+      "url": "https://schema-registry.example.com/",
+      "title": "https://schema-registry.example.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T19:47:13.602Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
+        "fileName": "aws-aws-cdk-learnings.md"
       }
     }
   }

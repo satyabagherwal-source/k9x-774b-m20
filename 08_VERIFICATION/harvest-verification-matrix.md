@@ -9922,3 +9922,6 @@
 | `CYCLE-20261114-JODA` | `2026-11-14T19:20:50.974Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8526` | Yes (`b7689485...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T19:21:23.060Z` | `hf-autotrust-gev-26b-decide-nvfp4` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-CC7591B7` [Domain D] | Yes (`bbc7cfe4...`) |
 | `CYCLE-20261114-04NY` | `2026-11-14T19:33:38.590Z` | `SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md` | Yes (`2a34e811...`) |
+| `CYCLE-20261114-AGXW` | `2026-11-14T19:41:41.060Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8527` | Yes (`3640b959...`) |
+| `CYCLE-20261114-GR1T` | `2026-11-14T19:46:34.097Z` | `Qwen/Qwen3-4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md` | Yes (`d09138b3...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T19:47:13.000Z` | `hf-qwen-qwen3-4b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-B7601B75` [Domain D] | Yes (`508a66fe...`) |

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-14T19:33:51.903Z",
-  "total_verified_learnings": 8595,
+  "last_updated": "2026-11-14T19:47:14.998Z",
+  "total_verified_learnings": 8597,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 17750,
+  "total_items": 17761,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113663,13 +113663,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-0EDH-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-HMCZ-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "bfcb88e81821d9b0d1136a0808647c209d2c54380a0b5b9268c6e1113e7edeb7",
+      "content_hash": "6a7b18dc31237de2d15bd4a0612fa46fd10beced336581da2d86763158fef496",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T19:33:51.177Z"
+      "persisted_at": "2026-11-14T19:47:14.687Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113679,9 +113679,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "f4864d592999b3b22d2575dfeb3838cf096e303506b4a4eb850da0cd16f29254",
+      "content_hash": "0f94f697aeb25639487ec21f4472e360710a099e64abf85fcccadeb5861d710f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T19:33:51.303Z"
+      "persisted_at": "2026-11-14T19:47:14.839Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113691,9 +113691,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "4d2d667a6ec908ac3c79d5a515b8ebfac97dd9e41d2d57bbc4136c90af8e0f1d",
+      "content_hash": "baa08f1a0d5d74cbc7739e56877a126b43f5b087eb5f06241f4fccde5aebf4c8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T19:33:51.408Z"
+      "persisted_at": "2026-11-14T19:47:14.998Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -233404,6 +233404,176 @@
       "content_hash": "6dfd84e9fc510259945c5068ad63e5866a4a4d9120b2ce2de5dbc332acaa2d59",
       "domain_letter": "D",
       "persisted_at": "2026-11-14T19:33:50.749Z"
+    },
+    "learn-github-aws-aws-cdk": {
+      "learning_id": "learn-github-aws-aws-cdk",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "aws/aws-cdk",
+      "repository": "aws/aws-cdk",
+      "slug": "aws-aws-cdk",
+      "platform": "github",
+      "source_url": "https://github.com/aws/aws-cdk",
+      "source_version": "708bee9a",
+      "content_hash": "3640b9590ab2d0ed2aad79dfbb40a5e99e73649898c6ceb59bc99b653fad5be8",
+      "dossier_path": "07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8527,
+          "title": "embed structured design context in synthesized templates (MetadataContext",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T19:41:40.837Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8527": {
+      "learning_id": "rule-8527",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8527,
+      "title": "embed structured design context in synthesized templates (MetadataContext",
+      "source_url": "https://github.com/aws/aws-cdk",
+      "source_version": "708bee9a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T19:41:40.837Z"
+    },
+    "candidate_directive-embed-structured-design-context-in-synthesized-templates-metadatacontext": {
+      "item_id": "candidate_directive-embed-structured-design-context-in-synthesized-templates-metadatacontext",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-AH3Y-embed-structured-design-context-in-synthesized-templates-metadatacontext.md",
+      "title": "embed structured design context in synthesized templates (MetadataContext",
+      "repository": "aws/aws-cdk",
+      "source_version": "708bee9a",
+      "content_hash": "7f143f6f8acc0fc948383003dffba32185ef02e3b77fcc5abf1fa295018ed454",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-14T19:41:41.279Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-aws-aws-cdk-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-aws-aws-cdk-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aws-aws-cdk-technical-construction-intelligence-aws-aws-cdk-core-invariants.md",
+      "title": "Technical Construction Intelligence: aws/aws-cdk Core Invariants",
+      "repository": "aws/aws-cdk",
+      "source_version": "708bee9a",
+      "content_hash": "bb480446e6c20d50434d5db7af7ad6bb83c02122b93ffe225b93a0a0c49df3c8",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T19:41:41.460Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-aws-aws-cdk": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aws-aws-cdk",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/aws-aws-cdk-verification-protocol-empirical-defect-shield-for-aws-aws-cdk.md",
+      "title": "Verification Protocol: Empirical Defect Shield for aws/aws-cdk",
+      "repository": "aws/aws-cdk",
+      "source_version": "708bee9a",
+      "content_hash": "55308e6671bd75a63e8398ff5de9e4eeddaa496f52382fc7c39a29791d1d1af1",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T19:41:41.644Z"
+    },
+    "learn-huggingface-qwen-qwen3-4b": {
+      "learning_id": "learn-huggingface-qwen-qwen3-4b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Qwen/Qwen3-4B",
+      "repository": "Qwen/Qwen3-4B",
+      "slug": "hf-qwen-qwen3-4b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Qwen/Qwen3-4B",
+      "source_version": "hf-qwen-qwen3-4b",
+      "content_hash": "d09138b3e349f5a16b64ee80adffc51880f9ab87a92851c20a3b5028616ae5ba",
+      "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T19:46:33.868Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-4b-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-4b-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-4b-research-knowledge-intelligence-qwen-qwen3-4b-core-invariants.md",
+      "title": "Research & Knowledge Intelligence: Qwen/Qwen3-4B Core Invariants",
+      "repository": "Qwen/Qwen3-4B",
+      "source_version": "hf-qwen-qwen3-4b",
+      "content_hash": "93dbc772bfeb07b54ef3c71de49c445e0891dcec60df35c7894980058d094aaf",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T19:46:34.313Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-4b-learnings-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-4b-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-4b-learnings-research-knowledge-intelligence-hf-qwen-qwen3-4b-lear.md",
+      "title": "Research & Knowledge Intelligence: hf-qwen-qwen3-4b-learnings Core Invariants",
+      "repository": "hf-qwen-qwen3-4b-learnings",
+      "source_version": "HEAD",
+      "content_hash": "47f57f8f761c9c383e6195adc53389792f76fb0699c22aac09189776f8934e61",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T19:47:13.240Z"
+    },
+    "candidate_directive-core-embed-structured-design-context-in-synthesized-templates-metadatacontext": {
+      "item_id": "candidate_directive-core-embed-structured-design-context-in-synthesized-templates-metadatacontext",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-HLP1-core-embed-structured-design-context-in-synthesized-templates-metadatacontext.md",
+      "title": "core): embed structured design context in synthesized templates (MetadataContext",
+      "repository": "aws-aws-cdk-learnings",
+      "source_version": "HEAD",
+      "content_hash": "01dd4fa40c491094180eaedbf14ce72c9ab5a94538a1de0c6a95583ae4b9e014",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-14T19:47:13.824Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-aws-aws-cdk-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-aws-aws-cdk-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aws-aws-cdk-learnings-technical-construction-intelligence-aws-aws-cdk-learnings-.md",
+      "title": "Technical Construction Intelligence: aws-aws-cdk-learnings Core Invariants",
+      "repository": "aws-aws-cdk-learnings",
+      "source_version": "HEAD",
+      "content_hash": "aaa4bd57662e757a17d7785f775e3ed2ae38cdfa58aa5d124cd72a8ce1c2ab9c",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T19:47:13.959Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-aws-aws-cdk-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aws-aws-cdk-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/aws-aws-cdk-learnings-verification-protocol-empirical-defect-shield-for-aws-aws-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for aws-aws-cdk-learnings",
+      "repository": "aws-aws-cdk-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a03ebbb39c46e45f04562484bcd1ee7a0647a2f741c15e23385c0995f67bb479",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T19:47:14.128Z"
     }
   },
   "ai-builder-brain": {
