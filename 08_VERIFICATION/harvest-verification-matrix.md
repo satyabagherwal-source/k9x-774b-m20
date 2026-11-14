@@ -9913,3 +9913,7 @@
 | `CYCLE-20261114-W67A` | `2026-11-14T18:34:34.726Z` | `Cactus-Compute/whistle` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md` | Yes (`964cfe29...`) |
 | `CYCLE-20261114-WD9R` | `2026-11-14T18:34:43.887Z` | `hashicorp/terraform` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8521` | Yes (`b7254f41...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T18:35:10.781Z` | `hf-cactus-compute-whistle` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-666917A5` [Domain D] | Yes (`8a96b5a2...`) |
+| `CYCLE-20261114-WXRT` | `2026-11-14T19:03:10.073Z` | `orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md` | Yes (`97f66e1e...`) |
+| `CYCLE-20261114-WYK4` | `2026-11-14T19:03:11.092Z` | `tw93/Pake` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8522` | Yes (`02cbae7b...`) |
+| `CYCLE-20261114-X4SE` | `2026-11-14T19:03:19.166Z` | `aquasecurity/trivy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8523` | Yes (`b431e785...`) |
+| `CYCLE-20261114-XAN6` | `2026-11-14T19:03:26.754Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8524` | Yes (`76107d48...`) |

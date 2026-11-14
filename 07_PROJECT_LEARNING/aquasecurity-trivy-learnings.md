@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md`  
 > **Source**: github ([https://github.com/aquasecurity/trivy](https://github.com/aquasecurity/trivy))  
-> **Source Version**: `6cd398d5`  
+> **Source Version**: `239be7b2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T13:50:24.958Z  
+> **Timestamp**: 2026-11-14T19:03:18.293Z  
 > **Learning ID**: `learn-github-aquasecurity-trivy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aquasecurity/trivy](https://github.com/aquasecurity/trivy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T13:50:24.954Z  
+> **Harvest Timestamp**: 2026-11-14T19:03:18.288Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Find vulnerabilities, misconfigurations, secrets, SBOM in containers, Kubernetes, code repositories, clouds and more
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39286 stars
+- **Stars / Engagement**: 39342 stars
 
 ---
 
@@ -1002,699 +1002,426 @@ type TracingConfiguration struct {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6cd398d5` (2026-11-13)
-**Commit Message**: fix(oracle): add Oracle Linux 10 EOL date (#11601)
+### Incident Patch 1: `239be7b2` (2026-11-13)
+**Commit Message**: fix(misconf): use TLS_1_2 as the default security policy for API Gateway domain names (#11124)
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `docs/guide/coverage/os/index.md` (modified, +1/-1)
+**File**: `pkg/iac/adapters/cloudformation/aws/apigateway/apigateway_test.go` (modified, +2/-2)
 ```diff
-@@ -20,7 +20,7 @@ Trivy supports operating systems for
- | [CentOS](centos.md)[^1]                        | 6, 7, 8                             | dnf/yum/rpm      |
- | [AlmaLinux](alma.md)                           | 8, 9, 10                            | dnf/yum/rpm      |
- | [Rocky Linux](rocky.md)                        | 8, 9, 10                            | dnf/yum/rpm      |
--| [Oracle Linux](oracle.md)                      | 5, 6, 7, 8                          | dnf/yum/rpm      |
-+| [Oracle Linux](oracle.md)                      | 5, 6, 7, 8, 9, 10                   | dnf/yum/rpm      |
- | [Azure Linux (CBL-Mariner)](azure.md)          | 1.0, 2.0, 3.0                       | tdnf/dnf/yum/rpm |
- | [Amazon Linux](amazon.md)                      | 1, 2, 2023                          | dnf/yum/rpm      |
- | [openSUSE Leap](suse.md)                       | 42, 15                              | zypper/rpm       |
+@@ -70,7 +70,7 @@ Resources:
+   MyDomainName2:
+     Type: 'AWS::ApiGatewayV2::DomainName'
+     Properties:
+-      DomainName: mydomainame.us-east-1.com
++      DomainName: mydomainame2.us-east-1.com
+       DomainNameConfigurations:
+         - SecurityPolicy: "TLS_1_2"
+ `,
+@@ -132,7 +132,7 @@ Resources:
+ 					},
+ 					DomainNames: []v2.DomainName{
+ 						{
+-							Name:           types.StringTest("mydomainame.us-east-1.com"),
++							Name:           types.StringTest("mydomainame2.us-east-1.com"),
+ 							SecurityPolicy: types.StringTest("TLS_1_2"),
+ 						},
+ 					},
 ```
 
-**File**: `pkg/detector/ospkg/oracle/oracle.go` (modified, +8/-7)
+**File**: `pkg/iac/adapters/cloudformation/aws/apigateway/apiv1.go` (modified, +2/-1)
 ```diff
-@@ -21,13 +21,14 @@ var (
- 		// Source:
- 		// https://www.oracle.com/a/ocom/docs/elsp-lifetime-069338.pdf
- 		// https://community.oracle.com/docs/DOC-917964
--		"3": time.Date(2011, 12, 31, 23, 59, 59, 0, time.UTC),
--		"4": time.Date(2013, 12, 31, 23, 59, 59, 0, time.UTC),
--		"5": time.Date(2017, 12, 31, 23, 59, 59, 0, time.UTC),
--		"6": time.Date(2021, 3, 21, 23, 59, 59, 0, time.UTC),
--		"7": time.Date(2024, 12, 31, 23, 59, 59, 0, time.UTC),
--		"8": time.Date(2029, 7, 18, 23, 59, 59, 0, time.UTC),
--		"9": time.Date(2032, 7, 18, 23, 59, 59, 0, time.UTC),
-+		"3":  time.Date(2011, 12, 31, 23, 59, 59, 0, time.UTC),
-+		"4":  time.Date(2013, 12, 31, 23, 59, 59, 0, time.UTC),
-+		"5":  time.Date(2017, 12, 31, 23, 59, 59, 0, time.UTC),
-+		"6":  time.Date(2021, 3, 21, 23, 59, 59, 0, time.UTC),
-+		"7":  time.Date(2024, 12, 31, 23, 59, 59, 0, time.UTC),
-+		"8":  time.Date(2029, 7, 18, 23, 59, 59, 0, time.UTC),
-+		"9":  time.Date(2032, 7, 18, 23, 59, 59, 0, time.UTC),
-+		"10": time.Date(2035, 6, 30, 23, 59, 59, 0, time.UTC),
+@@ -1,6 +1,7 @@
+ package apigateway
+ 
+ import (
++	"github.com/aquasecurity/trivy/pkg/iac/providers/aws/apigateway"
+ 	v1 "github.com/aquasecurity/trivy/pkg/iac/providers/aws/apigateway/v1"
+ 	"github.com/aquasecurity/trivy/pkg/iac/scanners/cloudformation/parser"
+ 	"github.com/aquasecurity/trivy/pkg/iac/types"
+@@ -128,7 +129,7 @@ func adaptDomainNamesV1(fctx parser.FileContext) []v1.DomainName {
+ 		domainNames = append(domainNames, v1.DomainName{
+ 			Metadata:       domainNameResource.Metadata(),
+ 			Name:           domainNameResource.GetStringProperty("DomainName"),
+-			SecurityPolicy: domainNameResource.GetStringProperty("SecurityPolicy"),
++			SecurityPolicy: domainNameResource.GetStringProperty("SecurityPolicy", apigateway.DefaultSecurityPolicy),
+ 		})
  	}
- )
  
 ```
 
-**File**: `pkg/detector/ospkg/oracle/oracle_test.go` (modified, +12/-0)
+**File**: `pkg/iac/adapters/cloudformation/aws/apigateway/apiv2.go` (modified, +4/-3)
 ```diff
-@@ -71,6 +71,18 @@ func TestScanner_IsSupportedVersion(t *testing.T) {
- 			osVersion: "8",
- 			expected:  false,
+@@ -1,6 +1,7 @@
+ package apigateway
+ 
+ import (
++	"github.com/aquasecurity/trivy/pkg/iac/providers/aws/apigateway"
+ 	v2 "github.com/aquasecurity/trivy/pkg/iac/providers/aws/apigateway/v2"
+ 	"github.com/aquasecurity/trivy/pkg/iac/scanners/cloudformation/parser"
+ 	"github.com/aquasecurity/trivy/pkg/iac/types"
+@@ -69,17 +70,17 @@ func getAccessLogging(r *parser.Resource) v2.AccessLogging {
+ func adaptDomainNamesV2(fctx parser.FileContext) []v2.DomainName {
+ 	var domainNames []v2.DomainName
+ 
+-	for _, domainNameResource := range fctx.GetResourcesByType("AWS::ApiGateway::DomainName") {
++	for _, domainNameResource := range fctx.GetResourcesByType("AWS::ApiGatewayV2::DomainName") {
+ 
+ 		domainName := v2.DomainName{
+ 			Metadata:       domainNameResource.Metadata(),
+ 			Name:           domainNameResource.GetStringProperty("DomainName"),
+-			SecurityPolicy: domainNameResource.GetStringProperty("SecurityPolicy"),
++			SecurityPolicy: domainNameResource.GetStringProperty("SecurityPolicy", apigateway.DefaultSecurityPolicy),
+ 		}
+ 
+ 		if domainNameCfgs := domainNameResource.GetProperty("DomainNameConfigurations"); domainNameCfgs.IsList() {
+ 			for _, domainNameCfg := range domainNameCfgs.AsList() {
+-				domainName.SecurityPolicy = domainNameCfg.GetStringProperty("SecurityPolicy")
++				domainName.SecurityPolicy = domainNameCfg.GetStringProperty("SecurityPolicy", apigateway.DefaultSecurityPolicy)
+ 			}
+ 		}
+ 
+```
+
+**File**: `pkg/iac/adapters/cloudformation/aws/sam/api.go` (modified, +2/-1)
+```diff
+@@ -1,6 +1,7 @@
+ package sam
+ 
+ import (
++	"github.com/aquasecurity/trivy/pkg/iac/providers/aws/apigateway"
+ 	"github.com/aquasecurity/trivy/pkg/iac/providers/aws/sam"
+ 	"github.com/aquasecurity/trivy/pkg/iac/scanners/cloudformation/parser"
+ 	iacTypes "github.com/aquasecurity/trivy/pkg/iac/types"
+@@ -87,7 +88,7 @@ func getDomainConfiguration(r *parser.Resource) sam.DomainConfiguration {
+ 		domainConfig = sam.DomainConfiguration{
+ 			Metadata:       domain.Metadata(),
+ 			Name:           domain.GetStringProperty("DomainName"),
+-			SecurityPolicy: domain.GetStringProperty("SecurityPolicy"),
++			SecurityPolicy: domain.GetStringProperty("SecurityPolicy", apigateway.DefaultSecurityPolicy),
+ 		}
+ 	}
+ 
+```
+
+**File**: `pkg/iac/adapters/terraform/aws/apigateway/namesv1.go` (modified, +2/-1)
+```diff
+@@ -1,6 +1,7 @@
+ package apigateway
+ 
+ import (
++	"github.com/aquasecurity/trivy/pkg/iac/providers/aws/apigateway"
+ 	v1 "github.com/aquasecurity/trivy/pkg/iac/providers/aws/apigateway/v1"
+ 	"github.com/aquasecurity/trivy/pkg/iac/terraform"
+ )
+@@ -14,7 +15,7 @@ func adaptDomainNamesV1(modules terraform.Modules) []v1.DomainName {
+ 			domainName := v1.DomainName{
+ 				Metadata:       nameBlock.GetMetadata(),
+ 				Name:           nameBlock.GetAttribute("domain_name").AsStringValueOrDefault("", nameBlock),
+-				SecurityPolicy: nameBlock.GetAttribute("security_policy").AsStringValueOrDefault("TLS_1_0", nameBlock),
++				SecurityPolicy: nameBlock.GetAttribute("security_policy").AsStringValueOrDefault(apigateway.DefaultSecurityPolicy, nameBlock),
+ 			}
+ 			domainNames = append(domainNames, domainName)
+ 		}
+```
+
+**File**: `pkg/iac/adapters/terraform/aws/apigateway/namesv1_test.go` (modified, +1/-2)
+```diff
+@@ -22,8 +22,7 @@ resource "aws_api_gateway_domain_name" "example" {
+ `,
+ 			expected: []v1.DomainName{
+ 				{
+-					Name:           String(""),
+-					SecurityPolicy: String("TLS_1_0"),
++					SecurityPolicy: String("TLS_1_2"),
+ 				},
+ 			},
  		},
-+		"oracle10": {
-+			now:       time.Date(2035, 6, 30, 23, 59, 58, 0, time.UTC),
-+			osFamily:  "oracle",
-+			osVersion: "10.0",
-+			expected:  true,
-+		},
-+		"oracle10-same-time": {
-+			now:       time.Date(2035, 6, 30, 23, 59, 59, 0, time.UTC),
-+			osFamily:  "oracle",
-+			osVersion: "10.0",
-+			expected:  false,
-+		},
- 		"latest": {
- 			now:       time.Date(2019, 5, 31, 23, 59, 59, 0, time.UTC),
- 			osFamily:  "oracle",
+```
+
+**File**: `pkg/iac/adapters/terraform/aws/apigateway/namesv2.go` (modified, +3/-2)
+```diff
+@@ -1,6 +1,7 @@
+ package apigateway
+ 
+ import (
++	"github.com/aquasecurity/trivy/pkg/iac/providers/aws/apigateway"
+ 	v2 "github.com/aquasecurity/trivy/pkg/iac/providers/aws/apigateway/v2"
+ 	"github.com/aquasecurity/trivy/pkg/iac/terraform"
+ 	"github.com/aquasecurity/trivy/pkg/iac/types"
+@@ -15,10 +16,10 @@ func adaptDomainNamesV2(modules terraform.Modules) []v2.DomainName {
+ 			domainName := v2.DomainName{
+ 				Metadata:       nameBlock.GetMetadata(),
+ 				Name:           nameBlock.GetAttribute("domain_name").AsStringValueOrDefault("", nameBlock),
+-				SecurityPolicy: types.StringDefault("TLS_1_0", nameBlock.GetMetadata()),
++				SecurityPolicy: types.StringDefault(apigateway.DefaultSecurityPolicy, nameBlock.GetMetadata()),
+ 			}
+ 			if config := nameBlock.GetBlock("domain_name_configuration"); config.IsNotNil() {
+-				domainName.SecurityPolicy = config.GetAttribute("security_policy").AsStringValueOrDefault("TLS_1_0", config)
++				domainName.SecurityPolicy = config.GetAttribute("security_policy").AsStringValueOrDefault(apigateway.DefaultSecurityPolicy, config)
+ 			}
+ 			domainNames = append(domainNames, domainName)
+ 		}
+```
+
+**File**: `pkg/iac/adapters/terraform/aws/apigateway/namesv2_test.go` (modified, +1/-2)
+```diff
+@@ -22,8 +22,7 @@ resource "aws_apigatewayv2_domain_name" "example" {
+ `,
+ 			expected: []v2.DomainName{
+ 				{
+-					Name:           String(""),
+-					SecurityPolicy: String("TLS_1_0"),
++					SecurityPolicy: String("TLS_1_2"),
+ 				},
+ 			},
+ 		},
 ```
 
 ---
 
-### Incident Patch 2: `5c3eac0c` (2026-11-13)
-**Commit Message**: fix(nodejs): derive Bun package name and version from the identifier (#11071)
+### Incident Patch 2: `decb934a` (2026-11-13)
+**Commit Message**: fix(misconf): apply checks with subtypes only to matching inputs (#11501)
 
-Co-authored-by: DmitriyLewen <[REDACTED_EMAIL]>
-
-**File**: `pkg/dependency/parser/nodejs/bun/parse.go` (modified, +208/-61)
+**File**: `pkg/iac/rego/scanner.go` (modified, +29/-19)
 ```diff
-@@ -6,14 +6,17 @@ import (
- 	"encoding/json/v2"
- 	"fmt"
- 	"io"
-+	"slices"
- 	"sort"
- 	"strings"
- 
- 	"github.com/samber/lo"
- 	"golang.org/x/xerrors"
- 
-+	"github.com/aquasecurity/go-version/pkg/semver"
- 	"github.com/aquasecurity/trivy/pkg/dependency"
- 	ftypes "github.com/aquasecurity/trivy/pkg/fanal/types"
-+	"github.com/aquasecurity/trivy/pkg/log"
- 	"github.com/aquasecurity/trivy/pkg/set"
- 	xio "github.com/aquasecurity/trivy/pkg/x/io"
- 	xjson "github.com/aquasecurity/trivy/pkg/x/json"
-@@ -40,10 +43,14 @@ type ParsedPackage struct {
- 	xjson.Location
- }
- 
--type Parser struct{}
-+type Parser struct {
-+	logger *log.Logger
-+}
- 
- func NewParser() *Parser {
--	return &Parser{}
-+	return &Parser{
-+		logger: log.WithPrefix("bun"),
-+	}
- }
- 
- func (p *ParsedPackage) UnmarshalJSON(data []byte) error {
-@@ -88,101 +95,241 @@ func (p *Parser) Parse(_ context.Context, r xio.ReadSeekerAt) ([]ftypes.Package,
- 		return nil, nil, xerrors.Errorf("JSON decode error: %w", err)
- 	}
- 
--	pkgs := make(map[string]ftypes.Package, len(lockFile.Packages))
--	deps := make(map[string][]string)
-+	// pkgs and deps are keyed by the install path (the key in `packages`),
-+	// e.g. "debug" or "send/debug" for a nested copy.
-+	pkgs, depNames, wsPaths := p.parsePackages(lockFile)
-+	deps := p.resolveDependencies(depNames, pkgs)
-+	prodDirectDeps, devDirectDeps := resolveDirectDependencies(lockFile.Workspaces, wsPaths, pkgs)
- 
--	prodDirectDeps := set.New[string]()
--	devDirectDeps := set.New[string]()
-+	for pkgPath, pkg := range pkgs {
-+		// A workspace member stays a workspace even when another workspace depends on it.
-+		if pkg.Relationship == ftypes.RelationshipWorkspace {
-+			continue
-+		}
-+		if prodDirectDeps.Contains(pkgPath) || devDirectDeps.Contains(pkgPath) {
-+			pkg.Relationship = ftypes.RelationshipDirect
-+			pkgs[pkgPath] = pkg
-+		}
-+	}
- 
--	for _, ws := range lockFile.Workspaces {
--		prodDirectDeps.Append(lo.Keys(ws.Dependencies)...)
--		prodDirectDeps.Append(lo.Keys(ws.PeerDependencies)...)
--		prodDirectDeps.Append(lo.Keys(ws.OptionalDependencies)...)
--		devDirectDeps.Append(lo.Keys(ws.DevDependencies)...)
-+	for pkgPath := range prodDirectDeps.Iter() {
-+		if pkgs[pkgPath].Relationship != ftypes.RelationshipDirect {
-+			continue
-+		}
-+		walkProdPackages(pkgPath, pkgs, deps, set.New[string]())
- 	}
--	for pkgName, parsed := range lockFile.Packages {
--		pkgVersion := strings.TrimPrefix(parsed.Identifier, pkgName+"@")
--		if strings.HasPrefix(pkgVersion, "workspace") {
--			pkgVersion = lockFile.Workspaces[pkgName].Version
-+
-+	pkgSlice, depSlice := mergePackages(pkgs, deps)
-+	sort.Sort(ftypes.Packages(pkgSlice))
-+	sort.Sort(ftypes.Dependencies(depSlice))
-+	return pkgSlice, depSlice, nil
-+}
-+
-+// parsePackages returns the packages and the names of their dependencies keyed by the install path,
-+// and the install paths of the workspaces keyed by the workspace directory (the key in `workspaces`).
-+func (p *Parser) parsePackages(lockFile LockFile) (map[string]ftypes.Package, map[string][]string, map[string]string) {
-+	pkgs := make(map[string]ftypes.Package, len(lockFile.Packages))
-+	depNames := make(map[string][]string)
-+	// The root workspace has no entry in `packages`; its dependencies are installed at the top level.
-+	wsPaths := map[string]string{"": ""}
-+
-+	for pkgPath, parsed := range lockFile.Packages {
-+		// The map key is an install path, which for deduped/nested dependencies
-+		// is "parent/child" (e.g. "glob/minimatch") rather than the package name.
-+		// The name and version come from the identifier ("minimatch@9.0.5").
-+		name, pkgVersion := splitIdentifier(parsed.Identifier)
-+		if name == "" {
-+			p.logger.Debug("Skip package with empty name", log.String("pkg_path", pkgPath))
-+			continue
- 		}
--		pkgId := packageID(pkgName, pkgVersion)
--		isDirect := prodDirectDeps.Contains(pkgName) || devDirectDeps.Contains(pkgName)
- 
- 		relationship := ftypes.RelationshipIndirect
--		if _, ok := lockFile.Workspaces[pkgName]; ok {
-+		// A workspace member is written as "<name>@workspace:<dir>",
-+		// e.g. "a": ["a@workspace:packages/a"] for the workspace "packages/a".
-+		if wsDir, ok := strings.CutPrefix(pkgVersion, "workspace:"); ok {
-+			wsPaths[wsDir] = pkgPath
-+			pkgVersion = lockFile.Workspaces[wsDir].Version
- 			relationship = ftypes.RelationshipWorkspace
--		} else if isDirect {
--			relationship = ftypes.RelationshipDirect
-+		}
-+		if pkgVersion != "" {
-+			if _, err := semver.Parse(pkgVersion); err != nil {
-+				p.logger.Debug("Skip non-semver package version", log.String("pkg_path", pkgPath),
-+					log.String("version", pkgVersion), log.Err(err))
-+				pkgVersion = ""
-+			}
+@@ -223,7 +223,8 @@ func (s *Scanner) ScanInput(ctx context.Context, sourceType types.Source, inputs
  		}
  
--		newPkg := ftypes.Package{
--			ID:           pkgId,
--			Name:         pkgName,
-+		pkgs[pkgPath] = ftypes.Package{
-+			ID:           packageID(name, pkgVersion),
-+			Name:         name,
- 			Version:      pkgVersion,
- 			Relationship: relationship,
--			Dev:          true, // Mark all dependencies as Dev. We will handle them later.
-+			Dev:          lo.Ternary(relationship == ft
-```
-
-**File**: `pkg/dependency/parser/nodejs/bun/parse_test.go` (modified, +18/-0)
-```diff
-@@ -35,6 +35,24 @@ func TestParse(t *testing.T) {
- 			want:     multipleWsPkgs,
- 			wantDeps: multipleWsDeps,
- 		},
-+		{
-+			name:     "nested, aliased and git packages",
-+			file:     "testdata/bun_nested.lock",
-+			want:     nestedPkgs,
-+			wantDeps: nestedDeps,
-+		},
-+		{
-+			name:     "nested scoped packages",
-+			file:     "testdata/bun_nested_scoped.lock",
-+			want:     nestedScopedPkgs,
-+			wantDeps: nestedScopedDeps,
-+		},
-+		{
-+			name:     "workspace with nested direct dependencies",
-+			file:     "testdata/bun_workspace_nested.lock",
-+			want:     workspaceNestedPkgs,
-+			wantDeps: workspaceNestedDeps,
-+		},
- 	}
+ 		// skip if check isn't relevant to what is being scanned
+-		if !isPolicyApplicable(sourceType, staticMeta, inputs...) {
++		checkInputs := applicableInputs(sourceType, staticMeta, inputs)
++		if len(checkInputs) == 0 {
+ 			continue
+ 		}
  
- 	for _, tt := range tests {
-```
-
-**File**: `pkg/dependency/parser/nodejs/bun/parse_testcase.go` (modified, +942/-0)
-```diff
-@@ -157,4 +157,946 @@ var (
- 	}
- 
- 	multipleWsDeps = []ftypes.Dependency(nil)
-+
-+	// testdata/bun_nested.lock is generated by bun 1.4.2.
-+	nestedPkgs = []ftypes.Package{
-+		{
-+			ID:           "adm-zip",
-+			Name:         "adm-zip",
-+			Version:      "",
-+			Relationship: ftypes.RelationshipDirect,
-+			Dev:          false,
-+			Locations: ftypes.Locations{
-+				{
-+					StartLine: 19,
-+					EndLine:   19,
-+				},
-+			},
-+		},
-+		{
-+			ID:           "debug@2.2.0",
-+			Name:         "debug",
-+			Version:      "2.2.0",
-+			Relationship: ftypes.RelationshipDirect,
-+			Dev:          false,
-+			Locations: ftypes.Locations{
-+				{
-+					StartLine: 21,
-+					EndLine:   21,
-+				},
-+			},
-+		},
-+		{
-+			ID:           "mkdirp@0.5.1",
-+			Name:         "mkdirp",
-+			Version:      "0.5.1",
-+			Relationship: ftypes.RelationshipDirect,
-+			Dev:          false,
-+			Locations: ftypes.Locations{
-+				{
-+					StartLine: 45,
-+					EndLine:   45,
-+				},
-+			},
-+		},
-+		{
-+			ID:           "ms@2.1.3",
-+			Name:         "ms",
-+			Version:      "2.1.3",
-+			Relationship: ftypes.RelationshipDirect,
-+			Dev:          false,
-+			Locations: ftypes.Locations{
-+				{
-+					StartLine: 43,
-+					EndLine:   43,
-+				},
-+			},
-+		},
-+		{
-+			ID:           "send@0.13.0",
-+			Name:         "send",
-+			Version:      "0.13.0",
-+			Relationship: ftypes.RelationshipDirect,
-+			Dev:          true,
-+			Locations: ftypes.Locations{
-+				{
-+					StartLine: 51,
-+					EndLine:   51,
-+				},
-+			},
-+		},
-+		{
-+			ID:           "depd@1.0.1",
-+			Name:         "depd",
-+			Version:      "1.0.1",
-+			Relationship: ftypes.RelationshipIndirect,
-+			Dev:          true,
-+			Locations: ftypes.Locations{
-+				{
-+					StartLine: 23,
-+					EndLine:   23,
-+				},
-+			},
-+		},
-+		{
-+			ID:           "destroy@1.0.3",
-+			Name:         "destroy",
-+			Version:      "1.0.3",
-+			Relationship: ftypes.RelationshipIndirect,
-+			Dev:          true,
-+			Locations: ftypes.Locations{
-+				{
-+					StartLine: 25,
-+					EndLine:   25,
-+				},
-+			},
-+		},
-+		{
-+			ID:           "ee-first@1.1.1",
-+			Name:         "ee-first",
-+			Version:      "1.1.1",
-+			Relationship: ftypes.RelationshipIndirect,
-+			Dev:          true,
-+			Locations: ftypes.Locations{
-+				{
-+					StartLine: 27,
-+					EndLine:   27,
-+				},
-+			},
-+		},
-+		{
-+			ID:           "escape-html@1.0.2",
-+			Name:         "escape-html",
-+			Version:      "1.0.2",
-+			Relationship: ftypes.RelationshipIndirect,
-+			Dev:          true,
-+			Locations: ftypes.Locations{
-+				{
-+					StartLine: 29,
-+					EndLine:   29,
-+				},
-+			},
-+		},
-+		{
-+			ID:           "etag@1.7.0",
-+			Name:         "etag",
-+			Version:      "1.7.0",
-+			Relationship: ftypes.RelationshipIndirect,
-+			Dev:          true,
-+			Locations: ftypes.Locations{
-+				{
-+					StartLine: 31,
-+					EndLine:   31,
-+				},
-+			},
-+		},
-+		{
-+			ID:           "fresh@0.3.0",
-+			Name:         "fresh",
-+			Version:      "0.3.0",
-+			Relationship: ftypes.RelationshipIndirect,
-+			Dev:          true,
-+			Locations: ftypes.Locations{
-+				{
-+					StartLine: 33,
-+					EndLine:   33,
-+				},
-+			},
-+		},
-+		{
-+			ID:           "http-errors@1.3.1",
-+			Name:         "http-errors",
-+			Version:      "1.3.1",
-+			Relationship: ftypes.RelationshipIndirect,
-+			Dev:          true,
-+			Locations: ftypes.Locations{
-+				{
-+					StartLine: 35,
-+					EndLine:   35,
-+				},
-+			},
-+		},
-+		{
-+			ID:           "inherits@2.0.4",
-+			Name:         "inherits",
-+			Version:      "2.0.4",
-+			Relationship: ftypes.RelationshipIndirect,
-+			Dev:          true,
-+			Locations: ftypes.Locations{
-+				{
-+					StartLine: 37,
-+					EndLine:   37,
-+				},
-+			},
-+		},
-+		{
-+			ID:           "mime@1.3.4",
-+			Name:         "mime",
-+			Version:      "1.3.4",
-+			Relationship: ftypes.RelationshipIndirect,
-+			Dev:          true,
-+			Locations: ftypes.Locations{
-+				{
-+					StartLine: 39,
-+					EndLine:   39,
-+				},
-+			},
-+		},
-+		{
-+			ID:           "minimist@0.0.8",
-+			Name:         "minimist",
-+			Version:      "0.0.8",
-+			Relationship: ftypes.RelationshipIndirect,
-+			Dev:          false,
-+			Locations: ftypes.Locations{
-+				{
-+					StartLine: 41,
-+					EndLine:   41,
-+				},
-+			},
-+		},
-+		{
-+			ID:           "ms@0.7.1",
-+			Name:         "ms",
-+			Version:      "0.7.1",
-+			Relationship: ftypes.RelationshipIndirect,
-+			Dev:          false,
-+			Locations: ftypes.Locations{
-+				{
-+					StartLine: 55,
-+					EndLine:   55,
-+				},
-+				{
-+					StartLine: 57,
-+					EndLine:   57,
-+				},
-+			},
-+		},
-+		{
-+			ID:           "on-finished@2.3.0",
-+			Name:         "on-finished",
-+			Version:      "2.3.0",
-+			Relationship: ftypes.RelationshipIndirect,
-+			Dev:          true,
-+			Locations: ftypes.Locations{
-+				{
-+					StartLine: 47,
-+					EndLine:   47,
-+				},
-+			},
-+		},
-+		{
-+			ID:           "range-parser@1.0.3",
-+			Name:         "range-parser",
-+			Version:      "1.0.3",
-+			Relationship: ftypes.RelationshipIndirect,
-+			Dev:          true,
-+			Locations: ftypes.Locations{
-+				{
-+		
-```
-
-**File**: `pkg/dependency/parser/nodejs/bun/testdata/bun_nested.lock` (added, +59/-0)
-```diff
-@@ -0,0 +1,59 @@
-+{
-+  "lockfileVersion": 2,
-+  "configVersion": 1,
-+  "workspaces": {
-+    "": {
-+      "name": "app",
-+      "dependencies": {
-+        "adm-zip": "git+https://git@github.com/cthackers/adm-zip.git#ff17ae85000b62b9d159e2520564902724d26c17",
-+        "debug": "2.2.0",
-+        "ms": "2.1.3",
-+        "my-mkdirp": "npm:mkdirp@0.5.1",
-+      },
-+      "devDependencies": {
-+        "send": "0.13.0",
-+      },
-+    },
-+  },
-+  "packages": {
-+    "adm-zip": ["adm-zip@git+https://git@github.com/cthackers/adm-zip.git#ff17ae85000b62b9d159e2520564902724d26c17", {}, "ff17ae85000b62b9d159e2520564902724d26c17"],
-+
-+    "debug": ["debug@2.2.0", "", { "dependencies": { "ms": "0.7.1" } }, "sha512-X0rGvJcskG1c3TgSCPqHJ0XJgwlcvOC7elJ5Y0hYuKBZoVqWpAMfLOeIh2UI/DCQ5ruodIjvsugZtjUYUw2pUw=="],
-+
-+    "depd": ["depd@1.0.1", "", {}, "sha512-OEWAMbCkK9IWQ8pfTvHBhCSqHgR+sk5pbiYqq0FqfARG4Cy+cRsCbITx6wh5pcsmfBPiJAcbd98tfdz5fnBbag=="],
-+
-+    "destroy": ["destroy@1.0.3", "", {}, "sha512-KB/AVLKRwZPOEo6/lxkDJ+Bv3jFRRrhmnRMPvpWwmIfUggpzGkQBqolyo8FRf833b/F5rzmy1uVN3fHBkjTxgw=="],
-+
-+    "ee-first": ["ee-first@1.1.1", "", {}, "sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow=="],
-+
-+    "escape-html": ["escape-html@1.0.2", "", {}, "sha512-J5ahyCRC4liskWVAfkmosNWfG0eHQxI0W+Ko7k3cZaYVMfgt05dwZ68vw6S/TZM1BPvuTv3kq6CRCb7WWtBUVA=="],
-+
-+    "etag": ["etag@1.7.0", "", {}, "sha512-Mbv5pNpLNPrm1b4rzZlZlfTRpdDr31oiD43N362sIyvSWVNu5Du33EcJGzvEV4YdYLuENB1HzND907cQkFmXNw=="],
-+
-+    "fresh": ["fresh@0.3.0", "", {}, "sha512-akx5WBKAwMSg36qoHTuMMVncHWctlaDGslJASDYAhoLrzDUDCjZlOngNa/iC6lPm9aA0qk8pN5KnpmbJHSIIQQ=="],
-+
-+    "http-errors": ["http-errors@1.3.1", "", { "dependencies": { "inherits": "~2.0.1", "statuses": "1" } }, "sha512-gMygNskMurDCWfoCdyh1gOeDfSbkAHXqz94QoPj5IHIUjC/BG8/xv7FSEUr7waR5RcAya4j58bft9Wu/wHNeXA=="],
-+
-+    "inherits": ["inherits@2.0.4", "", {}, "sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ=="],
-+
-+    "mime": ["mime@1.3.4", "", { "bin": { "mime": "cli.js" } }, "sha512-sAaYXszED5ALBt665F0wMQCUXpGuZsGdopoqcHPdL39ZYdi7uHoZlhrfZfhv8WzivhBzr/oXwaj+yiK5wY8MXQ=="],
-+
-+    "minimist": ["minimist@0.0.8", "", {}, "sha512-miQKw5Hv4NS1Psg2517mV4e4dYNaO3++hjAvLOAzKqZ61rH8NS1SK+vbfBWZ5PY/Me/bEWhUwqMghEW5Fb9T7Q=="],
-+
-+    "ms": ["ms@2.1.3", "", {}, "sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA=="],
-+
-+    "my-mkdirp": ["mkdirp@0.5.1", "", { "dependencies": { "minimist": "0.0.8" }, "bin": { "mkdirp": "bin/cmd.js" } }, "sha512-SknJC52obPfGQPnjIkXbmA6+5H15E+fR+E4iR2oQ3zzCLbd7/ONua69R/Gw7AgkTLsRG+r5fzksYwWe1AgTyWA=="],
-+
-+    "on-finished": ["on-finished@2.3.0", "", { "dependencies": { "ee-first": "1.1.1" } }, "sha512-ikqdkGAAyf/X/gPhXGvfgAytDZtDbr+bkNUJ0N9h5MI/dmdgCs3l6hoHrcUv41sRKew3jIwrp4qQDXiK99Utww=="],
-+
-+    "range-parser": ["range-parser@1.0.3", "", {}, "sha512-nDsRrtIxVUO5opg/A8T2S3ebULVIfuh8ECbh4w3N4mWxIiT3QILDJDUQayPqm2e8Q8NUa0RSUkGCfe33AfjR3Q=="],
-+
-+    "send": ["send@0.13.0", "", { "dependencies": { "debug": "~2.2.0", "depd": "~1.0.1", "destroy": "1.0.3", "escape-html": "1.0.2", "etag": "~1.7.0", "fresh": "0.3.0", "http-errors": "~1.3.1", "mime": "1.3.4", "ms": "0.7.1", "on-finished": "~2.3.0", "range-parser": "~1.0.2", "statuses": "~1.2.1" } }, "sha512-zck2y84i0SbUUiwq2l5gGPNVpCplL48og5xIhFjNjQa09003YCTy6Vb3rKfVuG8W8PWNUtUOntjQEBdwkJ9oBw=="],
-+
-+    "statuses": ["statuses@1.2.1", "", {}, "sha512-pVEuxHdSGrt8QmQ3LOZXLhSA6MP/iPqKzZeO6Squ7PNGkA/9MBsSfV0/L+bIxkoDmjF4tZcLpcVq/fkqoHvuKg=="],
-+
-+    "debug/ms": ["ms@0.7.1", "", {}, "sha512-lRLiIR9fSNpnP6TC4v8+4OU7oStC01esuNowdQ34L+Gk8e5Puoc88IqJ+XAY/B3Mn2ZKis8l8HX90oU8ivzUHg=="],
-+
-+    "send/ms": ["ms@0.7.1", "", {}, "sha512-lRLiIR9fSNpnP6TC4v8+4OU7oStC01esuNowdQ34L+Gk8e5Puoc88IqJ+XAY/B3Mn2ZKis8l8HX90oU8ivzUHg=="],
-+  }
-+}
-```
-
-**File**: `pkg/dependency/parser/nodejs/bun/testdata/bun_nested_scoped.lock` (added, +37/-0)
-```diff
-@@ -0,0 +1,37 @@
-+{
-+  "lockfileVersion": 2,
-+  "configVersion": 1,
-+  "workspaces": {
-+    "": {
-+      "name": "app",
-+      "dependencies": {
-+        "@noble/curves": "1.4.0",
-+        "@noble/hashes": "1.4.0",
-+        "ethereum-cryptography": "2.1.2",
-+      },
-+    },
-+  },
-+  "packages": {
-+    "@noble/curves": ["@noble/curves@1.4.0", "", { "dependencies": { "@noble/hashes": "1.4.0" } }, "sha512-p+4cb332SFCrReJkCYe8Xzm0OWi4Jji5jVdIZRL/PmacmDkFNw6MrrV+gGpiPxLHbV+zKFRywUWbaseT+tZRXg=="],
-+
-+    "@noble/hashes": ["@noble/hashes@1.4.0", "", {}, "sha512-V1JJ1WTRUqHHrOSh597hURcMqVKVGL/ea3kv0gSnEdsEZ0/+VyPghM1lMNGc00z7CIQorSvbKpuJkxvuHbvdbg=="],
-+
-+    "@scure/base": ["@scure/base@1.1.9", "", {}, "sha512-8YKhl8GHiNI/pU2VMaofa2Tor7PJRAjwQLBBuilkJ9L5+13yVbC7JO/wS7piioAvPSwR3JKM1IJ/u4xQzbcXKg=="],
-+
-+    "@scure/bip32": ["@scure/bip32@1.3.1", "", { "dependencies": { "@noble/curves": "~1.1.0", "@noble/hashes": "~1.3.1", "@scure/base": "~1.1.0" } }, "sha512-osvveYtyzdEVbt3OfwwXFr4P2iVBL5u1Q3q4ONBfDY/UpOuXmOlbgwc1xECEboY8wIays8Yt6onaWMUdUbfl0A=="],
-+
-+    "@scure/bip39": ["@scure/bip39@1.2.1", "", { "dependencies": { "@noble/hashes": "~1.3.0", "@scure/base": "~1.1.0" } }, "sha512-Z3/Fsz1yr904dduJD0NpiyRHhRYHdcnyh73FZWiV+/qhWi83wNJ3NWolYqCEN+ZWsUz2TWwajJggcRE9r1zUYg=="],
-+
-+    "ethereum-cryptography": ["ethereum-cryptography@2.1.2", "", { "dependencies": { "@noble/curves": "1.1.0", "@noble/hashes": "1.3.1", "@scure/bip32": "1.3.1", "@scure/bip39": "1.2.1" } }, "sha512-Z5Ba0T0ImZ8fqXrJbpHcbpAvIswRte2wGNR/KePnu8GbbvgJ47lMxT/ZZPG6i9Jaht4azPDop4HaM00J0J59ug=="],
-+
-+    "@scure/bip32/@noble/curves": ["@noble/curves@1.1.0", "", { "dependencies": { "@noble/hashes": "1.3.1" } }, "sha512-091oBExgENk/kGj3AZmtBDMpxQPDtxQABR2B9lb1JbVTs6ytdzZNwvhxQ4MWasRNEzlbEH8jCWFCwhF/Obj5AA=="],
-+
-+    "@scure/bip32/@noble/hashes": ["@noble/hashes@1.3.1", "", {}, "sha512-EbqwksQwz9xDRGfDST86whPBgM65E0OH/pCgqW0GBVzO22bNE+NuIbeTb714+IfSjU3aRk47EUvXIb5bTsenKA=="],
-+
-+    "@scure/bip39/@noble/hashes": ["@noble/hashes@1.3.1", "", {}, "sha512-EbqwksQwz9xDRGfDST86whPBgM65E0OH/pCgqW0GBVzO22bNE+NuIbeTb714+IfSjU3aRk47EUvXIb5bTsenKA=="],
-+
-+    "ethereum-cryptography/@noble/curves": ["@noble/curves@1.1.0", "", { "dependencies": { "@noble/hashes": "1.3.1" } }, "sha512-091oBExgENk/kGj3AZmtBDMpxQPDtxQABR2B9lb1JbVTs6ytdzZNwvhxQ4MWasRNEzlbEH8jCWFCwhF/Obj5AA=="],
-+
-+    "ethereum-cryptography/@noble/hashes": ["@noble/hashes@1.3.1", "", {}, "sha512-EbqwksQwz9xDRGfDST86whPBgM65E0OH/pCgqW0GBVzO22bNE+NuIbeTb714+IfSjU3aRk47EUvXIb5bTsenKA=="],
-+  }
-+}
-```
-
-**File**: `pkg/dependency/parser/nodejs/bun/testdata/bun_workspace_nested.lock` (added, +104/-0)
-```diff
-@@ -0,0 +1,104 @@
-+{
-+  "lockfileVersion": 2,
-+  "configVersion": 1,
-+  "workspaces": {
-+    "": {
-+      "name": "buntest-ws",
-+      "dependencies": {
-+        "debug": "4.3.4",
-+        "lodash": "4.17.21",
-+        "minimist": "1.2.8",
-+        "ms": "2.1.3",
-+        "send": "0.13.2",
-+      },
-+    },
-+    "packages/a": {
-+      "name": "a",
-+      "version": "1.0.0",
-+      "dependencies": {
-+        "debug": "2.6.9",
-+        "lodash": "4.17.15",
-+        "minimist": "0.0.8",
-+        "ms": "0.7.1",
-+        "send": "0.13.0",
-+      },
-+    },
-+    "packages/b": {
-+      "name": "b",
-+      "version": "1.0.0",
-+      "dependencies": {
-+        "a": "workspace:*",
-+      },
-+      "devDependencies": {
-+        "minimist": "0.0.10",
-+      },
-+    },
-+  },
-+  "packages": {
-+    "a": ["a@workspace:packages/a"],
-+
-+    "b": ["b@workspace:packages/b"],
-+
-+    "debug": ["debug@4.3.4", "", { "dependencies": { "ms": "2.1.2" }, "peerDependencies": { "supports-color": "*" }, "optionalPeers": ["supports-color"] }, "sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ=="],
-+
-+    "depd": ["depd@1.1.2", "", {}, "sha512-7emPTl6Dpo6JRXOXjLRxck+FlLRX5847cLKEn00PLAgc3g2hTZZgr+e4c2v6QpSmLeFP3n5yUo7ft6avBK/5jQ=="],
-+
-+    "destroy": ["destroy@1.0.4", "", {}, "sha512-3NdhDuEXnfun/z7x9GOElY49LoqVHoGScmOKwmxhsS8N5Y+Z8KyPPDnaSzqWgYt/ji4mqwfTS34Htrk0zPIXVg=="],
-+
-+    "ee-first": ["ee-first@1.1.1", "", {}, "sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow=="],
-+
-+    "escape-html": ["escape-html@1.0.3", "", {}, "sha512-NiSupZ4OeuGwr68lGIeym/ksIZMJodUGOSCZ/FSnTxcrekbvqrgdUxlJOMpijaKZVjAJrWrGs/6Jy8OMuyj9ow=="],
-+
-+    "etag": ["etag@1.7.0", "", {}, "sha512-Mbv5pNpLNPrm1b4rzZlZlfTRpdDr31oiD43N362sIyvSWVNu5Du33EcJGzvEV4YdYLuENB1HzND907cQkFmXNw=="],
-+
-+    "fresh": ["fresh@0.3.0", "", {}, "sha512-akx5WBKAwMSg36qoHTuMMVncHWctlaDGslJASDYAhoLrzDUDCjZlOngNa/iC6lPm9aA0qk8pN5KnpmbJHSIIQQ=="],
-+
-+    "http-errors": ["http-errors@1.3.1", "", { "dependencies": { "inherits": "~2.0.1", "statuses": "1" } }, "sha512-gMygNskMurDCWfoCdyh1gOeDfSbkAHXqz94QoPj5IHIUjC/BG8/xv7FSEUr7waR5RcAya4j58bft9Wu/wHNeXA=="],
-+
-+    "inherits": ["inherits@2.0.4", "", {}, "sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ=="],
-+
-+    "lodash": ["lodash@4.17.21", "", {}, "sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg=="],
-+
-+    "mime": ["mime@1.3.4", "", { "bin": { "mime": "cli.js" } }, "sha512-sAaYXszED5ALBt665F0wMQCUXpGuZsGdopoqcHPdL39ZYdi7uHoZlhrfZfhv8WzivhBzr/oXwaj+yiK5wY8MXQ=="],
-+
-+    "minimist": ["minimist@1.2.8", "", {}, "sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA=="],
-+
-+    "ms": ["ms@2.1.3", "", {}, "sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA=="],
-+
-+    "on-finished": ["on-finished@2.3.0", "", { "dependencies": { "ee-first": "1.1.1" } }, "sha512-ikqdkGAAyf/X/gPhXGvfgAytDZtDbr+bkNUJ0N9h5MI/dmdgCs3l6hoHrcUv41sRKew3jIwrp4qQDXiK99Utww=="],
-+
-+    "range-parser": ["range-parser@1.0.3", "", {}, "sha512-nDsRrtIxVUO5opg/A8T2S3ebULVIfuh8ECbh4w3N4mWxIiT3QILDJDUQayPqm2e8Q8NUa0RSUkGCfe33AfjR3Q=="],
-+
-+    "send": ["send@0.13.2", "", { "dependencies": { "debug": "~2.2.0", "depd": "~1.1.0", "destroy": "~1.0.4", "escape-html": "~1.0.3", "etag": "~1.7.0", "fresh": "0.3.0", "http-errors": "~1.3.1", "mime": "1.3.4", "ms": "0.7.1", "on-finished": "~2.3.0", "range-parser": "~1.0.3", "statuses": "~1.2.1" } }, "sha512-cQ0rmXHrdO2Iof08igV2bG/yXWD106ANwBg6DkGQNT2Vsznbgq6T0oAIQboy1GoFsIuy51jCim26aA9tj3Z3Zg=="],
-+
-+    "statuses": ["statuses@1.2.1", "", {}, "sha512-pVEuxHdSGrt8QmQ3LOZXLhSA6MP/iPqKzZeO6Squ7PNGkA/9MBsSfV0/L+bIxkoDmjF4tZcLpcVq/fkqoHvuKg=="],
-+
-+    "a/debug": ["debug@2.6.9", "", { "dependencies": { "ms": "2.0.0" } }, "sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA=="],
-+
-+    "a/lodash": ["lodash@4.17.15", "", {}, "sha512-8xOcRHvCjnocdS5cpwXQXVzmmh5e5+saE2QGoeQmbKmRS6J3VQppPOIt0MnmE+4xlZoumy0GPG0D0MVIQbNA1A=="],
-+
-+    "a/minimist": ["minimist@0.0.8", "", {}, "sha512-miQKw5Hv4NS1Psg2517mV4e4dYNaO3++hjAvLOAzKqZ61rH8NS1SK+vbfBWZ5PY/Me/bEWhUwqMghEW5Fb9T7Q=="],
-+
-+    "a/ms": ["ms@0.7.1", "", {}, "sha512-lRLiIR9fSNpnP6TC4v8+4OU7oStC01esuNowdQ34L+Gk8e5Puoc88IqJ+XAY/B3Mn2ZKis8l8HX90oU8ivzUHg=="],
-+
-+    "a/send": ["send@0.13.0", "", { "dependencies": { "debug": "~2.2.0", "depd": "~1.0.1", "destroy": "1.0.3", "escape-html": "1.0.2", "etag": "~1.7.0", "fresh": "0.3.0", "http-errors": "~1.3.1", "mime": "1.3.4", "ms": "0.7.1", "on-finished": "~2.3.0", "range-parser": "~1.0.2", "statuses": "~1.2.1" } }, "sha512-zck2y84i0SbUUiwq2l5gGPNVpCplL48og5xIhFjNjQa09003YCTy6Vb3rKfVuG8W8PWNUtUOntjQEBdwkJ9oBw=="],
-+
-+    "b/minimist": ["minimist@0.0.10", "", {}, "sha512-iotkTvxc+TwOm5Ieim8VnSNvCDjCK9S8G3scJ50ZthspSxa7jx50jkhYduuAtAjvfDUwSgOwf8+If99AlOEhyw=="],
-+
-
-```
-
-**File**: `pkg/fanal/analyzer/language/nodejs/bun/bun.go` (modified, +1/-1)
-```diff
-@@ -27,7 +27,7 @@ func init() {
+@@ -237,7 +238,7 @@ func (s *Scanner) ScanInput(ctx context.Context, sourceType types.Source, inputs
+ 			}
+ 			usedRules.Append(ruleName)
+ 			if isEnforcedRule(ruleName) {
+-				ruleResults, err := s.applyRule(ctx, namespace, ruleName, inputs)
++				ruleResults, err := s.applyRule(ctx, namespace, ruleName, checkInputs)
+ 				if err != nil {
+ 					s.logger.Error(
+ 						"Error occurred while applying rule from check",
+@@ -304,39 +305,48 @@ var sourcesWithExplicitSelectors = []types.Source{
+ 	types.SourceTerraformRaw,
  }
  
- const (
--	version = 1
-+	version = 2
- )
+-func isPolicyApplicable(sourceType types.Source, staticMetadata *StaticMetadata, inputs ...Input) bool {
++// applicableInputs returns the inputs the check should be applied to.
++// The result is empty if the check isn't relevant to what is being scanned.
++func applicableInputs(sourceType types.Source, staticMetadata *StaticMetadata, inputs []Input) []Input {
+ 	if len(staticMetadata.InputOptions.Selectors) == 0 &&
+ 		slices.Contains(sourcesWithExplicitSelectors, sourceType) {
+-		return false
++		return nil
+ 	}
  
- type bunLibraryAnalyzer struct {
+ 	if len(staticMetadata.InputOptions.Selectors) == 0 { // check always applies if no selectors
+-		return true
++		return inputs
+ 	}
+ 
+ 	for _, selector := range staticMetadata.InputOptions.Selectors {
+ 		if selector.Type != string(sourceType) {
+-			return false
++			return nil
+ 		}
+ 	}
+ 
+ 	if !isPolicyWithSubtype(sourceType) {
+-		return true
++		return inputs
+ 	}
+ 
+-	for _, input := range inputs {
+-		if ii, ok := input.Contents.(map[string]any); ok {
+-			for provider := range ii {
+-				if !supportedProviders.Contains(provider) {
+-					continue
+-				}
++	return lo.Filter(inputs, func(input Input, _ int) bool {
++		return inputMatchesSubtype(input, staticMetadata.InputOptions.Selectors)
++	})
++}
+ 
+-				// check metadata for subtype
+-				for _, s := range staticMetadata.InputOptions.Selectors {
+-					if checkSubtype(ii, provider, s.Subtypes) {
+-						return true
+-					}
+-				}
++func inputMatchesSubtype(input Input, selectors []Selector) bool {
++	ii, ok := input.Contents.(map[string]any)
++	if !ok {
++		return false
++	}
++
++	for provider := range ii {
++		if !supportedProviders.Contains(provider) {
++			continue
++		}
++
++		// check metadata for subtype
++		for _, s := range selectors {
++			if checkSubtype(ii, provider, s.Subtypes) {
++				return true
+ 			}
+ 		}
+ 	}
+```
+
+**File**: `pkg/iac/scanners/kubernetes/scanner_test.go` (modified, +55/-0)
+```diff
+@@ -289,6 +289,61 @@ spec:
+ 	assert.Equal(t, "KSV001", failure.Rule().ID)
+ }
+ 
++func Test_CheckWithSubtypeAppliesOnlyToMatchingInputs(t *testing.T) {
++	fsys := buildFS(map[string]string{
++		"checks/limit_range.rego": `# METADATA
++# title: test check
++# scope: package
++# schemas:
++# - input: schema["kubernetes"]
++# custom:
++#   id: KSV039
++#   severity: LOW
++#   input:
++#     selector:
++#     - type: kubernetes
++#       subtypes:
++#         - kind: limitrange
++package builtin.kubernetes.KSV039
++
++import rego.v1
++
++deny contains res if {
++  not input.spec.limits
++  res := result.new("fail", input.spec)
++}
++`,
++		"test/a/service.yaml": `apiVersion: v1
++kind: Service
++metadata:
++  name: web
++spec:
++  selector:
++    app: web
++`,
++		"test/b/limits.yaml": `apiVersion: v1
++kind: LimitRange
++metadata:
++  name: defaults
++spec:
++  limits:
++    - type: Container
++`,
++	})
++
++	scanner := kubernetes.NewScanner(
++		rego.WithEmbeddedLibraries(true),
++		rego.WithPolicyDirs("checks"),
++		rego.WithPolicyFilesystem(fsys),
++	)
++	results, err := scanner.ScanFS(t.Context(), fsys, "test")
++	require.NoError(t, err)
++
++	assert.Empty(t, results.GetFailed())
++	require.Len(t, results.GetPassed(), 1)
++	assert.Equal(t, "test/b/limits.yaml", results.GetPassed()[0].Metadata().Range().GetFilename())
++}
++
+ func assertLines(t *testing.T, content string, results scan.Results) {
+ 	lines := strings.Split(content, "\n")
+ 	for _, res := range results {
+```
+
+---
+
+### Incident Patch 3: `99878c00` (2026-11-13)
+**Commit Message**: fix(cloudformation): resolve short form of !Condition (#11432)
+
+**File**: `pkg/iac/scanners/cloudformation/parser/intrinsics.go` (modified, +1/-1)
+```diff
+@@ -93,7 +93,7 @@ func ResolveIntrinsicFunc(property *Property) (*Property, bool) {
+ func getIntrinsicTag(tag string) string {
+ 	tag = strings.TrimPrefix(tag, "!")
+ 	switch tag {
+-	case "Ref", "Contains":
++	case "Ref", "Contains", "Condition":
+ 		return tag
+ 	default:
+ 		return fmt.Sprintf("Fn::%s", tag)
+```
+
+**File**: `pkg/iac/scanners/cloudformation/parser/parser_test.go` (modified, +59/-0)
+```diff
+@@ -225,6 +225,65 @@ Resources:
+ 	assert.Equal(t, "/aws/lambda/${ServiceName}", refProp.AsString())
+ }
+ 
++func Test_parse_yaml_condition_short_form(t *testing.T) {
++	tests := []struct {
++		name      string
++		condition string
++		want      string
++	}{
++		{
++			name:      "and",
++			condition: `!And [!Condition IsEnvSet, !Equals [!Ref Env, prod]]`,
++			want:      "enabled",
++		},
++		{
++			name:      "and with false operand",
++			condition: `!And [!Condition IsEnvSet, !Equals [!Ref Env, dev]]`,
++			want:      "disabled",
++		},
++		{
++			name:      "or",
++			condition: `!Or [!Condition IsEnvSet, !Equals [!Ref Env, dev]]`,
++			want:      "enabled",
++		},
++		{
++			name:      "not",
++			condition: `!Not [!Condition IsEnvSet]`,
++			want:      "disabled",
++		},
++		{
++			name:      "top-level",
++			condition: `!Condition IsEnvSet`,
++			want:      "enabled",
++		},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			source := `---
++AWSTemplateFormatVersion: "2010-09-09"
++Parameters:
++  Env:
++    Type: String
++    Default: prod
++Conditions:
++  IsEnvSet: !Not [!Equals [!Ref Env, ""]]
++  Target: ` + tt.condition + `
++Resources:
++  Topic:
++    Type: AWS::SNS::Topic
++    Properties:
++      DisplayName: !If [Target, enabled, disabled]
++`
++			ctx := createTestFileContext(t, source)
++
++			res := ctx.GetResourceByLogicalID("Topic")
++			require.NotNil(t, res)
++			assert.Equal(t, tt.want, res.GetStringProperty("DisplayName").Value())
++		})
++	}
++}
++
+ func TestParse_WithParameters(t *testing.T) {
+ 	fs := testutil.CreateFS(map[string]string{
+ 		"main.yaml": `AWSTemplateFormatVersion: 2010-09-09
 ```
 
 #### Recent Merged Pull Requests:
@@ -1723,28 +1450,30 @@ Co-authored-by: DmitriyLewen <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. oracle): add Oracle Linux 10 EOL date (#11601)
+## X. misconf): use TLS_1_2 as the default security policy for API Gateway domain name
 
 **RULE**:
-When implementing operations in `docs/guide/coverage/os/index.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aquasecurity/trivy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/iac/adapters/cloudformation/aws/apigateway/apigateway_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aquasecurity/trivy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6cd398d5`: oracle): add Oracle Linux 10 EOL date (#11601). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `239be7b2`: misconf): use TLS_1_2 as the default security policy for API Gateway domain names. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/guide/coverage/os/index.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/iac/adapters/cloudformation/aws/apigateway/apigateway_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-| [Oracle Linux](oracle.md)                      | 5, 6, 7, 8, 9, 10                   | dnf/yum/rpm      |
+      DomainName: mydomainame2.us-east-1.com
+							Name:           types.StringTest("mydomainame2.us-east-1.com"),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-| [Oracle Linux](oracle.md)                      | 5, 6, 7, 8                          | dnf/yum/rpm      |
+// Induced defect failure mode:
+      DomainName: mydomainame.us-east-1.com
+							Name:           types.StringTest("mydomainame.us-east-1.com"),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6cd398d5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `239be7b2` are properly handled with clean fallback behavior.

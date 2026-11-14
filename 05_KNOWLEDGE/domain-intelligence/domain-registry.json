@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T18:35:11.823Z",
-  "total_records": 795,
+  "last_updated": "2026-11-14T19:03:31.280Z",
+  "total_records": 801,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 389,
+      "total": 391,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -426,7 +426,9 @@
         "domain_intelligence-research-knowledge-intelligence-hf-liquidai-d1-3b-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-cactus-compute-whistle-core-invariants",
         "DOM-D-666917A5",
-        "domain_intelligence-research-knowledge-intelligence-hf-cactus-compute-whistle-learnings-core-invaria"
+        "domain_intelligence-research-knowledge-intelligence-hf-cactus-compute-whistle-learnings-core-invaria",
+        "domain_intelligence-research-knowledge-intelligence-orcarouter-qwen3-8-flash-next-uncensored-gguf-co",
+        "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf"
       ]
     },
     "E": {
@@ -590,7 +592,7 @@
       ]
     },
     "H": {
-      "total": 167,
+      "total": 171,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -758,7 +760,11 @@
         "domain_intelligence-technical-construction-intelligence-google-tcmalloc-core-invariants",
         "domain_intelligence-technical-construction-intelligence-open-ani-animeko-core-invariants",
         "domain_intelligence-technical-construction-intelligence-google-tcmalloc-learnings-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-open-ani-animeko-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-open-ani-animeko-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-tw93-pake-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-aquasecurity-trivy-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-tw93-pake-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-aquasecurity-trivy-learnings-core-invariants"
       ]
     },
     "I": {
@@ -14558,8 +14564,8 @@
       "title": "Technical Construction Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nucleoidai-nucleoid-technical-construction-intelligence-nucleoidai-nucleoid-core.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "3cdf13337e0af0ed79a2c4c66696dc771118797ecdc220d76f59ea9a47c8ea45",
-      "created_at": "2026-11-14T14:27:58.305Z"
+      "content_hash": "0deb643867e8ab276d7992e267958e329bd9be1df4bd83844d66f41892e1cb20",
+      "created_at": "2026-11-14T19:03:27.186Z"
     },
     "DOM-D-C603EFBB": {
       "record_id": "DOM-D-C603EFBB",
@@ -16132,6 +16138,60 @@
       "repository": "hashicorp-terraform-learnings",
       "content_hash": "f394f710dd938c132602f6a24fe272d8633ec40479ce91223a62946ce60374c5",
       "created_at": "2026-11-14T18:35:11.353Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-orcarouter-qwen3-8-flash-next-uncensored-gguf-co": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-qwen3-8-flash-next-uncensored-gguf-co",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-research-knowledge-intelligence.md",
+      "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+      "content_hash": "d259cb8b84bfd05c98c6bff803b08d2b3e4b2d9513c59b677e83b918a1a0f3c7",
+      "created_at": "2026-11-14T19:03:10.255Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-tw93-pake-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-tw93-pake-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: tw93/Pake Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tw93-pake-technical-construction-intelligence-tw93-pake-core-invariants.md",
+      "repository": "tw93/Pake",
+      "content_hash": "8012f8f870342ee1636df9384b4b0bdf9ac91fd58b665cdfefd02715e95faa9e",
+      "created_at": "2026-11-14T19:03:11.371Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-aquasecurity-trivy-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-aquasecurity-trivy-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: aquasecurity/trivy Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aquasecurity-trivy-technical-construction-intelligence-aquasecurity-trivy-core-i.md",
+      "repository": "aquasecurity/trivy",
+      "content_hash": "2896b412a5920f8e54e67cb5c867da411ce0738a79f35b64d6a47c86a3992b41",
+      "created_at": "2026-11-14T19:03:19.463Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-tw93-pake-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-tw93-pake-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: tw93-pake-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tw93-pake-learnings-technical-construction-intelligence-tw93-pake-learnings-core.md",
+      "repository": "tw93-pake-learnings",
+      "content_hash": "1804c10c77714d4a1fe6c00d960cefa8a9daee4b17560a9f0f03ed5acf225497",
+      "created_at": "2026-11-14T19:03:30.418Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-learnings-research-knowledge-in.md",
+      "repository": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings",
+      "content_hash": "7074f431a46dc00c1bf36c2f127141c646636855a2dbac77a387637e39cf9a43",
+      "created_at": "2026-11-14T19:03:30.833Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-aquasecurity-trivy-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-aquasecurity-trivy-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: aquasecurity-trivy-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aquasecurity-trivy-learnings-technical-construction-intelligence-aquasecurity-tr.md",
+      "repository": "aquasecurity-trivy-learnings",
+      "content_hash": "58443eae94500649d2dac8644ca4a5c15bc783fb43ecc211f796e1ea44726b1d",
+      "created_at": "2026-11-14T19:03:31.280Z"
     }
   }
 }

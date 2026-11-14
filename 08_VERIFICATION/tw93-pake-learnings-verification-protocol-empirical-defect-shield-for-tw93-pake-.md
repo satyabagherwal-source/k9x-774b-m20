@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:46:03.506Z",
+  "timestamp": "2026-11-14T19:03:30.194Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-tw93-pake-learnings",
+  "learning_id": "LEARN-EVO-tw93-pake-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [tw93-pake-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:46:03.506Z`  
-> **Learning ID**: `LEARN-REEXTRACT-tw93-pake-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-14T19:03:30.194Z`  
+> **Learning ID**: `LEARN-EVO-tw93-pake-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tw93-pake-learnings.md`  
 > **Source**: github ([https://github.com/tw93/Pake](https://github.com/tw93/Pake))  
-> **Source Version**: `763ed8b0`  
+> **Source Version**: `6498b4d7`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T10:43:10.678Z  
+> **Timestamp**: 2026-11-14T19:03:10.230Z  
 > **Learning ID**: `learn-github-tw93-pake`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tw93-pake-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tw93/Pake](https://github.com/tw93/Pake))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T10:43:10.463Z  
+> **Harvest Timestamp**: 2026-11-14T19:03:10.222Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Turn any website into a lightweight desktop app with one command, on macOS, Windows and Linux.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 63205 stars
+- **Stars / Engagement**: 63595 stars
 
 ---
 
@@ -942,11 +942,11 @@ export function getDefaultLinuxTargets(): string {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1431** (2026-11-14): **[Bug] Power Apps Launch not working**
+  *Symptoms*: ### Search before asking  - [x] I searched in the [issues](https://github.com/tw93/Pake/issues?q=) and found nothing similar.   ### Pake version  Windows x64, Version 1.5.0  ### Rust version  ---  ### Package Manager  other  ### System version  Windows 11  ### Node.js version  --  ### Build Command  Version 1.5.0  ### Minimal reproduce step  Install an App with Site Powerapps. In the Powerapps make a button with Launch(). Click button in Power Apps, the link is opend. Click the button in Pake, nothing happens  ### What did you expect to see?  The link from Launch() should open in the browser  ### What did you see instead?  nothing happend  ### Anything else?  _No response_  ### Are you willing to submit a PR?  - [ ] I'm willing to submit a PR!
+
 - **Issue #1427** (2026-11-01): **[Bug] Web Midi issue on MacOS Arm and Intel**
   *Symptoms*: ### Search before asking  - [x] I searched in the [issues](https://github.com/tw93/Pake/issues?q=) and found nothing similar.   ### Pake version  I am encountering an issue with midi on MacOS Arm and Intel, the application is built (dmg) from local file, but the application doesn´t see midi devices and incoming midi messages. Not sure if it is an issue with Tauri Web Midi. When the application is built via npm build and runs on local server everything works normally on Macs, when using pake generated dmgs screens are ok, all the features are available except midi ports. On Windows 10 and 11 everything works fine with pake executables, midi devices listed and incoming midi messages functional. Any recommandations or hints how to fix that? Thank you.  ### Rust version  Rust 1.99.1, Pake 3.17.8, npm 11.19.1 on Mac   ### Package Manager  npm  ### System version  Sequoia 15.7 M1 Pro  ### Node.js version  v24.22.0  ### Build Command  sudo pake /Users/admin/Desktop/midee-master/dist/index.html -- name "MidoApp" -- use-local-file  ### Minimal reproduce step  midi icon in upper right corner of the apllication is greyed out.  ### What did you expect to see?  active connection of midi device and active playing like on Windows versions, those work with no issues.  ### What did you see instead?  midi icon in upper right corner of the apllication is greyed out.  ### Anything else?  Suspecting some issues with Web Midi in Tauri or Rust packages on MacOS.   ### Are you willing to submit a PR
-
-- **Issue #1424** (2026-10-28): **[Bug] Upgraded to 3.17.7 build and issues span out**
-  *Symptoms*: ### Search before asking  - [x] I searched in the [issues](https://github.com/tw93/Pake/issues?q=) and found nothing similar.   ### Pake version  Got this that comes with errors:  C:\Users\DELL\AppData\Local\pnpm\global\v11\2d30-18e2955c60370328-0\node_modules\.pnpm\pake-cli@3.17.7\node_modules\pake-cli\src-tauri\target\x86_64-pc-windows-msvc\release\bundle\msi\Pake_1.0.0_x64_en-US.msi (3.39 MiB)  It seems to have built something that I can't find using Explorer. May be should downgrade to 3.16.x that was working fine till now, or remove and make a new fresh install.  Would be great to have the pnpm, npm or some command to proceed eventually. Thanks  ### Rust version  rustc 1.99.1 (58cf8f9c3 2026-10-13)  ### Package Manager  npm  ### System version  12.1.0  ### Node.js version  v24.22.1  ### Build Command  pake https://docs.deno.com/runtime/ --name Docdeno  ### Minimal reproduce step  pake https://docs.deno.com/runtime/ --name Docdeno   ### What did you expect to see?  the msi path so I could run it  ### What did you see instead?  C:\Users\DELL\AppData\Local\pnpm\global\v11\2d30-18e2955c60370328-0\node_modules\.pnpm\pake-cli@3.17.7\node_modules\pake-cli\src-tauri\target\x86_64-pc-windows-msvc\release\bundle\msi\Pake_1.0.0_x64_en-US.msi (3.39 MiB)  ### Anything else?  no  ### Are you willing to submit a PR?  - [ ] I'm willing to submit a PR!
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -963,1159 +963,585 @@ export function getDefaultLinuxTargets(): string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `404369a5` (2026-11-10)
-**Commit Message**: feat(linux): ask before a page uses the camera or microphone, and recover from a failed load
+### Incident Patch 1: `ec5af5c3` (2026-11-14)
+**Commit Message**: fix(icon): ship the .icns when Assets.car cannot be compiled
 
-WebKitGTK refuses getUserMedia unless the embedder answers its
-permission-request signal, and neither wry 0.54 nor Pake did, so a call
-or voice page never got a device on Linux. Linux has no system prompt
-for this as macOS and WebView2 do, so Pake asks once per site and run
-("meet.google.com wants to use your camera and microphone", Don't Allow /
-Allow), in English or Chinese by the system language. enumerateDevices
-labels follow what the site was already allowed.
+Tauri runs actool itself for a .icon in bundle.icon and fails the whole
+build when actool errors, so handing it the .icon after our own compile
+failed turned a missing Liquid Glass icon into a failed build. Now only a
+precompiled Assets.car goes into bundle.icon, with the .icns; otherwise
+the .icns alone. The pkill ibtoold retry is gone: it ended a process that
+belongs to the user's Xcode, and the compile passed on its first try on
+Xcode 27.2. bundle.resources keeps only the .icns, as the plain .icns path
+does, instead of storing the 1 MB Assets.car a second time.
 
-A load that fails now shows a small page with the site and Try Again
-instead of the engine's bare message, and a web process that exits is
-reloaded; a cancelled load, a download taking over and a policy refusal
-are left alone. On Windows a renderer crash reloads the page; WebView2
-already has its own error page. macOS is not covered: Tauri 2.10 exposes
-neither hook for WKWebView.
+Verified on macOS 27.2 with Xcode 27.2: pake.icon built an app whose
+Assets.car holds the light, dark and tinted appearances with
+CFBundleIconName = Icon and one Assets.car; a broken .icon built an app
+with the .icns only. npx vitest run (815), format:check and cli:build pass;
+the new resources test fails on the old merge.ts.
 
-gtk 0.18 becomes a direct Linux dependency at the version wry and tao
-already lock.
-
-Verified on the Debian 12 devbox (WebKitGTK 2.50): clippy -D warnings and
-cargo test --lib with and without runtime-template, a deb and rpm build,
-and the built app un
-
-**File**: `src-tauri/Cargo.lock` (modified, +1/-0)
+**File**: `bin/helpers/icon-composer.ts` (modified, +7/-16)
 ```diff
-@@ -2589,6 +2589,7 @@ version = "3.18.0"
- dependencies = [
-  "block2",
-  "dispatch",
-+ "gtk",
-  "objc2",
-  "objc2-app-kit",
-  "objc2-foundation",
-```
-
-**File**: `src-tauri/Cargo.toml` (modified, +3/-0)
-```diff
-@@ -57,6 +57,9 @@ objc2-web-kit = { version = "0.3", default-features = false, features = [
- # Version and features must match what wry resolves, or PlatformWebview::inner
- # hands back a WebView from a different crate instance.
- webkit2gtk = { version = "=2.0.2", features = ["v2_40"] }
-+# The camera and microphone question (media_permission.rs). The version wry and
-+# tao already lock, so its Window is the one WebView::toplevel hands back.
-+gtk = "0.18"
- # Reads the freedesktop color-scheme from the settings portal. Same version
- # and features that tauri-plugin-opener and single-instance already lock.
- zbus = "5.14"
-```
-
-**File**: `src-tauri/src/app/media_permission.rs` (added, +175/-0)
-```diff
-@@ -0,0 +1,175 @@
-+//! Camera and microphone for pages on Linux.
-+//!
-+//! WebKitGTK refuses `getUserMedia` unless the embedder answers its
-+//! `permission-request` signal, and neither wry nor Pake did, so a call or
-+//! voice page never got a device. Linux has no system prompt for this as
-+//! macOS and WebView2 do, so Pake asks once per site and run.
-+
-+use gtk::prelude::*;
-+use std::cell::RefCell;
-+use std::collections::HashMap;
-+use webkit2gtk::{
-+    DeviceInfoPermissionRequest, PermissionRequestExt, SettingsExt, UserMediaPermissionRequest,
-+    UserMediaPermissionRequestExt, WebViewExt,
-+};
-+
-+thread_local! {
-+    /// The answers given in this run, by host and device kinds.
-+    static ANSWERS: RefCell<HashMap<String, bool>> = RefCell::new(HashMap::new());
-+}
-+
-+pub fn install(webview: &tauri::webview::PlatformWebview) {
-+    let gtk_webview = webview.inner();
-+    if let Some(settings) = WebViewExt::settings(&gtk_webview) {
-+        settings.set_enable_media_stream(true);
-+        settings.set_enable_webrtc(true);
-+    }
-+
-+    gtk_webview.connect_permission_request(|webview, request| {
-+        let host = webview
-+            .uri()
-+            .and_then(|uri| tauri::Url::parse(uri.as_str()).ok())
-+            .and_then(|url| url.host_str().map(str::to_owned))
-+            .unwrap_or_default();
-+
-+        // Device labels in enumerateDevices follow what the site was already allowed.
-+        if request.is::<DeviceInfoPermissionRequest>() {
-+            if host_was_allowed(&host) {
-+                request.allow();
-+            } else {
-+                request.deny();
-+            }
-+            return true;
-+        }
-+
-+        let Some(media) = request.downcast_ref::<UserMediaPermissionRequest>() else {
-+            return false;
-+        };
-+        let audio = media.is_for_audio_device();
-+        let video = media.is_for_video_device();
-+        let key = answer_key(&host, audio, video);
-+        if let Some(allowed) = ANSWERS.with(|answers| answers.borrow().get(&key).copied()) {
-+            answer(request, allowed);
-+            return true;
-+        }
-+
-+        let parent = webview
-+            .toplevel()
-+            .and_then(|widget| widget.downcast::<gtk::Window>().ok());
-+        let (question, deny, allow) = prompt_text(
-+            &host,
-+            audio,
-+            video,
-+            crate::util::UiLanguage::system() != crate::util::UiLanguage::English,
-+        );
-+        let dialog = gtk::MessageDialog::new(
-+            parent.as_ref(),
-+            gtk::DialogFlags::MODAL,
-+            gtk::MessageType::Question,
-+            gtk::ButtonsType::None,
-+            &question,
-+        );
-+        dialog.add_button(deny, gtk::ResponseType::Reject);
-+        dialog.add_button(allow, gtk::ResponseType::Accept);
-+        let request = request.clone();
-+        dialog.connect_response(move |dialog, response| {
-+            // Closing the dialog without choosing is a refusal that is asked again next time.
-+            if matches!(
-+                response,
-+                gtk::ResponseType::Accept | gtk::ResponseType::Reject
-+            ) {
-+                let allowed = response == gtk::ResponseType::Accept;
-+                ANSWERS.with(|answers| answers.borrow_mut().insert(key.clone(), allowed));
-+                answer(&request, allowed);
-+            } else {
-+                request.deny();
-+            }
-+            dialog.close();
-+        });
-+        dialog.show();
-+        true
-+    });
-+}
-+
-+fn answer(request: &webkit2gtk::PermissionRequest, allowed: bool) {
-+    if allowed {
-+        request.allow();
-+    } else {
-+        request.deny();
-+    }
-+}
-+
-+fn host_was_allowed(host: &str) -> bool {
-+    let prefix = format!("{host}|");
-+    ANSWERS.with(|answers| {
-+        answers
-+            .borrow()
-+            .iter()
-+            .any(|(key, allowed)| *allowed && key.starts_with(&prefix))
-+    })
-+}
-+
-+pub(crate) fn answer_key(host: &str, audio: bool, video: bool) -> String {
-+    format!("{host}|{}{}", u8::from(audio), u8::from(video))
-+}
-+
-+/// The question and its two buttons, refusal first.
-+pub(crate) fn prompt_text(
-+    host: &str,
-+    audio: bool,
-+    video: bool,
-+    chinese: bool,
-+) -> (String, &'static str, &'static str) {
-+    if chinese {
-+        let devices = match (audio, video) {
-+            (true, true) => "摄像头和麦克风",
-+            (false, true) => "摄像头",
-+            _ => "麦克风",
-+        };
-+        (format!("{host} 想使用{devices}"), "不允许", "允许")
-+    } else {
-+        let devices = match (audio, video) {
-+            (true, true) => "camera and microphone",
-+            (false, true) => "camera",
-+            _ => "microphone",
-+        };
-+        (
-+            format!("{host} wants to use your {devices}"),
-+            "Don't Allow",
-+            "Allow",
-+        )
-+    }
-+}
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+
-+    #[test]
-+    fn the_prompt_names_the_site_and_only_the_devices_asked_for() {
-+        assert_eq!(
-+      
-```
-
-**File**: `src-tauri/src/app/mod.rs` (modified, +4/-0)
-```diff
-@@ -6,10 +6,14 @@ pub mod config;
- #[cfg(target_os = "windows")]
- pub mod download;
- pub mod invoke;
-+#[cfg(target_os = "linux")]
-+pub mod media_permission;
- #[cfg(target_os = "macos")]
- pub mod menu;
- pub mod navigation;
- pub mod notification;
-+#[cfg(any(target_os = "linux", target_os = "windows", test))]
-+pub mod recovery;
- pub mod setup;
- #[cfg(target_os = "macos")]
- pub mod tab_bar;
-```
-
-**File**: `src-tauri/src/app/recovery.rs` (added, +122/-0)
-```diff
-@@ -0,0 +1,122 @@
-+//! Getting back from a page that failed to load or a web process that died.
-+//!
-+//! WebKitGTK shows a bare engine message for a failed load and a dead grey view
-+//! after its web process exits; WebView2 has its own error page but leaves a
-+//! blank view after a renderer crash. Neither had a way back short of knowing
-+//! Ctrl+R. macOS is not covered: Tauri 2.10 exposes neither hook for WKWebView.
-+
-+#[cfg(target_os = "linux")]
-+pub fn install(webview: &tauri::webview::PlatformWebview) {
-+    use webkit2gtk::{NetworkError, PluginError, PolicyError, WebViewExt};
-+
-+    let gtk_webview = webview.inner();
-+    gtk_webview.connect_load_failed(|webview, _event, uri, error| {
-+        // A cancelled load, a load a download took over and a policy refusal are not failures.
-+        if error.kind::<NetworkError>() == Some(NetworkError::Cancelled)
-+            || error.is::<PolicyError>()
-+            || error.is::<PluginError>()
-+            || uri.starts_with("about:")
-+        {
-+            return false;
-+        }
-+        let host = tauri::Url::parse(uri)
-+            .ok()
-+            .and_then(|url| url.host_str().map(str::to_owned))
-+            .unwrap_or_default();
-+        let chinese = crate::util::UiLanguage::system() != crate::util::UiLanguage::English;
-+        // The failed address stays the page's own, so Try Again and Ctrl+R load it again.
-+        webview.load_alternate_html(&error_page(&host, chinese), uri, None);
-+        true
-+    });
-+    gtk_webview.connect_web_process_terminated(|webview, _reason| {
-+        webview.reload();
-+    });
-+}
-+
-+#[cfg(target_os = "windows")]
-+pub fn install(webview: &tauri::webview::PlatformWebview) {
-+    use webview2_com::{
-+        Microsoft::Web::WebView2::Win32::{
-+            COREWEBVIEW2_PROCESS_FAILED_KIND,
-+            COREWEBVIEW2_PROCESS_FAILED_KIND_RENDER_PROCESS_EXITED,
-+        },
-+        ProcessFailedEventHandler,
-+    };
-+
-+    let result = unsafe {
-+        (|| -> windows_core::Result<()> {
-+            let core = webview.controller().CoreWebView2()?;
-+            let mut token = 0;
-+            core.add_ProcessFailed(
-+                &ProcessFailedEventHandler::create(Box::new(|core, args| {
-+                    let (Some(core), Some(args)) = (core, args) else {
-+                        return Ok(());
-+                    };
-+                    let mut kind = COREWEBVIEW2_PROCESS_FAILED_KIND(0);
-+                    args.ProcessFailedKind(&mut kind)?;
-+                    // Only a dead renderer leaves a view that a reload brings back.
-+                    if kind == COREWEBVIEW2_PROCESS_FAILED_KIND_RENDER_PROCESS_EXITED {
-+                        core.Reload()?;
-+                    }
-+                    Ok(())
-+                })),
-+                &mut token,
-+            )
-+        })()
-+    };
-+    if let Err(error) = result {
-+        eprintln!("[Pake] Failed to watch for a WebView2 renderer crash: {error}");
-+    }
-+}
-+
-+/// A self-contained page for a load that failed: what happened, the site, one way back.
-+#[cfg(any(target_os = "linux", test))]
-+pub(crate) fn error_page(host: &str, chinese: bool) -> String {
-+    let (title, hint, retry) = if chinese {
-+        ("无法打开此页面", "检查网络后再试一次", "重试")
-+    } else {
-+        (
-+            "Can't open this page",
-+            "Check your network, then try again.",
-+            "Try Again",
-+        )
-+    };
-+    let host = host
-+        .replace('&', "&amp;")
-+        .replace('<', "&lt;")
-+        .replace('>', "&gt;");
-+    format!(
-+        r#"<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{title}</title><style>
-+html,body{{height:100%;margin:0}}
-+body{{display:flex;align-items:center;justify-content:center;font:14px/1.5 system-ui,-apple-system,"Segoe UI","Noto Sans CJK SC",sans-serif;background:#fff;color:#1d1d1f}}
-+main{{text-align:center;padding:24px;max-width:420px}}
-+h1{{font-size:20px;font-weight:600;margin:0 0 6px}}
-+p{{margin:0;color:#6e6e73}}
-+.host{{margin-top:2px;word-break:break-all}}
-+button{{margin-top:20px;font:inherit;padding:7px 18px;border-radius:8px;border:0;background:#1d1d1f;color:#fff;cursor:pointer}}
-+@media (prefers-color-scheme:dark){{body{{background:#1c1c1e;color:#f5f5f7}}p{{color:#98989d}}button{{background:#f5f5f7;color:#1c1c1e}}}}
-+</style></head><body><main><h1>{title}</h1><p>{hint}</p><p class="host">{host}</p><button onclick="location.reload()">{retry}</button></main></body></html>"#
-+    )
-+}
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+
-+    #[test]
-+    fn the_error_page_names_the_site_and_offers_one_way_back() {
-+        let page = error_page("example.com", false);
-+        assert!(page.contains("Can't open this page"));
-+        assert!(page.contains(r#"<p class="host">example.com</p>"#));
-+        assert_eq!(page.matches("<button").count(), 1);
-+        assert!(page.contains("location.reload()"));
-+        assert!(error_page("example.com", true).co
-```
-
-**File**: `src-tauri/src/app/window.rs` (modified, +16/-0)
-```diff
-@@ -883,6 +883,22 @@ fn build_window(
-     #[cfg(target_os = "windows")]
-     crate::app::download::install(&window, download_target)?;
+@@ -202,21 +202,8 @@ export async function precompileIconComposerAssets(
+     return dest;
+   }
  
-+    // Every webview is built here, so every one can be asked for the camera and microphone.
-+    #[cfg(target_os = "linux")]
-+    if let Err(error) = window.with_webview(|webview| {
-+        crate::app::media_permission::install(&webview);
-+        crate::app::recovery::install(&webview);
-+    }) {
-+        eprintln!("[Pake] Failed to access WebKitGTK for media permissions and recovery: {error}");
-+    }
-+
-+    #[cfg(target_os = "windows")]
-+    if let Err(error) = window.with_webview(|webview| {
-+        crate::app::recovery::install(&webview);
-+    }) {
-+        eprintln!("[Pake] Failed to access WebView2 for crash recovery: {error}");
-+    }
-+
-     // Every webview is built here (main window, Cmd+N clones, --new-window and
-     // blank two-stage popups), so trackpad history swipes match in all of them.
-     #[cfg(target_os = "macos")]
-```
-
----
-
-### Incident Patch 2: `65513ded` (2026-11-10)
-**Commit Message**: fix: let the page keep its keys, stop endless crash reloads, and escape the autostart entry
-
-Findings of an independent review of 2f38e5ec..03c17008.
-
-The Ctrl+W, Ctrl+Q, Ctrl+L and Alt arrow shortcuts ran on keyup, after
-the page had already acted on the key, so a web terminal deleted a word
-and then lost its window. They now run on keydown from a window listener
-in the bubble phase and leave alone a key the page prevented, as find.js
-does for Ctrl+F; a repeat and AltGr (Ctrl and Alt together) do nothing.
-
-A page that takes its renderer down on every load was reloaded for ever
-on Linux and Windows. At most two automatic reloads in a minute now;
-past that Linux shows the failed-load page and Windows leaves the view.
-
-The camera and microphone dialog answers its request once and is
-destroyed rather than closed (close raised a second response), and goes
-with its window. The Linux autostart Exec is quoted and then escaped as a
-string value, as the format reads it, with env carrying a path that holds
-a percent sign, and a path the key cannot carry gets no entry.
-
-Verified: vitest 793 passed, cargo clippy -D warnings and cargo test
---lib (99) on macOS, and clippy, tests and a deb and rp
-
-**File**: `src-tauri/src/app/autostart.rs` (modified, +46/-10)
-```diff
-@@ -77,11 +77,25 @@ pub(crate) fn launch_agent(identifier: &str, executable: &Path) -> String {
-     )
+-  // Xcode 27.1+ sometimes leaves ibtoold in a bad state (tauri-apps/tauri#16386).
+   logger.warn(
+-    '✼ actool failed to compile the .icon package; retrying after stopping ibtoold (tauri-apps/tauri#16386).',
+-  );
+-  await execa('pkill', ['-x', 'ibtoold'], {
+-    stdin: 'ignore',
+-    reject: false,
+-  });
+-
+-  if (await compileAssetsCar(iconPackagePath, dest)) {
+-    return dest;
+-  }
+-
+-  logger.warn(
+-    '✼ Could not precompile Assets.car. The .icon will be passed to Tauri, which may hit the same actool issue (tauri-apps/tauri#15315, #16386). The .icns fallback stays in bundle.icon.',
++    '✼ actool could not compile the .icon package (tauri-apps/tauri#15315, #16386). The app will use the .icns icon instead.',
+   );
+   return null;
  }
+@@ -281,15 +268,19 @@ export async function applyDarwinIconComposerPackage(options: {
+     destIconsDir,
+   );
  
--/// An XDG autostart entry. Exec quotes the path and doubles `%`, which the
--/// desktop entry format reads as a field code.
-+/// A desktop-entry string value: the format unescapes backslash sequences before anything else.
- #[cfg(any(target_os = "linux", test))]
--pub(crate) fn autostart_entry(name: &str, executable: &Path) -> String {
-+fn entry_value(text: &str) -> String {
-+    text.replace('\\', "\\\\")
-+        .replace('\n', "\\n")
-+        .replace('\r', "\\r")
-+        .replace('\t', "\\t")
-+}
-+
-+/// An XDG autostart entry, or None for a path the Exec key cannot carry (`=`, a control
-+/// character). The argument is quoted first (a backslash before `"`, a backtick, `$` and `\`,
-+/// `%` doubled) and then escaped as a string value, since unescaping happens before unquoting.
-+/// GLib checks argv[0] before it expands `%%`, so a path with `%` is passed to env instead.
-+#[cfg(any(target_os = "linux", test))]
-+pub(crate) fn autostart_entry(name: &str, executable: &Path) -> Option<String> {
-     let path = executable.to_string_lossy();
-+    if path.contains('=') || path.chars().any(char::is_control) {
-+        return None;
-+    }
-     let mut quoted = String::with_capacity(path.len() + 2);
-     quoted.push('"');
-     for character in path.chars() {
-@@ -95,10 +109,16 @@ pub(crate) fn autostart_entry(name: &str, executable: &Path) -> String {
-         }
-     }
-     quoted.push('"');
-+    let command = if path.contains('%') {
-+        format!("/usr/bin/env -- {}", entry_value(&quoted))
-+    } else {
-+        entry_value(&quoted)
-+    };
-     let name: String = name.chars().filter(|c| !c.is_control()).collect();
--    format!(
--        "[Desktop Entry]\nType=Application\nName={name}\nExec={quoted}\nTerminal=false\nX-GNOME-Autostart-enabled=true\n"
--    )
-+    Some(format!(
-+        "[Desktop Entry]\nType=Application\nName={}\nExec={command}\nTerminal=false\nX-GNOME-Autostart-enabled=true\n",
-+        entry_value(&name)
-+    ))
++  // Tauri runs actool itself for a .icon in bundle.icon and fails the whole
++  // build when actool errors, so only a precompiled Assets.car goes in; when
++  // that could not be built, the app ships with the .icns alone.
+   const bundleIcon: string[] = [];
+   if (compiledCar) {
+     logger.info('✼ Precompiled Assets.car from the Icon Composer package.');
+     bundleIcon.push('icons/Assets.car');
+-  } else {
+-    bundleIcon.push(`icons/${safeAppName}.icon`);
+   }
+   if (hasIcns) {
+     bundleIcon.push(`icons/${safeAppName}.icns`);
+   }
++  if (bundleIcon.length === 0) {
++    bundleIcon.push(`icons/${safeAppName}.icon`);
++  }
+   return { bundleIcon };
  }
- 
- #[cfg(target_os = "macos")]
-@@ -142,7 +162,12 @@ mod platform {
-         let path = config
-             .join("autostart")
-             .join(format!("{identifier}.desktop"));
--        let content = enabled.then(|| autostart_entry(name, executable));
-+        // A path the entry cannot carry gets no login item rather than a broken one.
-+        let content = if enabled {
-+            autostart_entry(name, executable)
-+        } else {
-+            None
-+        };
-         sync_file(&path, content.as_deref())
-     }
- }
-@@ -233,11 +258,22 @@ mod tests {
-     }
- 
-     #[test]
--    fn the_autostart_entry_quotes_the_path_and_doubles_percent() {
--        let entry = autostart_entry("Hacker\nNews", Path::new("/home/a b/50%/com.pake.a1"));
-+    fn the_autostart_entry_quotes_then_escapes_the_path() {
-+        let entry = autostart_entry("Hacker\nNews", Path::new("/home/a b/com.pake.a1")).unwrap();
-         assert!(entry.contains("Name=HackerNews\n"));
--        assert!(entry.contains("Exec=\"/home/a b/50%%/com.pake.a1\"\n"));
-+        assert!(entry.contains("Exec=\"/home/a b/com.pake.a1\"\n"));
-         assert!(entry.starts_with("[Desktop Entry]\nType=Application\n"));
-+
-+        // Quoted first, then escaped as a string value: a `$` gets one backslash, doubled.
-+        let odd = autostart_entry("A", Path::new("/home/a$b/x")).unwrap();
-+        assert!(odd.contains("Exec=\"/home/a\\\\$b/x\"\n"), "{odd}");
-+        // GLib checks argv[0] before expanding %%, so env carries such a path.
-+        let percent = autostart_entry("A", Path::new("/home/50%/x")).unwrap();
-+        assert!(
-+            percent.contains("Exec=/usr/bin/env -- \"/home/50%%/x\"\n"),
-+            "{percent}"
-+        );
-+        assert!(autostart_entry("A", Path::new("/home/a=b/x")).is_none());
-     }
- 
-     #[test]
 ```
 
-**File**: `src-tauri/src/app/media_permission.rs` (modified, +8/-2)
+**File**: `bin/helpers/merge.ts` (modified, +5/-1)
 ```diff
-@@ -64,15 +64,21 @@ pub fn install(webview: &tauri::webview::PlatformWebview) {
-         );
-         let dialog = gtk::MessageDialog::new(
-             parent.as_ref(),
--            gtk::DialogFlags::MODAL,
-+            gtk::DialogFlags::MODAL | gtk::DialogFlags::DESTROY_WITH_PARENT,
-             gtk::MessageType::Question,
-             gtk::ButtonsType::None,
-             &question,
-         );
-         dialog.add_button(deny, gtk::ResponseType::Reject);
-         dialog.add_button(allow, gtk::ResponseType::Accept);
-         let request = request.clone();
-+        // The request is answered once: destroying the dialog raises no second response, where
-+        // close() would send a delete-event and with it another one.
-+        let answered = std::cell::Cell::new(false);
-         dialog.connect_response(move |dialog, response| {
-+            if answered.replace(true) {
-+                return;
-+            }
-             // Closing the dialog without choosing is a refusal that is asked again next time.
-             if matches!(
-                 response,
-@@ -84,7 +90,7 @@ pub fn install(webview: &tauri::webview::PlatformWebview) {
-             } else {
-                 request.deny();
-             }
--            dialog.close();
-+            unsafe { dialog.destroy() };
+@@ -436,7 +436,11 @@ export async function mergeIcons(
+           defaultIcnsPath,
          });
-         dialog.show();
-         true
+         tauriConf.bundle.icon = bundleIcon;
+-        tauriConf.bundle.resources = bundleIcon;
++        // Assets.car is read from bundle.icon; copying it into resources too
++        // would store it twice. Keep the .icns resource the plain path ships.
++        tauriConf.bundle.resources = bundleIcon.filter((icon) =>
++          icon.endsWith('.icns'),
++        );
+         composerIconApplied = true;
+       }
+     } else if (customIconExt !== iconInfo.fileExt) {
 ```
 
-**File**: `src-tauri/src/app/recovery.rs` (modified, +63/-2)
+**File**: `dist/cli.js` (modified, +10/-14)
 ```diff
-@@ -5,6 +5,30 @@
- //! blank view after a renderer crash. Neither had a way back short of knowing
- //! Ctrl+R. macOS is not covered: Tauri 2.10 exposes neither hook for WKWebView.
- 
-+/// A page that takes its renderer down on every load must not be reloaded for ever: after
-+/// `MAX_RELOADS` in `RELOAD_WINDOW` the view is left as it is.
-+const MAX_RELOADS: usize = 2;
-+const RELOAD_WINDOW: std::time::Duration = std::time::Duration::from_secs(60);
-+
-+/// True when one more automatic reload is within the limit, and counts it.
-+pub(crate) fn may_reload(recent: &mut Vec<std::time::Instant>, now: std::time::Instant) -> bool {
-+    recent.retain(|at| now.duration_since(*at) < RELOAD_WINDOW);
-+    if recent.len() >= MAX_RELOADS {
-+        return false;
-+    }
-+    recent.push(now);
-+    true
-+}
-+
-+#[cfg(any(target_os = "linux", target_os = "windows"))]
-+fn reload_allowed() -> bool {
-+    use std::cell::RefCell;
-+    thread_local! {
-+        static RECENT: RefCell<Vec<std::time::Instant>> = const { RefCell::new(Vec::new()) };
-+    }
-+    RECENT.with(|recent| may_reload(&mut recent.borrow_mut(), std::time::Instant::now()))
-+}
-+
- #[cfg(target_os = "linux")]
- pub fn install(webview: &tauri::webview::PlatformWebview) {
-     use webkit2gtk::{NetworkError, PluginError, PolicyError, WebViewExt};
-@@ -29,7 +53,18 @@ pub fn install(webview: &tauri::webview::PlatformWebview) {
-         true
-     });
-     gtk_webview.connect_web_process_terminated(|webview, _reason| {
--        webview.reload();
-+        if reload_allowed() {
-+            webview.reload();
-+            return;
-+        }
-+        // Past the limit the page gets the same way back as a failed load, and no more reloads.
-+        let uri = webview.uri().map(|uri| uri.to_string()).unwrap_or_default();
-+        let host = tauri::Url::parse(&uri)
-+            .ok()
-+            .and_then(|url| url.host_str().map(str::to_owned))
-+            .unwrap_or_default();
-+        let chinese = crate::util::UiLanguage::system() != crate::util::UiLanguage::English;
-+        webview.load_alternate_html(&error_page(&host, chinese), &uri, None);
-     });
- }
- 
-@@ -55,7 +90,9 @@ pub fn install(webview: &tauri::webview::PlatformWebview) {
-                     let mut kind = COREWEBVIEW2_PROCESS_FAILED_KIND(0);
-                     args.ProcessFailedKind(&mut kind)?;
-                     // Only a dead renderer leaves a view that a reload brings back.
--                    if kind == COREWEBVIEW2_PROCESS_FAILED_KIND_RENDER_PROCESS_EXITED {
-+                    if kind == COREWEBVIEW2_PROCESS_FAILED_KIND_RENDER_PROCESS_EXITED
-+                        && reload_allowed()
-+                    {
-                         core.Reload()?;
-                     }
-                     Ok(())
-@@ -113,6 +150,30 @@ mod tests {
-         assert!(error_page("example.com", true).contains("无法打开此页面"));
+@@ -1099,16 +1099,7 @@ async function precompileIconComposerAssets(iconPackagePath, destIconsDir) {
+     if (await compileAssetsCar(iconPackagePath, dest)) {
+         return dest;
      }
- 
-+    #[test]
-+    fn a_page_that_keeps_crashing_is_reloaded_twice_a_minute_at_most() {
-+        let start = std::time::Instant::now();
-+        let mut recent = Vec::new();
-+        assert!(may_reload(&mut recent, start));
-+        assert!(may_reload(
-+            &mut recent,
-+            start + std::time::Duration::from_secs(1)
-+        ));
-+        assert!(!may_reload(
-+            &mut recent,
-+            start + std::time::Duration::from_secs(2)
-+        ));
-+        assert!(!may_reload(
-+            &mut recent,
-+            start + std::time::Duration::from_secs(59)
-+        ));
-+        // Once the first reload is a minute old there is room for one more.
-+        assert!(may_reload(
-+            &mut recent,
-+            start + std::time::Duration::from_secs(61)
-+        ));
-+    }
-+
-     #[test]
-     fn a_host_cannot_inject_markup_into_the_error_page() {
-         let page = error_page("<script>alert(1)</script>", false);
-```
-
-**File**: `src-tauri/src/inject/event.js` (modified, +26/-16)
-```diff
-@@ -128,28 +128,37 @@ const altShortcuts = {
-   ArrowRight: () => nativeNavigate("forward"),
- };
- 
--function handleWebShortcut(event) {
--  if (isNonMacDesktop() && event.ctrlKey) {
--    const plain = !event.shiftKey && !event.altKey && !event.metaKey;
--    const windowShortcut = plain && windowShortcuts[event.key?.toLowerCase?.()];
--    if (windowShortcut) {
--      event.preventDefault();
--      windowShortcut();
--      return;
+-    // Xcode 27.1+ sometimes leaves ibtoold in a bad state (tauri-apps/tauri#16386).
+-    logger.warn('✼ actool failed to compile the .icon package; retrying after stopping ibtoold (tauri-apps/tauri#16386).');
+-    await execa('pkill', ['-x', 'ibtoold'], {
+-        stdin: 'ignore',
+-        reject: false,
+-    });
+-    if (await compileAssetsCar(iconPackagePath, dest)) {
+-        return dest;
 -    }
--    handleShortcut(event);
-+// The page gets these keys first: this listens on window for keydown in the
-+// bubble phase, after the page's own handlers, and leaves alone a key the page
-+// prevented. A web terminal or editor that takes Ctrl+W (delete a word), Ctrl+L
-+// (clear) or Alt+Left (word left) on keydown keeps it, as find.js does for Ctrl+F.
-+function handleWindowShortcut(event) {
-+  if (!isNonMacDesktop() || event.defaultPrevented || event.repeat) {
-     return;
-   }
- 
--  if (
--    isNonMacDesktop() &&
-+  let action;
-+  if (event.ctrlKey && !event.shiftKey && !event.altKey && !event.metaKey) {
-+    action = windowShortcuts[event.key?.toLowerCase?.()];
-+  } else if (
-     event.altKey &&
-+    !event.ctrlKey &&
-     !event.shiftKey &&
--    !event.metaKey &&
--    altShortcuts[event.key]
-+    !event.metaKey
-   ) {
--    event.preventDefault();
--    altShortcuts[event.key]();
-+    action = altShortcuts[event.key];
-+  }
-+  if (!action) {
-+    return;
-+  }
-+
-+  event.preventDefault();
-+  action();
-+}
-+
-+function handleWebShortcut(event) {
-+  if (isNonMacDesktop() && event.ctrlKey) {
-+    handleShortcut(event);
-     return;
-   }
- 
-@@ -742,6 +751,7 @@ document.addEventListener("DOMContentLoaded", () => {
-   if (window["pakeConfig"]?.disabled_web_shortcuts !== true) {
-     document.addEventListener("keydown", handleWindowFullscreenShortcut, true);
-     document.addEventListener("keyup", handleWebShortcut);
-+    window.addEventListener("keydown", handleWindowShortcut);
-   }
- 
-   document.addEventListener("keydown", handleClipboardShortcut, true);
-```
-
-**File**: `tests/unit/event-fullscreen-shortcuts.test.js` (modified, +27/-3)
-```diff
-@@ -179,6 +179,12 @@ function getFullscreenShortcutHandler(context) {
-   ).handler;
+-    logger.warn('✼ Could not precompile Assets.car. The .icon will be passed to Tauri, which may hit the same actool issue (tauri-apps/tauri#15315, #16386). The .icns fallback stays in bundle.icon.');
++    logger.warn('✼ actool could not compile the .icon package (tauri-apps/tauri#15315, #16386). The app will use the .icns icon instead.');
+     return null;
+ }
+ /**
+@@ -1147,17 +1138,20 @@ async function applyDarwinIconComposerPackage(options) {
+     }
+     await warnIfActoolUnavailable();
+     const compiledCar = await precompileIconComposerAssets(destIconPackage, destIconsDir);
++    // Tauri runs actool itself for a .icon in bundle.icon and fails the whole
++    // build when actool errors, so only a precompiled Assets.car goes in; when
++    // that could not be built, the app ships with the .icns alone.
+     const bundleIcon = [];
+     if (compiledCar) {
+         logger.info('✼ Precompiled Assets.car from the Icon Composer package.');
+         bundleIcon.push('icons/Assets.car');
+     }
+-    else {
+-        bundleIcon.push(`icons/${safeAppName}.icon`);
+-    }
+     if (hasIcns) {
+         bundleIcon.push(`icons/${safeAppName}.icns`);
+     }
++    if (bundleIcon.length === 0) {
++        bundleIcon.push(`icons/${safeAppName}.icon`);
++    }
+     return { bundleIcon };
  }
  
-+function getWindowShortcutHandler(context) {
-+  return context.eventListeners.keydown.find(
-+    ({ handler }) => handler.name === "handleWindowShortcut",
-+  ).handler;
-+}
-+
- function getWebShortcutHandler(context) {
-   return context.eventListeners.keyup.find(
-     ({ handler }) => handler.name === "handleWebShortcut",
-@@ -245,7 +251,7 @@ describe("event fullscreen shortcuts", () => {
-       },
-     };
-     context.window.location = { href: "https://example.com/page" };
--    const handler = getWebShortcutHandler(context);
-+    const handler = getWindowShortcutHandler(context);
+@@ -1462,7 +1456,9 @@ async function mergeIcons(options, name, tauriConf, platform, safeAppName) {
+                     defaultIcnsPath,
+                 });
+                 tauriConf.bundle.icon = bundleIcon;
+-                tauriConf.bundle.resources = bundleIcon;
++                // Assets.car is read from bundle.icon; copying it into resources too
++                // would store it twice. Keep the .icns resource the plain path ships.
++                tauriConf.bundle.resources = bundleIcon.filter((icon) => icon.endsWith('.icns'));
+                 composerIconApplied = true;
+             }
+         }
+```
+
+**File**: `docs/cli-usage.md` (modified, +1/-1)
+```diff
+@@ -132,7 +132,7 @@ Supports both local and remote files, automatically converts to platform-specifi
  
-     handler(createKeyEvent("w", { ctrlKey: true }));
-     expect(context.closeCalls).toEqual(["close"]);
-@@ -263,7 +269,7 @@ describe("event fullscreen shortcuts", () => {
+ If you pass a `.icon`, also put a sibling `.icns` of the same basename for macOS versions before 26. If there isn't one, Pake uses its default `icon.icns`. A `.icon` is a local package, not a URL. Compiling Liquid Glass appearances needs Xcode 26+ (`actool` short version 26 or newer) on the machine that runs `pake`. If `actool` is missing or too old, Pake warns and uses the `.icns` fallback.
  
-   it("goes back and forward on Alt+Left and Alt+Right on Windows and Linux", () => {
-     const context = loadEventHelpers();
--    const handler = getWebShortcutHandler(context);
-+    const handler = getWindowShortcutHandler(context);
+-On some Xcode 27 setups, Tauri's bundler fails when it runs `actool` (tauri-apps/tauri#15315, #16386). Pake tries to precompile `Assets.car` itself first, with stdin closed, and retries once after stopping `ibtoold`. If that fails, the `.icon` is still passed to Tauri, and the `.icns` fallback stays in `bundle.icon`.
++On some Xcode 27 setups, Tauri's bundler fails when it runs `actool` itself (tauri-apps/tauri#15315, #16386), so Pake compiles `Assets.car` first, with stdin closed, and hands Tauri the compiled file. If that compile fails, the build goes on with the `.icns` alone.
  
-     handler(createKeyEvent("ArrowLeft", { altKey: true }));
-     handler(createKeyEvent("ArrowRight", { altKey: true }));
-@@ -278,7 +284,7 @@ describe("event fullscreen shortcuts", () => {
-         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15",
-       platform: "MacIntel",
+ ```shell
+ --icon <path>
+```
+
+**File**: `docs/cli-usage_CN.md` (modified, +1/-1)
+```diff
+@@ -132,7 +132,7 @@ pake ./dist --name MyTool
+ 
+ 传入 `.icon` 时，请在同目录放一个同名的 `.icns`，给 macOS 26 以下的系统做回退；没有的话会用 Pake 自带的默认 `icon.icns`。`.icon` 只能是本地包，不能通过 URL 下载。编译 Liquid Glass 外观需要打包机器上有 Xcode 26+（`actool` 主版本不低于 26）；找不到或版本过低时，会给出警告并使用 `.icns` 回退。
+ 
+-在部分 Xcode 27 环境里，Tauri 打包过程调用 `actool` 可能失败（tauri-apps/tauri#15315、#16386）。Pake 会先自行预编译 `Assets.car`（关闭 stdin），失败时停掉 `ibtoold` 再试一次；仍失败就把 `.icon` 交给 Tauri，同时保留 `.icns` 回退。
++在部分 Xcode 27 环境里，Tauri 打包时自己调用 `actool` 可能失败（tauri-apps/tauri#15315、#16386），所以 Pake 会先自行编译 `Assets.car`（关闭 stdin），再把编译好的文件交给 Tauri，编译失败时只用 `.icns` 继续打包。
+ 
+ ```shell
+ --icon <path>
+```
+
+**File**: `llms.txt` (modified, +1/-1)
+```diff
+@@ -38,6 +38,6 @@ Do not recommend Pake as a replacement for a fully native application when deep
+ ## Notes
+ 
+ - Output formats: dmg/app (macOS), msi (Windows), deb/AppImage/rpm/zst (Linux); pick with `--targets`.
+-- Icons auto-fetch from the site favicon when `--icon` is omitted. On macOS, `--icon` also accepts a local Icon Composer `.icon` package, which is passed to Tauri together with an `.icns` fallback (a sibling file of the same basename, or Pake's default). A `.icon` cannot be fetched from a URL. Compiling appearance variants needs Xcode 26+ `actool`.
++- Icons auto-fetch from the site favicon when `--icon` is omitted. On macOS, `--icon` also accepts a local Icon Composer `.icon` package, compiled into the app's `Assets.car` with an `.icns` fallback (a sibling file of the same basename, or Pake's default); when the compile fails the app ships with the `.icns` alone. A `.icon` cannot be fetched from a URL. Compiling appearance variants needs Xcode 26+ `actool`.
+ - `--proxy-url` is baked into the app webview at build time; it does not proxy the icon download itself.
+ - Google OAuth and similar providers may reject embedded webviews regardless of flags; `--new-window` and `--safe-domain` help with most SSO flows.
+```
+
+**File**: `tests/unit/icon-composer.test.ts` (modified, +112/-48)
+```diff
+@@ -44,7 +44,10 @@ async function makeIconPackage(
+     fill: 'automatic',
+     groups: [],
+   });
+-  await fsExtra.writeFile(path.join(pkg, 'Assets', 'icon.png'), Buffer.from([1, 2, 3, 4]));
++  await fsExtra.writeFile(
++    path.join(pkg, 'Assets', 'icon.png'),
++    Buffer.from([1, 2, 3, 4]),
++  );
+   return pkg;
+ }
+ 
+@@ -137,7 +140,7 @@ describe('parseActoolVersion', () => {
+ });
+ 
+ describe('applyDarwinIconComposerPackage', () => {
+-  it('sets bundle.icon to the .icon package and a sibling .icns', async () => {
++  it('ships only a sibling .icns when Assets.car could not be precompiled', async () => {
+     const root = await makeTempDir();
+     const pkg = await makeIconPackage(root);
+     await fsExtra.writeFile(path.join(root, 'AppIcon.icns'), 'sibling-icns');
+@@ -152,16 +155,15 @@ describe('applyDarwinIconComposerPackage', () => {
+       defaultIcnsPath: defaultIcns,
      });
--    const handler = getWebShortcutHandler(context);
-+    const handler = getWindowShortcutHandler(context);
  
-     handler(createKeyEvent("w", { ctrlKey: true }));
-     handler(createKeyEvent("ArrowLeft", { altKey: true }));
-@@ -287,6 +293,24 @@ describe("event fullscreen shortcuts", () => {
-     expect(context.navigateCalls).toEqual([]);
+-    expect(bundleIcon).toEqual([
+-      'icons/weekly.icon',
+-      'icons/weekly.icns',
+-    ]);
+-    expect(await fsExtra.pathExists(path.join(destIconsDir, 'weekly.icon', 'icon.json'))).toBe(
+-      true,
+-    );
+-    expect(await fsExtra.readFile(path.join(destIconsDir, 'weekly.icns'), 'utf8')).toBe(
+-      'sibling-icns',
+-    );
++    expect(bundleIcon).toEqual(['icons/weekly.icns']);
++    expect(
++      await fsExtra.pathExists(
++        path.join(destIconsDir, 'weekly.icon', 'icon.json'),
++      ),
++    ).toBe(true);
++    expect(
++      await fsExtra.readFile(path.join(destIconsDir, 'weekly.icns'), 'utf8'),
++    ).toBe('sibling-icns');
    });
  
-+  it("leaves a window shortcut to a page that handled the key itself", () => {
-+    const context = loadEventHelpers();
-+    const handler = getWindowShortcutHandler(context);
+   it('uses the default .icns when there is no sibling file', async () => {
+@@ -178,13 +180,10 @@ describe('applyDarwinIconComposerPackage', () => {
+       defaultIcnsPath: defaultIcns,
+     });
+ 
+-    expect(bundleIcon).toEqual([
+-      'icons/weekly.icon',
+-      'icons/weekly.icns',
+-    ]);
+-    expect(await fsExtra.readFile(path.join(destIconsDir, 'weekly.icns'), 'utf8')).toBe(
+-      'default-icns',
+-    );
++    expect(bundleIcon).toEqual(['icons/weekly.icns']);
++    expect(
++      await fsExtra.readFile(path.join(destIconsDir, 'weekly.icns'), 'utf8'),
++    ).toBe('default-icns');
+   });
+ });
+ 
+@@ -207,10 +206,16 @@ describe('precompileIconComposerAssets', () => {
+       if (compileAt >= 0) {
+         const outputPath = args[compileAt + 1];
+         await fsExtra.ensureDir(outputPath);
+-        await fsExtra.writeFile(path.join(outputPath, 'Assets.car'), 'compiled-car');
++        await fsExtra.writeFile(
++          path.join(outputPath, 'Assets.car'),
++          'compiled-car',
++        );
+         return { exitCode: 0, stdout: '', stderr: '' };
+       }
+-      if (args.includes('--version') || args.includes('--output-format=human-readable-text')) {
++      if (
++        args.includes('--version') ||
++        args.includes('--output-format=human-readable-text')
++      ) {
+         return actoolVersionResult('26.1');
+       }
+       return { exitCode: 0, stdout: '', stderr: '' };
+@@ -244,36 +249,57 @@ describe('precompileIconComposerAssets', () => {
+     expect(compiled).toBe(false);
+   });
+ 
+-  it('retries once after pkill ibtoold when the first compile fails', async () => {
++  it('gives up after one failed compile without stopping other processes', async () => {
+     const root = await makeTempDir();
+     const pkg = await makeIconPackage(root);
+-    const destIconsDir = path.join(root, 'dest');
+     let compileAttempts = 0;
+ 
+-    execaMock.mockImplementation(async (file: string, args: string[] = []) => {
+-      if (file === 'pkill') {
+-        return { exitCode: 0, stdout: '', stderr: '' };
++    execaMock.mockImplementation(async (_file: string, args: string[] = []) => {
++      if (args.includes('--compile')) {
++        compileAttempts += 1;
++        return { exitCode: 1, stdout: '', stderr: 'failed to run actool' };
+       }
++      return actoolVersionResult('27.2');
++    });
 +
-+    // A web terminal takes Ctrl+W on keydown and prevents the default.
-+    handler(createKeyEvent("w", { ctrlKey: true, defaultPrevented: true }));
-+    handler(
-+      createKeyEvent("ArrowLeft", { altKey: true, defaultPrevented: true }),
++    await expect(
++      precompileIconComposerAssets(pkg, path.join(root, 'dest')),
++    ).resolves.toBeNull();
++    expect(compileAttempts).toBe(1);
++    expect(execaMock.mock.calls.some((call) => call[0] === 'pkill')).toBe(
++      false,
 +    );
-+    handler(createKeyEvent("w", { ctrlKey: true, repeat: true }));
-+    // AltGr on European layouts reports Ctrl and Alt together.
-+    handler(createKeyEvent("q", { ctrlKey: true, altKey: true }));
-+
-+    expect(context.closeCalls).toEqual([]);
-+    expect(context.navigateCalls).toEqual([]);
-+    expect(context.invokeCalls).not.toContain("quit_app");
 +  });
 +
-   it("keeps macOS scroll-to-edge shortcuts in the webview", () => {
-     const context = loadEventHelpers({
-       userAgent:
++  it('puts the precompiled Assets.car and the .icns in bundle.icon, never the .icon', async () => {
++    const root = await makeTempDir();
++    const pkg = await makeIconPackage(root);
++    const destIconsDir = path.join(root, 'dest');
++    const defaultIcns = path.join(root, 'icon.icns');
++    await fsExtra.writeFile(defaultIcns, 'default-icns');
++
++    execaMock.mockImplementation(async (_file: string, args: string[] = []) => {
+       const compileAt = args.indexOf('--compile');
+       if (compileAt >= 0) {
+-        compileAttempts += 1;
+-        if (compileAttempts === 1) {
+-          return { exitCode: 1, stdout: '', stderr: 'failed to run actool' };
+-        }
+         const outputPath = args[compileAt + 1];
+         await fsExtra.ensureDir(outputPath);
+-        await fsExtra.writeFile(path.join(outputPath, 'Assets.car'), 'retry-car');
++ 
 ```
 
 ---
 
-### Incident Patch 3: `4c0db527` (2026-11-10)
-**Commit Message**: feat: close, quit and copy the address on Windows and Linux, and show a finished download
+### Incident Patch 2: `3d6f2ddd` (2026-11-13)
+**Commit Message**: docs: record icon download cancellation regression
 
-Windows and Linux apps have no menu, so what the macOS menu carries was
-out of reach there. Ctrl+W closes the window through its close request
-(hide-on-close still applies), Ctrl+Q quits with the tray's window-state
-flags, Ctrl+L copies the page address, and Alt+Left / Alt+Right go back
-and forward. A browser keeps all of these for itself, so no page relies
-on them; Shift or Alt with Ctrl is left to the page, and macOS is
-unchanged.
-
-A finished download's toast was the only trace of the file on macOS and
-Linux. It now reads "Download successful, click to show in folder~" and a
-click shows the file in the file manager through the opener plugin. The
-page asks for "the last download" and never names a path; WKWebView
-reports no path on finish, so the destination set at the request is
-remembered per address.
-
-New commands quit_app and reveal_download, both in the default
-capability. Verified: vitest 792 passed (new cases for the five
-shortcuts and the macOS no-op), clippy and cargo test on macOS and on the
-devbox. Not verified by hand: the toast click on a real download.
-
-**File**: `src-tauri/build.rs` (modified, +2/-0)
+**File**: `docs/incidents.md` (modified, +1/-0)
 ```diff
-@@ -14,6 +14,8 @@ fn main() {
-             "set_zoom",
-             "webview_navigate",
-             "set_title_bar_color",
-+            "quit_app",
-+            "reveal_download",
-         ]),
-     ))
-     .expect("Failed to build Pake permissions")
+@@ -33,3 +33,4 @@ When a review skill, its prompt or the model running it changes, rerun it on the
+ | I-10 | 2026-10-15 | On macOS the Enter that confirms a Chinese input method candidate reached the page and sent the message early (#1415)                                                                       | unknown    | f4b4e3cb | field  | `keeps the candidate-confirming Enter (keyCode 229) away from the page`                                                                   |
+ | I-11 | 2026-10-28 | After one failed Windows build, every later build refused to start with "A previous Pake process left a compilation cache lock" until the lock was deleted by hand                          | 5d66c330   | 16d79b66 | native | `a failed Windows build whose taskkill exits %i keeps the workspace %i times`                                                             |
+ | I-12 | 2026-08-31 | `--enable-drag-drop`, documented as enabling drag-and-drop uploads, kept Tauri's handler instead, so file drops never reached the page and Windows HTML5 drag and drop broke (#1030, #1132) | bd764f5f   | f62e7225 | native | `forwards window/zoom/wasm/new_window flags verbatim`                                                                                     |
++| I-13 | 2026-11-13 | During a stalled remote `--icon` download, SIGINT/SIGTERM waited for the 10-second timeout and logged "Icon download timed out!" before cancelling                                          | 5d66c330   | 891521b4 | unit   | `tests/unit/icon.test.ts`, `does not try another favicon source after the build is cancelled`                                             |
 ```
 
-**File**: `src-tauri/capabilities/default.json` (modified, +2/-0)
-```diff
-@@ -15,6 +15,8 @@
-     "allow-set-zoom",
-     "allow-webview-navigate",
-     "allow-set-title-bar-color",
-+    "allow-quit-app",
-+    "allow-reveal-download",
-     "shell:allow-open",
-     "core:window:allow-theme",
-     "core:window:allow-start-dragging",
-```
+---
 
-**File**: `src-tauri/src/app/invoke.rs` (modified, +31/-2)
+### Incident Patch 3: `99a50d41` (2026-11-14)
+**Commit Message**: Merge pull request #1435 from yuxino/fix/icon-download-cancellation
+
+**File**: `bin/options/icon.ts` (modified, +16/-2)
 ```diff
-@@ -396,9 +396,10 @@ pub async fn download_file(
-                 return Err(error);
-             }
+@@ -16,6 +16,10 @@ import {
+ } from '@/utils/icon-source';
+ import { generateLinuxPackageName, getSafeAppName } from '@/utils/name';
+ import { PakeAppOptions } from '@/types';
++import {
++  getBuildCancellationSignal,
++  throwIfBuildCancelled,
++} from '@/utils/build-workspace';
+ import {
+   ensureMultiResolutionIco,
+   writeIcoWithPreferredSize,
+@@ -609,6 +613,7 @@ async function tryResolveIconSource(
+         return resolvedPath;
+       }
+     } catch (error: unknown) {
++      throwIfBuildCancelled();
+       if (error instanceof Error) {
+         const label =
+           source === 'dashboard' ? 'Dashboard icon' : 'Icon service';
+@@ -627,9 +632,10 @@ async function tryGetFavicon(
+   url: string,
+   appName: string,
+ ): Promise<string | null> {
++  let spinner: ReturnType<typeof getSpinner> | undefined;
+   try {
+     const domain = new URL(url).hostname;
+-    const spinner = getSpinner(`Fetching icon from ${domain}...`);
++    spinner = getSpinner(`Fetching icon from ${domain}...`);
  
--            show_toast(
-+            crate::util::show_download_finished(
-                 &window,
--                &get_download_message_with_lang(MessageType::Success, params.language.clone()),
-+                Some(std::path::PathBuf::from(&file_path)),
-+                params.language.clone(),
-             );
-             Ok(())
-         }
-@@ -529,6 +530,34 @@ pub fn webview_navigate(window: WebviewWindow, action: String) -> Result<(), Str
+     const isCI =
+       process.env.CI === 'true' || process.env.GITHUB_ACTIONS === 'true';
+@@ -662,10 +668,13 @@ async function tryGetFavicon(
+     spinner.warn(`No favicon found for ${domain}. Using default.`);
+     return null;
+   } catch (error) {
++    throwIfBuildCancelled();
+     if (error instanceof Error) {
+       logger.warn(`Failed to fetch favicon: ${error.message}`);
      }
- }
- 
-+/// Shows the last finished download in the file manager, for a click on its toast.
-+#[command]
-+pub fn reveal_download(app: AppHandle) -> Result<(), String> {
-+    let path = app
-+        .try_state::<crate::util::LastDownload>()
-+        .and_then(|last| last.0.lock().ok().and_then(|slot| slot.clone()))
-+        .ok_or_else(|| "No finished download to show".to_string())?;
-+    tauri_plugin_opener::reveal_item_in_dir(path).map_err(|error| error.to_string())
-+}
-+
-+/// Quit for the injected Ctrl+Q on Windows and Linux, which have no app menu to carry it.
-+/// Saves the window state with the same flags as the tray's Quit.
-+#[command]
-+pub fn quit_app(app: AppHandle) {
-+    use tauri_plugin_window_state::{AppHandleExt, StateFlags};
-+
-+    let fullscreen = app
-+        .try_state::<crate::app::window::MultiWindowState>()
-+        .is_some_and(|state| state.pake_config.windows[0].fullscreen);
-+    let flags = if fullscreen {
-+        StateFlags::all()
-+    } else {
-+        StateFlags::all() & !StateFlags::FULLSCREEN
-+    };
-+    let _ = app.save_window_state(flags);
-+    app.exit(0);
-+}
-+
- #[cfg(test)]
- mod tests {
-     use super::*;
-```
-
-**File**: `src-tauri/src/app/window.rs` (modified, +19/-10)
-```diff
-@@ -802,6 +802,9 @@ fn build_window(
-     #[cfg(not(target_os = "windows"))]
-     {
-         let download_handle = app.clone();
-+        // WKWebView reports no path when a download finishes, so remember where each was sent.
-+        let destinations: std::sync::Mutex<std::collections::HashMap<String, PathBuf>> =
-+            std::sync::Mutex::new(std::collections::HashMap::new());
-         window_builder = window_builder.on_download(move |webview, event| match event {
-             DownloadEvent::Requested { url, destination } => {
-                 match get_download_dir(&download_handle) {
-@@ -821,6 +824,9 @@ fn build_window(
-                         let target = download_dir.join(sanitize_download_filename(&filename));
-                         if let Some(path_str) = target.to_str() {
-                             *destination = PathBuf::from(check_file_or_append(path_str));
-+                            if let Ok(mut sent) = destinations.lock() {
-+                                sent.insert(url.to_string(), destination.clone());
-+                            }
-                         } else {
-                             eprintln!("[Pake] Download destination is not valid UTF-8");
-                             return false;
-@@ -842,23 +848,26 @@ fn build_window(
-                 }
-                 true
-             }
--            DownloadEvent::Finished {
--                url: _,
--                path: _,
--                success,
--            } => {
-+            DownloadEvent::Finished { url, path, success } => {
-+                let saved = destinations
-+                    .lock()
-+                    .ok()
-+                    .and_then(|mut sent| sent.remove(url.as_str()))
-+                    .or(path);
-                 // Toast on the window that started the download (including
-                 // secondary multi-window labels), not a hard-coded "pake".
-                 let toast_window = download_handle
-                     .get_webview_window(webview.label())
-                     .or_else(|| download_handle.get_webview_window("pake"));
-                 if let Some(window) = toast_window {
--                    let message_type = if success {
--                        MessageType::Success
-+                    if success {
-+                        crate::util::show_download_finished(&window, saved, None);
-                     } else {
--                        MessageType::Failure
--                    };
--                    show_toast(&window, &get_download_message_with_lang(message_type, None));
-+                        show_toast(
-+                            &window,
-+                            &get_download_message_with_lang(MessageType::Failure, None),
-+                        );
-+                    }
-                 }
-                 true
-             }
-```
-
-**File**: `src-tauri/src/inject/event.js` (modified, +63/-0)
-```diff
-@@ -84,12 +84,75 @@ function handleShortcut(event) {
+     return null;
++  } finally {
++    spinner?.stop();
    }
  }
  
-+// What the macOS app menu carries and Windows and Linux, with no menu, lacked:
-+// close the window, quit, copy the page address, as a browser's Ctrl+W, Ctrl+Q
-+// and Ctrl+L. A browser keeps all three for itself, so no page relies on them.
-+function closeCurrentWindow() {
-+  // close() raises the window's close request, so hide-on-close still applies.
-+  window.__TAURI__?.window?.getCurrentWindow?.()?.close?.();
-+}
-+
-+function quitApp() {
-+  window.__TAURI__?.core?.invoke?.("quit_app")?.catch?.(() => {});
-+}
-+
-+function copyPageAddress() {
-+  const address = window.location.href;
-+  const write = navigator.clipboard?.writeText?.(address);
-+  if (write?.catch) {
-+    write.catch(() => copyTextWithSelection(address));
-+  } else if (!write) {
-+    copyTextWithSelection(address);
-+  }
-+}
-+
-+function copyTextWithSelection(text) {
-+  const field = document.createElement("textarea");
-+  field.value = text;
-+  field.setAttribute("readonly", "");
-+  field.style.cssText = "position:fixed;top:0;left:0;opacity:0;";
-+  document.body.appendChild(field);
-+  field.select();
-+  document.execCommand("copy");
-+  field.remove();
-+}
-+
-+const windowShortcuts = {
-+  w: closeCurrentWindow,
-+  q: quitApp,
-+  l: copyPageAddress,
-+};
-+
-+const altShortcuts = {
-+  ArrowLeft: () => nativeNavigate("back"),
-+  ArrowRight: () => nativeNavigate("forward"),
-+};
-+
- function handleWebShortcut(event) {
-   if (isNonMacDesktop() && event.ctrlKey) {
-+    const plain = !event.shiftKey && !event.altKey && !event.metaKey;
-+    const windowShortcut = plain && windowShortcuts[event.key?.toLowerCase?.()];
-+    if (windowShortcut) {
-+      event.preventDefault();
-+      windowShortcut();
-+      return;
-+    }
-     handleShortcut(event);
-     return;
-   }
+@@ -677,14 +686,18 @@ export async function downloadIcon(
+   showSpinner = true,
+   customTimeout?: number,
+ ): Promise<string | null> {
++  throwIfBuildCancelled();
++  const buildSignal = getBuildCancellationSignal();
+   const controller = new AbortController();
+   const timeoutId = setTimeout(() => {
+     controller.abort();
+   }, customTimeout || 10000);
  
-+  if (
-+    isNonMacDesktop() &&
-+    event.altKey &&
-+    !event.shiftKey &&
-+    !event.metaKey &&
-+    altShortcuts[event.key]
-+  ) {
-+    event.preventDefault();
-+    altShortcuts[event.key]();
-+    return;
-+  }
-+
-   const isMac = /mac/i.test(getDesktopPlatform());
-   const isMacScrollShortcut =
-     event.key === "ArrowUp" || event.key === "ArrowDown";
+   try {
+     const response = await fetch(iconUrl, {
+-      signal: controller.signal,
++      signal: buildSignal
++        ? AbortSignal.any([controller.signal, buildSignal])
++        : controller.signal,
+     });
+ 
+     if (!response.ok) {
+@@ -710,6 +723,7 @@ export async function downloadIcon(
+ 
+     return await saveIconFile(arrayBuffer, extension);
+   } catch (error: unknown) {
++    throwIfBuildCancelled();
+     if (showSpinner) {
+       if (error instanceof Error && error.name === 'AbortError') {
+         logger.error('Icon download timed out!');
 ```
 
-**File**: `src-tauri/src/inject/toast.js` (modified, +22/-10)
+**File**: `dist/cli.js` (modified, +13/-2)
 ```diff
-@@ -1,21 +1,33 @@
- // Lightweight in-page toast used by Rust `show_toast` (download status, etc).
- // Kept tiny and always loaded so the Rust side can rely on `window.pakeToast`.
- document.addEventListener("DOMContentLoaded", () => {
--  function pakeToast(msg) {
-+  // `action` names a Pake command a click on the toast runs (showing a finished
-+  // download in the file manager); such a toast stays twice as long.
-+  function pakeToast(msg, action) {
-     const m = document.createElement("div");
-     m.innerHTML = msg;
-     m.style.cssText =
-       "max-width:60%;min-width: 80px;padding:0 12px;height: 32px;color: rgb(255, 255, 255);line-height: 32px;text-align: center;border-radius: 8px;position: fixed; bottom:24px;right: 28px;z-index: 999999;background: rgba(0, 0, 0,.8);font-size: 13px;";
-+    if (action) {
-+      m.style.cursor = "pointer";
-+      m.addEventListener("click", function () {
-+        const invoke = window.__TAURI__?.core?.invoke;
-+        if (invoke) invoke(action).catch(function () {});
-+      });
+@@ -3291,6 +3291,7 @@ async function tryResolveIconSource(source, domain, appName, downloadTimeout) {
+             }
+         }
+         catch (error) {
++            throwIfBuildCancelled();
+             if (error instanceof Error) {
+                 const label = source === 'dashboard' ? 'Dashboard icon' : 'Icon service';
+                 logger.debug(`${label} ${iconUrl} failed: ${error.message}`);
+@@ -3303,9 +3304,10 @@ async function tryResolveIconSource(source, domain, appName, downloadTimeout) {
+  * Attempts to fetch favicon from website
+  */
+ async function tryGetFavicon(url, appName) {
++    let spinner;
+     try {
+         const domain = new URL(url).hostname;
+-        const spinner = getSpinner(`Fetching icon from ${domain}...`);
++        spinner = getSpinner(`Fetching icon from ${domain}...`);
+         const isCI = process.env.CI === 'true' || process.env.GITHUB_ACTIONS === 'true';
+         const downloadTimeout = isCI
+             ? ICON_CONFIG.downloadTimeout.ci
+@@ -3325,23 +3327,31 @@ async function tryGetFavicon(url, appName) {
+         return null;
+     }
+     catch (error) {
++        throwIfBuildCancelled();
+         if (error instanceof Error) {
+             logger.warn(`Failed to fetch favicon: ${error.message}`);
+         }
+         return null;
+     }
++    finally {
++        spinner?.stop();
 +    }
-     document.body.appendChild(m);
--    setTimeout(function () {
--      const d = 0.5;
--      m.style.transition =
--        "transform " + d + "s ease-in, opacity " + d + "s ease-in";
--      m.style.opacity = "0";
--      setTimeout(function () {
--        document.body.removeChild(m);
--      }, d * 1000);
--    }, 3000);
-+    setTimeout(
-+      function () {
-+        const d = 0.5;
-+        m.style.transition =
-+          "transform " + d + "s ease-in, opacity " + d + "s ease-in";
-+        m.style.opacity = "0";
-+        setTimeout(function () {
-+          document.body.removeChild(m);
-+        }, d * 1000);
-+      },
-+      action ? 6000 : 3000,
+ }
+ /**
+  * Downloads icon from URL
+  */
+ async function downloadIcon(iconUrl, showSpinner = true, customTimeout) {
++    throwIfBuildCancelled();
++    const buildSignal = getBuildCancellationSignal();
+     const controller = new AbortController();
+     const timeoutId = setTimeout(() => {
+         controller.abort();
+     }, customTimeout || 10000);
+     try {
+         const response = await fetch(iconUrl, {
+-            signal: controller.signal,
++            signal: buildSignal
++                ? AbortSignal.any([controller.signal, buildSignal])
++                : controller.signal,
+         });
+         if (!response.ok) {
+             if (response.status === 404 && !showSpinner) {
+@@ -3359,6 +3369,7 @@ async function downloadIcon(iconUrl, showSpinner = true, customTimeout) {
+         return await saveIconFile(arrayBuffer, extension);
+     }
+     catch (error) {
++        throwIfBuildCancelled();
+         if (showSpinner) {
+             if (error instanceof Error && error.name === 'AbortError') {
+                 logger.error('Icon download timed out!');
+```
+
+**File**: `docs/incidents.md` (modified, +1/-0)
+```diff
+@@ -33,3 +33,4 @@ When a review skill, its prompt or the model running it changes, rerun it on the
+ | I-10 | 2026-10-15 | On macOS the Enter that confirms a Chinese input method candidate reached the page and sent the message early (#1415)                                                                       | unknown    | f4b4e3cb | field  | `keeps the candidate-confirming Enter (keyCode 229) away from the page`                                                                   |
+ | I-11 | 2026-10-28 | After one failed Windows build, every later build refused to start with "A previous Pake process left a compilation cache lock" until the lock was deleted by hand                          | 5d66c330   | 16d79b66 | native | `a failed Windows build whose taskkill exits %i keeps the workspace %i times`                                                             |
+ | I-12 | 2026-08-31 | `--enable-drag-drop`, documented as enabling drag-and-drop uploads, kept Tauri's handler instead, so file drops never reached the page and Windows HTML5 drag and drop broke (#1030, #1132) | bd764f5f   | f62e7225 | native | `forwards window/zoom/wasm/new_window flags verbatim`                                                                                     |
++| I-13 | 2026-11-13 | During a stalled remote `--icon` download, SIGINT/SIGTERM waited for the 10-second timeout and logged "Icon download timed out!" before cancelling                                          | 5d66c330   | 891521b4 | unit   | `tests/unit/icon.test.ts`, `does not try another favicon source after the build is cancelled`                                             |
+```
+
+**File**: `tests/unit/icon.test.ts` (modified, +66/-1)
+```diff
+@@ -11,8 +11,10 @@ vi.mock('execa', () => ({
+   execa: execaMock,
+ }));
+ 
+-import { downloadIcon, generateMacOSIcns } from '@/options/icon';
++import { downloadIcon, generateMacOSIcns, handleIcon } from '@/options/icon';
+ import { getIconSourcePriority } from '@/utils/icon-source';
++import { beginBuildCancellation } from '@/utils/build-workspace';
++import { DEFAULT_PAKE_OPTIONS } from '@/defaults';
+ 
+ const downloadedIconPaths: string[] = [];
+ const generatedIconDirs: string[] = [];
+@@ -41,6 +43,69 @@ it('keeps the download deadline active until the response body completes', async
+   }
+ });
+ 
++it.each(['SIGINT', 'SIGTERM'] as const)(
++  'cancels an in-flight icon response on %s',
++  async (signal) => {
++    let requestStarted!: () => void;
++    const started = new Promise<void>((resolve) => {
++      requestStarted = resolve;
++    });
++    const server = http.createServer((_request, response) => {
++      response.writeHead(200, { 'content-type': 'image/png' });
++      response.flushHeaders();
++      requestStarted();
++    });
++    await new Promise<void>((resolve) =>
++      server.listen(0, '127.0.0.1', resolve),
 +    );
-   }
- 
-   window.pakeToast = pakeToast;
-```
-
-**File**: `src-tauri/src/lib.rs` (modified, +6/-3)
-```diff
-@@ -29,9 +29,9 @@ const GDK_BACKEND: &str = "GDK_BACKEND";
- 
- use app::{
-     invoke::{
--        clear_dock_badge, close_notification, download_file, increment_dock_badge,
--        send_notification, set_dock_badge, set_dock_badge_label, set_title_bar_color, set_zoom,
--        update_theme_mode, webview_navigate,
-+        clear_dock_badge, close_notification, download_file, increment_dock_badge, quit_app,
-+        reveal_download, send_notification, set_dock_badge, set_dock_badge_label,
-+        set_title_bar_color, set_zoom, update_theme_mode, webview_navigate,
-     },
-     setup::{set_global_shortcut, set_system_tray},
-     window::{
-@@ -413,13 +413,16 @@ pub fn run_app() {
-             set_zoom,
-             webview_navigate,
-             set_title_bar_color,
-+            quit_app,
-+            reveal_download,
-         ])
-         .setup(move |app| {
-             // Grant remote IPC only to the immutable, packaged entry origins,
-             // before any webview can start loading untrusted content.
-             if let Some(capability) = pake_config.remote_capability()? {
-                 app.add_capability(capability)?;
-             }
-+            app.manage(crate::util::LastDownload::default());
-             app.manage(MultiWindowState::new(
-                 pake_config.clone(),
-                 tauri_config.clone(),
-```
-
-**File**: `src-tauri/src/util.rs` (modified, +34/-0)
-```diff
-@@ -262,9 +262,41 @@ pub fn show_toast(window: &WebviewWindow, message: &str) {
-     }
- }
- 
-+/// The file the last finished download wrote, so its toast can show it in the file manager.
-+/// The page only asks for "the last download"; it never names a path itself.
-+#[derive(Default)]
-+pub struct LastDownload(pub std::sync::Mutex<Option<PathBuf>>);
-+
-+/// The success toast for a download that knows where its file went: a click on it shows the
-+/// file in the file manager. Without a known path it is the plain success toast.
-+pub fn show_download_finished(
-+    window: &WebviewWindow,
-+    path: Option<PathBuf>,
-+    language: Option<String>,
-+) {
-+    let Some(path) = path else {
-+        show_toast(
-+            window,
-+            &get_download_message_with_lang(MessageType::Success, language),
-+        );
-+        return;
-+    };
-+    if let Some(last) = window.app_handle().try_state::<LastDownload>() {
-+        if let Ok(mut slot) = last.0.lock() {
-+            *slot = Some(path);
-+        }
++    const endCancellation = beginBuildCancellation();
++    try {
++      const port = (server.address() as import('net').AddressInfo).port;
++      const download = downloadIcon(
++        `http://127.0.0.1:${port}/icon`,
++        false,
++        2000,
++      );
++      const cancelled = expect(download).rejects.toThrow(
++        `Build cancelled (${signal}).`,
++      );
++      await started;
++      const cancelledAt = performance.now();
++      process.emit(signal, signal);
++      await cancelled;
++      expect(performance.now() - cancelledAt).toBeLessThan(1000);
++    } finally {
++      endCancellation();
++      server.closeAllConnections();
++      await new Promise<void>((resolve) => server.close(() => resolve()));
 +    }
-+    let message = get_download_message_with_lang(MessageType::SuccessReveal, language);
-+    let script = format!(r#"pakeToast("{message}", "reveal_download");"#);
-+    if let Err(error) = window.eval(&script) {
-+        eprintln!("[Pake] Failed to show toast: {error}");
-+    }
-+}
++  },
++);
 +
- pub enum MessageType {
-     Start,
-     Success,
-+    SuccessReveal,
-     Failure,
-     DirectoryFailure,
- }
-@@ -308,13 +340,15 @@ pub fn get_download_message_with_lang(
-         match message_type {
-             MessageType::Start => chinese_start_message,
-             MessageType::Success => chinese_success_message,
-+            MessageType::SuccessReveal => "下载成功，点击在文件夹中显示~",
-             MessageType::Failure => chinese_failure_message,
-             MessageType::DirectoryFailure => "无法保存到下载目录~",
-         }
-     } else {
-         match message_type {
-             MessageType::Start => default_start_message,
-             MessageType::Success => default_success_message,
-+            MessageType::SuccessReveal => "Download successful, click to show in folder~",
-             MessageType::Failure => default_failure_message,
-             MessageType::DirectoryFailure => "Cannot save to the download directory~",
-         }
++it('does not try another favicon source after the build is cancelled', async () => {
++  const endCancellation = beginBuildCancellation();
++  const fetchMock = vi.fn(async () => {
++    process.emit('SIGINT', 'SIGINT');
++    throw new Error('Request interrupted');
++  });
++  vi.stubGlobal('fetch', fetchMock);
++  try {
++    await expect(
++      handleIcon(
++        {
++          ...DEFAULT_PAKE_OPTIONS,
++          name: 'CancelProbe',
++          identifier: 'com.pake.cancelprobe',
++        },
++        'https://example.com',
++      ),
++    ).rejects.toThrow('Build cancelled (SIGINT).');
++    expect(fetchMock).toHaveBeenCalledTimes(1);
++  } finally {
++    endCancellation();
++  }
++});
++
+ afterEach(() => {
+   vi.unstubAllGlobals();
+   vi.restoreAllMocks();
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1436** (2026-11-14): feat: accept macOS Icon Composer .icon files (#1433) (@adamsiwiec1)
+- **PR #1435** (2026-11-14): fix(cli): cancel in-flight icon downloads with builds (@yuxino)
+- **PR #1434** (2026-11-14): fix(windows): open external links from iframes in the system browser (@crispyaus)
 - **PR #1430** (closed): marge (@MrCrystal2)
 - **PR #1429** (closed): sync (@tyh0615)
 - **PR #1428** (closed): updating (@fejorca)
-- **PR #1426** (2026-10-30): fix: decode percent-encoded file names when saving downloads (@NgoQuocViet2001)
-- **PR #1422** (2026-10-26): fix: update vitest, add vite peer and remove unused terser plugin for advisories (@jakero)
-- **PR #1421** (2026-10-26): fix: update Cargo.lock crates for published RustSec advisories (@jakero)
 
 ---
 
@@ -2135,31 +1561,52 @@ devbox. Not verified by hand: the toast click on a real download.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. linux): ask before a page uses the camera or microphone, and recover from a fail
+## X. icon): ship the .icns when Assets.car cannot be compiled
 
 **RULE**:
-When implementing operations in `src-tauri/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tw93/Pake. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `bin/helpers/icon-composer.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tw93/Pake. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `404369a5`: linux): ask before a page uses the camera or microphone, and recover from a failed load. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ec5af5c3`: icon): ship the .icns when Assets.car cannot be compiled. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src-tauri/Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `bin/helpers/icon-composer.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "gtk",
+    '✼ actool could not compile the .icon package (tauri-apps/tauri#15315, #16386). The app will use the .icns icon instead.',
+  // Tauri runs actool itself for a .icon in bundle.icon and fails the whole
+  // build when actool errors, so only a precompiled Assets.car goes in; when
+  // that could not be built, the app ships with the .icns alone.
+  if (bundleIcon.length === 0) {
+    bundleIcon.push(`icons/${safeAppName}.icon`);
+  }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+  // Xcode 27.1+ sometimes leaves ibtoold in a bad state (tauri-apps/tauri#16386).
+    '✼ actool failed to compile the .icon package; retrying after stopping ibtoold (tauri-apps/tauri#16386).',
+  );
+  await execa('pkill', ['-x', 'ibtoold'], {
+    stdin: 'ignore',
+    reject: false,
+  });
+
+  if (await compileAssetsCar(iconPackagePath, dest)) {
+    return dest;
+  }
+
+  logger.warn(
+    '✼ Could not precompile Assets.car. The .icon will be passed to Tauri, which may hit the same actool issue (tauri-apps/tauri#15315, #16386). The .icns fallback stays in bundle.icon.',
+  } else {
+    bundleIcon.push(`icons/${safeAppName}.icon`);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `404369a5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ec5af5c3` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

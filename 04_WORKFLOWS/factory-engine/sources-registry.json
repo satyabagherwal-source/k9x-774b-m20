@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-14T18:34:46.825Z",
-    "lastVerified": "2026-11-14T18:34:46.825Z",
+    "lastChecked": "2026-11-14T19:03:29.935Z",
+    "lastVerified": "2026-11-14T19:03:29.935Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -465,22 +465,21 @@
     "revisionIdentifier": "baeabbfe"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-14T17:51:16.911Z",
-    "lastVerified": "2026-11-14T17:51:16.911Z",
+    "lastChecked": "2026-11-14T19:03:25.898Z",
+    "lastVerified": "2026-11-14T19:03:25.898Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "7b6765bc8c88f83811e97b8f40f558299329d2bb3075c1f4e90d605bb6ed9228",
-    "promotedRulesCount": 0,
+    "contentHash": "76107d486b9adc06837896f4e9180b09c77c8f623a73a0d497d124a6fd6b516c",
+    "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "4cba3006"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -1598,9 +1597,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-11-14T09:48:03.151Z",
+    "lastChecked": "2026-11-14T19:03:16.950Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-11-14T09:48:03.151Z"
+    "lastVerified": "2026-11-14T19:03:16.950Z"
   },
   "t8y2-dbx": {
     "name": "t8y2/dbx",
@@ -5374,14 +5373,14 @@
     "officialUrl": "https://github.com/aquasecurity/trivy",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-13T13:50:24.954Z",
-    "lastVerified": "2026-11-13T13:50:24.954Z",
+    "lastChecked": "2026-11-14T19:03:18.288Z",
+    "lastVerified": "2026-11-14T19:03:18.288Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aquasecurity-trivy",
-    "contentHash": "013d168f1e5849cad8101ec6468ffe101a9c5d0c4c4e17ec7f6b9ca38ba28b3d",
+    "contentHash": "b431e785e7fdee36a740becd5b3628c1e458a86948ed6863bcafb7a327aec1cf",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6833,9 +6832,9 @@
   "brianegan-flutter_architecture_samples": {
     "name": "flutter_architecture_samples",
     "officialUrl": "https://github.com/brianegan/flutter_architecture_samples",
-    "lastChecked": "2026-11-11T09:39:35.313Z",
+    "lastChecked": "2026-11-14T19:03:12.040Z",
     "revisionIdentifier": "d898d132",
-    "lastVerified": "2026-11-11T09:39:35.313Z"
+    "lastVerified": "2026-11-14T19:03:12.040Z"
   },
   "kcl-lang-kcl": {
     "name": "kcl",
@@ -7035,9 +7034,9 @@
   "lindb-lindb": {
     "name": "lindb",
     "officialUrl": "https://github.com/lindb/lindb",
-    "lastChecked": "2026-11-13T12:51:45.202Z",
+    "lastChecked": "2026-11-14T19:03:19.540Z",
     "revisionIdentifier": "612070e1",
-    "lastVerified": "2026-11-13T12:51:45.202Z"
+    "lastVerified": "2026-11-14T19:03:19.540Z"
   },
   "vercel-labs-opensrc": {
     "name": "opensrc",
@@ -8357,13 +8356,13 @@
     "officialUrl": "https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-09T07:20:48.579Z",
-    "lastVerified": "2026-11-09T07:20:48.579Z",
+    "lastChecked": "2026-11-14T19:03:09.543Z",
+    "lastVerified": "2026-11-14T19:03:09.543Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
-    "contentHash": "1bf5d705ced4dabad949b9055a0a829da1e4616b53939a30dcf583ba7608b3f3",
-    "promotedRulesCount": 2,
+    "contentHash": "97f66e1e56fa1cb298418a2c6962387a2c0a8b6d9fb2587ccb8d6ae79fb0ed19",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -9293,14 +9292,14 @@
     "officialUrl": "https://github.com/tw93/Pake",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-13T04:50:08.203Z",
-    "lastVerified": "2026-11-13T04:50:08.203Z",
+    "lastChecked": "2026-11-14T19:03:10.222Z",
+    "lastVerified": "2026-11-14T19:03:10.222Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tw93-pake",
-    "contentHash": "37009f43a30ef0a16c4d27401dee14190b2b7413b3e80a9213018b60e97bfdd0",
+    "contentHash": "02cbae7b6441cc980dfad1f730d2c9fd10b226f814e7d5403d048d66bbe684f0",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

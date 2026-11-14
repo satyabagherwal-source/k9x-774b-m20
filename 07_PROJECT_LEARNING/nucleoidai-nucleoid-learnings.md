@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `4cba3006`  
+> **Source Version**: `c10b67e8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T14:27:57.519Z  
+> **Timestamp**: 2026-11-14T19:03:25.903Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T14:22:56.884Z  
+> **Harvest Timestamp**: 2026-11-14T19:03:25.898Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1739,76 +1739,220 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4cba3006` (2026-11-14)
-**Commit Message**: Resume NUC 106 Intersect and Except Reasoning Selections
+### Incident Patch 1: `c10b67e8` (2026-11-14)
+**Commit Message**: Draft NUC 107 Python-Style Self Parameters
 
-Claims the stale Draft allocated in cc21315a (Draft NUC 106 Intersect and
-Except Reasoning Selections, 2026-11-11T22:31:30-05:00). It waited 2 days,
-10 hours and 34 minutes without an allocation or claim commit. This
-continuous cycle completes it with a fresh baseline, candidate worktree,
-proposer and evaluator, under its Reasoning enhancement category.
+Category: Language compatibility, drawn uniformly at random (index 4 of the
+five eligible categories in NUC 1's registry, p = 1/5, no redraw) for a
+continuous /nuc-proposal cycle, so token comparison is skipped for this
+category.
+
+Requested change: let a method written with `def` directly in a class's
+indented body declare its receiver explicitly as a leading `self`
+parameter, as Python methods do. `def deposit(self, amount):` declares
+exactly what `def deposit(amount):` declares, and
+`def __init__(self, balance):` declares exactly what `def init(balance):`
+declares. The receiver parameter is the keyword `self`, or its alias
+`this`, followed by `,` or `)`; it adds no binding, no token, keyword,
+syntax-tree node or runtime path. `def __init__` without a leading `self`,
+`super().__init__(...)` and `class Dog(Animal):` keep their accepted
+meanings, and `self` parameters keep their accepted error everywhere else.
+Only inputs that raised
+SyntaxError("Expected a parameter but found keyword 'this'") change.
+
+This allocation changes only the Draft and its two index rows.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01AJtz8gLvp2aQjMS8yXtmh6
+Claude-Session: https://
 
+**File**: `docs/nuc-0000.md` (modified, +2/-0)
+```diff
+@@ -150,6 +150,7 @@ Created: 31-Jul-2026
+ | [89](nuc-0089.md) | Named Function Declarations | Accepted |
+ | [92](nuc-0092.md) | List Comprehensions | Accepted |
+ | [99](nuc-0099.md) | SQL-Style Inequality | Rejected: full suite fails 14 corpus-count assertions |
++| [107](nuc-0107.md) | Python-Style Self Parameters | Draft |
+ 
+ ### Documentation
+ 
+@@ -267,6 +268,7 @@ Created: 31-Jul-2026
+ | [104](nuc-0104.md) | Any and All Class References | Standards Track | Syntax enhancement | Accepted |
+ | [105](nuc-0105.md) | List and Population Sorting by Key | Standards Track | Utility enhancement | Accepted |
+ | [106](nuc-0106.md) | Intersect and Except Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
++| [107](nuc-0107.md) | Python-Style Self Parameters | Standards Track | Language compatibility | Draft |
+ 
+ ## Copyright
+ 
+```
 
+**File**: `docs/nuc-0107.md` (added, +103/-0)
+```diff
+@@ -0,0 +1,103 @@
++# NUC 107 -- Python-Style Self Parameters
++
++```
++NUC: 107
++Title: Python-Style Self Parameters
++Author: Can Mingir <canmingir@gmail.com>
++Status: Draft
++Type: Standards Track
++Category: Language compatibility
++Created: 14-Nov-2026
++Requires: 8, 47, 87
++```
++
++## Abstract
++
++- Lets a method written with `def` directly in a class's indented body
++  declare its receiver explicitly as a leading `self` parameter, as Python
++  methods do:
++  - `def deposit(self, amount):` declares exactly what
++    `def deposit(amount):` declares;
++  - `def area(self) => self.w * self.h` declares exactly what
++    `def area() => self.w * self.h` declares.
++
++  Calls pass no receiver: `account.deposit(5)` runs as before.
++- `def __init__(self, ...)` declares the class's `init` constructor, as
++  Python's `__init__` does: `def __init__(self, balance):` declares exactly
++  what `def init(balance):` declares, so `Account(100)` runs it.
++- The receiver parameter is the keyword `self`, or its accepted alias
++  `this`, followed by `,` or `)`. It adds no binding: the body reads the
++  receiver through `self` or `this`, as every accepted method does.
++- Every accepted program keeps its parse and behavior:
++  - `def __init__(...)` without a leading `self` stays an ordinary method
++    named `__init__`;
++  - `super().__init__(...)` keeps its accepted behavior;
++  - `class Dog(Animal):` still declares a constructor parameter named
++    `Animal`, not a parent class.
++- Only inputs that were parse errors at the accepted revision change. A
++  leading `self` raised
++  `SyntaxError("Expected a parameter but found keyword 'this'")`, so the
++  whole program did not run. `self` and `this` parameters keep that error
++  everywhere else: in top-level functions, function literals, arrows and
++  lambdas, class headers such as `class P(self)`, bare signatures, and
++  methods outside a class's indented body.
++- No token, keyword, syntax-tree node or runtime path is added: each form
++  parses to the tree its accepted spelling parses to.
++
++## Motivation
++
++- Python is among the languages that language models read and write most,
++  and its classes declare every method's receiver as `self`. A model writing
++  a Nucleoid world model writes the class the way it writes Python:
++
++  ```
++  class Account:
++      def __init__(self, balance):
++          self.balance = balance
++      def deposit(self, amount):
++          self.balance = self.balance + amount
++          return self.balance
++  account = Account(100)
++  account.deposit(5)
++  ```
++
++  The accepted parser rejects the whole program with
++  `SyntaxError("Expected a parameter but found keyword 'this'")` at line 2,
++  column 22, and nothing runs. Writing `def init(balance):` and
++  `def deposit(amount):` makes it run and return `105`, with the same
++  method bodies.
++- The two spellings differ only where Python declares what Nucleoid leaves
++  implicit: the receiver parameter and the constructor's name. Nucleoid
++  methods already read their receiver as `self`, the accepted alias of
++  `this`, so the bodies need no change.
++- Accepted Nucleoid already welcomes familiar forms from Python and its
++  neighbours: [NUC 57](nuc-0057.md)'s Python-style lambdas,
++  [NUC 87](nuc-0087.md)'s `self.x` initializing parameters, which Dart and
++  TypeScript also have, and [NUC 92](nuc-0092.md)'s list comprehensions.
++  Explicit receivers are the Python habit that still fails a whole program.
++- Prior art: Python's explicit `self` and `__init__`; Rust's `&self` method
++  receivers, as in `fn area(&self) -> f64`; and TypeScript's `this`
++  parameters, as in `function f(this: Window)`.
++
++## Rationale
++
++- Pending: the proposer completes this section.
++
++## Specification
++
++- Pending: the proposer completes this section.
++
++## Errors
++
++- Pending: the proposer completes this section.
++
++## Reference Implementation
++
++- Pending: the proposer completes this section.
++
++## Copyright
++
++Copyright 2020 Nucleoid
++
++This document is licensed under the Apache License, Version 2.0. See
++[LICENSE](../LICENSE) for the full text.
+```
 
 ---
 
-### Incident Patch 2: `9abb3434` (2026-11-14)
-**Commit Message**: NUC 105 List and Population Sorting by Key
+### Incident Patch 2: `52cad61b` (2026-11-14)
+**Commit Message**: NUC 106 Intersect and Except Reasoning Selections
 
 Accepted under the automatic acceptance rule, in a continuous
-/nuc-proposal cycle (Utility enhancement): the frozen candidate meets every
-hard criterion and passes every policy check. The cycle picked NUC 105 up
-as a stale Draft, allocated in e2ade2a2, under the claim 120db05d, with a
-fresh baseline, candidate, proposer, Rust improvement pass and evaluator.
+/nuc-proposal cycle (Reasoning enhancement): the frozen candidate meets
+every hard criterion and passes every policy check. The cycle picked
+NUC 106 up as a stale Draft, allocated in cc21315a, under the claim
+4cba3006, with a fresh baseline, candidate, proposer, Rust improvement
+pass and evaluator.
 
-Adds the read-only list and population query `sortBy`: `xs.sortBy(f)`
-returns a new list of the receiver's items in stable ascending order of
-`f(item)`, comparing keys as `<` does, and a key that cannot be compared
-with itself makes it undefined, as it makes `maxBy` and `minBy`. It never
-writes its receiver, unlike `sort`, so `ranked = scores.sortBy(s -> s)` is
-a standing ordering. When every key compares with itself it equals the
-accepted spelling
-`xs.map(x -> [f(x), x]).sort((a, b) -> a[0] < b[0] ? -1 : 0).map(p -> p[1])`.
-Only `sortBy` calls on lists and class populations change; they raised
-TypeError("<receiver>.sortBy is not a function").
+Adds the reasoning pipeline stages `SELECTION |> intersect(OTHER)` and
+`SELECTION |> except(OTHER)`. They keep the steps of SELECTION whose node
+OTHER selects, or does not select, in SELECTION's order and with their
+fields, walk direction and NUC 82 distances. OTHER is any selection: a
+reference, `model`, a prefix stage or a pipeline. It is evaluated once per
+application, and an undefined OTHER makes the selection undefined. A
+binding named intersect or except shadows its stage, standing selections
+stay live through both sides, and the stages render as
+`SOURCE|>intersect(OTHER)`. Only inputs that were whole-program parse
+errors at the accepted revision change: they raised
+TypeError("intersect is not an operation") or
+TypeError("except is not an operation"), or, for unpacking 
 
-Hard criteria, checked by the independent evaluator and again by the caller
-on the integrated tree: build, warning-denied Clippy on 1.97.1 and
-
-**File**: `README.md` (modified, +26/-0)
+**File**: `README.md` (modified, +30/-0)
 ```diff
-@@ -2167,6 +2167,32 @@ assert([a.color, b.color], [null, "red"])
-   before. See the
-   [root contract](nucleoid.spec.md#any-and-all-class-references).
+@@ -2193,6 +2193,36 @@ assert(tasks.map(task -> task.name), ["ship", "plan", "build", "test"])
+   and strings as text. See the
+   [root contract](nucleoid.spec.md#list-and-population-sorting-by-key).
  
-+## List and population sorting by key
++## Intersect and except reasoning selections
 +
-+**Sorting by key keeps a live agenda while the list keeps its order**
++**Intersect and except tell apart what two symptoms rest on**
 +
 +```nuc
-+tasks = [{name: "ship", due: 3}, {name: "plan", due: 1}, {name: "build", due: 2}]
-+agenda = tasks.sortBy(task -> task.due)
-+assert(agenda.map(task -> task.name), ["plan", "build", "ship"])
-+tasks.push({name: "test", due: 2})
-+assert(agenda.map(task -> task.name), ["plan", "build", "test", "ship"])
-+tasks[2].due = 4
-+assert(agenda.map(task -> task.name), ["plan", "test", "ship", "build"])
-+assert(tasks.map(task -> task.name), ["ship", "plan", "build", "test"])
++fan = 2
++load = 40
++voltage = 230
++current = load / voltage * 100
++heat = current * 3 + fan
++noise = fan * 10
++shared = why heat |> intersect(why noise)
++own = why heat |> except(why noise)
++assert(shared.map(step -> step.node), ["fan"])
++assert(own.map(step -> step.node), ["heat", "current", "load", "voltage"])
++noise = fan * 10 + load
++assert(shared.map(step -> step.node), ["fan", "load"])
++assert(own.map(step -> step.node), ["heat", "current", "voltage"])
 +```
 +
-+- [NUC 105](docs/nuc-0105.md) adds `sortBy(selector)` to lists and class
-+  populations. `tasks.sortBy(task -> task.due)` is a new list of the tasks
-+  themselves in ascending order of their due days, and tasks due the same day
-+  keep their list order, so `test` follows `build` until `build` moves to
-+  day 4.
-+- `agenda` is a live declaration that follows new tasks and changed days,
-+  while `tasks` keeps its own order, where `sort` would reorder `tasks`
-+  itself. Keys compare as `<` compares them, so numbers compare as numbers
-+  and strings as text. See the
-+  [root contract](nucleoid.spec.md#list-and-population-sorting-by-key).
++- [NUC 106](docs/nuc-0106.md) adds the reasoning stages `|> intersect(OTHER)`
++  and `|> except(OTHER)`. `why heat |> intersect(why noise)` keeps the steps
++  of the heat's explanation whose node the noise's explanation also selects,
++  here the fan, and `why heat |> except(why noise)` keeps the others: what
++  only the heat rests on.
++- Both keep the first selection's order and every field of the steps they
++  keep, and they stay live: once the noise also reads the load, the load
++  moves from the heat's own causes to the shared ones. See the
++  [root contract](nucleoid.spec.md#intersect-and-except-reasoning-selections).
 +
  ## Reactive list flattening
  
@@ -1817,132 +1961,162 @@ on the integrated tree: build, warning-denied Clippy on 1.97.1 and
 
 **File**: `dataset/nucleoid.spec.jsonl` (modified, +22/-16)
 ```diff
-@@ -731,19 +731,25 @@
- {"id":"spec-0731","description":"Nucleoid writes class level rules and conditionals with all and any","code":"class Order(total):\n    this.total = total\nsmall = Order(5)\nall Order.big = all Order.total > 10\nif any Order.total > 100:\n    all Order.vip = true\nlarge = Order(200)\nassert([small.big, large.big], [false, true])\nassert([small.vip, large.vip], [null, true])\nsmall.total = 150\nassert([small.big, small.vip], [true, true])\nlarge.total = 8\nassert(large.big, false)\nall Order.big = all Order.total > 100\n[small.big, large.big]","return":"[true,false]"}
- {"id":"spec-0732","description":"Nucleoid states class predicates with all and any","code":"class Human(name: str):\n    this.name = name\nplato = Human(\"Plato\")\nall Human is mortal\nany Human is wise\nsocrates = Human(\"Socrates\")\nassert([plato.mortal, socrates.mortal], [true, true])\nassert([plato.wise, socrates.wise], [true, true])\nassert((why socrates.mortal)[0].rule, \"$Human.mortal = true\")\nplato.wise = false\nassert([plato.wise, socrates.wise], [false, true])\nsocrates.mortal","return":"true"}
- {"id":"spec-0733","description":"Nucleoid keeps all and any as names and quantifiers beside class references","code":"class Item(x):\n    this.x = x\nall = [1, 2, 3]\nany = 2\nall Item.big = all Item.x > any\nfirst = Item(1)\nthird = Item(3)\nassert([first.big, third.big], [false, true])\nassert(all n in all: n > any, false)\nassert(any n in all: n > any, true)\nassert(all.length + any, 5)\nany = 0\nassert([first.big, third.big], [true, true])\nassert(all i in Item: i.big, true)\nfirst.big","return":"true"}
--{"id":"spec-0734","description":"Nucleoid flattens nested lists by one level","code":"nested = [[1, 2], 2, [[3, [4]]], [], \"ab\"]\nonce = nested.flat()\ntwice = once.flat(1)\nassert(once, [1, 2, 2, [3, [4]], \"ab\"])\nassert(twice, [1, 2, 2, 3, [4], \"ab\"])\nassert(nested, [[1, 2], 2, [[3, [4]]], [], \"ab\"])\nnested.push([[5]], 6)\nassert(once, [1, 2, 2, [3, [4]], \"ab\", [5], 6])\nassert(twice, [1, 2, 2, 3, [4], \"ab\", 5, 6])\ntwice.length","return":"8"}
--{"id":"spec-0735","description":"Nucleoid flattens lists to a given depth","code":"deep = [1, [2, [3, [4, [5]]]], [[6]]]\ntwo = deep.flat(2)\nthree = deep.flat(3)\nsame = deep.flat(0)\nassert(two, [1, 2, 3, [4, [5]], 6])\nassert(three, [1, 2, 3, 4, [5], 6])\nassert(same, [1, [2, [3, [4, [5]]]], [[6]]])\ndeep.push([[7, [8]]])\nassert(two, [1, 2, 3, [4, [5]], 6, 7, [8]])\nassert(three, [1, 2, 3, 4, [5], 6, 7, 8])\nassert(same, deep)\nthree.length","return":"8"}
--{"id":"spec-0736","description":"Nucleoid keeps flattened lists live","code":"shifts = [[\"ana\", \"bo\"], [\"cy\"]]\nstaff = shifts.flat()\nsize = staff.length\nassert([staff, size], [[\"ana\", \"bo\", \"cy\"], 3])\nshifts.push([\"di\"])\nassert([staff, size], [[\"ana\", \"bo\", \"cy\", \"di\"], 4])\nshifts = [[\"eve\"], [], [\"fay\", \"gus\"]]\nassert([staff, size], [[\"eve\", \"fay\", \"gus\"], 3])\nshifts.shift()\nassert([staff, size], [[\"fay\", \"gus\"], 2])\nsize","return":"2"}
--{"id":"spec-0737","description":"Nucleoid flattens lists in class level rules","code":"class Team(squads):\n    this.squads = squads\n$Team.members = $Team.squads.flat()\nred = Team([[\"ana\", \"bo\"], [\"cy\"]])\nblue = Team([[\"di\"]])\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\"], [\"di\"]])\nred.squads.push([\"ed\"])\nblue.squads = [[\"fay\"], [\"gus\", \"hal\"]]\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\", \"ed\"], [\"fay\", \"gus\", \"hal\"]])\nred.members.length","return":"4"}
--{"id":"spec-0738","description":"Nucleoid queries the cells of flattened grids","code":"grid = [[1, 0, 2], [0, 3, 2]]\ncells = grid.flat()\ntotal = cells.sum()\ncolors = cells.distinct()\nfilled = cells.count(cell => cell > 0)\nassert([total, colors, filled], [8, [1, 0, 2, 3], 4])\ngrid.push([5, 0, 0])\nassert([total, colors, filled], [13, [1, 0, 2, 3, 5], 5])\ngrid = [[4, 4], [0]]\n[total, colors, filled]","return":"[8,[4,0],2]"}
--{"id":"spec-0739","description":"Nucleoid rolls back failed flattening updates","code":"rows = [[1, [2]], [3]]\ncells = rows.flat()\ntry:\n    rows.push([4])\n    assert(cells, [1, [2], 3, 4])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert([rows, cells], [[[1, [2]], [3]], [1, [2], 3]])\ntry:\n    cells = rows.flat(2)\n    assert(cells, [1, 2, 3])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nrows.push([[5]])\ncells","return":"[1,[2],3,[5]]"}
--{"id":"spec-0740","description":"Nucleoid tests membership with in and not in","code":"tags = [\"red\", \"blue\"]\nassert(\"red\" in tags, true)\nassert(\"green\" in tags, false)\nassert(\"green\" not in tags, true)\nassert(\"red\" not in tags, false)\nassert([1, 2] in [[1, 2], [3]], true)\nassert({ x: 1 } in [{ x: 1 }, null], true)\nassert(null in [1, null], true)\nassert(Number.NaN in [Number.NaN], false)\nassert(\"ell\" in \"hello\", true)\nassert(1 in \"a1\", true)\nassert(\"\" in \"abc\", tr
+@@ -737,19 +737,25 @@
+ {"id":"spec-0737","description":"Nucleoid ranks instances by key in class level rules","code":"class Runner(name, time):\n    this.name = name\n    this.time = time\n$Runner.place = Runner.sortBy(runner -> runner.time).indexOf($Runner) + 1\nana = Runner(\"ana\", 31)\nbo = Runner(\"bo\", 28)\ncy = Runner(\"cy\", 31)\nassert([ana.place, bo.place, cy.place], [2, 1, 3])\nbo.time = 33\nassert([ana.place, bo.place, cy.place], [1, 3, 2])\nRunner(\"di\", 25)\n[ana.place, bo.place, cy.place]","return":"[2,4,3]"}
+ {"id":"spec-0738","description":"Nucleoid waits for every sortBy key to be comparable","code":"class Job(name):\n    this.name = name\nqueue = Job.sortBy(job -> job.due)\npress = Job(\"press\")\npress.due = new Date(\"2026-12-01\")\ncoat = Job(\"coat\")\nassert(queue, null)\ncoat.due = new Date(\"2026-11-20\")\nassert(queue, [coat, press])\nweld = Job(\"weld\")\nweld.due = new Date(\"2026-11-28\")\nassert(queue, [coat, weld, press])\nweld.due = 0 / 0\nassert(queue, null)\nweld.due = coat.due\nqueue.map(job -> job.name)","return":"[\"coat\",\"weld\",\"press\"]"}
+ {"id":"spec-0739","description":"Nucleoid rolls back failed key sorting updates","code":"parcels = [{id: 1, code: \"B2\"}, {id: 2, code: \"a9\"}]\nlabels = parcels.sortBy(parcel -> parcel.code.toUpperCase()).map(parcel -> parcel.id)\nfailure = \"\"\ntry:\n    parcels.push({id: 3, code: 7})\ncatch error:\n    failure = error\nassert(failure, TypeError(\"number.toUpperCase is not a function\"))\nassert([parcels.length, labels], [2, [2, 1]])\nparcels.push({id: 4, code: \"a1\"})\nassert(labels, [4, 2, 1])\ntry:\n    parcels[0].code = \"a0\"\n    assert(labels, [1, 4, 2])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nlabels","return":"[4,2,1]"}
+-{"id":"spec-0740","description":"Nucleoid flattens nested lists by one level","code":"nested = [[1, 2], 2, [[3, [4]]], [], \"ab\"]\nonce = nested.flat()\ntwice = once.flat(1)\nassert(once, [1, 2, 2, [3, [4]], \"ab\"])\nassert(twice, [1, 2, 2, 3, [4], \"ab\"])\nassert(nested, [[1, 2], 2, [[3, [4]]], [], \"ab\"])\nnested.push([[5]], 6)\nassert(once, [1, 2, 2, [3, [4]], \"ab\", [5], 6])\nassert(twice, [1, 2, 2, 3, [4], \"ab\", 5, 6])\ntwice.length","return":"8"}
+-{"id":"spec-0741","description":"Nucleoid flattens lists to a given depth","code":"deep = [1, [2, [3, [4, [5]]]], [[6]]]\ntwo = deep.flat(2)\nthree = deep.flat(3)\nsame = deep.flat(0)\nassert(two, [1, 2, 3, [4, [5]], 6])\nassert(three, [1, 2, 3, 4, [5], 6])\nassert(same, [1, [2, [3, [4, [5]]]], [[6]]])\ndeep.push([[7, [8]]])\nassert(two, [1, 2, 3, [4, [5]], 6, 7, [8]])\nassert(three, [1, 2, 3, 4, [5], 6, 7, 8])\nassert(same, deep)\nthree.length","return":"8"}
+-{"id":"spec-0742","description":"Nucleoid keeps flattened lists live","code":"shifts = [[\"ana\", \"bo\"], [\"cy\"]]\nstaff = shifts.flat()\nsize = staff.length\nassert([staff, size], [[\"ana\", \"bo\", \"cy\"], 3])\nshifts.push([\"di\"])\nassert([staff, size], [[\"ana\", \"bo\", \"cy\", \"di\"], 4])\nshifts = [[\"eve\"], [], [\"fay\", \"gus\"]]\nassert([staff, size], [[\"eve\", \"fay\", \"gus\"], 3])\nshifts.shift()\nassert([staff, size], [[\"fay\", \"gus\"], 2])\nsize","return":"2"}
+-{"id":"spec-0743","description":"Nucleoid flattens lists in class level rules","code":"class Team(squads):\n    this.squads = squads\n$Team.members = $Team.squads.flat()\nred = Team([[\"ana\", \"bo\"], [\"cy\"]])\nblue = Team([[\"di\"]])\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\"], [\"di\"]])\nred.squads.push([\"ed\"])\nblue.squads = [[\"fay\"], [\"gus\", \"hal\"]]\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\", \"ed\"], [\"fay\", \"gus\", \"hal\"]])\nred.members.length","return":"4"}
+-{"id":"spec-0744","description":"Nucleoid queries the cells of flattened grids","code":"grid = [[1, 0, 2], [0, 3, 2]]\ncells = grid.flat()\ntotal = cells.sum()\ncolors = cells.distinct()\nfilled = cells.count(cell => cell > 0)\nassert([total, colors, filled], [8, [1, 0, 2, 3], 4])\ngrid.push([5, 0, 0])\nassert([total, colors, filled], [13, [1, 0, 2, 3, 5], 5])\ngrid = [[4, 4], [0]]\n[total, colors, filled]","return":"[8,[4,0],2]"}
+-{"id":"spec-0745","description":"Nucleoid rolls back failed flattening updates","code":"rows = [[1, [2]], [3]]\ncells = rows.flat()\ntry:\n    rows.push([4])\n    assert(cells, [1, [2], 3, 4])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert([rows, cells], [[[1, [2]], [3]], [1, [2], 3]])\ntry:\n    cells = rows.flat(2)\n    assert(cells, [1, 2, 3])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nrows.push([[5]])\ncells","return":"[1,[2],3,[5]]"}
+-{"id":"spec-0746","description":"Nucleoid tests membership with in and not in","code":"tags = [\"red\", \"blue\"]\nassert(\"red\" in tags, true)\nassert(\"green\" in tags, false)\nassert(\"green\" not in tags, true)\nassert(\"red\" not in tags, false)\nassert([1, 2] in [[1, 2], [3]], true)\nassert({ x: 1 } in [{ x: 1 }, null], true)\nassert(null in [1, nul
 ```
 
-**File**: `dataset/nucleoid.synth.69.jsonl` (added, +8/-0)
+**File**: `dataset/nucleoid.synth.70.jsonl` (added, +10/-0)
 ```diff
-@@ -0,0 +1,8 @@
-+{"id":"synth-69-0001","description":"SortBy orders records by a numeric key and keeps ties in list order","code":"tasks = [{name: \"ship\", due: 3}, {name: \"plan\", due: 1}, {name: \"test\", due: 3}, {name: \"build\", due: 2}]\nagenda = tasks.sortBy(task -> task.due)\nagenda.map(task -> task.name)","return":"[\"plan\",\"build\",\"ship\",\"test\"]"}
-+{"id":"synth-69-0002","description":"SortBy compares string keys as text, by code point","code":"codes = [{code: \"B12\"}, {code: \"A7\"}, {code: \"B3\"}]\ncodes.sortBy(item -> item.code).map(item -> item.code)","return":"[\"A7\",\"B12\",\"B3\"]"}
-+{"id":"synth-69-0003","description":"A negated key sorts numbers in descending order","code":"scores = [{name: \"ana\", points: 9}, {name: \"bo\", points: 3}, {name: \"cy\", points: 7}]\nscores.sortBy(score -> -score.points).map(score -> score.name)","return":"[\"ana\",\"cy\",\"bo\"]"}
-+{"id":"synth-69-0004","description":"A sorted declaration follows its list while the list keeps its own order","code":"queue = [{id: 1, eta: 30}, {id: 2, eta: 10}]\nroute = queue.sortBy(stop -> stop.eta).map(stop -> stop.id)\nqueue.push({id: 3, eta: 20})\nassert(route, [2, 3, 1])\nqueue.map(stop -> stop.id)","return":"[1,2,3]"}
-+{"id":"synth-69-0005","description":"SortBy orders a class population and follows new instances and changed keys","code":"class Runner(name, time):\n    this.name = name\n    this.time = time\nboard = Runner.sortBy(runner -> runner.time)\nana = Runner(\"ana\", 31)\nRunner(\"bo\", 28)\nana.time = 25\nboard.map(runner -> runner.name)","return":"[\"ana\",\"bo\"]"}
-+{"id":"synth-69-0006","description":"A class-level rule ranks every instance by its place in a sorted population","code":"class Bid(who, amount):\n    this.who = who\n    this.amount = amount\n$Bid.place = Bid.sortBy(bid -> -bid.amount).indexOf($Bid) + 1\nada = Bid(\"ada\", 40)\nbo = Bid(\"bo\", 65)\ncy = Bid(\"cy\", 50)\n[ada.place, bo.place, cy.place]","return":"[3,1,2]"}
-+{"id":"synth-69-0007","description":"A key that is not set yet leaves the sorted list null until it is set","code":"class Job(name):\n    this.name = name\nqueue = Job.sortBy(job -> job.due)\npress = Job(\"press\")\npress.due = 5\ncoat = Job(\"coat\")\nassert(queue, null)\ncoat.due = 2\nqueue.map(job -> job.name)","return":"[\"coat\",\"press\"]"}
-+{"id":"synth-69-0008","description":"A selector error rolls back the change that triggered it","code":"labels = [\"b\", \"a\"]\nsorted = labels.sortBy(label -> label.toUpperCase())\nfailure = \"\"\ntry:\n    labels.push(7)\ncatch error:\n    failure = error\n[failure, labels.length, sorted]","return":"[\"TypeError: number.toUpperCase is not a function\",2,[\"a\",\"b\"]]"}
+@@ -0,0 +1,10 @@
++{"id":"synth-70-0001","description":"Intersect keeps the steps of an explanation whose node another explanation also selects, in the first explanation's order","code":"price = 10\nquantity = 3\nrate = 0.2\nsubtotal = price * quantity\ntax = subtotal * rate\nshipping = quantity * 2 + price\n(why tax |> intersect(why shipping)).map(step -> step.node)","return":"[\"price\",\"quantity\"]"}
++{"id":"synth-70-0002","description":"Except keeps what one explanation rests on and another does not","code":"fan = 2\nload = 40\ncurrent = load * 2\nheat = current + fan\nnoise = fan * 10\n(why heat |> except(why noise)).map(step -> step.node)","return":"[\"heat\",\"current\",\"load\"]"}
++{"id":"synth-70-0003","description":"Intersecting two impact selections gives what both inputs move","code":"price = 10\nrate = 0.2\nsubtotal = price * 3\ntax = subtotal * rate\ntotal = subtotal + tax\nfee = rate * 5\n(affects price |> intersect(affects rate)).map(step -> step.node)","return":"[\"tax\",\"total\"]"}
++{"id":"synth-70-0004","description":"A state filter keeps the same steps before or after intersect","code":"a = 1\nb = 2\nc = a + b\nd = c * 2\ne = b + 5\n[(why d |> stated |> intersect(why e)).map(step -> step.node), (why d |> intersect(why e) |> stated).map(step -> step.node)]","return":"[[\"b\"],[\"b\"]]"}
++{"id":"synth-70-0005","description":"A depth stage keeps the same steps before or after intersect, because intersect keeps each step's distance","code":"x = 1\ny = x + 1\nz = y * 2\nw = z + x\n[(why w |> depth(1) |> intersect(why z)).map(step -> step.node), (why w |> intersect(why z) |> depth(1)).map(step -> step.node)]","return":"[[\"z\",\"x\"],[\"z\",\"x\"]]"}
++{"id":"synth-70-0006","description":"A walk after intersect starts from the steps the intersection kept","code":"price = 10\nquantity = 3\nsubtotal = price * quantity\nshipping = quantity * 2\nlabel = shipping + 1\n(why subtotal |> intersect(why shipping) |> affects).map(step -> step.node)","return":"[\"subtotal\",\"shipping\",\"label\"]"}
++{"id":"synth-70-0007","description":"A standing intersection follows a rule rewired on the other side","code":"a = 1\nb = 2\nleft = a + 1\nright = b + 1\ncommon = why left |> intersect(why right)\nright = a + b\ncommon.map(step -> step.node)","return":"[\"a\"]"}
++{"id":"synth-70-0008","description":"Except with a reference drops only that node, and intersect with model keeps every step","code":"price = 10\nquantity = 3\ntax = price * quantity\n[(why tax |> except(tax)).map(step -> step.node), (why tax |> intersect(model)).length]","return":"[[\"price\",\"quantity\"],3]"}
++{"id":"synth-70-0009","description":"A name that holds a selection is a reasoning observer, so it selects nothing as the other selection; the pipeline is written in place","code":"price = 10\ntax = price * 2\nshipping = price + 1\ncauses = why shipping\n[(why tax |> intersect(causes)).length, (why tax |> intersect(why shipping)).length]","return":"[0,1]"}
++{"id":"synth-70-0010","description":"A class-level rule gives every instance its own intersection","code":"class Item(price, qty, fee):\n    this.price = price\n    this.qty = qty\n    this.fee = fee\n$Item.total = $Item.price * $Item.qty\n$Item.cost = $Item.qty + $Item.fee\n$Item.shared = why $Item.total |> intersect(why $Item.cost)\npen = Item(2, 5, 1)\ncup = Item(3, 1, 4)\n[pen.shared.map(step -> step.node), cup.shared.map(step -> step.node)]","return":"[[\"pen.qty\"],[\"cup.qty\"]]"}
 ```
 
-**File**: `docs/README.md` (modified, +55/-1)
+**File**: `docs/README.md` (modified, +63/-3)
 ```diff
-@@ -2458,7 +2458,7 @@ Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md).
- | `Math` | `pow`, `sqrt`, `floor`, `round`, `max`, `min`, `clamp` ([NUC 21](nuc-0021.md)), `lerp` ([NUC 22](nuc-0022.md)), `saturate` ([NUC 23](nuc-0023.md)), `smoothstep(lower, upper, value)` (accepted [NUC 33](nuc-0033.md)), `smootherstep(lower, upper, value)` (accepted [NUC 35](nuc-0035.md)), `remap(start, end, targetStart, targetEnd, value)` (accepted [NUC 39](nuc-0039.md)) |
- | `String` | `String.fromCharCode`; instance `charAt`, `length`, `lower`, `replace`, `replaceAll` (accepted [NUC 42](nuc-0042.md)), `repeat`, `split` |
- | `Date` | `Date()`, `Date(string)`, `Date(number)`, `Date.now()`, `Date.parse()`; instance `getTime`, `getYear`, `toDateString` |
--| `List` | `push`, `pop`, `filter`, `map`, `flatMap` (accepted [NUC 41](nuc-0041.md)), `flat` ([NUC 103](nuc-0103.md)), `reduce`, `find`, `some`, `every`, `slice`, `sort` (in place, [NUC 58](nuc-0058.md)), `join`, `length`, and the queries `at`, `includes`, `indexOf`, `lastIndexOf`, `findIndex`, `findLast`, `findLastIndex` and `concat` ([NUC 61](nuc-0061.md)), `sum` ([NUC 68](nuc-0068.md)), `max` and `min` ([NUC 69](nuc-0069.md)), `distinct` ([NUC 71](nuc-0071.md)), `count(predicate)` ([NUC 73](nuc-0073.md)), `mode` ([NUC 75](nuc-0075.md)), `maxBy` and `minBy` ([NUC 77](nuc-0077.md)), `average` ([NUC 80](nuc-0080.md)), and `median` ([NUC 84](nuc-0084.md)); `sum`, `max`, `min` and `mode` also read as `sum of list` ([NUC 75](nuc-0075.md) revision 2) |
-+| `List` | `push`, `pop`, `filter`, `map`, `flatMap` (accepted [NUC 41](nuc-0041.md)), `flat` ([NUC 103](nuc-0103.md)), `reduce`, `find`, `some`, `every`, `slice`, `sort` (in place, [NUC 58](nuc-0058.md)), `join`, `length`, and the queries `at`, `includes`, `indexOf`, `lastIndexOf`, `findIndex`, `findLast`, `findLastIndex` and `concat` ([NUC 61](nuc-0061.md)), `sum` ([NUC 68](nuc-0068.md)), `max` and `min` ([NUC 69](nuc-0069.md)), `distinct` ([NUC 71](nuc-0071.md)), `count(predicate)` ([NUC 73](nuc-0073.md)), `mode` ([NUC 75](nuc-0075.md)), `maxBy` and `minBy` ([NUC 77](nuc-0077.md)), `average` ([NUC 80](nuc-0080.md)), `median` ([NUC 84](nuc-0084.md)), and `sortBy` ([NUC 105](nuc-0105.md)); `sum`, `max`, `min` and `mode` also read as `sum of list` ([NUC 75](nuc-0075.md) revision 2) |
- | `Class` | the global list of declared types; `Class.length` |
- 
- ```
-@@ -3510,6 +3510,58 @@ top.who
-   [list and population extreme items](../nucleoid.spec.md#list-and-population-extreme-items)
+@@ -3837,6 +3837,59 @@ link.map(step => step.holds)
+   [derivation path selections](../nucleoid.spec.md#derivation-path-selections)
    section.
  
-+### List and population sorting by key
++### Intersect and except selections
 +
 +```
-+scores = [{name: "ben", points: 3}, {name: "ana", points: 9}, {name: "dan", points: 5}, {name: "cy", points: 9}]
-+ranked = scores.sortBy(score -> -score.points)
-+class Bid(who, amount):
-+    this.who = who
-+    this.amount = amount
-+Bid("ada", 40)
-+Bid("bo", 65)
-+book = Bid.sortBy(bid -> bid.amount)
-+assert(ranked.map(score -> score.name), ["ana", "cy", "dan", "ben"])
-+assert(book.map(bid -> bid.who), ["ada", "bo"])
-+scores.push({name: "eve", points: 7})
-+Bid("col", 50)
-+assert(ranked.map(score -> score.name), ["ana", "cy", "eve", "dan", "ben"])
-+assert(book.map(bid -> bid.who), ["ada", "col", "bo"])
-+assert(scores[0].name, "ben")
-+book[1].who
++price = 10
++quantity = 3
++rate = 0.2
++subtotal = price * quantity
++tax = subtotal * rate
++shipping = quantity * 2
++common = tax |> why |> intersect(shipping |> why)
++only = tax |> why |> except(shipping |> why)
++assert(common.map(step => step.node), ["quantity"])
++assert(only.map(step => step.node), ["tax", "subtotal", "rate", "price"])
++shipping = price + quantity
++common.map(step => step.node)
 +```
 +
-+- This is the complete
-+  `Nucleoid sorts lists and populations by key with sortBy` program in
-+  `tests/reference.md`, without its title and expected-return metadata; it
-+  returns `"col"`.
-+- [NUC 105](nuc-0105.md) adds `sortBy(selector)` to lists and class instance
-+  lists. The result is a new list of the items themselves in ascending order
-+  of their selected keys, and items with equal keys keep their receiver
-+  order, so `ana` stays before `cy`. A negated key, such as
-+  `score -> -score.points`, sorts in descending order. An empty list or class
-+  gives `[]`.
-+- The receiver is never written: `scores` keeps its own order, where `sort`
-+  reorders a writable list in place.
-+- Keys compare as `<` compares them: two strings as text and every other pair
-+  as numbers, so dates compare by time. When every key can be compared with
-+  itself, `xs.sortBy(f)` is exactly
-+  `xs.map(x -> [f(x), x]).sort((a, b) -> a[0] < b[0] ? -1 : 0).map(p -> p[1])`.
-+  A key that cannot be compared with itself, such as undefined, NaN or an
-+  object, makes the result undefined, which a declaration stores as `null`.
-+- The selector is required and is called once per item, in order, with only
-+  the item. A missing selector, or one that is not a function, including
-+  `null`, raises `TypeError("sortBy expects a function")`, even on an empty
-+  receiver.
-+- Sorted lists are read-only and live: a declaration follows the list or
-+  population, the arguments and what the selector reads, in class-level rules
-+  too. On a class name, `Name.sortBy(...)` is the population query even when
-+  the class declares an instance method `sortBy`; instances keep calling the
-+  method.
++- This is the complete `Nucleoid compares two explanations with intersect and except`
++  program in `tests/reference.md`, without its title and expected-return
++  metadata; it returns `["price","quantity"]`.
++- [NUC 106](nuc-0106.md) adds the stages `selection |> intersect(other)` and
++  `selection |> except(other)`. `intersect` keeps the steps whose node `other`
++  also selects and `except` the steps whose node it does not, in their order
++  and with their fields unchanged, so `tax |> why |> intersect(shipping |> why)`
++  is what the tax and the shipping both rest on, and
++  `tax |> why |> except(shipping |> why)` what only the tax rests on.
++- `other` is written as a pipeline's source is: a reference, `model`, a prefix
++  stage such as `why shipping` or a pipeline. It is evaluated in place each
++  time the stage applies, and steps are compared by their node, whatever they
++  hold. A name that holds a selection is a reasoning observer, which no
++  selection holds, so the selection is written out, as in
++  `intersect(why shipping)`.
++- The kept steps keep the direction of the most recent walk and their
++  distances, so the stages compose with `stated`, `derived`, `depth`, `diff`,
++  `path` and each other in either order, and a later `why` or `affects` walks
++  from the kept steps. An `other` that is undefined, because a `depth` in it
++  has a `null` limit, makes the selection undefined.
++- An invalid `other` keeps the diagnostics of a pipeline source, such as
++  `TypeError("Cannot explain 1")`. Only `|>` followed by `intersect` or
++  `except` and `(` is a stage; both names stay ordinary everywhere else, and a
++  bare `|> intersect` keeps its parse-time
++  `TypeError("intersect is not an operation")`. A local or parameter,
++  variable, function or class named `intersect` or `except` shadows its stage,
++  as bindings shadow the state filters, `depth`, `diff` and `path`: the stage
++  then raises `TypeError("intersect is not an operation")` or
++  `TypeError("except is not an operation")` before selecting its source.
++- The selection stays live through every observation of both selections,
++  including the steps each one drops. It renders as
++  `selection|>intersect(other)` and `selection|>except(other)`.
 +- The authoritative contract is the
-+  [list and population sorting by key](../nucleoid.spec.md#l
++  [intersect and except reasoning selections](../nucleoid.spec.md#intersect-and-except-reasoning-selections)
++  section.
++
+ ### Live structure
+ 
+ - A reasoning assignment follows both values and graph structure.
+@@ -3872,9 +3925,11 @@ c = b * 2
+   without `diff`, the [NUC 82](nuc-0082.md) candidate adds its `depth` stage
+   without the `depth(x, n)` call form, and the [NUC 83](nuc-0083.md)
+   candidate adds its `diff` as the `|> diff` stage, without the bare `diff`
+-  and its `before` and `after` fields, and the [NUC 88](nuc-0088.md)
+-  candidate adds a `path(target)` stage that NUC 11 does not plan. Other
+-  NUC 11 operations remain proposals, not dependencies.
++  and its `before` and `after` fields, the [NUC 88](nuc-0088.md)
++  candidate adds a `path(target)` stage that NUC 11 does not plan, and the
++  [NUC 106](nuc-0106.md) candidate adds `intersect(other)` and
++  `except(other)` stages, which NUC 11 does not plan either. Other NUC 11
++  operations remain proposals, not dependencies.
+ 
+ ### Quantifiers
+ 
+@@ -4337,6 +4392,11 @@ selection |> depth(limit)             steps within limit steps of where the last
+ reference |> why |> path(target)      how target reaches the reference (NUC 88)
+ reference |> affects |> path(target)  what the reference moves on its way to target (NUC 88)
+ selection |> path(target)             steps on a dependency path to target (NUC 88)
++why a |> intersect(why b)             the causes a and b share (NUC 106)
++why a |> except(why b)                what a rests on and b does not (NUC 106)
++affects a |> intersect(affects b)     what a and b both move (NUC 106)
++selection |> intersect(other)         steps whose node other also selects (NUC 106)
++selection |> except(other)            steps whose node other does not select (NUC 106)
+ all name in collection: condition     true when the condition holds for every member (NUC 62)
+ every name in collection: condition   the same quantifier as all (NUC 98)
+ any name in collection: condition     true when the condition holds for some member (NUC 62)
 ```
 
-**File**: `docs/examples.md` (modified, +28/-0)
+**File**: `docs/examples.md` (modified, +32/-0)
 ```diff
-@@ -3672,6 +3672,34 @@ all Shelf is tracked
-   `$Shelf.tracked = true` for every shelf. See [NUC 104](nuc-0104.md) and the
-   [root contract](../nucleoid.spec.md#any-and-all-class-references).
+@@ -3700,6 +3700,38 @@ assert(ana.stops[0].name, "mill")
+   [NUC 105](nuc-0105.md) and the
+   [root contract](../nucleoid.spec.md#list-and-population-sorting-by-key).
  
-+## List and population sorting by key
++## Intersect and except reasoning selections
 +
-+**Sorting by key keeps every courier's route in order of distance**
++**Except shows what a steel delay moves and a glass delay does not**
 +
 +```nuc
-+class Courier(name, stops):
-+    this.name = name
-+    this.stops = stops
-+$Courier.route = $Courier.stops.sortBy(stop -> stop.km).map(stop -> stop.name)
-+ana = Courier("ana", [{name: "mill", km: 12}, {name: "dock", km: 3}, {name: "farm", km: 7}])
-+bo = Courier("bo", [{name: "pier", km: 5}])
-+assert([ana.route, bo.route], [["dock", "farm", "mill"], ["pier"]])
-+ana.stops.push({name: "yard", km: 1})
-+ana.stops[0].km = 2
-+bo.stops = [{name: "gate", km: 9}, {name: "lane", km: 2}]
-+assert(ana.stops[0].name, "mill")
-+[ana.route, bo.route]
-+# return: [["yard","mill","dock","farm"],["lane","gate"]]
++steel = 5
++glass = 3
++frame = steel + 2
++panes = glass + 1
++assembly = frame + panes
++crating = steel + 1
++delivery = assembly + 4
++invoice = crating * 10
++pushed = affects steel |> except(affects glass)
++shared = affects steel |> intersect(affects glass)
++assert(pushed.map(step -> step.node), ["frame", "crating", "invoice"])
++assert(shared.map(step -> step.node), ["assembly", "delivery"])
++crating = panes + 1
++steel = 9
++[pushed.map(step -> step.node), shared.map(step -> step.holds)]
++# return: [["frame"],[15,19]]
 +```
 +
-+- A class-level rule keeps the route of each courier: the names of its stops
-+  in order of distance. `$Courier.stops.sortBy(stop -> stop.km)` sorts the
-+  courier's own list, so every courier has its own route.
-+- A new stop, a changed distance and a new list of stops re-sort the routes,
-+  while each courier's `stops` keep the order they were listed in. See
-+  [NUC 105](nuc-0105.md) and the
-+  [root contract](../nucleoid.spec.md#list-and-population-sorting-by-key).
++- `affects steel |> except(affects glass)` is what a later steel delivery
++  moves and a later glass delivery does not: the frame, the crating and the
++  invoice. `affects steel |> intersect(affects glass)` is what both delays
++  move: the assembly and the delivery.
++- Both follow the model: once the crating is built from the panes, a steel
++  delay moves only the frame of its own, and the shared steps hold the new
++  dates. See [NUC 106](nuc-0106.md) and the
++  [root contract](../nucleoid.spec.md#intersect-and-except-reasoning-selections).
 +
  ## Reactive list flattening
  
@@ -1951,193 +2125,152 @@ on the integrated tree: build, warning-denied Clippy on 1.97.1 and
 
 **File**: `docs/nuc-0000.md` (modified, +2/-2)
 ```diff
-@@ -123,7 +123,7 @@ Created: 31-Jul-2026
- | [84](nuc-0084.md) | List and Population Medians | Accepted |
- | [100](nuc-0100.md) | Reactive Cotangent | Accepted |
- | [103](nuc-0103.md) | Reactive List Flattening | Accepted |
--| [105](nuc-0105.md) | List and Population Sorting by Key | Draft |
-+| [105](nuc-0105.md) | List and Population Sorting by Key | Accepted |
+@@ -138,7 +138,7 @@ Created: 31-Jul-2026
+ | [83](nuc-0083.md) | Hypothetical Difference Selections | Accepted |
+ | [88](nuc-0088.md) | Derivation Path Selections | Accepted |
+ | [101](nuc-0101.md) | Exact-Depth Reasoning Selections | Rejected: existing selector-case audit fails |
+-| [106](nuc-0106.md) | Intersect and Except Reasoning Selections | Draft |
++| [106](nuc-0106.md) | Intersect and Except Reasoning Selections | Accepted |
  
- ### Reasoning enhancement
+ ### Language compatibility
  
-@@ -265,7 +265,7 @@ Created: 31-Jul-2026
- | [102](nuc-0102.md) | Implicit Receiver Properties | Standards Track | Syntax enhancement | Automatic-Accepted: independent evaluation rejected it because a `while` condition or `suppose` premise in a property value that holds a receiver read and ends in `is NAME: NAME` builds a loop or hypothetical where its written-out spelling runs as separate statements |
+@@ -266,7 +266,7 @@ Created: 31-Jul-2026
  | [103](nuc-0103.md) | Reactive List Flattening | Standards Track | Utility enhancement | Accepted |
  | [104](nuc-0104.md) | Any and All Class References | Standards Track | Syntax enhancement | Accepted |
--| [105](nuc-0105.md) | List and Population Sorting by Key | Standards Track | Utility enhancement | Draft |
-+| [105](nuc-0105.md) | List and Population Sorting by Key | Standards Track | Utility enhancement | Accepted |
- | [106](nuc-0106.md) | Intersect and Except Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
+ | [105](nuc-0105.md) | List and Population Sorting by Key | Standards Track | Utility enhancement | Accepted |
+-| [106](nuc-0106.md) | Intersect and Except Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
++| [106](nuc-0106.md) | Intersect and Except Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
  
  ## Copyright
+ 
 ```
 
-**File**: `docs/nuc-0105.md` (modified, +1127/-11)
+**File**: `docs/nuc-0106.md` (modified, +1207/-34)
 ```diff
 @@ -4,7 +4,7 @@
- NUC: 105
- Title: List and Population Sorting by Key
+ NUC: 106
+ Title: Intersect and Except Reasoning Selections
  Author: Can Mingir <canmingir@gmail.com>
 -Status: Draft
 +Status: Accepted
  Type: Standards Track
- Category: Utility enhancement
- Created: 10-Nov-2026
-@@ -23,20 +23,26 @@ Requires: 58, 77
-   - Keys compare as `<` compares them, the rule of `maxBy` and `minBy`: two
-     strings as text, and every other pair as numbers.
-   - The selector runs once for every item, in receiver order, and the items
--    are returned unchanged, so an instance stays the same instance.
-+    are returned unchanged, so an instance stays the same instance. An empty
-+    receiver gives `[]`.
- - Unlike `sort`, which [NUC 58](nuc-0058.md) makes reorder a writable
-   receiver in place, `sortBy` never writes its receiver.
-   `ranked = scores.sortBy(s -> s)` is a standing ordering that follows later
-   writes of `scores`, while `scores` keeps its own order.
--- When every key can be compared with itself, `xs.sortBy(f)` is exactly the
--  list that `xs.map(x -> [f(x), x]).sort((a, b) -> a[0] < b[0] ? -1 : 0).map(p -> p[1])`
--  returns. A key that cannot be compared with itself makes the result
-+- When every key can be compared with itself, the list `xs.sortBy(f)`
-+  evaluates to is exactly the list that
-+  `xs.map(x -> [f(x), x]).sort((a, b) -> a[0] < b[0] ? -1 : 0).map(p -> p[1])`
-+  evaluates to at the accepted revision, including where strings and other
-+  keys mix. A key that cannot be compared with itself makes the result
-   undefined, as it makes `maxBy` and `minBy` undefined.
- - Only calls of `sortBy` on lists and class populations change. They raised
-   `TypeError("<receiver>.sortBy is not a function")` at the accepted
-   revision. Reading `xs.sortBy` without a call, object properties named
-   `sortBy`, instance methods named `sortBy` called on an instance, and every
-   other receiver keep their accepted behavior.
-+- No token, keyword, syntax, error type or message format, option or public
-+  item is added. The authoritative contract is
-+  [List and population sorting by key](../nucleoid.spec.md#list-and-population-sorting-by-key).
+ Category: Reasoning enhancement
+ Created: 11-Nov-2026
+@@ -23,22 +23,24 @@ Requires: 48, 82, 83, 88
+   `holds`, `rule`, `state` and `from` fields unchanged. With
+   `subtotal = price * quantity`, `tax = subtotal * rate` and
+   `shipping = quantity * 2`:
+-  - `tax |> why |> intersect(shipping |> why)` selects `quantity`, the one
+-    node both values rest on;
+-  - `tax |> why |> except(shipping |> why)` selects `tax`, `subtotal`,
+-    `rate` and `price`, what the tax rests on and the shipping does not;
++  - `why tax |> intersect(why shipping)` selects `quantity`, the one node
++    both values rest on;
++  - `why tax |> except(why shipping)` selects `tax`, `subtotal`, `rate` and
++    `price`, what the tax rests on and the shipping does not;
+   - with `total = subtotal + tax + shipping`,
+-    `price |> affects |> intersect(rate |> affects)` selects `tax` and
+-    `total`, what both inputs move.
+-- `OTHER` is one expression in parentheses that denotes a selection, as the
+-  source of a pipeline does: a reference, `model`, a prefix stage such as
+-  `why b`, or a pipeline such as `b |> why |> stated`. It is evaluated in
+-  place each time the stage applies, after the source selection and the
+-  stages before it.
++    `affects price |> intersect(affects rate)` selects `tax` and `total`,
++    what both inputs move.
++- Steps are compared by their graph node, not by value. `OTHER` is one
++  expression in parentheses that denotes a selection, as the source of a
++  pipeline does: a reference, `model`, a prefix stage such as `why b`, or a
++  pipeline such as `b |> why |> stated`. It is evaluated in place each time
++  the stage applies, after the source selection and the stages before it.
+ - The kept steps keep the direction of `SELECTION`'s most recent walk and
+-  their [NUC 82](nuc-0082.md) distances. Both stages therefore compose with
+-  `stated`, `derived`, `depth`, `diff`, `path` and each other in either
+-  order, and a later `why` or `affects` walks from the kept steps as usual.
++  their [NUC 82](nuc-0082.md) distances. Between two walks, the stages
++  therefore select the same steps in any order with `stated`, `derived`,
++  `depth`, `diff`, `path` and each other, and a later `why` or `affects`
++  walks from the kept steps. An `OTHER` that a `depth(null)` makes undefined
++  makes the whole selection undefined.
+ - A standing selection that holds either stage stays live through every
+   value and structural observation of both `SELECTION` and `OTHER`,
+   including the steps each one drops. It renders as
+@@ -51,33 +53,47 @@ Requires: 48, 82, 83, 88
+   such as `TypeError("Cannot explain 1")`.
+ - No keyword, lexer token or error type is added, and no union stage is
+   added. Every accepted program keeps its parse and behavior. Only inputs
+-  that were errors at the accepted revision change: a `|>` followed by
+-  `intersect` or `except` raised the parse-time
+-  `TypeError("intersect is not an operation")` or
+-  `TypeError("except is not an operation")`.
++  that were parse errors at the accepted revision change: most raised the
++  parse-time `TypeError("intersect is not an operation")` or
++  `TypeError("except is not an operation")`, and where the parser
++  backtracks some raised another parse error first, such as
++  `SyntaxError("Unexpected ','")` for an unpacking declaration.
++- The public `Expr` enum gains one variant, `Expr::Combine`, with a new
++  public `SetOperation` enum, which needs human SemVer review. No project
++  version is changed. The authoritative contract is
++  [Intersect and except reasoning selections](../nucleoid.spec.md#intersect-and-except-reasoning-selections).
  
  ## Motivation
  
-@@ -59,24 +65,1134 @@ Requires: 58, 77
-   Python's `sorted(xs, key=f)`, yet `[3, 1, 2].sortBy(x -> x)` raises
-   `TypeError("[3,1,2].sortBy is not a function")`.
- - `Shape.sortBy(s -> s.size)` is ten lexer tokens against eighteen for
--  `Shape.sort((a, b) -> a.size - b.size)`, and it names the key once
--  instead of spelling a comparator.
-+  `Shape.sort((a, b) -> a.size - b.size)` and seventeen for
-+  `Shape.sort(lambda a, b: a.size - b.size)`, and it names the key once
-+  instead of spelling a comparator. A list adds a copy to the comparator
-+  spelling: `ranked = scores.sortBy(s -> s.points)` is twelve tokens against
-+  twenty-two for `ranked = scores[:].sort(lambda a, b: a.points - b.points)`.
- 
- ## Rationale
- 
--- Pending: the proposer completes this section.
-+- **Category and mode.** The cycle that allocated this Draft made one
-+  tool-backed uniform draw over the five categories that NUC 1's registry
-+  marks eligible for automatic selection and selected Utility enhancement,
-+  index 2, with probability 1/5 and no redraw. A later continuous cycle
-+  found the Draft stale and claimed it with the pushed empty commit
-+  `Resume NUC 105 List and Population Sorting by Key`, `120db05d`, keeping
-+  its number, title, category and requested change without a new draw.
-+  Token comparison is required; runtime applicability does not apply to this
-+  category.
-+- **Optional evidence.** No hint was supplied. Advisory usefulness is
-+  unscored, not zero. Strategy learning is `not_configured`, so this
-+  revision is unattributed, with no policy, selection receipt, trial or
-+  reward.
-+- **One more shared query.** `sortBy` joins `Runtime::list_query` beside
-+  `maxBy` and `minBy`, so lists however they are reached, through variables,
-+  members, slices, call results, `.value` snapshots and selected state
-+  versions, and class populations named by the class, by a variable that
-+  holds the class or by `$Name`, gain it at once, with the receiver snapshot,
-+  argument evaluation, receiver text and null-receiver routing of every other
-+  query. Rejected: a list-only method, which would leave `Name.sortBy(f)`
-+  raising where `Name.maxBy(f)` runs.
-+- **Read-only, unlike `sort`.** [NUC 58](nuc-0058.md)'s `sort` writes a
-+  writable receiver, so a declaration holding it is a standing sort of that
-+  list, and two standing sorts of one list conflict. `sortBy` never writes:
-+  `call_method` routes only `sort` through its writable-receiver path, so a
-+  declaration holding `sortBy` is a derived ordering, and several orderings
-+  of one list coexist. Rejected: an in-place `sortBy`; lodash's `_.sortBy`,
-+  Ruby's `sort_by`, Kotlin's `sortedBy`, Scala's `sortBy` and Python's
-+  `sorted` all return a new list.
-+- **The items themselves.** The query orders the objects of a model, so it
-+  returns those objects, unchanged and in order, as every pr
+-- Diagnosis asks what two observations have in common. When two alarms
+-  fire, the stated facts behind both are the candidate root causes, and the
+-  facts behind one but not the other tell them apart. Impact analysis asks
+-  the dual question: what do two inputs both move? Each answer is the
++- Diagnosis asks what two observations have in common. When two symptoms
++  appear, the facts behind both are the candidate root causes, and the facts
++  behind one but not the other tell them apart. Impact analysis asks the
++  dual question: what do two inputs both move? Each answer is the
+   intersection or the difference of two explanations or impact selections.
+ - The accepted stages each narrow a single selection: `stated` and
+   `derived` by a step's state, `depth` by distance, `path` by reachability
+   of one target and `diff` by change since a `suppose` block began. None
+   compares a selection with another one.
+-- Accepted Nucleoid can spell the comparison only as a membership test that
+-  walks the second selection inside a lambda:
+-  `(tax |> why).filter(s -> s.node in (shipping |> why).map(t -> t.node))`
+-  is 29 lexer tokens, against 10 for
+-  `tax |
 ```
 
-**File**: `nucleoid.spec.md` (modified, +186/-0)
+**File**: `docs/nucleoid.g4` (modified, +6/-0)
 ```diff
-@@ -5327,6 +5327,83 @@ statement positions; caught values and transaction recovery are unchanged.
-   `Nucleoid rolls back failed median updates` specify the executable
-   behavior.
+@@ -462,6 +462,7 @@ stage
+     | DIFF                                                // Expr::Reason
+     | DEPTH LPAREN expression RPAREN                       // Expr::Depth
+     | PATH LPAREN expression RPAREN                        // Expr::Path
++    | (INTERSECT | EXCEPT) LPAREN expression RPAREN        // Expr::Combine
+     ;
  
-+## List and population sorting by key
-+
-+- [NUC 105](docs/nuc-0105.md) adds the read-only list query `sortBy` to lists
-+  and class instance lists, the receivers of `maxBy` and `minBy`, through the
-+  same shared list-query route. No syntax, keyword or error type is added.
-+- `RECEIVER.sortBy(selector)` returns a new list of the receiver's items in
-+  ascending order of `selector(item)`. The items are the items themselves,
-+  unchanged: an object or instance stays the same object, and the keys are
-+  not returned. Items with equal keys keep their receiver order, and an empty
-+  receiver gives `[]`.
-+- **Read-only.** The receiver is never written, whatever its kind. After
-+  `ranked = scores.sortBy(score -> score)`, `scores` keeps its own order and
-+  `ranked` follows it, while the `sort` of [NUC 58](docs/nuc-0058.md)
-+  reorders a writable receiver in place.
-+- **Keys.** Keys compare as `<` compares them: two strings as text, by code
-+  point, and every other pair as numbers with the numeric conversion of the
-+  comparisons, so dates compare by time and `true`, `false`, `null`, empty
-+  lists and one-item lists count as numbers. `["10", "9", "2"].sortBy(code -> code)`
-+  is `["10", "2", "9"]`, while `[10, 9, 2].sortBy(count -> count)` is
-+  `[2, 9, 10]`, and `0` and `-0` keys tie.
-+- **Unordered keys.** A key that cannot be compared with itself, one for
-+  which `key >= key` is `false`, makes the result undefined, which a
-+  declaration stores as `null`: undefined, NaN, objects, instances, classes,
-+  functions, regular expressions and lists that convert to NaN. Every item is
-+  still visited, so a declaration waits for every key to be comparable.
-+- **Accepted spelling.** When every key can be compared with itself,
-+  `xs.sortBy(f)` evaluates to exactly the list that
-+  `xs.map(x -> [f(x), x]).sort((a, b) -> a[0] < b[0] ? -1 : 0).map(p -> p[1])`
-+  evaluates to, with `f` called once per item: each item, in receiver order,
-+  is placed before the first already placed item whose key it compares
-+  below. Where strings that are not numeric mix with other keys, which they
-+  are neither smaller nor greater than, that placement decides the order, so
-+  `["b", 5, "a", 3].sortBy(key -> key)` is `["a", "b", 3, 5]`. A declaration
-+  of either spelling settles by what that spelling reads.
-+- **Selectors.** The selector is required. It is called once for every item,
-+  in receiver order, with only the item; further parameters are `null`. A
-+  missing first argument, or one that is not a function, including `null`,
-+  raises `TypeError("sortBy expects a function")`, even on an empty receiver.
-+- **Reads.** A `null` key compares as `0`. Reads inside a selector follow the
-+  existing rules, so a selector that reads a `null` binding or property
-+  settles a declaration to `null`, while an item the selector does not read
-+  stays an item: after `xs = [1, null]`, `r = xs.sortBy(x -> 1)` stores
-+  `[1, null]`.
-+- **Receivers.** The receiver is a list, however it is reached, or a class's
-+  instance list in population order, named by the class, by a variable that
-+  holds the class or by `$Name`. On a class name, `sortBy` is the population
-+  query even when the class declares an instance method `sortBy`; its
-+  instances keep calling that method.
-+- **Live.** `sortBy` follows the shared rules of the list queries: it reads
-+  the receiver before its arguments and evaluates every supplied argument
-+  once, left to right, including unused extras. A declaration that uses it
-+  depends on the list or population, on its argument expressions and on
-+  whatever the selector reads for every item, so list mutations, new and
-+  deleted instances and property changes re-evaluate it, in class-level
-+  rules too. Selector errors roll back through the existing transaction. A
-+  null or undefined receiver yields undefined without evaluating the
-+  arguments.
-+- **Cost.** A call selects each key once. Keys that are all strings, or among
-+  which none is a string, are ordered by a stable sort in O(n log n)
-+  comparisons; only a mix of strings and other keys is ordered by the
-+  placement rule above, in up to O(n²) comparisons.
-+- **Rendering.** The call keeps its ordinary rendering, so
-+  `ranked = scores.sortBy(score -> score.points)` explains as
-+  `ranked = scores.sortBy(function())`, and a `sortBy` call and its accepted
-+  spelling are different statements and graph keys.
-+- **Unchanged.** Only calls of `sortBy` on lists and class populations
-+  change; they raised `TypeError("<receiver>.sortBy is not a function")`.
-+  `sortBy of xs` stays `SyntaxError("Unexpected keyword 'of'")`. Property
-+  reads such as `xs.sortBy`, bindings and object properties named `sortBy`,
-+  `sortBy(...)` without a definition, `Math.sortBy` and the other built-in
-+  namespaces, i
+ logicalOr
+@@ -797,6 +798,8 @@ enumName
+     | DIFF
+     | DEPTH
+     | PATH
++    | INTERSECT
++    | EXCEPT
+     | MODEL
+     | FIRST
+     | LAST
+@@ -879,6 +882,8 @@ DERIVED          : 'derived';
+ DIFF             : 'diff';
+ DEPTH            : 'depth';
+ PATH             : 'path';
++INTERSECT        : 'intersect';
++EXCEPT           : 'except';
+ MODEL            : 'model';
+ FIRST            : 'first';
+ LAST             : 'last';
+@@ -1049,6 +1054,7 @@ fragment REGEX_CHAR
+  * for xs:                  -> iteration with the item name "it".
+  * catch without a name     -> the binding "error".
+  * model directly before |> -> Expr::Model.
++ * |> intersect(model)      -> its other selection is Expr::Model; also except.
+  * An object containing spread uses Expr::SpreadObject, with later entries
+  * winning; otherwise it uses Expr::ObjectLiteral. Numeric keys become text.
+  *
 ```
 
 #### Recent Merged Pull Requests:
@@ -2166,45 +2299,22 @@ on the integrated tree: build, warning-denied Clippy on 1.97.1 and
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. NUC 105 List and Population Sorting by Key
+## X. Draft NUC 107 Python-Style Self Parameters
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9abb3434`: NUC 105 List and Population Sorting by Key. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c10b67e8`: Draft NUC 107 Python-Style Self Parameters. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## List and population sorting by key
-
-**Sorting by key keeps a live agenda while the list keeps its order**
-
-```nuc
-tasks = [{name: "ship", due: 3}, {name: "plan", due: 1}, {name: "build", due: 2}]
-agenda = tasks.sortBy(task -> task.due)
-assert(agenda.map(task -> task.name), ["plan", "build", "ship"])
-tasks.push({name: "test", due: 2})
-assert(agenda.map(task -> task.name), ["plan", "build", "test", "ship"])
-tasks[2].due = 4
-assert(agenda.map(task -> task.name), ["plan", "test", "ship", "build"])
-assert(tasks.map(task -> task.name), ["ship", "plan", "build", "test"])
-```
-
-- [NUC 105](docs/nuc-0105.md) adds `sortBy(selector)` to lists and class
-  populations. `tasks.sortBy(task -> task.due)` is a new list of the tasks
-  themselves in ascending order of their due days, and tasks due the same day
-  keep their list order, so `test` follows `build` until `build` moves to
-  day 4.
-- `agenda` is a live declaration that follows new tasks and changed days,
-  while `tasks` keeps its own order, where `sort` would reorder `tasks`
-  itself. Keys compare as `<` compares them, so numbers compare as numbers
-  and strings as text. See the
-  [root contract](nucleoid.spec.md#list-and-population-sorti
+| [107](nuc-0107.md) | Python-Style Self Parameters | Draft |
+| [107](nuc-0107.md) | Python-Style Self Parameters | Standards Track | Language compatibility | Draft |
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2214,4 +2324,4 @@ assert(tasks.map(task -> task.name), ["ship", "plan", "build", "test"])
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9abb3434` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c10b67e8` are properly handled with clean fallback behavior.

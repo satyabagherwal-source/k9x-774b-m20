@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-14T18:35:11.918Z",
-  "total_verified_learnings": 8588,
+  "last_updated": "2026-11-14T19:03:31.384Z",
+  "total_verified_learnings": 8591,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 17709,
+  "total_items": 17730,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -227192,8 +227192,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "4cba3006",
-      "content_hash": "7b6765bc8c88f83811e97b8f40f558299329d2bb3075c1f4e90d605bb6ed9228",
+      "source_version": "c10b67e8",
+      "content_hash": "76107d486b9adc06837896f4e9180b09c77c8f623a73a0d497d124a6fd6b516c",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -227206,6 +227206,11 @@
           "number": 8483,
           "title": "Resume stale NUC drafts in continuous cycles",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8524,
+          "title": "Draft NUC 107 Python-Style Self Parameters",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -227213,7 +227218,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T14:27:57.783Z",
+      "verified_at": "2026-11-14T19:03:26.613Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -227267,10 +227272,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "4cba3006",
-      "content_hash": "991c801405094e5eb698a4f9663182b4da002f6661971e59f12846fe776e3f7b",
+      "source_version": "c10b67e8",
+      "content_hash": "fccfec0efad3ede7dc1925c34041ef440008597ad4cd1cb21c51c2c5defdc618",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T14:27:58.427Z"
+      "persisted_at": "2026-11-14T19:03:27.289Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -228705,10 +228710,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nucleoidai-nucleoid-technical-construction-intelligence-nucleoidai-nucleoid-core.md",
       "title": "Technical Construction Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "4cba3006",
-      "content_hash": "3cdf13337e0af0ed79a2c4c66696dc771118797ecdc220d76f59ea9a47c8ea45",
+      "source_version": "c10b67e8",
+      "content_hash": "0deb643867e8ab276d7992e267958e329bd9be1df4bd83844d66f41892e1cb20",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T14:27:58.305Z"
+      "persisted_at": "2026-11-14T19:03:27.186Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-google-gemma-4-31b-it-learnings-core-invarian": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-google-gemma-4-31b-it-learnings-core-invarian",
@@ -232768,6 +232773,321 @@
       "content_hash": "a4f58dcd5ad13aa70b4eaa2a586a4cf783dac20a96fd93c4a854558e3db84777",
       "domain_letter": "K",
       "persisted_at": "2026-11-14T18:35:11.450Z"
+    },
+    "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf": {
+      "learning_id": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+      "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+      "slug": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+      "source_version": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
+      "content_hash": "97f66e1e56fa1cb298418a2c6962387a2c0a8b6d9fb2587ccb8d6ae79fb0ed19",
+      "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T19:03:09.911Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-orcarouter-qwen3-8-flash-next-uncensored-gguf-co": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-qwen3-8-flash-next-uncensored-gguf-co",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-research-knowledge-intelligence.md",
+      "title": "Research & Knowledge Intelligence: orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF Core Invariants",
+      "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+      "source_version": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
+      "content_hash": "d259cb8b84bfd05c98c6bff803b08d2b3e4b2d9513c59b677e83b918a1a0f3c7",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T19:03:10.255Z"
+    },
+    "learn-github-tw93-pake": {
+      "learning_id": "learn-github-tw93-pake",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "tw93/Pake",
+      "repository": "tw93/Pake",
+      "slug": "tw93-pake",
+      "platform": "github",
+      "source_url": "https://github.com/tw93/Pake",
+      "source_version": "6498b4d7",
+      "content_hash": "02cbae7b6441cc980dfad1f730d2c9fd10b226f814e7d5403d048d66bbe684f0",
+      "dossier_path": "07_PROJECT_LEARNING/tw93-pake-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tw93-pake-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8522,
+          "title": "ship the .icns when Assets.car cannot be compiled",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T19:03:10.949Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8522": {
+      "learning_id": "rule-8522",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8522,
+      "title": "ship the .icns when Assets.car cannot be compiled",
+      "source_url": "https://github.com/tw93/Pake",
+      "source_version": "6498b4d7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T19:03:10.949Z"
+    },
+    "candidate_directive-ship-the-icns-when-assets-car-cannot-be-compiled": {
+      "item_id": "candidate_directive-ship-the-icns-when-assets-car-cannot-be-compiled",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WYOZ-ship-the-icns-when-assets-car-cannot-be-compiled.md",
+      "title": "ship the .icns when Assets.car cannot be compiled",
+      "repository": "tw93/Pake",
+      "source_version": "6498b4d7",
+      "content_hash": "e35f93bc4dacb3513a2b674784872e55f4d0016021b90043c417f571f4889012",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T19:03:11.268Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-tw93-pake-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-tw93-pake-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tw93-pake-technical-construction-intelligence-tw93-pake-core-invariants.md",
+      "title": "Technical Construction Intelligence: tw93/Pake Core Invariants",
+      "repository": "tw93/Pake",
+      "source_version": "6498b4d7",
+      "content_hash": "8012f8f870342ee1636df9384b4b0bdf9ac91fd58b665cdfefd02715e95faa9e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T19:03:11.371Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-tw93-pake": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tw93-pake",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/tw93-pake-verification-protocol-empirical-defect-shield-for-tw93-pake.md",
+      "title": "Verification Protocol: Empirical Defect Shield for tw93/Pake",
+      "repository": "tw93/Pake",
+      "source_version": "6498b4d7",
+      "content_hash": "ffb1d31c05637f2105a3d4e53c2cd4dbf0071dcf78e7bca98be36d230ba082ee",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T19:03:11.473Z"
+    },
+    "learn-github-aquasecurity-trivy": {
+      "learning_id": "learn-github-aquasecurity-trivy",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "aquasecurity/trivy",
+      "repository": "aquasecurity/trivy",
+      "slug": "aquasecurity-trivy",
+      "platform": "github",
+      "source_url": "https://github.com/aquasecurity/trivy",
+      "source_version": "239be7b2",
+      "content_hash": "b431e785e7fdee36a740becd5b3628c1e458a86948ed6863bcafb7a327aec1cf",
+      "dossier_path": "07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8523,
+          "title": "use TLS_1_2 as the default security policy for API Gateway domain name",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T19:03:18.988Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8523": {
+      "learning_id": "rule-8523",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8523,
+      "title": "use TLS_1_2 as the default security policy for API Gateway domain name",
+      "source_url": "https://github.com/aquasecurity/trivy",
+      "source_version": "239be7b2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T19:03:18.988Z"
+    },
+    "candidate_directive-use-tls_1_2-as-the-default-security-policy-for-api-gateway-domain-name": {
+      "item_id": "candidate_directive-use-tls_1_2-as-the-default-security-policy-for-api-gateway-domain-name",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-X4XS-use-tls_1_2-as-the-default-security-policy-for-api-gateway-domain-name.md",
+      "title": "use TLS_1_2 as the default security policy for API Gateway domain name",
+      "repository": "aquasecurity/trivy",
+      "source_version": "239be7b2",
+      "content_hash": "50625d28362842021546e3ef1e8b70546a42b839a297bb82abd2ea6e38562a0d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T19:03:19.362Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-aquasecurity-trivy-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-aquasecurity-trivy-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aquasecurity-trivy-technical-construction-intelligence-aquasecurity-trivy-core-i.md",
+      "title": "Technical Construction Intelligence: aquasecurity/trivy Core Invariants",
+      "repository": "aquasecurity/trivy",
+      "source_version": "239be7b2",
+      "content_hash": "2896b412a5920f8e54e67cb5c867da411ce0738a79f35b64d6a47c86a3992b41",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T19:03:19.463Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-aquasecurity-trivy": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aquasecurity-trivy",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/aquasecurity-trivy-verification-protocol-empirical-defect-shield-for-aquasecurit.md",
+      "title": "Verification Protocol: Empirical Defect Shield for aquasecurity/trivy",
+      "repository": "aquasecurity/trivy",
+      "source_version": "239be7b2",
+      "content_hash": "ccbde5ebe3edabe020842da71284b93eab75fc11850a3d07e68455b7df766124",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T19:03:19.566Z"
+    },
+    "rule-8524": {
+      "learning_id": "rule-8524",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8524,
+      "title": "Draft NUC 107 Python-Style Self Parameters",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "c10b67e8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T19:03:26.613Z"
+    },
+    "candidate_directive-draft-nuc-107-python-style-self-parameters": {
+      "item_id": "candidate_directive-draft-nuc-107-python-style-self-parameters",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XAS3-draft-nuc-107-python-style-self-parameters.md",
+      "title": "Draft NUC 107 Python-Style Self Parameters",
+      "repository": "NucleoidAI/Nucleoid",
+      "source_version": "c10b67e8",
+      "content_hash": "0dbe50f1af87b6e22cf3db9da0859dbb599d8dc77315b53d607f53610a5748b5",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T19:03:26.936Z"
+    },
+    "candidate_directive-icon-ship-the-icns-when-assets-car-cannot-be-compiled": {
+      "item_id": "candidate_directive-icon-ship-the-icns-when-assets-car-cannot-be-compiled",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XDDE-icon-ship-the-icns-when-assets-car-cannot-be-compiled.md",
+      "title": "icon): ship the .icns when Assets.car cannot be compiled",
+      "repository": "tw93-pake-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d329d4a75f67d7f8c3c07db4356f1e190d5beb755961a01d30cd9e88330c236d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T19:03:30.291Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-tw93-pake-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-tw93-pake-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tw93-pake-learnings-technical-construction-intelligence-tw93-pake-learnings-core.md",
+      "title": "Technical Construction Intelligence: tw93-pake-learnings Core Invariants",
+      "repository": "tw93-pake-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1804c10c77714d4a1fe6c00d960cefa8a9daee4b17560a9f0f03ed5acf225497",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T19:03:30.418Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-tw93-pake-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tw93-pake-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/tw93-pake-learnings-verification-protocol-empirical-defect-shield-for-tw93-pake-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for tw93-pake-learnings",
+      "repository": "tw93-pake-learnings",
+      "source_version": "HEAD",
+      "content_hash": "aaf259d92191ebc7f749bcc1f46df0f4aef9dd10e5f94e67816bb12152612e13",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T19:03:30.541Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-learnings-research-knowledge-in.md",
+      "title": "Research & Knowledge Intelligence: hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings Core Invariants",
+      "repository": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7074f431a46dc00c1bf36c2f127141c646636855a2dbac77a387637e39cf9a43",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T19:03:30.833Z"
+    },
+    "candidate_directive-misconf-use-tls_1_2-as-the-default-security-policy-for-api-gateway-domain-name": {
+      "item_id": "candidate_directive-misconf-use-tls_1_2-as-the-default-security-policy-for-api-gateway-domain-name",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XE1W-misconf-use-tls_1_2-as-the-default-security-policy-for-api-gateway-domain-name.md",
+      "title": "misconf): use TLS_1_2 as the default security policy for API Gateway domain name",
+      "repository": "aquasecurity-trivy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f1da2cf0423b37b1b183a9fd4e9665937da6d09de8d3001c493f27e1ec568851",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T19:03:31.172Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-aquasecurity-trivy-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-aquasecurity-trivy-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aquasecurity-trivy-learnings-technical-construction-intelligence-aquasecurity-tr.md",
+      "title": "Technical Construction Intelligence: aquasecurity-trivy-learnings Core Invariants",
+      "repository": "aquasecurity-trivy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "58443eae94500649d2dac8644ca4a5c15bc783fb43ecc211f796e1ea44726b1d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T19:03:31.280Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-aquasecurity-trivy-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aquasecurity-trivy-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/aquasecurity-trivy-learnings-verification-protocol-empirical-defect-shield-for-a.md",
+      "title": "Verification Protocol: Empirical Defect Shield for aquasecurity-trivy-learnings",
+      "repository": "aquasecurity-trivy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ab9f8481ac5b0c556964acf1e39ef2589c9d8a624615411a49fb6734d2d65941",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T19:03:31.384Z"
     }
   },
   "ai-builder-brain": {

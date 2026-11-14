@@ -235,8 +235,8 @@
     "sourceUrl": "https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
     "sourceVersion": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "1bf5d705ced4dabad949b9055a0a829da1e4616b53939a30dcf583ba7608b3f3",
-    "lastHarvestedAt": "2026-11-09T07:24:59.795Z",
+    "contentHash": "97f66e1e56fa1cb298418a2c6962387a2c0a8b6d9fb2587ccb8d6ae79fb0ed19",
+    "lastHarvestedAt": "2026-11-14T19:03:10.077Z",
     "learningId": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf"
   },
   "hf-autotrust-gev-26b-decide-nvfp4": {
@@ -1703,10 +1703,10 @@
     "repository": "tw93/Pake",
     "platform": "github",
     "sourceUrl": "https://github.com/tw93/Pake",
-    "sourceVersion": "be35fa33",
+    "sourceVersion": "6498b4d7",
     "license": "GPL-3.0",
-    "contentHash": "37009f43a30ef0a16c4d27401dee14190b2b7413b3e80a9213018b60e97bfdd0",
-    "lastHarvestedAt": "2026-11-13T04:50:17.371Z",
+    "contentHash": "02cbae7b6441cc980dfad1f730d2c9fd10b226f814e7d5403d048d66bbe684f0",
+    "lastHarvestedAt": "2026-11-14T19:03:11.095Z",
     "learningId": "learn-github-tw93-pake"
   },
   "hf-datalab-to-indra-ocr": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "4cba3006",
+    "sourceVersion": "c10b67e8",
     "license": "Apache-2.0",
-    "contentHash": "7b6765bc8c88f83811e97b8f40f558299329d2bb3075c1f4e90d605bb6ed9228",
-    "lastHarvestedAt": "2026-11-14T14:27:57.953Z",
+    "contentHash": "76107d486b9adc06837896f4e9180b09c77c8f623a73a0d497d124a6fd6b516c",
+    "lastHarvestedAt": "2026-11-14T19:03:26.757Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -4663,10 +4663,10 @@
     "repository": "aquasecurity/trivy",
     "platform": "github",
     "sourceUrl": "https://github.com/aquasecurity/trivy",
-    "sourceVersion": "6cd398d5",
+    "sourceVersion": "239be7b2",
     "license": "Apache-2.0",
-    "contentHash": "013d168f1e5849cad8101ec6468ffe101a9c5d0c4c4e17ec7f6b9ca38ba28b3d",
-    "lastHarvestedAt": "2026-11-13T13:50:38.286Z",
+    "contentHash": "b431e785e7fdee36a740becd5b3628c1e458a86948ed6863bcafb7a327aec1cf",
+    "lastHarvestedAt": "2026-11-14T19:03:19.170Z",
     "learningId": "learn-github-aquasecurity-trivy"
   },
   "sfu-db-connector-x": {

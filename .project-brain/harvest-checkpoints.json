@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-14T18:34:43.898Z",
+  "last_updated": "2026-11-14T19:03:26.767Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -245,14 +245,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
-      "content_hash": "1bf5d705ced4dabad949b9055a0a829da1e4616b53939a30dcf583ba7608b3f3",
-      "verified_at": "2026-11-09T07:24:59.812Z",
+      "content_hash": "97f66e1e56fa1cb298418a2c6962387a2c0a8b6d9fb2587ccb8d6ae79fb0ed19",
+      "verified_at": "2026-11-14T19:03:10.086Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T07:24:59.812Z"
+      "last_updated": "2026-11-14T19:03:10.086Z"
     },
     "autotrust/GEV-26B-Decide-NVFP4": {
       "repository": "autotrust/GEV-26B-Decide-NVFP4",
@@ -2691,14 +2691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tw93-pake",
-      "content_hash": "37009f43a30ef0a16c4d27401dee14190b2b7413b3e80a9213018b60e97bfdd0",
-      "verified_at": "2026-11-13T04:50:17.378Z",
+      "content_hash": "02cbae7b6441cc980dfad1f730d2c9fd10b226f814e7d5403d048d66bbe684f0",
+      "verified_at": "2026-11-14T19:03:11.104Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T04:50:17.378Z"
+      "last_updated": "2026-11-14T19:03:11.104Z"
     },
     "datalab-to/indra-ocr": {
       "repository": "datalab-to/indra-ocr",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "7b6765bc8c88f83811e97b8f40f558299329d2bb3075c1f4e90d605bb6ed9228",
-      "verified_at": "2026-11-14T14:27:57.973Z",
+      "content_hash": "76107d486b9adc06837896f4e9180b09c77c8f623a73a0d497d124a6fd6b516c",
+      "verified_at": "2026-11-14T19:03:26.766Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T14:27:57.973Z"
+      "last_updated": "2026-11-14T19:03:26.766Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -7116,14 +7116,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aquasecurity-trivy",
-      "content_hash": "013d168f1e5849cad8101ec6468ffe101a9c5d0c4c4e17ec7f6b9ca38ba28b3d",
-      "verified_at": "2026-11-13T13:50:38.314Z",
+      "content_hash": "b431e785e7fdee36a740becd5b3628c1e458a86948ed6863bcafb7a327aec1cf",
+      "verified_at": "2026-11-14T19:03:19.179Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T13:50:38.314Z"
+      "last_updated": "2026-11-14T19:03:19.179Z"
     },
     "sfu-db/connector-x": {
       "repository": "sfu-db/connector-x",

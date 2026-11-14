@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tw93-pake-learnings.md`  
 > **Source**: github ([https://github.com/tw93/Pake](https://github.com/tw93/Pake))  
-> **Source Version**: `be35fa33`  
+> **Source Version**: `6498b4d7`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T04:50:08.207Z  
+> **Timestamp**: 2026-11-14T19:03:10.230Z  
 > **Learning ID**: `learn-github-tw93-pake`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tw93-pake-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tw93/Pake](https://github.com/tw93/Pake))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T04:50:08.203Z  
+> **Harvest Timestamp**: 2026-11-14T19:03:10.222Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Turn any website into a lightweight desktop app with one command, on macOS, Windows and Linux.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 63467 stars
+- **Stars / Engagement**: 63595 stars
 
 ---
 
@@ -917,11 +917,11 @@ export function getDefaultLinuxTargets(): string {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1431** (2026-11-14): **[Bug] Power Apps Launch not working**
+  *Symptoms*: ### Search before asking  - [x] I searched in the [issues](https://github.com/tw93/Pake/issues?q=) and found nothing similar.   ### Pake version  Windows x64, Version 1.5.0  ### Rust version  ---  ### Package Manager  other  ### System version  Windows 11  ### Node.js version  --  ### Build Command  Version 1.5.0  ### Minimal reproduce step  Install an App with Site Powerapps. In the Powerapps make a button with Launch(). Click button in Power Apps, the link is opend. Click the button in Pake, nothing happens  ### What did you expect to see?  The link from Launch() should open in the browser  ### What did you see instead?  nothing happend  ### Anything else?  _No response_  ### Are you willing to submit a PR?  - [ ] I'm willing to submit a PR!
+
 - **Issue #1427** (2026-11-01): **[Bug] Web Midi issue on MacOS Arm and Intel**
   *Symptoms*: ### Search before asking  - [x] I searched in the [issues](https://github.com/tw93/Pake/issues?q=) and found nothing similar.   ### Pake version  I am encountering an issue with midi on MacOS Arm and Intel, the application is built (dmg) from local file, but the application doesn´t see midi devices and incoming midi messages. Not sure if it is an issue with Tauri Web Midi. When the application is built via npm build and runs on local server everything works normally on Macs, when using pake generated dmgs screens are ok, all the features are available except midi ports. On Windows 10 and 11 everything works fine with pake executables, midi devices listed and incoming midi messages functional. Any recommandations or hints how to fix that? Thank you.  ### Rust version  Rust 1.99.1, Pake 3.17.8, npm 11.19.1 on Mac   ### Package Manager  npm  ### System version  Sequoia 15.7 M1 Pro  ### Node.js version  v24.22.0  ### Build Command  sudo pake /Users/admin/Desktop/midee-master/dist/index.html -- name "MidoApp" -- use-local-file  ### Minimal reproduce step  midi icon in upper right corner of the apllication is greyed out.  ### What did you expect to see?  active connection of midi device and active playing like on Windows versions, those work with no issues.  ### What did you see instead?  midi icon in upper right corner of the apllication is greyed out.  ### Anything else?  Suspecting some issues with Web Midi in Tauri or Rust packages on MacOS.   ### Are you willing to submit a PR
-
-- **Issue #1424** (2026-10-28): **[Bug] Upgraded to 3.17.7 build and issues span out**
-  *Symptoms*: ### Search before asking  - [x] I searched in the [issues](https://github.com/tw93/Pake/issues?q=) and found nothing similar.   ### Pake version  Got this that comes with errors:  C:\Users\DELL\AppData\Local\pnpm\global\v11\2d30-18e2955c60370328-0\node_modules\.pnpm\pake-cli@3.17.7\node_modules\pake-cli\src-tauri\target\x86_64-pc-windows-msvc\release\bundle\msi\Pake_1.0.0_x64_en-US.msi (3.39 MiB)  It seems to have built something that I can't find using Explorer. May be should downgrade to 3.16.x that was working fine till now, or remove and make a new fresh install.  Would be great to have the pnpm, npm or some command to proceed eventually. Thanks  ### Rust version  rustc 1.99.1 (58cf8f9c3 2026-10-13)  ### Package Manager  npm  ### System version  12.1.0  ### Node.js version  v24.22.1  ### Build Command  pake https://docs.deno.com/runtime/ --name Docdeno  ### Minimal reproduce step  pake https://docs.deno.com/runtime/ --name Docdeno   ### What did you expect to see?  the msi path so I could run it  ### What did you see instead?  C:\Users\DELL\AppData\Local\pnpm\global\v11\2d30-18e2955c60370328-0\node_modules\.pnpm\pake-cli@3.17.7\node_modules\pake-cli\src-tauri\target\x86_64-pc-windows-msvc\release\bundle\msi\Pake_1.0.0_x64_en-US.msi (3.39 MiB)  ### Anything else?  no  ### Are you willing to submit a PR?  - [ ] I'm willing to submit a PR!
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -938,523 +938,585 @@ export function getDefaultLinuxTargets(): string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b6bb966e` (2026-11-12)
-**Commit Message**: fix: open the title bar in its last color and fit tall windows on screen
+### Incident Patch 1: `ec5af5c3` (2026-11-14)
+**Commit Message**: fix(icon): ship the .icns when Assets.car cannot be compiled
 
-A macOS app with a transparent title bar opened with a white bar until
-title_bar.js sampled the page, which flashed on every dark site. The main
-window now remembers the last color it painted (title-bar-color.txt in the
-app data dir) and opens in it. title_bar.js also falls back to the page's
-theme-color, honouring its media query, when the top edge is not painted
-yet.
+Tauri runs actool itself for a .icon in bundle.icon and fails the whole
+build when actool errors, so handing it the .icon after our own compile
+failed turned a missing Liquid Glass icon into a failed build. Now only a
+precompiled Assets.car goes into bundle.icon, with the .icns; otherwise
+the .icns alone. The pkill ibtoold retry is gone: it ended a process that
+belongs to the user's Xcode, and the compile passed on its first try on
+Xcode 27.2. bundle.resources keeps only the .icns, as the plain .icns path
+does, instead of storing the 1 MB Assets.car a second time.
 
-Size presets can exceed the screen (the tablet one is 820x1180), so the
-first window is fitted to the primary monitor's work area less a title bar
-allowance; sizes restored by the window-state plugin are untouched.
+Verified on macOS 27.2 with Xcode 27.2: pake.icon built an app whose
+Assets.car holds the light, dark and tinted appearances with
+CFBundleIconName = Icon and one Assets.car; a broken .icon built an app
+with the .icns only. npx vitest run (815), format:check and cli:build pass;
+the new resources test fails on the old merge.ts.
 
-Verified: cargo test --lib and clippy -D warnings with and without
-runtime-template on macOS, vitest tests/unit (773), and the theme-color
-test fails with the fallback removed. The Windows and Linux arms are
-compiled only by CI.
-
-**File**: `src-tauri/src/app/invoke.rs` (modified, +21/-1)
+**File**: `bin/helpers/icon-composer.ts` (modified, +7/-16)
 ```diff
-@@ -485,7 +485,27 @@ pub fn set_title_bar_color(
-             .as_ref()
-             .window()
-             .set_background_color(Some(tauri::window::Color(red, green, blue, 255)))
--            .map_err(|e| format!("Failed to set the title bar color: {}", e))
-+            .map_err(|e| format!("Failed to set the title bar color: {}", e))?;
-+        // Remember the main window's color for the next launch; failing to
-+        // save it costs only that first frame, so it never fails the call.
-+        if window.label() == "pake" {
-+            let saved = window
-+                .app_handle()
-+                .path()
-+                .app_data_dir()
-+                .map_err(|e| e.to_string())
-+                .and_then(|directory| {
-+                    crate::util::write_title_bar_color(
-+                        &directory.join(crate::app::window::TITLE_BAR_COLOR_FILE),
-+                        (red, green, blue),
-+                    )
-+                    .map_err(|e| e.to_string())
-+                });
-+            if let Err(error) = saved {
-+                eprintln!("[Pake] Could not remember the title bar color: {error}");
-+            }
-+        }
-+        Ok(())
-     }
-     #[cfg(not(target_os = "macos"))]
-     {
-```
-
-**File**: `src-tauri/src/app/window.rs` (modified, +44/-10)
-```diff
-@@ -38,6 +38,13 @@ use tauri::Theme;
- #[cfg(target_os = "macos")]
- use tauri::TitleBarStyle;
- 
-+/// Logical points kept free above a fitted window for its title bar.
-+const TITLE_BAR_ALLOWANCE: f64 = 40.0;
-+
-+/// Where the main window's last title bar color is remembered on macOS.
-+#[cfg(target_os = "macos")]
-+pub const TITLE_BAR_COLOR_FILE: &str = "title-bar-color.txt";
-+
- #[cfg(target_os = "macos")]
- fn prepare_macos_new_window_configuration(features: &NewWindowFeatures) -> tauri::Result<()> {
-     let mtm = MainThreadMarker::new().ok_or_else(|| {
-@@ -536,22 +543,37 @@ fn build_window(
-         .resizable(window_config.resizable)
-         .maximized(window_config.maximize);
- 
-+    // A size preset can be taller than the screen (the tablet one is 820x1180),
-+    // so the first window fits the primary monitor's work area; a size the
-+    // window-state plugin restores later is left as the user made it.
-+    let monitor = app.primary_monitor().ok().flatten();
-+    let scale_factor = monitor.as_ref().map(|m| m.scale_factor()).unwrap_or(1.0);
-+    let work_area = monitor.as_ref().map(|m| {
-+        let size = m.work_area().size;
-+        (f64::from(size.width), f64::from(size.height))
-+    });
-+
-     #[cfg(target_os = "windows")]
-     {
--        let scale_factor = app
--            .primary_monitor()
--            .ok()
--            .flatten()
--            .map(|m| m.scale_factor())
--            .unwrap_or(1.0);
--        let logical_width = window_config.width / scale_factor;
--        let logical_height = window_config.height / scale_factor;
--        window_builder = window_builder.inner_size(logical_width, logical_height);
-+        // The config size is read as physical pixels here, as before.
-+        let (width, height) = crate::util::fit_to_work_area(
-+            window_config.width,
-+            window_config.height,
-+            work_area,
-+            TITLE_BAR_ALLOWANCE * scale_factor,
-+        );
-+        window_builder = window_builder.inner_size(width / scale_factor, height / scale_factor);
-     }
- 
-     #[cfg(not(target_os = "windows"))]
-     {
--        window_builder = window_builder.inner_size(window_config.width, window_config.height);
-+        let (width, height) = crate::util::fit_to_work_area(
-+            window_config.width,
-+            window_config.height,
-+            work_area.map(|(width, height)| (width / scale_factor, height / scale_factor)),
-+            TITLE_BAR_ALLOWANCE,
-+        );
-+        window_builder = window_builder.inner_size(width, height);
-     }
- 
-     window_builder = window_builder
-@@ -719,6 +741,18 @@ fn build_window(
-         window_builder = window_builder.title_bar_style(title_bar_style);
-         if window_config.title_bar_follows_page() {
-             window_builder = window_builder.hidden_title(true);
-+            // Open in the color title_bar.js last painted, so the bar does not
-+            // flash the default white before the page reports its own.
-+            if label == "pake" {
-+                if let Some((red, green, blue)) =
-+                    app.path().app_data_dir().ok().and_then(|directory| {
-+                        crate::util::read_title_bar_color(&directory.join(TITLE_BAR_COLOR_FILE))
-+                    })
-+                {
-+                    window_builder = window_builder
-+                        .background_color(tauri::window::Color(red, green, blue, 255));
-+                }
-+            }
-         }
-         window_builder = window_builder.theme(theme);
- 
-```
-
-**File**: `src-tauri/src/inject/title_bar.js` (modified, +15/-1)
-```diff
-@@ -55,9 +55,23 @@
-     return samples[majority === -1 ? 1 : majority];
+@@ -202,21 +202,8 @@ export async function precompileIconComposerAssets(
+     return dest;
    }
  
-+  // Before the page paints its top edge (or when it is see-through there),
-+  // the page's own theme-color still says what the bar should be. A tag with
-+  // a media query counts only while that query matches.
-+  function themeColor() {
-+    const tags = document.querySelectorAll?.('meta[name="theme-color"]') || [];
-+    for (const tag of tags) {
-+      const media = tag.getAttribute("media");
-+      if (media && !window.matchMedia?.(media)?.matches) continue;
-+      const color = toRgb(tag.getAttribute("content"));
-+      if (color) return color;
-+    }
-+    return null;
+-  // Xcode 27.1+ sometimes leaves ibtoold in a bad state (tauri-apps/tauri#16386).
+   logger.warn(
+-    '✼ actool failed to compile the .icon package; retrying after stopping ibtoold (tauri-apps/tauri#16386).',
+-  );
+-  await execa('pkill', ['-x', 'ibtoold'], {
+-    stdin: 'ignore',
+-    reject: false,
+-  });
+-
+-  if (await compileAssetsCar(iconPackagePath, dest)) {
+-    return dest;
+-  }
+-
+-  logger.warn(
+-    '✼ Could not precompile Assets.car. The .icon will be passed to Tauri, which may hit the same actool issue (tauri-apps/tauri#15315, #16386). The .icns fallback stays in bundle.icon.',
++    '✼ actool could not compile the .icon package (tauri-apps/tauri#15315, #16386). The app will use the .icns icon instead.',
+   );
+   return null;
+ }
+@@ -281,15 +268,19 @@ export async function applyDarwinIconComposerPackage(options: {
+     destIconsDir,
+   );
+ 
++  // Tauri runs actool itself for a .icon in bundle.icon and fails the whole
++  // build when actool errors, so only a precompiled Assets.car goes in; when
++  // that could not be built, the app ships with the .icns alone.
+   const bundleIcon: string[] = [];
+   if (compiledCar) {
+     logger.info('✼ Precompiled Assets.car from the Icon Composer package.');
+     bundleIcon.push('icons/Assets.car');
+-  } else {
+-    bundleIcon.push(`icons/${safeAppName}.icon`);
+   }
+   if (hasIcns) {
+     bundleIcon.push(`icons/${safeAppName}.icns`);
+   }
++  if (bundleIcon.length === 0) {
++    bundleIcon.push(`icons/${safeAppName}.icon`);
 +  }
-+
-   function update() {
-     pending = 0;
--    const color = pageTopColor();
-+    const color = pageTopColor() || themeColor();
-     if (!color) return;
-     const key = `${color.red},${color.green},${color.blue}`;
-     if (key === lastSent) return;
+   return { bundleIcon };
+ }
 ```
 
-**File**: `src-tauri/src/util.rs` (modified, +84/-0)
+**File**: `bin/helpers/merge.ts` (modified, +5/-1)
 ```diff
-@@ -206,6 +206,55 @@ pub fn write_last_url(path: &Path, url: &tauri::Url) -> std::io::Result<()> {
-     Ok(())
- }
- 
-+/// The title bar color last painted on macOS, stored as `r,g,b`, so the next
-+/// launch opens in it instead of flashing the default bar first.
-+#[cfg(any(target_os = "macos", test))]
-+pub fn parse_title_bar_color(value: &str) -> Option<(u8, u8, u8)> {
-+    let mut parts = value
-+        .trim()
-+        .split(',')
-+        .map(|part| part.trim().parse::<u8>());
-+    let color = (
-+        parts.next()?.ok()?,
-+        parts.next()?.ok()?,
-+        parts.next()?.ok()?,
-+    );
-+    parts.next().is_none().then_some(color)
-+}
-+
-+#[cfg(any(target_os = "macos", test))]
-+pub fn read_title_bar_color(path: &Path) -> Option<(u8, u8, u8)> {
-+    std::fs::read_to_string(path)
-+        .ok()
-+        .and_then(|value| parse_title_bar_color(&value))
-+}
-+
-+#[cfg(any(target_os = "macos", test))]
-+pub fn write_title_bar_color(path: &Path, (red, green, blue): (u8, u8, u8)) -> std::io::Result<()> {
-+    if let Some(parent) = path.parent() {
-+        std::fs::create_dir_all(parent)?;
-+    }
-+    std::fs::write(path, format!("{red},{green},{blue}"))
-+}
-+
-+/// Fits a configured window into the monitor's work area, leaving room for
-+/// the title bar, so a tall preset never opens past the bottom of the screen.
-+/// All values share one unit: logical points on macOS and Linux, physical
-+/// pixels on Windows, where the config size is read as physical.
-+pub fn fit_to_work_area(
-+    width: f64,
-+    height: f64,
-+    area: Option<(f64, f64)>,
-+    chrome: f64,
-+) -> (f64, f64) {
-+    match area {
-+        Some((area_width, area_height)) if area_width > 0.0 && area_height > chrome => {
-+            (width.min(area_width), height.min(area_height - chrome))
-+        }
-+        _ => (width, height),
-+    }
-+}
-+
- /// Both native and IPC downloads use the trusted, packaged configuration.
- pub fn get_download_dir(app: &AppHandle) -> Result<PathBuf, String> {
-     let state = app
-@@ -520,6 +569,41 @@ mod tests {
-         dir
+@@ -436,7 +436,11 @@ export async function mergeIcons(
+           defaultIcnsPath,
+         });
+         tauriConf.bundle.icon = bundleIcon;
+-        tauriConf.bundle.resources = bundleIcon;
++        // Assets.car is read from bundle.icon; copying it into resources too
++        // would store it twice. Keep the .icns resource the plain path ships.
++        tauriConf.bundle.resources = bundleIcon.filter((icon) =>
++          icon.endsWith('.icns'),
++        );
+         composerIconApplied = true;
+       }
+     } else if (customIconExt !== iconInfo.fileExt) {
+```
+
+**File**: `dist/cli.js` (modified, +10/-14)
+```diff
+@@ -1099,16 +1099,7 @@ async function precompileIconComposerAssets(iconPackagePath, destIconsDir) {
+     if (await compileAssetsCar(iconPackagePath, dest)) {
+         return dest;
      }
- 
-+    #[test]
-+    fn title_bar_color_round_trips_and_rejects_anything_else() {
-+        let path = temp_path("state/title-bar-color.txt");
-+        assert_eq!(read_title_bar_color(&path), None);
-+        write_title_bar_color(&path, (17, 24, 39)).unwrap();
-+        assert_eq!(read_title_bar_color(&path), Some((17, 24, 39)));
-+        assert_eq!(parse_title_bar_color(" 255, 0 ,8\n"), Some((255, 0, 8)));
-+        for value in ["", "1,2", "1,2,3,4", "256,0,0", "-1,0,0", "a,b,c", "1,,3"] {
-+            assert_eq!(parse_title_bar_color(value), None, "{value:?}");
-+        }
-+        fs::remove_dir_all(path.parent().unwrap().parent().unwrap()).unwrap();
+-    // Xcode 27.1+ sometimes leaves ibtoold in a bad state (tauri-apps/tauri#16386).
+-    logger.warn('✼ actool failed to compile the .icon package; retrying after stopping ibtoold (tauri-apps/tauri#16386).');
+-    await execa('pkill', ['-x', 'ibtoold'], {
+-        stdin: 'ignore',
+-        reject: false,
+-    });
+-    if (await compileAssetsCar(iconPackagePath, dest)) {
+-        return dest;
+-    }
+-    logger.warn('✼ Could not precompile Assets.car. The .icon will be passed to Tauri, which may hit the same actool issue (tauri-apps/tauri#15315, #16386). The .icns fallback stays in bundle.icon.');
++    logger.warn('✼ actool could not compile the .icon package (tauri-apps/tauri#15315, #16386). The app will use the .icns icon instead.');
+     return null;
+ }
+ /**
+@@ -1147,17 +1138,20 @@ async function applyDarwinIconComposerPackage(options) {
+     }
+     await warnIfActoolUnavailable();
+     const compiledCar = await precompileIconComposerAssets(destIconPackage, destIconsDir);
++    // Tauri runs actool itself for a .icon in bundle.icon and fails the whole
++    // build when actool errors, so only a precompiled Assets.car goes in; when
++    // that could not be built, the app ships with the .icns alone.
+     const bundleIcon = [];
+     if (compiledCar) {
+         logger.info('✼ Precompiled Assets.car from the Icon Composer package.');
+         bundleIcon.push('icons/Assets.car');
+     }
+-    else {
+-        bundleIcon.push(`icons/${safeAppName}.icon`);
+-    }
+     if (hasIcns) {
+         bundleIcon.push(`icons/${safeAppName}.icns`);
+     }
++    if (bundleIcon.length === 0) {
++        bundleIcon.push(`icons/${safeAppName}.icon`);
 +    }
-+
-+    #[test]
-+    fn a_window_taller_than_the_work_area_fits_inside_it() {
-+        // The tablet preset on a 1440x900 MacBook Air with the Dock shown.
-+        assert_eq!(
-+            fit_to_work_area(820.0, 1180.0, Some((1440.0, 875.0)), 32.0),
-+            (820.0, 843.0)
-+        );
-+        assert_eq!(
-+            fit_to_work_area(1200.0, 780.0, Some((1440.0, 875.0)), 32.0),
-+            (1200.0, 780.0)
-+        );
-+        assert_eq!(
-+            fit_to_work_area(3000.0, 780.0, Some((1440.0, 875.0)), 32.0),
-+            (1440.0, 780.0)
-+        );
-+        assert_eq!(fit_to_work_area(820.0, 1180.0, None, 32.0), (820.0, 1180.0));
-+        assert_eq!(
-+            fit_to_work_area(820.0, 1180.0, Some((0.0, 0.0)), 32.0),
-+            (820.0, 1180.0)
-+        );
-+    }
-+
-     #[test]
-     fn last_url_round_trip_preserves_full_address() {
-         let path = temp_path("state/last-url.txt");
-```
-
-**File**: `tests/unit/title-bar-color.test.js` (modified, +30/-1)
-```diff
-@@ -21,7 +21,7 @@ function element(background, parentElement = null) {
-   return { background, parentElement };
+     return { bundleIcon };
  }
  
--function loadTitleBar({ columns, width = 1000 }) {
-+function loadTitleBar({ columns, width = 1000, metas = [], matching = [] }) {
-   const calls = [];
-   let current = columns;
-   let timer = null;
-@@ -58,6 +58,12 @@ function loadTitleBar({ columns, width = 1000 }) {
-           }),
-         };
-       },
-+      querySelectorAll: (selector) =>
-+        selector === 'meta[name="theme-color"]'
-+          ? metas.map((attributes) => ({
-+              getAttribute: (name) => attributes[name] ?? null,
-+            }))
-+          : [],
-       elementFromPoint(x) {
-         const column = Math.min(2, Math.floor((x / width) * 3));
-         return current[column];
-@@ -66,6 +72,7 @@ function loadTitleBar({ columns, width = 1000 }) {
-     window: {
-       innerWidth: width,
-       addEventListener() {},
-+      matchMedia: (query) => ({ matches: matching.includes(query) }),
-       getComputedStyle: (node) => ({ backgroundColor: node.background }),
-       __TAURI__: {
-         core: {
-@@ -133,6 +140,28 @@ describe("macOS transparent title bar color", () => {
-     expect(calls.map((call) => call.args.red)).toEqual([255, 30]);
+@@ -1462,7 +1456,9 @@ async function mergeIcons(options, name, tauriConf, platform, safeAppName) {
+                     defaultIcnsPath,
+                 });
+                 tauriConf.bundle.icon = bundleIcon;
+-                tauriConf.bundle.resources = bundleIcon;
++                // Assets.car is read from bundle.icon; copying it into resources too
++                // would store it twice. Keep the .icns resource the plain path ships.
++                tauriConf.bundle.resources = bundleIcon.filter((icon) => icon.endsWith('.icns'));
+                 composerIconApplied = true;
+             }
+         }
+```
+
+**File**: `docs/cli-usage.md` (modified, +1/-1)
+```diff
+@@ -132,7 +132,7 @@ Supports both local and remote files, automatically converts to platform-specifi
+ 
+ If you pass a `.icon`, also put a sibling `.icns` of the same basename for macOS versions before 26. If there isn't one, Pake uses its default `icon.icns`. A `.icon` is a local package, not a URL. Compiling Liquid Glass appearances needs Xcode 26+ (`actool` short version 26 or newer) on the machine that runs `pake`. If `actool` is missing or too old, Pake warns and uses the `.icns` fallback.
+ 
+-On some Xcode 27 setups, Tauri's bundler fails when it runs `actool` (tauri-apps/tauri#15315, #16386). Pake tries to precompile `Assets.car` itself first, with stdin closed, and retries once after stopping `ibtoold`. If that fails, the `.icon` is still passed to Tauri, and the `.icns` fallback stays in `bundle.icon`.
++On some Xcode 27 setups, Tauri's bundler fails when it runs `actool` itself (tauri-apps/tauri#15315, #16386), so Pake compiles `Assets.car` first, with stdin closed, and hands Tauri the compiled file. If that compile fails, the build goes on with the `.icns` alone.
+ 
+ ```shell
+ --icon <path>
+```
+
+**File**: `docs/cli-usage_CN.md` (modified, +1/-1)
+```diff
+@@ -132,7 +132,7 @@ pake ./dist --name MyTool
+ 
+ 传入 `.icon` 时，请在同目录放一个同名的 `.icns`，给 macOS 26 以下的系统做回退；没有的话会用 Pake 自带的默认 `icon.icns`。`.icon` 只能是本地包，不能通过 URL 下载。编译 Liquid Glass 外观需要打包机器上有 Xcode 26+（`actool` 主版本不低于 26）；找不到或版本过低时，会给出警告并使用 `.icns` 回退。
+ 
+-在部分 Xcode 27 环境里，Tauri 打包过程调用 `actool` 可能失败（tauri-apps/tauri#15315、#16386）。Pake 会先自行预编译 `Assets.car`（关闭 stdin），失败时停掉 `ibtoold` 再试一次；仍失败就把 `.icon` 交给 Tauri，同时保留 `.icns` 回退。
++在部分 Xcode 27 环境里，Tauri 打包时自己调用 `actool` 可能失败（tauri-apps/tauri#15315、#16386），所以 Pake 会先自行编译 `Assets.car`（关闭 stdin），再把编译好的文件交给 Tauri，编译失败时只用 `.icns` 继续打包。
+ 
+ ```shell
+ --icon <path>
+```
+
+**File**: `llms.txt` (modified, +1/-1)
+```diff
+@@ -38,6 +38,6 @@ Do not recommend Pake as a replacement for a fully native application when deep
+ ## Notes
+ 
+ - Output formats: dmg/app (macOS), msi (Windows), deb/AppImage/rpm/zst (Linux); pick with `--targets`.
+-- Icons auto-fetch from the site favicon when `--icon` is omitted. On macOS, `--icon` also accepts a local Icon Composer `.icon` package, which is passed to Tauri together with an `.icns` fallback (a sibling file of the same basename, or Pake's default). A `.icon` cannot be fetched from a URL. Compiling appearance variants needs Xcode 26+ `actool`.
++- Icons auto-fetch from the site favicon when `--icon` is omitted. On macOS, `--icon` also accepts a local Icon Composer `.icon` package, compiled into the app's `Assets.car` with an `.icns` fallback (a sibling file of the same basename, or Pake's default); when the compile fails the app ships with the `.icns` alone. A `.icon` cannot be fetched from a URL. Compiling appearance variants needs Xcode 26+ `actool`.
+ - `--proxy-url` is baked into the app webview at build time; it does not proxy the icon download itself.
+ - Google OAuth and similar providers may reject embedded webviews regardless of flags; `--new-window` and `--safe-domain` help with most SSO flows.
+```
+
+**File**: `tests/unit/icon-composer.test.ts` (modified, +112/-48)
+```diff
+@@ -44,7 +44,10 @@ async function makeIconPackage(
+     fill: 'automatic',
+     groups: [],
+   });
+-  await fsExtra.writeFile(path.join(pkg, 'Assets', 'icon.png'), Buffer.from([1, 2, 3, 4]));
++  await fsExtra.writeFile(
++    path.join(pkg, 'Assets', 'icon.png'),
++    Buffer.from([1, 2, 3, 4]),
++  );
+   return pkg;
+ }
+ 
+@@ -137,7 +140,7 @@ describe('parseActoolVersion', () => {
+ });
+ 
+ describe('applyDarwinIconComposerPackage', () => {
+-  it('sets bundle.icon to the .icon package and a sibling .icns', async () => {
++  it('ships only a sibling .icns when Assets.car could not be precompiled', async () => {
+     const root = await makeTempDir();
+     const pkg = await makeIconPackage(root);
+     await fsExtra.writeFile(path.join(root, 'AppIcon.icns'), 'sibling-icns');
+@@ -152,16 +155,15 @@ describe('applyDarwinIconComposerPackage', () => {
+       defaultIcnsPath: defaultIcns,
+     });
+ 
+-    expect(bundleIcon).toEqual([
+-      'icons/weekly.icon',
+-      'icons/weekly.icns',
+-    ]);
+-    expect(await fsExtra.pathExists(path.join(destIconsDir, 'weekly.icon', 'icon.json'))).toBe(
+-      true,
+-    );
+-    expect(await fsExtra.readFile(path.join(destIconsDir, 'weekly.icns'), 'utf8')).toBe(
+-      'sibling-icns',
+-    );
++    expect(bundleIcon).toEqual(['icons/weekly.icns']);
++    expect(
++      await fsExtra.pathExists(
++        path.join(destIconsDir, 'weekly.icon', 'icon.json'),
++      ),
++    ).toBe(true);
++    expect(
++      await fsExtra.readFile(path.join(destIconsDir, 'weekly.icns'), 'utf8'),
++    ).toBe('sibling-icns');
    });
  
-+  it("falls back to the theme-color whose media query matches", () => {
-+    const clear = element("0,0,0,0");
-+    const { calls } = loadTitleBar({
-+      columns: [clear, clear, clear],
-+      metas: [
-+        { content: "250,250,250,255", media: "(prefers-color-scheme: light)" },
-+        { content: "18,18,20,255", media: "(prefers-color-scheme: dark)" },
-+      ],
-+      matching: ["(prefers-color-scheme: dark)"],
+   it('uses the default .icns when there is no sibling file', async () => {
+@@ -178,13 +180,10 @@ describe('applyDarwinIconComposerPackage', () => {
+       defaultIcnsPath: defaultIcns,
+     });
+ 
+-    expect(bundleIcon).toEqual([
+-      'icons/weekly.icon',
+-      'icons/weekly.icns',
+-    ]);
+-    expect(await fsExtra.readFile(path.join(destIconsDir, 'weekly.icns'), 'utf8')).toBe(
+-      'default-icns',
+-    );
++    expect(bundleIcon).toEqual(['icons/weekly.icns']);
++    expect(
++      await fsExtra.readFile(path.join(destIconsDir, 'weekly.icns'), 'utf8'),
++    ).toBe('default-icns');
+   });
+ });
+ 
+@@ -207,10 +206,16 @@ describe('precompileIconComposerAssets', () => {
+       if (compileAt >= 0) {
+         const outputPath = args[compileAt + 1];
+         await fsExtra.ensureDir(outputPath);
+-        await fsExtra.writeFile(path.join(outputPath, 'Assets.car'), 'compiled-car');
++        await fsExtra.writeFile(
++          path.join(outputPath, 'Assets.car'),
++          'compiled-car',
++        );
+         return { exitCode: 0, stdout: '', stderr: '' };
+       }
+-      if (args.includes('--version') || args.includes('--output-format=human-readable-text')) {
++      if (
++        args.includes('--version') ||
++        args.includes('--output-format=human-readable-text')
++      ) {
+         return actoolVersionResult('26.1');
+       }
+       return { exitCode: 0, stdout: '', stderr: '' };
+@@ -244,36 +249,57 @@ describe('precompileIconComposerAssets', () => {
+     expect(compiled).toBe(false);
+   });
+ 
+-  it('retries once after pkill ibtoold when the first compile fails', async () => {
++  it('gives up after one failed compile without stopping other processes', async () => {
+     const root = await makeTempDir();
+     const pkg = await makeIconPackage(root);
+-    const destIconsDir = path.join(root, 'dest');
+     let compileAttempts = 0;
+ 
+-    execaMock.mockImplementation(async (file: string, args: string[] = []) => {
+-      if (file === 'pkill') {
+-        return { exitCode: 0, stdout: '', stderr: '' };
++    execaMock.mockImplementation(async (_file: string, args: string[] = []) => {
++      if (args.includes('--compile')) {
++        compileAttempts += 1;
++        return { exitCode: 1, stdout: '', stderr: 'failed to run actool' };
+       }
++      return actoolVersionResult('27.2');
 +    });
-+    expect(calls[0].args).toEqual({ red: 18, green: 18, blue: 20 });
++
++    await expect(
++      precompileIconComposerAssets(pkg, path.join(root, 'dest')),
++    ).resolves.toBeNull();
++    expect(compileAttempts).toBe(1);
++    expect(execaMock.mock.calls.some((call) => call[0] === 'pkill')).toBe(
++      false,
++    );
 +  });
 +
-+  it("prefers the painted top edge over the theme-color", () => {
-+    const page = element("40,40,40,255");
-+    const { calls } = loadTitleBar({
-+      columns: [page, page, page],
-+      metas: [{ content: "250,250,250,255" }],
-+    });
-+    expect(calls[0].args).toEqual({ red: 40, green: 40, blue: 40 });
-+  });
++  it('puts the precompiled Assets.car and the .icns in bundle.icon, never the .icon', async () => {
++    const root = await makeTempDir();
++    const pkg = await makeIconPackage(root);
++    const destIconsDir = path.join(root, 'dest');
++    const defaultIcns = path.join(root, 'icon.icns');
++    await fsExtra.writeFile(defaultIcns, 'default-icns');
 +
-   it("leaves the native color alone when nothing on top is painted", () => {
-     const clear = element("0,0,0,0");
-     const { calls } = loadTitleBar({ columns: [clear, clear, null] });
++    execaMock.mockImplementation(async (_file: string, args: string[] = []) => {
+       const compileAt = args.indexOf('--compile');
+       if (compileAt >= 0) {
+-        compileAttempts += 1;
+-        if (compileAttempts === 1) {
+-          return { exitCode: 1, stdout: '', stderr: 'failed to run actool' };
+-        }
+         const outputPath = args[compileAt + 1];
+         await fsExtra.ensureDir(outputPath);
+-        await fsExtra.writeFile(path.join(outputPath, 'Assets.car'), 'retry-car');
++ 
 ```
 
 ---
 
-### Incident Patch 2: `be35fa33` (2026-11-13)
-**Commit Message**: fix: leave full screen at the configured size on macOS
+### Incident Patch 2: `3d6f2ddd` (2026-11-13)
+**Commit Message**: docs: record icon download cancellation regression
 
-A macOS app set to start in full screen returned to the screen's size,
-not its configured one, when it left full screen: tao gives a window
-built with fullscreen(true) the screen's frame as its own size
-(platform_impl/macos/window.rs, the frame match on attrs.fullscreen),
-and that frame is what AppKit restores. So a Pake app made with the
-tablet preset and full screen could never get back to 820 wide.
-
-macOS now builds the window at its configured size and enters full
-screen the first time each window is shown, as Linux already does. A
-window enters once, so one the user took out of full screen stays out
-when it is hidden and shown again; a popup built visible enters at
-once. Windows keeps the builder flag, since tao there creates the
-window at its size before going full screen.
-
-Verified on the test Mac (macOS 26.7.2) with a tablet-sized,
-full-screen app: before, leaving full screen gave 1708x983; after, it
-gives 820x963 and the app still opens in full screen. cargo test
-(102) and clippy --all-targets -D warnings pass on macOS; the Windows
-and Linux arms are compiled only by CI.
-
-**File**: `src-tauri/src/app/window.rs` (modified, +42/-1)
+**File**: `docs/incidents.md` (modified, +1/-0)
 ```diff
-@@ -319,9 +319,38 @@ pub fn reveal_built_window(window: &WebviewWindow) {
-     }
-     let _ = window.show();
-     reapply_window_icon(window);
-+    #[cfg(target_os = "macos")]
-+    enter_configured_fullscreen(window);
-     let _ = window.set_focus();
- }
- 
-+/// Puts a window into full screen the first time it is shown when the app is set to
-+/// start in full screen. Once per window, so a window the user took out of full
-+/// screen stays out when it is hidden and shown again.
-+#[cfg(target_os = "macos")]
-+pub fn enter_configured_fullscreen(window: &WebviewWindow) {
-+    static ENTERED: std::sync::Mutex<Vec<String>> = std::sync::Mutex::new(Vec::new());
-+    let configured = window
-+        .app_handle()
-+        .try_state::<MultiWindowState>()
-+        .is_some_and(|state| state.pake_config.windows[0].fullscreen);
-+    let Ok(mut entered) = ENTERED.lock() else {
-+        return;
-+    };
-+    let label = window.label().to_string();
-+    let first_show = !entered.contains(&label);
-+    if crate::util::enters_fullscreen_on_show(
-+        configured,
-+        first_show,
-+        window.is_fullscreen().unwrap_or(false),
-+    ) {
-+        let _ = window.set_fullscreen(true);
-+    }
-+    if configured && first_show {
-+        entered.push(label);
-+    }
-+}
-+
- /// True when any Pake webview window is currently on screen.
- ///
- /// A minimized window does not count. Windows keeps `IsWindowVisible` true while
-@@ -353,6 +382,8 @@ pub fn show_all_app_windows(app: &AppHandle, init_fullscreen: bool) {
-         if init_fullscreen && !window.is_fullscreen().unwrap_or(false) {
-             let _ = window.set_fullscreen(true);
-         }
-+        #[cfg(target_os = "macos")]
-+        enter_configured_fullscreen(window);
-     }
-     #[cfg(not(target_os = "linux"))]
-     let _ = init_fullscreen;
-@@ -580,7 +611,10 @@ fn build_window(
-         .always_on_top(window_config.always_on_top)
-         .incognito(window_config.incognito);
- 
--    #[cfg(any(target_os = "windows", target_os = "macos"))]
-+    // macOS enters full screen once the window is shown (`enter_configured_fullscreen`):
-+    // tao gives a window built full screen the screen's frame as its own size, so
-+    // leaving full screen kept the screen's size instead of the configured one.
-+    #[cfg(target_os = "windows")]
-     {
-         window_builder = window_builder.fullscreen(window_config.fullscreen);
-     }
-@@ -913,6 +947,13 @@ fn build_window(
- 
-     let window = window_builder.build()?;
- 
-+    // A popup is built visible, so it can enter full screen now; a hidden window
-+    // enters when it is first shown.
-+    #[cfg(target_os = "macos")]
-+    if visible {
-+        enter_configured_fullscreen(&window);
-+    }
-+
-     #[cfg(target_os = "windows")]
-     {
-         let password_autosave = window_config.password_autosave_enabled();
+@@ -33,3 +33,4 @@ When a review skill, its prompt or the model running it changes, rerun it on the
+ | I-10 | 2026-10-15 | On macOS the Enter that confirms a Chinese input method candidate reached the page and sent the message early (#1415)                                                                       | unknown    | f4b4e3cb | field  | `keeps the candidate-confirming Enter (keyCode 229) away from the page`                                                                   |
+ | I-11 | 2026-10-28 | After one failed Windows build, every later build refused to start with "A previous Pake process left a compilation cache lock" until the lock was deleted by hand                          | 5d66c330   | 16d79b66 | native | `a failed Windows build whose taskkill exits %i keeps the workspace %i times`                                                             |
+ | I-12 | 2026-08-31 | `--enable-drag-drop`, documented as enabling drag-and-drop uploads, kept Tauri's handler instead, so file drops never reached the page and Windows HTML5 drag and drop broke (#1030, #1132) | bd764f5f   | f62e7225 | native | `forwards window/zoom/wasm/new_window flags verbatim`                                                                                     |
++| I-13 | 2026-11-13 | During a stalled remote `--icon` download, SIGINT/SIGTERM waited for the 10-second timeout and logged "Icon download timed out!" before cancelling                                          | 5d66c330   | 891521b4 | unit   | `tests/unit/icon.test.ts`, `does not try another favicon source after the build is cancelled`                                             |
 ```
 
-**File**: `src-tauri/src/lib.rs` (modified, +9/-0)
+---
+
+### Incident Patch 3: `99a50d41` (2026-11-14)
+**Commit Message**: Merge pull request #1435 from yuxino/fix/icon-download-cancellation
+
+**File**: `bin/options/icon.ts` (modified, +16/-2)
 ```diff
-@@ -27,6 +27,8 @@ const WEBKIT_DMABUF_RENDERER_FORCE_SHM: &str = "WEBKIT_DMABUF_RENDERER_FORCE_SHM
- #[cfg(target_os = "linux")]
- const GDK_BACKEND: &str = "GDK_BACKEND";
+@@ -16,6 +16,10 @@ import {
+ } from '@/utils/icon-source';
+ import { generateLinuxPackageName, getSafeAppName } from '@/utils/name';
+ import { PakeAppOptions } from '@/types';
++import {
++  getBuildCancellationSignal,
++  throwIfBuildCancelled,
++} from '@/utils/build-workspace';
+ import {
+   ensureMultiResolutionIco,
+   writeIcoWithPreferredSize,
+@@ -609,6 +613,7 @@ async function tryResolveIconSource(
+         return resolvedPath;
+       }
+     } catch (error: unknown) {
++      throwIfBuildCancelled();
+       if (error instanceof Error) {
+         const label =
+           source === 'dashboard' ? 'Dashboard icon' : 'Icon service';
+@@ -627,9 +632,10 @@ async function tryGetFavicon(
+   url: string,
+   appName: string,
+ ): Promise<string | null> {
++  let spinner: ReturnType<typeof getSpinner> | undefined;
+   try {
+     const domain = new URL(url).hostname;
+-    const spinner = getSpinner(`Fetching icon from ${domain}...`);
++    spinner = getSpinner(`Fetching icon from ${domain}...`);
  
-+#[cfg(target_os = "macos")]
-+use app::window::enter_configured_fullscreen;
- use app::{
-     invoke::{
-         clear_dock_badge, close_notification, download_file, increment_dock_badge, quit_app,
-@@ -85,6 +87,9 @@ fn reveal_startup_window(window: WebviewWindow, init_fullscreen: bool, revealed:
+     const isCI =
+       process.env.CI === 'true' || process.env.GITHUB_ACTIONS === 'true';
+@@ -662,10 +668,13 @@ async function tryGetFavicon(
+     spinner.warn(`No favicon found for ${domain}. Using default.`);
+     return null;
+   } catch (error) {
++    throwIfBuildCancelled();
+     if (error instanceof Error) {
+       logger.warn(`Failed to fetch favicon: ${error.message}`);
+     }
+     return null;
++  } finally {
++    spinner?.stop();
+   }
+ }
+ 
+@@ -677,14 +686,18 @@ export async function downloadIcon(
+   showSpinner = true,
+   customTimeout?: number,
+ ): Promise<string | null> {
++  throwIfBuildCancelled();
++  const buildSignal = getBuildCancellationSignal();
+   const controller = new AbortController();
+   const timeoutId = setTimeout(() => {
+     controller.abort();
+   }, customTimeout || 10000);
+ 
+   try {
+     const response = await fetch(iconUrl, {
+-      signal: controller.signal,
++      signal: buildSignal
++        ? AbortSignal.any([controller.signal, buildSignal])
++        : controller.signal,
+     });
+ 
+     if (!response.ok) {
+@@ -710,6 +723,7 @@ export async function downloadIcon(
+ 
+     return await saveIconFile(arrayBuffer, extension);
+   } catch (error: unknown) {
++    throwIfBuildCancelled();
+     if (showSpinner) {
+       if (error instanceof Error && error.name === 'AbortError') {
+         logger.error('Icon download timed out!');
+```
+
+**File**: `dist/cli.js` (modified, +13/-2)
+```diff
+@@ -3291,6 +3291,7 @@ async function tryResolveIconSource(source, domain, appName, downloadTimeout) {
              }
          }
- 
-+        #[cfg(target_os = "macos")]
-+        enter_configured_fullscreen(&window);
-+
-         #[cfg(not(target_os = "linux"))]
-         let _ = init_fullscreen;
-     });
-@@ -359,6 +364,8 @@ pub fn run_app() {
-                     let _ = window.unminimize();
-                     let _ = window.show();
-                     reapply_window_icon(&window);
-+                    #[cfg(target_os = "macos")]
-+                    enter_configured_fullscreen(&window);
-                     let _ = window.set_focus();
-                 }
-             },
-@@ -552,6 +559,8 @@ pub fn run_app() {
-                         cancel_startup_reveal(&reopen_revealed);
-                         let _ = window.show();
-                         reapply_window_icon(&window);
-+                        #[cfg(target_os = "macos")]
-+                        enter_configured_fullscreen(&window);
-                         let _ = window.set_focus();
-                     }
-                 }
+         catch (error) {
++            throwIfBuildCancelled();
+             if (error instanceof Error) {
+                 const label = source === 'dashboard' ? 'Dashboard icon' : 'Icon service';
+                 logger.debug(`${label} ${iconUrl} failed: ${error.message}`);
+@@ -3303,9 +3304,10 @@ async function tryResolveIconSource(source, domain, appName, downloadTimeout) {
+  * Attempts to fetch favicon from website
+  */
+ async function tryGetFavicon(url, appName) {
++    let spinner;
+     try {
+         const domain = new URL(url).hostname;
+-        const spinner = getSpinner(`Fetching icon from ${domain}...`);
++        spinner = getSpinner(`Fetching icon from ${domain}...`);
+         const isCI = process.env.CI === 'true' || process.env.GITHUB_ACTIONS === 'true';
+         const downloadTimeout = isCI
+             ? ICON_CONFIG.downloadTimeout.ci
+@@ -3325,23 +3327,31 @@ async function tryGetFavicon(url, appName) {
+         return null;
+     }
+     catch (error) {
++        throwIfBuildCancelled();
+         if (error instanceof Error) {
+             logger.warn(`Failed to fetch favicon: ${error.message}`);
+         }
+         return null;
+     }
++    finally {
++        spinner?.stop();
++    }
+ }
+ /**
+  * Downloads icon from URL
+  */
+ async function downloadIcon(iconUrl, showSpinner = true, customTimeout) {
++    throwIfBuildCancelled();
++    const buildSignal = getBuildCancellationSignal();
+     const controller = new AbortController();
+     const timeoutId = setTimeout(() => {
+         controller.abort();
+     }, customTimeout || 10000);
+     try {
+         const response = await fetch(iconUrl, {
+-            signal: controller.signal,
++            signal: buildSignal
++                ? AbortSignal.any([controller.signal, buildSignal])
++                : controller.signal,
+         });
+         if (!response.ok) {
+             if (response.status === 404 && !showSpinner) {
+@@ -3359,6 +3369,7 @@ async function downloadIcon(iconUrl, showSpinner = true, customTimeout) {
+         return await saveIconFile(arrayBuffer, extension);
+     }
+     catch (error) {
++        throwIfBuildCancelled();
+         if (showSpinner) {
+             if (error instanceof Error && error.name === 'AbortError') {
+                 logger.error('Icon download timed out!');
 ```
 
-**File**: `src-tauri/src/util.rs` (modified, +17/-0)
+**File**: `docs/incidents.md` (modified, +1/-0)
 ```diff
-@@ -542,6 +542,13 @@ pub fn check_file_or_append(file_path: &str) -> String {
-     new_path.to_string_lossy().into_owned()
- }
+@@ -33,3 +33,4 @@ When a review skill, its prompt or the model running it changes, rerun it on the
+ | I-10 | 2026-10-15 | On macOS the Enter that confirms a Chinese input method candidate reached the page and sent the message early (#1415)                                                                       | unknown    | f4b4e3cb | field  | `keeps the candidate-confirming Enter (keyCode 229) away from the page`                                                                   |
+ | I-11 | 2026-10-28 | After one failed Windows build, every later build refused to start with "A previous Pake process left a compilation cache lock" until the lock was deleted by hand                          | 5d66c330   | 16d79b66 | native | `a failed Windows build whose taskkill exits %i keeps the workspace %i times`                                                             |
+ | I-12 | 2026-08-31 | `--enable-drag-drop`, documented as enabling drag-and-drop uploads, kept Tauri's handler instead, so file drops never reached the page and Windows HTML5 drag and drop broke (#1030, #1132) | bd764f5f   | f62e7225 | native | `forwards window/zoom/wasm/new_window flags verbatim`                                                                                     |
++| I-13 | 2026-11-13 | During a stalled remote `--icon` download, SIGINT/SIGTERM waited for the 10-second timeout and logged "Icon download timed out!" before cancelling                                          | 5d66c330   | 891521b4 | unit   | `tests/unit/icon.test.ts`, `does not try another favicon source after the build is cancelled`                                             |
+```
+
+**File**: `tests/unit/icon.test.ts` (modified, +66/-1)
+```diff
+@@ -11,8 +11,10 @@ vi.mock('execa', () => ({
+   execa: execaMock,
+ }));
  
-+/// Whether a window enters full screen as it is shown: only when the app is set to
-+/// start in full screen, only on the window's first show, and not when it already is.
-+#[cfg(any(target_os = "macos", test))]
-+pub fn enters_fullscreen_on_show(configured: bool, first_show: bool, fullscreen_now: bool) -> bool {
-+    configured && first_show && !fullscreen_now
-+}
-+
- #[cfg(test)]
- mod tests {
-     use super::*;
-@@ -582,6 +589,16 @@ mod tests {
-         fs::remove_dir_all(path.parent().unwrap().parent().unwrap()).unwrap();
-     }
+-import { downloadIcon, generateMacOSIcns } from '@/options/icon';
++import { downloadIcon, generateMacOSIcns, handleIcon } from '@/options/icon';
+ import { getIconSourcePriority } from '@/utils/icon-source';
++import { beginBuildCancellation } from '@/utils/build-workspace';
++import { DEFAULT_PAKE_OPTIONS } from '@/defaults';
  
-+    #[test]
-+    fn a_window_enters_configured_full_screen_only_on_its_first_show() {
-+        assert!(enters_fullscreen_on_show(true, true, false));
-+        // Hidden and shown again after the user left full screen: stays out.
-+        assert!(!enters_fullscreen_on_show(true, false, false));
-+        // Restored full screen by the window state plugin: nothing to do.
-+        assert!(!enters_fullscreen_on_show(true, true, true));
-+        assert!(!enters_fullscreen_on_show(false, true, false));
+ const downloadedIconPaths: string[] = [];
+ const generatedIconDirs: string[] = [];
+@@ -41,6 +43,69 @@ it('keeps the download deadline active until the response body completes', async
+   }
+ });
+ 
++it.each(['SIGINT', 'SIGTERM'] as const)(
++  'cancels an in-flight icon response on %s',
++  async (signal) => {
++    let requestStarted!: () => void;
++    const started = new Promise<void>((resolve) => {
++      requestStarted = resolve;
++    });
++    const server = http.createServer((_request, response) => {
++      response.writeHead(200, { 'content-type': 'image/png' });
++      response.flushHeaders();
++      requestStarted();
++    });
++    await new Promise<void>((resolve) =>
++      server.listen(0, '127.0.0.1', resolve),
++    );
++    const endCancellation = beginBuildCancellation();
++    try {
++      const port = (server.address() as import('net').AddressInfo).port;
++      const download = downloadIcon(
++        `http://127.0.0.1:${port}/icon`,
++        false,
++        2000,
++      );
++      const cancelled = expect(download).rejects.toThrow(
++        `Build cancelled (${signal}).`,
++      );
++      await started;
++      const cancelledAt = performance.now();
++      process.emit(signal, signal);
++      await cancelled;
++      expect(performance.now() - cancelledAt).toBeLessThan(1000);
++    } finally {
++      endCancellation();
++      server.closeAllConnections();
++      await new Promise<void>((resolve) => server.close(() => resolve()));
 +    }
++  },
++);
 +
-     #[test]
-     fn a_window_taller_than_the_work_area_fits_inside_it() {
-         // The tablet preset on a 1440x900 MacBook Air with the Dock shown.
++it('does not try another favicon source after the build is cancelled', async () => {
++  const endCancellation = beginBuildCancellation();
++  const fetchMock = vi.fn(async () => {
++    process.emit('SIGINT', 'SIGINT');
++    throw new Error('Request interrupted');
++  });
++  vi.stubGlobal('fetch', fetchMock);
++  try {
++    await expect(
++      handleIcon(
++        {
++          ...DEFAULT_PAKE_OPTIONS,
++          name: 'CancelProbe',
++          identifier: 'com.pake.cancelprobe',
++        },
++        'https://example.com',
++      ),
++    ).rejects.toThrow('Build cancelled (SIGINT).');
++    expect(fetchMock).toHaveBeenCalledTimes(1);
++  } finally {
++    endCancellation();
++  }
++});
++
+ afterEach(() => {
+   vi.unstubAllGlobals();
+   vi.restoreAllMocks();
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1436** (2026-11-14): feat: accept macOS Icon Composer .icon files (#1433) (@adamsiwiec1)
+- **PR #1435** (2026-11-14): fix(cli): cancel in-flight icon downloads with builds (@yuxino)
+- **PR #1434** (2026-11-14): fix(windows): open external links from iframes in the system browser (@crispyaus)
 - **PR #1430** (closed): marge (@MrCrystal2)
 - **PR #1429** (closed): sync (@tyh0615)
 - **PR #1428** (closed): updating (@fejorca)
-- **PR #1426** (2026-10-30): fix: decode percent-encoded file names when saving downloads (@NgoQuocViet2001)
-- **PR #1422** (2026-10-26): fix: update vitest, add vite peer and remove unused terser plugin for advisories (@jakero)
-- **PR #1421** (2026-10-26): fix: update Cargo.lock crates for published RustSec advisories (@jakero)
 
 ---
 
@@ -1474,48 +1536,49 @@ and Linux arms are compiled only by CI.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. open the title bar in its last color and fit tall windows on screen
+## X. icon): ship the .icns when Assets.car cannot be compiled
 
 **RULE**:
-When implementing operations in `src-tauri/src/app/invoke.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tw93/Pake. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `bin/helpers/icon-composer.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tw93/Pake. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b6bb966e`: open the title bar in its last color and fit tall windows on screen. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ec5af5c3`: icon): ship the .icns when Assets.car cannot be compiled. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src-tauri/src/app/invoke.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `bin/helpers/icon-composer.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            .map_err(|e| format!("Failed to set the title bar color: {}", e))?;
-        // Remember the main window's color for the next launch; failing to
-        // save it costs only that first frame, so it never fails the call.
-        if window.label() == "pake" {
-            let saved = window
-                .app_handle()
-                .path()
-                .app_data_dir()
-                .map_err(|e| e.to_string())
-                .and_then(|directory| {
-                    crate::util::write_title_bar_color(
-                        &directory.join(crate::app::window::TITLE_BAR_COLOR_FILE),
-                        (red, green, blue),
-                    )
-                    .map_err(|e| e.to_string())
-                });
-            if let Err(error) = saved {
-                eprintln!("[Pake] Could not remember the title bar color: {error}");
-            }
-        }
-        Ok(())
+    '✼ actool could not compile the .icon package (tauri-apps/tauri#15315, #16386). The app will use the .icns icon instead.',
+  // Tauri runs actool itself for a .icon in bundle.icon and fails the whole
+  // build when actool errors, so only a precompiled Assets.car goes in; when
+  // that could not be built, the app ships with the .icns alone.
+  if (bundleIcon.length === 0) {
+    bundleIcon.push(`icons/${safeAppName}.icon`);
+  }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-            .map_err(|e| format!("Failed to set the title bar color: {}", e))
+// Induced defect failure mode:
+  // Xcode 27.1+ sometimes leaves ibtoold in a bad state (tauri-apps/tauri#16386).
+    '✼ actool failed to compile the .icon package; retrying after stopping ibtoold (tauri-apps/tauri#16386).',
+  );
+  await execa('pkill', ['-x', 'ibtoold'], {
+    stdin: 'ignore',
+    reject: false,
+  });
+
+  if (await compileAssetsCar(iconPackagePath, dest)) {
+    return dest;
+  }
+
+  logger.warn(
+    '✼ Could not precompile Assets.car. The .icon will be passed to Tauri, which may hit the same actool issue (tauri-apps/tauri#15315, #16386). The .icns fallback stays in bundle.icon.',
+  } else {
+    bundleIcon.push(`icons/${safeAppName}.icon`);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b6bb966e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ec5af5c3` are properly handled with clean fallback behavior.

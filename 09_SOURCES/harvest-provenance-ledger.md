@@ -9946,3 +9946,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-cactus-compute-whistle` | `https://huggingface.co/Cactus-Compute/whistle` | `hf-cactus-` | Multi-dimensional audit evidence | 2026-11-14T18:34:34.730Z |
 | `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `7b843103` | Multi-dimensional audit evidence | 2026-11-14T18:34:43.890Z |
 | `learn-dom-d-666917a5` | `project://hf-cactus-compute-whistle` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md` | 2026-11-14T18:35:10.781Z |
+| `learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf` | `https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-14T19:03:10.077Z |
+| `learn-github-tw93-pake` | `https://github.com/tw93/Pake` | `6498b4d7` | Multi-dimensional audit evidence | 2026-11-14T19:03:11.095Z |
+| `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `239be7b2` | Multi-dimensional audit evidence | 2026-11-14T19:03:19.170Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `c10b67e8` | Multi-dimensional audit evidence | 2026-11-14T19:03:26.757Z |
