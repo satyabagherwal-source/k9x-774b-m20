@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T13:29:46.758Z",
+  "last_updated": "2026-11-14T13:39:26.765Z",
   "directives": [
     {
       "id": "CD-001",
@@ -12515,6 +12515,50 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-925B31-splash-screen-staying-visible-after-warm.md",
       "staged_date": "2026-11-14"
+    },
+    {
+      "id": "CD-BP3Y",
+      "directive_title": "Fix crash on a package subpath ending in \"/.\", such as \"pkg/.\"",
+      "source_repo": "react/metro",
+      "source_commit": "059ef8d4",
+      "staged_file": "11_INBOX/candidate-directives/CD-BP3Y-fix-crash-on-a-package-subpath-ending-in-such-as-pkg.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-14",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-BWCI",
+      "directive_title": "unnecessary-to-owned",
+      "source_repo": "dathere/qsv",
+      "source_commit": "b0d8deec",
+      "staged_file": "11_INBOX/candidate-directives/CD-BWCI-unnecessary-to-owned.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-14",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-CLG8",
+      "directive_title": "metro-file-map: Fix crash on a package subpath ending in \"/.\", such as \"pkg/.\"",
+      "source_repo": "react-metro-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-CLG8-metro-file-map-fix-crash-on-a-package-subpath-ending-in-such-as-pkg.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-14",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-CMN4",
+      "directive_title": "clippy::unnecessary-to-owned",
+      "source_repo": "dathere-qsv-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-CMN4-clippy-unnecessary-to-owned.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-14",
+      "domain_letter": "G"
     }
   ]
 }

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-8LTQ",
-    "timestamp": "2026-11-13T13:20:39.038Z",
-    "repository": "ClementTsang/bottom",
-    "learningId": "learn-github-clementtsang-bottom",
-    "contentHash": "2d0b8d38960e20d310015ecd3d58935f706527788bf7faf02cea51f556579dc1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-8PX3",
-    "timestamp": "2026-11-13T13:20:44.343Z",
-    "repository": "Planetable/Planet",
-    "learningId": "learn-github-planetable-planet",
-    "contentHash": "b8adec3d614f250c86c6ba4a2e50189a103dfd25fdcd19a9ab5b6b6f45e562b5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-Q9AD",
-    "timestamp": "2026-11-13T13:34:22.597Z",
-    "repository": "mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF",
-    "learningId": "learn-huggingface-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-i1-gguf",
-    "contentHash": "9970d2b3fb06fad2935502eddaca45cf33c61f74b3884f28c11f2648208370c4",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-0H0L",
     "timestamp": "2026-11-13T13:42:19.173Z",
     "repository": "nvidia/Nemotron-3-Diarization",
@@ -7490,6 +7445,51 @@
     "repository": "dosco/graphjin",
     "learningId": "learn-github-dosco-graphjin",
     "contentHash": "a8f2e5192cef221c735fc79cfa514ae0b7a2131779085265958c90a6f48e115d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-BOYC",
+    "timestamp": "2026-11-14T13:38:43.092Z",
+    "repository": "react/metro",
+    "learningId": "learn-github-react-metro",
+    "contentHash": "821ddd92d116f5ce214a716281d0c6b037ee78ced949f330acff2ab82ef6642b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-BRNM",
+    "timestamp": "2026-11-14T13:38:46.594Z",
+    "repository": "google/vit-base-patch16-224",
+    "learningId": "learn-huggingface-google-vit-base-patch16-224",
+    "contentHash": "db15ee4d8901500b51b44dd27dc67a430dad11c86856c9ec168c742535d3e022",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-BW7K",
+    "timestamp": "2026-11-14T13:38:52.496Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "b2228f7a84688c0cae28c341dc66562f49fcec1e4589a3e40f5ba5b82170d606",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

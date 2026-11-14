@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-14T13:29:08.449Z",
+  "last_updated": "2026-11-14T13:38:52.509Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1625,14 +1625,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-vit-base-patch16-224",
-      "content_hash": "ad59f4ec3e3c40f1119d47cc4dba70f81b00e3d0cf75574abe031765a85e4381",
-      "verified_at": "2026-11-09T04:00:51.549Z",
+      "content_hash": "db15ee4d8901500b51b44dd27dc67a430dad11c86856c9ec168c742535d3e022",
+      "verified_at": "2026-11-14T13:38:46.610Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T04:00:51.549Z"
+      "last_updated": "2026-11-14T13:38:46.610Z"
     },
     "google/gemma-4-31B-it": {
       "repository": "google/gemma-4-31B-it",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "d0b1b2beab32ae1d0840b957abdff3531e85e034b182b14cb742dd4e2b468d41",
-      "verified_at": "2026-11-14T01:26:27.529Z",
+      "content_hash": "b2228f7a84688c0cae28c341dc66562f49fcec1e4589a3e40f5ba5b82170d606",
+      "verified_at": "2026-11-14T13:38:52.508Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T01:26:27.529Z"
+      "last_updated": "2026-11-14T13:38:52.508Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -8361,14 +8361,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-react-metro",
-      "content_hash": "e474935394132a8feedee55b208296d327f117b63b9f8c862ba8ed7eaae8e45f",
-      "verified_at": "2026-11-10T04:51:48.796Z",
+      "content_hash": "821ddd92d116f5ce214a716281d0c6b037ee78ced949f330acff2ab82ef6642b",
+      "verified_at": "2026-11-14T13:38:43.104Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-10T04:51:48.796Z"
+      "last_updated": "2026-11-14T13:38:43.104Z"
     },
     "Checkmarx/kics": {
       "repository": "Checkmarx/kics",

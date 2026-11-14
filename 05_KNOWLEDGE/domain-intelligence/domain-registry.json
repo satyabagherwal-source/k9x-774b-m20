@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T13:29:46.893Z",
-  "total_records": 680,
+  "last_updated": "2026-11-14T13:39:26.868Z",
+  "total_records": 685,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 335,
+      "total": 338,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -372,7 +372,10 @@
         "domain_intelligence-research-knowledge-intelligence-dosco-graphjin-core-invariants",
         "DOM-D-33F233D7",
         "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-8b-learnings-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-dosco-graphjin-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-dosco-graphjin-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-google-vit-base-patch16-224-core-invariants",
+        "DOM-D-D7AD2A79",
+        "domain_intelligence-research-knowledge-intelligence-hf-google-vit-base-patch16-224-learnings-core-in"
       ]
     },
     "E": {
@@ -511,7 +514,7 @@
       ]
     },
     "H": {
-      "total": 143,
+      "total": 145,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -655,7 +658,9 @@
         "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
         "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-learnings-c",
         "domain_intelligence-technical-construction-intelligence-czy0729-bangumi-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-czy0729-bangumi-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-czy0729-bangumi-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-react-metro-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-react-metro-learnings-core-invariants"
       ]
     },
     "I": {
@@ -10737,8 +10742,8 @@
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "ccebf559ae2dd16e89bf574d7dbdf1414f1ea479ab924dc23d43f076f1d00878",
-      "created_at": "2026-11-14T01:26:27.771Z"
+      "content_hash": "11b9a5b16479f3b0de0a97292dcf30def03a864d1ce39e2e5a78db5722cb58d7",
+      "created_at": "2026-11-14T13:38:52.804Z"
     },
     "DOM-D-F5645095": {
       "record_id": "DOM-D-F5645095",
@@ -10806,8 +10811,8 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-learnings-architecture-intelligence-dathere-qsv-learnings-core-invar.md",
       "repository": "dathere-qsv-learnings",
-      "content_hash": "12282d166866a14a1aee169d9aba1b948a22ec0b78dd21010e6e2fa140b840da",
-      "created_at": "2026-11-14T01:26:59.304Z"
+      "content_hash": "426dafbba6bd410edbf5a7c7ec95d734bcf6222e92b983bb08a5424f6e648328",
+      "created_at": "2026-11-14T13:39:26.868Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants",
@@ -14289,6 +14294,84 @@
       "repository": "dosco-graphjin-learnings",
       "content_hash": "7fa9e76fc35ed225c45a8e7fc271558caec13671e50e20ea7d12319d0baaf0bc",
       "created_at": "2026-11-14T13:29:46.220Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-react-metro-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-react-metro-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: react/metro Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-metro-technical-construction-intelligence-react-metro-core-invariants.md",
+      "repository": "react/metro",
+      "content_hash": "cbab03cddc3e3d17a1531eb331ffdac67fbb9cd7cf9a70609e5951194663f023",
+      "created_at": "2026-11-14T13:38:43.393Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-google-vit-base-patch16-224-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-google-vit-base-patch16-224-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: google/vit-base-patch16-224 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-vit-base-patch16-224-research-knowledge-intelligence-google-vit-base-p.md",
+      "repository": "google/vit-base-patch16-224",
+      "content_hash": "df243aefc0eadccf21b224090e3786bc4e2549a168aa3b4dd3ee8654532a4d77",
+      "created_at": "2026-11-14T13:38:46.775Z"
+    },
+    "DOM-D-D7AD2A79": {
+      "record_id": "DOM-D-D7AD2A79",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): google/vit-base-patch16-224",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/google/vit-base-patch16-224](https://huggingface.co/google/vit-base-patch16-224))  \n> **Source Version**: `hf-google-vi`  \n> **License**: Open-Sou",
+      "content_hash": "dae0bf99025ff80868d432cd83fd794ef2ca66708e90032346d405b4de47f970",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md`  \n> **Source**: huggingface ([https://h -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md`  \n> **Source**: huggingface ([https://h",
+      "provenance": {
+        "source_uri": "project://hf-google-vit-base-patch16-224/hf-google-vit-base-patch16-224-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T13:38:55.670Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-google-vit-base-patch16-224)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-google-vit-base-patch16-224"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T13:39:24.417Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-google-vit-base-patch16-224-learnings-core-in": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-google-vit-base-patch16-224-learnings-core-in",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-google-vit-base-patch16-224-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-vit-base-patch16-224-learnings-research-knowledge-intelligence-hf-goog.md",
+      "repository": "hf-google-vit-base-patch16-224-learnings",
+      "content_hash": "0d2003dce8781161ce55c2614f9c5319aff6f2f92655f10c7f4c82281067f2fb",
+      "created_at": "2026-11-14T13:39:24.633Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-react-metro-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-react-metro-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: react-metro-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-metro-learnings-technical-construction-intelligence-react-metro-learnings-.md",
+      "repository": "react-metro-learnings",
+      "content_hash": "7e88e6345fa079e393e227ed61d3f2bfefca5aacc979159ae85bb74b58b38fa6",
+      "created_at": "2026-11-14T13:39:25.323Z"
     }
   }
 }

@@ -4,45 +4,31 @@
 {
   "source_repository": "react/metro",
   "source_url": "https://github.com/react/metro",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "059ef8d4",
+  "license": "MIT",
+  "timestamp": "2026-11-14T13:38:43.295Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-react-metro",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [react/metro](https://github.com/react/metro) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [react/metro](https://github.com/react/metro) (Revision: `059ef8d4`).  
+> **License**: MIT | **Timestamp**: `2026-11-14T13:38:43.295Z`  
+> **Learning ID**: `learn-github-react-metro`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `react/metro` (Commit: `historical`)
+- **Target Repository**: `react/metro` (Commit: `059ef8d4`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/react-metro-learnings.md`  
-> **Source**: github ([https://github.com/react/metro](https://github.com/react/metro))  
-> **Source Version**: `b76d1d61`  
-> **License**: MIT  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-10T04:51:47.295Z  
-> **Learning ID**: `learn-github-react-metro`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): react/metro
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/react-metro-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/react/metro](https://github.com/react/metro))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-10T04:51:46.421Z  
+> **Harvest Timestamp**: 2026-11-14T13:38:42.045Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1549,207 +1535,242 @@ export default class Terminal {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9611b6f8` (2026-11-09)
-**Commit Message**: metro-file-map: Fix out-of-memory crash on a symlink into itself (#2204)
+### Incident Patch 1: `1461d81e` (2026-11-10)
+**Commit Message**: metro-file-map: Fix crash on a package subpath ending in "/.", such as "pkg/." (#2213)
 
-**File**: `packages/metro-file-map/src/lib/TreeFS.js` (modified, +7/-9)
-```diff
-@@ -39,6 +39,11 @@ function isRegularFile(node: FileNode): boolean {
-   return node[H.SYMLINK] === 0;
- }
- 
-+// The limit Linux applies when resolving a path (`MAXSYMLINKS`). A count rather
-+// than a set of visited targets because a symlink into itself (`a -> a/b`)
-+// gives a longer target on every follow, and so never repeats one.
-+const MAX_SYMLINK_FOLLOWS = 40;
-+
- // Null if not within the ancestor ('' is the root).
- function relativeToAncestor(
-   normalPath: string,
-@@ -701,8 +706,7 @@ export default class TreeFS implements MutableFileSystem {
-       } {
-     // We'll update the target if we hit a symlink.
-     let targetNormalPath = requestedNormalPath;
--    // Lazy-initialised set of seen target paths, to detect symlink cycles.
--    let seen: ?Set<string>;
-+    let followedSymlinks = 0;
-     // Pointer to the first character of the current path segment in
-     // targetNormalPath.
-     let fromIdx = opts.start?.pathIdx ?? 0;
-@@ -892,20 +896,14 @@ export default class TreeFS implements MutableFileSystem {
-         // onwards.
-         unseenPathFromIdx = normalSymlinkTarget.lastIndexOf(path.sep) + 1;
- 
--        if (seen == null) {
--          // Optimisation: set this lazily only when we've encountered a symlink
--          seen = new Set([requestedNormalPath]);
--        }
--        if (seen.has(targetNormalPath)) {
--          // TODO: Warn `Symlink cycle detected: ${[...seen, node].join(' -> ')}`
-+        if (++followedSymlinks > MAX_SYMLINK_FOLLOWS) {
-           return {
-             canonicalMissingPath: targetNormalPath,
-             exists: false,
-             missingSegmentName: segmentName,
-             remainingPath: '',
-           };
-         }
--        seen.add(targetNormalPath);
-         fromIdx = 0;
-         parentNode = this.#rootNode;
-         ancestorOfRootIdx = 0;
-```
+Resolving "pkg/." or "pkg/lib/." failed with a raw "Unexpectedly
+escaped traversal" invariant from TreeFS. Node.js resolves them to the
+package's main and to lib/index.js.
 
-**File**: `packages/metro-file-map/src/lib/__tests__/TreeFS-test.js` (modified, +35/-0)
+The fast path in RootPathUtils only falls back to path.relative when it
+finds a "./" fragment. A final "." or ".." segment has no separator
+after it, so paths like "node_modules/pkg/." were returned as they
+were, which is not a normal path. TreeFS skipped the "." segment but
+ended its traversal on the "pkg" node, and hit the invariant. A final
+".." got through the same way, so hierarchicalLookup("/project/foo/..")
+found foo/package.json.
+
+Make absoluteToNormal and relativeToNormal fall back to path.relative
+for a final "." segment, and for a final ".." after a normal segment. A
+final ".." in the leading "../" run keeps the fast path.
+joinNormalToRelative shares the fast path but treats a fallback as an
+error, so it skips the new check and keeps its current results.
+
+Part of #2166.
+
+**File**: `packages/metro-file-map/src/lib/RootPathUtils.js` (modified, +25/-2)
 ```diff
-@@ -225,6 +225,41 @@ describe.each([['win32'], ['posix']])('TreeFS on %s', platform => {
-       },
+@@ -123,6 +123,7 @@ export class RootPathUtils {
+         absolutePath,
+         endOfMatchingPrefix,
+         upIndirectionsToPrepend,
++        true,
+       )?.collapsedPath ?? this.#slowAbsoluteToNormal(absolutePath)
      );
+   }
+@@ -168,7 +169,7 @@ export class RootPathUtils {
  
-+    test('symlink into itself is missing, rather than following it forever', () => {
-+      const tfs = new TreeFS({
-+        rootDir: p('/project'),
-+        files: new Map<CanonicalPath, FileMetadata>([
-+          [p('a'), [123, 0, 0, null, 'a/b', null]],
-+        ]),
-+        processFile: () => {
-+          throw new Error('Not implemented');
-+        },
-+      });
-+      expect(tfs.lookup(p('/project/a/file.js'))).toEqual({exists: false});
-+    });
-+
-+    test.each([
-+      [40, true],
-+      [41, false],
-+    ])('a chain of %i symlinks: exists %s', (length, exists) => {
-+      const links: Array<[CanonicalPath, FileMetadata]> = [];
-+      for (let i = 0; i < length; i++) {
-+        const target = i === length - 1 ? 'file.js' : 'link' + (i + 1);
-+        links.push([p('link' + i), [123, 0, 0, null, target, null]]);
-+      }
-+      const tfs = new TreeFS({
-+        rootDir: p('/project'),
-+        files: new Map<CanonicalPath, FileMetadata>([
-+          [p('file.js'), [123, 0, 0, null, 0, null]],
-+          ...links,
-+        ]),
-+        processFile: () => {
-+          throw new Error('Not implemented');
-+        },
-+      });
-+      expect(tfs.lookup(p('/project/link0'))).toMatchObject({exists});
-+    });
-+
-     test('traversing the same symlink multiple times does not imply a cycle', () => {
-       expect(
-         tfs.lookup(p('/project/foo/owndir/owndir/another.js')),
+   relativeToNormal(relativePath: string): string {
+     return (
+-      this.#tryCollapseIndirectionsInSuffix(relativePath, 0, 0)
++      this.#tryCollapseIndirectionsInSuffix(relativePath, 0, 0, true)
+         ?.collapsedPath ??
+       path.relative(this.#rootDir, path.join(this.#rootDir, relativePath))
+     );
+@@ -217,7 +218,12 @@ export class RootPathUtils {
+       : normalPath + path.sep;
+     const rawPath = left + relativePath;
+     if (normalPath === '..' || normalPath.endsWith(SEP_UP_FRAGMENT)) {
+-      const collapsed = this.#tryCollapseIndirectionsInSuffix(rawPath, 0, 0);
++      const collapsed = this.#tryCollapseIndirectionsInSuffix(
++        rawPath,
++        0,
++        0,
++        false,
++      );
+       invariant(collapsed != null, 'Failed to collapse');
+       return {
+         collapsedSegments: collapsed.collapsedSegments,
+@@ -240,6 +246,7 @@ export class RootPathUtils {
+     fullPath: string, // A string ending with the relative path to process
+     startOfRelativePart: number, // Index of the start of part to process
+     implicitUpIndirections: number, // 0=root-relative, 1=dirname(root)-relative...
++    bailOnTrailingIndirection: boolean, // Fall back on a final '.' or '..'
+   ): ?{collapsedPath: string, collapsedSegments: number} {
+     let totalUpIndirections = implicitUpIndirections;
+     let collapsedSegments = 0;
+@@ -250,6 +257,22 @@ export class RootPathUtils {
+     for (let pos = startOfRelativePart; ; pos += UP_FRAGMENT_SEP_LENGTH) {
+       const nextIndirection = fullPath.indexOf(CURRENT_FRAGMENT, pos);
+       if (nextIndirection === -1) {
++        // The search above doesn't find a final '.' or '..' segment, as no
++        // separator follows it. Fall back for those too, unless the '..' is
++        // one of the leading indirections, e.g. for /project/root/foo/. or
++        // /project/root/foo/..
++        if (bailOnTrailingIndirection && fullPath.endsWith('.')) {
++          const lastSegmentIdx = fullPath.lastIndexOf(path.sep) + 1;
++          const lastSegmentLength = fullPath.length - lastSegmentIdx;
++          if (
++            lastSegmentLength === 1 ||
++            (lastSegmentLength === 2 &&
++              fullPath[lastSegmentIdx] === '.' &&
++              lastSegmentIdx > pos)
++          ) {
++            return null;
++          }
++        }
+         // If we have any indirections, they may "collapse" if a subsequent
+         // segment re-enters a directory we had previously exited, e.g:
+         // /project/root/../root/foo should collapse to /project/root/foo' and
 ```
 
----
-
-### Incident Patch 2: `66c7c48f` (2026-11-09)
-**Commit Message**: Name the dictionary key in the Metro build integration test
-
-Summary: Add the required dictionary key label to the diagnosed test context annotation. No runtime code or other types change.
-
-Differential Revision: D130744590
-
-Pull Request resolved: https://github.com/react/metro/pull/2211
-
-**File**: `packages/metro/src/integration_tests/__tests__/build-test.js` (modified, +1/-1)
+**File**: `packages/metro-file-map/src/lib/__tests__/RootPathUtils-test.js` (modified, +29/-0)
 ```diff
-@@ -54,7 +54,7 @@ test('builds a bundle that runs under a global prefix', async () => {
-     dev: true,
+@@ -54,6 +54,11 @@ describe.each([['win32'], ['posix']])('RootPathUtils on %s', platform => {
+     p('/'),
+     p('/outside'),
+     p('/outside/'),
++    p('/project/..'),
++    p('/project/root/../..'),
++    p('/project/root/a.'),
++    p('/project/root/foo..'),
++    p('/project/root/...'),
+   ])(`absoluteToNormal('%s') is correct and optimised`, absolutePath => {
+     const rootDir = p('/project/root');
+     pathUtils = new RootPathUtils(rootDir);
+@@ -80,6 +85,11 @@ describe.each([['win32'], ['posix']])('RootPathUtils on %s', platform => {
+       p('/project/root/../a./foo'),
+       p('/project/root/.././foo'),
+       p('/project/root/.././foo/'),
++      p('/project/root/.'),
++      p('/project/root/baz/.'),
++      p('/project/root/baz/..'),
++      p('/project/root/../root2/.'),
++      p('/project/root/../root2/..'),
+     ])(`absoluteToNormal('%s') falls back to path.relative`, absolutePath => {
+       let expected = mockPathModule.relative(rootDir, absolutePath);
+       // Unlike path.relative, we expect to preserve trailing separators.
+@@ -136,6 +146,11 @@ describe.each([['win32'], ['posix']])('RootPathUtils on %s', platform => {
+             p('../../project/root'),
+             p('../../project/root/'),
+             p('../../..'),
++            p('.'),
++            p('foo/.'),
++            p('foo/..'),
++            p('../root/.'),
++            p('../root/..'),
+             // On POSIX, `..` at the root re-enters the root
+             ...(platform === 'posix'
+               ? [p('../../../normal/path'), p('../../../normal/path/')]
+@@ -164,6 +179,20 @@ describe.each([['win32'], ['posix']])('RootPathUtils on %s', platform => {
+     );
    });
  
--  const context: {[string]: unknown} = {};
-+  const context: {[key: string]: unknown} = {};
-   // Exports cross realms, so compare their serialized form.
-   expect(JSON.stringify(execBundle(prefixed.code, context))).toBe(
-     JSON.stringify(execBundle(unprefixed.code)),
-```
-
----
-
-### Incident Patch 3: `b76d1d61` (2026-11-09)
-**Commit Message**: metro-file-map: Fix the path of a file added through a symlink to the root (#2212)
-
-**File**: `packages/metro-file-map/src/lib/TreeFS.js` (modified, +9/-8)
-```diff
-@@ -566,21 +566,22 @@ export default class TreeFS implements MutableFileSystem {
-     changeListener?: FileSystemListener,
-   ): void {
-     const normalPath = this.#normalizePath(mixedPath);
-+    // path.dirname gives '.' for a file in the root, whose normal path is ''.
-+    const normalDirname = path.dirname(normalPath);
-     // Walk the tree to find the *real* path of the parent node, creating
-     // directories as we need.
--    const parentDirNode = this.#lookupByNormalPath(path.dirname(normalPath), {
--      ...LOOKUP_OPTIONS,
--      changeListener,
--      makeDirectories: true,
--    });
-+    const parentDirNode = this.#lookupByNormalPath(
-+      normalDirname === '.' ? '' : normalDirname,
-+      {...LOOKUP_OPTIONS, changeListener, makeDirectories: true},
-+    );
-     if (!parentDirNode.exists) {
-       throw new Error(
-         `TreeFS: Failed to make parent directory entry for ${mixedPath}`,
-       );
-     }
--    // Normalize the resulting path to account for the parent node being root.
--    const canonicalPath = this.#normalizePath(
--      parentDirNode.canonicalPath + path.sep + path.basename(normalPath),
-+    const {normalPath: canonicalPath} = this.#pathUtils.joinNormalToRelative(
-+      parentDirNode.canonicalPath,
-+      path.basename(normalPath),
-     );
-     this.bulkAddOrModify(new Map([[canonicalPath, metadata]]), changeListener);
-   }
-```
-
-**File**: `packages/metro-file-map/src/lib/__tests__/TreeFS-test.js` (modified, +22/-0)
-```diff
-@@ -1137,6 +1137,28 @@ describe.each([['win32'], ['posix']])('TreeFS on %s', platform => {
-       });
-     });
- 
-+    test('adds a file through a symlink to the root at its canonical path', () => {
-+      tfs.addOrModify(p('link-to-root'), [0, 0, 0, null, '', null]);
-+      const fileAdded = jest.fn();
-+      tfs.addOrModify(p('link-to-root/new.js'), [1, 1, 0, null, 0, null], {
-+        directoryAdded: jest.fn(),
-+        directoryRemoved: jest.fn(),
-+        fileAdded,
-+        fileModified: jest.fn(),
-+        fileRemoved: jest.fn(),
++  test.each([
++    [p('..'), p('foo/.'), p('../foo/.')],
++    [p('..'), p('foo/..'), p('../foo/..')],
++  ])(
++    'joinNormalToRelative(%s, %s) keeps a final indirection, as %s',
++    (normalPath, relativePath, expected) => {
++      pathUtils = new RootPathUtils(p('/project/root'));
++      expect(pathUtils.joinNormalToRelative(normalPath, relativePath)).toEqual({
++        collapsedSegments: 0,
++        normalPath: expected,
 +      });
-+      expect(fileAdded).toHaveBeenCalledWith(p('new.js'), [
-+        1,
-+        1,
-+        0,
-+        null,
-+        0,
-+        null,
-+      ]);
-+      expect(tfs.getAllFiles()).toContain(p('/project/new.js'));
-+      expect(tfs.getAllFiles()).not.toContain(p('/new.js'));
-+    });
++    },
++  );
 +
-     describe('bulkAddOrModify', () => {
-       test('adds new files and modifies existing, new symlinks work', () => {
-         tfs.bulkAddOrModify(
+   if (platform === 'win32') {
+     describe('cross-drive absolute paths (Windows)', () => {
+       test.each([['C:\\project\\root'], ['C:\\']])(
+```
+
+**File**: `packages/metro-file-map/src/lib/__tests__/TreeFS-test.js` (modified, +26/-0)
+```diff
+@@ -208,6 +208,8 @@ describe.each([['win32'], ['posix']])('TreeFS on %s', platform => {
+       [p('/project/foo'), p('/project/foo'), []],
+       [p('/project/foo/'), p('/project/foo'), []],
+       [p('/project/root/outside'), p('/outside'), [p('/project/root')]],
++      [p('/project/foo/.'), p('/project/foo'), []],
++      [p('/project/foo/..'), p('/project'), []],
+     ])(
+       'returns type: d for %s',
+       (givenPath, expectedRealPath, expectedSymlinks) => {
+@@ -622,6 +624,30 @@ describe.each([['win32'], ['posix']])('TreeFS on %s', platform => {
+     });
+   });
+ 
++  test('hierarchicalLookup from a path ending in "." finds its own directory', () => {
++    expect(
++      tfs.hierarchicalLookup(p('/project/node_modules/pkg/.'), 'package.json', {
++        breakOnSegment: 'node_modules',
++        subpathType: 'f',
++      }),
++    ).toEqual({
++      absolutePath: p('/project/node_modules/pkg/package.json'),
++      containerRelativePath: '',
++    });
++  });
++
++  test.each([p('sub/.'), p('sub/..')])(
++    'hierarchicalLookup of a subpath ending in an indirection, %s',
++    subpath => {
++      expect(
++        tfs.hierarchicalLookup(p('/project/foo/.bar'), subpath, {
++          breakOnSegment: null,
++          subpathType: 'd',
++        }),
++      ).toBeNull();
++    },
++  );
++
+   describe('hierarchicalLookup', () => {
+     let tfs: TreeFSType;
+ 
+```
+
+**File**: `packages/metro/src/DeltaBundler/__tests__/resolver-test.js` (modified, +24/-0)
+```diff
+@@ -559,6 +559,30 @@ function dep(name: string): TransformResultDependency {
+         });
+       });
+ 
++      test.each([
++        ['foo/.', 'lib/m.js'],
++        ['foo/lib/.', 'lib/index.js'],
++      ])(
++        'resolves %s, a package subpath ending in "."',
++        async (name, expected) => {
++          setMockFileSystem({
++            'index.js': '',
++            node_modules: {
++              foo: {
++                'package.json': JSON.stringify({name: 'foo', main: 'lib/m.js'}),
++                lib: {'m.js': '', 'index.js': ''},
++              },
++            },
++          });
++
++          resolver = await createResolver();
++          expect(resolver.resolve(p('/root/index.js'), dep(name))).toEqual({
++            type: 'sourceFile',
++            filePath: p('/root/node_modules/foo/' + expected),
++          });
++        },
++      );
++
+       test('finds the appropriate node_modules folder', async () => {
+         setMockFileSystem({
+           node_modules: {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2212** (2026-11-09): metro-file-map: Fix the path of a file added through a symlink to the root (@robhogan)
-- **PR #2211** (2026-11-09): Name the dictionary key in the Metro build integration test (@SamChou19815)
-- **PR #2210** (closed): metro-file-map: Walk to the parent directory once in addOrModify (@robhogan)
-- **PR #2209** (2026-11-09): metro-file-map: Use a separate cache file under Bun (@robhogan)
-- **PR #2208** (2026-11-09): metro-file-map: Avoid a generator per directory in matchFiles (@robhogan)
-- **PR #2206** (2026-11-09): metro-file-map: Avoid a generator per directory when visiting every file (@robhogan)
+- **PR #2225** (2026-11-13): Type the `verifyClient` callback in the `ws` library definition (@javache)
+- **PR #2224** (2026-11-13): Upgrade the Flow parser tooling to 0.340.0 (@gkz)
+- **PR #2222** (2026-11-12): Upgrade Flow to 0.340.0 (#2222) (@gkz)
+- **PR #2218** (closed): Pre-warm the 3 most recently used bundles on server start (@vzaidman)
+- **PR #2217** (2026-11-10): Prepare metro for the TypeScript definition of `Omit` (@SamChou19815)
+- **PR #2213** (2026-11-10): metro-file-map: Fix crash on a package subpath ending in `/.`, such as `pkg/.` (@kwy404)
 
 ---
 
@@ -1769,45 +1790,56 @@ Pull Request resolved: https://github.com/react/metro/pull/2211
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. metro-file-map: Fix out-of-memory crash on a symlink into itself (#2204)
+## X. metro-file-map: Fix crash on a package subpath ending in "/.", such as "pkg/."
 
 **RULE**:
-When implementing operations in `packages/metro-file-map/src/lib/TreeFS.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react/metro. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/metro-file-map/src/lib/RootPathUtils.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react/metro. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9611b6f8`: metro-file-map: Fix out-of-memory crash on a symlink into itself (#2204). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1461d81e`: metro-file-map: Fix crash on a package subpath ending in "/.", such as "pkg/.". Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/metro-file-map/src/lib/TreeFS.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/metro-file-map/src/lib/RootPathUtils.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-// The limit Linux applies when resolving a path (`MAXSYMLINKS`). A count rather
-// than a set of visited targets because a symlink into itself (`a -> a/b`)
-// gives a longer target on every follow, and so never repeats one.
-const MAX_SYMLINK_FOLLOWS = 40;
-
-    let followedSymlinks = 0;
-        if (++followedSymlinks > MAX_SYMLINK_FOLLOWS) {
+        true,
+      this.#tryCollapseIndirectionsInSuffix(relativePath, 0, 0, true)
+      const collapsed = this.#tryCollapseIndirectionsInSuffix(
+        rawPath,
+        0,
+        0,
+        false,
+      );
+    bailOnTrailingIndirection: boolean, // Fall back on a final '.' or '..'
+        // The search above doesn't find a final '.' or '..' segment, as no
+        // separator follows it. Fall back for those too, unless the '..' is
+        // one of the leading indirections, e.g. for /project/root/foo/. or
+        // /project/root/foo/..
+        if (bailOnTrailingIndirection && fullPath.endsWith('.')) {
+          const lastSegmentIdx = fullPath.lastIndexOf(path.sep) + 1;
+          const lastSegmentLength = fullPath.length - lastSegmentIdx;
+          if (
+            lastSegmentLength === 1 ||
+            (lastSegmentLength === 2 &&
+              fullPath[lastSegmentIdx] === '.' &&
+              lastSegmentIdx > pos)
+          ) {
+            return null;
+          }
+        }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
-// Anti-pattern to NEVER write (induced failure mode):
-    // Lazy-initialised set of seen target paths, to detect symlink cycles.
-    let seen: ?Set<string>;
-        if (seen == null) {
-          // Optimisation: set this lazily only when we've encountered a symlink
-          seen = new Set([requestedNormalPath]);
-        }
-        if (seen.has(targetNormalPath)) {
-          // TODO: Warn `Symlink cycle detected: ${[...seen, node].join(' -> ')}`
-        seen.add(targetNormalPath);
+// Induced defect failure mode:
+      this.#tryCollapseIndirectionsInSuffix(relativePath, 0, 0)
+      const collapsed = this.#tryCollapseIndirectionsInSuffix(rawPath, 0, 0);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9611b6f8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1461d81e` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

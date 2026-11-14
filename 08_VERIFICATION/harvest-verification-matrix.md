@@ -9838,3 +9838,7 @@
 | `CYCLE-20261114-Z6VV` | `2026-11-14T13:28:59.803Z` | `Qwen/Qwen3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-8b-learnings.md` | Yes (`e2ab85eb...`) |
 | `CYCLE-20261114-ZDJL` | `2026-11-14T13:29:08.433Z` | `dosco/graphjin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8489` | Yes (`a8f2e519...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T13:29:45.426Z` | `hf-qwen-qwen3-8b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-33F233D7` [Domain D] | Yes (`9d143328...`) |
+| `CYCLE-20261114-BOYC` | `2026-11-14T13:38:43.092Z` | `react/metro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8490` | Yes (`821ddd92...`) |
+| `CYCLE-20261114-BRNM` | `2026-11-14T13:38:46.594Z` | `google/vit-base-patch16-224` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md` | Yes (`db15ee4d...`) |
+| `CYCLE-20261114-BW7K` | `2026-11-14T13:38:52.496Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8491` | Yes (`b2228f7a...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T13:39:24.436Z` | `hf-google-vit-base-patch16-224` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-D7AD2A79` [Domain D] | Yes (`dae0bf99...`) |

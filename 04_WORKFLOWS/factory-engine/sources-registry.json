@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-14T13:29:11.568Z",
-    "lastVerified": "2026-11-14T13:29:11.568Z",
+    "lastChecked": "2026-11-14T13:38:55.563Z",
+    "lastVerified": "2026-11-14T13:38:55.564Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -252,22 +252,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-14T12:04:16.837Z",
-    "lastVerified": "2026-11-14T12:04:16.837Z",
+    "lastChecked": "2026-11-14T13:38:51.616Z",
+    "lastVerified": "2026-11-14T13:38:51.616Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "d0b1b2beab32ae1d0840b957abdff3531e85e034b182b14cb742dd4e2b468d41",
+    "contentHash": "b2228f7a84688c0cae28c341dc66562f49fcec1e4589a3e40f5ba5b82170d606",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "9e86198d"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -2427,12 +2426,12 @@
     "revisionIdentifier": "386a1e0e"
   },
   "mitmproxy-mitmproxy": {
-    "name": "mitmproxy/mitmproxy",
+    "name": "mitmproxy",
     "officialUrl": "https://github.com/mitmproxy/mitmproxy",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-14T03:49:15.688Z",
-    "lastVerified": "2026-11-14T03:49:15.688Z",
+    "lastChecked": "2026-11-14T13:38:41.460Z",
+    "lastVerified": "2026-11-14T13:38:41.460Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mitmproxy-mitmproxy",
@@ -2441,7 +2440,8 @@
     "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "3da37a52"
   },
   "oceanbase-oceanbase": {
     "name": "oceanbase",
@@ -4152,9 +4152,9 @@
   "alibaba-sentinel-golang": {
     "name": "sentinel-golang",
     "officialUrl": "https://github.com/alibaba/sentinel-golang",
-    "lastChecked": "2026-11-13T09:56:50.239Z",
+    "lastChecked": "2026-11-14T13:38:38.800Z",
     "revisionIdentifier": "f7a7f957",
-    "lastVerified": "2026-11-13T09:56:50.239Z"
+    "lastVerified": "2026-11-14T13:38:38.800Z"
   },
   "supervc-stack-vectorchord": {
     "name": "VectorChord",
@@ -5550,14 +5550,14 @@
     "officialUrl": "https://github.com/react/metro",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-10T04:51:46.421Z",
-    "lastVerified": "2026-11-10T04:51:46.421Z",
+    "lastChecked": "2026-11-14T13:38:42.045Z",
+    "lastVerified": "2026-11-14T13:38:42.045Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-react-metro",
-    "contentHash": "e474935394132a8feedee55b208296d327f117b63b9f8c862ba8ed7eaae8e45f",
+    "contentHash": "821ddd92d116f5ce214a716281d0c6b037ee78ced949f330acff2ab82ef6642b",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5844,12 +5844,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "sqlpage-sqlpage": {
-    "name": "sqlpage/SQLPage",
+    "name": "SQLPage",
     "officialUrl": "https://github.com/sqlpage/SQLPage",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-13T08:05:10.645Z",
-    "lastVerified": "2026-11-13T08:05:10.645Z",
+    "lastChecked": "2026-11-14T13:38:44.078Z",
+    "lastVerified": "2026-11-14T13:38:44.078Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sqlpage-sqlpage",
@@ -5858,7 +5858,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "4cb43afc"
   },
   "mlua-rs-mlua": {
     "name": "mlua",
@@ -7132,13 +7133,13 @@
     "officialUrl": "https://huggingface.co/google/vit-base-patch16-224",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-09T04:00:32.526Z",
-    "lastVerified": "2026-11-09T04:00:32.526Z",
+    "lastChecked": "2026-11-14T13:38:33.985Z",
+    "lastVerified": "2026-11-14T13:38:33.985Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-google-vit-base-patch16-224",
-    "contentHash": "ad59f4ec3e3c40f1119d47cc4dba70f81b00e3d0cf75574abe031765a85e4381",
-    "promotedRulesCount": 3,
+    "contentHash": "db15ee4d8901500b51b44dd27dc67a430dad11c86856c9ec168c742535d3e022",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -14917,12 +14918,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "yyjeqhc-webcodex": {
-    "name": "yyjeqhc/webcodex",
+    "name": "webcodex",
     "officialUrl": "https://github.com/yyjeqhc/webcodex",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-13T01:01:11.613Z",
-    "lastVerified": "2026-11-13T01:01:11.613Z",
+    "lastChecked": "2026-11-14T13:38:31.370Z",
+    "lastVerified": "2026-11-14T13:38:31.370Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-yyjeqhc-webcodex",
@@ -14931,7 +14932,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "3c141967"
   },
   "hf-minimaxai-minimax-h3-image": {
     "name": "MiniMaxAI/MiniMax-H3-Image",

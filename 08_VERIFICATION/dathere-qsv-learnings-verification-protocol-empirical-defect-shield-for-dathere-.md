@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T01:26:59.102Z",
+  "timestamp": "2026-11-14T13:39:26.659Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-dathere-qsv-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [dathere-qsv-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T01:26:59.102Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-14T13:39:26.659Z`  
 > **Learning ID**: `LEARN-EVO-dathere-qsv-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `9e86198d`  
+> **Source Version**: `b0d8deec`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T01:26:26.702Z  
+> **Timestamp**: 2026-11-14T13:38:51.622Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T01:26:26.696Z  
+> **Harvest Timestamp**: 2026-11-14T13:38:51.616Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2226,82 +2226,364 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9e86198d` (2026-11-14)
-**Commit Message**: deps: bump lock file
+### Incident Patch 1: `b0d8deec` (2026-11-14)
+**Commit Message**: chore: clippy::unnecessary-to-owned
 
-Update bumpalo, cc, mio, redb, and target-lexicon to newer versions.
+warning: unnecessary use of `.to_string()`
+   --> src/cmd/json.rs:384:38
+    |
+384 |             .all(|&h| actual_headers.contains(&h.to_string()))
+    |                                      ^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://clippy.rust-lang.org/main/index.html#unnecessary_to_owned
+    = note: `-W clippy::unnecessary-to-owned` implied by `-W clippy::perf`
+    = help: to override `-W clippy::perf` add `#[allow(clippy::unnecessary_to_owned)]`
+help: use an iterator instead of `.contains(_)` to avoid cloning via `.to_string()`
+    |
+384 -             .all(|&h| actual_headers.contains(&h.to_string()))
+384 +             .all(|&h| actual_headers.iter().any(|i| i == h))
 
-**File**: `Cargo.lock` (modified, +10/-10)
+[skip ci]
+
+**File**: `src/cmd/json.rs` (modified, +1/-1)
 ```diff
-@@ -1151,9 +1151,9 @@ dependencies = [
- 
+@@ -381,7 +381,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+         // If all expected headers exist, use the original order
+         if first_dict_headers
+             .iter()
+-            .all(|&h| actual_headers.contains(&h.to_string()))
++            .all(|&h| actual_headers.iter().any(|i| i == h))
+         {
+             SelectColumns::parse(&first_dict_headers.join(",")).map_err(|e| {
+                 CliError::Other(format!(
+```
+
+---
+
+### Incident Patch 2: `04775187` (2026-11-14)
+**Commit Message**: deps: bump Polars to upstream 36ea0f9 (#5048)
+
+* deps: bump Polars to upstream 36ea0f9
+
+17 commits past 61fdb30. No sqlp result that already worked changes
+(side-by-side probes, incl. EXTRACT on 21,260 dates from year 1-9999
+for the integer date-part rewrite #30777).
+
+New SQL, with regression tests (all fail on 61fdb30):
+- comma-separated LATERAL derived tables, aggregates w/o GROUP BY (#30768)
+- CREATE VIEW / DROP VIEW in scripts, DESCRIBE <table> (#30778)
+- leading ~ in read_* table function paths (#30774)
+
+Also carries the webdriver-downloader 0.18.1 lock bump.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* docs: cite #5048 in CHANGELOG
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +1/-1)
+```diff
+@@ -34,7 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+   - The 25 `frequency` benchmarks require every field's counts to add up to the row count, and every selected column to be present.
+   - 13 `sqlp` benchmarks must return the exact expected rows or groups (cross-checked with DuckDB), in CSV, JSON, JSONL, Parquet and Arrow output.
+   - Also fixed: an output check on a benchmark that has a `--conclude` or `--cleanup` hook checked the hook's output instead, because hyperfine writes it to the same file.
+-- **deps: Polars bumped to upstream rev [`61fdb30`](https://github.com/pola-rs/polars/commit/61fdb30fa49c467cf50facfd894aaefe140979fa)** (from `py-2.1.0`, 258 commits: `0b47007` in [#4993](https://github.com/dathere/qsv/pull/4993), `a598c51` in [#5021](https://github.com/dathere/qsv/pull/5021), `a9bce97` in [#5030](https://github.com/dathere/qsv/pull/5030), `ff1b37d` in [#5034](https://github.com/dathere/qsv/pull/5034), `8ecd1ca` in [#5041](https://github.com/dathere/qsv/pull/5041), then `61fdb30` in [#5045](https://github.com/dathere/qsv/pull/5045)). The `61fdb30` step is 11 commits. Its one `sqlp` result change is a fix: a signed integer literal combined with an unsigned value no longer gives NULL for the negative rows ([#30742](https://github.com/pola-rs/polars/pull/30742)). For example, `CASE WHEN side = 'buy' THEN 1 ELSE -1 END * CAST(qty AS UINTEGER)` returned NULL for the `-1` rows, so a `SUM` over it skipped them. It also adds `BOOL_AND`, `BOOL_OR`, `COUNT_IF`, `MAX_BY`, `MIN_BY`, `ANY_VALUE`, `APPROX_COUNT_DISTINCT` and `REGEXP_EXTRACT` to `sqlp` ([#30763](https://github.com/pola-rs/polars/pull/30763)); qsv now enables polars' `approx_unique` feature for `APPROX_COUNT_DISTINCT`. `REGEXP_EXTRACT(s, pattern[, group])` returns the whole match or the given capture group, and an empty string when nothing matches. The other fixes left `sqlp` results unchanged in side-by-side tests: calendar-part offsets applied in one step ([#30744](https://github.com/pola-rs/polars/pull/30744), checked with month-end `INTERVAL` arithmetic), and population variance of a single null in a sorted group-by ([#30747](https://github.com/pola-rs/polars/pull/30747); `sqlp`'s `VARIANCE`/`STDDEV` are the sample forms, which this doesn't touch). The `8ecd1ca` step is 14 commits of performance work: quantiles and medians computed by selection instead of sorting, in parallel ([#30569](https://github.com/pola-rs/polars/pull/30569), [#30570](https://github.com/pola-rs/polars/pull/30570)), multi-column join and group-by keys packed into fixed-width integers ([#30708](https://github.com/pola-rs/polars/pull/30708)), and joins that skip the probe side when the build side has no non-null keys ([#30692](https://github.com/pola-rs/polars/pull/30692)). No `sqlp` result changed in side-by-side tests of quantiles, medians, `NTILE`/`PERCENT_RANK`, multi-key `GROUP BY`s and joins, and joins on all-NULL keys. The `ff1b37d` step is 10 commits. Its one `sqlp` result change is a fix: a `CASE` whose `ELSE` applies a strict `CAST` no longer fails on values from rows that take an earlier branch ([#30682](https://github.com/pola-rs/polars/pull/30682)). For example, `CASE WHEN a THEN 0 ELSE CAST(COALESCE(v, -1) AS UTINYINT) END` used to fail when `v` was NULL only in rows where `a` is true. The rest is Decimal `SUM`/`AVG` and Parquet string decoding speedups ([#30704](https://github.com/pola-rs/polars/pull/30704), [#30632](https://github.com/pola-rs/polars/pull/30632)), and slice pushdown and unnest fixes that left `sqlp` results unchanged in side-by-side tests. The `a9bce97` step is 11 commits of join planning and performance: out-of-core joins ([#30679](https://github.com/pola-rs/polars/pull/30679)), join reordering ([#30680](https://github.com/pola-rs/polars/pull/30680), [#30694](https://github.com/pola-rs/polars/pull/30694)), a streaming build-side choice from estimated row counts ([#30681](https://github.com/pola-rs/polars/pull/30681)), and a fix for order relaxation in sliced maintain-order joins ([#30684](https://github.com/pola-rs/polars/pull/30684)). No `sqlp` result changed in side-by-side tests. Dividing a number by a date or timestamp still fails, now with a clearer message when the schema is resolved ([#30163](https://github.com/pola-rs/polars/pull/30163)). The `a598c51` step is mostly performance, including a faster CSV reader ([#30639](https://github.com/pola-rs/polars/pull/30639)) and spillable streaming joins; no `sqlp` result changed in side-by-side tests. Crates stay 0.55.1; it moves to zstd 0.14 ([#30316](https://github.com/pola-rs/polars/pull/30316)), so the 13 zstd "unsound" advisory ignores (#4930–#4942) are dropped from `.cargo/audit.toml`. Some `sqlp` results that already worked change:
++- **deps: Polars bumped to upstream rev [`36ea0f9`](https://github.com/pola-rs/polars/commit/36ea0f99d67213f0593f8096ffc7d037cc7aa158)** (from `py-2.1.0`, 275 commits: `0b47007` in [#4993](https://github.
+```
+
+**File**: `Cargo.lock` (modified, +29/-29)
+```diff
+@@ -6021,7 +6021,7 @@ dependencies = [
  [[package]]
- name = "bumpalo"
--version = "3.20.3"
-+version = "3.20.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "72f5acc6cb2ba439de613abc23857ec3d78374d8ed5ac84e9d11336e87da8649"
-+checksum = "87a0cf66fd1eb2fb7b822cb78370d82303750809bc6ba855f3f58e517d3238db"
- 
- [[package]]
- name = "by_address"
-@@ -1314,9 +1314,9 @@ dependencies = [
- 
- [[package]]
- name = "cc"
--version = "1.11.1"
-+version = "1.11.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "4ff2a8126fff0f8c839080d619675a585e61720bb12d2baceae45769fd66f155"
-+checksum = "33ef9e3e8154a45c7a95cff4c1299702106ad94062d7bb85fdc5d3a5afd91d45"
+ name = "polars"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=61fdb30fa49c467cf50facfd894aaefe140979fa#61fdb30fa49c467cf50facfd894aaefe140979fa"
++source = "git+https://github.com/pola-rs/polars?rev=36ea0f99d67213f0593f8096ffc7d037cc7aa158#36ea0f99d67213f0593f8096ffc7d037cc7aa158"
  dependencies = [
-  "find-msvc-tools",
-  "jobserver",
-@@ -4875,9 +4875,9 @@ dependencies = [
- 
+  "getrandom 0.2.17",
+  "getrandom 0.4.3",
+@@ -6046,7 +6046,7 @@ dependencies = [
  [[package]]
- name = "mio"
--version = "1.2.4"
-+version = "1.2.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1788edb87fdc09c7e26304471e2f5be8cdefb1b6930d6e3985fc02ff53bf86ee"
-+checksum = "20521a903f02b0a573cd6840e9d0a5a0cc043d361fe924092cd70f8556cc9c4a"
+ name = "polars-arrow"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=61fdb30fa49c467cf50facfd894aaefe140979fa#61fdb30fa49c467cf50facfd894aaefe140979fa"
++source = "git+https://github.com/pola-rs/polars?rev=36ea0f99d67213f0593f8096ffc7d037cc7aa158#36ea0f99d67213f0593f8096ffc7d037cc7aa158"
  dependencies = [
-  "libc",
-  "log",
-@@ -7667,9 +7667,9 @@ dependencies = [
- 
+  "avro-schema",
+  "bitflags 2.13.2",
+@@ -6089,7 +6089,7 @@ dependencies = [
  [[package]]
- name = "redb"
--version = "4.5.0"
-+version = "4.6.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "8b317ef681e18f6091efbfab532eaf924a135c492d9d0299d0fbfae07e92a39b"
-+checksum = "096b1dd5ec053c9c2a5a26a93aafeadf73ebcb710ea54dc3151f17a8e20535ef"
+ name = "polars-async"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=61fdb30fa49c467cf50facfd894aaefe140979fa#61fdb30fa49c467cf50facfd894aaefe140979fa"
++source = "git+https://github.com/pola-rs/polars?rev=36ea0f99d67213f0593f8096ffc7d037cc7aa158#36ea0f99d67213f0593f8096ffc7d037cc7aa158"
  dependencies = [
-  "libc",
- ]
-@@ -9116,9 +9116,9 @@ dependencies = [
- 
+  "atomic-waker",
+  "crossbeam-channel",
+@@ -6108,7 +6108,7 @@ dependencies = [
  [[package]]
- name = "target-lexicon"
--version = "0.13.5"
-+version = "0.13.6"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "adb6935a6f5c20170eeceb1a3835a49e12e19d792f6dd344ccc76a985ca5a6ca"
-+checksum = "8c447be3a2abfa84b2d91680c56600bd6b2873866de27b36ec911be705e291da"
- 
+ name = "polars-buffer"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=61fdb30fa49c467cf50facfd894aaefe140979fa#61fdb30fa49c467cf50facfd894aaefe140979fa"
++source = "git+https://github.com/pola-rs/polars?rev=36ea0f99d67213f0593f8096ffc7d037cc7aa158#36ea0f99d67213f0593f8096ffc7d037cc7aa158"
+ dependencies = [
+  "bytemuck",
+  "either",
+@@ -6120,7 +6120,7 @@ dependencies = [
  [[package]]
- name = "tempfile"
+ name = "polars-compute"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=61fdb30fa49c467cf50facfd894aaefe140979fa#61fdb30fa49c467cf50facfd894aaefe140979fa"
++source = "git+https://github.com/pola-rs/polars?rev=36ea0f99d67213f0593f8096ffc7d037cc7aa158#36ea0f99d67213f0593f8096ffc7d037cc7aa158"
+ dependencies = [
+  "atoi_simd",
+  "bytemuck",
+@@ -6146,7 +6146,7 @@ dependencies = [
+ [[package]]
+ name = "polars-config"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=61fdb30fa49c467cf50facfd894aaefe140979fa#61fdb30fa49c467cf50facfd894aaefe140979fa"
++source = "git+https://github.com/pola-rs/polars?rev=36ea0f99d67213f0593f8096ffc7d037cc7aa158#36ea0f99d67213f0593f8096ffc7d037cc7aa158"
+ dependencies = [
+  "polars-error",
+  "serde",
+@@ -6156,7 +6156,7 @@ dependencies = [
+ [[package]]
+ name = "polars-core"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=61fdb30fa49c467cf50facfd894aaefe140979fa#61fdb30fa49c467cf50facfd894aaefe140979fa"
++source = "git+https://github.com/pola-rs/polars?rev=36ea0f99d67213f0593f8096ffc7d037cc7aa158#36ea0f99d67213f0593f8096ffc7d037cc7aa158"
+ dependencies = [
+  "atoi_simd",
+  "bitflags 2.13.2",
+@@ -6197,7 +6197,7 @@ dependencies = [
+ [[package]]
+ name = "polars-defs"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=61fdb30fa49c467cf50facfd894aaefe140979fa#61fdb30fa49c467cf50facfd894aaefe140979fa"
++source = "git+https://github.com/pola-rs/polars?rev=36ea0f99d67213f0593f8096ffc7d037cc7aa158#36ea0f99d67213f0593f8096ffc7d037cc7aa158"
+ dependencies = [
+  "chrono",
+  "chrono-tz",
+@@ -6212,7 +6212,7 @@ dependencies = [
+ [[package]]
+ name = "polars-descriptions"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=61fdb30fa49c467cf50facfd894aaefe140979fa#61fdb30fa49c467cf50facfd894aaefe140979fa"
++source = "git+https://github.com/pola-rs/polars?rev=36ea0f99d67213f0593f8096ffc7d037cc7aa158#36ea0f99d67213f0593f8096ffc7d037cc7aa158"
+ dependencies = [
+  "serde",
+  "strum_macros 0.28.0",
+@@ -6221,7 +6221,7 @@ dependencies = [
+ [[package]]
+ name = "polars-dtype"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=61fdb30fa49c467cf50facfd894aaefe140979fa#61fdb30fa49c467cf50facfd894aaefe140979fa"
++source = "git+https://github.com/pola-rs/polars?rev=36ea0f99d67213f0593f8096ffc7d037cc7aa158#36ea0f99d67213f0593f8096ffc7d037cc7aa158"
+ dependencies = [
+  "boxcar",
+  "hashbrown 0.17.1",
+@@ -6235,7 +6235,7 @@ dependencies = [
+ [[package]]
+ name = "polars-error"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=61fdb30fa49c467cf50facfd894aaefe140979fa#61fdb30fa49c467cf50facfd894aaefe140979fa"
++source = "git+https://github.com/pola-rs/polars?rev=36ea0f99d67213f0593f8096ffc7d037cc7aa158#36ea0f99d67213f0593f8096ffc7d037cc7aa158"
+ dependencies = [
+  "avro-schema",
+  "parking_lot 0.12.5",
+@@ -6248,7 +6248,7 @@ dependencies = [
+ [[package]]
+ name = "polars-expr"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=61fdb30fa49c467cf50facfd894aaefe140979fa#61fdb30fa49c467cf50facfd894aaefe140979fa"
++source = "git+https://github.com/pola-rs/polars?rev=36ea0f99d67213f0593f8096ffc7d037cc7aa158#36ea0f99d67213f0593f8096ffc7d037cc7aa158"
+ dependencies = 
+```
+
+**File**: `Cargo.toml` (modified, +4/-4)
+```diff
+@@ -541,8 +541,8 @@ serial_test = { version = "4.0", features = ["file_locks"] }
+ [patch.crates-io]
+ # polars-readstat-rs depends on these directly; redirect them onto the same git polars
+ # revision qsv pins, otherwise a second, incompatible polars tree resolves from crates.io. (#5021)
+-polars-core  = { git = "https://github.com/pola-rs/polars", rev = "61fdb30fa49c467cf50facfd894aaefe140979fa" }
+-polars-arrow = { git = "https://github.com/pola-rs/polars", rev = "61fdb30fa49c467cf50facfd894aaefe140979fa" }
++polars-core  = { git = "https://github.com/pola-rs/polars", rev = "36ea0f99d67213f0593f8096ffc7d037cc7aa158" }
++polars-arrow = { git = "https://github.com/pola-rs/polars", rev = "36ea0f99d67213f0593f8096ffc7d037cc7aa158" }
+ # Polars (since py-2.0.0) calls HashTable::prefetch_{get,insert}, which exist only in its
+ # hashbrown fork (https://github.com/rust-lang/hashbrown/pull/727). Polars' own workspace
+ # [patch] doesn't propagate to dependents, so mirror it here; keep the rev in sync with the
+@@ -619,9 +619,9 @@ compact_bytes = { git = "https://github.com/jqnatividad/compact_bytes", branch =
+ #      and the commit hash 52ea381)
+ # ================================
+ # Keep the next line bare: build.rs reads everything after `=` into --version.
+-# QSV_POLARS_REV=py-2.1.0:61fdb30
++# QSV_POLARS_REV=py-2.1.0:36ea0f9
+ # polars = { git = "https://github.com/pola-rs/polars", tag = "py-2.1.0", optional = true }
+-polars = { git = "https://github.com/pola-rs/polars", rev = "61fdb30fa49c467cf50facfd894aaefe140979fa", optional = true }
++polars = { git = "https://github.com/pola-rs/polars", rev = "36ea0f99d67213f0593f8096ffc7d037cc7aa158", optional = true }
+ 
+ # Apache DataSketches (t-digest, HLL, Frequent Items) — upstream C++ does not
+ # support big-endian targets, so we exclude the crate on big-endian builds.
+```
+
+**File**: `README.md` (modified, +1/-1)
+```diff
+@@ -115,7 +115,7 @@
+ 🧠: expensive operations are memoized with available inter-session Redis/Disk caching for fetch commands.  
+ 🗄️: [Extended input support](#extended-input-support).  
+ 🗃️: [Limited Extended input support](#limited-extended-input-support).  
+-🐻‍❄️: command powered/accelerated by [![polars 0.55.1 at py-2.1.0:61fdb30](https://img.shields.io/badge/polars-0.55.1:py--2.1.0:61fdb30-blue?logo=polars)](https://github.com/pola-rs/polars/releases/tag/py-2.1.0) vectorized query engine.  
++🐻‍❄️: command powered/accelerated by [![polars 0.55.1 at py-2.1.0:36ea0f9](https://img.shields.io/badge/polars-0.55.1:py--2.1.0:36ea0f9-blue?logo=polars)](https://github.com/pola-rs/polars/releases/tag/py-2.1.0) vectorized query engine.  
+ 🤖: command uses Natural Language Processing or Generative AI.  
+ 🏎️: multithreaded and/or faster when an index (📇) is available.  
+ 🚀: multithreaded even without an index.  
+```
+
+**File**: `docs/help/TableOfContents.md` (modified, +1/-1)
+```diff
+@@ -96,7 +96,7 @@
+ 🧠: expensive operations are memoized with available inter-session Redis/Disk caching for fetch commands.  
+ 🗄️: [Extended input support](../../README.md#extended-input-support).  
+ 🗃️: [Limited Extended input support](../../README.md#limited-extended-input-support).  
+-🐻‍❄️: command powered/accelerated by [![polars 0.55.1 at py-2.1.0:61fdb30](https://img.shields.io/badge/polars-0.55.1:py--2.1.0:61fdb30-blue?logo=polars)](https://github.com/pola-rs/polars/releases/tag/py-2.1.0) vectorized query engine.  
++🐻‍❄️: command powered/accelerated by [![polars 0.55.1 at py-2.1.0:36ea0f9](https://img.shields.io/badge/polars-0.55.1:py--2.1.0:36ea0f9-blue?logo=polars)](https://github.com/pola-rs/polars/releases/tag/py-2.1.0) vectorized query engine.  
+ 🤖: command uses Natural Language Processing or Generative AI.  
+ 🏎️: multithreaded and/or faster when an index (📇) is available.  
+ 🚀: multithreaded even without an index.  
+```
+
+**File**: `tests/test_sqlp.rs` (modified, +107/-0)
+```diff
+@@ -7551,6 +7551,113 @@ fn sqlp_approx_count_distinct() {
+     assert_eq!(got, vec![svec!["sides", "names"], svec!["2", "5"]]);
+ }
+ 
++// Polars SQL behavior changed between 61fdb30 and 36ea0f9.
++
++#[test]
++fn sqlp_comma_separated_lateral_aggregates() {
++    // pola-rs/polars#30768: comma-separated LATERAL derived tables, and aggregates without
++    // GROUP BY inside them. On 61fdb30 both failed with "`LATERAL` clause is not supported".
++    let wrk = Workdir::new("sqlp_comma_separated_lateral_aggregates");
++    sides_fixture(&wrk);
++
++    let mut cmd = wrk.command("sqlp");
++    cmd.arg("t.csv").arg(
++        "SELECT t.name, hi.mx, lo.mn FROM t, LATERAL (SELECT MAX(qty) AS mx FROM t AS t2 WHERE \
++         t2.side = t.side) AS hi, LATERAL (SELECT MIN(qty) AS mn FROM t AS t3 WHERE t3.side = \
++         t.side) AS lo ORDER BY t.name",
++    );
++    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
++    assert_eq!(
++        got,
++        vec![
++            svec!["name", "mx", "mn"],
++            svec!["alice", "10", "1"],
++            svec!["bob", "4", "3"],
++            svec!["carol", "10", "1"],
++            svec!["dave", "4", "3"],
++            svec!["erin", "10", "1"],
++        ]
++    );
++}
++
++#[test]
++fn sqlp_create_and_drop_view() {
++    // pola-rs/polars#30778 added CREATE VIEW and DROP VIEW (61fdb30: "statement type is not
++    // supported").
++    let wrk = Workdir::new("sqlp_create_and_drop_view");
++    sides_fixture(&wrk);
++    wrk.create_from_string(
++        "view.sql",
++        "CREATE VIEW buys AS SELECT name, qty FROM t WHERE side = 'buy';\nSELECT * FROM buys \
++         ORDER BY qty;\n",
++    );
++
++    let mut cmd = wrk.command("sqlp");
++    cmd.arg("t.csv").arg("view.sql");
++    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
++    assert_eq!(
++        got,
++        vec![
++            svec!["name", "qty"],
++            svec!["erin", "1"],
++            svec!["carol", "7"],
++            svec!["alice", "10"],
++        ]
++    );
++
++    wrk.create_from_string(
++        "drop.sql",
++        "CREATE VIEW buys AS SELECT name FROM t WHERE side = 'buy';\nDROP VIEW buys;\nSELECT * \
++         FROM buys;\n",
++    );
++    let mut cmd = wrk.command("sqlp");
++    cmd.arg("t.csv").arg("drop.sql");
++    let stderr = wrk.output_stderr(&mut cmd);
++    assert!(
++        stderr.contains("relation 'buys' was not found"),
++        "stderr: {stderr}"
++    );
++}
++
++#[test]
++fn sqlp_describe_table() {
++    // pola-rs/polars#30778 added DESCRIBE (61fdb30: "statement type is not supported").
++    let wrk = Workdir::new("sqlp_describe_table");
++    sides_fixture(&wrk);
++
++    let mut cmd = wrk.command("sqlp");
++    cmd.arg("t.csv").arg("DESCRIBE t");
++    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
++    assert_eq!(
++        got,
++        vec![
++            svec!["column_name", "column_type"],
++            svec!["side", "str"],
++            svec!["qty", "i64"],
++            svec!["flag", "bool"],
++            svec!["name", "str"],
++            svec!["s", "str"],
++        ]
++    );
++}
++
++// std::env::home_dir() reads HOME on unix only; Windows uses the profile directory.
++#[cfg(unix)]
++#[test]
++fn sqlp_read_csv_expands_home_dir() {
++    // pola-rs/polars#30774: a leading `~` in a read_* table function path is the home
++    // directory. On 61fdb30 it was taken literally ("No such file or directory").
++    let wrk = Workdir::new("sqlp_read_csv_expands_home_dir");
++    sides_fixture(&wrk);
++
++    let mut cmd = wrk.command("sqlp");
++    cmd.env("HOME", wrk.path(""))
++        .arg("t.csv")
++        .arg("SELECT COUNT(*) AS n FROM read_csv('~/t.csv')");
++    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
++    assert_eq!(got, vec![svec!["n"], svec!["5"]]);
++}
++
+ // ---------------------------------------------------------------------------
+ // sqlp --streaming writes the result batch by batch (csv, jsonl, parquet, arrow).
+ // ---------------------------------------------------------------------------
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5048** (2026-11-14): deps: bump Polars to upstream 36ea0f9 (@jqnatividad)
 - **PR #5047** (2026-11-14): fix(viz): category-axis tickvals are category names, not positions (@jqnatividad)
 - **PR #5046** (2026-11-13): docs: fix sqlp `<=>` and Polars schema file name in USAGE (@jqnatividad)
 - **PR #5045** (2026-11-13): deps: bump Polars to upstream 61fdb30 (@jqnatividad)
 - **PR #5044** (2026-11-13): build(deps): bump anthropics/claude-code-action from 1.0.270 to 1.0.271 (@dependabot[bot])
 - **PR #5043** (2026-11-13): build(deps): bump hono from 4.13.13 to 4.13.18 in /.claude/skills (@dependabot[bot])
-- **PR #5042** (2026-11-12): build(deps): bump @hono/node-server from 2.1.5 to 2.1.8 in /.claude/skills (@dependabot[bot])
 
 ---
 
@@ -2321,49 +2603,31 @@ Update bumpalo, cc, mio, redb, and target-lexicon to newer versions.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps: bump lock file
+## X. clippy::unnecessary-to-owned
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/cmd/json.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9e86198d`: deps: bump lock file. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b0d8deec`: clippy::unnecessary-to-owned. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/cmd/json.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "3.20.4"
-checksum = "87a0cf66fd1eb2fb7b822cb78370d82303750809bc6ba855f3f58e517d3238db"
-version = "1.11.2"
-checksum = "33ef9e3e8154a45c7a95cff4c1299702106ad94062d7bb85fdc5d3a5afd91d45"
-version = "1.2.5"
-checksum = "20521a903f02b0a573cd6840e9d0a5a0cc043d361fe924092cd70f8556cc9c4a"
-version = "4.6.0"
-checksum = "096b1dd5ec053c9c2a5a26a93aafeadf73ebcb710ea54dc3151f17a8e20535ef"
-version = "0.13.6"
-checksum = "8c447be3a2abfa84b2d91680c56600bd6b2873866de27b36ec911be705e291da"
+            .all(|&h| actual_headers.iter().any(|i| i == h))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "3.20.3"
-checksum = "72f5acc6cb2ba439de613abc23857ec3d78374d8ed5ac84e9d11336e87da8649"
-version = "1.11.1"
-checksum = "4ff2a8126fff0f8c839080d619675a585e61720bb12d2baceae45769fd66f155"
-version = "1.2.4"
-checksum = "1788edb87fdc09c7e26304471e2f5be8cdefb1b6930d6e3985fc02ff53bf86ee"
-version = "4.5.0"
-checksum = "8b317ef681e18f6091efbfab532eaf924a135c492d9d0299d0fbfae07e92a39b"
-version = "0.13.5"
-checksum = "adb6935a6f5c20170eeceb1a3835a49e12e19d792f6dd344ccc76a985ca5a6ca"
+            .all(|&h| actual_headers.contains(&h.to_string()))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9e86198d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b0d8deec` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

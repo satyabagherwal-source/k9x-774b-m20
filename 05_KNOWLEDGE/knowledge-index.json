@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-14T13:29:47.029Z",
-  "total_verified_learnings": 8539,
+  "last_updated": "2026-11-14T13:39:26.982Z",
+  "total_verified_learnings": 8541,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 17425,
+  "total_items": 17439,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112094,10 +112094,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "9e86198d",
-      "content_hash": "d36324a6705b0ae51f851194ccde5ffedb7041c4f4d9dfdb8715fa109f3e6699",
+      "source_version": "b0d8deec",
+      "content_hash": "9871387d0cfbebb3c26da6cf69f175d187e205866feed2ca755ceecc7d81fbf8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T01:26:27.859Z"
+      "persisted_at": "2026-11-14T13:38:52.928Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -112131,9 +112131,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dathere-qsv-learnings",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "9d156787743dc40cd48943a173e906f5278de9ea7fe2b8bc680379fd4790cc6e",
+      "content_hash": "59a763b72f7f6ca61a36fcc21b3a84ae300d48ae60f45a268499543a0013ce41",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T01:26:59.408Z"
+      "persisted_at": "2026-11-14T13:39:26.982Z"
     },
     "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels": {
       "item_id": "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels",
@@ -218656,8 +218656,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "9e86198d",
-      "content_hash": "d0b1b2beab32ae1d0840b957abdff3531e85e034b182b14cb742dd4e2b468d41",
+      "source_version": "b0d8deec",
+      "content_hash": "b2228f7a84688c0cae28c341dc66562f49fcec1e4589a3e40f5ba5b82170d606",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -218670,6 +218670,11 @@
           "number": 8415,
           "title": "bump lock file",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8491,
+          "title": "unnecessary-to-owned",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -218677,7 +218682,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T01:26:27.391Z",
+      "verified_at": "2026-11-14T13:38:52.331Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -219507,10 +219512,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "repository": "dathere/qsv",
-      "source_version": "9e86198d",
-      "content_hash": "ccebf559ae2dd16e89bf574d7dbdf1414f1ea479ab924dc23d43f076f1d00878",
+      "source_version": "b0d8deec",
+      "content_hash": "11b9a5b16479f3b0de0a97292dcf30def03a864d1ce39e2e5a78db5722cb58d7",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T01:26:27.771Z"
+      "persisted_at": "2026-11-14T13:38:52.804Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant",
@@ -219580,9 +219585,9 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "12282d166866a14a1aee169d9aba1b948a22ec0b78dd21010e6e2fa140b840da",
+      "content_hash": "426dafbba6bd410edbf5a7c7ec95d734bcf6222e92b983bb08a5424f6e648328",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T01:26:59.304Z"
+      "persisted_at": "2026-11-14T13:39:26.868Z"
     },
     "learn-huggingface-qwen-qwen3-8-flash-next": {
       "learning_id": "learn-huggingface-qwen-qwen3-8-flash-next",
@@ -228367,6 +228372,214 @@
       "content_hash": "4e1cf352f2f8dd77bf9e8fddce0e16b292fbf84b4594e9573459f22bfae7dbeb",
       "domain_letter": "K",
       "persisted_at": "2026-11-14T13:29:46.357Z"
+    },
+    "learn-github-react-metro": {
+      "learning_id": "learn-github-react-metro",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "react/metro",
+      "repository": "react/metro",
+      "slug": "react-metro",
+      "platform": "github",
+      "source_url": "https://github.com/react/metro",
+      "source_version": "059ef8d4",
+      "content_hash": "821ddd92d116f5ce214a716281d0c6b037ee78ced949f330acff2ab82ef6642b",
+      "dossier_path": "07_PROJECT_LEARNING/react-metro-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/react-metro-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8490,
+          "title": "Fix crash on a package subpath ending in \"/.\", such as \"pkg/.\"",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T13:38:42.931Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8490": {
+      "learning_id": "rule-8490",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8490,
+      "title": "Fix crash on a package subpath ending in \"/.\", such as \"pkg/.\"",
+      "source_url": "https://github.com/react/metro",
+      "source_version": "059ef8d4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T13:38:42.931Z"
+    },
+    "candidate_directive-fix-crash-on-a-package-subpath-ending-in-such-as-pkg": {
+      "item_id": "candidate_directive-fix-crash-on-a-package-subpath-ending-in-such-as-pkg",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BP3Y-fix-crash-on-a-package-subpath-ending-in-such-as-pkg.md",
+      "title": "Fix crash on a package subpath ending in \"/.\", such as \"pkg/.\"",
+      "repository": "react/metro",
+      "source_version": "059ef8d4",
+      "content_hash": "c153cea151208eff956536c7adcc10ad863df1c4d3e75b67a8ee8ec98ae42437",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T13:38:43.296Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-react-metro-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-react-metro-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-metro-technical-construction-intelligence-react-metro-core-invariants.md",
+      "title": "Technical Construction Intelligence: react/metro Core Invariants",
+      "repository": "react/metro",
+      "source_version": "059ef8d4",
+      "content_hash": "cbab03cddc3e3d17a1531eb331ffdac67fbb9cd7cf9a70609e5951194663f023",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T13:38:43.393Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-react-metro": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-react-metro",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/react-metro-verification-protocol-empirical-defect-shield-for-react-metro.md",
+      "title": "Verification Protocol: Empirical Defect Shield for react/metro",
+      "repository": "react/metro",
+      "source_version": "059ef8d4",
+      "content_hash": "32be68d0a6eb2660443c0f8c066b40ff41856f9b1b9d804218fae07779c97f68",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T13:38:43.497Z"
+    },
+    "learn-huggingface-google-vit-base-patch16-224": {
+      "learning_id": "learn-huggingface-google-vit-base-patch16-224",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "google/vit-base-patch16-224",
+      "repository": "google/vit-base-patch16-224",
+      "slug": "hf-google-vit-base-patch16-224",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/google/vit-base-patch16-224",
+      "source_version": "hf-google-vit-base-patch16-224",
+      "content_hash": "db15ee4d8901500b51b44dd27dc67a430dad11c86856c9ec168c742535d3e022",
+      "dossier_path": "07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T13:38:46.434Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-google-vit-base-patch16-224-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-google-vit-base-patch16-224-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-vit-base-patch16-224-research-knowledge-intelligence-google-vit-base-p.md",
+      "title": "Research & Knowledge Intelligence: google/vit-base-patch16-224 Core Invariants",
+      "repository": "google/vit-base-patch16-224",
+      "source_version": "hf-google-vit-base-patch16-224",
+      "content_hash": "df243aefc0eadccf21b224090e3786bc4e2549a168aa3b4dd3ee8654532a4d77",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T13:38:46.775Z"
+    },
+    "rule-8491": {
+      "learning_id": "rule-8491",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8491,
+      "title": "unnecessary-to-owned",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "b0d8deec",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T13:38:52.331Z"
+    },
+    "candidate_directive-unnecessary-to-owned": {
+      "item_id": "candidate_directive-unnecessary-to-owned",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BWCI-unnecessary-to-owned.md",
+      "title": "unnecessary-to-owned",
+      "repository": "dathere/qsv",
+      "source_version": "b0d8deec",
+      "content_hash": "ceb7a000cb093bb99dce8f57dcba5ebf589b5cd1c4193b9ef1fe8efea5cad483",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T13:38:52.678Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-google-vit-base-patch16-224-learnings-core-in": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-google-vit-base-patch16-224-learnings-core-in",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-vit-base-patch16-224-learnings-research-knowledge-intelligence-hf-goog.md",
+      "title": "Research & Knowledge Intelligence: hf-google-vit-base-patch16-224-learnings Core Invariants",
+      "repository": "hf-google-vit-base-patch16-224-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0d2003dce8781161ce55c2614f9c5319aff6f2f92655f10c7f4c82281067f2fb",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T13:39:24.633Z"
+    },
+    "candidate_directive-metro-file-map-fix-crash-on-a-package-subpath-ending-in-such-as-pkg": {
+      "item_id": "candidate_directive-metro-file-map-fix-crash-on-a-package-subpath-ending-in-such-as-pkg",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CLG8-metro-file-map-fix-crash-on-a-package-subpath-ending-in-such-as-pkg.md",
+      "title": "metro-file-map: Fix crash on a package subpath ending in \"/.\", such as \"pkg/.\"",
+      "repository": "react-metro-learnings",
+      "source_version": "HEAD",
+      "content_hash": "18d6e683c4f294be0870abc19f1d0871da0d69eac4c7e89903c175bc96fe5b57",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T13:39:25.208Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-react-metro-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-react-metro-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-metro-learnings-technical-construction-intelligence-react-metro-learnings-.md",
+      "title": "Technical Construction Intelligence: react-metro-learnings Core Invariants",
+      "repository": "react-metro-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7e88e6345fa079e393e227ed61d3f2bfefca5aacc979159ae85bb74b58b38fa6",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T13:39:25.323Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-react-metro-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-react-metro-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/react-metro-learnings-verification-protocol-empirical-defect-shield-for-react-me.md",
+      "title": "Verification Protocol: Empirical Defect Shield for react-metro-learnings",
+      "repository": "react-metro-learnings",
+      "source_version": "HEAD",
+      "content_hash": "70fdaf58ec52a6a0c25c0fa5edbde10e3ff6430aec5508cf59cca04e0c3ecc85",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T13:39:25.437Z"
+    },
+    "candidate_directive-clippy-unnecessary-to-owned": {
+      "item_id": "candidate_directive-clippy-unnecessary-to-owned",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CMN4-clippy-unnecessary-to-owned.md",
+      "title": "clippy::unnecessary-to-owned",
+      "repository": "dathere-qsv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4044916190b374fc050f0810317f6a8f498e4d1f8d6f5622e49bb95ab72af98c",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T13:39:26.765Z"
     }
   },
   "ai-builder-brain": {
