@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md`  
 > **Source**: github ([https://github.com/neuron-core/neuron-ai](https://github.com/neuron-core/neuron-ai))  
-> **Source Version**: `aeea883b`  
+> **Source Version**: `0ee0f399`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T01:57:31.204Z  
+> **Timestamp**: 2026-11-14T03:01:54.096Z  
 > **Learning ID**: `learn-github-neuron-core-neuron-ai`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/neuron-core/neuron-ai](https://github.com/neuron-core/neuron-ai))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T01:57:31.190Z  
+> **Harvest Timestamp**: 2026-11-14T03:01:54.092Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Agentic Framework of the PHP ecosystem to build production-ready AI driven applications. Connect components (LLMs, Tools, vector DBs, memory) to agents that interact with your data and UI.
 - **Primary Language / Ecosystem**: PHP
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 2172 stars
+- **Stars / Engagement**: 2174 stars
 
 ---
 
@@ -71,7 +71,7 @@ interface Budget {
 }
 
 const byteLimit = 8 * 1024 * 1024;
-const terminalTypes = new Set(['stream.completed', 'stream.interrupted', 'stream.failed']);
+export const terminalTypes = new Set(['stream.completed', 'stream.interrupted', 'stream.failed']);
 
 export function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -287,8 +287,99 @@ export { subscribeToPusher } from './pusher.js';
 export type { PusherChannel } from './pusher.js';
 export { subscribeToMercure } from './mercure.js';
 export type { MercureSource } from './mercure.js';
+export { subscribeToIQ } from './iq.js';
+export type { IQSource } from './iq.js';
 export { createProtocolStream } from './protocol.js';
 export type { ProtocolEvent } from './protocol.js';
+
+```
+
+### Core Architecture Module: `packages/streaming/src/iq.ts`
+```
+import { createChannelConsumer, isRecord, terminalTypes, type ChannelCallbacks } from './consumer.js';
+
+export interface IQSource {
+  readonly readyState: number;
+  addEventListener(type: string, listener: (event: { data?: unknown }) => void): unknown;
+  removeEventListener(type: string, listener: (event: { data?: unknown }) => void): unknown;
+  close(): void;
+}
+
+/** EventSource.CLOSED: the browser gave up, and will not reconnect. */
+const CLOSED = 2;
+
+/**
+ * Subscribe to a stream of an IQ server, whose frames are the envelopes of one segment. The
+ * subscription owns the source: it closes it when IQ ends the stream, on a gap, and on close().
+ */
+export function subscribeToIQ(source: IQSource, callbacks: ChannelCallbacks): { close(): void } {
+  let closed = false;
+  let whole = false;
+  const consumer = createChannelConsumer({
+    onEvent(event) {
+      whole ||= terminalTypes.has(event.type);
+      callbacks.onEvent(event);
+    },
+    onGap: fail,
+  });
+  const listeners: Record<string, (event: { data?: unknown }) => void> = {
+    message: receive,
+    'iq:end': () => end('Missing channel events'),
+    'iq:fail': event => end(`IQ stream failed: ${failureReason(event.data)}`),
+    'iq:gone': () => end('IQ stream gone'),
+    // While the source is connecting again, it resumes after the last frame by itself.
+    error: () => source.readyState === CLOSED && end('IQ subscription refused'),
+  };
+
+  function close(): void {
+    if (closed) return;
+    closed = true;
+    for (const [type, listener] of Object.entries(listeners)) source.removeEventListener(type, listener);
+    source.close();
+    consumer.close();
+  }
+
+  function fail(reason: string): void {
+    if (closed) return;
+    close();
+    callbacks.onGap(reason);
+  }
+
+  /** The source delivers nothing more: a segment still without its terminal event never gets it. */
+  function end(reason: string): void {
+    if (whole) close();
+    else fail(reason);
+  }
+
+  function receive(message: { data?: unknown }): void {
+    if (closed) return;
+    let envelope: unknown;
+    try {
+      envelope = typeof message.data === 'string' ? JSON.parse(message.data) : undefined;
+    } catch {
+      envelope = undefined;
+    }
+    try {
+      consumer.accept(envelope);
+    } catch (error) {
+      close();
+      throw error;
+    }
+  }
+
+  for (const [type, listener] of Object.entries(listeners)) source.addEventListener(type, listener);
+  return { close };
+}
+
+function failureReason(data: unknown): string {
+  try {
+    const failure: unknown = typeof data === 'string' ? JSON.parse(data) : undefined;
+    if (isRecord(failure) && typeof failure.reason === 'string') return failure.reason;
+  } catch {
+    // An unreadable failure is a failure all the same.
+  }
+  return 'unknown';
+}
 
 ```
 
@@ -540,200 +631,414 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `aeea883b` (2026-11-11)
-**Commit Message**: fix cli loading arguments
+### Incident Patch 1: `0ee0f399` (2026-11-13)
+**Commit Message**: streaming channel
 
-**File**: `.github/dependabot.yml` (modified, +2/-2)
+**File**: `packages/streaming/src/iq.ts` (added, +84/-0)
 ```diff
-@@ -4,7 +4,7 @@ updates:
-   - package-ecosystem: github-actions
-     directory: /
-     schedule:
--      interval: "weekly"
-+      interval: "monthly"
-     cooldown:
-       default-days: 5
-     groups:
-@@ -15,7 +15,7 @@ updates:
-   - package-ecosystem: npm
-     directory: /
-     schedule:
--      interval: "weekly"
-+      interval: "monthly"
-     cooldown:
-       default-days: 5
-     ignore:
+@@ -0,0 +1,84 @@
++import { createChannelConsumer, isRecord, terminalTypes, type ChannelCallbacks } from './consumer.js';
++
++export interface IQSource {
++  readonly readyState: number;
++  addEventListener(type: string, listener: (event: { data?: unknown }) => void): unknown;
++  removeEventListener(type: string, listener: (event: { data?: unknown }) => void): unknown;
++  close(): void;
++}
++
++/** EventSource.CLOSED: the browser gave up, and will not reconnect. */
++const CLOSED = 2;
++
++/**
++ * Subscribe to a stream of an IQ server, whose frames are the envelopes of one segment. The
++ * subscription owns the source: it closes it when IQ ends the stream, on a gap, and on close().
++ */
++export function subscribeToIQ(source: IQSource, callbacks: ChannelCallbacks): { close(): void } {
++  let closed = false;
++  let whole = false;
++  const consumer = createChannelConsumer({
++    onEvent(event) {
++      whole ||= terminalTypes.has(event.type);
++      callbacks.onEvent(event);
++    },
++    onGap: fail,
++  });
++  const listeners: Record<string, (event: { data?: unknown }) => void> = {
++    message: receive,
++    'iq:end': () => end('Missing channel events'),
++    'iq:fail': event => end(`IQ stream failed: ${failureReason(event.data)}`),
++    'iq:gone': () => end('IQ stream gone'),
++    // While the source is connecting again, it resumes after the last frame by itself.
++    error: () => source.readyState === CLOSED && end('IQ subscription refused'),
++  };
++
++  function close(): void {
++    if (closed) return;
++    closed = true;
++    for (const [type, listener] of Object.entries(listeners)) source.removeEventListener(type, listener);
++    source.close();
++    consumer.close();
++  }
++
++  function fail(reason: string): void {
++    if (closed) return;
++    close();
++    callbacks.onGap(reason);
++  }
++
++  /** The source delivers nothing more: a segment still without its terminal event never gets it. */
++  function end(reason: string): void {
++    if (whole) close();
++    else fail(reason);
++  }
++
++  function receive(message: { data?: unknown }): void {
++    if (closed) return;
++    let envelope: unknown;
++    try {
++      envelope = typeof message.data === 'string' ? JSON.parse(message.data) : undefined;
++    } catch {
++      envelope = undefined;
++    }
++    try {
++      consumer.accept(envelope);
++    } catch (error) {
++      close();
++      throw error;
++    }
++  }
++
++  for (const [type, listener] of Object.entries(listeners)) source.addEventListener(type, listener);
++  return { close };
++}
++
++function failureReason(data: unknown): string {
++  try {
++    const failure: unknown = typeof data === 'string' ? JSON.parse(data) : undefined;
++    if (isRecord(failure) && typeof failure.reason === 'string') return failure.reason;
++  } catch {
++    // An unreadable failure is a failure all the same.
++  }
++  return 'unknown';
++}
 ```
 
 ---
 
-### Incident Patch 2: `655adb5f` (2026-11-11)
-**Commit Message**: fix cli loading arguments
+### Incident Patch 2: `d38cca97` (2026-11-13)
+**Commit Message**: streaming channel
 
-**File**: `bin/neuron` (modified, +6/-0)
+**File**: `packages/streaming/CHANGELOG.md` (modified, +4/-0)
 ```diff
-@@ -6,6 +6,12 @@ declare(strict_types=1);
- $autoloadFile = null;
- $args = [$argv[0]];
- for ($i = 1; $i < $argc; $i++) {
-+    // Everything from "--" on belongs to the command, even an argument that looks like this option
-+    if ($argv[$i] === '--') {
-+        $args = [...$args, ...array_slice($argv, $i)];
-+        break;
-+    }
+@@ -1,5 +1,9 @@
+ # Changelog
+ 
++## Unreleased
 +
-     if ($argv[$i] === '--autoload-file') {
-         if (!isset($argv[$i + 1])) {
-             fwrite(STDERR, 'The --autoload-file option requires a file path' . PHP_EOL);
++- Add `subscribeToIQ` and its `IQSource` type, an input adapter for an IQ streaming server. It feeds the core the envelopes the backend's `IQStreamChannel` publishes, closes the `EventSource` when IQ ends the stream, and reports through `onGap` a stream that ended before its terminal event, failed, is gone, or refused the subscription.
++
+ ## 0.3.0
+ 
+ - Add `subscribeToMercure` and its `MercureSource` type, an input adapter for a Mercure hub: every update the backend's `MercureChannel` publishes holds a JSON array of envelopes, which the adapter unwraps for the core.
 ```
 
-**File**: `src/Console/NeuronCli.php` (modified, +8/-2)
+**File**: `packages/streaming/README.md` (modified, +38/-3)
 ```diff
-@@ -9,8 +9,12 @@
- use NeuronAI\Console\Make\MakeCommand;
- use Throwable;
+@@ -2,7 +2,7 @@
  
-+use function array_keys;
-+use function array_map;
- use function array_shift;
-+use function max;
- use function str_pad;
-+use function strlen;
+ Reconstruct Neuron AI events delivered through transports with message-size limits. The PHP backend splits oversized events into fragments; this package orders the envelopes, joins their fragments, suppresses duplicates, and reports gaps that require application recovery.
  
- use const PHP_EOL;
+-The core is independent of transport, UI framework, and agent protocol. Use it with any source of Neuron envelopes: WebSockets, a Redis-to-browser bridge, Pusher, a Mercure hub, or an in-process callback. Consume the reconstructed events directly, update React/Vue state, or bridge them into AG-UI or the Vercel AI SDK.
++The core is independent of transport, UI framework, and agent protocol. Use it with any source of Neuron envelopes: WebSockets, a Redis-to-browser bridge, Pusher, a Mercure hub, an IQ streaming server, or an in-process callback. Consume the reconstructed events directly, update React/Vue state, or bridge them into AG-UI or the Vercel AI SDK.
  
-@@ -98,8 +102,10 @@ protected function printUsage(): void
-         echo 'Usage: neuron <command> [options]' . PHP_EOL . PHP_EOL;
+ ```sh
+ npm install @neuron-core/streaming
+@@ -24,7 +24,7 @@ Application callbacks / UI state / createProtocolStream
  
-         echo 'Available Commands:' . PHP_EOL;
--        foreach ($this->commands() as $name => [$description]) {
--            echo '  ' . str_pad($name, 16) . $description . PHP_EOL;
-+        $commands = $this->commands();
-+        $nameWidth = max(array_map(strlen(...), array_keys($commands))) + 1;
-+        foreach ($commands as $name => [$description]) {
-+            echo '  ' . str_pad($name, $nameWidth) . $description . PHP_EOL;
-         }
-         echo PHP_EOL;
+ The backend's `AbstractChannel` owns sequencing and fragmentation. Transport implementations such as `PusherChannel` supply delivery and byte budgets. The frontend core understands the shared Neuron envelope contract, without knowing which transport carried it or what the event payload means.
  
+-`subscribeToPusher` and `subscribeToMercure` are thin input adapters around the same core. `createProtocolStream` is an optional output bridge. Neither is required for direct consumption.
++`subscribeToPusher`, `subscribeToMercure` and `subscribeToIQ` are thin input adapters around the same core. `createProtocolStream` is an optional output bridge. Neither is required for direct consumption.
+ 
+ ## Core: consume events from any source
+ 
+@@ -176,6 +176,41 @@ Open the source before starting execution, and wait for its `open` event before
+ 
+ To drive AG-UI or the Vercel AI SDK, hand the subscription to `createProtocolStream` as shown below, on a topic or a `streamId` that carries one execution segment.
+ 
++## IQ
++
++Pass an `EventSource` opened on a stream of an IQ server, with the `sub` token your backend minted for it:
++
++```ts
++import { subscribeToIQ } from '@neuron-core/streaming';
++
++const source = new EventSource(`https://stream.example.com/${stream}?token=${subscribeToken}`);
++
++const subscription = subscribeToIQ(source, {
++  onEvent: ({ type, data }) => renderEvent(type, data),
++  onGap: reason => reloadConversation(reason),
++});
++
++// On cleanup:
++subscription.close();
++```
++
++The backend's `IQStreamChannel` publishes one execution segment per IQ stream, one envelope per frame, so the adapter takes no `streamId`. IQ numbers the frames and resumes a reconnecting `EventSource` right after the last one it received, so the core gets every envelope in order, once each.
++
++The subscription owns the source. IQ ends every stream with an event of its own, sent after every frame it holds: `iq:end`, `iq:fail` or `iq:gone`. The adapter then closes the source, since an open `EventSource` would reconnect. If the segment's terminal event (`stream.completed`, `stream.interrupted` or `stream.failed`) has arrived by then, the segment is whole and nothing else happens: a failed run reaches your callbacks as the protocol's error events and `stream.failed`. If it has not, the missing events will never come, and `onGap` reports it at once instead of after the 30-second deadline:
++
++| Event | `onGap` reason |
++| --- | --- |
++| `iq:end` | `Missing channel events`: the backend's delivery broke during the segment |
++| `iq:fail` | `IQ stream failed: <reason>`, such as `max_duration`, `too_large` or `publisher_idle` |
++| `iq:gone` | `IQ stream gone`: frames this page never received are gone, as for a page that subscribed after the end |
++| `error` with `readyState` `CLOSED` | `IQ subscription refused`: an invalid or expired token, a limit, or a server that is unavailable |
++
++An `error` while the source is connecting again is a dropped connection, which the browser resumes by itself. `close()` detaches the adapter, closes the source, and clears the core's buffers and timers; so do a gap and a callback that throws.
++
++IQ keeps every frame while the stream runs, so the page may subscribe before or after the backend starts executing: a late subscriber still gets the stream from its first frame. A page that subscribes first makes IQ wait for the backend, for as long as the server allows. The browser sends the token in the URL again on every reconnection, so it must stay valid until the stream ends. This package opens no connections and mints no tokens.
++
++To drive AG-UI or the Vercel AI SDK, hand the subscription to `createProtocolStream`: an IQ stream carries one execution segment.
++
+ ## React, Vue, and other UI frameworks
+ 
+ The callback API requires no framework wrapper. Subscribe when a component mounts and close on disposal. For example, in React:
+@@ -325,7 +360,7 @@ A missing se
 ```
 
-**File**: `tests/Console/NeuronBinTest.php` (modified, +33/-0)
+**File**: `packages/streaming/src/consumer.ts` (modified, +1/-1)
 ```diff
-@@ -4,14 +4,17 @@
- 
- namespace NeuronAI\Tests\Console;
- 
-+use NeuronAI\Tests\Console\Stub\ArgumentsCommandProvider;
- use NeuronAI\Tests\Console\Stub\GreetingCommandProvider;
- use NeuronAI\Tests\Support\FileSystemSandbox;
- use PHPUnit\Framework\TestCase;
- 
-+use function array_map;
- use function dirname;
- use function escapeshellarg;
- use function exec;
- use function file_put_contents;
-+use function implode;
- use function json_encode;
- use function mkdir;
- use function var_export;
-@@ -78,4 +81,34 @@ public function test_lists_the_commands_of_installed_packages_next_to_the_autolo
-         $this->assertSame(0, $exitCode);
-         $this->assertSame(['Hello from an installed package'], $output);
-     }
-+
-+    public function test_passes_everything_after_the_double_dash_to_the_command(): void
-+    {
-+        $root = dirname(__DIR__, 2);
-+        $proxy = $this->sandbox . '/neuron';
-+        $payload = $this->sandbox . '/payload.php';
-+
-+        mkdir($this->sandbox . '/composer');
-+        file_put_contents($this->sandbox . '/composer/installed.json', json_encode(['packages' => [
-+            ['name' => 'acme/arguments', 'extra' => ['neuron' => ['command-provider' => ArgumentsCommandProvider::class]]],
-+        ]], JSON_THROW_ON_ERROR));
-+        file_put_contents($this->sandbox . '/autoload.php', '<?php require ' . var_export($root . '/vendor/autoload.php', true) . ';');
-+        file_put_contents($payload, "<?php echo 'payload ran', PHP_EOL;");
-+        file_put_contents(
-+            $proxy,
-+            "<?php \$GLOBALS['_composer_autoload_path'] = " . var_export($this->sandbox . '/autoload.php', true) . ';'
-+            . ' return include ' . var_export($root . '/bin/neuron', true) . ';'
-+        );
-+
-+        $arguments = ['first', '--', '--autoload-file=' . $payload, '--autoload-file', $payload];
-+        exec(
-+            escapeshellarg(PHP_BINARY) . ' ' . escapeshellarg($proxy) . ' arguments:echo '
-+            . implode(' ', array_map(escapeshellarg(...), $arguments)) . ' 2>&1',
-+            $output,
-+            $exitCode,
-+        );
-+
-+        $this->assertSame(0, $exitCode);
-+        $this->assertSame($arguments, $output);
-+    }
+@@ -30,7 +30,7 @@ interface Budget {
  }
-```
-
-**File**: `tests/Console/NeuronCliTest.php` (modified, +15/-0)
-```diff
-@@ -85,6 +85,21 @@ public function test_usage_lists_every_registered_command_with_its_description()
-         }
-     }
  
-+    public function test_usage_aligns_descriptions_after_the_longest_command_name(): void
-+    {
-+        $provider = new class () implements CommandProvider {
-+            public function commands(): array
-+            {
-+                return ['make:subagent-task' => ['Create a subagent task', fn (): Command => throw new RuntimeException('not run')]];
-+            }
-+        };
-+
-+        [, $output] = $this->runCli(new NeuronCli([$provider]), 'neuron', '--help');
-+
-+        $this->assertStringContainsString('  make:subagent-task Create a subagent task' . PHP_EOL, $output);
-+        $this->assertStringContainsString('  make:agent         Create a new Agent class' . PHP_EOL, $output);
-+    }
-+
-     public function test_registry_exposes_the_documented_commands(): void
-     {
-         $commands = (new NeuronCli())->commands();
+ const byteLimit = 8 * 1024 * 1024;
+-const terminalTypes = new Set(['stream.completed', 'stream.interrupted', 'stream.failed']);
++export const terminalTypes = new Set(['stream.completed', 'stream.interrupted', 'stream.failed']);
+ 
+ export function isRecord(value: unknown): value is Record<string, unknown> {
+   return typeof value === 'object' && value !== null && !Array.isArray(value);
 ```
 
-**File**: `tests/Console/Stub/ArgumentsCommandProvider.php` (added, +31/-0)
+**File**: `packages/streaming/src/index.ts` (modified, +2/-0)
 ```diff
-@@ -0,0 +1,31 @@
-+<?php
-+
-+declare(strict_types=1);
-+
-+namespace NeuronAI\Tests\Console\Stub;
-+
-+use NeuronAI\Console\Command;
-+use NeuronAI\Console\CommandProvider;
-+
-+use function array_slice;
-+
-+use const PHP_EOL;
-+
-+class ArgumentsCommandProvider implements CommandProvider
-+{
-+    public function commands(): array
-+    {
-+        return [
-+            'arguments:echo' => ['Print each argument on its own line', fn (): Command => new class () extends Command {
-+                public function run(array $args): int
-+                {
-+                    foreach (array_slice($args, 1) as $arg) {
-+                        echo $arg . PHP_EOL;
-+                    }
-+
-+                    return 0;
-+                }
-+            }],
-+        ];
-+    }
+@@ -4,5 +4,7 @@ export { subscribeToPusher } from './pusher.js';
+ export type { PusherChannel } from './pusher.js';
+ export { subscribeToMercure } from './mercure.js';
+ export type { MercureSource } from './mercure.js';
++export { subscribeToIQ } from './iq.js';
++export type { IQSource } from './iq.js';
+ export { createProtocolStream } from './protocol.js';
+ export type { ProtocolEvent } from './protocol.js';
+```
+
+**File**: `packages/streaming/test/consumer.test.mjs` (modified, +124/-1)
+```diff
+@@ -1,6 +1,6 @@
+ import { test } from 'node:test';
+ import assert from 'node:assert/strict';
+-import { createChannelConsumer, createProtocolStream, subscribeToMercure, subscribeToPusher } from '../dist/index.js';
++import { createChannelConsumer, createProtocolStream, subscribeToIQ, subscribeToMercure, subscribeToPusher } from '../dist/index.js';
+ 
+ const id = 'a'.repeat(32);
+ const frame = (sequence, data = { value: sequence }, type = 'text-delta', streamId = id) => ({ streamId, sequence, type, data });
+@@ -30,6 +30,18 @@ function mercure() {
+     raw(data) { for (const listener of [...listeners]) listener({ data }); },
+   };
+ }
++function iq() {
++  const listeners = [];
++  return {
++    listeners, readyState: 1, closes: 0,
++    addEventListener(type, listener) { listeners.push([type, listener]); },
++    removeEventListener(type, listener) { listeners.splice(listeners.findIndex(([t, l]) => t === type && l === listener), 1); },
++    close() { this.readyState = 2; this.closes++; },
++    // One frame, as IQ relays it: the data of a message event holds one envelope.
++    send(...envelopes) { for (const envelope of envelopes) this.dispatch('message', JSON.stringify(envelope)); },
++    dispatch(type, data) { for (const [t, listener] of [...listeners]) if (t === type) listener({ data }); },
++  };
 +}
+ 
+ test('orders interleaved fragments, decodes UTF-8, and waits before terminal delivery', () => {
+   const c = setup();
+@@ -321,6 +333,117 @@ test('Mercure feeds a protocol bridge, which releases the subscription at the te
+   assert.equal(source.listeners.size, 0);
+ });
+ 
++test('IQ delivers the envelopes in order and closes the source when IQ ends a whole stream', () => {
++  const source = iq(), events = [];
++  subscribeToIQ(source, { onEvent: e => events.push(e), onGap: assert.fail });
++  const encoded = Buffer.from(JSON.stringify({ text: 'こんにちは 🌍' })).toString('base64url');
++  source.send(frame(0), fragment(1, encoded.slice(0, 4), 0, 2), fragment(1, encoded.slice(4), 1, 2), frame(2, {}, 'stream.completed'));
++  source.dispatch('iq:future', '{}');
++  assert.equal(source.closes, 0);
++  source.dispatch('iq:end', '{"lastEventId":4}');
++  assert.deepEqual(events.map(e => [e.sequence, e.type, e.data]), [
++    [0, 'text-delta', { value: 0 }], [1, 'text-delta', { text: 'こんにちは 🌍' }], [2, 'stream.completed', {}],
++  ]);
++  assert.equal(source.closes, 1); assert.equal(source.listeners.length, 0);
++});
++
++for (const [type, data] of [['iq:fail', '{"reason":"publisher","lastEventId":2}'], ['iq:gone', '{"outcome":"fail","reason":"publisher","lastEventId":2}']]) {
++  test(`IQ closes quietly on ${type} after the segment's terminal event`, () => {
++    const source = iq(), events = [];
++    subscribeToIQ(source, { onEvent: e => events.push(e), onGap: assert.fail });
++    source.send(frame(0), frame(1, {}, 'stream.failed'));
++    source.dispatch(type, data);
++    assert.deepEqual(events.map(e => e.type), ['text-delta', 'stream.failed']);
++    assert.equal(source.closes, 1); assert.equal(source.listeners.length, 0);
++  });
++}
++
++for (const [type, data, reason] of [
++  ['iq:end', '{"lastEventId":3}', 'Missing channel events'],
++  ['iq:fail', '{"reason":"max_duration","lastEventId":3}', 'IQ stream failed: max_duration'],
++  ['iq:fail', 'not json', 'IQ stream failed: unknown'],
++  ['iq:fail', '{"lastEventId":3}', 'IQ stream failed: unknown'],
++  ['iq:gone', '{"outcome":"end","lastEventId":3}', 'IQ stream gone'],
++  // The server no longer knows the stream: it restarted, or forgot it.
++  ['iq:gone', '{"outcome":"unknown"}', 'IQ stream gone'],
++]) test(`IQ reports ${type} (${data}) before the terminal event as a gap at once`, t => {
++  t.mock.timers.enable({ apis: ['setTimeout'] });
++  const source = iq(), events = [], gaps = [];
++  subscribeToIQ(source, { onEvent: e => events.push(e), onGap: reason => gaps.push(reason) });
++  // The frame that carried sequence 1 never arrives: the terminal event waits behind it.
++  source.send(frame(0), frame(2, {}, 'stream.completed'));
++  source.dispatch(type, data);
++  t.mock.timers.tick(60_000);
++  assert.deepEqual(events.map(e => e.sequence), [0]);
++  assert.deepEqual(gaps, [reason]);
++  assert.equal(source.closes, 1); assert.equal(source.listeners.length, 0);
++});
++
++test('IQ waits while the source reconnects and reports a refused subscription', () => {
++  const source = iq(), gaps = [];
++  subscribeToIQ(source, { onEvent: assert.fail, onGap: reason => gaps.push(reason) });
++  source.readyState = 0; source.dispatch('error');
++  assert.deepEqual(gaps, []); assert.equal(source.closes, 0);
++  source.readyState = 2; source.dispatch('error');
++  assert.deepEqual(gaps, ['IQ subscription refused']);
++  assert.equal(source.listeners.length, 0);
++});
++
++test('IQ closes quietly when a reconnection is refused after the segment\'s terminal event', () => {
++  const source = iq(), events = [];
++  subscribeToIQ(source, { onEvent: e => events.push(e), onGap: assert.fail });
++  source.send(frame(0), frame(1, {}, 'st
+```
+
+**File**: `packages/streaming/tools/test-packed.mjs` (modified, +4/-1)
+```diff
+@@ -22,7 +22,7 @@ try {
+   writeFileSync(join(directory, 'consumer.test.mjs'), unitTest);
+   run(process.execPath, ['--test', 'consumer.test.mjs'], { cwd: directory });
+   writeFileSync(join(directory, 'types.ts'), `
+-import { createChannelConsumer, createProtocolStream, subscribeToMercure, subscribeToPusher, type ChannelEvent, type MercureSource, type PusherChannel } from '@neuron-core/streaming';
++import { createChannelConsumer, createProtocolStream, subscribeToIQ, subscribeToMercure, subscribeToPusher, type ChannelEvent, type IQSource, type MercureSource, type PusherChannel } from '@neuron-core/streaming';
+ const consume = (event: ChannelEvent): void => { console.log(event.streamId, event.sequence, event.type, event.data); };
+ const consumer = createChannelConsumer({ onEvent: consume, onGap: console.error }, 'a'.repeat(32));
+ consumer.accept({}); consumer.close();
+@@ -32,6 +32,9 @@ declare const hub: EventSource;
+ declare const source: MercureSource;
+ subscribeToMercure(hub, { onEvent: consume, onGap: console.error }).close();
+ subscribeToMercure(source, { onEvent: consume, onGap: console.error }, 'a'.repeat(32)).close();
++declare const iq: IQSource;
++subscribeToIQ(hub, { onEvent: consume, onGap: console.error }).close();
++subscribeToIQ(iq, { onEvent: consume, onGap: console.error }).close();
+ const stream: ReadableStream<string> = createProtocolStream(
+   callbacks => createChannelConsumer(callbacks, 'a'.repeat(32)),
+   async event => event.type,
+```
+
+**File**: `skills/neuron-streaming/SKILL.md` (modified, +42/-2)
+```diff
+@@ -1,6 +1,6 @@
+ ---
+ name: neuron-streaming
+-description: Stream Neuron AI agent and workflow output to a consumer — iterating native chunks, yielding portable progress events from nodes, attaching a stream adapter for a UI protocol (Vercel AI SDK, AG-UI, SSE) or for Neuron's native vocabulary, and pushing output through a streaming channel when the consumer is not the HTTP response (queue worker, websocket, resumed run). Use this skill whenever the user mentions streaming, stream chunks, TextChunk, real-time responses, SSE, server-sent events, useChat, Vercel AI SDK, AG-UI, CopilotKit, stream adapters, streaming channels, pushing output to a websocket, Redis, Pusher or a Mercure hub, progress events from a workflow node, or testing streamed output. Also trigger for any task involving setStreamAdapter, setChannel, StreamAdapterInterface, NativeAdapter, StreamingChannelInterface, AbstractChannel, CallbackChannel, RedisChannel, PusherChannel, MercureChannel, FakeChannel, ProtocolEvent, SSEEncoder, ActivityStreamEvent, StepStartedStreamEvent, or CustomStreamEvent.
++description: Stream Neuron AI agent and workflow output to a consumer — iterating native chunks, yielding portable progress events from nodes, attaching a stream adapter for a UI protocol (Vercel AI SDK, AG-UI, SSE) or for Neuron's native vocabulary, and pushing output through a streaming channel when the consumer is not the HTTP response (queue worker, websocket, resumed run). Use this skill whenever the user mentions streaming, stream chunks, TextChunk, real-time responses, SSE, server-sent events, useChat, Vercel AI SDK, AG-UI, CopilotKit, stream adapters, streaming channels, pushing output to a websocket, Redis, Pusher, a Mercure hub or an IQ streaming server, progress events from a workflow node, or testing streamed output. Also trigger for any task involving setStreamAdapter, setChannel, StreamAdapterInterface, NativeAdapter, StreamingChannelInterface, AbstractChannel, CallbackChannel, RedisChannel, PusherChannel, MercureChannel, IQStreamChannel, FakeChannel, ProtocolEvent, SSEEncoder, ActivityStreamEvent, StepStartedStreamEvent, or CustomStreamEvent.
+ ---
+ 
+ # Neuron AI Streaming
+@@ -213,7 +213,7 @@ Implement `StreamAdapterInterface`: `start()`, `transform(object)`, `end()`, `in
+ 
+ Pull iteration only works when the code driving the generator is also the consumer, typically an HTTP response. Often it is not:
+ 
+-- A queue worker runs the agent and the browser is connected to a websocket, a Redis or Pusher stream, or a Mercure hub.
++- A queue worker runs the agent and the browser is connected to a websocket, a Redis or Pusher stream, a Mercure hub, or an IQ streaming server.
+ - A run is resumed after an approval from a different process than the one the client is watching.
+ - The application calls `run()` or `chat()` and still wants live output somewhere.
+ 
+@@ -412,6 +412,46 @@ A publish blocks the run until the hub answers: configure timeouts on the HTTP c
+ 
+ In the browser, `subscribeToMercure` from `@neuron-core/streaming` takes the `EventSource`, unwraps every update and delivers its events one at a time. Read [Channel wire contract and consumers](references/channels.md) for it, and for driving the AG-UI client or `useChat` from a channel.
+ 
++### IQStreamChannel
++
++`IQStreamChannel` publishes the segment to an IQ streaming server (the `ghcr.io/neuron-core/iq-stream` image), which relays it to browsers over plain Server-Sent Events. It needs no package, only `ext-openssl` for an `https` URL. The channel holds one chunked `POST` open from the first event to the end of the segment and writes every event as one NDJSON line as soon as it is produced, which is how IQ is meant to be published to.
++
++IQ authorizes each request with a token the application signs with the app's secret: a `pub` token for the worker and a `sub` token for the browser, both naming one stream:
++
++```php
++use NeuronAI\Workflow\Streaming\Channel\IQStreamChannel;
++
++function iqToken(string $scope, string $stream, int $ttl): string
++{
++    $base64url = static fn (string $bytes): string => rtrim(strtr(base64_encode($bytes), '+/', '-_'), '=');
++    $body = $base64url(json_encode(['app_key' => $_ENV['IQ_APP_KEY'], 'stream' => $stream, 'exp' => time() + $ttl], JSON_UNESCAPED_SLASHES));
++
++    return $body . '.' . $base64url(hash_hmac('sha256', "{$scope}.{$body}", $_ENV['IQ_APP_SECRET'], true));
++}
++
++// The endpoint picks the stream, dispatches the job with it, and answers the browser with its sub token.
++$stream = rtrim(strtr(base64_encode(random_bytes(16)), '+/', '-_'), '=');
++$subscribeToken = iqToken('sub', $stream, ttl: 3600);
++
++// Inside the queued job:
++$agent = MyAgent::make(workflowId: $threadId)
++    ->setStreamAdapter(fn (): VercelAIAdapter => new VercelAIAdapter())
++    ->setChannel(fn (): IQStreamChannel => new IQStreamChannel('https://stream.example.com', $stream, iqToken('pub', $stream, ttl: 3600)));
++
++$state = $agent->chat(new UserMessage($message), stream: tru
+```
+
+**File**: `skills/neuron-streaming/references/channels.md` (modified, +20/-2)
+```diff
+@@ -1,6 +1,6 @@
+ # Channel wire contract
+ 
+-`RedisChannel` publishes each envelope as JSON. `PusherChannel` passes the envelope to the injected official Pusher SDK as already-encoded event `data`, named by the envelope's `type`. On `private-encrypted-*` channels the SDK encrypts it, and the encryption-enabled browser SDK restores the envelope before invoking callbacks. `MercureChannel` publishes a JSON array of envelopes as the `data` of each update, with no SSE event type, so a single `message` listener receives every update. `CallbackChannel` calls its configured closures directly and does not use this contract. Pull streaming and SSE remain protocol events; this envelope belongs only to broadcast channel delivery.
++`RedisChannel` publishes each envelope as JSON. `PusherChannel` passes the envelope to the injected official Pusher SDK as already-encoded event `data`, named by the envelope's `type`. On `private-encrypted-*` channels the SDK encrypts it, and the encryption-enabled browser SDK restores the envelope before invoking callbacks. `MercureChannel` publishes a JSON array of envelopes as the `data` of each update, with no SSE event type, so a single `message` listener receives every update. `IQStreamChannel` writes each envelope as the `data` of one NDJSON line of its publish request, without an event name: IQ relays it as an SSE `message`, and ends the stream with an event of its own, `iq:end`, `iq:fail` or `iq:gone`. `CallbackChannel` calls its configured closures directly and does not use this contract. Pull streaming and SSE remain protocol events; this envelope belongs only to broadcast channel delivery.
+ 
+ ```json
+ {"streamId":"81d4f00e881563538f272ca26aa7a8d4","sequence":0,"type":"text-delta","data":{"id":"message-1","delta":"Hello"}}
+@@ -19,7 +19,7 @@ An oversized event becomes one or more `stream.fragment` envelopes:
+ 
+ All fragments of one logical event share `(streamId, sequence)`. Sort their zero-based `index` values, concatenate `part`, translate URL-safe base64 to standard base64, decode, and parse the resulting JSON to recover the original `data`. Unicode remains JSON-escaped, so decoded JSON is ASCII. `event` is the original type. The final fragment may contain base64 padding; earlier fragments do not.
+ 
+-Ordering is a consumer responsibility. Pusher [guarantees order within a batch, not between batches](https://docs.bird.com/pusher/channels/channels/events/why-dont-channels-events-arrive-in-order). A terminal event can therefore arrive before earlier data. Do not close on its arrival until preceding sequences are complete, or declare a gap and reconcile from application history. Redis orders one publisher's messages, but different segments can share a destination and must still be distinguished. `MercureChannel` publishes one update after the other, so a hub delivers a segment's updates in stream order, and the envelopes inside an update are in stream order.
++Ordering is a consumer responsibility. Pusher [guarantees order within a batch, not between batches](https://docs.bird.com/pusher/channels/channels/events/why-dont-channels-events-arrive-in-order). A terminal event can therefore arrive before earlier data. Do not close on its arrival until preceding sequences are complete, or declare a gap and reconcile from application history. Redis orders one publisher's messages, but different segments can share a destination and must still be distinguished. `MercureChannel` publishes one update after the other, so a hub delivers a segment's updates in stream order, and the envelopes inside an update are in stream order. IQ numbers the frames of a stream and replays the ones a reconnecting `EventSource` missed, so a subscriber receives them in order, once each, then IQ's terminal event; frames it can no longer get are reported as `iq:gone`.
+ 
+ ## Browser consumer
+ 
+@@ -72,6 +72,24 @@ A Mercure update holds a JSON array of envelopes, however many the channel packe
+ 
+ Wait for the source's `open` event before starting backend execution. An `EventSource` reconnects with the ID of the last update it received, and a hub with history replays the updates published since: the consumer ignores the ones it already delivered, so a short interruption leaves no gap. History is the hub's: Mercure Cloud retains about a hundred updates for the whole hub, and a hub on the `local` transport none. When the source's `error` event finds its `readyState` `CLOSED`, the browser has given up: close the subscription and reconcile.
+ 
++For an IQ stream, open an `EventSource` on the stream with the `sub` token the application minted, and pass it to `subscribeToIQ`:
++
++```js
++import { subscribeToIQ } from '@neuron-core/streaming';
++
++const source = new EventSource(`https://stream.example.com/${stream}?token=${subscribeToken}`);
++
++const subscription = subscribeToIQ(source, {
++  onEvent: ({ type, data }) => renderEvent(type, data),
++  onGap: (reason) => reloadConversation(reason),
++});
++
++// On cleanup:
++subscription.clos
 ```
 
 #### Recent Merged Pull Requests:
@@ -762,30 +1067,58 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cli loading arguments
+## X. streaming channel
 
 **RULE**:
-When implementing operations in `.github/dependabot.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in neuron-core/neuron-ai. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/streaming/src/iq.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in neuron-core/neuron-ai. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `aeea883b`: cli loading arguments. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0ee0f399`: streaming channel. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing PHP data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/dependabot.yml`.
+Subsystems managing PHP data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/streaming/src/iq.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```php
 // Verified production-grade fix pattern:
-      interval: "monthly"
-      interval: "monthly"
+import { createChannelConsumer, isRecord, terminalTypes, type ChannelCallbacks } from './consumer.js';
+
+export interface IQSource {
+  readonly readyState: number;
+  addEventListener(type: string, listener: (event: { data?: unknown }) => void): unknown;
+  removeEventListener(type: string, listener: (event: { data?: unknown }) => void): unknown;
+  close(): void;
+}
+
+/** EventSource.CLOSED: the browser gave up, and will not reconnect. */
+const CLOSED = 2;
+
+/**
+ * Subscribe to a stream of an IQ server, whose frames are the envelopes of one segment. The
+ * subscription owns the source: it closes it when IQ ends the stream, on a gap, and on close().
+ */
+export function subscribeToIQ(source: IQSource, callbacks: ChannelCallbacks): { close(): void } {
+  let closed = false;
+  let whole = false;
+  const consumer = createChannelConsumer({
+    onEvent(event) {
+      whole ||= terminalTypes.has(event.type);
+      callbacks.onEvent(event);
+    },
+    onGap: fail,
+  });
+  const listeners: Record<string, (event: { data?: unknown }) => void> = {
+    message: receive,
+    'iq:end': () => end('Missing channel events'),
+    'iq:fail': event => end(`IQ stream failed: ${failureReason(event.data)}`),
+    
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```php
-// Anti-pattern to NEVER write (induced failure mode):
-      interval: "weekly"
-      interval: "weekly"
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `aeea883b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0ee0f399` are properly handled with clean fallback behavior.

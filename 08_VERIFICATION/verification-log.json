@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-8OVO",
-    "timestamp": "2026-11-13T06:20:48.756Z",
-    "repository": "StikDebug/StikDebug",
-    "learningId": "learn-github-stikdebug-stikdebug",
-    "contentHash": "d4c63a725b8e17a44caf1ee22d6c215125e48c2dc079870710cfbb36df5af038",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-8R7A",
-    "timestamp": "2026-11-13T06:20:51.766Z",
-    "repository": "kgateway-dev/kgateway",
-    "learningId": "learn-github-kgateway-dev-kgateway",
-    "contentHash": "59c5e3c427f223782736c0bc7c125e1690dd2c63168d5f3c83c0191fafdf464a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-ONAQ",
-    "timestamp": "2026-11-13T06:33:13.202Z",
-    "repository": "KRAFTON/Raon-1-mini-preview",
-    "learningId": "learn-huggingface-krafton-raon-1-mini-preview",
-    "contentHash": "506d84c12bf7bf15b3bcdac666a0860af77ee001f0384312feab46ccd9dd3812",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-OWMK",
     "timestamp": "2026-11-13T06:33:25.292Z",
     "repository": "Automattic/harper",
@@ -7492,6 +7447,51 @@
     "contentHash": "70c42df2412388811314227de32f507c2a830900b96d209498cc6a89dd9625ee",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-KLGA",
+    "timestamp": "2026-11-14T03:01:47.290Z",
+    "repository": "zai-org/GLM-5.2",
+    "learningId": "learn-huggingface-zai-org-glm-5-2",
+    "contentHash": "7bda3b84411b4cdd122bd89a9e0eb4f68b8b76a82fbf9935b87cffa3593fea55",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-KNF5",
+    "timestamp": "2026-11-14T03:01:49.841Z",
+    "repository": "loft-sh/vcluster",
+    "learningId": "learn-github-loft-sh-vcluster",
+    "contentHash": "1a3b0847f53aede32e63edf82a0fefbcd5a7ca1ddf1ea8288ffa2eee75020a1c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-KRAP",
+    "timestamp": "2026-11-14T03:01:54.865Z",
+    "repository": "neuron-core/neuron-ai",
+    "learningId": "learn-github-neuron-core-neuron-ai",
+    "contentHash": "551f515a22ba0da3009d78d7f27ba39d4b405bd997da682b5e682df05e6ce0db",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

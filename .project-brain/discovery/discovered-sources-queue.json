@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T02:46:28.325Z",
+  "updated_at": "2026-11-14T03:02:23.556Z",
   "stats": {
-    "total_discovered": 3067,
-    "approved_pending_harvest": 2866,
+    "total_discovered": 3079,
+    "approved_pending_harvest": 2878,
     "harvested_count": 0,
     "rejected_count": 201,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2863,
-      "OFFICIAL_DOCUMENTATION": 109,
+      "COMMUNITY_AND_EXPERT": 2874,
+      "OFFICIAL_DOCUMENTATION": 110,
       "STANDARDS_AND_SPECIFICATIONS": 81,
       "ENGINEERING_BLOGS": 1,
       "SECURITY_ADVISORIES": 10,
@@ -66087,6 +66087,270 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md",
         "fileName": "hf-meta-llama-meta-llama-3-8b-instruct-learnings.md"
+      }
+    },
+    "SRC-9EC90332DA9E": {
+      "id": "SRC-9EC90332DA9E",
+      "url": "https://huggingface.co/zai-org/GLM-5.2",
+      "title": "https://huggingface.co/zai-org/GLM-5.2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T03:02:22.651Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md",
+        "fileName": "hf-zai-org-glm-5.2-learnings.md"
+      }
+    },
+    "SRC-AB3847E48120": {
+      "id": "SRC-AB3847E48120",
+      "url": "https://my-vcluster-platform.com/",
+      "title": "https://my-vcluster-platform.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T03:02:22.951Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md",
+        "fileName": "loft-sh-vcluster-learnings.md"
+      }
+    },
+    "SRC-70C4B4F33780": {
+      "id": "SRC-70C4B4F33780",
+      "url": "https://index.docker.io/v1",
+      "title": "https://index.docker.io/v1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T03:02:22.969Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md",
+        "fileName": "loft-sh-vcluster-learnings.md"
+      }
+    },
+    "SRC-27BE253B8729": {
+      "id": "SRC-27BE253B8729",
+      "url": "https://standards.freedesktop.org/basedir-spec/latest/ar01s03.html",
+      "title": "https://standards.freedesktop.org/basedir-spec/latest/ar01s03.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T03:02:22.993Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md",
+        "fileName": "loft-sh-vcluster-learnings.md"
+      }
+    },
+    "SRC-37E0E0EF1E22": {
+      "id": "SRC-37E0E0EF1E22",
+      "url": "https://github.com/neuron-core/neuron-ai",
+      "title": "https://github.com/neuron-core/neuron-ai",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T03:02:23.422Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md",
+        "fileName": "neuron-core-neuron-ai-learnings.md"
+      }
+    },
+    "SRC-A3126ADDCD24": {
+      "id": "SRC-A3126ADDCD24",
+      "url": "https://github.com/neuron-core/neuron-ai/blob/2.x/src/Providers/Gemini/HandleChat.php",
+      "title": "https://github.com/neuron-core/neuron-ai/blob/2.x/src/Providers/Gemini/HandleChat.php",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T03:02:23.448Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md",
+        "fileName": "neuron-core-neuron-ai-learnings.md"
+      }
+    },
+    "SRC-CC50E3943A2B": {
+      "id": "SRC-CC50E3943A2B",
+      "url": "https://ai.google.dev/gemini-api/docs/thought-signatures",
+      "title": "https://ai.google.dev/gemini-api/docs/thought-signatures",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T03:02:23.465Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md",
+        "fileName": "neuron-core-neuron-ai-learnings.md"
+      }
+    },
+    "SRC-DE88E04C084B": {
+      "id": "SRC-DE88E04C084B",
+      "url": "https://github.com/dx-tooling/sitebuilder-webapp",
+      "title": "https://github.com/dx-tooling/sitebuilder-webapp",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T03:02:23.482Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md",
+        "fileName": "neuron-core-neuron-ai-learnings.md"
+      }
+    },
+    "SRC-484554A16AD5": {
+      "id": "SRC-484554A16AD5",
+      "url": "https://github.com/dx-tooling/sitebuilder-webapp/blob/main/src/PhotoBuilder/Infrastructure/Adapter/PatchedGemini.php",
+      "title": "https://github.com/dx-tooling/sitebuilder-webapp/blob/main/src/PhotoBuilder/Infrastructure/Adapter/PatchedGemini.php",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T03:02:23.498Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md",
+        "fileName": "neuron-core-neuron-ai-learnings.md"
+      }
+    },
+    "SRC-F200C888752B": {
+      "id": "SRC-F200C888752B",
+      "url": "https://stream.example.com/$%7Bstream",
+      "title": "https://stream.example.com/$%7Bstream",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T03:02:23.516Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md",
+        "fileName": "neuron-core-neuron-ai-learnings.md"
+      }
+    },
+    "SRC-8842031C9E30": {
+      "id": "SRC-8842031C9E30",
+      "url": "https://stream.example.com/",
+      "title": "https://stream.example.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T03:02:23.540Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md",
+        "fileName": "neuron-core-neuron-ai-learnings.md"
+      }
+    },
+    "SRC-A4D46B004F8B": {
+      "id": "SRC-A4D46B004F8B",
+      "url": "https://docs.bird.com/pusher/channels/channels/events/why-dont-channels-events-arrive-in-order",
+      "title": "https://docs.bird.com/pusher/channels/channels/events/why-dont-channels-events-arrive-in-order",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T03:02:23.556Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md",
+        "fileName": "neuron-core-neuron-ai-learnings.md"
       }
     }
   }

@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-14T02:46:28.312Z",
+  "updated_at": "2026-11-14T03:02:22.640Z",
   "statistics": {
-    "total_nodes": 149,
-    "total_edges": 82,
+    "total_nodes": 150,
+    "total_edges": 83,
     "domain_distribution": {
-      "D": 121,
+      "D": 122,
       "M": 1,
       "H": 11,
       "J": 5,
@@ -18,7 +18,7 @@
       "B": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 82
+      "CONSTRAINED_BY_ARCHITECTURE": 83
     }
   },
   "nodes": {
@@ -3336,6 +3336,29 @@
       ],
       "created_at": "2026-11-14T02:46:28.312Z",
       "updated_at": "2026-11-14T02:46:28.312Z"
+    },
+    "DOM-D-78E4F99B": {
+      "id": "DOM-D-78E4F99B",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): zai-org/GLM-5.2",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md`  \n> **Source**: huggingface ([https://huggingface.c -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md`  \n> **Source**: huggingface ([https://huggingface.c",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-zai-org-glm-5.2/hf-zai-org-glm-5.2-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T03:01:57.872Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-zai-org-glm-5.2)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-14T03:02:22.640Z",
+      "updated_at": "2026-11-14T03:02:22.640Z"
     }
   },
   "edges": [
@@ -4158,6 +4181,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-J-B241A1ED [J] with Domain D",
       "created_at": "2026-11-14T02:46:28.312Z"
+    },
+    {
+      "id": "EDGE-527DCB4014D1",
+      "sourceId": "DOM-D-78E4F99B",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-78E4F99B [D] with Domain M",
+      "created_at": "2026-11-14T03:02:22.640Z"
     }
   ]
 }

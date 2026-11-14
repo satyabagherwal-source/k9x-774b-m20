@@ -9745,3 +9745,7 @@ Every entry in this ledger must capture:
 | `learn-dom-d-0d55db0b` | `project://hf-openai-gpt-oss-120b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md` | 2026-11-14T02:38:23.554Z |
 | `learn-huggingface-meta-llama-meta-llama-3-8b-instruct` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-14T02:45:51.140Z |
 | `learn-dom-j-b241a1ed` | `project://hf-meta-llama-meta-llama-3-8b-instruct` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md` | 2026-11-14T02:46:28.314Z |
+| `learn-huggingface-zai-org-glm-5-2` | `https://huggingface.co/zai-org/GLM-5.2` | `hf-zai-org` | Multi-dimensional audit evidence | 2026-11-14T03:01:47.294Z |
+| `learn-github-loft-sh-vcluster` | `https://github.com/loft-sh/vcluster` | `3a0085b6` | Multi-dimensional audit evidence | 2026-11-14T03:01:49.844Z |
+| `learn-github-neuron-core-neuron-ai` | `https://github.com/neuron-core/neuron-ai` | `0ee0f399` | Multi-dimensional audit evidence | 2026-11-14T03:01:54.868Z |
+| `learn-dom-d-78e4f99b` | `project://hf-zai-org-glm-5.2` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md` | 2026-11-14T03:02:22.641Z |

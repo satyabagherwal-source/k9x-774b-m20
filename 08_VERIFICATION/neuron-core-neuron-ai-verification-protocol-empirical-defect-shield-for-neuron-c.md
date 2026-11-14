@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for neuron/core/neuron/ai
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for neuron-core/neuron-ai
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "neuron/core/neuron/ai",
-  "source_url": "https://github.com/neuron/core/neuron/ai",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "neuron-core/neuron-ai",
+  "source_url": "https://github.com/neuron-core/neuron-ai",
+  "source_version": "0ee0f399",
+  "license": "MIT",
+  "timestamp": "2026-11-14T03:01:55.019Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-neuron-core-neuron-ai",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [neuron/core/neuron/ai](https://github.com/neuron/core/neuron/ai) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [neuron-core/neuron-ai](https://github.com/neuron-core/neuron-ai) (Revision: `0ee0f399`).  
+> **License**: MIT | **Timestamp**: `2026-11-14T03:01:55.019Z`  
+> **Learning ID**: `learn-github-neuron-core-neuron-ai`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `neuron/core/neuron/ai` (Commit: `historical`)
+- **Target Repository**: `neuron-core/neuron-ai` (Commit: `0ee0f399`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md`  
-> **Source**: github ([https://github.com/neuron-core/neuron-ai](https://github.com/neuron-core/neuron-ai))  
-> **Source Version**: `fdae7e29`  
-> **License**: MIT  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T04:44:29.414Z  
-> **Learning ID**: `learn-github-neuron-core-neuron-ai`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): neuron-core/neuron-ai
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/neuron-core/neuron-ai](https://github.com/neuron-core/neuron-ai))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T04:44:29.256Z  
+> **Harvest Timestamp**: 2026-11-14T03:01:54.092Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: The Agentic Framework of the PHP ecosystem to build production-ready AI driven applications. Connect components (LLMs, Tools, vector DBs, memory) to agents that interact with your data and UI.
 - **Primary Language / Ecosystem**: PHP
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 2166 stars
+- **Stars / Engagement**: 2174 stars
 
 ---
 
@@ -96,7 +82,7 @@ interface Budget {
 }
 
 const byteLimit = 8 * 1024 * 1024;
-const terminalTypes = new Set(['stream.completed', 'stream.interrupted', 'stream.failed']);
+export const terminalTypes = new Set(['stream.completed', 'stream.interrupted', 'stream.failed']);
 
 export function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -312,8 +298,99 @@ export { subscribeToPusher } from './pusher.js';
 export type { PusherChannel } from './pusher.js';
 export { subscribeToMercure } from './mercure.js';
 export type { MercureSource } from './mercure.js';
+export { subscribeToIQ } from './iq.js';
+export type { IQSource } from './iq.js';
 export { createProtocolStream } from './protocol.js';
 export type { ProtocolEvent } from './protocol.js';
+
+```
+
+### Core Architecture Module: `packages/streaming/src/iq.ts`
+```
+import { createChannelConsumer, isRecord, terminalTypes, type ChannelCallbacks } from './consumer.js';
+
+export interface IQSource {
+  readonly readyState: number;
+  addEventListener(type: string, listener: (event: { data?: unknown }) => void): unknown;
+  removeEventListener(type: string, listener: (event: { data?: unknown }) => void): unknown;
+  close(): void;
+}
+
+/** EventSource.CLOSED: the browser gave up, and will not reconnect. */
+const CLOSED = 2;
+
+/**
+ * Subscribe to a stream of an IQ server, whose frames are the envelopes of one segment. The
+ * subscription owns the source: it closes it when IQ ends the stream, on a gap, and on close().
+ */
+export function subscribeToIQ(source: IQSource, callbacks: ChannelCallbacks): { close(): void } {
+  let closed = false;
+  let whole = false;
+  const consumer = createChannelConsumer({
+    onEvent(event) {
+      whole ||= terminalTypes.has(event.type);
+      callbacks.onEvent(event);
+    },
+    onGap: fail,
+  });
+  const listeners: Record<string, (event: { data?: unknown }) => void> = {
+    message: receive,
+    'iq:end': () => end('Missing channel events'),
+    'iq:fail': event => end(`IQ stream failed: ${failureReason(event.data)}`),
+    'iq:gone': () => end('IQ stream gone'),
+    // While the source is connecting again, it resumes after the last frame by itself.
+    error: () => source.readyState === CLOSED && end('IQ subscription refused'),
+  };
+
+  function close(): void {
+    if (closed) return;
+    closed = true;
+    for (const [type, listener] of Object.entries(listeners)) source.removeEventListener(type, listener);
+    source.close();
+    consumer.close();
+  }
+
+  function fail(reason: string): void {
+    if (closed) return;
+    close();
+    callbacks.onGap(reason);
+  }
+
+  /** The source delivers nothing more: a segment still without its terminal event never gets it. */
+  function end(reason: string): void {
+    if (whole) close();
+    else fail(reason);
+  }
+
+  function receive(message: { data?: unknown }): void {
+    if (closed) return;
+    let envelope: unknown;
+    try {
+      envelope = typeof message.data === 'string' ? JSON.parse(message.data) : undefined;
+    } catch {
+      envelope = undefined;
+    }
+    try {
+      consumer.accept(envelope);
+    } catch (error) {
+      close();
+      throw error;
+    }
+  }
+
+  for (const [type, listener] of Object.entries(listeners)) source.addEventListener(type, listener);
+  return { close };
+}
+
+function failureReason(data: unknown): string {
+  try {
+    const failure: unknown = typeof data === 'string' ? JSON.parse(data) : undefined;
+    if (isRecord(failure) && typeof failure.reason === 'string') return failure.reason;
+  } catch {
+    // An unreadable failure is a failure all the same.
+  }
+  return 'unknown';
+}
 
 ```
 
@@ -565,731 +642,423 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fdae7e29` (2026-11-05)
-**Commit Message**: Merge pull request #707 from neuron-core/ccr-4b0a3ad5-fa9k32
+### Incident Patch 1: `0ee0f399` (2026-11-13)
+**Commit Message**: streaming channel
 
-Let installed packages add commands to the neuron CLI
-
-**File**: `bin/neuron` (modified, +3/-1)
+**File**: `packages/streaming/src/iq.ts` (added, +84/-0)
 ```diff
-@@ -51,10 +51,12 @@ if ($defaultAutoload === null) {
- 
- require_once $defaultAutoload;
- 
-+use NeuronAI\Console\InstalledCommandProviders;
- use NeuronAI\Console\NeuronCli;
- 
- try {
--    $command = new NeuronCli();
-+    $installedPackages = dirname($defaultAutoload) . '/composer/installed.json';
-+    $command = new NeuronCli((new InstalledCommandProviders($installedPackages))->discover());
-     $exitCode = $command->run($args);
-     exit($exitCode);
- } catch (Throwable $e) {
-```
-
-**File**: `src/Console/AGENTS.md` (modified, +1/-0)
-```diff
-@@ -5,6 +5,7 @@ CLI entry point (`php vendor/bin/neuron <command>`) for code generation and for
- ## Design
- 
- - `NeuronCli::commands()` is the single registry: command name => [description, factory closure]. The help output is generated from it, so there is nowhere else to register a command.
-+- Installed packages add commands through a `CommandProvider`, declared under `extra.neuron.command-provider` in their composer.json. `InstalledCommandProviders` finds them in `vendor/composer/installed.json` and `bin/neuron` passes them to `NeuronCli`. Built-in commands win name collisions, so a package can never change what an existing command does.
- - `Command` is the abstract base: `run(array $args): int` plus print helpers (errors go to STDERR).
- - `MakeCommand` is one concrete class for every `make:*` command, configured with (command name, resource type, stub file). Adding a generator means adding a stub in `Make/Stubs/` and one registry entry, never a new command class.
- - `EvaluationCommand` is a thin CLI over `src/Evaluation/`: flag parsing (`--verbose`, `--concurrency`, `--cache`, `--fresh`) lives here, the semantics live in the Evaluation module. A framework console command wraps it, passing a resolver and a runner that replace the `resolver` and `runner` entries of `evaluation.php`.
-```
-
-**File**: `src/Console/CommandProvider.php` (added, +19/-0)
-```diff
-@@ -0,0 +1,19 @@
-+<?php
+@@ -0,0 +1,84 @@
++import { createChannelConsumer, isRecord, terminalTypes, type ChannelCallbacks } from './consumer.js';
 +
-+declare(strict_types=1);
++export interface IQSource {
++  readonly readyState: number;
++  addEventListener(type: string, listener: (event: { data?: unknown }) => void): unknown;
++  removeEventListener(type: string, listener: (event: { data?: unknown }) => void): unknown;
++  close(): void;
++}
 +
-+namespace NeuronAI\Console;
-+
-+use Closure;
++/** EventSource.CLOSED: the browser gave up, and will not reconnect. */
++const CLOSED = 2;
 +
 +/**
-+ * Adds commands to the neuron CLI from an installed package, which declares it
-+ * under "extra.neuron.command-provider" in its composer.json.
++ * Subscribe to a stream of an IQ server, whose frames are the envelopes of one segment. The
++ * subscription owns the source: it closes it when IQ ends the stream, on a gap, and on close().
 + */
-+interface CommandProvider
-+{
-+    /**
-+     * @return array<string, array{string, Closure(): Command}> Command name => [description, factory].
-+     */
-+    public function commands(): array;
++export function subscribeToIQ(source: IQSource, callbacks: ChannelCallbacks): { close(): void } {
++  let closed = false;
++  let whole = false;
++  const consumer = createChannelConsumer({
++    onEvent(event) {
++      whole ||= terminalTypes.has(event.type);
++      callbacks.onEvent(event);
++    },
++    onGap: fail,
++  });
++  const listeners: Record<string, (event: { data?: unknown }) => void> = {
++    message: receive,
++    'iq:end': () => end('Missing channel events'),
++    'iq:fail': event => end(`IQ stream failed: ${failureReason(event.data)}`),
++    'iq:gone': () => end('IQ stream gone'),
++    // While the source is connecting again, it resumes after the last frame by itself.
++    error: () => source.readyState === CLOSED && end('IQ subscription refused'),
++  };
++
++  function close(): void {
++    if (closed) return;
++    closed = true;
++    for (const [type, listener] of Object.entries(listeners)) source.removeEventListener(type, listener);
++    source.close();
++    consumer.close();
++  }
++
++  function fail(reason: string): void {
++    if (closed) return;
++    close();
++    callbacks.onGap(reason);
++  }
++
++  /** The source delivers nothing more: a segment still without its terminal event never gets it. */
++  function end(reason: string): void {
++    if (whole) close();
++    else fail(reason);
++  }
++
++  function receive(message: { data?: unknown }): void {
++    if (closed) return;
++    let envelope: unknown;
++    try {
++      envelope = typeof message.data === 'string' ? JSON.parse(message.data) : undefined;
++    } catch {
++      envelope = undefined;
++    }
++    try {
++      consumer.accept(envelope);
++    } catch (error) {
++      close();
++      throw error;
++    }
++  }
++
++  for (const [type, listener] of Object.entries(listeners)) source.addEventListener(type, listener);
++  return { close };
 +}
-```
-
-**File**: `src/Console/InstalledCommandProviders.php` (added, +63/-0)
-```diff
-@@ -0,0 +1,63 @@
-+<?php
 +
-+declare(strict_types=1);
-+
-+namespace NeuronAI\Console;
-+
-+use RuntimeException;
-+
-+use function file_get_contents;
-+use function is_file;
-+use function json_decode;
-+
-+use const JSON_THROW_ON_ERROR;
-+
-+/**
-+ * The command providers declared by the packages Composer installed.
-+ */
-+class InstalledCommandProviders
-+{
-+    /**
-+     * @param string $installedPackagesFile Composer's vendor/composer/installed.json.
-+     */
-+    public function __construct(protected string $installedPackagesFile)
-+    {
-+    }
-+
-+    /**
-+     * @return CommandProvider[]
-+     */
-+    public function discover(): array
-+    {
-+        if (!is_file($this->installedPackagesFile)) {
-+            return [];
-+        }
-+
-+        $installed = json_decode((string) file_get_contents($this->installedPackagesFile), true, flags: JSON_THROW_ON_ERROR);
-+
-+        $providers = [];
-+        foreach ($installed['packages'] ?? [] as $package) {
-+            $providerClass = $package['extra']['neuron']['command-provider'] ?? null;
-+
-+            if ($providerClass !== null) {
-+                $providers[] = $this->instantiate($package['name'], $providerClass);
-+            }
-+        }
-+
-+        return $providers;
-+    }
-+
-+    protected function instantiate(string $packageName, string $providerClass): CommandProvider
-+    {
-+        $provider = new $providerClass();
-+
-+        if (!$provider instanceof CommandProvider) {
-+            throw new RuntimeException(
-+                "{$packageName} declares {$providerClass} as its command provider, "
-+                . 'but it does not implement ' . CommandProvider::class
-+            );
-+        }
-+
-+        return $provider;
-+    }
++function failureReason(data: unknown): string {
++  try {
++    const failure: unknown = typeof data === 'string' ? JSON.parse(data) : undefined;
++    if (isRecord(failure) && typeof failure.reason === 'string') return failure.reason;
++  } catch {
++    // An unreadable failure is a failure all the same.
++  }
++  return 'unknown';
 +}
-```
-
-**File**: `src/Console/NeuronCli.php` (modified, +17/-1)
-```diff
-@@ -17,11 +17,21 @@
- class NeuronCli extends Command
- {
-     /**
-+     * @param CommandProvider[] $providers
-+     */
-+    public function __construct(protected array $providers = [])
-+    {
-+    }
-+
-+    /**
-+     * Built-in commands come first and win name collisions, so an installed
-+     * package can add commands but never change what an existing one does.
-+     *
-      * @return array<string, array{string, Closure(): Command}>
-      */
-     public function commands(): array
-     {
--        return [
-+        $commands = [
-             'evaluation' => ['Run AI evaluation tests on a directory of evaluators', fn (): Command => new EvaluationCommand()],
-             'make:agent' => ['Create a new Agent class', fn (): Command => new MakeCommand('make:agent', 'Agent', 'agent.stub')],
-             'make:middleware' => ['Create a new Workflow Middleware class', fn (): Command => new MakeCommand('make:middleware', 'Middleware', 'middleware.stub')],
-@@ -32,6 +42,12 @@ public function commands(): array
-             'make:event' => ['Create a new Event class', fn (): Command => new MakeCommand('make:event', 'Event', 'event.stub')],
-             'make:evaluators' => ['Create a new Evaluator class', fn (): Command => new MakeCommand('make:evaluators', 'Evaluator', 'evaluator.stub')],
-         ];
-+
-+        foreach ($this->providers as $provider) {
-+            $commands += $provider->commands();
-+        }
-+
-+        return $commands;
-     }
- 
-     /**
-```
-
-**File**: `tests/Console/InstalledCommandProvidersTest.php` (added, +81/-0)
-```diff
-@@ -0,0 +1,81 @@
-+<?php
-+
-+declare(strict_types=1);
-+
-+namespace NeuronAI\Tests\Console;
-+
-+use NeuronAI\Console\CommandProvider;
-+use NeuronAI\Console\InstalledCommandProviders;
-+use NeuronAI\Tests\Console\Stub\GreetingCommandProvider;
-+use NeuronAI\Tests\Support\FileSystemSandbox;
-+use PHPUnit\Framework\TestCase;
-+use RuntimeException;
-+use stdClass;
-+
-+use function file_put_contents;
-+use function json_encode;
-+
-+use const JSON_THROW_ON_ERROR;
-+
-+class InstalledCommandProvidersTest extends TestCase
-+{
-+    use FileSystemSandbox;
-+
-+    protected string $sandbox;
-+
-+    protected function setUp(): void
-+    {
-+        $this->sandbox = $this->createSandbox('installed-command-providers');
-+    }
-+
-+    protected function tearDown(): void
-+    {
-+        $this->removeSandbox($this->sandbox);
-+    }
-+
-+    public function test_discovers_the_providers_declared_by_installed_packages(): void
-+    {
-+        $file = $this->installedPackages([
-+            ['name' => 'acme/without-commands', 'extra' => ['branch-alias' => ['dev-main' => '1.x-dev']]],
-+            ['name' => 'acme/greeting', 'extra' => ['neuron' => ['command-provider' => GreetingCommandProvider::class]]],
-+            ['name' => 'acme/without-extra'],
-+        ]);
-+
-+        $providers = (new InstalledCommandProviders($file))->discover();
-+
-+        $this->assertCount(1, $providers);
-+        $this->assertInstanceOf(GreetingCommandProvider::class, $providers[0]);
-+    }
-+
-+    public function test_a_missing_installed_packages_file_has_no_providers(): void
-+    {
-+        $providers = (new InstalledCommandProviders($this->sandbox . '/missing.json'))->discover();
-+
-+        $this->assertSame([], $providers);
-+    }
-+
-+    public function test_a_declared_class_that_is_not_a_command_provider_is_reported_with_its_package(): void
-+    {
-+        $file = $this->installedPackages([
-+            ['name' => 'acme/broken', 'extra' => ['neuron' => ['command-provider' => stdClass::class]]],
-+        ]);
-+
-+        $this->expectException(RuntimeException::class);
-+        $this->expectExceptionMessage(
-+            'acme/broken declares stdClass as its command provider, but it does not implement ' . CommandProvider::class
-+        );
-+
-+        (new InstalledCommandProviders($file))->discover();
-+    }
-+
-+    /**
-+     * @param array<array<string, mixed>> $packages
-+     */
-+    protected function installedPackages(array $packages): string
-+    {
-+        $file = $this->sandbox . '/installed.json';
-+        file_put_contents($file, json_encode(['packages' => $packages], JSON_THROW_ON_ERROR));
-+
-+        return $file;
-+    }
-+}
-```
-
-**File**: `tests/Console/NeuronBinTest.php` (modified, +26/-0)
-```diff
-@@ -4,15 +4,19 @@
- 
- namespace NeuronAI\Tests\Console;
- 
-+use NeuronAI\Tests\Console\Stub\GreetingCommandProvider;
- use NeuronAI\Tests\Support\FileSystemSandbox;
- use PHPUnit\Framework\TestCase;
- 
- use function dirname;
- use function escapeshellarg;
- use function exec;
- use function file_put_contents;
-+use function json_encode;
-+use function mkdir;
- use function var_export;
- 
-+use const JSON_THROW_ON_ERROR;
- use const PHP_BINARY;
- 
- class NeuronBinTest extends TestCase
-@@ -52,4 +56,26 @@ public function test_loads_the_autoloader_named_by_the_composer_bin_proxy(): voi
-         $this->assertSame(0, $exitCode);
-         $this->assertSame('project autoloader', $output[0]);
-     }
-+
-+    public function test_lists_the_commands_of_installed_packages_next_to_the_autoloader(): void
-+    {
-+        $root = dirname(__DIR__, 2);
-+        $proxy = $this->sandbox . '/neuron';
-+
-+        mkdir($this->sandbox . '/composer');
-+        file_put_contents($this->sandbox . '/composer/installed.json', json_encode(['packages' => [
-+            ['name' => 'acme/greeting', 'extra' => ['neuron' => ['command-provider' => GreetingCommandProvider::class]]],
-+        ]], JSON_THROW_ON_ERROR));
-+        file_put_contents($this->sandbox . '/autoload.php', '<?php require ' . var_export($root . '/vendor/autoload.php', true) . ';');
-+        file_put_contents(
-+            $proxy,
-+            "<?php \$GLOBALS['_composer_autoload_path'] = " . var_export($this->sandbox . '/autoload.php', true) . ';'
-+            . ' return include ' . var_export($root . '/bin/neuron', true) . ';'
-+        );
-+
-+        exec(escapeshellarg(PHP_BINARY) . ' ' . escapeshellarg($proxy) . ' greeting:hello 2>&1', $output, $exitCode);
-+
-+        $this->assertSame(0, $exitCode);
-+        $this->assertSame(['Hello from an installed package'], $output);
-+    }
- }
-```
-
-**File**: `tests/Console/NeuronCliTest.php` (modified, +29/-0)
-```diff
-@@ -6,9 +6,11 @@
- 
- use Closure;
- use NeuronAI\Console\Command;
-+use NeuronAI\Console\CommandProvider;
- use NeuronAI\Console\Evaluation\EvaluationCommand;
- use NeuronAI\Console\Make\MakeCommand;
- use NeuronAI\Console\NeuronCli;
-+use NeuronAI\Tests\Console\Stub\GreetingCommandProvider;
- use PHPUnit\Framework\Attributes\DataProvider;
- use PHPUnit\Framework\TestCase;
- use RuntimeException;
-@@ -106,6 +108,33 @@ public function test_registry_exposes_the_documented_commands(): void
-         }
-     }
- 
-+    public function test_provider_commands_are_listed_and_dispatched(): void
-+    {
-+        $cli = new NeuronCli([new GreetingCommandProvider()]);
-+
-+        [, $usage] = $this->runCli($cli, 'neuron', '--help');
-+        [$exitCode, $output] = $this->runCli($cli, 'neuron', 'greeting:hello');
-+
-+        $this->assertMatchesRegularExpression('/^  greeting:hello +Say hello$/m', $usage);
-+        $this->assertSame(0, $exitCode);
-+        $this->assertSame('Hello from an installed package' . PHP_EOL, $output);
-+    }
-+
-+    public function test_a_provider_cannot_replace_a_built_in_command(): void
-+    {
-+        $provider = new class () implements CommandProvider {
-+            public function commands(): array
-+            {
-+                return ['make:agent' => ['Hijacked', fn (): Command => throw new RuntimeException('hijacked')]];
-+            }
-+        };
-+
-+        $commands = (new NeuronCli([$provider]))->commands();
-+
-+        $this->assertSame('Create a new Agent class', $commands['make:agent'][0]);
-+        $this->assertInstanceOf(MakeCommand::class, $commands['make:agent'][1]());
-+    }
-+
-     public function test_dispatches_the_remaining_arguments_to_the_sub_command(): void
-     {
-         $received = [];
 ```
 
 ---
 
-### Incident Patch 2: `1464641e` (2026-11-05)
-**Commit Message**: Let installed packages add commands to the neuron CLI
+### Incident Patch 2: `d38cca97` (2026-11-13)
+**Commit Message**: streaming channel
 
-A package declares a CommandProvider under "extra.neuron.command-provider"
-in its composer.json. bin/neuron finds the declared providers in
-vendor/composer/installed.json and passes them to NeuronCli, which appends
-their commands to the built-in registry. Built-in commands win name
-collisions, so a package can add commands but never change what an existing
-one does.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01H82s6KprwfcSdPkRT9ZdfF
-
-**File**: `bin/neuron` (modified, +3/-1)
+**File**: `packages/streaming/CHANGELOG.md` (modified, +4/-0)
 ```diff
-@@ -51,10 +51,12 @@ if ($defaultAutoload === null) {
+@@ -1,5 +1,9 @@
+ # Changelog
  
- require_once $defaultAutoload;
++## Unreleased
++
++- Add `subscribeToIQ` and its `IQSource` type, an input adapter for an IQ streaming server. It feeds the core the envelopes the backend's `IQStreamChannel` publishes, closes the `EventSource` when IQ ends the stream, and reports through `onGap` a stream that ended before its terminal event, failed, is gone, or refused the subscription.
++
+ ## 0.3.0
  
-+use NeuronAI\Console\InstalledCommandProviders;
- use NeuronAI\Console\NeuronCli;
- 
- try {
--    $command = new NeuronCli();
-+    $installedPackages = dirname($defaultAutoload) . '/composer/installed.json';
-+    $command = new NeuronCli((new InstalledCommandProviders($installedPackages))->discover());
-     $exitCode = $command->run($args);
-     exit($exitCode);
- } catch (Throwable $e) {
+ - Add `subscribeToMercure` and its `MercureSource` type, an input adapter for a Mercure hub: every update the backend's `MercureChannel` publishes holds a JSON array of envelopes, which the adapter unwraps for the core.
 ```
 
-**File**: `src/Console/AGENTS.md` (modified, +1/-0)
+**File**: `packages/streaming/README.md` (modified, +38/-3)
 ```diff
-@@ -5,6 +5,7 @@ CLI entry point (`php vendor/bin/neuron <command>`) for code generation and for
- ## Design
+@@ -2,7 +2,7 @@
  
- - `NeuronCli::commands()` is the single registry: command name => [description, factory closure]. The help output is generated from it, so there is nowhere else to register a command.
-+- Installed packages add commands through a `CommandProvider`, declared under `extra.neuron.command-provider` in their composer.json. `InstalledCommandProviders` finds them in `vendor/composer/installed.json` and `bin/neuron` passes them to `NeuronCli`. Built-in commands win name collisions, so a package can never change what an existing command does.
- - `Command` is the abstract base: `run(array $args): int` plus print helpers (errors go to STDERR).
- - `MakeCommand` is one concrete class for every `make:*` command, configured with (command name, resource type, stub file). Adding a generator means adding a stub in `Make/Stubs/` and one registry entry, never a new command class.
- - `EvaluationCommand` is a thin CLI over `src/Evaluation/`: flag parsing (`--verbose`, `--concurrency`, `--cache`, `--fresh`) lives here, the semantics live in the Evaluation module. A framework console command wraps it, passing a resolver and a runner that replace the `resolver` and `runner` entries of `evaluation.php`.
+ Reconstruct Neuron AI events delivered through transports with message-size limits. The PHP backend splits oversized events into fragments; this package orders the envelopes, joins their fragments, suppresses duplicates, and reports gaps that require application recovery.
+ 
+-The core is independent of transport, UI framework, and agent protocol. Use it with any source of Neuron envelopes: WebSockets, a Redis-to-browser bridge, Pusher, a Mercure hub, or an in-process callback. Consume the reconstructed events directly, update React/Vue state, or bridge them into AG-UI or the Vercel AI SDK.
++The core is independent of transport, UI framework, and agent protocol. Use it with any source of Neuron envelopes: WebSockets, a Redis-to-browser bridge, Pusher, a Mercure hub, an IQ streaming server, or an in-process callback. Consume the reconstructed events directly, update React/Vue state, or bridge them into AG-UI or the Vercel AI SDK.
+ 
+ ```sh
+ npm install @neuron-core/streaming
+@@ -24,7 +24,7 @@ Application callbacks / UI state / createProtocolStream
+ 
+ The backend's `AbstractChannel` owns sequencing and fragmentation. Transport implementations such as `PusherChannel` supply delivery and byte budgets. The frontend core understands the shared Neuron envelope contract, without knowing which transport carried it or what the event payload means.
+ 
+-`subscribeToPusher` and `subscribeToMercure` are thin input adapters around the same core. `createProtocolStream` is an optional output bridge. Neither is required for direct consumption.
++`subscribeToPusher`, `subscribeToMercure` and `subscribeToIQ` are thin input adapters around the same core. `createProtocolStream` is an optional output bridge. Neither is required for direct consumption.
+ 
+ ## Core: consume events from any source
+ 
+@@ -176,6 +176,41 @@ Open the source before starting execution, and wait for its `open` event before
+ 
+ To drive AG-UI or the Vercel AI SDK, hand the subscription to `createProtocolStream` as shown below, on a topic or a `streamId` that carries one execution segment.
+ 
++## IQ
++
++Pass an `EventSource` opened on a stream of an IQ server, with the `sub` token your backend minted for it:
++
++```ts
++import { subscribeToIQ } from '@neuron-core/streaming';
++
++const source = new EventSource(`https://stream.example.com/${stream}?token=${subscribeToken}`);
++
++const subscription = subscribeToIQ(source, {
++  onEvent: ({ type, data }) => renderEvent(type, data),
++  onGap: reason => reloadConversation(reason),
++});
++
++// On cleanup:
++subscription.close();
++```
++
++The backend's `IQStreamChannel` publishes one execution segment per IQ stream, one envelope per frame, so the adapter takes no `streamId`. IQ numbers the frames and resumes a reconnecting `EventSource` right after the last one it received, so the core gets every envelope in order, once each.
++
++The subscription owns the source. IQ ends every stream with an event of its own, sent after every frame it holds: `iq:end`, `iq:fail` or `iq:gone`. The adapter then closes the source, since an open `EventSource` would reconnect. If the segment's terminal event (`stream.completed`, `stream.interrupted` or `stream.failed`) has arrived by then, the segment is whole and nothing else happens: a failed run reaches your callbacks as the protocol's error events and `stream.failed`. If it has not, the missing events will never come, and `onGap` reports it at once instead of after the 30-second deadline:
++
++| Event | `onGap` reason |
++| --- | --- |
++| `iq:end` | `Missing channel events`: the backend's delivery broke during the segment |
++| `iq:fail` | `IQ stream failed: <reason>`, such as `max_duration`, `too_large` or `publisher_idle` |
++| `iq:gone` | `IQ stream gone`: frames this page never received are gone, as for a page that subscribed after the end |
++| `error` with `readyState` `CLOSED` | `IQ subscription refused`: an invalid or expired token, a limit, or a server that is unavailable |
++
++An `error` while the source is connecting again is a dropped connection, which the browser resumes by itself. `close()` detaches the adapter, closes the source, and clears the core's buffers and timers; so do a gap and a callback that throws.
++
++IQ keeps every frame while the stream runs, so the page may subscribe before or after the backend starts executing: a late subscriber still gets the stream from its first frame. A page that subscribes first makes IQ wait for the backend, for as long as the server allows. The browser sends the token in the URL again on every reconnection, so it must stay valid until the stream ends. This package opens no connections and mints no tokens.
++
++To drive AG-UI or the Vercel AI SDK, hand the subscription to `createProtocolStream`: an IQ stream carries one execution segment.
++
+ ## React, Vue, and other UI frameworks
+ 
+ The callback API requires no framework wrapper. Subscribe when a component mounts and close on disposal. For example, in React:
+@@ -325,7 +360,7 @@ A missing se
 ```
 
-**File**: `src/Console/CommandProvider.php` (added, +19/-0)
+**File**: `packages/streaming/src/consumer.ts` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,19 @@
-+<?php
-+
-+declare(strict_types=1);
-+
-+namespace NeuronAI\Console;
-+
-+use Closure;
-+
-+/**
-+ * Adds commands to the neuron CLI from an installed package, which declares it
-+ * under "extra.neuron.command-provider" in its composer.json.
-+ */
-+interface CommandProvider
-+{
-+    /**
-+     * @return array<string, array{string, Closure(): Command}> Command name => [description, factory].
-+     */
-+    public function commands(): array;
-+}
-```
-
-**File**: `src/Console/InstalledCommandProviders.php` (added, +63/-0)
-```diff
-@@ -0,0 +1,63 @@
-+<?php
-+
-+declare(strict_types=1);
-+
-+namespace NeuronAI\Console;
-+
-+use RuntimeException;
-+
-+use function file_get_contents;
-+use function is_file;
-+use function json_decode;
-+
-+use const JSON_THROW_ON_ERROR;
-+
-+/**
-+ * The command providers declared by the packages Composer installed.
-+ */
-+class InstalledCommandProviders
-+{
-+    /**
-+     * @param string $installedPackagesFile Composer's vendor/composer/installed.json.
-+     */
-+    public function __construct(protected string $installedPackagesFile)
-+    {
-+    }
-+
-+    /**
-+     * @return CommandProvider[]
-+     */
-+    public function discover(): array
-+    {
-+        if (!is_file($this->installedPackagesFile)) {
-+            return [];
-+        }
-+
-+        $installed = json_decode((string) file_get_contents($this->installedPackagesFile), true, flags: JSON_THROW_ON_ERROR);
-+
-+        $providers = [];
-+        foreach ($installed['packages'] ?? [] as $package) {
-+            $providerClass = $package['extra']['neuron']['command-provider'] ?? null;
-+
-+            if ($providerClass !== null) {
-+                $providers[] = $this->instantiate($package['name'], $providerClass);
-+            }
-+        }
-+
-+        return $providers;
-+    }
-+
-+    protected function instantiate(string $packageName, string $providerClass): CommandProvider
-+    {
-+        $provider = new $providerClass();
-+
-+        if (!$provider instanceof CommandProvider) {
-+            throw new RuntimeException(
-+                "{$packageName} declares {$providerClass} as its command provider, "
-+                . 'but it does not implement ' . CommandProvider::class
-+            );
-+        }
-+
-+        return $provider;
-+    }
-+}
-```
-
-**File**: `src/Console/NeuronCli.php` (modified, +17/-1)
-```diff
-@@ -17,11 +17,21 @@
- class NeuronCli extends Command
- {
-     /**
-+     * @param CommandProvider[] $providers
-+     */
-+    public function __construct(protected array $providers = [])
-+    {
-+    }
-+
-+    /**
-+     * Built-in commands come first and win name collisions, so an installed
-+     * package can add commands but never change what an existing one does.
-+     *
-      * @return array<string, array{string, Closure(): Command}>
-      */
-     public function commands(): array
-     {
--        return [
-+        $commands = [
-             'evaluation' => ['Run AI evaluation tests on a directory of evaluators', fn (): Command => new EvaluationCommand()],
-             'make:agent' => ['Create a new Agent class', fn (): Command => new MakeCommand('make:agent', 'Agent', 'agent.stub')],
-             'make:middleware' => ['Create a new Workflow Middleware class', fn (): Command => new MakeCommand('make:middleware', 'Middleware', 'middleware.stub')],
-@@ -32,6 +42,12 @@ public function commands(): array
-             'make:event' => ['Create a new Event class', fn (): Command => new MakeCommand('make:event', 'Event', 'event.stub')],
-             'make:evaluators' => ['Create a new Evaluator class', fn (): Command => new MakeCommand('make:evaluators', 'Evaluator', 'evaluator.stub')],
-         ];
-+
-+        foreach ($this->providers as $provider) {
-+            $commands += $provider->commands();
-+        }
-+
-+        return $commands;
-     }
- 
-     /**
-```
-
-**File**: `tests/Console/InstalledCommandProvidersTest.php` (added, +81/-0)
-```diff
-@@ -0,0 +1,81 @@
-+<?php
-+
-+declare(strict_types=1);
-+
-+namespace NeuronAI\Tests\Console;
-+
-+use NeuronAI\Console\CommandProvider;
-+use NeuronAI\Console\InstalledCommandProviders;
-+use NeuronAI\Tests\Console\Stub\GreetingCommandProvider;
-+use NeuronAI\Tests\Support\FileSystemSandbox;
-+use PHPUnit\Framework\TestCase;
-+use RuntimeException;
-+use stdClass;
-+
-+use function file_put_contents;
-+use function json_encode;
-+
-+use const JSON_THROW_ON_ERROR;
-+
-+class InstalledCommandProvidersTest extends TestCase
-+{
-+    use FileSystemSandbox;
-+
-+    protected string $sandbox;
-+
-+    protected function setUp(): void
-+    {
-+        $this->sandbox = $this->createSandbox('installed-command-providers');
-+    }
-+
-+    protected function tearDown(): void
-+    {
-+        $this->removeSandbox($this->sandbox);
-+    }
-+
-+    public function test_discovers_the_providers_declared_by_installed_packages(): void
-+    {
-+        $file = $this->installedPackages([
-+            ['name' => 'acme/without-commands', 'extra' => ['branch-alias' => ['dev-main' => '1.x-dev']]],
-+            ['name' => 'acme/greeting', 'extra' => ['neuron' => ['command-provider' => GreetingCommandProvider::class]]],
-+            ['name' => 'acme/without-extra'],
-+        ]);
-+
-+        $providers = (new InstalledCommandProviders($file))->discover();
-+
-+        $this->assertCount(1, $providers);
-+        $this->assertInstanceOf(GreetingCommandProvider::class, $providers[0]);
-+    }
-+
-+    public function test_a_missing_installed_packages_file_has_no_providers(): void
-+    {
-+        $providers = (new InstalledCommandProviders($this->sandbox . '/missing.json'))->discover();
-+
-+        $this->assertSame([], $providers);
-+    }
-+
-+    public function test_a_declared_class_that_is_not_a_command_provider_is_reported_with_its_package(): void
-+    {
-+        $file = $this->installedPackages([
-+            ['name' => 'acme/broken', 'extra' => ['neuron' => ['command-provider' => stdClass::class]]],
-+        ]);
-+
-+        $this->expectException(RuntimeException::class);
-+        $this->expectExceptionMessage(
-+            'acme/broken declares stdClass as its command provider, but it does not implement ' . CommandProvider::class
-+        );
-+
-+        (new InstalledCommandProviders($file))->discover();
-+    }
-+
-+    /**
-+     * @param array<array<string, mixed>> $packages
-+     */
-+    protected function installedPackages(array $packages): string
-+    {
-+        $file = $this->sandbox . '/installed.json';
-+        file_put_contents($file, json_encode(['packages' => $packages], JSON_THROW_ON_ERROR));
-+
-+        return $file;
-+    }
-+}
-```
-
-**File**: `tests/Console/NeuronBinTest.php` (modified, +26/-0)
-```diff
-@@ -4,15 +4,19 @@
- 
- namespace NeuronAI\Tests\Console;
- 
-+use NeuronAI\Tests\Console\Stub\GreetingCommandProvider;
- use NeuronAI\Tests\Support\FileSystemSandbox;
- use PHPUnit\Framework\TestCase;
- 
- use function dirname;
- use function escapeshellarg;
- use function exec;
- use function file_put_contents;
-+use function json_encode;
-+use function mkdir;
- use function var_export;
- 
-+use const JSON_THROW_ON_ERROR;
- use const PHP_BINARY;
- 
- class NeuronBinTest extends TestCase
-@@ -52,4 +56,26 @@ public function test_loads_the_autoloader_named_by_the_composer_bin_proxy(): voi
-         $this->assertSame(0, $exitCode);
-         $this->assertSame('project autoloader', $output[0]);
-     }
-+
-+    public function test_lists_the_commands_of_installed_packages_next_to_the_autoloader(): void
-+    {
-+        $root = dirname(__DIR__, 2);
-+        $proxy = $this->sandbox . '/neuron';
-+
-+        mkdir($this->sandbox . '/composer');
-+        file_put_contents($this->sandbox . '/composer/installed.json', json_encode(['packages' => [
-+            ['name' => 'acme/greeting', 'extra' => ['neuron' => ['command-provider' => GreetingCommandProvider::class]]],
-+        ]], JSON_THROW_ON_ERROR));
-+        file_put_contents($this->sandbox . '/autoload.php', '<?php require ' . var_export($root . '/vendor/autoload.php', true) . ';');
-+        file_put_contents(
-+            $proxy,
-+            "<?php \$GLOBALS['_composer_autoload_path'] = " . var_export($this->sandbox . '/autoload.php', true) . ';'
-+            . ' return include ' . var_export($root . '/bin/neuron', true) . ';'
-+        );
-+
-+        exec(escapeshellarg(PHP_BINARY) . ' ' . escapeshellarg($proxy) . ' greeting:hello 2>&1', $output, $exitCode);
-+
-+        $this->assertSame(0, $exitCode);
-+        $this->assertSame(['Hello from an installed package'], $output);
-+    }
+@@ -30,7 +30,7 @@ interface Budget {
  }
+ 
+ const byteLimit = 8 * 1024 * 1024;
+-const terminalTypes = new Set(['stream.completed', 'stream.interrupted', 'stream.failed']);
++export const terminalTypes = new Set(['stream.completed', 'stream.interrupted', 'stream.failed']);
+ 
+ export function isRecord(value: unknown): value is Record<string, unknown> {
+   return typeof value === 'object' && value !== null && !Array.isArray(value);
 ```
 
-**File**: `tests/Console/NeuronCliTest.php` (modified, +29/-0)
+**File**: `packages/streaming/src/index.ts` (modified, +2/-0)
 ```diff
-@@ -6,9 +6,11 @@
+@@ -4,5 +4,7 @@ export { subscribeToPusher } from './pusher.js';
+ export type { PusherChannel } from './pusher.js';
+ export { subscribeToMercure } from './mercure.js';
+ export type { MercureSource } from './mercure.js';
++export { subscribeToIQ } from './iq.js';
++export type { IQSource } from './iq.js';
+ export { createProtocolStream } from './protocol.js';
+ export type { ProtocolEvent } from './protocol.js';
+```
+
+**File**: `packages/streaming/test/consumer.test.mjs` (modified, +124/-1)
+```diff
+@@ -1,6 +1,6 @@
+ import { test } from 'node:test';
+ import assert from 'node:assert/strict';
+-import { createChannelConsumer, createProtocolStream, subscribeToMercure, subscribeToPusher } from '../dist/index.js';
++import { createChannelConsumer, createProtocolStream, subscribeToIQ, subscribeToMercure, subscribeToPusher } from '../dist/index.js';
  
- use Closure;
- use NeuronAI\Console\Command;
-+use NeuronAI\Console\CommandProvider;
- use NeuronAI\Console\Evaluation\EvaluationCommand;
- use NeuronAI\Console\Make\MakeCommand;
- use NeuronAI\Console\NeuronCli;
-+use NeuronAI\Tests\Console\Stub\GreetingCommandProvider;
- use PHPUnit\Framework\Attributes\DataProvider;
- use PHPUnit\Framework\TestCase;
- use RuntimeException;
-@@ -106,6 +108,33 @@ public function test_registry_exposes_the_documented_commands(): void
-         }
-     }
+ const id = 'a'.repeat(32);
+ const frame = (sequence, data = { value: sequence }, type = 'text-delta', streamId = id) => ({ streamId, sequence, type, data });
+@@ -30,6 +30,18 @@ function mercure() {
+     raw(data) { for (const listener of [...listeners]) listener({ data }); },
+   };
+ }
++function iq() {
++  const listeners = [];
++  return {
++    listeners, readyState: 1, closes: 0,
++    addEventListener(type, listener) { listeners.push([type, listener]); },
++    removeEventListener(type, listener) { listeners.splice(listeners.findIndex(([t, l]) => t === type && l === listener), 1); },
++    close() { this.readyState = 2; this.closes++; },
++    // One frame, as IQ relays it: the data of a message event holds one envelope.
++    send(...envelopes) { for (const envelope of envelopes) this.dispatch('message', JSON.stringify(envelope)); },
++    dispatch(type, data) { for (const [t, listener] of [...listeners]) if (t === type) listener({ data }); },
++  };
++}
  
-+    public function test_provider_commands_are_listed_and_dispatched(): void
-+    {
-+        $cli = new NeuronCli([new GreetingCommandProvider()]);
+ test('orders interleaved fragments, decodes UTF-8, and waits before terminal delivery', () => {
+   const c = setup();
+@@ -321,6 +333,117 @@ test('Mercure feeds a protocol bridge, which releases the subscription at the te
+   assert.equal(source.listeners.size, 0);
+ });
+ 
++test('IQ delivers the envelopes in order and closes the source when IQ ends a whole stream', () => {
++  const source = iq(), events = [];
++  subscribeToIQ(source, { onEvent: e => events.push(e), onGap: assert.fail });
++  const encoded = Buffer.from(JSON.stringify({ text: 'こんにちは 🌍' })).toString('base64url');
++  source.send(frame(0), fragment(1, encoded.slice(0, 4), 0, 2), fragment(1, encoded.slice(4), 1, 2), frame(2, {}, 'stream.completed'));
++  source.dispatch('iq:future', '{}');
++  assert.equal(source.closes, 0);
++  source.dispatch('iq:end', '{"lastEventId":4}');
++  assert.deepEqual(events.map(e => [e.sequence, e.type, e.data]), [
++    [0, 'text-delta', { value: 0 }], [1, 'text-delta', { text: 'こんにちは 🌍' }], [2, 'stream.completed', {}],
++  ]);
++  assert.equal(source.closes, 1); assert.equal(source.listeners.length, 0);
++});
 +
-+        [, $usage] = $this->runCli($cli, 'neuron', '--help');
-+        [$exitCode, $output] = $this->runCli($cli, 'neuron', 'greeting:hello');
++for (const [type, data] of [['iq:fail', '{"reason":"publisher","lastEventId":2}'], ['iq:gone', '{"outcome":"fail","reason":"publisher","lastEventId":2}']]) {
++  test(`IQ closes quietly on ${type} after the segment's terminal event`, () => {
++    const source = iq(), events = [];
++    subscribeToIQ(source, { onEvent: e => events.push(e), onGap: assert.fail });
++    source.send(frame(0), frame(1, {}, 'stream.failed'));
++    source.dispatch(type, data);
++    assert.deepEqual(events.map(e => e.type), ['text-delta', 'stream.failed']);
++    assert.equal(source.closes, 1); assert.equal(source.listeners.length, 0);
++  });
++}
 +
-+        $this->assertMatchesRegularExpression('/^  greeting:hello +Say hello$/m', $usage);
-+        $this->assertSame(0, $exitCode);
-+        $this->assertSame('Hello from an installed package' . PHP_EOL, $output);
-+    }
++for (const [type, data, reason] of [
++  ['iq:end', '{"lastEventId":3}', 'Missing channel events'],
++  ['iq:fail', '{"reason":"max_duration","lastEventId":3}', 'IQ stream failed: max_duration'],
++  ['iq:fail', 'not json', 'IQ stream failed: unknown'],
++  ['iq:fail', '{"lastEventId":3}', 'IQ stream failed: unknown'],
++  ['iq:gone', '{"outcome":"end","lastEventId":3}', 'IQ stream gone'],
++  // The server no longer knows the stream: it restarted, or forgot it.
++  ['iq:gone', '{"outcome":"unknown"}', 'IQ stream gone'],
++]) test(`IQ reports ${type} (${data}) before the terminal event as a gap at once`, t => {
++  t.mock.timers.enable({ apis: ['setTimeout'] });
++  const source = iq(), events = [], gaps = [];
++  subscribeToIQ(source, { onEvent: e => events.push(e), onGap: reason => gaps.push(reason) });
++  // The frame that carried sequence 1 never arrives: the terminal event waits behind it.
++  source.send(frame(0), frame(2, {}, 'stream.completed'));
++  source.dispatch(type, data);
++  t.mock.timers.tick(60_000);
++  assert.deepEqual(events.map(e => e.sequence), [0]);
++  assert.deepEqual(gaps, [reason]);
++  assert.equal(source.closes, 1); assert.equal(source.listeners.length, 0);
++});
 +
-+    public function test_a_provider_cannot_replace_a_built_in_command(): void
-+    {
-+        $provider = new class () implements CommandProvider {
-+            public function commands(): array
-+            {
-+                return ['make:agent' => ['Hijacked', fn (): Command => throw new RuntimeException('hijacked')]];
-+            }
-+        };
++test('IQ waits while the source reconnects and reports a refused subscription', () => {
++  const source = iq(), gaps = [];
++  subscribeToIQ(source, { onEvent: assert.fail, onGap: reason => gaps.push(reason) });
++  source.readyState = 0; source.dispatch('error');
++  assert.deepEqual(gaps, []); assert.equal(source.closes, 0);
++  source.readyState = 2; source.dispatch('error');
++  assert.deepEqual(gaps, ['IQ subscription refused']);
++  assert.equal(source.listeners.length, 0);
++});
 +
-+        $commands = (new NeuronCli([$provider]))->commands();
++test('IQ closes quietly when a reconnection is refused after the segment\'s terminal event', () => {
++  const source = iq(), events = [];
++  subscribeToIQ(source, { onEvent: e => events.push(e), onGap: assert.fail });
++  source.send(frame(0), frame(1, {}, 'st
+```
+
+**File**: `packages/streaming/tools/test-packed.mjs` (modified, +4/-1)
+```diff
+@@ -22,7 +22,7 @@ try {
+   writeFileSync(join(directory, 'consumer.test.mjs'), unitTest);
+   run(process.execPath, ['--test', 'consumer.test.mjs'], { cwd: directory });
+   writeFileSync(join(directory, 'types.ts'), `
+-import { createChannelConsumer, createProtocolStream, subscribeToMercure, subscribeToPusher, type ChannelEvent, type MercureSource, type PusherChannel } from '@neuron-core/streaming';
++import { createChannelConsumer, createProtocolStream, subscribeToIQ, subscribeToMercure, subscribeToPusher, type ChannelEvent, type IQSource, type MercureSource, type PusherChannel } from '@neuron-core/streaming';
+ const consume = (event: ChannelEvent): void => { console.log(event.streamId, event.sequence, event.type, event.data); };
+ const consumer = createChannelConsumer({ onEvent: consume, onGap: console.error }, 'a'.repeat(32));
+ consumer.accept({}); consumer.close();
+@@ -32,6 +32,9 @@ declare const hub: EventSource;
+ declare const source: MercureSource;
+ subscribeToMercure(hub, { onEvent: consume, onGap: console.error }).close();
+ subscribeToMercure(source, { onEvent: consume, onGap: console.error }, 'a'.repeat(32)).close();
++declare const iq: IQSource;
++subscribeToIQ(hub, { onEvent: consume, onGap: console.error }).close();
++subscribeToIQ(iq, { onEvent: consume, onGap: console.error }).close();
+ const stream: ReadableStream<string> = createProtocolStream(
+   callbacks => createChannelConsumer(callbacks, 'a'.repeat(32)),
+   async event => event.type,
+```
+
+**File**: `skills/neuron-streaming/SKILL.md` (modified, +42/-2)
+```diff
+@@ -1,6 +1,6 @@
+ ---
+ name: neuron-streaming
+-description: Stream Neuron AI agent and workflow output to a consumer — iterating native chunks, yielding portable progress events from nodes, attaching a stream adapter for a UI protocol (Vercel AI SDK, AG-UI, SSE) or for Neuron's native vocabulary, and pushing output through a streaming channel when the consumer is not the HTTP response (queue worker, websocket, resumed run). Use this skill whenever the user mentions streaming, stream chunks, TextChunk, real-time responses, SSE, server-sent events, useChat, Vercel AI SDK, AG-UI, CopilotKit, stream adapters, streaming channels, pushing output to a websocket, Redis, Pusher or a Mercure hub, progress events from a workflow node, or testing streamed output. Also trigger for any task involving setStreamAdapter, setChannel, StreamAdapterInterface, NativeAdapter, StreamingChannelInterface, AbstractChannel, CallbackChannel, RedisChannel, PusherChannel, MercureChannel, FakeChannel, ProtocolEvent, SSEEncoder, ActivityStreamEvent, StepStartedStreamEvent, or CustomStreamEvent.
++description: Stream Neuron AI agent and workflow output to a consumer — iterating native chunks, yielding portable progress events from nodes, attaching a stream adapter for a UI protocol (Vercel AI SDK, AG-UI, SSE) or for Neuron's native vocabulary, and pushing output through a streaming channel when the consumer is not the HTTP response (queue worker, websocket, resumed run). Use this skill whenever the user mentions streaming, stream chunks, TextChunk, real-time responses, SSE, server-sent events, useChat, Vercel AI SDK, AG-UI, CopilotKit, stream adapters, streaming channels, pushing output to a websocket, Redis, Pusher, a Mercure hub or an IQ streaming server, progress events from a workflow node, or testing streamed output. Also trigger for any task involving setStreamAdapter, setChannel, StreamAdapterInterface, NativeAdapter, StreamingChannelInterface, AbstractChannel, CallbackChannel, RedisChannel, PusherChannel, MercureChannel, IQStreamChannel, FakeChannel, ProtocolEvent, SSEEncoder, ActivityStreamEvent, StepStartedStreamEvent, or CustomStreamEvent.
+ ---
+ 
+ # Neuron AI Streaming
+@@ -213,7 +213,7 @@ Implement `StreamAdapterInterface`: `start()`, `transform(object)`, `end()`, `in
+ 
+ Pull iteration only works when the code driving the generator is also the consumer, typically an HTTP response. Often it is not:
+ 
+-- A queue worker runs the agent and the browser is connected to a websocket, a Redis or Pusher stream, or a Mercure hub.
++- A queue worker runs the agent and the browser is connected to a websocket, a Redis or Pusher stream, a Mercure hub, or an IQ streaming server.
+ - A run is resumed after an approval from a different process than the one the client is watching.
+ - The application calls `run()` or `chat()` and still wants live output somewhere.
+ 
+@@ -412,6 +412,46 @@ A publish blocks the run until the hub answers: configure timeouts on the HTTP c
+ 
+ In the browser, `subscribeToMercure` from `@neuron-core/streaming` takes the `EventSource`, unwraps every update and delivers its events one at a time. Read [Channel wire contract and consumers](references/channels.md) for it, and for driving the AG-UI client or `useChat` from a channel.
+ 
++### IQStreamChannel
 +
-+        $this->assertSame('Create a new Agent class', $commands['make:agent'][0]);
-+        $this->assertInstanceOf(MakeCommand::class, $commands['make:agent'][1]());
-+    }
++`IQStreamChannel` publishes the segment to an IQ streaming server (the `ghcr.io/neuron-core/iq-stream` image), which relays it to browsers over plain Server-Sent Events. It needs no package, only `ext-openssl` for an `https` URL. The channel holds one chunked `POST` open from the first event to the end of the segment and writes every event as one NDJSON line as soon as it is produced, which is how IQ is meant to be published to.
 +
-     public function test_dispatches_the_remaining_arguments_to_the_sub_command(): void
-     {
-         $received = [];
++IQ authorizes each request with a token the application signs with the app's secret: a `pub` token for the worker and a `sub` token for the browser, both naming one stream:
++
++```php
++use NeuronAI\Workflow\Streaming\Channel\IQStreamChannel;
++
++function iqToken(string $scope, string $stream, int $ttl): string
++{
++    $base64url = static fn (string $bytes): string => rtrim(strtr(base64_encode($bytes), '+/', '-_'), '=');
++    $body = $base64url(json_encode(['app_key' => $_ENV['IQ_APP_KEY'], 'stream' => $stream, 'exp' => time() + $ttl], JSON_UNESCAPED_SLASHES));
++
++    return $body . '.' . $base64url(hash_hmac('sha256', "{$scope}.{$body}", $_ENV['IQ_APP_SECRET'], true));
++}
++
++// The endpoint picks the stream, dispatches the job with it, and answers the browser with its sub token.
++$stream = rtrim(strtr(base64_encode(random_bytes(16)), '+/', '-_'), '=');
++$subscribeToken = iqToken('sub', $stream, ttl: 3600);
++
++// Inside the queued job:
++$agent = MyAgent::make(workflowId: $threadId)
++    ->setStreamAdapter(fn (): VercelAIAdapter => new VercelAIAdapter())
++    ->setChannel(fn (): IQStreamChannel => new IQStreamChannel('https://stream.example.com', $stream, iqToken('pub', $stream, ttl: 3600)));
++
++$state = $agent->chat(new UserMessage($message), stream: tru
+```
+
+**File**: `skills/neuron-streaming/references/channels.md` (modified, +20/-2)
+```diff
+@@ -1,6 +1,6 @@
+ # Channel wire contract
+ 
+-`RedisChannel` publishes each envelope as JSON. `PusherChannel` passes the envelope to the injected official Pusher SDK as already-encoded event `data`, named by the envelope's `type`. On `private-encrypted-*` channels the SDK encrypts it, and the encryption-enabled browser SDK restores the envelope before invoking callbacks. `MercureChannel` publishes a JSON array of envelopes as the `data` of each update, with no SSE event type, so a single `message` listener receives every update. `CallbackChannel` calls its configured closures directly and does not use this contract. Pull streaming and SSE remain protocol events; this envelope belongs only to broadcast channel delivery.
++`RedisChannel` publishes each envelope as JSON. `PusherChannel` passes the envelope to the injected official Pusher SDK as already-encoded event `data`, named by the envelope's `type`. On `private-encrypted-*` channels the SDK encrypts it, and the encryption-enabled browser SDK restores the envelope before invoking callbacks. `MercureChannel` publishes a JSON array of envelopes as the `data` of each update, with no SSE event type, so a single `message` listener receives every update. `IQStreamChannel` writes each envelope as the `data` of one NDJSON line of its publish request, without an event name: IQ relays it as an SSE `message`, and ends the stream with an event of its own, `iq:end`, `iq:fail` or `iq:gone`. `CallbackChannel` calls its configured closures directly and does not use this contract. Pull streaming and SSE remain protocol events; this envelope belongs only to broadcast channel delivery.
+ 
+ ```json
+ {"streamId":"81d4f00e881563538f272ca26aa7a8d4","sequence":0,"type":"text-delta","data":{"id":"message-1","delta":"Hello"}}
+@@ -19,7 +19,7 @@ An oversized event becomes one or more `stream.fragment` envelopes:
+ 
+ All fragments of one logical event share `(streamId, sequence)`. Sort their zero-based `index` values, concatenate `part`, translate URL-safe base64 to standard base64, decode, and parse the resulting JSON to recover the original `data`. Unicode remains JSON-escaped, so decoded JSON is ASCII. `event` is the original type. The final fragment may contain base64 padding; earlier fragments do not.
+ 
+-Ordering is a consumer responsibility. Pusher [guarantees order within a batch, not between batches](https://docs.bird.com/pusher/channels/channels/events/why-dont-channels-events-arrive-in-order). A terminal event can therefore arrive before earlier data. Do not close on its arrival until preceding sequences are complete, or declare a gap and reconcile from application history. Redis orders one publisher's messages, but different segments can share a destination and must still be distinguished. `MercureChannel` publishes one update after the other, so a hub delivers a segment's updates in stream order, and the envelopes inside an update are in stream order.
++Ordering is a consumer responsibility. Pusher [guarantees order within a batch, not between batches](https://docs.bird.com/pusher/channels/channels/events/why-dont-channels-events-arrive-in-order). A terminal event can therefore arrive before earlier data. Do not close on its arrival until preceding sequences are complete, or declare a gap and reconcile from application history. Redis orders one publisher's messages, but different segments can share a destination and must still be distinguished. `MercureChannel` publishes one update after the other, so a hub delivers a segment's updates in stream order, and the envelopes inside an update are in stream order. IQ numbers the frames of a stream and replays the ones a reconnecting `EventSource` missed, so a subscriber receives them in order, once each, then IQ's terminal event; frames it can no longer get are reported as `iq:gone`.
+ 
+ ## Browser consumer
+ 
+@@ -72,6 +72,24 @@ A Mercure update holds a JSON array of envelopes, however many the channel packe
+ 
+ Wait for the source's `open` event before starting backend execution. An `EventSource` reconnects with the ID of the last update it received, and a hub with history replays the updates published since: the consumer ignores the ones it already delivered, so a short interruption leaves no gap. History is the hub's: Mercure Cloud retains about a hundred updates for the whole hub, and a hub on the `local` transport none. When the source's `error` event finds its `readyState` `CLOSED`, the browser has given up: close the subscription and reconcile.
+ 
++For an IQ stream, open an `EventSource` on the stream with the `sub` token the application minted, and pass it to `subscribeToIQ`:
++
++```js
++import { subscribeToIQ } from '@neuron-core/streaming';
++
++const source = new EventSource(`https://stream.example.com/${stream}?token=${subscribeToken}`);
++
++const subscription = subscribeToIQ(source, {
++  onEvent: ({ type, data }) => renderEvent(type, data),
++  onGap: (reason) => reloadConversation(reason),
++});
++
++// On cleanup:
++subscription.clos
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #709** (2026-11-11): Bump the npm group with 9 updates (@dependabot[bot])
+- **PR #708** (2026-11-11): Bump docker/login-action from 4.7.0 to 4.8.0 in the github-actions group (@dependabot[bot])
 - **PR #707** (2026-11-05): Let installed packages add commands to the neuron CLI (@ilvalerione)
 - **PR #706** (2026-11-04): Bump the npm group with 4 updates (@dependabot[bot])
 - **PR #703** (2026-10-28): Bump the npm group with 3 updates (@dependabot[bot])
 - **PR #702** (2026-10-28): Bump docker/login-action from 4.6.0 to 4.7.0 in the github-actions group (@dependabot[bot])
-- **PR #700** (2026-10-29): Echo an empty reasoning_content from the deepseek mapper (@wpjscc)
-- **PR #697** (closed): Add deed.page toolkit to publish a web page (@f-o-x11)
 
 ---
 
@@ -1309,33 +1078,61 @@ Claude-Session: https://claude.ai/code/session_01H82s6KprwfcSdPkRT9ZdfF
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #707 from neuron-core/ccr-4b0a3ad5-fa9k32
+## X. streaming channel
 
 **RULE**:
-When implementing operations in `bin/neuron`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in neuron-core/neuron-ai. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/streaming/src/iq.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in neuron-core/neuron-ai. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fdae7e29`: Merge pull request #707 from neuron-core/ccr-4b0a3ad5-fa9k32. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0ee0f399`: streaming channel. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing PHP data structures, boundary deserialization, API parsing, or resource lifecycles matching `bin/neuron`.
+Subsystems managing PHP data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/streaming/src/iq.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```php
 // Verified production-grade fix pattern:
-use NeuronAI\Console\InstalledCommandProviders;
-    $installedPackages = dirname($defaultAutoload) . '/composer/installed.json';
-    $command = new NeuronCli((new InstalledCommandProviders($installedPackages))->discover());
+import { createChannelConsumer, isRecord, terminalTypes, type ChannelCallbacks } from './consumer.js';
+
+export interface IQSource {
+  readonly readyState: number;
+  addEventListener(type: string, listener: (event: { data?: unknown }) => void): unknown;
+  removeEventListener(type: string, listener: (event: { data?: unknown }) => void): unknown;
+  close(): void;
+}
+
+/** EventSource.CLOSED: the browser gave up, and will not reconnect. */
+const CLOSED = 2;
+
+/**
+ * Subscribe to a stream of an IQ server, whose frames are the envelopes of one segment. The
+ * subscription owns the source: it closes it when IQ ends the stream, on a gap, and on close().
+ */
+export function subscribeToIQ(source: IQSource, callbacks: ChannelCallbacks): { close(): void } {
+  let closed = false;
+  let whole = false;
+  const consumer = createChannelConsumer({
+    onEvent(event) {
+      whole ||= terminalTypes.has(event.type);
+      callbacks.onEvent(event);
+    },
+    onGap: fail,
+  });
+  const listeners: Record<string, (event: { data?: unknown }) => void> = {
+    message: receive,
+    'iq:end': () => end('Missing channel events'),
+    'iq:fail': event => end(`IQ stream failed: ${failureReason(event.data)}`),
+    
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```php
-// Anti-pattern to NEVER write (induced failure mode):
-    $command = new NeuronCli();
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fdae7e29` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0ee0f399` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T02:46:29.692Z",
+  "last_updated": "2026-11-14T03:02:23.946Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-14T02:46:28.602Z",
@@ -473,7 +473,7 @@
       "staged_for_review": 1
     },
     "loft-sh-vcluster-learnings.md": {
-      "processed_at": "2026-11-11T18:17:05.108Z",
+      "processed_at": "2026-11-14T03:02:22.897Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2341,9 +2341,19 @@
       "processed_at": "2026-11-14T02:46:28.314Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-zai-org-glm-5.2-learnings.md": {
+      "processed_at": "2026-11-14T03:02:22.641Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "neuron-core-neuron-ai-learnings.md": {
+      "processed_at": "2026-11-14T03:02:23.413Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 747,
-  "total_canonical_promoted": 157,
-  "total_staged_for_review": 585
+  "total_dossiers_evaluated": 750,
+  "total_canonical_promoted": 158,
+  "total_staged_for_review": 587
 }

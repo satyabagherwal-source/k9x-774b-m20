@@ -925,8 +925,8 @@
     "sourceUrl": "https://huggingface.co/zai-org/GLM-5.2",
     "sourceVersion": "hf-zai-org-glm-5.2",
     "license": "Open-Source",
-    "contentHash": "e8910081e4134775b1ff1d1bca8b8063eec11d3064808fea49331ec4f440f9b2",
-    "lastHarvestedAt": "2026-11-08T23:19:54.381Z",
+    "contentHash": "7bda3b84411b4cdd122bd89a9e0eb4f68b8b76a82fbf9935b87cffa3593fea55",
+    "lastHarvestedAt": "2026-11-14T03:01:47.294Z",
     "learningId": "learn-huggingface-zai-org-glm-5-2"
   },
   "hf-stabilityai-stable-diffusion-3-medium": {
@@ -3113,10 +3113,10 @@
     "repository": "neuron-core/neuron-ai",
     "platform": "github",
     "sourceUrl": "https://github.com/neuron-core/neuron-ai",
-    "sourceVersion": "aeea883b",
+    "sourceVersion": "0ee0f399",
     "license": "MIT",
-    "contentHash": "c1661565bc09dfab4c3eaec2a109ec1442b3facbd39f673adfca2c4fb2b6da6b",
-    "lastHarvestedAt": "2026-11-13T01:57:53.030Z",
+    "contentHash": "551f515a22ba0da3009d78d7f27ba39d4b405bd997da682b5e682df05e6ce0db",
+    "lastHarvestedAt": "2026-11-14T03:01:54.868Z",
     "learningId": "learn-github-neuron-core-neuron-ai"
   },
   "geekyants-nativebase": {
@@ -7333,10 +7333,10 @@
     "repository": "loft-sh/vcluster",
     "platform": "github",
     "sourceUrl": "https://github.com/loft-sh/vcluster",
-    "sourceVersion": "c5e9027e",
+    "sourceVersion": "3a0085b6",
     "license": "Apache-2.0",
-    "contentHash": "0bd23d27cb6f4b0285bf21fe065d25c074beb131a2b48c1b5179875b961b7a5a",
-    "lastHarvestedAt": "2026-11-11T18:12:01.976Z",
+    "contentHash": "1a3b0847f53aede32e63edf82a0fefbcd5a7ca1ddf1ea8288ffa2eee75020a1c",
+    "lastHarvestedAt": "2026-11-14T03:01:49.844Z",
     "learningId": "learn-github-loft-sh-vcluster"
   },
   "arkivanov-decompose": {

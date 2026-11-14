@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:40:56.154Z",
+  "timestamp": "2026-11-14T03:02:23.059Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-loft-sh-vcluster-learnings",
+  "learning_id": "LEARN-EVO-loft-sh-vcluster-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [loft-sh-vcluster-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:40:56.154Z`  
-> **Learning ID**: `LEARN-REEXTRACT-loft-sh-vcluster-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-14T03:02:23.059Z`  
+> **Learning ID**: `LEARN-EVO-loft-sh-vcluster-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md`  
 > **Source**: github ([https://github.com/loft-sh/vcluster](https://github.com/loft-sh/vcluster))  
-> **Source Version**: `c5e9027e`  
+> **Source Version**: `3a0085b6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T18:11:52.337Z  
+> **Timestamp**: 2026-11-14T03:01:49.082Z  
 > **Learning ID**: `learn-github-loft-sh-vcluster`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/loft-sh/vcluster](https://github.com/loft-sh/vcluster))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T18:11:52.122Z  
+> **Harvest Timestamp**: 2026-11-14T03:01:48.752Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: vCluster creates tenant clusters: fully isolated environments delivered as managed Kubernetes, or as the foundation for Slurm, Ray, Run:ai and inference clusters. Each gets its own API server, CRDs and RBAC, and runs on an existing cluster or standalone on bare metal. CNCF Certified Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11376 stars
+- **Stars / Engagement**: 11378 stars
 
 ---
 
@@ -1499,575 +1499,477 @@ func ResumeVCluster(ctx context.Context, kubeClient *kubernetes.Clientset, name,
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c5e9027e` (2026-11-09)
-**Commit Message**: chore: CVE fixes (#2594)
+### Incident Patch 1: `fe70eda6` (2026-11-13)
+**Commit Message**: fix(cli): deprecate --docker-login instead of reading image pull secrets (#2730)
 
-* chore(deps): bump kube-vip to 1.2.1
+* fix(cli): ignore --docker-login instead of reading image pull secrets
 
-kube-vip v1.2.1 indirectly updates github.com/osrg/gobgp/v3 to the patched
-version.
+vCluster Platform 5.0 removed image pull secrets on users and teams, and
+the shared secrets they pointed to. --docker-login read them to write
+registry credentials to the local Docker config, so against 5.0 it no
+longer did anything.
 
-* fix(docker): download kubectl from dl.k8s.io
+Remove that code and pkg/docker, but keep the flag on vcluster login
+and vcluster platform login as a hidden flag that does nothing, so
+scripts that pass it keep working. Setting it explicitly prints:
+"--docker-login only works with shared secrets. Support for shared
+secrets was removed in vCluster CLI v0.38." Users on Platform 4.12 LTS
+stay on vCluster CLI 0.37.
 
-The legacy GCS stable.txt is frozen at v1.31.0.
+Behavior change: --docker-login=false used to return before the
+--use-driver switch, so the two flags together never switched the
+driver. The switch now always runs.
 
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
+Closes ENGPLAT-1460
 
-* chore(cli): drop devspace from the vcluster-cli release image
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-Nothing in the vcluster CLI, chart, goreleaser config or workflows runs
-devspace inside ghcr.io/loft-sh/vcluster-cli, which only needs vcluster,
-helm and kubectl. Removing the downloaded binary drops its vulnerable Go
-dependencies from the image. The devcontainer keeps devspace, since the
-devspace dev workflow needs it.
+* refactor(cli): declare the deprecated --docker-login flag inline
 
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+It is a deprecation, so keep the flag where it was declared, bound to
+the existing DockerLogin field, rather than behind exported helpe
 
-* chore(docker): upgrade Alpine packages when building images
-
-Run apk upgrade in the Alpine-based images so base-image packages (zlib,
-libcrypto3 and others) pick up the latest security patches instead of
-only zlib. Dockerfile.cli.release and Dockerfile.cli, which had no
-upgrade step, now get one. Mirrors the loft-enterprise change in
-8709c94f8.
-
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-* chore(deps): bump containerd/v2 to v2.3.6
-
-Fixes the container
-
-**File**: `.devcontainer/Dockerfile` (modified, +1/-1)
+**File**: `cmd/vclusterctl/cmd/login.go` (modified, +1/-0)
 ```diff
-@@ -6,5 +6,5 @@ ARG TARGETARCH
- RUN curl -L -o devspace "https://github.com/loft-sh/devspace/releases/latest/download/devspace-linux-${TARGETARCH}" && install -c -m 0755 devspace /usr/local/bin
- RUN curl -L -o vcluster "https://github.com/loft-sh/vcluster/releases/latest/download/vcluster-linux-${TARGETARCH}" && install -c -m 0755 vcluster /usr/local/bin
- RUN curl -L -o kind "https://kind.sigs.k8s.io/dl/v0.29.0/kind-linux-${TARGETARCH}" && install -c -m 0755 kind /usr/local/bin
--RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/${TARGETARCH}/kubectl && chmod +x ./kubectl && mv ./kubectl /usr/local/bin
-+RUN curl -LO "https://dl.k8s.io/release/$(curl -fsSL https://dl.k8s.io/release/stable.txt)/bin/linux/${TARGETARCH}/kubectl" && chmod +x ./kubectl && mv ./kubectl /usr/local/bin
- RUN bash -c "curl -s https://get.helm.sh/helm-v3.18.6-linux-${TARGETARCH}.tar.gz > helm3.tar.gz" && tar -zxvf helm3.tar.gz linux-${TARGETARCH}/helm && chmod +x linux-${TARGETARCH}/helm && mv linux-${TARGETARCH}/helm /usr/local/bin && rm helm3.tar.gz && rm -R linux-${TARGETARCH}
-```
-
-**File**: `Dockerfile` (modified, +2/-2)
-```diff
-@@ -9,7 +9,7 @@ ARG TELEMETRY_PRIVATE_KEY=""
- ARG HELM_VERSION="v3.22.0"
+@@ -54,6 +54,7 @@ vcluster platform login https://my-vcluster-platform.com --access-key myaccesske
+ 	loginCmd.Flags().StringVar(&cmd.AccessKey, "access-key", "", "The access key to use")
+ 	loginCmd.Flags().BoolVar(&cmd.Insecure, "insecure", true, product.Replace("Allow login into an insecure Loft instance"))
+ 	loginCmd.Flags().BoolVar(&cmd.DockerLogin, "docker-login", true, "If true, will log into the docker image registries the user has image pull secrets for")
++	_ = loginCmd.Flags().MarkDeprecated("docker-login", "it only works with shared secrets, which were removed in vCluster CLI v0.38")
  
- # Install kubectl for development
--RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/${TARGETARCH}/kubectl && chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
-+RUN curl -LO "https://dl.k8s.io/release/$(curl -fsSL https://dl.k8s.io/release/stable.txt)/bin/linux/${TARGETARCH}/kubectl" && chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
- 
- # Install helm binary
- RUN curl -s https://get.helm.sh/helm-${HELM_VERSION}-linux-${TARGETARCH}.tar.gz > helm3.tar.gz && tar -zxvf helm3.tar.gz linux-${TARGETARCH}/helm && chmod +x linux-${TARGETARCH}/helm && mv linux-${TARGETARCH}/helm /usr/local/bin/helm && rm helm3.tar.gz && rm -R linux-${TARGETARCH}
-@@ -54,7 +54,7 @@ ENTRYPOINT ["go", "run", "-mod", "vendor", "cmd/vcluster/main.go", "start"]
- FROM alpine:3.24
- 
- # install runtime dependencies
--RUN apk upgrade --no-cache zlib && apk add --no-cache ca-certificates zstd tzdata
-+RUN apk update && apk upgrade --no-cache && apk add --no-cache ca-certificates zstd tzdata
- 
- # Set root path as working directory
- WORKDIR /
-```
-
-**File**: `Dockerfile.cli` (modified, +3/-0)
-```diff
-@@ -34,6 +34,9 @@ RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} GO111MODULE=on go build
- 
- # we use alpine for easier debugging
- FROM alpine:3.24
-+
-+RUN apk update && apk upgrade --no-cache
-+
- # Set home to "/" in order to for kubectl to automatically pick up vcluster kube config
- ENV KUBECONFIG=/root/.kube/config
- COPY --from=builder /vcluster /usr/local/bin/vcluster
-```
-
-**File**: `Dockerfile.cli.release` (modified, +4/-6)
-```diff
-@@ -4,14 +4,12 @@ FROM alpine:3.24
- ARG HELM_VERSION="v3.22.0"
- ARG TARGETARCH
- 
-+# Pull in the latest Alpine security patches for the base image
-+RUN apk update && apk upgrade --no-cache
-+
- # Set root path as working directory
- WORKDIR /
- 
--# Add devspace
--RUN wget -O devspace "https://github.com/loft-sh/devspace/releases/latest/download/devspace-linux-${TARGETARCH}" \
--	&& chmod +x devspace \
--	&& mv devspace /usr/local/bin/devspace
--
- # Add helm
- RUN wget -O helm3.tar.gz "https://get.helm.sh/helm-${HELM_VERSION}-linux-${TARGETARCH}.tar.gz" \
- 	&& tar -zxvf helm3.tar.gz "linux-${TARGETARCH}/helm" \
-@@ -21,7 +19,7 @@ RUN wget -O helm3.tar.gz "https://get.helm.sh/helm-${HELM_VERSION}-linux-${TARGE
- 	&& rm -R "linux-${TARGETARCH}"
- 
- # Add kubectl
--RUN wget -O kubectl https://dl.k8s.io/release/`wget -q -O- https://dl.k8s.io/release/stable.txt`/bin/linux/${TARGETARCH}/kubectl \
-+RUN wget -O kubectl "https://dl.k8s.io/release/$(wget -q -O- https://dl.k8s.io/release/stable.txt)/bin/linux/${TARGETARCH}/kubectl" \
- 	&& chmod +x kubectl \
- 	&& mv kubectl /usr/local/bin/kubectl
- 
-```
-
-**File**: `Dockerfile.release` (modified, +1/-1)
-```diff
-@@ -2,7 +2,7 @@
- FROM alpine:3.24
- 
- # install runtime dependencies
--RUN apk upgrade --no-cache zlib && apk add --no-cache ca-certificates zstd tzdata
-+RUN apk update && apk upgrade --no-cache && apk add --no-cache ca-certificates zstd tzdata
- 
- # Set root path as working directory
- WORKDIR /
-```
-
----
-
-### Incident Patch 2: `32aa6484` (2026-11-09)
-**Commit Message**: fix(kubeletproxy): reject unvalidated segments in node proxy paths (#2694)
-
-Monorepo-Commit: b8df1c61d00b06c911f802676425a5358862a7c5
-
-**File**: `e2e/test_security/kubeletproxy/test_kubelet_proxy.go` (modified, +87/-0)
-```diff
-@@ -5,6 +5,9 @@ import (
- 	"context"
- 	"encoding/json"
- 	"fmt"
-+	"io"
-+	"net/http"
-+	"strings"
- 
- 	"github.com/loft-sh/e2e-framework/pkg/setup/cluster"
- 	"github.com/loft-sh/vcluster/e2e/constants"
-@@ -16,6 +19,7 @@ import (
- 	kerrors "k8s.io/apimachinery/pkg/api/errors"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 	"k8s.io/client-go/kubernetes"
-+	"k8s.io/client-go/rest"
- )
- 
- // KubeletProxySpec registers the spec.
-@@ -237,7 +241,90 @@ func KubeletProxySpec() {
- 							"expected 403 Forbidden, got: %v", err)
- 					})
- 				})
-+
-+				// client-go cleans "." and ".." out of AbsPath, and the vcluster's ServeMux redirects
-+				// literal dot segments to the cleaned path, so these specs send the traversal with
-+				// encoded slashes over raw HTTP.
-+				It("GET /containerLogs for an owned pod with an encoded traversal to /pods returns 400 Bad Request", func(ctx context.Context) {
-+					By("requesting container logs that walk to the unfiltered kubelet /pods", func() {
-+						expectEncodedTraversalRejected(ctx, nodeName, nsName, podName, "%2F..%2F..%2F..%2F..%2Fpods")
-+					})
-+				})
-+
-+				It("GET /containerLogs for an owned pod with an encoded traversal to /configz returns 400 Bad Request", func(ctx context.Context) {
-+					By("requesting container logs that walk to the kubelet /configz", func() {
-+						expectEncodedTraversalRejected(ctx, nodeName, nsName, podName, "%2F..%2F..%2F..%2F..%2Fconfigz")
-+					})
-+				})
-+
-+				It("GET /containerLogs for an owned pod with an encoded traversal to another pod's logs returns 400 Bad Request", func(ctx context.Context) {
-+					By("requesting container logs that walk to another pod's containerLogs", func() {
-+						expectEncodedTraversalRejected(ctx, nodeName, nsName, podName,
-+							"%2F..%2F..%2F..%2Fkube-system%2Fother-pod%2Fother-container")
-+					})
-+				})
-+
-+				It("GET /containerLogs for an owned pod with literal traversal segments is redirected to the cleaned path", func(ctx context.Context) {
-+					By("requesting container logs with literal dot segments after the owned container", func() {
-+						rawPath := fmt.Sprintf("/api/v1/nodes/%s/proxy/containerLogs/%s/%s/logger/../../../../configz",
-+							nodeName, nsName, podName)
-+						code, body := getRawPath(ctx, rawPath)
-+						Expect(code).To(Equal(http.StatusTemporaryRedirect),
-+							"expected the ServeMux to redirect %q, got %d: %s", rawPath, code, body)
-+					})
-+				})
-+
-+				It("GET /containerLogs for an owned pod with an extra trailing segment returns 403 Forbidden", func(ctx context.Context) {
-+					By("requesting container logs with a segment after the owned container", func() {
-+						_, err := vClusterClientset.RESTClient().Get().
-+							AbsPath(fmt.Sprintf("/api/v1/nodes/%s/proxy/containerLogs/%s/%s/logger/extra",
-+								nodeName, nsName, podName)).
-+							DoRaw(ctx)
-+						Expect(err).To(HaveOccurred(), "expected 403 for a containerLogs path with an extra segment")
-+						Expect(kerrors.IsForbidden(err)).To(BeTrue(),
-+							"expected 403 Forbidden, got: %v", err)
-+					})
-+				})
- 			})
- 		},
- 	)
+ 	return loginCmd, nil
  }
-+
-+// expectEncodedTraversalRejected requests the logs of the owned logger container with suffix
-+// appended after the container name, and expects the vcluster to reject the dot segments.
-+func expectEncodedTraversalRejected(ctx context.Context, nodeName, nsName, podName, suffix string) {
-+	GinkgoHelper()
-+
-+	rawPath := fmt.Sprintf("/api/v1/nodes/%s/proxy/containerLogs/%s/%s/logger%s",
-+		nodeName, nsName, podName, suffix)
-+	code, body := getRawPath(ctx, rawPath)
-+	Expect(code).To(Equal(http.StatusBadRequest),
-+		"expected 400 for %q, got %d: %s", rawPath, code, body)
-+	Expect(body).To(ContainSubstring("must not contain '.' or '..' segments"),
-+		"unexpected response body for %q", rawPath)
-+}
-+
-+// getRawPath sends a GET for rawPath to the current vcluster without cleaning or re-encoding the
-+// path, and returns the status code and response body.
-+func getRawPath(ctx context.Context, rawPath string) (int, string) {
-+	GinkgoHelper()
-+
-+	cfg := cluster.CurrentClusterFrom(ctx).KubernetesRestConfig()
-+	httpClient, err := rest.HTTPClientFor(cfg)
-+	Expect(err).To(Succeed())
-+	httpClient.CheckRedirect = func(*http.Request, []*http.Request) error {
-+		return http.ErrUseLastResponse
-+	}
-+
-+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, strings.TrimSuffix(cfg.Host, "/")+rawPath, nil)
-+	Expect(err).To(Succeed())
-+	Expect(req.URL.EscapedPath()).To(HaveSuffix(rawPath), "request path was cleaned or re-encoded before sending")
-+
-+	resp, err := httpClient.Do(req)
-+	Expect(err).To(Succeed())
-+	defer resp.Body.Close()
-+
-+	body, err := io.ReadAll(resp.Body)
-+	Expect(err).To(Succeed())
-+	return resp.StatusCode, string(body)
-+}
 ```
 
-**File**: `pkg/server/filters/metrics.go` (modified, +106/-51)
+**File**: `cmd/vclusterctl/cmd/login_test.go` (added, +20/-0)
 ```diff
-@@ -8,6 +8,7 @@ import (
- 	"io"
- 	"net/http"
- 	"net/http/httptest"
-+	"path"
- 	"sort"
- 	"strconv"
- 	"strings"
-@@ -122,6 +123,16 @@ func enforceKubeletSubpathAllowlist(
- 	sharedNodes bool,
- ) bool {
- 	reqPath := req.URL.Path
-+
-+	// checks and reject dot segments before classifying the path
-+	if hasDotSegment(reqPath) {
-+		responsewriters.ErrorNegotiated(
-+			kerrors.NewBadRequest("proxy path must not contain '.' or '..' segments"),
-+			s, corev1.SchemeGroupVersion, w, req,
-+		)
-+		return false
-+	}
-+
- 	switch {
- 	case IsKubeletHealthz(reqPath):
- 		// allowed — health check, no tenant data, forward as-is in all modes
-@@ -134,65 +145,66 @@ func enforceKubeletSubpathAllowlist(
- 	case IsKubeletContainerLogs(reqPath):
- 		// allowed — but validate pod and container ownership before forwarding
- 		// path format: /api/v1/nodes/{node}/proxy/containerLogs/{namespace}/{pod}/{container}
--		parts := strings.Split(reqPath, "/")
-+		// anything before or after that exact form is rejected, so no unvalidated segments
-+		// are ever forwarded with the host credential
-+		prefix, vNamespace, vPodName, vContainer, ok := parseKubeletContainerLogsPath(reqPath)
- 		allowed := false
--		for i, seg := range parts {
--			if seg == "containerLogs" && i+3 < len(parts) {
--				vNamespace, vPodName, vContainer := parts[i+1], parts[i+2], parts[i+3]
--				if vNamespace == "" || vPodName == "" || vContainer == "" {
--					break // malformed path
--				}
--				syncCtx := registerCtx.ToSyncContext("container-logs-auth")
--				nsm, find := generic.VirtualToHostFromStore(
-+		if ok {
-+			syncCtx := registerCtx.ToSyncContext("container-logs-auth")
-+			nsm, find := generic.VirtualToHostFromStore(
-+				syncCtx,
-+				types.NamespacedName{
-+					Name:      vPodName,
-+					Namespace: vNamespace,
-+				},
-+				mappings.Pods(),
-+			)
-+			if find {
-+				// verify the requested container exists in the virtual pod so injected
-+				// host-only sidecars (not present in the virtual spec) cannot be read
-+				vPodObj := &corev1.Pod{}
-+				getErr := syncCtx.VirtualClient.Get(
- 					syncCtx,
--					types.NamespacedName{
--						Name:      vPodName,
--						Namespace: vNamespace,
--					},
--					mappings.Pods(),
-+					types.NamespacedName{Name: vPodName, Namespace: vNamespace},
-+					vPodObj,
- 				)
--				if find {
--					// verify the requested container exists in the virtual pod so injected
--					// host-only sidecars (not present in the virtual spec) cannot be read
--					vPodObj := &corev1.Pod{}
--					getErr := syncCtx.VirtualClient.Get(
--						syncCtx,
--						types.NamespacedName{Name: vPodName, Namespace: vNamespace},
--						vPodObj,
--					)
--					if getErr != nil && !kerrors.IsNotFound(getErr) {
--						// transient API server error — do not conflate with an auth denial
--						responsewriters.ErrorNegotiated(getErr, s, corev1.SchemeGroupVersion, w, req)
--						return false
--					}
--					if getErr == nil {
--						for _, c := range vPodObj.Spec.Containers {
--							if c.Name == vContainer {
--								allowed = true
--								break
--							}
-+				if getErr != nil && !kerrors.IsNotFound(getErr) {
-+					// transient API server error — do not conflate with an auth denial
-+					responsewriters.ErrorNegotiated(getErr, s, corev1.SchemeGroupVersion, w, req)
-+					return false
-+				}
-+				if getErr == nil {
-+					for _, c := range vPodObj.Spec.Containers {
-+						if c.Name == vContainer {
-+							allowed = true
-+							break
- 						}
--						for _, c := range vPodObj.Spec.InitContainers {
--							if c.Name == vContainer {
--								allowed = true
--								break
--							}
-+					}
-+					for _, c := range vPodObj.Spec.InitContainers {
-+						if c.Name == vContainer {
-+							allowed = true
-+							break
- 						}
--						for _, c := range vPodObj.Spec.EphemeralContainers {
--							if c.Name == vContainer {
--								allowed = true
--								break
--							}
-+					}
-+					for _, c := range vPodObj.Spec.EphemeralContainers {
-+						if c.Name == vContainer {
-+							allowed = true
-+							break
- 						}
- 					}
--					if allowed {
--						// rewrite virtual -> host coordinates so the kubelet receives the physical pod name/namespace
--						parts[i+1] = nsm.Namespace
--						parts[i+2] = nsm.Name
--						req.URL.Path = strings.Join(parts, "/")
-+				}
-+				if allowed {
-+					// rewrite virtual -> host coordinates so the kubelet receives the physical pod name/namespace
-+					hostPath := prefix + kubeletContainerLogsSegment + nsm.Namespace + "/" + nsm.Name + "/" + vContainer
-+					// re-check the rewritten path so only the exact containerLogs form is forwarded
-+					if _, _, _, _, stillOK := parseKubeletContainerLogsPath(hostPath); stillOK && path.Clean(hostPath) == hostPath {
-+						req.URL.Path = hostPath
-+						// drop the client-supplied encoding so the proxied URL is built from the validated path
-+						req.URL.RawPath = ""
-+					} else {
-+						allowed = false
- 					}
- 				}
--				break
- 			}
- 		}
- 		if !allowed {
-@@ -372,8 +384,51 @@ func IsKubeletPods(path string) bool {
- 	return strings.HasSuffix(p, "/po
-```
-
-**File**: `pkg/server/filters/metrics_test.go` (added, +180/-0)
-```diff
-@@ -0,0 +1,180 @@
-+package filters
+@@ -0,0 +1,20 @@
++package cmd
 +
 +import (
-+	"net/http"
-+	"net/http/httptest"
 +	"testing"
 +
-+	"github.com/loft-sh/vcluster/pkg/scheme"
-+	"k8s.io/apimachinery/pkg/runtime/serializer"
++	"github.com/loft-sh/vcluster/pkg/cli/flags"
 +)
 +
-+func TestParseKubeletContainerLogsPath(t *testing.T) {
-+	tests := []struct {
-+		name          string
-+		path          string
-+		wantOK        bool
-+		wantPrefix    string
-+		wantNamespace string
-+		wantPod       string
-+		wantContainer string
-+	}{
-+		{
-+			name:          "exact form",
-+			path:          "/api/v1/nodes/node-1/proxy/containerLogs/ns/pod/container",
-+			wantOK:        true,
-+			wantPrefix:    "/api/v1/nodes/node-1",
-+			wantNamespace: "ns",
-+			wantPod:       "pod",
-+			wantContainer: "container",
-+		},
-+		{
-+			name:   "trailing traversal to pods",
-+			path:   "/api/v1/nodes/node-1/proxy/containerLogs/ns/pod/container/../../../../pods",
-+			wantOK: false,
-+		},
-+		{
-+			name:   "trailing traversal to configz",
-+			path:   "/api/v1/nodes/node-1/proxy/containerLogs/ns/pod/container/../../../../configz",
-+			wantOK: false,
-+		},
-+		{
-+			name:   "traversal to second containerLogs",
-+			path:   "/api/v1/nodes/node-1/proxy/containerLogs/ns/pod/container/../../../other-ns/other-pod/other-container",
-+			wantOK: false,
-+		},
-+		{
-+			name:   "extra segment without dots",
-+			path:   "/api/v1/nodes/node-1/proxy/containerLogs/ns/pod/container/extra",
-+			wantOK: false,
-+		},
-+		{
-+			name:   "trailing slash",
-+			path:   "/api/v1/nodes/node-1/proxy/containerLogs/ns/pod/container/",
-+			wantOK: false,
-+		},
-+		{
-+			name:   "missing container",
-+			path:   "/api/v1/nodes/node-1/proxy/containerLogs/ns/pod",
-+			wantOK: false,
-+		},
-+		{
-+			name:   "empty segment",
-+			path:   "/api/v1/nodes/node-1/proxy/containerLogs/ns//container",
-+			wantOK: false,
-+		},
-+		{
-+			name:   "dot container",
-+			path:   "/api/v1/nodes/node-1/proxy/containerLogs/ns/pod/..",
-+			wantOK: false,
-+		},
-+		{
-+			name:   "unexpected prefix",
-+			path:   "/api/v1/nodes/node-1/extra/proxy/containerLogs/ns/pod/container",
-+			wantOK: false,
-+		},
-+		{
-+			name:   "not a containerLogs path",
-+			path:   "/api/v1/nodes/node-1/proxy/pods",
-+			wantOK: false,
-+		},
++func TestDeprecatedLoginKeepsDeprecatedDockerLoginFlag(t *testing.T) {
++	cmd, err := NewLoginCmd(&flags.GlobalFlags{})
++	if err != nil {
++		t.Fatalf("NewLoginCmd: %v", err)
 +	}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			prefix, namespace, pod, container, ok := parseKubeletContainerLogsPath(tt.path)
-+			if ok != tt.wantOK {
-+				t.Fatalf("expected ok=%v for %q, got %v", tt.wantOK, tt.path, ok)
-+			}
-+			if !tt.wantOK {
-+				return
-+			}
-+			if prefix != tt.wantPrefix || namespace != tt.wantNamespace || pod != tt.wantPod || container != tt.wantContainer {
-+				t.Fatalf("expected (%q, %q, %q, %q), got (%q, %q, %q, %q)",
-+					tt.wantPrefix, tt.wantNamespace, tt.wantPod, tt.wantContainer,
-+					prefix, namespace, pod, container)
-+			}
-+		})
++	if err := cmd.ParseFlags([]string{"--docker-login=false"}); err != nil {
++		t.Fatalf("--docker-login=false no longer parses: %v", err)
++	}
++	if f := cmd.Flags().Lookup("docker-login"); f.Deprecated == "" || !f.Hidden {
++		t.Errorf("--docker-login: deprecated %q, hidden %v; want deprecated and hidden", f.Deprecated, f.Hidden)
 +	}
 +}
+```
+
+**File**: `cmd/vclusterctl/cmd/platform/login.go` (modified, +1/-135)
+```diff
+@@ -1,31 +1,22 @@
+ package platform
+ 
+ import (
+-	"bytes"
+ 	"context"
+ 	"fmt"
+ 	"os"
+ 	"strings"
+ 
+-	dockerconfig "github.com/docker/cli/cli/config"
+-	"github.com/docker/cli/cli/config/configfile"
+-	managementv1 "github.com/loft-sh/api/v5/pkg/apis/management/v1"
+-	storagev1 "github.com/loft-sh/api/v5/pkg/apis/storage/v1"
+ 	"github.com/loft-sh/api/v5/pkg/product"
+ 	"github.com/loft-sh/log"
+ 	"github.com/loft-sh/vcluster/cmd/vclusterctl/cmd/use"
+-	"github.com/loft-sh/vcluster/pkg/cli/config"
+ 	"github.com/loft-sh/vcluster/pkg/cli/flags"
+-	"github.com/loft-sh/vcluster/pkg/docker"
+ 	"github.com/loft-sh/vcluster/pkg/platform"
+ 	"github.com/loft-sh/vcluster/pkg/platform/clihelper"
+-	"github.com/loft-sh/vcluster/pkg/platform/kube"
+ 	"github.com/loft-sh/vcluster/pkg/upgrade"
+ 	"github.com/mgutz/ansi"
+ 	"github.com/pkg/errors"
+ 	"github.com/sirupsen/logrus"
+ 	"github.com/spf13/cobra"
+-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ )
+ 
+ const PlatformURL = "VCLUSTER_PLATFORM_URL"
+@@ -79,6 +70,7 @@ vcluster platform login https://my-vcluster-platform.com --access-key myaccesske
+ 	loginCmd.Flags().StringVar(&cmd.AccessKey, "access-key", "", "The access key to use")
+ 	loginCmd.Flags().BoolVar(&cmd.Insecure, "insecure", false, product.Replace("Allow login into an insecure Loft instance"))
+ 	loginCmd.Flags().BoolVar(&cmd.DockerLogin, "docker-login", true, "If true, will log into the docker image registries the user has image pull secrets for")
++	_ = loginCmd.Flags().MarkDeprecated("docker-login", "it only works with shared secrets, which were removed in vCluster CLI v0.38")
+ 
+ 	return loginCmd
+ }
+@@ -142,16 +134,6 @@ func (cmd *LoginCmd) Run(ctx context.Context, args []string) error {
+ 	}
+ 	cmd.Log.Donef(product.Replace("Successfully logged into Loft instance %s"), ansi.Color(url, "white+b"))
+ 
+-	// skip log into docker registries?
+-	if !cmd.DockerLogin {
+-		return nil
+-	}
+-
+-	err = dockerLogin(ctx, cmd.LoadedConfig(cmd.Log), cmd.Log)
+-	if err != nil {
+-		return err
+-	}
+-
+ 	// should switch driver
+ 	if cmd.Driver != "" {
+ 		err := use.SwitchDriver(ctx, cfg, cmd.Driver, log.GetInstance())
+@@ -189,119 +171,3 @@ func (cmd *LoginCmd) printLoginDetails(ctx context.Context) error {
+ 	}
+ 	return nil
+ }
+-
+-func dockerLogin(ctx context.Context, config *config.CLI, log log.Logger) error {
+-	platformClient := platform.NewClientFromConfig(config)
+-
+-	managementClient, err := platformClient.Management()
+-	if err != nil {
+-		return err
+-	}
+-
+-	// get user name
+-	userName, teamName, err := platform.GetCurrentUser(ctx, managementClient)
+-	if err != nil {
+-		return err
+-	}
+-
+-	// collect image pull secrets from team or user
+-	dockerConfigs := []*configfile.ConfigFile{}
+-	if userName != nil {
+-		// get image pull secrets from user
+-		user, err := managementClient.Loft().ManagementV1().Users().Get(ctx, userName.Name, metav1.GetOptions{})
+-		if err != nil {
+-			return err
+-		}
+-		dockerConfigs = append(dockerConfigs, collectImagePullSecrets(ctx, managementClient, user.Spec.ImagePullSecrets, log)...)
+-
+-		// get image pull secrets from teams
+-		for _, teamName := range user.Status.Teams {
+-			team, err := managementClient.Loft().ManagementV1().Teams().Get(ctx, teamName, metav1.GetOptions{})
+-			if err != nil {
+-				return err
+-			}
+-
+-			dockerConfigs = append(dockerConfigs, collectImagePullSecrets(ctx, managementClient, team.Spec.ImagePullSecrets, log)...)
+-		}
+-	} else if teamName != nil {
+-		// get image pull secrets from team
+-		team, err := managementClient.Loft().ManagementV1().Teams().Get(ctx, teamName.Name, metav1.GetOptions{})
+-		if err != nil {
+-			return err
+-		}
+-		dockerConfigs = append(dockerConfigs, collectImagePullSecrets(ctx, managementClient, team.Spec.ImagePullSecrets, log)...)
+-	}
+-
+-	// store docker configs
+-	if len(dockerConfigs) > 0 {
+-		dockerConfig, err := docker.NewDockerConfig()
+-		if err != nil {
+-			return err
+-		}
+-
+-		// log into registries locally
+-		for _, config := range dockerConfigs {
+-			for registry, authConfig := range config.AuthConfigs {
+-				err = dockerConfig.Store(registry, authConfig)
+-				if err != nil {
+-					return err
+-				}
+-
+-				if registry == "https://index.docker.io/v1/" {
+-					registry = "docker hub"
+-				}
+-
+-				log.Donef("Successfully logged into docker registry '%s'", registry)
+-			}
+-		}
+-
+-		err = dockerConfig.Save()
+-		if err != nil {
+-			return errors.Wrap(err, "save docker config")
+-		}
+-	}
+-
+-	return nil
+-}
+-
+-func collectImagePullSecrets(ctx context.Context, managementClient kube.Interface, imagePullSecrets []*storagev1.KindSecretRef, log log.Logger) []*configfile.ConfigFile {
+-	retConfigFiles := []*configfile.ConfigFile{}
+-	for _, imagePullSecret := range imagePullSecrets {
+-		// unknown image pull secret type?
+-		if imagePullSecret.Kind != "SharedSecret" || (imagePullSecret.APIGroup != storagev1.SchemeGroupVersion.Group && imagePullSecret.APIGroup != managementv1.SchemeGroupVersion.Group) {
+-			continue
+-		} else if imagePullSecret.SecretName == "" || imagePullSecret.Secret
+```
+
+**File**: `cmd/vclusterctl/cmd/platform/login_test.go` (added, +17/-0)
+```diff
+@@ -0,0 +1,17 @@
++package platform
 +
-+func TestEnforceKubeletSubpathAllowlistRejectsUnvalidatedPaths(t *testing.T) {
-+	s := serializer.NewCodecFactory(scheme.Scheme)
-+	tests := []struct {
-+		name       string
-+		path       string
-+		sharedNode bool
-+		wantStatus int
-+	}{
-+		{
-+			name:       "containerLogs with trailing traversal to pods",
-+			path:       "/api/v1/nodes/node-1/proxy/containerLogs/ns/pod/container/../../../../pods",
-+			sharedNode: true,
-+			wantStatus: http.StatusBadRequest,
-+		},
-+		{
-+			name:       "containerLogs with trailing traversal on dedicated nodes",
-+			path:       "/api/v1/nodes/node-1/proxy/containerLogs/ns/pod/container/../../../../configz",
-+			sharedNode: false,
-+			wantStatus: http.StatusBadRequest,
-+		},
-+		{
-+			name:       "traversal ending in an allowed suffix",
-+			path:       "/api/v1/nodes/node-1/proxy/configz/../healthz",
-+			sharedNode: true,
-+			wantStatus: http.StatusBadRequest,
-+		},
-+		{
-+			name:       "current directory segment",
-+			path:       "/api/v1/nodes/node-1/proxy/./pods",
-+			sharedNode: true,
-+			wantStatus: http.StatusBadRequest,
-+		},
-+		{
-+			name:       "containerLogs with extra segment",
-+			path:       "/api/v1/nodes/node-1/proxy/containerLogs/ns/pod/container/extra",
-+			sharedNode: true,
-+			wantStatus: http.StatusForbidden,
-+		},
-+		{
-+			name:       "containerLogs with extra segment on dedicated nodes",
-+			path:       "/api/v1/nodes/node-1/proxy/containerLogs/ns/pod/container/extra",
-+			sharedNode: false,
-+			wantStatus: http.StatusForbidden,
-+		},
++import (
++	"testing"
++
++	"github.com/loft-sh/vcluster/pkg/cli/flags"
++)
++
++func TestPlatformLoginKeepsDeprecatedDockerLoginFlag(t *testing.T) {
++	cmd := NewCobraLoginCmd(&flags.GlobalFlags{})
++	if err := cmd.ParseFlags([]string{"--docker-login=false"}); err != nil {
++		t.Fatalf("--docker-login=false no longer parses: %v", err)
 +	}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			req := httptest.NewRequest(http.MethodGet, "http://vcluster.local"+tt.path, nil)
-+			req.URL.Path = tt.path
-+			w := httptest.NewRecorder()
-+
-+			// a nil register context proves the request is rejected before any lookup or forwarding
-+			if enforceKubeletSubpathAllowlist(nil, s, w, req, tt.sharedNode) {
-+				t.Fatalf("expected %q to be rejected", tt.path)
-+			}
-+			if w.Code != tt.wantStatus {
-+				t.Fatalf("expected status %d for %q, got %d: %s", tt.wantStatus, tt.path, w.Code, w.Body.String())
-+			}
-+		})
++	if f := cmd.Flags().Lookup("docker-login"); f.Deprecated == "" || !f.Hidden {
++		t.Errorf("--docker-login: deprecated %q, hidden %v; want deprecated and hidden", f.Deprecated, f.Hidden)
 +	}
 +}
-+
-+func TestHasDotSegment(t *testing.T) {
-+	tests := []struct {
-+		path string
-+		want bool
-+	}{
-+		{path: "/api/v
+```
+
+**File**: `go.mod` (modified, +2/-2)
+```diff
+@@ -6,8 +6,6 @@ require (
+ 	github.com/blang/semver v3.5.1+incompatible
+ 	github.com/blang/semver/v4 v4.0.0
+ 	github.com/denisbrodbeck/machineid v1.0.1
+-	github.com/docker/cli v29.8.0+incompatible
+-	github.com/docker/docker v28.5.2+incompatible
+ 	github.com/dustin/go-humanize v1.0.1
+ 	github.com/evanphx/json-patch/v5 v5.9.11
+ 	github.com/ghodss/yaml v1.0.0
+@@ -123,7 +121,9 @@ require (
+ 	github.com/containers/storage v1.58.1-0.20250515004000-78f4258b2bd9 // indirect
+ 	github.com/creack/pty v1.1.21 // indirect
+ 	github.com/distribution/reference v0.6.0 // indirect
++	github.com/docker/cli v29.8.0+incompatible // indirect
+ 	github.com/docker/distribution v2.8.3+incompatible // indirect
++	github.com/docker/docker v28.5.2+incompatible // indirect
+ 	github.com/docker/docker-credential-helpers v0.9.3 // indirect
+ 	github.com/docker/go-connections v0.5.0 // indirect
+ 	github.com/docker/go-units v0.5.0 // indirect
+```
+
+**File**: `pkg/docker/config.go` (removed, +0/-66)
+```diff
+@@ -1,66 +0,0 @@
+-package docker
+-
+-import (
+-	"os"
+-	"path/filepath"
+-
+-	"github.com/docker/docker/pkg/homedir"
+-
+-	dockerconfig "github.com/docker/cli/cli/config"
+-	"github.com/docker/cli/cli/config/configfile"
+-	"github.com/docker/cli/cli/config/types"
+-	"github.com/pkg/errors"
+-)
+-
+-const dockerFileFolder = ".docker"
+-
+-// Config is the interface to interact with the docker config
+-type Config interface {
+-	// Store saves credentials for the given registry into the local config file
+-	Store(registry string, authConfig types.AuthConfig) error
+-
+-	// Save persists the locally changed config file to file
+-	Save() error
+-}
+-
+-// NewDockerConfig creates a new docker client
+-func NewDockerConfig() (Config, error) {
+-	configFile, err := loadDockerConfig()
+-	if err != nil {
+-		return nil, err
+-	}
+-
+-	return &config{
+-		DockerConfig: configFile,
+-	}, nil
+-}
+-
+-type config struct {
+-	DockerConfig *configfile.ConfigFile
+-}
+-
+-func (c *config) Store(registry string, authConfig types.AuthConfig) error {
+-	if registry == "" {
+-		return nil
+-	}
+-
+-	err := c.DockerConfig.GetCredentialsStore(registry).Store(authConfig)
+-	if err != nil {
+-		return errors.Wrapf(err, "store credentials for registry %s", registry)
+-	}
+-
+-	return nil
+-}
+-
+-func (c *config) Save() error {
+-	return c.DockerConfig.Save()
+-}
+-
+-func loadDockerConfig() (*configfile.ConfigFile, error) {
+-	configDir := os.Getenv("DOCKER_CONFIG")
+-	if configDir == "" {
+-		configDir = filepath.Join(homedir.Get(), dockerFileFolder)
+-	}
+-
+-	return dockerconfig.Load(configDir)
+-}
+```
+
+**File**: `vendor/github.com/docker/docker/pkg/homedir/homedir.go` (removed, +0/-28)
+```diff
+@@ -1,28 +0,0 @@
+-package homedir
+-
+-import (
+-	"os"
+-	"os/user"
+-	"runtime"
+-)
+-
+-// Get returns the home directory of the current user with the help of
+-// environment variables depending on the target operating system.
+-// Returned path should be used with "path/filepath" to form new paths.
+-//
+-// On non-Windows platforms, it falls back to nss lookups, if the home
+-// directory cannot be obtained from environment-variables.
+-//
+-// If linking statically with cgo enabled against glibc, ensure the
+-// osusergo build tag is used.
+-//
+-// If needing to do nss lookups, do not disable cgo or set osusergo.
+-func Get() string {
+-	home, _ := os.UserHomeDir()
+-	if home == "" && runtime.GOOS != "windows" {
+-		if u, err := user.Current(); err == nil {
+-			return u.HomeDir
+-		}
+-	}
+-	return home
+-}
+```
+
+**File**: `vendor/github.com/docker/docker/pkg/homedir/homedir_linux.go` (removed, +0/-105)
+```diff
+@@ -1,105 +0,0 @@
+-package homedir
+-
+-import (
+-	"errors"
+-	"os"
+-	"path/filepath"
+-	"strings"
+-)
+-
+-// GetRuntimeDir returns XDG_RUNTIME_DIR.
+-// XDG_RUNTIME_DIR is typically configured via pam_systemd.
+-// GetRuntimeDir returns non-nil error if XDG_RUNTIME_DIR is not set.
+-//
+-// See also https://standards.freedesktop.org/basedir-spec/latest/ar01s03.html
+-func GetRuntimeDir() (string, error) {
+-	if xdgRuntimeDir := os.Getenv("XDG_RUNTIME_DIR"); xdgRuntimeDir != "" {
+-		return xdgRuntimeDir, nil
+-	}
+-	return "", errors.New("could not get XDG_RUNTIME_DIR")
+-}
+-
+-// StickRuntimeDirContents sets the sticky bit on files that are under
+-// XDG_RUNTIME_DIR, so that the files won't be periodically removed by the system.
+-//
+-// StickyRuntimeDir returns slice of sticked files.
+-// StickyRuntimeDir returns nil error if XDG_RUNTIME_DIR is not set.
+-//
+-// See also https://standards.freedesktop.org/basedir-spec/latest/ar01s03.html
+-func StickRuntimeDirContents(files []string) ([]string, error) {
+-	runtimeDir, err := GetRuntimeDir()
+-	if err != nil {
+-		// ignore error if runtimeDir is empty
+-		return nil, nil
+-	}
+-	runtimeDir, err = filepath.Abs(runtimeDir)
+-	if err != nil {
+-		return nil, err
+-	}
+-	var sticked []string
+-	for _, f := range files {
+-		f, err = filepath.Abs(f)
+-		if err != nil {
+-			return sticked, err
+-		}
+-		if strings.HasPrefix(f, runtimeDir+"/") {
+-			if err = stick(f); err != nil {
+-				return sticked, err
+-			}
+-			sticked = append(sticked, f)
+-		}
+-	}
+-	return sticked, nil
+-}
+-
+-func stick(f string) error {
+-	st, err := os.Stat(f)
+-	if err != nil {
+-		return err
+-	}
+-	m := st.Mode()
+-	m |= os.ModeSticky
+-	return os.Chmod(f, m)
+-}
+-
+-// GetDataHome returns XDG_DATA_HOME.
+-// GetDataHome returns $HOME/.local/share and nil error if XDG_DATA_HOME is not set.
+-// If HOME and XDG_DATA_HOME are not set, getpwent(3) is consulted to determine the users home directory.
+-//
+-// See also https://standards.freedesktop.org/basedir-spec/latest/ar01s03.html
+-func GetDataHome() (string, error) {
+-	if xdgDataHome := os.Getenv("XDG_DATA_HOME"); xdgDataHome != "" {
+-		return xdgDataHome, nil
+-	}
+-	home := Get()
+-	if home == "" {
+-		return "", errors.New("could not get either XDG_DATA_HOME or HOME")
+-	}
+-	return filepath.Join(home, ".local", "share"), nil
+-}
+-
+-// GetConfigHome returns XDG_CONFIG_HOME.
+-// GetConfigHome returns $HOME/.config and nil error if XDG_CONFIG_HOME is not set.
+-// If HOME and XDG_CONFIG_HOME are not set, getpwent(3) is consulted to determine the users home directory.
+-//
+-// See also https://standards.freedesktop.org/basedir-spec/latest/ar01s03.html
+-func GetConfigHome() (string, error) {
+-	if xdgConfigHome := os.Getenv("XDG_CONFIG_HOME"); xdgConfigHome != "" {
+-		return xdgConfigHome, nil
+-	}
+-	home := Get()
+-	if home == "" {
+-		return "", errors.New("could not get either XDG_CONFIG_HOME or HOME")
+-	}
+-	return filepath.Join(home, ".config"), nil
+-}
+-
+-// GetLibHome returns $HOME/.local/lib
+-// If HOME is not set, getpwent(3) is consulted to determine the users home directory.
+-func GetLibHome() (string, error) {
+-	home := Get()
+-	if home == "" {
+-		return "", errors.New("could not get HOME")
+-	}
+-	return filepath.Join(home, ".local/lib"), nil
+-}
 ```
 
 #### Recent Merged Pull Requests:
@@ -2096,31 +1998,31 @@ Monorepo-Commit: b8df1c61d00b06c911f802676425a5358862a7c5
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. CVE fixes (#2594)
+## X. cli): deprecate --docker-login instead of reading image pull secrets
 
 **RULE**:
-When implementing operations in `.devcontainer/Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in loft-sh/vcluster. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/vclusterctl/cmd/login.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in loft-sh/vcluster. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c5e9027e`: CVE fixes (#2594). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fe70eda6`: cli): deprecate --docker-login instead of reading image pull secrets. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.devcontainer/Dockerfile`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/vclusterctl/cmd/login.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-RUN curl -LO "https://dl.k8s.io/release/$(curl -fsSL https://dl.k8s.io/release/stable.txt)/bin/linux/${TARGETARCH}/kubectl" && chmod +x ./kubectl && mv ./kubectl /usr/local/bin
+	_ = loginCmd.Flags().MarkDeprecated("docker-login", "it only works with shared secrets, which were removed in vCluster CLI v0.38")
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/${TARGETARCH}/kubectl && chmod +x ./kubectl && mv ./kubectl /usr/local/bin
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c5e9027e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fe70eda6` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

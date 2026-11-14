@@ -9712,3 +9712,7 @@
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T02:38:23.554Z` | `hf-openai-gpt-oss-120b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-0D55DB0B` [Domain D] | Yes (`3ba95273...`) |
 | `CYCLE-20261114-03OG` | `2026-11-14T02:45:51.136Z` | `meta-llama/Meta-Llama-3-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md` | Yes (`70c42df2...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T02:46:28.314Z` | `hf-meta-llama-meta-llama-3-8b-instruct` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-J-B241A1ED` [Domain J] | Yes (`392a8348...`) |
+| `CYCLE-20261114-KLGA` | `2026-11-14T03:01:47.290Z` | `zai-org/GLM-5.2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md` | Yes (`7bda3b84...`) |
+| `CYCLE-20261114-KNF5` | `2026-11-14T03:01:49.841Z` | `loft-sh/vcluster` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8422` | Yes (`1a3b0847...`) |
+| `CYCLE-20261114-KRAP` | `2026-11-14T03:01:54.865Z` | `neuron-core/neuron-ai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8423` | Yes (`551f515a...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T03:02:22.641Z` | `hf-zai-org-glm-5.2` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-78E4F99B` [Domain D] | Yes (`d97a9f50...`) |

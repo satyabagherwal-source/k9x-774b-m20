@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T02:46:29.409Z",
-  "total_records": 487,
+  "last_updated": "2026-11-14T03:02:23.777Z",
+  "total_records": 494,
   "domains": {
     "A": {
       "total": 5,
@@ -33,7 +33,7 @@
       ]
     },
     "D": {
-      "total": 251,
+      "total": 254,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -285,7 +285,10 @@
         "DOM-D-0D55DB0B",
         "domain_intelligence-research-knowledge-intelligence-hf-openai-gpt-oss-120b-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-meta-llama-meta-llama-3-8b-instruct-core-invaria",
-        "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-meta-llama-3-8b-instruct-learnings"
+        "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-meta-llama-3-8b-instruct-learnings",
+        "domain_intelligence-research-knowledge-intelligence-zai-org-glm-5-2-core-invariants",
+        "DOM-D-78E4F99B",
+        "domain_intelligence-research-knowledge-intelligence-hf-zai-org-glm-5-2-learnings-core-invariants"
       ]
     },
     "E": {
@@ -384,7 +387,7 @@
       ]
     },
     "H": {
-      "total": 99,
+      "total": 101,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -484,7 +487,9 @@
         "domain_intelligence-technical-construction-intelligence-invertase-react-native-firebase-learnings-co",
         "domain_intelligence-technical-construction-intelligence-lioensky-vcptoolbox-core-invariants",
         "domain_intelligence-technical-construction-intelligence-nats-io-nats-server-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-nats-io-nats-server-learnings-core-invariant"
+        "domain_intelligence-technical-construction-intelligence-nats-io-nats-server-learnings-core-invariant",
+        "domain_intelligence-technical-construction-intelligence-neuron-core-neuron-ai-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-neuron-core-neuron-ai-learnings-core-invaria"
       ]
     },
     "I": {
@@ -539,7 +544,7 @@
       ]
     },
     "L": {
-      "total": 7,
+      "total": 9,
       "record_ids": [
         "DOM-L-1B851132",
         "DOM-L-80D1F65C",
@@ -547,7 +552,9 @@
         "domain_intelligence-deployment-operations-intelligence-gardener-gardener-core-invariants",
         "domain_intelligence-deployment-operations-intelligence-gardener-gardener-learnings-core-invariants",
         "domain_intelligence-deployment-operations-intelligence-graphprotocol-graph-node-core-invariants",
-        "domain_intelligence-deployment-operations-intelligence-graphprotocol-graph-node-learnings-core-invar"
+        "domain_intelligence-deployment-operations-intelligence-graphprotocol-graph-node-learnings-core-invar",
+        "domain_intelligence-deployment-operations-intelligence-loft-sh-vcluster-core-invariants",
+        "domain_intelligence-deployment-operations-intelligence-loft-sh-vcluster-learnings-core-invariants"
       ]
     },
     "M": {
@@ -11080,6 +11087,102 @@
       "repository": "hf-meta-llama-meta-llama-3-8b-instruct-learnings",
       "content_hash": "58b6f0f56d06a4f63d6853bc99397079f0163ee612549604aa439b9965dc5fb8",
       "created_at": "2026-11-14T02:46:28.492Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-zai-org-glm-5-2-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-zai-org-glm-5-2-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: zai-org/GLM-5.2 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-zai-org-glm-5-2-research-knowledge-intelligence-zai-org-glm-5-2-core-invarian.md",
+      "repository": "zai-org/GLM-5.2",
+      "content_hash": "bfaedff000947afd5088faf028a35e4cf017f2bab5b926f896a9176d0485baf2",
+      "created_at": "2026-11-14T03:01:47.443Z"
+    },
+    "domain_intelligence-deployment-operations-intelligence-loft-sh-vcluster-core-invariants": {
+      "record_id": "domain_intelligence-deployment-operations-intelligence-loft-sh-vcluster-core-invariants",
+      "domain_letter": "L",
+      "title": "Deployment & Operations Intelligence: loft-sh/vcluster Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-loft-sh-vcluster-deployment-operations-intelligence-loft-sh-vcluster-core-invari.md",
+      "repository": "loft-sh/vcluster",
+      "content_hash": "0ba553c91a5d6ff0c096ccd2a7807e0def53ac3391c4fd289fff740f87487cb7",
+      "created_at": "2026-11-14T03:01:50.088Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-neuron-core-neuron-ai-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-neuron-core-neuron-ai-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: neuron-core/neuron-ai Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-neuron-core-neuron-ai-technical-construction-intelligence-neuron-core-neuron-ai-.md",
+      "repository": "neuron-core/neuron-ai",
+      "content_hash": "ee45877616dd7e90bd8622b42eafcc269311f86d9ac8dad54f777a97e4debe18",
+      "created_at": "2026-11-14T03:01:55.098Z"
+    },
+    "DOM-D-78E4F99B": {
+      "record_id": "DOM-D-78E4F99B",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): zai-org/GLM-5.2",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/zai-org/GLM-5.2](https://huggingface.co/zai-org/GLM-5.2))  \n> **Source Version**: `hf-zai-org-g`  \n> **License**: Open-Source  \n> **Synthesized By**: zero-clo",
+      "content_hash": "d97a9f5049907d0eed5a531ff246c7878f105d8afcbb545773da3faaa80d337f",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md`  \n> **Source**: huggingface ([https://huggingface.c -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md`  \n> **Source**: huggingface ([https://huggingface.c",
+      "provenance": {
+        "source_uri": "project://hf-zai-org-glm-5.2/hf-zai-org-glm-5.2-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T03:01:57.872Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-zai-org-glm-5.2)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-zai-org-glm-5.2"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T03:02:22.633Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-zai-org-glm-5-2-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-zai-org-glm-5-2-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-zai-org-glm-5.2-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-zai-org-glm-5-2-learnings-research-knowledge-intelligence-hf-zai-org-glm-5-2-.md",
+      "repository": "hf-zai-org-glm-5.2-learnings",
+      "content_hash": "0fad32bde9e1fc5019ccd5ef8f9c9078777c2cce3ab6b5d2e33d7c90db1b5fdd",
+      "created_at": "2026-11-14T03:02:22.801Z"
+    },
+    "domain_intelligence-deployment-operations-intelligence-loft-sh-vcluster-learnings-core-invariants": {
+      "record_id": "domain_intelligence-deployment-operations-intelligence-loft-sh-vcluster-learnings-core-invariants",
+      "domain_letter": "L",
+      "title": "Deployment & Operations Intelligence: loft-sh-vcluster-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-loft-sh-vcluster-learnings-deployment-operations-intelligence-loft-sh-vcluster-l.md",
+      "repository": "loft-sh-vcluster-learnings",
+      "content_hash": "e92d612c99209dd288855d2ef62c8a9c1e2861412e0ed808c9a7e893487c5208",
+      "created_at": "2026-11-14T03:02:23.239Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-neuron-core-neuron-ai-learnings-core-invaria": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-neuron-core-neuron-ai-learnings-core-invaria",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: neuron-core-neuron-ai-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-neuron-core-neuron-ai-learnings-technical-construction-intelligence-neuron-core-.md",
+      "repository": "neuron-core-neuron-ai-learnings",
+      "content_hash": "90c37658befbe65f078ef2038550450395ec45b47971a09a89fe662c8f621d06",
+      "created_at": "2026-11-14T03:02:23.777Z"
     }
   }
 }

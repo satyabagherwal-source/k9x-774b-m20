@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T02:45:51.145Z",
-  "total_cycles_completed": 9437,
-  "total_learnings_persisted": 9437,
-  "total_rules_promoted": 9142,
+  "last_updated": "2026-11-14T03:01:54.873Z",
+  "total_cycles_completed": 9440,
+  "total_learnings_persisted": 9440,
+  "total_rules_promoted": 9144,
   "history": [
-    {
-      "timestamp": "2026-11-13T13:02:47.240Z",
-      "repository": "clastix/kamaji",
-      "learningId": "learn-github-clastix-kamaji",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T13:02:56.854Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T13:02:57.642Z",
-      "repository": "ytsaurus/ytsaurus",
-      "learningId": "learn-github-ytsaurus-ytsaurus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T13:10:51.765Z",
       "repository": "Qwen/Qwen-Image-2.1",
@@ -1403,6 +1382,27 @@
       "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
       "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T03:01:47.298Z",
+      "repository": "zai-org/GLM-5.2",
+      "learningId": "learn-huggingface-zai-org-glm-5-2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T03:01:49.848Z",
+      "repository": "loft-sh/vcluster",
+      "learningId": "learn-github-loft-sh-vcluster",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T03:01:54.873Z",
+      "repository": "neuron-core/neuron-ai",
+      "learningId": "learn-github-neuron-core-neuron-ai",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
