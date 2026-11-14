@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:43:23.392Z",
+  "timestamp": "2026-11-14T01:26:58.520Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-pingcap-tidb-learnings",
+  "learning_id": "LEARN-EVO-pingcap-tidb-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [pingcap-tidb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:43:23.392Z`  
-> **Learning ID**: `LEARN-REEXTRACT-pingcap-tidb-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-14T01:26:58.520Z`  
+> **Learning ID**: `LEARN-EVO-pingcap-tidb-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source**: github ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
-> **Source Version**: `32a53ec1`  
+> **Source Version**: `7a158c6a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T16:35:52.587Z  
+> **Timestamp**: 2026-11-14T01:26:20.115Z  
 > **Learning ID**: `learn-github-pingcap-tidb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T16:35:52.581Z  
+> **Harvest Timestamp**: 2026-11-14T01:26:19.927Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: TiDB is built for agentic workloads that grow unpredictably, with ACID guarantees and native support for transactions, analytics, and vector search. No data silos. No noisy neighbors. No infrastructure ceiling.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 40732 stars
+- **Stars / Engagement**: 40734 stars
 
 ---
 
@@ -908,15 +908,16 @@ func (db *Database) GetTable(name string) *Table {
 // LoadBackupTables loads schemas from BackupMeta.
 func LoadBackupTables(ctx context.Context, reader *MetaReader, loadStats bool) (map[string]*Database, error) {
 	ch := make(chan *Table)
-	errCh := make(chan error)
+	errCh := make(chan error, 1)
+	done := make(chan struct{})
+	defer func() { <-done }()
 	go func() {
+		defer close(done)
 		var opts []ReadSchemaOption
 		if !loadStats {
 			opts = []ReadSchemaOption{SkipStats}
 		}
-		if err := reader.ReadSchemasFiles(ctx, ch, opts...); err != nil {
-			errCh <- errors.Trace(err)
-		}
+		errCh <- reader.ReadSchemasFiles(ctx, ch, opts...)
 		close(ch)
 	}()
 
@@ -925,11 +926,11 @@ func LoadBackupTables(ctx context.Context, reader *MetaReader, loadStats bool) (
 		select {
 		case <-ctx.Done():
 			return nil, ctx.Err()
-		case err := <-errCh:
-			return nil, errors.Trace(err)
 		case table, ok := <-ch:
 			if !ok {
-				close(errCh)
+				if err := <-errCh; err != nil {
+					return nil, errors.Trace(err)
+				}
 				return databases, nil
 			}
 			dbName := table.DB.Name.String()
@@ -1944,17 +1945,11 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #73022** (2026-11-11): **chore: temporary CLA check after permission downgrade (will be closed)**
-  *Symptoms*: Verifies that license/cla still works after the GitHub App lost the Checks permission. Scratch file only; closed immediately.
-  **Post-Mortem & Fix Analysis**:
-  > Adding the "do-not-merge/release-note-label-needed" label because no release-note block was detected, please follow our [release note process](https://git.k8s.io/community/contributors/guide/release-notes.md) to remove it.  <details>  Instructions for interacting with me using PR comments are available [here](https://git.k8s.io/community/contributors/guide/pull-requests.md).  If you have questions or suggestions related to my behavior, please file an issue against the [kubernetes-sigs/prow](https://github.com/kubernetes-sigs/prow/issues/new?title=Prow%20issue:) repository. </details>
-  >  [FORMAT CHECKER NOTIFICATION]  **Notice**: To remove the `do-not-merge/needs-linked-issue` label, please provide the linked issue number on one line in the PR body, for example: `Issue Number: close #123` or `Issue Number: ref #456`.  <sub>:open_book: For more info, you can check the ["Contribute Code"](https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue) section in the development guide.</sub>  <hr>  **Notice**: To remove the `do-not-merge/needs-tests-checked` label, please finished the tests then check the finished items in description.  For example:      Tests <!-- At least one of them must be included. -->      - [x] Unit test     - [ ] Integration test     - [ ] Manual test (add detailed scripts or steps below)     - [ ] No code > ‼️ Must keep the HTML comments `<!-- At least one of them must be included. -->`  <sub>:open_book: For more info, you can check the ["Contribute Code"](https://pingcap.github.io/tidb-dev-guide/contribut
+- **Issue #73126** (2026-11-13): ***: upgrade brotli, compress, etcd client pkg, and prometheus (#73113)**
+  *Symptoms*: This is an automated cherry-pick of #73113  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: ref #72982  Problem Summary:  Upgrade these four modules:  - `github.com/andybalholm/brotli` to v1.2.7 - `github.com/klauspost/compress` to v1.20.2 - `go.etcd.io/etcd/client/pkg/v3` to v3.5.33 - `github.com/prometheus/prometheus` to v0.311.3  ### What changed and how does it work?  This change only intends to upgrade those four modules.  `go get` and `go mod tidy` also moved other modules in `go.mod` and `go.sum`, because Go's minimal version selection picked up requirements of the upgraded modules. `make bazel_prepare` then rewrote `DEPS.bzl` for that module graph, and updated `shard_count` in `pkg/planner/core/casetest/index/BUILD.bazel` to match the tests already in that package. Those other changes were applied by Go and Bazel, not requested on their own.  Prometheus v0.311.3 no longer provides the package-level `parser.ParseExpr`. `pkg/infoschema/metrics_schema_test.go` now parses PromQL with `parser.NewParser(parser.Options{})`.  ### Check List  Tests <!-- At least one of them must be included. -->  - [x] Unit test - [ ] Integration test - [ ] Manual test (add detailed scripts
 
-- **Issue #73021** (2026-11-11): **chore: temporary CLA webhook check (will be closed)**
-  *Symptoms*: Temporary pull request to verify the CLA webhook end to end after the webhook hardening. It only adds a scratch file and will be closed immediately.
-  **Post-Mortem & Fix Analysis**:
-  > Adding the "do-not-merge/release-note-label-needed" label because no release-note block was detected, please follow our [release note process](https://git.k8s.io/community/contributors/guide/release-notes.md) to remove it.  <details>  Instructions for interacting with me using PR comments are available [here](https://git.k8s.io/community/contributors/guide/pull-requests.md).  If you have questions or suggestions related to my behavior, please file an issue against the [kubernetes-sigs/prow](https://github.com/kubernetes-sigs/prow/issues/new?title=Prow%20issue:) repository. </details>
-  >  [FORMAT CHECKER NOTIFICATION]  **Notice**: To remove the `do-not-merge/needs-linked-issue` label, please provide the linked issue number on one line in the PR body, for example: `Issue Number: close #123` or `Issue Number: ref #456`.  <sub>:open_book: For more info, you can check the ["Contribute Code"](https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue) section in the development guide.</sub>  <hr>  **Notice**: To remove the `do-not-merge/needs-tests-checked` label, please finished the tests then check the finished items in description.  For example:      Tests <!-- At least one of them must be included. -->      - [x] Unit test     - [ ] Integration test     - [ ] Manual test (add detailed scripts or steps below)     - [ ] No code > ‼️ Must keep the HTML comments `<!-- At least one of them must be included. -->`  <sub>:open_book: For more info, you can check the ["Contribute Code"](https://pingcap.github.io/tidb-dev-guide/contribut
+- **Issue #73118** (2026-11-13): **planner: register implicit MLog schema dependencies in MDL**
+  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: close #73117  Problem Summary: An ordinary base-table writer can keep using an old MLog tracked-column set while MLog ADD COLUMN completes. A newly created MV can then miss that writer during FAST refresh and silently retain SUM(b) = 10 while the base SUM(b) is 20.  ### What changed and how does it work?  Acquire and pin the implicit MLog schema through `tryLockMDLAndUpdateSchemaIfNecessary` after a public base table is locked for a non-read-only statement. Reuse the existing placeholder/version registration, transaction InfoSchema overlay, statement dependency collection, and transaction cleanup.  Run the implicit dependency acquisition even when base-table MDL is already held. If a MLog was created after the transaction started, locate it through the current domain schema before registering and pinning it. The existing plan-cache preprocessing path also uses the helper, so cached writes reacquire the dependency.  Extend the existing MLog MDL tests to cover INSERT, UPDATE, DELETE, rollback, actual prep
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1971,654 +1966,191 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7981253e` (2026-11-10)
-**Commit Message**: expression: fix flaky TestGetLock internal session check (#72941)
+### Incident Patch 1: `7a158c6a` (2026-11-13)
+**Commit Message**: config: recognize runtime exit tails in diagnostic goroutine profiles (#72536)
 
-close pingcap/tidb#72880
+ref pingcap/tidb#71484
 
-**File**: `pkg/expression/integration_test/BUILD.bazel` (modified, +1/-0)
+**File**: `pkg/config/diagnosticmode/mode_server_test.go` (modified, +5/-4)
 ```diff
-@@ -36,6 +36,7 @@ go_test(
-         "//pkg/store/mockstore",
-         "//pkg/tablecodec",
-         "//pkg/testkit",
-+        "//pkg/testkit/testfailpoint",
-         "//pkg/testkit/testmain",
-         "//pkg/testkit/testsetup",
-         "//pkg/types",
+@@ -139,9 +139,10 @@ func assertDiagnosticGoroutineAllowlist(t *testing.T, dump []byte) {
+ 		require.Equal(t, "@", marker)
+ 		require.Positive(t, count)
+ 		checked += count
+-		if !hasFrames {
+-			// debug=1 suppresses runtime.goexit even when it is the only frame.
+-			// Resolve the raw PCs so no other frameless stack escapes the allowlist.
++		if !hasFrames || isRuntimeGoexitGroup(groupHeader) {
++			// A goroutine can be sampled after its user function has returned,
++			// in runtime.goexit or runtime.goexit1. debug=1 hides runtime.goexit.
++			// Resolve every raw PC so only runtime exit stacks bypass the allowlist.
+ 			require.True(t, isRuntimeGoexitGroup(groupHeader), "goroutine group has no frames: %s", group)
+ 			continue
+ 		}
+@@ -177,7 +178,7 @@ func isRuntimeGoexitGroup(header []byte) bool {
+ 		// expanding a stack containing known frames.
+ 		frames := runtime.CallersFrames([]uintptr{uintptr(pc)})
+ 		frame, more := frames.Next()
+-		if frame.Function != "runtime.goexit" || more {
++		if (frame.Function != "runtime.goexit" && frame.Function != "runtime.goexit1") || more {
+ 			return false
+ 		}
+ 	}
 ```
 
-**File**: `pkg/expression/integration_test/integration_test.go` (modified, +47/-11)
+---
+
+### Incident Patch 2: `f961be10` (2026-11-13)
+**Commit Message**: test: stabilize flaky TestSharedLockLockView (#70955)
+
+close pingcap/tidb#70951
+
+**File**: `tests/realtikvtest/txntest/shared_lock_test.go` (modified, +111/-20)
 ```diff
-@@ -59,6 +59,7 @@ import (
- 	"github.com/pingcap/tidb/pkg/store/mockstore"
- 	"github.com/pingcap/tidb/pkg/tablecodec"
- 	"github.com/pingcap/tidb/pkg/testkit"
-+	"github.com/pingcap/tidb/pkg/testkit/testfailpoint"
- 	"github.com/pingcap/tidb/pkg/types"
- 	"github.com/pingcap/tidb/pkg/util/codec"
- 	"github.com/pingcap/tidb/pkg/util/collate"
-@@ -1572,27 +1573,62 @@ func TestGetLock(t *testing.T) {
+@@ -969,12 +969,75 @@ func TestSharedLockLockView(t *testing.T) {
+ 	prepareForeignKeyTables(tk1)
  
- 	// Test someone else has the lock with short timeout.
- 	tk2 := testkit.NewTestKit(t, store)
--	sessionManager := domain.GetDomain(tk.Session()).InfoSyncer().GetSessionManager()
--	checkInternalSessionCount := func(expected int) {
-+	dom := domain.GetDomain(tk.Session())
-+	// Keep an unrelated checkout registered so the test cannot rely on a global count.
-+	backgroundSession, err := dom.SysSessionPool().Get()
-+	require.NoError(t, err)
-+	defer dom.SysSessionPool().Put(backgroundSession)
-+	sessionManager := dom.InfoSyncer().GetSessionManager()
-+	type lockSession struct {
-+		session  any
-+		returned bool
+ 	conn2 := tk2.MustQuery("select connection_id()").Rows()[0][0].(string)
++	parentTableID := external.GetTableByName(t, tk1, "test", "parent").Meta().ID
++	parentKey := fmt.Sprintf("%X", []byte(tablecodec.EncodeRowKeyWithHandle(parentTableID, kv.IntHandle(1))))
++	// DATA_LOCK_WAITS also contains waiters belonging to background transactions.
++	lockWaitsSource := func(txnID uint64) string {
++		return fmt.Sprintf(
++			"from INFORMATION_SCHEMA.DATA_LOCK_WAITS as l left join INFORMATION_SCHEMA.TIDB_TRX as trx on l.trx_id = trx.id where l.key = '%s' and l.trx_id = %d and trx.session_id = %s",
++			parentKey, txnID, conn2,
++		)
 +	}
-+	var mu sync.Mutex
-+	var sessions []*lockSession
-+	active := make(map[any]*lockSession)
-+	testfailpoint.EnableCall(t, "github.com/pingcap/tidb/pkg/session/afterGetAdvisoryLockSession", func(owner, internal any) {
-+		if owner != tk.Session() && owner != tk2.Session() {
-+			return
-+		}
-+		mu.Lock()
-+		defer mu.Unlock()
-+		tracked := &lockSession{session: internal}
-+		sessions = append(sessions, tracked)
-+		active[internal] = tracked
-+	})
-+	testfailpoint.EnableCall(t, "github.com/pingcap/tidb/pkg/testkit/afterDeleteInternalSession", func(internal any) {
-+		mu.Lock()
-+		defer mu.Unlock()
-+		if tracked := active[internal]; tracked != nil {
-+			tracked.returned = true
-+			delete(active, internal)
-+		}
-+	})
-+	checkSessions := func(returned ...bool) {
- 		t.Helper()
--		// Background tasks can temporarily borrow sessions from the same pool.
--		require.Eventually(t, func() bool {
--			return sessionManager.InternalSessionCount() == expected
--		}, 10*time.Second, 20*time.Millisecond, "expected %d internal sessions", expected)
-+		mu.Lock()
-+		defer mu.Unlock()
-+		require.Len(t, sessions, len(returned))
-+		for i, expected := range returned {
-+			require.Equal(t, expected, sessions[i].returned, "advisory lock attempt %d", i+1)
-+			if !expected {
-+				require.True(t, sessionManager.ContainsInternalSession(sessions[i].session))
++
++	// Two unrelated waiters also make the old count-ordered query select their key first.
++	noiseBlocker := testkit.NewTestKit(t, store)
++	noiseBlocker.MustExec("begin pessimistic")
++	noiseBlocker.MustExec("select * from test.parent where id=2 for update")
++	noiseDoneCh := make(chan error, 2)
++	noiseWaiters := 0
++	t.Cleanup(func() {
++		noiseBlocker.MustExec("rollback")
++		for range noiseWaiters {
++			select {
++			case err := <-noiseDoneCh:
++				require.NoError(t, err)
++			case <-time.After(10 * time.Second):
++				t.Error("unrelated waiter did not finish after rolling back its blocker")
 +			}
 +		}
- 	}
--	checkInternalSessionCount(0)
- 	tk2.MustQuery("SELECT get_lock('mygloballock', 1)").Check(testkit.Rows("1"))
--	checkInternalSessionCount(1)
-+	checkSessions(false)
- 	tk.MustQuery("SELECT get_lock('mygloballock', 1)").Check(testkit.Rows("0")) // someone else has the lock
--	checkInternalSessionCount(1)
-+	checkSessions(false, true)
- 	tk.MustQuery("SELECT release_lock('mygloballock')").Check(testkit.Rows("0")) // never had the lock
- 	// try again
- 	tk.MustQuery("SELECT get_lock('mygloballock', 0)").Check(testkit.Rows("0")) // someone else has the lock
--	checkInternalSessionCount(1)
-+	checkSessions(false, true, true)
- 	tk.MustQuery("SELECT release_lock('mygloballock')").Check(testkit.Rows("0")) // never had the lock
- 	// release it
- 	tk2.MustQuery("SELECT release_lock('mygloballock')").Check(testkit.Rows("1")) // works
--	checkInternalSessionCount(0)
-+	// The deletion event is recorded before the session becomes available for reuse.
-+	checkSessions(true, true, true)
- 
- 	// Confirm all locks are released
- 	tk2.MustQuery("SELECT release_all_locks()").Check(testkit.Rows("0"))
-```
-
-**File**: `pkg/session/session.go` (modified, +1/-0)
-```diff
-@@ -2089,6 +2089,7 @@ func (s *session) GetAdvisoryLock(lockName string, timeout int64) error {
- 	if err != nil {
- 		return err
- 	}
-+	failpoint.InjectCall("afterGetAdvisoryLockSession", s, se)
- 	lock := &advisoryLock{session: se, ctx: context.TODO(), owner: s.getAdvisoryLockOwner(), clean: clean}
- 	err = lock.GetLock(lockName, timeout)
- 	if err != nil {
-```
-
-**File**: `pkg/testkit/mocksessionmanager.go` (modified, +2/-0)
-```diff
-@@ -19,6 +19,7 @@ import (
- 	"maps"
- 	"sync"
- 
-+	"github.com/pingcap/failpoint"
- 	"github.com/pingcap/tidb/pkg/domain"
- 	"github.com/pingcap/tidb/pkg/infoschema/issyncer/mdldef"
- 	"github.com/pingcap/tidb/pkg/parser/ast"
-@@ -160,6 +161,7 @@ func (msm *MockSessionManager) DeleteInternalSession(s any) {
- 	msm.mu.Lock()
- 	delete(msm.internalSessions, s)
- 	msm.mu.Unlock()
-+	failpoint.InjectCall("afterDeleteInternalSession", s)
- }
- 
- // GetInternalSessionStartTSList is to get all startTS of every transaction running in the current internal sessions
-```
-
----
-
-### Incident Patch 2: `e5efa812` (2026-11-10)
-**Commit Message**: server: fix resource group connection gauge drift on change user (#71974)
-
-close pingcap/tidb#71969
-
-**File**: `pkg/server/conn.go` (modified, +3/-1)
-```diff
-@@ -2741,13 +2741,16 @@ func (cc *clientConn) handleChangeUser(ctx context.Context, data []byte) error {
- 	cc.user = newUser
- 	cc.dbname = newDBName
- 	err := cc.openSession()
-+	cc.moveResourceGroupCounter(oldResourceGroup)
- 	restoreOldSession := func() {
-+		newResourceGroup := cc.currentResourceGroupName()
- 		if newCtx := cc.getCtx(); newCtx != nil && newCtx != oldCtx {
- 			if err := newCtx.Close(); err != nil {
- 				logutil.Logger(ctx).Debug("close new context failed", zap.Error(err))
- 			}
- 		}
- 		cc.SetCtx(oldCtx)
-+		cc.moveResourceGroupCounter(newResourceGroup)
- 		cc.user = oldUser
- 		cc.dbname = oldDBName
- 		cc.authPlugin = oldAuthPlugin
-@@ -2784,7 +2787,6 @@ func (cc *clientConn) handleChangeUser(ctx context.Context, data []byte) error {
- 			logutil.Logger(ctx).Debug("close old context failed", zap.Error(err))
- 		}
- 	}
--	cc.moveResourceGroupCounter(oldResourceGroup)
- 	return cc.handleCommonConnectionReset(ctx)
- }
- 
-```
-
-**File**: `pkg/server/conn_test.go` (modified, +35/-14)
-```diff
-@@ -391,12 +391,15 @@ func TestChangeUserAndResetSessionResourceGroupCounter(t *testing.T) {
- 
- 	metrics.ConnGauge.WithLabelValues(resourcegroup.DefaultResourceGroupName).Inc()
- 
-+	requireCounter := func(rgTest, defaultGroup float64) {
-+		require.Equal(t, rgTest, promtestutils.ToFloat64(metrics.ConnGauge.WithLabelValues("rg_test")))
-+		require.Equal(t, defaultGroup, promtestutils.ToFloat64(metrics.ConnGauge.WithLabelValues(resourcegroup.DefaultResourceGroupName)))
-+	}
-+
- 	tk := testkit.NewTestKit(t, store)
- 	tk.MustExec("create resource group rg_test RU_PER_SEC = 1000;")
- 	tk.MustExec("set resource group rg_test")
--
--	require.Equal(t, 0.0, promtestutils.ToFloat64(metrics.ConnGauge.WithLabelValues(resourcegroup.DefaultResourceGroupName)))
--	require.Equal(t, 1.0, promtestutils.ToFloat64(metrics.ConnGauge.WithLabelValues("rg_test")))
-+	requireCounter(1, 0)
- 
- 	tidbdrv := NewTiDBDriver(store)
- 	cfg := serverutil.NewTestConfig()
-@@ -420,23 +423,41 @@ func TestChangeUserAndResetSessionResourceGroupCounter(t *testing.T) {
- 	}
- 	cc.SetCtx(&TiDBContext{Session: tk.Session()})
- 
--	userData := append([]byte("root"), 0x0, 0x0)
--	userData = append(userData, []byte("test")...)
--	userData = append(userData, 0x0)
--	err = cc.dispatch(context.Background(), append([]byte{mysql.ComChangeUser}, userData...))
--	require.NoError(t, err)
-+	changeUser := func(user, db string) error {
-+		data := append([]byte(user), 0x0, 0x0)
-+		data = append(data, []byte(db)...)
-+		data = append(data, 0x0)
-+		return cc.dispatch(context.Background(), append([]byte{mysql.ComChangeUser}, data...))
++	})
++	for range 2 {
++		noiseWaiter := testkit.NewTestKit(t, store)
++		noiseWaiter.MustExec("begin pessimistic")
++		noiseTxnID := noiseWaiter.Session().TxnInfo().StartTS
++		noiseWaiters++
++		go func() {
++			_, err := noiseWaiter.Exec("select * from test.parent where id=2 for update")
++			if err == nil {
++				_, err = noiseWaiter.Exec("rollback")
++			}
++			noiseDoneCh <- err
++		}()
++		require.Eventually(t, func() bool {
++			return len(testTk.MustQuery(fmt.Sprintf(
++				"select TRX_ID from INFORMATION_SCHEMA.DATA_LOCK_WAITS where TRX_ID = %d", noiseTxnID,
++			)).Rows()) > 0
++		}, 10*time.Second, 100*time.Millisecond)
 +	}
  
--	require.Equal(t, 0.0, promtestutils.ToFloat64(metrics.ConnGauge.WithLabelValues("rg_test")))
--	require.Equal(t, 1.0, promtestutils.ToFloat64(metrics.ConnGauge.WithLabelValues(resourcegroup.DefaultResourceGroupName)))
-+	require.NoError(t, changeUser("root", "test"))
-+	requireCounter(0, 1)
+ 	// Case1: shared lock waits for exclusive lock on parent row
+ 	tk1.MustExec("begin pessimistic")
+ 	tk1.MustExec("select * from parent where id=1 for update") // lock parent row(exclusive)
  
- 	_, err = cc.ctx.Session.Execute(context.Background(), "set resource group rg_test")
- 	require.NoError(t, err)
--	require.Equal(t, 1.0, promtestutils.ToFloat64(metrics.ConnGauge.WithLabelValues("rg_test")))
--	require.Equal(t, 0.0, promtestutils.ToFloat64(metrics.ConnGauge.WithLabelValues(resourcegroup.DefaultResourceGroupName)))
-+	requireCounter(1, 0)
- 	err = cc.dispatch(context.Background(), []byte{mysql.ComResetConnection})
- 	require.NoError(t, err)
--	require.Equal(t, 0.0, promtestutils.ToFloat64(metrics.ConnGauge.WithLabelValues("rg_test")))
--	require.Equal(t, 1.0, promtestutils.ToFloat64(metrics.ConnGauge.WithLabelValues(resourcegroup.DefaultResourceGroupName)))
-+	requireCounter(0, 1)
-+
-+	// Change to a user bound to a resource group, where authentication itself moves the counter.
-+	tk.MustExec("create user u_rg resource group rg_test")
-+	require.NoError(t, changeUser("u_rg", ""))
-+	requireCounter(1, 0)
-+	require.NoError(t, changeUser("u_rg", ""))
-+	requireCounter(1, 0)
-+
-+	// Authentication succeeds and binds the group, then useDB fails and the old session is restored.
-+	require.Error(t, changeUser("u_rg", "no_such_db"))
-+	require.Equal(t, "u_rg", cc.user)
-+	requireCounter(1, 0)
-+
-+	require.Error(t, changeUser("no_such_user", ""))
-+	require.Equal(t, "u_rg", cc.user)
-+	requireCounter(1, 0)
-+
-+	require.NoError(t, changeUser("root", ""))
-+	requireCounter(0, 1)
- }
+ 	insertDoneCh := make(chan error, 1)
++	insertDone := false
++	var exclusiveLockDoneCh chan error
++	exclusiveLockDone := false
++	t.Cleanup(func() {
++		_, _ = tk1.Exec("rollback")
++		if !insertDone {
++			select {
++			case <-insertDoneCh:
++			case <-time.After(time.Second):
++			}
++		}
++		if exclusiveLockDoneCh != nil && !exclusiveLockDone {
++			select {
++			case <-exclusiveLockDoneCh:
++			case <-time.After(time.Second):
++			}
++		}
++	})
+ 	tk2.MustExec("begin pessimistic")
+ 	conn2TxnID := tk2.Session().TxnInfo().StartTS
+ 	go func() {
+@@ -985,35 +1048,49 @@ func TestSharedLockLockView(t *testing.T) {
+ 		insertDoneCh <- err
+ 	}()
  
- func TestMalformHandshakeHeader(t *testing.T) {
-```
-
----
-
-### Incident Patch 3: `781d3965` (2026-11-10)
-**Commit Message**: *: restore materialized view regression coverage (#72864)
-
-ref pingcap/tidb#18023
-
-**File**: `pkg/ddl/mv_index_test.go` (modified, +1/-0)
-```diff
-@@ -144,6 +144,7 @@ func TestCreateUniqueIndexOnMaterializedView(t *testing.T) {
- 	tk.MustExec(`create materialized view mv_nullable_key_agg (g1, cnt)
- 		refresh fast
- 		as select g1, count(*) as cnt from t_mv_nullable_key group by g1`)
-+	tk.MustQuery("select non_unique, index_name = 'PRIMARY' from information_schema.statistics where table_schema='test' and table_name='mv_nullable_key_agg'").Check(testkit.Rows("0 0"))
- 	tk.MustGetErrMsg(
- 		"alter table mv_nullable_key_agg add primary key (cnt) nonclustered",
- 		"[ddl:8200]Unsupported ALTER TABLE ADD PRIMARY KEY on materialized view table",
-```
-
-**File**: `pkg/ddl/mview_worker_test.go` (modified, +3/-0)
-```diff
-@@ -70,9 +70,11 @@ func TestInitCreateMaterializedViewBuildSessionAppliesDefinitionDivPrecisionIncr
- 		before[name] = sessionVar(name)
- 	}
- 	sqlMode := sessVars.SQLMode
-+	originalInMViewMaintenance := sessVars.InMViewMaintenance
+-	select {
+-	case <-time.After(500 * time.Millisecond):
+-	case <-insertDoneCh:
+-		require.FailNow(t, "insert should be blocked")
+-		return
+-	}
++	var (
++		insertErr           error
++		insertFinishedEarly bool
++		txnWaits            [][]any
++	)
++	require.Eventually(t, func() bool {
++		select {
++		case insertErr = <-insertDoneCh:
++			insertDone = true
++			insertFinishedEarly = true
++			return true
++		default:
++		}
  
- 	restore, err := initCreateMaterializedViewBuildSession(sessCtx, job, mviewTableInfo, "test")
- 	require.NoError(t, err)
-+	require.True(t, sessVars.InMViewMaintenance)
- 	require.Equal(t, 9, sessVars.DivPrecisionIncrement)
- 	require.Equal(t, "test", sessVars.CurrentDB)
- 	require.Equal(t, "9", sessionVar(vardef.DivPrecisionIncrement))
-@@ -85,6 +87,7 @@ func TestInitCreateMaterializedViewBuildSessionAppliesDefinitionDivPrecisionIncr
- 	require.Equal(t, vardef.On, sessionVar(vardef.TiDBEnableParallelHashaggSpill))
+-	lockWaits := testTk.MustQuery("select `key`, count(*) as `count` from INFORMATION_SCHEMA.DATA_LOCK_WAITS group by `key` order by `count` desc;").Rows()
++		txnWaits = testTk.MustQuery("select TRX_ID, SESSION_ID " + lockWaitsSource(conn2TxnID)).Rows()
++		return len(txnWaits) > 0
++	}, 10*time.Second, 100*time.Millisecond)
++	require.Falsef(t, insertFinishedEarly, "insert should be blocked before DATA_LOCK_WAITS row is observed, err: %v", insertErr)
++	lockWaits := testTk.MustQuery("select l.key, count(*) as `count` " + lockWaitsSource(conn2TxnID) + " group by l.key").Rows()
+ 	require.Len(t, lockWaits, 1)
+ 	key := lockWaits[0][0].(string)
++	require.Equal(t, parentKey, key)
+ 	count := lockWaits[0][1].(string)
+-	require.Equal(t, count, "1")
++	require.Equal(t, "1", count)
  
- 	restore()
-+	require.Equal(t, originalInMViewMaintenance, sessVars.InMViewMaintenance)
- 	require.Equal(t, 2, sessVars.DivPrecisionIncrement)
- 	require.Equal(t, "before", sessVars.CurrentDB)
- 	require.Equal(t, sqlMode, sessVars.SQLMode)
-```
-
-**File**: `pkg/ddl/tests/materializedview/materialized_view_alter_test.go` (modified, +100/-4)
-```diff
-@@ -171,17 +171,62 @@ func TestMaterializedViewDDLProtectsMinMaxSupportingBaseTableIndexes(t *testing.
- 	err := tk.ExecToErr("drop index idx_ab on t_drop_idx")
- 	require.ErrorContains(t, err, "required by materialized view mv_drop_idx")
- 	require.ErrorContains(t, err, "MIN/MAX fast refresh")
-+	err = tk.ExecToErr("alter table t_drop_idx drop index idx_ab")
-+	require.ErrorContains(t, err, "required by materialized view mv_drop_idx")
-+	require.ErrorContains(t, err, "MIN/MAX fast refresh")
+-	txnWaits := testTk.MustQuery(fmt.Sprintf("select TRX_ID, SESSION_ID from INFORMATION_SCHEMA.DATA_LOCK_WAITS as l left join INFORMATION_SCHEMA.TIDB_TRX as trx on l.trx_id = trx.id where l.key = \"%s\"", key)).Rows()
++	txnWaits = testTk.MustQuery("select TRX_ID, SESSION_ID " + lockWaitsSource(conn2TxnID)).Rows()
+ 	require.Len(t, txnWaits, 1)
+ 	waitingTxnID := txnWaits[0][0].(string)
+ 	sessionID := txnWaits[0][1].(string)
+ 	require.Equal(t, waitingTxnID, fmt.Sprintf("%d", conn2TxnID))
+ 	require.Equal(t, sessionID, conn2)
  
- 	createMinMaxMV("t_invisible_idx", "mv_invisible_idx", ", index idx_ab(a, b)")
- 	err = tk.ExecToErr("alter table t_invisible_idx alter index idx_ab invisible")
- 	require.ErrorContains(t, err, "required by materialized view mv_invisible_idx")
-+	require.ErrorContains(t, err, "MIN/MAX fast refresh")
-+
-+	tk.MustExec("create table t_create_invisible_idx (a int not null, b int not null, c int not null, index idx_ab(a, b))")
-+	tk.MustExec("create materialized view log on t_create_invisible_idx (a, b, c)")
-+	tk.MustExec("alter table t_create_invisible_idx alter index idx_ab invisible")
-+	err = tk.ExecToErr("create materialized view mv_create_invisible_idx (a, b, minc, cnt) refresh fast next now() as select a, b, min(c), count(1) from t_create_invisible_idx group by a, b")
-+	require.ErrorContains(t, err, "requires base table index whose leading columns cover all GROUP BY columns")
-+
-+	tk.MustExec("create table t_drop_pk (a int not null primary key nonclustered, c int not null)")
-+	tk.MustExec("create materialized view log on t_drop_pk (a, c)")
-+	tk.MustExec("create materialized view mv_drop_pk (a, minc, cnt) refresh fast next now() as select a, min(c), count(1) from t_drop_pk group by a")
-+	err = tk.ExecToErr("alter table t_drop_pk drop primary key")
-+	require.ErrorContains(t, err, "required by materialized view mv_drop_pk")
-+	require.ErrorContains(t, err, "MIN/MAX fast refresh")
-+
-+	createMinMaxMV("t_alt_idx", "mv_alt_idx", ", index idx_ab(a, b), index idx_ba(b, a)")
-+	tk.MustExec("drop index idx_ab on t_alt_idx")
-+	tk.MustExec("insert into t_alt_idx values (1, 2, 10), (1, 2, 5)")
-+	tk.MustExec("refresh materialized view mv_alt_idx fast")
-+	tk.MustQuery("select a, b, minc, cnt from mv_alt_idx").Check(testkit.Rows("1 2 5 2"))
-+
-+	createMinMaxMVWithWhere := func(baseTable, mvName string) {
-+		tk.MustExec(fmt.Sprintf("create table %s (a int not null, b int not null, c int not null, index idx_ab(a, b), index idx_ba(b, a))", baseTable))
-+		tk.MustExec(fmt.Sprintf("create materialized view log on %s (a, b, c)", baseTable))
-+		tk.MustExec(fmt.Sprintf("create materialized view %s (a, b, minc, cnt) refresh fast next now() as select a, b, min(c), count(1) from %s where c > 0 group by a, b", mvName, baseTable))
-+	}
-+
-+	createMinMaxMVWithWhere("t_where_drop_idx", "mv_where_drop_idx")
-+	tk.MustExec("drop index idx_ab on t_where_drop_idx")
-+	err = tk.ExecToErr("drop index idx_ba on t_where_drop_idx")
-+	require.ErrorContains(t, err, "required by materialized view mv_where_drop_idx")
-+	require.ErrorContains(t, err, "MIN/MAX fast refresh")
-+
-+	createMinMaxMVWithWhere("t_where_invisible_idx", "mv_where_invisible_idx")
-+	tk.MustExec("alter table t_where_invisible_idx alter index idx_ab invisible")
-+	err = tk.ExecToErr("alter table t_where_invisible_idx alter index idx_ba invisible")
-+	require.ErrorContains(t, err, "required by materialized view mv_where_invisible_idx")
-+	require.ErrorContains(t, err, "MIN/MAX fast refresh")
+ 	tk1.MustExec("commit")
+-	require.NoError(t, <-insertDoneCh)
++	insertErr = <-insertDoneCh
++	insertDone = true
++	require.NoError(t, insertErr)
+ 	tk1.MustQuery("select * from child").Check(testkit.Rows("1 1"))
  
- 	createMinMaxMV("t_multi_schema_replace_idx", "mv_multi_schema_replace_idx", ", index idx_ab(a, b)")
- 	tk.MustExec("alter table t_multi_schema_replace_idx drop index idx_ab, add index idx_ba(b, a)")
-+	tk.MustExec("insert into t_multi_schema_replace_idx values (1, 2, 10), (1, 2, 5)")
-+	tk.MustExec("refresh materialized view mv_multi_schema_replace_idx fast")
-+	tk.MustQuery("select a, b, minc, cnt from mv_multi_schema_replace_idx").Check(testkit.Rows("1 2 5 2"))
+ 	// Case2: exclusive lock waits for shared lock on parent row
+ 	tk1.MustExec("begin pessimistic")
+ 	tk1.MustExec("insert into child values (2, 1)") // lock parent row (shared)
  
- 	createMinMaxMV("t_multi_schema_bad_idx", "mv_multi_schema_bad_idx", ", index idx_ab(a, b)")
- 	err = tk.ExecToErr("alter table t_multi_schema_bad_idx drop index idx_ab, add index idx_c(c)")
- 	require.ErrorContains(t, err, "required by materialized view mv_multi_schema_bad_idx")
-+	require.ErrorContains(t, err, "MIN/MAX fast refresh")
- }
- 
- func TestMaterializedViewDDLProtectsMinMaxSupportingBaseTableIndexesAgainstConcurrentDrop(t *testing.T) {
-@@ -254,6 +299,10 @@ func TestMaterializedViewDDLProtectsMinMaxSupportingBaseTableIndexesAgainstConcu
- 	require.NoError(t, err1)
- 	require.ErrorContains(t, err2, "required by materialized view mv_concurrent_drop_idx")
- 	require.ErrorContains(t, err2, "MIN/MAX fast refresh")
-+
-+	tk.MustExec("insert into t_concurrent_drop_idx values (1, 2, 10), (1, 2, 5)")
-+	tk.MustExec("refresh materialized view mv_concurrent_drop_idx fast")
-+	tk.MustQuery("select a, b, minc, cnt from mv_concurrent_drop_idx").Check(testkit.Rows("1 2 5 2"))
- }
- 
- func TestAlterMaterializedViewRefreshDisableScheduleUpdatesAlert(t *testing.T) {
-@@ -325,11 +374,11 @@ 
-```
-
-**File**: `pkg/ddl/tests/materializedview/materialized_view_basic_test.go` (modified, +108/-3)
-```diff
-@@ -37,25 +37,65 @@ import (
- )
- 
- func TestCreateMaterializedViewValidationCoverage(t *testing.T) {
--	store := testkit.CreateMockStore(t)
-+	store, dom := testkit.CreateMockStoreAndDomain(t)
- 	tk := newMViewTestKit(t, store)
- 	tk.MustExec("use test")
-+	tk.MustExec("set time_zone = '+08:00'")
- 	tk.MustExec("create table t_mv_validation (a int not null, b int not null)")
-+	err := tk.ExecToErr("create materialized view mv_no_log (a, cnt) as select a, count(1) from t_mv_validation group by a")
-+	require.ErrorContains(t, err, "materialized view log does not exist")
- 	tk.MustExec("insert into t_mv_validation values (1, 10), (1, 5), (2, 7)")
- 	tk.MustExec("create materialized view log on t_mv_validation (a, b)")
- 
-+	err = tk.ExecToErr("create materialized view mv_no_count (a, s) as select a, sum(b) from t_mv_validation group by a")
-+	require.ErrorContains(t, err, "must contain count(*)/count(1)")
-+	err = tk.ExecToErr("create materialized view mv_avg (a, avgv, cnt) as select a, avg(b), count(1) from t_mv_validation group by a")
-+	require.ErrorContains(t, err, "unsupported aggregate function")
-+	err = tk.ExecToErr("create materialized view mv_rand (a, cnt) as select a, count(1) from t_mv_validation where rand() > 0 group by a")
-+	require.ErrorContains(t, err, "WHERE clause must be deterministic")
-+
- 	// COUNT(column) is supported when the required COUNT(*)/COUNT(1) is also present.
- 	tk.MustExec("create materialized view mv_count_column (a, cnt_b, cnt) as select a, count(b), count(1) from t_mv_validation group by a")
- 	tk.MustQuery("select a, cnt_b, cnt from mv_count_column order by a").Check(testkit.Rows("1 2 2", "2 1 1"))
- 
-+	baseTable, err := dom.InfoSchema().TableByName(context.Background(), ast.NewCIStr("test"), ast.NewCIStr("t_mv_validation"))
-+	require.NoError(t, err)
-+	mvTable, err := dom.InfoSchema().TableByName(context.Background(), ast.NewCIStr("test"), ast.NewCIStr("mv_count_column"))
-+	require.NoError(t, err)
-+	mvInfo := mvTable.Meta().MaterializedView
-+	require.NotNil(t, mvInfo)
-+	require.Equal(t, []int64{baseTable.Meta().ID}, mvInfo.BaseTableIDs)
-+	require.Equal(t, "FAST", mvInfo.RefreshMethod)
-+	require.Empty(t, mvInfo.RefreshStartWith)
-+	require.Empty(t, mvInfo.RefreshNext)
-+	require.Zero(t, mvInfo.AlertWarningSec)
-+	require.Zero(t, mvInfo.AlertOverdueSec)
-+	require.False(t, mvInfo.AlertRefreshFailed)
-+	require.Equal(t, tk.Session().GetSessionVars().SQLMode, mvInfo.DefinitionSQLMode)
-+	require.Equal(t, tk.Session().GetSessionVars().SQLMode, mvInfo.RefreshScheduleSQLMode)
-+	require.Empty(t, mvInfo.DefinitionTimeZone.Name)
-+	require.Equal(t, 8*60*60, mvInfo.DefinitionTimeZone.Offset)
-+
- 	// Aggregate function names are case-insensitive.
- 	tk.MustExec("create materialized view mv_upper_aggregate (a, s, cnt) as select a, SUM(b), COUNT(1) from t_mv_validation group by a")
- 	tk.MustQuery("select a, s, cnt from mv_upper_aggregate order by a").Check(testkit.Rows("1 15 2", "2 7 1"))
- 
-+	tk.MustExec("create materialized view mv_alias (a, cnt) as select x.a, count(1) from t_mv_validation x where x.b > 0 group by x.a")
-+	tk.MustQuery("select a, cnt from mv_alias order by a").Check(testkit.Rows("1 2", "2 1"))
-+	tk.MustExec("create materialized view mv_out_alias (k, cnt) as select a as k, count(1) from t_mv_validation group by a")
-+	tk.MustQuery("select k, cnt from mv_out_alias order by k").Check(testkit.Rows("1 2", "2 1"))
-+
-+	tk.MustExec("create table t_mv_sum_time (a int not null, d date not null default '2020-01-01', dt datetime not null default '2020-01-01 00:00:00', ts timestamp not null default '2020-01-01 00:00:00', dur time not null default '00:00:00')")
-+	tk.MustExec("create materialized view log on t_mv_sum_time (a, d, dt, ts, dur)")
-+	for _, col := range []string{"d", "dt", "ts", "dur"} {
-+		err = tk.ExecToErr(fmt.Sprintf("create materialized view mv_sum_%s (a, s, cnt) as select a, sum(%s), count(1) from t_mv_sum_time group by a", col, col))
-+		require.ErrorContains(t, err, "does not support SUM on DATE/DATETIME/TIMESTAMP/TIME column", col)
-+	}
-+
- 	// MIN/MAX still require a supporting base-table index, regardless of function case.
- 	tk.MustExec("create table t_mv_minmax_validation (a int not null, b int not null, c int not null, index idx_cab(c, a, b))")
- 	tk.MustExec("create materialized view log on t_mv_minmax_validation (a, b, c)")
--	err := tk.ExecToErr("create materialized view mv_upper_min (a, b, minc, cnt) as select a, b, MIN(c), COUNT(1) from t_mv_minmax_validation group by a, b")
-+	err = tk.ExecToErr("create materialized view mv_upper_min (a, b, minc, cnt) as select a, b, MIN(c), COUNT(1) from t_mv_minmax_validation group by a, b")
- 	require.ErrorContains(t, err, "requires base table index whose leading columns cover all GROUP BY columns")
- 
- 	// Every referenced column must be present in the materialized view log.
-@@ -146,10 +186,21 @@ func TestMaterializedViewCommentLength(t *testing.T) {
- 	err := tk.ExecToErr(createMVSQL("mv_comment_too_long", commentTooLong))
- 	require.ErrorContains(t, er
-```
-
-**File**: `pkg/ddl/tests/materializedviewlog/materialized_view_alter_test.go` (modified, +23/-1)
-```diff
-@@ -99,7 +99,7 @@ func TestAlterMaterializedViewLogAddColumnBasic(t *testing.T) {
- 	tk.MustExec("use test")
- 	tk.MustExec("create table t_mlog_add_column (id int not null, n int not null, s varchar(10) not null, d date not null, note text not null, untouched int)")
- 	tk.MustExec("create materialized view log on t_mlog_add_column (id)")
--	mustExecMViewMaintenance(t, tk, "insert into `$mlog$t_mlog_add_column` (id, `_MLOG$_DML_TYPE`, `_MLOG$_OLD_NEW`) values (1, 'I', 1)")
-+	tk.MustExec("insert into t_mlog_add_column values (1, 7, 'old', '2026-01-02', 'memo', 100)")
- 
- 	tk.MustExec("alter materialized view log on t_mlog_add_column add column (n, s, d, note)")
- 	mlogTable, err := dom.InfoSchema().TableByName(context.Background(), ast.NewCIStr("test"), ast.NewCIStr("$mlog$t_mlog_add_column"))
-@@ -123,6 +123,19 @@ func TestAlterMaterializedViewLogAddColumnBasic(t *testing.T) {
- 	require.Equal(t, mysql.TypeBlob, columns["note"].GetType())
- 	tk.MustQuery("select n, hex(s), cast(d as char), hex(note), `_MLOG$_DML_TYPE`, `_MLOG$_OLD_NEW` from `$mlog$t_mlog_add_column`").Check(testkit.Rows("0 20 0000-00-00 20 I 1"))
- 
-+	showCreate := tk.MustQuery("show create materialized view log on t_mlog_add_column").Rows()[0][1].(string)
-+	require.Contains(t, showCreate, "CREATE MATERIALIZED VIEW LOG ON `t_mlog_add_column` (`id`, `n`, `s`, `d`, `note`)")
-+
-+	mustExecMViewMaintenance(t, tk, "delete from `$mlog$t_mlog_add_column`")
-+	tk.MustExec("update t_mlog_add_column set untouched = 101 where id = 1")
-+	tk.MustQuery("select * from `$mlog$t_mlog_add_column`").Check(testkit.Rows())
-+
-+	tk.MustExec("update t_mlog_add_column set s = 'new' where id = 1")
-+	tk.MustQuery("select id, n, s, cast(d as char), note, `_MLOG$_DML_TYPE`, `_MLOG$_OLD_NEW` from `$mlog$t_mlog_add_column`").Sort().Check(testkit.Rows(
-+		"1 7 new 2026-01-02 memo U 1",
-+		"1 7 old 2026-01-02 memo U -1",
-+	))
-+
- 	tk.MustExec("create table t_mlog_add_column_atomic (id int, b int, c int)")
- 	tk.MustExec("create materialized view log on t_mlog_add_column_atomic (id)")
- 	cancelTK := testkit.NewTestKit(t, store)
-@@ -159,6 +172,10 @@ func TestAlterMaterializedViewLogAddColumnBasic(t *testing.T) {
- 	require.Equal(t, []ast.CIStr{ast.NewCIStr("id")}, atomicMLog.Meta().MaterializedViewLog.Columns)
- 	require.Nil(t, model.FindColumnInfo(atomicMLog.Meta().Columns, "b"))
- 	require.Nil(t, model.FindColumnInfo(atomicMLog.Meta().Columns, "c"))
-+	showCreate = tk.MustQuery("show create materialized view log on t_mlog_add_column_atomic").Rows()[0][1].(string)
-+	require.Contains(t, showCreate, "CREATE MATERIALIZED VIEW LOG ON `t_mlog_add_column_atomic` (`id`)")
-+	require.NotContains(t, showCreate, "`b`")
-+	require.NotContains(t, showCreate, "`c`")
- }
- 
- func TestAlterMaterializedViewLogAddColumnDefaultSemantics(t *testing.T) {
-@@ -236,4 +253,9 @@ func TestAlterMaterializedViewLogAddColumnSupportsNewMaterializedView(t *testing
- 	tk.MustExec("alter materialized view log on t_add_mlog_mv add column (c)")
- 	tk.MustExec("create materialized view mv_add_mlog_col_after (a, s, cnt) refresh fast as select a, sum(c), count(1) from t_add_mlog_mv group by a")
- 	tk.MustQuery("select a, s, cnt from mv_add_mlog_col_after order by a").Check(testkit.Rows("1 300 2", "2 300 1"))
-+
-+	tk.MustExec("update t_add_mlog_mv set c = 150 where a = 1 and b = 10")
-+	tk.MustExec("insert into t_add_mlog_mv values (2, 40, 400)")
-+	tk.MustExec("refresh materialized view mv_add_mlog_col_after fast")
-+	tk.MustQuery("select a, s, cnt from mv_add_mlog_col_after order by a").Check(testkit.Rows("1 350 2", "2 700 2"))
- }
-```
-
-**File**: `pkg/ddl/tests/materializedviewlog/materialized_view_basic_test.go` (modified, +26/-2)
-```diff
-@@ -118,6 +118,17 @@ func TestCreateMaterializedViewLogNameLengthByRune(t *testing.T) {
- 	tk.MustExec("use test")
- 
- 	maxBaseNameLen := mysql.MaxTableNameLength - len([]rune(model.MaterializedViewLogTableNamePrefix))
-+	asciiBaseName := strings.Repeat("t", mysql.MaxTableNameLength)
-+	asciiMLogName := model.MaterializedViewLogTableNamePrefix + strings.Repeat("t", maxBaseNameLen)
-+	require.Equal(t, asciiMLogName, model.MaterializedViewLogTableName(ast.NewCIStr(asciiBaseName)).O)
-+	tk.MustExec(fmt.Sprintf("create table `%s` (id int primary key)", asciiBaseName))
-+	tk.MustExec(fmt.Sprintf("create materialized view log on `%s` (id)", asciiBaseName))
-+	tk.MustQuery(fmt.Sprintf("select table_name from information_schema.tables where table_schema='test' and table_name='%s'", asciiMLogName)).Check(testkit.Rows(asciiMLogName))
-+	tk.MustExec(fmt.Sprintf("insert into `%s` values (1)", asciiBaseName))
-+	tk.MustQuery(fmt.Sprintf("select id, `_MLOG$_DML_TYPE`, `_MLOG$_OLD_NEW` from `%s`", asciiMLogName)).Check(testkit.Rows("1 I 1"))
-+	tk.MustExec(fmt.Sprintf("drop materialized view log on `%s`", asciiBaseName))
-+	tk.MustQuery(fmt.Sprintf("select table_name from information_schema.tables where table_schema='test' and table_name='%s'", asciiMLogName)).Check(testkit.Rows())
-+
- 	maxName := strings.Repeat("表", maxBaseNameLen)
- 	maxMLogName := model.MaterializedViewLogTableName(ast.NewCIStr(maxName)).O
- 	require.Equal(t, mysql.MaxTableNameLength, len([]rune(maxMLogName)))
-@@ -130,6 +141,10 @@ func TestCreateMaterializedViewLogNameLengthByRune(t *testing.T) {
- 	tk.MustExec(fmt.Sprintf("create table `%s` (a int)", tooLongName))
- 	err := tk.ExecToErr(fmt.Sprintf("create materialized view log on `%s` (a)", tooLongName))
- 	require.ErrorContains(t, err, "already exists")
-+
-+	tk.MustExec(fmt.Sprintf("drop materialized view log on `%s`", maxName))
-+	tk.MustExec(fmt.Sprintf("create materialized view log on `%s` (a)", tooLongName))
-+	tk.MustQuery(fmt.Sprintf("select count(*) from information_schema.tables where table_schema='test' and table_name='%s'", maxMLogName)).Check(testkit.Rows("1"))
- }
- 
- func TestCreateMaterializedViewLogPurgeExprTypeValidation(t *testing.T) {
-@@ -147,6 +162,8 @@ func TestCreateMaterializedViewLogPurgeExprTypeValidation(t *testing.T) {
- 	require.ErrorContains(t, err, "PURGE NEXT expression must return DATE/DATETIME/TIMESTAMP")
- 	tk.MustExec("create table t_date_schedule (a int)")
- 	tk.MustExec("create materialized view log on t_date_schedule (a) purge next cast('2030-01-02' as date)")
-+	tk.MustExec("create table t_current_date_schedule (a int)")
-+	tk.MustExec("create materialized view log on t_current_date_schedule (a) purge start with current_date next date_add(now(), interval 1 hour)")
- 	tk.MustExec("create materialized view log on t (a) purge start with now() next date_add(now(), interval 1 hour)")
- }
- 
-@@ -208,6 +225,7 @@ func TestAlterMaterializedViewLogPurgeExprTypeValidation(t *testing.T) {
- 	require.ErrorContains(t, err, "PURGE IMMEDIATE is not supported for ALTER MATERIALIZED VIEW LOG")
- 
- 	tk.MustExec("alter materialized view log on t purge next cast('2030-01-02' as date)")
-+	tk.MustExec("alter materialized view log on t purge start with current_date next date_add(now(), interval 1 hour)")
- 	tk.MustExec("alter materialized view log on t purge start with now() next date_add(now(), interval 1 hour)")
- }
- 
-@@ -458,10 +476,10 @@ func TestAlterMaterializedViewLogPurgeScheduleUTC(t *testing.T) {
- 	require.Empty(t, info.PurgeNext)
- 
- 	tk.MustExec("set sql_mode = 'PIPES_AS_CONCAT'")
--	tk.MustExec("alter materialized view log on t purge next cast('2030-01-02 10:00:00' as datetime)")
-+	tk.MustExec("alter materialized view log on t purge next cast(date_add('2030-01-01', interval (1 || 2) day) as datetime)")
- 	_, info = getMLog()
- 	require.Equal(t, tk.Session().GetSessionVars().SQLMode, info.PurgeScheduleSQLMode)
--	tk.MustQuery("select NEXT_PURGE_UNIX_SECONDS = 1893578400 from mysql.tidb_mlog_purge_info where MLOG_ID = " + strconv.FormatInt(mlogTable.ID, 10)).Check(testkit.Rows("1"))
-+	tk.MustQuery("select NEXT_PURGE_UNIX_SECONDS = TIMESTAMPDIFF(SECOND, '1970-01-01 00:00:00', '2030-01-13 00:00:00') from mysql.tidb_mlog_purge_info where MLOG_ID = " + strconv.FormatInt(mlogTable.ID, 10)).Check(testkit.Rows("1"))
- 
- 	tk.MustExec("set time_zone = 'America/Los_Angeles'")
- 	tk.MustExec("alter materialized view log on t purge next cast('2021-03-14 02:30:00' as datetime)")
-@@ -490,7 +508,13 @@ func TestAlterMaterializedViewLogAddColumnRejectsInvalidColumns(t *testing.T) {
- 	require.ErrorContains(t, err, "ALTER MATERIALIZED VIEW LOG does not support BLOB column b")
- 	err = tk.ExecToErr("alter materialized view log on t_add_mlog_unsupported add column (j)")
- 	require.ErrorContains(t, err, "ALTER MATERIALIZED VIEW LOG does not support JSON column j")
-+	tk.MustExec("insert into t_add_mlog_unsupported (id, g1) values (1, 10)")
- 	tk.MustExec("alter materialized view log on t_add_mlog_unsupported add column (g2)")
-+	tk.MustExec("
-```
-
-**File**: `pkg/ddl/tests/materializedviewlog/materialized_view_create_test.go` (modified, +25/-0)
-```diff
-@@ -323,6 +323,19 @@ func TestCreateMaterializedViewLogRollbackUpdateSchemaVersionFailureRetries(t *t
- 	releaseRetry()
- 	require.Error(t, <-ddlErrCh)
- 	tk.MustQuery("show tables like '$mlog$t_create_mlog_rollback_retry'").Check(testkit.Rows())
-+	// A full InfoSchema reload can hide an invalid rollback diff.
-+	require.NoError(t, kv.RunInNewTxn(context.Background(), store, false, func(_ context.Context, txn kv.Transaction) error {
-+		metaMut := meta.NewMutator(txn)
-+		version, err := metaMut.GetSchemaVersion()
-+		require.NoError(t, err)
-+		diff, err := metaMut.GetSchemaDiff(version)
-+		require.NoError(t, err)
-+		require.NotNil(t, diff)
-+		require.Equal(t, model.ActionCreateMaterializedViewLog, diff.Type)
-+		require.Equal(t, mlogID, diff.OldTableID)
-+		require.Zero(t, diff.TableID)
-+		return nil
-+	}))
- }
- 
- func TestCreateMaterializedViewLogPrivilege(t *testing.T) {
-@@ -375,6 +388,7 @@ func TestCreateMaterializedViewAndLog(t *testing.T) {
- 	tk := newMViewTestKit(t, store)
- 	tk.MustExec("use test")
- 	tk.MustExec("set div_precision_increment = 9")
-+	tk.MustExec("set time_zone = 'Asia/Shanghai'")
- 	tk.MustExec("create table t (a int not null, b int not null)")
- 	tk.MustExec("insert into t values (1, 10), (1, 5), (2, 7)")
- 
-@@ -407,6 +421,17 @@ func TestCreateMaterializedViewAndLog(t *testing.T) {
- 	require.NotNil(t, mviewTable.Meta().MaterializedView)
- 	require.Equal(t, model.MViewInitBuildReady, mviewTable.Meta().MaterializedView.GetInitBuildState())
- 	require.Equal(t, 9, mviewTable.Meta().MaterializedView.DefinitionDivPrecisionIncrement)
-+	require.Equal(t, []int64{baseTable.Meta().ID}, mviewTable.Meta().MaterializedView.BaseTableIDs)
-+	require.Equal(t, "FAST", mviewTable.Meta().MaterializedView.RefreshMethod)
-+	require.Empty(t, mviewTable.Meta().MaterializedView.RefreshStartWith)
-+	require.Equal(t, "DATE_ADD(NOW(), INTERVAL 1 HOUR)", mviewTable.Meta().MaterializedView.RefreshNext)
-+	require.Zero(t, mviewTable.Meta().MaterializedView.AlertWarningSec)
-+	require.Zero(t, mviewTable.Meta().MaterializedView.AlertOverdueSec)
-+	require.False(t, mviewTable.Meta().MaterializedView.AlertRefreshFailed)
-+	require.Equal(t, tk.Session().GetSessionVars().SQLMode, mviewTable.Meta().MaterializedView.DefinitionSQLMode)
-+	require.Equal(t, tk.Session().GetSessionVars().SQLMode, mviewTable.Meta().MaterializedView.RefreshScheduleSQLMode)
-+	require.Equal(t, "Asia/Shanghai", mviewTable.Meta().MaterializedView.DefinitionTimeZone.Name)
-+	require.Zero(t, mviewTable.Meta().MaterializedView.DefinitionTimeZone.Offset)
- 
- 	tk.MustQuery("select count(*) from mysql.tidb_mlog_purge_info where mlog_id = ?", mlogTable.Meta().ID).Check(testkit.Rows("1"))
- 	tk.MustQuery("select last_success_read_tso > 0 from mysql.tidb_mview_refresh_info where mview_id = ?", mviewTable.Meta().ID).Check(testkit.Rows("1"))
-```
-
-**File**: `pkg/executor/executor_pkg_test.go` (modified, +12/-0)
-```diff
-@@ -93,6 +93,18 @@ func TestDecodeOldRowValToChunkWithExtraCommitTS(t *testing.T) {
- 	}
- }
- 
-+func TestHistTimeUsesLocation(t *testing.T) {
-+	input := time.Date(2026, 6, 14, 12, 0, 0, 123456789, time.UTC)
-+	loc := time.FixedZone("UTC+8", 8*60*60)
-+
-+	localTime := histTime(input, loc)
-+	utcTime := histTime(input, time.UTC)
-+	require.Equal(t, "2026-06-14 20:00:00.123456 +0800", localTime.Format("2006-01-02 15:04:05.000000 -0700"))
-+	require.Equal(t, "2026-06-14 12:00:00.123456 +0000", utcTime.Format("2006-01-02 15:04:05.000000 -0700"))
-+	require.Equal(t, 123456000, localTime.Nanosecond())
-+	require.Equal(t, 123456000, utcTime.Nanosecond())
-+}
-+
- func newTestMViewCompleteDeltaTargetTable(tp *types.FieldType) *tables.TableCommon {
- 	return tables.MockTableFromMeta(&model.TableInfo{
- 		ID:    1,
+-	exclusiveLockDoneCh := make(chan error, 1)
++	exclusiveLockDoneCh = make(chan error, 1)
+ 	tk2.Must
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #73022** (closed): chore: temporary CLA check after permission downgrade (will be closed) (@wuhuizuo)
-- **PR #73021** (closed): chore: temporary CLA webhook check (will be closed) (@wuhuizuo)
-- **PR #73001** (2026-11-11): executor: avoid repeated EXPLAIN comparison in TestTikvRegionStatus (@wjhuang2016)
-- **PR #73000** (2026-11-11): dxf, executor: isolate IMPORT INTO tests and clean up step executors (@joechenrh)
-- **PR #72990** (2026-11-11): server: check authentication plugins consistently on user changes (@D3Hunter)
-- **PR #72983** (2026-11-11): *: upgrade golang.org/x/net, golang.org/x/crypto, and golang.org/x/text (@D3Hunter)
+- **PR #73126** (closed): *: upgrade brotli, compress, etcd client pkg, and prometheus (#73113) (@ti-chi-bot)
+- **PR #73118** (2026-11-13): planner: register implicit MLog schema dependencies in MDL (@windtalker)
+- **PR #73116** (2026-11-13): *: upgrade Go dependencies (#72983) | plugin=pr/260 tidb-test=pr/2803- #72572 (@ti-chi-bot)
+- **PR #73113** (2026-11-13): *: upgrade brotli, compress, etcd client pkg, and prometheus (@D3Hunter)
+- **PR #73111** (2026-11-13): statistics: fix slow stats delta dumps on the materialized view branch (@windtalker)
+- **PR #73109** (2026-11-13): ddl, executor: serialize MLog column additions with MV refresh (@windtalker)
 
 ---
 
@@ -2638,31 +2170,38 @@ ref pingcap/tidb#18023
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. expression: fix flaky TestGetLock internal session check (#72941)
+## X. config: recognize runtime exit tails in diagnostic goroutine profiles
 
 **RULE**:
-When implementing operations in `pkg/expression/integration_test/BUILD.bazel`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/config/diagnosticmode/mode_server_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7981253e`: expression: fix flaky TestGetLock internal session check (#72941). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7a158c6a`: config: recognize runtime exit tails in diagnostic goroutine profiles. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/expression/integration_test/BUILD.bazel`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/config/diagnosticmode/mode_server_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        "//pkg/testkit/testfailpoint",
+		if !hasFrames || isRuntimeGoexitGroup(groupHeader) {
+			// A goroutine can be sampled after its user function has returned,
+			// in runtime.goexit or runtime.goexit1. debug=1 hides runtime.goexit.
+			// Resolve every raw PC so only runtime exit stacks bypass the allowlist.
+		if (frame.Function != "runtime.goexit" && frame.Function != "runtime.goexit1") || more {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+		if !hasFrames {
+			// debug=1 suppresses runtime.goexit even when it is the only frame.
+			// Resolve the raw PCs so no other frameless stack escapes the allowlist.
+		if frame.Function != "runtime.goexit" || more {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7981253e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7a158c6a` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

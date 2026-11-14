@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T00:49:24.931Z",
-  "total_records": 451,
+  "last_updated": "2026-11-14T01:26:59.304Z",
+  "total_records": 458,
   "domains": {
     "A": {
       "total": 5,
@@ -33,7 +33,7 @@
       ]
     },
     "D": {
-      "total": 231,
+      "total": 234,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -265,7 +265,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-1-schnell-learnings-co",
         "domain_intelligence-research-knowledge-intelligence-scantist-glm-5-3-slim-gguf-core-invariants",
         "DOM-D-0C0C2CB4",
-        "domain_intelligence-research-knowledge-intelligence-hf-scantist-glm-5-3-slim-gguf-learnings-core-inv"
+        "domain_intelligence-research-knowledge-intelligence-hf-scantist-glm-5-3-slim-gguf-learnings-core-inv",
+        "domain_intelligence-research-knowledge-intelligence-minimaxai-minimax-h3-core-invariants",
+        "DOM-D-F5645095",
+        "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant"
       ]
     },
     "E": {
@@ -290,7 +293,7 @@
       ]
     },
     "G": {
-      "total": 61,
+      "total": 63,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -352,7 +355,9 @@
         "domain_intelligence-architecture-intelligence-yvgude-lean-ctx-core-invariants",
         "domain_intelligence-architecture-intelligence-yvgude-lean-ctx-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-flux-iac-tofu-controller-core-invariants",
-        "domain_intelligence-architecture-intelligence-flux-iac-tofu-controller-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-flux-iac-tofu-controller-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-dathere-qsv-core-invariants",
+        "domain_intelligence-architecture-intelligence-dathere-qsv-learnings-core-invariants"
       ]
     },
     "H": {
@@ -457,7 +462,7 @@
       ]
     },
     "I": {
-      "total": 16,
+      "total": 18,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -474,7 +479,9 @@
         "domain_intelligence-content-information-intelligence-temporalio-temporal-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-alibaba-zvec-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-prometheus-prometheus-core-invariants",
-        "domain_intelligence-content-information-intelligence-lancedb-lancedb-core-invariants"
+        "domain_intelligence-content-information-intelligence-lancedb-lancedb-core-invariants",
+        "domain_intelligence-content-information-intelligence-pingcap-tidb-core-invariants",
+        "domain_intelligence-content-information-intelligence-pingcap-tidb-learnings-core-invariants"
       ]
     },
     "J": {
@@ -10483,6 +10490,102 @@
       "repository": "hf-scantist-glm-5.3-slim-gguf-learnings",
       "content_hash": "64326af889262212952692ebfb2527c79471326a02f962dc76c8ad51712a56f2",
       "created_at": "2026-11-14T00:49:23.700Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-minimaxai-minimax-h3-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-minimaxai-minimax-h3-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: MiniMaxAI/MiniMax-H3 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-minimaxai-minimax-h3-research-knowledge-intelligence-minimaxai-minimax-h3-cor.md",
+      "repository": "MiniMaxAI/MiniMax-H3",
+      "content_hash": "fe2e5807d50240f1923b7769c438f90e43b4b1095e7b18895a0dc2e69b725959",
+      "created_at": "2026-11-14T01:26:20.278Z"
+    },
+    "domain_intelligence-content-information-intelligence-pingcap-tidb-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-pingcap-tidb-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: pingcap/tidb Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pingcap-tidb-content-information-intelligence-pingcap-tidb-core-invariants.md",
+      "repository": "pingcap/tidb",
+      "content_hash": "5ef3dc8b38cd1ff456cdeb091edd17de690c4673f4a67233430da4847812f1fb",
+      "created_at": "2026-11-14T01:26:21.203Z"
+    },
+    "domain_intelligence-architecture-intelligence-dathere-qsv-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-dathere-qsv-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: dathere/qsv Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
+      "repository": "dathere/qsv",
+      "content_hash": "ccebf559ae2dd16e89bf574d7dbdf1414f1ea479ab924dc23d43f076f1d00878",
+      "created_at": "2026-11-14T01:26:27.771Z"
+    },
+    "DOM-D-F5645095": {
+      "record_id": "DOM-D-F5645095",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): MiniMaxAI/MiniMax-H3",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/MiniMaxAI/MiniMax-H3](https://huggingface.co/MiniMaxAI/MiniMax-H3))  \n> **Source Version**: `hf-minimaxai`  \n> **License**: Open-Source  \n> **Synthesized",
+      "content_hash": "b6da644dc1d0a4635626b270f4a2c7090d15b3e5d832bbef39fcb72ef5bf8f68",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-learnings.md`  \n> **Source**: huggingface ([https://huggingf -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-learnings.md`  \n> **Source**: huggingface ([https://huggingf",
+      "provenance": {
+        "source_uri": "project://hf-minimaxai-minimax-h3/hf-minimaxai-minimax-h3-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T01:26:30.571Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-minimaxai-minimax-h3)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-minimaxai-minimax-h3"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T01:26:58.105Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-minimaxai-minimax-h3-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-minimaxai-minimax-h3-learnings-research-knowledge-intelligence-hf-minimaxai-m.md",
+      "repository": "hf-minimaxai-minimax-h3-learnings",
+      "content_hash": "e72b610b454838c0f562684b588219fa916d6bc3a1ea3cb3c6986369d0038830",
+      "created_at": "2026-11-14T01:26:58.293Z"
+    },
+    "domain_intelligence-content-information-intelligence-pingcap-tidb-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-pingcap-tidb-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: pingcap-tidb-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pingcap-tidb-learnings-content-information-intelligence-pingcap-tidb-learnings-c.md",
+      "repository": "pingcap-tidb-learnings",
+      "content_hash": "e10c0257ac9bc0467ecd9c985f3e8b4cdcd91f64b13fcdb4c40ba8cad2937bed",
+      "created_at": "2026-11-14T01:26:58.724Z"
+    },
+    "domain_intelligence-architecture-intelligence-dathere-qsv-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-dathere-qsv-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-learnings-architecture-intelligence-dathere-qsv-learnings-core-invar.md",
+      "repository": "dathere-qsv-learnings",
+      "content_hash": "12282d166866a14a1aee169d9aba1b948a22ec0b78dd21010e6e2fa140b840da",
+      "created_at": "2026-11-14T01:26:59.304Z"
     }
   }
 }

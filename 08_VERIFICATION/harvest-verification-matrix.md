@@ -9690,3 +9690,7 @@
 | `CYCLE-20261114-T73V` | `2026-11-14T00:48:30.523Z` | `Scantist/GLM-5.3-SLIM-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-scantist-glm-5.3-slim-gguf-learnings.md` | Yes (`9a3f76b1...`) |
 | `CYCLE-20261114-TN0V` | `2026-11-14T00:48:51.151Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8413` | Yes (`82f498f1...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T00:49:23.505Z` | `hf-scantist-glm-5.3-slim-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-0C0C2CB4` [Domain D] | Yes (`fa7161b0...`) |
+| `CYCLE-20261114-5UBR` | `2026-11-14T01:26:20.103Z` | `MiniMaxAI/MiniMax-H3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-learnings.md` | Yes (`167b9d28...`) |
+| `CYCLE-20261114-5UYU` | `2026-11-14T01:26:20.934Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8414` | Yes (`20b38ab3...`) |
+| `CYCLE-20261114-601Q` | `2026-11-14T01:26:27.518Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8415` | Yes (`d0b1b2be...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T01:26:58.114Z` | `hf-minimaxai-minimax-h3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-F5645095` [Domain D] | Yes (`b6da644d...`) |

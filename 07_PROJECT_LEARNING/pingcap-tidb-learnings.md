@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source**: github ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
-> **Source Version**: `c3adc8df`  
+> **Source Version**: `7a158c6a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T01:57:26.224Z  
+> **Timestamp**: 2026-11-14T01:26:20.115Z  
 > **Learning ID**: `learn-github-pingcap-tidb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T01:57:26.216Z  
+> **Harvest Timestamp**: 2026-11-14T01:26:19.927Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: TiDB is built for agentic workloads that grow unpredictably, with ACID guarantees and native support for transactions, analytics, and vector search. No data silos. No noisy neighbors. No infrastructure ceiling.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 40732 stars
+- **Stars / Engagement**: 40734 stars
 
 ---
 
@@ -1920,11 +1920,11 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #73082** (2026-11-12): ***: disable coderabbit's approval**
-  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: close #xxx  Problem Summary:  Its approval ruins the default view of github pr status.  <img width="390" height="1069" alt="image" src="https://github.com/user-attachments/assets/4b92c23c-1f34-4b27-9360-9b39d22518c4" />  We can not know whether a pr is approved by someone simply from the board.  ### What changed and how does it work?  Ref https://docs.coderabbit.ai/pr-reviews/automatic-approvals  ### Check List  Tests <!-- At least one of them must be included. -->  - [ ] Unit test - [ ] Integration test - [ ] Manual test (add detailed scripts or steps below) - [x] No need to test   > - [ ] I checked and no code files have been changed.   > <!-- Or your custom  "No need to test" reasons -->  Side effects  - [ ] Performance regression: Consumes more CPU - [ ] Performance regression: Consumes more Memory - [ ] Breaking backward compatibility  Documentation  - [ ] Affects user behaviors - [ ] Contains syntax changes - [ ] Contains variable changes - [ ] Contains experimental features - [ ] Changes MySQL co
+- **Issue #73126** (2026-11-13): ***: upgrade brotli, compress, etcd client pkg, and prometheus (#73113)**
+  *Symptoms*: This is an automated cherry-pick of #73113  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: ref #72982  Problem Summary:  Upgrade these four modules:  - `github.com/andybalholm/brotli` to v1.2.7 - `github.com/klauspost/compress` to v1.20.2 - `go.etcd.io/etcd/client/pkg/v3` to v3.5.33 - `github.com/prometheus/prometheus` to v0.311.3  ### What changed and how does it work?  This change only intends to upgrade those four modules.  `go get` and `go mod tidy` also moved other modules in `go.mod` and `go.sum`, because Go's minimal version selection picked up requirements of the upgraded modules. `make bazel_prepare` then rewrote `DEPS.bzl` for that module graph, and updated `shard_count` in `pkg/planner/core/casetest/index/BUILD.bazel` to match the tests already in that package. Those other changes were applied by Go and Bazel, not requested on their own.  Prometheus v0.311.3 no longer provides the package-level `parser.ParseExpr`. `pkg/infoschema/metrics_schema_test.go` now parses PromQL with `parser.NewParser(parser.Options{})`.  ### Check List  Tests <!-- At least one of them must be included. -->  - [x] Unit test - [ ] Integration test - [ ] Manual test (add detailed scripts
 
-- **Issue #73081** (2026-11-12): **server: return unimplemented for unsupported TiKV RPCs (#71320)**
-  *Symptoms*: This is an automated cherry-pick of #71320  <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: close #73050  Problem Summary:  TiDB registers its RPC server as a TiKV service but implements only a subset of its methods. The remaining methods are promoted from an uninitialized `tikvpb.TikvServer` interface. Calling an unsupported method such as `KvPrewrite` therefore panics instead of returning an RPC error.  This PR addresses the panic in the issue, not the unexplained routing of the request to TiDB or end-to-end Lightning import success.  ### What changed and how does it work?  Embed the generated, zero-value-safe `tikvpb.UnimplementedTikvServer` instead of a nil interface. Unsupported methods return gRPC `Unimplemented`; TiDB's explicit coprocessor and batch handlers continue to take precedence.  Add regression coverage for `KvPrewrite`, `KvCommit`, and `RawGet` through the service interface. All three reproduce the panic before the fix and return `Unimplemented` after it.  Validation (Ready profile):  - RED: `./t
+- **Issue #73118** (2026-11-13): **planner: register implicit MLog schema dependencies in MDL**
+  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: close #73117  Problem Summary: An ordinary base-table writer can keep using an old MLog tracked-column set while MLog ADD COLUMN completes. A newly created MV can then miss that writer during FAST refresh and silently retain SUM(b) = 10 while the base SUM(b) is 20.  ### What changed and how does it work?  Acquire and pin the implicit MLog schema through `tryLockMDLAndUpdateSchemaIfNecessary` after a public base table is locked for a non-read-only statement. Reuse the existing placeholder/version registration, transaction InfoSchema overlay, statement dependency collection, and transaction cleanup.  Run the implicit dependency acquisition even when base-table MDL is already held. If a MLog was created after the transaction started, locate it through the current domain schema before registering and pinning it. The existing plan-cache preprocessing path also uses the helper, so cached writes reacquire the dependency.  Extend the existing MLog MDL tests to cover INSERT, UPDATE, DELETE, rollback, actual prep
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1941,231 +1941,191 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `12d84a92` (2026-11-12)
-**Commit Message**: statistics, domain: keep stats workers running after a panic (#72768)
+### Incident Patch 1: `7a158c6a` (2026-11-13)
+**Commit Message**: config: recognize runtime exit tails in diagnostic goroutine profiles (#72536)
 
-close pingcap/tidb#72741
+ref pingcap/tidb#71484
 
-**File**: `pkg/domain/BUILD.bazel` (modified, +1/-0)
+**File**: `pkg/config/diagnosticmode/mode_server_test.go` (modified, +5/-4)
 ```diff
-@@ -184,6 +184,7 @@ go_test(
-         "//pkg/meta",
-         "//pkg/meta/model",
-         "//pkg/metrics",
-+        "//pkg/owner",
-         "//pkg/parser/ast",
-         "//pkg/parser/auth",
-         "//pkg/parser/mysql",
-```
-
-**File**: `pkg/domain/domain.go` (modified, +24/-11)
-```diff
-@@ -2349,23 +2349,36 @@ func (do *Domain) gcStatsWorker() {
- 			do.gcStatsWorkerExitPreprocessing()
- 			return
- 		case <-gcStatsTicker.C:
--			if !do.statsOwner.IsOwner() {
--				continue
--			}
--			err := statsHandle.GCStats(do.InfoSchema(), do.GetSchemaLease())
--			if err != nil {
--				logutil.BgLogger().Warn("GC stats failed", zap.Error(err))
--			}
--			do.CheckAutoAnalyzeWindows()
-+			callWithRecover("gcStatsWorker", func() {
-+				if !do.statsOwner.IsOwner() {
-+					return
-+				}
-+				err := statsHandle.GCStats(do.InfoSchema(), do.GetSchemaLease())
-+				if err != nil {
-+					logutil.BgLogger().Warn("GC stats failed", zap.Error(err))
-+				}
-+				do.CheckAutoAnalyzeWindows()
-+			})
- 		case <-readMemTicker.C:
--			memory.ForceReadMemStats()
--			do.StatsHandle().StatsCache.TriggerEvict()
-+			callWithRecover("gcStatsWorker", func() {
-+				memory.ForceReadMemStats()
-+				do.StatsHandle().StatsCache.TriggerEvict()
-+			})
- 		case <-updateStatsHealthyTicker.C:
--			statsHandle.UpdateStatsHealthyMetrics()
-+			callWithRecover("gcStatsWorker", func() {
-+				statsHandle.UpdateStatsHealthyMetrics()
-+			})
+@@ -139,9 +139,10 @@ func assertDiagnosticGoroutineAllowlist(t *testing.T, dump []byte) {
+ 		require.Equal(t, "@", marker)
+ 		require.Positive(t, count)
+ 		checked += count
+-		if !hasFrames {
+-			// debug=1 suppresses runtime.goexit even when it is the only frame.
+-			// Resolve the raw PCs so no other frameless stack escapes the allowlist.
++		if !hasFrames || isRuntimeGoexitGroup(groupHeader) {
++			// A goroutine can be sampled after its user function has returned,
++			// in runtime.goexit or runtime.goexit1. debug=1 hides runtime.goexit.
++			// Resolve every raw PC so only runtime exit stacks bypass the allowlist.
+ 			require.True(t, isRuntimeGoexitGroup(groupHeader), "goroutine group has no frames: %s", group)
+ 			continue
+ 		}
+@@ -177,7 +178,7 @@ func isRuntimeGoexitGroup(header []byte) bool {
+ 		// expanding a stack containing known frames.
+ 		frames := runtime.CallersFrames([]uintptr{uintptr(pc)})
+ 		frame, more := frames.Next()
+-		if frame.Function != "runtime.goexit" || more {
++		if (frame.Function != "runtime.goexit" && frame.Function != "runtime.goexit1") || more {
+ 			return false
  		}
  	}
- }
+```
+
+---
+
+### Incident Patch 2: `f961be10` (2026-11-13)
+**Commit Message**: test: stabilize flaky TestSharedLockLockView (#70955)
+
+close pingcap/tidb#70951
+
+**File**: `tests/realtikvtest/txntest/shared_lock_test.go` (modified, +111/-20)
+```diff
+@@ -969,12 +969,75 @@ func TestSharedLockLockView(t *testing.T) {
+ 	prepareForeignKeyTables(tk1)
  
-+// callWithRecover calls fn and recovers a panic in it. gcStatsWorker uses it for each
-+// tick, because the worker does not restart after it exits.
-+func callWithRecover(funcInfo string, fn func()) {
-+	defer util.Recover(metrics.LabelDomain, funcInfo, nil, false)
-+	fn()
-+}
+ 	conn2 := tk2.MustQuery("select connection_id()").Rows()[0][0].(string)
++	parentTableID := external.GetTableByName(t, tk1, "test", "parent").Meta().ID
++	parentKey := fmt.Sprintf("%X", []byte(tablecodec.EncodeRowKeyWithHandle(parentTableID, kv.IntHandle(1))))
++	// DATA_LOCK_WAITS also contains waiters belonging to background transactions.
++	lockWaitsSource := func(txnID uint64) string {
++		return fmt.Sprintf(
++			"from INFORMATION_SCHEMA.DATA_LOCK_WAITS as l left join INFORMATION_SCHEMA.TIDB_TRX as trx on l.trx_id = trx.id where l.key = '%s' and l.trx_id = %d and trx.session_id = %s",
++			parentKey, txnID, conn2,
++		)
++	}
 +
- func (do *Domain) dumpColStatsUsageWorker() {
- 	logutil.BgLogger().Info("dumpColStatsUsageWorker started.")
- 	// We need to have different nodes trigger tasks at different times to avoid the herd effect.
-```
-
-**File**: `pkg/domain/domain_test.go` (modified, +12/-0)
-```diff
-@@ -35,6 +35,7 @@ import (
- 	"github.com/pingcap/tidb/pkg/domain/serverinfo"
- 	"github.com/pingcap/tidb/pkg/kv"
- 	"github.com/pingcap/tidb/pkg/metrics"
-+	"github.com/pingcap/tidb/pkg/owner"
- 	"github.com/pingcap/tidb/pkg/parser/ast"
- 	"github.com/pingcap/tidb/pkg/parser/mysql"
- 	"github.com/pingcap/tidb/pkg/planner/core/resolve"
-@@ -240,6 +241,17 @@ func TestStatWorkRecoverFromPanic(t *testing.T) {
- 	require.NoError(t, err)
- 	require.Equal(t, float64(2), pb.GetCounter().GetValue())
- 
-+	// The domain has no stats handle, so each tick of gcStatsWorker panics on a nil pointer.
-+	// The worker recovers each panic and keeps running, so stats stay marked as updating.
-+	dom.statsLease = 10 * time.Millisecond
-+	dom.statsOwner = owner.NewMockManager(context.Background(), "test", store, "stats-owner-test")
-+	dom.SetStatsUpdating(true)
-+	dom.wg.Run(dom.gcStatsWorker, "gcStatsWorker")
-+	require.Eventually(t, func() bool {
-+		return counter.Write(pb) == nil && pb.GetCounter().GetValue() >= 4
-+	}, 5*time.Second, 10*time.Millisecond)
-+	require.True(t, dom.StatsUpdating())
-+
- 	scope := dom.GetScope("status")
- 	require.Equal(t, variable.DefaultStatusVarScopeFlag, scope)
- 
-```
-
-**File**: `pkg/statistics/handle/autoanalyze/priorityqueue/BUILD.bazel` (modified, +2/-0)
-```diff
-@@ -22,6 +22,7 @@ go_library(
-         "//pkg/meta",
-         "//pkg/meta/metadef",
-         "//pkg/meta/model",
-+        "//pkg/metrics",
-         "//pkg/sessionctx",
-         "//pkg/sessionctx/sysproctrack",
-         "//pkg/sessionctx/vardef",
-@@ -63,6 +64,7 @@ go_test(
-     flaky = True,
-     shard_count = 50,
-     deps = [
-+        "//pkg/ddl/notifier",
-         "//pkg/domain",
-         "//pkg/domain/infosync",
-         "//pkg/meta/metadef",
-```
-
-**File**: `pkg/statistics/handle/autoanalyze/priorityqueue/queue_ddl_handler.go` (modified, +5/-0)
-```diff
-@@ -23,6 +23,7 @@ import (
- 	"github.com/pingcap/tidb/pkg/ddl/notifier"
- 	"github.com/pingcap/tidb/pkg/infoschema"
- 	"github.com/pingcap/tidb/pkg/meta/model"
-+	"github.com/pingcap/tidb/pkg/metrics"
- 	"github.com/pingcap/tidb/pkg/sessionctx"
- 	"github.com/pingcap/tidb/pkg/sessionctx/vardef"
- 	"github.com/pingcap/tidb/pkg/sessionctx/variable"
-@@ -31,12 +32,16 @@ import (
- 	"github.com/pingcap/tidb/pkg/statistics/handle/lockstats"
- 	statslogutil "github.com/pingcap/tidb/pkg/statistics/handle/logutil"
- 	statsutil "github.com/pingcap/tidb/pkg/statistics/handle/util"
-+	"github.com/pingcap/tidb/pkg/util"
- 	"github.com/pingcap/tidb/pkg/util/intest"
- 	"go.uber.org/zap"
- )
- 
- // HandleDDLEvent handles DDL events for the priority queue.
- func (pq *AnalysisPriorityQueue) HandleDDLEvent(_ context.Context, sctx sessionctx.Context, event *notifier.SchemaChangeEvent) error {
-+	// A panic would stop the DDL notifier, and a new stats owner would replay the same event.
-+	// So log the panic and skip the event, the same as an error below.
-+	defer util.Recover(metrics.LabelStats, "AnalysisPriorityQueue.HandleDDLEvent", nil, false)
- 	pq.syncFields.mu.Lock()
- 	defer pq.syncFields.mu.Unlock()
- 	// If the priority queue is not initialized, we should retry later.
-```
-
-**File**: `pkg/statistics/handle/autoanalyze/priorityqueue/queue_ddl_handler_test.go` (modified, +6/-0)
-```diff
-@@ -21,6 +21,7 @@ import (
- 	"time"
- 
- 	"github.com/pingcap/failpoint"
-+	"github.com/pingcap/tidb/pkg/ddl/notifier"
- 	"github.com/pingcap/tidb/pkg/domain"
- 	"github.com/pingcap/tidb/pkg/domain/infosync"
- 	"github.com/pingcap/tidb/pkg/meta/model"
-@@ -320,6 +321,11 @@ func TestDropTable(t *testing.T) {
- 	isEmpty, err = pq.IsEmptyForTest()
- 	require.NoError(t, err)
- 	require.True(t, isEmpty)
-+
-+	// A panic in handling an event does not escape HandleDDLEvent. The event has no table info.
-+	require.NotPanics(t, func() {
-+		require.NoError(t, pq.HandleDDLEvent(ctx, sctx, notifier.NewDropTableEvent(nil)))
++	// Two unrelated waiters also make the old count-ordered query select their key first.
++	noiseBlocker := testkit.NewTestKit(t, store)
++	noiseBlocker.MustExec("begin pessimistic")
++	noiseBlocker.MustExec("select * from test.parent where id=2 for update")
++	noiseDoneCh := make(chan error, 2)
++	noiseWaiters := 0
++	t.Cleanup(func() {
++		noiseBlocker.MustExec("rollback")
++		for range noiseWaiters {
++			select {
++			case err := <-noiseDoneCh:
++				require.NoError(t, err)
++			case <-time.After(10 * time.Second):
++				t.Error("unrelated waiter did not finish after rolling back its blocker")
++			}
++		}
 +	})
- }
++	for range 2 {
++		noiseWaiter := testkit.NewTestKit(t, store)
++		noiseWaiter.MustExec("begin pessimistic")
++		noiseTxnID := noiseWaiter.Session().TxnInfo().StartTS
++		noiseWaiters++
++		go func() {
++			_, err := noiseWaiter.Exec("select * from test.parent where id=2 for update")
++			if err == nil {
++				_, err = noiseWaiter.Exec("rollback")
++			}
++			noiseDoneCh <- err
++		}()
++		require.Eventually(t, func() bool {
++			return len(testTk.MustQuery(fmt.Sprintf(
++				"select TRX_ID from INFORMATION_SCHEMA.DATA_LOCK_WAITS where TRX_ID = %d", noiseTxnID,
++			)).Rows()) > 0
++		}, 10*time.Second, 100*time.Millisecond)
++	}
  
- func TestDropPartitionedTableWithStaticPartition(t *testing.T) {
-```
-
-**File**: `pkg/statistics/handle/cache/BUILD.bazel` (modified, +1/-0)
-```diff
-@@ -23,6 +23,7 @@ go_library(
-         "//pkg/statistics/handle/metrics",
-         "//pkg/statistics/handle/types",
-         "//pkg/statistics/handle/util",
-+        "//pkg/util",
-         "//pkg/util/chunk",
-         "//pkg/util/intest",
-         "//pkg/util/logutil",
-```
-
-**File**: `pkg/statistics/handle/cache/statscache.go` (modified, +7/-2)
-```diff
-@@ -33,6 +33,7 @@ import (
- 	handle_metrics "github.com/pingcap/tidb/pkg/statistics/handle/metrics"
- 	"github.com/pingcap/tidb/pkg/statistics/handle/types"
- 	"github.com/pingcap/tidb/pkg/statistics/handle/util"
-+	tidbutil "github.com/pingcap/tidb/pkg/util"
- 	"github.com/pingcap/tidb/pkg/util/chunk"
- 	"github.com/pingcap/tidb/pkg/util/intest"
- 	"go.uber.org/zap"
-@@ -119,7 +120,12 @@ func newCacheOfBatchUpdate(batchSize int, op func(toUpdate []*statistics.Table,
- }
+ 	// Case1: shared lock waits for exclusive lock on parent row
+ 	tk1.MustExec("begin pessimistic")
+ 	tk1.MustExec("select * from parent where id=1 for update") // lock parent row(exclusive)
  
- // Update reads stats meta from store and updates the stats map.
--func (s *StatsCacheImpl) Update(ctx context.Context, is infoschema.InfoSchema, tableAndPartitionIDs ...int64) error {
-+func (s *StatsCacheImpl) Update(ctx context.Context, is infoschema.InfoSchema, tableAndPartitionIDs ...int64) (err error) {
-+	// loadStatsWorker does not restart after a panic, so return the panic as an error.
-+	// The worker then logs the error and tries again at the next tick.
-+	defer tidbutil.Recover(tidbmetrics.LabelStats, "StatsCacheImpl.Update", func() {
-+		err = errors.New("panic in StatsCacheImpl.Update")
-+	}, false)
- 	onlyForAnalyzedTables := len(tableAndPartitionIDs) > 0
- 	start := time.Now()
- 	defer func() {
-@@ -130,7 +136,6 @@ func (s *StatsCacheImpl) Update(ctx context.Context, is infoschema.InfoSchema, t
- 	var (
- 		skipMoveForwardStatsCache bool
- 		rows                      []chunk.Row
--		err                       error
- 	)
- 	if err := util.CallWithSCtx(s.statsHandle.SPool(), func(sctx sessionctx.Context) error {
- 		query := "SELECT"
+ 	insertDoneCh := make(chan error, 1)
++	insertDone := false
++	var exclusiveLockDoneCh chan error
++	exclusiveLockDone := false
++	t.Cleanup(func() {
++		_, _ = tk1.Exec("rollback")
++		if !insertDone {
++			select {
++			case <-insertDoneCh:
++			case <-time.After(time.Second):
++			}
++		}
++		if exclusiveLockDoneCh != nil && !exclusiveLockDone {
++			select {
++			case <-exclusiveLockDoneCh:
++			case <-time.After(time.Second):
++			}
++		}
++	})
+ 	tk2.MustExec("begin pessimistic")
+ 	conn2TxnID := tk2.Session().TxnInfo().StartTS
+ 	go func() {
+@@ -985,35 +1048,49 @@ func TestSharedLockLockView(t *testing.T) {
+ 		insertDoneCh <- err
+ 	}()
+ 
+-	select {
+-	case <-time.After(500 * time.Millisecond):
+-	case <-insertDoneCh:
+-		require.FailNow(t, "insert should be blocked")
+-		return
+-	}
++	var (
++		insertErr           error
++		insertFinishedEarly bool
++		txnWaits            [][]any
++	)
++	require.Eventually(t, func() bool {
++		select {
++		case insertErr = <-insertDoneCh:
++			insertDone = true
++			insertFinishedEarly = true
++			return true
++		default:
++		}
+ 
+-	lockWaits := testTk.MustQuery("select `key`, count(*) as `count` from INFORMATION_SCHEMA.DATA_LOCK_WAITS group by `key` order by `count` desc;").Rows()
++		txnWaits = testTk.MustQuery("select TRX_ID, SESSION_ID " + lockWaitsSource(conn2TxnID)).Rows()
++		return len(txnWaits) > 0
++	}, 10*time.Second, 100*time.Millisecond)
++	require.Falsef(t, insertFinishedEarly, "insert should be blocked before DATA_LOCK_WAITS row is observed, err: %v", insertErr)
++	lockWaits := testTk.MustQuery("select l.key, count(*) as `count` " + lockWaitsSource(conn2TxnID) + " group by l.key").Rows()
+ 	require.Len(t, lockWaits, 1)
+ 	key := lockWaits[0][0].(string)
++	require.Equal(t, parentKey, key)
+ 	count := lockWaits[0][1].(string)
+-	require.Equal(t, count, "1")
++	require.Equal(t, "1", count)
+ 
+-	txnWaits := testTk.MustQuery(fmt.Sprintf("select TRX_ID, SESSION_ID from INFORMATION_SCHEMA.DATA_LOCK_WAITS as l left join INFORMATION_SCHEMA.TIDB_TRX as trx on l.trx_id = trx.id where l.key = \"%s\"", key)).Rows()
++	txnWaits = testTk.MustQuery("select TRX_ID, SESSION_ID " + lockWaitsSource(conn2TxnID)).Rows()
+ 	require.Len(t, txnWaits, 1)
+ 	waitingTxnID := txnWaits[0][0].(string)
+ 	sessionID := txnWaits[0][1].(string)
+ 	require.Equal(t, waitingTxnID, fmt.Sprintf("%d", conn2TxnID))
+ 	require.Equal(t, sessionID, conn2)
+ 
+ 	tk1.MustExec("commit")
+-	require.NoError(t, <-insertDoneCh)
++	insertErr = <-insertDoneCh
++	insertDone = true
++	require.NoError(t, insertErr)
+ 	tk1.MustQuery("select * from child").Check(testkit.Rows("1 1"))
+ 
+ 	// Case2: exclusive lock waits for shared lock on parent row
+ 	tk1.MustExec("begin pessimistic")
+ 	tk1.MustExec("insert into child values (2, 1)") // lock parent row (shared)
+ 
+-	exclusiveLockDoneCh := make(chan error, 1)
++	exclusiveLockDoneCh = make(chan error, 1)
+ 	tk2.Must
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #73082** (2026-11-12): *: disable coderabbit's approval (@winoros)
-- **PR #73081** (2026-11-12): server: return unimplemented for unsupported TiKV RPCs (#71320) (@ti-chi-bot)
-- **PR #73078** (2026-11-12): server: return unimplemented for unsupported TiKV RPCs (#71320) (@ti-chi-bot)
-- **PR #73075** (2026-11-12): server: return unimplemented for unsupported TiKV RPCs (#71320) (@ti-chi-bot)
-- **PR #73061** (2026-11-12): executor: reject MPP status reports with missing task metadata (#73054) (@ti-chi-bot)
-- **PR #73059** (2026-11-12): executor: reject MPP status reports with missing task metadata (#73054) (@ti-chi-bot)
+- **PR #73126** (closed): *: upgrade brotli, compress, etcd client pkg, and prometheus (#73113) (@ti-chi-bot)
+- **PR #73118** (2026-11-13): planner: register implicit MLog schema dependencies in MDL (@windtalker)
+- **PR #73116** (2026-11-13): *: upgrade Go dependencies (#72983) | plugin=pr/260 tidb-test=pr/2803- #72572 (@ti-chi-bot)
+- **PR #73113** (2026-11-13): *: upgrade brotli, compress, etcd client pkg, and prometheus (@D3Hunter)
+- **PR #73111** (2026-11-13): statistics: fix slow stats delta dumps on the materialized view branch (@windtalker)
+- **PR #73109** (2026-11-13): ddl, executor: serialize MLog column additions with MV refresh (@windtalker)
 
 ---
 
@@ -2185,28 +2145,35 @@ close pingcap/tidb#72741
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. statistics, domain: keep stats workers running after a panic (#72768)
+## X. config: recognize runtime exit tails in diagnostic goroutine profiles
 
 **RULE**:
-When implementing operations in `pkg/domain/BUILD.bazel`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/config/diagnosticmode/mode_server_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `12d84a92`: statistics, domain: keep stats workers running after a panic (#72768). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7a158c6a`: config: recognize runtime exit tails in diagnostic goroutine profiles. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/domain/BUILD.bazel`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/config/diagnosticmode/mode_server_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        "//pkg/owner",
+		if !hasFrames || isRuntimeGoexitGroup(groupHeader) {
+			// A goroutine can be sampled after its user function has returned,
+			// in runtime.goexit or runtime.goexit1. debug=1 hides runtime.goexit.
+			// Resolve every raw PC so only runtime exit stacks bypass the allowlist.
+		if (frame.Function != "runtime.goexit" && frame.Function != "runtime.goexit1") || more {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+		if !hasFrames {
+			// debug=1 suppresses runtime.goexit even when it is the only frame.
+			// Resolve the raw PCs so no other frameless stack escapes the allowlist.
+		if frame.Function != "runtime.goexit" || more {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `12d84a92` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7a158c6a` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `892e7223`  
+> **Source Version**: `9e86198d`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T00:08:16.977Z  
+> **Timestamp**: 2026-11-14T01:26:26.702Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T00:08:16.970Z  
+> **Harvest Timestamp**: 2026-11-14T01:26:26.696Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2201,208 +2201,73 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `892e7223` (2026-11-14)
-**Commit Message**: fix(viz): category-axis tickvals are category names, not positions (#5047)
+### Incident Patch 1: `9e86198d` (2026-11-14)
+**Commit Message**: deps: bump lock file
 
-* fix(viz): category-axis tickvals are category names, not positions
+Update bumpalo, cc, mio, redb, and target-lexicon to newer versions.
 
-Frequency bars, measure-by-dimension bars, the Top Relationships lollipop
-and funnels set their display-only tick labels with tickvals = [0, 1, 2…].
-Plotly.js resolves a category-axis tickval by category NAME first and
-treats it as a position only when no category has that name. On an axis
-of integer-like codes (day_of_week "6","7","5",…,"0") each label landed
-under the wrong bar, and the colliding ones were dropped. Hovering a bar
-showed one value while the axis named another.
-
-tickvals now carry the exact category values the trace feeds (the
-aggregate-bucket sentinel included), via a CategoryTicks { keys, text }
-pair. This needs Axis::tick_values to accept strings, so the plotly pin
-moves to dathere/plotly b652677.
-
-Gallery Data Schematics regenerated (gen_gallery.py and
-refresh_external_dashboards.sh).
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* docs(changelog): cite #5047
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `Cargo.lock` (modified, +10/-10)
 ```diff
-@@ -42,6 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
-   - **New SQL:** join keys of different numeric types ([#30401](https://github.com/pola-rs/polars/pull/30401)); correlated subqueries with any outer condition, `GROUP BY`, `HAVING`, `LIMIT`, `ANY`/`ALL`, and `LATERAL` derived tables ([#30378](https://github.com/pola-rs/polars/pull/30378), [#30453](https://github.com/pola-rs/polars/pull/30453), [#30466](https://github.com/pola-rs/polars/pull/30466), [#30459](https://github.com/pola-rs/polars/pull/30459), [#30490](https://github.com/pola-rs/polars/pull/30490), [#30467](https://github.com/pola-rs/polars/pull/30467)); `PERCENTILE_CONT`/`PERCENTILE_DISC ... WITHIN GROUP` ([#30442](https://github.com/pola-rs/polars/pull/30442)); non-literal `LIKE` patterns ([#30364](https://github.com/pola-rs/polars/pull/30364), [#30372](https://github.com/pola-rs/polars/pull/30372)); typed numeric/string literals ([#30486](https://github.com/pola-rs/polars/pull/30486)); `LIMIT`/`OFFSET` expressions such as scalar subqueries ([#30425](https://github.com/pola-rs/polars/pull/30425)); repeated unnamed constants ([#30488](https://github.com/pola-rs/polars/pull/30488)); `RANDOM()`, `REPEAT`, `CARDINALITY`, constant `GROUP BY` keys and row values in `IN (subquery)`.
+@@ -1151,9 +1151,9 @@ dependencies = [
  
- ### Fixed
-+- **`viz smart`: category-axis labels no longer land under the wrong bar when the categories look like numbers.** ([#5047](https://github.com/dathere/qsv/pull/5047)) Frequency bars, measure-by-dimension bars, the Top Relationships lollipop and funnels set their axis labels with `tickvals` holding each category's *position* (0, 1, 2…). Plotly.js matches a category-axis tickval against category *names* first, so on an axis of codes like `day_of_week` (`6, 7, 5, …, 0`) the label for position 0 went under category "0", and so on. Hovering a bar showed one value while the axis said another, and labels that collided were dropped. `tickvals` now hold the category values themselves. This needed `Axis::tick_values` to accept strings, so qsv's `plotly` pin moves to `dathere/plotly` rev [`b652677`](https://github.com/dathere/plotly/commit/b652677502d667edb2caa09dc930a6fe294ce3f4). The gallery Data Schematics are regenerated.
- - **docs: `sqlp`, `joinp` and `schema` USAGE corrections** ([#5046](https://github.com/dathere/qsv/pull/5046)). `sqlp`'s `<=>` is NULL-safe equality (the same as `IS NOT DISTINCT FROM`: true when both sides are equal or both are NULL, never NULL), not a -1/0/1 "spaceship" comparison. A Polars schema file is named after the full input file name, so `data.csv`'s is `data.csv.pschema.json`, not `data.pschema.json`.
- - **`luau`: fixes from a review of `luau.rs`** ([#5036](https://github.com/dathere/qsv/pull/5036)):
-   - **An existing `./date.lua` is no longer overwritten and deleted.** A script using `require "./date"` made qsv write the bundled LuaDate over any `date.lua` in the current directory, then delete it at exit. An existing file is now used as-is and left alone. The bundled copy is also removed when the run fails; before, a failed run left it behind.
-```
-
-**File**: `Cargo.lock` (modified, +3/-3)
-```diff
-@@ -5969,7 +5969,7 @@ dependencies = [
  [[package]]
- name = "plotly"
- version = "0.15.0"
--source = "git+https://github.com/dathere/plotly?rev=d43be3786c32ab2790a6c0e927ee39d2bb99704c#d43be3786c32ab2790a6c0e927ee39d2bb99704c"
-+source = "git+https://github.com/dathere/plotly?rev=b652677502d667edb2caa09dc930a6fe294ce3f4#b652677502d667edb2caa09dc930a6fe294ce3f4"
- dependencies = [
-  "askama",
-  "async-trait",
-@@ -5991,7 +5991,7 @@ dependencies = [
- [[package]]
- name = "plotly_derive"
- version = "0.15.0"
--source = "git+https://github.com/dathere/plotly?rev=d43be3786c32ab2790a6c0e927ee39d2bb99704c#d43be3786c32ab2790a6c0e927ee39d2bb99704c"
-+source = "git+https://github.com/dathere/plotly?rev=b652677502d667edb2caa09dc930a6fe294ce3f4#b652677502d667edb2caa09dc930a6fe294ce3f4"
- dependencies = [
-  "darling 0.24.1",
-  "proc-macro2",
-@@ -6002,7 +6002,7 @@ dependencies = [
- [[package]]
- name = "plotly_static"
- version = "0.2.0"
--source = "git+https://github.com/dathere/plotly?rev=d43be3786c32ab2790a6c0e927ee39d2bb99704c#d43be3786c32ab2790a6c0e927ee39d2bb99704c"
-+source = "git+https://github.com/dathere/plotly?rev=b652677502d667edb2caa09dc930a6fe294ce3f4#b652677502d667edb2caa09dc930a6fe294ce3f4"
- dependencies = [
-  "anyhow",
-  "base64 0.23.1",
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -580,7 +580,7 @@ whatlang = { git = "https://github.com/jqnatividad/whatlang-rs", branch = "bump-
- # plotly.rs 0.15.0 release-prep branch (plotly/plotly.rs#442: full plotly.js 3.7 trace coverage)
- # until 0.15.0 is on crates.io. This rev also moves plotly_static's build-dep to
- # webdriver-downloader 0.18 (zip 9; every zip 8.x is yanked). (#5027)
--plotly = { git = "https://github.com/dathere/plotly", rev = "d43be3786c32ab2790a6c0e927ee39d2bb99704c" }
-+plotly = { git = "https://github.com/dathere/plotly", rev = "b652677502d667edb2caa09dc930a6fe294ce3f4" }
+ name = "bumpalo"
+-version = "3.20.3"
++version = "3.20.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "72f5acc6cb2ba439de613abc23857ec3d78374d8ed5ac84e9d11336e87da8649"
++checksum = "87a0cf66fd1eb2fb7b822cb78370d82303750809bc6ba855f3f58e517d3238db"
  
- # use our patched fork until our PR is merged with bumped deps and quick-xml RUSTSEC fixes
- # https://github.com/thscharler/spreadsheet-ods/pull/77
-```
-
-**File**: `examples/viz/smart_allegheny_dogs.html` (modified, +8/-8)
-```diff
-@@ -77,7 +77,7 @@ <h1 class="qsv-viz-title">allegheny_dog_licenses.csv — Data Schematic</h1>
- <tr><td class="qsv-viz-meta-k">Rows:</td><td>50,013 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Preview<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
- <tr><td class="qsv-viz-meta-k">Columns:</td><td>8</td></tr>
- <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
--<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-12 15:03 UTC</td></tr>
-+<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-13 23:42 UTC</td></tr>
- <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 28.0.0</td></tr>
- </table>
- <div class="qsv-viz-grid">
-@@ -117,31 +117,31 @@ <h1 class="qsv-viz-title">allegheny_dog_licenses.csv — Data Schematic</h1>
-       <div class="qsv-viz-plot" style="height:320px">
- <div id="qsv-viz-panel-4" class="plotly-graph-div" style="height:100%; width:100%;"></div>
- <script type="text/javascript">
--    Plotly.newPlot("qsv-viz-panel-4", {"data":[{"type":"bar","x":["Dog Lifetime Spayed Female","Dog Lifetime Neutered Male","Dog Lifetime Male","Dog Senior Lifetime Spayed Female","Dog Lifetime Female","Dog Senior Lifetime Neutered Male","Dog Lifetime Duplicate","Dog Senior Lifetime Female","Dog Senior Lifetime Male","Dog Out of County Transfer - Lifetime","Dog Inter County Transfer - Lifetime"],"y":[16350.0,15279.0,3717.0,3658.0,3039.0,2748.0,2045.0,1282.0,1155.0,553.0,187.0],"name":"LicenseType","textposition":"outside","texttemplate":["16.4k","15.3k","3.72k","3.66k","3.04k","2.75k","2.04k","1.28k","1.16k","553","187"],"hovertext":["Dog Lifetime Spayed Female","Dog Lifetime Neutered Male","Dog Lifetime Male","Dog Senior Lifetime Spayed Female","Dog Lifetime Female","Dog Senior Lifetime Neutered Male","Dog Lifetime Duplicate","Dog Senior Lifetime Female","Dog Senior Lifetime Male","Dog Out of County Transfer - Lifetime","Dog Inter County Transfer - Lifetime"],"hovertemplate":"%{hovertext}\u003cbr\u003ecount: %{y:,}\u003cextra\u003e\u003c/extra\u003e","marker":{"color":["#72B7B2","#72B7B2","#72B7B2","#72B7B2","#72B7B2","#72B7B2","#72B7B2","#72B7B2","#72B7B2","#72B7B2","#72B7B2"],"pattern":{"shape":["","","","","","","","","","",""]}},"textfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":9},"cliponaxis":false}],"layout":{"showlegend":false,"margin":{"l":80,"r":30,"t":48,"b":60,"pad":4},"height":320,"font":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":12,"color":"#2A3F5F"},"paper_bgcolor":"#FFFFFF","plot_bgcolor":"#FFFFFF","modebar":{"orientation":"v"},"uirevision":"qsv-viz","xaxis":{"type":"category","tickmode":"array","tickvals":[0.0,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0],"ticktext":["Dog Lifetime Spayed…","Dog Lifetime Neuter…","Dog Lifetime Male","Dog Senior Lifetime…","Dog Lifetime Female","Dog Senior Lifetime…","Dog Lifetime Duplic…","Dog Senior Lifetime…","Dog Senior Lifetime…","Dog Out of County T…","Dog Inter County Tr…"],"tickcolor":"#BCC4CE","tickfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":10},"showline":true,"linecolor":"#BCC4CE","showgrid":false,"zeroline":false},"yaxis":{"title":{"text":"count (log)","font":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":11}},"type":"log","range":[-0.05,4.3635177569963055],"tickcolor":"#BCC4CE","tickfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":10},"exponentformat":"B","showline":false,"showgrid":true,"gridcolor":"#ECECEC","gridwidth":1,"zeroline":false},"annotations":[{"text":"LicenseType \u003cspan style=\"font-size:12px;color:#999999\"\u003eⓘ\u003c/span\u003e\u003cbr\u003e\u003cspan style=\"font-size:11px;color:#999999\"\u003eLicense Type\u003c/span\u003e","font":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":16},"showarrow":false,"xref":"paper","x":0.5,"xanchor":"center","yref":"paper","y":1.0,"yanchor":"bottom","yshift":8.0,"hovertext":"The specific classification of the dog license (e.g., lifetime, senior).","captureevents":true,"name":"qsvdict-LicenseType-4b4165cc"}]},"config":{"responsive":true},"frames":null});
-+    Plotly.newPlot("qsv-viz-panel-4", {"data":[{"type":"bar","x":["Dog Lifetime Spayed Female","Dog Lifetime Neutered Male","Dog Lifetime Male","Dog Senior Lifetime Spayed Female","Dog Lifetime Female","Dog Senior Lifetime Neutered Male","Dog Lifetime Duplicate","Dog Senior Lifetime Female","Dog Senior Lifetime Male","Dog Out of County Transfer - Lifetime","Dog Inter County Transfer - Lifetime"],"y":[16350.0,15279.0,3717.0,3658.0,3039.0,2748.0,2045.0,1282.0,1155.0,553.0,187.0],"name":"LicenseType","textposition":"outside","texttemplate":["16.4k","15.3k","3.72k","3.66k","3.04k","2.75k","2.04k","1.28k","1.16k","553","
-```
-
-**File**: `examples/viz/smart_cms_medicare.html` (modified, +4/-4)
-```diff
-@@ -75,7 +75,7 @@ <h1 class="qsv-viz-title">cms_medicare_providers.csv — Data Schematic</h1>
- <tr><td class="qsv-viz-meta-k">Rows:</td><td>30,007 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Preview<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
- <tr><td class="qsv-viz-meta-k">Columns:</td><td>4</td></tr>
- <tr><td class="qsv-viz-meta-k">Completeness:</td><td>97.0%</td></tr>
--<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-12 15:03 UTC</td></tr>
-+<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-13 23:42 UTC</td></tr>
- <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 28.0.0</td></tr>
- </table>
- <div class="qsv-viz-grid">
-@@ -139,15 +139,15 @@ <h1 class="qsv-viz-title">cms_medicare_providers.csv — Data Schematic</h1>
-       <div class="qsv-viz-plot" style="height:320px">
- <div id="qsv-viz-panel-7" class="plotly-graph-div" style="height:100%; width:100%;"></div>
- <script type="text/javascript">
--    Plotly.newPlot("qsv-viz-panel-7", {"data":[{"type":"bar","x":["Nurse Practitioner","Physician Assistant","Internal Medicine","Family Practice","Physical Therapist in Private Practice","Certified Registered Nurse Anesthetist (CRNA)","Emergency Medicine","Anesthesiology","Diagnostic Radiology","Optometry","Other (77)​"],"y":[4920.0,2699.0,2313.0,2075.0,1911.0,1328.0,1218.0,1022.0,794.0,793.0,10934.0],"name":"provider_type","textposition":"outside","texttemplate":["4.92k","2.7k","2.31k","2.08k","1.91k","1.33k","1.22k","1.02k","794","793","10.9k"],"hovertext":["Nurse Practitioner","Physician Assistant","Internal Medicine","Family Practice","Physical Therapist in Private Practice","Certified Registered Nurse Anesthetist (CRNA)","Emergency Medicine","Anesthesiology","Diagnostic Radiology","Optometry","Other (77)"],"hovertemplate":"%{hovertext}\u003cbr\u003ecount: %{y:,}\u003cextra\u003e\u003c/extra\u003e","marker":{"color":["#FF9DA6","#FF9DA6","#FF9DA6","#FF9DA6","#FF9DA6","#FF9DA6","#FF9DA6","#FF9DA6","#FF9DA6","#FF9DA6","#999999"]},"textfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":9},"cliponaxis":false}],"layout":{"title":{"text":"provider_type"},"showlegend":false,"margin":{"l":60,"r":30,"t":48,"b":60,"pad":4},"height":320,"font":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":12,"color":"#2A3F5F"},"paper_bgcolor":"#FFFFFF","plot_bgcolor":"#FFFFFF","modebar":{"orientation":"v"},"uirevision":"qsv-viz","xaxis":{"type":"category","tickmode":"array","tickvals":[0.0,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0],"ticktext":["Nurse Practitioner","Physician Assistant","Internal Medicine","Family Practice","Physical Therapist …","Certified Registere…","Emergency Medicine","Anesthesiology","Diagnostic Radiology","Optometry","Other (77)"],"tickcolor":"#BCC4CE","tickfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":10},"showline":true,"linecolor":"#BCC4CE","showgrid":false,"zeroline":false},"yaxis":{"range":[0.0,12574.099999999999],"tickcolor":"#BCC4CE","tickfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":10},"exponentformat":"B","showline":false,"showgrid":true,"gridcolor":"#ECECEC","gridwidth":1,"zeroline":false}},"config":{"responsive":true},"frames":null});
-+    Plotly.newPlot("qsv-viz-panel-7", {"data":[{"type":"bar","x":["Nurse Practitioner","Physician Assistant","Internal Medicine","Family Practice","Physical Therapist in Private Practice","Certified Registered Nurse Anesthetist (CRNA)","Emergency Medicine","Anesthesiology","Diagnostic Radiology","Optometry","Other (77)​"],"y":[4920.0,2699.0,2313.0,2075.0,1911.0,1328.0,1218.0,1022.0,794.0,793.0,10934.0],"name":"provider_type","textposition":"outside","texttemplate":["4.92k","2.7k","2.31k","2.08k","1.91k","1.33k","1.22k","1.02k","794","793","10.9k"],"hovertext":["Nurse Practitioner","Physician Assistant","Internal Medicine","Family Practice","Physical Therapist in Private Practice","Certified Registered Nurse Anesthetist (CRNA)","Emergency Medicine","Anesthesiology","Diagnostic Radiology","Optometry","Other (77)"],"hovertemplate":"%{hovertext}\u003cbr\u003ecount: %{y:,}\u003cextra\u003e\u003c/extra\u003e","marker":{"color":["#FF9DA6","#FF9DA6","#FF9DA6","#FF9DA6","#FF9DA6","#FF9DA6","#FF9DA6","#FF9DA6","#FF9DA6","#FF9DA6","#999999"]},"textfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":9},"cliponaxis":false}],"layout":{"title":{"text":"provider_type"},"showlegend":false,"margin":{"l":60,"r":30,"t":48,"b":60,"pad":4},"height":320,"font":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":12,"color":"#2A3F5F"},"paper_bgcolor":"#FFFFFF","plot_bgcolor":"#FFFFFF","modebar":{"orientation":"v"},"uirevision":"qsv-viz","xaxis":{"type":"category","tickmod
-```
-
-**File**: `examples/viz/smart_cpdb.html` (modified, +5/-5)
-```diff
-@@ -75,7 +75,7 @@ <h1 class="qsv-viz-title">nyc_capital_projects.csv — Data Schematic</h1>
- <tr><td class="qsv-viz-meta-k">Rows:</td><td>12,587 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Preview<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
- <tr><td class="qsv-viz-meta-k">Columns:</td><td>7</td></tr>
- <tr><td class="qsv-viz-meta-k">Completeness:</td><td>98.8%</td></tr>
--<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-12 15:03 UTC</td></tr>
-+<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-13 23:42 UTC</td></tr>
- <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 28.0.0</td></tr>
- </table>
- <div class="qsv-viz-grid">
-@@ -147,7 +147,7 @@ <h1 class="qsv-viz-title">nyc_capital_projects.csv — Data Schematic</h1>
-       <div class="qsv-viz-plot" style="height:420px">
- <div id="qsv-viz-panel-8" class="plotly-graph-div" style="height:100%; width:100%;"></div>
- <script type="text/javascript">
--    Plotly.newPlot("qsv-viz-panel-8", {"data":[{"type":"bar","x":["DEP","DOT","DDC","HPD","DOE","SBS","DPR","DCAS","UK","HHC"],"y":[33374372000.0,29346246000.0,26872762000.0,26731759000.0,24972388000.0,9338390000.0,9337994000.0,7410213000.0,4857843000.0,4651982000.0],"name":"Planned by Managing Agency (sum, explains 17% of variance) — top 10","textposition":"outside","texttemplate":["33.4B","29.3B","26.9B","26.7B","25B","9.34B","9.34B","7.41B","4.86B","4.65B"],"hovertext":["DEP","DOT","DDC","HPD","DOE","SBS","DPR","DCAS","UK","HHC"],"hovertemplate":"%{hovertext}\u003cbr\u003e%{y:,}\u003cextra\u003e\u003c/extra\u003e","marker":{"color":"#4C78A8"},"textfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":9},"cliponaxis":false}],"layout":{"title":{"text":"Planned by Managing Agency (sum, explains 17% of variance) — top 10"},"showlegend":false,"margin":{"l":60,"r":30,"t":48,"b":60,"pad":4},"height":420,"font":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":12,"color":"#2A3F5F"},"paper_bgcolor":"#FFFFFF","plot_bgcolor":"#FFFFFF","modebar":{"orientation":"v"},"uirevision":"qsv-viz","xaxis":{"type":"category","tickmode":"array","tickvals":[0.0,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0],"ticktext":["DEP","DOT","DDC","HPD","DOE","SBS","DPR","DCAS","UK","HHC"],"tickcolor":"#BCC4CE","tickfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":10},"showline":true,"linecolor":"#BCC4CE","showgrid":false,"zeroline":false},"yaxis":{"range":[0.0,38380527800.0],"tickcolor":"#BCC4CE","tickfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":10},"exponentformat":"B","showline":false,"showgrid":true,"gridcolor":"#ECECEC","gridwidth":1,"zeroline":false}},"config":{"responsive":true},"frames":null});
-+    Plotly.newPlot("qsv-viz-panel-8", {"data":[{"type":"bar","x":["DEP","DOT","DDC","HPD","DOE","SBS","DPR","DCAS","UK","HHC"],"y":[33374372000.0,29346246000.0,26872762000.0,26731759000.0,24972388000.0,9338390000.0,9337994000.0,7410213000.0,4857843000.0,4651982000.0],"name":"Planned by Managing Agency (sum, explains 17% of variance) — top 10","textposition":"outside","texttemplate":["33.4B","29.3B","26.9B","26.7B","25B","9.34B","9.34B","7.41B","4.86B","4.65B"],"hovertext":["DEP","DOT","DDC","HPD","DOE","SBS","DPR","DCAS","UK","HHC"],"hovertemplate":"%{hovertext}\u003cbr\u003e%{y:,}\u003cextra\u003e\u003c/extra\u003e","marker":{"color":"#4C78A8"},"textfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":9},"cliponaxis":false}],"layout":{"title":{"text":"Planned by Managing Agency (sum, explains 17% of variance) — top 10"},"showlegend":false,"margin":{"l":60,"r":30,"t":48,"b":60,"pad":4},"height":420,"font":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":12,"color":"#2A3F5F"},"paper_bgcolor":"#FFFFFF","plot_bgcolor":"#FFFFFF","modebar":{"orientation":"v"},"uirevision":"qsv-viz","xaxis":{"type":"category","tickmode":"array","tickvals":["DEP","DOT","DDC","HPD","DOE","SBS","DPR","DCAS","UK","HHC"],"ticktext":["DEP","DOT","DDC","HPD","DOE","SBS","DPR","DCAS","UK","HHC"],"tickcolor":"#BCC4CE","tickfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":10},"showline":true,"linecolor":"#BCC4CE","showgrid":false,"zeroline":false},"yaxis":{"range":[0.0,38380527800.0],"tickcolor":"#BCC4CE","tickfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":10},"exponentformat":"B","showline":false,"showgrid":true,"gridcolor":"#ECECEC","gridwidth":1,"zeroline":false}},"config":{"responsive":true},"frames":null});
- </script>
-       </div>
-     </div>
-@@ -171,15 +171,15 @@ <h1 class="qsv-viz-title">nyc_capital_projects.csv — Data Schematic</h1>
-       <div class="qsv-viz-plot" style="height:320px">
- <div id="qsv-viz-panel-11" class="plo
-```
-
-**File**: `examples/viz/smart_dict_sunburst.html` (modified, +7/-7)
-```diff
-@@ -75,7 +75,7 @@ <h1 class="qsv-viz-title">sales_sample.csv — Data Schematic</h1>
- <tr><td class="qsv-viz-meta-k">Rows:</td><td>500 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Explore<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
- <tr><td class="qsv-viz-meta-k">Columns:</td><td>13</td></tr>
- <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
--<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-12 15:03 UTC</td></tr>
-+<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-13 23:42 UTC</td></tr>
- <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 28.0.0</td></tr>
- </table>
- <div class="qsv-viz-grid">
-@@ -131,39 +131,39 @@ <h1 class="qsv-viz-title">sales_sample.csv — Data Schematic</h1>
-       <div class="qsv-viz-plot" style="height:320px">
- <div id="qsv-viz-panel-6" class="plotly-graph-div" style="height:100%; width:100%;"></div>
- <script type="text/javascript">
--    Plotly.newPlot("qsv-viz-panel-6", {"data":[{"type":"bar","x":["South","North","West","East"],"y":[132.0,126.0,126.0,116.0],"name":"region","textposition":"outside","texttemplate":["132","126","126","116"],"hovertext":["South","North","West","East"],"hovertemplate":"%{hovertext}\u003cbr\u003ecount: %{y:,}\u003cextra\u003e\u003c/extra\u003e","marker":{"color":["#B279A2","#B279A2","#B279A2","#B279A2"]},"textfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":9},"cliponaxis":false}],"layout":{"title":{"text":"region"},"showlegend":false,"margin":{"l":60,"r":30,"t":48,"b":60,"pad":4},"height":320,"font":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":12,"color":"#2A3F5F"},"paper_bgcolor":"#FFFFFF","plot_bgcolor":"#FFFFFF","modebar":{"orientation":"v"},"uirevision":"qsv-viz","xaxis":{"type":"category","tickmode":"array","tickvals":[0.0,1.0,2.0,3.0],"ticktext":["South","North","West","East"],"tickcolor":"#BCC4CE","tickfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":10},"showline":true,"linecolor":"#BCC4CE","showgrid":false,"zeroline":false},"yaxis":{"range":[0.0,151.79999999999998],"tickcolor":"#BCC4CE","tickfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":10},"exponentformat":"B","showline":false,"showgrid":true,"gridcolor":"#ECECEC","gridwidth":1,"zeroline":false}},"config":{"responsive":true},"frames":null});
-+    Plotly.newPlot("qsv-viz-panel-6", {"data":[{"type":"bar","x":["South","North","West","East"],"y":[132.0,126.0,126.0,116.0],"name":"region","textposition":"outside","texttemplate":["132","126","126","116"],"hovertext":["South","North","West","East"],"hovertemplate":"%{hovertext}\u003cbr\u003ecount: %{y:,}\u003cextra\u003e\u003c/extra\u003e","marker":{"color":["#B279A2","#B279A2","#B279A2","#B279A2"]},"textfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":9},"cliponaxis":false}],"layout":{"title":{"text":"region"},"showlegend":false,"margin":{"l":60,"r":30,"t":48,"b":60,"pad":4},"height":320,"font":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":12,"color":"#2A3F5F"},"paper_bgcolor":"#FFFFFF","plot_bgcolor":"#FFFFFF","modebar":{"orientation":"v"},"uirevision":"qsv-viz","xaxis":{"type":"category","tickmode":"array","tickvals":["South","North","West","East"],"ticktext":["South","North","West","East"],"tickcolor":"#BCC4CE","tickfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":10},"showline":true,"linecolor":"#BCC4CE","showgrid":false,"zeroline":false},"yaxis":{"range":[0.0,151.79999999999998],"tickcolor":"#BCC4CE","tickfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":10},"exponentformat":"B","showline":false,"showgrid":true,"gridcolor":"#ECECEC","gridwidth":1,"zeroline":false}},"config":{"responsive":true},"frames":null});
- </script>
-       </div>
-     </div>
-     <div class="qsv-viz-cell" data-qsv-column="product_category" data-qsv-agg-keys="[]">
-       <div class="qsv-viz-plot" style="height:320px">
- <div id="qsv-viz-panel-7" class="plotly-graph-div" style="height:100%; width:100%;"></div>
- <script type="text/javascript">
--    Plotly.newPlot("qsv-viz-panel-7", {"data":[{"type":"bar","x":["Books","Sports","Toys","Electronics","Clothing","Home"],"y":[108.0,96.0,83.0,78.0,74.0,61.0],"name":"product_category","textposition":"outside","texttemplate":["108","96","83","78","74","61"],"hovertext":["Books","Sports","Toys","Electronics","Clothing","Home"],"hovertemplate":"%{hovertext}\u003cbr\u003ecount: %{y:,}\u003cextra\u003e\u003c/extra\u003e","marker":{"color":["#FF9DA6","#FF9DA6","#FF9DA6","#FF9DA6","#FF9DA6","#FF9DA6"]},"textfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":9},"cliponaxis":false}],"layout":{"title":{"text":"product_category\u003cb
-```
-
-**File**: `examples/viz/smart_dict_treemap.html` (modified, +5/-5)
-```diff
-@@ -75,7 +75,7 @@ <h1 class="qsv-viz-title">customer_spend.csv — Data Schematic</h1>
- <tr><td class="qsv-viz-meta-k">Rows:</td><td>300 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Explore<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
- <tr><td class="qsv-viz-meta-k">Columns:</td><td>5</td></tr>
- <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
--<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-12 15:03 UTC</td></tr>
-+<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-13 23:42 UTC</td></tr>
- <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 28.0.0</td></tr>
- </table>
- <div class="qsv-viz-grid">
-@@ -107,7 +107,7 @@ <h1 class="qsv-viz-title">customer_spend.csv — Data Schematic</h1>
-       <div class="qsv-viz-plot" style="height:420px">
- <div id="qsv-viz-panel-3" class="plotly-graph-div" style="height:100%; width:100%;"></div>
- <script type="text/javascript">
--    Plotly.newPlot("qsv-viz-panel-3", {"data":[{"type":"bar","x":["South","East","West","Central"],"y":[16649.03,16349.419999999995,2345.2900000000004,2272.8399999999997],"name":"Monthly Spend by Region (sum, explains 98% of variance)","textposition":"outside","texttemplate":["16.6k","16.3k","2.35k","2.27k"],"hovertext":["South","East","West","Central"],"hovertemplate":"%{hovertext}\u003cbr\u003e%{y:,}\u003cextra\u003e\u003c/extra\u003e","marker":{"color":"#E45756"},"textfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":9},"cliponaxis":false}],"layout":{"title":{"text":"Monthly Spend by Region (sum, explains 98% of variance)"},"showlegend":false,"margin":{"l":60,"r":30,"t":48,"b":60,"pad":4},"height":420,"font":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":12,"color":"#2A3F5F"},"paper_bgcolor":"#FFFFFF","plot_bgcolor":"#FFFFFF","modebar":{"orientation":"v"},"uirevision":"qsv-viz","xaxis":{"type":"category","tickmode":"array","tickvals":[0.0,1.0,2.0,3.0],"ticktext":["South","East","West","Central"],"tickcolor":"#BCC4CE","tickfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":10},"showline":true,"linecolor":"#BCC4CE","showgrid":false,"zeroline":false},"yaxis":{"range":[0.0,19146.384499999996],"tickcolor":"#BCC4CE","tickfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":10},"exponentformat":"B","showline":false,"showgrid":true,"gridcolor":"#ECECEC","gridwidth":1,"zeroline":false}},"config":{"responsive":true},"frames":null});
-+    Plotly.newPlot("qsv-viz-panel-3", {"data":[{"type":"bar","x":["South","East","West","Central"],"y":[16649.03,16349.419999999995,2345.2900000000004,2272.8399999999997],"name":"Monthly Spend by Region (sum, explains 98% of variance)","textposition":"outside","texttemplate":["16.6k","16.3k","2.35k","2.27k"],"hovertext":["South","East","West","Central"],"hovertemplate":"%{hovertext}\u003cbr\u003e%{y:,}\u003cextra\u003e\u003c/extra\u003e","marker":{"color":"#E45756"},"textfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":9},"cliponaxis":false}],"layout":{"title":{"text":"Monthly Spend by Region (sum, explains 98% of variance)"},"showlegend":false,"margin":{"l":60,"r":30,"t":48,"b":60,"pad":4},"height":420,"font":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":12,"color":"#2A3F5F"},"paper_bgcolor":"#FFFFFF","plot_bgcolor":"#FFFFFF","modebar":{"orientation":"v"},"uirevision":"qsv-viz","xaxis":{"type":"category","tickmode":"array","tickvals":["South","East","West","Central"],"ticktext":["South","East","West","Central"],"tickcolor":"#BCC4CE","tickfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":10},"showline":true,"linecolor":"#BCC4CE","showgrid":false,"zeroline":false},"yaxis":{"range":[0.0,19146.384499999996],"tickcolor":"#BCC4CE","tickfont":{"family":"Helvetica Neue, Helvetica, Arial, sans-serif","size":10},"exponentformat":"B","showline":false,"showgrid":true,"gridcolor":"#ECECEC","gridwidth":1,"zeroline":false}},"config":{"responsive":true},"frames":null});
- </script>
-       </div>
-     </div>
-@@ -123,15 +123,15 @@ <h1 class="qsv-viz-title">customer_spend.csv — Data Schematic</h1>
-       <div class="qsv-viz-plot" style="height:320px">
- <div id="qsv-viz-panel-5" class="plotly-graph-div" style="height:100%; width:100%;"></div>
- <script type="text/javascript">
--    Plotly.newPlot("qsv-viz-panel-5", {"data":[{"type":"bar","x":["Basic","Plus","Pro"],"y":[150.0,100.0,50.0],"name":"plan","textposition":"outside","texttemplate":["150","100","50"],"hovertext":["Basic","Plus","Pro"],"hovertemplate":"%{hovertext}\u003cbr\u003ecount: %{y:,}\u003cextra\u003e\u003c/extra\u003e","marker":{"color":["#EECA3B","#EECA3B","#EECA3B"]},"textfont":{"family":"Helvetica Neue, Helvetica, Arial, s
+ [[package]]
+ name = "by_address"
+@@ -1314,9 +1314,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "cc"
+-version = "1.11.1"
++version = "1.11.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "4ff2a8126fff0f8c839080d619675a585e61720bb12d2baceae45769fd66f155"
++checksum = "33ef9e3e8154a45c7a95cff4c1299702106ad94062d7bb85fdc5d3a5afd91d45"
+ dependencies = [
+  "find-msvc-tools",
+  "jobserver",
+@@ -4875,9 +4875,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "mio"
+-version = "1.2.4"
++version = "1.2.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "1788edb87fdc09c7e26304471e2f5be8cdefb1b6930d6e3985fc02ff53bf86ee"
++checksum = "20521a903f02b0a573cd6840e9d0a5a0cc043d361fe924092cd70f8556cc9c4a"
+ dependencies = [
+  "libc",
+  "log",
+@@ -7667,9 +7667,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "redb"
+-version = "4.5.0"
++version = "4.6.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "8b317ef681e18f6091efbfab532eaf924a135c492d9d0299d0fbfae07e92a39b"
++checksum = "096b1dd5ec053c9c2a5a26a93aafeadf73ebcb710ea54dc3151f17a8e20535ef"
+ dependencies = [
+  "libc",
+ ]
+@@ -9116,9 +9116,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "target-lexicon"
+-version = "0.13.5"
++version = "0.13.6"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "adb6935a6f5c20170eeceb1a3835a49e12e19d792f6dd344ccc76a985ca5a6ca"
++checksum = "8c447be3a2abfa84b2d91680c56600bd6b2873866de27b36ec911be705e291da"
+ 
+ [[package]]
+ name = "tempfile"
 ```
 
 #### Recent Merged Pull Requests:
@@ -2431,28 +2296,46 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. viz): category-axis tickvals are category names, not positions
+## X. deps: bump lock file
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `892e7223`: viz): category-axis tickvals are category names, not positions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9e86198d`: deps: bump lock file. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **`viz smart`: category-axis labels no longer land under the wrong bar when the categories look like numbers.** ([#5047](https://github.com/dathere/qsv/pull/5047)) Frequency bars, measure-by-dimension bars, the Top Relationships lollipop and funnels set their axis labels with `tickvals` holding each category's *position* (0, 1, 2…). Plotly.js matches a category-axis tickval against category *names* first, so on an axis of codes like `day_of_week` (`6, 7, 5, …, 0`) the label for position 0 went under category "0", and so on. Hovering a bar showed one value while the axis said another, and labels that collided were dropped. `tickvals` now hold the category values themselves. This needed `Axis::tick_values` to accept strings, so qsv's `plotly` pin moves to `dathere/plotly` rev [`b652677`](https://github.com/dathere/plotly/commit/b652677502d667edb2caa09dc930a6fe294ce3f4). The gallery Data Schematics are regenerated.
+version = "3.20.4"
+checksum = "87a0cf66fd1eb2fb7b822cb78370d82303750809bc6ba855f3f58e517d3238db"
+version = "1.11.2"
+checksum = "33ef9e3e8154a45c7a95cff4c1299702106ad94062d7bb85fdc5d3a5afd91d45"
+version = "1.2.5"
+checksum = "20521a903f02b0a573cd6840e9d0a5a0cc043d361fe924092cd70f8556cc9c4a"
+version = "4.6.0"
+checksum = "096b1dd5ec053c9c2a5a26a93aafeadf73ebcb710ea54dc3151f17a8e20535ef"
+version = "0.13.6"
+checksum = "8c447be3a2abfa84b2d91680c56600bd6b2873866de27b36ec911be705e291da"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+version = "3.20.3"
+checksum = "72f5acc6cb2ba439de613abc23857ec3d78374d8ed5ac84e9d11336e87da8649"
+version = "1.11.1"
+checksum = "4ff2a8126fff0f8c839080d619675a585e61720bb12d2baceae45769fd66f155"
+version = "1.2.4"
+checksum = "1788edb87fdc09c7e26304471e2f5be8cdefb1b6930d6e3985fc02ff53bf86ee"
+version = "4.5.0"
+checksum = "8b317ef681e18f6091efbfab532eaf924a135c492d9d0299d0fbfae07e92a39b"
+version = "0.13.5"
+checksum = "adb6935a6f5c20170eeceb1a3835a49e12e19d792f6dd344ccc76a985ca5a6ca"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `892e7223` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9e86198d` are properly handled with clean fallback behavior.

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T00:49:24.071Z",
+  "updated_at": "2026-11-14T01:26:58.125Z",
   "stats": {
-    "total_discovered": 3039,
-    "approved_pending_harvest": 2839,
+    "total_discovered": 3040,
+    "approved_pending_harvest": 2840,
     "harvested_count": 0,
     "rejected_count": 200,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2839,
+      "COMMUNITY_AND_EXPERT": 2840,
       "OFFICIAL_DOCUMENTATION": 106,
       "STANDARDS_AND_SPECIFICATIONS": 80,
       "ENGINEERING_BLOGS": 1,
@@ -65478,6 +65478,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
         "fileName": "bitterbot-ai-bitterbot-desktop-learnings.md"
+      }
+    },
+    "SRC-1F0E60FDED5C": {
+      "id": "SRC-1F0E60FDED5C",
+      "url": "https://huggingface.co/MiniMaxAI/MiniMax-H3",
+      "title": "https://huggingface.co/MiniMaxAI/MiniMax-H3",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T01:26:58.125Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-learnings.md",
+        "fileName": "hf-minimaxai-minimax-h3-learnings.md"
       }
     }
   }

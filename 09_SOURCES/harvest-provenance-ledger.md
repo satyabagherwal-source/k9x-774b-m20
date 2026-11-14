@@ -9723,3 +9723,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-scantist-glm-5-3-slim-gguf` | `https://huggingface.co/Scantist/GLM-5.3-SLIM-GGUF` | `hf-scantis` | Multi-dimensional audit evidence | 2026-11-14T00:48:30.527Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `e4d179d3` | Multi-dimensional audit evidence | 2026-11-14T00:48:51.155Z |
 | `learn-dom-d-0c0c2cb4` | `project://hf-scantist-glm-5.3-slim-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-scantist-glm-5.3-slim-gguf-learnings.md` | 2026-11-14T00:49:23.505Z |
+| `learn-huggingface-minimaxai-minimax-h3` | `https://huggingface.co/MiniMaxAI/MiniMax-H3` | `hf-minimax` | Multi-dimensional audit evidence | 2026-11-14T01:26:20.107Z |
+| `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `7a158c6a` | Multi-dimensional audit evidence | 2026-11-14T01:26:20.937Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `9e86198d` | Multi-dimensional audit evidence | 2026-11-14T01:26:27.522Z |
+| `learn-dom-d-f5645095` | `project://hf-minimaxai-minimax-h3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-learnings.md` | 2026-11-14T01:26:58.114Z |

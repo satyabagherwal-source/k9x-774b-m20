@@ -865,8 +865,8 @@
     "sourceUrl": "https://huggingface.co/MiniMaxAI/MiniMax-H3",
     "sourceVersion": "hf-minimaxai-minimax-h3",
     "license": "Open-Source",
-    "contentHash": "6d6e27b18dbee4c549bcf342d3386ea88e1d23cc17a9a3e25e0631f2239d1000",
-    "lastHarvestedAt": "2026-11-08T22:19:47.626Z",
+    "contentHash": "167b9d284c69a23e916cb6ead2dcbae5a24fa480b106c7ef89e5aca047a5b874",
+    "lastHarvestedAt": "2026-11-14T01:26:20.107Z",
     "learningId": "learn-huggingface-minimaxai-minimax-h3"
   },
   "hf-qwen-qwen3.8-flash-next": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "892e7223",
+    "sourceVersion": "9e86198d",
     "license": "NOASSERTION",
-    "contentHash": "398275f30687510a94bb33b3f1bbe8aec3241391610eeaedcb19239be7970226",
-    "lastHarvestedAt": "2026-11-14T00:08:17.982Z",
+    "contentHash": "d0b1b2beab32ae1d0840b957abdff3531e85e034b182b14cb742dd4e2b468d41",
+    "lastHarvestedAt": "2026-11-14T01:26:27.522Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -7103,10 +7103,10 @@
     "repository": "pingcap/tidb",
     "platform": "github",
     "sourceUrl": "https://github.com/pingcap/tidb",
-    "sourceVersion": "c3adc8df",
+    "sourceVersion": "7a158c6a",
     "license": "Apache-2.0",
-    "contentHash": "b36b0e67516a986704045308519ff440d5572145bb80f590a9d56329024d765e",
-    "lastHarvestedAt": "2026-11-13T01:57:48.744Z",
+    "contentHash": "20b38ab38e9ac2f9f73eee0bbee5ded34e795122431f1d3d5e50847f820848fd",
+    "lastHarvestedAt": "2026-11-14T01:26:20.937Z",
     "learningId": "learn-github-pingcap-tidb"
   },
   "neondatabase-neon": {
