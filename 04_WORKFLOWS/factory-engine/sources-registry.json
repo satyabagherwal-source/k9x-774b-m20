@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-14T04:36:40.660Z",
-    "lastVerified": "2026-11-14T04:36:40.660Z",
+    "lastChecked": "2026-11-14T04:50:39.347Z",
+    "lastVerified": "2026-11-14T04:50:39.347Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -230,9 +230,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-11-13T21:28:14.530Z",
+    "lastChecked": "2026-11-14T04:50:34.330Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-11-13T21:28:14.530Z"
+    "lastVerified": "2026-11-14T04:50:34.330Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch/meilisearch",
@@ -368,8 +368,8 @@
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-14T03:49:16.318Z",
-    "lastVerified": "2026-11-14T03:49:16.318Z",
+    "lastChecked": "2026-11-14T04:50:39.338Z",
+    "lastVerified": "2026-11-14T04:50:39.338Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-synalinks-synalinks-skills",
@@ -2610,9 +2610,9 @@
   "alexellis-k3sup": {
     "name": "k3sup",
     "officialUrl": "https://github.com/alexellis/k3sup",
-    "lastChecked": "2026-11-13T04:50:11.722Z",
+    "lastChecked": "2026-11-14T04:50:31.826Z",
     "revisionIdentifier": "07ee3911",
-    "lastVerified": "2026-11-13T04:50:11.722Z"
+    "lastVerified": "2026-11-14T04:50:31.826Z"
   },
   "paradedb-paradedb": {
     "name": "paradedb/paradedb",
@@ -3992,14 +3992,14 @@
     "officialUrl": "https://github.com/keybase/client",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-09T22:27:03.115Z",
-    "lastVerified": "2026-11-09T22:27:03.115Z",
+    "lastChecked": "2026-11-14T04:50:34.717Z",
+    "lastVerified": "2026-11-14T04:50:34.717Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-keybase-client",
-    "contentHash": "34324c1861dce80df7a2352c72627cd17a51484d2d2f35f314c8494d62ee18a7",
+    "contentHash": "5bdf6aca9f8919b627c7fb5d539f4567407dcc393544e95ec99655d6b437b52f",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4271,8 +4271,8 @@
     "officialUrl": "https://github.com/LLPhant/LLPhant",
     "sourceType": "github",
     "technology": "PHP",
-    "lastChecked": "2026-11-13T03:26:30.292Z",
-    "lastVerified": "2026-11-13T03:26:30.292Z",
+    "lastChecked": "2026-11-14T04:50:36.862Z",
+    "lastVerified": "2026-11-14T04:50:36.862Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-llphant-llphant",
@@ -5710,12 +5710,12 @@
     "officialUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V3",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-09T00:22:52.275Z",
-    "lastVerified": "2026-11-09T00:22:52.275Z",
+    "lastChecked": "2026-11-14T04:50:27.178Z",
+    "lastVerified": "2026-11-14T04:50:27.178Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
-    "contentHash": "a23fc3c79733fc66304304d1ce35e0a7b52a928d47257cbe7cb24fbbb9adaced",
+    "contentHash": "d74a22cac9d54d1ebe4cf833a9640631220762973b393e0c0e1c65bbbab45d01",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -7611,12 +7611,12 @@
     "revisionIdentifier": "9eadfa99"
   },
   "medialab-xan": {
-    "name": "medialab/xan",
+    "name": "xan",
     "officialUrl": "https://github.com/medialab/xan",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-12T21:49:04.171Z",
-    "lastVerified": "2026-11-12T21:49:04.171Z",
+    "lastChecked": "2026-11-14T04:50:24.345Z",
+    "lastVerified": "2026-11-14T04:50:24.345Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-medialab-xan",
@@ -7625,7 +7625,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "f4e85fee"
   },
   "hf-zai-org-glm-5.3": {
     "name": "zai-org/GLM-5.3",

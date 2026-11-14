@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T04:37:58.448Z",
-  "total_records": 537,
+  "last_updated": "2026-11-14T04:51:09.129Z",
+  "total_records": 542,
   "domains": {
     "A": {
       "total": 5,
@@ -35,7 +35,7 @@
       ]
     },
     "D": {
-      "total": 267,
+      "total": 270,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -303,7 +303,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-llama-2-7b-chat-hf-learnings-core-",
         "domain_intelligence-research-knowledge-intelligence-mistralai-mixtral-8x7b-instruct-v0-1-core-invari",
         "DOM-D-2D29CC33",
-        "domain_intelligence-research-knowledge-intelligence-hf-mistralai-mixtral-8x7b-instruct-v0-1-learning"
+        "domain_intelligence-research-knowledge-intelligence-hf-mistralai-mixtral-8x7b-instruct-v0-1-learning",
+        "domain_intelligence-research-knowledge-intelligence-deepseek-ai-deepseek-v3-core-invariants",
+        "DOM-D-C791DEC9",
+        "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v3-learnings-core-invari"
       ]
     },
     "E": {
@@ -329,7 +332,7 @@
       ]
     },
     "G": {
-      "total": 75,
+      "total": 77,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -405,7 +408,9 @@
         "domain_intelligence-architecture-intelligence-moby-buildkit-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-tailscale-tailscale-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-berty-berty-core-invariants",
-        "domain_intelligence-architecture-intelligence-berty-berty-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-berty-berty-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-keybase-client-core-invariants",
+        "domain_intelligence-architecture-intelligence-keybase-client-learnings-core-invariants"
       ]
     },
     "H": {
@@ -9928,8 +9933,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "0d8dc1790070c1c4a37e3f6c1292a21143103264c4d245571999e3acd9d0ef72",
-      "created_at": "2026-11-13T22:45:46.375Z"
+      "content_hash": "2a62e205e010b23e7b2c678c4a8a05cbf47d8ed4d9a66eb0f8505bcd6de2951d",
+      "created_at": "2026-11-14T04:51:09.129Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -11892,6 +11897,84 @@
       "repository": "berty-berty-learnings",
       "content_hash": "92357373a78144d751bf20357deb781b12f8cf757181cb6844ee2eb8b598aa33",
       "created_at": "2026-11-14T04:37:57.730Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-deepseek-ai-deepseek-v3-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-deepseek-ai-deepseek-v3-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: deepseek-ai/DeepSeek-V3 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-deepseek-ai-deepseek-v3-research-knowledge-intelligence-deepseek-ai-deepseek-.md",
+      "repository": "deepseek-ai/DeepSeek-V3",
+      "content_hash": "a6b89d2a967493e2a6c1f73b36b30cf2be4c8720e24058d6c132a38146eb2f15",
+      "created_at": "2026-11-14T04:50:27.870Z"
+    },
+    "domain_intelligence-architecture-intelligence-keybase-client-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-keybase-client-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: keybase/client Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-keybase-client-architecture-intelligence-keybase-client-core-invariants.md",
+      "repository": "keybase/client",
+      "content_hash": "18f1139f6b8c21e5fc388ecb6235a256ea588ccb4e47daa47f5d9f5130c41d7f",
+      "created_at": "2026-11-14T04:50:35.792Z"
+    },
+    "DOM-D-C791DEC9": {
+      "record_id": "DOM-D-C791DEC9",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): deepseek-ai/DeepSeek-V3",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/deepseek-ai/DeepSeek-V3](https://huggingface.co/deepseek-ai/DeepSeek-V3))  \n> **Source Version**: `hf-deepseek-`  \n> **License**: Open-Source  \n> **Sy",
+      "content_hash": "3deb3134b3d9d02acf19d1cae1b6af49f69d4bba69516ea0565d436dddd31b03",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3-learnings.md`  \n> **Source**: huggingface ([https://huggi -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3-learnings.md`  \n> **Source**: huggingface ([https://huggi",
+      "provenance": {
+        "source_uri": "project://hf-deepseek-ai-deepseek-v3/hf-deepseek-ai-deepseek-v3-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T04:50:39.430Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-deepseek-ai-deepseek-v3)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-deepseek-ai-deepseek-v3"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T04:51:07.647Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v3-learnings-core-invari": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v3-learnings-core-invari",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-deepseek-ai-deepseek-v3-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-deepseek-ai-deepseek-v3-learnings-research-knowledge-intelligence-hf-deepseek.md",
+      "repository": "hf-deepseek-ai-deepseek-v3-learnings",
+      "content_hash": "53aa4d66bc1582d076b56dabd721cd795a6bd5442de10a3ad2f641011b5c7042",
+      "created_at": "2026-11-14T04:51:07.845Z"
+    },
+    "domain_intelligence-architecture-intelligence-keybase-client-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-keybase-client-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: keybase-client-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-keybase-client-learnings-architecture-intelligence-keybase-client-learnings-core.md",
+      "repository": "keybase-client-learnings",
+      "content_hash": "bbdcbfcc4824e7ce97d4dce2e0d72bcc79a5024cd724e6dc9da6365ea0a0f7c1",
+      "created_at": "2026-11-14T04:51:08.613Z"
     }
   }
 }

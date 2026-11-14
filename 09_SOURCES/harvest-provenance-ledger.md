@@ -9778,3 +9778,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-meta-llama-llama-2-7b` | `https://huggingface.co/meta-llama/Llama-2-7b` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-14T04:36:37.128Z |
 | `learn-dom-j-c6558b0e` | `project://hf-meta-llama-llama-2-7b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md` | 2026-11-14T04:37:15.307Z |
 | `learn-dom-h-dd654136` | `project://hf-meta-llama-llama-2-7b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md` | 2026-11-14T04:37:56.176Z |
+| `learn-huggingface-deepseek-ai-deepseek-v3` | `https://huggingface.co/deepseek-ai/DeepSeek-V3` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-14T04:50:27.719Z |
+| `learn-github-keybase-client` | `https://github.com/keybase/client` | `c241b403` | Multi-dimensional audit evidence | 2026-11-14T04:50:35.530Z |
+| `learn-dom-d-c791dec9` | `project://hf-deepseek-ai-deepseek-v3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3-learnings.md` | 2026-11-14T04:51:07.657Z |

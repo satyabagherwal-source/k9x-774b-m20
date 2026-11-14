@@ -995,8 +995,8 @@
     "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V3",
     "sourceVersion": "hf-deepseek-ai-deepseek-v3",
     "license": "Open-Source",
-    "contentHash": "a23fc3c79733fc66304304d1ce35e0a7b52a928d47257cbe7cb24fbbb9adaced",
-    "lastHarvestedAt": "2026-11-09T00:22:53.630Z",
+    "contentHash": "d74a22cac9d54d1ebe4cf833a9640631220762973b393e0c0e1c65bbbab45d01",
+    "lastHarvestedAt": "2026-11-14T04:50:27.719Z",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v3"
   },
   "hf-baidu-unlimited-ocr": {
@@ -4403,10 +4403,10 @@
     "repository": "keybase/client",
     "platform": "github",
     "sourceUrl": "https://github.com/keybase/client",
-    "sourceVersion": "22e5dbba",
+    "sourceVersion": "c241b403",
     "license": "BSD-3-Clause",
-    "contentHash": "34324c1861dce80df7a2352c72627cd17a51484d2d2f35f314c8494d62ee18a7",
-    "lastHarvestedAt": "2026-11-09T22:27:16.744Z",
+    "contentHash": "5bdf6aca9f8919b627c7fb5d539f4567407dcc393544e95ec99655d6b437b52f",
+    "lastHarvestedAt": "2026-11-14T04:50:35.530Z",
     "learningId": "learn-github-keybase-client"
   },
   "sealerio-sealer": {

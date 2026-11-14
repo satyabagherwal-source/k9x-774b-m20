@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-14T04:37:56.175Z",
+  "updated_at": "2026-11-14T04:51:07.656Z",
   "statistics": {
-    "total_nodes": 159,
-    "total_edges": 87,
+    "total_nodes": 160,
+    "total_edges": 88,
     "domain_distribution": {
-      "D": 125,
+      "D": 126,
       "M": 1,
       "H": 12,
       "J": 8,
@@ -18,7 +18,7 @@
       "B": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 87
+      "CONSTRAINED_BY_ARCHITECTURE": 88
     }
   },
   "nodes": {
@@ -3561,6 +3561,29 @@
       ],
       "created_at": "2026-11-14T04:37:56.175Z",
       "updated_at": "2026-11-14T04:37:56.175Z"
+    },
+    "DOM-D-C791DEC9": {
+      "id": "DOM-D-C791DEC9",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): deepseek-ai/DeepSeek-V3",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3-learnings.md`  \n> **Source**: huggingface ([https://huggi -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3-learnings.md`  \n> **Source**: huggingface ([https://huggi",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-deepseek-ai-deepseek-v3/hf-deepseek-ai-deepseek-v3-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T04:50:39.430Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-deepseek-ai-deepseek-v3)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-14T04:51:07.655Z",
+      "updated_at": "2026-11-14T04:51:07.655Z"
     }
   },
   "edges": [
@@ -4433,6 +4456,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-H-DD654136 [H] with Domain M",
       "created_at": "2026-11-14T04:37:56.175Z"
+    },
+    {
+      "id": "EDGE-130EF51DB8B6",
+      "sourceId": "DOM-D-C791DEC9",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-C791DEC9 [D] with Domain M",
+      "created_at": "2026-11-14T04:51:07.656Z"
     }
   ]
 }

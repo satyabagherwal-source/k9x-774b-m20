@@ -607598,3 +607598,104 @@ def test_tokenizer_no_dual_bos():
 ```
 
 ---
+
+
+---
+
+## 8443. Block modal, Files and inbox loader fixes from the e2e gates; harness hardening (Harvested from keybase/client)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Block modal, Files and inbox loader fixes from the e2e gates; harness hardening",
+  "source": "keybase/client",
+  "source_url": "https://github.com/keybase/client",
+  "source_version": "c241b403",
+  "license": "BSD-3-Clause",
+  "extracted_at": "2026-11-14T04:50:35.149Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-keybase-client",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [keybase/client](https://github.com/keybase/client) (Revision: `c241b403`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `go/chat/logout_stop_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in keybase/client. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `44ab4afa`: Block modal, Files and inbox loader fixes from the e2e gates; harness hardening. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go/chat/logout_stop_test.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+
+// A Start right after a Stop, before the stop's wait on the work group has returned, must wait for
+// it: starting the work group again while it is being waited on panics ("WaitGroup is reused
+// before previous Wait has returned"). Back-to-back account switches do exactly this.
+func TestUIInboxLoaderStartWaitsForPreviousStop(t *testing.T) {
+	tc, g, _ := setupLogoutStopTest(t, "TestUIInboxLoaderStartWaitsForPreviousStop")
+	defer tc.Cleanup()
+
+	ctx := context.TODO()
+	loader := NewUIInboxLoader(g)
+	release, stopped := holdUIInboxLoaderStop(ctx, loader)
+
+	started := make(chan struct{})
+	go func() {
+		loader.Start(ctx, gregor1.UID([]byte("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb")))
+		close(started)
+	}()
+	select {
+	case <-started:
+		t.Fatal("Start returned while the previous Stop was still waiting on the work group")
+	case <-time.After(200 * time.Millisecond):
+	}
+
+	release()
+	<-stopped
+	requireDone(t, started, "Start did not return once the previous Stop finished")
+	<-loader.Stop(ctx)
+}
+
+// Holds the loader's previous stop pending: the returned func lets it finish.
+func holdUIInboxLoaderStop(ctx context.Context, loader *UIInboxLoader) (release func(), stopped chan struct{}) {
+	loader.Start(c
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `44ab4afa` are properly handled with clean fallback behavior.

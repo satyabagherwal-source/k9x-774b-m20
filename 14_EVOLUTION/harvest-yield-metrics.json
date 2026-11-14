@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T04:36:37.134Z",
-  "total_cycles_completed": 9460,
-  "total_learnings_persisted": 9460,
-  "total_rules_promoted": 9163,
+  "last_updated": "2026-11-14T04:50:35.535Z",
+  "total_cycles_completed": 9462,
+  "total_learnings_persisted": 9462,
+  "total_rules_promoted": 9164,
   "history": [
-    {
-      "timestamp": "2026-11-13T14:17:46.001Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T14:17:47.486Z",
-      "repository": "genkit-ai/genkit",
-      "learningId": "learn-github-genkit-ai-genkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T14:25:31.353Z",
       "repository": "XingChen-AGI/Xing4.0-29B-A4B",
@@ -1403,6 +1389,20 @@
       "repository": "meta-llama/Llama-2-7b",
       "learningId": "learn-huggingface-meta-llama-llama-2-7b",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T04:50:27.724Z",
+      "repository": "deepseek-ai/DeepSeek-V3",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T04:50:35.535Z",
+      "repository": "keybase/client",
+      "learningId": "learn-github-keybase-client",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

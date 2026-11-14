@@ -9745,3 +9745,6 @@
 | `CYCLE-20261114-YJR7` | `2026-11-14T04:36:37.123Z` | `meta-llama/Llama-2-7b` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8440, Rule 8441, Rule 8442` | Yes (`5ceaa236...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T04:37:15.307Z` | `hf-meta-llama-llama-2-7b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-J-C6558B0E` [Domain J] | Yes (`6a9f484c...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T04:37:56.176Z` | `hf-meta-llama-llama-2-7b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-DD654136` [Domain H] | Yes (`efe4f1ce...`) |
+| `CYCLE-20261114-GCN7` | `2026-11-14T04:50:27.715Z` | `deepseek-ai/DeepSeek-V3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3-learnings.md` | Yes (`d74a22ca...`) |
+| `CYCLE-20261114-GIO6` | `2026-11-14T04:50:35.526Z` | `keybase/client` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8443` | Yes (`5bdf6aca...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T04:51:07.657Z` | `hf-deepseek-ai-deepseek-v3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-C791DEC9` [Domain D] | Yes (`3deb3134...`) |
