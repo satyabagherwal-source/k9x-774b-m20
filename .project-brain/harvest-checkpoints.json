@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-14T05:46:40.872Z",
+  "last_updated": "2026-11-14T06:05:50.362Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1370,14 +1370,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-fermionresearch-phonon-2",
-      "content_hash": "da5159e3e1b7cb35df2a5df76df11732f6756f00ba58416c233a524a11afcefa",
-      "verified_at": "2026-11-09T01:06:01.992Z",
+      "content_hash": "668d3d1e3925272c45034402ea9c17b01ff71ff6edf7b84803c4a58341ff6e0e",
+      "verified_at": "2026-11-14T06:05:36.519Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T01:06:01.992Z"
+      "last_updated": "2026-11-14T06:05:36.519Z"
     },
     "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw": {
       "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
@@ -5781,14 +5781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-risingwavelabs-risingwave",
-      "content_hash": "b7b6bfaa783e7d7c8017dd1ba8f4e1a7909f61e49533ac91aa6d3011a0110ed7",
-      "verified_at": "2026-11-13T04:31:32.236Z",
+      "content_hash": "b430616fc8589cdf9a6c059b03ff0bb2702496ad42a60ce79a7754b58e187c27",
+      "verified_at": "2026-11-14T06:05:50.362Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T04:31:32.236Z"
+      "last_updated": "2026-11-14T06:05:50.362Z"
     },
     "mertJF/tailblocks": {
       "repository": "mertJF/tailblocks",
@@ -6951,14 +6951,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-founded-labs-react-native-reusables",
-      "content_hash": "10a86964d797c7c89a45810dc3ddcef64ae2786681e4a8bdcdf0a58152ea5a2f",
-      "verified_at": "2026-10-19T01:34:53.550Z",
+      "content_hash": "f18f0249bb5d2dc29dd12544090e8481ad71c3275dd25a6bf20d4abd71475c7b",
+      "verified_at": "2026-11-14T06:05:42.623Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T01:34:53.550Z"
+      "last_updated": "2026-11-14T06:05:42.623Z"
     },
     "openyurtio/openyurt": {
       "repository": "openyurtio/openyurt",

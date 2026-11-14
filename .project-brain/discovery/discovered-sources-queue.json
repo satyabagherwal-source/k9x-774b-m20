@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T05:47:18.272Z",
+  "updated_at": "2026-11-14T06:06:26.356Z",
   "stats": {
-    "total_discovered": 3161,
-    "approved_pending_harvest": 2958,
+    "total_discovered": 3167,
+    "approved_pending_harvest": 2964,
     "harvested_count": 0,
     "rejected_count": 203,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2950,
+      "COMMUNITY_AND_EXPERT": 2956,
       "OFFICIAL_DOCUMENTATION": 116,
       "STANDARDS_AND_SPECIFICATIONS": 81,
       "ENGINEERING_BLOGS": 1,
@@ -68141,6 +68141,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
         "fileName": "pixeltable-pixeltable-learnings.md"
+      }
+    },
+    "SRC-B5F6870BCC90": {
+      "id": "SRC-B5F6870BCC90",
+      "url": "https://huggingface.co/FermionResearch/Phonon-2",
+      "title": "https://huggingface.co/FermionResearch/Phonon-2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T06:06:25.866Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md",
+        "fileName": "hf-fermionresearch-phonon-2-learnings.md"
+      }
+    },
+    "SRC-D1724B929F84": {
+      "id": "SRC-D1724B929F84",
+      "url": "https://github.com/founded-labs/react-native-reusables",
+      "title": "https://github.com/founded-labs/react-native-reusables",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T06:06:26.237Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/founded-labs-react-native-reusables-learnings.md",
+        "fileName": "founded-labs-react-native-reusables-learnings.md"
+      }
+    },
+    "SRC-1627F463D34C": {
+      "id": "SRC-1627F463D34C",
+      "url": "https://catalogs.dev/",
+      "title": "https://catalogs.dev/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T06:06:26.277Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/founded-labs-react-native-reusables-learnings.md",
+        "fileName": "founded-labs-react-native-reusables-learnings.md"
+      }
+    },
+    "SRC-B06251B5ADC7": {
+      "id": "SRC-B06251B5ADC7",
+      "url": "https://foundedlabs.com/",
+      "title": "https://foundedlabs.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T06:06:26.303Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/founded-labs-react-native-reusables-learnings.md",
+        "fileName": "founded-labs-react-native-reusables-learnings.md"
+      }
+    },
+    "SRC-AF3776F0E7AB": {
+      "id": "SRC-AF3776F0E7AB",
+      "url": "https://catalogs.dev/founded-labs",
+      "title": "https://catalogs.dev/founded-labs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T06:06:26.330Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/founded-labs-react-native-reusables-learnings.md",
+        "fileName": "founded-labs-react-native-reusables-learnings.md"
+      }
+    },
+    "SRC-165AB4274EB0": {
+      "id": "SRC-165AB4274EB0",
+      "url": "https://uniwind.dev/",
+      "title": "https://uniwind.dev/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T06:06:26.356Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/founded-labs-react-native-reusables-learnings.md",
+        "fileName": "founded-labs-react-native-reusables-learnings.md"
       }
     }
   }

@@ -9794,3 +9794,7 @@ Every entry in this ledger must capture:
 | `learn-github-builderio-builder` | `https://github.com/BuilderIO/builder` | `4f46c3a2` | Multi-dimensional audit evidence | 2026-11-14T05:46:33.551Z |
 | `learn-github-pixeltable-pixeltable` | `https://github.com/pixeltable/pixeltable` | `941d38df` | Multi-dimensional audit evidence | 2026-11-14T05:46:40.861Z |
 | `learn-dom-d-2c3ed23b` | `project://hf-aleph-alpha-kolibri-1` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1-learnings.md` | 2026-11-14T05:47:17.077Z |
+| `learn-huggingface-fermionresearch-phonon-2` | `https://huggingface.co/FermionResearch/Phonon-2` | `hf-fermion` | Multi-dimensional audit evidence | 2026-11-14T06:05:36.509Z |
+| `learn-github-founded-labs-react-native-reusables` | `https://github.com/founded-labs/react-native-reusables` | `da1e1f22` | Multi-dimensional audit evidence | 2026-11-14T06:05:42.613Z |
+| `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `24cf8ef7` | Multi-dimensional audit evidence | 2026-11-14T06:05:50.353Z |
+| `learn-dom-d-683cd8f2` | `project://hf-fermionresearch-phonon-2` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md` | 2026-11-14T06:06:25.851Z |

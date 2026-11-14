@@ -1045,8 +1045,8 @@
     "sourceUrl": "https://huggingface.co/FermionResearch/Phonon-2",
     "sourceVersion": "hf-fermionresearch-phonon-2",
     "license": "Open-Source",
-    "contentHash": "da5159e3e1b7cb35df2a5df76df11732f6756f00ba58416c233a524a11afcefa",
-    "lastHarvestedAt": "2026-11-09T01:06:01.982Z",
+    "contentHash": "668d3d1e3925272c45034402ea9c17b01ff71ff6edf7b84803c4a58341ff6e0e",
+    "lastHarvestedAt": "2026-11-14T06:05:36.509Z",
     "learningId": "learn-huggingface-fermionresearch-phonon-2"
   },
   "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw": {
@@ -3773,10 +3773,10 @@
     "repository": "risingwavelabs/risingwave",
     "platform": "github",
     "sourceUrl": "https://github.com/risingwavelabs/risingwave",
-    "sourceVersion": "365307c5",
+    "sourceVersion": "24cf8ef7",
     "license": "Apache-2.0",
-    "contentHash": "b7b6bfaa783e7d7c8017dd1ba8f4e1a7909f61e49533ac91aa6d3011a0110ed7",
-    "lastHarvestedAt": "2026-11-13T04:31:32.012Z",
+    "contentHash": "b430616fc8589cdf9a6c059b03ff0bb2702496ad42a60ce79a7754b58e187c27",
+    "lastHarvestedAt": "2026-11-14T06:05:50.353Z",
     "learningId": "learn-github-risingwavelabs-risingwave"
   },
   "mertjf-tailblocks": {
@@ -4553,10 +4553,10 @@
     "repository": "founded-labs/react-native-reusables",
     "platform": "github",
     "sourceUrl": "https://github.com/founded-labs/react-native-reusables",
-    "sourceVersion": "385834c2",
+    "sourceVersion": "da1e1f22",
     "license": "MIT",
-    "contentHash": "10a86964d797c7c89a45810dc3ddcef64ae2786681e4a8bdcdf0a58152ea5a2f",
-    "lastHarvestedAt": "2026-10-19T01:34:53.545Z",
+    "contentHash": "f18f0249bb5d2dc29dd12544090e8481ad71c3275dd25a6bf20d4abd71475c7b",
+    "lastHarvestedAt": "2026-11-14T06:05:42.613Z",
     "learningId": "learn-github-founded-labs-react-native-reusables"
   },
   "openyurtio-openyurt": {

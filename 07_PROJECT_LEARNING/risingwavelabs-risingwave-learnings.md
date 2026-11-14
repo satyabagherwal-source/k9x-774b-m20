@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source**: github ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
-> **Source Version**: `365307c5`  
+> **Source Version**: `24cf8ef7`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T04:31:17.067Z  
+> **Timestamp**: 2026-11-14T06:05:49.383Z  
 > **Learning ID**: `learn-github-risingwavelabs-risingwave`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T04:31:17.055Z  
+> **Harvest Timestamp**: 2026-11-14T06:05:49.377Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1077,337 +1077,94 @@ pub(crate) use def_path_lookup;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `de92f0a6` (2026-11-12)
-**Commit Message**: fix(storage): don't panic on a write limit notification before the snapshot (#27853)
+### Incident Patch 1: `24cf8ef7` (2026-11-13)
+**Commit Message**: chore(deps): bump sysinfo from 0.39.6 to 0.40.0 (#27975)
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Co-authored-by: Li0k <[REDACTED_EMAIL]>
 
-**File**: `src/common/common_service/src/observer_manager.rs` (modified, +32/-1)
+**File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -121,7 +121,10 @@ where
-             }
-             Info::MetaBackupManifestId(_) => true,
-             Info::SystemParams(_) | Info::SessionParam(_) => true,
--            Info::Snapshot(_) | Info::HummockWriteLimits(_) => unreachable!(),
-+            // It carries the whole limit table, so applying it after the snapshot in queue order
-+            // ends at the latest limits.
-+            Info::HummockWriteLimits(_) => true,
-+            Info::Snapshot(_) => unreachable!(),
-             Info::HummockStats(_) => true,
-             Info::Recovery(_) => true,
-             Info::ClusterResource(_) => true,
-@@ -305,6 +308,7 @@ mod tests {
-         initialized: bool,
-         table_refill_runtime_config_versions: Vec<u64>,
-         database_notifications: usize,
-+        write_limits_versions: Vec<u64>,
+@@ -18034,9 +18034,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "sysinfo"
+-version = "0.39.6"
++version = "0.40.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d2071df9448915b71c4fe6d25deaf1c22f12bd234f01540b77312bb8e41361e6"
++checksum = "110e37d98880fd804cd47509b90a8444f7aaaab655ae625e83cd442a8bc2ebf2"
+ dependencies = [
+  "libc",
+  "memchr",
+```
+
+**File**: `src/common/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -105,7 +105,7 @@ stacker = "0.1"
+ static_assertions = "1"
+ strum = "0.28"
+ strum_macros = "0.28"
+-sysinfo = { version = "0.39", default-features = false, features = ["system"] }
++sysinfo = { version = "0.40", default-features = false, features = ["system"] }
+ thiserror = { workspace = true }
+ thiserror-ext = { workspace = true }
+ tinyvec = { version = "1", features = ["rustc_1_55", "grab_spare_slice"] }
+```
+
+**File**: `src/utils/resource_util/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -7,7 +7,7 @@ repository = { workspace = true }
+ [dependencies]
+ fs-err = "3"
+ hostname = "0.4.1"
+-sysinfo = { version = "0.39", default-features = false, features = ["system"] }
++sysinfo = { version = "0.40", default-features = false, features = ["system"] }
+ thiserror-ext = { workspace = true }
+ tracing = "0.1"
+ 
+```
+
+**File**: `src/utils/resource_util/src/lib.rs` (modified, +9/-6)
+```diff
+@@ -151,18 +151,21 @@ pub mod memory {
+     const V2_MEMORY_LIMIT_PATH: &str = "/sys/fs/cgroup/memory.max";
+     const V2_MEMORY_CURRENT_PATH: &str = "/sys/fs/cgroup/memory.current";
+ 
++    fn system_with_memory() -> System {
++        // A zero total would invalidate memory sizing, so fail if sysinfo cannot initialize.
++        let mut sys = System::new().expect("failed to initialize system memory information");
++        sys.refresh_memory();
++        sys
++    }
++
+     /// Returns the system memory.
+     pub fn get_system_memory() -> usize {
+-        let mut sys = System::new();
+-        sys.refresh_memory();
+-        sys.total_memory() as usize
++        system_with_memory().total_memory() as usize
      }
  
-     impl ObserverState for TestObserverState {
-@@ -318,6 +322,10 @@ mod tests {
-                     self.table_refill_runtime_config_versions.push(resp.version)
-                 }
-                 Info::Database(_) => self.database_notifications += 1,
-+                Info::HummockWriteLimits(_) => {
-+                    assert!(self.initialized);
-+                    self.write_limits_versions.push(resp.version);
-+                }
-                 info => panic!("unexpected notification: {info:?}"),
-             }
-         }
-@@ -390,4 +398,27 @@ mod tests {
-         );
-         assert_eq!(observer_manager.observer_states.database_notifications, 0);
+     /// Returns the used memory of the system.
+     pub fn get_system_memory_used() -> usize {
+-        let mut sys = System::new();
+-        sys.refresh_memory();
+-        sys.used_memory() as usize
++        system_with_memory().used_memory() as usize
      }
-+
-+    #[tokio::test]
-+    async fn test_keep_write_limits_before_snapshot() {
-+        let rx = TestChannel {
-+            messages: VecDeque::from([
-+                notification(1, Info::HummockWriteLimits(Default::default())),
-+                notification(2, Info::HummockWriteLimits(Default::default())),
-+                notification(0, Info::Snapshot(Default::default())),
-+            ]),
-+        };
-+        let mut observer_manager = ObserverManager {
-+            rx,
-+            client: TestClient,
-+            observer_states: TestObserverState::default(),
-+        };
-+
-+        observer_manager.wait_init_notification().await.unwrap();
-+
-+        assert_eq!(
-+            observer_manager.observer_states.write_limits_versions,
-+            vec![1, 2]
-+        );
-+    }
- }
-```
-
----
-
-### Incident Patch 2: `b107c39c` (2026-11-12)
-**Commit Message**: fix(stream): make ChangeBuffer cancellation constant time (#27953)
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `Cargo.lock` (modified, +0/-1)
-```diff
-@@ -16047,7 +16047,6 @@ dependencies = [
-  "hashbrown 0.17.1",
-  "hytra",
-  "iceberg",
-- "indexmap 2.14.0",
-  "itertools 0.14.0",
-  "jsonbb",
-  "madsim-tokio",
-```
-
-**File**: `src/stream/Cargo.toml` (modified, +0/-1)
-```diff
-@@ -36,7 +36,6 @@ glob = "0.3"
- hashbrown = { workspace = true }
- hytra = "0.1.2"
- iceberg = { workspace = true }
--indexmap = "2"
- itertools = { workspace = true }
- jsonbb = { workspace = true }
- maplit = "1.0.2"
-```
-
-**File**: `src/stream/src/common/change_buffer.rs` (modified, +7/-8)
-```diff
-@@ -14,8 +14,6 @@
  
- use std::sync::LazyLock;
- 
--use indexmap::IndexMap;
--use indexmap::map::Entry;
- use risingwave_common::array::stream_record::Record;
- use risingwave_common::array::{Op, StreamChunk, StreamChunkBuilder};
- use risingwave_common::log::LogSuppressor;
-@@ -24,6 +22,9 @@ use risingwave_common::types::DataType;
- 
- use crate::consistency::consistency_panic;
- 
-+mod insertion_ordered_map;
-+use insertion_ordered_map::{Entry, InsertionOrderedMap};
-+
- /// Behavior when inconsistency is detected when aggregating changes to [`ChangeBuffer`].
- #[derive(Clone, Copy, Debug, PartialEq, Eq)]
- pub enum InconsistencyBehavior {
-@@ -70,8 +71,8 @@ struct Slot<R> {
- /// A buffer that accumulates changes and produce compacted changes.
- #[derive(Debug)]
- pub struct ChangeBuffer<K, R> {
--    // We use an `IndexMap` to preserve the original order of the changes as much as possible.
--    buffer: IndexMap<K, Slot<R>>,
-+    // `InsertionOrderedMap` preserves the original order of the changes as much as possible.
-+    buffer: InsertionOrderedMap<K, Slot<R>>,
-     ib: InconsistencyBehavior,
- }
- 
-@@ -115,9 +116,7 @@ where
-                 if slot.new.take().is_some() {
-                     if slot.old.is_none() {
-                         // The previous `Insert` is fully cancelled by this deletion.
--                        // FIXME: though preserving the order well,
--                        // this is not performant compared to `swap_remove`
--                        e.shift_remove();
-+                        e.remove();
-                     }
-                 } else {
-                     self.ib.report("inconsistent changes: double-deleting");
-@@ -232,7 +231,7 @@ impl<K, R> ChangeBuffer<K, R> {
-     /// Create a new `ChangeBuffer` with the given capacity that panics on inconsistency.
-     pub fn with_capacity(capacity: usize) -> Self {
-         Self {
--            buffer: IndexMap::with_capacity(capacity),
-+            buffer: InsertionOrderedMap::with_capacity(capacity),
-             ib: InconsistencyBehavior::Panic,
-         }
-     }
-```
-
-**File**: `src/stream/src/common/change_buffer/insertion_ordered_map.rs` (added, +168/-0)
-```diff
-@@ -0,0 +1,168 @@
-+// Copyright 2026 RisingWave Labs
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+use std::hash::{BuildHasher, Hash, RandomState};
-+
-+use hashbrown::HashTable;
-+
-+/// A hash map that iterates in insertion order like `IndexMap`, but removes a key in O(1): the
-+/// key leaves a hole instead of shifting the entries after it, and goes to the end if inserted
-+/// again.
-+#[derive(Debug)]
-+pub(super) struct InsertionOrderedMap<K, V> {
-+    /// Positions in `entries` of the keys in the map.
-+    index: HashTable<usize>,
-+    /// `None` marks a removed entry.
-+    entries: Vec<Option<(K, V)>>,
-+    hasher: RandomState,
-+}
-+
-+pub(super) enum Entry<'a, K, V> {
-+    Occupied(OccupiedEntry<'a, K, V>),
-+    Vacant(VacantEntry<'a, K, V>),
-+}
-+
-+pub(super) struct OccupiedEntry<'a, K, V> {
-+    map: &'a mut InsertionOrderedMap<K, V>,
-+    hash: u64,
-+    pos: usize,
-+}
-+
-+pub(super) struct VacantEntry<'a, K, V> {
-+    map: &'a mut InsertionOrderedMap<K, V>,
-+    hash: u64,
-+    key: K,
-+}
-+
-+impl<K, V> InsertionOrderedMap<K, V> {
-+    pub(super) fn with_capacity(capacity: usize) -> Self {
-+        Self {
-+            index: HashTable::with_capacity(capacity),
-+            entries: Vec::with_capacity(capacity),
-+            hasher: RandomState::new(),
-+        }
-+    }
-+
-+    pub(super) fn len(&self) -> usize {
-+        self.index.len()
-+    }
-+
-+    pub(super) fn is_empty(&self) -> bool {
-+        self.index.is_empty()
-+    }
-+
-+    pub(super) fn into_values(self) -> impl Iterator<Item = V> {
-+        self.entries.into_iter().flatten().map(|(_, value)| value)
-+    }
-+}
-+
-+impl<K: Hash + Eq, V> InsertionOrderedMap<K, V> {
-+    pub(super) fn entry(&mut self, key: K) -> Entry<'_, K, V> {
-+        let hash = self.hasher.hash_one(&key);
-+        match self
-+            .index
-+            .find(hash, |&i| {
-+                self.entries[i].as_ref().is_some_and(|(k, _)| *k == key)
-+            })
-+            .copied()
-+        {
-+            Some(pos) => Entry::Occupied(OccupiedEntry {
-+                map: self,
-+                hash,
-+                pos,
-+            }),
-+            None => Entry::Vacant(VacantEntry {
-+                map: self,
-+                hash,
-+                key,
-+            }),
-+        }
-+    }
-+
-+    /// Insert the value, replacing the value of an existing key in place.
-+    pub(super) fn insert(&mut self, key: K, value: V) {
-+        match self.entry(key) {
-+            Entry::Occupied(mut e) => *e.get_mut() = value,
-+            Entry::Vacant(e) => e.insert(value),
-+        }
-+    }
-+}
-+
-+impl<K, V> OccupiedEntry<'_, K, V> {
-+    pub(super) fn get_mut(&mut self) -> &mut V {
-+        &mut self.map.entries[self.pos]
-+            .as_mut()
-+            .expect("indexed entry should exist")
-+            .1
-+    }
-+
-+    pub(super) fn remove(self) {
-+        let entry = self.map.index.find_entry(self.hash, |&i| i == self.pos);
-+        entry.expect("entry should be indexed").remove();
-+        self.map.entries[self.pos] = None;
-+    }
-+}
-+
-+impl<K: Hash, V> VacantEntry<'_, K, V> {
-+    pub(super) fn insert(self, value: V) {
-+        let InsertionOrderedMap {
-+            index,
-+            entries,
-+            hasher,
-+        } = self.map;
-+        index.insert_unique(self.hash, entries.len(), |&i| {
-+            hasher.hash_one(&entries[i].as_ref().expect("indexed entry should exist").0)
-+        });
-+        entries.push(Some((self.key, value)));
-+    }
-+}
-+
-+#[cfg(test)]
-+mod tests {
-+    use itertools::Itertools;
-+
-+    use super::*;
-+
-+    fn remove(map: &mut InsertionOrderedMap<i32, i32>, key: i32) {
-+        let Entry::Occupied(e) = map.entry(key) else {
-+            panic!("key {key} should be in the map");
-+        };
-+        e.remove();
-+    }
-+
-+    #[test]
-+    fn test_removed_key_goes_to_the_end_when_inserted_again() {
-+        let mut map = InsertionOrderedMap::with_capacity(0);
-+        map.insert(1, 10);
-+        map.insert(2, 20);
-+        map.insert(3, 30);
-+        remove(&mut map, 1);
-+        assert_eq!(map.len(), 2);
-+
-+        map.insert(1, 11);
-+        map.insert(4, 40);
-+        assert_eq!(map.len(), 4);
-+        assert_eq!(map.into_values().collect_vec(), [20, 30, 11, 40]);
-+    }
-+
-+    #[test]
-+    fn test_replaced_key_keeps_its_position() {
-+        let mut map = InsertionOrderedMap::with_capacity(0);
-+        map.insert(1, 10);
-+        map.insert(2, 20);
-+        map.insert(1, 11);
-+        assert_eq!(map.len(), 2);
-+        as
+     /// Returns the total memory used by the system in bytes.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #27975** (2026-11-13): chore(deps): bump sysinfo from 0.39.6 to 0.40.0 (@dependabot[bot])
 - **PR #27970** (2026-11-12): feat(iceberg): gate PK index sinks behind a license (@silver-ymz)
+- **PR #27967** (2026-11-13): cherry-pick fix(storage): don't panic on a write limit notification before the snapshot (#27853) to release-3.0 (@yuhao-su)
 - **PR #27965** (2026-11-12): fix(storage): don't panic on a write limit notification before the snapshot (#27853) (@risingwave-ci)
 - **PR #27960** (closed): feat(sink): support replacing exactly-once sinks (@chenzl25)
 - **PR #27953** (2026-11-12): fix(stream): make ChangeBuffer cancellation constant time (@yuhao-su)
-- **PR #27950** (closed): chore(deps): bump the aws group with 7 updates (@dependabot[bot])
-- **PR #27948** (2026-11-11): cherry-pick: fix(meta): keep periodic barrier timer and checkpoint counter untouched by discarded commands (release-3.0) (@anlowee)
 
 ---
 
@@ -1427,57 +1184,30 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. storage): don't panic on a write limit notification before the snapshot (#27853)
+## X. deps): bump sysinfo from 0.39.6 to 0.40.0
 
 **RULE**:
-When implementing operations in `src/common/common_service/src/observer_manager.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `de92f0a6`: storage): don't panic on a write limit notification before the snapshot (#27853). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `24cf8ef7`: deps): bump sysinfo from 0.39.6 to 0.40.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/common/common_service/src/observer_manager.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            // It carries the whole limit table, so applying it after the snapshot in queue order
-            // ends at the latest limits.
-            Info::HummockWriteLimits(_) => true,
-            Info::Snapshot(_) => unreachable!(),
-        write_limits_versions: Vec<u64>,
-                Info::HummockWriteLimits(_) => {
-                    assert!(self.initialized);
-                    self.write_limits_versions.push(resp.version);
-                }
-
-    #[tokio::test]
-    async fn test_keep_write_limits_before_snapshot() {
-        let rx = TestChannel {
-            messages: VecDeque::from([
-                notification(1, Info::HummockWriteLimits(Default::default())),
-                notification(2, Info::HummockWriteLimits(Default::default())),
-                notification(0, Info::Snapshot(Default::default())),
-            ]),
-        };
-        let mut observer_manager = ObserverManager {
-            rx,
-            client: TestClient,
-            observer_states: TestObserverState::default(),
-        };
-
-        observer_manager.wait_init_notification().await.unwrap();
-
-        assert_eq!(
-            observer_manager.observer_states.write_limits_versions,
-            v
+version = "0.40.0"
+checksum = "110e37d98880fd804cd47509b90a8444f7aaaab655ae625e83cd442a8bc2ebf2"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-            Info::Snapshot(_) | Info::HummockWriteLimits(_) => unreachable!(),
+// Induced defect failure mode:
+version = "0.39.6"
+checksum = "d2071df9448915b71c4fe6d25deaf1c22f12bd234f01540b77312bb8e41361e6"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `de92f0a6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `24cf8ef7` are properly handled with clean fallback behavior.

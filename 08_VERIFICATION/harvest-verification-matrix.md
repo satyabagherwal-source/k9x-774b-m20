@@ -9761,3 +9761,7 @@
 | `CYCLE-20261114-GHQJ` | `2026-11-14T05:46:33.547Z` | `BuilderIO/builder` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8453` | Yes (`76eb9d0b...`) |
 | `CYCLE-20261114-GNDL` | `2026-11-14T05:46:40.857Z` | `pixeltable/pixeltable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8454` | Yes (`88a46480...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T05:47:17.077Z` | `hf-aleph-alpha-kolibri-1` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-2C3ED23B` [Domain D] | Yes (`664d6ff1...`) |
+| `CYCLE-20261114-4ZND` | `2026-11-14T06:05:36.505Z` | `FermionResearch/Phonon-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md` | Yes (`668d3d1e...`) |
+| `CYCLE-20261114-54CX` | `2026-11-14T06:05:42.609Z` | `founded-labs/react-native-reusables` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8455` | Yes (`f18f0249...`) |
+| `CYCLE-20261114-5ABX` | `2026-11-14T06:05:50.349Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8456` | Yes (`b430616f...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T06:06:25.851Z` | `hf-fermionresearch-phonon-2` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-683CD8F2` [Domain D] | Yes (`4604ab0a...`) |

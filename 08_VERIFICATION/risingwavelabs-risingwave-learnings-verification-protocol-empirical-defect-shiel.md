@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:44:03.084Z",
+  "timestamp": "2026-11-14T06:06:27.133Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-risingwavelabs-risingwave-learnings",
+  "learning_id": "LEARN-EVO-risingwavelabs-risingwave-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [risingwavelabs-risingwave-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:44:03.084Z`  
-> **Learning ID**: `LEARN-REEXTRACT-risingwavelabs-risingwave-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-14T06:06:27.133Z`  
+> **Learning ID**: `LEARN-EVO-risingwavelabs-risingwave-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source**: github ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
-> **Source Version**: `26236216`  
+> **Source Version**: `24cf8ef7`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T18:03:48.492Z  
+> **Timestamp**: 2026-11-14T06:05:49.383Z  
 > **Learning ID**: `learn-github-risingwavelabs-risingwave`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T18:03:48.487Z  
+> **Harvest Timestamp**: 2026-11-14T06:05:49.377Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Event streaming platform for agentic AI. Continuously ingest, transform, and serve event streams in real time, at scale.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9410 stars
+- **Stars / Engagement**: 9411 stars
 
 ---
 
@@ -1102,773 +1102,94 @@ pub(crate) use def_path_lookup;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c4837fda` (2026-11-09)
-**Commit Message**: fix(frontend): reject invalid rate limit in WITH options instead of panicking (#27900)
+### Incident Patch 1: `24cf8ef7` (2026-11-13)
+**Commit Message**: chore(deps): bump sysinfo from 0.39.6 to 0.40.0 (#27975)
 
-**File**: `e2e_test/ddl/throttle.slt` (modified, +7/-0)
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Co-authored-by: Li0k <[REDACTED_EMAIL]>
+
+**File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -15,6 +15,13 @@ create materialized view mv1 with (backfill_rate_limit = 1000, backfill_rate_lim
- statement error unexpected options in WITH clause
- create materialized view mv1 with (backfill_rate_limit = 1000, unknown_field = 2000) as select * from t1;
+@@ -18034,9 +18034,9 @@ dependencies = [
  
-+# create with invalid backfill_rate_limit
-+statement error `backfill_rate_limit` must be a non-negative integer, but got `abc`
-+create materialized view mv1 with (backfill_rate_limit = 'abc') as select * from t1;
-+
-+statement error `backfill_rate_limit` must be a non-negative integer, but got `-1`
-+create materialized view mv1 with (backfill_rate_limit = '-1') as select * from t1;
-+
- statement ok
- create materialized view mv1 with (backfill_rate_limit = 1000) as select * from t1;
+ [[package]]
+ name = "sysinfo"
+-version = "0.39.6"
++version = "0.40.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d2071df9448915b71c4fe6d25deaf1c22f12bd234f01540b77312bb8e41361e6"
++checksum = "110e37d98880fd804cd47509b90a8444f7aaaab655ae625e83cd442a8bc2ebf2"
+ dependencies = [
+  "libc",
+  "memchr",
+```
+
+**File**: `src/common/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -105,7 +105,7 @@ stacker = "0.1"
+ static_assertions = "1"
+ strum = "0.28"
+ strum_macros = "0.28"
+-sysinfo = { version = "0.39", default-features = false, features = ["system"] }
++sysinfo = { version = "0.40", default-features = false, features = ["system"] }
+ thiserror = { workspace = true }
+ thiserror-ext = { workspace = true }
+ tinyvec = { version = "1", features = ["rustc_1_55", "grab_spare_slice"] }
+```
+
+**File**: `src/utils/resource_util/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -7,7 +7,7 @@ repository = { workspace = true }
+ [dependencies]
+ fs-err = "3"
+ hostname = "0.4.1"
+-sysinfo = { version = "0.39", default-features = false, features = ["system"] }
++sysinfo = { version = "0.40", default-features = false, features = ["system"] }
+ thiserror-ext = { workspace = true }
+ tracing = "0.1"
  
 ```
 
-**File**: `src/frontend/planner_test/src/lib.rs` (modified, +1/-1)
+**File**: `src/utils/resource_util/src/lib.rs` (modified, +9/-6)
 ```diff
-@@ -440,7 +440,7 @@ impl TestCase {
-                     let context = OptimizerContext::new(
-                         HandlerArgs::new(session.clone(), &stmt, sql.clone())?,
-                         explain_options,
--                    );
-+                    )?;
-                     let ret = self.apply_query(&stmt, context.into())?;
-                     if do_check_result {
-                         check_result(self, &ret)?;
-```
-
-**File**: `src/frontend/src/handler/create_index.rs` (modified, +1/-1)
-```diff
-@@ -712,7 +712,7 @@ pub async fn handle_create_index(
-             return Ok(resp);
-         }
+@@ -151,18 +151,21 @@ pub mod memory {
+     const V2_MEMORY_LIMIT_PATH: &str = "/sys/fs/cgroup/memory.max";
+     const V2_MEMORY_CURRENT_PATH: &str = "/sys/fs/cgroup/memory.current";
  
--        let context = OptimizerContext::from_handler_args(handler_args);
-+        let context = OptimizerContext::from_handler_args(handler_args)?;
-         let (plan, index_table, index) = gen_create_index_plan(
-             &session,
-             context.into(),
-```
-
-**File**: `src/frontend/src/handler/create_mv.rs` (modified, +5/-5)
-```diff
-@@ -257,9 +257,9 @@ pub(crate) fn resolve_streaming_job_resource_type(
-     Ok(resource_type)
- }
- 
--fn get_with_options(handler_args: HandlerArgs) -> WithOptions {
--    let context = OptimizerContext::from_handler_args(handler_args);
--    context.with_options().clone()
-+fn get_with_options(handler_args: HandlerArgs) -> Result<WithOptions> {
-+    let context = OptimizerContext::from_handler_args(handler_args)?;
-+    Ok(context.with_options().clone())
- }
- 
- pub async fn handle_create_mv_bound(
-@@ -355,7 +355,7 @@ pub(crate) fn gen_create_mv_graph(
-     streaming_job_resource_type::ResourceType,
-     Option<u64>,
- )> {
--    let mut with_options = get_with_options(handler_args.clone());
-+    let mut with_options = get_with_options(handler_args.clone())?;
-     let refresh_interval_sec = with_options.refresh_interval_sec()?;
-     with_options.remove(MV_REFRESH_INTERVAL_SEC_KEY);
-     let resource_type =
-@@ -369,7 +369,7 @@ pub(crate) fn gen_create_mv_graph(
-         ))));
-     }
- 
--    let context = OptimizerContext::from_handler_args(handler_args);
-+    let context = OptimizerContext::from_handler_args(handler_args)?;
-     let has_order_by = !query.order.is_empty();
-     if has_order_by {
-         context.warn_to_user(r#"The ORDER BY clause in the CREATE MATERIALIZED VIEW statement does not guarantee that the rows selected out of this materialized view is returned in this order.
-```
-
-**File**: `src/frontend/src/handler/create_sink.rs` (modified, +2/-2)
-```diff
-@@ -219,9 +219,9 @@ pub async fn gen_sink_plan(
-     let partition_info = get_partition_compute_info(&resolved_with_options).await?;
- 
-     let context = if let Some(explain_options) = explain_options {
--        OptimizerContext::new(handler_args.clone(), explain_options)
-+        OptimizerContext::new(handler_args.clone(), explain_options)?
-     } else {
--        OptimizerContext::from_handler_args(handler_args.clone())
-+        OptimizerContext::from_handler_args(handler_args.clone())?
-     };
-     let is_auto_schema_change = resolved_with_options
-         .get(AUTO_SCHEMA_CHANGE_KEY)
-```
-
-**File**: `src/frontend/src/handler/create_source.rs` (modified, +2/-2)
-```diff
-@@ -1221,7 +1221,7 @@ pub async fn handle_create_source(
-         return handle_create_cdc_table_source(handler_args, stmt).await;
-     }
- 
--    let overwrite_options = OverwriteOptions::new(&mut handler_args);
-+    let overwrite_options = OverwriteOptions::new(&mut handler_args)?;
- 
-     if handler_args.with_options.is_empty() {
-         return Err(RwError::from(InvalidInputSyntax(
-@@ -1556,7 +1556,7 @@ pub(super) fn generate_stream_graph_for_source(
-     handler_args: HandlerArgs,
-     source_catalog: SourceCatalog,
- ) -> Result<PbStreamFragmentGraph> {
--    let context = OptimizerContext::from_handler_args(handler_args);
-+    let context = OptimizerContext::from_handler_args(handler_args)?;
-     let source_node = LogicalSource::with_catalog(
-         Rc::new(source_catalog),
-         SourceNodeKind::CreateSharedSource,
-```
-
-**File**: `src/frontend/src/handler/create_subscription.rs` (modified, +1/-1)
-```diff
-@@ -86,7 +86,7 @@ pub async fn handle_create_subscription(
-         return Ok(resp);
-     };
-     let subscription_catalog = {
--        let context = Rc::new(OptimizerContext::from_handler_args(handle_args));
-+        let context = Rc::new(OptimizerContext::from_handler_args(handle_args)?);
-         create_subscription_catalog(&session, context, stmt)?
-     };
- 
-```
-
-**File**: `src/frontend/src/handler/create_table.rs` (modified, +7/-7)
-```diff
-@@ -516,7 +516,7 @@ pub(crate) async fn gen_create_table_plan_with_source(
-     )
-     .await?;
- 
--    let overwrite_options = OverwriteOptions::new(&mut handler_args);
-+    let overwrite_options = OverwriteOptions::new(&mut handler_args)?;
-     let rate_limit = overwrite_options.source_rate_limit;
-     let source = bind_create_source_or_table_with_connector(
-         handler_args.clone(),
-@@ -538,7 +538,7 @@ pub(crate) async fn gen_create_table_plan_with_source(
-     )
-     .await?;
- 
--    let context = OptimizerContext::new(handler_args, explain_options);
-+    let context = OptimizerContext::new(handler_args, explain_options)?;
- 
-     let (plan, table) = gen_table_plan_with_source(
-         context.into(),
-@@ -1056,7 +1056,7 @@ pub(super) async fn handle_create_table_plan(
-             None,
-         ),
-         (None, None) => {
--            let context = OptimizerContext::new(handler_args, explain_options);
-+            let context = OptimizerContext::new(handler_args, explain_options)?;
-             let (plan, table) = gen_create_table_plan(
-                 context,
-                 table_name.clone(),
-@@ -1150,7 +1150,7 @@ pub(super) async fn handle_create_table_plan(
-             reject_pk_filtered_by_debezium_column_filter(&pk_names, &cdc_with_options)?;
- 
-             let context: OptimizerContextRef =
--                OptimizerContext::new(handler_args, explain_options).into();
-+                OptimizerContext::new(handler_args, explain_options)?.into();
-             let shared_source_id = source.id;
-             let (plan, table) = gen_create_table_plan_for_cdc_table(
-                 context,
-@@ -1704,7 +1704,7 @@ pub async fn create_iceberg_engine_table(
-     source_handler_args.with_options =
-         WithOptions::new(source_with, Default::default(), connection_ref);
- 
--    let overwrite_options = OverwriteOptions::new(&mut source_handler_args);
-+    let overwrite_options = OverwriteOptions::new(&mut source_handler_args)?;
-     let format_encode = create_source_stmt.format_encode.into_v2_with_warning();
-     let (with_properties, refresh_mode) =
-         bind_connector_props(&source_handler_args, &format_encode, true)?;
-@@ -1934,7 +1934,7 @@ pub async fn generate_stream_graph_for_replace_table(
-             TableJobType::General,
-         ),
-         (None, None) => {
--            let context = OptimizerContext::from_handler_args(handler_args);
-+            let context = OptimizerContext::from_handler_args(handler_args)?;
-             let (plan, table) = gen_create_table_plan(
-                 context,
-                 table_name,
-@@ -1977,7 +1977,7 @@ pub async fn generate_stream_graph_for_replace_table(
-             reject_pk_filtered_by_debezium_column_filter(&pk_names, &cdc_with_options)?;
- 
-             let context: OptimizerContextRef =
--                OptimizerContext::new(handler_args, ExplainOptions::default()).into();
-+                OptimizerContext::new(handler_args, ExplainOptions::default())?.into();
-             let (plan, table) = gen_create_table_plan_for_cdc_table(
-                 context,
-                 source,
-```
-
----
-
-### Incident Patch 2: `0609c3aa` (2026-11-10)
-**Commit Message**: fix(iceberg): let sink coordinator start before pending schema change is committed (#27906)
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `src/connector/src/connector_common/iceberg/mock_catalog.rs` (modified, +44/-2)
-```diff
-@@ -41,7 +41,7 @@ mod test_tables {
-         UnboundPartitionSpec,
-     };
-     use iceberg::table::Table;
--    use iceberg::{NamespaceIdent, Runtime, TableIdent};
-+    use iceberg::{NamespaceIdent, Runtime, TableCommit, TableIdent};
-     use parking_lot::Mutex;
- 
-     use super::MockCatalog;
-@@ -97,6 +97,18 @@ mod test_tables {
-             TABLES.lock().contains_key(ident) || matches!(ident.name(), "updates_v2" | "updates_v3")
-         }
- 
-+        /// Apply a commit to a registered table. Returns the commit back if the table is not
-+        /// registered.
-+        pub(super) fn update_test_table(
-+            commit: TableCommit,
-+        ) -> Result<iceberg::Result<Table>, Box<TableCommit>> {
-+            let mut tables = TABLES.lock();
-+            let Some(table) = tables.get_mut(commit.identifier()) else {
-+                return Err(Box::new(commit));
-+            };
-+            Ok(apply_commit(table, commit))
-+        }
-+
-         pub(super) fn updates_table(name: &str, version: FormatVersion) -> Table {
-             let schema = Schema::builder()
-                 .with_fields(vec![
-@@ -132,6 +144,30 @@ mod test_tables {
-                 .unwrap()
-         }
-     }
-+
-+    fn apply_commit(table: &mut Table, mut commit: TableCommit) -> iceberg::Result<Table> {
-+        for requirement in commit.take_requirements() {
-+            requirement.check(Some(table.metadata()))?;
-+        }
-+        let mut metadata_builder = table
-+            .metadata()
-+            .clone()
-+            .into_builder(table.metadata_location().map(str::to_owned));
-+        for update in commit.take_updates() {
-+            metadata_builder = update.apply(metadata_builder)?;
-+        }
-+        let mut builder = Table::builder()
-+            .identifier(table.identifier().clone())
-+            .file_io(table.file_io().clone())
-+            .runtime(Runtime::try_current().unwrap())
-+            .metadata(metadata_builder.build()?.metadata);
-+        if let Some(location) = table.metadata_location() {
-+            builder = builder.metadata_location(location);
-+        }
-+        let updated = builder.build()?;
-+        *table = updated.clone();
-+        Ok(updated)
-+    }
- }
- 
- /// A mock catalog for Iceberg planner and executor tests.
-@@ -364,7 +400,13 @@ impl CatalogV2 for MockCatalog {
-     }
- 
-     /// Update a table to the catalog.
--    async fn update_table(&self, _commit: TableCommit) -> iceberg::Result<Table> {
-+    async fn update_table(&self, commit: TableCommit) -> iceberg::Result<Table> {
-+        #[cfg(any(test, feature = "test"))]
-+        let commit = match Self::update_test_table(commit) {
-+            Ok(result) => return result,
-+            Err(commit) => *commit,
-+        };
-+        let _ = commit;
-         todo!()
-     }
- 
-```
-
-**File**: `src/connector/src/sink/iceberg/create_table.rs` (modified, +22/-7)
-```diff
-@@ -65,6 +65,28 @@ impl IcebergOrderKeyField {
- pub async fn create_and_validate_table_impl(
-     config: &IcebergConfig,
-     param: &SinkParam,
-+) -> Result<Table> {
-+    let table = create_and_load_table_impl(config, param).await?;
-+
-+    let sink_schema = param.schema();
-+    let iceberg_arrow_schema = schema_to_arrow_schema(table.metadata().current_schema())
-+        .map_err(|err| SinkError::Iceberg(anyhow!(err)))?;
-+
-+    try_matches_arrow_schema(&sink_schema, &iceberg_arrow_schema)
-+        .map_err(|err| SinkError::Iceberg(anyhow!(err)))?;
-+
-+    Ok(table)
-+}
-+
-+/// Creates the table if configured, loads it, and checks table properties that do not depend on
-+/// its current schema.
-+///
-+/// Unlike [`create_and_validate_table_impl`], this does not require the current Iceberg schema to
-+/// match `param`. During recovery, a durably recorded sink schema change may still need to be
-+/// committed before the two schemas match again.
-+pub async fn create_and_load_table_impl(
-+    config: &IcebergConfig,
-+    param: &SinkParam,
- ) -> Result<Table> {
-     if config.create_table_if_not_exists {
-         create_table_if_not_exists_impl(config, param).await?;
-@@ -86,13 +108,6 @@ pub async fn create_and_validate_table_impl(
-         }
-     }
- 
--    let sink_schema = param.schema();
--    let iceberg_arrow_schema = schema_to_arrow_schema(table.metadata().current_schema())
--        .map_err(|err| SinkError::Iceberg(anyhow!(err)))?;
--
--    try_matches_arrow_schema(&sink_schema, &iceberg_arrow_schema)
--        .map_err(|err| SinkError::Iceberg(anyhow!(err)))?;
--
-     Ok(table)
- }
- 
-```
-
-**File**: `src/connector/src/sink/iceberg/mod.rs` (modified, +9/-1)
-```diff
-@@ -152,6 +152,10 @@ impl IcebergSink {
-         create_and_validate_table_impl(&self.config, &self.param).await
-     }
- 
-+    async fn create_and_load_table(&self) -> Result<Table> {
-+        create_and_load_table_impl(&self.config, &self.param).await
++    fn system_with_memory() -> System {
++        // A zero total would invalidate memory sizing, so fail if sysinfo cannot initialize.
++        let mut sys = System::new().expect("failed to initialize system memory information");
++        sys.refresh_memory();
++        sys
 +    }
 +
-     /// Returns `true` if this call created the table, `false` if it already existed.
-     pub async fn create_table_if_not_exists(&self) -> Result<bool> {
-         create_table_if_not_exists_impl(&self.config, &self.param).await
-@@ -424,7 +428,11 @@ impl Sink for IcebergSink {
-         iceberg_compact_stat_sender: Option<UnboundedSender<IcebergSinkCompactionUpdate>>,
-     ) -> Result<SinkCommitCoordinator> {
-         let catalog = self.config.create_catalog().await?;
--        let table = self.create_and_validate_table().await?;
-+        // Do not require the current Iceberg schema to match `self.param` here. During recovery,
-+        // `self.param` may already include a sink schema change that is still pending in the meta
-+        // store. The coordinator commits that change before it starts writer handles, and writers
-+        // validate the table schema against their own params in `begin_epoch`.
-+        let table = self.create_and_load_table().await?;
-         let coordinator = IcebergSinkCommitter {
-             catalog,
-             table,
-```
-
-**File**: `src/connector/src/sink/iceberg/test.rs` (modified, +214/-0)
-```diff
-@@ -1253,3 +1253,217 @@ fn test_validate_row_lineage_column_names() {
-     // `<table>._row_id`, which does not collide with the lineage column.
-     validate_row_lineage_column_names(FormatVersion::V3, &columns("t._row_id")).unwrap();
- }
-+
-+// Iceberg tables require a native Tokio runtime, which madsim does not provide.
-+#[cfg(not(madsim))]
-+mod coordinator_recovery {
-+    use std::collections::HashMap;
-+
-+    use iceberg::io::FileIO;
-+    use iceberg::spec::{
-+        FormatVersion, NestedField, PrimitiveType, Schema as IcebergSchema, SortOrder,
-+        TableMetadataBuilder, Type, UnboundPartitionSpec,
-+    };
-+    use iceberg::table::Table;
-+    use iceberg::{NamespaceIdent, Runtime, TableIdent};
-+    use risingwave_common::catalog::{ColumnDesc, ColumnId, Field};
-+    use risingwave_common::id::SinkId;
-+    use risingwave_common::types::DataType;
-+    use risingwave_pb::plan_common::PbField;
-+    use risingwave_pb::stream_plan::sink_schema_change::Op as PbSinkSchemaChangeOp;
-+    use risingwave_pb::stream_plan::{PbSinkAddColumnsOp, PbSinkSchemaChange};
-+    use thiserror_ext::AsReport;
-+
-+    use crate::connector_common::mock_catalog::{MockCatalog, MockTableGuard};
-+    use crate::sink::boxed::BoxTwoPhaseCoordinator;
-+    use crate::sink::catalog::SinkType;
-+    use crate::sink::iceberg::{IcebergConfig, IcebergSink, create_and_validate_table_impl};
-+    use crate::sink::{Sink, SinkCommitCoordinator, SinkParam};
-+
-+    const NAMESPACE: &str = "mock_namespace";
-+
-+    fn register_table(fields: &[(i32, &str, PrimitiveType)]) -> (String, MockTableGuard) {
-+        let name = format!("coordinator_recovery_{}", uuid::Uuid::new_v4().simple());
-+        let schema = IcebergSchema::builder()
-+            .with_fields(fields.iter().map(|(id, field_name, ty)| {
-+                NestedField::optional(*id, *field_name, Type::Primitive(ty.clone())).into()
-+            }))
-+            .build()
-+            .unwrap();
-+        let metadata = TableMetadataBuilder::new(
-+            schema,
-+            UnboundPartitionSpec::builder().build(),
-+            SortOrder::unsorted_order(),
-+            format!("memory://{name}"),
-+            FormatVersion::V2,
-+            HashMap::new(),
-+        )
-+        .unwrap()
-+        .build()
-+        .unwrap()
-+        .metadata;
-+        let table = Table::builder()
-+            .identifier(TableIdent::new(
-+                NamespaceIdent::new(NAMESPACE.to_owned()),
-+                name.clone(),
-+            ))
-+            .file_io(FileIO::new_with_memory())
-+            .runtime(Runtime::try_current().unwrap())
-+            .metadata(metadata)
-+            .build()
-+            .unwrap();
-+        let guard = MockCatalog::register(table);
-+        (name, guard)
-+    }
-+
-+    fn sink_param(table_name: &str, columns: &[(&str, DataType)]) -> SinkParam {
-+        SinkParam {
-+            sink_id: SinkId::from(1u32),
-+            sink_name: "test_sink".to_owned(),
-+            properties: [
-+                ("connector", "iceberg"),
-+                ("type", "append-only"),
-+                ("catalog.type", "mock"),
-+                ("database.name", NAMESPACE),
-+                ("table.name", table_name),
-+            ]
-+            .into_iter()
-+            .map(|(k, v)| (k.to_owned(), v.to_owned()))
-+            .collect(),
-+            columns: columns
-+                .iter()
-+                .enumerate()
-+                .map(|(i, (name, ty))| {
-+                    ColumnDesc::named(*name, ColumnId::new(i as i32 + 1), ty.clone())
-+                })
-+                .collect(),
-+            downstream_pk: None,
-+            sink_type: SinkType::AppendOnly,
-+            ignore_delete: false,
-+            format_desc: None,
-+            db_name: "test_db".to_owned(),
-+            sink_from_name: "test_table".to_owned(),
-+        }
-+    }
-+
-+    fn pb_fields(columns: &[(&str, DataType)]) -> Vec<PbField> {
-+        columns
-+            .iter()
-+            .map(|(name, ty)| Field::with_name(ty.clone(), *name).to_prost())
-+            .collect()
-+    }
-+
-+    fn add_columns_change(
-+        original: &[(&str, DataType)],
-+        added: &[(&str, DataType)],
-+    ) -> PbSinkSchemaChange {
-+        PbSinkSchemaChange {
-+            original_schema: pb_fields(original),
-+            op: Some(PbSinkSchemaChangeOp::AddColumns(PbSinkAddColumnsOp {
-+                fields: pb_fields(added),
-+            })),
-+        }
-+    }
-+
-+    async fn new_two_phase_coordinator(param: &SinkParam) -> BoxTwoPhaseCoordinator {
-+        let sink = IcebergSink::try_from(param.clone()).unwrap();
-+        match sink.new_coordinator(None).await.unwrap() {
-+            SinkCommitCoordinator::TwoPhase(coordinator) => coordinator,
-+            SinkCommitCoordinator::SinglePhase(_) => {
-+                panic!("an exactly-once iceberg sink should use a two-phase coordinator")
-+            }
-+        }
-+    }
-+
-+    /// After a sink schema change is persisted and the replace job is finished, recovery builds t
-```
-
-**File**: `src/meta/src/manager/sink_coordination/manager.rs` (modified, +148/-0)
-```diff
-@@ -2102,6 +2102,154 @@ mod tests {
-         assert_eq!(rows[0].3, None);
+     /// Returns the system memory.
+     pub fn get_system_memory() -> usize {
+-        let mut sys = System::new();
+-        sys.refresh_memory();
+-        sys.total_memory() as usize
++        system_with_memory().total_memory() as usize
      }
  
-+    /// After a replace job finishes, recovery builds the coordinator from writers that already have
-+    /// the new schema, while the schema change can still be pending in the meta store. The pending
-+    /// change must be committed before any writer receives its start response, because writers
-+    /// validate the sink table against their new schema once they start.
-+    #[tokio::test]
-+    async fn test_recovered_schema_change_committed_before_writer_start() {
-+        let db = prepare_db_backend().await;
-+
-+        let param = SinkParam {
-+            sink_id: SinkId::from(1),
-+            sink_name: "test".into(),
-+            properties: Default::default(),
-+            columns: vec![],
-+            downstream_pk: None,
-+            sink_type: SinkType::AppendOnly,
-+            ignore_delete: false,
-+            format_desc: None,
-+            db_name: "test".into(),
-+            sink_from_name: "test".into(),
-+        };
-+
-+        let epoch1 = 233;
-+        let metadata = vec![1u8, 2u8];
-+        let schema_change = PbSinkSchemaChange {
-+            original_schema: vec![PbField {
-+                data_type: Some(PbDataType {
-+                    type_name: PbTypeName::Int32 as i32,
-+                    ..Default::default()
-+                }),
-+                name: "col_v1".into(),
-+            }],
-+            op: Some(SinkSchemachangeOp::AddColumns(PbSinkAddColumnsOp {
-+                fields: vec![PbField {
-+                    data_type: Some(PbDataType {
-+                        type_name: PbTypeName::Varchar as i32,
-+                        ..Default::default()
-+                    }),
-+                    name: "new_col".into(),
-+                }],
-+            })),
-+        };
-+        crate::manager::exactly_once_util::persist_pre_commit_metadata(
-+            &db,
-+            param.sink_id,
-+            epoch1,
-+            Some(metadata.clone()),
-+            Some(&schema_change),
-+        )
-+        .await
-+        .unwrap();
-+
-+        let all_vnode = (0..VirtualNode::COUNT_FOR_TEST).collect_vec();
-+        let mut builder = BitmapBuilder::zeroed(VirtualNode::COUNT_FOR_TEST);
-+        for i in all_vnode {
-+            builder.set(i, true);
-+        }
-+        let vnode = builder.finish();
-+
-+        // Keep the sender alive so that the coordinator keeps waiting for new committed epochs.
-+        let epoch_sender = Arc::new(tokio::sync::Mutex::new(None));
-+        let mock_subscriber: SinkCommittedEpochSubscriber = Arc::new(move |_sink_id: SinkId| {
-+            let (sender, receiver) = unbounded_channel();
-+            let epoch_sender = epoch_sender.clone();
-+            async move {
-+                *epoch_sender.lock().await = Some(sender);
-+                Ok((epoch1, receiver))
-+            }
-+            .boxed()
-+        });
-+
-+        let commits = Arc::new(std::sync::Mutex::new(vec![]));
-+        let (manager, (_join_handle, _stop_tx)) =
-+            SinkCoordinatorManager::start_worker_with_spawn_worker({
-+                let db = db.clone();
-+                let commits = commits.clone();
-+                move |param, new_writer_rx| {
-+                    let db = db.clone();
-+                    let metadata = metadata.clone();
-+                    let schema_change = schema_change.clone();
-+                    let data_commits = commits.clone();
-+                    let schema_change_commits = commits.clone();
-+                    tokio::spawn({
-+                        let subscriber = mock_subscriber.clone();
-+                        async move {
-+                            CoordinatorWorker::execute_coordinator(
-+                                db,
-+                                param,
-+                                new_writer_rx,
-+                                MockTwoPhaseCoordinator::new_coordinator(
-+                                    move |_epoch, _metadata_list, _schema_change| {
-+                                        Err(SinkError::Coordinator(anyhow!(
-+                                            "pre_commit should not be called for a recovered pending epoch"
-+                                        )))
-+                                    },
-+                                    move |epoch, commit_metadata| {
-+                                        assert_eq!(epoch, epoch1);
-+                                        assert_eq!(commit_metadata, metadata);
-+                                        data_commits.lock().unwrap().push("data");
-+                                        Ok(())
-+                                    },
-+                                    move |epoch, committed_schema_change| {
-+                                        assert_eq!(epoch, epoch1);
-+                                        assert_eq!(committed_schema_change, schema_change);
-+                                        let mut commits = schema_change_commits.lock().unwrap();
-+           
-```
-
----
-
-### Incident Patch 3: `6c08b672` (2026-11-11)
-**Commit Message**: fix(stream): emit plain deletes and inserts for update pairs in delta join lookup (#27932)
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `src/stream/src/executor/lookup/impl_.rs` (modified, +6/-1)
-```diff
-@@ -318,10 +318,15 @@ impl<S: StateStore, SD: ValueRowSerde> LookupExecutor<S, SD> {
-                     );
+     /// Returns the used memory of the system.
+     pub fn get_system_memory_used() -> usize {
+-        let mut sys = System::new();
+-        sys.refresh_memory();
+-        sys.used_memory() as usize
++        system_with_memory().used_memory() as usize
+     }
  
-                     for (op, row) in ops.iter().zip_eq_debug(chunk.rows()) {
-+                        // A `U-`/`U+` pair can match many arrangement rows, which would be
-+                        // emitted as `U-` x N followed by `U+` x N. Downstream expects every
-+                        // `U-` to be directly followed by its `U+`, so emit plain `-`/`+`
-+                        // instead, as the hash join does.
-+                        let op = op.normalize_update();
-                         for matched_row in self.lookup_one_row(&row, &metrics).await? {
-                             tracing::debug!(target: "events::stream::lookup::put", "{:?} {:?}", row, matched_row);
- 
--                            if let Some(chunk) = builder.append_row(*op, row, &matched_row) {
-+                            if let Some(chunk) = builder.append_row(op, row, &matched_row) {
-                                 yield Message::Chunk(chunk);
-                             }
-                         }
-```
-
-**File**: `src/stream/src/executor/lookup/tests.rs` (modified, +90/-11)
-```diff
-@@ -145,21 +145,26 @@ async fn create_arrangement<S: StateStore>(table_id: TableId, store: S) -> Execu
- /// | -  | 6     | 1    | 3       |
- /// | b  |       |      | 3 -> 4  |
- fn create_source() -> Executor {
-+    create_source_with_chunks(
-+        StreamChunk::from_pretty(
-+            " I I
-+            + 6 1",
-+        ),
-+        StreamChunk::from_pretty(
-+            " I I
-+            - 6 1",
-+        ),
-+    )
-+}
-+
-+/// Create a test source with the same schema as [`create_source`], which yields `chunk1` in
-+/// epoch 2 and `chunk2` in epoch 3.
-+fn create_source_with_chunks(chunk1: StreamChunk, chunk2: StreamChunk) -> Executor {
-     let columns = [
-         ColumnDesc::named("join_column", 1.into(), DataType::Int64),
-         ColumnDesc::named("rowid_column", 2.into(), DataType::Int64),
-     ];
- 
--    // Prepare source chunks.
--    let chunk1 = StreamChunk::from_pretty(
--        " I I
--        + 6 1",
--    );
--    let chunk2 = StreamChunk::from_pretty(
--        " I I
--        - 6 1",
--    );
--
-     // Prepare stream executors.
-     let schema = Schema::new(
-         columns
-@@ -183,7 +188,13 @@ async fn next_msg(buffer: &mut Vec<Message>, executor: &mut BoxedMessageStream)
- }
- 
- fn check_chunk_eq(chunk1: &StreamChunk, chunk2: &StreamChunk) {
--    assert_eq!(format!("{:?}", chunk1), format!("{:?}", chunk2));
-+    // The non-alternate `Debug` of `StreamChunk` only prints the cardinality, so compare the
-+    // pretty-printed ops and rows instead. Rows matching the same join key come out of a hash set
-+    // in the lookup cache, so their order is not deterministic; sort before comparing.
-+    assert_eq!(
-+        chunk1.clone().sort_rows().to_pretty().to_string(),
-+        chunk2.clone().sort_rows().to_pretty().to_string()
-+    );
- }
- 
- fn create_storage_table_desc(table_id: TableId) -> risingwave_pb::plan_common::StorageTableDesc {
-@@ -364,3 +375,71 @@ async fn test_lookup_last_epoch() {
-     );
-     check_chunk_eq(chunk2, &expected_chunk2);
- }
-+
-+/// An update pair on the stream side that matches several arrangement rows must not be emitted as
-+/// `U-` x N followed by `U+` x N, since downstream (e.g. the hash dispatcher) requires each `U-` to
-+/// be directly followed by its `U+`. It is emitted as plain deletes and inserts instead.
-+#[tokio::test]
-+async fn test_lookup_update_matches_multiple_rows() {
-+    let table_id = TableId::new(1);
-+    let store = prepare_hummock_store(table_id).await;
-+    let arrangement = create_arrangement(table_id, store.clone()).await;
-+    let stream = create_source_with_chunks(
-+        StreamChunk::from_pretty(
-+            " I I
-+            + 6 1",
-+        ),
-+        StreamChunk::from_pretty(
-+            "  I I
-+            U- 6 1
-+            U+ 6 2",
-+        ),
-+    );
-+    let info = ExecutorInfo::for_test(
-+        Schema::new(vec![
-+            Field::with_name(DataType::Int64, "join_column"),
-+            Field::with_name(DataType::Int64, "rowid_column"),
-+            Field::with_name(DataType::Int64, "rowid_column"),
-+            Field::with_name(DataType::Int64, "join_column"),
-+        ]),
-+        vec![1, 2],
-+        "LookupExecutor".to_owned(),
-+        0,
-+    );
-+    let lookup_executor = Box::new(LookupExecutor::new(LookupExecutorParams {
-+        ctx: ActorContext::for_test(0),
-+        info,
-+        arrangement,
-+        stream,
-+        arrangement_col_descs: arrangement_col_descs(),
-+        arrangement_order_rules: arrangement_col_arrange_rules_join_key(),
-+        use_current_epoch: true,
-+        stream_join_key_indices: vec![0],
-+        arrange_join_key_indices: vec![1],
-+        column_mapping: vec![2, 3, 0, 1],
-+        state_table: create_replicated_state_table(store, table_id).await,
-+        watermark_epoch: Arc::new(AtomicU64::new(0)),
-+        chunk_size: 1024,
-+    }));
-+    let mut lookup_executor = lookup_executor.execute();
-+
-+    let mut msgs = vec![];
-+    for _ in 0..5 {
-+        next_msg(&mut msgs, &mut lookup_executor).await;
-+    }
-+
-+    assert_matches!(msgs[0], Message::Barrier(_));
-+    assert_matches!(msgs[2], Message::Barrier(_));
-+    assert_matches!(msgs[4], Message::Barrier(_));
-+
-+    // In epoch 3, join key 6 matches rows 2334 and 2335 of the arrangement.
-+    let chunk2 = msgs[3].as_chunk().unwrap();
-+    let expected_chunk2 = StreamChunk::from_pretty(
-+        "    I I I I
-+        - 2334 6 6 1
-+        - 2335 6 6 1
-+        + 2334 6 6 2
-+        + 2335 6 6 2",
-+    );
-+    check_chunk_eq(chunk2, &expected_chunk2);
-+}
+     /// Returns the total memory used by the system in bytes.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #27948** (2026-11-11): cherry-pick: fix(meta): keep periodic barrier timer and checkpoint counter untouched by discarded commands (release-3.0) (@anlowee)
-- **PR #27939** (2026-11-11): feat(sink): make Turbopuffer sink a premium feature (@hzxa21)
-- **PR #27938** (closed): Keep barrier timing and checkpoint state unchanged for discarded commands (@Copilot)
-- **PR #27932** (2026-11-11): fix(stream): emit plain deletes and inserts for update pairs in delta join lookup (@chenzl25)
-- **PR #27931** (closed): ci: enable parallel rustc frontend in ci-dev (@chenzl25)
-- **PR #27929** (2026-11-10): perf(storage): binary search SST table boundaries (@Li0k)
+- **PR #27975** (2026-11-13): chore(deps): bump sysinfo from 0.39.6 to 0.40.0 (@dependabot[bot])
+- **PR #27970** (2026-11-12): feat(iceberg): gate PK index sinks behind a license (@silver-ymz)
+- **PR #27967** (2026-11-13): cherry-pick fix(storage): don't panic on a write limit notification before the snapshot (#27853) to release-3.0 (@yuhao-su)
+- **PR #27965** (2026-11-12): fix(storage): don't panic on a write limit notification before the snapshot (#27853) (@risingwave-ci)
+- **PR #27960** (closed): feat(sink): support replacing exactly-once sinks (@chenzl25)
+- **PR #27953** (2026-11-12): fix(stream): make ChangeBuffer cancellation constant time (@yuhao-su)
 
 ---
 
@@ -1888,37 +1209,33 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. frontend): reject invalid rate limit in WITH options instead of panicking (#2790
+## X. deps): bump sysinfo from 0.39.6 to 0.40.0
 
 **RULE**:
-When implementing operations in `e2e_test/ddl/throttle.slt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c4837fda`: frontend): reject invalid rate limit in WITH options instead of panicking (#27900). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `24cf8ef7`: deps): bump sysinfo from 0.39.6 to 0.40.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e_test/ddl/throttle.slt`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# create with invalid backfill_rate_limit
-statement error `backfill_rate_limit` must be a non-negative integer, but got `abc`
-create materialized view mv1 with (backfill_rate_limit = 'abc') as select * from t1;
-
-statement error `backfill_rate_limit` must be a non-negative integer, but got `-1`
-create materialized view mv1 with (backfill_rate_limit = '-1') as select * from t1;
-
+version = "0.40.0"
+checksum = "110e37d98880fd804cd47509b90a8444f7aaaab655ae625e83cd442a8bc2ebf2"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+version = "0.39.6"
+checksum = "d2071df9448915b71c4fe6d25deaf1c22f12bd234f01540b77312bb8e41361e6"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c4837fda` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `24cf8ef7` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

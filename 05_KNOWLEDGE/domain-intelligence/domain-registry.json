@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T05:47:18.606Z",
-  "total_records": 561,
+  "last_updated": "2026-11-14T06:06:27.363Z",
+  "total_records": 568,
   "domains": {
     "A": {
       "total": 5,
@@ -35,7 +35,7 @@
       ]
     },
     "D": {
-      "total": 276,
+      "total": 279,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -312,7 +312,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-baidu-unlimited-ocr-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-aleph-alpha-kolibri-1-core-invariants",
         "DOM-D-2C3ED23B",
-        "domain_intelligence-research-knowledge-intelligence-hf-aleph-alpha-kolibri-1-learnings-core-invarian"
+        "domain_intelligence-research-knowledge-intelligence-hf-aleph-alpha-kolibri-1-learnings-core-invarian",
+        "domain_intelligence-research-knowledge-intelligence-fermionresearch-phonon-2-core-invariants",
+        "DOM-D-683CD8F2",
+        "domain_intelligence-research-knowledge-intelligence-hf-fermionresearch-phonon-2-learnings-core-invar"
       ]
     },
     "E": {
@@ -426,7 +429,7 @@
       ]
     },
     "H": {
-      "total": 118,
+      "total": 122,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -545,7 +548,11 @@
         "DOM-H-948029CF",
         "DOM-H-C33FF226",
         "domain_intelligence-technical-construction-intelligence-pixeltable-pixeltable-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-pixeltable-pixeltable-learnings-core-invaria"
+        "domain_intelligence-technical-construction-intelligence-pixeltable-pixeltable-learnings-core-invaria",
+        "domain_intelligence-technical-construction-intelligence-founded-labs-react-native-reusables-core-inv",
+        "domain_intelligence-technical-construction-intelligence-risingwavelabs-risingwave-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-founded-labs-react-native-reusables-learning",
+        "domain_intelligence-technical-construction-intelligence-risingwavelabs-risingwave-learnings-core-inv"
       ]
     },
     "I": {
@@ -12331,6 +12338,102 @@
       "repository": "pixeltable-pixeltable-learnings",
       "content_hash": "9e1c89922770b032b38ee7b81071600a58616116bc740a2d38fb2ea51a893cf9",
       "created_at": "2026-11-14T05:47:18.606Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-fermionresearch-phonon-2-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-fermionresearch-phonon-2-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: FermionResearch/Phonon-2 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-fermionresearch-phonon-2-research-knowledge-intelligence-fermionresearch-phon.md",
+      "repository": "FermionResearch/Phonon-2",
+      "content_hash": "03dbdbce11f4c9618dd15ed9989ee3d2e35694bc113ab8642d4898d73d57cdad",
+      "created_at": "2026-11-14T06:05:36.708Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-founded-labs-react-native-reusables-core-inv": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-founded-labs-react-native-reusables-core-inv",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: founded-labs/react-native-reusables Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-founded-labs-react-native-reusables-technical-construction-intelligence-founded-.md",
+      "repository": "founded-labs/react-native-reusables",
+      "content_hash": "b256bbd214ff1f3103f3289b7e4cc9311ec29a94d4793b6d3fa964d0daebf343",
+      "created_at": "2026-11-14T06:05:42.926Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-risingwavelabs-risingwave-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-risingwavelabs-risingwave-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: risingwavelabs/risingwave Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-risingwavelabs-risingwave-technical-construction-intelligence-risingwavelabs-ris.md",
+      "repository": "risingwavelabs/risingwave",
+      "content_hash": "40154fc98d407651555239b34356c8f3cdd7aa770934a287500e24d636bf75d3",
+      "created_at": "2026-11-14T06:05:50.673Z"
+    },
+    "DOM-D-683CD8F2": {
+      "record_id": "DOM-D-683CD8F2",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): FermionResearch/Phonon-2",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/FermionResearch/Phonon-2](https://huggingface.co/FermionResearch/Phonon-2))  \n> **Source Version**: `hf-fermionre`  \n> **License**: Open-Source  \n> *",
+      "content_hash": "4604ab0aceae2304905e5c130f60239448317b8720b383ef9de170080323e242",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md`  \n> **Source**: huggingface ([https://hugg -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md`  \n> **Source**: huggingface ([https://hugg",
+      "provenance": {
+        "source_uri": "project://hf-fermionresearch-phonon-2/hf-fermionresearch-phonon-2-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T06:05:53.555Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-fermionresearch-phonon-2)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-fermionresearch-phonon-2"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T06:06:25.837Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-fermionresearch-phonon-2-learnings-core-invar": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-fermionresearch-phonon-2-learnings-core-invar",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-fermionresearch-phonon-2-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-fermionresearch-phonon-2-learnings-research-knowledge-intelligence-hf-fermion.md",
+      "repository": "hf-fermionresearch-phonon-2-learnings",
+      "content_hash": "ddb039a626fe9876a7c2771fd462df385a58c4b30ae19ab5fa113e1391f206db",
+      "created_at": "2026-11-14T06:06:26.081Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-founded-labs-react-native-reusables-learning": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-founded-labs-react-native-reusables-learning",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: founded-labs-react-native-reusables-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-founded-labs-react-native-reusables-learnings-technical-construction-intelligenc.md",
+      "repository": "founded-labs-react-native-reusables-learnings",
+      "content_hash": "5dd1fcab338642bd7e91d4aeecb3d2448b5a47a4dab80930293fe6a3a3e6150c",
+      "created_at": "2026-11-14T06:06:26.712Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-risingwavelabs-risingwave-learnings-core-inv": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-risingwavelabs-risingwave-learnings-core-inv",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: risingwavelabs-risingwave-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-risingwavelabs-risingwave-learnings-technical-construction-intelligence-risingwa.md",
+      "repository": "risingwavelabs-risingwave-learnings",
+      "content_hash": "2b68c78b42733197a523e00118f8306c168fb0bcd38f75b7d88195fc8a66ac85",
+      "created_at": "2026-11-14T06:06:27.363Z"
     }
   }
 }
