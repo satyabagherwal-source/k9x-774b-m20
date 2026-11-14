@@ -9991,3 +9991,7 @@ Every entry in this ledger must capture:
 | `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `e6256de9` | Multi-dimensional audit evidence | 2026-11-14T22:11:32.969Z |
 | `learn-huggingface-facebook-sam3` | `https://huggingface.co/facebook/sam3` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-11-14T22:16:18.680Z |
 | `learn-dom-d-dd21ad65` | `project://hf-facebook-sam3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md` | 2026-11-14T22:16:49.250Z |
+| `learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf` | `https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF` | `hf-atomicc` | Multi-dimensional audit evidence | 2026-11-14T22:39:16.977Z |
+| `learn-github-sharkdp-fd` | `https://github.com/sharkdp/fd` | `6cf33028` | Multi-dimensional audit evidence | 2026-11-14T22:39:18.301Z |
+| `learn-github-mikepenz-aboutlibraries` | `https://github.com/mikepenz/AboutLibraries` | `42e86795` | Multi-dimensional audit evidence | 2026-11-14T22:39:23.744Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `2825902a` | Multi-dimensional audit evidence | 2026-11-14T22:39:34.177Z |

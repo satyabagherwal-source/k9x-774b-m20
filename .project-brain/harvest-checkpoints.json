@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-14T22:16:18.688Z",
+  "last_updated": "2026-11-14T22:39:34.187Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1924,14 +1924,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf",
-      "content_hash": "dd22413ad0c459872519478ee9884c547fb8c0e1ea3a0fd31a092665ed43a7eb",
-      "verified_at": "2026-11-09T11:31:31.444Z",
+      "content_hash": "2e97dd05b3bd047bbfd26cb82822e277d74f0ebd98b44aebb4a40b88d3a21173",
+      "verified_at": "2026-11-14T22:39:16.986Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T11:31:31.444Z"
+      "last_updated": "2026-11-14T22:39:16.986Z"
     },
     "slopus/happy": {
       "repository": "slopus/happy",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "82f498f1198ffac06b9f940227110537dd076eba695186ba76f82feaefdd417a",
-      "verified_at": "2026-11-14T00:48:51.163Z",
+      "content_hash": "fa001ba3c4fdfe882a77ef9e842ebbdb97e4f69515fa6b85f6a3594e87f2f824",
+      "verified_at": "2026-11-14T22:39:34.186Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T00:48:51.163Z"
+      "last_updated": "2026-11-14T22:39:34.186Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -3951,14 +3951,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sharkdp-fd",
-      "content_hash": "abe3a6c977b4420aa9e7254704b80effd11aec2094121afc8d76eddc04f0064a",
-      "verified_at": "2026-11-11T14:38:51.964Z",
+      "content_hash": "01e530f1940384cd16f88127835ec3263c8acded75f6d2ebb7a88d7c6f3d2b53",
+      "verified_at": "2026-11-14T22:39:18.310Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T14:38:51.964Z"
+      "last_updated": "2026-11-14T22:39:18.310Z"
     },
     "maotoumao/MusicFree": {
       "repository": "maotoumao/MusicFree",
@@ -10596,14 +10596,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mikepenz-aboutlibraries",
-      "content_hash": "62692211442631c769c6bcf67cdbaa5c9cd6eee1535943473c3b4bc7569bba43",
-      "verified_at": "2026-11-11T12:08:34.865Z",
+      "content_hash": "9b6cf103461b78f4aaad447926ad555e0bcb59c4123340a01fdb9e39b0add687",
+      "verified_at": "2026-11-14T22:39:23.752Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T12:08:34.865Z"
+      "last_updated": "2026-11-14T22:39:23.752Z"
     },
     "flux-iac/tofu-controller": {
       "repository": "flux-iac/tofu-controller",

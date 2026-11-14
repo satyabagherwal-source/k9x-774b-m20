@@ -9958,3 +9958,7 @@
 | `CYCLE-20261114-N751` | `2026-11-14T22:11:32.965Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8544` | Yes (`cbd225d1...`) |
 | `CYCLE-20261114-TBLH` | `2026-11-14T22:16:18.677Z` | `facebook/sam3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md` | Yes (`ccccc3c0...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T22:16:49.250Z` | `hf-facebook-sam3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-DD21AD65` [Domain D] | Yes (`9eca88d3...`) |
+| `CYCLE-20261114-MV3H` | `2026-11-14T22:39:16.973Z` | `AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md` | Yes (`2e97dd05...`) |
+| `CYCLE-20261114-MW49` | `2026-11-14T22:39:18.297Z` | `sharkdp/fd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8545` | Yes (`01e530f1...`) |
+| `CYCLE-20261114-N0BG` | `2026-11-14T22:39:23.740Z` | `mikepenz/AboutLibraries` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8546` | Yes (`9b6cf103...`) |
+| `CYCLE-20261114-N8D9` | `2026-11-14T22:39:34.173Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8547` | Yes (`fa001ba3...`) |

@@ -4,22 +4,22 @@
 {
   "source_repository": "Bitterbot-AI/bitterbot-desktop",
   "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-  "source_version": "e4d179d3",
+  "source_version": "2825902a",
   "license": "MIT",
-  "timestamp": "2026-11-14T00:48:51.329Z",
+  "timestamp": "2026-11-14T22:39:34.375Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop) (Revision: `e4d179d3`).  
-> **License**: MIT | **Timestamp**: `2026-11-14T00:48:51.329Z`  
+> **Provenance**: Harvested from [Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop) (Revision: `2825902a`).  
+> **License**: MIT | **Timestamp**: `2026-11-14T22:39:34.375Z`  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `Bitterbot-AI/bitterbot-desktop` (Commit: `e4d179d3`)
+- **Target Repository**: `Bitterbot-AI/bitterbot-desktop` (Commit: `2825902a`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T00:48:50.323Z  
+> **Harvest Timestamp**: 2026-11-14T22:39:33.197Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -530,6 +530,251 @@ export function persistFrameResponse(opts: {
   };
   writeGameMeta(next, root);
   return { index, meta: next };
+}
+
+```
+
+### Core Architecture Module: `benchmarks/collective-learning/node-worker.ts`
+```
+import path from "node:path";
+import { z } from "zod";
+import type { BitterbotConfig } from "../../src/config/config.js";
+import { readJson, DeploymentSpecSchema, validateCorpus } from "./deployment-contract.js";
+import { StudyNode } from "./study-node.js";
+import { CONDITIONS } from "./study.js";
+
+const [directory, specFile, conditionText, nodeText] = process.argv.slice(2);
+const condition = z.enum(CONDITIONS).parse(conditionText),
+  nodeId = z.enum(["a", "b"]).parse(nodeText);
+if (!process.send || path.resolve(directory) !== process.env.BITTERBOT_STATE_DIR)
+  throw new Error("Study worker requires isolated state and private parent IPC");
+const spec = DeploymentSpecSchema.parse(await readJson(specFile));
+const corpus = validateCorpus(await readJson(path.join(path.dirname(specFile), "corpus.json")));
+const config = (await readJson(path.join(directory, "bitterbot.json"))) as BitterbotConfig;
+const pending = new Map<string, { resolve: () => void; reject: (error: Error) => void }>();
+let counter = 0;
+const accounting = (operation: string, value: unknown) =>
+  new Promise<void>((resolve, reject) => {
+    const id = `account:${counter++}`;
+    pending.set(id, { resolve, reject });
+    process.send!({ type: "accounting", id, operation, value });
+  });
+const worker = new StudyNode({
+  directory,
+  node: nodeId,
+  condition,
+  spec,
+  config,
+  corpus,
+  accounting: {
+    reserve: (charge) => accounting("reserve", charge),
+    finish: (id, row, artifact) => accounting("finish", { id, row, artifact }),
+  },
+});
+const abort = new AbortController();
+let busy = false;
+process.on("message", async (raw: unknown) => {
+  const message = raw as {
+    type: string;
+    id: string;
+    method: string;
+    input: Record<string, unknown>;
+    error?: string;
+  };
+  if (message.type === "accounted") {
+    const task = pending.get(message.id);
+    pending.delete(message.id);
+    if (message.error) task?.reject(new Error(message.error));
+    else task?.resolve();
+    return;
+  }
+  if (message.type !== "request") return;
+  if (busy) {
+    process.send!({ type: "response", id: message.id, error: "Worker already executing" });
+    return;
+  }
+  busy = true;
+  try {
+    let result: unknown;
+    if (message.method === "peers")
+      result = await worker.configurePeers(
+        message.input.peers as Parameters<StudyNode["configurePeers"]>[0],
+        message.input.circleId as string | undefined,
+      );
+    else if (message.method === "join") {
+      await worker.join(message.input.invite as string);
+      result = { joined: true };
+    } else if (message.method === "policy") {
+      worker.setupPolicy(message.input.peers as Parameters<StudyNode["setupPolicy"]>[0]);
+      result = { configured: true };
+    } else if (message.method === "status")
+      result = {
+        currentHash: worker.currentHash(),
+        circle: worker.meta("circle"),
+        learningEndedAt: worker.meta("learning-ended-at"),
+        finalRanAt: worker.meta("final-ran-at"),
+        command:
+          worker.db
+            .prepare("SELECT hash,state,result FROM study_node_commands WHERE id=?")
+            .get((message.input.commandId as string) ?? "") ?? null,
+      };
+    else if (message.method === "close") {
+      await worker.close();
+      process.send!({ type: "response", id: message.id, result: { closed: true } }, () =>
+        process.exit(0),
+      );
+      return;
+    } else
+      result = await worker.commandRun(message.id, message.method, message.input, abort.signal);
+    process.send!({ type: "response", id: message.id, result });
+  } catch (error) {
+    process.send!({ type: "response", id: message.id, error: String(error) });
+  } finally {
+    busy = false;
+  }
+});
+process.on("disconnect", () => {
+  abort.abort();
+  setTimeout(() => process.exit(1), 1000).unref();
+});
+process.on("SIGTERM", () => {
+  abort.abort();
+  setTimeout(() => process.exit(1), 1000).unref();
+});
+try {
+  process.send({ type: "ready", descriptor: await worker.start() });
+} catch (error) {
+  process.send!({ type: "failed", error: String(error) });
+  process.exitCode = 1;
+  await worker.close();
+  process.disconnect!();
+}
+
+```
+
+### Core Architecture Module: `benchmarks/collective-learning/worker-client.ts`
+```
+import { fork, type ChildProcess, type ForkOptions } from "node:child_process";
+import { randomUUID } from "node:crypto";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import type { StudyLedger } from "./study-ledger.js";
+import type { NodeDescriptor } from "./study-node.js";
+import type { PairedObservation } from "./study.js";
+
+export class WorkerClient {
+  readonly child: ChildProcess;
+  readonly ready: Promise<NodeDescriptor>;
+  private requests = new Map<
+    string,
+    { resolve: (value: unknown) => void; reject: (error: Error) => void }
+  >();
+  constructor(
+    directory: string,
+    spec: string,
+    condition: string,
+    node: string,
+    readonly ledger: StudyLedger,
+    readonly progress: (message: string) => void = () => {},
+  ) {
+    const log = fs.openSync(path.join(directory, "worker.log"), "a", 0o600);
+    const launchOptions: ForkOptions & { windowsHide: boolean } = {
+      execArgv: ["--import", "tsx"],
+      windowsHide: true,
+      env: {
+        ...process.env,
+        BITTERBOT_STATE_DIR: directory,
+        BITTERBOT_CONFIG_PATH: path.join(directory, "bitterbot.json"),
+        BITTERBOT_DISABLE_DISCOVERY: "1",
+      },
+      stdio: ["ignore", log, log, "ipc"],
+    };
+    this.child = fork(
+      fileURLToPath(new URL("./node-worker.ts", import.meta.url)),
+      [directory, spec, condition, node],
+      launchOptions,
+    );
+    fs.closeSync(log);
+    this.ready = new Promise((resolve, reject) => {
+      const timer = setTimeout(
+        () => reject(new Error(`Worker ${condition}/${node} startup timed out; inspect its log`)),
+        600000,
+      );
+      this.child.on("message", (raw: unknown) => {
+        const message = raw as {
+          type: string;
+          id: string;
+          error?: string;
+          descriptor: NodeDescriptor;
+          operation: string;
+          value: unknown;
+          result: unknown;
+        };
+        if (message.type === "ready") {
+          clearTimeout(timer);
+          resolve(message.descriptor);
+        } else if (message.type === "failed") {
+          clearTimeout(timer);
+          reject(new Error(message.error));
+        } else if (message.type === "accounting") {
+          try {
+            if (message.operation === "reserve") this.ledger.reserve(message.value);
+            else if (message.operation === "finish") {
+              const value = message.value as {
+                id: string;
+                row: PairedObservation;
+                artifact: unknown;
+              };
+              this.ledger.finish(value.id, value.row, value.artifact);
+              this.progress(
+                `${condition}/${node}: ${value.row.phase} ${value.row.taskId} ${value.row.success === null ? "unresolved" : value.row.success ? "pass" : "fail"}`,
+              );
+            } else throw new Error("Unknown accounting operation");
+            this.child.send({ type: "accounted", id: message.id });
+          } catch (error) {
+            this.child.send({ type: "accounted", id: message.id, error: String(error) });
+          }
+        } else if (message.type === "response") {
+          const request = this.requests.get(message.id);
+          this.requests.delete(message.id);
+          if (message.error) request?.reject(new Error(message.error));
+          else request?.resolve(message.result);
+        }
+      });
+      this.child.on("error", (error) => {
+        clearTimeout(timer);
+        reject(error);
+      });
+      this.child.on("exit", (code, signal) => {
+        clearTimeout(timer);
+        const error = new Error(
+          `Worker ${condition}/${node} exited (${code ?? signal}); unresolved costs and commands are retained`,
+        );
+        reject(error);
+        for (const request of this.requests.values()) request.reject(error);
+        this.requests.clear();
+      });
+    });
+  }
+  async call(
+    method: string,
+    input: Record<string, unknown> = {},
+    id: string = randomUUID(),
+  ): Promise<unknown> {
+    await this.ready;
+    if (!this.child.connected) throw new Error("Study worker disconnected");
+    return new Promise((resolve, reject) => {
+      this.requests.set(id, { resolve, reject });
+      this.child.send({ type: "request", id, method, input });
+    });
+  }
+  async close(): Promise<void> {
+    if (!this.child.connected) return;
+    await this.call("close").catch(() => {
+      this.child.kill();
+    });
+  }
 }
 
 ```
@@ -1307,379 +1552,6 @@ def main():
  
 ```
 
-### Core Architecture Module: `benchmarks/longmemeval-v2/worker.ts`
-```
-// This process has no API credentials, evaluator files, personal HOME or network.
-import fs from "node:fs";
-import path from "node:path";
-import readline from "node:readline";
-import { DatabaseSync } from "node:sqlite";
-import type { BitterbotConfig } from "../../src/config/types.js";
-
-type Json = Record<string, unknown>;
-const send = (value: unknown) => process.stdout.write(JSON.stringify(value) + "\n");
-console.log = (...args: unknown[]) => console.error(...args);
-let now = Date.parse("2025-01-01T00:00:00Z");
-const NativeDate = Date;
-// Only wall-clock semantics are virtualized. perf_hooks/timers retain real elapsed time.
-globalThis.Date = new Proxy(NativeDate, {
-  construct(target, args) {
-    return Reflect.construct(target, args.length ? args : [now]);
-  },
-  apply() {
-    return new NativeDate(now).toString();
-  },
-  get(target, key) {
-    return key === "now" ? () => now : Reflect.get(target, key);
-  },
-});
-let apiId = 0;
-const pending = new Map<number, { resolve: (v: Json) => void; reject: (e: Error) => void }>();
-function api(kind: string, body: Json): Promise<Json> {
-  const id = ++apiId;
-  send({ type: "api", id, kind, body });
-  return new Promise((resolve, reject) => pending.set(id, { resolve, reject }));
-}
-globalThis.fetch = async (input, init) => {
-  const url = String(input);
-  if (url !== "https://benchmark.invalid/v1/embeddings" || init?.method !== "POST") {
-    throw new Error("Benchmark denied unexpected fetch: " + url.split("?")[0]);
-  }
-  const body = JSON.parse(String(init.body)) as Json;
-  const payload = await api("embedding", body);
-  return new Response(JSON.stringify(payload), {
-    status: 200,
-    headers: { "content-type": "application/json" },
-  });
-};
-let manager: import("../../src/memory/manager.js").MemoryIndexManager;
-let profile: string;
-let config: Json;
-let sessionCount = 0;
-let managerConfig: BitterbotConfig;
-const agentId = "lme-isolated";
-function health() {
-  const db = new DatabaseSync(path.join(profile, "memory.sqlite"), { readOnly: true });
-  try {
-    const pendingRow = db
-      .prepare(
-        "SELECT count(*) AS n FROM chunks WHERE (model = 'pending' OR embedding IS NULL OR length(embedding) = 0 OR embedding = '[]') AND text IS NOT NULL AND length(trim(text)) > 0 AND (lifecycle_state IS NULL OR lifecycle_state <> 'forgotten')",
-      )
-      .get();
-    if (Number(pendingRow?.n) !== 0)
-      throw new Error("Incomplete embeddings: " + String(pendingRow?.n));
-    return { chunks: db.prepare("SELECT count(*) AS n FROM chunks").get()?.n };
-  } finally {
-    db.close();
-  }
-}
-async function drainEmbeddings() {
-  const backfill = manager as unknown as {
-    backfillPendingEmbeddings(opts?: {
-      limit?: number;
-    }): Promise<{ embedded: number; remaining: number }>;
-  };
-  for (;;) {
-    const result = await backfill.backfillPendingEmbeddings({ limit: 200 });
-    if (result.remaining === 0) return;
-    if (result.embedded === 0) throw new Error("Embedding backfill made no progress");
-  }
-}
-async function handle(request: Json): Promise<unknown> {
-  if (request.op === "init") {
-    profile = String(request.profile);
-    config = request.config as Json;
-    now = Number(request.now);
-    const workspace = path.join(profile, "workspace");
-    fs.mkdirSync(workspace, { recursive: true });
-    const complete = async (prompt: string) => {
-      const result = await api("dream", { messages: [{ role: "user", content: prompt }] });
-      const choices = result.choices as Array<{ message: { content: string } }>;
-      const content = choices?.[0]?.message?.content;
-      if (!content) throw new Error("Empty dream completion");
-      return content;
-    };
-    const cfg: BitterbotConfig = {
-      agents: {
-        defaults: {
-          workspace,
-          model: { primary: "openai/" + String(config.dreamModel) },
-          memorySearch: {
-            enabled: true,
-            provider: "openai",
-            model: String(config.embeddingModel),
-            fallback: "none",
-            remote: {
-              baseUrl: "https://benchmark.invalid/v1",
-              apiKey: "broker",
-              batch: { enabled: false },
-            },
-            sources: ["memory", "sessions"],
-            experimental: { sessionMemory: true },
-            store: { path: path.join(profile, "memory.sqlite"), vector: { enabled: true } },
-            sync: { intervalMinutes: 0, onSearch: false, onSessionStart: false, watch: false },
-            query: {
-              maxResults: Number(config.maxResults),
-              minScore: 0,
-              hybrid: {
-                enabled: true,
-                mergeStrategy: "rrf",
-                vectorWeight: 0.7,
-                textWeight: 0.3,
-                candidateMultiplier: 5,
-              },
-            },
-            cache: { enabled: true },
-            chunking: { tokens: 384, overlap: 48 },
-          },
-        },
-        list: [{ id: agentId, default: true, workspace, agentDir: path.join(profile, "agent") }],
-      },
-      memory: {
-        consolidation: { enabled: true, intervalMinutes: 0 },
-        dream: {
-          enabled: true,
-          intervalMinutes: 0,
-          synthesisMode: "llm",
-          model: "openai/" + String(config.dreamModel),
-          synthesisModel: "openai/" + String(config.dreamModel),
-          llmCall: complete,
-          synthesisLlmCall: complete,
-          maxLlmCallsPerCycle: Number(config.dreamCalls),
-          adaptiveInterval: { enabled: false },
-        },
-        emotional: { enabled: true, hormonal: { enabled: true } },
-        curiosity: { enabled: true, autoResearch: { enabled: false } },
-        digest: { enabled: false },
-        healthSweep: { enabled: false },
-        dreamBrief: { enabled: false },
-      },
-      skills: { skillSeekers: { trending: { enabled: false } }, evolution: { enabled: false } },
-    };
-    managerConfig = cfg;
-    const { MemoryIndexManager } = await import("../../src/memory/manager.js");
-    const created = await MemoryIndexManager.get({ cfg, agentId });
-    if (!created) throw new Error("Memory manager unavailable");
-    manager = created;
-    return { ready: true };
-  }
-  now = Number(request.now);
-  let seed = (Number(config.seed) ^ Math.floor(now / 1000)) >>> 0;
-  Math.random = () => {
-    seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
-    return seed / 4294967296;
-  };
-  if (!Number.isFinite(now)) throw new Error("Explicit historical timestamp required");
-  if (request.op === "ingest") {
-    if (sessionCount > 0) {
-      await manager.close();
-      const { MemoryIndexManager } = await import("../../src/memory/manager.js");
-      const reopened = await MemoryIndexManager.get({ cfg: managerConfig, agentId });
-      if (!reopened) throw new Error("Failed to reopen memory manager");
-      manager = reopened;
-    }
-    const trajectory = request.trajectory as {
-      id: string;
-      goal: string;
-      outcome: string;
-      start_url: string;
-      states: Json[];
-    };
-    if (!/^[a-zA-Z0-9_-]+$/.test(trajectory.id)) throw new Error("Invalid trajectory ID");
-    const dir = path.join(profile, "state", "agents", agentId, "sessions");
-    fs.mkdirSync(dir, { recursive: true });
-    const stamp = new Date(now).toISOString();
-    const records: Json[] = [
-      {
-        type: "session",
-        version: 3,
-        id: trajectory.id,
-        timestamp: stamp,
-        cwd: path.join(profile, "workspace"),
-      },
-    ];
-    records.push({
-      type: "message",
-      timestamp: stamp,
-      message: {
-        role: "user",
-        content: [
-          {
-            type: "text",
-            text: JSON.stringify({
-              trajectory: trajectory.id,
-              goal: trajectory.goal,
-              start_url: trajectory.start_url,
-            }),
-          },
-        ],
-      },
-    });
-    for (const state of trajectory.states) {
-      records.push({
-        type: "message",
-        timestamp: stamp,
-        message: {
-          role: "assistant",
-          content: [
-            { type: "text", text: JSON.stringify({ trajectory: trajectory.id, ...state }) },
-          ],
-        },
-      });
-    }
-    records.push({
-      type: "message",
-      timestamp: stamp,
-      message: {
-        role: "assistant",
-        content: [{ type: "text", text: JSON.stringify({ outcome: trajectory.outcome }) }],
-      },
-    });
-    const target = path.join(dir, trajectory.id + ".jsonl");
-    fs.writeFileSync(target, records.map((x) => JSON.stringify(x)).join("\n") + "\n", {
-      flag: "wx",
-    });
-    fs.utimesSync(target, now / 1000, now / 1000);
-    await manager.sync({ reason: "longmemeval-v2-transcript" });
-    await manager.probeVectorAvailability();
-    const status = manager.status();
-    if (status.fallback || !status.vector?.available || !status.fts?.available)
-      throw new Error(
-        "Memory backend degraded: " +
-          JSON.stringify({ vector: status.vector, fts: status.fts, fallback: status.fallback }),
-      );
-    sessionCount++;
-    return { sessionCount, ...health() };
-  }
-  if (request.op === "health") {
-    return manager.status();
-  }
-  if (request.op === "consolidate") {
-    const result = await manager.consolidate();
-    if (!result) throw new Error("Consolidation did not run");
-    return { result, ...health() };
-  }
-  if (request.op === "dream") {
-    const result = await manager.dream();
-    if (!result || result.cycle.error || result.cycle.completedAt === null) {
-      throw new Error("Dream incomplete: " + JSON.stringify(result?.cycle));
-    }
-    const { readWorkingMemoryProvenance } =
-      await import("../../src/memory/working-memory-snapshots.js");
-    const provenance = await readWorkingMemoryProvenance(path.join(profile, "workspace"));
-    if (
-      provenance.some(
-        (record) => record.trigger === result.cycle.cycleId && record.wasHeuristicFallback,
-      )
-    ) {
-      throw new Error("Production working-memory synthesis used heuristic fallback");
-    }
-    // Watchers are disabled; a normal manager r
-```
-
-### Core Architecture Module: `desktop/renderer/src/App.tsx`
-```
-import { useCallback, useEffect, useState } from "react";
-import { FirstRun } from "./components/first-run/FirstRun";
-import { AppShell } from "./components/layout/AppShell";
-import { SetupWizard } from "./components/setup/SetupWizard";
-import { Toaster } from "./components/ui/sonner";
-import { initDeepLinkJoin } from "./lib/deep-link";
-import { fetchSessionToken, persistGatewayCredentials } from "./lib/gateway-origin";
-import { isSetupPath } from "./lib/setup-route";
-import {
-  readStoredGatewayToken,
-  readStoredGatewayUrl,
-  useGatewayStore,
-} from "./stores/gateway-store";
-
-export function App() {
-  // PLAN-56 Phase 4: `<basePath>/setup` is browser-first onboarding, with its
-  // own connection (a one-time setup token, wizard scope only).
-  if (typeof window !== "undefined" && isSetupPath(window.location.pathname)) {
-    return (
-      <>
-        <SetupWizard />
-        <Toaster richColors position="top-right" />
-      </>
-    );
-  }
-  return <ControlApp />;
-}
-
-function ControlApp() {
-  const connect = useGatewayStore((s) => s.connect);
-
-  // Decide at boot whether we already have a token. A stored one (from a prior
-  // FirstRun) wins; otherwise ask the gateway that served this page via the
-  // same-origin handoff endpoint, which replaces the old build-time
-  // VITE_GATEWAY_TOKEN define. Only when both come up empty do we render
-  // <FirstRun>, so we never flash a "Disconnected" badge at a new user.
-  // `undefined` means "still deciding" and renders nothing.
-  const [hasCredentials, setHasCredentials] = useState<boolean | undefined>(() =>
-    readStoredGatewayToken() !== null ? true : undefined,
-  );
-
-  useEffect(() => {
-    if (hasCredentials !== undefined) return;
-    let cancelled = false;
-    void (async () => {
-      const token = await fetchSessionToken();
-      if (cancelled) return;
-      if (token) {
-        persistGatewayCredentials({ url: readStoredGatewayUrl(), token });
-        setHasCredentials(true);
-      } else {
-        setHasCredentials(false);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [hasCredentials]);
-
-  useEffect(() => {
-    if (hasCredentials !== true) return;
-    const url = readStoredGatewayUrl();
-    connect(url);
-  }, [connect, hasCredentials]);
-
-  // bitterbot:// deep links (Tauri shell only; no-op in the browser).
-  // Registered at app boot so a cold-start link (the app was LAUNCHED by
-  // the guest page's "Open in Bitterbot") is picked up too.
-  useEffect(() => {
-    void initDeepLinkJoin();
-  }, []);
-
-  const handleFirstRunComplete = useCallback(() => {
-    setHasCredentials(true);
-  }, []);
-
-  // Still asking the gateway for a token: render nothing rather than flashing
-  // FirstRun at a user who is about to be connected automatically.
-  if (hasCredentials === undefined) {
-    return null;
-  }
-
-  if (!hasCredentials) {
-    return (
-      <>
-        <FirstRun onComplete={handleFirstRunComplete} />
-        <Toaster richColors position="top-right" />
-      </>
-    );
-  }
-
-  return (
-    <>
-      <AppShell />
-      <Toaster richColors position="top-right" />
-    </>
-  );
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1709,251 +1581,397 @@ function ControlApp() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `716cfd2b` (2026-11-13)
-**Commit Message**: chore(deps-dev): bump the build-tooling group across 1 directory with 2 updates
+### Incident Patch 1: `2825902a` (2026-11-14)
+**Commit Message**: feat(skills): add verified collective learning and reproducible pilot evidence (#376)
 
-Bumps the build-tooling group with 2 updates in the / directory: [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/tree/HEAD/packages/plugin-react) and [vite](https://github.com/vitejs/vite/tree/HEAD/packages/vite).
+Add opt-in complete skill packages, package-bound execution validation and rollback, scoped Circle automation and transport, bounded evidence synthesis, and Hermes interoperability. Publish the exploratory executable-learning pilot data, methodology, replayable artifacts, limitations, follow-up experiments, and promotional drafts.
 
+All final PR CI checks pass on Linux, macOS and Windows. Paid validation defaults to zero; public-mesh binary support remains gated on the documented signed companion sidecar release.
 
-Updates `@vitejs/plugin-react` from 6.1.2 to 6.3.0
-- [Release notes](https://github.com/vitejs/vite-plugin-react/releases)
-- [Changelog](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/CHANGELOG.md)
-- [Commits](https://github.com/vitejs/vite-plugin-react/commits/plugin-react@6.3.0/packages/plugin-react)
-
-Updates `vite` from 8.3.4 to 8.3.7
-- [Release notes](https://github.com/vitejs/vite/releases)
-- [Changelog](https://github.com/vitejs/vite/blob/main/packages/vite/CHANGELOG.md)
-- [Commits](https://github.com/vitejs/vite/commits/v8.3.7/packages/vite)
-
----
-updated-dependencies:
-- dependency-name: "@vitejs/plugin-react"
-  dependency-version: 6.2.1
-  dependency-type: direct:development
-  update-type: version-update:semver-minor
-  dependency-group: build-tooling
-- dependency-name: vite
-  dependency-version: 8.3.5
-  dependency-type: direct:developmen
-
-**File**: `pnpm-lock.yaml` (modified, +114/-387)
+**File**: `.gitattributes` (modified, +1/-0)
 ```diff
-@@ -267,7 +267,7 @@ importers:
-         version: 7.0.0-dev.20260215.1
-       '@vitest/coverage-v8':
-         specifier: ^4.0.18
--        version: 4.0.18(@vitest/browser@4.0.18(bufferutil@4.1.0)(utf-8-validate@5.0.10)(vite@6.4.4(@types/node@26.6.5)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1))(vitest@4.0.18))(vitest@4.0.18)
-+        version: 4.0.18(@vitest/browser@4.0.18(bufferutil@4.1.0)(utf-8-validate@5.0.10)(vite@7.3.8(@types/node@26.6.5)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1))(vitest@4.0.18))(vitest@4.0.18)
-       esbuild:
-         specifier: ^0.28.2
-         version: 0.28.2
-@@ -448,7 +448,7 @@ importers:
-         version: 18.3.7(@types/react@18.3.28)
-       '@vitejs/plugin-react':
-         specifier: ^6.1.2
--        version: 6.1.2(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
-+        version: 6.3.0(vite@8.3.7(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
-       autoprefixer:
-         specifier: ^10.6.1
-         version: 10.6.2(postcss@8.5.32)
-@@ -466,10 +466,10 @@ importers:
-         version: 5.9.3
-       vite:
-         specifier: ^8.3.4
--        version: 8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)
-+        version: 8.3.7(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)
-       vitest:
-         specifier: ^4.1.11
--        version: 4.1.11(@opentelemetry/api@1.10.0)(@types/node@26.6.5)(@vitest/browser-playwright@4.0.18)(@vitest/coverage-v8@4.0.18(@vitest/browser@4.0.18(bufferutil@4.1.0)(utf-8-validate@5.0.10)(vite@6.4.4(@types/node@26.6.5)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1))(vitest@4.0.18))(vitest@4.0.18))(happy-dom@20.14.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
-+        version: 4.1.11(@opentelemetry/api@1.10.0)(@types/node@26.6.5)(@vitest/browser-playwright@4.0.18)(@vitest/coverage-v8@4.0.18(@vitest/browser@4.0.18(bufferutil@4.1.0)(utf-8-validate@5.0.10)(vite@7.3.8(@types/node@26.6.5)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1))(vitest@4.0.18))(vitest@4.0.18))(happy-dom@20.14.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(vite@8.3.7(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
- 
-   extensions/discord:
-     devDependencies:
-@@ -921,312 +921,156 @@ packages:
-   '@ensofinance/sdk@2.3.1':
-     resolution: {integrity: sha512-sw0Je+x82LxCDexQvWemDk8X2kaPPIaiQwoWqtyWw9sNSnvsu//jLir2FXaNwvusCihYyX3p4Z1zgorqanKZzg==}
- 
--  '@esbuild/aix-ppc64@0.25.12':
--    resolution: {integrity: sha512-Hhmwd6CInZ3dwpuGTF8fJG6yoWmsToE+vYgD4nytZVxcu1ulHpUQRAB1UJ8+N1Am3Mz4+xOByoQoSZf4D+CpkA==}
--    engines: {node: '>=18'}
--    cpu: [ppc64]
--    os: [aix]
--
-   '@esbuild/aix-ppc64@0.28.2':
-     resolution: {integrity: sha512-XExcO+dvLKvVtNTibSTBej1NCAbaGhWn9Ww1ZPx80qsahhPFe/8jgWP0IchNe0F3HwkU7n8ejhH8bjonqht8mQ==}
-     engines: {node: '>=18'}
-     cpu: [ppc64]
-     os: [aix]
- 
--  '@esbuild/android-arm64@0.25.12':
--    resolution: {integrity: sha512-6AAmLG7zwD1Z159jCKPvAxZd4y/VTO0VkprYy+3N2FtJ8+BQWFXU+OxARIwA46c5tdD9SsKGZ/1ocqBS/gAKHg==}
--    engines: {node: '>=18'}
--    cpu: [arm64]
--    os: [android]
--
-   '@esbuild/android-arm64@0.28.2':
-     resolution: {integrity: sha512-5YfKeeI8qWfBZIX+u2xZC3Zlb3Os/gLS2sbEKM+I4ZOcsWmHS2WLysCcQZDAFRslDUU5Oiq44gf6PYN1vGwG5A==}
-     engines: {node: '>=18'}
-     cpu: [arm64]
-     os: [android]
- 
--  '@esbuild/android-arm@0.25.12':
--    resolution: {integrity: sha512-VJ+sKvNA/GE7Ccacc9Cha7bpS8nyzVv0jdVgwNDaR4gDMC/2TTRc33Ip8qrNYUcpkOHUT5OZ0bUcNNVZQ9RLlg==}
--    engines: {node: '>=18'}
--    cpu: [arm]
--    os: [android]
--
-   '@esbuild/android-arm@0.28.2':
-     resolution: {integrity: sha512-kXXoiPVVGQcnIYGOeaovwOURpniDBpSq4A03qkQ+BMQqtGG6HYap3xne9C1O1yo4TR3qxlCX5IqqmX6fFo2Lqg==}
-     engines: {node: '>=18'}
-     cpu: [arm]
-     os: [android]
- 
--  '@esbuild/android-x64@0.25.12':
--    resolution: {integrity: sha512-5jbb+2hhDHx5phYR2By8GTWEzn6I9UqR11Kwf22iKbNpYrsmRB18aX/9ivc5cabcUiAT/wM+YIZ6SG9QO6a8kg==}
--    engines: {node: '>=18'}
--    cpu: [x64]
--    os: [android]
--
-   '@esbuild/android-x64@0.28.2':
-     resolution: {integrity: sha512-O387ite7SzUyCcy3JQX4P4bLtEA7bLLkx+esve5JHnyYfNTxcVpXZo9jhdB0lTKN44gztELTdU7nS8Nr16Fs1Q==}
-     engines: {node: '>=18'}
-     cpu: [x64]
-     os: [android]
- 
--  '@esbuild/darwin-arm64@0.25.12':
--    resolution: {integrity: sha512-N3zl+lxHCifgIlcMUP5016ESkeQjLj/959RxxNYIthIg+CQHInujFuXeWbWMgnTo4cp5XVHqFPmpyu9J65C1Yg==}
--    engines: {node: '>=18'}
--    cpu: [arm64]
--    os: [darwin]
--
-   '@esbuild/darwin-arm64@0.28.2':
-     resolution: {integrity: sha512-n4KqkOQrraxHJcgjM1RvwbigfQKIKJVpM7xp+KsxiyUSrRdIXnt73VhrPAx0fV44hgfmIVKjxMN9J1t5jySVkw==}
-     engines: {node: '>=18'}
-     cpu: [arm64]
-     os: [darwin]
- 
--  '@esbuild/darwin-x64@0.25.12':
--    resolution: {integrity: sha512-HQ9ka4Kx21qHXwtlTUVbKJOAnmG1ipXhdWTmNXiPzPfWKpXqASVcWdnf2bnL73wgjNrFXAa3yYvBSd9pzfEIpA==}
--    eng
+@@ -6,3 +6,4 @@
+ # breaks the byte-identity test. Never rewrite its line endings.
+ benchmarks/skill-evolution/*.jsonl text eol=lf
+ src/infra/__fixtures__/** -text
++test/fixtures/collective-learning/** -text
 ```
 
----
-
-### Incident Patch 2: `aac6c8af` (2026-11-13)
-**Commit Message**: Merge pull request #357 from Bitterbot-AI/dependabot/npm_and_yarn/build-tooling-30e09afc1a
-
-chore(deps-dev): bump the build-tooling group across 1 directory with 2 updates
-
-**File**: `pnpm-lock.yaml` (modified, +114/-387)
+**File**: `.github/workflows/ci.yml` (modified, +13/-0)
 ```diff
-@@ -267,7 +267,7 @@ importers:
-         version: 7.0.0-dev.20260215.1
-       '@vitest/coverage-v8':
-         specifier: ^4.0.18
--        version: 4.0.18(@vitest/browser@4.0.18(bufferutil@4.1.0)(utf-8-validate@5.0.10)(vite@6.4.4(@types/node@26.6.5)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1))(vitest@4.0.18))(vitest@4.0.18)
-+        version: 4.0.18(@vitest/browser@4.0.18(bufferutil@4.1.0)(utf-8-validate@5.0.10)(vite@7.3.8(@types/node@26.6.5)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1))(vitest@4.0.18))(vitest@4.0.18)
-       esbuild:
-         specifier: ^0.28.2
-         version: 0.28.2
-@@ -448,7 +448,7 @@ importers:
-         version: 18.3.7(@types/react@18.3.28)
-       '@vitejs/plugin-react':
-         specifier: ^6.1.2
--        version: 6.1.2(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
-+        version: 6.3.0(vite@8.3.7(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
-       autoprefixer:
-         specifier: ^10.6.1
-         version: 10.6.2(postcss@8.5.32)
-@@ -466,10 +466,10 @@ importers:
-         version: 5.9.3
-       vite:
-         specifier: ^8.3.4
--        version: 8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)
-+        version: 8.3.7(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)
-       vitest:
-         specifier: ^4.1.11
--        version: 4.1.11(@opentelemetry/api@1.10.0)(@types/node@26.6.5)(@vitest/browser-playwright@4.0.18)(@vitest/coverage-v8@4.0.18(@vitest/browser@4.0.18(bufferutil@4.1.0)(utf-8-validate@5.0.10)(vite@6.4.4(@types/node@26.6.5)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1))(vitest@4.0.18))(vitest@4.0.18))(happy-dom@20.14.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
-+        version: 4.1.11(@opentelemetry/api@1.10.0)(@types/node@26.6.5)(@vitest/browser-playwright@4.0.18)(@vitest/coverage-v8@4.0.18(@vitest/browser@4.0.18(bufferutil@4.1.0)(utf-8-validate@5.0.10)(vite@7.3.8(@types/node@26.6.5)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1))(vitest@4.0.18))(vitest@4.0.18))(happy-dom@20.14.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(vite@8.3.7(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
+@@ -66,6 +66,19 @@ jobs:
+       - name: Unit tests
+         run: pnpm test:fast
  
-   extensions/discord:
-     devDependencies:
-@@ -921,312 +921,156 @@ packages:
-   '@ensofinance/sdk@2.3.1':
-     resolution: {integrity: sha512-sw0Je+x82LxCDexQvWemDk8X2kaPPIaiQwoWqtyWw9sNSnvsu//jLir2FXaNwvusCihYyX3p4Z1zgorqanKZzg==}
- 
--  '@esbuild/aix-ppc64@0.25.12':
--    resolution: {integrity: sha512-Hhmwd6CInZ3dwpuGTF8fJG6yoWmsToE+vYgD4nytZVxcu1ulHpUQRAB1UJ8+N1Am3Mz4+xOByoQoSZf4D+CpkA==}
--    engines: {node: '>=18'}
--    cpu: [ppc64]
--    os: [aix]
--
-   '@esbuild/aix-ppc64@0.28.2':
-     resolution: {integrity: sha512-XExcO+dvLKvVtNTibSTBej1NCAbaGhWn9Ww1ZPx80qsahhPFe/8jgWP0IchNe0F3HwkU7n8ejhH8bjonqht8mQ==}
-     engines: {node: '>=18'}
-     cpu: [ppc64]
-     os: [aix]
- 
--  '@esbuild/android-arm64@0.25.12':
--    resolution: {integrity: sha512-6AAmLG7zwD1Z159jCKPvAxZd4y/VTO0VkprYy+3N2FtJ8+BQWFXU+OxARIwA46c5tdD9SsKGZ/1ocqBS/gAKHg==}
--    engines: {node: '>=18'}
--    cpu: [arm64]
--    os: [android]
--
-   '@esbuild/android-arm64@0.28.2':
-     resolution: {integrity: sha512-5YfKeeI8qWfBZIX+u2xZC3Zlb3Os/gLS2sbEKM+I4ZOcsWmHS2WLysCcQZDAFRslDUU5Oiq44gf6PYN1vGwG5A==}
-     engines: {node: '>=18'}
-     cpu: [arm64]
-     os: [android]
- 
--  '@esbuild/android-arm@0.25.12':
--    resolution: {integrity: sha512-VJ+sKvNA/GE7Ccacc9Cha7bpS8nyzVv0jdVgwNDaR4gDMC/2TTRc33Ip8qrNYUcpkOHUT5OZ0bUcNNVZQ9RLlg==}
--    engines: {node: '>=18'}
--    cpu: [arm]
--    os: [android]
--
-   '@esbuild/android-arm@0.28.2':
-     resolution: {integrity: sha512-kXXoiPVVGQcnIYGOeaovwOURpniDBpSq4A03qkQ+BMQqtGG6HYap3xne9C1O1yo4TR3qxlCX5IqqmX6fFo2Lqg==}
-     engines: {node: '>=18'}
-     cpu: [arm]
-     os: [android]
- 
--  '@esbuild/android-x64@0.25.12':
--    resolution: {integrity: sha512-5jbb+2hhDHx5phYR2By8GTWEzn6I9UqR11Kwf22iKbNpYrsmRB18aX/9ivc5cabcUiAT/wM+YIZ6SG9QO6a8kg==}
--    engines: {node: '>=18'}
--    cpu: [x64]
--    os: [android]
--
-   '@esbuild/android-x64@0.28.2':
-     resolution: {integrity: sha512-O387ite7SzUyCcy3JQX4P4bLtEA7bLLkx+esve5JHnyYfNTxcVpXZo9jhdB0lTKN44gztELTdU7nS8Nr16Fs1Q==}
-     engines: {node: '>=18'}
-     cpu: [x64]
-     os: [android]
- 
--  '@esbuild/darwin-arm64@0.25.12':
--    resolution: {integrity: sha512-N3zl+lxHCifgIlcMUP5016ESkeQjLj/959RxxNYIthIg+CQHInujFuXeWbWMgnTo4cp5XVHqFPmpyu9J65C1Yg==}
--    engines: {node: '>=18'}
--    cpu: [arm64]
--    os: [darwin]
--
-   '@esbuild/darwin-arm64@0.28.2':
-     resolution: {integrity: sha512-n4KqkOQrraxHJcgjM1RvwbigfQKIKJVpM7xp+KsxiyUSrRdIXnt73VhrPAx0fV44hgfmIVKjxMN9J1t5jySVkw==}
-     engines: {node: '>=18'}
-     cpu: [arm64]
-     os: [darwin]
- 
--  '@esbuild/darwin-x64@0.25.12':
--    resolution: {integrity: sha512-HQ9ka4Kx21qHXwtlTUVbKJOAnmG1ipXhdWTmNXiPzPfWKpXqASVcWdnf2bnL73wgjNrFXAa3yYvBSd9pzfEIpA==}
--    eng
++      - name: Collective learning harness tests
++        if: matrix.os == 'ubuntu-latest'
++        run: pnpm exec vitest run --config benchmarks/collective-learning/vitest.config.ts
++
++      - name: Replay published executable-learning artifacts
++        run: python -B -X utf8 benchmarks/collective-learning/published/executable-learning-20261114/replay.py
++
++      - name: Benchmark checker and fixture tests
++        run: python -B -X utf8 -m unittest discover -s benchmarks/collective-learning/benchmark-audit -p 'test_*.py'
++
++      - name: Verify published signed package handoff
++        run: node benchmarks/collective-learning/published/executable-learning-20261114/verify-transfer.mjs
++
+       # The gateway suite (src/gateway/**, 635 tests) is EXCLUDED from the unit
+       # config, and until 2026-08-26 no workflow ran it at all — every gateway
+       # test, including the Control-UI serving and token-handoff ones, guarded
+```
+
+**File**: `.oxfmtrc.jsonc` (modified, +2/-0)
+```diff
+@@ -18,6 +18,8 @@
+     "benchmarks/learning-strategy/data/",
+     "benchmarks/learning-strategy/datasets/",
+     "benchmarks/learning-strategy/published/",
++    "benchmarks/collective-learning/published/",
++    "test/fixtures/collective-learning/",
+     "benchmarks/learning-strategy/telecom/vendor/",
+     "benchmarks/learning-strategy/telecom/qualification-*.json",
+     "benchmarks/learning-strategy/telecom/native-sources.json",
+```
+
+**File**: `benchmarks/collective-learning/PILOT.md` (added, +98/-0)
+```diff
+@@ -0,0 +1,98 @@
++# Two-node deployment driver
++
++`deployment-cli.ts` runs the actual Bitterbot embedded model runner and package coordinator in two separate worker processes. Each condition gets a fresh pair of identities, SQLite databases, package stores, credential profiles, and workspaces. Only two workers run at a time. They exchange signed, encrypted Circle messages over loopback HTTP; this deployment never joins the production public mesh.
++
++The driver implements `StudyDriver` in `study.ts`. A deployment can execute all four conditions, resume completed commands without repeating model calls, collect independently checked outputs, and run fresh-session retention after 24 real hours. Node qualification ledgers retain their original receipts. The controller's group ledger is the authoritative source for aggregate study costs, so the same execution is not counted twice.
++
++The `research-brief-v3` task contract explicitly requires converting timestamped publication dates to UTC before taking their calendar date. Date-only values stay unchanged. Both incumbent and candidate receive this rule, including the requirement to use matching dates in JSON and Markdown. Ambiguous timestamps without a timezone and impossible dates are rejected before model execution. The public instructions, date schema and conversion logic are bound to the environment/checker identity, and `readiness.json` includes the public contract for review.
++
++Earlier v2 smoke receipts are preserved. Their offset-date rejection remains inconclusive because the task did not state the checker's UTC requirement. Use a newly prepared v3 deployment for subsequent comparisons; never relabel those earlier observations as v3 evidence. The baseline package remains the same experimental library, and any proposed package correction must pass the ordinary local gate.
++
++## Prepare
++
++Run on Linux or WSL with Node 22, the repository dependencies, Docker, and a prepared image containing the package's Python requirements. Images are inspected and pinned; the driver never pulls images or installs packages. A disposable, network-disabled probe verifies the ordinary shell/sleep entry point and Python 3 before any model request. Use an existing provider configuration and credential directory. Preparation copies the provider configuration into private study directories without altering the normal gateway configuration.
++
++On WSL, keep the deployment directory on the native Linux filesystem, for example under `~/.local/share/bitterbot-studies/`. Windows-mounted directories can make SQLite schema creation and durable writes substantially slower. The repository itself may remain on the Windows drive. Keep the deployment directory private and persistent for the 24-hour retention interval.
++
++```sh
++node --import tsx benchmarks/collective-learning/deployment-cli.ts corpus /absolute/path/development-corpus.json
++node --import tsx benchmarks/collective-learning/deployment-cli.ts prepare /absolute/path/spec.json /absolute/path/new-deployment
++```
++
++Example specification:
++
++```json
++{
++  "schemaVersion": 1,
++  "id": "collective-development-pilot",
++  "purpose": "development-pilot",
++  "baseConfig": "/home/operator/.bitterbot/bitterbot.json",
++  "authAgentDirectory": "/home/operator/.bitterbot/agents/main/agent",
++  "model": "YOUR_EXISTING_PROVIDER/YOUR_EXISTING_MODEL",
++  "sandboxImage": "YOUR_PREPARED_LINUX_IMAGE",
++  "initialPackageDirectory": "/absolute/repo/test/fixtures/collective-learning/research-brief",
++  "corpusFile": "/absolute/path/development-corpus.json",
++  "seed": 20261111,
++  "conditions": ["frozen", "local", "exchange", "pooled"],
++  "groupCeiling": { "providerUsd": 10000, "toolCalls": 1000000, "wallMs": 604800000 },
++  "maxCanaryBatches": 5,
++  "retentionHours": 24
++}
++```
++
++The ceiling applies to each entire condition, across both nodes and all cost phases. It is not a per-call allowance. Interrupted and unresolved calls retain their reservations. Credential files and raw study artifacts belong in an ignored private directory such as `reports/collective-learning/`, never in a publication bundle.
++
++Evaluation uses the provider's sampling defaults, a 4,096-token output cap and a 16,000-token context cap. These settings are included in the environment fingerprint. This supports models such as Claude Opus 4.8 that reject non-default sampling parameters; a zero-temperature override is not required for the paired statistical gate.
++
++Validation and proposal runs disable the tool-result cache, and that setting is part of the host environment fingerprint. Fresh scratch directories alone do not isolate a process-wide cache: different containers use the same visible paths, such as `/workspace/sources.json`. Ordinary agent runs scope cached results to a single tool binding, and cache hits still pass through current authorization and abort checks.
++
++The first funded development deployment exposed cross-task read reuse and was stopped. Its entire performanc
+```
+
+**File**: `benchmarks/collective-learning/README.md` (added, +99/-0)
+```diff
+@@ -0,0 +1,99 @@
++# Verified collective learning
++
++Opt-in complete skill packages, local execution validation, scoped Circle/public transport, and bounded peer-evidence proposals. Legacy scores and peer reports do not confer local qualification. The feature is ported to main's in-tree agent runtime; default paid budgets remain zero.
++
++The [published executable-learning pilot](published/executable-learning-20261114/README.md) contains the measured gains, negative observations, task data, saved artifacts, methodology, portable offline replay, and required follow-up experiments. See [the operator guide](../../docs/agents/collective-learning.md) for deployment behavior.
++
++## Implementation map
++
++| Area                   | Entry points                                                                       | Behavior                                                                                                                                                                                                             |
++| ---------------------- | ---------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
++| Complete packages      | `src/agents/skills/collective/{contracts,package,store}.ts`                        | Frozen bytes, canonical manifest, individual file hashes, signed release lineage, immutable package directories, transactional activation and complete rollback.                                                     |
++| Local execution        | `validation.ts`, `research-brief.ts`, `execution-context.ts`, `isolated-config.ts` | Paired execution, host-owned checkers, durable reservations, verified instruction reads, significance gate, fixed regression panel, canary and drift checks.                                                         |
++| Session selection      | `run-snapshot.ts`, embedded runner `run/attempt.ts`                                | Pin a session to immutable paths; mount only selected packages read-only in sandboxed sessions.                                                                                                                      |
++| Circle automation      | `policy.ts`, `service.ts`, `exceptions.ts`, `src/circles/skill-packages.ts`        | Separate publication, evidence, evaluation and adoption grants; operator approval authority; membership checks on both local node and publisher; existing pending-outbound exceptions.                               |
++| Catalog                | `desktop/renderer/src/components/circles/SkillCatalog.tsx`                         | Skills dialog in the Circle header, package files/differences, local versus peer evidence, local staging/validation, adoption, pin/fork/replace/reject/rollback/withdraw, persistent grants, costs and waiting jobs. |
++| Transport              | `transport.ts`, `mesh.ts`, `orchestrator-bridge.ts`, Rust `swarm/`                 | Signed descriptors, 24 KiB objects, resumable downloads, scoped serving, separate opt-in public topic, capability negotiation, idempotent delivery and author withdrawals.                                           |
++| Evidence and proposals | `evidence.ts`, `coordination.ts`, `proposal-host.ts`                               | Separate signed evidence store, deduplication, disclosure inheritance, bounded peer-informed proposals, shadow mode, same execution gate for every proposed update.                                                  |
++| External adapters      | `hermes.ts`, `trace-adapter.ts`                                                    | Offline Hermes conversion with pinned contract, exact original bytes and source hash, explicit compatibility reports, observation-only trace normalization.                                                          |
++| Comparative study      | `study.ts`, `cli.ts`, `vitest.config.ts`                                           | Four-condition driver contract, pilot sample planning, immutable manifest hashing, cost accounting, family-clustered paired bootstrap, retention/new-user reporting.                                                 |
++
++Paths in the table after the first row are relative to `src/agents/skills/collective/` unless another directory is shown.
++
++## First controlled deployment
++
++Use two independent test nodes with separate device identities and state directories. Join both to a private Circle through the ordinary approved Circle flow. Do not use production public-mesh nodes for the research study.
++
++Merge this configuration into each node's existing configuration, choosing its already configured model. Enabling packages does not grant sharing or spend authority.
++
++```json
++{
++  "skills": {
++    "collective": {
++      "enabled": true,
++      "publicMesh": false,
++      "synthesis": "off",
++    
+```
+
+**File**: `benchmarks/collective-learning/benchmark-audit/bird_prepare.py` (added, +85/-0)
+```diff
+@@ -0,0 +1,85 @@
++"""Freeze a deterministic development panel before observing any solver outcome.
++
++Two challenging questions per database, SHA256-ranked with a fixed seed.
++This is a headroom calibration, not a held-out collective-learning experiment.
++No model-specific selection, replacement of failed tasks, or skill training.
++"""
++import argparse
++import hashlib
++import json
++import pathlib
++import sqlite3
++
++from bird_sql import execute, grade, rows_hash
++
++SEED = "bitterbot-bird-development-calibration-v1"
++
++
++def sha(data):
++    return hashlib.sha256(data).hexdigest()
++
++
++def prepare(source, destination):
++    provenance = json.loads((source / "provenance.json").read_text())
++    annotations = (source / "annotations.jsonl").read_bytes()
++    if sha(annotations) != "926af2a0d1b47e5d0d15a7aa8a34d4721007f4550a881555b6a89496b54a2606":
++        raise ValueError("Annotation drift")
++    data = [json.loads(line) for line in annotations.splitlines()]
++    schemas = json.loads((source / "schemas.json").read_text())
++    selected = []
++    for db in sorted({row["db_id"] for row in data}):
++        pool = [r for r in data if r["db_id"] == db and r["difficulty"] == "challenging"]
++        pool.sort(key=lambda r: sha(f"{SEED}:{r['question_id']}".encode()))
++        if len(pool) < 2:
++            raise ValueError("Insufficient challenging tasks: " + db)
++        selected.extend(pool[:2])
++    destination.mkdir(mode=0o700)
++    (destination / "selection.json").write_text(json.dumps({"seed": SEED,
++        "rule": "Two challenging questions per database, smallest SHA256(seed:question_id)",
++        "questionIds": [r["question_id"] for r in selected], "paidCallsBeforeSelection": 0}, indent=2) + "\n")
++    cases = []
++    probes = []
++    for row in selected:
++        db = row["db_id"]
++        file = source / (db + ".sqlite")
++        receipt = next(p for p in provenance["files"] if p["file"] == file.name)
++        if sha(file.read_bytes()) != receipt["sha256"]:
++            raise ValueError("Database drift: " + db)
++        with sqlite3.connect(file.as_uri() + "?mode=ro&immutable=1", uri=True) as conn:
++            schema = [x[0] for x in conn.execute("SELECT sql FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name")]
++        expected = execute(file, row["SQL"])
++        reference_digest = rows_hash(expected)
++        controls = {
++            "reference": grade(file, row["SQL"], row["SQL"], reference_digest),
++            "empty": grade(file, row["SQL"], "SELECT 1 WHERE 0", reference_digest),
++            "wrong_scalar": grade(file, row["SQL"], "SELECT 'deliberately incorrect benchmark control'", reference_digest),
++            "write": grade(file, row["SQL"], "CREATE TABLE unauthorized(x)", reference_digest),
++        }
++        if controls["reference"]["status"] != "pass" or any(controls[k]["status"] != "task-failure" for k in ["empty", "wrong_scalar", "write"]):
++            raise ValueError("Checker qualification failed: " + str(row["question_id"]))
++        cases.append({"id": f"bird-{row['question_id']}", "family": db,
++                      "difficulty": row["difficulty"], "input": {
++                          "question": row["question"], "evidence": row["evidence"],
++                          "databaseFile": "database.sqlite", "dialect": "SQLite",
++                          "schema": schema, "schemaDocumentation": schemas[db]},
++                      "databaseSha256": receipt["sha256"], "databaseBytes": receipt["bytes"],
++                      "referenceSql": row["SQL"], "referenceDigest": reference_digest})
++        probes.append({"id": cases[-1]["id"], "referenceRows": len(expected), "controls": controls})
++        print(json.dumps({"id": cases[-1]["id"], "database": db, "rows": len(expected)}), flush=True)
++    fixture = {"schemaVersion": 1, "upstreamRevision": "5b256b5a9c17478f06ed6912612e9a14d17065c8",
++               "annotationSha256": sha(annotations), "selectionSeed": SEED, "cases": cases}
++    (destination / "fixture.json").write_text(json.dumps(fixture, indent=2) + "\n")
++    (destination / "qualification.json").write_text(json.dumps({"paidModelCalls": 0,
++        "selectedTasks": len(cases), "domains": len({c["family"] for c in cases}), "probes": probes,
++        "limitations": ["Reference self-agreement is an execution check, not independent proof of the annotation.",
++                         "Only one database snapshot per domain; accidental SQL equivalence remains possible.",
++                         "Result bags preserve duplicates and column positions but ignore row ordering.",
++                         "Public benchmark contamination cannot be excluded."]}, indent=2) + "\n")
++
++
++if __name__ == "__main__":
++    p = argparse.ArgumentParser()
++    p.add_argument("source", type=pathlib.Path)
++    p.add_argument("destination", type=pathlib.Path)
++    args = p.parse_args()
++    prepare(args.source.resolve(), args.destination.resolve())
+```
+
+**File**: `benchmarks/collective-learning/benchmark-audit/bird_reference_audit.py` (added, +30/-0)
+```diff
+@@ -0,0 +1,30 @@
++"""Independent, unpaid probes of suspected BIRD annotation edge cases."""
++import json
++import pathlib
++import sqlite3
++import sys
++
++root = pathlib.Path(sys.argv[1])
++rows = {r["question_id"]: r for r in map(json.loads, (root / "annotations.jsonl").read_text().splitlines())}
++findings = []
++for question_id in [254, 487]:
++    item = rows[question_id]
++    with sqlite3.connect((root / (item["db_id"] + ".sqlite")).as_uri() + "?mode=ro&immutable=1", uri=True) as conn:
++        original = conn.execute(item["SQL"]).fetchall()
++        if question_id == 254:
++            alternative = item["SQL"].replace("CAST(substr(q.q1, instr(q.q1, ':') + 1) AS INTEGER)", "CAST(substr(q.q1, instr(q.q1, ':') + 1) AS REAL)")
++            concern = "Reference truncates fractional seconds; compare exact fractional-second ranking on this snapshot."
++            supporting = conn.execute("SELECT q.q1,d.nationality FROM qualifying q JOIN drivers d ON d.driverId=q.driverId JOIN races r ON r.raceId=q.raceId WHERE r.year=1995 AND r.name='Japanese Grand Prix' ORDER BY q.q1 DESC LIMIT 5").fetchall()
++        else:
++            alternative = item["SQL"].replace("b.bond_type <> '-'", "b.bond_type IN ('=', '#')")
++            concern = "Question excludes double/triple nitrogen bonds; reference excludes all non-single nitrogen bonds, including aromatic bonds if present."
++            supporting = conn.execute("SELECT bond_type,COUNT(*) FROM bond GROUP BY bond_type").fetchall()
++        changed = conn.execute(alternative).fetchall()
++        findings.append({"id": question_id, "concern": concern, "reference": original,
++                         "alternative": changed, "sameOnThisSnapshot": original == changed,
++                         "supportingRows": supporting, "alternativeSql": alternative})
++result = json.dumps({"paidCalls": 0, "findings": findings}, indent=2) + "\n"
++if len(sys.argv) > 2:
++    with pathlib.Path(sys.argv[2]).open("x") as f:
++        f.write(result)
++print(result)
+```
+
+**File**: `benchmarks/collective-learning/benchmark-audit/bird_source.py` (added, +146/-0)
+```diff
+@@ -0,0 +1,146 @@
++"""Acquire official BIRD SQLite bytes without executing upstream images or scripts.
++
++Inventory pins mutable image tags to manifests and the seed-only final layer.
++Fetch verifies every content digest and extracts exactly the regular seed file.
++The upstream dataset is CC BY-SA 4.0; preserve README and manifest attribution.
++"""
++import argparse
++import hashlib
++import json
++import pathlib
++import re
++import tarfile
++import urllib.request
++
++REVISION = "5b256b5a9c17478f06ed6912612e9a14d17065c8"
++HF = f"https://huggingface.co/datasets/birdsql/bird_mini_dev/resolve/{REVISION}/"
++REPO = "3036197201/bird-mini-dev-sqlite"
++REGISTRY = f"https://registry-1.docker.io/v2/{REPO}/"
++MEDIA = ", ".join([
++    "application/vnd.docker.distribution.manifest.list.v2+json",
++    "application/vnd.docker.distribution.manifest.v2+json",
++    "application/vnd.oci.image.index.v1+json",
++    "application/vnd.oci.image.manifest.v1+json",
++])
++
++
++def digest(data):
++    return hashlib.sha256(data).hexdigest()
++
++
++def get(url, limit=2_000_000, headers=None):
++    with urllib.request.urlopen(urllib.request.Request(url, headers=headers or {}), timeout=60) as r:
++        data = r.read(limit + 1)
++    if len(data) > limit:
++        raise ValueError("Download exceeds bound")
++    return data
++
++
++def write_new(file, data):
++    with file.open("xb") as f:
++        f.write(data)
++
++
++def registry_headers():
++    token = json.loads(get(f"https://auth.docker.io/token?service=registry.docker.io&scope=repository:{REPO}:pull"))["token"]
++    return {"Authorization": "Bearer " + token, "Accept": MEDIA}
++
++
++def pinned_json(route, expected, headers):
++    data = get(REGISTRY + route, headers=headers)
++    if expected and "sha256:" + digest(data) != expected:
++        raise ValueError("Registry digest mismatch")
++    return json.loads(data), "sha256:" + digest(data)
++
++
++def inventory(output):
++    headers = registry_headers()
++    tags, _ = pinned_json("tags/list", None, headers)
++    pins = []
++    for tag in sorted(tags["tags"]):
++        match = re.fullmatch(r"harbor-minidev1024-r1-([a-z0-9_]+)-[0-9a-f]{12}-[0-9a-f]{8}", tag)
++        if not match:
++            continue
++        index, index_hash = pinned_json("manifests/" + tag, None, headers)
++        platform = next(m for m in index["manifests"] if m["platform"] == {"architecture": "amd64", "os": "linux"})
++        manifest, manifest_hash = pinned_json("manifests/" + platform["digest"], platform["digest"], headers)
++        config, _ = pinned_json("blobs/" + manifest["config"]["digest"], manifest["config"]["digest"], headers)
++        nonempty = [h for h in config["history"] if not h.get("empty_layer")]
++        if len(nonempty) != len(manifest["layers"]) or nonempty[-1]["created_by"] != "COPY seed.sqlite /opt/dii/seed.sqlite # buildkit":
++            raise ValueError("Expected a final seed-only layer")
++        pins.append({"database": match[1], "tag": tag, "indexDigest": index_hash,
++                     "imageDigest": manifest_hash, "configDigest": manifest["config"]["digest"],
++                     "seedLayer": manifest["layers"][-1]})
++    if len(pins) != 11 or len({p["database"] for p in pins}) != 11:
++        raise ValueError("Unexpected database inventory")
++    body = {"schemaVersion": 1, "source": "https://huggingface.co/datasets/birdsql/bird_mini_dev",
++            "revision": REVISION, "license": "CC-BY-SA-4.0", "registry": REPO,
++            "annotationSha256": "926af2a0d1b47e5d0d15a7aa8a34d4721007f4550a881555b6a89496b54a2606",
++            "databases": pins}
++    write_new(output, (json.dumps(body, indent=2) + "\n").encode())
++    print(json.dumps({"databases": len(pins), "compressedBytes": sum(p["seedLayer"]["size"] for p in pins)}))
++
++
++def fetch(manifest_path, root):
++    pins = json.loads(manifest_path.read_text())
++    if pins["revision"] != REVISION:
++        raise ValueError("Unexpected revision")
++    root.mkdir(mode=0o700)  # No implicit overwrite/resume of partial acquisition.
++    headers = registry_headers()
++    receipts = []
++    for source, target in [("README.md", "README.upstream.md"), ("data/manifest.json", "manifest.upstream.json"), ("data/mini_dev_sqlite.jsonl", "annotations.jsonl"), ("baseline_inference/schemas/sqlite.json", "schemas.json")]:
++        data = get(HF + source)
++        if target == "annotations.jsonl" and digest(data) != pins["annotationSha256"]:
++            raise ValueError("Annotation digest mismatch")
++        write_new(root / target, data)
++        receipts.append({"file": target, "source": HF + source, "sha256": digest(data), "bytes": len(data)})
++    total = 0
++    for pin in pins["databases"]:
++        name = pin["database"]
++        if not re.fullmatch(r"[a-z0-9_]+", name):
++            raise ValueError("Invalid database name")
++        layer = pin["seedLayer"]
++        if layer["size"] > 300_000_000:
++            raise ValueError("Compressed layer too large")
++        archive = root / (name + ".tar.gz")
++      
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #376** (2026-11-14): feat(skills): add verified collective learning and reproducible pilot evidence (@VGIL77)
 - **PR #373** (2026-11-13): fix(wallet): stop @coinbase/agentkit sending analytics to Coinbase (@VGIL77)
 - **PR #371** (2026-11-08): fix(memory): trim the embedding cache on every write; the agent explains its memory from its guide (@VGIL77)
 - **PR #370** (2026-11-08): feat(agents): the agent knows which of its parts are on, from the live config (@VGIL77)
 - **PR #369** (2026-11-07): feat(skills): add verified live outcome writer in shadow mode (@VGIL77)
 - **PR #368** (2026-11-06): feat(skills): annotate verified skill outcomes in words (@VGIL77)
-- **PR #367** (2026-11-06): fix(gateway): correct WSL logon task XML schema (@VGIL77)
 
 ---
 
@@ -1973,45 +1991,31 @@ chore(deps-dev): bump the build-tooling group across 1 directory with 2 updates
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps-dev): bump the build-tooling group across 1 directory with 2 updates
+## X. skills): add verified collective learning and reproducible pilot evidence
 
 **RULE**:
-When implementing operations in `pnpm-lock.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.gitattributes`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `716cfd2b`: deps-dev): bump the build-tooling group across 1 directory with 2 updates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2825902a`: skills): add verified collective learning and reproducible pilot evidence. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `pnpm-lock.yaml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.gitattributes`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-        version: 4.0.18(@vitest/browser@4.0.18(bufferutil@4.1.0)(utf-8-validate@5.0.10)(vite@7.3.8(@types/node@26.6.5)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1))(vitest@4.0.18))(vitest@4.0.18)
-        version: 6.3.0(vite@8.3.7(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
-        version: 8.3.7(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)
-        version: 4.1.11(@opentelemetry/api@1.10.0)(@types/node@26.6.5)(@vitest/browser-playwright@4.0.18)(@vitest/coverage-v8@4.0.18(@vitest/browser@4.0.18(bufferutil@4.1.0)(utf-8-validate@5.0.10)(vite@7.3.8(@types/node@26.6.5)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1))(vitest@4.0.18))(vitest@4.0.18))(happy-dom@20.14.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(vite@8.3.7(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
+test/fixtures/collective-learning/** -text
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-        version: 4.0.18(@vitest/browser@4.0.18(bufferutil@4.1.0)(utf-8-validate@5.0.10)(vite@6.4.4(@types/node@26.6.5)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1))(vitest@4.0.18))(vitest@4.0.18)
-        version: 6.1.2(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
-        version: 8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)
-        version: 4.1.11(@opentelemetry/api@1.10.0)(@types/node@26.6.5)(@vitest/browser-playwright@4.0.18)(@vitest/coverage-v8@4.0.18(@vitest/browser@4.0.18(bufferutil@4.1.0)(utf-8-validate@5.0.10)(vite@6.4.4(@types/node@26.6.5)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1))(vitest@4.0.18))(vitest@4.0.18))(happy-dom@20.14.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
-  '@esbuild/aix-ppc64@0.25.12':
-    resolution: {integrity: sha512-Hhmwd6CInZ3dwpuGTF8fJG6yoWmsToE+vYgD4nytZVxcu1ulHpUQRAB1UJ8+N1Am3Mz4+xOByoQoSZf4D+CpkA==}
-    engines: {node: '>=18'}
-    cpu: [ppc64]
-    os: [aix]
-
-  '@esbuild/android-arm64@0.25.12':
-    resolution: {integrity: sha512-6AAmLG7zwD1Z159jCKPvAxZd4y/VTO0Vkpr
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `716cfd2b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2825902a` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T22:16:49.697Z",
+  "updated_at": "2026-11-14T22:39:38.431Z",
   "stats": {
-    "total_discovered": 3455,
-    "approved_pending_harvest": 3247,
+    "total_discovered": 3466,
+    "approved_pending_harvest": 3257,
     "harvested_count": 0,
-    "rejected_count": 208,
+    "rejected_count": 209,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3228,
+      "COMMUNITY_AND_EXPERT": 3239,
       "OFFICIAL_DOCUMENTATION": 123,
       "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
@@ -74575,6 +74575,241 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
         "fileName": "clickhouse-clickhouse-learnings.md"
+      }
+    },
+    "SRC-1B63D9FE1591": {
+      "id": "SRC-1B63D9FE1591",
+      "url": "https://github.com/sharkdp/fd",
+      "title": "https://github.com/sharkdp/fd",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T22:39:37.376Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sharkdp-fd-learnings.md",
+        "fileName": "sharkdp-fd-learnings.md"
+      }
+    },
+    "SRC-1147BE0FE9C3": {
+      "id": "SRC-1147BE0FE9C3",
+      "url": "https://github.com/sharkdp/fd/issues",
+      "title": "https://github.com/sharkdp/fd/issues",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T22:39:37.401Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sharkdp-fd-learnings.md",
+        "fileName": "sharkdp-fd-learnings.md"
+      }
+    },
+    "SRC-0F062E5C2FBB": {
+      "id": "SRC-0F062E5C2FBB",
+      "url": "https://bford.info/cachedir",
+      "title": "https://bford.info/cachedir",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T22:39:37.425Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sharkdp-fd-learnings.md",
+        "fileName": "sharkdp-fd-learnings.md"
+      }
+    },
+    "SRC-EB84D4EF1B18": {
+      "id": "SRC-EB84D4EF1B18",
+      "url": "https://github.com/clap-rs/clap/issues/3542",
+      "title": "https://github.com/clap-rs/clap/issues/3542",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T22:39:37.447Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sharkdp-fd-learnings.md",
+        "fileName": "sharkdp-fd-learnings.md"
+      }
+    },
+    "SRC-D1856215BF87": {
+      "id": "SRC-D1856215BF87",
+      "url": "https://github.com/user-attachments/assets/df606286-e6ae-4769-bfa9-93e90f7b6a70",
+      "title": "https://github.com/user-attachments/assets/df606286-e6ae-4769-bfa9-93e90f7b6a70",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T22:39:37.471Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sharkdp-fd-learnings.md",
+        "fileName": "sharkdp-fd-learnings.md"
+      }
+    },
+    "SRC-2FD1700434E4": {
+      "id": "SRC-2FD1700434E4",
+      "url": "https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+      "title": "https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T22:39:38.027Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md",
+        "fileName": "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md"
+      }
+    },
+    "SRC-BE264110DF1B": {
+      "id": "SRC-BE264110DF1B",
+      "url": "https://github.com/mikepenz/AboutLibraries",
+      "title": "https://github.com/mikepenz/AboutLibraries",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T22:39:38.334Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mikepenz-aboutlibraries-learnings.md",
+        "fileName": "mikepenz-aboutlibraries-learnings.md"
+      }
+    },
+    "SRC-173EAE2E8A7A": {
+      "id": "SRC-173EAE2E8A7A",
+      "url": "https://developer.android.com/topic/performance/app-optimization/customize-which-resources-to-keep",
+      "title": "https://developer.android.com/topic/performance/app-optimization/customize-which-resources-to-keep",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T22:39:38.360Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mikepenz-aboutlibraries-learnings.md",
+        "fileName": "mikepenz-aboutlibraries-learnings.md"
+      }
+    },
+    "SRC-8D8ECA6FDB66": {
+      "id": "SRC-8D8ECA6FDB66",
+      "url": "http://schemas.android.com/tools",
+      "title": "http://schemas.android.com/tools",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-14T22:39:38.385Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mikepenz-aboutlibraries-learnings.md",
+        "fileName": "mikepenz-aboutlibraries-learnings.md"
+      }
+    },
+    "SRC-BE4AD460F413": {
+      "id": "SRC-BE4AD460F413",
+      "url": "https://svn.apache.org/repos/infra/websites/production/maven/content/pom.html",
+      "title": "https://svn.apache.org/repos/infra/websites/production/maven/content/pom.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T22:39:38.408Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mikepenz-aboutlibraries-learnings.md",
+        "fileName": "mikepenz-aboutlibraries-learnings.md"
+      }
+    },
+    "SRC-BA7581B66F53": {
+      "id": "SRC-BA7581B66F53",
+      "url": "https://gitlab.freedesktop.org/monado/monado",
+      "title": "https://gitlab.freedesktop.org/monado/monado",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T22:39:38.431Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mikepenz-aboutlibraries-learnings.md",
+        "fileName": "mikepenz-aboutlibraries-learnings.md"
       }
     }
   }

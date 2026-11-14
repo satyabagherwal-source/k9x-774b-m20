@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-14T22:16:21.450Z",
-    "lastVerified": "2026-11-14T22:16:21.450Z",
+    "lastChecked": "2026-11-14T22:39:37.220Z",
+    "lastVerified": "2026-11-14T22:39:37.220Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -152,22 +152,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "bitterbot-ai-bitterbot-desktop": {
-    "name": "bitterbot-desktop",
+    "name": "Bitterbot-AI/bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-14T21:29:31.828Z",
-    "lastVerified": "2026-11-14T21:29:31.828Z",
+    "lastChecked": "2026-11-14T22:39:33.197Z",
+    "lastVerified": "2026-11-14T22:39:33.197Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "82f498f1198ffac06b9f940227110537dd076eba695186ba76f82feaefdd417a",
+    "contentHash": "fa001ba3c4fdfe882a77ef9e842ebbdb97e4f69515fa6b85f6a3594e87f2f824",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "e4d179d3"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -232,9 +231,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-11-14T15:03:49.217Z",
+    "lastChecked": "2026-11-14T22:39:23.617Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-11-14T15:03:49.217Z"
+    "lastVerified": "2026-11-14T22:39:23.617Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch/meilisearch",
@@ -1342,22 +1341,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "sharkdp-fd": {
-    "name": "fd",
+    "name": "sharkdp/fd",
     "officialUrl": "https://github.com/sharkdp/fd",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-13T07:39:18.127Z",
-    "lastVerified": "2026-11-13T07:39:18.127Z",
+    "lastChecked": "2026-11-14T22:39:17.334Z",
+    "lastVerified": "2026-11-14T22:39:17.334Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sharkdp-fd",
-    "contentHash": "abe3a6c977b4420aa9e7254704b80effd11aec2094121afc8d76eddc04f0064a",
+    "contentHash": "01e530f1940384cd16f88127835ec3263c8acded75f6d2ebb7a88d7c6f3d2b53",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "24d90b28"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-qwen-qwen-image-2.1": {
     "name": "Qwen/Qwen-Image-2.1",
@@ -6264,9 +6262,9 @@
   "diggerhq-digger": {
     "name": "digger",
     "officialUrl": "https://github.com/diggerhq/digger",
-    "lastChecked": "2026-11-13T16:58:44.704Z",
+    "lastChecked": "2026-11-14T22:39:21.300Z",
     "revisionIdentifier": "7c237c09",
-    "lastVerified": "2026-11-13T16:58:44.704Z"
+    "lastVerified": "2026-11-14T22:39:21.300Z"
   },
   "arangodb-arangodb": {
     "name": "arangodb/arangodb",
@@ -7749,14 +7747,14 @@
     "officialUrl": "https://github.com/mikepenz/AboutLibraries",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-11T12:03:20.236Z",
-    "lastVerified": "2026-11-11T12:03:20.236Z",
+    "lastChecked": "2026-11-14T22:39:22.797Z",
+    "lastVerified": "2026-11-14T22:39:22.797Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mikepenz-aboutlibraries",
-    "contentHash": "62692211442631c769c6bcf67cdbaa5c9cd6eee1535943473c3b4bc7569bba43",
+    "contentHash": "9b6cf103461b78f4aaad447926ad555e0bcb59c4123340a01fdb9e39b0add687",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7994,8 +7992,8 @@
     "officialUrl": "https://github.com/libsql/libsql",
     "sourceType": "github",
     "technology": "C",
-    "lastChecked": "2026-11-13T15:38:14.984Z",
-    "lastVerified": "2026-11-13T15:38:14.984Z",
+    "lastChecked": "2026-11-14T22:39:26.250Z",
+    "lastVerified": "2026-11-14T22:39:26.250Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tursodatabase-libsql",
@@ -8844,12 +8842,12 @@
     "officialUrl": "https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-09T11:30:58.532Z",
-    "lastVerified": "2026-11-09T11:30:58.532Z",
+    "lastChecked": "2026-11-14T22:39:16.311Z",
+    "lastVerified": "2026-11-14T22:39:16.311Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf",
-    "contentHash": "dd22413ad0c459872519478ee9884c547fb8c0e1ea3a0fd31a092665ed43a7eb",
+    "contentHash": "2e97dd05b3bd047bbfd26cb82822e277d74f0ebd98b44aebb4a40b88d3a21173",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

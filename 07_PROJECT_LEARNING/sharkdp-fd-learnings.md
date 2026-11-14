@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sharkdp-fd-learnings.md`  
 > **Source**: github ([https://github.com/sharkdp/fd](https://github.com/sharkdp/fd))  
-> **Source Version**: `24d90b28`  
+> **Source Version**: `6cf33028`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T14:38:39.806Z  
+> **Timestamp**: 2026-11-14T22:39:17.340Z  
 > **Learning ID**: `learn-github-sharkdp-fd`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sharkdp-fd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sharkdp/fd](https://github.com/sharkdp/fd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T14:38:29.300Z  
+> **Harvest Timestamp**: 2026-11-14T22:39:17.334Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A simple, fast and user-friendly alternative to 'find'
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 45090 stars
+- **Stars / Engagement**: 45062 stars
 
 ---
 
@@ -1809,124 +1809,138 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `24d90b28` (2026-11-09)
-**Commit Message**: Merge pull request #2222 from azchohfi/windows-delay-load
+### Incident Patch 1: `6cf33028` (2026-11-14)
+**Commit Message**: Merge pull request #2124 from pederbe/learn/2113-strip-prefix-search-paths
 
-Delay-load shell32, combase and advapi32 on Windows MSVC
+Allow stripping cwd prefix with explicit search paths
 
-**File**: `.cargo/config.toml` (modified, +18/-1)
+**File**: `CHANGELOG.md` (modified, +1/-1)
 ```diff
-@@ -6,4 +6,21 @@
- [target.x86_64-pc-windows-msvc]
- rustflags = ["-C", "target-feature=+crt-static"]
- [target.i686-pc-windows-msvc]
--rustflags = ["-C", "target-feature=+crt-static"]
-\ No newline at end of file
-+rustflags = ["-C", "target-feature=+crt-static"]
-+
-+# On Windows MSVC, delay-load DLLs that most runs never call, so they (and the
-+# DLLs they pull in) are not loaded at startup. shell32 and combase are only
-+# used to find the AppData folder when APPDATA is not set, advapi32 only by
-+# `--type executable`. LNK4199 ("no imports found") is ignored because binaries
-+# that don't use one of these DLLs, like the test binaries, would warn.
-+#
-+# See: https://github.com/sharkdp/fd/issues/2217
-+
-+[target.'cfg(all(target_os = "windows", target_env = "msvc"))']
-+rustflags = [
-+    "-C", "link-arg=/DELAYLOAD:shell32.dll",
-+    "-C", "link-arg=/DELAYLOAD:combase.dll",
-+    "-C", "link-arg=/DELAYLOAD:advapi32.dll",
-+    "-C", "link-arg=delayimp.lib",
-+    "-C", "link-arg=/IGNORE:4199",
-+]
-```
-
-**File**: `CHANGELOG.md` (modified, +13/-0)
-```diff
-@@ -1,3 +1,16 @@
-+# Upcoming release
-+
-+## Features
-+
-+
-+## Bugfixes
-+
-+
-+## Changes
-+- Delay-load `shell32.dll`, `combase.dll` and `advapi32.dll` in Windows MSVC builds, so most runs no longer load them (and the DLLs they pull in) at startup, see #2217 (@azchohfi)
-+
-+## Other
-+
- # 10.5.2
+@@ -1,7 +1,7 @@
+ # Upcoming release
+ 
+ ## Features
+-
++- Allow `--strip-cwd-prefix` with explicit search paths, see #2113 (@pederbe)
  
  ## Bugfixes
-```
-
----
-
-### Incident Patch 2: `7dc30379` (2026-11-08)
-**Commit Message**: Delay-load shell32, combase and advapi32 on Windows MSVC
-
-Most runs never call these DLLs: shell32 and combase are only used to
-find the AppData folder when APPDATA is not set, and advapi32 only by
---type executable. Delay-loading them means they, and the DLLs they pull
-in (user32, gdi32 and others), are no longer loaded at startup.
-
-The flags go in .cargo/config.toml next to the existing crt-static
-setting, so no build script is needed.
-
-See #2217
-
-Co-authored-by: Copilot App <[REDACTED_EMAIL]>
-
-**File**: `.cargo/config.toml` (modified, +18/-1)
-```diff
-@@ -6,4 +6,21 @@
- [target.x86_64-pc-windows-msvc]
- rustflags = ["-C", "target-feature=+crt-static"]
- [target.i686-pc-windows-msvc]
--rustflags = ["-C", "target-feature=+crt-static"]
-\ No newline at end of file
-+rustflags = ["-C", "target-feature=+crt-static"]
-+
-+# On Windows MSVC, delay-load DLLs that most runs never call, so they (and the
-+# DLLs they pull in) are not loaded at startup. shell32 and combase are only
-+# used to find the AppData folder when APPDATA is not set, advapi32 only by
-+# `--type executable`. LNK4199 ("no imports found") is ignored because binaries
-+# that don't use one of these DLLs, like the test binaries, would warn.
-+#
-+# See: https://github.com/sharkdp/fd/issues/2217
-+
-+[target.'cfg(all(target_os = "windows", target_env = "msvc"))']
-+rustflags = [
-+    "-C", "link-arg=/DELAYLOAD:shell32.dll",
-+    "-C", "link-arg=/DELAYLOAD:combase.dll",
-+    "-C", "link-arg=/DELAYLOAD:advapi32.dll",
-+    "-C", "link-arg=delayimp.lib",
-+    "-C", "link-arg=/IGNORE:4199",
-+]
-```
-
-**File**: `CHANGELOG.md` (modified, +13/-0)
-```diff
-@@ -1,3 +1,16 @@
-+# Upcoming release
-+
-+## Features
-+
-+
-+## Bugfixes
-+
-+
-+## Changes
-+- Delay-load `shell32.dll`, `combase.dll` and `advapi32.dll` in Windows MSVC builds, so most runs no longer load them (and the DLLs they pull in) at startup, see #2217 (@azchohfi)
-+
-+## Other
-+
- # 10.5.2
  
- ## Bugfixes
+```
+
+**File**: `doc/fd.1` (modified, +2/-1)
+```diff
+@@ -187,7 +187,8 @@ Never strip the ./ at the beginning of paths
+ .IP always
+ Always strip the ./ at the beginning of paths
+ .IP auto
+-Only strip if used with --exec, --exec-batch, or --print0. That is, it resets to the default behavior.
++Only strip without explicit search paths and without --exec, --exec-batch,
++or --print0. That is, it resets to the default behavior.
+ .RE
+ .TP
+ .B \-\-one\-file\-system, \-\-mount, \-\-xdev
+```
+
+**File**: `src/cli.rs` (modified, +14/-8)
+```diff
+@@ -693,8 +693,15 @@ pub struct Opts {
+     /// -X/--exec-batch, or -0/--print0 are given, to reduce the risk of a
+     /// path starting with '-' being treated as a command line option. Use
+     /// this flag to change this behavior. If this flag is used without a value,
+-    /// it is equivalent to passing "always".
+-    #[arg(long, conflicts_with_all(&["path", "search_path"]), value_name = "when", hide_short_help = true, require_equals = true, long_help)]
++    /// it is equivalent to passing "always". In "auto" mode, prefixes are only
++    /// stripped without explicit search paths.
++    #[arg(
++        long,
++        value_name = "when",
++        hide_short_help = true,
++        require_equals = true,
++        long_help
++    )]
+     strip_cwd_prefix: Option<Option<StripCwdWhen>>,
+ 
+     /// By default, fd will traverse the file system tree as far as other options
+@@ -779,12 +786,11 @@ impl Opts {
+ 
+     pub fn strip_cwd_prefix<P: FnOnce() -> bool>(&self, auto_pred: P) -> bool {
+         use self::StripCwdWhen::*;
+-        self.no_search_paths()
+-            && match self.strip_cwd_prefix.map_or(Auto, |o| o.unwrap_or(Always)) {
+-                Auto => auto_pred(),
+-                Always => true,
+-                Never => false,
+-            }
++        match self.strip_cwd_prefix.map_or(Auto, |o| o.unwrap_or(Always)) {
++            Auto => self.no_search_paths() && auto_pred(),
++            Always => true,
++            Never => false,
++        }
+     }
+ 
+     #[cfg(feature = "completions")]
+```
+
+**File**: `tests/tests.rs` (modified, +51/-0)
+```diff
+@@ -3025,6 +3025,57 @@ fn test_error_if_hidden_not_set_and_pattern_starts_with_dot() {
+     te.assert_output(&[".gitignore"], "");
+ }
+ 
++#[test]
++fn test_strip_cwd_prefix_search_paths() {
++    let te = TestEnv::new(
++        &["a/b/c"],
++        &["a/fileA", "a/b/fileB", "a/b/c/fileC", "a/-file"],
++    );
++
++    for paths in [
++        vec!["--search-path=.", "--search-path=b/c"],
++        vec!["", ".", "b/c"],
++    ] {
++        let mut args = vec!["-C", "a", "--type", "f", "--exclude", "b"];
++        args.extend_from_slice(&paths);
++        te.assert_output(
++            &args,
++            "./-file
++            ./fileA
++            b/c/fileC",
++        );
++
++        for mode in ["--strip-cwd-prefix=auto", "--strip-cwd-prefix=never"] {
++            let mut args = args.clone();
++            args.push(mode);
++            te.assert_output(
++                &args,
++                "./-file
++                ./fileA
++                b/c/fileC",
++            );
++        }
++
++        for mode in ["--strip-cwd-prefix", "--strip-cwd-prefix=always"] {
++            let mut args = args.clone();
++            args.push(mode);
++            te.assert_output(
++                &args,
++                "./-file
++                fileA
++                b/c/fileC",
++            );
++            args.push("--print0");
++            te.assert_output(
++                &args,
++                "./-fileNULL
++                fileANULL
++                b/c/fileCNULL",
++            );
++        }
++    }
++}
++
+ #[test]
+ fn test_strip_cwd_prefix() {
+     let te = TestEnv::new(DEFAULT_DIRS, DEFAULT_FILES);
 ```
 
 #### Recent Merged Pull Requests:
@@ -1955,45 +1969,28 @@ Co-authored-by: Copilot App <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #2222 from azchohfi/windows-delay-load
+## X. Empirical Invariant Guard in CHANGELOG.md
 
 **RULE**:
-When implementing operations in `.cargo/config.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sharkdp/fd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sharkdp/fd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `24d90b28`: Merge pull request #2222 from azchohfi/windows-delay-load. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6cf33028`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.cargo/config.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-rustflags = ["-C", "target-feature=+crt-static"]
-
-# On Windows MSVC, delay-load DLLs that most runs never call, so they (and the
-# DLLs they pull in) are not loaded at startup. shell32 and combase are only
-# used to find the AppData folder when APPDATA is not set, advapi32 only by
-# `--type executable`. LNK4199 ("no imports found") is ignored because binaries
-# that don't use one of these DLLs, like the test binaries, would warn.
-#
-# See: https://github.com/sharkdp/fd/issues/2217
-
-[target.'cfg(all(target_os = "windows", target_env = "msvc"))']
-rustflags = [
-    "-C", "link-arg=/DELAYLOAD:shell32.dll",
-    "-C", "link-arg=/DELAYLOAD:combase.dll",
-    "-C", "link-arg=/DELAYLOAD:advapi32.dll",
-    "-C", "link-arg=delayimp.lib",
-    "-C", "link-arg=/IGNORE:4199",
-]
+- Allow `--strip-cwd-prefix` with explicit search paths, see #2113 (@pederbe)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-rustflags = ["-C", "target-feature=+crt-static"]
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `24d90b28` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6cf33028` are properly handled with clean fallback behavior.

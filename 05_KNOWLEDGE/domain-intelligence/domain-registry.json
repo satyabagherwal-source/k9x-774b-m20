@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T22:16:50.546Z",
-  "total_records": 860,
+  "last_updated": "2026-11-14T22:39:38.712Z",
+  "total_records": 867,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 423,
+      "total": 425,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -460,7 +460,9 @@
         "domain_intelligence-research-knowledge-intelligence-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-o",
         "domain_intelligence-research-knowledge-intelligence-facebook-sam3-core-invariants",
         "DOM-D-DD21AD65",
-        "domain_intelligence-research-knowledge-intelligence-hf-facebook-sam3-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-hf-facebook-sam3-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-",
+        "domain_intelligence-research-knowledge-intelligence-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gg"
       ]
     },
     "E": {
@@ -494,7 +496,7 @@
       ]
     },
     "G": {
-      "total": 137,
+      "total": 140,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -632,7 +634,10 @@
         "domain_intelligence-architecture-intelligence-iii-hq-iii-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-onejs-one-core-invariants",
         "domain_intelligence-architecture-intelligence-onejs-one-learnings-core-invariants",
-        "domain_intelligence-architecture-intelligence-duckdb-duckdb-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-duckdb-duckdb-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-mikepenz-aboutlibraries-core-invariants",
+        "domain_intelligence-architecture-intelligence-bitterbot-ai-bitterbot-desktop-core-invariants",
+        "domain_intelligence-architecture-intelligence-mikepenz-aboutlibraries-learnings-core-invariants"
       ]
     },
     "H": {
@@ -860,7 +865,7 @@
       ]
     },
     "J": {
-      "total": 10,
+      "total": 12,
       "record_ids": [
         "DOM-J-C14FC2D6",
         "DOM-J-B305372A",
@@ -871,7 +876,9 @@
         "DOM-J-B241A1ED",
         "DOM-J-37B3B4A9",
         "DOM-J-2672FCA2",
-        "DOM-J-C6558B0E"
+        "DOM-J-C6558B0E",
+        "domain_intelligence-search-distribution-intelligence-sharkdp-fd-core-invariants",
+        "domain_intelligence-search-distribution-intelligence-sharkdp-fd-learnings-core-invariants"
       ]
     },
     "K": {
@@ -17104,6 +17111,69 @@
       "repository": "clickhouse-clickhouse-learnings",
       "content_hash": "f7ec640bc046c41ad276182b5d50d899515bbde73e3106382e04498cd96f7bd0",
       "created_at": "2026-11-14T22:16:50.017Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-research-knowledge-intelligen.md",
+      "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+      "content_hash": "246bb4b89d06e8de3ddba3d9cd0e2e20ba36fabbd85d51fafd90a3bfd183db7b",
+      "created_at": "2026-11-14T22:39:17.172Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-sharkdp-fd-core-invariants": {
+      "record_id": "domain_intelligence-search-distribution-intelligence-sharkdp-fd-core-invariants",
+      "domain_letter": "J",
+      "title": "Search & Distribution Intelligence: sharkdp/fd Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-sharkdp-fd-search-distribution-intelligence-sharkdp-fd-core-invariants.md",
+      "repository": "sharkdp/fd",
+      "content_hash": "2f1774245062389b233dec178ed0f9e61c24e00a87acc2bd59eeeb3521e01ecd",
+      "created_at": "2026-11-14T22:39:18.611Z"
+    },
+    "domain_intelligence-architecture-intelligence-mikepenz-aboutlibraries-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-mikepenz-aboutlibraries-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: mikepenz/AboutLibraries Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mikepenz-aboutlibraries-architecture-intelligence-mikepenz-aboutlibraries-core-i.md",
+      "repository": "mikepenz/AboutLibraries",
+      "content_hash": "2e96e86bf5c5534e4511cd34c3bec4481f6eec17c48f5a17743313dad107828e",
+      "created_at": "2026-11-14T22:39:24.042Z"
+    },
+    "domain_intelligence-architecture-intelligence-bitterbot-ai-bitterbot-desktop-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-bitterbot-ai-bitterbot-desktop-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: Bitterbot-AI/bitterbot-desktop Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-bitterbot-ai-bitterbot-desktop-architecture-intelligence-bitterbot-ai-bitterbot-.md",
+      "repository": "Bitterbot-AI/bitterbot-desktop",
+      "content_hash": "497db509be041acd6e3287bb8aaf2fb46f94ea17b3abba95641294e8883e9298",
+      "created_at": "2026-11-14T22:39:34.483Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-sharkdp-fd-learnings-core-invariants": {
+      "record_id": "domain_intelligence-search-distribution-intelligence-sharkdp-fd-learnings-core-invariants",
+      "domain_letter": "J",
+      "title": "Search & Distribution Intelligence: sharkdp-fd-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-sharkdp-fd-learnings-search-distribution-intelligence-sharkdp-fd-learnings-core-.md",
+      "repository": "sharkdp-fd-learnings",
+      "content_hash": "cf570c5fae96e050fd0bf08dbcc1a7646d222d9c3c53dec5c755c93c481ff2ed",
+      "created_at": "2026-11-14T22:39:37.789Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gg": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gg",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-learnings-research-knowledge-.md",
+      "repository": "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings",
+      "content_hash": "aca82af291ec2183876f06590386e1f7f03fc3c2f05bb38ed40052c0b4cfe139",
+      "created_at": "2026-11-14T22:39:38.189Z"
+    },
+    "domain_intelligence-architecture-intelligence-mikepenz-aboutlibraries-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-mikepenz-aboutlibraries-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: mikepenz-aboutlibraries-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mikepenz-aboutlibraries-learnings-architecture-intelligence-mikepenz-aboutlibrar.md",
+      "repository": "mikepenz-aboutlibraries-learnings",
+      "content_hash": "b1a467ea2151f2e71d5ee37ce354e502bb3acfb832dc40f3e2977b37609f9732",
+      "created_at": "2026-11-14T22:39:38.712Z"
     }
   }
 }

@@ -775,8 +775,8 @@
     "sourceUrl": "https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
     "sourceVersion": "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "dd22413ad0c459872519478ee9884c547fb8c0e1ea3a0fd31a092665ed43a7eb",
-    "lastHarvestedAt": "2026-11-09T11:31:31.437Z",
+    "contentHash": "2e97dd05b3bd047bbfd26cb82822e277d74f0ebd98b44aebb4a40b88d3a21173",
+    "lastHarvestedAt": "2026-11-14T22:39:16.977Z",
     "learningId": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf"
   },
   "hf-timm-mobilenetv3_small_100.lamb_in1k": {
@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "e4d179d3",
+    "sourceVersion": "2825902a",
     "license": "MIT",
-    "contentHash": "82f498f1198ffac06b9f940227110537dd076eba695186ba76f82feaefdd417a",
-    "lastHarvestedAt": "2026-11-14T00:48:51.155Z",
+    "contentHash": "fa001ba3c4fdfe882a77ef9e842ebbdb97e4f69515fa6b85f6a3594e87f2f824",
+    "lastHarvestedAt": "2026-11-14T22:39:34.177Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -2543,10 +2543,10 @@
     "repository": "sharkdp/fd",
     "platform": "github",
     "sourceUrl": "https://github.com/sharkdp/fd",
-    "sourceVersion": "24d90b28",
+    "sourceVersion": "6cf33028",
     "license": "Apache-2.0",
-    "contentHash": "abe3a6c977b4420aa9e7254704b80effd11aec2094121afc8d76eddc04f0064a",
-    "lastHarvestedAt": "2026-11-11T14:38:51.949Z",
+    "contentHash": "01e530f1940384cd16f88127835ec3263c8acded75f6d2ebb7a88d7c6f3d2b53",
+    "lastHarvestedAt": "2026-11-14T22:39:18.301Z",
     "learningId": "learn-github-sharkdp-fd"
   },
   "maotoumao-musicfree": {
@@ -7023,10 +7023,10 @@
     "repository": "mikepenz/AboutLibraries",
     "platform": "github",
     "sourceUrl": "https://github.com/mikepenz/AboutLibraries",
-    "sourceVersion": "b18bd7b2",
+    "sourceVersion": "42e86795",
     "license": "Apache-2.0",
-    "contentHash": "62692211442631c769c6bcf67cdbaa5c9cd6eee1535943473c3b4bc7569bba43",
-    "lastHarvestedAt": "2026-11-11T12:08:34.846Z",
+    "contentHash": "9b6cf103461b78f4aaad447926ad555e0bcb59c4123340a01fdb9e39b0add687",
+    "lastHarvestedAt": "2026-11-14T22:39:23.744Z",
     "learningId": "learn-github-mikepenz-aboutlibraries"
   },
   "tursodatabase-turso": {
