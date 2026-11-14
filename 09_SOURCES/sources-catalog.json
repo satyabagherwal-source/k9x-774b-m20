@@ -825,8 +825,8 @@
     "sourceUrl": "https://huggingface.co/microsoft/FrogNano-4B-2609",
     "sourceVersion": "hf-microsoft-frognano-4b-2609",
     "license": "Open-Source",
-    "contentHash": "e68472edce66cac423e9b21dadc20b1e6db2d39ad61ad5c49d853cf6c329efd5",
-    "lastHarvestedAt": "2026-11-09T10:07:45.474Z",
+    "contentHash": "0eee8fabff0dd015dfce6a76b61e6c769669f267d79ba053c4d843871451342b",
+    "lastHarvestedAt": "2026-11-14T21:29:20.450Z",
     "learningId": "learn-huggingface-microsoft-frognano-4b-2609"
   },
   "hf-hexgrad-kokoro-82m": {
@@ -2323,10 +2323,10 @@
     "repository": "max-sixty/worktrunk",
     "platform": "github",
     "sourceUrl": "https://github.com/max-sixty/worktrunk",
-    "sourceVersion": "d5b9a7e0",
-    "license": "NOASSERTION",
-    "contentHash": "45036269a1dfbcb997bbbb6b6892ffbf5143a49040dbb306323afa89f44fad81",
-    "lastHarvestedAt": "2026-11-13T06:51:10.956Z",
+    "sourceVersion": "325c0b18",
+    "license": "Apache-2.0",
+    "contentHash": "026d8bb73411adcd327c16e646d8ed9a945803d8c4c36164176d9751dcacd8bc",
+    "lastHarvestedAt": "2026-11-14T21:29:22.427Z",
     "learningId": "learn-github-max-sixty-worktrunk"
   },
   "mattermost-mattermost": {

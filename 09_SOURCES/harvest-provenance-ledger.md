@@ -9976,3 +9976,6 @@ Every entry in this ledger must capture:
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `9d531366` | Multi-dimensional audit evidence | 2026-11-14T21:21:02.315Z |
 | `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `76130045` | Multi-dimensional audit evidence | 2026-11-14T21:21:05.050Z |
 | `learn-dom-d-04705777` | `project://hf-phocinae-phocinae-largha-150m-v1` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md` | 2026-11-14T21:21:32.664Z |
+| `learn-huggingface-microsoft-frognano-4b-2609` | `https://huggingface.co/microsoft/FrogNano-4B-2609` | `hf-microso` | Multi-dimensional audit evidence | 2026-11-14T21:29:20.450Z |
+| `learn-github-max-sixty-worktrunk` | `https://github.com/max-sixty/worktrunk` | `325c0b18` | Multi-dimensional audit evidence | 2026-11-14T21:29:22.427Z |
+| `learn-dom-d-88e5b240` | `project://hf-microsoft-frognano-4b-2609` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md` | 2026-11-14T21:30:06.145Z |

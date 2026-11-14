@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for max/sixty/worktrunk
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for max-sixty/worktrunk
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "max/sixty/worktrunk",
-  "source_url": "https://github.com/max/sixty/worktrunk",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "max-sixty/worktrunk",
+  "source_url": "https://github.com/max-sixty/worktrunk",
+  "source_version": "325c0b18",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-14T21:29:22.644Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-max-sixty-worktrunk",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [max/sixty/worktrunk](https://github.com/max/sixty/worktrunk) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [max-sixty/worktrunk](https://github.com/max-sixty/worktrunk) (Revision: `325c0b18`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-14T21:29:22.644Z`  
+> **Learning ID**: `learn-github-max-sixty-worktrunk`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `max/sixty/worktrunk` (Commit: `historical`)
+- **Target Repository**: `max-sixty/worktrunk` (Commit: `325c0b18`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md`  
-> **Source**: github ([https://github.com/max-sixty/worktrunk](https://github.com/max-sixty/worktrunk))  
-> **Source Version**: `a6cbc294`  
-> **License**: NOASSERTION  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T13:28:53.277Z  
-> **Learning ID**: `learn-github-max-sixty-worktrunk`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): max-sixty/worktrunk
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/max-sixty/worktrunk](https://github.com/max-sixty/worktrunk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T13:28:53.272Z  
+> **Harvest Timestamp**: 2026-11-14T21:29:21.370Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Worktrunk is a CLI for Git worktree management, designed for parallel AI agent workflows
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 12435 stars
+- **Stars / Engagement**: 12529 stars
 
 ---
 
@@ -975,7 +961,9 @@ fn list_trash_entries(repo: &Repository) -> anyhow::Result<Vec<TrashEntry>> {
 //! # Hook announcement format
 //!
 //! Background hook execution emits a single `Running ...` line covering every
-//! hook type that fires from one event. Separators form a precedence hierarchy
+//! hook type that fires from one event in one directory; hooks running in a
+//! different directory get their own line, since the `@ <path>` suffix
+//! covers the whole line. Separators form a precedence hierarchy
 //! from tightest to loosest:
 //!
 //! ```text
@@ -1025,8 +1013,12 @@ fn list_trash_entries(repo: &Repository) -> anyhow::Result<Vec<TrashEntry>> {
 //!
 //! Multi-source for one hook type: `sync, push (user); build (project)`.
 //!
-//! Multi-type bundle (e.g., `wt merge` firing four hook types):
-//! `Running post-commit: mark (user); post-remove: cleanup (user); post-switch: notify (user); post-merge: sync (user) @ ~/repo`.
+//! Multi-type bundle (e.g., `wt merge` firing three hook types):
+//! `Running post-remove: cleanup (user); post-switch: notify (user); post-merge: sync (user) @ ~/repo`.
+//!
+//! Split by path (`wt merge --no-remove`, where `post-commit` runs in the
+//! feature worktree and `post-merge` in the target):
+//! `Running post-commit: mark (user)` then `Running post-merge: sync (user) @ ~/repo`.
 //!
 //! ## Implementation
 //!
@@ -1035,9 +1027,10 @@ fn list_trash_entries(repo: &Repository) -> anyhow::Result<Vec<TrashEntry>> {
 //! - [`format_pipeline_summary`] wraps it with the per-pipeline source label,
 //!   collapsing the all-unnamed case to the bare `<source>` / `<source> ×N`
 //!   form.
-//! - `run_hooks_background` (in `hooks.rs`) joins source summaries with `;`
-//!   within each hook-type clause, then joins clauses with `;` into one
-//!   announce line with the path suffix at the end.
+//! - `run_hooks_background` (in `hooks.rs`) groups pipelines by display path;
+//!   for each group it joins source summaries with `;` within each hook-type
+//!   clause, then joins clauses with `;` into one announce line with the path
+//!   suffix at the end.
 
 use color_print::cformat;
 
@@ -1226,17 +1219,7 @@ mod tests {
     fn test_format_pipeline_summary_unnamed() {
         let steps = vec![
             make_sourced_step(PreparedStep::Single(make_cmd(None, "npm install"))),
-            make_sourced_step(PreparedStep::Single(make_cmd(None, "npm run build"))),
-        ];
-        let summary = format_pipeline_summary(&steps);
-        assert_snapshot!(summary.ansi_strip(), @"user ×2");
-    }
-
-    #[test]
-    fn test_format_pipeline_summary_mixed_named_unnamed() {
-        let steps = vec![
-            make_sourced_step(PreparedStep::Single(make_cmd(None, "npm install"))),
-            make_sourced_step(PreparedStep::Single(make_cmd(Some
+            make_sourced_step(PreparedStep::Single(make_cmd(None, "npm run b
 ```
 
 ### Core Architecture Module: `src/commands/hook_commands.rs`
@@ -1341,14 +1324,14 @@ fn build_manual_hook_template_vars(ctx: &CommandContext, hook_type: HookType) ->
     let branch = ctx.branch;
     let worktree_path = ctx.worktree_path;
     match hook_type {
-        // Merge/commit hooks: target = merge target (default branch for commit,
-        // current for merge). Only this arm needs the default branch, and
+        // Commit hooks: target = default branch. Only this arm needs it, and
         // resolving it can cost a `git ls-remote` on a fresh clone — so it is
         // fetched here rather than up front.
         HookType::PreCommit | HookType::PostCommit => ctx
             .repo
             .default_branch()
             .map_or_else(TemplateVars::new, |t| TemplateVars::new().with_target(&t)),
+        // Merge hooks: target = current branch
         HookType::PreMerge | HookType::PostMerge => TemplateVars::new()
             .with_target_opt(branch)
             .with_target_worktree_path(worktree_path),
@@ -1474,7 +1457,8 @@ pub fn run_hook(
     // don't exist is a no-op, so scripts can invoke `wt hook <type>`
     // unconditionally without special-casing empty configuration.
     if user_config.is_none() && proj_config.is_none() {
-
+        eprintln!(
+           
 ```
 
 ### Core Architecture Module: `src/commands/hook_filter.rs`
@@ -1830,7 +1814,9 @@ impl HookPlan {
 //! | `pre-start`, `post-start`, `post-switch` (on switch) | the new/destination worktree | `worktree::switch::approve_switch_hooks` |
 //!
 //! "Runs in" is the *anchor* — the executor's plan lookup key and render root,
-//! not a config source. A `pre-start`'s new worktree need not exist when the
+//! not a config source. `post-remove` is the exception: its anchor (the
+//! removed worktree) is only the plan key, and it runs and renders in the
+//! removal destination. A `pre-start`'s new worktree need not exist when the
 //! gate runs; the config came from the invoking worktree regardless. A
 //! background pipeline anchored on a worktree the command removed is dropped
 //! and reported rather than spawned (see [`report_dropped_pipelines`]); only
@@ -2008,12 +1994,7 @@ fn no_matching_commands_error(
         let Some(config) = config else { continue };
         // Include this source if any filter matches it
         if !parsed_filters.iter().any(|f| f.matches_source(source)) {
-            continue;
-        }
-        available.extend(config.commands().filter_map(|c| {
-            c.name
-                .as_deref()
-             
+    
 ```
 
 
@@ -2045,426 +2026,507 @@ fn no_matching_commands_error(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8c43d4ec` (2026-11-11)
-**Commit Message**: test: make three picker/list assertions able to fail, and fix two stale comments (#4768)
+### Incident Patch 1: `da09f170` (2026-11-13)
+**Commit Message**: fix(state): stop a branch's vars from including a dotted branch's vars (#4779)
 
-Three test assertions could not fail, and two comments described code
-that has since changed. This PR fixes all five. There are no behavior
-changes. The picker unit tests and clippy pass locally.
+A branch's vars could include another branch's vars when that branch's
+name extends the first with `.vars.<x>`.
+[`vars_entries`](https://github.com/max-sixty/worktrunk/blob/d65c511596ac1d952d28d3be8f13e43a2f8f4b22/src/git/repository/config.rs#L208-L223)
+queried `^worktrunk\.state\.<branch>\.vars\.` with no end anchor, so for
+branch `a` it also matched `worktrunk.state.a.vars.x.vars.k` (a var `k`
+on branch `a.vars.x`) and returned it as a var named `x.vars.k`. Git
+config variable names can't contain a dot, so this anchors the pattern
+to `\.vars\.[^.]+$`.
 
-**Assertions that could not fail**
-- `render_preview_tabs_compacts_when_narrow`
-(`src/commands/picker/items.rs`) checked that the compact tab bar drops
-the "HEAD" label. No tab is labeled "HEAD" since tab 3 became
-"committed", so the check always passed. It now checks "committed".
-- `upstream_diff_diverged` accepted either `feat.txt` or `upstream.txt`.
-For a branch that has diverged from its upstream,
-`compute_upstream_diff_preview` diffs merge-base..head only. The test
-now requires `feat.txt` and rejects `upstream.txt`, so a regression that
-shows the upstream side would fail it.
-- `test_list_progressive_vs_buffered_identical_data`
-(`tests/integration_tests/list.rs`) compared `--progressive
---format=json` against `--no-progressive --format=json`.
-`RenderTarget::detect` sends `OutputFormat::Json` down the JSON path
-whatever `--progressive` says (its unit tests in `progressive.rs` pin
-that), so both ru
+Who sees it: `wt config state vars list`, `{{ vars.* }}` in hook and
+alias templates, and the statusline read the extra entry. `wt config
+state vars clear --all` on `a` also unset the other branch's vars, since
+it clears every key `vars_entries` returns. The cross-branch reads
+(`all_vars_entries`, the snapshot) already split on the last `.vars.`
+and were correct.
 
-**File**: `benches/prune.rs` (modified, +4/-2)
+A new unit test, `test_vars_entries_excludes_extended_branch_names`,
+failed before the change (branch `weird` returned `{"branch.vars.key":
+"v", "own": "1"}`) and passes after; the rest of the
+
+**File**: `src/git/repository/config.rs` (modified, +22/-1)
 ```diff
-@@ -8,8 +8,10 @@
- //      first scan after new commits is cold and later scans are warm.
- //   2. The removals — each integrated candidate runs the removal chain
- //      (final clean check, fsmonitor stop, rename-to-trash, branch CAS
--//      delete) serially under the write side of the scan lock, reusing the
--//      removal plan its scan check computed.
-+//      delete) on a worker pool sized like rayon's, concurrently with the
-+//      remaining scan, reusing the removal plan its scan check computed.
-+//      Only `--foreground` and current-worktree removals serialize, and the
-+//      live variant passes neither.
- //
- // The generated base gets a prune overlay: squash-merged candidates
- // (integrated by content — the expensive probe path, the post-PR-squash shape
-```
-
-**File**: `src/commands/picker/items.rs` (modified, +16/-12)
-```diff
-@@ -394,14 +394,6 @@ enum WorktreeDiffState {
-     Unknown,
- }
- 
--/// Wrapper to implement SkimItem for ListItem.
--///
--/// Progressive updates live inside `rendered` — the picker handler rewrites
--/// the ANSI-colored display string in place as task results arrive. skim 4.x
--/// renders on demand, so the handler pokes an `Event::Render` after each
--/// mutation (see `progressive_handler`); skim then re-reads `display()` and the
--/// new value surfaces — no re-send through the item channel.
--///
- /// Append the PR/MR fields a row filters on — reference (`#123`/`!7`), title,
- /// author — to `text`, space-separated, in the order shared by worktree rows
- /// and listed `--prs` rows. A PR thus filters identically however it's shown,
-@@ -433,6 +425,14 @@ pub(super) fn push_pr_search_tokens(
-     }
- }
- 
-+/// Wrapper to implement SkimItem for ListItem.
-+///
-+/// Progressive updates live inside `rendered` — the picker handler rewrites
-+/// the ANSI-colored display string in place as task results arrive. skim 4.x
-+/// renders on demand, so the handler pokes an `Event::Render` after each
-+/// mutation (see `progressive_handler`); skim then re-reads `display()` and the
-+/// new value surfaces — no re-send through the item channel.
-+///
- /// The matcher text (`text()`) is assembled live from `search_base` + the
- /// `gutter` glyph + the current `pr_status` slot, so a PR's reference, title,
- /// and author become filterable the moment the CI fetch lands them — the same
-@@ -2416,7 +2416,10 @@ mod tests {
-             !plain.contains("comments"),
-             "inactive label dropped: {plain:?}"
-         );
--        assert!(!plain.contains("HEAD"), "inactive label dropped: {plain:?}");
-+        assert!(
-+            !plain.contains("committed"),
-+            "inactive label dropped: {plain:?}"
-+        );
-         // The compact bar fits a narrow pane where the full bar would not.
-         assert!(visual_width(&plain) <= 40, "fits the pane: {plain:?}");
- 
-@@ -3719,10 +3722,11 @@ mod tests {
-         repo.run_command(&["checkout", "feature"]).unwrap();
-         let item = item_at(&repo, "feature");
-         let output = PickerRow::compute_upstream_diff_preview(&repo, &item, 80);
--        // Diverged path runs the diff; symmetric difference includes both files.
-+        // Diverged shows this branch's unique changes (merge-base..head), not
-+        // upstream's.
-         assert!(
--            output.contains("feat.txt") || output.contains("upstream.txt"),
--            "expected diverged diff, got: {output:?}"
-+            output.contains("feat.txt") && !output.contains("upstream.txt"),
-+            "expected the branch's side of the diverged diff, got: {output:?}"
-         );
+@@ -207,7 +207,9 @@ impl Repository {
+     /// through our coherent `set_config_value` helper.
+     pub fn vars_entries(&self, branch: &str) -> std::collections::BTreeMap<String, String> {
+         let escaped = regex::escape(branch);
+-        let pattern = format!(r"^worktrunk\.state\.{escaped}\.vars\.");
++        // Variable names can't contain a dot, so anchoring past one keeps
++        // out the vars of a branch named `{branch}.vars.<x>`.
++        let pattern = format!(r"^worktrunk\.state\.{escaped}\.vars\.[^.]+$");
+         let prefix = format!("worktrunk.state.{branch}.vars.");
+         self.config_regexp_entries(&pattern)
+             .unwrap_or_default()
+@@ -1300,6 +1302,25 @@ mod tests {
+         assert_eq!(snapshot["weird.vars.branch"]["key"], "v");
      }
  
-```
-
-**File**: `tests/integration_tests/list.rs` (modified, +0/-60)
-```diff
-@@ -3094,66 +3094,6 @@ fn test_list_task_dag_ordering_stability(mut repo: TestRepo) {
-     });
- }
- 
--#[rstest]
--fn test_list_progressive_vs_buffered_identical_data(mut repo: TestRepo) {
--    // Critical test: Verify that progressive and buffered modes collect identical data
--    // despite using different rendering strategies (real-time UI vs collect-then-print).
--    // This ensures consolidation on task DAG data collection works correctly.
--    //
--    // Note: We compare JSON output, not table output, because:
--    // - Progressive mode renders headers before knowing final column widths (uses estimates)
--    // - Buffered mode renders headers after data collection (uses actual widths)
--    // - The DATA must be identical, but table formatting may differ slightly
--
--    // Create varied worktrees to test multiple data points
--    repo.add_worktree("feature-a");
--    repo.add_worktree("feature-b");
--
--    // Modify a worktree to have uncommitted changes
--    let feature_a_path = repo.worktree_path("feature-a");
--    std::fs::write(feature_a_path.join("changes.txt"), "test").unwrap();
--
--    // Run both modes with JSON output to compare data (not formatting)
--    let progressive_output = {
--        let mut cmd = list_snapshots::command(&repo, repo.root_path());
--        cmd.args(["--progressive", "--format=json"]);
--        cmd.output().unwrap()
--    };
--
--    let buffered_output = {
--        let mut cmd = list_snapshots::command(&repo, repo.root_path());
--        cmd.args(["--no-progressive", "--format=json"]);
--        cmd.output().unwrap()
--    };
--
--    // Both should succeed
--    assert!(
--        progressive_output.status.success(),
--        "Progressive mode failed: {}",
--        String::from_utf8_lossy(&progressive_output.stderr)
--    );
--    assert!(
--        buffered_output.status.success(),
--        "Buffered mode failed: {}",
--        String::from_utf8_lossy(&buffered_output.stderr)
--    );
--
--    // Parse JSON outputs
--    let progressive_json: serde_json::Value =
--        serde_json::from_slice(&progressive_output.stdout).unwrap();
--    let buffered_json: serde_json::Value = serde_json::from_slice(&buffered_output.stdout).unwrap();
--
--    // The JSON data should be identical (ignoring display fields which may have formatting differences)
--    // Compare the structured data to ensure both modes collect the same information
--    assert_eq!(
--        progressive_json,
--        buffered_json,
--        "Progressive and buffered modes produced different data!\n\nProgressive:\n{}\n\nBuffered:\n{}",
--        serde_json::to_string_pretty(&progressive_json).unwrap(),
--        serde_json::to_string_pretty(&buffered_json).unwrap()
--    );
--}
--
- #[rstest]
- fn test_list_with_c_flag(mut repo: TestRepo) {
-     // Create some worktrees
-```
-
----
-
-### Incident Patch 2: `a6cbc294` (2026-11-11)
-**Commit Message**: fix(config): point system-config deprecation hints at the file, not wt config update (#4767)
-
-When the system config (e.g. `/etc/xdg/worktrunk/config.toml`) contains
-a deprecated setting, every command printed the generic hint `To see
-details, run wt config show; to apply updates, run wt config update`.
-Neither command acts on the system config: `wt config update` only
-checks the user and project files and answers "No deprecated settings
-found", and `wt config show` renders no deprecation details for the
-system section. So the hint led nowhere.
-
-The system config now gets its own hint:
-
-```
-▲ System config: [select] is deprecated in favor of [switch.picker]
-↳ wt config update leaves the system config unchanged; to apply updates, edit /etc/xdg/worktrunk/config.toml
-```
-
-The generic hint is shown at most once per process. Previously a
-system-config deprecation could use it up before the user config was
-checked. Now the system hint has its own path, so a user-config
-deprecation in the same run still prints the `wt config update` hint.
-The path reaches users through `UserConfig::load_with_warnings`, which
-runs `check_and_migrate` on the system file with inline warnings on.
-
-The new `te
-
-**File**: `src/config/deprecation.rs` (modified, +20/-9)
-```diff
-@@ -529,8 +529,8 @@ fn detect_deprecations_from_doc(doc: &toml_edit::DocumentMut) -> Deprecations {
- /// Run every rule in table order against `doc`, appending each rule's warning
- /// kinds to `kinds` and returning whether the document changed.
- ///
--/// The load pass excludes [`DeprecationRule::UpdateOnly`] rewrites (cosmetic
--/// or still-valid serde fields, so serde doesn't need them applied).
-+/// The load pass excludes [`DeprecationRule::UpdateOnly`] rewrites (still-valid
-+/// serde fields, so serde doesn't need them applied).
- /// Detection and [`compute_migrated_content`] run the update pass.
- fn apply_rules(doc: &mut toml_edit::DocumentMut, pass: RulePass, kinds: &mut Deprecations) -> bool {
-     let mut modified = false;
-@@ -1228,8 +1228,7 @@ fn migrate_negated_bool_doc(
- /// [`DeprecationRule::Silent`] rule — to a parsed document, in table order.
- /// Returns true if any modifications were made.
- ///
--/// [`DeprecationRule::UpdateOnly`] rules are excluded — template variable
--/// renaming is cosmetic (would break `--var` overrides), and approved-commands
-+/// [`DeprecationRule::UpdateOnly`] rules are excluded — `approved-commands`
- /// is still a valid serde field. They apply in [`compute_migrated_content`].
- fn migrate_content_doc(doc: &mut toml_edit::DocumentMut) -> bool {
-     apply_rules(doc, RulePass::Load, &mut Vec::new())
-@@ -1494,8 +1493,10 @@ pub struct CheckAndMigrateResult {
- /// the main worktree" hint when viewing project config from a linked worktree.
- ///
- /// When `emit_inline_warnings` is true, per-kind deprecation warnings are printed to stderr
--/// with a hint pointing at `wt config show`/`wt config update`. When false, nothing is
--/// printed and the caller is expected to render via `format_deprecation_details`. Use this for commands other than `config show`.
-+/// with a hint pointing at `wt config show`/`wt config update`, or at editing the file for
-+/// the system config, which `wt config update` never rewrites. When false, nothing is
-+/// printed and the caller is expected to render via `format_deprecation_details`;
-+/// `wt config show` and `wt config update` pass false.
- ///
- /// Warnings are deduplicated per path per process.
- ///
-@@ -1570,7 +1571,17 @@ pub fn check_and_migrate(
-     if emit_inline_warnings && !warnings_suppressed() {
-         let warnings = format_warning_lines(info.deprecations.iter(), info.label());
-         eprint!("{warnings}");
--        if DEPRECATION_HINT_EMITTED.set(()).is_ok() {
-+        if kind == ConfigFileKind::System {
-+            // `wt config update` never rewrites the system config, and the
-+            // per-path dedup above already limits this to once per process.
-+            eprintln!(
-+                "{}",
-+                hint_message(cformat!(
-+                    "<underline>wt config update</> leaves the system config unchanged; to apply updates, edit <underline>{}</>",
-+                    crate::path::format_path_for_display(path)
-+                ))
-+            );
-+        } else if DEPRECATION_HINT_EMITTED.set(()).is_ok() {
-             eprintln!(
-                 "{}",
-                 hint_message(cformat!(
-@@ -1590,8 +1601,8 @@ pub fn check_and_migrate(
- /// Apply all deprecation fixes to `content` in memory and return the migrated
- /// TOML string.
- ///
--/// Applies variable renames (cosmetic, string-level), structural section and
--/// field migrations, and removes `approved-commands` under `[projects]` (which
-+/// Applies template variable renames, structural section and field
-+/// migrations, and removes `approved-commands` under `[projects]` (which
- /// `wt config update` copies to `approvals.toml` before overwriting).
- ///
- /// Pure function — no filesystem access. Idempotent: feeding its own output
-```
-
-**File**: `tests/integration_tests/config_show.rs` (modified, +51/-0)
-```diff
-@@ -8,6 +8,7 @@ use ansi_str::AnsiStr;
- use insta_cmd::assert_cmd_snapshot;
- use rstest::rstest;
- use std::fs;
-+use std::path::Path;
- use tempfile::TempDir;
- 
- #[rstest]
-@@ -682,6 +683,56 @@ pager = "delta --paging=never"
-     );
- }
- 
-+/// `wt config update` never rewrites the system config, so a system-config
-+/// deprecation points at editing the file instead. A user-config deprecation
-+/// in the same run still gets the `wt config update` hint.
-+#[rstest]
-+fn test_system_config_deprecation_hint_points_at_the_file(repo: TestRepo) {
-+    let system_config_dir = worktrunk::testing::tempdir().unwrap();
-+    let system_config_path = system_config_dir.path().join("config.toml");
-+    fs::write(&system_config_path, "[select]\npager = \"less\"\n").unwrap();
-+
-+    let run = |user_config: Option<&Path>| {
-+        let mut cmd = repo.wt_command();
-+        cmd.env("WORKTRUNK_SYSTEM_CONFIG_PATH", &system_config_path)
-+            .env("NO_COLOR", "1");
-+        if let Some(path) = user_config {
-+            cmd.env("WORKTRUNK_CONFIG_PATH", path);
-+        }
-+        cmd.args(["hook", "show"]).current_dir(repo.root_path());
-+        let output = cmd.output().unwrap();
-+        assert!(
-+            output.status.success(),
-+            "Command should succeed: {}",
-+            String::from_utf8_lossy(&output.stderr)
-+        );
-+        String::from_utf8_lossy(&output.stderr).into_owned()
-+    };
-+
-+    let stderr = run(None);
-+    assert!(
-+        stderr.contains("System config: [select] is deprecated"),
-+        "system config deprecation should warn, got: {stderr}"
-+    );
-+    assert!(
-+        !stderr.contains("run wt config update"),
-+        "wt config update doesn't rewrite the system config, got: {stderr}"
-+    );
-+    assert!(
-+        stderr.contains("to apply updates, edit"),
-+        "system config hint should point at the file, got: {stderr}"
-+    );
-+
-+    let user_config_dir = worktrunk::testing::tempdir().unwrap();
-+    let user_config_path = user_config_dir.path().join("config.toml");
-+    fs::write(&user_config_path, "[select]\npager = \"less\"\n").unwrap();
-+    let stderr = run(Some(&user_config_path));
-+    assert!(
-+        stderr.contains("to apply updates, edit") && stderr.contains("run wt config update"),
-+        "both hints should appear when both files are deprecated, got: {stderr}"
-+    );
-+}
-+
- #[rstest]
- fn test_config_show_outside_git_repo(mut repo: TestRepo, temp_home: TempDir) {
-     let temp_dir = worktrunk::testing::tempdir().unwrap();
-```
-
----
-
-### Incident Patch 3: `2271c34b` (2026-11-10)
-**Commit Message**: fix(list): report the tracked remote branch in schema-1 JSON remote.branch (#4756)
-
-`wt list --format=json` (schema 1) and `wt list statusline
---format=json` reported the **local** branch name in `remote.branch`. So
-a local `feature` tracking `origin/other-name` serialized `"branch":
-"feature"`, even though the field is documented as the remote branch
-name. Schema 2's `upstream.branch` already reports `other-name` for the
-same row, so the two schemas disagreed.
-
-
-[`upstream_to_json`](https://github.com/max-sixty/worktrunk/blob/e864cb9ef685701baad487a5a63c3c2c541b490f/src/commands/list/json_output.rs#L436-L448)
-has a comment saying `UpstreamStatus` only stores the remote name. That
-stopped being true once the field began carrying the upstream's short
-name (`upstream_short`, set in `compute_upstream`). The fix reads
-`ActiveUpstream::branch`, which is the same value schema 2 uses. It
-falls back to the local name only when the upstream short name is
-unknown, so output for rows without one doesn't change.
-
-A new unit test (`test_upstream_to_json_reports_tracked_branch_name`)
-fails on `main` with `left: "feature"`, `right: "other-name"` and passes
-with the fix. The existing `list` and `s
-
-**File**: `src/commands/list/json_output.rs` (modified, +22/-9)
-```diff
-@@ -435,15 +435,13 @@ impl JsonItem {
- 
- /// Convert UpstreamStatus to JsonRemote
- fn upstream_to_json(upstream: &UpstreamStatus, branch: Option<&str>) -> Option<JsonRemote> {
--    upstream.active().map(|active| {
--        // Use local branch name since UpstreamStatus only stores the remote name,
--        // not the full tracking refspec. In most cases these match (e.g., feature -> origin/feature).
--        JsonRemote {
--            name: active.remote.to_string(),
--            branch: branch.unwrap_or_default().to_string(),
--            ahead: active.ahead,
--            behind: active.behind,
--        }
-+    upstream.active().map(|active| JsonRemote {
-+        name: active.remote.to_string(),
-+        // The tracked branch's name on the remote; the local name stands in
-+        // only when the upstream's short name isn't known.
-+        branch: active.branch.or(branch).unwrap_or_default().to_string(),
-+        ahead: active.ahead,
-+        behind: active.behind,
-     })
- }
- 
-@@ -733,6 +731,21 @@ mod tests {
-         assert_eq!(json.behind, 2);
-     }
- 
++    /// A branch's vars exclude those of a branch whose name extends it with
++    /// `.vars.<x>`: `worktrunk.state.weird.vars.branch.vars.key` belongs to
++    /// `weird.vars.branch`, though it also starts with `weird`'s vars prefix.
 +    #[test]
-+    fn test_upstream_to_json_reports_tracked_branch_name() {
-+        // A local `feature` tracking `origin/other-name` reports the remote
-+        // branch, matching schema 2's `upstream.branch`.
-+        let upstream = UpstreamStatus {
-+            remote: Some("origin".to_string()),
-+            upstream_short: Some("origin/other-name".to_string()),
-+            ahead: 1,
-+            behind: 0,
-+        };
-+        let json = upstream_to_json(&upstream, Some("feature")).unwrap();
-+        assert_eq!(json.name, "origin");
-+        assert_eq!(json.branch, "other-name");
++    fn test_vars_entries_excludes_extended_branch_names() {
++        let test = TestRepo::with_initial_commit();
++        let repo = Repository::at(test.root_path()).unwrap();
++
++        repo.set_config("worktrunk.state.weird.vars.own", "1")
++            .unwrap();
++        repo.set_config("worktrunk.state.weird.vars.branch.vars.key", "v")
++            .unwrap();
++
++        let weird = repo.vars_entries("weird");
++        assert_eq!(weird.len(), 1, "{weird:?}");
++        assert_eq!(weird["own"], "1");
++        assert_eq!(repo.vars_entries("weird.vars.branch")["key"], "v");
++    }
++
+     /// The branch-config snapshot read parses `branch.<name>.*` keys, including
+     /// branch names containing dots or slashes, lowercases the variable name as
+     /// git does, and skips git's own section-level branch settings
+```
+
+---
+
+### Incident Patch 2: `a591d31f` (2026-11-13)
+**Commit Message**: fix(config state): print table cells literally instead of as markdown (#4780)
+
+The tables in `wt config state get` rendered their cells as markdown, so
+user data could break them.
+[`render_data_table`](https://github.com/max-sixty/worktrunk/blob/08de6cc4e3fda245b886fbce08ac64101bc6224b/src/md_help.rs#L299-L319)
+joined cells with ` | ` and passed the lines through the help-text table
+path. A var set with ``wt config state vars set 'note=a | b
+[x](http://y) `c`'`` printed as:
+
+```
+VARS
+ Branch Key  Value
+ ────── ──── ───── ─────
+ master note a     b x c
+```
+
+The `|` opened an extra column, the link lost its URL, and the backticks
+became dim styling. A multi-line var value (allowed, and covered by an
+existing test) ended the table at its line break. Summary subjects and
+branch names reach the same tables.
+
+minimad, termimad's parser, honours backslash escapes for `|`, `*`, `~`,
+`` ` `` and `\`. Cells are now escaped with those, line breaks become
+spaces, and data tables skip the help-text link stripping and `\|`
+unescaping. The same value now prints as ``a | b [x](http://y) `c` ``.
+Help-text tables are unchanged.
+
+`test_render_data_table_cells_are_literal` covers `|`, `*`, backticks,
+
+
+**File**: `src/md_help.rs` (modified, +52/-13)
+```diff
+@@ -298,21 +298,42 @@ fn render_table(lines: &[&str], max_width: Option<usize>) -> String {
+ 
+ /// Render a table from headers and rows using termimad.
+ ///
+-/// Column widths are computed by termimad based on content.
++/// Column widths are computed by termimad based on content. Cells are data —
++/// var values, summary subjects, branch names — so each is escaped to print as
++/// written, and the help-text preprocessing (link stripping, `\|` unescaping)
++/// is skipped.
+ pub(crate) fn render_data_table(headers: &[&str], rows: &[Vec<String>]) -> String {
+-    let header_line = format!("| {} |", headers.join(" | "));
+-    let separator = format!("|{}|", vec!["---"; headers.len()].join("|"));
+-    let row_lines: Vec<String> = rows
+-        .iter()
+-        .map(|row| format!("| {} |", row.join(" | ")))
+-        .collect();
+-
+-    let mut lines: Vec<&str> = Vec::with_capacity(rows.len() + 2);
+-    lines.push(&header_line);
+-    lines.push(&separator);
+-    lines.extend(row_lines.iter().map(|s| s.as_str()));
++    let row_line = |cells: Vec<String>| format!("| {} |", cells.join(" | "));
++    let mut lines = vec![
++        row_line(headers.iter().map(|h| escape_table_cell(h)).collect()),
++        format!("|{}|", vec!["---"; headers.len()].join("|")),
++    ];
++    lines.extend(
++        rows.iter()
++            .map(|row| row_line(row.iter().map(|cell| escape_table_cell(cell)).collect())),
++    );
++
++    help_table_skin()
++        .text(&lines.join("\n"), Some(DEFAULT_HELP_WIDTH))
++        .to_string()
++}
+ 
+-    render_table_with_termimad(&lines, None)
++/// Escape a data value for a termimad table cell: backslash-escape the
++/// characters minimad gives meaning to (`|` splits cells; `*`, `~` and `` ` ``
++/// style text), and flatten line breaks, which would end the row.
++fn escape_table_cell(cell: &str) -> String {
++    let mut escaped = String::with_capacity(cell.len());
++    for c in cell.chars() {
++        match c {
++            '\\' | '|' | '*' | '~' | '`' => {
++                escaped.push('\\');
++                escaped.push(c);
++            }
++            '\n' | '\r' => escaped.push(' '),
++            _ => escaped.push(c),
++        }
++    }
++    escaped
+ }
+ 
+ /// Render a markdown table using termimad
+@@ -805,6 +826,24 @@ mod tests {
+         ");
+     }
+ 
++    /// Cells hold data (var values, summary subjects, branch names), not
++    /// markdown: a `|` stays in its cell, and `*`, `` ` ``, `\`, `[x](y)` and a
++    /// line break print as written rather than restyling or splitting the row.
++    #[test]
++    fn test_render_data_table_cells_are_literal() {
++        let rows = vec![
++            vec!["a|b".into(), "x *y* `z` \\ [l](u)".into()],
++            vec!["two\nlines".into(), "ok".into()],
++        ];
++        let result = render_data_table(&["K", "V"], &rows);
++        assert_snapshot!(result, @r"
++            K             V          
++        ───────── ────────────────── 
++        a|b       x *y* `z` \ [l](u) 
++        two lines ok
++        ");
 +    }
 +
      #[test]
-     fn test_upstream_to_json_no_remote() {
-         let upstream = UpstreamStatus {
+     fn test_render_data_table_empty_rows() {
+         let result = render_data_table(&["A", "B"], &[]);
+```
+
+---
+
+### Incident Patch 3: `0df65338` (2026-11-14)
+**Commit Message**: fix(hooks): announce background hooks per directory (#4781)
+
+`wt merge --no-remove` with both a `post-commit` and a `post-merge` hook
+printed one combined line, `Running post-commit: mark (user);
+post-merge: sync (user) @ ~/repo`. That reads as if `post-commit` ran in
+the target, but it runs in the feature worktree. This PR gives hooks
+that run in different directories separate `Running` lines:
+
+```
+◎ Running post-commit: mark (user)
+◎ Running post-merge: sync (user) @ ~/repo
+```
+
+`run_hooks_background` puts the display path of the first pipeline that
+has one at the end of the line, on the assumption (written in its
+docstring) that every hook in a batch shares a path. That stopped being
+true for `post-commit` once the `post-commit` pipeline started being
+dropped when its worktree is removed. Now `post-commit` reaches the
+flush only when the feature worktree is kept, which is exactly when its
+directory differs from `post-merge`'s. Hooks that share a path, such as
+`post-remove`, `post-switch` and `post-merge` after a removal, still
+combine onto one line, so existing snapshots are unchanged.
+
+The new snapshot test
+`test_merge_announces_post_commit_and_post_merge_by_directory` produced
+
+**File**: `src/commands/hook_announcement.rs` (modified, +13/-6)
+```diff
+@@ -1,7 +1,9 @@
+ //! # Hook announcement format
+ //!
+ //! Background hook execution emits a single `Running ...` line covering every
+-//! hook type that fires from one event. Separators form a precedence hierarchy
++//! hook type that fires from one event in one directory; hooks running in a
++//! different directory get their own line, since the `@ <path>` suffix
++//! covers the whole line. Separators form a precedence hierarchy
+ //! from tightest to loosest:
+ //!
+ //! ```text
+@@ -51,8 +53,12 @@
+ //!
+ //! Multi-source for one hook type: `sync, push (user); build (project)`.
+ //!
+-//! Multi-type bundle (e.g., `wt merge` firing four hook types):
+-//! `Running post-commit: mark (user); post-remove: cleanup (user); post-switch: notify (user); post-merge: sync (user) @ ~/repo`.
++//! Multi-type bundle (e.g., `wt merge` firing three hook types):
++//! `Running post-remove: cleanup (user); post-switch: notify (user); post-merge: sync (user) @ ~/repo`.
++//!
++//! Split by path (`wt merge --no-remove`, where `post-commit` runs in the
++//! feature worktree and `post-merge` in the target):
++//! `Running post-commit: mark (user)` then `Running post-merge: sync (user) @ ~/repo`.
+ //!
+ //! ## Implementation
+ //!
+@@ -61,9 +67,10 @@
+ //! - [`format_pipeline_summary`] wraps it with the per-pipeline source label,
+ //!   collapsing the all-unnamed case to the bare `<source>` / `<source> ×N`
+ //!   form.
+-//! - `run_hooks_background` (in `hooks.rs`) joins source summaries with `;`
+-//!   within each hook-type clause, then joins clauses with `;` into one
+-//!   announce line with the path suffix at the end.
++//! - `run_hooks_background` (in `hooks.rs`) groups pipelines by display path;
++//!   for each group it joins source summaries with `;` within each hook-type
++//!   clause, then joins clauses with `;` into one announce line with the path
++//!   suffix at the end.
+ 
+ use color_print::cformat;
+ 
+```
+
+**File**: `src/commands/hooks.rs` (modified, +42/-25)
+```diff
+@@ -232,11 +232,12 @@ fn no_matching_commands_error(
+ 
+ /// Coordinates background hook announcements within a single `wt` command.
+ ///
+-/// The principle: one `◎ Running …` line per command. Sites that would have
+-/// individually spawned background hooks instead `register` their pipelines
+-/// here, and the command `flush`es once after all phases have been resolved —
+-/// every registered hook type ends up on the same combined announce line, in
+-/// registration order, with `;` between clauses (see module spec).
++/// The principle: one `◎ Running …` line per command and directory. Sites that
++/// would have individually spawned background hooks instead `register` their
++/// pipelines here, and the command `flush`es once after all phases have been
++/// resolved — every registered hook type sharing a display path ends up on the
++/// same combined announce line, in registration order, with `;` between
++/// clauses (see module spec).
+ ///
+ /// Just-in-time honesty: registration happens at each phase's normal moment,
+ /// so if an earlier phase fails (e.g. pre-merge errors before post-merge is
+@@ -383,11 +384,11 @@ impl Drop for HookAnnouncer<'_> {
+ /// `flush` lands here. The function stays separate to keep the announce/spawn
+ /// formatting isolated from the announcer's pending-list bookkeeping.
+ ///
+-/// Emits a single combined `Running ...` line covering every registered hook
+-/// type (see module-level grammar), with the path suffix at the end. Pipelines
+-/// may carry different worktrees (e.g., post-remove uses the removed branch
+-/// while post-switch uses the destination branch); the announce shares one
+-/// line because every bundled clause shares the same path.
++/// Emits one combined `Running ...` line per display path, covering every hook
++/// type registered with that path (see module-level grammar), with the path
++/// suffix at the end. Pipelines may carry different worktrees (e.g.,
++/// post-remove uses the removed branch while post-switch uses the destination
++/// branch) yet share one line when they share a display path.
+ ///
+ /// When `show_branch` is true, the announce includes the branch name for
+ /// disambiguation in batch contexts (e.g., prune removing multiple worktrees):
+@@ -409,16 +410,38 @@ fn run_hooks_background(
+         return Ok(());
+     }
+ 
++    // The `@ path` suffix covers the whole line, so pipelines announced
++    // together must share a display path. `wt merge --no-remove` registers
++    // `post-commit` (in the feature worktree, no path) beside `post-merge`
++    // (@ the target), so group by path and give each group its own line.
++    let mut groups: Vec<Vec<PendingPipeline>> = Vec::new();
++    for pipeline in pipelines {
++        match groups
++            .iter_mut()
++            .find(|g| g[0].display_path == pipeline.display_path)
++        {
++            Some(group) => group.push(pipeline),
++            None => groups.push(vec![pipeline]),
++        }
++    }
++
++    for group in groups {
++        announce_pipelines(&group, show_branch);
++        for pipeline in group {
++            spawn_hook_pipeline_quiet(repo, pipeline)?;
++        }
++    }
++
++    Ok(())
++}
++
++/// Print one combined `Running ...` line for pipelines sharing a display path.
++fn announce_pipelines(pipelines: &[PendingPipeline], show_branch: bool) {
+     // Merge per-source summaries by hook type so user+project for the same
+     // type render as one clause: `post-merge: sync, push (user); build (project)`.
+-    // Pull `display_path` off the first pipeline that has one — every hook
+-    // pipeline in this batch shares a path; the path slot is bundle-wide.
+-    let mut display_path: Option<&Path> = None;
++    let display_path = pipelines[0].display_path.as_deref();
+     let mut type_summaries: Vec<(HookType, Vec<String>)> = Vec::new();
+-    for pipeline in &pipelines {
+-        if display_path.is_none() {
+-            display_path = pipeline.display_path.as_deref();
+-        }
++    for pipeline in pipelines {
+         let summary = format_pipeline_summary(&pipeline.steps);
+         if let Some(entry) = type_summaries
+             .iter_mut()
+@@ -444,7 +467,7 @@ fn run_hooks_background(
+ 
+     if verbosity() >= 1 {
+         for (ht, _) in &type_summaries {
+-            print_background_variable_table(&pipelines, *ht);
++            print_background_variable_table(pipelines, *ht);
+         }
+     }
+     let suffix = branch_suffix.as_deref().unwrap_or("");
+@@ -461,12 +484,6 @@ fn run_hooks_background(
+         None => format!("Running {combined}"),
+     };
+     eprintln!("{}", progress_message(message));
+-
+-    for pipeline in pipelines {
+-        spawn_hook_pipeline_quiet(repo, pipeline)?;
+-    }
+-
+-    Ok(())
+ }
+ 
+ /// Report background hook pipelines dropped because this command removed the
+@@ -527,7 +544,7 @@ fn into_source_groups(flat: Vec<SourcedStep>) -> Vec<Vec<SourcedStep>> {
+ ///
+ /// Background hooks don't flow through `announce_command` (which prints the
+ /// table in the foreground path), so
+```
+
+**File**: `tests/integration_tests/user_hooks.rs` (modified, +28/-0)
+```diff
+@@ -1287,6 +1287,34 @@ mark = "git rev-parse --show-toplevel > {{ repo_path }}/post-commit-toplevel.txt
+     }
+ }
+ 
++/// `wt merge --no-remove` registers `post-commit` in the feature worktree and
++/// `post-merge` in the target. The announce's `@ <path>` suffix covers the
++/// whole line, so the two get separate lines rather than one line implying
++/// `post-commit` ran in the target.
++#[rstest]
++fn test_merge_announces_post_commit_and_post_merge_by_directory(mut repo: TestRepo) {
++    let feature_wt =
++        repo.add_worktree_with_commit("feature", "feature.txt", "feature", "Add feature");
++    // Uncommitted work so the merge squashes, which is what fires post-commit.
++    fs::write(feature_wt.join("dirty.txt"), "uncommitted").unwrap();
++
++    repo.write_test_config(
++        r#"[post-commit]
++mark = "echo commit"
++
++[post-merge]
++sync = "echo merge"
++"#,
++    );
++
++    snapshot_merge(
++        "merge_announces_post_commit_and_post_merge_by_directory",
++        &repo,
++        &["main", "--yes", "--no-remove"],
++        Some(&feature_wt),
++    );
++}
++
+ /// When post-merge template prep errors after post-remove + post-switch are
+ /// already registered, the announcer's `Drop` impl flushes the pending hooks
+ /// so they still spawn — preserving the prior fire-and-forget behavior in
+```
+
+**File**: `tests/snapshots/integration__integration_tests__user_hooks__merge_announces_post_commit_and_post_merge_by_directory.snap` (added, +84/-0)
+```diff
+@@ -0,0 +1,84 @@
++---
++source: tests/integration_tests/user_hooks.rs
++info:
++  program: wt
++  args:
++    - merge
++    - main
++    - "--yes"
++    - "--no-remove"
++  env:
++    APPDATA: "[TEST_CONFIG_HOME]"
++    CLAUDE_CONFIG_DIR: "[TEST_CLAUDE_CONFIG]"
++    CLICOLOR_FORCE: "1"
++    COLUMNS: "500"
++    GIT_ALLOW_PROTOCOL: file
++    GIT_AUTHOR_DATE: "2025-01-01T00:00:00Z"
++    GIT_AUTHOR_EMAIL: test@example.com
++    GIT_AUTHOR_NAME: Test User
++    GIT_COMMITTER_DATE: "2025-01-01T00:00:00Z"
++    GIT_COMMITTER_EMAIL: test@example.com
++    GIT_COMMITTER_NAME: Test User
++    GIT_CONFIG_COUNT: "2"
++    GIT_CONFIG_GLOBAL: /nonexistent/wt/gitconfig
++    GIT_CONFIG_KEY_0: user.useConfigOnly
++    GIT_CONFIG_KEY_1: rerere.enabled
++    GIT_CONFIG_SYSTEM: /nonexistent/wt/gitconfig
++    GIT_CONFIG_VALUE_0: "true"
++    GIT_CONFIG_VALUE_1: "false"
++    GIT_TERMINAL_PROMPT: "0"
++    HOME: "[TEST_HOME]"
++    LANG: C
++    LC_ALL: C
++    LLVM_PROFILE_FILE: "[LLVM_PROFILE_FILE]"
++    OPENCODE_CONFIG_DIR: "[TEST_OPENCODE_CONFIG]"
++    PATH: "[PATH]"
++    TERM: alacritty
++    USERPROFILE: "[TEST_HOME]"
++    WORKTRUNK_APPROVALS_PATH: "[TEST_APPROVALS]"
++    WORKTRUNK_CONFIG_PATH: "[TEST_CONFIG]"
++    WORKTRUNK_SYSTEM_CONFIG_PATH: "[TEST_SYSTEM_CONFIG]"
++    WORKTRUNK_TEST_BASH_INSTALLED: "0"
++    WORKTRUNK_TEST_CLAUDE_INSTALLED: "0"
++    WORKTRUNK_TEST_CODEX_INSTALLED: "0"
++    WORKTRUNK_TEST_DELAYED_STREAM_MS: "-1"
++    WORKTRUNK_TEST_EPOCH: "1735776000"
++    WORKTRUNK_TEST_FISH_INSTALLED: "0"
++    WORKTRUNK_TEST_GEMINI_INSTALLED: "0"
++    WORKTRUNK_TEST_MOCK_CONFIG_DIR: "[TEST_MOCK_CONFIG]"
++    WORKTRUNK_TEST_NUSHELL_ENV: "0"
++    WORKTRUNK_TEST_OPENCODE_INSTALLED: "0"
++    WORKTRUNK_TEST_PARENT_SHELL: ""
++    WORKTRUNK_TEST_POWERSHELL_ENV: "0"
++    WORKTRUNK_TEST_POWERSHELL_INSTALLED: "0"
++    WORKTRUNK_TEST_PROBE_TIMEOUT_MS: "60000"
++    WORKTRUNK_TEST_SKIP_URL_HEALTH_CHECK: "1"
++    WORKTRUNK_TEST_ZSH_INSTALLED: "0"
++    XDG_CONFIG_HOME: "[TEST_CONFIG_HOME]"
++---
++success: true
++exit_code: 0
++----- stdout -----
++
++----- stderr -----
++[33m▲[39m [33mAuto-staging 1 untracked path:[39m
++[107m [0m dirty.txt
++[36m◎[39m [36mSquashing 1 commit & working tree changes into a single commit [90m(2 files, [32m+2[39m[39m[90m)[39m...[39m
++[2m↳[22m [2mBackup created @ [4mrefs/wt-backup/feature[24m (874aee4)[22m
++[2m↳[22m [2mTo recover in a new worktree, run [4mwt switch --create --base 874aee4a329ef4a3a76b091e5d04f2b9ee5f33a5 --no-hooks recovery/874aee4[24m[22m
++[36m◎[39m [36mGenerating squash commit message...[39m
++[2m↳[22m [2mUsing fallback commit message. For LLM setup guide, run [4mwt config --help[24m[22m
++[107m [0m [1mSquash commits from feature[22m
++[107m [0m 
++[107m [0m Combined commits:
++[107m [0m - Add feature
++[32m✓[39m [32mSquashed @ [HASH][39m
++[36m◎[39m [36mMerging 1 commit to [1mmain[22m @ [2m[HASH][22m (no rebase needed)[39m
++[107m [0m * [33m[HASH][m Squash commits from feature
++[107m [0m  dirty.txt   | 1 [32m+[m
++[107m [0m  feature.txt | 1 [32m+[m
++[107m [0m  2 files changed, 2 insertions(+)
++[32m✓[39m [32mMerged to [1mmain[22m [90m(1 commit, 2 files, [32m+2[39m[39m[90m)[39m[39m
++[2m○[22m Worktree preserved (--no-remove)
++[36m◎[39m [36mRunning post-commit: [1mmark[22m (user)[39m
++[36m◎[39m [36mRunning post-merge: [1msync[22m (user) @ [1m_REPO_[22m[39m
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4768** (2026-11-11): test: make three picker/list assertions able to fail, and fix two stale comments (@worktrunk-bot)
-- **PR #4767** (2026-11-11): fix(config): point system-config deprecation hints at the file, not wt config update (@worktrunk-bot)
-- **PR #4765** (2026-11-11): chore: bump taiki-e/install-action from 2.90.2 to 2.90.3 (@dependabot[bot])
-- **PR #4764** (2026-11-10): fix(forge): read Azure DevOps collection, legacy SSH, and default-repo remotes (@worktrunk-bot)
-- **PR #4761** (closed): feat(config): expose pr_number to the worktree-path template (@robsonpeixoto)
-- **PR #4760** (2026-11-10): ci: bump Nushell pin to 0.117.0 (@worktrunk-bot)
+- **PR #4789** (2026-11-14): Repair macOS release runners and recover existing tags (@max-sixty)
+- **PR #4784** (2026-11-14): skills(running-tend): don't list intended behavior as a bug in the digest (@max-sixty)
+- **PR #4783** (2026-11-14): chore: split LICENSE into LICENSE-MIT and LICENSE-APACHE (@max-sixty)
+- **PR #4782** (2026-11-14): docs: correct stale code comments in hooks, list, picker, and output (@worktrunk-bot)
+- **PR #4781** (2026-11-14): fix(hooks): announce background hooks per directory (@worktrunk-bot)
+- **PR #4780** (2026-11-13): fix(config state): print table cells literally instead of as markdown (@worktrunk-bot)
 
 ---
 
@@ -2484,35 +2546,52 @@ with the fix. The existing `list` and `s
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test: make three picker/list assertions able to fail, and fix two stale comments
+## X. state): stop a branch's vars from including a dotted branch's vars
 
 **RULE**:
-When implementing operations in `benches/prune.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/git/repository/config.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8c43d4ec`: test: make three picker/list assertions able to fail, and fix two stale comments (#4768). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `da09f170`: state): stop a branch's vars from including a dotted branch's vars. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `benches/prune.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/git/repository/config.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-//      delete) on a worker pool sized like rayon's, concurrently with the
-//      remaining scan, reusing the removal plan its scan check computed.
-//      Only `--foreground` and current-worktree removals serialize, and the
-//      live variant passes neither.
+        // Variable names can't contain a dot, so anchoring past one keeps
+        // out the vars of a branch named `{branch}.vars.<x>`.
+        let pattern = format!(r"^worktrunk\.state\.{escaped}\.vars\.[^.]+$");
+    /// A branch's vars exclude those of a branch whose name extends it with
+    /// `.vars.<x>`: `worktrunk.state.weird.vars.branch.vars.key` belongs to
+    /// `weird.vars.branch`, though it also starts with `weird`'s vars prefix.
+    #[test]
+    fn test_vars_entries_excludes_extended_branch_names() {
+        let test = TestRepo::with_initial_commit();
+        let repo = Repository::at(test.root_path()).unwrap();
+
+        repo.set_config("worktrunk.state.weird.vars.own", "1")
+            .unwrap();
+        repo.set_config("worktrunk.state.weird.vars.branch.vars.key", "v")
+            .unwrap();
+
+        let weird = repo.vars_entries("weird");
+        assert_eq!(weird.len(), 1, "{weird:?}");
+        assert_eq!(weird["own"], "1");
+        assert_eq!(repo.vars_entries("weird.vars.branch")["key"], "v");
+    }
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-//      delete) serially under the write side of the scan lock, reusing the
-//      removal plan its scan check computed.
+// Induced defect failure mode:
+        let pattern = format!(r"^worktrunk\.state\.{escaped}\.vars\.");
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8c43d4ec` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `da09f170` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

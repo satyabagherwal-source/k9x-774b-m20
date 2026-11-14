@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-HG38",
-    "timestamp": "2026-11-09T15:12:49.076Z",
-    "repository": "RustCrypto/hashes",
-    "learningId": "learn-github-rustcrypto-hashes",
-    "contentHash": "d73b31e0435e2ecf7b08c679ea5cc1af76fc7d501d52c91199f23dcc091b6b1c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-HHZX",
-    "timestamp": "2026-11-09T15:12:51.549Z",
-    "repository": "sfu-db/connector-x",
-    "learningId": "learn-github-sfu-db-connector-x",
-    "contentHash": "c5f104155959d0b1ef8d6003070701385280cb1346bf30a14c4bfc07b261d865",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-NL6J",
     "timestamp": "2026-11-09T15:17:35.611Z",
     "repository": "meta-models/Muse-Spark-Open-816B-A42B",
@@ -7490,6 +7460,36 @@
     "repository": "genkit-ai/genkit",
     "learningId": "learn-github-genkit-ai-genkit",
     "contentHash": "5f6536aad6d70f67809f5a02b7159ac023c91479d591011ce4e662207cc7179c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-4X19",
+    "timestamp": "2026-11-14T21:29:20.445Z",
+    "repository": "microsoft/FrogNano-4B-2609",
+    "learningId": "learn-huggingface-microsoft-frognano-4b-2609",
+    "contentHash": "0eee8fabff0dd015dfce6a76b61e6c769669f267d79ba053c4d843871451342b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-4YK7",
+    "timestamp": "2026-11-14T21:29:22.423Z",
+    "repository": "max-sixty/worktrunk",
+    "learningId": "learn-github-max-sixty-worktrunk",
+    "contentHash": "026d8bb73411adcd327c16e646d8ed9a945803d8c4c36164176d9751dcacd8bc",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

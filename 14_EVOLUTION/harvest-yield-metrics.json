@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T21:21:05.054Z",
-  "total_cycles_completed": 9600,
-  "total_learnings_persisted": 9600,
-  "total_rules_promoted": 9262,
+  "last_updated": "2026-11-14T21:29:22.432Z",
+  "total_cycles_completed": 9602,
+  "total_learnings_persisted": 9602,
+  "total_rules_promoted": 9263,
   "history": [
-    {
-      "timestamp": "2026-11-13T22:31:00.274Z",
-      "repository": "Bitterbot-AI/bitterbot-desktop",
-      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T22:45:42.289Z",
-      "repository": "CompVis/stable-diffusion-v1-4",
-      "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T23:01:31.883Z",
       "repository": "hexgrad/Kokoro-82M",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-14T21:21:05.054Z",
       "repository": "genkit-ai/genkit",
       "learningId": "learn-github-genkit-ai-genkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T21:29:20.456Z",
+      "repository": "microsoft/FrogNano-4B-2609",
+      "learningId": "learn-huggingface-microsoft-frognano-4b-2609",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T21:29:22.432Z",
+      "repository": "max-sixty/worktrunk",
+      "learningId": "learn-github-max-sixty-worktrunk",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

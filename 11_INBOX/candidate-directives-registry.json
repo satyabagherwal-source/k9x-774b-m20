@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T21:21:33.621Z",
+  "last_updated": "2026-11-14T21:30:06.927Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4835,11 +4835,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-AK62",
+      "id": "CD-5WW2",
       "directive_title": "editor): add scoped ios account deletion",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-AK62-editor-add-scoped-ios-account-deletion.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-5WW2-editor-add-scoped-ios-account-deletion.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-14",
@@ -13628,6 +13628,37 @@
       "source_repo": "kotest-kotest",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-147C98-update-dependency-dev-reformator-stacktr.md",
+      "staged_date": "2026-11-14"
+    },
+    {
+      "id": "CD-4YQ7",
+      "directive_title": "stop a branch's vars from including a dotted branch's vars",
+      "source_repo": "max-sixty/worktrunk",
+      "source_commit": "325c0b18",
+      "staged_file": "11_INBOX/candidate-directives/CD-4YQ7-stop-a-branch-s-vars-from-including-a-dotted-branch-s-vars.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-14",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-567Y",
+      "directive_title": "state): stop a branch's vars from including a dotted branch's vars",
+      "source_repo": "max-sixty-worktrunk-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-567Y-state-stop-a-branch-s-vars-from-including-a-dotted-branch-s-vars.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-14",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-C9C79B",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C9C79B-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-14"
     }
   ]

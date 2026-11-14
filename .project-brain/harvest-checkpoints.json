@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-14T21:21:05.059Z",
+  "last_updated": "2026-11-14T21:29:22.438Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1850,14 +1850,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-microsoft-frognano-4b-2609",
-      "content_hash": "e68472edce66cac423e9b21dadc20b1e6db2d39ad61ad5c49d853cf6c329efd5",
-      "verified_at": "2026-11-09T10:07:45.483Z",
+      "content_hash": "0eee8fabff0dd015dfce6a76b61e6c769669f267d79ba053c4d843871451342b",
+      "verified_at": "2026-11-14T21:29:20.460Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T10:07:45.483Z"
+      "last_updated": "2026-11-14T21:29:20.460Z"
     },
     "FrancisRing/Prism": {
       "repository": "FrancisRing/Prism",
@@ -3621,14 +3621,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-max-sixty-worktrunk",
-      "content_hash": "45036269a1dfbcb997bbbb6b6892ffbf5143a49040dbb306323afa89f44fad81",
-      "verified_at": "2026-11-13T06:51:10.964Z",
+      "content_hash": "026d8bb73411adcd327c16e646d8ed9a945803d8c4c36164176d9751dcacd8bc",
+      "verified_at": "2026-11-14T21:29:22.437Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T06:51:10.964Z"
+      "last_updated": "2026-11-14T21:29:22.437Z"
     },
     "mattermost/mattermost": {
       "repository": "mattermost/mattermost",

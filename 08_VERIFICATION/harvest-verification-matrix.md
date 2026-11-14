@@ -9943,3 +9943,6 @@
 | `CYCLE-20261114-U8O8` | `2026-11-14T21:21:02.312Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8536` | Yes (`71d9e736...`) |
 | `CYCLE-20261114-UAS7` | `2026-11-14T21:21:05.047Z` | `genkit-ai/genkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8537` | Yes (`5f6536aa...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T21:21:32.664Z` | `hf-phocinae-phocinae-largha-150m-v1` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-04705777` [Domain D] | Yes (`d50e5fb2...`) |
+| `CYCLE-20261114-4X19` | `2026-11-14T21:29:20.445Z` | `microsoft/FrogNano-4B-2609` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md` | Yes (`0eee8fab...`) |
+| `CYCLE-20261114-4YK7` | `2026-11-14T21:29:22.423Z` | `max-sixty/worktrunk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8538` | Yes (`026d8bb7...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T21:30:06.145Z` | `hf-microsoft-frognano-4b-2609` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-88E5B240` [Domain D] | Yes (`621d00ef...`) |

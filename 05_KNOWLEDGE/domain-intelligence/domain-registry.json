@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T21:21:33.714Z",
-  "total_records": 841,
+  "last_updated": "2026-11-14T21:30:07.052Z",
+  "total_records": 846,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 410,
+      "total": 415,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -447,7 +447,12 @@
         "domain_intelligence-research-knowledge-intelligence-hf-autotrust-qwen3-8-flash-next-e384-fp4-v2-lear",
         "domain_intelligence-research-knowledge-intelligence-phocinae-phocinae-largha-150m-v1-core-invariants",
         "DOM-D-04705777",
-        "domain_intelligence-research-knowledge-intelligence-hf-phocinae-phocinae-largha-150m-v1-learnings-co"
+        "domain_intelligence-research-knowledge-intelligence-hf-phocinae-phocinae-largha-150m-v1-learnings-co",
+        "domain_intelligence-research-knowledge-intelligence-microsoft-frognano-4b-2609-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-max-sixty-worktrunk-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-max-sixty-worktrunk-learnings-core-invariants",
+        "DOM-D-88E5B240",
+        "domain_intelligence-research-knowledge-intelligence-hf-microsoft-frognano-4b-2609-learnings-core-inv"
       ]
     },
     "E": {
@@ -7574,8 +7579,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "388d2eb8432501dcedaa1eb8718889545960fc8aa359198aba8a2f0c34de226f",
-      "created_at": "2026-11-14T20:09:44.956Z"
+      "content_hash": "66b076c7e141949dab9f8bc11beda4dca050c9984eef3efc77236ced61d81b17",
+      "created_at": "2026-11-14T21:30:07.052Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -16782,6 +16787,84 @@
       "repository": "kotest-kotest-learnings",
       "content_hash": "05226632263030610d0e3228e7fa4d12e1921bdc7762876c6f3c408ace0189b6",
       "created_at": "2026-11-14T21:21:33.714Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-microsoft-frognano-4b-2609-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-microsoft-frognano-4b-2609-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: microsoft/FrogNano-4B-2609 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-microsoft-frognano-4b-2609-research-knowledge-intelligence-microsoft-frognano.md",
+      "repository": "microsoft/FrogNano-4B-2609",
+      "content_hash": "a23dc84f17a2da1100b11cea827f181093350bc460eeac9cb086f87d730880cc",
+      "created_at": "2026-11-14T21:29:20.657Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-max-sixty-worktrunk-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-max-sixty-worktrunk-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: max-sixty/worktrunk Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-max-sixty-worktrunk-research-knowledge-intelligence-max-sixty-worktrunk-core-inv.md",
+      "repository": "max-sixty/worktrunk",
+      "content_hash": "782104a0c94cee14d16555265ec7281d171f5b92fc748addba31a7c86df2cc23",
+      "created_at": "2026-11-14T21:29:22.764Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-max-sixty-worktrunk-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-max-sixty-worktrunk-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: max-sixty-worktrunk-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-max-sixty-worktrunk-learnings-research-knowledge-intelligence-max-sixty-worktrun.md",
+      "repository": "max-sixty-worktrunk-learnings",
+      "content_hash": "8f64bdef68235c96e79f492b834ef3ea39ab0d45c47e87e0a3993aa64ef51367",
+      "created_at": "2026-11-14T21:29:32.477Z"
+    },
+    "DOM-D-88E5B240": {
+      "record_id": "DOM-D-88E5B240",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): microsoft/FrogNano-4B-2609",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/microsoft/FrogNano-4B-2609](https://huggingface.co/microsoft/FrogNano-4B-2609))  \n> **Source Version**: `hf-microsoft`  \n> **License**: Open-Source",
+      "content_hash": "621d00efb8cd855c8d23c5ec00fc30904ae704296adac36df43c6d2932fc0756",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md`  \n> **Source**: huggingface ([https://hu -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md`  \n> **Source**: huggingface ([https://hu",
+      "provenance": {
+        "source_uri": "project://hf-microsoft-frognano-4b-2609/hf-microsoft-frognano-4b-2609-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T21:29:32.722Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-microsoft-frognano-4b-2609)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-microsoft-frognano-4b-2609"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T21:30:06.130Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-microsoft-frognano-4b-2609-learnings-core-inv": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-microsoft-frognano-4b-2609-learnings-core-inv",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-microsoft-frognano-4b-2609-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-microsoft-frognano-4b-2609-learnings-research-knowledge-intelligence-hf-micro.md",
+      "repository": "hf-microsoft-frognano-4b-2609-learnings",
+      "content_hash": "8833f5a5b1196fa543bc4c2f70442747e6878d6b3bd1a9c2baf3e17f98dee783",
+      "created_at": "2026-11-14T21:30:06.359Z"
     }
   }
 }

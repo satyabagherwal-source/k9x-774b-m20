@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md`  
 > **Source**: github ([https://github.com/max-sixty/worktrunk](https://github.com/max-sixty/worktrunk))  
-> **Source Version**: `d5b9a7e0`  
-> **License**: NOASSERTION  
+> **Source Version**: `325c0b18`  
+> **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T06:51:01.579Z  
+> **Timestamp**: 2026-11-14T21:29:21.380Z  
 > **Learning ID**: `learn-github-max-sixty-worktrunk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/max-sixty/worktrunk](https://github.com/max-sixty/worktrunk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T06:51:01.574Z  
+> **Harvest Timestamp**: 2026-11-14T21:29:21.370Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Worktrunk is a CLI for Git worktree management, designed for parallel AI agent workflows
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 12485 stars
+- **Stars / Engagement**: 12529 stars
 
 ---
 
@@ -950,7 +950,9 @@ fn list_trash_entries(repo: &Repository) -> anyhow::Result<Vec<TrashEntry>> {
 //! # Hook announcement format
 //!
 //! Background hook execution emits a single `Running ...` line covering every
-//! hook type that fires from one event. Separators form a precedence hierarchy
+//! hook type that fires from one event in one directory; hooks running in a
+//! different directory get their own line, since the `@ <path>` suffix
+//! covers the whole line. Separators form a precedence hierarchy
 //! from tightest to loosest:
 //!
 //! ```text
@@ -1000,8 +1002,12 @@ fn list_trash_entries(repo: &Repository) -> anyhow::Result<Vec<TrashEntry>> {
 //!
 //! Multi-source for one hook type: `sync, push (user); build (project)`.
 //!
-//! Multi-type bundle (e.g., `wt merge` firing four hook types):
-//! `Running post-commit: mark (user); post-remove: cleanup (user); post-switch: notify (user); post-merge: sync (user) @ ~/repo`.
+//! Multi-type bundle (e.g., `wt merge` firing three hook types):
+//! `Running post-remove: cleanup (user); post-switch: notify (user); post-merge: sync (user) @ ~/repo`.
+//!
+//! Split by path (`wt merge --no-remove`, where `post-commit` runs in the
+//! feature worktree and `post-merge` in the target):
+//! `Running post-commit: mark (user)` then `Running post-merge: sync (user) @ ~/repo`.
 //!
 //! ## Implementation
 //!
@@ -1010,9 +1016,10 @@ fn list_trash_entries(repo: &Repository) -> anyhow::Result<Vec<TrashEntry>> {
 //! - [`format_pipeline_summary`] wraps it with the per-pipeline source label,
 //!   collapsing the all-unnamed case to the bare `<source>` / `<source> ×N`
 //!   form.
-//! - `run_hooks_background` (in `hooks.rs`) joins source summaries with `;`
-//!   within each hook-type clause, then joins clauses with `;` into one
-//!   announce line with the path suffix at the end.
+//! - `run_hooks_background` (in `hooks.rs`) groups pipelines by display path;
+//!   for each group it joins source summaries with `;` within each hook-type
+//!   clause, then joins clauses with `;` into one announce line with the path
+//!   suffix at the end.
 
 use color_print::cformat;
 
@@ -1201,17 +1208,7 @@ mod tests {
     fn test_format_pipeline_summary_unnamed() {
         let steps = vec![
             make_sourced_step(PreparedStep::Single(make_cmd(None, "npm install"))),
-            make_sourced_step(PreparedStep::Single(make_cmd(None, "npm run build"))),
-        ];
-        let summary = format_pipeline_summary(&steps);
-        assert_snapshot!(summary.ansi_strip(), @"user ×2");
-    }
-
-    #[test]
-    fn test_format_pipeline_summary_mixed_named_unnamed() {
-        let steps = vec![
-            make_sourced_step(PreparedStep::Single(make_cmd(None, "npm install"))),
-            make_sourced_step(PreparedStep::Single(make_cmd(Some
+            make_sourced_step(PreparedStep::Single(make_cmd(None, "npm run b
 ```
 
 ### Core Architecture Module: `src/commands/hook_commands.rs`
@@ -1806,7 +1803,9 @@ impl HookPlan {
 //! | `pre-start`, `post-start`, `post-switch` (on switch) | the new/destination worktree | `worktree::switch::approve_switch_hooks` |
 //!
 //! "Runs in" is the *anchor* — the executor's plan lookup key and render root,
-//! not a config source. A `pre-start`'s new worktree need not exist when the
+//! not a config source. `post-remove` is the exception: its anchor (the
+//! removed worktree) is only the plan key, and it runs and renders in the
+//! removal destination. A `pre-start`'s new worktree need not exist when the
 //! gate runs; the config came from the invoking worktree regardless. A
 //! background pipeline anchored on a worktree the command removed is dropped
 //! and reported rather than spawned (see [`report_dropped_pipelines`]); only
@@ -1984,12 +1983,7 @@ fn no_matching_commands_error(
         let Some(config) = config else { continue };
         // Include this source if any filter matches it
         if !parsed_filters.iter().any(|f| f.matches_source(source)) {
-            continue;
-        }
-        available.extend(config.commands().filter_map(|c| {
-            c.name
-                .as_deref()
-             
+    
 ```
 
 
@@ -2021,379 +2015,507 @@ fn no_matching_commands_error(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1e4e6dda` (2026-11-12)
-**Commit Message**: docs: fix stale comments in remove, hook_commands, and trace parsing (#4771)
+### Incident Patch 1: `da09f170` (2026-11-13)
+**Commit Message**: fix(state): stop a branch's vars from including a dotted branch's vars (#4779)
 
-Three code comments described behavior the code doesn't have.
-Comment-only change; no behavior or test changes.
+A branch's vars could include another branch's vars when that branch's
+name extends the first with `.vars.<x>`.
+[`vars_entries`](https://github.com/max-sixty/worktrunk/blob/d65c511596ac1d952d28d3be8f13e43a2f8f4b22/src/git/repository/config.rs#L208-L223)
+queried `^worktrunk\.state\.<branch>\.vars\.` with no end anchor, so for
+branch `a` it also matched `worktrunk.state.a.vars.x.vars.k` (a var `k`
+on branch `a.vars.x`) and returned it as a var named `x.vars.k`. Git
+config variable names can't contain a dot, so this anchors the pattern
+to `\.vars\.[^.]+$`.
 
--
-[`src/commands/remove.rs`](https://github.com/max-sixty/worktrunk/blob/9b7ac2c13b47c4cf8454660b621ec5874b10e948/src/commands/remove.rs#L373-L374)
-said "locked worktrees" fall back to `git worktree remove` in the
-background. A `git worktree lock` is refused outright
-([`src/git/remove.rs`](https://github.com/max-sixty/worktrunk/blob/9b7ac2c13b47c4cf8454660b621ec5874b10e948/src/git/remove.rs#L26-L28));
-the fallback covers rename failures (cross-filesystem, permissions,
-Windows file locks), as `execute_instant_removal_or_fallback` documents.
--
-[`src/commands/hook_commands.rs`](https://github.com/max-sixty/worktrunk/blob/9b7ac2c13b47c4cf8454660b621ec5874b10e948/src/commands/hook_commands.rs#L101-L104)
-had the merge/commit target comment on the commit-only arm; it's now
-split per arm. A second copy of the `{{ args }}` encoding comment a few
-lines below the first is trimmed.
--
-[`src/trace/parse.rs`](https://github.com/max-sixty/worktrunk/blob/9b7ac2c13b47c4cf8454660b621ec5874b10e948/src/trace/parse.
+Who sees it: `wt config state vars list`, `{{ vars.* }}` in hook and
+alias templates, and the statusline read the extra entry. `wt config
+state vars clear --all` on `a` also unset the other branch's vars, since
+it clears every key `vars_entries` returns. The cross-branch reads
+(`all_vars_entries`, the snapshot) already split on the last `.vars.`
+and were correct.
 
-**File**: `src/commands/hook_commands.rs` (modified, +3/-5)
+A new unit test, `test_vars_entries_excludes_extended_branch_names`,
+failed before the change (branch `weird` returned `{"branch.vars.key":
+"v", "own": "1"}`) and passes after; the rest of the
+
+**File**: `src/git/repository/config.rs` (modified, +22/-1)
 ```diff
-@@ -98,14 +98,14 @@ fn build_manual_hook_template_vars(ctx: &CommandContext, hook_type: HookType) ->
-     let branch = ctx.branch;
-     let worktree_path = ctx.worktree_path;
-     match hook_type {
--        // Merge/commit hooks: target = merge target (default branch for commit,
--        // current for merge). Only this arm needs the default branch, and
-+        // Commit hooks: target = default branch. Only this arm needs it, and
-         // resolving it can cost a `git ls-remote` on a fresh clone — so it is
-         // fetched here rather than up front.
-         HookType::PreCommit | HookType::PostCommit => ctx
-             .repo
-             .default_branch()
-             .map_or_else(TemplateVars::new, |t| TemplateVars::new().with_target(&t)),
-+        // Merge hooks: target = current branch
-         HookType::PreMerge | HookType::PostMerge => TemplateVars::new()
-             .with_target_opt(branch)
-             .with_target_worktree_path(worktree_path),
-@@ -282,9 +282,7 @@ pub fn run_hook(
-     let template_vars = build_manual_hook_template_vars(&ctx, hook_type);
-     let mut extra_vars = template_vars.as_extra_vars();
-     extra_vars.extend(custom_vars_refs.iter().copied());
--    // Forward positional CLI args as `{{ args }}` (empty sequence when
--    // nothing was forwarded). `expand_template` rehydrates this JSON into a
--    // `ShellArgs` sequence that renders space-joined, per-element escaped.
-+    // Empty sequence when nothing was forwarded.
-     extra_vars.push((ALIAS_ARGS_KEY, &args_json));
- 
-     if dry_run {
-```
-
-**File**: `src/commands/remove.rs` (modified, +2/-1)
-```diff
-@@ -370,7 +370,8 @@ fn maybe_reap_result(result: &RemovalPlan, reap_enabled: bool) {
- ///      → synchronous `remove_dir_all` on the staged directory.
- ///    - **Background** (default): stop fsmonitor → rename + prune +
- ///      synchronous branch delete → spawn a detached drain of the trash
--///      directory (`wt _drain-trash`). Cross-filesystem or locked worktrees fall back to
-+///      directory (`wt _drain-trash`). When the rename fails (cross-filesystem,
-+///      permissions, Windows file locks), removal falls back to
- ///      `git worktree remove` in the detached process.
- /// 4. **Post-remove hooks** run in the background after dispatch.
- /// 5. **Internal sweep** (fire-and-forget, after primary output): entries
-```
-
-**File**: `src/trace/parse.rs` (modified, +2/-2)
-```diff
-@@ -108,8 +108,8 @@ impl TraceEntry {
- /// skipped this way.
- fn parse_line(line: &str) -> Option<TraceEntry> {
-     let line = line.trim();
--    // Cheap reject before handing the line to serde — most non-record lines
--    // (start echoes, blank lines) don't even start with `{`.
-+    // Cheap reject before serde for lines that can't be a JSON object: blank
-+    // lines, or a non-JSONL file passed to `wt config state logs profile`.
-     if !line.starts_with('{') {
-         return None;
+@@ -207,7 +207,9 @@ impl Repository {
+     /// through our coherent `set_config_value` helper.
+     pub fn vars_entries(&self, branch: &str) -> std::collections::BTreeMap<String, String> {
+         let escaped = regex::escape(branch);
+-        let pattern = format!(r"^worktrunk\.state\.{escaped}\.vars\.");
++        // Variable names can't contain a dot, so anchoring past one keeps
++        // out the vars of a branch named `{branch}.vars.<x>`.
++        let pattern = format!(r"^worktrunk\.state\.{escaped}\.vars\.[^.]+$");
+         let prefix = format!("worktrunk.state.{branch}.vars.");
+         self.config_regexp_entries(&pattern)
+             .unwrap_or_default()
+@@ -1300,6 +1302,25 @@ mod tests {
+         assert_eq!(snapshot["weird.vars.branch"]["key"], "v");
      }
+ 
++    /// A branch's vars exclude those of a branch whose name extends it with
++    /// `.vars.<x>`: `worktrunk.state.weird.vars.branch.vars.key` belongs to
++    /// `weird.vars.branch`, though it also starts with `weird`'s vars prefix.
++    #[test]
++    fn test_vars_entries_excludes_extended_branch_names() {
++        let test = TestRepo::with_initial_commit();
++        let repo = Repository::at(test.root_path()).unwrap();
++
++        repo.set_config("worktrunk.state.weird.vars.own", "1")
++            .unwrap();
++        repo.set_config("worktrunk.state.weird.vars.branch.vars.key", "v")
++            .unwrap();
++
++        let weird = repo.vars_entries("weird");
++        assert_eq!(weird.len(), 1, "{weird:?}");
++        assert_eq!(weird["own"], "1");
++        assert_eq!(repo.vars_entries("weird.vars.branch")["key"], "v");
++    }
++
+     /// The branch-config snapshot read parses `branch.<name>.*` keys, including
+     /// branch names containing dots or slashes, lowercases the variable name as
+     /// git does, and skips git's own section-level branch settings
 ```
 
 ---
 
-### Incident Patch 2: `736606ba` (2026-11-12)
-**Commit Message**: fix(copy-ignored): reach .worktreeinclude paths inside a wholly ignored directory (#4751)
+### Incident Patch 2: `a591d31f` (2026-11-13)
+**Commit Message**: fix(config state): print table cells literally instead of as markdown (#4780)
 
-`.worktreeinclude` now selects by git's own gitignore rules, including
-paths inside a wholly ignored directory that an include line names, as
-Claude Code does. `git ls-files --directory` lists such a directory as
-one entry, so `.cache/claude-code-types/` under an ignored `.cache/`
-matched nothing, and `copy-ignored` and `promote` skipped it. Claude
-Code's own `.worktreeinclude` copy reaches it, and a team trialling the
-Claude Code plugin lost that cache in every new worktree
-(Rikmorn/sidekick#287).
+The tables in `wt config state get` rendered their cells as markdown, so
+user data could break them.
+[`render_data_table`](https://github.com/max-sixty/worktrunk/blob/08de6cc4e3fda245b886fbce08ac64101bc6224b/src/md_help.rs#L299-L319)
+joined cells with ` | ` and passed the lines through the help-text table
+path. A var set with ``wt config state vars set 'note=a | b
+[x](http://y) `c`'`` printed as:
 
-Git now does all the matching. Discovery runs `git ls-files -o -i
---directory` once with the standard exclude sources and, when
-`.worktreeinclude` exists, again with that file as the only source. An
-entry is selected where the two listings overlap, taking the deeper path
-of each pair where one holds the other. Inside a directory git lists
-whole, only lines that name a path (a slash before the end, past any
-leading `/` or `**/`) select, as found by a third listing of those lines
-plus the negations. A name matched at any depth (`.env`, `types/`)
-selects only outside such directories. Claude Code, wh
-
-**File**: `docs/src/content/docs/claude-code.md` (modified, +1/-1)
-```diff
-@@ -140,7 +140,7 @@ For other agent CLIs, configure these commands to run on session events:
- 
- ## Worktree isolation (Claude Code and OpenCode)
- 
--Claude Code agents can run in isolated worktrees (`isolation: "worktree"`). By default, Claude Code creates these with `git worktree add`. The plugin's `WorktreeCreate` and `WorktreeRemove` hooks route this through `wt switch --create` and `wt remove` instead, so worktrees created by agents get worktrunk's naming conventions, hooks, and lifecycle management. If the branch already exists, the hook runs `wt switch` without `--create`, which returns the branch's worktree, creating one if it has none.
-+Claude Code agents can run in isolated worktrees (`isolation: "worktree"`). By default, Claude Code creates these with `git worktree add`. The plugin's `WorktreeCreate` and `WorktreeRemove` hooks route this through `wt switch --create` and `wt remove` instead, so worktrees created by agents get worktrunk's naming conventions, hooks, and lifecycle management. If the branch already exists, the hook runs `wt switch` without `--create`, which returns the branch's worktree, creating one if it has none. New branches start from the default branch: Claude Code's hook input names the worktree but no base, so its `worktree.baseRef` setting has no effect.
- 
- Under OpenCode 2, the plugin registers a `worktrunk` worktree strategy, so worktrees OpenCode creates and removes go through the same commands. Each gets a branch named after the worktree name OpenCode chooses, at the path from `worktree-path`; OpenCode's `worktree.directory` setting is ignored. New branches start from the default branch (or the starting ref OpenCode passes), not the current checkout's HEAD. A dirty worktree fails removal with worktrunk's message rather than an offer to force.
- 
+```
+VARS
+ Branch Key  Value
+ ────── ──── ───── ─────
+ master note a     b x c
 ```
 
-**File**: `plugins/worktrunk/skills/worktrunk/reference/claude-code.md` (modified, +1/-1)
-```diff
-@@ -132,7 +132,7 @@ For other agent CLIs, configure these commands to run on session events:
- 
- ## Worktree isolation (Claude Code and OpenCode)
- 
--Claude Code agents can run in isolated worktrees (`isolation: "worktree"`). By default, Claude Code creates these with `git worktree add`. The plugin's `WorktreeCreate` and `WorktreeRemove` hooks route this through `wt switch --create` and `wt remove` instead, so worktrees created by agents get worktrunk's naming conventions, hooks, and lifecycle management. If the branch already exists, the hook runs `wt switch` without `--create`, which returns the branch's worktree, creating one if it has none.
-+Claude Code agents can run in isolated worktrees (`isolation: "worktree"`). By default, Claude Code creates these with `git worktree add`. The plugin's `WorktreeCreate` and `WorktreeRemove` hooks route this through `wt switch --create` and `wt remove` instead, so worktrees created by agents get worktrunk's naming conventions, hooks, and lifecycle management. If the branch already exists, the hook runs `wt switch` without `--create`, which returns the branch's worktree, creating one if it has none. New branches start from the default branch: Claude Code's hook input names the worktree but no base, so its `worktree.baseRef` setting has no effect.
- 
- Under OpenCode 2, the plugin registers a `worktrunk` worktree strategy, so worktrees OpenCode creates and removes go through the same commands. Each gets a branch named after the worktree name OpenCode chooses, at the path from `worktree-path`; OpenCode's `worktree.directory` setting is ignored. New branches start from the default branch (or the starting ref OpenCode passes), not the current checkout's HEAD. A dirty worktree fails removal with worktrunk's message rather than an offer to force.
- 
-```
+The `|` opened an extra column, the link lost its URL, and the backticks
+became dim styling. A multi-line var value (allowed, and covered by an
+existing test) ended the table at its line break. Summary subjects and
+branch names reach the same tables.
 
-**File**: `skills/worktrunk/reference/claude-code.md` (modified, +1/-1)
-```diff
-@@ -132,7 +132,7 @@ For other agent CLIs, configure these commands to run on session events:
- 
- ## Worktree isolation (Claude Code and OpenCode)
- 
--Claude Code agents can run in isolated worktrees (`isolation: "worktree"`). By default, Claude Code creates these with `git worktree add`. The plugin's `WorktreeCreate` and `WorktreeRemove` hooks route this through `wt switch --create` and `wt remove` instead, so worktrees created by agents get worktrunk's naming conventions, hooks, and lifecycle management. If the branch already exists, the hook runs `wt switch` without `--create`, which returns the branch's worktree, creating one if it has none.
-+Claude Code agents can run in isolated worktrees (`isolation: "worktree"`). By default, Claude Code creates these with `git worktree add`. The plugin's `WorktreeCreate` and `WorktreeRemove` hooks route this through `wt switch --create` and `wt remove` instead, so worktrees created by agents get worktrunk's naming conventions, hooks, and lifecycle management. If the branch already exists, the hook runs `wt switch` without `--create`, which returns the branch's worktree, creating one if it has none. New branches start from the default branch: Claude Code's hook input names the worktree but no base, so its `worktree.baseRef` setting has no effect.
- 
- Under OpenCode 2, the plugin registers a `worktrunk` worktree strategy, so worktrees OpenCode creates and removes go through the same commands. Each gets a branch named after the worktree name OpenCode chooses, at the path from `worktree-path`; OpenCode's `worktree.directory` setting is ignored. New branches start from the default branch (or the starting ref OpenCode passes), not the current checkout's HEAD. A dirty worktree fails removal with worktrunk's message rather than an offer to force.
- 
-```
+minimad, termimad's parser, honours backslash escapes for `|`, `*`, `~`,
+`` ` `` and `\`. Cells are now escaped with those, line breaks become
+spaces, and data tables skip the help-text link stripping and `\|`
+unescaping. The same value now prints as ``a | b [x](http://y) `c` ``.
+Help-text tables are unchanged.
 
-**File**: `src/commands/step/copy_ignored.rs` (modified, +4/-1)
-```diff
-@@ -5,7 +5,7 @@ use std::path::{Path, PathBuf};
- 
- use anyhow::Context;
- use color_print::cformat;
--use worktrunk::copy::{copy_dir_recursive, copy_leaf};
-+use worktrunk::copy::{copy_dir_recursive, copy_leaf, ensure_path_within_root};
- use worktrunk::git::{Repository, path_dir_name};
- use worktrunk::path::format_path_for_display;
- use worktrunk::progress::{Progress, format_bytes, format_reflink_paren};
-@@ -225,6 +225,9 @@ pub fn step_copy_ignored(
-                         })?;
-             } else {
-                 if let Some(parent) = dest_entry.parent() {
-+                    // Before creating anything: a symlinked directory in the
-+                    // destination must not get directories made beyond it.
-+                    ensure_path_within_root(parent, &dest_path)?;
-                     fs::create_dir_all(parent).with_context(|| {
-                         format!(
-                             "creating directory for {}",
-```
+`test_render_data_table_cells_are_literal` covers `|`, `*`, backticks,
 
-**File**: `src/commands/step/promote.rs` (modified, +5/-1)
+
+**File**: `src/md_help.rs` (modified, +52/-13)
 ```diff
-@@ -6,7 +6,7 @@ use std::path::{Path, PathBuf};
+@@ -298,21 +298,42 @@ fn render_table(lines: &[&str], max_width: Option<usize>) -> String {
  
- use anyhow::{Context, bail};
- use color_print::cformat;
--use worktrunk::copy::{copy_dir_recursive, copy_leaf};
-+use worktrunk::copy::{copy_dir_recursive, copy_leaf, ensure_path_within_root};
- use worktrunk::git::{Repository, duplicated_branches};
- use worktrunk::path::format_path_for_display;
- use worktrunk::progress::Progress;
-@@ -128,6 +128,8 @@ fn stage_ignored(
+ /// Render a table from headers and rows using termimad.
  ///
- /// B's original files (in staging/b) go to worktree A (which now has B's branch).
- /// A's original files (in staging/a) go to worktree B (which now has A's branch).
-+/// An entry whose destination resolves outside its worktree, through a
-+/// symlinked directory there, stays in staging and fails the promote.
- fn distribute_staged(
-     staging_dir: &Path,
-     path_a: &Path,
-@@ -147,6 +149,7 @@ fn distribute_staged(
-         let staging_entry = staging_b.join(relative);
-         let dest_entry = path_a.join(relative);
-         if fs::symlink_metadata(&staging_entry).is_ok() {
-+            ensure_path_within_root(dest_entry.parent().unwrap_or(&dest_entry), path_a)?;
-             move_entry(&staging_entry, &dest_entry, *is_dir)
-                 .with_context(|| format!("distributing {}", format_path_for_display(relative)))?;
-             count += 1;
-@@ -161,6 +164,7 @@ fn distribute_staged(
-         let staging_entry = staging_a.join(relative);
-         let dest_entry = path_b.join(relative);
-         if fs::symlink_metadata(&staging_entry).is_ok() {
-+            ensure_path_within_root(dest_entry.parent().unwrap_or(&dest_entry), path_b)?;
-             move_entry(&staging_entry, &dest_entry, *is_dir)
-                 .with_context(|| format!("distributing {}", format_path_for_display(relative)))?;
-             count += 1;
-```
-
-**File**: `src/commands/step/shared.rs` (modified, +257/-96)
-```diff
-@@ -4,12 +4,16 @@
- //! - Copy-ignored discovery (`list_and_filter_ignored_entries` and friends) —
- //!   used by `copy_ignored` and `promote`.
+-/// Column widths are computed by termimad based on content.
++/// Column widths are computed by termimad based on content. Cells are data —
++/// var values, summary subjects, branch names — so each is escaped to print as
++/// written, and the help-text preprocessing (link stripping, `\|` unescaping)
++/// is skipped.
+ pub(crate) fn render_data_table(headers: &[&str], rows: &[Vec<String>]) -> String {
+-    let header_line = format!("| {} |", headers.join(" | "));
+-    let separator = format!("|{}|", vec!["---"; headers.len()].join("|"));
+-    let row_lines: Vec<String> = rows
+-        .iter()
+-        .map(|row| format!("| {} |", row.join(" | ")))
+-        .collect();
+-
+-    let mut lines: Vec<&str> = Vec::with_capacity(rows.len() + 2);
+-    lines.push(&header_line);
+-    lines.push(&separator);
+-    lines.extend(row_lines.iter().map(|s| s.as_str()));
++    let row_line = |cells: Vec<String>| format!("| {} |", cells.join(" | "));
++    let mut lines = vec![
++        row_line(headers.iter().map(|h| escape_table_cell(h)).collect()),
++        format!("|{}|", vec!["---"; headers.len()].join("|")),
++    ];
++    lines.extend(
++        rows.iter()
++            .map(|row| row_line(row.iter().map(|cell| escape_table_cell(cell)).collect())),
++    );
++
++    help_table_skin()
++        .text(&lines.join("\n"), Some(DEFAULT_HELP_WIDTH))
++        .to_string()
++}
  
-+use std::collections::HashSet;
-+use std::ffi::OsStr;
-+use std::fs;
- use std::path::{Path, PathBuf};
- 
- use anyhow::Context;
- use ignore::gitignore::GitignoreBuilder;
- use worktrunk::config::CopyIgnoredConfig;
- use worktrunk::git::Repository;
-+use worktrunk::path::format_path_for_display;
- use worktrunk::shell_exec::Cmd;
- use worktrunk::styling::{format_bash_with_gutter, format_heading, format_with_gutter};
- 
-@@ -93,101 +97,209 @@ pub(super) fn resolve_copy_ignored_config(repo: &Repository) -> anyhow::Result<C
+-    render_table_with_termimad(&lines, None)
++/// Escape a data value for a termimad table cell: backslash-escape the
++/// characters minimad gives meaning to (`|` splits cells; `*`, `~` and `` ` ``
++/// style text), and flatten line breaks, which would end the row.
++fn escape_table_cell(cell: &str) -> String {
++    let mut escaped = String::with_capacity(cell.len());
++    for c in cell.chars() {
++        match c {
++            '\\' | '|' | '*' | '~' | '`' => {
++                escaped.push('\\');
++                escaped.push(c);
++            }
++            '\n' | '\r' => escaped.push(' '),
++            _ => escaped.push(c),
++        }
++    }
++    escaped
  }
  
- /// List gitignored entries in a worktree, filtered by `.worktreeinclude` and excluding
--/// configured patterns, VCS metadata directories, and entries that contain nested worktrees.
-+/// configured patterns, VCS metadata directories, and other worktrees.
- ///
--/// Combines five steps:
--/// 1. `list_ignored_entries()` — git ls-files for ignored entries
--/// 2. `.worktreeinclude` filtering — only matching entries if the file exists
--/// 3. `[step.copy-ignored].exclude` filtering — skip entries matching configured patterns
--/// 4. Built-in exclude filtering — always skip VCS metadata and tool-state directories
--/// 5. Nested worktree filtering — exclude entries containing other worktrees
-+/// Git decides both what is ignored and what `.worktreeinclude` selects:
-+/// [`list_ignored_entries`] runs once with git's standard exclude sources and,
-+/// when the include file exists, once more with that file as the only source,
-+/// and [`overlap`] keeps what both listings cover. Git applies gitignore rules,
-+/// so a pattern naming a path inside a wholly ignored directory
-+/// (`.cache/types/`) finds it, and a negation can't re-include a path inside a
-+/// selected directory. Like every git listing, both stop at a nested
-+/// repository: a path inside one belongs to that repository.
-+///
-+/// Inside a directory git lists whole, only a line that names a path
-+/// ([`names_path`]) selects anything: a third listing runs with just those
-+/// lines and the negations. A name matched at any depth (`.env`, `types/`)
-+/// selects only outside such directories, so `.env` copies the root `.env` and
-+/// every `.env` git lists on its own, but never a package's `.env` from
-+/// `node_modules/`. Claude Code, which defines `.worktreeinclude`, agrees on
-+/// path-naming lines; it opens a directory git lists whole from a line's text,
-+/// then applies every line inside it. Each include listing walks every
-+/// untracked directory, about 0.3 s per 100k ignored files with a warm cache.
-+/// [`Boundaries`] then drops configured excludes, built-in VCS and tool-state
-+/// directories, and other worktrees.
- pub(super) fn list_and_filter_ignored_entries(
-     worktree_path: &Path,
-     context: &str,
-     worktree_paths: &[PathBuf],
-     exclude_patterns: &[String],
- ) -> anyhow::Result<Vec<(PathBuf, bool)>> {
--    let ignored_entries = list_ignored_entries(worktree_path, context)?;
--
--    // Filter to entries that match .worktreeinclude (or all if no file exists)
-+    let ignored = list_ignored_entries(worktree_path, context, &["--exclude-standard"])?;
-     let include_path = worktree_path.join(".worktreeinclude");
--    let filtered: Vec<_> = if include_path.exists() {
--        let include_matcher = {
--            let mut builder = GitignoreBuilder::new(worktree_path);
--            if let Some(err) = builder.add(&include_path) {
--                // The `ignore` crate formats the path with OS-native separators;
--                // normalize to forward slashes for consistent display.
--                return Err(worktrunk::git::GitError::WorktreeIncludeParseError {
--                    error: err.to_string().replace('\\', "/"),
--                }
--                .into());
--            }
--            builder.build().context("Failed to build include matcher")?
--        };
--        ignored_entries
--            .into_iter()
--            .filter(|(path, is_dir)| {
--                include_matcher
--                    .matched_path_or_any_parents(relative_entry(path, worktree_path), *is_dir)
--                    .is_ignore()
--            })
--            .collect()
--    } else {
--        ignored_entries
-+    let entries = match fs::read_to_string(&include_path) {
-+        Ok(lines) => {
-+            let included =
-+                list_ignored_entries(worktree_path, context, &["--exclude-from=.worktreeinclude"])?;
-+            // Git skips a leading byte-order mark, so the first line is read without it.
-+            let lines = lines.strip_prefix('\u{feff}').unwrap_or(&lines);
-+            let named = if lines.lines().any(names_path) {
-+                // A file, not `--exclude=` arguments, so git reads these lines
-+                // exactly as it reads `.worktreeinclude`.
-+                let naming: String = lines
-+                    .lines()
-+                    .filter(|line| names_path(l
+ /// Render a markdown table using termimad
+@@ -805,6 +826,24 @@ mod tests {
+         ");
+     }
+ 
++    /// Cells hold data (var values, summary subjects, branch names), not
++    /// markdown: a `|` stays in its cell, and `*`, `` ` ``, `\`, `[x](y)` and a
++    /// line break print as written rather than restyling or splitting the row.
++    #[test]
++    fn test_render_data_table_cells_are_literal() {
++        let rows = vec![
++            vec!["a|b".into(), "x *y* `z` \\ [l](u)".into()],
++            vec!["two\nlines".into(), "ok".into()],
++        ];
++        let result = render_data_table(&["K", "V"], &rows);
++        assert_snapshot!(result, @r"
++            K             V          
++        ───────── ────────────────── 
++        a|b       x *y* `z` \ [l](u) 
++        two lines ok
++        ");
++    }
++
+     #[test]
+     fn test_render_data_table_empty_rows() {
+         let result = render_data_table(&["A", "B"], &[]);
 ```
 
-**File**: `src/copy.rs` (modified, +5/-2)
+---
+
+### Incident Patch 3: `0df65338` (2026-11-14)
+**Commit Message**: fix(hooks): announce background hooks per directory (#4781)
+
+`wt merge --no-remove` with both a `post-commit` and a `post-merge` hook
+printed one combined line, `Running post-commit: mark (user);
+post-merge: sync (user) @ ~/repo`. That reads as if `post-commit` ran in
+the target, but it runs in the feature worktree. This PR gives hooks
+that run in different directories separate `Running` lines:
+
+```
+◎ Running post-commit: mark (user)
+◎ Running post-merge: sync (user) @ ~/repo
+```
+
+`run_hooks_background` puts the display path of the first pipeline that
+has one at the end of the line, on the assumption (written in its
+docstring) that every hook in a batch shares a path. That stopped being
+true for `post-commit` once the `post-commit` pipeline started being
+dropped when its worktree is removed. Now `post-commit` reaches the
+flush only when the feature worktree is kept, which is exactly when its
+directory differs from `post-merge`'s. Hooks that share a path, such as
+`post-remove`, `post-switch` and `post-merge` after a removal, still
+combine onto one line, so existing snapshots are unchanged.
+
+The new snapshot test
+`test_merge_announces_post_commit_and_post_merge_by_directory` produced
+
+**File**: `src/commands/hook_announcement.rs` (modified, +13/-6)
 ```diff
-@@ -332,13 +332,16 @@ fn preserve_modified(path: &Path, src_meta: &fs::Metadata) {
+@@ -1,7 +1,9 @@
+ //! # Hook announcement format
+ //!
+ //! Background hook execution emits a single `Running ...` line covering every
+-//! hook type that fires from one event. Separators form a precedence hierarchy
++//! hook type that fires from one event in one directory; hooks running in a
++//! different directory get their own line, since the `@ <path>` suffix
++//! covers the whole line. Separators form a precedence hierarchy
+ //! from tightest to loosest:
+ //!
+ //! ```text
+@@ -51,8 +53,12 @@
+ //!
+ //! Multi-source for one hook type: `sync, push (user); build (project)`.
+ //!
+-//! Multi-type bundle (e.g., `wt merge` firing four hook types):
+-//! `Running post-commit: mark (user); post-remove: cleanup (user); post-switch: notify (user); post-merge: sync (user) @ ~/repo`.
++//! Multi-type bundle (e.g., `wt merge` firing three hook types):
++//! `Running post-remove: cleanup (user); post-switch: notify (user); post-merge: sync (user) @ ~/repo`.
++//!
++//! Split by path (`wt merge --no-remove`, where `post-commit` runs in the
++//! feature worktree and `post-merge` in the target):
++//! `Running post-commit: mark (user)` then `Running post-merge: sync (user) @ ~/repo`.
+ //!
+ //! ## Implementation
+ //!
+@@ -61,9 +67,10 @@
+ //! - [`format_pipeline_summary`] wraps it with the per-pipeline source label,
+ //!   collapsing the all-unnamed case to the bare `<source>` / `<source> ×N`
+ //!   form.
+-//! - `run_hooks_background` (in `hooks.rs`) joins source summaries with `;`
+-//!   within each hook-type clause, then joins clauses with `;` into one
+-//!   announce line with the path suffix at the end.
++//! - `run_hooks_background` (in `hooks.rs`) groups pipelines by display path;
++//!   for each group it joins source summaries with `;` within each hook-type
++//!   clause, then joins clauses with `;` into one announce line with the path
++//!   suffix at the end.
+ 
+ use color_print::cformat;
+ 
+```
+
+**File**: `src/commands/hooks.rs` (modified, +42/-25)
+```diff
+@@ -232,11 +232,12 @@ fn no_matching_commands_error(
+ 
+ /// Coordinates background hook announcements within a single `wt` command.
+ ///
+-/// The principle: one `◎ Running …` line per command. Sites that would have
+-/// individually spawned background hooks instead `register` their pipelines
+-/// here, and the command `flush`es once after all phases have been resolved —
+-/// every registered hook type ends up on the same combined announce line, in
+-/// registration order, with `;` between clauses (see module spec).
++/// The principle: one `◎ Running …` line per command and directory. Sites that
++/// would have individually spawned background hooks instead `register` their
++/// pipelines here, and the command `flush`es once after all phases have been
++/// resolved — every registered hook type sharing a display path ends up on the
++/// same combined announce line, in registration order, with `;` between
++/// clauses (see module spec).
+ ///
+ /// Just-in-time honesty: registration happens at each phase's normal moment,
+ /// so if an earlier phase fails (e.g. pre-merge errors before post-merge is
+@@ -383,11 +384,11 @@ impl Drop for HookAnnouncer<'_> {
+ /// `flush` lands here. The function stays separate to keep the announce/spawn
+ /// formatting isolated from the announcer's pending-list bookkeeping.
+ ///
+-/// Emits a single combined `Running ...` line covering every registered hook
+-/// type (see module-level grammar), with the path suffix at the end. Pipelines
+-/// may carry different worktrees (e.g., post-remove uses the removed branch
+-/// while post-switch uses the destination branch); the announce shares one
+-/// line because every bundled clause shares the same path.
++/// Emits one combined `Running ...` line per display path, covering every hook
++/// type registered with that path (see module-level grammar), with the path
++/// suffix at the end. Pipelines may carry different worktrees (e.g.,
++/// post-remove uses the removed branch while post-switch uses the destination
++/// branch) yet share one line when they share a display path.
+ ///
+ /// When `show_branch` is true, the announce includes the branch name for
+ /// disambiguation in batch contexts (e.g., prune removing multiple worktrees):
+@@ -409,16 +410,38 @@ fn run_hooks_background(
+         return Ok(());
+     }
+ 
++    // The `@ path` suffix covers the whole line, so pipelines announced
++    // together must share a display path. `wt merge --no-remove` registers
++    // `post-commit` (in the feature worktree, no path) beside `post-merge`
++    // (@ the target), so group by path and give each group its own line.
++    let mut groups: Vec<Vec<PendingPipeline>> = Vec::new();
++    for pipeline in pipelines {
++        match groups
++            .iter_mut()
++            .find(|g| g[0].display_path == pipeline.display_path)
++        {
++            Some(group) => group.push(pipeline),
++            None => groups.push(vec![pipeline]),
++        }
++    }
++
++    for group in groups {
++        announce_pipelines(&group, show_branch);
++        for pipeline in group {
++            spawn_hook_pipeline_quiet(repo, pipeline)?;
++        }
++    }
++
++    Ok(())
++}
++
++/// Print one combined `Running ...` line for pipelines sharing a display path.
++fn announce_pipelines(pipelines: &[PendingPipeline], show_branch: bool) {
+     // Merge per-source summaries by hook type so user+project for the same
+     // type render as one clause: `post-merge: sync, push (user); build (project)`.
+-    // Pull `display_path` off the first pipeline that has one — every hook
+-    // pipeline in this batch shares a path; the path slot is bundle-wide.
+-    let mut display_path: Option<&Path> = None;
++    let display_path = pipelines[0].display_path.as_deref();
+     let mut type_summaries: Vec<(HookType, Vec<String>)> = Vec::new();
+-    for pipeline in &pipelines {
+-        if display_path.is_none() {
+-            display_path = pipeline.display_path.as_deref();
+-        }
++    for pipeline in pipelines {
+         let summary = format_pipeline_summary(&pipeline.steps);
+         if let Some(entry) = type_summaries
+             .iter_mut()
+@@ -444,7 +467,7 @@ fn run_hooks_background(
+ 
+     if verbosity() >= 1 {
+         for (ht, _) in &type_summaries {
+-            print_background_variable_table(&pipelines, *ht);
++            print_background_variable_table(pipelines, *ht);
+         }
+     }
+     let suffix = branch_suffix.as_deref().unwrap_or("");
+@@ -461,12 +484,6 @@ fn run_hooks_background(
+         None => format!("Running {combined}"),
+     };
+     eprintln!("{}", progress_message(message));
+-
+-    for pipeline in pipelines {
+-        spawn_hook_pipeline_quiet(repo, pipeline)?;
+-    }
+-
+-    Ok(())
+ }
+ 
+ /// Report background hook pipelines dropped because this command removed the
+@@ -527,7 +544,7 @@ fn into_source_groups(flat: Vec<SourcedStep>) -> Vec<Vec<SourcedStep>> {
+ ///
+ /// Background hooks don't flow through `announce_command` (which prints the
+ /// table in the foreground path), so
+```
+
+**File**: `tests/integration_tests/user_hooks.rs` (modified, +28/-0)
+```diff
+@@ -1287,6 +1287,34 @@ mark = "git rev-parse --show-toplevel > {{ repo_path }}/post-commit-toplevel.txt
      }
  }
  
--fn ensure_path_within_root(path: &Path, root: &Path) -> anyhow::Result<()> {
-+/// Fails when `path`, with its existing ancestors' symlinks resolved, lies
-+/// outside `root`: a symlinked directory in a destination worktree must not
-+/// carry a copy or move out of it.
-+pub fn ensure_path_within_root(path: &Path, root: &Path) -> anyhow::Result<()> {
-     let canonical_root = canonicalize_with_parents(root);
-     let canonical_path = canonicalize_with_parents(path);
- 
-     anyhow::ensure!(
-         canonical_path.starts_with(&canonical_root),
--        "refusing to copy outside destination worktree: {} resolves outside {}",
-+        "refusing to write outside destination worktree: {} resolves outside {}",
-         format_path_for_display(path),
-         format_path_for_display(root)
-     );
++/// `wt merge --no-remove` registers `post-commit` in the feature worktree and
++/// `post-merge` in the target. The announce's `@ <path>` suffix covers the
++/// whole line, so the two get separate lines rather than one line implying
++/// `post-commit` ran in the target.
++#[rstest]
++fn test_merge_announces_post_commit_and_post_merge_by_directory(mut repo: TestRepo) {
++    let feature_wt =
++        repo.add_worktree_with_commit("feature", "feature.txt", "feature", "Add feature");
++    // Uncommitted work so the merge squashes, which is what fires post-commit.
++    fs::write(feature_wt.join("dirty.txt"), "uncommitted").unwrap();
++
++    repo.write_test_config(
++        r#"[post-commit]
++mark = "echo commit"
++
++[post-merge]
++sync = "echo merge"
++"#,
++    );
++
++    snapshot_merge(
++        "merge_announces_post_commit_and_post_merge_by_directory",
++        &repo,
++        &["main", "--yes", "--no-remove"],
++        Some(&feature_wt),
++    );
++}
++
+ /// When post-merge template prep errors after post-remove + post-switch are
+ /// already registered, the announcer's `Drop` impl flushes the pending hooks
+ /// so they still spawn — preserving the prior fire-and-forget behavior in
 ```
 
-**File**: `src/git/error.rs` (modified, +0/-12)
+**File**: `tests/snapshots/integration__integration_tests__user_hooks__merge_announces_post_commit_and_post_merge_by_directory.snap` (added, +84/-0)
 ```diff
-@@ -647,9 +647,6 @@ pub enum GitError {
-     ParseError {
-         message: String,
-     },
--    WorktreeIncludeParseError {
--        error: String,
--    },
-     LlmCommandFailed {
-         command: String,
-         error: String,
-@@ -1023,10 +1020,6 @@ impl GitError {
- 
-             GitError::ParseError { message } => message.clone(),
- 
--            GitError::WorktreeIncludeParseError { .. } => {
--                cformat!("Error parsing <bold>.worktreeinclude</>")
--            }
--
-             GitError::WorktreeNotFound { branch } => {
-                 cformat!("Branch <bold>{branch}</> has no worktree")
-             }
-@@ -1652,11 +1645,6 @@ impl GitError {
-                 write!(f, "{}", error_message(&title))
-             }
- 
--            GitError::WorktreeIncludeParseError { error } => {
--                let title = self.title();
--                write!(f, "{}", format_error_block(error_message(&title), error))
--            }
--
-             GitError::WorktreeNotFound { branch } => {
-                 let title = self.title();
-                 let switch_cmd = suggest_command("switch", &[branch], &[]);
+@@ -0,0 +1,84 @@
++---
++source: tests/integration_tests/user_hooks.rs
++info:
++  program: wt
++  args:
++    - merge
++    - main
++    - "--yes"
++    - "--no-remove"
++  env:
++    APPDATA: "[TEST_CONFIG_HOME]"
++    CLAUDE_CONFIG_DIR: "[TEST_CLAUDE_CONFIG]"
++    CLICOLOR_FORCE: "1"
++    COLUMNS: "500"
++    GIT_ALLOW_PROTOCOL: file
++    GIT_AUTHOR_DATE: "2025-01-01T00:00:00Z"
++    GIT_AUTHOR_EMAIL: test@example.com
++    GIT_AUTHOR_NAME: Test User
++    GIT_COMMITTER_DATE: "2025-01-01T00:00:00Z"
++    GIT_COMMITTER_EMAIL: test@example.com
++    GIT_COMMITTER_NAME: Test User
++    GIT_CONFIG_COUNT: "2"
++    GIT_CONFIG_GLOBAL: /nonexistent/wt/gitconfig
++    GIT_CONFIG_KEY_0: user.useConfigOnly
++    GIT_CONFIG_KEY_1: rerere.enabled
++    GIT_CONFIG_SYSTEM: /nonexistent/wt/gitconfig
++    GIT_CONFIG_VALUE_0: "true"
++    GIT_CONFIG_VALUE_1: "false"
++    GIT_TERMINAL_PROMPT: "0"
++    HOME: "[TEST_HOME]"
++    LANG: C
++    LC_ALL: C
++    LLVM_PROFILE_FILE: "[LLVM_PROFILE_FILE]"
++    OPENCODE_CONFIG_DIR: "[TEST_OPENCODE_CONFIG]"
++    PATH: "[PATH]"
++    TERM: alacritty
++    USERPROFILE: "[TEST_HOME]"
++    WORKTRUNK_APPROVALS_PATH: "[TEST_APPROVALS]"
++    WORKTRUNK_CONFIG_PATH: "[TEST_CONFIG]"
++    WORKTRUNK_SYSTEM_CONFIG_PATH: "[TEST_SYSTEM_CONFIG]"
++    WORKTRUNK_TEST_BASH_INSTALLED: "0"
++    WORKTRUNK_TEST_CLAUDE_INSTALLED: "0"
++    WORKTRUNK_TEST_CODEX_INSTALLED: "0"
++    WORKTRUNK_TEST_DELAYED_STREAM_MS: "-1"
++    WORKTRUNK_TEST_EPOCH: "1735776000"
++    WORKTRUNK_TEST_FISH_INSTALLED: "0"
++    WORKTRUNK_TEST_GEMINI_INSTALLED: "0"
++    WORKTRUNK_TEST_MOCK_CONFIG_DIR: "[TEST_MOCK_CONFIG]"
++    WORKTRUNK_TEST_NUSHELL_ENV: "0"
++    WORKTRUNK_TEST_OPENCODE_INSTALLED: "0"
++    WORKTRUNK_TEST_PARENT_SHELL: ""
++    WORKTRUNK_TEST_POWERSHELL_ENV: "0"
++    WORKTRUNK_TEST_POWERSHELL_INSTALLED: "0"
++    WORKTRUNK_TEST_PROBE_TIMEOUT_MS: "60000"
++    WORKTRUNK_TEST_SKIP_URL_HEALTH_CHECK: "1"
++    WORKTRUNK_TEST_ZSH_INSTALLED: "0"
++    XDG_CONFIG_HOME: "[TEST_CONFIG_HOME]"
++---
++success: true
++exit_code: 0
++----- stdout -----
++
++----- stderr -----
++[33m▲[39m [33mAuto-staging 1 untracked path:[39m
++[107m [0m dirty.txt
++[36m◎[39m [36mSquashing 1 commit & working tree changes into a single commit [90m(2 files, [32m+2[39m[39m[90m)[39m...[39m
++[2m↳[22m [2mBackup created @ [4mrefs/wt-backup/feature[24m (874aee4)[22m
++[2m↳[22m [2mTo recover in a new worktree, run [4mwt switch --create --base 874aee4a329ef4a3a76b091e5d04f2b9ee5f33a5 --no-hooks recovery/874aee4[24m[22m
++[36m◎[39m [36mGenerating squash commit message...[39m
++[2m↳[22m [2mUsing fallback commit message. For LLM setup guide, run [4mwt config --help[24m[22m
++[107m [0m [1mSquash commits from feature[22m
++[107m [0m 
++[107m [0m Combined commits:
++[107m [0m - Add feature
++[32m✓[39m [32mSquashed @ [HASH][39m
++[36m◎[39m [36mMerging 1 commit to [1mmain[22m @ [2m[HASH][22m (no rebase needed)[39m
++[107m [0m * [33m[HASH][m Squash commits from feature
++[107m [0m  dirty.txt   | 1 [32m+[m
++[107m [0m  feature.txt | 1 [32m+[m
++[107m [0m  2 files changed, 2 insertions(+)
++[32m✓[39m [32mMerged to [1mmain[22m [90m(1 commit, 2 files, [32m+2[39m[39m[90m)[39m[39m
++[2m○[22m Worktree preserved (--no-remove)
++[36m◎[39m [36mRunning post-commit: [1mmark[22m (user)[39m
++[36m◎[39m [36mRunning post-merge: [1msync[22m (user) @ [1m_REPO_[22m[39m
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4775** (2026-11-12): Accept int/float filters on vars and git.branch values in custom-column validation (@worktrunk-bot)
-- **PR #4772** (2026-11-12): refactor: replace expect() with ? when encoding forwarded hook and alias args (@worktrunk-bot)
-- **PR #4771** (2026-11-12): docs: fix stale comments in remove, hook_commands, and trace parsing (@worktrunk-bot)
-- **PR #4770** (2026-11-11): docs(list): explain shortened counts (C, K, ∞) (@worktrunk-bot)
-- **PR #4768** (2026-11-11): test: make three picker/list assertions able to fail, and fix two stale comments (@worktrunk-bot)
-- **PR #4767** (2026-11-11): fix(config): point system-config deprecation hints at the file, not wt config update (@worktrunk-bot)
+- **PR #4789** (2026-11-14): Repair macOS release runners and recover existing tags (@max-sixty)
+- **PR #4784** (2026-11-14): skills(running-tend): don't list intended behavior as a bug in the digest (@max-sixty)
+- **PR #4783** (2026-11-14): chore: split LICENSE into LICENSE-MIT and LICENSE-APACHE (@max-sixty)
+- **PR #4782** (2026-11-14): docs: correct stale code comments in hooks, list, picker, and output (@worktrunk-bot)
+- **PR #4781** (2026-11-14): fix(hooks): announce background hooks per directory (@worktrunk-bot)
+- **PR #4780** (2026-11-13): fix(config state): print table cells literally instead of as markdown (@worktrunk-bot)
 
 ---
 
@@ -2413,34 +2535,49 @@ selects only outside such directories. Claude Code, wh
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: fix stale comments in remove, hook_commands, and trace parsing (#4771)
+## X. state): stop a branch's vars from including a dotted branch's vars
 
 **RULE**:
-When implementing operations in `src/commands/hook_commands.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/git/repository/config.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1e4e6dda`: docs: fix stale comments in remove, hook_commands, and trace parsing (#4771). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `da09f170`: state): stop a branch's vars from including a dotted branch's vars. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/commands/hook_commands.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/git/repository/config.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        // Commit hooks: target = default branch. Only this arm needs it, and
-        // Merge hooks: target = current branch
-    // Empty sequence when nothing was forwarded.
+        // Variable names can't contain a dot, so anchoring past one keeps
+        // out the vars of a branch named `{branch}.vars.<x>`.
+        let pattern = format!(r"^worktrunk\.state\.{escaped}\.vars\.[^.]+$");
+    /// A branch's vars exclude those of a branch whose name extends it with
+    /// `.vars.<x>`: `worktrunk.state.weird.vars.branch.vars.key` belongs to
+    /// `weird.vars.branch`, though it also starts with `weird`'s vars prefix.
+    #[test]
+    fn test_vars_entries_excludes_extended_branch_names() {
+        let test = TestRepo::with_initial_commit();
+        let repo = Repository::at(test.root_path()).unwrap();
+
+        repo.set_config("worktrunk.state.weird.vars.own", "1")
+            .unwrap();
+        repo.set_config("worktrunk.state.weird.vars.branch.vars.key", "v")
+            .unwrap();
+
+        let weird = repo.vars_entries("weird");
+        assert_eq!(weird.len(), 1, "{weird:?}");
+        assert_eq!(weird["own"], "1");
+        assert_eq!(repo.vars_entries("weird.vars.branch")["key"], "v");
+    }
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-        // Merge/commit hooks: target = merge target (default branch for commit,
-        // current for merge). Only this arm needs the default branch, and
-    // Forward positional CLI args as `{{ args }}` (empty sequence when
-    // nothing was forwarded). `expand_template` rehydrates this JSON into a
-    // `ShellArgs` sequence that renders space-joined, per-element escaped.
+// Induced defect failure mode:
+        let pattern = format!(r"^worktrunk\.state\.{escaped}\.vars\.");
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1e4e6dda` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `da09f170` are properly handled with clean fallback behavior.
