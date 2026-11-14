@@ -9703,3 +9703,5 @@
 | `CYCLE-20261114-LBH0` | `2026-11-14T02:06:21.780Z` | `goharbor/harbor` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8419` | Yes (`173d139b...`) |
 | `CYCLE-20261114-LFOP` | `2026-11-14T02:06:27.241Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8420` | Yes (`bf8378e7...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T02:06:55.661Z` | `hf-deepseek-ai-deepseek-v4-pro` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-53028CD5` [Domain D] | Yes (`41e1bc5a...`) |
+| `CYCLE-20261114-4ODG` | `2026-11-14T02:21:24.964Z` | `Tongyi-MAI/Z-Image-Turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md` | Yes (`a552e111...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T02:22:03.067Z` | `hf-tongyi-mai-z-image-turbo` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-38E3B6C2` [Domain D] | Yes (`a6103327...`) |

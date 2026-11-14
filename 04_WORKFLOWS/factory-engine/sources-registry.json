@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-14T02:06:30.158Z",
-    "lastVerified": "2026-11-14T02:06:30.158Z",
+    "lastChecked": "2026-11-14T02:21:35.723Z",
+    "lastVerified": "2026-11-14T02:21:35.723Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -151,12 +151,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "bitterbot-ai-bitterbot-desktop": {
-    "name": "Bitterbot-AI/bitterbot-desktop",
+    "name": "bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-14T00:48:50.323Z",
-    "lastVerified": "2026-11-14T00:48:50.323Z",
+    "lastChecked": "2026-11-14T02:21:35.712Z",
+    "lastVerified": "2026-11-14T02:21:35.712Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -165,7 +165,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "e4d179d3"
   },
   "sxyazi-yazi": {
     "name": "sxyazi/yazi",
@@ -1661,9 +1662,9 @@
   "go-kratos-kratos": {
     "name": "kratos",
     "officialUrl": "https://github.com/go-kratos/kratos",
-    "lastChecked": "2026-11-13T02:31:55.659Z",
+    "lastChecked": "2026-11-14T02:21:28.207Z",
     "revisionIdentifier": "dd0fb7df",
-    "lastVerified": "2026-11-13T02:31:55.659Z"
+    "lastVerified": "2026-11-14T02:21:28.207Z"
   },
   "lunasec-io-lunasec": {
     "name": "lunasec",
@@ -1843,12 +1844,12 @@
     "lastVerified": "2026-11-13T03:10:34.099Z"
   },
   "zama-ai-tfhe-rs": {
-    "name": "zama-ai/tfhe-rs",
+    "name": "tfhe-rs",
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-13T19:40:00.551Z",
-    "lastVerified": "2026-11-13T19:40:00.551Z",
+    "lastChecked": "2026-11-14T02:21:30.704Z",
+    "lastVerified": "2026-11-14T02:21:30.704Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
@@ -1857,7 +1858,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "b07e249c"
   },
   "memvid-memvid": {
     "name": "memvid",
@@ -3383,9 +3385,9 @@
   "leecade-react-native-swiper": {
     "name": "react-native-swiper",
     "officialUrl": "https://github.com/leecade/react-native-swiper",
-    "lastChecked": "2026-11-09T17:12:04.416Z",
+    "lastChecked": "2026-11-14T02:21:25.737Z",
     "revisionIdentifier": "98cc9060",
-    "lastVerified": "2026-11-09T17:12:04.416Z"
+    "lastVerified": "2026-11-14T02:21:25.737Z"
   },
   "taubyte-tau": {
     "name": "tau",
@@ -3596,9 +3598,9 @@
   "vearch-vearch": {
     "name": "vearch",
     "officialUrl": "https://github.com/vearch/vearch",
-    "lastChecked": "2026-11-13T01:14:14.917Z",
+    "lastChecked": "2026-11-14T02:21:33.206Z",
     "revisionIdentifier": "bae78b18",
-    "lastVerified": "2026-11-13T01:14:14.917Z"
+    "lastVerified": "2026-11-14T02:21:33.206Z"
   },
   "imsnif-bandwhich": {
     "name": "bandwhich",
@@ -5060,13 +5062,13 @@
     "officialUrl": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-08T22:52:30.060Z",
-    "lastVerified": "2026-11-08T22:52:30.060Z",
+    "lastChecked": "2026-11-14T02:21:23.601Z",
+    "lastVerified": "2026-11-14T02:21:23.601Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
-    "contentHash": "0e9f636010421662ec55c9f0956ec02f67bc388a32836c266fb99e94305ad503",
-    "promotedRulesCount": 2,
+    "contentHash": "a552e111f94720176bbfa8bbcb80b6ce17ce4df60ed2115bb44c589bd34424b8",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -7022,9 +7024,9 @@
   "vercel-labs-opensrc": {
     "name": "opensrc",
     "officialUrl": "https://github.com/vercel-labs/opensrc",
-    "lastChecked": "2026-11-12T14:44:23.739Z",
+    "lastChecked": "2026-11-14T02:21:20.654Z",
     "revisionIdentifier": "b51de608",
-    "lastVerified": "2026-11-12T14:44:23.739Z"
+    "lastVerified": "2026-11-14T02:21:20.654Z"
   },
   "hf-qwen-qwen3-8b": {
     "name": "Qwen/Qwen3-8B",

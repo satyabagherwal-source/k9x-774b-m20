@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T02:06:56.223Z",
+  "last_updated": "2026-11-14T02:22:04.287Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4833,14 +4833,14 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-ZHXB",
+      "id": "CD-5IAM",
       "directive_title": "editor): add scoped ios account deletion",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-ZHXB-editor-add-scoped-ios-account-deletion.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-5IAM-editor-add-scoped-ios-account-deletion.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-13",
+      "date_staged": "2026-11-14",
       "domain_letter": "H"
     },
     {
@@ -10260,14 +10260,14 @@
       "staged_date": "2026-11-13"
     },
     {
-      "id": "CD-OI7A",
+      "id": "CD-5IPF",
       "directive_title": "puppet: Fix PostgreSQL failing to start on new installs.",
       "source_repo": "zulip-zulip-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-OI7A-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-5IPF-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-13",
+      "date_staged": "2026-11-14",
       "domain_letter": "G"
     },
     {
@@ -11177,6 +11177,24 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-14",
       "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-A5EF5F",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-A5EF5F-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-14"
+    },
+    {
+      "id": "CD-REV-869023",
+      "directive_title": "puppet: Fix PostgreSQL failing to start on new installs.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-869023-puppet-fix-postgresql-failing-to-start-o.md",
+      "staged_date": "2026-11-14"
     }
   ]
 }

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-14T02:06:56.431Z",
-  "total_verified_learnings": 8452,
+  "last_updated": "2026-11-14T02:22:04.492Z",
+  "total_verified_learnings": 8453,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 16901,
+  "total_items": 16904,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112155,9 +112155,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "b436a8a2c4b4d668347d23dac11b889fcb6833852f66702d3ea5b0574d4fb9f9",
+      "content_hash": "1d0a605bcecca308a118d500359cd87f75466e7837b291549c62d6cf50963463",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T21:28:54.454Z"
+      "persisted_at": "2026-11-14T02:22:04.383Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112167,9 +112167,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "77f2f2ef0ee687d7ea5082f07fa3ce27f24c8e5731696cf8ab9f661af645742b",
+      "content_hash": "4db40cfe5c26bc9e6381fc963e99067eb90afa0463b8da14b3f12162786c2d6d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T21:28:54.593Z"
+      "persisted_at": "2026-11-14T02:22:04.492Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -113663,13 +113663,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-ZHXB-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-5IAM-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "72641450b6672bdf2801b7c1d1bfcdf396ebb884e1205ec0d7a59a35b8f52341",
+      "content_hash": "2ef5d313d7aeeb023366f52586b59aad5d667ff16878ea205f1eb86905fec207",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T23:29:25.643Z"
+      "persisted_at": "2026-11-14T02:22:03.755Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113679,9 +113679,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "fdb13e2e9d1659d5967802c69f73f1840c82cbbb40bde4270919b3fcd4edfa71",
+      "content_hash": "8fab2a14dc07901ed35466967f6dd08b817b26faa685b5825b0012cbe759e622",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T23:29:25.740Z"
+      "persisted_at": "2026-11-14T02:22:03.852Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113691,9 +113691,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "062ff9727d1bf137265f6277530b01f101549d8bda143c2bc96b069519676fda",
+      "content_hash": "0cb8a97dadfc2d0fd98515846d3f401c101d180465340a68e8a48770978939d5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T23:29:25.849Z"
+      "persisted_at": "2026-11-14T02:22:03.963Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -214751,13 +214751,13 @@
       "item_id": "candidate_directive-puppet-fix-postgresql-failing-to-start-on-new-installs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-OI7A-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-5IPF-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
       "title": "puppet: Fix PostgreSQL failing to start on new installs.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "7d8112c31cbfecfdf4bbafb8e7d452646e3ed627f0fcf086ee3102eefb440846",
+      "content_hash": "8f8f7b6f5b5188c8e422192bfb3d2c4e34f7aa3a010a5c6040f5096b8fe69bcb",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T21:28:54.321Z"
+      "persisted_at": "2026-11-14T02:22:04.287Z"
     },
     "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
@@ -220227,6 +220227,57 @@
       "content_hash": "02725bf2143c6e3b53806fd7ce04ef7ece4fe667a76671a6d42f88bd7e6b5497",
       "domain_letter": "K",
       "persisted_at": "2026-11-14T02:06:56.431Z"
+    },
+    "learn-huggingface-tongyi-mai-z-image-turbo": {
+      "learning_id": "learn-huggingface-tongyi-mai-z-image-turbo",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Tongyi-MAI/Z-Image-Turbo",
+      "repository": "Tongyi-MAI/Z-Image-Turbo",
+      "slug": "hf-tongyi-mai-z-image-turbo",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo",
+      "source_version": "hf-tongyi-mai-z-image-turbo",
+      "content_hash": "a552e111f94720176bbfa8bbcb80b6ce17ce4df60ed2115bb44c589bd34424b8",
+      "dossier_path": "07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T02:21:24.797Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-tongyi-mai-z-image-turbo-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-tongyi-mai-z-image-turbo-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-tongyi-mai-z-image-turbo-research-knowledge-intelligence-tongyi-mai-z-image-t.md",
+      "title": "Research & Knowledge Intelligence: Tongyi-MAI/Z-Image-Turbo Core Invariants",
+      "repository": "Tongyi-MAI/Z-Image-Turbo",
+      "source_version": "hf-tongyi-mai-z-image-turbo",
+      "content_hash": "009dd16c835799b810ab008da34e4a20168b0be4ccbb0d091e2bfa8d352d16ad",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T02:21:25.126Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-tongyi-mai-z-image-turbo-learnings-core-invar": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-tongyi-mai-z-image-turbo-learnings-core-invar",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-tongyi-mai-z-image-turbo-learnings-research-knowledge-intelligence-hf-tongyi-.md",
+      "title": "Research & Knowledge Intelligence: hf-tongyi-mai-z-image-turbo-learnings Core Invariants",
+      "repository": "hf-tongyi-mai-z-image-turbo-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2d84a699c24c57019aa296c5783cfb0ff95a5677da9164ef2c49d28685e97f74",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T02:22:03.268Z"
     }
   },
   "ai-builder-brain": {

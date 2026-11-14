@@ -9736,3 +9736,5 @@ Every entry in this ledger must capture:
 | `learn-github-goharbor-harbor` | `https://github.com/goharbor/harbor` | `e7dbdea2` | Multi-dimensional audit evidence | 2026-11-14T02:06:21.783Z |
 | `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `9373aa70` | Multi-dimensional audit evidence | 2026-11-14T02:06:27.244Z |
 | `learn-dom-d-53028cd5` | `project://hf-deepseek-ai-deepseek-v4-pro` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md` | 2026-11-14T02:06:55.661Z |
+| `learn-huggingface-tongyi-mai-z-image-turbo` | `https://huggingface.co/Tongyi-MAI/Z-Image-Turbo` | `hf-tongyi-` | Multi-dimensional audit evidence | 2026-11-14T02:21:24.968Z |
+| `learn-dom-d-38e3b6c2` | `project://hf-tongyi-mai-z-image-turbo` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md` | 2026-11-14T02:22:03.067Z |

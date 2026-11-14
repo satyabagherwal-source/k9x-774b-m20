@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T02:06:56.328Z",
-  "total_records": 473,
+  "last_updated": "2026-11-14T02:22:04.383Z",
+  "total_records": 476,
   "domains": {
     "A": {
       "total": 5,
@@ -33,7 +33,7 @@
       ]
     },
     "D": {
-      "total": 240,
+      "total": 243,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -274,7 +274,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-8-flash-next-learnings-core-invari",
         "domain_intelligence-research-knowledge-intelligence-deepseek-ai-deepseek-v4-pro-core-invariants",
         "DOM-D-53028CD5",
-        "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v4-pro-learnings-core-in"
+        "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v4-pro-learnings-core-in",
+        "domain_intelligence-research-knowledge-intelligence-tongyi-mai-z-image-turbo-core-invariants",
+        "DOM-D-38E3B6C2",
+        "domain_intelligence-research-knowledge-intelligence-hf-tongyi-mai-z-image-turbo-learnings-core-invar"
       ]
     },
     "E": {
@@ -6288,8 +6291,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "b436a8a2c4b4d668347d23dac11b889fcb6833852f66702d3ea5b0574d4fb9f9",
-      "created_at": "2026-11-13T21:28:54.454Z"
+      "content_hash": "1d0a605bcecca308a118d500359cd87f75466e7837b291549c62d6cf50963463",
+      "created_at": "2026-11-14T02:22:04.383Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -7206,8 +7209,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "fdb13e2e9d1659d5967802c69f73f1840c82cbbb40bde4270919b3fcd4edfa71",
-      "created_at": "2026-11-13T23:29:25.740Z"
+      "content_hash": "8fab2a14dc07901ed35466967f6dd08b817b26faa685b5825b0012cbe759e622",
+      "created_at": "2026-11-14T02:22:03.852Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -10802,6 +10805,66 @@
       "repository": "goharbor-harbor-learnings",
       "content_hash": "8b751b47691a064f07ae0e9d3fa4afd35a2e83fd58fdeaac236eba875e46d84f",
       "created_at": "2026-11-14T02:06:56.328Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-tongyi-mai-z-image-turbo-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-tongyi-mai-z-image-turbo-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: Tongyi-MAI/Z-Image-Turbo Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-tongyi-mai-z-image-turbo-research-knowledge-intelligence-tongyi-mai-z-image-t.md",
+      "repository": "Tongyi-MAI/Z-Image-Turbo",
+      "content_hash": "009dd16c835799b810ab008da34e4a20168b0be4ccbb0d091e2bfa8d352d16ad",
+      "created_at": "2026-11-14T02:21:25.126Z"
+    },
+    "DOM-D-38E3B6C2": {
+      "record_id": "DOM-D-38E3B6C2",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Tongyi-MAI/Z-Image-Turbo",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/Tongyi-MAI/Z-Image-Turbo](https://huggingface.co/Tongyi-MAI/Z-Image-Turbo))  \n> **Source Version**: `hf-tongyi-ma`  \n> **License**: Open-Source  \n> *",
+      "content_hash": "a6103327b876f4824cf497ae53bb34b82f56e8a6bc92a997e0a0562ad1f94217",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md`  \n> **Source**: huggingface ([https://hugg -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md`  \n> **Source**: huggingface ([https://hugg",
+      "provenance": {
+        "source_uri": "project://hf-tongyi-mai-z-image-turbo/hf-tongyi-mai-z-image-turbo-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T02:21:35.811Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-tongyi-mai-z-image-turbo)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-tongyi-mai-z-image-turbo"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T02:22:03.056Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-tongyi-mai-z-image-turbo-learnings-core-invar": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-tongyi-mai-z-image-turbo-learnings-core-invar",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-tongyi-mai-z-image-turbo-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-tongyi-mai-z-image-turbo-learnings-research-knowledge-intelligence-hf-tongyi-.md",
+      "repository": "hf-tongyi-mai-z-image-turbo-learnings",
+      "content_hash": "2d84a699c24c57019aa296c5783cfb0ff95a5677da9164ef2c49d28685e97f74",
+      "created_at": "2026-11-14T02:22:03.268Z"
     }
   }
 }

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T02:06:55.672Z",
+  "updated_at": "2026-11-14T02:22:03.080Z",
   "stats": {
-    "total_discovered": 3063,
-    "approved_pending_harvest": 2862,
+    "total_discovered": 3064,
+    "approved_pending_harvest": 2863,
     "harvested_count": 0,
     "rejected_count": 201,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2859,
+      "COMMUNITY_AND_EXPERT": 2860,
       "OFFICIAL_DOCUMENTATION": 109,
       "STANDARDS_AND_SPECIFICATIONS": 81,
       "ENGINEERING_BLOGS": 1,
@@ -65999,6 +65999,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md",
         "fileName": "hf-deepseek-ai-deepseek-v4-pro-learnings.md"
+      }
+    },
+    "SRC-4542559F9F13": {
+      "id": "SRC-4542559F9F13",
+      "url": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo",
+      "title": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T02:22:03.080Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md",
+        "fileName": "hf-tongyi-mai-z-image-turbo-learnings.md"
       }
     }
   }

@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-14T02:06:55.660Z",
+  "updated_at": "2026-11-14T02:22:03.066Z",
   "statistics": {
-    "total_nodes": 145,
-    "total_edges": 78,
+    "total_nodes": 146,
+    "total_edges": 79,
     "domain_distribution": {
-      "D": 118,
+      "D": 119,
       "M": 1,
       "H": 11,
       "J": 4,
@@ -18,7 +18,7 @@
       "B": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 78
+      "CONSTRAINED_BY_ARCHITECTURE": 79
     }
   },
   "nodes": {
@@ -3244,6 +3244,29 @@
       ],
       "created_at": "2026-11-14T02:06:55.660Z",
       "updated_at": "2026-11-14T02:06:55.660Z"
+    },
+    "DOM-D-38E3B6C2": {
+      "id": "DOM-D-38E3B6C2",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): Tongyi-MAI/Z-Image-Turbo",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md`  \n> **Source**: huggingface ([https://hugg -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md`  \n> **Source**: huggingface ([https://hugg",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-tongyi-mai-z-image-turbo/hf-tongyi-mai-z-image-turbo-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T02:21:35.811Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-tongyi-mai-z-image-turbo)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-14T02:22:03.065Z",
+      "updated_at": "2026-11-14T02:22:03.065Z"
     }
   },
   "edges": [
@@ -4026,6 +4049,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-79605CEE [D] with Domain M",
       "created_at": "2026-11-14T01:49:12.905Z"
+    },
+    {
+      "id": "EDGE-7EC2D0BF64AE",
+      "sourceId": "DOM-D-38E3B6C2",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-38E3B6C2 [D] with Domain M",
+      "created_at": "2026-11-14T02:22:03.065Z"
     }
   ]
 }
