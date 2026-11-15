@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-15T06:37:31.051Z",
+  "updated_at": "2026-11-15T06:45:47.841Z",
   "statistics": {
-    "total_nodes": 243,
-    "total_edges": 135,
+    "total_nodes": 244,
+    "total_edges": 137,
     "domain_distribution": {
       "D": 192,
       "M": 1,
-      "H": 20,
+      "H": 21,
       "J": 9,
       "K": 10,
       "L": 3,
@@ -19,7 +19,7 @@
       "E": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 135
+      "CONSTRAINED_BY_ARCHITECTURE": 137
     }
   },
   "nodes": {
@@ -5458,6 +5458,30 @@
       ],
       "created_at": "2026-11-15T06:37:31.050Z",
       "updated_at": "2026-11-15T06:37:31.050Z"
+    },
+    "DOM-H-8C16206C": {
+      "id": "DOM-H-8C16206C",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): tencent/Hy-Memory-30B-A3B",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-tencent-hy-memory-30b-a3b-learnings.md`  \n> **Source**: huggingface ([https://hug -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-tencent-hy-memory-30b-a3b-learnings.md`  \n> **Source**: huggingface ([https://hug",
+      "confidence": 0.64,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-tencent-hy-memory-30b-a3b/hf-tencent-hy-memory-30b-a3b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T06:45:19.001Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-tencent-hy-memory-30b-a3b)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence",
+        "D",
+        "M"
+      ],
+      "created_at": "2026-11-15T06:45:47.841Z",
+      "updated_at": "2026-11-15T06:45:47.841Z"
     }
   },
   "edges": [
@@ -6810,6 +6834,26 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-1138A8F2 [D] with Domain M",
       "created_at": "2026-11-15T06:37:31.050Z"
+    },
+    {
+      "id": "EDGE-A92352815D25",
+      "sourceId": "DOM-H-8C16206C",
+      "targetId": "NODE-D-domain-bridge-d",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-H-8C16206C [H] with Domain D",
+      "created_at": "2026-11-15T06:45:47.841Z"
+    },
+    {
+      "id": "EDGE-76EFCED5B737",
+      "sourceId": "DOM-H-8C16206C",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-H-8C16206C [H] with Domain M",
+      "created_at": "2026-11-15T06:45:47.841Z"
     }
   ]
 }

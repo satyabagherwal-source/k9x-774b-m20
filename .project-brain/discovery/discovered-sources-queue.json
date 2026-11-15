@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T06:37:32.210Z",
+  "updated_at": "2026-11-15T06:45:49.233Z",
   "stats": {
-    "total_discovered": 3628,
-    "approved_pending_harvest": 3418,
+    "total_discovered": 3654,
+    "approved_pending_harvest": 3444,
     "harvested_count": 0,
     "rejected_count": 210,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3398,
+      "COMMUNITY_AND_EXPERT": 3424,
       "OFFICIAL_DOCUMENTATION": 125,
       "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
@@ -78367,6 +78367,578 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
         "fileName": "t8y2-dbx-learnings.md"
+      }
+    },
+    "SRC-12B3F8153EE1": {
+      "id": "SRC-12B3F8153EE1",
+      "url": "https://huggingface.co/tencent/Hy-Memory-30B-A3B",
+      "title": "https://huggingface.co/tencent/Hy-Memory-30B-A3B",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T06:45:47.856Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-tencent-hy-memory-30b-a3b-learnings.md",
+        "fileName": "hf-tencent-hy-memory-30b-a3b-learnings.md"
+      }
+    },
+    "SRC-57FE63CEA962": {
+      "id": "SRC-57FE63CEA962",
+      "url": "https://github.com/pyo3/maturin",
+      "title": "https://github.com/pyo3/maturin",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T06:45:48.273Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
+        "fileName": "mitmproxy-mitmproxy-learnings.md"
+      }
+    },
+    "SRC-3668CFE86F06": {
+      "id": "SRC-3668CFE86F06",
+      "url": "https://github.com/pyo3/maturin/releases",
+      "title": "https://github.com/pyo3/maturin/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T06:45:48.299Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
+        "fileName": "mitmproxy-mitmproxy-learnings.md"
+      }
+    },
+    "SRC-55B48C4D1997": {
+      "id": "SRC-55B48C4D1997",
+      "url": "https://github.com/msimacek",
+      "title": "https://github.com/msimacek",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T06:45:48.335Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
+        "fileName": "mitmproxy-mitmproxy-learnings.md"
+      }
+    },
+    "SRC-FA3F575C908C": {
+      "id": "SRC-FA3F575C908C",
+      "url": "https://redirect.github.com/PyO3/maturin/pull/3297",
+      "title": "https://redirect.github.com/PyO3/maturin/pull/3297",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T06:45:48.361Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
+        "fileName": "mitmproxy-mitmproxy-learnings.md"
+      }
+    },
+    "SRC-C69455529AED": {
+      "id": "SRC-C69455529AED",
+      "url": "https://github.com/davidhewitt",
+      "title": "https://github.com/davidhewitt",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T06:45:48.385Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
+        "fileName": "mitmproxy-mitmproxy-learnings.md"
+      }
+    },
+    "SRC-22F8007AA608": {
+      "id": "SRC-22F8007AA608",
+      "url": "https://redirect.github.com/PyO3/maturin/pull/3299",
+      "title": "https://redirect.github.com/PyO3/maturin/pull/3299",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T06:45:48.409Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
+        "fileName": "mitmproxy-mitmproxy-learnings.md"
+      }
+    },
+    "SRC-53887B3DDB10": {
+      "id": "SRC-53887B3DDB10",
+      "url": "https://github.com/pre-commit-ci",
+      "title": "https://github.com/pre-commit-ci",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T06:45:48.446Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
+        "fileName": "mitmproxy-mitmproxy-learnings.md"
+      }
+    },
+    "SRC-79C12C1093D8": {
+      "id": "SRC-79C12C1093D8",
+      "url": "https://redirect.github.com/PyO3/maturin/pull/3295",
+      "title": "https://redirect.github.com/PyO3/maturin/pull/3295",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T06:45:48.471Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
+        "fileName": "mitmproxy-mitmproxy-learnings.md"
+      }
+    },
+    "SRC-2D126D38191A": {
+      "id": "SRC-2D126D38191A",
+      "url": "https://github.com/Udonburo",
+      "title": "https://github.com/Udonburo",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T06:45:48.643Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
+        "fileName": "mitmproxy-mitmproxy-learnings.md"
+      }
+    },
+    "SRC-CB305FF05857": {
+      "id": "SRC-CB305FF05857",
+      "url": "https://redirect.github.com/PyO3/maturin/pull/3298",
+      "title": "https://redirect.github.com/PyO3/maturin/pull/3298",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T06:45:48.668Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
+        "fileName": "mitmproxy-mitmproxy-learnings.md"
+      }
+    },
+    "SRC-189E50B586A9": {
+      "id": "SRC-189E50B586A9",
+      "url": "https://redirect.github.com/PyO3/maturin/pull/3303",
+      "title": "https://redirect.github.com/PyO3/maturin/pull/3303",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T06:45:48.739Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
+        "fileName": "mitmproxy-mitmproxy-learnings.md"
+      }
+    },
+    "SRC-C023D8504BD1": {
+      "id": "SRC-C023D8504BD1",
+      "url": "https://github.com/devtechedge",
+      "title": "https://github.com/devtechedge",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T06:45:48.765Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
+        "fileName": "mitmproxy-mitmproxy-learnings.md"
+      }
+    },
+    "SRC-0CEF5E3BCE8F": {
+      "id": "SRC-0CEF5E3BCE8F",
+      "url": "https://files.pythonhosted.org/packages/ac/c0/1dcc17036fa58aae33aa3878e386dd55b88955e882ef794075ac98894da6/mitmproxy_linux-0.12.15.tar.gz",
+      "title": "https://files.pythonhosted.org/packages/ac/c0/1dcc17036fa58aae33aa3878e386dd55b88955e882ef794075ac98894da6/mitmproxy_linux-0.12.15.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T06:45:48.890Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
+        "fileName": "mitmproxy-mitmproxy-learnings.md"
+      }
+    },
+    "SRC-F5FEECE5FC93": {
+      "id": "SRC-F5FEECE5FC93",
+      "url": "https://files.pythonhosted.org/packages/97/26/1ecf0cb64ab46c4d04a06f4300b79d4557321ded7317f290652e76e3a8a8/mitmproxy_linux-0.12.16.tar.gz",
+      "title": "https://files.pythonhosted.org/packages/97/26/1ecf0cb64ab46c4d04a06f4300b79d4557321ded7317f290652e76e3a8a8/mitmproxy_linux-0.12.16.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T06:45:48.915Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
+        "fileName": "mitmproxy-mitmproxy-learnings.md"
+      }
+    },
+    "SRC-D1B0AFB4FD37": {
+      "id": "SRC-D1B0AFB4FD37",
+      "url": "https://files.pythonhosted.org/packages/62/31/538d49c2e4943fac02ae154967b7ed21a952c7650e5835e60e41ac69bab4/mitmproxy_linux-0.12.15-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl",
+      "title": "https://files.pythonhosted.org/packages/62/31/538d49c2e4943fac02ae154967b7ed21a952c7650e5835e60e41ac69bab4/mitmproxy_linux-0.12.15-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T06:45:48.952Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
+        "fileName": "mitmproxy-mitmproxy-learnings.md"
+      }
+    },
+    "SRC-117DA20C7D72": {
+      "id": "SRC-117DA20C7D72",
+      "url": "https://files.pythonhosted.org/packages/fa/ef/32bf79a030d7d0775c31d0c866d68030da386d738be284e8527c0ffa230e/mitmproxy_linux-0.12.15-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "title": "https://files.pythonhosted.org/packages/fa/ef/32bf79a030d7d0775c31d0c866d68030da386d738be284e8527c0ffa230e/mitmproxy_linux-0.12.15-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T06:45:48.977Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
+        "fileName": "mitmproxy-mitmproxy-learnings.md"
+      }
+    },
+    "SRC-CC0292D0D54F": {
+      "id": "SRC-CC0292D0D54F",
+      "url": "https://files.pythonhosted.org/packages/df/f8/27fd58f3488f24c653f00bb34411bfe2633cd1603eddb0d58c79a9b4aa1a/mitmproxy_linux-0.12.16-py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl",
+      "title": "https://files.pythonhosted.org/packages/df/f8/27fd58f3488f24c653f00bb34411bfe2633cd1603eddb0d58c79a9b4aa1a/mitmproxy_linux-0.12.16-py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T06:45:49.002Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
+        "fileName": "mitmproxy-mitmproxy-learnings.md"
+      }
+    },
+    "SRC-7ECD9B94512F": {
+      "id": "SRC-7ECD9B94512F",
+      "url": "https://files.pythonhosted.org/packages/f2/b2/90837d64dec0aad3483edb0977d4792acf111047415c9dc4e5ed008fc7ff/mitmproxy_linux-0.12.16-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+      "title": "https://files.pythonhosted.org/packages/f2/b2/90837d64dec0aad3483edb0977d4792acf111047415c9dc4e5ed008fc7ff/mitmproxy_linux-0.12.16-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T06:45:49.039Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
+        "fileName": "mitmproxy-mitmproxy-learnings.md"
+      }
+    },
+    "SRC-7281238D30C1": {
+      "id": "SRC-7281238D30C1",
+      "url": "https://files.pythonhosted.org/packages/63/98/ce0d7feb45bacd086ac387d97b6b7725b5b5a0edf84283fbeebdd3da85e6/mitmproxy_macos-0.12.15-py3-none-any.whl",
+      "title": "https://files.pythonhosted.org/packages/63/98/ce0d7feb45bacd086ac387d97b6b7725b5b5a0edf84283fbeebdd3da85e6/mitmproxy_macos-0.12.15-py3-none-any.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T06:45:49.064Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
+        "fileName": "mitmproxy-mitmproxy-learnings.md"
+      }
+    },
+    "SRC-20141FD7E037": {
+      "id": "SRC-20141FD7E037",
+      "url": "https://files.pythonhosted.org/packages/7f/57/fecefcff11ea01f31b4cfcae3a2b7862d8a6cbf9a93b8f91bc6bbea535bc/mitmproxy_macos-0.12.16-py3-none-any.whl",
+      "title": "https://files.pythonhosted.org/packages/7f/57/fecefcff11ea01f31b4cfcae3a2b7862d8a6cbf9a93b8f91bc6bbea535bc/mitmproxy_macos-0.12.16-py3-none-any.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T06:45:49.089Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
+        "fileName": "mitmproxy-mitmproxy-learnings.md"
+      }
+    },
+    "SRC-1F1A5C510CA0": {
+      "id": "SRC-1F1A5C510CA0",
+      "url": "https://files.pythonhosted.org/packages/21/18/0882ae668dbba421194e28aa68b35a795dc830ebc1cea4611d3cb38143ca/mitmproxy_rs-0.12.15.tar.gz",
+      "title": "https://files.pythonhosted.org/packages/21/18/0882ae668dbba421194e28aa68b35a795dc830ebc1cea4611d3cb38143ca/mitmproxy_rs-0.12.15.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T06:45:49.113Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
+        "fileName": "mitmproxy-mitmproxy-learnings.md"
+      }
+    },
+    "SRC-74B8D9E5932A": {
+      "id": "SRC-74B8D9E5932A",
+      "url": "https://files.pythonhosted.org/packages/68/97/28e88c4f4c2bc4cdc22696838de1c056d3834e69fa7e071fb60edd22bd7e/mitmproxy_rs-0.12.16.tar.gz",
+      "title": "https://files.pythonhosted.org/packages/68/97/28e88c4f4c2bc4cdc22696838de1c056d3834e69fa7e071fb60edd22bd7e/mitmproxy_rs-0.12.16.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T06:45:49.151Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
+        "fileName": "mitmproxy-mitmproxy-learnings.md"
+      }
+    },
+    "SRC-6B8F0F4815A6": {
+      "id": "SRC-6B8F0F4815A6",
+      "url": "https://files.pythonhosted.org/packages/0e/ac/8e208fd35bf9d7349506ceb7aca84ee892bc298bebc567703fada8f5d558/mitmproxy_rs-0.12.15-cp312-abi3-macosx_10_12_x86_64.macosx_11_0_arm64.macosx_10_12_universal2.whl",
+      "title": "https://files.pythonhosted.org/packages/0e/ac/8e208fd35bf9d7349506ceb7aca84ee892bc298bebc567703fada8f5d558/mitmproxy_rs-0.12.15-cp312-abi3-macosx_10_12_x86_64.macosx_11_0_arm64.macosx_10_12_universal2.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T06:45:49.176Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
+        "fileName": "mitmproxy-mitmproxy-learnings.md"
+      }
+    },
+    "SRC-E0A5979C45FB": {
+      "id": "SRC-E0A5979C45FB",
+      "url": "https://files.pythonhosted.org/packages/ad/a6/29720f59f99908ffe5d0f67a0097ed9b1b8c059c55173a8d02bba4630e38/mitmproxy_rs-0.12.15-cp312-abi3-manylinux_2_17_aarch64.many",
+      "title": "https://files.pythonhosted.org/packages/ad/a6/29720f59f99908ffe5d0f67a0097ed9b1b8c059c55173a8d02bba4630e38/mitmproxy_rs-0.12.15-cp312-abi3-manylinux_2_17_aarch64.many",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T06:45:49.201Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
+        "fileName": "mitmproxy-mitmproxy-learnings.md"
+      }
+    },
+    "SRC-C7F6E02AF2B6": {
+      "id": "SRC-C7F6E02AF2B6",
+      "url": "https://github.com/mitmproxy/mitmproxy/pull/8577",
+      "title": "https://github.com/mitmproxy/mitmproxy/pull/8577",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T06:45:49.233Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
+        "fileName": "mitmproxy-mitmproxy-learnings.md"
       }
     }
   }

@@ -10048,3 +10048,6 @@
 | `CYCLE-20261115-P15R` | `2026-11-15T06:36:51.615Z` | `k3s-io/k3s` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8583` | Yes (`a704822c...`) |
 | `CYCLE-20261115-P5YI` | `2026-11-15T06:36:57.834Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8584` | Yes (`e1ffaaa2...`) |
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T06:37:31.052Z` | `hf-datalab-to-indra-ocr` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-1138A8F2` [Domain D] | Yes (`57c74263...`) |
+| `CYCLE-20261115-ZKVV` | `2026-11-15T06:45:03.739Z` | `tencent/Hy-Memory-30B-A3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tencent-hy-memory-30b-a3b-learnings.md` | Yes (`950c357f...`) |
+| `CYCLE-20261115-ZU8X` | `2026-11-15T06:45:15.873Z` | `mitmproxy/mitmproxy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8585` | Yes (`9db5b8b6...`) |
+| `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T06:45:47.842Z` | `hf-tencent-hy-memory-30b-a3b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-8C16206C` [Domain H] | Yes (`ff4f8ada...`) |

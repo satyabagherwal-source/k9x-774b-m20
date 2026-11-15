@@ -1745,8 +1745,8 @@
     "sourceUrl": "https://huggingface.co/tencent/Hy-Memory-30B-A3B",
     "sourceVersion": "hf-tencent-hy-memory-30b-a3b",
     "license": "Open-Source",
-    "contentHash": "d1d704ec75774467cf0d0e46085efb5a1b707adce97d481f1bc1372ca0857fd7",
-    "lastHarvestedAt": "2026-11-09T17:00:00.977Z",
+    "contentHash": "950c357f2c1b81bf1c7540611e38f857c390c18f1b8bc055c2530618621682c7",
+    "lastHarvestedAt": "2026-11-15T06:45:03.743Z",
     "learningId": "learn-huggingface-tencent-hy-memory-30b-a3b"
   },
   "addy0-com-free-open-technical-seo-crawler": {
@@ -3403,10 +3403,10 @@
     "repository": "mitmproxy/mitmproxy",
     "platform": "github",
     "sourceUrl": "https://github.com/mitmproxy/mitmproxy",
-    "sourceVersion": "3da37a52",
+    "sourceVersion": "f7701d5f",
     "license": "MIT",
-    "contentHash": "1608d45155932dacac15e8443100071bc3c08bdd550c34e17d7934bcbc8dfba5",
-    "lastHarvestedAt": "2026-11-14T03:49:16.730Z",
+    "contentHash": "9db5b8b665a834a2ab787f415b7a77a9d1305a8ae216c7e6d7ee843e8f550e87",
+    "lastHarvestedAt": "2026-11-15T06:45:15.877Z",
     "learningId": "learn-github-mitmproxy-mitmproxy"
   },
   "parthsarthi03-raptor": {

@@ -10081,3 +10081,6 @@ Every entry in this ledger must capture:
 | `learn-github-k3s-io-k3s` | `https://github.com/k3s-io/k3s` | `c55a7df0` | Multi-dimensional audit evidence | 2026-11-15T06:36:51.619Z |
 | `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `0c019880` | Multi-dimensional audit evidence | 2026-11-15T06:36:57.838Z |
 | `learn-dom-d-1138a8f2` | `project://hf-datalab-to-indra-ocr` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-datalab-to-indra-ocr-learnings.md` | 2026-11-15T06:37:31.052Z |
+| `learn-huggingface-tencent-hy-memory-30b-a3b` | `https://huggingface.co/tencent/Hy-Memory-30B-A3B` | `hf-tencent` | Multi-dimensional audit evidence | 2026-11-15T06:45:03.743Z |
+| `learn-github-mitmproxy-mitmproxy` | `https://github.com/mitmproxy/mitmproxy` | `f7701d5f` | Multi-dimensional audit evidence | 2026-11-15T06:45:15.877Z |
+| `learn-dom-h-8c16206c` | `project://hf-tencent-hy-memory-30b-a3b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-tencent-hy-memory-30b-a3b-learnings.md` | 2026-11-15T06:45:47.842Z |

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261110-GH7V",
-    "timestamp": "2026-11-10T00:31:56.203Z",
-    "repository": "zarf-dev/zarf",
-    "learningId": "learn-github-zarf-dev-zarf",
-    "contentHash": "dc9d9b74c2c0379d3890f43eac013e14f7cf7d1e7469de00dc81fd129dd13cbb",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261110-GK2Q",
-    "timestamp": "2026-11-10T00:31:59.906Z",
-    "repository": "dragonflydb/dragonfly",
-    "learningId": "learn-github-dragonflydb-dragonfly",
-    "contentHash": "0b5225805030a68d284dcb74196b72fcc80f06f3b7870cd5fd1c53abd68c86c8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261110-X6C3",
     "timestamp": "2026-11-10T00:44:55.251Z",
     "repository": "domcyrus/rustnet",
@@ -7490,6 +7460,36 @@
     "repository": "t8y2/dbx",
     "learningId": "learn-github-t8y2-dbx",
     "contentHash": "e1ffaaa2a2fd7ce1332a7f599de667eaecb79837a2a6c1f785945481407463bf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-ZKVV",
+    "timestamp": "2026-11-15T06:45:03.739Z",
+    "repository": "tencent/Hy-Memory-30B-A3B",
+    "learningId": "learn-huggingface-tencent-hy-memory-30b-a3b",
+    "contentHash": "950c357f2c1b81bf1c7540611e38f857c390c18f1b8bc055c2530618621682c7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-ZU8X",
+    "timestamp": "2026-11-15T06:45:15.873Z",
+    "repository": "mitmproxy/mitmproxy",
+    "learningId": "learn-github-mitmproxy-mitmproxy",
+    "contentHash": "9db5b8b665a834a2ab787f415b7a77a9d1305a8ae216c7e6d7ee843e8f550e87",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

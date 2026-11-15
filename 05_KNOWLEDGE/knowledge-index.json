@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-15T06:37:32.646Z",
-  "total_verified_learnings": 8671,
+  "last_updated": "2026-11-15T06:45:50.426Z",
+  "total_verified_learnings": 8672,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18208,
+  "total_items": 18213,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112562,10 +112562,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mitmproxy-mitmproxy-architecture-intelligence-mitmproxy-mitmproxy-core-invariant.md",
       "title": "Architecture Intelligence: mitmproxy/mitmproxy Core Invariants",
       "repository": "mitmproxy/mitmproxy",
-      "source_version": "3da37a52",
-      "content_hash": "327cc2167fa30d38327b702b1bbfb07264fb10d5e222ec163053a2a9707d1b9f",
+      "source_version": "f7701d5f",
+      "content_hash": "1c4084b3f2b813ac09ca5b56a7794c07261c4cb75ce9a531de7ddf0728daae5a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T03:49:17.058Z"
+      "persisted_at": "2026-11-15T06:45:16.154Z"
     },
     "skill_playbook-skill-operational-integration-playbook-for-mitmproxy-mitmproxy": {
       "item_id": "skill_playbook-skill-operational-integration-playbook-for-mitmproxy-mitmproxy",
@@ -112586,10 +112586,10 @@
       "relative_path": "08_VERIFICATION/mitmproxy-mitmproxy-verification-protocol-empirical-defect-shield-for-mitmproxy-.md",
       "title": "Verification Protocol: Empirical Defect Shield for mitmproxy/mitmproxy",
       "repository": "mitmproxy/mitmproxy",
-      "source_version": "3da37a52",
-      "content_hash": "515502053bda3d8119b8d5201ccaa6b26a86d5fbaf6ffde9103fa4ac3209fa3d",
+      "source_version": "f7701d5f",
+      "content_hash": "dfe139f6b835b15f1306a55cb56c9fb1df0d06a216aa0234ffe521b086e206bc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T03:49:17.235Z"
+      "persisted_at": "2026-11-15T06:45:16.263Z"
     },
     "candidate_directive-merge-pull-request-131190-from-groeneai-null-as-default-type-default": {
       "item_id": "candidate_directive-merge-pull-request-131190-from-groeneai-null-as-default-type-default",
@@ -112671,9 +112671,9 @@
       "title": "Architecture Intelligence: mitmproxy-mitmproxy-learnings Core Invariants",
       "repository": "mitmproxy-mitmproxy-learnings",
       "source_version": "HEAD",
-      "content_hash": "57abd6514bc5750107d2500071c93940ae6b288da6800253651c2671c63c6a2c",
+      "content_hash": "dd67b7964e0b01dacedc6fc9dfd26dfa1cb6eff4844e0fc61f3158fedf01f430",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T15:30:25.565Z"
+      "persisted_at": "2026-11-15T06:45:49.544Z"
     },
     "skill_playbook-skill-operational-integration-playbook-for-mitmproxy-mitmproxy-learnings": {
       "item_id": "skill_playbook-skill-operational-integration-playbook-for-mitmproxy-mitmproxy-learnings",
@@ -112695,9 +112695,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for mitmproxy-mitmproxy-learnings",
       "repository": "mitmproxy-mitmproxy-learnings",
       "source_version": "HEAD",
-      "content_hash": "f7b09972ca9f6117d17b953b97cdc9c0b7fd22c2be38c707fdfe6c8af119794d",
+      "content_hash": "cf90cdff5bb1cfa7f94041871665d47cf11dbcfcd8b9009dc88a3db36985e0b3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T15:30:25.773Z"
+      "persisted_at": "2026-11-15T06:45:49.688Z"
     },
     "domain_intelligence-research-knowledge-intelligence-fastino-gliner2-5-decide-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-fastino-gliner2-5-decide-core-invariants",
@@ -113663,13 +113663,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-0M86-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-0KPV-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "62ace9c6d58a96c76ff81b9e777ae30b1eaf700317b49c69e21b53f9842cb78d",
+      "content_hash": "3d0a6d517308aecf60eb7e529c9f04f71f34645d62edcce63526b4810a8723e7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T04:53:53.682Z"
+      "persisted_at": "2026-11-15T06:45:50.192Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113679,9 +113679,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "18056d9d2d43f757b992ed7d8e874654a60eff7b904eb073f935dff769216ac0",
+      "content_hash": "0482fb53e222e4f3e5c06b60534b96d70db41191663e5190d2514ca77e929ecf",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T04:53:53.786Z"
+      "persisted_at": "2026-11-15T06:45:50.301Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113691,9 +113691,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "c80daf0e2a351aa241f8c8b1374256c417119f2903f899e84c0957d8b70069d6",
+      "content_hash": "60a66ca6d4344670402d48a65f4078c4725b150f10a5fd4202da7a0eef6f1c23",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T04:53:53.902Z"
+      "persisted_at": "2026-11-15T06:45:50.426Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -221945,14 +221945,19 @@
       "slug": "mitmproxy-mitmproxy",
       "platform": "github",
       "source_url": "https://github.com/mitmproxy/mitmproxy",
-      "source_version": "3da37a52",
-      "content_hash": "1608d45155932dacac15e8443100071bc3c08bdd550c34e17d7934bcbc8dfba5",
+      "source_version": "f7701d5f",
+      "content_hash": "9db5b8b665a834a2ab787f415b7a77a9d1305a8ae216c7e6d7ee843e8f550e87",
       "dossier_path": "07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
       "promoted_rules": [
         {
           "number": 8435,
           "title": "build(deps-dev): bump click from 8.4.2 to 8.5.1",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8585,
+          "title": "update mitmproxy-rs",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -221961,7 +221966,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T03:49:16.567Z",
+      "verified_at": "2026-11-15T06:45:15.683Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -240485,6 +240490,83 @@
       "content_hash": "3bd4ea5d15e99b0b47eb8d70163f4d6a7871a0dca7df7efd4f550901200fd1a8",
       "domain_letter": "K",
       "persisted_at": "2026-11-15T06:37:32.646Z"
+    },
+    "learn-huggingface-tencent-hy-memory-30b-a3b": {
+      "learning_id": "learn-huggingface-tencent-hy-memory-30b-a3b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "tencent/Hy-Memory-30B-A3B",
+      "repository": "tencent/Hy-Memory-30B-A3B",
+      "slug": "hf-tencent-hy-memory-30b-a3b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/tencent/Hy-Memory-30B-A3B",
+      "source_version": "hf-tencent-hy-memory-30b-a3b",
+      "content_hash": "950c357f2c1b81bf1c7540611e38f857c390c18f1b8bc055c2530618621682c7",
+      "dossier_path": "07_PROJECT_LEARNING/hf-tencent-hy-memory-30b-a3b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-tencent-hy-memory-30b-a3b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T06:45:03.563Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-tencent-hy-memory-30b-a3b-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-tencent-hy-memory-30b-a3b-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-tencent-hy-memory-30b-a3b-research-knowledge-intelligence-tencent-hy-memory-3.md",
+      "title": "Research & Knowledge Intelligence: tencent/Hy-Memory-30B-A3B Core Invariants",
+      "repository": "tencent/Hy-Memory-30B-A3B",
+      "source_version": "hf-tencent-hy-memory-30b-a3b",
+      "content_hash": "c9478ab77b10cd887c885e4c43ea2f74b440b87ad77588ca35fef3932b21fcf3",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T06:45:03.922Z"
+    },
+    "rule-8585": {
+      "learning_id": "rule-8585",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8585,
+      "title": "update mitmproxy-rs",
+      "source_url": "https://github.com/mitmproxy/mitmproxy",
+      "source_version": "f7701d5f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T06:45:15.683Z"
+    },
+    "candidate_directive-update-mitmproxy-rs": {
+      "item_id": "candidate_directive-update-mitmproxy-rs",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0K4S-update-mitmproxy-rs.md",
+      "title": "update mitmproxy-rs",
+      "repository": "mitmproxy-mitmproxy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3d7bda795b53ad676436fc4307cd6be724fa749db528783f7b55e50744f909a7",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T06:45:49.421Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-tencent-hy-memory-30b-a3b-learnings-core-inva": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-tencent-hy-memory-30b-a3b-learnings-core-inva",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-tencent-hy-memory-30b-a3b-learnings-research-knowledge-intelligence-hf-tencen.md",
+      "title": "Research & Knowledge Intelligence: hf-tencent-hy-memory-30b-a3b-learnings Core Invariants",
+      "repository": "hf-tencent-hy-memory-30b-a3b-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5d3b662b1d0434867e9a7ca436f2cf29c14c2eb614a47cb935664c44e78d5a93",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T06:45:48.063Z"
     }
   },
   "ai-builder-brain": {

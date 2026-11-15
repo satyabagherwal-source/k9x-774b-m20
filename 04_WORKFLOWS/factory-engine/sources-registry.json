@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-15T06:37:00.997Z",
-    "lastVerified": "2026-11-15T06:37:00.997Z",
+    "lastChecked": "2026-11-15T06:45:18.905Z",
+    "lastVerified": "2026-11-15T06:45:18.905Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -473,8 +473,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-15T05:31:51.276Z",
-    "lastVerified": "2026-11-15T05:31:51.276Z",
+    "lastChecked": "2026-11-15T06:45:15.136Z",
+    "lastVerified": "2026-11-15T06:45:15.136Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1685,8 +1685,8 @@
     "officialUrl": "https://github.com/valeriansaliou/sonic",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-13T20:16:24.564Z",
-    "lastVerified": "2026-11-13T20:16:24.564Z",
+    "lastChecked": "2026-11-15T06:45:12.632Z",
+    "lastVerified": "2026-11-15T06:45:12.632Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-valeriansaliou-sonic",
@@ -2433,22 +2433,21 @@
     "revisionIdentifier": "386a1e0e"
   },
   "mitmproxy-mitmproxy": {
-    "name": "mitmproxy",
+    "name": "mitmproxy/mitmproxy",
     "officialUrl": "https://github.com/mitmproxy/mitmproxy",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-14T21:29:26.830Z",
-    "lastVerified": "2026-11-14T21:29:26.830Z",
+    "lastChecked": "2026-11-15T06:45:14.955Z",
+    "lastVerified": "2026-11-15T06:45:14.955Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mitmproxy-mitmproxy",
-    "contentHash": "1608d45155932dacac15e8443100071bc3c08bdd550c34e17d7934bcbc8dfba5",
+    "contentHash": "9db5b8b665a834a2ab787f415b7a77a9d1305a8ae216c7e6d7ee843e8f550e87",
     "promotedRulesCount": 1,
-    "recentFixesCount": 8,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "3da37a52"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "oceanbase-oceanbase": {
     "name": "oceanbase",
@@ -3309,9 +3308,9 @@
   "xampprocky-tokei": {
     "name": "tokei",
     "officialUrl": "https://github.com/XAMPPRocky/tokei",
-    "lastChecked": "2026-11-13T13:10:48.665Z",
+    "lastChecked": "2026-11-15T06:45:00.101Z",
     "revisionIdentifier": "c14f7447",
-    "lastVerified": "2026-11-13T13:10:48.665Z"
+    "lastVerified": "2026-11-15T06:45:00.101Z"
   },
   "hf-alissonerdx-bfs-best-face-swap": {
     "name": "Alissonerdx/BFS-Best-Face-Swap",
@@ -7930,12 +7929,12 @@
     "lastVerified": "2026-11-14T23:43:06.367Z"
   },
   "prometheus-prometheus": {
-    "name": "prometheus/prometheus",
+    "name": "prometheus",
     "officialUrl": "https://github.com/prometheus/prometheus",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-13T21:16:13.020Z",
-    "lastVerified": "2026-11-13T21:16:13.020Z",
+    "lastChecked": "2026-11-15T06:45:07.683Z",
+    "lastVerified": "2026-11-15T06:45:07.683Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-prometheus-prometheus",
@@ -7944,7 +7943,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "8e974df2"
   },
   "clickhouse-clickhouse": {
     "name": "ClickHouse/ClickHouse",
@@ -8910,9 +8910,9 @@
   "russhwolf-multiplatform-settings": {
     "name": "multiplatform-settings",
     "officialUrl": "https://github.com/russhwolf/multiplatform-settings",
-    "lastChecked": "2026-11-11T18:54:46.859Z",
+    "lastChecked": "2026-11-15T06:45:05.218Z",
     "revisionIdentifier": "f95cdff4",
-    "lastVerified": "2026-11-11T18:54:46.859Z"
+    "lastVerified": "2026-11-15T06:45:05.218Z"
   },
   "tokio-rs-tokio": {
     "name": "tokio-rs/tokio",
@@ -9690,12 +9690,12 @@
     "officialUrl": "https://huggingface.co/tencent/Hy-Memory-30B-A3B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-09T16:59:38.387Z",
-    "lastVerified": "2026-11-09T16:59:38.387Z",
+    "lastChecked": "2026-11-15T06:45:03.136Z",
+    "lastVerified": "2026-11-15T06:45:03.136Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-tencent-hy-memory-30b-a3b",
-    "contentHash": "d1d704ec75774467cf0d0e46085efb5a1b707adce97d481f1bc1372ca0857fd7",
+    "contentHash": "950c357f2c1b81bf1c7540611e38f857c390c18f1b8bc055c2530618621682c7",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

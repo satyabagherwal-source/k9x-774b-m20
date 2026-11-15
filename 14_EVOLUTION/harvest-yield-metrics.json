@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T06:36:57.844Z",
-  "total_cycles_completed": 9679,
-  "total_learnings_persisted": 9679,
-  "total_rules_promoted": 9311,
+  "last_updated": "2026-11-15T06:45:15.882Z",
+  "total_cycles_completed": 9681,
+  "total_learnings_persisted": 9681,
+  "total_rules_promoted": 9312,
   "history": [
-    {
-      "timestamp": "2026-11-14T07:18:00.850Z",
-      "repository": "kgateway-dev/kgateway",
-      "learningId": "learn-github-kgateway-dev-kgateway",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T07:18:07.347Z",
-      "repository": "MaterializeInc/materialize",
-      "learningId": "learn-github-materializeinc-materialize",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T07:30:37.380Z",
       "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-15T06:36:57.844Z",
       "repository": "t8y2/dbx",
       "learningId": "learn-github-t8y2-dbx",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T06:45:03.748Z",
+      "repository": "tencent/Hy-Memory-30B-A3B",
+      "learningId": "learn-huggingface-tencent-hy-memory-30b-a3b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T06:45:15.882Z",
+      "repository": "mitmproxy/mitmproxy",
+      "learningId": "learn-github-mitmproxy-mitmproxy",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
