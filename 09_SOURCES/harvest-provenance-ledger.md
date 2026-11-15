@@ -10003,3 +10003,7 @@ Every entry in this ledger must capture:
 | `learn-dom-d-d6b073d5` | `project://hf-speridlabs-iris-3b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md` | 2026-11-14T22:58:30.106Z |
 | `learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-11-14T23:43:04.695Z |
 | `learn-github-dnscontrol-dnscontrol` | `https://github.com/DNSControl/dnscontrol` | `5da338d6` | Multi-dimensional audit evidence | 2026-11-14T23:43:13.624Z |
+| `learn-huggingface-autotrust-jev-35b` | `https://huggingface.co/autotrust/JEV-35B` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-15T00:05:22.357Z |
+| `learn-huggingface-conceptcountry-qwen-concept-27b` | `https://huggingface.co/ConceptCountry/qwen-concept-27b` | `hf-concept` | Multi-dimensional audit evidence | 2026-11-15T00:05:27.873Z |
+| `learn-dom-e-5b37ac18` | `project://hf-conceptcountry-qwen-concept-27b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-conceptcountry-qwen-concept-27b-learnings.md` | 2026-11-15T00:06:03.825Z |
+| `learn-dom-d-ce38aa18` | `project://hf-autotrust-jev-35b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-autotrust-jev-35b-learnings.md` | 2026-11-15T00:06:43.372Z |

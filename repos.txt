@@ -5092,3 +5092,7 @@ https://huggingface.co/higurashi-ai/Haru-4B
 # --- Automatically Discovered by AI Scout Engine [2026-11-14T15:34:18.811Z] ---
 # [MOBILE-CROSS-PLATFORM] jithin-sabu/purge-app (1273 score) - Free up your Mac. Safely. A free, open-source native Mac app that clears the cac
 https://github.com/jithin-sabu/purge-app
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-15T00:05:12.149Z] ---
+# [HUGGINGFACE-AI-MODELS] ConceptCountry/qwen-concept-27b (4590 score) - Verified Hugging Face Model: ConceptCountry/qwen-concept-27b (259 likes, 63439 d
+https://huggingface.co/ConceptCountry/qwen-concept-27b

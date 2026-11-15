@@ -9970,3 +9970,7 @@
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T22:58:30.106Z` | `hf-speridlabs-iris-3b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-D6B073D5` [Domain D] | Yes (`69042b81...`) |
 | `CYCLE-20261114-WWKY` | `2026-11-14T23:43:04.690Z` | `abenzerps/Qwen-Image-2.1-Turbo-Quantized` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings.md` | Yes (`cb7b79ae...`) |
 | `CYCLE-20261114-X3GZ` | `2026-11-14T23:43:13.619Z` | `DNSControl/dnscontrol` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8551` | Yes (`e79f3bda...`) |
+| `CYCLE-20261115-PKQ9` | `2026-11-15T00:05:22.353Z` | `autotrust/AutoTrust-Decider-Pro-35B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-35b-learnings.md` | Yes (`305de66c...`) |
+| `CYCLE-20261115-POZH` | `2026-11-15T00:05:27.869Z` | `ConceptCountry/qwen-concept-27b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-conceptcountry-qwen-concept-27b-learnings.md` | Yes (`ae94b3e7...`) |
+| `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T00:06:03.825Z` | `hf-conceptcountry-qwen-concept-27b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-E-5B37AC18` [Domain E] | Yes (`4dc93019...`) |
+| `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T00:06:43.372Z` | `hf-autotrust-jev-35b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-CE38AA18` [Domain D] | Yes (`e1d75500...`) |

@@ -21178,5 +21178,17 @@
     "qualityScore": 1273,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-14T15:32:15.039Z"
+  },
+  {
+    "name": "ConceptCountry/qwen-concept-27b",
+    "fullName": "ConceptCountry/qwen-concept-27b",
+    "url": "https://huggingface.co/ConceptCountry/qwen-concept-27b",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: ConceptCountry/qwen-concept-27b (259 likes, 63439 downloads)",
+    "likes": 259,
+    "downloads": 63439,
+    "qualityScore": 4590,
+    "discoveredAt": "2026-11-15T00:03:04.103Z"
   }
 ]

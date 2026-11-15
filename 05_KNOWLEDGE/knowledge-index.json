@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-14T23:43:18.606Z",
-  "total_verified_learnings": 8626,
+  "last_updated": "2026-11-15T00:06:44.446Z",
+  "total_verified_learnings": 8628,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 17938,
+  "total_items": 17944,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113663,13 +113663,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-5WW2-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-RBUY-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "3cd7e648af384037b39db706cfdc1f93bf852a57a6082562ccd63dde467713fa",
+      "content_hash": "d3298520b77f5e44415c2b88b3a8ef66bad2e15773b3ae4db11386806f8b86f2",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T21:30:06.927Z"
+      "persisted_at": "2026-11-15T00:06:44.188Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113679,9 +113679,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "66b076c7e141949dab9f8bc11beda4dca050c9984eef3efc77236ced61d81b17",
+      "content_hash": "4dfe975c710a8c1333d856f0464188a36c1f88450a31cc1580d9b2b816f77e92",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T21:30:07.052Z"
+      "persisted_at": "2026-11-15T00:06:44.311Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113691,9 +113691,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "343ac501109ae7db62b09950daf4bb3d44623547e39fb01d7e7db7b7ee6ef329",
+      "content_hash": "a16dafaf607da3ce81be6b110994e7ae54a93f81d37c510963dfb491a29e2d18",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T21:30:07.195Z"
+      "persisted_at": "2026-11-15T00:06:44.446Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -236319,6 +236319,108 @@
       "content_hash": "c53238613fe7ba7ed9aab0e6986f0179d2729211f7fa9d70dc664fa968ba94eb",
       "domain_letter": "K",
       "persisted_at": "2026-11-14T23:43:17.926Z"
+    },
+    "learn-huggingface-autotrust-jev-35b": {
+      "learning_id": "learn-huggingface-autotrust-jev-35b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "autotrust/AutoTrust-Decider-Pro-35B",
+      "repository": "autotrust/AutoTrust-Decider-Pro-35B",
+      "slug": "hf-autotrust-jev-35b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/autotrust/JEV-35B",
+      "source_version": "hf-autotrust-jev-35b",
+      "content_hash": "305de66ceebdb2dd243384ba03f6e9fefc9ebfb26258750d3d0a518ead3b0200",
+      "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-jev-35b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-jev-35b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T00:05:22.165Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-35b-core-invaria": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-35b-core-invaria",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-jev-35b-research-knowledge-intelligence-autotrust-autotrust-decider.md",
+      "title": "Research & Knowledge Intelligence: autotrust/AutoTrust-Decider-Pro-35B Core Invariants",
+      "repository": "autotrust/AutoTrust-Decider-Pro-35B",
+      "source_version": "hf-autotrust-jev-35b",
+      "content_hash": "e79e12dfaed418e550e770907d351804ac14919c3e435a0be60f816ed2d3ffeb",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T00:05:22.585Z"
+    },
+    "learn-huggingface-conceptcountry-qwen-concept-27b": {
+      "learning_id": "learn-huggingface-conceptcountry-qwen-concept-27b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "ConceptCountry/qwen-concept-27b",
+      "repository": "ConceptCountry/qwen-concept-27b",
+      "slug": "hf-conceptcountry-qwen-concept-27b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/ConceptCountry/qwen-concept-27b",
+      "source_version": "hf-conceptcountry-qwen-concept-27b",
+      "content_hash": "ae94b3e76a9776789459b18f1d7dbebecbca20c1185ffb0f4945ef536c7766fd",
+      "dossier_path": "07_PROJECT_LEARNING/hf-conceptcountry-qwen-concept-27b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-conceptcountry-qwen-concept-27b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T00:05:27.722Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-conceptcountry-qwen-concept-27b-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-conceptcountry-qwen-concept-27b-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-conceptcountry-qwen-concept-27b-research-knowledge-intelligence-conceptcountr.md",
+      "title": "Research & Knowledge Intelligence: ConceptCountry/qwen-concept-27b Core Invariants",
+      "repository": "ConceptCountry/qwen-concept-27b",
+      "source_version": "hf-conceptcountry-qwen-concept-27b",
+      "content_hash": "537094c03b0ff208e597a0d0f79ecb75c76ad8dc47a1ce83bbc830fbccb91fc9",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T00:05:28.047Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-conceptcountry-qwen-concept-27b-learnings-cor": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-conceptcountry-qwen-concept-27b-learnings-cor",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-conceptcountry-qwen-concept-27b-learnings-research-knowledge-intelligence-hf-.md",
+      "title": "Research & Knowledge Intelligence: hf-conceptcountry-qwen-concept-27b-learnings Core Invariants",
+      "repository": "hf-conceptcountry-qwen-concept-27b-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ce45130e1d4643912a2797dbb41807de941fab1000c525e1922063cc410a586a",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T00:06:04.031Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-autotrust-jev-35b-learnings-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-autotrust-jev-35b-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-jev-35b-learnings-research-knowledge-intelligence-hf-autotrust-jev-.md",
+      "title": "Research & Knowledge Intelligence: hf-autotrust-jev-35b-learnings Core Invariants",
+      "repository": "hf-autotrust-jev-35b-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9edf3782f32e235c276bc07526b50c6caf1cbd03c798b98d5a6f917d2b9103f5",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T00:06:43.573Z"
     }
   },
   "ai-builder-brain": {

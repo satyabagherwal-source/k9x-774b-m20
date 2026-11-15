@@ -1350,13 +1350,13 @@
     "learningId": "learn-github-ebony-vinyl-dsh-our-free-model-mv5u7qjj"
   },
   "hf-autotrust-jev-35b": {
-    "repository": "autotrust/JEV-35B",
+    "repository": "autotrust/AutoTrust-Decider-Pro-35B",
     "platform": "huggingface",
     "sourceUrl": "https://huggingface.co/autotrust/JEV-35B",
     "sourceVersion": "hf-autotrust-jev-35b",
     "license": "Open-Source",
-    "contentHash": "99c6e6405fd3fd8377bc71980b003a32f50339db946d9fdb3f9dbc38c4f78117",
-    "lastHarvestedAt": "2026-11-09T12:29:33.710Z",
+    "contentHash": "305de66ceebdb2dd243384ba03f6e9fefc9ebfb26258750d3d0a518ead3b0200",
+    "lastHarvestedAt": "2026-11-15T00:05:22.357Z",
     "learningId": "learn-huggingface-autotrust-jev-35b"
   },
   "hf-openbmb-minicpm-v-4.7-35b-a3b": {
@@ -12588,5 +12588,15 @@
     "contentHash": "c33edf08e7879ac2c23b69fdbf58d709feaa85eeb433c6731e1f13473271d40f",
     "lastHarvestedAt": "2026-11-14T15:34:30.266Z",
     "learningId": "learn-github-jithin-sabu-purge-app"
+  },
+  "hf-conceptcountry-qwen-concept-27b": {
+    "repository": "ConceptCountry/qwen-concept-27b",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/ConceptCountry/qwen-concept-27b",
+    "sourceVersion": "hf-conceptcountry-qwen-concept-27b",
+    "license": "Open-Source",
+    "contentHash": "ae94b3e76a9776789459b18f1d7dbebecbca20c1185ffb0f4945ef536c7766fd",
+    "lastHarvestedAt": "2026-11-15T00:05:27.873Z",
+    "learningId": "learn-huggingface-conceptcountry-qwen-concept-27b"
   }
 }

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T23:43:18.726Z",
+  "last_updated": "2026-11-15T00:06:44.607Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-14T22:16:50.251Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-14T21:30:06.509Z",
+      "processed_at": "2026-11-15T00:06:43.776Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2801,9 +2801,19 @@
       "processed_at": "2026-11-14T23:43:16.954Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-conceptcountry-qwen-concept-27b-learnings.md": {
+      "processed_at": "2026-11-15T00:06:03.825Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "hf-autotrust-jev-35b-learnings.md": {
+      "processed_at": "2026-11-15T00:06:43.372Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 936,
-  "total_canonical_promoted": 226,
-  "total_staged_for_review": 710
+  "total_dossiers_evaluated": 939,
+  "total_canonical_promoted": 228,
+  "total_staged_for_review": 711
 }

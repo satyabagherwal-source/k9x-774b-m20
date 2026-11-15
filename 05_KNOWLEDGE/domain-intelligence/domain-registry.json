@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T23:43:18.446Z",
-  "total_records": 877,
+  "last_updated": "2026-11-15T00:06:44.311Z",
+  "total_records": 883,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 430,
+      "total": 435,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -467,13 +467,19 @@
         "DOM-D-D6B073D5",
         "domain_intelligence-research-knowledge-intelligence-hf-speridlabs-iris-3b-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-abenzerps-qwen-image-2-1-turbo-quantized-core-in",
-        "domain_intelligence-research-knowledge-intelligence-hf-abenzerps-qwen-image-2-1-uncensored-quantized"
+        "domain_intelligence-research-knowledge-intelligence-hf-abenzerps-qwen-image-2-1-uncensored-quantized",
+        "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-35b-core-invaria",
+        "domain_intelligence-research-knowledge-intelligence-conceptcountry-qwen-concept-27b-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-conceptcountry-qwen-concept-27b-learnings-cor",
+        "DOM-D-CE38AA18",
+        "domain_intelligence-research-knowledge-intelligence-hf-autotrust-jev-35b-learnings-core-invariants"
       ]
     },
     "E": {
-      "total": 1,
+      "total": 2,
       "record_ids": [
-        "DOM-E-D288C96D"
+        "DOM-E-D288C96D",
+        "DOM-E-5B37AC18"
       ]
     },
     "F": {
@@ -7610,8 +7616,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "66b076c7e141949dab9f8bc11beda4dca050c9984eef3efc77236ced61d81b17",
-      "created_at": "2026-11-14T21:30:07.052Z"
+      "content_hash": "4dfe975c710a8c1333d856f0464188a36c1f88450a31cc1580d9b2b816f77e92",
+      "created_at": "2026-11-15T00:06:44.311Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -17307,6 +17313,132 @@
       "repository": "dnscontrol-dnscontrol-learnings",
       "content_hash": "5901574a3b932c67070eed34c3eb9810402e203107b629282699fc0e130ba4a6",
       "created_at": "2026-11-14T23:43:17.766Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-35b-core-invaria": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-35b-core-invaria",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: autotrust/AutoTrust-Decider-Pro-35B Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-jev-35b-research-knowledge-intelligence-autotrust-autotrust-decider.md",
+      "repository": "autotrust/AutoTrust-Decider-Pro-35B",
+      "content_hash": "e79e12dfaed418e550e770907d351804ac14919c3e435a0be60f816ed2d3ffeb",
+      "created_at": "2026-11-15T00:05:22.585Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-conceptcountry-qwen-concept-27b-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-conceptcountry-qwen-concept-27b-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: ConceptCountry/qwen-concept-27b Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-conceptcountry-qwen-concept-27b-research-knowledge-intelligence-conceptcountr.md",
+      "repository": "ConceptCountry/qwen-concept-27b",
+      "content_hash": "537094c03b0ff208e597a0d0f79ecb75c76ad8dc47a1ce83bbc830fbccb91fc9",
+      "created_at": "2026-11-15T00:05:28.047Z"
+    },
+    "DOM-E-5B37AC18": {
+      "record_id": "DOM-E-5B37AC18",
+      "domain_letter": "E",
+      "domain_id": "creative",
+      "domain_name": "Creative Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        },
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): ConceptCountry/qwen-concept-27b",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-conceptcountry-qwen-concept-27b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/ConceptCountry/qwen-concept-27b](https://huggingface.co/ConceptCountry/qwen-concept-27b))  \n> **Source Version**: `hf-conceptco`  \n> **License",
+      "content_hash": "4dc93019c4d6ab131e09dabec9333373c43c5e38bb055643b1b3d2d91b8bf3ea",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-conceptcountry-qwen-concept-27b-learnings.md`  \n> **Source**: huggingface ([https -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-conceptcountry-qwen-concept-27b-learnings.md`  \n> **Source**: huggingface ([https",
+      "provenance": {
+        "source_uri": "project://hf-conceptcountry-qwen-concept-27b/hf-conceptcountry-qwen-concept-27b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T00:05:33.025Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-conceptcountry-qwen-concept-27b)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-conceptcountry-qwen-concept-27b"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M",
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.71,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-15T00:06:03.810Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-conceptcountry-qwen-concept-27b-learnings-cor": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-conceptcountry-qwen-concept-27b-learnings-cor",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-conceptcountry-qwen-concept-27b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-conceptcountry-qwen-concept-27b-learnings-research-knowledge-intelligence-hf-.md",
+      "repository": "hf-conceptcountry-qwen-concept-27b-learnings",
+      "content_hash": "ce45130e1d4643912a2797dbb41807de941fab1000c525e1922063cc410a586a",
+      "created_at": "2026-11-15T00:06:04.031Z"
+    },
+    "DOM-D-CE38AA18": {
+      "record_id": "DOM-D-CE38AA18",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): autotrust/AutoTrust-Decider-Pro-35B",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-autotrust-jev-35b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/autotrust/JEV-35B](https://huggingface.co/autotrust/JEV-35B))  \n> **Source Version**: `hf-autotrust`  \n> **License**: Open-Source  \n> **Synthesized By**: ze",
+      "content_hash": "e1d75500e54adb6db541b51fa996642680deca645f5419d598cd554de0f2b594",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-autotrust-jev-35b-learnings.md`  \n> **Source**: huggingface ([https://huggingface -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-autotrust-jev-35b-learnings.md`  \n> **Source**: huggingface ([https://huggingface",
+      "provenance": {
+        "source_uri": "project://hf-autotrust-jev-35b/hf-autotrust-jev-35b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T00:06:04.175Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-autotrust-jev-35b)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-autotrust-jev-35b"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-15T00:06:43.359Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-autotrust-jev-35b-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-autotrust-jev-35b-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-autotrust-jev-35b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-jev-35b-learnings-research-knowledge-intelligence-hf-autotrust-jev-.md",
+      "repository": "hf-autotrust-jev-35b-learnings",
+      "content_hash": "9edf3782f32e235c276bc07526b50c6caf1cbd03c798b98d5a6f917d2b9103f5",
+      "created_at": "2026-11-15T00:06:43.573Z"
     }
   }
 }

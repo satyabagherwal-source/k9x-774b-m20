@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T23:43:13.630Z",
-  "total_cycles_completed": 9622,
-  "total_learnings_persisted": 9622,
+  "last_updated": "2026-11-15T00:05:27.878Z",
+  "total_cycles_completed": 9624,
+  "total_learnings_persisted": 9624,
   "total_rules_promoted": 9277,
   "history": [
-    {
-      "timestamp": "2026-11-14T01:26:20.112Z",
-      "repository": "MiniMaxAI/MiniMax-H3",
-      "learningId": "learn-huggingface-minimaxai-minimax-h3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T01:26:20.942Z",
-      "repository": "pingcap/tidb",
-      "learningId": "learn-github-pingcap-tidb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T01:26:27.526Z",
       "repository": "dathere/qsv",
@@ -1403,6 +1389,20 @@
       "repository": "DNSControl/dnscontrol",
       "learningId": "learn-github-dnscontrol-dnscontrol",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T00:05:22.400Z",
+      "repository": "autotrust/AutoTrust-Decider-Pro-35B",
+      "learningId": "learn-huggingface-autotrust-jev-35b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T00:05:27.878Z",
+      "repository": "ConceptCountry/qwen-concept-27b",
+      "learningId": "learn-huggingface-conceptcountry-qwen-concept-27b",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
