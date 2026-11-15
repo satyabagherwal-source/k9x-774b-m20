@@ -10003,3 +10003,5 @@
 | `CYCLE-20261115-1Y6O` | `2026-11-15T02:34:57.744Z` | `vllm-sr/d3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md` | Yes (`e1ef3ac6...`) |
 | `CYCLE-20261115-2B9Z` | `2026-11-15T02:35:14.711Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8565` | Yes (`03fb7e46...`) |
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T02:35:54.049Z` | `hf-vllm-sr-d3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-608927A6` [Domain D] | Yes (`a85ebfaa...`) |
+| `CYCLE-20261115-SI9B` | `2026-11-15T02:55:36.815Z` | `fallow-rs/fallow` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md` | Yes (`ed9071f2...`) |
+| `CYCLE-20261115-WR3U` | `2026-11-15T02:58:54.906Z` | `LiquidAI/LFM2.5-24B-A2B-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8566, Rule 8567` | Yes (`4263d69c...`) |

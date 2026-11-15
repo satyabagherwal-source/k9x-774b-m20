@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-3MN1",
-    "timestamp": "2026-11-09T21:05:59.389Z",
-    "repository": "microsoft/agent-governance-toolkit",
-    "learningId": "learn-github-microsoft-agent-governance-toolkit",
-    "contentHash": "132ab0185028c2d92583c72e7ddda398dae0bcb1a121804177105ea5a811ab0c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-3PF9",
-    "timestamp": "2026-11-09T21:06:02.997Z",
-    "repository": "GreptimeTeam/greptimedb",
-    "learningId": "learn-github-greptimeteam-greptimedb",
-    "contentHash": "c2bf03f482ce2f2ccd207be8acc410b6374d1619d285aa7ce070ef089f64af6c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-UR5I",
     "timestamp": "2026-11-09T21:27:04.950Z",
     "repository": "ydb-platform/ydb",
@@ -7492,6 +7462,36 @@
     "contentHash": "03fb7e4650f98883b2dbb55b1cf9e1c8b6042d15ece8887382dfe3a94d24ba39",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-SI9B",
+    "timestamp": "2026-11-15T02:55:36.815Z",
+    "repository": "fallow-rs/fallow",
+    "learningId": "learn-github-fallow-rs-fallow",
+    "contentHash": "ed9071f2b691739e861016a53856d5f5d102419ce8e2ef88d02d7750de21b004",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-WR3U",
+    "timestamp": "2026-11-15T02:58:54.906Z",
+    "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
+    "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
+    "contentHash": "4263d69c8d9a9df20bf1903032c44fefb73de34740e56c7658af1bbe0da96ecc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1525,8 +1525,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF",
     "sourceVersion": "hf-liquidai-lfm2.5-24b-a2b-gguf",
     "license": "Open-Source",
-    "contentHash": "04834c3a58eb9c16dec094600de38abf4dffd8e3f1ce67adc749198007cf91b4",
-    "lastHarvestedAt": "2026-11-09T14:18:04.452Z",
+    "contentHash": "4263d69c8d9a9df20bf1903032c44fefb73de34740e56c7658af1bbe0da96ecc",
+    "lastHarvestedAt": "2026-11-15T02:58:54.910Z",
     "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf"
   },
   "amplifthq-openmeld": {
@@ -3183,10 +3183,10 @@
     "repository": "fallow-rs/fallow",
     "platform": "github",
     "sourceUrl": "https://github.com/fallow-rs/fallow",
-    "sourceVersion": "249d5f7d",
+    "sourceVersion": "b5123420",
     "license": "MIT",
-    "contentHash": "a7fb2a6d83fb552be369d41d9b6af602cca6279d2b8e77fe642005b8ffac9201",
-    "lastHarvestedAt": "2026-11-13T10:55:33.901Z",
+    "contentHash": "ed9071f2b691739e861016a53856d5f5d102419ce8e2ef88d02d7750de21b004",
+    "lastHarvestedAt": "2026-11-15T02:55:36.819Z",
     "learningId": "learn-github-fallow-rs-fallow"
   },
   "expo-create-react-native-app": {

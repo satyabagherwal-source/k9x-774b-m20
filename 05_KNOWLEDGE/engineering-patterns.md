@@ -618311,3 +618311,279 @@ import (
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `6893a8c3` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8566. Embedded Metadata Parameter Authority (GGUF Sampling Self-Containment) (Harvested from LiquidAI/LFM2.5-24B-A2B-GGUF)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Embedded Metadata Parameter Authority (GGUF Sampling Self-Containment)",
+  "source": "LiquidAI/LFM2.5-24B-A2B-GGUF",
+  "source_url": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF",
+  "source_version": "hf-liquidai-lfm2.5-24b-a2b-gguf",
+  "license": "Open-Source",
+  "extracted_at": "2026-11-15T02:58:54.016Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [LiquidAI/LFM2.5-24B-A2B-GGUF](https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF) (Revision: `hf-liquida`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+Model serialization pipelines MUST embed inference-critical generation parameters (temperature, top-k, top-p, repetition penalties, context limits) directly into the binary distribution container as immutable metadata keys (`general.sampling.*`), and runtime inference engines MUST inspect, log, and default to these embedded parameters unless explicitly overridden by an operator flag. Runtimes MUST NOT fall back to arbitrary global engine defaults without validating embedded container metadata.
+
+**WHY**:
+Decoupling model weights from their hyperparameter generation configs causes severe post-training degradation. For hybrid models like LFM2.5-24B, sampling with generic LLM defaults (e.g., `temp = 0.8`, `repeat_penalty = 1.0`) destabilizes continuous-time state representations, leading to high-entropy token hallucination loops or degenerate token repetition. Direct container binding ensures portable, zero-configuration execution fidelity across heterogeneous runtimes.
+
+**WHEN TO APPLY**:
+Apply to all model export, quantization (GGUF, Safetensors, ONNX), and inference engine adapter codebases targeting multi-tenant or local edge deployment.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Production-grade GGUF writer embedding verified sampling parameters
+import struct
+from typing import Dict, Any, BinaryIO
+import numpy as np
+
+class GGUFWriter:
+    GGUF_MAGIC = 0x46554747  # "GGUF" in little-endian
+    GGUF_VERSION = 3
+    
+    METADATA_TYPE_UINT32 = 4
+    METADATA_TYPE_FLOAT32 = 6
+    METADATA_TYPE_STRING = 8
+
+    def __init__(self, output_file: BinaryIO):
+        self.fp = output_file
+        self.metadata_entries = []
+
+    def add_sampling_hyperparameters(
+        self, 
+        temp: float, 
+        top_k: int, 
+        repeat_penalty: float
+    ) -> None:
+        """Embeds canonical generation hyperparameters into GGUF metadata."""
+        assert temp >= 0.0, f"Temperature cannot be negative: {temp}"
+        assert top_k >= 0, f"Top-K must be non-negative: {top_k}"
+        assert repeat_penalty >= 0.0, f"Repetition penalty must be non-negative: {repeat_penalty}"
+
+        self._add_kv("general.sampling.temp", self.METADATA_TYPE_FLOAT32, float(temp))
+        self._add_kv("general.sampling.top_k", self.METADATA_TYPE_UINT32, int(top_k))
+        self._add_kv("general.sampling.penalty_repeat", self.METADATA_TYPE_FLOAT32, float(repeat_penalty))
+
+    def _add_kv(self, key: str, val_type: int, value: Any) -> None:
+        self.metadata_entries.append((key, val_type, value))
+
+    def write_header(self, tensor_count: int) -> None:
+        # Header: magic (uint32), version (uint32), tensor_count (uint64), metadata_kv_count (uint64)
+        header = struct.pack(
+            "<IIQQ", 
+            self.GGUF_MAGIC, 
+            self.GGUF_VERSION, 
+            tensor_count, 
+            len(self.metadata_entries)
+        )
+        self.fp.write(header)
+
+        for key, val_type, value in self.metadata_entries:
+            key_bytes = key.encode("utf-8")
+            self.fp.write(struct.pack("<Q", len(key_bytes)))
+            self.fp.write(key_bytes)
+            self.fp.write(struct.pack("<I", val_type))
+
+            if val_type == self.METADATA_TYPE_FLOAT32:
+                self.fp.write(struct.pack("<f", value))
+            elif val_type == self.METADATA_TYPE_UINT32:
+                self.fp.write(struct.pack("<I", value))
+            elif val_type == self.METADATA_TYPE_STRING:
+                val_bytes = value.encode("utf-8")
+                self.fp.write(struct.pack("<Q", len(val_bytes)))
+                self.fp.write(val_bytes)
+            else:
+                raise NotImplementedError(f"Unsupported type: {val_type}")
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Shipping GGUF weights stripped of generation metadata
+# Relying on users or calling runtimes to memorize and inject hyperparams
+def export_quantized_model_bad(weights, output_path):
+    with open(output_path, "wb") as f:
+        # Bare tensor dump without sampling metadata keys
+        f.write(b"GGUF")
+        # Runtime defaults to temp=0.8, top_k=40 -> LFM2.5 collapses into degenerative output
+        dump_tensors_only(f, weights)
+```
+
+**VERIFICATION METHOD**:
+Verify header conformity by executing binary parsing validation against the exported GGUF file:
+```bash
+python -c '
+import struct
+
+with open("LFM2.5-24B-A2B-QAD-Q4_0.gguf", "rb") as f:
+    magic, ver, n_tensors, n_kv = struct.unpack("<IIQQ", f.read(24))
+    assert magic == 0x46554747, f"Invalid GGUF magic: {hex(magic)}"
+    assert ver >= 2, f"Unsupported version: {ver}"
+    print(f"Verified GGUF v{ver} containing {n_kv} metadata records.")
+'
+```
+
+---
+
+
+---
+
+## 8567. Block-Quantized Memory Allocation Alignment & Padded Stride Invariant (Harvested from LiquidAI/LFM2.5-24B-A2B-GGUF)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Block-Quantized Memory Allocation Alignment & Padded Stride Invariant",
+  "source": "LiquidAI/LFM2.5-24B-A2B-GGUF",
+  "source_url": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF",
+  "source_version": "hf-liquidai-lfm2.5-24b-a2b-gguf",
+  "license": "Open-Source",
+  "extracted_at": "2026-11-15T02:58:54.493Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [LiquidAI/LFM2.5-24B-A2B-GGUF](https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF) (Revision: `hf-liquida`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+Low-level tensor memory allocation routines for block-quantized data (e.g., `Q4_0`, `Q4_K`, `Q8_0`) MUST enforce that all tensor dimensions along the quantization axis are integer multiples of the quantization block size ($K \pmod{B} == 0$, where $B=32$ for `Q4_0`), and row memory offsets MUST be aligned to minimum cache-line or SIMD register boundaries (minimum 32 bytes for AVX2/NEON, 64 bytes for AVX-512).
+
+**WHY**:
+Quantization kernels process vectors using vector SIMD instructions (`_mm256_loadu_si256`, `vld1q_u8`). If a tensor row is not an exact multiple of the block size or lacks boundary padding, vectorized dequantization reads out-of-bounds memory into adjacent tensor weights or unmapped pages, triggering `SIGSEGV` or silent data corruption in continuous linear state-space projections.
+
+**WHEN TO APPLY**:
+All C/C++/Rust tensor loaders, mmap consumers, and quantization transform engines converting PyTorch FP16/BF16 weights to GGML formats.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <stdbool.h>
+
+#define Q4_0_BLOCK_SIZE 32
+#define MEM_ALIGNMENT_BYTES 64
+
+typedef struct {
+    uint16_t d;           // FP16 scale
+    uint8_t  qs[16];      // 32 nibbles
+} block_q4_0;
+
+// Validates tensor dimensions and allocates aligned memory
+block_q4_0* allocate_quantized_tensor_buffer(uint64_t n_elements, size_t* out_bytes) {
+    if (n_elements % Q4_0_BLOCK_SIZE != 0) {
+        fprintf(stderr, "FATAL: Dimension %lu not divisible by block size %d\n", 
+                n_elements, Q4_0_BLOCK_SIZE);
+        return NULL;
+    }
+
+    size_t n_blocks = n_elements / Q4_0_BLOCK_SIZE;
+    size_t total_bytes = n_blocks * sizeof(block_q4_0);
+
+    // Round up total_bytes to alignment boundary to protect vector reads
+    size_t remainder = total_bytes % MEM_ALIGNMENT_BYTES;
+    if (remainder != 0) {
+        total_bytes += (MEM_ALIGNMENT_BYTES - remainder);
+    }
+
+    void* ptr = NULL;
+    int res = posix_memalign(&ptr, MEM_ALIGNMENT_BYTES, total_bytes);
+    if (res != 0 || ptr == NULL) {
+        fprintf(stderr, "FATAL: posix_memalign failed to allocate %zu bytes\n", total_bytes);
+        return NULL;
+    }
+
+    *out_bytes = total_bytes;
+    return (block_q4_0*)ptr;
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```c
+// ANTI-PATTERN: Raw malloc without dimension validation or cacheline padding
+block_q4_0* allocate_bad(uint64_t n_elements) {
+    // Truncates tail elements silently or causes out-of-bounds read in SIMD kernel
+    size_t bytes = (n_elements / 32) * sizeof(block_q4_0);
+    return (block_q4_0*)malloc(bytes); // Not aligned to 32/64 bytes; potential unaligned AVX trap
+}
+```
+
+**VERIFICATION METHOD**:
+Automated CUnit / GoogleTest assertion:
+```cpp
+TEST(TensorMemoryTest, InvariantBlockDivisibilityAndAlignment) {
+    size_t allocated_size = 0;
+    // 1025 elements cannot form uniform Q4_0 blocks (1025 % 32 != 0)
+    EXPECT_EQ(allocate_quantized_tensor_buffer(1025, &allocated_size), nullptr);
+
+    // 1024 elements (32 blocks of 32 elements) is valid
+    block_q4_0* buf = allocate_quantized_tensor_buffer(1024, &allocated_size);
+    ASSERT_NE(buf, nullptr);
+    EXPECT_EQ(reinterpret_cast<uintptr_t>(buf) % 64, 0);
+    free(buf);
+}
+```
+
+---

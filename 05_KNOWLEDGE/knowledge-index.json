@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-15T02:35:55.881Z",
-  "total_verified_learnings": 8648,
+  "last_updated": "2026-11-15T02:58:59.807Z",
+  "total_verified_learnings": 8650,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18045,
+  "total_items": 18061,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -226393,13 +226393,13 @@
       "item_id": "candidate_directive-splash-screen-staying-visible-after-warm-start-on-android-12",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-Y4CV-splash-screen-staying-visible-after-warm-start-on-android-12.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-WUQ9-splash-screen-staying-visible-after-warm-start-on-android-12.md",
       "title": "splash screen staying visible after warm start on Android 12+",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "812913cd54a39f100a6341264f8476f036875f190dac61144a9bd361d8126f24",
+      "content_hash": "acf2a9fb345c6a13827550546069793109ed0e511e58a3b83d0381caa7b2e9d9",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T20:00:04.495Z"
+      "persisted_at": "2026-11-15T02:58:59.602Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co",
@@ -226409,9 +226409,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "c542d84f1ada3434b71a4707cca0ef5dcd2d8726d6fc01e9a5590b5209efb6de",
+      "content_hash": "1a672bfbf07da45d187544db802c668e0d80acd6a1db9972e9a0609227e6b1f8",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T20:00:04.593Z"
+      "persisted_at": "2026-11-15T02:58:59.708Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -226421,9 +226421,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "6f1b10594840d64aa6822c18d2be702d55fefb78e6427a9013e0fd0c5799a035",
+      "content_hash": "007ea663d5ef314cfed04630572a2d1b5108a0a5a6504181c4641fd590022a76",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T20:00:04.689Z"
+      "persisted_at": "2026-11-15T02:58:59.807Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -238028,6 +238028,243 @@
       "content_hash": "ccb7263d3f1ed7fc2216bae403e44df39eb2d0fac7d95cce0fe525b1e5c523f0",
       "domain_letter": "D",
       "persisted_at": "2026-11-15T02:35:54.295Z"
+    },
+    "learn-github-fallow-rs-fallow": {
+      "learning_id": "learn-github-fallow-rs-fallow",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "fallow-rs/fallow",
+      "repository": "fallow-rs/fallow",
+      "slug": "fallow-rs-fallow",
+      "platform": "github",
+      "source_url": "https://github.com/fallow-rs/fallow",
+      "source_version": "b5123420",
+      "content_hash": "ed9071f2b691739e861016a53856d5f5d102419ce8e2ef88d02d7750de21b004",
+      "dossier_path": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T02:55:36.664Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "candidate_directive-keep-a-clone-inherited-when-lines-above-one-copy-are-rewritten": {
+      "item_id": "candidate_directive-keep-a-clone-inherited-when-lines-above-one-copy-are-rewritten",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-SIE8-keep-a-clone-inherited-when-lines-above-one-copy-are-rewritten.md",
+      "title": "keep a clone inherited when lines above one copy are rewritten",
+      "repository": "fallow-rs/fallow",
+      "source_version": "b5123420",
+      "content_hash": "833dab47076d59854a30261a8f221b0a09f5fc90b92e11add49083b332ba8d92",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-15T02:55:36.996Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-fallow-rs-fallow-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-fallow-rs-fallow-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fallow-rs-fallow-technical-construction-intelligence-fallow-rs-fallow-core-invar.md",
+      "title": "Technical Construction Intelligence: fallow-rs/fallow Core Invariants",
+      "repository": "fallow-rs/fallow",
+      "source_version": "b5123420",
+      "content_hash": "1b3d7f3ebba97a2b9f97b9c021fe882996e16b543fcf85a51ae676c40946996c",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T02:55:37.098Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-fallow-rs-fallow": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-fallow-rs-fallow",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/fallow-rs-fallow-verification-protocol-empirical-defect-shield-for-fallow-rs-fal.md",
+      "title": "Verification Protocol: Empirical Defect Shield for fallow-rs/fallow",
+      "repository": "fallow-rs/fallow",
+      "source_version": "b5123420",
+      "content_hash": "34af0c1034a8630b355e2606d52a0cd21998e065df9bb52d206e9e45cece3717",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T02:55:37.207Z"
+    },
+    "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf": {
+      "learning_id": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "LiquidAI/LFM2.5-24B-A2B-GGUF",
+      "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
+      "slug": "hf-liquidai-lfm2.5-24b-a2b-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF",
+      "source_version": "hf-liquidai-lfm2.5-24b-a2b-gguf",
+      "content_hash": "4263d69c8d9a9df20bf1903032c44fefb73de34740e56c7658af1bbe0da96ecc",
+      "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-gguf-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8566,
+          "title": "Embedded Metadata Parameter Authority (GGUF Sampling Self-Containment)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8567,
+          "title": "Block-Quantized Memory Allocation Alignment & Padded Stride Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T02:58:54.761Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8566": {
+      "learning_id": "rule-8566",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8566,
+      "title": "Embedded Metadata Parameter Authority (GGUF Sampling Self-Containment)",
+      "source_url": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF",
+      "source_version": "hf-liquidai-lfm2.5-24b-a2b-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T02:58:54.761Z"
+    },
+    "rule-8567": {
+      "learning_id": "rule-8567",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8567,
+      "title": "Block-Quantized Memory Allocation Alignment & Padded Stride Invariant",
+      "source_url": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF",
+      "source_version": "hf-liquidai-lfm2.5-24b-a2b-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T02:58:54.761Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-liquidai-lfm2-5-24b-a2b-gguf-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-liquidai-lfm2-5-24b-a2b-gguf-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-liquidai-lfm2-5-24b-a2b-gguf-technical-construction-intelligence-liquidai-lfm.md",
+      "title": "Technical Construction Intelligence: LiquidAI/LFM2.5-24B-A2B-GGUF Core Invariants",
+      "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
+      "source_version": "hf-liquidai-lfm2.5-24b-a2b-gguf",
+      "content_hash": "38a064c1b73c31313f21ef1652e444ca5879edb2c8ce9928738eed0c00333cf1",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T02:58:55.229Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-liquidai-lfm2-5-24b-a2b-gguf": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-liquidai-lfm2-5-24b-a2b-gguf",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/hf-liquidai-lfm2-5-24b-a2b-gguf-verification-protocol-empirical-defect-shield-fo.md",
+      "title": "Verification Protocol: Empirical Defect Shield for LiquidAI/LFM2.5-24B-A2B-GGUF",
+      "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
+      "source_version": "hf-liquidai-lfm2.5-24b-a2b-gguf",
+      "content_hash": "7d2dae171eeb2052bf0e90a8d68e4eb64969d2a132d54f323c3ec1431b1367dd",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T02:58:55.334Z"
+    },
+    "candidate_directive-audit-keep-a-clone-inherited-when-lines-above-one-copy-are-rewritten": {
+      "item_id": "candidate_directive-audit-keep-a-clone-inherited-when-lines-above-one-copy-are-rewritten",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WTW2-audit-keep-a-clone-inherited-when-lines-above-one-copy-are-rewritten.md",
+      "title": "audit): keep a clone inherited when lines above one copy are rewritten",
+      "repository": "fallow-rs-fallow-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e11bc133aeda5f7293117444af4eaea8dfb19db2904ee127a76927233099b94e",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-15T02:58:58.518Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-fallow-rs-fallow-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-fallow-rs-fallow-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fallow-rs-fallow-learnings-technical-construction-intelligence-fallow-rs-fallow-.md",
+      "title": "Technical Construction Intelligence: fallow-rs-fallow-learnings Core Invariants",
+      "repository": "fallow-rs-fallow-learnings",
+      "source_version": "HEAD",
+      "content_hash": "35e65309d1e16182317f8554ed36f24ceeeb40529e2b8857ddcad0ff90051bf6",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T02:58:58.620Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-fallow-rs-fallow-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-fallow-rs-fallow-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/fallow-rs-fallow-learnings-verification-protocol-empirical-defect-shield-for-fal.md",
+      "title": "Verification Protocol: Empirical Defect Shield for fallow-rs-fallow-learnings",
+      "repository": "fallow-rs-fallow-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3fb960d134c0b59b91681c7e974289c0f2c7cf809b407d4e7076ca5797c0db15",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T02:58:58.724Z"
+    },
+    "candidate_directive-embedded-metadata-parameter-authority-gguf-sampling-self-containment": {
+      "item_id": "candidate_directive-embedded-metadata-parameter-authority-gguf-sampling-self-containment",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WU9C-embedded-metadata-parameter-authority-gguf-sampling-self-containment.md",
+      "title": "Embedded Metadata Parameter Authority (GGUF Sampling Self-Containment)",
+      "repository": "hf-liquidai-lfm2.5-24b-a2b-gguf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c2d4a9944d632f1d8584c67775d5a0c61e05db9924a00d750e6cad5be3cef45f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T02:58:58.993Z"
+    },
+    "candidate_directive-block-quantized-memory-allocation-alignment-padded-stride-invariant": {
+      "item_id": "candidate_directive-block-quantized-memory-allocation-alignment-padded-stride-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WU9C-block-quantized-memory-allocation-alignment-padded-stride-invariant.md",
+      "title": "Block-Quantized Memory Allocation Alignment & Padded Stride Invariant",
+      "repository": "hf-liquidai-lfm2.5-24b-a2b-gguf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "854627c66b731f77117d2fcf0a0e658628c5601466c5fb4f7785fced3069f6ae",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T02:58:59.094Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-hf-liquidai-lfm2-5-24b-a2b-gguf-learnings-co": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-hf-liquidai-lfm2-5-24b-a2b-gguf-learnings-co",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-liquidai-lfm2-5-24b-a2b-gguf-learnings-technical-construction-intelligence-hf.md",
+      "title": "Technical Construction Intelligence: hf-liquidai-lfm2.5-24b-a2b-gguf-learnings Core Invariants",
+      "repository": "hf-liquidai-lfm2.5-24b-a2b-gguf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7201a983e64aaa16d91172d341c876d398bc3d04ab7878b65624f08b1368f82b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T02:58:59.196Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-hf-liquidai-lfm2-5-24b-a2b-ggu": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-hf-liquidai-lfm2-5-24b-a2b-ggu",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/hf-liquidai-lfm2-5-24b-a2b-gguf-learnings-verification-protocol-empirical-defect.md",
+      "title": "Verification Protocol: Empirical Defect Shield for hf-liquidai-lfm2.5-24b-a2b-gguf-learnings",
+      "repository": "hf-liquidai-lfm2.5-24b-a2b-gguf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8afe28aa18d498b5d69bab2cb961f39da09139e7539d359cbafabc63143991e6",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T02:58:59.301Z"
     }
   },
   "ai-builder-brain": {

@@ -10036,3 +10036,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-vllm-sr-d3` | `https://huggingface.co/vllm-sr/d3` | `hf-vllm-sr` | Multi-dimensional audit evidence | 2026-11-15T02:34:57.749Z |
 | `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `6893a8c3` | Multi-dimensional audit evidence | 2026-11-15T02:35:14.715Z |
 | `learn-dom-d-608927a6` | `project://hf-vllm-sr-d3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md` | 2026-11-15T02:35:54.049Z |
+| `learn-github-fallow-rs-fallow` | `https://github.com/fallow-rs/fallow` | `b5123420` | Multi-dimensional audit evidence | 2026-11-15T02:55:36.819Z |
+| `learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf` | `https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-15T02:58:54.910Z |

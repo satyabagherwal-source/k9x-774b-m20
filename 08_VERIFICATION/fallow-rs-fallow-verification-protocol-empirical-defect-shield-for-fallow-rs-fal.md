@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for fallow/rs/fallow
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for fallow-rs/fallow
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "fallow/rs/fallow",
-  "source_url": "https://github.com/fallow/rs/fallow",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "fallow-rs/fallow",
+  "source_url": "https://github.com/fallow-rs/fallow",
+  "source_version": "b5123420",
+  "license": "MIT",
+  "timestamp": "2026-11-15T02:55:36.995Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-fallow-rs-fallow",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [fallow/rs/fallow](https://github.com/fallow/rs/fallow) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [fallow-rs/fallow](https://github.com/fallow-rs/fallow) (Revision: `b5123420`).  
+> **License**: MIT | **Timestamp**: `2026-11-15T02:55:36.995Z`  
+> **Learning ID**: `learn-github-fallow-rs-fallow`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `fallow/rs/fallow` (Commit: `historical`)
+- **Target Repository**: `fallow-rs/fallow` (Commit: `b5123420`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md`  
-> **Source**: github ([https://github.com/fallow-rs/fallow](https://github.com/fallow-rs/fallow))  
-> **Source Version**: `7016f77b`  
-> **License**: MIT  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T17:51:02.426Z  
-> **Learning ID**: `learn-github-fallow-rs-fallow`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): fallow-rs/fallow
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fallow-rs/fallow](https://github.com/fallow-rs/fallow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T17:46:01.679Z  
+> **Harvest Timestamp**: 2026-11-15T02:55:36.335Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Codebase intelligence for TypeScript and JavaScript. Health, complexity hotspots, duplication, architecture boundaries, circular dependencies, design-system drift, and unused code, from one graph. CLI, GitHub Action, LSP, MCP, and VS Code. Rust, MIT licensed.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5340 stars
+- **Stars / Engagement**: 5366 stars
 
 ---
 
@@ -1475,11 +1461,11 @@ fn format_finding(finding: &Finding<'_>) -> String {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4431** (2026-11-10): **security --gate new: an unresolvable --changed-since ref prints the whole-project fallback warning, then exits 2 without a report**
-  *Symptoms*: ### What happened?  When `fallow security --gate new --changed-since <ref>` cannot resolve `<ref>`, it first prints the scope-fallback warning, which says the run will continue as a whole-project report, then fails with exit 2. No whole-project report is produced, so the warning describes a fallback that does not happen.  stderr from step 3 below (the long git hint is shortened to `...`):  ``` Warning: --changed-since 'origin/main' was ignored because fatal: ambiguous argument 'origin/main...HEAD': unknown revision ... so this report covers the whole project instead of the changed files. Verify the ref exists in this repository, and check out with full history. Error: fallow security --gate could not compute the diff for 'origin/main': fatal: Not a valid object name origin/main (shallow clone? ...) ```  With `--format json`, stdout holds only `{"error":true,"message":"fallow security --gate could not compute the diff ...","exit_code":2}`, and the same "covers the whole project" warning still goes to stderr.  The exit code is right: the gate refuses to pass without a diff. Only the warning is wrong. A reader, human or agent, sees two messages that disagree about what the run did, and a log that keeps only stderr shows the warning and not the error.  The two messages also quote different git errors (`ambiguous argument 'origin/main...HEAD'` and `Not a valid object name origin/main`), which suggests the ref is resolved twice: once for the scope, then again for the gate.  Related
+- **Issue #4605** (2026-11-15): **ci: CodSpeed fast simulation builds stop with exit code 143**
+  *Symptoms*: ## Problem  Since 2026-11-14, many "CodSpeed fast simulation" jobs in the Benchmarks workflow fail on pull requests and on `main`, before any benchmark runs.  - The step "Build benchmark shard" (`cargo codspeed build`) stops with `Process completed with exit code 143`, after 5 to 8 minutes. The job timeout is 30 minutes, and the step has no timeout of its own. - Other jobs of the same matrix stay queued or running until the 30-minute job timeout cancels them. - A rerun of a failed job often fails again in the same way.  Examples:  - `main` push runs on 2026-11-14: one run with 1 failure and 4 cancelled jobs of 12, one run with 7 of 7 cancelled, one run with 2 failures and 4 cancelled jobs of 6. - Pull request runs: https://github.com/fallow-rs/fallow/actions/runs/43601936478 (exit code 143 again on a rerun of "LSP save-to-publish"), https://github.com/fallow-rs/fallow/actions/runs/43604188088.  These jobs are not required checks, but they keep each pull request in the `UNSTABLE` state, and a `ci:perf` pull request gets no benchmark result.  ## Proposal  - Find what sends SIGTERM to the build step. Possible causes: memory pressure on the `ubuntu-24.04` runner during the `cargo codspeed build`, or runner shutdown. - If memory is the cause, limit `CARGO_BUILD_JOBS` for the build step, or build with fewer codegen units. - Count a job that hits the timeout before its build starts separately from a benchmark failure.  ## Acceptance  - Over one day of pull request and `main` runs, t
 
-- **Issue #4429** (2026-11-10): **security: `finding_id` changes when an unrelated edit moves a sink's line, so stored verdicts stop matching**
-  *Symptoms*: ### Problem  `finding_id` is built from the rule, path, line and column (see [Finding identity migration](https://fallow.tools/docs/cli/security-agent-verification/#finding-identity-migration)). Any edit above a sink therefore gives it a new ID, even when the sink itself is unchanged. `fallow security survivors` matches verdicts by `finding_id` and exits 2 on an unknown ID. So a verdict for an unchanged candidate stops working after an unrelated edit, and the candidate has to be verified again.  The security docs also recommend the ID "to track a candidate across runs (for example after a rebase)". A rebase usually moves lines, so in practice the ID does not support that use.  Minimal repro, fallow 3.41.0 on Windows:  1. `package.json`: `{ "name": "fid-repro", "private": true, "type": "module", "main": "src/index.js" }` 2. `src/index.js`:    ```js    import { exec } from 'node:child_process'     export function run(name) {    	exec(`git log ${name}`)    }    ``` 3. Commit, then run `fallow security --no-cache --format json > before.json`. This gives one candidate: `7538fe0777339dfc src/index.js:4:1 command-injection`. 4. Write a `fallow-security-verdict/v1` file that dismisses `7538fe0777339dfc`. `fallow security survivors --candidates before.json --verdicts verdicts.json` exits 0. 5. Insert a comment line above `export function run`, commit, and run step 3 again into `after.json`. The same sink is now `6dc84d0773557bd3 src/index.js:5:1`. 6. `fallow security survivors --candi
+- **Issue #4585** (2026-11-14): **migrate from knip: production markers on ignoreDependencies and project, and named plugin configs, are lost**
+  *Symptoms*: ### What happened?  `fallow migrate` from a knip config loses three settings. Two of them only get a generic warning, and one gets a warning that gives the wrong advice:  1. **The production marker on `ignoreDependencies` is copied literally.** knip's `"left-pad!"` becomes `"left-pad!"` in Fallow. Fallow reads it as a package name, so the entry never matches. On a real repository, the migrated config then printed "ignoreDependencies entry 'ai!' hid no dependency finding in this run, so it has no effect" for each such entry. 2. **Production exclusions in `project` are dropped.** knip's `"!scripts/**!"` (exclude from production mode) only gets "[knip] `project`: Fallow auto-discovers project files". On a real repository with `!.agents/**!`, `!other/**!`, `!tests/**!` and similar exclusions, `fallow dead-code --production` with the migrated config reported 99 unused files and 56 unused exports, nearly all inside those excluded trees. knip's production run on the same tree reported none. 3. **A plugin section that names non-default config files is called redundant.** knip's `"playwright": { "config": ["playwright.e2e.config.ts"] }` gets "plugin config `playwright` is auto-detected by fallow's built-in plugins (suggestion: remove this section; fallow detects framework config automatically)". But the Playwright plugin reads only `playwright.config.{ts,js}` (`CONFIG_PATTERNS` in `crates/core/src/plugins/playwright.rs`), so a project with named configs loses them. Fallow also has no 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1496,617 +1482,984 @@ fn format_finding(finding: &Finding<'_>) -> String {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dd78ac74` (2026-11-11)
-**Commit Message**: feat(mutation): add the opt-in nullish-fallback operator (#4507)
+### Incident Patch 1: `7a3fbe65` (2026-11-14)
+**Commit Message**: fix(audit): keep a clone inherited when lines above one copy are rewritten (#4593)
 
-* feat(mutation): add the opt-in nullish-fallback operator
+The new-only duplication check maps each head copy of a clone group back
+to its base lines and keeps the group inherited when the copies lie
+inside one base clone group. When the first or last line of a copy was a
+rewritten line that replaced several base lines, the mapped range grew to
+the far end of the replaced lines. The range then fell outside the base
+copy, and the group was reported as introduced.
 
-The new opt-in operator `nullish-fallback` changes `a ?? b` to `a`. The
-existing `logical-operator` changes `??` to `&&`, which does not remove
-the fallback. A survivor shows that no test gives a nullish left operand.
+This happened for example when a change renamed one copy and removed an
+import line above the other copy. The clone in that copy then started on
+the rewritten line, and `--gate new-only` failed on duplication that the
+change did not write.
 
-With `--typecheck`, a survivor gets the existing advisory hint
-`type-non-nullish` when the declared type of `a` excludes `null` and
-`undefined`. The type-aware companion uses the same proof as for
-`optional-chaining`. The proof rejects a left operand that is an
-optional chain, such as `o?.items.map(f) ?? []`, because the chain gives
-`undefined` when a link short-circuits.
+An added line at the start of a range now maps to the last base line of
+its block, and an added line at the end maps to the first one. These are
+the replaced lines next to the unchanged lines of the copy. A range that
+starts and ends in one block still maps to every removed line.
 
-A run that does not name the operator gives the same plan and the same
-mutant ids as before. No schema_version changes.
+The drift harness seed of the failing case is in the regression file, so
+each harness run replays it.
 
-Refs #4502
+Closes #4580
 
 Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
 
-* test(mutation): cover comments and multi-byte text around a nullish fallback
-
-The collector skips a `??` inside a comment, and the companion maps byte
-offsets to UTF-16 offsets after multi-byte text. Tests now lock both.
-The docs no longer say that each opt-in operator comes from the Stryker
-
-**File**: `crates/api/src/mutation/typecheck.rs` (modified, +2/-1)
+**File**: `changelog.d/fix-audit-clone-attribution-on-rename.md` (added, +11/-0)
 ```diff
-@@ -3,7 +3,8 @@
- //! The check runs after the tests and reads only the survivors. A survivor
- //! whose mutated file does not type-check becomes `compile_error`, which the
- //! score does not count. A survivor that removes an optional-chaining link
--//! from a receiver whose declared type excludes nullish values keeps the
-+//! or a nullish fallback (`a ?? b` to `a`) from a receiver whose declared
-+//! type excludes nullish values keeps the
- //! status `survived` and gets an advisory `equivalence_hint`. A survivor that
- //! the checker cannot check keeps the status `survived`.
- 
+@@ -0,0 +1,11 @@
++### Fixed
++
++- **`fallow audit` no longer reports an old clone group as introduced when the change rewrites the lines above one copy.**
++  The audit maps each head copy of a clone back to its base lines. When the
++  first or last line of a copy was a rewritten line that replaced several base
++  lines, the mapped range grew to the far end of the replaced lines and fell
++  outside the base clone. A rename of the other copy, together with fewer
++  import lines above this copy, could then fail `--gate new-only` on
++  duplication that the change did not write. The rewritten edge line now maps
++  to the replaced base line next to the unchanged lines of the copy.
++  (Closes [#4580](https://github.com/fallow-rs/fallow/issues/4580))
 ```
 
-**File**: `crates/cli/src/mutation_cli.rs` (modified, +6/-4)
+**File**: `crates/api/src/audit_run/clone_containment.rs` (modified, +24/-0)
 ```diff
-@@ -171,7 +171,8 @@ pub struct MutationArgs {
-     /// The operators to use, comma-separated. Default: the default set. The
-     /// opt-in operators (block-statement, array-literal, object-literal,
-     /// method-expression, switch-case, call-expression, throw-statement,
--    /// regex-constructor, regex-assertion) run only when named here.
-+    /// regex-constructor, regex-assertion, nullish-fallback) run only when
-+    /// named here.
-     #[arg(long, value_name = "NAMES", value_delimiter = ',')]
-     pub operators: Vec<String>,
-     /// A verdict document that marks mutants as equivalent. Equivalent
-@@ -191,9 +192,10 @@ pub struct MutationArgs {
-     pub runner_config: Option<PathBuf>,
-     /// Type-check each survived mutant through the `--type-aware`
-     /// companion. A survivor that does not type-check becomes
--    /// `compile_error` and leaves the score. An optional-chaining survivor on a
--    /// receiver whose type excludes `null` and `undefined` gets an advisory
--    /// `equivalence_hint`. Its status and the score do not change.
-+    /// `compile_error` and leaves the score. An optional-chaining or
-+    /// nullish-fallback survivor on a receiver whose type excludes `null` and
-+    /// `undefined` gets an advisory `equivalence_hint`. Its status and the
-+    /// score do not change.
-     #[arg(long)]
-     pub typecheck: bool,
-     /// Continue an interrupted or partial run: reuse the killed and confirmed
-```
-
-**File**: `crates/cli/tests/integration/mutation_tests.rs` (modified, +82/-0)
-```diff
-@@ -1646,6 +1646,88 @@ mod end_to_end {
-         assert_eq!(judged["summary"]["counts"]["equivalent"], 1, "{judged}");
+@@ -212,6 +212,30 @@ mod tests {
+         assert!(keys.is_empty());
      }
  
-+    /// `labelOf` reads `name ?? "anon"` where `name` is a `string`. No test
-+    /// can tell the expression from `name`, so the opt-in `nullish-fallback`
-+    /// mutant survives. The type check adds the advisory hint, and the
-+    /// status and the score do not change. A run of the default operators
-+    /// has no `nullish-fallback` mutant.
++    /// The change renames one copy and replaces the three lines above the
++    /// other copy with two. The second copy moves up one line, and its clone
++    /// starts on a replaced line, which holds only the clone's first token
++    /// (issue #4580).
 +    #[test]
-+    fn a_typecheck_run_hints_a_nullish_fallback_on_a_non_nullable_receiver() {
-+        let Some(package) = companion_package() else {
-+            return;
-+        };
-+        if !type_aware_companion_installed() {
-+            return;
-+        }
-+        let (_project, root) = vitest_project(
-+            &package,
-+            "\nexport function labelOf(name: string): string {\n  return name ?? \"anon\";\n}\n",
++    fn renamed_copy_with_a_rewritten_first_line_in_the_other_copy_is_contained() {
++        let diff = DiffIndex::from_unified_diff(
++            "diff --git a/src/a.js b/src/r.js\nsimilarity index 100%\nrename from src/a.js\nrename to src/r.js\ndiff --git a/src/b.js b/src/b.js\n--- a/src/b.js\n+++ b/src/b.js\n@@ -1,3 +1,2 @@\n-import { a0 } from './a.js';\n-import { c0 } from './c.js';\n-export const b0 = a0 + c0;\n+import { a0 } from './r.js';\n+export const b0 = a0;\n",
 +        );
-+        fs::write(
-+            root.join("tsconfig.json"),
-+            r#"{"compilerOptions":{"strict":true,"noUncheckedIndexedAccess":true,"noEmit":true},"include":["src"]}"#,
-+        )
-+        .expect("tsconfig");
-+        fs::write(
-+            root.join("test/label.test.ts"),
-+            "import { expect, test } from \"vitest\";\nimport { labelOf } from \"../src/math\";\n\ntest(\"labels\", () => {\n  expect(labelOf(\"ada\")).toBe(\"ada\");\n});\n",
-+        )
-+        .expect("label test");
-+        commit_all(&root, "label");
-+
-+        let fallback = |report: &serde_json::Value| -> Option<serde_json::Value> {
-+            report["mutants"]
-+                .as_array()
-+                .expect("mutants")
-+                .iter()
-+                .find(|mutant| {
-+                    mutant["function"] == "labelOf" && mutant["operator"] == "nullish-fallback"
-+                })
-+                .cloned()
-+        };
-+        let (default_output, default_run) =
-+            json_mutation(&root, &["src/math.ts", "--concurrency", "1"]);
-+        assert_eq!(default_output.code, 0, "{}", default_output.stderr);
-+        assert!(fallback(&default_run).is_none(), "{default_run}");
-+
-+        let args = [
-+            "src/math.ts",
-+            "--concurrency",
-+            "1",
-+            "--operators",
-+            "nullish-fallback",
-+        ];
-+        let (plain_output, plain) = json_mutation(&root, &args);
-+        assert_eq!(plain_output.code, 0, "{}", plain_output.stderr);
-+        let mutant = fallback(&plain).expect("a nullish-fallback mutant of labelOf");
-+        assert_eq!(mutant["status"], "survived", "{plain}");
-+        assert!(mutant.get("equivalence_hint").is_none(), "{plain}");
-+
-+        let mut command = std::process::Command::new(crate::common::fallow_bin());
-+        command
-+            .env("RUST_LOG", "")
-+            .env("NO_COLOR", "1")
-+            .args(["mutation", "--root"])
-+            .arg(&root)
-+            .args(args)
-+            .args(["--typecheck", "--format", "json", "--quiet"]);
-+        crate::common::configure_type_aware_sidecar(&mut command);
-+        let output = command.output().expect("fallow runs");
-+        assert_eq!(
-+            output.status.code(),
-+            Some(0),
-+            "{}",
-+            String::from_utf8_lossy(&output.stderr)
-+        );
-+        let checked: serde_json::Value =
-+            serde_json::from_str(&String::from_utf8_lossy(&output.stdout)).expect("json");
-+        let mutant = fallback(&checked).expect("a nullish-fallback mutant of labelOf");
-+        assert_eq!(mutant["status"], "survived", "{checked}");
-+        assert_eq!(mutant["equivalence_hint"], "type-non-nullish", "{checked}");
-+        assert_eq!(checked["typecheck"]["hinted"], 1, "{checked}");
-+        assert_hint_leaves_the_score(&checked, &plain);
++        let renames = [RenamedFile {
++            from: root().join("src/a.js"),
++            to: root().join("src/r.js"),
++        }];
++        let base = vec![BaseCloneGroup {
++            instances: vec![span("src/a.js", 1, 14), span("src/b.js", 3, 16)],
++        }];
++        let moved = group(vec![
++            instance("src/b.js", 2, 15),
++            instance("src/r.js", 1, 14),
++        ]);
++        let keys = base_contained_dupe_group_keys([&moved], &root(), &diff, &base, &renames);
++        assert_eq!(keys.len(), 1);
 +    }
 +
-     /// A component compiler in the shape of the Vue plugin: its `transform`
-     /// hook keeps the script block of a `.vue` file.
-     const COMPONENT_CONFIG: &str = r#"const componentPlugin = () => ({
+     #[test]
+     fn renamed_copy_maps_to_its_base_path() {
+         let diff = DiffIndex::from_unified_diff(
 ```
 
-**File**: `crates/config/src/config/mutation.rs` (modified, +7/-2)
+**File**: `crates/cli/tests/drift/drift.proptest-regressions` (modified, +1/-0)
 ```diff
-@@ -72,6 +72,8 @@ pub enum MutationOperatorName {
-     RegexConstructor,
-     /// Opt-in. A lookaround negated, or `\b` and `\B` swapped.
-     RegexAssertion,
-+    /// Opt-in. `a ?? b` to `a`.
-+    NullishFallback,
+@@ -8,3 +8,4 @@ cc 5df4327fe0503553bb8a508d63db3bfb12a49da74905f7aae5d279d3adcd67b5 # shrinks to
+ cc 24c6d75d5610b0ac612b8bba185e77e21e14627731d3964cde850561e78db8d6 # shrinks to ProjectModel { workspaces: false, files: [FileSpec { second_package: false, entry_imported: false, suppress_file: false, exports: [ExportSpec { is_type: false, suppressed: false }], imports: [] }, FileSpec { second_package: false, entry_imported: false, suppress_file: false, exports: [], imports: [(2, 0)] }, FileSpec { second_package: false, entry_imported: false, suppress_file: false, exports: [ExportSpec { is_type: false, suppressed: false }], imports: [] }, FileSpec { second_package: false, entry_imported: false, suppress_file: false, exports: [ExportSpec { is_type: false, suppressed: false }], imports: [] }, FileSpec { second_package: false, entry_imported: false, suppress_file: false, exports: [], imports: [(0, 0), (3, 0)] }], deps: [], duplicate: Some((4, 1, false)), complex: None, changes: [Delete(0)], baseline_mask: [false, false, false, false, false, false] }
+ cc f02fec81f4b22e082a5bfa73f22e9d5890acbd86079e7e4373d98c84bf3f9322 # shrinks to ProjectModel { workspaces: false, files: [FileSpec { second_package: false, entry_imported: false, suppress_file: false, exports: [ExportSpec { is_type: false, suppressed: true }, ExportSpec { is_type: false, suppressed: true }], imports: [(1, 0)] }, FileSpec { second_package: false, entry_imported: true, suppress_file: false, exports: [ExportSpec { is_type: false, suppressed: false }], imports: [(3, 0)] }, FileSpec { second_package: false, entry_imported: false, suppress_file: false, exports: [], imports: [] }], deps: [], duplicate: None, complex: None, changes: [Delete(4)], baseline_mask: [false, false, false, false, false, false] }
+ cc fa822e78e71d56589ad0d90be43c58c85e4bcbf6143abcb088ba0dcd0ecc763b # shrinks to ProjectModel { workspaces: false, files: [FileSpec { second_package: false, entry_imported: false, suppress_file: false, exports: [], imports: [] }], deps: [], duplicate: None, complex: None, changes: [], baseline_mask: [false, false, false, false, false, false] }
++cc 3e4c880932c0f81cd6f1340de91eb5a3f537153039fde33194ed05c1719f8063 # shrinks to ProjectModel { workspaces: false, files: [FileSpec { second_package: false, entry_imported: false, suppress_file: false, exports: [ExportSpec { is_type: false, suppressed: false }], imports: [] }, FileSpec { second_package: false, entry_imported: false, suppress_file: false, exports: [ExportSpec { is_type: false, suppressed: false }], imports: [] }, FileSpec { second_package: false, entry_imported: false, suppress_file: false, exports: [], imports: [] }, FileSpec { second_package: false, entry_imported: false, suppress_file: false, exports: [], imports: [(1, 0), (4, 0)] }], deps: [], duplicate: Some((3, 4, false)), complex: None, changes: [Rename(0), Delete(1)], baseline_mask: [false, false, false, false, false, false] }
+```
+
+**File**: `crates/cli/tests/integration/audit_clone_containment_tests.rs` (modified, +66/-0)
+```diff
+@@ -175,6 +175,72 @@ fn audit_renamed_and_edited_copy_inside_base_clone_is_inherited() {
+     assert_all_clone_groups_inherited(&json);
  }
  
- impl MutationOperatorName {
-@@ -101,6 +103,7 @@ impl MutationOperatorName {
-             Self::ThrowStatement => "throw-statement",
-             Self::RegexConstructor => "regex-constructor",
-             Self::RegexAssertion => "regex-assertion",
-+            Self::NullishFallback => "nullish-fallback",
-         }
-     }
++/// The change renames one copy and rewrites the lines above the other copy.
++/// Two import lines become one, so that copy moves up by one line, and its
++/// clone starts on a rewritten line. The rewritten line replaces several base
++/// lines, and the clone text on it matches only the last of them. The head
++/// group thus lies inside the base group (issue #4580).
++#[test]
++fn audit_renamed_copy_and_rewritten_lines_above_other_copy_is_inherited() {
++    let tmp = TempDir::new().expect("failed to create temp dir");
++    let repo = tmp.path();
++    fs::create_dir_all(repo.join("src")).unwrap();
++    fs::write(
++        repo.join("package.json"),
++        r#"{"name":"audit-clone-rename-shift","type":"module","main":"src/index.js"}"#,
++    )
++    .unwrap();
++    let clone = SUBSPAN_CLONE.replace("NAME", "compute");
++    fs::write(
++        repo.join("src/a.js"),
++        format!("export const a0 = 1;\n{clone}"),
++    )
++    .unwrap();
++    fs::write(repo.join("src/c.js"), "export const c0 = 2;\n").unwrap();
++    fs::write(
++        repo.join("src/b.js"),
++        format!(
++            "import {{ a0 }} from './a.js';\nimport {{ c0 }} from './c.js';\nexport const b0 = a0 + c0;\n{clone}"
++        ),
++    )
++    .unwrap();
++    fs::write(
++        repo.join("src/index.js"),
++        "import { b0 } from './b.js';\nimport { compute } from './a.js';\nconsole.log(b0, compute);\n",
++    )
++    .unwrap();
++    git(repo, &["init", "-b", "main"]);
++    git(repo, &["config", "core.autocrlf", "false"]);
++    commit_all(repo, "initial");
++
++    git(repo, &["mv", "src/a.js", "src/r.js"]);
++    git(repo, &["rm", "-q", "src/c.js"]);
++    fs::write(
++        repo.join("src/b.js"),
++        format!("import {{ a0 }} from './r.js';\nexport const b0 = a0;\n{clone}"),
++    )
++    .unwrap();
++    edit_file(repo, "src/index.js", "'./a.js'", "'./r.js'");
++    commit_all(repo, "rename and rewrite");
++
++    let output = run_fallow_raw(&[
++        "audit",
++        "--root",
++        repo.to_str().unwrap(),
++        "--base",
++        "HEAD~1",
++        "--gate",
++        "new-only",
++        "--no-cache",
++        "--format",
++        "json",
++        "--quiet",
++    ]);
++    let json = parse_json(&output);
++    assert_all_clone_groups_inherited(&json);
++    assert_eq!(json["attribution"]["duplication_inherited"], 1);
++}
++
+ /// A project in a subdirectory of the repo gets the same result. The added
+ /// lines move the head clone below the end of its base instance. The head
+ /// span maps back inside the base instance only when the diff paths are
+```
+
+**File**: `crates/output/src/diff.rs` (modified, +62/-13)
+```diff
+@@ -56,6 +56,15 @@ struct ChangeBlock {
+     old_len: u64,
  }
-@@ -209,8 +212,9 @@ pub struct MutationConfig {
-     /// Type-check each survived mutant through the TypeScript-Go companion
-     /// of `--type-aware`. A survivor that does not type-check becomes
-     /// `compile_error` and does not count in the score. A survivor that
--    /// removes an optional-chaining link from a receiver whose type excludes
--    /// `null` and `undefined` gets an advisory `equivalence_hint`. Its status
-+    /// removes an optional-chaining link or a nullish fallback from a
-+    /// receiver whose type excludes `null` and `undefined` gets an advisory
-+    /// `equivalence_hint`. Its status
-     /// and the score do not change. Unset or `false` checks no survivor.
-     /// `--typecheck` turns the check on.
-     #[serde(default, skip_serializing_if = "Option::is_none")]
-@@ -343,6 +347,7 @@ mod tests {
-             MutationOperatorName::BooleanLiteral,
-             MutationOperatorName::StringLiteral,
-             MutationOperatorName::OptionalChaining,
-+            MutationOperatorName::NullishFallback,
-         ] {
-             let json = serde_json::to_value(name).expect("serializes");
-             assert_eq!(json, serde_json::Value::String(name.as_str().to_owned()));
-```
-
-**File**: `crates/engine/src/mutation/sampling.rs` (modified, +6/-5)
-```diff
-@@ -32,11 +32,12 @@ const fn productivity(operator: Operator) -> u8 {
-         Operator::CallExpression => 14,
-         Operator::ThrowStatement => 15,
-         Operator::SwitchCase => 16,
--        Operator::RegexAssertion => 17,
--        Operator::RegexConstructor => 18,
--        Operator::ArrayLiteral => 19,
--        Operator::ObjectLiteral => 20,
--        Operator::BlockStatement => 21,
-+        Operator::NullishFallback => 17,
-+        Operator::RegexAssertion => 18,
-+        Operator::RegexConstructor => 19,
-+        Operator::ArrayLiteral => 20,
-+        Operator::ObjectLiteral => 21,
-+        Operator::BlockStatement => 22,
-     }
- }
  
-```
-
-**File**: `crates/mutation/src/collect/mod.rs` (modified, +3/-0)
-```diff
-@@ -1470,6 +1470,9 @@ impl<'a> Visit<'a> for Collector<'_> {
-                     change,
-                 );
-             }
-+            if operator == LogicalOperator::Coalesce {
-+                self.nullish_fallback(it, start);
-+            }
++impl ChangeBlock {
++    /// Last base line that the run removed. `None` when it removed no line.
++    fn last_removed_line(self) -> Option<u64> {
++        (self.old_start + self.old_len)
++            .checked_sub(1)
++            .filter(|_| self.old_len > 0)
++    }
++}
++
+ /// Where one head line sits relative to the change blocks of its file.
+ enum HeadLinePlace {
+     /// An unchanged line, at this base line.
+@@ -216,26 +225,44 @@ impl DiffIndex {
+     /// is a key of this diff.
+     ///
+     /// Unchanged lines map exactly. An added line at the start of the range
+-    /// maps to the first base line that its block removed. An added line at
+-    /// the end maps to the last one. A file that the diff does not name maps
+-    /// unchanged. `None` when the range holds no base line, when the diff
+-    /// adds `path` as a new file, or when the index stopped at
+-    /// [`MAX_ADDED_LINES`].
++    /// maps to the last base line that its block removed, which is the
++    /// removed line next to the unchanged lines inside the range. An added
++    /// line at the end maps to the first removed line, for the same reason.
++    /// A block that replaces several lines thus does not widen the range to
++    /// base lines that the range does not reach. A range that starts and
++    /// ends in one block maps to every line that the block removed. A file
++    /// that the diff does not name maps unchanged. `None` when the range
++    /// holds no base line, when the diff adds `path` as a new file, or when
++    /// the index stopped at [`MAX_ADDED_LINES`].
+     #[must_use]
+     pub fn base_line_range(&self, path: &str, start: u64, end: u64) -> Option<(u64, u64)> {
+         let map = &self.base_lines;
+         if map.lines_capped || start > end || map.new_files.contains(path) {
+             return None;
          }
-         walk::walk_logical_expression(self, it);
-         self.negate_operands(it);
-```
-
-**File**: `crates/mutation/src/collect/opt_in.rs` (modified, +17/-2)
-```diff
-@@ -6,8 +6,8 @@
- 
- use oxc_ast::ast::{
-     Argument, ArrayExpression, ArrowFunctionExpression, BlockStatement, CallExpression, Class,
--    Expression, Function, FunctionBody, ObjectExpression, Statement, SwitchCase, ThrowStatement,
--    VariableDeclaration, VariableDeclarationKind,
-+    Expression, Function, FunctionBody, LogicalExpression, ObjectExpression, Statement, SwitchCase,
-+    ThrowStatement, VariableDeclaration, VariableDeclarationKind,
- };
- use oxc_ast_visit::{Visit, walk};
- use oxc_span::{GetSpan, Span};
-@@ -241,6 +241,21 @@ impl Collector<'_> {
-         }
+         let blocks = map.change_blocks.get(path).map_or(&[][..], Vec::as_slice);
+-        let base_start = match head_line_place(blocks, start) {
+-            HeadLinePlace::Unchanged(line) => line,
+-            HeadLinePlace::Added(block) => block.old_start,
+-        };
+-        let base_end = match head_line_place(blocks, end) {
+-            HeadLinePlace::Unchanged(line) => line,
+-            HeadLinePlace::Added(block) => (block.old_start + block.old_len).checked_sub(1)?,
+-        };
++        let (base_start, base_end) =
++            match (head_line_place(blocks, start), head_line_place(blocks, end)) {
++                (HeadLinePlace::Added(first), HeadLinePlace::Added(last))
++                    if first.new_start == last.new_start =>
++                {
++                    (first.old_start, first.last_removed_line()?)
++                }
++                (start_place, end_place) => {
++                    let base_start = match start_place {
++                        HeadLinePlace::Unchanged(line) => line,
++                        HeadLinePlace::Added(block) => {
++                            block.last_removed_line().unwrap_or(block.old_start)
++                        }
++                    };
++                    let base_end = match end_place {
++                        HeadLinePlace::Unchanged(line) => line,
++                        HeadLinePlace::Added(block) if block.old_len > 0 => block.old_start,
++                        HeadLinePlace::Added(block) => block.old_start.checked_sub(1)?,
++                    };
++                    (base_start, base_end)
++                }
++            };
+         (base_start <= base_end).then_some((base_start, base_end))
      }
  
-+    /// Adds the `nullish-fallback` candidate of `a ?? b`: the region from
-+    /// the `??` token at `token_start` to the end of `b` is removed, so the
-+    /// expression becomes `a`. The left operand keeps its place, and `??`
-+    /// binds more loosely than any operand that it can have without
-+    /// parentheses, so the grouping of the context does not change.
-+    pub(super) fn nullish_fallback(&mut self, it: &LogicalExpression<'_>, token_start: u32) {
-+        self.add(
-+            it.span,
-+            Operator::NullishFallback,
-+            (token_start, it.right.span().end),
-+            String::new(),
-+            MutantChange::new(MutantChange::FALLBACK, ""),
+@@ -496,6 +523,28 @@ mod tests {
+         assert_eq!(index.base_line_range("a.js", 1, 12), Some((1, 10)));
+     }
+ 
++    /// Three base lines become two head lines. A range that starts on the
++    /// second head line reaches only the last replaced base line, so it maps
++    /// to that line and not to the first one (issue #4580).
++    #[test]
++    fn base_line_range_maps_a_start_in_a_multi_line_replacement_to_its_last_removed_line() {
++        let index = DiffIndex::from_unified_diff(
++            "diff --git a/b.ts b/b.ts\n--- a/b.ts\n+++ b/b.ts\n@@ -1,3 +1,2 @@\n-one\n-two\n-three\n+ONE\n+TWO\n",
 +        );
++        assert_eq!(index.base_line_range("b.ts", 2, 15), Some((3, 16)));
++        assert_eq!(index.base_line_range("b.ts", 1, 2), Some((1, 3)));
 +    }
 +
-     /// Adds the `array-literal` candidate.
-     pub(super) fn array_literal(&mut self, it: &ArrayExpression<'_>) {
-         let (replacement, change) = if it.elements.is_empty() {
++    #[test]
++    fn base_line_range_maps_an_end_in_a_multi_line_replacement_to_its_first_removed_line() {
++        let index = DiffIndex::from_unified_diff(
++            "diff --git a/b.ts b/b.ts\n--- a/b.ts\n+++ b/b.ts\n@@ -10,3 +10,2 @@\n-ten\n-eleven\n-twelve\n+TEN\n+ELEVEN\n",
++        );
++        assert_eq!(index.base_line_range("b.ts", 1, 10), Some((1, 10)));
++        assert_eq!(index.base_line_range("b.ts", 1, 11), Some((1, 10)));
++        assert_eq!(index.base_line_range("b.ts", 12, 20), Some((13, 21)));
++    }
++
+     #[test]
+     fn base_line_range_has_no_base_line_for_pure_additions() {
+         let index = DiffIndex::f
 ```
 
-**File**: `crates/mutation/src/lib.rs` (modified, +3/-0)
+**File**: `docs/reference/cli-internals.md` (modified, +4/-1)
 ```diff
-@@ -186,6 +186,9 @@ impl MutantChange {
-     const ARRAY: &'static str = "<array>";
-     /// Placeholder for a non-empty object literal.
-     const OBJECT: &'static str = "<object>";
-+    /// The `??` token and the fallback operand that `nullish-fallback`
-+    /// removes.
-+    const FALLBACK: &'static str = "?? <expression>";
- 
-     /// A change from `from` to `to`.
-     pub const fn new(from: &'static str, to: &'static str) -> Self {
+@@ -538,7 +538,10 @@ line states exit code 0.
+   (`crates/api/src/audit_run/clone_containment.rs`). The check maps each head
+   instance to its base path through the rename list and the diff renames,
+   and to its base lines through the line changes of the diff
+-  (`DiffIndex::base_line_range`). An edit inside one copy of a base clone
++  (`DiffIndex::base_line_range`). A rewritten line at the start or end of an
++  instance maps to the replaced base line next to the unchanged lines of the
++  instance, so a block that turns several lines into fewer does not move the
++  span outside its base instance. An edit inside one copy of a base clone
+   splits the base group into smaller groups with new keys, and this rule
+   keeps them inherited. The rule records no demotion, because the group
+   matches a base group. A file that the diff adds has no base lines, so a
 ```
 
 ---
 
-### Incident Patch 2: `a09d23e9` (2026-11-11)
-**Commit Message**: fix(dead-code): narrow the constant-parameter gate for broken files and HTML scripts (#4499)
+### Incident Patch 2: `b5123420` (2026-11-15)
+**Commit Message**: ci(bench): build CodSpeed shards with two compile jobs, swap and a resource log (#4616)
 
-A file with a parse error blocked each function of the project, and an
-HTML page with an inline script blocked each exported function. Both now
-block only the functions that their import specifiers can reach. A
-lexical scan reads the specifiers; a computed module name, a path alias,
-an import map, an auto-import project or a component file keeps the old
-behavior. A declaration file blocks nothing.
+* ci(bench): add swap and a resource log to the CodSpeed builds
 
-never-passed now abstains when a self-call passes the parameter on, so a
-recursive function with an optional cache gives no false finding.
-MIN_CALL_SITES is 2. The debug log reports the gate counts and the
-first, any and only abstain reason of each function.
+CodSpeed jobs stop in "Build benchmark shard" with exit code 143 and
+"The runner has received a shutdown signal", with no compiler error.
+The runner stops while a cold build compiles several large crates at
+once with full debug info.
+
+Each CodSpeed job now adds 8 GiB of swap on the temporary disk before
+the build. When the disk has too little free space or swapon fails,
+the step prints a warning and the job continues. The build runs
+through a wrapper that prints the available memory, the used swap,
+the load average and the available disk every 30 seconds, so the last
+lines of a log show which resource ran out.
+
+The cargo command and its flags do not change, so the instruction
+counts of the benchmarks do not change.
+
+Closes #4605
 
 Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
 
-**File**: `.agents/skills/fallow/SKILL.md` (modified, +7/-0)
+* ci(bench): build the CodSpeed shards with two compile jobs
+
+The resource log of the first run showed the memory peak. While the
+large fallow crates compile in parallel, the available memory fell to
+about 1 GB, and six shards used up to 2.5 GB of swap. 
+
+**File**: `.github/workflows/bench.yml` (modified, +28/-3)
 ```diff
-@@ -215,6 +215,13 @@ fallow dead-code --format json --quiet --production
+@@ -141,7 +141,8 @@ jobs:
+     permissions:
+       contents: read
+       id-token: write
+-    timeout-minutes: 30
++    # A cold build with two compile jobs takes longer than one with four.
++    timeout-minutes: 45
+     env:
+       # One rayon thread keeps simulated instruction counts stable: adaptive
+       # work splitting on steals changes them between runs of the same code.
+@@ -164,9 +165,21 @@ jobs:
+         with:
+           tool: cargo-codspeed@4.7.0
  
- Excludes test/dev files (`*.test.*`, `*.spec.*`, `*.stories.*`) and only analyzes production scripts.
- 
-+### Review parameters that each call passes in one way
-+```bash
-+fallow dead-code --constant-parameters --production --format json --quiet
-+```
++      - name: Add swap for the build
++        # A cold build compiles several large crates at once with full debug
++        # info. Without extra swap, a memory peak can stop the hosted runner
++        # with exit code 143 and no compiler error (#4605). The temporary
++        # disk at /mnt has the free space.
++        run: bash scripts/ci-add-swap.sh /mnt/bench.swap 8
 +
-+The opt-in rule reports a function parameter that each visible call passes the same literal (`identical-argument`), or an optional parameter that no call passes (`never-passed`). It reports only when it sees each caller. Start with findings where `condition_reads` is above 0: a condition tests the constant, so a branch cannot run. Read the `inspected_call_sites` and the intent before a change. Keep a deliberate option, a test seam, or a parameter that matches a sibling API. `--production` drops test callers and test helpers. There is no auto-fix.
-+
- ### Analyze specific workspaces
- ```bash
- fallow dead-code --format json --quiet --workspace my-package                # single package (lists: web,admin)
-```
-
-**File**: `.claude/skills/fallow/SKILL.md` (modified, +7/-0)
-```diff
-@@ -216,6 +216,13 @@ fallow dead-code --format json --quiet --production
+       - name: Build benchmark shard
+         # Keep PR feedback focused on deterministic API/session/cache paths.
+-        run: cargo codspeed build -p ${{ matrix.package }} --bench ${{ matrix.bench }} --features codspeed
++        # The resource log shows the cause when the runner stops mid-build.
++        env:
++          # Four parallel compiles of the large fallow crates, with full debug
++          # info, use more than the 16 GB of the runner (#4605).
++          CARGO_BUILD_JOBS: "2"
++        run: bash scripts/ci-with-resource-log.sh cargo codspeed build -p ${{ matrix.package }} --bench ${{ matrix.bench }} --features codspeed
  
- Excludes test/dev files (`*.test.*`, `*.spec.*`, `*.stories.*`) and only analyzes production scripts.
+       - name: Run benchmark shard
+         uses: CodSpeedHQ/action@af75f77f17a054769abefaa42fe8dc2975469b5f # v5.6.3
+@@ -214,9 +227,21 @@ jobs:
+         with:
+           tool: cargo-codspeed@4.7.0
  
-+### Review parameters that each call passes in one way
-+```bash
-+fallow dead-code --constant-parameters --production --format json --quiet
-+```
++      - name: Add swap for the build
++        # A cold build compiles several large crates at once with full debug
++        # info. Without extra swap, a memory peak can stop the hosted runner
++        # with exit code 143 and no compiler error (#4605). The temporary
++        # disk at /mnt has the free space.
++        run: bash scripts/ci-add-swap.sh /mnt/bench.swap 8
 +
-+The opt-in rule reports a function parameter that each visible call passes the same literal (`identical-argument`), or an optional parameter that no call passes (`never-passed`). It reports only when it sees each caller. Start with findings where `condition_reads` is above 0: a condition tests the constant, so a branch cannot run. Read the `inspected_call_sites` and the intent before a change. Keep a deliberate option, a test seam, or a parameter that matches a sibling API. `--production` drops test callers and test helpers. There is no auto-fix.
-+
- ### Analyze specific workspaces
- ```bash
- fallow dead-code --format json --quiet --workspace my-package                # single package (lists: web,admin)
-```
-
-**File**: `changelog.d/feat-constant-parameter-rule.md` (modified, +1/-1)
-```diff
-@@ -1,4 +1,4 @@
- ### Added
+       - name: Build full benchmark shard
+         # Full suites include audit/git-heavy and scaling paths that are useful but noisier.
+-        run: cargo codspeed build -p ${{ matrix.package }} --bench ${{ matrix.bench }} --features codspeed
++        # The resource log shows the cause when the runner stops mid-build.
++        env:
++          # Four parallel compiles of the large fallow crates, with full debug
++          # info, use more than the 16 GB of the runner (#4605).
++          CARGO_BUILD_JOBS: "2"
++        run: bash scripts/ci-with-resource-log.sh cargo codspeed build -p ${{ matrix.package }} --bench ${{ matrix.bench }} --features codspeed
  
--- **New opt-in rule `constant-parameter` reports a parameter that each call passes in one way.** It reports a parameter of a module-scope function when each visible call passes the same literal (`identical-argument`), or when no call passes an optional parameter (`never-passed`). The finding lists the value, the call count, up to 20 calls, and the count of conditions that test the parameter. Turn it on with `fallow dead-code --constant-parameters` or `rules.constant-parameters`; the default is `off`, and the rule has no automatic fix. The rule reports only when it sees each caller: it skips public API and entry-point exports, dynamic imports, CommonJS, a function used as a value, template files, `eval`, framework auto-imports and functions with fewer than 3 calls. JSON, SARIF, CodeClimate, markdown, compact, human output, baselines, LSP, MCP, the Node bindings and the VS Code extension carry the finding. A test file is a caller unless `--production` is set. The first run after the upgrade parses each file again, because the cache format changed.
-+- **New opt-in rule `constant-parameter` reports a parameter that each call passes in one way.** It reports a parameter of a module-scope function when each visible call passes the same literal (`identical-argument`), or when no call passes an optional parameter (`never-passed`). The finding lists the value, the call count, up to 20 calls, and the count of conditions that test the parameter. Turn it on with `fallow dead-code --constant-parameters` or `rules.constant-parameters`; the default is `off`, and the rule has no automatic fix. The rule reports only when it sees each caller: it skips public API and entry-point exports, dynamic imports, CommonJS, a function used as a value, template files, `eval`, framework auto-imports and functions with fewer than 2 calls. A file with a parse error, or an HTML page with an inline script, blocks only the functions that its import specifiers can reach. JSON, SARIF, CodeClimate, markdown, compact, human output, baselines, LSP, MCP, the Node bindings and the VS Code extension carry the finding. A test file is a caller unless `--production` is set. The first run after the upgrade parses each file again, because the cache format changed.
-   (Closes [#4491](https://github.com/fallow-rs/fallow/issues/4491))
+       - name: Run full benchmark shard
+         uses: CodSpeedHQ/action@af75f77f17a054769abefaa42fe8dc2975469b5f # v5.6.3
 ```
 
-**File**: `crates/api/src/explain.rs` (modified, +1/-1)
+**File**: `.github/workflows/ci.yml` (modified, +4/-0)
 ```diff
-@@ -355,7 +355,7 @@ pub const CHECK_RULES: &[RuleDef] = &[
-         category: "Dead code",
-         name: "Constant parameters",
-         short: "Each visible call passes a function parameter in the same way",
--        full: "A parameter of a module-scope function gets the same literal at each visible call (reason identical-argument), or an optional parameter is passed by no call (reason never-passed). The finding lists the value, the call count, the calls, and the count of conditions that test the parameter; a condition that tests a constant points at a branch that cannot run. Enable constant-parameters explicitly; it defaults to off. The rule fires only when each caller is visible. It abstains for public API and entry-point exports, exports that a plugin marks as used, dynamic imports, CommonJS, escaped namespaces, a function used as a value or through call/apply/bind, template hosts, direct eval, classic scripts, framework auto-imports, open contracts (arguments, overloads, a reassigned binding, decorators, generators), parse errors, and fewer than 3 calls. A written, rest or destructured parameter gives no finding. In the default mode a test file is a caller; with --production only production callers count. Review the parameter manually; static analysis does not prove that no caller outside the project exists.",
-+        full: "A parameter of a module-scope function gets the same literal at each visible call (reason identical-argument), or an optional parameter is passed by no call (reason never-passed). The finding lists the value, the call count, the calls, and the count of conditions that test the parameter; a condition that tests a constant points at a branch that cannot run. Enable constant-parameters explicitly; it defaults to off. The rule fires only when each caller is visible. It abstains for public API and entry-point exports, exports that a plugin marks as used, dynamic imports, CommonJS, escaped namespaces, a function used as a value or through call/apply/bind, template hosts that can import the function, direct eval, classic scripts, framework auto-imports, open contracts (arguments, overloads, a reassigned binding, decorators, generators), a module with a parse error that can import the function, and fewer than 2 calls. A self-call that passes an optional parameter on blocks never-passed. A written, rest or destructured parameter gives no finding. In the default mode a test file is a caller; with --production only production callers count. Review the parameter manually; static analysis does not prove that no caller outside the project exists.",
-         docs_path: "explanations/dead-code#constant-parameters",
-     },
-     RuleDef {
+@@ -984,6 +984,10 @@ jobs:
+         run: sh scripts/check-conflict-markers.sh
+       - name: Merge-conflict marker check self-test
+         run: bash scripts/test-check-conflict-markers.sh
++      - name: CI runner script self-tests
++        run: |
++          bash scripts/test-ci-add-swap.sh
++          bash scripts/test-ci-with-resource-log.sh
+ 
+   js-lint:
+     name: JS Lint and Format
 ```
 
-**File**: `crates/cli/tests/integration/snapshots/integration__snapshot_tests__sarif_circular_deps_only.snap` (modified, +1/-1)
+**File**: `docs/benchmarking.md` (modified, +13/-0)
 ```diff
-@@ -462,7 +462,7 @@ expression: redact_sarif_version(&json_str)
-                 "text": "Each visible call passes a function parameter in the same way"
-               },
-               "fullDescription": {
--                "text": "A parameter of a module-scope function gets the same literal at each visible call (reason identical-argument), or an optional parameter is passed by no call (reason never-passed). The finding lists the value, the call count, the calls, and the count of conditions that test the parameter; a condition that tests a constant points at a branch that cannot run. Enable constant-parameters explicitly; it defaults to off. The rule fires only when each caller is visible. It abstains for public API and entry-point exports, exports that a plugin marks as used, dynamic imports, CommonJS, escaped namespaces, a function used as a value or through call/apply/bind, template hosts, direct eval, classic scripts, framework auto-imports, open contracts (arguments, overloads, a reassigned binding, decorators, generators), parse errors, and fewer than 3 calls. A written, rest or destructured parameter gives no finding. In the default mode a test file is a caller; with --production only production callers count. Review the parameter manually; static analysis does not prove that no caller outside the project exists."
-+                "text": "A parameter of a module-scope function gets the same literal at each visible call (reason identical-argument), or an optional parameter is passed by no call (reason never-passed). The finding lists the value, the call count, the calls, and the count of conditions that test the parameter; a condition that tests a constant points at a branch that cannot run. Enable constant-parameters explicitly; it defaults to off. The rule fires only when each caller is visible. It abstains for public API and entry-point exports, exports that a plugin marks as used, dynamic imports, CommonJS, escaped namespaces, a function used as a value or through call/apply/bind, template hosts that can import the function, direct eval, classic scripts, framework auto-imports, open contracts (arguments, overloads, a reassigned binding, decorators, generators), a module with a parse error that can import the function, and fewer than 2 calls. A self-call that passes an optional parameter on blocks never-passed. A written, rest or destructured parameter gives no finding. In the default mode a test file is a caller; with --production only production callers count. Review the parameter manually; static analysis does not prove that no caller outside the project exists."
-               },
-               "helpUri": "https://fallow.tools/docs/explanations/dead-code/#constant-parameters",
-               "defaultConfiguration": {
+@@ -27,6 +27,19 @@ to judge an I/O change.
+ compare instruction counts across a change to this profile: the codegen
+ changes, so CodSpeed records a one-time baseline shift.
+ 
++A cold build of a shard compiles several large crates at once, and
++cargo-codspeed always adds full debug info (`-Cdebuginfo=2`). With four
++parallel compile jobs, the large fallow crates (core, engine, cli, lsp) used
++more than the 16 GB of the runner. Each CodSpeed job in
++`.github/workflows/bench.yml` therefore builds with `CARGO_BUILD_JOBS=2` and adds
++8 GiB of swap on the temporary disk (`scripts/ci-add-swap.sh`) before the
++build. The job count does not change the instruction counts, because each
++crate compiles to the same code. The build runs through
++`scripts/ci-with-resource-log.sh`, which prints the available memory, the used
++swap and the available disk every 30 seconds. When a runner stops in "Build
++benchmark shard" with exit code 143 and no compiler error, read the last
++`resources:` lines of the job log to find the resource that ran out.
++
+ The optional TypeScript semantic companion is measured separately with
+ CodSpeed walltime. Simulation cannot measure the interpreted Node.js process or
+ its child process, so `tools/type-aware-sidecar/bench/session.mjs` uses the
 ```
 
-**File**: `crates/cli/tests/integration/snapshots/integration__snapshot_tests__sarif_duplicate_exports_only.snap` (modified, +1/-1)
+**File**: `scripts/ci-add-swap.sh` (added, +43/-0)
 ```diff
-@@ -462,7 +462,7 @@ expression: redact_sarif_version(&json_str)
-                 "text": "Each visible call passes a function parameter in the same way"
-               },
-               "fullDescription": {
--                "text": "A parameter of a module-scope function gets the same literal at each visible call (reason identical-argument), or an optional parameter is passed by no call (reason never-passed). The finding lists the value, the call count, the calls, and the count of conditions that test the parameter; a condition that tests a constant points at a branch that cannot run. Enable constant-parameters explicitly; it defaults to off. The rule fires only when each caller is visible. It abstains for public API and entry-point exports, exports that a plugin marks as used, dynamic imports, CommonJS, escaped namespaces, a function used as a value or through call/apply/bind, template hosts, direct eval, classic scripts, framework auto-imports, open contracts (arguments, overloads, a reassigned binding, decorators, generators), parse errors, and fewer than 3 calls. A written, rest or destructured parameter gives no finding. In the default mode a test file is a caller; with --production only production callers count. Review the parameter manually; static analysis does not prove that no caller outside the project exists."
-+                "text": "A parameter of a module-scope function gets the same literal at each visible call (reason identical-argument), or an optional parameter is passed by no call (reason never-passed). The finding lists the value, the call count, the calls, and the count of conditions that test the parameter; a condition that tests a constant points at a branch that cannot run. Enable constant-parameters explicitly; it defaults to off. The rule fires only when each caller is visible. It abstains for public API and entry-point exports, exports that a plugin marks as used, dynamic imports, CommonJS, escaped namespaces, a function used as a value or through call/apply/bind, template hosts that can import the function, direct eval, classic scripts, framework auto-imports, open contracts (arguments, overloads, a reassigned binding, decorators, generators), a module with a parse error that can import the function, and fewer than 2 calls. A self-call that passes an optional parameter on blocks never-passed. A written, rest or destructured parameter gives no finding. In the default mode a test file is a caller; with --production only production callers count. Review the parameter manually; static analysis does not prove that no caller outside the project exists."
-               },
-               "helpUri": "https://fallow.tools/docs/explanations/dead-code/#constant-parameters",
-               "defaultConfiguration": {
+@@ -0,0 +1,43 @@
++#!/usr/bin/env bash
++# Adds a swap file on a Linux CI runner and prints the memory and swap after.
++# When the directory of the file does not exist, or its file system has less
++# free space than the swap size plus a reserve, the script prints a warning and
++# adds no swap: a missing swap file must not fail the job.
++#
++# Usage: bash scripts/ci-add-swap.sh <swap file> <size in GiB>
++set -u
++
++RESERVE_GIB=4
++
++if [ "$#" -ne 2 ] || ! [[ "$2" =~ ^[1-9][0-9]*$ ]]; then
++  echo "usage: bash scripts/ci-add-swap.sh <swap file> <size in GiB>" >&2
++  exit 2
++fi
++
++file="$1"
++size_gib="$2"
++dir="$(dirname "$file")"
++
++warn() {
++  echo "::warning::No extra swap: $1"
++  exit 0
++}
++
++[ -d "$dir" ] || warn "$dir does not exist"
++free_gib="$(df -Pk "$dir" | awk 'NR == 2 { print int($4 / 1024 / 1024) }')"
++[ "$free_gib" -ge $((size_gib + RESERVE_GIB)) ] ||
++  warn "$dir has ${free_gib} GiB free, the swap file needs $((size_gib + RESERVE_GIB)) GiB"
++
++sudo_cmd=""
++[ "$(id -u)" -eq 0 ] || sudo_cmd="sudo -n"
++
++drop() {
++  $sudo_cmd rm -f "$file"
++  warn "$1"
++}
++
++$sudo_cmd fallocate -l "${size_gib}G" "$file" || drop "fallocate failed for $file"
++$sudo_cmd chmod 600 "$file"
++$sudo_cmd mkswap "$file" >/dev/null || drop "mkswap failed for $file"
++$sudo_cmd swapon "$file" || drop "swapon failed for $file"
++free -m
 ```
 
-**File**: `crates/cli/tests/integration/snapshots/integration__snapshot_tests__sarif_empty.snap` (modified, +1/-1)
+**File**: `scripts/ci-with-resource-log.sh` (added, +58/-0)
 ```diff
-@@ -462,7 +462,7 @@ expression: redact_sarif_version(&json_str)
-                 "text": "Each visible call passes a function parameter in the same way"
-               },
-               "fullDescription": {
--                "text": "A parameter of a module-scope function gets the same literal at each visible call (reason identical-argument), or an optional parameter is passed by no call (reason never-passed). The finding lists the value, the call count, the calls, and the count of conditions that test the parameter; a condition that tests a constant points at a branch that cannot run. Enable constant-parameters explicitly; it defaults to off. The rule fires only when each caller is visible. It abstains for public API and entry-point exports, exports that a plugin marks as used, dynamic imports, CommonJS, escaped namespaces, a function used as a value or through call/apply/bind, template hosts, direct eval, classic scripts, framework auto-imports, open contracts (arguments, overloads, a reassigned binding, decorators, generators), parse errors, and fewer than 3 calls. A written, rest or destructured parameter gives no finding. In the default mode a test file is a caller; with --production only production callers count. Review the parameter manually; static analysis does not prove that no caller outside the project exists."
-+                "text": "A parameter of a module-scope function gets the same literal at each visible call (reason identical-argument), or an optional parameter is passed by no call (reason never-passed). The finding lists the value, the call count, the calls, and the count of conditions that test the parameter; a condition that tests a constant points at a branch that cannot run. Enable constant-parameters explicitly; it defaults to off. The rule fires only when each caller is visible. It abstains for public API and entry-point exports, exports that a plugin marks as used, dynamic imports, CommonJS, escaped namespaces, a function used as a value or through call/apply/bind, template hosts that can import the function, direct eval, classic scripts, framework auto-imports, open contracts (arguments, overloads, a reassigned binding, decorators, generators), a module with a parse error that can import the function, and fewer than 2 calls. A self-call that passes an optional parameter on blocks never-passed. A written, rest or destructured parameter gives no finding. In the default mode a test file is a caller; with --production only production callers count. Review the parameter manually; static analysis does not prove that no caller outside the project exists."
-               },
-               "helpUri": "https://fallow.tools/docs/explanations/dead-code/#constant-parameters",
-               "defaultConfiguration": {
+@@ -0,0 +1,58 @@
++#!/usr/bin/env bash
++# Runs a command and prints the available memory, the used swap, the load
++# average and the available disk of the runner at an interval while the command
++# runs, and once at the end. A hosted runner that runs out of memory or disk, or
++# is too busy to answer, stops without an error from the command, so the last
++# lines of the log show the cause.
++#
++# Usage: bash scripts/ci-with-resource-log.sh <command> [args...]
++# RESOURCE_LOG_INTERVAL sets the interval in seconds (default 30). A value that
++# is not a positive whole number uses the default.
++# The exit code is the exit code of the command.
++set -u
++
++if [ "$#" -eq 0 ]; then
++  echo "usage: bash scripts/ci-with-resource-log.sh <command> [args...]" >&2
++  exit 2
++fi
++
++interval="${RESOURCE_LOG_INTERVAL:-30}"
++[[ "$interval" =~ ^[1-9][0-9]*$ ]] || interval=30
++
++sample() {
++  local line="resources:"
++  if [ -r /proc/meminfo ]; then
++    line="$line $(awk '
++      /^MemAvailable:/ { available = $2 }
++      /^SwapTotal:/ { swap_total = $2 }
++      /^SwapFree:/ { swap_free = $2 }
++      END { printf "mem_available_mb=%d swap_used_mb=%d", available / 1024, (swap_total - swap_free) / 1024 }
++    ' /proc/meminfo)"
++  fi
++  if [ -r /proc/loadavg ]; then
++    line="$line load_1m=$(cut -d ' ' -f 1 /proc/loadavg)"
++  fi
++  line="$line $(df -Pk . | awk 'NR == 2 { printf "disk_available_mb=%d", $4 / 1024 }')"
++  echo "$line"
++}
++
++# The sampler also stops its sleep, so no process keeps the output open after
++# the command ends.
++(
++  sleeper=""
++  trap '[ -n "$sleeper" ] && kill "$sleeper" 2>/dev/null; exit 0' TERM
++  while :; do
++    sample
++    sleep "$interval" &
++    sleeper=$!
++    wait "$sleeper"
++  done
++) &
++sampler=$!
++trap 'kill "$sampler" 2>/dev/null' EXIT
++
++"$@"
++status=$?
++kill "$sampler" 2>/dev/null
++sample
++exit "$status"
 ```
 
-**File**: `crates/cli/tests/integration/snapshots/integration__snapshot_tests__sarif_mixed_severity.snap` (modified, +1/-1)
+**File**: `scripts/test-ci-add-swap.sh` (added, +42/-0)
 ```diff
-@@ -462,7 +462,7 @@ expression: redact_sarif_version(&json_str)
-                 "text": "Each visible call passes a function parameter in the same way"
-               },
-               "fullDescription": {
--                "text": "A parameter of a module-scope function gets the same literal at each visible call (reason identical-argument), or an optional parameter is passed by no call (reason never-passed). The finding lists the value, the call count, the calls, and the count of conditions that test the parameter; a condition that tests a constant points at a branch that cannot run. Enable constant-parameters explicitly; it defaults to off. The rule fires only when each caller is visible. It abstains for public API and entry-point exports, exports that a plugin marks as used, dynamic imports, CommonJS, escaped namespaces, a function used as a value or through call/apply/bind, template hosts, direct eval, classic scripts, framework auto-imports, open contracts (arguments, overloads, a reassigned binding, decorators, generators), parse errors, and fewer than 3 calls. A written, rest or destructured parameter gives no finding. In the default mode a test file is a caller; with --production only production callers count. Review the parameter manually; static analysis does not prove that no caller outside the project exists."
-+                "text": "A parameter of a module-scope function gets the same literal at each visible call (reason identical-argument), or an optional parameter is passed by no call (reason never-passed). The finding lists the value, the call count, the calls, and the count of conditions that test the parameter; a condition that tests a constant points at a branch that cannot run. Enable constant-parameters explicitly; it defaults to off. The rule fires only when each caller is visible. It abstains for public API and entry-point exports, exports that a plugin marks as used, dynamic imports, CommonJS, escaped namespaces, a function used as a value or through call/apply/bind, template hosts that can import the function, direct eval, classic scripts, framework auto-imports, open contracts (arguments, overloads, a reassigned binding, decorators, generators), a module with a parse error that can import the function, and fewer than 2 calls. A self-call that passes an optional parameter on blocks never-passed. A written, rest or destructured parameter gives no finding. In the default mode a test file is a caller; with --production only production callers count. Review the parameter manually; static analysis does not prove that no caller outside the project exists."
-               },
-               "helpUri": "https://fallow.tools/docs/explanations/dead-code/#constant-parameters",
-               "defaultConfiguration": {
+@@ -0,0 +1,42 @@
++#!/usr/bin/env bash
++# Self-test for scripts/ci-add-swap.sh. Covers the paths that add no swap, so
++# it runs without root: invalid arguments, a missing directory and too little
++# free space. The CodSpeed jobs in bench.yml run the path that adds swap.
++# Run: bash scripts/test-ci-add-swap.sh
++set -u
++
++SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
++SWAP="$SCRIPT_DIR/ci-add-swap.sh"
++
++pass=0
++fail=0
++check() { # description, expected, actual
++  if [ "$2" = "$3" ]; then pass=$((pass + 1)); else fail=$((fail + 1)); echo "FAIL: $1 (expected $2, got $3)"; fi
++}
++
++# 1. Invalid arguments: usage error.
++bash "$SWAP" >/dev/null 2>&1
++check "no arguments" 2 $?
++bash "$SWAP" /tmp/x.swap 0 >/dev/null 2>&1
++check "zero size" 2 $?
++bash "$SWAP" /tmp/x.swap 8G >/dev/null 2>&1
++check "size with unit" 2 $?
++
++# 2. A missing directory: warning, exit code 0, no file.
++out="$(bash "$SWAP" /nonexistent-dir-for-swap-test/x.swap 1 2>&1)"
++check "missing directory exit code" 0 $?
++check "missing directory warning" 1 "$(printf '%s\n' "$out" | grep -c '^::warning::No extra swap: .* does not exist$')"
++# The warning ends the script, so no other command prints anything.
++check "missing directory stops at the warning" 1 "$(printf '%s\n' "$out" | wc -l | tr -d ' ')"
++
++# 3. Too little free space: warning, exit code 0, no file.
++dir="$(mktemp -d)"
++trap 'rm -rf "$dir"' EXIT
++out="$(bash "$SWAP" "$dir/x.swap" 999999 2>&1)"
++check "low space exit code" 0 $?
++check "low space warning" 1 "$(printf '%s\n' "$out" | grep -c '^::warning::No extra swap: .* GiB free, the swap file needs 1000003 GiB$')"
++check "low space stops at the warning" 1 "$(printf '%s\n' "$out" | wc -l | tr -d ' ')"
++check "low space creates no file" 0 "$([ -e "$dir/x.swap" ] && echo 1 || echo 0)"
++
++echo "ci-add-swap: $pass passed, $fail failed"
++[ "$fail" -eq 0 ]
+```
+
+**File**: `scripts/test-ci-with-resource-log.sh` (added, +78/-0)
+```diff
+@@ -0,0 +1,78 @@
++#!/usr/bin/env bash
++# Self-test for scripts/ci-with-resource-log.sh. Asserts that the wrapper keeps
++# the exit code and the output of the command, prints resource lines, and stops
++# its sampler with the command.
++# Run: bash scripts/test-ci-with-resource-log.sh
++set -u
++
++SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
++WRAP="$SCRIPT_DIR/ci-with-resource-log.sh"
++TMP="$(mktemp -d)"
++trap 'rm -rf "$TMP"' EXIT
++# A wrapper run that takes longer than this has a sampler that did not stop.
++LIMIT_SECONDS=15
++
++pass=0
++fail=0
++check() { # description, expected, actual
++  if [ "$2" = "$3" ]; then pass=$((pass + 1)); else fail=$((fail + 1)); echo "FAIL: $1 (expected $2, got $3)"; fi
++}
++
++# Runs the wrapper with an interval and a command. A reader in the background
++# copies the output through a pipe, like a CI step does. Sets `out` to the
++# output and `status` to the exit code, or to "hung" when the output stays open
++# past the limit (a sampler that keeps running holds the pipe open).
++run_wrapped() { # interval, command...
++  local interval="$1"
++  shift
++  rm -f "$TMP/out" "$TMP/status"
++  ( (RESOURCE_LOG_INTERVAL="$interval" bash "$WRAP" "$@"; echo $? >"$TMP/status") | cat >"$TMP/out" ) &
++  local reader=$!
++  local waited=0
++  while kill -0 "$reader" 2>/dev/null && [ "$waited" -lt "$LIMIT_SECONDS" ]; do
++    sleep 1
++    waited=$((waited + 1))
++  done
++  if kill -0 "$reader" 2>/dev/null; then
++    kill "$reader" 2>/dev/null
++    status=hung
++  else
++    status="$(cat "$TMP/status" 2>/dev/null || echo missing)"
++  fi
++  out="$(cat "$TMP/out" 2>/dev/null)"
++}
++
++resource_lines() { printf '%s\n' "$out" | grep -c '^resources:.*disk_available_mb=[0-9]'; }
++
++# 1. A passing command: exit code 0, its output stays, resource lines appear.
++run_wrapped 1 sh -c 'echo built; sleep 2'
++check "pass exit code" 0 "$status"
++check "command output kept" 1 "$(printf '%s\n' "$out" | grep -c '^built$')"
++check "interval and final resource lines" 1 "$([ "$(resource_lines)" -ge 2 ] && echo 1 || echo 0)"
++if [ -r /proc/meminfo ]; then
++  check "memory and swap on Linux" 1 "$(printf '%s\n' "$out" | grep -c -m1 'mem_available_mb=[0-9]* swap_used_mb=[0-9]*')"
++  check "load average on Linux" 1 "$(printf '%s\n' "$out" | grep -c -m1 'load_1m=[0-9.]* disk_available_mb=')"
++fi
++
++# 2. A failing command: the wrapper returns its exit code.
++run_wrapped 1 sh -c 'exit 7'
++check "failure exit code" 7 "$status"
++
++# 3. The sampler stops with the command and keeps no pipe open. With a 30 s
++# interval, the output has the first line and the final line.
++run_wrapped 30 sleep 2
++check "sampler stops with the command" 0 "$status"
++check "first and final resource lines" 2 "$(resource_lines)"
++
++# 4. An invalid interval uses the default, so the sampler does not loop fast.
++run_wrapped abc sleep 2
++check "invalid interval uses the default" 2 "$(resource_lines)"
++run_wrapped 0 sleep 2
++check "zero interval uses the default" 2 "$(resource_lines)"
++
++# 5. No command: usage error.
++bash "$WRAP" >/dev/null 2>&1
++check "usage error" 2 $?
++
++echo "ci-with-resource-log: $pass passed, $fail failed"
++[ "$fail" -eq 0 ]
 ```
 
 ---
 
-### Incident Patch 3: `4f93d207` (2026-11-11)
-**Commit Message**: fix(constant-parameter): abstain for a module that an asset import reads (#4518)
+### Incident Patch 3: `0776b47e` (2026-11-14)
+**Commit Message**: fix(vscode): enable links set the setting without the Settings editor (#4597)
 
-An import with a query, such as `./op.ts?raw` or `./op.ts?url`, or with a
-webpack inline loader, reads the module as text or as a file. A project can
-copy that text into generated code, so the copy can call the functions of
-the module with values that the project does not hold. The rule reported
-such a function as constant although callers outside the project exist.
+In Cursor, `workbench.action.openSettings` with a query can freeze the
+Settings editor. The command returns the Settings editor pane, and the
+Cursor RPC layer serializes that object graph. The "enable" links in the
+Security Candidates and Health views used this command through
+`fallow.openSettings`.
 
-The rule now abstains with the reason `asset-import` for each function of a
-module that a static import, a dynamic import or a re-export with a query
-or an inline loader targets. A type-only import does not block.
+The links now run `fallow.enableSecurity` and `fallow.enableHealth`.
+These commands set the toggle to true in workspace settings, or in user
+settings when no folder is open. They show the result, or an error
+message that names the setting to change by hand.
+
+Closes #4553
 
 Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
 
-**File**: `crates/core/src/analyze/constant_parameter.rs` (modified, +34/-1)
+**File**: `changelog.d/fix-vscode-open-settings-cursor.md` (added, +3/-0)
 ```diff
-@@ -71,6 +71,10 @@ pub(super) enum Abstain {
-     ClassicScript,
-     /// A framework convention imports the module with no import statement.
-     AutoImport,
-+    /// An import with a query, such as `?raw` or `?url`, or with a webpack
-+    /// inline loader reads the module as text or as a file. A copy of the
-+    /// code can run with callers that the project does not hold.
-+    AssetImport,
-     /// A test file declares the function. A test helper exists to pass
-     /// fixed values, so a constant argument is its purpose. A test file
-     /// stays a caller of the functions of other files.
-@@ -81,7 +85,7 @@ pub(super) enum Abstain {
- 
- impl Abstain {
-     /// Each reason, in declaration order.
--    const ALL: [Self; 15] = [
-+    const ALL: [Self; 16] = [
-         Self::ParseIncomplete,
-         Self::OpenContract,
-         Self::PublicApi,
-@@ -95,6 +99,7 @@ impl Abstain {
-         Self::DirectEval,
-         Self::ClassicScript,
-         Self::AutoImport,
-+        Self::AssetImport,
-         Self::TestFile,
-         Self::TooFewCalls,
-     ];
-@@ -120,12 +125,16 @@ impl Abstain {
-             Self::DirectEval => "direct-eval",
-             Self::ClassicScript => "classic-script",
-             Self::AutoImport => "auto-import",
-+            Self::AssetImport => "asset-import",
-             Self::TestFile => "test-file",
-             Self::TooFewCalls => "too-few-calls",
-         }
-     }
- }
- 
-+// `Reasons` holds one bit for each reason.
-+const _: () = assert!(Abstain::ALL.len() <= u16::BITS as usize);
+@@ -0,0 +1,3 @@
++### Fixed
 +
- /// A function contract: the module and the index of its declaration.
- type FnId = (FileId, u32);
- 
-@@ -559,6 +568,22 @@ impl<'a> Gate<'a> {
-     }
- 
-     fn block_hidden_imports(&mut self, resolved: &ResolvedModule) {
-+        let imports = resolved
-+            .resolved_imports
-+            .iter()
-+            .chain(&resolved.resolved_dynamic_imports)
-+            .filter(|import| !import.info.is_type_only && reads_as_asset(&import.info.source))
-+            .filter_map(|import| import.target.internal_file_id());
-+        let re_exports = resolved
-+            .re_exports
-+            .iter()
-+            .filter(|re_export| {
-+                !re_export.info.is_type_only && reads_as_asset(&re_export.info.source)
-+            })
-+            .filter_map(|re_export| re_export.target.internal_file_id());
-+        for target in imports.chain(re_exports) {
-+            self.block_module(target, Abstain::AssetImport);
-+        }
-         for import in &resolved.resolved_dynamic_imports {
-             if let Some(target) = import.target.internal_file_id() {
-                 self.block_surface(target, Abstain::DynamicImport);
-@@ -1122,6 +1147,14 @@ impl<'a> Gate<'a> {
-     }
- }
- 
-+/// `true` when an import specifier can read its module as text, as a file
-+/// or through a loader: a query such as `./op.ts?raw`, or a webpack inline
-+/// loader request such as `raw-loader!./op.ts`. A `!` can also be part of a
-+/// plain file name, so the check can only hide a finding, never add one.
-+fn reads_as_asset(specifier: &str) -> bool {
-+    specifier.contains(['?', '!'])
-+}
-+
- fn facts(module: &ModuleInfo) -> Option<&FunctionContractFacts> {
-     module.function_contracts.as_deref()
- }
++- **VS Code: the "enable" links in the Security Candidates and Health views no longer freeze Settings in Cursor.** The links opened the Settings editor with the `fallow` search query. In Cursor, that call can make the Settings editor stop responding. The links now run the new `Fallow: Enable Security Candidates` and `Fallow: Enable Health View` commands. These commands set `fallow.security.enabled` or `fallow.health.enabled` to `true` in workspace settings, or in user settings when no folder is open, and show a message. The Settings editor does not open. (Closes [#4553](https://github.com/fallow-rs/fallow/issues/4553))
 ```
 
-**File**: `crates/core/src/analyze/constant_parameter_tests.rs` (modified, +53/-0)
+**File**: `editors/vscode/README.md` (modified, +2/-0)
 ```diff
-@@ -975,3 +975,56 @@ fn a_function_that_a_test_file_declares_is_not_a_candidate() {
-     let rows = project.findings("format");
-     assert!(rows.iter().any(|row| row.0 == "compact"), "{rows:?}");
- }
-+
-+const RUNTIME_OP: &str = "export function op(kind: string, compact: boolean) {\n  return compact ? kind : kind + '!';\n}\nfunction inner(flag: boolean) {\n  return flag;\n}\nexport const run = () => {\n  op('a', true);\n  op('b', true);\n  inner(true);\n  inner(true);\n};\n";
-+
-+/// A project whose main module calls `run` and then has `extra`.
-+fn runtime_project(extra: &str) -> Project {
-+    let main = format!("import {{ run }} from './runtime/op';\nrun();\n{extra}");
-+    let other = "export const other = 1;\n";
-+    analyze(&[
-+        ("src/runtime/op.ts", RUNTIME_OP),
-+        ("src/runtime/other.ts", other),
-+        ("src/main.ts", main.as_str()),
-+    ])
-+}
-+
-+#[test]
-+fn a_module_that_an_asset_import_reads_abstains() {
-+    // A `?raw` or `?url` import, or an inline loader, reads the module as
-+    // text or as a file, so a copy of the code can have callers that the
-+    // project does not hold.
-+    for extra in [
-+        "import source from './runtime/op.ts?raw';\nexport const text = source;\n",
-+        "import href from './runtime/op.ts?url';\nexport const text = href;\n",
-+        "import Worker from './runtime/op.ts?worker&inline';\nexport const text = Worker;\n",
-+        "export { default as text } from './runtime/op.ts?raw';\n",
-+        "export const load = () => import('./runtime/op.ts?raw');\n",
-+        "import source from '!!raw-loader!./runtime/op.ts';\nexport const text = source;\n",
-+    ] {
-+        let project = runtime_project(extra);
-+        assert_abstains(&project, "src/runtime/op.ts", "op", "asset-import");
-+        assert_abstains(&project, "src/runtime/op.ts", "inner", "asset-import");
-+    }
-+}
-+
-+#[test]
-+fn an_asset_import_of_another_module_or_a_type_keeps_the_findings() {
-+    for extra in [
-+        "",
-+        "import source from './runtime/other.ts?raw';\nexport const text = source;\n",
-+        "import type Source from './runtime/op.ts?raw';\nexport type Text = Source;\n",
-+    ] {
-+        let project = runtime_project(extra);
-+        assert_eq!(
-+            project.findings("op"),
-+            vec![identical("compact", "true")],
-+            "{extra}"
-+        );
-+        assert_eq!(
-+            project.findings("inner"),
-+            vec![identical("flag", "true")],
-+            "{extra}"
-+        );
-+    }
-+}
+@@ -45,6 +45,8 @@ code --install-extension fallow-rs.fallow-vscode
+ | `Fallow: Audit Changed Files` | Audit the current change set for a pass/warn/fail verdict, shown in the audit verdict status-bar item (or an information message when that item is disabled). Findings are static candidates to verify. |
+ | `Fallow: Reload Health` | Re-run the Health view analysis (score, complexity, hotspot and refactoring candidates) |
+ | `Fallow: Scan for Security Candidates` | Scan for local security candidates (`client-server-leak`, tainted-sink CWE findings) and populate the Security Candidates view. Requires `fallow.security.enabled`. Results are UNVERIFIED candidates to verify, never confirmed vulnerabilities. |
++| `Fallow: Enable Security Candidates` | Set `fallow.security.enabled` to `true` in workspace settings (user settings when no folder is open). The Security Candidates welcome link runs this command. |
++| `Fallow: Enable Health View` | Set `fallow.health.enabled` to `true` in workspace settings (user settings when no folder is open). The Health welcome link runs this command. |
+ | `Fallow: Load Runtime Coverage` | Analyze a local runtime-coverage capture and populate the Runtime Coverage view with hot paths and cleanup candidates. Prompts for a capture when `fallow.coverage.capturePath` is empty. Requires the fallow-cov sidecar (`fallow coverage setup`). |
+ | `Fallow: Reload Runtime Coverage` | Re-run the runtime-coverage analysis against the current capture |
+ | `Fallow: Clear Runtime Coverage` | Clear the Runtime Coverage view back to its empty state |
 ```
 
-**File**: `docs/reference/detection-internals.md` (modified, +6/-0)
+**File**: `editors/vscode/package.json` (modified, +18/-2)
 ```diff
-@@ -1075,6 +1075,12 @@ each reason:
- - `direct-eval`: the same, for a module with a direct `eval`.
- - `classic-script`: a module with no imports, no exports and no re-exports.
- - `auto-import`: a synthetic auto-import edge reaches the module.
-+- `asset-import`: an import, a dynamic import or a re-export with a query,
-+  such as `./op.ts?raw` or `./op.ts?url`, or with a webpack inline loader,
-+  such as `raw-loader!./op.ts`, reads the module as text or as a file. The
-+  rule blocks each contract of the module, because a copy of the code can
-+  run with callers that the project does not hold. A type-only import does
-+  not block.
- - `test-file`: a test file declares the function. The path below the project
-   root matches the test subset of `PRODUCTION_EXCLUDE_PATTERNS`
-   (`is_test_or_spec_file`, which leaves out the tooling-config and dotfile
+@@ -170,6 +170,14 @@
+         "command": "fallow.openSettings",
+         "title": "Fallow: Open Settings"
+       },
++      {
++        "command": "fallow.enableSecurity",
++        "title": "Fallow: Enable Security Candidates"
++      },
++      {
++        "command": "fallow.enableHealth",
++        "title": "Fallow: Enable Health View"
++      },
+       {
+         "command": "fallow.noop",
+         "title": "Fallow: No-op (internal)"
+@@ -870,6 +878,14 @@
+           "command": "fallow.reloadAnalysis",
+           "when": "false"
+         },
++        {
++          "command": "fallow.enableSecurity",
++          "when": "!fallow.security.enabled"
++        },
++        {
++          "command": "fallow.enableHealth",
++          "when": "!fallow.health.enabled"
++        },
+         {
+           "command": "fallow.reloadCoverage",
+           "when": "fallow.hasCoverage"
+@@ -915,7 +931,7 @@
+       },
+       {
+         "view": "fallow.health",
+-        "contents": "The Health view is turned off.\nEnable [fallow.health.enabled](command:fallow.openSettings) to see the project health score, complexity findings, hotspot candidates, and refactoring candidates.",
++        "contents": "The Health view is turned off.\nEnable [fallow.health.enabled](command:fallow.enableHealth) to see the project health score, complexity findings, hotspot candidates, and refactoring candidates.",
+         "when": "!fallow.health.enabled"
+       },
+       {
+@@ -925,7 +941,7 @@
+       },
+       {
+         "view": "fallow.security",
+-        "contents": "Security candidate scanning is off by default.\nEnable [fallow.security.enabled](command:fallow.openSettings) to scan for security candidates.\nResults are UNVERIFIED candidates to verify, never confirmed vulnerabilities.",
++        "contents": "Security candidate scanning is off by default.\nEnable [fallow.security.enabled](command:fallow.enableSecurity) to scan for security candidates.\nResults are UNVERIFIED candidates to verify, never confirmed vulnerabilities.",
+         "when": "!fallow.security.enabled"
+       },
+       {
+```
+
+**File**: `editors/vscode/src/enableFeature.ts` (added, +42/-0)
+```diff
+@@ -0,0 +1,42 @@
++import * as vscode from "vscode";
++
++/** Fallow settings that a sidebar welcome link can turn on. */
++export type FeatureToggleKey = "security.enabled" | "health.enabled";
++
++const FEATURE_LABELS: Readonly<Record<FeatureToggleKey, string>> = {
++  "security.enabled": "security candidate scanning",
++  "health.enabled": "the Health view",
++};
++
++/**
++ * Sets a Fallow feature toggle to `true` without the Settings editor.
++ *
++ * The sidebar welcome links use this command instead of
++ * `workbench.action.openSettings` with a query. In Cursor, that command call
++ * with a query can freeze the Settings editor: the reply to the extension host
++ * is the Settings editor pane, and Cursor serializes that object graph (#4553).
++ *
++ * The value goes to workspace settings when a workspace is open, because a
++ * workspace value overrides a user value. Without a workspace, it goes to
++ * user settings. When the write fails (for example, a settings file with
++ * invalid JSON), an error message names the setting to change by hand.
++ */
++export const enableFeature = async (key: FeatureToggleKey): Promise<void> => {
++  const hasWorkspace = (vscode.workspace.workspaceFolders?.length ?? 0) > 0;
++  const target = hasWorkspace
++    ? vscode.ConfigurationTarget.Workspace
++    : vscode.ConfigurationTarget.Global;
++  const where = hasWorkspace ? "workspace" : "user";
++  try {
++    await vscode.workspace.getConfiguration("fallow").update(key, true, target);
++  } catch (error) {
++    const reason = error instanceof Error ? error.message : String(error);
++    void vscode.window.showErrorMessage(
++      `Fallow: could not turn on ${FEATURE_LABELS[key]}. Set "fallow.${key}": true in your ${where} settings.json. ${reason}`,
++    );
++    return;
++  }
++  void vscode.window.showInformationMessage(
++    `Fallow: turned on ${FEATURE_LABELS[key]} (fallow.${key} in ${where} settings).`,
++  );
++};
+```
+
+**File**: `editors/vscode/src/extension.ts` (modified, +9/-0)
+```diff
+@@ -10,6 +10,7 @@ import { runBaselineCommand } from "./baselineCommand.js";
+ import { shouldAcceptLspAnalysisComplete } from "./analysisNotification.js";
+ import { startClient, stopClient, restartClient } from "./client.js";
+ import { cancelReleaseRetry } from "./download.js";
++import { enableFeature } from "./enableFeature.js";
+ import { createSingleFlight } from "./analysis-single-flight.js";
+ import {
+   getHealthEnabled,
+@@ -1027,6 +1028,14 @@ export const activate = async (context: vscode.ExtensionContext): Promise<Extens
+     }),
+   );
+ 
++  // Turn on an opt-in view from its sidebar welcome link (#4553).
++  context.subscriptions.push(
++    vscode.commands.registerCommand("fallow.enableSecurity", () =>
++      enableFeature("security.enabled"),
++    ),
++    vscode.commands.registerCommand("fallow.enableHealth", () => enableFeature("health.enabled")),
++  );
++
+   // License management commands (activate / status / refresh / deactivate).
+   // All are one-shot CLI invocations; none touch the analysis path.
+   context.subscriptions.push(
+```
+
+**File**: `editors/vscode/test/enableFeature.test.ts` (added, +78/-0)
+```diff
+@@ -0,0 +1,78 @@
++import { beforeEach, describe, expect, it, vi } from "vitest";
++import { enableFeature } from "../src/enableFeature.js";
++
++const mocks = vi.hoisted(() => ({
++  update: vi.fn<(key: string, value: unknown, target: number) => Promise<void>>(),
++  executeCommand: vi.fn<(command: string, ...args: unknown[]) => Promise<unknown>>(),
++  showInformationMessage: vi.fn<(message: string) => Promise<undefined>>(),
++  showErrorMessage: vi.fn<(message: string) => Promise<undefined>>(),
++  workspaceFolders: undefined as readonly object[] | undefined,
++}));
++
++vi.mock("vscode", () => ({
++  ConfigurationTarget: { Global: 1, Workspace: 2, WorkspaceFolder: 3 },
++  workspace: {
++    get workspaceFolders() {
++      return mocks.workspaceFolders;
++    },
++    getConfiguration: (section: string) => {
++      expect(section).toBe("fallow");
++      return { update: mocks.update };
++    },
++  },
++  commands: { executeCommand: mocks.executeCommand },
++  window: {
++    showInformationMessage: mocks.showInformationMessage,
++    showErrorMessage: mocks.showErrorMessage,
++  },
++}));
++
++beforeEach(() => {
++  mocks.update.mockReset().mockResolvedValue(undefined);
++  mocks.executeCommand.mockReset();
++  mocks.showInformationMessage.mockReset().mockResolvedValue(undefined);
++  mocks.showErrorMessage.mockReset().mockResolvedValue(undefined);
++  mocks.workspaceFolders = [{}];
++});
++
++describe("enableFeature", () => {
++  it("writes the toggle to workspace settings when a workspace is open", async () => {
++    await enableFeature("security.enabled");
++
++    expect(mocks.update).toHaveBeenCalledWith("security.enabled", true, 2);
++    expect(mocks.showInformationMessage).toHaveBeenCalledWith(
++      expect.stringContaining("fallow.security.enabled in workspace settings"),
++    );
++  });
++
++  it("writes the toggle to user settings when no workspace is open", async () => {
++    mocks.workspaceFolders = undefined;
++
++    await enableFeature("health.enabled");
++
++    expect(mocks.update).toHaveBeenCalledWith("health.enabled", true, 1);
++    expect(mocks.showInformationMessage).toHaveBeenCalledWith(
++      expect.stringContaining("fallow.health.enabled in user settings"),
++    );
++  });
++
++  it("never opens the Settings editor", async () => {
++    await enableFeature("security.enabled");
++
++    expect(mocks.executeCommand).not.toHaveBeenCalled();
++  });
++
++  it("names the manual setting when the settings write fails", async () => {
++    mocks.update.mockRejectedValue(new Error("Unable to write into workspace settings."));
++
++    await expect(enableFeature("security.enabled")).resolves.toBeUndefined();
++
++    expect(mocks.showInformationMessage).not.toHaveBeenCalled();
++    expect(mocks.showErrorMessage).toHaveBeenCalledWith(
++      expect.stringContaining('Set "fallow.security.enabled": true in your workspace settings.json'),
++    );
++    expect(mocks.showErrorMessage).toHaveBeenCalledWith(
++      expect.stringContaining("Unable to write into workspace settings."),
++    );
++  });
++});
+```
+
+**File**: `editors/vscode/test/integration/suite/extension.test.ts` (modified, +20/-0)
+```diff
+@@ -205,6 +205,26 @@ describe("Fallow VS Code extension", () => {
+     assert.equal(editor?.selection.active.line, 1);
+   });
+ 
++  for (const { command, key } of [
++    { command: "fallow.enableSecurity", key: "security.enabled" },
++    { command: "fallow.enableHealth", key: "health.enabled" },
++  ]) {
++    it(`sets ${key} in workspace settings from ${command}`, async () => {
++      const workspaceValue = (): boolean | undefined =>
++        vscode.workspace.getConfiguration("fallow").inspect<boolean>(key)?.workspaceValue;
++      assert.equal(workspaceValue(), undefined);
++
++      try {
++        await vscode.commands.executeCommand(command);
++        assert.equal(workspaceValue(), true);
++      } finally {
++        await vscode.workspace
++          .getConfiguration("fallow")
++          .update(key, undefined, vscode.ConfigurationTarget.Workspace);
++      }
++    });
++  }
++
+   it("frames completed security scans as unverified candidates in the actual toast", async () => {
+     const messages: string[] = [];
+     windowApi.showInformationMessage = async (message: string) => {
+```
+
+**File**: `editors/vscode/test/package-manifest.test.ts` (modified, +23/-0)
+```diff
+@@ -492,3 +492,26 @@ describe("package.json license commands", () => {
+     expect(properties["fallow.license.showStatusBar"]?.default).toBe(true);
+   });
+ });
++
++describe("package.json feature enable links", () => {
++  const cases = [
++    { view: "fallow.security", when: "!fallow.security.enabled", command: "fallow.enableSecurity" },
++    { view: "fallow.health", when: "!fallow.health.enabled", command: "fallow.enableHealth" },
++  ] as const;
++
++  // `workbench.action.openSettings` with a query can freeze the Settings
++  // editor in Cursor (#4553). The disabled-state links turn the setting on
++  // directly, so they never open the Settings editor.
++  it.each(cases)("links the disabled $view welcome to $command", (entry) => {
++    const welcome = pkg.contributes.viewsWelcome.find(
++      (item) => item.view === entry.view && item.when === entry.when,
++    );
++    expect(welcome?.contents).toContain(`(command:${entry.command})`);
++    expect(welcome?.contents).not.toContain("command:fallow.openSettings");
++  });
++
++  it.each(cases)("contributes $command and hides it from the palette once on", (entry) => {
++    expect(command(entry.command)?.title).toMatch(/^Fallow: /);
++    expect(commandPaletteEntry(entry.command)?.when).toBe(entry.when);
++  });
++});
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4522** (2026-11-11): docs(changelog): add the missing entries for three merged changes (@BartWaardenburg)
-- **PR #4521** (2026-11-11): feat(skills): pin fallow launchers in the published companion skills (@BartWaardenburg)
-- **PR #4520** (2026-11-11): feat(api): name the project package manager in the companion install hint (@BartWaardenburg)
-- **PR #4518** (2026-11-11): fix(constant-parameter): abstain for a module that an asset import reads (@BartWaardenburg)
-- **PR #4515** (2026-11-11): feat(mutation): add the constant-parameter hint to negate-condition survivors (@BartWaardenburg)
-- **PR #4514** (2026-11-11): fix(mcp): cap tool responses at 1,000,000 bytes and name the narrowing parameters (@BartWaardenburg)
+- **PR #4616** (2026-11-15): ci(bench): build CodSpeed shards with two compile jobs, swap and a resource log (@BartWaardenburg)
+- **PR #4615** (2026-11-14): ci(release): run the published Action on Linux after each publication (@BartWaardenburg)
+- **PR #4614** (2026-11-14): chore: sync napi, Docker pins and RELEASED_TAG to v3.43.1 (@BartWaardenburg)
+- **PR #4607** (2026-11-14): chore: release v3.43.1 (@BartWaardenburg)
+- **PR #4604** (2026-11-14): fix(angular): credit more template reads and inherited inputs and outputs (@BartWaardenburg)
+- **PR #4602** (2026-11-14): fix(extract): credit enum members read through an alias or passed on whole (@BartWaardenburg)
 
 ---
 
@@ -2126,32 +2479,41 @@ Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. mutation): add the opt-in nullish-fallback operator (#4507)
+## X. audit): keep a clone inherited when lines above one copy are rewritten
 
 **RULE**:
-When implementing operations in `crates/api/src/mutation/typecheck.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fallow-rs/fallow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/fix-audit-clone-attribution-on-rename.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fallow-rs/fallow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dd78ac74`: mutation): add the opt-in nullish-fallback operator (#4507). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7a3fbe65`: audit): keep a clone inherited when lines above one copy are rewritten. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/api/src/mutation/typecheck.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/fix-audit-clone-attribution-on-rename.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-//! or a nullish fallback (`a ?? b` to `a`) from a receiver whose declared
-//! type excludes nullish values keeps the
+### Fixed
+
+- **`fallow audit` no longer reports an old clone group as introduced when the change rewrites the lines above one copy.**
+  The audit maps each head copy of a clone back to its base lines. When the
+  first or last line of a copy was a rewritten line that replaced several base
+  lines, the mapped range grew to the far end of the replaced lines and fell
+  outside the base clone. A rename of the other copy, together with fewer
+  import lines above this copy, could then fail `--gate new-only` on
+  duplication that the change did not write. The rewritten edge line now maps
+  to the replaced base line next to the unchanged lines of the copy.
+  (Closes [#4580](https://github.com/fallow-rs/fallow/issues/4580))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-//! from a receiver whose declared type excludes nullish values keeps the
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dd78ac74` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7a3fbe65` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

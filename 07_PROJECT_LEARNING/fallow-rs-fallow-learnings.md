@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md`  
 > **Source**: github ([https://github.com/fallow-rs/fallow](https://github.com/fallow-rs/fallow))  
-> **Source Version**: `249d5f7d`  
+> **Source Version**: `b5123420`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T10:55:23.393Z  
+> **Timestamp**: 2026-11-15T02:55:36.454Z  
 > **Learning ID**: `learn-github-fallow-rs-fallow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fallow-rs/fallow](https://github.com/fallow-rs/fallow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T10:55:23.387Z  
+> **Harvest Timestamp**: 2026-11-15T02:55:36.335Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Codebase intelligence for TypeScript and JavaScript. Health, complexity hotspots, duplication, architecture boundaries, circular dependencies, design-system drift, and unused code, from one graph. CLI, GitHub Action, LSP, MCP, and VS Code. Rust, MIT licensed.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5352 stars
+- **Stars / Engagement**: 5366 stars
 
 ---
 
@@ -1450,11 +1450,11 @@ fn format_finding(finding: &Finding<'_>) -> String {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4556** (2026-11-13): **constant-parameter: a dynamic import with a variable source blocks no function**
-  *Symptoms*: ## Problem  The opt-in `constant-parameter` rule skips a function when a caller can be invisible. A dynamic import with a literal or a pattern source blocks the target module (gate reason `dynamic-import`). A dynamic import whose source is a plain variable blocks nothing, so the rule can report a parameter that a hidden caller passes in another way.  ## Reproduction  ```ts // src/pad.ts export function pad(s: string, n: number): string { return s + n; }  // src/a.ts import { pad } from "./pad"; export const a = pad("x", 1); export const b = pad("y", 1);  // src/main.ts import { a, b } from "./a"; console.log(a, b); const name = process.argv[2]; const mod = await import(name); mod.pad("z", 2); ```  `fallow dead-code --constant-parameters --format json --quiet` reports `n` of `pad` as `identical-argument` with the value `1`. The call through `mod` passes `2`.  ## Expected  One of these:  1. The rule skips each exported function of a project when a reachable file has a dynamic import or a `require` with a source that Fallow cannot resolve to a pattern. A new gate reason names the cause. 2. The rule keeps the finding, and the user documentation lists the case as a known limit.  Option 1 needs a measurement first: how many findings of the public corpus it removes. A project with a plugin loader would lose each finding on an exported function.  ## Notes  - The rule is off by default, and a finding has no fix action. - The same question applies to `require(variable)`. - The extracto
+- **Issue #4605** (2026-11-15): **ci: CodSpeed fast simulation builds stop with exit code 143**
+  *Symptoms*: ## Problem  Since 2026-11-14, many "CodSpeed fast simulation" jobs in the Benchmarks workflow fail on pull requests and on `main`, before any benchmark runs.  - The step "Build benchmark shard" (`cargo codspeed build`) stops with `Process completed with exit code 143`, after 5 to 8 minutes. The job timeout is 30 minutes, and the step has no timeout of its own. - Other jobs of the same matrix stay queued or running until the 30-minute job timeout cancels them. - A rerun of a failed job often fails again in the same way.  Examples:  - `main` push runs on 2026-11-14: one run with 1 failure and 4 cancelled jobs of 12, one run with 7 of 7 cancelled, one run with 2 failures and 4 cancelled jobs of 6. - Pull request runs: https://github.com/fallow-rs/fallow/actions/runs/43601936478 (exit code 143 again on a rerun of "LSP save-to-publish"), https://github.com/fallow-rs/fallow/actions/runs/43604188088.  These jobs are not required checks, but they keep each pull request in the `UNSTABLE` state, and a `ci:perf` pull request gets no benchmark result.  ## Proposal  - Find what sends SIGTERM to the build step. Possible causes: memory pressure on the `ubuntu-24.04` runner during the `cargo codspeed build`, or runner shutdown. - If memory is the cause, limit `CARGO_BUILD_JOBS` for the build step, or build with fewer codegen units. - Count a job that hits the timeout before its build starts separately from a benchmark failure.  ## Acceptance  - Over one day of pull request and `main` runs, t
 
-- **Issue #4530** (2026-11-13): **Inline package.json config of a workspace package is not read**
-  *Symptoms*: The inline `package.json` config pass (`process_package_json_inline_configs` in `crates/core/src/plugins/registry/mod.rs`) reads only the root `package.json`. A plugin key in the manifest of a workspace package is ignored, for every plugin with a `package_json_config_key` (prettier, jest, babel, stylelint, ...).  Reproduction: a workspace `apps/web/package.json` with  ```json {   "devDependencies": { "@acme/config-stylelint": "^1.0.0", "stylelint": "^16.0.0" },   "stylelint": { "extends": "@acme/config-stylelint" } } ```  `fallow dead-code` reports `@acme/config-stylelint` as an unused devDependency of `apps/web`. The same key in the root `package.json` credits the package.  Expected: the workspace run applies the inline config pass to the manifest of each workspace package, as the root run does. 
+- **Issue #4585** (2026-11-14): **migrate from knip: production markers on ignoreDependencies and project, and named plugin configs, are lost**
+  *Symptoms*: ### What happened?  `fallow migrate` from a knip config loses three settings. Two of them only get a generic warning, and one gets a warning that gives the wrong advice:  1. **The production marker on `ignoreDependencies` is copied literally.** knip's `"left-pad!"` becomes `"left-pad!"` in Fallow. Fallow reads it as a package name, so the entry never matches. On a real repository, the migrated config then printed "ignoreDependencies entry 'ai!' hid no dependency finding in this run, so it has no effect" for each such entry. 2. **Production exclusions in `project` are dropped.** knip's `"!scripts/**!"` (exclude from production mode) only gets "[knip] `project`: Fallow auto-discovers project files". On a real repository with `!.agents/**!`, `!other/**!`, `!tests/**!` and similar exclusions, `fallow dead-code --production` with the migrated config reported 99 unused files and 56 unused exports, nearly all inside those excluded trees. knip's production run on the same tree reported none. 3. **A plugin section that names non-default config files is called redundant.** knip's `"playwright": { "config": ["playwright.e2e.config.ts"] }` gets "plugin config `playwright` is auto-detected by fallow's built-in plugins (suggestion: remove this section; fallow detects framework config automatically)". But the Playwright plugin reads only `playwright.config.{ts,js}` (`CONFIG_PATTERNS` in `crates/core/src/plugins/playwright.rs`), so a project with named configs loses them. Fallow also has no 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1471,1155 +1471,153 @@ fn format_finding(finding: &Finding<'_>) -> String {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fbeb91b0` (2026-11-11)
-**Commit Message**: fix(scripts): wait for the GitHub rate-limit reset in the check wait (#4531)
+### Incident Patch 1: `7a3fbe65` (2026-11-14)
+**Commit Message**: fix(audit): keep a clone inherited when lines above one copy are rewritten (#4593)
 
-The check wait counted a read that GitHub refused because of the API rate
-limit as a failed read. The reset can be up to an hour away, so the wait
-stopped after its 10-minute error window with exit code 2, and the CI
-state stayed unknown.
+The new-only duplication check maps each head copy of a clone group back
+to its base lines and keeps the group inherited when the copies lie
+inside one base clone group. When the first or last line of a copy was a
+rewritten line that replaced several base lines, the mapped range grew to
+the far end of the replaced lines. The range then fell outside the base
+copy, and the group was reported as introduced.
 
-A refused read now gets the reset time from `gh api rate_limit`, which
-does not count against the limit. The wait sleeps until then, and the
-read does not count against the error window. Commit reads use the
-`core` limit. Pull request reads use the `graphql` limit. When the reset
-comes after the deadline, the wait ends with a timeout and a warning.
+This happened for example when a change renamed one copy and removed an
+import line above the other copy. The clone in that copy then started on
+the rewritten line, and `--gate new-only` failed on duplication that the
+change did not write.
 
-The base-branch fetch of --follow-main also fetches one more time when
-another fetch in the same clone holds the ref lock.
+An added line at the start of a range now maps to the last base line of
+its block, and an added line at the end maps to the first one. These are
+the replaced lines next to the unchanged lines of the copy. A range that
+starts and ends in one block still maps to every removed line.
 
-Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
+The drift harness seed of the failing case is in the regression file, so
+each harness run replays it.
 
-**File**: `scripts/ship-wait-checks.mjs` (modified, +102/-17)
-```diff
-@@ -152,7 +152,9 @@ Options:
-                           The maximum time of failed reads in a row
-                           (default: ${READ_ERROR_WINDOW_SECONDS}). After each failed read, the
-                           delay to the next read doubles, from --interval
--                          up to ${READ_RETRY_MAX_MS / MINUTE} minutes.
-+                          up to ${READ_RETRY_MAX_MS / MINUTE} minutes. A read that GitHub
-+                          refuses because of the API rate limit waits
-+                          until the limit resets, and does not count.
-   -h, --help              Show this help.
- 
- With --pr, the wait stops when the pull request conflicts with its base
-@@ -257,6 +259,37 @@ const completedStatus = (checks, unchangedMs, options) => {
-   return hasFailure(checks) ? "fail" : "settled";
- };
- 
-+/**
-+ * Plan the next read after a failed read. A rate-limited read (with
-+ * `retryAtMs`) waits for the reset and does not count as a failed read. Any
-+ * other failed read backs off and counts against the error window. Returns
-+ * `{ delayMs, readErrors, stop, counts }`, where `counts` tells whether the
-+ * delay counts against the error window.
-+ */
-+const failedRead = (
-+  read,
-+  { readErrors, errorMs, intervalMs, errorWindowMs, deadline, now, warn },
-+) => {
-+  if (read.retryAtMs !== undefined) {
-+    const delayMs = Math.max(read.retryAtMs - now(), intervalMs);
-+    warn(
-+      now() + delayMs <= deadline
-+        ? `Read of the checks failed: ${read.error}. Next read in ${formatSeconds(delayMs)}, after the rate limit resets.`
-+        : `Read of the checks failed: ${read.error}. The rate limit resets after the end of the wait.`,
-+    );
-+    return { delayMs, readErrors, stop: false, counts: false };
-+  }
-+  const errors = readErrors + 1;
-+  const windowLeftMs = errorWindowMs - errorMs;
-+  const delayMs = Math.min(intervalMs * 2 ** (errors - 1), READ_RETRY_MAX_MS, windowLeftMs);
-+  if (windowLeftMs <= 0 || now() + delayMs > deadline) {
-+    warn(`Read of the checks failed: ${read.error}`);
-+    return { delayMs, readErrors: errors, stop: true, counts: true };
-+  }
-+  warn(`Read of the checks failed: ${read.error}. Next read in ${formatSeconds(delayMs)}.`);
-+  return { delayMs, readErrors: errors, stop: false, counts: true };
-+};
-+
- /**
-  * Read the checks until at least `minChecks` exist and none is pending.
-  *
-@@ -304,6 +337,8 @@ export const waitForChecks = async ({
-   let changedAt = now();
-   for (;;) {
-     let delayMs = intervalMs;
-+    // The part of the delay that counts against the error window.
-+    let errorDelayMs = 0;
-     const read = readChecks();
-     if (read.ok) {
-       readErrors = 0;
-@@ -324,14 +359,21 @@ export const waitForChecks = async ({
-         return { status, checks };
-       }
-     } else {
--      readErrors += 1;
--      const windowLeftMs = errorWindowMs - errorMs;
--      delayMs = Math.min(intervalMs * 2 ** (readErrors - 1), READ_RETRY_MAX_MS, windowLeftMs);
--      if (windowLeftMs <= 0 || now() + delayMs > deadline) {
--        warn(`Read of the checks failed: ${read.error}`);
--        return { status: "error", checks, readErrors, errorMs };
-+      const failed = failedRead(read, {
-+        readErrors,
-+        errorMs,
-+        intervalMs,
-+        errorWindowMs,
-+        deadline,
-+        now,
-+        warn,
-+      });
-+      if (failed.stop) {
-+        return { status: "error", checks, readErrors: failed.readErrors, errorMs };
-       }
--      warn(`Read of the checks failed: ${read.error}. Next read in ${formatSeconds(delayMs)}.`);
-+      readErrors = failed.readErrors;
-+      delayMs = failed.delayMs;
-+      errorDelayMs = failed.counts ? delayMs : 0;
-     }
-     if (readMergeable !== null) {
-       const state = readMergeable();
-@@ -345,9 +387,7 @@ export const waitForChecks = async ({
-       return { status: "timeout", checks };
-     }
-     await sleep(delayMs);
--    if (readErrors > 0) {
--      errorMs += delayMs;
--    }
-+    errorMs += errorDelayMs;
-   }
- };
- 
-@@ -478,9 +518,18 @@ export const parseGitAncestor = ({ error, status, stderr }) => {
- 
- const runGit = (args) => spawnSync("git", args, { encoding: "utf8" });
- 
--/** Fetch the base branch, then read its newest commit. */
--const gitHeadReader = (git) => () => {
--  const fetched = git(["fetch", "--quiet", FOLLOW_REMOTE, FOLLOW_BRANCH]);
-+const REF_LOCK_ERROR = "cannot lock ref";
-+
-+/**
-+ * Fetch the base branch, then read its newest commit. Another fetch in the
-+ * same clone can hold the ref lock, so a lock error gets one more fetch.
-+ */
-+export const gitHeadReader = (git) => () => {
-+  const fetch = () => git(["fetch", "--quiet", FOLLOW_REMOTE, FOLLOW_BRANCH]);
-+  let fetched = fetch();
-+  if (fetched.status !== 0 && fetched.stderr?.includes(REF_LOCK_ERROR)) {
-+    fetched = fetch();
-+  }
-   if (fetched.error) {
-     return { ok: false, error: fetched.error.message };
-   }
-@@ -1193,6 +1242,36 @@ const parseGhCheckRuns = (result, name) => {
-   return { ok: true, checks };
- };
- 
-+cons
-```
-
-**File**: `scripts/ship-wait-checks.test.mjs` (modified, +131/-0)
-```diff
-@@ -11,6 +11,7 @@ import {
-   compareWithMain,
-   followMain,
-   ghMainReaders,
-+  gitHeadReader,
-   isChangelogFragment,
-   parseGhChecks,
-   parseGhMergeable,
-@@ -22,6 +23,7 @@ import {
-   waitForChecks,
-   waitForCommitRuns,
-   waitForPullRequestChecks,
-+  withRateLimitWait,
- } from "./ship-wait-checks.mjs";
- 
- const SCRIPT = fileURLToPath(new URL("./ship-wait-checks.mjs", import.meta.url));
-@@ -538,6 +540,135 @@ test("a suspended machine does not use up the error window", async () => {
-   assert.equal(warnings.length, 3);
- });
- 
-+test("a rate-limited read waits until the reset and does not use the error window", async () => {
-+  const limited = { ok: false, error: "API rate limit exceeded", retryAtMs: 45 * MINUTE_MS };
-+  const script = scripted([limited, { ok: true, checks: [check("lint", "pass")] }]);
-+  const sleeps = [];
-+  const warnings = [];
-+
-+  const result = await waitForChecks({
-+    ...script,
-+    sleep: async (ms) => {
-+      sleeps.push(ms);
-+      await script.sleep(ms);
-+    },
-+    minChecks: 1,
-+    intervalMs: 30 * 1000,
-+    timeoutMs: 60 * MINUTE_MS,
-+    warn: (line) => warnings.push(line),
-+  });
-+
-+  assert.equal(result.status, "pass");
-+  assert.deepEqual(sleeps, [45 * MINUTE_MS]);
-+  assert.deepEqual(warnings, [
-+    "Read of the checks failed: API rate limit exceeded. Next read in 2700 seconds, after the rate limit resets.",
-+  ]);
-+});
-+
-+test("a rate-limit reset after the deadline ends the wait with a timeout", async () => {
-+  const limited = { ok: false, error: "API rate limit exceeded", retryAtMs: 45 * MINUTE_MS };
-+  const script = scripted([limited]);
-+  const warnings = [];
-+
-+  const result = await waitForChecks({
-+    ...script,
-+    minChecks: 1,
-+    intervalMs: 30 * 1000,
-+    timeoutMs: 10 * MINUTE_MS,
-+    warn: (line) => warnings.push(line),
-+  });
-+
-+  assert.equal(result.status, "timeout");
-+  assert.equal(script.reads(), 1);
-+  assert.deepEqual(warnings, [
-+    "Read of the checks failed: API rate limit exceeded. The rate limit resets after the end of the wait.",
-+  ]);
-+});
-+
-+test("a rate-limit wait between failed reads does not use up the error window", async () => {
-+  const limited = { ok: false, error: "API rate limit exceeded", retryAtMs: 45 * MINUTE_MS };
-+  const script = scripted([
-+    failure,
-+    limited,
-+    failure,
-+    { ok: true, checks: [check("lint", "pass")] },
-+  ]);
-+
-+  const result = await waitForChecks({
-+    ...script,
-+    minChecks: 1,
-+    intervalMs: 30 * 1000,
-+    timeoutMs: 120 * MINUTE_MS,
-+    warn: () => {},
-+  });
-+
-+  assert.equal(result.status, "pass");
-+  assert.equal(script.reads(), 4);
-+});
-+
-+test("withRateLimitWait adds the reset time only to a rate-limit error", () => {
-+  let resets = 0;
-+  const readReset = () => {
-+    resets += 1;
-+    return { ok: true, resetMs: 1_000_000 };
-+  };
-+  const limited = withRateLimitWait(
-+    () => ({ ok: false, error: "HTTP 403: API rate limit exceeded for user ID 1." }),
-+    readReset,
-+  );
-+  const other = withRateLimitWait(() => ({ ok: false, error: "HTTP 504" }), readReset);
-+  const passing = withRateLimitWait(() => ({ ok: true, checks: [] }), readReset);
-+  const graphql = withRateLimitWait(
-+    () => ({ ok: false, error: "GraphQL: API rate limit already exceeded for user ID 1." }),
-+    readReset,
-+  );
-+  const noReset = withRateLimitWait(
-+    () => ({ ok: false, error: "API rate limit exceeded" }),
-+    () => ({ ok: false, error: "HTTP 500" }),
-+  );
-+
-+  assert.deepEqual(limited(), {
-+    ok: false,
-+    error: "HTTP 403: API rate limit exceeded for user ID 1.",
-+    retryAtMs: 1_000_000,
-+  });
-+  assert.equal(graphql().retryAtMs, 1_000_000);
-+  assert.deepEqual(other(), { ok: false, error: "HTTP 504" });
-+  assert.deepEqual(passing(), { ok: true, checks: [] });
-+  assert.deepEqual(noReset(), { ok: false, error: "API rate limit exceeded" });
-+  assert.equal(resets, 2);
-+});
-+
-+test("the head reader fetches again when another fetch holds the ref lock", () => {
-+  const lock =
-+    "error: cannot lock ref 'refs/remotes/origin/main': is at 2090fcd but expected 4f93d20";
-+  const calls = [];
-+  const fetches = [
-+    { status: 1, stderr: lock },
-+    { status: 0, stderr: "" },
-+  ];
-+  const git = (args) => {
-+    calls.push(args[0]);
-+    if (args[0] === "fetch") {
-+      return fetches.shift();
-+    }
-+    return { status: 0, stdout: "2090fcdaf2eadca43e7d37452f17add066d57785\n", stderr: "" };
-+  };
-+
-+  assert.deepEqual(gitHeadReader(git)(), {
-+    ok: true,
-+    sha: "2090fcdaf2eadca43e7d37452f17add066d57785",
-+  });
-+  assert.deepEqual(calls, ["fetch", "fetch", "rev-parse"]);
-+});
-+
-+test("the head reader reports a fetch that keeps failing on the ref lock", () => {
-+  const lock = "error: cannot lock ref 'refs/remotes/origin/main': is at a but expected b";
-+  const git = () => ({ status: 1, stderr: lock });
-+
-+  assert.deepEqual(gitHeadReader(git)(), { ok: false, error: lock });
-+});
-+
- test("a good read resets the backoff and the error window", async () => {
-```
-
----
-
-### Incident Patch 2: `3173b60b` (2026-11-12)
-**Commit Message**: fix(security): gate spawn without a shell like execFile (#4541)
-
-* fix(security): gate spawn without a shell like execFile
-
-Without the `shell` option, `child_process.spawn` and `spawnSync` run the
-program directly, the same as `execFile`. The catalogue put them in the
-source-free `exec` rows. A computed program path, for example a binary of the
-repository or a CLI path from an environment variable, was then reported with
-no untrusted source.
-
-The extractor now attaches the options object of a `spawn` call to its
-command site. A new `options_may_enable` matcher predicate reads it. The
-source-free spawn rows match only when the options can set `shell`: a `shell`
-key that is not literal `false`, an options variable, or a spread. Every other
-spawn call goes to the `execFile` rows, which need untrusted input in the
-argument, the module or each direct importer.
-
-`SinkSite` gains the `call_options` field, so `CACHE_VERSION` goes to 437.
-The row predicates move to `crates/security/src/predicates.rs`, and the sink
-value types move to `crates/types/src/extract_sink_values.rs`, so that the two
-large files do not grow.
+Closes #4580
 
 Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
 
-* fix(security): trea
-
-**File**: `changelog.d/fix-adopter-security-literal-exec.md` (added, +3/-0)
+**File**: `changelog.d/fix-audit-clone-attribution-on-rename.md` (added, +11/-0)
 ```diff
-@@ -0,0 +1,3 @@
+@@ -0,0 +1,11 @@
 +### Fixed
 +
-+- **`fallow security` no longer reports a `spawn` or `spawnSync` call that runs no shell when no untrusted input reaches it.** Without the `shell` option, `child_process.spawn` runs the program directly, the same as `execFile`. Such a call now uses the `execFile` gate: Fallow reports a computed program only when the argument, the module, or each direct importer reads untrusted input. A command-line argument does not count. A program path from a file of the repository or from an environment variable is now clean. When the options can set `shell` (a `shell` key that is not literal `false`, an options variable, or a spread), Fallow reports a computed command without a source, as before. The first run after the upgrade parses each file again, because the cache format changed.
++- **`fallow audit` no longer reports an old clone group as introduced when the change rewrites the lines above one copy.**
++  The audit maps each head copy of a clone back to its base lines. When the
++  first or last line of a copy was a rewritten line that replaced several base
++  lines, the mapped range grew to the far end of the replaced lines and fell
++  outside the base clone. A rename of the other copy, together with fewer
++  import lines above this copy, could then fail `--gate new-only` on
++  duplication that the change did not write. The rewritten edge line now maps
++  to the replaced base line next to the unchanged lines of the copy.
++  (Closes [#4580](https://github.com/fallow-rs/fallow/issues/4580))
 ```
 
-**File**: `crates/core/src/analyze/security/tainted_sink.rs` (modified, +2/-0)
+**File**: `crates/api/src/audit_run/clone_containment.rs` (modified, +24/-0)
 ```diff
-@@ -328,6 +328,7 @@ fn matcher_admits_sink(matcher: &Matcher, sink: &SinkSite, source: Option<(&str,
-             &sink.object_property_keys,
-             sink.object_property_keys_complete,
-         )
-+        && matcher.options_may_enable_satisfied(sink.call_options.as_deref())
-         && matcher.context_satisfied(&sink.arg_idents)
-         && (!matcher.requires_source || source.is_some())
-         // Source-KIND gate (#890): when set, the matched source's id must be one
-@@ -916,6 +917,7 @@ mod tests {
-             span_end: 1,
-             url_arg_literal: None,
-             url_shape: None,
-+            call_options: None,
-         }
+@@ -212,6 +212,30 @@ mod tests {
+         assert!(keys.is_empty());
      }
  
++    /// The change renames one copy and replaces the three lines above the
++    /// other copy with two. The second copy moves up one line, and its clone
++    /// starts on a replaced line, which holds only the clone's first token
++    /// (issue #4580).
++    #[test]
++    fn renamed_copy_with_a_rewritten_first_line_in_the_other_copy_is_contained() {
++        let diff = DiffIndex::from_unified_diff(
++            "diff --git a/src/a.js b/src/r.js\nsimilarity index 100%\nrename from src/a.js\nrename to src/r.js\ndiff --git a/src/b.js b/src/b.js\n--- a/src/b.js\n+++ b/src/b.js\n@@ -1,3 +1,2 @@\n-import { a0 } from './a.js';\n-import { c0 } from './c.js';\n-export const b0 = a0 + c0;\n+import { a0 } from './r.js';\n+export const b0 = a0;\n",
++        );
++        let renames = [RenamedFile {
++            from: root().join("src/a.js"),
++            to: root().join("src/r.js"),
++        }];
++        let base = vec![BaseCloneGroup {
++            instances: vec![span("src/a.js", 1, 14), span("src/b.js", 3, 16)],
++        }];
++        let moved = group(vec![
++            instance("src/b.js", 2, 15),
++            instance("src/r.js", 1, 14),
++        ]);
++        let keys = base_contained_dupe_group_keys([&moved], &root(), &diff, &base, &renames);
++        assert_eq!(keys.len(), 1);
++    }
++
+     #[test]
+     fn renamed_copy_maps_to_its_base_path() {
+         let diff = DiffIndex::from_unified_diff(
 ```
 
-**File**: `crates/core/tests/integration_test/security_catalogue_categories.rs` (modified, +17/-1)
+**File**: `crates/cli/tests/drift/drift.proptest-regressions` (modified, +1/-0)
 ```diff
-@@ -1401,7 +1401,7 @@ fn llm_call_injection_langchain_invoke_does_not_fire() {
- 
- // ── catalogue gaps: callee variants of existing categories ───────────────────
- 
--const CATALOGUE_GAP_SINKS: [(&str, &str, u32); 28] = [
-+const CATALOGUE_GAP_SINKS: [(&str, &str, u32); 32] = [
-     ("src/esm-default-exec.ts", "command-injection", 78),
-     ("src/esm-namespace-exec.ts", "command-injection", 78),
-     ("src/esm-default-vm.ts", "code-injection", 94),
-@@ -1423,6 +1423,10 @@ const CATALOGUE_GAP_SINKS: [(&str, &str, u32); 28] = [
-         732,
-     ),
-     ("src/exec-file.ts", "command-injection", 78),
-+    ("src/spawn-request.ts", "command-injection", 78),
-+    ("src/spawn-shell.ts", "command-injection", 78),
-+    ("src/spawn-shell-duplicate.js", "command-injection", 78),
-+    ("src/spawn-options-variable.ts", "command-injection", 78),
-     ("src/shelljs.ts", "command-injection", 78),
-     ("src/ssti-handlebars.ts", "ssti", 1336),
-     ("src/ssti-lodash.ts", "ssti", 1336),
-@@ -1489,6 +1493,18 @@ fn catalogue_gap_lookalikes_do_not_fire() {
-             "src/exec-file-tooling.ts",
-             "execFile of a computed binary without untrusted input is not a candidate",
-         ),
-+        (
-+            "src/spawn-tooling-bin.ts",
-+            "spawn of a repository binary without a shell is not a candidate",
-+        ),
-+        (
-+            "src/spawn-tooling-env.ts",
-+            "spawnSync of a configured CLI path without a shell is not a candidate",
-+        ),
-+        (
-+            "src/spawn-shell-false.ts",
-+            "spawn with shell: false of a computed binary is not a candidate",
-+        ),
-         (
-             "src/exec-local-shadow.ts",
-             "a parameter that hides the exec import is not a shell call",
+@@ -8,3 +8,4 @@ cc 5df4327fe0503553bb8a508d63db3bfb12a49da74905f7aae5d279d3adcd67b5 # shrinks to
+ cc 24c6d75d5610b0ac612b8bba185e77e21e14627731d3964cde850561e78db8d6 # shrinks to ProjectModel { workspaces: false, files: [FileSpec { second_package: false, entry_imported: false, suppress_file: false, exports: [ExportSpec { is_type: false, suppressed: false }], imports: [] }, FileSpec { second_package: false, entry_imported: false, suppress_file: false, exports: [], imports: [(2, 0)] }, FileSpec { second_package: false, entry_imported: false, suppress_file: false, exports: [ExportSpec { is_type: false, suppressed: false }], imports: [] }, FileSpec { second_package: false, entry_imported: false, suppress_file: false, exports: [ExportSpec { is_type: false, suppressed: false }], imports: [] }, FileSpec { second_package: false, entry_imported: false, suppress_file: false, exports: [], imports: [(0, 0), (3, 0)] }], deps: [], duplicate: Some((4, 1, false)), complex: None, changes: [Delete(0)], baseline_mask: [false, false, false, false, false, false] }
+ cc f02fec81f4b22e082a5bfa73f22e9d5890acbd86079e7e4373d98c84bf3f9322 # shrinks to ProjectModel { workspaces: false, files: [FileSpec { second_package: false, entry_imported: false, suppress_file: false, exports: [ExportSpec { is_type: false, suppressed: true }, ExportSpec { is_type: false, suppressed: true }], imports: [(1, 0)] }, FileSpec { second_package: false, entry_imported: true, suppress_file: false, exports: [ExportSpec { is_type: false, suppressed: false }], imports: [(3, 0)] }, FileSpec { second_package: false, entry_imported: false, suppress_file: false, exports: [], imports: [] }], deps: [], duplicate: None, complex: None, changes: [Delete(4)], baseline_mask: [false, false, false, false, false, false] }
+ cc fa822e78e71d56589ad0d90be43c58c85e4bcbf6143abcb088ba0dcd0ecc763b # shrinks to ProjectModel { workspaces: false, files: [FileSpec { second_package: false, entry_imported: false, suppress_file: false, exports: [], imports: [] }], deps: [], duplicate: None, complex: None, changes: [], baseline_mask: [false, false, false, false, false, false] }
++cc 3e4c880932c0f81cd6f1340de91eb5a3f537153039fde33194ed05c1719f8063 # shrinks to ProjectModel { workspaces: false, files: [FileSpec { second_package: false, entry_imported: false, suppress_file: false, exports: [ExportSpec { is_type: false, suppressed: false }], imports: [] }, FileSpec { second_package: false, entry_imported: false, suppress_file: false, exports: [ExportSpec { is_type: false, suppressed: false }], imports: [] }, FileSpec { second_package: false, entry_imported: false, suppress_file: false, exports: [], imports: [] }, FileSpec { second_package: false, entry_imported: false, suppress_file: false, exports: [], imports: [(1, 0), (4, 0)] }], deps: [], duplicate: Some((3, 4, false)), complex: None, changes: [Rename(0), Delete(1)], baseline_mask: [false, false, false, false, false, false] }
 ```
 
-**File**: `crates/extract/src/cache/types.rs` (modified, +2/-2)
+**File**: `crates/cli/tests/integration/audit_clone_containment_tests.rs` (modified, +66/-0)
 ```diff
-@@ -10,7 +10,7 @@ use crate::MemberKind;
- /// extraction semantics change, and give the reason in the commit message and
- /// the CHANGELOG. A stale version serves old extraction results from a warm
- /// cache. The `assert_cached_type_size!` guards below catch shape changes.
--pub(super) const CACHE_VERSION: u32 = 438;
-+pub(super) const CACHE_VERSION: u32 = 439;
- 
- /// Duplication token cache version. Bump it when duplicate tokenization,
- /// normalization, or the on-disk token cache schema changes, and give the
-@@ -90,7 +90,7 @@ assert_cached_type_size!(fallow_types::extract::CalleeUse, 56);
- assert_cached_type_size!(fallow_types::extract::ImportedCallSite, 80);
- assert_cached_type_size!(fallow_types::extract::ImportBindingReference, 64);
- assert_cached_type_size!(fallow_types::extract::MisplacedDirectiveSite, 8);
--assert_cached_type_size!(fallow_types::extract::SinkSite, 216);
-+assert_cached_type_size!(fallow_types::extract::SinkSite, 224);
- assert_cached_type_size!(fallow_types::extract::FunctionComplexity, 104);
- assert_cached_type_size!(fallow_types::extract::ComplexityContribution, 16);
- assert_cached_type_size!(fallow_types::extract::FlagUse, 80);
-```
-
-**File**: `crates/extract/src/template_usage.rs` (modified, +1/-0)
-```diff
-@@ -317,6 +317,7 @@ fn template_dom_sink(
-         span_end: u32::try_from(span_end).ok()?,
-         url_arg_literal: None,
-         url_shape: None,
-+        call_options: None,
-     })
+@@ -175,6 +175,72 @@ fn audit_renamed_and_edited_copy_inside_base_clone_is_inherited() {
+     assert_all_clone_groups_inherited(&json);
  }
  
-```
-
-**File**: `crates/extract/src/visitor/tests.rs` (modified, +66/-0)
-```diff
-@@ -18430,3 +18430,69 @@ fn element_of_typed_parameter_field_records_typed_property_path() {
-         "a string key reads the property `key`, found: {paths:?}"
-     );
- }
-+
-+fn spawn_command_sink(source: &str) -> fallow_types::extract::SinkSite {
-+    let info = parse(&format!(
-+        "import {{ spawn }} from \"node:child_process\";\n{source}"
-+    ));
-+    info.security_sinks
-+        .into_iter()
-+        .find(|sink| sink.callee_path.ends_with("spawn") && sink.arg_index == 0)
-+        .expect("spawn command sink captured")
-+}
-+
-+fn spawn_command_options(source: &str) -> Option<fallow_types::extract::SinkCallOptions> {
-+    spawn_command_sink(source)
-+        .call_options
-+        .map(|options| *options)
-+}
-+
++/// The change renames one copy and rewrites the lines above the other copy.
++/// Two import lines become one, so that copy moves up by one line, and its
++/// clone starts on a rewritten line. The rewritten line replaces several base
++/// lines, and the clone text on it matches only the last of them. The head
++/// group thus lies inside the base group (issue #4580).
 +#[test]
-+fn security_spawn_command_carries_options_metadata() {
-+    let keys_of = |source: &str| {
-+        spawn_command_options(source).map(|options| (options.keys, options.keys_complete))
-+    };
-+
-+    assert_eq!(keys_of("spawn(cmd);"), Some((Vec::new(), true)));
-+    assert_eq!(keys_of("spawn(cmd, [\"x\"]);"), Some((Vec::new(), true)));
-+    assert_eq!(
-+        keys_of("spawn(cmd, [], { shell: false, stdio: \"inherit\" });"),
-+        Some((vec!["shell".to_string(), "stdio".to_string()], true))
-+    );
-+    assert_eq!(
-+        keys_of("spawn(cmd, { shell: true });"),
-+        Some((vec!["shell".to_string()], true))
-+    );
-+    assert_eq!(
-+        keys_of("spawn(cmd, args);"),
-+        Some((Vec::new(), false)),
-+        "a second argument variable can be the options object"
-+    );
-+    assert_eq!(
-+        keys_of("spawn(cmd, args, options);"),
-+        Some((Vec::new(), false))
-+    );
-+    assert_eq!(
-+        keys_of("spawn(cmd, [], { ...base });"),
-+        Some((Vec::new(), false))
-+    );
-+    assert_eq!(
-+        keys_of("spawn(cmd, [], { shell: false, shell: true });"),
-+        Some((vec!["shell".to_string()], false)),
-+        "the last duplicate key wins at runtime, so the options stay unknown"
-+    );
-+    assert_eq!(
-+        keys_of("spawn(cmd, [], { shell: false, shell: useShell });"),
-+        Some((vec!["shell".to_string()], false))
-+    );
-+
-+    let options =
-+        spawn_command_options("spawn(cmd, [], { shell: false });").expect("spawn options captured");
-+    assert_eq!(
-+        options.properties,
-+        vec![fallow_types::extract::SinkObjectProperty {
-+            key: "shell".to_string(),
-+            value: SinkLiteralValue::Boolean(false),
-+        }]
-+    );
-+}
-```
-
-**File**: `crates/extract/src/visitor/visit_impl_security_sinks.rs` (modified, +84/-1)
-```diff
-@@ -4,7 +4,7 @@ use rustc_hash::{FxHashMap, FxHashSet};
- use std::borrow::Cow;
- 
- use fallow_types::extract::{
--    SecurityControlSite, SinkArgKind, SinkLiteralValue, SinkShape, SinkSite,
-+    SecurityControlSite, SinkArgKind, SinkCallOptions, SinkLiteralValue, SinkShape, SinkSite,
-     SkippedSecurityCalleeExpressionKind, SkippedSecurityCalleeReason, SkippedSecurityCalleeSite,
- };
- use fallow_types::security_sinks::{JSX_SPREAD_SINK_PROPS, node_binding_module};
-@@ -437,6 +437,73 @@ fn is_metadata_service_literal(value: &str) -> bool {
-     value.contains("169.254.169.254") || value.contains("metadata.google.internal")
- }
- 
-+/// Whether the callee is `spawn(command, args?, options?)` or its sync form.
-+fn is_spawn_callee(callee_path: &str) -> bool {
-+    let name = callee_path.rsplit('.').next().unwrap_or(callee_path);
-+    matches!(name, "spawn" | "spawnSync")
-+}
-+
-+/// The options object of a `spawn(command, args?, options?)` call. An object
-+/// literal in the second position is the options object. A second argument
-+/// that is not an array or an object literal can be either, so the options
-+/// stay unknown when no third argument follows it. An options object with a
-+/// duplicate key also stays unknown: the last property wins at runtime, and a
-+/// non-literal value of a later duplicate leaves no literal property to read.
-+fn spawn_call_options(arguments: &[Argument<'_>]) -> SinkCallOptions {
-+    let known = |expr: Option<&Expression<'_>>| match expr {
-+        None => SinkCallOptions {
-+            properties: Vec::new(),
-+            keys: Vec::new(),
-+            keys_complete: true,
-+        },
-+        Some(expr) => {
-+            let keys = object_key_metadata(expr);
-+            SinkCallOptions {
-+                properties: object_literal_properties(expr),
-+                keys: keys.keys,
-+                keys_complete: keys.complete && !has_duplicate_static_key(expr),
-+            }
-+        }
-+    };
-+    let unknown = || SinkCallOptions {
-+        properties: Vec::new(),
-+        keys: Vec::new(),
-+        keys_complete: false,
-+    };
-+    let Some(second) = arguments.get(1) else {
-+        return known(None);
-+    };
-+    let Some(second) = second.as_expression() else {
-+        return unknown();
-+    };
-+    if matches!(unwrap_static_expr(second), Expression::ObjectExpression(_)) {
-+        return known(Some(second));
-+    }
-+    match arguments.get(2) {
-+        Some(third) => third
-+            .as_expression()
-+            .map_or_else(unknown, |third| known(Some(third))),
-+        None if matches!(unwrap_static_expr(second), Expression::ArrayExpression(_)) => known(None),
-+        None => unknown(),
-+    }
-+}
-+
-+/// Whether an object literal names one static key in more than one property.
-+fn has_duplicate_static_key(expr: &Expression<'_>) -> bool {
-+    let Expression::ObjectExpression(obj) = unwrap_static_expr(expr) else {
-+        return false;
-+    };
-+    let mut seen = FxHashSet::default();
-+    obj.properties.iter().any(|prop| {
-+        let ObjectPropertyKind::ObjectProperty(prop) = prop else {
-+            return false;
-+        };
-+        prop.key
-+            .static_name()
-+            .is_some_and(|key| !seen.insert(key.text().into_owned()))
-+    })
-+}
-+
- fn should_capture_missing_jwt_verify_options(
-     callee_path: &str,
-     sink_shape: SinkShape,
-@@ -737,6 +804,7 @@ impl ModuleInfoExtractor {
-             span_end: expr.span.end,
-             url_arg_literal: None,
-             url_shape: None,
-+            call_options: None,
-         });
-     }
- 
-@@ -883,6 +951,7 @@ impl ModuleInfoExtractor {
-             } else {
-                 None
-             },
-+            call_options: None,
-         }
-     }
- 
-@@ -924,6 +993,7 @@ impl ModuleInfoExtractor {
-                 span_end: expr.span.end,
-                 url_arg_literal: None,
-                 url_shape: None,
-+                call_options: None,
-             });
-         }
-     }
-@@ -949,6 +1019,8 @@ impl ModuleInfoExtractor {
-         // The arg-0 URL literal is captured once per call so secret-to-network
-         // findings can carry a destination-host signal on the arg-1 sink.
-         let url_arg_literal = call_url_arg_literal(expr);
-+        let mut call_options =
-+            is_spawn_callee(callee_path).then(|| Box::new(spawn_call_options(&expr.arguments)));
-         for (index, arg) in expr.arguments.iter().enumerate() {
-             let Some(arg_expr) = arg.as_expression() else {
-                 continue;
-@@ -962,6 +1034,7 @@ impl ModuleInfoExtractor {
-             {
-                 continue;
-             }
-+            let pushed_before = self.security_sinks.len();
-             self.push_security_sink_arg(PushSinkArgInput {
-                 callee_path,
-                 sink_shape,
-@@ -970,6 +1043,11 @@ impl ModuleInfoExtractor {
-                 url_arg_literal: url_arg_literal.clone(),
-                 span: expr.span,
-             });
-+            if arg_index == 0
-+                && let So
-```
-
-**File**: `crates/security/data/security_matchers.toml` (modified, +37/-6)
-```diff
-@@ -67,6 +67,9 @@
- # object_missing_or_false fires when any listed object option is missing or
- # boolean false. Optional object_missing fires when any listed object key is
- # absent, but only when the extractor proved the object key list is complete.
-+# Optional options_may_enable matches unless the extractor proved that each
-+# listed call option is absent or boolean false (the `shell` option of
-+# `child_process.spawn`).
- # Optional context_keywords matches zero-arg sinks that were captured only
- # because the surrounding variable or property name is security sensitive.
- #
-@@ -170,7 +173,7 @@ cwe = 78
- title = "OS command injection sink"
- effect = "shell"
- sink_shape = "member-call"
--callee_patterns = ["child_process.exec", "child_process.execSync", "child_process.spawn", "child_process.spawnSync"]
-+callee_patterns = ["child_process.exec", "child_process.execSync"]
- arg_index = 0
- import_provenance = "node:child_process"
- evidence_template = "Non-literal command passed to {callee}(). Candidate for verification: confirm the command/args are not attacker-controlled (prefer the array-arg spawn form)."
-@@ -181,11 +184,38 @@ cwe = 78
- title = "OS command injection sink"
- effect = "shell"
- sink_shape = "member-call"
--callee_patterns = ["node:child_process.exec", "node:child_process.execSync", "node:child_process.spawn", "node:child_process.spawnSync"]
-+callee_patterns = ["node:child_process.exec", "node:child_process.execSync"]
- arg_index = 0
- import_provenance = "node:child_process"
- evidence_template = "Non-literal command passed to {callee}(). Candidate for verification: confirm the command/args are not attacker-controlled."
- 
-+# `spawn` runs a shell only when its `shell` option is set. These rows match
-+# when the options can set `shell`. The execFile rows below take a `spawn`
-+# without a shell. The order matters: the first row that matches wins.
-+[[matcher]]
-+id = "command-injection"
-+cwe = 78
-+title = "OS command injection sink"
-+effect = "shell"
-+sink_shape = "member-call"
-+callee_patterns = ["child_process.spawn", "child_process.spawnSync"]
-+arg_index = 0
-+import_provenance = "node:child_process"
-+options_may_enable = ["shell"]
-+evidence_template = "Non-literal command passed to {callee}(), and the options can enable a shell. Candidate for verification: confirm the command/args are not attacker-controlled (drop the shell option)."
-+
-+[[matcher]]
-+id = "command-injection"
-+cwe = 78
-+title = "OS command injection sink"
-+effect = "shell"
-+sink_shape = "member-call"
-+callee_patterns = ["node:child_process.spawn", "node:child_process.spawnSync"]
-+arg_index = 0
-+import_provenance = "node:child_process"
-+options_may_enable = ["shell"]
-+evidence_template = "Non-literal command passed to {callee}(), and the options can enable a shell. Candidate for verification: confirm the command/args are not attacker-controlled (drop the shell option)."
-+
- [[matcher]]
- id = "command-injection"
- cwe = 78
-@@ -197,15 +227,16 @@ arg_index = 0
- import_provenance = "shelljs"
- evidence_template = "Non-literal command passed to {callee}(). Candidate for verification: confirm the command/args are not attacker-controlled."
- 
--# `execFile` runs no shell, and tooling code runs computed binary paths all the
--# time. These rows therefore need untrusted input in the argument or module.
-+# `execFile`, and `spawn` without the `shell` option, run no shell. Tooling
-+# code runs computed binary paths all the time. These rows therefore need
-+# untrusted input in the argument or module.
- [[matcher]]
- id = "command-injection"
- cwe = 78
- title = "OS command injection sink"
- effect = "shell"
- sink_shape = "member-call"
--callee_patterns = ["child_process.execFile", "child_process.execFileSync"]
-+callee_patterns = ["child_process.execFile", "child_process.execFileSync", "child_process.spawn", "child_process.spawnSync"]
- arg_index = 0
- import_provenance = "node:child_process"
- requires_module_source = true
-@@ -218,7 +249,7 @@ cwe = 78
- title = "OS command injection sink"
- effect = "shell"
- sink_shape = "member-call"
--callee_patterns = ["node:child_process.execFile", "node:child_process.execFileSync"]
-+callee_patterns = ["node:child_process.execFile", "node:child_process.execFileSync", "node:child_process.spawn", "node:child_process.spawnSync"]
- arg_index = 0
- import_provenance = "node:child_process"
- requires_module_source = true
-```
-
----
-
-### Incident Patch 3: `655d1ac2` (2026-11-12)
-**Commit Message**: fix(audit): inherit clone groups that lie inside a base clone group (#4564)
-
-* fix(audit): inherit clone groups that lie inside a base clone group
-
-A one-line edit or a parameter rename in one copy of a clone splits the
-clone group into smaller groups with new attribution keys. The new-only
-gate counted these groups as introduced, also where a group held the
-edited line, but the change did not write that duplication.
-
-A head clone group is now inherited when each instance lies inside a
-different instance of one base clone group and at least one instance
-holds no added line. The check maps paths through the renames and lines
-through the change blocks of the diff (`DiffIndex::base_line_range`).
-A pasted copy in a new file has no base lines and stays introduced. The
-rule records no demotion, so `attribution.duplication_demoted` does not
-count these groups.
-
-The diff parser no longer moves its line cursor on a
-`\ No newline at end of file` marker.
-
-Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
-
-* test(audit): move the clone containment tests into their own module
-
-The audit integration test file is over 2000 lines. The clone containment tests now live in audit_clone_containment_te
-
-**File**: `.agents/skills/fallow/references/cli-reference.md` (modified, +1/-1)
-```diff
-@@ -1261,7 +1261,7 @@ fallow audit \
- }
- ```
- 
--The `verdict` field is always present and is the primary decision signal. With the default `new-only` gate, the `attribution` object counts introduced vs inherited findings across dead code, complexity, duplication, and styling, and audit sub-results annotate individual findings with `introduced: true/false`. With `gate=all`, audit skips that extra base-snapshot attribution pass, so introduced/inherited counts stay `0` and per-finding `introduced` fields are omitted. Dead code, complexity, and duplication sections follow their respective schemas from the individual commands. Thresholds for complexity are inherited from `fallow health` config (defaults: cyclomatic 20, cognitive 15).
-+The `verdict` field is always present and is the primary decision signal. With the default `new-only` gate, the `attribution` object counts introduced vs inherited findings across dead code, complexity, duplication, and styling, and audit sub-results annotate individual findings with `introduced: true/false`. With `gate=all`, audit skips that extra base-snapshot attribution pass, so introduced/inherited counts stay `0` and per-finding `introduced` fields are omitted. A clone group where each instance lies inside a different instance of one base clone group is inherited: an edit inside one copy of a base clone (a changed line, a renamed parameter) splits the base group into smaller groups, and the change did not write that duplication. A pasted copy in a new file has no base lines, so its clone group stays introduced. A group stays introduced also when every copy holds an added line, because the change then wrote the same text into each copy. Dead code, complexity, and duplication sections follow their respective schemas from the individual commands. Thresholds for complexity are inherited from `fallow health` config (defaults: cyclomatic 20, cognitive 15).
- 
- Audit creates a temporary git worktree to compare against the base ref. When the current checkout has `node_modules`, audit links it into the base worktree so tsconfig `extends` chains into installed packages and path aliases resolve like the working tree. The worktree is removed on normal exit. If the process is force-killed, run `git worktree prune` to clean up stale `.git/worktrees/fallow-audit-base-*` entries.
- 
-```
-
-**File**: `.claude/skills/fallow/references/cli-reference.md` (modified, +1/-1)
-```diff
-@@ -1261,7 +1261,7 @@ fallow audit \
- }
- ```
- 
--The `verdict` field is always present and is the primary decision signal. With the default `new-only` gate, the `attribution` object counts introduced vs inherited findings across dead code, complexity, duplication, and styling, and audit sub-results annotate individual findings with `introduced: true/false`. With `gate=all`, audit skips that extra base-snapshot attribution pass, so introduced/inherited counts stay `0` and per-finding `introduced` fields are omitted. Dead code, complexity, and duplication sections follow their respective schemas from the individual commands. Thresholds for complexity are inherited from `fallow health` config (defaults: cyclomatic 20, cognitive 15).
-+The `verdict` field is always present and is the primary decision signal. With the default `new-only` gate, the `attribution` object counts introduced vs inherited findings across dead code, complexity, duplication, and styling, and audit sub-results annotate individual findings with `introduced: true/false`. With `gate=all`, audit skips that extra base-snapshot attribution pass, so introduced/inherited counts stay `0` and per-finding `introduced` fields are omitted. A clone group where each instance lies inside a different instance of one base clone group is inherited: an edit inside one copy of a base clone (a changed line, a renamed parameter) splits the base group into smaller groups, and the change did not write that duplication. A pasted copy in a new file has no base lines, so its clone group stays introduced. A group stays introduced also when every copy holds an added line, because the change then wrote the same text into each copy. Dead code, complexity, and duplication sections follow their respective schemas from the individual commands. Thresholds for complexity are inherited from `fallow health` config (defaults: cyclomatic 20, cognitive 15).
- 
- Audit creates a temporary git worktree to compare against the base ref. When the current checkout has `node_modules`, audit links it into the base worktree so tsconfig `extends` chains into installed packages and path aliases resolve like the working tree. The worktree is removed on normal exit. If the process is force-killed, run `git worktree prune` to clean up stale `.git/worktrees/fallow-audit-base-*` entries.
- 
-```
-
-**File**: `changelog.d/fix-audit-clone-subspan-inherited.md` (added, +3/-0)
-```diff
-@@ -0,0 +1,3 @@
-+### Fixed
-+
-+- **`fallow audit` no longer reports a clone as introduced after an edit inside an existing clone.** A one-line edit or a parameter rename in one copy of a clone splits the clone group into smaller groups with new attribution keys. The new-only gate then counted these groups as introduced, also where a group held the edited line. Now a clone group where each instance lies inside a different instance of one base clone group is inherited. The rule maps paths through renames and lines through the diff. A pasted copy in a new file stays introduced, and so does a group where every copy holds an added line. `attribution.duplication_demoted` does not count these groups, because they match a base clone group.
-```
-
-**File**: `crates/api/src/audit_keys.rs` (modified, +19/-0)
-```diff
-@@ -430,6 +430,25 @@ impl AuditDomainLedger {
-             }
-         }
-     }
-+
-+    /// Whether the finding with `key` is introduced.
-+    #[must_use]
-+    pub fn is_introduced(&self, key: &str) -> bool {
-+        self.introduced_keys.contains(key)
-+    }
-+
-+    /// Mark introduced findings whose keys are in `inherit` as inherited.
-+    /// Unlike [`Self::demote_introductions`], this records no demotion: the
-+    /// finding matches a base finding, only its key changed.
-+    pub fn inherit_introductions(&mut self, inherit: &FxHashSet<String>) {
-+        for (key, introduced) in &mut self.records {
-+            if *introduced && inherit.contains(key) {
-+                *introduced = false;
-+                self.introduced_keys.remove(key);
-+                self.inherited_keys.insert(key.clone());
-+            }
-+        }
-+    }
- }
- 
- /// One-pass audit comparison shared by attribution, verdict, and annotations.
-```
-
-**File**: `crates/api/src/audit_run/clone_containment.rs` (added, +237/-0)
-```diff
-@@ -0,0 +1,237 @@
-+//! Head clone groups that lie inside a base clone group.
-+//!
-+//! An edit inside one copy of a base clone splits the base group into
-+//! smaller groups with new attribution keys. Each smaller group still holds
-+//! only duplication that the base already had, so it is inherited.
-+
-+use std::path::Path;
-+
-+use fallow_engine::changed_files::RenamedFile;
-+use fallow_engine::module_graph::relative_key_path;
-+use fallow_output::DiffIndex;
-+use fallow_types::duplicates::{CloneGroup, CloneInstance};
-+use rustc_hash::{FxHashMap, FxHashSet};
-+
-+use crate::audit_keys::dupe_group_key;
-+use crate::diff_risk::clones::{BaseCloneGroup, CloneSpan};
-+
-+/// Keys of the head clone groups where each instance lies inside a different
-+/// instance of one base clone group, and at least one instance holds no added
-+/// line.
-+///
-+/// The check maps each head instance to its base path (through `renames`,
-+/// then through the renames of `diff`) and to its base lines (through the
-+/// line changes of `diff`). A group with an instance that has no base lines,
-+/// for example a pasted copy in a new file, is not in the set. A group where
-+/// each instance holds an added line is not in the set either: the change
-+/// wrote the same text into every copy, so it can have written new
-+/// duplication inside the old clone.
-+pub fn base_contained_dupe_group_keys<'a>(
-+    groups: impl IntoIterator<Item = &'a CloneGroup>,
-+    root: &Path,
-+    diff: &DiffIndex,
-+    base_groups: &[BaseCloneGroup],
-+    renames: &[RenamedFile],
-+) -> FxHashSet<String> {
-+    if base_groups.is_empty() {
-+        return FxHashSet::default();
-+    }
-+    let head_to_base: FxHashMap<String, String> = renames
-+        .iter()
-+        .map(|rename| {
-+            (
-+                relative_key_path(&rename.to, root),
-+                relative_key_path(&rename.from, root),
-+            )
-+        })
-+        .collect();
-+    let base_span = |instance: &CloneInstance| -> Option<(CloneSpan, bool)> {
-+        let rel = relative_key_path(&instance.file, root);
-+        let key = diff.key_for(&instance.file, root)?;
-+        let start = u64::try_from(instance.start_line).ok()?;
-+        let end = u64::try_from(instance.end_line).ok()?;
-+        let (base_start, base_end) = diff.base_line_range(&key, start, end)?;
-+        let touched = diff.range_overlaps_added(&key, start, end);
-+        let path = head_to_base.get(&rel).cloned().unwrap_or_else(|| {
-+            diff.old_path_for_root_relative(&rel)
-+                .map_or_else(|| rel.clone(), |old| old.into_owned())
-+        });
-+        let span = CloneSpan {
-+            path,
-+            start_line: u32::try_from(base_start).ok()?,
-+            end_line: u32::try_from(base_end).ok()?,
-+        };
-+        Some((span, touched))
-+    };
-+    groups
-+        .into_iter()
-+        .filter(|group| {
-+            let mapped: Option<Vec<(CloneSpan, bool)>> =
-+                group.instances.iter().map(base_span).collect();
-+            let Some(mapped) = mapped else {
-+                return false;
-+            };
-+            if mapped.iter().all(|(_, touched)| *touched) {
-+                return false;
-+            }
-+            let spans: Vec<CloneSpan> = mapped.into_iter().map(|(span, _)| span).collect();
-+            base_groups
-+                .iter()
-+                .any(|base| spans_fit_in_group(&spans, &base.instances))
-+        })
-+        .map(|group| dupe_group_key(group, root))
-+        .collect()
-+}
-+
-+/// Whether each span lies inside a different instance of the base group.
-+/// Two head instances inside one base copy are a new clone of the copy with
-+/// itself, so each base instance takes at most one span.
-+fn spans_fit_in_group(spans: &[CloneSpan], base: &[CloneSpan]) -> bool {
-+    let mut used = vec![false; base.len()];
-+    spans.iter().all(|span| {
-+        let slot = base.iter().enumerate().position(|(index, outer)| {
-+            !used[index]
-+                && outer.path == span.path
-+                && outer.start_line <= span.start_line
-+                && span.end_line <= outer.end_line
-+        });
-+        slot.is_some_and(|index| {
-+            used[index] = true;
-+            true
-+        })
-+    })
-+}
-+
-+#[cfg(test)]
-+mod tests {
-+    use std::path::PathBuf;
-+
-+    use super::*;
-+
-+    fn root() -> PathBuf {
-+        PathBuf::from("/project")
-+    }
-+
-+    fn instance(path: &str, start_line: usize, end_line: usize) -> CloneInstance {
-+        CloneInstance {
-+            is_symlink: false,
-+            file: root().join(path),
-+            start_line,
-+            end_line,
-+            start_col: 0,
-+            end_col: 0,
-+            fragment: format!("{path}:{start_line}"),
-+        }
-+    }
-+
-+    fn group(instances: Vec<CloneInstance>) -> CloneGroup {
-+        CloneGroup {
-+            instances,
-+            token_count: 40,
-+            line_count: 6,
-+            similarity: None,
-+        }
-+    }
-+
-+    fn span(path: &str, start_line: u32, end_line
-```
-
-**File**: `crates/api/src/audit_run/mod.rs` (modified, +11/-2)
-```diff
-@@ -20,6 +20,7 @@
- 
- mod base_files;
- mod base_ref;
-+mod clone_containment;
- mod outcome;
- mod own_config;
- mod scope;
-@@ -42,8 +43,8 @@ pub use base_ref::{
-     AuditBaseError, AuditBaseOrigin, parse_audit_base_override, resolve_audit_base,
- };
- pub use outcome::{
--    DupeDemotionDiffSource, SharedDiff, compare, demote_preexisting_dupe_introductions, outcome,
--    realign_styling_introductions, styling_finding_gates, styling_rule_severity,
-+    DupeBase, DupeDemotionDiffSource, SharedDiff, compare, demote_preexisting_dupe_introductions,
-+    outcome, realign_styling_introductions, styling_finding_gates, styling_rule_severity,
- };
- pub use own_config::{config_path_under_root, own_config_unused_code_keys};
- pub use scope::{
-@@ -562,6 +563,14 @@ pub fn attribute<A: AuditAnalyses>(
-             root,
-             base_ref,
-             shared_diff,
-+            DupeBase {
-+                // A skipped base reuses the head keys, so no group is introduced.
-+                groups: base_snapshot
-+                    .as_ref()
-+                    .filter(|_| !skipped)
-+                    .map_or(&[][..], |snapshot| snapshot.dupe_groups.as_slice()),
-+                renames,
-+            },
-         );
-         realign_styling_introductions(
-             &mut comparison,
-```
-
-**File**: `crates/api/src/audit_run/outcome.rs` (modified, +45/-7)
-```diff
-@@ -4,13 +4,17 @@ use std::path::Path;
- 
- use fallow_config::{AuditGate, AuditWorsened, RulesConfig, Severity};
- 
-+use fallow_engine::changed_files::RenamedFile;
-+
-+use super::clone_containment::base_contained_dupe_group_keys;
- use super::{AuditAnalysesView, AuditKeySnapshot};
- use crate::audit_keys::{
-     AuditComparison, AuditDomainLedger, DeadCodeAuditLedger,
-     classify_complexity_attribution_against_all, complexity_ledger_keys, dead_code_audit_ledger,
-     dupe_group_key, preexisting_dupe_group_keys, styling_ledger_keys,
-     styling_ledger_keys_with_diff,
- };
-+use crate::diff_risk::clones::BaseCloneGroup;
- use crate::{AuditAttribution, AuditSummary, AuditVerdict};
- 
- /// Which diff decided the new-only duplication demotion, so output can name
-@@ -136,20 +140,39 @@ pub fn compare(
-     }
- }
- 
--/// Demote introduced clone groups that hold no added line of the run's diff.
-+/// The base data that the clone group reclassification compares with.
-+#[derive(Clone, Copy)]
-+pub struct DupeBase<'a> {
-+    /// Instance locations of the base clone groups, at base paths.
-+    pub groups: &'a [BaseCloneGroup],
-+    /// The renamed files of the change.
-+    pub renames: &'a [RenamedFile],
-+}
-+
-+/// Reclassify introduced clone groups that the change did not write.
-+///
-+/// Two rules use the run's diff, in this order:
- ///
--/// No instance range holds an added line, so the changeset did not write the
--/// duplicated text. Only the attribution key of the group changed, because the
--/// changeset removed code in another place. Without this step, a clone-removal
--/// refactor fails the new-only gate on duplication that it did not write
--/// (issue #2164). The opt-in shared diff decides when it is present; the
--/// merge-base worktree diff decides in the other cases.
-+/// 1. A group that holds no added line is demoted. Only the attribution key
-+///    of the group changed, because the changeset removed code in another
-+///    place. Without this rule, a clone-removal refactor fails the new-only
-+///    gate on duplication that it did not write (issue #2164).
-+/// 2. A group where each instance lies inside a different instance of one
-+///    base clone group, and one instance holds no added line, is inherited.
-+///    An edit inside one copy of a base clone splits the base group into
-+///    smaller groups with new keys, and the
-+///    change did not write their duplication. This rule records no
-+///    demotion, because the group matches a base group.
-+///
-+/// The opt-in shared diff decides when it is present; the merge-base worktree
-+/// diff decides in the other cases.
- pub fn demote_preexisting_dupe_introductions(
-     comparison: &mut AuditComparison,
-     view: &AuditAnalysesView<'_>,
-     root: &Path,
-     base_ref: &str,
-     shared: Option<SharedDiff<'_>>,
-+    base: DupeBase<'_>,
- ) -> Option<DupeDemotionDiffSource> {
-     if comparison.dupes.introduced_count() == 0 {
-         return None;
-@@ -173,6 +196,21 @@ pub fn demote_preexisting_dupe_introductions(
-         index,
-     );
-     comparison.dupes.demote_introductions(&demote);
-+    // Only an introduced group can become inherited. The filter keeps the
-+    // containment check, which compares each group with every base group,
-+    // away from the groups that already match a base key.
-+    let inherit = base_contained_dupe_group_keys(
-+        duplication.clone_groups.iter().copied().filter(|group| {
-+            comparison
-+                .dupes
-+                .is_introduced(&dupe_group_key(group, duplication.root))
-+        }),
-+        duplication.root,
-+        index,
-+        base.groups,
-+        base.renames,
-+    );
-+    comparison.dupes.inherit_introductions(&inherit);
-     Some(source)
- }
- 
-```
-
-**File**: `crates/cli/tests/integration/audit_clone_containment_tests.rs` (added, +126/-0)
-```diff
-@@ -0,0 +1,126 @@
-+//! New-only duplication attribution for a head clone group that lies inside a
-+//! base clone group: an edit inside an existing clone is inherited, and a new
-+//! copy stays introduced.
-+
-+#![allow(
-+    clippy::unwrap_used,
-+    clippy::expect_used,
-+    reason = "tests and benches use unwrap and expect to keep fixture setup concise"
-+)]
-+
-+use crate::common::{commit_all, git, parse_json, run_fallow_raw};
-+use std::fs;
-+use std::path::Path;
-+use tempfile::TempDir;
-+
-+const SUBSPAN_CLONE: &str = "export function NAME(items, opts) {\n  const out = [];\n  for (const item of items) {\n    if (item.kind === 'alpha' && opts.includeAlpha) {\n      out.push({ id: item.id, label: item.name.toUpperCase(), score: item.score * 2 });\n    } else if (item.kind === 'beta' && opts.includeBeta) {\n      out.push({ id: item.id, label: item.name.toLowerCase(), score: item.score + 10 });\n    } else if (item.kind === 'gamma') {\n      out.push({ id: item.id, label: item.name.trim(), score: Math.max(0, item.score - 5) });\n    } else {\n      out.push({ id: item.id, label: String(item.name), score: 0 });\n    }\n  }\n  const total = out.reduce((sum, row) => sum + row.score, 0);\n  const sorted = out.sort((x, y) => y.score - x.score);\n  return { total, rows: sorted, count: sorted.length, empty: sorted.length === 0 };\n}\n";
-+
-+/// Repo with one committed clone group across `src/a.js` and `src/b.js`. The
-+/// `edit` callback changes the working tree, and the function returns the
-+/// JSON of a new-only audit against the commit.
-+fn audit_after_clone_edit(edit: impl FnOnce(&Path)) -> serde_json::Value {
++fn audit_renamed_copy_and_rewritten_lines_above_other_copy_is_inherited() {
 +    let tmp = TempDir::new().expect("failed to create temp dir");
-+    let dir = tmp.path();
-+    fs::create_dir_all(dir.join("src")).unwrap();
++    let repo = tmp.path();
++    fs::create_dir_all(repo.join("src")).unwrap();
 +    fs::write(
-+        dir.join("package.json"),
-+        r#"{"name":"audit-clone-subspan","type":"module","main":"src/index.js"}"#,
++        repo.join("package.json"),
++        r#"{"name":"audit-clone-rename-shift","type":"module","main":"src/index.js"}"#,
++    )
++    .unwrap();
++    let clone = SUBSPAN_CLONE.replace("NAME", "compute");
++    fs::write(
++        repo.join("src/a.js"),
++        format!("export const a0 = 1;\n{clone}"),
++    )
++    .unwrap();
++    fs::write(repo.join("src/c.js"), "export const c0 = 2;\n").unwrap();
++    fs::write(
++        repo.join("src/b.js"),
++        format!(
++            "import {{ a0 }} from './a.js';\nimport {{ c0 }} from './c.js';\nexport const b0 = a0 + c0;\n{clone}"
++        ),
 +    )
 +    .unwrap();
 +    fs::write(
-+        dir.join("src/index.js"),
-+        "import { a } from './a.js';\nimport { b } from './b.js';\nconsole.log(a, b);\n",
++        repo.join("src/index.js"),
++        "import { b0 } from './b.js';\nimport { compute } from './a.js';\nconsole.log(b0, compute);\n",
 +    )
 +    .unwrap();
-+    fs::write(dir.join("src/a.js"), SUBSPAN_CLONE.replace("NAME", "a")).unwrap();
-+    fs::write(dir.join("src/b.js"), SUBSPAN_CLONE.replace("NAME", "b")).unwrap();
-+    git(dir, &["init", "-b", "main"]);
-+    git(dir, &["config", "core.autocrlf", "false"]);
-+    commit_all(dir, "initial");
-+    edit(dir);
++    git(repo, &["init", "-b", "main"]);
++    git(repo, &["config", "core.autocrlf", "false"]);
++    commit_all(repo, "initial");
++
++    git(repo, &["mv", "src/a.js", "src/r.js"]);
++    git(repo, &["rm", "-q", "src/c.js"]);
++    fs::write(
++        repo.join("src/b.js"),
++        format!("import {{ a0 }} from './r.js';\nexport const b0 = a0;\n{clone}"),
++    )
++    .unwrap();
++    edit_file(repo, "src/index.js", "'./a.js'", "'./r.js'");
++    commit_all(repo, "rename and rewrite");
 +
 +    let output = run_fallow_raw(&[
 +        "audit",
 +        "--root",
-+        dir.to_str().unwrap(),
++        repo.to_str().unwrap(),
 +        "--base",
-+        "HEAD",
++        "HEAD~1",
 +        "--gate",
 +        "new-only",
 +        "--no-cache",
@@ -2627,75 +1625,830 @@ The audit integration test file is over 2000 lines. The clone containment tests 
 +        "json",
 +        "--quiet",
 +    ]);
-+    assert_eq!(
-+        output.code, 0,
-+        "audit should run. stdout: {}\nstderr: {}",
-+        output.stdout, output.stderr
-+    );
-+    parse_json(&output)
-+}
-+
-+fn edit_file(dir: &Path, rel: &str, from: &str, to: &str) {
-+    let path = dir.join(rel);
-+    let text = fs::read_to_string(&path).unwrap();
-+    assert!(text.contains(from), "{rel} must contain {from}");
-+    fs::write(&path, text.replace(from, to)).unwrap();
-+}
-+
-+fn assert_all_clone_groups_inherited(json: &serde_json::Value) {
-+    let groups = json["duplication"]["clone_groups"]
-+        .as_array()
-+        .expect("clone groups array");
-+    assert!(!groups.is_empty(), "expected a clone group: {json}");
-+    assert!(
-+        groups.iter().all(|group| group["introduced"] == false),
-+        "every clone group inside a base clone group must be inherited: {json}"
-+    );
-+    assert_eq!(json["attribution"]["duplication_introduced"], 0);
-+    assert_eq!(json["attribution"]["duplication_demoted"], 0);
-+}
-+
-+/// A one-line edit inside one copy of a base clone splits the group into
-+/// smaller groups. Each smaller group lies inside the base group, so the
-+/// change did not write the duplication, even where a group holds the edited
-+/// line.
-+#[test]
-+fn audit_one_line_edit_inside_base_clone_is_inherited() {
-+    let json = audit_after_clone_edit(|dir| {
-+        edit_file(dir, "src/a.js", "item.score + 10", "item.score + 11");
-+    });
++    let json = parse_json(&output);
 +    assert_all_clone_groups_inherited(&json);
++    assert_eq!(json["attribution"]["duplication_inherited"], 1);
 +}
 +
-+/// A parameter rename in one copy of a base clone shrinks the group to the
-+/// lines that do not name the parameter. The smaller group is inherited.
-+#[test]
-+fn audit_parameter_rename_inside_base_clone_is_inherited() {
-+    let json = audit_after_clone_edit(|dir| {
-+        let path = dir.join("src/a.js");
-+        let text = fs::read_to_string(&path).unwrap();
-+        fs::write(&path, text.replace("opts", "options")).unwrap();
-+    });
-+    assert_all_clone_groups_inherited(&json);
-+}
-+
-+/// A new copy of a base clone in a new file has no containing base instance,
-+/// so its clone group stays introduced.
-+#[test]
-+fn audit_new_copy_of_base_clone_stays_introduced() {
-+    let json = audit_after_clone_edit(|dir| {
-+        fs::write(dir.join("src/c.js"), SUBSPAN_CLONE.replace("NAME", "c")).unwrap();
-+        fs::write(
+ /// A project in a subdirectory of the repo gets the same result. The added
+ /// lines move the head clone below the end of its base instance. The head
+ /// span maps back inside the base instance only when the diff paths are
+```
 
+**File**: `crates/output/src/diff.rs` (modified, +62/-13)
+```diff
+@@ -56,6 +56,15 @@ struct ChangeBlock {
+     old_len: u64,
+ }
+ 
++impl ChangeBlock {
++    /// Last base line that the run removed. `None` when it removed no line.
++    fn last_removed_line(self) -> Option<u64> {
++        (self.old_start + self.old_len)
++            .checked_sub(1)
++            .filter(|_| self.old_len > 0)
++    }
++}
++
+ /// Where one head line sits relative to the change blocks of its file.
+ enum HeadLinePlace {
+     /// An unchanged line, at this base line.
+@@ -216,26 +225,44 @@ impl DiffIndex {
+     /// is a key of this diff.
+     ///
+     /// Unchanged lines map exactly. An added line at the start of the range
+-    /// maps to the first base line that its block removed. An added line at
+-    /// the end maps to the last one. A file that the diff does not name maps
+-    /// unchanged. `None` when the range holds no base line, when the diff
+-    /// adds `path` as a new file, or when the index stopped at
+-    /// [`MAX_ADDED_LINES`].
++    /// maps to the last base line that its block removed, which is the
++    /// removed line next to the unchanged lines inside the range. An added
++    /// line at the end maps to the first removed line, for the same reason.
++    /// A block that replaces several lines thus does not widen the range to
++    /// base lines that the range does not reach. A range that starts and
++    /// ends in one block maps to every line that the block removed. A file
++    /// that the diff does not name maps unchanged. `None` when the range
++    /// holds no base line, when the diff adds `path` as a new file, or when
++    /// the index stopped at [`MAX_ADDED_LINES`].
+     #[must_use]
+     pub fn base_line_range(&self, path: &str, start: u64, end: u64) -> Option<(u64, u64)> {
+         let map = &self.base_lines;
+         if map.lines_capped || start > end || map.new_files.contains(path) {
+             return None;
+         }
+         let blocks = map.change_blocks.get(path).map_or(&[][..], Vec::as_slice);
+-        let base_start = match head_line_place(blocks, start) {
+-            HeadLinePlace::Unchanged(line) => line,
+-            HeadLinePlace::Added(block) => block.old_start,
+-        };
+-        let base_end = match head_line_place(blocks, end) {
+-            HeadLinePlace::Unchanged(line) => line,
+-            HeadLinePlace::Added(block) => (block.old_start + block.old_len).checked_sub(1)?,
+-        };
++        let (base_start, base_end) =
++            match (head_line_place(blocks, start), head_line_place(blocks, end)) {
++                (HeadLinePlace::Added(first), HeadLinePlace::Added(last))
++                    if first.new_start == last.new_start =>
++                {
++                    (first.old_start, first.last_removed_line()?)
++                }
++                (start_place, end_place) => {
++                    let base_start = match start_place {
++                        HeadLinePlace::Unchanged(line) => line,
++                        HeadLinePlace::Added(block) => {
++                            block.last_removed_line().unwrap_or(block.old_start)
++                        }
++                    };
++                    let base_end = match end_place {
++                        HeadLinePlace::Unchanged(line) => line,
++                        HeadLinePlace::Added(block) if block.old_len > 0 => block.old_start,
++                        HeadLinePlace::Added(block) => block.old_start.checked_sub(1)?,
++                    };
++                    (base_start, base_end)
++                }
++            };
+         (base_start <= base_end).then_some((base_start, base_end))
+     }
+ 
+@@ -496,6 +523,28 @@ mod tests {
+         assert_eq!(index.base_line_range("a.js", 1, 12), Some((1, 10)));
+     }
+ 
++    /// Three base lines become two head lines. A range that starts on the
++    /// second head line reaches only the last replaced base line, so it maps
++    /// to that line and not to the first one (issue #4580).
++    #[test]
++    fn base_line_range_maps_a_start_in_a_multi_line_replacement_to_its_last_removed_line() {
++        let index = DiffIndex::from_unified_diff(
++            "diff --git a/b.ts b/b.ts\n--- a/b.ts\n+++ b/b.ts\n@@ -1,3 +1,2 @@\n-one\n-two\n-three\n+ONE\n+TWO\n",
++        );
++        assert_eq!(index.base_line_range("b.ts", 2, 15), Some((3, 16)));
++        assert_eq!(index.base_line_range("b.ts", 1, 2), Some((1, 3)));
++    }
++
++    #[test]
++    fn base_line_range_maps_an_end_in_a_multi_line_replacement_to_its_first_removed_line() {
++        let index = DiffIndex::from_unified_diff(
++            "diff --git a/b.ts b/b.ts\n--- a/b.ts\n+++ b/b.ts\n@@ -10,3 +10,2 @@\n-ten\n-eleven\n-twelve\n+TEN\n+ELEVEN\n",
++        );
++        assert_eq!(index.base_line_range("b.ts", 1, 10), Some((1, 10)));
++        assert_eq!(index.base_line_range("b.ts", 1, 11), Some((1, 10)));
++        assert_eq!(index.base_line_range("b.ts", 12, 20), Some((13, 21)));
++    }
++
+     #[test]
+     fn base_line_range_has_no_base_line_for_pure_additions() {
+         let index = DiffIndex::f
+```
+
+**File**: `docs/reference/cli-internals.md` (modified, +4/-1)
+```diff
+@@ -538,7 +538,10 @@ line states exit code 0.
+   (`crates/api/src/audit_run/clone_containment.rs`). The check maps each head
+   instance to its base path through the rename list and the diff renames,
+   and to its base lines through the line changes of the diff
+-  (`DiffIndex::base_line_range`). An edit inside one copy of a base clone
++  (`DiffIndex::base_line_range`). A rewritten line at the start or end of an
++  instance maps to the replaced base line next to the unchanged lines of the
++  instance, so a block that turns several lines into fewer does not move the
++  span outside its base instance. An edit inside one copy of a base clone
+   splits the base group into smaller groups with new keys, and this rule
+   keeps them inherited. The rule records no demotion, because the group
+   matches a base group. A file that the diff adds has no base lines, so a
+```
+
+---
+
+### Incident Patch 2: `b5123420` (2026-11-15)
+**Commit Message**: ci(bench): build CodSpeed shards with two compile jobs, swap and a resource log (#4616)
+
+* ci(bench): add swap and a resource log to the CodSpeed builds
+
+CodSpeed jobs stop in "Build benchmark shard" with exit code 143 and
+"The runner has received a shutdown signal", with no compiler error.
+The runner stops while a cold build compiles several large crates at
+once with full debug info.
+
+Each CodSpeed job now adds 8 GiB of swap on the temporary disk before
+the build. When the disk has too little free space or swapon fails,
+the step prints a warning and the job continues. The build runs
+through a wrapper that prints the available memory, the used swap,
+the load average and the available disk every 30 seconds, so the last
+lines of a log show which resource ran out.
+
+The cargo command and its flags do not change, so the instruction
+counts of the benchmarks do not change.
+
+Closes #4605
+
+Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
+
+* ci(bench): build the CodSpeed shards with two compile jobs
+
+The resource log of the first run showed the memory peak. While the
+large fallow crates compile in parallel, the available memory fell to
+about 1 GB, and six shards used up to 2.5 GB of swap. 
+
+**File**: `.github/workflows/bench.yml` (modified, +28/-3)
+```diff
+@@ -141,7 +141,8 @@ jobs:
+     permissions:
+       contents: read
+       id-token: write
+-    timeout-minutes: 30
++    # A cold build with two compile jobs takes longer than one with four.
++    timeout-minutes: 45
+     env:
+       # One rayon thread keeps simulated instruction counts stable: adaptive
+       # work splitting on steals changes them between runs of the same code.
+@@ -164,9 +165,21 @@ jobs:
+         with:
+           tool: cargo-codspeed@4.7.0
+ 
++      - name: Add swap for the build
++        # A cold build compiles several large crates at once with full debug
++        # info. Without extra swap, a memory peak can stop the hosted runner
++        # with exit code 143 and no compiler error (#4605). The temporary
++        # disk at /mnt has the free space.
++        run: bash scripts/ci-add-swap.sh /mnt/bench.swap 8
++
+       - name: Build benchmark shard
+         # Keep PR feedback focused on deterministic API/session/cache paths.
+-        run: cargo codspeed build -p ${{ matrix.package }} --bench ${{ matrix.bench }} --features codspeed
++        # The resource log shows the cause when the runner stops mid-build.
++        env:
++          # Four parallel compiles of the large fallow crates, with full debug
++          # info, use more than the 16 GB of the runner (#4605).
++          CARGO_BUILD_JOBS: "2"
++        run: bash scripts/ci-with-resource-log.sh cargo codspeed build -p ${{ matrix.package }} --bench ${{ matrix.bench }} --features codspeed
+ 
+       - name: Run benchmark shard
+         uses: CodSpeedHQ/action@af75f77f17a054769abefaa42fe8dc2975469b5f # v5.6.3
+@@ -214,9 +227,21 @@ jobs:
+         with:
+           tool: cargo-codspeed@4.7.0
+ 
++      - name: Add swap for the build
++        # A cold build compiles several large crates at once with full debug
++        # info. Without extra swap, a memory peak can stop the hosted runner
++        # with exit code 143 and no compiler error (#4605). The temporary
++        # disk at /mnt has the free space.
++        run: bash scripts/ci-add-swap.sh /mnt/bench.swap 8
++
+       - name: Build full benchmark shard
+         # Full suites include audit/git-heavy and scaling paths that are useful but noisier.
+-        run: cargo codspeed build -p ${{ matrix.package }} --bench ${{ matrix.bench }} --features codspeed
++        # The resource log shows the cause when the runner stops mid-build.
++        env:
++          # Four parallel compiles of the large fallow crates, with full debug
++          # info, use more than the 16 GB of the runner (#4605).
++          CARGO_BUILD_JOBS: "2"
++        run: bash scripts/ci-with-resource-log.sh cargo codspeed build -p ${{ matrix.package }} --bench ${{ matrix.bench }} --features codspeed
+ 
+       - name: Run full benchmark shard
+         uses: CodSpeedHQ/action@af75f77f17a054769abefaa42fe8dc2975469b5f # v5.6.3
+```
+
+**File**: `.github/workflows/ci.yml` (modified, +4/-0)
+```diff
+@@ -984,6 +984,10 @@ jobs:
+         run: sh scripts/check-conflict-markers.sh
+       - name: Merge-conflict marker check self-test
+         run: bash scripts/test-check-conflict-markers.sh
++      - name: CI runner script self-tests
++        run: |
++          bash scripts/test-ci-add-swap.sh
++          bash scripts/test-ci-with-resource-log.sh
+ 
+   js-lint:
+     name: JS Lint and Format
+```
+
+**File**: `docs/benchmarking.md` (modified, +13/-0)
+```diff
+@@ -27,6 +27,19 @@ to judge an I/O change.
+ compare instruction counts across a change to this profile: the codegen
+ changes, so CodSpeed records a one-time baseline shift.
+ 
++A cold build of a shard compiles several large crates at once, and
++cargo-codspeed always adds full debug info (`-Cdebuginfo=2`). With four
++parallel compile jobs, the large fallow crates (core, engine, cli, lsp) used
++more than the 16 GB of the runner. Each CodSpeed job in
++`.github/workflows/bench.yml` therefore builds with `CARGO_BUILD_JOBS=2` and adds
++8 GiB of swap on the temporary disk (`scripts/ci-add-swap.sh`) before the
++build. The job count does not change the instruction counts, because each
++crate compiles to the same code. The build runs through
++`scripts/ci-with-resource-log.sh`, which prints the available memory, the used
++swap and the available disk every 30 seconds. When a runner stops in "Build
++benchmark shard" with exit code 143 and no compiler error, read the last
++`resources:` lines of the job log to find the resource that ran out.
++
+ The optional TypeScript semantic companion is measured separately with
+ CodSpeed walltime. Simulation cannot measure the interpreted Node.js process or
+ its child process, so `tools/type-aware-sidecar/bench/session.mjs` uses the
+```
+
+**File**: `scripts/ci-add-swap.sh` (added, +43/-0)
+```diff
+@@ -0,0 +1,43 @@
++#!/usr/bin/env bash
++# Adds a swap file on a Linux CI runner and prints the memory and swap after.
++# When the directory of the file does not exist, or its file system has less
++# free space than the swap size plus a reserve, the script prints a warning and
++# adds no swap: a missing swap file must not fail the job.
++#
++# Usage: bash scripts/ci-add-swap.sh <swap file> <size in GiB>
++set -u
++
++RESERVE_GIB=4
++
++if [ "$#" -ne 2 ] || ! [[ "$2" =~ ^[1-9][0-9]*$ ]]; then
++  echo "usage: bash scripts/ci-add-swap.sh <swap file> <size in GiB>" >&2
++  exit 2
++fi
++
++file="$1"
++size_gib="$2"
++dir="$(dirname "$file")"
++
++warn() {
++  echo "::warning::No extra swap: $1"
++  exit 0
++}
++
++[ -d "$dir" ] || warn "$dir does not exist"
++free_gib="$(df -Pk "$dir" | awk 'NR == 2 { print int($4 / 1024 / 1024) }')"
++[ "$free_gib" -ge $((size_gib + RESERVE_GIB)) ] ||
++  warn "$dir has ${free_gib} GiB free, the swap file needs $((size_gib + RESERVE_GIB)) GiB"
++
++sudo_cmd=""
++[ "$(id -u)" -eq 0 ] || sudo_cmd="sudo -n"
++
++drop() {
++  $sudo_cmd rm -f "$file"
++  warn "$1"
++}
++
++$sudo_cmd fallocate -l "${size_gib}G" "$file" || drop "fallocate failed for $file"
++$sudo_cmd chmod 600 "$file"
++$sudo_cmd mkswap "$file" >/dev/null || drop "mkswap failed for $file"
++$sudo_cmd swapon "$file" || drop "swapon failed for $file"
++free -m
+```
+
+**File**: `scripts/ci-with-resource-log.sh` (added, +58/-0)
+```diff
+@@ -0,0 +1,58 @@
++#!/usr/bin/env bash
++# Runs a command and prints the available memory, the used swap, the load
++# average and the available disk of the runner at an interval while the command
++# runs, and once at the end. A hosted runner that runs out of memory or disk, or
++# is too busy to answer, stops without an error from the command, so the last
++# lines of the log show the cause.
++#
++# Usage: bash scripts/ci-with-resource-log.sh <command> [args...]
++# RESOURCE_LOG_INTERVAL sets the interval in seconds (default 30). A value that
++# is not a positive whole number uses the default.
++# The exit code is the exit code of the command.
++set -u
++
++if [ "$#" -eq 0 ]; then
++  echo "usage: bash scripts/ci-with-resource-log.sh <command> [args...]" >&2
++  exit 2
++fi
++
++interval="${RESOURCE_LOG_INTERVAL:-30}"
++[[ "$interval" =~ ^[1-9][0-9]*$ ]] || interval=30
++
++sample() {
++  local line="resources:"
++  if [ -r /proc/meminfo ]; then
++    line="$line $(awk '
++      /^MemAvailable:/ { available = $2 }
++      /^SwapTotal:/ { swap_total = $2 }
++      /^SwapFree:/ { swap_free = $2 }
++      END { printf "mem_available_mb=%d swap_used_mb=%d", available / 1024, (swap_total - swap_free) / 1024 }
++    ' /proc/meminfo)"
++  fi
++  if [ -r /proc/loadavg ]; then
++    line="$line load_1m=$(cut -d ' ' -f 1 /proc/loadavg)"
++  fi
++  line="$line $(df -Pk . | awk 'NR == 2 { printf "disk_available_mb=%d", $4 / 1024 }')"
++  echo "$line"
++}
++
++# The sampler also stops its sleep, so no process keeps the output open after
++# the command ends.
++(
++  sleeper=""
++  trap '[ -n "$sleeper" ] && kill "$sleeper" 2>/dev/null; exit 0' TERM
++  while :; do
++    sample
++    sleep "$interval" &
++    sleeper=$!
++    wait "$sleeper"
++  done
++) &
++sampler=$!
++trap 'kill "$sampler" 2>/dev/null' EXIT
++
++"$@"
++status=$?
++kill "$sampler" 2>/dev/null
++sample
++exit "$status"
+```
+
+**File**: `scripts/test-ci-add-swap.sh` (added, +42/-0)
+```diff
+@@ -0,0 +1,42 @@
++#!/usr/bin/env bash
++# Self-test for scripts/ci-add-swap.sh. Covers the paths that add no swap, so
++# it runs without root: invalid arguments, a missing directory and too little
++# free space. The CodSpeed jobs in bench.yml run the path that adds swap.
++# Run: bash scripts/test-ci-add-swap.sh
++set -u
++
++SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
++SWAP="$SCRIPT_DIR/ci-add-swap.sh"
++
++pass=0
++fail=0
++check() { # description, expected, actual
++  if [ "$2" = "$3" ]; then pass=$((pass + 1)); else fail=$((fail + 1)); echo "FAIL: $1 (expected $2, got $3)"; fi
++}
++
++# 1. Invalid arguments: usage error.
++bash "$SWAP" >/dev/null 2>&1
++check "no arguments" 2 $?
++bash "$SWAP" /tmp/x.swap 0 >/dev/null 2>&1
++check "zero size" 2 $?
++bash "$SWAP" /tmp/x.swap 8G >/dev/null 2>&1
++check "size with unit" 2 $?
++
++# 2. A missing directory: warning, exit code 0, no file.
++out="$(bash "$SWAP" /nonexistent-dir-for-swap-test/x.swap 1 2>&1)"
++check "missing directory exit code" 0 $?
++check "missing directory warning" 1 "$(printf '%s\n' "$out" | grep -c '^::warning::No extra swap: .* does not exist$')"
++# The warning ends the script, so no other command prints anything.
++check "missing directory stops at the warning" 1 "$(printf '%s\n' "$out" | wc -l | tr -d ' ')"
++
++# 3. Too little free space: warning, exit code 0, no file.
++dir="$(mktemp -d)"
++trap 'rm -rf "$dir"' EXIT
++out="$(bash "$SWAP" "$dir/x.swap" 999999 2>&1)"
++check "low space exit code" 0 $?
++check "low space warning" 1 "$(printf '%s\n' "$out" | grep -c '^::warning::No extra swap: .* GiB free, the swap file needs 1000003 GiB$')"
++check "low space stops at the warning" 1 "$(printf '%s\n' "$out" | wc -l | tr -d ' ')"
++check "low space creates no file" 0 "$([ -e "$dir/x.swap" ] && echo 1 || echo 0)"
++
++echo "ci-add-swap: $pass passed, $fail failed"
++[ "$fail" -eq 0 ]
+```
+
+**File**: `scripts/test-ci-with-resource-log.sh` (added, +78/-0)
+```diff
+@@ -0,0 +1,78 @@
++#!/usr/bin/env bash
++# Self-test for scripts/ci-with-resource-log.sh. Asserts that the wrapper keeps
++# the exit code and the output of the command, prints resource lines, and stops
++# its sampler with the command.
++# Run: bash scripts/test-ci-with-resource-log.sh
++set -u
++
++SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
++WRAP="$SCRIPT_DIR/ci-with-resource-log.sh"
++TMP="$(mktemp -d)"
++trap 'rm -rf "$TMP"' EXIT
++# A wrapper run that takes longer than this has a sampler that did not stop.
++LIMIT_SECONDS=15
++
++pass=0
++fail=0
++check() { # description, expected, actual
++  if [ "$2" = "$3" ]; then pass=$((pass + 1)); else fail=$((fail + 1)); echo "FAIL: $1 (expected $2, got $3)"; fi
++}
++
++# Runs the wrapper with an interval and a command. A reader in the background
++# copies the output through a pipe, like a CI step does. Sets `out` to the
++# output and `status` to the exit code, or to "hung" when the output stays open
++# past the limit (a sampler that keeps running holds the pipe open).
++run_wrapped() { # interval, command...
++  local interval="$1"
++  shift
++  rm -f "$TMP/out" "$TMP/status"
++  ( (RESOURCE_LOG_INTERVAL="$interval" bash "$WRAP" "$@"; echo $? >"$TMP/status") | cat >"$TMP/out" ) &
++  local reader=$!
++  local waited=0
++  while kill -0 "$reader" 2>/dev/null && [ "$waited" -lt "$LIMIT_SECONDS" ]; do
++    sleep 1
++    waited=$((waited + 1))
++  done
++  if kill -0 "$reader" 2>/dev/null; then
++    kill "$reader" 2>/dev/null
++    status=hung
++  else
++    status="$(cat "$TMP/status" 2>/dev/null || echo missing)"
++  fi
++  out="$(cat "$TMP/out" 2>/dev/null)"
++}
++
++resource_lines() { printf '%s\n' "$out" | grep -c '^resources:.*disk_available_mb=[0-9]'; }
++
++# 1. A passing command: exit code 0, its output stays, resource lines appear.
++run_wrapped 1 sh -c 'echo built; sleep 2'
++check "pass exit code" 0 "$status"
++check "command output kept" 1 "$(printf '%s\n' "$out" | grep -c '^built$')"
++check "interval and final resource lines" 1 "$([ "$(resource_lines)" -ge 2 ] && echo 1 || echo 0)"
++if [ -r /proc/meminfo ]; then
++  check "memory and swap on Linux" 1 "$(printf '%s\n' "$out" | grep -c -m1 'mem_available_mb=[0-9]* swap_used_mb=[0-9]*')"
++  check "load average on Linux" 1 "$(printf '%s\n' "$out" | grep -c -m1 'load_1m=[0-9.]* disk_available_mb=')"
++fi
++
++# 2. A failing command: the wrapper returns its exit code.
++run_wrapped 1 sh -c 'exit 7'
++check "failure exit code" 7 "$status"
++
++# 3. The sampler stops with the command and keeps no pipe open. With a 30 s
++# interval, the output has the first line and the final line.
++run_wrapped 30 sleep 2
++check "sampler stops with the command" 0 "$status"
++check "first and final resource lines" 2 "$(resource_lines)"
++
++# 4. An invalid interval uses the default, so the sampler does not loop fast.
++run_wrapped abc sleep 2
++check "invalid interval uses the default" 2 "$(resource_lines)"
++run_wrapped 0 sleep 2
++check "zero interval uses the default" 2 "$(resource_lines)"
++
++# 5. No command: usage error.
++bash "$WRAP" >/dev/null 2>&1
++check "usage error" 2 $?
++
++echo "ci-with-resource-log: $pass passed, $fail failed"
++[ "$fail" -eq 0 ]
+```
+
+---
+
+### Incident Patch 3: `0776b47e` (2026-11-14)
+**Commit Message**: fix(vscode): enable links set the setting without the Settings editor (#4597)
+
+In Cursor, `workbench.action.openSettings` with a query can freeze the
+Settings editor. The command returns the Settings editor pane, and the
+Cursor RPC layer serializes that object graph. The "enable" links in the
+Security Candidates and Health views used this command through
+`fallow.openSettings`.
+
+The links now run `fallow.enableSecurity` and `fallow.enableHealth`.
+These commands set the toggle to true in workspace settings, or in user
+settings when no folder is open. They show the result, or an error
+message that names the setting to change by hand.
+
+Closes #4553
+
+Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
+
+**File**: `changelog.d/fix-vscode-open-settings-cursor.md` (added, +3/-0)
+```diff
+@@ -0,0 +1,3 @@
++### Fixed
++
++- **VS Code: the "enable" links in the Security Candidates and Health views no longer freeze Settings in Cursor.** The links opened the Settings editor with the `fallow` search query. In Cursor, that call can make the Settings editor stop responding. The links now run the new `Fallow: Enable Security Candidates` and `Fallow: Enable Health View` commands. These commands set `fallow.security.enabled` or `fallow.health.enabled` to `true` in workspace settings, or in user settings when no folder is open, and show a message. The Settings editor does not open. (Closes [#4553](https://github.com/fallow-rs/fallow/issues/4553))
+```
+
+**File**: `editors/vscode/README.md` (modified, +2/-0)
+```diff
+@@ -45,6 +45,8 @@ code --install-extension fallow-rs.fallow-vscode
+ | `Fallow: Audit Changed Files` | Audit the current change set for a pass/warn/fail verdict, shown in the audit verdict status-bar item (or an information message when that item is disabled). Findings are static candidates to verify. |
+ | `Fallow: Reload Health` | Re-run the Health view analysis (score, complexity, hotspot and refactoring candidates) |
+ | `Fallow: Scan for Security Candidates` | Scan for local security candidates (`client-server-leak`, tainted-sink CWE findings) and populate the Security Candidates view. Requires `fallow.security.enabled`. Results are UNVERIFIED candidates to verify, never confirmed vulnerabilities. |
++| `Fallow: Enable Security Candidates` | Set `fallow.security.enabled` to `true` in workspace settings (user settings when no folder is open). The Security Candidates welcome link runs this command. |
++| `Fallow: Enable Health View` | Set `fallow.health.enabled` to `true` in workspace settings (user settings when no folder is open). The Health welcome link runs this command. |
+ | `Fallow: Load Runtime Coverage` | Analyze a local runtime-coverage capture and populate the Runtime Coverage view with hot paths and cleanup candidates. Prompts for a capture when `fallow.coverage.capturePath` is empty. Requires the fallow-cov sidecar (`fallow coverage setup`). |
+ | `Fallow: Reload Runtime Coverage` | Re-run the runtime-coverage analysis against the current capture |
+ | `Fallow: Clear Runtime Coverage` | Clear the Runtime Coverage view back to its empty state |
+```
+
+**File**: `editors/vscode/package.json` (modified, +18/-2)
+```diff
+@@ -170,6 +170,14 @@
+         "command": "fallow.openSettings",
+         "title": "Fallow: Open Settings"
+       },
++      {
++        "command": "fallow.enableSecurity",
++        "title": "Fallow: Enable Security Candidates"
++      },
++      {
++        "command": "fallow.enableHealth",
++        "title": "Fallow: Enable Health View"
++      },
+       {
+         "command": "fallow.noop",
+         "title": "Fallow: No-op (internal)"
+@@ -870,6 +878,14 @@
+           "command": "fallow.reloadAnalysis",
+           "when": "false"
+         },
++        {
++          "command": "fallow.enableSecurity",
++          "when": "!fallow.security.enabled"
++        },
++        {
++          "command": "fallow.enableHealth",
++          "when": "!fallow.health.enabled"
++        },
+         {
+           "command": "fallow.reloadCoverage",
+           "when": "fallow.hasCoverage"
+@@ -915,7 +931,7 @@
+       },
+       {
+         "view": "fallow.health",
+-        "contents": "The Health view is turned off.\nEnable [fallow.health.enabled](command:fallow.openSettings) to see the project health score, complexity findings, hotspot candidates, and refactoring candidates.",
++        "contents": "The Health view is turned off.\nEnable [fallow.health.enabled](command:fallow.enableHealth) to see the project health score, complexity findings, hotspot candidates, and refactoring candidates.",
+         "when": "!fallow.health.enabled"
+       },
+       {
+@@ -925,7 +941,7 @@
+       },
+       {
+         "view": "fallow.security",
+-        "contents": "Security candidate scanning is off by default.\nEnable [fallow.security.enabled](command:fallow.openSettings) to scan for security candidates.\nResults are UNVERIFIED candidates to verify, never confirmed vulnerabilities.",
++        "contents": "Security candidate scanning is off by default.\nEnable [fallow.security.enabled](command:fallow.enableSecurity) to scan for security candidates.\nResults are UNVERIFIED candidates to verify, never confirmed vulnerabilities.",
+         "when": "!fallow.security.enabled"
+       },
+       {
+```
+
+**File**: `editors/vscode/src/enableFeature.ts` (added, +42/-0)
+```diff
+@@ -0,0 +1,42 @@
++import * as vscode from "vscode";
++
++/** Fallow settings that a sidebar welcome link can turn on. */
++export type FeatureToggleKey = "security.enabled" | "health.enabled";
++
++const FEATURE_LABELS: Readonly<Record<FeatureToggleKey, string>> = {
++  "security.enabled": "security candidate scanning",
++  "health.enabled": "the Health view",
++};
++
++/**
++ * Sets a Fallow feature toggle to `true` without the Settings editor.
++ *
++ * The sidebar welcome links use this command instead of
++ * `workbench.action.openSettings` with a query. In Cursor, that command call
++ * with a query can freeze the Settings editor: the reply to the extension host
++ * is the Settings editor pane, and Cursor serializes that object graph (#4553).
++ *
++ * The value goes to workspace settings when a workspace is open, because a
++ * workspace value overrides a user value. Without a workspace, it goes to
++ * user settings. When the write fails (for example, a settings file with
++ * invalid JSON), an error message names the setting to change by hand.
++ */
++export const enableFeature = async (key: FeatureToggleKey): Promise<void> => {
++  const hasWorkspace = (vscode.workspace.workspaceFolders?.length ?? 0) > 0;
++  const target = hasWorkspace
++    ? vscode.ConfigurationTarget.Workspace
++    : vscode.ConfigurationTarget.Global;
++  const where = hasWorkspace ? "workspace" : "user";
++  try {
++    await vscode.workspace.getConfiguration("fallow").update(key, true, target);
++  } catch (error) {
++    const reason = error instanceof Error ? error.message : String(error);
++    void vscode.window.showErrorMessage(
++      `Fallow: could not turn on ${FEATURE_LABELS[key]}. Set "fallow.${key}": true in your ${where} settings.json. ${reason}`,
++    );
++    return;
++  }
++  void vscode.window.showInformationMessage(
++    `Fallow: turned on ${FEATURE_LABELS[key]} (fallow.${key} in ${where} settings).`,
++  );
++};
+```
+
+**File**: `editors/vscode/src/extension.ts` (modified, +9/-0)
+```diff
+@@ -10,6 +10,7 @@ import { runBaselineCommand } from "./baselineCommand.js";
+ import { shouldAcceptLspAnalysisComplete } from "./analysisNotification.js";
+ import { startClient, stopClient, restartClient } from "./client.js";
+ import { cancelReleaseRetry } from "./download.js";
++import { enableFeature } from "./enableFeature.js";
+ import { createSingleFlight } from "./analysis-single-flight.js";
+ import {
+   getHealthEnabled,
+@@ -1027,6 +1028,14 @@ export const activate = async (context: vscode.ExtensionContext): Promise<Extens
+     }),
+   );
+ 
++  // Turn on an opt-in view from its sidebar welcome link (#4553).
++  context.subscriptions.push(
++    vscode.commands.registerCommand("fallow.enableSecurity", () =>
++      enableFeature("security.enabled"),
++    ),
++    vscode.commands.registerCommand("fallow.enableHealth", () => enableFeature("health.enabled")),
++  );
++
+   // License management commands (activate / status / refresh / deactivate).
+   // All are one-shot CLI invocations; none touch the analysis path.
+   context.subscriptions.push(
+```
+
+**File**: `editors/vscode/test/enableFeature.test.ts` (added, +78/-0)
+```diff
+@@ -0,0 +1,78 @@
++import { beforeEach, describe, expect, it, vi } from "vitest";
++import { enableFeature } from "../src/enableFeature.js";
++
++const mocks = vi.hoisted(() => ({
++  update: vi.fn<(key: string, value: unknown, target: number) => Promise<void>>(),
++  executeCommand: vi.fn<(command: string, ...args: unknown[]) => Promise<unknown>>(),
++  showInformationMessage: vi.fn<(message: string) => Promise<undefined>>(),
++  showErrorMessage: vi.fn<(message: string) => Promise<undefined>>(),
++  workspaceFolders: undefined as readonly object[] | undefined,
++}));
++
++vi.mock("vscode", () => ({
++  ConfigurationTarget: { Global: 1, Workspace: 2, WorkspaceFolder: 3 },
++  workspace: {
++    get workspaceFolders() {
++      return mocks.workspaceFolders;
++    },
++    getConfiguration: (section: string) => {
++      expect(section).toBe("fallow");
++      return { update: mocks.update };
++    },
++  },
++  commands: { executeCommand: mocks.executeCommand },
++  window: {
++    showInformationMessage: mocks.showInformationMessage,
++    showErrorMessage: mocks.showErrorMessage,
++  },
++}));
++
++beforeEach(() => {
++  mocks.update.mockReset().mockResolvedValue(undefined);
++  mocks.executeCommand.mockReset();
++  mocks.showInformationMessage.mockReset().mockResolvedValue(undefined);
++  mocks.showErrorMessage.mockReset().mockResolvedValue(undefined);
++  mocks.workspaceFolders = [{}];
++});
++
++describe("enableFeature", () => {
++  it("writes the toggle to workspace settings when a workspace is open", async () => {
++    await enableFeature("security.enabled");
++
++    expect(mocks.update).toHaveBeenCalledWith("security.enabled", true, 2);
++    expect(mocks.showInformationMessage).toHaveBeenCalledWith(
++      expect.stringContaining("fallow.security.enabled in workspace settings"),
++    );
++  });
++
++  it("writes the toggle to user settings when no workspace is open", async () => {
++    mocks.workspaceFolders = undefined;
++
++    await enableFeature("health.enabled");
++
++    expect(mocks.update).toHaveBeenCalledWith("health.enabled", true, 1);
++    expect(mocks.showInformationMessage).toHaveBeenCalledWith(
++      expect.stringContaining("fallow.health.enabled in user settings"),
++    );
++  });
++
++  it("never opens the Settings editor", async () => {
++    await enableFeature("security.enabled");
++
++    expect(mocks.executeCommand).not.toHaveBeenCalled();
++  });
++
++  it("names the manual setting when the settings write fails", async () => {
++    mocks.update.mockRejectedValue(new Error("Unable to write into workspace settings."));
++
++    await expect(enableFeature("security.enabled")).resolves.toBeUndefined();
++
++    expect(mocks.showInformationMessage).not.toHaveBeenCalled();
++    expect(mocks.showErrorMessage).toHaveBeenCalledWith(
++      expect.stringContaining('Set "fallow.security.enabled": true in your workspace settings.json'),
++    );
++    expect(mocks.showErrorMessage).toHaveBeenCalledWith(
++      expect.stringContaining("Unable to write into workspace settings."),
++    );
++  });
++});
+```
+
+**File**: `editors/vscode/test/integration/suite/extension.test.ts` (modified, +20/-0)
+```diff
+@@ -205,6 +205,26 @@ describe("Fallow VS Code extension", () => {
+     assert.equal(editor?.selection.active.line, 1);
+   });
+ 
++  for (const { command, key } of [
++    { command: "fallow.enableSecurity", key: "security.enabled" },
++    { command: "fallow.enableHealth", key: "health.enabled" },
++  ]) {
++    it(`sets ${key} in workspace settings from ${command}`, async () => {
++      const workspaceValue = (): boolean | undefined =>
++        vscode.workspace.getConfiguration("fallow").inspect<boolean>(key)?.workspaceValue;
++      assert.equal(workspaceValue(), undefined);
++
++      try {
++        await vscode.commands.executeCommand(command);
++        assert.equal(workspaceValue(), true);
++      } finally {
++        await vscode.workspace
++          .getConfiguration("fallow")
++          .update(key, undefined, vscode.ConfigurationTarget.Workspace);
++      }
++    });
++  }
++
+   it("frames completed security scans as unverified candidates in the actual toast", async () => {
+     const messages: string[] = [];
+     windowApi.showInformationMessage = async (message: string) => {
+```
+
+**File**: `editors/vscode/test/package-manifest.test.ts` (modified, +23/-0)
+```diff
+@@ -492,3 +492,26 @@ describe("package.json license commands", () => {
+     expect(properties["fallow.license.showStatusBar"]?.default).toBe(true);
+   });
+ });
++
++describe("package.json feature enable links", () => {
++  const cases = [
++    { view: "fallow.security", when: "!fallow.security.enabled", command: "fallow.enableSecurity" },
++    { view: "fallow.health", when: "!fallow.health.enabled", command: "fallow.enableHealth" },
++  ] as const;
++
++  // `workbench.action.openSettings` with a query can freeze the Settings
++  // editor in Cursor (#4553). The disabled-state links turn the setting on
++  // directly, so they never open the Settings editor.
++  it.each(cases)("links the disabled $view welcome to $command", (entry) => {
++    const welcome = pkg.contributes.viewsWelcome.find(
++      (item) => item.view === entry.view && item.when === entry.when,
++    );
++    expect(welcome?.contents).toContain(`(command:${entry.command})`);
++    expect(welcome?.contents).not.toContain("command:fallow.openSettings");
++  });
++
++  it.each(cases)("contributes $command and hides it from the palette once on", (entry) => {
++    expect(command(entry.command)?.title).toMatch(/^Fallow: /);
++    expect(commandPaletteEntry(entry.command)?.when).toBe(entry.when);
++  });
++});
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4569** (2026-11-13): test(audit): cover more clone groups inside a base clone group (@BartWaardenburg)
-- **PR #4568** (2026-11-13): fix(health): use one term for the CRAP static estimate (@BartWaardenburg)
-- **PR #4565** (2026-11-13): fix(constant-parameter): skip exports that an unknown-source load can call (@BartWaardenburg)
-- **PR #4564** (2026-11-12): fix(audit): inherit clone groups that lie inside a base clone group (@BartWaardenburg)
-- **PR #4563** (2026-11-12): feat(audit): add --staged to audit the staged index (@BartWaardenburg)
-- **PR #4562** (2026-11-12): feat(audit): report unused code that a change creates outside the changed files (@BartWaardenburg)
+- **PR #4616** (2026-11-15): ci(bench): build CodSpeed shards with two compile jobs, swap and a resource log (@BartWaardenburg)
+- **PR #4615** (2026-11-14): ci(release): run the published Action on Linux after each publication (@BartWaardenburg)
+- **PR #4614** (2026-11-14): chore: sync napi, Docker pins and RELEASED_TAG to v3.43.1 (@BartWaardenburg)
+- **PR #4607** (2026-11-14): chore: release v3.43.1 (@BartWaardenburg)
+- **PR #4604** (2026-11-14): fix(angular): credit more template reads and inherited inputs and outputs (@BartWaardenburg)
+- **PR #4602** (2026-11-14): fix(extract): credit enum members read through an alias or passed on whole (@BartWaardenburg)
 
 ---
 
@@ -2715,65 +2468,38 @@ The audit integration test file is over 2000 lines. The clone containment tests 
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. scripts): wait for the GitHub rate-limit reset in the check wait (#4531)
+## X. audit): keep a clone inherited when lines above one copy are rewritten
 
 **RULE**:
-When implementing operations in `scripts/ship-wait-checks.mjs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fallow-rs/fallow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/fix-audit-clone-attribution-on-rename.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fallow-rs/fallow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fbeb91b0`: scripts): wait for the GitHub rate-limit reset in the check wait (#4531). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7a3fbe65`: audit): keep a clone inherited when lines above one copy are rewritten. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/ship-wait-checks.mjs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/fix-audit-clone-attribution-on-rename.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                          up to ${READ_RETRY_MAX_MS / MINUTE} minutes. A read that GitHub
-                          refuses because of the API rate limit waits
-                          until the limit resets, and does not count.
-/**
- * Plan the next read after a failed read. A rate-limited read (with
- * `retryAtMs`) waits for the reset and does not count as a failed read. Any
- * other failed read backs off and counts against the error window. Returns
- * `{ delayMs, readErrors, stop, counts }`, where `counts` tells whether the
- * delay counts against the error window.
- */
-const failedRead = (
-  read,
-  { readErrors, errorMs, intervalMs, errorWindowMs, deadline, now, warn },
-) => {
-  if (read.retryAtMs !== undefined) {
-    const delayMs = Math.max(read.retryAtMs - now(), intervalMs);
-    warn(
-      now() + delayMs <= deadline
-        ? `Read of the checks failed: ${read.error}. Next read in ${formatSeconds(delayMs)}, after the rate limit resets.`
-        : `Read of the checks failed: ${read.error}. The rate limit resets after the end of the wait.`,
-    );
-    return { delayMs, readErrors, stop: false, counts: false };
-  }
-  const errors = readErrors + 1;
-  const windowLeftMs = erro
+### Fixed
+
+- **`fallow audit` no longer reports an old clone group as introduced when the change rewrites the lines above one copy.**
+  The audit maps each head copy of a clone back to its base lines. When the
+  first or last line of a copy was a rewritten line that replaced several base
+  lines, the mapped range grew to the far end of the replaced lines and fell
+  outside the base clone. A rename of the other copy, together with fewer
+  import lines above this copy, could then fail `--gate new-only` on
+  duplication that the change did not write. The rewritten edge line now maps
+  to the replaced base line next to the unchanged lines of the copy.
+  (Closes [#4580](https://github.com/fallow-rs/fallow/issues/4580))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-                          up to ${READ_RETRY_MAX_MS / MINUTE} minutes.
-      readErrors += 1;
-      const windowLeftMs = errorWindowMs - errorMs;
-      delayMs = Math.min(intervalMs * 2 ** (readErrors - 1), READ_RETRY_MAX_MS, windowLeftMs);
-      if (windowLeftMs <= 0 || now() + delayMs > deadline) {
-        warn(`Read of the checks failed: ${read.error}`);
-        return { status: "error", checks, readErrors, errorMs };
-      warn(`Read of the checks failed: ${read.error}. Next read in ${formatSeconds(delayMs)}.`);
-    if (readErrors > 0) {
-      errorMs += delayMs;
-    }
-/** Fetch the base branch, then read its newest commit. */
-const gitHeadReader = (git) => () => {
-  const fetched = git(["fetch", "--quiet", FOLLOW_REMOTE, FOLLOW_BRANCH]);
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fbeb91b0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7a3fbe65` are properly handled with clean fallback behavior.

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T02:35:54.066Z",
+  "updated_at": "2026-11-15T02:58:58.846Z",
   "stats": {
-    "total_discovered": 3556,
-    "approved_pending_harvest": 3346,
+    "total_discovered": 3561,
+    "approved_pending_harvest": 3351,
     "harvested_count": 0,
     "rejected_count": 210,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3327,
+      "COMMUNITY_AND_EXPERT": 3332,
       "OFFICIAL_DOCUMENTATION": 125,
       "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
@@ -76783,6 +76783,116 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md",
         "fileName": "hf-vllm-sr-d3-learnings.md"
+      }
+    },
+    "SRC-63373124481F": {
+      "id": "SRC-63373124481F",
+      "url": "https://github.com/fallow-rs/fallow/actions/runs/43601936478",
+      "title": "https://github.com/fallow-rs/fallow/actions/runs/43601936478",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T02:58:58.269Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
+        "fileName": "fallow-rs-fallow-learnings.md"
+      }
+    },
+    "SRC-6E221206B930": {
+      "id": "SRC-6E221206B930",
+      "url": "https://github.com/fallow-rs/fallow/actions/runs/43604188088",
+      "title": "https://github.com/fallow-rs/fallow/actions/runs/43604188088",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T02:58:58.293Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
+        "fileName": "fallow-rs-fallow-learnings.md"
+      }
+    },
+    "SRC-09253D3B39F0": {
+      "id": "SRC-09253D3B39F0",
+      "url": "https://github.com/fallow-rs/fallow/issues/4580",
+      "title": "https://github.com/fallow-rs/fallow/issues/4580",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T02:58:58.316Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
+        "fileName": "fallow-rs-fallow-learnings.md"
+      }
+    },
+    "SRC-B6C0E8B9CCD9": {
+      "id": "SRC-B6C0E8B9CCD9",
+      "url": "https://github.com/fallow-rs/fallow/issues/4553",
+      "title": "https://github.com/fallow-rs/fallow/issues/4553",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T02:58:58.338Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
+        "fileName": "fallow-rs-fallow-learnings.md"
+      }
+    },
+    "SRC-3909C77963D9": {
+      "id": "SRC-3909C77963D9",
+      "url": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF",
+      "title": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T02:58:58.846Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-gguf-learnings.md",
+        "fileName": "hf-liquidai-lfm2.5-24b-a2b-gguf-learnings.md"
       }
     }
   }

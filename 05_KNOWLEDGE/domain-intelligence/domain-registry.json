@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T02:35:55.732Z",
-  "total_records": 921,
+  "last_updated": "2026-11-15T02:58:59.708Z",
+  "total_records": 925,
   "domains": {
     "A": {
       "total": 6,
@@ -682,7 +682,7 @@
       ]
     },
     "H": {
-      "total": 189,
+      "total": 193,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -872,7 +872,11 @@
         "domain_intelligence-technical-construction-intelligence-falkordb-falkordb-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-metalbear-co-mirrord-core-invariants",
         "domain_intelligence-technical-construction-intelligence-run-llama-llama_index-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-metalbear-co-mirrord-learnings-core-invarian"
+        "domain_intelligence-technical-construction-intelligence-metalbear-co-mirrord-learnings-core-invarian",
+        "domain_intelligence-technical-construction-intelligence-fallow-rs-fallow-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-liquidai-lfm2-5-24b-a2b-gguf-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-fallow-rs-fallow-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-hf-liquidai-lfm2-5-24b-a2b-gguf-learnings-co"
       ]
     },
     "I": {
@@ -13712,8 +13716,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "c542d84f1ada3434b71a4707cca0ef5dcd2d8726d6fc01e9a5590b5209efb6de",
-      "created_at": "2026-11-14T20:00:04.593Z"
+      "content_hash": "1a672bfbf07da45d187544db802c668e0d80acd6a1db9972e9a0609227e6b1f8",
+      "created_at": "2026-11-15T02:58:59.708Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
@@ -18050,6 +18054,42 @@
       "repository": "hf-vllm-sr-d3-learnings",
       "content_hash": "ccb7263d3f1ed7fc2216bae403e44df39eb2d0fac7d95cce0fe525b1e5c523f0",
       "created_at": "2026-11-15T02:35:54.295Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-fallow-rs-fallow-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-fallow-rs-fallow-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: fallow-rs/fallow Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fallow-rs-fallow-technical-construction-intelligence-fallow-rs-fallow-core-invar.md",
+      "repository": "fallow-rs/fallow",
+      "content_hash": "1b3d7f3ebba97a2b9f97b9c021fe882996e16b543fcf85a51ae676c40946996c",
+      "created_at": "2026-11-15T02:55:37.098Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-liquidai-lfm2-5-24b-a2b-gguf-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-liquidai-lfm2-5-24b-a2b-gguf-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: LiquidAI/LFM2.5-24B-A2B-GGUF Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-liquidai-lfm2-5-24b-a2b-gguf-technical-construction-intelligence-liquidai-lfm.md",
+      "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
+      "content_hash": "38a064c1b73c31313f21ef1652e444ca5879edb2c8ce9928738eed0c00333cf1",
+      "created_at": "2026-11-15T02:58:55.229Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-fallow-rs-fallow-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-fallow-rs-fallow-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: fallow-rs-fallow-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fallow-rs-fallow-learnings-technical-construction-intelligence-fallow-rs-fallow-.md",
+      "repository": "fallow-rs-fallow-learnings",
+      "content_hash": "35e65309d1e16182317f8554ed36f24ceeeb40529e2b8857ddcad0ff90051bf6",
+      "created_at": "2026-11-15T02:58:58.620Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-hf-liquidai-lfm2-5-24b-a2b-gguf-learnings-co": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-hf-liquidai-lfm2-5-24b-a2b-gguf-learnings-co",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: hf-liquidai-lfm2.5-24b-a2b-gguf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-liquidai-lfm2-5-24b-a2b-gguf-learnings-technical-construction-intelligence-hf.md",
+      "repository": "hf-liquidai-lfm2.5-24b-a2b-gguf-learnings",
+      "content_hash": "7201a983e64aaa16d91172d341c876d398bc3d04ab7878b65624f08b1368f82b",
+      "created_at": "2026-11-15T02:58:59.196Z"
     }
   }
 }

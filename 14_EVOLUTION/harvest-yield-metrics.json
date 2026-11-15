@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T02:35:14.722Z",
-  "total_cycles_completed": 9646,
-  "total_learnings_persisted": 9646,
-  "total_rules_promoted": 9289,
+  "last_updated": "2026-11-15T02:58:54.914Z",
+  "total_cycles_completed": 9648,
+  "total_learnings_persisted": 9648,
+  "total_rules_promoted": 9291,
   "history": [
-    {
-      "timestamp": "2026-11-14T03:32:23.111Z",
-      "repository": "moby/buildkit",
-      "learningId": "learn-github-moby-buildkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T03:32:25.586Z",
-      "repository": "tailscale/tailscale",
-      "learningId": "learn-github-tailscale-tailscale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T03:49:04.827Z",
       "repository": "stabilityai/stable-diffusion-3-medium",
@@ -1403,6 +1389,20 @@
       "repository": "milvus-io/milvus",
       "learningId": "learn-github-milvus-io-milvus",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T02:55:36.832Z",
+      "repository": "fallow-rs/fallow",
+      "learningId": "learn-github-fallow-rs-fallow",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T02:58:54.914Z",
+      "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
+      "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]
