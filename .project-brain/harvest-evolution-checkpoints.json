@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T01:33:21.532Z",
+  "last_updated": "2026-11-15T01:47:19.792Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-14T22:16:50.251Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-15T00:06:43.776Z",
+      "processed_at": "2026-11-15T01:47:19.092Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1198,7 +1198,7 @@
       "staged_for_review": 1
     },
     "kcl-lang-kcl-learnings.md": {
-      "processed_at": "2026-11-12T15:04:44.643Z",
+      "processed_at": "2026-11-15T01:47:18.542Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2831,9 +2831,14 @@
       "processed_at": "2026-11-15T01:33:20.677Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-fishaudio-drama-3-learnings.md": {
+      "processed_at": "2026-11-15T01:47:18.116Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 951,
-  "total_canonical_promoted": 232,
-  "total_staged_for_review": 719
+  "total_dossiers_evaluated": 954,
+  "total_canonical_promoted": 233,
+  "total_staged_for_review": 721
 }

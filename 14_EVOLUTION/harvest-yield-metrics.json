@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T01:32:44.896Z",
-  "total_cycles_completed": 9638,
-  "total_learnings_persisted": 9638,
-  "total_rules_promoted": 9285,
+  "last_updated": "2026-11-15T01:46:46.735Z",
+  "total_cycles_completed": 9640,
+  "total_learnings_persisted": 9640,
+  "total_rules_promoted": 9286,
   "history": [
-    {
-      "timestamp": "2026-11-14T03:01:49.848Z",
-      "repository": "loft-sh/vcluster",
-      "learningId": "learn-github-loft-sh-vcluster",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T03:01:54.873Z",
-      "repository": "neuron-core/neuron-ai",
-      "learningId": "learn-github-neuron-core-neuron-ai",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T03:10:30.630Z",
       "repository": "i18next/react-i18next",
@@ -1403,6 +1389,20 @@
       "repository": "Tencent-TDS/KuiklyUI",
       "learningId": "learn-github-tencent-tds-kuiklyui",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T01:46:37.671Z",
+      "repository": "fishaudio/drama-3",
+      "learningId": "learn-huggingface-fishaudio-drama-3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T01:46:46.735Z",
+      "repository": "kcl-lang/kcl",
+      "learningId": "learn-github-kcl-lang-kcl",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

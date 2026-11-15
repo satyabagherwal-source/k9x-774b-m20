@@ -9992,3 +9992,6 @@
 | `CYCLE-20261115-TTSP` | `2026-11-15T01:32:39.577Z` | `FalkorDB/FalkorDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8559` | Yes (`3533a4c7...`) |
 | `CYCLE-20261115-TXW1` | `2026-11-15T01:32:44.881Z` | `Tencent-TDS/KuiklyUI` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/tencent-tds-kuiklyui-learnings.md` | Yes (`e27bc1ad...`) |
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T01:33:20.676Z` | `hf-liquidai-lfm2.5-24b-a2b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-04368044` [Domain D] | Yes (`5620d660...`) |
+| `CYCLE-20261115-BSGU` | `2026-11-15T01:46:37.662Z` | `fishaudio/drama-3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fishaudio-drama-3-learnings.md` | Yes (`8f006a0f...`) |
+| `CYCLE-20261115-BZGJ` | `2026-11-15T01:46:46.723Z` | `kcl-lang/kcl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8560` | Yes (`100b4fed...`) |
+| `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T01:47:18.115Z` | `hf-fishaudio-drama-3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-57D6CED2` [Domain D] | Yes (`9b1cd794...`) |

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T01:33:21.021Z",
+  "updated_at": "2026-11-15T01:47:18.129Z",
   "stats": {
-    "total_discovered": 3542,
-    "approved_pending_harvest": 3332,
+    "total_discovered": 3543,
+    "approved_pending_harvest": 3333,
     "harvested_count": 0,
     "rejected_count": 210,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3313,
+      "COMMUNITY_AND_EXPERT": 3314,
       "OFFICIAL_DOCUMENTATION": 125,
       "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
@@ -76475,6 +76475,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tencent-tds-kuiklyui-learnings.md",
         "fileName": "tencent-tds-kuiklyui-learnings.md"
+      }
+    },
+    "SRC-6EE455E9D355": {
+      "id": "SRC-6EE455E9D355",
+      "url": "https://huggingface.co/fishaudio/drama-3",
+      "title": "https://huggingface.co/fishaudio/drama-3",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T01:47:18.129Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-fishaudio-drama-3-learnings.md",
+        "fileName": "hf-fishaudio-drama-3-learnings.md"
       }
     }
   }

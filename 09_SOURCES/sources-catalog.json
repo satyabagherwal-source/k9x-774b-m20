@@ -1455,8 +1455,8 @@
     "sourceUrl": "https://huggingface.co/fishaudio/drama-3",
     "sourceVersion": "hf-fishaudio-drama-3",
     "license": "Open-Source",
-    "contentHash": "453c4cdf88bb5941535f84bf7d0b3514eeaf2b13480acebdccf9c5d13c655626",
-    "lastHarvestedAt": "2026-11-09T13:34:27.671Z",
+    "contentHash": "8f006a0ffac309fb28cd5736ce21610c11eb71b93949c7892044d4458bccc6c7",
+    "lastHarvestedAt": "2026-11-15T01:46:37.666Z",
     "learningId": "learn-huggingface-fishaudio-drama-3"
   },
   "hf-dealignai-deepseek-v4.1-flash-uncensored-fp8": {
@@ -5713,10 +5713,10 @@
     "repository": "kcl-lang/kcl",
     "platform": "github",
     "sourceUrl": "https://github.com/kcl-lang/kcl",
-    "sourceVersion": "1c4984ad",
+    "sourceVersion": "f8a29788",
     "license": "Apache-2.0",
-    "contentHash": "d5dcd248592e43f6b6c9808889edd6c206dc75250e57762fcc9f8b936eb49269",
-    "lastHarvestedAt": "2026-11-12T14:59:49.316Z",
+    "contentHash": "100b4fed3dec6fc9dc1ad674a5096addb5cc33bcfefd3dafc192681a4e09c6a1",
+    "lastHarvestedAt": "2026-11-15T01:46:46.728Z",
     "learningId": "learn-github-kcl-lang-kcl"
   },
   "apache-incubator-pegasus": {

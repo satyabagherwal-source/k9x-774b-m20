@@ -10025,3 +10025,6 @@ Every entry in this ledger must capture:
 | `learn-github-falkordb-falkordb` | `https://github.com/FalkorDB/FalkorDB` | `d6fcd5aa` | Multi-dimensional audit evidence | 2026-11-15T01:32:39.580Z |
 | `learn-github-tencent-tds-kuiklyui` | `https://github.com/Tencent-TDS/KuiklyUI` | `b53b6c4c` | Multi-dimensional audit evidence | 2026-11-15T01:32:44.885Z |
 | `learn-dom-d-04368044` | `project://hf-liquidai-lfm2.5-24b-a2b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-learnings.md` | 2026-11-15T01:33:20.676Z |
+| `learn-huggingface-fishaudio-drama-3` | `https://huggingface.co/fishaudio/drama-3` | `hf-fishaud` | Multi-dimensional audit evidence | 2026-11-15T01:46:37.666Z |
+| `learn-github-kcl-lang-kcl` | `https://github.com/kcl-lang/kcl` | `f8a29788` | Multi-dimensional audit evidence | 2026-11-15T01:46:46.728Z |
+| `learn-dom-d-57d6ced2` | `project://hf-fishaudio-drama-3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-fishaudio-drama-3-learnings.md` | 2026-11-15T01:47:18.115Z |

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T01:33:21.307Z",
-  "total_records": 907,
+  "last_updated": "2026-11-15T01:47:19.542Z",
+  "total_records": 912,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 447,
+      "total": 450,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -484,7 +484,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-autotrust-jev-35b-nvfp4-learnings-core-invari",
         "domain_intelligence-research-knowledge-intelligence-liquidai-lfm2-5-24b-a2b-core-invariants",
         "DOM-D-04368044",
-        "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm2-5-24b-a2b-learnings-core-invari"
+        "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm2-5-24b-a2b-learnings-core-invari",
+        "domain_intelligence-research-knowledge-intelligence-fishaudio-drama-3-core-invariants",
+        "DOM-D-57D6CED2",
+        "domain_intelligence-research-knowledge-intelligence-hf-fishaudio-drama-3-learnings-core-invariants"
       ]
     },
     "E": {
@@ -864,7 +867,7 @@
       ]
     },
     "I": {
-      "total": 34,
+      "total": 36,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -899,7 +902,9 @@
         "domain_intelligence-content-information-intelligence-pulumi-pulumi-core-invariants",
         "domain_intelligence-content-information-intelligence-pulumi-pulumi-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-kotest-kotest-core-invariants",
-        "domain_intelligence-content-information-intelligence-kotest-kotest-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-kotest-kotest-learnings-core-invariants",
+        "domain_intelligence-content-information-intelligence-kcl-lang-kcl-core-invariants",
+        "domain_intelligence-content-information-intelligence-kcl-lang-kcl-learnings-core-invariants"
       ]
     },
     "J": {
@@ -7640,8 +7645,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "4dfe975c710a8c1333d856f0464188a36c1f88450a31cc1580d9b2b816f77e92",
-      "created_at": "2026-11-15T00:06:44.311Z"
+      "content_hash": "fb0dc5ceb47ae1aa122535d424fa06ec1ac09172ec5c9ab43f48329dfc56c61b",
+      "created_at": "2026-11-15T01:47:19.542Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -17811,6 +17816,84 @@
       "repository": "tencent-tds-kuiklyui-learnings",
       "content_hash": "d90851f41c9d24a6c5799f0357baf74007bf84a9419f4bc9d49ea3528c710446",
       "created_at": "2026-11-15T01:33:21.307Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-fishaudio-drama-3-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-fishaudio-drama-3-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: fishaudio/drama-3 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-fishaudio-drama-3-research-knowledge-intelligence-fishaudio-drama-3-core-inva.md",
+      "repository": "fishaudio/drama-3",
+      "content_hash": "3cb2d8ef2b13a816b2ba2136cb37399c2500a26551059a2fe86e85b977408909",
+      "created_at": "2026-11-15T01:46:37.841Z"
+    },
+    "domain_intelligence-content-information-intelligence-kcl-lang-kcl-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-kcl-lang-kcl-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: kcl-lang/kcl Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-kcl-lang-kcl-content-information-intelligence-kcl-lang-kcl-core-invariants.md",
+      "repository": "kcl-lang/kcl",
+      "content_hash": "58f4b6cf932fab20745db12bd94587168bc0cbab9b0160265c88c12a7a28266f",
+      "created_at": "2026-11-15T01:46:47.023Z"
+    },
+    "DOM-D-57D6CED2": {
+      "record_id": "DOM-D-57D6CED2",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): fishaudio/drama-3",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-fishaudio-drama-3-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/fishaudio/drama-3](https://huggingface.co/fishaudio/drama-3))  \n> **Source Version**: `hf-fishaudio`  \n> **License**: Open-Source  \n> **Synthesized By**: ze",
+      "content_hash": "9b1cd7947ab784c6f749a00eb3ad6e904649bc6e3d2952dd0dd2dfabea78b606",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-fishaudio-drama-3-learnings.md`  \n> **Source**: huggingface ([https://huggingface -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-fishaudio-drama-3-learnings.md`  \n> **Source**: huggingface ([https://huggingface",
+      "provenance": {
+        "source_uri": "project://hf-fishaudio-drama-3/hf-fishaudio-drama-3-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T01:46:49.886Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-fishaudio-drama-3)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-fishaudio-drama-3"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-15T01:47:18.102Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-fishaudio-drama-3-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-fishaudio-drama-3-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-fishaudio-drama-3-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-fishaudio-drama-3-learnings-research-knowledge-intelligence-hf-fishaudio-dram.md",
+      "repository": "hf-fishaudio-drama-3-learnings",
+      "content_hash": "8c2447ec4b043aac1a088af963dbc65a3c37d8e4910947a8cce8650e7462f69d",
+      "created_at": "2026-11-15T01:47:18.322Z"
+    },
+    "domain_intelligence-content-information-intelligence-kcl-lang-kcl-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-kcl-lang-kcl-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: kcl-lang-kcl-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-kcl-lang-kcl-learnings-content-information-intelligence-kcl-lang-kcl-learnings-c.md",
+      "repository": "kcl-lang-kcl-learnings",
+      "content_hash": "54205badba354ed0f9a14fe5ff28930ad1db27a949f462af7727566aded5bf74",
+      "created_at": "2026-11-15T01:47:18.857Z"
     }
   }
 }

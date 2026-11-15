@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-15T01:32:44.900Z",
+  "last_updated": "2026-11-15T01:46:46.740Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2257,14 +2257,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-fishaudio-drama-3",
-      "content_hash": "453c4cdf88bb5941535f84bf7d0b3514eeaf2b13480acebdccf9c5d13c655626",
-      "verified_at": "2026-11-09T13:34:27.681Z",
+      "content_hash": "8f006a0ffac309fb28cd5736ce21610c11eb71b93949c7892044d4458bccc6c7",
+      "verified_at": "2026-11-15T01:46:37.675Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T13:34:27.681Z"
+      "last_updated": "2026-11-15T01:46:37.675Z"
     },
     "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8": {
       "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
@@ -8691,14 +8691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kcl-lang-kcl",
-      "content_hash": "d5dcd248592e43f6b6c9808889edd6c206dc75250e57762fcc9f8b936eb49269",
-      "verified_at": "2026-11-12T14:59:49.327Z",
+      "content_hash": "100b4fed3dec6fc9dc1ad674a5096addb5cc33bcfefd3dafc192681a4e09c6a1",
+      "verified_at": "2026-11-15T01:46:46.740Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T14:59:49.327Z"
+      "last_updated": "2026-11-15T01:46:46.740Z"
     },
     "apache/incubator-pegasus": {
       "repository": "apache/incubator-pegasus",
