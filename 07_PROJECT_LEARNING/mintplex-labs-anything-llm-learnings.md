@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md`  
 > **Source**: github ([https://github.com/Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm))  
-> **Source Version**: `1626d971`  
+> **Source Version**: `4d09fa5f`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T16:58:54.431Z  
+> **Timestamp**: 2026-11-15T01:03:34.214Z  
 > **Learning ID**: `learn-github-mintplex-labs-anything-llm`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T16:58:54.424Z  
+> **Harvest Timestamp**: 2026-11-15T01:03:34.210Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Stop renting your intelligence. Own it with AnythingLLM. Everything you need for a powerful local-first agent experience 
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 68244 stars
+- **Stars / Engagement**: 68284 stars
 
 ---
 
@@ -1309,1064 +1309,1087 @@ module.exports = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a145523c` (2026-11-12)
-**Commit Message**: fix: batch Qdrant upserts under the 32MB request limit (#7140)
+### Incident Patch 1: `4d09fa5f` (2026-11-13)
+**Commit Message**: Mobile document picker UI (#7125)
 
-* fix: upgrade Qdrant client to 1.20.0 and batch upserts under 32MB
+* add mobile document picker + move mobile toasts to top
 
-Bump @qdrant/js-client-rest 1.18.0 -> 1.20.0. Docker and CI now run
-Node 24, so the Node 22 floor that blocked 1.19+ is gone; raise the
-server engines field and .nvmrc to match.
+* mobile document picker embedding, empty folder + folder count fixes
 
-1.19 removed client.search(), so similarity search now uses query()
-(Qdrant Query API, server >= 1.10).
+* trim comments
 
-Upserts sent 500 points per request. At 4096 dims (e.g. qwen3-embedding)
-that is ~42MB of JSON, over Qdrant's default 32MB request limit, which
-Qdrant rejects with a 400. Send 100 points per request from both the
-fresh and cached embed paths, and include Qdrant's error reason in the
-logged message instead of a bare "Bad Request".
+* fix mobile upload preselect + block moving fully embedded folders
 
-Disable the client's version check: it only warns, fires on every
-request, and reads like the cause of unrelated failures.
+* Translate mobile document picker strings and drop unused manage keys
 
-Closes #7139
+---------
 
-* Keep Qdrant client at 1.18.0; scope fix to upsert batch size
+Co-authored-by: Timothy Carambat <[REDACTED_EMAIL]>
 
-The 1.18 client works against a 1.20 server (the version check only
-warns), so the 400 in #7139 is the oversized upsert alone. Revert the
-client bump, query() migration, Node pin changes and disabled version
-check.
-
-**File**: `server/utils/vectorDbProviders/qdrant/index.js` (modified, +32/-44)
+**File**: `frontend/src/components/Modals/ManageWorkspace/Documents/Directory/MobileDirectory/MobileFolderRow/index.jsx` (added, +153/-0)
 ```diff
-@@ -186,13 +186,8 @@ class QDrant extends VectorDatabase {
-               namespace,
-             });
- 
-+          const records = [];
-           for (const chunk of chunks) {
--            const submission = {
--              ids: [],
--              vectors: [],
--              payloads: [],
--            };
--
-             // Before sending to Qdrant and saving the records to our db
-             // we need to assign the id of each chunk that is stored in the cached file.
-             // The id property must be defined or else it will be unable to be managed by ALLM.
-@@ -201,24 +196,16 @@ class QDrant extends VectorDatabase {
-               if (chunk?.payload?.hasOwnProperty("id")) {
-                 const { id: _id, ...payload } = chunk.payload;
-                 documentVectors.push({ docId, vectorId: id });
--                submission.ids.push(id);
--                submission.vectors.push(chunk.vector);
--                submission.payloads.push(payload);
-+                records.push({ id, vector: chunk.vector, payload });
-               } else {
-                 console.error(
-                   "The 'id' property is not defined in chunk.payload - it will be omitted from being inserted in QDrant collection."
-                 );
-               }
-             });
--
--            const additionResult = await client.upsert(namespace, {
--              wait: true,
--              batch: { ...submission },
--            });
--            if (additionResult?.status !== "completed")
--              throw new Error("Error embedding into QDrant", additionResult);
-           }
- 
-+          await this.#upsertRecords(client, namespace, records);
-           await DocumentVectors.bulkInsert(documentVectors);
-           return { vectorized: true, error: null };
-         }
-@@ -292,40 +279,41 @@ class QDrant extends VectorDatabase {
-         });
- 
-       if (vectors.length > 0) {
--        const chunks = [];
--
-         this.logger("Inserting vectorized chunks into QDrant collection.");
--        for (const chunk of toChunks(vectors, 500)) {
--          const batchIds = [],
--            batchVectors = [],
--            batchPayloads = [];
--          chunks.push(chunk);
--          chunk.forEach((v) => {
--            batchIds.push(v.id);
--            batchVectors.push(v.vector);
--            batchPayloads.push(v.payload);
--          });
--
--          const additionResult = await client.upsert(namespace, {
--            wait: true,
--            batch: {
--              ids: batchIds,
--              vectors: batchVectors,
--              payloads: batchPayloads,
--            },
--          });
--          if (additionResult?.status !== "completed")
--            throw new Error("Error embedding into QDrant", additionResult);
--        }
--
--        await storeVectorResult(chunks, fullFilePath);
-+        await this.#upsertRecords(client, namespace, vectors);
-+        await storeVectorResult(toChunks(vectors, 500), fullFilePath);
-       }
- 
-       await DocumentVectors.bulkInsert(documentVectors);
-       return { vectorized: true, error: null };
-     } catch (e) {
--      this.logger("addDocumentToNamespace", e.message);
--      return { vectorized: false, error: e.message };
-+      // Qdrant's reason for a rejected request is in the response body, not the message.
-+      const reason = e?.data?.status?.error;
-+      const message = reason ? `${e.message}: ${reason}` : e.message;
-+      this.logger("addDocumentToNamespace", message);
-+      return { vectorized: false, error: message };
-+    }
-+  }
+@@ -0,0 +1,153 @@
++import { memo } from "react";
++import { useTranslation } from "react-i18next";
++import {
++  CaretRight,
++  CircleNotch,
++  File,
++  FolderNotch,
++} from "@phosphor-icons/react";
++import {
++  formatDateTimeAsMoment,
++  getFileExtension,
++  middleTruncate,
++} from "@/utils/directories";
++import MobileCheckbox from "../../../MobileCheckbox";
 +
-+  /**
-+   * Upsert points in batches small enough to stay under Qdrant's default 32MB
-+   * request limit. A 500-point batch of 4096-dim vectors is ~42MB of JSON.
-+   * @param {QdrantClient} client
-+   * @param {string} namespace
-+   * @param {{id: string, vector: number[], payload: object}[]} records
-+   */
-+  async #upsertRecords(client, namespace, records) {
-+    for (const batch of toChunks(records, 100)) {
-+      const result = await client.upsert(namespace, {
-+        wait: true,
-+        batch: {
-+          ids: batch.map((r) => r.id),
-+          vectors: batch.map((r) => r.vector),
-+          payloads: batch.map((r) => r.payload),
-+        },
-+      });
-+      if (result?.status !== "completed")
-+        throw new Error("Error embedding into QDrant", result);
-     }
++/**
++ * @param {Object} props
++ * @param {number} props.inWorkspaceCount - Documents of this folder already in workspace
++ * @param {"none"|"some"|"all"} props.selectionState
++ */
++export default function MobileFolderRow({
++  row,
++  inWorkspaceCount,
++  selectionState,
++  isFileSelected,
++  onToggleExpanded,
++  onToggleFolder,
++  onToggleFile,
++  onLoadMore,
++}) {
++  const { t } = useTranslation();
++  const { item, files, expanded, loading, hasMore, totalCount, displayCount } =
++    row;
++  const availableCount =
++    inWorkspaceCount > 0
++      ? Math.max(0, totalCount - inWorkspaceCount)
++      : displayCount;
++
++  return (
++    <div>
++      <div
++        onClick={() => onToggleExpanded(item.name)}
++        className="flex items-center h-14 pr-3 rounded-xl cursor-pointer transition-colors duration-150 active:bg-zinc-800 light:active:bg-slate-100"
++      >
++        <MobileCheckbox
++          state={selectionState}
++          label={item.name}
++          onToggle={() => onToggleFolder(item, files)}
++        />
++        <FolderNotch
++          weight="fill"
++          className="w-5 h-5 shrink-0 text-zinc-400 light:text-slate-400"
++        />
++        <div className="flex-1 min-w-0 ml-3">
++          <p className="text-sm font-medium truncate text-slate-50 light:text-slate-900">
++            {item.name}
++          </p>
++          <p className="text-xs text-zinc-400 light:text-slate-500">
++            {t("connectors.directory.total-documents", {
++              count: availableCount,
++            })}
++            {inWorkspaceCount > 0 && (
++              <span className="lowercase">
++                {" · "}
++                {inWorkspaceCount} {t("connectors.directory.in-workspace")}
++              </span>
++            )}
++          </p>
++        </div>
++        {loading && files.length > 0 && (
++          <CircleNotch
++            size={14}
++            weight="bold"
++            className="animate-spin shrink-0 mr-2 text-zinc-400 light:text-slate-500"
++          />
++        )}
++        <CaretRight
++          size={16}
++          weight="bold"
++          className={`shrink-0 text-zinc-500 light:text-slate-400 transition-transform duration-200 ease-in-out ${
++            expanded ? "rotate-90" : ""
++          }`}
++        />
++      </div>
++
++      {expanded && (
++        <div className="pl-5">
++          {loading && files.length === 0 && (
++            <div className="flex items-center gap-x-2 h-12 pl-4 text-xs text-zinc-400 light:text-slate-500">
++              <CircleNotch size={14} weight="bold" className="animate-spin" />
++              {t("common.loading")}...
++            </div>
++          )}
++          {!loading && files.length === 0 && (
++            <p className="h-12 pl-4 flex items-center text-xs text-zinc-400 light:text-slate-500">
++              {t("connectors.directory.no-documents")}
++            </p>
++          )}
++          {files.map((file) => (
++            <MobileFileRow
++              key={file.id}
++              file={file}
++              folderName={item.name}
++              selected={isFileSelected(file.id)}
++              onToggle={onToggleFile}
++            />
++          ))}
++          {hasMore && (
++            <button
++              type="button"
++              disabled={loading}
++              onClick={() => onLoadMore(item.name)}
++              className="border-none bg-transparent h-11 pl-4 text-sm font-medium text-sky-400 light:text-sky-700 disabled:opacity-50"
++            >
++              {loading
++                ? `${t("common.loading")}...`
++                : `Load more (${files.length} of ${totalCount})`}
++            </button>
++          )}
++        </div>
++      )}
++    </div>
++  );
++}
++
++const MobileFileRow = memo(
++  function MobileFileRow({ file, folderName, selected, onToggle }) {
++    return (
++      <div
++        onClick={() => onToggle(file, folderName)}
++        className="flex items-center min-h-[52px] pr-3 rounded-xl cursor-pointer transition-colors duration-150 active:bg-zinc-800 light:active:bg-slate-100"
++      >
++        <MobileCheckbox state={selected ? "all" : "none"} />
++        <File
++          weight="fill"
++          className="w-5 h-5 shrink-0 text-zinc-500 light:text-slate-400"
++        />
++        <div className="flex-1 min-w-0 ml-3 py-1.5">
++          <p className="text-sm truncate text-slate-50 light:text-slate-900">
++            {middleTruncate(file.title, 40)}
++          </p>
++          <p className="text-xs truncate text-zinc-400 light:text-slate-500">
++            {getFileExtension(file.url)} ·{" "}
++            {formatDateTimeAsMoment(file.published, "ll")}
++            {file.cached && 
+```
+
+**File**: `frontend/src/components/Modals/ManageWorkspace/Documents/Directory/MobileDirectory/index.jsx` (added, +246/-0)
+```diff
+@@ -0,0 +1,246 @@
++import { useState } from "react";
++import { useTranslation } from "react-i18next";
++import {
++  CircleNotch,
++  FolderNotch,
++  FolderPlus,
++  MagnifyingGlass,
++  Trash,
++} from "@phosphor-icons/react";
++import PreLoader from "@/components/Preloader";
++import UploadFile from "../../UploadFile";
++import MoveToFolderIcon from "../MoveToFolderIcon";
++import MobileFolderRow from "./MobileFolderRow";
++import MobileSheet, { MobileSheetOption } from "../../MobileSheet";
++import MobileActionBar, {
++  MobileActionButton,
++  MobileActionIconButton,
++} from "../../MobileActionBar";
++
++/**
++ * Touch layout of the "My Documents" picker. State and mutations come from `Directory`.
++ *
++ * @param {Object} props
++ * @param {ReturnType<import("../../hooks/useDocumentPicker").default>} props.picker
++ * @param {Record<string, number>} props.embeddedCounts - Per folder, documents already in workspace
++ * @param {number} props.documentCount - Total documents, or matches while searching
++ */
++export default function MobileDirectory({
++  picker,
++  workspace,
++  rows,
++  embeddedCounts,
++  documentCount,
++  allSelected,
++  uploadQueue,
++  onSearch,
++  onSelectAll,
++  onMoveToWorkspace,
++  onMoveToFolder,
++  onDelete,
++  onNewFolder,
++}) {
++  const { t } = useTranslation();
++  const [showFolderSheet, setShowFolderSheet] = useState(false);
++  const {
++    status,
++    busyMessage,
++    folders,
++    searching,
++    searchResults,
++    hasSelection,
++    selectedCount,
++    selectedFolderNames,
++    isFileSelected,
++    folderSelectionState,
++    toggleExpanded,
++    toggleFolder,
++    toggleFile,
++    loadMore,
++    clearSelection,
++    syncAfterUpload,
++    contents,
++  } = picker;
++
++  // Until a selected folder is fully loaded its count comes from the server,
++  // which still includes documents already in the workspace.
++  const alreadyEmbedded = selectedFolderNames.reduce((sum, name) => {
++    const entry = contents[name];
++    const exact = entry?.status === "loaded" && !entry.hasMore;
++    return exact ? sum : sum + (embeddedCounts[name] ?? 0);
++  }, 0);
++  const movableCount = Math.max(0, selectedCount - alreadyEmbedded);
++  const hasFiles = movableCount > 0;
++
++  return (
++    <div className="relative flex flex-col flex-1 min-h-0">
++      <div className="shrink-0 flex flex-col gap-y-3 px-4 pb-3">
++        <UploadFile
++          variant="mobile"
++          workspace={workspace}
++          queue={uploadQueue}
++          onUploadComplete={syncAfterUpload}
++          onLinkScraped={syncAfterUpload}
++        />
++        <div className="flex gap-x-2">
++          <div className="relative flex-1 min-w-0">
++            <input
++              type="search"
++              placeholder={t("connectors.directory.search-document")}
++              onChange={onSearch}
++              className="search-input w-full h-11 pl-10 pr-3 rounded-xl text-base outline-none border border-transparent bg-zinc-800 light:bg-slate-100 text-slate-50 light:text-slate-900 placeholder:text-zinc-500 light:placeholder:text-slate-400 focus:border-sky-500"
++            />
++            {searching ? (
++              <CircleNotch
++                size={16}
++                weight="bold"
++                className="absolute left-3.5 top-1/2 -translate-y-1/2 animate-spin text-zinc-400 light:text-slate-500"
++              />
++            ) : (
++              <MagnifyingGlass
++                size={16}
++                weight="bold"
++                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400 light:text-slate-500"
++              />
++            )}
++          </div>
++          <MobileActionIconButton
++            label={t("connectors.directory.new-folder")}
++            onClick={onNewFolder}
++          >
++            <FolderPlus size={20} />
++          </MobileActionIconButton>
++        </div>
++      </div>
++
++      <div className="shrink-0 flex items-center justify-between h-9 px-4 text-xs text-zinc-400 light:text-slate-500">
++        <p>
++          {searchResults
++            ? t("connectors.directory.search-results", {
++                count: documentCount,
++              })
++            : t("connectors.directory.total-documents", {
++                count: documentCount,
++              })}
++        </p>
++        {rows.length > 0 && (
++          <button
++            type="button"
++            onClick={allSelected ? clearSelection : onSelectAll}
++            className="border-none bg-transparent h-9 -mr-2 px-2 text-xs font-semibold text-sky-400 light:text-sky-700"
++          >
++            {allSelected
++              ? t("connectors.directory.deselect_all")
++              : t("connectors.directory.select_all")}
++          </button>
++        )}
++      </div>
++
++      {!!busyMessage && (
++        <div className="shrink-0 flex items-center gap-x-2 mx-4 mb-2 px-3 py-2 rounded-xl text-xs font-medium bg-zinc-800 light:bg-slate-100 text-slate-50 light:text-slate-900">
++          <CircleNotch size={14} weight="bold" className="animate-spin
+```
+
+**File**: `frontend/src/components/Modals/ManageWorkspace/Documents/Directory/index.jsx` (modified, +35/-0)
+```diff
+@@ -3,6 +3,7 @@ import PreLoader from "@/components/Preloader";
+ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+ import { useTranslation } from "react-i18next";
+ import FolderRow from "./FolderRow";
++import MobileDirectory from "./MobileDirectory";
+ import System from "@/models/system";
+ import {
+   CircleNotch,
+@@ -53,12 +54,19 @@ function flattenRows(rows) {
+   });
+ }
+ 
++/**
++ * @param {Object} props
++ * @param {"default"|"mobile"} [props.variant="default"] - `mobile` renders the
++ * touch layout
++ */
+ export default function Directory({
+   picker,
+   workspace,
+   hiddenPaths,
++  embeddedCounts,
+   setHighlightWorkspace,
+   moveToWorkspace,
++  variant = "default",
+ }) {
+   const { t } = useTranslation();
+   const [showFolderSelection, setShowFolderSelection] = useState(false);
+@@ -363,6 +371,33 @@ export default function Directory({
+     []
+   );
+ 
++  if (variant === "mobile")
++    return (
++      <>
++        <MobileDirectory
++          picker={picker}
++          workspace={workspace}
++          rows={rows}
++          embeddedCounts={embeddedCounts}
++          documentCount={searchResults ? searchResultCount : totalDocCount}
++          allSelected={allSelected}
++          uploadQueue={uploadQueue}
++          onSearch={handleSearch}
++          onSelectAll={selectAllVisible}
++          onMoveToWorkspace={moveToWorkspace}
++          onMoveToFolder={moveToFolder}
++          onDelete={deleteFiles}
++          onNewFolder={openFolderModal}
++        />
++        <Modal isOpen={isFolderModalOpen} onClose={closeFolderModal}>
++          <NewFolderModal
++            closeModal={closeFolderModal}
++            onCreated={handleFolderCreated}
++          />
++        </Modal>
++      </>
++    );
++
+   return (
+     <>
+       <div className="px-8 pb-8" onContextMenu={handleContextMenu}>
+```
+
+**File**: `frontend/src/components/Modals/ManageWorkspace/Documents/MobileActionBar/index.jsx` (added, +69/-0)
+```diff
+@@ -0,0 +1,69 @@
++/**
++ * Action bar docked to the bottom of its `relative` parent. Stays mounted so
++ * it can slide out as well as in.
++ *
++ * @param {Object} props
++ * @param {import("react").ReactNode} props.label - Status line above the actions
++ */
++export default function MobileActionBar({ show, label, children }) {
++  return (
++    <div
++      className={`absolute bottom-0 inset-x-0 z-[5] flex flex-col gap-y-3 px-4 pt-3 pb-[max(16px,env(safe-area-inset-bottom))] bg-zinc-900 light:bg-white border-t border-zinc-800 light:border-slate-200 transition-[transform,visibility] ${
++        show
++          ? "translate-y-0 visible duration-200 ease-out"
++          : "translate-y-full invisible duration-150 ease-in"
++      }`}
++    >
++      <p className="text-sm font-medium text-slate-50 light:text-slate-900">
++        {label}
++      </p>
++      <div className="flex items-center gap-x-2">{children}</div>
++    </div>
++  );
++}
++
++/**
++ * @param {Object} props
++ * @param {"primary"|"danger"} [props.variant="primary"]
++ */
++export function MobileActionButton({
++  children,
++  variant = "primary",
++  className = "",
++  ...props
++}) {
++  const colors =
++    variant === "danger"
++      ? "bg-red-500 light:bg-red-600 text-white"
++      : "bg-zinc-50 light:bg-slate-900 text-zinc-950 light:text-white";
++  return (
++    <button
++      type="button"
++      {...props}
++      className={`border-none flex-1 h-11 px-4 rounded-xl text-sm font-semibold flex items-center justify-center transition-transform duration-100 active:scale-[0.97] disabled:opacity-50 ${colors} ${className}`}
++    >
++      {children}
++    </button>
++  );
++}
++
++/**
++ * @param {Object} props
++ * @param {string} props.label - Accessible label
++ */
++export function MobileActionIconButton({ label, danger, children, ...props }) {
++  return (
++    <button
++      type="button"
++      aria-label={label}
++      {...props}
++      className={`border-none w-11 h-11 shrink-0 rounded-xl flex items-center justify-center bg-zinc-800 light:bg-slate-100 transition-transform duration-100 active:scale-[0.97] disabled:opacity-50 ${
++        danger
++          ? "text-red-400 light:text-red-600"
++          : "text-slate-50 light:text-slate-900"
++      }`}
++    >
++      {children}
++    </button>
++  );
++}
+```
+
+**File**: `frontend/src/components/Modals/ManageWorkspace/Documents/MobileCheckbox/index.jsx` (added, +45/-0)
+```diff
+@@ -0,0 +1,45 @@
++import { Check, Minus } from "@phosphor-icons/react";
++
++/**
++ * @param {Object} props
++ * @param {"none"|"some"|"all"} [props.state="none"] - Unchecked, mixed, or checked
++ * @param {() => void} [props.onToggle] - Makes the box its own tap target; without it the row handles the tap
++ * @param {string} [props.label] - Accessible label when the box is interactive
++ */
++export default function MobileCheckbox({ state = "none", onToggle, label }) {
++  const box = (
++    <span
++      className={`w-5 h-5 rounded-md flex items-center justify-center transition-colors duration-150 ${
++        state === "none"
++          ? "border-2 border-zinc-600 light:border-slate-300"
++          : "bg-sky-500 text-white"
++      }`}
++    >
++      {state === "all" && <Check size={12} weight="bold" />}
++      {state === "some" && <Minus size={12} weight="bold" />}
++    </span>
++  );
++
++  if (!onToggle)
++    return (
++      <span className="w-11 h-11 shrink-0 flex items-center justify-center">
++        {box}
++      </span>
++    );
++
++  return (
++    <button
++      type="button"
++      role="checkbox"
++      aria-checked={state === "some" ? "mixed" : state === "all"}
++      aria-label={label}
++      onClick={(event) => {
++        event.stopPropagation();
++        onToggle();
++      }}
++      className="border-none bg-transparent w-11 h-11 shrink-0 flex items-center justify-center"
++    >
++      {box}
++    </button>
++  );
++}
+```
+
+**File**: `frontend/src/components/Modals/ManageWorkspace/Documents/MobileSheet/index.jsx` (added, +57/-0)
+```diff
+@@ -0,0 +1,57 @@
++/**
++ * Bottom sheet for the mobile document picker. Stays mounted so it can slide
++ * out as well as in.
++ */
++export default function MobileSheet({ open, onClose, title, children }) {
++  return (
++    <div
++      className={`fixed inset-0 z-10 transition-[visibility] ${
++        open ? "visible duration-200" : "invisible duration-150"
++      }`}
++    >
++      <div
++        onClick={onClose}
++        className={`absolute inset-0 bg-black/60 transition-opacity ${
++          open ? "opacity-100 duration-200" : "opacity-0 duration-150"
++        }`}
++      />
++      <div
++        role="dialog"
++        aria-modal="true"
++        className={`absolute bottom-0 inset-x-0 max-h-[70vh] flex flex-col rounded-t-2xl bg-zinc-900 light:bg-white border-t border-zinc-800 light:border-slate-200 pb-[max(12px,env(safe-area-inset-bottom))] transition-transform ${
++          open
++            ? "translate-y-0 duration-200 ease-out"
++            : "translate-y-full duration-150 ease-in"
++        }`}
++      >
++        {title && (
++          <p className="px-5 pt-5 pb-2 text-sm font-semibold text-slate-50 light:text-slate-900 truncate">
++            {title}
++          </p>
++        )}
++        <div className="overflow-y-auto px-2 pt-1">{children}</div>
++      </div>
++    </div>
++  );
++}
++
++/**
++ * @param {Object} props
++ * @param {boolean} [props.danger] - Red treatment for destructive actions
++ */
++export function MobileSheetOption({ icon: Icon, label, onClick, danger }) {
++  return (
++    <button
++      type="button"
++      onClick={onClick}
++      className={`border-none bg-transparent w-full h-12 px-3 flex items-center gap-x-3 rounded-xl text-left text-sm font-medium active:bg-zinc-800 light:active:bg-slate-100 ${
++        danger
++          ? "text-red-400 light:text-red-600"
++          : "text-slate-50 light:text-slate-900"
++      }`}
++    >
++      <Icon size={20} className="shrink-0" />
++      <span className="truncate">{label}</span>
++    </button>
++  );
++}
+```
+
+**File**: `frontend/src/components/Modals/ManageWorkspace/Documents/UploadFile/MobileUploadFile/index.jsx` (added, +112/-0)
+```diff
+@@ -0,0 +1,112 @@
++import { useState } from "react";
++import { useTranslation } from "react-i18next";
++import { LinkSimple, UploadSimple } from "@phosphor-icons/react";
++import FileUploadProgress from "../FileUploadProgress";
++
++/**
++ * Touch layout of the uploader. Upload logic stays in `UploadFile`.
++ *
++ * @param {Object} props
++ * @param {boolean} props.ready - Document processor is online
++ * @param {object} props.inputProps - `getInputProps()` from the dropzone
++ */
++export default function MobileUploadFile({
++  ready,
++  uploads,
++  setFiles,
++  slug,
++  openFilePicker,
++  inputProps,
++  fetchingUrl,
++  onSubmitLink,
++  onSettled,
++}) {
++  const { t } = useTranslation();
++  const [showLinkForm, setShowLinkForm] = useState(false);
++
++  return (
++    <div className="flex flex-col gap-y-2">
++      <input {...inputProps} />
++      <div className="grid grid-cols-2 gap-x-2">
++        <UploadButton
++          icon={UploadSimple}
++          label={t("connectors.directory.upload-files")}
++          disabled={!ready}
++          onClick={openFilePicker}
++        />
++        <UploadButton
++          icon={LinkSimple}
++          label={t("connectors.directory.add-link")}
++          active={showLinkForm}
++          onClick={() => setShowLinkForm(!showLinkForm)}
++        />
++      </div>
++      {!ready && (
++        <p className="text-xs text-zinc-400 light:text-slate-500">
++          {t("connectors.upload.processor-offline")}
++        </p>
++      )}
++      {showLinkForm && (
++        <form onSubmit={onSubmitLink} className="flex gap-x-2">
++          <input
++            disabled={fetchingUrl}
++            name="link"
++            // Not type="url" - that would force the user to type the protocol.
++            type="text"
++            inputMode="url"
++            autoFocus
++            autoComplete="off"
++            autoCapitalize="off"
++            placeholder={t("connectors.upload.placeholder-link")}
++            className="flex-1 min-w-0 h-11 px-3.5 rounded-xl text-base outline-none border border-transparent bg-zinc-800 light:bg-slate-100 text-slate-50 light:text-slate-900 placeholder:text-zinc-500 light:placeholder:text-slate-400 focus:border-sky-500 disabled:opacity-50"
++          />
++          <button
++            disabled={fetchingUrl}
++            type="submit"
++            className="border-none h-11 px-4 rounded-xl text-sm font-semibold shrink-0 bg-zinc-50 light:bg-slate-900 text-zinc-950 light:text-white transition-transform duration-100 active:scale-[0.97] disabled:opacity-50"
++          >
++            {fetchingUrl
++              ? t("connectors.upload.fetching")
++              : t("connectors.upload.fetch-website")}
++          </button>
++        </form>
++      )}
++      {uploads.length > 0 && (
++        <div className="flex flex-col gap-y-2 max-h-[136px] overflow-y-auto no-scroll">
++          {uploads.map((file) => (
++            <FileUploadProgress
++              key={file.uid}
++              file={file.file}
++              uuid={file.uid}
++              setFiles={setFiles}
++              slug={slug}
++              rejected={file?.rejected}
++              reason={file?.reason}
++              folderName={file?.folderName}
++              relativePath={file?.relativePath}
++              onSettled={onSettled}
++            />
++          ))}
++        </div>
++      )}
++    </div>
++  );
++}
++
++function UploadButton({ icon: Icon, label, onClick, disabled, active }) {
++  return (
++    <button
++      type="button"
++      onClick={onClick}
++      disabled={disabled}
++      className={`border-none h-11 rounded-xl flex items-center justify-center gap-x-2 text-sm font-medium transition-[transform,background-color] duration-150 active:scale-[0.97] disabled:opacity-50 ${
++        active
++          ? "bg-sky-500/15 text-sky-300 light:bg-sky-50 light:text-sky-700"
++          : "bg-zinc-800 light:bg-slate-100 text-slate-50 light:text-slate-900"
++      }`}
++    >
++      <Icon size={18} weight="bold" />
++      {label}
++    </button>
++  );
++}
+```
+
+**File**: `frontend/src/components/Modals/ManageWorkspace/Documents/UploadFile/index.jsx` (modified, +20/-1)
+```diff
+@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
+ import showToast from "../../../../../utils/toast";
+ import { useDropzone } from "react-dropzone";
+ import FileUploadProgress from "./FileUploadProgress";
++import MobileUploadFile from "./MobileUploadFile";
+ import Workspace from "../../../../../models/workspace";
+ import debounce from "lodash.debounce";
+ import { getFilesFromUploadEvent } from "../../../../../utils/folderUpload";
+@@ -36,12 +37,15 @@ function withProtocol(value = "") {
+  * @param {() => Promise<void>} props.onUploadComplete called (coalesced) once a
+  * burst of file uploads settles, so the picker can hydrate in place.
+  * @param {() => Promise<void>} props.onLinkScraped called after a link scrape.
++ * @param {"default"|"mobile"} [props.variant="default"] - `mobile` swaps the
++ * drag-and-drop zone for touch-sized buttons
+  */
+ export default function UploadFile({
+   workspace,
+   queue,
+   onUploadComplete,
+   onLinkScraped,
++  variant = "default",
+ }) {
+   const { t } = useTranslation();
+   const { ready, files, setFiles, enqueueDrop } = queue;
+@@ -74,12 +78,27 @@ export default function UploadFile({
+   );
+   useEffect(() => () => syncPicker.cancel(), [syncPicker]);
+ 
+-  const { getRootProps, getInputProps } = useDropzone({
++  const { getRootProps, getInputProps, inputRef } = useDropzone({
+     onDrop: enqueueDrop,
+     disabled: !ready,
+     getFilesFromEvent: getFilesFromUploadEvent,
+   });
+ 
++  if (variant === "mobile")
++    return (
++      <MobileUploadFile
++        ready={ready}
++        uploads={files}
++        setFiles={setFiles}
++        slug={workspace.slug}
++        openFilePicker={() => inputRef.current?.click()}
++        inputProps={getInputProps()}
++        fetchingUrl={fetchingUrl}
++        onSubmitLink={handleSendLink}
++        onSettled={syncPicker}
++      />
++    );
++
+   return (
+     <div>
+       <div
+```
+
+---
+
+### Incident Patch 2: `8a5aae10` (2026-11-13)
+**Commit Message**: fix: separate replies in imported GitLab issue threads with a blank line (#7151)
+
+fix: separate replies in GitLab issue threads with a blank line
+
+**File**: `collector/__tests__/utils/extensions/RepoLoader/GitlabRepo.test.js` (modified, +18/-1)
+```diff
+@@ -1050,7 +1050,7 @@ describe("GitLabRepoLoader issues and wikis", () => {
+     expect(imported.discussions).toEqual(expectedDiscussions);
+     expect(refreshed.discussions).toEqual(expectedDiscussions);
+     const expectedActivity =
+-      "## Activity\n\nbob at 2024-01-01T00:00:00Z:\nReproduced on main.,alice at 2024-01-02T00:00:00Z:\nFix incoming.\n\ncarol at 2024-01-03T00:00:00Z:\nVerified the fix.\n";
++      "## Activity\n\nbob at 2024-01-01T00:00:00Z:\nReproduced on main.\n\nalice at 2024-01-02T00:00:00Z:\nFix incoming.\n\ncarol at 2024-01-03T00:00:00Z:\nVerified the fix.\n";
+     expect(issueToMarkdown(imported)).toContain(expectedActivity);
+     expect(issueToMarkdown(refreshed)).toContain(expectedActivity);
+   });
+@@ -1436,4 +1436,21 @@ describe("issueToMarkdown", () => {
+       "## Activity\n\nbob at 2024-01-01T00:00:00Z:\nReproduced on main.\n\nalice at 2024-01-02T00:00:00Z:\nFix incoming."
+     );
+   });
++
++  test("replies in a discussion thread are separated like other notes", () => {
++    const markdown = issueToMarkdown({
++      ...base,
++      discussions: [
++        [
++          "bob at 2024-01-01T00:00:00Z:\nReproduced on main.",
++          "alice at 2024-01-02T00:00:00Z:\nFix incoming.",
++        ],
++      ],
++    });
++
++    expect(markdown).toContain(
++      "## Activity\n\nbob at 2024-01-01T00:00:00Z:\nReproduced on main.\n\nalice at 2024-01-02T00:00:00Z:\nFix incoming."
++    );
++    expect(markdown).not.toContain("main.,alice");
++  });
+ });
+```
+
+**File**: `collector/utils/extensions/RepoLoader/GitlabRepo/index.js` (modified, +1/-1)
+```diff
+@@ -318,7 +318,7 @@ ${metadataString}`;
+ 
+ ## Activity
+ 
+-${issue.discussions.join("\n\n")}
++${issue.discussions.flat().join("\n\n")}
+ `;
    }
  
 ```
 
 ---
 
-### Incident Patch 2: `1626d971` (2026-11-12)
-**Commit Message**: fix: guard image downloads in the PDF, DOCX and PPTX file tools (#7143)
+### Incident Patch 3: `83dedd8a` (2026-11-13)
+**Commit Message**: fix: bound Outlook thread reads and fit them to the context window (#7158)
 
-* Guard image downloads in the PDF, DOCX and PPTX file tools
+* fix: bound Outlook thread reads and fit them to the context window
 
-Image sources in generated documents come from model output, so the file
-tools must not fetch from this host or private networks. The PDF tool
-handed markdown straight to mdpdf, which downloads images itself, and the
-DOCX tool used plain fetch; only PPTX checked addresses.
+readThread pages through the conversation newest first and keeps the 50
+most recent messages, reading each message's uniqueBody so quoted reply
+chains are not repeated in every message. The read-thread tool summarizes
+all but the latest message when the thread exceeds 75% of the model's
+context window, keeping the latest verbatim plus an index of every message.
 
-create-files/images.js now holds the public-address guard (moved from
-pptx/images.js) plus loadImage, which takes a data URL or a public URL and
-checks the format by magic bytes, and embedMarkdownImages, which rewrites
-markdown and HTML images to data URLs and drops the ones that cannot be
-loaded. DOCX loads every <img> through loadImage, PDF embeds images before
-calling mdpdf, and PPTX downloads through the shared guard.
+* read the full body of forwards and empty-uniqueBody messages in Outlook threads
 
-* Note that bypasses of the file tools' image guard are not accepted as vulnerabilities
+* roll up Outlook thread recipients and show only who was added or removed per message
 
-**File**: `server/__tests__/utils/agents/aibitat/plugins/create-files/images.test.js` (added, +359/-0)
+* fix: download Outlook thread attachments only after the parse is approved (#7159)
+
+download Outlook thread attachments only after the parse is approved
+
+**File**: `server/utils/agents/aibitat/plugins/outlook/lib.js` (modified, +118/-17)
 ```diff
-@@ -0,0 +1,359 @@
-+/* eslint-env jest */
-+const http = require("http");
-+const {
-+  isPublicIp,
-+  assertPublicUrl,
-+  downloadImage,
-+  imageType,
-+  loadImage,
-+  embedMarkdownImages,
-+} = require("../../../../../../utils/agents/aibitat/plugins/create-files/images.js");
-+
-+const PNG = Buffer.from(
-+  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
-+  "base64"
-+);
-+const pad = (head) =>
-+  Buffer.concat([Buffer.from(head, "latin1"), Buffer.alloc(16)]);
-+const GIF = pad("GIF89a");
-+const BMP = pad("BM");
-+const WEBP = Buffer.concat([
-+  Buffer.from("RIFF\0\0\0\0WEBP", "latin1"),
-+  Buffer.alloc(8),
-+]);
-+const dataUrl = (buffer, mime = "image/png") =>
-+  `data:${mime};base64,${buffer.toString("base64")}`;
-+
-+// The server listens on loopback, so tests that need to reach it allow
-+// exactly that address.
-+const loopbackOnly = (ip) => ip === "127.0.0.1";
-+let server;
-+let base;
-+let port;
-+const hits = [];
-+const routes = {
-+  "/ok.png": (res) => {
-+    res.writeHead(200, { "content-type": "image/png" });
-+    res.write(PNG.subarray(0, 10));
-+    res.end(PNG.subarray(10));
-+  },
-+  "/untyped.gif": (res) => {
-+    res.writeHead(200, { "content-type": "application/octet-stream" });
-+    res.end(GIF);
-+  },
-+  "/lying.png": (res) => {
-+    res.writeHead(200, { "content-type": "image/png" });
-+    res.end("<html>not an image</html>");
-+  },
-+  "/page.html": (res) => {
-+    res.writeHead(200, { "content-type": "text/html" });
-+    res.end("<html>");
-+  },
-+  "/vector.svg": (res) => {
-+    res.writeHead(200, { "content-type": "image/svg+xml" });
-+    res.end("<svg/>");
-+  },
-+  "/missing.png": (res) => {
-+    res.writeHead(404, { "content-type": "image/png" });
-+    res.end();
-+  },
-+  "/huge.jpg": (res) => {
-+    res.writeHead(200, { "content-type": "image/jpeg" });
-+    const chunk = Buffer.alloc(1024 * 1024);
-+    for (let i = 0; i < 11; i++) res.write(chunk);
-+    res.end();
-+  },
-+  "/slow.png": () => {},
-+  "/hop": (res) => {
-+    res.writeHead(302, { location: "/ok.png" });
-+    res.end();
-+  },
-+  "/loop": (res) => {
-+    res.writeHead(302, { location: "/loop" });
-+    res.end();
-+  },
-+  "/to-v6-loopback": (res) => {
-+    res.writeHead(302, { location: "http://[::ffff:7f00:1]/secret" });
-+    res.end();
-+  },
-+};
-+
-+beforeAll(
-+  () =>
-+    new Promise((resolve) => {
-+      server = http.createServer((req, res) => {
-+        hits.push(req.url);
-+        (routes[req.url] || routes["/missing.png"])(res);
-+      });
-+      server.listen(0, "127.0.0.1", () => {
-+        port = server.address().port;
-+        base = `http://127.0.0.1:${port}`;
-+        resolve();
-+      });
-+    })
-+);
-+afterAll(() => {
-+  server.closeAllConnections();
-+  return new Promise((resolve) => server.close(resolve));
-+});
-+beforeEach(() => hits.splice(0));
-+
-+describe("isPublicIp and assertPublicUrl", () => {
-+  test("only public addresses pass", () => {
-+    for (const ip of [
-+      "127.0.0.1",
-+      "10.1.2.3",
-+      "172.16.0.1",
-+      "172.31.255.255",
-+      "192.168.1.1",
-+      "169.254.169.254",
-+      "100.64.0.1",
-+      "0.0.0.0",
-+      "224.0.0.1",
-+      "::1",
-+      "::",
-+      "fc00::1",
-+      "fe80::1",
-+      "::ffff:127.0.0.1",
-+      // The same addresses as Node writes them after parsing a URL.
-+      "::ffff:7f00:1",
-+      "::ffff:a9fe:a9fe",
-+      "::7f00:1",
-+      "64:ff9b::7f00:1",
-+      "2002:7f00:1::1",
-+      "2001:0:7f00:1::1",
-+      "not an ip",
-+      "",
-+    ])
-+      expect([ip, isPublicIp(ip)]).toEqual([ip, false]);
-+    for (const ip of ["8.8.8.8", "172.32.0.1", "93.184.216.34", "2606:4700::1"])
-+      expect([ip, isPublicIp(ip)]).toEqual([ip, true]);
-+  });
-+
-+  test("rejects other schemes and hosts on the server's own network, however they are written", async () => {
-+    for (const url of [
-+      "file:///etc/passwd",
-+      "ftp://8.8.8.8/a.png",
-+      "http://127.0.0.1/a.png",
-+      "http://127.1/a.png",
-+      "http://2130706433/a.png",
-+      "http://0x7f000001/a.png",
-+      "http://localhost:3001/a.png",
-+      "http://[::1]/a.png",
-+      "http://[::ffff:127.0.0.1]/a.png",
-+      "http://[::ffff:a9fe:a9fe]/latest/meta-data",
-+      "http://169.254.169.254/latest/meta-data",
-+    ])
-+      await expect(assertPublicUrl(url)).rejects.toThrow();
-+    await expect(assertPublicUrl("not a url")).rejects.toThrow();
-+    await expect(
-+      assertPublicUrl("https://93.184.216.34/a.png")
-+    ).resolves.toBeUndefined();
-+  });
-+});
-+
-+describe("downloadImage", () => {
-+  test("refuses this host by default, by name or by address, without connecting", async () => {
-+    for (const url of [
-+      `${base}/ok.png`,
-+      `http://localhost:${port}/ok.png`,
-+      `http://[::ffff:127.0.0.1]:${port}/ok.png`,
-+    ])
-+      await expect(downloadImage(url)).rejects.toThrow(/not a public address/);
-+    expect(hits).toEqual([]);
-+  });
-+
-+  test("checks every redirect before following it, and stops after a few", async () => {
-+    expect(
-```
-
-**File**: `server/__tests__/utils/agents/aibitat/plugins/create-files/pptx/images.test.js` (modified, +0/-148)
-```diff
-@@ -4,9 +4,6 @@ process.env.STORAGE_DIR = __dirname;
- const sharp = require("sharp");
- const {
-   preparePicture,
--  isPublicIp,
--  assertPublicUrl,
--  downloadImage,
-   imagesInMarkdown,
-   downloadUrls,
-   attachedPictures,
-@@ -29,151 +26,6 @@ const png = (width, height, alpha = false) =>
+@@ -8,6 +8,35 @@ const { humanFileSize } = require("../../../../helpers");
+ const { safeJsonParse } = require("../../../../http");
  
- const picture = (name) => ({ data: `data:${name}`, width: 1600, height: 900 });
- 
--describe("isPublicIp and assertPublicUrl", () => {
--  test("only public addresses pass", () => {
--    for (const ip of [
--      "127.0.0.1",
--      "10.1.2.3",
--      "172.16.0.1",
--      "172.31.255.255",
--      "192.168.1.1",
--      "169.254.169.254",
--      "100.64.0.1",
--      "0.0.0.0",
--      "224.0.0.1",
--      "::1",
--      "::",
--      "fc00::1",
--      "fe80::1",
--      "::ffff:127.0.0.1",
--      // The same addresses as Node writes them after parsing a URL.
--      "::ffff:7f00:1",
--      "::ffff:a9fe:a9fe",
--      "::7f00:1",
--      "64:ff9b::7f00:1",
--      "2002:7f00:1::1",
--      "2001:0:7f00:1::1",
--      "not an ip",
--    ])
--      expect([ip, isPublicIp(ip)]).toEqual([ip, false]);
--    for (const ip of ["8.8.8.8", "172.32.0.1", "93.184.216.34", "2606:4700::1"])
--      expect([ip, isPublicIp(ip)]).toEqual([ip, true]);
--  });
--
--  test("rejects other schemes and hosts on the server's own network, however they are written", async () => {
--    for (const url of [
--      "file:///etc/passwd",
--      "ftp://8.8.8.8/a.png",
--      "http://127.0.0.1/a.png",
--      "http://127.1/a.png",
--      "http://2130706433/a.png",
--      "http://localhost:3001/a.png",
--      "http://[::1]/a.png",
--      "http://[::ffff:127.0.0.1]/a.png",
--      "http://[::ffff:a9fe:a9fe]/latest/meta-data",
--      "http://169.254.169.254/latest/meta-data",
--    ])
--      await expect(assertPublicUrl(url)).rejects.toThrow();
--    await expect(
--      assertPublicUrl("https://93.184.216.34/a.png")
--    ).resolves.toBeUndefined();
--  });
--});
--
--describe("downloadImage", () => {
--  const http = require("http");
--  let server;
--  let base;
--  const hits = [];
--  const routes = {
--    "/ok.png": (res) => {
--      res.writeHead(200, { "content-type": "image/png" });
--      res.write("ab");
--      res.end("cd");
--    },
--    "/page.html": (res) => {
--      res.writeHead(200, { "content-type": "text/html" });
--      res.end("<html>");
--    },
--    "/vector.svg": (res) => {
--      res.writeHead(200, { "content-type": "image/svg+xml" });
--      res.end("<svg/>");
--    },
--    "/missing.png": (res) => {
--      res.writeHead(404, { "content-type": "image/png" });
--      res.end();
--    },
--    "/huge.jpg": (res) => {
--      res.writeHead(200, { "content-type": "image/jpeg" });
--      const chunk = Buffer.alloc(1024 * 1024);
--      for (let i = 0; i < 9; i++) res.write(chunk);
--      res.end();
--    },
--    "/hop": (res) => {
--      res.writeHead(302, { location: "/ok.png" });
--      res.end();
--    },
--    "/to-v6-loopback": (res) => {
--      res.writeHead(302, { location: "http://[::ffff:7f00:1]/secret" });
--      res.end();
--    },
--  };
--  // The server listens on loopback, so tests that need to reach it allow
--  // exactly that address.
--  const loopbackOnly = (ip) => ip === "127.0.0.1";
--
--  beforeAll(
--    () =>
--      new Promise((resolve) => {
--        server = http.createServer((req, res) => {
--          hits.push(req.url);
--          (routes[req.url] || routes["/missing.png"])(res);
--        });
--        server.listen(0, "127.0.0.1", () => {
--          base = `http://127.0.0.1:${server.address().port}`;
--          resolve();
--        });
--      })
--  );
--  afterAll(() => new Promise((resolve) => server.close(resolve)));
--  beforeEach(() => hits.splice(0));
--
--  test("refuses this host by default, by name or by address, without connecting", async () => {
--    const port = server.address().port;
--    for (const url of [
--      `${base}/ok.png`,
--      `http://localhost:${port}/ok.png`,
--      `http://[::ffff:127.0.0.1]:${port}/ok.png`,
--    ])
--      await expect(downloadImage(url)).rejects.toThrow(/not a public address/);
--    expect(hits).toEqual([]);
--  });
--
--  test("checks every redirect before following it", async () => {
--    expect(
--      (
--        await downloadImage(`${base}/hop`, { isAllowed: loopbackOnly })
--      ).toString()
--    ).toBe("abcd");
--    await expect(
--      downloadImage(`${base}/to-v6-loopback`, { isAllowed: loopbackOnly })
--    ).rejects.toThrow(/not a public address/);
--    expect(hits).toEqual(["/hop", "/ok.png", "/to-v6-loopback"]);
--  });
--
--  test("returns only raster images that load and fit under the size cap", async () => {
--    for (const [path, error] of [
--      ["/page.html", /not a raster image/],
--      ["/vector.svg", /not a raster image/],
--      ["/missing.png", /HTTP 404/],
--      ["/huge.jpg", /too large/],
--    ])
--      await expect(
--        downloadImage(`${base}${path}`, { isAllowed: loopbackOnly })
--      ).rejects.toThrow(error);
--  });
--});
--
- describe("imagesInMarkdown", () => {
-   test("keeps describe
-```
-
-**File**: `server/utils/agents/aibitat/plugins/create-files/docx/utils.js` (modified, +42/-188)
-```diff
-@@ -3,6 +3,8 @@
-  * Uses marked for parsing, jsdom for HTML traversal, and docx for document generation.
-  */
- 
-+const { loadImage } = require("../images.js");
+ const MAX_TOTAL_ATTACHMENT_SIZE = 25 * 1024 * 1024; // 25MB limit for Outlook
++// readThread keeps only the newest messages of a thread, fetched a page at a
++// time since each message carries its body and expanded attachments.
++const MAX_THREAD_MESSAGES = 50;
++const THREAD_PAGE_SIZE = 25;
 +
++/**
++ * Subject of a thread without reply/forward prefixes, so a thread read from a
++ * reply (when its older messages were left out) still shows the original subject.
++ * @param {string} subject
++ * @returns {string}
++ */
++function threadSubject(subject) {
++  const stripped = (subject || "")
++    .replace(/^\s*((re|fw|fwd)\s*:\s*)+/i, "")
++    .trim();
++  return stripped || "No Subject";
++}
++
++/**
++ * Whether a thread message needs its full body rather than its `uniqueBody`:
++ * forwards (whose forwarded content Graph treats as quoted) and messages whose
++ * `uniqueBody` is empty.
++ * @param {object} msg - Graph message with `subject` and `uniqueBody`
++ * @returns {boolean}
++ */
++function needsFullBody(msg) {
++  if (!msg.uniqueBody?.content?.trim()) return true;
++  return /^\s*(fw|fwd)\s*:/i.test(msg.subject || "");
++}
+ 
  /**
-  * Document style presets for professional-looking documents.
-  */
-@@ -90,209 +92,61 @@ async function loadLibraries() {
+  * Parses a comma-separated email string into Graph API recipient format.
+@@ -58,6 +87,11 @@ function mapGraphMessage(msg, options = {}) {
+     hasAttachments: msg.hasAttachments,
    };
- }
  
--const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
- const IMAGE_FETCH_TIMEOUT_MS = 2000;
-+// The formats docx ImageRun can embed.
-+const DOCX_IMAGE_FORMATS = ["png", "jpg", "gif", "bmp"];
- 
- /**
-- * Image magic bytes and their corresponding types.
-- * This is hardcoded and there might be a better way to do this but this is for simple image validation.
-- * @type {Object}
-- */
--const IMAGE_MAGIC_BYTES = {
--  png: { bytes: [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a], type: "png" },
--  jpg: { bytes: [0xff, 0xd8, 0xff], type: "jpg" },
--  gif87a: { bytes: [0x47, 0x49, 0x46, 0x38, 0x37, 0x61], type: "gif" },
--  gif89a: { bytes: [0x47, 0x49, 0x46, 0x38, 0x39, 0x61], type: "gif" },
--  bmp: { bytes: [0x42, 0x4d], type: "bmp" },
--  webp: {
--    bytes: [0x52, 0x49, 0x46, 0x46],
--    type: "webp",
--    offset4: [0x57, 0x45, 0x42, 0x50],
--  },
--};
--
--/**
-- * Validates image buffer by checking magic bytes to determine actual image type.
-- * @param {Buffer} buffer - The image buffer to validate
-- * @returns {{valid: boolean, type: string|null}} Validation result with detected type
-- */
--function validateImageMagicBytes(buffer) {
--  if (!buffer || buffer.length < 12) {
--    return { valid: false, type: null };
--  }
--
--  for (const [, signature] of Object.entries(IMAGE_MAGIC_BYTES)) {
--    const matches = signature.bytes.every((byte, i) => buffer[i] === byte);
--    if (matches) {
--      if (signature.offset4) {
--        const offset4Matches = signature.offset4.every(
--          (byte, i) => buffer[8 + i] === byte
--        );
--        if (!offset4Matches) continue;
--      }
--      return { valid: true, type: signature.type };
--    }
--  }
--
--  return { valid: false, type: null };
--}
--
--/**
-- * Fetches an image from a URL or processes a base64 data string.
-+ * Loads an image from a base64 data URL or a public URL and sizes it for the page.
-  * @param {string} src - Image source (URL or base64)
-  * @param {Function} log - Logging function
-  * @returns {Promise<{buffer: Buffer, type: string, width: number, height: number} | null>}
++  // Graph only returns BCC on mail the user sent, and only when selected.
++  if (msg.bccRecipients) {
++    base.bcc = msg.bccRecipients.map((r) => r.emailAddress?.address).join(", ");
++  }
++
+   if (msg.receivedDateTime) {
+     base.receivedDateTime = msg.receivedDateTime;
+   }
+@@ -359,11 +393,14 @@ function isParseableMimeType(contentType) {
+  * Collect attachments from messages and optionally parse them with user approval.
+  * Only attachments with parseable MIME types will be offered for parsing.
+  * If two attachments have the same name, only the first one will be kept (handling fwd emails)
++ * Attachments without `contentBytes` are downloaded with `loadContent` only after
++ * approval, up to MAX_TOTAL_ATTACHMENT_SIZE in total.
+  * @param {Object} context - The handler context (this) from the aibitat function
+  * @param {Array} messages - Array of message objects
++ * @param {(attachment: Object) => Promise<{success: boolean, data?: string, error?: string}>} [loadContent] - Downloads an attachment's base64 content
+  * @returns {Promise<{allAttachments: Array, parsedContent: string}>}
   */
- async function fetchImage(src, log) {
-+  let image;
-   try {
--    let imageBuffer;
--    let imageType = "png";
--
--    if (src.startsWith("data:")) {
--      const match = src.match(/^data:image\/(\w+);base64,(.+)$/);
--      if (match) {
--        imageBuffer = Buffer.from(match[2], "base64");
--
--        if (imageBuffer.length > MAX_IMAGE_SIZE) {
--          log(
--            `create-docx-file: Base64 image too large (${(imageBuffer.length / 1024 / 1024).toFixed(2)}MB), max ${MAX_IMAGE_SIZE / 1024 / 1024}MB`
--          );
--          return null;
--        }
--
--        const validation = validateImageMagicBytes(imageBuffer);
--        if (!validation.valid) {
--          log(
--            `create-docx-file: Base64 data is not a valid image (magic bytes check failed)`
--          );
--          return null;
--        }
--        imageType = validation.type;
--
--        log(
--          `create-docx-file: Processed base64 image, type: ${imageType}, size: ${imageBuffer.length} bytes`
--        );
--      } else {
--        log(`create-docx-file: Invalid base64 image format, skipping`);
--        return null;
--      }
--    } else if (src.startsWith("http://") || src.startsWith("https://")) {
--      let parsedUrl;
--      try {
--        parsedUrl = new URL(src);
--      } catch {
--        log(`create-docx-file: Invalid URL: ${src}`);
--        return null;
--      }
--
--      if (!["http:", "https:"].includes(parsedUrl.protocol)) {
--        log(`create-docx-file: Invalid URL protocol: ${parsedUrl.protocol}`);
--        return null;
--      }
--
--      const controller = new AbortController();
--      const timeoutId = setTimeout(
--        () => controller.abort(),
--        IMAGE_FETCH_TIMEOUT_MS
--      );
--
--      try {
--        const response = await fetch(src, {
--          signal: controller.signal,
--        });
--        clearTimeout(timeoutId);
--
--        if (!response.ok) {
--          log(
--            `create-docx-file: Failed to fetch image from ${src}: ${response.status}`
--          );
--          return null;
--        }
--
--        const contentLength = response.headers.get("content-length");
--        if (contentLength && parseInt(contentLength, 10) > MAX_IMAGE_SIZE) {
--          log(
--            `create-docx-file: Image too large (${(parseInt(contentLength, 10) / 1024 / 1024).toFixed(2)}MB), max ${MAX_IMAGE_SIZE / 1024 / 1024}MB`
--          );
--          return null;
--        }
--
--        const arrayBuffer = await response.arrayBuffer();
--        imageBuffer = Buffer.from(arrayBuffer);
--
--        if (imageBuffer.length > MAX_IMAGE_SIZE) {
--          log(
--            `create-docx-file: Downloaded image too large (${(imageB
+-async function handleAttachments(context, messages) {
++async function handleAttachments(context, messages, loadContent = null) {
+   const allAttachments = [];
+   const uniqueAttachments = new Set();
+   messages.forEach((msg, msgIndex) => {
+@@ -403,7 +440,27 @@ async function handleAttachments(context, messages) {
+       );
+ 
+       const parsedResults = [];
++      let downloadedBytes = 0;
+       for (const attachment of parseableAttachments) {
++        if (!attachment.contentBytes && loadContent) {
++          if (
++            downloadedBytes + (attachment.size || 0) >
++            MAX_TOTAL_ATTACHMENT_SIZE
++          ) {
++            context.super.introspect(
++              `${context.caller}: Skipping "${attachment.name}" - over the ${humanFileSize(MAX_TOTAL_ATTACHMENT_SIZE)} download limit`
++            );
++            continue;
++          }
++          context.super.introspect(
++            `${context.caller}: Downloading "${attachment.name}"...`
++          );
++          const download = await loadContent(attachment);
++          if (download.success) {
++            attachment.contentBytes = download.data;
++            downloadedBytes += attachment.size || 0;
++          }
++        }
+         if (!attachment.contentBytes) {
+           context.super.introspect(
+             `${context.caller}: Skipping "${attachment.name}" - no content available`
+@@ -1011,46 +1068,90 @@ class OutlookBridge {
+   }
+ 
+   /**
+-   * Read a full conversation thread by conversation ID.
+-   * Note: We avoid combining $filter with $orderby due to Microsoft Graph API
+-   * "InefficientFilter" errors. Instead, we fetch without orderby and sort client-side.
++   * Read the most recent messages of a conversation thread, oldest first.
++   * Pages through Graph until MAX_THREAD_MESSAGES are collected or the thread
++   * ends. Each body is the message's `uniqueBody`, so quoted replies of earlier
++   * messages are not repeated in every message. Forwards and messages with an
++   * empty `uniqueBody` get their full body instead (see needsFullBody).
++   * Attachments carry metadata only and skip inline ones (signature images);
++   * their content is downloaded on demand with getAttachmentContent.
++   *
++   * Graph rejects $orderby with "InefficientFilter" unless every $orderby
++   * property also appears first in $filter, hence the always-true
++   * receivedDateTime clause ahead of the conversationId match.
+    * @param {strin
 ```
 
-**File**: `server/utils/agents/aibitat/plugins/create-files/images.js` (added, +345/-0)
+**File**: `server/utils/agents/aibitat/plugins/outlook/search/outlook-read-thread.js` (modified, +174/-33)
 ```diff
-@@ -0,0 +1,345 @@
-+const net = require("net");
-+const dns = require("dns");
-+const http = require("http");
-+const https = require("https");
+@@ -1,5 +1,153 @@
+ const outlookLib = require("../lib.js");
+ const { handleAttachments, handleSkillError } = outlookLib;
++const Provider = require("../../../providers/ai-provider");
++const { summarizeContent } = require("../../../utils/summarize");
++const { TokenManager } = require("../../../../../helpers/tiktoken");
 +
-+/**  ATTN: SECURITY RESEARCHERS - WE ARE NOT ACCEPTING CVEs OR GHSAs FOR BYPASSES OF THIS GUARD.
-+ * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-+ * The public-address check below is a best-effort guard so a model cannot casually point a generated
-+ * document at this host or the local network. It is NOT a security boundary. We know there are any
-+ * number of ways to bypass or dupe it (DNS tricks, tunneling, hosts editing, open redirectors, proxies,
-+ * address encodings we did not think of, etc.), and we are not going to chase them.
-+ *
-+ * Securing an instance is the job of whoever deploys it: network isolation, firewalls and egress
-+ * rules. If your deployment can reach something it should not, fix that at the network layer.
-+ *
-+ * Any GHSA or CVE report about bypassing this guard will be closed without review, same as the
-+ * isValidIP check in collector/utils/url. Please do not submit one.
-+ * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-+ */
++// Share of the model's context window a thread may fill before its older
++// messages are summarized, leaving the rest for the conversation and the reply.
++const THREAD_CONTEXT_RATIO = 0.75;
++
++const RECIPIENT_FIELDS = [
++  ["to", "To"],
++  ["cc", "CC"],
++  ["bcc", "BCC"],
++];
 +
 +/**
-+ * Image loading shared by the file tools. Image sources come from model
-+ * output, so every remote download is limited to public addresses (for the
-+ * first URL and every redirect) and every image is identified by its magic
-+ * bytes, not by what its URL or server claims.
++ * Everyone on a message (sender and To/CC/BCC), keyed by lowercased address.
++ * @param {object} msg - A message from readThread
++ * @returns {Map<string, {address: string, role: string}>}
 + */
-+
-+const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
-+const DOWNLOAD_TIMEOUT_MS = 10_000;
-+const MAX_REDIRECTS = 3;
-+const DOWNLOAD_CONCURRENCY = 4;
-+const MIME_TYPES = {
-+  png: "image/png",
-+  jpg: "image/jpeg",
-+  gif: "image/gif",
-+  bmp: "image/bmp",
-+  webp: "image/webp",
-+  avif: "image/avif",
-+};
-+
-+// Addresses a document must not be able to reach through the server: this
-+// host, private networks, link-local (cloud metadata), carrier-grade NAT,
-+// benchmarking, multicast and reserved ranges. BlockList also checks
-+// IPv4-mapped IPv6 addresses ("::ffff:7f00:1") against these.
-+const PRIVATE_V4 = new net.BlockList();
-+for (const [address, prefix] of [
-+  ["0.0.0.0", 8],
-+  ["10.0.0.0", 8],
-+  ["100.64.0.0", 10],
-+  ["127.0.0.0", 8],
-+  ["169.254.0.0", 16],
-+  ["172.16.0.0", 12],
-+  ["192.0.0.0", 24],
-+  ["192.168.0.0", 16],
-+  ["198.18.0.0", 15],
-+  ["224.0.0.0", 3],
-+])
-+  PRIVATE_V4.addSubnet(address, prefix, "ipv4");
-+// Public IPv6 is global unicast (2000::/3), minus the ranges that carry an
-+// IPv4 address inside them (6to4, Teredo) and documentation addresses.
-+const GLOBAL_V6 = new net.BlockList();
-+GLOBAL_V6.addSubnet("2000::", 3, "ipv6");
-+const TUNNELED_V6 = new net.BlockList();
-+TUNNELED_V6.addSubnet("2002::", 16, "ipv6");
-+TUNNELED_V6.addSubnet("2001::", 32, "ipv6");
-+TUNNELED_V6.addSubnet("2001:db8::", 32, "ipv6");
++function participants(msg) {
++  const people = new Map();
++  const add = (list, role) => {
++    for (const address of (list || "").split(",")) {
++      const trimmed = address.trim();
++      const key = trimmed.toLowerCase();
++      if (trimmed && !people.has(key))
++        people.set(key, { address: trimmed, role });
++    }
++  };
++  add(msg.from, "From");
++  for (const [field, role] of RECIPIENT_FIELDS) add(msg[field], role);
++  return people;
++}
 +
 +/**
-+ * True only for an address on the public internet.
-+ * @param {string} ip
++ * Formats a thread with its recipients rolled up: the first message's To/CC/BCC
++ * are listed once in `header`, and each later message lists only the people
++ * added to or dropped from the conversation since the previous message.
++ * Comparing everyone on the message (sender included) means an ordinary
++ * reply-all, which moves the sender into To, shows no change.
++ * @param {object[]} messages - Thread messages, oldest first
++ * @returns {{header: string, formatted: string[]}}
 + */
-+function isPublicIp(ip) {
-+  if (net.isIPv4(ip)) return !PRIVATE_V4.check(ip, "ipv4");
-+  if (!net.isIPv6(ip)) return false;
++function formatThread(messages) {
++  const first = messages[0] || {};
++  const header =
++    `Recipients (message 1):\n` +
++    RECIPIENT_FIELDS.filter(([field]) => first[field])
++      .map(([field, role]) => `${role}: ${first[field]}`)
++      .join("\n");
++
++  let previous = participants(first);
++  const formatted = messages.map((msg, i) => {
++    const current = participants(msg);
++    let changes = "";
++    if (i > 0) {
++      const added = [...current]
++        .filter(([key]) => !previous.has(key))
++        .map(([, p]) => `${p.address} (${p.role})`);
++      const removed = [...previous]
++        .filter(([key]) => !current.has(key))
++        .map(([, p]) => p.address);
++      if (added.length) changes += `Added: ${added.join(", ")}\n`;
++      if (removed.length) changes += `Removed: ${removed.join(", ")}\n`;
++    }
++    previous = current;
++    return formatMessage(msg, i, changes);
++  });
++  return { header, formatted };
++}
++
++function formatMessage(msg, i, recipientChanges = "") {
++  let attachmentInfo = "";
++  if (msg.attachments?.length > 0) {
++    attachmentInfo = `\n   Attachments: ${msg.attachments.map((a) => `${a.name} (${a.contentType}, ${(a.size / 1024).toFixed(1)}KB)`).join(", ")}`;
++  }
++
++  const bodyContent =
++    msg.bodyType === "html"
++      ? msg.body
++          .replace(/<[^>]*>/g, " ")
++          .replace(/\s+/g, " ")
++          .trim()
++      : msg.body;
++
 +  return (
-+    !PRIVATE_V4.check(ip, "ipv6") &&
-+    GLOBAL_V6.check(ip, "ipv6") &&
-+    !TUNNELED_V6.check(ip, "ipv6")
++    `--- Message ${i + 1} ---\n` +
++    `From: ${msg.fromName} <${msg.from}>\n` +
++    recipientChanges +
++    `Date: ${new Date(msg.date).toLocaleString()}\n` +
++    `Subject: ${msg.subject}\n` +
++    `Status: ${msg.isRead ? "READ" : "UNREAD"}\n` +
++    `\n${bodyContent}` +
++    attachmentInfo
 +  );
 +}
 +
 +/**
-+ * Throws unless a URL is http(s) and its host is, or resolves only to,
-+ * allowed addresses.
-+ * @param {string} url
-+ * @param {(ip: string) => boolean} [isAllowed]
++ * Returns the thread text sized for the model's context window. When the
++ * messages (plus the other text sent with them) exceed the budget, every
++ * message but the latest is summarized; the latest stays verbatim and an index
++ * of all messages keeps who wrote when.
++ * @param {object} context - The tool handler's `this`
++ * @param {object[]} messages - Thread messages, oldest first
++ * @param {string[]} formatted - `messages` formatted by formatThread
++ * @param {string} extraContent - Other text sent alongside (recipients, parsed attachments)
++ * @returns {Promise<{text: string, summarized: boolean}>}
 + */
-+async function assertPublicUrl(url, isAllowed = isPublicIp) {
-+  const { protocol, hostname } = new URL(url);
-+  if (protocol !== "http:" && protocol !== "https:")
-+    throw new Error(`${protocol} URLs are not allowed`);
-+  const host = hostname.replace(/^\[|\]$/g, "");
-+  const addresses = net.isIP(host)
-+    ? [{ address: host }]
-+    : await dns.promises.lookup(host, { all: true });
-+  if (!addresses.length || !addresses.every((a) => isAllowed(a.address)))
-+    throw new Error(`${host} is not a public address`);
-+}
++async function fitThreadToContext(
++  context,
++  messages,
++  formatted,
++  extraContent = ""
++) {
++  const full = formatted.join("\n\n");
++  if (messages.length < 2) return { text: full, summarized: false };
 +
-+/**
-+ * A DNS lookup for http.get that refuses to connect anywhere but allowed
-+ * addresses. Checking at connect time, rather than before the request,
-+ * means a host cannot pass the check and then resolve somewhere else.
-+ */
-+const guardedLookup = (isAllowed) => (hostname, options, callback) => {
-+  dns.lookup(hostname, { ...options, all: true }, (error, addresses) => {
-+    if (error) return callback(error);
-+    if (!addresses.length || !addresses.every((a) => isAllowed(a.address)))
-+      return callback(new Error(`${hostname} is not a public address`));
-+    if (options.all) return callback(null, addresses);
-+    callback(null, addresses[0].address, addresses[0].family);
-+  });
-+};
++  const { provider, model } = context.super;
++  const budget = Math.floor(
++    Provider.contextLimit(provider, model) * THREAD_CONTEXT_RATIO
++  );
++  const tokens = new TokenManager(model).countFromString(full + extraContent);
++  if (tokens <= budget) return { text: full, summarized: false };
 +
-+/** One GET request, resolving with the response once headers arrive. */
-+function get(url, { signal, isAllowed, accept }) {
-+  const client = new URL(url).protocol === "https:" ? https : http;
-+  return new Promise((resolve, reject) => {
-+    const req = client.get(
-+      url,
-+      {
-+        signal,
-+        lookup: guardedLookup(isAllowed),
-+        headers: {
-+          A
-```
-
-**File**: `server/utils/agents/aibitat/plugins/create-files/pdf/create-pdf-file.js` (modified, +12/-1)
-```diff
-@@ -1,5 +1,9 @@
- const createFilesLib = require("../lib.js");
- const { applyBranding } = require("./utils.js");
-+const { embedMarkdownImages } = require("../images.js");
-+
-+// The image formats Typst can embed.
-+const PDF_IMAGE_FORMATS = ["png", "jpg", "gif", "webp"];
- 
- module.exports.CreatePdfFile = {
-   name: "create-pdf-file",
-@@ -91,7 +95,14 @@ module.exports.CreatePdfFile = {
-                 "pdf-lib"
-               );
- 
--              const rawBuffer = await markdownToPdf(content);
-+              // mdpdf downloads remote images itself, without an address
-+              // check, so it only ever receives embedded ones.
-+              const markdown = await embedMarkdownImages(content, {
-+                formats: PDF_IMAGE_FORMATS,
-+                log: (msg) =>
-+                  this.super.handlerProps.log(`create-pdf-file: ${msg}`),
-+              });
-+              const rawBuffer = await markdownToPdf(markdown);
-               const pdfDoc = await PDFDocument.load(rawBuffer);
-               await applyBranding(pdfDoc, { rgb, StandardFonts });
- 
-```
-
-**File**: `server/utils/agents/aibitat/plugins/create-files/pptx/images.js` (modified, +8/-174)
-```diff
-@@ -1,9 +1,6 @@
- const fs = require("fs");
- const path = require("path");
--const net = require("net");
--const dns = require("dns");
--const http = require("http");
--const https = require("https");
-+const { downloadImage, mapLimit } = require("../images.js");
- 
- /**
-  * Pictures for a deck, from three sources: images the user attached to the
-@@ -35,13 +32,12 @@ const MIN_WEB_W = 800;
- const MIN_WEB_H = 400;
- const MAX_ASPECT = 2.6;
- const MAX_DOWNLOAD_BYTES = 8 * 1024 * 1024;
--const DOWNLOAD_TIMEOUT_MS = 10_000;
- const SCRAPE_TIMEOUT_MS = 45_000;
--const MAX_REDIRECTS = 3;
- const SCRAPE_PAGES = 3;
- const CANDIDATES_PER_PAGE = 8;
- const DOWNLOAD_CONCURRENCY = 4;
--const WEB_TYPES = /^image\/(jpeg|png|webp|avif)\b/i;
-+// Formats sharp reads, in the order slides prefer them.
-+const WEB_FORMATS = ["avif", "webp", "png", "jpg"];
- const STOP_WORDS = new Set(
-   "about also been from have here into just more most only other over some such than that their them there these they this those very were what when where which will with your".split(
-     " "
-@@ -75,155 +71,6 @@ async function preparePicture(buffer) {
-   };
- }
- 
--// Addresses a page must not be able to reach through the server: this
--// host, private networks, link-local (cloud metadata), carrier-grade NAT,
--// benchmarking, multicast and reserved ranges. BlockList also checks
--// IPv4-mapped IPv6 addresses ("::ffff:7f00:1") against these.
--const PRIVATE_V4 = new net.BlockList();
--for (const [address, prefix] of [
--  ["0.0.0.0", 8],
--  ["10.0.0.0", 8],
--  ["100.64.0.0", 10],
--  ["127.0.0.0", 8],
--  ["169.254.0.0", 16],
--  ["172.16.0.0", 12],
--  ["192.0.0.0", 24],
--  ["192.168.0.0", 16],
--  ["198.18.0.0", 15],
--  ["224.0.0.0", 3],
--])
--  PRIVATE_V4.addSubnet(address, prefix, "ipv4");
--// Public IPv6 is global unicast (2000::/3), minus the ranges that carry an
--// IPv4 address inside them (6to4, Teredo) and documentation addresses.
--const GLOBAL_V6 = new net.BlockList();
--GLOBAL_V6.addSubnet("2000::", 3, "ipv6");
--const TUNNELED_V6 = new net.BlockList();
--TUNNELED_V6.addSubnet("2002::", 16, "ipv6");
--TUNNELED_V6.addSubnet("2001::", 32, "ipv6");
--TUNNELED_V6.addSubnet("2001:db8::", 32, "ipv6");
--
--/**
-- * True only for an address on the public internet.
-- * @param {string} ip
-- */
--function isPublicIp(ip) {
--  if (net.isIPv4(ip)) return !PRIVATE_V4.check(ip, "ipv4");
--  if (!net.isIPv6(ip)) return false;
--  return (
--    !PRIVATE_V4.check(ip, "ipv6") &&
--    GLOBAL_V6.check(ip, "ipv6") &&
--    !TUNNELED_V6.check(ip, "ipv6")
--  );
--}
--
--/**
-- * Throws unless a URL is http(s) and its host is, or resolves only to,
-- * allowed addresses.
-- * @param {string} url
-- * @param {(ip: string) => boolean} [isAllowed]
-- */
--async function assertPublicUrl(url, isAllowed = isPublicIp) {
--  const { protocol, hostname } = new URL(url);
--  if (protocol !== "http:" && protocol !== "https:")
--    throw new Error(`${protocol} URLs are not allowed`);
--  const host = hostname.replace(/^\[|\]$/g, "");
--  const addresses = net.isIP(host)
--    ? [{ address: host }]
--    : await dns.promises.lookup(host, { all: true });
--  if (!addresses.length || !addresses.every((a) => isAllowed(a.address)))
--    throw new Error(`${host} is not a public address`);
--}
--
--/**
-- * A DNS lookup for http.get that refuses to connect anywhere but allowed
-- * addresses. Checking at connect time, rather than before the request,
-- * means a host cannot pass the check and then resolve somewhere else.
-- */
--const guardedLookup = (isAllowed) => (hostname, options, callback) => {
--  dns.lookup(hostname, { ...options, all: true }, (error, addresses) => {
--    if (error) return callback(error);
--    if (!addresses.length || !addresses.every((a) => isAllowed(a.address)))
--      return callback(new Error(`${hostname} is not a public address`));
--    if (options.all) return callback(null, addresses);
--    callback(null, addresses[0].address, addresses[0].family);
--  });
--};
--
--/** One GET request, resolving with the response once headers arrive. */
--function get(url, { signal, isAllowed }) {
--  const client = new URL(url).protocol === "https:" ? https : http;
--  return new Promise((resolve, reject) => {
--    const req = client.get(
--      url,
--      {
--        signal,
--        lookup: guardedLookup(isAllowed),
--        headers: {
--          Accept: "image/avif,image/webp,image/png,image/jpeg",
--          // Some image hosts (Wikimedia among them) refuse clients that do
--          // not name themselves.
--          "User-Agent": "AnythingLLM-DeckBuilder/1.0",
--        },
--      },
--      resolve
--    );
--    req.on("error", reject);
--  });
--}
--
--/**
-- * Downloads an image from the public web: the first URL and every redirect
-- * may only connect to allowed addresses, and the response must be a raster
-- * image under MAX_DOWNLOAD_BYTES that arrives within DOWNLOAD_TIMEOUT_MS.
-- * @param {string} url
-- * @param {{signal?: AbortSignal, isAllowed?: (ip: string) => boolean}} [options] - isAllowed defaults to isPublicIp
-- * @retu
-```
-
----
-
-### Incident Patch 3: `c3ba00cd` (2026-11-12)
-**Commit Message**: fix: keep tool parameters named definitions or $defs in dereferenceSchema (#7130)
-
-* fix: keep tool parameters named definitions or $defs in dereferenceSchema
-
-walk skipped the $defs and definitions keys in every object, including properties and patternProperties maps where keys are parameter names. It now skips them only on schema nodes.
-
-* Walk properties/patternProperties maps in a dedicated helper
-
----------
-
-Co-authored-by: Israel Kliger <[REDACTED_EMAIL]>
-Co-authored-by: Timothy Carambat <[REDACTED_EMAIL]>
-
-**File**: `server/__tests__/utils/agents/aibitat/providers/helpers/dereferenceSchema.test.js` (modified, +33/-0)
-```diff
-@@ -187,6 +187,39 @@ describe("dereferenceSchema", () => {
-     expect(properties.inherited).toEqual({});
-   });
- 
-+  it("keeps parameters named `definitions` or `$defs`", () => {
-+    const schema = {
-+      type: "object",
-+      properties: {
-+        term: { type: "string" },
-+        definitions: { type: "array", items: { type: "string" } },
-+        $defs: { type: "string" },
-+      },
-+      patternProperties: {
-+        definitions: { type: "string" },
-+        $defs: { type: "number" },
-+      },
-+      required: ["term", "definitions"],
-+    };
-+
-+    expect(dereferenceSchema(schema)).toEqual(schema);
++  context.super.introspect(
++    `${context.caller}: Thread is ~${tokens} tokens, over the ~${budget} token budget. Summarizing all but the latest message.`
++  );
++  const summary = await summarizeContent({
++    provider,
++    model,
++    content: formatted.slice(0, -1).join("\n\n"),
++    aibitat: context.super,
 +  });
 +
-+  it("inlines references in a parameter named `definitions`", () => {
-+    const schema = {
-+      type: "object",
-+      properties: { definitions: { $ref: "#/$defs/Glossary" } },
-+      $defs: { Glossary: { type: "array", items: { type: "string" } } },
-+    };
-+
-+    expect(dereferenceSchema(schema)).toEqual({
-+      type: "object",
-+      properties: {
-+        definitions: { type: "array", items: { type: "string" } },
-+      },
-+    });
-+  });
-+
-   it("handles non-object inputs defensively", () => {
-     expect(dereferenceSchema(null)).toBeNull();
-     expect(dereferenceSchema(undefined)).toEqual({});
-```
-
-**File**: `server/utils/agents/aibitat/providers/helpers/dereferenceSchema.js` (modified, +16/-1)
-```diff
-@@ -41,6 +41,19 @@ function dereferenceSchema(schema = {}) {
-     return node && typeof node === "object" ? node : null;
-   };
- 
-+  // Keys of these maps are parameter names (which may be "definitions" or "$defs"),
-+  // not schema keywords, so every key is kept and only the values are walked.
-+  const NAME_MAPS = new Set(["properties", "patternProperties"]);
-+  const walkNameMap = (map, seenRefs) =>
-+    map && typeof map === "object" && !Array.isArray(map)
-+      ? Object.fromEntries(
-+          Object.entries(map).map(([name, value]) => [
-+            name,
-+            walk(value, seenRefs),
-+          ])
-+        )
-+      : walk(map, seenRefs);
-+
-   const walk = (node, seenRefs) => {
-     if (Array.isArray(node)) return node.map((item) => walk(item, seenRefs));
-     if (!node || typeof node !== "object") return node;
-@@ -63,7 +76,9 @@ function dereferenceSchema(schema = {}) {
-     const output = {};
-     for (const [key, value] of Object.entries(node)) {
-       if (key === "$defs" || key === "definitions") continue;
--      output[key] = walk(value, seenRefs);
-+      output[key] = NAME_MAPS.has(key)
-+        ? walkNameMap(value, seenRefs)
-+        : walk(value, seenRefs);
-     }
-     return output;
-   };
++  const index = messages
++    .map(
++      (m, i) =>
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7143** (2026-11-12): fix: guard image downloads in the PDF, DOCX and PPTX file tools (@timothycarambat)
-- **PR #7142** (closed): fix: fetch DOCX tool images through the public-address guard (@alexchenyu)
-- **PR #7140** (2026-11-12): fix: batch Qdrant upserts under the 32MB request limit (@timothycarambat)
-- **PR #7137** (2026-11-12): Limit owner fields returned with browser extension API keys (@timothycarambat)
-- **PR #7136** (2026-11-12): Block password recovery for suspended users (@timothycarambat)
-- **PR #7135** (2026-11-12): Fix typo in SQL Connector skill description (@lakshya-dhariwal)
+- **PR #7160** (2026-11-13): fix: send Voyage AI input_type for queries and documents (@timothycarambat)
+- **PR #7159** (2026-11-13): fix: download Outlook thread attachments only after the parse is approved (@timothycarambat)
+- **PR #7158** (2026-11-13): fix: bound Outlook thread reads and fit them to the context window (@timothycarambat)
+- **PR #7157** (2026-11-13): fix: use the resolved user id when updating a user from the admin endpoints (@timothycarambat)
+- **PR #7153** (2026-11-13): fix: title DrupalWiki attachments with their file name, not the hotdir path (@Fahmid-Arman)
+- **PR #7151** (2026-11-13): fix: separate replies in imported GitLab issue threads with a blank line (@Fahmid-Arman)
 
 ---
 
@@ -2386,91 +2409,73 @@ Co-authored-by: Timothy Carambat <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. batch Qdrant upserts under the 32MB request limit (#7140)
+## X. Mobile document picker UI
 
 **RULE**:
-When implementing operations in `server/utils/vectorDbProviders/qdrant/index.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Mintplex-Labs/anything-llm. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `frontend/src/components/Modals/ManageWorkspace/Documents/Directory/MobileDirectory/MobileFolderRow/index.jsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Mintplex-Labs/anything-llm. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a145523c`: batch Qdrant upserts under the 32MB request limit (#7140). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4d09fa5f`: Mobile document picker UI. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/utils/vectorDbProviders/qdrant/index.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `frontend/src/components/Modals/ManageWorkspace/Documents/Directory/MobileDirectory/MobileFolderRow/index.jsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-          const records = [];
-                records.push({ id, vector: chunk.vector, payload });
-          await this.#upsertRecords(client, namespace, records);
-        await this.#upsertRecords(client, namespace, vectors);
-        await storeVectorResult(toChunks(vectors, 500), fullFilePath);
-      // Qdrant's reason for a rejected request is in the response body, not the message.
-      const reason = e?.data?.status?.error;
-      const message = reason ? `${e.message}: ${reason}` : e.message;
-      this.logger("addDocumentToNamespace", message);
-      return { vectorized: false, error: message };
-    }
-  }
+import { memo } from "react";
+import { useTranslation } from "react-i18next";
+import {
+  CaretRight,
+  CircleNotch,
+  File,
+  FolderNotch,
+} from "@phosphor-icons/react";
+import {
+  formatDateTimeAsMoment,
+  getFileExtension,
+  middleTruncate,
+} from "@/utils/directories";
+import MobileCheckbox from "../../../MobileCheckbox";
 
-  /**
-   * Upsert points in batches small enough to stay under Qdrant's default 32MB
-   * request limit. A 500-point batch of 4096-dim vectors is ~42MB of JSON.
-   * @param {QdrantClient} client
-   * @param {string} namespace
-   * @param {{id: string, vector: number[], payload: object}[]} records
-   */
-  async #upsertRecords(client, namespace, records) {
-    for (const batch of toChunks(records, 100)) {
-      const result = await client.upsert(namespace, {
-        wait: true,
-        batch: {
-          ids: batch.map((r) => r.id),
-          vectors: batch.map((r) => r.vecto
+/**
+ * @param {Object} props
+ * @param {number} props.inWorkspaceCount - Documents of this folder already in workspace
+ * @param {"none"|"some"|"all"} props.selectionState
+ */
+export default function MobileFolderRow({
+  row,
+  inWorkspaceCount,
+  selectionState,
+  isFileSelected,
+  onToggleExpanded,
+  onToggleFolder,
+  onToggleFile,
+  onLoadMore,
+}) {
+  const { t } = useTranslation();
+  const { item, files, expanded, loading, hasMore, totalCount, displayCount } =
+    row;
+  const availableCount =
+    inWorkspaceCount > 0
+      ? Math.max(0, totalCount - inWorkspaceCount)
+      : displayCount;
+
+  return (
+    <div>
+      <div
+        onClick={() => onToggleExpanded(item.name)}
+        className="flex items-center h-14 pr-3 rounded-xl cursor-pointer transition-colors duration-150 active:bg-zinc-800 light:active:bg-slate-100"
+      >
+        <MobileCheckbox
+    
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
-// Anti-pattern to NEVER write (induced failure mode):
-            const submission = {
-              ids: [],
-              vectors: [],
-              payloads: [],
-            };
-
-                submission.ids.push(id);
-                submission.vectors.push(chunk.vector);
-                submission.payloads.push(payload);
-
-            const additionResult = await client.upsert(namespace, {
-              wait: true,
-              batch: { ...submission },
-            });
-            if (additionResult?.status !== "completed")
-              throw new Error("Error embedding into QDrant", additionResult);
-        const chunks = [];
-
-        for (const chunk of toChunks(vectors, 500)) {
-          const batchIds = [],
-            batchVectors = [],
-            batchPayloads = [];
-          chunks.push(chunk);
-          chunk.forEach((v) => {
-            batchIds.push(v.id);
-            batchVectors.push(v.vector);
-            batchPayloads.push(v.payload);
-          });
-
-          const additionResult = await client.upsert(namespace, {
-            wait: true,
-            batch: {
-              ids: batchIds,
-              vectors: batchVectors,
-              payloads: batchPayloads,
-            },
-          });
-          if (additionRes
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a145523c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4d09fa5f` are properly handled with clean fallback behavior.

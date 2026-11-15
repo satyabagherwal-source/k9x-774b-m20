@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T00:51:34.597Z",
-  "total_records": 895,
+  "last_updated": "2026-11-15T01:04:03.060Z",
+  "total_records": 900,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 441,
+      "total": 444,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -478,7 +478,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-openbmb-minicpm-v-4-7-35b-a3b-learnings-core-",
         "domain_intelligence-research-knowledge-intelligence-openbmb-minicpm-v-4-7-1b-core-invariants",
         "DOM-D-B43360BC",
-        "domain_intelligence-research-knowledge-intelligence-hf-openbmb-minicpm-v-4-7-1b-learnings-core-invar"
+        "domain_intelligence-research-knowledge-intelligence-hf-openbmb-minicpm-v-4-7-1b-learnings-core-invar",
+        "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-35b-nvfp4-core-i",
+        "DOM-D-100E5003",
+        "domain_intelligence-research-knowledge-intelligence-hf-autotrust-jev-35b-nvfp4-learnings-core-invari"
       ]
     },
     "E": {
@@ -513,7 +516,7 @@
       ]
     },
     "G": {
-      "total": 147,
+      "total": 149,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -661,7 +664,9 @@
         "domain_intelligence-architecture-intelligence-shifthackz-sdai-kmp-core-invariants",
         "domain_intelligence-architecture-intelligence-shifthackz-sdai-kmp-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-cachix-devenv-core-invariants",
-        "domain_intelligence-architecture-intelligence-cachix-devenv-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-cachix-devenv-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-jetbrains-kotlinconf-app-core-invariants",
+        "domain_intelligence-architecture-intelligence-jetbrains-kotlinconf-app-learnings-core-invariants"
       ]
     },
     "H": {
@@ -7559,8 +7564,8 @@
       "title": "Technical Construction Intelligence: Mintplex-Labs/anything-llm Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-mintplex-labs-anything-llm-technical-construction-intelligence-mintplex-labs-any.md",
       "repository": "Mintplex-Labs/anything-llm",
-      "content_hash": "ae793be0c8abe47228be3b10b8579e47d9adb07344c02d6e394243db19bc9ffa",
-      "created_at": "2026-11-13T16:58:55.415Z"
+      "content_hash": "94e801ce03e7a8810d5fe188447bc63d7643853963d0dc6035ccbbfabf32a4ca",
+      "created_at": "2026-11-15T01:03:35.111Z"
     },
     "DOM-D-AFA4F352": {
       "record_id": "DOM-D-AFA4F352",
@@ -7619,8 +7624,8 @@
       "title": "Technical Construction Intelligence: mintplex-labs-anything-llm-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-mintplex-labs-anything-llm-learnings-technical-construction-intelligence-mintple.md",
       "repository": "mintplex-labs-anything-llm-learnings",
-      "content_hash": "eee2188b9cdd9acbd9a383de6094cb50654d19e0000c52a3ca96c5893c157841",
-      "created_at": "2026-11-13T16:59:45.588Z"
+      "content_hash": "7765b018e489c81e7e32d442499e6ea22fd599d0f528272f1b2b3cc3808a7f6d",
+      "created_at": "2026-11-15T01:04:03.060Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -17625,6 +17630,84 @@
       "repository": "necolas-react-native-web-learnings",
       "content_hash": "bb8e9e5f0482180852ab3a38c0b9c812cea15fda91bcf92365e96d8a6c5d2c6f",
       "created_at": "2026-11-15T00:51:34.597Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-35b-nvfp4-core-i": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-35b-nvfp4-core-i",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: autotrust/AutoTrust-Decider-Pro-35B-NVFP4 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-jev-35b-nvfp4-research-knowledge-intelligence-autotrust-autotrust-d.md",
+      "repository": "autotrust/AutoTrust-Decider-Pro-35B-NVFP4",
+      "content_hash": "265bed0f73e92fe3935c349a9bd90e4d40546f6b827069fc91d570d3d8dbc4bf",
+      "created_at": "2026-11-15T01:03:20.541Z"
+    },
+    "domain_intelligence-architecture-intelligence-jetbrains-kotlinconf-app-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-jetbrains-kotlinconf-app-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: JetBrains/kotlinconf-app Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-jetbrains-kotlinconf-app-architecture-intelligence-jetbrains-kotlinconf-app-core.md",
+      "repository": "JetBrains/kotlinconf-app",
+      "content_hash": "0d6fb9f718177e13e305d01ce8eb2b5fb5a952e185ac789f7b2591536797c560",
+      "created_at": "2026-11-15T01:03:28.530Z"
+    },
+    "DOM-D-100E5003": {
+      "record_id": "DOM-D-100E5003",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): autotrust/AutoTrust-Decider-Pro-35B-NVFP4",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/autotrust/JEV-35B-NVFP4](https://huggingface.co/autotrust/JEV-35B-NVFP4))  \n> **Source Version**: `hf-autotrust`  \n> **License**: Open-Source  \n> **Sy",
+      "content_hash": "ab6ae3d058a6c56ef0a5729108e2dd0c9de88e176c4956ec8fe95437f9d81ff6",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md`  \n> **Source**: huggingface ([https://huggi -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md`  \n> **Source**: huggingface ([https://huggi",
+      "provenance": {
+        "source_uri": "project://hf-autotrust-jev-35b-nvfp4/hf-autotrust-jev-35b-nvfp4-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T01:03:37.906Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-autotrust-jev-35b-nvfp4)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-autotrust-jev-35b-nvfp4"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-15T01:04:02.090Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-autotrust-jev-35b-nvfp4-learnings-core-invari": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-autotrust-jev-35b-nvfp4-learnings-core-invari",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-autotrust-jev-35b-nvfp4-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-jev-35b-nvfp4-learnings-research-knowledge-intelligence-hf-autotrus.md",
+      "repository": "hf-autotrust-jev-35b-nvfp4-learnings",
+      "content_hash": "6078d8813c5a2e722a1e5ef8d34f922b9054414dbf422cf33c3da57da025e615",
+      "created_at": "2026-11-15T01:04:02.256Z"
+    },
+    "domain_intelligence-architecture-intelligence-jetbrains-kotlinconf-app-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-jetbrains-kotlinconf-app-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: jetbrains-kotlinconf-app-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-jetbrains-kotlinconf-app-learnings-architecture-intelligence-jetbrains-kotlincon.md",
+      "repository": "jetbrains-kotlinconf-app-learnings",
+      "content_hash": "bb6d06fc9775216cf973e92ddebadc73bfd1d15eadfe2cb2524de8d410bb5dff",
+      "created_at": "2026-11-15T01:04:02.606Z"
     }
   }
 }

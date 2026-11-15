@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T00:51:34.254Z",
+  "updated_at": "2026-11-15T01:04:02.390Z",
   "stats": {
-    "total_discovered": 3537,
-    "approved_pending_harvest": 3327,
+    "total_discovered": 3539,
+    "approved_pending_harvest": 3329,
     "harvested_count": 0,
     "rejected_count": 210,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3308,
+      "COMMUNITY_AND_EXPERT": 3310,
       "OFFICIAL_DOCUMENTATION": 125,
       "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
@@ -76365,6 +76365,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/necolas-react-native-web-learnings.md",
         "fileName": "necolas-react-native-web-learnings.md"
+      }
+    },
+    "SRC-8E72E4D1867B": {
+      "id": "SRC-8E72E4D1867B",
+      "url": "https://huggingface.co/autotrust/JEV-35B-NVFP4",
+      "title": "https://huggingface.co/autotrust/JEV-35B-NVFP4",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T01:04:02.109Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md",
+        "fileName": "hf-autotrust-jev-35b-nvfp4-learnings.md"
+      }
+    },
+    "SRC-E149DE8DC7BB": {
+      "id": "SRC-E149DE8DC7BB",
+      "url": "https://github.com/JetBrains/kotlinconf-app",
+      "title": "https://github.com/JetBrains/kotlinconf-app",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T01:04:02.390Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jetbrains-kotlinconf-app-learnings.md",
+        "fileName": "jetbrains-kotlinconf-app-learnings.md"
       }
     }
   }

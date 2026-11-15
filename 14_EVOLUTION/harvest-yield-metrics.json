@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T00:50:53.648Z",
-  "total_cycles_completed": 9632,
-  "total_learnings_persisted": 9632,
-  "total_rules_promoted": 9282,
+  "last_updated": "2026-11-15T01:03:34.899Z",
+  "total_cycles_completed": 9635,
+  "total_learnings_persisted": 9635,
+  "total_rules_promoted": 9284,
   "history": [
-    {
-      "timestamp": "2026-11-14T02:21:24.973Z",
-      "repository": "Tongyi-MAI/Z-Image-Turbo",
-      "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T02:36:55.747Z",
-      "repository": "meituan-longcat/LongCat-2.5",
-      "learningId": "learn-huggingface-meituan-longcat-longcat-2-5",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T02:36:58.182Z",
-      "repository": "openai/gpt-oss-120b",
-      "learningId": "learn-huggingface-openai-gpt-oss-120b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T02:37:06.884Z",
       "repository": "nats-io/nats-server",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-15T00:50:53.648Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T01:03:20.411Z",
+      "repository": "autotrust/AutoTrust-Decider-Pro-35B-NVFP4",
+      "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T01:03:28.314Z",
+      "repository": "JetBrains/kotlinconf-app",
+      "learningId": "learn-github-jetbrains-kotlinconf-app",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T01:03:34.899Z",
+      "repository": "Mintplex-Labs/anything-llm",
+      "learningId": "learn-github-mintplex-labs-anything-llm",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

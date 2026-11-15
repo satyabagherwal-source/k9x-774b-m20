@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T00:51:34.471Z",
+  "last_updated": "2026-11-15T01:04:02.977Z",
   "directives": [
     {
       "id": "CD-001",
@@ -14047,6 +14047,46 @@
       "source_repo": "necolas-react-native-web",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-32AD3A-upgrade-flow-to-0-339-and-make-types-mor.md",
+      "staged_date": "2026-11-15"
+    },
+    {
+      "id": "CD-T0WM",
+      "directive_title": "Update multiplatform-markdown-renderer to 0.46.0",
+      "source_repo": "jetbrains-kotlinconf-app-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-T0WM-update-multiplatform-markdown-renderer-to-0-46-0.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-15",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-T192",
+      "directive_title": "Mobile document picker UI",
+      "source_repo": "mintplex-labs-anything-llm-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-T192-mobile-document-picker-ui.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-15",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-F35DC1",
+      "directive_title": "Update multiplatform-markdown-renderer to 0.46.0",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "jetbrains-kotlinconf-app",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-F35DC1-update-multiplatform-markdown-renderer-t.md",
+      "staged_date": "2026-11-15"
+    },
+    {
+      "id": "CD-REV-4A05B3",
+      "directive_title": "Mobile document picker UI",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "mintplex-labs-anything-llm",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-4A05B3-mobile-document-picker-ui.md",
       "staged_date": "2026-11-15"
     }
   ]

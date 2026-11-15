@@ -9984,3 +9984,7 @@
 | `CYCLE-20261115-C0UY` | `2026-11-15T00:50:49.306Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/volcengine-openviking-learnings.md` | Yes (`9f450dc2...`) |
 | `CYCLE-20261115-C479` | `2026-11-15T00:50:53.637Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8556` | Yes (`ad36621f...`) |
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T00:51:33.728Z` | `hf-openbmb-minicpm-v-4.7-1b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-B43360BC` [Domain D] | Yes (`fecbb1ae...`) |
+| `CYCLE-20261115-S4ES` | `2026-11-15T01:03:20.404Z` | `autotrust/AutoTrust-Decider-Pro-35B-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md` | Yes (`c390b87d...`) |
+| `CYCLE-20261115-SAIB` | `2026-11-15T01:03:28.307Z` | `JetBrains/kotlinconf-app` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8557` | Yes (`adfff6c8...`) |
+| `CYCLE-20261115-SFL8` | `2026-11-15T01:03:34.892Z` | `Mintplex-Labs/anything-llm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8558` | Yes (`a2ae6076...`) |
+| `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T01:04:02.100Z` | `hf-autotrust-jev-35b-nvfp4` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-100E5003` [Domain D] | Yes (`ab6ae3d0...`) |

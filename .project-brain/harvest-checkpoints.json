@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-15T00:50:53.653Z",
+  "last_updated": "2026-11-15T01:03:34.902Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9801,14 +9801,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mintplex-labs-anything-llm",
-      "content_hash": "54a796474e163fcaeb38358e17a4464791107648823afc32189b40aac40ea900",
-      "verified_at": "2026-11-13T16:58:55.113Z",
+      "content_hash": "a2ae6076e7cbc3f34045cd514c657e278bcfbc9ca2aceb945f884913992cf069",
+      "verified_at": "2026-11-15T01:03:34.902Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T16:58:55.113Z"
+      "last_updated": "2026-11-15T01:03:34.902Z"
     },
     "shadcn-ui/taxonomy": {
       "repository": "shadcn-ui/taxonomy",
@@ -10761,14 +10761,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-jetbrains-kotlinconf-app",
-      "content_hash": "b7585d8a38f94fdb6d3bcb2757790ad199485c985dfe8ba70e4257dfd45f9fe3",
-      "verified_at": "2026-11-11T14:09:46.900Z",
+      "content_hash": "adfff6c81a219d2c9ef32134bb5c1fa9ea32e0d4e4f98c056d83bc0a928f822f",
+      "verified_at": "2026-11-15T01:03:28.317Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T14:09:46.900Z"
+      "last_updated": "2026-11-15T01:03:28.317Z"
     },
     "zeromicro/go-zero": {
       "repository": "zeromicro/go-zero",
@@ -18989,6 +18989,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-15T00:05:27.882Z"
+    },
+    "autotrust/AutoTrust-Decider-Pro-35B-NVFP4": {
+      "repository": "autotrust/AutoTrust-Decider-Pro-35B-NVFP4",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-autotrust-jev-35b-nvfp4",
+      "content_hash": "c390b87d0dd7669dd9dd56c1504dec0a5f8f6da94f30cb31cbbf2ec45ed31859",
+      "verified_at": "2026-11-15T01:03:20.414Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-15T01:03:20.414Z"
     }
   },
   "repos": {

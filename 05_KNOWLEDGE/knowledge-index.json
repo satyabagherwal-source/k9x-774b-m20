@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-15T00:51:34.741Z",
-  "total_verified_learnings": 8635,
+  "last_updated": "2026-11-15T01:04:03.157Z",
+  "total_verified_learnings": 8638,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 17980,
+  "total_items": 17993,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113606,10 +113606,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-mintplex-labs-anything-llm-technical-construction-intelligence-mintplex-labs-any.md",
       "title": "Technical Construction Intelligence: Mintplex-Labs/anything-llm Core Invariants",
       "repository": "Mintplex-Labs/anything-llm",
-      "source_version": "1626d971",
-      "content_hash": "ae793be0c8abe47228be3b10b8579e47d9adb07344c02d6e394243db19bc9ffa",
+      "source_version": "4d09fa5f",
+      "content_hash": "94e801ce03e7a8810d5fe188447bc63d7643853963d0dc6035ccbbfabf32a4ca",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T16:58:55.415Z"
+      "persisted_at": "2026-11-15T01:03:35.111Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-mintplex-labs-anything-llm": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-mintplex-labs-anything-llm",
@@ -113618,10 +113618,10 @@
       "relative_path": "08_VERIFICATION/mintplex-labs-anything-llm-verification-protocol-empirical-defect-shield-for-min.md",
       "title": "Verification Protocol: Empirical Defect Shield for Mintplex-Labs/anything-llm",
       "repository": "Mintplex-Labs/anything-llm",
-      "source_version": "1626d971",
-      "content_hash": "ee862a7c520ab59409e26a2be2405408ca4b5f7f4c6d4e1d454bccd3c2d40467",
+      "source_version": "4d09fa5f",
+      "content_hash": "540f984a62937a5c2217ffaa6908a631a88070664ee472491ee762a1ec47c0f7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T16:58:55.534Z"
+      "persisted_at": "2026-11-15T01:03:35.194Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-akhilaaa3-jev-omni-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-akhilaaa3-jev-omni-learnings-core-invariants",
@@ -113643,9 +113643,9 @@
       "title": "Technical Construction Intelligence: mintplex-labs-anything-llm-learnings Core Invariants",
       "repository": "mintplex-labs-anything-llm-learnings",
       "source_version": "HEAD",
-      "content_hash": "eee2188b9cdd9acbd9a383de6094cb50654d19e0000c52a3ca96c5893c157841",
+      "content_hash": "7765b018e489c81e7e32d442499e6ea22fd599d0f528272f1b2b3cc3808a7f6d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T16:59:45.588Z"
+      "persisted_at": "2026-11-15T01:04:03.060Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-mintplex-labs-anything-llm-lea": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-mintplex-labs-anything-llm-lea",
@@ -113655,9 +113655,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for mintplex-labs-anything-llm-learnings",
       "repository": "mintplex-labs-anything-llm-learnings",
       "source_version": "HEAD",
-      "content_hash": "afd8b08ca6deb0f9a66bb97444bac8aa6a36a5efdccdc74f3aa8d64021b17651",
+      "content_hash": "1e527e45022fb7d885ad38c638ceb24b255d2682eead1c9635af3dcdb4284635",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T16:59:45.710Z"
+      "persisted_at": "2026-11-15T01:04:03.157Z"
     },
     "candidate_directive-editor-add-scoped-ios-account-deletion": {
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
@@ -236997,6 +236997,223 @@
       "content_hash": "8e1c3125a89d4db51e54ea36c2bc945fc176f1b0a0d09600e6550c4345962cf6",
       "domain_letter": "K",
       "persisted_at": "2026-11-15T00:51:34.741Z"
+    },
+    "learn-huggingface-autotrust-jev-35b-nvfp4": {
+      "learning_id": "learn-huggingface-autotrust-jev-35b-nvfp4",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "autotrust/AutoTrust-Decider-Pro-35B-NVFP4",
+      "repository": "autotrust/AutoTrust-Decider-Pro-35B-NVFP4",
+      "slug": "hf-autotrust-jev-35b-nvfp4",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/autotrust/JEV-35B-NVFP4",
+      "source_version": "hf-autotrust-jev-35b-nvfp4",
+      "content_hash": "c390b87d0dd7669dd9dd56c1504dec0a5f8f6da94f30cb31cbbf2ec45ed31859",
+      "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T01:03:20.292Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-35b-nvfp4-core-i": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-35b-nvfp4-core-i",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-jev-35b-nvfp4-research-knowledge-intelligence-autotrust-autotrust-d.md",
+      "title": "Research & Knowledge Intelligence: autotrust/AutoTrust-Decider-Pro-35B-NVFP4 Core Invariants",
+      "repository": "autotrust/AutoTrust-Decider-Pro-35B-NVFP4",
+      "source_version": "hf-autotrust-jev-35b-nvfp4",
+      "content_hash": "265bed0f73e92fe3935c349a9bd90e4d40546f6b827069fc91d570d3d8dbc4bf",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T01:03:20.541Z"
+    },
+    "learn-github-jetbrains-kotlinconf-app": {
+      "learning_id": "learn-github-jetbrains-kotlinconf-app",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "JetBrains/kotlinconf-app",
+      "repository": "JetBrains/kotlinconf-app",
+      "slug": "jetbrains-kotlinconf-app",
+      "platform": "github",
+      "source_url": "https://github.com/JetBrains/kotlinconf-app",
+      "source_version": "146e891c",
+      "content_hash": "adfff6c81a219d2c9ef32134bb5c1fa9ea32e0d4e4f98c056d83bc0a928f822f",
+      "dossier_path": "07_PROJECT_LEARNING/jetbrains-kotlinconf-app-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/jetbrains-kotlinconf-app-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8557,
+          "title": "Update multiplatform-markdown-renderer to 0.46.0",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T01:03:28.165Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8557": {
+      "learning_id": "rule-8557",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8557,
+      "title": "Update multiplatform-markdown-renderer to 0.46.0",
+      "source_url": "https://github.com/JetBrains/kotlinconf-app",
+      "source_version": "146e891c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T01:03:28.165Z"
+    },
+    "candidate_directive-update-multiplatform-markdown-renderer-to-0-46-0": {
+      "item_id": "candidate_directive-update-multiplatform-markdown-renderer-to-0-46-0",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-T0WM-update-multiplatform-markdown-renderer-to-0-46-0.md",
+      "title": "Update multiplatform-markdown-renderer to 0.46.0",
+      "repository": "jetbrains-kotlinconf-app-learnings",
+      "source_version": "HEAD",
+      "content_hash": "be5db7a9aad7f024574d932964ae8ffa250c60f60d7e4e1bb38b210aa2e3b253",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T01:04:02.518Z"
+    },
+    "domain_intelligence-architecture-intelligence-jetbrains-kotlinconf-app-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-jetbrains-kotlinconf-app-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-jetbrains-kotlinconf-app-architecture-intelligence-jetbrains-kotlinconf-app-core.md",
+      "title": "Architecture Intelligence: JetBrains/kotlinconf-app Core Invariants",
+      "repository": "JetBrains/kotlinconf-app",
+      "source_version": "146e891c",
+      "content_hash": "0d6fb9f718177e13e305d01ce8eb2b5fb5a952e185ac789f7b2591536797c560",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T01:03:28.530Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-jetbrains-kotlinconf-app": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-jetbrains-kotlinconf-app",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/jetbrains-kotlinconf-app-verification-protocol-empirical-defect-shield-for-jetbr.md",
+      "title": "Verification Protocol: Empirical Defect Shield for JetBrains/kotlinconf-app",
+      "repository": "JetBrains/kotlinconf-app",
+      "source_version": "146e891c",
+      "content_hash": "b206da976bfbac214d88ad44a22b32658702b7ff70dd964d46b6b5213626a6a7",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T01:03:28.610Z"
+    },
+    "learn-github-mintplex-labs-anything-llm": {
+      "learning_id": "learn-github-mintplex-labs-anything-llm",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Mintplex-Labs/anything-llm",
+      "repository": "Mintplex-Labs/anything-llm",
+      "slug": "mintplex-labs-anything-llm",
+      "platform": "github",
+      "source_url": "https://github.com/Mintplex-Labs/anything-llm",
+      "source_version": "4d09fa5f",
+      "content_hash": "a2ae6076e7cbc3f34045cd514c657e278bcfbc9ca2aceb945f884913992cf069",
+      "dossier_path": "07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8558,
+          "title": "Mobile document picker UI",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T01:03:34.769Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8558": {
+      "learning_id": "rule-8558",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8558,
+      "title": "Mobile document picker UI",
+      "source_url": "https://github.com/Mintplex-Labs/anything-llm",
+      "source_version": "4d09fa5f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T01:03:34.769Z"
+    },
+    "candidate_directive-mobile-document-picker-ui": {
+      "item_id": "candidate_directive-mobile-document-picker-ui",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-T192-mobile-document-picker-ui.md",
+      "title": "Mobile document picker UI",
+      "repository": "mintplex-labs-anything-llm-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b1d027c0a995a53692d44e206e0b6c9cfd35825bd20b89ce8170933ff6ad22c8",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T01:04:02.977Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-autotrust-jev-35b-nvfp4-learnings-core-invari": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-autotrust-jev-35b-nvfp4-learnings-core-invari",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-jev-35b-nvfp4-learnings-research-knowledge-intelligence-hf-autotrus.md",
+      "title": "Research & Knowledge Intelligence: hf-autotrust-jev-35b-nvfp4-learnings Core Invariants",
+      "repository": "hf-autotrust-jev-35b-nvfp4-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6078d8813c5a2e722a1e5ef8d34f922b9054414dbf422cf33c3da57da025e615",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T01:04:02.256Z"
+    },
+    "domain_intelligence-architecture-intelligence-jetbrains-kotlinconf-app-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-jetbrains-kotlinconf-app-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-jetbrains-kotlinconf-app-learnings-architecture-intelligence-jetbrains-kotlincon.md",
+      "title": "Architecture Intelligence: jetbrains-kotlinconf-app-learnings Core Invariants",
+      "repository": "jetbrains-kotlinconf-app-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bb6d06fc9775216cf973e92ddebadc73bfd1d15eadfe2cb2524de8d410bb5dff",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T01:04:02.606Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-jetbrains-kotlinconf-app-learn": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-jetbrains-kotlinconf-app-learn",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/jetbrains-kotlinconf-app-learnings-verification-protocol-empirical-defect-shield.md",
+      "title": "Verification Protocol: Empirical Defect Shield for jetbrains-kotlinconf-app-learnings",
+      "repository": "jetbrains-kotlinconf-app-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5ebb642988be0f48f7b0237b7ab8e23046a3da6c668329087a6568498b513b08",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T01:04:02.695Z"
     }
   },
   "ai-builder-brain": {

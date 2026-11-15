@@ -1420,13 +1420,13 @@
     "learningId": "learn-github-tickernelz-opencode-mem"
   },
   "hf-autotrust-jev-35b-nvfp4": {
-    "repository": "autotrust/JEV-35B-NVFP4",
+    "repository": "autotrust/AutoTrust-Decider-Pro-35B-NVFP4",
     "platform": "huggingface",
     "sourceUrl": "https://huggingface.co/autotrust/JEV-35B-NVFP4",
     "sourceVersion": "hf-autotrust-jev-35b-nvfp4",
     "license": "Open-Source",
-    "contentHash": "fe6c4aa8fba078495935e7b89d42dd90653e9849436a6fb4a105ef0c56bed3b4",
-    "lastHarvestedAt": "2026-11-09T13:10:10.911Z",
+    "contentHash": "c390b87d0dd7669dd9dd56c1504dec0a5f8f6da94f30cb31cbbf2ec45ed31859",
+    "lastHarvestedAt": "2026-11-15T01:03:20.407Z",
     "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4"
   },
   "leonxlnx-taste-skill": {
@@ -6473,10 +6473,10 @@
     "repository": "Mintplex-Labs/anything-llm",
     "platform": "github",
     "sourceUrl": "https://github.com/Mintplex-Labs/anything-llm",
-    "sourceVersion": "1626d971",
+    "sourceVersion": "4d09fa5f",
     "license": "MIT",
-    "contentHash": "54a796474e163fcaeb38358e17a4464791107648823afc32189b40aac40ea900",
-    "lastHarvestedAt": "2026-11-13T16:58:55.095Z",
+    "contentHash": "a2ae6076e7cbc3f34045cd514c657e278bcfbc9ca2aceb945f884913992cf069",
+    "lastHarvestedAt": "2026-11-15T01:03:34.895Z",
     "learningId": "learn-github-mintplex-labs-anything-llm"
   },
   "shadcn-ui-taxonomy": {
@@ -7143,10 +7143,10 @@
     "repository": "JetBrains/kotlinconf-app",
     "platform": "github",
     "sourceUrl": "https://github.com/JetBrains/kotlinconf-app",
-    "sourceVersion": "ac7b40cc",
+    "sourceVersion": "146e891c",
     "license": "Apache-2.0",
-    "contentHash": "b7585d8a38f94fdb6d3bcb2757790ad199485c985dfe8ba70e4257dfd45f9fe3",
-    "lastHarvestedAt": "2026-11-11T14:09:46.892Z",
+    "contentHash": "adfff6c81a219d2c9ef32134bb5c1fa9ea32e0d4e4f98c056d83bc0a928f822f",
+    "lastHarvestedAt": "2026-11-15T01:03:28.310Z",
     "learningId": "learn-github-jetbrains-kotlinconf-app"
   },
   "zeromicro-go-zero": {

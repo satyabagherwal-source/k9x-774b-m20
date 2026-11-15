@@ -10017,3 +10017,7 @@ Every entry in this ledger must capture:
 | `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `00c8e7b1` | Multi-dimensional audit evidence | 2026-11-15T00:50:49.311Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `7abf98c0` | Multi-dimensional audit evidence | 2026-11-15T00:50:53.642Z |
 | `learn-dom-d-b43360bc` | `project://hf-openbmb-minicpm-v-4.7-1b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md` | 2026-11-15T00:51:33.728Z |
+| `learn-huggingface-autotrust-jev-35b-nvfp4` | `https://huggingface.co/autotrust/JEV-35B-NVFP4` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-15T01:03:20.407Z |
+| `learn-github-jetbrains-kotlinconf-app` | `https://github.com/JetBrains/kotlinconf-app` | `146e891c` | Multi-dimensional audit evidence | 2026-11-15T01:03:28.310Z |
+| `learn-github-mintplex-labs-anything-llm` | `https://github.com/Mintplex-Labs/anything-llm` | `4d09fa5f` | Multi-dimensional audit evidence | 2026-11-15T01:03:34.895Z |
+| `learn-dom-d-100e5003` | `project://hf-autotrust-jev-35b-nvfp4` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md` | 2026-11-15T01:04:02.100Z |

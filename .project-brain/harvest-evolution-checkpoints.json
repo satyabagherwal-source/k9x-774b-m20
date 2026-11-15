@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T00:51:34.876Z",
+  "last_updated": "2026-11-15T01:04:03.247Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-14T22:16:50.251Z",
@@ -318,7 +318,7 @@
       "staged_for_review": 1
     },
     "jetbrains-kotlinconf-app-learnings.md": {
-      "processed_at": "2026-11-11T14:09:53.305Z",
+      "processed_at": "2026-11-15T01:04:02.370Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1998,7 +1998,7 @@
       "staged_for_review": 0
     },
     "mintplex-labs-anything-llm-learnings.md": {
-      "processed_at": "2026-11-13T16:59:44.868Z",
+      "processed_at": "2026-11-15T01:04:02.783Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2821,9 +2821,14 @@
       "processed_at": "2026-11-15T00:51:33.728Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-autotrust-jev-35b-nvfp4-learnings.md": {
+      "processed_at": "2026-11-15T01:04:02.100Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 945,
-  "total_canonical_promoted": 230,
-  "total_staged_for_review": 715
+  "total_dossiers_evaluated": 948,
+  "total_canonical_promoted": 231,
+  "total_staged_for_review": 717
 }
