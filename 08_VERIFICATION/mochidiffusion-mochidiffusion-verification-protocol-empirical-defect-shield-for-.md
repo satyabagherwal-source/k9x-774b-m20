@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for mochidiffusion/mochidiffusion
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for MochiDiffusion/MochiDiffusion
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "mochidiffusion/mochidiffusion",
-  "source_url": "https://github.com/mochidiffusion/mochidiffusion",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "MochiDiffusion/MochiDiffusion",
+  "source_url": "https://github.com/MochiDiffusion/MochiDiffusion",
+  "source_version": "e9e0d755",
+  "license": "GPL-3.0",
+  "timestamp": "2026-11-15T12:54:21.521Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-mochidiffusion-mochidiffusion",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [mochidiffusion/mochidiffusion](https://github.com/mochidiffusion/mochidiffusion) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [MochiDiffusion/MochiDiffusion](https://github.com/MochiDiffusion/MochiDiffusion) (Revision: `e9e0d755`).  
+> **License**: GPL-3.0 | **Timestamp**: `2026-11-15T12:54:21.521Z`  
+> **Learning ID**: `learn-github-mochidiffusion-mochidiffusion`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `mochidiffusion/mochidiffusion` (Commit: `historical`)
+- **Target Repository**: `MochiDiffusion/MochiDiffusion` (Commit: `e9e0d755`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mochidiffusion-mochidiffusion-learnings.md`  
-> **Source**: github ([https://github.com/MochiDiffusion/MochiDiffusion](https://github.com/MochiDiffusion/MochiDiffusion))  
-> **Source Version**: `d23807f2`  
-> **License**: GPL-3.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T02:11:35.247Z  
-> **Learning ID**: `learn-github-mochidiffusion-mochidiffusion`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): MochiDiffusion/MochiDiffusion
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mochidiffusion-mochidiffusion-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MochiDiffusion/MochiDiffusion](https://github.com/MochiDiffusion/MochiDiffusion))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T02:11:35.104Z  
+> **Harvest Timestamp**: 2026-11-15T12:54:20.470Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Run Stable Diffusion on Mac natively
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7973 stars
+- **Stars / Engagement**: 7977 stars
 
 ---
 
@@ -82,13 +68,13 @@ nonisolated extension EngineID: CustomStringConvertible {
 nonisolated extension EngineID {
     static let coreMLStableDiffusion = EngineID(rawValue: "coreml-sd")
     static let iris = EngineID(rawValue: "iris")
-    static let openAI = EngineID(rawValue: "openai")
+    static let drawThings = EngineID(rawValue: "drawthings")
 }
 
 /// Identifies a model within an engine.
 ///
 /// For a local engine, `key` is the name of a direct child of the model directory.
-/// For a hosted engine, `key` is the API's own model name.
+/// For Draw Things, `key` is the model's filename on the server.
 nonisolated struct ModelID: Hashable, Codable, Sendable {
     let engine: EngineID
     let key: String
@@ -156,7 +142,6 @@ nonisolated enum MetadataField: String, CaseIterable, Sendable {
     case engine
     case modelKey
     case size
-    case quality
     case startingImage
     case controlNetImage
     case inputImages
@@ -166,12 +151,24 @@ nonisolated enum MetadataField: String, CaseIterable, Sendable {
     case seed
     case steps
     case guidanceScale
+    /// The LoRAs applied. An image that records this field and lists none was
+    /// generated without LoRAs.
+    case loras
+}
+
+/// Where a model lives, as the model info popover shows it.
+nonisolated enum ModelLocation: Sendable, Equatable {
+    /// A model directory on this Mac.
+    case directory(URL)
+    /// A model file on a Draw Things server, named as Settings names the server.
+    case server(name: String, file: String)
 }
 
 /// A model a particular engine can generate with.
 ///
-/// Local models have a directory, but hosted ones only a name,
-/// so the concrete types carry their own `url` and generic callers do not ask.
+/// Local models have a directory, but a server's models only a name,
+/// so the concrete types carry their own `url` and generic callers ask for
+/// `location` instead.
 nonisolated protocol EngineModel: Identifiable, Sendable {
     var id: ModelID { get }
     var name: String { get }
@@ -179,6 +176,27 @@ nonisolated protocol EngineModel: Identifiable, Sendable {
     var metadataFields: Set<MetadataField> { get }
     /// without a local tokenizer there is no prompt token count
     var tokenizerModelDir: URL? { get }
+    /// The steps the model's publisher recommends. Never applied automatically:
+    /// steps are the sidebar's value until the user changes them. `nil` when there
+    /// is no recommendation.
+    var recommendedSteps: Int? { get }
+    /// The guidance the model's publisher recommends, on the same terms as
+    /// `recommendedSteps`. `nil` when there is no recommendation or the model does
+    /// not use guidance.
+    var recommendedGuidanceScale: Double? { get }
+    /// The architecture's name, such as Stable Diffusion XL or FLUX.2 Klein, as
+    /// image metadata records it. `nil` when it is not known.
+    var familyName: String? { get }
+    /// `nil` only for test doubles, which have nowhere to show.
+    var location: ModelLocation? { get }
+}
+
+nonisolated extension EngineModel {
+    /// Local models carry no recommendation.
+    var recommendedSteps: Int? { nil }
+    var recommendedGuidanceScale: Double? { nil }
+    var familyName: String? { nil }
+    var location: ModelLocation? { nil }
 }
 
 ```
@@ -452,6 +470,237 @@ actor CoreMLEngineRuntime: GenerationEngineRuntime {
     /// ControlNet are recorded only when they reached the pipelin
 ```
 
+### Core Architecture Module: `Mochi Diffusion/Support/DrawThingsEngine.swift`
+```
+//
+//  DrawThingsEngine.swift
+//  Mochi Diffusion
+//
+
+import CoreGraphics
+import DrawThingsClient
+import Foundation
+import os
+
+/// One server for both this Mac (localhost) and another machine on the LAN.
+/// Credentials are deliberately absent from this persisted value.
+nonisolated struct DrawThingsConnection: Codable, Equatable, Sendable {
+    static let defaultPort = 7859
+    /// The Keychain account of the server's shared secret. There is one server, so
+    /// the account does not depend on the address: editing the host keeps the secret.
+    static let secretAccount = "drawthings"
+
+    var enabled = false
+    /// Draw Things on this Mac until the user enters another server. Mochi makes no
+    /// network calls until Draw Things is switched on.
+    var host = "localhost"
+    var port = DrawThingsConnection.defaultPort
+    var useTLS = true
+
+    /// Whether Mochi may contact the server: switched on, with a host entered.
+    /// Otherwise Mochi makes no network calls for Draw Things.
+    var isActive: Bool { enabled && !host.isEmpty }
+
+    /// The host, with the port only when it is not Draw Things' default.
+    var serverName: String {
+        port == Self.defaultPort ? host : "\(host):\(port)"
+    }
+
+    /// Keeps the characters a hostname or IPv4 address can contain.
+    static func filteredHost(_ text: String) -> String {
+        text.filter { $0.isASCII && ($0.isLetter || $0.isNumber || $0 == "." || $0 == "-") }
+    }
+
+    /// Keeps up to five digits.
+    static func filteredPort(_ text: String) -> String {
+        String(text.filter { $0.isASCII && $0.isNumber }.prefix(5))
+    }
+
+    func validated() throws -> Self {
+        var result = self
+        result.host = host.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !result.host.isEmpty,
+            !result.host.contains(where: { $0.isWhitespace }),
+            !result.host.contains("/"), !result.host.contains(":"),
+            (1...65535).contains(port)
+        else {
+            throw DrawThingsError.message(
+                "Enter a hostname or IPv4 address and a port from 1 to 65535.")
+        }
+        return result
+    }
+}
+
+/// What Settings says about the Draw Things model list: the result of the last
+/// fetch. Mochi holds no connection between fetches and generations, so this
+/// describes that fetch only, and stays true until the next one.
+nonisolated struct DrawThingsStatus: Equatable, Sendable {
+    nonisolated enum Fetch: Equatable, Sendable {
+        case models(count: Int, at: Date)
+        /// The server answered, but its list gives Mochi nothing to use; with why.
+        case noModels(String, at: Date)
+        case failed(String, at: Date)
+    }
+
+    /// Kept while the next fetch runs. `nil` before the first fetch from the server
+    /// the settings name.
+    var lastFetch: Fetch?
+    var isFetching = false
+
+    /// Switched off, or no host entered: Mochi does not fetch.
+    static let inactive = DrawThingsStatus()
+}
+
+nonisolated enum DrawThingsError: LocalizedError, ModelListMayBeOutdated {
+    case message(String)
+    /// The server answered, but its model list gives Mochi nothing to use.
+    case unusableModelList(String)
+    /// The connection closed before the image was finished. Draw Things does this
+    /// when the model is no longer installed, and it is also what quitting looks
+    /// like, so Mochi cannot tell which.
+    case connectionClosed(String)
+
+    var errorDescription: String? {
+        switch self {
+        case .message(let message), .unusableModelList(let message),
+            .connectionClosed(let message):
+            message
+        }
+    }
+
+    var outdatedModelListSource: ModelListSource? {
+        if case .connectionClosed = self { .connection } else { nil }
+    }
+}
+
+/// A LoRA the server publishes, with the specification it is sent back with.
+nonisolated struct DrawThingsLoRA: Sendable {
+    let option: LoRAOption
+    /// The model version it was trained for, such as `flux2_4b`.
+    let version: String
+    /// The server's entry for this LoRA as a JSON object, sent back with a
+    /// generation that uses it, including fields unknown to this build.
+    let specification: Data
+
+    /// The LoRAs in a server's list that Mochi can apply, in the server's order.
+    ///
+    /// Leaves out consistency, inpainting and alternative-decoder LoRAs, which
+    /// need options Mochi does not offer.
+    static func parse(_ data: Data) -> [Self] {
+        guard let entries = try? JSONSerialization.jsonObject(with: data) as? [Any] else {
+            return []
+        }
+        var seen: Set<String> = []
+        return entries.compactMap { entry in
+            guard let fields = entry as? [String: Any],
+                let file = fields["file"] as? String, !file.isEmpty,
+                let version = fields["version"] as? String,
+                fields["is_consistency_model"] as? Bool != true,
+                fields["alternative_decoder"] == nil,
+                (fields["modifier"] as? String ?? "none") == "none",
+                let specification = try? JSONSerialization.data(withJSONObject: fields)
+            else { return nil }
+            let weight = fields["weight"] as? [String: Any]
+            let lower = (weight?["lower_bound"] as? NSNumber)?.doubleValue ?? -1.5
+            let upper = (weight?["upper_bound"] as? NSNumber)?.doubleValue ?? 2.5
+            let value = (weight?["value"] as? NSNumber)?.doubleValue ?? 1
+            guard lower.isFinite, upper.isFinite, value.isFinite, lower <= upper,
+                seen.insert(file).inserted
+            else { return nil }
+            return Self(
+                option: LoRAOption(
+                    file: file, name: fields["name"] as? String ?? file,
+                    triggerWords: fields["prefix"] as? String ?? "",
+                    weightRange: lower...upper, defaultWeight: min(max(value, lower), upper)),
+                version: version, specification: specification)
+        }
+    }
+}
+
+nonisolated struct DrawThingsModel: EngineModel {
+    let file: String
+    let name: String
+    /// The Draw Things model version, such as `flux2_4b`, which names its family.
+    let version: String
+    /// The catalog's `modifier`, which says how the model uses an input image:
+    /// `none` for a text-to-image model, `kontext` or `kontext_kv` for one that
+    /// attends to reference images.
+    let modifier: String
+    /// Distilled models with no guidance at all, from the catalog's
+    /// `is_consistency_model`. They use neither guidance nor a negative prompt.
+    let isConsistencyModel: Bool
+    /// Models whose guidance is a distilled embedding rather than CFG, from the
+    /// catalog's `guidance_embed`. Guidance still has an effect; a negative prompt
+    /// does not.
+    let usesGuidanceEmbedding: Bool
+    let connection: DrawThingsConnection
+    /// Preserve the full server specification, including fields unknown to this build.
+    let specification: Data
+    /// The model's recommended configuration, which supplies every value Mochi does
+    /// not offer.
+    let configuration: DrawThingsConfiguration
+    /// The server's LoRAs for this model's version.
+    var loras: [DrawThingsLoRA] = []
+
+    var id: ModelID { ModelID(engine: .drawThings, key: file) }
+    var tokenizerModelDir: URL? { nil }
+    var familyName: String? { DrawThingsPresets.familyNames[version] }
+    var location: ModelLocation? { .server(name: connection.serverName, file: file) }
+
+    var supportsNegativePrompt: Bool { !isConsistencyModel && !usesGuidanceEmbedding }
+
+    /// A text-to-image model denoises from a starting image.
+    var takesStartingImage: Bool { modifier == "none" }
+
+    /// Draw Things passes these models its moodboard images, in order, as references.
+    var takesReferenceImages: Bool { ["kontext", "kontext_kv"].contains(modifier) }
+
+    /// Draw Things sets no limit of its own. These are Black Forest Labs' limits:
+    /// ten for FLUX.2 dev, four for Klein.
+    var maxReferenceImages: Int { version == "flux2" ? 10 : 4 }
+
+    var recommendedSteps: Int? { Int(configuration.steps) }
+    var recommendedGuidanceScale: Double? {
+        guard !isConsistencyModel else { return nil }
+        // Mochi always runs a guidance-embedding model with the speed-up on, where
+        // Draw Things uses the text guidance as the embed.
+        return Double(configuration.guidanceScale)
+    }
+
+    var metadataFields: Set<MetadataField> {
+        var fields: Set<MetadataField> = [
+            .prompt, .model, .engine, .modelKey, .size, .seed, .steps, .loras,
+        ]
+        if supportsNegativePrompt { fields.insert(.negativePrompt) }
+        if !isConsistencyModel { fields.insert(.guidanceScale) }
+        if takesStartingImage { fields.formUnion([.startingImage, .strength]) }
+        if takesReferenceImages { fields.insert(.inputImages) }
+        return fields
+    }
+
+    /// Decided by the model alone, from catalog fields every family shares; no
+    /// option depends on another option's value.
+    var constraints: OptionConstraints {
+        OptionConstraints(
+            supportsNegativePrompt: supportsNegativePrompt,
+            size: .freeform(range: 64...2048, step: 64),
+            steps: .range(1...50, step: 1, acceptsBeyondUpperBound: true),
+            guidanceScale: isConsistencyModel ? .unsupported : .range(1...20, step: nil),
+            scheduler: .unsupported,
+            startingImage: takesStartingImage
+                ? .supported(strength: .range(0...1, step: nil)) : .unsupported,
+            inputImages: takesReferenceImages
+                ? .supported(maxCount: maxReferenceImages) : .unsupported,
+            controlNet: .unsupported,
+            numberOfImages: .range(1...100, step: 1, acceptsBeyondUpperBound: true),
+            promptTokenLimit: nil,
+            loras: loras.isEmpty
+                ? .unsupported
+                : .supported(
+                    loras.map(\.option).sorted {
+                        $0.name.localizedStandardCompare($1.name) == 
+```
+
 ### Core Architecture Module: `Mochi Diffusion/Support/EngineRegistry.swift`
 ```
 //
@@ -465,8 +714,8 @@ import os
 /// Holds the engines and runs discovery across them.
 ///
 /// Discovery is per engine and failure-isolated: each engine's result is kept
-/// separately, so a missing folder or an absent API key cannot empty the model list
-/// for everything else.
+/// separately, so a missing folder or an unreachable server cannot empty the model
+/// list for everything else.
 actor EngineRegistry {
     /// The engines the app ships with, in registration order. That order decides
     /// only where an engine appears in a list — never which engine owns a model,
@@ -475,22 +724,8 @@ actor EngineRegistry {
         [
             AnyGenerationEngine(IrisEngine()),
             AnyGenerationEngine(CoreMLStableDiffusionEngine()),
+            AnyGenerationEngine(DrawThingsEngine(secrets: KeychainSecretStore())),
         ]
-    }
-
-    /// The shipped engines plus hosted OpenAI generation, which the app does not
-    /// currently register.
-    ///
-    /// Hosted generation is opt-in at the composition root, so the default
-    /// registry cannot reach a credential store or hosted runtime.
-    static func openAIBeta(
-        secrets: any SecretStore,
-        fileSystem: FileSystemStore = FileSystemStore()
-    ) -> EngineRegistry {
-        EngineRegistry(
-            engines: shipped + [AnyGenerationEngine(OpenAIImageEngine(secrets: secrets))],
-            fileSystem: fileSystem
-        )
     }
 
     /// One engine's discovery result, kept whole so a caller can report a failure
@@ -515,14 +750,9 @@ actor EngineRegistry {
         self.fileSystem = fileSystem
     }
 
-    /// The shipped engine list. Hosted generation must be opted into through
-    /// `openAIBeta(secrets:fileSystem:)`.
+    /// The shipped engine list.
     init(fileSystem: FileSystemStore = FileSystemStore()) {
         self.init(engines: EngineRegistry.shipped, fileSystem: fileSystem)
-    }
-
-    nonisolated var engineIDs: [EngineID] {
-        engines.map(\.id)
     }
 
     /// Every engine, in registration order, including ones that are unconfigured or
@@ -546,17 +776,22 @@ actor EngineRegistry {
         var failures: [(engine: EngineID, error: any Error)] { discoveries.failures }
     }
 
-    /// Asks every engine what it has and whether it can be used, concurrently.
+    /// Asks every engine whose models come from one of `sources` what it has and
+    /// whether it can be used, concurrently. Engines from other sources are not
+    /// asked and do not appear in the result.
     ///
-    /// Concurrent because the work is per engine and independent: with a hosted
-    /// engine registered, a serial pass would make a slow network round trip delay
-    /// the local engines that were ready all along.
+    /// Concurrent because the work is per engine and independent: a serial pass
+    /// would let a slow network round trip delay engines that were ready all along.
     ///
     /// Never throws. An engine that fails contributes its error and no models,
     /// which is what keeps one engine's problem from looking like a global one.
-    func refresh(settings: EngineSettings) async -> Refresh {
+    func refresh(
+        settings: EngineSettings,
+        sources: Set<ModelListSource> = Set(ModelListSource.allCases)
+    ) async -> Refresh {
         // Enumerated once for the whole pass; see `ModelDiscoveryContext`.
         let context = ModelDiscoveryContext(settings: settings, fileSystem: fileSystem)
+        let engines = engines.filter { sources.contains($0.modelListSource) }
 
         var discoveredByEngine: [EngineID: Discovery] = [:]
         var availability: [EngineID: EngineAvailability] = [:]
@@ -565,7 +800,7 @@ actor EngineRegistry {
             for engine in engines {
                 group.addTask {
                     // Both halves of one engine's answer, also concurrently: a
-                    // hosted engine will reach the network for each.
+                    // server engine may reach the network for each.
                     async let reported = engine.availability(settings)
                     let discovery: Discovery
                     do {
@@ -593,7 +828,7 @@ actor EngineRegistry {
             // folder is the problem.
             //
             // Only `.ready` is overridden. An engine that already said why it cannot
-            // be used — no API key, host unreachable — has given the better reason,
+            // be used — no server configured, host unreachable — has given the better reason,
             // and its discovery failing is a consequence of it rather than a second
             // fact. Replacing that with a generic message would lose the only one
             // the user can act on.
@@ -663,164 +898,41 @@ nonisolated extension [EngineRegistry.Discovery] {
 import Foundation
 import Observation
 
-/// Per-engine persisted values: which engine is selected, and which model each
-/// engine was last using.
+/// Persisted settings that belong to one engine: the Draw Things server connection.
 ///
-/// Separate from `ConfigStore` because the keys are dynamic. `@AppStorage` binds
-/// one property to one literal key, which cannot express `Engine.<id>.…` for a
-/// set of engines that grows, so the values are observed stored properties
-/// written through to `UserDefaults`.
-///
-/// The model picker's live selection is `ConfigStore.selectedModel`. These values
-/// back the explicit engine picker, which the app does not currently show.
+/// Separate from `ConfigStore` because the value is a whole connection under an
+/// engine-qualified `Engine.<id>.Options` key rather than one `@AppStorage`
+/// property per literal key. The model picker's selection is
+/// `ConfigStore.selectedModel`.
 @MainActor
 @Observable final class EngineSettingsStore {
     nonisolated enum Key {
-        static let selectedEngine = "SelectedEngine"
-
-        static func selectedModel(_ engine: EngineID) -> String {
-            "Engine.\(engine.rawValue).SelectedModel"
+        /// Engine-specific values that are not a model selection, such as a
+        /// server's address.
+        static func options(_ engine: EngineID) -> String {
+            "Engine.\(engine.rawValue).Options"
         }
     }
 
     private let store: UserDefaults
 
-    private var selectedEngineID: EngineID?
-    /// Model selections by engine, read once at init and written through on
-    /// change.
-    private var selectedModels: [EngineID: ModelID]
+    /// The shared secret is not part of this value; it is kept in the Keychain.
+    var drawThings: DrawThingsConnection {
+        didSet {
+            if let data = try? JSONEncoder().encode(drawThings) {
+                store.set(data, forKey: Key.options(.drawThings))
+            }
+        }
+    }
 
-    /// - Parameters:
-    ///   - store: the defaults to read and write. Tests pass an isolated suite;
-    ///     the app uses `.standard`.
-    ///   - engines: the engines whose selections are loaded. Only these are read,
-    ///     so a key left behind by an engine that no longer exists is ignored
-    ///     rather than resurrected.
-    init(store: UserDefaults = .standard, engines: [EngineID]) {
+    /// - Parameter store: the defaults to read and write. Tests pass an isolated
+    ///   suite; the app uses `.standard`.
+    init(store: UserDefaults = .standard) {
         self.store = store
-        selectedEngineID = store.string(forKey: Key.selectedEngine).map(EngineID.init(rawValue:))
-        selectedModels = [:]
-        for engine in engines {
-            guard
-                let persisted = store.string(forKey: Key.selectedModel(engine)),
-                let id = ModelID(persistedValue: persisted)
-            else { continue }
-            // A key filed under a different engine is corrupt; trusting it would
-            // let one engine's selection resolve to another engine's model.
-            guard id.engine == engine else { continue }
-            selectedModels[engine] = id
-        }
-    }
-
-    var selectedEngine: EngineID? {
-        get { selectedEngineID }
-        set {
-            guard newValue != selectedEngineID else { return }
-            selectedEngineID = newValue
-            if let newValue {
-                store.set(newValue.rawValue, forKey: Key.selectedEngine)
-            } else {
-                store.removeObject(forKey: Key.selectedEngine)
-            }
-        }
-    }
-
-    func selectedModel(for engine: EngineID) -> ModelID? {
-        selectedModels[engine]
-    }
-
-    /// Records `model` as `engine`'s selection.
-    ///
-    /// Ignores a model belonging to a different engine, which is a wiring bug
-    /// rather than something to persist.
-    func setSelectedModel(_ model: ModelID?, for engine: EngineID) {
-        if let model, model.engine != engine { return }
-        guard selectedModels[engine] != model else { return }
-        if let model {
-            selectedModels[engine] = model
-            store.set(model.persistedValue, forKey: Key.selectedModel(engine))
-        } else {
-            selectedModels.removeValue(forKey: engine)
-            store.removeObject(forKey: Key.selectedModel(engine))
-        }
-    }
-
-    /// Applies the selection migration, if it has not run.
-    ///
-    /// Written through the properties above rather than straight to `UserDefaults`,
-    /// so observers see the change.
-    @discardableResult
-    func migrateSelectedEngineIfNeeded(from previousSelection: ModelID?, discovered: [ModelID])
-        -> EngineSelectionMigration.Outcome
-    {
-        let outcome = EngineSelectionMigration.selection(
-            previousSelection: previousSelection,
-            alreadyInItsSlot: previousSelection.map {
-                selectedModel(for: $0.engine) == $0
-            } ?? false,
-            discovered: discovered
-        )
-        if case .migrated(let id) = outcome {
-            setSelectedModel(id, for: id.engine)
-            // The engine is adopted only if none is chosen, so the user is not
-            // moved off the engine they are working in.
-            if selectedEngine == nil {
-                selectedEngine = id.engine
-            }
-        }
-        return outcome
-    }
-}
-
-/// One-time migration of a single `SelectedModel` into `SelectedEngine` plus one
-/// key per engine, so switching engines and back does not lose the model in use.
-///
-/// Runs after `PreferenceMigration`, which turns the legacy `Model` URL into a
-/// `SelectedModel`; only that first step needs to match against discovery.
-///
-/// `SelectedModel` remains the model picker's live selection. This migration
-/// seeds the per-engine copy that the explicit engine picker reads.
-///
-/// Delete both once the migration window closes.
-nonisolated enum EngineSelectionMigration {
-    enum Outcome: Equatable, Sendable {
-        /// The selection is already recorded against its own engine.
-        case alreadyMigrated
-        /// Nothing to migrate.
-        case nothingToMigrate
-        /// The selection names nothing discovery found, so there is no engine worth
-        /// recording. Retried on the next pass, since the models folder may have
-        /// been temporarily unavailable.
-        case unresolvable
-        case migrated(ModelID)
-    }
-
-    /// Decides what the engine-scoped selection should become.
-    ///
-    /// Migrates only a selection that resolves to a model discovery actually found.
-    /// Otherwise `SelectedEngine` would name an engine with no models, and the
-    /// controller keeps a chosen engine even when it is empty. Leaving it unset
-    /// lets the controller pick the first model instead.
-    ///
-    /// - Parameter alreadyInItsSlot: whether the selection is already recorded
-    ///   against its own engine, which is what "this has run" means. Whether some
-    ///   engine is selected says nothing, because `restoreSelection` persists a
-    ///   fallback engine.
-    static func selection(
-        previousSelection: ModelID?,
-        alreadyInItsSlot: Bool,
-        discovered: [ModelID]
-    ) -> Outcome {
-        guard let previousSelection else {
-            return .nothingToMigrate
-        }
-        if alreadyInItsSlot {
-            return .alreadyMigrated
-        }
-        guard discovered.contains(previousSelection) else {
-            return .unresolvable
-        }
-        return .migrated(previousSelection)
+        drawThings =
+            store.data(forKey: Key.options(.drawThings))
+            .flatMap { try? JSONDecoder().decode(DrawThingsConnection.self, from: $0) }
+            ?? DrawThingsConnection()
     }
 }
 
@@ -845,6 +957,25 @@ import Foundation
 nonisolated struct EngineSettings: Sendable {
     var modelDirectory: URL
     var controlNetDirectory: URL
+    var drawThings: DrawThingsConnection = DrawThingsConnection()
+}
+
+/// What an engine's model list depends on, which decides the refreshes that ask it.
+///
+/// A change in the models folder refreshes only `.modelsFolder` engines, so a folder
+/// event never contacts a server. `.connection` engines are asked at launch, when the
+/// user switches Draw Things on or off, and when they save its details, which is how
+/// they reconnect.
+nonisolated enum ModelListSource: Sendable, Hashable, CaseIterable {
+    case modelsFolder
+    case connection
+}
+
+/// A generation error that a fresh model list may explain, such as a model removed
+/// from a server. The generation alert offers to refresh that source's models.
+nonisolated protocol ModelListMayBeOutdated: Error {
+    /// The source to refresh, or `nil` when this error is not one a refresh explains.
+    var outdatedModelListSource: ModelListSource? { get }
 }
 
 /// One discovery pass, with the work that does not vary by engine done once.
@@ -859,7 +990,7 @@ nonisolated struct ModelDiscoveryContext: Sendable {
     let settings: EngineSettings
 
     /// A `Result` rather than an array, so an unreadable models folder fails only
-    /// the engines that looked at it. A hosted engine never calls
+    /// the engines that looked at it. A server engine never calls
     /// `localModelDirectories()`, so a missing local folder cannot take its models
     /// down with it.
     private let localDirectories: Result<[URL], any Error>
@@ -916,7 +1047,6 @@ nonisolated struct GenerationDraft: Sendable {
     var stepCount: Int
     var guidanceScale: Float
     var scheduler: Scheduler
-    var quality: ImageQuality
     var seed: UInt32
     var numberOfImages: Int
     var computeUnitPreference: ComputeUnitPreference
@@ -927,6 +1057,9 @@ nonisolated struct GenerationDraft: Sendable {
     /// Where the shared ControlNet bundles live. Only Core ML Stable Diffusion
     /// reads it.
     var controlNetDirectory: URL
+    /// Every saved LoRA, including ones the model cannot use. An engine applies
+    /// the ones its `LoRAsConstraint` offers.
+    var loras: [LoRASelection] = []
 }
 
 nonisolated struct ControlNetDraft: Sendable {
@@ -957,8 +1090,8 @@ nonisolated struct GenerationPlan<Payload: Sendable>: Sendable {
     /// no source filename.
     var controlNetImageNames: [String?]
     /// `nil` where the model does not use the option at all, so the queue hides a
-    /// row rather than printing a number that had no effect. A hosted engine has no
-    /// concept of `stepCount` or `scheduler`, which is why those are optional too.
+    /// row rather than printing a number that had no effect. Draw Things always uses
+    /// its model's recommended sampler, which is why `scheduler` is optional too.
     ///
     /// A runtime that does use one of these reads the resolved value from its own
     /// payload.
@@ -966,7 +1099,6 @@ nonisolated struct GenerationPlan<Payload: Sendable>: Sendable {
     var scheduler: Scheduler?
     var strength: Float?
     var guidanceScale: Float?
-    var quality: ImageQuality?
     var numberOfImages: Int
     var mlComputeUnit: MLComputeUnits?
     /// Core ML records a starting image; Iris records input images. Same sidebar
@@ -975,6 +1107,8 @@ nonisolated struct GenerationPlan<Payload: Sendable>: Sendable {
     /// Positionally aligned with `inputImageData`; nil means those pixels had no
     /// source filename.
     var inputImageNames: [String?]
+    /// The LoRAs that will be applied, with their resolved weights.
+    var loras: [LoRASelection] = []
 }
 
 nonisolated extension GenerationPlan {
@@ -992,11 +1126,11 @@ nonisolated extension GenerationPlan {
             scheduler: scheduler,
             strength: strength,
             guidanceScale: guidanceScale,
-            quality: quality,
             numberOfImages: numberOfImages,
             mlComputeUnit: mlComputeUnit,
             startingImageName: startingImageName,
-            inputImageNames: inputImageNames
+            inputImageNames: inputImageNames,
+            loras: loras
         )
     }
 }
@@ -1040,32 +1174,9 @@ nonisolated protocol GenerationEngineRuntime: Sendable {
     /// enough to allow one is too loose to catch a hang.
     ///
     /// Per request, because the bound depends on what the request asked for: a
-    /// hosted runtime streaming partial images has a heartbeat and can be held to a
-    /// tight idle bound, while one with no intermediate events at all would see the
-    /// same number become a total budget.
-    ///
-    /// The queue enforces it, since it owns the request lifecycle and can guarantee
-    /// an expiry releases the drain exactly as a completion does. Local runtimes
-    /// leave this `nil`.
-    func idleTimeout(for request: GenerationRequest) -> Duration?
-
-    /// Whether stopping this runtime leaves work running somewhere we cannot reach.
-    /// `false` — the default — for anything in this process.
-    ///
-    /// A hosted service may finish an image we stopped waiting for, and bill for it,
-    /// so the UI says so rather than implying a cancel is free.
-    var cancellationMayLeaveWorkBilled: Bool { get }
-
-    /// Called when the queue holds no further request for this runtime: it has
-    /// emptied, or the next request belongs to another engine. A runtime that keeps
-    /// a model loaded between requests frees it here. The default does nothing.
-    ///
-    /// Never called while `run` is in progress on this runtime.
-    func queueDrained() async
-}
-
-nonisolated extension GenerationEngineRuntime {
-    func idleTimeout(for request: GenerationRequest) -> Duration? {
+    /// runtime that reports every step has a heartbeat and can be held to a tight
+    /// idle bound, while one with no intermediate events at all would see the same
+    /// number become a 
 ```
 
 ### Core Architecture Module: `Mochi Diffusion/Support/GenerationState.swift`
@@ -1081,11 +1192,6 @@ import Observation
 @MainActor
 @Observable
 final class GenerationState {
-    nonisolated enum ProgressKind: Sendable, Equatable {
-        case step
-        case preview
-    }
-
     /// `nonisolated` because these are pure data that cross isolation on every
     /// generation. Nested in a `@MainActor` type under
     /// `SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor`, their members would otherwise
@@ -1094,28 +1200,12 @@ final class GenerationState {
     nonisolated struct Progress: Sendable, Equatable {
         let step: Int
         let stepCount: Int
-        let kind: ProgressKind
-
-        init(step: Int, stepCount: Int, kind: ProgressKind = .step) {
-            self.step = step
-            self.stepCount = stepCount
-            self.kind = kind
-        }
 
         var localizedLabel: String {
-            let current = step + 1
-            switch kind {
-            case .step:
-                return String(
-                    localized: "Step \(current)/\(stepCount)",
-                    comment: "Progress through a model's generation steps"
-                )
-            case .preview:
-                return String(
-                    localized: "Preview \(current)/\(stepCount)",
-                    comment: "Progress through partial preview images from a hosted service"
-                )
-            }
+            String(
+                localized: "Step \(step + 1)/\(stepCount)",
+                comment: "Progress through a model's generation steps"
+            )
         }
     }
 
@@ -1123,14 +1213,14 @@ final class GenerationState {
         case ready(String?)
         case error(String)
         case loading(String?)
-        case canceling(String?)
+        case canceling
         case running(Progress?)
 
         /// What this status has to tell the user, if anything.
         ///
-        /// Only the two terminal cases. `.loading` and `.canceling` carry stage
-        /// text, which describes work in progress and is replaced by the next
-        /// stage rather than being news to report.
+        /// Only the two terminal cases. `.loading` carries stage text, which
+        /// describes work in progress and is replaced by the next stage rather than
+        /// being news to report.
         var outcomeMessage: String? {
             switch self {
             case .error(let message): message
@@ -1160,12 +1250,22 @@ final class GenerationState {
     /// requests failing the same way do not reopen the alert.
     private var acknowledged: Set<String> = []
 
+    /// Model lists the alert offers to refresh, because an unreported outcome may
+    /// be explained by one being out of date.
+    private(set) var outdatedModelListSources: Set<ModelListSource> = []
+
     /// The only way `state` changes, so an outcome cannot reach the UI without
     /// also being recorded for the alert to report.
-    func report(_ status: Status) {
+    ///
+    /// - Parameter outdatedModelListSource: a model list that may explain this
+    ///   outcome, which the alert then offers to refresh.
+    func report(_ status: Status, outdatedModelListSource: ModelListSource? = nil) {
         state = status
         guard let message = status.outcomeMessage else { return }
         guard !acknowledged.contains(message) else { return }
+        if let outdatedModelListSource {
+            outdatedModelListSources.insert(outdatedModelListSource)
+        }
         guard !unreportedOutcomes.contains(message) else { return }
         unreportedOutcomes.append(message)
     }
@@ -1173,6 +1273,7 @@ final class GenerationState {
     func clearUnreportedOutcomes() {
         acknowledged.formUnion(unreportedOutcomes)
         unreportedOutcomes = []
+        outdatedModelListSources = []
     }
 
     /// A batch starting forgets what was dismissed during the last one.
@@ -1438,6 +1539,7 @@ nonisolated struct CoreMLStableDiffusionEngine: GenerationEngineDescriptor {
     typealias Payload = CoreMLGenerationPayload
 
     static let id = EngineID.coreMLStableDiffusion
+    static let modelListSource = ModelListSource.modelsFolder
     var displayName: String { "Core ML Stable Diffusion" }
 
     private let fileSystem: FileSystemStore
@@ -1488,7 +1590,6 @@ nonisolated struct CoreMLStableDiffusionEngine: GenerationEngineDescriptor {
             .map(Float.init)
         let numberOfImages =
             constraints.numberOfImages.resolved(draft.numberOfImages) ?? draft.numberOfImages
-        let quality = constraints.quality.resolved(draft.quality)
         let computeUnit = draft.computeUnitPreference.computeUnits(forModel: model)
         // Core ML denoises from one image and attends to no references, so only the
         // starting-image constraint is consulted.
@@ -1535,7 +1636,6 @@ nonisolated struct CoreMLStableDiffusionEngine: GenerationEngineDescriptor {
             scheduler: scheduler,
             strength: strength,
             guidanceScale: guidanceScale,
-            quality: quality,
             numberOfImages: numberOfImages,
             mlComputeUnit: computeUnit,
             // Core ML denoises from its one image, so it records a *starting*
@@ -1594,6 +1694,7 @@ nonisolated struct IrisEngine: GenerationEngineDescriptor {
     typealias Payload = IrisGenerationPayload
 
     static let id = EngineID.iris
+    static let modelListSource = ModelListSource.modelsFolder
     var displayName: String { "Iris" }
 
     /// What `iris_multiref` accepts for Klein, per its declaration in `iris.h`:
@@ -1658,253 +1759,7 @@ nonisolated struct IrisEngine: GenerationEngineDescriptor {
             payload: IrisGenerationPayload(
                 modelDirectory: model.url.path(percentEncoded: false),
                 family: model.family,
-                stepCount: stepCount ?? model.family.stepCount,
-                guidanceSc
-```
-
-### Core Architecture Module: `Mochi Diffusion/Support/OpenAIEngineRuntime.swift`
-```
-//
-//  OpenAIEngineRuntime.swift
-//  Mochi Diffusion
-//
-
-import CoreGraphics
-import Foundation
-
-/// Runs a generation against the OpenAI image API.
-///
-/// Streams, and not only for previews: a non-streaming call gives no sign of life
-/// until it returns, which would make `idleTimeout` a wall-clock budget rather than
-/// an idle one. Partial images are the heartbeat that makes the bound meaningful.
-nonisolated final class OpenAIEngineRuntime: GenerationEngineRuntime {
-    private static let generationsEndpoint = URL(
-        string: "https://api.openai.com/v1/images/generations"
-    )!
-    private static let editsEndpoint = URL(string: "https://api.openai.com/v1/images/edits")!
-    /// The most the API accepts. Requested only when previews are on.
-    private static let maxPartialImages = 3
-
-    private let secrets: any SecretStore
-    private let account: String
-    private let session: any HTTPSession
-
-    init(secrets: any SecretStore, account: String, session: any HTTPSession) {
-        self.secrets = secrets
-        self.account = account
-        self.session = session
-    }
-
-    /// Bounds silence when there is a heartbeat to measure it against, and total
-    /// duration when there is not.
-    ///
-    /// With partial images requested, every one is a sign of life, so a minute of
-    /// silence means the stream has stopped even though a high-quality 3840x2160
-    /// image can legitimately take minutes to finish.
-    ///
-    /// With `partial_images: 0` the only event is the final one, so nothing resets
-    /// an idle clock and the same number would become a total budget, expiring a slow
-    /// but healthy generation. That case gets an explicitly generous total budget.
-    ///
-    /// Partials are not requested purely as heartbeats: that would fetch images the
-    /// user asked not to receive, and whether streamed partials affect billing is
-    /// unconfirmed.
-    static let streamingIdleTimeout = Duration.seconds(60)
-    static let nonStreamingTotalTimeout = Duration.seconds(300)
-
-    var cancellationMayLeaveWorkBilled: Bool { true }
-
-    func idleTimeout(for request: GenerationRequest) -> Duration? {
-        guard let payload = request.payload as? OpenAIGenerationPayload else { return nil }
-        return payload.wantsPreviews
-            ? Self.streamingIdleTimeout
-            : Self.nonStreamingTotalTimeout
-    }
-
-    func run(
-        request: GenerationRequest,
-        session generationSession: GenerationSession,
-        onResult: @escaping @Sendable (GenerationResult) async throws -> Void
-    ) async throws {
-        guard let payload = request.payload as? OpenAIGenerationPayload else {
-            throw EngineError.payloadDoesNotBelongToEngine(engine: OpenAIImageEngine.id)
-        }
-        // Read at run time, never carried in the payload: a payload is queued and
-        // logged, and a credential belongs in neither.
-        guard let apiKey = secrets.secret(for: account), !apiKey.isEmpty else {
-            throw GenerationError.authenticationFailed
-        }
-
-        generationSession.emit(
-            .state(
-                .loading(
-                    String(
-                        localized: "Generating with OpenAI...",
-                        comment: "Text displayed while waiting for OpenAI image generation"
-                    )
-                )
-            )
-        )
-
-        // Registered once, cancelling whichever image is in flight.
-        //
-        // Polling `isCancelled` is not enough here: a network call can stay
-        // suspended on response headers or the next stream line indefinitely. So
-        // the work runs in a task the handler can cancel, which terminates the
-        // stream and cancels the underlying transfer.
-        let inFlight = TaskHandle()
-        generationSession.onCancel { inFlight.cancel() }
-
-        // One request per image: cancelling after the second of five costs two
-        // rather than five, results reach the gallery as they arrive, and
-        // partial-image previews are per-request.
-        for _ in 0..<request.numberOfImages {
-            if generationSession.isCancelled { return }
-
-            let image = try await generateOne(
-                request: request,
-                payload: payload,
-                apiKey: apiKey,
-                session: generationSession,
-                inFlight: inFlight
-            )
-            guard let image else { return }
-            if generationSession.isCancelled { return }
-
-            let result = try await makeResult(
-                image: image,
-                request: request,
-                payload: payload
-            )
-            try await onResult(result)
-        }
-    }
-
-    // MARK: - One image
-
-    /// Returns the finished image, or `nil` if the session stopped first.
-    private func generateOne(
-        request: GenerationRequest,
-        payload: OpenAIGenerationPayload,
-        apiKey: String,
-        session generationSession: GenerationSession,
-        inFlight: TaskHandle
-    ) async throws -> CGImage? {
-        let urlRequest = try makeURLRequest(request: request, payload: payload, apiKey: apiKey)
-
-        // Both awaits below can suspend indefinitely, so both are inside the
-        // cancellable task rather than only the loop.
-        let work = Task { () throws -> CGImage? in
-            try await self.stream(
-                urlRequest: urlRequest,
-                payload: payload,
-                session: generationSession
-            )
-        }
-        inFlight.adopt(work)
-        do {
-            return try await work.value
-        } catch is CancellationError {
-            // Stopped on purpose, by the user or the watchdog. The queue reads the
-            // session's stop reason to tell which.
-            return nil
-        }
-    }
-
-    /// The suspending half, in its own function so the task above wraps all of it.
-    private func stream(
-        urlRequest: URLRequest,
-        payload: OpenAIGenerationPayload,
-        session generationSession: GenerationSession
-    ) async throws -> CGImage? {
-        let (response, lines) = try await session.lines(for: urlRequest)
-
-        guard (200..<300).contains(response.statusCode) else {
-            throw await Self.error(for: response, lines: lines)
-        }
-
-        let partialsRequested = payload.wantsPreviews ? Self.maxPartialImages : 0
-        var finished: CGImage?
-
-        for try await line in lines {
-            if generationSession.isCancelled { return nil }
-            guard let event = Self.event(from: line) else { continue }
-
-            switch event.type {
-            case "image_generation.partial_image", "image_edit.partial_image":
-                guard payload.wantsPreviews, let image = event.image else { continue }
-                // `partial_image_index` carries no total, but we chose the total,
-                // so this progress is measured rather than invented.
-                generationSession.emit(
-                    .progress(
-                        GenerationState.Progress(
-                            step: event.partialIndex ?? 0,
-                            stepCount: partialsRequested,
-                            kind: .preview
-                        )
-                    )
-                )
-                generationSession.emit(.preview(image))
-            case "image_generation.completed", "image_edit.completed":
-                guard let image = event.image else { throw GenerationError.malformedResponse }
-                finished = image
-            case "error":
-                throw GenerationError.serviceFailure(event.message ?? "Unknown error")
-            default:
-                continue
-            }
-        }
-
-        // Cancelling terminates the stream, so the loop above ends without a
-        // completed event. That is a stop, not a malformed response, and reporting
-        // it as the latter would turn every cancellation into an error.
-        if generationSession.isCancelled { return nil }
-        guard let finished else {
-            // The stream ended without a completed event. Not a refusal, which the
-            // service states, and not a stop, which is handled above — so it is a
-            // shape we do not understand.
-            throw GenerationError.malformedResponse
-        }
-        return finished
-    }
-
-    private func makeURLRequest(
-        request: GenerationRequest,
-        payload: OpenAIGenerationPayload,
-        apiKey: String
-    ) throws -> URLRequest {
-        var fields: [String: Any] = [
-            "model": payload.apiModel,
-            "prompt": request.prompt,
-            "size": "\(Int(payload.size.width))x\(Int(payload.size.height))",
-            // One image per call; the loop above handles the count.
-            "n": 1,
-            // Always PNG: lossless, and re-encoded anyway, since Mochi embeds its
-            // own metadata and applies the user's chosen output type on the way to
-            // disk.
-            "output_format": "png",
-            "moderation": "low",
-            "stream": true,
-            "partial_images": payload.wantsPreviews ? Self.maxPartialImages : 0,
-        ]
-        // `auto` is the service's own default, so sending it says nothing. Omitted
-        // rather than sent, to keep the request to what was actually chosen.
-        if payload.quality != .auto {
-            fields["quality"] = payload.quality.rawValue
-        }
-
-        var urlRequest = URLRequest(
-            url: request.inputImageData.isEmpty ? Self.generationsEndpoint : Self.editsEndpoint
-        )
-        urlRequest.httpMethod = "POST"
-        urlRequest.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
-        urlRequest.setValue("text/event-stream", forHTTPHeaderField: "Accept")
-
-        if request.inputImageData.isEmpty {
-            urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            urlRequest.httpBody = try JSONSerialization.data(withJSONObject: fields)
-        } else {
-
+                stepCount: stepCount ?? model.family.stepCount
 ```
 
 
@@ -1937,217 +1792,654 @@ nonisolated final class OpenAIEngineRuntime: GenerationEngineRuntime {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ae2c0f37` (2026-10-31)
-**Commit Message**: fix: move iris.c to the attention reduction fix
+### Incident Patch 1: `2d2ca0df` (2026-11-14)
+**Commit Message**: fix: keep the gallery when a folder setting is rewritten unchanged
 
-Z-Image's context refiner ran attention at the raw prompt token count,
-and the Iris kernels summed the softmax wrongly for lengths under 256
-that aren't powers of two, so nearly every prompt got slightly wrong
-caption attention. The same kernels set threadgroup memory lengths that
-Metal API Validation rejects, which aborted Debug runs from Xcode.
+Writing the images, models or ControlNet folder its current value counted as a change, so a Settings text field committing unchanged text reloaded the whole gallery, re-inserting every image. The folder settings now ignore a write of the value they already hold.
 
-iris.h and iris_metal.h are unchanged; only kernel code and threadgroup
-memory sizes differ from c41bce4.
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-
-**File**: `iris.c` (modified, +1/-1)
+**File**: `Mochi Diffusion/Support/ConfigStore.swift` (modified, +6/-0)
 ```diff
-@@ -1 +1 @@
--Subproject commit c41bce43fb6dffd2b4efb61938e6d60af69063ef
-+Subproject commit 8337730034f1d81fe91c389b7210eadcc29c7bb7
+@@ -133,12 +133,16 @@ import SwiftUI
+         __loras = AppStorage(wrappedValue: Data(), Key.loras, store: store)
+     }
+ 
++    // The folder settings ignore a write of the value they already hold, such as
++    // a Settings text field committing unchanged text: each change reloads the
++    // gallery or rediscovers the models.
+     var imageDir: String {
+         get {
+             access(keyPath: \.imageDir)
+             return _imageDir
+         }
+         set {
++            guard newValue != _imageDir else { return }
+             withMutation(keyPath: \.imageDir) {
+                 _imageDir = newValue
+             }
+@@ -151,6 +155,7 @@ import SwiftUI
+             return _modelDir
+         }
+         set {
++            guard newValue != _modelDir else { return }
+             withMutation(keyPath: \.modelDir) {
+                 _modelDir = newValue
+             }
+@@ -163,6 +168,7 @@ import SwiftUI
+             return _controlNetDir
+         }
+         set {
++            guard newValue != _controlNetDir else { return }
+             withMutation(keyPath: \.controlNetDir) {
+                 _controlNetDir = newValue
+             }
+```
+
+**File**: `Mochi DiffusionTests/GalleryLoadingTests.swift` (modified, +48/-0)
+```diff
+@@ -6,6 +6,8 @@
+ import CoreGraphics
+ import Foundation
+ import ImageIO
++import Observation
++import Synchronization
+ import Testing
+ import UniformTypeIdentifiers
+ 
+@@ -886,3 +888,49 @@ struct ImageRepositoryTests {
+         #expect(try Data(contentsOf: directory.appending(path: "A cat.1.42-2.png")) == Data([2]))
+     }
+ }
++
++/// Writing a folder setting the value it already holds is not a change, so it
++/// reloads neither the gallery nor the model list.
++@MainActor
++struct FolderSettingWriteTests {
++    enum Folder: CaseIterable, Sendable {
++        case images, models, controlNets
++    }
++
++    private func value(of folder: Folder, in store: ConfigStore) -> String {
++        switch folder {
++        case .images: store.imageDir
++        case .models: store.modelDir
++        case .controlNets: store.controlNetDir
++        }
++    }
++
++    private func set(_ folder: Folder, to path: String, in store: ConfigStore) {
++        switch folder {
++        case .images: store.imageDir = path
++        case .models: store.modelDir = path
++        case .controlNets: store.controlNetDir = path
++        }
++    }
++
++    @Test(
++        "Writing a folder setting its current value notifies no observer",
++        arguments: Folder.allCases)
++    func unchangedWriteIsSilent(folder: Folder) {
++        let defaults = TempDefaults()
++        let store = ConfigStore(store: defaults.defaults)
++        set(folder, to: "/tmp/mochi-folder", in: store)
++        let changed = Mutex(false)
++        withObservationTracking {
++            _ = value(of: folder, in: store)
++        } onChange: {
++            changed.withLock { $0 = true }
++        }
++
++        set(folder, to: "/tmp/mochi-folder", in: store)
++        #expect(!changed.withLock { $0 })
++
++        set(folder, to: "/tmp/mochi-other-folder", in: store)
++        #expect(changed.withLock { $0 })
++    }
++}
 ```
 
 ---
 
-### Incident Patch 2: `e41da883` (2026-11-02)
-**Commit Message**: build: add a script that lists new and changed localizable strings
+### Incident Patch 2: `964d2c90` (2026-11-14)
+**Commit Message**: fix: drop setup and help text from Draw Things settings and the model info button
 
-scripts/localization_diff.sh exports the English strings at two
-revisions with xcodebuild -exportLocalizations, the export the CI
-workflow uploads to Crowdin, and prints the strings that are new,
-changed or removed, with their translator comments. Each revision is
-built in a temporary worktree first, because the export cannot build
-the Iris library on its own.
+Someone browsing Settings is still many steps away from a running Draw Things server, so the setup instructions, host help and TLS caveat are gone from the Details sheet; the README covers them. The model info button's help no longer changes when settings differ from the recommendations, since the dot already shows that.
 
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `scripts/localization_diff.sh` (added, +128/-0)
+**File**: `Mochi Diffusion/Views/DrawThingsSettingsView.swift` (modified, +0/-21)
 ```diff
-@@ -0,0 +1,128 @@
-+#!/bin/bash
-+# Lists the English localizable strings that are new, changed or removed between
-+# two revisions, as Crowdin will see them.
-+#
-+# Each revision is checked out in a temporary worktree, built, and exported with
-+# xcodebuild -exportLocalizations, the same export the CI workflow uploads. The
-+# export cannot build the Iris library itself, so each revision is built first.
-+# Your checkout is not changed.
-+#
-+# Usage: scripts/localization_diff.sh <old-revision> [new-revision]
-+#   new-revision defaults to HEAD.
-+#
-+# Tools: Xcode, git and uv.
-+set -euo pipefail
-+
-+cd "$(dirname "$0")/.." || exit 1
-+
-+if [ $# -lt 1 ] || [ $# -gt 2 ]; then
-+  sed -n '2,13p' "$0" | sed 's/^# \{0,1\}//'
-+  exit 2
-+fi
-+old_rev="$(git rev-parse --verify "$1^{commit}")"
-+new_rev="$(git rev-parse --verify "${2:-HEAD}^{commit}")"
-+
-+work_dir="$(mktemp -d "${TMPDIR:-/tmp}/mochi-l10n.XXXXXX")"
-+cleanup() {
-+  for name in old new; do
-+    if [ -d "$work_dir/$name" ]; then
-+      git worktree remove --force "$work_dir/$name" >/dev/null 2>&1 || true
-+    fi
-+  done
-+  rm -rf "$work_dir"
-+}
-+trap cleanup EXIT
-+
-+export_strings() {
-+  local name="$1" rev="$2"
-+  local tree="$work_dir/$name"
-+  echo "==> Exporting strings at $(git rev-parse --short "$rev")" >&2
-+  git worktree add --quiet --detach "$tree" "$rev"
-+  git -C "$tree" submodule update --quiet --init
-+  local xcodebuild_args=(
-+    -project "$tree/Mochi Diffusion.xcodeproj"
-+    -scheme "Mochi Diffusion"
-+    -configuration Debug
-+    -derivedDataPath "$work_dir/$name-derived"
-+    CODE_SIGNING_ALLOWED=NO
-+  )
-+  xcodebuild build "${xcodebuild_args[@]}" >"$work_dir/$name-build.log" 2>&1 \
-+    || { echo "error: build failed at $rev; see $work_dir/$name-build.log" >&2; exit 1; }
-+  xcodebuild -exportLocalizations "${xcodebuild_args[@]}" \
-+    -localizationPath "$work_dir/$name-export" -exportLanguage en \
-+    >"$work_dir/$name-export.log" 2>&1 \
-+    || { echo "error: export failed at $rev; see $work_dir/$name-export.log" >&2; exit 1; }
-+}
-+
-+export_strings old "$old_rev"
-+export_strings new "$new_rev"
-+
-+uv run --no-project --quiet python -I - \
-+  "$work_dir/old-export/en.xcloc/Localized Contents/en.xliff" \
-+  "$work_dir/new-export/en.xcloc/Localized Contents/en.xliff" \
-+  "$work_dir/new" <<'PY'
-+import subprocess
-+import sys
-+import xml.etree.ElementTree as ET
-+
-+NS = {"x": "urn:oasis:names:tc:xliff:document:1.2"}
-+
-+
-+def units(path):
-+    found = {}
-+    for file in ET.parse(path).getroot().findall("x:file", NS):
-+        original = file.get("original", "")
-+        for unit in file.iter("{%s}trans-unit" % NS["x"]):
-+            source = unit.find("x:source", NS)
-+            note = unit.find("x:note", NS)
-+            found[(original, unit.get("id"))] = (
-+                source.text if source is not None else "",
-+                note.text if note is not None else "",
-+            )
-+    return found
-+
-+
-+def used_in(tree, text):
-+    """Swift files that contain `text` as a string literal."""
-+    if not text:
-+        return []
-+    result = subprocess.run(
-+        ["git", "-C", tree, "grep", "-l", "-F", f'"{text}"', "--", "Mochi Diffusion"],
-+        capture_output=True, text=True,
-+    )
-+    return result.stdout.splitlines()
-+
-+
-+old, new, tree = units(sys.argv[1]), units(sys.argv[2]), sys.argv[3]
-+added = sorted(new.keys() - old.keys())
-+removed = sorted(old.keys() - new.keys())
-+changed = sorted(k for k in new.keys() & old.keys() if new[k] != old[k])
-+
-+
-+def show(key, values):
-+    original, unit_id = key
-+    source, note = values
-+    print(f"- {unit_id!r}  ({original})")
-+    if source != unit_id:
-+        print(f"    text:    {source!r}")
-+    print(f"    comment: {note!r}" if note else "    comment: (none)")
-+
-+
-+print(f"NEW ({len(added)})")
-+for key in added:
-+    show(key, new[key])
-+    files = used_in(tree, new[key][0])
-+    if files:
-+        print(f"    used in: {', '.join(files)}")
-+print(f"\nCHANGED ({len(changed)})")
-+for key in changed:
-+    show(key, new[key])
-+    old_source, old_note = old[key]
-+    if old_source != new[key][0]:
-+        print(f"    was:     {old_source!r}")
-+    if old_note != new[key][1]:
-+        print(f"    comment was: {old_note!r}")
-+print(f"\nREMOVED ({len(removed)})")
-+for key in removed:
-+    show(key, old[key])
-+PY
+@@ -197,20 +197,6 @@ struct DrawThingsDetailsView: View {
+                     TextField(text: $port) {
+                         Text("Port", comment: "Draw Things server port field label")
+                     }
+-                } header: {
+-                    Text(
+-                        "In Draw Things, turn on the gRPC API server and Model Browsing.",
+-                        comment: "Draw Things connection settings instructions"
+-                    )
+-                    .font(.body)
+-                    .foregroundStyle(.secondary)
+-                } footer: {
+-                    Text(
+-                        "Use localhost for Draw Things on this Mac, or the hostname of a machine on the local network, such as studio.local",
+-                        comment: "Help text for the Draw Things host field"
+-                    )
+-                    .helpTextFormat()
+-                    .frame(maxWidth: .infinity, alignment: .leading)
+                 }
+ 
+                 Section {
+@@ -225,13 +211,6 @@ struct DrawThingsDetailsView: View {
+                             "Shared Secret", comment: "Draw Things server shared secret field label"
+                         )
+                     }
+-                } footer: {
+-                    Text(
+-                        "Match the server's settings in Draw Things. TLS encrypts the connection but doesn't verify the server's identity, so use a trusted network.",
+-                        comment: "Help text for the Draw Things TLS and shared secret settings"
+-                    )
+-                    .helpTextFormat()
+-                    .frame(maxWidth: .infinity, alignment: .leading)
+                 }
+             }
+             .formStyle(.grouped)
+```
+
+**File**: `Mochi Diffusion/Views/SidebarControls/ModelView.swift` (modified, +3/-9)
+```diff
+@@ -40,15 +40,9 @@ struct ModelView: View {
+                     }
+             }
+             .help(
+-                differsFromRecommendations
+-                    ? Text(
+-                        "Model Info: some settings differ from this model's recommendations",
+-                        comment:
+-                            "Help for the model info button while the sidebar differs from the model's recommended settings"
+-                    )
+-                    : Text(
+-                        "Model Info",
+-                        comment: "Help for the button that shows the selected model's details")
++                Text(
++                    "Model Info",
++                    comment: "Help for the button that shows the selected model's details")
+             )
+             .popover(isPresented: $isShowingInfo, arrowEdge: .trailing) {
+                 ModelInfoView()
 ```
 
 ---
 
-### Incident Patch 3: `b26f7a0a` (2026-11-02)
-**Commit Message**: build(deps): bump github.com/apple/swift-argument-parser (#526)
+### Incident Patch 3: `22323aa1` (2026-11-13)
+**Commit Message**: build: move the Draw Things client to DrawThings-Swift 2.3.0
 
-Bumps [github.com/apple/swift-argument-parser](https://github.com/apple/swift-argument-parser) from 1.3.0 to 1.8.2.
-- [Release notes](https://github.com/apple/swift-argument-parser/releases)
-- [Changelog](https://github.com/apple/swift-argument-parser/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/apple/swift-argument-parser/compare/1.3.0...6a52f3251125d74daf04fcbd5e6f08a75d074382)
+DT-gRPC-Swift-Client is now DrawThings-Swift, and its 2.x line moves to
+gRPC-Swift 2. Pin 2.3.0 exactly, port DrawThingsTransport and the loopback
+test to GRPCCore and the HTTP/2 Posix transport, and keep one connection
+per call. A call whose stream never opened is still the only one retried:
+the transport now tracks that itself instead of relying on the 1.x pool's
+error type.
 
----
-updated-dependencies:
-- dependency-name: github.com/apple/swift-argument-parser
-  dependency-version: 1.8.2
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
+2.x defaults DrawThingsConfiguration to Z-Image Turbo's preset, so the
+presets now start from Draw Things' own defaults for the values they leave
+out. The configuration for every bundled preset and family fallback is
+unchanged.
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `Mochi Diffusion.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` (modified, +2/-2)
+**File**: `AGENTS.md` (modified, +6/-4)
 ```diff
-@@ -41,8 +41,8 @@
+@@ -145,10 +145,12 @@ The multi-engine foundation is implemented. Current ownership and contracts foll
+     once per discovery pass and hands the same candidate list to every engine.
+   - Concrete descriptors live in `LocalEngines.swift` and `DrawThingsEngine.swift`;
+     `EngineRegistry.shipped` lists Iris, Core ML and Draw Things,
+-    which the app registers. Draw Things talks gRPC through `DrawThingsTransport.swift`, and
+-    DT-gRPC-Swift-Client is pinned to a revision; updating it requires a compatibility
+-    review, like `iris.c`. Its recommended configurations come from the bundled
+-    `DrawThingsPresets.json` snapshot of Draw Things' `configs.json`. Its shared secret is
++    which the app registers. Draw Things talks gRPC-Swift 2 through
++    `DrawThingsTransport.swift`, one connection per call, using DrawThings-Swift's protobuf
++    messages, configuration encoder and tensor codec but not its service. DrawThings-Swift is
++    pinned to an exact version; updating it requires a compatibility review, like `iris.c`.
++    Its recommended configurations come from the bundled `DrawThingsPresets.json` snapshot of
++    Draw Things' `configs.json`, over Draw Things' own defaults rather than the package's. Its shared secret is
+     kept in the Keychain through `SecretStore`. `EngineModel` requires no filesystem URL; its
+     optional `tokenizerModelDir` is nil for server models.
+ 
+```
+
+**File**: `Mochi Diffusion.xcodeproj/project.xcproj` (modified, +23/-13)
+```diff
+@@ -48,21 +48,27 @@
+   "packages": [
+     {
+       "kind": "remote",
+-      "repository": "https://github.com/euphoriacyberware-ai/DT-gRPC-Swift-Client",
++      "repository": "https://github.com/euphoriacyberware-ai/DrawThings-Swift",
+       "version": {
+-        "revision": "2e44f4f99e742709eb90cfd96ff3fe10198421c1",
++        "version-range": "2.3.0..<2.3.1",
+       },
+     }, {
+       "kind": "remote",
+-      "repository": "https://github.com/grpc/grpc-swift.git",
++      "repository": "https://github.com/grpc/grpc-swift-2.git",
+       "version": {
+-        "up-to-next-major-version": "1.23.0",
++        "up-to-next-major-version": "2.4.0",
+       },
+     }, {
+       "kind": "remote",
+-      "repository": "https://github.com/apple/swift-nio.git",
++      "repository": "https://github.com/grpc/grpc-swift-nio-transport.git",
+       "version": {
+-        "up-to-next-major-version": "2.65.0",
++        "up-to-next-major-version": "2.10.0",
++      },
++    }, {
++      "kind": "remote",
++      "repository": "https://github.com/grpc/grpc-swift-protobuf.git",
++      "version": {
++        "up-to-next-major-version": "2.4.0",
+       },
+     }, {
+       "kind": "remote",
+@@ -399,7 +405,7 @@
+           "product-name": "CompactSlider",
+           "build-phase": { "build-phase": "frameworks" },
+         }, {
+-          "package": "DT-gRPC-Swift-Client",
++          "package": "DrawThings-Swift",
+           "product-name": "DrawThingsClient",
+           "build-phase": { "build-phase": "frameworks" },
+         }, {
+@@ -415,16 +421,20 @@
+           "product-name": "Sparkle",
+           "build-phase": { "build-phase": "frameworks" },
+         }, {
+-          "package": "grpc-swift",
+-          "product-name": "GRPC",
++          "package": "grpc-swift-2",
++          "product-name": "GRPCCore",
+           "build-phase": { "build-phase": "frameworks" },
+         }, {
+-          "package": "ml-stable-diffusion",
+-          "product-name": "StableDiffusion",
++          "package": "grpc-swift-nio-transport",
++          "product-name": "GRPCNIOTransportHTTP2",
++          "build-phase": { "build-phase": "frameworks" },
++        }, {
++          "package": "grpc-swift-protobuf",
++          "product-name": "GRPCProtobuf",
+           "build-phase": { "build-phase": "frameworks" },
+         }, {
+-          "package": "swift-nio",
+-          "product-name": "NIO",
++          "package": "ml-stable-diffusion",
++          "product-name": "StableDiffusion",
+           "build-phase": { "build-phase": "frameworks" },
+         },
+       ],
+```
+
+**File**: `Mochi Diffusion.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` (modified, +31/-12)
+```diff
+@@ -1,12 +1,13 @@
+ {
+-  "originHash" : "5ec1727c978c7464c44663cc9d863f835e60a8c2734e04a3196f6e33aad98763",
++  "originHash" : "c0ba2eaa3d94da478ffb44f07ea9a272b6b37e16f06501b4641aceeb00c395c1",
+   "pins" : [
+     {
+-      "identity" : "dt-grpc-swift-client",
++      "identity" : "drawthings-swift",
        "kind" : "remoteSourceControl",
-       "location" : "https://github.com/apple/swift-argument-parser.git",
+-      "location" : "https://github.com/euphoriacyberware-ai/DT-gRPC-Swift-Client",
++      "location" : "https://github.com/euphoriacyberware-ai/DrawThings-Swift",
        "state" : {
--        "revision" : "c8ed701b513cf5177118a175d85fbbbcd707ab41",
--        "version" : "1.3.0"
-+        "revision" : "6a52f3251125d74daf04fcbd5e6f08a75d074382",
-+        "version" : "1.8.2"
+-        "revision" : "2e44f4f99e742709eb90cfd96ff3fe10198421c1"
++        "revision" : "3f7523799d53fc6ec4684273f3d3fe651f87aa63",
++        "version" : "2.3.0"
+       }
+     },
+     {
+@@ -28,12 +29,30 @@
+       }
+     },
+     {
+-      "identity" : "grpc-swift",
++      "identity" : "grpc-swift-2",
+       "kind" : "remoteSourceControl",
+-      "location" : "https://github.com/grpc/grpc-swift.git",
++      "location" : "https://github.com/grpc/grpc-swift-2.git",
+       "state" : {
+-        "revision" : "65d0084f6d7db34b0dfcb1c956b8dd8da8ef9d23",
+-        "version" : "1.27.6"
++        "revision" : "e31eb485c4575e0dbed3d1925e24084f755ac6e8",
++        "version" : "2.4.4"
++      }
++    },
++    {
++      "identity" : "grpc-swift-nio-transport",
++      "kind" : "remoteSourceControl",
++      "location" : "https://github.com/grpc/grpc-swift-nio-transport.git",
++      "state" : {
++        "revision" : "71c5da80432b10e87778928b309808fa89ad1911",
++        "version" : "2.12.0"
++      }
++    },
++    {
++      "identity" : "grpc-swift-protobuf",
++      "kind" : "remoteSourceControl",
++      "location" : "https://github.com/grpc/grpc-swift-protobuf.git",
++      "state" : {
++        "revision" : "83f5cdb2f8b4c7b57ed9419c6f4f6380b683500e",
++        "version" : "2.5.0"
+       }
+     },
+     {
+@@ -167,8 +186,8 @@
+       "kind" : "remoteSourceControl",
+       "location" : "https://github.com/apple/swift-nio.git",
+       "state" : {
+-        "revision" : "a931f2c1de8dd49381ce3bf2e279d033f68d8865",
+-        "version" : "2.102.0"
++        "revision" : "2f58d8ef84438d6517fc78bcea2f8527e3c72936",
++        "version" : "2.105.0"
+       }
+     },
+     {
+@@ -221,8 +240,8 @@
+       "kind" : "remoteSourceControl",
+       "location" : "https://github.com/apple/swift-protobuf.git",
+       "state" : {
+-        "revision" : "55d7a1cc5666b85c13464aea1c4b4a90feccb4c8",
+-        "version" : "1.38.1"
++        "revision" : "c7d117246c8cd5f93daa873a68659cfe23c93a1e",
++        "version" : "1.40.0"
        }
      },
      {
 ```
 
+**File**: `Mochi Diffusion/Support/DrawThingsEngine.swift` (modified, +2/-2)
+```diff
+@@ -239,7 +239,7 @@ nonisolated struct DrawThingsPayload: Sendable {
+     /// The model's family, recorded as its architecture.
+     let architecture: String?
+     /// How to turn the model's preview latents into colours.
+-    let previewFamily: LatentModelFamily
++    let previewFamily: ModelFamily
+     /// The server's entries for the LoRAs in `configuration.loras`, as a JSON array.
+     var loraSpecifications = Data()
+ }
+@@ -369,7 +369,7 @@ nonisolated struct DrawThingsEngine: GenerationEngineDescriptor {
+                 configuration: configuration,
+                 negativePrompt: constraints.supportsNegativePrompt ? draft.negativePrompt : "",
+                 architecture: DrawThingsPresets.familyNames[model.version],
+-                previewFamily: LatentModelFamily.detect(from: model.version),
++                previewFamily: ModelFamily.detect(from: model.version),
+                 loraSpecifications: Data("[".utf8)
+                     + Data(loraSpecifications.joined(separator: Data(",".utf8)))
+                     + Data("]".utf8)
+```
+
+**File**: `Mochi Diffusion/Support/DrawThingsPresets.swift` (modified, +13/-1)
+```diff
+@@ -66,6 +66,14 @@ nonisolated enum DrawThingsPresets {
+                 return modelStem(config?["model"] as? String ?? "") == stem
+             } ?? presets.first { $0["version"] as? String == version }
+         var config = DrawThingsConfiguration(model: file, numFrames: 1)
++        // The values a preset leaves out. `DrawThingsConfiguration`'s own defaults
++        // are Z-Image Turbo's; these are Draw Things' configuration defaults instead,
++        // with the steps and guidance of a Stable Diffusion model.
++        config.steps = 20
++        config.guidanceScale = 7
++        config.sampler = .dpmpp2mkarras
++        config.shift = 1
++        config.resolutionDependentShift = true
+         if let values = selected?["configuration"] as? [String: Any] {
+             apply(values, to: &config)
+         } else {
+@@ -167,7 +175,11 @@ nonisolated enum DrawThingsPresets {
+         {
+             config.sampler = option
+         }
+-        if let value = fields["seedMode"] as? NSNumber { config.seedMode = value.int32Value }
++        if let value = fields["seedMode"] as? NSNumber,
++            let option = SeedMode(rawValue: value.int8Value)
++        {
++            config.seedMode = option
++        }
+         if let value = fields["separateClipL"] as? NSNumber {
+             config.separateClipL = value.boolValue
+         }
+```
+
+**File**: `Mochi Diffusion/Support/DrawThingsTransport.swift` (modified, +145/-107)
+```diff
+@@ -7,39 +7,37 @@ import CoreGraphics
+ import CryptoKit
+ import DrawThingsClient
+ import Foundation
+-import GRPC
+-import NIO
++import GRPCCore
++import GRPCNIOTransportHTTP2
++import GRPCProtobuf
++import Synchronization
+ 
+ extension DrawThingsError {
+     /// Whether `error` means there is no connection to the server, rather than that
+     /// it answered with an error of its own: Mochi could not connect, or the
+     /// connection closed during a call.
+     static func isUnreachable(_ error: any Error) -> Bool {
+-        isConnectionFailure(error)
+-            || (error as? any GRPCStatusTransformable)?.makeGRPCStatus().code == .unavailable
++        isConnectionFailure(error) || (error as? RPCError)?.code == .unavailable
+     }
+ 
+-    /// Mochi could not open a connection. The channel pool reports this, as
+-    /// `deadlineExceeded` once the call's deadline passes.
++    /// Mochi could not open a connection, so the call never started.
+     static func isConnectionFailure(_ error: any Error) -> Bool {
+-        error is GRPCConnectionPoolError
++        error is DrawThingsUnopenedCall
+     }
+ 
+     /// A failed generation's error, worded for the generation alert. Other errors,
+     /// including Draw Things' own, keep their text.
+     static func generationFailure(_ error: any Error, connection: DrawThingsConnection)
+         -> any Error
+     {
+-        guard let status = (error as? any GRPCStatusTransformable)?.makeGRPCStatus() else {
+-            return error
+-        }
+         if isConnectionFailure(error) {
+             return DrawThingsError.message(
+                 String(
+                     localized: "Couldn't reach the Draw Things server at \(connection.serverName).",
+                     comment: "Generation error when the Draw Things server cannot be reached"
+                 ))
+         }
++        guard let status = error as? RPCError else { return error }
+         if isUnreachable(error) {
+             return DrawThingsError.connectionClosed(
+                 String(
+@@ -48,7 +46,7 @@ extension DrawThingsError {
+                     comment: "Generation error when the connection closes during a generation"
+                 ))
+         }
+-        let detail = status.message.flatMap { $0.isEmpty ? nil : $0 } ?? "\(status.code)"
++        let detail = status.message.isEmpty ? "\(status.code)" : status.message
+         return DrawThingsError.message(
+             String(
+                 localized: "Draw Things reported an error: \(detail)",
+@@ -68,6 +66,12 @@ extension DrawThingsError {
+     }
+ }
+ 
++/// A call that failed before its stream opened, because the connection never did
++/// or its deadline passed first. The server has not seen the request.
++nonisolated struct DrawThingsUnopenedCall: Error {
++    var error: RPCError
++}
++
+ nonisolated struct DrawThingsCatalog: Sendable {
+     var models: Data
+     var loras = Data()
+@@ -108,43 +112,70 @@ nonisolated protocol DrawThingsTransport: Sendable {
+     ) async throws -> CGImage?
+ }
+ 
+-/// Uses the package's public protobuf messages with gRPC's async calls. The package's
+-/// higher-level service doesn't expose an Echo deadline; a task-group timeout around
+-/// its uncancellable future would still wait for that child forever on scope exit.
++/// Uses the package's public protobuf messages with gRPC's calls directly: the
++/// package's generated client is internal, and its higher-level service keeps a
++/// connection open, fetches its own catalog and echoes before every generation.
+ actor GRPCDrawThingsTransport: DrawThingsTransport {
+-    nonisolated private struct Client: GRPCClient {
+-        var channel: any GRPCChannel
+-        var defaultCallOptions = CallOptions()
+-    }
++    private static let echo = MethodDescriptor(
++        fullyQualifiedService: "ImageGenerationService", method: "Echo")
++    private static let generateImage = MethodDescriptor(
++        fullyQualifiedService: "ImageGenerationService", method: "GenerateImage")
+ 
+-    private func channel(for connection: DrawThingsConnection) throws -> any GRPCChannel {
+-        let security: GRPCChannelPool.Configuration.TransportSecurity
++    /// One connection per call: Mochi holds none between them.
++    private static func transport(for connection: DrawThingsConnection) throws
++        -> HTTP2ClientTransport.Posix
++    {
++        let security: HTTP2ClientTransport.Posix.TransportSecurity
+         if connection.useTLS {
+             // Draw Things uses a self-signed server certificate, so TLS encrypts the
+             // connection but does not authenticate the host. Settings says so.
+-            security = .tls(
+-                .makeClientConfigurationBackedByNIOSSL(certificateVerification: .none))
++            security = .tls { $0.serverCertificateVerification = .noVerification }
+         } else {
+             security = .plaintext
+         }
+-        return try GRPCChannelPool.with(
+-            target: .host(connection.host, port: connection.port),
+-            transportSecurity:
+```
+
+**File**: `Mochi DiffusionTests/DrawThingsTests.swift` (modified, +84/-73)
+```diff
+@@ -7,12 +7,17 @@ import CoreGraphics
+ import CryptoKit
+ import DrawThingsClient
+ import Foundation
+-import GRPC
+-import NIO
++import GRPCCore
++import GRPCNIOTransportHTTP2
++import GRPCProtobuf
+ import Testing
+ 
+ @testable import Mochi_Diffusion
+ 
++// DrawThingsClient declares types with these names too.
++private typealias DrawThingsError = Mochi_Diffusion.DrawThingsError
++private typealias GenerationRequest = Mochi_Diffusion.GenerationRequest
++
+ private actor StubDrawThingsTransport: DrawThingsTransport {
+     let catalog: Data
+     let loras: Data
+@@ -984,7 +989,7 @@ struct DrawThingsTests {
+         // Settings reports the server; the main window does not blame a models folder.
+         #expect(controller.discoveryMessage?.contains("Couldn't read the models folder") != true)
+ 
+-        await transport.failCatalog(with: GRPCStatus(code: .unavailable, message: nil))
++        await transport.failCatalog(with: RPCError(code: .unavailable, message: ""))
+         await controller.loadModels(from: [.connection])
+         #expect(failureReason(controller.drawThingsStatus)?.contains("didn't answer") == true)
+ 
+@@ -1003,19 +1008,22 @@ struct DrawThingsTests {
+         var remote = connection
+         remote.host = "studio.local"
+         let unreachable = DrawThingsError.generationFailure(
+-            GRPCConnectionPoolError(code: .deadlineExceeded), connection: remote)
++            DrawThingsUnopenedCall(
++                error: RPCError(
++                    code: .unavailable, message: "Channel is in a transient failure state")),
++            connection: remote)
+         #expect(
+             GenerationService.userDescription(of: unreachable)
+                 == "Couldn't reach the Draw Things server at studio.local.")
+         let dropped = DrawThingsError.generationFailure(
+-            GRPCStatus(code: .unavailable, message: "Transport became inactive"),
++            RPCError(code: .unavailable, message: "Transport became inactive"),
+             connection: remote)
+         #expect(GenerationService.userDescription(of: dropped).contains("closed the connection"))
+         // The alert offers to refresh the server's models for this one only.
+         #expect((dropped as? any ModelListMayBeOutdated)?.outdatedModelListSource == .connection)
+         #expect((unreachable as? any ModelListMayBeOutdated)?.outdatedModelListSource == nil)
+         let reported = DrawThingsError.generationFailure(
+-            GRPCStatus(code: .internalError, message: "Out of memory"), connection: remote)
++            RPCError(code: .internalError, message: "Out of memory"), connection: remote)
+         #expect(
+             GenerationService.userDescription(of: reported)
+                 == "Draw Things reported an error: Out of memory")
+@@ -1026,7 +1034,7 @@ struct DrawThingsTests {
+             GenerationService.userDescription(of: own) == "Draw Things returned no finished image.")
+         // The runtime throws the worded error.
+         let transport = StubDrawThingsTransport(catalog: catalog)
+-        await transport.failGenerations(with: GRPCStatus(code: .unavailable, message: nil))
++        await transport.failGenerations(with: RPCError(code: .unavailable, message: ""))
+         let runtime = DrawThingsRuntime(secrets: NoSecretStore(), transport: transport)
+         let request = try request()
+         do {
+@@ -1041,7 +1049,8 @@ struct DrawThingsTests {
+ 
+     @Test("A call is retried only while its connection never opens")
+     func unopenedConnectionRetry() async throws {
+-        let unopened = GRPCConnectionPoolError(code: .deadlineExceeded)
++        let unopened = DrawThingsUnopenedCall(
++            error: RPCError(code: .unavailable, message: "Channel is in a transient failure state"))
+         // A sleeping server answers once the first attempt has woken it.
+         var attempts = 0
+         let answer = try await GRPCDrawThingsTransport.retryingUnopenedConnection {
+@@ -1053,7 +1062,7 @@ struct DrawThingsTests {
+         #expect(attempts == 3)
+ 
+         attempts = 0
+-        await #expect(throws: GRPCConnectionPoolError.self) {
++        await #expect(throws: DrawThingsUnopenedCall.self) {
+             try await GRPCDrawThingsTransport.retryingUnopenedConnection {
+                 attempts += 1
+                 throw unopened
+@@ -1063,10 +1072,10 @@ struct DrawThingsTests {
+ 
+         // A connection that closed during the call may have started the work.
+         attempts = 0
+-        await #expect(throws: GRPCStatus.self) {
++        await #expect(throws: RPCError.self) {
+             try await GRPCDrawThingsTransport.retryingUnopenedConnection {
+                 attempts += 1
+-                throw GRPCStatus(code: .unavailable, message: "Transport became inactive")
++                throw RPCError(code: .unavailable, message: "Transport became inactive")
+             }
+         }
+         #expect(attempts == 1)
+@@ -1159,8 +1168,7 @@ struct DrawThingsTests {
+ 
+ // Exercise the actual HTTP/2 + protobuf transport witho
+```
+
 #### Recent Merged Pull Requests:
+- **PR #538** (2026-11-15): New Crowdin updates (@itsjoshpark)
+- **PR #537** (2026-11-15): Release 7.0 (@gdbing)
+- **PR #536** (closed): build(deps): bump github.com/gdbing/filterablepicker from 1.1.0 to 1.2.0 (@dependabot[bot])
+- **PR #535** (2026-11-15): build(deps): bump crowdin/github-action from 3.5.0 to 3.6.0 (@dependabot[bot])
 - **PR #534** (2026-11-02): Release 6.3 (@gdbing)
 - **PR #533** (2026-11-02): build(deps): bump github.com/sparkle-project/sparkle from 2.9.0 to 2.10.1 (@dependabot[bot])
-- **PR #532** (2026-11-02): build(deps): bump github.com/gdbing/filterablepicker from 1.0.1 to 1.1.0 (@dependabot[bot])
-- **PR #531** (2026-11-02): build(deps): bump crowdin/github-action from 3.0.2 to 3.5.0 (@dependabot[bot])
-- **PR #530** (2026-11-02): build(deps): bump github.com/huggingface/swift-transformers from 0.1.8 to 1.3.5 (@dependabot[bot])
-- **PR #529** (2026-11-02): build(deps): bump actions/download-artifact from 8.0.1 to 8.0.2 (@dependabot[bot])
 
 ---
 
@@ -2167,31 +2459,36 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. move iris.c to the attention reduction fix
+## X. keep the gallery when a folder setting is rewritten unchanged
 
 **RULE**:
-When implementing operations in `iris.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MochiDiffusion/MochiDiffusion. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Mochi Diffusion/Support/ConfigStore.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MochiDiffusion/MochiDiffusion. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ae2c0f37`: move iris.c to the attention reduction fix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2d2ca0df`: keep the gallery when a folder setting is rewritten unchanged. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `iris.c`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Mochi Diffusion/Support/ConfigStore.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-Subproject commit 8337730034f1d81fe91c389b7210eadcc29c7bb7
+    // The folder settings ignore a write of the value they already hold, such as
+    // a Settings text field committing unchanged text: each change reloads the
+    // gallery or rediscovers the models.
+            guard newValue != _imageDir else { return }
+            guard newValue != _modelDir else { return }
+            guard newValue != _controlNetDir else { return }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
-// Anti-pattern to NEVER write (induced failure mode):
-Subproject commit c41bce43fb6dffd2b4efb61938e6d60af69063ef
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ae2c0f37` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2d2ca0df` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

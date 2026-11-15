@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T12:36:57.573Z",
+  "updated_at": "2026-11-15T12:54:34.669Z",
   "stats": {
-    "total_discovered": 3680,
-    "approved_pending_harvest": 3470,
+    "total_discovered": 3696,
+    "approved_pending_harvest": 3486,
     "harvested_count": 0,
     "rejected_count": 210,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3449,
+      "COMMUNITY_AND_EXPERT": 3465,
       "OFFICIAL_DOCUMENTATION": 126,
       "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
@@ -79511,6 +79511,358 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-sensenova-sensenova-loop-9b-preview-learnings.md",
         "fileName": "hf-sensenova-sensenova-loop-9b-preview-learnings.md"
+      }
+    },
+    "SRC-12A86FFA3457": {
+      "id": "SRC-12A86FFA3457",
+      "url": "https://github.com/MochiDiffusion/MochiDiffusion",
+      "title": "https://github.com/MochiDiffusion/MochiDiffusion",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T12:54:33.865Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mochidiffusion-mochidiffusion-learnings.md",
+        "fileName": "mochidiffusion-mochidiffusion-learnings.md"
+      }
+    },
+    "SRC-41867F617F45": {
+      "id": "SRC-41867F617F45",
+      "url": "https://github.com/euphoriacyberware-ai/DT-gRPC-Swift-Client",
+      "title": "https://github.com/euphoriacyberware-ai/DT-gRPC-Swift-Client",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T12:54:33.885Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mochidiffusion-mochidiffusion-learnings.md",
+        "fileName": "mochidiffusion-mochidiffusion-learnings.md"
+      }
+    },
+    "SRC-A3843DE29779": {
+      "id": "SRC-A3843DE29779",
+      "url": "https://github.com/euphoriacyberware-ai/DrawThings-Swift",
+      "title": "https://github.com/euphoriacyberware-ai/DrawThings-Swift",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T12:54:33.903Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mochidiffusion-mochidiffusion-learnings.md",
+        "fileName": "mochidiffusion-mochidiffusion-learnings.md"
+      }
+    },
+    "SRC-B0D8975AA19F": {
+      "id": "SRC-B0D8975AA19F",
+      "url": "https://github.com/grpc/grpc-swift.git",
+      "title": "https://github.com/grpc/grpc-swift.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T12:54:33.921Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mochidiffusion-mochidiffusion-learnings.md",
+        "fileName": "mochidiffusion-mochidiffusion-learnings.md"
+      }
+    },
+    "SRC-5AE337D2DD0D": {
+      "id": "SRC-5AE337D2DD0D",
+      "url": "https://github.com/grpc/grpc-swift-2.git",
+      "title": "https://github.com/grpc/grpc-swift-2.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T12:54:33.937Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mochidiffusion-mochidiffusion-learnings.md",
+        "fileName": "mochidiffusion-mochidiffusion-learnings.md"
+      }
+    },
+    "SRC-B68C973E78E3": {
+      "id": "SRC-B68C973E78E3",
+      "url": "https://github.com/apple/swift-nio.git",
+      "title": "https://github.com/apple/swift-nio.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T12:54:33.955Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mochidiffusion-mochidiffusion-learnings.md",
+        "fileName": "mochidiffusion-mochidiffusion-learnings.md"
+      }
+    },
+    "SRC-29A287BE8DCD": {
+      "id": "SRC-29A287BE8DCD",
+      "url": "https://github.com/grpc/grpc-swift-nio-transport.git",
+      "title": "https://github.com/grpc/grpc-swift-nio-transport.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T12:54:33.974Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mochidiffusion-mochidiffusion-learnings.md",
+        "fileName": "mochidiffusion-mochidiffusion-learnings.md"
+      }
+    },
+    "SRC-4BCF780F72C9": {
+      "id": "SRC-4BCF780F72C9",
+      "url": "https://github.com/grpc/grpc-swift-protobuf.git",
+      "title": "https://github.com/grpc/grpc-swift-protobuf.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T12:54:33.991Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mochidiffusion-mochidiffusion-learnings.md",
+        "fileName": "mochidiffusion-mochidiffusion-learnings.md"
+      }
+    },
+    "SRC-9F1E4EC42112": {
+      "id": "SRC-9F1E4EC42112",
+      "url": "https://github.com/apple/swift-protobuf.git",
+      "title": "https://github.com/apple/swift-protobuf.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T12:54:34.009Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mochidiffusion-mochidiffusion-learnings.md",
+        "fileName": "mochidiffusion-mochidiffusion-learnings.md"
+      }
+    },
+    "SRC-BDBE7B6CEE6A": {
+      "id": "SRC-BDBE7B6CEE6A",
+      "url": "https://www.oasis-open.org/standard/sarif-v2-1-0",
+      "title": "https://www.oasis-open.org/standard/sarif-v2-1-0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T12:54:34.558Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-9267420B719F": {
+      "id": "SRC-9267420B719F",
+      "url": "https://github.com/dathere/qsv/pull/5031",
+      "title": "https://github.com/dathere/qsv/pull/5031",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T12:54:34.575Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-36F6272FCD5A": {
+      "id": "SRC-36F6272FCD5A",
+      "url": "https://github.com/dathere/qsv/pull/5003",
+      "title": "https://github.com/dathere/qsv/pull/5003",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T12:54:34.595Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-7E9F521CAC44": {
+      "id": "SRC-7E9F521CAC44",
+      "url": "https://github.com/dathere/qsv/pull/5005",
+      "title": "https://github.com/dathere/qsv/pull/5005",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T12:54:34.611Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-5AB44746EB01": {
+      "id": "SRC-5AB44746EB01",
+      "url": "https://github.com/dathere/qsv/pull/5009",
+      "title": "https://github.com/dathere/qsv/pull/5009",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T12:54:34.627Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-A9807BD2F480": {
+      "id": "SRC-A9807BD2F480",
+      "url": "https://github.com/dathere/qsv/pull/5012",
+      "title": "https://github.com/dathere/qsv/pull/5012",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T12:54:34.643Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-B6FE51D95190": {
+      "id": "SRC-B6FE51D95190",
+      "url": "https://github.com/dathere/ckanext-webpageviewplus",
+      "title": "https://github.com/dathere/ckanext-webpageviewplus",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T12:54:34.669Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
       }
     }
   }

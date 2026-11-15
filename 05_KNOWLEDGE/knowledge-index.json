@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-15T12:36:58.652Z",
-  "total_verified_learnings": 8694,
+  "last_updated": "2026-11-15T12:54:35.442Z",
+  "total_verified_learnings": 8695,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18374,
+  "total_items": 18383,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112094,10 +112094,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "313132b8",
-      "content_hash": "2b09b800fdd5c7d680554e4befd83979a61e2d902b6526e034f3da2d8272e9e2",
+      "source_version": "4ec3d2c8",
+      "content_hash": "693bbfd5d0c51d818f27f58e70c703af766a2b5a470c5a159c91f1261c4cd105",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T03:34:41.645Z"
+      "persisted_at": "2026-11-15T12:54:31.156Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -112131,9 +112131,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dathere-qsv-learnings",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "062d79c7587db5812114e0f2534fa8dba9ee93782b5294318175eb46e483308a",
+      "content_hash": "56d45632d1a2f8963c2a6823bfe612f08e25d46303b4c3329389beee32642694",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T03:35:16.746Z"
+      "persisted_at": "2026-11-15T12:54:34.996Z"
     },
     "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels": {
       "item_id": "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels",
@@ -113663,13 +113663,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-K516-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-6SK6-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "efb26d93d71fd621b58c091482ee2cb6877abd7f0ec79dc110f67e60380b1e09",
+      "content_hash": "ce8dbbc007ddada3fa1d49c05965cad74863da5893f7208423d48f12f8abc0d5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T12:36:58.374Z"
+      "persisted_at": "2026-11-15T12:54:35.290Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113679,9 +113679,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "7f137c315e51ab7935003c4b14ea6d041a1e2ca5dae96e1ba01f67542cf5aea8",
+      "content_hash": "0aad2cee4c49dfd7432d61a868fe3ebd980108997d1cc48f75096b7702d49ed5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T12:36:58.507Z"
+      "persisted_at": "2026-11-15T12:54:35.363Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113691,9 +113691,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "a393bd3636d6b6d27b30a7735af6a059509bce92cae8bc17a7145613aac0641e",
+      "content_hash": "19a750d91b15624ad82d41f41ac88649b8f88bacbdc4da9bad24ea01e1fddddf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T12:36:58.652Z"
+      "persisted_at": "2026-11-15T12:54:35.442Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -218731,8 +218731,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "313132b8",
-      "content_hash": "15d8710cacadd1d24c64f4c3c258e25eb9bc253c97372476456be57721373b51",
+      "source_version": "4ec3d2c8",
+      "content_hash": "17b6bffe98ef8826edcf93fe097cecb72b28839067be84a9fa443e96b8abf0e8",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -218780,6 +218780,11 @@
           "number": 8572,
           "title": "docs(changelog): 29.0.0 Highlights split security fixes from bundled-library upd",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8614,
+          "title": "docs(changelog): 29.0.0 Highlights lead with validate --sarif, note smaller .mcp",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -218787,7 +218792,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T03:34:41.024Z",
+      "verified_at": "2026-11-15T12:54:30.703Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -219617,10 +219622,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "repository": "dathere/qsv",
-      "source_version": "313132b8",
-      "content_hash": "0e8af40b6e1e783f3007a160a32ec2367f8f07440c7496a478fe558e7bd6940c",
+      "source_version": "4ec3d2c8",
+      "content_hash": "5a46e6d202ed16f3ba73230c0e9c89c4808fa09f17290d5e39fffdb16dfd301b",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T03:34:41.537Z"
+      "persisted_at": "2026-11-15T12:54:31.045Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant",
@@ -219690,9 +219695,9 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "5919e5c9124f47e5a1018ed55bb201660e916294aa8d5b3c4b158e85def5890f",
+      "content_hash": "379157fd3cb47525d048ad6c8725e22f83ec1e028a8e552ea5587c722f21c07f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T03:35:16.620Z"
+      "persisted_at": "2026-11-15T12:54:34.911Z"
     },
     "learn-huggingface-qwen-qwen3-8-flash-next": {
       "learning_id": "learn-huggingface-qwen-qwen3-8-flash-next",
@@ -243036,6 +243041,139 @@
       "content_hash": "5351b834778f05d4a888d5cf889579a9169bd5f12e1d730235cbc3eb7efd9d8e",
       "domain_letter": "D",
       "persisted_at": "2026-11-15T12:36:57.789Z"
+    },
+    "learn-github-mochidiffusion-mochidiffusion": {
+      "learning_id": "learn-github-mochidiffusion-mochidiffusion",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "MochiDiffusion/MochiDiffusion",
+      "repository": "MochiDiffusion/MochiDiffusion",
+      "slug": "mochidiffusion-mochidiffusion",
+      "platform": "github",
+      "source_url": "https://github.com/MochiDiffusion/MochiDiffusion",
+      "source_version": "e9e0d755",
+      "content_hash": "cde4890f9268855673c20a109658fc5e97b03de705b1887c0413d50f4a0437e7",
+      "dossier_path": "07_PROJECT_LEARNING/mochidiffusion-mochidiffusion-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/mochidiffusion-mochidiffusion-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8613,
+          "title": "keep the gallery when a folder setting is rewritten unchanged",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T12:54:21.252Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8613": {
+      "learning_id": "rule-8613",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8613,
+      "title": "keep the gallery when a folder setting is rewritten unchanged",
+      "source_url": "https://github.com/MochiDiffusion/MochiDiffusion",
+      "source_version": "e9e0d755",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T12:54:21.252Z"
+    },
+    "candidate_directive-keep-the-gallery-when-a-folder-setting-is-rewritten-unchanged": {
+      "item_id": "candidate_directive-keep-the-gallery-when-a-folder-setting-is-rewritten-unchanged",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-6ROM-keep-the-gallery-when-a-folder-setting-is-rewritten-unchanged.md",
+      "title": "keep the gallery when a folder setting is rewritten unchanged",
+      "repository": "mochidiffusion-mochidiffusion-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e33febd7df83f9e01ac3345c8d23423cb15a89822424a1bbc4efa666a486872b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T12:54:34.155Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-mochidiffusion-mochidiffusion-core-invariant": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-mochidiffusion-mochidiffusion-core-invariant",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-mochidiffusion-mochidiffusion-technical-construction-intelligence-mochidiffusion.md",
+      "title": "Technical Construction Intelligence: MochiDiffusion/MochiDiffusion Core Invariants",
+      "repository": "MochiDiffusion/MochiDiffusion",
+      "source_version": "e9e0d755",
+      "content_hash": "00fa2ac18f9edd1c4dcdfa22a0a0edc38e61d3db1b478441c232da42f53db994",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T12:54:21.606Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-mochidiffusion-mochidiffusion": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-mochidiffusion-mochidiffusion",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/mochidiffusion-mochidiffusion-verification-protocol-empirical-defect-shield-for-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for MochiDiffusion/MochiDiffusion",
+      "repository": "MochiDiffusion/MochiDiffusion",
+      "source_version": "e9e0d755",
+      "content_hash": "117361cbb49d40805c95a19f4300586307411a90054d0dc8f89a39413cf8ae1e",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T12:54:21.688Z"
+    },
+    "rule-8614": {
+      "learning_id": "rule-8614",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8614,
+      "title": "docs(changelog): 29.0.0 Highlights lead with validate --sarif, note smaller .mcp",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "4ec3d2c8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T12:54:30.703Z"
+    },
+    "candidate_directive-docs-changelog-29-0-0-highlights-lead-with-validate-sarif-note-smaller-mcp": {
+      "item_id": "candidate_directive-docs-changelog-29-0-0-highlights-lead-with-validate-sarif-note-smaller-mcp",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-6S7L-docs-changelog-29-0-0-highlights-lead-with-validate-sarif-note-smaller-mcp.md",
+      "title": "docs(changelog): 29.0.0 Highlights lead with validate --sarif, note smaller .mcp",
+      "repository": "dathere-qsv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "72103ed9dda28b70c2e1664d1532117fc18b113c4d751391e0c2c94b2bbcb907",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T12:54:34.837Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-mochidiffusion-mochidiffusion-learnings-core": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-mochidiffusion-mochidiffusion-learnings-core",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-mochidiffusion-mochidiffusion-learnings-technical-construction-intelligence-moch.md",
+      "title": "Technical Construction Intelligence: mochidiffusion-mochidiffusion-learnings Core Invariants",
+      "repository": "mochidiffusion-mochidiffusion-learnings",
+      "source_version": "HEAD",
+      "content_hash": "32f4bc1e274ab97156809c66a1ccddc718846b70ca821b4a5c36fbcb2d34082b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T12:54:34.261Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-mochidiffusion-mochidiffusion-": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-mochidiffusion-mochidiffusion-",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/mochidiffusion-mochidiffusion-learnings-verification-protocol-empirical-defect-s.md",
+      "title": "Verification Protocol: Empirical Defect Shield for mochidiffusion-mochidiffusion-learnings",
+      "repository": "mochidiffusion-mochidiffusion-learnings",
+      "source_version": "HEAD",
+      "content_hash": "cb691919ea5c3c54ff4ae825314ae55b9c80908c4c89609992f76c9c3ab830c4",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T12:54:34.343Z"
     }
   },
   "ai-builder-brain": {

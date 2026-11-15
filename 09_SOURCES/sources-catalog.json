@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "313132b8",
+    "sourceVersion": "4ec3d2c8",
     "license": "NOASSERTION",
-    "contentHash": "15d8710cacadd1d24c64f4c3c258e25eb9bc253c97372476456be57721373b51",
-    "lastHarvestedAt": "2026-11-15T03:34:41.241Z",
+    "contentHash": "17b6bffe98ef8826edcf93fe097cecb72b28839067be84a9fa443e96b8abf0e8",
+    "lastHarvestedAt": "2026-11-15T12:54:30.828Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -7943,10 +7943,10 @@
     "repository": "MochiDiffusion/MochiDiffusion",
     "platform": "github",
     "sourceUrl": "https://github.com/MochiDiffusion/MochiDiffusion",
-    "sourceVersion": "d23807f2",
+    "sourceVersion": "e9e0d755",
     "license": "GPL-3.0",
-    "contentHash": "047da123ba539fd93421afad0fb422f6ffa770f25d7ddc56fdb901eb4a781e23",
-    "lastHarvestedAt": "2026-11-05T02:11:36.030Z",
+    "contentHash": "cde4890f9268855673c20a109658fc5e97b03de705b1887c0413d50f4a0437e7",
+    "lastHarvestedAt": "2026-11-15T12:54:21.373Z",
     "learningId": "learn-github-mochidiffusion-mochidiffusion"
   },
   "swiftkickmobile-swiftmessages": {

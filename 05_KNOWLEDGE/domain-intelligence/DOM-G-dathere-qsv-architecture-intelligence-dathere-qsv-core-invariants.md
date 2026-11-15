@@ -4,24 +4,24 @@
 {
   "source_repository": "dathere/qsv",
   "source_url": "https://github.com/dathere/qsv",
-  "source_version": "313132b8",
+  "source_version": "4ec3d2c8",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-15T03:34:41.422Z",
+  "timestamp": "2026-11-15T12:54:30.967Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dathere-qsv",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `313132b8`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-15T03:34:41.422Z`  
+> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `4ec3d2c8`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-15T12:54:30.967Z`  
 > **Learning ID**: `learn-github-dathere-qsv`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), B (Product Intelligence), F (Design Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 58%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), F (Design Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 54%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from dathere/qsv:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T03:34:40.297Z  
+> **Harvest Timestamp**: 2026-11-15T12:54:30.161Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2215,238 +2215,41 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `138800cf` (2026-11-15)
-**Commit Message**: docs(changelog): 29.0.0 Highlights split security fixes from bundled-library updates
+### Incident Patch 1: `4ec3d2c8` (2026-11-15)
+**Commit Message**: docs(changelog): 29.0.0 Highlights lead with validate --sarif, note smaller .mcpb
 
-Retitle the deps bullet "Dependency bumps for security fixes, and
-bundled-library updates": SQLite, zstd and hono stay under Security;
-Luau 0.745 moves to Bundled libraries (its notes cite crash and
-correctness fixes, not advisories) next to driver.js 1.14.0
-(#5038, #5057).
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +8/-5)
-```diff
-@@ -22,11 +22,14 @@ Also in this release:
- - **The stats cache is no longer served stale** when `QSV_NO_HEADERS`, `QSV_STATS_SEPARATOR` or a sniffed or default delimiter changes, or after an upgrade with `--infer-dates` ([#5049](https://github.com/dathere/qsv/pull/5049), [#5051](https://github.com/dathere/qsv/pull/5051), [#5052](https://github.com/dathere/qsv/pull/5052)).
- - **`stats --cardinality`, `--mode` and `--everything` are 12–27% faster and use up to 36% less memory**, with and without `--weight` ([#5011](https://github.com/dathere/qsv/pull/5011), [#5013](https://github.com/dathere/qsv/pull/5013)).
- - **`sqlp` runs on a newer Polars** that adds correlated subqueries, `LATERAL`, `PERCENTILE_CONT`/`PERCENTILE_DISC`, `CREATE VIEW`, `BOOL_AND`, `COUNT_IF`, `MAX_BY`, `REGEXP_EXTRACT` and more. It also fixes two wrong results ([#5055](https://github.com/dathere/qsv/pull/5055) and earlier bumps).
--- **Dependency bumps for security fixes, including bundled libraries.**
--  - The SQLite that `to sqlite` bundles is now 3.54.1, which fixes [RUSTSEC-2026-0459](https://rustsec.org/advisories/RUSTSEC-2026-0459) ([#5022](https://github.com/dathere/qsv/pull/5022)).
--  - The Polars bump moves to zstd 0.14, which clears 13 "unsound" advisories ([#5021](https://github.com/dathere/qsv/pull/5021)).
--  - The MCP server takes `hono` and `@hono/node-server` security releases ([#5042](https://github.com/dathere/qsv/pull/5042), [#5043](https://github.com/dathere/qsv/pull/5043)).
--  - The bundled Luau is now 0.745, with native-code (`luau-jit`) crash and code-generation fixes ([#5026](https://github.com/dathere/qsv/pull/5026)).
-+- **Dependency bumps for security fixes, and bundled-library updates.**
-+  - Security:
-+    - The SQLite that `to sqlite` bundles is now 3.54.1, which fixes [RUSTSEC-2026-0459](https://rustsec.org/advisories/RUSTSEC-2026-0459) ([#5022](https://github.com/dathere/qsv/pull/5022)).
-+    - The Polars bump moves to zstd 0.14, which clears 13 "unsound" advisories ([#5021](https://github.com/dathere/qsv/pull/5021)).
-+    - The MCP server takes `hono` and `@hono/node-server` security releases ([#5042](https://github.com/dathere/qsv/pull/5042), [#5043](https://github.com/dathere/qsv/pull/5043)).
-+  - Bundled libraries:
-+    - Luau is now 0.745, with native-code (`luau-jit`) crash and code-generation fixes ([#5026](https://github.com/dathere/qsv/pull/5026)).
-+    - [driver.js](https://driverjs.com), the engine behind the Data Schematic Tour, is now 1.14.0 (from 1.10.2). Enter now advances every step, and the spotlight follows elements that scroll or re-render ([#5038](https://github.com/dathere/qsv/pull/5038), [#5057](https://github.com/dathere/qsv/pull/5057)).
- 
- This is a major release because some `sqlp`, `validate`, `profile --strict`, `luau` and `stats` results and exit codes change. See [Breaking Changes](#v29-breaking-changes). The MSRV is now Rust 1.100.
- 
-```
-
----
-
-### Incident Patch 2: `4e5b4c67` (2026-11-15)
-**Commit Message**: docs(changelog): 29.0.0 title and Highlights: correctness sweep, Codacy, security bumps
-
-Title: 🛡️ The "Trust the numbers" Release ✅ (user's choice).
-Highlights now open with the correctness theme (Anthropic models for
-development, OpenAI for adversarial review, plus Codacy, thanked for free
-platform access) and list the security-driven dependency bumps: bundled
-SQLite 3.54.1 (RUSTSEC-2026-0459, #5022), zstd 0.14 via Polars (#5021),
-hono / @hono/node-server (#5042, #5043), bundled Luau 0.745 (#5026).
+SARIF moves up into the Highlights with its #5031 link and example
+workflow. The NaN crash bullet names the affected versions (28.0.0,
+27.0.1) in the past tense. The sandboxed-maps bullet links
+ckanext-webpageviewplus. A new bullet notes the .mcpb bundle shrank
+from 11.4 MB to 5.6 MB (#5014).
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `CHANGELOG.md` (modified, +9/-2)
+**File**: `CHANGELOG.md` (modified, +5/-6)
 ```diff
-@@ -4,11 +4,13 @@ All notable changes to this project will be documented in this file.
- The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
- and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
- 
--## [29.0.0] - <TBD>
-+## [29.0.0] - <TBD> 🛡️ The "Trust the numbers" Release ✅
+@@ -8,20 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
  ### Highlights
  
--~<TBD> commits since 28.0.0. If you run `stats` on data written by pandas or numpy, upgrade:
-+~<TBD> commits since 28.0.0, and the theme is **correctness**. We develop qsv with the latest models from Anthropic and review every change adversarially with OpenAI's. [Codacy](https://www.codacy.com) adds one more layer of correctness review on top of that, and it gives us free access to its platform. With all three, we swept several core commands for correctness: `stats` and `moarstats`, `luau`, `profile`, `scoresql`, `sqlp --format avro`, and every command that reads piped stdin. Thank you, Codacy.
-+
-+If you run `stats` on data written by pandas or numpy, upgrade:
+-~104 commits since 28.0.0, and the theme is **correctness**. We develop qsv with the latest models from Anthropic and review every change adversarially with OpenAI's. [Codacy](https://www.codacy.com) adds one more layer of correctness review on top of that, and it gives us free access to its platform. With all three, we swept several core commands for correctness: `stats` and `moarstats`, `luau`, `profile`, `scoresql`, `sqlp --format avro`, and every command that reads piped stdin. Thank you, Codacy.
++~104 commits since 28.0.0, and the theme is **correctness**. We develop qsv with the latest models from Anthropic and review every change adversarially with OpenAI's. [Codacy](https://www.codacy.com) adds one more layer of correctness review on top of that. Thanks to their generosity, we have free access to their platform. With all three, we swept several core commands for correctness: `stats` and `moarstats`, `luau`, `profile`, `scoresql`, `sqlp --format avro`, and every command that reads piped stdin. Thank you, Codacy!
  
- - **`stats` no longer crashes on `NaN` cells** ([#5053](https://github.com/dathere/qsv/pull/5053)). In qsv 28.0.0 and 27.0.1, `stats --median`, `--quartiles` or `--everything` panics on a float column of a few hundred rows or more that holds a `NaN`, `nan` or `NAN` cell, which is how pandas and numpy write missing values. So does `moarstats`, which runs `stats`. On smaller columns, the `sum` came out empty and the quartiles, MAD, IQR, fences and percentiles were empty or shifted. Every numeric statistic now skips `NaN` cells, as the mean and `--quantile-method approx` already did. A `NaN` cell still counts as a value for `nullcount`, `sparsity` and `cardinality`.
+-If you run `stats` on data written by pandas or numpy, upgrade:
+-
+-- **`stats` no longer crashes on `NaN` cells** ([#5053](https://github.com/dathere/qsv/pull/5053)). In qsv 28.0.0 and 27.0.1, `stats --median`, `--quartiles` or `--everything` panics on a float column of a few hundred rows or more that holds a `NaN`, `nan` or `NAN` cell, which is how pandas and numpy write missing values. So does `moarstats`, which runs `stats`. On smaller columns, the `sum` came out empty and the quartiles, MAD, IQR, fences and percentiles were empty or shifted. Every numeric statistic now skips `NaN` cells, as the mean and `--quantile-method approx` already did. A `NaN` cell still counts as a value for `nullcount`, `sparsity` and `cardinality`.
++- **`validate --sarif` writes JSON Schema errors as a [SARIF 2.1.0](https://www.oasis-open.org/standard/sarif-v2-1-0/) log** ([#5031](https://github.com/dathere/qsv/pull/5031)). Though SARIF is typically used for static analysis of code, we're now using it to report validation errors in a standardized format, with an example GitHub Actions workflow that uploads them to GitHub code scanning. This sets the stage for integrating qsv's validation capabilities into Datapusher+, CI/CD pipelines and other automated workflows.
++- **`stats` no longer crashes on `NaN` cells** ([#5053](https://github.com/dathere/qsv/pull/5053)). If you run `stats` on data written by pandas or numpy, upgrade. In qsv 28.0.0 and 27.0.1, `stats --median`, `--quartiles` or `--everything` panicked on a float column of a few hundred rows or more that holds a `NaN`, `nan` or `NAN` cell, which is how pandas and numpy write missing values. So did `moarstats`, which runs `stats`. On smaller columns, the `sum` came out empty and the quartiles, MAD, IQR, fences and percentiles were empty or shifted. Every numeric statistic now skips `NaN` cells, as the mean and `--quantile-method approx` already did. A `NaN` cell still counts as a value for `nullcount`, `sparsity` and `cardinality`.
  
-@@ -20,6 +22,11 @@ Also in this release:
+ Also in this release:
+ 
+-- **`validate --sarif` writes JSON Schema errors as a SARIF 2.1.0 log** for GitHub code scanning and other SARIF tools, with an example GitHub Actions workflow ([#5031](https://github.com/dathere/qsv/pull/5031)).
+ - **Piped stdin works in eleven more places.** `sample`, `cat`, `applydp`, `geocode --batch 0`, `input --skip-lastlines`, `partition`, `split --chunks`, `searchset`, `frequency`, `sniff` and `extsort` dropped rows, wrote only the header, or rejected `-` when reading from a pipe, several of them with exit 0 ([#5003](https://github.com/dathere/qsv/pull/5003), [#5005](https://github.com/dathere/qsv/pull/5005), [#5009](https://github.com/dathere/qsv/pull/5009), [#5012](https://github.com/dathere/qsv/pull/5012)).
+-- **Maps render in sandboxed iframes** such as CKAN's Webpage view. Before, every MapLibre map there stayed blank ([#5033](https://github.com/dathere/qsv/pull/5033)).
++- **Maps render in sandboxed iframes** such as CKAN's Webpage view or the new [ckanext-webpageviewplus](https://github.com/dathere/ckanext-webpageviewplus). Before, every MapLibre map there stayed blank ([#5033](https://github.com/dathere/qsv/pull/5033)).
  - **The stats cache is no longer served stale** when `QSV_NO_HEADERS`, `QSV_STATS_SEPARATOR` or a sniffed or default delimiter changes, or after an upgrade with `--infer-dates` ([#5049](https://github.com/dathere/qsv/pull/5049), [#5051](https://github.com/dathere/qsv/pull/5051), [#5052](https://github.com/dathere/qsv/pull/5052)).
  - **`stats --cardinality`, `--mode` and `--everything` are 12–27% faster and use up to 36% less memory**, with and without `--weight` ([#5011](https://github.com/dathere/qsv/pull/5011), [#5013](https://github.com/dathere/qsv/pull/5013)).
- - **`sqlp` runs on a newer Polars** that adds correlated subqueries, `LATERAL`, `PERCENTILE_CONT`/`PERCENTILE_DISC`, `CREATE VIEW`, `BOOL_AND`, `COUNT_IF`, `MAX_BY`, `REGEXP_EXTRACT` and more. It also fixes two wrong results ([#5055](https://github.com/dathere/qsv/pull/5055) and earlier bumps).
-+- **Dependency bumps for security fixes, including bundled libraries.**
-+  - The SQLite that `to sqlite` bundles is now 3.54.1, which fixes [RUSTSEC-2026-0459](https://rustsec.org/advisories/RUSTSEC-2026-0459) ([#5022](https://github.com/dathere/qsv/pull/5022)).
-+  - The Polars bump moves to zstd 0.14, which clears 13 "unsound" advisories ([#5021](https://github.com/dathere/qsv/pull/5021)).
-+  - The MCP server takes `hono` and `@hono/node-server` security releases ([#5042](https://github.com/dathere/qsv/pull/5042), [#5043](https://github.com/dathere/qsv/pull/5043)).
-+  - The bundled Luau is now 0.745, with native-code (`luau-jit`) crash and code-generation fixes ([#5026](https://github.com/dathere/qsv/pull/5026)).
- 
- This is a major release because some `sqlp`, `validate`, `profile --strict`, `luau` and `stats` results and exit codes change. See [Breaking Changes](#v29-breaking-changes). The MSRV is now Rust 1.100.
- 
-```
-
----
-
-### Incident Patch 3: `8f9c8c62` (2026-11-15)
-**Commit Message**: fix(stats): a column of only NaN cells has no sum, not 0 (#5056)
-
-#5053 skips NaN cells in the sum, so a column whose every cell is NaN
-summed nothing and printed 0, which reads as a real total (28.0.0 left it
-empty). The mean, stddev and quantiles were already empty for it.
-
-TypedSum now records whether it summed any number; with none, a Float
-column's sum is empty. The flag is OR-ed in merge, so a parallel chunk
-that saw only NaN cells doesn't hide the other chunks' total. An empty
-Float sum is written as-is instead of being parsed as a float.
-
-Tests: an all-NaN column, and an indexed --jobs 4 run over NaN-then-1.5
-rows and over all-NaN rows. Mutation-checked: reverting the fix fails
-both; dropping the merge OR fails the mixed chunk case.
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +1/-1)
-```diff
-@@ -42,7 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
-   - **New SQL:** join keys of different numeric types ([#30401](https://github.com/pola-rs/polars/pull/30401)); correlated subqueries with any outer condition, `GROUP BY`, `HAVING`, `LIMIT`, `ANY`/`ALL`, and `LATERAL` derived tables ([#30378](https://github.com/pola-rs/polars/pull/30378), [#30453](https://github.com/pola-rs/polars/pull/30453), [#30466](https://github.com/pola-rs/polars/pull/30466), [#30459](https://github.com/pola-rs/polars/pull/30459), [#30490](https://github.com/pola-rs/polars/pull/30490), [#30467](https://github.com/pola-rs/polars/pull/30467)); `PERCENTILE_CONT`/`PERCENTILE_DISC ... WITHIN GROUP` ([#30442](https://github.com/pola-rs/polars/pull/30442)); non-literal `LIKE` patterns ([#30364](https://github.com/pola-rs/polars/pull/30364), [#30372](https://github.com/pola-rs/polars/pull/30372)); typed numeric/string literals ([#30486](https://github.com/pola-rs/polars/pull/30486)); `LIMIT`/`OFFSET` expressions such as scalar subqueries ([#30425](https://github.com/pola-rs/polars/pull/30425)); repeated unnamed constants ([#30488](https://github.com/pola-rs/polars/pull/30488)); `RANDOM()`, `REPEAT`, `CARDINALITY`, constant `GROUP BY` keys and row values in `IN (subquery)`.
- 
- ### Fixed
--- **`stats`: a `NaN` cell in a float column is skipped by every numeric statistic** ([#5053](https://github.com/dathere/qsv/pull/5053)). A `NaN`, `nan` or `NAN` cell is read as a float (pandas and numpy write missing values this way). The mean already skipped it, but the `sum` came out empty, and the exact median, quartiles, IQR, MAD, fences, skewness and percentiles were computed with it. On a column of a few hundred rows or more that crashed `stats` (qsv 28.0.0 exits with a panic on `stats --quartiles`, as does `moarstats`, which runs it); on a smaller one they came out empty or shifted. With `--weight`, one such cell emptied the weighted mean and standard deviation of the whole column. They now all skip it, as `--quantile-method approx` already did, so the statistics are those of the column's other values. The cell still counts as a value: `nullcount`, `sparsity` and `cardinality` are unchanged, and the column stays Float. That holds when the other values are all integers too: such a column is summarized as floats, so its minimum and maximum read `1.0` and not `1`, and its sum is no longer exact past 2^53. `inf` cells are unchanged.
-+- **`stats`: a `NaN` cell in a float column is skipped by every numeric statistic** ([#5053](https://github.com/dathere/qsv/pull/5053)). A `NaN`, `nan` or `NAN` cell is read as a float (pandas and numpy write missing values this way). The mean already skipped it, but the `sum` came out empty, and the exact median, quartiles, IQR, MAD, fences, skewness and percentiles were computed with it. On a column of a few hundred rows or more that crashed `stats` (qsv 28.0.0 exits with a panic on `stats --quartiles`, as does `moarstats`, which runs it); on a smaller one they came out empty or shifted. With `--weight`, one such cell emptied the weighted mean and standard deviation of the whole column. They now all skip it, as `--quantile-method approx` already did, so the statistics are those of the column's other values. The cell still counts as a value: `nullcount`, `sparsity` and `cardinality` are unchanged, and the column stays Float. That holds when the other values are all integers too: such a column is summarized as floats, so its minimum and maximum read `1.0` and not `1`, and its sum is no longer exact past 2^53. A column whose cells are all `NaN` has no sum, as it has no mean ([#5056](https://github.com/dathere/qsv/pull/5056)). `inf` cells are unchanged.
- - **`stats`: the cache follows the delimiter set by `QSV_SNIFF_DELIMITER` and `QSV_DEFAULT_DELIMITER`** ([#5052](https://github.com/dathere/qsv/pull/5052)). The stats cache recorded only the `--delimiter` flag. A semicolon-separated `data.csv` read as one comma-delimited column kept that one-column cache after `QSV_SNIFF_DELIMITER` was set, so `stats` and the commands that read its cache went on describing the wrong columns. The cache now records the delimiter the file was read with, and `stats` and its readers compare against the delimiter they resolve the same way. Checking the cache still does not decompress a compressed or Parquet input. A cache written before this change did not record the delimiter it was read with, so it is recomputed on its next use.
- - **`moarstats`: two `QSV_STATS_SEPARATOR` fixes** ([#5051](https://github.com/dathere/qsv/pull/5051)):
-   - **`mode_zscore` is computed for a column with several modes under any separator.** The first mode was looked up by splitting on `|`, so with another separator a multi-modal numeric column had an empty `mode_zscore`.
-```
-
-**File**: `src/cmd/stats.rs` (modified, +17/-5)
-```diff
-@@ -6165,7 +6165,7 @@ impl Stats {
-         // sum
-         let stotlen =
-             if let Some((stotlen_work, sum)) = self.sum.as_ref().and_then(|sum| sum.show(typ)) {
--                if typ == FieldType::TFloat {
-+                if typ == FieldType::TFloat && !sum.is_empty() {
-                     if let Ok(f64_val) = fast_float2::parse::<f64, &[u8]>(sum.as_bytes()) {
-                         record.push_field(&util::round_num(f64_val, round_places));
-                     } else {
-@@ -7084,11 +7084,15 @@ impl FieldType {
- #[allow(clippy::unsafe_derive_deserialize)]
- #[derive(Clone, Default, Serialize, Deserialize, PartialEq)]
- struct TypedSum {
--    float:   Option<f64>,
-+    float:      Option<f64>,
-     // i128 so that an intermediate total past i64 range can come back in range exactly: a
-     // saturating i64 sum was order-dependent and printed plausible wrong totals
--    integer: i128,
--    stotlen: u64, // sum of the total length of strings
-+    integer:    i128,
-+    stotlen:    u64, // sum of the total length of strings
-+    // false while only NaN cells were seen: skipping them leaves nothing summed, and that must
-+    // print as no sum (like the mean), not as a total of 0
-+    #[serde(default)]
-+    has_number: bool,
- }
- 
- impl TypedSum {
-@@ -7111,6 +7115,7 @@ impl TypedSum {
-         #[allow(clippy::cast_precision_loss)]
-         match typ {
-             TInteger => {
-+                self.has_number = true;
-                 if let Some(ref mut f) = self.float {
-                     *f += float_val;
-                 } else {
-@@ -7120,7 +7125,12 @@ impl TypedSum {
-             TFloat => {
-                 // a "NaN" cell is skipped, as the mean skips it - it would turn the whole sum
-                 // into NaN. It still switches the sum to floats, carrying the integer total.
--                let addend = if float_val.is_nan() { 0.0 } else { float_val };
-+                let addend = if float_val.is_nan() {
-+                    0.0
-+                } else {
-+                    self.has_number = true;
-+                    float_val
-+                };
-                 if let Some(ref mut f) = self.float {
-                     *f += addend;
-                 } else {
-@@ -7144,6 +7154,7 @@ impl TypedSum {
-                     Err(_) => Some((self.stotlen, UNDERFLOW_STRING.to_string())),
-                 }
-             },
-+            TFloat if !self.has_number => Some((self.stotlen, String::new())),
-             TFloat => Some((
-                 self.stotlen,
-                 zmij::Buffer::new()
-@@ -7166,6 +7177,7 @@ impl Commute for TypedSum {
-             (None, None) => self.integer += other.integer,
-         }
-         self.stotlen = self.stotlen.saturating_add(other.stotlen);
-+        self.has_number |= other.has_number;
-     }
- }
- 
-```
-
-**File**: `tests/test_stats.rs` (modified, +39/-0)
-```diff
-@@ -11000,6 +11000,45 @@ fn stats_nan_cells_are_skipped_by_every_numeric_statistic() {
-     }
- }
- 
-+#[test]
-+fn stats_all_nan_column_has_no_sum() {
-+    // skipping every NaN leaves nothing summed: the sum is empty, like the mean, not 0
-+    let row = stats_first_row(
-+        "stats_all_nan_column_has_no_sum",
-+        "v\nNaN\nnan\nNAN\n",
-+        &["--everything"],
-+    );
-+    assert_eq!(
-+        [&row["type"], &row["sum"], &row["mean"], &row["nullcount"]],
-+        ["Float", "", "", "0"]
-+    );
-+}
-+
-+#[test]
-+fn stats_all_nan_chunks_merge_into_the_other_chunks_sum() {
-+    // an indexed file is summed in parallel chunks; a chunk that saw only NaN cells must not
-+    // hide the total of the chunks that saw numbers, and an all-NaN file must stay empty
-+    let mut csv = String::from("v\n");
-+    csv.push_str(&"NaN\n".repeat(3000));
-+    csv.push_str(&"1.5\n".repeat(1000));
-+    for (name, csv, sum) in [
-+        ("mixed", csv, "1500"),
-+        ("all_nan", format!("v\n{}", "NaN\n".repeat(4000)), ""),
-+    ] {
-+        let wrk = Workdir::new(&format!("stats_all_nan_chunks_merge_{name}"));
-+        wrk.create_from_string("d.csv", &csv);
-+        let mut idx = wrk.command("index");
-+        idx.arg("d.csv");
-+        wrk.assert_success(&mut idx);
-+        let mut cmd = wrk.command("stats");
-+        cmd.args(["--jobs", "4"]).arg("d.csv");
-+        let got: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
-+        let row: std::collections::HashMap<_, _> =
-+            got[0].iter().cloned().zip(got[1].iter().cloned()).collect();
-+        assert_eq!(row["sum"], sum, "{name}");
-+    }
-+}
-+
- #[test]
- fn stats_nan_cell_after_integers_keeps_the_integer_total() {
-     // the NaN switches the column to Float without adding to the sum
+ - **`sqlp` runs on a newer Polars** that adds correlated subqueries, `LATERAL`, `PERC
 ```
 
 #### Recent Merged Pull Requests:
@@ -2475,13 +2278,13 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(changelog): 29.0.0 Highlights split security fixes from bundled-library upd
+## X. docs(changelog): 29.0.0 Highlights lead with validate --sarif, note smaller .mcp
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `138800cf`: docs(changelog): 29.0.0 Highlights split security fixes from bundled-library updates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4ec3d2c8`: docs(changelog): 29.0.0 Highlights lead with validate --sarif, note smaller .mcpb. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2489,28 +2292,22 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **Dependency bumps for security fixes, and bundled-library updates.**
-  - Security:
-    - The SQLite that `to sqlite` bundles is now 3.54.1, which fixes [RUSTSEC-2026-0459](https://rustsec.org/advisories/RUSTSEC-2026-0459) ([#5022](https://github.com/dathere/qsv/pull/5022)).
-    - The Polars bump moves to zstd 0.14, which clears 13 "unsound" advisories ([#5021](https://github.com/dathere/qsv/pull/5021)).
-    - The MCP server takes `hono` and `@hono/node-server` security releases ([#5042](https://github.com/dathere/qsv/pull/5042), [#5043](https://github.com/dathere/qsv/pull/5043)).
-  - Bundled libraries:
-    - Luau is now 0.745, with native-code (`luau-jit`) crash and code-generation fixes ([#5026](https://github.com/dathere/qsv/pull/5026)).
-    - [driver.js](https://driverjs.com), the engine behind the Data Schematic Tour, is now 1.14.0 (from 1.10.2). Enter now advances every step, and the spotlight follows elements that scroll or re-render ([#5038](https://github.com/dathere/qsv/pull/5038), [#5057](https://github.com/dathere/qsv/pull/5057)).
+~104 commits since 28.0.0, and the theme is **correctness**. We develop qsv with the latest models from Anthropic and review every change adversarially with OpenAI's. [Codacy](https://www.codacy.com) adds one more layer of correctness review on top of that. Thanks to their generosity, we have free access to their platform. With all three, we swept several core commands for correctness: `stats` and `moarstats`, `luau`, `profile`, `scoresql`, `sqlp --format avro`, and every command that reads piped stdin. Thank you, Codacy!
+- **`validate --sarif` writes JSON Schema errors as a [SARIF 2.1.0](https://www.oasis-open.org/standard/sarif-v2-1-0/) log** ([#5031](https://github.com/dathere/qsv/pull/5031)). Though SARIF is typically used for static analysis of code, we're now using it to report validation errors in a standardized format, with an example GitHub Actions workflow that uploads them to GitHub code scanning. This sets the stage for integrating qsv's validation capabilities into Datapusher+, CI/CD pipelines and other automated workflows.
+- **`stats` no longer crashes on `NaN` cells** ([#5053](https://github.com/dathere/qsv/pull/5053)). If you run `stats` on data written by pandas or
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-- **Dependency bumps for security fixes, including bundled libraries.**
-  - The SQLite that `to sqlite` bundles is now 3.54.1, which fixes [RUSTSEC-2026-0459](https://rustsec.org/advisories/RUSTSEC-2026-0459) ([#5022](https://github.com/dathere/qsv/pull/5022)).
-  - The Polars bump moves to zstd 0.14, which clears 13 "unsound" advisories ([#5021](https://github.com/dathere/qsv/pull/5021)).
-  - The MCP server takes `hono` and `@hono/node-server` security releases ([#5042](https://github.com/dathere/qsv/pull/5042), [#5043](https://github.com/dathere/qsv/pull/5043)).
-  - The bundled Luau is now 0.745, with native-code (`luau-jit`) crash and code-generation fixes ([#5026](https://github.com/dathere/qsv/pull/5026)).
+~104 commits since 28.0.0, and the theme is **correctness**. We develop qsv with the latest models from Anthropic and review every change adversarially with OpenAI's. [Codacy](https://www.codacy.com) adds one more layer of correctness review on top of that, and it gives us free access to its platform. With all three, we swept several core commands for correctness: `stats` and `moarstats`, `luau`, `profile`, `scoresql`, `sqlp --format avro`, and every command that reads piped stdin. Thank you, Codacy.
+If you run `stats` on data written by pandas or numpy, upgrade:
+
+- **`stats` no longer crashes on `NaN` cells** ([#5053](https://github.com/dathere/qsv/pull/5053)). In qsv 28.0.0 and 27.0.1, `stats --median`, `--quartiles` or `--everything` panics on a float column of a few hundred rows or more that holds a `NaN`, `nan` or `NAN` cell, which is how pandas and numpy write missing values. So does `moarstats`, which runs `stats`. On smaller columns, the `sum` came out empty and the quartiles, MAD, IQR, fences and percentiles were empty or shifted. Every numeric statistic now skips `NaN` cells, as the mean and `--quantile-method approx` already did. A `NaN` cell still counts as a value for 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `138800cf` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4ec3d2c8` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

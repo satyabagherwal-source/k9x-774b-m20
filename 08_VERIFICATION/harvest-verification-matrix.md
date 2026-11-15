@@ -10091,3 +10091,5 @@
 | `CYCLE-20261115-CUZ5` | `2026-11-15T12:31:18.737Z` | `vi/websocat` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8012` | Yes (`f3d51d83...`) |
 | `CYCLE-20261115-JB4A` | `2026-11-15T12:36:19.594Z` | `sensenova/SenseNova-Loop-9B-Preview` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sensenova-sensenova-loop-9b-preview-learnings.md` | Yes (`31d59e76...`) |
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T12:36:57.559Z` | `hf-sensenova-sensenova-loop-9b-preview` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-20A9ABE9` [Domain D] | Yes (`02883ae2...`) |
+| `CYCLE-20261115-6HTM` | `2026-11-15T12:54:21.370Z` | `MochiDiffusion/MochiDiffusion` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8613` | Yes (`cde4890f...`) |
+| `CYCLE-20261115-6P49` | `2026-11-15T12:54:30.825Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8614` | Yes (`17b6bffe...`) |

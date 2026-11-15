@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T12:36:19.605Z",
-  "total_cycles_completed": 9709,
-  "total_learnings_persisted": 9709,
-  "total_rules_promoted": 9340,
+  "last_updated": "2026-11-15T12:54:30.832Z",
+  "total_cycles_completed": 9711,
+  "total_learnings_persisted": 9711,
+  "total_rules_promoted": 9342,
   "history": [
-    {
-      "timestamp": "2026-11-14T12:04:05.084Z",
-      "repository": "google/gemma-4-26B-A4B-it",
-      "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T12:04:07.692Z",
-      "repository": "bahdotsh/wrkflw",
-      "learningId": "learn-github-bahdotsh-wrkflw",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T12:04:13.832Z",
       "repository": "czy0729/Bangumi",
@@ -1403,6 +1389,20 @@
       "repository": "sensenova/SenseNova-Loop-9B-Preview",
       "learningId": "learn-huggingface-sensenova-sensenova-loop-9b-preview",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T12:54:21.377Z",
+      "repository": "MochiDiffusion/MochiDiffusion",
+      "learningId": "learn-github-mochidiffusion-mochidiffusion",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T12:54:30.832Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T12:36:58.507Z",
-  "total_records": 1046,
+  "last_updated": "2026-11-15T12:54:35.363Z",
+  "total_records": 1048,
   "domains": {
     "A": {
       "total": 7,
@@ -774,7 +774,7 @@
       ]
     },
     "H": {
-      "total": 211,
+      "total": 213,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -986,7 +986,9 @@
         "DOM-H-EE93AFC9",
         "domain_intelligence-technical-construction-intelligence-meshtastic-meshtastic-android-learnings-core",
         "domain_intelligence-technical-construction-intelligence-lancedb-lancedb-learnings-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-databendlabs-databend-learnings-core-invaria"
+        "domain_intelligence-technical-construction-intelligence-databendlabs-databend-learnings-core-invaria",
+        "domain_intelligence-technical-construction-intelligence-mochidiffusion-mochidiffusion-core-invariant",
+        "domain_intelligence-technical-construction-intelligence-mochidiffusion-mochidiffusion-learnings-core"
       ]
     },
     "I": {
@@ -7779,8 +7781,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "7f137c315e51ab7935003c4b14ea6d041a1e2ca5dae96e1ba01f67542cf5aea8",
-      "created_at": "2026-11-15T12:36:58.507Z"
+      "content_hash": "0aad2cee4c49dfd7432d61a868fe3ebd980108997d1cc48f75096b7702d49ed5",
+      "created_at": "2026-11-15T12:54:35.363Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -11103,8 +11105,8 @@
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "0e8af40b6e1e783f3007a160a32ec2367f8f07440c7496a478fe558e7bd6940c",
-      "created_at": "2026-11-15T03:34:41.537Z"
+      "content_hash": "5a46e6d202ed16f3ba73230c0e9c89c4808fa09f17290d5e39fffdb16dfd301b",
+      "created_at": "2026-11-15T12:54:31.045Z"
     },
     "DOM-D-F5645095": {
       "record_id": "DOM-D-F5645095",
@@ -11172,8 +11174,8 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-learnings-architecture-intelligence-dathere-qsv-learnings-core-invar.md",
       "repository": "dathere-qsv-learnings",
-      "content_hash": "5919e5c9124f47e5a1018ed55bb201660e916294aa8d5b3c4b158e85def5890f",
-      "created_at": "2026-11-15T03:35:16.620Z"
+      "content_hash": "379157fd3cb47525d048ad6c8725e22f83ec1e028a8e552ea5587c722f21c07f",
+      "created_at": "2026-11-15T12:54:34.911Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants",
@@ -20113,6 +20115,24 @@
       "repository": "hf-sensenova-sensenova-loop-9b-preview-learnings",
       "content_hash": "5351b834778f05d4a888d5cf889579a9169bd5f12e1d730235cbc3eb7efd9d8e",
       "created_at": "2026-11-15T12:36:57.789Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-mochidiffusion-mochidiffusion-core-invariant": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-mochidiffusion-mochidiffusion-core-invariant",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: MochiDiffusion/MochiDiffusion Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-mochidiffusion-mochidiffusion-technical-construction-intelligence-mochidiffusion.md",
+      "repository": "MochiDiffusion/MochiDiffusion",
+      "content_hash": "00fa2ac18f9edd1c4dcdfa22a0a0edc38e61d3db1b478441c232da42f53db994",
+      "created_at": "2026-11-15T12:54:21.606Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-mochidiffusion-mochidiffusion-learnings-core": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-mochidiffusion-mochidiffusion-learnings-core",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: mochidiffusion-mochidiffusion-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-mochidiffusion-mochidiffusion-learnings-technical-construction-intelligence-moch.md",
+      "repository": "mochidiffusion-mochidiffusion-learnings",
+      "content_hash": "32f4bc1e274ab97156809c66a1ccddc718846b70ca821b4a5c36fbcb2d34082b",
+      "created_at": "2026-11-15T12:54:34.261Z"
     }
   }
 }
