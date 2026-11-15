@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T00:05:27.878Z",
-  "total_cycles_completed": 9624,
-  "total_learnings_persisted": 9624,
-  "total_rules_promoted": 9277,
+  "last_updated": "2026-11-15T00:37:45.465Z",
+  "total_cycles_completed": 9627,
+  "total_learnings_persisted": 9627,
+  "total_rules_promoted": 9279,
   "history": [
-    {
-      "timestamp": "2026-11-14T01:26:27.526Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T01:48:32.608Z",
-      "repository": "Qwen/Qwen3.8-Flash-Next",
-      "learningId": "learn-huggingface-qwen-qwen3-8-flash-next",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T01:48:38.669Z",
-      "repository": "software-mansion/react-native-reanimated",
-      "learningId": "learn-github-software-mansion-react-native-reanimated",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T01:48:42.088Z",
       "repository": "zeromicro/go-zero",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-15T00:05:27.878Z",
       "repository": "ConceptCountry/qwen-concept-27b",
       "learningId": "learn-huggingface-conceptcountry-qwen-concept-27b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T00:37:27.175Z",
+      "repository": "ShiftHackZ/SDAI-KMP",
+      "learningId": "learn-github-shifthackz-sdai-kmp",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T00:37:31.127Z",
+      "repository": "nolabs-ai/nono",
+      "learningId": "learn-github-nolabs-ai-nono",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T00:37:45.465Z",
+      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
+      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

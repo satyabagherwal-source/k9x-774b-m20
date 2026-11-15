@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-15T00:05:27.883Z",
+  "last_updated": "2026-11-15T00:37:45.471Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2126,14 +2126,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
-      "content_hash": "4c854bb4c23fedf7423d3e50874e31e1f2fb9536442c84fa8d73bdb806fcb9cf",
-      "verified_at": "2026-11-09T12:42:11.414Z",
+      "content_hash": "e64fe6a5b98aeabe04c3a271df39276e70e55172d461d37375f5bd4874d9ad59",
+      "verified_at": "2026-11-15T00:37:45.470Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T12:42:11.414Z"
+      "last_updated": "2026-11-15T00:37:45.470Z"
     },
     "openbmb/MiniCPM-V-4.7-1B": {
       "repository": "openbmb/MiniCPM-V-4.7-1B",
@@ -3666,14 +3666,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nolabs-ai-nono",
-      "content_hash": "e3d6ec28deb81e6c0f22ec6ef281ff0261ae2dedbaa0aee37b92053b55f93a0c",
-      "verified_at": "2026-11-13T17:11:04.723Z",
+      "content_hash": "36cab4906bf4f292b72640f504287c857ee5cf25678fbff86725be3821de1197",
+      "verified_at": "2026-11-15T00:37:31.130Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T17:11:04.723Z"
+      "last_updated": "2026-11-15T00:37:31.130Z"
     },
     "dathere/qsv": {
       "repository": "dathere/qsv",
@@ -18306,14 +18306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-shifthackz-sdai-kmp",
-      "content_hash": "e7a4d897012af5179c293ade927ea6f0ce82b4b6393981ef74379213b7b72e99",
-      "verified_at": "2026-11-11T13:29:11.314Z",
+      "content_hash": "774f930094bc136730a943c8c946ec3c2571129280f94c93c16b0ec29dc43372",
+      "verified_at": "2026-11-15T00:37:27.180Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T13:29:11.314Z"
+      "last_updated": "2026-11-15T00:37:27.180Z"
     },
     "qybaihe/bla": {
       "repository": "qybaihe/bla",

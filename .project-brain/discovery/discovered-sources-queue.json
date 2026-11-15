@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T00:06:43.385Z",
+  "updated_at": "2026-11-15T00:38:24.631Z",
   "stats": {
-    "total_discovered": 3479,
-    "approved_pending_harvest": 3270,
+    "total_discovered": 3531,
+    "approved_pending_harvest": 3322,
     "harvested_count": 0,
     "rejected_count": 209,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3250,
+      "COMMUNITY_AND_EXPERT": 3302,
       "OFFICIAL_DOCUMENTATION": 125,
       "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
@@ -75096,6 +75096,1150 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-autotrust-jev-35b-learnings.md",
         "fileName": "hf-autotrust-jev-35b-learnings.md"
+      }
+    },
+    "SRC-E7B2C4BB55DE": {
+      "id": "SRC-E7B2C4BB55DE",
+      "url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
+      "title": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:22.637Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md",
+        "fileName": "hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md"
+      }
+    },
+    "SRC-42316E7C972D": {
+      "id": "SRC-42316E7C972D",
+      "url": "https://github.com/ShiftHackZ/SDAI-KMP",
+      "title": "https://github.com/ShiftHackZ/SDAI-KMP",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:23.031Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-1B43D7A28784": {
+      "id": "SRC-1B43D7A28784",
+      "url": "https://github.com/ShiftHackZ/Stable-Diffusion-Android/assets/15450754/79cc212a-90b9-4b60-bab9-766364e87eea",
+      "title": "https://github.com/ShiftHackZ/Stable-Diffusion-Android/assets/15450754/79cc212a-90b9-4b60-bab9-766364e87eea",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:23.061Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-8246F6ACF94A": {
+      "id": "SRC-8246F6ACF94A",
+      "url": "https://sdai-models.moroz.cc/SDAI/Bonsai/bonsai-image-ternary-4b-mlx-2bit.zip",
+      "title": "https://sdai-models.moroz.cc/SDAI/Bonsai/bonsai-image-ternary-4b-mlx-2bit.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:23.090Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-DD5EA1FB00A9": {
+      "id": "SRC-DD5EA1FB00A9",
+      "url": "https://huggingface.co/moroz-ellmsha/sdai-bonsai-model-archives/resolve/main/bonsai-image-ternary-4b-mlx-2bit.zip?download=true",
+      "title": "https://huggingface.co/moroz-ellmsha/sdai-bonsai-model-archives/resolve/main/bonsai-image-ternary-4b-mlx-2bit.zip?download=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:23.118Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-93C3F0D377A7": {
+      "id": "SRC-93C3F0D377A7",
+      "url": "https://huggingface.co/prism-ml/bonsai-image-ternary-4B-mlx-2bit",
+      "title": "https://huggingface.co/prism-ml/bonsai-image-ternary-4B-mlx-2bit",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:23.147Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-847CFEA62666": {
+      "id": "SRC-847CFEA62666",
+      "url": "https://sdai-models.moroz.cc/SDAI/Bonsai/bonsai-image-binary-4b-mlx-1bit.zip",
+      "title": "https://sdai-models.moroz.cc/SDAI/Bonsai/bonsai-image-binary-4b-mlx-1bit.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:23.187Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-4F99BC54C381": {
+      "id": "SRC-4F99BC54C381",
+      "url": "https://huggingface.co/moroz-ellmsha/sdai-bonsai-model-archives/resolve/main/bonsai-image-binary-4b-mlx-1bit.zip?download=true",
+      "title": "https://huggingface.co/moroz-ellmsha/sdai-bonsai-model-archives/resolve/main/bonsai-image-binary-4b-mlx-1bit.zip?download=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:23.216Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-9EC73A55671B": {
+      "id": "SRC-9EC73A55671B",
+      "url": "https://huggingface.co/prism-ml/bonsai-image-binary-4B-mlx-1bit",
+      "title": "https://huggingface.co/prism-ml/bonsai-image-binary-4B-mlx-1bit",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:23.250Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-52EE6C0B295B": {
+      "id": "SRC-52EE6C0B295B",
+      "url": "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-MediaPipe/releases/download/patch-26082024/stable-diffusion-v1-5.zip",
+      "title": "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-MediaPipe/releases/download/patch-26082024/stable-diffusion-v1-5.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:23.279Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-07669E69A873": {
+      "id": "SRC-07669E69A873",
+      "url": "https://sdai-models.moroz.cc/SDAI/MediaPipe/stable-diffusion-v1-5.zip",
+      "title": "https://sdai-models.moroz.cc/SDAI/MediaPipe/stable-diffusion-v1-5.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:23.320Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-64428626A929": {
+      "id": "SRC-64428626A929",
+      "url": "https://gh-proxy.ygxz.in/https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-MediaPipe/releases/download/patch-26082024/stable-diffusion-v1-5.zip",
+      "title": "https://gh-proxy.ygxz.in/https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-MediaPipe/releases/download/patch-26082024/stable-diffusion-v1-5.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:23.349Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-931E87A4E9A4": {
+      "id": "SRC-931E87A4E9A4",
+      "url": "https://huggingface.co/runwayml/stable-diffusion-v1-5/blob/main/v1-5-pruned-emaonly.ckpt",
+      "title": "https://huggingface.co/runwayml/stable-diffusion-v1-5/blob/main/v1-5-pruned-emaonly.ckpt",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:23.377Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-CEB914FA0701": {
+      "id": "SRC-CEB914FA0701",
+      "url": "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-MediaPipe/releases/download/patch-28082024/minisd.zip",
+      "title": "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-MediaPipe/releases/download/patch-28082024/minisd.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:23.406Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-2AFD32E6F4B9": {
+      "id": "SRC-2AFD32E6F4B9",
+      "url": "https://sdai-models.moroz.cc/SDAI/MediaPipe/minisd.zip",
+      "title": "https://sdai-models.moroz.cc/SDAI/MediaPipe/minisd.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:23.447Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-BF1846A1BBEE": {
+      "id": "SRC-BF1846A1BBEE",
+      "url": "https://gh-proxy.ygxz.in/https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-MediaPipe/releases/download/patch-28082024/minisd.zip",
+      "title": "https://gh-proxy.ygxz.in/https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-MediaPipe/releases/download/patch-28082024/minisd.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:23.476Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-E7B97C8AA4C1": {
+      "id": "SRC-E7B97C8AA4C1",
+      "url": "https://huggingface.co/justinpinkney/miniSD/blob/main/miniSD.ckpt",
+      "title": "https://huggingface.co/justinpinkney/miniSD/blob/main/miniSD.ckpt",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:23.506Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-4918E7BB3515": {
+      "id": "SRC-4918E7BB3515",
+      "url": "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-MediaPipe/releases/download/patch-28082024/waifu-diffusion-v1-4.zip",
+      "title": "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-MediaPipe/releases/download/patch-28082024/waifu-diffusion-v1-4.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:23.534Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-81A8921250DC": {
+      "id": "SRC-81A8921250DC",
+      "url": "https://sdai-models.moroz.cc/SDAI/MediaPipe/waifu-diffusion-v1-4.zip",
+      "title": "https://sdai-models.moroz.cc/SDAI/MediaPipe/waifu-diffusion-v1-4.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:23.577Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-469AAF13AAB5": {
+      "id": "SRC-469AAF13AAB5",
+      "url": "https://gh-proxy.ygxz.in/https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-MediaPipe/releases/download/patch-28082024/waifu-diffusion-v1-4.zip",
+      "title": "https://gh-proxy.ygxz.in/https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-MediaPipe/releases/download/patch-28082024/waifu-diffusion-v1-4.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:23.606Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-CC13DC2D15C4": {
+      "id": "SRC-CC13DC2D15C4",
+      "url": "https://huggingface.co/hakurei/waifu-diffusion-v1-4/blob/main/models/wd-1-3-penultimate-ucg-cont.ckpt",
+      "title": "https://huggingface.co/hakurei/waifu-diffusion-v1-4/blob/main/models/wd-1-3-penultimate-ucg-cont.ckpt",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:23.635Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-ED963ECF34C5": {
+      "id": "SRC-ED963ECF34C5",
+      "url": "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-MediaPipe/releases/download/patch-19092024/aniverse_v50.zip",
+      "title": "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-MediaPipe/releases/download/patch-19092024/aniverse_v50.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:23.665Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-48C3A530632D": {
+      "id": "SRC-48C3A530632D",
+      "url": "https://sdai-models.moroz.cc/SDAI/MediaPipe/aniverse_v50.zip",
+      "title": "https://sdai-models.moroz.cc/SDAI/MediaPipe/aniverse_v50.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:23.693Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-9CE21E9CCF1F": {
+      "id": "SRC-9CE21E9CCF1F",
+      "url": "https://gh-proxy.ygxz.in/https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-MediaPipe/releases/download/patch-19092024/aniverse_v50.zip",
+      "title": "https://gh-proxy.ygxz.in/https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-MediaPipe/releases/download/patch-19092024/aniverse_v50.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:23.736Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-22190FE9E0DC": {
+      "id": "SRC-22190FE9E0DC",
+      "url": "https://civitai.com/models/107842/aniverse",
+      "title": "https://civitai.com/models/107842/aniverse",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:23.765Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-0BA2A9FF6342": {
+      "id": "SRC-0BA2A9FF6342",
+      "url": "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-14022024/chilloutmix.zip",
+      "title": "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-14022024/chilloutmix.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:23.794Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-81A76638F7E2": {
+      "id": "SRC-81A76638F7E2",
+      "url": "https://sdai-models.moroz.cc/SDAI/ONNX/chilloutmix.zip",
+      "title": "https://sdai-models.moroz.cc/SDAI/ONNX/chilloutmix.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:23.823Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-EAFAD2B46006": {
+      "id": "SRC-EAFAD2B46006",
+      "url": "https://gh-proxy.ygxz.in/https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-14022024/chilloutmix.zip",
+      "title": "https://gh-proxy.ygxz.in/https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-14022024/chilloutmix.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:23.866Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-EE70B56C7D96": {
+      "id": "SRC-EE70B56C7D96",
+      "url": "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-14022024/majicmix.zip",
+      "title": "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-14022024/majicmix.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:23.896Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-02989029E91C": {
+      "id": "SRC-02989029E91C",
+      "url": "https://sdai-models.moroz.cc/SDAI/ONNX/majicmix.zip",
+      "title": "https://sdai-models.moroz.cc/SDAI/ONNX/majicmix.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:23.925Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-6C01AE27842C": {
+      "id": "SRC-6C01AE27842C",
+      "url": "https://gh-proxy.ygxz.in/https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-14022024/majicmix.zip",
+      "title": "https://gh-proxy.ygxz.in/https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-14022024/majicmix.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:23.954Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-E35140653F64": {
+      "id": "SRC-E35140653F64",
+      "url": "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-14022024/realvision.zip",
+      "title": "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-14022024/realvision.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:23.997Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-D10FA4F5D822": {
+      "id": "SRC-D10FA4F5D822",
+      "url": "https://sdai-models.moroz.cc/SDAI/ONNX/realvision.zip",
+      "title": "https://sdai-models.moroz.cc/SDAI/ONNX/realvision.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:24.031Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-C7B4B7FEB7A7": {
+      "id": "SRC-C7B4B7FEB7A7",
+      "url": "https://gh-proxy.ygxz.in/https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-14022024/realvision.zip",
+      "title": "https://gh-proxy.ygxz.in/https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-14022024/realvision.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:24.060Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-C158EBB9F087": {
+      "id": "SRC-C158EBB9F087",
+      "url": "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-25022024/analogMadness.zip",
+      "title": "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-25022024/analogMadness.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:24.089Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-AFBB40DD01DB": {
+      "id": "SRC-AFBB40DD01DB",
+      "url": "https://sdai-models.moroz.cc/SDAI/ONNX/analogMadness.zip",
+      "title": "https://sdai-models.moroz.cc/SDAI/ONNX/analogMadness.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:24.131Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-E2A9C603CA10": {
+      "id": "SRC-E2A9C603CA10",
+      "url": "https://gh-proxy.ygxz.in/https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-25022024/analogMadness.zip",
+      "title": "https://gh-proxy.ygxz.in/https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-25022024/analogMadness.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:24.160Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-F2FDD47C4EB0": {
+      "id": "SRC-F2FDD47C4EB0",
+      "url": "https://huggingface.co/Androidonnxfork/test/tree/main/fp16fullonnxsdquantized_in_ort/miena%2Clyriel%2Ccetus%2Canalogmadness/analogMadness*",
+      "title": "https://huggingface.co/Androidonnxfork/test/tree/main/fp16fullonnxsdquantized_in_ort/miena%2Clyriel%2Ccetus%2Canalogmadness/analogMadness*",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:24.188Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-A848F2171ACA": {
+      "id": "SRC-A848F2171ACA",
+      "url": "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-25022024/aniflatmix.zip",
+      "title": "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-25022024/aniflatmix.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:24.216Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-751C22271F1F": {
+      "id": "SRC-751C22271F1F",
+      "url": "https://sdai-models.moroz.cc/SDAI/ONNX/aniflatmix.zip",
+      "title": "https://sdai-models.moroz.cc/SDAI/ONNX/aniflatmix.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:24.245Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-16F2CDAD4C7F": {
+      "id": "SRC-16F2CDAD4C7F",
+      "url": "https://gh-proxy.ygxz.in/https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-25022024/aniflatmix.zip",
+      "title": "https://gh-proxy.ygxz.in/https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-25022024/aniflatmix.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:24.287Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-E4CA4F5E1AEC": {
+      "id": "SRC-E4CA4F5E1AEC",
+      "url": "https://huggingface.co/Androidonnxfork/test/tree/main/fp16fullonnxsdquantized_in_ort/landscape_modelsfp32noslicing/aniflatmix*",
+      "title": "https://huggingface.co/Androidonnxfork/test/tree/main/fp16fullonnxsdquantized_in_ort/landscape_modelsfp32noslicing/aniflatmix*",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:24.316Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-62397524BA24": {
+      "id": "SRC-62397524BA24",
+      "url": "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-25022024/beautifulRealistic_v60.zip",
+      "title": "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-25022024/beautifulRealistic_v60.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:24.345Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-B817970D2E0B": {
+      "id": "SRC-B817970D2E0B",
+      "url": "https://sdai-models.moroz.cc/SDAI/ONNX/beautifulRealistic_v60.zip",
+      "title": "https://sdai-models.moroz.cc/SDAI/ONNX/beautifulRealistic_v60.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:24.374Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-B84BF344E532": {
+      "id": "SRC-B84BF344E532",
+      "url": "https://gh-proxy.ygxz.in/https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-25022024/beautifulRealistic_v60.zip",
+      "title": "https://gh-proxy.ygxz.in/https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-25022024/beautifulRealistic_v60.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:24.416Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-CD9678E862E2": {
+      "id": "SRC-CD9678E862E2",
+      "url": "https://huggingface.co/Androidonnxfork/test/tree/main/fp16fullonnxsdquantized_in_ort/beautifulrealv6%2Cmajicmix%2Ccyberreal%2Cepicrealism%2C/beautifulRealistic_v60",
+      "title": "https://huggingface.co/Androidonnxfork/test/tree/main/fp16fullonnxsdquantized_in_ort/beautifulrealv6%2Cmajicmix%2Ccyberreal%2Cepicrealism%2C/beautifulRealistic_v60",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:24.444Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-E390BB90A8B4": {
+      "id": "SRC-E390BB90A8B4",
+      "url": "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-25022024/cetusMix.zip",
+      "title": "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-25022024/cetusMix.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:24.473Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-C817AE44F5FD": {
+      "id": "SRC-C817AE44F5FD",
+      "url": "https://sdai-models.moroz.cc/SDAI/ONNX/cetusMix.zip",
+      "title": "https://sdai-models.moroz.cc/SDAI/ONNX/cetusMix.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:24.502Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-484F5292F7C2": {
+      "id": "SRC-484F5292F7C2",
+      "url": "https://gh-proxy.ygxz.in/https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-25022024/cetusMix.zip",
+      "title": "https://gh-proxy.ygxz.in/https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-25022024/cetusMix.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:24.530Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-8CCA2E48B972": {
+      "id": "SRC-8CCA2E48B972",
+      "url": "https://huggingface.co/Androidonnxfork/test/tree/main/fp16fullonnxsdquantized_in_ort/miena%2Clyriel%2Ccetus%2Canalogmadness/cetusMix*",
+      "title": "https://huggingface.co/Androidonnxfork/test/tree/main/fp16fullonnxsdquantized_in_ort/miena%2Clyriel%2Ccetus%2Canalogmadness/cetusMix*",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:24.572Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-D36074B11CD1": {
+      "id": "SRC-D36074B11CD1",
+      "url": "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-25022024/counterfit-v3.0.zip",
+      "title": "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-25022024/counterfit-v3.0.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:24.602Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-9E20AD5AAF8C": {
+      "id": "SRC-9E20AD5AAF8C",
+      "url": "https://sdai-models.moroz.cc/SDAI/ONNX/counterfit-v3.0.zip",
+      "title": "https://sdai-models.moroz.cc/SDAI/ONNX/counterfit-v3.0.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:38:24.631Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
       }
     }
   }

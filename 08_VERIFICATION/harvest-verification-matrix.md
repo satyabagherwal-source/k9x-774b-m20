@@ -9974,3 +9974,7 @@
 | `CYCLE-20261115-POZH` | `2026-11-15T00:05:27.869Z` | `ConceptCountry/qwen-concept-27b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-conceptcountry-qwen-concept-27b-learnings.md` | Yes (`ae94b3e7...`) |
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T00:06:03.825Z` | `hf-conceptcountry-qwen-concept-27b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-E-5B37AC18` [Domain E] | Yes (`4dc93019...`) |
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T00:06:43.372Z` | `hf-autotrust-jev-35b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-CE38AA18` [Domain D] | Yes (`e1d75500...`) |
+| `CYCLE-20261115-UTX9` | `2026-11-15T00:37:27.165Z` | `ShiftHackZ/SDAI-KMP` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8552` | Yes (`774f9300...`) |
+| `CYCLE-20261115-UWZ1` | `2026-11-15T00:37:31.117Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8553` | Yes (`36cab490...`) |
+| `CYCLE-20261115-V81B` | `2026-11-15T00:37:45.455Z` | `openbmb/MiniCPM-V-4.7-35B-A3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md` | Yes (`e64fe6a5...`) |
+| `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T00:38:22.621Z` | `hf-openbmb-minicpm-v-4.7-35b-a3b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-C5F6E511` [Domain D] | Yes (`b6ef0585...`) |

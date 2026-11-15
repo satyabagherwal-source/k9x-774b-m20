@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-M79R",
-    "timestamp": "2026-11-09T16:40:29.775Z",
-    "repository": "datalab-to/indra-ocr",
-    "learningId": "learn-huggingface-datalab-to-indra-ocr",
-    "contentHash": "03e093a125e99f5a82332d9dc46be1ceb7e4b0687605358632fdc9c838ee747a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-MAIT",
-    "timestamp": "2026-11-09T16:40:33.989Z",
-    "repository": "trinodb/trino",
-    "learningId": "learn-github-trinodb-trino",
-    "contentHash": "a0d2067540c08d269d1ca3d9b241c4a41aab6cd239e769d81d3d67de08e15938",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-MB9E",
-    "timestamp": "2026-11-09T16:40:34.946Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "51c8dd6e8cc377e6d95063132f5c26f0713e1d301e5a5fb73e6cc36e6b0a11c0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-BAZ1",
     "timestamp": "2026-11-09T17:00:00.973Z",
     "repository": "tencent/Hy-Memory-30B-A3B",
@@ -7490,6 +7445,51 @@
     "repository": "ConceptCountry/qwen-concept-27b",
     "learningId": "learn-huggingface-conceptcountry-qwen-concept-27b",
     "contentHash": "ae94b3e76a9776789459b18f1d7dbebecbca20c1185ffb0f4945ef536c7766fd",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-UTX9",
+    "timestamp": "2026-11-15T00:37:27.165Z",
+    "repository": "ShiftHackZ/SDAI-KMP",
+    "learningId": "learn-github-shifthackz-sdai-kmp",
+    "contentHash": "774f930094bc136730a943c8c946ec3c2571129280f94c93c16b0ec29dc43372",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-UWZ1",
+    "timestamp": "2026-11-15T00:37:31.117Z",
+    "repository": "nolabs-ai/nono",
+    "learningId": "learn-github-nolabs-ai-nono",
+    "contentHash": "36cab4906bf4f292b72640f504287c857ee5cf25678fbff86725be3821de1197",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-V81B",
+    "timestamp": "2026-11-15T00:37:45.455Z",
+    "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
+    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
+    "contentHash": "e64fe6a5b98aeabe04c3a271df39276e70e55172d461d37375f5bd4874d9ad59",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

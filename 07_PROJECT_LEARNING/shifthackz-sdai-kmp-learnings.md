@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md`  
 > **Source**: github ([https://github.com/ShiftHackZ/SDAI-KMP](https://github.com/ShiftHackZ/SDAI-KMP))  
-> **Source Version**: `7431c4b6`  
+> **Source Version**: `3d9670a7`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T13:28:59.839Z  
+> **Timestamp**: 2026-11-15T00:37:26.152Z  
 > **Learning ID**: `learn-github-shifthackz-sdai-kmp`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ShiftHackZ/SDAI-KMP](https://github.com/ShiftHackZ/SDAI-KMP))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T13:28:59.834Z  
+> **Harvest Timestamp**: 2026-11-15T00:37:26.042Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Stable Diffusion AI client app for Android and iOS
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1287 stars
+- **Stars / Engagement**: 1291 stars
 
 ---
 
@@ -827,234 +827,281 @@ internal actual fun platformCurrentTimeMillis(): Long = System.currentTimeMillis
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7431c4b6` (2026-11-07)
-**Commit Message**: Prepare SDAI 1.2.0 (220) release (#731)
+### Incident Patch 1: `3d9670a7` (2026-11-14)
+**Commit Message**: Sign nightly APKs with the release keystore
 
-**File**: `CITATION.cff` (modified, +3/-3)
+**File**: `.github/workflows/nightly_android.yml` (modified, +26/-11)
 ```diff
-@@ -2,8 +2,8 @@ cff-version: 1.2.0
- message: "If you use this software, please cite it using the metadata below."
- title: "SDAI"
- type: software
--version: "1.1.2"
--date-released: "2026-07-19"
-+version: "1.2.0"
-+date-released: "2026-11-08"
- abstract: >-
-   SDAI is an independent, open-source AI image generation client for
-   Android and iOS. It provides a unified mobile workflow for self-hosted
-@@ -16,7 +16,7 @@ authors:
-     affiliation: "Moroz Inc."
-     website: "https://moroz.cc"
- license: "AGPL-3.0-only"
--repository-code: "https://github.com/ShiftHackZ/Stable-Diffusion-KMP"
-+repository-code: "https://github.com/ShiftHackZ/SDAI-KMP"
- url: "https://sdai.moroz.cc"
- keywords:
-   - "artificial intelligence"
+@@ -36,6 +36,7 @@ jobs:
+   nightly:
+     name: Build Android full nightly
+     runs-on: ubuntu-24.04
++    environment: android-release
+     timeout-minutes: 90
+     env:
+       TARGET_REF: ${{ github.event_name == 'workflow_dispatch' && inputs.target_ref || 'develop' }}
+@@ -128,18 +129,24 @@ jobs:
+             -Dkotlin.native.ignoreDisabledTargets=true \
+             -Pkotlin.native.ignoreDisabledTargets=true
+ 
+-      - name: Sign APK with apksigner key and certificate
++      - name: Sign APK with release JKS
+         if: steps.plan.outputs.should_build == 'true'
+         id: sign
+         shell: bash
+         env:
+-          ANDROID_NIGHTLY_CERT_PEM_BASE64: ${{ secrets.ANDROID_NIGHTLY_CERT_PEM_BASE64 }}
+-          ANDROID_NIGHTLY_KEY_PK8_BASE64: ${{ secrets.ANDROID_NIGHTLY_KEY_PK8_BASE64 }}
++          ANDROID_RELEASE_KEYSTORE_BASE64: ${{ secrets.ANDROID_RELEASE_KEYSTORE_BASE64 }}
++          ANDROID_RELEASE_STORE_PASSWORD: ${{ secrets.ANDROID_RELEASE_STORE_PASSWORD }}
++          ANDROID_RELEASE_KEY_ALIAS: ${{ secrets.ANDROID_RELEASE_KEY_ALIAS }}
++          ANDROID_RELEASE_KEY_PASSWORD: ${{ secrets.ANDROID_RELEASE_KEY_PASSWORD }}
++          ANDROID_RELEASE_CERT_SHA256: ${{ vars.ANDROID_RELEASE_CERT_SHA256 }}
+         run: |
+           set -euo pipefail
+ 
+-          : "${ANDROID_NIGHTLY_CERT_PEM_BASE64:?Missing ANDROID_NIGHTLY_CERT_PEM_BASE64 secret.}"
+-          : "${ANDROID_NIGHTLY_KEY_PK8_BASE64:?Missing ANDROID_NIGHTLY_KEY_PK8_BASE64 secret.}"
++          : "${ANDROID_RELEASE_KEYSTORE_BASE64:?Missing ANDROID_RELEASE_KEYSTORE_BASE64 secret.}"
++          : "${ANDROID_RELEASE_STORE_PASSWORD:?Missing ANDROID_RELEASE_STORE_PASSWORD secret.}"
++          : "${ANDROID_RELEASE_KEY_ALIAS:?Missing ANDROID_RELEASE_KEY_ALIAS secret.}"
++          : "${ANDROID_RELEASE_CERT_SHA256:?Missing ANDROID_RELEASE_CERT_SHA256 variable.}"
++          export ANDROID_RELEASE_KEY_PASSWORD="${ANDROID_RELEASE_KEY_PASSWORD:-${ANDROID_RELEASE_STORE_PASSWORD}}"
+ 
+           unsigned_apk="$(find app/android/build/outputs/apk/full/release -type f -name '*-unsigned.apk' -print -quit)"
+           if [[ -z "${unsigned_apk}" ]]; then
+@@ -153,23 +160,31 @@ jobs:
+           zipalign="${build_tools}/zipalign"
+ 
+           signing_dir="${RUNNER_TEMP}/nightly-signing"
++          trap 'rm -rf -- "${signing_dir}"' EXIT
+           output_dir="${RUNNER_TEMP}/nightly-output"
+           install -m 700 -d "${signing_dir}" "${output_dir}"
+ 
+-          key_file="${signing_dir}/nightly.pk8"
+-          cert_file="${signing_dir}/nightly.x509.pem"
++          keystore="${signing_dir}/release.jks"
+           aligned_apk="${output_dir}/sdai-full-nightly-aligned.apk"
+           signed_apk="${output_dir}/${APK_NAME}"
+ 
+-          printf "%s" "${ANDROID_NIGHTLY_KEY_PK8_BASE64}" | base64 --decode > "${key_file}"
+-          printf "%s" "${ANDROID_NIGHTLY_CERT_PEM_BASE64}" | base64 --decode > "${cert_file}"
+-          chmod 600 "${key_file}" "${cert_file}"
++          printf "%s" "${ANDROID_RELEASE_KEYSTORE_BASE64}" | base64 --decode > "${keystore}"
++          chmod 600 "${keystore}"
+ 
+           "${zipalign}" -p -f 4 "${unsigned_apk}" "${aligned_apk}"
+ 
+-          "${apksigner}" sign --key "${key_file}" --cert "${cert_file}" --out "${signed_apk}" "${aligned_apk}"
++          "${apksigner}" sign --ks "${keystore}" --ks-key-alias "${ANDROID_RELEASE_KEY_ALIAS}" \
++            --ks-pass env:ANDROID_RELEASE_STORE_PASSWORD --key-pass env:ANDROID_RELEASE_KEY_PASSWORD \
++            --out "${signed_apk}" "${aligned_apk}"
+           "${apksigner}" verify --print-certs "${signed_apk}" > "${output_dir}/apksigner.txt"
+ 
++          expected_cert="$(printf '%s' "${ANDROID_RELEASE_CERT_SHA256}" | tr -d '[:space:]:' | tr '[:upper:]' '[:lower:]')"
++          actual_cert="$(sed -n 's/^Signer #1 certificate SHA-256 digest: //p' "${output_dir}/apksigner.txt" | tr '[:upper:]' '[:lower:]')"
++          if [[ ! "${expected_cert}" =~ ^[0-9a-f]{64}$ || "${actual_cert}" != "${expected_cert}" ]]; then
++            echo "Signed APK certificate does not match the release certificate." >&2
++            exit 1
++          fi
++
+           sha256sum "${signed_apk}" > "${output_dir}/${APK_NAME}.sha256"
+           echo "signed_apk=${signed_apk}" >> "${GITHUB_OUTPUT}"
+           echo "sha256_file=${output_dir}/${APK_NAME}.sha256" >> "${GITHUB_OUTPUT}"
 ```
 
-**File**: `NIGHTLY_BUILDS.md` (modified, +2/-2)
+**File**: `NIGHTLY_BUILDS.md` (modified, +1/-10)
 ```diff
-@@ -5,13 +5,13 @@ SDAI publishes an Android `full` flavor nightly APK from `develop` through GitHu
- The public APK URL is stable:
+@@ -34,16 +34,7 @@ The workflow does not upload separate GitHub Actions artifacts, so APK downloads
  
- ```text
--https://github.com/ShiftHackZ/Stable-Diffusion-Android/releases/download/nightly/sdai-full-nightly.apk
-+https://github.com/ShiftHackZ/SDAI-KMP/releases/download/nightly/sdai-full-nightly.apk
- ```
+ ## Signing Model
  
- The release page is:
+-Nightly signing does not use JKS or Gradle `signing.properties`.
+-
+-The workflow signs the unsigned APK with Android SDK `apksigner` using:
+-
+-- `ANDROID_NIGHTLY_KEY_PK8_BASE64`: Base64-encoded plain PKCS#8 private key file.
+-- `ANDROID_NIGHTLY_CERT_PEM_BASE64`: Base64-encoded X.509 certificate file.
+-
+-These values should be stored as repository or environment secrets. Do not commit them to the repository.
+-
+-If the nightly key is different from the normal `full` release signing certificate, Android will not install a nightly APK as an update over an existing `com.shifthackz.aisdv1.app.full` build. Testers must uninstall the old build first, or the nightly signing certificate must match the installed build.
++The workflow signs the unsigned APK with Android SDK `apksigner` using the same release JKS as normal `full` releases, configured in the `android-release` GitHub environment. See [release signing configuration](scripts/release/README.md#configure-signing).
  
- ```text
--https://github.com/ShiftHackZ/Stable-Diffusion-Android/releases/tag/nightly
-+https://github.com/ShiftHackZ/SDAI-KMP/releases/tag/nightly
- ```
- 
- ## What Gets Built
-```
-
-**File**: `README.md` (modified, +10/-8)
-```diff
-@@ -5,7 +5,7 @@
- ![F-Droid](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Ff-droid.org%2Fapi%2Fv1%2Fpackages%2Fcom.shifthackz.aisdv1.app.foss&query=%24.packages%5B0%5D.versionName&label=F-Droid&link=https%3A%2F%2Ff-droid.org%2Fpackages%2Fcom.shifthackz.aisdv1.app.foss%2F)
- [![App Store](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fitunes.apple.com%2Flookup%3Fid%3D6778314183%26country%3Dus&query=%24.results%5B0%5D.version&label=App%20Store&logo=appstore&logoColor=white&color=blue)](https://apps.apple.com/us/app/sdai-ai-image-generator/id6778314183)
- 
--[Website](https://sdai.moroz.cc) | [Google Play](https://play.google.com/store/apps/details?id=com.shifthackz.aisdv1.app) | [F-Droid](https://f-droid.org/packages/com.shifthackz.aisdv1.app.foss) | [App Store](https://apps.apple.com/us/app/sdai-ai-image-generator/id6778314183) | [Nightly Build](https://github.com/ShiftHackZ/Stable-Diffusion-Android/releases/download/nightly/sdai-full-nightly.apk) | [Telegram](https://t.me/sdai_app) | [Discord](https://discord.gg/jzdR9m8Ves) | [4PDA](https://4pda.to/forum/index.php?showtopic=1082639)
-+[Website](https://sdai.moroz.cc) | [Google Play](https://play.google.com/store/apps/details?id=com.shifthackz.aisdv1.app) | [F-Droid](https://f-droid.org/packages/com.shifthackz.aisdv1.app.foss) | [App Store](https://apps.apple.com/us/app/sdai-ai-image-generator/id6778314183) | [Nightly Build](https://github.com/ShiftHackZ/SDAI-KMP/releases/download/nightly/sdai-full-nightly.apk) | [Telegram](https://t.me/sdai_app) | [Discord](https://discord.gg/jzdR9m8Ves) | [4PDA](https://4pda.to/forum/index.php?showtopic=1082639)
- 
- <p>
-   <a href="https://play.google.com/store/apps/details?id=com.shifthackz.aisdv1.app"><img src="docs/assets/badge-google-play.svg" alt="Get it on Google Play" height="54"></a>
-@@ -194,12 +194,12 @@ Android flavor availability is driven by the Gradle flavor configuration and run
- 
- The iOS app is not split into Android-style flavors. It uses the shared mobile UI, remote-provider stack, Silicon Diffusion Core ML, and Silicon Diffusion PrismML Bonsai. Android ONNX, MediaPipe, SDXL, and Local Diffusion PrismML Bonsai local runtimes remain Android-specific.
- 
--For a historical overview of flavor policy, see the project wiki page: [Build flavor difference](https://github.com/ShiftHackZ/Stable-Diffusion-Android/wiki/Build-flavor-difference).
-+For a historical overview of flavor policy, see the project wiki page: [Build flavor difference](https://github.com/ShiftHackZ/SDAI-KMP/wiki/Build-flavor-difference).
- 
- ## Legacy Android 0.x.x Versions
- 
- The old Android-only `0.x.x` release line is no longer maintained. It remains available for archival and reference purposes in the
--[`archive/version-0.x.x`](https://github.com/ShiftHackZ/Stable-Diffusion-Android/tree/archive/version-0.x.x) branch.
-+[`archive/version-0.x.x`](https://github.com/ShiftHackZ/SDAI-KMP/tree/archive/version-0.x.x) branch.
- 
- ## Supported Languages
- 
-@@ -212,6 +212,7 @@ SDAI uses the language provided by the OS when a translation is available.
- | Turkish              | 0.4.1         | Translated |
- | Russian              | 0.5.5         | Translated |
- | Chinese (Simplified) | 0.6.2         | Translated |
-+| German               | 1.2.0         | Translated |
- 
- Translation contributions are welcome.
- 
-@@ -228,24 +229,25 @@ Machine-readable citation metadata is available in [`CITATION.cff`](CITATION.cff
- 
- If you mention SDAI in research, articles, benchmarks, tutorials, app collections, or public project documentation, please cite it as:
- 
--> SDAI, version 1.1.2, an open-source cross-platform AI image generation client by Dmytro Moroz (Moroz Inc.). https://github.com/ShiftHackZ/Stable-Diffusion-KMP
-+> SDAI, version 1.2.0, an open-source cross-platform AI image generation client by Dmytro Moroz (Moroz Inc.). https://github.com/ShiftHackZ/SDAI-KMP
- 
- BibTeX:
- 
- ```bibtex
- @software{Moroz_SDAI_2026,
-   author = {Moroz, Dmytro},
-+  date = {2026-11-08},
-   license = {AGPL-3.0-only},
--  month = jul,
-+  month = nov,
-   title = {{SDAI}},
--  url = {https://github.com/ShiftHackZ/Stable-Diffusion-KMP},
--  version = {1.1.2},
-+  url = {https://github.com/ShiftHackZ/SDAI-KMP},
-+  version = {1.2.0},
-   year = {2026}
- }
- ```
- 
- APA:
- 
- ```
--Moroz, D. (2026). SDAI (Version 1.1.2) [Computer software]. https://github.com/ShiftHackZ/Stable-Diffusion-KMP
-+Moroz, D. (2026). SDAI (Version 1.2.0) [Computer software]. https://github.com/ShiftHackZ/SDAI-KMP
- ```
-```
-
-**File**: `app/android/build.gradle.kts` (modified, +2/-2)
-```diff
-@@ -40,8 +40,8 @@ android {
-         buildConfigField("String", "DONATE_URL", "\"https://sdai.moroz.cc/donate.html\"")
-         buildConfigField("String", "PROJECT_WEBSITE_URL", "\"https://sdai.moroz.cc\"")
-         buildConfigField("String", "DEVELOPER_WEBSITE_URL", "\"https://moroz.cc\"")
--        buildConfigField("String", "GITHUB_SOURCE_URL", "\"https://github.com/ShiftHackZ/Stable-Diffusion-Android\"")
--        buildConfigField("String", "LICENSE_URL", "\"https://github.com/ShiftHackZ/Stable-Diffusion-Android/blob/master/LICENSE\"")
-+        buildConfigField("String", "GITHUB_SOURCE_URL", "\"https://github.com/ShiftHackZ/SDAI-KMP\"")
-+        buildConfigField("String", "LICENSE_URL", "\"https://github.com/ShiftHackZ/SDAI-KMP/blob/master/LICENSE\"")
-         buildConfigField("String", "SETUP_INSTRUCTIONS_URL", "\"https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki\"")
-         buildConfigField("String", "SWARM_UI_INFO_URL", "\"https://github.com/mcmonkeyprojects/SwarmUI/tree/master/docs\"")
+ ## Manual Run
  
 ```
 
-**File**: `app/ios/iosApp.xcodeproj/project.pbxproj` (modified, +4/-4)
+---
+
+### Incident Patch 2: `dd8e9edd` (2026-11-14)
+**Commit Message**: Restore Bonsai model downloads and remove obsolete sources
+
+**File**: `docs/bonsai.json` (modified, +2/-2)
 ```diff
-@@ -317,7 +317,7 @@
- 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
- 				CODE_SIGN_IDENTITY = "Apple Development";
- 				CODE_SIGN_STYLE = Automatic;
--				CURRENT_PROJECT_VERSION = 204;
-+				CURRENT_PROJECT_VERSION = 220;
- 				DEVELOPMENT_TEAM = 383EQFRA4A;
- 				ENABLE_PREVIEWS = YES;
- 				FRAMEWORK_SEARCH_PATHS = (
-@@ -332,7 +332,7 @@
- 					"$(inherited)",
- 					"@executable_path/Frameworks",
- 				);
--				MARKETING_VERSION = 1.1.0;
-+				MARKETING_VERSION = 1.2.0;
- 				OTHER_LDFLAGS = (
- 					"$(inherited)",
- 					"-framework",
-@@ -353,7 +353,7 @@
- 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
- 				CODE_SIGN_IDENTITY = "Apple Development";
- 				CODE_SIGN_STYLE = Automatic;
--				CURRENT_PROJECT_VERSION = 204;
-+				CURRENT_PROJECT_VERSION = 220;
- 				DEVELOPMENT_TEAM = 383EQFRA4A;
- 				ENABLE_PREVIEWS = YES;
- 				FRAMEWORK_SEARCH_PATHS = (
-@@ -368,7 +368,7 @@
- 					"$(inherited)",
- 					"@executable_path/Frameworks",
- 				);
--				MARKETING_VERSION = 1.1.0;
-+				MARKETING_VERSION = 1.2.0;
- 				OTHER_LDFLAGS = (
- 					"$(inherited)",
- 					"-framework",
+@@ -4,7 +4,7 @@
+     "name": "Bonsai Image 4B Ternary MLX 2-bit",
+     "size": "3.89 GB",
+     "sources": [
+-      "https://sdai-models.moroz.cc/SDAI/Bonsai/bonsai-image-ternary-4b-mlx-2bit.zip"
++      "https://huggingface.co/moroz-ellmsha/sdai-bonsai-model-archives/resolve/main/bonsai-image-ternary-4b-mlx-2bit.zip?download=true"
+     ],
+     "metadata": {
+       "src": "https://huggingface.co/prism-ml/bonsai-image-ternary-4B-mlx-2bit"
+@@ -15,7 +15,7 @@
+     "name": "Bonsai Image 4B Binary MLX 1-bit",
+     "size": "3.42 GB",
+     "sources": [
+-      "https://sdai-models.moroz.cc/SDAI/Bonsai/bonsai-image-binary-4b-mlx-1bit.zip"
++      "https://huggingface.co/moroz-ellmsha/sdai-bonsai-model-archives/resolve/main/bonsai-image-binary-4b-mlx-1bit.zip?download=true"
+     ],
+     "metadata": {
+       "src": "https://huggingface.co/prism-ml/bonsai-image-binary-4B-mlx-1bit"
 ```
 
-**File**: `build.gradle.kts` (modified, +1/-1)
+**File**: `docs/mediapipe.json` (modified, +4/-12)
 ```diff
-@@ -69,7 +69,7 @@ subprojects {
-                     localDirectory.set(projectDir.resolve("src"))
-                     remoteUrl.set(
-                         URI(
--                            "https://github.com/ShiftHackZ/Stable-Diffusion-Android/tree/master/" +
-+                            "https://github.com/ShiftHackZ/SDAI-KMP/tree/master/" +
-                                 projectDir.relativeTo(rootProject.projectDir).path +
-                                 "/src"
-                         )
+@@ -4,9 +4,7 @@
+     "name": "stable-diffusion-v1-5",
+     "size": "1.9 Gb",
+     "sources": [
+-      "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-MediaPipe/releases/download/patch-26082024/stable-diffusion-v1-5.zip",
+-      "https://sdai-models.moroz.cc/SDAI/MediaPipe/stable-diffusion-v1-5.zip",
+-      "https://gh-proxy.ygxz.in/https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-MediaPipe/releases/download/patch-26082024/stable-diffusion-v1-5.zip"
++      "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-MediaPipe/releases/download/patch-26082024/stable-diffusion-v1-5.zip"
+     ],
+     "metadata": {
+       "src": "https://huggingface.co/runwayml/stable-diffusion-v1-5/blob/main/v1-5-pruned-emaonly.ckpt"
+@@ -17,9 +15,7 @@
+     "name": "miniSD",
+     "size": "1.82 Gb",
+     "sources": [
+-      "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-MediaPipe/releases/download/patch-28082024/minisd.zip",
+-      "https://sdai-models.moroz.cc/SDAI/MediaPipe/minisd.zip",
+-      "https://gh-proxy.ygxz.in/https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-MediaPipe/releases/download/patch-28082024/minisd.zip"
++      "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-MediaPipe/releases/download/patch-28082024/minisd.zip"
+     ],
+     "metadata": {
+       "src": "https://huggingface.co/justinpinkney/miniSD/blob/main/miniSD.ckpt"
+@@ -30,9 +26,7 @@
+     "name": "waifu-diffusion-v1-4",
+     "size": "1.82 Gb",
+     "sources": [
+-      "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-MediaPipe/releases/download/patch-28082024/waifu-diffusion-v1-4.zip",
+-      "https://sdai-models.moroz.cc/SDAI/MediaPipe/waifu-diffusion-v1-4.zip",
+-      "https://gh-proxy.ygxz.in/https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-MediaPipe/releases/download/patch-28082024/waifu-diffusion-v1-4.zip"
++      "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-MediaPipe/releases/download/patch-28082024/waifu-diffusion-v1-4.zip"
+     ],
+     "metadata": {
+       "src": "https://huggingface.co/hakurei/waifu-diffusion-v1-4/blob/main/models/wd-1-3-penultimate-ucg-cont.ckpt"
+@@ -43,9 +37,7 @@
+     "name": "aniverse_v50",
+     "size": "1.79 Gb",
+     "sources": [
+-      "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-MediaPipe/releases/download/patch-19092024/aniverse_v50.zip",
+-      "https://sdai-models.moroz.cc/SDAI/MediaPipe/aniverse_v50.zip",
+-      "https://gh-proxy.ygxz.in/https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-MediaPipe/releases/download/patch-19092024/aniverse_v50.zip"
++      "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-MediaPipe/releases/download/patch-19092024/aniverse_v50.zip"
+     ],
+     "metadata": {
+       "src": "https://civitai.com/models/107842/aniverse"
 ```
 
-**File**: `core/common/src/commonMain/kotlin/com/shifthackz/aisdv1/core/common/links/DefaultLinksProvider.kt` (modified, +4/-4)
+**File**: `docs/models.json` (modified, +30/-90)
 ```diff
-@@ -73,17 +73,17 @@ object DefaultLinksProvider : LinksProvider {
-      */
-     override val developerWebsiteUrl: String = "https://moroz.cc"
-     /**
--     * Exposes the `gitHubSourceUrl` value used by the SDAI core common layer.
-+     * Canonical repository URL opened by the app's source-code links.
-      *
-      * @author Dmitriy Moroz
-      */
--    override val gitHubSourceUrl: String = "https://github.com/ShiftHackZ/Stable-Diffusion-Android"
-+    override val gitHubSourceUrl: String = "https://github.com/ShiftHackZ/SDAI-KMP"
-     /**
--     * Exposes the `licenseUrl` value used by the SDAI core common layer.
-+     * License page in the canonical repository, opened by the app's license links.
-      *
-      * @author Dmitriy Moroz
-      */
--    override val licenseUrl: String = "https://github.com/ShiftHackZ/Stable-Diffusion-Android/blob/master/LICENSE"
-+    override val licenseUrl: String = "https://github.com/ShiftHackZ/SDAI-KMP/blob/master/LICENSE"
-     /**
-      * Exposes the `setupInstructionsUrl` value used by the SDAI core common layer.
-      *
-```
-
-**File**: `docs/docs/app/com.shifthackz.aisdv1.app.di/feature-module.html` (modified, +1/-1)
-```diff
-@@ -149,7 +149,7 @@
-   <div class="cover ">
-     <h1 class="cover"><span>feature</span><wbr><span><span>Module</span></span></h1>
-   </div>
--  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":app/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="feature-module.html">featureModule</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-array/index.html">Array</a><span class="token operator">&lt;</span><span data-unresolved-link="org.koin.core.module/Module///PointingToDeclaration/">Module</span><span class="token operator">&gt;</span><span class="source-link-wrapper"><span class="source-link" data-element-type="source-link">(<a href="https://github.com/ShiftHackZ/Stable-Diffusion-Android/tree/master/app/android/src/main/java/com/shifthackz/aisdv1/app/di/FeatureModule.kt#L11">source</a>)</span></span></div></div></div>
-+  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":app/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="feature-module.html">featureModule</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-array/index.html">Array</a><span class="token operator">&lt;</span><span data-unresolved-link="org.koin.core.module/Module///PointingToDeclaration/">Module</span><span class="token operator">&gt;</span><span class="source-link-wrapper"><span class="source-link" data-element-type="source-link">(<a href="https://github.com/ShiftHackZ/SDAI-KMP/tree/master/app/android/src/main/java/com/shifthackz/aisdv1/app/di/FeatureModule.kt#L11">source</a>)</span></span></div></div></div>
- </div>
-     <div class="footer">
-         <div class="footer--container">
+@@ -4,39 +4,31 @@
+     "name": "chilloutmix",
+     "size": "1.2 Gb",
+     "sources": [
+-      "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-14022024/chilloutmix.zip",
+-      "https://sdai-models.moroz.cc/SDAI/ONNX/chilloutmix.zip",
+-      "https://gh-proxy.ygxz.in/https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-14022024/chilloutmix.zip"
++      "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-14022024/chilloutmix.zip"
+     ]
+   },
+   {
+     "id": "a1621c1c-0646-41bf-bc9f-6d0f23399799",
+     "name": "Absolute Reality",
+     "size": "1.01 Gb",
+     "sources": [
+-      "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-14022024/majicmix.zip",
+-      "https://sdai-models.moroz.cc/SDAI/ONNX/majicmix.zip",
+-      "https://gh-proxy.ygxz.in/https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-14022024/majicmix.zip"
++      "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-14022024/majicmix.zip"
+     ]
+   },
+   {
+     "id": "dfd7304e-a1da-4bbb-8814-5342ac88814d",
+     "name": "Real Vision",
+     "size": "1.8 Gb",
+     "sources": [
+-      "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-14022024/realvision.zip",
+-      "https://sdai-models.moroz.cc/SDAI/ONNX/realvision.zip",
+-      "https://gh-proxy.ygxz.in/https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-14022024/realvision.zip"
++      "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-14022024/realvision.zip"
+     ]
+   },
+   {
+     "id": "efe6dfe2-b014-4952-b140-8eb6b10ac508",
+     "name": "analogMadness",
+     "size": "1.0 Gb",
+     "sources": [
+-      "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-25022024/analogMadness.zip",
+-      "https://sdai-models.moroz.cc/SDAI/ONNX/analogMadness.zip",
+-      "https://gh-proxy.ygxz.in/https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-25022024/analogMadness.zip"
++      "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-25022024/analogMadness.zip"
+     ],
+     "metadata": {
+       "src": "https://huggingface.co/Androidonnxfork/test/tree/main/fp16fullonnxsdquantized_in_ort/miena%2Clyriel%2Ccetus%2Canalogmadness/analogMadness*"
+@@ -47,9 +39,7 @@
+     "name": "aniflatmix",
+     "size": "1.0 Gb",
+     "sources": [
+-      "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-25022024/aniflatmix.zip",
+-      "https://sdai-models.moroz.cc/SDAI/ONNX/aniflatmix.zip",
+-      "https://gh-proxy.ygxz.in/https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-25022024/aniflatmix.zip"
++      "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-25022024/aniflatmix.zip"
+     ],
+     "metadata": {
+       "src": "https://huggingface.co/Androidonnxfork/test/tree/main/fp16fullonnxsdquantized_in_ort/landscape_modelsfp32noslicing/aniflatmix*"
+@@ -60,9 +50,7 @@
+     "name": "beautifulReal_v60",
+     "size": "1.1 Gb",
+     "sources": [
+-      "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-25022024/beautifulRealistic_v60.zip",
+-      "https://sdai-models.moroz.cc/SDAI/ONNX/beautifulRealistic_v60.zip",
+-      "https://gh-proxy.ygxz.in/https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-25022024/beautifulRealistic_v60.zip"
++      "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-25022024/beautifulRealistic_v60.zip"
+     ],
+     "metadata": {
+       "src": "https://huggingface.co/Androidonnxfork/test/tree/main/fp16fullonnxsdquantized_in_ort/beautifulrealv6%2Cmajicmix%2Ccyberreal%2Cepicrealism%2C/beautifulRealistic_v60"
+@@ -73,9 +61,7 @@
+     "name": "cetusMix",
+     "size": "1.0 Gb",
+     "sources": [
+-      "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-25022024/cetusMix.zip",
+-      "https://sdai-models.moroz.cc/SDAI/ONNX/cetusMix.zip",
+-      "https://gh-proxy.ygxz.in/https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-25022024/cetusMix.zip"
++      "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-25022024/cetusMix.zip"
+     ],
+     "metadata": {
+       "src": "https://huggingface.co/Androidonnxfork/test/tree/main/fp16fullonnxsdquantized_in_ort/miena%2Clyriel%2Ccetus%2Canalogmadness/cetusMix*"
+@@ -86,9 +72,7 @@
+     "name": "counterfit-v3.0",
+     "size": "1.0 Gb",
+     "sources": [
+-      "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-25022024/counterfit-v3.0.zip",
+-      "https://sdai-models.moroz.cc/SDAI/ONNX/counterfit-v3.0.zip",
+-      "
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #731** (2026-11-07): Prepare SDAI 1.2.0 (220) release (@ShiftHackZ)
-- **PR #730** (2026-11-07): Rebranding (@ShiftHackZ)
-- **PR #729** (2026-11-07): Document Python 3.12 for APK verification (@ShiftHackZ)
-- **PR #728** (2026-11-07): Fix release signing metadata and align the F-Droid SDK path (@ShiftHackZ)
-- **PR #727** (2026-11-07): Add reproducible Android release workflow (@ShiftHackZ)
-- **PR #725** (2026-11-07): Add German localization (@mijnders)
+- **PR #740** (2026-11-14): Fix large LoRA connections, setup timeouts, and traffic accounting (@ShiftHackZ)
+- **PR #739** (2026-11-14): Fix web UI compatibility of generation seeds (@ShiftHackZ)
+- **PR #738** (2026-11-14): Fix sampler list recovery after app process recreation (@ShiftHackZ)
+- **PR #737** (2026-11-14): Add OpenAI-compatible and ChatGPT OAuth image providers (@ShiftHackZ)
+- **PR #735** (2026-11-14): Persist generation sampling steps and CFG scale (@ShiftHackZ)
+- **PR #734** (2026-11-14): Make network provider timeouts configurable (@ShiftHackZ)
 
 ---
 
@@ -1074,32 +1121,53 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Prepare SDAI 1.2.0 (220) release (#731)
+## X. Sign nightly APKs with the release keystore
 
 **RULE**:
-When implementing operations in `CITATION.cff`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ShiftHackZ/SDAI-KMP. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/nightly_android.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ShiftHackZ/SDAI-KMP. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7431c4b6`: Prepare SDAI 1.2.0 (220) release (#731). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3d9670a7`: Sign nightly APKs with the release keystore. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `CITATION.cff`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/nightly_android.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-version: "1.2.0"
-date-released: "2026-11-08"
-repository-code: "https://github.com/ShiftHackZ/SDAI-KMP"
+    environment: android-release
+      - name: Sign APK with release JKS
+          ANDROID_RELEASE_KEYSTORE_BASE64: ${{ secrets.ANDROID_RELEASE_KEYSTORE_BASE64 }}
+          ANDROID_RELEASE_STORE_PASSWORD: ${{ secrets.ANDROID_RELEASE_STORE_PASSWORD }}
+          ANDROID_RELEASE_KEY_ALIAS: ${{ secrets.ANDROID_RELEASE_KEY_ALIAS }}
+          ANDROID_RELEASE_KEY_PASSWORD: ${{ secrets.ANDROID_RELEASE_KEY_PASSWORD }}
+          ANDROID_RELEASE_CERT_SHA256: ${{ vars.ANDROID_RELEASE_CERT_SHA256 }}
+          : "${ANDROID_RELEASE_KEYSTORE_BASE64:?Missing ANDROID_RELEASE_KEYSTORE_BASE64 secret.}"
+          : "${ANDROID_RELEASE_STORE_PASSWORD:?Missing ANDROID_RELEASE_STORE_PASSWORD secret.}"
+          : "${ANDROID_RELEASE_KEY_ALIAS:?Missing ANDROID_RELEASE_KEY_ALIAS secret.}"
+          : "${ANDROID_RELEASE_CERT_SHA256:?Missing ANDROID_RELEASE_CERT_SHA256 variable.}"
+          export ANDROID_RELEASE_KEY_PASSWORD="${ANDROID_RELEASE_KEY_PASSWORD:-${ANDROID_RELEASE_STORE_PASSWORD}}"
+          trap 'rm -rf -- "${signing_dir}"' EXIT
+          keystore="${signing_dir}/release.jks"
+          printf "%s" "${ANDROID_RELEASE_KEYSTORE_BASE64}" | base64 --decode > "${keystore}"
+          chmod 600 "${keystore
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
-// Anti-pattern to NEVER write (induced failure mode):
-version: "1.1.2"
-date-released: "2026-07-19"
-repository-code: "https://github.com/ShiftHackZ/Stable-Diffusion-KMP"
+// Induced defect failure mode:
+      - name: Sign APK with apksigner key and certificate
+          ANDROID_NIGHTLY_CERT_PEM_BASE64: ${{ secrets.ANDROID_NIGHTLY_CERT_PEM_BASE64 }}
+          ANDROID_NIGHTLY_KEY_PK8_BASE64: ${{ secrets.ANDROID_NIGHTLY_KEY_PK8_BASE64 }}
+          : "${ANDROID_NIGHTLY_CERT_PEM_BASE64:?Missing ANDROID_NIGHTLY_CERT_PEM_BASE64 secret.}"
+          : "${ANDROID_NIGHTLY_KEY_PK8_BASE64:?Missing ANDROID_NIGHTLY_KEY_PK8_BASE64 secret.}"
+          key_file="${signing_dir}/nightly.pk8"
+          cert_file="${signing_dir}/nightly.x509.pem"
+          printf "%s" "${ANDROID_NIGHTLY_KEY_PK8_BASE64}" | base64 --decode > "${key_file}"
+          printf "%s" "${ANDROID_NIGHTLY_CERT_PEM_BASE64}" | base64 --decode > "${cert_file}"
+          chmod 600 "${key_file}" "${cert_file}"
+          "${apksigner}" sign --key "${key_file}" --cert "${cert_file}" --out "${signed_apk}" "${aligned_apk}"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7431c4b6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3d9670a7` are properly handled with clean fallback behavior.

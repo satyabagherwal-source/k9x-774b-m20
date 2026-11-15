@@ -10007,3 +10007,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-conceptcountry-qwen-concept-27b` | `https://huggingface.co/ConceptCountry/qwen-concept-27b` | `hf-concept` | Multi-dimensional audit evidence | 2026-11-15T00:05:27.873Z |
 | `learn-dom-e-5b37ac18` | `project://hf-conceptcountry-qwen-concept-27b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-conceptcountry-qwen-concept-27b-learnings.md` | 2026-11-15T00:06:03.825Z |
 | `learn-dom-d-ce38aa18` | `project://hf-autotrust-jev-35b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-autotrust-jev-35b-learnings.md` | 2026-11-15T00:06:43.372Z |
+| `learn-github-shifthackz-sdai-kmp` | `https://github.com/ShiftHackZ/SDAI-KMP` | `3d9670a7` | Multi-dimensional audit evidence | 2026-11-15T00:37:27.169Z |
+| `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `165e2f7a` | Multi-dimensional audit evidence | 2026-11-15T00:37:31.121Z |
+| `learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-11-15T00:37:45.459Z |
+| `learn-dom-d-c5f6e511` | `project://hf-openbmb-minicpm-v-4.7-35b-a3b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md` | 2026-11-15T00:38:22.621Z |

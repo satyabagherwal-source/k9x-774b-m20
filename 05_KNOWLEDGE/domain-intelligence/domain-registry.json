@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T00:06:44.311Z",
-  "total_records": 883,
+  "last_updated": "2026-11-15T00:38:25.677Z",
+  "total_records": 888,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 435,
+      "total": 438,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -472,7 +472,10 @@
         "domain_intelligence-research-knowledge-intelligence-conceptcountry-qwen-concept-27b-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-hf-conceptcountry-qwen-concept-27b-learnings-cor",
         "DOM-D-CE38AA18",
-        "domain_intelligence-research-knowledge-intelligence-hf-autotrust-jev-35b-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-hf-autotrust-jev-35b-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-openbmb-minicpm-v-4-7-35b-a3b-core-invariants",
+        "DOM-D-C5F6E511",
+        "domain_intelligence-research-knowledge-intelligence-hf-openbmb-minicpm-v-4-7-35b-a3b-learnings-core-"
       ]
     },
     "E": {
@@ -507,7 +510,7 @@
       ]
     },
     "G": {
-      "total": 143,
+      "total": 145,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -651,7 +654,9 @@
         "domain_intelligence-architecture-intelligence-mikepenz-aboutlibraries-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-hmbown-codewhale-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-dnscontrol-dnscontrol-core-invariants",
-        "domain_intelligence-architecture-intelligence-dnscontrol-dnscontrol-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-dnscontrol-dnscontrol-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-shifthackz-sdai-kmp-core-invariants",
+        "domain_intelligence-architecture-intelligence-shifthackz-sdai-kmp-learnings-core-invariants"
       ]
     },
     "H": {
@@ -7634,8 +7639,8 @@
       "title": "Architecture Intelligence: nolabs-ai/nono Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nolabs-ai-nono-architecture-intelligence-nolabs-ai-nono-core-invariants.md",
       "repository": "nolabs-ai/nono",
-      "content_hash": "62d70a0a91cfb43bcf747ae35d76db8c07b9cce05fcbd530c347dfb899032f12",
-      "created_at": "2026-11-13T17:11:05.034Z"
+      "content_hash": "1de350caee55f7080bd2e19398e77ef117d14dc1f8facb8f5e9f142926228923",
+      "created_at": "2026-11-15T00:37:31.464Z"
     },
     "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-core-invariants",
@@ -7703,8 +7708,8 @@
       "title": "Architecture Intelligence: nolabs-ai-nono-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nolabs-ai-nono-learnings-architecture-intelligence-nolabs-ai-nono-learnings-core.md",
       "repository": "nolabs-ai-nono-learnings",
-      "content_hash": "6e1c3e9733e7f38681314e31f05da364a9fccd463d47df58d652bbd0045dfa04",
-      "created_at": "2026-11-13T17:11:58.247Z"
+      "content_hash": "a19a8b06feffc4d3b5de41ce56140ddc1e15ed0442a1fb6267323e4ef5f5593c",
+      "created_at": "2026-11-15T00:38:25.677Z"
     },
     "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-learnings-core-invar": {
       "record_id": "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-learnings-core-invar",
@@ -17439,6 +17444,84 @@
       "repository": "hf-autotrust-jev-35b-learnings",
       "content_hash": "9edf3782f32e235c276bc07526b50c6caf1cbd03c798b98d5a6f917d2b9103f5",
       "created_at": "2026-11-15T00:06:43.573Z"
+    },
+    "domain_intelligence-architecture-intelligence-shifthackz-sdai-kmp-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-shifthackz-sdai-kmp-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: ShiftHackZ/SDAI-KMP Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-shifthackz-sdai-kmp-architecture-intelligence-shifthackz-sdai-kmp-core-invariant.md",
+      "repository": "ShiftHackZ/SDAI-KMP",
+      "content_hash": "785fc78e23a3b990d780deee221973f02072b0a0d9de4486c6dcd37c91489688",
+      "created_at": "2026-11-15T00:37:27.532Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-openbmb-minicpm-v-4-7-35b-a3b-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-openbmb-minicpm-v-4-7-35b-a3b-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: openbmb/MiniCPM-V-4.7-35B-A3B Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openbmb-minicpm-v-4-7-35b-a3b-research-knowledge-intelligence-openbmb-minicpm.md",
+      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
+      "content_hash": "db03e462d49029215fdb5d7560e486939e3b27ac0255c72d57956b7eba3ee165",
+      "created_at": "2026-11-15T00:37:45.665Z"
+    },
+    "DOM-D-C5F6E511": {
+      "record_id": "DOM-D-C5F6E511",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): openbmb/MiniCPM-V-4.7-35B-A3B",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B](https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B))  \n> **Source Version**: `hf-openbmb-m`  \n> **License**: Op",
+      "content_hash": "b6ef0585b192a2e6fbf38c0606460348630dfee7166cdbd333d1854baf556cc1",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md`  \n> **Source**: huggingface ([https:/ -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md`  \n> **Source**: huggingface ([https:/",
+      "provenance": {
+        "source_uri": "project://hf-openbmb-minicpm-v-4.7-35b-a3b/hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T00:37:48.466Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-openbmb-minicpm-v-4.7-35b-a3b)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-openbmb-minicpm-v-4.7-35b-a3b"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-15T00:38:22.603Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-openbmb-minicpm-v-4-7-35b-a3b-learnings-core-": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-openbmb-minicpm-v-4-7-35b-a3b-learnings-core-",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-openbmb-minicpm-v-4.7-35b-a3b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openbmb-minicpm-v-4-7-35b-a3b-learnings-research-knowledge-intelligence-hf-op.md",
+      "repository": "hf-openbmb-minicpm-v-4.7-35b-a3b-learnings",
+      "content_hash": "cab05e0628c8e9e38166c95304338f69cca3e45df4fa4de59c13adf5d11f6b74",
+      "created_at": "2026-11-15T00:38:22.854Z"
+    },
+    "domain_intelligence-architecture-intelligence-shifthackz-sdai-kmp-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-shifthackz-sdai-kmp-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: shifthackz-sdai-kmp-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-shifthackz-sdai-kmp-learnings-architecture-intelligence-shifthackz-sdai-kmp-lear.md",
+      "repository": "shifthackz-sdai-kmp-learnings",
+      "content_hash": "4dbcbf9ca9ca079bcdbda93b040dc297f440119fa547fa26806a659ce880e79c",
+      "created_at": "2026-11-15T00:38:24.973Z"
     }
   }
 }
