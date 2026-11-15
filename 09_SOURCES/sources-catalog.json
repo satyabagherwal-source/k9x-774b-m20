@@ -1575,8 +1575,8 @@
     "sourceUrl": "https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy",
     "sourceVersion": "hf-black-forest-labs-flux-3-image-klein-comfy",
     "license": "Open-Source",
-    "contentHash": "96cbf5a7d186365e168cb82ce293cfce0f168ea95610dd32daaf079036c89bc4",
-    "lastHarvestedAt": "2026-11-09T15:28:54.512Z",
+    "contentHash": "0080ee173c6dae45446ba75afbdb97835c9f3f67b05c406dddf37f33ce0429f1",
+    "lastHarvestedAt": "2026-11-15T04:04:53.081Z",
     "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy"
   },
   "dayuanjiang-next-ai-draw-io": {
@@ -3373,10 +3373,10 @@
     "repository": "Kuddev/pebrel",
     "platform": "github",
     "sourceUrl": "https://github.com/Kuddev/pebrel",
-    "sourceVersion": "09e5eb47",
+    "sourceVersion": "c63ff393",
     "license": "GPL-3.0",
-    "contentHash": "d791e2c727e0eec1fd6c40728d2781da26ef65f8868ce6f24a7bfd6dd909b03c",
-    "lastHarvestedAt": "2026-11-13T11:55:43.254Z",
+    "contentHash": "247f06dc7a1b4d4b153819ee6693e1d4ca256122a1746aed91a53f3a0cf92207",
+    "lastHarvestedAt": "2026-11-15T04:04:55.894Z",
     "learningId": "learn-github-kuddev-pebrel"
   },
   "alibaba-formily": {

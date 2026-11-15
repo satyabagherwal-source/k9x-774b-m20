@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kuddev-pebrel-learnings.md`  
 > **Source**: github ([https://github.com/Kuddev/pebrel](https://github.com/Kuddev/pebrel))  
-> **Source Version**: `09e5eb47`  
+> **Source Version**: `c63ff393`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T11:55:34.444Z  
+> **Timestamp**: 2026-11-15T04:04:55.555Z  
 > **Learning ID**: `learn-github-kuddev-pebrel`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kuddev-pebrel-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Kuddev/pebrel](https://github.com/Kuddev/pebrel))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T11:55:34.439Z  
+> **Harvest Timestamp**: 2026-11-15T04:04:55.549Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI-native, GPU-accelerated terminal emulator for Windows with SSH, persistent sessions, split panes, and first-class AI CLI workflows.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3768 stars
+- **Stars / Engagement**: 3817 stars
 
 ---
 
@@ -1494,11 +1494,11 @@ def destinations(owner, deadline):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #960** (2026-11-12): **[Bug] 2.5.0+手机无法正确连接至电脑同时无法正常匹配**
-  *Symptoms*: ### Operating system / 操作系统  Windows  ### OS version and display / 系统版本与显示  Win11 26H2 （OS 内部版本 26320.9877）  ### Pebrel version / 版本号  2.5.3  ### How did you install Pebrel? / 安装方式  GitHub Release (.exe / .zip / .dmg / .AppImage / .deb)  ### Shell in the affected pane / 出问题的面板用的 Shell  Not sure / 不确定  ### Program running in the pane / 面板里正在跑的程序  Other / 其他  ### Connection type / 连接方式  Other / 其他  ### Affected area / 影响范围  Other / 其他  ### Did it work in a previous version? / 旧版本是否正常？  Yes, it worked before / 旧版本正常，新版本坏了  ### Can you reproduce it? / 复现概率  Always (100%) / 必现  ### Steps to reproduce / 复现步骤  **测试环境**：电脑端为 Windows 11 + Pebrel `2.5.3`，手机端为 Android + Pebrel `2.5.0` / `2.5.3`。电脑端“设置 → 手机远程”中配置了自建中转（无论“局域网 / Tailscale 直连”开关开启或关闭、无论两台设备处于同一局域网还是移动网络下，均 100% 复现）。  #### 场景 A：全新配对（手机端无该电脑的历史配对记录） 1. 在电脑端点击“添加手机”，使用 Android 手机端扫描二维码发起全新配对； 2. 电脑端弹出请求后点击批准（电脑端显示配对成功）； 3. 观察手机端配对结果。  #### 场景 B：在旧版本（2.4.0）已有记录的基础上再次扫码匹配 1. 手机端保留着 `2.4.0` 时期配对过的同一台电脑的历史记录； 2. 电脑端升级至 `2.5.0`~`2.5.3` 后，手机端先后扫描该电脑的“局域网”和“自建中转”二维码进行重新匹配； 3. 电脑端点击批准后，观察手机端等待耗时及最终保存的状态； 4. 点击该电脑卡片发起连接，观察两端连接表现。  ### Expected behavior / 期望结果  1. 全新配对时，电脑端点击批准后，手机端应立即完成配对并正常进入会话页面； 2. 已有旧记录重新扫码叠加连接方式时，电脑端批准后手机端应立即完成保存（无需等待数十秒），且保存“局域网 + 中转”后能够正常建立连接，不会出现连接被占用的报错死循环。  ### Actual behavior / 实际结果  #### 场景 A：全新配对根本无法匹配成功 - 电脑端点击批准并已显示配对成功，但手机端持续等待批准，最终配对直接失败； - 手机端状态显示 `失败`，并弹出错误提示：   > 操作失败   > 电脑会话服务尚未就绪。请打开 Pebrel，检查「设置 → 手机远程」后重新连接。[cite: 6]  #### 场景 B：基于旧记录重新扫码时异常延迟，保存双通道后无法连接并陷入死循环 - **异常延迟保存**：由于手机端原本存有同一台电脑的历史记录，重新
+- **Issue #982** (2026-11-14): **[Bug] 背景模糊效果失效**
+  *Symptoms*: ### Operating system / 操作系统  Windows  ### OS version and display / 系统版本与显示  Windows11 26H2, 125% sacaling, 1 monitor  ### Pebrel version / 版本号  2.5.7  ### How did you install Pebrel? / 安装方式  GitHub Release (.exe / .zip / .dmg / .AppImage / .deb)  ### Shell in the affected pane / 出问题的面板用的 Shell  PowerShell 7 (pwsh)  ### Program running in the pane / 面板里正在跑的程序  Nothing, plain shell prompt / 什么都没跑  ### Connection type / 连接方式  Local terminal / 本地终端  ### Affected area / 影响范围  Terminal rendering / scrolling / selection / garbled text — 终端渲染、滚动、选区、乱码  ### Did it work in a previous version? / 旧版本是否正常？  Not sure / 不确定  ### Can you reproduce it? / 复现概率  Always (100%) / 必现  ### Steps to reproduce / 复现步骤  1. 打开Pebrel 2. 进入设置-外观-界面-背景模糊 3. 选择Mica和Mica Alt，窗口背景不透明度调低整个窗口画面只会变白，像对比度特别高的样子，字体渲染也变糊，窗口背景没有模糊效果 4. 选择Aero和Acrylic， 窗口背景不透明度调低整个窗口只会变黑，窗口背景没有模糊效果   ### Expected behavior / 期望结果  希望能让背景模糊恢复  ### Actual behavior / 实际结果  无  ### Logs / screenshots / 日志或截图  <img width="1515" height="897" alt="屏幕截图 2026-11-13 184548" src="https://github.com/user-attachments/assets/db937186-cb10-4495-af40-2aa923ff2e68" />  <img width="1535" height="911" alt="屏幕截图 2026-11-13 184734" src="https://github.com/user-attachments/assets/d1e97e49-7a8e-4543-92cf-2793e6bc0607" />  <img width="1505" height="902" alt="屏幕截图 2026-11-13 184613" src="https://github.com/user-attachments/assets/c7cad6a9-6f3a-4a7b-92a1-b70fc10fc65a" />  <img width="1521" height="902" alt="屏幕截图 2026-11-13 184759" src="https://github.com/user-a
 
-- **Issue #958** (2026-11-12): **[Bug] 打字后删除会出现黑条**
-  *Symptoms*: ### Operating system / 操作系统  Windows  ### OS version and display / 系统版本与显示  win10 22h2  ### Pebrel version / 版本号  2.5.3  ### How did you install Pebrel? / 安装方式  GitHub Release (.exe / .zip / .dmg / .AppImage / .deb)  ### Shell in the affected pane / 出问题的面板用的 Shell  Windows PowerShell 5.1  ### Program running in the pane / 面板里正在跑的程序  Nothing, plain shell prompt / 什么都没跑  ### Connection type / 连接方式  Local terminal / 本地终端  ### Affected area / 影响范围  Terminal rendering / scrolling / selection / garbled text — 终端渲染、滚动、选区、乱码  ### Did it work in a previous version? / 旧版本是否正常？  Not sure / 不确定  ### Can you reproduce it? / 复现概率  Always (100%) / 必现  ### Steps to reproduce / 复现步骤  随便在终端输入一些内容，然后删掉，就会出现黑条 只有在PowerShell5中才有这个现象。 主题是slate light。其他主题也会出现类似的问题。  <img width="1174" height="546" alt="image" src="https://github.com/user-attachments/assets/b9cee252-62ae-4070-af0c-634bed93ffc0" />  ### Expected behavior / 期望结果  不出现黑条。  ### Actual behavior / 实际结果  出现黑条。  ### Logs / screenshots / 日志或截图  无  ### Non-default settings / 改过的设置  只有主题。  ### Before submitting / 提交前确认  - [x] I searched existing issues and did not find a duplicate / 已搜索，无重复 - [x] I tested with the latest release / 已用最新版本试过 - [x] I removed passwords, private keys, tokens and other secrets / 已删除敏感信息
+- **Issue #974** (2026-11-14): **[Bug] sftp 目录所在目录删除后，无法跳回上级目录**
+  *Symptoms*: ### Operating system / 操作系统  macOS  ### OS version and display / 系统版本与显示  macos 26.0  ### Pebrel version / 版本号  2.5.6  ### How did you install Pebrel? / 安装方式  GitHub Release (.exe / .zip / .dmg / .AppImage / .deb)  ### Shell in the affected pane / 出问题的面板用的 Shell  bash  ### Program running in the pane / 面板里正在跑的程序  Codex CLI  ### Connection type / 连接方式  SSH via Pebrel host list / Pebrel 内 SSH 主机  ### Affected area / 影响范围  File tree / drag-and-drop upload — 文件树、拖拽上传  ### Did it work in a previous version? / 旧版本是否正常？  Not sure / 不确定  ### Can you reproduce it? / 复现概率  Always (100%) / 必现  ### Steps to reproduce / 复现步骤  1. 先进入 sftp,进入某个目录 2. 删除那个目录后再次打开 sftp, 按钮失效。  ### Expected behavior / 期望结果  希望刷新或者退回上级能使用，或者跳回家目录。现在删除了 sftp 所在目录后按钮都失效了。  ### Actual behavior / 实际结果  按钮失效  ### Logs / screenshots / 日志或截图  无  ### Non-default settings / 改过的设置  _No response_  ### Before submitting / 提交前确认  - [x] I searched existing issues and did not find a duplicate / 已搜索，无重复 - [x] I tested with the latest release / 已用最新版本试过 - [x] I removed passwords, private keys, tokens and other secrets / 已删除敏感信息
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1515,503 +1515,825 @@ def destinations(owner, deadline):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4807f289` (2026-11-11)
-**Commit Message**: Merge pull request #615 from WilliamWang1721/fix/issue-549-5gzczi
+### Incident Patch 1: `c63ff393` (2026-11-15)
+**Commit Message**: Throttle unchanged hook session registry writes (#983)
 
-feat(windows): let PowerShell keep its own ls/dir via builtin_ls=0
+Persist unchanged session identities at most once per minute. Persist new identities and cwd or title changes immediately.
 
-**File**: `nebula_terminal/src/tty/windows/mod.rs` (modified, +18/-6)
+**File**: `architecture/notes/nebula_app/ai_sessions/2026-11-13-hook-registry-write-interval.md` (added, +75/-0)
 ```diff
-@@ -658,12 +658,15 @@ function global:Nebula-List {
-         "$meta$mode$e[0m  $muted$size$e[0m  $muted$date$e[0m  $e]8;;$uri$b$col$($i.Name)$e[0m$e]8;;$b"
-     }
- }
--Remove-Item Alias:ls  -Force -ErrorAction SilentlyContinue
--Remove-Item Alias:dir -Force -ErrorAction SilentlyContinue
--Remove-Item Alias:ll  -Force -ErrorAction SilentlyContinue
--Set-Alias -Name ls  -Value Nebula-List -Scope Global -Option AllScope -Force
--Set-Alias -Name ll  -Value Nebula-List -Scope Global -Option AllScope -Force
--Set-Alias -Name dir -Value Nebula-List -Scope Global -Option AllScope -Force
-+# builtin_ls=0 in the settings file keeps PowerShell's own ls/dir.
-+if (Get-NebulaBoolSetting 'builtin_ls' $true) {
-+    Remove-Item Alias:ls  -Force -ErrorAction SilentlyContinue
-+    Remove-Item Alias:dir -Force -ErrorAction SilentlyContinue
-+    Remove-Item Alias:ll  -Force -ErrorAction SilentlyContinue
-+    Set-Alias -Name ls  -Value Nebula-List -Scope Global -Option AllScope -Force
-+    Set-Alias -Name ll  -Value Nebula-List -Scope Global -Option AllScope -Force
-+    Set-Alias -Name dir -Value Nebula-List -Scope Global -Option AllScope -Force
+@@ -0,0 +1,75 @@
++# Hook session index rewrites are throttled to one per minute
++
++## Status
++
++Implemented.
++
++## Context
++
++AI clients emit a hook event per tool call, and nearly every event only refreshes
++`last_seen` for an existing session. `record_hook_session` runs on the UI/event
++path (`gpui_shell/terminal/view/agent_activity.rs` and
++`window_context/agent_activity.rs`), and each event took the exclusive registry
++lock, read and parsed the whole JSON index, updated/sorted/truncated the rows,
++serialized it and replaced the file through `atomic_file::write` (`sync_all` plus
++the write-through rename). Active AI turns therefore paid a file write per tool
++call on the UI thread.
++
++## Evidence
++
++- One `record_hook_session` measured about 12.4 ms locally; reading and parsing
++  the file costs about 0.05 ms on its own.
++- Both production call sites pass `title: None`, so the only field that usually
++  moves is `last_seen`.
++- The registry is capped at 256 rows and is read by `scan()`, which uses
++  `last_seen` as `modified` for ordering and the relative label. Claude and Codex
++  rows also merge the native transcript mtime via `max`, so the registry timestamp
++  mainly orders the remaining agents.
++
++## Decision
++
++After loading the registry, when the row for `(source, id)` already has the same
++effective cwd and title and was persisted less than 60 s ago, return without
++sorting, serializing or writing; the row keeps its previous `last_seen`. Empty
++incoming cwd/title keep the stored value and never count as a change. New rows,
++cwd/title changes and rows older than the interval still rewrite, with the id
++validation, sort order, `REGISTRY_LIMIT` truncation and JSON format unchanged.
++
++## Rejected alternatives
++
++- Move the write to a background worker: the per-event fsync traffic remains, and
++  a small JSON index would gain a thread lifecycle. Throttling removes most of the
++  work with no new state.
++- Keep writing every event but skip `sync_all`: weakens the durability contract of
++  the only file that records resumable identities.
++- Cache the registry in memory: several instances and helpers write the same file,
++  so the cache would need cross-process invalidation.
++- Never refresh `last_seen` while the identity is unchanged: ordering and relative
++  labels would freeze at the first event of a turn.
++
++## Consequences
++
++- A session that keeps emitting events without cwd/title changes is written at
++  most once per 60 s; ordering and "N minutes ago" labels stay minute-accurate.
++- The row can remain up to 60 s older than the latest event, for every client.
++- A wall-clock jump backwards makes `now.saturating_sub(last_seen)` zero, so that
++  row is treated as just written until the clock catches up.
++- Skipped events still take the exclusive lock file and parse the registry; the win
++  comes from dropping serialization and fsync, not the read.
++
++## Validation
++
++`nebula_app/src/ai_sessions.rs` tests: `the_rewrite_interval_is_pure`,
++`unchanged_events_within_a_minute_skip_the_rewrite` (an unknown-field sentinel
++proves the file was not rewritten), `changed_cwd_or_title_still_rewrites`,
++`events_after_the_interval_still_write` and `new_sessions_still_write`.
++`scripts/check_architecture.py --base origin/main` passes.
++
++## Supersedes
++
++None.
++
++## Revisit when
++
++Hook events stop being the dominant writer, registry serialization becomes cheap,
++or the resume list needs second-level freshness.
+```
+
+**File**: `nebula_app/AGENTS.md` (modified, +1/-0)
+```diff
+@@ -18,6 +18,7 @@
+ - 测试真实控件和布局路径；编译或状态单测不能代替 hover、命中区域、键盘路径和视觉验收。
+ - 只有跨层所有权、持久化、协议、线程/生命周期或重要性能取舍才写 note，路径镜像到 `architecture/notes/nebula_app/<capability>/`。
+ - Agent 集成、改键输入与 SSH 认证的因果记录分别位于 [`ai_hook`](../architecture/notes/nebula_app/ai_hook/)、[`input`](../architecture/notes/nebula_app/input/) 和 [`ssh_session`](../architecture/notes/nebula_app/ssh_session/)。
++- AI hook 会话索引的写入节流（身份未变时 60 秒内不重复落盘）见 [`ai_sessions`](../architecture/notes/nebula_app/ai_sessions/)。
+ - Windows PowerShell 剪贴板粘贴与当前编辑器能力的边界见 [`terminal/view`](../architecture/notes/nebula_app/gpui_shell/terminal/view/)。
+ - Windows 回收站调用的消息重入与后台 COM 生命周期见 [`file_operations`](../architecture/notes/nebula_app/display/file_operations/2026-11-11-recycle-bin-reentrancy.md)。
+ - Runtime 地址发现与隔离实例的生命周期边界见 [`runtime_api`](../architecture/notes/nebula_app/runtime_api/)。
+```
+
+**File**: `nebula_app/src/ai_sessions.rs` (modified, +97/-3)
+```diff
+@@ -117,6 +117,22 @@ impl AiSession {
+ 
+ const REGISTRY_VERSION: u32 = 1;
+ const REGISTRY_LIMIT: usize = 256;
++/// AI clients emit a hook event per tool call, and most only refresh
++/// `last_seen`. Rewriting and fsyncing the index is the expensive part, so a
++/// row that changed nothing else is rewritten at most this often; the resume
++/// list stays minute-accurate.
++const REGISTRY_WRITE_INTERVAL_SECS: u64 = 60;
++
++/// Whether updating `session` would change nothing but `last_seen`, and it was
++/// persisted less than [`REGISTRY_WRITE_INTERVAL_SECS`] ago. Empty incoming
++/// fields keep the stored value, so they never count as a change.
++fn unchanged_within_interval(session: &RegistrySession, cwd: &str, title: &str, now: u64) -> bool {
++    let cwd_unchanged = cwd.is_empty() || cwd == session.cwd;
++    let title_unchanged = title.is_empty() || title == session.title;
++    cwd_unchanged
++        && title_unchanged
++        && now.saturating_sub(session.last_seen) < REGISTRY_WRITE_INTERVAL_SECS
 +}
  
- function global:Convert-NebulaBareEnvAssignment {
-     param([string]$Line)
-@@ -1293,6 +1296,15 @@ mod test {
-         );
+ #[derive(Debug, Default, Serialize, Deserialize)]
+ struct SessionRegistry {
+@@ -187,15 +203,21 @@ fn record_hook_session_at(
+     };
+     let mut registry = load_registry(path);
+     let now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_secs();
++    let cwd = cwd.trim();
+     let title = title.map(truncate_title).unwrap_or_default();
+     if let Some(existing) = registry
+         .sessions
+         .iter_mut()
+         .find(|session| session.source == agent.slug() && session.id == id)
+     {
++        if unchanged_within_interval(existing, cwd, &title, now) {
++            // Nothing but `last_seen` would move, and the writer would just
++            // fsync the same bytes again. Keep the previous timestamp.
++            return Ok(());
++        }
+         existing.last_seen = now;
+-        if !cwd.trim().is_empty() {
+-            existing.cwd = cwd.trim().to_owned();
++        if !cwd.is_empty() {
++            existing.cwd = cwd.to_owned();
+         }
+         if !title.is_empty() {
+             existing.title = title;
+@@ -205,7 +227,7 @@ fn record_hook_session_at(
+             source: agent.slug().to_owned(),
+             id: id.to_owned(),
+             title,
+-            cwd: cwd.trim().to_owned(),
++            cwd: cwd.to_owned(),
+             last_seen: now,
+         });
      }
- 
+@@ -647,4 +669,76 @@ mod tests {
+         assert!(title.ends_with('…'));
+         assert!(title.chars().count() <= TITLE_STORAGE_CHARS + 1);
+     }
++
 +    #[test]
-+    fn builtin_ls_aliases_can_be_opted_out() {
-+        let gate = NEBULA_PROMPT_PS1
-+            .find("if (Get-NebulaBoolSetting 'builtin_ls' $true) {")
-+            .expect("builtin_ls gate");
-+        let alias = NEBULA_PROMPT_PS1.find("Set-Alias -Name ls ").expect("ls alias");
-+        assert!(gate < alias, "the ls/ll/dir aliases must sit behind the builtin_ls gate");
++    fn the_rewrite_interval_is_pure() {
++        let session = RegistrySession {
++            source: "opencode".into(),
++            id: "session-1".into(),
++            title: "标题".into(),
++            cwd: r"D:\repo".into(),
++            last_seen: 1_000,
++        };
++        // 未变化的身份在窗口内可跳过；空字段表示保留旧值。
++        assert!(unchanged_within_interval(&session, r"D:\repo", "标题", 1_059));
++        assert!(unchanged_within_interval(&session, "", "", 1_010));
++        // 到达窗口边界或字段变化必须落盘。
++        assert!(!unchanged_within_interval(&session, r"D:\repo", "标题", 1_060));
++        assert!(!unchanged_within_interval(&session, r"D:\other", "标题", 1_010));
++        assert!(!unchanged_within_interval(&session, r"D:\repo", "别的标题", 1_010));
 +    }
 +
-     #[test]
-     fn disabling_powerline_keeps_the_complete_osc_lifecycle() {
-         let toggle = NEBULA_PROMPT_PS1
++    /// 未知字段会被 serde 忽略而原样保留；用它观察是否发生了重写。
++    fn write_sentinel_registry(path: &Path, id: &str, last_seen: u64) {
++        let json = format!(
++            r#"{{"version":1,"sentinel":true,"sessions":[{{"source":"opencode","id":"{id}","cwd":"D:\\repo","last_seen":{last_seen}}}]}}"#
++        );
++        std::fs::write(path, json).unwrap();
++    }
++
++    #[test]
++    fn unchanged_events_within_a_minute_skip_the_rewrite() {
++        let dir = tempfile::tempdir().unwrap();
++        let path = dir.path().join("ai_sessions.json");
++        let now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs();
++        write_sentinel_registry(&path, "session-2", now);
++        record_hook_session_at(&path, "opencode", "session-2", r"D:\repo", None).unwrap();
++        // 同 cwd、无新标题且 last_seen 在 60s 内：不重写，哨兵字段仍在。
++        assert!(std::fs::read_to_string(&path).unwrap().contains("sentinel"));
++    }
++
++    #[test]
++    fn changed_cwd_or_title_still_rewrites() {
++        let dir = tempfile::tempdir().unwrap();
++        let path = dir.path().join("ai_sessions.json");
++        record_hook_session_at(&path, "opencode", "session-3", r"D:\repo", Some("旧标题")).unwrap();
++        record_hook_session_at(&path, "opencode", "session-3", r"D:\repo\worktree", None).unwrap();
++        let registry = load_registry(&path);
++        assert_eq!(registry.sessions[0].cwd, r"D:\repo\worktree");
++        // 本次没给标题，旧标题保留。
++        assert_eq!(registry.sessions[0].title, "旧标题");
++        record_hook_session_at(&path, "opencode", "session-3", r"D:\repo\worktree", Some("新标题"))
++            .unwrap();
++        assert_eq!(load_registry(&path).sessions[0].title, "新标题");
++    }
++
++    #[test]
++    fn events_after_the_interval_still_write() {
++        let di
 ```
 
 ---
 
-### Incident Patch 2: `589d1f86` (2026-11-11)
-**Commit Message**: Merge branch 'main' into fix/issue-549-5gzczi
+### Incident Patch 2: `12dab334` (2026-11-14)
+**Commit Message**: Integrate reviewed prerequisites for validate English change verbs before stable packaging
 
-**File**: `.github/workflows/release-2.4.0.yml` (added, +498/-0)
+**File**: `README.md` (modified, +3/-2)
 ```diff
-@@ -0,0 +1,498 @@
-+name: Pebrel 2.4.0 requested build and publication
-+run-name: Pebrel 2.4.0 release handoff ${{ github.run_number }}
-+'on':
-+  push:
-+    branches:
-+    - release/2.4.0-20261102
-+permissions:
-+  contents: read
-+concurrency:
-+  group: pebrel-release-2.4.0
-+  cancel-in-progress: false
-+env:
-+  PYTHONUTF8: '1'
-+  RUST_TOOLCHAIN: 1.97.1
-+  CARGO_TERM_COLOR: always
-+  RUST_BACKTRACE: '1'
-+jobs:
-+  prepare:
-+    name: Validate requested release phase
-+    runs-on: ubuntu-22.04
-+    outputs:
-+      phase: ${{ steps.request.outputs.phase }}
-+      version: ${{ steps.request.outputs.version }}
-+      source_commit: ${{ steps.request.outputs.source_commit }}
-+      build_run_id: ${{ steps.request.outputs.build_run_id }}
-+    steps:
-+    - uses: actions/checkout@v4
-+      with:
-+        fetch-depth: 0
-+        persist-credentials: false
-+    - uses: actions/setup-python@v5
-+      with:
-+        python-version: '3.13'
-+    - name: Read the scoped release request
-+      id: request
-+      run: python3 scripts/release_240.py prepare
-+  linux:
-+    name: Build Linux x64 package
-+    needs: prepare
-+    if: ${{ needs.prepare.outputs.phase == 'build' }}
-+    runs-on: ubuntu-22.04
-+    timeout-minutes: 120
-+    env:
-+      PACKAGE_VERSION: ${{ needs.prepare.outputs.version }}
-+      LINUXDEPLOY_VERSION: 1-alpha-20251107-1
-+      LINUXDEPLOY_SHA256: c20cd71e3a4e3b80c3483cef793cda3f4e990aca14014d23c544ca3ce1270b4d
-+    steps:
-+    - uses: actions/checkout@v4
-+      with:
-+        fetch-depth: 0
-+        persist-credentials: false
-+    - uses: actions/setup-python@v5
-+      with:
-+        python-version: '3.13'
-+    - name: Install build, package, and headless runtime dependencies
-+      run: |
-+        sudo apt-get update
-+        sudo apt-get install -y --no-install-recommends \
-+          appstream build-essential cmake curl desktop-file-utils dpkg-dev \
-+          imagemagick libasound2-dev libdbus-1-dev libegl1-mesa-dev \
-+          libfontconfig1-dev libfreetype6-dev libgl1-mesa-dev libudev-dev \
-+          libvulkan1 libwayland-dev libx11-dev libx11-xcb-dev \
-+          libxcb-render0-dev libxcb-shape0-dev libxcb-xfixes0-dev \
-+          libxcb-xinput-dev libxcb-xkb-dev libxcb1-dev libxi-dev \
-+          libxkbcommon-dev libxkbcommon-x11-dev mesa-vulkan-drivers \
-+          patchelf pkg-config weston xauth xvfb zsh
-+    - uses: dtolnay/rust-toolchain@stable
-+      with:
-+        toolchain: ${{ env.RUST_TOOLCHAIN }}
-+    - uses: ./.github/actions/rust-cache
-+      id: rust-cache
-+      with:
-+        key: release
-+        target: target/release
-+        legacy-key: linux
-+    - name: Build GPUI release binary
-+      run: cargo build --locked --release -p nebula --bin pebrel -p nebula_hook --bin pebrel-hook --features nebula/gpui-shell --timings
-+    - name: Save compiled workload
-+      if: ${{ always() && steps.rust-cache.outcome == 'success' && steps.rust-cache.outputs.cache-hit != 'true' }}
-+      uses: actions/cache/save@v4
-+      with:
-+        path: target/release
-+        key: ${{ steps.rust-cache.outputs.cache-key }}
-+    - name: Download pinned linuxdeploy
-+      env:
-+        LINUXDEPLOY: ${{ runner.temp }}/linuxdeploy-x86_64.AppImage
-+      run: |
-+        curl --fail --location --retry 3 --retry-all-errors --show-error \
-+          --output "$LINUXDEPLOY" \
-+          "https://github.com/linuxdeploy/linuxdeploy/releases/download/$LINUXDEPLOY_VERSION/linuxdeploy-x86_64.AppImage"
-+        echo "$LINUXDEPLOY_SHA256  $LINUXDEPLOY" | sha256sum --check --strict
-+        chmod 0755 "$LINUXDEPLOY"
-+        echo "LINUXDEPLOY=$LINUXDEPLOY" >>"$GITHUB_ENV"
-+    - name: Package stable Linux assets
-+      run: |
-+        SOURCE_DATE_EPOCH="$(git show -s --format=%ct "$GITHUB_SHA")"
-+        export SOURCE_DATE_EPOCH
-+        bash scripts/package-linux.sh \
-+          --channel stable \
-+          --binary target/release/pebrel \
-+          --version "$PACKAGE_VERSION" \
-+          --output-directory dist \
-+          --linuxdeploy "$LINUXDEPLOY" \
-+          --force
-+    - name: Verify built Linux version and Debian metadata
-+      run: |
-+        target/release/pebrel --version
-+        version="$(dpkg-deb --field dist/*.deb Version)"
-+        test "$version" = "$PACKAGE_VERSION"
-+    - uses: actions/upload-artifact@v4
-+      with:
-+        name: release-240-package-linux-x64
-+        path: |
-+          dist/*.AppImage
-+          dist/*.deb
-+          dist/*.tar.gz
-+        if-no-files-found: error
-+        retention-days: 14
-+        compression-level: 0
-+  macos:
-+    name: Build macOS ${{ matrix.asset_architecture }} package
-+    needs: prepare
-+    if: ${{ needs.prepare.outputs.phase == 'build' }}
-+    strategy:
-+      fail-fast: false
-+      matrix:
-+        include:
-+        - runner: macos-26
-+          architecture: aarch64
-+          native_architecture: arm64
-+          asset_architecture: arm64
-+        - runner: macos-26-intel
-+          architecture: x86_64
-+          native_architecture: x86
-```
-
-**File**: `CHANGELOG.md` (modified, +230/-55)
-```diff
-@@ -4,89 +4,264 @@ Every release entry is provided in English and Simplified Chinese.
- 
- 每个版本条目均同时提供英文和简体中文说明。
- 
--## 2.3.2 - 2026-11-01
--
--- `Pebrel-v2.3.2-linux-x64-preview.AppImage`: `PENDING FINAL BUILD`
--- `Pebrel-v2.3.2-linux-x64-preview.deb`: `PENDING FINAL BUILD`
--- `Pebrel-v2.3.2-linux-x64-preview.tar.gz`: `PENDING FINAL BUILD`
--- `Pebrel-v2.3.2-macos-arm64-preview.dmg`: `PENDING FINAL BUILD`
--- `Pebrel-v2.3.2-macos-x64-preview.dmg`: `PENDING FINAL BUILD`
--- `Pebrel-v2.3.2-windows-x64.zip`: `PENDING FINAL BUILD`
--- `Pebrel-v2.3.2-windows-x64-setup.exe`: `PENDING FINAL BUILD`
--- `Pebrel-v2.3.2-windows-arm64.zip`: `PENDING FINAL BUILD`
--- `Pebrel-v2.3.2-windows-arm64-setup.exe`: `PENDING FINAL BUILD`
--- `Pebrel-v2.3.2-android-universal-preview.apk`: `PENDING FINAL BUILD`
--- `Pebrel-v2.3.2-relay-manual.tar.gz`: `PENDING FINAL BUILD`
-+## 2.5.0 - 2026-11-09
-+
-+```text
-+PENDING FINAL BUILD  Pebrel-v2.5.0-android-universal-preview.apk
-+PENDING FINAL BUILD  Pebrel-v2.5.0-linux-x64-preview.AppImage
-+PENDING FINAL BUILD  Pebrel-v2.5.0-linux-x64-preview.deb
-+PENDING FINAL BUILD  Pebrel-v2.5.0-linux-x64-preview.tar.gz
-+PENDING FINAL BUILD  Pebrel-v2.5.0-macos-arm64-preview.dmg
-+PENDING FINAL BUILD  Pebrel-v2.5.0-macos-x64-preview.dmg
-+PENDING FINAL BUILD  Pebrel-v2.5.0-relay-manual.tar.gz
-+PENDING FINAL BUILD  Pebrel-v2.5.0-windows-arm64-setup.exe
-+PENDING FINAL BUILD  Pebrel-v2.5.0-windows-arm64.zip
-+PENDING FINAL BUILD  Pebrel-v2.5.0-windows-x64-setup.exe
-+PENDING FINAL BUILD  Pebrel-v2.5.0-windows-x64.zip
-+```
- 
- ### English
- 
--This release brings independently configurable next-prompt prediction to supported native AI CLI editors, native shell pointer editing, and fixes for startup, SSH, input, tabs and settings. This is a Windows x64 release candidate; publication remains pending.
-+macOS, Linux, and Android downloads are Preview builds.
- 
- #### Added
- 
--- Predict the next message when the native input is empty in supported local Claude Code, Pi and OpenCode sessions launched or resumed through Pebrel. Choose a separate provider and model without changing the agent's main model. Bundled adapters handle installation, Tab fills the suggestion without submitting it, and Pi/OpenCode display the selected model with animated dots while waiting. Prediction is off by default and uses recent conversation context and the application's language.
--- Click to position the cursor and drag to select a range for deletion in supported Bash/Readline, Zsh/ZLE and PowerShell/PSReadLine input. Edits stay in the shell's native buffer and undo history; unsupported keymaps and ambiguous layouts retain ordinary terminal selection.
--- Display directly transmitted, uncompressed RGB/RGBA images using the Kitty graphics protocol with bounded storage, chunked transfers, cropping and independent placements. This supported profile does not include file/shared-memory transport, PNG payloads, Unicode placeholders or animation. Existing OSC 1337 image support remains available. ([#767](https://github.com/Kuddev/pebrel/pull/767))
-+- Add a Community page to the theme picker for browsing, previewing, and installing community themes.
-+- Add `pebrel theme catalog` and `pebrel theme install` for community themes.
-+- Add a Plugins page in Settings to install plugins from a folder, enable, disable, and uninstall them.
-+- Add `pebrel plugin install`, `list`, `enable`, `disable`, and `uninstall`.
-+- Add plugins that bundle or generate themes, with theme library access granted at install and nothing applied automatically.
-+- Add Shift+Insert paste on Windows and Linux. ([#814](https://github.com/Kuddev/pebrel/pull/814))
-+- Add a Japanese README. ([#872](https://github.com/Kuddev/pebrel/pull/872))
- 
- #### Fixed
- 
--- Prevent dozens of duplicate tabs when a launch request reaches the resident process but its acknowledgement is lost. Addresses [#797](https://github.com/Kuddev/nebula/issues/797).
--- Keep localhost HTTP clients working when terminal proxying is enabled with an empty bypass list, including local OpenCode startup. Addresses [#807](https://github.com/Kuddev/nebula/issues/807).
--- Prevent an out-of-bounds crash when rendering a stale cursor during terminal resize and selection. Addresses [#788](https://github.com/Kuddev/nebula/issues/788).
--- Run the welcome command correctly from fish, both with Fastfetch installed and with the fallback output. Addresses [#803](https://github.com/Kuddev/nebula/issues/803).
--- Restore workspace keyboard shortcuts while an image tab has focus. Addresses [#774](https://github.com/Kuddev/nebula/issues/774).
--- Find settings and shortcut actions using Japanese text and current-language action labels while retaining English/Chinese aliases and prediction search terms. Addresses [#821](https://github.com/Kuddev/nebula/issues/821).
--- Preserve nested file paths after native Tab completion instead of treating a path suffix as a new command. Addresses [#676](https://github.com/Kuddev/nebula/issues/676).
--- Preserve the c
-```
-
-**File**: `Cargo.lock` (modified, +52/-32)
-```diff
-@@ -1552,7 +1552,7 @@ dependencies = [
- [[package]]
- name = "collections"
- version = "0.1.0"
--source = "git+https://github.com/Kuddev/zed?rev=1e716d16ec54b361499931b4278903cdcaae8949#1e716d16ec54b361499931b4278903cdcaae8949"
-+source = "git+https://github.com/Kuddev/zed?rev=4f2c269fd288d29b58b641da56a0dd5608fb22df#4f2c269fd288d29b58b641da56a0dd5608fb22df"
- dependencies = [
-  "gpui_util",
-  "indexmap",
-@@ -2201,7 +2201,7 @@ dependencies = [
- [[package]]
- name = "derive_refineable"
- version = "0.1.0"
--source = "git+https://github.com/Kuddev/zed?rev=1e716d16ec54b361499931b4278903cdcaae8949#1e716d16ec54b361499931b4278903cdcaae8949"
-+source = "git+https://github.com/Kuddev/zed?rev=4f2c269fd288d29b58b641da56a0dd5608fb22df#4f2c269fd288d29b58b641da56a0dd5608fb22df"
- dependencies = [
-  "proc-macro2",
-  "quote",
-@@ -3300,7 +3300,7 @@ dependencies = [
- [[package]]
- name = "gpui"
- version = "0.2.2"
--source = "git+https://github.com/Kuddev/zed?rev=1e716d16ec54b361499931b4278903cdcaae8949#1e716d16ec54b361499931b4278903cdcaae8949"
-+source = "git+https://github.com/Kuddev/zed?rev=4f2c269fd288d29b58b641da56a0dd5608fb22df#4f2c269fd288d29b58b641da56a0dd5608fb22df"
- dependencies = [
-  "accesskit",
-  "anyhow",
-@@ -3387,7 +3387,7 @@ dependencies = [
- [[package]]
- name = "gpui-component"
- version = "0.5.2"
--source = "git+https://github.com/Kuddev/gpui-component?rev=78e1d0c48867f69fec297d9016f48b0ce1b8c146#78e1d0c48867f69fec297d9016f48b0ce1b8c146"
-+source = "git+https://github.com/Kuddev/gpui-component?rev=4b62121bac83e103b4176708a98aecf0b51c84ab#4b62121bac83e103b4176708a98aecf0b51c84ab"
- dependencies = [
-  "aho-corasick",
-  "anyhow",
-@@ -3470,7 +3470,7 @@ dependencies = [
- [[package]]
- name = "gpui-component-assets"
- version = "0.5.1"
--source = "git+https://github.com/Kuddev/gpui-component?rev=78e1d0c48867f69fec297d9016f48b0ce1b8c146#78e1d0c48867f69fec297d9016f48b0ce1b8c146"
-+source = "git+https://github.com/Kuddev/gpui-component?rev=4b62121bac83e103b4176708a98aecf0b51c84ab#4b62121bac83e103b4176708a98aecf0b51c84ab"
- dependencies = [
-  "anyhow",
-  "gpui",
-@@ -3484,7 +3484,7 @@ dependencies = [
- [[package]]
- name = "gpui-component-macros"
- version = "0.5.1"
--source = "git+https://github.com/Kuddev/gpui-component?rev=78e1d0c48867f69fec297d9016f48b0ce1b8c146#78e1d0c48867f69fec297d9016f48b0ce1b8c146"
-+source = "git+https://github.com/Kuddev/gpui-component?rev=4b62121bac83e103b4176708a98aecf0b51c84ab#4b62121bac83e103b4176708a98aecf0b51c84ab"
- dependencies = [
-  "proc-macro2",
-  "quote",
-@@ -3494,7 +3494,7 @@ dependencies = [
- [[package]]
- name = "gpui_linux"
- version = "0.1.0"
--source = "git+https://github.com/Kuddev/zed?rev=1e716d16ec54b361499931b4278903cdcaae8949#1e716d16ec54b361499931b4278903cdcaae8949"
-+source = "git+https://github.com/Kuddev/zed?rev=4f2c269fd288d29b58b641da56a0dd5608fb22df#4f2c269fd288d29b58b641da56a0dd5608fb22df"
- dependencies = [
-  "accesskit",
-  "accesskit_unix",
-@@ -3546,7 +3546,7 @@ dependencies = [
- [[package]]
- name = "gpui_macos"
- version = "0.1.0"
--source = "git+https://github.com/Kuddev/zed?rev=1e716d16ec54b361499931b4278903cdcaae8949#1e716d16ec54b361499931b4278903cdcaae8949"
-+source = "git+https://github.com/Kuddev/zed?rev=4f2c269fd288d29b58b641da56a0dd5608fb22df#4f2c269fd288d29b58b641da56a0dd5608fb22df"
- dependencies = [
-  "accesskit",
-  "accesskit_macos",
-@@ -3596,7 +3596,7 @@ dependencies = [
- [[package]]
- name = "gpui_macros"
- version = "0.1.0"
--source = "git+https://github.com/Kuddev/zed?rev=1e716d16ec54b361499931b4278903cdcaae8949#1e716d16ec54b361499931b4278903cdcaae8949"
-+source = "git+https://github.com/Kuddev/zed?rev=4f2c269fd288d29b58b641da56a0dd5608fb22df#4f2c269fd288d29b58b641da56a0dd5608fb22df"
- dependencies = [
-  "heck 0.5.0",
-  "proc-macro2",
-@@ -3607,7 +3607,7 @@ dependencies = [
- [[package]]
- name = "gpui_platform"
- version = "0.1.0"
--source = "git+https://github.com/Kuddev/zed?rev=1e716d16ec54b361499931b4278903cdcaae8949#1e716d16ec54b361499931b4278903cdcaae8949"
-+source = "git+https://github.com/Kuddev/zed?rev=4f2c269fd288d29b58b641da56a0dd5608fb22df#4f2c269fd288d29b58b641da56a0dd5608fb22df"
- dependencies = [
-  "console_error_panic_hook",
-  "gpui",
-@@ -3620,7 +3620,7 @@ dependencies = [
- [[package]]
- name = "gpui_shared_string"
- version = "0.1.0"
--source = "git+https://github.com/Kuddev/zed?rev=1e716d16ec54b361499931b4278903cdcaae8949#1e716d16ec54b361499931b4278903cdcaae8949"
-+source = "git+https://github.com/Kuddev/zed?rev=4f2c269fd288d29b58b641da56a0dd5608fb22df#4f2c269fd288d29b58b641da56a0dd5608fb22df"
- dependencies = [
-  "schemars",
-  "serde",
-@@ -3630,7 +3630,7 @@ dependencies = [
- [[package]]
- name = "gpui_util"
- version = "0.1.0"
--source = "git+https://github.com/Kuddev/zed?rev=1e716d16ec54b361499931b4278903cdcaae8949#1e716d16ec54b361499931b4278903cdcaae8949"
-+source = "git+https://github.com/Kuddev/zed?rev=4f2c269fd288d29b58b641da56a0dd5608fb22df#4f2c269fd288d29b58b641da56a0dd5608fb22df"
- dependencies = [
-  "anyhow",
-  "log",
-@@ -3640,7 +3640,7 @@ dependencies = [
- [[package]]
- 
-```
-
-**File**: `Cargo.toml` (modified, +13/-5)
-```diff
-@@ -71,14 +71,14 @@ nebula_terminal = { opt-level = 3 }
- 
- nebula-gpui = { opt-level = 3, codegen-units = 16 }
- [workspace.dependencies]
--mlua = { version = "0.11.4", features = ["lua54", "vendored", "serialize", "send"] }
-+mlua = { version = "0.11.4", features = ["luau", "vendored", "serialize", "send"] }
- serde_path_to_error = "0.1.20"
- toml = "0.9.11"
- toml_edit = "0.24.0"
- # GPUI v1.16.1 把平台启动入口拆到独立 crate。它必须与 `gpui` 使用完全相同
- # 的 Git URL 和 rev，否则 Cargo 会把同名类型解析成两套互不兼容的 crate。
- # Without font-kit, the macOS platform uses NoopTextSystem and renders no text.
--gpui_platform = { git = "https://github.com/Kuddev/zed", rev = "1e716d16ec54b361499931b4278903cdcaae8949", version = "=0.1.0", features = ["font-kit"] }
-+gpui_platform = { git = "https://github.com/Kuddev/zed", rev = "4f2c269fd288d29b58b641da56a0dd5608fb22df", version = "=0.1.0", features = ["font-kit"] }
- 
- # TODO: Drop this pin and return to the crates.io release once the fix ships there.
- [patch.crates-io]
-@@ -193,12 +193,20 @@ winit = { path = "third_party/winit-0.30.13" }
- # 当前精确引用包含补丁 1-3、6、字体内存修补及 Windows 彩色 emoji 枚举修复。
- # DirectWrite 必须先 MoveNext 再 GetCurrentRun，否则回退为黑色字形（issue #317）。
- # 修复来源：WilliamWang1721/zed codex/issue-317-color-emoji；维护分支吸收后改回其固定点。
-+# DirectWrite 字形 run 按字体面 COM 地址缓存 FontId；缓存必须持有该字体面。
-+# run 的字体面可能不是 FontId 背后的对象（如同一字族既内存注册又系统安装），
-+# 布局释放后地址被另一字体复用，中文粗体/斜体会画成错字（issue #744）。
-+# Windows 打字后自动隐藏的鼠标指针只在屏幕坐标真正改变后恢复；Win32 在指针
-+# 未移动时补发的 WM_MOUSEMOVE 不再让它每次按键闪一下（issue #868）。
-+# 原因与撤销条件见 architecture/notes/nebula_app/input/2026-11-05-windows-pointer-auto-hide.md。
-+# 这两项修复经 Kuddev/zed#2、#3 并入维护分支 fix/native-window-input-lifetime-20261015；
-+# 组件经 Kuddev/gpui-component#2、#3 只同步五个 Zed 引用。
- # Input 补丁 4-5 仍保持独立。
- # 背景流式纹理和 WGSL 原生适配已固定到公开的渲染器基线；组件同步引用
- # 同一提交，避免一套窗口里出现两份不兼容的 GPUI 类型。功能仍显式启用。
--gpui = { git = "https://github.com/Kuddev/zed", rev = "1e716d16ec54b361499931b4278903cdcaae8949", version = "=0.2.2" }
-+gpui = { git = "https://github.com/Kuddev/zed", rev = "4f2c269fd288d29b58b641da56a0dd5608fb22df", version = "=0.2.2" }
- # Native inputs share rendered text's device-pixel line height and expose a
- # post-paint point lookup. Window selection ends on release even when a child
- # consumes MouseUp or the platform reports the next move without a held button.
--gpui-component = { git = "https://github.com/Kuddev/gpui-component", rev = "78e1d0c48867f69fec297d9016f48b0ce1b8c146", version = "=0.5.2" }
--gpui-component-assets = { git = "https://github.com/Kuddev/gpui-component", rev = "78e1d0c48867f69fec297d9016f48b0ce1b8c146", version = "=0.5.1" }
-+gpui-component = { git = "https://github.com/Kuddev/gpui-component", rev = "4b62121bac83e103b4176708a98aecf0b51c84ab", version = "=0.5.2" }
-+gpui-component-assets = { git = "https://github.com/Kuddev/gpui-component", rev = "4b62121bac83e103b4176708a98aecf0b51c84ab", version = "=0.5.1" }
-```
-
-**File**: `README.ja.md` (modified, +1/-0)
-```diff
-@@ -18,6 +18,7 @@
- </p>
+@@ -192,8 +192,9 @@ discover candidates from the current environment without matching prior commands
+   selected language; Copy source preserves the complete original answer. See
+   [reader language behavior](docs/answer-reader-language.md).
+ - Clipboard images are saved as PNG files and their paths inserted into local,
+-  WSL, or SSH sessions. Inline terminal images require the CLI to emit the supported
+-  OSC 1337 protocol; image attachment previews depend on the CLI itself.
++  WSL, or SSH sessions. Inline terminal images require CLI output using OSC 1337,
++  Kitty protocol (direct RGB/RGBA), or Sixel (7-bit DCS); image attachment previews
++  depend on the CLI itself.
  
  <p align="center">
-+  <a href="https://pebrel.com"><img src="https://img.shields.io/badge/%E5%85%AC%E5%BC%8F%E3%82%B5%E3%82%A4%E3%83%88-pebrel.com-2f81f7?style=flat-square&logo=googlechrome&logoColor=white" alt="公式サイト：pebrel.com" /></a>
-   <img src="https://img.shields.io/github/stars/Kuddev/pebrel?style=flat-square&color=ffd33d&logo=github" alt="Stars" />
-   <a href="https://atomgit.com/kettys/pebrel"><img src="https://atomgit.com/kettys/pebrel/star/badge.svg" alt="AtomGitStars" /></a>
-   <a href="https://hub.xerj.org/contributors/Kuddev"><img src="https://hub.xerj.org/contributors/Kuddev/badge.svg" alt="XERJ Corpus Hub contributor" /></a>
+   <img src="docs/screenshots/ai-sidebar.png" alt="AI activity sidebar" width="300" />
 ```
 
-**File**: `README.md` (modified, +7/-0)
+**File**: `README.zh-CN.md` (modified, +2/-1)
 ```diff
-@@ -18,6 +18,7 @@
- </p>
+@@ -170,7 +170,8 @@ Tab 打开列表，再次按 Tab 轮换候选，Enter 插入选中项但不执
+ - 已捕获的 Claude Code 与 Codex 回答可在阅读器中打开，支持 Markdown、公式、原文和本地图片预览。
+   阅读器控件与提示随所选语言显示；复制原文保留完整回答。详见[阅读器语言说明](docs/answer-reader-language.md)。
+ - 剪贴板图片会保存为 PNG，并把路径插入本地、WSL 或 SSH 会话。终端内直接显示图片需要 CLI
+-  输出受支持的 OSC 1337 协议；附件缩略图取决于 CLI 自身。
++  输出 OSC 1337、Kitty protocol（APC，直接传输 RGB/RGBA）或 Sixel（7 位 DCS）协议；
++  附件缩略图取决于 CLI 自身。
  
  <p align="center">
-+  <a href="https://pebrel.com"><img src="https://img.shields.io/badge/Website-pebrel.com-2f81f7?style=flat-square&logo=googlechrome&logoColor=white" alt="Website: pebrel.com" /></a>
-   <img src="https://img.shields.io/github/stars/Kuddev/pebrel?style=flat-square&color=ffd33d&logo=github" alt="Stars" />
-   <a href="https://atomgit.com/kettys/pebrel"><img src="https://atomgit.com/kettys/pebrel/star/badge.svg" alt="AtomGitStars" /></a>
-   <a href="https://hub.xerj.org/contributors/Kuddev"><img src="https://hub.xerj.org/contributors/Kuddev/badge.svg" alt="XERJ Corpus Hub contributor" /></a>
-@@ -147,6 +148,12 @@ Choose **Inline** (Tab accepts the suggestion), **List** (Tab accepts the select
- candidate), or **Hybrid** (→ accepts the inline suggestion; Tab opens the list)
- in Settings.
- 
-+When Pebrel can query the pane's filesystem, file arguments to `nvim`, `code`, and
-+`cat` use its current directory; history only ranks the discovered candidates.
-+To choose among several files, select **Hybrid**: Tab opens the
-+list, subsequent Tab presses cycle candidates, and Enter inserts the selection
-+without running the command. Right arrow accepts the inline suggestion directly.
-+
- <details>
- <summary>How history completion differs</summary>
- 
+   <img src="docs/screenshots/ai-sidebar.png" alt="AI 活动侧栏" width="300" />
 ```
 
-**File**: `README.zh-CN.md` (modified, +5/-0)
+**File**: `architecture/notes/mobile/android/app/connection/2026-11-06-ssh-agent-conversation.md` (added, +60/-0)
 ```diff
-@@ -18,6 +18,7 @@
- </p>
- 
- <p align="center">
-+  <a href="https://pebrel.com"><img src="https://img.shields.io/badge/%E5%AE%98%E7%BD%91-pebrel.com-2f81f7?style=flat-square&logo=googlechrome&logoColor=white" alt="官网：pebrel.com" /></a>
-   <img src="https://img.shields.io/github/stars/Kuddev/pebrel?style=flat-square&color=ffd33d&logo=github" alt="Stars" />
-   <a href="https://atomgit.com/kettys/pebrel"><img src="https://atomgit.com/kettys/pebrel/star/badge.svg" alt="AtomGitStars" /></a>
-   <a href="https://hub.xerj.org/contributors/Kuddev"><img src="https://hub.xerj.org/contributors/Kuddev/badge.svg" alt="XERJ Corpus Hub contributor" /></a>
-@@ -133,6 +134,10 @@ WSL 发行版，以及 `cat` 读取带空格的文件名。使用内置 Powerlin
- 设置中可选择**行内补齐**（Tab 接受灰字）、**列表补齐**（Tab 接受选中候选），
- 或**混合补齐**（→ 接受灰字，Tab 打开列表）。
- 
-+Pebrel 能查询窗格的文件系统时，`nvim`、`code` 和 `cat` 的文件参数从当前目录获取候选，
-+历史只给已发现的候选排序。需要在多个文件间选择时，选用**混合补齐**：
-+Tab 打开列表，再次按 Tab 轮换候选，Enter 插入选中项但不执行命令；→ 直接接受灰字。
+@@ -0,0 +1,60 @@
++# Conversation view for Agents in a direct SSH terminal
 +
- <details>
- <summary>历史补齐有什么不同？</summary>
- 
++## Status
++
++Accepted by the maintainer on 2026-11-06 for the mobile preview.
++
++## Context
++
++The chat view only worked for panes of a paired computer, whose runtime reads the
++native transcript. A phone that connects to a server over SSH had only the terminal,
++although the same Agents (Claude Code, Codex, Pi, Antigravity) run there.
++
++## Evidence
++
++On an Android 14 emulator, an SSH tab running a stand-in Agent that writes Claude's
++JSONL format showed the conversation switch within one detection round. A sent
++message, the tool call, the selection menu and the chosen answer appeared in the
++chat view. Projections were also checked against real Claude Code and Codex
++transcripts and against Pi and Antigravity records built from their published
++formats. Real Pi and Antigravity CLIs were not run.
++
++## Decision
++
++A bundled Python reader runs on the server through a separate exec channel, never
++through the interactive shell. It finds the Agent in the foreground process group of
++this connection's PTY, or of the multiplexer pane the app reports, locates its
++transcript and returns one bounded page in the existing conversation message shape.
++The reader is installed once under `~/.cache/pebrel`, named by its hash, because one
++exec command is limited to 8 KiB. Output stays under the 64 KiB query budget.
++
++Input goes to the terminal: a message is pasted and submitted with Enter, and a
++numbered menu drawn on screen becomes a prompt card answered with arrow keys. The
++menu is read from the terminal engine, so it is current while the terminal is hidden.
++
++## Rejected alternatives
++
++- Parse the screen into messages: wrapped and redrawn output cannot be told apart
++  from content.
++- Require the desktop app on the server: direct SSH is the case being served.
++- Send the reader with every poll: it exceeds the exec command size.
++
++## Consequences
++
++The server needs `python3`; without it the view explains why. Agents whose
++transcript cannot be found show an empty conversation, and the terminal still
++works. Transcript formats are not public contracts and may change with releases.
++
++## Validation
++
++`TerminalPromptTest`, `RemoteOsIconTest` and the debug unit suite pass; the emulator
++flow above was run with screenshots.
++
++## Supersedes
++
++None.
++
++## Revisit when
++
++An Agent publishes a stable session API, or a transcript format change breaks
++the projection.
 ```
 
-**File**: `THIRD-PARTY-NOTICES` (modified, +5/-0)
+**File**: `architecture/notes/mobile/android/app/connection/2026-11-12-workspace-client-recovery.md` (added, +56/-0)
 ```diff
-@@ -421,4 +421,9 @@ Normal NF CN Regular font (SIL Open Font License 1.1). The original copyright
- and license metadata are retained in the font; see licenses/LICENSE-PEBREL-SYMBOLS.
- Source: https://github.com/subframe7536/maple-font
- Regeneration: python scripts/build_symbol_font.py (requires fontTools).
-+It also keeps Maple's unchanged `m` glyph, required by GPUI's macOS font loader.
- The complete Maple face remains unchanged and separately selectable.
+@@ -0,0 +1,56 @@
++# Attach only to the selected remote workspace
 +
-+nebula-waiting-hand.svg preserves the U+F256 outline from that bundled font,
-+translated and flipped into a centered SVG viewBox without changing the outline.
-+Copyright (c) 2022, subframe7536. See licenses/LICENSE-PEBREL-SYMBOLS (OFL 1.1).
++## Status
++
++Proposed.
++
++## Context
++
++An Android SSH tab can launch a workspace on its first connection or open a
++workspace from the server's running-session list. When an existing target ends,
++opening a fresh shell under the same name loses the context that reconnect was
++intended to restore.
++
++## Evidence
++
++In a Linux PTY, the former reconnect command kept the original shell PID while
++the daemon was running. After the daemon stopped, the same command started a
++new daemon and a shell with a different PID. On 0.9.5, the upstream client mode
++alone also tried another saved SSH machine when its local target was absent.
++
++## Decision
++
++Use the upstream `client` entry point for recovery and for an explicit selection
++from the running-session list. Set `HERDR_REMOTE_KEYBINDINGS=server` for that
++process to use the selected host's keymap and skip its saved-machine catalog.
++An unnamed host profile keeps the same remote default as its first connection.
++A selected tab must still be focusable before the client is started.
++
++## Rejected alternatives
++
++- Check whether the server is running before the launch-or-attach command. It
++  could stop between the two operations and the launch command would create it.
++- Attach to a single terminal stream. That would drop the workspace and tab
++  controls and is unavailable on Windows.
++
++## Consequences
++
++First connections can still create a workspace. Missing targets terminate the
++PTY command and leave the SSH tab in its existing ended state. A server's
++saved-machine federation is available when launched manually from a regular
++SSH shell. Client-only mode depends on an upstream internal entry point.
++
++## Validation
++
++The POSIX regression runs the production commands against a fixture executable.
++Real Linux PTYs with upstream 0.8.2 and 0.9.5 verify shell continuity and missing
++targets. The 0.9.5 fixture also verifies a saved-machine probe is suppressed and
++a custom server shortcut still works.
++
++## Supersedes
++
++None.
++
++## Revisit when
++
++Upstream offers a documented attach-only command for a named workspace.
+```
+
+**File**: `architecture/notes/mobile/android/app/session/2026-11-06-background-ssh-survival.md` (added, +52/-0)
+```diff
+@@ -0,0 +1,52 @@
++# Keeping background SSH tabs connected
++
++## Status
++
++Accepted by the maintainer on 2026-11-06, who reported SSH tabs dropping soon after
++the app went to the background.
++
++## Context
++
++Two paths closed working connections. A new default network finished every SSH
++tab at once, although a VPN change, Wi-Fi roaming or a second SIM often leaves the
++old route working. And without a wake lock the CPU sleeps, so keepalives stop and
++servers or the client's own keepalive limit end the session.
++
++## Evidence
++
++Code inspection of `networkChanged` and `SessionService`. The existing recovery
++tests still pass: a probe that fails reconnects in the background, and closing a
++tab cancels its probe. No physical-device battery or Doze measurement was made.
++
++## Decision
++
++On a network change, a ready SSH tab is probed with a round trip and reconnects
++only if the probe fails or times out (5 s). The session service holds its partial
++wake lock by default while sessions live; the notification action still releases it,
++and that choice is kept until the user takes it again.
++
++## Rejected alternatives
++
++- Keep reconnecting every tab on any network change: it discards sessions that
++  were fine, including running programs without a multiplexer.
++- Raise the native keepalive limits: it needs a native rebuild and does not help
++  while the CPU sleeps.
++
++## Consequences
++
++Battery use rises while sessions are open in the background; the notification
++shows that the wake lock is held. A dead route now takes up to 5 s longer to
++reconnect.
++
++## Validation
++
++`SshRecoveryTest` passes.
++
++## Supersedes
++
++None.
++
++## Revisit when
++
++Device measurements show the wake lock costs too much, or Android restricts it
++for foreground services of this type.
+```
+
+**File**: `architecture/notes/mobile/android/app/ui/2026-11-05-glass-and-chat-timeline.md` (added, +59/-0)
+```diff
+@@ -0,0 +1,59 @@
++# Glass surfaces and the native conversation timeline
++
++## Status
++
++Accepted by the maintainer on 2026-11-05 as a preview direction. Android
++acceptance is limited to an x86_64 emulator with a scripted desktop.
++
++## Context
++
++The conversation view rendered CommonMark through the reader WebView and floating
++controls had no depth. The maintainer asked for frosted glass, a web-chat layout
++with the user on the right, and no loss of scroll performance.
++
++## Evidence
++
++On the emulator, scroll frame time with blur on stayed about 2 ms above the
++baseline build; with blur off the fallback kept text behind the input bar sharp.
++Emulator numbers are only comparable with each other. `GlassTokensTest` checks
++every registered theme on both the blurred and the solid path.
++
++## Decision
++
++Use Haze for backdrop blur and derive tint, hairline and shadow from each theme, so
++no install theme is added. Battery saver, disabled animators, disabled window blur,
++low-RAM devices and old API levels fall back to a translucent surface. Parse
++CommonMark into Compose blocks; messages keep their transcript ids, so unchanged
++rows reuse their parsed documents.
++
++Sizes and alphas are our own: type sizes follow the Material scale, motion uses the
++Compose spring constants, and tint alphas start from the contrast check. A survey of
++another product informed the direction, but its measured constants are not reused,
++because that product publishes no license for them.
++
++## Rejected alternatives
++
++- Keep the WebView timeline: selection and scroll anchoring stay out of reach.
++- Reuse the surveyed constants as they were: this invites a copying claim for no
++  functional gain.
++- Add dedicated glass themes: the Rust table stays the only palette authority.
++
++## Consequences
++
++Haze becomes a runtime dependency recorded in the third-party notices. Blur cost has
++not been measured on physical devices; do that before calling the performance
++settled.
++
++## Validation
++
++`GlassTokensTest`, `ConversationTimelineTest` and the debug unit test suite pass; the
++preview build succeeds.
++
++## Supersedes
++
++None.
++
++## Revisit when
++
++Physical-device measurements exceed the frame budget, or Haze drops an API level
++this app supports.
+```
+
+**File**: `architecture/notes/nebula_app/ai_hook/2026-11-06-unix-accept-poll-wait.md` (added, +105/-0)
+```diff
+@@ -0,0 +1,105 @@
++# Unix AI hook accept wait uses `poll`
++
++## Status
++
++Implemented and validated on Linux. Windows named-pipe transport is unchanged.
++
++## Context
++
++The Unix AI hook worker accepts connections from a nonblocking `UnixListener`
++and, before this decision, slept 20 ms after every `WouldBlock`. The helper
++connects once per AI turn and waits for the acknowledgement byte before exiting,
++so the sleep added an expected ~10 ms (observed ~20 ms) to every turn's ack even
++when the worker had been idle for a long time.
++
++The same wait bounds how often `stopping` is observed while the listener is
++idle, and therefore how long `Drop` can spend joining an idle worker. A
++connected peer that sends nothing already keeps `read_message` waiting for up to
++one second, before and after this change, so that read is the bound for a
++connected worker. A replacement must keep the idle stop granularity, must not
++introduce a blocking `accept`, and must not need a synthetic wake-up connection
++during shutdown.
++
++## Evidence
++
++- Before (`sleep(20 ms)`), three 100-round runs: ack p50 20.196 / 20.221 /
++  20.185 ms; every one of the 300 samples was at least 1 ms, and p95 was about
++  42 ms.
++- After (`poll`), three 100-round runs: ack p50 0.063 / 0.067 / 0.050 ms. The
++  only sample at or above 1 ms in each run was round 0 (~22 ms), the cold
++  `nearest_agent_ancestor` process snapshot that both builds pay.
++- Harness: the `#[ignore]` `manual_ack_latency_samples` test times
++  connect -> envelope write -> one ack byte read -> channel drain. Numbers are
++  single-machine, debug-profile point estimates (Linux 7.0.0-31, i5-12400,
++  rustc 1.97.1), not a general performance guarantee.
++- Code: `nebula_app/src/ai_hook/unix.rs` `WouldBlock` branch and
++  `wait_until_readable`. Behaviour tests:
++  `connections_are_accepted_in_order_and_each_receives_its_ack` and
++  `drop_stops_the_idle_worker_and_removes_its_private_directory`.
++## Decision
++
++In the `WouldBlock` branch, wait for `POLLIN` on the listener descriptor with
++`libc::poll` for the same 20 ms budget, then return to the top of the loop and
++let the existing nonblocking `accept` classify the readiness. `accept` stays
++nonblocking; `stopping` is still checked once per loop iteration, so for an idle
++listener the stop granularity and `Drop` join bound remain one 20 ms timeout. A
++connected peer that sends nothing can still hold the worker in `read_message`
++for up to one second, as before; this decision does not change that read.
++
++The deadline is tracked with `Instant`. `EINTR` retries the poll against the
++same deadline, so repeated signals cannot extend the stop granularity. Any other
++poll error is logged and stops the worker, the same fail-closed direction as an
++accept error. `POLLERR`, `POLLHUP`, and `POLLNVAL` are deliberately handed to the
++following `accept` so existing accept error behaviour is unchanged.
++
++## Rejected alternatives
++
++- **Blocking `accept` plus a wake-up connection on shutdown.** This changes the
++  shutdown ownership and adds a synthetic connection to a path that verifies
++  peer identity, for no latency benefit over `poll`.
++- **A shorter sleep (for example 1 ms).** It cuts the average but multiplies
++  idle wake-ups by 20 and still leaves a fixed alignment delay; `poll` blocks
++  until readiness without spinning.
++- **A stop channel or condvar in addition to the socket.** It requires new
++  synchronization and does not make accept itself more responsive.
++- **`SO_RCVTIMEO` on the listener.** Its effect on `accept` is not portable
++  across the supported Unix targets and it does not express readiness as
++  directly as `poll`.
++
++## Consequences
++
++- Ack latency no longer pays the sleep alignment; p50 is dominated by accept,
++  peer verification, read, parse, ancestry lookup, enqueue, and ack write.
++- Idle wake-up rate, idle stop-check granularity, and the `Drop` join bound for
++  an idle listener are unchanged: one bounded 20 ms wait per idle iteration. A
++  connected-but-silent peer can still hold `Drop`'s join for up to about one
++  second through the existing `read_message` deadline, exactly as before.
++- Poll failures other than `EINTR` stop the worker with a log line and no retry
++  loop, matching the fail-closed accept path.
++- The cold first-event process snapshot (~22 ms) remains; it is unrelated to the
++  accept wait and is not addressed here.
++- No new dependency: `libc` was already used by the transport.
++
++## Validation
++
++- The two behaviour tests above cover ordered accepts, per-connection acks, a
++  forced wait-timeout iteration (40 ms gap between connections), and shutdown
++  while idle (worker exits, private directory removed).
++- At the change commit, `cargo test -p nebula --features gpui-shell ai_hook`
++  passed with 133 passed and 2 ignored tests.
++- The full `nebula_terminal` and product builds are unaffected; the Windows
++  transport was not edited.
++- No timing assertion runs in CI; the latency probe is `#
+```
+
+**File**: `architecture/notes/nebula_terminal/sixel/2026-10-31-shared-graphics-replay.md` (added, +128/-0)
+```diff
+@@ -0,0 +1,128 @@
++# Sixel through shared graphics replay
++
++## Status
++
++Implemented; proposed for review.
++
++## Context
++
++Sixel support was developed before the keyed graphics replay queue, grid transient-content
++guards, parser-input wake accounting, and Kitty protocol support were merged. Replaying the old
++branch's shared files would remove those changes. The integration therefore starts from
++`cf6bafb21bc0d20e4ff07477522caf13add0f6e2` (the merged #767), retaining its ownership model.
++
++## Evidence
++
++- [StreamProcessor](../../../../nebula_terminal/src/event_loop.rs) owns pending payloads;
++  [terminal replay](../../../../nebula_terminal/src/term/inline_image.rs) consumes keyed
++  markers in VT order. A synchronized frame must not insert cells before it commits.
++- [Real PTY tests](../../../../nebula_terminal/src/event_loop/sync_tests.rs) cover a committed
++  text prefix followed by an open graphics frame. The shortest Sixel is shorter than its
++  replay marker, so comparing wire bytes against parser synchronized bytes loses wakeups.
++- [Decoder tests](../../../../nebula_terminal/src/sixel/tests.rs) exercise the 4096-pixel
++  boundary: after 682 band advances, `@` and `N` fit while `^` and `~` do not.
++- The [DEC manual, chapter 14](https://vt100.net/docs/vt3xx-gp/chapter14.html) defines six
++  vertical bits per data character, opaque zero-bit backgrounds, and raster dimensions as
++  minimum dimensions. Pixel aspect is separate from the stored pixel array.
++- [Mixed-protocol tests](../../../../nebula_terminal/tests/inline_image/sixel.rs) verify
++  OSC 1337, Kitty protocol APC and Sixel DCS in one synchronized frame at every split point.
++
++Local scanner-only cost probe: Linux x86_64 under WSL, Rust 1.97.1 release defaults,
++System allocator with allocation counting, CPU affinity 19. Each sample feeds about
++32 MiB in approximately 4 KiB chunks, after one warm-up feed. Nine samples per process,
++three alternating main/feature pairs produced median throughputs of 32,413/32,940 MiB/s
++for plain ASCII and 691/686 MiB/s for repeated SGR/text/reset lines. Both variants made
++zero steady-state allocations on these two inputs. Other build work ran concurrently;
++these measurements bound the local scanner comparison, not terminal/render throughput
++or a general performance guarantee. Probe sources and raw results remain local diagnostic
++artifacts; correctness and bounded graphics expansion are covered by the tests above.
++
++## Decision
++
++Use the existing scanner to recognize 7-bit DCS Sixel and XTSMGRAPHICS. Preserve the existing
++Kitty protocol APC path and the one CSI 16 t request/reply implementation. No second metrics query
++handler, session message or renderer store is added for Sixel; the overlapping changes in
++PR #799 are not a prerequisite.
++
++One bounded Sixel parser performs geometry validation on the stream side and RGBA decoding
++on the frontend side. The public payload carries immutable encoded bytes and validated
++geometry. Limits are 12 MiB encoded, 4096 pixels per edge, 256 private color registers,
++16 Mi pixels and 64 Mi pixel paint operations. Actual set bits beyond the edge are rejected;
++only the unused opaque background in the final partial band is clipped at 4096.
++
++At replay, resolve dynamic terminal background overrides, insert grid-owned image tiles,
++reset text-cluster state, and mark transient grid content. The current keyed queue,
++stream-owned payload lifetime and parser-input byte accounting remain authoritative.
++Sixel and OSC 1337 share the existing 16-entry / 32 MiB encoded queue. The Kitty protocol retains its
++separate weak raw-pixel slots and core store. GPUI serializes all decodes into the shared
++16-image / 128 MiB cache, discarding expired placements before and after decoding.
++
++Decode natural RGBA dimensions, then swap channels in place for GPUI. Pixel aspect belongs
++to display geometry, so it cannot multiply the decoded allocation. The legacy shell uses
++the same parser and RGBA result through its existing pane image handler; its UI-loop decode
++behavior is unchanged.
++
++Retain the previous Sixel branch's placement profile: default placement starts at the
++cursor and ends on its last occupied row; a producer's following LF advances past it.
++This preserves save/move/image/restore prompt layouts. Mode 8452 advances to the right.
++Mode 80 follows xterm's fixed top-left behavior when set, restoring the cursor afterwards.
++Below a restricted scroll region, clip rows that cannot advance rather than overwriting
++the bottom source tile. Mode 1070 reports permanently private palettes.
++
++## Rejected alternatives
++
++- Cherry-picking obsolete shared parser/renderer files: it loses current Kitty protocol ownership,
++  synchronized wake accounting and transient-grid cleanup.
++- A Sixel-only cache or eager PNG conversion: it bypasses shared budgets or adds encoding
++  work and allocations on the PTY path.
++- Rounding every image to a whole six-row band: it rejects valid set p
+```
+
+---
+
+### Incident Patch 3: `f2c1abab` (2026-11-14)
+**Commit Message**: Fix command palette labels to use the selected language (#986)
+
+NebulaWorkspace::filtered_palette_rows read the active UI language for group
+headings but copied PaletteItem.label directly for command names. The shared
+CommandPalette::row_for already called localized_item_label.
+
+Make localized_item_label pub(crate) and reuse it in the GPUI row projection.
+Keep the existing resolver behavior, search aliases, shortcut hints and action
+payloads. The row still owns its label through the existing to_owned() call.
+
+Add command_palette_labels_follow_the_active_language using an empty GPUI test
+workspace. Check English labels, switch Settings.ui_language to Chinese, verify
+unchanged aliases and hints, and switch back to English.
+
+**File**: `nebula_app/src/display/command_palette.rs` (modified, +2/-2)
+```diff
+@@ -12,7 +12,7 @@
+ use std::path::PathBuf;
+ 
+ use super::ui::geometry as layout_geometry;
+-use super::{NebulaTheme, SizeInfo};
++use super::{NebulaTheme, SizeInfo, UiLanguage};
+ use crate::config::ui_config::Profile;
+ use crate::shell_detect::DetectedShell;
+ use unicode_width::UnicodeWidthChar;
+@@ -1278,7 +1278,7 @@ impl CommandPalette {
+     }
+ }
+ 
+-fn localized_item_label(item: &PaletteItem, language: super::UiLanguage) -> &'static str {
++pub(crate) fn localized_item_label(item: &PaletteItem, language: UiLanguage) -> &'static str {
+     use PaletteAction::*;
+     if matches!(item.action, CycleCompletionStyle) {
+         return language.text(crate::i18n::Message::SettingsCompletionCycle);
+```
+
+**File**: `nebula_app/src/gpui_shell/workspace/palette.rs` (modified, +7/-1)
+```diff
+@@ -1,5 +1,8 @@
+ use super::*;
+ 
++#[cfg(all(test, feature = "gpui-test-support"))]
++mod tests;
++
+ const PALETTE_SEARCH_HEIGHT: f32 = 48.0;
+ 
+ /// 命令面板 / Shell 选择弹窗里图标轨的逻辑边长。品牌贴图、Nerd Font 字形
+@@ -158,7 +161,10 @@ impl NebulaWorkspace {
+                     WorkspacePaletteRow {
+                         group_order,
+                         group,
+-                        label: item.label.to_owned(),
++                        label: crate::display::command_palette::localized_item_label(
++                            item, language,
++                        )
++                        .to_owned(),
+                         hint: item.hint.to_owned(),
+                         hint_style: WorkspacePaletteHintStyle::Shortcut,
+                         search: item.search.to_owned(),
+```
+
+**File**: `nebula_app/src/gpui_shell/workspace/palette/tests.rs` (added, +64/-0)
+```diff
+@@ -0,0 +1,64 @@
++use super::*;
++use crate::display::command_palette::PaletteAction;
++use crate::gpui_shell::config::Settings;
++use crate::i18n::UiLanguage;
++use gpui::{BorrowAppContext as _, TestAppContext};
++
++#[gpui::test]
++fn command_palette_labels_follow_the_active_language(cx: &mut TestAppContext) {
++    cx.update(|cx| {
++        gpui_component::init(cx);
++        crate::gpui_shell::math_view::register(cx);
++        crate::gpui_shell::file_editor::init(cx);
++        super::super::init(cx);
++        windowing::initialize(cx, crate::runtime_api::RuntimeHub::new());
++        let runtime = nebula_settings::RuntimeSettings::from_raw(&Default::default());
++        let mut settings = Settings::load_with_runtime(nebula_settings::ThemeName::Nord, runtime);
++        settings.ui_language = UiLanguage::EnUs;
++        cx.set_global(settings);
++    });
++    let mut workspace = None;
++    let (_, mut window) = cx.add_window_view(|window, cx| {
++        let view = cx.new(|cx| {
++            NebulaWorkspace::new(
++                window,
++                None,
++                None,
++                1,
++                crate::runtime_api::RuntimeHub::new(),
++                windowing::WorkspaceStartup::Empty,
++                windowing::WindowRole::Regular,
++                cx,
++            )
++        });
++        workspace = Some(view.clone());
++        Root::new(view, window, cx)
++    });
++    let workspace = workspace.unwrap();
++    window.update(|_, cx| {
++        workspace.update(cx, |workspace, cx| {
++            let row = |workspace: &NebulaWorkspace, cx: &App, action: PaletteAction| {
++                workspace
++                    .filtered_palette_rows(cx)
++                    .into_iter()
++                    .find(|row| {
++                        matches!(&row.action, WorkspacePaletteAction::Shared(value) if *value == action)
++                    })
++                    .expect("built-in command must remain available")
++            };
++            let english = row(workspace, cx, PaletteAction::NewTab);
++            assert_eq!(english.label, "New tab");
++            assert_eq!(row(workspace, cx, PaletteAction::CloseTab).label, "Close tab");
++            assert_eq!(row(workspace, cx, PaletteAction::NextTab).label, "Next tab");
++
++            cx.update_global::<Settings, _>(|settings, _| settings.ui_language = UiLanguage::ZhCn);
++            let chinese = row(workspace, cx, PaletteAction::NewTab);
++            assert_eq!(chinese.label, "新建标签页");
++            assert_eq!(chinese.search, english.search);
++            assert_eq!(chinese.hint, english.hint);
++
++            cx.update_global::<Settings, _>(|settings, _| settings.ui_language = UiLanguage::EnUs);
++            assert_eq!(row(workspace, cx, PaletteAction::NewTab).label, "New tab");
++        });
++    });
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #948** (2026-11-11): Use theme palettes for grouped settings cards (@Kuddev)
-- **PR #946** (2026-11-11): fix: integrate reviewed rendering, workspace and hook regressions (@Kuddev)
-- **PR #945** (2026-11-11): fix(hooks): deliver detached Claude session end to its terminal (@Kuddev)
-- **PR #944** (2026-11-11): fix(macos): align top tabs with native window controls (@Kuddev)
-- **PR #943** (2026-11-11): fix(math): recover collapsed matrix rows from terminal output (@Kuddev)
-- **PR #942** (2026-11-11): fix(math): recognize uppercase variables with numeric subscripts (@Kuddev)
+- **PR #986** (2026-11-14): fix: use the selected language for command palette labels (@Celestial-0)
+- **PR #983** (2026-11-15): perf(ai_sessions): throttle hook registry rewrites to once per minute (@not-exist)
+- **PR #979** (2026-11-14): Restore the Android conversation view and session timeline (@Kuddev)
+- **PR #978** (2026-11-14): Use the adaptive Android launcher icon (@Kuddev)
+- **PR #977** (2026-11-14): Keep Android SSH tabs connected and restore the original workspace (@Kuddev)
+- **PR #954** (2026-11-14): Keep detached Codex sessions out of Linux pane recovery (@Kuddev)
 
 ---
 
@@ -2031,50 +2353,58 @@ feat(windows): let PowerShell keep its own ls/dir via builtin_ls=0
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #615 from WilliamWang1721/fix/issue-549-5gzczi
+## X. Throttle unchanged hook session registry writes
 
 **RULE**:
-When implementing operations in `nebula_terminal/src/tty/windows/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kuddev/pebrel. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `architecture/notes/nebula_app/ai_sessions/2026-11-13-hook-registry-write-interval.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kuddev/pebrel. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4807f289`: Merge pull request #615 from WilliamWang1721/fix/issue-549-5gzczi. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c63ff393`: Throttle unchanged hook session registry writes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `nebula_terminal/src/tty/windows/mod.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `architecture/notes/nebula_app/ai_sessions/2026-11-13-hook-registry-write-interval.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# builtin_ls=0 in the settings file keeps PowerShell's own ls/dir.
-if (Get-NebulaBoolSetting 'builtin_ls' $true) {
-    Remove-Item Alias:ls  -Force -ErrorAction SilentlyContinue
-    Remove-Item Alias:dir -Force -ErrorAction SilentlyContinue
-    Remove-Item Alias:ll  -Force -ErrorAction SilentlyContinue
-    Set-Alias -Name ls  -Value Nebula-List -Scope Global -Option AllScope -Force
-    Set-Alias -Name ll  -Value Nebula-List -Scope Global -Option AllScope -Force
-    Set-Alias -Name dir -Value Nebula-List -Scope Global -Option AllScope -Force
-}
-    #[test]
-    fn builtin_ls_aliases_can_be_opted_out() {
-        let gate = NEBULA_PROMPT_PS1
-            .find("if (Get-NebulaBoolSetting 'builtin_ls' $true) {")
-            .expect("builtin_ls gate");
-        let alias = NEBULA_PROMPT_PS1.find("Set-Alias -Name ls ").expect("ls alias");
-        assert!(gate < alias, "the ls/ll/dir aliases must sit behind the builtin_ls gate");
-    }
+# Hook session index rewrites are throttled to one per minute
 
+## Status
+
+Implemented.
+
+## Context
+
+AI clients emit a hook event per tool call, and nearly every event only refreshes
+`last_seen` for an existing session. `record_hook_session` runs on the UI/event
+path (`gpui_shell/terminal/view/agent_activity.rs` and
+`window_context/agent_activity.rs`), and each event took the exclusive registry
+lock, read and parsed the whole JSON index, updated/sorted/truncated the rows,
+serialized it and replaced the file through `atomic_file::write` (`sync_all` plus
+the write-through rename). Active AI turns therefore paid a file write per tool
+call on the UI thread.
+
+## Evidence
+
+- One `record_hook_session` measured about 12.4 ms locally; reading and parsing
+  the file costs about 0.05 ms on its own.
+- Both production call sites pass `title: None`, so the only field that usually
+  moves is `last_seen`.
+- The registry is capped at 256 rows and is read by `scan()`, which uses
+  `last_seen` as `modified` for ordering and the relative label. Claude and Codex
+  rows also merge the native transcript mtime via `max`, so the registry timestamp
+  mainly orders the remaining agents.
+
+## Decision
+
+After lo
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-Remove-Item Alias:ls  -Force -ErrorAction SilentlyContinue
-Remove-Item Alias:dir -Force -ErrorAction SilentlyContinue
-Remove-Item Alias:ll  -Force -ErrorAction SilentlyContinue
-Set-Alias -Name ls  -Value Nebula-List -Scope Global -Option AllScope -Force
-Set-Alias -Name ll  -Value Nebula-List -Scope Global -Option AllScope -Force
-Set-Alias -Name dir -Value Nebula-List -Scope Global -Option AllScope -Force
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4807f289` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c63ff393` are properly handled with clean fallback behavior.

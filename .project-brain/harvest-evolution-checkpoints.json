@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T03:48:48.324Z",
+  "last_updated": "2026-11-15T04:05:32.330Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-14T22:16:50.251Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-15T02:35:55.163Z",
+      "processed_at": "2026-11-15T04:05:31.739Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -488,7 +488,7 @@
       "staged_for_review": 1
     },
     "kuddev-pebrel-learnings.md": {
-      "processed_at": "2026-11-13T11:55:47.907Z",
+      "processed_at": "2026-11-15T04:05:05.167Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2866,9 +2866,14 @@
       "processed_at": "2026-11-15T03:48:46.418Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md": {
+      "processed_at": "2026-11-15T04:05:31.446Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 972,
-  "total_canonical_promoted": 238,
-  "total_staged_for_review": 734
+  "total_dossiers_evaluated": 975,
+  "total_canonical_promoted": 239,
+  "total_staged_for_review": 736
 }

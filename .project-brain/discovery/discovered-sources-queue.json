@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T03:48:46.981Z",
+  "updated_at": "2026-11-15T04:05:31.456Z",
   "stats": {
-    "total_discovered": 3587,
-    "approved_pending_harvest": 3377,
+    "total_discovered": 3593,
+    "approved_pending_harvest": 3383,
     "harvested_count": 0,
     "rejected_count": 210,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3358,
+      "COMMUNITY_AND_EXPERT": 3364,
       "OFFICIAL_DOCUMENTATION": 125,
       "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
@@ -77465,6 +77465,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nativescript-nativescript-learnings.md",
         "fileName": "nativescript-nativescript-learnings.md"
+      }
+    },
+    "SRC-7DFB077D499D": {
+      "id": "SRC-7DFB077D499D",
+      "url": "https://github.com/user-attachments/assets/db937186-cb10-4495-af40-2aa923ff2e68",
+      "title": "https://github.com/user-attachments/assets/db937186-cb10-4495-af40-2aa923ff2e68",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T04:05:05.189Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
+        "fileName": "kuddev-pebrel-learnings.md"
+      }
+    },
+    "SRC-F62332DF8B30": {
+      "id": "SRC-F62332DF8B30",
+      "url": "https://github.com/user-attachments/assets/d1e97e49-7a8e-4543-92cf-2793e6bc0607",
+      "title": "https://github.com/user-attachments/assets/d1e97e49-7a8e-4543-92cf-2793e6bc0607",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T04:05:05.212Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
+        "fileName": "kuddev-pebrel-learnings.md"
+      }
+    },
+    "SRC-6473642DEBBA": {
+      "id": "SRC-6473642DEBBA",
+      "url": "https://github.com/user-attachments/assets/c7cad6a9-6f3a-4a7b-92a1-b70fc10fc65a",
+      "title": "https://github.com/user-attachments/assets/c7cad6a9-6f3a-4a7b-92a1-b70fc10fc65a",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T04:05:05.232Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
+        "fileName": "kuddev-pebrel-learnings.md"
+      }
+    },
+    "SRC-13B5CADB508C": {
+      "id": "SRC-13B5CADB508C",
+      "url": "https://github.com/user-a",
+      "title": "https://github.com/user-a",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T04:05:05.252Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
+        "fileName": "kuddev-pebrel-learnings.md"
+      }
+    },
+    "SRC-9F37F61C35BB": {
+      "id": "SRC-9F37F61C35BB",
+      "url": "https://vt100.net/docs/vt3xx-gp/chapter14.html",
+      "title": "https://vt100.net/docs/vt3xx-gp/chapter14.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T04:05:05.272Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
+        "fileName": "kuddev-pebrel-learnings.md"
+      }
+    },
+    "SRC-5A9BDA72C1D1": {
+      "id": "SRC-5A9BDA72C1D1",
+      "url": "https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy",
+      "title": "https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T04:05:31.456Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md",
+        "fileName": "hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md"
       }
     }
   }

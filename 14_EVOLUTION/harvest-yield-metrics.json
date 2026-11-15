@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T03:48:13.041Z",
-  "total_cycles_completed": 9658,
-  "total_learnings_persisted": 9658,
+  "last_updated": "2026-11-15T04:04:55.904Z",
+  "total_cycles_completed": 9660,
+  "total_learnings_persisted": 9660,
   "total_rules_promoted": 9298,
   "history": [
-    {
-      "timestamp": "2026-11-14T04:32:18.732Z",
-      "repository": "berty/berty",
-      "learningId": "learn-github-berty-berty",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T04:36:37.134Z",
-      "repository": "meta-llama/Llama-2-7b",
-      "learningId": "learn-huggingface-meta-llama-llama-2-7b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T04:50:27.724Z",
       "repository": "deepseek-ai/DeepSeek-V3",
@@ -1403,6 +1389,20 @@
       "repository": "rook/rook",
       "learningId": "learn-github-rook-rook",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T04:04:53.085Z",
+      "repository": "black-forest-labs/flux-3-image-klein-comfy",
+      "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T04:04:55.904Z",
+      "repository": "Kuddev/pebrel",
+      "learningId": "learn-github-kuddev-pebrel",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -10051,3 +10051,6 @@ Every entry in this ledger must capture:
 | `learn-github-nativescript-nativescript` | `https://github.com/NativeScript/NativeScript` | `283eb0c5` | Multi-dimensional audit evidence | 2026-11-15T03:48:10.781Z |
 | `learn-github-rook-rook` | `https://github.com/rook/rook` | `5301ca41` | Multi-dimensional audit evidence | 2026-11-15T03:48:13.035Z |
 | `learn-dom-j-6ab1b121` | `project://hf-meta-models-muse-spark-open-816b-a42b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-learnings.md` | 2026-11-15T03:48:46.418Z |
+| `learn-huggingface-black-forest-labs-flux-3-image-klein-comfy` | `https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy` | `hf-black-f` | Multi-dimensional audit evidence | 2026-11-15T04:04:53.081Z |
+| `learn-github-kuddev-pebrel` | `https://github.com/Kuddev/pebrel` | `c63ff393` | Multi-dimensional audit evidence | 2026-11-15T04:04:55.894Z |
+| `learn-dom-d-f3c53cd9` | `project://hf-black-forest-labs-flux-3-image-klein-comfy` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md` | 2026-11-15T04:05:31.446Z |

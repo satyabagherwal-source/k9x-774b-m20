@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-15T03:48:48.214Z",
-  "total_verified_learnings": 8657,
+  "last_updated": "2026-11-15T04:05:32.237Z",
+  "total_verified_learnings": 8659,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18111,
+  "total_items": 18120,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113663,13 +113663,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-36TE-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-AFBA-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "268f7ddf132f81a1cc60a6e2eb4b7d1df4f99a4e3e2ae277eee474bb4edb1cf5",
+      "content_hash": "9a68d39d6b37ce0748b51263913365e5154e6b8dd0f877fe143fd6b007ffcb9d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T02:35:55.596Z"
+      "persisted_at": "2026-11-15T04:05:32.051Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113679,9 +113679,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "9be0c622836453553dd1de6eb866ec291b8f748ae242f7994c884e68885b6ece",
+      "content_hash": "69a79fdda47c78ef9276ba25596cf6aafe38f56440ca02717adab30787ccae4a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T02:35:55.732Z"
+      "persisted_at": "2026-11-15T04:05:32.138Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113691,9 +113691,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "029fe36dabb51d31186d60109cc0316632c9e7cadc68ea26968f2544edaf5d58",
+      "content_hash": "cdf857ce6209cd11d201967cbd14a2a303c42be1fc09b1a2daef4199e031c3d4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T02:35:55.881Z"
+      "persisted_at": "2026-11-15T04:05:32.237Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -239023,6 +239023,144 @@
       "content_hash": "6e2b04cce87e380e1636f5ba5b0aba64c608a607d04446c0e714b1031fc987af",
       "domain_letter": "K",
       "persisted_at": "2026-11-15T03:48:48.214Z"
+    },
+    "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy": {
+      "learning_id": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "black-forest-labs/flux-3-image-klein-comfy",
+      "repository": "black-forest-labs/flux-3-image-klein-comfy",
+      "slug": "hf-black-forest-labs-flux-3-image-klein-comfy",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy",
+      "source_version": "hf-black-forest-labs-flux-3-image-klein-comfy",
+      "content_hash": "0080ee173c6dae45446ba75afbdb97835c9f3f67b05c406dddf37f33ce0429f1",
+      "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T04:04:52.952Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-black-forest-labs-flux-3-image-klein-comfy-core-": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-black-forest-labs-flux-3-image-klein-comfy-core-",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-black-forest-labs-flux-3-image-klein-comfy-research-knowledge-intelligence-bl.md",
+      "title": "Research & Knowledge Intelligence: black-forest-labs/flux-3-image-klein-comfy Core Invariants",
+      "repository": "black-forest-labs/flux-3-image-klein-comfy",
+      "source_version": "hf-black-forest-labs-flux-3-image-klein-comfy",
+      "content_hash": "5ee21d5b040efdf343ae6006f5c21681ce9ff2cefcfa684c48d4f63b47995554",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T04:04:53.228Z"
+    },
+    "learn-github-kuddev-pebrel": {
+      "learning_id": "learn-github-kuddev-pebrel",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Kuddev/pebrel",
+      "repository": "Kuddev/pebrel",
+      "slug": "kuddev-pebrel",
+      "platform": "github",
+      "source_url": "https://github.com/Kuddev/pebrel",
+      "source_version": "c63ff393",
+      "content_hash": "247f06dc7a1b4d4b153819ee6693e1d4ca256122a1746aed91a53f3a0cf92207",
+      "dossier_path": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T04:04:55.750Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "candidate_directive-throttle-unchanged-hook-session-registry-writes": {
+      "item_id": "candidate_directive-throttle-unchanged-hook-session-registry-writes",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9US3-throttle-unchanged-hook-session-registry-writes.md",
+      "title": "Throttle unchanged hook session registry writes",
+      "repository": "kuddev-pebrel-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b6d16f4f1118ab8fa0336fbaf940ad5d33ad9effffff79fe17099bdb13d2889a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T04:05:05.432Z"
+    },
+    "domain_intelligence-architecture-intelligence-kuddev-pebrel-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-kuddev-pebrel-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kuddev-pebrel-architecture-intelligence-kuddev-pebrel-core-invariants.md",
+      "title": "Architecture Intelligence: Kuddev/pebrel Core Invariants",
+      "repository": "Kuddev/pebrel",
+      "source_version": "c63ff393",
+      "content_hash": "363640be861d1a9a7579cbc58f1ed93b8594006173b843a6d2eb9029bfb9af5f",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T04:04:56.144Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-kuddev-pebrel": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kuddev-pebrel",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/kuddev-pebrel-verification-protocol-empirical-defect-shield-for-kuddev-pebrel.md",
+      "title": "Verification Protocol: Empirical Defect Shield for Kuddev/pebrel",
+      "repository": "Kuddev/pebrel",
+      "source_version": "c63ff393",
+      "content_hash": "a271816d8025f02b514ca848e2d70e9375a9863c020554a1b1043771683ef32d",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T04:04:56.234Z"
+    },
+    "domain_intelligence-architecture-intelligence-kuddev-pebrel-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-kuddev-pebrel-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kuddev-pebrel-learnings-architecture-intelligence-kuddev-pebrel-learnings-core-i.md",
+      "title": "Architecture Intelligence: kuddev-pebrel-learnings Core Invariants",
+      "repository": "kuddev-pebrel-learnings",
+      "source_version": "HEAD",
+      "content_hash": "aa446de0722292a1e3b4b917461a9f2777b60009bbbef4049391b5b50beb61ea",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T04:05:05.517Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-kuddev-pebrel-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kuddev-pebrel-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/kuddev-pebrel-learnings-verification-protocol-empirical-defect-shield-for-kuddev.md",
+      "title": "Verification Protocol: Empirical Defect Shield for kuddev-pebrel-learnings",
+      "repository": "kuddev-pebrel-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bdbba63e6c1e7987fa1ac47b847ed5c3d7178c04a2e603f57505faba7a5c5dc9",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T04:05:05.607Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-3-image-klein-comfy-le": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-3-image-klein-comfy-le",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-black-forest-labs-flux-3-image-klein-comfy-learnings-research-knowledge-intel.md",
+      "title": "Research & Knowledge Intelligence: hf-black-forest-labs-flux-3-image-klein-comfy-learnings Core Invariants",
+      "repository": "hf-black-forest-labs-flux-3-image-klein-comfy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "58d1d36bcacf46732563ff0fe4a18b3e87b5b70776fce97463394e290e9cb149",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T04:05:31.601Z"
     }
   },
   "ai-builder-brain": {

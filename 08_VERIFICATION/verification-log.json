@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-KCBL",
-    "timestamp": "2026-11-09T22:14:58.401Z",
-    "repository": "nolabs-ai/nono",
-    "learningId": "learn-github-nolabs-ai-nono",
-    "contentHash": "63e0c12cbbaba6f2e823cbbcf0ca8d1a5d32c4059dcf6d730ac16cd9473fdb9f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-KGPE",
-    "timestamp": "2026-11-09T22:15:04.082Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "5b3cfbcd17c17b4b17d913cff9c0c83b01a8896edc781cde8030fcbed8dffd8a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-0610",
     "timestamp": "2026-11-09T22:27:16.741Z",
     "repository": "keybase/client",
@@ -7492,6 +7462,36 @@
     "contentHash": "76eb2a292bd1ebd5b7d82b95ab933822e28bd885176e080796a81aff4a1f0477",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-9L92",
+    "timestamp": "2026-11-15T04:04:53.078Z",
+    "repository": "black-forest-labs/flux-3-image-klein-comfy",
+    "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
+    "contentHash": "0080ee173c6dae45446ba75afbdb97835c9f3f67b05c406dddf37f33ce0429f1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-9NF6",
+    "timestamp": "2026-11-15T04:04:55.890Z",
+    "repository": "Kuddev/pebrel",
+    "learningId": "learn-github-kuddev-pebrel",
+    "contentHash": "247f06dc7a1b4d4b153819ee6693e1d4ca256122a1746aed91a53f3a0cf92207",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

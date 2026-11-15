@@ -10018,3 +10018,6 @@
 | `CYCLE-20261115-O3VD` | `2026-11-15T03:48:10.777Z` | `NativeScript/NativeScript` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8573` | Yes (`45651c2f...`) |
 | `CYCLE-20261115-O5LZ` | `2026-11-15T03:48:13.031Z` | `rook/rook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8574` | Yes (`76eb2a29...`) |
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T03:48:46.418Z` | `hf-meta-models-muse-spark-open-816b-a42b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-J-6AB1B121` [Domain J] | Yes (`ba8c5b39...`) |
+| `CYCLE-20261115-9L92` | `2026-11-15T04:04:53.078Z` | `black-forest-labs/flux-3-image-klein-comfy` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md` | Yes (`0080ee17...`) |
+| `CYCLE-20261115-9NF6` | `2026-11-15T04:04:55.890Z` | `Kuddev/pebrel` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/kuddev-pebrel-learnings.md` | Yes (`247f06dc...`) |
+| `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T04:05:31.446Z` | `hf-black-forest-labs-flux-3-image-klein-comfy` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-F3C53CD9` [Domain D] | Yes (`64b38653...`) |

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T03:48:47.832Z",
+  "last_updated": "2026-11-15T04:05:32.051Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4835,11 +4835,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-36TE",
+      "id": "CD-AFBA",
       "directive_title": "editor): add scoped ios account deletion",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-36TE-editor-add-scoped-ios-account-deletion.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-AFBA-editor-add-scoped-ios-account-deletion.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-15",
@@ -14457,6 +14457,35 @@
       "source_repo": "rook-rook",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-D011A6-empirical-invariant-guard-in-cephcluster.md",
+      "staged_date": "2026-11-15"
+    },
+    {
+      "id": "CD-9US3",
+      "directive_title": "Throttle unchanged hook session registry writes",
+      "source_repo": "kuddev-pebrel-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-9US3-throttle-unchanged-hook-session-registry-writes.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-15",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-6C86F1",
+      "directive_title": "Throttle unchanged hook session registry writes",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "kuddev-pebrel",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-6C86F1-throttle-unchanged-hook-session-registry.md",
+      "staged_date": "2026-11-15"
+    },
+    {
+      "id": "CD-REV-10E975",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-10E975-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-15"
     }
   ]
