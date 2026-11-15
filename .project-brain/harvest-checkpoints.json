@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-15T04:19:24.561Z",
+  "last_updated": "2026-11-15T04:43:56.249Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2631,14 +2631,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
-      "content_hash": "ccc72169ad78a693bfdec6119390b9f875b985942a0acbffd3564965482c48e0",
-      "verified_at": "2026-11-09T16:04:17.202Z",
+      "content_hash": "5129eb1355d9058db0fb2e2ebd86fd913794fada4cb06f0e7abfbc1ffa641051",
+      "verified_at": "2026-11-15T04:43:50.122Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T16:04:17.202Z"
+      "last_updated": "2026-11-15T04:43:50.122Z"
     },
     "OpenMOSS-Team/MOSS-Image-Base": {
       "repository": "OpenMOSS-Team/MOSS-Image-Base",
@@ -11346,14 +11346,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-microsoft-react-native-windows",
-      "content_hash": "fd0a48d5ccde3a626e875af66de5350e41c75773f80c87536afb207d1bcf7187",
-      "verified_at": "2026-11-11T17:13:14.582Z",
+      "content_hash": "30b42071349ac385dcc4164df5514524d3bfed6048cec461fc7034d1dc89b980",
+      "verified_at": "2026-11-15T04:43:56.248Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T17:13:14.582Z"
+      "last_updated": "2026-11-15T04:43:56.248Z"
     },
     "paradedb/paradedb": {
       "repository": "paradedb/paradedb",

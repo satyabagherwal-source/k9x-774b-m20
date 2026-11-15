@@ -10056,3 +10056,7 @@ Every entry in this ledger must capture:
 | `learn-dom-d-f3c53cd9` | `project://hf-black-forest-labs-flux-3-image-klein-comfy` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md` | 2026-11-15T04:05:31.446Z |
 | `learn-github-zeronsh-zeron` | `https://github.com/zeronsh/zeron` | `68e460af` | Multi-dimensional audit evidence | 2026-11-15T04:17:59.344Z |
 | `learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-11-15T04:19:24.549Z |
+| `learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local` | `https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-15T04:43:50.114Z |
+| `learn-github-microsoft-react-native-windows` | `https://github.com/microsoft/react-native-windows` | `e49cdf04` | Multi-dimensional audit evidence | 2026-11-15T04:43:56.240Z |
+| `learn-dom-d-31a60a1e` | `project://hf-nvidia-qwen3.8-flash-next-fp4-local` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md` | 2026-11-15T04:44:29.706Z |
+| `learn-dom-h-e5aa5217` | `project://microsoft-react-native-windows` | `e49cdf04` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md` | 2026-11-15T04:45:03.819Z |

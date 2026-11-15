@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md`  
 > **Source**: github ([https://github.com/microsoft/react-native-windows](https://github.com/microsoft/react-native-windows))  
-> **Source Version**: `5ba45344`  
+> **Source Version**: `e49cdf04`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T17:13:03.975Z  
+> **Timestamp**: 2026-11-15T04:43:55.420Z  
 > **Learning ID**: `learn-github-microsoft-react-native-windows`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/microsoft/react-native-windows](https://github.com/microsoft/react-native-windows))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T17:13:03.970Z  
+> **Harvest Timestamp**: 2026-11-15T04:43:55.415Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -938,6 +938,22 @@ export type LayoutChangeEvent = NativeSyntheticEvent<
   }>,
 >;
 
+export type SafeAreaInsets = Readonly<{
+  top: number,
+  right: number,
+  bottom: number,
+  left: number,
+}>;
+
+export type SafeAreaInsetsChangeEvent = NativeSyntheticEvent<
+  Readonly<{
+    /**
+     * Inset measurements in points (iOS) or dp (Android), not display pixels.
+     */
+    insets: SafeAreaInsets,
+  }>,
+>;
+
 /**
  * @deprecated Use `TextLayoutEvent` instead.
  */
@@ -1230,16 +1246,7 @@ export type MouseEvent = NativeSyntheticEvent<
 // Windows]
 export type KeyEvent = Readonly<{
   /**
-   * The actual key that was pressed. For example, F would be "f" or "F" depending on the shift key.
-   * @see https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key
-   */
-  key: string,
-  /**
-   * The key code of the key that was pressed. For example, F would be "KeyF"
-   * @see https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code
-   */
-  code: string,
-  altKey: bo
+   * The actual key that was pressed. For example, F would be "f" or "F" dep
 ```
 
 ### Core Architecture Module: `packages/@office-iss/react-native-win32/src-win/Libraries/Utilities/BackHandler.win32.js`
@@ -1451,9 +1458,7 @@ class Dimensions {
    */
   static addEventListener(
     type: 'change',
-    /* $FlowFixMe[unclear-type] Callers annotate the payload with assorted
-     * object shapes that any precise signature would reject. */
-    handler: Function,
+    handler: LegacyFunction,
   ): EventSubscription {
     invariant(
       type === 'change',
@@ -1550,8 +1555,8 @@ export default FocusManager;
 - **Issue #16481** (2026-10-15): **Single-line TextInput text is drawn below center and clipped on ARM64 (New Architecture)**
   *Symptoms*: ### Problem Description  On the New Architecture (Fabric) **on ARM64**, a single-line `TextInput` that is taller than its text draws the text and placeholder starting at the **vertical middle** of the box, not centered in it. The top half of the input is empty, and in shorter inputs the bottom of the text is clipped.  This comes from #15754 ("Center single line textinputs"), which centers single-line text using the height returned by `WindowsTextInputComponentView::GetContentSize()`. On ARM64 that height is always about **0**, so the centering offset becomes half the box height.  **Root cause:** `GetContentSize()` calls `ITextServices::TxGetNaturalSize` with this extent:  ```cpp SIZE extentHimetric = {     static_cast<LONG>(availableWidth * scale * HIMETRIC_PER_INCH / dpi),     static_cast<LONG>(std::numeric_limits<LONG>::max() * HIMETRIC_PER_INCH / dpi)}; ```  `psizelExtent` is the extent used for zooming the control, not a layout constraint. A very large positive height therefore scales the returned natural size down to about 0. I measured this in a 40px-tall input with `fontSize: 18` at 96 DPI (ARM64):  | `extentHimetric.cy` passed | natural size returned (px) | | --- | --- | | `LONG_MAX` scaled (saturates to `2147483647`) | `(2, 0)` | | `1000000` | `(2, 0)` | | frame height (`1058`) | `(3, 1)` | | **`-1`** | **`(74, 24)`** (correct) |  With `contentHeight = 0`, `calculateContentVerticalOffset()` computes `(40 - 0) / 2 = 20` px, so the 24px-tall text is drawn from y=20 to 
 
-- **Issue #16141** (2026-07-08): **TextInput renders text outside of text field for certain scales**
-  *Symptoms*: ### Problem Description  At certain display scales (reproducible at 100%), the `<TextInput/>` component renders text outside the boundaries of the text field. When typing into the TextInput, the entered text overflows and appears outside the input container rather than being properly contained within it.  ### Steps To Reproduce  This issue is reproducible consistently at the affected display scale (in my testing at 100% scale). Simply rendering a multiline TextInput and typing any text will cause the text to appear outside the field boundaries. ``` import { View, StyleSheet } from 'react-native'; import { TextInput } from 'react-native-windows';  export const ReproExample = () => {     return (         <View style={styles.container}>             <TextInput                 style={styles.textInput}                 placeholder="Type here..." ```  In the following `<TextInput/>` I just wrote "This is a test" and the text was renderer outside of the text field.  <img width="210" height="113" alt="Image" src="https://github.com/user-attachments/assets/02d1a173-eac0-4e9d-9335-5c98a37f7e31" />  ### Expected Results  _No response_  ### CLI version  20.0.0  ### Environment  ```markdown info Fetching system and libraries information... System:   OS: Windows 11 10.0.26100   CPU: (12) x64 13th Gen Intel(R) Core(TM) i7-1365U   Memory: 5.44 GB / 31.64 GB Binaries:   Node:     version: 22.13.0     path: C:\nvm4w\nodejs\node.exe   Yarn:     version: 1.22.22     path: C:\Program Files (x86)\Ya
+- **Issue #16321** (2026-11-12): **[msvc] react-native-windows failed with warning C4864: expected 'template' keyword before dependent template name**
+  *Symptoms*: ### Problem Description  When build react-native-windows with VS2026 on windows, it failed with 'warning C4864: expected 'template' keyword before dependent template name', could you please take a look?  Failures: ``` C:\gitP\microsoft\react-native-windows\vnext\Microsoft.ReactNative\Fabric\Composition\CompositionContextHelper.cpp(1799,52): error C2220: the following warning is treated as an error [C:\gitP\microsoft\react-native-windows\vnext\Desktop\React.Windows.Desktop.vcxproj]          (compiling source file '../Microsoft.ReactNative/Fabric/Composition/CompositionContextHelper.cpp')           C:\gitP\microsoft\react-native-windows\vnext\Microsoft.ReactNative\Fabric\Composition\CompositionContextHelper.cpp(1799,52): warning C4864: expected 'template' keyword before dependent template name [C:\gitP\microsoft\react-native-windows\vnext\Desktop\React.Windows.Desktop.vcxproj] ```  ### Steps To Reproduce  1. git clone https://github.com/microsoft/react-native-windows and checkout 883b2f4 2. cd /d C:\gitP\microsoft\react-native-windows 3. msbuild /m /restore /p:PlatformToolset=v145 /p:Platform=x64 /p:Configuration=Release /p:WindowsTargetPlatformVersion=10.0.26100.0 /p:PublishToolDuringBuild=true /p:RestoreLockedMode=true /p:RestoreForceEvaluate=true /p:VisualStudioVersion="18.0" vnext\ReactWindows-Desktop.sln /t:Rebuild  ### Expected Results  It builds successfully.  ### CLI version  20.0.0  ### Environment  ```markdown nfo Fetching system and libraries information... System:  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1568,83 +1573,160 @@ export default FocusManager;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2547bada` (2026-11-10)
-**Commit Message**: Fix GitHub authentication for release source tags (#16592)
+### Incident Patch 1: `a115ff1c` (2026-11-12)
+**Commit Message**: Fix the build with MSVC 14.52 (C4864 and ARM64 internal compiler error) (#16618)
 
-Reuse retained GitHub checkout credentials for CI tag pushes and disable interactive Git authentication. Keep PR credentials disabled and preserve release-only tagging conditions, with regression coverage for the pipeline contract.
+* Add template keyword for dependent template calls flagged by MSVC C4864
 
-**File**: `.ado/build-template.yml` (modified, +7/-5)
+MSVC 14.52 reports C4864 (expected 'template' keyword before dependent
+template name) at member-template calls on dependent types. With /WX the
+warning fails the Microsoft.ReactNative build. Add the standard 'template'
+disambiguator at those calls. No behavior change.
+
+* Work around MSVC 14.52 ARM64 internal compiler error in folly AtFork.cpp
+
+MSVC 14.52 (toolset v145) crashes with C1001 when it optimizes
+folly/system/AtFork.cpp for ARM64 Release. Build that one file without
+the precompiled header, optimization, and whole-program optimization on
+ARM64 with v145 or later. The file only registers fork handlers, so the
+cost is negligible.
+
+**File**: `change/react-native-windows-83836459-f769-4dd6-8f44-a1f7de330c7f.json` (added, +7/-0)
 ```diff
-@@ -401,7 +401,10 @@ extends:
-           timeoutInMinutes: 60 # Protect against the long CodeSign task
- 
-           steps:
-+          # GitHub tag pushes need checkout credentials, not System.AccessToken.
-           - template: .ado/templates/checkout-shallow.yml@self
-+            parameters:
-+              persistCredentials: ${{ eq(parameters.buildEnvironment, 'Continuous') }}
- 
-           - template: .ado/templates/prepare-js-env.yml@self
-             parameters:
-@@ -462,14 +465,13 @@ extends:
-             - pwsh: |
-                 $tag = "react-native-windows_v$(npmVersion)"
-                 Write-Host "Creating tag $tag on $(Build.SourceVersion)"
--                $authHeader = "AUTHORIZATION: bearer $env:SYSTEM_ACCESSTOKEN"
--                Write-Host "##vso[task.setsecret]$authHeader"
--                git -c http.extraheader="$authHeader" tag $tag "$(Build.SourceVersion)"
--                git -c http.extraheader="$authHeader" push origin $tag
-+                git tag $tag "$(Build.SourceVersion)"
-+                git push origin $tag
-               displayName: Tag release sources
-               condition: and(succeeded(), eq(variables['IsReleaseBuild'], 'True'), eq(variables['isReleaseCommit'], 'True'))
-               env:
--                SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-+                GIT_TERMINAL_PROMPT: '0'
-+                GCM_INTERACTIVE: Never
- 
-           templateContext:
-             sdl:
+@@ -0,0 +1,7 @@
++{
++  "type": "prerelease",
++  "comment": "Fix the build with MSVC 14.52: add template keywords flagged by C4864 and work around an ARM64 internal compiler error in folly AtFork.cpp",
++  "packageName": "react-native-windows",
++  "email": "vmorozov@microsoft.com",
++  "dependentChangeType": "patch"
++}
 ```
 
-**File**: `.ado/tests/detect-release-build.test.cjs` (modified, +14/-1)
+**File**: `vnext/Microsoft.ReactNative/Fabric/Composition/CompositionContextHelper.cpp` (modified, +1/-1)
 ```diff
-@@ -200,7 +200,7 @@ test('CLI reads exact SHA, emits safe exact outputs, and fails closed', () => {
-   }
- });
+@@ -1796,7 +1796,7 @@ struct CompActivityVisual : winrt::implements<
+     auto innerBrush = TTypeRedirects::CompositionContextHelper::InnerBrush(brush);
+     if (brush) {
+       _themeProperties.InsertVector4(
+-          L"Foreground", ColorAsVector4(innerBrush.as<TTypeRedirects::CompositionColorBrush>().Color()));
++          L"Foreground", ColorAsVector4(innerBrush.template as<TTypeRedirects::CompositionColorBrush>().Color()));
+     } else {
+       _themeProperties.InsertVector4(L"Foreground", ColorAsVector4({0, 0, 0, 0}));
+     }
+```
+
+**File**: `vnext/Microsoft.ReactNative/Fabric/Composition/Modal/WindowsModalHostViewComponentView.cpp` (modified, +6/-4)
+```diff
+@@ -95,10 +95,12 @@ struct ModalHostView : public winrt::implements<ModalHostView, winrt::Windows::F
+       const winrt::Microsoft::ReactNative::Composition::PortalComponentView &portalComponentView) noexcept {
+     m_reactContext = portalComponentView.ReactContext();
  
--test('pipeline maps metadata across stages and tags only successful releases', () => {
-+test('pipeline tags only successful releases using GitHub checkout credentials', () => {
-   const yaml = readFileSync(
-     path.resolve(__dirname, '../build-template.yml'),
-     'utf8',
-@@ -235,4 +235,17 @@ test('pipeline maps metadata across stages and tags only successful releases', (
-     nuget,
-     /if eq\(parameters.buildEnvironment, 'Continuous'\).*\n.*- pwsh: \|\n.*\$tag =/,
-   );
-+  assert.match(
-+    nuget,
-+    /checkout-shallow\.yml@self\s+parameters:\s+persistCredentials: \$\{\{ eq\(parameters.buildEnvironment, 'Continuous'\) \}\}/,
-+  );
-+  assert.match(
-+    nuget,
-+    /git tag \$tag "\$\(Build.SourceVersion\)"\n\s+git push origin \$tag/,
-+  );
-+  assert.match(
-+    nuget,
-+    /GIT_TERMINAL_PROMPT: '0'\n\s+GCM_INTERACTIVE: Never/,
-+  );
-+  assert.doesNotMatch(nuget, /SYSTEM_ACCESSTOKEN|http\.extraheader/);
- });
+-    portalComponentView.Mounted(
+-        [](const auto & /*sender*/, const auto &view) { view.UserData().as<ModalHostView>()->OnMounted(view); });
+-    portalComponentView.Unmounted(
+-        [](const auto & /*sender*/, const auto &view) { view.UserData().as<ModalHostView>()->OnUnmounted(view); });
++    portalComponentView.Mounted([](const auto & /*sender*/, const auto &view) {
++      view.UserData().template as<ModalHostView>()->OnMounted(view);
++    });
++    portalComponentView.Unmounted([](const auto & /*sender*/, const auto &view) {
++      view.UserData().template as<ModalHostView>()->OnUnmounted(view);
++    });
+   }
+ 
+   void UpdateProps(
+```
+
+**File**: `vnext/external/folly/folly.vcxitems` (modified, +10/-0)
+```diff
+@@ -153,6 +153,16 @@
+       <AdditionalIncludeDirectories>$(ReactNativeWindowsDir)Folly;$(ReactNativeWindowsDir)stubs;$(ExternalDir)folly;$(ExternalDir)fast-float\include;$(ExternalDir)fmt\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+     </ClCompile>
+   </ItemGroup>
++  <!-- Work around MSVC v145 ARM64 optimizer C1001 in AtForkListSingleton::init.
++       Disable PCH use so its Release optimization settings cannot override /Od.
++       Keep the forced pch.h include as an ordinary header. Remove when the compiler is fixed. -->
++  <ItemGroup>
++    <ClCompile Update="$(ExternalDir)folly\folly\system\AtFork.cpp" Condition="'$(Platform)' == 'ARM64' And '$(PlatformToolsetVersion)' != '' And $(PlatformToolsetVersion)&gt;=145">
++      <PrecompiledHeader>NotUsing</PrecompiledHeader>
++      <Optimization>Disabled</Optimization>
++      <WholeProgramOptimization>false</WholeProgramOptimization>
++    </ClCompile>
++  </ItemGroup>
+   <!-- SysMman.cpp is Desktop-only and must not use folly's UWP pch; re-assert no-PCH after
+        the blanket Update above, which would otherwise force pch.h onto it. -->
+   <ItemGroup>
+```
+
+---
+
+### Incident Patch 2: `1e85f047` (2026-11-11)
+**Commit Message**: Update node-api-jsi to pick up the BigInt::toString fix (#16610)
+
+Moves NodeApiJsiCommitHash from 4b8a4a59 to 9f2fdfa2, which corrects BigInt::toString for values larger than 64 bits (microsoft/node-api-jsi#18).
+
+Co-authored-by: Anukrati Agrawal <[REDACTED_EMAIL]>
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
+Copilot-Session: 6571d0a2-c95e-4c83-8fb7-82debbd8de73
+
+**File**: `change/react-native-windows-98883727-c128-42b8-a88d-506bdd7de350.json` (added, +7/-0)
+```diff
+@@ -0,0 +1,7 @@
++{
++  "type": "prerelease",
++  "comment": "Update node-api-jsi to pick up the BigInt::toString fix for values larger than 64 bits",
++  "packageName": "react-native-windows",
++  "email": "anuagra@microsoft.com",
++  "dependentChangeType": "patch"
++}
+```
+
+**File**: `vnext/Directory.Build.props` (modified, +1/-1)
+```diff
+@@ -26,7 +26,7 @@
+     <IncludeSymbols Condition="'$(Configuration)' == 'Release'">true</IncludeSymbols>
+     <IncludeSource Condition="'$(Configuration)' == 'Release'">false</IncludeSource>
+     <!-- Commit hash for https://github.com/microsoft/node-api-jsi code. -->
+-    <NodeApiJsiCommitHash>4b8a4a59c4e1b7b988b809dedffd89a7662aa785</NodeApiJsiCommitHash>
++    <NodeApiJsiCommitHash>9f2fdfa2a923784a73cc97da9b369edaf4c6c243</NodeApiJsiCommitHash>
+   </PropertyGroup>
+ 
+   <!--
+```
+
+**File**: `vnext/Microsoft.ReactNative.Cxx/Microsoft.ReactNative.Cxx.vcxitems` (modified, +1/-1)
+```diff
+@@ -14,7 +14,7 @@
+     <!-- If your project is using glog, then GLog_IncludeDir could be set to include the actual location of glog -->
+     <GLog_IncludeDir Condition="'$(GLog_IncludeDir)' == '' AND Exists('$(MSBuildThisFileDirectory)stubs\glog\logging.h')">$(MSBuildThisFileDirectory)stubs</GLog_IncludeDir>
+ 
+-    <NodeApiJsiCommitHash>4b8a4a59c4e1b7b988b809dedffd89a7662aa785</NodeApiJsiCommitHash>
++    <NodeApiJsiCommitHash>9f2fdfa2a923784a73cc97da9b369edaf4c6c243</NodeApiJsiCommitHash>
+     <NodeApiJsiLocal Condition="Exists('$(MSBuildThisFileDirectory)NodeApiJsiRuntime.cpp')">true</NodeApiJsiLocal>
+     <NodeApiJsiDir Condition="'$(NodeApiJsiDir)' == '' AND '$(NodeApiJsiLocal)' == 'true'">$(MSBuildThisFileDirectory)</NodeApiJsiDir>
+     <NodeApiJsiDir Condition="'$(NodeApiJsiDir)' == '' AND '$(ReactNativeDir)' != ''">$(ReactNativeDir)\..\..\node_modules\.node-api-jsi\node-api-jsi-$(NodeApiJsiCommitHash)\</NodeApiJsiDir>
+```
+
+**File**: `vnext/ReactCommon/cgmanifest.json` (modified, +1/-1)
+```diff
+@@ -6,7 +6,7 @@
+                 "Type": "git",
+                 "Git": {
+                   "RepositoryUrl": "https://github.com/microsoft/node-api-jsi",
+-                  "CommitHash": "4b8a4a59c4e1b7b988b809dedffd89a7662aa785"
++                  "CommitHash": "9f2fdfa2a923784a73cc97da9b369edaf4c6c243"
+                 }
+             },
+             "DevelopmentDependency": false
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #16607** (2026-11-11): 📦 [0.85]: Bump the all-dependencies group with 4 updates (@dependabot[bot])
-- **PR #16601** (2026-11-11): [0.81] Fix Continuous CI Guardian baseline, CodeQL job timeouts, and Paper E2E flakes (@vmoroz)
-- **PR #16600** (2026-11-11): [0.85] Fix Continuous CI Guardian baseline and CodeQL job timeouts (@vmoroz)
-- **PR #16599** (2026-11-11): [0.81] Remove unused eslint-plugin-jsx-a11y to drop the MPL-2.0 axe-core dependency (@vmoroz)
-- **PR #16598** (2026-11-11): [0.85] Remove unused eslint-plugin-jsx-a11y to drop the MPL-2.0 axe-core dependency (@vmoroz)
-- **PR #16597** (2026-11-11): Remove unused eslint-plugin-jsx-a11y to drop the MPL-2.0 axe-core dependency (@vmoroz)
+- **PR #16619** (2026-11-13): 📦 [main]: Bump the all-dependencies group across 1 directory with 10 updates (@dependabot[bot])
+- **PR #16618** (2026-11-12): Fix the build with MSVC 14.52 (C4864 and ARM64 internal compiler error) (@vmoroz)
+- **PR #16617** (2026-11-12): [0.85] Fix the build with MSVC 14.52 (C4864 and ARM64 internal compiler error) (@vmoroz)
+- **PR #16616** (closed): 📦 [main]: Bump resolve from 1.22.13 to 1.22.14 in the all-dependencies group (@dependabot[bot])
+- **PR #16615** (2026-11-12): [0.81] Fix the build with MSVC 14.52 (C4864 and ARM64 internal compiler error) (@vmoroz)
+- **PR #16614** (2026-11-11): [0.81] Ignore generated Guardian SARIF reports (@vmoroz)
 
 ---
 
@@ -1664,38 +1746,34 @@ Reuse retained GitHub checkout credentials for CI tag pushes and disable interac
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. GitHub authentication for release source tags (#16592)
+## X. the build with MSVC 14.52 (C4864 and ARM64 internal compiler error)
 
 **RULE**:
-When implementing operations in `.ado/build-template.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/react-native-windows. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `change/react-native-windows-83836459-f769-4dd6-8f44-a1f7de330c7f.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/react-native-windows. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2547bada`: GitHub authentication for release source tags (#16592). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a115ff1c`: the build with MSVC 14.52 (C4864 and ARM64 internal compiler error). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `.ado/build-template.yml`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `change/react-native-windows-83836459-f769-4dd6-8f44-a1f7de330c7f.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-          # GitHub tag pushes need checkout credentials, not System.AccessToken.
-            parameters:
-              persistCredentials: ${{ eq(parameters.buildEnvironment, 'Continuous') }}
-                git tag $tag "$(Build.SourceVersion)"
-                git push origin $tag
-                GIT_TERMINAL_PROMPT: '0'
-                GCM_INTERACTIVE: Never
+{
+  "type": "prerelease",
+  "comment": "Fix the build with MSVC 14.52: add template keywords flagged by C4864 and work around an ARM64 internal compiler error in folly AtFork.cpp",
+  "packageName": "react-native-windows",
+  "email": "vmorozov@microsoft.com",
+  "dependentChangeType": "patch"
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
-// Anti-pattern to NEVER write (induced failure mode):
-                $authHeader = "AUTHORIZATION: bearer $env:SYSTEM_ACCESSTOKEN"
-                Write-Host "##vso[task.setsecret]$authHeader"
-                git -c http.extraheader="$authHeader" tag $tag "$(Build.SourceVersion)"
-                git -c http.extraheader="$authHeader" push origin $tag
-                SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2547bada` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a115ff1c` are properly handled with clean fallback behavior.

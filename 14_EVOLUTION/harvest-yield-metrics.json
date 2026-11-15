@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T04:19:24.555Z",
-  "total_cycles_completed": 9662,
-  "total_learnings_persisted": 9662,
-  "total_rules_promoted": 9301,
+  "last_updated": "2026-11-15T04:43:56.245Z",
+  "total_cycles_completed": 9664,
+  "total_learnings_persisted": 9664,
+  "total_rules_promoted": 9302,
   "history": [
-    {
-      "timestamp": "2026-11-14T05:05:33.407Z",
-      "repository": "Edge0/Audio8-TTS-Realistic-Air",
-      "learningId": "learn-huggingface-edge0-audio8-tts-realistic-0-6b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T05:07:01.707Z",
-      "repository": "authzed/spicedb",
-      "learningId": "learn-github-authzed-spicedb",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T05:07:04.586Z",
       "repository": "restatedev/restate",
@@ -1403,6 +1389,20 @@
       "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
       "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T04:43:50.119Z",
+      "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
+      "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T04:43:56.245Z",
+      "repository": "microsoft/react-native-windows",
+      "learningId": "learn-github-microsoft-react-native-windows",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

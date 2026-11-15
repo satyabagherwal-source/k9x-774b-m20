@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-15T04:05:31.444Z",
+  "updated_at": "2026-11-15T04:45:03.817Z",
   "statistics": {
-    "total_nodes": 235,
-    "total_edges": 132,
+    "total_nodes": 237,
+    "total_edges": 133,
     "domain_distribution": {
-      "D": 185,
+      "D": 186,
       "M": 1,
-      "H": 19,
+      "H": 20,
       "J": 9,
       "K": 10,
       "L": 3,
@@ -19,7 +19,7 @@
       "E": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 132
+      "CONSTRAINED_BY_ARCHITECTURE": 133
     }
   },
   "nodes": {
@@ -5279,6 +5279,51 @@
       ],
       "created_at": "2026-11-15T04:05:31.444Z",
       "updated_at": "2026-11-15T04:05:31.444Z"
+    },
+    "DOM-D-31A60A1E": {
+      "id": "DOM-D-31A60A1E",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): nvidia/Qwen3.8-Flash-Next-FP4-Local",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md`  \n> **Source**: huggingface ([h -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md`  \n> **Source**: huggingface ([h",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-nvidia-qwen3.8-flash-next-fp4-local/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T04:44:02.195Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-nvidia-qwen3.8-flash-next-fp4-local)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-15T04:44:29.705Z",
+      "updated_at": "2026-11-15T04:44:29.705Z"
+    },
+    "DOM-H-E5AA5217": {
+      "id": "DOM-H-E5AA5217",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "the build with MSVC 14.52 (C4864 and ARM64 internal compiler error)",
+      "summary": "Prevents defects observed in production commit `a115ff1c`: the build with MSVC 14.52 (C4864 and ARM64 internal compiler error). Unvalidated  -> When implementing operations in `change/react-native-windows-83836459-f769-4dd6-8f44-a1f7de330c7f.json`, engineers MUST enforce rigorous bou",
+      "confidence": 0.86,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://microsoft-react-native-windows/microsoft-react-native-windows-learnings.md",
+        "source_version": "e49cdf04",
+        "observed_at": "2026-11-15T04:43:55.420Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (microsoft-react-native-windows)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence",
+        "G"
+      ],
+      "created_at": "2026-11-15T04:45:03.817Z",
+      "updated_at": "2026-11-15T04:45:03.817Z"
     }
   },
   "edges": [
@@ -6601,6 +6646,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-J-6AB1B121 [J] with Domain D",
       "created_at": "2026-11-15T03:48:46.416Z"
+    },
+    {
+      "id": "EDGE-F6CAB5BC488D",
+      "sourceId": "DOM-H-E5AA5217",
+      "targetId": "NODE-G-domain-bridge-g",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-H-E5AA5217 [H] with Domain G",
+      "created_at": "2026-11-15T04:45:03.817Z"
     }
   ]
 }

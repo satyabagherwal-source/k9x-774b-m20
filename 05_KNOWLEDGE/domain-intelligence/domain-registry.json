@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T04:19:30.419Z",
-  "total_records": 951,
+  "last_updated": "2026-11-15T04:45:04.853Z",
+  "total_records": 957,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 466,
+      "total": 469,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -503,7 +503,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-meta-models-muse-spark-open-816b-a42b-learnin",
         "domain_intelligence-research-knowledge-intelligence-black-forest-labs-flux-3-image-klein-comfy-core-",
         "DOM-D-F3C53CD9",
-        "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-3-image-klein-comfy-le"
+        "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-3-image-klein-comfy-le",
+        "domain_intelligence-research-knowledge-intelligence-nvidia-qwen3-8-flash-next-fp4-local-core-invaria",
+        "DOM-D-31A60A1E",
+        "domain_intelligence-research-knowledge-intelligence-hf-nvidia-qwen3-8-flash-next-fp4-local-learnings"
       ]
     },
     "E": {
@@ -704,7 +707,7 @@
       ]
     },
     "H": {
-      "total": 196,
+      "total": 199,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -901,7 +904,10 @@
         "domain_intelligence-technical-construction-intelligence-hf-liquidai-lfm2-5-24b-a2b-gguf-learnings-co",
         "domain_intelligence-technical-construction-intelligence-vectifyai-pageindex-core-invariants",
         "domain_intelligence-technical-construction-intelligence-openbmb-minicpm-v-4-7-35b-a3b-gguf-core-inva",
-        "domain_intelligence-technical-construction-intelligence-hf-openbmb-minicpm-v-4-7-35b-a3b-gguf-learni"
+        "domain_intelligence-technical-construction-intelligence-hf-openbmb-minicpm-v-4-7-35b-a3b-gguf-learni",
+        "domain_intelligence-technical-construction-intelligence-microsoft-react-native-windows-core-invarian",
+        "DOM-H-E5AA5217",
+        "domain_intelligence-technical-construction-intelligence-microsoft-react-native-windows-learnings-cor"
       ]
     },
     "I": {
@@ -13742,8 +13748,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "1a672bfbf07da45d187544db802c668e0d80acd6a1db9972e9a0609227e6b1f8",
-      "created_at": "2026-11-15T02:58:59.708Z"
+      "content_hash": "f2031e45de47edae8c87e83b513a224b781eaf4d4e7671921338c282f7382bd0",
+      "created_at": "2026-11-15T04:45:04.853Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
@@ -18488,6 +18494,126 @@
       "repository": "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings",
       "content_hash": "9aaaeaf1469fe43cb87bb7eb0784d34d610e03819d0c6ab238938f6864e00d76",
       "created_at": "2026-11-15T04:19:29.404Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-nvidia-qwen3-8-flash-next-fp4-local-core-invaria": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-qwen3-8-flash-next-fp4-local-core-invaria",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: nvidia/Qwen3.8-Flash-Next-FP4-Local Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-qwen3-8-flash-next-fp4-local-research-knowledge-intelligence-nvidia-qw.md",
+      "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
+      "content_hash": "012173021b2bee27916550703d3e2480b3629e30270f1114f6220e43393e95fc",
+      "created_at": "2026-11-15T04:43:50.280Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-microsoft-react-native-windows-core-invarian": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-microsoft-react-native-windows-core-invarian",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: microsoft/react-native-windows Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-microsoft-react-native-windows-technical-construction-intelligence-microsoft-rea.md",
+      "repository": "microsoft/react-native-windows",
+      "content_hash": "167fc39b2788b289a6e479534f32edcb2affbb1b337b2deb643f08d33fb83f56",
+      "created_at": "2026-11-15T04:43:56.514Z"
+    },
+    "DOM-D-31A60A1E": {
+      "record_id": "DOM-D-31A60A1E",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): nvidia/Qwen3.8-Flash-Next-FP4-Local",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local](https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local))  \n> **Source Version**: `hf-nvidia-qw`",
+      "content_hash": "daffa6216d50310f7fd377c3ae61c6fb9d8a4fb65b4c8032ad463c3a72fc5208",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md`  \n> **Source**: huggingface ([h -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md`  \n> **Source**: huggingface ([h",
+      "provenance": {
+        "source_uri": "project://hf-nvidia-qwen3.8-flash-next-fp4-local/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T04:44:02.195Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-nvidia-qwen3.8-flash-next-fp4-local)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-nvidia-qwen3.8-flash-next-fp4-local"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-15T04:44:29.692Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-nvidia-qwen3-8-flash-next-fp4-local-learnings": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-nvidia-qwen3-8-flash-next-fp4-local-learnings",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-nvidia-qwen3.8-flash-next-fp4-local-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-qwen3-8-flash-next-fp4-local-learnings-research-knowledge-intelligence.md",
+      "repository": "hf-nvidia-qwen3.8-flash-next-fp4-local-learnings",
+      "content_hash": "82ff6c81e561d10ed1deb571b44d150c604dc08a8cb3ab3dae8df725448c3c76",
+      "created_at": "2026-11-15T04:44:29.902Z"
+    },
+    "DOM-H-E5AA5217": {
+      "record_id": "DOM-H-E5AA5217",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "G",
+          "id": "architecture",
+          "name": "Architecture Intelligence"
+        }
+      ],
+      "title": "the build with MSVC 14.52 (C4864 and ARM64 internal compiler error)",
+      "content": "When implementing operations in `change/react-native-windows-83836459-f769-4dd6-8f44-a1f7de330c7f.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/react-native-windows. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "20e40faae0f7907924c9a28071f589c01b4174298c44e1022321b26287cf3164",
+      "summary": "Prevents defects observed in production commit `a115ff1c`: the build with MSVC 14.52 (C4864 and ARM64 internal compiler error). Unvalidated  -> When implementing operations in `change/react-native-windows-83836459-f769-4dd6-8f44-a1f7de330c7f.json`, engineers MUST enforce rigorous bou",
+      "provenance": {
+        "source_uri": "project://microsoft-react-native-windows/microsoft-react-native-windows-learnings.md",
+        "source_version": "e49cdf04",
+        "observed_at": "2026-11-15T04:43:55.420Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (microsoft-react-native-windows)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of microsoft-react-native-windows"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "G"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.86,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-15T04:45:03.807Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-microsoft-react-native-windows-learnings-cor": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-microsoft-react-native-windows-learnings-cor",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: microsoft-react-native-windows-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-microsoft-react-native-windows-learnings-technical-construction-intelligence-mic.md",
+      "repository": "microsoft-react-native-windows-learnings",
+      "content_hash": "a519fb09030f732bee464ac2210507e4da5e5f7cf46df1a1939dbe59897f93d8",
+      "created_at": "2026-11-15T04:45:04.260Z"
     }
   }
 }

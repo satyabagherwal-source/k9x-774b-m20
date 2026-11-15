@@ -10023,3 +10023,7 @@
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T04:05:31.446Z` | `hf-black-forest-labs-flux-3-image-klein-comfy` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-F3C53CD9` [Domain D] | Yes (`64b38653...`) |
 | `CYCLE-20261115-QFXN` | `2026-11-15T04:17:59.339Z` | `zeronsh/zeron` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8575` | Yes (`066dc680...`) |
 | `CYCLE-20261115-S9OH` | `2026-11-15T04:19:24.545Z` | `openbmb/MiniCPM-V-4.7-35B-A3B-gguf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8576, Rule 8577` | Yes (`cc4ef726...`) |
+| `CYCLE-20261115-NOIM` | `2026-11-15T04:43:50.110Z` | `nvidia/Qwen3.8-Flash-Next-FP4-Local` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md` | Yes (`5129eb13...`) |
+| `CYCLE-20261115-NT8T` | `2026-11-15T04:43:56.237Z` | `microsoft/react-native-windows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8578` | Yes (`30b42071...`) |
+| `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T04:44:29.706Z` | `hf-nvidia-qwen3.8-flash-next-fp4-local` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-31A60A1E` [Domain D] | Yes (`daffa621...`) |
+| `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T04:45:03.819Z` | `microsoft-react-native-windows` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-E5AA5217` [Domain H] | Yes (`20e40faa...`) |
