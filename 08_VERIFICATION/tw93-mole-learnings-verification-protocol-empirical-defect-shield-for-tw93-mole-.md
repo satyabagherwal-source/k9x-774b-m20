@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:46:03.139Z",
+  "timestamp": "2026-11-15T03:14:19.392Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-tw93-mole-learnings",
+  "learning_id": "LEARN-EVO-tw93-mole-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [tw93-mole-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:46:03.139Z`  
-> **Learning ID**: `LEARN-REEXTRACT-tw93-mole-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-15T03:14:19.392Z`  
+> **Learning ID**: `LEARN-EVO-tw93-mole-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tw93-mole-learnings.md`  
 > **Source**: github ([https://github.com/tw93/Mole](https://github.com/tw93/Mole))  
-> **Source Version**: `d9181d3b`  
+> **Source Version**: `060fba8b`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T16:05:02.349Z  
+> **Timestamp**: 2026-11-15T03:13:32.825Z  
 > **Learning ID**: `learn-github-tw93-mole`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tw93-mole-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tw93/Mole](https://github.com/tw93/Mole))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T16:05:02.059Z  
+> **Harvest Timestamp**: 2026-11-15T03:13:32.814Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: 🐹 Open-source Mac and PC cleaner. Keep your machine clean, light, and running like new. Fast CLI, plus native Mac and Windows apps.
 - **Primary Language / Ecosystem**: Shell
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 74633 stars
+- **Stars / Engagement**: 75074 stars
 
 ---
 
@@ -100,7 +100,9 @@ import (
 // v8: APFS clones that share every block count once, so v7 totals can be inflated.
 // v9: mixed clone/hardlink groups deduplicate together; bounded lists use path ties.
 // v10: shortened directory listings must refresh before they are browsed.
-const cacheSchemaVersion = 10
+// v11: the overview leaves CloudStorage out of the User Library total.
+// v12: traversal stops at mount points, so v11 totals can include mounted volumes.
+const cacheSchemaVersion = 12
 
 type overviewSizeSnapshot struct {
 	Size          int64     `json:"size"`
@@ -135,7 +137,7 @@ func snapshotFromModel(m model) historyEntry {
 func filterNonEmptyEntries(entries []dirEntry) []dirEntry {
 	filtered := make([]dirEntry, 0, len(entries))
 	for _, entry := range entries {
-		if entry.Size > 0 || entry.State != scanComplete {
+		if !entry.hiddenWhenEmpty() {
 			filtered = append(filtered, entry)
 		}
 	}
@@ -370,9 +372,7 @@ func moleCacheRoot(home string) string {
 	return filepath.Join(home, ".cache", "mole")
 }
 
-// getMoleCacheRoot is the shared `~/.cache/mole` directory. The shell side
-// keeps its own state files there, so nothing may be swept from it wholesale.
-func getMo
+// getMoleCacheRoot is the sha
 ```
 
 ### Core Architecture Module: `cmd/analyze/cleanable.go`
@@ -671,6 +671,11 @@ var overviewDuIgnoreNames = map[string]bool{
 	// when most entries are cloud placeholders. Keep the overview responsive;
 	// users can still drill into the folder explicitly when they need it.
 	"Mobile Documents": true,
+	// File Provider domains (Dropbox, Google Drive, OneDrive, Proton Drive)
+	// hold cloud-only folders too, and walking them asks the provider to
+	// materialize each listing. Mole Mac turns materialization off for the
+	// same walk (17143ac4c); the overview skips them like Mobile Documents.
+	"CloudStorage": true,
 }
 
 var foldDirs = map[string]bool{
@@ -1248,13 +1253,12 @@ func isProtectedAnalyzeDeletePath(path string) bool {
 	if isCriticalAnalyzeDeletePath(cleanPath) {
 		return true
 	}
-
-	homeRoots := protectedAnalyzeHomeRoots()
-	if len(homeRoots) == 0 {
-		return false
+	if isLibraryHeadFolder(cleanPath, "/Library") {
+		return true
 	}
 
-	for _, homeRoot := r
+	homeRoots := protectedAnalyzeHomeRoots()
+
 ```
 
 ### Core Architecture Module: `cmd/analyze/format.go`
@@ -1323,7 +1327,10 @@ func formatNumber(n int64) string {
 	if n < 1000 {
 		return fmt.Sprintf("%d", n)
 	}
-	if n < 1000000 {
+	// Compare against the threshold the label rounds to, not the raw count:
+	// 999,950 printed with one decimal in thousands is "1000.0k", which
+	// should read as the next unit, the same way units.BytesSI steps up.
+	if n < 999950 {
 		return fmt.Sprintf("%.1fk", float64(n)/1000)
 	}
 	return fmt.Sprintf("%.1fM", float64(n)/1000000)
@@ -1934,11 +1941,11 @@ func jsonFileEntriesFromFileEntries(files []fileEntry) []jsonFileEntry {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1956** (2026-11-09): **[BUG] Analyze overview reports `unknown` when directory scans exceed the 30-second timeout**
-  *Symptoms*: ## Describe the bug  `mo analyze` reports `unknown` sizes for `Applications` and `User Library`, despite both directories being readable and measurable with `/usr/bin/du`.  The likely cause is the hardcoded 30-second `duTimeout` in [`cmd/analyze/constants.go`](https://github.com/tw93/Mole/blob/main/cmd/analyze/constants.go).  ## Steps to reproduce  1. Run `mo analyze`. 2. Observe `unknown` sizes for `Applications` and `User Library`. 3. Measure the directories directly: ```swift /usr/bin/time -p /usr/bin/du -skPx "$HOME/Library" /usr/bin/time -p /usr/bin/du -skPx /Applications ```  Results on my machine:  | Directory    | Size (KiB)  | Wall time | | ------------ | ----------- | --------- | | User Library | 188,924,628 | 33.64s    | | Applications | 57,714,556  | 22.49s    |  The User Library scan exceeds Mole's timeout even when run independently. Applications completes within 30 seconds independently, but may exceed the limit when competing with Mole's other concurrent overview scans.  ## Relevant implementation history  - [Commit 749ed22](https://github.com/tw93/Mole/commit/749ed2230bf4350982a5b76b749a56d79647d0e1) reduced the timeout from 60 to 30 seconds to fail faster and fall back to concurrent scanning. - [Commit d04453f](https://github.com/tw93/Mole/commit/d04453f190ddf03a3fe4f9e15c0733d0ec280e32) changed fallback behavior to respect the original deadline. Once that deadline expires, the fallback no longer runs. - [Commit d382692](https://github.com/tw93/Mole/commit/d
+- **Issue #2002** (2026-11-15): **[Bug] `mo clean` 误判 `.bundle` 结构的 PrivilegedHelperTools 为孤儿服务，导致 Clash Verge Rev 系统服务被误杀 (`launchctl unload`)**
+  *Symptoms*: > 🤖 *注：本 Issue 由 **Google Antigravity AI 助手** 协助用户排查系统日志与 Mole 源码后自动撰写生成。*  ### 环境信息 (Environment) - **Mole 版本**: `1.44.0` (Homebrew) - **macOS 版本**: macOS (Apple Silicon) - **受影响软件**: Clash Verge Rev (`v2.5.10`, Bundle ID: `io.github.clash-verge-rev.clash-verge-rev`)  ---  ### 问题描述 (Bug Description) 在 `/Applications/Clash Verge.app` 正常安装且后台系统服务正在运行的情况下，带 `sudo` 权限执行 `mole clean` 时，`clean_orphaned_system_services()` 会**误将 Clash Verge Rev 的 LaunchDaemon 判定为孤儿服务（orphaned service）**，并执行 `sudo -n launchctl unload` 强行杀掉正在运行的后台服务，导致 Clash Verge 断网并弹出“需要更新系统服务（所需的 Clash Verge 系统服务当前不可用）”报错。  ---  ### 根因分析 (Root Cause Analysis)  排查 `lib/clean/apps.sh` 后发现是由 **两个逻辑问题叠加** 导致的：  #### 1. `_plist_is_orphaned()` 未考虑 `/Library/PrivilegedHelperTools/*.bundle` 目录结构（`lib/clean/apps.sh` L589–L600） Clash Verge Rev 的 LaunchDaemon (`/Library/LaunchDaemons/io.github.clash-verge-rev.clash-verge-rev.service.plist`) 中，`ProgramArguments[0]` 指向的是一个 `.bundle` 内部的可执行文件： ```text /Library/PrivilegedHelperTools/io.github.clash-verge-rev.clash-verge-rev.service.bundle/Contents/MacOS/clash-verge-service ```  而在 `lib/clean/apps.sh` 第 590–599 行中： ```bash         if [[ -e "$binary" ]]; then             if [[ "$binary" == /Library/PrivilegedHelperTools/* ]]; then                 local helper_bundle_id                 helper_bundle_id=$(basename "$binary")                 helper_bundle_id="${helper_bundle_id%.plist}"                 if bundle_has_installed_app "$helper_bundle_id"; then                     return 1
 
-- **Issue #1944** (2026-11-08): **状态栏 GPU 无法实时刷新**
-  *Symptoms*: ### Mole Mac app version  1.19.1 (366)  ### macOS version  26.7.1 (Tahoe)  ### Mac model  MacBookPro16,1 (Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz)  ### Affected area  Status  ### What happened?  状态栏的 GPU 状态无法实时刷新，具体表现：Mole 随系统启动，状态栏的 GPU 值显示为横线，点击状态栏，此时状态栏获取到与弹出层一样的 GPU 数值，然后就不再更新，直到再次手动点击状态栏图标。  ### Steps to reproduce  1. Mole 随系统启动，状态栏的 GPU 值显示为横线。 2. 点击状态栏，此时状态栏获取到与弹出层一样的 GPU 数值。 3. GPU 数值不再更新，直到再次手动点击状态栏图标。  ### Expected behavior  GPU 数值可以像其他参数一样可以实时刷新。  ### Screenshots or safe logs  录屏是 Bug 的具体表现行为 https://github.com/user-attachments/assets/d3a254fb-623f-490f-819e-f67147370c42  截图是系统环境，希望对定位问题有所帮助  <img width="321" height="422" alt="Image" src="https://github.com/user-attachments/assets/473c945c-7248-4ee4-b1c8-80bcebee9e6b" />  ### Before submitting  - [x] I updated to the latest stable Mole Mac app, reopened it, and reproduced this problem (or this report explains why I cannot update). - [x] I did not include license keys, order numbers, or private data.
+- **Issue #1988** (2026-11-13): **[BUG] mo clean skips CloudStorage project caches due to Google Drive .tmp permission errors**
+  *Symptoms*: ## Describe the bug  `mo clean` skips the entire `~/Library/CloudStorage` project-cache scan when Google Drive's internal `.tmp` directories return `Permission denied`.  The debug log shows:  ```text [2026-11-12 11:00:51] DEBUG: Project cache scan failed (1): /Users/<user>/Library/CloudStorage ```  And the cleanup summary reports:  ```text ◎ Project caches · skipped 2 slow/incomplete root scans ```  The `CloudStorage` failure is one of those skipped roots.  ## Steps to reproduce  1. Have Google Drive for desktop installed with folders under `~/Library/CloudStorage`. 2. Run `mo clean --debug`. 3. Observe that the project-cache scan fails with exit status 1. 4. Reproduce the underlying filesystem error:  ```bash /usr/bin/find -P "$HOME/Library/CloudStorage" \   -maxdepth 9 -mount -type d -print > /dev/null ```  Output:  ```text find: .../CloudStorage/GoogleDrive-<account-1>/.tmp: Permission denied find: .../CloudStorage/GoogleDrive-<account-2>/.tmp: Permission denied ```  ## Verified workaround  Running a comparable scan that prunes `.tmp` directories succeeds:  ```bash /usr/bin/find -P "$HOME/Library/CloudStorage" \   -maxdepth 9 -mount \   -name '.tmp' -prune -o \   -type d \   \( -name '.next' -o -name '__pycache__' -o -name '.dart_tool' \) \   -print > /dev/null  echo $status # 0 ```  Tested in zsh. This suggests that pruning `.tmp` directories would resolve the observed traversal failure without excluding the entire CloudStorage root.  ## Expected behavior  Mole should dis
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1955,587 +1962,665 @@ func jsonFileEntriesFromFileEntries(files []fileEntry) []jsonFileEntry {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `77aa5a28` (2026-11-11)
-**Commit Message**: fix(clean): prove a LaunchAgent path missing by ENOENT, not by test -e
+### Incident Patch 1: `2dd073d2` (2026-11-12)
+**Commit Message**: fix(clean): bound container cache enumeration (#1974)
 
-[[ -e ]] reads a denied lookup as missing: under a sandbox denying
-~/Library/Mail/V10, an existing agent there was judged gone and dropped its
-claim, and TCC denials behave the same way. Absence is now proven by the
-errno: /usr/bin/stat under LC_ALL=C must fail with "No such file or
-directory", and anything else (EPERM, EACCES, a timeout) keeps the claim.
-BSD stat ships in every macOS base system, while perl is a deprecated
-runtime. The probe runs under run_with_timeout before any builtin test
-touches the path, so a stale NFS or autofs path cannot block the scan.
-The nearest existing ancestor must also list (/bin/ls -f) rather than
-merely carry the search bit.
+`mo clean --dry-run` listed every sandbox container's caches with a shell glob
+and per-entry probes, with no time limit, so a container the user could not
+read quickly, or one holding many thousands of entries, held the clean
+section for minutes.
 
-Verified: new bats case in clean_apps.bats. It fails on the previous
-apps.sh ("lost claim com.example.listless", a wx-only folder). Separate
-mutations each fail it: no listing check (listless), errno ignored
-(denied, run under sandbox-exec), timeout not treated as doubt
-(slowprobe). Passes under /bin/bash 3.2.
+Each container listing now runs through `find -mindepth 1 -maxdepth 1` under
+the real timeout wrapper, bounded by MOLE_TIMEOUT_MEDIUM_PROBE_SEC and by the
+section deadline. A listing that fails or times out discards its partial
+candidates and the scan moves on, so a half-read container is never cleaned
+from an incomplete list. The container cache sweeps take their own section
+budget, so the limit stops listing in time without cutting short the
+cleaning that follows.
 
-Rollback: git revert this commit.
+Verified with tests/clean_container_scan.bats (a blocked listing is stopped by
+the timeout wrapper; failed enumerations discard partial candidates and
+continue) and the full CI matrix on b648b687.
 
-**File**: `lib/clean/apps.sh` (modified, +15/-1)
+Revert: `git revert` of this commit restores the unbounded glob listing.
+
+Fixes #1973
+
+**File**: `lib/clean/user.sh` (modified, +183/-123)
 ```diff
-@@ -353,6 +353,16 @@ _mole_launch_agent_path_provably_missing() {
-             "$lower_home/$folder" | "$lower_home/$folder"/*) return 1 ;;
-         esac
-     done
-+    # [[ -e ]] reads a denied lookup (a TCC or sandbox EPERM) as missing, so
-+    # absence is proven by the errno itself. BSD stat is in every macOS base
-+    # system (perl is a deprecated runtime) and reports through strerror, fixed
-+    # English under LC_ALL=C; only ENOENT counts. The timeout keeps a stale NFS
-+    # or autofs path from blocking the scan, and it runs before any builtin
-+    # test touches the path.
-+    local stat_error="" stat_rc=0
-+    stat_error=$(run_with_timeout "$MOLE_TIMEOUT_QUICK_DETECT_SEC" /usr/bin/env LC_ALL=C \
-+        /usr/bin/stat -f %N -- "$path" 2>&1 > /dev/null < /dev/null) || stat_rc=$?
-+    [[ $stat_rc -eq 1 && "$stat_error" == *": No such file or directory" ]] || return 1
-     local prefix="" component="" rest="${path#/}"
-     while [[ -n "$rest" ]]; do
-         component="${rest%%/*}"
-@@ -369,7 +379,11 @@ _mole_launch_agent_path_provably_missing() {
-     local parent="${path%/*}"
-     while [[ "$parent" == /* ]]; do
-         if [[ -e "$parent" ]]; then
--            [[ -d "$parent" && -x "$parent" ]]
-+            [[ -d "$parent" && -x "$parent" ]] || return 1
-+            # The nearest existing folder must really list, not only carry the
-+            # Unix search bit.
-+            run_with_timeout "$MOLE_TIMEOUT_QUICK_DETECT_SEC" /bin/ls -f -- "$parent" \
-+                > /dev/null 2>&1 < /dev/null
-             return
+@@ -1098,61 +1098,79 @@ clean_support_app_data() {
+     safe_clean ~/Library/Messages/Caches/Previews/StickerCache/* "Messages preview sticker cache"
+ }
+ 
+-# App caches (merged: macOS system caches + Sandboxed apps).
+-# Runs in the caller's shell and returns the count in
+-# CACHE_TOP_LEVEL_ENTRY_COUNT: it is called once per container, and a command
+-# substitution plus two $(shopt -p) captures cost three forks each time.
+-cache_top_level_entry_count_capped() {
++# Complete, NUL-delimited directory snapshots for the container cache scans.
++# A Bash glob opens the directory before any loop checkpoint can run (#1973).
++# Keep both enumeration and sorting in the bounded producer, discard partial
++# output on failure, and reuse the snapshot for counting and cleanup. Callers
++# own the array so nested scans cannot replace another caller's candidates.
++_container_cache_list_entries() {
+     local dir="$1"
+-    local cap="${2:-101}"
+-    local count=0
+-    local restore_nullglob=false
+-    local restore_dotglob=false
+-    shopt -q nullglob || restore_nullglob=true
+-    shopt -q dotglob || restore_dotglob=true
+-    shopt -s nullglob dotglob
+-
+-    local item
+-    for item in "$dir"/*; do
+-        [[ -e "$item" ]] || continue
+-        count=$((count + 1))
+-        if ((count >= cap)); then
+-            break
++    local entries_file="${2:-}"
++    local owns_entries_file=false
++    _MOLE_CONTAINER_CACHE_ENTRIES=()
++    local timeout_seconds
++    if ! timeout_seconds=$(_mole_timeout_with_deadline "$MOLE_TIMEOUT_MEDIUM_PROBE_SEC" \
++        "${_MOLE_CLEAN_SECTION_DEADLINE:-}"); then
++        debug_log "Container cache scan budget exhausted: $dir"
++        return 1
++    fi
++    if [[ -z "$entries_file" ]]; then
++        entries_file=$(create_temp_file) || return 1
++        owns_entries_file=true
++    fi
++    local scan_rc=0
++    run_with_timeout "$timeout_seconds" "$FIND_BSD" "$dir" \
++        -mindepth 1 -maxdepth 1 -print0 > "$entries_file" 2> /dev/null || scan_rc=$?
++    if [[ $scan_rc -eq 0 ]]; then
++        if timeout_seconds=$(_mole_timeout_with_deadline "$MOLE_TIMEOUT_MEDIUM_PROBE_SEC" \
++            "${_MOLE_CLEAN_SECTION_DEADLINE:-}"); then
++            # BSD sort can silently truncate malformed UTF-8 records in a
++            # UTF-8 locale, even with -z. Paths remain byte strings here.
++            LC_ALL=C run_with_timeout "$timeout_seconds" /usr/bin/sort -z -o "$entries_file" \
++                "$entries_file" 2> /dev/null || scan_rc=$?
++        else
++            scan_rc=1
          fi
-         parent="${parent%/*}"
-```
-
-**File**: `tests/clean_apps.bats` (modified, +53/-0)
-```diff
-@@ -495,6 +495,59 @@ _assert_launch_agent_claims() {
-     _assert_launch_agent_claims keep com.example.slashhome
- }
- 
-+@test "scan_installed_apps proves a LaunchAgent path missing by its errno, not by test -e" {
-+    local agent_home="$HOME/agent-errno"
-+    [[ ! -d "$agent_home" ]] || chmod -R u+rwx "$agent_home"
-+    rm -rf "$agent_home"
-+    mkdir -p "$agent_home/Library/LaunchAgents" "$agent_home/Library/Mail/V10" "$agent_home/listless"
-+    printf '#!/bin/sh\n' > "$agent_home/Library/Mail/V10/agent"
-+    chmod +x "$agent_home/Library/Mail/V10/agent"
-+    local AGENT_DIR="$agent_home/Library/LaunchAgents"
-+    _write_launch_agent_fixture com.example.control "$agent_home/opt/gone"
-+    _write_launch_agent_fixture com.example.listless "$agent_home/listless/gone/agent"
-+    chmod 311 "$agent_home/listless"
-+    _scan_launch_agent_claims "$agent_home"
-+    chmod 755 "$agent_home/listless"
-+    [ "$status" -eq 0 ] || { echo "$output"; return 1; }
-+    _assert_launch_agent_claims drop com.example.control
-+    _assert_launch_agent_claims keep com.example.listless
-+
-+    # A stat probe that times out (a stale NFS or autofs path) keeps the claim.
-+    rm -f "$agent_home/.cache/mole/installed_apps_cache"
-+    _write_launch_agent_fixture com.example.slowprobe "$agent_home/slow/gone/agent"
-+    cat > "$agent_home/preamble.sh" <<'SH'
-+run_with_timeout() {
-+    shift
-+    case " $* " in *" /usr/bin/stat "*) return 124 ;; esac
-+    "$@"
-+}
-+SH
-+    _scan_launch_agent_claims "$agent_home" MOLE_TEST_PREAMBLE="$agent_home/preamble.sh"
-+    [ "$status" -eq 0 ] || { echo "$output"; return 1; }
-+    _assert_launch_agent_claims keep com.example.slowprobe com.example.control
-+
-+    # A lookup the sandbox denies (as TCC does) is EPERM, not ENOENT.
-+    if ! command -v sandbox-exec > /dev/null 2>&1 ||
-+        ! sandbox-exec -p '(version 1)(allow default)' /usr/bin/true 2> /dev/null; then
-+        skip "sandbox-exec unavailable"
+-    done
+-
+-    [[ "$restore_nullglob" == "true" ]] && shopt -u nullglob
+-    [[ "$restore_dotglob" == "true" ]] && shopt -u dotglob
+-
+-    [[ "$count" =~ ^[0-9]+$ ]] || count=0
+-    CACHE_TOP_LEVEL_ENTRY_COUNT=$count
+-    return 0
 +    fi
-+    rm -f "$agent_home/.cache/mole/installed_apps_cache"
-+    _write_launch_agent_fixture com.example.denied "$agent_home/Library/Mail/V10/agent"
-+    printf '(version 1)\n(allow default)\n(deny file-read-metadata file-read-data (subpath "%s"))\n' \
-+        "$agent_home/Library/Mail/V10" > "$agent_home/deny.sb"
-+    run sandbox-exec -f "$agent_home/deny.sb" env HOME="$agent_home" PROJECT_ROOT="$PROJECT_ROOT" \
-+        MOLE_TEST_MODE=1 /bin/bash --noprofile --norc <<'EOF'
-+set -euo pipefail
-+source "$PROJECT_ROOT/lib/core/common.sh"
-+source "$PROJECT_ROOT/lib/clean/apps.sh"
-+debug_log() { :; }
-+scan_installed_apps "$HOME/installed.txt"
-+cat "$HOME/installed.txt"
-+EOF
-+    [ "$status" -eq 0 ] || { echo "$output"; return 1; }
-+    _assert_launch_agent_claims keep com.example.denied
-+}
-+
- @test "scan_installed_apps drops the claim of a LaunchAgent whose job provably cannot run" {
-     local agent_home="$HOME/agent-dead"
-     rm -rf "$agent_home"
-```
-
----
-
-### Incident Patch 2: `6bb932a6` (2026-11-11)
-**Commit Message**: fix(clean): run no tmutil while a network share is mounted
-
-Every tmutil verb opens each mounted volume as it starts, and macOS charges
-that access to the calling process. In the Mac app this raised "access
-files on a network volume" during a Clean scan when an SMB share was
-mounted and Full Disk Access was missing, so the app runs no tmutil from a
-scan while a non-local volume is mounted. The CLI runs tmutil
-listlocalsnapshots / from the Large files snapshot row and from
-clean_local_snapshots (with its tmutil status probe), which the same
-prompt would charge to the terminal. That was not reproduced here: nothing
-was mounted and TCC was not changed.
-
-mole_network_volume_mounted reads /sbin/mount with no arguments, the
-kernel's cached getmntinfo(MNT_NOWAIT) table, and treats any entry without
-the local flag as a network volume, except autofs trigger nodes. Options
-are taken after the last " (" so a mount point with parentheses parses. An
-unreadable or unparsable table also skips: the rows are report-only, so a
-skip costs one row and prints nothing. clean_time_machine_failed_backups
-keeps its tmutil calls, because a network Time Machine destination is
-itself such a mount.
-
-Verified: 
-
-**File**: `.claude/rules/clean.md` (modified, +1/-0)
-```diff
-@@ -51,6 +51,7 @@ Developer and toolchain caches in `lib/clean/dev.sh` also follow `.claude/rules/
- - Chrome / Edge / Brave old-version cleanup is one table-driven helper (`_clean_chromium_old_versions`) plus three thin public wrappers; the wrapper names are the test surface, so keep them. `clean_edge_updater_old_versions` is deliberately NOT part of it: it prunes staged updater payloads strictly older than the installed Edge (falling back to keep-latest by `sort -V` when the installed version is unreadable), has no `Current` symlink, and never escalates to a sudo removal, so folding it in would silently change its semantics.
- - Large-files review rows share `_large_candidate_size_kb`: a du exit of 1 means some entry was unreadable and still carries a usable total, while a timeout never does. The E5RT row passes `exact` and drops a status-1 total, because #1631 promised incomplete measurements are never shown as a complete size. Tighten a new row's evidence at that row, not in the shared helper; the compiled-model row once made the helper strict and hid an 11.78GB `Simulator data` row. Locked by `large files keeps a du total that skipped unreadable entries` and `large files skips an E5RT total that missed unreadable entries (#1631)` in `tests/clean_user_core.bats`.
- - The fixed rows are measured ahead of the report by a pool of at most four workers under one shared deadline (`_large_prefetch_queue_rows`), and the worktree container search runs beside it; a new fixed row belongs in that list too, or it is measured inline after the pool and adds its full time. `large files queue lists every fixed HOME row the report measures` in `tests/clean_user_core.bats` reads every literal `$HOME` row out of the report source and fails when the queue misses one. The Docker Desktop data row stays queued unconditionally, because whether the report skips it depends on the later `docker system df` probe. That probe runs only on a local engine (`.claude/rules/clean-dev.md`), once, and its row reads `Images 931.5MB, 859.1MB reclaimable`: types and reclaimable figures under 1MB are left out.
-+- The snapshot rows (`check_large_file_candidates`, and `clean_local_snapshots` with its `tmutil status` probe) run no `tmutil` while any volume without the `local` flag is mounted (`mole_network_volume_mounted` in `lib/clean/snapshots.sh`); the rows are then absent, with no skip line. Every tmutil verb opens each mounted volume, and the Mac app raised "access files on a network volume" from its scan with an SMB share mounted and no Full Disk Access (2026-11-10); the CLI's call would be charged to the terminal the same way (not reproduced on the CLI). The table is `/sbin/mount` with no arguments, which reads the cached `getmntinfo(MNT_NOWAIT)` table and touches no volume (the same flags the Mac app reads with `getfsstat(MNT_NOWAIT)`); the options are taken after the LAST ` (` so a mount point holding parentheses parses, and `autofs` trigger nodes (`/System/Volumes/Data/home`) do not count. An unreadable or unparsable table also skips (report-only rows, so skipping costs nothing; the Mac app fails open there). `clean_time_machine_failed_backups` keeps its `tmutil` calls: a network Time Machine destination is itself such a mount, and skipping would stop that cleanup for every NAS-backup user. Tests stub `_mole_mount_table`. Locked by `mole_network_volume_mounted reads the local flag of every mount table entry`, `clean_local_snapshots runs no tmutil while a network share is mounted` and `large files lists snapshots with only local volumes and runs no tmutil beside a network share` in `tests/clean_system_maintenance.bats`.
- - The generic Application Support sweep (`clean_application_support_logs`) skips an app folder whose `SingletonLock` (Chromium and Electron write `<host>-<pid>` there while running) names a live pid or cannot be read, and checks again before each cache folder; it cleared Code Cache and GPUCache under running Docker Desktop, VS Code and T3 Code before. A stale lock left by a crash, and apps with no lock, keep the old behaviour. Locked by `clean_application_support_logs keeps caches of a running Electron app` in `tests/clean_user_core.bats`.
- - Browser signing-clone probes must preserve signal statuses through process checks, metadata, open-handle checks, snapshots, and final guards. A timeout keeps the clone; an interrupt stops later candidates and system cleanup stages. Locked by `tests/browser_clones.bats`, where each snapshot guard has its own case except the two uid ownership checks (a differently owned fixture needs root) and the root-prefix check.
- - **Leaked automation browsers are identified by a `playwright_chromiumdev_profile` browser root with ppid 1, never by the playwright-cli daemon.** The daemon is spawned detached, so ppid 1 is its normal state for the life of an active session; matching it kills a live session. A profile directory is stale only when `pgrep -f` returns exactly 1; any other status is an unknown
-```
-
-**File**: `lib/clean/snapshots.sh` (modified, +38/-0)
-```diff
-@@ -57,3 +57,41 @@ mole_local_snapshot_rows() {
-             "from $(mole_join_names "${owners[@]}"), deleted files keep using space until removed"
-     fi
- }
-+
-+# The kernel's mount table as /sbin/mount prints it. With no arguments it
-+# reads getmntinfo(MNT_NOWAIT), the cached table, and touches no volume.
-+_mole_mount_table() {
-+    run_with_timeout "$MOLE_TIMEOUT_QUICK_DETECT_SEC" /sbin/mount < /dev/null 2> /dev/null
-+}
-+
-+# Every tmutil verb opens each mounted volume as it starts, and macOS charges
-+# that access to the calling process: with a network share mounted and no Full
-+# Disk Access, the Mac app raised "access files on a network volume" from its
-+# scan, and the CLI's call would be charged to the terminal the same way. So
-+# the snapshot rows run no tmutil while a volume without the "local" flag
-+# (SMB, NFS, AFP, WebDAV, a FUSE share) is mounted; an autofs trigger node
-+# such as /System/Volumes/Data/home is no mount of its own. Returns 0 when such
-+# a volume is mounted or the table cannot be read or parsed (the rows are
-+# report-only, so skipping costs nothing), 1 when every entry is local, and a
-+# signal status as is.
-+mole_network_volume_mounted() {
-+    local table="" rc=0
-+    table=$(_mole_mount_table) || rc=$?
-+    if mole_rc_signal "$rc"; then
-+        return "$rc"
++    if [[ $scan_rc -eq 0 ]]; then
++        local item
++        while IFS= read -r -d '' item; do
++            if _mole_clean_section_budget_spent; then
++                scan_rc=1
++                break
++            fi
++            [[ -e "$item" ]] || continue
++            _MOLE_CONTAINER_CACHE_ENTRIES+=("$item")
++        done < "$entries_file"
 +    fi
-+    [[ $rc -eq 0 && -n "$table" ]] || return 0
-+    local line="" options=""
-+    while IFS= read -r line; do
-+        [[ -n "$line" ]] || continue
-+        [[ "$line" == *" ("*")" ]] || return 0
-+        options="${line##* (}"
-+        options="${options%)}"
-+        [[ "${options%%,*}" != "autofs" ]] || continue
-+        case ", $options," in
-+            *", local,"*) continue ;;
-+        esac
-+        return 0
-+    done <<< "$table"
++    if [[ "$owns_entries_file" == true ]]; then
++        rm -f "$entries_file" # SAFE: exact create_temp_file output owned by this scan
++    fi
++    [[ $scan_rc -eq 0 ]] && return 0
++    _MOLE_CONTAINER_CACHE_ENTRIES=()
++    if mole_rc_signal "$scan_rc"; then
++        _mole_record_clean_cancellation "$scan_rc"
++        return "$scan_rc"
++    fi
++    debug_log "Container cache listing incomplete: $dir (status $scan_rc)"
 +    return 1
-+}
-```
-
-**File**: `lib/clean/system.sh` (modified, +5/-0)
-```diff
-@@ -1431,6 +1431,11 @@ clean_local_snapshots() {
-     if ! command -v tmutil > /dev/null 2>&1; then
-         return 0
-     fi
-+    # No tmutil while a network share is mounted (see mole_network_volume_mounted).
-+    local network_mount_rc=0
-+    mole_network_volume_mounted || network_mount_rc=$?
-+    mole_rc_signal "$network_mount_rc" && return "$network_mount_rc"
-+    [[ $network_mount_rc -eq 1 ]] || return 0
-     # The Time Machine row needs Time Machine configured and idle; snapshots
-     # from other backup apps are listed either way (#1916).
-     local include_tm=false
-```
-
-**File**: `lib/clean/user.sh` (modified, +9/-1)
-```diff
-@@ -3665,7 +3665,15 @@ _check_large_file_candidates_body() {
- 
-     _report_large_or_stop "macOS updates cache" "$HOME/Library/Updates" || return $?
- 
--    if [[ "${SYSTEM_CLEAN:-false}" != "true" ]] && command -v tmutil > /dev/null 2>&1; then
-+    local network_mount_rc=0
-+    [[ "${SYSTEM_CLEAN:-false}" == "true" ]] || mole_network_volume_mounted || network_mount_rc=$?
-+    if mole_rc_signal "$network_mount_rc"; then
-+        _mole_record_clean_cancellation "$network_mount_rc"
-+        stop_section_spinner
-+        return "$network_mount_rc"
-+    fi
-+    if [[ "${SYSTEM_CLEAN:-false}" != "true" && $network_mount_rc -eq 1 ]] &&
-+        command -v tmutil > /dev/null 2>&1; then
-         # Snapshots from other backup apps exist without Time Machine (#1916).
-         local snapshot_include_tm=false snapshot_list snapshot_rows=""
-         if defaults read /Library/Preferences/com.apple.TimeMachine AutoBackup 2> /dev/null | grep -qE '^[01]$'; then
-```
-
-**File**: `tests/clean_system_maintenance.bats` (modified, +121/-0)
-```diff
-@@ -601,6 +601,7 @@ EOF
- set -euo pipefail
- source "$PROJECT_ROOT/lib/core/common.sh"
- source "$PROJECT_ROOT/lib/clean/system.sh"
-+_mole_mount_table() { echo "/dev/disk3s1s1 on / (apfs, local, journaled)"; }
- 
- defaults() { echo "1"; }
- 
-@@ -628,6 +629,7 @@ EOF
- set -euo pipefail
- source "$PROJECT_ROOT/lib/core/common.sh"
- source "$PROJECT_ROOT/lib/clean/system.sh"
-+_mole_mount_table() { echo "/dev/disk3s1s1 on / (apfs, local, journaled)"; }
- 
- defaults() { echo "1"; }
- 
-@@ -650,6 +652,7 @@ EOF
- set -euo pipefail
- source "$PROJECT_ROOT/lib/core/common.sh"
- source "$PROJECT_ROOT/lib/clean/system.sh"
-+_mole_mount_table() { echo "/dev/disk3s1s1 on / (apfs, local, journaled)"; }
- 
- defaults() { return 1; }
- run_with_timeout() {
-@@ -682,6 +685,7 @@ EOF
- set -euo pipefail
- source "$PROJECT_ROOT/lib/core/common.sh"
- source "$PROJECT_ROOT/lib/clean/system.sh"
-+_mole_mount_table() { echo "/dev/disk3s1s1 on / (apfs, local, journaled)"; }
- 
- defaults() { echo "1"; }
- run_with_timeout() {
-@@ -708,6 +712,7 @@ EOF
- set -euo pipefail
- source "$PROJECT_ROOT/lib/core/common.sh"
- source "$PROJECT_ROOT/lib/clean/system.sh"
-+_mole_mount_table() { echo "/dev/disk3s1s1 on / (apfs, local, journaled)"; }
- 
- defaults() { echo "1"; }
- run_with_timeout() {
-@@ -736,6 +741,7 @@ EOF
- set -euo pipefail
- source "$PROJECT_ROOT/lib/core/common.sh"
- source "$PROJECT_ROOT/lib/clean/system.sh"
-+_mole_mount_table() { echo "/dev/disk3s1s1 on / (apfs, local, journaled)"; }
- 
- defaults() { echo "1"; }
- run_with_timeout() {
-@@ -762,6 +768,7 @@ EOF
- set -euo pipefail
- source "$PROJECT_ROOT/lib/core/common.sh"
- source "$PROJECT_ROOT/lib/clean/system.sh"
-+_mole_mount_table() { echo "/dev/disk3s1s1 on / (apfs, local, journaled)"; }
- 
- defaults() { echo "1"; }
- run_with_timeout() { echo "UNEXPECTED_LISTING"; }
-@@ -780,6 +787,120 @@ EOF
-     [[ "$output" != *"UNEXPECTED_LISTING"* ]] || { echo "$output"; return 1; }
  }
  
-+@test "mole_network_volume_mounted reads the local flag of every mount table entry" {
-+    run /bin/bash --noprofile --norc << 'EOF'
-+set -euo pipefail
-+source "$PROJECT_ROOT/lib/core/common.sh"
-+source "$PROJECT_ROOT/lib/clean/snapshots.sh"
-+
-+LOCAL_TABLE='/dev/disk3s1s1 on / (apfs, sealed, local, read-only, journaled)
-+devfs on /dev (devfs, local, nobrowse)
-+map auto_home on /System/Volumes/Data/home (autofs, automounted, nobrowse)
-+/dev/disk5s1 on /Volumes/Disk (with) parens (apfs, local, nodev, nosuid, journaled)
-+devices -- file:///Users/me/Library/Containers/x/Data/ on /Users/me/DeviceFS (devicefs, local, nodev, nosuid, noowners, fskit, mounted by me)'
-+verdict() {
-+    local rc=0
-+    mole_network_volume_mounted || rc=$?
-+    echo "$1=$rc"
+-directory_has_entries() {
+-    local dir="$1"
+-    [[ -d "$dir" ]] || return 1
+-
+-    local _nullglob_state
+-    local _dotglob_state
+-    _nullglob_state=$(shopt -p nullglob || true)
+-    _dotglob_state=$(shopt -p dotglob || true)
+-    shopt -s nullglob dotglob
+-
+-    local item
+-    for item in "$dir"/*; do
+-        if [[ -e "$item" ]]; then
+-            # eval: restore shopt state captured by $(shopt -p)
+-            eval "$_nullglob_state"
+-            eval "$_dotglob_state"
+-            return 0
+-        fi
+-    done
++# One scratch file per scan, reused only after its complete contents have been
++# copied into the caller's array. Registering a new temp file per directory
++# exhausted the scan budget even for hundreds of readable, one-file caches.
++_container_cache_scan_finish() {
++    stop_section_spinner
++    if [[ -n "${1:-}" ]]; then
++        rm -f "$1" # SAFE: exact create_temp_file output owned by the calling scan
++    fi
 +}
-+TABLE="$LOCAL_TABLE"
-+TABLE_RC=0
-+_mole_mount_table() { printf '%s\n' "$TABLE"; return "$TABLE_RC"; }
-+verdict local
-+TABLE="$LOCAL_TABLE"$'\n''//me@192.168.1.2/share on /Volumes/share (smbfs, nodev, nosuid, mounted by me)'
-+verdict smb
-+TABLE="$LOCAL_TABLE"$'\n''nas:/export on /Volumes/export (nfs, asynchronous)'
-+verdict nfs
-+TABLE="$LOCAL_TABLE"$'\n''//me@nas/share on /Volumes/share (apfs, local, copy) (smbfs, nodev, nosuid, mounted by me)'
-+verdict smbparen
-+TABLE="something this parser does not know"
-+verdict unknown
-+TABLE=""
-+verdict empty
-+TABLE="$LOCAL_TABLE"
-+TABLE_RC=124
-+verdict timeout
-+TABLE_RC=130
-+verdict signal
-+EOF
+ 
+-    # eval: restore shopt state captured by $(shopt -p)
+-    eval "$_nullglob_state"
+-    eval "$_dotglob_state"
+-    return 1
++# Same wording as the Cloud & Office budget line in bin/clean.sh.
++_container_cache_budget_note() {
++    [[ "$1" == true ]] || return 0
++    echo -e "  ${YELLOW}${ICON_WARNING}${NC} $2 · ${GRAY}time limit reached, skipped remaining items${NC}"
++    note_activity
+ }
+ 
+ # Rendered wallpaper bitmaps the wallpaper agent keeps in its container: one
+@@ -132
+```
+
+**File**: `lib/core/timeouts.sh` (modified, +4/-0)
+```diff
+@@ -66,6 +66,10 @@ readonly MOLE_TIMEOUT_PKG_CLEANUP_SEC="${MOLE_TIMEOUT_PKG_CLEANUP_SEC:-20}"
+ readonly MOLE_TIMEOUT_DISK_VERIFY_SEC="${MOLE_TIMEOUT_DISK_VERIFY_SEC:-30}"
+ readonly MOLE_TIMEOUT_HINT_SCAN_SEC="${MOLE_TIMEOUT_HINT_SCAN_SEC:-15}"
+ readonly MOLE_CLOUD_OFFICE_SECTION_BUDGET_SEC="${MOLE_CLOUD_OFFICE_SECTION_BUDGET_SEC:-300}"
++# Sandbox and Group Container cache sweeps each get their own wall-clock budget.
++# It bounds blocked directory listings (#1973) without cutting short a normal
++# sweep: 800 readable containers took about 14 seconds to offer.
++readonly MOLE_CONTAINER_CACHE_SECTION_BUDGET_SEC="${MOLE_CONTAINER_CACHE_SECTION_BUDGET_SEC:-120}"
+ 
+ # True when a cooperative clean-section wall clock has elapsed (#1513).
+ _mole_clean_section_budget_spent() {
+```
+
+**File**: `tests/clean_container_scan.bats` (added, +312/-0)
+```diff
+@@ -0,0 +1,312 @@
++#!/usr/bin/env bats
 +
-+    [ "$status" -eq 0 ] || { echo "$output"; return 1; }
-+    local expected
-+    for expected in local=1 smb=0 nfs=0 smbparen=0 unknown=0 empty=0 timeout=0 signal=130; do
-+        [[ "$output" == *"$expected"* ]] || { echo "missing $expected"; echo "$output"; return 1; }
-+    done
++load helpers/common
++
++setup_file() {
++    mole_test_setup_home container-scan
 +}
 +
-+@test "clean_local_snapshots runs no tmutil while a network share is mounted" {
-+    run /bin/bash --noprofile --norc << 'EOF'
-+set -euo pipefail
-+source "$PROJECT_ROOT/lib/core/common.sh"
-+source "$PROJECT_ROOT/lib/clean/system.sh"
-+_mole_mount_table() {
-+    printf '%s\n' '/dev/disk3s1s1 on / (apfs, local, journaled)' \
-+        '//me@nas/share on /Volumes/share (smbfs, nodev, nosuid, mounted by me)'
++teardown_file() {
++    mole_test_teardown_home
 +}
 +
-+defaults() { echo "1"; }
-+run_with_timeout() { echo "UNEXPECTED_TMUTIL:$*"; }
-+tmutil() { echo "UNEXPECTED_TMUTIL:$*"; }
-+start_section_spinner(){ echo "SPINNER:$1"; }
-+stop_section_spinner(){ :; }
-+note_activity(){ :; }
-+tm_is_running(){ echo "UNEXPECTED_TM_PROBE"; return 1; }
-+
-+clean_local_snapshots
-+EOF
-+
-+    [ "$status" -eq 0 ] || { echo "$output"; return 1; }
-+    [ -z "$output" ] || { echo "$output"; return 1; }
-+}
-+
-+@test "large files lists snapshots with only local volumes and runs no tmutil beside a network share" {
-+    local review_home="$HOME/large-review-network-share"
-+    mkdir -p "$review_home"
-+
-+    local mounts
-+    for mounts in local share; do
-+        rm -f "$review_home/tmutil.calls"
-+        run env HOME="$review_home" PROJECT_ROOT="$PROJECT_ROOT" MOUNTS="$mounts" \
-+            /bin/bash --noprofile --norc << 'EOF'
++run_container_scan_fixture() {
++    local scope="$1" scan_status="$2" dry_run="$3"
++    local fixture_home
++    fixture_home=$(mktemp -d "$HOME/$scope-$scan_status-$dry_run.XXXXXX")
++    run env HOME="$fixture_home" PROJECT_ROOT="$PROJECT_ROOT" \
++        SCAN_SCOPE="$scope" SCAN_STATUS="$scan_status" DRY_RUN="$dry_run" \
++        LC_ALL=en_US.UTF-8 \
++        MOLE_TEST_NO_AUTH=1 MOLE_CURRENT_COMMAND=clean MOLE_CLEAN_CANCEL_STATUS=0 \
++        MOLE_TIMEOUT_MEDIUM_PROBE_SEC=2 MOLE_TIMEOUT_HINT_SCAN_SEC=0 \
++        MOLE_CONTAINER_CACHE_SECTION_BUDGET_SEC=15 /bin/bash --noprofile --norc <<'EOF'
 +set -euo pipefail
 +source "$PROJECT_ROOT/lib/core/common.sh"
 +source "$PROJECT_ROOT/lib/clean/user.sh"
-+start_section_spinner() { :
++eval "$(declare -f create_temp_file | sed '1s/^create_temp_file/_scan_create_temp_file/')"
++create_temp_file() {
++    local file
++    file=$(_scan_create_temp_file) || return $?
++    printf '%s\0' "$file" >> "$HOME/temp-trace"
++    printf '%s\n' "$file"
++}
++start_section_spinner() { spinner=on; }
++stop_section_spinner() { spinner=off; }
++safe_clean() { :; }
++clean_support_app_data() { :; }
++_clean_wallpaper_renders() { :; }
++clean_handoff_pasteboard_cache() { echo LATER_SECTION; }
++note_activity() { :; }
++should_protect_data() { return 1; }
++is_critical_system_component() { return 1; }
++should_protect_path() { return 1; }
++is_path_whitelisted() { return 1; }
++holds_compiled_model_cache() { return 1; }
++get_path_size_kb() { echo 7; }
++validate_path_for_deletion() { return 0; }
++register_dry_run_cleanup_target() { return 0; }
++record_scan_action() {
++    printf '%s\0' "$1" >> "$HOME/actions"
++    if [[ "$SCAN_SCOPE" == budget && "$1" == "$app_a/payload" ]]; then
++        SECONDS="${_MOLE_CLEAN_SECTION_DEADLINE:-$SECONDS}"
++    fi
++    if [[ "$SCAN_SCOPE" == group-budget && "$1" == "$group_a/payload" ]]; then
++        SECONDS="${_MOLE_CLEAN_SECTION_DEADLINE:-$SECONDS}"
++    fi
++}
++safe_remove() { record_scan_action "$1"; }
++append_dry_run_cleanup_target() { record_scan_action "$1"; }
++record_dry_run_cleanup_target() { record_scan_action "$1"; }
++files_cleaned=0
++total_size_cleaned=0
++total_items=0
++spinner=off
++
++app_root="$HOME/Library/Containers"
++group_root="$HOME/Library/Group Containers"
++app_a="$app_root/com.example.a/Data/Library/Caches"
++app_z="$app_root/com.example.z/Data/Library/Caches"
++group_a="$group_root/group.com.example.a/Library/Caches"
++group_z="$group_root/group.com.example.z/Library/Caches"
++mkdir -p "$app_a" "$app_z" "$group_a" "$group_z"
++touch "$app_a/payload" "$app_a/zlater" "$app_z/.hidden" "$app_z/line
++break" "$group_a/payload" "$group_z/.hidden"
++ln -s "$app_a/payload" "$app_z/link"
++# Root globs used to exclude hidden containers; keep that boundary.
++mkdir -p "$app_root/.hidden-container/Data/Library/Caches"
++touch "$app_root/.hidden-container/Data/Library/Caches/keep"
++touch "$HOME/actions" "$HOME/find-trace" "$HOME/temp-trace"
++if [[ "$SCAN_SCOPE" == safari* ]]; then
++    mkdir -p "$app_root/group.com.example.a"
++    if [[ "$SCAN_SCOPE" == safari-present ]]; then
++        touch "$app_root/group.com.example.a/SafariExtension"
++    fi
++fi
++
++export REAL_FIND="$FIND_BSD" app_root group_root app_a group_a
++cat > "$HOME/find-stub" <<'FIND'
++#!/bin/bash
++printf '%s\0' "$1" >> "$HOME/find-trace"
++blocked=false
++case "$SCAN_SCOPE:$1" in
++    "app-root:$app_root" | "cache:$app_a" | stall*:"$app_a" | \
++        "group-root:$group_root" | "group-cache:$group_a" | \
++        "safari:$app_root/group.com.example.a") blocked=true ;;
++esac
++if [[ "$blocked" == true ]]; then
++    printf 'ENUMERATION_REACHED\n' >> "$HOME/producer-trace"
++    case "$SCAN_SCOPE" in
++        app-root) printf '%s\0' "$app_root/com.example.a" ;;
++        group-root) printf '%s\0' "$group_root/group.com.example.a" ;;
++        *) printf '%s\0' "$1/payload" ;;
++    esac
++    if [[ "$SCAN_SCOPE" == stall* ]]; then
++        echo "$$" > "$HOME/stalled-pid"
++        exec /bin/sleep 20
++    fi
++    exit "$SCAN_STATUS"
++fi
++exec "$REAL_FIND" "$@"
++FIND
++chmod +x "$HOME/find-stub"
++FIND_BSD="$HOME/find-stub"
++case "$SCAN_SCOPE" in
++    stall-perl) MO_TIMEOUT_BIN="" ;;
++    stall-shell) MO_TIMEOUT_BIN=""; MO_TIMEOUT_PERL_BIN="" ;;
++esac
++if [[ "$SCAN_SCOPE" == glob-on ]]; then
++    shopt -s nullglob dotglob
++else
++    shopt -u nullglob dotglob
++fi
++
++rc=0
++clean_app_caches || rc=$?
++printf 'RC=%s CANCEL=%s SPINNER=%s\n' "$rc" "$MOLE_CLEAN_CANCEL_STATUS" "$spinner"
++printf 'ITEMS=%s SIZE=%s\n' "$files_cleaned" "$total_size_cleaned"
++printf 'GLOBS=%s%s\n' "$(shopt -q nullglob && echo N || echo n)" "$(shopt -q dotglob && echo D || echo d)"
++printf 'FINDS=%s\n' "$(tr -dc '\0' < "$HOME/find-trace" | wc -c | tr -d ' ')"
++printf 'TEMP_FILES=%s\n' "$(tr -dc '\0' < "$HOME/temp-trace" | wc -c | tr -d ' ')"
++while IFS= read -r -d '' file; do
++    [[ ! -e "$file" ]] || { ec
 ```
 
-**File**: `tests/clean_user_core.bats` (modified, +2/-0)
+**File**: `tests/clean_user_core.bats` (modified, +0/-88)
 ```diff
-@@ -3939,6 +3939,7 @@ EOF
- set -euo pipefail
- source "$PROJECT_ROOT/lib/core/common.sh"
- source "$PROJECT_ROOT/lib/clean/user.sh"
-+_mole_mount_table() { echo "/dev/disk3s1s1 on / (apfs, local, journaled)"; }
- start_section_spinner() { :; }
+@@ -2018,7 +2018,6 @@ start_section_spinner() { :; }
  stop_section_spinner() { :; }
  note_activity() { :; }
-@@ -3965,6 +3966,7 @@ EOF
+ bytes_to_human() { printf '0B\n'; }
+-directory_has_entries() { return 1; }
+ clean_support_app_data() { :; }
+ safe_clean() {
+     case "${*: -1}" in
+@@ -2412,93 +2411,6 @@ EOF
+     [[ "$output" != *"SHOULD_NOT_SIZE_SCAN"* ]]
+ }
+ 
+-@test "container cache counters run in the caller's shell and restore glob options" {
+-    # Own HOME: earlier cases leave Group Containers fixtures in the shared one,
+-    # and every extra candidate adds a counter call.
+-    local counter_home
+-    counter_home=$(mktemp -d "${BATS_TEST_DIRNAME}/tmp-counter-home.XXXXXX")
+-    run env HOME="$counter_home" PROJECT_ROOT="$PROJECT_ROOT" DRY_RUN=true /bin/bash --noprofile --norc << 'EOF'
+-set -euo pipefail
+-source "$PROJECT_ROOT/lib/core/common.sh"
+-source "$PROJECT_ROOT/lib/clean/user.sh"
+-start_section_spinner() { :; }
+-stop_section_spinner() { :; }
+-bytes_to_human() { echo "0B"; }
+-note_activity() { :; }
+-should_protect_data() { return 1; }
+-should_protect_path() { return 1; }
+-is_path_whitelisted() { return 1; }
+-holds_compiled_model_cache() { return 1; }
+-_mole_user_cache_owner_process_state() { return 1; }
+-_MOLE_COMPLETE_LSOF_MODE=direct
+-lsof() { return 1; }
+-run_with_timeout() { shift; "$@"; }
+-get_path_size_kb() { printf '7\n'; }
+-record_dry_run_cleanup_target() { return 0; }
+-files_cleaned=0
+-total_size_cleaned=0
+-total_items=0
+-
+-# A call made through $(...) increments this counter in a subshell, so the
+-# owning shell sees zero: the count only survives a direct call.
+-eval "$(declare -f cache_top_level_entry_count_capped | sed '1s/^cache_top_level_entry_count_capped/_counted_entry_count_capped/')"
+-COUNTER_CALLS=0
+-cache_top_level_entry_count_capped() {
+-    COUNTER_CALLS=$((COUNTER_CALLS + 1))
+-    _counted_entry_count_capped "$@"
+-}
+-
+-probe="$HOME/counter-probe"
+-mkdir -p "$probe"
+-touch "$probe/.hidden" "$probe/a" "$probe/b"
+-shopt -u nullglob dotglob
+-cache_top_level_entry_count_capped "$probe" 101
+-printf 'DIRECT_COUNT=%s\n' "$CACHE_TOP_LEVEL_ENTRY_COUNT"
+-cache_top_level_entry_count_capped "$probe" 2
+-printf 'CAPPED_COUNT=%s\n' "$CACHE_TOP_LEVEL_ENTRY_COUNT"
+-printf 'OFF_AFTER=%s%s\n' "$(shopt -q nullglob && echo N || echo n)" "$(shopt -q dotglob && echo D || echo d)"
+-shopt -s nullglob dotglob
+-cache_top_level_entry_count_capped "$probe" 101
+-printf 'ON_AFTER=%s%s\n' "$(shopt -q nullglob && echo N || echo n)" "$(shopt -q dotglob && echo D || echo d)"
+-shopt -u nullglob dotglob
+-COUNTER_CALLS=0
+-
+-container="$HOME/Library/Containers/com.example.counter"
+-mkdir -p "$container/Data/Library/Caches/one"
+-touch "$container/Data/Library/Caches/one/data.tmp"
+-total_size=0
+-total_size_partial=false
+-cleaned_count=0
+-found_any=false
+-precise_size_limit=64
+-precise_size_used=0
+-process_container_cache "$container"
+-printf 'CONTAINER_CALLS=%s\n' "$COUNTER_CALLS"
+-
+-mkdir -p "$HOME/Library/Group Containers/group.com.example.counter/Library/Caches"
+-for i in $(seq 1 101); do
+-    touch "$HOME/Library/Group Containers/group.com.example.counter/Library/Caches/file-$i.tmp"
+-done
+-clean_group_container_caches
+-printf 'TOTAL_CALLS=%s\n' "$COUNTER_CALLS"
+-printf 'GLOBS_AFTER=%s%s\n' "$(shopt -q nullglob && echo N || echo n)" "$(shopt -q dotglob && echo D || echo d)"
+-EOF
+-
+-    rm -rf "$counter_home" # SAFE: this test's own mktemp HOME
+-    [ "$status" -eq 0 ] || {
+-        echo "$output"
+-        return 1
+-    }
+-    [[ "$output" == *"DIRECT_COUNT=3"* ]] || return 1
+-    [[ "$output" == *"CAPPED_COUNT=2"* ]] || return 1
+-    [[ "$output" == *"OFF_AFTER=nd"* ]] || return 1
+-    [[ "$output" == *"ON_AFTER=ND"* ]] || return 1
+-    [[ "$output" == *"CONTAINER_CALLS=1"* ]] || return 1
+-    [[ "$output" == *"Group Containers logs/caches"* ]] || return 1
+-    [[ "$output" == *"TOTAL_CALLS=2"* ]] || return 1
+-    [[ "$output" == *"GLOBS_AFTER=nd"* ]]
+-}
+-
+ @test "clean_finder_metadata respects protection flag" {
+     run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" PROTECT_FINDER_METADATA=true /bin/bash --noprofile --norc << 'EOF'
  set -euo pipefail
- source "$PROJECT_ROOT/lib/core/common.sh"
- source "$PROJECT_ROOT/lib/clean/user.sh"
-+_mole_mount_table() { echo "/dev/disk3s1s1 on / (apfs, local, journaled)"; }
- start_section_spinner() { :; }
- stop_section_spinner() { :; }
- note_activity() { :; }
 ```
 
 ---
 
-### Incident Patch 3: `f5b4bba3` (2026-11-11)
-**Commit Message**: fix(optimize): read and write Spotlight rules in com.apple.Spotlight
+### Incident Patch 2: `830f5e68` (2026-11-14)
+**Commit Message**: fix(clean): protect Claude Code transcripts, file history and prompt history
 
-The orphan-rule task asked defaults for com.apple.spotlight. cfprefsd keys
-domains by the exact string even on a case-insensitive volume, so while
-Spotlight holds com.apple.Spotlight the lowercase read finds no
-EnabledPreferenceRules and the task reports the rules clean while orphans
-remain, and a lowercase write reaches the shared plist but never Spotlight.
-The Mac app fixed the same defect on 2026-11-10.
+V1.36.3 ran safe_find_delete on ~/.claude/projects with the 7-day log age
+and removed whole transcript folders with rm -rf (a2a0421e). V1.37.0 dropped
+that rule (32bfb5b9), but nothing protected the folder afterwards, so the
+next rule written the same way would delete them again. Codex sessions and
+the Windows CLI already have this protection.
 
-Measured on this Mac (case-insensitive APFS) with a throwaway domain held
-open by a long-lived NSUserDefaults client: a read in the other case
-returned "Could not find key" for a value the client had written (twice);
-a write in the other case updated the one shared file while the client kept
-its old value; an exact-case write reached the client within a second. With
-no live client both spellings agree, which is why it went unnoticed. The
-domain, its plist path and every defaults read, write and delete now use
-Spotlight's own case.
+should_protect_path now covers ~/.claude/projects, ~/.claude/file-history,
+~/.claude/history.jsonl and the exact ~/.claude root, so a sweep one level
+up cannot take them either. Character classes match the case-insensitive
+APFS spellings, and the root compares against HOME without a trailing
+slash. Other ~/.claude children, such as the worktrees purge scans, stay
+reachable. No current cleanup rule touches these paths, so nothing users
+see changes. Recorded as I-73 in docs/incidents.md.
 
-Verified: the new test fails on the old code (read and write go to
-com.apple.spotlight) and passes now; optimize.bats Spotlight tests pass;
-check.sh --no-format passes;
-full ./scrip
+Verified: both new tests fail on the old code, and again when only the
+root rule, only the case classes or only the HOME slash handling is
+removed; check.sh --no-format passes; the full suite passes (2523 tests,
+0 failures). A separate safety review found the root, case and HOME sla
 
-**File**: `.claude/rules/optimize.md` (modified, +1/-0)
+**File**: `docs/incidents.md` (modified, +1/-0)
 ```diff
-@@ -12,6 +12,7 @@ paths:
- - Preference repair and optimize cleanup must skip protected and whitelisted plists before attempting removal.
- - Broken-preference repair lints through `/usr/bin/plutil` (`_mole_plutil_lint`), never a PATH-provided `plutil`, and an unreadable preference file is unknown, not corrupt: retain it with a `SKIPPED` reason instead of removing it. Locked by `fix_broken_preferences keeps an unreadable plist and still removes a readable broken one` and `fix_broken_preferences keeps valid plists when a broken plutil shadows the system one` in `tests/optimize.bats`.
- - Spotlight orphan-rule optimization must parse a complete typed snapshot before resolving apps and recheck the snapshot immediately before writing. A failed indexed plist read is not evidence that the array ended. Locked by `tests/optimize.bats`.
-+- Spotlight's preferences domain is `com.apple.Spotlight`, spelled exactly, for every `defaults` read, write and delete and for the plist path. cfprefsd keys domains by the exact string even on a case-insensitive volume: measured 2026-11-11 with a throwaway domain held open by a long-lived NSUserDefaults client, a read in the other case found no key the client had written, and a write in the other case reached the shared file but never the client, while the exact case reached it within a second. The lowercase spelling made the gate report the rules clean while Spotlight held them, the same defect Mole Mac fixed on 2026-11-10. Locked by `Spotlight rules are read and written in the domain Spotlight itself uses`. Open: the snapshot reads the plist file, which can lag what cfprefsd holds (the file read `<dict/>` while the client's value sat in cfprefsd); `defaults export com.apple.Spotlight -` would read the live domain.
- - The CoreDuet WAL/SHM rule is a Critical Safety Rule in `AGENTS.md`.
- - Notification database cleanup refreshes only `gui/$UID/com.apple.notificationcenterui.agent` through the fixed `/bin/launchctl kill SIGTERM` command, bounded by the existing medium timeout. The system plist `/System/Library/LaunchAgents/com.apple.notificationcenterui.plist` names that service and its `/System/Library/CoreServices/NotificationCenter.app` executable. Never use `killall NotificationCenter` or a path-check-then-PID-kill fallback: a same-named third-party process matches the former, and PID reuse remains between the latter's check and signal. launchd owns the service instance; missing, stopped or refused services do not undo successful SQL cleanup. Dry runs send no signal. Locked by `notification refresh targets only its current-user launchd service`, `notification refresh never falls back to name killing after launchd refusal` and `notification cleanup dry run never refreshes the service` in `tests/optimize_db.bats`.
- - DNS refresh likewise signals a launchd service, never `sudo killall -HUP mDNSResponder`. Read `Label` only from `/System/Library/LaunchDaemons/com.apple.mDNSResponder.plist` through `/usr/bin/plutil`, accept only `com.apple.mDNSResponder` or `com.apple.mDNSResponder.reloaded` (the latter is the live label on macOS 26), then retain sudo for `launchctl kill SIGHUP system/<label>`. An unreadable or unrecognized label fails before either cache mutation. macOS 27 refuses `launchctl kill` on this service to every caller, root included (`Not privileged to signal service.`, #1867): after that one launchctl message, and only then, Mole retries once as the service account, `sudo -u _mdnsresponder /usr/bin/killall -u _mdnsresponder -HUP mDNSResponder` (proposed and verified on 27.2 in #1867): the kernel lets that account signal only processes it owns, and `-u` narrows the match to them, so a same-named process elsewhere cannot be reached, which is what ruled out root `killall` and the PID route, both still never used. If that retry also fails the task is skipped with its reason, not failed; any other launchctl failure stays a failure with no retry. VPN, dry-run and authorization gates remain before the plist read. Locked by the four `DNS refresh` service-target/refusal/retry tests in `tests/optimize.bats`.
+@@ -107,3 +107,4 @@ when it was confirmed by reading the history, otherwise `unknown`.
+ | I-70 | 2026-11-12 | `mo analyze` kept at most one Spotlight large-file result: `strings.Lines` leaves the newline on each line, so every path but the last failed `os.Lstat` and Spotlight could never replace the walk's list | 158af1e1 | 5487a011 | unit | `TestSpotlightKeepsEveryOutputLine` |
+ | I-71 | 2026-11-10 | `mo clean --dry-run` sat for many minutes in the sandbox cache step: every container's caches were listed with a shell glob and per-entry probes under no time limit, so a slow or very large container held the whole clean section (#1973) | unknown | 2dd073d2 | review | `failed container enumerations discard partial candidates and continue (#1973)`, `a blocked container listing is stopped by the real timeout wrapper (#1973)` |
+ | I-72 | 2026-11-12 | `mo clean` discarded every project-cache match from an otherwise readable CloudStorage root when Google Drive's internal `.tmp` directory returned Permission denied (#1988) | unknown | 601471d7 | unit | `scan_project_cache_root prunes provider temp folders but keeps readable CloudStorage projects (#1988)`, `scan_project_cache_root still discards results for other unreadable CloudStorage folders (#1988)` |
++| I-73 | 2026-11-14 | `mo clean` in V1.36.3 removed every `~/.claude/projects` folder (and `file-history` entry) idle for 7 days with `rm -rf`, treating Claude Code transcripts as logs; V1.37.0 dropped the rule, but nothing protected the folder afterwards | a2a0421e | 32bfb5b9 | review | `should_protect_path protects Claude Code transcripts, file history and prompt history`, `the V1.36.3 aged sweep of ~/.claude/projects keeps every transcript folder` |
 ```
 
-**File**: `lib/optimize/tasks.sh` (modified, +5/-2)
+**File**: `lib/core/app_protection.sh` (modified, +15/-0)
 ```diff
-@@ -978,11 +978,14 @@ opt_spotlight_index_optimize() {
- 
- # Remove orphaned Spotlight search-rule entries.
- # Uninstalling an app (especially Mac App Store apps that synced via iCloud)
--# can leave its bundle id behind in com.apple.spotlight EnabledPreferenceRules,
-+# can leave its bundle id behind in com.apple.Spotlight EnabledPreferenceRules,
- # showing up as a dead row in System Settings > Spotlight (#1000). macOS never
- # prunes these, so we drop entries whose app is no longer installed.
-+# The domain is spelled in Spotlight's own case: cfprefsd keys domains by the
-+# exact string, so while Spotlight holds com.apple.Spotlight a lowercase read
-+# finds no rules and a lowercase write reaches the file but never Spotlight.
- opt_prune_spotlight_orphan_rules() {
--    local domain="com.apple.spotlight"
-+    local domain="com.apple.Spotlight"
-     local plist="$HOME/Library/Preferences/${domain}.plist"
- 
-     if ! defaults read "$domain" EnabledPreferenceRules &> /dev/null; then
+@@ -557,6 +557,21 @@ should_protect_path() {
+             */.codex/cache/codex_app_directory | */.codex/cache/codex_app_directory/*)
+             return 0
+             ;;
++        # Claude Code keeps every conversation transcript, its file snapshots
++        # and the prompt history under ~/.claude. V1.36.3 aged out whole
++        # ~/.claude/projects folders as if they were logs; nothing there is
++        # rebuildable. Same three entries the Windows CLI protects, plus the
++        # exact ~/.claude root so a delete one level up cannot take them along;
++        # its other children (~/.claude/worktrees for purge) stay reachable.
++        # Character classes cover the case-insensitive APFS spellings.
++        "${HOME%/}"/.[Cc][Ll][Aa][Uu][Dd][Ee] | "${HOME%/}"/.[Cc][Ll][Aa][Uu][Dd][Ee]/ | \
++            */.[Cc][Ll][Aa][Uu][Dd][Ee]/[Pp][Rr][Oo][Jj][Ee][Cc][Tt][Ss] | \
++            */.[Cc][Ll][Aa][Uu][Dd][Ee]/[Pp][Rr][Oo][Jj][Ee][Cc][Tt][Ss]/* | \
++            */.[Cc][Ll][Aa][Uu][Dd][Ee]/[Ff][Ii][Ll][Ee]-[Hh][Ii][Ss][Tt][Oo][Rr][Yy] | \
++            */.[Cc][Ll][Aa][Uu][Dd][Ee]/[Ff][Ii][Ll][Ee]-[Hh][Ii][Ss][Tt][Oo][Rr][Yy]/* | \
++            */.[Cc][Ll][Aa][Uu][Dd][Ee]/[Hh][Ii][Ss][Tt][Oo][Rr][Yy].[Jj][Ss][Oo][Nn][Ll])
++            return 0
++            ;;
+         # Bluetooth and WiFi configurations
+         */ByHost/com.apple.bluetooth.* | */ByHost/com.apple.wifi.*)
+             return 0
 ```
 
-**File**: `tests/optimize.bats` (modified, +41/-7)
+**File**: `tests/core_common.bats` (modified, +29/-0)
 ```diff
-@@ -1017,7 +1017,7 @@ EOF
- set -euo pipefail
- source "$PROJECT_ROOT/lib/core/common.sh"
- source "$PROJECT_ROOT/lib/optimize/tasks.sh"
--PLIST="$HOME/Library/Preferences/com.apple.spotlight.plist"
-+PLIST="$HOME/Library/Preferences/com.apple.Spotlight.plist"
- mkdir -p "$(dirname "$PLIST")"
- rm -f "$PLIST"
- /usr/libexec/PlistBuddy \
-@@ -1054,7 +1054,7 @@ EOF
- set -euo pipefail
- source "$PROJECT_ROOT/lib/core/common.sh"
- source "$PROJECT_ROOT/lib/optimize/tasks.sh"
--PLIST="$HOME/Library/Preferences/com.apple.spotlight.plist"
-+PLIST="$HOME/Library/Preferences/com.apple.Spotlight.plist"
- mkdir -p "$(dirname "$PLIST")"
- rm -f "$PLIST"
- /usr/libexec/PlistBuddy \
-@@ -1094,7 +1094,7 @@ EOF
- set -euo pipefail
- source "$PROJECT_ROOT/lib/core/common.sh"
- source "$PROJECT_ROOT/lib/optimize/tasks.sh"
--PLIST="$HOME/Library/Preferences/com.apple.spotlight.plist"
-+PLIST="$HOME/Library/Preferences/com.apple.Spotlight.plist"
- mkdir -p "$(dirname "$PLIST")"
- rm -f "$PLIST"
- /usr/libexec/PlistBuddy \
-@@ -1123,7 +1123,7 @@ EOF
- set -euo pipefail
- source "$PROJECT_ROOT/lib/core/common.sh"
- source "$PROJECT_ROOT/lib/optimize/tasks.sh"
--PLIST="$HOME/Library/Preferences/com.apple.spotlight.plist"
-+PLIST="$HOME/Library/Preferences/com.apple.Spotlight.plist"
- mkdir -p "$(dirname "$PLIST")"
- rm -f "$PLIST"
- /usr/libexec/PlistBuddy \
-@@ -1152,7 +1152,7 @@ EOF
- set -euo pipefail
- source "$PROJECT_ROOT/lib/core/common.sh"
- source "$PROJECT_ROOT/lib/optimize/tasks.sh"
--PLIST="$HOME/Library/Preferences/com.apple.spotlight.plist"
-+PLIST="$HOME/Library/Preferences/com.apple.Spotlight.plist"
- mkdir -p "$(dirname "$PLIST")"
- rm -f "$PLIST"
- /usr/libexec/PlistBuddy \
-@@ -1182,7 +1182,7 @@ EOF
- set -euo pipefail
- source "$PROJECT_ROOT/lib/core/common.sh"
- source "$PROJECT_ROOT/lib/optimize/tasks.sh"
--PLIST="$HOME/Library/Preferences/com.apple.spotlight.plist"
-+PLIST="$HOME/Library/Preferences/com.apple.Spotlight.plist"
- mkdir -p "${PLIST%/*}"
- printf '%s' '<plist version="1.0"><dict><key>EnabledPreferenceRules</key><array><string>com.missing.App</string><string>com.apple.Safari</string></array></dict></plist>' > "$PLIST"
- defaults() { case "$1" in read) return 0;; *) echo "UNEXPECTED_WRITE $*";; esac; }
-@@ -1207,7 +1207,7 @@ EOF
- set -euo pipefail
- source "$PROJECT_ROOT/lib/core/common.sh"
- source "$PROJECT_ROOT/lib/optimize/tasks.sh"
--PLIST="$HOME/Library/Preferences/com.apple.spotlight.plist"
-+PLIST="$HOME/Library/Preferences/com.apple.Spotlight.plist"
- mkdir -p "${PLIST%/*}"
- printf '%s' '<plist version="1.0"><dict><key>EnabledPreferenceRules</key><array><string>com.missing.App</string><dict><key>protected</key><true/></dict></array></dict></plist>' > "$PLIST"
- defaults() { case "$1" in read) return 0;; *) echo "UNEXPECTED_WRITE $*";; esac; }
-@@ -1218,6 +1218,40 @@ EOF
-     [[ "$output" != *"UNEXPECTED_WRITE"* ]] || return 1
+@@ -978,6 +978,35 @@ EOF2
+     done
  }
  
-+@test "Spotlight rules are read and written in the domain Spotlight itself uses" {
-+	# cfprefsd keys domains by exact string: while Spotlight holds
-+	# com.apple.Spotlight, com.apple.spotlight reads no rules and a write to it
-+	# never reaches Spotlight, even on a case-insensitive volume.
-+	for keep in some none; do
-+		run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" KEEP="$keep" /bin/bash --noprofile --norc <<'EOF'
-+set -euo pipefail
-+source "$PROJECT_ROOT/lib/core/common.sh"
-+source "$PROJECT_ROOT/lib/optimize/tasks.sh"
-+PLIST="$HOME/Library/Preferences/com.apple.Spotlight.plist"
-+mkdir -p "${PLIST%/*}"
-+rm -f "$PLIST"
-+/usr/libexec/PlistBuddy -c "Add :EnabledPreferenceRules array" "$PLIST" >/dev/null 2>&1
-+[[ "$KEEP" == none ]] || /usr/libexec/PlistBuddy -c "Add :EnabledPreferenceRules:0 string System.iphoneApps" "$PLIST" >/dev/null 2>&1
-+/usr/libexec/PlistBuddy -c "Add :EnabledPreferenceRules: string com.gone.App" "$PLIST" >/dev/null 2>&1
-+: > "$HOME/defaults-calls"
-+# Recorded in a file: the read's output goes to /dev/null.
-+defaults() { echo "DEFAULTS_DOMAIN: $1 $2" >> "$HOME/defaults-calls"; }
-+bundle_has_installed_app() { return 1; }
-+execute_optimization spotlight_orphan_rules_cleanup
-+cat "$HOME/defaults-calls"
-+EOF
-+		[ "$status" -eq 0 ] || { echo "$output"; return 1; }
-+		[[ "$output" == *"Removed 1 orphan"* ]] || { echo "$output"; return 1; }
-+		[[ "$output" == *"DEFAULTS_DOMAIN: read com.apple.Spotlight"* ]] || { echo "$output"; return 1; }
-+		if [[ "$keep" == none ]]; then
-+			[[ "$output" == *"DEFAULTS_DOMAIN: delete com.apple.Spotlight"* ]] || { echo "$output"; return 1; }
-+		else
-+			[[ "$output" == *"DEFAULTS_DOMAIN: write com.apple.Spotlight"* ]] || { echo "$output"; return 1; }
-+		fi
-+		[[ "$output" != *"com.apple.spotlight"* ]] || { echo "$output"; return 1; }
-+	done
++@test "should_protect_path protects Claude Code transcripts, file history and prompt history" {
++    for claude_state_path in \
++        "$HOME/.claude/projects" \
++        "$HOME/.claude/projects/-Users-me-app" \
++        "$HOME/.claude/projects/-Users-me-app/0b6c9f0e-1111-4222-8333-944455556666.jsonl" \
++        "$HOME/.claude/file-history" \
++        "$HOME/.claude/file-history/0b6c9f0e-1111-4222-8333-944455556666/1" \
++        "$HOME/.claude/history.jsonl" \
++        "$HOME/.claude" \
++        "$HOME/.Claude/projects/-Users-me-app" \
++        "$HOME/.CLAUDE/History.jsonl"; do
++        result=$(HOME="$HOME" TARGET_PATH="$claude_state_path" /bin/bash --noprofile --norc -c 'source "$PROJECT_ROOT/lib/core/common.sh"; should_protect_path "$TARGET_PATH" && echo "protected" || echo "not-protected"')
++        [ "$result" = "protected" ] || { echo "not protected: $claude_state_path"; return 1; }
++    done
++
++    # A HOME set with a trailing slash still names the same root.
++    local root_path="$HOME/.claude"
++    result=$(HOME="$HOME/" TARGET_PATH="$root_path" /bin/bash --noprofile --norc -c 'source "$PROJECT_ROOT/lib/core/common.sh"; should_protect_path "$TARGET_PATH" && echo "protected" || echo "not-protected"')
++    [ "$result" = "protected" ] || { echo "root not protected with HOME ending in /"; return 1; }
++
++    # A prefix sibling is not the transcript folder, and the root's other
++    # children (purge's worktree container) stay reachable.
++    local sibling_path
++    for sibling_path in "$HOME/.claude/projects-old" "$HOME/.claude/worktrees/feature"; do
++        result=$(HOME="$HOME" TARGET_PATH="$sibling_path" /bin/bash --noprofile --norc -c 'source "$PROJECT_ROOT/lib/core/common.sh"; should_protect_path "$TARGET_PATH" && echo "protected" || echo "not-protected"')
++        [ "$result" = "not-protected" ] || { echo "protected: $sibling_path"; return 1; }
++    done
 +}
 +
- @test "opt_spotlight_index_optimize reports optimal when probes are fast" {
- 	run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" /bin/bash --noprofile --norc <<'EOF'
- set -euo pipefail
+ @test "should_protect_data covers Raycast wildcard variants" {
+     for id in com.raycast.macos com.raycast.shared com.raycast.macos.BrowserExtension com.raycast-x.macos; do
+         result=$(HOME="$HOME" /bin/bash --noprofile --norc -c "source '$PROJECT_ROOT/lib/core/common.sh'; should_protect_data '$id' && echo 'protected' || echo 'not-protected'")
+```
+
+**File**: `tests/core_safe_functions.bats` (modified, +25/-0)
+```diff
+@@ -1970,6 +1970,31 @@ SCRIPT
+     [ -f "$target_dir/file2.log" ] || return 1
+ }
+ 
++@test "the V1.36.3 aged sweep of ~/.claude/projects keeps every transcript folder" {
++    local projects="$HOME/.claude/projects"
++    local control="$TEST_DIR/aged-control"
++    mkdir -p "$projects/-Users-me-app" "$projects/-Users-me-old" "$control/old-dir"
++    touch "$projects/-Users-me-app/0b6c9f0e-1111-4222-8333-944455556666.jsonl"
++    touch -t 202601010000 "$projects/-Users-me-old" "$projects/-Users-me-app" "$control/old-dir"
++
++    # The exact call V1.36.3 shipped in clean_dev_misc, beside a control
++    # folder of the same age that ordinary policy does remove.
++    run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" PROJECTS="$projects" CONTROL="$control" /bin/bash --noprofile --norc <<'SCRIPT'
++set -euo pipefail
++source "$PROJECT_ROOT/lib/core/common.sh"
++safe_find_delete "$PROJECTS" "*" 7 d || printf 'RC=%s\n' "$?"
++safe_find_delete "$CONTROL" "*" 7 d || printf 'RC=%s\n' "$?"
++# The same sweep one level up, aimed at an aged ~/.claude itself.
++touch -t 202601010000 "$HOME/.claude"
++safe_find_delete "$HOME" ".claude" 7 d || printf 'RC=%s\n' "$?"
++SCRIPT
++
++    [ "$status" -eq 0 ] || { echo "$output"; return 1; }
++    [ ! -d "$control/old-dir" ] || { echo "control folder survived: $output"; return 1; }
++    [ -d "$projects/-Users-me-old" ] || return 1
++    [ -f "$projects/-Users-me-app/0b6c9f0e-1111-4222-8333-944455556666.jsonl" ]
++}
++
+ @test "safe_sudo_find_delete dry run records targets once and tracks count (#1865)" {
+     local target_dir="$TEST_DIR/sudo-find-dry-run-once"
+     mkdir -p "$target_dir"
+```
+
+---
+
+### Incident Patch 3: `022bdf42` (2026-11-15)
+**Commit Message**: fix(clean): skip only Clang cache on DARWIN_USER_CACHE_DIR timeout (#2006)
+
+When mole_darwin_user_cache_root timed out resolving DARWIN_USER_CACHE_DIR (exit 124), clean_clang_module_cache returned 124 via mole_rc_timeout_or_signal, causing _run_developer_cleanup_step to record a clean cancellation and abort remaining mo clean steps even though nothing had been modified.
+
+Match clean_dev_go and lib/core/app_protection.sh by skipping only clean_clang_module_cache on timeout (returning 0 with a debug log message), while keeping real OS signals sticky via mole_rc_signal and explicit propagation from clean_dev_other_langs.
+
+**File**: `lib/clean/dev.sh` (modified, +6/-2)
+```diff
+@@ -918,7 +918,11 @@ clean_clang_module_cache() {
+     local resolver_rc=0
+     darwin_user_cache=$(mole_darwin_user_cache_root) || resolver_rc=$?
+     if [[ $resolver_rc -ne 0 ]]; then
+-        mole_rc_timeout_or_signal "$resolver_rc" && return "$resolver_rc"
++        if mole_rc_timeout "$resolver_rc"; then
++            debug_log "Skipping Clang module cache: DARWIN_USER_CACHE_DIR lookup timed out"
++            return 0
++        fi
++        mole_rc_signal "$resolver_rc" && return "$resolver_rc"
+         return 0
+     fi
+ 
+@@ -4419,7 +4423,7 @@ clean_dev_other_langs() {
+     # DENO_DIR mixes remote imports with origin storage and downloaded runtime
+     # payloads. The owner clean command resets the whole root, so Mole keeps it
+     # review-only and the generic user-cache sweep excludes it as well.
+-    clean_clang_module_cache
++    clean_clang_module_cache || return $?
+ }
+ # CI/CD and DevOps caches.
+ clean_dev_cicd() {
+```
+
+**File**: `tests/clean_dev_caches.bats` (modified, +55/-0)
+```diff
+@@ -2896,6 +2896,61 @@ EOF
+     [ -d "$outside_root/private-data" ]
+ }
+ 
++@test "clean_clang_module_cache skips only Clang cleanup on resolver timeout and keeps a signal sticky" {
++    local darwin_cache="$HOME/clang-resolver-cache"
++    local trace="$HOME/clang-resolver.trace"
++    mkdir -p "$darwin_cache/clang/module-cache"
++
++    run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" \
++        DARWIN_CACHE="$darwin_cache" CLANG_TRACE="$trace" \
++        /bin/bash --noprofile --norc <<'EOF'
++set -euo pipefail
++source "$PROJECT_ROOT/lib/core/common.sh"
++source "$PROJECT_ROOT/lib/clean/dev.sh"
++DRY_RUN=false
++MOLE_CURRENT_COMMAND=clean
++clang_module_cache_process_state() { return 1; }
++note_activity() { :; }
++later_step() { LATER=ran; }
++safe_clean() {
++    local description="${!#}"
++    if [[ "$description" == "Clang module cache" ]]; then
++        printf 'CLEAN:%s\n' "$1" >> "$CLANG_TRACE"
++    fi
++    return 0
++}
++run_with_timeout() {
++    shift
++    if [[ "${1:-}" == "/usr/bin/getconf" && "${2:-}" == "DARWIN_USER_CACHE_DIR" ]]; then
++        [[ "$RESOLVER_FAIL_RC" -eq 0 ]] || return "$RESOLVER_FAIL_RC"
++        printf '%s\n' "$DARWIN_CACHE"
++        return 0
++    fi
++    return 0
++}
++
++for RESOLVER_FAIL_RC in 0 124 1 130 143; do
++    MOLE_CLEAN_CANCEL_STATUS=0
++    : > "$CLANG_TRACE"
++    rc=0
++    _run_developer_cleanup_step clean_dev_other_langs || rc=$?
++    LATER=skipped
++    _run_developer_cleanup_step later_step || true
++    cleans=$(wc -l < "$CLANG_TRACE" | tr -d ' ')
++    printf 'RC_IN=%s RC=%s CANCEL=%s LATER=%s CLEANS=%s\n' \
++        "$RESOLVER_FAIL_RC" "$rc" "$MOLE_CLEAN_CANCEL_STATUS" "$LATER" "$cleans"
++done
++EOF
++
++    [ "$status" -eq 0 ] || { echo "$output"; return 1; }
++    [[ "$output" == *"RC_IN=0 RC=0 CANCEL=0 LATER=ran CLEANS=1"* ]] || { echo "$output"; return 1; }
++    [[ "$output" == *"RC_IN=124 RC=0 CANCEL=0 LATER=ran CLEANS=0"* ]] || { echo "$output"; return 1; }
++    [[ "$output" == *"RC_IN=1 RC=0 CANCEL=0 LATER=ran CLEANS=0"* ]] || { echo "$output"; return 1; }
++    [[ "$output" == *"RC_IN=130 RC=130 CANCEL=130 LATER=skipped CLEANS=0"* ]] || { echo "$output"; return 1; }
++    [[ "$output" == *"RC_IN=143 RC=143 CANCEL=143 LATER=skipped CLEANS=0"* ]] || { echo "$output"; return 1; }
++    rm -rf "$darwin_cache" "$trace" # SAFE: test fixture paths under the temporary HOME
++}
++
+ @test "clean_dev_rust honors CARGO_HOME and RUSTUP_HOME when absolute" {
+     # mise and friends relocate cargo/rustup via env; hardcoded ~/.cargo misses
+     # the live cache (issue #1378). Scope stays redundant download copies only.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1968** (2026-11-10): fix(status): read Bluetooth connection state from the group headers (@viniciusdsandrade)
-- **PR #1966** (2026-11-10): fix(clean): continue external cleanup when metadata file sizing fails (@viniciusdsandrade)
-- **PR #1964** (2026-11-10): fix(status): read the memory pressure level from the kernel (@viniciusdsandrade)
-- **PR #1958** (2026-11-09): fix(purge): protect artifacts with open files or active build processes (@baryon)
-- **PR #1955** (2026-11-09): fix(purge): decompose packaged SwiftPM scratch dirs into build outputs (@baryon)
-- **PR #1954** (closed): fix(purge): use default paths for empty or comment-only configuration (@viniciusdsandrade)
+- **PR #2009** (2026-11-15): test(purge): decouple depth coverage from short deadlines (@r266-tech)
+- **PR #2008** (2026-11-15): fix(completion): fix Fish completion subcommand arguments (@viniciusdsandrade)
+- **PR #2006** (2026-11-15): fix(clean): skip only Clang cache on DARWIN_USER_CACHE_DIR timeout (@viniciusdsandrade)
+- **PR #1999** (2026-11-15): perf(clean): ask a running browser before sizing its Caches root (@sebastianbreguel)
+- **PR #1996** (2026-11-15): fix(analyze): keep cursor on visible rows and skip only hidden empty entries (@viniciusdsandrade)
+- **PR #1993** (2026-11-15): fix(update): preserve nightly SHAs from large responses (@r266-tech)
 
 ---
 
@@ -2555,45 +2640,93 @@ full ./scrip
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. clean): prove a LaunchAgent path missing by ENOENT, not by test -e
+## X. clean): bound container cache enumeration
 
 **RULE**:
-When implementing operations in `lib/clean/apps.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tw93/Mole. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `lib/clean/user.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tw93/Mole. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `77aa5a28`: clean): prove a LaunchAgent path missing by ENOENT, not by test -e. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2dd073d2`: clean): bound container cache enumeration. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Shell data structures, boundary deserialization, API parsing, or resource lifecycles matching `lib/clean/apps.sh`.
+Subsystems managing Shell data structures, boundary deserialization, API parsing, or resource lifecycles matching `lib/clean/user.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```shell
 // Verified production-grade fix pattern:
-    # [[ -e ]] reads a denied lookup (a TCC or sandbox EPERM) as missing, so
-    # absence is proven by the errno itself. BSD stat is in every macOS base
-    # system (perl is a deprecated runtime) and reports through strerror, fixed
-    # English under LC_ALL=C; only ENOENT counts. The timeout keeps a stale NFS
-    # or autofs path from blocking the scan, and it runs before any builtin
-    # test touches the path.
-    local stat_error="" stat_rc=0
-    stat_error=$(run_with_timeout "$MOLE_TIMEOUT_QUICK_DETECT_SEC" /usr/bin/env LC_ALL=C \
-        /usr/bin/stat -f %N -- "$path" 2>&1 > /dev/null < /dev/null) || stat_rc=$?
-    [[ $stat_rc -eq 1 && "$stat_error" == *": No such file or directory" ]] || return 1
-            [[ -d "$parent" && -x "$parent" ]] || return 1
-            # The nearest existing folder must really list, not only carry the
-            # Unix search bit.
-            run_with_timeout "$MOLE_TIMEOUT_QUICK_DETECT_SEC" /bin/ls -f -- "$parent" \
-                > /dev/null 2>&1 < /dev/null
+# Complete, NUL-delimited directory snapshots for the container cache scans.
+# A Bash glob opens the directory before any loop checkpoint can run (#1973).
+# Keep both enumeration and sorting in the bounded producer, discard partial
+# output on failure, and reuse the snapshot for counting and cleanup. Callers
+# own the array so nested scans cannot replace another caller's candidates.
+_container_cache_list_entries() {
+    local entries_file="${2:-}"
+    local owns_entries_file=false
+    _MOLE_CONTAINER_CACHE_ENTRIES=()
+    local timeout_seconds
+    if ! timeout_seconds=$(_mole_timeout_with_deadline "$MOLE_TIMEOUT_MEDIUM_PROBE_SEC" \
+        "${_MOLE_CLEAN_SECTION_DEADLINE:-}"); then
+        debug_log "Container cache scan budget exhausted: $dir"
+        return 1
+    fi
+    if [[ -z "$entries_file" ]]; then
+        entries_file=$(create_temp_file) || return 1
+        owns_entries_file=true
+    fi
+    local scan_rc=0
+    run_with_timeout "$timeout_seconds" "$FIND_BSD" "$dir" \
+        -mindepth 1 -maxdepth 1 -print0 > "$entries_file" 2> /dev/null || scan_rc=$?
+    if [[ $scan_rc -eq 0 ]]; then
+        if timeout_seconds=$(_mole_timeout_with_deadline "$MOLE_TIMEOUT_MEDIUM_PROBE_SEC" \
+ 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```shell
-// Anti-pattern to NEVER write (induced failure mode):
-            [[ -d "$parent" && -x "$parent" ]]
+// Induced defect failure mode:
+# App caches (merged: macOS system caches + Sandboxed apps).
+# Runs in the caller's shell and returns the count in
+# CACHE_TOP_LEVEL_ENTRY_COUNT: it is called once per container, and a command
+# substitution plus two $(shopt -p) captures cost three forks each time.
+cache_top_level_entry_count_capped() {
+    local cap="${2:-101}"
+    local count=0
+    local restore_nullglob=false
+    local restore_dotglob=false
+    shopt -q nullglob || restore_nullglob=true
+    shopt -q dotglob || restore_dotglob=true
+    shopt -s nullglob dotglob
+
+    local item
+    for item in "$dir"/*; do
+        [[ -e "$item" ]] || continue
+        count=$((count + 1))
+        if ((count >= cap)); then
+            break
+    done
+
+    [[ "$restore_nullglob" == "true" ]] && shopt -u nullglob
+    [[ "$restore_dotglob" == "true" ]] && shopt -u dotglob
+
+    [[ "$count" =~ ^[0-9]+$ ]] || count=0
+    CACHE_TOP_LEVEL_ENTRY_COUNT=$count
+    return 0
+directory_has_entries() {
+    local dir="$1"
+    [[ -d "$dir" ]] || return 1
+
+    local _nullglob_state
+    local _dotglob_state
+    _nullglob_state=$(shopt -p nullglob || true)
+    _dotglob_state=$(shopt -p dotglob || true)
+    shopt -s nullglob dotglob
+
+    local item
+    f
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `77aa5a28` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2dd073d2` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

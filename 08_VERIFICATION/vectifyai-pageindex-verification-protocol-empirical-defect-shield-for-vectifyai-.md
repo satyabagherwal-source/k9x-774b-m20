@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for vectifyai/pageindex
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for VectifyAI/PageIndex
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "vectifyai/pageindex",
-  "source_url": "https://github.com/vectifyai/pageindex",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "VectifyAI/PageIndex",
+  "source_url": "https://github.com/VectifyAI/PageIndex",
+  "source_version": "cc035e8d",
+  "license": "MIT",
+  "timestamp": "2026-11-15T03:13:41.919Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-vectifyai-pageindex",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [vectifyai/pageindex](https://github.com/vectifyai/pageindex) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex) (Revision: `cc035e8d`).  
+> **License**: MIT | **Timestamp**: `2026-11-15T03:13:41.919Z`  
+> **Learning ID**: `learn-github-vectifyai-pageindex`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `vectifyai/pageindex` (Commit: `historical`)
+- **Target Repository**: `VectifyAI/PageIndex` (Commit: `cc035e8d`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md`  
-> **Source**: github ([https://github.com/VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex))  
-> **Source Version**: `2ac8694b`  
-> **License**: MIT  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T20:52:20.152Z  
-> **Learning ID**: `learn-github-vectifyai-pageindex`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): VectifyAI/PageIndex
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T20:52:19.222Z  
+> **Harvest Timestamp**: 2026-11-15T03:13:40.668Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: 📑 PageIndex: Document Index for Vectorless, Reasoning-based RAG
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 40139 stars
+- **Stars / Engagement**: 40437 stars
 
 ---
 
@@ -456,6 +442,7 @@ from __future__ import annotations
 
 import copy
 import difflib
+import html
 import inspect
 import json
 import re
@@ -651,7 +638,7 @@ TOOL_CONTRACT: dict[str, dict[str, Any]] = {
                     "description": (
                         "Part number for pagination (1-based, default 1). For "
                         "large outlines, increment until the response's "
-                  
+      
 ```
 
 ### Core Architecture Module: `pageindex/chat_stream.py`
@@ -900,9 +887,26 @@ _CITE_TAG_RE = re.compile(r"<cite\s([^<>]*)>(?:(?P<inner>[^<>]*)</cite>)?")
 _CITE_ATTR_RE = re.compile(r"""\b(\w+)=(["'])(.*?)\2""", re.S)
 
 
-def _citation_key(m: re.Match) -> Optional[tuple[str, int, Optional[str]]]:
-    """(document, page, block_id) of one matched tag, or None when it names
-    no document or no positive page."""
+_CitationKey = tuple[str, int, Optional[str], Optional[tuple[float, ...]]]
+
+
+def _citation_box(raw: Optional[str]) -> Optional[tuple[float, ...]]:
+    """A box="x0,y0,x1,y1" value as PageIndex chat's renderer takes it:
+    four fractions from 0 to 1, each start before its end; else None."""
+    try:
+        box = tuple(float(part) for part in (raw or "").split(","))
+    except ValueError:
+        return None
+    if (len(box) != 4 or not all(0 <= value <= 1 for value in box)
+            or box[0] >= box[2] or box[1] >= box[3]):
+        return None
+    return box
+
+
+def _citation_key(m: re.Match) -> Optional[_CitationKey]:
+    """(document, page, block_id, box) of one matched tag, or None when it
+    names no document or no positive page."""
+    box_str = None
     if m.re is _OLD_CITATION_RE:
         doc, page_str, block_id = m.group(1), m.group(2), m.group(3)
     else:
@@ -910,21 +914,23 @@ def _citation_key(m: re.Match) -> Optional[tuple[str, int, Optional[str]]]:
                  _CITE_ATTR_RE.findall(m.group(1))}
         doc, page_str, block_id = (attrs.get("doc", ""), attrs.get("page", ""),
                                    attrs.get("block"))
+        box_str = attrs.get("box")
     doc = doc.strip()
     block_id = (block_id or "").strip() or None
     try:
         page = int(page_str.split("-")[0])
     except ValueError:
         return None
-    return (doc, page, block_id) if doc and page > 0 else None
+    return ((doc, page, block_id, _citation_box(box_str))
+            if doc and page > 0 else None)
 
 
 def _parse_citations(text: str) -> list[dict[str, Any]]:
     """``<doc=…;page=…;block=…>`` tags (the managed chat's format), then
-    ``<cite doc= page= block=/>`` tags; deduplicated, ``block_id`` only
-    when the tag carries one."""
+    ``<cite doc= page= block= box=/>`` tags; deduplicated, ``block_id`` and
+    ``box`` only when the tag carries one."""
     found: list[dict[str, Any]] = []
-    seen: set[tuple[str, int, Optional[str]]] = set()
+    seen: set[_CitationKey] = set()
     for m in [*_OLD_CITATION_RE.finditer(text), *_CITE_TAG_RE.finditer(text)]:
         key = _citation_key(m)
         if key and key not in seen:
@@ -932,6 +938,8 @@ def _parse_citations(text: str) -> list[dict[str, Any]]:
             entry: dict[str, Any] = {"document": key[0], "page": key[1]}
             if key[2]:
                 entry["block_id"] = key[2]
+            if key[3]:
+                entry["box"] = list(key[3])
             found.append(entry)
     return found
 
@@ -1068,21 +1076,7 @@ def _resolve_index_slot(index) -> "tuple[_CloudKey, dict[str, Any]]":
         if index.strip():
             return None, {"index_model": index}
         raise PageIndexAPIError(
-            "index is an empty string — pass a local index model name, "
-            'or "cloud".')
-    if isinstance(index, Mapping):
-        # None-valued keys mean "absent", exactly like the flat arguments.
-        conf: dict[str, Any] = {name: value for name, value in index.items()
-                                if value is not None}
-        declared = _declared_mode(conf.pop("mode", None), "index")
-        if not conf:
-            if declared == "cloud":
-                return lambda: _env_cloud_key('index={"mode": "cloud"}',
-                                              'index={"api_key": ...}'), {}
-            if declared == "local":
-                return None, {}
-            raise PageIndexAPIError(
-     
+         
 ```
 
 ### Core Architecture Module: `pageindex/cloud_api.py`
@@ -1142,6 +1136,7 @@ class CloudAPI:
         beta_headers: Optional[List[str]] = None,
         folder_id: Optional[str] = None,
         metadata: Optional[Dict[str, Any]] = None,
+        collection_id: Optional[str] = None,
     ) -> Dict[str, Any]:
         """
         Upload a PDF document for processing; the tree is built in the background.
@@ -1155,6 +1150,7 @@ class CloudAPI:
             folder_id (str, optional): Folder (workspace) ID to assign the document to. Defaults to None.
             metadata (dict, optional): Your own JSON-serializable tags for the document;
                 returned in get_tree/get_ocr responses and list_documents entries. Defaults to None.
+            collection_id (str, optional): Collection ID to store the document in, in place of a folder. Defaults to None.
 
         Returns:
             dict: {'doc_id': ...} — plus 'name', the stored document name
@@ -1177,6 +1173,8 @@ class CloudAPI:
             data['folder_id'] = folder_id
         if metadata is not None:
             data['metadata'] = json.dumps(metadata)
+        if collection_id is not None:
+            data['collection_id'] = collection_id
 
         with open(file_path, "rb") as f:
             response = self._http.post(
@@ -1354,17 +1352,6 @@ class CloudAPI:
         return response.json()
 
     def get_retrieval(self, retrieval_id: str) -> Dict[str, Any]:
-        """
-        Get retrieval status and results.
-
-        Args:
-            retrieval_id (str): Retrieval ID.
-
-        Returns:
-            dict: Retrieval status and results.
-        """
-        response = self._http.get(
-            f"{self.BASE_UR
 ```
 
 ### Core Architecture Module: `pageindex/errors.py`
@@ -1416,13 +1403,13 @@ __all__ = ["page_index_flash"]
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #659** (2026-11-05): **perf: summaries think the least each model takes, indexing stops paying for cache writes it never reads, and a chosen reasoning effort arrives as chosen**
-  *Symptoms*: Flash summaries now run with the least thinking each model accepts, and indexing stops paying the GPT-5.6+ premium on prompt-cache writes it never reads back. On the 22-page cookbook PDF, gpt-5-nano's summaries go from 63,424 reasoning tokens, $0.028 and 64 s to 0, $0.0028 and 9 s, and o3's from $0.238 to $0.104. Indexing with gpt-6-luna drops from $0.184 to $0.164 per 1,000 pages.  A reasoning effort you choose, in `summary_reasoning_effort` or in `index_backend`, now arrives as chosen, or raises before any model call where LiteLLM's model map says the model doesn't take it, as chat already does, or where LiteLLM would drop it even when let through. Indexing's `drop_params=True` used to drop it unseen: gpt-5-nano given `"none"` ran at its default thinking, 7 times slower than leaving it unset. Where the map says it, the error names the least level the model takes. Every other param still goes as LiteLLM takes it.  `"none"` now turns a Claude model's thinking off on every lane and route. The Messages lane gives a Claude id the table lacks its first off switch (thinking `disabled`) instead of an effort Anthropic refuses, and chat on Databricks gets the switch alone.  ## Changes  - Summaries at the default effort climb a ladder from the least thinking up: `"none"`, `"minimal"`, `"low"`, then no effort. A Claude model takes its own switches instead: thinking `disabled`, then `between_tools`, then `"low"`, starting at its known row, past `disabled` where LiteLLM's map says it alw
+- **Issue #674** (2026-11-14): **release: collections, chat(collection_id=) with box citations, and get_citations for library paths**
+  *Symptoms*: Cloud users get collections, own-model chat kept to one collection with citations that carry a box on the page, and `get_citations` that resolves the library paths the MCP server now cites. This brings `develop` into `main` for the next release.  ## Changes  - Collections: create, list and delete them, upload a document into one, list its documents, and declare their metadata fields. A collection without declared fields learns them from its documents' metadata. `delete_collection` waits up to 600 s for the server to delete every document. (The commits of #666.) - `chat(collection_id=)` keeps own-model cloud chat in one collection, and `citations=` takes a format name such as `cite_with_boxes`. (#668) - `get_citations` resolves the library paths the MCP server now cites. (#632) - Own-model chat drops a citation box on a page whose picture the call never saw. (#673, fixes #669) - Live tests:   - The envelope check passes on the cloud's text outline and on a picture page's extra blocks. (#670)   - The three exact-copy checks skip while the cloud addresses documents by path and local mode does not. (#671)  ## Merge  Merge with **Create a merge commit**. `develop`'s commits then land on `main` unchanged, and the next `develop` → `main` PR carries only new commits.  Fixes #669. 
 
-- **Issue #658** (2026-11-04): **fix(cloud): CloudAPI.submit_document docstring drops the OCR claim; a rejected mode is proven to send nothing**
-  *Symptoms*: Two follow-ups to #657. The `CloudAPI.submit_document` docstring no longer says every upload runs OCR (false for `mode="flash"`), and the bad-mode test now proves a rejected mode sends no request.  ## Changes  - `pageindex/cloud_api.py`: summary line reads "Upload a PDF document for processing; the tree is built in the background." It used to say the system processes both tree generation and OCR. - `tests/test_client.py`: `test_cloud_request_wiring` asserts the request count is unchanged after the four rejected modes (`"Flash"`, `" flash"`, `"standard"`, `"mcp"`). Before this, moving the mode check below the upload would still pass while every bad call uploaded the document.  ## Verification  - `pytest` (without `tests/test_local_chat.py`, whose local anthropic is too old): 805 passed, 7 skipped. - Mutation check: with the mode check moved below the POST, `test_cloud_request_wiring` fails on the new assert. 
+- **Issue #673** (2026-11-13): **fix(chat): own-model chat drops a citation box on a page whose picture the call never saw**
+  *Symptoms*: Own-model `chat()` now drops a citation box on a page whose picture the call's tools never attached, leaving the page citation. A box is read off a page's picture, so a box on a page the model only read as text is a guess, and a reader that outlines it marks the wrong part of the page. PageIndex chat already drops such boxes when it shows a reply; the SDK passed them on, and so did everything built on `chat()`, the Dash playground included (compute's `/api/v1` runs it, and the playground draws each `box=`). Closes #669.  ## Changes  - Each own-model call records the pages its cloud tools pictured, as PageIndex chat counts them: `view_pages`' `returned_pages`, `get_page_content`'s `picture_pages`, `zoom_page`'s `page`, and only when the result carries an image. A citation matches by the result's library path, its `doc_name`, or either one's file name, with its `doc` matched as written or unescaped (`Release&notes.pdf` and `Q&amp;A.pdf` both match). A `box` on any other page is removed from the `<cite>` tag. - The answer lane, `chat_completions` and `responses` drop it in the model's reply before openai-agents reads it, so the answer, the stream, the events, the envelope and the returned `messages` all agree. A streamed `<cite` tag still open at a delta's end waits for the delta that closes it; text held at the end of the reply goes out before the part's done event. - `messages` drops it in each turn's message (so the returned `messages` agree) and in the stream's `text_delta`,
   **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"19a61bba6043e924ededa7e0168afec2236a5f4e","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":"19a61bba6043e924ededa7e0168afec2236a5f4e","has_any_findings":null,"has_unresolved_findings":null,"status":"completed"}} --> <!-- codex-security-review:v1 {"blockingSeverityThreshold":"P0","headSha":"19a61bba6043e924ededa7e0168afec2236a5f4e","mergeGateEnabled":false,"pullRequestNumber":658,"repository":"VectifyAI/PageIndex","status":"completed"} --> ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-04T10:43:34.424118Z">2026-11-04T10:43:34.424118Z</relative-time> | `19a61bb` | PR opened | | 🔒 **Security Review** | ✅ **Completed** <relative-time da
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"e55aaf30a3c190d95710e9b50c43183f33950ffe","has_any_findings":true,"has_unresolved_findings":true,"status":"completed"},"security_review":{"commit_sha":"e55aaf30a3c190d95710e9b50c43183f33950ffe","has_any_findings":null,"has_unresolved_findings":null,"status":"completed"}} --> <!-- codex-security-review:v1 {"blockingSeverityThreshold":"P0","headSha":"e55aaf30a3c190d95710e9b50c43183f33950ffe","mergeGateEnabled":false,"pullRequestNumber":673,"repository":"VectifyAI/PageIndex","status":"completed"} --> <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-13T08:40:31.110567Z">2026-11-13T08:40:31.110567Z</relative-time> | `e55aaf3` | New commits | | 🔒
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1439,534 +1426,645 @@ __all__ = ["page_index_flash"]
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2ac8694b` (2026-11-05)
-**Commit Message**: perf: summaries think the least each model takes, indexing stops paying for cache writes it never reads, and a chosen reasoning effort arrives as chosen (#659)
+### Incident Patch 1: `eb582bee` (2026-11-13)
+**Commit Message**: fix(chat): own-model chat drops a citation box on a page whose picture the call never saw (#673)
 
-* perf: summaries think the least each model takes, indexing stops paying for cache writes it never reads, and a chosen reasoning effort arrives as chosen
+- Each own-model call records the pages its cloud tools pictured, as PageIndex chat counts them: view_pages' returned_pages, get_page_content's picture_pages, zoom_page's page, and only when the result carries an image. A box on any other page is removed from its <cite> tag, leaving the page citation. A citation's doc matches the result's path, doc_name or either one's file name, as written or unescaped.
+- Every lane drops it before the reply reaches the caller: the answer, chat_completions and responses lanes in the model's reply before openai-agents reads it, messages in each turn and its stream events, claude-code/ in its deltas and final answer. A streamed <cite tag still open at a delta's end waits for the delta that closes it.
+- A picture seen in an earlier call does not count, as in PageIndex chat. Local mode drops every box. The as_* adapters, get_citations() and resolve_citations() are unchanged.
 
-Flash summaries now run with the least thinking each model accepts, and
-indexing stops paying the GPT-5.6+ premium on prompt-cache writes it
-never reads back. On the 22-page cookbook PDF, gpt-5-nano's summaries
-go from 63,424 reasoning tokens, $0.028 and 64 s to 0, $0.0028 and 9 s,
-and o3's from $0.238 to $0.104. Indexing with gpt-6-luna drops from
-$0.184 to $0.164 per 1,000 pages.
-
-Summaries at the default effort:
-- A ladder from the least thinking up: "none", "minimal", "low", then
-  no effort. A Claude model takes its own switches instead: thinking
-  disabled, then between_tools, then "low", starting at its known row,
-  past disabled where LiteLLM's map says it always thinks.
-- A rung goes out only where LiteLLM would put it on the wire, as
-  get_optional_params builds it, and never one LiteLLM sends as
-  thinking turned on: an effort on a model that thinks only when 
-
-**File**: `pageindex/client.py` (modified, +58/-17)
+**File**: `pageindex/agent_tools.py` (modified, +84/-2)
 ```diff
-@@ -442,16 +442,33 @@ class PageIndexClient:
-             cap + min(32, cap) calls run at once. Defaults to 128.
-         summary_reasoning_effort (str, optional): Local flash mode only —
-             the reasoning effort sent with each node-summary call, over any
--            in ``index_backend`` (``"none"``, ``"low"``, ``"high"``, ...; a
--            model without the setting drops it). Defaults to ``"none"``
--            unless LiteLLM lists the model as refusing it, and stops
--            sending it once a prompt the server refused with it (HTTP
--            400) goes through without it (never on ``claude-code/``,
--            whose effort is checked up front). ``"none"`` raises on a model
--            whose thinking can't be turned off (Claude Opus 5.5 and Fable
--            under ``anthropic/``, ``bedrock/``, ``vertex_ai/`` or
--            ``azure_ai/``) and on any ``claude-code/`` model; the default
--            runs them at ``"low"``.
-+            in ``index_backend`` (``"none"``, ``"low"``, ``"high"``, ...):
-+            a level LiteLLM's model map says the model doesn't take raises
-+            before any model call, as chat does (``"none"`` on gpt-5-nano
-+            names ``"minimal"``), a model LiteLLM doesn't know on an
-+            OpenAI-format API (``azure/``, or a provider LiteLLM lists as
-+            OpenAI-compatible, such as ``groq/``) gets it as is (a level
-+            LiteLLM drops even then raises too), and one it doesn't know
-+            elsewhere, ``openai/`` included, goes as LiteLLM takes it,
-+            which may drop the effort unless LiteLLM's published map knows
-+            the model. A global ``litellm.drop_params = True`` turns these
-+            checks off: LiteLLM then drops a level the model doesn't take,
-+            unseen. Defaults to the least
-+            thinking the model takes, trying ``"none"``, ``"minimal"``,
-+            ``"low"`` in turn (a Claude model under ``anthropic/``,
-+            ``bedrock/``, ``vertex_ai/``, ``azure_ai/`` or ``databricks/``:
-+            ``thinking`` ``disabled``, then ``between_tools``, then
-+            ``"low"``): a level LiteLLM would not send is skipped,
-+            ``"minimal"`` is tried only where LiteLLM's model map lists
-+            it, a model LiteLLM doesn't know on an OpenAI-format API gets
-+            the effort as is, and a level the server refuses (HTTP 400 or
-+            422) gives way to the next, then to none sent, once a prompt goes
-+            through a step down; the process then skips it (never on
-+            ``claude-code/``, whose effort is checked up front).
-+            ``"none"`` also raises on a model whose thinking can't be
-+            turned off (Claude Opus 5.5 and Fable under those routes) and
-+            on any ``claude-code/`` model; the default runs them at
-+            ``"low"``.
-             Expand keeps the model's own default. A
-             ``mode="standard"`` submit refuses any of the summary knobs.
-         use_embedded_toc (bool, optional): Local mode only — whether flash
-@@ -468,7 +485,31 @@ class PageIndexClient:
-         index_backend (dict, optional): Local mode only — connection
-             overrides for the indexing lane's LLM calls. Keys are
-             LiteLLM's own connection params — ``api_key``, ``api_base``,
--            ``api_version``, ``aws_*``, … — passed through verbatim.
-+            ``api_version``, ``aws_*``, … — passed through verbatim. A
-+            ``reasoning_effort`` here reaches every indexing call as
-+            chosen: a level LiteLLM's model map says the indexing model
-+            doesn't take raises before any model call, as chat does, a
-+            model LiteLLM doesn't know on an OpenAI-format API (``azure/``,
-+            or a provider LiteLLM lists as OpenAI-compatible) gets it as
-+            is (a level LiteLLM drops even then raises too), and one it
-+            doesn't know elsewhere, ``openai/`` included, goes as LiteLLM
-+            takes it, which may drop the effort unless its map knows the
-+            model. A global ``litellm.drop_params = True`` turns these
-+            checks off: LiteLLM then drops a level the model doesn't take,
-+            unseen. Where
-+            LiteLLM's own rule says a model takes
-+            ``prompt_cache_options`` (its model map's flag, else its
-+            GPT-5.6-on name rule) and the route's map entry, where it has
-+            one, prices a cache write above input, indexing sends
-+            ``prompt_cache_options={"mode": "explicit"}``, which writes
-+            nothing (OpenAI's GPT-5.6 on, direct or through gateways such
-+            as OpenRouter; with a ``base_model`` here, as LiteLLM prices
-+            that), and stops on a server that refuses it (HTTP 400 or
-+            422). A cache choice here wins: ``prompt_cache_options``
-+            (``{"mode": "implicit"}`` keeps the model's default caching,
-+            which pays for the writes and lets a document indexed again
-+          
-```
-
-**File**: `pageindex/flash/api.py` (modified, +21/-18)
-```diff
-@@ -190,7 +190,7 @@ def page_index_flash(pdf, summary=True, summary_model=None,
-                      optimize_model=None, summary_concurrency=None,
-                      use_embedded_toc=True, summary_max_words=None,
-                      summary_reasoning_effort=None) -> dict:
--    """Build a PageIndex tree structure from a PDF using layout statistics. The tree extraction itself uses no LLM; by default an LLM writes node summaries and expands the tree (``summary=False, optimize=False`` runs fully LLM-free). Args: pdf: path to a PDF file (``str`` or ``pathlib.Path``) or an in-memory binary stream (``io.BytesIO``). summary: if True, generate LLM summaries for each node (requires ``summary_model``). summary_model: the LLM model identifier to use for summary generation. optimize: ``"full"`` for merge + LLM expand (a model unreachable after the retry ladder — a missing credential included — fails the run loudly from expand itself; a per-prompt rejection leaves just that node collapsed), ``"merge"`` for deterministic merge only, ``False`` to disable. ``True`` is accepted as ``"full"`` for backward compatibility; defaults to ``"full"``. Expand needs readable page text, so a bookmark-only or scanned PDF runs the merge half only (``expands`` reports 0). optimize_expand: deprecated — use ``optimize``. Honored only when ``optimize`` is not passed (or is the legacy ``True``): ``False`` maps to ``"merge"``, ``True`` to ``"full"``. optimize_model: the LLM model for expand (defaults to the summary model). summary_concurrency: cap on simultaneous indexing model calls per lane: the summaries, and expand up to its own ceiling of 32 (the lanes overlap, so up to cap + min(32, cap) calls run at once); None uses the library defaults (128 and 32). use_embedded_toc: if True, consume the PDF's embedded bookmarks when trustworthy: deep bookmarks become the frame and the detected sections they lack are grafted back in after noise filtering, coarse ones become the chapter frame with detected nodes re-hung under them (deeper sparse entries are filled in when the page text confirms them, and garbled extracted titles are repaired from the bookmark strings), garbage ones are ignored. On by default; pass False for the pure detected structure. summary_max_words: word cap each model-written node summary is asked to stay within (a leaf shorter than that keeps its raw text); None uses the library default (150). summary_reasoning_effort: the reasoning effort sent with each summary call (``"none"``, ``"low"``, ``"high"``, ...; a model without the setting drops it); None sends the library default (``"none"``) unless LiteLLM lists the model as refusing it, and stops sending it once a prompt the server refused with it (HTTP 400) goes through without it (never on ``claude-code/``, whose effort is checked up front). ``"none"`` raises on a model whose thinking can't be turned off (Claude Opus 5.5 and Fable under ``anthropic/``, ``bedrock/``, ``vertex_ai/`` or ``azure_ai/``) and on any ``claude-code/`` model; the default runs them at ``"low"``. Expand keeps the model's own default. Returns: dict with keys ``doc_name``, ``doc_title``, ``structure`` (a list of ``{"title", "node_id", "start_index", "end_index"}`` dicts; ``"nodes"`` holds the children where there are any and ``"summary"`` appears when summaries ran; page indexes are 1-based; a hierarchy that starts after page 1 is preceded by a ``Preface`` node covering the pages before it, as in standard mode, and the first section's page too unless that heading opens it; a parent whose first child starts on a later page opens with a child titled ``"<parent title> (intro)"`` holding the pages before it; a parent's range and summary cover its whole subtree) and ``has_abstract_or_references_section`` (True when a top-level entry is an abstract or references heading). ``toc_source`` says where the structure came from: ``"detected"`` (layout), ``"bookmarks"`` (the embedded outline), ``"hybrid"`` (bookmarks framing the detected sections), ``"pages"`` (no hierarchy found, so one node per page titled ``Page N``; left unsummarized and unoptimized when there are more than ``FLAT_TREE_MAX_NODES`` pages, a size the local client and CLI refuse) or ``"unreadable"`` (no page carries text; ``structure`` is empty). With ``optimize`` an ``optimize`` key reports merge/expand counts and before/after search-cost metrics; a refused flat tree carries neither it nor node summaries. """
-+    """Build a PageIndex tree structure from a PDF using layout statistics. The tree extraction itself uses no LLM; by default an LLM writes node summaries and expands the tree (``summary=False, optimize=False`` runs fully LLM-free). Args: pdf: path to a PDF file (``str`` or ``pathlib.Path``) or an in-memory binary stream (``io.BytesIO``). summary: if True, generate LLM summaries for each node (requires ``summary_model``). summary_model: the LLM model identifier to use for summary generation. optimize: ``"full"`` for merge + LLM expand (a mode
-```
-
-**File**: `pageindex/local_api.py` (modified, +20/-7)
-```diff
-@@ -56,16 +56,28 @@ def __init__(self, storage_path: str, model: str, summary_model: str,
-         from .utils import ConfigLoader
-         self._config_loader = ConfigLoader()
+@@ -23,6 +23,7 @@
  
--    def _with_backend(self, usage, func, *args):
-+    def _with_backend(self, usage, models, func, *args):
-         """Scope the indexing lane's connection overrides and the `usage`
-         tally around one operation — runs inside whatever thread
--        run_off_loop picked."""
--        from .utils import _llm_backend, _llm_usage
--        token = _llm_backend.set(self._index_backend)
-+        run_off_loop picked. A reasoning effort among the overrides goes to
-+        each of `models`, the ones the operation calls, as chosen_effort
-+        carries it to that one, or fails first."""
-+        from .integrations.claude_agent_sdk import is_claude_code
-+        from .utils import _llm_backend, _llm_effort, _llm_usage, chosen_effort
-+        backend = self._index_backend
-+        effort = (backend or {}).get("reasoning_effort")
-+        token = _llm_backend.set(backend)  # chosen_effort reads it
-         usage_token = _llm_usage.set(usage)
-+        effort_token = None
-         try:
-+            effort_token = _llm_effort.set({
-+                model: chosen_effort(model, effort, name='index_backend["reasoning_effort"]')
-+                for model in dict.fromkeys(models)
-+                if effort and model and not is_claude_code(model)})
-             return func(*args)
-         finally:
-+            if effort_token is not None:
-+                _llm_effort.reset(effort_token)
-             _llm_usage.reset(usage_token)
-             _llm_backend.reset(token)
- 
-@@ -148,12 +160,13 @@ def submit_document(
-         try:
-             if mode == "flash":
-                 structure, description = run_off_loop(
--                    self._with_backend, usage, self._index_flash, file_path
-+                    self._with_backend, usage, (self._summary_model,),
-+                    self._index_flash, file_path
-                 )
-             else:
-                 structure, description = run_off_loop(
--                    self._with_backend, usage, self._index_standard, file_path,
--                    page_texts
-+                    self._with_backend, usage, (self._model, self._summary_model),
-+                    self._index_standard, file_path, page_texts
-                 )
-         except PageIndexAPIError:
-             raise
-```
-
-**File**: `pageindex/local_chat.py` (modified, +88/-30)
-```diff
-@@ -313,7 +313,9 @@ def __init__(self, model: str, nested: bool = False):
-         self.missed = False  # a request went out without the fill
-         self.unanswered: Optional[bool] = None  # the latest stream, so far
-         self.sent: set = set()  # latest request's fields a 400 may refuse
--        self.refused: set = set()  # fields a 400 refused in this call
-+        self.refused: set = set()  # fields a 400 refused in this call, or before (_keep_reply_fields)
-+        self.inherited: set = set()  # of those, the ones refused before
-+        self.forced: set = set()  # params LiteLLM refused that go as they are
- 
-     def _call_id(self, call: dict) -> str:
-         # LiteLLM folds a Gemini signature into the id; the SDK strips it
-@@ -439,13 +441,15 @@ def converting(thinking_blocks, *args, **kwargs):
+ import copy
+ import difflib
++import html
+ import inspect
+ import json
+ import re
+@@ -1381,8 +1382,84 @@ def _raise_account_limit(blocks: list) -> None:
+     raise PageIndexAPIError(message, status_code=status)
  
  
- def _register_fill() -> None:
--    """The LiteLLM pre-request hook that fills a run's requests, in
--    litellm.callbacks: added before each request, again if a caller
-+    """The LiteLLM pre-request hook that fills a run's requests, and takes
-+    a "none" effort off where a Claude thinking switch stands in for it,
-+    in litellm.callbacks: added before each request, again if a caller
-     replaced the list. The first call also wraps LiteLLM's Converse
-     thinking converter (_keep_redacted)."""
-     global _fill_hook
-     import litellm
-     from litellm.integrations.custom_logger import CustomLogger
-+    from .utils import _claude_routed
-     with _FILL_LOCK:
-         if _fill_hook is None:
-             name = "translate_thinking_blocks_to_reasoning_content_blocks"
-@@ -466,6 +470,12 @@ async def async_pre_call_deployment_hook(self, kwargs,
-                             or not isinstance(kwargs.get("messages"), list)):
-                         return None
-                     messages = replies.fill(kwargs["messages"])
-+                    if (kwargs.get("reasoning_effort") == "none" and "thinking" in kwargs
-+                            and _claude_routed(str(kwargs.get("model") or ""))):
-+                        # the switch stands in for "none" (_openai_agent): beside
-+                        # it, LiteLLM's Databricks route drops both
-+                        kwargs = {key: value for key, value in kwargs.items()
-+                                  if key != "reasoning_effort"}
-                     if (kwargs.get("cache_control_injection_points")
-                             and _gateway(str(kwargs.get("model") or ""),
-                                          kwargs.get("base_url"))):
-@@ -539,31 +549,64 @@ async def _again_with_published_models():
-     return False
- 
- 
--def _chat_retry(replies: _Replies):
--    """Once again after LiteLLM refused the request itself, with the
--    entries its packaged model map lacks taken from the published one (a
--    model newer than the package). Again at once without the fields a 400
--    names, of those the request had that may be refused, for the rest of
--    the call: each retry refuses what its 400 named. A reply with no
--    choices goes again, as on the index lane. Anything else by the SDK's
--    one retry rule, within retry.CHAT_RETRIES."""
-+def _litellm_allows(text) -> set:
-+    """The params a LiteLLM refusal says to send as allowed_openai_params."""
-+    import ast
-+    found = re.search(r"allowed_openai_params=(\[[^\]]*\])", text)
-+    try:
-+        return set(ast.literal_eval(found.group(1))) if found else set()
-+    except (ValueError, SyntaxError):
-+        return set()
++# The tools whose results attach page pictures, by the field naming those pages.
++_PICTURE_PAGES = {"view_pages": "returned_pages",
++                  "get_page_content": "picture_pages", "zoom_page": "page"}
++_CITE_OPEN_RE = re.compile(r"<cite\s[^<>]*>")
++_TAG_ATTR_RE = re.compile(r"""\b(\w+)\s*=\s*(["'])(.*?)\2""", re.S)
++_BOX_ATTR_RE = re.compile(r"""\s+box\s*=\s*("[^"]*"|'[^']*')""")
 +
 +
-+def _chat_retry(replies: _Replies, remembered: set):
-+    """Once again after LiteLLM refused the request itself for a model its
-+    map lacks: on an OpenAI-format API with the params it named as they are,
-+    that API's own fields (as summaries send an effort), where it named
-+    none (its GPT-5 rules refusing "xhigh") and elsewhere with the entries
-+    its packaged model map lacks taken from the published one (a model
-+    newer than the package). A model the map holds gains nothing from
-+    either. Again at once without the fields a 400 names, of those the
-+    request had that may be refused, for the rest of the call, and of the
-+    process at that model and base URL once a request goes through without
-+    it (_keep_reply_fields); with one a 400 names that the call withheld
-+    only as the process remembered it refused, forgotten. Each retry acts
-+    on what its 400 named. A reply with no choices goes again, as on the
-+    index lane. Anything else by the SDK's one retry rule, within
-+    retry.CHAT_RETRIES."""
-     from agents import ModelRetrySettings, RetryDecision
-     from litellm.exceptions import UnsupportedParamsError
-     from .retry import CHAT_RETRIES, SDK_MAX_DELAY, agent_policy, delay
--    learned = False
-+    from .utils import _in_model_map, _openai_format
-+    lifted = False
- 
-     def policy(context):
--        nonlocal learned
-+        nonlocal lifted
-         if context.normalized.status_code in (400, 422):
--            if (isinstance(context.e
-```
-
-**File**: `pageindex/utils.py` (modified, +467/-69)
-```diff
-@@ -37,6 +37,11 @@
- _llm_backend: contextvars.ContextVar = contextvars.ContextVar(
-     "pageindex_llm_backend", default=None)
- 
-+# Same scope: per model the operation calls, the kwargs chosen_effort
-+# carries the backend's reasoning_effort to that model with.
-+_llm_effort: contextvars.ContextVar = contextvars.ContextVar(
-+    "pageindex_llm_effort", default=None)
++class _SeenPages:
++    """The pages one chat call's tools pictured; strip() drops boxes elsewhere."""
 +
- # Same scope: the dict the token usage of every indexing model call is
- # summed into, which LocalAPI returns from submit_document.
- _llm_usage: contextvars.ContextVar = contextvars.ContextVar(
-@@ -130,28 +135,33 @@ def _quiet_litellm() -> None:
- _published = None
- _published_lock = threading.Lock()
- _filled = False
-+_MAP_RETRY = 300  # seconds a failed download stands before the next may start
-+_retry_published_at = float("inf")
- 
- 
- def _published_map():
-     """LiteLLM's published model map as downloaded, a Future of its bytes:
-     one download per process, on a daemon thread, that runs on any thread
--    wait for together."""
--    global _published
-+    wait for together; a failed one, _MAP_RETRY on, gives way to another."""
-+    global _published, _retry_published_at
-     with _published_lock:
--        if _published is not None:
-+        if _published is not None and time.monotonic() < _retry_published_at:
-             return _published
-         from concurrent.futures import Future
-         future = _published = Future()
-+        _retry_published_at = float("inf")
-         # running: a cancelled waiter can't cancel it for the others
-         future.set_running_or_notify_cancel()
- 
-     def fetch():
-+        global _retry_published_at
-         try:
-             import httpx
-             response = httpx.get(_PUBLISHED_MAP_URL, timeout=5)
-             response.raise_for_status()
-             future.set_result(response.content)
-         except Exception as exc:
-+            _retry_published_at = time.monotonic() + _MAP_RETRY
-             future.set_exception(exc)
-     threading.Thread(target=fetch, daemon=True).start()
-     return future
-@@ -197,21 +207,163 @@ async def learn_published_models() -> bool:
-     return _filled
- 
- 
--def learn_model_if_effort_dropped(model) -> None:
--    """learn_published_models when LiteLLM's packaged map lacks `model` and
--    LiteLLM so drops a reasoning_effort sent with it: drop_params drops it
--    unseen, leaving no refusal to learn on."""
-+_MAP_WAIT = 3  # seconds summaries wait on the download, which goes on past it
++    def __init__(self):
++        self.pages: set = set()
 +
-+
-+def _in_model_map(model):
-+    """Whether LiteLLM's map holds `model` itself, or the indexing backend's
-+    base_model LiteLLM reads it as, as LiteLLM's own lookup finds it
-+    (provider included); its fallback rules answer ids the map lacks with a
-+    key the map doesn't hold."""
-+    import litellm
-+    for name in filter(None, ((_llm_backend.get() or {}).get("base_model"), model)):
++    def record(self, name: str, blocks: list) -> None:
++        field = _PICTURE_PAGES.get(name)
++        if field is None or not any(isinstance(block, dict)
++                                    and block.get("type") == "image"
++                                    for block in blocks):
++            return
 +        try:
-+            if litellm.get_model_info(name).get("key") in litellm.model_cost:
-+                return True
-+        except Exception:
++            result = json.loads(blocks[0]["text"])
++            pictured = result[field]
++            pages = ([pictured] if isinstance(pictured, int)
++                     else _expand_pages(pictured))
++        except (LookupError, TypeError, ValueError):
++            return
++        for ref in (result.get("path"), result.get("doc_name")):
++            if isinstance(ref, str) and ref:
++                for doc in (ref, ref.rsplit("/", 1)[-1]):
++                    self.pages.update((doc, page) for page in pages)
++
++    def strip(self, text: str) -> str:
++        return _CITE_OPEN_RE.sub(self._tag, text) if "box" in text else text
++
++    def _tag(self, match: re.Match) -> str:
++        tag = match.group(0)
++        attrs = {name: value for name, _, value in _TAG_ATTR_RE.findall(tag)}
++        try:
++            page = int(attrs.get("page", "").split("-")[0])
++        except ValueError:
++            return tag
++        doc = attrs.get("doc", "").strip()
++        if "box" not in attrs or (doc, page) in self.pages \
++                or (html.unescape(doc), page) in self.pages:
++            return tag
++        return _BOX_ATTR_RE.sub("", tag, count=1)
++
++    def stream(self) -> "_HeldTags":
++        return _HeldTags(self)
++
++
++class _HeldTags:
++    """strip() over a text's pieces: a tag open at a piece's end waits."""
++
++    def __init__(self, seen: _SeenPages):
++        self.seen, self.held = seen, ""
++
++    def feed(self, piece: str) -> str:
++        text = self.held + piece
++        start = text.rfind("<")
++        tail = text[start:] if start >= 0 else ""
++        opening = ">" not in tail and (
++            "<cite".startswith(tail) if len(tail) <= 5
++            else tail.startswith("<cite") and tail[5].isspace())
++        cut = start if start >= 0 and opening else len(text)
++        self.held = text[cut:]
++        return self.seen.strip(text[:cut])
++
++    def flush(self) -> str:
++        """The text's end: a tag never closed goes out as written."""
++        rest, self.held = self.held, ""
++        return rest
++
++
+ def _bridge_invoker(bridge, name: str, schema: dict,
+                     collection: Optional[str] = None,
++                    seen: Optional[_SeenPages] = None,
+                     ) -> "Callable[[dict], tuple[list, bool]]":
+     """One cloud tool call proxied over MCP: string booleans are coerced
+     (same as call_tool), None-valued arguments are dropped (None ≡ omitted,
+@@ -1420,6 +1497,8 @@ def _invoke(arguments: dict[str, Any]) -> tuple[list, bool]:
+             return [{"type": "text", "text": _dumps(payload)}], True
+         if is_error:
+             _raise_account_limit(blocks)
++        elif seen is not None:
++            seen.record(name, blocks)
+         return blocks, is_error
+     return _invoke
+ 
+@@ -1529,6 +1608,7 @@ def _require_doc_selection(doc_ids) -> None:
+ def _tool_specs(client, include_management: bool = False, doc_ids=None,
+                 annotations: Optional[dict] = None,
+                 collection: Optional[str] = None,
++                seen: Optional[_SeenPages] = None,
+                 ) -> "list[tuple[str, str, dict, Callable[[dict], tuple[list, bool]]]]":
+     """(name, description, schema, invoke) per tool, for adapters that take
+     the wire schema verbatim. ``invoke`` returns (content blocks, is_error):
+@@ -1539,7 +1619,8 @@ def _tool_specs(client, include_management: bool = False, doc_ids=None,
+     receives each annotated tool's MCP annotations by name: the server's
+     on cloud, the contract's locally. ``collection`` is the cloud chat's
+     collection, by name: every tool that takes one is held to it, and the
+-    folder-tree tools are left out."""
++    folder-tree tools are left out. ``seen`` records the pages the cloud
++    tools picture."""
+     if getattr(client, "api_key", None):
+         bridge = _cloud_bridge(client, gated=not include_management)
+ 
+```
+
+**File**: `pageindex/client.py` (modified, +3/-1)
+```diff
+@@ -1469,7 +1469,9 @@ def chat(
+                 cloud document has blocks; ``"cite_with_boxes"`` adds
+                 ``box="x0,y0,x1,y1"`` to a tag with no block, the part of
+                 the page as fractions of its width and height from the top
+-                left, and has the model look at each page it cites;
++                left, and has the model look at each page it cites (a box
++                on a page whose picture the call's tools never attached is
++                dropped, leaving the page citation);
+                 ``"markdown"`` writes ``[doc, p. N]``. A format the server
+                 does not serve raises. The guidance joins the system prompt
+                 after the managed prompt and before ``instructions``; local
+```
+
+**File**: `pageindex/integrations/anthropic_sdk.py` (modified, +4/-2)
+```diff
+@@ -27,7 +27,8 @@
+ def build_anthropic_tools(client, include_management: bool = False,
+                           asynchronous: bool = False, doc_ids=None,
+                           failures: Optional[list] = None,
+-                          collection: Optional[str] = None) -> list:
++                          collection: Optional[str] = None,
++                          seen=None) -> list:
+     """``failures`` records the invoker's re-raised failures for
+     chat(protocol="messages") to fail fast on."""
+     try:
+@@ -82,4 +83,5 @@ def _fn(**kwargs: Any) -> list:
+ 
+     return [wrap(*spec)
+             for spec in _tool_specs(client, include_management,
+-                                    doc_ids=doc_ids, collection=collection)]
++                                    doc_ids=doc_ids, collection=collection,
++                                    seen=seen)]
+```
+
+**File**: `pageindex/integrations/claude_agent_sdk.py` (modified, +2/-2)
+```diff
+@@ -54,7 +54,7 @@ def build_claude_mcp(client, include_management: bool = False, *,
+ def tool_server(client, include_management: bool = False, *,
+                 server_name: str = "pageindex", doc_ids=None,
+                 failures: Optional[list] = None,
+-                collection: Optional[str] = None):
++                collection: Optional[str] = None, seen=None):
+     """The agent tools as an in-process server in either mode, on cloud
+     through the bridge: local as_claude_mcp()'s, and the claude-code/ chat
+     engine's, whose system prompt carries the guidance. ``failures``
+@@ -89,7 +89,7 @@ async def handler(arguments: dict[str, Any]) -> dict[str, Any]:
+ 
+     hints: dict = {}  # readOnlyHint lets the CLI run the read tools in parallel
+     specs = _tool_specs(client, include_management, doc_ids, annotations=hints,
+-                        collection=collection)
++                        collection=collection, seen=seen)
+     tools = [
+         tool(name, description, schema, annotations=ToolAnnotations(
+             **(hints.get(name) or {}), maxResultSizeChars=MAX_RESULT_CHARS),
+```
+
+**File**: `pageindex/integrations/openai_agents.py` (modified, +5/-4)
+```diff
+@@ -32,14 +32,14 @@ def _tool_failure(ctx, error):
+ 
+ 
+ def build_mcp_server(client, include_management: bool = False, doc_ids=None,
+-                     collection=None):
++                     collection=None, seen=None):
+     """The tool set as an in-process MCP server for the Agents SDK."""
+     from agents.mcp import MCPServer
+     from mcp import types as mcp_types
+     from ..agent_tools import _tool_specs
+ 
+     specs = _tool_specs(client, include_management, doc_ids,
+-                        collection=collection)
++                        collection=collection, seen=seen)
+ 
+     class _ToolServer(MCPServer):
+         def __init__(self):
+@@ -79,7 +79,7 @@ async def get_prompt(self, name: str, arguments=None):
+ 
+ def build_openai_tools(client, include_management: bool = False,
+                        hosted: bool = False, doc_ids=None,
+-                       collection=None) -> list:
++                       collection=None, seen=None) -> list:
+     from agents import HostedMCPTool
+     from agents.mcp import MCPUtil
+     if getattr(client, "api_key", None) and hosted:
+@@ -95,6 +95,7 @@ def build_openai_tools(client, include_management: bool = False,
+             "require_approval": "never",
+         })]
+ 
+-    server = build_mcp_server(client, include_management, doc_ids, collection)
++    server = build_mcp_server(client, include_management, doc_ids, collection,
++                              seen)
+     return [MCPUtil.to_function_tool(tool, server, False)
+             for tool in server.tools]
+```
+
+**File**: `pageindex/local_chat.py` (modified, +138/-12)
+```diff
+@@ -20,7 +20,7 @@
+ from typing import Any, Generator, Iterator, Mapping, Optional, Union
+ from urllib.parse import urlparse
+ 
+-from .agent_tools import _base_instructions, targeting_block
++from .agent_tools import _base_instructions, _SeenPages, targeting_block
+ from .chat_stream import (ChatStream, MessagesStream, ChatObject,
+                           _yaml_as_dict)
+ from .errors import PageIndexAPIError, _pageindex_cause
+@@ -884,7 +884,7 @@ def _openai_agent(client, protocol: str, model_name: str, instructions: str,
+                   temperature, top_p, doc_ids=None, cache_key=None,
+                   reasoning=None, reasoning_effort=None, extra_body=None,
+                   max_tokens=None, backend=None, extra_headers=None,
+-                  collection=None):
++                  collection=None, seen=None):
+     _refuse_skeleton(extra_body)
+     from agents import Agent, ModelSettings
+     from openai.types.shared import Reasoning
+@@ -965,16 +965,83 @@ def _openai_agent(client, protocol: str, model_name: str, instructions: str,
+         if swap:
+             # the request hook (_register_fill) takes the "none" off beside it
+             settings = dataclasses.replace(settings, extra_args={**args, **swap})
++    model = _openai_model(protocol, model_name, conn or None)
++    if seen is not None:
++        _drop_unseen_boxes(model, seen)
+     return Agent(
+         name="PageIndex",
+         instructions=instructions,
+         tools=build_openai_tools(client, doc_ids=doc_ids,
+-                                 collection=collection),
+-        model=_openai_model(protocol, model_name, conn or None),
++                                 collection=collection, seen=seen),
++        model=model,
+         model_settings=settings,
+     )
+ 
+ 
++def _strip_output(items, seen: _SeenPages) -> None:
++    for item in items or ():
++        if getattr(item, "type", None) == "message":
++            for part in item.content or ():
++                if getattr(part, "type", None) == "output_text":
++                    part.text = seen.strip(part.text)
++
++
++def _drop_unseen_boxes(model, seen: _SeenPages) -> None:
++    """Strips each reply, streamed or not, before openai-agents reads it."""
++    get_response = model.get_response
++    stream_response = model.stream_response
++
++    async def getting(*args, **kwargs):
++        response = await get_response(*args, **kwargs)
++        _strip_output(response.output, seen)
++        return response
++
++    async def streaming(*args, **kwargs):
++        from contextlib import aclosing
++        texts: dict = {}
++
++        def close(ended):
++            for key in [key for key in texts if ended(key)]:
++                held, last = texts.pop(key)
++                rest = held.flush()
++                if rest:
++                    yield last.model_copy(update={"delta": rest})
++
++        async with aclosing(stream_response(*args, **kwargs)) as events:  # type: ignore[arg-type]
++            async for event in events:
++                kind = getattr(event, "type", None)
++                if kind == "response.output_text.delta":
++                    key = (event.item_id, event.content_index)
++                    held = texts[key][0] if key in texts else seen.stream()
++                    texts[key] = (held, event)
++                    piece = event.delta
++                    event.delta = held.feed(piece)
++                    if piece and not event.delta:
++                        continue
++                elif kind in ("response.output_text.done",
++                              "response.content_part.done"):
++                    key = (event.item_id, event.content_index)
++                    for rest in close(lambda k: k == key):
++                        yield rest
++                    if kind == "response.output_text.done":
++                        event.text = seen.strip(event.text)
++                    elif getattr(event.part, "type", None) == "output_text":
++                        event.part.text = seen.strip(event.part.text)
++                elif kind == "response.output_item.done":
++                    for rest in close(lambda k: k[0] == event.item.id):
++                        yield rest
++                    _strip_output([event.item], seen)
++                elif kind in ("response.completed", "response.incomplete",
++                              "response.failed"):
++                    for rest in close(lambda k: True):
++                        yield rest
++                    _strip_output(event.response.output, seen)
++                yield event
++
++    model.get_response = getting
++    model.stream_response = streaming
++
++
+ def _validate_max_turns(max_turns) -> None:
+     if max_turns is not None and (not isinstance(max_turns, int)
+                                   or max_turns < 1):
+@@ -1329,7 +1396,8 @@ def _chat_agent(client, messages, doc_id, model, temperature=None,
+                           reasoning_effort=reasoning_effort,
+                           extra_body=extra_body, max_tokens=
+```
+
+**File**: `tests/test_agent_tools.py` (modified, +56/-0)
+```diff
+@@ -3780,3 +3780,59 @@ def test_render_prompt_text_flattens_messages():
+         {"role": "user"},
+     ]) == "a\nb\n[image/png content omitted: ~1 KB]"
+     assert render_prompt_text([]) == ""
++
++
++def _pictured(payload, image=True):
++    return [{"type": "text", "text": json.dumps(payload)},
++            *([{"type": "image", "mimeType": "image/jpeg", "data": "AAAA"}]
++              if image else [])]
++
++
++def test_seen_pages_keep_only_boxes_on_pictured_pages():
++    from pageindex.agent_tools import _bridge_invoker, _SeenPages
++
++    class Bridge:
++        def call_tool(self, name, arguments):
++            if name == "zoom_page":
++                return _pictured({"error": "nope"}), True
++            return {
++                "view_pages": _pictured({"doc_name": "Reports/a.pdf",
++                                         "path": "Reports/a.pdf",
++                                         "returned_pages": "1-2"}),
++                "get_page_content": _pictured({"doc_name": "b.pdf",
++                                               "picture_pages": "5"}),
++                "get_document_image": _pictured({"doc_name": "c.pdf",
++                                                 "page": 9}),
++            }[name], False
++
++    seen = _SeenPages()
++    for name in ("view_pages", "get_page_content", "get_document_image",
++                 "zoom_page"):
++        _bridge_invoker(Bridge(), name, {}, seen=seen)({})
++    seen.record("zoom_page", _pictured({"doc_name": "d.pdf", "page": 4}))
++    seen.record("zoom_page", _pictured({"doc_name": "Q&A's.pdf", "page": 7}))
++    seen.record("zoom_page", _pictured({"doc_name": "Release&notes.pdf",
++                                        "page": 8}))
++    seen.record("view_pages", _pictured({"doc_name": "e.pdf",
++                                         "returned_pages": "3"}, image=False))
++
++    def cite(doc, page):
++        return f'<cite doc="{doc}" page="{page}" box="0.1,0.2,0.3,0.4"/>'
++
++    kept = [cite("Reports/a.pdf", 2), cite("a.pdf", 1), cite("b.pdf", 5),
++            cite("d.pdf", 4), cite("Q&amp;A&apos;s.pdf", 7),
++            cite("Release&notes.pdf", 8), '<cite doc="x.pdf" page="1"/>']
++    for tag in kept:
++        assert seen.strip(tag) == tag
++    for doc, page in (("a.pdf", 3), ("Other/a.pdf", 1), ("c.pdf", 9),
++                      ("e.pdf", 3), ("b.pdf", 6)):
++        assert seen.strip(cite(doc, page)) == f'<cite doc="{doc}" page="{page}"/>'
++    text = ("x < y " + cite("a.pdf", 1) + " then " + cite("a.pdf", 3)
++            + "<cite doc='f.pdf' page='2' box = '0,0,1,1'>z</cite> <ci")
++    whole = seen.strip(text)
++    assert "box" not in whole.split("then")[1]
++    for size in range(1, 12):
++        held = seen.stream()
++        out = "".join(held.feed(text[i:i + size])
++                      for i in range(0, len(text), size)) + held.flush()
++        assert out == whole
+```
+
+**File**: `tests/test_claude_code.py` (modified, +45/-0)
+```diff
+@@ -1160,6 +1160,51 @@ async def the_model_calls_the_tool():
+                                               "maxResultSizeChars": 200_000}
+ 
+ 
++@needs_claude
++def test_chat_drops_boxes_on_pages_never_seen(monkeypatch):
++    import claude_agent_sdk
++    import pageindex.mcp_bridge as mcp_bridge
++    from pageindex import PageIndexCloudClient
++
++    class Bridge:
++        def __init__(self, url, headers):
 +            pass
-+    return False
++
++        def list_tools(self):
++            return [{"name": "view_pages", "description": "v",
++                     "inputSchema": {"type": "object", "properties": {}}}]
++
++        def instructions(self):
++            return "GUIDANCE"
++
++        def call_tool(self, name, arguments):
++            return [{"type": "text", "text": json.dumps({
++                "doc_name": "r.pdf", "returned_pages": "2"})},
++                {"type": "image", "mimeType": "image/jpeg", "data": "AAAA"}], False
++    monkeypatch.setattr(mcp_bridge, "McpBridge", Bridge)
++    tools = {}
++
++    def server(**kwargs):
++        tools.update({tool.name: tool for tool in kwargs["tools"]})
++        return {"type": "sdk", "name": kwargs["name"], "instance": None}
++    monkeypatch.setattr(claude_agent_sdk, "create_sdk_mcp_server", server)
++
++    async def the_model_views_page_2():
++        await tools["view_pages"].handler({})
++    text = ('A <cite doc="r.pdf" page="2" box="0.1,0.2,0.3,0.4"/> '
++            'B <cite doc="r.pdf" page="3" box="0.5,0.6,0.7,0.8"/> <cite doc')
++    expected = text.replace(' box="0.5,0.6,0.7,0.8"', "")
++    said = AssistantMessage(content=[TextBlock(text)], model="haiku")
++    pieces = [delta(text[i:i + 5]) for i in range(0, len(text), 5)]
++    cloud = PageIndexCloudClient(api_key="pi-test-key",
++                                 chat_model="claude-code/haiku")
++    fake_cli(monkeypatch, said, result(text), during=the_model_views_page_2)
++    assert cloud.chat("Q") == expected
++    fake_cli(monkeypatch, *pieces[:-3], said, result(text),
++             during=the_model_views_page_2)
++    assert "".join(cloud.chat("Q", stream=True)) == expected
 +
 +
-+def _openai_format(model):
-+    """Whether `model`'s API takes OpenAI's own request fields: a provider on
-+    LiteLLM's list of OpenAI-compatible ones, less a Claude model there,
-+    which LiteLLM sends in Anthropic's (azure_ai/claude-...), and Azure
-+    OpenAI, OpenAI's own API under deployment names."""
-+    import litellm
-+    provider = model.split("/", 1)[0]
-+    return provider == "azure" or (provider in litellm.openai_compatible_providers
-+                                   and not _claude_routed(model))
-+
-+
-+def _effort_dropped_unmapped(model, effort=None):
-+    """LiteLLM's packaged map lacks `model` and LiteLLM so drops a
-+    reasoning_effort sent with it, or the level the caller chose (`effort`,
-+    else the indexing backend's: "xhigh" on openai/gpt-6.1-terra):
-+    drop_params drops it unseen, leaving no refusal to learn on. On an
-+    OpenAI-format API, where the effort is the API's own field and goes as
-+    is (summary_effort_ladder), only a chosen level LiteLLM drops even
-+    then ("xhigh" on azure/gpt-6.1-terra)."""
-     import litellm
-     model = _litellm_model(model)
--    try:
--        litellm.get_model_info(model)
--        return  # in the packaged map: the published one adds nothing for it
--    except Exception:
--        pass
-+    if _in_model_map(model):
-+        return False
-+    effort = effort or (_llm_backend.get() or {}).get("reasoning_effort")
-+    if _openai_format(model):
-+        return bool(effort) and "reasoning_effort" not in _sends(model, {
-+            "reasoning_effort": effort, "allowed_openai_params": ["reasoning_effort"]})
-     provider, name = model.split("/", 1)
-     if "reasoning_effort" not in (litellm.get_supported_openai_params(
-             model=name, custom_llm_provider=provider) or []):
--        run_off_loop(asyncio.run, learn_published_models())
-+        return True
-+    return bool(effort) and _litellm_refuses(model, {"reasoning_effort": effort}) is not None
-
+ @needs_claude
+ def test_chat_max_turns(monkeypatch, chat_client):
+     fake_cli(monkeypatch, result(None, is_error=True, subtype="error_max_turns",
 ```
 
-**File**: `run_pageindex.py` (modified, +2/-2)
+---
+
+### Incident Patch 2: `9b036acc` (2026-11-11)
+**Commit Message**: fix(cloud): delete_collection waits up to 600 s for the server to delete every document, and list_documents names a collection among the places path is None
+
+The server deletes a collection's documents one by one before it answers.
+With the 30 s timeout, a collection of many documents timed out, and the
+retrying session sent the DELETE twice more while the first cascade was
+still running; the caller got a connection error while the server kept
+deleting. 600 s is the wait chat() already uses without streaming. A
+gateway that cuts the request first answers 5xx, which is still retried.
+
+A document in a collection has no folder chain, so its path is None too.
+
+**File**: `pageindex/client.py` (modified, +2/-2)
 ```diff
-@@ -4,7 +4,7 @@
- from pageindex import *
- from pageindex.page_index_md import md_to_tree
- from pageindex.utils import (ConfigLoader, SUMMARY_CONCURRENCY, SUMMARY_MAX_WORDS,
--                             SUMMARY_REASONING_EFFORT)
-+                             SUMMARY_EFFORT_LADDER)
- from pageindex.tree_optimize import EXPAND_CONCURRENCY
+@@ -2175,8 +2175,8 @@ def list_documents(
  
- if __name__ == "__main__":
-@@ -36,7 +36,7 @@
-     parser.add_argument('--summary-concurrency', type=int, default=None,
-                       help=f'Cap on simultaneous indexing model calls per lane (flash mode; default {SUMMARY_CONCURRENCY}, expand tops out at {EXPAND_CONCURRENCY})')
-     parser.add_argument('--summary-reasoning-effort', type=str, default=None,
--                      help=f'Reasoning effort sent with each node-summary call; a model without the setting drops it (flash mode; default {SUMMARY_REASONING_EFFORT} unless LiteLLM lists the model as refusing it, no longer sent once a prompt the server refused with it (HTTP 400) goes through without it)')
-+                      help=f'Reasoning effort sent with each node-summary call; a level LiteLLM\'s model map says the model doesn\'t take raises before any model call (flash mode; default the least thinking the model takes, trying {", ".join(SUMMARY_EFFORT_LADDER)} in turn, past a level the server refuses)')
- 
-     parser.add_argument('--toc-check-pages', type=int, default=None,
-                       help='Number of pages to check for table of contents (PDF only)')
+         Each document carries ``path``, its folder chain rendered
+         ``"Parent/Child"`` — what a flat listing otherwise loses. None
+-        at the library root, for a folder reached only through a share
+-        of something below it, and for every local document.
++        at the library root, in a collection, for a folder reached only
++        through a share of something below it, and for every local document.
+         """
+         return self._api.list_documents(limit=limit, offset=offset,
+                                         folder_id=folder_id, recursive=recursive,
 ```
 
-**File**: `tests/conftest.py` (modified, +7/-0)
+**File**: `pageindex/cloud_api.py` (modified, +1/-1)
 ```diff
-@@ -18,6 +18,13 @@ def _no_published_model_map(monkeypatch):
-     monkeypatch.setattr(utils, "_MAP_SET_BY_USER", True)
- 
- 
-+@pytest.fixture(autouse=True)
-+def _no_refusals_remembered(monkeypatch):
-+    """Each test starts with no server refusal remembered for the process."""
-+    from pageindex import utils
-+    monkeypatch.setattr(utils, "_refusals", {})
-+
-+
- def exit_code_in_forked_child(check, timeout=5):
-     """``check()`` run in a forked child of this process: exit code 0 when it
-     returns true, 1 when false or raising, minus SIGALRM when it hangs."""
+@@ -625,7 +625,7 @@ def delete_collection(self, collection_id: str) -> Dict[str, Any]:
+         response = self._http.delete(
+             f"{self.BASE_URL}/collection/{_enc(collection_id)}/",
+             headers=self._headers(),
+-            timeout=30
++            timeout=600
+         )
+         if response.status_code != 200:
+             raise PageIndexAPIError(
 ```
 
-**File**: `tests/test_client.py` (modified, +599/-29)
+---
+
+### Incident Patch 3: `c4191018` (2026-11-12)
+**Commit Message**: fix: get_citations resolves the library paths the MCP server now cites (#632)
+
+* fix: get_citations resolves the library paths the MCP server now cites
+
+* docs: get_citations says how doc_id= matches a cited path
+
+* refactor: get_citations keeps each path beside the names
+
+* docs: list_documents says a document's path ends with its file name
+
+The cloud listing's path is the folder chain plus the file name, and a root document's path is its name. get_citations relies on that meaning; the docstring still said folder chain only, None at the root.
+
+---------
+
+Co-authored-by: Ray <[REDACTED_EMAIL]>
+
+**File**: `pageindex/client.py` (modified, +20/-9)
 ```diff
-@@ -2657,8 +2657,8 @@ def test_backend_scopes_the_index_lane(tmp_path, monkeypatch):
-     api = LocalAPI(storage_path=str(tmp_path / "s"), model="m",
-                    summary_model="s",
-                    index_backend={"api_key": "ik", "api_base": "http://b"})
--    assert api._with_backend(None, _llm_backend.get) == {"api_key": "ik",
--                                                         "api_base": "http://b"}
-+    assert api._with_backend(None, ("m", "s"), _llm_backend.get) == {
-+        "api_key": "ik", "api_base": "http://b"}
-     assert _llm_backend.get() is None
+@@ -2249,10 +2249,11 @@ def list_documents(
+         Returns:
+             dict: {'documents': [...], 'total', 'limit', 'offset'}.
  
-     reply = SimpleNamespace(choices=[SimpleNamespace(
-@@ -2672,7 +2672,7 @@ def test_backend_scopes_the_index_lane(tmp_path, monkeypatch):
-                         ("gpt-4o", "openai/gpt-4o"),
-                         ("my-finetune-v2", "openai/my-finetune-v2")):
-         captured.clear()
--        api._with_backend(None, lambda: llm_completion(model, "p"))
-+        api._with_backend(None, (model,), lambda: llm_completion(model, "p"))
-         assert captured["model"] == wire
-         assert captured["api_key"] == "ik"
-         assert captured["api_base"] == "http://b"
-@@ -2905,6 +2905,184 @@ async def _nosleep(s):
-     assert calls["n"] == 1
+-        Each document carries ``path``, its folder chain rendered
+-        ``"Parent/Child"`` — what a flat listing otherwise loses. None
+-        at the library root, in a collection, for a folder reached only
+-        through a share of something below it, and for every local document.
++        Each document carries ``path``, its folder chain plus its file
++        name, ``"Parent/Child/Q3.pdf"`` — what a flat listing otherwise
++        loses. Just the file name at the library root; None in a
++        collection, for a folder reached only through a share of
++        something below it, and for every local document.
+         """
+         return self._api.list_documents(limit=limit, offset=offset,
+                                         folder_id=folder_id, recursive=recursive,
+@@ -2763,10 +2764,12 @@ def get_citations(
+             answer (str): The answer text, tags included.
+             doc_id (str | list[str], optional): The documents the answer
+                 was about — what ``chat(doc_id=...)`` took. Citations name
+-                documents, and the ids come from here; without it your own
+-                library is listed. Two documents sharing a cited name
+-                raise PageIndexAPIError naming both ids: pass ``doc_id``
+-                to pick.
++                documents by name or by library path
++                (``Research/2024/Q3.pdf``), and the ids come from here;
++                without it your own library is listed. With it, a cited
++                path matches by its file name. Two documents sharing a
++                cited name raise PageIndexAPIError naming both ids: pass
++                ``doc_id`` to pick.
+ 
+         Returns:
+             list: One dict per distinct citation: ``{'document', 'doc_id',
+@@ -2804,9 +2807,17 @@ def get_citations(
+             for doc in _all_documents(self):
+                 if doc.get("name") and doc.get("id"):
+                     names.setdefault(doc["name"], []).append(doc["id"])
++                if doc.get("path") and doc.get("id"):
++                    names.setdefault(doc["path"], []).append(doc["id"])
+         resolved: list[dict[str, Any]] = []
+         for citation in citations:
+-            ids = list(dict.fromkeys(names.get(citation["document"], [])))
++            cited = citation["document"]
++            ids = names.get(cited)
++            if not ids and doc_id is not None:
++                # Document metadata carries no path: a cited path matches
++                # by its file name within the scoped documents.
++                ids = names.get(cited.rsplit("/", 1)[-1])
++            ids = list(dict.fromkeys(ids or []))
+             if len(ids) > 1:
+                 raise PageIndexAPIError(
+                     f"{citation['document']!r} names {len(ids)} documents "
+```
+
+**File**: `tests/test_client.py` (modified, +32/-3)
+```diff
+@@ -2252,12 +2252,13 @@ def test_parse_citations_scans_in_linear_time():
+ 
+ def _library(docs):
+     """A cloud handler serving /docs/ (100 per page) and /doc/<id>/block/
+-    lookups from {doc_id: (name, {block_id: block})}."""
++    lookups from {doc_id: (name, {block_id: block}[, path])}."""
+     def handler(method, url, kw):
+         if url.endswith("/docs/"):
+             offset = kw["params"]["offset"]
+-            entries = [{"id": doc_id, "name": name}
+-                       for doc_id, (name, _) in docs.items()]
++            entries = [{"id": doc_id, "name": doc[0],
++                        **({"path": doc[2]} if len(doc) > 2 else {})}
++                       for doc_id, doc in docs.items()]
+             return FakeResponse({"documents": entries[offset:offset + 100],
+                                  "total": len(entries), "limit": 100,
+                                  "offset": offset})
+@@ -2381,6 +2382,34 @@ def test_get_citations_refuses_a_shared_name(cloud, monkeypatch):
+         {"document": "a.pdf", "doc_id": "pi-2", "page": 1}]
  
  
-+_BILLED = {"litellm_provider": "openai", "mode": "chat",
-+           "supports_prompt_cache_breakpoint": True,
-+           "input_cost_per_token": 1e-7, "cache_creation_input_token_cost": 1.25e-7}
-+_CACHE_OFF = {"mode": "explicit"}
++def test_get_citations_resolves_library_paths(cloud, monkeypatch):
++    """The MCP server cites by library path: a nested path picks its own
++    document over a same-name one at the root, a bare name keeps the
++    shared-name refusal, and a path outside the listing (a shared mount)
++    stays unresolved rather than borrowing a same-name own document."""
++    client, calls, fake = cloud
++    block = {"doc_id": "pi-n", "page": 4, "block_id": "p4_text_1",
++             "bbox": [1, 2, 3, 4], "block_type": "text", "text": "Revenue."}
++    _patch_requests(monkeypatch, _library({
++        "pi-r": ("Q3 Report.pdf", {}, "Q3 Report.pdf"),
++        "pi-n": ("Q3 Report.pdf", {"p4_text_1": block},
++                 "Research/2024/Q3 Report.pdf"),
++    }))
++    nested = 'See <cite doc="Research/2024/Q3 Report.pdf" page="4" block="p4_text_1"/>.'
++    assert client.get_citations(nested) == [
++        {"document": "Research/2024/Q3 Report.pdf", **block}]
++    with pytest.raises(PageIndexAPIError, match=r"pi-r, pi-n.*doc_id="):
++        client.get_citations('<cite doc="Q3 Report.pdf" page="1"/>')
++    assert client.get_citations(
++        '<cite doc="Shared with me/Deals/Q3 Report.pdf" page="2"/>') == [
++        {"document": "Shared with me/Deals/Q3 Report.pdf", "doc_id": None,
++         "page": 2}]
++    # doc_id= reads metadata, which carries no path: the file name decides.
++    assert client.get_citations('<cite doc="Research/2024/Q3 Report.pdf" page="4"/>',
++                                doc_id="pi-n") == [
++        {"document": "Research/2024/Q3 Report.pdf", "doc_id": "pi-n", "page": 4}]
 +
 +
-+@pytest.fixture
-+def cache_map(monkeypatch):
-+    """LiteLLM's map with test entries, and no cache-write decision yet."""
-+    litellm = pytest.importorskip("litellm")
-+    monkeypatch.setattr(litellm, "model_cost", {**litellm.model_cost,
-+        "gpt-test-billed": _BILLED,
-+        "gpt-test-no-write-price": {**_BILLED, "cache_creation_input_token_cost": None},
-+        "gpt-test-unflagged": {**_BILLED, "supports_prompt_cache_breakpoint": None},
-+        "azure/gpt-test-billed": {**_BILLED, "litellm_provider": "azure",
-+                                  "supports_prompt_cache_breakpoint": None},
-+        "azure_ai/gpt-test-billed": {**_BILLED, "litellm_provider": "azure_ai",
-+                                     "supports_prompt_cache_breakpoint": False}})
-+    return litellm
-+
-+
-+def _ok(**kw):
-+    return types.SimpleNamespace(choices=[types.SimpleNamespace(
-+        message=types.SimpleNamespace(content="ok"), finish_reason="stop")])
-+
-+
-+def test_indexing_writes_no_cache_a_model_bills_above_input(cache_map, monkeypatch):
-+    """A model LiteLLM's map flags for prompt_cache_options and prices a cache
-+    write above input indexes with no cache writes, on any route: the id's
-+    own flag answers first, then its bare name's. A backend's own option
-+    wins."""
-+    sent = []
-+
-+    def reply(**kw):
-+        sent.append(kw.get("prompt_cache_options"))
-+        return _ok()
-+
-+    async def areply(**kw):
-+        return reply(**kw)
-+    monkeypatch.setattr(cache_map, "completion", reply)
-+    monkeypatch.setattr(cache_map, "acompletion", areply)
-+    for model, expected in (("gpt-test-billed", _CACHE_OFF),
-+                            ("openai/gpt-test-billed", _CACHE_OFF),
-+                            ("openrouter/openai/gpt-test-billed:nitro", _CACHE_OFF),
-+                            ("azure/gpt-test-billed", _CACHE_OFF),
-+                            ("azure_ai/gpt-test-billed", None),
-+                            ("gpt-test-no-write-price", None),
-+                            ("gpt-test-unflagged", None),
-+                            ("anthropic/claude-test-unmapped", None)):
-+        sent.clear()
-+        asyncio.run(pageindex.utils.llm_acompletion(model, "p"))
-+        pageindex.utils.llm_completion(model, "p")
-+        assert sent == [expected, expected], model
-+
-+    implicit = {"mode": "implicit"}
-+    for backend, expected in (({"prompt_cache_options": implicit}, implicit),
-+                              ({"extra_body": {"prompt_cache_options": implicit}}, None)):
-+        sent.clear()
-+        token = pageindex.utils._llm_backend.set(backend)
-+        try:
-+            asyncio.run(pageindex.utils.llm_acompletion("gpt-test-billed", "p"))
-+            pageindex.utils.llm_completion("gpt-test-billed", "p")
-+        finally:
-+            pageindex.utils._llm_backend.reset(token)
-+        assert sent == [expected, expected], backend
-+
-+
-+def test_a_model_newer_than_the_map_is_tried_without_a_download(
-+        cache_map, monkeypatch):
-+    """A saving never waits on the published map. A model the loaded map
-+    lacks is tried where LiteLLM's name rule calls it GPT-5.6 on, on any
-+    route; any other keeps its caching until an entry learned elsewhere
-+    (chat, flash) lists its premium."""
-+    fetched = []
-+    monkeypatch.setattr(httpx, "get", lambda url, timeout: fetched.append(url))
-+    monkeypatch.setattr(pageindex.utils, "_published", None)
-+    monkeypatch.setattr(pageindex.utils, "_MAP_SET_BY_USER", False)
-+    off = {"prompt_cache_optio
+ def test_get_citations_keeps_blocks_it_cannot_read(cloud, monkeypatch):
+     """A denied block (403) keeps its bbox-less entry like a missing one;
+     a transport failure still propagates with its status."""
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #659** (2026-11-05): perf: summaries think the least each model takes, indexing stops paying for cache writes it never reads, and a chosen reasoning effort arrives as chosen (@rejojer)
-- **PR #658** (2026-11-04): fix(cloud): CloudAPI.submit_document docstring drops the OCR claim; a rejected mode is proven to send nothing (@rejojer)
-- **PR #657** (2026-11-04): feat(cloud): submit_document(mode="flash") builds the tree with Flash on the cloud (@BukeLy)
-- **PR #645** (2026-11-03): perf(flash): sequential parse holds one page at a time instead of the whole document (@BukeLy)
-- **PR #644** (2026-10-29): fix: follow-ups to #622 (indexing learns newer models, forked processes drop LiteLLM's connections, and five more) (@rejojer)
-- **PR #643** (closed): fix: claude-code/ chat runs at the reasoning_effort it is given, not an inherited CLAUDE_CODE_EFFORT_LEVEL (@rejojer)
+- **PR #674** (2026-11-14): release: collections, chat(collection_id=) with box citations, and get_citations for library paths (@rejojer)
+- **PR #673** (2026-11-13): fix(chat): own-model chat drops a citation box on a page whose picture the call never saw (@rejojer)
+- **PR #671** (2026-11-13): test: the live copy checks skip while the cloud addresses documents by path and local mode does not (@rejojer)
+- **PR #670** (2026-11-13): test: the live envelope check passes on the cloud's text outline and on a picture page's extra blocks (@rejojer)
+- **PR #668** (2026-11-12): feat(chat): chat(collection_id=) keeps own-model cloud chat in one collection, and citations= takes a format name such as cite_with_boxes (@rejojer)
+- **PR #666** (2026-11-14): feat(cloud): collections: create, list and delete them, upload a document into one, list its documents, and declare its metadata fields (@rejojer)
 
 ---
 
@@ -1986,57 +2084,59 @@ Summaries at the default effort:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. summaries think the least each model takes, indexing stops paying for cache writ
+## X. chat): own-model chat drops a citation box on a page whose picture the call neve
 
 **RULE**:
-When implementing operations in `pageindex/client.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in VectifyAI/PageIndex. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pageindex/agent_tools.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in VectifyAI/PageIndex. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2ac8694b`: summaries think the least each model takes, indexing stops paying for cache writes it never reads, and a chosen reasoning effort arrives as chosen (#659). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `eb582bee`: chat): own-model chat drops a citation box on a page whose picture the call never saw. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pageindex/client.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pageindex/agent_tools.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-            in ``index_backend`` (``"none"``, ``"low"``, ``"high"``, ...):
-            a level LiteLLM's model map says the model doesn't take raises
-            before any model call, as chat does (``"none"`` on gpt-5-nano
-            names ``"minimal"``), a model LiteLLM doesn't know on an
-            OpenAI-format API (``azure/``, or a provider LiteLLM lists as
-            OpenAI-compatible, such as ``groq/``) gets it as is (a level
-            LiteLLM drops even then raises too), and one it doesn't know
-            elsewhere, ``openai/`` included, goes as LiteLLM takes it,
-            which may drop the effort unless LiteLLM's published map knows
-            the model. A global ``litellm.drop_params = True`` turns these
-            checks off: LiteLLM then drops a level the model doesn't take,
-            unseen. Defaults to the least
-            thinking the model takes, trying ``"none"``, ``"minimal"``,
-            ``"low"`` in turn (a Claude model under ``anthropic/``,
-            ``bedrock/``, ``vertex_ai/``, ``azure_ai/`` or ``databricks/``:
-            ``thinking`` ``disabled``, then ``between_tools``, then
-            ``"low"``): a level LiteLLM would not send is skipped
+import html
+# The tools whose results attach page pictures, by the field naming those pages.
+_PICTURE_PAGES = {"view_pages": "returned_pages",
+                  "get_page_content": "picture_pages", "zoom_page": "page"}
+_CITE_OPEN_RE = re.compile(r"<cite\s[^<>]*>")
+_TAG_ATTR_RE = re.compile(r"""\b(\w+)\s*=\s*(["'])(.*?)\2""", re.S)
+_BOX_ATTR_RE = re.compile(r"""\s+box\s*=\s*("[^"]*"|'[^']*')""")
+
+
+class _SeenPages:
+    """The pages one chat call's tools pictured; strip() drops boxes elsewhere."""
+
+    def __init__(self):
+        self.pages: set = set()
+
+    def record(self, name: str, blocks: list) -> None:
+        field = _PICTURE_PAGES.get(name)
+        if field is None or not any(isinstance(block, dict)
+                                    and block.get("type") == "image"
+                                    for block in blocks):
+            return
+        try:
+            result = json.loads(blocks[0]["text"])
+            pictured = result[field]
+            pages = ([pictured] if isinstance(pictured, int)
+                     else _expand_pages(pictured))
+        except (LookupError, TypeError, ValueError):
+            return
+        for ref in (result.get("path"), result.get("do
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-// Anti-pattern to NEVER write (induced failure mode):
-            in ``index_backend`` (``"none"``, ``"low"``, ``"high"``, ...; a
-            model without the setting drops it). Defaults to ``"none"``
-            unless LiteLLM lists the model as refusing it, and stops
-            sending it once a prompt the server refused with it (HTTP
-            400) goes through without it (never on ``claude-code/``,
-            whose effort is checked up front). ``"none"`` raises on a model
-            whose thinking can't be turned off (Claude Opus 5.5 and Fable
-            under ``anthropic/``, ``bedrock/``, ``vertex_ai/`` or
-            ``azure_ai/``) and on any ``claude-code/`` model; the default
-            runs them at ``"low"``.
-            ``api_version``, ``aws_*``, … — passed through verbatim.
+// Induced defect failure mode:
+    folder-tree tools are left out."""
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2ac8694b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `eb582bee` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

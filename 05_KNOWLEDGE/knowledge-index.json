@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-15T02:58:59.807Z",
-  "total_verified_learnings": 8650,
+  "last_updated": "2026-11-15T03:14:20.585Z",
+  "total_verified_learnings": 8653,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18061,
+  "total_items": 18082,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -212346,14 +212346,19 @@
       "slug": "argoproj-argo-workflows",
       "platform": "github",
       "source_url": "https://github.com/argoproj/argo-workflows",
-      "source_version": "abd7e05c",
-      "content_hash": "99b890ae797badb12d86bece8aefd0c8b3b7a8093eccabe614100f981d2f7a0b",
+      "source_version": "5ecc44fc",
+      "content_hash": "0c484764fa28419a9aa58a873ac2577e1da15e2bc62adc0db1ba75b44b10e7b2",
       "dossier_path": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "promoted_rules": [
         {
           "number": 8360,
           "title": "fail containerSet nodes of a pod rejected by kubelet",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8569,
+          "title": "retry transient package download failures",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -212362,7 +212367,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T19:19:15.435Z",
+      "verified_at": "2026-11-15T03:13:36.071Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -212404,10 +212409,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-argoproj-argo-workflows-human-need-intelligence-argoproj-argo-workflows-core-inv.md",
       "title": "Human & Need Intelligence: argoproj/argo-workflows Core Invariants",
       "repository": "argoproj/argo-workflows",
-      "source_version": "abd7e05c",
-      "content_hash": "2d3cf1f1c01a2142afaf4b0bd629170055a78dbe833a65163b67c467352cc69d",
+      "source_version": "5ecc44fc",
+      "content_hash": "c368303a3821628709fdf0306118f22d6ef508315693391a0dd289e031988d7e",
       "domain_letter": "A",
-      "persisted_at": "2026-11-13T19:19:15.801Z"
+      "persisted_at": "2026-11-15T03:13:36.601Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-argoproj-argo-workflows": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-argoproj-argo-workflows",
@@ -212416,10 +212421,10 @@
       "relative_path": "08_VERIFICATION/argoproj-argo-workflows-verification-protocol-empirical-defect-shield-for-argopr.md",
       "title": "Verification Protocol: Empirical Defect Shield for argoproj/argo-workflows",
       "repository": "argoproj/argo-workflows",
-      "source_version": "abd7e05c",
-      "content_hash": "79d2ed769bbc0a49fa759e03c4d49bd62ae7fc734c31f2a2956a508bff831577",
+      "source_version": "5ecc44fc",
+      "content_hash": "7a2e1b3456cd797e6b3c6f3a3504143b7f6f9d4d3e2cf6717d6502ba7845065d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T19:19:15.884Z"
+      "persisted_at": "2026-11-15T03:13:36.733Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-psrben-visionhope-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-psrben-visionhope-learnings-core-invariants",
@@ -212453,9 +212458,9 @@
       "title": "Human & Need Intelligence: argoproj-argo-workflows-learnings Core Invariants",
       "repository": "argoproj-argo-workflows-learnings",
       "source_version": "HEAD",
-      "content_hash": "f6916d02b330f8648e19253b2ed461348ff76379214b94e44055503e543932bd",
+      "content_hash": "88ef303da12e3477ed769eb16a8f158b2f626811a9079172b5aa14e8b84ca68d",
       "domain_letter": "A",
-      "persisted_at": "2026-11-13T19:19:47.610Z"
+      "persisted_at": "2026-11-15T03:14:20.440Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-argoproj-argo-workflows-learni": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-argoproj-argo-workflows-learni",
@@ -212465,9 +212470,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for argoproj-argo-workflows-learnings",
       "repository": "argoproj-argo-workflows-learnings",
       "source_version": "HEAD",
-      "content_hash": "e06795206f96a6a49f9c19e037684107fbf9ac99d173415d6ff897b09f94860c",
+      "content_hash": "491a8f7e79808450882c6ac773a4b93a51886a8b52edcfda5135b1652ebd13b2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T19:19:47.711Z"
+      "persisted_at": "2026-11-15T03:14:20.585Z"
     },
     "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf": {
       "learning_id": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
@@ -238265,6 +238270,321 @@
       "content_hash": "8afe28aa18d498b5d69bab2cb961f39da09139e7539d359cbafabc63143991e6",
       "domain_letter": "K",
       "persisted_at": "2026-11-15T02:58:59.301Z"
+    },
+    "learn-huggingface-black-forest-labs-flux-3-image-klein": {
+      "learning_id": "learn-huggingface-black-forest-labs-flux-3-image-klein",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "black-forest-labs/flux-3-image-klein",
+      "repository": "black-forest-labs/flux-3-image-klein",
+      "slug": "hf-black-forest-labs-flux-3-image-klein",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/black-forest-labs/flux-3-image-klein",
+      "source_version": "hf-black-forest-labs-flux-3-image-klein",
+      "content_hash": "3dabd21aecf1f79d9631c5db4e7623f716302638da9b04f874f0edec4b4b3927",
+      "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T03:13:26.483Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-black-forest-labs-flux-3-image-klein-core-invari": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-black-forest-labs-flux-3-image-klein-core-invari",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-black-forest-labs-flux-3-image-klein-research-knowledge-intelligence-black-fo.md",
+      "title": "Research & Knowledge Intelligence: black-forest-labs/flux-3-image-klein Core Invariants",
+      "repository": "black-forest-labs/flux-3-image-klein",
+      "source_version": "hf-black-forest-labs-flux-3-image-klein",
+      "content_hash": "65854e2d8ffce5a3012700e0a2e15af3cfb928583365733b9d5bc0f6c02880da",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T03:13:26.866Z"
+    },
+    "learn-github-tw93-mole": {
+      "learning_id": "learn-github-tw93-mole",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "tw93/Mole",
+      "repository": "tw93/Mole",
+      "slug": "tw93-mole",
+      "platform": "github",
+      "source_url": "https://github.com/tw93/Mole",
+      "source_version": "060fba8b",
+      "content_hash": "de78d2df30c991193d302e15d62f62602889421ef758e42cc5c86b59735afa66",
+      "dossier_path": "07_PROJECT_LEARNING/tw93-mole-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tw93-mole-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8568,
+          "title": "bound container cache enumeration",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T03:13:33.727Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8568": {
+      "learning_id": "rule-8568",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8568,
+      "title": "bound container cache enumeration",
+      "source_url": "https://github.com/tw93/Mole",
+      "source_version": "060fba8b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T03:13:33.727Z"
+    },
+    "candidate_directive-bound-container-cache-enumeration": {
+      "item_id": "candidate_directive-bound-container-cache-enumeration",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-FLIG-bound-container-cache-enumeration.md",
+      "title": "bound container cache enumeration",
+      "repository": "tw93/Mole",
+      "source_version": "060fba8b",
+      "content_hash": "cb3ade77e6fae2ce717f196ae034493f4c8b76df6c63d079bb5921647ffd88df",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-15T03:13:34.126Z"
+    },
+    "domain_intelligence-architecture-intelligence-tw93-mole-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-tw93-mole-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tw93-mole-architecture-intelligence-tw93-mole-core-invariants.md",
+      "title": "Architecture Intelligence: tw93/Mole Core Invariants",
+      "repository": "tw93/Mole",
+      "source_version": "060fba8b",
+      "content_hash": "72c51c349ac38f072262eaea2465d69ee357efe4be346960023188025e659a37",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T03:13:34.247Z"
+    },
+    "agent_contract-agent-contract-tw93-mole-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-tw93-mole-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/tw93-mole-agent-contract-tw93-mole-autonomous-specialist-persona.md",
+      "title": "Agent Contract: tw93/Mole Autonomous Specialist Persona",
+      "repository": "tw93/Mole",
+      "source_version": "060fba8b",
+      "content_hash": "8520086b6a6676c347ead404e012c08f5bd622a3c28bde2fd3ed243d18d5051e",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T03:13:34.377Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-tw93-mole": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tw93-mole",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/tw93-mole-verification-protocol-empirical-defect-shield-for-tw93-mole.md",
+      "title": "Verification Protocol: Empirical Defect Shield for tw93/Mole",
+      "repository": "tw93/Mole",
+      "source_version": "060fba8b",
+      "content_hash": "10612b15c22bbabde452335a97c2b8a2fe75fdb8312f5bdc6ebb7cc0e32feb9d",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T03:13:34.496Z"
+    },
+    "rule-8569": {
+      "learning_id": "rule-8569",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8569,
+      "title": "retry transient package download failures",
+      "source_url": "https://github.com/argoproj/argo-workflows",
+      "source_version": "5ecc44fc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T03:13:36.071Z"
+    },
+    "candidate_directive-retry-transient-package-download-failures": {
+      "item_id": "candidate_directive-retry-transient-package-download-failures",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-FNBK-retry-transient-package-download-failures.md",
+      "title": "retry transient package download failures",
+      "repository": "argoproj/argo-workflows",
+      "source_version": "5ecc44fc",
+      "content_hash": "e76d3a068389935c3bf949f1659550c43543522a94a0568578d0fa9f2b3107cf",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-15T03:13:36.466Z"
+    },
+    "learn-github-vectifyai-pageindex": {
+      "learning_id": "learn-github-vectifyai-pageindex",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "VectifyAI/PageIndex",
+      "repository": "VectifyAI/PageIndex",
+      "slug": "vectifyai-pageindex",
+      "platform": "github",
+      "source_url": "https://github.com/VectifyAI/PageIndex",
+      "source_version": "cc035e8d",
+      "content_hash": "cb37ad2263f56a04ac785fee6a40cff1300bfdef6824fecf40e4eb84ba242b1d",
+      "dossier_path": "07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8570,
+          "title": "own-model chat drops a citation box on a page whose picture the call neve",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T03:13:41.523Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8570": {
+      "learning_id": "rule-8570",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8570,
+      "title": "own-model chat drops a citation box on a page whose picture the call neve",
+      "source_url": "https://github.com/VectifyAI/PageIndex",
+      "source_version": "cc035e8d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T03:13:41.524Z"
+    },
+    "candidate_directive-own-model-chat-drops-a-citation-box-on-a-page-whose-picture-the-call-neve": {
+      "item_id": "candidate_directive-own-model-chat-drops-a-citation-box-on-a-page-whose-picture-the-call-neve",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-FRIY-own-model-chat-drops-a-citation-box-on-a-page-whose-picture-the-call-neve.md",
+      "title": "own-model chat drops a citation box on a page whose picture the call neve",
+      "repository": "VectifyAI/PageIndex",
+      "source_version": "cc035e8d",
+      "content_hash": "5fbf0880002fbfd280daed9a475310934f42f9864aa074fee4779816d79cee45",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T03:13:41.919Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-vectifyai-pageindex-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-vectifyai-pageindex-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-vectifyai-pageindex-technical-construction-intelligence-vectifyai-pageindex-core.md",
+      "title": "Technical Construction Intelligence: VectifyAI/PageIndex Core Invariants",
+      "repository": "VectifyAI/PageIndex",
+      "source_version": "cc035e8d",
+      "content_hash": "65bbe1824556109c9569c20fb14deaad903d8100a4f5d1141159e09ad7a01c7d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T03:13:42.049Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-vectifyai-pageindex": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-vectifyai-pageindex",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/vectifyai-pageindex-verification-protocol-empirical-defect-shield-for-vectifyai-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for VectifyAI/PageIndex",
+      "repository": "VectifyAI/PageIndex",
+      "source_version": "cc035e8d",
+      "content_hash": "bf7267a86ae0614b0bf692cb284bdc6efef2ffaac744f64115479a4ccd3ecd21",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T03:13:42.179Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-3-image-klein-learning": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-3-image-klein-learning",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-black-forest-labs-flux-3-image-klein-learnings-research-knowledge-intelligenc.md",
+      "title": "Research & Knowledge Intelligence: hf-black-forest-labs-flux-3-image-klein-learnings Core Invariants",
+      "repository": "hf-black-forest-labs-flux-3-image-klein-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2d0b7b8f4123629031b32e78d2215fd764bf537797c7aa072a32a2728e6c6370",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T03:14:19.109Z"
+    },
+    "candidate_directive-clean-bound-container-cache-enumeration": {
+      "item_id": "candidate_directive-clean-bound-container-cache-enumeration",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GKJE-clean-bound-container-cache-enumeration.md",
+      "title": "clean): bound container cache enumeration",
+      "repository": "tw93-mole-learnings",
+      "source_version": "HEAD",
+      "content_hash": "71722ef9f92d6f16571d29f01fe7e8eb6f8df7a07c738b1c38c801f516f23f44",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-15T03:14:19.526Z"
+    },
+    "domain_intelligence-architecture-intelligence-tw93-mole-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-tw93-mole-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tw93-mole-learnings-architecture-intelligence-tw93-mole-learnings-core-invariant.md",
+      "title": "Architecture Intelligence: tw93-mole-learnings Core Invariants",
+      "repository": "tw93-mole-learnings",
+      "source_version": "HEAD",
+      "content_hash": "56c54d2691a3b7620eedfcc046c3e7d19db838ea742f718a448565bf1224ee97",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T03:14:19.654Z"
+    },
+    "agent_contract-agent-contract-tw93-mole-learnings-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-tw93-mole-learnings-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/tw93-mole-learnings-agent-contract-tw93-mole-learnings-autonomous-specialist-per.md",
+      "title": "Agent Contract: tw93-mole-learnings Autonomous Specialist Persona",
+      "repository": "tw93-mole-learnings",
+      "source_version": "HEAD",
+      "content_hash": "67bc4766e03d7630f177d4f8e48354afa9038617b81cd7c6de203ccaee908d1a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T03:14:19.799Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-tw93-mole-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tw93-mole-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/tw93-mole-learnings-verification-protocol-empirical-defect-shield-for-tw93-mole-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for tw93-mole-learnings",
+      "repository": "tw93-mole-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3d6a5fd03c574438fe0ca83264600785c0b55949ce3eb5462dddf5647ae6e375",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T03:14:19.935Z"
+    },
+    "candidate_directive-ci-retry-transient-package-download-failures": {
+      "item_id": "candidate_directive-ci-retry-transient-package-download-failures",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GL56-ci-retry-transient-package-download-failures.md",
+      "title": "ci): retry transient package download failures",
+      "repository": "argoproj-argo-workflows-learnings",
+      "source_version": "HEAD",
+      "content_hash": "fc2aa9e1c58522bbfa2377cc8907d27f880ebd733526260cebd7ae59df140d9b",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-15T03:14:20.299Z"
     }
   },
   "ai-builder-brain": {

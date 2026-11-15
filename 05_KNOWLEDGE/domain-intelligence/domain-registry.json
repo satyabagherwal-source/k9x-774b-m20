@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T02:58:59.708Z",
-  "total_records": 925,
+  "last_updated": "2026-11-15T03:14:20.440Z",
+  "total_records": 931,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 455,
+      "total": 458,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -492,7 +492,10 @@
         "DOM-D-F32FC521",
         "domain_intelligence-research-knowledge-intelligence-vllm-sr-d3-core-invariants",
         "DOM-D-608927A6",
-        "domain_intelligence-research-knowledge-intelligence-hf-vllm-sr-d3-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-hf-vllm-sr-d3-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-black-forest-labs-flux-3-image-klein-core-invari",
+        "DOM-D-1DE3F011",
+        "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-3-image-klein-learning"
       ]
     },
     "E": {
@@ -528,7 +531,7 @@
       ]
     },
     "G": {
-      "total": 149,
+      "total": 151,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -678,11 +681,13 @@
         "domain_intelligence-architecture-intelligence-cachix-devenv-core-invariants",
         "domain_intelligence-architecture-intelligence-cachix-devenv-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-jetbrains-kotlinconf-app-core-invariants",
-        "domain_intelligence-architecture-intelligence-jetbrains-kotlinconf-app-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-jetbrains-kotlinconf-app-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-tw93-mole-core-invariants",
+        "domain_intelligence-architecture-intelligence-tw93-mole-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 193,
+      "total": 194,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -876,7 +881,8 @@
         "domain_intelligence-technical-construction-intelligence-fallow-rs-fallow-core-invariants",
         "domain_intelligence-technical-construction-intelligence-liquidai-lfm2-5-24b-a2b-gguf-core-invariants",
         "domain_intelligence-technical-construction-intelligence-fallow-rs-fallow-learnings-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-hf-liquidai-lfm2-5-24b-a2b-gguf-learnings-co"
+        "domain_intelligence-technical-construction-intelligence-hf-liquidai-lfm2-5-24b-a2b-gguf-learnings-co",
+        "domain_intelligence-technical-construction-intelligence-vectifyai-pageindex-core-invariants"
       ]
     },
     "I": {
@@ -8597,8 +8603,8 @@
       "title": "Human & Need Intelligence: argoproj/argo-workflows Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-argoproj-argo-workflows-human-need-intelligence-argoproj-argo-workflows-core-inv.md",
       "repository": "argoproj/argo-workflows",
-      "content_hash": "2d3cf1f1c01a2142afaf4b0bd629170055a78dbe833a65163b67c467352cc69d",
-      "created_at": "2026-11-13T19:19:15.801Z"
+      "content_hash": "c368303a3821628709fdf0306118f22d6ef508315693391a0dd289e031988d7e",
+      "created_at": "2026-11-15T03:13:36.601Z"
     },
     "DOM-D-3A0F1688": {
       "record_id": "DOM-D-3A0F1688",
@@ -8657,8 +8663,8 @@
       "title": "Human & Need Intelligence: argoproj-argo-workflows-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-argoproj-argo-workflows-learnings-human-need-intelligence-argoproj-argo-workflow.md",
       "repository": "argoproj-argo-workflows-learnings",
-      "content_hash": "f6916d02b330f8648e19253b2ed461348ff76379214b94e44055503e543932bd",
-      "created_at": "2026-11-13T19:19:47.610Z"
+      "content_hash": "88ef303da12e3477ed769eb16a8f158b2f626811a9079172b5aa14e8b84ca68d",
+      "created_at": "2026-11-15T03:14:20.440Z"
     },
     "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-ggu": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-ggu",
@@ -18090,6 +18096,93 @@
       "repository": "hf-liquidai-lfm2.5-24b-a2b-gguf-learnings",
       "content_hash": "7201a983e64aaa16d91172d341c876d398bc3d04ab7878b65624f08b1368f82b",
       "created_at": "2026-11-15T02:58:59.196Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-black-forest-labs-flux-3-image-klein-core-invari": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-black-forest-labs-flux-3-image-klein-core-invari",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: black-forest-labs/flux-3-image-klein Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-black-forest-labs-flux-3-image-klein-research-knowledge-intelligence-black-fo.md",
+      "repository": "black-forest-labs/flux-3-image-klein",
+      "content_hash": "65854e2d8ffce5a3012700e0a2e15af3cfb928583365733b9d5bc0f6c02880da",
+      "created_at": "2026-11-15T03:13:26.866Z"
+    },
+    "domain_intelligence-architecture-intelligence-tw93-mole-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-tw93-mole-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: tw93/Mole Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tw93-mole-architecture-intelligence-tw93-mole-core-invariants.md",
+      "repository": "tw93/Mole",
+      "content_hash": "72c51c349ac38f072262eaea2465d69ee357efe4be346960023188025e659a37",
+      "created_at": "2026-11-15T03:13:34.247Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-vectifyai-pageindex-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-vectifyai-pageindex-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: VectifyAI/PageIndex Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-vectifyai-pageindex-technical-construction-intelligence-vectifyai-pageindex-core.md",
+      "repository": "VectifyAI/PageIndex",
+      "content_hash": "65bbe1824556109c9569c20fb14deaad903d8100a4f5d1141159e09ad7a01c7d",
+      "created_at": "2026-11-15T03:13:42.049Z"
+    },
+    "DOM-D-1DE3F011": {
+      "record_id": "DOM-D-1DE3F011",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): black-forest-labs/flux-3-image-klein",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/black-forest-labs/flux-3-image-klein](https://huggingface.co/black-forest-labs/flux-3-image-klein))  \n> **Source Version**: `hf-black-for",
+      "content_hash": "9432cf203139c9798ce7bd989bf69f4b9d30b7539ae55408b9147a064d19946d",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-learnings.md`  \n> **Source**: huggingface ([ -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-learnings.md`  \n> **Source**: huggingface ([",
+      "provenance": {
+        "source_uri": "project://hf-black-forest-labs-flux-3-image-klein/hf-black-forest-labs-flux-3-image-klein-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T03:13:44.975Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-black-forest-labs-flux-3-image-klein)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-black-forest-labs-flux-3-image-klein"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-15T03:14:18.844Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-3-image-klein-learning": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-3-image-klein-learning",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-black-forest-labs-flux-3-image-klein-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-black-forest-labs-flux-3-image-klein-learnings-research-knowledge-intelligenc.md",
+      "repository": "hf-black-forest-labs-flux-3-image-klein-learnings",
+      "content_hash": "2d0b7b8f4123629031b32e78d2215fd764bf537797c7aa072a32a2728e6c6370",
+      "created_at": "2026-11-15T03:14:19.109Z"
+    },
+    "domain_intelligence-architecture-intelligence-tw93-mole-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-tw93-mole-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: tw93-mole-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tw93-mole-learnings-architecture-intelligence-tw93-mole-learnings-core-invariant.md",
+      "repository": "tw93-mole-learnings",
+      "content_hash": "56c54d2691a3b7620eedfcc046c3e7d19db838ea742f718a448565bf1224ee97",
+      "created_at": "2026-11-15T03:14:19.654Z"
     }
   }
 }

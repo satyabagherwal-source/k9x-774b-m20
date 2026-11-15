@@ -10038,3 +10038,8 @@ Every entry in this ledger must capture:
 | `learn-dom-d-608927a6` | `project://hf-vllm-sr-d3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md` | 2026-11-15T02:35:54.049Z |
 | `learn-github-fallow-rs-fallow` | `https://github.com/fallow-rs/fallow` | `b5123420` | Multi-dimensional audit evidence | 2026-11-15T02:55:36.819Z |
 | `learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf` | `https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-15T02:58:54.910Z |
+| `learn-huggingface-black-forest-labs-flux-3-image-klein` | `https://huggingface.co/black-forest-labs/flux-3-image-klein` | `hf-black-f` | Multi-dimensional audit evidence | 2026-11-15T03:13:26.660Z |
+| `learn-github-tw93-mole` | `https://github.com/tw93/Mole` | `060fba8b` | Multi-dimensional audit evidence | 2026-11-15T03:13:33.911Z |
+| `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `5ecc44fc` | Multi-dimensional audit evidence | 2026-11-15T03:13:36.249Z |
+| `learn-github-vectifyai-pageindex` | `https://github.com/VectifyAI/PageIndex` | `cc035e8d` | Multi-dimensional audit evidence | 2026-11-15T03:13:41.705Z |
+| `learn-dom-d-1de3f011` | `project://hf-black-forest-labs-flux-3-image-klein` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-learnings.md` | 2026-11-15T03:14:18.862Z |

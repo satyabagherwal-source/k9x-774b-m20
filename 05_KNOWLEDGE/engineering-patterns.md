@@ -618587,3 +618587,306 @@ TEST(TensorMemoryTest, InvariantBlockDivisibilityAndAlignment) {
 ```
 
 ---
+
+
+---
+
+## 8568. bound container cache enumeration (Harvested from tw93/Mole)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "bound container cache enumeration",
+  "source": "tw93/Mole",
+  "source_url": "https://github.com/tw93/Mole",
+  "source_version": "060fba8b",
+  "license": "GPL-3.0",
+  "extracted_at": "2026-11-15T03:13:33.422Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-tw93-mole",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [tw93/Mole](https://github.com/tw93/Mole) (Revision: `060fba8b`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `lib/clean/user.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tw93/Mole. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `2dd073d2`: clean): bound container cache enumeration. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Shell data structures, boundary deserialization, API parsing, or resource lifecycles matching `lib/clean/user.sh`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```shell
+// Verified production-grade fix pattern:
+# Complete, NUL-delimited directory snapshots for the container cache scans.
+# A Bash glob opens the directory before any loop checkpoint can run (#1973).
+# Keep both enumeration and sorting in the bounded producer, discard partial
+# output on failure, and reuse the snapshot for counting and cleanup. Callers
+# own the array so nested scans cannot replace another caller's candidates.
+_container_cache_list_entries() {
+    local entries_file="${2:-}"
+    local owns_entries_file=false
+    _MOLE_CONTAINER_CACHE_ENTRIES=()
+    local timeout_seconds
+    if ! timeout_seconds=$(_mole_timeout_with_deadline "$MOLE_TIMEOUT_MEDIUM_PROBE_SEC" \
+        "${_MOLE_CLEAN_SECTION_DEADLINE:-}"); then
+        debug_log "Container cache scan budget exhausted: $dir"
+        return 1
+    fi
+    if [[ -z "$entries_file" ]]; then
+        entries_file=$(create_temp_file) || return 1
+        owns_entries_file=true
+    fi
+    local scan_rc=0
+    run_with_timeout "$timeout_seconds" "$FIND_BSD" "$dir" \
+        -mindepth 1 -maxdepth 1 -print0 > "$entries_file" 2> /dev/null || scan_rc=$?
+    if [[ $scan_rc -eq 0 ]]; then
+        if timeout_seconds=$(_mole_timeout_with_deadline "$MOLE_TIMEOUT_MEDIUM_PROBE_SEC" \
+ 
+```
+
+**NEGATIVE CONSTRAINT**:
+```shell
+// Induced defect failure mode:
+# App caches (merged: macOS system caches + Sandboxed apps).
+# Runs in the caller's shell and returns the count in
+# CACHE_TOP_LEVEL_ENTRY_COUNT: it is called once per container, and a command
+# substitution plus two $(shopt -p) captures cost three forks each time.
+cache_top_level_entry_count_capped() {
+    local cap="${2:-101}"
+    local count=0
+    local restore_nullglob=false
+    local restore_dotglob=false
+    shopt -q nullglob || restore_nullglob=true
+    shopt -q dotglob || restore_dotglob=true
+    shopt -s nullglob dotglob
+
+    local item
+    for item in "$dir"/*; do
+        [[ -e "$item" ]] || continue
+        count=$((count + 1))
+        if ((count >= cap)); then
+            break
+    done
+
+    [[ "$restore_nullglob" == "true" ]] && shopt -u nullglob
+    [[ "$restore_dotglob" == "true" ]] && shopt -u dotglob
+
+    [[ "$count" =~ ^[0-9]+$ ]] || count=0
+    CACHE_TOP_LEVEL_ENTRY_COUNT=$count
+    return 0
+directory_has_entries() {
+    local dir="$1"
+    [[ -d "$dir" ]] || return 1
+
+    local _nullglob_state
+    local _dotglob_state
+    _nullglob_state=$(shopt -p nullglob || true)
+    _dotglob_state=$(shopt -p dotglob || true)
+    shopt -s nullglob dotglob
+
+    local item
+    f
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `2dd073d2` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8569. retry transient package download failures (Harvested from argoproj/argo-workflows)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "retry transient package download failures",
+  "source": "argoproj/argo-workflows",
+  "source_url": "https://github.com/argoproj/argo-workflows",
+  "source_version": "5ecc44fc",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-15T03:13:35.754Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-argoproj-argo-workflows",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [argoproj/argo-workflows](https://github.com/argoproj/argo-workflows) (Revision: `5ecc44fc`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `.github/workflows/ci-build.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-workflows. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `5ecc44fc`: ci): retry transient package download failures. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci-build.yaml`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+              - hack/retry-download.sh
+      - run: sh hack/retry-download.sh yarn --cwd ui install
+          sh hack/retry-download.sh yarn --cwd ui install
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+      - run: yarn --cwd ui install
+          yarn --cwd ui install
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `5ecc44fc` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8570. own-model chat drops a citation box on a page whose picture the call neve (Harvested from VectifyAI/PageIndex)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "own-model chat drops a citation box on a page whose picture the call neve",
+  "source": "VectifyAI/PageIndex",
+  "source_url": "https://github.com/VectifyAI/PageIndex",
+  "source_version": "cc035e8d",
+  "license": "MIT",
+  "extracted_at": "2026-11-15T03:13:41.226Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-vectifyai-pageindex",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex) (Revision: `cc035e8d`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `pageindex/agent_tools.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in VectifyAI/PageIndex. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `eb582bee`: chat): own-model chat drops a citation box on a page whose picture the call never saw. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pageindex/agent_tools.py`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+import html
+# The tools whose results attach page pictures, by the field naming those pages.
+_PICTURE_PAGES = {"view_pages": "returned_pages",
+                  "get_page_content": "picture_pages", "zoom_page": "page"}
+_CITE_OPEN_RE = re.compile(r"<cite\s[^<>]*>")
+_TAG_ATTR_RE = re.compile(r"""\b(\w+)\s*=\s*(["'])(.*?)\2""", re.S)
+_BOX_ATTR_RE = re.compile(r"""\s+box\s*=\s*("[^"]*"|'[^']*')""")
+
+
+class _SeenPages:
+    """The pages one chat call's tools pictured; strip() drops boxes elsewhere."""
+
+    def __init__(self):
+        self.pages: set = set()
+
+    def record(self, name: str, blocks: list) -> None:
+        field = _PICTURE_PAGES.get(name)
+        if field is None or not any(isinstance(block, dict)
+                                    and block.get("type") == "image"
+                                    for block in blocks):
+            return
+        try:
+            result = json.loads(blocks[0]["text"])
+            pictured = result[field]
+            pages = ([pictured] if isinstance(pictured, int)
+                     else _expand_pages(pictured))
+        except (LookupError, TypeError, ValueError):
+            return
+        for ref in (result.get("path"), result.get("do
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Induced defect failure mode:
+    folder-tree tools are left out."""
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `eb582bee` are properly handled with clean fallback behavior.

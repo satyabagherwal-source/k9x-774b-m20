@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T02:58:58.846Z",
+  "updated_at": "2026-11-15T03:14:19.279Z",
   "stats": {
-    "total_discovered": 3561,
-    "approved_pending_harvest": 3351,
+    "total_discovered": 3563,
+    "approved_pending_harvest": 3353,
     "harvested_count": 0,
     "rejected_count": 210,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3332,
+      "COMMUNITY_AND_EXPERT": 3334,
       "OFFICIAL_DOCUMENTATION": 125,
       "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
@@ -76893,6 +76893,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-gguf-learnings.md",
         "fileName": "hf-liquidai-lfm2.5-24b-a2b-gguf-learnings.md"
+      }
+    },
+    "SRC-FDFA7D470E10": {
+      "id": "SRC-FDFA7D470E10",
+      "url": "https://huggingface.co/black-forest-labs/flux-3-image-klein",
+      "title": "https://huggingface.co/black-forest-labs/flux-3-image-klein",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T03:14:18.878Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-learnings.md",
+        "fileName": "hf-black-forest-labs-flux-3-image-klein-learnings.md"
+      }
+    },
+    "SRC-C5E3F7B4452C": {
+      "id": "SRC-C5E3F7B4452C",
+      "url": "https://github.com/tw93/Mole",
+      "title": "https://github.com/tw93/Mole",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T03:14:19.279Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tw93-mole-learnings.md",
+        "fileName": "tw93-mole-learnings.md"
       }
     }
   }

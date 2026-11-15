@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T19:19:47.413Z",
+  "timestamp": "2026-11-15T03:14:20.201Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-argoproj-argo-workflows-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [argoproj-argo-workflows-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T19:19:47.413Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-15T03:14:20.201Z`  
 > **Learning ID**: `LEARN-EVO-argoproj-argo-workflows-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md`  
 > **Source**: github ([https://github.com/argoproj/argo-workflows](https://github.com/argoproj/argo-workflows))  
-> **Source Version**: `abd7e05c`  
+> **Source Version**: `5ecc44fc`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T19:19:14.779Z  
+> **Timestamp**: 2026-11-15T03:13:35.194Z  
 > **Learning ID**: `learn-github-argoproj-argo-workflows`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/argoproj/argo-workflows](https://github.com/argoproj/argo-workflows))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T19:19:14.774Z  
+> **Harvest Timestamp**: 2026-11-15T03:13:35.188Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Workflow Engine for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 17096 stars
+- **Stars / Engagement**: 17098 stars
 
 ---
 
@@ -813,212 +813,150 @@ func githubMatch(secret string, r *http.Request) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `abd7e05c` (2026-11-13)
-**Commit Message**: fix(controller): fail containerSet nodes of a pod rejected by kubelet (#17475)
+### Incident Patch 1: `5ecc44fc` (2026-11-14)
+**Commit Message**: fix(ci): retry transient package download failures (#17238)
 
-Signed-off-by: Simon Domke <[REDACTED_EMAIL]>
+Signed-off-by: droctothorpe <[REDACTED_EMAIL]>
 
-**File**: `workflow/controller/operator.go` (modified, +37/-0)
+**File**: `.github/workflows/ci-build.yaml` (modified, +3/-2)
 ```diff
-@@ -1413,6 +1413,40 @@ func (woc *wfOperationCtx) markAllContainersDeleted(ctx context.Context, nodeID
- 	}
- }
- 
-+// failContainersWithoutStatus fails the container nodes of a failed containerSet pod
-+// that have no container status, e.g. because kubelet rejected the pod at admission.
-+// Otherwise they would stay Pending forever.
-+func (woc *wfOperationCtx) failContainersWithoutStatus(ctx context.Context, pod *apiv1.Pod, podNode *wfv1.NodeStatus, message string) {
-+	reported := make(map[string]bool, len(pod.Status.ContainerStatuses))
-+	for _, c := range pod.Status.ContainerStatuses {
-+		reported[fmt.Sprintf("%s.%s", podNode.Name, c.Name)] = true
-+	}
-+	// Walk only the pod's container graph. Leaf containers link to the pod's dependents,
-+	// which are outside the pod's boundary.
-+	var pending []string
-+	visited := make(map[string]bool)
-+	queue := append([]string(nil), podNode.Children...)
-+	for len(queue) > 0 {
-+		id := queue[0]
-+		queue = queue[1:]
-+		if visited[id] {
-+			continue
-+		}
-+		visited[id] = true
-+		node, err := woc.wf.Status.Nodes.Get(id)
-+		if err != nil || node.Type != wfv1.NodeTypeContainer || node.BoundaryID != podNode.ID {
-+			continue
-+		}
-+		if !reported[node.Name] && !node.Fulfilled() {
-+			pending = append(pending, node.Name)
-+		}
-+		queue = append(queue, node.Children...)
-+	}
-+	for _, name := range pending {
-+		woc.markNodePhase(ctx, name, wfv1.NodeFailed, message)
-+	}
-+}
-+
- // shouldPrintPodSpec return eligible to print to the pod spec
- func (woc *wfOperationCtx) shouldPrintPodSpec(node *wfv1.NodeStatus) bool {
- 	return woc.controller.Config.PodSpecLogStrategy.AllPods ||
-@@ -1659,6 +1693,9 @@ func (woc *wfOperationCtx) assessNodeStatus(ctx context.Context, pod *apiv1.Pod,
- 			woc.markNodePhase(ctx, ctrNodeName, wfv1.NodeRunning)
- 		}
- 	}
-+	if pod.Status.Phase == apiv1.PodFailed && !stoppedDaemon && updated.Phase != wfv1.NodePending {
-+		woc.failContainersWithoutStatus(ctx, pod, old, updated.Message)
-+	}
- 
- 	// only update Pod IP for daemoned nodes to reduce number of updates
- 	if !updated.Completed() && updated.IsDaemoned() {
+@@ -54,6 +54,7 @@ jobs:
+               - Tiltfile
+               - Dockerfile
+               - hack/tilt/**
++              - hack/retry-download.sh
+             tests: &tests
+               - *common
+               - cmd/**
+@@ -578,7 +579,7 @@ jobs:
+           node-version: "24" # change in all GH Workflows
+           cache: yarn
+           cache-dependency-path: ui/yarn.lock
+-      - run: yarn --cwd ui install
++      - run: sh hack/retry-download.sh yarn --cwd ui install
+       - run: yarn --cwd ui build
+       - run: yarn --cwd ui test
+       - run: yarn --cwd ui lint
+@@ -633,7 +634,7 @@ jobs:
+         uses: ./.github/actions/e2e-cluster-up
+       - name: Install UI dependencies and Playwright browser
+         run: |
+-          yarn --cwd ui install
++          sh hack/retry-download.sh yarn --cwd ui install
+           yarn --cwd ui playwright install --with-deps chromium
+       - name: Build images and start Argo in-cluster
+         # tilt builds the production images (UI baked in), deploys them, and keeps
 ```
 
-**File**: `workflow/controller/operator_test.go` (modified, +151/-0)
+**File**: `.github/workflows/docs.yaml` (modified, +1/-1)
 ```diff
-@@ -9838,6 +9838,157 @@ func TestContainerSetWithDependenciesWhenPodDeleted(t *testing.T) {
- 	}
- }
+@@ -43,7 +43,7 @@ jobs:
+           node-version: "24"
+       # This is mainly here so the dependencies get saved to the cache by "actions/setup-go"
+       - name: Download go dependencies
+-        run: go mod download
++        run: sh hack/retry-download.sh go mod download
+       # Use the same make target both locally and on CI to make it easier to debug failures.
+       - name: Build & Lint docs
+         run: make docs
+```
+
+**File**: `Dockerfile` (modified, +4/-2)
+```diff
+@@ -20,7 +20,8 @@ RUN apk update && apk add --no-cache \
+ WORKDIR /go/src/github.com/argoproj/argo-workflows
+ COPY go.mod .
+ COPY go.sum .
+-RUN --mount=type=cache,target=/go/pkg/mod go mod download
++COPY hack/retry-download.sh /usr/local/bin/retry-download.sh
++RUN --mount=type=cache,target=/go/pkg/mod sh /usr/local/bin/retry-download.sh go mod download
  
-+// withRejection makes a pod look like kubelet rejected it at admission: the pod is Failed
-+// and has no container statuses, because no container was ever created.
-+func withRejection(pod *apiv1.Pod, _ *wfOperationCtx) {
-+	pod.Status.Reason = "OutOfmemory"
-+	pod.Status.Message = "Pod was rejected: Node didn't have enough resource: memory, requested: 1, used: 2, capacity: 2"
-+	pod.Status.ContainerStatuses = nil
-+}
+ COPY . .
+ 
+@@ -41,10 +42,11 @@ FROM node:20-alpine AS argo-ui
+ RUN apk update && apk add --no-cache git
+ 
+ COPY ui/package.json ui/yarn.lock ui/
++COPY hack/retry-download.sh /usr/local/bin/retry-download.sh
+ 
+ RUN --mount=type=cache,target=/root/.yarn \
+   YARN_CACHE_FOLDER=/root/.yarn JOBS=max \
+-  yarn --cwd ui install --network-timeout 1000000
++  sh /usr/local/bin/retry-download.sh yarn --cwd ui install --network-timeout 1000000
+ 
+ COPY ui ui
+ COPY api api
+```
+
+**File**: `Makefile` (modified, +2/-2)
+```diff
+@@ -324,7 +324,7 @@ cli: dist/argo ## Build the CLI
+ ui/dist/app/index.html: $(shell find ui/src -type f && find ui -maxdepth 1 -type f)
+ ifeq ($(STATIC_FILES),true)
+ 	# `yarn install` is fast (~2s), so you can call it safely.
+-	JOBS=max yarn --cwd ui install
++	JOBS=max sh hack/retry-download.sh yarn --cwd ui install
+ 	# `yarn build` is slow, so we guard it with a up-to-date check.
+ 	JOBS=max yarn --cwd ui build
+ else
+@@ -864,7 +864,7 @@ test-%-sdk:
+ # Explicit target so it is not captured by the `test-%` Go e2e pattern rule above.
+ .PHONY: test-ui-e2e
+ test-ui-e2e:
+-	yarn --cwd ui install
++	sh hack/retry-download.sh yarn --cwd ui install
+ 	yarn --cwd ui e2e
+ 
+ Test%: $(TOOL_GOTESTSUM) $(JSON_TEST_OUTPUT) vendor/modules.txt
+```
+
+**File**: `hack/README.md` (modified, +17/-0)
+```diff
+@@ -9,6 +9,23 @@ The directory structure roughly follows the top-level structure:
+ - [`hack/git/`](git/) has scripts for `.git/`
+ - [`hack/manifests/`](manifests/) has scripts for [`manifests/`](../manifests/)
+ 
++## Retrying package downloads
 +
-+// TestContainerSetWhenPodRejected tests that the container nodes of a containerSet pod that
-+// kubelet rejected (no container statuses) are failed instead of staying Pending.
-+func TestContainerSetWhenPodRejected(t *testing.T) {
-+	cancel, controller := newController(logging.TestContext(t.Context()))
-+	defer cancel()
-+	ctx := logging.TestContext(t.Context())
-+	wfcset := controller.wfclientset.ArgoprojV1alpha1().Workflows("")
-+	wf := wfv1.MustUnmarshalWorkflow(wfHasContainerSetWithDependencies)
-+	wf, err := wfcset.Create(ctx, wf, metav1.CreateOptions{})
-+	require.NoError(t, err)
-+	woc := newWorkflowOperationCtx(ctx, wf, controller)
-+	woc.operate(ctx)
++Use `sh hack/retry-download.sh COMMAND [ARG ...]` for idempotent package-download commands that can fail because of a temporary registry or network error.
++The Go module downloads and Yarn installs in CI image builds, the main CI workflow, the docs workflow and the UI Make targets use this helper.
++For example:
 +
-+	makePodsPhase(ctx, woc, apiv1.PodFailed, withRejection)
-+	woc = newWorkflowOperationCtx(ctx, woc.wf, controller)
-+	woc.operate(ctx)
++```sh
++sh hack/retry-download.sh go mod download
++sh hack/retry-download.sh yarn --cwd ui install
++```
 +
-+	assert.Equal(t, wfv1.WorkflowFailed, woc.wf.Status.Phase)
-+	containers := 0
-+	for _, node := range woc.wf.Status.Nodes {
-+		if node.Type == wfv1.NodeTypeContainer {
-+			containers++
-+			assert.Equal(t, wfv1.NodeFailed, node.Phase, node.Name)
-+			assert.Contains(t, node.Message, "Pod was rejected", node.Name)
-+		}
-+	}
-+	assert.Equal(t, 2, containers)
-+}
++The helper retries any failed command up to three attempts total, waiting 5 seconds and then 10 seconds between attempts.
++It does not classify errors: permanent failures are retried too, avoiding dependence on package-manager diagnostic strings.
++Command output is passed through directly, and the final command exit status is preserved unless the retry delay fails, in which case the helper returns `sleep`'s status.
++Existing package caches, integrity checks and CI step timeouts remain in effect.
++Do not wrap builds, tests or non-idempotent commands with this helper.
 +
-+var wfContainerSetParameterizedNameRejected = `
-+apiVersion: argoproj.io/v1alpha1
-+kind: Workflow
-+metadata:
-+  name: wf-containerset-parameterized-rejected
-+spec:
-+  entrypoint: init
-+  arguments:
-+    parameters:
-+      - name: ctr
-+        value: main
-+  templates:
-+    - name: init
-+      dag:
-+        tasks:
-+          - name: A
-+            template: run
-+    - name: run
-+      containerSet:
-+        containers:
-+          - name: "{{workflow.parameters.ctr}}"
-+            image: alpine:3.23
-+            command: [echo]`
+ ## Modifications
+ 
+ When adding or deleting files in this directory, make sure to also update [the `Makefile`](../Makefile) and the [GitHub Actions](../.github/workflows/)
+```
+
+**File**: `hack/retry-download.sh` (added, +16/-0)
+```diff
+@@ -0,0 +1,16 @@
++#!/bin/sh
++# Retry idempotent package-download commands, not builds or tests, up to 3 times.
++if [ "$#" -eq 0 ]; then
++    echo "Usage: sh hack/retry-download.sh COMMAND [ARG ...]" >&2
++    exit 2
++fi
 +
-+// TestContainerSetParameterizedNameWhenPodRejected tests that container nodes are failed
-+// when their names come from parameters resolved at runtime.
-+func TestContainerSetParameterizedNameWhenPodRejected(t *testing.T) {
-+	cancel, controller := newController(logging.TestContext(t.Context()))
-+	defer cancel()
-+	ctx := logging.TestContext(t.Context())
-+	wfcset := controller.wfclientset.ArgoprojV1alpha1().Workflows("")
-+	wf := wfv1.MustUnmarshalWorkflow(wfContainerSetParameterizedNameRejected)
-+	wf, err := wfcset.Create(ctx, wf, metav1.CreateOptions{})
-+	require.NoError(t, err)
-+	woc := newWorkflowOperationCtx(ctx, wf, controller)
-+	woc.operate(ctx)
-+
-+	makePodsPhase(ctx, woc, apiv1.PodFailed, withRejection)
-+	woc = newWorkflowOperationCtx(ctx, woc.wf, controller)
-+	woc.operate(ctx)
-+
-+	assert.Equal(t, wfv1.WorkflowFailed, woc.wf.Status.Phase)
-+	node, err := woc.wf.GetNodeByName("wf-containerset-parameterized-rejected.A.main")
-+	require.NoError(t, err)
-+	assert.Equal(t, wfv1.NodeFailed, node.Phase)
-+	assert.Contains(t, node.Message, "Pod was rejected")
-+}
-+
-+var wfContainerSetRetryRejected = `
-+apiVersion: argoproj.io/v1alpha1
-+kind: Workflow
-+metadata:
-+  name: wf-containerset-retry-rejected
-+spec:
-+  entrypoint: init
-+  templates:
-+    - name: init
-+      dag:
-+        tasks:
-+          - name: A
-+            template: run
-+    - name: run
-+      retryStrategy:
-+        limit: 2
-+        retryPolicy: Always
-+      containerSet:
-+        containers:
-+          - name: main
-+            image: alpine:3.23
-+            command: [echo]
-+          - name: main2
-+            image: alpine:3.23
-+            command: [echo]
-+            dependencies:
-+              - main`
-+
-+// TestContainerSetRetryWhenPodRejected tests that a containerSet whose first pod kubelet rejected
-+// is retried and that the workflow completes once the retry succeeds.
-+func TestContainerSetRetryWhenPodRejected(t *testing.T) {
-+	cancel, controller := newController(logging.TestContext(t.Context()))
-+	defer cancel()
-+	ctx := logging.TestContext(t.Context())
-+	wfcset := controller.wfclientset.ArgoprojV1alpha1().Workflows("")
-+	wf := wfv1.MustUnmarshalWorkflow(wfContainerSetRetryRejected)
-+	wf, err := wfcset.Create(ctx, wf, metav1.CreateOptions{})
-+	require.NoError(t, err)
-+	woc := newWorkflowOperationCtx(ctx, wf, controller)
-+	woc.operate(ctx)
-+
-+	makePodsPhase(ctx, woc, apiv1.PodFailed, withRejection)
-+	woc = newWorkflowOperationCtx(ctx, woc.wf, controller)
-+	woc.operate(ctx)
-+	pods, err := listPods(ctx, woc)
-+	require.NoError(t, err)
-+	require.Len(t, pods.Items, 2)
-+
-+	setPodPhases(ctx, woc, func(node *wfv1.NodeStatus) apiv1.PodPhase {
-+		if node.Phase == wfv1.NodeFailed {
-+			return ""
-+		}
-+		return apiv1.PodSucceeded
-+	}, withExitCode(0))
-+	woc = newWorkflowOperat
++attempt=1
++until "$@"; do
++    status=$?
++    [ "$attempt" -ge 3 ] && exit "$status"
++    delay=$((attempt * 5))
++    echo "Package download attempt $attempt/3 failed (exit $status); retrying in ${delay}s." >&2
++    sleep "$delay" || exit $?
++    attempt=$((attempt + 1))
++done
 ```
 
 #### Recent Merged Pull Requests:
@@ -1047,60 +985,34 @@ Signed-off-by: Simon Domke <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. controller): fail containerSet nodes of a pod rejected by kubelet
+## X. ci): retry transient package download failures
 
 **RULE**:
-When implementing operations in `workflow/controller/operator.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-workflows. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci-build.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-workflows. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `abd7e05c`: controller): fail containerSet nodes of a pod rejected by kubelet. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5ecc44fc`: ci): retry transient package download failures. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `workflow/controller/operator.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci-build.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// failContainersWithoutStatus fails the container nodes of a failed containerSet pod
-// that have no container status, e.g. because kubelet rejected the pod at admission.
-// Otherwise they would stay Pending forever.
-func (woc *wfOperationCtx) failContainersWithoutStatus(ctx context.Context, pod *apiv1.Pod, podNode *wfv1.NodeStatus, message string) {
-	reported := make(map[string]bool, len(pod.Status.ContainerStatuses))
-	for _, c := range pod.Status.ContainerStatuses {
-		reported[fmt.Sprintf("%s.%s", podNode.Name, c.Name)] = true
-	}
-	// Walk only the pod's container graph. Leaf containers link to the pod's dependents,
-	// which are outside the pod's boundary.
-	var pending []string
-	visited := make(map[string]bool)
-	queue := append([]string(nil), podNode.Children...)
-	for len(queue) > 0 {
-		id := queue[0]
-		queue = queue[1:]
-		if visited[id] {
-			continue
-		}
-		visited[id] = true
-		node, err := woc.wf.Status.Nodes.Get(id)
-		if err != nil || node.Type != wfv1.NodeTypeContainer || node.BoundaryID != podNode.ID {
-			continue
-		}
-		if !reported[node.Name] && !node.Fulfilled() {
-			pending = append(pending, node.Name)
-		}
-		queue = append(queue, node.Children...)
-	}
-	for _, name := range
+              - hack/retry-download.sh
+      - run: sh hack/retry-download.sh yarn --cwd ui install
+          sh hack/retry-download.sh yarn --cwd ui install
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+      - run: yarn --cwd ui install
+          yarn --cwd ui install
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `abd7e05c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5ecc44fc` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

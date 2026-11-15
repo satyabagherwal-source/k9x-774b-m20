@@ -10005,3 +10005,8 @@
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T02:35:54.049Z` | `hf-vllm-sr-d3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-608927A6` [Domain D] | Yes (`a85ebfaa...`) |
 | `CYCLE-20261115-SI9B` | `2026-11-15T02:55:36.815Z` | `fallow-rs/fallow` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md` | Yes (`ed9071f2...`) |
 | `CYCLE-20261115-WR3U` | `2026-11-15T02:58:54.906Z` | `LiquidAI/LFM2.5-24B-A2B-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8566, Rule 8567` | Yes (`4263d69c...`) |
+| `CYCLE-20261115-FFR4` | `2026-11-15T03:13:26.656Z` | `black-forest-labs/flux-3-image-klein` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-learnings.md` | Yes (`3dabd21a...`) |
+| `CYCLE-20261115-FLCJ` | `2026-11-15T03:13:33.907Z` | `tw93/Mole` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8568` | Yes (`de78d2df...`) |
+| `CYCLE-20261115-FN5H` | `2026-11-15T03:13:36.245Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8569` | Yes (`0c484764...`) |
+| `CYCLE-20261115-FRD1` | `2026-11-15T03:13:41.701Z` | `VectifyAI/PageIndex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8570` | Yes (`cb37ad22...`) |
+| `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T03:14:18.862Z` | `hf-black-forest-labs-flux-3-image-klein` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-1DE3F011` [Domain D] | Yes (`9432cf20...`) |

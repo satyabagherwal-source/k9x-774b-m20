@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-15T02:58:54.918Z",
+  "last_updated": "2026-11-15T03:13:41.716Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2391,14 +2391,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-black-forest-labs-flux-3-image-klein",
-      "content_hash": "5ee3bbd729adb535d339445f4b41278f1e808c1828723f45964826f0108e2a58",
-      "verified_at": "2026-11-09T14:35:41.287Z",
+      "content_hash": "3dabd21aecf1f79d9631c5db4e7623f716302638da9b04f874f0edec4b4b3927",
+      "verified_at": "2026-11-15T03:13:26.670Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T14:35:41.287Z"
+      "last_updated": "2026-11-15T03:13:26.670Z"
     },
     "pyannote/speaker-diarization-community-1": {
       "repository": "pyannote/speaker-diarization-community-1",
@@ -8991,14 +8991,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-argoproj-argo-workflows",
-      "content_hash": "99b890ae797badb12d86bece8aefd0c8b3b7a8093eccabe614100f981d2f7a0b",
-      "verified_at": "2026-11-13T19:19:15.566Z",
+      "content_hash": "0c484764fa28419a9aa58a873ac2577e1da15e2bc62adc0db1ba75b44b10e7b2",
+      "verified_at": "2026-11-15T03:13:36.260Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T19:19:15.566Z"
+      "last_updated": "2026-11-15T03:13:36.260Z"
     },
     "postgresml/postgresml": {
       "repository": "postgresml/postgresml",
@@ -9996,14 +9996,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vectifyai-pageindex",
-      "content_hash": "e46c56b8bdf2feeb66a87aa98bc3057582ebb70f634e364f1119864a5a94dc05",
-      "verified_at": "2026-11-06T20:52:21.443Z",
+      "content_hash": "cb37ad2263f56a04ac785fee6a40cff1300bfdef6824fecf40e4eb84ba242b1d",
+      "verified_at": "2026-11-15T03:13:41.715Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T20:52:21.443Z"
+      "last_updated": "2026-11-15T03:13:41.715Z"
     },
     "dalance/procs": {
       "repository": "dalance/procs",
@@ -11106,14 +11106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tw93-mole",
-      "content_hash": "70551f6518a447289db3393a0115b8abe6d52dbbf68d7b4724172950ca5ac3dc",
-      "verified_at": "2026-11-11T16:06:52.811Z",
+      "content_hash": "de78d2df30c991193d302e15d62f62602889421ef758e42cc5c86b59735afa66",
+      "verified_at": "2026-11-15T03:13:33.921Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T16:06:52.811Z"
+      "last_updated": "2026-11-15T03:13:33.921Z"
     },
     "siderolabs/talos": {
       "repository": "siderolabs/talos",

@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-UR5I",
-    "timestamp": "2026-11-09T21:27:04.950Z",
-    "repository": "ydb-platform/ydb",
-    "learningId": "learn-github-ydb-platform-ydb",
-    "contentHash": "824aa60c496f24ce14acef416efe6e27d43a284fc4ac26a1e511b1c220a455ab",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-URS2",
-    "timestamp": "2026-11-09T21:27:05.762Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "5f87bc84a465bfcc1842a0afa0a4fd86095aa591a0351d06f653547643d10d61",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-V1AA",
-    "timestamp": "2026-11-09T21:27:18.082Z",
-    "repository": "LiquidAI/d1-2B",
-    "learningId": "learn-huggingface-liquidai-d1-2b",
-    "contentHash": "b9a517d9c2578a1c0dc13c5b2bac459cfa0bab4f0099790e168687d2652ca695",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-02SC",
-    "timestamp": "2026-11-09T21:31:13.308Z",
-    "repository": "sceneview/sceneview",
-    "learningId": "learn-github-sceneview-sceneview",
-    "contentHash": "f705756cc6b179cb6c9186ecfc808a8cd3b26239833cd466074f2c5db5136c99",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-0TIZ",
     "timestamp": "2026-11-09T21:31:47.963Z",
     "repository": "fabio-rovai/open-ontologies",
@@ -7492,6 +7432,66 @@
     "contentHash": "4263d69c8d9a9df20bf1903032c44fefb73de34740e56c7658af1bbe0da96ecc",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-FFR4",
+    "timestamp": "2026-11-15T03:13:26.656Z",
+    "repository": "black-forest-labs/flux-3-image-klein",
+    "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
+    "contentHash": "3dabd21aecf1f79d9631c5db4e7623f716302638da9b04f874f0edec4b4b3927",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-FLCJ",
+    "timestamp": "2026-11-15T03:13:33.907Z",
+    "repository": "tw93/Mole",
+    "learningId": "learn-github-tw93-mole",
+    "contentHash": "de78d2df30c991193d302e15d62f62602889421ef758e42cc5c86b59735afa66",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-FN5H",
+    "timestamp": "2026-11-15T03:13:36.245Z",
+    "repository": "argoproj/argo-workflows",
+    "learningId": "learn-github-argoproj-argo-workflows",
+    "contentHash": "0c484764fa28419a9aa58a873ac2577e1da15e2bc62adc0db1ba75b44b10e7b2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-FRD1",
+    "timestamp": "2026-11-15T03:13:41.701Z",
+    "repository": "VectifyAI/PageIndex",
+    "learningId": "learn-github-vectifyai-pageindex",
+    "contentHash": "cb37ad2263f56a04ac785fee6a40cff1300bfdef6824fecf40e4eb84ba242b1d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

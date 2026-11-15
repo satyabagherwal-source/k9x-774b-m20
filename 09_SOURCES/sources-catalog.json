@@ -1545,8 +1545,8 @@
     "sourceUrl": "https://huggingface.co/black-forest-labs/flux-3-image-klein",
     "sourceVersion": "hf-black-forest-labs-flux-3-image-klein",
     "license": "Open-Source",
-    "contentHash": "5ee3bbd729adb535d339445f4b41278f1e808c1828723f45964826f0108e2a58",
-    "lastHarvestedAt": "2026-11-09T14:35:41.265Z",
+    "contentHash": "3dabd21aecf1f79d9631c5db4e7623f716302638da9b04f874f0edec4b4b3927",
+    "lastHarvestedAt": "2026-11-15T03:13:26.660Z",
     "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein"
   },
   "hf-pyannote-speaker-diarization-community-1": {
@@ -5913,10 +5913,10 @@
     "repository": "argoproj/argo-workflows",
     "platform": "github",
     "sourceUrl": "https://github.com/argoproj/argo-workflows",
-    "sourceVersion": "abd7e05c",
+    "sourceVersion": "5ecc44fc",
     "license": "Apache-2.0",
-    "contentHash": "99b890ae797badb12d86bece8aefd0c8b3b7a8093eccabe614100f981d2f7a0b",
-    "lastHarvestedAt": "2026-11-13T19:19:15.559Z",
+    "contentHash": "0c484764fa28419a9aa58a873ac2577e1da15e2bc62adc0db1ba75b44b10e7b2",
+    "lastHarvestedAt": "2026-11-15T03:13:36.249Z",
     "learningId": "learn-github-argoproj-argo-workflows"
   },
   "postgresml-postgresml": {
@@ -6613,10 +6613,10 @@
     "repository": "VectifyAI/PageIndex",
     "platform": "github",
     "sourceUrl": "https://github.com/VectifyAI/PageIndex",
-    "sourceVersion": "2ac8694b",
+    "sourceVersion": "cc035e8d",
     "license": "MIT",
-    "contentHash": "e46c56b8bdf2feeb66a87aa98bc3057582ebb70f634e364f1119864a5a94dc05",
-    "lastHarvestedAt": "2026-11-06T20:52:21.430Z",
+    "contentHash": "cb37ad2263f56a04ac785fee6a40cff1300bfdef6824fecf40e4eb84ba242b1d",
+    "lastHarvestedAt": "2026-11-15T03:13:41.705Z",
     "learningId": "learn-github-vectifyai-pageindex"
   },
   "epicweb-dev-advanced-react-patterns": {
@@ -7373,10 +7373,10 @@
     "repository": "tw93/Mole",
     "platform": "github",
     "sourceUrl": "https://github.com/tw93/Mole",
-    "sourceVersion": "d9181d3b",
+    "sourceVersion": "060fba8b",
     "license": "GPL-3.0",
-    "contentHash": "70551f6518a447289db3393a0115b8abe6d52dbbf68d7b4724172950ca5ac3dc",
-    "lastHarvestedAt": "2026-11-11T16:06:52.732Z",
+    "contentHash": "de78d2df30c991193d302e15d62f62602889421ef758e42cc5c86b59735afa66",
+    "lastHarvestedAt": "2026-11-15T03:13:33.911Z",
     "learningId": "learn-github-tw93-mole"
   },
   "siderolabs-talos": {

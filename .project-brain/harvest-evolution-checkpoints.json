@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T02:58:59.899Z",
+  "last_updated": "2026-11-15T03:14:20.719Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-14T22:16:50.251Z",
@@ -98,7 +98,7 @@
       "staged_for_review": 1
     },
     "argoproj-argo-workflows-learnings.md": {
-      "processed_at": "2026-11-13T19:19:47.343Z",
+      "processed_at": "2026-11-15T03:14:20.082Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -383,7 +383,7 @@
       "staged_for_review": 1
     },
     "tw93-mole-learnings.md": {
-      "processed_at": "2026-11-11T16:12:24.208Z",
+      "processed_at": "2026-11-15T03:14:19.253Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2851,9 +2851,14 @@
       "processed_at": "2026-11-15T02:58:58.835Z",
       "promoted_canonical": 0,
       "staged_for_review": 2
+    },
+    "hf-black-forest-labs-flux-3-image-klein-learnings.md": {
+      "processed_at": "2026-11-15T03:14:18.862Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 963,
-  "total_canonical_promoted": 235,
-  "total_staged_for_review": 728
+  "total_dossiers_evaluated": 966,
+  "total_canonical_promoted": 236,
+  "total_staged_for_review": 730
 }
