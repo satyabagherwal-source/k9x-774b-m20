@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T16:07:38.642Z",
+  "last_updated": "2026-11-15T16:30:51.039Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4797,11 +4797,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-USDN",
+      "id": "CD-WWPR",
       "directive_title": "splash screen staying visible after warm start on Android 12+",
       "source_repo": "zoontek-react-native-bootsplash-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-USDN-splash-screen-staying-visible-after-warm-start-on-android-12.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-WWPR-splash-screen-staying-visible-after-warm-start-on-android-12.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-15",
@@ -11821,11 +11821,11 @@
       "domain_letter": "H"
     },
     {
-      "id": "CD-S6SD",
+      "id": "CD-WVVR",
       "directive_title": "watcher): filter access events before queueing",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-S6SD-watcher-filter-access-events-before-queueing.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-WVVR-watcher-filter-access-events-before-queueing.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-15",
@@ -15746,6 +15746,33 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-51E1EE-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-15"
+    },
+    {
+      "id": "CD-REV-0E558D",
+      "directive_title": "watcher): filter access events before queueing",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0E558D-watcher-filter-access-events-before-queu.md",
+      "staged_date": "2026-11-15"
+    },
+    {
+      "id": "CD-REV-EBA252",
+      "directive_title": "Forensic Learning Record (Deep Inspection): Zleap-AI/SAG",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zleap-ai-sag",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-EBA252-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-15"
+    },
+    {
+      "id": "CD-REV-B92744",
+      "directive_title": "splash screen staying visible after warm start on Android 12+",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-bootsplash",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B92744-splash-screen-staying-visible-after-warm.md",
       "staged_date": "2026-11-15"
     }
   ]

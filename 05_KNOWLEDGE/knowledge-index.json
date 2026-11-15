@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-15T16:07:38.841Z",
+  "last_updated": "2026-11-15T16:30:51.233Z",
   "total_verified_learnings": 8705,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112032,9 +112032,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "6d03597c50da60f4b82cb06b33b0c8dabe3c1966163f54a02f86e035ed50d6ae",
+      "content_hash": "6a94b3feff768eb5cdbf346aad3e94ee85b7c213248a6a3699f79d80b23e3981",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T14:07:12.824Z"
+      "persisted_at": "2026-11-15T16:30:50.059Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112044,9 +112044,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "6dfba0a893410f3cd05e846de9fbc7a15647e56b348a8af8cc92e286af7a01d1",
+      "content_hash": "0ee03346f93a7fefa3ca8369e85cff7f5eeb7d5fe10dc2c226488edb177c6e28",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T14:07:12.912Z"
+      "persisted_at": "2026-11-15T16:30:50.159Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112056,9 +112056,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "13248af624a93c148107d239817a57a8adab144bd4a17b2946d3742c2b51c82d",
+      "content_hash": "857273c26d48fb853200ed743cd2dea262237ec47ca6a7debc9bd3132f0c6e21",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T14:07:12.994Z"
+      "persisted_at": "2026-11-15T16:30:50.253Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -224435,13 +224435,13 @@
       "item_id": "candidate_directive-watcher-filter-access-events-before-queueing",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-S6SD-watcher-filter-access-events-before-queueing.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-WVVR-watcher-filter-access-events-before-queueing.md",
       "title": "watcher): filter access events before queueing",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "22fc4189df9f32c0f5fee454ccb5e787cf2903eed0a3a6f9a48ab33641e4455f",
+      "content_hash": "5d76a3c3658c119292de7262de7c9790031a4b6ea672ff2b985662cc7947ae85",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T14:07:12.738Z"
+      "persisted_at": "2026-11-15T16:30:49.965Z"
     },
     "candidate_directive-hybrid-linear-attention-full-attention-layer-synchronization-invariant": {
       "item_id": "candidate_directive-hybrid-linear-attention-full-attention-layer-synchronization-invariant",
@@ -226507,13 +226507,13 @@
       "item_id": "candidate_directive-splash-screen-staying-visible-after-warm-start-on-android-12",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-USDN-splash-screen-staying-visible-after-warm-start-on-android-12.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-WWPR-splash-screen-staying-visible-after-warm-start-on-android-12.md",
       "title": "splash screen staying visible after warm start on Android 12+",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "57c6662f19f93252d195d2cd942c2eb2317c433ab0d34b4b4ce87d1caa987cc4",
+      "content_hash": "d161bcc653e69141a7c2363464c1d199583ab44e27bc24c4587c2f350acf6ac7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T14:37:13.643Z"
+      "persisted_at": "2026-11-15T16:30:51.039Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co",
@@ -226523,9 +226523,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "e9c54aaf0f0a0019681c000c4a6e3d21446df72b77e7f3322e90f0b234d66667",
+      "content_hash": "ea2f3cbc664b13d86f99a6a62c8fd156850402e5ff811ed96c5b3b2483f7c210",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T14:37:13.747Z"
+      "persisted_at": "2026-11-15T16:30:51.133Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -226535,9 +226535,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "7b6b6d55dd07f34a8e451b77272060fce0bc96d3677b14dc6f094cd89226a7c3",
+      "content_hash": "59e83065630c85ce7b98e849f3eb9605a0b4eba33c6698bcb41154b2c63204fa",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T14:37:13.865Z"
+      "persisted_at": "2026-11-15T16:30:51.233Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -233793,9 +233793,9 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "repository": "zleap-ai-sag-learnings",
       "source_version": "HEAD",
-      "content_hash": "dcbf43fcfcf120ba5df0ad38f628d699d29d3ab95b9c966b7f4232e0bffd8794",
+      "content_hash": "324f707c79dd13c356b7f0ffcd38ebb2e895e3e7b5000cba6a6d0966a1818516",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T13:27:58.775Z"
+      "persisted_at": "2026-11-15T16:30:50.756Z"
     },
     "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b": {
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
