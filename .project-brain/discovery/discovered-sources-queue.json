@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T17:04:41.857Z",
+  "updated_at": "2026-11-15T17:14:26.613Z",
   "stats": {
-    "total_discovered": 3793,
-    "approved_pending_harvest": 3576,
+    "total_discovered": 3794,
+    "approved_pending_harvest": 3577,
     "harvested_count": 0,
     "rejected_count": 217,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3562,
+      "COMMUNITY_AND_EXPERT": 3563,
       "OFFICIAL_DOCUMENTATION": 126,
       "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
@@ -81948,6 +81948,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chocoford-excalidrawz-learnings.md",
         "fileName": "chocoford-excalidrawz-learnings.md"
+      }
+    },
+    "SRC-E1E8329B6695": {
+      "id": "SRC-E1E8329B6695",
+      "url": "https://github.com/NixOS/nixpkgs/archive/50eb7ecf4cd0a5756d7275c8ba36790e5bd53e33.tar.gz",
+      "title": "https://github.com/NixOS/nixpkgs/archive/50eb7ecf4cd0a5756d7275c8ba36790e5bd53e33.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T17:14:26.613Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
+        "fileName": "actix-actix-web-learnings.md"
       }
     }
   }

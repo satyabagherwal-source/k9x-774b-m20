@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-15T17:04:06.994Z",
-    "lastVerified": "2026-11-15T17:04:06.994Z",
+    "lastChecked": "2026-11-15T17:14:26.434Z",
+    "lastVerified": "2026-11-15T17:14:26.434Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -472,8 +472,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-15T16:07:12.957Z",
-    "lastVerified": "2026-11-15T16:07:12.958Z",
+    "lastChecked": "2026-11-15T17:14:19.148Z",
+    "lastVerified": "2026-11-15T17:14:19.148Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -2541,8 +2541,8 @@
     "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-15T07:04:08.142Z",
-    "lastVerified": "2026-11-15T07:04:08.142Z",
+    "lastChecked": "2026-11-15T17:14:14.199Z",
+    "lastVerified": "2026-11-15T17:14:14.199Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
@@ -2627,9 +2627,9 @@
   "alexellis-k3sup": {
     "name": "k3sup",
     "officialUrl": "https://github.com/alexellis/k3sup",
-    "lastChecked": "2026-11-14T04:50:31.826Z",
+    "lastChecked": "2026-11-15T17:14:11.722Z",
     "revisionIdentifier": "07ee3911",
-    "lastVerified": "2026-11-14T04:50:31.826Z"
+    "lastVerified": "2026-11-15T17:14:11.722Z"
   },
   "paradedb-paradedb": {
     "name": "paradedb/paradedb",
@@ -3885,14 +3885,14 @@
     "officialUrl": "https://github.com/matrixorigin/matrixone",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-14T03:10:38.459Z",
-    "lastVerified": "2026-11-14T03:10:38.459Z",
+    "lastChecked": "2026-11-15T17:14:22.294Z",
+    "lastVerified": "2026-11-15T17:14:22.294Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-matrixorigin-matrixone",
-    "contentHash": "03d8f4b9cdf177778c15cc53c02f6fa86054241b36f1d0533dc207817e8c4842",
+    "contentHash": "a9c8e8a62cebac898d9c99e56cfc9cf8109027c7f3699056a1591bd7f88be5c9",
     "promotedRulesCount": 1,
-    "recentFixesCount": 14,
+    "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4953,12 +4953,12 @@
     "officialUrl": "https://github.com/actix/actix-web",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-13T18:52:21.495Z",
-    "lastVerified": "2026-11-13T18:52:21.495Z",
+    "lastChecked": "2026-11-15T17:14:08.705Z",
+    "lastVerified": "2026-11-15T17:14:08.705Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-actix-actix-web",
-    "contentHash": "f63f582ae633872e624f4031448fc970b4922e24c6732f5808390048e84861fa",
+    "contentHash": "05cffc2b3cf2ce22c380579f7803f999bb7f140254c7fc8a496d6c2f653b4c6c",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -9850,9 +9850,9 @@
   "alin23-lunar": {
     "name": "Lunar",
     "officialUrl": "https://github.com/alin23/Lunar",
-    "lastChecked": "2026-11-12T05:13:07.665Z",
+    "lastChecked": "2026-11-15T17:14:09.145Z",
     "revisionIdentifier": "06950e25",
-    "lastVerified": "2026-11-12T05:13:07.665Z"
+    "lastVerified": "2026-11-15T17:14:09.145Z"
   },
   "davo20019-seo-analysis": {
     "name": "seo-analysis",
@@ -10076,9 +10076,9 @@
   "sarfrz-novacrawl": {
     "name": "NovaCrawl",
     "officialUrl": "https://github.com/SArfrz/NovaCrawl",
-    "lastChecked": "2026-11-10T02:06:33.479Z",
+    "lastChecked": "2026-11-15T17:14:06.645Z",
     "revisionIdentifier": "68c95079df",
-    "lastVerified": "2026-11-10T02:06:33.479Z"
+    "lastVerified": "2026-11-15T17:14:06.645Z"
   },
   "zacharee-bifrost": {
     "name": "Bifrost",

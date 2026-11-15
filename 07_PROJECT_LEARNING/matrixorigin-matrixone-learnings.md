@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source**: github ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
-> **Source Version**: `71390fb3`  
+> **Source Version**: `f70c37b1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T03:10:38.468Z  
+> **Timestamp**: 2026-11-15T17:14:22.301Z  
 > **Learning ID**: `learn-github-matrixorigin-matrixone`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T03:10:38.459Z  
+> **Harvest Timestamp**: 2026-11-15T17:14:22.294Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2349,11 +2349,11 @@ func runWorker(ctx context.Context, r WorkerRequest, control *workerControl) (ou
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #32742** (2026-11-14): **fileservice: TestDiskCacheReadOfDownloadStopsOnCancel flakes during TempDir cleanup**
-  *Symptoms*: ## Summary  `TestDiskCacheReadOfDownloadStopsOnCancel` failed during Go's automatic `TempDir` cleanup because a cache subdirectory was not empty.  ## Observed failure  - CI job: https://github.com/matrixorigin/matrixone/actions/runs/43526630231/job/132233966531?pr=32741 - Observed on: #32741, head `d456b5b5b41f67ed611f5e9adc6a7fc42787e8d3` - Package: `pkg/fileservice` - Test: [`TestDiskCacheReadOfDownloadStopsOnCancel`](https://github.com/matrixorigin/matrixone/blob/d456b5b5b41f67ed611f5e9adc6a7fc42787e8d3/pkg/fileservice/disk_cache_download_test.go#L124-L131)  ```text === RUN   TestDiskCacheReadOfDownloadStopsOnCancel 2026/11/14 00:24:37 ... INFO fileservice/disk_cache.go:408 disk cache info loaded ... 2026/11/14 00:24:37 ... INFO fileservice/disk_cache.go:422 disk cache evict done ...     testing.go:1617: TempDir RemoveAll cleanup:         unlinkat /tmp/TestDiskCacheReadOfDownloadStopsOnCancel1644607021/001/37a:         directory not empty --- FAIL: TestDiskCacheReadOfDownloadStopsOnCancel (0.00s) ```  The package subsequently failed and the UT step exited through `make: *** [Makefile:582: ut] Error 1`.  ## Hypothesis to verify  The test cancels the read context and returns immediately. An asynchronous download/cache writer may still be creating or renaming files while `testing.T.TempDir` cleanup runs, allowing `RemoveAll` to race with new directory entries.  This is currently a cleanup-lifecycle failure, not evidence of incorrect read results or data corruption. The exact 
+- **Issue #32771** (2026-11-15): **perf: avoid repeated TEXT assignment buffer growth**
+  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [ ] BUG - [x] Improvement - [ ] Documentation - [ ] Feature - [ ] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  Related to #32751  ## What this PR does / why we need it:  A new TEXT/BLOB assignment result can repeatedly grow its payload area as large fields are appended. During operations such as ALTER's table copy, old and new buffers coexist and increase transient CN memory use.  For eligible empty, independently owned results, preflight the selected source values and reserve the required payload area once. Width or collation violations, partial selection, aliases, existing capacity, unsupported vector shapes, and allocations beyond the allocator's single-allocation limit keep the original path. The assignment still owns its output, and existing truncation, warning, error, and NULL behavior is preserved.  Validation on a CPU-only 57 host:  - Full `pkg/sql/plan/function` tests and package race test; focused race tests and 100 repeated concurrent-reader runs; incremental lint and format checks. - A four-field regression test reduces result-area allocations from four on the base to one. For one 8 MiB field and 31 64 KiB fields, result-area peak allocation decreases from 18,882,560 to 10,420,224 bytes when the large field comes first; with the large field last, cumulative allocations decrease from 21,692,416 to 10,420,224 bytes. - Isolated 1-CN SQL LOAD/ALTER comparisons verified all row hashes, NULLs, stri
 
-- **Issue #32741** (2026-11-14): **fix(stage): return an error for missing catalog context**
-  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [x] BUG - [ ] Improvement - [x] Documentation - [ ] Feature - [x] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  Related to #18534.  ## What this PR does / why we need it:  Main already supports host- and path-form Stage URIs, but resolving either through a Datalink with no process panics in `StageLoadCatalog`. For example, `ParseDatalink("stage:///a/b/c/1.txt?size=c", nil)` reaches the Stage cache before validating the range.  Return an internal error when the process, its base, or its Stage cache is missing. This propagates through Datalink, export, and nested Stage resolution without returning a partial result. Initialized callers retain the existing Stage resolution, access checks, and range validation. The ordinary SQL process initialization path is unchanged; this PR does not claim a normal SQL statement alone produces a nil process.  Clarify the existing Stage URI syntax and the 4.2.8 server compatibility boundary in the SDK guide. The companion 4.2 change is in #32723.  ### Validation  - Before the fix, the focused regression on main `5540b068209c` reproduced the nil pointer panic in `StageLoadCatalog`. - Linux/amd64, Go 1.27.1, CPU: complete `pkg/datalink` and `pkg/stage/stageutil` tests passed with coverage; the regressions cover three missing-context states, both URI forms, five Datalink entry points, export and nested Stage. Existing valid Stage and malformed-range controls pass. - Scoped `go v
+- **Issue #32769** (2026-11-15): **perf: reduce CSV field copy amplification on 4.2-dev**
+  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [ ] BUG - [x] Improvement - [ ] Documentation - [ ] Feature - [x] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  Related to #32751. Port of main #32766.  ## What this PR does / why we need it:  CSV fragments spanning read blocks were assembled into a temporary growing buffer and then copied into the row buffer, repeating allocation even with a reusable row buffer. Append fragments directly into the caller-owned row/lookahead accumulator, retaining the single-block path.  Adapt the change to 4.2's raw record bounds and memory reservation callbacks. Growth grants still precede appends, and rejected lookahead preserves the prior empty-fragment error result. Keep the existing conservative reservation envelope.  Six alternating Linux/amd64 CPU benchmark samples with Go 1.26.4: - Reused plain 1 MiB / 8 MiB fields: 3,399,680 / 43,220,992 B/op -> 0; time improves about 44% / 55%. Four concurrent 1 MiB readers improve about 58%. - Tradeoff: serial small/wide CSV framing is about 3.6% / 3.5% slower (roughly 1 ns/field). Cold row capacity after an 8 MiB field is about 9.07 MiB versus 8 MiB (1 MiB: 1.20 versus 1 MiB). This targets large-value ingestion and does not make every workload better. - Parallel fixtures keep mutable row headers local to each goroutine. Corrected small-field concurrent controls do not establish a consistent regression; initial shared-header samples are superseded.  Validation: full csvparser n
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2370,14 +2370,14 @@ func runWorker(ctx context.Context, r WorkerRequest, control *workerControl) (ou
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `645219d3` (2026-11-14)
-**Commit Message**: fix(compile): support saved-result CTAS with current source privileges (#32727)
+### Incident Patch 1: `d1893e5a` (2026-11-15)
+**Commit Message**: fix(ci): correct SCA closure and native test lifecycle ownership (#32717)
 
 ## What type of PR is this?
 
 - [ ] API-change
 - [x] BUG
-- [ ] Improvement
+- [x] Improvement
 - [ ] Documentation
 - [ ] Feature
 - [x] Test and CI
@@ -2385,54 +2385,238 @@ Observed empirical fixes and code patches:
 
 ## Which issue(s) this PR fixes:
 
-Fixes #31536
+Fixes #32664
+Fixes #32706
+Fixes #32715
+
+Related to #32544, #32570, #32423, #32422, #32324, #32185 and #32179.
+These historical incidents are not claimed fixed by this PR; the local
+controls do not establish their original causes.
+
+Supersedes #32666.
 
 ## What this PR does / why we need it:
 
-CTAS from a valid saved RESULT_SCAN reached the internal executor's
-unsupported metadata lookup and panicked. Delegate that lookup to the
-calling session compiler context; return a typed internal error when no
-delegate exists and propagate the delegate's errors unchanged.
+Correct CI dependency selection and test ownership boundaries that cause
+unnecessary work or make failures wait on resources that cannot
+complete. The branch is rebased on main. This change does not add
+runners or change DWARF settings.
 
-Before CTAS creates its target, re-check the saved source plan using the
-current caller's privileges, as direct RESULT_SCAN does. This prevents
-the newly enabled CTAS path from bypassing source SELECT privileges
-after a role switch or REVOKE. Result metadata remains account-scoped;
-access is not tied to the producing connection.
+- **SCA selection:** traverse `go list` production and test variants
+before mapping them to package owners, preventing a test-only reverse
+edge from pulling in unchanged production consumers. Changed production
+still seeds its variants, and uncertain discovery or broad fan-out still
+selects full analysis. Real Go/Make fixtures cover both internal and
+external tests, reverse edges and fallbacks.
+- **Bootstrap 
 
-The maintained `save_query_result` case now exercises this public path
-in normal comparison mode. A really saved result populates the CTAS
-target through a prepared statement with data, count and schema
-assertions; after a live REVOKE that removes only the source read
-privil
-
-**File**: `pkg/frontend/authenticate.go` (modified, +12/-0)
+**File**: `.github/ci/static-analysis.cjs` (modified, +20/-16)
 ```diff
-@@ -10178,6 +10178,18 @@ func authenticateCreateTableAsSelectSourcePrivilege(
- 	if err != nil {
- 		return false, stats, err
- 	}
-+	// A CTAS source over a saved query result carries no table-scan tips, and
-+	// the CTAS follow-up INSERT ... SELECT runs through the internal executor,
-+	// whose compile path does not re-verify result-query access. Apply the same
-+	// saved-result source re-verification the direct SELECT path uses, so a
-+	// role whose source SELECT privilege is missing or revoked cannot copy the
-+	// saved result by CTAS. Plain sources have no result scans and return here
-+	// with no extra cost.
-+	resultStats, resultErr := checkResultQueryPrivilege(compilerContext.GetProcess(), sourcePlan, ctx, ses.GetService(), ses)
-+	stats.Add(&resultStats)
-+	if resultErr != nil {
-+		return false, stats, resultErr
-+	}
- 	if len(arr) == 0 {
- 		return true, stats, nil
- 	}
+@@ -19,7 +19,7 @@ const { category, immutableChanges } = require('./change-scope.cjs');
+ 
+ // Emit one bounded record per main-module package/variant. Go owns import and
+ // build-tag resolution, including test-only importers; no source import parser.
+-const inventoryFields = 'Name,ImportPath,Dir,Module,Imports,TestImports,XTestImports,' +
++const inventoryFields = 'Name,ImportPath,Dir,Module,Imports,' +
+   'GoFiles,CgoFiles,TestGoFiles,XTestGoFiles';
+ 
+ // go list emits adjacent JSON objects rather than an array. Frame the objects;
+@@ -49,7 +49,6 @@ function inventory(text) {
+           const generatedMain = p.Name === 'main' && p.ImportPath.endsWith('.test') &&
+             p.GoFiles?.length && p.GoFiles.every(file => path.isAbsolute(file));
+           records.push({ id: p.ImportPath, dir: p.Dir, imports: p.Imports || [],
+-            testImports: p.TestImports || [], xTestImports: p.XTestImports || [],
+             sources: [...(generatedMain ? [] : p.GoFiles || []), ...(p.CgoFiles || []),
+               ...(p.TestGoFiles || []), ...(p.XTestGoFiles || [])] });
+         }
+@@ -95,36 +94,41 @@ function selectPackages(files, records, root, report = () => {}) {
+     owners.set(relative, owner);
+     variants.set(record.id, owner);
+   }
++  // Imports already resolves production, internal-test and external-test
++  // variants. Keep those identities until traversal ends: a test importer does
++  // not make its owner's unchanged production consumers affected.
+   for (const record of records) {
+-    const owner = variants.get(record.id);
+-    for (const imported of [...(record.imports || []), ...(record.testImports || []),
+-      ...(record.xTestImports || [])]) {
+-      const dependency = variants.get(imported);
+-      if (!dependency) {
++    for (const imported of record.imports || []) {
++      if (!variants.has(imported)) {
+         // A main-module test variant missing from discovery is not a known
+         // external dependency. Do not guess how its package ID maps.
+         if (imported.includes(' [')) return full('test variant is missing from the verified graph');
+         continue;
+       }
+-      if (!reverse.has(dependency)) reverse.set(dependency, new Set());
+-      reverse.get(dependency).add(owner);
++      if (!reverse.has(imported)) reverse.set(imported, new Set());
++      reverse.get(imported).add(record.id);
+     }
+   }
+   const selected = new Set();
+-  const production = [];
++  const production = new Set();
+   for (const file of changed) {
+     const owner = owners.get(path.posix.dirname(file));
+     if (!owner) return full('changed package is missing from the verified graph');
+     selected.add(owner);
+-    if (!file.endsWith('_test.go')) production.push(owner);
++    if (!file.endsWith('_test.go')) production.add(owner);
+   }
+-  const seen = new Set(production);
+-  for (let i = 0; i < production.length; i++) {
+-    for (const consumer of reverse.get(production[i]) || []) {
+-      selected.add(consumer);
++  // A changed production source belongs to every active variant of its owner.
++  const pending = [];
++  for (const [id, owner] of variants) {
++    if (production.has(owner)) pending.push(id);
++  }
++  const seen = new Set(pending);
++  for (let i = 0; i < pending.length; i++) {
++    for (const consumer of reverse.get(pending[i]) || []) {
++      selected.add(variants.get(consumer));
+       if (!seen.has(consumer)) {
+         seen.add(consumer);
+-        production.push(consumer);
++        pending.push(consumer);
+       }
+     }
+   }
 ```
 
-**File**: `pkg/sql/compile/query_result_meta_delegate_test.go` (added, +110/-0)
+**File**: `.github/ci/static-analysis.test.cjs` (modified, +25/-3)
 ```diff
-@@ -0,0 +1,110 @@
-+// Copyright 2021 - 2026 Matrix Origin
+@@ -40,6 +40,24 @@ test('complete package selection follows production and test imports, not test r
+   assert.deepEqual(selectPackages([file('pkg/a/a.go', 'D')], records, root), ['./pkg/a', './pkg/b', './pkg/c']);
+ });
+ 
++test('test dependencies preserve variant identity through the reverse closure', () => {
++  const packages = records.slice(0, 8).map(p => ({ ...p, imports: [] }));
++  const [a, b, c, d] = packages;
++  c.imports = [b.id];
++  d.imports = [c.id];
++  const bTest = { id: `${b.id}_test [${b.id}.test]`, dir: b.dir, imports: [a.id] };
++  const graph = [...packages, bTest];
++  assert.deepEqual(selectPackages([file('pkg/a/a.go')], graph, root), ['./pkg/a', './pkg/b']);
++  assert.deepEqual(selectPackages([file('pkg/b/b.go')], graph, root), ['./pkg/b', './pkg/c', './pkg/d']);
++  assert.deepEqual(selectPackages([file('pkg/a/a_test.go')], graph, root), ['./pkg/a']);
++
++  // A production file also belongs to variants compiled for another owner's tests.
++  const bVariant = { id: `${b.id} [${a.id}.test]`, dir: b.dir, imports: [] };
++  const aTest = { id: `${a.id}_test [${a.id}.test]`, dir: a.dir, imports: [bVariant.id] };
++  const variantGraph = packages.map(p => ({ ...p, imports: [] }));
++  assert.deepEqual(selectPackages([file('pkg/b/b.go')], [...variantGraph, bVariant, aTest], root), ['./pkg/a', './pkg/b']);
++});
++
+ test('uncertain inputs and broad changes retain full analysis', () => {
+   for (const files of [null, [], [file('README.md')], [file('go.mod')], [file('cgo/x.c')],
+     [file('.golangci.yml')], [file('pkg/a/testdata/input.go')], [file('pkg/gone/x.go', 'D')],
+@@ -53,7 +71,7 @@ test('uncertain inputs and broad changes retain full analysis', () => {
+ 
+ test('Go JSON inventory is framed without interpreting braces inside strings', () => {
+   const p = { ImportPath: 'example.org/pkg/a', Dir: '/repo/pkg/a', Module: { Main: true },
+-    Imports: ['external/{quoted}"'], TestImports: ['testing'] };
++    Imports: ['external/{quoted}"'] };
+   const parsed = inventory(`${JSON.stringify({ ImportPath: 'fmt' })}\n${JSON.stringify(p)}\n`);
+   assert.equal(parsed.length, 1);
+   assert.deepEqual(parsed[0].imports, p.Imports);
+@@ -107,8 +125,12 @@ test('real Make consumer shares selection, keeps full override, and propagates a
+   fs.writeFileSync(path.join(repo, 'go.mod'), 'module example.org/project\n\ngo 1.23.0\n');
+   for (const name of ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']) {
+     const p = path.join(repo, 'pkg', name); fs.mkdirSync(p, { recursive: true });
+-    fs.writeFileSync(path.join(p, `${name}.go`), `package ${name}\n${name === 'b' ? 'import _ "example.org/project/pkg/a"\n' : ''}func Value() int { return 1 }\n`);
+-    if (name === 'c') fs.writeFileSync(path.join(p, 'c_test.go'), 'package c_test\nimport _ "example.org/project/pkg/a"\n');
++    const dependency = { b: 'a', d: 'c', e: 'd' }[name];
++    fs.writeFileSync(path.join(p, `${name}.go`), `package ${name}\n${dependency ? `import _ "example.org/project/pkg/${dependency}"\n` : ''}func Value() int { return 1 }\n`);
++    if (name === 'c') {
++      fs.writeFileSync(path.join(p, 'c_test.go'), 'package c_test\nimport _ "example.org/project/pkg/a"\n');
++      fs.writeFileSync(path.join(p, 'c_internal_test.go'), 'package c\nimport _ "example.org/project/pkg/a"\n');
++    }
+   }
+   const source = path.resolve(__dirname, '../..');
+   fs.mkdirSync(path.join(repo, '.github/ci'), { recursive: true });
+```
+
+**File**: `pkg/embed/cluster_test.go` (modified, +53/-0)
+```diff
+@@ -21,11 +21,13 @@ import (
+ 	"errors"
+ 	"flag"
+ 	"fmt"
++	"net"
+ 	"os"
+ 	"os/exec"
+ 	"path/filepath"
+ 	"sort"
+ 	"strconv"
++	"strings"
+ 	"sync"
+ 	"sync/atomic"
+ 	"testing"
+@@ -1801,3 +1803,54 @@ func TestClusterAndLegacyPortAllocatorsShareLeases(t *testing.T) {
+ 	}
+ 	require.False(t, locked)
+ }
++
++// A frontend constructor can fail after the engine starts catalog replay and
++// before the CN heartbeat is published. Teardown must retire both owners.
++func TestCNFrontendConstructionFailureReleasesResources(t *testing.T) {
++	socket := filepath.Join(t.TempDir(), strings.Repeat("s", 160))
++	var frontendAddress string
++	value, err := NewCluster(WithTesting(), WithCNCount(1), WithPreStart(func(op ServiceOperator) {
++		if op.ServiceType() == metadata.ServiceType_CN {
++			op.Adjust(func(cfg *ServiceConfig) {
++				cfg.CN.Frontend.UnixSocketAddress = socket
++				frontendAddress = net.JoinHostPort("127.0.0.1", strconv.Itoa(int(cfg.CN.Frontend.Port)))
++			})
++		}
++	}))
++	require.NoError(t, err)
++	c := value.(*cluster)
++	t.Cleanup(func() {
++		require.NoError(t, c.Close())
++		require.True(t, c.CloseComplete())
++		require.NoError(t, os.RemoveAll(c.options.dataPath))
++	})
++	failure := errors.New("injected Unix frontend construction failure")
++	var panicValue any
++	var failed cnservice.Service
++	// Recover only at the existing test seam, in the constructor's goroutine;
++	// the real production constructor and rollback still own every resource.
++	c.startFn = func(op *operator) (err error) {
++		if op.serviceType == metadata.ServiceType_CN {
++			defer func() {
++				if value := recover(); value != nil {
++					panicValue = value
++					failed, _ = op.reset.svc.(cnservice.Service)
++					err = failure
++				}
++			}()
++		}
++		return op.StartContext(c.startup.context())
++	}
++	require.ErrorIs(t, c.Start(), failure)
++	require.NotNil(t, panicValue)
++	require.Contains(t, fmt.Sprint(panicValue), "listen unix "+socket)
++	require.NotNil(t, failed)
++	state, ok := failed.(interface{ CloseComplete() bool })
++	require.True(t, ok)
++	require.True(t, state.CloseComplete(), "failed CN construction must finish its owned cleanup")
++	require.NoError(t, c.Close())
++	require.True(t, c.CloseComplete())
++	rebound, err := net.Listen("tcp", frontendAddress)
++	require.NoError(t, err, "failed frontend handoff must release its TCP listener")
++	require.NoError(t, rebound.Close())
++}
+```
+
+**File**: `pkg/frontend/cdc_restart_timeout_fallback_test.go` (added, +193/-0)
+```diff
+@@ -0,0 +1,193 @@
++// Copyright 2026 Matrix Origin
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
 +// you may not use this file except in compliance with the License.
@@ -2446,312 +2630,542 @@ privil
 +// See the License for the specific language governing permissions and
 +// limitations under the License.
 +
-+package compile
++package frontend
 +
 +import (
 +	"context"
++	"errors"
++	"flag"
++	"os"
++	"os/exec"
++	"strings"
++	"sync"
 +	"testing"
++	"time"
 +
 +	"github.com/stretchr/testify/require"
 +
-+	"github.com/matrixorigin/matrixone/pkg/common/moerr"
-+	pbplan "github.com/matrixorigin/matrixone/pkg/pb/plan"
-+	sqlplan "github.com/matrixorigin/matrixone/pkg/sql/plan"
++	"github.com/matrixorigin/matrixone/pkg/catalog"
++	"github.com/matrixorigin/matrixone/pkg/cdc"
++	"github.com/matrixorigin/matrixone/pkg/defines"
++	"github.com/matrixorigin/matrixone/pkg/pb/task"
++	ie "github.com/matrixorigin/matrixone/pkg/util/internalExecutor"
 +)
 +
-+// queryResultMetaStub records saved-result metadata lookups so tests can
-+// assert the internal executor forwards them to the owning session compiler
-+// context instead of resolving them against the wrong identity.
-+type queryResultMetaStub struct {
-+	sqlplan.CompilerContext
-+
-+	requested []string
-+	cols      []*pbplan.ColDef
-+	path      string
-+	err       error
++type restartCatalogOperation struct {
++	sql        string
++	account    uint32
++	accountSet bool
 +}
 +
-+func (s *queryResultMetaStub) GetQueryResultMeta(uuid string) ([]*pbplan.ColDef, string, error) {
-+	s.requested = append(s.requested, uuid)
-+	return s.cols, s.path, s.err
++type restartCatalogRecorder struct {
++	*blockingRestartPublicationExecutor
++	mu         sync.Mutex
++	operations []restartCatalogOperation
 +}
 +
-+// An internal-executor query that reaches a saved-result source without a
-+// frontend session delegate must fail with a clean typed error, never panic.
-+func TestGetQueryResultMetaWithoutSessionDelegateFailsCleanly(t *testing.T) {
-+	c := &compilerContext{ctx: context.Background()}
-+
-+	cols, path, err := c.GetQueryResultMeta("7f0e9d51-8bd9-4e0f-8d1e-3cddc1234567")
-+	require.Error(t, err)
-+	require.True(t, moerr.IsMoErrCode(err, moerr.ErrInternal),
-+		"want typed internal error, got %v", err)
-+	require.Nil(t, cols)
-+	require.Empty(t, path)
-+
-+	// The message must identify the missing session plumbing so operators can
-+	// tell an authorization/session-state gap from a missing result file.
-+	require.Contains(t, err.Error(), "session compiler context")
++func (r *restartCatalogRecorder) record(ctx context.Context, sql string) {
++	account, err := defines.GetAccountId(ctx)
++	r.mu.Lock()
++	r.operations = append(r.operations, restartCatalogOperation{sql: sql, account: account, accountSet: err == nil})
++	r.mu.Unlock()
 +}
 +
-+// With the owning frontend session compiler context installed (as CTAS
-+// populate does), a saved-result metadata lookup must be forwarded to that
-+// delegate verbatim, with its columns and result path passed through.
-+func TestGetQueryResultMetaDelegatesToSessionCompilerContext(t *testing.T) {
-+	delegate := &queryResultMetaStub{
-+		cols: []*pbplan.ColDef{{Name: "id"}},
-+		path: "result-path",
++func (r *restartCatalogRecorder) Exec(ctx context.Context, sql string, opts ie.SessionOverrideOptions) error {
++	_, err := r.ExecWithStatus(ctx, sql, opts)
++	return err
++}
++
++func (r *restartCatalogRecorder) ExecWithStatus(ctx context.Context, sql string, opts ie.SessionOverrideOptions) (ie.InternalExecStatus, error) {
++	r.record(ctx, sql)
++	return r.blockingRestartPublicationExecutor.ExecWithStatus(ctx, sql, opts)
++}
++
++func (r *restartCatalogRecorder) Query(ctx context.Context, sql string, opts ie.SessionOverrideOptions) ie.InternalExecResult {
++	r.record(ctx, sql)
++	return r.blockingRestartPublicationExecutor.Query(ctx, sql, opts)
++}
++
++// The larger restart test exercises a real race. Pin the alternative where
++// publication has committed running before timeout persistence reads the
++// catalog, so the fallback and its ownership fence have explicit oracles.
++func TestRestartTimeoutRepairsLateRunningCatalogState(t *testing.T) {
++	const childMarker = "MO_TEST_CDC_TIMEOUT_FALLBACK_CHILD"
++	child := os.Getenv(childMarker) == "error-controls"
++	var once sync.Once
++	var childOutput []byte
++	var childErr error
++	runErrorControls := func() {
++		ctx, cancel := context.WithTimeout(t.Context(), 30*time.Second)
++		defer cancel()
++		args := []string{"-test.run=^TestRestartTimeoutRepairsLateRunningCatalogState$", "-test.v", "-test.count=1", "-test.timeout=20s"}
++		if testing.CoverMode() != "" {
++			coverageDir := ""
++			if f := flag.Lookup("test.gocoverdir"); f != nil {
++				coverageDir = f.Value.String()
++			}
++			if coverageDir == "" {
++				coverageDir = os.Getenv("GOCOVERDIR")
++			}
++			if coverageDir == "" {
++				childErr = errors.New("the child must contribute to the parent coverage profile")
++				return
++			}
++			args = append(args, "-test.gocoverdir="+coverageDir)
++		}
++		command := exec.CommandContext(ctx, os.Args[0], args...)
++		command.Env = append(os.Environ(), childMarker+"=error-controls")
++		childOutput, childErr = command.CombinedOutput()
 +	}
-+	ctx := attachInternalExecutorCompilerContext(context.Background(), delegate)
-+	c := &compilerContext{ctx: ctx}
++	cases := []struct {
++		name, initial, owner, final string
++		fallback, wantError         bool
++	}{
++		{"timed out and running", cdc.CDCState_Running, "timed out", cdc.CDCState_Failed, true, false},
++		{"missing owner", cdc.CDCState_Running, "missing", cdc.CDCState_Running, false, true},
++		{"pending owner", cdc.CDCState_Running, "pending", cdc.CDCState_Running, false, true},
++		{"conflicting paused state", cdc.CDCState_Paused, "timed out", cdc.CDCState_Paused, true, true},
++		{"still restarting", cdc.CDCState_Restarting, "timed out", cdc.CDCState_Failed, false, false},
++	}
++	for _, tc := range cases {
++		if child && !tc.wantError {
++			continue
++		}
++		t.Run(tc.name, func(t *testing.T) {
++			if tc.wantError && !child {
++				// These errors consume a process-wide logging budget. A single
++				// child isolates them and is also used for selected subtests.
++				once.Do(runErrorControls)
++				require.NoError(t, childErr, "isolated error controls: %s", childOutput)
++				name := strings.ReplaceAll(tc.name, " ", "_")
++				require.Contains(t, string(childOutput), "--- PASS: TestRestartTimeoutRepairsLateRunningCatalogState/"+name)
++				return
++			}
++			store := newBlockingRestartPublicationExecutor()
++			// This test fixes the catalog's starting state; it does not park a
++			// publication. An unexpected running update must not hang it.
++			store.unblock()
++			store.state = tc.initial
++			recorder := &restartCatalogRecorder{b
+```
+
+**File**: `pkg/frontend/mysql_cmd_executor_test.go` (modified, +47/-1)
+```diff
+@@ -174,6 +174,23 @@ func TestDoComQueryParseErrorReplacesPreviousDiagnostics(t *testing.T) {
+ 	require.Equal(t, 1, info.length())
+ 	require.Equal(t, []uint16{1064}, info.codes)
+ 	require.NotContains(t, info.msgs, "stale diagnostic marker")
++	t.Run("restore outer statement after parse error", func(t *testing.T) {
++		previous := ses.GetStmtInfo()
++		t.Cleanup(func() { ses.SetTStmt(previous) })
++		outer := &motrace.StatementInfo{Statement: []byte("outer statement")}
++		ses.SetTStmt(outer)
++		ses.appendErrorDiagnostic(1000, "stale diagnostic marker")
++		execCtx := newTestExecCtx(ctx, ctrl)
++		execCtx.ses = ses
++		err := doComQuery(ses, execCtx, &UserInput{sql: "select from"})
++		require.Error(t, err)
++		require.Same(t, outer, ses.GetStmtInfo(), "a nested request must return the outer statement to its owner")
++		ses.appendErrorDiagnostic(1064, err.Error())
++		info := ses.diagnosticsSnapshot()
++		require.Equal(t, 1, info.length())
++		require.Equal(t, []uint16{1064}, info.codes)
++		require.NotContains(t, info.msgs, "stale diagnostic marker")
++	})
+ }
+ 
+ func TestDoComQueryParseErrorRedactsMongoDBSelector(t *testing.T) {
+@@ -9167,6 +9184,9 @@ func TestJsonPlanHandlerRefreshesTerminalResourceSummary(t *testing.T) {
+ 	require.Nil(t, unmarshaled.buffer)
+ 	require.Nil(t, unmarshaled.marshalHandler)
+ 	require.Nil(t, unmarshaled.Marshal(context.Background()))
++	unmarshaled.SetResourceSummary(summary)
++	var absent *jsonPlanHandler
++	absent.SetResourceSummary(summary)
+ }
+ 
+ func TestSchedulingTracePlanHandlerMarshalsLazilyOnce(t *testing.T) {
+@@ -10888,6 +10908,14 @@ func TestMysqlCmdExecutor_HandleShowBackendServers(t *testing.T) {
+ 
+ }
+ 
++func enableParseErrorTracer(t *testing.T) {
++	t.Helper()
++	provider := motrace.GetTracerProvider()
++	wasEnabled := provider.IsEnable()
++	t.Cleanup(func() { provider.SetEnable(wasEnabled) })
++	provider.SetEnable(true)
++}
 +
-+	cols, path, err := c.GetQueryResultMeta("qid-1")
+ func Test_RecordParseErrorStatement(t *testing.T) {
+ 	ctrl := gomock.NewController(t)
+ 	defer ctrl.Finish()
+@@ -10916,7 +10944,7 @@ func Test_RecordParseErrorStatement(t *testing.T) {
+ 		Ctx:  context.TODO(),
+ 	}
+ 
+-	motrace.GetTracerProvider().SetEnable(true)
++	enableParseErrorTracer(t)
+ 	_, err := RecordParseErrorStatement(context.TODO(), ses, proc, time.Now(), nil, nil, moerr.NewInternalErrorNoCtx("test"))
+ 	assert.Nil(t, err)
+ 
+@@ -10936,6 +10964,24 @@ func Test_RecordParseErrorStatement(t *testing.T) {
+ 
+ }
+ 
++func TestRecordParseErrorStatementRestoresTracer(t *testing.T) {
++	provider := motrace.GetTracerProvider()
++	wasEnabled := provider.IsEnable()
++	t.Cleanup(func() { provider.SetEnable(wasEnabled) })
++	for _, enabled := range []bool{false, true} {
++		t.Run(fmt.Sprintf("initial=%t", enabled), func(t *testing.T) {
++			provider.SetEnable(enabled)
++			require.True(t, t.Run("enable tracer", func(t *testing.T) {
++				enableParseErrorTracer(t)
++				require.Same(t, provider, motrace.GetTracerProvider())
++				require.True(t, provider.IsEnable())
++			}))
++			require.Same(t, provider, motrace.GetTracerProvider())
++			require.Equal(t, enabled, provider.IsEnable())
++		})
++	}
++}
++
+ func Test_getExplainOption(t *testing.T) {
+ 	ctx := context.TODO()
+ 	var option *explain.ExplainOptions
+```
+
+**File**: `pkg/frontend/server.go` (modified, +16/-7)
+```diff
+@@ -844,13 +844,6 @@ func NewMOServer(
+ 	if err != nil {
+ 		logutil.Panicf("start server failed with %+v", err)
+ 	}
+-	setRtMgr(service, rm)
+-	rm.setBaseService(baseService)
+-	if baseService != nil {
+-		rm.setSessionMgr(baseService.SessionMgr())
+-	}
+-	// TODO asyncFlushBatch
+-	unixAddr := pu.SV.GetUnixSocketAddress()
+ 	mo := &MOServer{
+ 		addr:    addr,
+ 		uaddr:   pu.SV.UnixSocketAddress,
+@@ -859,6 +852,21 @@ func NewMOServer(
+ 		handler: rm.Handler,
+ 		service: service,
+ 	}
++	constructed := false
++	defer func() {
++		if !constructed {
++			if err := mo.Stop(); err != nil {
++				logutil.Errorf("failed to stop partially constructed frontend: %v", err)
++			}
++		}
++	}()
++	setRtMgr(service, rm)
++	rm.setBaseService(baseService)
++	if baseService != nil {
++		rm.setSessionMgr(baseService.SessionMgr())
++	}
++	// TODO asyncFlushBatch
++	unixAddr := pu.SV.GetUnixSocketAddress()
+ 	listenerTcp, err := net.Listen("tcp", addr)
+ 	if err != nil {
+ 		logutil.Panicf("start server failed with %+v", err)
+@@ -871,6 +879,7 @@ func NewMOServer(
+ 		}
+ 		mo.listeners = append(mo.listeners, listenerUnix)
+ 	}
++	constructed = true
+ 	return mo
+ }
+ 
+```
+
+**File**: `pkg/frontend/server_test.go` (modified, +95/-1)
+```diff
+@@ -18,8 +18,11 @@ import (
+ 	"context"
+ 	"database/sql"
+ 	"errors"
++	"fmt"
+ 	"io"
+ 	"net"
++	"path/filepath"
++	"strings"
+ 	"sync"
+ 	"testing"
+ 	"time"
+@@ -40,14 +43,18 @@ type closeErrorListener struct {
+ 
+ type testMOServerBaseService struct {
+ 	MockBaseService
+-	id string
++	id              string
++	sessionMgrPanic error
+ }
+ 
+ func (s *testMOServerBaseService) ID() string {
+ 	return s.id
+ }
+ 
+ func (s *testMOServerBaseService) SessionMgr() *queryservice.SessionManager {
++	if s.sessionMgrPanic != nil {
++		panic(s.sessionMgrPanic)
++	}
+ 	return nil
+ }
+ 
+@@ -131,6 +138,69 @@ func TestMOServerEmptyUnixAddressUsesTCPOnly(t *testing.T) {
+ 	require.NoError(t, rebound.Close())
+ }
+ 
++func TestMOServerConstructorFailureReleasesResources(t *testing.T) {
++	for _, network := range []string{"session-manager", "tcp", "unix"} {
++		t.Run(network, func(t *testing.T) {
++			address := "127.0.0.1:0"
++			var occupied net.Listener
++			if network != "session-manager" {
++				var err error
++				occupied, err = net.Listen("tcp", address)
++				require.NoError(t, err)
++				t.Cleanup(func() { _ = occupied.Close() })
++				address = occupied.Addr().String()
++			}
++			pu := config.NewParameterUnit(&config.FrontendParameters{}, nil, nil, nil)
++			pu.SV.SetDefaultValues()
++			pu.SV.KillRountinesInterval = 1
++			pu.SV.UnixSocketAddress = ""
++			if network == "unix" {
++				require.NoError(t, occupied.Close())
++				// Filesystem preflight succeeds; only the Unix bind must fail.
++				pu.SV.UnixSocketAddress = filepath.Join(t.TempDir(), strings.Repeat("s", 160))
++			}
++			ctx, cancel := context.WithCancel(t.Context())
++			defer cancel() // Also retires old-code workers in the negative control.
++			service := &testMOServerBaseService{id: t.Name()}
++			if network == "session-manager" {
++				service.sessionMgrPanic = errors.New("injected session manager panic")
++			}
++			var failure any
++			func() {
++				defer func() { failure = recover() }()
++				NewMOServer(ctx, address, pu, nil, service)
++			}()
++			require.NotNil(t, failure)
++			if network == "session-manager" {
++				require.Same(t, service.sessionMgrPanic, failure, "cleanup must preserve the original panic")
++			} else {
++				require.Contains(t, fmt.Sprint(failure), "listen "+network)
++			}
++			if network == "unix" {
++				require.Contains(t, fmt.Sprint(failure), pu.SV.UnixSocketAddress)
++			}
++			require.NoError(t, ctx.Err(), "constructor cleanup must not cancel its caller")
++			manager := getRtMgr(service.id)
++			require.NotNil(t, manager)
++			if !assert.ErrorIs(t, manager.ctx.Err(), context.Canceled) {
++				cancel() // Release old-code workers before checking the listener.
++			}
++			joined := make(chan struct{})
++			go func() { manager.workerWG.Wait(); close(joined) }()
++			select {
++			case <-joined:
++			case <-time.After(5 * time.Second):
++				t.Fatal("frontend constructor left its routine manager worker running")
++			}
++			if network == "unix" {
++				rebound, err := net.Listen("tcp", address)
++				require.NoError(t, err, "Unix bind failure must release the earlier TCP listener")
++				require.NoError(t, rebound.Close())
++			}
++		})
++	}
++}
++
+ func TestMOServerStopJoinsConnectionCleanup(t *testing.T) {
+ 	ctx, cancel := context.WithCancel(t.Context())
+ 	defer cancel()
+@@ -297,6 +367,30 @@ func Test_handshake(t *testing.T) {
+ 	assert.NoError(t, err)
+ }
+ 
++func TestMOServerHandleRequestReturnsPeerEOF(t *testing.T) {
++	service := t.Name()
++	InitServerLevelVars(service)
++	t.Cleanup(func() { serverVarsMap.Delete(service) })
++	allocator := NewLeakCheckAllocator()
++	setSessionAlloc(service, allocator)
++	pu := config.NewParameterUnit(&config.FrontendParameters{}, nil, nil, nil)
++	pu.SV.SetDefaultValues()
++	serverConn, peer := net.Pipe()
++	t.Cleanup(func() { _ = serverConn.Close(); _ = peer.Close() })
++	conn, err := NewIOSession(serverConn, pu, service)
 +	require.NoError(t, err)
-+	require.Equal(t, []string{"qid-1"}, delegate.requested)
-+	require.Len(t, cols, 1)
-+	require.Equal(t, "id", cols[0].Name)
-+	require.Equal(t, "result-path", path)
++	t.Cleanup(func() { _ = conn.Close() })
++	// net.Pipe rejects setting a new deadline after its peer closes. Arm the
++	// bounded read now and prevent ReadFromConn from resetting that deadline.
++	conn.timeout = 0
++	require.NoError(t, serverConn.SetReadDeadline(time.Now().Add(time.Second)))
++	require.NoError(t, peer.Close())
++	server := &MOServer{running: true}
++	require.Equal(t, io.EOF, server.handleRequest(conn))
++	require.NoError(t, conn.Close())
++	require.True(t, allocator.CheckBalance())
 +}
 +
-+// View-description child contexts must forward saved-result metadata lookups
-+// to their isolated delegate as well.
-+func TestGetQueryResultMetaViewChildForwardsToViewDelegate(t *testing.T) {
-+	delegate := &queryResultMetaStub{
-+		cols: []*pbplan.ColDef{{Name: "v"}},
-+		path: "view-path",
+ // TestMOServerTerminatesConnectionOnClientQuit proves the COM_QUIT contract
+ // at the connection owner: the MySQL wire protocol makes the client send
+ // COM_QUIT and wait for the server (not the client) to close the connection.
+```
+
+**File**: `pkg/frontend/trace_ownership_test.go` (added, +219/-0)
+```diff
+@@ -0,0 +1,219 @@
++// Copyright 2026 Matrix Origin
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package frontend
++
++import (
++	"context"
++	"encoding/json"
++	"testing"
++	"time"
++
++	"github.com/google/uuid"
++	"github.com/stretchr/testify/require"
++
++	"github.com/matrixorigin/matrixone/pkg/common/moerr"
++	"github.com/matrixorigin/matrixone/pkg/config"
++	"github.com/matrixorigin/matrixone/pkg/frontend/constant"
++	plan0 "github.com/matrixorigin/matrixone/pkg/pb/plan"
++	"github.com/matrixorigin/matrixone/pkg/util/resource"
++	"github.com/matrixorigin/matrixone/pkg/util/trace/impl/motrace"
++)
++
++// The tracer is process-global; each case borrows it only for the lifetime of
++// the real statement and its memory epoch.
++func TestRecordStatementTraceOwnership(t *testing.T) {
++	provider := motrace.GetTracerProvider()
++	// The frontend test provider is initialized with the no-op exporter. It
++	// leaves these statements with this test, allowing deterministic release.
++	require.IsType(t, motrace.NoopBatchProcessor{}, motrace.GetGlobalBatchProcessor())
++	wasEnabled := provider.IsEnable()
++	t.Cleanup(func() { provider.SetEnable(wasEnabled) })
++	provider.SetEnable(true)
++
++	newSession := func(t *testing.T) *Session {
++		t.Helper()
++		service := t.Name()
++		InitServerLevelVars(service)
++		t.Cleanup(func() { serverVarsMap.Delete(service) })
++		pu := config.NewParameterUnit(&config.FrontendParameters{}, nil, nil, nil)
++		pu.SV.SetDefaultValues()
++		setPu(service, pu)
++		proto := &internalProtocol{result: &internalExecResult{}}
++		require.Equal(t, "0.0.0.0:0", proto.Peer())
++		require.Equal(t, "0.0.0.0:0", proto.GetStr(PEER))
++		ses := NewSession(context.Background(), service, proto, nil)
++		ses.SetTenantInfo(&TenantInfo{Tenant: "trace_account", User: "trace_user"})
++		t.Cleanup(ses.Close)
++		t.Cleanup(func() {
++			h := ses.GetTxnHandler()
++			h.mu.Lock()
++			h.txnOp, h.txnCtx = nil, nil
++			h.mu.Unlock()
++		})
++		return ses
 +	}
-+	c := &compilerContext{ctx: context.Background(), viewChild: true, viewDelegate: delegate}
-+
-+	cols, path, err := c.GetQueryResultMeta("qid-2")
-+	require.NoError(t, err)
-+	require.Equal(t, []string{"qid-2"}, delegate.requested)
-+	require.Len(t, cols, 1)
-+	require.Equal(t, "view-path", path)
-+}
-+
-+// A delegate error must be propagated verbatim - never wrapped or swallowed -
-+// so the frontend session's typed result-file errors reach the caller intact.
-+func TestGetQueryResultMetaDelegatesErrorVerbatim(t *testing.T) {
-+	sentinel := moerr.NewResultFileNotFound(context.Background(), "deadbeef-qid")
-+	delegate := &queryResultMetaStub{err: sentinel}
-+	ctx := attachInternalExecutorCompilerContext(context.Background(), delegate)
-+	c := &compilerContext{ctx: ctx}
-+
-+	cols, path, err := c.GetQueryResultMeta("deadbeef-qid")
-+	require.ErrorIs(t, err, sentinel)
-+	require.True(t, moerr.IsMoErrCode(err, moerr.ErrResultFileNotFound))
-+	require.Nil(t, cols)
-+	require.Empty(t, path)
-+}
-```
-
-**File**: `pkg/sql/compile/sql_executor_context.go` (modified, +19/-1)
-```diff
-@@ -472,8 +472,26 @@ func (c *compilerContext) GetProcess() *process.Process {
- 	return c.proc
- }
- 
-+// GetQueryResultMeta resolves saved-result metadata for result_scan plans.
-+// The stored metadata is account-scoped (frontend.BuildQueryResultMetaPath),
-+// and access is authorized separately by re-checking the saved source AST/plan
-+// against the CURRENT calling role (frontend checkResultQueryPrivilege); the
-+// delegate below carries the calling session's compiler identity and imposes
-+// no producer-session ownership on the saved result. The internal executor has
-+// no account/session identity of its own, so it consults the calling frontend
-+// session's compiler context, which CTAS populate installs via
-+// attachInternalExecutorCompilerContext. Without such a delegate nothing can
-+// be resolved here: return a clean typed error instead of panicking.
- func (c *compilerContext) GetQueryResultMeta(uuid string) ([]*plan.ColDef, string, error) {
--	panic("not supported in internal sql executor")
-+	if delegate := c.sessionCompilerContextValue(); delegate != nil {
-+		return delegate.GetQueryResultMeta(uuid)
++	installTxn := func(ses *Session, id uuid.UUID) {
++		op := newTestTxnOp()
++		op.meta.ID = append([]byte(nil), id[:]...)
++		h := ses.GetTxnHandler()
++		h.mu.Lock()
++		h.txnOp, h.txnCtx = op, context.Background()
++		h.mu.Unlock()
 +	}
-+	errCtx := c.ctx
-+	if errCtx == nil {
-+		errCtx = context.Background()
++	start := func(t *testing.T, ses *Session) (context.Context, *motrace.StatementInfo, *resource.Root) {
++		t.Helper()
++		ctx, err := RecordStatement(context.Background(), ses, ses.GetProc(), nil, time.Now(), "select 17", constant.ExternSql, true)
++		require.NoError(t, err)
++		stmt := ses.GetStmtInfo()
++		require.NotNil(t, stmt)
++		row := motrace.SingleStatementTable.GetRow(ctx)
++		t.Cleanup(func() {
++			stmt.EndStatement(ctx, nil, 0, 0, 0)
++			stmt.FillRow(ctx, row)
++			row.Free()
++			stmt.Free()
++			ses.SetTStmt(nil)
++		})
++		root := resource.RootFromContext(ctx)
++		require.NotNil(t, root)
++		return ctx, stmt, root
 +	}
-+	return nil, "", moerr.NewInternalError(errCtx,
-+		"query result metadata requires a session compiler context in internal sql executor")
- }
- 
- func (c *compilerContext) DatabaseExists(name string, snapshot *plan.Snapshot) bool {
-```
-
-**File**: `pkg/sql/compile/sql_executor_context_test.go` (modified, +9/-4)
-```diff
-@@ -192,10 +192,15 @@ func TestCompilerContextUnsupportedOperations(t *testing.T) {
- 		_, _ = c.ResolveAccountIds(nil)
- 	}()
- 
--	func() {
--		defer r()
--		_, _, _ = c.GetQueryResultMeta("")
--	}()
-+	// GetQueryResultMeta is a delegated operation since CTAS-from-result_scan
-+	// support: without a delegate - including the nil-context case above - it
-+	// must return a clean typed internal error and no metadata, never panic.
-+	cols, path, qerr := c.GetQueryResultMeta("")
-+	require.Error(t, qerr)
-+	require.True(t, moerr.IsMoErrCode(qerr, moerr.ErrInternal),
-+		"want typed internal error, got %v", qerr)
-+	require.Nil(t, cols)
-+	require.Empty(t, path)
- }
- 
- type recordingSessionCompilerContext struct {
-```
-
-**File**: `test/distributed/cases/save_query_result/save_query_result.result` (modified, +63/-0)
-```diff
-@@ -2465,3 +2465,66 @@ acc_save    admin    2024-11-21 07:19:49    open    null    5    65    0.0    0.
- set save_query_result = off;
- drop account acc_save;
- set save_query_result = off;
-+set @saved_enable_privilege_cache = @@global.enable_privilege_cache;
-+set global enable_privilege_cache = off;
-+drop database if exists db_save_ctas;
-+create database db_save_ctas;
-+use db_save_ctas;
-+create table ctas_priv_src(a int, b varchar(20));
-+insert into ctas_priv_src values (1, 'alpha'), (2, 'beta'), (3, 'gamma');
-+drop role if exists r_ctas_src;
-+create role r_ctas_src;
-+drop user if exists u_ctas;
-+create user u_ctas identified by '111' default role r_ctas_src;
-+grant connect on account * to r_ctas_src;
-+grant show databases on account * to r_ctas_src;
-+grant show tables on database db_save_ctas to r_ctas_src;
-+grant create table on database db_save_ctas to r_ctas_src;
-+grant select on table db_save_ctas.ctas_priv_src to r_ctas_src;
-+use db_save_ctas;
-+set save_query_result = on;
-+/* save_result */select a, b from ctas_priv_src order by a desc;
-+a	b
-+3	gamma
-+2	beta
-+1	alpha
-+set @saved_qid = last_query_id();
-+set @ctas_sql = concat('create table ctas_priv_ok as select a, b from result_scan(''', @saved_qid, ''') as t');
-+prepare ctas_priv_p from @ctas_sql;
-+execute ctas_priv_p;
-+deallocate prepare ctas_priv_p;
-+/* save_result */select a, b from ctas_priv_src order by a desc;
-+a	b
-+3	gamma
-+2	beta
-+1	alpha
-+revoke select on table db_save_ctas.ctas_priv_src from r_ctas_src;
-+create table ctas_priv_denied as select a, b from result_scan(last_query_id()) t;
-+internal error: do not have privilege to execute the statement
-+create table ctas_priv_probe(a int);
-+select a from ctas_priv_src;
-+internal error: do not have privilege to execute the statement
-+select count(*) from ctas_priv_ok;
-+count(*)
-+3
-+select a, b from ctas_priv_ok order by a;
-+a	b
-+1	alpha
-+2	beta
-+3	gamma
-+show create table ctas_priv_ok;
-+Table	Create Table
-+ctas_priv_ok	CREATE TABLE `ctas_priv_ok` (\n  `a` int DEFAULT NULL,\n  `b` varchar(20) DEFAULT NULL\n)
-+show tables;
-+Tables_in_db_save_ctas
-+ctas_priv_ok
-+ctas_priv_probe
-+ctas_priv_src
-+set save_query_result = off;
-+drop user if exists u_ctas;
-+drop role if exists r_ctas_src;
-+drop database if exists db_save_ctas;
-+set global enable_privilege_cache = @saved_enable_privilege_cache;
-+select @@global.enable_privilege_cache = @saved_enable_privilege_cache as cache_snapshot_restored;
-+cache_snapshot_restored
-+1
-```
-
-**File**: `test/distributed/cases/save_query_result/save_query_result.sql` (modified, +63/-0)
-```diff
-@@ -180,3 +180,66 @@ set save_query_result = off;
- drop account acc_save;
- -- reset to default(off)
- set save_query_result = off;
 +
-+-- PR32727 maintained regression: saved-result CTAS with current source
-+-- privileges. The allowed population path is asserted first; a live revoke
-+-- then removes only the source read privilege while the target CREATE
-+-- privilege stays granted, and reusing the same saved queryID must be
-+-- denied before any denied target is created.
-+set @saved_enable_privilege_cache = @@global.enable_privilege_cache;
-+set global enable_privilege_cache = off;
-+drop database if exists db_save_ctas;
-+create database db_save_ctas;
-+use db_save_ctas;
-+create table ctas_priv_src(a int, b varchar(20));
-+insert into ctas_priv_src values (1, 'alpha'), (2, 'beta'), (3, 'gamma');
-+drop role if exists r_ctas_src;
-+create role r_ctas_src;
-+drop user if exists u_ctas;
-+create user u_ctas identified by '111' default role r_ctas_src;
-+grant connect on account * to r_ctas_src;
-+grant show databases on account * to r_ctas_src;
-+grant show tables on database db_save_ctas to r_ctas_src;
-+grant create table on database db_save_ctas to r_ctas_src;
-+grant select on table db_save_ctas.ctas_priv_src to r_ctas_src;
-+-- @session:id=201&user=sys:u_ctas:r_ctas_src&password=111
-+use db_save_ctas;
-+set save_query_result = on;
-+/* save_result */select a, b from ctas_priv_src order by a desc;
-+-- allowed CTAS populated from the really saved result while the source is
-+-- readable; the queryID is embedded into the prepared statement text with
-+-- concat because the populate phase runs in the internal executor where
-+-- last_query_id() is not visible and would resolve to the zero query id.
-+set @saved_qid = last_query_id();
-+set @ctas_sql = concat('create table ctas_priv_ok as select a, b from result_scan(''', @saved_qid, ''') as t');
-+prepare ctas_priv_p from @ctas_sql;
-+execute ctas_priv_p;
-+deallocate prepare ctas_priv_p;
-+-- re-save the same producer so it stays the ring top for the deny phase
-+/* save_result */select a, b from ctas_priv_src order by a desc;
-+-- @session
-+-- live revoke of the source read privilege only; the target CREATE stays granted
-+revoke select on table db_save_ctas.ctas_priv_src from r_ctas_src;
-+-- @session:id=201&user=sys:u_ctas:r_ctas_src&password=111
-+-- reusing the saved queryID must be denied by the current source privilege
-+-- @ignore:0
-+create table ctas_priv_denied as select a, b from result_scan(last_query_id()) t;
-+-- witness after the revoke: the same live role keeps target CREATE
-+create table ctas_priv_probe(a int);
-+-- the direct source read is denied in this live session
-+-- @ignore:0
-+select a from ctas_priv_src;
-+select count(*) from ctas_priv_ok;
-+select a, b from ctas_priv_ok order by a;
-+show create table ctas_priv_ok;
-+-- no leftover denied target exists
-+show tables;
-+set save_query_result = off;
-+-- @session
-+drop user if exists u_ctas;
-+drop role if exists r_ctas_src;
-+drop database if exists db_save_ctas;
-+-- restore the genuine original global value captured at case start
-+set global enable_privilege_cache = @saved_enable_privilege_cache;
-+-- equality with the case-start snapshot is the restoration oracle, valid for any initial value
-+select @@global.enable_privilege_cache = @saved_enable_privilege_cache as cache_snapshot_restored;
++	t.Run("active transaction and available epoch", func(t *testing.T) {
++		ses := newSession(t)
++		id := uuid.MustParse("01020304-0506-0708-090a-0b0c0d0e0f10")
++		installTxn(ses, id)
++		ctx, stmt, root := start(t, ses)
++		require.Equal(t, id[:], stmt.TransactionID[:])
++		require.Equal(t, "trace_account", stmt.Account)
++		require.Equal(t, "trace_user", stmt.User)
++		require.Equal(t, "0.0.0.0:0", stmt.Host)
++		require.Equal(t, constant.ExternSql, stmt.SqlSourceType)
++		require.Equal(t, "select 17", string(stmt.Statement))
++		pool := ses.GetProc().Mp()
++		allocation, err := pool.Alloc(64, true)
++		require.NoError(t, err)
++		pool.Free(allocation)
++		require.GreaterOrEqual(t, root.PreResponseSummary().Memory.MaxDomainPeakLiveBytes, uint64(64))
++		stmt.EndStatement(ctx, nil, 0, 0, 0)
++		token := pool.StartResourcePeakEpoch()
++		require.NotNil(t, token, "statement completion must release its pool epoch")
++		_, ok := pool.EndResourcePeakEpoch(token)
++		require.True(t, ok)
++	})
++
++	t.Run("transaction acquired after statement starts", func(t *testing.T) {
++		ses := newSession(t)
++		ctx, stmt, _ := start(t, ses)
++		require.Equal(t, motrace.NilTxnID, stmt.TransactionID)
++		require.NoError(t, RecordStatementTxnID(ctx, ses))
++		require.Equal(t, motrace.NilTxnID, stmt.TransactionID)
++		id := uuid.MustParse("11121314-1516-1718-191a-1b1c1d1e1f20")
++		installTxn(ses, id)
++		require.NoError(t, RecordStatementTxnID(ctx, ses))
++		require.Equal(t, id[:], stmt.TransactionID[:])
++		got := ses.GetTxnId()
++		require.Equal(t, id[:], got[:])
++		installTxn(ses, uuid.MustParse("21222324-2526-2728-292a-2b2c2d2e2f30"))
++		require.NoError(t, RecordStatementTxnID(ctx, ses))
 ```
 
 ---
 
-### Incident Patch 2: `2a42b3e9` (2026-11-13)
-**Commit Message**: fix(external): validate and normalize Parquet temporal LOAD values (#32722)
+### Incident Patch 2: `88100ce0` (2026-11-15)
+**Commit Message**: fix(pSpool): reserve batch backing without planning slices (#32754)
 
 ## What type of PR is this?
 
 - [ ] API-change
 - [x] BUG
-- [ ] Improvement
+- [x] Improvement
 - [ ] Documentation
 - [ ] Feature
 - [ ] Test and CI
@@ -2759,132 +3173,29 @@ privil
 
 ## Which issue(s) this PR fixes:
 
-Fixes #31519
-Fixes #31520
+Related to #32751.
 
 ## What this PR does / why we need it:
 
-Numeric Parquet columns loaded into DATE/TIMESTAMP/DATETIME targets via `LOAD` are now validated and normalized per logical consumed row values before assignment, instead of being trusted raw:
+Reserve cached backing across the uncopied batch suffix without
+allocating request or copy-index slices. After caching `[empty, 128
+MiB]`, copying `[1 MiB, 128 MiB]` previously let the small column
+consume the only large block. The revised real-Vector diagnostic uses
+about **129 MiB target native backing/peak instead of 256 MiB**,
+preserving every payload byte. This is a component result, not a CN
+RSS/OOM claim. 4.2-dev counterpart: #32758.
 
-- Each consumed non-null dictionary-page value is checked against the target SQL calendar, so out-of-range carriers such as year 10000, DATE32 day 0 (owned by the existing INSERT-layer lower bound) and session-local display overflows are rejected with the engine's own temporal errors instead of silently persisting (issue 31519). The check honors the session time zone for local-wall calendars and keeps the existing foreign-table read mapping untouched - only the LOAD-only numeric temporal mappers changed.
-- Fractional-second carriers are staged at the source units/scale (micros) and then routed through the existing assign-cast semantics, so target-scale rounding, `TIME_T
+Exact compatible hits and current needs that dominate future needs can
+reuse backing directly. Other needs are visited largest-first through a
+constant-size cursor, followed by source-order undersized fallback.
+Best-fit searches first reject insufficient or already-worse capacities
+before checking allocation provenance; the chosen block, tie order and
+attachment checks are identical. Logical needs replace historical spare
+backing size. P
 
-**File**: `pkg/sql/colexec/external/parquet.go` (modified, +56/-0)
+**File**: `pkg/container/pSpool/batch_cache_test.go` (added, +226/-0)
 ```diff
-@@ -1762,9 +1762,17 @@ func (h *ParquetHandler) getMapperWithStaging(sc *parquet.Column, dt plan.Type,
- 				break
- 			}
- 			if lt.Timestamp != nil {
-+				assignment := h.timeAssignment
- 				mp.mapper = func(mp *columnMapper, page parquet.Page, proc *process.Process, vec *vector.Vector) error {
- 					loc := parquetSessionLocation(proc)
- 					return processParquetValuesToFixed(proc.Ctx, mp, page, proc, vec, types.Date(0), func(v parquet.Value) (types.Date, error) {
-+						if assignment {
-+							dt, err := parquetLoadTimestampValueToDatetime(proc.Ctx, st, v, loc)
-+							if err != nil {
-+								return 0, err
-+							}
-+							return dt.ToDate(), nil
-+						}
- 						dt, err := parquetTimestampValueToDatetime(proc.Ctx, st, v, loc)
- 						if err != nil {
- 							return 0, err
-@@ -1779,7 +1787,13 @@ func (h *ParquetHandler) getMapperWithStaging(sc *parquet.Column, dt plan.Type,
- 			if dateT == nil {
- 				break
- 			}
-+			assignment := h.timeAssignment
- 			mp.mapper = func(mp *columnMapper, page parquet.Page, proc *process.Process, vec *vector.Vector) error {
-+				if assignment {
-+					return processParquetValuesToFixed(proc.Ctx, mp, page, proc, vec, types.Date(0), func(v parquet.Value) (types.Date, error) {
-+						return parquetLoadDate32(proc.Ctx, v.Int32())
-+					})
-+				}
- 				data := page.Data()
- 				dict := page.Dictionary()
- 				if dict == nil {
-@@ -1830,9 +1844,17 @@ func (h *ParquetHandler) getMapperWithStaging(sc *parquet.Column, dt plan.Type,
- 				break
- 			}
- 			if lt.Date != nil {
-+				assignment := h.timeAssignment
- 				mp.mapper = func(mp *columnMapper, page parquet.Page, proc *process.Process, vec *vector.Vector) error {
- 					loc := parquetSessionLocation(proc)
- 					return processParquetValuesToFixed(proc.Ctx, mp, page, proc, vec, types.Timestamp(0), func(v parquet.Value) (types.Timestamp, error) {
-+						if assignment {
-+							date, err := parquetLoadDate32(proc.Ctx, v.Int32())
-+							if err != nil {
-+								return 0, err
-+							}
-+							return date.ToTimestamp(loc), nil
-+						}
- 						return types.DaysFromUnixEpochToDate(v.Int32()).ToTimestamp(loc), nil
- 					})
- 				}
-@@ -1845,7 +1867,23 @@ func (h *ParquetHandler) getMapperWithStaging(sc *parquet.Column, dt plan.Type,
- 			}
- 			// isAdjustedToUTC: true=UTC (use directly), false=local wall-clock time.
- 			isAdjustedToUTC := tsT.IsAdjustedToUTC
-+			assignment := h.timeAssignment
- 			mp.mapper = func(mp *columnMapper, page parquet.Page, proc *process.Process, vec *vector.Vector) error {
-+				if assignment {
-+					// LOAD stages the true source precision (scale 6) and lets
-+					// the standard assignment cast own target-scale rounding,
-+					// SQL mode, and the final row-domain check.
-+					loc := parquetSessionLocation(proc)
-+					return processParquetTemporalAssignment[types.Timestamp](mp, page, proc, vec,
-+						parquetTimestampStagingType,
-+						func(v parquet.Value) (types.Timestamp, error) {
-+							micros, err := parquetTimestampValueToMicros(proc.Ctx, v, lt)
-+							if err != nil {
-+								return 0, err
-+							}
-+							return parquetLoadTimestampMicrosToTimestamp(proc.Ctx, micros, isAdjustedToUTC, loc)
-+						})
-+				}
- 				data := page.Data()
- 				dict := page.Dictionary()
- 
-@@ -1967,7 +2005,17 @@ func (h *ParquetHandler) getMapperWithStaging(sc *parquet.Column, dt plan.Type,
- 			break
- 		}
- 		if lt.Date != nil {
-+			assignment := h.timeAssignment
- 			mp.mapper = func(mp *columnMapper, page parquet.Page, proc *process.Process, vec *vector.Vector) error {
-+				if assignment {
-+					return processParquetValuesToFixed(proc.Ctx, mp, page, proc, vec, types.Datetime(0), func(v parquet.Value) (types.Datetime, error) {
-+						date, err := parquetLoadDate32(proc.Ctx, v.Int32())
-+						if err != nil {
-+							return 0, err
-+						}
-+						return date.ToDatetime(), nil
-+					})
-+				}
- 				data := page.Data()
- 				dict := page.Dictionary()
- 				if dict == nil {
-@@ -2010,8 +2058,16 @@ func (h *ParquetHandler) getMapperWithStaging(sc *parquet.Column, dt plan.Type,
- 		if lt.Timestamp == nil {
- 			break
- 		}
-+		assignment := h.timeAssignment
- 		mp.mapper = func(mp *columnMapper, page parquet.Page, proc *process.Process, vec *vector.Vector) error {
- 			loc := parquetSessionLocation(proc)
-+			if assignment {
-+				return processParquetTemporalAssignment[types.Datetime](mp, page, proc, vec,
-+					parquetDatetimeStagingType,
-+					func(v parquet.Value) (types.Datetime, error) {
-+						return parquetLoadTimestampValueToDatetime(proc.Ctx, st, v, loc)
-+					})
-+			}
- 			return processParquetValuesToFixed(proc.Ctx, mp, page, proc, vec, types.Datetime(0), func(v parquet.Value) (types.Datetime, error) {
- 				return parquetTimestampValueToDatetime(proc.Ctx, st, v, loc)
- 			})
-```
-
-**File**: `pkg/sql/colexec/external/parquet_temporal_assignment.go` (added, +231/-0)
-```diff
-@@ -0,0 +1,231 @@
+@@ -0,0 +1,226 @@
 +// Copyright 2026 Matrix Origin
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
@@ -2899,399 +3210,294 @@ Numeric Parquet columns loaded into DATE/TIMESTAMP/DATETIME targets via `LOAD` a
 +// See the License for the specific language governing permissions and
 +// limitations under the License.
 +
-+package external
-+
-+import (
-+	"context"
-+	"math"
-+	"time"
-+
-+	"github.com/matrixorigin/matrixone/pkg/common/moerr"
-+	"github.com/matrixorigin/matrixone/pkg/container/types"
-+	"github.com/matrixorigin/matrixone/pkg/container/vector"
-+	"github.com/matrixorigin/matrixone/pkg/sql/plan/function"
-+	"github.com/matrixorigin/matrixone/pkg/vm/process"
-+	"github.com/parquet-go/parquet-go"
-+)
-+
-+// Numeric Parquet DATE/TIMESTAMP sources that feed a temporal target under
-+// LOAD receive the same SQL assignment contract as INSERT:
-+//
-+//   - values above the supported SQL calendar (year > 9999 in the target
-+//     calendar) are rejected row by row, before any value reaches the target
-+//     vector;
-+//   - the carrier keeps the true source precision (scale 6) and the single
-+//     target-scale normalization is the standard assignment cast, which owns
-+//     half-step rounding, carry, TIME_TRUNCATE_FRACTIONAL, and
-+//     statement-ignore semantics;
-+//   - after that normalization the rows are re-checked, because rounding can
-+//     carry 9999-12-31 23:59:59.999999 into 10000-01-01 00:00:00;
-+//   - the lower bound and zero-date policies stay owned by the insert layer.
-+//
-+// Foreign-table reads never route through this path: their raw mapping policy
-+// is unchanged.
-+//
-+// All checks are per consumed logical row. Dictionary pages are expanded per
-+// referenced entry only, so an out-of-range entry that no consumed row
-+// references does not fail the load, and NULL-only pages pass unchanged.
-+
-+var (
-+	// parquetUnixEpochMicros is the numeric of 1970-01-01 in the year-0 based
-+	// microsecond space shared by types.Timestamp and types.Datetime.
-+	parquetUnixEpochMicros = int64(types.UnixMicroToTimestamp(0))
-+	// parquetUnixEpochDays is the Date numeric of 1970-01-01.
-+	parquetUnixEpochDays = int32(types.DaysFromUnixEpochToDate(0))
-+	// The storable SQL calendar in days since the Unix epoch: 0001-01-01
-+	// through 9999-12-31. A raw day count inside this interval can never wrap
-+	// in the epoch add nor in any derived DATETIME/TIMESTAMP conversion.
-+	parquetMinLoadDateDays = time.Date(1, 1, 1, 0, 0, 0, 0, time.UTC).Unix() / int64(86400)
-+	parquetMaxLoadDateDays = time.Date(9999, 12, 31, 0, 0, 0, 0, time.UTC).Unix() / int64(86400)
-+	// parquetMaxLoadDatetime is 9999-12-31 23:59:59.999999 in the shared
-+	// year-0 based numeric space: the SQL-calendar upper bound.
-+	parquetMaxLoadDatetime = types.FromClockUTC(9999, 12, 31, 23, 59, 59, 999999).ToDatetime(time.UTC)
-+	// Staging carriers carry the true parquet source precision.
-+	parquetTimestampStagingType = types.T_timestamp.ToTypeWithScale(6)
-+	parquetDatetimeStagingType  = types.T_datetime.ToTypeWithScale(6)
-+)
-+
-+// parquetLoadTemporalOffsetBudgetMicros bounds the timezone offset applied by
-+// ToDatetime when a timestamp is displayed in the session timezone. Real
-+// offsets stay within +-15h; the two-day headroom additionally keeps the
-+// epoch-space guard below from covering every wrap exactly at its boundary.
-+const parquetLoadTemporalOffsetBudgetMicros = int64(2 * 86400 * 1000000)
-+
-+// parquetGuardTimestampMicros rejects raw epoch microseconds that would
-+// overflow the shared year-0 based numeric space when the epoch or a zone
-+// offset is added. A wrapped value could otherwise look like a small valid
-+// timestamp and slip past calendar validation.
-+func parquetGuardTimestampMicros(ctx context.Context, micros int64) error {
-+	if micros > math.MaxInt64-parquetUnixEpochMicros-parquetLoadTemporalOffsetBudgetMicros ||
-+		micros < math.MinInt64+parquetUnixEpochMicros+parquetLoadTemporalOffsetBudgetMicros {
-+		return moerr.NewInvalidInputf(ctx,
-+			"parquet timestamp %d microseconds is out of range", micros)
-+	}
-+	return nil
-+}
-+
-+// parquetLoadDate32 maps days since the Unix epoch into a Date value under
-+// the storable SQL calendar. The raw-domain guard runs before the epoch add
-+// and before any derived DATETIME/TIMESTAMP conversion, so extreme int32 day
-+// counts cannot wrap into a small valid-looking value downstream. Zero-date
-+// and TIMESTAMP lower-bound policies stay owned by the insert layer.
-+func parquetLoadDate32(ctx context.Context, days int32) (types.Date, error) {
-+	if int64(days) < parquetMinLoadDateDays || int64(days) > parquetMaxLoadDateDays {
-+		return 0, moerr.NewInvalidInputf(ctx,
-+			"parquet date is out of range for 
-```
-
-**File**: `pkg/sql/colexec/external/parquet_temporal_assignment_test.go` (added, +577/-0)
-```diff
-@@ -0,0 +1,577 @@
-+// Copyright 2026 Matrix Origin
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package external
++package pSpool
 +
 +import (
 +	"bytes"
-+	"fmt"
-+	"math"
 +	"testing"
-+	"time"
 +
-+	"github.com/matrixorigin/matrixone/pkg/common/moerr"
++	"github.com/stretchr/testify/require"
++
++	"github.com/matrixorigin/matrixone/pkg/common/mpool"
++	"github.com/matrixorigin/matrixone/pkg/container/batch"
 +	"github.com/matrixorigin/matrixone/pkg/container/types"
 +	"github.com/matrixorigin/matrixone/pkg/container/vector"
-+	"github.com/matrixorigin/matrixone/pkg/pb/plan"
-+	"github.com/matrixorigin/matrixone/pkg/testutil"
-+	"github.com/matrixorigin/matrixone/pkg/vm/process"
-+	"github.com/parquet-go/parquet-go"
-+	"github.com/stretchr/testify/require"
 +)
 +
-+// loadTemporalProc builds a process wired to the session timezone and SQL mode
-+// used by the temporal assignment tests.
-+func loadTemporalProc(t *testing.T, tz *time.Location, sqlMode string) *process.Process {
-+	t.Helper()
-+	proc := testutil.NewProcess(t)
-+	proc.Base.SessionInfo.TimeZone = tz
-+	proc.SetResolveVariableFunc(func(string, bool, bool) (interface{}, error) {
-+		return sqlMode, nil
-+	})
-+	return proc
-+}
-+
-+// localTimestampMicrosModel writes an int64 TIMESTAMP(MICROS) leaf with
-+// isAdjustedToUTC=false through the documented schema tag, so the local
-+// wall-clock branch of the timestamp mappers can be exercised end to end.
-+type localTimestampMicrosModel struct {
-+	Value int64 `parquet:"local_ts,timestamp(microsecond:local)"`
-+}
-+
-+func writeLocalTimestampPage(t *testing.T, micros []int64) (*parquet.File, parquet.Page) {
-+	t.Helper()
-+	var buf bytes.Buffer
-+	schema := parquet.SchemaOf(localTimestampMicrosModel{})
-+	w := parquet.NewWriter(&buf, schema)
-+	rows := make([]parquet.Row, 0, len(micros))
-+	for _, m := range micros {
-+		rows = append(rows, parquet.Row{parquet.Int64Value(m).Level(0, 0, 0)})
-+	}
-+	_, err := w.WriteRows(rows)
-+	require.NoError(t, err)
-+	require.NoError(t, w.Close())
-+	f, err := parquet.OpenFile(bytes.NewReader(buf.Bytes()), int64(buf.Len()))
-+	require.NoError(t, err)
-+	col := f.Root().Column("local_ts")
-+	require.NotNil(t, col)
-+	lt := col.Type().LogicalType()
-+	require.NotNil(t, lt)
-+	require.NotNil(t, lt.Timestamp)
-+	require.False(t, lt.Timestamp.IsAdjustedToUTC, "fixture must be a local wall-clock timestamp")
-+	pages := col.Pages()
-+	defer func() { require.NoError(t, pages.Close()) }()
-+	page, err := pages.ReadPage()
-+	require.NoError(t, err)
-+	require.NotNil(t, page)
-+	return f, page
-+}
-+
-+// TestParquetLoadTemporalBounds pins the SQL calendar upper bound for numeric
-+// Parquet DATE/TIMESTAMP sources under LOAD, mirroring the rejection the SQL
-+// parser applies to year 10000 spellings. Lower-bound and zero-date policies
-+// belong to the insert layer and are intentionally not re-enforced here.
-+func TestParquetLoadTemporalBounds(t *testing.T) {
-+	const (
-+		// 9999-12-31 23:59:59.999999 UTC
-+		microsMaxSqlCalendar = 253402300799999999
-+		// 10000-01-01 00:00:00 UTC
-+		microsYear10000 = 253402300800000000
-+		// 9999-12-31 15:00:00 UTC: at +14:00 this is local 10000-01-01 05:00.
-+		microsUtcTailPlus14 = 253402268000000000
-+		// 10000-01-01 05:00:00 UTC: at -12:00 this is local 9999-12-31 17:00.
-+		microsUtcHeadMinus12 = 253402322800000000
-+	)
-+	daysYear10000 := int32(time.Date(10000, 1, 1, 0, 0, 0, 0, time.UTC).Unix() / int64(86400))
-+	daysMaxSqlCalendar := int32(time.Date(9999, 12, 31, 0, 0, 0, 0, time.UTC).Unix() / int64(86400))
-+	days2024 := int32(time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC).Unix() / int64(86400))
-+
-+	utc := time.UTC
-+	plus14 := time.FixedZone("+14:00", 14*3600)
-+	minus12 := time.FixedZone("-12:00", -12*3600)
-+
-+	rowOfInt64 := func(values ...int64) []parquet.Row {
-+		rows := make([]parquet.Row, 0, len(values))
-+		for _, v := range values {
-+			rows = append(rows, parquet.Row{parquet.Int64Value(v).Level(0, 0, 0)})
-+		}
-+		return rows
-+	}
-+	rowOfInt32 := func(values ...int32) []parquet.Row {
-+		rows := make([]parquet.Row, 0, len(values))
-+		for _, v := range values {
-+			rows = append(rows, parquet.Row{parquet.Int32Value(v).Level(0, 0, 0)})
-+		}
-+		return rows
-+	}
-+
-+	t.Run("adjusted micros max passes at utc", func(t *testing.T) {
-+		proc := loadTemporalProc(t, utc, "")
-+		f, page := writeColumnAndGetPage(t, parquet.Timestamp(parquet.Microsecond), rowOfInt64(microsMaxSqlCalendar))
-+		var h ParquetHandler
-+		h.timeAssignment = true
-+		mp := h.getMapper(f.Root().Column("c"), plan.Type{Id: int32(types.T_timestamp), Scale: 6, NotNullable: true})
-+		require.NotNil(t, mp)
-+		vec := vector.NewVec(types.New(types.T_timestamp, 0, 6))
-+		defer vec.Free(proc.Mp())
-+		re
-```
-
-**File**: `test/distributed/cases/load_data/load_data_parquet.result` (modified, +15/-1)
-```diff
-@@ -218,8 +218,22 @@ select * from ts_test;
- ➤ id[-5,64,0]  ¦  ts_no_tz_micros[93,64,0]  ¦  ts_no_tz_millis[93,64,0]  𝄀
- 1  ¦  2023-10-27 10:00:00  ¦  2025-12-25 08:30:00  𝄀
- 2  ¦  1960-01-01 12:00:00  ¦  2000-01-01 00:00:00  𝄀
--3  ¦  null  ¦  2023-12-31 23:59:59
-+3  ¦  null  ¦  2024-01-01 00:00:00
- drop table ts_test;
-+create table ts_test_ctl(id bigint, v datetime);
-+insert into ts_test_ctl values (1, '2023-12-31 23:59:59.999');
-+select * from ts_test_ctl;
-+➤ id[-5,64,0]  ¦  v[93,64,0]  𝄀
-+1  ¦  2024-01-01 00:00:00
-+set @ts_saved_sql_mode = @@session.sql_mode;
-+set session sql_mode = 'TIME_TRUNCATE_FRACTIONAL';
-+insert into ts_test_ctl values (2, '2023-12-31 23:59:59.999');
-+select * from ts_test_ctl;
-+➤ id[-5,64,0]  ¦  v[93,64,0]  𝄀
-+1  ¦  2024-01-01 00:00:00  𝄀
-+2  ¦  2023-12-31 23:59:59
-+set session sql_mode = @ts_saved_sql_mode;
-+drop table ts_test_ctl;
- drop table if exists none_compression;
- CREATE TABLE none_compression (
- id BIGINT,
-```
-
-**File**: `test/distributed/cases/load_data/load_data_parquet.sql` (modified, +10/-0)
-```diff
-@@ -140,6 +140,16 @@ load data infile {'filepath'='$resources/parquet/ts_no_tz_test.parquet', 'format
- select * from ts_test;
- drop table ts_test;
- 
-+create table ts_test_ctl(id bigint, v datetime);
-+insert into ts_test_ctl values (1, '2023-12-31 23:59:59.999');
-+select * from ts_test_ctl;
-+set @ts_saved_sql_mode = @@session.sql_mode;
-+set session sql_mode = 'TIME_TRUNCATE_FRACTIONAL';
-+insert into ts_test_ctl values (2, '2023-12-31 23:59:59.999');
-+select * from ts_test_ctl;
-+set session sql_mode = @ts_saved_sql_mode;
-+drop table ts_test_ctl;
-+
- -- compressed file load
- drop table if exists none_compression;
- CREATE TABLE none_compression (
-```
-
----
-
-### Incident Patch 3: `c52d2deb` (2026-11-13)
-**Commit Message**: fix(frontend): combine compound privileges across inherited roles (#32687)
-
-## What type of PR is this?
-
-- [ ] API-change
-- [x] BUG
-- [ ] Improvement
-- [ ] Documentation
-- [ ] Feature
-- [ ] Test and CI
-- [ ] Code Refactoring
-
-## Which issue(s) this PR fixes:
-
-Related to matrixorigin/matrixflow#21538.
-
-## What this PR does / why we need it:
-
-This is the main-branch counterpart of #32663, adapted to main's single-active-role semantics. `SET SECONDARY ROLE ALL/NONE` remains a no-op; this change does not activate independently granted secondary roles.
-
-Compound authorization currently requires one role to satisfy every item. If the active role can SELECT from A and inherits a role that can SELECT from B, each table is readable separately but their JOIN is rejected with the privilege cache disabled. With caching enabled, the result can depend on traversal order.
-
-### Changes
-
-- Retain fully satisfied table/view compound items across the existing role sets and inheritance levels within one authorization attempt, independently of the session cache.
-- Continue checking other items after an individual miss, but authorize only when every required item is satisfied.
-- Keep each view chain ato
-
-**File**: `pkg/frontend/authenticate.go` (modified, +45/-6)
-```diff
-@@ -8493,9 +8493,38 @@ func verifyViewPrivilegeForRole(
- 	return false, nil
- }
- 
-+// newCompoundPrivilegeChecks retains complete table-access checks across inherited
-+// roles for one authorization attempt, independently of the session cache.
-+func newCompoundPrivilegeChecks(priv *privilege) map[*compoundEntry][]bool {
-+	if priv.needMatchedRole {
-+		return nil
-+	}
-+	var checks map[*compoundEntry][]bool
-+	for _, entry := range priv.entries {
-+		if entry.privilegeEntryTyp != privilegeEntryTypeCompound || entry.compound == nil || len(entry.compound.items) < 2 {
++func newSpoolSizeBatch(tb testing.TB, mp *mpool.MPool, sizes []int, alias bool) *batch.Batch {
++	tb.Helper()
++	source := batch.NewWithSize(len(sizes))
++	tb.Cleanup(func() { source.Clean(mp) })
++	for i, size := range sizes {
++		if size == -2 {
++			var err error
++			source.Vecs[i], err = vector.NewConstBytes(types.T_text.ToType(), []byte("constant"), 1, mp)
++			require.NoError(tb, err)
 +			continue
 +		}
-+		canCombine := true
-+		for _, item := range entry.compound.items {
-+			if item.privilegeTyp == PrivilegeTypeCanGrantRoleToOthersInCreateUser ||
-+				(item.objType != objectTypeTable && item.objType != objectTypeView) {
-+				canCombine = false
-+				break
-+			}
++		if size < 0 {
++			continue
 +		}
-+		if canCombine {
-+			if checks == nil {
-+				checks = make(map[*compoundEntry][]bool)
-+			}
-+			checks[entry.compound] = make([]bool, len(entry.compound.items))
-+		}
++		source.Vecs[i] = vector.NewOffHeapVecWithType(types.T_text.ToType())
++		require.NoError(tb, vector.AppendBytes(source.Vecs[i], bytes.Repeat([]byte{byte(i + 1)}, size), false, mp))
 +	}
-+	return checks
++	if alias {
++		source.Vecs = append(source.Vecs, source.Vecs[len(sizes)-1])
++	}
++	source.SetRowCount(1)
++	return source
 +}
 +
- // determineRoleSetHasPrivilegeSet decides the role set has at least one privilege of the privilege set.
- // The algorithm 2.
--func determineRoleSetHasPrivilegeSet(ctx context.Context, bh BackgroundExec, ses *Session, roleIds *btree.Set[int64], priv *privilege, enableCache bool) (bool, int64, error) {
-+func determineRoleSetHasPrivilegeSet(ctx context.Context, bh BackgroundExec, ses *Session, roleIds *btree.Set[int64], priv *privilege, enableCache bool, compoundChecks map[*compoundEntry][]bool) (bool, int64, error) {
- 	var err error
- 	var pls []privilegeLevelType
- 	var yes bool
-@@ -8541,8 +8570,13 @@ func determineRoleSetHasPrivilegeSet(ctx context.Context, bh BackgroundExec, ses
- 
- 				allTrue := true
- 				matchedRoleID := int64(0)
--				// multi privileges take effect together
--				for _, mi := range entry.compound.items {
-+				checked := compoundChecks[entry.compound]
-+				// All items are required, but different inherited roles may satisfy
-+				// them. Each view chain remains a complete check in its own context.
-+				for itemIndex, mi := range entry.compound.items {
-+					if checked != nil && checked[itemIndex] {
++func TestCachedBatchCopiesMixedShapes(t *testing.T) {
++	for _, test := range []struct {
++		name                       string
++		columns                    int
++		largeBytes                 int
++		largeFirst, alias          bool
++		descriptorSlack, decorated bool
++	}{
++		{"small_first_exact", 2, 8192, false, false, false, false},
++		{"small_first_spare_capacity", 2, 8191, false, false, false, false},
++		{"large_first_control", 2, 8192, true, false, false, false},
++		{"large_first_spare_capacity", 2, 8191, true, false, false, false},
++		{"aliased_large_column", 2, 8192, false, true, false, false},
++		{"wide_batch", 40, 8192, false, false, false, false},
++		{"spare_descriptor_capacity", 2, 8192, false, false, true, false},
++		{"nil_null_and_constant", 5, 8192, false, false, false, true},
++	} {
++		t.Run(test.name, func(t *testing.T) {
++			sourceMP := mpool.MustNewZeroNoFixed()
++			t.Cleanup(func() { defer mpool.DeleteMPool(sourceMP); require.Zero(t, sourceMP.CurrNB()) })
++			seedSizes, nextSizes := make([]int, test.columns), make([]int, test.columns)
++			large, small := test.columns-1, 0
++			if test.largeFirst {
++				large, small = 0, test.columns-1
++			}
++			seedSizes[large], nextSizes[large], nextSizes[small] = 8192, test.largeBytes, 1024
++			if test.decorated {
++				seedSizes[1], nextSizes[1], seedSizes[2], nextSizes[2] = -2, -2, -1, -1
++			}
++			seed := newSpoolSizeBatch(t, sourceMP, seedSizes, test.alias)
++			source := newSpoolSizeBatch(t, sourceMP, nextSizes, test.alias)
++			if test.decorated {
++				seed.Vecs[3].SetNull(0)
++				source.Vecs[3].SetNull(0)
++			}
++			if test.descriptorSlack {
++				require.NoError(t, source.Vecs[small].PreExtend(512, sourceMP))
++			}
++			mp := mpool.MustNewZeroNoFixed()
++			t.Cleanup(func() { defer mpool.DeleteMPool(mp); require.Zero(t, mp.CurrNB()) })
++			cache := initCachedBatch(mp, 1)
++			t.Cleanup(cache.free)
++			copyAndReturn := func(src *batch.Batch, checkMemory bool) {
++				copied, useCache, id, err := cache.GetCopiedBatch(src)
++				require.NoError(t, err)
++				defer cache.CacheBatch(useCache, id, copied)
++				require.Equal(t, src.RowCount(), copied.RowCount())
++				var required int64
++				for i, vec := range src.Vecs {
++					if vec == nil {
++						require.Nil(t, copied.Vecs[i])
 +						continue
 +					}
- 					if mi.privilegeTyp == PrivilegeTypeCanGrantRoleToOthersInCreateUser {
- 						yes, err = determineUserCanGrantRolesToOthersInternal(ctx, bh, ses, []*tree.Role{mi.role})
- 						if err != nil {
-@@ -8650,7 +8684,11 @@ func determineRoleSetHasPrivilegeSet(ctx context.Context, bh BackgroundExec, ses
- 					}
- 					if !yes {
- 						allTrue = false
--						break
-+						if checked == nil {
-+							break
-+						}
-+					} else if checked != nil {
-+						checked[itemIndex] = true
- 					}
- 				}
- 
-@@ -8910,7 +8948,8 @@ func determineUserHasPrivilegeSetWithSelectLockBatch(ctx context.Context, ses *S
- 
- 	// Call the algorithm 2.
- 	// If the result of the algorithm 2 is true, Then return true;
--	yes, matchedRoleID, err = determineRoleSetHasPrivilegeSet(ctx, bh, ses, roleSetOfKthIteration, priv, enableCache)
-+	compoundChecks := newCompoundPrivilegeChecks(priv)
-+	yes, matchedRoleID, err = determineRoleSetHasPrivilegeSet(ctx, bh, ses, roleSetOfKthIteration, priv, enableCache, compoundChecks)
- 	if err != nil {
- 		return false, stats, err
- 	}
-@@ -9005,7 +9044,7 @@ func determineUserHasPrivilegeSetWithSelectLockBatch(ctx context.Context, ses *S
- 
- 		// Call the algorithm 2.
- 		// If the result of the algorithm 2 is true, Then return true;
--		yes, matchedRoleID, err = determineRoleSetHasPrivilegeSet(ctx, bh, ses, roleSetOfKPlusOneThIteration, priv, enableCache)
-+		yes, matchedRoleID, err = determineRoleSetHasPrivilegeSet(ctx, bh, ses, roleSetOfKPlusOneThIteration, priv, enableCache, compoundChecks)
- 		if err != nil {
- 			return false, stats, err
- 		}
++					require.Equal(t, vec.GetBytesAt(0), copied.Vecs[i].GetBytesAt(0))
++					require.Equal(t, vec.IsNull(0), copied.Vecs[i].IsNull(0))
++					if test.alias && i == len(src.Vecs)-1 {
++						require.Same(t, copied.Vecs[i-1], copied.Vecs[i])
++					} else {
++						required += int64(vec.Length()*vec.GetType().TypeSize() + cap(vec.GetArea()))
++					}
++				}
++				if checkMemory {
++					require.LessOrEqual(t, mp.CurrNB(), required,
++						"small columns must not consume the only cached backing needed by a later large column")
++				}
++			}
++			copyAndReturn(seed, false)
++			copyAndReturn(source, true)
++			copyAndReturn(source, true)
++		})
++	}
++}
++
++func TestCachedBatchMixedShapeFailureReturnsBacking(t *testing.T) {
++	sourceMP := mpool.MustNewZeroNoFixed()
++	t.Cleanup(func() { defer mpool.DeleteMPool(sourceMP); require.Zero(t, sourceMP.CurrNB()) })
++	seed := newSpoolSizeBatch(t, sourceMP, []int{64, 0, 8192}, true)
++	source := newSpoolSizeBatch(t, sourceMP, []int{64, 1024, 8192}, true)
++	const limit = 1 << 20
 ```
 
-**File**: `pkg/frontend/authenticate_compound_test.go` (added, +183/-0)
+**File**: `pkg/container/pSpool/copy.go` (modified, +340/-32)
 ```diff
-@@ -0,0 +1,183 @@
+@@ -101,13 +101,32 @@ func (cb *cachedBatch) GetCopiedBatch(
+ 		dst.Attrs[i] = src.Attrs[i]
+ 	}
+ 
+-	// copy vectors.
++	memoryCache := &cb.buffer.bytesCache[cacheID]
++	planned := false
++	hasAliases := false
++
++copyVectors:
+ 	for i := range dst.Vecs {
+ 		vec := src.Vecs[i]
+-		if vec == nil || dst.Vecs[i] != nil {
++		if vec == nil {
+ 			continue
+ 		}
++		if dst.Vecs[i] != nil {
++			if !planned {
++				continue
++			}
++			if hasAliases {
++				for _, previous := range src.Vecs[:i] {
++					if previous == vec {
++						continue copyVectors
++					}
++				}
++			}
++		}
+ 		if vec.HasBorrowedBacking() {
++			if dst.Vecs[i] != nil {
++				continue
++			}
+ 			dst.Vecs[i], err = vec.RetainedReadonlyViewWithMP(cb.mp)
+ 			if err != nil {
+ 				cb.CacheBatch(true, cacheID, dst)
+@@ -122,80 +141,82 @@ func (cb *cachedBatch) GetCopiedBatch(
+ 		}
+ 
+ 		typ := *vec.GetType()
+-		selection := vec.AllocationAccountSelection()
+-		if selection == nil {
+-			dst.Vecs[i] = vector.NewOffHeapVecWithType(typ)
+-		} else {
+-			dst.Vecs[i], err = vector.NewOffHeapVecWithTypeAndAllocation(
+-				typ,
+-				selection,
+-			)
+-			if err != nil {
+-				cb.CacheBatch(true, cacheID, dst)
+-				return nil, false, 0, err
++		if dst.Vecs[i] == nil {
++			selection := vec.AllocationAccountSelection()
++			if selection == nil {
++				dst.Vecs[i] = vector.NewOffHeapVecWithType(typ)
++			} else {
++				dst.Vecs[i], err = vector.NewOffHeapVecWithTypeAndAllocation(
++					typ,
++					selection,
++				)
++				if err != nil {
++					cb.CacheBatch(true, cacheID, dst)
++					return nil, false, 0, err
++				}
+ 			}
+ 		}
+ 
++		destination := dst.Vecs[i]
+ 		if vec.IsConst() {
+-			if err = vector.GetConstSetFunction(typ, cb.mp)(dst.Vecs[i], vec, 0, vec.Length()); err != nil {
++			if err = vector.GetConstSetFunction(typ, cb.mp)(destination, vec, 0, vec.Length()); err != nil {
+ 				cb.CacheBatch(true, cacheID, dst)
+ 				return nil, false, 0, err
+ 			}
+ 
+ 		} else {
+-			if err = cb.buffer.bytesCache[cacheID].
+-				setSuitableDataAreaToVector(
+-					len(vec.GetData()),
+-					len(vec.GetArea()),
+-					dst.Vecs[i],
+-				); err != nil {
++			planned, hasAliases, err = memoryCache.prepareCopyBacking(src, dst, i, planned, hasAliases)
++			if err != nil {
+ 				cb.CacheBatch(true, cacheID, dst)
+ 				return nil, false, 0, err
+ 			}
+-			dst.Vecs[i].Reset(typ)
++
++			destination.Reset(typ)
+ 			if err = vector.GetUnionAllFunction(typ, cb.mp)(
+-				dst.Vecs[i],
++				destination,
+ 				vec); err != nil {
+ 				cb.CacheBatch(true, cacheID, dst)
+ 				return nil, false, 0, err
+ 			}
+ 
+-			dst.Vecs[i].SetSorted(vec.GetSorted())
++			destination.SetSorted(vec.GetSorted())
+ 		}
+ 		if vec.HasGrouping() {
+ 			groupingRows := vec.GetGrouping().GetBitmap().Len()
+ 			if groupingRows < 0 || groupingRows > int64(math.MaxInt) {
+ 				cb.CacheBatch(true, cacheID, dst)
+ 				return nil, false, 0, mpool.ErrAllocationAccountInvalid
+ 			}
+-			if err = dst.Vecs[i].PreExtendGrouping(
++			if err = destination.PreExtendGrouping(
+ 				int(groupingRows),
+ 				cb.mp,
+ 			); err != nil {
+ 				cb.CacheBatch(true, cacheID, dst)
+ 				return nil, false, 0, err
+ 			}
+-			dst.Vecs[i].SetGrouping(vec.GetGrouping())
++			destination.SetGrouping(vec.GetGrouping())
+ 		}
+-		dst.Vecs[i].SetIsBin(vec.GetIsBin())
++		destination.SetIsBin(vec.GetIsBin())
+ 		if vec.IsConst() {
+ 			// GetUnionAllFunction already propagates row provenance for the
+ 			// non-constant path. Constants still need their scalar metadata
+ 			// copied after the const setter has materialized the value.
+-			if err = vec.CopyPrepareParamMetadataToWithMP(dst.Vecs[i], cb.mp); err != nil {
++			if err = vec.CopyPrepareParamMetadataToWithMP(destination, cb.mp); err != nil {
+ 				cb.CacheBatch(true, cacheID, dst)
+ 				return nil, false, 0, err
+ 			}
+-			if err = dst.Vecs[i].SetRuntimeStringDomainWithMP(vec.GetRuntimeStringDomainAt(0), cb.mp); err != nil {
++			if err = destination.SetRuntimeStringDomainWithMP(vec.GetRuntimeStringDomainAt(0), cb.mp); err != nil {
+ 				cb.CacheBatch(true, cacheID, dst)
+ 				return nil, false, 0, err
+ 			}
+ 		}
+ 
+-		// range src and found the same vector.
+-		for j := i + 1; j < len(src.Vecs); j++ {
+-			if dst.Vecs[j] == nil && src.Vecs[j] == vec {
+-				dst.Vecs[j] = dst.Vecs[i]
++		if !planned {
++			// range src and found the same vector.
++			for j := i + 1; j < len(src.Vecs); j++ {
++				if dst.Vecs[j] == nil && src.Vecs[j] == vec {
++					dst.Vecs[j] = dst.Vecs[i]
++				}
+ 			}
+ 		}
+ 	}
+@@ -208,6 +229,103 @@ func (cb *cachedBatch) GetCopiedBatch(
+ 	return dst, true, cacheID, nil
+ }
+ 
++// prepareCopyBacking keeps whole-batch reservation off the copy loop's
++// common path. A final column cannot compete with a later request.
++func (mc *oneBatchMemoryCache) prepareCopyBacking(src, dst *batch.Batch, column int, planned, aliases bool) (bool, bool, error) {
++	if planned || len(mc.buffers) == 0 {
++		return planned, aliases, nil
++	}
++	source := src.Vecs[column]
++	dataSize := source.Length() * source.GetType().TypeSize()
++	areaSize := len(source.GetArea())
++	if column == len(src
+```
+
+**File**: `pkg/container/pSpool/copy_memory_test.go` (added, +127/-0)
+```diff
+@@ -0,0 +1,127 @@
 +// Copyright 2026 Matrix Origin
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
@@ -3306,348 +3512,440 @@ Compound authorization currently requires one role to satisfy every item. If the
 +// See the License for the specific language governing permissions and
 +// limitations under the License.
 +
-+package frontend
++package pSpool
 +
 +import (
-+	"context"
-+	"fmt"
++	"bytes"
 +	"testing"
 +
-+	"github.com/golang/mock/gomock"
-+	"github.com/prashantv/gostub"
 +	"github.com/stretchr/testify/require"
 +
-+	"github.com/matrixorigin/matrixone/pkg/common/moerr"
-+	"github.com/matrixorigin/matrixone/pkg/defines"
++	"github.com/matrixorigin/matrixone/pkg/common/mpool"
++	"github.com/matrixorigin/matrixone/pkg/container/batch"
++	"github.com/matrixorigin/matrixone/pkg/container/types"
++	"github.com/matrixorigin/matrixone/pkg/container/vector"
 +)
 +
-+func TestCompoundPrivilegesAcrossInheritedRoles(t *testing.T) {
-+	for _, cacheEnabled := range []bool{false, true} {
-+		for _, tc := range []struct {
-+			name      string
-+			grants    map[int64][]string
-+			inherited map[int64][]int64
-+			reverse   bool
-+			want      bool
-+		}{
-+			{name: "parent_and_child", grants: map[int64][]string{5: {"a"}, 7: {"b"}}, inherited: map[int64][]int64{5: {7}}, want: true},
-+			{name: "reverse_grants", grants: map[int64][]string{5: {"b"}, 7: {"a"}}, inherited: map[int64][]int64{5: {7}}, want: true},
-+			{name: "reverse_items", grants: map[int64][]string{5: {"a"}, 7: {"b"}}, inherited: map[int64][]int64{5: {7}}, reverse: true, want: true},
-+			{name: "different_depths", grants: map[int64][]string{7: {"a"}, 9: {"b"}}, inherited: map[int64][]int64{5: {7}, 7: {9}}, want: true},
-+			{name: "siblings", grants: map[int64][]string{7: {"a"}, 9: {"b"}}, inherited: map[int64][]int64{5: {7, 9}}, want: true},
-+			{name: "reverse_siblings", grants: map[int64][]string{7: {"b"}, 9: {"a"}}, inherited: map[int64][]int64{5: {7, 9}}, want: true},
-+			{name: "single_role", grants: map[int64][]string{5: {"a", "b"}}, want: true},
-+			{name: "missing_permission", grants: map[int64][]string{5: {"a"}}, inherited: map[int64][]int64{5: {7}}},
-+			{name: "not_inherited", grants: map[int64][]string{5: {"a"}, 7: {"b"}}},
-+			{name: "cycle_missing_permission", grants: map[int64][]string{7: {"a"}}, inherited: map[int64][]int64{5: {7}, 7: {5}}},
-+		} {
-+			t.Run(fmt.Sprintf("cache_%t/%s", cacheEnabled, tc.name), func(t *testing.T) {
-+				ctx := defines.AttachAccountId(t.Context(), 0)
-+				priv := compoundTablePrivileges("a", "b")
-+				if tc.reverse {
-+					priv.entries[0].compound.items[0], priv.entries[0].compound.items[1] = priv.entries[0].compound.items[1], priv.entries[0].compound.items[0]
-+				}
-+				ses, _ := newCompoundPrivilegeSession(t, priv, tc.grants, tc.inherited, cacheEnabled)
-+				ok, _, err := determineUserHasPrivilegeSet(ctx, ses, priv)
-+				require.NoError(t, err)
-+				require.Equal(t, tc.want, ok)
-+			})
-+		}
++func copySpoolBatchAtPeak(t *testing.T, cache *cachedBatch, source *batch.Batch) (copied *batch.Batch, peak uint64) {
++	t.Helper()
++	epoch := cache.mp.StartResourcePeakEpoch()
++	require.NotNil(t, epoch)
++	defer func() {
++		var ok bool
++		peak, ok = cache.mp.EndResourcePeakEpoch(epoch)
++		require.True(t, ok)
++	}()
++	copied, use, id, err := cache.GetCopiedBatch(source)
++	if err == nil {
++		t.Cleanup(func() { cache.CacheBatch(use, id, copied) })
 +	}
++	require.NoError(t, err)
++	return copied, 0
 +}
 +
-+func TestCompoundPrivilegeCatalogError(t *testing.T) {
-+	for _, want := range []error{moerr.NewInternalErrorNoCtx("catalog unavailable"), context.Canceled} {
-+		t.Run(want.Error(), func(t *testing.T) {
-+			ctx := defines.AttachAccountId(t.Context(), 0)
-+			priv := compoundTablePrivileges("a", "b")
-+			ses, bh := newCompoundPrivilegeSession(t, priv, map[int64][]string{5: {"a"}, 7: {"b"}}, map[int64][]int64{5: {7}}, false)
-+			entry := privilegeEntriesMap[PrivilegeTypeSelect]
-+			entry.databaseName, entry.tableName = "compound_db", "b"
-+			levels, err := getPrivilegeLevelsOfObjectType(ctx, objectTypeTable)
-+			require.NoError(t, err)
-+			sql, err := getSqlForPrivilege(ctx, 7, entry, levels[0])
-+			require.NoError(t, err)
-+			bh.sql2err[sql] = want
-+			ok, _, err := determineUserHasPrivilegeSet(ctx, ses, priv)
-+			require.ErrorIs(t, err, want)
-+			require.False(t, ok)
-+			require.Contains(t, bh.executedSQLs, "rollback;")
++func TestCachedBatchGrowthReleasesEarlierBacking(t *testing.T) {
++	sourceMP := mpool.MustNewZeroNoFixed()
++	t.Cleanup(func() { defer mpool.DeleteMPool(sourceMP); require.Zero(t, sourceMP.CurrNB()) })
++	makeSource := func(sizes ...int) *batch.Batch {
++		source := batch.NewWithSize(len(sizes))
++		t.Cleanup(func() { source.Clean(sourceMP) })
++		for i, size := range sizes {
++			source.Vecs[i] = vector.NewOffHeapVecWithType(types.T_text.ToType())
++			require.NoError(t, vector.AppendBytes(source.Vecs[i], bytes.Repeat([]byte{byte(i + 1)}, size), false, sourceMP))
++		}
++		source.SetRowCount(1)
++		return source
++	}
++	seed, source := makeSource(1024, 0), makeSource(2048, 4096)
++	mp := mpool.MustNewZeroNoFixed()
++	t.Cleanup(func() { defer mpool.DeleteMPool(mp); require.Zero(t, mp.CurrNB()) })
++	cache := initCachedBatch(mp, 1)
++	t.Cleanup(cache.free)
++	copied, use, id, err := cache.GetCopiedBatch(seed)
++	require.NoError(t, err)
++	cache.CacheBatch(use, id, copied)
++	copied, peak := copySpoolBatchAtPeak(t, cache, source)
++	for i, vec := range source.Vecs {
++		require.Equal(t, vec.GetBytesAt(0), copied.Vecs[i].GetBytesAt(0))
++	}
++	// Giving the old 1KiB area to the first column releases it during its
++	// 2KiB growth. Holding it until the later 4KiB copy adds needless overlap.
++	require.LessOrEqual(t, peak, uint64(mp.CurrNB()), "earlier growth must release old backing before later allocations")
++}
++
++func TestCachedBatchCreatesBorrowedSnapshotInCopyOrder(t *testing.T) {
++	sourceMP := mpool.MustNewZeroNoFixed()
++	t.Cleanup(func() { defer mpool.DeleteMPool(sourceMP); require.Zero(t, sourceMP.CurrNB()) })
++	const rows = 512
++	fill := func(vec *vector.Vector, size int) {
++		require.NoError(t, vec.PreExtendWithArea(rows, size, sourceMP))
++		value := bytes.Repeat([]byte("x"), size)
++		for row := range rows {
++			data := value
++			if row != 0 {
++				data = nil
++			}
++			require.NoError(t, vector.AppendBytes(vec, data, false, sourceMP))
++		}
++	}
++	original := vector.NewOffHeapVecWithType(types.T_text.ToType())
++	t.Cleanup(func() { original.Free(sourceMP) })
++	fill(original, 128)
++	private := vector.NewOffHeapVecWithType(types.T_text.ToType())
++	t.Cleanup(func() { private.Free(sourceMP) })
++	require.NoError(t, private.CopyWithReadonlyArea(original, sourceMP))
++	makeSource := func(size int) *batch.Batch {
++		source := batch.NewWithSize(3)
++		t.Cleanup(func() { source.Clean(sourceMP) })
++		source.Vecs[0] = vector.NewOffHeapVecWithType(types.T_text.ToType())
++		fill(source.Vecs[0], size)
++		var err error
++		source.Vecs[1], err = private.RetainedReadonlyViewWithMP(sourceMP)
++		require.NoError(t, err)
++		source.Vecs[2] = source.Vecs[1]
++		source.SetRowCount(rows)
++		return source
++	}
++	seed, source := makeSource(8192), makeSource(13568)
++	mp := mpool.MustNewZeroNoFixed()
++	t.Cleanup(func() { defer mpool.DeleteMPool(mp); require.Zero(t, mp.CurrNB()) })
++	cache := initCachedBatch(mp, 1)
++	t.Cleanup(cache.free)
++	copied, use, id, err := cache.GetCopiedBatch(seed)
++	require.NoError(t, err)
++	cache.CacheBatch(use, id, copied)
++	copied, peak := copySpoolBatchAtPeak(t, cache, source)
++	for i, vec := range source.Vecs {
++		for row := range rows {
++			require.Equal(t, vec.GetBytesAt(row), copied.Vecs[i].GetBytesAt(row))
++		}
++	}
++	require.Same(t, copied.Vecs[1], copied.Vecs[2])
++	// The ordinary column must finish growing and releasing its old area
++	// before the later borrowed column allocates its descriptor snapshot.
++	require.LessOrEqual(t, peak, uint64(mp.CurrNB()), "borrowed descriptors must not overlap an earlier c
+```
+
+**File**: `pkg/container/pSpool/copy_producer_benchmark_test.go` (added, +123/-0)
+```diff
+@@ -0,0 +1,123 @@
++// Copyright 2026 Matrix Origin
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package pSpool
++
++import (
++	"bytes"
++	"runtime"
++	"sync/atomic"
++	"testing"
++
++	"github.com/matrixorigin/matrixone/pkg/common/mpool"
++	"github.com/matrixorigin/matrixone/pkg/container/batch"
++	"github.com/matrixorigin/matrixone/pkg/container/types"
++	"github.com/matrixorigin/matrixone/pkg/container/vector"
++)
++
++// Independent producers model separate spools. Each producer owns its source:
++// GetCopiedBatch transfers ExtraBuf and must not share a mutable source batch.
++func BenchmarkCachedBatchProducerShapes(b *testing.B) {
++	for _, tc := range []struct {
++		name                string
++		columns, rows, size int
++		ragged, fixed       bool
++	}{
++		{"fixed_8192", 1, 8192, 0, false, true},
++		{"tiny_exact_2", 2, 1, 64, false, false},
++		{"tiny_slack_2", 2, 1, 65, false, false},
++		{"ragged_2", 2, 1, 65, true, false},
++		{"dense_exact_17", 17, 1, 64, false, false},
++		{"dense_exact_20", 20, 1, 64, false, false},
++		{"dense_exact_128", 128, 1, 64, false, false},
++		{"ragged_20", 20, 1, 65, true, false},
++		{"ragged_128", 128, 1, 65, true, false},
++		{"bulk_varlen_2", 2, 256, 65, true, false},
++	} {
++		b.Run(tc.name, func(b *testing.B) {
++			type producer struct {
++				cache   *cachedBatch
++				sources [2]*batch.Batch
++			}
++			producers := make([]producer, runtime.GOMAXPROCS(0))
++			for worker := range producers {
++				sm := mpool.MustNewZeroNoFixed()
++				b.Cleanup(func() {
++					defer mpool.DeleteMPool(sm)
++					if sm.CurrNB() != 0 {
++						b.Error("source leak")
++					}
++				})
++				for version := range 2 {
++					source := batch.NewWithSize(tc.columns)
++					b.Cleanup(func() { source.Clean(sm) })
++					for column := range tc.columns {
++						if tc.fixed {
++							source.Vecs[column] = vector.NewOffHeapVecWithType(types.T_int64.ToType())
++							if e := vector.AppendFixedList(source.Vecs[column], make([]int64, tc.rows), nil, sm); e != nil {
++								b.Fatal(e)
++							}
++						} else {
++							source.Vecs[column] = vector.NewOffHeapVecWithType(types.T_text.ToType())
++							size := tc.size
++							if tc.ragged {
++								size += column*17 + version*(64+column*14)
++							}
++							value := bytes.Repeat([]byte{byte(column + 1)}, size)
++							for range tc.rows {
++								if e := vector.AppendBytes(source.Vecs[column], value, false, sm); e != nil {
++									b.Fatal(e)
++								}
++							}
++						}
++					}
++					source.SetRowCount(tc.rows)
++					producers[worker].sources[version] = source
++				}
++				mp := mpool.MustNewZeroNoFixed()
++				b.Cleanup(func() {
++					defer mpool.DeleteMPool(mp)
++					if mp.CurrNB() != 0 {
++						b.Error("target leak")
++					}
++				})
++				producers[worker].cache = initCachedBatch(mp, 1)
++				b.Cleanup(producers[worker].cache.free)
++				for warm := range 4 {
++					got, use, id, e := producers[worker].cache.GetCopiedBatch(producers[worker].sources[warm%2])
++					if e != nil {
++						b.Fatal(e)
++					}
++					producers[worker].cache.CacheBatch(use, id, got)
++				}
++			}
++			var next atomic.Int64
++			b.ReportAllocs()
++			b.ResetTimer()
++			b.RunParallel(func(pb *testing.PB) {
++				p := &producers[next.Add(1)-1]
++				iteration := 0
++				for pb.Next() {
++					got, use, id, e := p.cache.GetCopiedBatch(p.sources[iteration%2])
++					if e != nil {
++						b.Error(e)
++						return
++					}
++					p.cache.CacheBatch(use, id, got)
++					iteration++
++				}
++			})
 +		})
 +	}
 +}
-+
-+func TestCompoundPrivilegeChecksAreStatementLocal(t *testing.T) {
-+	ctx := defines.AttachAccountId(t.Context(), 0)
-+	priv := compoundTablePrivileges("a", "b")
-+	ses, _ := newCompoundPrivilegeSession(t, priv, map[int64][]string{5: {"a"}, 7: {"b"}}, map[int64][]int64{5: {7}}, false)
-+	for _, role := range []uint32{5, 7, 5} {
-+		ses.GetTenantInfo().SetDefaultRoleID(role)
-+		ok, _, err := determineUserHasPrivilegeSet(ctx, ses, priv)
-+		require.NoError(t, err)
-+		require.Equal(t, role == 5, ok)
-+	}
-+}
-+
-+func TestCompoundPrivilegesPreserveMatchedRole(t *testing.T) {
-+	priv := compoundTablePrivileges("a", "b")
-+	priv.needMatchedRole = true
-+	ses, _ := newCompoundPrivilegeSession(t, priv, map[int64][]string{5: {"a"}, 7: {"b"}}, map[int64][]int64{5: {7}}, true)
-+	ok, _, err := determineUserHasPrivilegeSet(defines.AttachAccountId(t.Context(), 0), ses, priv)
-+	require.NoError(t, err)
-+	require.False(t, ok, "a statement requiring one matched role must not combine roles")
-+}
-+
-+func TestCompoundPrivilegeChecksScope(t *testing.T) {
-+	for _, tc := range []struct {
-+		name str
 ```
 
-**File**: `pkg/frontend/view_privilege_principal_test.go` (modified, +20/-1)
+---
+
+### Incident Patch 3: `8868e6c3` (2026-11-14)
+**Commit Message**: fix(plan): allow INSERT IGNORE into writable external tables (#32750)
+
+## What type of PR is this?
+
+- [ ] API-change
+- [x] BUG
+- [ ] Improvement
+- [ ] Documentation
+- [ ] Feature
+- [ ] Test and CI
+- [ ] Code Refactoring
+
+## Which issue(s) this PR fixes:
+
+Fixes #32512
+
+## What this PR does / why we need it:
+
+Allow `INSERT IGNORE` into writable, non-Iceberg external tables to use the existing legacy external-insert path when the modern binder returns its exact external-table sentinel. This restores VALUES, SELECT and prepared forms without changing assignment, warning or external-file writer semantics. Read-only tables, Iceberg DML, ODKU, RETURNING and non-Iceberg OVERWRITE keep their existing rejection paths.
+
+The planner regression covers six admitted forms, eight rejection controls and unchanged ordinary external INSERT. No FileService, authorization, error-mapping or native code changes are included.
+
+Validation on the final source based on upstream `bc9b822cd1f5d742b550f8366516fd836936ba70`:
+
+- Regression RED exit 1 before the admission fix and GREEN exit 0 after it. The CGO-enabled owning `pkg/sql/plan` run through `mo-cgo-test` recorded 24,593 named passes and two skips; skipp
+
+**File**: `pkg/sql/plan/build.go` (modified, +14/-5)
 ```diff
-@@ -94,14 +94,33 @@ func TestViewPrivilegePrincipal(t *testing.T) {
- 				convertPrivilegeTipsToPrivilege(priv, privilegeTipsArray{{typ: PrivilegeTypeSelect, objType: objectTypeTable, databaseName: "sub", tableName: "t", viewPath: []*plan.ViewStep{step("outer"), step("inner")}, objectRef: ref}})
- 				roles := &btree.Set[int64]{}
- 				roles.Insert(50)
--				allowed, role, err := determineRoleSetHasPrivilegeSet(ctx, bh, ses, roles, priv, cached)
-+				allowed, role, err := determineRoleSetHasPrivilegeSet(ctx, bh, ses, roles, priv, cached, nil)
- 				require.NoError(t, err)
- 				require.Equal(t, tc.allowed, allowed)
- 				if allowed {
- 					require.Equal(t, int64(50), role)
- 				}
- 				require.Equal(t, "sub", ref.SubscriptionName)
- 				require.False(t, ses.GetPrivilegeCache().has(objectTypeTable, privilegeLevelDatabaseTable, "publisher", "t", PrivilegeTypeSelect))
-+
-+				// A complete view check cannot also authorize a direct table item,
-+				// even when its database, table and numeric role IDs coincide.
-+				priv.entries[0].compound.items = append(priv.entries[0].compound.items, privilegeItem{
-+					privilegeTyp: PrivilegeTypeSelect, objType: objectTypeTable, dbName: "publisher", tableName: "t",
-+				})
-+				roles.Insert(51)
-+				allowed, _, err = determineRoleSetHasPrivilegeSet(ctx, bh, ses, roles, priv, cached, newCompoundPrivilegeChecks(priv))
-+				require.NoError(t, err)
-+				require.False(t, allowed)
-+
-+				// Another caller role can supply the sibling grant, but it cannot
-+				// repair an invalid DEFINER/INVOKER chain for the original item.
-+				sql, err := getSqlForCheckRoleHasTableLevelPrivilegeWithObjType(ctx, objectTypeTable, 51, PrivilegeTypeSelect, "publisher", "t")
-+				require.NoError(t, err)
-+				results[queryKey{7, sql}] = positive
-+				allowed, _, err = determineRoleSetHasPrivilegeSet(ctx, bh, ses, roles, priv, cached, newCompoundPrivilegeChecks(priv))
-+				require.NoError(t, err)
-+				require.Equal(t, tc.allowed, allowed)
- 			})
+@@ -242,14 +242,23 @@ func bindAndOptimizeInsertQuery(ctx CompilerContext, stmt *tree.Insert, isPrepar
+ 			}
  		}
- 	}
+ 		// ON DUPLICATE KEY UPDATE is fully handled by the modern path; it must
+-		// never fall back to the legacy ODKU operator. Two exceptions still fall
+-		// back: ordinary plain INSERT (e.g. inserting into a system index table),
+-		// and the degenerate ODKU on a table with no primary/unique key (no dedup key to
++		// never fall back to the legacy ODKU operator. Three cases still fall
++		// back: ordinary plain INSERT (e.g. inserting into a system index table);
++		// the degenerate ODKU on a table with no primary/unique key (no dedup key to
+ 		// represent the upsert; legacy treats it as a plain INSERT and preserves
+-		// the prepared-statement parameters).
++		// the prepared-statement parameters); and INSERT IGNORE into a writable
++		// non-Iceberg external table (issue #32512). resolveSingleTable raises
++		// the external-table sentinel only for writable non-Iceberg targets
++		// (read-only targets fail with InvalidInput, Iceberg mappings with their
++		// own sentinel), and an ODKU list keeps external INSERT IGNORE on the
++		// modern rejection, so keying the sentinel admits exactly this one
++		// legacy-supported shape.
+ 		if !stmt.HasReturning() && moerr.IsMoErrCode(err, moerr.ErrUnsupportedDML) &&
+ 			((len(stmt.GetOnDuplicateUpdate()) == 0 && !stmt.IsIgnore()) ||
+-				err.Error() == noPkOnDupUpdateMsg) {
++				err.Error() == noPkOnDupUpdateMsg ||
++				(stmt.IsIgnore() &&
++					len(stmt.GetOnDuplicateUpdate()) == 0 &&
++					err.Error() == externalTableUnsupportedDMLMsg)) {
+ 			return buildInsert(stmt, ctx, false, isPrepareStmt)
+ 		}
+ 		return nil, err
 ```
 
-**File**: `test/distributed/cases/zz_accesscontrol/inherited_role_compound.result` (added, +108/-0)
+**File**: `pkg/sql/plan/external_insert_ignore_admission_test.go` (added, +191/-0)
 ```diff
-@@ -0,0 +1,108 @@
-+drop database if exists inherited_compound_db;
-+drop user if exists inherited_compound_reader;
-+drop role if exists inherited_compound_a, inherited_compound_b, inherited_compound_parent, inherited_compound_unused;
-+create database inherited_compound_db;
-+create table inherited_compound_db.a (yr int, amount int);
-+create table inherited_compound_db.b (yr int, amount int);
-+create table inherited_compound_db.denied (amount int);
-+insert into inherited_compound_db.a values (2024, 10), (2025, 20);
-+insert into inherited_compound_db.b values (2024, 2), (2025, 4);
-+insert into inherited_compound_db.denied values (99);
-+create role inherited_compound_a, inherited_compound_b, inherited_compound_parent, inherited_compound_unused;
-+grant connect on account * to inherited_compound_a;
-+grant select, insert on table inherited_compound_db.a to inherited_compound_a;
-+grant select on table inherited_compound_db.b to inherited_compound_b;
-+grant select on table inherited_compound_db.denied to inherited_compound_unused;
-+grant inherited_compound_b to inherited_compound_a;
-+create user inherited_compound_reader identified by '123456' default role inherited_compound_a;
-+grant inherited_compound_b, inherited_compound_unused to inherited_compound_reader;
-+set enable_privilege_cache = off;
-+select sum(amount) from inherited_compound_db.a;
-+➤ sum(amount)[-5,64,0]  𝄀
-+30
-+select sum(amount) from inherited_compound_db.b;
-+➤ sum(amount)[-5,64,0]  𝄀
-+6
-+select a.amount, b.amount from inherited_compound_db.a a join inherited_compound_db.b b on a.yr = b.yr order by a.yr;
-+➤ amount[4,32,0]  ¦  amount[4,32,0]  𝄀
-+10  ¦  2  𝄀
-+20  ¦  4
-+with a24 as (select sum(amount) v from inherited_compound_db.a where yr = 2024),
-+a25 as (select sum(amount) v from inherited_compound_db.a where yr = 2025),
-+b24 as (select sum(amount) v from inherited_compound_db.b where yr = 2024),
-+b25 as (select sum(amount) v from inherited_compound_db.b where yr = 2025)
-+select a24.v, a25.v, b24.v, b25.v from a24 cross join a25 cross join b24 cross join b25;
-+➤ v[-5,64,0]  ¦  v[-5,64,0]  ¦  v[-5,64,0]  ¦  v[-5,64,0]  𝄀
-+10  ¦  20  ¦  2  ¦  4
-+select count(*) from (
-+with a24 as (select sum(amount) v from inherited_compound_db.a where yr = 2024),
-+a25 as (select sum(amount) v from inherited_compound_db.a where yr = 2025),
-+b24 as (select sum(amount) v from inherited_compound_db.b where yr = 2024),
-+b25 as (select sum(amount) v from inherited_compound_db.b where yr = 2025)
-+select a25.v / b25.v as ratio from a24 cross join a25 cross join b24 cross join b25
-+union all
-+select a24.v / b24.v as ratio from a24 cross join a25 cross join b24 cross join b25
-+) totals;
-+➤ count(*)[-5,64,0]  𝄀
-+2
-+set secondary role all;
-+select sum(a.amount + d.amount) from inherited_compound_db.a a cross join inherited_compound_db.denied d;
-+internal error: do not have privilege to execute the statement
-+set secondary role none;
-+select sum(a.amount + b.amount) from inherited_compound_db.a a cross join inherited_compound_db.b b;
-+➤ sum(a.amount + b.amount)[3,38,0]  𝄀
-+72
-+begin;
-+insert into inherited_compound_db.a select * from inherited_compound_db.b;
-+select count(*) from inherited_compound_db.a;
-+➤ count(*)[-5,64,0]  𝄀
-+4
-+rollback;
-+set enable_privilege_cache = on;
-+set clear_privilege_cache = on;
-+select sum(a.amount + b.amount) from inherited_compound_db.a a cross join inherited_compound_db.b b;
-+➤ sum(a.amount + b.amount)[3,38,0]  𝄀
-+72
-+set clear_privilege_cache = on;
-+select sum(b.amount + a.amount) from inherited_compound_db.b b cross join inherited_compound_db.a a;
-+➤ sum(b.amount + a.amount)[3,38,0]  𝄀
-+72
-+set clear_privilege_cache = on;
-+select sum(amount) from inherited_compound_db.a;
-+➤ sum(amount)[-5,64,0]  𝄀
-+30
-+select sum(amount) from inherited_compound_db.b;
-+➤ sum(amount)[-5,64,0]  𝄀
-+6
-+select sum(a.amount + b.amount) from inherited_compound_db.a a cross join inherited_compound_db.b b;
-+➤ sum(a.amount + b.amount)[3,38,0]  𝄀
-+72
-+select sum(a.amount + b.amount) from inherited_compound_db.a a cross join inherited_compound_db.b b;
-+➤ sum(a.amount + b.amount)[3,38,0]  𝄀
-+72
-+set role inherited_compound_b;
-+select sum(a.amount + b.amount) from inherited_compound_db.a a cross join inherited_compound_db.b b;
-+internal error: do not have privilege to execute the statement
-+set secondary role all;
-+select sum(amount) from inherited_compound_db.a;
-+internal error: do not have privilege to execute the statement
-+set role inherited_compound_a;
-+select sum(a.amount + b.amount) from inherited_compound_db.a a cross join inherited_compound_db.b b;
-+➤ sum(a.amount + b.amount)[3,38,0]  𝄀
-+72
-+revoke inherited_compound_b from inherited_compound_a;
-+grant inherited_compound_b to inherited_compound_parent;
-+grant inherited_compound_parent to inherited_compound_a;
-+set enable_privilege_cache = off;
-+select sum(a.amount + b.amount) from inherited_compound_db.a a cross join inherited_compound_db.b b;
-+➤ sum(a.amount + b.amount)[3,38,0]  𝄀
-+72
-+revoke select o
-```
-
-**File**: `test/distributed/cases/zz_accesscontrol/inherited_role_compound.sql` (added, +90/-0)
-```diff
-@@ -0,0 +1,90 @@
-+drop database if exists inherited_compound_db;
-+drop user if exists inherited_compound_reader;
-+drop role if exists inherited_compound_a, inherited_compound_b, inherited_compound_parent, inherited_compound_unused;
-+create database inherited_compound_db;
-+create table inherited_compound_db.a (yr int, amount int);
-+create table inherited_compound_db.b (yr int, amount int);
-+create table inherited_compound_db.denied (amount int);
-+insert into inherited_compound_db.a values (2024, 10), (2025, 20);
-+insert into inherited_compound_db.b values (2024, 2), (2025, 4);
-+insert into inherited_compound_db.denied values (99);
-+create role inherited_compound_a, inherited_compound_b, inherited_compound_parent, inherited_compound_unused;
-+grant connect on account * to inherited_compound_a;
-+grant select, insert on table inherited_compound_db.a to inherited_compound_a;
-+grant select on table inherited_compound_db.b to inherited_compound_b;
-+grant select on table inherited_compound_db.denied to inherited_compound_unused;
-+grant inherited_compound_b to inherited_compound_a;
-+create user inherited_compound_reader identified by '123456' default role inherited_compound_a;
-+grant inherited_compound_b, inherited_compound_unused to inherited_compound_reader;
+@@ -0,0 +1,191 @@
++// Copyright 2026 Matrix Origin
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
 +
-+-- 主角色和继承角色分别提供两张表的权限，关闭缓存仍应允许组合查询。
-+-- @session:id=1&user=sys:inherited_compound_reader&password=123456
-+set enable_privilege_cache = off;
-+select sum(amount) from inherited_compound_db.a;
-+select sum(amount) from inherited_compound_db.b;
-+select a.amount, b.amount from inherited_compound_db.a a join inherited_compound_db.b b on a.yr = b.yr order by a.yr;
-+with a24 as (select sum(amount) v from inherited_compound_db.a where yr = 2024),
-+     a25 as (select sum(amount) v from inherited_compound_db.a where yr = 2025),
-+     b24 as (select sum(amount) v from inherited_compound_db.b where yr = 2024),
-+     b25 as (select sum(amount) v from inherited_compound_db.b where yr = 2025)
-+select a24.v, a25.v, b24.v, b25.v from a24 cross join a25 cross join b24 cross join b25;
-+select count(*) from (
-+with a24 as (select sum(amount) v from inherited_compound_db.a where yr = 2024),
-+     a25 as (select sum(amount) v from inherited_compound_db.a where yr = 2025),
-+     b24 as (select sum(amount) v from inherited_compound_db.b where yr = 2024),
-+     b25 as (select sum(amount) v from inherited_compound_db.b where yr = 2025)
-+select a25.v / b25.v as ratio from a24 cross join a25 cross join b24 cross join b25
-+union all
-+select a24.v / b24.v as ratio from a24 cross join a25 cross join b24 cross join b25
-+) totals;
++package plan
 +
-+-- 仅直接授予用户但未被当前角色继承的权限不能参与合并；ALL/NONE 仍为无操作。
-+set secondary role all;
-+select sum(a.amount + d.amount) from inherited_compound_db.a a cross join inherited_compound_db.denied d;
-+set secondary role none;
-+select sum(a.amount + b.amount) from inherited_compound_db.a a cross join inherited_compound_db.b b;
++import (
++	"encoding/json"
++	"testing"
 +
-+-- 合并目标写权限和源表读权限，随后回滚以保持后续预期数据不变。
-+begin;
-+insert into inherited_compound_db.a select * from inherited_compound_db.b;
-+select count(*) from inherited_compound_db.a;
-+rollback;
++	"github.com/stretchr/testify/require"
 +
-+-- 冷缓存、交换表顺序、单表预热及重复执行的判定保持一致。
-+set enable_privilege_cache = on;
-+set clear_privilege_cache = on;
-+select sum(a.amount + b.amount) from inherited_compound_db.a a cross join inherited_compound_db.b b;
-+set clear_privilege_cache = on;
-+select sum(b.amount + a.amount) from inherited_compound_db.b b cross join inherited_compound_db.a a;
-+set clear_privilege_cache = on;
-+select sum(amount) from inherited_compound_db.a;
-+select sum(amount) from inherited_compound_db.b;
-+select sum(a.amount + b.amount) from inherited_compound_db.a a cross join inherited_compound_db.b b;
-+select sum(a.amount + b.amount) from inherited_compound_db.a a cross join inherited_compound_db.b b;
-+set role inherited_compound_b;
-+select sum(a.amount + b.amount) from inherited_compound_db.a a cross join inherited_compound_db.b b;
-+set secondary role all;
-+select sum(amount) from inherited_compound_db.a;
-+set role inherited_compound_a;
-+select sum(a.amount + b.amount) from inherited_compound_db.a a cross join inherited_compound_db.b b;
-+-- @session
++	"github.com/matrixorigin/matrixone/pkg/catalog"
++	"github.com/matrixorigin/matrixone/pkg/common/moerr"
++	"github.com/matrixorigin/matrixone/pkg/container/types"
++	icebergmodel "github.com/matrixorigin/matrixone/pkg/iceberg/model"
++	planpb "github.com/matrixorigin/matrixone/pkg/pb/plan"
++	sqliceberg "github.com/matrixorigin/matrixone/pkg/sql/iceberg"
++	"github.com/matrixorigin/matrixone/pkg/sql/parsers/dialect/mysql"
++	"github.com/matrixorigin/matrixone/pkg/sql/parsers/tree"
++)
 +
-+-- 将直接继承改为两层继承，权限需要跨不同深度保留。
-+revoke inherited_compound_b from inherited_compound_a;
-+grant inherited_compound_b to inherited_compound_parent;
-+grant inherited_compound_parent to inherited_compound_a;
-+-- @session:id=2&user=sys:inherited_compound_reader&password=123456
-+set enable_privilege_cache = off;
-+select sum(a.amount + b.amount) from inherited_compound_db.a a cross join inherited_compound_db.b b;
-+-- @session
++// newExtIgnoreAdmissionMock registers one writable non-Iceberg external target
++// (WRITE_FILE_PATTERN present), one read-only external target (no pattern), and
++// one Iceberg mapping external target, each with columns id INT (nullable) and
++// a INT NOT NULL. The mock catalog's built-in NATION table is the SELECT source.
++func newExtIgnoreAdmissionMock(t *testing.T) *MockOptimizer {
++	t.Helper()
++	mock := NewMockOptimizer(true, newPlanTestProcess(t))
 +
-+-- 撤销底层表授权后，即使角色仍可达也不能读取该表。
-+revoke select on table inherited_compound_db.b from inherited_compound_b;
-+-- @session:id=3&user=sys:inherited_compound_reader&password=123456
-+select sum(a.amount + b.amount) from inherited_compound_db.a a cross join inherited_compound_db.b b;
-+select sum(amount) from inherited_compound_db.a;
-+-- @session
++	newTarget := func(name string, tblId uint64, externSQL string) *planpb.TableDef {
++		def := &planpb.TableDef{
++			TblId:         tblId,
++			Name:          name,
++			TableType:     catalog.SystemExternalRel,
++			Createsql:     externSQL,
++			Name2ColIndex: map[string]int32{"id": 0, "a": 1},
++			Cols: []*planpb.ColDef{
++				{Name: "id", Typ: planpb.Type{Id: int32(types.T_int32), Width: 32}, Default: &planpb.Default{NullAbility: true}},
++				{Name: "a", Typ: planpb.Type{Id: int32(types.T_int32), Width: 32}, Default: &planpb.Default{NullAbility: false}},
++			},
++		}
++		mock.ctxt.tables[name] = def
++		mock.ctxt.objects[name] = &planpb.ObjectRef{Obj: int64(tblId), ObjName: name, SchemaName: mock.ctxt.DefaultDatabase()}
++		return def
++	}
 +
-+drop user inherited_compound_reader;
-+drop role inherited_compound_a, inherited_compound_parent, inherited_compound_b, inher
++	// Writable non-Iceberg external: the admission contract target.
++	param := &tree.ExternParam{ExParamConst: tree.ExParamConst{
++		Format: tree.CSV,
++		Option: []string{"filepath", "stage://ext_stage/p-*.csv", "format", "csv",
++			"write_file_pattern", "stage://ext_stage/p-%U.csv"},
++	}}
++	metadata, err := json.Marshal(param)
++	require.NoError(t, err)
++	newTarget("ext_w_ignore", 9001, string(metadata))
++
++	// Read-only external: modern InvalidInput rejection stays.
++	roParam := &tree.ExternParam{ExParamConst: tree.ExParamConst{
++		Format: tree.CSV,
++		Option: []string{"filepath", "stage://ext_stage/p-ro-*.csv", "format", "csv"},
++	}}
++	roMetadata, err := json.Marshal(roParam)
++	require.NoError(t, err)
++	newTarget("ext_ro_ignore", 9002, string(roMetadata))
++
++	// Iceberg mapping external: separate Iceberg DML rejection stays.
++	iceSQL := sqliceberg.BuildCreateSQLEnvelope(icebergmodel.TableMapping{
++		Namespace:  "ext_ignore",
++		TableName:  "ice",
++		DefaultRef: icebergmodel.DefaultRefMain,
++		ReadMode:   icebergmodel.ReadModeMergeOnRead,
++		WriteMode:  icebergmodel.WriteModeMergeOnRead,
++	}, "ksa_ext_ignore")
++	newTarget("ice_ext_ignore", 9003, iceSQL)
++
++	return mock
++}
++
++// requireExternalInsertPlan asserts the plan bound through the legacy writable
++// external insert path: an INSERT query whose sink node carries the external
++// table with an INSERT statement.
++func requireExternalInsertPlan(t *testing.T, p *Plan, targetTable string) {
++	t.Helper()
++	q := p.GetQuery()
++	require.NotNil(t, q)
++	require.Equal(t, planpb.Query_INSERT, q.GetStmtType())
++	var insertNode *planpb.Node
++	for _, node := range q.GetNodes() {
++		if node.GetNodeType() == planpb.Node_INSERT {
++			insertNode = node
++			break
++		}
++	}
++	require.NotNil(t, insertNode, "expected an INSERT sink node")
++	require.NotNil(t, insertNode.GetInsertCtx(), "external insert sink must carry an INSERT context")
++	require.True(t, insertNode.GetInsertCtx().GetAddAffectedRows())
++	require.Equal(t, catalog.SystemExternalRel, insertNode.GetTableDef().GetTableType())
++	require.Equal(t, targetTable, insertNode.GetTableDef().GetName())
++}
++
++// TestExternalInsertIgnoreAdmission covers issue #32512: INSERT IGNORE into a
++// writable non-Iceberg external table must bind through the existing legacy
++// external insert path (VALUES / SELECT / prepared forms), while every
++// rejection classification stays unchanged: read-only external (20301),
++// external ODKU / Iceberg (20313), RETURNING (not supported), and non-Iceberg
++// OVERWRITE (not supported).
++func TestExternalInsertIgnoreAdmission(t 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #32741** (2026-11-14): fix(stage): return an error for missing catalog context (@XuPeng-SH)
-- **PR #32740** (2026-11-14): [4.2-dev] backport #32734 and #32719 (@XuPeng-SH)
-- **PR #32739** (closed): fix(frontend): preserve long-running half-closed clients (4.2-dev) (@XuPeng-SH)
-- **PR #32738** (closed): fix(frontend): preserve replies after client write half-close (@XuPeng-SH)
-- **PR #32734** (2026-11-14): perf: reduce low-value DEBUG logging (@XuPeng-SH)
-- **PR #32730** (2026-11-13): fix(plan): preserve user-variable domains in INTERVAL arithmetic (@aptend)
+- **PR #32771** (2026-11-15): perf: avoid repeated TEXT assignment buffer growth (@XuPeng-SH)
+- **PR #32769** (2026-11-15): perf: reduce CSV field copy amplification on 4.2-dev (@XuPeng-SH)
+- **PR #32768** (2026-11-15): fix(load): preserve sealed CSV fields on 4.2-dev (@XuPeng-SH)
+- **PR #32767** (2026-11-15): fix: preserve DECIMAL comparison domains on 4.2 (@XuPeng-SH)
+- **PR #32766** (2026-11-15): perf: avoid temporary CSV field assembly buffers (@XuPeng-SH)
+- **PR #32762** (2026-11-15): perf(ci): parse UT setup reports once (@XuPeng-SH)
 
 ---
 
@@ -3667,39 +3965,62 @@ Compound authorization currently requires one role to satisfy every item. If the
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. compile): support saved-result CTAS with current source privileges
+## X. ci): correct SCA closure and native test lifecycle ownership
 
 **RULE**:
-When implementing operations in `pkg/frontend/authenticate.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/ci/static-analysis.cjs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `645219d3`: compile): support saved-result CTAS with current source privileges. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d1893e5a`: ci): correct SCA closure and native test lifecycle ownership. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/frontend/authenticate.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/ci/static-analysis.cjs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// A CTAS source over a saved query result carries no table-scan tips, and
-	// the CTAS follow-up INSERT ... SELECT runs through the internal executor,
-	// whose compile path does not re-verify result-query access. Apply the same
-	// saved-result source re-verification the direct SELECT path uses, so a
-	// role whose source SELECT privilege is missing or revoked cannot copy the
-	// saved result by CTAS. Plain sources have no result scans and return here
-	// with no extra cost.
-	resultStats, resultErr := checkResultQueryPrivilege(compilerContext.GetProcess(), sourcePlan, ctx, ses.GetService(), ses)
-	stats.Add(&resultStats)
-	if resultErr != nil {
-		return false, stats, resultErr
-	}
+const inventoryFields = 'Name,ImportPath,Dir,Module,Imports,' +
+  // Imports already resolves production, internal-test and external-test
+  // variants. Keep those identities until traversal ends: a test importer does
+  // not make its owner's unchanged production consumers affected.
+    for (const imported of record.imports || []) {
+      if (!variants.has(imported)) {
+      if (!reverse.has(imported)) reverse.set(imported, new Set());
+      reverse.get(imported).add(record.id);
+  const production = new Set();
+    if (!file.endsWith('_test.go')) production.add(owner);
+  // A changed production source belongs to every active variant of its owner.
+  const pending = [];
+  for (const [id, owner] of variants) {
+    if (production.has(owner)) pending.push(id);
+  }
+  const seen = new Set(pending);
+  for (let i = 0; i < pending.length; i++) {
+    for (const consumer of reverse.get(pending[i]) || []) {
+      selected.add(variants.get(consumer));
+        pending.push(consumer);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+const inventoryFields = 'Name,ImportPath,Dir,Module,Imports,TestImports,XTestImports,' +
+            testImports: p.TestImports || [], xTestImports: p.XTestImports || [],
+    const owner = variants.get(record.id);
+    for (const imported of [...(record.imports || []), ...(record.testImports || []),
+      ...(record.xTestImports || [])]) {
+      const dependency = variants.get(imported);
+      if (!dependency) {
+      if (!reverse.has(dependency)) reverse.set(dependency, new Set());
+      reverse.get(dependency).add(owner);
+  const production = [];
+    if (!file.endsWith('_test.go')) production.push(owner);
+  const seen = new Set(production);
+  for (let i = 0; i < production.length; i++) {
+    for (const consumer of reverse.get(production[i]) || []) {
+      selected.add(consumer);
+        production.push(consumer);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `645219d3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d1893e5a` are properly handled with clean fallback behavior.

@@ -3173,10 +3173,10 @@
     "repository": "matrixorigin/matrixone",
     "platform": "github",
     "sourceUrl": "https://github.com/matrixorigin/matrixone",
-    "sourceVersion": "71390fb3",
+    "sourceVersion": "f70c37b1",
     "license": "Apache-2.0",
-    "contentHash": "03d8f4b9cdf177778c15cc53c02f6fa86054241b36f1d0533dc207817e8c4842",
-    "lastHarvestedAt": "2026-11-14T03:10:39.467Z",
+    "contentHash": "a9c8e8a62cebac898d9c99e56cfc9cf8109027c7f3699056a1591bd7f88be5c9",
+    "lastHarvestedAt": "2026-11-15T17:14:23.209Z",
     "learningId": "learn-github-matrixorigin-matrixone"
   },
   "fallow-rs-fallow": {
@@ -5193,10 +5193,10 @@
     "repository": "actix/actix-web",
     "platform": "github",
     "sourceUrl": "https://github.com/actix/actix-web",
-    "sourceVersion": "0ac7d216",
+    "sourceVersion": "baebbb57",
     "license": "Apache-2.0",
-    "contentHash": "f63f582ae633872e624f4031448fc970b4922e24c6732f5808390048e84861fa",
-    "lastHarvestedAt": "2026-11-13T18:52:21.902Z",
+    "contentHash": "05cffc2b3cf2ce22c380579f7803f999bb7f140254c7fc8a496d6c2f653b4c6c",
+    "lastHarvestedAt": "2026-11-15T17:14:09.871Z",
     "learningId": "learn-github-actix-actix-web"
   },
   "wix-react-native-ui-lib": {

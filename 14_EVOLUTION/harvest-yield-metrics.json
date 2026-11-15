@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T17:04:03.848Z",
-  "total_cycles_completed": 9735,
-  "total_learnings_persisted": 9735,
-  "total_rules_promoted": 9359,
+  "last_updated": "2026-11-15T17:14:23.215Z",
+  "total_cycles_completed": 9737,
+  "total_learnings_persisted": 9737,
+  "total_rules_promoted": 9361,
   "history": [
-    {
-      "timestamp": "2026-11-14T15:25:36.813Z",
-      "repository": "lilylilith/QI_2.1_AnyAngle",
-      "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T15:25:38.993Z",
-      "repository": "biomejs/biome",
-      "learningId": "learn-github-biomejs-biome",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T15:25:47.584Z",
       "repository": "microsoft/agent-governance-toolkit",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-15T17:04:03.848Z",
       "repository": "neuron-core/neuron-ai",
       "learningId": "learn-github-neuron-core-neuron-ai",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T17:14:09.877Z",
+      "repository": "actix/actix-web",
+      "learningId": "learn-github-actix-actix-web",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T17:14:23.215Z",
+      "repository": "matrixorigin/matrixone",
+      "learningId": "learn-github-matrixorigin-matrixone",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

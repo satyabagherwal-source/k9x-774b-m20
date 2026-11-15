@@ -10123,3 +10123,5 @@
 | `CYCLE-20261115-3H8C` | `2026-11-15T17:03:57.180Z` | `jacklandrin/OnlySwitch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8630` | Yes (`9cc41d8c...`) |
 | `CYCLE-20261115-3MDA` | `2026-11-15T17:04:03.838Z` | `neuron-core/neuron-ai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8631` | Yes (`ad57dabb...`) |
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T17:04:41.313Z` | `hf-autotrust-autotrust-decider-pro-vision-27b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-A223FE37` [Domain D] | Yes (`20510433...`) |
+| `CYCLE-20261115-GLZG` | `2026-11-15T17:14:09.868Z` | `actix/actix-web` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8632` | Yes (`05cffc2b...`) |
+| `CYCLE-20261115-GW9Y` | `2026-11-15T17:14:23.206Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8633` | Yes (`a9c8e8a6...`) |

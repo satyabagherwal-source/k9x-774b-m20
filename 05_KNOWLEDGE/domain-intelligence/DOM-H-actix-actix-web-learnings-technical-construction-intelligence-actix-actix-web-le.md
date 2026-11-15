@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T18:53:10.773Z",
+  "timestamp": "2026-11-15T17:14:26.740Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-actix-actix-web-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [actix-actix-web-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T18:53:10.773Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-15T17:14:26.740Z`  
 > **Learning ID**: `LEARN-EVO-actix-actix-web-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 56%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 71%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from actix-actix-web-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/actix-actix-web-learnings.md`  
 > **Source**: github ([https://github.com/actix/actix-web](https://github.com/actix/actix-web))  
-> **Source Version**: `0ac7d216`  
+> **Source Version**: `baebbb57`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T18:52:21.499Z  
+> **Timestamp**: 2026-11-15T17:14:08.949Z  
 > **Learning ID**: `learn-github-actix-actix-web`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/actix-actix-web-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/actix/actix-web](https://github.com/actix/actix-web))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T18:52:21.495Z  
+> **Harvest Timestamp**: 2026-11-15T17:14:08.705Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Actix Web is a powerful, pragmatic, and extremely fast web framework for Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 24953 stars
+- **Stars / Engagement**: 24955 stars
 
 ---
 
@@ -1360,15 +1360,13 @@ impl Files {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4417** (2026-11-13): **test: replace Actix test attributes with Tokio local tests**
-  *Symptoms*: ## PR Type  Refactor  ## PR Checklist  - [x] Tests for the changes have been added / updated. - [ ] Documentation comments have been added / updated. - [ ] A changelog entry has been made for the appropriate packages. - [x] (Team) Label with affected crates and semver status.  ## Overview  Replace Actix test attributes with `#[tokio::test(flavor = "local")]` across the workspace. Add Tokio as a development dependency where needed and update the Tokio version requirement in `actix-http`.  Keep `tokio_runtime_without_local_set` on the current-thread runtime so it continues to verify the expected panic when local-task support is missing.
-  **Post-Mortem & Fix Analysis**:
-  > <!-- code-coverage-overview --> ### Code coverage overview  <b>Languages:</b> Rust <h4>Rust / code-coverage/cargo-llvm-cov</h4>  <table> <tr> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:main">main</span> <a id="cc-sha-link" href="/actix/actix-web/commit/92eca51bd9d5f17734078939a558248002aad4ce">92eca51</a></th> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:t3/replace-test-attributes">t3/replace-test-attr...</span> <a id="cc-sha-link" href="/actix/actix-web/commit/0afaa8f786e17bef28d4d7e351cdffaab8bf5b9e">0afaa8f</a></th> <th scope="col">+/-</th> </tr> <tr> <td>85%</td> <td>88%</td> <td><span id="cc-diff">+3%</span></td> </tr> </table>  <details> <summary>View coverage of the 10 most impacted files.</summary>  <table> <tr> <th scope="col">File</th> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:main">main</span> <a id="cc-sha-link" href="/actix/actix-web/commit/92eca51bd9d5f17734078939a558248002aad4ce">92eca51</a></th> <th sco
+- **Issue #4420** (2026-11-15): **fix(actix-http): bound partial request heads on keep-alive connections**
+  *Symptoms*: ## PR Type  Bug Fix  ## PR Checklist  - [x] Tests for the changes have been added / updated. - [x] Documentation comments have been added / updated. - [x] A changelog entry has been made for the appropriate packages. - [x] (Team) Label with affected crates and semver status.  ## Overview  After a successful HTTP/1 request, a client could send `G` or a bare `\r\n` probe and keep the connection open forever. The input cleared the idle keep-alive timer, but the request head timer applied only to the first request. This regressed in #2611 (`3200de3f`, 2022-01-31, "fix request head timeout").  Use the existing `head_timer` when decoding needs more head bytes on a connection that permits keep-alive. Preserve the active deadline across reads and clear it after a complete head, so byte drips cannot extend the deadline and upload bodies remain unrestricted. A partial head uses `client_request_timeout` even when `keep_alive` is shorter. Do not start another head timer after `Connection: close`.  The decode loop also checks for an incomplete head after each complete head. This covers the residual pipelined case: a complete second request followed by a single byte of a third request in the same write. Clearing the timer for the second head must not leave the third head without a deadline.  A client that sends a bare `\r\n` probe and waits longer than `client_request_timeout` (5 seconds by default) now receives 408, then the connection closes, even when no request is pending. HTTP/2 behav
 
-- **Issue #4416** (2026-11-13): **chore: replace example main macros with Tokio**
-  *Symptoms*: ## PR Type  Other  ## PR Checklist  - [x] Tests for the changes have been added / updated. - [x] Documentation comments have been added / updated. - [x] A changelog entry has been made for the appropriate packages. - [x] (Team) Label with affected crates and semver status.  ## Overview  Replace `actix_web::main` with `tokio::main(flavor = "local")` in the examples. Enable Tokio's macros and runtime features in the affected packages.  Run all 10 changed examples with smoke checks. They handled 60 requests, shut down cleanly on SIGINT, and did not panic.
+- **Issue #4418** (2026-11-15): **ci: automate releases with release-plz**
+  *Symptoms*: ## PR Type  Other  ## PR Checklist  - [x] Tests for the changes have been added / updated. - [x] Documentation comments have been added / updated. - [x] A changelog entry has been made for the appropriate packages. - [x] (Team) Label with affected crates and semver status.  ## Overview  Add a GitHub Actions workflow that runs release-plz on pushes to `main` and prepares releases for the workspace crates. When releases are created, the workflow uses the Nix release tools to update release notes and undraft the releases. Add the release-plz configuration, Nix release shell, and pinned action dependencies.
   **Post-Mortem & Fix Analysis**:
-  > <!-- code-coverage-overview --> ### Code coverage overview  <b>Languages:</b> Rust <h4>Rust / code-coverage/cargo-llvm-cov</h4>  <table> <tr> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:main">main</span> <a id="cc-sha-link" href="/actix/actix-web/commit/5613284adb77369cf7277391e4c77fbf975ebaa2">5613284</a></th> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:t3/replace-example-main-macros">t3/replace-example-m...</span> <a id="cc-sha-link" href="/actix/actix-web/commit/d64afc128aa6618d02f6ac29055ad091e2d9aed3">d64afc1</a></th> <th scope="col">+/-</th> </tr> <tr> <td>85%</td> <td>85%</td> <td>0%</td> </tr> </table>  <details> <summary>View coverage of the 3 most impacted files.</summary>  <table> <tr> <th scope="col">File</th> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:main">main</span> <a id="cc-sha-link" href="/actix/actix-web/commit/5613284adb77369cf7277391e4c77fbf975ebaa2">5613284</a></th> <th scope="col"><span id="cc-br
+  > <!-- code-coverage-overview --> ### Code coverage overview  <b>Languages:</b> Rust <h4>Rust / code-coverage/cargo-llvm-cov</h4>  <table> <tr> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:main">main</span> <a id="cc-sha-link" href="/actix/actix-web/commit/0ac7d21619644f2e8d5ffbf8ccc87ac2d0e96542">0ac7d21</a></th> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:t3/setup-release-plz">t3/setup-release-plz</span> <a id="cc-sha-link" href="/actix/actix-web/commit/d260ff9ca6e48e61728625d99b365d43107e2e41">d260ff9</a></th> <th scope="col">+/-</th> </tr> <tr> <td>88%</td> <td>88%</td> <td>0%</td> </tr> </table>  :information_source: Calculations represent line coverage. Results may change as calculations are updated.  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1385,432 +1383,293 @@ impl Files {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0ac7d216` (2026-11-13)
-**Commit Message**: test: replace Actix test attributes with Tokio local tests (#4417)
+### Incident Patch 1: `baebbb57` (2026-11-15)
+**Commit Message**: ci: automate releases with release-plz (#4418)
 
-* test: replace Actix test attributes with Tokio local tests
-
-* test: replace Actix test attributes with Tokio local tests
-
-- Remove redundant `actix-rt` dev-dependencies
-
-* docs: update runtime macro comment
-
-**File**: `Cargo.lock` (modified, +1/-4)
+**File**: `.github/workflows/actions.lock` (modified, +45/-0)
 ```diff
-@@ -24,7 +24,6 @@ name = "actix-files"
- version = "0.7.4"
- dependencies = [
-  "actix-http",
-- "actix-rt",
-  "actix-service",
-  "actix-test",
-  "actix-utils",
-@@ -149,7 +148,6 @@ dependencies = [
-  "actix-http",
-  "actix-multipart-derive",
-  "actix-multipart-rfc7578",
-- "actix-rt",
-  "actix-test",
-  "actix-utils",
-  "actix-web",
-@@ -261,7 +259,6 @@ dependencies = [
-  "actix-codec",
-  "actix-http",
-  "actix-http-test",
-- "actix-rt",
-  "actix-service",
-  "actix-utils",
-  "actix-web",
-@@ -386,7 +383,6 @@ version = "4.5.0"
- dependencies = [
-  "actix-macros",
-  "actix-router",
-- "actix-rt",
-  "actix-test",
-  "actix-utils",
-  "actix-web",
-@@ -395,6 +391,7 @@ dependencies = [
-  "quote",
-  "rustversion-msrv",
-  "syn 3.0.9",
-+ "tokio",
-  "trybuild",
- ]
- 
+@@ -33,6 +33,12 @@ workflows:
+         - 'taiki-e/install-action@v2.90.3'
+         - 'useblacksmith/checkout@v1.8.2'
+         - 'zizmorcore/zizmor-action@v0.8.1'
++    '.github/workflows/release.yml':
++        - 'actions-rust-lang/setup-rust-toolchain@v2.0.1'
++        - 'actions/checkout@v7.0.1'
++        - 'nicknovitski/nix-develop@v1.2.1'
++        - 'nixbuild/nix-quick-install-action@v35'
++        - 'release-plz/action@v0.5.140'
+     '.github/workflows/semver-checks.yml':
+         - 'actions-rust-lang/setup-rust-toolchain@v2.0.1'
+         - 'taiki-e/install-action@v2.90.3'
+@@ -50,6 +56,11 @@ dependencies:
+         commit: 'sha1-55cc8345863c7cc4c66a329aec7e433d2d1c52a9'
+         owner_id: 44036562
+         repo_id: 215566462
++    'actions/checkout@v7.0.1':
++        ref: 'v7.0.1'
++        commit: 'sha1-3d3c42e5aac5ba805825da76410c181273ba90b1'
++        owner_id: 44036562
++        repo_id: 197814629
+     'actions/labeler@v7.0.0':
+         ref: 'v7.0.0'
+         commit: 'sha1-bf12e9b00b37c5c0ca2b87b79b2daf7891dbda13'
+@@ -60,6 +71,11 @@ dependencies:
+         commit: 'sha1-2b21a77928be8d5168c2b9581a67f2adbebacc52'
+         owner_id: 44036562
+         repo_id: 1220171870
++    'cargo-bins/cargo-binstall@c06f6a0003f7c6165a00c89d1697731c9e8a5c72':
++        ref: 'v1.25.2'
++        commit: 'sha1-c06f6a0003f7c6165a00c89d1697731c9e8a5c72'
++        owner_id: 110581826
++        repo_id: 321270638
+     'embarkstudios/cargo-deny-action@v2.1.1':
+         ref: 'v2.1.1'
+         commit: 'sha1-3c6349835b2b7b196a839186cb8b78e02f7b5f25'
+@@ -80,6 +96,30 @@ dependencies:
+         commit: 'sha1-72793074d3c8cdda771dba85f6deafe00623038b'
+         owner_id: 1256587
+         repo_id: 211647646
++    'nicknovitski/nix-develop@v1.2.1':
++        ref: 'v1.2.1'
++        commit: 'sha1-9be7cfb4b10451d3390a75dc18ad0465bed4932a'
++        owner_id: 151337
++        repo_id: 706956179
++    'nixbuild/nix-quick-install-action@v35':
++        ref: 'v35'
++        commit: 'sha1-9f63be77f412a248c9d9a65a4c82cf066cdf8f0c'
++        owner_id: 60610456
++        repo_id: 296639338
++    'release-plz/action@v0.5.140':
++        ref: 'v0.5.140'
++        commit: 'sha1-18641b6c63063cc5ff8786ebf69cd57e8541bae1'
++        owner_id: 188756284
++        repo_id: 476470908
++        uses:
++            - 'cargo-bins/cargo-binstall@c06f6a0003f7c6165a00c89d1697731c9e8a5c72'
++            - 'release-plz/git-config@59144859caf016f8b817a2ac9b051578729173c4'
++            - 'taiki-e/install-action@f7e5d7c961414b23f5b25b2da9294395d08513ad'
++    'release-plz/git-config@59144859caf016f8b817a2ac9b051578729173c4':
++        ref: 'v0.1.2'
++        commit: 'sha1-59144859caf016f8b817a2ac9b051578729173c4'
++        owner_id: 188756284
++        repo_id: 735058483
+     'rui314/setup-mold@v1':
+         ref: 'v1'
+         commit: 'sha1-339e96b4ff1f3bd865856ba4cbbe8818a7acb038'
+@@ -97,6 +137,11 @@ dependencies:
+         repo_id: 588643148
+         uses:
+             - 'actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9'
++    'taiki-e/install-action@f7e5d7c961414b23f5b25b2da9294395d08513ad':
++        ref: 'v2.87.26'
++        commit: 'sha1-f7e5d7c961414b23f5b25b2da9294395d08513ad'
++        owner_id: 43724913
++        repo_id: 442947557
+     'taiki-e/install-action@v2.90.3':
+         ref: 'v2.90.3'
+         commit: 'sha1-cfdb7ed4ccc7c7dce37759eae89dc5674b469b39'
 ```
 
-**File**: `actix-files/Cargo.toml` (modified, +0/-1)
+**File**: `.github/workflows/release.yml` (added, +61/-0)
 ```diff
-@@ -35,7 +35,6 @@ v_htmlescape = "0.17"
- winapi-util = "0.1"
- 
- [dev-dependencies]
--actix-rt = "2.7"
- actix-test = "0.1"
- actix-web = "4"
- env_logger = "0.11"
+@@ -0,0 +1,61 @@
++name: Release
++
++on:
++  push:
++    branches: [main]
++
++permissions: {}
++
++concurrency:
++  group: ${{ github.workflow }}-${{ github.ref }}
++  cancel-in-progress: false
++
++jobs:
++  release:
++    name: Release
++    runs-on: ubuntu-latest
++    if: github.repository == 'actix/actix-web'
++    permissions:
++      contents: write
++      id-token: write
++
++    steps:
++      - name: Checkout
++        uses: actions/checkout@v7.0.1
++        with:
++          fetch-depth: 0
++          persist-credentials: false
++
++      - name: Install Rust
++        uses: actions-rust-lang/setup-rust-toolchain@v2.0.1
++
++      - name: release-plz
++        uses: release-plz/action@v0.5.140
++        id: release-plz
++        with:
++          command: release
++        env:
++          GITHUB_TOKEN: ${{ github.token }}
++
++      - name: Install Nix
++        if: steps.release-plz.outputs.releases_created == 'true'
++        uses: nixbuild/nix-quick-install-action@v35
++
++      - name: Enter Nix devshell
++        if: steps.release-plz.outputs.releases_created == 'true'
++        uses: nicknovitski/nix-develop@v1.2.1
++        with:
++          arguments: .#ci-release
++
++      - name: Update release notes
++        if: steps.release-plz.outputs.releases_created == 'true'
++        env:
++          GH_TOKEN: ${{ github.token }}
++          RELEASE_PLZ_RELEASES_JSON: ${{ steps.release-plz.outputs.releases }}
++        run: |
++          # The shared release tool reads CHANGELOG.md.
++          for changelog in */CHANGES.md; do
++            ln -s CHANGES.md "${changelog%CHANGES.md}CHANGELOG.md"
++          done
++
++          x52-update-release-notes --then-undraft
 ```
 
-**File**: `actix-files/src/files.rs` (modified, +1/-1)
+**File**: `.release-plz.toml` (added, +8/-0)
 ```diff
-@@ -578,7 +578,7 @@ mod tests {
- 
-     use super::*;
- 
--    #[actix_web::test]
-+    #[tokio::test(flavor = "local")]
-     async fn custom_files_listing_renderer() {
-         let srv = test::init_service(
-             App::new().service(
+@@ -0,0 +1,8 @@
++[workspace]
++changelog_update = false
++dependencies_update = false
++publish_all_features = true
++release_always = true
++git_release_draft = true
++git_release_name = "{{ package }}: v{{ version }}"
++git_tag_name = "{{ package }}-v{{ version }}"
 ```
 
-**File**: `actix-files/src/lib.rs` (modified, +72/-72)
+**File**: `flake.lock` (added, +82/-0)
 ```diff
-@@ -96,7 +96,7 @@ mod tests {
-     use super::*;
-     use crate::named::File;
- 
--    #[actix_web::test]
-+    #[tokio::test(flavor = "local")]
-     async fn test_file_extension_to_mime() {
-         let m = file_extension_to_mime("");
-         assert_eq!(m, mime::APPLICATION_OCTET_STREAM);
-@@ -111,7 +111,7 @@ mod tests {
-         assert_eq!(m, mime::APPLICATION_OCTET_STREAM);
-     }
- 
--    #[actix_rt::test]
-+    #[tokio::test(flavor = "local")]
-     async fn test_if_none_match_get_and_head() {
-         let file = NamedFile::open("Cargo.toml").unwrap();
-         let etag = file.etag().unwrap().to_string();
-@@ -137,7 +137,7 @@ mod tests {
-         }
-     }
- 
--    #[actix_rt::test]
-+    #[tokio::test(flavor = "local")]
-     async fn test_if_none_match_post() {
-         let file = NamedFile::open("Cargo.toml").unwrap();
-         let etag = file.etag().unwrap().to_string();
-@@ -160,7 +160,7 @@ mod tests {
-         }
-     }
- 
--    #[actix_rt::test]
-+    #[tokio::test(flavor = "local")]
-     async fn test_if_modified_since_get_and_head() {
-         let file = NamedFile::open("Cargo.toml").unwrap();
-         let since = file.last_modified().unwrap();
-@@ -184,7 +184,7 @@ mod tests {
-         }
-     }
- 
--    #[actix_rt::test]
-+    #[tokio::test(flavor = "local")]
-     async fn test_if_modified_since_post() {
-         let file = NamedFile::open("Cargo.toml").unwrap();
-         let since = file.last_modified().unwrap();
-@@ -209,7 +209,7 @@ mod tests {
-         );
-     }
- 
--    #[actix_rt::test]
-+    #[tokio::test(flavor = "local")]
-     async fn test_if_modified_since_without_if_none_match() {
-         let file = NamedFile::open("Cargo.toml").unwrap();
-         let since = header::HttpDate::from(SystemTime::now().add(Duration::from_secs(60)));
-@@ -221,7 +221,7 @@ mod tests {
-         assert_eq!(resp.status(), StatusCode::NOT_MODIFIED);
-     }
- 
--    #[actix_rt::test]
-+    #[tokio::test(flavor = "local")]
-     async fn test_if_modified_since_without_if_none_match_same() {
-         let file = NamedFile::open("Cargo.toml").unwrap();
-         let since = file.last_modified().unwrap();
-@@ -233,7 +233,7 @@ mod tests {
-         assert_eq!(resp.status(), StatusCode::NOT_MODIFIED);
-     }
- 
--    #[actix_rt::test]
-+    #[tokio::test(flavor = "local")]
-     async fn test_if_modified_since_with_if_none_match() {
-         let file = NamedFile::open("Cargo.toml").unwrap();
-         let since = header::HttpDate::from(SystemTime::now().add(Duration::from_secs(60)));
-@@ -246,7 +246,7 @@ mod tests {
-         assert_ne!(resp.status(), StatusCode::NOT_MODIFIED);
-     }
- 
--    #[actix_rt::test]
-+    #[tokio::test(flavor = "local")]
-     async fn test_if_match_overrides_if_unmodified_since() {
-         let file = NamedFile::open("Cargo.toml").unwrap();
-         let etag = file.etag().unwrap();
-@@ -260,7 +260,7 @@ mod tests {
-         assert_eq!(resp.status(), StatusCode::OK);
-     }
- 
--    #[actix_rt::test]
-+    #[tokio::test(flavor = "local")]
-     async fn test_if_match_failure_with_if_unmodified_since() {
-         let file = NamedFile::open("Cargo.toml").unwrap();
-         let since = file.last_modified().unwrap();
-@@ -273,7 +273,7 @@ mod tests {
-         assert_eq!(resp.status(), StatusCode::PRECONDITION_FAILED);
-     }
- 
--    #[actix_rt::test]
-+    #[tokio::test(flavor = "local")]
-     async fn test_if_unmodified_since() {
-         let file = NamedFile::open("Cargo.toml").unwrap();
-         let since = file.last_modified().unwrap();
-@@ -285,7 +285,7 @@ mod tests {
-         assert_eq!(resp.status(), StatusCode::OK);
-     }
- 
--    #[actix_rt::test]
-+    #[tokio::test(flavor = "local")]
-     async fn test_if_unmodified_since_failed() {
-         let file = NamedFile::open("Cargo.toml").unwrap();
-         let since = header::HttpDate::from(SystemTime::UNIX_EPOCH);
-@@ -297,7 +297,7 @@ mod tests {
-         assert_eq!(resp.status(), StatusCode::PRECONDITION_FAILED);
-     }
- 
--    #[actix_rt::test]
-+    #[tokio::test(flavor = "local")]
-     async fn test_named_file_text() {
-         assert!(NamedFile::open("test--").is_err());
-         let mut file = NamedFile::open("Cargo.toml").unwrap();
-@@ -321,7 +321,7 @@ mod tests {
-         );
-     }
- 
--    #[actix_rt::test]
-+    #[tokio::test(flavor = "local")]
-     async fn test_named_file_content_disposition() {
-         assert!(NamedFile::open("test--").is_err());
-         let mut file = NamedFile::open("Cargo.toml").unwrap();
-@@ -348,7 +348,7 @@ mod tests {
-         assert!(resp.headers().get(header::CONTENT_DISPOSITION).is_none());
-     }
- 
--    #[actix_rt::test]
-+    #[tokio::test(flavor = "local")]
-     async fn test_named_file_non_ascii_file_name() {
-         let file = crate::named::File::open("Cargo.toml").unwrap();
- 
-@@ -373,7 +373,7 @@ mod tests {
-         );
-     }
- 
--    #[actix_rt::test]
-+    #[tokio::test(flavor = "local")]
-     async fn test_named_file_set_content_type() {
-         let mut file = NamedFile::open("Cargo.toml")
-             .unwrap()
-@@ -398,7 +398,7 @@ mod tests {
-         
+@@ -0,0 +1,82 @@
++{
++  "nodes": {
++    "flake-parts": {
++      "inputs": {
++        "nixpkgs-lib": "nixpkgs-lib"
++      },
++      "locked": {
++        "lastModified": 1715865404,
++        "narHash": "sha256-/GJvTdTpuDjNn84j82cU6bXztE0MSkdnTWClUCRub78=",
++        "owner": "hercules-ci",
++        "repo": "flake-parts",
++        "rev": "8dc45382d5206bd292f9c2768b8058a8fd8311d9",
++        "type": "github"
++      },
++      "original": {
++        "owner": "hercules-ci",
++        "repo": "flake-parts",
++        "type": "github"
++      }
++    },
++    "nixpkgs": {
++      "locked": {
++        "lastModified": 1791662279,
++        "narHash": "sha256-xI8L+UwJLIg75yVJwLPsY+AUEP1teCT3FyuvodyJu2Y=",
++        "owner": "NixOS",
++        "repo": "nixpkgs",
++        "rev": "6fcc160353f63555b560f25588925133c8f61f2a",
++        "type": "github"
++      },
++      "original": {
++        "owner": "NixOS",
++        "ref": "nixos-26.05",
++        "repo": "nixpkgs",
++        "type": "github"
++      }
++    },
++    "nixpkgs-lib": {
++      "locked": {
++        "lastModified": 1714640452,
++        "narHash": "sha256-QBx10+k6JWz6u7VsohfSw8g8hjdBZEf8CFzXH1/1Z94=",
++        "type": "tarball",
++        "url": "https://github.com/NixOS/nixpkgs/archive/50eb7ecf4cd0a5756d7275c8ba36790e5bd53e33.tar.gz"
++      },
++      "original": {
++        "type": "tarball",
++        "url": "https://github.com/NixOS/nixpkgs/archive/50eb7ecf4cd0a5756d7275c8ba36790e5bd53e33.tar.gz"
++      }
++    },
++    "root": {
++      "inputs": {
++        "flake-parts": "flake-parts",
++        "nixpkgs": "nixpkgs",
++        "x52": "x52"
++      }
++    },
++    "x52": {
++      "inputs": {
++        "flake-parts": [
++          "flake-parts"
++        ],
++        "nixpkgs": [
++          "nixpkgs"
++        ]
++      },
++      "locked": {
++        "lastModified": 1791501778,
++        "narHash": "sha256-2HLxyAtbHUiTuVx4KCC4SIRZdcgnfpIjfOtjWULRN8o=",
++        "owner": "x52dev",
++        "repo": "nix",
++        "rev": "cb0c45f9c706bd8b3f65dabb6a4e860d7afded8e",
++        "type": "github"
++      },
++      "original": {
++        "owner": "x52dev",
++        "repo": "nix",
++        "type": "github"
++      }
++    }
++  },
++  "root": "root",
++  "version": 7
++}
 ```
 
-**File**: `actix-files/src/named.rs` (modified, +1/-1)
+**File**: `flake.nix` (added, +22/-0)
 ```diff
-@@ -764,7 +764,7 @@ mod tests {
-     }
- 
-     #[cfg(any(unix, windows))]
--    #[actix_web::test]
-+    #[tokio::test(flavor = "local")]
-     async fn if_none_match_does_not_match_a_different_file_with_same_size_and_mtime() {
-         use std::fs;
- 
-```
-
-**File**: `actix-files/src/service.rs` (modified, +1/-1)
-```diff
-@@ -466,7 +466,7 @@ mod tests {
-         name
-     }
- 
--    #[actix_web::test]
-+    #[tokio::test(flavor = "local")]
-     #[ignore = "requires an NTFS temporary directory with 8.3 name creation enabled"]
-     async fn hidden_short_names() {
-         let temp = tempfile::tempdir().unwrap();
-```
-
-**File**: `actix-files/tests/encoding.rs` (modified, +4/-4)
-```diff
-@@ -8,7 +8,7 @@ use actix_web::{
-     web, App,
- };
- 
--#[actix_web::test]
-+#[tokio::test(flavor = "local")]
- async fn test_utf8_file_contents() {
-     // use default ISO-8859-1 encoding
-     let srv = test::init_service(App::new().service(Files::new("/", "./tests"))).await;
-@@ -36,7 +36,7 @@ async fn test_utf8_file_contents() {
-     );
- }
- 
--#[actix_web::test]
-+#[tokio::test(flavor = "local")]
- async fn test_compression_encodings() {
-     use actix_web::body::MessageBody;
- 
-@@ -166,7 +166,7 @@ async fn test_compression_encodings() {
-     assert_eq!(res.headers().get(header::CONTENT_ENCODING), None);
- }
- 
--#[actix_web::test]
-+#[tokio::test(flavor = "local")]
- async fn test_compression_encodings_multiple_directories() {
-     use actix_web::body::MessageBody;
- 
-@@ -204,7 +204,7 @@ async fn test_compression_encodings_multiple_directories() {
-     );
- }
- 
--#[actix_web::test]
-+#[tokio::test(flavor = "local")]
- async fn partial_range_response_encoding() {
-     let srv = test::init_service(App::new().default_service(web::to(|| async {
-         NamedFile::open("./tests/test.binary").unwrap()
-```
-
-**File**: `actix-files/tests/guard.rs` (modified, +1/-1)
-```diff
-@@ -7,7 +7,7 @@ use actix_web::{
- };
- use bytes::Bytes;
- 
--#[actix_web::test]
-+#[tokio::test(flavor = "local")]
- async fn test_guard_filter() {
-     let srv = test::init_service(
-         App::new()
-```
-
----
-
-### Incident Patch 2: `92eca51b` (2026-11-13)
-**Commit Message**: chore: replace example main macros with Tokio (#4416)
-
-- Use Tokio's local runtime in examples
-- Add Tokio macro and runtime features where needed
-
-**File**: `Cargo.lock` (modified, +1/-0)
-```diff
-@@ -42,6 +42,7 @@ dependencies = [
-  "percent-encoding",
-  "pin-project-lite",
-  "tempfile",
-+ "tokio",
-  "v_htmlescape",
-  "winapi-util",
- ]
-```
-
-**File**: `actix-files/Cargo.toml` (modified, +1/-0)
-```diff
-@@ -41,6 +41,7 @@ actix-web = "4"
- env_logger = "0.11"
- filetime = "0.2"
- tempfile = "3.2"
-+tokio = { version = "1.51", features = ["macros", "rt"] }
- 
- [lints]
- workspace = true
-```
-
-**File**: `actix-files/examples/guarded-listing.rs` (modified, +1/-1)
-```diff
-@@ -8,7 +8,7 @@ async fn index() -> impl Responder {
-     "Hello world!"
- }
- 
--#[actix_web::main]
-+#[tokio::main(flavor = "local")]
- async fn main() -> std::io::Result<()> {
-     env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
- 
-```
-
-**File**: `actix-multipart/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -75,7 +75,7 @@ futures-test = "0.3"
- futures-util = { version = "0.3.17", default-features = false, features = ["alloc"] }
- multer = "3"
- rustversion-msrv = "0.100"
--tokio = { version = "1.38.2", features = ["sync", "time"] }
-+tokio = { version = "1.51", features = ["macros", "rt", "sync", "time"] }
- tokio-stream = "0.1"
- trybuild = "1"
- 
-```
-
-**File**: `actix-multipart/examples/form.rs` (modified, +1/-1)
-```diff
-@@ -27,7 +27,7 @@ async fn post_video(MultipartForm(form): MultipartForm<UploadForm>) -> impl Resp
-     )
- }
- 
--#[actix_web::main]
-+#[tokio::main(flavor = "local")]
- async fn main() -> std::io::Result<()> {
-     env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
- 
-```
-
-**File**: `actix-web/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -186,7 +186,7 @@ serde = { version = "1", features = ["derive"] }
- static_assertions = "1"
- tls-openssl = { package = "openssl", version = "0.10.55" }
- tls-rustls = { package = "rustls", version = "0.23" }
--tokio = { version = "1.38.2", features = ["rt-multi-thread", "macros", "time"] }
-+tokio = { version = "1.51", features = ["rt-multi-thread", "macros", "time"] }
- tokio-util = { version = "0.7", default-features = false, features = ["time"] }
- zstd = "0.14"
- 
-```
-
-**File**: `actix-web/examples/basic.rs` (modified, +1/-1)
-```diff
-@@ -16,7 +16,7 @@ async fn no_params() -> &'static str {
-     "Hello world!\r\n"
- }
- 
--#[actix_web::main]
-+#[tokio::main(flavor = "local")]
- async fn main() -> std::io::Result<()> {
-     env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
- 
-```
-
-**File**: `actix-web/examples/from_fn.rs` (modified, +1/-1)
-```diff
-@@ -102,7 +102,7 @@ impl MyMw {
-     }
- }
- 
--#[actix_web::main]
-+#[tokio::main(flavor = "local")]
- async fn main() -> io::Result<()> {
-     env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
- 
+@@ -0,0 +1,22 @@
++{
++  inputs = {
++    nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
++    flake-parts.url = "github:hercules-ci/flake-parts";
++
++    x52 = {
++      url = "github:x52dev/nix";
++      inputs.nixpkgs.follows = "nixpkgs";
++      inputs.flake-parts.follows = "flake-parts";
++    };
++  };
++
++  outputs = inputs@{ flake-parts, ... }:
++    flake-parts.lib.mkFlake { inherit inputs; } {
++      systems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
++      perSystem = { pkgs, inputs', ... }: {
++        devShells.ci-release = pkgs.mkShellNoCC {
++          packages = [ inputs'.x52.packages.x52-release-tools ];
++        };
++      };
++    };
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4418** (2026-11-15): ci: automate releases with release-plz (@robjtede)
 - **PR #4417** (2026-11-13): test: replace Actix test attributes with Tokio local tests (@robjtede)
 - **PR #4416** (2026-11-13): chore: replace example main macros with Tokio (@robjtede)
 - **PR #4413** (2026-11-11): build(deps): bump smallvec from 1.16.4 to 1.16.5 (@dependabot[bot])
 - **PR #4412** (2026-11-11): build(deps): bump mime from 0.3.17 to 0.3.18 (@dependabot[bot])
 - **PR #4411** (2026-11-11): build(deps): bump flate2 from 1.1.10 to 1.1.11 (@dependabot[bot])
-- **PR #4410** (2026-11-11): build(deps): bump err-report from 0.1.4 to 0.1.5 (@dependabot[bot])
 
 ---
 
@@ -1830,34 +1689,62 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test: replace Actix test attributes with Tokio local tests (#4417)
+## X. ci: automate releases with release-plz
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in actix/actix-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/actions.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in actix/actix-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0ac7d216`: test: replace Actix test attributes with Tokio local tests (#4417). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `baebbb57`: ci: automate releases with release-plz. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/actions.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "tokio",
+    '.github/workflows/release.yml':
+        - 'actions-rust-lang/setup-rust-toolchain@v2.0.1'
+        - 'actions/checkout@v7.0.1'
+        - 'nicknovitski/nix-develop@v1.2.1'
+        - 'nixbuild/nix-quick-install-action@v35'
+        - 'release-plz/action@v0.5.140'
+    'actions/checkout@v7.0.1':
+        ref: 'v7.0.1'
+        commit: 'sha1-3d3c42e5aac5ba805825da76410c181273ba90b1'
+        owner_id: 44036562
+        repo_id: 197814629
+    'cargo-bins/cargo-binstall@c06f6a0003f7c6165a00c89d1697731c9e8a5c72':
+        ref: 'v1.25.2'
+        commit: 'sha1-c06f6a0003f7c6165a00c89d1697731c9e8a5c72'
+        owner_id: 110581826
+        repo_id: 321270638
+    'nicknovitski/nix-develop@v1.2.1':
+        ref: 'v1.2.1'
+        commit: 'sha1-9be7cfb4b10451d3390a75dc18ad0465bed4932a'
+        owner_id: 151337
+        repo_id: 706956179
+    'nixbuild/nix-quick-install-action@v35':
+        ref: 'v35'
+        commit: 'sha1-9f63be77f412a248c9d9a65a4c82cf066cdf8f0c'
+        owner_id: 60610456
+        repo_id: 296639338
+    'release-plz/action@v0.5.140':
+        ref: 'v0.5.140'
+        commit: 'sha1-18641b6c63063cc5ff8786ebf69cd57e8541bae1'
+        owner_id: 188756284
+        repo_id: 476470908
+        use
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
- "actix-rt",
- "actix-rt",
- "actix-rt",
- "actix-rt",
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0ac7d216` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `baebbb57` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

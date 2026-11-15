@@ -10156,3 +10156,5 @@ Every entry in this ledger must capture:
 | `learn-github-jacklandrin-onlyswitch` | `https://github.com/jacklandrin/OnlySwitch` | `ff711c47` | Multi-dimensional audit evidence | 2026-11-15T17:03:57.185Z |
 | `learn-github-neuron-core-neuron-ai` | `https://github.com/neuron-core/neuron-ai` | `5e9c7b57` | Multi-dimensional audit evidence | 2026-11-15T17:04:03.842Z |
 | `learn-dom-d-a223fe37` | `project://hf-autotrust-autotrust-decider-pro-vision-27b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-autotrust-autotrust-decider-pro-vision-27b-learnings.md` | 2026-11-15T17:04:41.313Z |
+| `learn-github-actix-actix-web` | `https://github.com/actix/actix-web` | `baebbb57` | Multi-dimensional audit evidence | 2026-11-15T17:14:09.871Z |
+| `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `f70c37b1` | Multi-dimensional audit evidence | 2026-11-15T17:14:23.209Z |

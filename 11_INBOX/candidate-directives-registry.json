@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T17:04:42.813Z",
+  "last_updated": "2026-11-15T17:14:28.198Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4835,11 +4835,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-32BW",
+      "id": "CD-H04I",
       "directive_title": "editor): add scoped ios account deletion",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-32BW-editor-add-scoped-ios-account-deletion.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-H04I-editor-add-scoped-ios-account-deletion.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-15",
@@ -15890,6 +15890,59 @@
       "source_repo": "jacklandrin-onlyswitch",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-DFD40D-post-the-desktop-pet-hunger-setting-chan.md",
+      "staged_date": "2026-11-15"
+    },
+    {
+      "id": "CD-GM4M",
+      "directive_title": "automate releases with release-plz",
+      "source_repo": "actix/actix-web",
+      "source_commit": "baebbb57",
+      "staged_file": "11_INBOX/candidate-directives/CD-GM4M-automate-releases-with-release-plz.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-15",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-GWF4",
+      "directive_title": "correct SCA closure and native test lifecycle ownership",
+      "source_repo": "matrixorigin/matrixone",
+      "source_commit": "f70c37b1",
+      "staged_file": "11_INBOX/candidate-directives/CD-GWF4-correct-sca-closure-and-native-test-lifecycle-ownership.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-15",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-GZ2P",
+      "directive_title": "ci: automate releases with release-plz",
+      "source_repo": "actix-actix-web-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-GZ2P-ci-automate-releases-with-release-plz.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-15",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-GZIE",
+      "directive_title": "ci): correct SCA closure and native test lifecycle ownership",
+      "source_repo": "matrixorigin-matrixone-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-GZIE-ci-correct-sca-closure-and-native-test-lifecycle-ownership.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-15",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-61E600",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-61E600-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-15"
     }
   ]
