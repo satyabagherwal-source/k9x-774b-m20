@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T19:12:46.276Z",
-  "total_records": 1103,
+  "last_updated": "2026-11-15T19:32:22.363Z",
+  "total_records": 1105,
   "domains": {
     "A": {
       "total": 7,
@@ -1036,7 +1036,7 @@
       ]
     },
     "I": {
-      "total": 41,
+      "total": 43,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -1078,7 +1078,9 @@
         "domain_intelligence-content-information-intelligence-1jehuang-jcode-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-gravitl-netmaker-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-siteline-swiftui-introspect-core-invariants",
-        "domain_intelligence-content-information-intelligence-siteline-swiftui-introspect-learnings-core-inva"
+        "domain_intelligence-content-information-intelligence-siteline-swiftui-introspect-learnings-core-inva",
+        "domain_intelligence-content-information-intelligence-pixeltable-pixeltable-core-invariants",
+        "domain_intelligence-content-information-intelligence-pixeltable-pixeltable-learnings-core-invariants"
       ]
     },
     "J": {
@@ -7836,8 +7838,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "7143016ad8ee7132bc22cc5bd2cfef5d22cf1c072f941da0c6c75c8058eefc89",
-      "created_at": "2026-11-15T19:12:45.623Z"
+      "content_hash": "1ef09f97007b491d999e882f8c495c2e588c6e890cd0d6932549b68402e31dcb",
+      "created_at": "2026-11-15T19:32:22.363Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -9396,8 +9398,8 @@
       "title": "Technical Construction Intelligence: salvo-rs/salvo Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-salvo-rs-salvo-technical-construction-intelligence-salvo-rs-salvo-core-invariant.md",
       "repository": "salvo-rs/salvo",
-      "content_hash": "248005196127d361dec1e6ae5561b497f3da7921ef378427d4d2129e61cb6ca6",
-      "created_at": "2026-11-13T20:36:45.971Z"
+      "content_hash": "32c9e93d674cc7f69b294a15121753417a78715860864bf0b47ae78835b66d7c",
+      "created_at": "2026-11-15T19:32:03.855Z"
     },
     "domain_intelligence-architecture-intelligence-zulip-zulip-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zulip-zulip-core-invariants",
@@ -9423,8 +9425,8 @@
       "title": "Technical Construction Intelligence: salvo-rs-salvo-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-salvo-rs-salvo-learnings-technical-construction-intelligence-salvo-rs-salvo-lear.md",
       "repository": "salvo-rs-salvo-learnings",
-      "content_hash": "f83b67bf5d8886bea79a7265b5c2e9bd65f316222c00483bf1727afc4e9c4d71",
-      "created_at": "2026-11-13T20:36:57.282Z"
+      "content_hash": "569be10521a7a1d2fad360a7c6c2802014e0fc19bc3d5e57a19fe6deefe8065c",
+      "created_at": "2026-11-15T19:32:20.532Z"
     },
     "DOM-D-A812096F": {
       "record_id": "DOM-D-A812096F",
@@ -21005,6 +21007,24 @@
       "repository": "hf-pyannote-speaker-diarization-3.1-learnings",
       "content_hash": "afa9bc84b74919d8642585f0f3a874c20543337a93546592b3083002c1dc2921",
       "created_at": "2026-11-15T19:12:44.875Z"
+    },
+    "domain_intelligence-content-information-intelligence-pixeltable-pixeltable-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-pixeltable-pixeltable-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: pixeltable/pixeltable Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pixeltable-pixeltable-content-information-intelligence-pixeltable-pixeltable-cor.md",
+      "repository": "pixeltable/pixeltable",
+      "content_hash": "6676670d2e6f7ff1bf422063f62970929e5aea123041fa60db86518b0f68bdf5",
+      "created_at": "2026-11-15T19:32:16.812Z"
+    },
+    "domain_intelligence-content-information-intelligence-pixeltable-pixeltable-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-pixeltable-pixeltable-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: pixeltable-pixeltable-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pixeltable-pixeltable-learnings-content-information-intelligence-pixeltable-pixe.md",
+      "repository": "pixeltable-pixeltable-learnings",
+      "content_hash": "14a1e0ec980be48bffb02752579108ebbce5f72b19ef457b2607bd258481b601",
+      "created_at": "2026-11-15T19:32:21.450Z"
     }
   }
 }

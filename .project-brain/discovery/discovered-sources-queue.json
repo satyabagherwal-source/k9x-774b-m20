@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T19:12:44.674Z",
+  "updated_at": "2026-11-15T19:32:21.090Z",
   "stats": {
-    "total_discovered": 3823,
-    "approved_pending_harvest": 3604,
+    "total_discovered": 3831,
+    "approved_pending_harvest": 3612,
     "harvested_count": 0,
     "rejected_count": 219,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3587,
-      "OFFICIAL_DOCUMENTATION": 129,
+      "COMMUNITY_AND_EXPERT": 3594,
+      "OFFICIAL_DOCUMENTATION": 130,
       "STANDARDS_AND_SPECIFICATIONS": 90,
       "ENGINEERING_BLOGS": 2,
       "SECURITY_ADVISORIES": 11,
@@ -82594,6 +82594,182 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-pyannote-speaker-diarization-3.1-learnings.md",
         "fileName": "hf-pyannote-speaker-diarization-3.1-learnings.md"
+      }
+    },
+    "SRC-09AFEB671250": {
+      "id": "SRC-09AFEB671250",
+      "url": "https://github.com/actions/cache",
+      "title": "https://github.com/actions/cache",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T19:32:20.060Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md",
+        "fileName": "salvo-rs-salvo-learnings.md"
+      }
+    },
+    "SRC-3ACA2837571B": {
+      "id": "SRC-3ACA2837571B",
+      "url": "https://github.com/actions/cache/releases",
+      "title": "https://github.com/actions/cache/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T19:32:20.095Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md",
+        "fileName": "salvo-rs-salvo-learnings.md"
+      }
+    },
+    "SRC-E50B40808D5F": {
+      "id": "SRC-E50B40808D5F",
+      "url": "https://github.com/actions/cache/blob/main/RELEASES.md",
+      "title": "https://github.com/actions/cache/blob/main/RELEASES.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T19:32:20.128Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md",
+        "fileName": "salvo-rs-salvo-learnings.md"
+      }
+    },
+    "SRC-51CFB9D0168C": {
+      "id": "SRC-51CFB9D0168C",
+      "url": "https://github.com/actions/cache/compare/caa296126883cff596d87d8935842f9db880ef25...55cc8345863c7cc4c66a329aec7e433d2d1c52a9",
+      "title": "https://github.com/actions/cache/compare/caa296126883cff596d87d8935842f9db880ef25...55cc8345863c7cc4c66a329aec7e433d2d1c52a9",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T19:32:20.159Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md",
+        "fileName": "salvo-rs-salvo-learnings.md"
+      }
+    },
+    "SRC-0134904C4334": {
+      "id": "SRC-0134904C4334",
+      "url": "https://docs.parallel.ai/integrations/mcp/search-mcp",
+      "title": "https://docs.parallel.ai/integrations/mcp/search-mcp",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T19:32:20.994Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
+        "fileName": "pixeltable-pixeltable-learnings.md"
+      }
+    },
+    "SRC-C1B4411C363F": {
+      "id": "SRC-C1B4411C363F",
+      "url": "https://parallel.ai/",
+      "title": "https://parallel.ai/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T19:32:21.025Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
+        "fileName": "pixeltable-pixeltable-learnings.md"
+      }
+    },
+    "SRC-DC99B0D68D83": {
+      "id": "SRC-DC99B0D68D83",
+      "url": "https://platform.parallel.ai/",
+      "title": "https://platform.parallel.ai/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T19:32:21.059Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
+        "fileName": "pixeltable-pixeltable-learnings.md"
+      }
+    },
+    "SRC-48D078939FEA": {
+      "id": "SRC-48D078939FEA",
+      "url": "https://github.com/pixeltable/pixeltable-new",
+      "title": "https://github.com/pixeltable/pixeltable-new",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T19:32:21.090Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
+        "fileName": "pixeltable-pixeltable-learnings.md"
       }
     }
   }

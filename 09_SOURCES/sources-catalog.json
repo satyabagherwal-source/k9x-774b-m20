@@ -3713,10 +3713,10 @@
     "repository": "pixeltable/pixeltable",
     "platform": "github",
     "sourceUrl": "https://github.com/pixeltable/pixeltable",
-    "sourceVersion": "941d38df",
+    "sourceVersion": "890b85ab",
     "license": "Apache-2.0",
-    "contentHash": "88a46480e707494b5f8db2eca7d1068ca8d253326063787f86f458cb7ee4e912",
-    "lastHarvestedAt": "2026-11-14T05:46:40.861Z",
+    "contentHash": "f1663694eff71b1a65c9f77a74eac927fff0e872aee3d95ec3fe9da2a0ba9d66",
+    "lastHarvestedAt": "2026-11-15T19:32:16.459Z",
     "learningId": "learn-github-pixeltable-pixeltable"
   },
   "honojs-hono": {
@@ -5483,10 +5483,10 @@
     "repository": "salvo-rs/salvo",
     "platform": "github",
     "sourceUrl": "https://github.com/salvo-rs/salvo",
-    "sourceVersion": "fb80161a",
+    "sourceVersion": "617611e8",
     "license": "Apache-2.0",
-    "contentHash": "1e8a5f6c172d01179704444b2327c5158311fd5fbd0542400b6c7e46d410d94c",
-    "lastHarvestedAt": "2026-11-13T20:36:45.674Z",
+    "contentHash": "d0b5e958086ae57bb73c73b137e3d756100b813c81dbf002a5303d343ab0d19e",
+    "lastHarvestedAt": "2026-11-15T19:32:03.471Z",
     "learningId": "learn-github-salvo-rs-salvo"
   },
   "react-metro": {

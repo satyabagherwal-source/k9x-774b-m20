@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T19:12:46.144Z",
+  "last_updated": "2026-11-15T19:32:22.231Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4835,11 +4835,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-P4ET",
+      "id": "CD-ECEQ",
       "directive_title": "editor): add scoped ios account deletion",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-P4ET-editor-add-scoped-ios-account-deletion.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-ECEQ-editor-add-scoped-ios-account-deletion.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-15",
@@ -16224,6 +16224,55 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-F585D4-puppet-fix-postgresql-failing-to-start-o.md",
+      "staged_date": "2026-11-15"
+    },
+    {
+      "id": "CD-EAZV",
+      "directive_title": "Update cache save action and fix vendor spell checks",
+      "source_repo": "salvo-rs-salvo-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-EAZV-update-cache-save-action-and-fix-vendor-spell-checks.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-15",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-EBOH",
+      "directive_title": "Add built-in web search and fetching through Parallel MCP",
+      "source_repo": "pixeltable-pixeltable-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-EBOH-add-built-in-web-search-and-fetching-through-parallel-mcp.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-15",
+      "domain_letter": "J"
+    },
+    {
+      "id": "CD-REV-2CC170",
+      "directive_title": "Update cache save action and fix vendor spell checks",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "salvo-rs-salvo",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-2CC170-update-cache-save-action-and-fix-vendor-.md",
+      "staged_date": "2026-11-15"
+    },
+    {
+      "id": "CD-REV-5D4740",
+      "directive_title": "Add built-in web search and fetching through Parallel MCP",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "pixeltable-pixeltable",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-5D4740-add-built-in-web-search-and-fetching-thr.md",
+      "staged_date": "2026-11-15"
+    },
+    {
+      "id": "CD-REV-A139AB",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-A139AB-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-15"
     }
   ]

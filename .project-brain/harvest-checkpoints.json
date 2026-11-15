@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-15T19:12:00.654Z",
+  "last_updated": "2026-11-15T19:32:16.470Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5691,14 +5691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pixeltable-pixeltable",
-      "content_hash": "88a46480e707494b5f8db2eca7d1068ca8d253326063787f86f458cb7ee4e912",
-      "verified_at": "2026-11-14T05:46:40.871Z",
+      "content_hash": "f1663694eff71b1a65c9f77a74eac927fff0e872aee3d95ec3fe9da2a0ba9d66",
+      "verified_at": "2026-11-15T19:32:16.469Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T05:46:40.871Z"
+      "last_updated": "2026-11-15T19:32:16.469Z"
     },
     "honojs/hono": {
       "repository": "honojs/hono",
@@ -8346,14 +8346,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-salvo-rs-salvo",
-      "content_hash": "1e8a5f6c172d01179704444b2327c5158311fd5fbd0542400b6c7e46d410d94c",
-      "verified_at": "2026-11-13T20:36:45.696Z",
+      "content_hash": "d0b5e958086ae57bb73c73b137e3d756100b813c81dbf002a5303d343ab0d19e",
+      "verified_at": "2026-11-15T19:32:03.481Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T20:36:45.696Z"
+      "last_updated": "2026-11-15T19:32:03.481Z"
     },
     "react/metro": {
       "repository": "react/metro",

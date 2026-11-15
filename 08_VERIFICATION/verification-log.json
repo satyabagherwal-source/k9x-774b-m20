@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261111-45PA",
-    "timestamp": "2026-11-11T07:37:55.678Z",
-    "repository": "callstack/agent-device",
-    "learningId": "learn-github-callstack-agent-device",
-    "contentHash": "8bb0e7571a44df184df7b0193cc6fb5490d63c0d6a1f2dbdfb3d896ad590adc2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261111-EIMF",
-    "timestamp": "2026-11-11T07:45:58.983Z",
-    "repository": "microsoft/Florence-2-base",
-    "learningId": "learn-huggingface-microsoft-florence-2-base",
-    "contentHash": "3edc255cfadbf304b15e9d9efc027c13436d4859e9cc0c7f339fe3d368308970",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261111-ETTC",
     "timestamp": "2026-11-11T07:46:13.488Z",
     "repository": "biomejs/biome",
@@ -7492,6 +7462,36 @@
     "contentHash": "894bfa8ae41ef18962f4e8b1e8f46a2875227fd8a9fd4017944b78c3afb1e9d2",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-DXXN",
+    "timestamp": "2026-11-15T19:32:03.467Z",
+    "repository": "salvo-rs/salvo",
+    "learningId": "learn-github-salvo-rs-salvo",
+    "contentHash": "d0b5e958086ae57bb73c73b137e3d756100b813c81dbf002a5303d343ab0d19e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-E7YF",
+    "timestamp": "2026-11-15T19:32:16.455Z",
+    "repository": "pixeltable/pixeltable",
+    "learningId": "learn-github-pixeltable-pixeltable",
+    "contentHash": "f1663694eff71b1a65c9f77a74eac927fff0e872aee3d95ec3fe9da2a0ba9d66",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

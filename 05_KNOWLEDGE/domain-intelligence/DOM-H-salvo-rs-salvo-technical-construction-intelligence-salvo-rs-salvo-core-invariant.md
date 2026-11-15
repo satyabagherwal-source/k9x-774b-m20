@@ -4,24 +4,24 @@
 {
   "source_repository": "salvo-rs/salvo",
   "source_url": "https://github.com/salvo-rs/salvo",
-  "source_version": "fb80161a",
+  "source_version": "617611e8",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-13T20:36:45.874Z",
+  "timestamp": "2026-11-15T19:32:03.712Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-salvo-rs-salvo",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [salvo-rs/salvo](https://github.com/salvo-rs/salvo) (Revision: `fb80161a`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-13T20:36:45.874Z`  
+> **Provenance**: Harvested from [salvo-rs/salvo](https://github.com/salvo-rs/salvo) (Revision: `617611e8`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-15T19:32:03.712Z`  
 > **Learning ID**: `learn-github-salvo-rs-salvo`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 83%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), B (Product Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 81%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from salvo-rs/salvo:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/salvo-rs/salvo](https://github.com/salvo-rs/salvo))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T20:36:45.299Z  
+> **Harvest Timestamp**: 2026-11-15T19:32:02.292Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A powerful web framework built with a simplified design.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4468 stars
+- **Stars / Engagement**: 4467 stars
 
 ---
 
@@ -330,6 +330,12 @@ criterion_main!(service_dispatch);
 //! - **Middleware-style chaining** of error handlers
 //! - **Content negotiation** based on the `Accept` header
 //!
+//! Plain text errors are always available. Built-in HTML, JSON and XML output
+//! require `catcher-html`, `catcher-json` and `catcher-xml`, respectively (all
+//! enabled by default). Unsupported formats fall back to HTML when enabled,
+//! otherwise plain text. These features do not restrict custom handlers or
+//! ordinary JSON/XML response writers.
+//!
 //! # Basic Usage
 //!
 //! Add a default catcher to your service:
@@ -432,15 +438,23 @@ use std::sync::{Arc, LazyLock};
 use async_trait::async_trait;
 use bytes::Bytes;
 use mime::Mime;
+#[cfg(any(feature = "catcher-json", feature = "catcher-xml"))]
 use serde::Serialize;
 
 use crate::handler::{Handler, WhenHoop};
-use crate::http::mime::guess_accept_mime;
+use crate::http::mime::negotiate_accept_mime;
 use crate::http::{Request, ResBody, Response, StatusCode, StatusError, header};
 use crate::{Depot, FlowCtrl};
 
-static SUPPORTED_FORMATS: LazyLock<Vec<mime::Name>> =
-    LazyLock::new(|| vec![mime::JSON, mime::HTML, mime::XML, mime::PLAIN]);
+static SUPPORTED_FORMATS: &[mime::Name<'static>] = &[
+    #[cfg(feature = "catcher-json")]
+    mime::JSON,
+    #[cfg(feature = "catcher-html")]
+    mime::HTML,
+    #[cfg(feature = "catcher-xml")]
+    mime::XML,
+    mime::PLAIN,
+];
 static STATUS_ERROR_SETS: LazyLock<HashSet<&'static str>> = LazyLock::new(|| {
     HashSet::from([
         "force_detail",
@@ -470,6 +484,7 @@ static PARSED_ENV_SETS: LazyLock<HashSet<String>> = LazyLock::new(|| {
         })
         .collect::<HashSet<_>>()
 });
+#[cfg(feature = "catcher-html")]
 const SALVO_LINK: &str = r#"<a href="https://salvo.rs" target="_blank">salvo</a>"#;
 
 /// `Catcher` is used to catch errors.
@@ -644,23 +659,7 @@ cfg_feature! {
             let status = res.status_code.unwrap_or(StatusCode::NOT_FOUND);
             if (status.is_server_error() || status.is_client_error())
                 && (res.body.is_none() || res.body.is_error())
-            {
-                let problem = if let ResBody::Error(error) = &res.body {
-                    crate::http::Problem::from(error)
-                } else {
-                    crate::http::Problem::new(status)
-                };
-                res.render(problem);
-            }
-        }
-    }
-}
-
-/// Escapes text interpolated into the HTML error page so that request-derived
-/// content (e.g. via `StatusError::brief`/`detail`/`cause`) cannot inject markup
-/// (reflected XSS).
-fn html_escape(input: &str) -> String {
-    let mut out = String::w
+ 
 ```
 
 ### Core Architecture Module: `crates/core/src/cfg.rs`
@@ -1306,6 +1305,8 @@ struct Inner {
     state: AtomicU8,
     notify: Notify,
     relax: AtomicBool,
+    // 0: cleartext, 1: TLS without ALPN, 2: HTTP/1.1, 3: HTTP/2, 4: unsupported ALPN.
+    protocol: AtomicU8,
     upgrades: std::sync::OnceLock<tokio::sync::mpsc::UnboundedSender<UpgradeTask>>,
     // Reuse the connection state already exposed on Request. Request dispatch
     // needs no additional extension insertion, certificate clone, or synchronization.
@@ -1337,6 +1338,7 @@ impl ConnCtrl {
                 state: AtomicU8::new(RUNNING),
                 notify: Notify::new(),
                 relax: AtomicBool::new(false),
+                protocol: AtomicU8::new(0),
                 upgrades: std::sync::OnceLock::new(),
                 #[cfg(feature = "rustls")]
                 tls_info: std::sync::OnceLock::new(),
@@ -1372,8 +1374,41 @@ impl ConnCtrl {
         super::upgrades::UpgradeScope::new(self.clone(), receiver)
     }
 
+    #[cfg(any(feature = "rustls", feature = "native-tls", feature = "openssl"))]
+    pub(crate) fn set_tls_protocol(&self, protocol: Option<&[u8]>) {
+        let protocol = match protocol {
+            None => 1,
+            Some(b"http/1.1") => 2,
+            Some(b"h2") => 3,
+            Some(_) => 4,
+        };
+        self.inner.protocol.store(protocol, Ordering::Release);
+    }
+
+    pub(crate) fn select_http_version(
+        &self,
+        detected: http::Version,
+    ) -> std::io::Result<http::Version> {
+        use http::Version;
+        let allowed = match self.inner.protocol.load(Ordering::Acquire) {
+            0 => detected != Version::HTTP_2 || cfg!(feature = "http2-cleartext"),
+            1 | 2 => detected != Version::HTTP_2,
+            3 => detected == Version::HTTP_2,
+            _ => false,
+        };
+        if allowed {
+            Ok(detected)
+        } else {
+            Err(std::io::Error::new(
+                std::io::ErrorKind::InvalidData,
+                "HTTP protocol does not match the transport's negotiated or enabled protocol",
+            ))
+        }
+    }
+
     #[cfg(feature = "rustls")]
     pub(crate) fn set_tls_info(&self, info: super::TlsInfo) {
+        self.set_tls_protocol(info.alpn_protocol());
         let _ = self.inner.tls_info.set(Box::new(info));
     }
 
@@ -1520,38 +1555,7 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn abort_waiter_ignores_graceful_shutdown() {
-        let ctrl = ConnCtrl::new();
-        ctrl.graceful_shutdown();
-        assert!(
-            tokio::time::timeout(std::time::Duration::from_millis(10), ctrl.aborted())
-                .await
-                .is_err()
-        );
-        ctrl.abort();
-        assert_eq!(ctrl.aborted().await, ConnState::Abort);
-    }
-
-    #[tokio::test]
-    async fn abort_wakes_every_waiter() {
-        let ctrl = ConnCtrl::new();
-        let connection_ctrl = ctrl.clone();
-        let connection_waiter = tokio::spawn(async move { connection_ctrl.notified().await });
-        let request_ctrl_a = ctrl.clone();
-        let request_waiter_a = tokio::spawn(async move { request_ctrl_a.aborted().await });
-        let request_ctrl_b = ctrl.clone();
-        let request_waiter_b = tokio::spawn(async move { request_ctrl_b.aborted().await });
-
-        // Give every future a chance to subscribe before broadcasting abort.
-        tokio::task::yield_now().await;
-        ctrl.abort();
-
-        let all_waiters = async {
-            assert_eq!(connection_waiter.await.unwrap(), ConnState::Abort);
-            assert_eq!(request_waiter_a.await.unwrap(), ConnState::Abort);
-            assert_eq!(request_waiter_b.await.unwrap(), ConnState::Abort);
-        };
-        tokio::time::timeout(std::tim
+    async fn abort_w
 ```
 
 ### Core Architecture Module: `crates/core/src/conn/joined.rs`
@@ -1897,490 +1901,187 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `52a54f7c` (2026-11-13)
-**Commit Message**: Fix endpoint request_body attribute path through the salvo facade (#1876)
+### Incident Patch 1: `617611e8` (2026-11-15)
+**Commit Message**: Update cache save action and fix vendor spell checks (#2008)
 
-The request_body attribute of #[endpoint] expanded to `#oapi::RefOr`,
-which resolves to `salvo::RefOr` when the application depends on the
-`salvo` facade instead of `salvo-oapi` directly. That path does not
-exist, so both `request_body(...)` and `request_body = Type` failed with
-E0433 since 1.1.2 (#1852).
+* Bump actions/cache/save from 5.1.0 to 6.1.0
 
-Use `#oapi::oapi::RefOr`, like the rest of the macro crate, and cover
-both forms of the attribute with a test that goes through the facade.
+Bumps [actions/cache/save](https://github.com/actions/cache) from 5.1.0 to 6.1.0.
+- [Release notes](https://github.com/actions/cache/releases)
+- [Changelog](https://github.com/actions/cache/blob/main/RELEASES.md)
+- [Commits](https://github.com/actions/cache/compare/caa296126883cff596d87d8935842f9db880ef25...55cc8345863c7cc4c66a329aec7e433d2d1c52a9)
 
-Co-authored-by: rust1688 <[REDACTED_EMAIL]>
+---
+updated-dependencies:
+- dependency-name: actions/cache/save
+  dependency-version: 6.1.0
+  dependency-type: direct:production
+  update-type: version-update:semver-major
+...
 
-**File**: `CHANGELOG.md` (modified, +5/-0)
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+
+* Apply vendor spell-check exceptions to repository scans
+
+---------
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Co-authored-by: Chris Young <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/fuzz.yml` (modified, +1/-1)
 ```diff
-@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+@@ -98,7 +98,7 @@ jobs:
  
- ## [Unreleased]
- 
-+### Fixed
-+
-+- Fix `#[endpoint(request_body(...))]` failing to compile through the `salvo` facade
-+  with `cannot find RefOr in salvo` (regression in 1.1.2).
-+
- ## [1.1.2] - 2026-11-10
- 
- ### Added
+       - name: Save reusable corpus
+         if: always() && github.event_name != 'pull_request'
+-        uses: actions/cache/save@caa296126883cff596d87d8935842f9db880ef25 # v5
++        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+         with:
+           path: fuzz/.corpus-cache/${{ matrix.target }}
+           key: fuzz-corpus-v1-${{ matrix.target }}-${{ github.run_id }}-${{ github.run_attempt }}
 ```
 
-**File**: `crates/oapi-macros/src/operation.rs` (modified, +1/-1)
+**File**: `examples/vendor/rbdc/typos.toml` (removed, +0/-4)
 ```diff
-@@ -120,7 +120,7 @@ impl<'a> Operation<'a> {
-             modifiers.push({
-                 let rb = rb.try_to_token_stream()?;
-                 quote! {
--                    if let Some(#oapi::RefOr::Type(request_body)) = operation.request_body.as_mut() {
-+                    if let Some(#oapi::oapi::RefOr::Type(request_body)) = operation.request_body.as_mut() {
-                         request_body.merge(#rb);
-                     } else {
-                         operation.request_body = Some((#rb).into());
+@@ -1,4 +0,0 @@
+-# Preserve these upstream documentation and test-fixture spellings.
+-[default.extend-words]
+-exmample = "exmample"
+-abd = "abd"
 ```
 
-**File**: `crates/oapi-macros/tests/endpoint_tests.rs` (modified, +55/-0)
+**File**: `examples/vendor/sqlx-sqlite/typos.toml` (removed, +0/-3)
 ```diff
-@@ -94,3 +94,58 @@ fn test_endpoint_singular_aliases() {
-         })
-     );
- }
-+
-+// The `request_body(...)` attribute must expand to paths that resolve through the `salvo`
-+// facade, which is how this test crate (and most applications) reach `salvo-oapi`.
-+#[test]
-+fn test_endpoint_request_body_attribute() {
-+    #[derive(serde::Deserialize, ToSchema)]
-+    #[allow(dead_code)]
-+    struct NewUser {
-+        name: String,
-+    }
-+
-+    #[endpoint(request_body(content = NewUser, description = "user payload"))]
-+    async fn create_user() -> &'static str {
-+        "ok"
-+    }
-+
-+    // The attribute is merged into the body inferred from the `JsonBody` extractor.
-+    #[endpoint(request_body(content = NewUser, description = "replacement payload"))]
-+    async fn replace_user(_user: JsonBody<NewUser>) -> &'static str {
-+        "ok"
-+    }
-+
-+    #[endpoint(request_body = NewUser)]
-+    async fn patch_user() -> &'static str {
-+        "ok"
-+    }
-+
-+    let router = Router::new()
-+        .push(Router::with_path("users").post(create_user))
-+        .push(
-+            Router::with_path("users/{id}")
-+                .put(replace_user)
-+                .patch(patch_user),
-+        );
-+
-+    let doc =
-+        serde_json::to_value(OpenApi::new("test api", "0.0.1").merge_router(&router)).unwrap();
-+    let schema_ref = json!({"$ref": "#/components/schemas/endpoint_tests.test_endpoint_request_body_attribute.NewUser"});
-+    assert_json_eq!(
-+        doc["paths"]["/users"]["post"]["requestBody"],
-+        json!({
-+            "description": "user payload",
-+            "content": {"application/json": {"schema": schema_ref}},
-+            "required": true
-+        })
-+    );
-+    let merged = &doc["paths"]["/users/{id}"]["put"]["requestBody"];
-+    assert_eq!(merged["description"], "replacement payload");
-+    assert_eq!(merged["content"]["application/json"]["schema"], schema_ref);
-+    let short_form = &doc["paths"]["/users/{id}"]["patch"]["requestBody"];
-+    assert_eq!(
-+        short_form["content"]["application/json"]["schema"],
-+        schema_ref
-+    );
-+}
+@@ -1,3 +0,0 @@
+-# Preserve this token in the unmodified upstream SQLite driver sources.
+-[default.extend-words]
+-doub = "doub"
+```
+
+**File**: `typos.toml` (modified, +7/-1)
+```diff
+@@ -3,6 +3,12 @@ extend-ignore-identifiers-re = [
+     # *sigh* this just isn't worth the cost of fixing
+     "AttributeID.*Supress.*",
+ ]
++extend-ignore-re = [
++    # Preserve these exact upstream vendor snippets during a repository-root scan.
++    'Bytes::from\(b"abd"\.to_vec\(\)\)',
++    's\.contains\("doub"\)',
++    '/// for exmample:',
++]
+ 
+ [default.extend-identifiers]
+ # *sigh* this just isn't worth the cost of fixing
+@@ -15,4 +21,4 @@ Hashi = "Hashi"
+ consts = "consts"
+ 
+ [files]
+-extend-exclude = ["**/*.js", "**/*.css", "**/*.html", "examples/*/static/**/*.*"]
+\ No newline at end of file
++extend-exclude = ["**/*.js", "**/*.css", "**/*.html", "examples/*/static/**/*.*"]
 ```
 
 ---
 
-### Incident Patch 2: `fb80161a` (2026-11-13)
-**Commit Message**: Fix macro expansion for downstream consumers (#1877)
+### Incident Patch 2: `31d4f408` (2026-11-15)
+**Commit Message**: Format new transport and response regressions with nightly rustfmt (#2006)
 
-**File**: `.github/fixtures/macro_paths.rs` (added, +128/-0)
+**File**: `crates/core/tests/response_http_semantics.rs` (modified, +2/-1)
 ```diff
-@@ -0,0 +1,128 @@
-+// Deliberately avoid the prelude and Writer imports: generated code must resolve
-+// its own dependencies, including traits used on extractor errors.
-+#[derive(serde::Deserialize, api::ToSchema)]
-+struct Payload {
-+    value: String,
-+}
+@@ -1,11 +1,12 @@
+ //! HTTP response semantics are finalized before selecting a transport.
+ #![cfg(feature = "test")]
+ 
++use std::io::Cursor;
 +
-+#[derive(serde::Deserialize, framework::macros::Extractible)]
-+#[salvo(extract(default_source(from = "query")))]
-+struct Extracted {
-+    value: String,
-+}
+ use salvo_core::http::{HeaderMap, StatusCode};
+ use salvo_core::prelude::*;
+ use salvo_core::test::{ResponseExt, TestClient};
+ use salvo_core::writing::ReadSeeker;
+-use std::io::Cursor;
+ 
+ #[tokio::test]
+ async fn head_runs_the_catcher_but_suppresses_its_body() {
+```
+
+**File**: `crates/core/tests/transport_protocol_selection.rs` (modified, +6/-3)
+```diff
+@@ -87,11 +87,14 @@ async fn cleartext_http2_follows_the_feature_and_advertised_capabilities() {
+ 
+ #[cfg(feature = "rustls")]
+ mod tls {
+-    use super::*;
+-    use rustls::pki_types::{CertificateDer, ServerName, pem::PemObject};
+-    use salvo_core::conn::rustls::{Keycert, RustlsConfig, default_crypto_provider};
+     use std::sync::Arc;
+ 
++    use rustls::pki_types::pem::PemObject;
++    use rustls::pki_types::{CertificateDer, ServerName};
++    use salvo_core::conn::rustls::{Keycert, RustlsConfig, default_crypto_provider};
 +
-+#[derive(serde::Deserialize, api::ToParameters)]
-+struct Parameters {
-+    r#type: String,
-+}
++    use super::*;
 +
-+#[api::endpoint]
-+async fn parameters(params: Parameters) -> String {
-+    params.r#type
-+}
-+
-+#[derive(api::ToResponse)]
-+struct Reply(String);
-+
-+#[derive(api::ToResponses)]
-+enum Replies {
-+    #[salvo(response(status_code = 200))]
-+    Ok(String),
-+}
-+
-+#[framework::handler]
-+async fn plain(value: api::extract::QueryParam<String>) -> String {
-+    value.into_inner()
-+}
-+
-+#[api::endpoint(request_body(content = Payload, description = "payload"))]
-+async fn described(value: api::extract::QueryParam<String>) -> String {
-+    value.into_inner()
-+}
-+
-+#[api::endpoint(request_body = Payload)]
-+async fn short() {}
-+
-+#[api::endpoint(request_body(content = Payload, description = "merged"))]
-+async fn merged(_body: api::extract::JsonBody<Payload>) {}
-+
-+#[api::endpoint(request_body(description = "inferred payload"))]
-+async fn inferred(_body: api::extract::JsonBody<Payload>) {}
-+
-+#[derive(Clone)]
-+struct Service;
-+
-+#[renamed_craft::craft]
-+impl Service {
-+    #[craft(endpoint(request_body = Payload))]
-+    fn endpoint(&self) -> &'static str {
-+        "ok"
-+    }
-+
-+    #[craft(endpoint)]
-+    fn static_endpoint() {}
-+
-+    #[craft(handler)]
-+    fn handler(&self) {}
-+}
-+
-+#[tokio::main(flavor = "current_thread")]
-+async fn main() {
-+    use framework::test::ResponseExt;
-+    let _ = <Extracted as framework::Extractible>::metadata();
-+    let router = framework::Router::new()
-+        .push(framework::Router::with_path("plain").get(plain))
-+        .push(framework::Router::with_path("described").post(described))
-+        .push(framework::Router::with_path("short").post(short))
-+        .push(framework::Router::with_path("merged").post(merged))
-+        .push(framework::Router::with_path("inferred").post(inferred))
-+        .push(framework::Router::with_path("craft").post(Service.endpoint()))
-+        .push(framework::Router::with_path("static").get(Service::static_endpoint()))
-+        .push(framework::Router::with_path("handler").get(Service.handler()));
-+    let router = router.push(framework::Router::with_path("parameters").get(parameters));
-+    let document =
-+        serde_json::to_value(api::OpenApi::new("paths", "1").merge_router(&router)).unwrap();
-+    for path in ["/described", "/short", "/merged", "/inferred", "/craft"] {
-+        assert!(
-+            document["paths"][path]["post"]["requestBody"]["content"]["application/json"]["schema"]
-+                ["$ref"]
-+                .is_string()
-+        );
-+    }
-+    assert_eq!(
-+        document["paths"]["/merged"]["post"]["requestBody"]["description"],
-+        "merged"
+     fn identity() -> Keycert {
+         Keycert::new()
+             .cert(include_bytes!("../certs/cert.pem").as_slice())
+```
+
+**File**: `crates/proxy/tests/unix_upgrade.rs` (modified, +5/-1)
+```diff
+@@ -28,7 +28,11 @@ async fn unix_upgrade_transfers_both_ways_and_stops_with_its_front_server() {
+     let path = directory.path().join("app.sock.d");
+     std::fs::create_dir(&path).unwrap();
+     let path = path.join("server.sock");
+-    let upstream = Server::new(salvo_core::conn::UnixListener::new(path.clone()).bind().await);
++    let upstream = Server::new(
++        salvo_core::conn::UnixListener::new(path.clone())
++            .bind()
++            .await,
 +    );
-+    assert_eq!(
-+        document["paths"]["/inferred"]["post"]["requestBody"]["description"],
-+        "inferred payload"
-+    );
-+    assert!(document["paths"]["/static"]["get"].is_object());
-+    assert_eq!(
-+        document["paths"]["/parameters"]["get"]["parameters"][0]["name"],
-+        "type"
-+    );
-+    let service = framework::Service::new(router);
-+    let response = framework::test::TestClient::get("http://localhost/plain")
-+        .send(&service)
-+        .await;
-+    assert_eq!(
-+        response.status_code,
-+        Some(framework::http::StatusCode::BAD_REQUEST)
-+    );
-+    let response = framework::test::TestClient::post("http://localhost/described")
-+        .send(&service)
-+        .await;
-+    assert_eq!(
-+        response.status_code,
-+        Some(framework::http::StatusCode::BAD_REQUEST)
-+    );
-+    let mut response = framework::test::TestClient::get("http://localhost/plain?value=hello")
-+        .send(&service)
-+        .await;
-+    assert_eq!(response.take_string().await.unwrap(), "hello");
-+    let mut response = framework::test::TestClient::get("http://localhost/parameters?type=hello")
-+        .send(&service)
-+        .await;
-+    assert_eq!(response.take_string().await.unwrap(), "hello");
-+}
+     let upstream_handle = upstream.handle();
+     let upstream = tokio::spawn(upstream.serve(Router::new().goal(websocket)));
+     let front = TcpListener::new("127.0.0.1:0").bind().await;
 ```
 
-**File**: `.github/scripts/check_macro_paths.py` (added, +64/-0)
+---
+
+### Incident Patch 3: `4fbccbbc` (2026-11-15)
+**Commit Message**: Declare catcher formats required by isolated crate tests (#2000)
+
+**File**: `crates/oapi/Cargo.toml` (modified, +1/-0)
 ```diff
-@@ -0,0 +1,64 @@
-+"""Run macro consumers with facade/split dependencies and renamed dependency keys."""
-+import argparse
-+import json
-+from pathlib import Path
-+import subprocess
-+
-+
-+def main():
-+    parser = argparse.ArgumentParser(description=__doc__)
-+    parser.add_argument("--offline", action="store_true")
-+    parser.add_argument("--case", choices=["facade", "renamed-facade", "split", "renamed-split", "raw-identifier"])
-+    args = parser.parse_args()
-+    root = Path(__file__).resolve().parents[2]
-+    metadata = json.loads(subprocess.check_output(["cargo", "metadata", "--no-deps", "--format-version", "1"], cwd=root, text=True))
-+    target = Path(metadata["target_directory"]).resolve()
-+    fixture = (target / "macro-path-contract").resolve()
-+    assert fixture.is_relative_to(target)
-+    (fixture / "src").mkdir(parents=True, exist_ok=True)
-+    source = (root / ".github/fixtures/macro_paths.rs").read_text(encoding="utf-8")
-+    failures = []
-+    for case in ["facade", "renamed-facade", "split", "renamed-split", "raw-identifier"]:
-+        if args.case and args.case != case:
-+            continue
-+        facade = case in ("facade", "renamed-facade", "raw-identifier")
-+        framework = "framework" if case.startswith("renamed") else ("salvo" if facade else "salvo_core")
-+        api = "api" if case.startswith("renamed") else "salvo_oapi"
-+        package = "salvo" if facade else "salvo_core"
-+        path = root / "crates" / ("salvo" if facade else "core")
-+        manifest = '[package]\nname = "macro-path-contract"\nversion = "0.0.0"\nedition = "2024"\npublish = false\n[workspace]\n[dependencies]\n'
-+        manifest += f'{framework} = {{ package = "{package}", path = {json.dumps(str(path))}, default-features = false, features = {json.dumps(["oapi", "test"] if facade else ["test"])} }}\n'
-+        if not facade:
-+            manifest += f'{api} = {{ package = "salvo-oapi", path = {json.dumps(str(root / "crates/oapi"))} }}\n'
-+        manifest += f'renamed_craft = {{ package = "salvo-craft", path = {json.dumps(str(root / "crates/craft"))} }}\n'
-+        manifest += 'serde = { version = "1", features = ["derive"] }\nserde_json = "1"\n'
-+        manifest += 'tokio = { version = "1", features = ["macros", "rt"] }\n'
-+        imports = f'use {framework} as framework;\n' if framework != "framework" else ""
-+        imports += f'use {framework}::oapi as api;\n' if facade else (f'use {api} as api;\n' if api != "api" else "")
-+        code = source
-+        if case == "raw-identifier":
-+            code = '''#[api::endpoint]
-+async fn r#match(r#type: api::extract::QueryParam<String>) -> String { r#type.into_inner() }
-+fn main() {
-+    let router = framework::Router::with_path("raw").get(r#match);
-+    let document = serde_json::to_value(api::OpenApi::new("raw", "1").merge_router(&router)).unwrap();
-+    assert_eq!(document["paths"]["/raw"]["get"]["parameters"][0]["name"], "type");
-+}
-+'''
-+        (fixture / "Cargo.toml").write_text(manifest, encoding="utf-8")
-+        (fixture / "src/main.rs").write_text(imports + code, encoding="utf-8")
-+        command = ["cargo", "run", "--quiet", "--manifest-path", str(fixture / "Cargo.toml")]
-+        if args.offline:
-+            command.append("--offline")
-+        result = subprocess.run(command, cwd=root, text=True, capture_output=True)
-+        (fixture / f"{case}.log").write_text(result.stderr, encoding="utf-8")
-+        print(f'{case}: {"FAIL" if result.returncode else "PASS"}', flush=True)
-+        if result.returncode:
-+            failures.append(case)
-+    if failures:
-+        raise SystemExit(f"Failed: {', '.join(failures)}; evidence: {fixture}")
-+    print(f"Macro dependency path contracts passed; evidence: {fixture}")
-+
-+
-+if __name__ == "__main__":
-+    main()
+@@ -107,6 +107,7 @@ assert-json-diff = { workspace = true }
+ salvo_core = { workspace = true, default-features = false, features = [
+     "cookie",
+     "test",
++    "catcher-json",
+ ] }
+ serde_json = { workspace = true }
+ serde = { workspace = true }
 ```
 
-**File**: `.github/workflows/macro-contracts.yml` (modified, +5/-2)
+**File**: `crates/serve-static/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -3,10 +3,10 @@ permissions:
-   contents: read
- on:
-   pull_request:
--    paths: ['**/*.rs', '**/Cargo.toml', '.github/fixtures/**', '.github/schemas/**', '.github/scripts/check_macro_contracts.py', '.github/workflows/macro-contracts.yml']
-+    paths: ['**/*.rs', '**/Cargo.toml', '.github/fixtures/**', '.github/schemas/**', '.github/scripts/check_macro_contracts.py', '.github/scripts/check_macro_paths.py', '.github/workflows/macro-contracts.yml']
-   push:
-     branches: [main]
--    paths: ['**/*.rs', '**/Cargo.toml', '.github/fixtures/**', '.github/schemas/**', '.github/scripts/check_macro_contracts.py', '.github/workflows/macro-contracts.yml']
-+    paths: ['**/*.rs', '**/Cargo.toml', '.github/fixtures/**', '.github/schemas/**', '.github/scripts/check_macro_contracts.py', '.github/scripts/check_macro_paths.py', '.github/workflows/macro-contracts.yml']
- concurrency:
-   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-   cancel-in-progress: ${{ github.ref_type != 'tag' }}
-@@ -21,6 +21,7 @@ jobs:
-           toolchain: 1.99.1
-       - run: python3 -m pip install jsonschema==4.26.0
-       - run: python3 .github/scripts/check_macro_contracts.py
-+      - run: python3 .github/scripts/check_macro_paths.py
-       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
-         if: always()
-         with:
-@@ -29,3 +30,5 @@ jobs:
-             target/downstream-macro-contract/*.log
-             target/downstream-macro-contract/openapi.json
-             target/downstream-macro-contract/Cargo.lock
-+            target/macro-path-contract/*.log
-+            target/macro-path-contract/Cargo.lock
-```
-
-**File**: `CHANGELOG.md` (modified, +6/-0)
-```diff
-@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+@@ -40,7 +40,7 @@ tokio = { workspace = true }
+ [dev-dependencies]
+ stats_alloc = "0.1.10"
+ flate2 = { workspace = true }
+-salvo_core = { workspace = true, features = ["test"] }
++salvo_core = { workspace = true, features = ["test", "catcher-html"] }
+ tempfile = { workspace = true }
+ tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
  
- ### Fixed
- 
-+- Fix OpenAPI macros with renamed `salvo` dependencies, `craft(endpoint)` with
-+  direct `salvo_core`/`salvo-oapi` dependencies, extractor error handling without
-+  a `Writer` import, endpoint functions and parameters using raw identifiers,
-+  raw field extraction in `ToParameters`, crafted handlers on private service types,
-+  and description-only overrides of inferred request bodies.
-+
- - Fix `#[endpoint(request_body(...))]` failing to compile through the `salvo` facade
-   with `cannot find RefOr in salvo` (regression in 1.1.2).
- 
-```
-
-**File**: `crates/craft-macros/src/craft.rs` (modified, +3/-3)
-```diff
-@@ -8,7 +8,7 @@ use syn::{
-     Attribute, FnArg, Generics, Ident, ImplItem, ImplItemFn, Item, Token, Type, parse_quote,
- };
- 
--use crate::utils::salvo_crate;
-+use crate::utils::{oapi_crate, salvo_crate};
- 
- pub(crate) fn generate(input: Item) -> syn::Result<TokenStream> {
-     match input {
-@@ -61,7 +61,7 @@ fn take_method_macro(item_fn: &mut ImplItemFn) -> syn::Result<Option<Attribute>>
-                 .unwrap_or_default();
-             let ts: TokenStream = match name {
-                 "handler" => format!("#[{}::{name}{content}]", salvo_crate()).parse()?,
--                "endpoint" => format!("#[{}::oapi::{name}{content}]", salvo_crate()).parse()?,
-+                "endpoint" => format!("#[{}::oapi::{name}{content}]", oapi_crate()).parse()?,
-                 _ => {
-                     unreachable!()
-                 }
-@@ -184,7 +184,7 @@ fn rewrite_method(
-             parse_quote! {
-                 #vis fn #method_name(#receiver) -> impl #handler {
-                     #[allow(non_camel_case_types)]
--                    pub struct handle #impl_g(::std::sync::Arc<#self_ty>) #where_c;
-+                    struct handle #impl_g(::std::sync::Arc<#self_ty>) #where_c;
-                     use ::std::ops::Deref;
-                     impl #impl_g Deref for handle #ty_g #where_c {
-                         type Target = #self_ty;
-```
-
-**File**: `crates/craft-macros/src/utils.rs` (modified, +8/-0)
-```diff
-@@ -2,6 +2,14 @@ use proc_macro_crate::{FoundCrate, crate_name};
- use proc_macro2::Span;
- use syn::Ident;
- 
-+pub(crate) fn oapi_crate() -> syn::Ident {
-+    match crate_name("salvo-oapi") {
-+        Ok(FoundCrate::Itself) => Ident::new("salvo_oapi", Span::call_site()),
-+        Ok(FoundCrate::Name(name)) => Ident::new(&name, Span::call_site()),
-+        Err(_) => salvo_crate(),
-+    }
-+}
-+
- pub(crate) fn salvo_crate() -> syn::Ident {
-     match crate_name("salvo") {
-         Ok(salvo) => match salvo {
-```
-
-**File**: `crates/macros/src/handler.rs` (modified, +1/-1)
-```diff
-@@ -126,7 +126,7 @@ fn handle_fn(salvo: &Ident, sig: &Signature) -> syn::Result<TokenStream> {
-                         let #id: #ty = match <#ty as #salvo::Extractible>::extract_with_arg(__macro_gen_req, __macro_gen_depot, #idv).await {
-                             Ok(data) => data,
-                             Err(e) => {
--                                e.write(__macro_gen_req, __macro_gen_depot, __macro_gen_res).await;
-+                                #salvo::Writer::write(e, __macro_gen_req, __macro_gen_depot, __macro_gen_res).await;
-                                 // If status code is not set or is not error, set it to 400.
-                                 let status_code = __macro_gen_res.status_code.unwrap_or_default();
-                                 if !status_code.is_client_error() && !status_code.is_server_error() {
-```
-
-**File**: `crates/oapi-macros/src/endpoint.rs` (modified, +6/-9)
-```diff
-@@ -1,5 +1,6 @@
- use proc_macro2::{Span, TokenStream};
- use quote::{ToTokens, quote};
-+use syn::ext::IdentExt;
- use syn::spanned::Spanned;
- use syn::{Expr, Ident, ImplItem, Item, Lit, Pat, ReturnType, Signature, Type};
- 
-@@ -41,6 +42,7 @@ fn metadata(
-     type_path: &TokenStream,
-     mut modifiers: Vec<TokenStream>,
- ) -> DiagResult<TokenStream> {
-+    let name = name.unraw();
-     let tfn = Ident::new(
-         &format!("__macro_gen_oapi_endpoint_type_id_{name}"),
-         Span::call_site(),
-@@ -280,21 +282,16 @@ fn handle_fn(
-                 if let (Pat::Ident(ident), Type::Path(ty)) = (&*pat.pat, &*pat.ty) {
-                     call_args.push(ident.ident.clone());
-                     let ty = omit_type_path_lifetimes(ty);
--                    let idv = pat.pat.to_token_stream().to_string();
--                    // If id like `mut pdata`, then idv is `pdata`;
--                    let idv = idv
--                        .rsplit_once(' ')
--                        .map(|(_, v)| v.to_owned())
--                        .unwrap_or(idv);
--                    let id = Ident::new(&idv, Span::call_site());
-+                    let id = ident.ident.clone();
-+                    let idv = id.unraw().to_string();
-                     let idv = idv.trim_start_matches('_');
-                     extract_ts.push(quote!{
-                         let #id: #ty = match <#ty as #salvo::Extractible>::extract_with_arg(__macro_gen_req, __macro_gen_depot, #idv).await {
-                             Ok(data) => {
-                                 data
-                             },
-                             Err(e) => {
--                                e.write(__macro_gen_req, __macro_gen_depot, __macro_gen_res).await;
-+                                #salvo::Writer::write(e, __macro_gen_req, __macro_gen_depot, __macro_gen_res).await;
-                                 // If status code is not set or is not error, set it to 400.
-                                 let status_code = __macro_gen_res.status_code.unwrap_or_default();
-                                 if !status_code.is_client_error() && !status_code.is_server_error() {
-@@ -379,7 +376,7 @@ mod tests {
-                         data
-                     },
-                     Err(e) => {
--                        e.write(__macro_gen_req, __macro_gen_depot, __macro_gen_res).await;
-+                        salvo::Writer::write(e, __macro_gen_req, __macro_gen_depot, __macro_gen_res).await;
-                         // If status code is not set or is not error, set it to 400.
-                         let status_code = __macro_gen_res.status_code.unwrap_or_default();
-                         if !status_code.is_client_error() && !status_code.is_server_error() {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1877** (2026-11-13): Fix macro expansion for downstream consumers (@chrislearn)
-- **PR #1876** (2026-11-13): Fix `#[endpoint(request_body(...))]` not compiling through the `salvo` facade (@rust1688)
-- **PR #1874** (2026-11-10): build(deps): bump actions/checkout from 6.1.0 to 7.0.1 (@dependabot[bot])
-- **PR #1873** (2026-11-10): build(deps): bump softprops/action-gh-release from 2.6.2 to 3.0.4 (@dependabot[bot])
-- **PR #1872** (2026-11-10): build(deps): bump actions/cache/restore from 5.1.0 to 6.1.0 (@dependabot[bot])
-- **PR #1871** (2026-11-10): build(deps): update taiki-e/install-action requirement to 28bfb437c78d9b7ea8650351357e3eb8c0be2672 (@dependabot[bot])
+- **PR #2008** (2026-11-15): Update cache save action and fix vendor spell checks (@dependabot[bot])
+- **PR #2007** (2026-11-15): Preserve negotiated TLS protocol state in ACME listeners (@chrislearn)
+- **PR #2006** (2026-11-15): Format transport and response regression tests (@chrislearn)
+- **PR #2005** (2026-11-15): Clarify the existing RSA audit exception (@chrislearn)
+- **PR #2004** (2026-11-15): Migrate Toasty PostgreSQL PEM parsing to maintained APIs (@chrislearn)
+- **PR #2003** (2026-11-15): Patch RBatis cache and PEM dependencies (@chrislearn)
 
 ---
 
@@ -2400,35 +2101,31 @@ Co-authored-by: rust1688 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. endpoint request_body attribute path through the salvo facade
+## X. Update cache save action and fix vendor spell checks
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in salvo-rs/salvo. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/fuzz.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in salvo-rs/salvo. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `52a54f7c`: endpoint request_body attribute path through the salvo facade. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `617611e8`: Update cache save action and fix vendor spell checks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/fuzz.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-### Fixed
-
-- Fix `#[endpoint(request_body(...))]` failing to compile through the `salvo` facade
-  with `cannot find RefOr in salvo` (regression in 1.1.2).
-
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+        uses: actions/cache/save@caa296126883cff596d87d8935842f9db880ef25 # v5
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `52a54f7c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `617611e8` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

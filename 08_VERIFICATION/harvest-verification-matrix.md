@@ -10140,3 +10140,5 @@
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T19:04:44.285Z` | `hf-diffuspace-clover-35b-a3b-preview` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-CBBB279C` [Domain D] | Yes (`df640769...`) |
 | `CYCLE-20261115-O5TR` | `2026-11-15T19:12:00.639Z` | `pyannote/speaker-diarization-3.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-pyannote-speaker-diarization-3.1-learnings.md` | Yes (`894bfa8a...`) |
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T19:12:44.648Z` | `hf-pyannote-speaker-diarization-3.1` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-6A7F4F3B` [Domain D] | Yes (`e327974f...`) |
+| `CYCLE-20261115-DXXN` | `2026-11-15T19:32:03.467Z` | `salvo-rs/salvo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8642` | Yes (`d0b5e958...`) |
+| `CYCLE-20261115-E7YF` | `2026-11-15T19:32:16.455Z` | `pixeltable/pixeltable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8643` | Yes (`f1663694...`) |

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T05:47:18.370Z",
+  "timestamp": "2026-11-15T19:32:21.179Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-pixeltable-pixeltable-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [pixeltable-pixeltable-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T05:47:18.370Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-15T19:32:21.179Z`  
 > **Learning ID**: `LEARN-EVO-pixeltable-pixeltable-learnings`
 
 
@@ -26,10 +26,10 @@ PROVENANCE_END -->
 ## 2. Operational Capabilities
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md`  
 > **Source**: github ([https://github.com/pixeltable/pixeltable](https://github.com/pixeltable/pixeltable))  
-> **Source Version**: `941d38df`  
+> **Source Version**: `890b85ab`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T05:46:39.869Z  
+> **Timestamp**: 2026-11-15T19:32:15.426Z  
 > **Learning ID**: `learn-github-pixeltable-pixeltable`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -43,7 +43,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pixeltable/pixeltable](https://github.com/pixeltable/pixeltable))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T05:46:39.862Z  
+> **Harvest Timestamp**: 2026-11-15T19:32:15.419Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1199,446 +1199,313 @@ def check_udf_references(bases: list[model.TableModelMeta]) -> list[str]:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b907dcb3` (2026-11-13)
-**Commit Message**: Write the default config atomically and require init_env for tests that reach Env (#1955)
+### Incident Patch 1: `890b85ab` (2026-11-14)
+**Commit Message**: Add built-in web search and fetching through Parallel MCP (#1793)
 
-## Problem
+Give Pixeltable tool-calling workflows and computed columns free web
+search and page excerpts with [Parallel Search
+MCP](https://docs.parallel.ai/integrations/mcp/search-mcp). Install
+`pixeltable[web]`, then call `pxtf.web.search(query)` and
+`pxtf.web.fetch(url)`, or include them in `pxt.tools()`. Search uses
+Fast mode, with no account or API key needed.
 
-[Run
-43480825714](https://github.com/pixeltable/pixeltable/actions/runs/43480825714/job/132076789915)
-(`standard, macos-15, 3.11`, the merge group for #1945) failed in
-`TestAnthropicTypedDictAdherence::test_mirrors` with
-`pixeltable/file_cache_size_g is missing from configuration`. Two things
-combined:
+The new web functions use Parallel when unconfigured. Existing tool
+lists and MCP server selections stay explicit. Set `PARALLEL_API_KEY` to
+use an existing account, and bind the application's conversation ID for
+related searches and fetches.
 
-1. **The default config isn't written atomically.** When `config.toml`
-doesn't exist, `Config` creates it with `open(path, 'w')` followed by
-`toml.dump()`. A process that reads it between the two sees an empty
-file and caches a config with no `file_cache_size_g`. On a fresh runner,
-the xdist workers all start at once and race on
-`~/.pixeltable/config.toml`.
-2. **#1855 added 9 tests that reach `Env.get()` without `init_env`**,
-through `skip_test_if_not_installed()`. `test_mirrors` was gw2's first
-test, so it read the shared config outside `init_env`'s file lock while
-gw0 and gw1 were creating it. #1855's own merge-queue run passed because
-a different test ran first.
+I work at Parallel.
 
-Locally, with 3 processes starting at once against an empty home, 25 of
-180 processes read an empty config.
+---------
 
-## Chang
+Co-authored-by: George Pickett <[REDACTED_EMAIL]>
+Co-authored-by: Marcel Kornacker <[REDACTED_EMAIL]>
 
-**File**: `.github/instructions/tests.instructions.md` (modified, +4/-0)
+**File**: `.github/workflows/pytest.yml` (modified, +1/-0)
 ```diff
-@@ -10,6 +10,10 @@ applyTo: "tests/**"
- - Prefer `db_root: DatabaseRoot` and `db_root.make_catalog_path()` for portable catalog tests.
-   `uses_db` and plain paths are valid for in-process tests; they require
-   `@pytest.mark.db_roots('local', reason='...')`. The reason explains the restriction or is `TODO: convert`.
-+- A test that reaches `Env.get()`, directly or through a helper such as `skip_test_if_not_installed()`,
-+  requests `init_env`; `uses_db` and `db_root` include it. Without it, the test would use whatever an earlier
-+  test on its xdist worker set up, or the developer's real Pixeltable home and database when it runs first, so
-+  `tests/conftest.py` fails such a test.
- - Use `pxt_raises(..., match=...)` for Pixeltable errors, and `pytest.raises(..., match=...)` for other
-   exceptions. Verify meaningful error text.
- - New tests making live third-party model/service calls need `remote_api` and `very_expensive`; mocked
+@@ -110,6 +110,7 @@ env:
+   OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+   OTEL_EXPORTER_OTLP_ENDPOINT: ${{ secrets.OTEL_EXPORTER_OTLP_ENDPOINT }}
+   OTEL_EXPORTER_OTLP_HEADERS: ${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}
++  PARALLEL_API_KEY: ${{ secrets.PARALLEL_API_KEY }}
+   R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+   R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+   REPLICATE_API_TOKEN: ${{ secrets.REPLICATE_API_TOKEN }}
 ```
 
-**File**: `pixeltable/config.py` (modified, +3/-1)
+**File**: `docs/public_api.opml` (modified, +4/-0)
 ```diff
-@@ -20,6 +20,7 @@
- 
- from pixeltable import exceptions as excs
- from pixeltable.service.resources import DatabaseCapacity, ServiceResources, UdfResources
-+from pixeltable.utils.file_io import atomic_write
- 
- if TYPE_CHECKING:
-     from pixeltable import catalog
-@@ -597,7 +598,8 @@ def __load_home_config(self) -> dict[str, dict[str, tuple[Any, Path]]]:
- 
-         else:
-             config_dict = self.__create_default_config(self.__config_file)
--            with open(self.__config_file, 'w', encoding='utf-8') as stream:
-+            # a process starting at the same time must never read a partial file
-+            with atomic_write(self.__config_file, mode='w', encoding='utf-8') as stream:
-                 try:
-                     toml.dump(config_dict, stream)
-                 except Exception as exc:
+@@ -481,6 +481,10 @@
+         <outline text="module|pixeltable.functions.openrouter">
+           <outline text="udf|pixeltable.functions.openrouter.chat_completions" />
+         </outline>
++        <outline text="module|pixeltable.functions.parallel">
++          <outline text="udf|pixeltable.functions.parallel.search" />
++          <outline text="udf|pixeltable.functions.parallel.extract" />
++        </outline>
+         <outline text="module|pixeltable.functions.replicate">
+           <outline text="udf|pixeltable.functions.replicate.run" />
+         </outline>
 ```
 
-**File**: `tests/conftest.py` (modified, +34/-1)
+**File**: `docs/release/docs.json` (modified, +2/-0)
 ```diff
-@@ -1,3 +1,4 @@
-+import contextlib
- import ctypes
- import faulthandler
- import functools
-@@ -102,10 +103,42 @@ def pytest_collection_modifyitems(items: list[pytest.Item]) -> None:
-         )
+@@ -125,6 +125,7 @@
+                       "sdk/latest/ollama",
+                       "sdk/latest/openai",
+                       "sdk/latest/openrouter",
++                      "sdk/latest/parallel",
+                       "sdk/latest/replicate",
+                       "sdk/latest/runwayml",
+                       "sdk/latest/together",
+@@ -373,6 +374,7 @@
+               "howto/providers/working-with-ollama",
+               "howto/providers/working-with-openai",
+               "howto/providers/working-with-openrouter",
++              "howto/providers/working-with-parallel",
+               "howto/providers/working-with-pydantic",
+               "howto/providers/working-with-replicate",
+               "howto/providers/working-with-runwayml",
+```
+
+**File**: `docs/release/howto/providers/working-with-parallel.ipynb` (added, +510/-0)
+```diff
+@@ -0,0 +1,510 @@
++{
++ "cells": [
++  {
++   "cell_type": "markdown",
++   "metadata": {},
++   "source": [
++    "# Working with Parallel in Pixeltable\n",
++    "\n",
++    "Pixeltable's [Parallel](https://parallel.ai/) integration gives your tables and agents web search and page\n",
++    "extraction, as computed columns that run once per row and are cached with the rest of your data.\n",
++    "\n",
++    "The UDFs work without a Parallel account: with no API key configured, they call Parallel's free MCP endpoint,\n",
++    "which serves searches in Fast mode under the service's anonymous rate limits. With a key, they call the Search and\n",
++    "Extract REST APIs, which also accept the settings shown further down.\n",
++    "\n",
++    "### Prerequisites\n",
++    "\n",
++    "- `pip install mcp`, which the free endpoint needs\n",
++    "- Optionally, a Parallel account and API key (https://platform.parallel.ai/)\n",
++    "\n",
++    "### Important notes\n",
++    "\n",
++    "- Parallel usage may incur costs based on your Parallel plan. Searches in `basic` and `advanced` mode cost five\n",
++    "  times those in `fast` and `turbo` mode.\n",
++    "- Be mindful of sensitive data and consider security measures when integrating with external services."
++   ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": null,
++   "metadata": {},
++   "outputs": [],
++   "source": [
++    "%pip install -qU pixeltable mcp"
++   ]
++  },
++  {
++   "cell_type": "markdown",
++   "metadata": {},
++   "source": [
++    "Everything up to [Searching with your own account](#searching-with-your-own-account) runs without a\n",
++    "Parallel API key, on the free endpoint, in Fast mode. That section needs one."
++   ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": 2,
++   "metadata": {},
++   "outputs": [
++    {
++     "name": "stdout",
++     "output_type": "stream",
++     "text": [
++      "No PARALLEL_API_KEY: using the free endpoint, in Fast mode.\n"
++     ]
++    }
++   ],
++   "source": [
++    "import os\n",
++    "\n",
++    "if 'PARALLEL_API_KEY' in os.environ:\n",
++    "    print('Using the Search and Extract APIs of your Parallel account.')\n",
++    "else:\n",
++    "    print('No PARALLEL_API_KEY: using the free endpoint, in Fast mode.')"
++   ]
++  },
++  {
++   "cell_type": "markdown",
++   "metadata": {},
++   "source": [
++    "Now let's create a Pixeltable directory to hold the tables for our demo."
++   ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": 3,
++   "metadata": {},
++   "outputs": [
++    {
++     "name": "stdout",
++     "output_type": "stream",
++     "text": [
++      "Created directory 'parallel_demo'.\n"
++     ]
++    },
++    {
++     "data": {
++      "text/plain": [
++       "<pixeltable.catalog.dir.Dir at 0x7fddbe435c10>"
++      ]
++     },
++     "execution_count": 3,
++     "metadata": {},
++     "output_type": "execute_result"
++    }
++   ],
++   "source": [
++    "import pixeltable as pxt\n",
++    "\n",
++    "# Remove the 'parallel_demo' directory and its contents, if it exists\n",
++    "pxt.drop_dir('parallel_demo', force=True)\n",
++    "pxt.create_dir('parallel_demo')"
++   ]
++  },
++  {
++   "cell_type": "markdown",
++   "metadata": {},
++   "source": [
++    "## Searching the web\n",
++    "\n",
++    "`parallel.search()` takes the information a row needs and returns the sources that answer it, each with the\n",
++    "passages relevant to the request. Pass `search_queries` to rank sources against keyword queries of your own;\n",
++    "with none, the UDF sends the objective as the only query.\n",
++    "\n",
++    "Each row also carries a conversation ID, which the next section uses."
++   ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": 4,
++   "metadata": {},
++   "outputs": [
++    {
++     "name": "stdout",
++     "output_type": "stream",
++     "text": [
++      "Created table 'research'.\n",
++      "Added 0 column values with 0 errors in 0.01 s\n"
++     ]
++    },
++    {
++     "data": {
++      "text/plain": [
++       "No rows affected."
++      ]
++     },
++     "execution_count": 4,
++     "metadata": {},
++     "output_type": "execute_result"
++    }
++   ],
++   "source": [
++    "import uuid\n",
++    "from pixeltable.functions import parallel\n",
++    "\n",
++    "research_t = pxt.create_table(\n",
++    "    'parallel_demo.research',\n",
++    "    {'question': pxt.String, 'conversation': pxt.String},\n",
++    ")\n",
++    "research_t.add_computed_column(\n",
++    "    sources=parallel.search(\n",
++    "        research_t.question, session_id=research_t.conversation\n",
++    "    )\n",
++    ")"
++   ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": 5,
++   "metadata": {},
++   "outputs": [
++    {
++     "name": "stdout",
++     "output_type": "stream",
++     "text": [
++      "Inserted 2 rows with 0 errors in 1.46 s (1.37 rows/s)\n"
++     ]
++    },
++    {
++     "data": {
++      "text/plain": [
++       "2 rows inserted."
++      ]
++     },
++     "execution_count": 5,
++     "metadata": {},
++     "output_type": "execute_result"
+```
+
+**File**: `docs/release/integrations/frameworks.mdx` (modified, +10/-0)
+```diff
+@@ -283,6 +283,16 @@ Platforms that host or route many models from a shared catalog.
+   </Card>
+ </CardGroup>
  
- 
--def pytest_runtest_setup(item: pytest.Item) -> None:
-+@contextlib.contextmanager
-+def _requires_init_env(item: pytest.Item) -> Iterator[None]:
-+    """Fails a test that reaches Env.get() on its own thread without requesting init_env.
++## Web search
 +
-+    Such a test uses whatever environment an earlier test on its worker set up, or the developer's real home and
-+    database when it runs first, so CI catches it only when it happens to run first.
-+    """
-+    if not isinstance(item, pytest.Function) or 'init_env' in item.fixturenames:
-+        yield
-+        return
-+    get = Env.__dict__['get'].__func__
-+    test_thread = threading.current_thread()
++<Card
++  title="Parallel"
++  icon="magnifying-glass"
++  href="/howto/providers/working-with-parallel"
++>
++  Web search and page extraction, with or without a Parallel account
++</Card>
 +
-+    def guarded_get(cls: type[Env]) -> Env:
-+        if threading.current_thread() is test_thread:
-+            pytest.fail(f'{item.nodeid} reaches Env.get() without requesting the init_env fixture')
-+        return get(cls)
+ ## Enterprise
+ 
+ <Card
+```
+
+**File**: `docs/release/platform/configuration.mdx` (modified, +1/-0)
+```diff
+@@ -144,6 +144,7 @@ The pods read these settings at startup. The endpoint and protocol in the entry
+ | OPENROUTER_API_KEY | [openrouter]<br/>api_key | (string) API key to use for OpenRouter services |
+ | OPENROUTER_SITE_URL | [openrouter]<br/>site_url | (string) Application URL (optional, for OpenRouter analytics) |
+ | OPENROUTER_APP_NAME | [openrouter]<br/>app_name | (string) Application name (optional, for OpenRouter analytics) |
++| PARALLEL_API_KEY | [parallel]<br/>api_key | (string, optional) API key to use for Parallel services; without one, search and extraction use Parallel's free endpoint |
+ | REPLICATE_API_TOKEN | [replicate]<br/>api_token | (string) API token to use for Replicate services |
+ | TOGETHER_API_KEY | [together]<br/>api_key | (string) API key to use for Together AI services |
+ | TWELVELABS_API_KEY | [twelvelabs]<br/>api_key | (string) API key to use for TwelveLabs services |
+```
+
+**File**: `docs/release/use-cases/agentic-workflows.mdx` (modified, +2/-0)
+```diff
+@@ -53,6 +53,8 @@ assistant.select(assistant.message, assistant.tool_output).collect()
+ 
+ `pxt service list` prints the URL. POST `/ask` with `{"message": "..."}`. Chat history is another table with an embedding index: [Agent memory](/howto/cookbooks/agents/pattern-agent-memory). MCP tools load with `pxt.mcp_udfs(...)` and go into the same `pxt.tools()` list.
+ 
++For web search and page extraction, `pxt.tools(pxtf.parallel.search, pxtf.parallel.extract)` works without a Parallel account: [Working with Parallel](/howto/providers/working-with-parallel).
 +
-+    with pytest.MonkeyPatch.context() as mp:
-+        mp.setattr(Env, 'get', classmethod(guarded_get))
-+        yield
-+
-+
-+@pytest.hookimpl(wrapper=True)
-+def pytest_runtest_setup(item: pytest.Item) -> Generator[None, None, None]:
-     current_test = os.environ.get('PYTEST_CURRENT_TEST')
-     _logger.info(f'Running Pixeltable test: {current_test}')
-     _clear_model_caches()
-+    with _requires_init_env(item):
-+        yield
-+
-+
-+@pytest.hookimpl(wrapper=True)
-+def pytest_runtest_call(item: pytest.Item) -> Generator[None, None, None]:
-+    with _requires_init_env(item):
-+        yield
+ A full chat app: [`uvx pixeltable-new`](https://github.com/pixeltable/pixeltable-new) copies the [starter kit](/resources/starter-kit) agent. Pass `agent` as the last argument to `pxt schema update`. `/ask` needs `ANTHROPIC_API_KEY`.
  
- 
- def _clear_model_caches() -> None:
+ On Cloud, sign in with `pxt login`, or set `PIXELTABLE_API_KEY`. `pxt org create` provisions `main`. Then run `pxt db update`, `pxt schema update`, and `pxt service update` against `pxt://org:main`. [Pixeltable Cloud](/cloud).
 ```
 
-**File**: `tests/functions/test_anthropic.py` (modified, +1/-1)
+**File**: `pixeltable/config.py` (modified, +1/-0)
 ```diff
-@@ -89,7 +89,7 @@ def make_table(tools: pxt.Tools, tool_choice: pxt.ToolChoice) -> pxt.Table:
- class TestAnthropicTypedDictAdherence:
-     """Detect drift between the TypedDict mirrors and the SDK Pydantic models. Doesn't need credentials."""
- 
--    def test_mirrors(self) -> None:
-+    def test_mirrors(self, init_env: None) -> None:
-         skip_test_if_not_installed('anthropic')
-         from anthropic.types import ContentBlock, Message, Usage
- 
-```
-
-**File**: `tests/functions/test_openai.py` (modified, +8/-8)
-```diff
-@@ -972,7 +972,7 @@ def test_typed_paths(self, uses_db: None) -> None:
-         for col in (t.chat_text, t.tool_name, t.resp_text, t.item_text):
-             assert_type_eq(col.col_type, pxt.String | None)
- 
--    def test_chat_completion(self) -> None:
-+    def test_chat_completion(self, init_env: None) -> None:
-         skip_test_if_not_installed('openai')
-         from openai.types import completion_usage
-         from openai.types.chat import (
-@@ -1017,7 +1017,7 @@ def test_chat_completion(self) -> None:
-             ]
-         )
- 
--    def test_response(self) -> None:
-+    def test_response(self, init_env: None) -> None:
-         skip_test_if_not_installed('openai')
-         import typing
- 
-@@ -1054,7 +1054,7 @@ def test_response(self) -> None:
-             synth=frozenset({'output_text'}),
-         )
- 
--    def test_exact_mirror_types(self) -> None:
-+    def test_exact_mirror_types(self, init_env: None) -> None:
-         """JsonType equality for TypedDicts that are exact mirrors of an SDK Pydantic model."""
-         skip_test_if_not_installed('openai')
-         from openai.types import (
-@@ -1096,7 +1096,7 @@ def test_exact_mirror_types(self) -> None:
-                 f'{ours.__name__} drifted from {sdk.__module__}.{sdk.__name__}:\n  ours: {ours_jt}\n  sdk:  {sdk_jt}'
-             )
- 
--    def test_transcription_response(self) -> None:
-+    def test_transcription_response(self, init_env: None) -> None:
-         """TranscriptionResponse unions Transcription + TranscriptionVerbose; we add synth srt/vtt and
-         re-type usage as plain dict to avoid committing to one variant of the SDK Usage union."""
-         skip_test_if_not_installed('openai')
-@@ -1134,7 +1134,7 @@ def test_transcription_response(self) -> None:
-         # every field is path-dependent
-         assert ours_optional == frozenset(ours_fields.keys())
- 
--    def test_translation_response(self) -> None:
-+    def test_translation_response(self, init_env: None) -> None:
-         """TranslationResponse unions Translation + TranslationVerbose; we add synth srt/vtt."""
-         skip_test_if_not_installed('openai')
-         from openai.types.audio.translation import Translation
-@@ -1160,7 +1160,7 @@ def test_translation_response(self) -> None:
- 
-         assert ours_optional == frozenset(ours_fields.keys())
- 
--    def test_decision_response(self) -> None:
-+    def test_decision_response(self, init_env: None) -> None:
-         """DecisionResponse mirrors Decision except for its flattened answer variants."""
-         skip_test_if_not_installed('openai')
-         from openai.types.decision import Decision
-@@ -1177,7 +1177,7 @@ def test_decision_response(self) -> None:
-                 f'DecisionResponse field {name!r} drifted: ours={ours_fields[name]} sdk={sdk_fields[name]}'
-             )
- 
--    def test_decision_answer(self) -> None:
-+    def test_decision_answer(self, init_env: None) -> None:
-         """DecisionAnswer flattens the SDK's four answer variants into one TypedDict."""
-         skip_test_if_not_installed('openai')
-         from openai.types import decision as sdk_decision
-@@ -1212,7 +1212,7 @@ def test_decision_answer(self) -> None:
-         assert set(ours_fields) == set().union(*(v.model_fields for v in probability_variants))
-         assert ours_optional == {'label'}
- 
--    def test_images_response(self) -> None:
-+    def test_images_response(self, init_env: None) -> None:
-         """ImagesResponse mirrors SDK ImagesResponse field-for-field, except data is non-null
-         (we guarantee a populated list in _decode_image_response), and fields that newer SDKs added are optional."""
-         skip_test_if_not_installed('openai')
-```
-
-**File**: `tests/pixeltable_cli/test_service.py` (modified, +1/-0)
-```diff
-@@ -2150,6 +2150,7 @@ class TestServiceOtel:
-     )
-     def test_run_otel(
-         self,
-+        init_env: None,
-         tmp_path: pathlib.Path,
-         monkeypatch: pytest.MonkeyPatch,
-         excluded_urls_env: dict[str, str],
-```
-
-**File**: `tests/serving/test_hosted_openapi.py` (modified, +1/-1)
-```diff
-@@ -2,7 +2,7 @@
- 
- 
- class TestHostedOpenapi:
--    def test_gateway_security_only_on_hosted_schema(self) -> None:
-+    def test_gateway_security_only_on_hosted_schema(self, init_env: None) -> None:
-         skip_test_if_not_installed('fastapi')
-         import fastapi
-         from fastapi.security import HTTPBasic
-```
-
-**File**: `tests/serving/test_prepare_project.py` (modified, +1/-1)
-```diff
-@@ -184,7 +184,7 @@ def test_pinned_release(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -
- 
- 
- class TestUnpack:
--    def test_round_trip(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-+    def test_round_trip(self, init_env: None, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-         """Unpacking an archive yields the project it was packaged from, whatever shapes its files take.
- 
-         unpack_project_archive() checks the unpacked project against the served digest, so serving this
-```
-
----
-
-### Incident Patch 2: `42be2c00` (2026-11-13)
-**Commit Message**: Fix diffusers pipeline placement on CUDA in text_to_image and image_to_image (#1953)
-
-## Summary
-
-`text_to_image()` and `image_to_image()` failed on every GPU with
-`NotImplementedError: auto not supported. Supported strategies are:
-balanced, cuda, cpu`. This PR removes `device_map` from their
-`from_pretrained` calls and passes `torch_dtype` instead of `dtype`.
-These UDFs now load their pipelines the same way `image_to_video()`
-already does.
-
-Without `device_map`, `enable_model_cpu_offload()` is the only thing
-that puts these pipelines on CUDA. In all three diffusers UDFs it ran
-inside `try: ... except Exception: pass`, so a failure would leave the
-pipeline on CPU. It now runs outside any `try`. The `try` also guarded
-`enable_memory_efficient_attention()`, which no diffusers class defines,
-so that call is gone.
-
-This bug isn't new for GPU users. It showed up because #1900 runs the
-Hugging Face tests on the weekly `ubuntu-small-t4` job, where
-`test_text_to_image` and `test_image_to_image` failed in run
-43367048923. CPU runners never pass a `device_map`, so they passed.
-
-## Why
-
-In diffusers 0.39.0 (the `uv.lock` version):
-
-- **`'auto'` is never accepted.** `DiffusionPipeline.from_pre
-
-**File**: `pixeltable/functions/huggingface.py` (modified, +8/-25)
-```diff
-@@ -1706,19 +1706,13 @@ def text_to_image(
-         model_id,
-         AutoPipelineForText2Image.from_pretrained,
-         device=device,
--        dtype=torch.float16 if device == 'cuda' else torch.float32,
--        device_map='auto' if device == 'cuda' else None,
-+        torch_dtype=torch.float16 if device == 'cuda' else torch.float32,
-         safety_checker=None,
-         requires_safety_checker=False,
-     )
- 
--    try:
--        if device == 'cuda' and hasattr(pipeline, 'enable_model_cpu_offload'):
--            pipeline.enable_model_cpu_offload()
--        if hasattr(pipeline, 'enable_memory_efficient_attention'):
--            pipeline.enable_memory_efficient_attention()
--    except Exception:
--        pass  # Ignore optimization failures
-+    if device == 'cuda':
-+        pipeline.enable_model_cpu_offload()
- 
-     generator = None if seed is None else torch.Generator(device=device).manual_seed(seed)
- 
-@@ -1906,19 +1900,13 @@ def image_to_image(
-         model_id,
-         AutoPipelineForImage2Image.from_pretrained,
-         device=device,
--        dtype=torch.float16 if device == 'cuda' else torch.float32,
--        device_map='auto' if device == 'cuda' else None,
-+        torch_dtype=torch.float16 if device == 'cuda' else torch.float32,
-         safety_checker=None,
-         requires_safety_checker=False,
-     )
- 
--    try:
--        if device == 'cuda' and hasattr(pipeline, 'enable_model_cpu_offload'):
--            pipeline.enable_model_cpu_offload()
--        if hasattr(pipeline, 'enable_memory_efficient_attention'):
--            pipeline.enable_memory_efficient_attention()
--    except Exception:
--        pass  # Ignore optimization failures
-+    if device == 'cuda':
-+        pipeline.enable_model_cpu_offload()
- 
-     generator = None if seed is None else torch.Generator(device=device).manual_seed(seed)
- 
-@@ -2162,13 +2150,8 @@ def image_to_video(
-         variant='fp16' if device == 'cuda' else None,
-     )
- 
--    try:
--        if device == 'cuda' and hasattr(pipe, 'enable_model_cpu_offload'):
--            pipe.enable_model_cpu_offload()
--        if hasattr(pipe, 'enable_memory_efficient_attention'):
--            pipe.enable_memory_efficient_attention()
--    except Exception:
--        pass  # Ignore optimization failures
-+    if device == 'cuda':
-+        pipe.enable_model_cpu_offload()
- 
-     generator = None if seed is None else torch.Generator(device=device).manual_seed(seed)
- 
-```
-
-**File**: `tests/functions/test_huggingface.py` (modified, +7/-8)
-```diff
-@@ -655,10 +655,9 @@ def test_text_to_image(self, uses_db: None) -> None:
-         )
- 
-         validate_update_status(t.insert(prompt=test_prompt), expected_rows=1)
--        result = t.select(t.image).collect()[0]
--
--        # Verify we got an image
--        assert result['image'] is not None
-+        img = t.select(t.image).collect()[0]['image']
-+        assert img.size == (256, 256)
-+        assert np.asarray(img).std() > 0
- 
-     @pytest.mark.xdist_group('large_model')
-     def test_image_to_image(self, uses_db: None, sample_file_server: SampleFileServer) -> None:
-@@ -683,10 +682,10 @@ def test_image_to_image(self, uses_db: None, sample_file_server: SampleFileServe
-         validate_update_status(
-             t.insert(img=sample_file_server.url(SAMPLE_IMAGE_FILE_PATH), prompt=test_prompt), expected_rows=1
-         )
--        result = t.select(t.modified_image).collect()[0]
--
--        # Verify we got a modified image
--        assert result['modified_image'] is not None
-+        res = t.select(t.modified_image, width=t.img.width, height=t.img.height).collect()[0]
-+        img = res['modified_image']
-+        assert img.size == (res['width'], res['height'])
-+        assert np.asarray(img).std() > 0
- 
-     @pytest.mark.xdist_group('large_model')
-     def test_image_to_video(self, uses_db: None, sample_file_server: SampleFileServer) -> None:
-```
-
----
-
-### Incident Patch 3: `dbe8f8b1` (2026-11-13)
-**Commit Message**: [PXT-1767] Fix the notebooks++ and T4 failures in the weekly test run (#1934)
-
-Fixes [PXT-1767](https://pixeltable.atlassian.net/browse/PXT-1767).
-Supersedes #1929.
-
-Fixes two failures in the weekly `tests` run on 2026-11-10 ([run
-42735604741](https://github.com/pixeltable/pixeltable/actions/runs/42735604741)).
-
-## notebooks++: invalid notebook JSON
-
-The job failed on `video-generate-ai.ipynb` with "Notebook does not
-appear to be JSON". Its setup cell ran `%pip install -qU pixeltable
-"google-genai>=2.22"`. `scripts/prepare-nb-tests.sh --no-pip` strips pip
-lines with `sed -E 's/%pip install [^"]*//'`, which stops at the escaped
-quote and leaves invalid JSON.
-
-The bound isn't needed. `-U` already installs the latest google-genai
-(3.2.0 today), and `gemini.generate_video()` enforces the minimum itself
-with `require_package('google.genai', min_version=[2, 22])`. The
-notebook now installs `pixeltable google-genai` and lists `pip install
-google-genai` under Requirements.
-
-## standard, ubuntu-small-t4: `test_db_migration`
-
-`test_db_migration` took 16 minutes on the T4 runner in the 2026-11-03
-run. On 2026-11-10 it was still running at the 10-minute faulthandler
-dump, its xdist worker went
-
-**File**: `docs/release/howto/cookbooks/video/video-generate-ai.ipynb` (modified, +2/-2)
-```diff
-@@ -53,7 +53,7 @@
-    "metadata": {},
-    "outputs": [],
-    "source": [
--    "%pip install -qU pixeltable \"google-genai>=2.22\""
-+    "%pip install -qU pixeltable google-genai"
-    ]
-   },
-   {
-@@ -327,7 +327,7 @@
-     "**Requirements:**\n",
-     "\n",
-     "- Google AI Studio API key (set `GEMINI_API_KEY`); Gemini Omni requires the Gemini Developer API\n",
--    "- `pip install \"google-genai>=2.22\"`"
-+    "- `pip install google-genai`"
-    ]
-   },
-   {
-```
-
-**File**: `tests/test_migration.py` (modified, +1/-0)
-```diff
-@@ -95,6 +95,7 @@ def test_convert_53_normalize(self) -> None:
- 
-     @rerun(reruns=3, reruns_delay=8)  # Deal with occasional concurrency issues
-     @pytest.mark.skipif(platform.system() == 'Windows', reason='Does not run on Windows')
-+    @pytest.mark.skipif('t4' in os.environ.get('PXTTEST_CI_OS', ''), reason='Too slow on t4 CI instances')
-     def test_db_migration(self, init_env: None) -> None:
-         skip_test_if_not_installed('transformers')
-         # the dumps contain a sentence-mode string_splitter view, which needs spacy to compute inserted rows
+@@ -1066,6 +1066,7 @@ def describe_setting(self, section: str, key: str) -> str:
+         'metrics': 'Export metrics via OTLP (default: only when an OTLP endpoint is configured)',
+         'logs': 'Export pixeltable logs via OTLP (default: false)',
+     },
++    'parallel': {'api_key': 'Parallel API key', 'rate_limit': 'Rate limit for Parallel API requests'},
+     'replicate': {'api_token': 'Replicate API token'},
+     'runwayml': {'api_secret': 'RunwayML API secret'},
+     'together': {
 ```
 
 #### Recent Merged Pull Requests:
@@ -1667,24 +1534,21 @@ dump, its xdist worker went
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Write the default config atomically and require init_env for tests that reach En
+## X. Add built-in web search and fetching through Parallel MCP
 
 **RULE**:
-When implementing operations in `.github/instructions/tests.instructions.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pixeltable/pixeltable. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/pytest.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pixeltable/pixeltable. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b907dcb3`: Write the default config atomically and require init_env for tests that reach Env. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `890b85ab`: Add built-in web search and fetching through Parallel MCP. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/instructions/tests.instructions.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/pytest.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- A test that reaches `Env.get()`, directly or through a helper such as `skip_test_if_not_installed()`,
-  requests `init_env`; `uses_db` and `db_root` include it. Without it, the test would use whatever an earlier
-  test on its xdist worker set up, or the developer's real Pixeltable home and database when it runs first, so
-  `tests/conftest.py` fails such a test.
+  PARALLEL_API_KEY: ${{ secrets.PARALLEL_API_KEY }}
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1694,7 +1558,7 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b907dcb3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `890b85ab` are properly handled with clean fallback behavior.
 
 
 ## 3. Decision Protocol & Boundary Restrictions
