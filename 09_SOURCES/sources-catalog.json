@@ -11485,8 +11485,8 @@
     "sourceUrl": "https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B",
     "sourceVersion": "hf-mistralai-mistral-large-4-1t-a52b",
     "license": "Open-Source",
-    "contentHash": "e7c29efdf68fc4ad91dbbbb1c70e4cc06b892a553295066738532bb3faa4df56",
-    "lastHarvestedAt": "2026-11-10T02:19:53.263Z",
+    "contentHash": "bffacc603781bdf8786b7f53dc45e277e511805981a8b642dea27e34401b836e",
+    "lastHarvestedAt": "2026-11-15T17:22:41.019Z",
     "learningId": "learn-huggingface-mistralai-mistral-large-4-1t-a52b"
   },
   "jakeschincariol-arena-skill": {

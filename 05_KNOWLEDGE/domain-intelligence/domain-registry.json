@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T17:14:28.311Z",
-  "total_records": 1082,
+  "last_updated": "2026-11-15T17:23:19.696Z",
+  "total_records": 1085,
   "domains": {
     "A": {
       "total": 7,
@@ -37,7 +37,7 @@
       ]
     },
     "D": {
-      "total": 526,
+      "total": 529,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -564,7 +564,10 @@
         "DOM-D-3B7C0B67",
         "domain_intelligence-research-knowledge-intelligence-hf-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf-lea",
         "DOM-D-A223FE37",
-        "domain_intelligence-research-knowledge-intelligence-hf-autotrust-autotrust-decider-pro-vision-27b-le"
+        "domain_intelligence-research-knowledge-intelligence-hf-autotrust-autotrust-decider-pro-vision-27b-le",
+        "domain_intelligence-research-knowledge-intelligence-mistralai-mistral-large-4-1t-a52b-core-invariant",
+        "DOM-D-BBC8733A",
+        "domain_intelligence-research-knowledge-intelligence-hf-mistralai-mistral-large-4-1t-a52b-learnings-c"
       ]
     },
     "E": {
@@ -13873,8 +13876,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "ea2f3cbc664b13d86f99a6a62c8fd156850402e5ff811ed96c5b3b2483f7c210",
-      "created_at": "2026-11-15T16:30:51.133Z"
+      "content_hash": "aa571be21251394a0bc69c69aa8c34402f85681b8964305bb45320104a74f9c9",
+      "created_at": "2026-11-15T17:23:19.696Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
@@ -16732,8 +16735,8 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zleap-ai-sag-learnings-technical-construction-intelligence-zleap-ai-sag-learning.md",
       "repository": "zleap-ai-sag-learnings",
-      "content_hash": "324f707c79dd13c356b7f0ffcd38ebb2e895e3e7b5000cba6a6d0966a1818516",
-      "created_at": "2026-11-15T16:30:50.756Z"
+      "content_hash": "b8c6cef8a58f42825b120d09a65f0e5838f3e4497cf6a19cebfb06cb8014e609",
+      "created_at": "2026-11-15T17:23:19.256Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co",
@@ -20663,6 +20666,66 @@
       "repository": "matrixorigin-matrixone-learnings",
       "content_hash": "cc4553a3aa9a870a6bdd8cfe5cc43f8cbac5cc57f0afcedc8ec893cdd7ff1fd6",
       "created_at": "2026-11-15T17:14:27.513Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-mistralai-mistral-large-4-1t-a52b-core-invariant": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-mistralai-mistral-large-4-1t-a52b-core-invariant",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: mistralai/Mistral-Large-4-1T-A52B Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-mistralai-mistral-large-4-1t-a52b-research-knowledge-intelligence-mistralai-m.md",
+      "repository": "mistralai/Mistral-Large-4-1T-A52B",
+      "content_hash": "093c2528bb5ddeff3678ad9c2aeb0dea7ee962640135649e5b398b071d6eba6a",
+      "created_at": "2026-11-15T17:22:41.173Z"
+    },
+    "DOM-D-BBC8733A": {
+      "record_id": "DOM-D-BBC8733A",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): mistralai/Mistral-Large-4-1T-A52B",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-mistralai-mistral-large-4-1t-a52b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B](https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B))  \n> **Source Version**: `hf-mistralai`  \n> **L",
+      "content_hash": "5b149944cb5c43763511d55e6e89c002f28bde77165435bee3ba69e0704a65c5",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-mistralai-mistral-large-4-1t-a52b-learnings.md`  \n> **Source**: huggingface ([htt -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-mistralai-mistral-large-4-1t-a52b-learnings.md`  \n> **Source**: huggingface ([htt",
+      "provenance": {
+        "source_uri": "project://hf-mistralai-mistral-large-4-1t-a52b/hf-mistralai-mistral-large-4-1t-a52b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T17:22:52.782Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-mistralai-mistral-large-4-1t-a52b)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-mistralai-mistral-large-4-1t-a52b"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-15T17:23:18.415Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-mistralai-mistral-large-4-1t-a52b-learnings-c": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-mistralai-mistral-large-4-1t-a52b-learnings-c",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-mistralai-mistral-large-4-1t-a52b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-mistralai-mistral-large-4-1t-a52b-learnings-research-knowledge-intelligence-h.md",
+      "repository": "hf-mistralai-mistral-large-4-1t-a52b-learnings",
+      "content_hash": "0ef78c7e9d99aa295092ca3acb2f39307f3d7ce9a5fc067b2d4ae98c053c09eb",
+      "created_at": "2026-11-15T17:23:18.613Z"
     }
   }
 }

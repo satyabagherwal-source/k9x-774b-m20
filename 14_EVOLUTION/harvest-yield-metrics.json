@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T17:14:23.215Z",
-  "total_cycles_completed": 9737,
-  "total_learnings_persisted": 9737,
+  "last_updated": "2026-11-15T17:22:41.024Z",
+  "total_cycles_completed": 9738,
+  "total_learnings_persisted": 9738,
   "total_rules_promoted": 9361,
   "history": [
-    {
-      "timestamp": "2026-11-14T15:25:47.584Z",
-      "repository": "microsoft/agent-governance-toolkit",
-      "learningId": "learn-github-microsoft-agent-governance-toolkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T15:25:50.558Z",
       "repository": "apple/foundationdb",
@@ -1403,6 +1396,13 @@
       "repository": "matrixorigin/matrixone",
       "learningId": "learn-github-matrixorigin-matrixone",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T17:22:41.024Z",
+      "repository": "mistralai/Mistral-Large-4-1T-A52B",
+      "learningId": "learn-huggingface-mistralai-mistral-large-4-1t-a52b",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

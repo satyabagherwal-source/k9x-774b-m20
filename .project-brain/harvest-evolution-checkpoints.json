@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T17:14:28.540Z",
+  "last_updated": "2026-11-15T17:23:19.908Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-15T15:47:58.797Z",
@@ -13,7 +13,7 @@
       "staged_for_review": 1
     },
     "zleap-ai-sag-learnings.md": {
-      "processed_at": "2026-11-15T16:30:50.352Z",
+      "processed_at": "2026-11-15T17:23:18.754Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -253,7 +253,7 @@
       "staged_for_review": 1
     },
     "zoontek-react-native-bootsplash-learnings.md": {
-      "processed_at": "2026-11-15T16:30:50.863Z",
+      "processed_at": "2026-11-15T17:23:19.376Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3026,9 +3026,14 @@
       "processed_at": "2026-11-15T17:04:41.733Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-mistralai-mistral-large-4-1t-a52b-learnings.md": {
+      "processed_at": "2026-11-15T17:23:18.430Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 1083,
-  "total_canonical_promoted": 266,
-  "total_staged_for_review": 818
+  "total_dossiers_evaluated": 1086,
+  "total_canonical_promoted": 267,
+  "total_staged_for_review": 820
 }

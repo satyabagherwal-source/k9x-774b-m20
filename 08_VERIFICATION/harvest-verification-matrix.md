@@ -10125,3 +10125,5 @@
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T17:04:41.313Z` | `hf-autotrust-autotrust-decider-pro-vision-27b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-A223FE37` [Domain D] | Yes (`20510433...`) |
 | `CYCLE-20261115-GLZG` | `2026-11-15T17:14:09.868Z` | `actix/actix-web` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8632` | Yes (`05cffc2b...`) |
 | `CYCLE-20261115-GW9Y` | `2026-11-15T17:14:23.206Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8633` | Yes (`a9c8e8a6...`) |
+| `CYCLE-20261115-RKDZ` | `2026-11-15T17:22:41.015Z` | `mistralai/Mistral-Large-4-1T-A52B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mistralai-mistral-large-4-1t-a52b-learnings.md` | Yes (`bffacc60...`) |
+| `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T17:23:18.430Z` | `hf-mistralai-mistral-large-4-1t-a52b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-BBC8733A` [Domain D] | Yes (`5b149944...`) |

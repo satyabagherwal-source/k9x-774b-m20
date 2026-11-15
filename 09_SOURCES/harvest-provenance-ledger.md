@@ -10158,3 +10158,5 @@ Every entry in this ledger must capture:
 | `learn-dom-d-a223fe37` | `project://hf-autotrust-autotrust-decider-pro-vision-27b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-autotrust-autotrust-decider-pro-vision-27b-learnings.md` | 2026-11-15T17:04:41.313Z |
 | `learn-github-actix-actix-web` | `https://github.com/actix/actix-web` | `baebbb57` | Multi-dimensional audit evidence | 2026-11-15T17:14:09.871Z |
 | `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `f70c37b1` | Multi-dimensional audit evidence | 2026-11-15T17:14:23.209Z |
+| `learn-huggingface-mistralai-mistral-large-4-1t-a52b` | `https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B` | `hf-mistral` | Multi-dimensional audit evidence | 2026-11-15T17:22:41.019Z |
+| `learn-dom-d-bbc8733a` | `project://hf-mistralai-mistral-large-4-1t-a52b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-mistralai-mistral-large-4-1t-a52b-learnings.md` | 2026-11-15T17:23:18.430Z |
