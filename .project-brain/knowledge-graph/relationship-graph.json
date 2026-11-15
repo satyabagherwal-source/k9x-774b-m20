@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-15T06:19:33.118Z",
+  "updated_at": "2026-11-15T06:37:31.051Z",
   "statistics": {
-    "total_nodes": 242,
-    "total_edges": 134,
+    "total_nodes": 243,
+    "total_edges": 135,
     "domain_distribution": {
-      "D": 191,
+      "D": 192,
       "M": 1,
       "H": 20,
       "J": 9,
@@ -19,7 +19,7 @@
       "E": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 134
+      "CONSTRAINED_BY_ARCHITECTURE": 135
     }
   },
   "nodes": {
@@ -5435,6 +5435,29 @@
       ],
       "created_at": "2026-11-15T06:19:33.118Z",
       "updated_at": "2026-11-15T06:19:33.118Z"
+    },
+    "DOM-D-1138A8F2": {
+      "id": "DOM-D-1138A8F2",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): datalab-to/indra-ocr",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-datalab-to-indra-ocr-learnings.md`  \n> **Source**: huggingface ([https://huggingf -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-datalab-to-indra-ocr-learnings.md`  \n> **Source**: huggingface ([https://huggingf",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-datalab-to-indra-ocr/hf-datalab-to-indra-ocr-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T06:37:01.115Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-datalab-to-indra-ocr)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-15T06:37:31.050Z",
+      "updated_at": "2026-11-15T06:37:31.050Z"
     }
   },
   "edges": [
@@ -6777,6 +6800,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-70830486 [D] with Domain M",
       "created_at": "2026-11-15T06:18:53.941Z"
+    },
+    {
+      "id": "EDGE-ED74D7544C69",
+      "sourceId": "DOM-D-1138A8F2",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-1138A8F2 [D] with Domain M",
+      "created_at": "2026-11-15T06:37:31.050Z"
     }
   ]
 }

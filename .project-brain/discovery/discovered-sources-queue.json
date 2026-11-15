@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T06:18:53.955Z",
+  "updated_at": "2026-11-15T06:37:32.210Z",
   "stats": {
-    "total_discovered": 3624,
-    "approved_pending_harvest": 3414,
+    "total_discovered": 3628,
+    "approved_pending_harvest": 3418,
     "harvested_count": 0,
     "rejected_count": 210,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3394,
+      "COMMUNITY_AND_EXPERT": 3398,
       "OFFICIAL_DOCUMENTATION": 125,
       "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
@@ -78279,6 +78279,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-liquidai-lfm3-omni-2b-learnings.md",
         "fileName": "hf-liquidai-lfm3-omni-2b-learnings.md"
+      }
+    },
+    "SRC-110896D94E28": {
+      "id": "SRC-110896D94E28",
+      "url": "https://huggingface.co/datalab-to/indra-ocr",
+      "title": "https://huggingface.co/datalab-to/indra-ocr",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T06:37:31.066Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-datalab-to-indra-ocr-learnings.md",
+        "fileName": "hf-datalab-to-indra-ocr-learnings.md"
+      }
+    },
+    "SRC-FC71802A41D9": {
+      "id": "SRC-FC71802A41D9",
+      "url": "https://github.com/user-attachments/assets/980c8012-34d1-4a21-9d7b-90441932f84d",
+      "title": "https://github.com/user-attachments/assets/980c8012-34d1-4a21-9d7b-90441932f84d",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T06:37:32.159Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
+        "fileName": "t8y2-dbx-learnings.md"
+      }
+    },
+    "SRC-D9E4C454226A": {
+      "id": "SRC-D9E4C454226A",
+      "url": "https://github.com/user-attachments/assets/723dabe2-a898-4f2a-948e-c647254ea655",
+      "title": "https://github.com/user-attachments/assets/723dabe2-a898-4f2a-948e-c647254ea655",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T06:37:32.186Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
+        "fileName": "t8y2-dbx-learnings.md"
+      }
+    },
+    "SRC-8766EAA65C3F": {
+      "id": "SRC-8766EAA65C3F",
+      "url": "https://github.com/user-attachments/assets/1d927423-7b0a-4642-ac4f-325499a5b88b",
+      "title": "https://github.com/user-attachments/assets/1d927423-7b0a-4642-ac4f-325499a5b88b",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T06:37:32.210Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
+        "fileName": "t8y2-dbx-learnings.md"
       }
     }
   }

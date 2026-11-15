@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T06:18:19.329Z",
-  "total_cycles_completed": 9676,
-  "total_learnings_persisted": 9676,
-  "total_rules_promoted": 9309,
+  "last_updated": "2026-11-15T06:36:57.844Z",
+  "total_cycles_completed": 9679,
+  "total_learnings_persisted": 9679,
+  "total_rules_promoted": 9311,
   "history": [
-    {
-      "timestamp": "2026-11-14T06:57:00.942Z",
-      "repository": "wcandillon/react-native-skia",
-      "learningId": "learn-github-wcandillon-react-native-skia",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T07:17:51.503Z",
-      "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
-      "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T07:17:53.809Z",
-      "repository": "matthart1983/netwatch",
-      "learningId": "learn-github-matthart1983-netwatch",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T07:18:00.850Z",
       "repository": "kgateway-dev/kgateway",
@@ -1403,6 +1382,27 @@
       "repository": "envoyproxy/envoy",
       "learningId": "learn-github-envoyproxy-envoy",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T06:36:43.085Z",
+      "repository": "datalab-to/indra-ocr",
+      "learningId": "learn-huggingface-datalab-to-indra-ocr",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T06:36:51.624Z",
+      "repository": "k3s-io/k3s",
+      "learningId": "learn-github-k3s-io-k3s",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T06:36:57.844Z",
+      "repository": "t8y2/dbx",
+      "learningId": "learn-github-t8y2-dbx",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

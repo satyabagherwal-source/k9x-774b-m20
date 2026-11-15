@@ -10077,3 +10077,7 @@ Every entry in this ledger must capture:
 | `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `2c6ea77a` | Multi-dimensional audit evidence | 2026-11-15T06:18:19.324Z |
 | `learn-dom-d-70830486` | `project://hf-liquidai-lfm3-omni-2b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-liquidai-lfm3-omni-2b-learnings.md` | 2026-11-15T06:18:53.943Z |
 | `learn-dom-d-7db1294c` | `project://envoyproxy-envoy` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md` | 2026-11-15T06:19:33.120Z |
+| `learn-huggingface-datalab-to-indra-ocr` | `https://huggingface.co/datalab-to/indra-ocr` | `hf-datalab` | Multi-dimensional audit evidence | 2026-11-15T06:36:43.079Z |
+| `learn-github-k3s-io-k3s` | `https://github.com/k3s-io/k3s` | `c55a7df0` | Multi-dimensional audit evidence | 2026-11-15T06:36:51.619Z |
+| `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `0c019880` | Multi-dimensional audit evidence | 2026-11-15T06:36:57.838Z |
+| `learn-dom-d-1138a8f2` | `project://hf-datalab-to-indra-ocr` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-datalab-to-indra-ocr-learnings.md` | 2026-11-15T06:37:31.052Z |

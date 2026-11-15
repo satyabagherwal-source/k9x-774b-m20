@@ -10044,3 +10044,7 @@
 | `CYCLE-20261115-16WN` | `2026-11-15T06:18:19.320Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md` | Yes (`19e6fb58...`) |
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T06:18:53.943Z` | `hf-liquidai-lfm3-omni-2b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-70830486` [Domain D] | Yes (`b92bd6c1...`) |
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T06:19:33.120Z` | `envoyproxy-envoy` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-7DB1294C` [Domain D] | Yes (`541e135b...`) |
+| `CYCLE-20261115-OUKJ` | `2026-11-15T06:36:43.075Z` | `datalab-to/indra-ocr` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-datalab-to-indra-ocr-learnings.md` | Yes (`00bd3526...`) |
+| `CYCLE-20261115-P15R` | `2026-11-15T06:36:51.615Z` | `k3s-io/k3s` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8583` | Yes (`a704822c...`) |
+| `CYCLE-20261115-P5YI` | `2026-11-15T06:36:57.834Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8584` | Yes (`e1ffaaa2...`) |
+| `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T06:37:31.052Z` | `hf-datalab-to-indra-ocr` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-1138A8F2` [Domain D] | Yes (`57c74263...`) |

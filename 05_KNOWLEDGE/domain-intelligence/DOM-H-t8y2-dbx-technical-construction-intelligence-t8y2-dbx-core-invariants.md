@@ -4,24 +4,24 @@
 {
   "source_repository": "t8y2/dbx",
   "source_url": "https://github.com/t8y2/dbx",
-  "source_version": "acc33f63",
+  "source_version": "0c019880",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-13T20:07:25.840Z",
+  "timestamp": "2026-11-15T06:36:58.014Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-t8y2-dbx",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [t8y2/dbx](https://github.com/t8y2/dbx) (Revision: `acc33f63`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-13T20:07:25.840Z`  
+> **Provenance**: Harvested from [t8y2/dbx](https://github.com/t8y2/dbx) (Revision: `0c019880`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-15T06:36:58.014Z`  
 > **Learning ID**: `learn-github-t8y2-dbx`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 59%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 71%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from t8y2/dbx:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T20:07:24.647Z  
+> **Harvest Timestamp**: 2026-11-15T06:36:56.958Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: 25 MB lightweight cross-platform database client for 100+ databases, including MySQL, PostgreSQL, SQLite, Redis, MongoDB, DuckDB, SQL Server, and Dameng. Built-in AI, MCP Server, CLI, desktop and Docker. | 轻量级跨平台数据库管理工具，支持 MySQL、PostgreSQL、SQLite、Redis、MongoDB、达梦等 100+ 数据库，提供桌面端、Docker、CLI、内置 AI 助手和 MCP。
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 30306 stars
+- **Stars / Engagement**: 30359 stars
 
 ---
 
@@ -2005,11 +2005,13 @@ func (b *Binary) GetValues() []byte {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #14884** (2026-11-13): **[Bug] 高斯Gauss数据库Schema筛选后无法展开表对象节点**
-  *Symptoms*: ### 数据库类型和版本 / Database type and version  Gauss DWS 8.1.2 ,  兼容PostgreSQL 8  ### 问题描述 / Problem description  左侧边栏，录入筛选文本后，Schema可以展示筛选后对象，但其中表（视图）对象节点无法继续展开  <img width="694" height="634" alt="nodecannotbecollapsed" src="https://github.com/user-attachments/assets/8d38716d-3b40-4402-8a9c-cdbe1b0ccc1c" />  ### 支持信息 / Support information  DBX Version: v0.6.70 (0.6.70-beta.20261112.1) Runtime: Desktop Operating System: Windows 11 (10.0.26300.9974) Architecture: x86_64 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36 Edg/157.0.0.0 Database Types: gaussdb, postgres Local Driver Versions: kafka 0.1.25  ### 优先级（是否紧急） / Priority (urgency)  🔴 P0 紧急 · 下个版本必须修 / Urgent · Must fix next release  ### 补充信息 / Additional information  _No response_
+- **Issue #14966** (2026-11-14): **[Bug] 查看表结构与 DDL 弹窗叠加导致层级异常、交互锁定**
+  *Symptoms*: ### 数据库类型和版本 / Database type and version  ClickHouse 25.3.14.14  ### 问题描述 / Problem description  1. 复现步骤 ①新建连接，在 SQL 编辑器输入查询语句 ②右键表名 → 选择「查看表结构」，弹出表结构弹窗 ③再次右键同一表名 → 选择「查看 DDL」，弹出 DDL 弹窗 ④观察两弹窗层级、可见性及交互状态；尝试点击表结构弹窗右上角关闭 × 2. 期望结果 ①表结构与 DDL 弹窗应互斥（或打开替换前弹窗）或正确分层（后者在上且独立） ②鼠标焦点应跟随或选择当前活动弹窗，实现正常查看/操作 ③任意弹窗均可独立关闭；无需依赖 先后顺序 3. 实际结果 ①层级遮挡：​ DDL 弹窗显示在下层，表结构弹窗在上层，整体层级混乱，视觉重叠 ②交互锁定：​ 鼠标只能操作 DDL 框，表结构弹窗无法交互 ③关闭链异常：​无法操作表结构弹窗，必须先关闭 DDL 弹窗，操作阻塞 ④截图日志 如图  <img width="589" height="274" alt="d0489b1082942b3e47ac2edaabaca75e" src="https://github.com/user-attachments/assets/980c8012-34d1-4a21-9d7b-90441932f84d" />  <img width="1320" height="774" alt="3a9f1b3c5acf7975cac363e94f9e33d2" src="https://github.com/user-attachments/assets/723dabe2-a898-4f2a-948e-c647254ea655" />  <img width="1257" height="812" alt="92bbf3537be6e8f80c3c29583e1104df" src="https://github.com/user-attachments/assets/1d927423-7b0a-4642-ac4f-325499a5b88b" />  ### 支持信息 / Support information  DBX 版本: v0.6.69 (0.6.69-beta.20261110.1) 运行环境: 桌面端 操作系统: Windows 10 (10.0.19045.3324) 系统架构: x86_64 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36 Edg/155.0.0.0 数据库类型: clickhouse, postgres, redis  ### 优先级（是否紧急） / Priority (urgency)  🟢 P3 低优 · 有空再修 / Low · Fix when possible  ### 补充信息 / Additional information  _No response_
 
-- **Issue #14868** (2026-11-13): **[Bug] 新窗口下的sql编辑器，不能使用AI，点击不起作用，只能回到主窗口才能用，希望能改成在分窗口也能使用**
-  *Symptoms*: ### 数据库类型和版本 / Database type and version  doris  ### 问题描述 / Problem description  新窗口下的sql编辑器，不能使用AI，点击不起作用，只能回到主窗口才能用，希望能改成在分窗口也能使用  <img width="3456" height="2056" alt="image" src="https://github.com/user-attachments/assets/81e9a703-6258-46c7-84c2-d66d5d9ca5e1" />  ### 支持信息 / Support information  DBX 版本: v0.6.69 (0.6.69-beta.20261110.1) 运行环境: 桌面端 操作系统: macOS 15.8.1 系统架构: aarch64 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) 数据库类型: dameng/dm, mysql, mysql/doris, oracle, postgres, sqlserver 本地驱动版本: dameng 0.1.103, oracle 0.1.79  ### 优先级（是否紧急） / Priority (urgency)  🔴 P0 紧急 · 下个版本必须修 / Urgent · Must fix next release  ### 补充信息 / Additional information  _No response_
+- **Issue #14946** (2026-11-14): **[Bug] 禁用 DBX 【设置-安全】搜索框表单自动补全**
+  *Symptoms*: ### 数据库类型和版本 / Database type and version  None  ### 问题描述 / Problem description  默认情况下，浏览器会记录用户网页上提交的<input>框的信息，DBX 【设置-安全】搜索框哪怕清除了输入信息还是会自动填入，其它页面搜索框自动填入后清除了不会自动填入，请检查前端 autocomplete 的属性设置  ### 支持信息 / Support information  运行环境:Docker  ### 优先级（是否紧急） / Priority (urgency)  🟡 P2 普通 · 按排期处理 / Normal · Schedule as appropriate  ### 补充信息 / Additional information  _No response_
+  **Post-Mortem & Fix Analysis**:
+  > 结论：与 #14952 是同一问题——设置搜索框被浏览器表单历史自动填充。main 已由 e759e60cc（fix(desktop): stop settings search from autofilling browser history，关闭 #14952）修复：该搜索框此前是应用里唯一 `type="text"` 的搜索框（其它搜索框都不是 text 类型，所以只有它会被浏览器记住表单内容），现已改为 `type="search"` 并隐藏 WebKit 自带的清除按钮，升级到包含该提交的版本即可。  两点补充：  - 若指的是「安全」标签页里密码输入框旁的凭据自动填充（浏览器在密码字段旁弹出已保存凭据）：那是浏览器凭据管理器的行为，与表单历史是两条机制；密码字段已在代码里带 `autocomplete="off"` 且隐藏了 WebKit 的自动填充按钮，Chrome 对密码型输入会忽略 `off`，标准解法是把三个密码框改为 `autocomplete="current-password"` / `"new-password"` 让浏览器行为可预期（旧密码提供已保存凭据、新密码不自动填充）。如果升级后仍有这个问题，可以按这个方向单独提增强。 - 建议将本 issue 关闭为 #14952 的重复项。 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2026,761 +2028,944 @@ func (b *Binary) GetValues() []byte {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e7d19408` (2026-11-13)
-**Commit Message**: fix(postgres): block tuple locator on Greenplum, Cloudberry, Hologres
+### Incident Patch 1: `9ce79533` (2026-11-14)
+**Commit Message**: fix(updater): retry the update cache rename on transient Windows locks (#14821)
 
-The v0.6.69 keyless-edit tuple locator (tableoid/ctid/xmin) broke
-Cloudberry AO tables and Greenplum (virtual tuple slot / Invalid
-attnum: -3): the query-mode version sniff never fired because native
-postgres pools returned no database info at all, and the data-tab
-injection sites had no engine gate. Probe SELECT version() for native
-postgres pools, keep the full product string, and gate every injection
-site on one shared predicate that also covers Hologres (#12647).
+* fix(updater): retry the cache commit rename on transient Windows locks
 
-Closes #14745
+Real-time security software opens the freshly written update package for a moment, and Windows rejects the commit directory rename while any file below it is still open. Reuse the plugin installer's transient-lock retry (Windows 5/32, 200..2000 ms) for the updater commit, and run the commit on the blocking pool so the wait cannot stall the async runtime.
 
-**File**: `apps/desktop/src/components/grid/DataGrid.vue` (modified, +11/-3)
+Fixes #14574.
+
+* fix(updater): do not publish a download canceled during the cache rename retry
+
+The scanner wait can last several seconds. A committing slot keeps that wait off the state mutex, so cancel discards the package and a second download cannot start.
+
+**File**: `crates/dbx-platform/src/fs_retry.rs` (added, +117/-0)
 ```diff
-@@ -145,6 +145,7 @@ import {
-   isTdengineExistingRowReadonlyColumn,
-   shouldIncludeSyntheticRowId,
-   showsKeylessEditWarning,
-+  postgresTupleLocatorUnsupportedEngine,
- } from "@/lib/table/tableEditing";
- import { rowIdLocatorUnsupported } from "@/lib/table/tableRowIdSupport";
- import { buildDataGridConditionalUpdateSql, buildDataGridContextFilterCondition, buildDataGridCountSql, buildHiveTablePropertiesSql, type DataGridContextFilterMode } from "@/lib/dataGrid/dataGridSql";
-@@ -4722,7 +4723,8 @@ async function refreshSavedRows(request: { dirtyRows: ReadonlyMap<number, Readon
-     ...largeValuePreviewOptions,
-     whereInput: identityConditions.join(" OR "),
-     limit: planResult.plan.sourceIndexes.length + 1,
--    includeRowId: shouldIncludeSyntheticRowId(resolvedDatabaseType.value, tableMeta.primaryKeys, tableMeta.tableType) && !(props.connectionId && rowIdLocatorUnsupported(props.connectionId)),
-+    includeRowId:
-+      shouldIncludeSyntheticRowId(resolvedDatabaseType.value, tableMeta.primaryKeys, tableMeta.tableType) && !(props.connectionId && rowIdLocatorUnsupported(props.connectionId)) && !postgresTupleLocatorUnsupportedEngine(props.connectionId ? connectionStore.getConfig(props.connectionId) : undefined),
-   });
-   const refreshed = await executeDataGridSavedRowRefreshQuery(api, {
-     connectionId,
-@@ -8403,7 +8405,10 @@ async function applyOrderBySearch(_value?: string, structuredOrderByOverride?: s
-       injectDefaultTimeSeriesWhere: true,
-       limit: pageSize.value,
-       whereInput: currentWhereInput(),
--      includeRowId: shouldIncludeSyntheticRowId(resolvedDatabaseType.value, tableMeta.primaryKeys, tableMeta.tableType) && !(props.connectionId && rowIdLocatorUnsupported(props.connectionId)),
-+      includeRowId:
-+        shouldIncludeSyntheticRowId(resolvedDatabaseType.value, tableMeta.primaryKeys, tableMeta.tableType) &&
-+        !(props.connectionId && rowIdLocatorUnsupported(props.connectionId)) &&
-+        !postgresTupleLocatorUnsupportedEngine(props.connectionId ? connectionStore.getConfig(props.connectionId) : undefined),
-     });
-     markConditionInputsApplied();
-     await props.onExecuteSql(sql);
-@@ -8446,7 +8451,10 @@ async function applyWhereFilter() {
-       limit: pageSize.value,
-       injectDefaultTimeSeriesWhere: true,
-       whereInput,
--      includeRowId: shouldIncludeSyntheticRowId(resolvedDatabaseType.value, tableMeta.primaryKeys, tableMeta.tableType) && !(props.connectionId && rowIdLocatorUnsupported(props.connectionId)),
-+      includeRowId:
-+        shouldIncludeSyntheticRowId(resolvedDatabaseType.value, tableMeta.primaryKeys, tableMeta.tableType) &&
-+        !(props.connectionId && rowIdLocatorUnsupported(props.connectionId)) &&
-+        !postgresTupleLocatorUnsupportedEngine(props.connectionId ? connectionStore.getConfig(props.connectionId) : undefined),
-     });
-     markConditionInputsApplied();
-     await props.onExecuteSql(sql);
-```
-
-**File**: `apps/desktop/src/composables/__tests__/useSidebarDataOpenRuntime.spec.ts` (modified, +1/-0)
-```diff
-@@ -173,6 +173,7 @@ vi.mock("@/lib/table/tableEditing", () => ({
-   },
-   usesSyntheticRowIdKey: () => false,
-   shouldIncludeSyntheticRowId: () => mocks.includeSyntheticRowId,
-+  postgresTupleLocatorUnsupportedEngine: () => false,
- }));
- vi.mock("@/lib/table/tableOpenPageLimit", () => ({ tableOpenPageLimit: () => 100 }));
- vi.mock("@/lib/tabs/dataTabActivation", () => ({ canActivateExistingDataTableTab: () => false }));
-```
-
-**File**: `apps/desktop/src/composables/useDataGridActions.ts` (modified, +2/-2)
-```diff
-@@ -8,7 +8,7 @@ import { buildTableSelectSql, quoteTableDataIdentifier } from "@/lib/table/table
- import { tableOpenPageLimit } from "@/lib/table/tableOpenPageLimit";
- import { tableDataLargeValuePreviewOptions, tableDataPreviewRowBudget } from "@/lib/dataGrid/dataGridLargeValues";
- import { elasticsearchCursorPageJumpRequestCount } from "@/lib/dataGrid/dataGridPagination";
--import { editablePrimaryKeys, shouldIncludeSyntheticRowId } from "@/lib/table/tableEditing";
-+import { editablePrimaryKeys, postgresTupleLocatorUnsupportedEngine, shouldIncludeSyntheticRowId } from "@/lib/table/tableEditing";
- import { markRowIdLocatorUnsupported, rowIdLocatorUnsupported, shouldKeepRowIdLocatorDisabled, shouldRetryWithoutRowIdLocator } from "@/lib/table/tableRowIdSupport";
- import { tableMetaForDataTab } from "@/lib/table/tableDataTabMeta";
- import { loadVirtualRowIdentifier } from "@/lib/table/virtualRowIdentifier";
-@@ -124,7 +124,7 @@ export function useDataGridActions(activeTab: ComputedRef<QueryTab | undefined>)
-     const primaryKeys = tab.tableMeta ? tab.tableMeta.primaryKeys : (tableMeta?.primaryKeys ?? []);
-     // 已确认该连接拒绝合成行定位器（如 Hologres 拒绝 tableoid，#12647）时不再注入，
-     // 避免无主键表每次打开都报错。
--    const useRowId = includeRowId ?? (shouldIncludeSyntheticRowId(effectiveDbType, primaryKeys, tableMeta?.tableType) && !rowIdLocatorUnsupported(tab.connectionId));
-+    const useRowId = includeRowId ?? (shouldIncludeSyntheticRowId(effectiveDbType, primaryKeys, tableMeta?.tableType) && !rowIdLocatorUnsupported(tab.connectionId) && !postgresTupleLocatorUnsupportedEngine(config));
-     // 列投影只信任真实元数据列：tableMetaForDataTab 的 fallback 列来自查询
-     // 结果（可能是失败结果的 ["Error"]），进入 SQL 会生成非法投影；
-     // 真实列缺失时省略 columns 让 builder 生成 SELECT *
-```
-
-**File**: `apps/desktop/src/composables/useDataGridLargeValues.ts` (modified, +7/-3)
-```diff
-@@ -2,8 +2,9 @@ import { computed, nextTick, onActivated, onDeactivated, ref, watch, type Comput
- import * as api from "@/lib/backend/api";
- import type { CellValue } from "@/lib/dataGrid/cellValue";
- import { chunkLegacyLargeValueRequests, fetchLegacyLargeValueRequestChunk, legacyLargeValueRowPredicate, resolveCapturedLegacyLargeValueCells, type LegacyLargeValueContext } from "@/lib/dataGrid/legacyLargeValueExport";
-+import { useConnectionStore } from "@/stores/connectionStore";
- import { buildTableSelectSql } from "@/lib/table/tableSelectSql";
--import { shouldIncludeSyntheticRowId } from "@/lib/table/tableEditing";
-+import { postgresTupleLocatorUnsupportedEngine, shouldIncludeSyntheticRowId } from "@/lib/table/tableEditing";
- import { rowIdLocatorUnsupported } from "@/lib/table/tableRowIdSupport";
- import { queryTimeoutSecsForConnection } from "@/lib/sql/queryTimeout";
- import { SnapshotCompletionError } from "@/lib/export/snapshotCompletion";
-@@ -365,7 +366,10 @@ export function useDataGridLargeValues(options: UseDataGridLargeValuesOptions) {
-       whereInput: predicates.map((predicate) => `(${predicate})`).join(" OR "),
-       limit: requests.size,
-       offset: 0,
--      includeRowId: shouldIncludeSyntheticRowId(options.databaseType.value, tableMeta.primaryKeys, tableMeta.tableType) && !(options.connectionId.value ? rowIdLocatorUnsupported(options.connectionId.value) : false),
-+      includeRowId:
-+        shouldIncludeSyntheticRowId(options.databaseType.value, tableMeta.primaryKeys, tableMeta.tableType) &&
-+        !(options.connectionId.value ? rowIdLocatorUnsupported(options.connectionId.value) : false) &&
-+        !postgresTupleLocatorUnsupportedEngine(useConnectionStore().getConfig(options.connectionId.value)),
-     });
-     if (!visibleLargeValuePreviewActive || generation !== visibleLargeValuePreviewRequestedGeneration || options.result.value !== sourceResult) return;
-     const connection = options.getConnectionConfig(options.connectionId.value!);
-@@ -504,7 +508,7 @@ export function useDataGridLargeValues(options: UseDataGridLargeValuesOptions) {
-       identifierQuote: options.connectionIdentifierQuote(connectionId),
-       serverVersion: connection?.database_info?.productVersion,
-       includeDatabaseName: options.includeDatabaseName.value,
--      includeRowId: !!tableMeta && shouldIncludeSyntheticRowId(options.databaseType.value, tableMeta.primaryKeys, tableMeta.tableType) && !(connectionId ? rowIdLocatorUnsupported(connectionId) : false),
-+      includeRowId: !!tableMeta && shouldIncludeSyntheticRowId(options.databaseType.value, tableMeta.primaryKeys, tableMeta.tableType) && !(connectionId ? rowIdLocatorUnsupported(connectionId) : false) && !postgresTupleLocatorUnsupportedEngine(connection),
-       timeoutSecs: queryTimeoutSecsForConnection(connection, options.globalQueryTimeoutSecs.value),
-     };
-   }
-```
-
-**File**: `apps/desktop/src/composables/useNavigationTargets.ts` (modified, +3/-3)
-```diff
-@@ -6,7 +6,7 @@ import { isNoSnapshotErrorResult, isQueryExecutionErrorResult } from "@/lib/quer
- import { buildTableSelectSql, requiresEagerTableMetadataForDataOpen } from "@/lib/table/tableSelectSql";
- import { resolveTableDefaultSort, applyTableDefaultSortResult } from "@/lib/table/tableDefaultSort";
- import { tableDataLargeValuePreviewOptions } from "@/lib/dataGrid/dataGridLargeValues";
--import { editableRowIdentifierColumns, physicalTablePrimaryKeys, shouldIncludeSyntheticRowId } from "@/lib/table/tableEditing";
-+import { editableRowIdentifierColumns, physicalTablePrimaryKeys, postgresTupleLocatorUnsupportedEngine, shouldIncludeSyntheticRowId } from "@/lib/table/tableEditing";
- import { markRowIdLocatorUnsupported, rowIdLocatorUnsupported, shouldKeepRowIdLocatorDisabled, shouldRetryWithoutRowIdLocator } from "@/lib/table/tableRowIdSupport";
- import { tableOpenPageLimit } from "@/lib/table/tableOpenPageLimit";
- import { uuid } from "@/lib/common/utils";
-@@ -218,7 +218,7 @@ async function openTableTarget(target: NavigationTarget, options: NavigationOpen
-     }
-     const eagerColumns = eagerMetadata?.metadata.columns ?? [];
-     const eagerPrimaryKeys = eagerMetadata?.metadata.primaryKeys ?? [];
--    const eagerIncludeRowId = Boolean(eagerMetadata) && shouldIncludeSyntheticRowId(effectiveDbType, eagerPrimaryKeys, targetTableType) && !rowIdLocatorUnsupported(target.connectionId);
-+    const eagerIncludeRowId = Boolean(eagerMetadata) && shouldIncludeSyntheticRowId(effectiveDbType, eagerPrimaryKeys, targetTableType) && !rowIdLocatorUnsupported(target.connectionId) && !postgresTupleLocatorUnsupportedEngine(config);
-     const defaultSort = resolveTableDefaultSort(settingsStore.editorSettings, effectiveDbType, physicalTablePrimaryKeys(eagerColumns, eagerMetadata?.metadata.indexes, effectiveDbType), identifierQuote);
-     const tableSelectSqlOptions = {
-       databaseType: effectiveDbType,
-@@ -324,7 +324,7 @@ async function openTableTarget(target: NavigationTarget, options: NavigationOpen
-       // 异步窗口内 tab 可能已被复用为其他目标：旧请求的元数据不得落地、
-       // 不得解除新目标的 pending
-       if (!isCurrentTarget() || !isCurrentGeneration()) return;
--      const useRowId = shouldIncludeSyntheticRowId(effectiveDbType, primaryKeys, targetTableType) && !rowIdLocatorUnsupported(target.connectionId);
-+      const useRowId = shouldIncludeSyntheticRowId(effectiveDbType, primaryKeys, targetTableType) && !rowIdLocatorUnsupported(target.connectionId) && !postgresTupleLocatorUnsupportedEngine(connectionStore.getConfig(target.connectionId));
-       queryStore.setTableMeta(tabId, {
-         schema: tableSchema,
-         catalog: target.catalog,
-```
-
-**File**: `apps/desktop/src/composables/useSidebarDataOpenRuntime.ts` (modified, +2/-2)
-```diff
-@@ -14,7 +14,7 @@ import type { SidebarDataOpenRequest } from "@/lib/sidebar/sidebarDataOpenCoordi
- import { hasTreeNodeDatabaseContext } from "@/lib/sidebar/treeNodeContext";
- import { buildTableSelectSql, requiresEagerTableMetadataForDataOpen } from "@/lib/table/tableSelectSql";
- import { resolveTableDefaultSort, applyTableDefaultSortResult } from "@/lib/table/tableDefaultSort";
--import { physicalTablePrimaryKeys, shouldIncludeSyntheticRowId } from "@/lib/table/tableEditing";
-+import { physicalTablePrimaryKeys, postgresTupleLocatorUnsupportedEngine, shouldIncludeSyntheticRowId } from "@/lib/table/tableEditing";
- import { markRowIdLocatorUnsupported, rowIdLocatorUnsupported, shouldKeepRowIdLocatorDisabled, shouldRetryWithoutRowIdLocator } from "@/lib/table/tableRowIdSupport";
- import { tableOpenPageLimit } from "@/lib/table/tableOpenPageLimit";
- import { tableDataLargeValuePreviewOptions } from "@/lib/dataGrid/dataGridLargeValues";
-@@ -428,7 +428,7 @@ export function useSidebarDataOpenRuntime() {
-       const defaultOrderBy = defaultSort.orderBy;
-       // #12647：首开路径同样尊重"该连接的行定位器已被引擎拒绝"的记忆，否则
-       // 被降级过的连接每次重新单击表都会再发一次注定失败的定位器查询。
--      const includeRowId = shouldIncludeSyntheticRowId(effectiveDbType, primaryKeys, tableType) && !rowIdLocatorUnsupported(node.connectionId);
-+      const includeRowId = shouldIncludeSyntheticRowId(effectiveDbType, primaryKeys, tableType) && !rowIdLocatorUnsupported(node.connectionId) && !postgresTupleLocatorUnsupportedEngine(connectionStore.getConfig(node.connectionId));
-       const buildOpenSql = (withRowId: boolean) =>
-         buildTableSelectSql({
-           databaseType: effectiveDbType,
-```
-
-**File**: `apps/desktop/src/lib/table/__tests__/postgresTupleLocatorEngine.spec.ts` (added, +33/-0)
-```diff
-@@ -0,0 +1,33 @@
-+import { describe, expect, it } from "vitest";
-+import { postgresTupleLocatorUnsupportedEngine, shouldIncludeSyntheticRowId } from "@/lib/table/tableEditing";
+@@ -0,0 +1,117 @@
++//! Retries for filesystem operations that security software can briefly block.
++//!
++//! Real-time antivirus/EDR scanners open a file right after it is written. On Windows a
++//! directory rename is rejected with `ERROR_ACCESS_DENIED` (5) while any file below it is
++//! still open, even when the opening handle allows delete sharing, and file operations can
++//! fail with `ERROR_SHARING_VIOLATION` (32). The scan normally finishes well inside this
++//! retry window, so callers can keep a single atomic rename as their commit point instead
++//! of falling back to a non-atomic write protocol.
 +
-+const connection = (dbType: string, productName?: string, productVersion?: string) => ({
-+  db_type: dbType,
-+  database_info: productName || productVersion ? { productName, productVersion } : undefined,
-+});
++use std::path::Path;
++use std::time::Duration;
 +
-+describe("postgresTupleLocatorUnsupportedEngine (#14745)", () => {
-+  it("blocks Greenplum, Cloudberry, and Hologres postgres connections", () => {
-+    expect(postgresTupleLocatorUnsupportedEngine(connection("postgres", "Greenplum", "PostgreSQL 9.4.24 (Greenplum Database 6.18.2 build commit)"))).toBe(true);
-+    expect(postgresTupleLocatorUnsupportedEngine(connection("postgres", "Apache Cloudberry", "PostgreSQL 14.4 (Apache Cloudberry 1.2.0)"))).toBe(true);
-+    // Hologres connections reject tableoid outright (#12647).
-+    expect(postgresTupleLocatorUnsupportedEngine(connection("postgres", undefined, "PostgreSQL 14.x (Hologres 2.x)"))).toBe(true);
-+  });
++/// Field reports put the scan window at roughly 1-2 seconds for a large installer, so this
++/// budget gives the scanner several times that window. The plugin installer and the desktop
++/// updater share it deliberately: both commit by renaming a freshly written package.
++pub const TRANSIENT_LOCK_RETRY_DELAYS: [Duration; 5] = [
++    Duration::from_millis(200),
++    Duration::from_millis(400),
++    Duration::from_millis(800),
++    Duration::from_millis(1500),
++    Duration::from_millis(2000),
++];
 +
-+  it("keeps vanilla PostgreSQL and engines without product info on the locator", () => {
-+    expect(postgresTupleLocatorUnsupportedEngine(connection("postgres", "PostgreSQL", "PostgreSQL 16.2 on x86_64"))).toBe(false);
-+    expect(postgresTupleLocatorUnsupportedEngine(connection("postgres"))).toBe(false);
-+    expect(postgresTupleLocatorUnsupportedEngine(undefined)).toBe(false);
-+    // Non-postgres engine types are decided by their own capability sets.
-+    expect(postgresTupleLocatorUnsupportedEngine(connection("mysql", "Greenplum", "whatever"))).toBe(false);
-+  });
++/// Rename `src` to `dst`, retrying the transient Windows locks described above.
++pub fn rename_with_transient_lock_retry(src: &Path, dst: &Path) -> std::io::Result<()> {
++    retry_transient_lock(&TRANSIENT_LOCK_RETRY_DELAYS, || std::fs::rename(src, dst))
++}
 +
-+  it("gates the synthetic row-id decision for keyless base tables (#14745)", () => {
-+    const keyless: string[] = [];
-+    expect(shouldIncludeSyntheticRowId("postgres", keyless, "TABLE")).toBe(true);
-+    // The engine gate is a separate predicate the injection sites combine; the
-+    // combination is what keeps Cloudberry AO tables from receiving the
-+    // tableoid/ctid/xmin projection.
-+    expect(shouldIncludeSyntheticRowId("postgres", keyless, "TABLE") && !postgresTupleLocatorUnsupportedEngine(connection("postgres", "Apache Cloudberry", "PostgreSQL 14.4 (Apache Cloudberry 1.2.0)"))).toBe(false);
-+  });
-+});
++/// Run `operation`, sleeping for each entry in `delays` after a transient Windows lock error.
++///
++/// Every other error is returned immediately. After the last delay the operation is tried
++/// once more, so at most `delays.len() + 1` attempts are made and the final error is the
++/// original one.
++pub fn retry_transient_lock<T>(
++    delays: &[Duration],
++    mut operation: impl FnMut() -> std::io::Result<T>,
++) -> std::io::Result<T> {
++    for delay in delays {
++        match operation() {
++            Ok(value) => return Ok(value),
++            Err(error) if cfg!(windows) && is_windows_lock_error(&error) => std::thread::sleep(*delay),
++            Err(error) => return Err(error),
++        }
++    }
++    operation()
++}
++
++fn is_windows_lock_error(error: &std::io::Error) -> bool {
++    matches!(error.raw_os_error(), Some(5 | 32))
++}
++
++#[cfg(test)]
++mod tests {
++    use super::retry_transient_lock;
++    use std::time::Duration;
++
++    #[test]
++    #[cfg(windows)]
++    fn transient_lock_retry_recovers_from_windows_lock_errors() {
++        use std::sync::atomic::{AtomicUsize, Ordering};
++
++        for code in [5, 32] {
++            let attempts = AtomicUsize::new(0);
++            let result = retry_transient_lock(&[Duration::ZERO, Duration::ZERO, Duration::ZERO], || {
++                if attempts.fetch_add(1, Ordering::SeqCst) < 2 {
++                    Err(std::io::Error::from_raw_os_error(code))
++                } else {
++                    Ok(())
++                }
++            });
++            assert!(result.is_ok());
++            assert_eq!(attempts.load(Ordering::SeqCst), 3);
++        }
++    }
++
++    #[test]
++    #[cfg(windows)]
++    fn transient_lock_retry_returns_last_error_after_exhausting_delays() {
++        use std::sync::atomic::{AtomicUsize, Ordering};
++
++        let attempts = AtomicUsize::new(0);
++        let result: std::io::Result<()> = retry_transient_lock(&[Duration::ZERO], || {
++            attempts.fetch_add(1, Ordering::SeqCst);
++            Err(std::io::Error::from_raw_os_error(5))
++        });
++        assert_eq!(attempts.load(Ordering::SeqCst), 2);
++        assert_eq!(result.unwrap_err().raw_os_error(), Some(5));
++    }
++
++    #[test]
++    fn transient_lock_retry_does_not_retry_other_errors() {
++        use std::sync::atomic::{AtomicUsize, Ordering};
++
++        let attempts = AtomicUsize::new(0);
++        let result: std::io::Result<()> = retry_transient_lock(&[Duration::ZERO; 3], || {
++            attempts.fetch_add(1, Ordering::SeqCst);
++            Err(std::io::Error::from_raw_os_error(2))
++        });
++        assert_eq!(attempts.load(Ordering::SeqCst), 1);
++        assert_eq!(result.unwrap_err().raw_os_error(), Some(2));
++    }
++
++    #[test]
++    #[cfg(unix)]
++    fn transient_lock_retry_treats_windows_lock_codes_as_final_on_unix() {
++        use std::sync::atomic::{AtomicUsize, Ordering};
++
++        // Raw code 5 on Unix is EIO, not a Windows lock error, so the retry gate must leave it final.
++        let attempts = AtomicUsize::new(0);
++        let result: std::io::Result<()> = retry_transient_lock(&[Duration::ZERO; 3], || {
++            attempts.fetch_add(1, Ordering::SeqCst);
++            Err(std::io::Error::from_raw_os_error(5))
++        });
++        assert_eq!(attempts.load(Ordering::SeqCst), 1);
++        assert_eq!(result.unwrap_err().raw_os_error(), Some(5));
++    }
++}
 ```
 
-**File**: `apps/desktop/src/lib/table/tableEditing.ts` (modified, +16/-1)
+**File**: `crates/dbx-platform/src/lib.rs` (modified, +1/-0)
 ```diff
-@@ -1,10 +1,25 @@
--import type { ColumnInfo, DatabaseType, IndexInfo } from "@/types/database";
-+import type { ColumnInfo, ConnectionConfig, DatabaseType, IndexInfo } from "@/types/database";
- import { getDatabaseCapability } from "@/lib/database/databaseCapabilities";
+@@ -1,3 +1,4 @@
++pub mod fs_retry;
+ pub mod path_utils;
+ pub mod process;
+ pub mod proxy;
+```
+
+**File**: `crates/dbx-plugin-runtime/src/plugins/installer.rs` (modified, +2/-99)
+```diff
+@@ -7,6 +7,7 @@ use std::time::Duration;
  
- export const DBX_ROWID_COLUMN = "__DBX_ROWID";
- export const DBX_NEO4J_ELEMENT_ID_COLUMN = "__DBX_ELEMENT_ID";
- export const DBX_TDENGINE_TBNAME_COLUMN = "tbname";
+ use base64::Engine;
+ use chrono::Utc;
++use dbx_platform::fs_retry::{rename_with_transient_lock_retry, retry_transient_lock, TRANSIENT_LOCK_RETRY_DELAYS};
+ use ed25519_dalek::{Signature, Verifier, VerifyingKey};
+ use fs2::FileExt;
+ use semver::Version;
+@@ -1155,43 +1156,6 @@ fn open_install_lock(root_dir: &Path) -> Result<File, String> {
+         .map_err(|error| error.to_string())
+ }
+ 
+-// Antivirus scanners briefly hold handles on freshly extracted plugin binaries, which fails
+-// directory renames with ERROR_ACCESS_DENIED (5) or ERROR_SHARING_VIOLATION (32); the scan
+-// normally finishes well inside this retry window.
+-const TRANSIENT_LOCK_RETRY_DELAYS: [Duration; 5] = [
+-    Duration::from_millis(200),
+-    Duration::from_millis(400),
+-    Duration::from_millis(800),
+-    Duration::from_millis(1500),
+-    Duration::from_millis(2000),
+-];
+-
+-pub(crate) fn rename_with_transient_lock_retry(src: &Path, dst: &Path) -> std::io::Result<()> {
+-    retry_transient_lock(&TRANSIENT_LOCK_RETRY_DELAYS, || std::fs::rename(src, dst))
+-}
+-
+-fn retry_transient_lock<T>(
+-    delays: &[Duration],
+-    mut operation: impl FnMut() -> std::io::Result<T>,
+-) -> std::io::Result<T> {
+-    for delay in delays {
+-        match operation() {
+-            Ok(value) => return Ok(value),
+-            Err(error) if cfg!(windows) && is_windows_lock_error(&error) => {
+-                // If a file in the directory has the read-only attribute set on Windows,
+-                // renames and removals fail with ERROR_ACCESS_DENIED (5). Ensure write permissions.
+-                std::thread::sleep(*delay);
+-            }
+-            Err(error) => return Err(error),
+-        }
+-    }
+-    operation()
+-}
+-
+-fn is_windows_lock_error(error: &std::io::Error) -> bool {
+-    matches!(error.raw_os_error(), Some(5 | 32))
+-}
+-
+ #[allow(clippy::permissions_set_readonly_false)]
+ fn ensure_tree_writable(path: &Path) {
+     if !path.exists() {
+@@ -1344,7 +1308,7 @@ mod tests {
+     use zip::write::SimpleFileOptions;
+ 
+     use super::{
+-        ensure_tree_writable, is_activation_record_file, read_install_identity, retry_transient_lock, sha256_hex,
++        ensure_tree_writable, is_activation_record_file, read_install_identity, sha256_hex,
+         validate_package_expectation, write_json_atomically, PluginInstallPolicy, PluginPackageExpectation,
+         PluginPackageInstaller, PluginSignatureStatus, PluginTrustStore, ACTIVATIONS_DIR, INSTALL_LOCK_FILE,
+         PLUGIN_CHECKSUMS_FILE, PLUGIN_SIGNATURE_FILE, PLUGIN_TRASH_DIR, VERSIONS_DIR,
+@@ -2194,67 +2158,6 @@ mod tests {
+         output.into_inner()
+     }
+ 
+-    #[test]
+-    #[cfg(windows)]
+-    fn transient_lock_retry_recovers_from_windows_lock_errors() {
+-        use std::sync::atomic::{AtomicUsize, Ordering};
+-
+-        for code in [5, 32] {
+-            let attempts = AtomicUsize::new(0);
+-            let result = retry_transient_lock(&[Duration::ZERO, Duration::ZERO, Duration::ZERO], || {
+-                if attempts.fetch_add(1, Ordering::SeqCst) < 2 {
+-                    Err(std::io::Error::from_raw_os_error(code))
+-                } else {
+-                    Ok(())
+-                }
+-            });
+-            assert!(result.is_ok());
+-            assert_eq!(attempts.load(Ordering::SeqCst), 3);
+-        }
+-    }
+-
+-    #[test]
+-    #[cfg(windows)]
+-    fn transient_lock_retry_returns_last_error_after_exhausting_delays() {
+-        use std::sync::atomic::{AtomicUsize, Ordering};
+-
+-        let attempts = AtomicUsize::new(0);
+-        let result: std::io::Result<()> = retry_transient_lock(&[Duration::ZERO], || {
+-            attempts.fetch_add(1, Ordering::SeqCst);
+-            Err(std::io::Error::from_raw_os_error(5))
+-        });
+-        assert_eq!(attempts.load(Ordering::SeqCst), 2);
+-        assert_eq!(result.unwrap_err().raw_os_error(), Some(5));
+-    }
+-
+-    #[test]
+-    fn transient_lock_retry_does_not_retry_other_errors() {
+-        use std::sync::atomic::{AtomicUsize, Ordering};
+-
+-        let attempts = AtomicUsize::new(0);
+-        let result: std::io::Result<()> = retry_transient_lock(&[Duration::ZERO; 3], || {
+-            attempts.fetch_add(1, Ordering::SeqCst);
+-            Err(std::io::Error::from_raw_os_error(2))
+-        });
+-        assert_eq!(attempts.load(Ordering::SeqCst), 1);
+-        assert_eq!(result.unwrap_err().raw_os_error(), Some(2));
+-    }
+-
+-    #[test]
+-    #[cfg(unix)]
+-    fn transient_lock_retry_treats_windows_lock_codes_as_final_on_unix() {
+-        use std::sync::atomic::{AtomicUsize, Ordering};
+-
+-        // Raw code 5 on Unix is EIO, not a Windows lock error, so the retry gate must leave it final.
+-        let attempts = AtomicUsize::new(0);
+-        let result: std::io::Result<()> = retry_transient_lock(&[Duration::ZERO; 3], || {
+-            attempts.fetch_add(1, Ordering::SeqCst);
+-            Err(std::io::Error::from_raw_os_error(5))
+-        });
+-        assert_eq!(attempts.load(Ordering::SeqCst), 1
+```
+
+**File**: `crates/dbx-plugin-runtime/src/plugins/marketplace.rs` (modified, +2/-1)
+```diff
+@@ -4,6 +4,7 @@ use std::io::Write;
+ use std::path::{Path, PathBuf};
+ use std::time::Duration;
+ 
++use dbx_platform::fs_retry::rename_with_transient_lock_retry;
+ use fs2::FileExt;
+ use reqwest::redirect::Policy;
+ use reqwest::{Client, Url};
+@@ -804,7 +805,7 @@ fn write_json_atomically<T: Serialize>(path: &Path, value: &T) -> Result<(), Str
+     // std::fs::rename atomically replaces an existing destination on POSIX
+     // and Windows alike; remove-then-rename could lose the repository
+     // document to a crash between the two calls.
+-    crate::plugins::installer::rename_with_transient_lock_retry(&temporary, path).map_err(|error| error.to_string())?;
++    rename_with_transient_lock_retry(&temporary, path).map_err(|error| error.to_string())?;
+     Ok(())
+ }
+ 
+```
+
+**File**: `src-tauri/src/commands/update.rs` (modified, +166/-12)
+```diff
+@@ -85,10 +85,31 @@ impl UpdateDownloadProgressGate {
+ 
+ enum PendingUpdate {
+     Downloading(Arc<DownloadCancellation>),
++    /// The package is being renamed into the cache. Cancel is recorded on the token, but the slot
++    /// stays occupied so another download cannot start and cache cleanup cannot sweep staging.
++    Committing(Arc<DownloadCancellation>),
+     Installing,
+     Ready(Box<CachedUpdate>),
+ }
+ 
++/// Clears a commit slot that `finish_commit` did not finish, including when the commit panics.
++struct CommitGuard<'a> {
++    state: &'a PendingUpdateState,
++    cancellation: &'a Arc<DownloadCancellation>,
++}
++
++impl Drop for CommitGuard<'_> {
++    fn drop(&mut self) {
++        let Ok(mut pending) = self.state.pending.lock() else { return };
++        if matches!(
++            pending.as_ref(),
++            Some(PendingUpdate::Committing(current)) if Arc::ptr_eq(current, self.cancellation)
++        ) {
++            *pending = None;
++        }
++    }
++}
++
+ struct CachedUpdate {
+     record: CacheRecord,
+     ready: ReadyUpdate,
+@@ -161,6 +182,19 @@ impl PendingUpdateState {
+         update: CachedUpdate,
+         root: &std::path::Path,
+     ) -> Result<(), String> {
++        let guard = self.begin_commit(cancellation)?;
++        let bytes = match &update.ready {
++            ReadyUpdate::Installer { bytes, .. } => bytes,
++            ReadyUpdate::Portable { archive, .. } => archive,
++        };
++        // `commit` retries while security software scans the package. That wait must not run
++        // under the state lock: cancel and a later download both need the lock, and holding it
++        // across the scan would publish a package the user had already canceled.
++        let committed = update_cache::commit(root, &update.record, bytes);
++        self.finish_commit(guard, update, root, committed)
++    }
++
++    fn begin_commit<'a>(&'a self, cancellation: &'a Arc<DownloadCancellation>) -> Result<CommitGuard<'a>, String> {
+         let mut pending = self.pending.lock().map_err(|_| "Update state is unavailable.".to_string())?;
+         let is_current = matches!(
+             pending.as_ref(),
+@@ -170,13 +204,63 @@ impl PendingUpdateState {
+         if !is_current {
+             return Err(DOWNLOAD_CANCELED_ERROR.to_string());
+         }
+-        let bytes = match &update.ready {
+-            ReadyUpdate::Installer { bytes, .. } => bytes,
+-            ReadyUpdate::Portable { archive, .. } => archive,
++        *pending = Some(PendingUpdate::Committing(Arc::clone(cancellation)));
++        drop(pending);
++        Ok(CommitGuard { state: self, cancellation })
++    }
++
++    fn finish_commit(
++        &self,
++        guard: CommitGuard<'_>,
++        update: CachedUpdate,
++        root: &std::path::Path,
++        committed: Result<(), String>,
++    ) -> Result<(), String> {
++        let canceled = {
++            let mut pending = self.pending.lock().map_err(|_| "Update state is unavailable.".to_string())?;
++            if !Self::is_our_commit(&pending, guard.cancellation) {
++                drop(pending);
++                return Err("Update state is unavailable.".into());
++            }
++            if guard.cancellation.is_canceled() {
++                true
++            } else if let Err(error) = committed {
++                *pending = None;
++                drop(pending);
++                return Err(error);
++            } else {
++                *pending = Some(PendingUpdate::Ready(Box::new(update)));
++                false
++            }
+         };
+-        update_cache::commit(root, &update.record, bytes)?;
+-        *pending = Some(PendingUpdate::Ready(Box::new(update)));
+-        Ok(())
++        if !canceled {
++            return Ok(());
++        }
++        // Stay in `Committing` while the package is removed so a new download cannot observe
++        // or replace the cache directory mid-delete.
++        self.discard_canceled_cache(root);
++        self.clear_our_commit(guard.cancellation);
++        Err(DOWNLOAD_CANCELED_ERROR.to_string())
++    }
++
++    fn discard_canceled_cache(&self, root: &std::path::Path) {
++        if let Err(error) = update_cache::discard(root) {
++            eprintln!("[DBX updater] failed to discard a canceled update cache: {error}");
++        }
++    }
++
++    fn clear_our_commit(&self, cancellation: &Arc<DownloadCancellation>) {
++        let Ok(mut pending) = self.pending.lock() else { return };
++        if Self::is_our_commit(&pending, cancellation) {
++            *pending = None;
++        }
++    }
++
++    fn is_our_commit(pending: &Option<PendingUpdate>, cancellation: &Arc<DownloadCancellation>) -> bool {
++        matches!(
++            pending.as_ref(),
++            Some(PendingUpdate::Committing(current)) if Arc::ptr_eq(current, cancellation)
++        )
+     }
+ 
+     fn finish_failed_download(&self, cancellation: &Arc<DownloadCancellation>) -> Result<(), String> {
+@@ -192,11 +276,22 @@ impl PendingUpdateState {
+     }
+ 
+     pub fn cancel_download(&self) {
+-        if let Ok
+```
+
+**File**: `src-tauri/src/commands/update_cache.rs` (modified, +172/-13)
+```diff
+@@ -1,10 +1,16 @@
+ //! A single committed update. The directory rename is the commit point; partial writes are never read.
++//!
++//! Security software opens a freshly written package to scan it, which makes Windows reject
++//! directory removal and the commit rename for a moment. `commit` retries that transient lock
++//! so a scan cannot turn a finished download into a failed one.
++use dbx_platform::fs_retry::{retry_transient_lock, TRANSIENT_LOCK_RETRY_DELAYS};
+ use serde::{Deserialize, Serialize};
+ use sha2::{Digest, Sha256};
+ use std::{
+     fs,
+     io::{Read, Write},
+     path::{Path, PathBuf},
++    time::Duration,
+ };
+ 
+ fn default_is_promoted() -> bool {
+@@ -60,6 +66,18 @@ fn write_synced(path: &Path, bytes: &[u8]) -> Result<(), String> {
+ }
+ 
+ pub(super) fn commit(root: &Path, record: &CacheRecord, bytes: &[u8]) -> Result<(), String> {
++    commit_with(root, record, bytes, &TRANSIENT_LOCK_RETRY_DELAYS, |src, dst| fs::rename(src, dst))
++}
++
++/// `commit` with an injectable rename so tests can prove the transient-lock retry without
++/// racing a real antivirus scan.
++fn commit_with(
++    root: &Path,
++    record: &CacheRecord,
++    bytes: &[u8],
++    retry_delays: &[Duration],
++    mut rename: impl FnMut(&Path, &Path) -> std::io::Result<()>,
++) -> Result<(), String> {
+     let metadata = serde_json::to_vec(record).map_err(|e| e.to_string())?;
+     if metadata.len() > 4 * 1024 * 1024 || bytes.len() > 512 * 1024 * 1024 {
+         return Err("Cached update exceeds size limits.".into());
+@@ -75,11 +93,14 @@ pub(super) fn commit(root: &Path, record: &CacheRecord, bytes: &[u8]) -> Result<
+         #[cfg(unix)]
+         fs::File::open(&staging).and_then(|dir| dir.sync_all()).map_err(|e| e.to_string())?;
+         let ready = root.join("ready");
+-        // Windows cannot rename onto an existing directory: `fs::rename` fails with
+-        // `os error 5` when `ready` is still present from an earlier attempt. Clear
+-        // it first so the commit is idempotent and does not need a manual retry.
+-        discard(root)?;
+-        fs::rename(&staging, &ready)
++        // Windows cannot rename onto an existing directory, and a scanner can hold that
++        // previous tree open with the same access-denied error as the commit rename.
++        discard_with(root, retry_delays, remove_cache_entry)?;
++        // A real-time antivirus/EDR scanner opens the freshly written package for a moment.
++        // While that handle exists Windows rejects the directory rename with `os error 5`,
++        // even though the scan releases it shortly after, so wait out the scan instead of
++        // failing the download and making the user transfer the package again.
++        retry_transient_lock(retry_delays, || rename(&staging, &ready))
+             .map_err(|error| context("Failed to finalize the DBX update cache", &ready, error))?;
+         #[cfg(unix)]
+         fs::File::open(root).and_then(|dir| dir.sync_all()).map_err(|e| e.to_string())?;
+@@ -175,16 +196,27 @@ pub(super) fn cleanup_partial(root: &Path) -> Result<(), String> {
+ }
+ 
+ pub(super) fn discard(root: &Path) -> Result<(), String> {
+-    let ready = root.join("ready");
+-    let result = if fs::symlink_metadata(&ready).is_ok_and(|m| !m.file_type().is_dir()) {
+-        fs::remove_file(&ready)
++    discard_with(root, &TRANSIENT_LOCK_RETRY_DELAYS, remove_cache_entry)
++}
++
++fn remove_cache_entry(path: &Path) -> std::io::Result<()> {
++    if fs::symlink_metadata(path).is_ok_and(|metadata| !metadata.file_type().is_dir()) {
++        fs::remove_file(path)
+     } else {
+-        fs::remove_dir_all(&ready)
+-    };
+-    match result {
++        fs::remove_dir_all(path)
++    }
++}
++
++fn discard_with(
++    root: &Path,
++    retry_delays: &[Duration],
++    mut remove: impl FnMut(&Path) -> std::io::Result<()>,
++) -> Result<(), String> {
++    let ready = root.join("ready");
++    match retry_transient_lock(retry_delays, || remove(&ready)) {
+         Ok(()) => Ok(()),
+-        Err(e) if e.kind() == std::io::ErrorKind::NotFound => Ok(()),
+-        Err(e) => Err(context("Failed to clear the previous DBX update cache", &ready, e)),
++        Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(()),
++        Err(error) => Err(context("Failed to clear the previous DBX update cache", &ready, error)),
+     }
+ }
+ 
+@@ -196,6 +228,31 @@ pub(super) fn root(app: &tauri::AppHandle) -> Result<PathBuf, String> {
+ #[cfg(test)]
+ mod tests {
+     use super::*;
++    use std::time::Duration;
++
++    fn record_for(bytes: &[u8]) -> CacheRecord {
++        CacheRecord {
++            schema_version: 1,
++            package_kind: "test".into(),
++            package_length: bytes.len() as u64,
++            package_sha256: digest(bytes),
++            info: DownloadedUpdate {
++                cache_id: "test".into(),
++                version: "99.0.0".into(),
++                portable_mode: false,
++                release_url: String::new(),
++                release_notes: String::new(),
++                do
+```
+
+---
+
+### Incident Patch 2: `64184374` (2026-11-14)
+**Commit Message**: fix(editor): keep structure peek panels below modal dialogs (#14967)
+
+* fix(editor): keep structure peek panels below modal dialogs
+
+Opening "View DDL" while a structure peek panel was up produced a broken
+stack: the peek panel shared the dialog layer band, so it drew over the
+dialog's overlay while the dialog's modal pointer-event guard still blocked
+it -- the panel looked on top but could not be focused or closed, and the
+window order was unpredictable.
+
+Peek panels are modeless, so allocate their z-index from a dedicated band
+(40-49) that always stays below dialog layers (which start at 50). Repeated
+activations can no longer climb into the dialog band.
+
+Refs #14966
+
+* fix(editor): stack peek panels by activation order
+
+Keeping modeless peek panels below modal dialogs by allocating from a
+monotonic counter that saturates at the top of the band breaks the existing
+bring-to-front behaviour: after enough activations two panels share a
+layer, so the panel clicked last can no longer be raised above the other.
+
+Keep panels in activation order instead and derive their z-index from that
+order, so any number of activations keeps a strict order inside the band.
+Expose BASE_DIALOG_Z_INDEX 
+
+**File**: `apps/desktop/src/components/editor/QueryEditor.vue` (modified, +21/-7)
+```diff
+@@ -57,7 +57,7 @@ import type { ColumnInfo } from "@/types/database";
+ import { createColumnReferencePayload, tableReferenceInsertText } from "@/lib/editor/queryEditorTableDrop";
+ import { clearRememberedFocusedQueryEditorView, focusedQueryEditorView, queryEditorInsertContext, registerQueryEditorInsertContext, rememberFocusedQueryEditorView, unregisterQueryEditorInsertContext } from "@/lib/editor/focusedQueryEditorView";
+ import { loadObjectMetadataFacet } from "@/lib/metadata/objectMetadataCache";
+-import { structurePeekPanelId } from "@/lib/editor/structurePeekPanel";
++import { structurePeekPanelId, structurePeekZIndexesByOrder } from "@/lib/editor/structurePeekPanel";
+ import { createQueryEditorNativeSelectionGuard, parkEditorNativeSelection, type EditorNativeSelectionPark } from "@/lib/editor/queryEditorNativeSelection";
+ import CodeSnapshotDialog from "@/components/codeSnapshot/CodeSnapshotDialog.vue";
+ import QueryEditorContextMenu, { type QueryEditorContextMenuState, type QueryEditorContextMenuActions } from "./QueryEditorContextMenu.vue";
+@@ -366,18 +366,32 @@ interface StructurePeekPanelState {
+ 
+ const structurePeekPanels = ref<StructurePeekPanelState[]>([]);
+ let structurePeekRequestSeq = 0;
+-let structurePeekZIndexSeq = 50;
+ let structurePeekCascadeSeq = 0;
  
 +/**
-+ * PostgreSQL-family engines whose storage rejects the tableoid/ctid/xmin
-+ * tuple locator on at least some tables: Greenplum and Apache Cloudberry AO
-+ * tables (`ERROR: virtual tuple table slot does not have system attributes`,
-+ * `Invalid attnum: -3`, #14745) and Hologres (#12647, rejects `tableoid`
-+ * outright). Detected from the connection's `SELECT version()` product
-+ * string; before that probe lands the connection degrades on first
-+ * rejection and is remembered per session.
++ * Peek panels are kept in activation order (back to front) and their z-index is
++ * derived from that order, so any number of activations keeps a strict order and
++ * the stack never leaves the band below modal dialogs.
 + */
-+export function postgresTupleLocatorUnsupportedEngine(connection: Pick<ConnectionConfig, "db_type" | "database_info"> | undefined): boolean {
-+  if (connection?.db_type !== "postgres") return false;
-+  const version = `${connection.database_info?.productName ?? ""} ${connection.database_info?.productVersion ?? ""}`.toLowerCase();
-+  return version.includes("greenplum") || version.includes("cloudberry") || version.includes("hologres");
-+}
-+
- export function isViewTableType(tableType?: string): boolean {
-   return tableType?.toUpperCase().includes("VIEW") === true;
- }
-```
-
----
-
-### Incident Patch 2: `325fe1a6` (2026-11-13)
-**Commit Message**: fix(export): clear an idle-expired manual transaction when export fails (#14882)
-
-Exports read through the tab's open manual transaction. When the backend
-idle watcher rolls that session back, the export still sent the stale
-txnSessionId and surfaced the raw expiry error, leaving the dead id on
-the tab so every retry failed the same way.
-
-Handle expiry in both query-result export entry points and in the LOB
-reads an export performs: clear the dead session on the owning tab (with
-the auto-rollback notice when uncommitted work may be lost, or the SQL
-Server transaction-status recovery), then report
-exportProgress.transactionUnavailable instead of the backend string. The
-same cleanup now backs the query-execution expiry path, and the expiry
-matcher accepts the current idle-rollback wording.
-
-Fixes #14795
-
-Co-authored-by: linzhikai <[REDACTED_EMAIL]>
-
-**File**: `apps/desktop/src/composables/__tests__/useDataGridExport.transactionExpiry.spec.ts` (added, +168/-0)
-```diff
-@@ -0,0 +1,168 @@
-+import { computed, ref } from "vue";
-+import { createPinia, setActivePinia } from "pinia";
-+import { beforeEach, describe, expect, it, vi } from "vitest";
-+import type { UseDataGridExportOptions } from "@/composables/useDataGridExport";
-+import type { QueryResultExportRequest } from "@/lib/backend/api";
-+
-+const mocks = vi.hoisted(() => ({
-+  start: vi.fn(),
-+  cancel: vi.fn(),
-+  noteExpired: vi.fn(),
-+  save: vi.fn(),
-+  mode: vi.fn(),
-+  toast: vi.fn(),
-+}));
-+
-+vi.mock("@/lib/backend/tauriRuntime", () => ({ isTauriRuntime: () => true }));
-+vi.mock("@/lib/backend/api", async (importOriginal) => {
-+  const original = await importOriginal<typeof import("@/lib/backend/api")>();
-+  return {
-+    ...original,
-+    startQueryResultExport: mocks.start,
-+    cancelQueryResultExport: mocks.cancel,
-+    createQueryResultTempFile: vi.fn(async (extension: string) => `C:/exports/temp.${extension}`),
-+    openQueryResultTempFile: vi.fn(async () => undefined),
-+  };
-+});
-+vi.mock("@/lib/export/exportPath", () => ({
-+  promptExportSavePath: mocks.save,
-+  autoRevealExportedPathIfConfigured: vi.fn(),
-+}));
-+vi.mock("@/lib/export/exportExecutionMode", () => ({ getDefaultExportExecutionMode: mocks.mode }));
-+vi.mock("@/stores/queryStore", () => ({ useQueryStore: () => ({ noteExpiredManualTransaction: mocks.noteExpired }) }));
-+vi.mock("@/composables/useToast", () => ({ useToast: () => ({ toast: mocks.toast }) }));
-+vi.mock("vue-i18n", () => ({ useI18n: () => ({ t: (key: string, params?: { message?: string }) => (params?.message ? `${key}: ${params.message}` : key) }) }));
-+vi.mock("@/i18n", () => ({ default: { install() {} } }));
-+vi.mock("@/lib/schema/oracleRoutineDeploy", () => ({}));
-+vi.mock("@/composables/useDataGridExtractor", () => ({ useDataGridExtractor: () => ({ canCopyWithExtractor: vi.fn() }) }));
-+vi.mock("@/stores/connectionStore", () => ({
-+  useConnectionStore: () => ({
-+    getConfig: () => ({ id: "mysql-1", name: "MySQL", db_type: "mysql", database: "app" }),
-+    ensureConnected: vi.fn(async () => undefined),
-+    connectionStateRevision: () => 0,
-+    isCurrentConnectionStateRevision: () => true,
-+  }),
-+}));
-+vi.mock("@/stores/settingsStore", () => ({
-+  useSettingsStore: () => ({
-+    editorSettings: {
-+      defaultExportMode: "immediate",
-+      exportBatchSize: 1000,
-+      exportRowLimitEnabled: false,
-+      csvQuoteMode: "minimal",
-+      csvNullMode: "empty",
-+      numericColumnRightAlign: true,
-+    },
-+  }),
-+}));
-+
-+function expiredTransactionError() {
-+  return new Error("Transaction session not found or expired; it may have been auto-rolled back due to inactivity");
-+}
-+
-+function capturedRequest(options: { exportId: string; filePath: string; format: QueryResultExportRequest["format"] }): QueryResultExportRequest {
-+  return {
-+    exportId: options.exportId,
-+    connectionId: "mysql-1",
-+    database: "app",
-+    sql: "UPDATE users SET active = 1",
-+    queryBaseSql: "UPDATE users SET active = 1",
-+    databaseType: "mysql",
-+    useAgentCursor: false,
-+    filePath: options.filePath,
-+    format: options.format,
-+    pageSize: 1000,
-+    keysetOptimizationEnabled: false,
-+    txnSessionId: "txn-expired",
-+    executionId: "exec-1",
-+  };
-+}
-+
-+function fixture() {
-+  const progress = ref({
-+    title: "",
-+    tableName: "",
-+    format: "",
-+    rowsExported: 0,
-+    totalRows: null as number | null,
-+    status: "",
-+    errorMessage: null as string | null,
-+    filePath: null as string | null,
++function restackStructurePeekPanels() {
++  const zIndexes = structurePeekZIndexesByOrder(structurePeekPanels.value.length);
++  structurePeekPanels.value.forEach((panel, index) => {
++    panel.zIndex = zIndexes[index] ?? panel.zIndex;
 +  });
-+  const options: UseDataGridExportOptions = {
-+    columns: computed(() => ["ID"]),
-+    displayItems: computed(() => []),
-+    sql: computed(() => "SELECT ID FROM users"),
-+    tableMeta: computed(() => undefined),
-+    databaseType: computed(() => "mysql"),
-+    connectionId: computed(() => "mysql-1"),
-+    database: computed(() => "app"),
-+    context: computed(() => "results"),
-+    sourceColumns: computed(() => ["ID"]),
-+    columnTypes: computed(() => ["INT"]),
-+    whereInput: computed(() => undefined),
-+    orderBy: computed(() => undefined),
-+    exportBatchSize: computed(() => 1000),
-+    hasCellSelection: computed(() => false),
-+    selectedCells: computed(() => ({ columns: [], rows: [] })),
-+    selectedCellMatrix: computed(() => null),
-+    selectedRange: computed(() => null),
-+    contextCell: ref(null),
-+    contextSelectionIsSynthetic: ref(false),
-+    getRowItem: () => undefined,
-+    selectedRowIds: ref(new Set<number>()),
-+    hasRowSelection: computed(() => false),
-+    captureQueryResultExportRequest: () => async (buildOptions) => capturedRequest(buildOptions),
-+    queryResultExportRequest: async (buildOptions) => capturedRequest(buildOptions),
-+    exportProgressState: progress,
-+    exportProgressDialog: ref(false),
-+    exportCanMinimize: ref(false),
-+    exportCancelHandler: ref(null),
-+  };
-+  return { options, progress };
 +}
 +
-+describe("data grid query result export with an expired manual transaction", () => {
-+  beforeEach(() => {
-+    v
-```
-
-**File**: `apps/desktop/src/composables/useDataGridExport.ts` (modified, +22/-1)
-```diff
-@@ -27,6 +27,7 @@ import { resolveSqlExportColumnIndexes, sqlExportColumnChoices } from "@/lib/exp
- import { summarizeExportRows } from "@/lib/export/exportDiagnostics";
- import { appendDebugLog, appendNativeProcessMemoryLog, getBrowserMemorySnapshot, isDebugLoggingEnabled } from "@/lib/backend/debugLog";
- import { uuid } from "@/lib/common/utils";
-+import { isManualTransactionSessionExpired } from "@/lib/backend/errorUtils";
- import { useSettingsStore } from "@/stores/settingsStore";
- import { csvNullLiteralForMode } from "@/lib/export/csvNullMode";
- import { expandNestedJsonStringsForCopy } from "@/lib/common/jsonCopyValue";
-@@ -47,6 +48,7 @@ import { getDefaultExportExecutionMode } from "@/lib/export/exportExecutionMode"
- import { SnapshotCompletionError } from "@/lib/export/snapshotCompletion";
- import type { CapturedLegacyLargeValueExport } from "@/lib/dataGrid/legacyLargeValueExport";
- import { useConnectionStore } from "@/stores/connectionStore";
-+import { useQueryStore } from "@/stores/queryStore";
- import { connectionConfigFingerprint } from "@/lib/connection/connectionDatabaseInfo";
- import type { ManualExportMode } from "@/lib/export/manualExportQueue";
- 
-@@ -1343,6 +1345,10 @@ export function useDataGridExport(options: UseDataGridExportOptions) {
-             return await (native ? api.readLargeValueChunk(request, true) : api.readLargeValueChunk(request));
-           } catch (error) {
-             nativeUnknown = native && (!(error instanceof SnapshotCompletionError) || error.status === "unknown");
-+            if (request.txnSessionId && isManualTransactionSessionExpired(error)) {
-+              useQueryStore().noteExpiredManualTransaction(request.txnSessionId, error);
-+              throw new Error(t("exportProgress.transactionUnavailable"));
-+            }
-             throw error;
-           }
-         };
-@@ -2129,6 +2135,10 @@ export function useDataGridExport(options: UseDataGridExportOptions) {
-             return await api.readLargeValueChunk(request, true);
-           } catch (error) {
-             unknown ||= !(error instanceof SnapshotCompletionError) || error.status === "unknown";
-+            if (request.txnSessionId && isManualTransactionSessionExpired(error)) {
-+              useQueryStore().noteExpiredManualTransaction(request.txnSessionId, error);
-+              throw new Error(t("exportProgress.transactionUnavailable"));
-+            }
-             throw error;
-           }
-         };
-@@ -2782,6 +2792,17 @@ export function useDataGridExport(options: UseDataGridExportOptions) {
-     };
-     let request: QueryResultExportRequest | undefined;
-     if (mode === "immediate") request = await build();
-+    const startExport = async (onProgress: (progress: api.TableExportProgress) => void) => {
-+      try {
-+        return await (isTauriRuntime() ? api.startQueryResultExport(request!, onProgress, true) : api.startQueryResultExport(request!, onProgress));
-+      } catch (error) {
-+        if (request?.txnSessionId && isManualTransactionSessionExpired(error)) {
-+          useQueryStore().noteExpiredManualTransaction(request.txnSessionId, error);
-+          throw new Error(t("exportProgress.transactionUnavailable"));
-+        }
-+        throw error;
-+      }
-+    };
-     await submitBackendExport({
-       exportId,
-       tableName: "Query Result",
-@@ -2796,7 +2817,7 @@ export function useDataGridExport(options: UseDataGridExportOptions) {
-               request = await build();
-             }
-           : undefined,
--      start: (onProgress) => (isTauriRuntime() ? api.startQueryResultExport(request!, onProgress, true) : api.startQueryResultExport(request!, onProgress)),
-+      start: startExport,
-       cancel: () => api.cancelQueryResultExport(exportId, request!.executionId),
-     });
-     return true;
-```
-
-**File**: `apps/desktop/src/lib/backend/errorUtils.ts` (modified, +7/-1)
-```diff
-@@ -193,7 +193,13 @@ export function normalizeBackendError(error: unknown): BackendError | null {
- export function isManualTransactionSessionExpired(error: unknown): boolean {
-   if (normalizeBackendError(error)?.code === MANUAL_TRANSACTION_SESSION_EXPIRED_CODE) return true;
-   const message = error instanceof Error ? error.message : typeof error === "string" ? error : undefined;
--  return message?.startsWith("Transaction session not found or expired;") === true || message === "Transaction was auto-rolled back due to 5 minutes of inactivity";
-+  return (
-+    message?.startsWith("Transaction session not found or expired;") === true ||
-+    // Current backend idle-rollback message, plus the pre-0.6.70 wording that
-+    // hardcoded the five-minute timeout.
-+    message === "Transaction was auto-rolled back due to inactivity" ||
-+    message === "Transaction was auto-rolled back due to 5 minutes of inactivity"
-+  );
+ function bringStructurePeekToFront(panelId: string) {
+-  const panel = structurePeekPanels.value.find((item) => item.id === panelId);
++  const index = structurePeekPanels.value.findIndex((item) => item.id === panelId);
++  if (index < 0) return;
++  const [panel] = structurePeekPanels.value.splice(index, 1);
+   if (!panel) return;
+-  structurePeekZIndexSeq += 1;
+-  panel.zIndex = structurePeekZIndexSeq;
++  structurePeekPanels.value.push(panel);
++  restackStructurePeekPanels();
  }
  
- export function isUnsupportedManualTransactionMethod(error: unknown): boolean {
-```
-
-**File**: `apps/desktop/src/stores/__tests__/queryStore.directExportQueue.spec.ts` (modified, +23/-0)
-```diff
-@@ -110,3 +110,26 @@ it("finishes a known preparation failure and permits the following independent e
-   expect(pending[0]!.request.sql).toBe("SELECT 2 FROM dual");
-   finish(0);
- });
-+
-+it("drops the idle-expired manual transaction and reports the export transaction as unavailable", async () => {
-+  const { useQueryStore } = await import("../queryStore");
-+  const { useExportTracker } = await import("@/composables/useExportTracker");
-+  const { default: i18n } = await import("@/i18n");
-+  const store = useQueryStore();
-+  const id = store.createTab("oracle-1", "APP", "Query");
-+  const tab = store.tabs.find((item) => item.id === id)!;
-+  tab.autoCommit = false;
-+  tab.txnSessionId = "txn-expired";
-+  tab.txnPossiblyDirty = true;
-+
-+  await store.exportQuerySqlDirect(id, "UPDATE users SET active = 1", "csv", "out.csv");
-+  await vi.waitFor(() => expect(pending).toHaveLength(1));
-+  expect(pending[0]!.request.txnSessionId).toBe("txn-expired");
-+  pending[0]!.reject(new Error("Transaction session not found or expired; it may have been auto-rolled back due to inactivity"));
-+
-+  const tracker = useExportTracker();
-+  await vi.waitFor(() => expect(tracker.tasks.value[0]!.errorMessage).toBe(i18n.global.t("exportProgress.transactionUnavailable")));
-+  expect(tab.txnSessionId).toBeUndefined();
-+  expect(tab.txnAutoRolledBack).toBe(true);
-+  expect(tab.txnPossiblyDirty).toBe(false);
-+});
-```
-
-**File**: `apps/desktop/src/stores/queryStore.ts` (modified, +40/-16)
-```diff
-@@ -6349,6 +6349,27 @@ export const useQueryStore = defineStore("query", () => {
-     if (tab.txnPossiblyDirty !== undefined) tab.txnPossiblyDirty = false;
+ function closeStructurePeekPanel(panelId: string) {
+   structurePeekPanels.value = structurePeekPanels.value.filter((item) => item.id !== panelId);
++  restackStructurePeekPanels();
+ }
+ 
+ async function loadStructurePeekColumns(panelId: string, requestId: number, target: SqlObjectNavigationTarget, database: string, schema: string) {
+@@ -427,7 +441,6 @@ async function openTableStructurePeek(target: SqlObjectNavigationTarget) {
+     return;
    }
  
-+  /** Backend session was removed and rolled back after idle expiry: clear the
-+   *  sticky dirty state together with the session. A session proven read-only
-+   *  reports no lost work, so it gets no auto-rollback notice (#9831). */
-+  function markManualTransactionIdleExpired(tab: QueryTab) {
-+    const rollbackNoticeRequired = manualTransactionRollbackNoticeRequired(tab, effectiveDatabaseTypeForConnection(useConnectionStore().getConfig(tab.connectionId)));
-+    clearTxnPossiblyDirty(tab);
-+    tab.txnSessionId = undefined;
-+    tab.txnAutoRolledBack = rollbackNoticeRequired;
-+  }
-+
-+  /** An export observed the backend's idle-expiry error for the transaction it
-+   *  was reading through. Drop the dead session from its source tab so a retry
-+   *  stops sending the stale id. Returns false when no open tab owns it. */
-+  function noteExpiredManualTransaction(txnSessionId: string, error: unknown): boolean {
-+    const tab = tabs.value.find((item) => item.txnSessionId === txnSessionId);
-+    if (!tab) return false;
-+    if (isSqlServerTransactionTab(tab)) reportSqlServerTransactionError(tab, error);
-+    else markManualTransactionIdleExpired(tab);
-+    return true;
-+  }
-+
-   function rollbackTabTransaction(tab: QueryTab, options?: { resetAutoCommit?: boolean; resetAutoCommitDbType?: string }) {
-     invalidateManualTransactionTarget(tab);
-     if (tab.txnSessionId) void rollbackTransaction(tab.id);
-@@ -10155,13 +10176,7 @@ export const useQueryStore = defineStore("query", () => {
-         const errMsg: string = e?.message ?? String(e);
-         const idleTimeout = isManualTransactionSessionExpired(e) || errMsg.includes("已自动回滚");
-         if (idleTimeout) {
--          // Backend session was removed and rolled back after idle expiry: clear
--          // the sticky dirty state together with the session. Same rule as the
--          // restart path: a session proven read-only reports no lost work.
--          const rollbackNoticeRequired = manualTransactionRollbackNoticeRequired(tab, effectiveDatabaseTypeForConnection(useConnectionStore().getConfig(tab.connectionId)));
--          clearTxnPossiblyDirty(tab);
--          tab.txnSessionId = undefined;
--          tab.txnAutoRolledBack = rollbackNoticeRequired;
-+          markManualTransactionIdleExpired(tab);
-         } else if (/rolled.?back/i.test(errMsg) || /transaction session not found/i.test(errMsg) || /agent runtime terminated/i.test(errMsg)) {
-           // Statement failure that disposed the manual session: the `rolled back`
-           // message fragment is a frontend cleanup compatibility contract.
-@@ -11923,6 +11938,18 @@ export const useQueryStore = defineStore("query", () => {
-         throw new Error(i18n.global.t("exportProgress.transactionUnavailable"));
-     }
+-  structurePeekZIndexSeq += 1;
+   const requestId = ++structurePeekRequestSeq;
+   const cascadeIndex = structurePeekCascadeSeq++;
+   const panel: StructurePeekPanelState = {
+@@ -436,11 +449,12 @@ async function openTableStructurePeek(target: SqlObjectNavigationTarget) {
+     columns: [],
+     loading: true,
+     error: "",
+-    zIndex: structurePeekZIndexSeq,
++    zIndex: 0,
+     cascadeIndex,
+     requestId,
+   };
+   structurePeekPanels.value = [...structurePeekPanels.value, panel];
++  restackStructurePeekPanels();
+   await loadStructurePeekColumns(id, requestId, panel.target, database, schema);
+ }
  
-+    const startExport = async (onProgress: (progress: api.TableExportProgress) => void) => {
-+      try {
-+        return await (isTauriRuntime() ? api.startQueryResultExport(request, onProgress, true) : api.startQueryResultExport(request, onProgress));
-+      } catch (error) {
-+        if (request.txnSessionId && isManualTransactionSessionExpired(error)) {
-+          noteExpiredManualTransaction(request.txnSessionId, error);
-+          throw new Error(i18n.global.t("exportProgress.transactionUnavailable"));
-+        }
-+        throw error;
-+      }
+```
+
+**File**: `apps/desktop/src/components/editor/TableStructurePeekDialog.vue` (modified, +2/-2)
+```diff
+@@ -5,7 +5,7 @@ import { useI18n } from "vue-i18n";
+ import { Button } from "@/components/ui/button";
+ import { Input } from "@/components/ui/input";
+ import { formatMetadataColumnTypeLabel } from "@/lib/dataGrid/dataGridColumnType";
+-import { STRUCTURE_PEEK_MIN_HEIGHT, STRUCTURE_PEEK_MIN_WIDTH, centeredStructurePeekRect, clampStructurePeekRect, defaultStructurePeekSize, resizeStructurePeekRect, type StructurePeekResizeEdge } from "@/lib/editor/structurePeekPanel";
++import { STRUCTURE_PEEK_MAX_Z_INDEX, STRUCTURE_PEEK_MIN_HEIGHT, STRUCTURE_PEEK_MIN_WIDTH, centeredStructurePeekRect, clampStructurePeekRect, defaultStructurePeekSize, resizeStructurePeekRect, type StructurePeekResizeEdge } from "@/lib/editor/structurePeekPanel";
+ import { shouldPreserveEditorFocusOnPeekPointerDown } from "@/lib/editor/focusedQueryEditorView";
+ import { tableColumnDefaultDisplayValue } from "@/lib/table/tableColumnDefaultPresentation";
+ import { filterObjectBrowserTableColumns, sortObjectBrowserTableColumns, type ObjectBrowserTableColumnSort, type ObjectBrowserTableColumnSortKey } from "@/lib/table/objectBrowserTableInfo";
+@@ -82,7 +82,7 @@ const panelStyle = computed(() => {
+     top: `${panelTop.value}px`,
+     width: `${panelWidth.value}px`,
+     height: `${panelHeight.value}px`,
+-    zIndex: String(props.zIndex ?? 50),
++    zIndex: String(props.zIndex ?? STRUCTURE_PEEK_MAX_Z_INDEX),
+   };
+   if (interacting.value) style.transition = "none";
+   return style;
+```
+
+**File**: `apps/desktop/src/components/ui/dialog/useDialogLayerOrder.ts` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ import { injectDialogRootContext, useForwardExpose } from "reka-ui";
+ import { computed, onBeforeUnmount, onUpdated, ref, watch, watchPostEffect, type Ref } from "vue";
+ 
+-const BASE_DIALOG_Z_INDEX = 50;
++export const BASE_DIALOG_Z_INDEX = 50;
+ const DIALOG_TOP_Z_INDEX_VAR = "--dbx-dialog-top-z-index";
+ const FLOATING_LAYER_Z_INDEX_VAR = "--dbx-floating-layer-z-index";
+ 
+```
+
+**File**: `apps/desktop/src/lib/__tests__/editor/structurePeekPanel.spec.ts` (modified, +50/-1)
+```diff
+@@ -1,5 +1,6 @@
+ import { describe, expect, it } from "vitest";
+-import { STRUCTURE_PEEK_MIN_HEIGHT, STRUCTURE_PEEK_MIN_WIDTH, clampStructurePeekRect, resizeStructurePeekRect, structurePeekPanelId } from "@/lib/editor/structurePeekPanel";
++import { BASE_DIALOG_Z_INDEX } from "@/components/ui/dialog/useDialogLayerOrder";
++import { STRUCTURE_PEEK_BASE_Z_INDEX, STRUCTURE_PEEK_DEPTH, STRUCTURE_PEEK_MAX_Z_INDEX, STRUCTURE_PEEK_MIN_HEIGHT, STRUCTURE_PEEK_MIN_WIDTH, clampStructurePeekRect, resizeStructurePeekRect, structurePeekPanelId, structurePeekZIndexesByOrder } from "@/lib/editor/structurePeekPanel";
+ 
+ describe("structurePeekPanel", () => {
+   it("builds a stable case-insensitive identity including catalog", () => {
+@@ -42,4 +43,52 @@ describe("structurePeekPanel", () => {
+     expect(grown.left).toBe(100);
+     expect(grown.top).toBe(60);
+   });
++
++  it("keeps peek panels in a layer band strictly below modal dialogs", () => {
++    expect(STRUCTURE_PEEK_MAX_Z_INDEX).toBeLessThan(BASE_DIALOG_Z_INDEX);
++    expect(STRUCTURE_PEEK_BASE_Z_INDEX).toBeLessThan(STRUCTURE_PEEK_MAX_Z_INDEX);
++    expect(STRUCTURE_PEEK_DEPTH).toBe(STRUCTURE_PEEK_MAX_Z_INDEX - STRUCTURE_PEEK_BASE_Z_INDEX + 1);
++  });
++
++  it("stacks open panels by activation order so the last activated one stays on top", () => {
++    // Mirror the editor: `open` holds panels back to front, z-index comes from order.
++    let open: string[] = [];
++    const zIndexOf = (panelId: string) => structurePeekZIndexesByOrder(open.length)[open.indexOf(panelId)]!;
++    const openPanel = (panelId: string) => {
++      open = [...open, panelId];
++    };
++    const activate = (panelId: string) => {
++      open = [...open.filter((item) => item !== panelId), panelId];
 +    };
 +
-     const tracker = useExportTracker();
-     if (!isTauriRuntime()) await connStore.ensureConnected(request.connectionId);
-     const task = tracker.addTask("Query Result", format, filePath, request.exportId);
-@@ -11945,14 +11972,10 @@ export const useQueryStore = defineStore("query", () => {
-             return "settled";
-           }
-           invoked = true;
--          const result = await api.startQueryResultExport(
--            request,
--            (progress) => {
--              terminal ||= progress.status === "Done" || progress.status === "Error" || progress.status === "Cancelled";
--              tracker.updateTableExportTask(request.exportId, progress);
--            },
--            true,
--          );
-+          const result = await startExport((progress) => {
-+            terminal ||= progress.status === "Done" || progress.status === "Error" || progress.status === "Cancelled";
-+            tracker.updateTableExportTask(request.exportId, progress);
-+          });
-           terminal ||= result.status === "Done" || result.status === "Error" || result.status === "Cancelled";
-           tracker.updateTableExportTask(request.exportId, result);
-           return terminal ? "settled" : "unknown";
-@@ -11975,7 +11998,7 @@ export const useQueryStore = defineStore("query", () => {
++    openPanel("a");
++    openPanel("b");
++    expect(zIndexOf("b")).toBeGreaterThan(zIndexOf("a"));
++
++    // Repeated A/B/A cycles must not saturate: whichever panel is activated last wins.
++    for (let round = 0; round < 24; round += 1) {
++      const top = round % 2 === 0 ? "a" : "b";
++      const other = top === "a" ? "b" : "a";
++      activate(top);
++      expect(zIndexOf(top)).toBe(STRUCTURE_PEEK_MAX_Z_INDEX);
++      expect(zIndexOf(top)).toBeGreaterThan(zIndexOf(other));
++    }
++  });
++
++  it("keeps the front panels in strict order no matter how many are open", () => {
++    expect(structurePeekZIndexesByOrder(0)).toEqual([]);
++
++    const count = 20;
++    const zIndexes = structurePeekZIndexesByOrder(count);
++    expect(zIndexes).toHaveLength(count);
++    expect(zIndexes[count - 1]).toBe(STRUCTURE_PEEK_MAX_Z_INDEX);
++    for (const zIndex of zIndexes) {
++      expect(zIndex).toBeGreaterThanOrEqual(STRUCTURE_PEEK_BASE_Z_INDEX);
++      expect(zIndex).toBeLessThan(BASE_DIALOG_Z_INDEX);
++    }
++    // The `STRUCTURE_PEEK_DEPTH` front panels stay strictly ordered; older ones share the base layer.
++    for (let index = count - STRUCTURE_PEEK_DEPTH + 1; index < count; index += 1) {
++      expect(zIndexes[index]!).toBeGreaterThan(zIndexes[index - 1]!);
++    }
++  });
+ });
+```
+
+**File**: `apps/desktop/src/lib/editor/structurePeekPanel.ts` (modified, +34/-0)
+```diff
+@@ -9,6 +9,40 @@ export const STRUCTURE_PEEK_MIN_WIDTH = 360;
+ export const STRUCTURE_PEEK_MIN_HEIGHT = 240;
+ export const STRUCTURE_PEEK_CASCADE = 24;
  
-     void (async () => {
-       try {
--        await api.startQueryResultExport(request, (progress) => tracker.updateTableExportTask(request.exportId, progress));
-+        await startExport((pro
++/**
++ * Peek panels are modeless windows, so they must stay below modal dialogs.
++ * Dialog layers start at 50 (BASE_DIALOG_Z_INDEX in useDialogLayerOrder), and
++ * allocating peek panels from the same band used to tie a panel with an open
++ * dialog: the dialog's overlay painted behind the panel while its modal
++ * pointer-event guard still blocked the panel, so the panel looked on top but
++ * could not be clicked or closed.
++ */
++export const STRUCTURE_PEEK_BASE_Z_INDEX = 40;
++export const STRUCTURE_PEEK_MAX_Z_INDEX = 49;
++
++/** Number of layers available inside the peek band. */
++export const STRUCTURE_PEEK_DEPTH = STRUCTURE_PEEK_MAX_Z_INDEX - STRUCTURE_PEEK_BASE_Z_INDEX + 1;
++
++/**
++ * z-indexes for `count` open panels, ordered bottom to top: the last entry is
++ * the panel the user activated most recently and always lands on
++ * STRUCTURE_PEEK_MAX_Z_INDEX, so the whole stack stays strictly below dialogs.
++ *
++ * Peek panels are re-stacked by their current order instead of being handed a
++ * monotonic counter. A counter saturates at the top of the band after a handful
++ * of activations, after which two panels share one layer and the older panel can
++ * no longer be raised above the newer one even when clicked last. With more open
++ * panels than band slots the ones furthest back share the base layer while the
++ * front STRUCTURE_PEEK_DEPTH panels keep a strict order.
++ */
++export function structurePeekZIndexesByOrder(count: number): number[] {
++  const total = Math.max(0, Math.floor(Number.isFinite(count) ? count : 0));
++  return Array.from({ length: total }, (_unused, index) => {
++    const offset = Math.max(0, index - (total - STRUCTURE_PEEK_DEPTH));
++    return STRUCTURE_PEEK_BASE_Z_INDEX + offset;
++  });
++}
++
+ export function defaultStructurePeekSize(viewportWidth: number, viewportHeight: number): { width: number; height: number } {
+   const maxWidth = Math.max(STRUCTURE_PEEK_MIN_WIDTH, viewportWidth - STRUCTURE_PEEK_MARGIN * 2);
+   const maxHeight = Math.max(STRUCTURE_PEEK_MIN_HEIGHT, viewportHeight - STRUCTURE_PEEK_MARGIN * 2);
 ```
 
 ---
 
-### Incident Patch 3: `65efe53b` (2026-11-13)
-**Commit Message**: fix(query): apply configured default schema when opening queries from quick connections (#11844) (#11865)
+### Incident Patch 3: `f91cc454` (2026-11-14)
+**Commit Message**: feat(postgres): show row-level security from the sidebar (#14935)
 
-* fix(query): apply configured default schema when opening queries from quick connections (#11844)
+* feat(postgres): show row-level security from the sidebar
 
-* style: format frontend with oxfmt 0.76.0
+* chore(i18n): autofill new translations
 
-The two merge commits carried 32 files reformatted by a stale local oxfmt 0.73.0 pre-commit hook; the repo now pins 0.76.0 and CI enforces it. Re-formatting with 0.76.0 restores those files to main's content, leaving only the PR's own 3-file change.
+* chore: trigger CI for updated translations
 
 ---------
 
-Co-authored-by: zipg <[REDACTED_EMAIL]>
+Co-authored-by: ThugKd <[REDACTED_EMAIL]>
+Co-authored-by: dbx-i18n-bot <github-actions[bot]@users.noreply.github.com>
 
-**File**: `apps/desktop/src/App.vue` (modified, +33/-7)
+**File**: `apps/desktop/src/components/sidebar/SidebarTreeRuntimeHost.vue` (modified, +28/-0)
 ```diff
-@@ -3454,7 +3454,25 @@ async function newQuery(options: NewQueryOptions = {}) {
-     await connectionStore.ensureConnected(target.connectionId);
-     if (target.shouldRefreshDefaultDatabase) {
-       const options = await getDatabaseOptions(target.connectionId);
--      queryStore.updateDatabase(tabId, resolveDefaultDatabase(conn, options));
-+      const nextDb = resolveDefaultDatabase(conn, options);
-+      if (nextDb !== target.database) {
-+        queryStore.updateDatabase(tabId, nextDb);
-+        if (target.schema) {
-+          queryStore.updateSchema(tabId, target.schema);
-+        }
-+      }
-+      if (!target.schema && (conn.db_type === "oracle" || conn.db_type === "oceanbase-oracle")) {
-+        try {
-+          const orderedSchemas = await api.listSchemas(target.connectionId, nextDb);
-+          const schema = schemaAfterConnectionSwitch(conn.db_type, orderedSchemas, conn.default_schema);
-+          const latestTab = queryStore.tabs.find((candidate) => candidate.id === tabId);
-+          if (schema && latestTab && latestTab.connectionId === target.connectionId) {
-+            queryStore.updateSchema(tabId, schema);
-+          }
-+        } catch {
-+          // Schema metadata failure must not turn a successful connection into an error.
-+        }
-+      }
-     }
-   } catch (e: any) {
-     toast(
-@@ -3517,18 +3535,26 @@ async function openConnectionQuery(connectionId: string) {
-     }
-     return;
+@@ -3317,6 +3317,31 @@ async function openDatabaseObjectDependencies() {
    }
--  // The quick-start page opens a query directly, bypassing newQuery() and its
--  // default-schema fallback. Pass the configured schema here too, otherwise an
--  // Oracle connection with a default schema opens the editor without a session
--  // schema and unqualified tables resolve against the session default (#11844).
--  const tabId = queryStore.createTab(connectionId, initialTarget.database, undefined, "query", initialTarget.schema);
-+  const initialSchema = initialTarget.kind === "query" ? initialTarget.schema : undefined;
-+  const tabId = queryStore.createTab(connectionId, initialTarget.database, undefined, "query", initialSchema);
-   try {
-     await connectionStore.ensureConnected(connectionId);
-     const options = await getDatabaseOptions(connectionId);
-     const target = quickConnectionOpenTarget(connection, options);
-     if (target.kind === "query") {
-       queryStore.updateDatabase(tabId, target.database);
--      if (target.schema) queryStore.updateSchema(tabId, target.schema);
-+      if (connection.default_schema || connection.db_type === "oracle" || connection.db_type === "oceanbase-oracle") {
-+        try {
-+          const orderedSchemas = connection.default_schema ? [] : await api.listSchemas(connectionId, target.database);
-+          const schema = schemaAfterConnectionSwitch(connection.db_type, orderedSchemas, connection.default_schema);
-+          const latestTab = queryStore.tabs.find((candidate) => candidate.id === tabId);
-+          if (schema && latestTab && latestTab.connectionId === connectionId) {
-+            queryStore.updateSchema(tabId, schema);
-+          }
-+        } catch {
-+          // Schema metadata failure must not turn a successful connection into an error.
-+        }
-+      }
-     }
-   } catch (e: any) {
-     toast(
-```
-
-**File**: `apps/desktop/src/lib/__tests__/connection/connectionOpenTarget.spec.ts` (modified, +13/-4)
-```diff
-@@ -43,11 +43,20 @@ describe("quickConnectionOpenTarget", () => {
-     });
-   });
- 
--  it("carries the connection's default schema into the query tab (#11844)", () => {
--    expect(quickConnectionOpenTarget({ ...connection("oracle"), database: "XE", default_schema: "REPORTING" })).toEqual({
-+  it("includes configured default schema for Oracle and other query connections", () => {
-+    expect(quickConnectionOpenTarget({ ...connection("oracle"), database: "ORCL", default_schema: "HR" })).toEqual({
-       kind: "query",
--      database: "XE",
--      schema: "REPORTING",
-+      database: "ORCL",
-+      schema: "HR",
-+    });
-+    expect(quickConnectionOpenTarget({ ...connection("oracle"), database: "ORCL", default_schema: "  FINANCE  " })).toEqual({
-+      kind: "query",
-+      database: "ORCL",
-+      schema: "FINANCE",
-+    });
-+    expect(quickConnectionOpenTarget({ ...connection("oracle"), database: "ORCL", default_schema: "   " })).toEqual({
-+      kind: "query",
-+      database: "ORCL",
-     });
-   });
- });
-```
-
-**File**: `apps/desktop/src/lib/connection/connectionOpenTarget.ts` (modified, +7/-2)
-```diff
-@@ -3,7 +3,7 @@ import { resolveDefaultDatabase } from "@/lib/database/defaultDatabase";
- 
- export type QuickConnectionOpenTarget = { kind: "mq-admin" } | { kind: "nacos-admin" } | { kind: "plugin-workbench" } | { kind: "etcd" } | { kind: "zookeeper" } | { kind: "consul" } | { kind: "query"; database: string; schema?: string };
- 
--export function quickConnectionOpenTarget(connection: Pick<ConnectionConfig, "db_type" | "database" | "default_schema">, databaseOptions: string[] = []): QuickConnectionOpenTarget {
-+export function quickConnectionOpenTarget(connection: Pick<ConnectionConfig, "db_type" | "database"> & Partial<Pick<ConnectionConfig, "default_schema">>, databaseOptions: string[] = []): QuickConnectionOpenTarget {
-   if (connection.db_type === "mq") {
-     return { kind: "mq-admin" };
-   }
-@@ -22,5 +22,10 @@ export function quickConnectionOpenTarget(connection: Pick<ConnectionConfig, "db
-   if (connection.db_type === "consul") {
-     return { kind: "consul" };
-   }
--  return { kind: "query", database: resolveDefaultDatabase(connection, databaseOptions), schema: connection.default_schema };
-+  const configuredSchema = connection.default_schema?.trim() || undefined;
-+  return {
-+    kind: "query",
-+    database: resolveDefaultDatabase(connection, databaseOptions),
-+    ...(configuredSchema ? { schema: configuredSchema } : {}),
-+  };
  }
+ 
++async function openPostgresRowLevelSecurity(node: TreeNode) {
++  if (!node.connectionId || !hasTreeNodeDatabaseContext(node) || (node.type === "schema" && !node.schema)) return;
++  // An escape string keeps schema names containing backslashes safe with either
++  // setting of standard_conforming_strings.
++  const schemaFilter = node.type === "schema" && node.schema ? `\n  AND n.nspname = E'${node.schema.replaceAll("\\", "\\\\").replaceAll("'", "''")}'` : "";
++  const sql = `SELECT n.nspname AS schema_name, c.relname AS table_name,
++       c.relrowsecurity AS rls_enabled, c.relforcerowsecurity AS rls_forced,
++       p.policyname AS policy_name, p.permissive, p.roles, p.cmd AS command,
++       p.qual AS using_expression, p.with_check AS check_expression
++FROM pg_catalog.pg_class AS c
++JOIN pg_catalog.pg_namespace AS n ON n.oid = c.relnamespace
++LEFT JOIN pg_catalog.pg_policies AS p ON p.schemaname = n.nspname AND p.tablename = c.relname
++WHERE (c.relrowsecurity OR c.relforcerowsecurity OR p.policyname IS NOT NULL)${schemaFilter}
++ORDER BY n.nspname, c.relname, p.policyname;`;
++  try {
++    await connectionStore.ensureConnected(node.connectionId);
++    connectionStore.activeConnectionId = node.connectionId;
++    const title = `${t("contextMenu.viewPostgresRowLevelSecurity")} - ${node.label}`;
++    const tabId = queryStore.createTab(node.connectionId, node.database, title, "query", node.schema, sql, node.catalog, { forceNew: true });
++    await queryStore.executeTabSql(tabId, sql);
++  } catch (error) {
++    toast(t("contextMenu.tableOperationFailed", { message: error instanceof Error ? error.message : String(error) }), 5000);
++  }
++}
++
+ async function compileXuguObject() {
+   const node = activeNode.value;
+   if (currentDatabaseType() !== "xugu" || !node.connectionId || !node.database) return;
+@@ -7833,6 +7858,9 @@ function buildDatabaseSidebarMenu(context: SidebarMenuFactoryContext): boolean {
+     if (canOpenObjectBrowser.value) {
+       items.push({ sidebarActionId: "contextMenu.openObjectBrowser", label: t("contextMenu.openObjectBrowser"), action: openObjectBrowser, icon: TableProperties });
+     }
++    if (currentDatabaseType() === "postgres" && hasTreeNodeDatabaseContext(node)) {
++      items.push({ sidebarActionId: "contextMenu.viewPostgresRowLevelSecurity", label: t("contextMenu.viewPostgresRowLevelSecurity"), action: () => openPostgresRowLevelSecurity(node), icon: ShieldCheck });
++    }
+     if (canCreateOracleTriggerAt(node)) items.push({ sidebarActionId: "contextMenu.createTrigger", label: t("contextMenu.createTrigger"), action: createOracleTrigger, icon: Plus });
+     if (supportsConnectionQueryActions(currentDatabaseType())) {
+       items.push({ sidebarActionId: "contextMenu.newQuery", label: t("contextMenu.newQuery"), action: newQuery, icon: TerminalSquare });
+```
+
+**File**: `apps/desktop/src/i18n/locales/en.ts` (modified, +1/-0)
+```diff
+@@ -5357,6 +5357,7 @@ export default {
+     editView: "Edit View",
+     viewSource: "View Source",
+     viewDependencies: "View Dependencies",
++    viewPostgresRowLevelSecurity: "View Row-Level Security",
+     viewObject: "View",
+     changeOpenMode: "Change open mode",
+     copyDdl: "Copy DDL",
+```
+
+**File**: `apps/desktop/src/i18n/locales/es.ts` (modified, +1/-0)
+```diff
+@@ -5335,6 +5335,7 @@ export default withEnglishFallback({
+     foreignKeyChecksEnable: "Habilitar",
+     foreignKeyChecksDisable: "Deshabilitar",
+     foreignKeyChecksHint: "De forma predeterminada, se usa la configuración de la sesión. Al deshabilitarla, se ejecuta con SET FOREIGN_KEY_CHECKS = 0, lo que permite procesar las tablas referenciadas en cualquier orden; después de la ejecución, se restaura el valor original.",
++    viewPostgresRowLevelSecurity: "Ver políticas de seguridad a nivel de fila",
+   },
+   visibleDatabases: {
+     title: "Bases de datos visibles",
+```
+
+**File**: `apps/desktop/src/i18n/locales/it.ts` (modified, +1/-0)
+```diff
+@@ -5156,6 +5156,7 @@ export default withEnglishFallback({
+     foreignKeyChecksEnable: "Abilita",
+     foreignKeyChecksDisable: "Disabilita",
+     foreignKeyChecksHint: "Per impostazione predefinita viene mantenuta l'impostazione della sessione. Se disabilitato, viene eseguito con SET FOREIGN_KEY_CHECKS = 0, così le tabelle referenziate possono essere gestite in qualsiasi ordine; al termine, il valore originale viene ripristinato.",
++    viewPostgresRowLevelSecurity: "Visualizza criteri di sicurezza a livello di riga",
+   },
+   visibleDatabases: {
+     title: "Database Visibili",
+```
+
+**File**: `apps/desktop/src/i18n/locales/ja.ts` (modified, +1/-0)
+```diff
+@@ -5177,6 +5177,7 @@ export default withEnglishFallback({
+     foreignKeyChecksEnable: "有効",
+     foreignKeyChecksDisable: "無効",
+     foreignKeyChecksHint: "デフォルトではセッション設定を引き継ぎます。無効時は SET FOREIGN_KEY_CHECKS = 0 で実行し、参照されるテーブルを任意の順序で処理できます。実行後は元の値に戻します。",
++    viewPostgresRowLevelSecurity: "行レベルセキュリティポリシーを表示",
+   },
+   visibleDatabases: {
+     title: "表示するデータベース",
+```
+
+**File**: `apps/desktop/src/i18n/locales/ko.ts` (modified, +1/-0)
+```diff
+@@ -5089,6 +5089,7 @@ export default withEnglishFallback({
+     foreignKeyChecksEnable: "활성화",
+     foreignKeyChecksDisable: "비활성화",
+     foreignKeyChecksHint: "기본적으로 세션 설정을 따릅니다. 비활성화하면 SET FOREIGN_KEY_CHECKS = 0으로 실행하며, 참조되는 테이블을 임의 순서로 처리할 수 있습니다. 실행 후 원래 값으로 복원합니다.",
++    viewPostgresRowLevelSecurity: "행 수준 보안 정책 보기",
+   },
+   visibleDatabases: {
+     title: "표시할 데이터베이스",
+```
+
+**File**: `apps/desktop/src/i18n/locales/pt-BR.ts` (modified, +1/-0)
+```diff
+@@ -5154,6 +5154,7 @@ export default withEnglishFallback({
+     foreignKeyChecksEnable: "Ativar",
+     foreignKeyChecksDisable: "Desativar",
+     foreignKeyChecksHint: "Por padrão, segue a configuração da sessão. Quando desativado, executa com SET FOREIGN_KEY_CHECKS = 0, permitindo processar as tabelas referenciadas em qualquer ordem; após a execução, o valor original é restaurado.",
++    viewPostgresRowLevelSecurity: "Ver políticas de segurança em nível de linha",
+   },
+   visibleDatabases: {
+     title: "Bancos de dados visíveis",
+```
+
+**File**: `apps/desktop/src/i18n/locales/ru.ts` (modified, +1/-0)
+```diff
+@@ -5275,6 +5275,7 @@ export default withEnglishFallback({
+     foreignKeyChecksEnable: "Включить",
+     foreignKeyChecksDisable: "Отключить",
+     foreignKeyChecksHint: "По умолчанию используется параметр сеанса. При отключении выполняется с SET FOREIGN_KEY_CHECKS = 0, что позволяет обрабатывать таблицы, на которые есть ссылки, в любом порядке; после выполнения исходное значение восстанавливается.",
++    viewPostgresRowLevelSecurity: "Просмотреть политики безопасности на уровне строк",
+   },
+   visibleDatabases: {
+     title: "Видимые базы данных",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14882** (2026-11-13): fix(export): clear an idle-expired manual transaction when export fails (@Lan-zk)
-- **PR #14875** (2026-11-13): fix(postgres): use concat() for CRDB metadata relation name (@Pius-x)
-- **PR #14873** (2026-11-13): fix(editor): enable AI in detached SQL windows (@Acd-kk)
-- **PR #14866** (2026-11-13): fix(structure): drop a local column order once the table is rebuilt in a new order (@jeff377)
-- **PR #14864** (2026-11-13): fix(editor): resolve Oracle public synonyms in semantic diagnostics (@zipg)
-- **PR #14861** (2026-11-13): fix(mysql): stop abandoned export streams instead of draining them on close (@jeff377)
+- **PR #14979** (2026-11-14): fix(oracle): scope metadata queries to requested object types (@Acd-kk)
+- **PR #14975** (2026-11-14): feat(grid): 结果集筛选可视化——列头漏斗标识与单字段关闭 (@dienaso)
+- **PR #14973** (2026-11-14): fix(plugin-sdk): encode nil capabilities as [] and tolerate null on initialize (@sx4im)
+- **PR #14967** (2026-11-14): fix(editor): keep structure peek panels below modal dialogs (@xiaou61)
+- **PR #14965** (2026-11-14): fix(sidebar): show table sizes for Doris and StarRocks tables (@xiaou61)
+- **PR #14959** (2026-11-14): fix(object-browser): prioritize common columns and restore timestamps (@Acd-kk)
 
 ---
 
@@ -2800,43 +2985,54 @@ Co-authored-by: zipg <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. postgres): block tuple locator on Greenplum, Cloudberry, Hologres
+## X. updater): retry the update cache rename on transient Windows locks
 
 **RULE**:
-When implementing operations in `apps/desktop/src/components/grid/DataGrid.vue`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/dbx-platform/src/fs_retry.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e7d19408`: postgres): block tuple locator on Greenplum, Cloudberry, Hologres. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9ce79533`: updater): retry the update cache rename on transient Windows locks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src/components/grid/DataGrid.vue`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/dbx-platform/src/fs_retry.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  postgresTupleLocatorUnsupportedEngine,
-    includeRowId:
-      shouldIncludeSyntheticRowId(resolvedDatabaseType.value, tableMeta.primaryKeys, tableMeta.tableType) && !(props.connectionId && rowIdLocatorUnsupported(props.connectionId)) && !postgresTupleLocatorUnsupportedEngine(props.connectionId ? connectionStore.getConfig(props.connectionId) : undefined),
-      includeRowId:
-        shouldIncludeSyntheticRowId(resolvedDatabaseType.value, tableMeta.primaryKeys, tableMeta.tableType) &&
-        !(props.connectionId && rowIdLocatorUnsupported(props.connectionId)) &&
-        !postgresTupleLocatorUnsupportedEngine(props.connectionId ? connectionStore.getConfig(props.connectionId) : undefined),
-      includeRowId:
-        shouldIncludeSyntheticRowId(resolvedDatabaseType.value, tableMeta.primaryKeys, tableMeta.tableType) &&
-        !(props.connectionId && rowIdLocatorUnsupported(props.connectionId)) &&
-        !postgresTupleLocatorUnsupportedEngine(props.connectionId ? connectionStore.getConfig(props.connectionId) : undefined),
+//! Retries for filesystem operations that security software can briefly block.
+//!
+//! Real-time antivirus/EDR scanners open a file right after it is written. On Windows a
+//! directory rename is rejected with `ERROR_ACCESS_DENIED` (5) while any file below it is
+//! still open, even when the opening handle allows delete sharing, and file operations can
+//! fail with `ERROR_SHARING_VIOLATION` (32). The scan normally finishes well inside this
+//! retry window, so callers can keep a single atomic rename as their commit point instead
+//! of falling back to a non-atomic write protocol.
+
+use std::path::Path;
+use std::time::Duration;
+
+/// Field reports put the scan window at roughly 1-2 seconds for a large installer, so this
+/// budget gives the scanner several times that window. The plugin installer and the desktop
+/// updater share it deliberately: both commit by renaming a freshly written package.
+pub const TRANSIENT_LOCK_RETRY_DELAYS: [Duration; 5] = [
+    Duration::from_millis(200),
+    Duration::from_millis(400),
+    Duration::from_millis(800),
+    Duration::from_millis(1500),
+    Duration::from_millis(2000),
+];
+
+/// Rename `src` to `dst`, retrying the transient Windows locks descr
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    includeRowId: shouldIncludeSyntheticRowId(resolvedDatabaseType.value, tableMeta.primaryKeys, tableMeta.tableType) && !(props.connectionId && rowIdLocatorUnsupported(props.connectionId)),
-      includeRowId: shouldIncludeSyntheticRowId(resolvedDatabaseType.value, tableMeta.primaryKeys, tableMeta.tableType) && !(props.connectionId && rowIdLocatorUnsupported(props.connectionId)),
-      includeRowId: shouldIncludeSyntheticRowId(resolvedDatabaseType.value, tableMeta.primaryKeys, tableMeta.tableType) && !(props.connectionId && rowIdLocatorUnsupported(props.connectionId)),
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e7d19408` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9ce79533` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

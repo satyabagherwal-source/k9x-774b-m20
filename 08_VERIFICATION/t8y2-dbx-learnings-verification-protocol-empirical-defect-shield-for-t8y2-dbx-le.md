@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:45:29.971Z",
+  "timestamp": "2026-11-15T06:37:32.297Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-t8y2-dbx-learnings",
+  "learning_id": "LEARN-EVO-t8y2-dbx-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [t8y2-dbx-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:45:29.971Z`  
-> **Learning ID**: `LEARN-REEXTRACT-t8y2-dbx-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-15T06:37:32.297Z`  
+> **Learning ID**: `LEARN-EVO-t8y2-dbx-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source**: github ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
-> **Source Version**: `04ccf364`  
+> **Source Version**: `0c019880`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T15:25:19.468Z  
+> **Timestamp**: 2026-11-15T06:36:56.964Z  
 > **Learning ID**: `learn-github-t8y2-dbx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T15:25:19.460Z  
+> **Harvest Timestamp**: 2026-11-15T06:36:56.958Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: 25 MB lightweight cross-platform database client for 100+ databases, including MySQL, PostgreSQL, SQLite, Redis, MongoDB, DuckDB, SQL Server, and Dameng. Built-in AI, MCP Server, CLI, desktop and Docker. | 轻量级跨平台数据库管理工具，支持 MySQL、PostgreSQL、SQLite、Redis、MongoDB、达梦等 100+ 数据库，提供桌面端、Docker、CLI、内置 AI 助手和 MCP。
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 30178 stars
+- **Stars / Engagement**: 30359 stars
 
 ---
 
@@ -2016,14 +2016,13 @@ func (b *Binary) GetValues() []byte {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #14818** (2026-11-12): **[Bug] 生成表 DDL 时 comment on COLUMN 语句之间存在空行**
-  *Symptoms*: ## 环境 - 操作系统：Windows 7 - DBX 版本：0.6.69 - 数据库：Oracle（具体版本未提供）  ## 问题描述 在 DBX 中连接 Oracle，生成表 DDL 时，列注释 `comment on COLUMN ... is ...;` 语句之间会出现空行。截图中可见连续多条 `comment on COLUMN` 语句之间各有一行空白。  查看 DDL 时显示正常，无空行。  ## 截图信息 截图显示了生成 DDL 的约 80–90 行，包含多条 `comment on COLUMN` 语句，语句之间存在空行；部分对象名和注释内容被遮挡或模糊，未还原。  ## 期望行为 生成表 DDL 时，`comment on COLUMN` 语句之间不插入多余空行，与查看 DDL 时的格式一致。  ## 未提供信息 - Oracle 具体版本 - 完整复现步骤 - 相关日志或错误信息 - 具体表结构及完整 DDL  ## 附件  ![DBX issue image 1](https://dl.dbxio.com/issue-feedback/2026/11/fed320ae-c6df-40a0-9d4d-1dd5b3ba663b/1-bb2b1235-e906-4978-8e6a-c3ccdf848e7e.jpg)  ---  _此 Issue 通过 DBX 官网匿名反馈入口提交，发布前已由提交者确认。_
-  **Post-Mortem & Fix Analysis**:
-  > <!-- dbx-similar-issues --> 以下 Issue 可能与当前问题相关：  - #14352  这些结果由机器人自动检索，尚未确认重复。如属于同一问题，建议在已有 Issue 中补充信息。
-  > /claim
+- **Issue #14966** (2026-11-14): **[Bug] 查看表结构与 DDL 弹窗叠加导致层级异常、交互锁定**
+  *Symptoms*: ### 数据库类型和版本 / Database type and version  ClickHouse 25.3.14.14  ### 问题描述 / Problem description  1. 复现步骤 ①新建连接，在 SQL 编辑器输入查询语句 ②右键表名 → 选择「查看表结构」，弹出表结构弹窗 ③再次右键同一表名 → 选择「查看 DDL」，弹出 DDL 弹窗 ④观察两弹窗层级、可见性及交互状态；尝试点击表结构弹窗右上角关闭 × 2. 期望结果 ①表结构与 DDL 弹窗应互斥（或打开替换前弹窗）或正确分层（后者在上且独立） ②鼠标焦点应跟随或选择当前活动弹窗，实现正常查看/操作 ③任意弹窗均可独立关闭；无需依赖 先后顺序 3. 实际结果 ①层级遮挡：​ DDL 弹窗显示在下层，表结构弹窗在上层，整体层级混乱，视觉重叠 ②交互锁定：​ 鼠标只能操作 DDL 框，表结构弹窗无法交互 ③关闭链异常：​无法操作表结构弹窗，必须先关闭 DDL 弹窗，操作阻塞 ④截图日志 如图  <img width="589" height="274" alt="d0489b1082942b3e47ac2edaabaca75e" src="https://github.com/user-attachments/assets/980c8012-34d1-4a21-9d7b-90441932f84d" />  <img width="1320" height="774" alt="3a9f1b3c5acf7975cac363e94f9e33d2" src="https://github.com/user-attachments/assets/723dabe2-a898-4f2a-948e-c647254ea655" />  <img width="1257" height="812" alt="92bbf3537be6e8f80c3c29583e1104df" src="https://github.com/user-attachments/assets/1d927423-7b0a-4642-ac4f-325499a5b88b" />  ### 支持信息 / Support information  DBX 版本: v0.6.69 (0.6.69-beta.20261110.1) 运行环境: 桌面端 操作系统: Windows 10 (10.0.19045.3324) 系统架构: x86_64 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36 Edg/155.0.0.0 数据库类型: clickhouse, postgres, redis  ### 优先级（是否紧急） / Priority (urgency)  🟢 P3 低优 · 有空再修 / Low · Fix when possible  ### 补充信息 / Additional information  _No response_
 
-- **Issue #14803** (2026-11-12): **[Bug] 我只有两个表，搜索出来重复的表了**
-  *Symptoms*: ### 数据库类型和版本 / Database type and version  MySQL 8.0  ### 问题描述 / Problem description  <img width="460" height="320" alt="image" src="https://github.com/user-attachments/assets/5f834826-5519-4f6e-8472-d1bf345d3a5c" />  ### 支持信息 / Support information  <img width="471" height="300" alt="image" src="https://github.com/user-attachments/assets/7147fcda-a6cf-4bbe-aceb-d4695539f3e4" />  ### 优先级（是否紧急） / Priority (urgency)  🔴 P0 紧急 · 下个版本必须修 / Urgent · Must fix next release  ### 补充信息 / Additional information  _No response_
+- **Issue #14946** (2026-11-14): **[Bug] 禁用 DBX 【设置-安全】搜索框表单自动补全**
+  *Symptoms*: ### 数据库类型和版本 / Database type and version  None  ### 问题描述 / Problem description  默认情况下，浏览器会记录用户网页上提交的<input>框的信息，DBX 【设置-安全】搜索框哪怕清除了输入信息还是会自动填入，其它页面搜索框自动填入后清除了不会自动填入，请检查前端 autocomplete 的属性设置  ### 支持信息 / Support information  运行环境:Docker  ### 优先级（是否紧急） / Priority (urgency)  🟡 P2 普通 · 按排期处理 / Normal · Schedule as appropriate  ### 补充信息 / Additional information  _No response_
+  **Post-Mortem & Fix Analysis**:
+  > 结论：与 #14952 是同一问题——设置搜索框被浏览器表单历史自动填充。main 已由 e759e60cc（fix(desktop): stop settings search from autofilling browser history，关闭 #14952）修复：该搜索框此前是应用里唯一 `type="text"` 的搜索框（其它搜索框都不是 text 类型，所以只有它会被浏览器记住表单内容），现已改为 `type="search"` 并隐藏 WebKit 自带的清除按钮，升级到包含该提交的版本即可。  两点补充：  - 若指的是「安全」标签页里密码输入框旁的凭据自动填充（浏览器在密码字段旁弹出已保存凭据）：那是浏览器凭据管理器的行为，与表单历史是两条机制；密码字段已在代码里带 `autocomplete="off"` 且隐藏了 WebKit 的自动填充按钮，Chrome 对密码型输入会忽略 `off`，标准解法是把三个密码框改为 `autocomplete="current-password"` / `"new-password"` 让浏览器行为可预期（旧密码提供已保存凭据、新密码不自动填充）。如果升级后仍有这个问题，可以按这个方向单独提增强。 - 建议将本 issue 关闭为 #14952 的重复项。 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2040,454 +2039,944 @@ func (b *Binary) GetValues() []byte {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `04ccf364` (2026-11-12)
-**Commit Message**: fix(query): wait for metadata before batch SQL copy (#14838)
+### Incident Patch 1: `9ce79533` (2026-11-14)
+**Commit Message**: fix(updater): retry the update cache rename on transient Windows locks (#14821)
 
-Reuse the active result metadata request before building the INSERT mapping so the batch does not fail while the table structure is still loading.
+* fix(updater): retry the cache commit rename on transient Windows locks
 
-Fixes #14791
+Real-time security software opens the freshly written update package for a moment, and Windows rejects the commit directory rename while any file below it is still open. Reuse the plugin installer's transient-lock retry (Windows 5/32, 200..2000 ms) for the updater commit, and run the commit on the blocking pool so the wait cannot stall the async runtime.
 
-Co-authored-by: seaways1015-afk <[REDACTED_EMAIL]>
+Fixes #14574.
 
-**File**: `apps/desktop/src/stores/__tests__/queryStore.tableDataRefresh.spec.ts` (modified, +34/-1)
+* fix(updater): do not publish a download canceled during the cache rename retry
+
+The scanner wait can last several seconds. A committing slot keeps that wait off the state mutex, so cancel discards the package and a second download cannot start.
+
+**File**: `crates/dbx-platform/src/fs_retry.rs` (added, +117/-0)
 ```diff
-@@ -5,21 +5,25 @@ import { clearDataGridStructuredFilterStates, loadDataGridStructuredFilterState,
- import { clearDataGridSortBuilderMemoryCache, useDataGridSortBuilder } from "@/composables/useDataGridSortBuilder";
- import { resetRowIdLocatorStateForTests, rowIdLocatorUnsupported } from "@/lib/table/tableRowIdSupport";
- import { canGoNextDataGridPage } from "@/lib/dataGrid/dataGridPagination";
-+import type { TableColumnsLoadResult } from "@/lib/metadata/tableMetadataCache";
-+import { analyzeEditableQueryEditability } from "@/lib/sql/sqlAnalysis";
- 
- const mocks = vi.hoisted(() => ({
-+  analyzeEditableQueryEditability: vi.fn(),
-   buildTableSelectSql: vi.fn(),
-   closeClientConnectionSession: vi.fn(),
-   closeQuerySession: vi.fn(),
-   executeMulti: vi.fn(),
-   getConnectionConfig: vi.fn(),
-   saveOpenTabsState: vi.fn(),
-+  loadTableColumns: vi.fn(),
-   loadTableMetadata: vi.fn(),
-   prepareQueryPaginationExecutionPlan: vi.fn(),
-   metadataGeneration: 0,
- }));
- 
- vi.mock("@/lib/backend/api", () => ({
--  analyzeEditableQueryEditability: vi.fn().mockResolvedValue({ editable: false, reason: "complex-query" }),
-+  analyzeEditableQueryEditability: mocks.analyzeEditableQueryEditability,
-   buildTableSelectSql: mocks.buildTableSelectSql,
-   closeClientConnectionSession: mocks.closeClientConnectionSession,
-   closeQuerySession: mocks.closeQuerySession,
-@@ -41,6 +45,7 @@ vi.mock("@/lib/metadata/tableMetadataCache", async (importOriginal) => {
-   const actual = await importOriginal<typeof import("@/lib/metadata/tableMetadataCache")>();
-   return {
-     ...actual,
-+    loadTableColumns: mocks.loadTableColumns,
-     loadTableMetadata: mocks.loadTableMetadata,
-   };
- });
-@@ -70,6 +75,7 @@ describe("queryStore table data refresh", () => {
-     resetRowIdLocatorStateForTests();
-     setActivePinia(createPinia());
-     mocks.metadataGeneration = 0;
-+    mocks.analyzeEditableQueryEditability.mockResolvedValue({ editable: false, reason: "complex-query" });
-     mocks.prepareQueryPaginationExecutionPlan.mockResolvedValue({ useAgentResultSession: false });
-     mocks.getConnectionConfig.mockReturnValue({
-       id: "pg-1",
-@@ -400,6 +406,33 @@ describe("queryStore table data refresh", () => {
-     expect(metadata?.querySourceColumns).toEqual(["name"]);
-   });
- 
-+  it("waits for an active query result's table metadata before batch INSERT mapping", async () => {
-+    const { useQueryStore } = await import("@/stores/queryStore");
-+    mocks.getConnectionConfig.mockReturnValue({ id: "mysql-1", db_type: "mysql", database: "app" });
-+    const store = useQueryStore();
-+    const tabId = store.createTab("mysql-1", "app", "Query", "query");
-+    const tab = store.tabs.find((candidate) => candidate.id === tabId)!;
-+    const sourceStatement = "SELECT name AS label FROM users";
-+    tab.results = [{ columns: ["label"], rows: [["Ada"]], sourceStatement }];
-+    const columns = [{ name: "name", data_type: "varchar", is_nullable: false, column_default: null, is_primary_key: false, extra: null }];
-+    const tableMetadata = { columns, tableName: "users", tableType: "TABLE", cachedAt: Date.now() };
-+    let resolveColumns!: (metadata: TableColumnsLoadResult) => void;
-+    mocks.loadTableColumns.mockReturnValueOnce(new Promise<TableColumnsLoadResult>((resolve) => (resolveColumns = resolve)));
-+    mocks.loadTableMetadata.mockResolvedValueOnce({ metadata: { ...tableMetadata, indexes: [], primaryKeys: [] }, cacheStatus: "miss", ageMs: 0 });
-+    mocks.analyzeEditableQueryEditability.mockResolvedValueOnce(analyzeEditableQueryEditability(sourceStatement));
+@@ -0,0 +1,117 @@
++//! Retries for filesystem operations that security software can briefly block.
++//!
++//! Real-time antivirus/EDR scanners open a file right after it is written. On Windows a
++//! directory rename is rejected with `ERROR_ACCESS_DENIED` (5) while any file below it is
++//! still open, even when the opening handle allows delete sharing, and file operations can
++//! fail with `ERROR_SHARING_VIOLATION` (32). The scan normally finishes well inside this
++//! retry window, so callers can keep a single atomic rename as their commit point instead
++//! of falling back to a non-atomic write protocol.
 +
-+    store.setActiveResultIndex(tabId, 0);
-+    await vi.waitFor(() => expect(mocks.loadTableColumns).toHaveBeenCalled());
-+    expect(tab.tableMeta).toBeUndefined();
-+    const batchMetadata = store.resolveResultMetadataForBatch(tabId, tab.result!);
-+    resolveColumns({ ...tableMetadata, cacheStatus: "miss", ageMs: 0 });
++use std::path::Path;
++use std::time::Duration;
 +
-+    await expect(batchMetadata).resolves.toMatchObject({
-+      tableMeta: { database: "app", tableName: "users", primaryKeys: [] },
-+      querySourceColumns: ["name"],
-+    });
-+  });
++/// Field reports put the scan window at roughly 1-2 seconds for a large installer, so this
++/// budget gives the scanner several times that window. The plugin installer and the desktop
++/// updater share it deliberately: both commit by renaming a freshly written package.
++pub const TRANSIENT_LOCK_RETRY_DELAYS: [Duration; 5] = [
++    Duration::from_millis(200),
++    Duration::from_millis(400),
++    Duration::from_millis(800),
++    Duration::from_millis(1500),
++    Duration::from_millis(2000),
++];
 +
-   it("uses JDBC ResultSet offset pagination for Caché data tabs", async () => {
-     mocks.getConnectionConfig.mockReturnValue({
-       id: "cache-1",
++/// Rename `src` to `dst`, retrying the transient Windows locks described above.
++pub fn rename_with_transient_lock_retry(src: &Path, dst: &Path) -> std::io::Result<()> {
++    retry_transient_lock(&TRANSIENT_LOCK_RETRY_DELAYS, || std::fs::rename(src, dst))
++}
++
++/// Run `operation`, sleeping for each entry in `delays` after a transient Windows lock error.
++///
++/// Every other error is returned immediately. After the last delay the operation is tried
++/// once more, so at most `delays.len() + 1` attempts are made and the final error is the
++/// original one.
++pub fn retry_transient_lock<T>(
++    delays: &[Duration],
++    mut operation: impl FnMut() -> std::io::Result<T>,
++) -> std::io::Result<T> {
++    for delay in delays {
++        match operation() {
++            Ok(value) => return Ok(value),
++            Err(error) if cfg!(windows) && is_windows_lock_error(&error) => std::thread::sleep(*delay),
++            Err(error) => return Err(error),
++        }
++    }
++    operation()
++}
++
++fn is_windows_lock_error(error: &std::io::Error) -> bool {
++    matches!(error.raw_os_error(), Some(5 | 32))
++}
++
++#[cfg(test)]
++mod tests {
++    use super::retry_transient_lock;
++    use std::time::Duration;
++
++    #[test]
++    #[cfg(windows)]
++    fn transient_lock_retry_recovers_from_windows_lock_errors() {
++        use std::sync::atomic::{AtomicUsize, Ordering};
++
++        for code in [5, 32] {
++            let attempts = AtomicUsize::new(0);
++            let result = retry_transient_lock(&[Duration::ZERO, Duration::ZERO, Duration::ZERO], || {
++                if attempts.fetch_add(1, Ordering::SeqCst) < 2 {
++                    Err(std::io::Error::from_raw_os_error(code))
++                } else {
++                    Ok(())
++                }
++            });
++            assert!(result.is_ok());
++            assert_eq!(attempts.load(Ordering::SeqCst), 3);
++        }
++    }
++
++    #[test]
++    #[cfg(windows)]
++    fn transient_lock_retry_returns_last_error_after_exhausting_delays() {
++        use std::sync::atomic::{AtomicUsize, Ordering};
++
++        let attempts = AtomicUsize::new(0);
++        let result: std::io::Result<()> = retry_transient_lock(&[Duration::ZERO], || {
++            attempts.fetch_add(1, Ordering::SeqCst);
++            Err(std::io::Error::from_raw_os_error(5))
++        });
++        assert_eq!(attempts.load(Ordering::SeqCst), 2);
++        assert_eq!(result.unwrap_err().raw_os_error(), Some(5));
++    }
++
++    #[test]
++    fn transient_lock_retry_does_not_retry_other_errors() {
++        use std::sync::atomic::{AtomicUsize, Ordering};
++
++        let attempts = AtomicUsize::new(0);
++        let result: std::io::Result<()> = retry_transient_lock(&[Duration::ZERO; 3], || {
++            attempts.fetch_add(1, Ordering::SeqCst);
++            Err(std::io::Error::from_raw_os_error(2))
++        });
++        assert_eq!(attempts.load(Ordering::SeqCst), 1);
++        assert_eq!(result.unwrap_err().raw_os_error(), Some(2));
++    }
++
++    #[test]
++    #[cfg(unix)]
++    fn transient_lock_retry_treats_windows_lock_codes_as_final_on_unix() {
++        use std::sync::atomic::{AtomicUsize, Ordering};
++
++        // Raw code 5 on Unix is EIO, not a Windows lock error, so the retry gate must leave it final.
++        let attempts = AtomicUsize::new(0);
++        let result: std::io::Result<()> = retry_transient_lock(&[Duration::ZERO; 3], || {
++            attempts.fetch_add(1, Ordering::SeqCst);
++            Err(std::io::Error::from_raw_os_error(5))
++        });
++        assert_eq!(attempts.load(Ordering::SeqCst), 1);
++        assert_eq!(result.unwrap_err().raw_os_error(), Some(5));
++    }
++}
 ```
 
-**File**: `apps/desktop/src/stores/queryStore.ts` (modified, +31/-13)
+**File**: `crates/dbx-platform/src/lib.rs` (modified, +1/-0)
 ```diff
-@@ -8123,6 +8123,8 @@ export const useQueryStore = defineStore("query", () => {
-     }
-   }
+@@ -1,3 +1,4 @@
++pub mod fs_retry;
+ pub mod path_utils;
+ pub mod process;
+ pub mod proxy;
+```
+
+**File**: `crates/dbx-plugin-runtime/src/plugins/installer.rs` (modified, +2/-99)
+```diff
+@@ -7,6 +7,7 @@ use std::time::Duration;
  
-+  const pendingQueryMetadata = new WeakMap<QueryResult, Promise<QueryMetadataPatch | undefined>>();
+ use base64::Engine;
+ use chrono::Utc;
++use dbx_platform::fs_retry::{rename_with_transient_lock_retry, retry_transient_lock, TRANSIENT_LOCK_RETRY_DELAYS};
+ use ed25519_dalek::{Signature, Verifier, VerifyingKey};
+ use fs2::FileExt;
+ use semver::Version;
+@@ -1155,43 +1156,6 @@ fn open_install_lock(root_dir: &Path) -> Result<File, String> {
+         .map_err(|error| error.to_string())
+ }
+ 
+-// Antivirus scanners briefly hold handles on freshly extracted plugin binaries, which fails
+-// directory renames with ERROR_ACCESS_DENIED (5) or ERROR_SHARING_VIOLATION (32); the scan
+-// normally finishes well inside this retry window.
+-const TRANSIENT_LOCK_RETRY_DELAYS: [Duration; 5] = [
+-    Duration::from_millis(200),
+-    Duration::from_millis(400),
+-    Duration::from_millis(800),
+-    Duration::from_millis(1500),
+-    Duration::from_millis(2000),
+-];
+-
+-pub(crate) fn rename_with_transient_lock_retry(src: &Path, dst: &Path) -> std::io::Result<()> {
+-    retry_transient_lock(&TRANSIENT_LOCK_RETRY_DELAYS, || std::fs::rename(src, dst))
+-}
+-
+-fn retry_transient_lock<T>(
+-    delays: &[Duration],
+-    mut operation: impl FnMut() -> std::io::Result<T>,
+-) -> std::io::Result<T> {
+-    for delay in delays {
+-        match operation() {
+-            Ok(value) => return Ok(value),
+-            Err(error) if cfg!(windows) && is_windows_lock_error(&error) => {
+-                // If a file in the directory has the read-only attribute set on Windows,
+-                // renames and removals fail with ERROR_ACCESS_DENIED (5). Ensure write permissions.
+-                std::thread::sleep(*delay);
+-            }
+-            Err(error) => return Err(error),
+-        }
+-    }
+-    operation()
+-}
+-
+-fn is_windows_lock_error(error: &std::io::Error) -> bool {
+-    matches!(error.raw_os_error(), Some(5 | 32))
+-}
+-
+ #[allow(clippy::permissions_set_readonly_false)]
+ fn ensure_tree_writable(path: &Path) {
+     if !path.exists() {
+@@ -1344,7 +1308,7 @@ mod tests {
+     use zip::write::SimpleFileOptions;
+ 
+     use super::{
+-        ensure_tree_writable, is_activation_record_file, read_install_identity, retry_transient_lock, sha256_hex,
++        ensure_tree_writable, is_activation_record_file, read_install_identity, sha256_hex,
+         validate_package_expectation, write_json_atomically, PluginInstallPolicy, PluginPackageExpectation,
+         PluginPackageInstaller, PluginSignatureStatus, PluginTrustStore, ACTIVATIONS_DIR, INSTALL_LOCK_FILE,
+         PLUGIN_CHECKSUMS_FILE, PLUGIN_SIGNATURE_FILE, PLUGIN_TRASH_DIR, VERSIONS_DIR,
+@@ -2194,67 +2158,6 @@ mod tests {
+         output.into_inner()
+     }
+ 
+-    #[test]
+-    #[cfg(windows)]
+-    fn transient_lock_retry_recovers_from_windows_lock_errors() {
+-        use std::sync::atomic::{AtomicUsize, Ordering};
+-
+-        for code in [5, 32] {
+-            let attempts = AtomicUsize::new(0);
+-            let result = retry_transient_lock(&[Duration::ZERO, Duration::ZERO, Duration::ZERO], || {
+-                if attempts.fetch_add(1, Ordering::SeqCst) < 2 {
+-                    Err(std::io::Error::from_raw_os_error(code))
+-                } else {
+-                    Ok(())
+-                }
+-            });
+-            assert!(result.is_ok());
+-            assert_eq!(attempts.load(Ordering::SeqCst), 3);
+-        }
+-    }
+-
+-    #[test]
+-    #[cfg(windows)]
+-    fn transient_lock_retry_returns_last_error_after_exhausting_delays() {
+-        use std::sync::atomic::{AtomicUsize, Ordering};
+-
+-        let attempts = AtomicUsize::new(0);
+-        let result: std::io::Result<()> = retry_transient_lock(&[Duration::ZERO], || {
+-            attempts.fetch_add(1, Ordering::SeqCst);
+-            Err(std::io::Error::from_raw_os_error(5))
+-        });
+-        assert_eq!(attempts.load(Ordering::SeqCst), 2);
+-        assert_eq!(result.unwrap_err().raw_os_error(), Some(5));
+-    }
+-
+-    #[test]
+-    fn transient_lock_retry_does_not_retry_other_errors() {
+-        use std::sync::atomic::{AtomicUsize, Ordering};
+-
+-        let attempts = AtomicUsize::new(0);
+-        let result: std::io::Result<()> = retry_transient_lock(&[Duration::ZERO; 3], || {
+-            attempts.fetch_add(1, Ordering::SeqCst);
+-            Err(std::io::Error::from_raw_os_error(2))
+-        });
+-        assert_eq!(attempts.load(Ordering::SeqCst), 1);
+-        assert_eq!(result.unwrap_err().raw_os_error(), Some(2));
+-    }
+-
+-    #[test]
+-    #[cfg(unix)]
+-    fn transient_lock_retry_treats_windows_lock_codes_as_final_on_unix() {
+-        use std::sync::atomic::{AtomicUsize, Ordering};
+-
+-        // Raw code 5 on Unix is EIO, not a Windows lock error, so the retry gate must leave it final.
+-        let attempts = AtomicUsize::new(0);
+-        let result: std::io::Result<()> = retry_transient_lock(&[Duration::ZERO; 3], || {
+-            attempts.fetch_add(1, Ordering::SeqCst);
+-            Err(std::io::Error::from_raw_os_error(5))
+-        });
+-        assert_eq!(attempts.load(Ordering::SeqCst), 1
+```
+
+**File**: `crates/dbx-plugin-runtime/src/plugins/marketplace.rs` (modified, +2/-1)
+```diff
+@@ -4,6 +4,7 @@ use std::io::Write;
+ use std::path::{Path, PathBuf};
+ use std::time::Duration;
+ 
++use dbx_platform::fs_retry::rename_with_transient_lock_retry;
+ use fs2::FileExt;
+ use reqwest::redirect::Policy;
+ use reqwest::{Client, Url};
+@@ -804,7 +805,7 @@ fn write_json_atomically<T: Serialize>(path: &Path, value: &T) -> Result<(), Str
+     // std::fs::rename atomically replaces an existing destination on POSIX
+     // and Windows alike; remove-then-rename could lose the repository
+     // document to a crash between the two calls.
+-    crate::plugins::installer::rename_with_transient_lock_retry(&temporary, path).map_err(|error| error.to_string())?;
++    rename_with_transient_lock_retry(&temporary, path).map_err(|error| error.to_string())?;
+     Ok(())
+ }
+ 
+```
+
+**File**: `src-tauri/src/commands/update.rs` (modified, +166/-12)
+```diff
+@@ -85,10 +85,31 @@ impl UpdateDownloadProgressGate {
+ 
+ enum PendingUpdate {
+     Downloading(Arc<DownloadCancellation>),
++    /// The package is being renamed into the cache. Cancel is recorded on the token, but the slot
++    /// stays occupied so another download cannot start and cache cleanup cannot sweep staging.
++    Committing(Arc<DownloadCancellation>),
+     Installing,
+     Ready(Box<CachedUpdate>),
+ }
+ 
++/// Clears a commit slot that `finish_commit` did not finish, including when the commit panics.
++struct CommitGuard<'a> {
++    state: &'a PendingUpdateState,
++    cancellation: &'a Arc<DownloadCancellation>,
++}
 +
-   function analyzeQueryMetadataInBackground(tabId: string, sql: string, result: QueryResult, executionDatabase: string, traceId: string, elapsed: () => string, databaseType: DatabaseType | undefined, hiddenPrimaryKeys: HiddenPrimaryKeyProjection[] = [], connection?: ConnectionConfig) {
-     void (async () => {
-       const tab = tabs.value.find((t) => t.id === tabId);
-@@ -8137,17 +8139,25 @@ export const useQueryStore = defineStore("query", () => {
-       };
-       // Metadata requests outlive the displayed result when another query starts
-       // or a retained run is selected. Analyze this result, not the live tab.
--      const patch = await buildQueryMetadataPatch({ ...tab, result }, sql, executionDatabase, traceId, elapsed, hiddenPrimaryKeys, connection, applyDisplayReady);
--      if (patch?.queryAnalysis && hasHiddenPhysicalRowKey(databaseType, hiddenPrimaryKeys)) {
--        patch.queryAnalysis = { ...patch.queryAnalysis, allowInsert: false };
--      }
--      const current = tabs.value.find((t) => t.id === tabId);
--      if (patch && current?.result === result) {
--        applyQueryMetadataPatch(current, patch, databaseType, executionDatabase);
--        if (activeResultRunOwnsDisplayedResult(current)) syncActiveResultRunFromDisplayed(current);
--        queryExecutionLog("info", "metadata:done", { traceId, elapsed: elapsed() });
--      } else {
--        queryExecutionLog("warn", "metadata:stale", { traceId, elapsed: elapsed() });
-+      const pending = buildQueryMetadataPatch({ ...tab, result }, sql, executionDatabase, traceId, elapsed, hiddenPrimaryKeys, connection, applyDisplayReady);
-+      pendingQueryMetadata.set(result, pending);
-+      try {
-+        const patch = await pending;
-+        if (patch?.queryAnalysis && hasHiddenPhysicalRowKey(databaseType, hiddenPrimaryKeys)) {
-+          patch.queryAnalysis = { ...patch.queryAnalysis, allowInsert: false };
++impl Drop for CommitGuard<'_> {
++    fn drop(&mut self) {
++        let Ok(mut pending) = self.state.pending.lock() else { return };
++        if matches!(
++            pending.as_ref(),
++            Some(PendingUpdate::Committing(current)) if Arc::ptr_eq(current, self.cancellation)
++        ) {
++            *pending = None;
 +        }
-+        const current = tabs.value.find((t) => t.id === tabId);
-+        if (patch && current?.result === result) {
-+          applyQueryMetadataPatch(current, patch, databaseType, executionDatabase);
-+          if (activeResultRunOwnsDisplayedResult(current)) syncActiveResultRunFromDisplayed(current);
-+          queryExecutionLog("info", "metadata:done", { traceId, elapsed: elapsed() });
-+        } else {
-+          queryExecutionLog("warn", "metadata:stale", { traceId, elapsed: elapsed() });
++    }
++}
++
+ struct CachedUpdate {
+     record: CacheRecord,
+     ready: ReadyUpdate,
+@@ -161,6 +182,19 @@ impl PendingUpdateState {
+         update: CachedUpdate,
+         root: &std::path::Path,
+     ) -> Result<(), String> {
++        let guard = self.begin_commit(cancellation)?;
++        let bytes = match &update.ready {
++            ReadyUpdate::Installer { bytes, .. } => bytes,
++            ReadyUpdate::Portable { archive, .. } => archive,
++        };
++        // `commit` retries while security software scans the package. That wait must not run
++        // under the state lock: cancel and a later download both need the lock, and holding it
++        // across the scan would publish a package the user had already canceled.
++        let committed = update_cache::commit(root, &update.record, bytes);
++        self.finish_commit(guard, update, root, committed)
++    }
++
++    fn begin_commit<'a>(&'a self, cancellation: &'a Arc<DownloadCancellation>) -> Result<CommitGuard<'a>, String> {
+         let mut pending = self.pending.lock().map_err(|_| "Update state is unavailable.".to_string())?;
+         let is_current = matches!(
+             pending.as_ref(),
+@@ -170,13 +204,63 @@ impl PendingUpdateState {
+         if !is_current {
+             return Err(DOWNLOAD_CANCELED_ERROR.to_string());
+         }
+-        let bytes = match &update.ready {
+-            ReadyUpdate::Installer { bytes, .. } => bytes,
+-            ReadyUpdate::Portable { archive, .. } => archive,
++        *pending = Some(PendingUpdate::Committing(Arc::clone(cancellation)));
++        drop(pending);
++        Ok(CommitGuard { state: self, cancellation })
++    }
++
++    fn finish_commit(
++        &self,
++        guard: CommitGuard<'_>,
++        update: CachedUpdate,
++        root: &std::path::Path,
++        committed: Result<(), String>,
++    ) -> Result<(), String> {
++        let canceled = {
++            let mut pending = self.pending.lock().map_err(|_| "Update state is unavailable.".to_string())?;
++            if !Self::is_our_commit(&pending, guard.cancellation) {
++                drop(pending);
++                return Err("Update state is unavailable.".into());
++            }
++            if guard.cancellation.is_canceled() {
++                true
++            } else if let Err(error) = committed {
++                *pending = None;
++                drop(pending);
++                return Err(error);
++            } else {
++                *pending = Some(PendingUpdate::Ready(Box::new(update)));
++                false
++            }
+         };
+-        update_cache::commit(root, &update.record, bytes)?;
+-        *pending = Some(PendingUpdate::Ready(Box::new(update)));
+-        Ok(())
++        if !canceled {
++            return Ok(());
 +        }
-+      } catch (error) {
-+        queryExecutionLog("warn", "metadata:failed", { traceId, elapsed: elapsed(), error });
-+      } finally {
-+        if (pendingQueryMetadata.get(result) === pending) pendingQueryMetadata.delete(result);
-       }
-     })();
-   }
-@@ -10890,8 +10900,16 @@ export const useQueryStore = defineStore("query", () => {
-     const connection = useConnectionStore().getConfig(location.connectionId);
-     const databaseType = effectiveDatabaseTypeForConnection(connection);
-     if (result === tab.result) {
--      if (tab.mode === "data" && (tab.tableMetaPending || !tab.tableMeta?.columns.length)) return undefined;
--      const tableMeta = tab.mode === "data" ? tableMetaForDataTab(tab) : tab.tableMeta;
-+      let tableMeta = tab.tableMeta;
-+      if (tab.mode === "data") {
-+        if (tab.tableMetaPending || !tableMeta?.columns.length) return undefined;
-+        tableMeta = tableMetaForDataTab(tab);
-+      } else {
-+        // The grid can show rows before background metadata is ready. Await
-+        // the patch for this result, since the active tab can change meanwhile.
-+        const pending = pendingQueryMetadata.get(result);
-+        if (pending) tableMeta = (await pending)?.tableMeta;
-+      }
-       const structure = analyzeSelectStructureForDisplay(result.sourceStatement);
-       const sameTable = structure?.tableName && tableMeta?.tableName && structure.tableName.toLowerCase() === tableMeta.tableName.toLowerCase() && (!structure.schema || !tableMeta.schema || structure.schema.toLowerCase() === tableMeta.schema.toLowerCase());
-       if (!sameTable || !tableMeta?.tableName || !canInsertTableRows(databaseType) || tableMeta.tableType?.toUpperCase().includes("VIEW")) return undefined;
++        // Stay in `Committing` while the package is removed so a new download cannot observe
++        // or replace the cache directory mid-delete.
++        self.discard_canceled_cache(root);
++        self.clear_our_commit(guard.cancellation);
++        Err(DOWNLOAD_CANCELED_ERROR.to_string())
++    }
++
++    fn discard_canceled_cache(&self, root: &std::path::Path) {
++        if let Err(error) = update_cache::discard(root) {
++            eprintln!("[DBX updater] failed to discard a canceled update cache: {error}");
++        }
++    }
++
++    fn clear_our_commit(&self, cancellation: &Arc<DownloadCancellation>) {
++        let Ok(mut pending) = self.pending.lock() else { return };
++        if Self::is_our_commit(&pending, cancellation) {
++            *pending = None;
++        }
++    }
++
++    fn is_our_commit(pending: &Option<PendingUpdate>, cancellation: &Arc<DownloadCancellation>) -> bool {
++        matches!(
++            pending.as_ref(),
++            Some(PendingUpdate::Committing(current)) if Arc::ptr_eq(current, cancellation)
++        )
+     }
+ 
+     fn finish_failed_download(&self, cancellation: &Arc<DownloadCancellation>) -> Result<(), String> {
+@@ -192,11 +276,22 @@ impl PendingUpdateState {
+     }
+ 
+     pub fn cancel_download(&self) {
+-        if let Ok
+```
+
+**File**: `src-tauri/src/commands/update_cache.rs` (modified, +172/-13)
+```diff
+@@ -1,10 +1,16 @@
+ //! A single committed update. The directory rename is the commit point; partial writes are never read.
++//!
++//! Security software opens a freshly written package to scan it, which makes Windows reject
++//! directory removal and the commit rename for a moment. `commit` retries that transient lock
++//! so a scan cannot turn a finished download into a failed one.
++use dbx_platform::fs_retry::{retry_transient_lock, TRANSIENT_LOCK_RETRY_DELAYS};
+ use serde::{Deserialize, Serialize};
+ use sha2::{Digest, Sha256};
+ use std::{
+     fs,
+     io::{Read, Write},
+     path::{Path, PathBuf},
++    time::Duration,
+ };
+ 
+ fn default_is_promoted() -> bool {
+@@ -60,6 +66,18 @@ fn write_synced(path: &Path, bytes: &[u8]) -> Result<(), String> {
+ }
+ 
+ pub(super) fn commit(root: &Path, record: &CacheRecord, bytes: &[u8]) -> Result<(), String> {
++    commit_with(root, record, bytes, &TRANSIENT_LOCK_RETRY_DELAYS, |src, dst| fs::rename(src, dst))
++}
++
++/// `commit` with an injectable rename so tests can prove the transient-lock retry without
++/// racing a real antivirus scan.
++fn commit_with(
++    root: &Path,
++    record: &CacheRecord,
++    bytes: &[u8],
++    retry_delays: &[Duration],
++    mut rename: impl FnMut(&Path, &Path) -> std::io::Result<()>,
++) -> Result<(), String> {
+     let metadata = serde_json::to_vec(record).map_err(|e| e.to_string())?;
+     if metadata.len() > 4 * 1024 * 1024 || bytes.len() > 512 * 1024 * 1024 {
+         return Err("Cached update exceeds size limits.".into());
+@@ -75,11 +93,14 @@ pub(super) fn commit(root: &Path, record: &CacheRecord, bytes: &[u8]) -> Result<
+         #[cfg(unix)]
+         fs::File::open(&staging).and_then(|dir| dir.sync_all()).map_err(|e| e.to_string())?;
+         let ready = root.join("ready");
+-        // Windows cannot rename onto an existing directory: `fs::rename` fails with
+-        // `os error 5` when `ready` is still present from an earlier attempt. Clear
+-        // it first so the commit is idempotent and does not need a manual retry.
+-        discard(root)?;
+-        fs::rename(&staging, &ready)
++        // Windows cannot rename onto an existing directory, and a scanner can hold that
++        // previous tree open with the same access-denied error as the commit rename.
++        discard_with(root, retry_delays, remove_cache_entry)?;
++        // A real-time antivirus/EDR scanner opens the freshly written package for a moment.
++        // While that handle exists Windows rejects the directory rename with `os error 5`,
++        // even though the scan releases it shortly after, so wait out the scan instead of
++        // failing the download and making the user transfer the package again.
++        retry_transient_lock(retry_delays, || rename(&staging, &ready))
+             .map_err(|error| context("Failed to finalize the DBX update cache", &ready, error))?;
+         #[cfg(unix)]
+         fs::File::open(root).and_then(|dir| dir.sync_all()).map_err(|e| e.to_string())?;
+@@ -175,16 +196,27 @@ pub(super) fn cleanup_partial(root: &Path) -> Result<(), String> {
+ }
+ 
+ pub(super) fn discard(root: &Path) -> Result<(), String> {
+-    let ready = root.join("ready");
+-    let result = if fs::symlink_metadata(&ready).is_ok_and(|m| !m.file_type().is_dir()) {
+-        fs::remove_file(&ready)
++    discard_with(root, &TRANSIENT_LOCK_RETRY_DELAYS, remove_cache_entry)
++}
++
++fn remove_cache_entry(path: &Path) -> std::io::Result<()> {
++    if fs::symlink_metadata(path).is_ok_and(|metadata| !metadata.file_type().is_dir()) {
++        fs::remove_file(path)
+     } else {
+-        fs::remove_dir_all(&ready)
+-    };
+-    match result {
++        fs::remove_dir_all(path)
++    }
++}
++
++fn discard_with(
++    root: &Path,
++    retry_delays: &[Duration],
++    mut remove: impl FnMut(&Path) -> std::io::Result<()>,
++) -> Result<(), String> {
++    let ready = root.join("ready");
++    match retry_transient_lock(retry_delays, || remove(&ready)) {
+         Ok(()) => Ok(()),
+-        Err(e) if e.kind() == std::io::ErrorKind::NotFound => Ok(()),
+-        Err(e) => Err(context("Failed to clear the previous DBX update cache", &ready, e)),
++        Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(()),
++        Err(error) => Err(context("Failed to clear the previous DBX update cache", &ready, error)),
+     }
+ }
+ 
+@@ -196,6 +228,31 @@ pub(super) fn root(app: &tauri::AppHandle) -> Result<PathBuf, String> {
+ #[cfg(test)]
+ mod tests {
+     use super::*;
++    use std::time::Duration;
++
++    fn record_for(bytes: &[u8]) -> CacheRecord {
++        CacheRecord {
++            schema_version: 1,
++            package_kind: "test".into(),
++            package_length: bytes.len() as u64,
++            package_sha256: digest(bytes),
++            info: DownloadedUpdate {
++                cache_id: "test".into(),
++                version: "99.0.0".into(),
++                portable_mode: false,
++                release_url: String::new(),
++                release_notes: String::new(),
++                do
 ```
 
 ---
 
-### Incident Patch 2: `dea9faa1` (2026-11-12)
-**Commit Message**: fix(sidebar): apply DDL display preferences to Generate SQL > DDL (#14847)
+### Incident Patch 2: `64184374` (2026-11-14)
+**Commit Message**: fix(editor): keep structure peek panels below modal dialogs (#14967)
 
-Generate SQL > DDL only applied the database-name and identifier-quote
-settings, so Oracle DDL kept the blank lines between COMMENT ON
-statements and the storage clauses that View DDL removes through the
-Compact SQL and Storage attributes preferences.
+* fix(editor): keep structure peek panels below modal dialogs
 
-Closes #14818
+Opening "View DDL" while a structure peek panel was up produced a broken
+stack: the peek panel shared the dialog layer band, so it drew over the
+dialog's overlay while the dialog's modal pointer-event guard still blocked
+it -- the panel looked on top but could not be focused or closed, and the
+window order was unpredictable.
 
-**File**: `apps/desktop/src/components/sidebar/SidebarTreeRuntimeHost.vue` (modified, +1/-1)
+Peek panels are modeless, so allocate their z-index from a dedicated band
+(40-49) that always stays below dialog layers (which start at 50). Repeated
+activations can no longer climb into the dialog band.
+
+Refs #14966
+
+* fix(editor): stack peek panels by activation order
+
+Keeping modeless peek panels below modal dialogs by allocating from a
+monotonic counter that saturates at the top of the band breaks the existing
+bring-to-front behaviour: after enough activations two panels share a
+layer, so the panel clicked last can no longer be raised above the other.
+
+Keep panels in activation order instead and derive their z-index from that
+order, so any number of activations keeps a strict order inside the band.
+Expose BASE_DIALOG_Z_INDEX 
+
+**File**: `apps/desktop/src/components/editor/QueryEditor.vue` (modified, +21/-7)
 ```diff
-@@ -2695,7 +2695,7 @@ async function openSidebarMultiTableDdlTab(targets: Array<TreeNode & { connectio
-     async (ddl, target) => {
-       const formatDialect = sqlFormatDialectForDbType(databaseTypeForNode(target));
-       const formatted = await formatSqlForDisplay(ddl, formatDialect, settingsStore.editorSettings.sqlFormatter);
--      return formatSidebarDdlTemplateForDisplay(formatted, formatDialect, databaseTypeForNode(target), settingsStore.editorSettings.generateSqlIncludeDatabaseName, target.database, settingsStore.editorSettings.generateSqlQuoteIdentifiers, target.catalog);
-+      return formatSidebarDdlTemplateForDisplay(formatted, formatDialect, databaseTypeForNode(target), settingsStore.editorSettings.generateSqlIncludeDatabaseName, target.database, settingsStore.editorSettings.generateSqlQuoteIdentifiers, settingsStore.editorSettings, target.catalog);
-     },
-   );
-   connectionStore.activeConnectionId = tabTarget.connectionId;
+@@ -57,7 +57,7 @@ import type { ColumnInfo } from "@/types/database";
+ import { createColumnReferencePayload, tableReferenceInsertText } from "@/lib/editor/queryEditorTableDrop";
+ import { clearRememberedFocusedQueryEditorView, focusedQueryEditorView, queryEditorInsertContext, registerQueryEditorInsertContext, rememberFocusedQueryEditorView, unregisterQueryEditorInsertContext } from "@/lib/editor/focusedQueryEditorView";
+ import { loadObjectMetadataFacet } from "@/lib/metadata/objectMetadataCache";
+-import { structurePeekPanelId } from "@/lib/editor/structurePeekPanel";
++import { structurePeekPanelId, structurePeekZIndexesByOrder } from "@/lib/editor/structurePeekPanel";
+ import { createQueryEditorNativeSelectionGuard, parkEditorNativeSelection, type EditorNativeSelectionPark } from "@/lib/editor/queryEditorNativeSelection";
+ import CodeSnapshotDialog from "@/components/codeSnapshot/CodeSnapshotDialog.vue";
+ import QueryEditorContextMenu, { type QueryEditorContextMenuState, type QueryEditorContextMenuActions } from "./QueryEditorContextMenu.vue";
+@@ -366,18 +366,32 @@ interface StructurePeekPanelState {
+ 
+ const structurePeekPanels = ref<StructurePeekPanelState[]>([]);
+ let structurePeekRequestSeq = 0;
+-let structurePeekZIndexSeq = 50;
+ let structurePeekCascadeSeq = 0;
+ 
++/**
++ * Peek panels are kept in activation order (back to front) and their z-index is
++ * derived from that order, so any number of activations keeps a strict order and
++ * the stack never leaves the band below modal dialogs.
++ */
++function restackStructurePeekPanels() {
++  const zIndexes = structurePeekZIndexesByOrder(structurePeekPanels.value.length);
++  structurePeekPanels.value.forEach((panel, index) => {
++    panel.zIndex = zIndexes[index] ?? panel.zIndex;
++  });
++}
++
+ function bringStructurePeekToFront(panelId: string) {
+-  const panel = structurePeekPanels.value.find((item) => item.id === panelId);
++  const index = structurePeekPanels.value.findIndex((item) => item.id === panelId);
++  if (index < 0) return;
++  const [panel] = structurePeekPanels.value.splice(index, 1);
+   if (!panel) return;
+-  structurePeekZIndexSeq += 1;
+-  panel.zIndex = structurePeekZIndexSeq;
++  structurePeekPanels.value.push(panel);
++  restackStructurePeekPanels();
+ }
+ 
+ function closeStructurePeekPanel(panelId: string) {
+   structurePeekPanels.value = structurePeekPanels.value.filter((item) => item.id !== panelId);
++  restackStructurePeekPanels();
+ }
+ 
+ async function loadStructurePeekColumns(panelId: string, requestId: number, target: SqlObjectNavigationTarget, database: string, schema: string) {
+@@ -427,7 +441,6 @@ async function openTableStructurePeek(target: SqlObjectNavigationTarget) {
+     return;
+   }
+ 
+-  structurePeekZIndexSeq += 1;
+   const requestId = ++structurePeekRequestSeq;
+   const cascadeIndex = structurePeekCascadeSeq++;
+   const panel: StructurePeekPanelState = {
+@@ -436,11 +449,12 @@ async function openTableStructurePeek(target: SqlObjectNavigationTarget) {
+     columns: [],
+     loading: true,
+     error: "",
+-    zIndex: structurePeekZIndexSeq,
++    zIndex: 0,
+     cascadeIndex,
+     requestId,
+   };
+   structurePeekPanels.value = [...structurePeekPanels.value, panel];
++  restackStructurePeekPanels();
+   await loadStructurePeekColumns(id, requestId, panel.target, database, schema);
+ }
+ 
 ```
 
-**File**: `apps/desktop/src/lib/__tests__/sidebar/sidebarDdlTemplate.spec.ts` (modified, +25/-2)
+**File**: `apps/desktop/src/components/editor/TableStructurePeekDialog.vue` (modified, +2/-2)
 ```diff
-@@ -1,6 +1,19 @@
- import { describe, expect, it, vi } from "vitest";
- import { buildSidebarDdlTemplateSql, formatSidebarDdlTemplateForDisplay, sidebarDdlTargetsForExecutionContext } from "@/lib/sidebar/sidebarDdlTemplate";
- 
-+const KEEP_DDL_TEXT = { includeDdlStorage: true, compactDdlSql: false };
-+
-+// Oracle display DDL as returned for a commented table (statements are separated by blank lines).
-+const ORACLE_COMMENTED_TABLE_DDL = [
-+  'CREATE TABLE "APP"."ORDERS" ("ID" NUMBER(10, 0), "NOTE" VARCHAR2(100)) SEGMENT CREATION DEFERRED TABLESPACE "USERS";',
-+  "",
-+  'COMMENT ON TABLE "APP"."ORDERS" IS \'Orders\';',
-+  "",
-+  'COMMENT ON COLUMN "APP"."ORDERS"."ID" IS \'Id\';',
-+  "",
-+  'COMMENT ON COLUMN "APP"."ORDERS"."NOTE" IS \'Note\';',
-+].join("\n");
-+
- describe("sidebar DDL template", () => {
-   it("preserves the single-target SQL", async () => {
-     const sql = await buildSidebarDdlTemplateSql(
-@@ -30,7 +43,7 @@ describe("sidebar DDL template", () => {
-     const sql = await buildSidebarDdlTemplateSql(
-       [{ databaseType: "oracle" as const, catalog: undefined }],
-       async () => 'CREATE TABLE "SYSTEM"."TEST" ("ID" NUMBER)',
--      async (ddl, target) => formatSidebarDdlTemplateForDisplay(ddl, "oracle", target.databaseType, false, undefined, true, target.catalog),
-+      async (ddl, target) => formatSidebarDdlTemplateForDisplay(ddl, "oracle", target.databaseType, false, undefined, true, KEEP_DDL_TEXT, target.catalog),
-     );
- 
-     expect(sql).toBe('CREATE TABLE "TEST" ("ID" NUMBER)');
-@@ -44,12 +57,22 @@ describe("sidebar DDL template", () => {
-     const sql = await buildSidebarDdlTemplateSql(
-       targets,
-       async (target) => `CREATE TABLE \`iceberg\`.\`analytics\`.\`${target.name}\` (\`id\` bigint)`,
--      async (ddl, target) => formatSidebarDdlTemplateForDisplay(ddl, "mysql", "starrocks", false, undefined, false, target.catalog),
-+      async (ddl, target) => formatSidebarDdlTemplateForDisplay(ddl, "mysql", "starrocks", false, undefined, false, KEEP_DDL_TEXT, target.catalog),
-     );
- 
-     expect(sql).toBe("CREATE TABLE iceberg.analytics.events (id bigint);\n\nCREATE TABLE iceberg.analytics.sessions (id bigint);\n");
-   });
- 
-+  it("applies the DDL viewer text preferences to Oracle DDL", () => {
-+    const sql = formatSidebarDdlTemplateForDisplay(ORACLE_COMMENTED_TABLE_DDL, "oracle", "oracle", true, undefined, true, { includeDdlStorage: false, compactDdlSql: true });
-+
-+    expect(sql).toBe(['CREATE TABLE "APP"."ORDERS" ("ID" NUMBER(10, 0), "NOTE" VARCHAR2(100));', 'COMMENT ON TABLE "APP"."ORDERS" IS \'Orders\';', 'COMMENT ON COLUMN "APP"."ORDERS"."ID" IS \'Id\';', 'COMMENT ON COLUMN "APP"."ORDERS"."NOTE" IS \'Note\';'].join("\n"));
-+  });
-+
-+  it("keeps Oracle blank lines and storage clauses when the preferences are off", () => {
-+    expect(formatSidebarDdlTemplateForDisplay(ORACLE_COMMENTED_TABLE_DDL, "oracle", "oracle", true, undefined, true, KEEP_DDL_TEXT)).toBe(ORACLE_COMMENTED_TABLE_DDL);
-+  });
-+
-   it("keeps DDL targets in the active SQL execution context", () => {
-     const active = { id: "active", connectionId: "c1", database: "db1", catalog: "catalog1" };
-     const sameContext = { id: "same", connectionId: "c1", database: "db1", catalog: "catalog1" };
+@@ -5,7 +5,7 @@ import { useI18n } from "vue-i18n";
+ import { Button } from "@/components/ui/button";
+ import { Input } from "@/components/ui/input";
+ import { formatMetadataColumnTypeLabel } from "@/lib/dataGrid/dataGridColumnType";
+-import { STRUCTURE_PEEK_MIN_HEIGHT, STRUCTURE_PEEK_MIN_WIDTH, centeredStructurePeekRect, clampStructurePeekRect, defaultStructurePeekSize, resizeStructurePeekRect, type StructurePeekResizeEdge } from "@/lib/editor/structurePeekPanel";
++import { STRUCTURE_PEEK_MAX_Z_INDEX, STRUCTURE_PEEK_MIN_HEIGHT, STRUCTURE_PEEK_MIN_WIDTH, centeredStructurePeekRect, clampStructurePeekRect, defaultStructurePeekSize, resizeStructurePeekRect, type StructurePeekResizeEdge } from "@/lib/editor/structurePeekPanel";
+ import { shouldPreserveEditorFocusOnPeekPointerDown } from "@/lib/editor/focusedQueryEditorView";
+ import { tableColumnDefaultDisplayValue } from "@/lib/table/tableColumnDefaultPresentation";
+ import { filterObjectBrowserTableColumns, sortObjectBrowserTableColumns, type ObjectBrowserTableColumnSort, type ObjectBrowserTableColumnSortKey } from "@/lib/table/objectBrowserTableInfo";
+@@ -82,7 +82,7 @@ const panelStyle = computed(() => {
+     top: `${panelTop.value}px`,
+     width: `${panelWidth.value}px`,
+     height: `${panelHeight.value}px`,
+-    zIndex: String(props.zIndex ?? 50),
++    zIndex: String(props.zIndex ?? STRUCTURE_PEEK_MAX_Z_INDEX),
+   };
+   if (interacting.value) style.transition = "none";
+   return style;
 ```
 
-**File**: `apps/desktop/src/lib/sidebar/sidebarDdlTemplate.ts` (modified, +13/-2)
+**File**: `apps/desktop/src/components/ui/dialog/useDialogLayerOrder.ts` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ import { injectDialogRootContext, useForwardExpose } from "reka-ui";
+ import { computed, onBeforeUnmount, onUpdated, ref, watch, watchPostEffect, type Ref } from "vue";
+ 
+-const BASE_DIALOG_Z_INDEX = 50;
++export const BASE_DIALOG_Z_INDEX = 50;
+ const DIALOG_TOP_Z_INDEX_VAR = "--dbx-dialog-top-z-index";
+ const FLOATING_LAYER_Z_INDEX_VAR = "--dbx-floating-layer-z-index";
+ 
+```
+
+**File**: `apps/desktop/src/lib/__tests__/editor/structurePeekPanel.spec.ts` (modified, +50/-1)
 ```diff
 @@ -1,5 +1,6 @@
- import { joinExportedDdls } from "@/lib/export/ddlExport";
- import { applyDdlDatabaseQualifier, omitDdlIdentifierQuotes } from "@/lib/sql/ddlDisplay";
-+import { applyDdlTextPreferences } from "@/lib/sql/ddlPreferences";
- import type { SqlFormatDialect } from "@/lib/sql/sqlFormatter";
- import type { DatabaseType } from "@/types/database";
+ import { describe, expect, it } from "vitest";
+-import { STRUCTURE_PEEK_MIN_HEIGHT, STRUCTURE_PEEK_MIN_WIDTH, clampStructurePeekRect, resizeStructurePeekRect, structurePeekPanelId } from "@/lib/editor/structurePeekPanel";
++import { BASE_DIALOG_Z_INDEX } from "@/components/ui/dialog/useDialogLayerOrder";
++import { STRUCTURE_PEEK_BASE_Z_INDEX, STRUCTURE_PEEK_DEPTH, STRUCTURE_PEEK_MAX_Z_INDEX, STRUCTURE_PEEK_MIN_HEIGHT, STRUCTURE_PEEK_MIN_WIDTH, clampStructurePeekRect, resizeStructurePeekRect, structurePeekPanelId, structurePeekZIndexesByOrder } from "@/lib/editor/structurePeekPanel";
  
-@@ -21,7 +22,17 @@ export async function buildSidebarDdlTemplateSql<T>(targets: readonly T[], loadD
-   return parts.length === 1 ? parts[0]! : joinExportedDdls(parts);
- }
+ describe("structurePeekPanel", () => {
+   it("builds a stable case-insensitive identity including catalog", () => {
+@@ -42,4 +43,52 @@ describe("structurePeekPanel", () => {
+     expect(grown.left).toBe(100);
+     expect(grown.top).toBe(60);
+   });
++
++  it("keeps peek panels in a layer band strictly below modal dialogs", () => {
++    expect(STRUCTURE_PEEK_MAX_Z_INDEX).toBeLessThan(BASE_DIALOG_Z_INDEX);
++    expect(STRUCTURE_PEEK_BASE_Z_INDEX).toBeLessThan(STRUCTURE_PEEK_MAX_Z_INDEX);
++    expect(STRUCTURE_PEEK_DEPTH).toBe(STRUCTURE_PEEK_MAX_Z_INDEX - STRUCTURE_PEEK_BASE_Z_INDEX + 1);
++  });
++
++  it("stacks open panels by activation order so the last activated one stays on top", () => {
++    // Mirror the editor: `open` holds panels back to front, z-index comes from order.
++    let open: string[] = [];
++    const zIndexOf = (panelId: string) => structurePeekZIndexesByOrder(open.length)[open.indexOf(panelId)]!;
++    const openPanel = (panelId: string) => {
++      open = [...open, panelId];
++    };
++    const activate = (panelId: string) => {
++      open = [...open.filter((item) => item !== panelId), panelId];
++    };
++
++    openPanel("a");
++    openPanel("b");
++    expect(zIndexOf("b")).toBeGreaterThan(zIndexOf("a"));
++
++    // Repeated A/B/A cycles must not saturate: whichever panel is activated last wins.
++    for (let round = 0; round < 24; round += 1) {
++      const top = round % 2 === 0 ? "a" : "b";
++      const other = top === "a" ? "b" : "a";
++      activate(top);
++      expect(zIndexOf(top)).toBe(STRUCTURE_PEEK_MAX_Z_INDEX);
++      expect(zIndexOf(top)).toBeGreaterThan(zIndexOf(other));
++    }
++  });
++
++  it("keeps the front panels in strict order no matter how many are open", () => {
++    expect(structurePeekZIndexesByOrder(0)).toEqual([]);
++
++    const count = 20;
++    const zIndexes = structurePeekZIndexesByOrder(count);
++    expect(zIndexes).toHaveLength(count);
++    expect(zIndexes[count - 1]).toBe(STRUCTURE_PEEK_MAX_Z_INDEX);
++    for (const zIndex of zIndexes) {
++      expect(zIndex).toBeGreaterThanOrEqual(STRUCTURE_PEEK_BASE_Z_INDEX);
++      expect(zIndex).toBeLessThan(BASE_DIALOG_Z_INDEX);
++    }
++    // The `STRUCTURE_PEEK_DEPTH` front panels stay strictly ordered; older ones share the base layer.
++    for (let index = count - STRUCTURE_PEEK_DEPTH + 1; index < count; index += 1) {
++      expect(zIndexes[index]!).toBeGreaterThan(zIndexes[index - 1]!);
++    }
++  });
+ });
+```
+
+**File**: `apps/desktop/src/lib/editor/structurePeekPanel.ts` (modified, +34/-0)
+```diff
+@@ -9,6 +9,40 @@ export const STRUCTURE_PEEK_MIN_WIDTH = 360;
+ export const STRUCTURE_PEEK_MIN_HEIGHT = 240;
+ export const STRUCTURE_PEEK_CASCADE = 24;
  
--export function formatSidebarDdlTemplateForDisplay(sql: string, dialect: SqlFormatDialect, databaseType: DatabaseType | undefined, includeDatabaseName: boolean, database: string | undefined, quoteIdentifiers: boolean, catalog?: string): string {
-+// Text preferences run last, in the same order as the DDL viewers, so "Generate SQL > DDL" matches "View DDL".
-+export function formatSidebarDdlTemplateForDisplay(
-+  sql: string,
-+  dialect: SqlFormatDialect,
-+  databaseType: DatabaseType | undefined,
-+  includeDatabaseName: boolean,
-+  database: string | undefined,
-+  quoteIdentifiers: boolean,
-+  textPreferences: { includeDdlStorage: boolean; compactDdlSql: boolean },
-+  catalog?: string,
-+): string {
-   const unqualified = applyDdlDatabaseQualifier(sql, dialect, databaseType, includeDatabaseName, database, catalog);
--  return quoteIdentifiers ? unqualified : omitDdlIdentifierQuotes(unqualified, dialect);
-+  return applyDdlTextPreferences(quoteIdentifiers ? unqualified : omitDdlIdentifierQuotes(unqualified, dialect), databaseType, textPreferences);
- }
++/**
++ * Peek panels are modeless windows, so they must stay below modal dialogs.
++ * Dialog layers start at 50 (BASE_DIALOG_Z_INDEX in useDialogLayerOrder), and
++ * allocating peek panels from the same band used to tie a panel with an open
++ * dialog: the dialog's overlay painted behind the panel while its modal
++ * pointer-event guard still blocked the panel, so the panel looked on top but
++ * could not be clicked or closed.
++ */
++export const STRUCTURE_PEEK_BASE_Z_INDEX = 40;
++export const STRUCTURE_PEEK_MAX_Z_INDEX = 49;
++
++/** Number of layers available inside the peek band. */
++export const STRUCTURE_PEEK_DEPTH = STRUCTURE_PEEK_MAX_Z_INDEX - STRUCTURE_PEEK_BASE_Z_INDEX + 1;
++
++/**
++ * z-indexes for `count` open panels, ordered bottom to top: the last entry is
++ * the panel the user activated most recently and always lands on
++ * STRUCTURE_PEEK_MAX_Z_INDEX, so the whole stack stays strictly below dialogs.
++ *
++ * Peek panels are re-stacked by their current order instead of being handed a
++ * monotonic counter. A counter saturates at the top of the band after a handful
++ * of activations, after which two panels share one layer and the older panel can
++ * no longer be raised above the newer one even when clicked last. With more open
++ * panels than band slots the ones furthest back share the base layer while the
++ * front STRUCTURE_PEEK_DEPTH panels keep a strict order.
++ */
++export function structurePeekZIndexesByOrder(count: number): number[] {
++  const total = Math.max(0, Math.floor(Number.isFinite(count) ? count : 0));
++  return Array.from({ length: total }, (_unused, index) => {
++    const offset = Math.max(0, index - (total - STRUCTURE_PEEK_DEPTH));
++    return STRUCTURE_PEEK_BASE_Z_INDEX + offset;
++  });
++}
++
+ export function defaultStructurePeekSize(viewportWidth: number, viewportHeight: number): { width: number; height: number } {
+   const maxWidth = Math.max(STRUCTURE_PEEK_MIN_WIDTH, viewportWidth - STRUCTURE_PEEK_MARGIN * 2);
+   const maxHeight = Math.max(STRUCTURE_PEEK_MIN_HEIGHT, viewportHeight - STRUCTURE_PEEK_MARGIN * 2);
 ```
 
 ---
 
-### Incident Patch 3: `3dc1b8e8` (2026-11-12)
-**Commit Message**: fix(agent): serialize non-finite JDBC floats as strings
+### Incident Patch 3: `f91cc454` (2026-11-14)
+**Commit Message**: feat(postgres): show row-level security from the sidebar (#14935)
 
-**File**: `agents/common/src/main/java/com/dbx/agent/AbstractJdbcAgent.java` (modified, +1/-1)
+* feat(postgres): show row-level security from the sidebar
+
+* chore(i18n): autofill new translations
+
+* chore: trigger CI for updated translations
+
+---------
+
+Co-authored-by: ThugKd <[REDACTED_EMAIL]>
+Co-authored-by: dbx-i18n-bot <github-actions[bot]@users.noreply.github.com>
+
+**File**: `apps/desktop/src/components/sidebar/SidebarTreeRuntimeHost.vue` (modified, +28/-0)
 ```diff
-@@ -766,7 +766,7 @@ protected Object resultValue(ResultSet rs, int index, int sqlType) {
-                     value = rs.getString(index);
-                     break;
-             }
--            return rs.wasNull() ? null : value;
-+            return rs.wasNull() ? null : JdbcExecutor.normalizeNonFiniteValue(value);
-         });
-     }
+@@ -3317,6 +3317,31 @@ async function openDatabaseObjectDependencies() {
+   }
+ }
  
++async function openPostgresRowLevelSecurity(node: TreeNode) {
++  if (!node.connectionId || !hasTreeNodeDatabaseContext(node) || (node.type === "schema" && !node.schema)) return;
++  // An escape string keeps schema names containing backslashes safe with either
++  // setting of standard_conforming_strings.
++  const schemaFilter = node.type === "schema" && node.schema ? `\n  AND n.nspname = E'${node.schema.replaceAll("\\", "\\\\").replaceAll("'", "''")}'` : "";
++  const sql = `SELECT n.nspname AS schema_name, c.relname AS table_name,
++       c.relrowsecurity AS rls_enabled, c.relforcerowsecurity AS rls_forced,
++       p.policyname AS policy_name, p.permissive, p.roles, p.cmd AS command,
++       p.qual AS using_expression, p.with_check AS check_expression
++FROM pg_catalog.pg_class AS c
++JOIN pg_catalog.pg_namespace AS n ON n.oid = c.relnamespace
++LEFT JOIN pg_catalog.pg_policies AS p ON p.schemaname = n.nspname AND p.tablename = c.relname
++WHERE (c.relrowsecurity OR c.relforcerowsecurity OR p.policyname IS NOT NULL)${schemaFilter}
++ORDER BY n.nspname, c.relname, p.policyname;`;
++  try {
++    await connectionStore.ensureConnected(node.connectionId);
++    connectionStore.activeConnectionId = node.connectionId;
++    const title = `${t("contextMenu.viewPostgresRowLevelSecurity")} - ${node.label}`;
++    const tabId = queryStore.createTab(node.connectionId, node.database, title, "query", node.schema, sql, node.catalog, { forceNew: true });
++    await queryStore.executeTabSql(tabId, sql);
++  } catch (error) {
++    toast(t("contextMenu.tableOperationFailed", { message: error instanceof Error ? error.message : String(error) }), 5000);
++  }
++}
++
+ async function compileXuguObject() {
+   const node = activeNode.value;
+   if (currentDatabaseType() !== "xugu" || !node.connectionId || !node.database) return;
+@@ -7833,6 +7858,9 @@ function buildDatabaseSidebarMenu(context: SidebarMenuFactoryContext): boolean {
+     if (canOpenObjectBrowser.value) {
+       items.push({ sidebarActionId: "contextMenu.openObjectBrowser", label: t("contextMenu.openObjectBrowser"), action: openObjectBrowser, icon: TableProperties });
+     }
++    if (currentDatabaseType() === "postgres" && hasTreeNodeDatabaseContext(node)) {
++      items.push({ sidebarActionId: "contextMenu.viewPostgresRowLevelSecurity", label: t("contextMenu.viewPostgresRowLevelSecurity"), action: () => openPostgresRowLevelSecurity(node), icon: ShieldCheck });
++    }
+     if (canCreateOracleTriggerAt(node)) items.push({ sidebarActionId: "contextMenu.createTrigger", label: t("contextMenu.createTrigger"), action: createOracleTrigger, icon: Plus });
+     if (supportsConnectionQueryActions(currentDatabaseType())) {
+       items.push({ sidebarActionId: "contextMenu.newQuery", label: t("contextMenu.newQuery"), action: newQuery, icon: TerminalSquare });
 ```
 
-**File**: `agents/common/src/main/java/com/dbx/agent/JdbcExecutor.java` (modified, +25/-3)
+**File**: `apps/desktop/src/i18n/locales/en.ts` (modified, +1/-0)
 ```diff
-@@ -852,7 +852,29 @@ public Object defaultResultValue(ResultSet rs, int index, int sqlType) throws SQ
-                 value = normalizeResultValue(rs.getObject(index));
-                 break;
-         }
--        return rs.wasNull() ? null : value;
-+        return rs.wasNull() ? null : normalizeNonFiniteValue(value);
-+    }
-+
-+    /**
-+     * JSON has no representation for NaN or infinities. Keep the same text
-+     * representation the Oracle Go agent uses ("NaN", "+Inf", "-Inf") so every
-+     * agent can return the value instead of failing the whole RPC response.
-+     */
-+    public static Object normalizeNonFiniteValue(Object value) {
-+        if (value instanceof Double number) {
-+            return Double.isFinite(number) ? number : nonFiniteText(number);
-+        }
-+        if (value instanceof Float number) {
-+            return Float.isFinite(number) ? number : nonFiniteText(number.doubleValue());
-+        }
-+        return value;
-+    }
-+
-+    private static String nonFiniteText(double value) {
-+        if (Double.isNaN(value)) {
-+            return "NaN";
-+        }
-+        return value > 0 ? "+Inf" : "-Inf";
-     }
- 
-     public static Object stringResultValue(ResultSet rs, int index, int sqlType) throws SQLException {
-@@ -907,7 +929,7 @@ public static Object normalizeResultValue(Object value) throws SQLException {
-             byte[] bytes = (byte[]) value;
-             return bytesToHex(bytes);
-         }
--        return value instanceof Number || value instanceof Boolean ? value : value.toString();
-+        return value instanceof Number || value instanceof Boolean ? normalizeNonFiniteValue(value) : value.toString();
-     }
- 
-     public static String bytesToHex(byte[] bytes) {
-@@ -1088,7 +1110,7 @@ private List<Object> rowValues(
-             } else {
-                 value = valueReader.read(rs, i, sqlType);
-             }
--            row.add(value);
-+            row.add(normalizeNonFiniteValue(value));
-         }
-         return row;
-     }
+@@ -5357,6 +5357,7 @@ export default {
+     editView: "Edit View",
+     viewSource: "View Source",
+     viewDependencies: "View Dependencies",
++    viewPostgresRowLevelSecurity: "View Row-Level Security",
+     viewObject: "View",
+     changeOpenMode: "Change open mode",
+     copyDdl: "Copy DDL",
 ```
 
-**File**: `agents/common/src/test/java/com/dbx/agent/JdbcExecutorTest.java` (modified, +73/-0)
+**File**: `apps/desktop/src/i18n/locales/es.ts` (modified, +1/-0)
 ```diff
-@@ -6,6 +6,7 @@
- import java.lang.reflect.Method;
- import java.lang.reflect.Proxy;
- import java.sql.Connection;
-+import java.sql.DriverManager;
- import java.sql.ResultSet;
- import java.sql.ResultSetMetaData;
- import java.sql.SQLException;
-@@ -16,6 +17,8 @@
- import java.util.Arrays;
- import java.util.Collections;
- import java.util.List;
-+import java.util.Set;
-+import java.util.UUID;
- import java.util.concurrent.atomic.AtomicInteger;
- import javax.sql.rowset.serial.SerialBlob;
- 
-@@ -162,6 +165,76 @@ void defaultResultValueNormalizesBlobObjectsFromFallbackTypes() throws Exception
-         assertEquals("0x0a0b", JdbcExecutor.INSTANCE.defaultResultValue(rs, 1, Types.OTHER));
-     }
- 
-+    @Test
-+    void defaultResultValueReturnsJsonSafeTextForNonFiniteFloats() throws Exception {
-+        try (Connection connection = DriverManager.getConnection(
-+                 "jdbc:h2:mem:nonfinite_default_" + UUID.randomUUID() + ";DB_CLOSE_DELAY=-1");
-+             Statement statement = connection.createStatement();
-+             ResultSet rs = statement.executeQuery(
-+                 "SELECT CAST('NaN' AS DOUBLE), CAST('Infinity' AS REAL), CAST('-Infinity' AS DOUBLE)")) {
-+            assertTrue(rs.next());
-+            assertEquals("NaN", JdbcExecutor.INSTANCE.defaultResultValue(rs, 1, Types.DOUBLE));
-+            assertEquals("+Inf", JdbcExecutor.INSTANCE.defaultResultValue(rs, 2, Types.REAL));
-+            assertEquals("-Inf", JdbcExecutor.INSTANCE.defaultResultValue(rs, 3, Types.DOUBLE));
-+        }
-+    }
-+
-+    @Test
-+    void executeReturnsJsonSafeTextForNonFiniteFloats() throws Exception {
-+        try (Connection connection = DriverManager.getConnection(
-+                 "jdbc:h2:mem:nonfinite_exec_" + UUID.randomUUID() + ";DB_CLOSE_DELAY=-1")) {
-+            QueryResult result = JdbcExecutor.INSTANCE.execute(
-+                connection,
-+                "SELECT CAST('NaN' AS DOUBLE), CAST('Infinity' AS REAL), CAST('-Infinity' AS DOUBLE)",
-+                "",
-+                schema -> ""
-+            );
-+
-+            assertEquals(Arrays.asList("NaN", "+Inf", "-Inf"), result.getRows().get(0));
-+        }
-+    }
-+
-+    @Test
-+    void rowValuesNormalizesNonFiniteFloatsFromCustomReaders() throws Exception {
-+        try (Connection connection = DriverManager.getConnection(
-+                 "jdbc:h2:mem:nonfinite_reader_" + UUID.randomUUID() + ";DB_CLOSE_DELAY=-1")) {
-+            QueryResult result = JdbcExecutor.INSTANCE.execute(
-+                connection,
-+                "SELECT 1",
-+                "",
-+                schema -> "",
-+                10,
-+                null,
-+                (rs, index, sqlType) -> Double.NaN
-+            );
-+
-+            assertEquals(Collections.singletonList("NaN"), result.getRows().get(0));
-+        }
-+    }
-+
-+    @Test
-+    void normalizeResultValueReturnsJsonSafeTextForNonFiniteNumbers() throws Exception {
-+        assertEquals("NaN", JdbcExecutor.normalizeResultValue(Double.NaN));
-+        assertEquals("+Inf", JdbcExecutor.normalizeResultValue(Float.POSITIVE_INFINITY));
-+        assertEquals("-Inf", JdbcExecutor.normalizeResultValue(Double.NEGATIVE_INFINITY));
-+        assertEquals(Double.valueOf(1.5), JdbcExecutor.normalizeResultValue(1.5));
-+    }
-+
-+    @Test
-+    void abstractAgentResultValueReturnsJsonSafeTextForNonFiniteFloats() throws Exception {
-+        ConfiguredJdbcAgent agent = new ConfiguredJdbcAgent(
-+            new JdbcAgentProfile("org.h2.Driver", "jdbc:h2:mem:abstract_nonfinite", 0, false, Set.of(), List.of("TABLE"))
-+        ) {};
-+
-+        try (Connection connection = DriverManager.getConnection("jdbc:h2:mem:abstract_nonfinite");
-+             Statement statement = connection.createStatement();
-+             ResultSet rs = statement.executeQuery("SELECT CAST('NaN' AS DOUBLE), CAST('Infinity' AS REAL)")) {
-+            assertTrue(rs.next());
-+            assertEquals("NaN", agent.resultValue(rs, 1, Types.DOUBLE));
-+            assertEquals("+Inf", agent.resultValue(rs, 2, Types.REAL));
-+        }
-+    }
-+
-     @Test
-     void readResultSetCachesColumnTypeMetadataAcrossRows() {
-         CountingResultSetFixture fixture = countingResultSet(new Object[][]{
+@@ -5335,6 +5335,7 @@ export default withEnglishFallback({
+     foreignKeyChecksEnable: "Habilitar",
+     foreignKeyChecksDisable: "Deshabilitar",
+     foreignKeyChecksHint: "De forma predeterminada, se usa la configuración de la sesión. Al deshabilitarla, se ejecuta con SET FOREIGN_KEY_CHECKS = 0, lo que permite procesar las tablas referenciadas en cualquier orden; después de la ejecución, se restaura el valor original.",
++    viewPostgresRowLevelSecurity: "Ver políticas de seguridad a nivel de fila",
+   },
+   visibleDatabases: {
+     title: "Bases de datos visibles",
+```
+
+**File**: `apps/desktop/src/i18n/locales/it.ts` (modified, +1/-0)
+```diff
+@@ -5156,6 +5156,7 @@ export default withEnglishFallback({
+     foreignKeyChecksEnable: "Abilita",
+     foreignKeyChecksDisable: "Disabilita",
+     foreignKeyChecksHint: "Per impostazione predefinita viene mantenuta l'impostazione della sessione. Se disabilitato, viene eseguito con SET FOREIGN_KEY_CHECKS = 0, così le tabelle referenziate possono essere gestite in qualsiasi ordine; al termine, il valore originale viene ripristinato.",
++    viewPostgresRowLevelSecurity: "Visualizza criteri di sicurezza a livello di riga",
+   },
+   visibleDatabases: {
+     title: "Database Visibili",
+```
+
+**File**: `apps/desktop/src/i18n/locales/ja.ts` (modified, +1/-0)
+```diff
+@@ -5177,6 +5177,7 @@ export default withEnglishFallback({
+     foreignKeyChecksEnable: "有効",
+     foreignKeyChecksDisable: "無効",
+     foreignKeyChecksHint: "デフォルトではセッション設定を引き継ぎます。無効時は SET FOREIGN_KEY_CHECKS = 0 で実行し、参照されるテーブルを任意の順序で処理できます。実行後は元の値に戻します。",
++    viewPostgresRowLevelSecurity: "行レベルセキュリティポリシーを表示",
+   },
+   visibleDatabases: {
+     title: "表示するデータベース",
+```
+
+**File**: `apps/desktop/src/i18n/locales/ko.ts` (modified, +1/-0)
+```diff
+@@ -5089,6 +5089,7 @@ export default withEnglishFallback({
+     foreignKeyChecksEnable: "활성화",
+     foreignKeyChecksDisable: "비활성화",
+     foreignKeyChecksHint: "기본적으로 세션 설정을 따릅니다. 비활성화하면 SET FOREIGN_KEY_CHECKS = 0으로 실행하며, 참조되는 테이블을 임의 순서로 처리할 수 있습니다. 실행 후 원래 값으로 복원합니다.",
++    viewPostgresRowLevelSecurity: "행 수준 보안 정책 보기",
+   },
+   visibleDatabases: {
+     title: "표시할 데이터베이스",
+```
+
+**File**: `apps/desktop/src/i18n/locales/pt-BR.ts` (modified, +1/-0)
+```diff
+@@ -5154,6 +5154,7 @@ export default withEnglishFallback({
+     foreignKeyChecksEnable: "Ativar",
+     foreignKeyChecksDisable: "Desativar",
+     foreignKeyChecksHint: "Por padrão, segue a configuração da sessão. Quando desativado, executa com SET FOREIGN_KEY_CHECKS = 0, permitindo processar as tabelas referenciadas em qualquer ordem; após a execução, o valor original é restaurado.",
++    viewPostgresRowLevelSecurity: "Ver políticas de segurança em nível de linha",
+   },
+   visibleDatabases: {
+     title: "Bancos de dados visíveis",
+```
+
+**File**: `apps/desktop/src/i18n/locales/ru.ts` (modified, +1/-0)
+```diff
+@@ -5275,6 +5275,7 @@ export default withEnglishFallback({
+     foreignKeyChecksEnable: "Включить",
+     foreignKeyChecksDisable: "Отключить",
+     foreignKeyChecksHint: "По умолчанию используется параметр сеанса. При отключении выполняется с SET FOREIGN_KEY_CHECKS = 0, что позволяет обрабатывать таблицы, на которые есть ссылки, в любом порядке; после выполнения исходное значение восстанавливается.",
++    viewPostgresRowLevelSecurity: "Просмотреть политики безопасности на уровне строк",
+   },
+   visibleDatabases: {
+     title: "Видимые базы данных",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14847** (2026-11-12): fix(sidebar): apply DDL display preferences to Generate SQL > DDL (@jeff377)
-- **PR #14841** (2026-11-12): fix(mongodb): 受限账号 listDatabases 回退到已授权数据库列表 (@Lan-zk)
-- **PR #14838** (2026-11-12): fix(query): wait for metadata before batch SQL copy (@seaways1015-afk)
-- **PR #14835** (2026-11-12): fix(dbx-core): 修掉 secret_codec 的 clippy 报错（type_complexity / needless_borrow） (@zipg)
-- **PR #14815** (closed): fix(core): 用类型别名收敛 secret_codec 的 DPAPI 闭包签名，修复 main 的 clippy 红 (@dienaso)
-- **PR #14792** (2026-11-12): fix(agent): serialize non-finite JDBC floats as strings (@knqiufan)
+- **PR #14979** (2026-11-14): fix(oracle): scope metadata queries to requested object types (@Acd-kk)
+- **PR #14975** (2026-11-14): feat(grid): 结果集筛选可视化——列头漏斗标识与单字段关闭 (@dienaso)
+- **PR #14973** (2026-11-14): fix(plugin-sdk): encode nil capabilities as [] and tolerate null on initialize (@sx4im)
+- **PR #14967** (2026-11-14): fix(editor): keep structure peek panels below modal dialogs (@xiaou61)
+- **PR #14965** (2026-11-14): fix(sidebar): show table sizes for Doris and StarRocks tables (@xiaou61)
+- **PR #14959** (2026-11-14): fix(object-browser): prioritize common columns and restore timestamps (@Acd-kk)
 
 ---
 
@@ -2507,47 +2996,54 @@ Closes #14818
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. query): wait for metadata before batch SQL copy (#14838)
+## X. updater): retry the update cache rename on transient Windows locks
 
 **RULE**:
-When implementing operations in `apps/desktop/src/stores/__tests__/queryStore.tableDataRefresh.spec.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/dbx-platform/src/fs_retry.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `04ccf364`: query): wait for metadata before batch SQL copy (#14838). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9ce79533`: updater): retry the update cache rename on transient Windows locks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src/stores/__tests__/queryStore.tableDataRefresh.spec.ts`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/dbx-platform/src/fs_retry.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-import type { TableColumnsLoadResult } from "@/lib/metadata/tableMetadataCache";
-import { analyzeEditableQueryEditability } from "@/lib/sql/sqlAnalysis";
-  analyzeEditableQueryEditability: vi.fn(),
-  loadTableColumns: vi.fn(),
-  analyzeEditableQueryEditability: mocks.analyzeEditableQueryEditability,
-    loadTableColumns: mocks.loadTableColumns,
-    mocks.analyzeEditableQueryEditability.mockResolvedValue({ editable: false, reason: "complex-query" });
-  it("waits for an active query result's table metadata before batch INSERT mapping", async () => {
-    const { useQueryStore } = await import("@/stores/queryStore");
-    mocks.getConnectionConfig.mockReturnValue({ id: "mysql-1", db_type: "mysql", database: "app" });
-    const store = useQueryStore();
-    const tabId = store.createTab("mysql-1", "app", "Query", "query");
-    const tab = store.tabs.find((candidate) => candidate.id === tabId)!;
-    const sourceStatement = "SELECT name AS label FROM users";
-    tab.results = [{ columns: ["label"], rows: [["Ada"]], sourceStatement }];
-    const columns = [{ name: "name", data_type: "varchar", is_nullable: false, column_default: null, is_primary_key: false, extra: null }];
-    const tableMet
+//! Retries for filesystem operations that security software can briefly block.
+//!
+//! Real-time antivirus/EDR scanners open a file right after it is written. On Windows a
+//! directory rename is rejected with `ERROR_ACCESS_DENIED` (5) while any file below it is
+//! still open, even when the opening handle allows delete sharing, and file operations can
+//! fail with `ERROR_SHARING_VIOLATION` (32). The scan normally finishes well inside this
+//! retry window, so callers can keep a single atomic rename as their commit point instead
+//! of falling back to a non-atomic write protocol.
+
+use std::path::Path;
+use std::time::Duration;
+
+/// Field reports put the scan window at roughly 1-2 seconds for a large installer, so this
+/// budget gives the scanner several times that window. The plugin installer and the desktop
+/// updater share it deliberately: both commit by renaming a freshly written package.
+pub const TRANSIENT_LOCK_RETRY_DELAYS: [Duration; 5] = [
+    Duration::from_millis(200),
+    Duration::from_millis(400),
+    Duration::from_millis(800),
+    Duration::from_millis(1500),
+    Duration::from_millis(2000),
+];
+
+/// Rename `src` to `dst`, retrying the transient Windows locks descr
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-  analyzeEditableQueryEditability: vi.fn().mockResolvedValue({ editable: false, reason: "complex-query" }),
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `04ccf364` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9ce79533` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

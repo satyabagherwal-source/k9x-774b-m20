@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T06:19:33.338Z",
-  "total_records": 979,
+  "last_updated": "2026-11-15T06:37:32.520Z",
+  "total_records": 983,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 482,
+      "total": 485,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -519,7 +519,10 @@
         "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-omni-2b-core-invariants",
         "DOM-D-70830486",
         "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-omni-2b-learnings-core-invarian",
-        "DOM-D-7DB1294C"
+        "DOM-D-7DB1294C",
+        "domain_intelligence-research-knowledge-intelligence-datalab-to-indra-ocr-core-invariants",
+        "DOM-D-1138A8F2",
+        "domain_intelligence-research-knowledge-intelligence-hf-datalab-to-indra-ocr-learnings-core-invariant"
       ]
     },
     "E": {
@@ -725,7 +728,7 @@
       ]
     },
     "H": {
-      "total": 201,
+      "total": 202,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -927,7 +930,8 @@
         "DOM-H-E5AA5217",
         "domain_intelligence-technical-construction-intelligence-microsoft-react-native-windows-learnings-cor",
         "domain_intelligence-technical-construction-intelligence-orange-opensource-hurl-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-orange-opensource-hurl-learnings-core-invari"
+        "domain_intelligence-technical-construction-intelligence-orange-opensource-hurl-learnings-core-invari",
+        "domain_intelligence-technical-construction-intelligence-t8y2-dbx-learnings-core-invariants"
       ]
     },
     "I": {
@@ -9020,8 +9024,8 @@
       "title": "Technical Construction Intelligence: t8y2/dbx Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-t8y2-dbx-technical-construction-intelligence-t8y2-dbx-core-invariants.md",
       "repository": "t8y2/dbx",
-      "content_hash": "e3a0816ec859abf4ade075e31f53ec5bff1d44957aacd861c345df39e0b24ce8",
-      "created_at": "2026-11-13T20:07:25.956Z"
+      "content_hash": "09f88eb24300023486a80f324b07f181c0c54bef4cf6a172274699e4ee2ea985",
+      "created_at": "2026-11-15T06:36:58.124Z"
     },
     "DOM-D-218A5260": {
       "record_id": "DOM-D-218A5260",
@@ -9578,8 +9582,8 @@
       "title": "Architecture Intelligence: k3s-io/k3s Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-k3s-io-k3s-architecture-intelligence-k3s-io-k3s-core-invariants.md",
       "repository": "k3s-io/k3s",
-      "content_hash": "eb375050a02130f21b5ff9b9ec977c1e532edea080ea70868907f7e06803c12e",
-      "created_at": "2026-11-13T21:07:18.014Z"
+      "content_hash": "444292f8e8b1fb24fbb82f752f3b46b7a434bb3017528095e13198de3b09441e",
+      "created_at": "2026-11-15T06:36:51.908Z"
     },
     "DOM-D-81EB8074": {
       "record_id": "DOM-D-81EB8074",
@@ -9689,8 +9693,8 @@
       "title": "Architecture Intelligence: k3s-io-k3s-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-k3s-io-k3s-learnings-architecture-intelligence-k3s-io-k3s-learnings-core-invaria.md",
       "repository": "k3s-io-k3s-learnings",
-      "content_hash": "17838e29cb625eef6f04f861b866817152f2bc225eb98c8346625d04259f88a4",
-      "created_at": "2026-11-13T21:08:34.145Z"
+      "content_hash": "6ffcd6b76001c6cbb023dbbe75e58a8dd41d2606315818b7229e9d7b7c8cd769",
+      "created_at": "2026-11-15T06:37:31.861Z"
     },
     "domain_intelligence-research-knowledge-intelligence-baai-bge-m3-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-baai-bge-m3-core-invariants",
@@ -18999,6 +19003,75 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-15T06:19:33.107Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-datalab-to-indra-ocr-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-datalab-to-indra-ocr-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: datalab-to/indra-ocr Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-datalab-to-indra-ocr-research-knowledge-intelligence-datalab-to-indra-ocr-cor.md",
+      "repository": "datalab-to/indra-ocr",
+      "content_hash": "07139343311ee831ee4944b7e6d9c2bc0f62a89467b124e2f9798f56f3404c36",
+      "created_at": "2026-11-15T06:36:43.263Z"
+    },
+    "DOM-D-1138A8F2": {
+      "record_id": "DOM-D-1138A8F2",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): datalab-to/indra-ocr",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-datalab-to-indra-ocr-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/datalab-to/indra-ocr](https://huggingface.co/datalab-to/indra-ocr))  \n> **Source Version**: `hf-datalab-t`  \n> **License**: Open-Source  \n> **Synthesized",
+      "content_hash": "57c742636ff17a6213c621765e5f23dfd084c689056e8fe5729dae00f4839b28",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-datalab-to-indra-ocr-learnings.md`  \n> **Source**: huggingface ([https://huggingf -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-datalab-to-indra-ocr-learnings.md`  \n> **Source**: huggingface ([https://huggingf",
+      "provenance": {
+        "source_uri": "project://hf-datalab-to-indra-ocr/hf-datalab-to-indra-ocr-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T06:37:01.115Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-datalab-to-indra-ocr)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-datalab-to-indra-ocr"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-15T06:37:31.036Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-datalab-to-indra-ocr-learnings-core-invariant": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-datalab-to-indra-ocr-learnings-core-invariant",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-datalab-to-indra-ocr-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-datalab-to-indra-ocr-learnings-research-knowledge-intelligence-hf-datalab-to-.md",
+      "repository": "hf-datalab-to-indra-ocr-learnings",
+      "content_hash": "7756b2ed3eff9ff939b408651ad2446098ba9d0ad413a0a53ce3764d1e773f05",
+      "created_at": "2026-11-15T06:37:31.268Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-t8y2-dbx-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-t8y2-dbx-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: t8y2-dbx-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-t8y2-dbx-learnings-technical-construction-intelligence-t8y2-dbx-learnings-core-i.md",
+      "repository": "t8y2-dbx-learnings",
+      "content_hash": "f95fd39a31de81768a3acfacc2da39e8dbe79008a1d31110624cc305797a317e",
+      "created_at": "2026-11-15T06:37:32.520Z"
     }
   }
 }

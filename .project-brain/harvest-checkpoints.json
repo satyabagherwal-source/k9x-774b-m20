@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-15T06:18:19.333Z",
+  "last_updated": "2026-11-15T06:36:57.848Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2706,14 +2706,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-datalab-to-indra-ocr",
-      "content_hash": "03e093a125e99f5a82332d9dc46be1ceb7e4b0687605358632fdc9c838ee747a",
-      "verified_at": "2026-11-09T16:40:29.793Z",
+      "content_hash": "00bd35269790c91fcdc67f0f92d903d65ee2af857f4b3bb4c0c2b7f76d801717",
+      "verified_at": "2026-11-15T06:36:43.088Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T16:40:29.793Z"
+      "last_updated": "2026-11-15T06:36:43.088Z"
     },
     "chrisryugj/kordoc": {
       "repository": "chrisryugj/kordoc",
@@ -9591,14 +9591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-k3s-io-k3s",
-      "content_hash": "a312f8b12054c88ec6429bd94f4143ecbb7bca1acd1ea3c8e669f1230922c5c8",
-      "verified_at": "2026-11-13T21:07:17.711Z",
+      "content_hash": "a704822ca2f5ece452c8ac1549aa05e819ea2ff8b03d0c12b466b73f864893c8",
+      "verified_at": "2026-11-15T06:36:51.627Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T21:07:17.711Z"
+      "last_updated": "2026-11-15T06:36:51.627Z"
     },
     "Ataraxy-Labs/sem": {
       "repository": "Ataraxy-Labs/sem",
@@ -10791,14 +10791,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-t8y2-dbx",
-      "content_hash": "022ecaa20b10da9821709304df45bbcd184a82c666bd6608e465badc175a17c7",
-      "verified_at": "2026-11-13T20:07:25.639Z",
+      "content_hash": "e1ffaaa2a2fd7ce1332a7f599de667eaecb79837a2a6c1f785945481407463bf",
+      "verified_at": "2026-11-15T06:36:57.848Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T20:07:25.639Z"
+      "last_updated": "2026-11-15T06:36:57.848Z"
     },
     "ouch-org/ouch": {
       "repository": "ouch-org/ouch",

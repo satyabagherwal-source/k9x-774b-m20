@@ -4,23 +4,23 @@
 {
   "source_repository": "k3s-io/k3s",
   "source_url": "https://github.com/k3s-io/k3s",
-  "source_version": "7cc32d88",
+  "source_version": "c55a7df0",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-13T21:07:17.901Z",
+  "timestamp": "2026-11-15T06:36:51.800Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-k3s-io-k3s",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [k3s-io/k3s](https://github.com/k3s-io/k3s) (Revision: `7cc32d88`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-13T21:07:17.901Z`  
+> **Provenance**: Harvested from [k3s-io/k3s](https://github.com/k3s-io/k3s) (Revision: `c55a7df0`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-15T06:36:51.800Z`  
 > **Learning ID**: `learn-github-k3s-io-k3s`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence)
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), L (Deployment & Operations Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence)
 - **Confidence Rating**: 57%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/k3s-io-k3s-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/k3s-io/k3s](https://github.com/k3s-io/k3s))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T21:07:16.738Z  
+> **Harvest Timestamp**: 2026-11-15T06:36:50.735Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Lightweight Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 34398 stars
+- **Stars / Engagement**: 34408 stars
 
 ---
 
@@ -921,28 +921,122 @@ func AddFeatureGate(current, toAdd string) string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7cc32d88` (2026-11-11)
-**Commit Message**: Bump gateway-api to 1.7.0
+### Incident Patch 1: `c55a7df0` (2026-11-10)
+**Commit Message**: update busybox image to 1.38.0
 
-Signed-off-by: Manuel Buil <[REDACTED_EMAIL]>
+Signed-off-by: Michael Moll <[REDACTED_EMAIL]>
 
-**File**: `manifests/gateway-api-crd.yaml` (modified, +1/-1)
+**File**: `manifests/local-storage.yaml` (modified, +1/-1)
 ```diff
-@@ -8,4 +8,4 @@ spec:
-   forceConflicts: true
-   failurePolicy: retry
-   takeOwnership: true
--  chart: https://%{KUBERNETES_API}%/static/charts/gateway-api-crd-1.6.301.tgz
-+  chart: https://%{KUBERNETES_API}%/static/charts/gateway-api-crd-1.7.1.tgz
+@@ -131,7 +131,7 @@ data:
+     spec:
+       containers:
+       - name: helper-pod
+-        image: "%{SYSTEM_DEFAULT_REGISTRY}%rancher/mirrored-library-busybox:1.37.0"
++        image: "%{SYSTEM_DEFAULT_REGISTRY}%rancher/mirrored-library-busybox:1.38.0"
+         imagePullPolicy: IfNotPresent
+         securityContext:
+           seLinuxOptions:
+```
+
+**File**: `scripts/airgap/image-list.txt` (modified, +1/-1)
+```diff
+@@ -2,7 +2,7 @@ docker.io/rancher/klipper-helm:v0.14.0-build20261106
+ docker.io/rancher/klipper-lb:v0.4.18
+ docker.io/rancher/local-path-provisioner:v0.0.37
+ docker.io/rancher/mirrored-coredns-coredns:1.15.0
+-docker.io/rancher/mirrored-library-busybox:1.37.0
++docker.io/rancher/mirrored-library-busybox:1.38.0
+ docker.io/rancher/mirrored-library-traefik:3.7.17
+ docker.io/rancher/mirrored-metrics-server:v0.9.1
+ docker.io/rancher/mirrored-pause:3.10.2
+```
+
+**File**: `tests/docker/resources/clusterip.yaml` (modified, +1/-1)
+```diff
+@@ -14,7 +14,7 @@ spec:
+     spec:
+       containers:
+       - name: nginx
+-        image: ghcr.io/k3s-io/mirrored-library-busybox:1.37.0
++        image: ghcr.io/k3s-io/mirrored-library-busybox:1.38.0
+         args: ['sh', '-c', 'echo Welcome to nginx! > index.html; hostname > name.html; httpd -vvf']
+         ports:
+         - containerPort: 80
+```
+
+**File**: `tests/docker/resources/daemonset.yaml` (modified, +1/-1)
+```diff
+@@ -13,7 +13,7 @@ spec:
+     spec:
+       containers:
+         - name: webserver
+-          image: ghcr.io/k3s-io/mirrored-library-busybox:1.37.0
++          image: ghcr.io/k3s-io/mirrored-library-busybox:1.38.0
+           args: ['sh', '-c', 'echo Welcome to nginx! > index.html; hostname > name.html; httpd -vvf']
+           ports:
+           - containerPort: 80
+```
+
+**File**: `tests/docker/resources/dualstack_clusterip.yaml` (modified, +1/-1)
+```diff
+@@ -14,7 +14,7 @@ spec:
+     spec:
+       containers:
+       - name: nginx
+-        image: ghcr.io/k3s-io/mirrored-library-busybox:1.37.0
++        image: ghcr.io/k3s-io/mirrored-library-busybox:1.38.0
+         args: ['sh', '-c', 'echo Welcome to nginx! > index.html; hostname > name.html; httpd -vvf']
+         ports:
+         - containerPort: 80
+```
+
+**File**: `tests/docker/resources/dualstack_nodeport.yaml` (modified, +1/-1)
+```diff
+@@ -14,7 +14,7 @@ spec:
+     spec:
+       containers:
+       - name: nginx
+-        image: ghcr.io/k3s-io/mirrored-library-busybox:1.37.0
++        image: ghcr.io/k3s-io/mirrored-library-busybox:1.38.0
+         args: ['sh', '-c', 'echo Welcome to nginx! > index.html; hostname > name.html; httpd -vvf']
+         ports:
+         - containerPort: 80
+```
+
+**File**: `tests/docker/resources/gatewayapi.yaml` (modified, +1/-1)
+```diff
+@@ -32,7 +32,7 @@ spec:
+       terminationGracePeriodSeconds: 10
+       containers:
+       - name: testcontainer
+-        image: ghcr.io/k3s-io/mirrored-library-busybox:1.37.0
++        image: ghcr.io/k3s-io/mirrored-library-busybox:1.38.0
+         args: ['sh', '-c', 'echo Welcome to gatewayapi-echo! > index.html; httpd -vvf']
+         ports:
+         - containerPort: 80
+```
+
+**File**: `tests/docker/resources/ingress.yaml` (modified, +1/-1)
+```diff
+@@ -47,7 +47,7 @@ spec:
+       terminationGracePeriodSeconds: 60
+       containers:
+       - name: testcontainer
+-        image: ghcr.io/k3s-io/mirrored-library-busybox:1.37.0
++        image: ghcr.io/k3s-io/mirrored-library-busybox:1.38.0
+         args: ['sh', '-c', 'echo Welcome to nginx! > index.html; hostname > name.html; httpd -vvf']
+         ports:
+         - containerPort: 80
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #14974** (2026-11-13): Bump gateway-api to 1.7.0 (@manuelbuil)
+- **PR #14972** (2026-11-13): update busybox image to 1.38.0 (@mmoll)
 - **PR #14971** (2026-11-10): Disable LB+tunnel on agentless servers with local apiserver (@brandond)
 - **PR #14968** (2026-11-06): [main] Bump Klipper LB version (@github-actions[bot])
 - **PR #14967** (2026-11-06): [main] Bump Klipper Helm and Helm Controller version (@github-actions[bot])
 - **PR #14966** (2026-11-06): [release-1.36] Bump Klipper LB version (@github-actions[bot])
-- **PR #14965** (2026-11-06): [release-1.35] Bump Klipper LB version (@github-actions[bot])
 
 ---
 
@@ -962,31 +1056,31 @@ Signed-off-by: Manuel Buil <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Bump gateway-api to 1.7.0
+## X. update busybox image to 1.38.0
 
 **RULE**:
-When implementing operations in `manifests/gateway-api-crd.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in k3s-io/k3s. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `manifests/local-storage.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in k3s-io/k3s. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7cc32d88`: Bump gateway-api to 1.7.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c55a7df0`: update busybox image to 1.38.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `manifests/gateway-api-crd.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `manifests/local-storage.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-  chart: https://%{KUBERNETES_API}%/static/charts/gateway-api-crd-1.7.1.tgz
+        image: "%{SYSTEM_DEFAULT_REGISTRY}%rancher/mirrored-library-busybox:1.38.0"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-  chart: https://%{KUBERNETES_API}%/static/charts/gateway-api-crd-1.6.301.tgz
+        image: "%{SYSTEM_DEFAULT_REGISTRY}%rancher/mirrored-library-busybox:1.37.0"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7cc32d88` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c55a7df0` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

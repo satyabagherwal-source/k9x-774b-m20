@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-15T06:19:33.338Z",
-  "total_verified_learnings": 8670,
+  "last_updated": "2026-11-15T06:37:32.646Z",
+  "total_verified_learnings": 8671,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18198,
+  "total_items": 18208,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -213940,14 +213940,19 @@
       "slug": "t8y2-dbx",
       "platform": "github",
       "source_url": "https://github.com/t8y2/dbx",
-      "source_version": "acc33f63",
-      "content_hash": "022ecaa20b10da9821709304df45bbcd184a82c666bd6608e465badc175a17c7",
+      "source_version": "0c019880",
+      "content_hash": "e1ffaaa2a2fd7ce1332a7f599de667eaecb79837a2a6c1f785945481407463bf",
       "dossier_path": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "promoted_rules": [
         {
           "number": 8372,
           "title": "block tuple locator on Greenplum, Cloudberry, Hologres",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8584,
+          "title": "retry the update cache rename on transient Windows locks",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -213956,7 +213961,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T20:07:25.469Z",
+      "verified_at": "2026-11-15T06:36:57.684Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -213998,10 +214003,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-t8y2-dbx-technical-construction-intelligence-t8y2-dbx-core-invariants.md",
       "title": "Technical Construction Intelligence: t8y2/dbx Core Invariants",
       "repository": "t8y2/dbx",
-      "source_version": "acc33f63",
-      "content_hash": "e3a0816ec859abf4ade075e31f53ec5bff1d44957aacd861c345df39e0b24ce8",
+      "source_version": "0c019880",
+      "content_hash": "09f88eb24300023486a80f324b07f181c0c54bef4cf6a172274699e4ee2ea985",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T20:07:25.956Z"
+      "persisted_at": "2026-11-15T06:36:58.124Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-t8y2-dbx": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-t8y2-dbx",
@@ -214010,10 +214015,10 @@
       "relative_path": "08_VERIFICATION/t8y2-dbx-verification-protocol-empirical-defect-shield-for-t8y2-dbx.md",
       "title": "Verification Protocol: Empirical Defect Shield for t8y2/dbx",
       "repository": "t8y2/dbx",
-      "source_version": "acc33f63",
-      "content_hash": "21912fe3be4c1df786fc1cf34b41105c550f69c72a2c755a522a4d88d8470daf",
+      "source_version": "0c019880",
+      "content_hash": "bd1cb283379d5aa6bff995c98d8c899c565d8b2aab2eb75bb17b8ff10d9bb76d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T20:07:26.071Z"
+      "persisted_at": "2026-11-15T06:36:58.351Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-unsloth-qwen3-8-27b-gguf-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-unsloth-qwen3-8-27b-gguf-learnings-core-invar",
@@ -215598,14 +215603,19 @@
       "slug": "k3s-io-k3s",
       "platform": "github",
       "source_url": "https://github.com/k3s-io/k3s",
-      "source_version": "7cc32d88",
-      "content_hash": "a312f8b12054c88ec6429bd94f4143ecbb7bca1acd1ea3c8e669f1230922c5c8",
+      "source_version": "c55a7df0",
+      "content_hash": "a704822ca2f5ece452c8ac1549aa05e819ea2ff8b03d0c12b466b73f864893c8",
       "dossier_path": "07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
       "promoted_rules": [
         {
           "number": 8383,
           "title": "Bump gateway-api to 1.7.0",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8583,
+          "title": "update busybox image to 1.38.0",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -215614,7 +215624,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T21:07:17.546Z",
+      "verified_at": "2026-11-15T06:36:51.466Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -215656,10 +215666,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-k3s-io-k3s-architecture-intelligence-k3s-io-k3s-core-invariants.md",
       "title": "Architecture Intelligence: k3s-io/k3s Core Invariants",
       "repository": "k3s-io/k3s",
-      "source_version": "7cc32d88",
-      "content_hash": "eb375050a02130f21b5ff9b9ec977c1e532edea080ea70868907f7e06803c12e",
+      "source_version": "c55a7df0",
+      "content_hash": "444292f8e8b1fb24fbb82f752f3b46b7a434bb3017528095e13198de3b09441e",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T21:07:18.014Z"
+      "persisted_at": "2026-11-15T06:36:51.908Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-k3s-io-k3s": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-k3s-io-k3s",
@@ -215668,10 +215678,10 @@
       "relative_path": "08_VERIFICATION/k3s-io-k3s-verification-protocol-empirical-defect-shield-for-k3s-io-k3s.md",
       "title": "Verification Protocol: Empirical Defect Shield for k3s-io/k3s",
       "repository": "k3s-io/k3s",
-      "source_version": "7cc32d88",
-      "content_hash": "464050aa1715de0a2b152bb678d822c78877a7d82de09e368802b7b4b1002620",
+      "source_version": "c55a7df0",
+      "content_hash": "f60393773cbdb64a05b63525e75746b2dd2082737277ae48b32be9d3548b9ca9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T21:07:18.123Z"
+      "persisted_at": "2026-11-15T06:36:52.079Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-google-bert-bert-base-uncased-learnings-core-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-google-bert-bert-base-uncased-learnings-core-",
@@ -215741,9 +215751,9 @@
       "title": "Architecture Intelligence: k3s-io-k3s-learnings Core Invariants",
       "repository": "k3s-io-k3s-learnings",
       "source_version": "HEAD",
-      "content_hash": "17838e29cb625eef6f04f861b866817152f2bc225eb98c8346625d04259f88a4",
+      "content_hash": "6ffcd6b76001c6cbb023dbbe75e58a8dd41d2606315818b7229e9d7b7c8cd769",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T21:08:34.145Z"
+      "persisted_at": "2026-11-15T06:37:31.861Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-k3s-io-k3s-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-k3s-io-k3s-learnings",
@@ -215753,9 +215763,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for k3s-io-k3s-learnings",
       "repository": "k3s-io-k3s-learnings",
       "source_version": "HEAD",
-      "content_hash": "8ec6cd9970060680a4d266a8e273b6e29d06fb085167399490f598bd08149035",
+      "content_hash": "8fac3ba83650cdd315a55d4d4e24cb96e8f1dbe33af8f75cb8e5d594f4cc8955",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T21:08:34.271Z"
+      "persisted_at": "2026-11-15T06:37:31.986Z"
     },
     "learn-huggingface-baai-bge-m3": {
       "learning_id": "learn-huggingface-baai-bge-m3",
@@ -240336,6 +240346,145 @@
       "content_hash": "a27ab278680b5ce4aebdaf3594c60be3eaebecdb12fb9f688776322f9509d12a",
       "domain_letter": "D",
       "persisted_at": "2026-11-15T06:18:54.140Z"
+    },
+    "learn-huggingface-datalab-to-indra-ocr": {
+      "learning_id": "learn-huggingface-datalab-to-indra-ocr",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "datalab-to/indra-ocr",
+      "repository": "datalab-to/indra-ocr",
+      "slug": "hf-datalab-to-indra-ocr",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/datalab-to/indra-ocr",
+      "source_version": "hf-datalab-to-indra-ocr",
+      "content_hash": "00bd35269790c91fcdc67f0f92d903d65ee2af857f4b3bb4c0c2b7f76d801717",
+      "dossier_path": "07_PROJECT_LEARNING/hf-datalab-to-indra-ocr-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-datalab-to-indra-ocr-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T06:36:42.892Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-datalab-to-indra-ocr-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-datalab-to-indra-ocr-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-datalab-to-indra-ocr-research-knowledge-intelligence-datalab-to-indra-ocr-cor.md",
+      "title": "Research & Knowledge Intelligence: datalab-to/indra-ocr Core Invariants",
+      "repository": "datalab-to/indra-ocr",
+      "source_version": "hf-datalab-to-indra-ocr",
+      "content_hash": "07139343311ee831ee4944b7e6d9c2bc0f62a89467b124e2f9798f56f3404c36",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T06:36:43.263Z"
+    },
+    "rule-8583": {
+      "learning_id": "rule-8583",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8583,
+      "title": "update busybox image to 1.38.0",
+      "source_url": "https://github.com/k3s-io/k3s",
+      "source_version": "c55a7df0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T06:36:51.466Z"
+    },
+    "candidate_directive-update-busybox-image-to-1-38-0": {
+      "item_id": "candidate_directive-update-busybox-image-to-1-38-0",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PW3T-update-busybox-image-to-1-38-0.md",
+      "title": "update busybox image to 1.38.0",
+      "repository": "k3s-io-k3s-learnings",
+      "source_version": "HEAD",
+      "content_hash": "76452085325d9c121dcb3e33491cebb4c6b85a88c51640db8328910537a40c1d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T06:37:31.721Z"
+    },
+    "rule-8584": {
+      "learning_id": "rule-8584",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8584,
+      "title": "retry the update cache rename on transient Windows locks",
+      "source_url": "https://github.com/t8y2/dbx",
+      "source_version": "0c019880",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T06:36:57.684Z"
+    },
+    "candidate_directive-retry-the-update-cache-rename-on-transient-windows-locks": {
+      "item_id": "candidate_directive-retry-the-update-cache-rename-on-transient-windows-locks",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-P63I-retry-the-update-cache-rename-on-transient-windows-locks.md",
+      "title": "retry the update cache rename on transient Windows locks",
+      "repository": "t8y2/dbx",
+      "source_version": "0c019880",
+      "content_hash": "bb80fc4ecca44a873cc9e0db732a48fcdf78ea4e3a7c27102a82cb3867f69738",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T06:36:58.019Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-datalab-to-indra-ocr-learnings-core-invariant": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-datalab-to-indra-ocr-learnings-core-invariant",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-datalab-to-indra-ocr-learnings-research-knowledge-intelligence-hf-datalab-to-.md",
+      "title": "Research & Knowledge Intelligence: hf-datalab-to-indra-ocr-learnings Core Invariants",
+      "repository": "hf-datalab-to-indra-ocr-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7756b2ed3eff9ff939b408651ad2446098ba9d0ad413a0a53ce3764d1e773f05",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T06:37:31.268Z"
+    },
+    "candidate_directive-updater-retry-the-update-cache-rename-on-transient-windows-locks": {
+      "item_id": "candidate_directive-updater-retry-the-update-cache-rename-on-transient-windows-locks",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PWMM-updater-retry-the-update-cache-rename-on-transient-windows-locks.md",
+      "title": "updater): retry the update cache rename on transient Windows locks",
+      "repository": "t8y2-dbx-learnings",
+      "source_version": "HEAD",
+      "content_hash": "27581926ebeb6b0f06473c371b2fe2f3e9c39aff37112cc7a7db688aaadefbd3",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T06:37:32.412Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-t8y2-dbx-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-t8y2-dbx-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-t8y2-dbx-learnings-technical-construction-intelligence-t8y2-dbx-learnings-core-i.md",
+      "title": "Technical Construction Intelligence: t8y2-dbx-learnings Core Invariants",
+      "repository": "t8y2-dbx-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f95fd39a31de81768a3acfacc2da39e8dbe79008a1d31110624cc305797a317e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T06:37:32.520Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-t8y2-dbx-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-t8y2-dbx-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/t8y2-dbx-learnings-verification-protocol-empirical-defect-shield-for-t8y2-dbx-le.md",
+      "title": "Verification Protocol: Empirical Defect Shield for t8y2-dbx-learnings",
+      "repository": "t8y2-dbx-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3bd4ea5d15e99b0b47eb8d70163f4d6a7871a0dca7df7efd4f550901200fd1a8",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T06:37:32.646Z"
     }
   },
   "ai-builder-brain": {
