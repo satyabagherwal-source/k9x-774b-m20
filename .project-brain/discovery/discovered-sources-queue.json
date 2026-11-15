@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T02:16:50.127Z",
+  "updated_at": "2026-11-15T02:35:54.066Z",
   "stats": {
-    "total_discovered": 3555,
-    "approved_pending_harvest": 3345,
+    "total_discovered": 3556,
+    "approved_pending_harvest": 3346,
     "harvested_count": 0,
     "rejected_count": 210,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3326,
+      "COMMUNITY_AND_EXPERT": 3327,
       "OFFICIAL_DOCUMENTATION": 125,
       "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
@@ -76761,6 +76761,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
         "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-5EE1AFDD29A5": {
+      "id": "SRC-5EE1AFDD29A5",
+      "url": "https://huggingface.co/vllm-sr/d3",
+      "title": "https://huggingface.co/vllm-sr/d3",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T02:35:54.066Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md",
+        "fileName": "hf-vllm-sr-d3-learnings.md"
       }
     }
   }

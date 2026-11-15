@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T02:16:50.361Z",
-  "total_records": 918,
+  "last_updated": "2026-11-15T02:35:55.732Z",
+  "total_records": 921,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 452,
+      "total": 455,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -489,7 +489,10 @@
         "DOM-D-57D6CED2",
         "domain_intelligence-research-knowledge-intelligence-hf-fishaudio-drama-3-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-",
-        "DOM-D-F32FC521"
+        "DOM-D-F32FC521",
+        "domain_intelligence-research-knowledge-intelligence-vllm-sr-d3-core-invariants",
+        "DOM-D-608927A6",
+        "domain_intelligence-research-knowledge-intelligence-hf-vllm-sr-d3-learnings-core-invariants"
       ]
     },
     "E": {
@@ -7651,8 +7654,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "fb0dc5ceb47ae1aa122535d424fa06ec1ac09172ec5c9ab43f48329dfc56c61b",
-      "created_at": "2026-11-15T01:47:19.542Z"
+      "content_hash": "9be0c622836453553dd1de6eb866ec291b8f748ae242f7994c884e68885b6ece",
+      "created_at": "2026-11-15T02:35:55.732Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -7945,8 +7948,8 @@
       "title": "Technical Construction Intelligence: milvus-io/milvus Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-milvus-io-milvus-technical-construction-intelligence-milvus-io-milvus-core-invar.md",
       "repository": "milvus-io/milvus",
-      "content_hash": "85cfec64de8ef817e80f92047383d256981b94ef0b766d436436c99c859c0ba6",
-      "created_at": "2026-11-13T17:55:12.440Z"
+      "content_hash": "a82c66269ef9b4e0fe100d07c0a570424ef7bd5cc4bbccee0e7ab96247a3f248",
+      "created_at": "2026-11-15T02:35:15.077Z"
     },
     "DOM-D-E7346FF5": {
       "record_id": "DOM-D-E7346FF5",
@@ -8005,8 +8008,8 @@
       "title": "Technical Construction Intelligence: milvus-io-milvus-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-milvus-io-milvus-learnings-technical-construction-intelligence-milvus-io-milvus-.md",
       "repository": "milvus-io-milvus-learnings",
-      "content_hash": "e740148e150ba066ef713fe1b266ad61a9543fdf252b282581be565a68af75d7",
-      "created_at": "2026-11-13T17:55:47.633Z"
+      "content_hash": "5547acb646807a763327f7fffd03e2366d9dd86469dea472cbd6a238ca9cccfd",
+      "created_at": "2026-11-15T02:35:54.871Z"
     },
     "domain_intelligence-research-knowledge-intelligence-akatz-ai-minimax-h3-character-swap-lora-core-inv": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-akatz-ai-minimax-h3-character-swap-lora-core-inv",
@@ -17987,6 +17990,66 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-15T02:16:49.186Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-vllm-sr-d3-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-vllm-sr-d3-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: vllm-sr/d3 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-vllm-sr-d3-research-knowledge-intelligence-vllm-sr-d3-core-invariants.md",
+      "repository": "vllm-sr/d3",
+      "content_hash": "7c3d586eafb0b29c4f2bea7c782b94df7caf23adf59f0e02f2d323378bc9b514",
+      "created_at": "2026-11-15T02:34:57.959Z"
+    },
+    "DOM-D-608927A6": {
+      "record_id": "DOM-D-608927A6",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): vllm-sr/d3",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/vllm-sr/d3](https://huggingface.co/vllm-sr/d3))  \n> **Source Version**: `hf-vllm-sr-d`  \n> **License**: Open-Source  \n> **Synthesized By**: zero-clone-structural-s",
+      "content_hash": "a85ebfaa2f7a4fdafa781d3e251e0cc5ed74c40973b424ef4e673716b3fdf813",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/vll -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/vll",
+      "provenance": {
+        "source_uri": "project://hf-vllm-sr-d3/hf-vllm-sr-d3-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T02:35:18.006Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-vllm-sr-d3)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-vllm-sr-d3"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-15T02:35:54.030Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-vllm-sr-d3-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-vllm-sr-d3-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-vllm-sr-d3-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-vllm-sr-d3-learnings-research-knowledge-intelligence-hf-vllm-sr-d3-learnings-.md",
+      "repository": "hf-vllm-sr-d3-learnings",
+      "content_hash": "ccb7263d3f1ed7fc2216bae403e44df39eb2d0fac7d95cce0fe525b1e5c523f0",
+      "created_at": "2026-11-15T02:35:54.295Z"
     }
   }
 }

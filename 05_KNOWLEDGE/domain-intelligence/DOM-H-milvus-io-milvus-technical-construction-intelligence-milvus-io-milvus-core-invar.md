@@ -4,24 +4,24 @@
 {
   "source_repository": "milvus-io/milvus",
   "source_url": "https://github.com/milvus-io/milvus",
-  "source_version": "03d63d65",
+  "source_version": "6893a8c3",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-13T17:55:12.363Z",
+  "timestamp": "2026-11-15T02:35:14.944Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-milvus-io-milvus",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [milvus-io/milvus](https://github.com/milvus-io/milvus) (Revision: `03d63d65`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-13T17:55:12.363Z`  
+> **Provenance**: Harvested from [milvus-io/milvus](https://github.com/milvus-io/milvus) (Revision: `6893a8c3`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-15T02:35:14.944Z`  
 > **Learning ID**: `learn-github-milvus-io-milvus`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 63%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 54%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from milvus-io/milvus:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/milvus-io/milvus](https://github.com/milvus-io/milvus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T17:55:11.761Z  
+> **Harvest Timestamp**: 2026-11-15T02:35:13.585Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Milvus is a high-performance, cloud-native vector database built for scalable vector ANN search
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 46654 stars
+- **Stars / Engagement**: 46665 stars
 
 ---
 
@@ -1363,14 +1363,14 @@ BENCHMARK_MAIN();
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #55527** (2026-11-14): **enhance: [cp3.0] Support PBKDF2 password hashing for FIPS deployments**
+  *Symptoms*: issue: #55081 pr: #55084  Cherry-pick of #55084 to 3.0. See #55084 for the design, upgrade notes and limits.  The only conflict was in `pkg/util/paramtable/component_param.go`: 3.0 doesn't have master's `FeatureUsage*` fields, so `PasswordHashAlgorithm` was added to 3.0's field list. The other changes are the same as in #55084.  Default behaviour is unchanged: `common.security.passwordHashAlgorithm` defaults to `bcrypt`.  ## Testing on 3.0  - Unit tests in the builder image: `pkg/util/crypto`, `pkg/util/paramtable`, `internal/util/adminauth`, `internal/proxy` (credential, password and auth filter), `internal/rootcoord` (credential filter, with etcd) and `cmd/tools/config`. - golangci-lint on the changed packages. - A local linux/arm64 3.0 image with this change and other open FIPS PRs, configured with `pbkdf2-sha512`: an end-to-end run passed user creation, login, wrong-password refusal and password change. etcd held only `$pbkdf2-sha512$` hashes, root's included. - Upgrade on that image: users created with `bcrypt` kept logging in after switching to `pbkdf2-sha512`, and updating their passwords stored PBKDF2 hashes.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
+  **Post-Mortem & Fix Analysis**:
+  > /set-milestone 3.0.7
+  > [ci-v2-notice] Notice: ci-v2 system is enabled for this PR (3.0 branch).  To rerun ci-v2 checks, comment with: - /ci-rerun-code-check-macos  // for Code Checker MacOS (GitHub Actions) - /ci-rerun-build-ut-cov  // for ci-v2/build-ut-cov (build + unit tests) - /ci-rerun-e2e-amd  // for ci-v2/e2e-amd (e2e tests) - /ci-rerun-e2e-dist-wp  // for ci-v2/e2e-dist-wp (Tencent distributed woodpecker-service boundary) - /ci-rerun-gosdk  // for ci-v2/go-sdk (Go SDK E2E tests) - /ci-rerun-gosdk-std  // for ci-v2/go-sdk-std (Go SDK E2E, standalone) - /ci-rerun-gosdk-dist-wp // for ci-v2/go-sdk-dist-wp (distributed + Woodpecker service)  If you have any questions or requests, please contact @zhikunyao. 
+
 - **Issue #55508** (2026-11-13): **fix: [2.6] restore AND early exit at null-rejecting filters**
   *Symptoms*: issue: #51181 pr: #51182  AND conjunctions keep UNKNOWN rows active even when the filter consumer excludes them together with FALSE. Backport #51182 to restore early exit for these rows at FilterBitsNode and IterativeFilterNode, while keeping strict three-valued semantics below NOT. Native iterative filtering now explicitly folds validity before selecting rows.  Preserves the inherited candidate-mask handling from #55058. The master batch-LIKE reserved-slot fix does not apply to 2.6. Includes the five applicable upstream regression tests and retains existing conjunction and mask coverage.  Validation: clang-format 15 and git diff --check pass. Compilation and runtime validation are pending CI; local-source remote test attempts were blocked before compilation by test dependency image startup failures. 
-
-- **Issue #55493** (2026-11-13): **enhance: reduce broadcast task logger memory**
-  *Symptoms*: issue: #40451  - Broadcaster: reuse the component logger across broadcast tasks to avoid retaining a logger and encoded message per task. - Task logging: attach the task message at persistence, broadcast execution, and legacy ACK log sites to preserve message correlation.
-  **Post-Mortem & Fix Analysis**:
-  > [ci-v2-notice] Notice: New ci-v2 system is enabled for this PR.  To rerun ci-v2 checks, comment with: - /ci-rerun-code-check  // for ci-v2/code-check - /ci-rerun-code-check-macos  // for Code Checker MacOS (GitHub Actions) - /ci-rerun-build  // for ci-v2/build - /ci-rerun-build-all  // for ci-v2/build-all (multi-arch builds) - /ci-rerun-buildenv  // for ci-v2/build-env (build milvus-env builder images; update .env after the new tag is ready) - /ci-rerun-ut-integration  // for ci-v2/ut-integration, will rerun ci-v2/build - /ci-rerun-ut-go  // for ci-v2/ut-go, will rerun ci-v2/build - /ci-rerun-ut-cpp  // for ci-v2/ut-cpp - /ci-rerun-ut  // for all ci-v2/ut-integration, ci-v2/ut-go, ci-v2/ut-cpp, will rerun ci-v2/build - /ci-rerun-e2e-default  // for ci-v2/e2e-default - /ci-rerun-e2e-pulsar-wp  // for ci-v2/e2e-pulsar-wp (GCP branch-equivalent Pulsar + Woodpecker Python E2E) - /ci-rerun-e2e-amd  // for ci-v2/e2e-amd (e2e pool dispatcher) - /ci-rerun-e2e-dist-wp  // for ci-v2/e2e-dist-wp 
-  > <!-- team2-arev:debate-D7b128574ec --> > **Must-fix issues introduced by this PR: 0** > **Merge recommendation:** Mergeable as-is — this review found no must-fix issue introduced by this PR.  Adversarial review found no issues requiring changes.  **Verified:** - `internal/streamingcoord/server/broadcaster/broadcast_task.go:132`: `SetLogger` now stores the shared component logger. Tasks no longer keep the cloned encoder buffer and message reference that `logger.With(mlog.FieldMessage(b.msg))` created for each task. - `internal/streamingcoord/server/broadcaster/broadcast_task.go:664`: `saveTaskIfDirty` reads `b.msg` directly, and all three callers hold `b.mu` at that point. The callers are `InitializeRecovery`, `ack` (through `Ack`/`FastAck`) and `MarkAckCallbackDone`. There is no unlocked read and no recursive locking. - `internal/streamingcoord/server/broadcaster/pending_broadcast_task.go:54`: the five `Execute` log sites call `BroadcastMessage()` without already holding the non-reentr
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1387,484 +1387,542 @@ BENCHMARK_MAIN();
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5ce39ad7` (2026-11-13)
-**Commit Message**: fix: resolve Azure Germany regions and explicit storage authorities (#55484)
+### Incident Patch 1: `6893a8c3` (2026-11-14)
+**Commit Message**: fix: bound manifest cgo concurrency process-wide (#55182)
 
-issue: #55483
+cgo pins a goroutine to an OS thread for the duration of every C call,
+so the blocking milvus-storage manifest FFI calls (transaction
+open/commit, filesystem read/write, external-source explore, and the
+async executor workers) grow one OS thread each while in flight. The
+per-context ManifestIOContext pools bound only their own callers, and
+the synchronous entry points had no process-wide ceiling, so under
+concurrent manifest add-file load mixcoord grew 1500-2000 threads and
+RSS jumped from ~220-277 MB to 3.66-5.27 GB.
 
-External collections on Azure cannot be read when the storage account is
-in `germanywestcentral` or `germanynorth`. Spec producers write
-`azure://core.windows.net/<container>/<blob>` with the account's region.
-`DeriveEndpoint` maps every `germany*` region to `core.cloudapi.de`
-(Microsoft Cloud Germany, closed in October 2021), so native injection
-set the address to `core.cloudapi.de` and the container to
-`core.windows.net`.
+Add a process-wide budget, common.storage.manifestFFIConcurrency
+(default 128, clamped [1, 2048]), acquired around every blocking
+manifest FFI call and shared by all components in the process. The
+budget is read once at first manifest I/O and requires a restart to
+change. Worker execution stays deadlock-free because rejected native
+continuations run inline on the submitting worker instead of waiting for
+another slot.
 
-- Drop the `germany*` rule in the Go and C++ `DeriveEndpoint`; those
-regions are public Azure on `core.windows.net`.
-- In native injection, a bare Azure Storage authority in the source host
-wins over the region-derived authority, as endpoint hosts of the other
-clouds already do. An Azure container name cannot contain a dot, so such
-a host is never a container. This also covers other region/authority
-mismatches, for example `chinaeast2` with `core.windows.net`.
+issue: #55176
 
-### Validation
-- `pkg/util/externalspec` tests, `go vet` and golangci-lint pass.
-- C++ `InjectExtfsAllowlist.*` and the related external-table suites (92
-tests) pass on a local build with this patch applied; the 
+---------
 
-**File**: `internal/core/src/storage/loon_ffi/util.cpp` (modified, +25/-4)
+Signed-off-by: Congqi Xia <[REDACTED_EMAIL]>
+
+**File**: `internal/storagev2/packed/cgo_limit.go` (added, +127/-0)
 ```diff
-@@ -544,9 +544,8 @@ DeriveEndpoint(const std::string& cloud_provider, const std::string& region) {
-         if (r.rfind("usgov", 0) == 0 || r.rfind("usdod", 0) == 0) {
-             return "core.usgovcloudapi.net";
-         }
--        if (r.rfind("germany", 0) == 0) {
--            return "core.cloudapi.de";
--        }
-+        // Microsoft Cloud Germany (core.cloudapi.de) closed in October 2021;
-+        // germanywestcentral and germanynorth are public Azure regions.
-         return "core.windows.net";
-     }
-     return "";
-@@ -565,6 +564,19 @@ StripURIScheme(const std::string& addr) {
- // family, the URI is Milvus-form regardless of whether DeriveEndpoint(cp,
- // region) equals the host string. Keep list in sync with Go
- // externalspec.IsCloudEndpointHost.
-+// IsAzureStorageAuthority returns true for the bare Azure Storage
-+// authorities that azure://<authority>/<container>/<blob> names. An Azure
-+// container name cannot contain a dot, so such a host is never a container.
-+static bool
-+IsAzureStorageAuthority(const std::string& host) {
-+    std::string h = host;
-+    std::transform(h.begin(), h.end(), h.begin(), [](unsigned char c) {
-+        return std::tolower(c);
-+    });
-+    return h == "core.windows.net" || h == "core.chinacloudapi.cn" ||
-+           h == "core.usgovcloudapi.net" || h == "core.cloudapi.de";
-+}
+@@ -0,0 +1,127 @@
++// Copyright 2023 Zilliz
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
 +
- static bool
- IsCloudEndpointHost(const std::string& host) {
-     std::string h = host;
-@@ -949,7 +961,16 @@ InjectExternalSpecProperties(
-         // regardless of whether DeriveEndpoint string-matches. This prevents
-         // misclassifying `s3://s3.amazonaws.com/bucket/key` as AWS-form when
-         // spec.region is a regional value.
--        bool uri_host_is_cloud_endpoint = IsCloudEndpointHost(host);
-+        // A bare Azure Storage authority is the endpoint the source names, so
-+        // it also wins over the region-derived authority.
-+        std::string spec_cp = spec_cloud_provider;
-+        std::transform(spec_cp.begin(),
-+                       spec_cp.end(),
-+                       spec_cp.begin(),
-+                       [](unsigned char c) { return std::tolower(c); });
-+        bool uri_host_is_cloud_endpoint =
-+            IsCloudEndpointHost(host) ||
-+            (spec_cp == "azure" && IsAzureStorageAuthority(host));
-         if (!uri_host_is_cloud_endpoint && !derived.empty() &&
-             StripURIScheme(derived) != host) {
-             milvus_storage::api::SetValue(
++package packed
++
++import (
++	"context"
++	"sync"
++
++	"golang.org/x/sync/semaphore"
++
++	"github.com/milvus-io/milvus/pkg/v3/util/paramtable"
++)
++
++// cgo call entry points in this package
++//
++// A goroutine that enters a cgo call is pinned to an OS thread for the whole
++// call, so the number of OS threads the process holds tracks the number of
++// goroutines simultaneously blocked inside C. Storage v3 routes every manifest
++// add-file / read / commit through milvus-storage FFI; the per-context
++// ManifestIOContext pools bound only their own callers, and the synchronous
++// entry points had no process-wide ceiling at all. Under load (segment change
++// commit bursts, index/stats publication, L0 compaction, startup manifest
++// reload, GC, copy-segment and backfill reads) hundreds of callers across many
++// contexts blocked in cgo at once, growing process threads to 1500-2000 and
++// inflating RSS by gigabytes. Every *blocking* cgo call below therefore
++// acquires a shared process-wide slot (manifestFFI) before entering C.
++//
++// Blocking manifest transaction I/O (wrapped):
++//   - openTransaction          (C.loon_transaction_open)   ffi_common.go
++//   - commitTransaction        (C.loon_transaction_commit) ffi_common.go
++//   - createMilvusTableManifest
++//     (C.loon_transaction_open +
++//      C.loon_milvus_table_append_source_manifests)         manifest_ffi.go
++//
++//   Every synchronous manifest mutator funnels through the first two:
++//   CommitManifestUpdates, CreateManifestForSegment, AppendSegmentManifestColumns,
++//   AddLobFilesToTransaction, AddDeltaLogsToManifest(Overwrite), AddStatsToManifest.
++//   Every synchronous manifest reader funnels through openTransaction:
++//   GetManifestHandle(WithExtfs), GetManifestFieldIDs, ReadFragmentsFromManifest,
++//   ManifestHasColumns, ResolveManifestSingleWriterFormat, ReadManifestColumnGroups,
++//   GetManifestIndexInfos, GetManifestLobFiles, GetManifestStats,
++//   StatsBinlogSizeFromManifest, GetDeltaLogPathsFromManifest,
++//   GetDeltaLogsFromManifestWithExtfs, ReadMilvusTableSnapshotMetadata.
++//
++// Blocking manifest filesystem I/O (wrapped):
++//   - readFileWithExternalSpec (C.loon_filesystem_read_file_all)  ffi_filesystem.go
++//   - WriteFile               (C.loon_filesystem_create_dir /
++//                              C.loon_filesystem_write_file)      ffi_filesystem.go
++//
++// Blocking external-source explore I/O (wrapped):
++//   - GetFileInfoFromExternalSource
++//     (C.loon_exttable_get_file_info)                             explore_ffi.go
++//   - ExploreFilesFromExternalSource
++//     (C.loon_exttable_explore)                                   explore_ffi.go
++//   - ReadFileInfosFromManifestPath
++//     (C.loon_exttable_read_manifest)                             explore_ffi.go
++//
++// Async manifest executor worker (wrapped):
++//   - runWorker               (C.milvusRunManifestTask)           manifest_async.go
++//
++//   The caller's submitOpen/submitCommit only enqueue to the native async
++//   engine; the actual blocking manifest I/O runs on these workers, so bounding
++//   worker execution bounds the async path's threads process-wide. The worker
++//   never re-enters acquire for native continuations (rejected enqueues run
++//   inline on the same worker), so this cannot deadlock with the budget.
++//
++// Quick staging / parse cgo (not wrapped): these build in-memory column-group /
++// properties / stat descriptors or copy loaded manifest bytes and do not block
++// on storage: loon_properties_create/free, loon_properties_inject_external_spec,
++// loon_column_groups_create, loon_transaction_append_files/add_lob_file/
++// add_delta_log/drop_column/update_stat, loon_transaction_get_manifest,
++// loon_manifest_destroy, CString/free, and the result/error helpers.
++//
++// Data-plane writer/reader FFI (not wrapped): NewPackedWriter/NewFFIPackedWriter
++// Close (parquet file write) and NewPackedReader/NewFFISegmentReader run on
++// DataNode / QueryNode write/read paths, not on coordinators; the coordinator
++// manifest-add operations they feed are the wrapped ones above.
++
++// manifestFFILimit bounds the number of goroutines that may simultaneously run
++// blocking milvus-storage FFI calls in this process. The budget is read once
++// from CommonCfg.ManifestFFIConcurrency at first use (the param is
++// refreshable=false) and is shared by eve
 ```
 
-**File**: `internal/core/unittest/test_external_take.cpp` (modified, +75/-1)
+**File**: `internal/storagev2/packed/cgo_limit_test.go` (added, +83/-0)
 ```diff
-@@ -3982,7 +3982,9 @@ TEST(InjectExtfsAllowlist, AzureSovereignCloudEndpoints) {
-         {"chinaeast", "core.chinacloudapi.cn"},
-         {"usgovvirginia", "core.usgovcloudapi.net"},
-         {"usdodcentral", "core.usgovcloudapi.net"},
--        {"germanynortheast", "core.cloudapi.de"},
-+        // Microsoft Cloud Germany closed; these are public Azure regions.
-+        {"germanywestcentral", "core.windows.net"},
-+        {"germanynorth", "core.windows.net"},
-         {"eastus", "core.windows.net"},
-     };
-     for (const auto& c : cases) {
-@@ -4001,6 +4003,78 @@ TEST(InjectExtfsAllowlist, AzureSovereignCloudEndpoints) {
-     }
- }
+@@ -0,0 +1,83 @@
++// Copyright 2023 Zilliz
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package packed
++
++import (
++	"context"
++	"sync/atomic"
++	"testing"
++	"time"
++
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++	"golang.org/x/sync/semaphore"
++
++	"github.com/milvus-io/milvus/pkg/v3/util/paramtable"
++)
++
++// TestManifestFFILimiterBoundsConcurrency verifies the limiter caps the number
++// of simultaneous holders even when more goroutines than the budget request it.
++func TestManifestFFILimiterBoundsConcurrency(t *testing.T) {
++	limiter := &manifestFFILimit{slots: semaphore.NewWeighted(2)}
++	ctx := context.Background()
++
++	var held atomic.Int32
++	var maxHeld atomic.Int32
++	done := make(chan struct{})
++	for i := 0; i < 8; i++ {
++		go func() {
++			defer func() { done <- struct{}{} }()
++			for j := 0; j < 20; j++ {
++				require.NoError(t, limiter.acquire(ctx))
++				current := held.Add(1)
++				for maxHeld.Load() < current {
++					if maxHeld.CompareAndSwap(maxHeld.Load(), current) {
++						break
++					}
++				}
++				time.Sleep(time.Millisecond)
++				held.Add(-1)
++				limiter.release()
++			}
++		}()
++	}
++	for i := 0; i < 8; i++ {
++		<-done
++	}
++	assert.LessOrEqual(t, int(maxHeld.Load()), 2, "the limiter must never admit more holders than its budget")
++}
++
++// TestManifestFFILimiterContextCancellation verifies a canceled caller is not
++// admitted and does not consume a slot.
++func TestManifestFFILimiterContextCancellation(t *testing.T) {
++	limiter := &manifestFFILimit{slots: semaphore.NewWeighted(1)}
++	require.NoError(t, limiter.acquire(context.Background()))
++
++	canceled, cancel := context.WithCancel(context.Background())
++	cancel()
++	require.ErrorIs(t, limiter.acquire(canceled), context.Canceled)
++
++	limiter.release()
++	require.NoError(t, limiter.acquire(context.Background()))
++	limiter.release()
++}
++
++// TestManifestFFILimiterReadsConfiguredBudget verifies the package-wide budget
++// is sized from the configured paramtable value and is at least one.
++func TestManifestFFILimiterReadsConfiguredBudget(t *testing.T) {
++	paramtable.Init()
++	require.NoError(t, acquireManifestFFI(context.Background()))
++	releaseManifestFFI()
++}
+```
+
+**File**: `internal/storagev2/packed/explore_ffi.go` (modified, +10/-0)
+```diff
+@@ -128,7 +128,11 @@ func GetFileInfo(
  
-+// Spec producers write azure://core.windows.net/<container>/<blob> together
-+// with the storage account's region. The authority in the source wins over the
-+// region-derived one, so a region never turns the authority into a container.
-+TEST(InjectExtfsAllowlist, AzureAuthorityHostWinsOverRegion) {
-+    // The native policy is process-wide and immutable: reuse the allowlist
-+    // that the other Broker tests in this binary install.
-+    const std::string endpoint =
-+        "https://broker.example.com/v1/credentials/assume-role";
-+    ASSERT_TRUE(
-+        InitCredentialBrokerPolicy(
-+            std::string(
-+                R"(["https://broker.example.com/v1/credentials/assume-role","https://broker.example.com/v1/credentials/assume-role?api-version=1&scope=a%2Fb+x"])"))
-+            .ok());
-+    struct Case {
-+        std::string source;
-+        std::string region;
-+        std::string address;
-+    };
-+    const std::vector<Case> cases = {
-+        {"azure://core.windows.net/ctr/dir/file.parquet",
-+         "westeurope",
-+         "core.windows.net"},
-+        {"azure://core.windows.net/ctr/dir/file.parquet",
-+         "germanywestcentral",
-+         "core.windows.net"},
-+        {"azure://core.windows.net/ctr/dir/file.parquet",
-+         "germanynorth",
-+         "core.windows.net"},
-+        {"azure://core.windows.net/ctr/dir/file.parquet",
-+         "chinaeast2",
-+         "core.windows.net"},
-+        {"azure://core.windows.net/ctr/dir/file.parquet",
-+         "usgovvirginia",
-+         "core.windows.net"},
-+        {"azure://core.chinacloudapi.cn/ctr/dir/file.parquet",
-+         "eastus",
-+         "core.chinacloudapi.cn"},
-+        {"azure://CORE.WINDOWS.NET/ctr/dir/file.parquet",
-+         "eastus",
-+         "CORE.WINDOWS.NET"},
-+    };
-+    for (const auto& c : cases) {
-+        SCOPED_TRACE(c.source + " region=" + c.region);
-+        // The target-mode spec the Zilliz Cloud control plane builds.
-+        nlohmann::json spec = {{"format", "parquet"},
-+                               {"extfs",
-+                                {{"cloud_provider", "azure"},
-+                                 {"region", c.region},
-+                                 {"access_key_id", "account"},
-+                                 {"azure_client_id", "client"},
-+                                 {"azure_tenant_id", "tenant"},
-+                                 {"azure_credential_endpoint", endpoint},
-+                                 {"load_frequency", "3600"}}}};
-+        milvus_storage::api::Properties props;
-+        ::InjectExternalSpecProperties(props, 42, c.source, spec.dump());
-+        EXPECT_EQ(std::get<std::string>(props.at("extfs.42.address")),
-+                  c.address);
-+        EXPECT_EQ(std::get<std::string>(props.at("extfs.42.bucket_name")),
-+                  "ctr");
-+    }
-+    // A container host still takes its authority from the region.
-+    milvus_storage::api::Properties props;
-+    ::InjectExternalSpecProperties(
-+        props,
-+        42,
-+        "azure://ctr/dir/file.parquet",
-+        R"({"format":"parquet","extfs":{"cloud_provider":"azure","region":"germanywestcentral","access_key_id":"account","access_key_value":"KEY"}})");
-+    EXPECT_EQ(std::get<std::string>(props.at("extfs.42.address")),
-+              "core.windows.net");
-+    EXPECT_EQ(std::get<std::string>(props.at("extfs.42.bucket_name")), "ctr");
-+}
-+
- TEST(InjectExtfsAllowlist, AzuriteMilvusFormURIUsesHostAsEndpoint) {
-     // Azurite / Azure Stack Hub: custom endpoint expressed via Milvus-form URI
-     // (path has ≥2 segments). URI.host is authoritative; cp+region are
-```
-
-**File**: `pkg/util/externalspec/external_spec.go` (modified, +2/-3)
-```diff
-@@ -630,9 +630,8 @@ func DeriveEndpoint(cloudProvider, region string) string {
- 		if strings.HasPrefix(r, "usgov") || strings.HasPrefix(r, "usdod") {
- 			return "core.usgovcloudapi.net"
- 		}
--		if strings.HasPrefix(r, "germany") {
--			return "core.cloudapi.de"
--		}
-+		// Microsoft Cloud Germany (core.cloudapi.de) closed in October 2021;
-+		// germanywestcentral and germanynorth are public Azure regions.
- 		return "core.windows.net"
+ 	var numRows C.uint64_t
+ 
++	// GetFileInfo stats an external object; blocking storage I/O on this
++	// goroutine's OS thread, bounded process-wide like the other FFI calls.
++	acquireManifestFFI(context.Background())
+ 	result := C.loon_exttable_get_file_info(cFormat, cFilePath, cProperties, &numRows)
++	releaseManifestFFI()
+ 	if err := HandleLoonFFIResult(result); err != nil {
+ 		return nil, merr.WrapErrStorage(err, "loon_exttable_get_file_info failed")
  	}
- 	return ""
+@@ -420,11 +424,15 @@ func ExploreFilesReturnManifestPath(
+ 		cColumnsPtr = &cColumns[0]
+ 	}
+ 
++	// Explore lists/reads the external source and writes an explore manifest;
++	// blocking storage I/O bounded process-wide like the other FFI calls.
++	acquireManifestFFI(context.Background())
+ 	result := C.loon_exttable_explore(
+ 		cColumnsPtr, C.size_t(len(columns)),
+ 		cFormat, cBaseDir, cExploreDir, cProperties,
+ 		&numFiles, &outColumnGroupsPath,
+ 	)
++	releaseManifestFFI()
+ 	if err := HandleLoonFFIResult(result); err != nil {
+ 		return nil, "", merr.WrapErrStorage(err, "loon_exttable_explore failed")
+ 	}
+@@ -469,7 +477,9 @@ func ReadFileInfosFromManifestPath(
+ 	defer C.loon_properties_free(cProperties)
+ 
+ 	var manifest *C.LoonManifest
++	acquireManifestFFI(context.Background())
+ 	result := C.loon_exttable_read_manifest(cManifestPath, cProperties, &manifest)
++	releaseManifestFFI()
+ 	if err := HandleLoonFFIResult(result); err != nil {
+ 		return nil, merr.WrapErrStorage(err, "loon_exttable_read_manifest failed")
+ 	}
 ```
 
-**File**: `pkg/util/externalspec/external_spec_test.go` (modified, +2/-1)
+**File**: `internal/storagev2/packed/ffi_common.go` (modified, +10/-0)
 ```diff
-@@ -797,7 +797,8 @@ func TestDeriveEndpoint(t *testing.T) {
- 		{"azure_china", CloudProviderAzure, "china", "core.chinacloudapi.cn"},
- 		{"azure_usgov", CloudProviderAzure, "usgov", "core.usgovcloudapi.net"},
- 		{"azure_usdod", CloudProviderAzure, "usdod", "core.usgovcloudapi.net"},
--		{"azure_germany", CloudProviderAzure, "germany", "core.cloudapi.de"},
-+		{"azure_germany_west_central", CloudProviderAzure, "germanywestcentral", "core.windows.net"},
-+		{"azure_germany_north", CloudProviderAzure, "germanynorth", "core.windows.net"},
- 		{"azure_public", CloudProviderAzure, "public", "core.windows.net"},
- 		{"case_insensitive_provider", "AWS", "us-east-1", "https://s3.us-east-1.amazonaws.com"},
- 		{"unknown_provider", "minio", "us-east-1", ""},
+@@ -13,6 +13,7 @@ package packed
+ import "C"
+ 
+ import (
++	"context"
+ 	"encoding/json"
+ 	"fmt"
+ 	"strconv"
+@@ -508,6 +509,11 @@ func openTransaction(manifest ManifestJSON, cProperties *C.LoonProperties, resol
+ 	cBasePath := C.CString(manifest.BasePath)
+ 	defer C.free(unsafe.Pointer(cBasePath))
+ 	var handle C.LoonTransactionHandle
++	// The open reads the manifest revision from storage and blocks the calling
++	// goroutine's OS thread; bound it process-wide like every other blocking
++	// manifest FFI call so concurrent commits cannot explode thread count.
++	acquireManifestFFI(context.Background())
++	defer releaseManifestFFI()
+ 	result := C.loon_transaction_open(cBasePath, cProperties, C.int64_t(manifest.ManifestVersion),
+ 		C.int64_t(manifest.Size), resolveID, retryLimit, &handle)
+ 	return handle, HandleLoonFFIResult(result)
+@@ -531,6 +537,10 @@ func openManifest(manifest ManifestJSON, cProperties *C.LoonProperties) (*C.Loon
+ // revision it wrote on basePath, recording the size of the manifest object.
+ func commitTransaction(handle C.LoonTransactionHandle, basePath string, storageConfig *indexpb.StorageConfig) (string, error) {
+ 	var version, size C.int64_t
++	// The commit writes the manifest revision and blocks the calling
++	// goroutine's OS thread; bound it process-wide like openTransaction.
++	acquireManifestFFI(context.Background())
++	defer releaseManifestFFI()
+ 	if err := HandleLoonFFIResult(C.loon_transaction_commit(handle, &version, &size)); err != nil {
+ 		return "", err
+ 	}
+```
+
+**File**: `internal/storagev2/packed/ffi_filesystem.go` (modified, +7/-0)
+```diff
+@@ -23,6 +23,7 @@ package packed
+ import "C"
+ 
+ import (
++	"context"
+ 	"net/url"
+ 	"strings"
+ 	"unsafe"
+@@ -63,7 +64,9 @@ func WriteFile(
+ 			dir := filePath[:idx]
+ 			cDir := C.CString(dir)
+ 			defer C.free(unsafe.Pointer(cDir))
++			acquireManifestFFI(context.Background())
+ 			result = C.loon_filesystem_create_dir(fsHandle, cDir, C.uint32_t(len(dir)), true)
++			releaseManifestFFI()
+ 			if err := HandleLoonFFIResult(result); err != nil {
+ 				return merr.WrapErrStorage(err, "failed to create parent directory %q", dir)
+ 			}
+@@ -76,6 +79,8 @@ func WriteFile(
+ 		dataPtr = (*C.uint8_t)(unsafe.Pointer(&data[0]))
+ 	}
+ 
++	acquireManifestFFI(context.Background())
++	defer releaseManifestFFI()
+ 	result = C.loon_filesystem_write_file(
+ 		fsHandle,
+ 		cPath, pathLen,
+@@ -148,6 +153,8 @@ func readFileWithExternalSpec(
+ 
+ 	var outData *C.uint8_t
+ 	var outSize C.uint64_t
++	acquireManifestFFI(context.Background())
++	defer releaseManifestFFI()
+ 	result = C.loon_filesystem_read_file_all(fsHandle, cPath, pathLen, &outData, &outSize)
+ 	if err := HandleLoonFFIResult(result); err != nil {
+ 		return nil, merr.Wrapf(err, "read file %s via filesystem %s", normalizedFilePath, filesystemPath)
+```
+
+**File**: `internal/storagev2/packed/manifest_async.go` (modified, +6/-0)
+```diff
+@@ -101,7 +101,13 @@ func (io *ManifestIOContext) init() {
+ func (io *ManifestIOContext) runWorker() {
+ 	defer io.workers.Done()
+ 	for task := range io.tasks {
++		// The native task performs blocking manifest I/O on this goroutine's
++		// OS thread. Bound worker execution by the process-wide manifest FFI
++		// budget, not just this context's capacity: many short-lived contexts
++		// (GC, copy-segment, backfill, index reads) share one process.
++		acquireManifestFFI(context.Background())
+ 		C.milvusRunManifestTask(task.run, task.data)
++		releaseManifestFFI()
+ 		io.taskMu.Lock()
+ 		io.pendingTasks--
+ 		io.taskMu.Unlock()
+```
+
+**File**: `internal/storagev2/packed/manifest_ffi.go` (modified, +11/-2)
+```diff
+@@ -442,9 +442,12 @@ func createMilvusTableManifest(
+ 	// updates append, even with OVERWRITE; opening the old version would retain
+ 	// its stale deletes. Version allocation still advances past existing files.
+ 	var handle C.LoonTransactionHandle
+-	if err := HandleLoonFFIResult(C.loon_transaction_open(cBasePath, cProperties,
++	acquireManifestFFI(context.Background())
++	err = HandleLoonFFIResult(C.loon_transaction_open(cBasePath, cProperties,
+ 		C.int64_t(ManifestEarliest), C.int64_t(-1), C.LOON_TRANSACTION_RESOLVE_OVERWRITE,
+-		getRetryLimit(), &handle)); err != nil {
++		getRetryLimit(), &handle))
++	releaseManifestFFI()
++	if err != nil {
+ 		return "", merr.WrapErrStorage(err, "begin milvus-table manifest")
+ 	}
+ 	defer C.loon_transaction_destroy(handle)
+@@ -457,6 +460,11 @@ func createMilvusTableManifest(
+ 	if extfs.MilvusTablePKMode.usesExternalPrimaryKey() {
+ 		hasExternalPrimaryKey = C.int(1)
+ 	}
++	// The call reads the source segment manifests and writes the new target
++	// manifest, blocking this goroutine's OS thread; bound it process-wide.
++	// Release before commitTransaction, which acquires its own slot: holding
++	// this one through it would nest and deadlock a budget of one.
++	acquireManifestFFI(context.Background())
+ 	result := C.loon_milvus_table_append_source_manifests(
+ 		handle,
+ 		cPathsPtr,
+@@ -468,6 +476,7 @@ func createMilvusTableManifest(
+ 		cProperties,
+ 		hasExternalPrimaryKey,
+ 	)
++	releaseManifestFFI()
+ 	if err := HandleLoonFFIResult(result); err != nil {
+ 		return "", err
+ 	}
+```
+
+**File**: `pkg/util/paramtable/component_param.go` (modified, +18/-0)
+```diff
+@@ -380,6 +380,7 @@ type commonConfig struct {
+ 
+ 	StorageType                   ParamItem `refreshable:"false"`
+ 	ManifestTransactionRetryLimit ParamItem `refreshable:"true"`
++	ManifestFFIConcurrency        ParamItem `refreshable:"false"`
+ 	UseArrowFSChunkManager        ParamItem `refreshable:"false"`
+ 	SimdType                      ParamItem `refreshable:"false"`
+ 
+@@ -882,6 +883,23 @@ This configuration is only used by querynode and indexnode, it selects CPU instr
+ 	}
+ 	p.ManifestTransactionRetryLimit.Init(base.mgr)
+ 
++	p.ManifestFFIConcurrency = ParamItem{
++		Key:          "common.storage.manifestFFIConcurrency",
++		Version:      "3.0.0",
++		DefaultValue: "128",
++		Formatter: func(v string) string {
++			return strconv.Itoa(min(2048, max(1, getAsInt(v))))
++		},
++		Doc: "Maximum number of goroutines that may concurrently execute blocking milvus-storage manifest FFI calls " +
++			"in one process. cgo pins each such goroutine to an OS thread, so unbounded concurrency across the " +
++			"synchronous manifest transaction/filesystem entry points and the async manifest executor workers inflates " +
++			"thread count and process RSS (observed 1500+ cgo threads / multiple GBs on coordinators). The budget is " +
++			"process-wide and shared by every component in the process. Values are clamped to [1, 2048]; read once at " +
++			"first manifest I/O, changes require restart.",
++		Export: false,
++	}
++	p.ManifestFFIConcurrency.Init(base.mgr)
++
+ 	p.UseArrowFSChunkManager = ParamItem{
+ 		Key:          "common.storage.useArrowFileSystemChunkManager",
+ 		Version:      "3.0.1",
 ```
 
 ---
 
-### Incident Patch 2: `b66a69d2` (2026-11-13)
-**Commit Message**: enhance: raise default bounded staleness (common.gracefulTime) to 60s (#55480)
+### Incident Patch 2: `8f5d5ecc` (2026-11-13)
+**Commit Message**: fix: preserve VARCHAR primary key when building QueryIterator filter (#55426)
 
 ## What
 
-Raise the default of `common.gracefulTime` (the staleness bound of
-Bounded consistency) from 5000ms to 60000ms, in
-`pkg/util/paramtable/component_param.go` and `configs/milvus.yaml`. The
-value stays configurable and refreshable; the proxy reads it per
-request.
+`composeIteratorExpr` (`client/milvusclient/iterator.go`) builds the
+continuation filter for `QueryIterator` by interpolating the last
+primary key into a double-quoted expression:
 
-Strong, Session, Customized and Eventually reads are not affected: only
-the Bounded branch of `parseGuaranteeTs` /
-`parseGuaranteeTsFromConsistency` uses it.
-
-## Why
-
-For a Bounded read the proxy sets the guarantee timestamp to `now -
-gracefulTime`, and the delegator waits in `waitTSafe` until the
-channel's tSafe reaches it. tSafe is driven by the time ticks of the
-channel's WAL. When the WAL stops advancing (StreamingNode power loss,
-object storage stall), the delegators of **all** replicas of that
-channel stop at the same tSafe. With 5s, every Bounded read on the
-channel starts failing about 5s into the outage, so a second replica
-does not help.
-
-With 60s the guarantee timestamp stays below the stalled tSafe for the
-first minute of a WAL outage, and the delegators on healthy nodes keep
-answering Bounded reads.
-
-Outside of an outage res
-
-**File**: `configs/milvus.yaml` (modified, +1/-1)
-```diff
-@@ -1316,7 +1316,7 @@ common:
-     SearchCacheBudgetGBRatio: 0.1
-     LoadNumThreadRatio: 8
-     BeamWidthRatio: 4
--  gracefulTime: 5000 # milliseconds. it represents the interval (in ms) by which the request arrival time needs to be subtracted in the case of Bounded Consistency.
-+  gracefulTime: 60000 # milliseconds. it represents the interval (in ms) by which the request arrival time needs to be subtracted in the case of Bounded Consistency.
-   gracefulStopTimeout: 1800 # seconds. it will force quit the server if the graceful stop process is not completed during this time.
-   parquetStatsSkipIndex:
-     enabled: true # whether to force one row group per cache cell and build the sealed-segment chunk skip index from parquet footer statistics. When enabled, packing is 1:1 even without usable statistics; disabling allows target-size packing. Takes effect only at startup (not refreshable): the flag decides the segment cache cell layout, which must not change while queries are running. Storage v2 segments only; manifest-based (v3) segments do not build this index yet.
+```go
+pkFilter := fmt.Sprintf(`%s > "%s"`, pkName, it.lastPK)
 ```
 
-**File**: `pkg/util/paramtable/component_param.go` (modified, +4/-4)
+For a VARCHAR primary key whose value needs escaping, this produces a
+broken filter. A value such as `a"b` yields `ID > "a"b"`, which fails to
+parse, so the iterator returns the first page and then errors on the
+next request. A trailing backslash or an actual newline fails the same
+way, and a backslash followed by `n` changes the comparison value so the
+iterator returns the same row repeatedly instead of advancing.
+
+Int64 primary keys are not affected.
+
+## How
+
+Quote the key as a Go string literal with `strconv.Quote`. The server
+unquotes a filter string literal with `strconv.Unquote` (see
+`planparserv2.convertEscapeSingle` and the `StringLiteral` escape rules
+in `Plan.g4`), so `strconv.Quote` round-trips any value, including one
+that contains a double quote, a backslash, a control character or a
+newline. Iterating valid primary keys now returns each m
+
+**File**: `client/milvusclient/iterator.go` (modified, +6/-1)
 ```diff
-@@ -61,10 +61,10 @@ const (
- 	// DefaultStorageV2AsyncLoadReadWindowSizeBytes is the historical-key
- 	// default for the Storage V3 async read-window threshold.
- 	DefaultStorageV2AsyncLoadReadWindowSizeBytes = 16 * 1024 * 1024
--	DefaultGracefulTime                          = 5000 // ms
--	DefaultGracefulStopTimeout                   = 1800 // s, for node
--	DefaultProxyGracefulStopTimeout              = 30   // s，for proxy
--	DefaultCoordGracefulStopTimeout              = 5    // s，for coord
-+	DefaultGracefulTime                          = 60000 // ms
-+	DefaultGracefulStopTimeout                   = 1800  // s, for node
-+	DefaultProxyGracefulStopTimeout              = 30    // s，for proxy
-+	DefaultCoordGracefulStopTimeout              = 5     // s，for coord
- 	DefaultHighPriorityThreadCoreCoefficient     = 10
- 	DefaultMiddlePriorityThreadCoreCoefficient   = 5
- 	DefaultLowPriorityThreadCoreCoefficient      = 1
-```
-
----
-
-### Incident Patch 3: `09c12608` (2026-11-13)
-**Commit Message**: fix: forward the resolved consistency level from Query to QueryView (#55474)
-
-issue: #55473
-
-### What
-
-`QueryTask.PreExecute` now forwards the resolved consistency level, not
-the raw request level, in `RetrieveRequest.ConsistencyLevel`. This
-matches what `SearchTask.PreExecute` already does (`t.ConsistencyLevel =
-consistencyLevel`).
-
-### Why
-
-The proxy computes the guarantee timestamp from the resolved level (the
-collection level when `use_default_consistency` is true), but QueryView
-plans the read by the forwarded level (`executeGetQueryPlan` in
-`internal/views/queryclient/shard_client.go` → `resolveQueryPlanMVCC` in
-`internal/streamingnode/server/wal/adaptor/query_plan.go`). Strong and
-Session also wait for pending WAL writes (`QueryMVCCManager.Minimum`);
-Bounded and Eventually do not.
-
-SDKs that defer to the collection default put a placeholder level in the
-request:
-
-- pymilvus sends `consistency_level=0` (Strong) with
-`use_default_consistency=true`. Its default query on a Bounded or
-Eventually collection was planned as Strong.
-- The Go SDK and RESTful v2 send `Bounded` with
-`use_default_consistency=true` and no guarantee timestamp. Their default
-query on a Strong or Session col
-
-**File**: `internal/proxy/dql/task_query.go` (modified, +3/-1)
-```diff
-@@ -1009,7 +1009,6 @@ func (t *QueryTask) PreExecute(ctx context.Context) error {
- 	guaranteeTs := t.request.GetGuaranteeTimestamp()
- 	var consistencyLevel commonpb.ConsistencyLevel
- 	useDefaultConsistency := t.request.GetUseDefaultConsistency()
--	t.ConsistencyLevel = t.request.GetConsistencyLevel()
- 	if useDefaultConsistency {
- 		consistencyLevel = collectionInfo.ConsistencyLevel
- 		guaranteeTs = ParseGuaranteeTsFromConsistency(guaranteeTs, t.BeginTs(), consistencyLevel)
-@@ -1023,6 +1022,9 @@ func (t *QueryTask) PreExecute(ctx context.Context) error {
- 			guaranteeTs = ParseGuaranteeTsFromConsistency(guaranteeTs, t.BeginTs(), consistencyLevel)
+@@ -263,7 +263,12 @@ func (it *queryIterator) composeIteratorExpr() string {
  		}
- 	}
-+	// Forward the resolved level: QueryView and the delegator plan the read by
-+	// it, so it must match the level the guarantee timestamp was computed from.
-+	t.ConsistencyLevel = consistencyLevel
- 
- 	// update actual consistency level
- 	accesslog.SetActualConsistencyLevel(ctx, consistencyLevel)
+ 		return fmt.Sprintf("(%s) and %s", expr, pkFilter)
+ 	case entity.FieldTypeVarChar:
+-		pkFilter := fmt.Sprintf(`%s > "%s"`, pkName, it.lastPK)
++		// Quote the primary key as a Go string literal. The server unquotes a
++		// string literal with strconv.Unquote (see planparserv2.convertEscapeSingle),
++		// so strconv.Quote round-trips any value, including one that contains a
++		// double quote, a backslash or a newline. Interpolating the raw value
++		// instead produced an invalid filter such as `ID > "a"b"`.
++		pkFilter := fmt.Sprintf("%s > %s", pkName, strconv.Quote(fmt.Sprintf("%v", it.lastPK)))
+ 		if len(expr) == 0 {
+ 			return pkFilter
+ 		}
 ```
 
-**File**: `internal/proxy/dql/task_query_test.go` (modified, +132/-0)
+**File**: `client/milvusclient/iterator_test.go` (modified, +37/-0)
 ```diff
-@@ -38,6 +38,7 @@ import (
- 	"github.com/milvus-io/milvus/internal/proxy/shardclient"
- 	"github.com/milvus-io/milvus/internal/types"
- 	"github.com/milvus-io/milvus/internal/util/reduce"
-+	"github.com/milvus-io/milvus/internal/views/queryclient"
- 	"github.com/milvus-io/milvus/pkg/v3/common"
- 	"github.com/milvus-io/milvus/pkg/v3/mlog"
- 	"github.com/milvus-io/milvus/pkg/v3/proto/internalpb"
-@@ -341,6 +342,137 @@ func TestQueryTaskPreExecuteUsesStrongVisibility(t *testing.T) {
- 	}
- }
+@@ -21,9 +21,12 @@ import (
+ 	"fmt"
+ 	"io"
+ 	"math/rand"
++	"strconv"
++	"strings"
+ 	"testing"
  
-+// The level forwarded to QueryView decides how the read is planned (Strong
-+// and Session wait for pending WAL writes; Bounded and Eventually do not), so
-+// it must be the level the guarantee timestamp was computed from, not the raw
-+// request field. SDKs that defer to the collection default send a placeholder
-+// level with use_default_consistency=true: pymilvus sends 0 (Strong), the Go
-+// SDK sends Bounded.
-+func TestQueryTaskPreExecuteForwardsResolvedConsistencyLevel(t *testing.T) {
-+	const collectionID = int64(100)
-+	schedulerTime := time.Unix(1_700_000_000, 0)
-+	schedulerTS := tsoutil.ComposeTSByTime(schedulerTime)
-+	graceful := paramtable.Get().CommonCfg.GracefulTime.GetAsDuration(time.Millisecond)
-+	boundedTS := tsoutil.ComposeTSByTime(schedulerTime.Add(-graceful))
+ 	"github.com/samber/lo"
++	"github.com/stretchr/testify/assert"
+ 	"github.com/stretchr/testify/mock"
+ 	"github.com/stretchr/testify/suite"
+ 
+@@ -848,3 +851,37 @@ func (s *QueryIteratorSuite) TestQueryIteratorWithFilter() {
+ func TestQueryIterator(t *testing.T) {
+ 	suite.Run(t, new(QueryIteratorSuite))
+ }
 +
-+	schema := mustNewSchemaInfo(&schemapb.CollectionSchema{
-+		Name: "test_collection",
-+		Fields: []*schemapb.FieldSchema{{
-+			FieldID:      100,
-+			Name:         "id",
-+			IsPrimaryKey: true,
-+			DataType:     schemapb.DataType_Int64,
-+		}},
-+	})
-+	info := &collectionInfo{CollID: collectionID, Schema: schema}
-+	for _, m := range []*mockey.Mocker{
-+		mockTest(t, (*metacache.MetaCache).GetCollectionID, collectionID, nil),
-+		mockTest(t, (*metacache.MetaCache).GetCollectionInfo, info, nil),
-+		mockTest(t, (*metacache.MetaCache).GetCollectionSchema, schema, nil),
-+		mockey.Mock((*metacache.MetaCache).GetPartitions).Return(map[string]UniqueID{
-+			paramtable.Get().CommonCfg.DefaultPartitionName.GetValue(): 200,
-+		}, nil).Build(),
-+	} {
-+		defer m.UnPatch()
++func TestComposeIteratorExprVarChar(t *testing.T) {
++	newIt := func(expr string, pk any) *queryIterator {
++		return &queryIterator{
++			expr:    expr,
++			pkField: entity.NewField().WithName("ID").WithDataType(entity.FieldTypeVarChar),
++			lastPK:  pk,
++		}
 +	}
 +
-+	for _, tc := range []struct {
-+		name             string
-+		collectionLevel  commonpb.ConsistencyLevel
-+		requestLevel     commonpb.ConsistencyLevel
-+		useDefault       bool
-+		requestGuarantee uint64
-+		wantLevel        commonpb.ConsistencyLevel
-+		wantGuarantee    uint64
-+	}{
-+		{
-+			name:            "pymilvus default on bounded collection",
-+			collectionLevel: commonpb.ConsistencyLevel_Bounded,
-+			requestLevel:    commonpb.ConsistencyLevel_Strong,
-+			useDefault:      true,
-+			wantLevel:       commonpb.ConsistencyLevel_Bounded,
-+			wantGuarantee:   boundedTS,
-+		},
-+		{
-+			name:            "pymilvus default on eventually collection",
-+			collectionLevel: commonpb.ConsistencyLevel_Eventually,
-+			requestLevel:    commonpb.ConsistencyLevel_Strong,
-+			useDefault:      true,
-+			wantLevel:       commonpb.ConsistencyLevel_Eventually,
-+			wantGuarantee:   1,
-+		},
-+		{
-+			name:            "go sdk default on strong collection",
-+			collectionLevel: commonpb.ConsistencyLevel_Strong,
-+			requestLevel:    commonpb.ConsistencyLevel_Bounded,
-+			useDefault:      true,
-+			wantLevel:       commonpb.ConsistencyLevel_Strong,
-+			wantGuarantee:   schedulerTS,
-+		},
-+		{
-+			// No session timestamp is sent, so the guarantee is 0; QueryView
-+			// must still plan it as Session (Strong) to keep read-your-writes.
-+			name:            "go sdk default on session collection",
-+			collectionLevel: commonpb.ConsistencyLevel_Session,
-+			requestLevel:    commonpb.ConsistencyLevel_Bounded,
-+			useDefault:      true,
-+			wantLevel:       commonpb.ConsistencyLevel_Session,
-+			wantGuarantee:   0,
-+		},
-+		{
-+			name:            "explicit level overrides collection",
-+			collectionLevel: commonpb.ConsistencyLevel_Bounded,
-+			requestLevel:    commonpb.ConsistencyLevel_Eventually,
-+			wantLevel:       commonpb.ConsistencyLevel_Eventually,
-+			wantGuarantee:   1,
-+		},
-+		{
-+			// Compatibility: the legacy marker (level 0 with a placeholder
-+			// guarantee timestamp) only selects the guarantee; the level
-+			// stays 0, so QueryView keeps planning it as Strong.
-+			name:             "legacy bounded marker stays strong",
-+			collectionLevel:  commonpb.ConsistencyLevel_Bounded,
-+			requestLevel:     commonpb.ConsistencyLevel_Strong,
-+			requestGuarantee: 2,
-+			wantLevel:        commonpb.ConsistencyLevel_Strong,
-+			wantGuarantee:    boundedTS,
-+		},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			info.ConsistencyLevel = tc.collectionLevel
-+			ctx := context.Background()
-+			legacy := &fakeLegacyQueryClient{queryResult: &queryclient.LegacyQueryResult{}}
-+			task := &QueryTask{
-+				baseTask:        baseTask{MetaCache: newTestCache()},
-+				Condition:       NewTaskCondition(ctx),
-+				RetrieveRequest: &internalpb.RetrieveRequest{Base: &commonpb.MsgBase{}},
-+				ctx:             ctx,
-+				request: &milvuspb.QueryRequest{
-+					Base:                  &commonpb.MsgBase{},
-+					DbName:                "default",
-+					Coll
-```
-
-**File**: `internal/proxy/dql/task_query_view_legacy_test.go` (modified, +2/-0)
-```diff
-@@ -49,6 +49,7 @@ type fakeLegacyQueryClient struct {
- 	queryCalled  int
- 	searchResult *queryclient.LegacySearchResult
- 	queryResult  *queryclient.LegacyQueryResult
-+	lastQuery    *queryclient.LegacyQueryRequest
- 	err          error
- }
- 
-@@ -59,6 +60,7 @@ func (c *fakeLegacyQueryClient) Search(ctx context.Context, req *queryclient.Leg
- 
- func (c *fakeLegacyQueryClient) Query(ctx context.Context, req *queryclient.LegacyQueryRequest) (*queryclient.LegacyQueryResult, error) {
- 	c.queryCalled++
-+	c.lastQuery = req
- 	return c.queryResult, c.err
- }
- 
++	t.Run("plain value", func(t *testing.T) {
++		assert.Equal(t, `ID > "abc"`, newIt("", "abc").composeIteratorExpr())
++	})
++
++	t.Run("value with double quote", func(t *testing.T) {
++		assert.Equal(t, `ID > "a\"b"`, newIt("", `a"b`).composeIteratorExpr())
++	})
++
++	t.Run("special characters round-trip", func(t *testing.T) {
++		// The emitted literal must unquote back to the original value, the way the
++		// server parses it, so iteration keeps advancing past such a key.
++		for _, pk := range []string{`a"b`, `a\b`, "a\nb", "trailing\\", "plain"} {
++			got := newIt("", pk).composeIteratorExpr()
++			literal := strings.TrimPrefix(got, "ID > ")
++			unquoted, err := strconv.Unquote(literal)
++			assert.NoError(t, err)
++			assert.Equal(t, pk, unquoted)
++		}
++	})
++
++	t.Run("combined with base expression", func(t *testing.T) {
++		assert.Equal(t, `(age > 10) and ID > "a\"b"`, newIt("age > 10", `a"b`).composeIteratorExpr())
++	})
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #55527** (2026-11-14): enhance: [cp3.0] Support PBKDF2 password hashing for FIPS deployments (@aleks-s10)
 - **PR #55508** (2026-11-13): fix: [2.6] restore AND early exit at null-rejecting filters (@zhengbuqian)
+- **PR #55499** (2026-11-14): feat: [3.0] Support V2 and mixed V2/V3 snapshot import (@weiliu1031)
 - **PR #55493** (2026-11-13): enhance: reduce broadcast task logger memory (@chyezh)
 - **PR #55485** (2026-11-13): fix: [cp3.0] resolve Azure Germany regions and explicit storage authorities (@xiaofan-luan)
 - **PR #55484** (2026-11-13): fix: resolve Azure Germany regions and explicit storage authorities (@xiaofan-luan)
-- **PR #55482** (2026-11-13): enhance: [2.6] raise default bounded staleness (common.gracefulTime) to 60s (@xiaofan-luan)
-- **PR #55481** (2026-11-13): enhance: [3.0] raise default bounded staleness (common.gracefulTime) to 60s (@xiaofan-luan)
 
 ---
 
@@ -1884,58 +1942,63 @@ query on a Strong or Session col
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. resolve Azure Germany regions and explicit storage authorities (#55484)
+## X. bound manifest cgo concurrency process-wide
 
 **RULE**:
-When implementing operations in `internal/core/src/storage/loon_ffi/util.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/storagev2/packed/cgo_limit.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5ce39ad7`: resolve Azure Germany regions and explicit storage authorities (#55484). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6893a8c3`: bound manifest cgo concurrency process-wide. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/core/src/storage/loon_ffi/util.cpp`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/storagev2/packed/cgo_limit.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        // Microsoft Cloud Germany (core.cloudapi.de) closed in October 2021;
-        // germanywestcentral and germanynorth are public Azure regions.
-// IsAzureStorageAuthority returns true for the bare Azure Storage
-// authorities that azure://<authority>/<container>/<blob> names. An Azure
-// container name cannot contain a dot, so such a host is never a container.
-static bool
-IsAzureStorageAuthority(const std::string& host) {
-    std::string h = host;
-    std::transform(h.begin(), h.end(), h.begin(), [](unsigned char c) {
-        return std::tolower(c);
-    });
-    return h == "core.windows.net" || h == "core.chinacloudapi.cn" ||
-           h == "core.usgovcloudapi.net" || h == "core.cloudapi.de";
-}
+// Copyright 2023 Zilliz
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
-        // A bare Azure Storage authority is the endpoint the source names, so
-        // it also wins over the region-derived authority.
-        std::string spec_cp = spec_cloud_provider;
-        std::transform(spec_cp.begin(),
-                       spec_cp.end(),
-                       spec_cp.begin(),
-                       [](unsigned char c) { return std::tolower(c); });
-        bool uri_host_is_cloud_endpoint =
-            IsCloudEndpointHost(host) ||
-            (spec_cp == 
+package packed
+
+import (
+	"context"
+	"sync"
+
+	"golang.org/x/sync/semaphore"
+
+	"github.com/milvus-io/milvus/pkg/v3/util/paramtable"
+)
+
+// cgo call entry points in this package
+//
+// A goroutine that enters a cgo call is pinned to an OS thread for the whole
+// call, so the number of OS threads the process holds tracks the number of
+// goroutines simultaneously blocked inside C. Storage v3 routes every manifest
+// add-file / read / commit through milvus-storage FFI; the per-context
+// ManifestIOContext pools bound only their own callers, and the synchronous
+// entry points had no process-wide ceiling at all. Und
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-        if (r.rfind("germany", 0) == 0) {
-            return "core.cloudapi.de";
-        }
-        bool uri_host_is_cloud_endpoint = IsCloudEndpointHost(host);
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5ce39ad7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6893a8c3` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

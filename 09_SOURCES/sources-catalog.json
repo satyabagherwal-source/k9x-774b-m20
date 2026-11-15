@@ -1485,8 +1485,8 @@
     "sourceUrl": "https://huggingface.co/vllm-sr/d3",
     "sourceVersion": "hf-vllm-sr-d3",
     "license": "Open-Source",
-    "contentHash": "63c38cb9b9b85ca1a37f381e0c684f3398d3e33d9b4ed3122590bf24240f1d6e",
-    "lastHarvestedAt": "2026-11-09T14:05:33.553Z",
+    "contentHash": "e1ef3ac69ff501181d939c6ca8eff664012bad7fda3b6cb4de6a6b60e2667378",
+    "lastHarvestedAt": "2026-11-15T02:34:57.749Z",
     "learningId": "learn-huggingface-vllm-sr-d3"
   },
   "nguyenphutrong-quotio": {
@@ -6673,10 +6673,10 @@
     "repository": "milvus-io/milvus",
     "platform": "github",
     "sourceUrl": "https://github.com/milvus-io/milvus",
-    "sourceVersion": "03d63d65",
+    "sourceVersion": "6893a8c3",
     "license": "Apache-2.0",
-    "contentHash": "6c781b4bb58ccda7a5e3002f1333bce8edfcb10eb430927f92f83a8388b1cf28",
-    "lastHarvestedAt": "2026-11-13T17:55:12.204Z",
+    "contentHash": "03fb7e4650f98883b2dbb55b1cf9e1c8b6042d15ece8887382dfe3a94d24ba39",
+    "lastHarvestedAt": "2026-11-15T02:35:14.715Z",
     "learningId": "learn-github-milvus-io-milvus"
   },
   "ynqa-jnv": {

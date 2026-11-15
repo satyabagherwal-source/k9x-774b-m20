@@ -10033,3 +10033,6 @@ Every entry in this ledger must capture:
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `8052fac6` | Multi-dimensional audit evidence | 2026-11-15T02:15:12.045Z |
 | `learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8` | `https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8` | `hf-dealign` | Multi-dimensional audit evidence | 2026-11-15T02:16:10.763Z |
 | `learn-dom-d-f32fc521` | `project://dathere-qsv` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md` | 2026-11-15T02:16:49.212Z |
+| `learn-huggingface-vllm-sr-d3` | `https://huggingface.co/vllm-sr/d3` | `hf-vllm-sr` | Multi-dimensional audit evidence | 2026-11-15T02:34:57.749Z |
+| `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `6893a8c3` | Multi-dimensional audit evidence | 2026-11-15T02:35:14.715Z |
+| `learn-dom-d-608927a6` | `project://hf-vllm-sr-d3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md` | 2026-11-15T02:35:54.049Z |

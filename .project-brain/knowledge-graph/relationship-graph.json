@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-15T02:16:49.210Z",
+  "updated_at": "2026-11-15T02:35:54.047Z",
   "statistics": {
-    "total_nodes": 230,
-    "total_edges": 129,
+    "total_nodes": 231,
+    "total_edges": 130,
     "domain_distribution": {
-      "D": 181,
+      "D": 182,
       "M": 1,
       "H": 19,
       "J": 8,
@@ -19,7 +19,7 @@
       "E": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 129
+      "CONSTRAINED_BY_ARCHITECTURE": 130
     }
   },
   "nodes": {
@@ -5166,6 +5166,29 @@
       ],
       "created_at": "2026-11-15T02:16:49.210Z",
       "updated_at": "2026-11-15T02:16:49.210Z"
+    },
+    "DOM-D-608927A6": {
+      "id": "DOM-D-608927A6",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): vllm-sr/d3",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/vll -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/vll",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-vllm-sr-d3/hf-vllm-sr-d3-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T02:35:18.006Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-vllm-sr-d3)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-15T02:35:54.047Z",
+      "updated_at": "2026-11-15T02:35:54.047Z"
     }
   },
   "edges": [
@@ -6458,6 +6481,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-57D6CED2 [D] with Domain M",
       "created_at": "2026-11-15T01:47:18.114Z"
+    },
+    {
+      "id": "EDGE-AAEB232A9DFF",
+      "sourceId": "DOM-D-608927A6",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-608927A6 [D] with Domain M",
+      "created_at": "2026-11-15T02:35:54.047Z"
     }
   ]
 }

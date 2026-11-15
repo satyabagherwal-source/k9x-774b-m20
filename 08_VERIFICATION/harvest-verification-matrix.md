@@ -10000,3 +10000,6 @@
 | `CYCLE-20261115-CJAG` | `2026-11-15T02:15:12.040Z` | `dathere/qsv` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/dathere-qsv-learnings.md` | Yes (`6313cc0e...`) |
 | `CYCLE-20261115-DSLJ` | `2026-11-15T02:16:10.759Z` | `dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md` | Yes (`42bb4cb9...`) |
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T02:16:49.212Z` | `dathere-qsv` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-F32FC521` [Domain D] | Yes (`822f0cf4...`) |
+| `CYCLE-20261115-1Y6O` | `2026-11-15T02:34:57.744Z` | `vllm-sr/d3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md` | Yes (`e1ef3ac6...`) |
+| `CYCLE-20261115-2B9Z` | `2026-11-15T02:35:14.711Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8565` | Yes (`03fb7e46...`) |
+| `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T02:35:54.049Z` | `hf-vllm-sr-d3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-608927A6` [Domain D] | Yes (`a85ebfaa...`) |
