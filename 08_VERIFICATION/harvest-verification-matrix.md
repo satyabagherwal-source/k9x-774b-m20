@@ -10101,3 +10101,4 @@
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T13:27:57.286Z` | `hf-liquidai-lfm3-vl-2b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-98B9F9F9` [Domain D] | Yes (`59705ab6...`) |
 | `CYCLE-20261115-SPUM` | `2026-11-15T13:39:37.822Z` | `ccore/Qwen3.5-4B-GLB-3D-Coder` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-glb-3d-coder-learnings.md` | Yes (`c0c86b71...`) |
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T13:40:24.606Z` | `hf-ccore-qwen3.5-4b-glb-3d-coder` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-55AF5812` [Domain D] | Yes (`1563ec67...`) |
+| `CYCLE-20261115-S3LP` | `2026-11-15T14:07:08.605Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8619` | Yes (`cd3e3a4c...`) |

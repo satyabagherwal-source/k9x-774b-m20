@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T12:54:34.762Z",
+  "timestamp": "2026-11-15T14:07:11.819Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-dathere-qsv-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [dathere-qsv-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T12:54:34.762Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-15T14:07:11.819Z`  
 > **Learning ID**: `LEARN-EVO-dathere-qsv-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `4ec3d2c8`  
+> **Source Version**: `a6e090ae`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T12:54:30.166Z  
+> **Timestamp**: 2026-11-15T14:07:07.926Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T12:54:30.161Z  
+> **Harvest Timestamp**: 2026-11-15T14:07:07.677Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2226,50 +2226,76 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4ec3d2c8` (2026-11-15)
-**Commit Message**: docs(changelog): 29.0.0 Highlights lead with validate --sarif, note smaller .mcpb
+### Incident Patch 1: `a6e090ae` (2026-11-15)
+**Commit Message**: fix(ci): enable trim_prefix_suffix on the Polars-pinned nightly (#5058) [skip ci]
 
-SARIF moves up into the Highlights with its #5031 link and example
-workflow. The NaN crash bullet names the affected versions (28.0.0,
-27.0.1) in the past tense. The sandboxed-maps bullet links
-ckanext-webpageviewplus. A new bullet notes the .mcpb bundle shrank
-from 11.4 MB to 5.6 MB (#5014).
+#5039 moved to str::trim_prefix/trim_suffix, which are stable in Rust
+1.100. The Linux Polars Pinned Nightly job uses nightly-2026-09-01, the
+toolchain Polars pins in rust-toolchain.toml, and that nightly predates
+the stabilization, so the build has failed with E0658 every night since
+2026-11-13.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Enable the feature under the existing `nightly` cargo feature in each
+crate root (qsv/qsvmcp, qsvlite, qsvdp and the tests crate). Stable
+builds are unaffected. Drop it once Polars moves its nightly past the
+stabilization.
 
-**File**: `CHANGELOG.md` (modified, +5/-6)
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `src/main.rs` (modified, +4/-0)
 ```diff
-@@ -8,20 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -1,3 +1,7 @@
++// Polars pins a nightly built before `str::trim_prefix`/`trim_suffix` were stabilized (1.100).
++// Drop once that pin moves past the stabilization.
++#![cfg_attr(feature = "nightly", feature(trim_prefix_suffix))]
++
+ use std::{env, time::Instant};
  
- ### Highlights
+ extern crate qsv_docopt as docopt;
+```
+
+**File**: `src/maindp.rs` (modified, +3/-0)
+```diff
+@@ -1,3 +1,6 @@
++// Polars pins a nightly built before `str::trim_prefix`/`trim_suffix` were stabilized (1.100).
++// Drop once that pin moves past the stabilization.
++#![cfg_attr(feature = "nightly", feature(trim_prefix_suffix))]
+ #![allow(
+         clippy::cast_possible_truncation,
+         clippy::cast_possible_wrap,
+```
+
+**File**: `src/mainlite.rs` (modified, +4/-0)
+```diff
+@@ -1,3 +1,7 @@
++// Polars pins a nightly built before `str::trim_prefix`/`trim_suffix` were stabilized (1.100).
++// Drop once that pin moves past the stabilization.
++#![cfg_attr(feature = "nightly", feature(trim_prefix_suffix))]
++
+ use std::{env, time::Instant};
  
--~104 commits since 28.0.0, and the theme is **correctness**. We develop qsv with the latest models from Anthropic and review every change adversarially with OpenAI's. [Codacy](https://www.codacy.com) adds one more layer of correctness review on top of that, and it gives us free access to its platform. With all three, we swept several core commands for correctness: `stats` and `moarstats`, `luau`, `profile`, `scoresql`, `sqlp --format avro`, and every command that reads piped stdin. Thank you, Codacy.
-+~104 commits since 28.0.0, and the theme is **correctness**. We develop qsv with the latest models from Anthropic and review every change adversarially with OpenAI's. [Codacy](https://www.codacy.com) adds one more layer of correctness review on top of that. Thanks to their generosity, we have free access to their platform. With all three, we swept several core commands for correctness: `stats` and `moarstats`, `luau`, `profile`, `scoresql`, `sqlp --format avro`, and every command that reads piped stdin. Thank you, Codacy!
+ extern crate qsv_docopt as docopt;
+```
+
+**File**: `tests/tests.rs` (modified, +4/-0)
+```diff
+@@ -1,3 +1,7 @@
++// Polars pins a nightly built before `str::trim_prefix`/`trim_suffix` were stabilized (1.100).
++// Drop once that pin moves past the stabilization.
++#![cfg_attr(feature = "nightly", feature(trim_prefix_suffix))]
++
+ extern crate log;
+ extern crate serde;
  
--If you run `stats` on data written by pandas or numpy, upgrade:
--
--- **`stats` no longer crashes on `NaN` cells** ([#5053](https://github.com/dathere/qsv/pull/5053)). In qsv 28.0.0 and 27.0.1, `stats --median`, `--quartiles` or `--everything` panics on a float column of a few hundred rows or more that holds a `NaN`, `nan` or `NAN` cell, which is how pandas and numpy write missing values. So does `moarstats`, which runs `stats`. On smaller columns, the `sum` came out empty and the quartiles, MAD, IQR, fences and percentiles were empty or shifted. Every numeric statistic now skips `NaN` cells, as the mean and `--quantile-method approx` already did. A `NaN` cell still counts as a value for `nullcount`, `sparsity` and `cardinality`.
-+- **`validate --sarif` writes JSON Schema errors as a [SARIF 2.1.0](https://www.oasis-open.org/standard/sarif-v2-1-0/) log** ([#5031](https://github.com/dathere/qsv/pull/5031)). Though SARIF is typically used for static analysis of code, we're now using it to report validation errors in a standardized format, with an example GitHub Actions workflow that uploads them to GitHub code scanning. This sets the stage for integrating qsv's validation capabilities into Datapusher+, CI/CD pipelines and other automated workflows.
-+- **`stats` no longer crashes on `NaN` cells** ([#5053](https://github.com/dathere/qsv/pull/5053)). If you run `stats` on data written by pandas or numpy, upgrade. In qsv 28.0.0 and 27.0.1, `stats --median`, `--quartiles` or `--everything` panicked on a float column of a few hundred rows or more that holds a `NaN`, `nan` or `NAN` cell, which is how pandas and numpy write missing values. So did `moarstats`, which runs `stats`. On smaller columns, the `sum` came out empty and the quartiles, MAD, IQR, fences and percentiles were empty or shifted. Every numeric statistic now skips `NaN` cells, as the mean and `--quantile-method approx` already did. A `NaN` cell still counts as a value for `nullcount`, `sparsity` and `cardinality`.
- 
- Also in this release:
- 
--- **`validate --sarif` writes JSON Schema errors as a SARIF 2.1.0 log** for GitHub code scanning and other SARIF tools, with an example GitHub Actions workflow ([#5031](https://github.com/dathere/qsv/pull/5031)).
- - **Piped stdin works in eleven more places.** `sample`, `cat`, `applydp`, `geocode --batch 0`, `input --skip-lastlines`, `partition`, `split --chunks`, `searchset`, `frequency`, `sniff` and `extsort` dropped rows, wrote only the header, or rejected `-` when reading from a pipe, several of them with exit 0 ([#5003](https://github.com/dathere/qsv/pull/5003), [#5005](https://github.com/dathere/qsv/pull/5005), [#5009](https://github.com/dathere/qsv/pull/5009), [#5012](https://github.com/dathere/qsv/pull/5012)).
--- **Maps render in sandboxed iframes** such as CKAN's Webpage view. Before, every MapLibre map there stayed blank ([#5033](https://github.com/dathere/qsv/pull/5033)).
-+- **Maps render in sandboxed iframes** such as CKAN's Webpage view or the new [ckanext-webpageviewplus](https://github.com/dathere/ckanext-webpageviewplus). Before, every MapLibre map there stayed blank ([#5033](https://github.com/dathere/qsv/pull/5033)).
- - **The stats cache is no longer served stale** when `QSV_NO_HEADERS`, `QSV_STATS_SEPARATOR` or a sniffed or default delimiter changes, or after an upgrade with `--infer-dates` ([#5049](https://github.com/dathere/qsv/pull/5049), [#5051](https://github.com/dathere/qsv/pull/5051), [#5052](https://github.com/dathere/qsv/pull/5052)).
- - **`stats --cardinality`, `--mode` and `--everything` are 12–27% faster and use up to 36% less memory**, with and without `--weight` ([#5011](https://github.com/dathere/qsv/pull/5011), [#5013](https://github.com/dathere/qsv/pull/5013)).
- - **`sqlp` runs on a newer Polars** that adds correlated subqueries, `LATERAL`, `PERC
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5058** (2026-11-15): fix(ci): enable trim_prefix_suffix on the Polars-pinned nightly (@jqnatividad)
 - **PR #5057** (2026-11-15): deps(viz): driver.js 1.14.0 for the Data Schematic Tour (@jqnatividad)
 - **PR #5056** (2026-11-15): fix(stats): a column of only NaN cells has no sum, not 0 (@jqnatividad)
 - **PR #5055** (2026-11-15): deps: bump Polars to upstream rev 2d9938d; EXPLAIN takes queries only (@jqnatividad)
 - **PR #5054** (2026-11-14): test(stats): NaN cells crashed the exact quantiles on larger columns; cover it and Codacy's suggestions (@jqnatividad)
 - **PR #5053** (2026-11-14): fix(stats): a NaN cell is skipped by the sum, the exact quantiles and the weighted statistics (@jqnatividad)
-- **PR #5052** (2026-11-14): fix(stats): the cache key records the resolved delimiter, not the --delimiter flag (@jqnatividad)
 
 ---
 
@@ -2289,36 +2315,34 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(changelog): 29.0.0 Highlights lead with validate --sarif, note smaller .mcp
+## X. ci): enable trim_prefix_suffix on the Polars-pinned nightly [skip ci]
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/main.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4ec3d2c8`: docs(changelog): 29.0.0 Highlights lead with validate --sarif, note smaller .mcpb. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a6e090ae`: ci): enable trim_prefix_suffix on the Polars-pinned nightly [skip ci]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/main.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-~104 commits since 28.0.0, and the theme is **correctness**. We develop qsv with the latest models from Anthropic and review every change adversarially with OpenAI's. [Codacy](https://www.codacy.com) adds one more layer of correctness review on top of that. Thanks to their generosity, we have free access to their platform. With all three, we swept several core commands for correctness: `stats` and `moarstats`, `luau`, `profile`, `scoresql`, `sqlp --format avro`, and every command that reads piped stdin. Thank you, Codacy!
-- **`validate --sarif` writes JSON Schema errors as a [SARIF 2.1.0](https://www.oasis-open.org/standard/sarif-v2-1-0/) log** ([#5031](https://github.com/dathere/qsv/pull/5031)). Though SARIF is typically used for static analysis of code, we're now using it to report validation errors in a standardized format, with an example GitHub Actions workflow that uploads them to GitHub code scanning. This sets the stage for integrating qsv's validation capabilities into Datapusher+, CI/CD pipelines and other automated workflows.
-- **`stats` no longer crashes on `NaN` cells** ([#5053](https://github.com/dathere/qsv/pull/5053)). If you run `stats` on data written by pandas or
+// Polars pins a nightly built before `str::trim_prefix`/`trim_suffix` were stabilized (1.100).
+// Drop once that pin moves past the stabilization.
+#![cfg_attr(feature = "nightly", feature(trim_prefix_suffix))]
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-~104 commits since 28.0.0, and the theme is **correctness**. We develop qsv with the latest models from Anthropic and review every change adversarially with OpenAI's. [Codacy](https://www.codacy.com) adds one more layer of correctness review on top of that, and it gives us free access to its platform. With all three, we swept several core commands for correctness: `stats` and `moarstats`, `luau`, `profile`, `scoresql`, `sqlp --format avro`, and every command that reads piped stdin. Thank you, Codacy.
-If you run `stats` on data written by pandas or numpy, upgrade:
-
-- **`stats` no longer crashes on `NaN` cells** ([#5053](https://github.com/dathere/qsv/pull/5053)). In qsv 28.0.0 and 27.0.1, `stats --median`, `--quartiles` or `--everything` panics on a float column of a few hundred rows or more that holds a `NaN`, `nan` or `NAN` cell, which is how pandas and numpy write missing values. So does `moarstats`, which runs `stats`. On smaller columns, the `sum` came out empty and the quartiles, MAD, IQR, fences and percentiles were empty or shifted. Every numeric statistic now skips `NaN` cells, as the mean and `--quantile-method approx` already did. A `NaN` cell still counts as a value for 
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4ec3d2c8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a6e090ae` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

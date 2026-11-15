@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T13:40:26.328Z",
+  "last_updated": "2026-11-15T14:07:12.824Z",
   "total_records": 1056,
   "domains": {
     "A": {
@@ -6826,8 +6826,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "ae7f05bda5be0a83c9da770c7b7e87d99f31c611ac3744465b66311cf9bfc4de",
-      "created_at": "2026-11-15T10:53:37.694Z"
+      "content_hash": "6d03597c50da60f4b82cb06b33b0c8dabe3c1966163f54a02f86e035ed50d6ae",
+      "created_at": "2026-11-15T14:07:12.824Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -6871,8 +6871,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "35b848106a965ed8ffabba76667100eceb1f52ddc25e64327ecf048e2a719918",
-      "created_at": "2026-11-15T13:40:26.328Z"
+      "content_hash": "1cf4685f926a2110ecba3bcd22a2b3ce91daa666d3dd2d67e624546829f6dfa8",
+      "created_at": "2026-11-15T14:07:12.401Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -11113,8 +11113,8 @@
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "5a46e6d202ed16f3ba73230c0e9c89c4808fa09f17290d5e39fffdb16dfd301b",
-      "created_at": "2026-11-15T12:54:31.045Z"
+      "content_hash": "45bcc2be0468bbbd328031dbbaa43c222ccdca9ef84fd4328ecd2a4874565b25",
+      "created_at": "2026-11-15T14:07:08.837Z"
     },
     "DOM-D-F5645095": {
       "record_id": "DOM-D-F5645095",
@@ -11182,8 +11182,8 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-learnings-architecture-intelligence-dathere-qsv-learnings-core-invar.md",
       "repository": "dathere-qsv-learnings",
-      "content_hash": "379157fd3cb47525d048ad6c8725e22f83ec1e028a8e552ea5587c722f21c07f",
-      "created_at": "2026-11-15T12:54:34.911Z"
+      "content_hash": "95cb36f50ed1d79bb2267b91992e3a4e21a32c82b234c76849cfd07513cb6f29",
+      "created_at": "2026-11-15T14:07:11.985Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants",

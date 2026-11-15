@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-15T13:39:37.837Z",
+  "last_updated": "2026-11-15T14:07:08.615Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "17b6bffe98ef8826edcf93fe097cecb72b28839067be84a9fa443e96b8abf0e8",
-      "verified_at": "2026-11-15T12:54:30.834Z",
+      "content_hash": "cd3e3a4c8ceaac1a655f979698e61d35b2a97641407eb9fd602f30bb00003240",
+      "verified_at": "2026-11-15T14:07:08.614Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T12:54:30.834Z"
+      "last_updated": "2026-11-15T14:07:08.614Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-15T13:40:26.477Z",
+  "last_updated": "2026-11-15T14:07:12.994Z",
   "total_verified_learnings": 8698,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18404,
+  "total_items": 18407,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112023,9 +112023,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "ae7f05bda5be0a83c9da770c7b7e87d99f31c611ac3744465b66311cf9bfc4de",
+      "content_hash": "6d03597c50da60f4b82cb06b33b0c8dabe3c1966163f54a02f86e035ed50d6ae",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T10:53:37.694Z"
+      "persisted_at": "2026-11-15T14:07:12.824Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112035,9 +112035,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "e13ab439484349df222a713d79f7295e6a2a3f1f42d31409128749962d0ab670",
+      "content_hash": "6dfba0a893410f3cd05e846de9fbc7a15647e56b348a8af8cc92e286af7a01d1",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T10:53:37.840Z"
+      "persisted_at": "2026-11-15T14:07:12.912Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112047,9 +112047,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "d3292bf3a1d7847bd0e5ea8553df81948ca6fb0ccadc97667000f68acf8be3cd",
+      "content_hash": "13248af624a93c148107d239817a57a8adab144bd4a17b2946d3742c2b51c82d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T10:53:37.974Z"
+      "persisted_at": "2026-11-15T14:07:12.994Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112094,10 +112094,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "4ec3d2c8",
-      "content_hash": "693bbfd5d0c51d818f27f58e70c703af766a2b5a470c5a159c91f1261c4cd105",
+      "source_version": "a6e090ae",
+      "content_hash": "3d62f20c02ae9df637cf17f820d6be2c62baa40661f66590d7e35627365953f9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T12:54:31.156Z"
+      "persisted_at": "2026-11-15T14:07:08.921Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -112131,9 +112131,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dathere-qsv-learnings",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "56d45632d1a2f8963c2a6823bfe612f08e25d46303b4c3329389beee32642694",
+      "content_hash": "c9c473317b70bfd9d67035f35683b5a29582a4f58b20bf595dfcdcd817c8118a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T12:54:34.996Z"
+      "persisted_at": "2026-11-15T14:07:12.077Z"
     },
     "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels": {
       "item_id": "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels",
@@ -112155,9 +112155,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "35b848106a965ed8ffabba76667100eceb1f52ddc25e64327ecf048e2a719918",
+      "content_hash": "1cf4685f926a2110ecba3bcd22a2b3ce91daa666d3dd2d67e624546829f6dfa8",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T13:40:26.328Z"
+      "persisted_at": "2026-11-15T14:07:12.401Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112167,9 +112167,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "c81bb58946f72491bd47b314a0d04440ed6a15c068497c096b99911f0eacfcc2",
+      "content_hash": "9b15cf4c2287c66a5731d4c28dc452cfbef076c1ecc831ebd790c15eba34a5a7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T13:40:26.477Z"
+      "persisted_at": "2026-11-15T14:07:12.487Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -214776,13 +214776,13 @@
       "item_id": "candidate_directive-puppet-fix-postgresql-failing-to-start-on-new-installs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-TR5X-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-S6GT-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
       "title": "puppet: Fix PostgreSQL failing to start on new installs.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "34abb462ae00b948d39fe3629038ffbb4bcb5e83468f3873018ac5a3a6de6825",
+      "content_hash": "208732de67f1d2e84ab745d963c14a07b694c06f0e26a550164f01f6ddbf3937",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T13:40:26.190Z"
+      "persisted_at": "2026-11-15T14:07:12.321Z"
     },
     "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
@@ -218736,8 +218736,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "4ec3d2c8",
-      "content_hash": "17b6bffe98ef8826edcf93fe097cecb72b28839067be84a9fa443e96b8abf0e8",
+      "source_version": "a6e090ae",
+      "content_hash": "cd3e3a4c8ceaac1a655f979698e61d35b2a97641407eb9fd602f30bb00003240",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -218790,6 +218790,11 @@
           "number": 8614,
           "title": "docs(changelog): 29.0.0 Highlights lead with validate --sarif, note smaller .mcp",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8619,
+          "title": "enable trim_prefix_suffix on the Polars-pinned nightly [skip ci]",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -218797,7 +218802,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T12:54:30.703Z",
+      "verified_at": "2026-11-15T14:07:08.488Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -219632,10 +219637,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "repository": "dathere/qsv",
-      "source_version": "4ec3d2c8",
-      "content_hash": "5a46e6d202ed16f3ba73230c0e9c89c4808fa09f17290d5e39fffdb16dfd301b",
+      "source_version": "a6e090ae",
+      "content_hash": "45bcc2be0468bbbd328031dbbaa43c222ccdca9ef84fd4328ecd2a4874565b25",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T12:54:31.045Z"
+      "persisted_at": "2026-11-15T14:07:08.837Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant",
@@ -219705,9 +219710,9 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "379157fd3cb47525d048ad6c8725e22f83ec1e028a8e552ea5587c722f21c07f",
+      "content_hash": "95cb36f50ed1d79bb2267b91992e3a4e21a32c82b234c76849cfd07513cb6f29",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T12:54:34.911Z"
+      "persisted_at": "2026-11-15T14:07:11.985Z"
     },
     "learn-huggingface-qwen-qwen3-8-flash-next": {
       "learning_id": "learn-huggingface-qwen-qwen3-8-flash-next",
@@ -224411,13 +224416,13 @@
       "item_id": "candidate_directive-watcher-filter-access-events-before-queueing",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-V8GH-watcher-filter-access-events-before-queueing.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-S6SD-watcher-filter-access-events-before-queueing.md",
       "title": "watcher): filter access events before queueing",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "6e8aef306e7127eab643c199205dd0e8200b4ad04052afe09789c4caf4725ece",
+      "content_hash": "22fc4189df9f32c0f5fee454ccb5e787cf2903eed0a3a6f9a48ab33641e4455f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T10:53:37.565Z"
+      "persisted_at": "2026-11-15T14:07:12.738Z"
     },
     "candidate_directive-hybrid-linear-attention-full-attention-layer-synchronization-invariant": {
       "item_id": "candidate_directive-hybrid-linear-attention-full-attention-layer-synchronization-invariant",
@@ -243500,6 +243505,44 @@
       "content_hash": "356978fbd01b37dba2ed25554cd5e303ebe90a5b59360ee34457a9b74c4da471",
       "domain_letter": "D",
       "persisted_at": "2026-11-15T13:40:24.865Z"
+    },
+    "rule-8619": {
+      "learning_id": "rule-8619",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8619,
+      "title": "enable trim_prefix_suffix on the Polars-pinned nightly [skip ci]",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "a6e090ae",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T14:07:08.488Z"
+    },
+    "candidate_directive-enable-trim_prefix_suffix-on-the-polars-pinned-nightly-skip-ci": {
+      "item_id": "candidate_directive-enable-trim_prefix_suffix-on-the-polars-pinned-nightly-skip-ci",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-S3PT-enable-trim_prefix_suffix-on-the-polars-pinned-nightly-skip-ci.md",
+      "title": "enable trim_prefix_suffix on the Polars-pinned nightly [skip ci]",
+      "repository": "dathere/qsv",
+      "source_version": "a6e090ae",
+      "content_hash": "8f19a62e668250c54456da49bb2469e0539336bca923d02a43c3f0a3360c2ad9",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T14:07:08.758Z"
+    },
+    "candidate_directive-ci-enable-trim_prefix_suffix-on-the-polars-pinned-nightly-skip-ci": {
+      "item_id": "candidate_directive-ci-enable-trim_prefix_suffix-on-the-polars-pinned-nightly-skip-ci",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-S654-ci-enable-trim_prefix_suffix-on-the-polars-pinned-nightly-skip-ci.md",
+      "title": "ci): enable trim_prefix_suffix on the Polars-pinned nightly [skip ci]",
+      "repository": "dathere-qsv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8c511af54c0a66e0d44dfc0608fafbe4aef7d6b5ea8c1ad063bbb97dc0d426ac",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T14:07:11.901Z"
     }
   },
   "ai-builder-brain": {
