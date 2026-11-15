@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T21:45:22.641Z",
+  "updated_at": "2026-11-15T22:15:22.836Z",
   "stats": {
-    "total_discovered": 3865,
-    "approved_pending_harvest": 3645,
+    "total_discovered": 3866,
+    "approved_pending_harvest": 3646,
     "harvested_count": 0,
     "rejected_count": 220,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3625,
+      "COMMUNITY_AND_EXPERT": 3626,
       "OFFICIAL_DOCUMENTATION": 130,
       "STANDARDS_AND_SPECIFICATIONS": 92,
       "ENGINEERING_BLOGS": 2,
@@ -83511,6 +83511,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf-learnings.md",
         "fileName": "hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf-learnings.md"
+      }
+    },
+    "SRC-B55589CAC8FC": {
+      "id": "SRC-B55589CAC8FC",
+      "url": "https://huggingface.co/ConwayResearch/Underdog-Woof",
+      "title": "https://huggingface.co/ConwayResearch/Underdog-Woof",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T22:15:22.836Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-conwayresearch-underdog-woof-learnings.md",
+        "fileName": "hf-conwayresearch-underdog-woof-learnings.md"
       }
     }
   }

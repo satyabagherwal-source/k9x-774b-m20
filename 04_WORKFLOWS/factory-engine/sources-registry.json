@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-15T22:03:47.605Z",
-    "lastVerified": "2026-11-15T22:03:47.605Z",
+    "lastChecked": "2026-11-15T22:14:53.807Z",
+    "lastVerified": "2026-11-15T22:14:53.807Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -156,8 +156,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-15T21:27:43.419Z",
-    "lastVerified": "2026-11-15T21:27:43.419Z",
+    "lastChecked": "2026-11-15T22:14:53.798Z",
+    "lastVerified": "2026-11-15T22:14:53.798Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1952,8 +1952,8 @@
     "officialUrl": "https://github.com/sigstore/cosign",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-15T15:23:16.350Z",
-    "lastVerified": "2026-11-15T15:23:16.350Z",
+    "lastChecked": "2026-11-15T22:14:48.871Z",
+    "lastVerified": "2026-11-15T22:14:48.871Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sigstore-cosign",
@@ -5356,9 +5356,9 @@
   "vlcn-io-cr-sqlite": {
     "name": "cr-sqlite",
     "officialUrl": "https://github.com/vlcn-io/cr-sqlite",
-    "lastChecked": "2026-11-14T10:16:40.695Z",
+    "lastChecked": "2026-11-15T22:14:51.423Z",
     "revisionIdentifier": "43ab94ca",
-    "lastVerified": "2026-11-14T10:16:40.695Z"
+    "lastVerified": "2026-11-15T22:14:51.423Z"
   },
   "webrtc-rs-webrtc": {
     "name": "webrtc",
@@ -6392,12 +6392,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "u-root-u-root": {
-    "name": "u-root/u-root",
+    "name": "u-root",
     "officialUrl": "https://github.com/u-root/u-root",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-13T23:01:32.694Z",
-    "lastVerified": "2026-11-13T23:01:32.694Z",
+    "lastChecked": "2026-11-15T22:14:38.810Z",
+    "lastVerified": "2026-11-15T22:14:38.810Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-u-root-u-root",
@@ -6406,7 +6406,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "4eba8433"
   },
   "hf-sentence-transformers-all-mpnet-base-v2": {
     "name": "sentence-transformers/all-mpnet-base-v2",
@@ -9875,22 +9876,21 @@
     "lastVerified": "2026-11-15T17:22:42.716Z"
   },
   "fabio-rovai-open-ontologies": {
-    "name": "open-ontologies",
+    "name": "fabio-rovai/open-ontologies",
     "officialUrl": "https://github.com/fabio-rovai/open-ontologies",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-14T12:57:31.232Z",
-    "lastVerified": "2026-11-14T12:57:31.232Z",
+    "lastChecked": "2026-11-15T22:14:49.642Z",
+    "lastVerified": "2026-11-15T22:14:49.642Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-fabio-rovai-open-ontologies",
-    "contentHash": "a6ad34f5b3ac10e5e1b9ce3e9ad9c04c65feb5c965fbf25da5dbd18fafc9df5e",
+    "contentHash": "3383144cd519e711126c2cc617322cb4431ea3f0bc0b0597a91059f07685a564",
     "promotedRulesCount": 1,
-    "recentFixesCount": 19,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "fa06a2f6"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "serpapi-google-search-results-nodejs": {
     "name": "google-search-results-nodejs",
@@ -10396,9 +10396,9 @@
   "kudoleh-ios-clean-architecture-mvvm": {
     "name": "iOS-Clean-Architecture-MVVM",
     "officialUrl": "https://github.com/kudoleh/iOS-Clean-Architecture-MVVM",
-    "lastChecked": "2026-11-12T10:42:47.718Z",
+    "lastChecked": "2026-11-15T22:14:43.820Z",
     "revisionIdentifier": "a68da3e3",
-    "lastVerified": "2026-11-12T10:42:47.718Z"
+    "lastVerified": "2026-11-15T22:14:43.820Z"
   },
   "chris-c-thomas-oxideseo": {
     "name": "OxideSEO",
@@ -15080,13 +15080,13 @@
     "officialUrl": "https://huggingface.co/ConwayResearch/Underdog-Woof",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-11T07:03:05.693Z",
-    "lastVerified": "2026-11-11T07:03:05.693Z",
+    "lastChecked": "2026-11-15T22:14:41.350Z",
+    "lastVerified": "2026-11-15T22:14:41.350Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-conwayresearch-underdog-woof",
-    "contentHash": "b106b3ed0cdbaf1f6aeb6dd66314ddcad21374cd6bdda0e7c13c6b91fbab2af4",
-    "promotedRulesCount": 3,
+    "contentHash": "17c29779d963d6ea395847223ef8f0f9746186378bda9823f517836aba27c98e",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-15T21:45:22.626Z",
+  "updated_at": "2026-11-15T22:15:22.821Z",
   "statistics": {
-    "total_nodes": 271,
+    "total_nodes": 272,
     "total_edges": 144,
     "domain_distribution": {
-      "D": 212,
+      "D": 213,
       "M": 1,
       "H": 24,
       "J": 10,
@@ -6084,6 +6084,28 @@
       ],
       "created_at": "2026-11-15T21:45:22.626Z",
       "updated_at": "2026-11-15T21:45:22.626Z"
+    },
+    "DOM-D-5FCF2E96": {
+      "id": "DOM-D-5FCF2E96",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): ConwayResearch/Underdog-Woof",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-conwayresearch-underdog-woof-learnings.md`  \n> **Source**: huggingface ([https:// -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-conwayresearch-underdog-woof-learnings.md`  \n> **Source**: huggingface ([https://",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-conwayresearch-underdog-woof/hf-conwayresearch-underdog-woof-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T22:14:53.903Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-conwayresearch-underdog-woof)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-15T22:15:22.821Z",
+      "updated_at": "2026-11-15T22:15:22.821Z"
     }
   },
   "edges": [

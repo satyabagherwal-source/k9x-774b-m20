@@ -10166,3 +10166,6 @@
 | `CYCLE-20261115-3ZCD` | `2026-11-15T21:44:16.813Z` | `vercel-labs/agent-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8656, Rule 8657, Rule 8658` | Yes (`2d843561...`) |
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T21:44:45.307Z` | `vercel-labs-agent-desktop` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-0A98A103` [Domain H] | Yes (`058b8ffa...`) |
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T21:45:22.627Z` | `hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-E9AE08D3` [Domain D] | Yes (`bba814b5...`) |
+| `CYCLE-20261115-776P` | `2026-11-15T22:14:46.561Z` | `ConwayResearch/Underdog-Woof` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-conwayresearch-underdog-woof-learnings.md` | Yes (`17c29779...`) |
+| `CYCLE-20261115-7A8V` | `2026-11-15T22:14:50.527Z` | `fabio-rovai/open-ontologies` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8659` | Yes (`3383144c...`) |
+| `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T22:15:22.823Z` | `hf-conwayresearch-underdog-woof` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-5FCF2E96` [Domain D] | Yes (`8540ee54...`) |

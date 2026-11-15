@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T21:44:16.821Z",
-  "total_cycles_completed": 9769,
-  "total_learnings_persisted": 9769,
-  "total_rules_promoted": 9387,
+  "last_updated": "2026-11-15T22:14:50.537Z",
+  "total_cycles_completed": 9771,
+  "total_learnings_persisted": 9771,
+  "total_rules_promoted": 9388,
   "history": [
-    {
-      "timestamp": "2026-11-14T18:14:51.599Z",
-      "repository": "ydb-platform/ydb",
-      "learningId": "learn-github-ydb-platform-ydb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T18:26:19.999Z",
-      "repository": "LiquidAI/d1-3B",
-      "learningId": "learn-huggingface-liquidai-d1-3b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T18:26:22.490Z",
       "repository": "google/tcmalloc",
@@ -1403,6 +1389,20 @@
       "repository": "vercel-labs/agent-desktop",
       "learningId": "learn-github-vercel-labs-agent-desktop",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T22:14:46.573Z",
+      "repository": "ConwayResearch/Underdog-Woof",
+      "learningId": "learn-huggingface-conwayresearch-underdog-woof",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T22:14:50.537Z",
+      "repository": "fabio-rovai/open-ontologies",
+      "learningId": "learn-github-fabio-rovai-open-ontologies",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

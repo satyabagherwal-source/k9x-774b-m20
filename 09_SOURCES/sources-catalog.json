@@ -11443,10 +11443,10 @@
     "repository": "fabio-rovai/open-ontologies",
     "platform": "github",
     "sourceUrl": "https://github.com/fabio-rovai/open-ontologies",
-    "sourceVersion": "fa06a2f6",
+    "sourceVersion": "214e948e",
     "license": "MIT",
-    "contentHash": "a6ad34f5b3ac10e5e1b9ce3e9ad9c04c65feb5c965fbf25da5dbd18fafc9df5e",
-    "lastHarvestedAt": "2026-11-13T09:17:28.110Z",
+    "contentHash": "3383144cd519e711126c2cc617322cb4431ea3f0bc0b0597a91059f07685a564",
+    "lastHarvestedAt": "2026-11-15T22:14:50.531Z",
     "learningId": "learn-github-fabio-rovai-open-ontologies"
   },
   "hf-liquidai-lfm3-vl-2b": {
@@ -12345,8 +12345,8 @@
     "sourceUrl": "https://huggingface.co/ConwayResearch/Underdog-Woof",
     "sourceVersion": "hf-conwayresearch-underdog-woof",
     "license": "Open-Source",
-    "contentHash": "b106b3ed0cdbaf1f6aeb6dd66314ddcad21374cd6bdda0e7c13c6b91fbab2af4",
-    "lastHarvestedAt": "2026-11-11T07:08:07.263Z",
+    "contentHash": "17c29779d963d6ea395847223ef8f0f9746186378bda9823f517836aba27c98e",
+    "lastHarvestedAt": "2026-11-15T22:14:46.566Z",
     "learningId": "learn-huggingface-conwayresearch-underdog-woof"
   },
   "caviraoss-longmemory": {

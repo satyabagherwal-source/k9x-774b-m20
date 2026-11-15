@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md`  
 > **Source**: github ([https://github.com/fabio-rovai/open-ontologies](https://github.com/fabio-rovai/open-ontologies))  
-> **Source Version**: `fa06a2f6`  
+> **Source Version**: `214e948e`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T09:17:12.710Z  
+> **Timestamp**: 2026-11-15T22:14:49.647Z  
 > **Learning ID**: `learn-github-fabio-rovai-open-ontologies`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fabio-rovai/open-ontologies](https://github.com/fabio-rovai/open-ontologies))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T09:17:12.703Z  
+> **Harvest Timestamp**: 2026-11-15T22:14:49.642Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Plan, apply and roll back changes to a production ontology, with a blast radius report and a proof an auditor can re-check.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2890 stars
+- **Stars / Engagement**: 2905 stars
 
 ---
 
@@ -1747,245 +1747,389 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d6752db5` (2026-11-13)
-**Commit Message**: The #399 and #400 changelog entries sit in the existing Unreleased Fixed section, with the issue numbers
+### Incident Patch 1: `5d49478c` (2026-11-13)
+**Commit Message**: One changelog entry under Unreleased Fixed covers #382 and #402, including blank headers
 
-#399 opened a second Fixed heading above Added, and the merge of #400
-kept main's CHANGELOG, which was its only conflict. Both entries are now
-at the top of Unreleased Fixed. The stats entry says the Python engine
-follows the same rule.
+#402 added its entry under Added. Both changes are unreleased and
+describe one behaviour, so #382's entry now covers XLSX and the
+blank-header rule, and #402's line is gone from Added.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `CHANGELOG.md` (modified, +12/-4)
+**File**: `CHANGELOG.md` (modified, +9/-6)
 ```diff
-@@ -4,10 +4,6 @@ All notable changes to Open Ontologies are documented here.
+@@ -6,8 +6,6 @@ All notable changes to Open Ontologies are documented here.
  
- ## [Unreleased]
- 
--### Fixed
--
--- **Ontology statistics count individuals by their type vocabulary.** OWL, RDF and RDFS structural nodes such as restrictions, property declarations, datatypes and axiom nodes no longer inflate the individual count.
--
  ### Added
  
- - **`serve-http` can accept Host names other than localhost on `/mcp`.**
-@@ -169,6 +165,18 @@ All notable changes to Open Ontologies are documented here.
- 
- ### Fixed
- 
-+- **`stats` counts individuals by their type vocabulary, in both engines**
-+  (#399, #395). A node counts when it is typed `owl:NamedIndividual` or
-+  `owl:Thing`, or has a type outside the RDF, RDFS and OWL vocabularies.
-+  Restrictions, property characteristics such as `owl:TransitiveProperty`,
-+  annotation properties, datatypes, `owl:AllDisjointClasses` and `owl:Axiom`
-+  nodes no longer inflate the count. The Rust engine and
-+  `open-ontologies-lite` apply the same rule.
-+
-+- **The MCP `initialize` reply names the server** (#400, #398). `serverInfo`
-+  reported rmcp's crate name and version (`rmcp`, `3.9.0`); it now reports
-+  `open-ontologies` and the release version.
-+
- - **`onto_repo_list` reports cache and active status for the matching file**
-   (#386). Multiple repository directories can contain the same filename stem;
-   status flags now match the cached and active source paths instead of marking
-```
-
----
-
-### Incident Patch 2: `6d58aeb5` (2026-11-12)
-**Commit Message**: The nine changelog entries sit together at the top of Unreleased Fixed, with their PR numbers
-
-The merges kept main's CHANGELOG, which was the only conflict, so six of
-the nine entries were not in the file. All nine are now in the existing
-Unreleased Fixed section in PR order. #389 and #390 had each opened a
-second Fixed heading above Added. #394's entry moves from Added to
-Fixed, because JSON-LD output was already supported, and now covers
-`onto_convert` as well. #389's entry says the active unload removes the
-cache before it clears the store.
-
-Co-Authored-By: Claude <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +43/-11)
-```diff
-@@ -4,15 +4,8 @@ All notable changes to Open Ontologies are documented here.
- 
- ## [Unreleased]
- 
--### Fixed
--
--- Cache removal now reports filesystem deletion failures and preserves the cache index entry instead of claiming success while leaving the file behind.
--
- ### Added
- 
--- **The `onto_save` input schema includes JSON-LD.** JSON-LD serialization was
--  already supported but absent from the format list exposed to callers.
+-- **XLSX ingestion rejects duplicate headers instead of silently overwriting earlier columns.**
 -
  - **`serve-http` can accept Host names other than localhost on `/mcp`.**
    rmcp's Host check, which blocks DNS rebinding, has refused every `Host`
    header except `localhost`, `127.0.0.1` and `::1` with 403 since rmcp 1.4.
-@@ -172,10 +165,49 @@ All notable changes to Open Ontologies are documented here.
+@@ -231,10 +229,15 @@ All notable changes to Open Ontologies are documented here.
+   Names that were already valid local names, including non-ASCII letters and
+   a leading digit, keep the IRIs they had.
  
- ### Fixed
+-- **CSV ingestion rejects a repeated header instead of dropping a column**
+-  (#382). Each row became a map keyed by header, so a later column with the
+-  same header overwrote the earlier one. The error names the header and its
+-  column number.
++- **CSV and XLSX ingestion reject a repeated header instead of dropping a
++  column** (#382, #402). Each row became a map keyed by header, so a later
++  column with the same header overwrote the earlier one. The error names the
++  header and its column number. A blank header names no column, so blank
++  headers are not duplicates: a file whose lines end in empty columns, as
++  spreadsheet exports such as `name,,` do, still loads, with the empty
++  columns skipped and left out of the column list that mapping generation
++  reads. A value under a blank header has no name to go under and is refused
++  with its column number.
  
--- **Overlapping ontology repository roots no longer duplicate the same file**.
--  When a configured directory contains another configured directory, recursive
--  listing now reports the physical ontology once, so loading it by bare stem
--  does not fail with a false ambiguity.
-+- **`onto_repo_list` reports cache and active status for the matching file**
-+  (#386). Multiple repository directories can contain the same filename stem;
-+  status flags now match the cached and active source paths instead of marking
-+  every same-stem entry as cached or active.
-+
-+- **Overlapping ontology repository roots no longer duplicate the same file**
-+  (#387). When a configured directory contains another configured directory,
-+  recursive listing now reports the physical ontology once, so loading it by
-+  bare stem does not fail with a false ambiguity.
-+
-+- **OWL-DL discloses data restrictions marked with `owl:onDataRange`** (#388).
-+  A restriction remains reported as unmodelled even if its data property has
-+  no explicit `owl:DatatypeProperty` declaration.
-+
-+- **Cache removal reports a cache file it could not delete** (#389). It now
-+  reports filesystem deletion failures and preserves the cache index entry
-+  instead of claiming success while leaving the file behind. Unloading the
-+  active ontology with `delete_cache` removes the cache before it clears the
-+  store, so that error leaves the ontology loaded.
-+
-+- **Ossie `requires` keeps `inf` and `NaN` out of `xsd:decimal` bounds**
-+  (#390). Comparisons now accept only decimal numeral syntax for generated
-+  `xsd:decimal` facets; IEEE infinity and NaN tokens remain disclosed as
-+  unexpressible instead of becoming ill-typed bounds.
-+
-+- **Incremental reasoning parses the complete N-Triples delta** (#391). Valid
-+  end-of-line comments are no longer appended to the object term, and
-+  malformed delta input now returns a parse error instead of being silently
-+  skipped.
-+
-+- **`onto_stats` excludes anonymous OWL restrictions from the individual
-+  count** (#392). A restriction node is part of a class expression, not an
-+  ontology individual; it no longer inflates the count when it is typed
-+  `owl:Restriction`.
-+
-+- **CDC watermark selection compares RFC 3339 timestamps by instant** (#393).
-+  Timestamps with differing UTC offsets, including daylight-saving fall-back
-+  values, no longer select an earlier watermark by lexical order. Other
-+  watermark formats retain string ordering.
-+
-+- **`onto_save` and `onto_convert` list JSON-LD among their formats** (#394).
-+  Both already wrote JSON-LD (`jsonld`), but the format lists shown to callers
-+  left it out.
- 
- - **`import-schema` writes valid Turtle for SQL identifiers with spaces or
-   quotes** (#384). Table and column names went into prefixed names and labels
+ - **OWL-DL reports name `owl:NegativePropertyAssertion` as unmodelled**
+   (#376). The tableau never read negative property assertions, so a
 ```
 
 ---
 
-### Incident Patch 3: `76c2da87` (2026-11-12)
-**Commit Message**: Merge PR #393 (dajiaohuang): Fix timezone ordering for SQL sync watermarks
+### Incident Patch 2: `d64e867d` (2026-11-15)
+**Commit Message**: Merge PR #404 (dajiaohuang): Fix embedded label extraction
 
-# Conflicts:
-#	CHANGELOG.md
-
-**File**: `src/sql_sync.rs` (modified, +34/-15)
+**File**: `CHANGELOG.md` (modified, +4/-0)
 ```diff
-@@ -165,26 +165,45 @@ pub fn list_states(db: &StateDb) -> anyhow::Result<Vec<SyncState>> {
- }
+@@ -165,6 +165,10 @@ All notable changes to Open Ontologies are documented here.
  
- /// Extract the maximum value of `column` from a list of row maps. Returns
--/// `None` if no row contains the column or if all values are empty. String
--/// ordering is used (works for ISO-8601 timestamps and monotonic
--/// integer IDs alike).
-+/// `None` if no row contains the column or if all values are empty. When every
-+/// non-empty value is RFC 3339, compare timestamps by instant so differing
-+/// UTC offsets remain correctly ordered; other watermark formats keep string
-+/// ordering (use sortable forms such as zero-padded integer IDs).
- pub fn extract_max_watermark(
-     rows: &[std::collections::HashMap<String, String>],
-     column: &str,
- ) -> Option<String> {
--    let mut max: Option<&str> = None;
--    for row in rows {
--        if let Some(v) = row.get(column).map(|s| s.as_str())
--            && !v.is_empty()
--        {
--            match max {
--                None => max = Some(v),
--                Some(cur) if v > cur => max = Some(v),
--                _ => {}
--            }
--        }
-+    let values: Vec<&str> = rows
-+        .iter()
-+        .filter_map(|row| row.get(column).map(String::as_str))
-+        .filter(|value| !value.is_empty())
-+        .collect();
-+    if values.is_empty() {
-+        return None;
-     }
--    max.map(|s| s.to_string())
+ ### Fixed
+ 
++- **`onto_embed` uses the lexical value of an RDF label.** Language tags and
++  escaped quotes are no longer passed to the embedding model as part of the
++  label text.
 +
-+    let timestamps = values
-+        .iter()
-+        .map(|value| chrono::DateTime::parse_from_rfc3339(value).ok())
-+        .collect::<Option<Vec<_>>>();
-+    let max_index = if let Some(timestamps) = timestamps {
-+        (1..values.len()).fold(0, |current, candidate| {
-+            if timestamps[candidate] > timestamps[current] {
-+                candidate
-+            } else {
-+                current
-+            }
-+        })
-+    } else {
-+        (1..values.len()).fold(0, |current, candidate| {
-+            if values[candidate] > values[current] {
-+                candidate
-+            } else {
-+                current
-+            }
-+        })
-+    };
-+    Some(values[max_index].to_string())
- }
- 
- #[cfg(test)]
+ - **`stats` counts individuals by their type vocabulary, in both engines**
+   (#399, #395). A node counts when it is typed `owl:NamedIndividual` or
+   `owl:Thing`, or has a type outside the RDF, RDFS and OWL vocabularies.
 ```
 
-**File**: `tests/sql_sync_watermark_timezone_test.rs` (added, +21/-0)
+**File**: `src/graph.rs` (modified, +34/-0)
 ```diff
-@@ -0,0 +1,21 @@
-+use std::collections::HashMap;
+@@ -605,6 +605,40 @@ impl GraphStore {
+         self.select_with_dataset(query, true)
+     }
+ 
++    /// Run a SELECT over the union dataset and return its RDF terms without
++    /// serialising them to display strings. Callers that consume lexical values
++    /// (for example, labels used as embedding input) must not parse RDF syntax
++    /// back out of `Term::to_string()`.
++    pub fn sparql_select_union_terms(
++        &self,
++        query: &str,
++    ) -> anyhow::Result<Vec<std::collections::HashMap<String, Term>>> {
++        let store = &self.store;
++        let mut prepared = SparqlEvaluator::new().parse_query(query)?;
++        prepared.dataset_mut().set_default_graph_as_union();
++        let QueryResults::Solutions(solutions) = prepared.on_store(store).execute()? else {
++            anyhow::bail!("term selection needs a SELECT query");
++        };
 +
-+use open_ontologies::sql_sync::extract_max_watermark;
++        let vars: Vec<String> = solutions
++            .variables()
++            .iter()
++            .map(|v| v.as_str().to_string())
++            .collect();
++        let mut rows = Vec::new();
++        for solution in solutions {
++            let solution = solution?;
++            let mut row = std::collections::HashMap::new();
++            for var in &vars {
++                if let Some(term) = solution.get(var.as_str()) {
++                    row.insert(var.clone(), term.clone());
++                }
++            }
++            rows.push(row);
++        }
++        Ok(rows)
++    }
 +
-+fn row(key: &str, value: &str) -> HashMap<String, String> {
-+    HashMap::from([(key.to_string(), value.to_string())])
-+}
+     /// Run a SELECT once per term, with `var` pre-bound to that term, over the
+     /// union dataset. Returns the solutions per term, in the order given.
+     ///
+```
+
+**File**: `src/server.rs` (modified, +20/-21)
+```diff
+@@ -3,6 +3,8 @@
+ 
+ use std::sync::Arc;
+ 
++#[cfg(feature = "embeddings")]
++use oxigraph::model::Term;
+ use rmcp::{
+     ServerHandler, tool, tool_handler, tool_router,
+     prompt, prompt_handler, prompt_router,
+@@ -3196,31 +3198,28 @@ impl OpenOntologiesServer {
+ 
+         // Enumerating the store's classes is a question about the whole store,
+         // so read the union of all graphs, not the default graph alone.
+-        let result = match self.graph.sparql_select_union(classes_query) {
+-            Ok(r) => r,
+-            Err(e) => return Self::err_json(e),
+-        };
+-
+-        let parsed: serde_json::Value = match serde_json::from_str(&result) {
+-            Ok(v) => v,
++        let rows = match self.graph.sparql_select_union_terms(classes_query) {
++            Ok(rows) => rows,
+             Err(e) => return Self::err_json(e),
+         };
+ 
+         let mut class_labels: std::collections::HashMap<String, String> = std::collections::HashMap::new();
+-        if let Some(rows) = parsed["results"].as_array() {
+-            for row in rows {
+-                if let Some(iri) = row["class"].as_str() {
+-                    let iri = iri.trim_matches(|c| c == '<' || c == '>').to_string();
+-                    let label = row["label"].as_str()
+-                        .map(|s| s.trim_matches('"').to_string())
+-                        .unwrap_or_else(|| {
+-                            iri.rsplit_once('#').or_else(|| iri.rsplit_once('/'))
+-                                .map(|(_, n)| n.to_string())
+-                                .unwrap_or_else(|| iri.clone())
+-                        });
+-                    class_labels.insert(iri, label);
+-                }
+-            }
++        for row in rows {
++            let Some(Term::NamedNode(class)) = row.get("class") else {
++                continue;
++            };
++            let iri = class.as_str().to_string();
++            let fallback = || {
++                iri.rsplit_once('#').or_else(|| iri.rsplit_once('/'))
++                    .map(|(_, n)| n.to_string())
++                    .unwrap_or_else(|| iri.clone())
++            };
++            let label = match row.get("label") {
++                Some(Term::Literal(label)) => label.value().to_string(),
++                Some(other) => other.to_string(),
++                None => fallback(),
++            };
++            class_labels.insert(iri, label);
+         }
+ 
+         let trainer = crate::structembed::StructuralTrainer::new(struct_dim, struct_epochs, 0.01);
+```
+
+**File**: `tests/embedding_label_literal_test.rs` (added, +34/-0)
+```diff
+@@ -0,0 +1,34 @@
++use open_ontologies::graph::GraphStore;
++use oxigraph::model::Term;
 +
 +#[test]
-+fn extract_max_watermark_compares_offset_timestamps_by_instant() {
-+    let rows = vec![
-+        row("updated_at", "2026-11-01T01:30:00-04:00"),
-+        row("updated_at", "2026-11-01T01:15:00-05:00"),
-+    ];
-+    // During a daylight-saving fall-back, 01:15 at -05:00 is 06:15Z,
-+    // later than 01:30 at -04:00 (05:30Z), despite sorting first as text.
-+    assert_eq!(
-+        extract_max_watermark(&rows, "updated_at").as_deref(),
-+        Some("2026-11-01T01:15:00-05:00")
-+    );
++fn union_term_query_keeps_label_lexical_value_and_language() {
++    let graph = GraphStore::new();
++    graph
++        .load_turtle(
++            r#"@prefix : <http://example.org/> .
++               @prefix owl: <http://www.w3.org/2002/07/owl#> .
++               @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
++               :Canid a owl:Class ; rdfs:label "A \"quoted\" label"@en ."#,
++            None,
++        )
++        .unwrap();
++
++    let rows = graph
++        .sparql_select_union_terms(
++            r#"SELECT DISTINCT ?class ?label WHERE {
++                ?class a <http://www.w3.org/2002/07/owl#Class> .
++                OPTIONAL { ?class <http://www.w3.org/2000/01/rdf-schema#label> ?label }
++                FILTER(isIRI(?class))
++            }"#,
++        )
++        .unwrap();
++
++    assert_eq!(rows.len(), 1);
++    let label = match rows[0].get("label") {
++        Some(Term::Literal(label)) => label,
++        other => panic!("expected RDF literal, got {other:?}"),
++    };
++    assert_eq!(label.value(), "A \"quoted\" label");
++    assert_eq!(label.language(), Some("en"));
++}
+```
+
+---
+
+### Incident Patch 3: `dd88f9b0` (2026-11-14)
+**Commit Message**: Fix embedded label extraction
+
+**File**: `CHANGELOG.md` (modified, +4/-0)
+```diff
+@@ -165,6 +165,10 @@ All notable changes to Open Ontologies are documented here.
+ 
+ ### Fixed
+ 
++- **`onto_embed` uses the lexical value of an RDF label.** Language tags and
++  escaped quotes are no longer passed to the embedding model as part of the
++  label text.
++
+ - **`stats` counts individuals by their type vocabulary, in both engines**
+   (#399, #395). A node counts when it is typed `owl:NamedIndividual` or
+   `owl:Thing`, or has a type outside the RDF, RDFS and OWL vocabularies.
+```
+
+**File**: `src/graph.rs` (modified, +34/-0)
+```diff
+@@ -605,6 +605,40 @@ impl GraphStore {
+         self.select_with_dataset(query, true)
+     }
+ 
++    /// Run a SELECT over the union dataset and return its RDF terms without
++    /// serialising them to display strings. Callers that consume lexical values
++    /// (for example, labels used as embedding input) must not parse RDF syntax
++    /// back out of `Term::to_string()`.
++    pub fn sparql_select_union_terms(
++        &self,
++        query: &str,
++    ) -> anyhow::Result<Vec<std::collections::HashMap<String, Term>>> {
++        let store = &self.store;
++        let mut prepared = SparqlEvaluator::new().parse_query(query)?;
++        prepared.dataset_mut().set_default_graph_as_union();
++        let QueryResults::Solutions(solutions) = prepared.on_store(store).execute()? else {
++            anyhow::bail!("term selection needs a SELECT query");
++        };
++
++        let vars: Vec<String> = solutions
++            .variables()
++            .iter()
++            .map(|v| v.as_str().to_string())
++            .collect();
++        let mut rows = Vec::new();
++        for solution in solutions {
++            let solution = solution?;
++            let mut row = std::collections::HashMap::new();
++            for var in &vars {
++                if let Some(term) = solution.get(var.as_str()) {
++                    row.insert(var.clone(), term.clone());
++                }
++            }
++            rows.push(row);
++        }
++        Ok(rows)
++    }
++
+     /// Run a SELECT once per term, with `var` pre-bound to that term, over the
+     /// union dataset. Returns the solutions per term, in the order given.
+     ///
+```
+
+**File**: `src/server.rs` (modified, +20/-21)
+```diff
+@@ -3,6 +3,8 @@
+ 
+ use std::sync::Arc;
+ 
++#[cfg(feature = "embeddings")]
++use oxigraph::model::Term;
+ use rmcp::{
+     ServerHandler, tool, tool_handler, tool_router,
+     prompt, prompt_handler, prompt_router,
+@@ -3196,31 +3198,28 @@ impl OpenOntologiesServer {
+ 
+         // Enumerating the store's classes is a question about the whole store,
+         // so read the union of all graphs, not the default graph alone.
+-        let result = match self.graph.sparql_select_union(classes_query) {
+-            Ok(r) => r,
+-            Err(e) => return Self::err_json(e),
+-        };
+-
+-        let parsed: serde_json::Value = match serde_json::from_str(&result) {
+-            Ok(v) => v,
++        let rows = match self.graph.sparql_select_union_terms(classes_query) {
++            Ok(rows) => rows,
+             Err(e) => return Self::err_json(e),
+         };
+ 
+         let mut class_labels: std::collections::HashMap<String, String> = std::collections::HashMap::new();
+-        if let Some(rows) = parsed["results"].as_array() {
+-            for row in rows {
+-                if let Some(iri) = row["class"].as_str() {
+-                    let iri = iri.trim_matches(|c| c == '<' || c == '>').to_string();
+-                    let label = row["label"].as_str()
+-                        .map(|s| s.trim_matches('"').to_string())
+-                        .unwrap_or_else(|| {
+-                            iri.rsplit_once('#').or_else(|| iri.rsplit_once('/'))
+-                                .map(|(_, n)| n.to_string())
+-                                .unwrap_or_else(|| iri.clone())
+-                        });
+-                    class_labels.insert(iri, label);
+-                }
+-            }
++        for row in rows {
++            let Some(Term::NamedNode(class)) = row.get("class") else {
++                continue;
++            };
++            let iri = class.as_str().to_string();
++            let fallback = || {
++                iri.rsplit_once('#').or_else(|| iri.rsplit_once('/'))
++                    .map(|(_, n)| n.to_string())
++                    .unwrap_or_else(|| iri.clone())
++            };
++            let label = match row.get("label") {
++                Some(Term::Literal(label)) => label.value().to_string(),
++                Some(other) => other.to_string(),
++                None => fallback(),
++            };
++            class_labels.insert(iri, label);
+         }
+ 
+         let trainer = crate::structembed::StructuralTrainer::new(struct_dim, struct_epochs, 0.01);
+```
+
+**File**: `tests/embedding_label_literal_test.rs` (added, +34/-0)
+```diff
+@@ -0,0 +1,34 @@
++use open_ontologies::graph::GraphStore;
++use oxigraph::model::Term;
++
++#[test]
++fn union_term_query_keeps_label_lexical_value_and_language() {
++    let graph = GraphStore::new();
++    graph
++        .load_turtle(
++            r#"@prefix : <http://example.org/> .
++               @prefix owl: <http://www.w3.org/2002/07/owl#> .
++               @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
++               :Canid a owl:Class ; rdfs:label "A \"quoted\" label"@en ."#,
++            None,
++        )
++        .unwrap();
++
++    let rows = graph
++        .sparql_select_union_terms(
++            r#"SELECT DISTINCT ?class ?label WHERE {
++                ?class a <http://www.w3.org/2002/07/owl#Class> .
++                OPTIONAL { ?class <http://www.w3.org/2000/01/rdf-schema#label> ?label }
++                FILTER(isIRI(?class))
++            }"#,
++        )
++        .unwrap();
++
++    assert_eq!(rows.len(), 1);
++    let label = match rows[0].get("label") {
++        Some(Term::Literal(label)) => label,
++        other => panic!("expected RDF literal, got {other:?}"),
++    };
++    assert_eq!(label.value(), "A \"quoted\" label");
++    assert_eq!(label.language(), Some("en"));
 +}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #407** (2026-11-15): Land #404 and #405 from @dajiaohuang (@fabio-rovai)
+- **PR #405** (2026-11-15): Serialize ontology load and unload transitions (@dajiaohuang)
+- **PR #404** (2026-11-15): Fix embedded label extraction (@dajiaohuang)
+- **PR #403** (2026-11-15): Land #402 from @dajiaohuang; blank headers are not duplicates (@fabio-rovai)
+- **PR #402** (2026-11-15): Reject duplicate XLSX headers (@dajiaohuang)
 - **PR #401** (2026-11-13): Land #399 and #400 from @dajiaohuang, and #397 (@fabio-rovai)
-- **PR #400** (2026-11-13): fix: identify server in MCP initialize response (@dajiaohuang)
-- **PR #399** (2026-11-13): fix: count ontology individuals by type vocabulary (@dajiaohuang)
-- **PR #397** (2026-11-13): funding.json: the eight feature-gated tools are on top of the 116, not among them (@fabio-rovai)
-- **PR #396** (2026-11-12): Land nine fixes from @dajiaohuang (#386-#394) (@fabio-rovai)
-- **PR #394** (2026-11-12): Document JSON-LD support for onto_save (@dajiaohuang)
 
 ---
 
@@ -2005,13 +2149,13 @@ Co-Authored-By: Claude <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. The #399 and #400 changelog entries sit in the existing Unreleased Fixed section
+## X. One changelog entry under Unreleased Fixed covers #382 and #402, including blank
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fabio-rovai/open-ontologies. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d6752db5`: The #399 and #400 changelog entries sit in the existing Unreleased Fixed section, with the issue numbers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5d49478c`: One changelog entry under Unreleased Fixed covers #382 and #402, including blank headers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2019,28 +2163,27 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **`stats` counts individuals by their type vocabulary, in both engines**
-  (#399, #395). A node counts when it is typed `owl:NamedIndividual` or
-  `owl:Thing`, or has a type outside the RDF, RDFS and OWL vocabularies.
-  Restrictions, property characteristics such as `owl:TransitiveProperty`,
-  annotation properties, datatypes, `owl:AllDisjointClasses` and `owl:Axiom`
-  nodes no longer inflate the count. The Rust engine and
-  `open-ontologies-lite` apply the same rule.
-
-- **The MCP `initialize` reply names the server** (#400, #398). `serverInfo`
-  reported rmcp's crate name and version (`rmcp`, `3.9.0`); it now reports
-  `open-ontologies` and the release version.
-
+- **CSV and XLSX ingestion reject a repeated header instead of dropping a
+  column** (#382, #402). Each row became a map keyed by header, so a later
+  column with the same header overwrote the earlier one. The error names the
+  header and its column number. A blank header names no column, so blank
+  headers are not duplicates: a file whose lines end in empty columns, as
+  spreadsheet exports such as `name,,` do, still loads, with the empty
+  columns skipped and left out of the column list that mapping generation
+  reads. A value under a blank header has no name to go under and is refused
+  with its column number.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-### Fixed
+// Induced defect failure mode:
+- **XLSX ingestion rejects duplicate headers instead of silently overwriting earlier columns.**
 
-- **Ontology statistics count individuals by their type vocabulary.** OWL, RDF and RDFS structural nodes such as restrictions, property declarations, datatypes and axiom nodes no longer inflate the individual count.
-
+- **CSV ingestion rejects a repeated header instead of dropping a column**
+  (#382). Each row became a map keyed by header, so a later column with the
+  same header overwrote the earlier one. The error names the header and its
+  column number.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d6752db5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5d49478c` are properly handled with clean fallback behavior.

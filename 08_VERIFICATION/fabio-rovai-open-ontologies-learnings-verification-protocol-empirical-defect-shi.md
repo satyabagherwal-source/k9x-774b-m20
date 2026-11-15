@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:35:35.223Z",
+  "timestamp": "2026-11-15T22:15:23.335Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-fabio-rovai-open-ontologies-learnings",
+  "learning_id": "LEARN-EVO-fabio-rovai-open-ontologies-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [fabio-rovai-open-ontologies-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:35:35.223Z`  
-> **Learning ID**: `LEARN-REEXTRACT-fabio-rovai-open-ontologies-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-15T22:15:23.335Z`  
+> **Learning ID**: `LEARN-EVO-fabio-rovai-open-ontologies-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md`  
 > **Source**: github ([https://github.com/fabio-rovai/open-ontologies](https://github.com/fabio-rovai/open-ontologies))  
-> **Source Version**: `fe1e32b8`  
+> **Source Version**: `214e948e`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T04:24:38.304Z  
+> **Timestamp**: 2026-11-15T22:14:49.647Z  
 > **Learning ID**: `learn-github-fabio-rovai-open-ontologies`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fabio-rovai/open-ontologies](https://github.com/fabio-rovai/open-ontologies))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T04:23:54.710Z  
+> **Harvest Timestamp**: 2026-11-15T22:14:49.642Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Plan, apply and roll back changes to a production ontology, with a blast radius report and a proof an auditor can re-check.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2872 stars
+- **Stars / Engagement**: 2905 stars
 
 ---
 
@@ -551,7 +551,18 @@ _PROPERTY_TYPES = (RDF_PROPERTY,) + tuple(
     for name in ("ObjectProperty", "DatatypeProperty", "AnnotationProperty")
 )
 _PROPERTY_VALUES = " ".join(f"<{iri}>" for iri in _PROPERTY_TYPES)
-_SCHEMA_TYPES = (OWL_CLASS, RDFS_CLASS) + _PROPERTY_TYPES
+# An individual has a type outside the RDF, RDFS and OWL vocabularies, or is
+# declared owl:NamedIndividual or owl:Thing. Everything else typed only from
+# those vocabularies (restrictions, property characteristics, datatypes, axiom
+# nodes) is part of the ontology's structure. Same rule as GraphStore::get_stats
+# in the Rust engine (#395).
+_INDIVIDUAL_TYPE_FILTER = (
+    "FILTER(?t IN (<http://www.w3.org/2002/07/owl#NamedIndividual>, "
+    "<http://www.w3.org/2002/07/owl#Thing>) || ("
+    '!STRSTARTS(STR(?t), "http://www.w3.org/1999/02/22-rdf-syntax-ns#") && '
+    '!STRSTARTS(STR(?t), "http://www.w3.org/2000/01/rdf-schema#") && '
+    '!STRSTARTS(STR(?t), "http://www.w3.org/2002/07/owl#")))'
+)
 
 
 def resolve_format(name: str) -> ox.RdfFormat:
@@ -632,7 +643,8 @@ class OntologyEngine:
             ),
             "individuals": self._count(
                 "SELECT (COUNT(DISTINCT ?i) AS ?n) WHERE { ?i a ?t "
-                "FILTER(?t NOT IN (" + ", ".join(f"<{iri}>" for iri in _SCHEMA_TYPES) + ")) }"
+                + _INDIVIDUAL_TYPE_FILTER
+                + " }"
             ),
         }
 
@@ -731,26 +743,7 @@ class OntologyEngine:
         result = self.store.query(sparql)
         var = result.variables[0]
         out = []
-        for sol in result:
-            val = sol[var]
-            if val is not None:
-                out.append(val.value)
-        return out
-
-    # ---- certified reasoning ----------------------------------------------
-    def reason_horn(
-        self,
-        certificate_dir: str,
-        *,
-        rules=None,
-        graphs: str | list[str] = "default",
-        check: bool = True,
-        checker: str | None = None,
-        timeout: float = 120.0,
-        max_iterations: int | None = None,
-    ) -> dict:
-        """Derive the closure of a Horn rule table over the loaded store and
-        write a certificate the proved-sou
+        for sol in re
 ```
 
 ### Core Architecture Module: `src/borderline_loop.rs`
@@ -1758,11 +1751,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #356** (2026-11-09): **reason owl-dl: "consistent": true when the clash depends on a construct the tableau does not model (plan says null on the same graph)**
-  *Symptoms*: ## What happens  `reason --profile owl-dl` prints a definite `"consistent": true` for a knowledge base that is inconsistent when the inconsistency depends on a construct the tableau does not model. The run reports `complete: false` and lists the construct under `constructs_not_modelled`, but the headline is still `true`. `plan` judges the same graph `abox_consistent: null`, with the reason "finding no clash over the remaining axioms is not a proof that the whole graph is consistent", so the two tools disagree about one graph.  This is the same false-clean class as #355, on a second axis. #355 is about a search that did not finish. Here the search finished over a weaker axiom set than the ontology states.  ## Reproduction (main cefe5997, macOS arm64)  `chain.ttl`:  ```turtle @prefix : <http://example.org/t#> . @prefix owl: <http://www.w3.org/2002/07/owl#> . @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> . :hasParent a owl:ObjectProperty . :hasGrandparent a owl:ObjectProperty ; owl:propertyChainAxiom ( :hasParent :hasParent ) . :NoGrandparent a owl:Class ; owl:equivalentClass [ a owl:Restriction ; owl:onProperty :hasGrandparent ; owl:allValuesFrom owl:Nothing ] . :a a owl:NamedIndividual , :NoGrandparent ; :hasParent :b . :b a owl:NamedIndividual ; :hasParent :c . :c a owl:NamedIndividual . ```  ```bash printf 'load chain.ttl\nreason --profile owl-dl\n' | open-ontologies --no-connect --data-dir d batch - | tail -1 \   | jq -c '.result | {consistent, complete, search_fini
+- **Issue #398** (2026-11-13): **MCP handshake reports serverInfo as rmcp 3.9.0 instead of open-ontologies and its version**
+  *Symptoms*: ## What happens  Over MCP the server introduces itself as `rmcp`, with rmcp's version, instead of as Open Ontologies. `ServerHandler::get_info` in `src/server.rs` builds its `ServerConfig` without setting the server's name and version, so rmcp fills in its own crate name and version.  ## Repro  Start `open-ontologies serve` and send over stdio:  ```json {"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"probe","version":"1"}}} ```  ## Expected  `result.serverInfo` names this server and its release, for example `{"name":"open-ontologies","version":"2.1.0"}`.  ## Actual  On `fe1e32b8`, release build, default features:  ```json {"name":"rmcp","version":"3.9.0"} ```  ## Why it matters  Clients show this name in their server lists and logs, and a bug report that quotes the handshake carries the SDK's version, not the engine's. Nothing in `src/` or `tests/` mentions `serverInfo`, so nothing would catch a change either way.  ## Suggested fix  Set the implementation name to `open-ontologies` and the version to `env!("CARGO_PKG_VERSION")` in `get_info`, and add a handshake test that pins both. 
 
-- **Issue #355** (2026-11-01): **reason owl-dl: headline "consistent": true when the ABox phase ran out of budget (inconsistent KB reported consistent)**
-  *Symptoms*: ## Summary  `reason --profile owl-dl` reports `"consistent": true` for a knowledge base that is inconsistent, when the ABox phase runs out of budget. The same output carries `"complete": false`, `"search_finished": false`, `"budget_exhausted_in": [..., "abox"]` and `"abox": {"consistent": true, "undecided": true}`, but the headline flag is a definite `true`. A consumer that reads `consistent` (the natural field to read) gets a false claim. The expected value is undetermined (`null`, or a three-valued string), as it would be for a class whose satisfiability test ran out of budget.  ## Reproduction (synthetic, OO 2ecb50c2)  `abox_clash.ttl`: 3,000 classes `:Ci`, each with `:Di owl:disjointWith :Ci`, an individual `:xi a :Ci` for each, and one clash: `:x2999 a :D2999`.  ```python N = 3000 L = ["@prefix : <http://example.org/t#> .", "@prefix owl: <http://www.w3.org/2002/07/owl#> ."] for i in range(N):     L += [f":C{i} a owl:Class .", f":D{i} a owl:Class . :D{i} owl:disjointWith :C{i} .", f":x{i} a owl:NamedIndividual , :C{i} ."] L.append(f":x{N-1} a :D{N-1} .") open("abox_clash.ttl", "w").write("\n".join(L) + "\n") ```  ``` mkdir store && printf '[reasoner]\ntableaux_test_timeout_ms = 1\n' > store/config.toml printf 'clear\nload %s\nreason --profile owl-dl\n' "$PWD/abox_clash.ttl" | open-ontologies --data-dir store --no-connect batch - ```  (The config file sets the phase budget because batch `reason` ignores `--phase-timeout-ms`, see #352.)  | run | consistent | complete | sear
+- **Issue #395** (2026-11-13): **stats: individuals count includes property declarations, datatypes and axiom nodes**
+  *Symptoms*: ## What happens  `stats` / `onto_stats` reports `individuals` as the number of distinct subjects that have any `rdf:type` other than `owl:Class`, `rdfs:Class`, `owl:ObjectProperty`, `owl:DatatypeProperty` or `owl:Ontology` (`individual_query` in `GraphStore::get_stats`, `src/graph.rs`). The filter runs per type triple, so a subject with one excluded type and one other type still counts.  Property declarations, datatypes and axiom nodes are therefore counted as individuals.  ## Repro  `stats_repro.ttl`:  ```turtle @prefix ex: <https://example.org/> . @prefix owl: <http://www.w3.org/2002/07/owl#> . @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .  ex:Person a owl:Class ;     rdfs:subClassOf [ a owl:Restriction ;         owl:onProperty ex:partOf ;         owl:someValuesFrom ex:Org ] . ex:Org a owl:Class .  ex:partOf a owl:ObjectProperty, owl:TransitiveProperty . ex:hasId a owl:DatatypeProperty, owl:FunctionalProperty . ex:note a owl:AnnotationProperty . ex:Code a rdfs:Datatype .  [] a owl:AllDisjointClasses ;     owl:members ( ex:Person ex:Org ) .  [] a owl:Axiom ;     owl:annotatedSource ex:Person ;     owl:annotatedProperty rdfs:subClassOf ;     owl:annotatedTarget ex:Org ;     rdfs:comment "an annotated axiom" .  ex:Alice a owl:NamedIndividual, ex:Person . ```  ```sh printf 'load stats_repro.ttl\nstats\n' | open-ontologies batch --no-connect - ```  ## Expected  `"individuals": 1` (only `ex:Alice`).  ## Actual  On main `fe1e32b8`, release build:  ```json {"classes":2,"d
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1779,197 +1772,389 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6f5f6c5d` (2026-11-10)
-**Commit Message**: Merge PR #374 (dajiaohuang): fix: avoid max cardinality negation overflow
+### Incident Patch 1: `5d49478c` (2026-11-13)
+**Commit Message**: One changelog entry under Unreleased Fixed covers #382 and #402, including blank headers
 
-# Conflicts:
-#	CHANGELOG.md
-
-**File**: `src/tableaux.rs` (modified, +8/-1)
-```diff
-@@ -161,7 +161,14 @@ impl Concept {
-                 }
-             }
-             // ¬(≤n R.C) = ≥(n+1) R.C
--            Concept::MaxCard(r, n, c) => Concept::MinCard(*r, n + 1, c.clone()),
-+            // The complement of <=u32::MAX requires one more than this
-+            // representation can hold. Saturate so the bounded tableau treats
-+            // it as an unachievable-large minimum (and returns Unknown at its
-+            // node cap) instead of panicking in debug or wrapping to >=0 in
-+            // release builds.
-+            Concept::MaxCard(r, n, c) => {
-+                Concept::MinCard(*r, n.saturating_add(1), c.clone())
-+            }
-         }
-     }
- }
-```
-
-**File**: `tests/cardinality_negation_overflow_test.rs` (added, +47/-0)
-```diff
-@@ -0,0 +1,47 @@
-+// SPDX-FileCopyrightText: 2026 Fabio Rovai
-+// SPDX-License-Identifier: MIT
-+
-+use open_ontologies::tableaux::Concept;
-+use open_ontologies::{graph::GraphStore, reason::Reasoner};
-+use std::sync::Arc;
-+
-+#[test]
-+fn negating_the_largest_representable_max_cardinality_does_not_wrap() {
-+    let max = Concept::MaxCard(1, u32::MAX, Box::new(Concept::Top));
-+    assert_eq!(
-+        max.negate(),
-+        Concept::MinCard(1, u32::MAX, Box::new(Concept::Top)),
-+        "the complement needs one more successor; saturating preserves an unrepresentable-large requirement instead of wrapping to zero"
-+    );
-+}
-+
-+#[test]
-+fn reasoning_with_max_cardinality_stays_incomplete_instead_of_panicking() {
-+    open_ontologies::runtime::set_tableaux_test_timeout_ms(0);
-+    open_ontologies::runtime::set_classify_timeout_ms(0);
-+    let store = Arc::new(GraphStore::new());
-+    store
-+        .load_turtle(
-+            r#"
-+            @prefix : <http://example.org/> .
-+            @prefix owl: <http://www.w3.org/2002/07/owl#> .
-+            @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-+            @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-+            :r a owl:ObjectProperty .
-+            :A a owl:Class ; owl:equivalentClass [ a owl:Restriction ;
-+                owl:onProperty :r ;
-+                owl:maxCardinality "4294967295"^^xsd:nonNegativeInteger ] .
-+            :B a owl:Class .
-+            "#,
-+            None,
-+        )
-+        .unwrap();
-+
-+    let result = Reasoner::run(&store, "owl-dl", false).unwrap();
-+    let parsed: serde_json::Value = serde_json::from_str(&result).unwrap();
-+    assert_eq!(parsed["algorithm"], "tableaux");
-+    assert_eq!(
-+        parsed["complete"], false,
-+        "the minimum above the representable max threshold must reach a resource bound, not wrap to zero: {parsed}"
-+    );
-+}
-```
-
----
-
-### Incident Patch 2: `13743154` (2026-11-10)
-**Commit Message**: Merge PR #377 (dajiaohuang): fix: preserve graph on failed version rollback
-
-# Conflicts:
-#	CHANGELOG.md
-
-**File**: `src/graph.rs` (modified, +10/-0)
-```diff
-@@ -285,6 +285,16 @@ impl GraphStore {
-         self.load_content_with_base(content, format, None)
-     }
- 
-+    /// Replace the active dataset with RDF content after parsing the entire input.
-+    /// A parse failure leaves the current dataset untouched.
-+    pub(crate) fn replace_content(
-+        &self,
-+        content: &str,
-+        format: RdfFormat,
-+    ) -> anyhow::Result<usize> {
-+        self.load_content_with_base_mode(content, format, None, true)
-+    }
-+
-     /// Load RDF content with an optional base IRI for resolving relative IRIs.
-     pub fn load_content_with_base(
-         &self,
-```
-
-**File**: `src/ontology.rs` (modified, +1/-2)
-```diff
-@@ -289,8 +289,7 @@ impl OntologyService {
-             "ntriples" => RdfFormat::NTriples,
-             _ => anyhow::bail!("unsupported saved version format: {format}"),
-         };
--        store.clear()?;
--        let count = store.load_content(&content, rdf_format)?;
-+        let count = store.replace_content(&content, rdf_format)?;
-         Ok(serde_json::json!({
-             "ok": true,
-             "label": label,
-```
-
-**File**: `tests/ontology_version_test.rs` (modified, +24/-0)
-```diff
-@@ -53,3 +53,27 @@ fn test_rollback_version() {
-     assert!(query_result.contains("Alice"));
-     assert!(!query_result.contains("Bob"));
- }
-+
-+#[test]
-+fn failed_rollback_preserves_the_active_graph() {
-+    let db = test_db();
-+    let store = Arc::new(GraphStore::new());
-+    store
-+        .load_turtle(
-+            "<http://example.org/Current> a <http://example.org/Thing> .",
-+            None,
-+        )
-+        .unwrap();
-+    db.conn()
-+        .execute(
-+            "INSERT INTO ontology_versions (label, triple_count, content, format) VALUES (?1, ?2, ?3, ?4)",
-+            rusqlite::params!["broken", 1, "not valid n-quads", "nquads"],
-+        )
-+        .unwrap();
-+
-+    assert!(OntologyService::rollback_version(&db, &store, "broken").is_err());
-+    let query = store
-+        .sparql_select("SELECT ?s WHERE { ?s a <http://example.org/Thing> }")
-+        .unwrap();
-+    assert!(query.contains("Current"));
-+}
-```
-
----
-
-### Incident Patch 3: `42db61ce` (2026-11-11)
-**Commit Message**: #382 and #384 each opened their own Fixed heading in the changelog; their entries now sit in the existing Unreleased Fixed section
+#402 added its entry under Added. Both changes are unreleased and
+describe one behaviour, so #382's entry now covers XLSX and the
+blank-header rule, and #402's line is gone from Added.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `CHANGELOG.md` (modified, +13/-0)
+**File**: `CHANGELOG.md` (modified, +9/-6)
 ```diff
-@@ -165,6 +165,19 @@ All notable changes to Open Ontologies are documented here.
+@@ -6,8 +6,6 @@ All notable changes to Open Ontologies are documented here.
+ 
+ ### Added
+ 
+-- **XLSX ingestion rejects duplicate headers instead of silently overwriting earlier columns.**
+-
+ - **`serve-http` can accept Host names other than localhost on `/mcp`.**
+   rmcp's Host check, which blocks DNS rebinding, has refused every `Host`
+   header except `localhost`, `127.0.0.1` and `::1` with 403 since rmcp 1.4.
+@@ -231,10 +229,15 @@ All notable changes to Open Ontologies are documented here.
+   Names that were already valid local names, including non-ASCII letters and
+   a leading digit, keep the IRIs they had.
+ 
+-- **CSV ingestion rejects a repeated header instead of dropping a column**
+-  (#382). Each row became a map keyed by header, so a later column with the
+-  same header overwrote the earlier one. The error names the header and its
+-  column number.
++- **CSV and XLSX ingestion reject a repeated header instead of dropping a
++  column** (#382, #402). Each row became a map keyed by header, so a later
++  column with the same header overwrote the earlier one. The error names the
++  header and its column number. A blank header names no column, so blank
++  headers are not duplicates: a file whose lines end in empty columns, as
++  spreadsheet exports such as `name,,` do, still loads, with the empty
++  columns skipped and left out of the column list that mapping generation
++  reads. A value under a blank header has no name to go under and is refused
++  with its column number.
+ 
+ - **OWL-DL reports name `owl:NegativePropertyAssertion` as unmodelled**
+   (#376). The tableau never read negative property assertions, so a
+```
+
+---
+
+### Incident Patch 2: `d64e867d` (2026-11-15)
+**Commit Message**: Merge PR #404 (dajiaohuang): Fix embedded label extraction
+
+**File**: `CHANGELOG.md` (modified, +4/-0)
+```diff
+@@ -165,6 +165,10 @@ All notable changes to Open Ontologies are documented here.
  
  ### Fixed
  
-+- **`import-schema` writes valid Turtle for SQL identifiers with spaces or
-+  quotes** (#384). Table and column names went into prefixed names and labels
-+  unescaped, so a quoted identifier such as `"customer archive"` made the
-+  generated Turtle unparseable. Characters a Turtle local name cannot hold are
-+  now percent-encoded as UTF-8 bytes, and labels are escaped string literals.
-+  Names that were already valid local names, including non-ASCII letters and
-+  a leading digit, keep the IRIs they had.
++- **`onto_embed` uses the lexical value of an RDF label.** Language tags and
++  escaped quotes are no longer passed to the embedding model as part of the
++  label text.
 +
-+- **CSV ingestion rejects a repeated header instead of dropping a column**
-+  (#382). Each row became a map keyed by header, so a later column with the
-+  same header overwrote the earlier one. The error names the header and its
-+  column number.
+ - **`stats` counts individuals by their type vocabulary, in both engines**
+   (#399, #395). A node counts when it is typed `owl:NamedIndividual` or
+   `owl:Thing`, or has a type outside the RDF, RDFS and OWL vocabularies.
+```
+
+**File**: `src/graph.rs` (modified, +34/-0)
+```diff
+@@ -605,6 +605,40 @@ impl GraphStore {
+         self.select_with_dataset(query, true)
+     }
+ 
++    /// Run a SELECT over the union dataset and return its RDF terms without
++    /// serialising them to display strings. Callers that consume lexical values
++    /// (for example, labels used as embedding input) must not parse RDF syntax
++    /// back out of `Term::to_string()`.
++    pub fn sparql_select_union_terms(
++        &self,
++        query: &str,
++    ) -> anyhow::Result<Vec<std::collections::HashMap<String, Term>>> {
++        let store = &self.store;
++        let mut prepared = SparqlEvaluator::new().parse_query(query)?;
++        prepared.dataset_mut().set_default_graph_as_union();
++        let QueryResults::Solutions(solutions) = prepared.on_store(store).execute()? else {
++            anyhow::bail!("term selection needs a SELECT query");
++        };
 +
- - **OWL-DL reports name `owl:NegativePropertyAssertion` as unmodelled**
-   (#376). The tableau never read negative property assertions, so a
-   certificate or a clean verdict over a graph that has them was over a
++        let vars: Vec<String> = solutions
++            .variables()
++            .iter()
++            .map(|v| v.as_str().to_string())
++            .collect();
++        let mut rows = Vec::new();
++        for solution in solutions {
++            let solution = solution?;
++            let mut row = std::collections::HashMap::new();
++            for var in &vars {
++                if let Some(term) = solution.get(var.as_str()) {
++                    row.insert(var.clone(), term.clone());
++                }
++            }
++            rows.push(row);
++        }
++        Ok(rows)
++    }
++
+     /// Run a SELECT once per term, with `var` pre-bound to that term, over the
+     /// union dataset. Returns the solutions per term, in the order given.
+     ///
+```
+
+**File**: `src/server.rs` (modified, +20/-21)
+```diff
+@@ -3,6 +3,8 @@
+ 
+ use std::sync::Arc;
+ 
++#[cfg(feature = "embeddings")]
++use oxigraph::model::Term;
+ use rmcp::{
+     ServerHandler, tool, tool_handler, tool_router,
+     prompt, prompt_handler, prompt_router,
+@@ -3196,31 +3198,28 @@ impl OpenOntologiesServer {
+ 
+         // Enumerating the store's classes is a question about the whole store,
+         // so read the union of all graphs, not the default graph alone.
+-        let result = match self.graph.sparql_select_union(classes_query) {
+-            Ok(r) => r,
+-            Err(e) => return Self::err_json(e),
+-        };
+-
+-        let parsed: serde_json::Value = match serde_json::from_str(&result) {
+-            Ok(v) => v,
++        let rows = match self.graph.sparql_select_union_terms(classes_query) {
++            Ok(rows) => rows,
+             Err(e) => return Self::err_json(e),
+         };
+ 
+         let mut class_labels: std::collections::HashMap<String, String> = std::collections::HashMap::new();
+-        if let Some(rows) = parsed["results"].as_array() {
+-            for row in rows {
+-                if let Some(iri) = row["class"].as_str() {
+-                    let iri = iri.trim_matches(|c| c == '<' || c == '>').to_string();
+-                    let label = row["label"].as_str()
+-                        .map(|s| s.trim_matches('"').to_string())
+-                        .unwrap_or_else(|| {
+-                            iri.rsplit_once('#').or_else(|| iri.rsplit_once('/'))
+-                                .map(|(_, n)| n.to_string())
+-                                .unwrap_or_else(|| iri.clone())
+-                        });
+-                    class_labels.insert(iri, label);
+-                }
+-            }
++        for row in rows {
++            let Some(Term::NamedNode(class)) = row.get("class") else {
++                continue;
++            };
++            let iri = class.as_str().to_string();
++            let fallback = || {
++                iri.rsplit_once('#').or_else(|| iri.rsplit_once('/'))
++                    .map(|(_, n)| n.to_string())
++                    .unwrap_or_else(|| iri.clone())
++            };
++            let label = match row.get("label") {
++                Some(Term::Literal(label)) => label.value().to_string(),
++                Some(other) => other.to_string(),
++                None => fallback(),
++            };
++            class_labels.insert(iri, label);
+         }
+ 
+         let trainer = crate::structembed::StructuralTrainer::new(struct_dim, struct_epochs, 0.01);
+```
+
+**File**: `tests/embedding_label_literal_test.rs` (added, +34/-0)
+```diff
+@@ -0,0 +1,34 @@
++use open_ontologies::graph::GraphStore;
++use oxigraph::model::Term;
++
++#[test]
++fn union_term_query_keeps_label_lexical_value_and_language() {
++    let graph = GraphStore::new();
++    graph
++        .load_turtle(
++            r#"@prefix : <http://example.org/> .
++               @prefix owl: <http://www.w3.org/2002/07/owl#> .
++               @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
++               :Canid a owl:Class ; rdfs:label "A \"quoted\" label"@en ."#,
++            None,
++        )
++        .unwrap();
++
++    let rows = graph
++        .sparql_select_union_terms(
++            r#"SELECT DISTINCT ?class ?label WHERE {
++                ?class a <http://www.w3.org/2002/07/owl#Class> .
++                OPTIONAL { ?class <http://www.w3.org/2000/01/rdf-schema#label> ?label }
++                FILTER(isIRI(?class))
++            }"#,
++        )
++        .unwrap();
++
++    assert_eq!(rows.len(), 1);
++    let label = match rows[0].get("label") {
++        Some(Term::Literal(label)) => label,
++        other => panic!("expected RDF literal, got {other:?}"),
++    };
++    assert_eq!(label.value(), "A \"quoted\" label");
++    assert_eq!(label.language(), Some("en"));
++}
+```
+
+---
+
+### Incident Patch 3: `dd88f9b0` (2026-11-14)
+**Commit Message**: Fix embedded label extraction
+
+**File**: `CHANGELOG.md` (modified, +4/-0)
+```diff
+@@ -165,6 +165,10 @@ All notable changes to Open Ontologies are documented here.
+ 
+ ### Fixed
+ 
++- **`onto_embed` uses the lexical value of an RDF label.** Language tags and
++  escaped quotes are no longer passed to the embedding model as part of the
++  label text.
++
+ - **`stats` counts individuals by their type vocabulary, in both engines**
+   (#399, #395). A node counts when it is typed `owl:NamedIndividual` or
+   `owl:Thing`, or has a type outside the RDF, RDFS and OWL vocabularies.
+```
+
+**File**: `src/graph.rs` (modified, +34/-0)
+```diff
+@@ -605,6 +605,40 @@ impl GraphStore {
+         self.select_with_dataset(query, true)
+     }
+ 
++    /// Run a SELECT over the union dataset and return its RDF terms without
++    /// serialising them to display strings. Callers that consume lexical values
++    /// (for example, labels used as embedding input) must not parse RDF syntax
++    /// back out of `Term::to_string()`.
++    pub fn sparql_select_union_terms(
++        &self,
++        query: &str,
++    ) -> anyhow::Result<Vec<std::collections::HashMap<String, Term>>> {
++        let store = &self.store;
++        let mut prepared = SparqlEvaluator::new().parse_query(query)?;
++        prepared.dataset_mut().set_default_graph_as_union();
++        let QueryResults::Solutions(solutions) = prepared.on_store(store).execute()? else {
++            anyhow::bail!("term selection needs a SELECT query");
++        };
++
++        let vars: Vec<String> = solutions
++            .variables()
++            .iter()
++            .map(|v| v.as_str().to_string())
++            .collect();
++        let mut rows = Vec::new();
++        for solution in solutions {
++            let solution = solution?;
++            let mut row = std::collections::HashMap::new();
++            for var in &vars {
++                if let Some(term) = solution.get(var.as_str()) {
++                    row.insert(var.clone(), term.clone());
++                }
++            }
++            rows.push(row);
++        }
++        Ok(rows)
++    }
++
+     /// Run a SELECT once per term, with `var` pre-bound to that term, over the
+     /// union dataset. Returns the solutions per term, in the order given.
+     ///
+```
+
+**File**: `src/server.rs` (modified, +20/-21)
+```diff
+@@ -3,6 +3,8 @@
+ 
+ use std::sync::Arc;
+ 
++#[cfg(feature = "embeddings")]
++use oxigraph::model::Term;
+ use rmcp::{
+     ServerHandler, tool, tool_handler, tool_router,
+     prompt, prompt_handler, prompt_router,
+@@ -3196,31 +3198,28 @@ impl OpenOntologiesServer {
+ 
+         // Enumerating the store's classes is a question about the whole store,
+         // so read the union of all graphs, not the default graph alone.
+-        let result = match self.graph.sparql_select_union(classes_query) {
+-            Ok(r) => r,
+-            Err(e) => return Self::err_json(e),
+-        };
+-
+-        let parsed: serde_json::Value = match serde_json::from_str(&result) {
+-            Ok(v) => v,
++        let rows = match self.graph.sparql_select_union_terms(classes_query) {
++            Ok(rows) => rows,
+             Err(e) => return Self::err_json(e),
+         };
+ 
+         let mut class_labels: std::collections::HashMap<String, String> = std::collections::HashMap::new();
+-        if let Some(rows) = parsed["results"].as_array() {
+-            for row in rows {
+-                if let Some(iri) = row["class"].as_str() {
+-                    let iri = iri.trim_matches(|c| c == '<' || c == '>').to_string();
+-                    let label = row["label"].as_str()
+-                        .map(|s| s.trim_matches('"').to_string())
+-                        .unwrap_or_else(|| {
+-                            iri.rsplit_once('#').or_else(|| iri.rsplit_once('/'))
+-                                .map(|(_, n)| n.to_string())
+-                                .unwrap_or_else(|| iri.clone())
+-                        });
+-                    class_labels.insert(iri, label);
+-                }
+-            }
++        for row in rows {
++            let Some(Term::NamedNode(class)) = row.get("class") else {
++                continue;
++            };
++            let iri = class.as_str().to_string();
++            let fallback = || {
++                iri.rsplit_once('#').or_else(|| iri.rsplit_once('/'))
++                    .map(|(_, n)| n.to_string())
++                    .unwrap_or_else(|| iri.clone())
++            };
++            let label = match row.get("label") {
++                Some(Term::Literal(label)) => label.value().to_string(),
++                Some(other) => other.to_string(),
++                None => fallback(),
++            };
++            class_labels.insert(iri, label);
+         }
+ 
+         let trainer = crate::structembed::StructuralTrainer::new(struct_dim, struct_epochs, 0.01);
+```
+
+**File**: `tests/embedding_label_literal_test.rs` (added, +34/-0)
+```diff
+@@ -0,0 +1,34 @@
++use open_ontologies::graph::GraphStore;
++use oxigraph::model::Term;
++
++#[test]
++fn union_term_query_keeps_label_lexical_value_and_language() {
++    let graph = GraphStore::new();
++    graph
++        .load_turtle(
++            r#"@prefix : <http://example.org/> .
++               @prefix owl: <http://www.w3.org/2002/07/owl#> .
++               @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
++               :Canid a owl:Class ; rdfs:label "A \"quoted\" label"@en ."#,
++            None,
++        )
++        .unwrap();
++
++    let rows = graph
++        .sparql_select_union_terms(
++            r#"SELECT DISTINCT ?class ?label WHERE {
++                ?class a <http://www.w3.org/2002/07/owl#Class> .
++                OPTIONAL { ?class <http://www.w3.org/2000/01/rdf-schema#label> ?label }
++                FILTER(isIRI(?class))
++            }"#,
++        )
++        .unwrap();
++
++    assert_eq!(rows.len(), 1);
++    let label = match rows[0].get("label") {
++        Some(Term::Literal(label)) => label,
++        other => panic!("expected RDF literal, got {other:?}"),
++    };
++    assert_eq!(label.value(), "A \"quoted\" label");
++    assert_eq!(label.language(), Some("en"));
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #385** (2026-11-11): Land #382 and #384 from @dajiaohuang (@fabio-rovai)
-- **PR #384** (2026-11-11): fix: escape SQL identifiers in schema Turtle (@dajiaohuang)
-- **PR #383** (2026-11-10): Land twelve fixes from @dajiaohuang (#368, #370, #372-#381) (@fabio-rovai)
-- **PR #382** (2026-11-11): fix: reject duplicate CSV headers (@dajiaohuang)
-- **PR #381** (2026-11-10): fix: refuse named graph OFN conversion (@dajiaohuang)
-- **PR #380** (2026-11-10): fix: remove stale first-order goal exports (@dajiaohuang)
+- **PR #407** (2026-11-15): Land #404 and #405 from @dajiaohuang (@fabio-rovai)
+- **PR #405** (2026-11-15): Serialize ontology load and unload transitions (@dajiaohuang)
+- **PR #404** (2026-11-15): Fix embedded label extraction (@dajiaohuang)
+- **PR #403** (2026-11-15): Land #402 from @dajiaohuang; blank headers are not duplicates (@fabio-rovai)
+- **PR #402** (2026-11-15): Reject duplicate XLSX headers (@dajiaohuang)
+- **PR #401** (2026-11-13): Land #399 and #400 from @dajiaohuang, and #397 (@fabio-rovai)
 
 ---
 
@@ -1989,38 +2174,44 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge PR #374 (dajiaohuang): fix: avoid max cardinality negation overflow
+## X. One changelog entry under Unreleased Fixed covers #382 and #402, including blank
 
 **RULE**:
-When implementing operations in `src/tableaux.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fabio-rovai/open-ontologies. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fabio-rovai/open-ontologies. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6f5f6c5d`: Merge PR #374 (dajiaohuang): fix: avoid max cardinality negation overflow. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5d49478c`: One changelog entry under Unreleased Fixed covers #382 and #402, including blank headers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/tableaux.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            // The complement of <=u32::MAX requires one more than this
-            // representation can hold. Saturate so the bounded tableau treats
-            // it as an unachievable-large minimum (and returns Unknown at its
-            // node cap) instead of panicking in debug or wrapping to >=0 in
-            // release builds.
-            Concept::MaxCard(r, n, c) => {
-                Concept::MinCard(*r, n.saturating_add(1), c.clone())
-            }
+- **CSV and XLSX ingestion reject a repeated header instead of dropping a
+  column** (#382, #402). Each row became a map keyed by header, so a later
+  column with the same header overwrote the earlier one. The error names the
+  header and its column number. A blank header names no column, so blank
+  headers are not duplicates: a file whose lines end in empty columns, as
+  spreadsheet exports such as `name,,` do, still loads, with the empty
+  columns skipped and left out of the column list that mapping generation
+  reads. A value under a blank header has no name to go under and is refused
+  with its column number.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-            Concept::MaxCard(r, n, c) => Concept::MinCard(*r, n + 1, c.clone()),
+// Induced defect failure mode:
+- **XLSX ingestion rejects duplicate headers instead of silently overwriting earlier columns.**
+
+- **CSV ingestion rejects a repeated header instead of dropping a column**
+  (#382). Each row became a map keyed by header, so a later column with the
+  same header overwrote the earlier one. The error names the header and its
+  column number.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6f5f6c5d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5d49478c` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

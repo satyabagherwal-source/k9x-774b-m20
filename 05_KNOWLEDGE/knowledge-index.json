@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-15T22:03:49.526Z",
-  "total_verified_learnings": 8727,
+  "last_updated": "2026-11-15T22:15:24.330Z",
+  "total_verified_learnings": 8729,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18642,
+  "total_items": 18652,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -226608,13 +226608,13 @@
       "item_id": "candidate_directive-splash-screen-staying-visible-after-warm-start-on-android-12",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-ETMJ-splash-screen-staying-visible-after-warm-start-on-android-12.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-804O-splash-screen-staying-visible-after-warm-start-on-android-12.md",
       "title": "splash screen staying visible after warm start on Android 12+",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "12162272a15f4e568f366b5eaefdc804c050cb79370e8a165b81ebc8551ea848",
+      "content_hash": "c3bfe67408dd5a72f540e675887e8f3f278c4d4529b544687ee721b1c46e12f8",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T19:04:44.923Z"
+      "persisted_at": "2026-11-15T22:15:24.073Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co",
@@ -226624,9 +226624,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "12697b66054dfaf5fa5eaacc550ca2e35beff96ab144f510a0078a270835406c",
+      "content_hash": "81d81a9e1adaeffdde852baa327acefa00e076515143c02f4e710eb7a72ee30b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T19:04:45.054Z"
+      "persisted_at": "2026-11-15T22:15:24.199Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -226636,9 +226636,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "77bb0d745fcf1543bae86488f21c67a7bdae9b2c96354bc361b431fd6218778b",
+      "content_hash": "bdd3680336010e5fdcc243cb87d42dd6b6d586b994095bee871d904fa28c5728",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T19:04:45.186Z"
+      "persisted_at": "2026-11-15T22:15:24.330Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -247087,6 +247087,164 @@
       "content_hash": "26b3f138acad8914cc0db2850490d8f43e7d29085b90ab3efa4bccfc1f9a3ffd",
       "domain_letter": "D",
       "persisted_at": "2026-11-15T21:45:22.835Z"
+    },
+    "learn-huggingface-conwayresearch-underdog-woof": {
+      "learning_id": "learn-huggingface-conwayresearch-underdog-woof",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "ConwayResearch/Underdog-Woof",
+      "repository": "ConwayResearch/Underdog-Woof",
+      "slug": "hf-conwayresearch-underdog-woof",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/ConwayResearch/Underdog-Woof",
+      "source_version": "hf-conwayresearch-underdog-woof",
+      "content_hash": "17c29779d963d6ea395847223ef8f0f9746186378bda9823f517836aba27c98e",
+      "dossier_path": "07_PROJECT_LEARNING/hf-conwayresearch-underdog-woof-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-conwayresearch-underdog-woof-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T22:14:46.370Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-conwayresearch-underdog-woof-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-conwayresearch-underdog-woof-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-conwayresearch-underdog-woof-research-knowledge-intelligence-conwayresearch-u.md",
+      "title": "Research & Knowledge Intelligence: ConwayResearch/Underdog-Woof Core Invariants",
+      "repository": "ConwayResearch/Underdog-Woof",
+      "source_version": "hf-conwayresearch-underdog-woof",
+      "content_hash": "bd5f3a1d52e15eaef1692728657a90ad77525c4282420ba4cead8d477b4831cd",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T22:14:46.739Z"
+    },
+    "learn-github-fabio-rovai-open-ontologies": {
+      "learning_id": "learn-github-fabio-rovai-open-ontologies",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "fabio-rovai/open-ontologies",
+      "repository": "fabio-rovai/open-ontologies",
+      "slug": "fabio-rovai-open-ontologies",
+      "platform": "github",
+      "source_url": "https://github.com/fabio-rovai/open-ontologies",
+      "source_version": "214e948e",
+      "content_hash": "3383144cd519e711126c2cc617322cb4431ea3f0bc0b0597a91059f07685a564",
+      "dossier_path": "07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8659,
+          "title": "One changelog entry under Unreleased Fixed covers #382 and #402, including blank",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T22:14:50.369Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8659": {
+      "learning_id": "rule-8659",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8659,
+      "title": "One changelog entry under Unreleased Fixed covers #382 and #402, including blank",
+      "source_url": "https://github.com/fabio-rovai/open-ontologies",
+      "source_version": "214e948e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T22:14:50.369Z"
+    },
+    "candidate_directive-one-changelog-entry-under-unreleased-fixed-covers-382-and-402-including-blank": {
+      "item_id": "candidate_directive-one-changelog-entry-under-unreleased-fixed-covers-382-and-402-including-blank",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-7ZNB-one-changelog-entry-under-unreleased-fixed-covers-382-and-402-including-blank.md",
+      "title": "One changelog entry under Unreleased Fixed covers #382 and #402, including blank",
+      "repository": "fabio-rovai-open-ontologies-learnings",
+      "source_version": "HEAD",
+      "content_hash": "10bb547d61a4416a5fd1a1afd8dec4a1d311746f3e959cef4f0cebe575649f69",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T22:15:23.459Z"
+    },
+    "domain_intelligence-architecture-intelligence-fabio-rovai-open-ontologies-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-fabio-rovai-open-ontologies-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-fabio-rovai-open-ontologies-architecture-intelligence-fabio-rovai-open-ontologie.md",
+      "title": "Architecture Intelligence: fabio-rovai/open-ontologies Core Invariants",
+      "repository": "fabio-rovai/open-ontologies",
+      "source_version": "214e948e",
+      "content_hash": "3d2e1dbc0f4409c7964bab4ac46383d806ea9168db95a2ed276c1982aeaa279c",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T22:14:50.810Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-fabio-rovai-open-ontologies": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-fabio-rovai-open-ontologies",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/fabio-rovai-open-ontologies-verification-protocol-empirical-defect-shield-for-fa.md",
+      "title": "Verification Protocol: Empirical Defect Shield for fabio-rovai/open-ontologies",
+      "repository": "fabio-rovai/open-ontologies",
+      "source_version": "214e948e",
+      "content_hash": "2e76a3450c3bd78f81d8d08da775e996fca122dd1fbf3b921885a90d9f405770",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T22:14:50.926Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-conwayresearch-underdog-woof-learnings-core-i": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-conwayresearch-underdog-woof-learnings-core-i",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-conwayresearch-underdog-woof-learnings-research-knowledge-intelligence-hf-con.md",
+      "title": "Research & Knowledge Intelligence: hf-conwayresearch-underdog-woof-learnings Core Invariants",
+      "repository": "hf-conwayresearch-underdog-woof-learnings",
+      "source_version": "HEAD",
+      "content_hash": "962b2d1d72b9cff59b83ff5db12304a62fd85867ca64794db5a78cae641a6d40",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T22:15:23.031Z"
+    },
+    "domain_intelligence-architecture-intelligence-fabio-rovai-open-ontologies-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-fabio-rovai-open-ontologies-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-fabio-rovai-open-ontologies-learnings-architecture-intelligence-fabio-rovai-open.md",
+      "title": "Architecture Intelligence: fabio-rovai-open-ontologies-learnings Core Invariants",
+      "repository": "fabio-rovai-open-ontologies-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e119d2ecada51b85838309228c74d3d23ab08f1da3c4c95f2187f6450155dfd4",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T22:15:23.574Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-fabio-rovai-open-ontologies-le": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-fabio-rovai-open-ontologies-le",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/fabio-rovai-open-ontologies-learnings-verification-protocol-empirical-defect-shi.md",
+      "title": "Verification Protocol: Empirical Defect Shield for fabio-rovai-open-ontologies-learnings",
+      "repository": "fabio-rovai-open-ontologies-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1b9b3f5b5e1ad5aff0a4a5a3de75c1458bbc11d6170a8afa52ec46e010c9ffa1",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T22:15:23.706Z"
     }
   },
   "ai-builder-brain": {

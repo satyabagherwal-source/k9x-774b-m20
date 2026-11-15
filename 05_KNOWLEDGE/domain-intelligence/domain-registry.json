@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T22:03:49.301Z",
-  "total_records": 1132,
+  "last_updated": "2026-11-15T22:15:24.199Z",
+  "total_records": 1137,
   "domains": {
     "A": {
       "total": 7,
@@ -37,7 +37,7 @@
       ]
     },
     "D": {
-      "total": 548,
+      "total": 551,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -586,7 +586,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-minimax-h3-image-learnings-core-inv",
         "domain_intelligence-research-knowledge-intelligence-mradermacher-gemma-4-31b-it-ara-heretic-gguf-cor",
         "DOM-D-E9AE08D3",
-        "domain_intelligence-research-knowledge-intelligence-hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf-"
+        "domain_intelligence-research-knowledge-intelligence-hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf-",
+        "domain_intelligence-research-knowledge-intelligence-conwayresearch-underdog-woof-core-invariants",
+        "DOM-D-5FCF2E96",
+        "domain_intelligence-research-knowledge-intelligence-hf-conwayresearch-underdog-woof-learnings-core-i"
       ]
     },
     "E": {
@@ -625,7 +628,7 @@
       ]
     },
     "G": {
-      "total": 193,
+      "total": 195,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -819,7 +822,9 @@
         "domain_intelligence-architecture-intelligence-modelcontextprotocol-kotlin-sdk-learnings-core-invaria",
         "domain_intelligence-architecture-intelligence-materializeinc-materialize-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-mlua-rs-mlua-core-invariants",
-        "domain_intelligence-architecture-intelligence-mlua-rs-mlua-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-mlua-rs-mlua-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-fabio-rovai-open-ontologies-core-invariants",
+        "domain_intelligence-architecture-intelligence-fabio-rovai-open-ontologies-learnings-core-invariants"
       ]
     },
     "H": {
@@ -13923,8 +13928,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "12697b66054dfaf5fa5eaacc550ca2e35beff96ab144f510a0078a270835406c",
-      "created_at": "2026-11-15T19:04:45.054Z"
+      "content_hash": "81d81a9e1adaeffdde852baa327acefa00e076515143c02f4e710eb7a72ee30b",
+      "created_at": "2026-11-15T22:15:24.199Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
@@ -21460,6 +21465,84 @@
       "repository": "hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf-learnings",
       "content_hash": "26b3f138acad8914cc0db2850490d8f43e7d29085b90ab3efa4bccfc1f9a3ffd",
       "created_at": "2026-11-15T21:45:22.835Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-conwayresearch-underdog-woof-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-conwayresearch-underdog-woof-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: ConwayResearch/Underdog-Woof Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-conwayresearch-underdog-woof-research-knowledge-intelligence-conwayresearch-u.md",
+      "repository": "ConwayResearch/Underdog-Woof",
+      "content_hash": "bd5f3a1d52e15eaef1692728657a90ad77525c4282420ba4cead8d477b4831cd",
+      "created_at": "2026-11-15T22:14:46.739Z"
+    },
+    "domain_intelligence-architecture-intelligence-fabio-rovai-open-ontologies-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-fabio-rovai-open-ontologies-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: fabio-rovai/open-ontologies Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-fabio-rovai-open-ontologies-architecture-intelligence-fabio-rovai-open-ontologie.md",
+      "repository": "fabio-rovai/open-ontologies",
+      "content_hash": "3d2e1dbc0f4409c7964bab4ac46383d806ea9168db95a2ed276c1982aeaa279c",
+      "created_at": "2026-11-15T22:14:50.810Z"
+    },
+    "DOM-D-5FCF2E96": {
+      "record_id": "DOM-D-5FCF2E96",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): ConwayResearch/Underdog-Woof",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-conwayresearch-underdog-woof-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/ConwayResearch/Underdog-Woof](https://huggingface.co/ConwayResearch/Underdog-Woof))  \n> **Source Version**: `hf-conwayres`  \n> **License**: Open-",
+      "content_hash": "8540ee540c33aaf6e09e8636f5529c61b25b79e10133587f75a6b0722a89f2dc",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-conwayresearch-underdog-woof-learnings.md`  \n> **Source**: huggingface ([https:// -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-conwayresearch-underdog-woof-learnings.md`  \n> **Source**: huggingface ([https://",
+      "provenance": {
+        "source_uri": "project://hf-conwayresearch-underdog-woof/hf-conwayresearch-underdog-woof-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T22:14:53.903Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-conwayresearch-underdog-woof)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-conwayresearch-underdog-woof"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-15T22:15:22.807Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-conwayresearch-underdog-woof-learnings-core-i": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-conwayresearch-underdog-woof-learnings-core-i",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-conwayresearch-underdog-woof-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-conwayresearch-underdog-woof-learnings-research-knowledge-intelligence-hf-con.md",
+      "repository": "hf-conwayresearch-underdog-woof-learnings",
+      "content_hash": "962b2d1d72b9cff59b83ff5db12304a62fd85867ca64794db5a78cae641a6d40",
+      "created_at": "2026-11-15T22:15:23.031Z"
+    },
+    "domain_intelligence-architecture-intelligence-fabio-rovai-open-ontologies-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-fabio-rovai-open-ontologies-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: fabio-rovai-open-ontologies-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-fabio-rovai-open-ontologies-learnings-architecture-intelligence-fabio-rovai-open.md",
+      "repository": "fabio-rovai-open-ontologies-learnings",
+      "content_hash": "e119d2ecada51b85838309228c74d3d23ab08f1da3c4c95f2187f6450155dfd4",
+      "created_at": "2026-11-15T22:15:23.574Z"
     }
   }
 }
