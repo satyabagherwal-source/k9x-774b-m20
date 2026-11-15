@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-15T14:25:39.809Z",
+  "last_updated": "2026-11-15T14:36:40.969Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "12fdf0025cfd636ff4ab1ae09c6740307c64df23dc378e13b7d54c71f7d9c503",
-      "verified_at": "2026-11-15T10:04:31.080Z",
+      "content_hash": "5a444e051d43c0e5d9fc1f3cb214374ca33bbf45bf56c412b99268a17b11d215",
+      "verified_at": "2026-11-15T14:36:40.968Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T10:04:31.080Z"
+      "last_updated": "2026-11-15T14:36:40.968Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -12036,14 +12036,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-momenbasel-puremac",
-      "content_hash": "02d6baf1e92f3110cae5f0dfee5e75a66d88094ca3fa0e284cce7fdcf0028639",
-      "verified_at": "2026-11-12T03:10:26.227Z",
+      "content_hash": "312f9911d44c53f6f1f917af6d30af505412fb12cbf1ff0a297a2c873f4105aa",
+      "verified_at": "2026-11-15T14:36:30.723Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T03:10:26.227Z"
+      "last_updated": "2026-11-15T14:36:30.723Z"
     },
     "nalexn/clean-architecture-swiftui": {
       "repository": "nalexn/clean-architecture-swiftui",

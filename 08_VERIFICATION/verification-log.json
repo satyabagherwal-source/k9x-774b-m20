@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261110-QWD6",
-    "timestamp": "2026-11-10T04:51:58.938Z",
-    "repository": "Diffuspace/Clover-35B-A3B-Preview",
-    "learningId": "learn-huggingface-diffuspace-clover-35b-a3b-preview",
-    "contentHash": "82d8dad52a736f54717c6345338421a26180a1b2145ff91682a06edfda116acb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261110-0CAG",
-    "timestamp": "2026-11-10T04:59:19.480Z",
-    "repository": "meshery/meshery",
-    "learningId": "learn-github-meshery-meshery",
-    "contentHash": "e3df3a0aea1a1c27e6dd3362df1b446416cb2f3b7b9e0393d8600665131ffe0d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261110-0HS8",
     "timestamp": "2026-11-10T04:59:26.600Z",
     "repository": "pyannote/speaker-diarization-3.1",
@@ -7490,6 +7460,36 @@
     "repository": "Tencent/LoopForge",
     "learningId": "learn-github-tencent-loopforge",
     "contentHash": "13e1d5169468e38812cdfa41d8b106e8dc7eb78b994b460c10c8ce0655923f50",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-TV94",
+    "timestamp": "2026-11-15T14:36:30.712Z",
+    "repository": "momenbasel/PureMac",
+    "learningId": "learn-github-momenbasel-puremac",
+    "contentHash": "312f9911d44c53f6f1f917af6d30af505412fb12cbf1ff0a297a2c873f4105aa",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-U35P",
+    "timestamp": "2026-11-15T14:36:40.957Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "5a444e051d43c0e5d9fc1f3cb214374ca33bbf45bf56c412b99268a17b11d215",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

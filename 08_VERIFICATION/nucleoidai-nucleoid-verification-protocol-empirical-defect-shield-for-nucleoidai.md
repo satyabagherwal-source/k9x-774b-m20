@@ -4,22 +4,22 @@
 {
   "source_repository": "NucleoidAI/Nucleoid",
   "source_url": "https://github.com/NucleoidAI/Nucleoid",
-  "source_version": "a19be499",
+  "source_version": "d594b14b",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-15T10:04:31.250Z",
+  "timestamp": "2026-11-15T14:36:41.129Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nucleoidai-nucleoid",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `a19be499`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-15T10:04:31.250Z`  
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `d594b14b`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-15T14:36:41.129Z`  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `NucleoidAI/Nucleoid` (Commit: `a19be499`)
+- **Target Repository**: `NucleoidAI/Nucleoid` (Commit: `d594b14b`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T10:04:30.161Z  
+> **Harvest Timestamp**: 2026-11-15T14:36:40.104Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1199,7 +1199,7 @@ export async function instances({
 }) {
   milestone.segmenting_training_objects();
 
-  const { dataset } = await llm.generate({
+  const { instances } = await llm.generate({
     puzzle_id,
     only_puzzle_dataset,
     messages: [
@@ -1221,11 +1221,9 @@ export async function instances({
           })}
           json_format:
           {
-            "dataset": [{
-              "instances": [{
-                "input_instance_matrix": <INPUT_INSTANCE_MATRIX>,
-                "output_instance_matrix": <OUTPUT_INSTANCE_MATRIX>
-              }]
+            "instances": [{
+              "input_instance_matrix": <INPUT_INSTANCE_MATRIX>,
+              "output_instance_matrix": <OUTPUT_INSTANCE_MATRIX>
             }]
           }
         `,
@@ -1233,9 +1231,9 @@ export async function instances({
     ],
   });
 
-  milestone.training_objects_segmented({ instances: dataset[0].instances });
+  milestone.training_objects_segmented({ instances });
 
-  return { instances: dataset[0].instances };
+  return { instances };
 }
 
 // Each synthesis turns the extracted instances of a training pair clockwise by
@@ -1425,6 +1423,7 @@ export async function value({
             matrix: Matrix.silhouette(
               Matrix.crop(instance.input_instance_matrix)
             ),
+            orientation: "<ORIENTATION>",
           })}
           json_format:
           {
@@ -1435,7 +1434,7 @@ export async function value({
     ],
   });
 
-  const { dataset } = await llm.generate({
+  const { implementation } = await llm.generate({
     puzzle_id,
     only_puzzle_dataset,
     few_shot: (train_dataset) => ({
@@ -1465,7 +1464,7 @@ export async function value({
                   .map((instance) => ({
                     ...instance,
                     input_matrix: Matrix.crop(instance.input_instance_matrix),
-           
+                    output_matrix: Matrix.crop(instan
 ```
 
 ### Core Architecture Module: `arc/src/app.ts`
@@ -1480,7 +1479,7 @@ import fs from "node:fs/promises";
 
 // Genesis puzzle_id: 3aa6fb7a
 export async function start(
-  puzzle_id: string = "3aa6fb7a",
+  puzzle_id: string = "d631b094",
   only_puzzle_dataset: boolean = false
 ) {
   const { arc_train, test_input_matrix, test_output_matrix } =
@@ -1740,254 +1739,261 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a19be499` (2026-11-15)
-**Commit Message**: Exclude single-pixel objects from ARC synthesis
+### Incident Patch 1: `d594b14b` (2026-11-15)
+**Commit Message**: Simplify ARC model response formats
 
-Skip single-pixel instances when generating rotated training pairs, and update synthesis documentation. Add output placeholders to analyzer queries for declarations and instance segmentation.
+Flatten segmentation, implementation, and output matrix responses and update their prompt examples. Log model responses and change the default puzzle to d631b094.
 
-**File**: `.claude/agents/arc-debug.agent.md` (modified, +16/-9)
+**File**: `arc/src/analyzer.ts` (modified, +10/-16)
 ```diff
-@@ -82,10 +82,13 @@ between that code and the log. At the time of writing, `start()` writes
-    instances get their `instance_name`, then `analyzer.synthesize` (no LLM)
-    creates three synthesized pairs per training pair, one per synthesis:
-    every extracted instance turned clockwise by 90 degrees and moved by
--   x+1 y+1, x-1 y+1 or x-1 y-1. They follow the training pairs in
--   `train_dataset.dataset`, three per training pair in turn, in that order.
--   Each holds one instance per extracted instance of its source pair, in
--   source order, with `synthesis` (`source`, `rotation`, `offset`), named
-+   x+1 y+1, x-1 y+1 or x-1 y-1, except an instance whose object, its input
-+   object or its output object when the input is empty, is a single pixel.
-+   A training pair without other instances gains none. They follow the
-+   training pairs in `train_dataset.dataset`, three per training pair in
-+   turn, in that order. Each holds one instance per synthesized extracted
-+   instance of its source pair, in source order, with `synthesis` (`source`,
-+   `rotation`, `offset`), named
-    after every training pair's instances. Its `input_matrix` merges their
-    input grids, and its `output_matrix` merges their output grids under
-    `output_canvas`. Logs written before the synthesis have no synthesized
-@@ -150,8 +153,11 @@ Run every check that applies and record each result:
- - **Synthesis.** Three synthesized pairs per training pair follow the
-   training pairs, in training pair order, each pair's three in the synthesis
-   order x+1 y+1, x-1 y+1, x-1 y-1, all with rotation 90. Each holds one
--  instance per extracted instance of its source pair, in source order, whose
--  `source` names it. Recompute each instance from its source with the
-+  instance per extracted instance of its source pair whose object, its input
-+  object or its output object when the input is empty, is not a single pixel,
-+  in source order, whose `source` names it; a training pair whose instances
-+  are all single pixels has no synthesized pairs, and no `source` names a
-+  single pixel. Recompute each instance from its source with the
-   `Matrix.ts` helpers: turn the input and output crops with `Matrix.rotate`,
-   place the input crop at the source's located position plus the offset, and
-   place the output crop so that its gaps to the input object's bounding box
-@@ -186,9 +192,10 @@ Run every check that applies and record each result:
-   test answer. Re-run the logged declarations and implementations offline, one
-   program per pair, to confirm the state. For a synthesized instance, a
-   disagreement can also mean that a rule does not turn with its object, such
--  as a rim that always grows above its point, or that it reads a canvas that
--  grew to hold the turned objects, objects that overlap after turning, or a
--  list argument, such as cell positions, that carried over unturned.
-+  as one that always grows its object in one direction, or that it reads a
-+  canvas that grew to hold the turned objects, objects that overlap after
-+  turning, or a list argument, such as cell positions, that carried over
-+  unturned.
-   Report those separately from the extracted instances' disagreements, which
-   alone show the world model mispredicting its own training data.
- - **Test composition.** Every test `output_value` has integer `x` and `y`; a
-```
-
-**File**: `arc/README.md` (modified, +65/-60)
-```diff
-@@ -183,8 +183,8 @@ panels keep the same full number. The declarations header includes the
- output canvas instead of adding a separate milestone. Segmented-object panels
- use `Input` and `Output` without object-number labels. After each pair's
- segmentation, a `<count> training objects synthesized` step shows the `Input`
--and `Output` panels of the three training pairs synthesized from it, titled
--with their synthesis, such as `Input · +90° x-1 y+1`. A synthesized
-+and `Output` panels of the training pairs synthesized from it, titled with
-+their synthesis, such as `Input · +90° x-1 y+1`. A synthesized
- instance's construction starts with a `Deriving <instance> from <source>`
- step. Model
- token usage remains
-@@ -2562,63 +2562,69 @@ it by an offset:
- 2. `+90` degrees, x `-1`, y `+1`
- 3. `+90` degrees, x `-1`, y `-1`
+@@ -43,7 +43,7 @@ export async function instances({
+ }) {
+   milestone.segmenting_training_objects();
  
-+An instance whose object, its input object or its output object when the input
-+is empty, is a single pixel is not synthesized, and a training pair without
-+other instances gains no synthesized pairs.
-+
- An instance's input and output objects turn together about its input object's
- bounding box, which keeps its top-left corner, so the input object moves to its
- position plus the offset, and the output object keeps its place relative to
- the input object, turned with it. A marker beyond a corner's vertex in
- `dataset.core.json` stays beyond the turned vertex, and a line in
- `dataset.line.json` still grows at its turned tail, so the rules of both
- datasets give each synthesized output the box it is drawn in. A rule that does
--not turn with its object, such as the curve rim that always grows above or
--below its point, disagrees with the synthesized output instead. An instance
-+not turn with its object disagrees with the synthesized output instead. The
-+curve rim, which always grows above or below its point, is such a rule, but
-+the points of `dataset.curve.json` are single pixels, so they are not
-+synthesized. An instance
- whose input is empty turns about its output object, and an object without
- cells stays an all-zero grid. Turning swaps an object's row and column counts.
- 
--A synthesized pair holds one instance per extracted instance, in the same
--order, each turned and moved by the pair's synthesis. `Matrix.draw` draws each
--turned object on a grid of its source matrix's size that grows left, up,
--right, or down to hold it, and every grid of the pair is then drawn on one
-+A synthesized pair holds one instance per synthesized extracted instance, in
-+the same order, each turned and moved by the pair's synthesis. `Matrix.draw`
-+draws each turned object on a grid of its source matrix's size that grows left,
-+up, right, or down to hold it, and every grid of the pair is then drawn on one
- frame that covers them all, so they line up. The frame starts at its top-left
- cell, so positions in a synthesized pair are never negative, and a pair whose
--objects reach past an edge of the source canvas is larger than its source
--pair. These grids are the instances' `input_instance_matrix` and
--`output_instance_matrix`. The pair's `input_matrix` merges its input grids,
--and its `output_matrix` merges its output grids under the output canvas, so
--`FIT` crops it. Turned objects that land on the same cell overlap there, and
--the later one wins in the merge, as in `Matrix.merge`. Each instance records
--its synthesis. For x `-1` and y `+1`, a vertical domino at a 3 by 3 grid's
--left edge, with a marker right of its bottom cell, turns into a horizontal
--domino with the marker below its left cell, growing the frame one column left
--and one row down, and a dot in the grid's top-right corner moves one column
--left and one row down:
-+objects reach past an edge of the source canvas is larger than its source pair.
-+These grids are the instances' `input_instance_matrix` and
-+`output_instance_matrix`. The pair's `input_matrix` merges its input grids, and
-+its `output_matrix` merges its output grids under the output canvas, so `FIT`
-+crops it. Turned objects that land on the same cell overlap there, and the
-+later one wins in the merge, as in `Matrix.merge`. Each instance records its
-+synthesis. For x `-1` and y `+1`, in a grid of 3 rows and 4 columns, a vertical
-+domino at the left edge, with a marker right of its bottom cell, turns into a
-+horizontal domino with the marker below its left cell, growing the frame one
-+column left and one row down, and a horizontal domino in the top-right corner
-+turns vertical and moves one column left and one row down:
- 
- ```json
- {
-   "input_matrix": [
--    [0, 0, 0, 0],
--    [0, 0, 7, 0],
--    [5, 5, 0, 0],
--    [0, 0, 0, 0]
-+    [0, 0, 0, 0, 0],
-+    [0, 0, 7, 0, 0],
-+    [5, 5, 7, 0, 0],
-+    [0, 0, 0, 0, 0]
-   ],
-   "output_matrix": [
--    [0, 0, 0, 0],
--    [0, 0, 7, 0],
--    [5, 5, 0, 0],
--    [1, 0, 0, 0]
-+    [0, 0, 0, 0, 0],
-+    [0, 0, 7, 0, 0],
-+    [5, 5, 7, 0, 0],
-+    [1, 0, 0, 0, 0]
-   ],
-   "instances": [
-     {
-       "input_instance_matrix": [
--        [0, 0, 0, 0],
--     
-```
-
-**File**: `arc/src/analyzer.ts` (modified, +37/-10)
-```diff
-@@ -19,7 +19,11 @@ export async function declarations({
-         role: "user",
-         content: `
-           query:
--          ${JSON.stringify(train_dataset)}
-+          ${JSON.stringify({
-+            ...train_dataset,
-+            declarations: "<DECLARATIONS>",
-+            output_canvas: "<OUTPUT_CANVAS>",
-+          })}
-           json_format:
-           { "declarations": <DECLARATIONS>, "output_canvas": <OUTPUT_CANVAS> }
-         `,
-@@ -47,7 +51,18 @@ export async function instances({
-         role: "user",
-         content: `
-           query:
--          ${JSON.stringify(train_dataset)}
-+          ${JSON.stringify({
-+            ...train_dataset,
-+            dataset: train_dataset.dataset.map((dataset) => ({
-+              ...dataset,
-+              instances: [
-+                {
-+                  input_instance_matrix: "<INPUT_INSTANCE_MATRIX>",
-+                  output_instance_matrix: "<OUTPUT_INSTANCE_MATRIX>",
-+                },
-+              ],
-+            })),
-+          })}
+-  const { dataset } = await llm.generate({
++  const { instances } = await llm.generate({
+     puzzle_id,
+     only_puzzle_dataset,
+     messages: [
+@@ -65,21 +65,19 @@ export async function instances({
+           })}
            json_format:
            {
-             "dataset": [{
-@@ -121,6 +136,15 @@ function frame(drawing, drawings) {
-   return Matrix.merge(drawing, ...blanks).matrix;
+-            "dataset": [{
+-              "instances": [{
+-                "input_instance_matrix": <INPUT_INSTANCE_MATRIX>,
+-                "output_instance_matrix": <OUTPUT_INSTANCE_MATRIX>
+-              }]
++            "instances": [{
++              "input_instance_matrix": <INPUT_INSTANCE_MATRIX>,
++              "output_instance_matrix": <OUTPUT_INSTANCE_MATRIX>
+             }]
+           }
+         `,
+       },
+     ],
+   });
+ 
+-  milestone.training_objects_segmented({ instances: dataset[0].instances });
++  milestone.training_objects_segmented({ instances });
+ 
+-  return { instances: dataset[0].instances };
++  return { instances };
  }
  
-+// The bounding box an instance turns about: its input object's, or its output
-+// object's when the input is empty.
-+function pivot_box(instance) {
-+  const input = Matrix.locate(instance.input_instance_matrix);
-+  return input.width > 0
-+    ? input
-+    : Matrix.locate(instance.output_instance_matrix);
-+}
-+
- // The training pair that one synthesis makes of a training pair's extracted
- // instances: each instance's input and output objects turn together about its
- // input object's bounding box, or its output object's when the input is empty,
-@@ -132,9 +156,7 @@ function frame(drawing, drawings) {
- // where turned objects overlap.
- function synthesized_pair(instances, { rotation, offset }, output_canvas) {
-   const drawings = instances.map((instance) => {
--    const input = Matrix.locate(instance.input_instance_matrix);
--    const pivot =
--      input.width > 0 ? input : Matrix.locate(instance.output_instance_matrix);
-+    const pivot = pivot_box(instance);
+ // Each synthesis turns the extracted instances of a training pair clockwise by
+@@ -269,6 +267,7 @@ export async function value({
+             matrix: Matrix.silhouette(
+               Matrix.crop(instance.input_instance_matrix)
+             ),
++            orientation: "<ORIENTATION>",
+           })}
+           json_format:
+           {
+@@ -279,7 +278,7 @@ export async function value({
+     ],
+   });
  
-     return {
-       source: instance.instance_name,
-@@ -164,13 +186,18 @@ function synthesized_pair(instances, { rotation, offset }, output_canvas) {
- }
+-  const { dataset } = await llm.generate({
++  const { implementation } = await llm.generate({
+     puzzle_id,
+     only_puzzle_dataset,
+     few_shot: (train_dataset) => ({
+@@ -323,6 +322,7 @@ export async function value({
+             dataset: [
+               {
+                 instances: [instance],
++                implementation: "<IMPLEMENTATION>",
+               },
+             ],
+           })}
+@@ -333,19 +333,13 @@ export async function value({
+           orientation: ${orientation}
+           json_format:
+           {
+-            "dataset": [{
+-              "instances": [{
+-                "implementation": <IMPLEMENTATION>
+-              }]
+-            }]
++            "implementation": <IMPLEMENTATION>
+           }  
+         `,
+       },
+     ],
+   });
  
- // Synthesizes three training pairs from a training pair's extracted instances,
--// one per synthesis, each holding every instance turned and moved by it. A
--// pair without instances synthesizes none.
-+// one per synthesis, each holding every instance turned and moved by it. An
-+// instance whose object is a single pixel is not synthesized, and a pair
-+// without other instances synthesizes none.
- export function synthesize({ instances, output_canvas }) {
-+  const sources = instances.filter((instance) => {
-+    const { width, height } = pivot_box(instance);
-+    return width !== 1 || height !== 1;
-+  });
-   const dataset =
--    instances.length > 0
-+    sources.length > 0
-       ? SYNTHESES.map((synthesis) =>
--          synthesized_pair(instances, synthesis, output_canvas)
-+          synthesized_pair(sources, synthesis, output_canvas)
-         )
-       : [];
+-  const implementation = dataset[0].instances[0].implementation;
+-
+   milestone.evaluating_rules({ instance_name: instance.instance_name });
  
-@@ -340,7 +367,7 @@ export async function value({
+   const input_value = await evaluate(
+```
+
+**File**: `arc/src/app.ts` (modified, +1/-1)
+```diff
+@@ -8,7 +8,7 @@ import fs from "node:fs/promises";
  
- // The orientation of a shape turned clockwise by the rotation, as the datasets
- // label orientation by shape: a shape that the turn leaves unchanged, such as a
--// single cell, keeps its orientation, a shape that a half turn leaves
-+// square, keeps its orientation, a shape that a half turn leaves
- // unchanged, such as a bar, counts it modulo 180 degrees, and any other shape
- // counts it modulo 360 degrees.
- function turned_orientation(matrix, orientation: number, rotation: number) {
+ // Genesis puzzle_id: 3aa6fb7a
+ export async function start(
+-  puzzle_id: string = "3aa6fb7a",
++  puzzle_id: string = "d631b094",
+   only_puzzle_dataset: boolean = false
+ ) {
+   const { arc_train, test_input_matrix, test_output_matrix } =
+```
+
+**File**: `arc/src/lib/openrouter.ts` (modified, +1/-0)
+```diff
+@@ -79,6 +79,7 @@ export async function generate({ reasoning = false, messages = [] }) {
+   let jsonContent;
+ 
+   try {
++    console.debug(content);
+     jsonContent = JSON.parse(content);
+   } catch (error) {
+     throw new Error(
+```
+
+**File**: `arc/src/visualizer.ts` (modified, +22/-26)
+```diff
+@@ -11,7 +11,7 @@ export async function instances({
+ }) {
+   milestone.segmenting_test_input({ test_input_matrix });
+ 
+-  const { dataset } = await llm.generate({
++  let { instances } = await llm.generate({
+     puzzle_id,
+     only_puzzle_dataset,
+     few_shot: null,
+@@ -41,30 +41,34 @@ export async function instances({
+           query:
+           ${JSON.stringify({
+             declarations: train_dataset.declarations[0],
+-            dataset: {
+-              instance_matrix: test_input_matrix,
+-            },
++            dataset: [
++              {
++                instance_matrix: test_input_matrix,
++                instances: [
++                  {
++                    instance_matrix: "<INSTANCE_MATRIX>",
++                  },
++                ],
++              },
++            ],
+           })}
+           json_format:
+           {
+-            dataset: [{
+-              "instances": [{
+-                "instance_matrix": <INSTANCE_MATRIX>
+-              }]
++            "instances": [{
++              "instance_matrix": <INSTANCE_MATRIX>
+             }]
+           }
+         `,
+       },
+     ],
+   });
+ 
+-  dataset[0].instances = dataset[0].instances.map((instance) => ({
++  instances = instances.map((instance) => ({
+     ...instance,
+     input_instance_matrix: instance.instance_matrix,
++    instance_matrix: undefined,
+   }));
+ 
+-  const instances = dataset[0].instances;
+-
+   milestone.test_input_segmented({ instances });
+ 
+   return { instances };
+@@ -124,6 +128,7 @@ export async function value({
+             matrix: Matrix.silhouette(
+               Matrix.crop(instance.input_instance_matrix)
+             ),
++            orientation: "<ORIENTATION>",
+           })}
+           json_format:
+           {
+@@ -134,7 +139,7 @@ export async function value({
+     ],
+   });
+ 
+-  const { dataset } = await llm.generate({
++  const { implementation } = await llm.generate({
+     puzzle_id,
+     only_puzzle_dataset,
+     few_shot: null,
+@@ -168,6 +173,7 @@ export async function value({
+             dataset: [
+               {
+                 instances: [instance],
++                implementation: "<IMPLEMENTATION>",
+               },
+             ],
+           })}
+@@ -178,19 +184,13 @@ export async function value({
+           orientation: ${orientation}
+           json_format:
+           {
+-            "dataset": [{
+-              "instances": [{
+-                "implementation": <IMPLEMENTATION>
+-              }]
+-            }]
++            "implementation": <IMPLEMENTATION>
+           }  
+         `,
+       },
+     ],
+   });
+ 
+-  const implementation = dataset[0].instances[0].implementation;
+-
+   milestone.instance_synthesized({
+     instance_name,
+     input_instance_matrix,
+@@ -225,7 +225,7 @@ export async function output_instance_matrix({
+ 
+   milestone.composing_output({ instance_name: instance.instance_name });
+ 
+-  const { dataset } = await llm.generate({
++  const { output_instance_matrix } = await llm.generate({
+     puzzle_id,
+     only_puzzle_dataset,
+     few_shot: null,
+@@ -263,25 +263,21 @@ export async function output_instance_matrix({
+                     input_instance_matrix: Matrix.crop(
+                       instance.input_instance_matrix
+                     ),
++                    output_instance_matrix: "<OUTPUT_INSTANCE_MATRIX>",
+                   },
+                 ],
+               },
+             ],
+           })}
+           json_format:
+           {
+-            "dataset": [{
+-              "instances": [{
+-                "output_instance_matrix": <OUTPUT_INSTANCE_MATRIX>
+-              }]
+-            }]
++            "output_instance_matrix": <OUTPUT_INSTANCE_MATRIX>
+           }
+         `,
+       },
+     ],
+   });
+ 
+-  const output_instance_matrix = dataset[0].instances[0].output_instance_matrix;
+   instance.output_instance_matrix = output_instance_matrix;
+ 
+   milestone.output_composed(instance);
 ```
 
 #### Recent Merged Pull Requests:
@@ -2016,54 +2022,55 @@ Skip single-pixel instances when generating rotated training pairs, and update s
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Exclude single-pixel objects from ARC synthesis
+## X. Simplify ARC model response formats
 
 **RULE**:
-When implementing operations in `.claude/agents/arc-debug.agent.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `arc/src/analyzer.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a19be499`: Exclude single-pixel objects from ARC synthesis. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d594b14b`: Simplify ARC model response formats. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/agents/arc-debug.agent.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/src/analyzer.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-   x+1 y+1, x-1 y+1 or x-1 y-1, except an instance whose object, its input
-   object or its output object when the input is empty, is a single pixel.
-   A training pair without other instances gains none. They follow the
-   training pairs in `train_dataset.dataset`, three per training pair in
-   turn, in that order. Each holds one instance per synthesized extracted
-   instance of its source pair, in source order, with `synthesis` (`source`,
-   `rotation`, `offset`), named
-  instance per extracted instance of its source pair whose object, its input
-  object or its output object when the input is empty, is not a single pixel,
-  in source order, whose `source` names it; a training pair whose instances
-  are all single pixels has no synthesized pairs, and no `source` names a
-  single pixel. Recompute each instance from its source with the
-  as one that always grows its object in one direction, or that it reads a
-  canvas that grew to hold the turned objects, objects that overlap after
-  turning, or a list argument, such as cell positions, that carried over
-  unturned.
+  const { instances } = await llm.generate({
+            "instances": [{
+              "input_instance_matrix": <INPUT_INSTANCE_MATRIX>,
+              "output_instance_matrix": <OUTPUT_INSTANCE_MATRIX>
+  milestone.training_objects_segmented({ instances });
+  return { instances };
+            orientation: "<ORIENTATION>",
+  const { implementation } = await llm.generate({
+                implementation: "<IMPLEMENTATION>",
+            "implementation": <IMPLEMENTATION>
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-   x+1 y+1, x-1 y+1 or x-1 y-1. They follow the training pairs in
-   `train_dataset.dataset`, three per training pair in turn, in that order.
-   Each holds one instance per extracted instance of its source pair, in
-   source order, with `synthesis` (`source`, `rotation`, `offset`), named
-  instance per extracted instance of its source pair, in source order, whose
-  `source` names it. Recompute each instance from its source with the
-  as a rim that always grows above its point, or that it reads a canvas that
-  grew to hold the turned objects, objects that overlap after turning, or a
-  list argument, such as cell positions, that carried over unturned.
+  const { dataset } = await llm.generate({
+            "dataset": [{
+              "instances": [{
+                "input_instance_matrix": <INPUT_INSTANCE_MATRIX>,
+                "output_instance_matrix": <OUTPUT_INSTANCE_MATRIX>
+              }]
+  milestone.training_objects_segmented({ instances: dataset[0].instances });
+  return { instances: dataset[0].instances };
+  const { dataset } = await llm.generate({
+            "dataset": [{
+              "instances": [{
+                "implementation": <IMPLEMENTATION>
+              }]
+            }]
+  const implementation = dataset[0].instances[0].implementation;
+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a19be499` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d594b14b` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

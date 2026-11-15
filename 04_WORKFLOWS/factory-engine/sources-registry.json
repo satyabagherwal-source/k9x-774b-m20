@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-15T14:25:55.221Z",
-    "lastVerified": "2026-11-15T14:25:55.221Z",
+    "lastChecked": "2026-11-15T14:36:43.959Z",
+    "lastVerified": "2026-11-15T14:36:43.959Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -468,22 +468,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-15T13:27:30.714Z",
-    "lastVerified": "2026-11-15T13:27:30.714Z",
+    "lastChecked": "2026-11-15T14:36:40.104Z",
+    "lastVerified": "2026-11-15T14:36:40.104Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "12fdf0025cfd636ff4ab1ae09c6740307c64df23dc378e13b7d54c71f7d9c503",
+    "contentHash": "5a444e051d43c0e5d9fc1f3cb214374ca33bbf45bf56c412b99268a17b11d215",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "a19be499"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -1771,9 +1770,9 @@
   "nexus-xyz-nexus-zkvm": {
     "name": "nexus-zkvm",
     "officialUrl": "https://github.com/nexus-xyz/nexus-zkvm",
-    "lastChecked": "2026-11-15T04:18:04.649Z",
+    "lastChecked": "2026-11-15T14:36:32.083Z",
     "revisionIdentifier": "f2ad1265",
-    "lastVerified": "2026-11-15T04:18:04.649Z"
+    "lastVerified": "2026-11-15T14:36:32.083Z"
   },
   "seaql-sea-orm": {
     "name": "sea-orm",
@@ -1848,9 +1847,9 @@
   "kubesphere-kubesphere": {
     "name": "kubesphere",
     "officialUrl": "https://github.com/kubesphere/kubesphere",
-    "lastChecked": "2026-11-14T02:45:55.587Z",
+    "lastChecked": "2026-11-15T14:36:29.523Z",
     "revisionIdentifier": "04a29b5c",
-    "lastVerified": "2026-11-14T02:45:55.587Z"
+    "lastVerified": "2026-11-15T14:36:29.523Z"
   },
   "zama-ai-tfhe-rs": {
     "name": "tfhe-rs",
@@ -3361,9 +3360,9 @@
   "liyupi-yu-ai-agent": {
     "name": "yu-ai-agent",
     "officialUrl": "https://github.com/liyupi/yu-ai-agent",
-    "lastChecked": "2026-11-14T00:48:39.801Z",
+    "lastChecked": "2026-11-15T14:36:34.514Z",
     "revisionIdentifier": "6d4608c5",
-    "lastVerified": "2026-11-14T00:48:39.801Z"
+    "lastVerified": "2026-11-15T14:36:34.514Z"
   },
   "clementtsang-bottom": {
     "name": "ClementTsang/bottom",
@@ -4439,9 +4438,9 @@
   "chmln-sd": {
     "name": "sd",
     "officialUrl": "https://github.com/chmln/sd",
-    "lastChecked": "2026-11-13T17:10:49.172Z",
+    "lastChecked": "2026-11-15T14:36:22.022Z",
     "revisionIdentifier": "44febdf8",
-    "lastVerified": "2026-11-13T17:10:49.172Z"
+    "lastVerified": "2026-11-15T14:36:22.022Z"
   },
   "hf-timm-mobilenetv3_small_100.lamb_in1k": {
     "name": "timm/mobilenetv3_small_100.lamb_in1k",
@@ -9670,12 +9669,12 @@
     "officialUrl": "https://github.com/momenbasel/PureMac",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-12T03:10:25.922Z",
-    "lastVerified": "2026-11-12T03:10:25.922Z",
+    "lastChecked": "2026-11-15T14:36:30.227Z",
+    "lastVerified": "2026-11-15T14:36:30.227Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-momenbasel-puremac",
-    "contentHash": "02d6baf1e92f3110cae5f0dfee5e75a66d88094ca3fa0e284cce7fdcf0028639",
+    "contentHash": "312f9911d44c53f6f1f917af6d30af505412fb12cbf1ff0a297a2c873f4105aa",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -9917,9 +9916,9 @@
   "serpapi-google-search-results-ruby": {
     "name": "google-search-results-ruby",
     "officialUrl": "https://github.com/serpapi/google-search-results-ruby",
-    "lastChecked": "2026-11-10T00:10:06.866Z",
+    "lastChecked": "2026-11-15T14:36:24.567Z",
     "revisionIdentifier": "11326ef3",
-    "lastVerified": "2026-11-10T00:10:06.866Z"
+    "lastVerified": "2026-11-15T14:36:24.567Z"
   },
   "react-native-maps-react-native-maps": {
     "name": "react-native-maps",

@@ -10103,3 +10103,6 @@
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T13:40:24.606Z` | `hf-ccore-qwen3.5-4b-glb-3d-coder` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-55AF5812` [Domain D] | Yes (`1563ec67...`) |
 | `CYCLE-20261115-S3LP` | `2026-11-15T14:07:08.605Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8619` | Yes (`cd3e3a4c...`) |
 | `CYCLE-20261115-FX04` | `2026-11-15T14:25:39.796Z` | `Tencent/LoopForge` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8620` | Yes (`13e1d516...`) |
+| `CYCLE-20261115-TV94` | `2026-11-15T14:36:30.712Z` | `momenbasel/PureMac` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/momenbasel-puremac-learnings.md` | Yes (`312f9911...`) |
+| `CYCLE-20261115-U35P` | `2026-11-15T14:36:40.957Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8621` | Yes (`5a444e05...`) |
+| `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T14:37:12.400Z` | `momenbasel-puremac` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-E86C357A` [Domain D] | Yes (`36a7ccc3...`) |

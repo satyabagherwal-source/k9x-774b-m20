@@ -10136,3 +10136,6 @@ Every entry in this ledger must capture:
 | `learn-dom-d-55af5812` | `project://hf-ccore-qwen3.5-4b-glb-3d-coder` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-glb-3d-coder-learnings.md` | 2026-11-15T13:40:24.606Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `a6e090ae` | Multi-dimensional audit evidence | 2026-11-15T14:07:08.608Z |
 | `learn-github-tencent-loopforge` | `https://github.com/Tencent/LoopForge` | `dd565852` | Multi-dimensional audit evidence | 2026-11-15T14:25:39.800Z |
+| `learn-github-momenbasel-puremac` | `https://github.com/momenbasel/PureMac` | `656ec5b1` | Multi-dimensional audit evidence | 2026-11-15T14:36:30.716Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `d594b14b` | Multi-dimensional audit evidence | 2026-11-15T14:36:40.961Z |
+| `learn-dom-d-e86c357a` | `project://momenbasel-puremac` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/momenbasel-puremac-learnings.md` | 2026-11-15T14:37:12.400Z |

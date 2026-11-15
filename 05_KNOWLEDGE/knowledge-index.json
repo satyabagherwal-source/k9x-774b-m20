@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-15T14:25:56.962Z",
-  "total_verified_learnings": 8699,
+  "last_updated": "2026-11-15T14:37:13.865Z",
+  "total_verified_learnings": 8700,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18415,
+  "total_items": 18420,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -226488,13 +226488,13 @@
       "item_id": "candidate_directive-splash-screen-staying-visible-after-warm-start-on-android-12",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-S0VO-splash-screen-staying-visible-after-warm-start-on-android-12.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-USDN-splash-screen-staying-visible-after-warm-start-on-android-12.md",
       "title": "splash screen staying visible after warm start on Android 12+",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "1761fbe5d60286f869fe7c61d24ede051a2b7a53622edc120b3c98f068c0b499",
+      "content_hash": "57c6662f19f93252d195d2cd942c2eb2317c433ab0d34b4b4ce87d1caa987cc4",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T09:27:08.917Z"
+      "persisted_at": "2026-11-15T14:37:13.643Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co",
@@ -226504,9 +226504,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "95f15e5b25276a8c8943e6fea9ac34c81e8da5144e689a24f6b599da82296bc5",
+      "content_hash": "e9c54aaf0f0a0019681c000c4a6e3d21446df72b77e7f3322e90f0b234d66667",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T09:27:09.020Z"
+      "persisted_at": "2026-11-15T14:37:13.747Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -226516,9 +226516,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "ebc9196dd037f67e77e22f627c70512049258b130758ec3f2589c27916fabcbf",
+      "content_hash": "7b6b6d55dd07f34a8e451b77272060fce0bc96d3677b14dc6f094cd89226a7c3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T09:27:09.123Z"
+      "persisted_at": "2026-11-15T14:37:13.865Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -227317,8 +227317,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "a19be499",
-      "content_hash": "12fdf0025cfd636ff4ab1ae09c6740307c64df23dc378e13b7d54c71f7d9c503",
+      "source_version": "d594b14b",
+      "content_hash": "5a444e051d43c0e5d9fc1f3cb214374ca33bbf45bf56c412b99268a17b11d215",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -227341,6 +227341,11 @@
           "number": 8607,
           "title": "Exclude single-pixel objects from ARC synthesis",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8621,
+          "title": "Simplify ARC model response formats",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -227348,7 +227353,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T10:04:30.890Z",
+      "verified_at": "2026-11-15T14:36:40.806Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -227390,10 +227395,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "a19be499",
-      "content_hash": "ffde8384ba7381ffd934821196e526c2b63fdb17b7cde56f5ba5b4ca02bacabb",
+      "source_version": "d594b14b",
+      "content_hash": "a5174099c0fd6d0fda5e30ba972e30c6e8cd33182719d089fdfe5dbc5031ccc9",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T10:04:31.359Z"
+      "persisted_at": "2026-11-15T14:36:41.235Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -227402,10 +227407,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "a19be499",
-      "content_hash": "51dcc4de457ec25d9007729852ebefceb4cd876f6c82c5f76c3a9070340d5ed4",
+      "source_version": "d594b14b",
+      "content_hash": "ed8be464c233f15ad29b772fa45d1e69fe9ba5230fd84dc7cff364f53219f6c2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T10:04:31.468Z"
+      "persisted_at": "2026-11-15T14:36:41.338Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -228342,9 +228347,9 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "774fff39825a22f030c11ba4162def401d8e049a3f84892a19b272266798d8bd",
+      "content_hash": "4c60bbee0854f8ddf80fc948495e78a76266ed56e920eacd7ca696626dfae2ac",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T10:05:04.764Z"
+      "persisted_at": "2026-11-15T14:37:13.175Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid-learnings",
@@ -228354,9 +228359,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nucleoidai-nucleoid-learnings",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "cefac82a66657ed1ede4a9fb002f85322d3c5eebe8328dd57ca3d7b65faa99ff",
+      "content_hash": "dd8689a9df4ff1e972b6665581f6c89019c810f0034073030141d2ac01f9fdea",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T10:05:04.889Z"
+      "persisted_at": "2026-11-15T14:37:13.295Z"
     },
     "learn-huggingface-qwen-qwen3-8b": {
       "learning_id": "learn-huggingface-qwen-qwen3-8b",
@@ -243662,6 +243667,83 @@
       "content_hash": "0ea8c7397ec72d4e5a143f04e0929de5b6ee626366f4a189b54fb6b8995f2ece",
       "domain_letter": "K",
       "persisted_at": "2026-11-15T14:25:55.862Z"
+    },
+    "learn-github-momenbasel-puremac": {
+      "learning_id": "learn-github-momenbasel-puremac",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "momenbasel/PureMac",
+      "repository": "momenbasel/PureMac",
+      "slug": "momenbasel-puremac",
+      "platform": "github",
+      "source_url": "https://github.com/momenbasel/PureMac",
+      "source_version": "656ec5b1",
+      "content_hash": "312f9911d44c53f6f1f917af6d30af505412fb12cbf1ff0a297a2c873f4105aa",
+      "dossier_path": "07_PROJECT_LEARNING/momenbasel-puremac-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/momenbasel-puremac-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T14:36:30.568Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-architecture-intelligence-momenbasel-puremac-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-momenbasel-puremac-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-momenbasel-puremac-architecture-intelligence-momenbasel-puremac-core-invariants.md",
+      "title": "Architecture Intelligence: momenbasel/PureMac Core Invariants",
+      "repository": "momenbasel/PureMac",
+      "source_version": "656ec5b1",
+      "content_hash": "9d917468ec76a7ef9a84cd7235fa577746813fb4a52b2b3e11e8e5cd031857bb",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T14:36:30.878Z"
+    },
+    "rule-8621": {
+      "learning_id": "rule-8621",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8621,
+      "title": "Simplify ARC model response formats",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "d594b14b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T14:36:40.806Z"
+    },
+    "candidate_directive-simplify-arc-model-response-formats": {
+      "item_id": "candidate_directive-simplify-arc-model-response-formats",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-URXD-simplify-arc-model-response-formats.md",
+      "title": "Simplify ARC model response formats",
+      "repository": "nucleoidai-nucleoid-learnings",
+      "source_version": "HEAD",
+      "content_hash": "897cd89e72cdfa764eccdfacc7d397802ebfe3d3ea6cd560ff4750edb76d395e",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T14:37:13.069Z"
+    },
+    "domain_intelligence-architecture-intelligence-momenbasel-puremac-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-momenbasel-puremac-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-momenbasel-puremac-learnings-architecture-intelligence-momenbasel-puremac-learni.md",
+      "title": "Architecture Intelligence: momenbasel-puremac-learnings Core Invariants",
+      "repository": "momenbasel-puremac-learnings",
+      "source_version": "HEAD",
+      "content_hash": "26e3fd53e1a8b7d46303a5d5ca43fcb11b1740f49898b775a208de7b1629584c",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T14:37:12.624Z"
     }
   },
   "ai-builder-brain": {

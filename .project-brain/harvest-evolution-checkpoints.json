@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T14:25:57.061Z",
+  "last_updated": "2026-11-15T14:37:13.976Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-15T14:25:56.573Z",
@@ -253,7 +253,7 @@
       "staged_for_review": 1
     },
     "zoontek-react-native-bootsplash-learnings.md": {
-      "processed_at": "2026-11-15T09:27:08.710Z",
+      "processed_at": "2026-11-15T14:37:13.413Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -733,7 +733,7 @@
       "staged_for_review": 1
     },
     "momenbasel-puremac-learnings.md": {
-      "processed_at": "2026-11-12T03:10:59.806Z",
+      "processed_at": "2026-11-15T14:37:12.401Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
     },
@@ -773,7 +773,7 @@
       "staged_for_review": 1
     },
     "nucleoidai-nucleoid-learnings.md": {
-      "processed_at": "2026-11-15T10:05:04.291Z",
+      "processed_at": "2026-11-15T14:37:12.745Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2998,7 +2998,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1056,
-  "total_canonical_promoted": 262,
-  "total_staged_for_review": 794
+  "total_dossiers_evaluated": 1059,
+  "total_canonical_promoted": 263,
+  "total_staged_for_review": 796
 }
