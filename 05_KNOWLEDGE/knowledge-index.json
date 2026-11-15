@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-15T20:23:10.999Z",
-  "total_verified_learnings": 8721,
+  "last_updated": "2026-11-15T20:42:11.819Z",
+  "total_verified_learnings": 8722,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18579,
+  "total_items": 18595,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -215849,14 +215849,19 @@
       "slug": "nvidia-cuda-rust",
       "platform": "github",
       "source_url": "https://github.com/NVIDIA/cuda-rust",
-      "source_version": "7a7d160e",
-      "content_hash": "56f26b3ef881aa6d8a9d392d5c991932024d9f84632241af82e228581851b58e",
+      "source_version": "348895e4",
+      "content_hash": "5cf71739e5225697a324f0122805dddc6e9187d86e8dd928a5d4c4ceb70df743",
       "dossier_path": "07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
       "promoted_rules": [
         {
           "number": 8384,
           "title": "docs(cuda-oxide-book): rewrite Tile Libraries chapter, fix SVG diagrams, and add",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8645,
+          "title": "reject overflowing section lengths and varints in bytecode decoder",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -215865,7 +215870,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T21:16:06.595Z",
+      "verified_at": "2026-11-15T20:41:52.887Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -215907,10 +215912,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nvidia-cuda-rust-technical-construction-intelligence-nvidia-cuda-rust-core-invar.md",
       "title": "Technical Construction Intelligence: NVIDIA/cuda-rust Core Invariants",
       "repository": "NVIDIA/cuda-rust",
-      "source_version": "7a7d160e",
-      "content_hash": "360a74d735d3d3cd74530b6391e889f958194931b02d934fdfd049a76b7db4fb",
+      "source_version": "348895e4",
+      "content_hash": "5c60825589c1b6306ff2c35e0f1a7a4826be13eb1a67a0fd255ed7c4b2220b14",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T21:16:06.932Z"
+      "persisted_at": "2026-11-15T20:41:53.435Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nvidia-cuda-rust": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nvidia-cuda-rust",
@@ -215919,10 +215924,10 @@
       "relative_path": "08_VERIFICATION/nvidia-cuda-rust-verification-protocol-empirical-defect-shield-for-nvidia-cuda-r.md",
       "title": "Verification Protocol: Empirical Defect Shield for NVIDIA/cuda-rust",
       "repository": "NVIDIA/cuda-rust",
-      "source_version": "7a7d160e",
-      "content_hash": "8e98af129bca59e3bf4cc2316da7f4f9afbad435e3c3f4a9274661d03c84fa57",
+      "source_version": "348895e4",
+      "content_hash": "89507bd1ea8a3b3d221a2373adb39cb7462dd7079c7cc16d5e3b895326c883f6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T21:16:07.006Z"
+      "persisted_at": "2026-11-15T20:41:53.577Z"
     },
     "learn-github-infinitered-reactotron": {
       "learning_id": "learn-github-infinitered-reactotron",
@@ -216191,9 +216196,9 @@
       "title": "Technical Construction Intelligence: nvidia-cuda-rust-learnings Core Invariants",
       "repository": "nvidia-cuda-rust-learnings",
       "source_version": "HEAD",
-      "content_hash": "9138a2bfb86640534ece744bf8b91f89bce50f05241ec1c0ca6cf72d4ae99570",
+      "content_hash": "2021af56462fcae8da283e235aae62dda305516635836f4251c232b480004a36",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T21:16:21.426Z"
+      "persisted_at": "2026-11-15T20:42:09.839Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nvidia-cuda-rust-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nvidia-cuda-rust-learnings",
@@ -216203,9 +216208,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nvidia-cuda-rust-learnings",
       "repository": "nvidia-cuda-rust-learnings",
       "source_version": "HEAD",
-      "content_hash": "9d59332a1da027d0cb297f441d36ba9a1d085455f37d4d13f00fb7cae5fb5e80",
+      "content_hash": "d61d3f535f3776a654f4b8b5ba708b43c7cb67815e55d31c8ccc150a73cc55d7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T21:16:21.519Z"
+      "persisted_at": "2026-11-15T20:42:09.979Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-m3-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-m3-learnings-core-invariants",
@@ -224988,14 +224993,19 @@
       "slug": "materializeinc-materialize",
       "platform": "github",
       "source_url": "https://github.com/MaterializeInc/materialize",
-      "source_version": "ab4e4edb",
-      "content_hash": "bee7228afd9a4b35229b950d1fad5f36502711143899b80297b72267e573a23d",
+      "source_version": "2026293a",
+      "content_hash": "f47afe19e35374ed4468061e2b76cd05197217b0680bb6fa78f85213e404265f",
       "dossier_path": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "promoted_rules": [
         {
           "number": 8463,
           "title": "build(deps): Bump libz-sys from 1.1.31 to 1.1.33",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8647,
+          "title": "Nightly fixes (2026-11-13)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -225004,7 +225014,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T07:18:07.166Z",
+      "verified_at": "2026-11-15T20:42:05.818Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -225046,10 +225056,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-materializeinc-materialize-architecture-intelligence-materializeinc-materialize-.md",
       "title": "Architecture Intelligence: MaterializeInc/materialize Core Invariants",
       "repository": "MaterializeInc/materialize",
-      "source_version": "ab4e4edb",
-      "content_hash": "d4cdc58f7473fd88a18eca70df3df45a9f9201a66610d93db012f36d1043550f",
+      "source_version": "2026293a",
+      "content_hash": "d9547d3e6588bd315cfe5109988009aa30d80294d7a8f23425fbf8d42d19166e",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T07:18:07.636Z"
+      "persisted_at": "2026-11-15T20:42:06.346Z"
     },
     "agent_contract-agent-contract-materializeinc-materialize-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-materializeinc-materialize-autonomous-specialist-persona",
@@ -225058,10 +225068,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/materializeinc-materialize-agent-contract-materializeinc-materialize-autonomous-.md",
       "title": "Agent Contract: MaterializeInc/materialize Autonomous Specialist Persona",
       "repository": "MaterializeInc/materialize",
-      "source_version": "ab4e4edb",
-      "content_hash": "c186200b9b1ae7b8705361e8e6f04a7ad0a04db19b5a95bee539b4b8c597d46f",
+      "source_version": "2026293a",
+      "content_hash": "402ec803cffac2be6b40f379672a93ba059f258836dfbfe8d7879c1e82672fcf",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T07:18:07.737Z"
+      "persisted_at": "2026-11-15T20:42:06.485Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-materializeinc-materialize": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-materializeinc-materialize",
@@ -225070,10 +225080,10 @@
       "relative_path": "08_VERIFICATION/materializeinc-materialize-verification-protocol-empirical-defect-shield-for-mat.md",
       "title": "Verification Protocol: Empirical Defect Shield for MaterializeInc/materialize",
       "repository": "MaterializeInc/materialize",
-      "source_version": "ab4e4edb",
-      "content_hash": "4643eb9d05eb24767644199a2ca95c566e567148244cf9257307b89600624ae5",
+      "source_version": "2026293a",
+      "content_hash": "b2f96b5b3748bf980e4bb0f1f13e83e2c122169217962d6d66ea3ac0c954eaf1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T07:18:07.830Z"
+      "persisted_at": "2026-11-15T20:42:06.612Z"
     },
     "candidate_directive-windows-fix-the-unit-test-binary-crashing-at-startup-on-rust-1-100": {
       "item_id": "candidate_directive-windows-fix-the-unit-test-binary-crashing-at-startup-on-rust-1-100",
@@ -246140,6 +246150,225 @@
       "content_hash": "47ed60ec2e323eae02393725697bf4a0d82457484296c5971afbc98467e10833",
       "domain_letter": "K",
       "persisted_at": "2026-11-15T20:23:10.433Z"
+    },
+    "rule-8645": {
+      "learning_id": "rule-8645",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8645,
+      "title": "reject overflowing section lengths and varints in bytecode decoder",
+      "source_url": "https://github.com/NVIDIA/cuda-rust",
+      "source_version": "348895e4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T20:41:52.887Z"
+    },
+    "candidate_directive-reject-overflowing-section-lengths-and-varints-in-bytecode-decoder": {
+      "item_id": "candidate_directive-reject-overflowing-section-lengths-and-varints-in-bytecode-decoder",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VQTS-reject-overflowing-section-lengths-and-varints-in-bytecode-decoder.md",
+      "title": "reject overflowing section lengths and varints in bytecode decoder",
+      "repository": "NVIDIA/cuda-rust",
+      "source_version": "348895e4",
+      "content_hash": "94aeb125646b0eff895a25ad25198f274f20896cdb6367cda23c90a2f504eebb",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T20:41:53.302Z"
+    },
+    "learn-github-modelcontextprotocol-kotlin-sdk": {
+      "learning_id": "learn-github-modelcontextprotocol-kotlin-sdk",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "modelcontextprotocol/kotlin-sdk",
+      "repository": "modelcontextprotocol/kotlin-sdk",
+      "slug": "modelcontextprotocol-kotlin-sdk",
+      "platform": "github",
+      "source_url": "https://github.com/modelcontextprotocol/kotlin-sdk",
+      "source_version": "af5d784d",
+      "content_hash": "753e4a1064160c57f6ab152f63a89647e2520964814fd49b204e3051b35babf1",
+      "dossier_path": "07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8646,
+          "title": "!: return INVALID_PARAMS for unknown resources",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T20:41:57.895Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8646": {
+      "learning_id": "rule-8646",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8646,
+      "title": "!: return INVALID_PARAMS for unknown resources",
+      "source_url": "https://github.com/modelcontextprotocol/kotlin-sdk",
+      "source_version": "af5d784d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T20:41:57.895Z"
+    },
+    "candidate_directive-return-invalid_params-for-unknown-resources": {
+      "item_id": "candidate_directive-return-invalid_params-for-unknown-resources",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VUOH-return-invalid_params-for-unknown-resources.md",
+      "title": "!: return INVALID_PARAMS for unknown resources",
+      "repository": "modelcontextprotocol/kotlin-sdk",
+      "source_version": "af5d784d",
+      "content_hash": "16b081234b9e514e819d57597fb1566b6d105dfad4897dc90fc8dad48480b53e",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T20:41:58.295Z"
+    },
+    "domain_intelligence-architecture-intelligence-modelcontextprotocol-kotlin-sdk-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-modelcontextprotocol-kotlin-sdk-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-modelcontextprotocol-kotlin-sdk-architecture-intelligence-modelcontextprotocol-k.md",
+      "title": "Architecture Intelligence: modelcontextprotocol/kotlin-sdk Core Invariants",
+      "repository": "modelcontextprotocol/kotlin-sdk",
+      "source_version": "af5d784d",
+      "content_hash": "21c94cef2f0207c0601e582e34d12c140c51a88eba89d70fa93108375891c789",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T20:41:58.426Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-modelcontextprotocol-kotlin-sd": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-modelcontextprotocol-kotlin-sd",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/modelcontextprotocol-kotlin-sdk-learnings-verification-protocol-empirical-defect.md",
+      "title": "Verification Protocol: Empirical Defect Shield for modelcontextprotocol-kotlin-sdk-learnings",
+      "repository": "modelcontextprotocol-kotlin-sdk-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0178804e14b4f08439c1cae3e01b6467b56da174c151d09d939ee200fba381a9",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T20:42:10.645Z"
+    },
+    "rule-8647": {
+      "learning_id": "rule-8647",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8647,
+      "title": "Nightly fixes (2026-11-13)",
+      "source_url": "https://github.com/MaterializeInc/materialize",
+      "source_version": "2026293a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T20:42:05.818Z"
+    },
+    "candidate_directive-nightly-fixes-2026-11-13": {
+      "item_id": "candidate_directive-nightly-fixes-2026-11-13",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-W0SG-nightly-fixes-2026-11-13.md",
+      "title": "Nightly fixes (2026-11-13)",
+      "repository": "MaterializeInc/materialize",
+      "source_version": "2026293a",
+      "content_hash": "4dab75a184c1023ee0c3db7539594173cacdd52ea934cb9fc9d475001a0a5906",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T20:42:06.210Z"
+    },
+    "candidate_directive-cutile-rs-reject-overflowing-section-lengths-and-varints-in-bytecode-decoder": {
+      "item_id": "candidate_directive-cutile-rs-reject-overflowing-section-lengths-and-varints-in-bytecode-decoder",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-W3HF-cutile-rs-reject-overflowing-section-lengths-and-varints-in-bytecode-decoder.md",
+      "title": "cutile-rs): reject overflowing section lengths and varints in bytecode decoder",
+      "repository": "nvidia-cuda-rust-learnings",
+      "source_version": "HEAD",
+      "content_hash": "46e325e9906babcc45ef329c29ffe659e9bfd79e1f669935b61fac9a9c7e3ee5",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T20:42:09.705Z"
+    },
+    "candidate_directive-server-return-invalid_params-for-unknown-resources": {
+      "item_id": "candidate_directive-server-return-invalid_params-for-unknown-resources",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-W401-server-return-invalid_params-for-unknown-resources.md",
+      "title": "server)!: return INVALID_PARAMS for unknown resources",
+      "repository": "modelcontextprotocol-kotlin-sdk-learnings",
+      "source_version": "HEAD",
+      "content_hash": "81536a1d30b69ad15a02a5655156d6314945a18e36caacf8b2f3904e8074acc1",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T20:42:10.374Z"
+    },
+    "domain_intelligence-architecture-intelligence-modelcontextprotocol-kotlin-sdk-learnings-core-invaria": {
+      "item_id": "domain_intelligence-architecture-intelligence-modelcontextprotocol-kotlin-sdk-learnings-core-invaria",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-modelcontextprotocol-kotlin-sdk-learnings-architecture-intelligence-modelcontext.md",
+      "title": "Architecture Intelligence: modelcontextprotocol-kotlin-sdk-learnings Core Invariants",
+      "repository": "modelcontextprotocol-kotlin-sdk-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f5f1c5780d1ac2c31d8abe7b7a3843c1cd3c684ce45a8957fa4a05823a43e17d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T20:42:10.505Z"
+    },
+    "candidate_directive-ci-nightly-fixes-2026-11-13": {
+      "item_id": "candidate_directive-ci-nightly-fixes-2026-11-13",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-W4S5-ci-nightly-fixes-2026-11-13.md",
+      "title": "ci: Nightly fixes (2026-11-13)",
+      "repository": "materializeinc-materialize-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b57fe6acdf91d83da01e276ca71a22dca0db4cb163401b4197d5f690981af1c1",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T20:42:11.381Z"
+    },
+    "domain_intelligence-architecture-intelligence-materializeinc-materialize-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-materializeinc-materialize-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-materializeinc-materialize-learnings-architecture-intelligence-materializeinc-ma.md",
+      "title": "Architecture Intelligence: materializeinc-materialize-learnings Core Invariants",
+      "repository": "materializeinc-materialize-learnings",
+      "source_version": "HEAD",
+      "content_hash": "834238b977162c795bc9d39ba2c78531b1a75e5d33431ff6146390d2f1a0c22a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T20:42:11.534Z"
+    },
+    "agent_contract-agent-contract-materializeinc-materialize-learnings-autonomous-specialist-person": {
+      "item_id": "agent_contract-agent-contract-materializeinc-materialize-learnings-autonomous-specialist-person",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/materializeinc-materialize-learnings-agent-contract-materializeinc-materialize-l.md",
+      "title": "Agent Contract: materializeinc-materialize-learnings Autonomous Specialist Persona",
+      "repository": "materializeinc-materialize-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a8d5ee61b0bcb8203d5606a52f39f62d3af5de408600ce77361501c99fb7fe6b",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T20:42:11.682Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-materializeinc-materialize-lea": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-materializeinc-materialize-lea",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/materializeinc-materialize-learnings-verification-protocol-empirical-defect-shie.md",
+      "title": "Verification Protocol: Empirical Defect Shield for materializeinc-materialize-learnings",
+      "repository": "materializeinc-materialize-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3f94998cba25fe0fc1ee49223ba8251928b57c4ffdcf74142b5dd06ddd2f3c4e",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T20:42:11.819Z"
     }
   },
   "ai-builder-brain": {

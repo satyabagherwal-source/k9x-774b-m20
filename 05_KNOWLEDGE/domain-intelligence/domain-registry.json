@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T20:23:10.896Z",
-  "total_records": 1113,
+  "last_updated": "2026-11-15T20:42:11.534Z",
+  "total_records": 1116,
   "domains": {
     "A": {
       "total": 7,
@@ -617,7 +617,7 @@
       ]
     },
     "G": {
-      "total": 188,
+      "total": 191,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -806,7 +806,10 @@
         "domain_intelligence-architecture-intelligence-llphant-llphant-core-invariants",
         "domain_intelligence-architecture-intelligence-llphant-llphant-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-nsh07-tomato-core-invariants",
-        "domain_intelligence-architecture-intelligence-nsh07-tomato-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-nsh07-tomato-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-modelcontextprotocol-kotlin-sdk-core-invariants",
+        "domain_intelligence-architecture-intelligence-modelcontextprotocol-kotlin-sdk-learnings-core-invaria",
+        "domain_intelligence-architecture-intelligence-materializeinc-materialize-learnings-core-invariants"
       ]
     },
     "H": {
@@ -9841,8 +9844,8 @@
       "title": "Technical Construction Intelligence: NVIDIA/cuda-rust Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nvidia-cuda-rust-technical-construction-intelligence-nvidia-cuda-rust-core-invar.md",
       "repository": "NVIDIA/cuda-rust",
-      "content_hash": "360a74d735d3d3cd74530b6391e889f958194931b02d934fdfd049a76b7db4fb",
-      "created_at": "2026-11-13T21:16:06.932Z"
+      "content_hash": "5c60825589c1b6306ff2c35e0f1a7a4826be13eb1a67a0fd255ed7c4b2220b14",
+      "created_at": "2026-11-15T20:41:53.435Z"
     },
     "domain_intelligence-architecture-intelligence-infinitered-reactotron-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-infinitered-reactotron-core-invariants",
@@ -9877,8 +9880,8 @@
       "title": "Technical Construction Intelligence: nvidia-cuda-rust-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nvidia-cuda-rust-learnings-technical-construction-intelligence-nvidia-cuda-rust-.md",
       "repository": "nvidia-cuda-rust-learnings",
-      "content_hash": "9138a2bfb86640534ece744bf8b91f89bce50f05241ec1c0ca6cf72d4ae99570",
-      "created_at": "2026-11-13T21:16:21.426Z"
+      "content_hash": "2021af56462fcae8da283e235aae62dda305516635836f4251c232b480004a36",
+      "created_at": "2026-11-15T20:42:09.839Z"
     },
     "DOM-D-86956AB2": {
       "record_id": "DOM-D-86956AB2",
@@ -13178,8 +13181,8 @@
       "title": "Architecture Intelligence: MaterializeInc/materialize Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-materializeinc-materialize-architecture-intelligence-materializeinc-materialize-.md",
       "repository": "MaterializeInc/materialize",
-      "content_hash": "d4cdc58f7473fd88a18eca70df3df45a9f9201a66610d93db012f36d1043550f",
-      "created_at": "2026-11-14T07:18:07.636Z"
+      "content_hash": "d9547d3e6588bd315cfe5109988009aa30d80294d7a8f23425fbf8d42d19166e",
+      "created_at": "2026-11-15T20:42:06.346Z"
     },
     "DOM-K-C3DCBF34": {
       "record_id": "DOM-K-C3DCBF34",
@@ -21138,6 +21141,33 @@
       "repository": "nsh07-tomato-learnings",
       "content_hash": "33e9a384c9776aed2ff9349e6bcada74f831341530d136301fda6ee69e122f66",
       "created_at": "2026-11-15T20:23:10.336Z"
+    },
+    "domain_intelligence-architecture-intelligence-modelcontextprotocol-kotlin-sdk-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-modelcontextprotocol-kotlin-sdk-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: modelcontextprotocol/kotlin-sdk Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-modelcontextprotocol-kotlin-sdk-architecture-intelligence-modelcontextprotocol-k.md",
+      "repository": "modelcontextprotocol/kotlin-sdk",
+      "content_hash": "21c94cef2f0207c0601e582e34d12c140c51a88eba89d70fa93108375891c789",
+      "created_at": "2026-11-15T20:41:58.426Z"
+    },
+    "domain_intelligence-architecture-intelligence-modelcontextprotocol-kotlin-sdk-learnings-core-invaria": {
+      "record_id": "domain_intelligence-architecture-intelligence-modelcontextprotocol-kotlin-sdk-learnings-core-invaria",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: modelcontextprotocol-kotlin-sdk-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-modelcontextprotocol-kotlin-sdk-learnings-architecture-intelligence-modelcontext.md",
+      "repository": "modelcontextprotocol-kotlin-sdk-learnings",
+      "content_hash": "f5f1c5780d1ac2c31d8abe7b7a3843c1cd3c684ce45a8957fa4a05823a43e17d",
+      "created_at": "2026-11-15T20:42:10.505Z"
+    },
+    "domain_intelligence-architecture-intelligence-materializeinc-materialize-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-materializeinc-materialize-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: materializeinc-materialize-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-materializeinc-materialize-learnings-architecture-intelligence-materializeinc-ma.md",
+      "repository": "materializeinc-materialize-learnings",
+      "content_hash": "834238b977162c795bc9d39ba2c78531b1a75e5d33431ff6146390d2f1a0c22a",
+      "created_at": "2026-11-15T20:42:11.534Z"
     }
   }
 }

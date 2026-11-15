@@ -3923,10 +3923,10 @@
     "repository": "MaterializeInc/materialize",
     "platform": "github",
     "sourceUrl": "https://github.com/MaterializeInc/materialize",
-    "sourceVersion": "ab4e4edb",
+    "sourceVersion": "2026293a",
     "license": "NOASSERTION",
-    "contentHash": "bee7228afd9a4b35229b950d1fad5f36502711143899b80297b72267e573a23d",
-    "lastHarvestedAt": "2026-11-14T07:18:07.342Z",
+    "contentHash": "f47afe19e35374ed4468061e2b76cd05197217b0680bb6fa78f85213e404265f",
+    "lastHarvestedAt": "2026-11-15T20:42:06.003Z",
     "learningId": "learn-github-materializeinc-materialize"
   },
   "react-bootstrap-react-bootstrap": {
@@ -5773,10 +5773,10 @@
     "repository": "NVIDIA/cuda-rust",
     "platform": "github",
     "sourceUrl": "https://github.com/NVIDIA/cuda-rust",
-    "sourceVersion": "7a7d160e",
+    "sourceVersion": "348895e4",
     "license": "Apache-2.0",
-    "contentHash": "56f26b3ef881aa6d8a9d392d5c991932024d9f84632241af82e228581851b58e",
-    "lastHarvestedAt": "2026-11-13T21:16:06.703Z",
+    "contentHash": "5cf71739e5225697a324f0122805dddc6e9187d86e8dd928a5d4c4ceb70df743",
+    "lastHarvestedAt": "2026-11-15T20:41:53.073Z",
     "learningId": "learn-github-nvidia-cuda-rust"
   },
   "typestack-routing-controllers": {
@@ -8203,10 +8203,10 @@
     "repository": "modelcontextprotocol/kotlin-sdk",
     "platform": "github",
     "sourceUrl": "https://github.com/modelcontextprotocol/kotlin-sdk",
-    "sourceVersion": "0fd2f874",
+    "sourceVersion": "af5d784d",
     "license": "NOASSERTION",
-    "contentHash": "7f32221795f349b6551a0fcc24be9fe0b7eb5d78a23940566989cf0792c5258c",
-    "lastHarvestedAt": "2026-11-12T08:07:15.990Z",
+    "contentHash": "753e4a1064160c57f6ab152f63a89647e2520964814fd49b204e3051b35babf1",
+    "lastHarvestedAt": "2026-11-15T20:41:58.083Z",
     "learningId": "learn-github-modelcontextprotocol-kotlin-sdk"
   },
   "ivanvorobei-swiftui": {

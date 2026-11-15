@@ -10180,3 +10180,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-videorebirthai-hyperflow-h3-flash` | `https://huggingface.co/VideoRebirthAI/hyperflow-h3-flash` | `hf-videore` | Multi-dimensional audit evidence | 2026-11-15T20:22:37.208Z |
 | `learn-github-nsh07-tomato` | `https://github.com/nsh07/Tomato` | `43897a66` | Multi-dimensional audit evidence | 2026-11-15T20:22:43.978Z |
 | `learn-dom-d-fac11bec` | `project://hf-videorebirthai-hyperflow-h3-flash` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-videorebirthai-hyperflow-h3-flash-learnings.md` | 2026-11-15T20:23:09.701Z |
+| `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `348895e4` | Multi-dimensional audit evidence | 2026-11-15T20:41:53.073Z |
+| `learn-github-modelcontextprotocol-kotlin-sdk` | `https://github.com/modelcontextprotocol/kotlin-sdk` | `af5d784d` | Multi-dimensional audit evidence | 2026-11-15T20:41:58.083Z |
+| `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `2026293a` | Multi-dimensional audit evidence | 2026-11-15T20:42:06.003Z |

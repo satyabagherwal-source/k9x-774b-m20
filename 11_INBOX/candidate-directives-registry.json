@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T20:23:10.812Z",
+  "last_updated": "2026-11-15T20:42:11.381Z",
   "directives": [
     {
       "id": "CD-001",
@@ -16370,6 +16370,72 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-A8A21D-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-15"
+    },
+    {
+      "id": "CD-VQTS",
+      "directive_title": "reject overflowing section lengths and varints in bytecode decoder",
+      "source_repo": "NVIDIA/cuda-rust",
+      "source_commit": "348895e4",
+      "staged_file": "11_INBOX/candidate-directives/CD-VQTS-reject-overflowing-section-lengths-and-varints-in-bytecode-decoder.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-15",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-VUOH",
+      "directive_title": "!: return INVALID_PARAMS for unknown resources",
+      "source_repo": "modelcontextprotocol/kotlin-sdk",
+      "source_commit": "af5d784d",
+      "staged_file": "11_INBOX/candidate-directives/CD-VUOH-return-invalid_params-for-unknown-resources.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-15",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-W0SG",
+      "directive_title": "Nightly fixes (2026-11-13)",
+      "source_repo": "MaterializeInc/materialize",
+      "source_commit": "2026293a",
+      "staged_file": "11_INBOX/candidate-directives/CD-W0SG-nightly-fixes-2026-11-13.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-15",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-W3HF",
+      "directive_title": "cutile-rs): reject overflowing section lengths and varints in bytecode decoder",
+      "source_repo": "nvidia-cuda-rust-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-W3HF-cutile-rs-reject-overflowing-section-lengths-and-varints-in-bytecode-decoder.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-15",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-W401",
+      "directive_title": "server)!: return INVALID_PARAMS for unknown resources",
+      "source_repo": "modelcontextprotocol-kotlin-sdk-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-W401-server-return-invalid_params-for-unknown-resources.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-15",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-W4S5",
+      "directive_title": "ci: Nightly fixes (2026-11-13)",
+      "source_repo": "materializeinc-materialize-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-W4S5-ci-nightly-fixes-2026-11-13.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-15",
+      "domain_letter": "G"
     }
   ]
 }

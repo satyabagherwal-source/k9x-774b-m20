@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T20:22:43.983Z",
-  "total_cycles_completed": 9754,
-  "total_learnings_persisted": 9754,
-  "total_rules_promoted": 9373,
+  "last_updated": "2026-11-15T20:42:06.009Z",
+  "total_cycles_completed": 9757,
+  "total_learnings_persisted": 9757,
+  "total_rules_promoted": 9376,
   "history": [
-    {
-      "timestamp": "2026-11-14T17:03:05.938Z",
-      "repository": "oven-sh/bun",
-      "learningId": "learn-github-oven-sh-bun",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T17:03:23.156Z",
-      "repository": "autotrust/GEV-26B-Decide",
-      "learningId": "learn-huggingface-autotrust-gev-26b-decide",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T17:24:44.472Z",
-      "repository": "google/embeddinggemma-2",
-      "learningId": "learn-huggingface-google-embeddinggemma-2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T17:24:46.338Z",
       "repository": "astral-sh/uv",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-15T20:22:43.983Z",
       "repository": "nsh07/Tomato",
       "learningId": "learn-github-nsh07-tomato",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T20:41:53.080Z",
+      "repository": "NVIDIA/cuda-rust",
+      "learningId": "learn-github-nvidia-cuda-rust",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T20:41:58.090Z",
+      "repository": "modelcontextprotocol/kotlin-sdk",
+      "learningId": "learn-github-modelcontextprotocol-kotlin-sdk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T20:42:06.009Z",
+      "repository": "MaterializeInc/materialize",
+      "learningId": "learn-github-materializeinc-materialize",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

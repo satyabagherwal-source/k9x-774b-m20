@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-15T20:22:43.985Z",
+  "last_updated": "2026-11-15T20:42:06.014Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6006,14 +6006,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-materializeinc-materialize",
-      "content_hash": "bee7228afd9a4b35229b950d1fad5f36502711143899b80297b72267e573a23d",
-      "verified_at": "2026-11-14T07:18:07.351Z",
+      "content_hash": "f47afe19e35374ed4468061e2b76cd05197217b0680bb6fa78f85213e404265f",
+      "verified_at": "2026-11-15T20:42:06.013Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T07:18:07.351Z"
+      "last_updated": "2026-11-15T20:42:06.013Z"
     },
     "react-bootstrap/react-bootstrap": {
       "repository": "react-bootstrap/react-bootstrap",
@@ -8781,14 +8781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nvidia-cuda-rust",
-      "content_hash": "56f26b3ef881aa6d8a9d392d5c991932024d9f84632241af82e228581851b58e",
-      "verified_at": "2026-11-13T21:16:06.712Z",
+      "content_hash": "5cf71739e5225697a324f0122805dddc6e9187d86e8dd928a5d4c4ceb70df743",
+      "verified_at": "2026-11-15T20:41:53.084Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T21:16:06.712Z"
+      "last_updated": "2026-11-15T20:41:53.084Z"
     },
     "typestack/routing-controllers": {
       "repository": "typestack/routing-controllers",
@@ -12336,14 +12336,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-modelcontextprotocol-kotlin-sdk",
-      "content_hash": "7f32221795f349b6551a0fcc24be9fe0b7eb5d78a23940566989cf0792c5258c",
-      "verified_at": "2026-11-12T08:07:15.999Z",
+      "content_hash": "753e4a1064160c57f6ab152f63a89647e2520964814fd49b204e3051b35babf1",
+      "verified_at": "2026-11-15T20:41:58.093Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T08:07:15.999Z"
+      "last_updated": "2026-11-15T20:41:58.093Z"
     },
     "ivanvorobei/SwiftUI": {
       "repository": "ivanvorobei/SwiftUI",

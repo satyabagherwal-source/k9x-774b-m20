@@ -4,23 +4,23 @@
 {
   "source_repository": "NVIDIA/cuda-rust",
   "source_url": "https://github.com/NVIDIA/cuda-rust",
-  "source_version": "7a7d160e",
+  "source_version": "348895e4",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-13T21:16:06.852Z",
+  "timestamp": "2026-11-15T20:41:53.297Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nvidia-cuda-rust",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [NVIDIA/cuda-rust](https://github.com/NVIDIA/cuda-rust) (Revision: `7a7d160e`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-13T21:16:06.852Z`  
+> **Provenance**: Harvested from [NVIDIA/cuda-rust](https://github.com/NVIDIA/cuda-rust) (Revision: `348895e4`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-15T20:41:53.297Z`  
 > **Learning ID**: `learn-github-nvidia-cuda-rust`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), I (Content & Information Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence)
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), F (Design Intelligence)
 - **Confidence Rating**: 92%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NVIDIA/cuda-rust](https://github.com/NVIDIA/cuda-rust))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T21:16:06.023Z  
+> **Harvest Timestamp**: 2026-11-15T20:41:51.748Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: NVIDIA's CUDA platform for Rust. Host runtime crates plus Tile (cutile-rs) and SIMT (cuda-oxide) kernel programming models in idiomatic Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4042 stars
+- **Stars / Engagement**: 4049 stars
 
 ---
 
@@ -2290,994 +2290,347 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5183ab57` (2026-11-12)
-**Commit Message**: docs(cuda-oxide-book): rewrite Tile Libraries chapter, fix SVG diagrams, and add CLI/MLIR/C++ highlighting (#1785)
+### Incident Patch 1: `07814e2d` (2026-11-14)
+**Commit Message**: fix(cutile-rs): reject overflowing section lengths and varints in bytecode decoder (#1448)
 
-## What This PR Does
+Transplanted from NVlabs/cutile-rs#322, which was closed when the
+repository moved here. Closes #1443.
 
-Rewrites the **Tile Libraries** book chapter
-(`cuda-oxide-book/advanced/tile-libraries.md`) and its two SVG diagrams
-so the page is concise, scannable, and accurate against current `main`:
+Fixes two input-validation bugs in `cutile-ir`'s bytecode `Reader`:
 
-1. **Rewrite `tile-libraries.md` with scannable bullets, aligned tables,
-and 5 accuracy fixes**
-2. **Redesign `tilelib-direct-linkage.svg` and
-`tilelib-provider-linkage.svg` for left-to-right flow and accuracy**
-3. **Add CLI (`bash`), Tile IR (`mlir`), and Tile C++ (`cpp`) syntax
-highlighting in `conf.py`**
+- `read_bytes` checked `self.pos + n > len`, which overflows for a huge
+section length. Debug builds panic on the overflow. In release builds
+the
+  sum wraps, the check passes, and the slice then panics. It now checks
+  `n > self.remaining()`.
+- `read_varint` accepted a 10th byte with payload > 1. The extra high
+bits
+  were shifted out, so the value was silently truncated. For example, a
+section length could wrap to 1 and be accepted. It now rejects a 10th
+byte
+  other than `0x00`/`0x01`.
 
----
+Tests:
+- `decode_rejection.rs`: `reject_section_length_overflow` and
+`reject_section_length_varint_overflow` both fail on `main` and pass
+with
+  this change.
+- `decoder.rs`: `varint_u64_boundaries` round-trips 0, 127, 128, 2^63
+and
+  `u64::MAX`.
 
-### 1. Chapter Structure & Accuracy Fixes (`tile-libraries.md`)
+`cargo test -p cutile-ir`, `cargo fmt --check` and `cargo clippy
+--all-targets -- -D warnings` pass under `cutile-rs/` with the pinned
+1.98.0 toolchain. The change is identical to #322, where `
 
-Replaces dense prose paragraphs and unformatted `text` blocks with short
-bullet points and aligned tables, and resolves five stale/inaccurate
-claims:
-
-```text
-BEFORE (dense prose + 5 stale claims):
-  • Claimed `--provider` fails unless `TILEIR_LINKAGE_PROVIDER_INCLUDE_DIR` is set
-  • Dangling broken sentence at end of Building ("...not involved. writes its own Tile IR with.")
-  • Listed 3/3 exports in `tilelib_relu` instead of 5/5 (3 static + 2 parametric)
-  • Claimed only cuTile Python 
-
-**File**: `cuda-oxide/cuda-oxide-book/advanced/images/tilelib-direct-linkage.svg` (modified, +148/-96)
+**File**: `cutile-rs/cutile-ir/src/bytecode/decoder.rs` (modified, +16/-1)
 ```diff
-@@ -1,107 +1,159 @@
--<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 800" width="1240" height="800" role="img"
--  aria-label="Direct linkage flow: Rust source becomes LTOIR plus two description bytecodes, packaged into a .tilelib that tileiras links with a Tile kernel's bytecode into one cubin">
-+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 740" width="1240" height="740" role="img"
-+  aria-label="Static tile library flow: Left column builds relu.tilelib from #[tile_export], middle column compiles the Tile caller to prog.tilebc, and right column links both in tileiras to produce kernel.cubin">
- <style>
--  :root, svg { 
-+  :root, svg {
-   --bg: #f4f6f8; --fg: #1a232e; --muted: #5d6b7a; --line: #9aa7b4; --panel: #ffffff;
-   --meta: #0e7c72; --meta-fill: #d9f3ef; --code: #b4560a; --code-fill: #fdebd2;
-   --sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
-   --mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  }
--  @media (prefers-color-scheme: dark) { :root, svg { 
-+  @media (prefers-color-scheme: dark) { :root, svg {
-   --bg: #0f151b; --fg: #e4ebf2; --muted: #9fb0c0; --line: #4d5b6a; --panel: #171f28;
-   --meta: #5fe3d2; --meta-fill: #0f3a37; --code: #f6b544; --code-fill: #3b2a0c;
-  } }
- </style>
--<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" style="fill: var(--fg)"/></marker></defs>
--<rect x="0" y="0" width="1240" height="800" style="fill: var(--bg)"/>
--<text x="40" y="34" text-anchor="start" style="font: 600 17px var(--sans); fill: var(--fg)">Direct linkage: a Tile kernel calls a Rust function through a .tilelib</text>
--<text x="40" y="56" text-anchor="start" style="font: 400 12.5px var(--sans); fill: var(--muted)">cuda-oxide is the SIMT provider. It ships code plus a description; the Tile compiler matches, marshals and links.</text>
--<text x="40" y="92" text-anchor="start" style="font: 600 11px var(--sans); fill: var(--muted)">RUST SIDE  (cuda-oxide)</text>
--<text x="620.0" y="92" text-anchor="middle" style="font: 600 11px var(--sans); fill: var(--muted)">TILE COMPILER  (tileiras, CUDA 13.5 or newer)</text>
--<text x="870" y="92" text-anchor="start" style="font: 600 11px var(--sans); fill: var(--muted)">TILE SIDE  (Tile C++, cuTile Python or cutile-rs)</text>
--<rect x="40" y="108" width="330" height="64" rx="6" style="fill: var(--panel); stroke: var(--line); stroke-width: 1.2"/>
--<text x="54" y="134" text-anchor="start" style="font: 600 12px var(--mono); fill: var(--meta)">#[tile_export(tile_shape = 128)]</text>
--<text x="54" y="156" text-anchor="start" style="font: 400 12px var(--mono); fill: var(--fg)">pub fn relu(x: f32) -&gt; f32 { .. }</text>
--<line x1="120" y1="172" x2="120" y2="210" marker-end="url(#arrow)" style="stroke: var(--fg); stroke-width: 1.4"/>
--<text x="132" y="196" text-anchor="start" style="font: 400 11.5px var(--mono); fill: var(--muted)">cargo oxide tilelib relu --arch sm_120</text>
--<rect x="40" y="212" width="330" height="40" rx="6" style="fill: var(--code-fill); stroke: var(--code); stroke-width: 1.2"/>
--<text x="54" y="237" text-anchor="start" style="font: 600 12.5px var(--mono); fill: var(--fg)">relu.ltoir</text>
--<text x="356" y="237" text-anchor="end" style="font: 400 11px var(--sans); fill: var(--muted)">code: LLVM bitcode for nvJitLink</text>
--<rect x="40" y="260" width="330" height="40" rx="6" style="fill: var(--meta-fill); stroke: var(--meta); stroke-width: 1.2"/>
--<text x="54" y="285" text-anchor="start" style="font: 600 12.5px var(--mono); fill: var(--fg)">relu.iface.tilebc</text>
--<text x="356" y="285" text-anchor="end" style="font: 400 11px var(--sans); fill: var(--muted)">declaration: what can be called</text>
--<rect x="40" y="308" width="330" height="40" rx="6" style="fill: var(--meta-fill); stroke: var(--meta); stroke-width: 1.2"/>
--<text x="54" y="333" text-anchor="start" style="font: 600 12.5px var(--mono); fill: var(--fg)">relu.impl.tilebc</text>
--<text x="356" y="333" text-anchor="end" style="font: 400 11px var(--sans); fill: var(--muted)">implementation: how to call it</text>
--<line x1="120" y1="348" x2="120" y2="386" marker-end="url(#arrow)" style="stroke: var(--fg); stroke-width: 1.4"/>
--<text x="132" y="372" text-anchor="start" style="font: 400 11.5px var(--mono); fill: var(--muted)">tileiras --preview-create-tile-lib</text>
--<rect x="40" y="388" width="330" height="96" rx="6" style="fill: var(--panel); stroke: var(--line); stroke-width: 1.6"/>
--<text x="54" y="410" text-anchor="start" style="font: 600 12.5px var(--mono); fill: var(--fg)">relu.tilelib</text>
--<text x="356" y="410" text-anchor="end" style="font: 400 11px var(--sans); fill: var(--muted)">one host object file</text>
--<rect x="54" y="422" width="8" height="12" rx="2" style="fill: var(--meta)"/>
--<text x="70" y="432" text-anchor="start" style="font: 400 11px var(--mono); fill: var(--fg)">.nvtlifc</text>
--<text x="1
+@@ -183,7 +183,7 @@ impl<'a> Reader<'a> {
+     }
+ 
+     fn read_bytes(&mut self, n: usize) -> Result<&'a [u8]> {
+-        if self.pos + n > self.data.len() {
++        if n > self.remaining() {
+             return Err(err("unexpected end of data"));
+         }
+         let slice = &self.data[self.pos..self.pos + n];
+@@ -196,6 +196,10 @@ impl<'a> Reader<'a> {
+         let mut shift: u32 = 0;
+         loop {
+             let b = self.read_byte()?;
++            // The tenth byte can contribute only bit 63 and cannot continue.
++            if shift == 63 && b > 1 {
++                return Err(err("varint overflow"));
++            }
+             result |= ((b & 0x7F) as u64) << shift;
+             if b & 0x80 == 0 {
+                 break;
+@@ -979,6 +983,17 @@ mod tests {
+         assert!(decode_bytecode(&data).is_err());
+     }
+ 
++    #[test]
++    fn varint_u64_boundaries() {
++        for value in [0, 127, 128, 1 << 63, u64::MAX] {
++            let mut writer = EncodingWriter::new();
++            writer.write_varint(value);
++            let mut reader = Reader::new(writer.as_bytes());
++            assert_eq!(reader.read_varint().unwrap(), value);
++            assert_eq!(reader.remaining(), 0);
++        }
++    }
++
+     #[test]
+     fn roundtrip_string_section() {
+         // Build a bytecode with just a string section.
 ```
 
-**File**: `cuda-oxide/cuda-oxide-book/advanced/images/tilelib-provider-linkage.svg` (modified, +126/-62)
+**File**: `cutile-rs/cutile-ir/tests/decode_rejection.rs` (modified, +39/-0)
 ```diff
-@@ -1,4 +1,5 @@
--<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 610" width="1240" height="610" role="img" aria-label="Provider mode in one page: Rust exports become a shared object the Tile compiler loads; it asks per call site which implementations exist and once for their code">
-+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 620" width="1240" height="620" role="img"
-+  aria-label="Provider mode flow: Left column builds relu.tilelib with embedded NVVM IR, middle column shows the provider runtime inside the .so, and right column shows tileiras querying implementations and compiling size-specific symbols on demand">
- <style>
-   :root, svg {
-   --bg: #f4f6f8; --fg: #1a232e; --muted: #5d6b7a; --line: #9aa7b4; --panel: #ffffff;
-@@ -13,65 +14,128 @@
-   --rust: #c9a0f0; --rust-fill: #2b1b3f;
-  } }
- </style>
--<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" style="fill: var(--fg)"/></marker></defs>
--
--<rect x="0" y="0" width="1240" height="610" style="fill: var(--bg)"/>
--<text x="40" y="34" text-anchor="start" xml:space="preserve" style="font: 600 17px var(--sans); fill: var(--fg); white-space: pre">Provider mode: a tile library that answers the Tile compiler while the kernel compiles</text>
--<text x="40" y="56" text-anchor="start" xml:space="preserve" style="font: 400 12.5px var(--sans); fill: var(--muted); white-space: pre">For exports without tile_shape. The compiler asks for one implementation symbol per tile size; the provider builds it from one Rust body.</text>
--<text x="40" y="92" text-anchor="start" xml:space="preserve" style="font: 600 11px var(--sans); fill: var(--muted); white-space: pre">RUST SIDE  (build time)</text>
--<text x="500" y="92" text-anchor="start" xml:space="preserve" style="font: 600 11px var(--sans); fill: var(--muted); white-space: pre">THE LIBRARY</text>
--<text x="830" y="92" text-anchor="start" xml:space="preserve" style="font: 600 11px var(--sans); fill: var(--muted); white-space: pre">TILE COMPILER  (kernel compile time)</text>
--<rect x="40" y="108" width="400" height="74" rx="6" style="fill: var(--rust-fill); stroke: var(--rust); stroke-width: 1.2"/>
--<text x="52" y="128" text-anchor="start" xml:space="preserve" style="font: 600 12px var(--mono); fill: var(--rust); white-space: pre">#[tile_export]  pub fn relu_any(x: f32) -&gt; f32</text>
--<text x="52" y="148" text-anchor="start" xml:space="preserve" style="font: 400 11.5px var(--sans); fill: var(--fg); white-space: pre">no tile_shape: the call supplies the size</text>
--<text x="52" y="166" text-anchor="start" xml:space="preserve" style="font: 400 11.5px var(--sans); fill: var(--fg); white-space: pre">declaration @relu_any&lt;[N: index]&gt;(tile&lt;[N]xf32&gt;)</text>
--<line x1="90" y1="182" x2="90" y2="216" marker-end="url(#arrow)" style="stroke: var(--fg); stroke-width: 1.4"/>
--<text x="102" y="204" text-anchor="start" xml:space="preserve" style="font: 400 11px var(--mono); fill: var(--muted); white-space: pre">cargo oxide tilelib relu --arch sm_120 --provider</text>
--<rect x="40" y="218" width="400" height="74" rx="6" style="fill: var(--code-fill); stroke: var(--code); stroke-width: 1.2"/>
--<text x="52" y="238" text-anchor="start" xml:space="preserve" style="font: 600 12px var(--mono); fill: var(--fg); white-space: pre">relu.ll + descriptions  -&gt;  librelu_provider.so</text>
--<text x="52" y="258" text-anchor="start" xml:space="preserve" style="font: 400 11.5px var(--sans); fill: var(--fg); white-space: pre">a generated cdylib: the oxide-tile-provider runtime</text>
--<text x="52" y="276" text-anchor="start" xml:space="preserve" style="font: 400 11.5px var(--sans); fill: var(--fg); white-space: pre">with the crate's NVVM IR and descriptions embedded</text>
--<line x1="90" y1="292" x2="90" y2="326" marker-end="url(#arrow)" style="stroke: var(--fg); stroke-width: 1.4"/>
--<text x="102" y="314" text-anchor="start" xml:space="preserve" style="font: 400 11px var(--mono); fill: var(--muted); white-space: pre">tileiras --preview-create-tile-lib  (interface + the .so)</text>
--<rect x="40" y="328" width="400" height="56" rx="6" style="fill: var(--code-fill); stroke: var(--code); stroke-width: 1.2"/>
--<text x="52" y="348" text-anchor="start" xml:space="preserve" style="font: 600 12px var(--mono); fill: var(--fg); white-space: pre">relu.tilelib</text>
--<text x="52" y="368" text-anchor="start" xml:space="preserve" style="font: 400 11.5px var(--sans); fill: var(--fg); white-space: pre">the shared object with the interface section spliced in</text>
--<rect x="500" y="108" width="300" height="350" rx="6" style="fill: var(--panel); stroke: var(--line); stroke-width: 1.2"/>
--<text x="514" y="130" text-anchor="start" xml:space="preserve" style="font: 600 12.5px var(--sans); fill: var(--fg); white-space: pre">Inside the .so</text>
--<text x="514" y="162" text-anchor="start" xml:space="preserve" style="font: 600 11.5px var(-
-```
-
-**File**: `cuda-oxide/cuda-oxide-book/advanced/tile-libraries.md` (modified, +351/-395)
-```diff
-@@ -1,72 +1,67 @@
- # Tile Libraries
+@@ -10,6 +10,7 @@
+ //! on valid minimal modules.
  
--A Tile kernel works on whole tiles and never names a thread. A SIMT function
--works on one element from one thread. A **tile library** joins the two. It
--packages Rust device functions so the Tile compiler can call them from inside
--a cuTile kernel, once per element or once per warp, and link them into the
--kernel's cubin. The Rust side is `#[tile_export]`, the packaging is
--`cargo oxide tilelib`, and the caller is cuTile Python's `foreign_call` today,
--with [cutile-rs](https://nvidia.github.io/cuda-rust/cutile/) to follow.
--
--```text
--#[tile_export(tile_shape = 128)]
--pub fn relu(x: f32) -> f32 { .. }                     your Rust function
--        |
--        |  cargo oxide tilelib <crate> --arch sm_120
--        v
--<crate>.ltoir          device code     void relu_impl(float x, float *relu_out)
--<crate>.iface.tilebc   declaration     @relu(tile<128xf32> in, tile<128xf32> out) -> tile<128xf32>
--<crate>.impl.tilebc    implementation  @relu_impl implements @relu, one invocation per element
--        |
--        |  tileiras --preview-create-tile-lib       (CUDA 13.5 or newer)
--        v
--<crate>.tilelib
--        |
--        |  tp.foreign_call(symbol_name="relu", ...)   inside a cuTile kernel
--        v
--the Tile compiler links relu_impl into the kernel's cubin
--```
-+A Tile kernel operates on whole tiles without naming individual threads. A SIMT
-+function operates on elements from individual threads or warps. A **tile
-+library** connects the two: it packages Rust device functions so the Tile
-+compiler can call them from inside a Tile kernel and link them into a single
-+`cubin`.
-+
-+- **Annotate in Rust:** Mark device functions with `#[tile_export]`.
-+- **Package the library:** Run `cargo oxide tilelib` to emit compiled device
-+  code and Tile IR metadata, packaged into a `.tilelib` archive by `tileiras`
-+  (CUDA 13.5+).
-+- **Call from a Tile kernel:** Invoke the exported function from Tile C++ or
-+  cuTile Python, with [cutile-rs](https://nvidia.github.io/cuda-rust/cutile/)
-+  caller support to follow.
-+
-+| Mode              | Rust Attribute                   | How It Works                                                        |
-+|:------------------|:---------------------------------|:--------------------------------------------------------------------|
-+| **Static mode**   | `#[tile_export(tile_shape = N)]` | Fixed tile size `N` is compiled ahead of time into `.tilelib`       |
-+| **Provider mode** | `#[tile_export]`                 | Caller chooses size `N`; provider compiles each size `N` on demand  |
- 
- :::{seealso}
- [Kernels and Device Functions](../gpu-programming/kernels-and-device-functions.md)
--covers `#[device]` and the LTOIR route to CUDA C++. A tile library is the same
--route with the Tile compiler as the caller.
-+covers `#[device]` and LTOIR linking with CUDA C++. A tile library uses the
-+same LTOIR pipeline with the Tile compiler as the caller.
- :::
- 
- ```{figure} images/tilelib-direct-linkage.svg
- :align: center
- :width: 100%
- 
--The direct-linkage path. cuda-oxide ships the code (LTOIR) and two
--descriptions (interface and implementation bytecode); tileiras packs them
--into one `.tilelib`, and a Tile kernel calls the Rust function from inside
--its body.
-+Static tile library flow. `cargo oxide tilelib` emits compiled device code
-+(`.ltoir`) plus interface and implementation descriptions (`.tilebc`);
-+`tileiras` packages them into a `.tilelib` and links called exports into the
-+Tile kernel's `cubin`.
- ```
- 
--## Writing an export
-+---
-+
-+## Writing Exports
-+
-+Add `#[tile_export]` to a standard Rust function. Your original function stays
-+unchanged so other Rust device code can still call it directly. Alongside it,
-+the macro generates:
- 
--Put `#[tile_export(tile_shape = N)]` on an ordinary function. `N` is the tile size
--the caller will pass. The function stays as written, so the rest of your
--device code keeps calling it. The attribute adds two items next to it: an
--`extern "C"` implementation on the native SIMT ABI, named `<name>_impl` by
--default, and a host-only description that the compiler writes out as JSON.
--Leave `tile_shape` out and the call supplies the tile size instead; such an
--export needs the provider form of the library, described below.
-+- An `extern "C"` wrapper (`<name>_impl` by default) using the Tile-to-SIMT C
-+  ABI.
-+- A host-side export description that the compiler writes to
-+  `<crate>.tileexports.json`.
- 
- The
- [`tilelib_relu`](https://github.com/NVIDIA/cuda-rust/tree/main/cuda-oxide/crates/rustc-codegen-cuda/examples/tilelib_relu)
--example exports three functions, and this chapter follows them:
-+example demonstrates four export patterns:
- 
- ```rust
- use cuda_device::{tile_export, warp};
- 
--/// Elementwise `max(x, 0)`.
-+/// 1. Fixed-size elementwise export (128 threads, 1 element each).
- #[tile_export(tile_shape = 128)]
- pub fn relu(x: f32) -> f32 {
-     if x > 0.0 { x } else { 0.0 }
+ use cutile_ir::builder::{append_op, build_single_block_region, OpBuilder};
++use cutile_ir::bytecode::encoding::EncodingWriter;
+ use cutile_ir::bytecode::{BytecodeVersion, Opcode, Section, MAGIC};
+ use cutile_ir::ir::*;
+ use cutile_ir::{decode_bytecode, write_bytecode};
+@@ -124,6 +125,44 @@ fn reject_invalid_section_marker() {
+     );
  }
  
--/// Scale a tile in place. The cuTile side know
-```
-
-**File**: `cuda-oxide/cuda-oxide-book/conf.py` (modified, +95/-0)
-```diff
-@@ -104,3 +104,98 @@
- html_show_sourcelink = False
- html_title = "cuda-oxide"
- html_baseurl = "https://nvidia.github.io/cuda-rust/cuda-oxide/"
++#[test]
++fn reject_section_length_overflow() {
++    let mut buf = minimal_bytecode();
++    buf.pop();
++    buf.push(Section::String as u8);
++    let mut length = EncodingWriter::new();
++    length.write_varint(usize::MAX as u64);
++    buf.extend_from_slice(length.as_bytes());
++    buf.push(Section::EndOfBytecode as u8);
 +
++    assert!(
++        decode_bytecode(&buf).is_err(),
++        "an oversized section length should return an error"
++    );
++}
 +
-+def setup(app):
-+    """Register custom Pygments lexers for CLI commands, Tile C++, and Tile IR."""
-+    from pygments.lexer import RegexLexer, inherit
-+    from pygments.lexers.c_cpp import CppLexer
-+    from pygments.lexers.shell import BashLexer
-+    from pygments.token import (
-+        Comment,
-+        Keyword,
-+        Literal,
-+        Name,
-+        Number,
-+        Operator,
-+        Punctuation,
-+        String,
-+        Text,
-+        Whitespace,
-+    )
++#[test]
++fn reject_section_length_varint_overflow() {
++    // The tenth byte has only one payload bit available in a u64 varint.
++    // Without an overflow check, each of these lengths wraps to 1 and the
++    // empty string table below appears to be a valid section.
++    for last_byte in [0x02, 0x04, 0x7e] {
++        let mut buf = minimal_bytecode();
++        buf.pop();
++        buf.push(Section::String as u8);
++        buf.push(0x81);
++        buf.extend_from_slice(&[0x80; 8]);
++        buf.push(last_byte);
++        buf.push(0); // Empty string table.
++        buf.push(Section::EndOfBytecode as u8);
 +
-+    class OxideBashLexer(BashLexer):
-+        """Bash lexer that highlights CLI tools, cargo-oxide subcommands, flags, and GPU targets."""
++        assert!(
++            decode_bytecode(&buf).is_err(),
++            "an overflowing varint ending in {last_byte:#04x} should be rejected"
++        );
++    }
++}
 +
-+        name = "OxideBash"
-+        aliases = ["bash", "sh"]
-+
-+        tokens = {
-+            "basic": [
-+                (
-+                    r"\b(cargo|nvcc|tileiras|just|rustup|rustc|git|python3?)\b",
-+                    Name.Builtin,
-+                ),
-+                (
-+                    r"\b(oxide|tilelib|build|run|test|check|new|doctor|clean|install)\b",
-+                    Keyword,
-+                ),
-+                (r"(--[A-Za-z0-9_-]+|-[A-Za-z0-9]+)\b", Name.Attribute),
-+                (r"\b(sm_[0-9]+[a-z]?|compute_[0-9]+[a-z]?)\b", Literal.String.Symbol),
-+                inherit,
-+            ],
-+        }
-+
-+    class OxideCppLexer(CppLexer):
-+        """C++ lexer that accepts CUDA Tile C++ attributes and foreign-call qualifiers."""
-+
-+        name = "OxideCpp"
-+        aliases = ["cpp", "c++", "cuda"]
-+
-+        tokens = {
-+            "statements": [
-+                (r"\[\[[^\]]*\]\]", Name.Attribute),
-+                (
-+                    r"\b(__tile_global__|__tile__|__experimental_foreign_decl__|__experimental_foreign_name__)\b",
-+                    Keyword.Reserved,
-+                ),
-+                inherit,
-+            ],
-+        }
-+
-+    class MlirLexer(RegexLexer):
-+        """Lexer for MLIR and CUDA Tile IR modules."""
-+
-+        name = "MLIR"
-+        aliases = ["mlir", "tileir"]
-+
-+        tokens = {
-+            "root": [
-+                (r"\s+", Whitespace),
-+                (r"//[^\n]*", Comment.Single),
-+                (r'"[^"]*"', String.Double),
-+                (
-+                    r"\b(module|func|extern|implements|synchronization|mem_layout|fragmap|local|in|out|inout|warp|none)\b",
-+                    Keyword,
-+                ),
-+                (r"\b(cuda_tile\.[A-Za-z0-9_$]+)\b", Keyword.Namespace),
-+                (r"@[A-Za-z_][A-Za-z0-9_$.]*", Name.Function),
-+                (r"%[A-Za-z0-9_$.]+", Name.Variable),
-+                (r"![A-Za-z0-9_$.]+", Keyword.Type),
-+                (r"#[A-Za-z0-9_$.]+", Name.Attribute),
-+                (r"\b([0-9]+x)?(f16|bf16|f32|f64|i1|i8|i16|i32|i64|index)\b", Keyword.Type),
-+                (r"\b[0-9]+\b", Number.Integer),
-+                (r"->|=", Operator),
-+                (r"[{}()\[\]<>:,]", Punctuation),
-+                (r"[^\s{}()\[\]<>:,]+", Text),
-+            ],
-+        }
-+
-+    app.add_lexer("bash", OxideBashLexer)
-+    app.add_lexer("sh", OxideBashLexer)
-+    app.add_lexer("cpp", OxideCppLexer)
-+    app.add_lexer("c++", OxideCppLexer)
-+    app.add_lexer("cuda", OxideCppLexer)
-+    app.add_lexer("mlir", MlirLexer)
-+    app.add_lexer("tileir", MlirLexer)
-+
+ #[test]
+ fn reject_truncated_type_section() {
+     // Build a valid module so we get correct bytecode, then find and truncate
 ```
 
 ---
 
-### Incident Patch 2: `8e039ebe` (2026-11-12)
-**Commit Message**: fix(cuda-oxide): omit NVVM-only --arch on compile-only code-shape prebuild (#1789)
+### Incident Patch 2: `348895e4` (2026-11-14)
+**Commit Message**: fix(cuda-async): preserve device state on duplicate registration (#1754)
 
-## What This PR Does
+## What
+- Keep an existing device context when the same device is initialized
+again.
 
-Fixes `scripts/smoketest.sh --compile-only` on **Rubin (`R100`,
-`sm_107`)** for the two `NVVM_VERIFY_EXAMPLES` that also ship a
-`verify-code-shape.sh` gate (`kernel_reference_validity` and
-`promoted_ref_return`), resolving **NVBug 7084024**:
+## Why
+- `HashMap::insert` replaced the current context before the duplicate
+error was returned.
 
-```text
-BEFORE (in `scripts/smoketest.sh --compile-only` on R100, where nvvm_arch = sm_107):
-  ├──► Step 1 (NVPTX): cargo oxide build <ex> --arch=sm_107       [X] fails (NVPTX lacks sm_107)
-  └──► Step 2 (NVVM):  cargo oxide emit-ltoir <ex> --arch=sm_107  (never reached)
+## Implementation
+- Check for the device before creating streams or inserting a new
+context.
+- This covers per-device map inserts;
+[#176](https://github.com/NVIDIA/cuda-rust/pull/176) fixed the separate
+thread-local map reset.
 
-AFTER:
-  ├──► Step 1 (NVPTX): cargo oxide build <ex>                     [OK] NVPTX emits forward-compatible PTX
-  │                    bash verify-code-shape.sh                  [OK] validates .ll and .ptx code shape
-  └──► Step 2 (NVVM):  cargo oxide emit-ltoir <ex> --arch=sm_107  [OK] libNVVM compiles natively for sm_107
-```
+Signed-off-by: Minh Vu <[REDACTED_EMAIL]>
 
----
-
-### 1. Keep `--arch=sm_107` Scoped to the NVVM (`emit-ltoir`) Step
-
-`cuda-oxide` has two device compilation routes:
-* **NVPTX (`llc` / LLVM 23)** (`cargo oxide build` / `run`): does not
-have a processor entry for Rubin (`sm_107`). When invoke
-
-**File**: `cuda-oxide/scripts/check-example-smoketest-contract.sh` (modified, +42/-0)
+**File**: `cuda-async/src/device_context.rs` (modified, +47/-14)
 ```diff
-@@ -186,6 +186,48 @@ esac
-                  f"{result.returncode}, {result.stdout!r}, {result.stderr!r}")
-     print(f"OK: {len(cases)} WGMMA verdict cases and failed-run summary/exit status.")
+@@ -222,6 +222,19 @@ pub fn new_device_context(
+     })
+ }
  
-+    # On R100 (compute capability 10.7), NVVM_VERIFY_EXAMPLES with a
-+    # verify-code-shape.sh gate must run `cargo oxide build <ex>` without
-+    # passing the NVVM-only `sm_107` target into the NVPTX prebuild, while
-+    # keeping `--arch=sm_107` for `emit-ltoir` (NVBug 7084024).
-+    for ex_name in ("kernel_reference_validity", "promoted_ref_return"):
-+        ex_dir = simt / f"crates/rustc-codegen-cuda/examples/{ex_name}"
-+        ex_dir.mkdir(parents=True, exist_ok=True)
-+        (ex_dir / "Cargo.toml").touch()
-+        shape = ex_dir / "verify-code-shape.sh"
-+        shape.write_text("#!/usr/bin/env bash\ntest -s \"$(dirname \"$0\")/" + ex_name + ".ptx\"\n")
-+        shape.chmod(0o755)
-+    (bin_dir / "nvidia-smi").write_text('#!/usr/bin/env bash\necho "NVIDIA Graphics Device, 10.7"\n')
-+    (bin_dir / "cargo").write_text('''#!/usr/bin/env bash
-+case "$*" in
-+    "oxide --help"|"oxide setup") exit 0 ;;
-+    "oxide __debug-policy") echo unset; exit 0 ;;
-+    "oxide build kernel_reference_validity"|"oxide build promoted_ref_return")
-+        ex="$3"
-+        printf '.version 8.0\n.target sm_80\n.address_size 64\n' > "crates/rustc-codegen-cuda/examples/${ex}/${ex}.ptx"
-+        exit 0 ;;
-+    "oxide emit-ltoir kernel_reference_validity --arch=sm_107"|"oxide emit-ltoir promoted_ref_return --arch=sm_107")
-+        ex="$3"
-+        rm -f "crates/rustc-codegen-cuda/examples/${ex}/${ex}.ptx"
-+        printf '; ModuleID = %s\n' "${ex}" > "crates/rustc-codegen-cuda/examples/${ex}/${ex}.ll"
-+        printf 'ltoir' > "crates/rustc-codegen-cuda/examples/${ex}/${ex}.ltoir"
-+        exit 0 ;;
-+    *)
-+        echo "unexpected cargo invocation: $*" >&2
-+        exit 99 ;;
-+esac
-+''')
-+    r100_result = subprocess.run(
-+        ["bash", str(script), "--compile-only", "--only", "^(kernel_reference_validity|promoted_ref_return)$", "--no-color"],
-+        cwd=root, env=env, capture_output=True, text=True,
-+    )
-+    if (r100_result.returncode != 0
-+            or not re.search(r"^Pass:\s+2 / 2$", r100_result.stdout, re.M)
-+            or not re.search(r"^Fail:\s+0 / 2$", r100_result.stdout, re.M)):
-+        sys.exit(f"R100 compile-only NVVM code-shape prebuild failed: "
-+                 f"{r100_result.returncode}, {r100_result.stdout!r}, {r100_result.stderr!r}")
-+    print("OK: R100 (sm_107) compile-only NVVM code-shape prebuild omits --arch on build and passes --arch=sm_107 to emit-ltoir.")
++/// Reject duplicate registrations before creating streams or replacing live state.
++fn insert_device_context_once<T>(
++    hashmap: &mut HashMap<usize, T>,
++    device_id: usize,
++    create: impl FnOnce() -> Result<T, DeviceError>,
++) -> Result<(), DeviceError> {
++    if hashmap.contains_key(&device_id) {
++        return Err(device_error(device_id, "Context is already initialized."));
++    }
++    hashmap.insert(device_id, create()?);
++    Ok(())
++}
 +
- # Exercise the actual CLI/preflight without building or launching an example.
- # The Rust parser owns aliases and normalization; this checks that the shell
- # trusts its token, honors explicit mode, and refuses a failed/malformed reply.
-```
-
-**File**: `cuda-oxide/scripts/smoketest.sh` (modified, +2/-2)
-```diff
-@@ -2213,10 +2213,10 @@ run_cargo() {
-         : >"${log}"
-         if [[ -f "${nvvm_shape_check}" ]]; then
-             if [[ ${VERBOSE} -eq 1 ]]; then
--                cargo oxide build "${ex}" "--arch=${nvvm_arch}" 2>&1 | tee -a "${log}"
-+                cargo oxide build "${ex}" 2>&1 | tee -a "${log}"
-                 CARGO_EC=${PIPESTATUS[0]}
-             else
--                cargo oxide build "${ex}" "--arch=${nvvm_arch}" >>"${log}" 2>&1
-+                cargo oxide build "${ex}" >>"${log}" 2>&1
-                 CARGO_EC=$?
-             fi
-             if [[ ${CARGO_EC} -eq 0 ]] && ! bash "${nvvm_shape_check}" >>"${log}" 2>&1; then
+ /// Add a device with a specific scheduling policy to the context map.
+ ///
+ /// # Example: Using 8 streams instead of the default 4
+@@ -241,26 +254,24 @@ pub fn init_device(
+     device_id: usize,
+     policy: Arc<dyn SchedulingPolicy>,
+ ) -> Result<(), DeviceError> {
+-    let device_context = new_device_context(device_id, policy)?;
+-    let pred = hashmap.insert(device_id, device_context).is_none();
+-    device_assert(device_id, pred, "Context is already initialized.")
++    insert_device_context_once(hashmap, device_id, || new_device_context(device_id, policy))
+ }
+ 
+ pub fn init_with_default_policy(
+     hashmap: &mut HashMap<usize, AsyncDeviceContext>,
+     device_id: usize,
+ ) -> Result<(), DeviceError> {
+-    let device = get_or_init_device(device_id)?;
+-    let policy = StreamPoolRoundRobin::new(&device, DEFAULT_ROUND_ROBIN_STREAM_POOL_SIZE)?;
+-    let deallocator_stream = device.new_stream()?;
+-    let device_context = AsyncDeviceContext {
+-        device_id,
+-        deallocator_stream,
+-        policy: Arc::new(policy),
+-        pool: None,
+-    };
+-    let pred = hashmap.insert(device_id, device_context).is_none();
+-    device_assert(device_id, pred, "Context is already initialized.")
++    insert_device_context_once(hashmap, device_id, || {
++        let device = get_or_init_device(device_id)?;
++        let policy = StreamPoolRoundRobin::new(&device, DEFAULT_ROUND_ROBIN_STREAM_POOL_SIZE)?;
++        let deallocator_stream = device.new_stream()?;
++        Ok(AsyncDeviceContext {
++            device_id,
++            deallocator_stream,
++            policy: Arc::new(policy),
++            pool: None,
++        })
++    })
+ }
+ 
+ /// Holds the thread's context map while a closure runs against it, and puts it
+@@ -552,6 +563,28 @@ mod context_map_tests {
+         std::thread::spawn(f).join().expect("test thread panicked");
+     }
+ 
++    #[test]
++    fn duplicate_device_registration_preserves_entry() {
++        let mut map = HashMap::from([(3, "existing")]);
++        let err = insert_device_context_once(&mut map, 3, || -> Result<&str, DeviceError> {
++            panic!("duplicate must not create a replacement")
++        })
++        .unwrap_err();
++        assert!(matches!(err, DeviceError::Context { device_id: 3, .. }));
++        assert_eq!(map.get(&3), Some(&"existing"));
++    }
++
++    #[test]
++    fn failed_device_registration_does_not_insert() {
++        let mut map = HashMap::<usize, usize>::new();
++        let result = insert_device_context_once(&mut map, 7, || Err(device_error(7, "failed")));
++        assert!(result.is_err());
++        assert!(map.is_empty());
++
++        insert_device_context_once(&mut map, 7, || Ok(42)).unwrap();
++        assert_eq!(map.get(&7), Some(&42));
++    }
++
+     /// A second `init_device_contexts` is rejected *and* the first map stays
+     /// alive. The old `replace(None).is_none()` check consumed the live map
+     /// while reporting the error.
 ```
 
 ---
 
-### Incident Patch 3: `cbfaf0dd` (2026-11-13)
-**Commit Message**: fix(cutile-examples): add explicit B200 profiles and safe QKV tail loads (#1798)
+### Incident Patch 3: `bbe38427` (2026-11-14)
+**Commit Message**: fix: suppress host-only cuTile lints (#1389)
 
 ## Summary
 
-Add explicit, opt-in B200 launch profiles and evaluation controls for
-the fused QKV and NVFP4 MoE examples, and fix QKV tail-slot addressing.
-Original launch profiles remain the defaults. All changes are under
-`cutile-rs/`.
+`#[cutile::module]` emits host-side Rust for device kernels, where lints
+such as unused variables and unreachable statements do not reflect
+device execution. Allow these lints within generated modules so strict
+host builds do not fail on device-only code.
 
 ## Changes
 
-- Add opt-in B200 QKV/MoE profiles and document public CUDA Toolkit 13.5
-setup. Compiler support for individual schedules can vary; the default
-profiles remain available.
-- Add explicit large MoE fixture selection, focused correctness runs,
-and raw timing samples.
-- Keep masked QKV tail-slot addresses in bounds without padding fixtures
-or weakening correctness checks.
-- Update the example and reusable-kernel documentation.
+- Add the host-only lint allowances to both generated module forms.
+- Add a strict-lint integration regression case for a print followed by
+device code.
 
-## Validation
+## Testing
 
-- Local formatting and all 13 QKV/MoE example unit tests passed for this
-source tree.
-- The cuTile book builds with warnings treated as errors.
-- CI results are tracked on the current PR head.
-- Additional B200 profile qualification is ongoing; no universal
-performance or complete profile-qualification claim is made.
+- `cargo fmt --all --check`
+- `git diff --check`
+- `cargo test -p cutile --test basics_and_inlining --no-run` could not
+reach compilation: `cuda-bindings` requires a CUDA 13.0+ toolkit, which
+is not installed here.
 
 ## Checklist
 
-- [x] Commit has a DCO sign-off.
-- [x] Commit is cryptographically signed and verified by Gi
+- [x] All commits signed off (`git commit -s`)
+- [x] SPDX headers on new source files (no new source files added)
 
-**File**: `cutile-rs/CHANGELOG.md` (modified, +5/-0)
+Co-authored-by: GiGiKoneti <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Efe Gökdemir <[REDACTED_EMAIL]>
+
+**File**: `cutile-rs/cutile-macro/src/_module.rs` (modified, +3/-1)
 ```diff
-@@ -20,6 +20,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
- 
- ### Added
- 
-+- Add opt-in B200 profiles to the fused QKV and NVFP4 MoE examples. Add public
-+  CTK 13.5 setup instructions, explicit large MoE fixture selection, focused
-+  correctness runs and raw timing samples; retain the original default profiles.
- - Add optional cheap screening and budget-reserved paired confirmation to the
-   preparation pipeline. Preparation stops before fresh incumbent comparisons;
-   incomplete confirmation retains the incumbent and records raw samples and
-@@ -52,6 +55,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
- 
- ### Fixed
- 
-+- Keep masked QKV tail-row slot pointers in bounds, retaining the original
-+  M=67 fixture and numerical checks under compiler-instrumented memcheck.
- - Update the optional `cuda-tile-rs` bindings and `cuda-tile-translate` build
-   from CUDA Tile IR 13.2 to the public 13.5 release, including SIMT preview
-   support and translator round-trip tests.
+@@ -394,7 +394,7 @@ fn module_inner(
+             pub mod #name {
+                 #![allow(nonstandard_style)]
+                 #![allow(dead_code)]
+-                #![allow(unused_variables)]
++                #![allow(unused_variables, unreachable_code, unused_mut)]
+                 // Kernel source is a Rust subset with its own idioms (`a = a + b`,
+                 // explicit closures for reduce regions, trailing `return`); clippy's
+                 // host-Rust style lints do not apply to it.
+@@ -410,7 +410,9 @@ fn module_inner(
+     } else {
+         quote! {
+             pub mod #name {
++                #![allow(nonstandard_style)]
+                 #![allow(dead_code)]
++                #![allow(unused_variables, unreachable_code, unused_mut)]
+                 // Kernel source is a Rust subset with its own idioms; see above.
+                 #![allow(clippy::all)]
+                 // Entry point dependencies.
 ```
 
-**File**: `cutile-rs/cutile-examples/README.md` (modified, +97/-20)
+**File**: `cutile-rs/cutile/tests/basics_and_inlining.rs` (modified, +17/-0)
 ```diff
-@@ -38,26 +38,103 @@ features and do not change which APIs are compiled.
+@@ -6,6 +6,23 @@ use cutile_compiler::compiler::utils::CompileOptions;
  
- `nvfp4_moe` measures the full pipeline's CUDA graph replay latency for batch
- sizes 1, 2, 4, 8, 16, 32, 64, 128, and 256. Each batch uses 20 samples of
--1,000 replays, with 50 warmup replays per sample. CUDA events time GPU execution;
--compilation, allocation, and output validation are outside the timed region.
--The synthetic workload uses H=I=1024, eight allocated experts, four active
--experts, and top-k=4, with direct launches and graph replay checked against a
--deterministic reference. Performance will be optimized in a future version.
--
--The example uses the reusable kernels in
--[`cutile-kernels::experimental::nvfp4_moe`](../cutile-kernels/src/experimental/nvfp4_moe.rs).
--**Peak performance requires CUDA Toolkit 13.5 and its Tile IR assembler.** The
--minimum execution requirements above are unchanged; older assemblers can run
--the kernels without the latest compiler optimizations.
--
--### NVFP4 MoE validation gap
--
--On an RTX 5090 (`sm_120`, driver 610.43.02), the public `tileiras` 13.5.37
--fails the example's direct-launch numerical check at batch 16: normalized
--maximum error 0.5, maximum absolute error 1.578125. This reproduces with both
--13.4 and 13.5 bytecode, so changing the bytecode version is not a workaround.
--The cause has not been isolated. B200 correctness and performance evaluation
--remain pending; retain the output checks when evaluating this example.
-+1,000 replays, with 50 warmups per sample. Compilation, allocation, transfers,
-+and output validation are outside the timed region. The original default
-+fixture remains H=I=1024, eight allocated experts, four active experts, top-k=4.
-+Direct launches and graph replay are checked against a deterministic reference.
-+The example imports [shared kernels](../cutile-kernels/src/experimental/nvfp4_moe.rs).
-+
-+### B200 reference profiles
-+
-+The opt-in B200 profiles provide SM100 schedules for evaluation with CUDA 13.5
-+tooling. Compiler support for individual schedules can vary; selecting this
-+profile does not guarantee that every schedule is supported by every assembler
-+build. The minimum execution requirements above remain unchanged for default
-+profiles.
-+
-+Select matching public toolkit tools and libraries explicitly, and remove
-+inherited overrides from other toolkit installations:
-+
-+```sh
-+export CUDA_TOOLKIT_PATH=/absolute/path/to/public/cuda-13.5
-+export CUDA_HOME="$CUDA_TOOLKIT_PATH"
-+export CUDA_PATH="$CUDA_TOOLKIT_PATH"
-+export CUDA_ROOT="$CUDA_TOOLKIT_PATH"
-+export CUDACXX="$CUDA_TOOLKIT_PATH/bin/nvcc"
-+export CUTILE_TILEIRAS_PATH="$CUDA_TOOLKIT_PATH/bin/tileiras"
-+export CUTILE_BYTECODE_VERSION=13.5
-+export PATH="$CUDA_TOOLKIT_PATH/bin:$PATH"
-+export LD_LIBRARY_PATH="$CUDA_TOOLKIT_PATH/nvvm/lib64:$CUDA_TOOLKIT_PATH/lib64:$CUDA_TOOLKIT_PATH/lib"
-+export LIBRARY_PATH="$CUDA_TOOLKIT_PATH/lib64:$CUDA_TOOLKIT_PATH/lib"
-+unset LD_PRELOAD
-+export LIBCLANG_PATH=/absolute/path/to/libclang/directory
-+
-+nvcc --version
-+"$CUTILE_TILEIRAS_PATH" --version
-+"$CUTILE_TILEIRAS_PATH" --list-versions
-+sha256sum "$CUTILE_TILEIRAS_PATH"
-+```
-+
-+Preserve the repository's Rust toolchain pin.
-+Record actual backend-library loading during compilation (for example with
-+`LD_DEBUG=libs`), not just the version-command output.
-+
-+From `cutile-rs/`:
-+
-+```sh
-+cargo run --release --locked -p cutile-examples --example fused_qkv -- --bench --profile b200
-+cargo run --release --locked -p cutile-examples --example fused_qkv -- --bench --profile b200 --nontrivial
-+cargo run --release --locked -p cutile-examples --example nvfp4_moe -- --profile b200
-+cargo run --release --locked -p cutile-examples --example nvfp4_moe -- --profile b200 --shape large
-+```
-+
-+`--profile b200` is explicit and requires SM100. Omitting it preserves the
-+original schedules; it is never selected based on a compiler filename.
-+MoE uses bounded persistent FC1/FC2 grids and per-batch tiles, occupancy,
-+latency and finalization settings. It still processes every device-computed
-+expert group; launch bounds do not assume four active experts.
-+
-+`--shape large` selects H=6144, I=1536 and 192 allocated experts without a source
-+edit. Both shapes retain the same synthetic generator, top-k=4 and four active
-+experts. Label the shapes separately when reporting results. MoE prints every
-+selected schedule and all 20 `sample_csv,batch,sample,latency_us` records.
-+Timing still covers routing, quantization, FC1/ReLU-squared/requantization, FC2,
-+and weighted finalization.
-+
-+For focused correctness/sanitizer runs, use `--batch 16 --check-only`, with
-+either shape or profile. This validates direct launches and graph replay
-+without timing. It does not suppress checks or change tolerances.
-+
-+### Validation
-+
-+An assembler may reject individual B200 schedules, including TN=32. Record the
-+selected schedule and compiler diagnostics when comparing compilers; silently
-+substituting another profile changes the comparison. `--profile defaul
-```
-
-**File**: `cutile-rs/cutile-examples/examples/fused_qkv.rs` (modified, +134/-8)
-```diff
-@@ -7,8 +7,9 @@
- //!
- //! No arguments: full-output correctness checks on a small tail/scatter fixture.
- //! `--bench`: opt-in CUDA graph timing; `--help` lists shapes and tuning options.
--//! Use CUDA 13.5's Tile IR assembler for performance evaluation. The starting
--//! kernel is not B200-tuned; timings do not imply GEMM/epilogue overlap.
-+//! Use `--profile b200` to evaluate SM100 schedules with CUDA 13.5 tooling.
-+//! Compiler support for individual schedules can vary. Defaults remain unchanged;
-+//! timings do not imply GEMM/epilogue overlap.
+ mod common;
  
- use cuda_async::cuda_graph::{CudaGraph, Scope};
- use cuda_core::{f8e4m3fn, Context, Stream};
-@@ -24,9 +25,11 @@ const D: usize = 128;
- const EPS: f32 = 1e-6;
- const SENTINEL: u8 = 0x55;
- 
--#[derive(Debug)]
-+#[derive(Clone, Debug)]
- struct Config {
-     bench: bool,
-+    automatic_schedule: bool,
-+    cga: usize,
-     m_list: Vec<usize>,
-     k: usize,
-     q_heads: usize,
-@@ -42,23 +45,52 @@ struct Config {
- }
- 
- impl Config {
-+    fn for_problem(&self, problem: Problem, sm_count: usize, sm100: bool) -> Self {
-+        let mut config = self.clone();
-+        if self.automatic_schedule
-+            && sm100
-+            && sm_count > 0
-+            && problem.k == 4096
-+            && problem.hq == 32
-+            && problem.hkv == 8
-+            && [128, 256, 512, 1024, 2048, 4096, 8192].contains(&problem.m)
-+        {
-+            config.bm = 128;
-+            config.bk = if problem.m >= 4096 { 64 } else { 128 };
-+            config.group_m = if problem.m == 2048 { 1 } else { 8 };
-+            config.programs = if problem.m == 256 { 0 } else { sm_count };
-+            config.cga = if problem.m == 128 { 2 } else { 1 };
-+            if config.programs > 0 {
-+                config.programs = config.programs.div_ceil(config.cga) * config.cga;
-+            }
++#[deny(nonstandard_style, unused_variables, unreachable_code)]
++mod host_lint_regression {
++    #[test]
++    fn generated_host_code_allows_device_only_lints() {}
++
++    #[cutile::module]
++    mod generated {
++        use cutile::core::*;
++
++        #[cutile::entry]
++        fn printThenContinue(value: i32, unused: i32) {
++            cuda_tile_print!("value={}\n", value);
++            let _after_print = value;
 +        }
-+        config
-+    }
-+
-     fn parse(args: &[String]) -> Result<Option<Self>> {
-         if args.iter().any(|arg| arg == "--help") {
-             println!(
-                 "fused_qkv [--bench] [--m-list 128,256,512,1024,2048,4096,8192]\n\
-                 [--k 4096] [--q-heads 32] [--kv-heads 8] [--bm 64] [--bk 64]\n\
-                 [--group-m 8] [--programs 0] [--samples 20] [--replays 1000]\n\
--                [--warmups 50] [--nontrivial]\n\
-+                [--warmups 50] [--nontrivial] [--profile default|b200]\n\
-                 No arguments runs the small correctness fixture on ordinary/persistent grids.\n\
--                --bench enables timing; programs=0 launches one CTA per output tile.\n\
-+                --bench enables timing; --profile b200 selects evaluated SM100 schedules.\n\
-+                b200 requires standard benchmark dimensions and cannot mix with manual schedules.\n\
-+                programs=0 launches one CTA per output tile.\n\
-                 --nontrivial uses non-unit gamma/scales and permuted cache slots.\n\
-                 Other options require --bench. Head dimension is fixed at 128."
-             );
-             return Ok(None);
-         }
-         let bench = args.iter().any(|arg| arg == "--bench");
-+        let manual_schedule = args
-+            .iter()
-+            .any(|arg| matches!(arg.as_str(), "--bm" | "--bk" | "--group-m" | "--programs"));
-         let mut config = Self {
-             bench,
-+            automatic_schedule: false,
-+            cga: 1,
-             m_list: if bench {
-                 vec![128, 256, 512, 1024, 2048, 4096, 8192]
-             } else {
-@@ -105,12 +137,31 @@ impl Config {
-                 "--bk" => config.bk = value.parse()?,
-                 "--group-m" => config.group_m = value.parse()?,
-                 "--programs" => config.programs = value.parse()?,
-+                "--profile" => match value.as_str() {
-+                    "default" => config.automatic_schedule = false,
-+                    "b200" => config.automatic_schedule = true,
-+                    _ => return Err("profile must be default or b200".into()),
-+                },
-                 "--samples" => config.samples = value.parse()?,
-                 "--replays" => config.replays = value.parse()?,
-                 "--warmups" => config.warmups = value.parse()?,
-                 _ => return Err(format!("unknown option {arg}").into()),
-             }
-         }
-+        if config.automatic_schedule
-+            && (manual_schedule
-+                || config.k != 4096
-+                || config.q_heads != 32
-+                || config.kv_heads != 8
-+                || config
-+                    .m_list
-+                    .iter()
-+                    .any(|m| ![128, 256, 512, 1024, 2048, 4096, 8192].contains(m)))
-+        {
-+            return Err(
-+                "b200 requires standard benchmark shapes and no manual schedule options".into(),
-+            );
-+        }
-         if config.samples == 0
-             || config.replays == 0
-             || config.group_m == 0
-@@ -538,7 +589,11 @@ fn launch(
-             .to_vec(),
-     )
-     .grid((progr
-```
-
-**File**: `cutile-rs/cutile-examples/examples/nvfp4_moe.rs` (modified, +416/-81)
-```diff
-@@ -3,7 +3,8 @@
-  * SPDX-License-Identifier: Apache-2.0
-  *
-  * Uses cutile-kernels' NVFP4 mixture of experts kernels by Emmet Zhang et al.
-- * Peak kernel performance requires the CUDA Toolkit 13.5 Tile IR assembler.
-+ * The opt-in B200 profile provides SM100 schedules for CUDA 13.5 evaluation.
-+ * Compiler support for individual schedules can vary.
-  *
-  * Run with: cargo run --release -p cutile-examples --example nvfp4_moe
-  *
-@@ -15,8 +16,8 @@
-  *
-  * The small synthetic fixture uses H=I=1024, eight allocated experts, top-k=4,
-  * and four active experts. Constant packed weights and deterministic routes
-- * admit an analytical reference. Performance will be optimized in a future
-- * version.
-+ * admit an analytical reference. --profile b200 opts into bounded persistent
-+ * grids and per-batch schedules. --shape large selects H=6144, I=1536, E=192.
-  */
- 
- use cuda_async::cuda_graph::CudaGraph;
-@@ -26,6 +27,7 @@ use cutile::api;
- use cutile::cuda_core::{f4e2m1fnx2, f8e4m3fn};
- use cutile::half::{bf16, f16};
- use cutile::prelude::*;
-+use cutile::tile_kernel::CompileOptions;
- use std::sync::Arc;
- 
- use cutile_kernels::experimental::nvfp4_moe as kernels;
-@@ -36,9 +38,23 @@ use kernels::{
- };
- 
- // Kernel config
--const HIDDEN: usize = 1024;
--const INTERMEDIATE: usize = 1024;
--const NUM_EXPERTS: usize = 8;
-+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-+struct Shape {
-+    hidden: usize,
-+    intermediate: usize,
-+    experts: usize,
-+}
-+
-+const SMALL_SHAPE: Shape = Shape {
-+    hidden: 1024,
-+    intermediate: 1024,
-+    experts: 8,
-+};
-+const LARGE_SHAPE: Shape = Shape {
-+    hidden: 6144,
-+    intermediate: 1536,
-+    experts: 192,
-+};
- const MAX_NUM_TOKENS: usize = 256;
- const BATCH_SIZES: [usize; 9] = [1, 2, 4, 8, 16, 32, 64, 128, MAX_NUM_TOKENS];
- const TOP_K: usize = 4;
-@@ -59,9 +75,67 @@ const DOWN_FACTORS: [f32; TOP_K] = [1.0, 2.0, 0.5, 1.0];
- 
- const INPUT_SCALE: f32 = 1.0;
- 
--fn max_num_groups(routed_size: usize, tile_n: usize) -> usize {
--    let filled_experts = NUM_EXPERTS.min(routed_size);
--    filled_experts + (routed_size - filled_experts) / tile_n
-+impl Shape {
-+    fn max_num_groups(self, routed_size: usize, tile_n: usize) -> usize {
-+        let filled_experts = self.experts.min(routed_size);
-+        filled_experts + (routed_size - filled_experts) / tile_n
 +    }
 +}
 +
-+#[derive(Debug)]
-+struct Config {
-+    shape: Shape,
-+    tuned: bool,
-+    check_only: bool,
-+    batches: Vec<usize>,
-+}
-+
-+impl Config {
-+    fn parse(args: &[String]) -> Result<Option<Self>, Box<dyn std::error::Error>> {
-+        if args.iter().any(|arg| arg == "--help") {
-+            println!(
-+                "nvfp4_moe [--shape small|large] [--profile default|b200] \\
-+                 [--batch 1|2|4|8|16|32|64|128|256] [--check-only]\\n\\
-+                 small: H=I=1024, experts=8; large: H=6144, I=1536, experts=192.\\n\\
-+                 Both use the same synthetic fixture, four active experts and top-k=4.\\n\\
-+                 b200 selects SM100 profiles; support depends on the selected assembler.\\n\\
-+                 --check-only validates direct launches and graph replay without timing.\\n\\
-+                 No arguments preserves the original small fixture, profiles and full batch sweep."
-+            );
-+            return Ok(None);
-+        }
-+        let mut config = Self {
-+            shape: SMALL_SHAPE,
-+            tuned: false,
-+            check_only: false,
-+            batches: BATCH_SIZES.to_vec(),
-+        };
-+        let mut args = args.iter();
-+        while let Some(arg) = args.next() {
-+            if arg == "--check-only" {
-+                config.check_only = true;
-+                continue;
-+            }
-+            let value = args
-+                .next()
-+                .ok_or_else(|| format!("missing value for {arg}"))?;
-+            match (arg.as_str(), value.as_str()) {
-+                ("--shape", "small") => config.shape = SMALL_SHAPE,
-+                ("--shape", "large") => config.shape = LARGE_SHAPE,
-+                ("--profile", "default") => config.tuned = false,
-+                ("--profile", "b200") => config.tuned = true,
-+                ("--batch", _) => {
-+                    let batch = value.parse()?;
-+                    if !BATCH_SIZES.contains(&batch) {
-+                        return Err("batch must be a power of two from 1 through 256".into());
-+                    }
-+                    config.batches = vec![batch];
-+                }
-+                _ => return Err(format!("unknown option or value: {arg} {value}").into()),
-+            }
-+        }
-+        Ok(Some(config))
-+    }
- }
+ #[cutile::module]
+ mod basics_and_inlining_module {
  
- fn hidden_value(token: usize) -> f32 {
-@@ -95,7 +169,113 @@ fn expected_output(token: usize) -> bf16 {
-     bf16::from_f32(total)
- }
- 
-+#[derive(Clone, Copy, Debug)]
-+struct Schedule {
-+    tile_n: usize,
-+    fc1_workers: usize,
-+    fc2_workers: usize,
-+    fc1_occupancy: i32,
-+    fc2_occupancy: i32,
-+    fc1_latencies: [usize; 2],
-+    fc2_latencies: [usize; 3],
-+  
-```
-
-**File**: `cutile-rs/cutile-examples/fused_qkv.md` (modified, +25/-7)
-```diff
-@@ -7,9 +7,10 @@ FP8 quantization, a contiguous Q output, and paged K/V cache stores in one kerne
- V is quantized and stored without normalization. There is no FP16 intermediate
- rounding, bias, RoPE, residual, attention, or communication.
- 
--Use the **public CUDA Toolkit 13.5 Tile IR assembler for performance evaluation**.
-+Use a complete **public CUDA Toolkit 13.5** installation for evaluation.
-+Compiler support for individual opt-in SM100 schedules can vary.
- Execution requires FP8 support (SM90+); the normal target/version rules still
--apply. The kernel is a starting implementation, not a tuned B200 result. Source
-+apply. The schedules were evaluated on B200; they are not universal optima. Source
- fusion does not establish overlap between GEMM and the epilogue. Its grouped-M
- traversal and TMA loading derive from TileGym; the kernel retains the MIT notice.
- 
-@@ -21,11 +22,11 @@ From `cutile-rs/`, after configuring your toolkit and `CUTILE_TILEIRAS_PATH`:
- # Small full-output correctness check, including direct and graph launches.
- cargo run --release -p cutile-examples --example fused_qkv
- 
--# Opt-in performance sweep, with per-sample CUDA-event measurements.
--cargo run --release -p cutile-examples --example fused_qkv -- --bench
-+# Opt-in B200 profiles, with per-sample CUDA-event measurements.
-+cargo run --release --locked -p cutile-examples --example fused_qkv -- --bench --profile b200
- 
- # Same sweep with non-unit gamma/scales and permuted physical cache slots.
--cargo run --release -p cutile-examples --example fused_qkv -- --bench --nontrivial
-+cargo run --release --locked -p cutile-examples --example fused_qkv -- --bench --profile b200 --nontrivial
- 
- # Inspect dimensions, schedule controls and measurement options without a GPU.
- cargo run -p cutile-examples --example fused_qkv -- --help
-@@ -36,13 +37,27 @@ The benchmark defaults to M=128,256,512,1024,2048,4096,8192, K=4096,
- with `--m-list`, `--k`, `--q-heads`, and `--kv-heads`. K must be a multiple of
- 8 so FP16 input/weight row strides meet 16-byte TMA alignment.
- 
--The starting schedule is BM=64, BN=128, BK=64, GROUP_M=8, occupancy=1 and one
--CTA per cluster. `--bm` and `--bk` accept 16,32,64,128; `--group-m` controls
-+With `--profile b200`, the standard benchmark dimensions on SM100 use
-+BM=128, BN=128 and occupancy=1. BK=128 through M=2048 and BK=64 for larger M.
-+GROUP_M=1 at M=2048 and 8 otherwise. M=256 uses one CTA per output tile; other
-+sizes use a persistent grid with one CTA per SM. M=128 uses two CTAs per cluster
-+(with the grid rounded up to a complete cluster); other sizes use one.
-+
-+The default profile retains BM=64, BN=128, BK=64, GROUP_M=8, occupancy=1 and
-+one CTA per cluster on all architectures. `--profile b200` rejects other
-+architectures/nonstandard shapes and cannot mix with manual schedule controls.
-+With the default profile, `--bm`, `--bk`, `--group-m` and `--programs` start from
-+the original defaults. `--bm` and `--bk` accept 16,32,64,128; `--group-m` controls
- grouped-M traversal. `--programs 0` launches one CTA per output tile; a positive
- count sets a persistent grid. These controls enable evaluation, not an implicit
- claim that a configuration is optimal. This kernel does not explicitly implement
- the CuTe example's two-CTA, two-accumulator, warp-specialized schedule.
- 
-+See [B200 setup](README.md#b200-reference-profiles) for matching public toolkit
-+tools and libraries, and [validation](README.md#validation) for
-+compiler-instrumented sanitizer commands. Comparing compilers with different
-+profiles is not an isolated compiler comparison.
-+
- ## Data and validation
- 
- Weights have contiguous `[N,K]` layout, ordered Q, K, V. Each head has 128
-@@ -64,6 +79,9 @@ ordinary and persistent grids. It checks every Q/K/V element against an
- independent FP64 projection/norm and FP8 converter, allowing one neighboring
- FP8 spacing for FP32 reduction/rsqrt rounding. Untouched bytes must match exactly.
- Output buffers are reset before direct and graph checks.
-+Inactive tail rows retain their slot-load mask and use an in-bounds pointer
-+before the load. The fixture remains unpadded and retains its numerical checks
-+when running compiler-instrumented memcheck.
- 
- Benchmark inputs/weights use the same deterministic, nonuniform recipe in the
- source, including a zero first input row. By default gamma is one, all inverse
-```
-
-**File**: `cutile-rs/cutile-kernels/README.md` (modified, +7/-4)
-```diff
-@@ -69,17 +69,20 @@ cargo run --release -p cutile-examples --example nvfp4_moe
- 
- The example is a synthetic correctness and timing fixture; its timings are not
- a comparison against a production MoE library. See the
--[current validation gap](../cutile-examples/README.md#nvfp4-moe-validation-gap)
--observed with public `tileiras` 13.5.37 on SM120 before using its results.
-+[validation instructions](../cutile-examples/README.md#validation) and
-+[known SM120 limitation](../cutile-examples/README.md#known-sm120-limitation)
-+before using its results. Opt-in B200 launch profiles and the large synthetic fixture
-+are documented in the [host example guide](../cutile-examples/README.md#b200-reference-profiles).
- 
- ## Fused QKV
- 
- `experimental::fused_qkv` fuses FP16 QKV projection, FP32 per-head Q/K RMSNorm,
- FP8 conversion, Q storage, and paged K/V scatter. V is not normalized. The
- [runnable example and benchmark guide](../cutile-examples/fused_qkv.md) documents
- the unsafe buffer/slot contract, full-output correctness fixture, and opt-in
--CUDA graph timing sweep. Use CUDA 13.5's assembler for performance evaluation;
--the starting schedule has not been tuned on B200 and overlap is not guaranteed.
-+CUDA graph timing sweep. Its opt-in `--profile b200` schedules are intended for
-+evaluation with CUDA 13.5 tooling; compiler support for individual schedules can
-+vary. Defaults retain the original schedule. Overlap is not guaranteed.
- The adapted TileGym traversal retains its MIT license in the kernel source.
- 
- ## Validation
-```
-
-**File**: `cutile-rs/cutile-kernels/src/experimental/qkv.rs` (modified, +3/-1)
-```diff
-@@ -203,8 +203,10 @@ pub mod kernels {
-                     slot_base.reshape(const_shape![1]);
-                 let slot_base_tile: PointerTile<*const i64, { [BM] }> =
-                     slot_base_1d.broadcast(const_shape![BM]);
-+                let zero_rows: Tile<i64, { [BM] }> = constant(0i64, const_shape![BM]);
-+                let safe_rows: Tile<i64, { [BM] }> = select(row_valid, rows64, zero_rows);
-                 let slot_ptrs: PointerTile<*const i64, { [BM] }> =
--                    slot_base_tile.offset_tile(rows64);
-+                    slot_base_tile.offset_tile(safe_rows);
-                 let (slot, _): (Tile<i64, { [BM] }>, Token) = unsafe {
-                     load_ptr_tko(
-                         slot_ptrs,
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #1807** (closed): docs(cuda-core): link nvls_all_reduce example in tests (@Code4me2)
+- **PR #1806** (2026-11-14): docs(cuda-core): locate the NVLS all-reduce example (@elibol)
 - **PR #1799** (2026-11-13): docs(cutile): clarify versioned API compatibility (@elibol)
 - **PR #1798** (2026-11-13): fix(cutile-examples): add explicit B200 profiles and safe QKV tail loads (@elibol)
 - **PR #1790** (closed): fix(mir-importer,codegen): lower ConstantMemory::{get_ref,get} at opt-level 0 (@ssoj13)
 - **PR #1789** (2026-11-12): fix(cuda-oxide): omit NVVM-only --arch on compile-only code-shape prebuild (@nihalpasham)
-- **PR #1785** (2026-11-12): docs(cuda-oxide-book): rewrite Tile Libraries chapter, fix SVG diagrams, and add CLI/MLIR/C++ highlighting (@nihalpasham)
 
 ---
 
@@ -3297,43 +2650,46 @@ performance or complete profile-qualification claim is made.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(cuda-oxide-book): rewrite Tile Libraries chapter, fix SVG diagrams, and add
+## X. cutile-rs): reject overflowing section lengths and varints in bytecode decoder
 
 **RULE**:
-When implementing operations in `cuda-oxide/cuda-oxide-book/advanced/images/tilelib-direct-linkage.svg`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NVIDIA/cuda-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cutile-rs/cutile-ir/src/bytecode/decoder.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NVIDIA/cuda-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5183ab57`: docs(cuda-oxide-book): rewrite Tile Libraries chapter, fix SVG diagrams, and add CLI/MLIR/C++ highlighting. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `07814e2d`: cutile-rs): reject overflowing section lengths and varints in bytecode decoder. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cuda-oxide/cuda-oxide-book/advanced/images/tilelib-direct-linkage.svg`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cutile-rs/cutile-ir/src/bytecode/decoder.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 740" width="1240" height="740" role="img"
-  aria-label="Static tile library flow: Left column builds relu.tilelib from #[tile_export], middle column compiles the Tile caller to prog.tilebc, and right column links both in tileiras to produce kernel.cubin">
-  :root, svg {
-  @media (prefers-color-scheme: dark) { :root, svg {
+        if n > self.remaining() {
+            // The tenth byte can contribute only bit 63 and cannot continue.
+            if shift == 63 && b > 1 {
+                return Err(err("varint overflow"));
+            }
+    #[test]
+    fn varint_u64_boundaries() {
+        for value in [0, 127, 128, 1 << 63, u64::MAX] {
+            let mut writer = EncodingWriter::new();
+            writer.write_varint(value);
+            let mut reader = Reader::new(writer.as_bytes());
+            assert_eq!(reader.read_varint().unwrap(), value);
+            assert_eq!(reader.remaining(), 0);
+        }
+    }
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 800" width="1240" height="800" role="img"
-  aria-label="Direct linkage flow: Rust source becomes LTOIR plus two description bytecodes, packaged into a .tilelib that tileiras links with a Tile kernel's bytecode into one cubin">
-  :root, svg { 
-  @media (prefers-color-scheme: dark) { :root, svg { 
-<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" style="fill: var(--fg)"/></marker></defs>
-<rect x="0" y="0" width="1240" height="800" style="fill: var(--bg)"/>
-<text x="40" y="34" text-anchor="start" style="font: 600 17px var(--sans); fill: var(--fg)">Direct linkage: a Tile kernel calls a Rust function through a .tilelib</text>
-<text x="40" y="56" text-anchor="start" style="font: 400 12.5px var(--sans); fill: var(--muted)">cuda-oxide is the SIMT provider. It ships code plus a description; the Tile compiler matches, marshals and links.</text>
-<text x="40" y="92" text-anchor="start" style="font: 600 11px var(--sans); fill: var(--muted)">RUST SIDE  (cuda-oxide)</text>
-<text x="620.0" y="92" text-anchor="middle" style="font: 600 11
+        if self.pos + n > self.data.len() {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5183ab57` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `07814e2d` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
