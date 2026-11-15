@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-15T03:34:41.250Z",
+  "last_updated": "2026-11-15T03:48:13.045Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2421,14 +2421,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
-      "content_hash": "f4fe60d7bc57b9299885925c6a24399293637227a2ffd2ada26edd421c4faf2a",
-      "verified_at": "2026-11-09T15:17:35.625Z",
+      "content_hash": "c75d5fac8b844852ee547b21402989680acdf9afc88fc4a0b145e866a3ee7126",
+      "verified_at": "2026-11-15T03:48:03.276Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T15:17:35.625Z"
+      "last_updated": "2026-11-15T03:48:03.276Z"
     },
     "black-forest-labs/flux-3-image-klein-comfy": {
       "repository": "black-forest-labs/flux-3-image-klein-comfy",
@@ -9066,14 +9066,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rook-rook",
-      "content_hash": "23431232df306e9a0de2dab6ecb9377b334cffef5a437ce56437a03769c630be",
-      "verified_at": "2026-11-13T19:39:58.602Z",
+      "content_hash": "76eb2a292bd1ebd5b7d82b95ab933822e28bd885176e080796a81aff4a1f0477",
+      "verified_at": "2026-11-15T03:48:13.044Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T19:39:58.602Z"
+      "last_updated": "2026-11-15T03:48:13.044Z"
     },
     "genkit-ai/genkit": {
       "repository": "genkit-ai/genkit",
@@ -11226,14 +11226,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nativescript-nativescript",
-      "content_hash": "f54260707cf7aef4fbca63c6f639eb8bee6ac9d10bdc0924b412991c117d09a1",
-      "verified_at": "2026-11-11T16:35:59.599Z",
+      "content_hash": "45651c2f09dfca00320505909044bacfd270c20a4c15f872742b058cc0bdec25",
+      "verified_at": "2026-11-15T03:48:10.790Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T16:35:59.599Z"
+      "last_updated": "2026-11-15T03:48:10.790Z"
     },
     "oramasearch/orama": {
       "repository": "oramasearch/orama",

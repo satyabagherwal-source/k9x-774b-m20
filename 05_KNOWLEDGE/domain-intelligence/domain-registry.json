@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T03:35:16.620Z",
-  "total_records": 936,
+  "last_updated": "2026-11-15T03:48:47.962Z",
+  "total_records": 942,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 461,
+      "total": 463,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -498,7 +498,9 @@
         "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-3-image-klein-learning",
         "domain_intelligence-research-knowledge-intelligence-pyannote-speaker-diarization-community-1-core-in",
         "DOM-D-8240E8AC",
-        "domain_intelligence-research-knowledge-intelligence-hf-pyannote-speaker-diarization-community-1-lear"
+        "domain_intelligence-research-knowledge-intelligence-hf-pyannote-speaker-diarization-community-1-lear",
+        "domain_intelligence-research-knowledge-intelligence-meta-models-muse-spark-open-816b-a42b-core-invar",
+        "domain_intelligence-research-knowledge-intelligence-hf-meta-models-muse-spark-open-816b-a42b-learnin"
       ]
     },
     "E": {
@@ -534,7 +536,7 @@
       ]
     },
     "G": {
-      "total": 153,
+      "total": 156,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -688,7 +690,10 @@
         "domain_intelligence-architecture-intelligence-tw93-mole-core-invariants",
         "domain_intelligence-architecture-intelligence-tw93-mole-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-flox-flox-core-invariants",
-        "domain_intelligence-architecture-intelligence-flox-flox-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-flox-flox-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-nativescript-nativescript-core-invariants",
+        "domain_intelligence-architecture-intelligence-nativescript-nativescript-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-rook-rook-learnings-core-invariants"
       ]
     },
     "H": {
@@ -932,7 +937,7 @@
       ]
     },
     "J": {
-      "total": 12,
+      "total": 13,
       "record_ids": [
         "DOM-J-C14FC2D6",
         "DOM-J-B305372A",
@@ -945,7 +950,8 @@
         "DOM-J-2672FCA2",
         "DOM-J-C6558B0E",
         "domain_intelligence-search-distribution-intelligence-sharkdp-fd-core-invariants",
-        "domain_intelligence-search-distribution-intelligence-sharkdp-fd-learnings-core-invariants"
+        "domain_intelligence-search-distribution-intelligence-sharkdp-fd-learnings-core-invariants",
+        "DOM-J-6AB1B121"
       ]
     },
     "K": {
@@ -8776,8 +8782,8 @@
       "title": "Architecture Intelligence: rook/rook Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rook-rook-architecture-intelligence-rook-rook-core-invariants.md",
       "repository": "rook/rook",
-      "content_hash": "3dc0282a42fa87ffbfbf30727a7312c5d25caab88190613dcfd51c3273c69bf7",
-      "created_at": "2026-11-13T19:39:58.920Z"
+      "content_hash": "6fff9d7f3d955e4cc1e6ed837103539388956c548fa491a8375a05f9d9cd4610",
+      "created_at": "2026-11-15T03:48:13.367Z"
     },
     "domain_intelligence-technical-construction-intelligence-zama-ai-tfhe-rs-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zama-ai-tfhe-rs-core-invariants",
@@ -18266,6 +18272,99 @@
       "repository": "hf-pyannote-speaker-diarization-community-1-learnings",
       "content_hash": "02523407982d43c609abc58727db325bda92f09c2c82bf77e602d04406cfcbd9",
       "created_at": "2026-11-15T03:35:15.266Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-meta-models-muse-spark-open-816b-a42b-core-invar": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-meta-models-muse-spark-open-816b-a42b-core-invar",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: meta-models/Muse-Spark-Open-816B-A42B Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-models-muse-spark-open-816b-a42b-research-knowledge-intelligence-meta-mo.md",
+      "repository": "meta-models/Muse-Spark-Open-816B-A42B",
+      "content_hash": "a018f3fb4098b3fa8e205ac929ed77eaf76059de9337dd71176442dd06fc6ed4",
+      "created_at": "2026-11-15T03:48:03.464Z"
+    },
+    "domain_intelligence-architecture-intelligence-nativescript-nativescript-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-nativescript-nativescript-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: NativeScript/NativeScript Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nativescript-nativescript-architecture-intelligence-nativescript-nativescript-co.md",
+      "repository": "NativeScript/NativeScript",
+      "content_hash": "1e3cc4689e71a88e968125695792ffea38cb5d874b49d87e020e692c26bf6ad0",
+      "created_at": "2026-11-15T03:48:11.114Z"
+    },
+    "DOM-J-6AB1B121": {
+      "record_id": "DOM-J-6AB1B121",
+      "domain_letter": "J",
+      "domain_id": "search_distribution",
+      "domain_name": "Search & Distribution Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        },
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): meta-models/Muse-Spark-Open-816B-A42B",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B](https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B))  \n> **Source Version**: `hf-meta-m",
+      "content_hash": "ba8c5b394737229376ea7957d23bbe4371355428fac06e7208c23351e1469a35",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-learnings.md`  \n> **Source**: huggingface ( -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-learnings.md`  \n> **Source**: huggingface (",
+      "provenance": {
+        "source_uri": "project://hf-meta-models-muse-spark-open-816b-a42b/hf-meta-models-muse-spark-open-816b-a42b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T03:48:16.327Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-meta-models-muse-spark-open-816b-a42b)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-meta-models-muse-spark-open-816b-a42b"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M",
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.93,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-15T03:48:46.401Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-meta-models-muse-spark-open-816b-a42b-learnin": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-meta-models-muse-spark-open-816b-a42b-learnin",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-meta-models-muse-spark-open-816b-a42b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-models-muse-spark-open-816b-a42b-learnings-research-knowledge-intelligen.md",
+      "repository": "hf-meta-models-muse-spark-open-816b-a42b-learnings",
+      "content_hash": "4793566fed85169c27c70553cb12de7896c8fd7d29df425850d3a1ea4c5efac0",
+      "created_at": "2026-11-15T03:48:46.648Z"
+    },
+    "domain_intelligence-architecture-intelligence-nativescript-nativescript-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-nativescript-nativescript-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: nativescript-nativescript-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nativescript-nativescript-learnings-architecture-intelligence-nativescript-nativ.md",
+      "repository": "nativescript-nativescript-learnings",
+      "content_hash": "4744aedc1c774ce7d26dbdccf1b4898f9ecc2c010eaab2873bcfd5aa6d17246b",
+      "created_at": "2026-11-15T03:48:47.325Z"
+    },
+    "domain_intelligence-architecture-intelligence-rook-rook-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-rook-rook-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: rook-rook-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rook-rook-learnings-architecture-intelligence-rook-rook-learnings-core-invariant.md",
+      "repository": "rook-rook-learnings",
+      "content_hash": "68a826073a6dfa9ed3682ccce44a561f8f65769c44290801904f7a314196f426",
+      "created_at": "2026-11-15T03:48:47.962Z"
     }
   }
 }

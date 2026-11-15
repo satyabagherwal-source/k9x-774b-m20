@@ -10047,3 +10047,7 @@ Every entry in this ledger must capture:
 | `learn-github-flox-flox` | `https://github.com/flox/flox` | `d1b1f5f7` | Multi-dimensional audit evidence | 2026-11-15T03:34:23.901Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `313132b8` | Multi-dimensional audit evidence | 2026-11-15T03:34:41.241Z |
 | `learn-dom-d-8240e8ac` | `project://hf-pyannote-speaker-diarization-community-1` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-pyannote-speaker-diarization-community-1-learnings.md` | 2026-11-15T03:35:15.055Z |
+| `learn-huggingface-meta-models-muse-spark-open-816b-a42b` | `https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B` | `hf-meta-mo` | Multi-dimensional audit evidence | 2026-11-15T03:48:03.267Z |
+| `learn-github-nativescript-nativescript` | `https://github.com/NativeScript/NativeScript` | `283eb0c5` | Multi-dimensional audit evidence | 2026-11-15T03:48:10.781Z |
+| `learn-github-rook-rook` | `https://github.com/rook/rook` | `5301ca41` | Multi-dimensional audit evidence | 2026-11-15T03:48:13.035Z |
+| `learn-dom-j-6ab1b121` | `project://hf-meta-models-muse-spark-open-816b-a42b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-learnings.md` | 2026-11-15T03:48:46.418Z |

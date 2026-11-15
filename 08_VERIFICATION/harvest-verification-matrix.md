@@ -10014,3 +10014,7 @@
 | `CYCLE-20261115-6DUH` | `2026-11-15T03:34:23.897Z` | `flox/flox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8571` | Yes (`6359b612...`) |
 | `CYCLE-20261115-6R85` | `2026-11-15T03:34:41.237Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8572` | Yes (`15d8710c...`) |
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T03:35:15.055Z` | `hf-pyannote-speaker-diarization-community-1` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-8240E8AC` [Domain D] | Yes (`3f78745f...`) |
+| `CYCLE-20261115-NY2N` | `2026-11-15T03:48:03.263Z` | `meta-models/Muse-Spark-Open-816B-A42B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-learnings.md` | Yes (`c75d5fac...`) |
+| `CYCLE-20261115-O3VD` | `2026-11-15T03:48:10.777Z` | `NativeScript/NativeScript` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8573` | Yes (`45651c2f...`) |
+| `CYCLE-20261115-O5LZ` | `2026-11-15T03:48:13.031Z` | `rook/rook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8574` | Yes (`76eb2a29...`) |
+| `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T03:48:46.418Z` | `hf-meta-models-muse-spark-open-816b-a42b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-J-6AB1B121` [Domain J] | Yes (`ba8c5b39...`) |

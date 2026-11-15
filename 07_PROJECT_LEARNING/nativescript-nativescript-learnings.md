@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nativescript-nativescript-learnings.md`  
 > **Source**: github ([https://github.com/NativeScript/NativeScript](https://github.com/NativeScript/NativeScript))  
-> **Source Version**: `36a88dd6`  
+> **Source Version**: `283eb0c5`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T16:35:49.188Z  
+> **Timestamp**: 2026-11-15T03:48:09.783Z  
 > **Learning ID**: `learn-github-nativescript-nativescript`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nativescript-nativescript-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NativeScript/NativeScript](https://github.com/NativeScript/NativeScript))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T16:35:49.184Z  
+> **Harvest Timestamp**: 2026-11-15T03:48:09.777Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ⚡ Write Native with TypeScript ✨ Best of all worlds (TypeScript, Swift, Objective C, Kotlin, Java, Dart). Use what you love ❤️ Angular, React, Solid, Svelte, Vue with: iOS (UIKit, SwiftUI), Android (View, Jetpack Compose), Flutter and you name it compatible.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 25701 stars
+- **Stars / Engagement**: 25706 stars
 
 ---
 
@@ -923,14 +923,11 @@ export function getTimeInFrameBase(): number;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #11526** (2026-11-12): **Android openWindow uses an undeclared Activity class after the original Activity finishes**
+  *Symptoms*: ### Observed behavior  On Android, `Application.openWindow()` can throw `ActivityNotFoundException` after the original/primary Activity has finished, even while another NativeWindow from the app remains open.  Observed with NativeScript core/runtime 9.1.1 on an Android 15/API 35 arm64 emulator, using `com.tns.NativeScriptActivity` and `launchMode="standard"`. The remaining secondary window could still navigate, but requesting another window attempted to launch `org.nativescript.NativeScriptActivity`, which was not declared in the manifest.  ### Reproduction  1. Configure a multi-instance launch Activity and a window content resolver. 2. Launch the primary window and open a secondary one with `Application.openWindow()`. 3. Finish the original Activity while leaving the secondary window alive. 4. From the remaining window, call `Application.openWindow()` again.  Observed exception:  ```text android.content.ActivityNotFoundException: Unable to find explicit activity class {org.nativescript.vuerouterns/org.nativescript.NativeScriptActivity}; have you declared this activity in your AndroidManifest.xml ...? ```  ### Expected behavior  Use a valid NativeScript Activity class from a surviving owned window (or the application's configured launch component) when the initial Activity no longer exists. Closing one document window should not prevent another from opening further windows.  ### Suspected cause  `AndroidApplication.openWindow()` uses `this.startActivity` to select the target 
+
 - **Issue #11238** (2026-06-08): **When making use of axios CancelToken, `ReferenceError: exports is not defined at xhr.onabort` error occurs**
   *Symptoms*: ### Issue Description  When making use of axios' `CancelToken`, `ReferenceError: exports is not defined at xhr.onabort` error occurs.  In my code base I've had this issue due to a production issue and fixed it via patching the `packages/core/fetch/index.mjs` file. I replaced `exports.DOMException` with `DOMException` in these two instances:  https://github.com/NativeScript/NativeScript/blob/71d2203e1c95d009fd1daa1a15c52b9e8c10db8b/packages/core/fetch/index.mjs#L457-L463  https://github.com/NativeScript/NativeScript/blob/71d2203e1c95d009fd1daa1a15c52b9e8c10db8b/packages/core/fetch/index.mjs#L492-L496  I believe with the changes done here: https://github.com/NativeScript/NativeScript/commit/cc0b5034c4042418aa5b54f0b1f448430a9d0297, `DOMException` can be accessed from the exported classes.  If it helps I have a branch ready with the changes which I can push too :)  ### Reproduction  Sample code:  ```js // service.js let requestSource;  getData() {   if (requestSource) {     requestSource.cancel('Request cancelled!');   }    const currentSource = axios.CancelToken.source();   requestSource = currentSource;    const config = {     cancelToken: requestSource.token   };    return axios.get('api/get-data', undefined, config).finally(() => {     if (requestSource === currentSource) {       requestSource = undefined;     }   }); } ``` ```js // somewhere in app call function try {   getData(); } catch (e) {   console.log('Error ::', e); // results in ReferenceError: exports is not defin
-
-- **Issue #11142** (2026-10-18): **Android edge-to-edge: layout issues when switching Navigation mode**
-  *Symptoms*: ### Issue Description  When starting the NativeScript app on Android, switch to Android settings, switch navigation mode (e.g. from 3-button navigation to gesture-navigation or vice versa) and resume the NativeScript app, the layout is messed up like this:  https://github.com/user-attachments/assets/ed665727-4a81-4cac-b73b-2e5713237623  ### Reproduction  [ns9test.zip](https://github.com/user-attachments/files/26111687/ns9test.zip)  Build and run the app switch to Android settings for navigation mode switch from 3-button-navigation to gesture-navigation (or vice versa) switch back to the NativeScript app -> layout is messed up  ### Relevant log output (if applicable)  ```shell  ```  ### Environment  <!-- COPY START --> ```yaml OS: macOS 26.3.1 CPU: (12) x64 Intel(R) Core(TM) i7-9750H CPU @ 2.60GHz Shell: /bin/zsh node: 22.19.0 npm: 11.6.2 nativescript: 9.0.5  # android java: 17.0.11 ndk: Not Found apis: 29, 35, 36, 36 build_tools: 25.0.2, 27.0.3, 28.0.3, 29.0.2, 30.0.2, 30.0.3, 32.0.0, 33.0.0, 33.0.1, 33.0.2, 34.0.0, 35.0.0, 35.0.1, 36.0.0, 36.1.0 system_images:    - android-28 | Google Play Intel x86_64 Atom   - android-29 | Google Play Intel x86_64 Atom   - android-30 | Google APIs Intel x86_64 Atom   - android-35 | Google Play Intel x86_64 Atom   - android-36.1 | Google Play Intel x86_64 Atom   - android-36.1 | Pre-Release 16 KB Page Size Google Play Intel x86_64 Atom  # ios xcode: 26.3/17C529 cocoapods: 1.16.2 python: 2.7.18 python3: 3.13.0 ruby: 2.6.10 platforms:    - Dri
-  **Post-Mortem & Fix Analysis**:
-  > Hello, I think I am seeing exactely the same problem. Are you also using androidOverflowEdge="dont-apply" ?  <GridLayout rows="auto,*,auto" (loaded)="mainGridLayoutLoaded($event)" androidOverflowEdge="dont-apply" (androidOverflowInset)="onAndroidOverflowInset($event)">  public onAndroidOverflowInset(args: AndroidOverflowInsetData) { 		if (args.inset) { 			args.inset.bottom = 0; 			args.inset.top = 0; 			args.inset.topConsumed = true; 			args.inset.bottomConsumed = true; 			args.inset.imeBottom = 0; 			args.inset.imeBottomConsumed = true; 		} 	}  I see the layout issue when I go to the system settings and change the language settings. This seems to lead to a partial recreation of the activity. From what I found out it seems like the insets, are 0 like I have set them. However the first level of child views under the root layout gets the insets applied as padding top/bottom  Update: Just seen you demo code. Yes same problem. Have you found a workaround?
-  > The issue is resolved in nativescript/core 9.1.3
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -947,761 +944,441 @@ export function getTimeInFrameBase(): number;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e532d623` (2026-11-09)
-**Commit Message**: feat(webpack,vite): keep ns: builtin module imports for the runtime (#11626) [skip ci]
+### Incident Patch 1: `ce4102b0` (2026-11-14)
+**Commit Message**: fix(ios): never re-attach torn-down ListView item views (#11642)
 
-The iOS and Android runtimes resolve `ns:<name>` builtin modules (and a
-few `node:<name>` compatibility shims) themselves. Webpack failed on these
-imports with an unhandled-scheme error, and Vite failed to resolve `ns:`
-specifiers and replaced `node:` ones with an empty browser stub.
+When a cell leaves the table, ListView tears its item view down but kept
+the cell's WeakRef to it and left the dead native root in the cell's
+contentView. A later prepare of that cell re-attached the torn-down view,
+whose graph was no longer rooted, so native parts of it (such as the
+UIColor cached by a CSS Color) could already be released; the resulting
+exception made the data source return a nil cell and UIKit abort. UIKit
+also puts removed cells back into the table without asking for them
+again, and those rows stayed blank. Both happen constantly while an
+accessibility client (XCUITest, VoiceOver) disables cell reuse.
 
-Every `ns:` specifier is now left verbatim in the output, matched by
-prefix so modules added in future runtime versions work without changes.
-Each bundler is configured through its own plugin:
+- detach the item's native root from the cell on teardown
+- clear the cell's reference so the next prepare builds a new view
+- prepare a cell that is back in the table without content, from
+  didMoveToSuperview and from willDisplay; cells UIKit announces after
+  taking them out of the table are left alone, since preparing them
+  would keep them in the ListView's map for good
+- the same teardown changes for sticky header views
 
-- webpack: NativeScriptBuiltinModulesPlugin, registered by name so
-  webpack-chain can `.tap()` its `include` list. It externalizes on the
-  request after `beforeResolve`, so a NormalModuleReplacementPlugin can
-  redirect a builtin to a polyfill or forward a bare specifier to one.
-- vite: nativescriptBuiltinModules({ include }). Extra instances add
-  specifiers; resolve.alias handles polyfills and forwarding, since
-  aliases resolve before the plugin.
-
-In Vite this covers `vite build`, workers, dep optimization and the HMR
-dev server (esbuild dependency bundles, `/@id/` unwrapping, worker realm
-routing, core rewriting, the d
-
-**File**: `packages/vite/README.md` (modified, +24/-0)
+**File**: `apps/automated/src/ui/list-view/list-view-tests.ts` (modified, +31/-0)
 ```diff
-@@ -190,6 +190,30 @@ export default {
- 
- 3) Enjoy Vite.
- 
-+### Runtime builtin modules (`ns:` / `node:`)
-+
-+The NativeScript runtimes provide builtin modules under the `ns:` scheme (`ns:util`, `ns:module`, `ns:worker_threads`, …) and resolve them themselves. Every `ns:` import is left as-is in the output, including modules added in future runtime versions. This covers `vite build`, workers and HMR dev sessions.
-+
-+To also use the runtime's `node:` shims, add another `nativescriptBuiltinModules` instance (only list the ones your runtime version ships; other `node:` imports become an empty stub). Use `resolve.alias` to forward bare names, which libraries often import, or to polyfill a builtin the runtime doesn't ship:
-+
-+```ts
-+import { defineConfig, mergeConfig, UserConfig } from 'vite';
-+import { nativescriptBuiltinModules } from '@nativescript/vite';
-+import { typescriptConfig } from '@nativescript/vite/typescript';
-+
-+export default defineConfig(({ mode }): UserConfig => {
-+	return mergeConfig(typescriptConfig({ mode }), {
-+		plugins: [nativescriptBuiltinModules({ include: ['node:worker_threads'] })],
-+		resolve: {
-+			alias: {
-+				worker_threads: 'node:worker_threads',
-+				'ns:url': '/abs/path/to/polyfills/ns-url.js',
-+			},
-+		},
-+	});
-+});
-+```
-+
- ## Explore More
- 
- Check out the [NativeScript Vite documentation](https://docs.nativescript.org/configuration/vite) for more configuration options and features.
-```
-
-**File**: `packages/vite/configuration/base.ts` (modified, +5/-2)
-```diff
-@@ -46,6 +46,7 @@ import { getHmrWatchIgnoreGlobs } from '../helpers/hmr-scope.js';
- import { NS_OPTIMIZE_DEPS_EXCLUDE } from '../helpers/optimize-deps.js';
- import { sbgClassNamesPlugin } from '../helpers/sbg-class-names.js';
- import { chunkFileNames } from '../helpers/chunk-file-names.js';
-+import { nativescriptBuiltinModules } from '../helpers/builtin-modules.js';
- const require = createRequire(import.meta.url);
- // Optional PostCSS import plugin (only used if available)
- // Try to load postcss-import to control CSS @import resolution simply
-@@ -308,7 +309,7 @@ export const baseConfig = ({ mode, flavor }: { mode: string; flavor?: string }):
- 							'process.env.NODE_ENV': JSON.stringify(debug ? 'development' : 'production'),
- 						},
- 					},
--					plugins: [],
-+					plugins: [nativescriptBuiltinModules()],
- 				},
- 			}
- 		: {
-@@ -325,7 +326,7 @@ export const baseConfig = ({ mode, flavor }: { mode: string; flavor?: string }):
- 							'process.env.NODE_ENV': JSON.stringify(debug ? 'development' : 'production'),
- 						},
- 					},
--					plugins: [optimizeDepsPlatformResolver({ platform, verbose })],
-+					plugins: [nativescriptBuiltinModules(), optimizeDepsPlatformResolver({ platform, verbose })],
- 				},
- 			};
- 
-@@ -343,6 +344,8 @@ export const baseConfig = ({ mode, flavor }: { mode: string; flavor?: string }):
- 		define: defineConfig,
- 		optimizeDeps: optimizeDepsConfig,
- 		plugins: [
-+			// Must stay first: Vite stubs `node:` builtins for the browser otherwise.
-+			nativescriptBuiltinModules(),
- 			// Merge any dependency-provided `nativescript.vite.mjs` configs. Runs
- 			// in an awaited `config` hook so ESM configs load correctly.
- 			externalConfigsPlugin(),
-```
-
-**File**: `packages/vite/helpers/builtin-modules.spec.ts` (added, +125/-0)
-```diff
-@@ -0,0 +1,125 @@
-+import fs from 'fs';
-+import os from 'os';
-+import path from 'path';
-+import * as esbuild from 'esbuild';
-+import { build, type Plugin, type UserConfig } from 'vite';
-+import { afterAll, afterEach, describe, expect, it } from 'vitest';
-+
-+import { builtinModulesEsbuildPlugin, isBuiltinModuleId, nativescriptBuiltinModules, resetBuiltinModules, unwrapBuiltinModuleIds } from './builtin-modules.js';
-+
-+describe('builtin modules', () => {
-+	afterEach(() => resetBuiltinModules());
-+
-+	describe('matching', () => {
-+		it('matches every ns: specifier by default', () => {
-+			expect(isBuiltinModuleId('ns:util')).toBe(true);
-+			expect(isBuiltinModuleId('ns:some_future_module')).toBe(true);
-+			expect(isBuiltinModuleId('node:worker_threads')).toBe(false);
-+			expect(isBuiltinModuleId('worker_threads')).toBe(false);
-+		});
-+
-+		it('adds the specifiers another plugin instance includes', () => {
-+			nativescriptBuiltinModules({ include: ['node:worker_threads', /^node:(url|util)$/g] });
-+
-+			expect(isBuiltinModuleId('node:worker_threads')).toBe(true);
-+			expect(isBuiltinModuleId('node:url')).toBe(true);
-+			// a global RegExp must not carry lastIndex between calls
-+			expect(isBuiltinModuleId('node:url')).toBe(true);
-+			expect(isBuiltinModuleId('node:fs')).toBe(false);
-+		});
-+
-+		it('restores /@id/-wrapped builtin specifiers only', () => {
-+			nativescriptBuiltinModules({ include: ['node:worker_threads'] });
-+			const code = [`import { inspect } from "/@id/ns:util";`, `export * from '/@id/node:worker_threads';`, `import("/@id/ns:runtime");`, `import z from "/@id/ns:util?t=123";`, `import x from "/@id/__x00__virtual";`, `import y from "/@id/node:fs";`].join('\n');
-+
-+			expect(unwrapBuiltinModuleIds(code)).toBe([`import { inspect } from "ns:util";`, `export * from 'node:worker_threads';`, `import("ns:runtime");`, `import z from "ns:util";`, `import x from "/@id/__x00__virtual";`, `import y from "/@id/node:fs";`].join('\n'));
-+		});
-+	});
-+
-+	describe('vite build', () => {
-+		const root = fs.mkdtempSync(path.join(os.tmpdir(), 'ns-builtin-modules-'));
-+		afterAll(() => fs.rmSync(root, { recursive: true, force: true }));
-+
-+		const write = (file: string, code: string) => {
-+			fs.mkdirSync(path.dirname(path.join(root, file)), { recursive: true });
-+			fs.writeFileSync(path.join(root, file), code);
-+		};
-+
-+		const bundle = async (entry: string, plugins: Plugin[] = [nativescriptBuiltinModules()], resolve?: UserConfig['resolve']): Promise<string> => {
-+			const result: any = await build({
-+				root,
-+				configFile: false,
-+				logLevel: 'silent',
-+				plugins,
-+				resolve,
-+				build: {
-+					write: false,
-+					minify: false,
-+					rolldownOptions: { input: path.join(root, entry), output: { format: 'es', codeSplitting: false } },
-+				},
-+			});
-+			return (Array.isArray(result) ? result[0] : result).output.map((file: any) => file.code ?? '').join('\n');
-+		};
-+
-+		it('emits runtime builtin imports verbatim', async () => {
-+			write('esm.js', [`import { inspect } from 'ns:util';`, `import { Worker } from 'worker_threads';`, `console.log(inspect, Worker, import('ns:runtime'));`].join('\n'));
-+
-+			const output = await bundle('esm.js', [nativescriptBuiltinModules(), nativescriptBuiltinModules({ include: ['node:worker_threads'] })], { alias: { worker_threads: 'node:worker_threads' } });
-+
-+			expect(output).toMatch(/from "ns:util"/);
-+			expect(output).toMatch(/from "node:worker_threads"/);
-+			expect(output).toContain('import("ns:runtime")');
-+		});
-+
-+		it('keeps require() of builtins in CommonJS dependencies', async () => {
-+			write('node_modules/cjs-dep/package.json', JSON.stringify({ name: 'cjs-dep', main: 'index.js' }));
-+			write('node_modules/cjs-dep/index.js', `module.exports = require('ns:util').inspect;`);
-+			write('cjs.js', `import inspect from 'cjs-dep';\nconsole.log(inspect);`);
-+
-+			expect(await bundle('cjs.js')).toMatch(/require\("ns:util"\)/);
-+		});
-+
-+		it('lets resolve.alias polyfill a builtin', async () => {
-+			write('url-polyfill.js', `export const URL = 'url-polyfill';`);
-+			write('polyfill.js', `import { URL } from 'ns:url';\nconsole.log(URL);`);
-+
-+			const output = await bundle('polyfill.js', undefined, { alias: { 'ns:url': path.join(root, 'url-polyfill.js') } });
-+
-+			expect(output).not.toContain('"ns:url"');
-+			expect(output).toContain('url-polyfill');
-+		});
-+
-+		it('fails to resolve ns: specifiers without the plugin', async () => {
-+			write('plain.js', `import { inspect } from 'ns:util';\nconsole.log(inspect);`);
-+
-+			await expect(bundle('plain.js', [])).rejects.toThrow(/ns:util/);
-+		});
-+	});
-+
-+	describe('esbuild bundles', () => {
-+		it('externalizes builtins ahead of other resolvers', async () => {
-+			nativescriptBuiltinModules({ include: ['node:worker_threads'] });
-+			const result = await esbuild.build({
-+				stdin: { contents: `import { inspect } from 'ns:util';\nimport { Worker } from 'node:worker_threads';\nconsole.log(inspect, Worker);`, loader: 'js' },
-+	
-```
-
-**File**: `packages/vite/helpers/builtin-modules.ts` (added, +99/-0)
-```diff
-@@ -0,0 +1,99 @@
-+import type { Plugin } from 'vite';
-+import type { Plugin as EsbuildPlugin } from 'esbuild';
-+
-+export interface NativeScriptBuiltinModulesOptions {
-+	/**
-+	 * Additional specifiers the NativeScript runtime resolves itself, e.g. the
-+	 * `node:` shims a runtime version ships. Every `ns:` specifier is always included.
-+	 */
-+	include?: Array<string | RegExp>;
-+}
-+
-+// Shared by every plugin instance: workers and the HMR server read it too.
-+const includes: Array<string | RegExp> = [/^ns:/];
-+
-+/**
-+ * Leaves imports of runtime builtin modules (`ns:util`, `ns:worker_threads`, ...)
-+ * for the NativeScript runtime instead of bundling them. The base config already
-+ * adds it for `ns:`; add another instance to include more specifiers. To polyfill
-+ * a builtin instead, point a `resolve.alias` entry at the replacement module.
-+ *
-+ * @param options Extra specifiers to keep for the runtime.
-+ * @returns The Vite plugin.
-+ */
-+export function nativescriptBuiltinModules(options: NativeScriptBuiltinModulesOptions = {}): Plugin {
-+	for (const matcher of options.include ?? []) {
-+		if (!includes.includes(matcher)) {
-+			includes.push(matcher);
-+		}
-+	}
-+	return {
-+		name: 'ns-builtin-modules',
-+		enforce: 'pre',
-+		resolveId(source) {
-+			return isBuiltinModuleId(source) ? { id: source, external: true } : null;
-+		},
-+		// The dev server still pre-transforms external ids; the device never fetches these.
-+		load(id) {
-+			if (isBuiltinModuleId(id)) {
-+				return `throw new Error(${JSON.stringify(`${id} is a NativeScript runtime builtin and must be imported directly`)});`;
-+			}
-+			return null;
-+		},
-+	};
-+}
-+
-+/**
-+ * @internal
-+ */
-+export function resetBuiltinModules(): void {
-+	includes.length = 0;
-+	includes.push(/^ns:/);
-+}
-+
-+/**
-+ * True when `id` is a runtime builtin the output must reference verbatim.
-+ *
-+ * @internal
-+ */
-+export function isBuiltinModuleId(id: string): boolean {
-+	if (!id) {
-+		return false;
-+	}
-+	return includes.some((matcher) => {
-+		if (typeof matcher === 'string') {
-+			return matcher === id;
-+		}
-+		matcher.lastIndex = 0;
-+		return matcher.test(id);
-+	});
-+}
-+
-+/**
-+ * esbuild counterpart of `nativescriptBuiltinModules`, for bundles that bypass Vite plugins.
-+ *
-+ * @internal
-+ */
-+export function builtinModulesEsbuildPlugin(): EsbuildPlugin {
-+	return {
-+		name: 'ns-builtin-modules',
-+		setup(build) {
-+			build.onResolve({ filter: /^[^./]/ }, (args) => (isBuiltinModuleId(args.path) ? { path: args.path, external: true } : undefined));
-+		},
-+	};
-+}
-+
-+const WRAPPED_ID_RE = /(["'`])\/@id\/([^"'`?#\s]+)(?:[?#][^"'`\s]*)?\1/g;
-+
-+/**
-+ * Restores `/@id/<builtin>` specifiers, which Vite's dev import analysis emits
-+ * for external ids, to the verbatim specifier the runtime resolves.
-+ *
-+ * @internal
-+ */
-+export function unwrapBuiltinModuleIds(code: string): string {
-+	if (!code || code.indexOf('/@id/') === -1) {
-+		return code;
-+	}
-+	return code.replace(WRAPPED_ID_RE, (full, quote: string, id: string) => (isBuiltinModuleId(id) ? `${quote}${id}${quote}` : full));
-+}
-```
-
-**File**: `packages/vite/helpers/main-entry.ts` (modified, +4/-0)
-```diff
-@@ -498,6 +498,10 @@ export function mainEntryPlugin(opts: { platform: 'ios' | 'android' | 'visionos'
- 			imports += '  var _nsReq = function (id) {\n';
- 			imports += '    try {\n';
- 			imports += "      var n = String(id || '');\n";
-+			// Kept-external builtins must reach the runtime before the stub table.
-+			imports += "      if (__nsOrigRequire && (n.indexOf('ns:') === 0 || n.indexOf('node:') === 0)) {\n";
-+			imports += '        try { return __nsOrigRequire(n); } catch (e) {}\n';
-+			imports += '      }\n';
- 			imports += "      var stripped = n.indexOf('node:') === 0 ? n.slice(5) : n;\n";
- 			imports += '      if (__nsNodeBuiltins[stripped]) return {};\n';
- 			imports += "      if (n === '@nativescript/core' || n.indexOf('@nativescript/core/') === 0) {\n";
-```
-
-**File**: `packages/vite/helpers/workers.ts` (modified, +2/-0)
-```diff
-@@ -7,6 +7,7 @@ import { nativescriptPackageResolver } from './nativescript-package-resolver.js'
- import { findMonorepoWorkspaceRoot, getProjectRootPath } from './project.js';
- import { normalizeModuleId } from './normalize-id.js';
- import { sbgClassNamesPlugin } from './sbg-class-names.js';
-+import { nativescriptBuiltinModules } from './builtin-modules.js';
- 
- export interface WorkerPluginsOptions {
- 	platform: string;
-@@ -103,6 +104,7 @@ export function getWorkerPlugins(platformOrOpts: string | WorkerPluginsOptions)
- 	});
- 
- 	const plugins: any[] = [
-+		nativescriptBuiltinModules(),
- 		// Handle ~/package.json virtual module for workers
- 		{
- 			name: 'worker-virtual-package-json',
-```
-
-**File**: `packages/vite/hmr/server/builtin-modules-hmr.spec.ts` (added, +51/-0)
-```diff
-@@ -0,0 +1,51 @@
-+import { afterEach, describe, expect, it } from 'vitest';
-+
-+import { nativescriptBuiltinModules, resetBuiltinModules } from '../../helpers/builtin-modules.js';
-+import { rewriteSpecifiersForDevice } from './core-sanitize.js';
-+import { getNodeBuiltinImportMapEntries } from './node-builtins-route.js';
-+import { processCodeForDevice } from './process-code-for-device.js';
-+import { ensureNativeScriptModuleBindings } from './websocket-module-bindings.js';
-+import { isLikelyNativeScriptPluginSpecifier } from './websocket-module-specifiers.js';
-+
-+const ORIGIN = 'http://localhost:5173';
-+
-+describe('runtime builtin modules under HMR', () => {
-+	afterEach(() => resetBuiltinModules());
-+
-+	it('serves /@id/-wrapped builtins to the device verbatim', () => {
-+		nativescriptBuiltinModules({ include: ['node:worker_threads'] });
-+		const code = [`import { inspect } from "/@id/ns:util";`, `import "/@id/ns:runtime";`, `export * from "/@id/node:worker_threads";`, `console.log(inspect);`].join('\n');
-+
-+		const output = processCodeForDevice(code, false, true, true, '/node_modules/dep/index.js');
-+
-+		expect(output).toContain(`from "ns:util"`);
-+		expect(output).toContain(`import "ns:runtime"`);
-+		expect(output).toContain(`from "node:worker_threads"`);
-+		expect(output).not.toContain('/@id/');
-+	});
-+
-+	it('keeps builtin imports out of the worker realm /ns/m routing', () => {
-+		const output = ensureNativeScriptModuleBindings(`import { inspect } from 'ns:util';\nimport 'ns:runtime';\nconsole.log(inspect);`, { vendorImportsAsHttp: true });
-+
-+		expect(output).toContain(`import { inspect } from 'ns:util';`);
-+		expect(output).toContain(`import 'ns:runtime';`);
-+		expect(output).not.toContain('/ns/m/');
-+		expect(isLikelyNativeScriptPluginSpecifier('ns:util')).toBe(false);
-+	});
-+
-+	it('leaves builtins alone when rewriting core modules', () => {
-+		const output = rewriteSpecifiersForDevice(`import { inspect } from "ns:util";\nimport { Worker } from "/@id/ns:worker_threads";`, ORIGIN, 0);
-+
-+		expect(output).toContain(`from "ns:util"`);
-+		expect(output).toContain(`from "ns:worker_threads"`);
-+		expect(output).not.toContain('/ns/m/');
-+	});
-+
-+	it('drops opted-in node: builtins from the dev import map', () => {
-+		nativescriptBuiltinModules({ include: ['node:worker_threads'] });
-+		const entries = getNodeBuiltinImportMapEntries(ORIGIN);
-+
-+		expect(entries['node:worker_threads']).toBeUndefined();
-+		expect(entries['node:fs']).toBe(`${ORIGIN}/ns/node/fs`);
-+	});
-+});
-```
-
-**File**: `packages/vite/hmr/server/core-bundle.ts` (modified, +2/-1)
-```diff
-@@ -52,6 +52,7 @@ import { nsConfigToJson } from '../../helpers/utils.js';
- import { getVitePackageVersion } from '../../helpers/vite-package-version.js';
- import { aliasCssTree } from '../../helpers/css-tree.js';
- import { getWorkspaceCoreSourceRoot } from './websocket-served-module-helpers.js';
-+import { builtinModulesEsbuildPlugin } from '../../helpers/builtin-modules.js';
- 
- /**
-  * Per-module /ns/core serving mode (vs the default single-eval bundle).
-@@ -541,7 +542,7 @@ export async function generateCoreBundle(options: GenerateCoreBundleOptions): Pr
- 			'.json': 'json',
- 		},
- 		define: defines,
--		plugins: [coreAliasPlugin, cssTreeEnvPlugin, nsConfigPlugin, createNativeClassEsbuildPlugin(platform as Platform), createUnicodeRegexEsbuildPlugin(projectRoot)],
-+		plugins: [builtinModulesEsbuildPlugin(), coreAliasPlugin, cssTreeEnvPlugin, nsConfigPlugin, createNativeClassEsbuildPlugin(platform as Platform), createUnicodeRegexEsbuildPlugin(projectRoot)],
- 		external: NODE_EXTERNALS,
- 	});
- 
-```
-
----
-
-### Incident Patch 2: `49c04747` (2026-11-09)
-**Commit Message**: fix(vite): serve HMR app modules with source maps (#11629)
-
-The /ns/m device route rewrites Vite's transform output (prepended guards,
-import rewrites, AST normalization) and dropped Vite's source map, so
-debuggers attached under HMR could not bind breakpoints in app sources.
-
-Carry Vite's map onto the served body by aligning the two texts line by line
-and append it inline, with absolute file:// sources. Library modules are left
-unchanged.
-[skip ci]
-
-**File**: `packages/vite/hmr/server/served-module-sourcemap.spec.ts` (added, +123/-0)
-```diff
-@@ -0,0 +1,123 @@
-+import { decode } from '@jridgewell/sourcemap-codec';
-+import { transformSync } from 'esbuild';
-+import { describe, expect, it } from 'vitest';
-+
-+import { appendInlineSourceMap, buildServedModuleSourceMap, type InputSourceMap } from './served-module-sourcemap.js';
-+
-+const MODULE_FILE = '/project/src/components/counter.ts';
-+
-+const SOURCE = [
-+	`import { signal } from 'solid-js';`, // 1
-+	``, // 2
-+	`interface Props {`, // 3
-+	`  start: number;`, // 4
-+	`}`, // 5
-+	``, // 6
-+	`export function counter(props: Props) {`, // 7
-+	`  const [count, setCount] = signal<number>(props.start);`, // 8
-+	`  const bump = (by: number) => setCount(count() + by);`, // 9
-+	`  const lazy = () => import('./lazy');`, // 10
-+	`  return { count, bump, lazy };`, // 11
-+	`}`, // 12
-+].join('\n');
-+
-+function transform(): { code: string; map: InputSourceMap } {
-+	const result = transformSync(SOURCE, { loader: 'ts', format: 'esm', sourcemap: 'external', sourcefile: 'counter.ts' });
-+	return { code: result.code, map: JSON.parse(result.map) };
-+}
-+
-+/** 1-based source line that generated position (line 1-based, column 0-based) maps to. */
-+function sourceLineAt(mappings: string, line: number, column: number): number | undefined {
-+	const segments = decode(mappings)[line - 1] ?? [];
-+	let hit: number[] | undefined;
-+	for (const segment of segments) {
-+		if (segment[0] <= column && segment.length > 1) hit = segment;
-+	}
-+	return hit ? hit[2] + 1 : undefined;
-+}
-+
-+function lineOf(code: string, needle: string): number {
-+	const index = code.split('\n').findIndex((line) => line.includes(needle));
-+	if (index < 0) throw new Error(`"${needle}" not in code`);
-+	return index + 1;
-+}
-+
-+describe('buildServedModuleSourceMap', () => {
-+	it('maps the module body to the original source through a prepended preamble and rewritten lines', () => {
-+		const { code, map } = transform();
-+		const served = [`const __nsBootGlobal = globalThis;`, `try { __nsBootGlobal.__NS_HMR_BOOT_LAST_MODULE__ = "/src/components/counter"; } catch {}`, `;(function(){ /* require guard */ })();`, code.replace(`from "solid-js"`, `from "http://localhost:5173/ns/m/node_modules/solid-js/dist/solid.dev.js"`).replace(`import("./lazy")`, `__nsDynamicImport("http://localhost:5173/ns/m/src/components/lazy")`)].join('\n');
-+
-+		const result = buildServedModuleSourceMap(code, served, map, MODULE_FILE)!;
-+
-+		expect(result.sources).toEqual(['file:///project/src/components/counter.ts']);
-+		expect(result.sourcesContent).toEqual([SOURCE]);
-+		expect(sourceLineAt(result.mappings, 1, 0)).toBeUndefined();
-+		expect(sourceLineAt(result.mappings, 2, 0)).toBeUndefined();
-+
-+		const bumpLine = lineOf(served, 'const bump');
-+		const bumpColumn = served.split('\n')[bumpLine - 1].indexOf('setCount(count()');
-+		expect(sourceLineAt(result.mappings, bumpLine, bumpColumn)).toBe(9);
-+		expect(sourceLineAt(result.mappings, lineOf(served, 'return {'), 2)).toBe(11);
-+		expect(sourceLineAt(result.mappings, lineOf(served, '__nsDynamicImport'), 0)).toBe(10);
-+	});
-+
-+	it('leaves lines that only exist in the served code unmapped', () => {
-+		const { code, map } = transform();
-+		const served = code.replace('  const bump', '  const __injected = 1;\n  const bump');
-+
-+		const result = buildServedModuleSourceMap(code, served, map, MODULE_FILE)!;
-+
-+		expect(sourceLineAt(result.mappings, lineOf(served, '__injected'), 0)).toBeUndefined();
-+		expect(sourceLineAt(result.mappings, lineOf(served, 'const bump'), 2)).toBe(9);
-+	});
-+
-+	it('follows lines that were only re-indented, shifting columns by the indentation change', () => {
-+		const { code, map } = transform();
-+		const served = `/* [ast-normalized] */\n${code.replace(/^ {2}/gm, '\t\t')}`;
-+		const bumpLine = lineOf(served, 'const bump');
-+		const bumpColumn = served.split('\n')[bumpLine - 1].indexOf('setCount(count()');
-+		const vite = code.split('\n')[lineOf(code, 'const bump') - 1];
-+		const viteColumn = vite.indexOf('setCount(count()');
-+
-+		const result = buildServedModuleSourceMap(code, served, map, MODULE_FILE)!;
-+
-+		expect(sourceLineAt(result.mappings, bumpLine, bumpColumn)).toBe(9);
-+		const segment = decode(result.mappings)[bumpLine - 1].find((s) => s[0] === bumpColumn);
-+		const original = decode(map.mappings)[lineOf(code, 'const bump') - 1].find((s) => s[0] === viteColumn);
-+		expect(segment?.slice(1)).toEqual(original?.slice(1));
-+	});
-+
-+	it('resolves sources against sourceRoot and keeps URL sources as they are', () => {
-+		const { code, map } = transform();
-+		const result = buildServedModuleSourceMap(code, code, { ...map, sources: ['counter.ts', 'virtual:helpers'], sourceRoot: '../../original' }, MODULE_FILE)!;
-+
-+		expect(result.sources).toEqual(['file:///project/original/counter.ts', 'virtual:helpers']);
-+	});
-+
-+	it('returns null without usable mappings', () => {
-+		const { code, map } = transform();
-+		expect(buildServedModuleSourceMap(code, code, null, MODULE_FILE)).toBeNull();
-+		expect(buildServedModuleSourceMap(code, 
-```
-
-**File**: `packages/vite/hmr/server/served-module-sourcemap.ts` (added, +184/-0)
-```diff
-@@ -0,0 +1,184 @@
-+import path from 'node:path';
-+import { pathToFileURL } from 'node:url';
-+import { decode, encode, type SourceMapMappings, type SourceMapSegment } from '@jridgewell/sourcemap-codec';
-+
-+export interface InputSourceMap {
-+	version: number | string;
-+	mappings: string;
-+	sources: Array<string | null>;
-+	sourcesContent?: Array<string | null>;
-+	names?: string[];
-+	sourceRoot?: string;
-+	ignoreList?: number[];
-+}
-+
-+export interface ServedSourceMap {
-+	version: 3;
-+	file: string;
-+	sources: Array<string | null>;
-+	sourcesContent?: Array<string | null>;
-+	names: string[];
-+	mappings: string;
-+	ignoreList?: number[];
-+}
-+
-+/** Beyond this many differing lines the alignment is too expensive and too unreliable to be useful. */
-+const MAX_LINE_EDITS = 1000;
-+
-+const URL_SCHEME_RE = /^[a-z][a-z0-9+.-]*:/i;
-+const SOURCE_MAPPING_URL_RE = /^\s*\/\/[#@]\s*sourceMappingURL=/m;
-+
-+/**
-+ * Carries Vite's transform map for a module onto the body the `/ns/m` route
-+ * actually serves. The serve pipeline is a long chain of string passes
-+ * (prepended guards, import rewrites, hoisting) that cannot each maintain a
-+ * map, but they leave the body of the module line-for-line intact. So the
-+ * served text is aligned to Vite's output by a line diff:
-+ *
-+ * - lines identical up to indentation reuse Vite's segments, shifted by the
-+ *   indentation change (the AST normalizer re-prints with retainLines, which
-+ *   keeps lines but not indentation);
-+ * - a changed hunk with as many lines on both sides is an in-place rewrite, so
-+ *   each line maps to the start of its counterpart;
-+ * - every other served line (injected preamble, hoisted imports) is unmapped.
-+ *
-+ * Sources are emitted as absolute file:// URLs because the device loads the
-+ * module from an http URL that does not mirror the project layout.
-+ */
-+export function buildServedModuleSourceMap(transformedCode: string, servedCode: string, map: InputSourceMap | null | undefined, moduleFile: string): ServedSourceMap | null {
-+	if (!map || typeof map.mappings !== 'string' || !map.mappings || !Array.isArray(map.sources)) return null;
-+
-+	let decoded: SourceMapMappings;
-+	try {
-+		decoded = decode(map.mappings);
-+	} catch {
-+		return null;
-+	}
-+
-+	const before = transformedCode.split('\n');
-+	const after = servedCode.split('\n');
-+	const alignment = alignLines(
-+		before.map((line) => line.trim()),
-+		after.map((line) => line.trim()),
-+	);
-+	if (!alignment) return null;
-+
-+	const mappings: SourceMapMappings = alignment.map((match, servedLine) => {
-+		if (!match) return [];
-+		const segments = decoded[match.line];
-+		if (!segments?.length) return [];
-+		if (match.sameText) {
-+			const shift = indentOf(after[servedLine]) - indentOf(before[match.line]);
-+			return shift === 0 ? segments : segments.map(([column, ...rest]) => [Math.max(0, column + shift), ...rest] as SourceMapSegment);
-+		}
-+		const first = segments.find((segment) => segment.length > 1);
-+		return first ? [[0, ...first.slice(1)] as SourceMapSegment] : [];
-+	});
-+	if (!mappings.some((line) => line.length)) return null;
-+
-+	const moduleDir = path.dirname(moduleFile);
-+	return {
-+		version: 3,
-+		file: path.basename(moduleFile),
-+		sources: map.sources.map((source) => (source == null ? null : toSourceUrl(source, moduleDir, map.sourceRoot))),
-+		...(map.sourcesContent ? { sourcesContent: map.sourcesContent } : {}),
-+		names: map.names ?? [],
-+		mappings: encode(mappings),
-+		...(map.ignoreList?.length ? { ignoreList: map.ignoreList } : {}),
-+	};
-+}
-+
-+/** Returns `code` with `map` appended as an inline sourceMappingURL, leaving code that already names a map untouched. */
-+export function appendInlineSourceMap(code: string, map: ServedSourceMap | null): string {
-+	if (!map || SOURCE_MAPPING_URL_RE.test(code)) return code;
-+	const base64 = Buffer.from(JSON.stringify(map), 'utf8').toString('base64');
-+	return `${code}${code.endsWith('\n') ? '' : '\n'}//# sourceMappingURL=data:application/json;charset=utf-8;base64,${base64}\n`;
-+}
-+
-+function toSourceUrl(source: string, moduleDir: string, sourceRoot: string | undefined): string {
-+	if (URL_SCHEME_RE.test(source) && !/^[a-z]:[\\/]/i.test(source)) return source;
-+	const root = sourceRoot && !URL_SCHEME_RE.test(sourceRoot) ? path.resolve(moduleDir, sourceRoot) : moduleDir;
-+	return pathToFileURL(path.resolve(root, source)).href;
-+}
-+
-+function indentOf(line: string): number {
-+	return line.length - line.trimStart().length;
-+}
-+
-+interface LineMatch {
-+	line: number;
-+	sameText: boolean;
-+}
-+
-+/**
-+ * For each line of `after`, the line of `before` it corresponds to (Myers
-+ * shortest edit script), or null when it was inserted. Returns null when the
-+ * texts differ by more than MAX_LINE_EDITS lines.
-+ */
-+function alignLines(before: string[], after: string[]): Array<LineMatch | null> | null {
-+	const n = before.length;
-+	const m = after.length;
-+	const max = Math.min(n + m, MAX_LINE_EDITS);
-+	const offset = max + 1;
-+	const v = new Int32Array(2 * max + 3)
-```
-
-**File**: `packages/vite/hmr/server/websocket-ns-m.ts` (modified, +16/-0)
-```diff
-@@ -17,6 +17,7 @@ import { cleanCode, collectImportDependencies, isWorkerEntryModuleId, processCod
- import { REQUIRE_GUARD_SNIPPET } from './require-guard.js';
- import { getServerOrigin } from './server-origin.js';
- import { createNsMResponseMemo } from './ns-m-response-memo.js';
-+import { appendInlineSourceMap, buildServedModuleSourceMap, type InputSourceMap } from './served-module-sourcemap.js';
- import { getSharedDepsBundleService, registerDepsBundleRoute, type DepsBundleService } from './deps-bundle.js';
- import type { FrameworkServedModuleContext, FrameworkServerStrategy } from './framework-strategy.js';
- 
-@@ -607,6 +608,15 @@ export function registerNsModuleServerRoute(server: ViteDevServer, options: Regi
- 				});
- 			}
- 
-+			if (!isNodeMod && transformed.map) {
-+				try {
-+					const moduleFile = await resolveServedModuleFile(server, resolvedCandidate || spec);
-+					if (moduleFile) {
-+						code = appendInlineSourceMap(code, buildServedModuleSourceMap(transformed.code, code, transformed.map as InputSourceMap, moduleFile));
-+					}
-+				} catch {}
-+			}
-+
- 			// Only fully successful serves are memoized — every early-return
- 			// above (link-check throw module, 404 stubs, 500s) stays uncached.
- 			if (memoKey) {
-@@ -621,3 +631,9 @@ export function registerNsModuleServerRoute(server: ViteDevServer, options: Regi
+@@ -177,6 +177,37 @@ export class ListViewTest extends UITest<ListView> {
  		}
- 	});
- }
+ 	}
+ 
++	// UIKit can take a cell out of the table and display it again without asking for it in
++	// tableView:cellForRowAtIndexPath: (constantly while an accessibility client disables cell reuse).
++	public test_cell_displayed_again_after_teardown_gets_new_content_ios() {
++		if (__APPLE__) {
++			const listView = this.testView;
++			listView.on(ListView.itemLoadingEvent, this.loadViewWithItemNumber);
++			listView.items = FEW_ITEMS;
++			this.waitUntilListViewReady();
 +
-+async function resolveServedModuleFile(server: ViteDevServer, candidate: string): Promise<string | null> {
-+	const graph = server.moduleGraph;
-+	const mod = graph.getModuleById(candidate) ?? graph.getModuleById(candidate.replace(/[?#].*$/, '')) ?? (await graph.getModuleByUrl(candidate).catch(() => undefined));
-+	return mod?.file ?? null;
-+}
++			const tableView = <UITableView>listView.ios;
++			const indexPath = NSIndexPath.indexPathForRowInSection(1, 0);
++			const cell = <any>tableView.cellForRowAtIndexPath(indexPath);
++			const tableContent = cell.superview;
++			const tornDownView = cell.view;
++			TKUnit.assertNotNull(tornDownView, 'cell has an item view');
++
++			cell.removeFromSuperview();
++			TKUnit.assertEqual(cell.contentView.subviews.count, 0, 'the torn-down item view is detached from the cell');
++			TKUnit.assertNull(cell.view, 'the cell no longer refers to the torn-down item view');
++
++			tableView.delegate.tableViewWillDisplayCellForRowAtIndexPath(tableView, cell, indexPath);
++			TKUnit.assertNull(cell.view, 'a cell outside the table is not prepared');
++
++			tableContent.addSubview(cell);
++			TKUnit.assertEqual(cell.contentView.subviews.count, 1, 'the cell has exactly one item view again');
++			TKUnit.assertNotEqual(cell.view, tornDownView, 'the torn-down item view is not re-attached');
++			TKUnit.assertEqual(cell.view.parent, listView, 'the new item view is a child of the ListView');
++			TKUnit.assertEqual((<Label>cell.view).text, 'item 1', 'the new item view shows the row');
++		}
++	}
++
+ 	public test_set_items_to_array_creates_native_views() {
+ 		var listView = this.testView;
+ 		listView.on(ListView.itemLoadingEvent, this.loadViewWithItemNumber);
 ```
 
-**File**: `packages/vite/package.json` (modified, +1/-0)
+**File**: `packages/core/ui/list-view/index.ios.ts` (modified, +60/-16)
 ```diff
-@@ -106,6 +106,7 @@
- 		"@babel/plugin-transform-unicode-property-regex": "^7.25.9",
- 		"@babel/traverse": "^7.28.0",
- 		"@babel/types": "^7.28.0",
-+		"@jridgewell/sourcemap-codec": "^1.5.0",
- 		"@rollup/plugin-alias": "^6.0.0",
- 		"@rollup/plugin-commonjs": "^29.0.0",
- 		"@rollup/plugin-replace": "^6.0.2",
+@@ -60,11 +60,25 @@ class ListViewCell extends UITableViewCell {
+ 		}
+ 	}
+ 
++	public didMoveToSuperview(): void {
++		super.didMoveToSuperview();
++
++		// UIKit can put a cell back into the table without asking for it in tableView:cellForRowAtIndexPath:.
++		const listView = this.listView?.deref();
++		if (this.superview && listView && !listView._hasCellContent(this)) {
++			const indexPath = (listView.nativeViewProtected as UITableView)?.indexPathForCell(this);
++			if (indexPath) {
++				listView._prepareCellForDisplay(this, indexPath);
++			}
++		}
++	}
++
+ 	public get view(): View {
+ 		return this.owner ? this.owner.deref() : null;
+ 	}
+ 
+ 	public owner: WeakRef<View>;
++	public listView: WeakRef<ListView>;
+ }
+ 
+ @NativeClass
+@@ -166,18 +180,7 @@ class DataSource extends NSObject implements UITableViewDataSource {
+ 		if (owner) {
+ 			const template = owner.sectioned ? owner._getItemTemplateInSection(indexPath.section, indexPath.row) : owner._getItemTemplate(indexPath.row);
+ 			cell = <ListViewCell>(tableView.dequeueReusableCellWithIdentifier(template.key) || ListViewCell.initWithEmptyBackground());
+-			owner._prepareCell(cell, indexPath);
+-
+-			const cellView: View = cell.view;
+-			if (cellView && cellView.isLayoutRequired) {
+-				// Arrange cell views. We do it here instead of _layoutCell because _layoutCell is called
+-				// from 'tableViewHeightForRowAtIndexPath' method too (in iOS 7.1) and we don't want to arrange the fake cell.
+-				const width = layout.getMeasureSpecSize(owner.widthMeasureSpec);
+-				const rowHeight = owner._effectiveRowHeight;
+-				const cellHeight = rowHeight > 0 ? rowHeight : owner.getHeight(indexPath.row, indexPath.section);
+-				cellView.iosOverflowSafeAreaEnabled = false;
+-				View.layoutChild(owner, cellView, 0, 0, width, cellHeight);
+-			}
++			owner._prepareCellForDisplay(cell, indexPath);
+ 		} else {
+ 			cell = <ListViewCell>ListViewCell.initWithEmptyBackground();
+ 		}
+@@ -204,6 +207,11 @@ class UITableViewDelegateImpl extends NSObject implements UITableViewDelegate {
+ 
+ 	public tableViewWillDisplayCellForRowAtIndexPath(tableView: UITableView, cell: UITableViewCell, indexPath: NSIndexPath) {
+ 		const owner = this._owner?.deref();
++		// UIKit also announces cells it has already taken out of the table and will drop; preparing
++		// those would keep them and their item views in the ListView's map for good.
++		if (owner && cell instanceof ListViewCell && cell.superview && !owner._hasCellContent(cell)) {
++			owner._prepareCellForDisplay(cell, indexPath);
++		}
+ 		if (owner && indexPath.row === owner.items.length - 1) {
+ 			owner.notify(<EventData>{
+ 				eventName: LOADMOREITEMS,
+@@ -315,6 +323,11 @@ class UITableViewRowHeightDelegateImpl extends NSObject implements UITableViewDe
+ 
+ 	public tableViewWillDisplayCellForRowAtIndexPath(tableView: UITableView, cell: UITableViewCell, indexPath: NSIndexPath) {
+ 		const owner = this._owner?.deref();
++		// UIKit also announces cells it has already taken out of the table and will drop; preparing
++		// those would keep them and their item views in the ListView's map for good.
++		if (owner && cell instanceof ListViewCell && cell.superview && !owner._hasCellContent(cell)) {
++			owner._prepareCellForDisplay(cell, indexPath);
++		}
+ 		if (owner && indexPath.row === owner.items.length - 1) {
+ 			owner.notify(<EventData>{
+ 				eventName: LOADMOREITEMS,
+@@ -867,8 +880,6 @@ export class ListView extends ListViewBase {
+ 			if (!cell.view) {
+ 				cell.owner = new WeakRef(view);
+ 			} else if (cell.view !== view) {
+-				// Remove view from super view now as nativeViewProtected will be null afterwards
+-				(<UIView>cell.view.nativeViewProtected)?.removeFromSuperview();
+ 				this._removeContainer(cell);
+ 				cell.owner = new WeakRef(view);
+ 			}
+@@ -882,6 +893,9 @@ export class ListView extends ListViewBase {
+ 				view._listViewItemIndex = indexPath.row;
+ 			}
+ 			this._map.set(cell, view);
++			if (cell.listView?.deref() !== this) {
++				cell.listView = new WeakRef(this);
++			}
+ 
+ 			// We expect that views returned from itemLoading are new (e.g. not reused).
+ 			if (view && !view.parent) {
+@@ -897,8 +911,33 @@ export class ListView extends ListViewBase {
+ 		return cellHeight;
+ 	}
+ 
++	public _hasCellContent(cell: ListViewCell): boolean {
++		const view = cell.view;
++
++		return !!view && this._map.get(cell) === view;
++	}
++
++	public _prepareCellForDisplay(cell: ListViewCell, indexPath: NSIndexPath): void {
++		this._prepareCell(cell, indexPath);
++
++		const cellView: View = cell.view;
++		if (cellView && cellView.isLayoutRequired) {
++			// Arrange cell views. We do it here instead of _layoutCell because _layoutCell is called
++			// from 'tableViewHeightForRowAtIndexPath' method too (in iOS 7.1) and we don't want to arrange the fake cell.
++			const width = layout.getMeasureSpecSize(this.widthMeasureSpec);
++			const rowHeight = this._effectiveRowHeight;
++			const cellHeight = rowHeight > 0 ? rowHeight : this.getHeight(indexPath.row, indexPath.section);
++			cellView.iosOverf
 ```
 
 ---
 
-### Incident Patch 3: `5d099c85` (2026-11-10)
-**Commit Message**: fix(webpack): find ExternalModuleFactoryPlugin where webpack 5.112 moved it (#11633)
-
-webpack 5.112 moved lib/ExternalModuleFactoryPlugin.js to lib/externals/, so loading NativeScriptBuiltinModulesPlugin threw "Cannot find module". Try the new location first and fall back to the old one, as the worker loader does for WorkerDependency.
+### Incident Patch 2: `9875c2ee` (2026-11-12)
+**Commit Message**: fix(ios): raise orientationChanged from scene geometry updates (#11638)
 
 [skip ci]
 
-**File**: `packages/webpack5/src/plugins/NativeScriptBuiltinModulesPlugin.ts` (modified, +8/-1)
+**File**: `packages/core/application/application.ios.ts` (modified, +12/-6)
 ```diff
-@@ -1,6 +1,13 @@
- import type { Compiler } from 'webpack';
+@@ -617,6 +617,17 @@ class SceneDelegate extends UIResponder implements UIWindowSceneDelegate {
+ 		deliverUserActivity(windowScene, Application.ios._getWindowForScene(windowScene), userActivity);
+ 	}
  
--const ExternalModuleFactoryPlugin = require('webpack/lib/ExternalModuleFactoryPlugin');
-+// webpack 5.112 moved it into externals/.
-+const ExternalModuleFactoryPlugin = (() => {
-+	try {
-+		return require('webpack/lib/externals/ExternalModuleFactoryPlugin');
-+	} catch {
-+		return require('webpack/lib/ExternalModuleFactoryPlugin');
++	// Scene-based apps get rotation here rather than through the status bar orientation notification.
++	// iOS 26+ calls both callbacks per rotation, earlier versions only the coordinate-space one;
++	// _setOrientation drops the repeat.
++	windowSceneDidUpdateEffectiveGeometry(windowScene: UIWindowScene, previousEffectiveGeometry: UIWindowSceneGeometry): void {
++		Application.ios._getWindowForScene(windowScene)?._syncOrientation();
 +	}
-+})();
++
++	windowSceneDidUpdateCoordinateSpaceInterfaceOrientationTraitCollection(windowScene: UIWindowScene, previousCoordinateSpace: UICoordinateSpace, previousInterfaceOrientation: UIInterfaceOrientation, previousTraitCollection: UITraitCollection): void {
++		Application.ios._getWindowForScene(windowScene)?._syncOrientation();
++	}
++
+ 	windowScenePerformActionForShortcutItemCompletionHandler(windowScene: UIWindowScene, shortcutItem: UIApplicationShortcutItem, completionHandler: (p1: boolean) => void): void {
+ 		deliverShortcutAction(windowScene, Application.ios._getWindowForScene(windowScene), shortcutItem, completionHandler);
+ 	}
+@@ -1382,12 +1393,7 @@ export class iOSApplication extends ApplicationCommon implements IiOSApplication
+ 		// The notification is app-wide, but scenes rotate independently, so every attached
+ 		// window is refreshed from its own scene.
+ 		for (const nativeWindow of this._windows) {
+-			if (nativeWindow.state !== 'attached') {
+-				continue;
+-			}
+-
+-			const orientation = nativeWindow.ios?.scene?.interfaceOrientation ?? UIApplication.sharedApplication.statusBarOrientation;
+-			nativeWindow._setOrientation(this.getOrientationValue(orientation));
++			(nativeWindow as IOSNativeWindow)._syncOrientation();
+ 		}
+ 	}
  
- export interface NativeScriptBuiltinModulesPluginOptions {
+```
+
+**File**: `packages/core/application/scene-orientation.ios.spec.ts` (added, +61/-0)
+```diff
+@@ -0,0 +1,61 @@
++import { describe, it, expect, afterEach, vi } from 'vitest';
++import { Application } from './application.ios';
++import { IOSNativeWindow } from '../native-window/native-window.ios';
++
++function createScene(interfaceOrientation: number, effectiveOrientation?: number): any {
++	return {
++		session: {},
++		interfaceOrientation,
++		effectiveGeometry: effectiveOrientation === undefined ? undefined : { interfaceOrientation: effectiveOrientation },
++	};
++}
++
++function createSceneDelegate(): any {
++	return new (global as any).SceneDelegate();
++}
++
++describe('iOS scene orientation', () => {
++	afterEach(() => {
++		vi.restoreAllMocks();
++	});
++
++	it('reads the effective geometry orientation when the scene provides one', () => {
++		const window = new IOSNativeWindow(createScene(UIInterfaceOrientation.Portrait, UIInterfaceOrientation.LandscapeLeft), {} as UIWindow);
++
++		expect(window.orientation()).toBe('landscape');
++	});
++
++	it('falls back to the scene interface orientation without effective geometry', () => {
++		const window = new IOSNativeWindow(createScene(UIInterfaceOrientation.LandscapeRight), {} as UIWindow);
++
++		expect(window.orientation()).toBe('landscape');
++	});
++
++	for (const callback of ['windowSceneDidUpdateEffectiveGeometry', 'windowSceneDidUpdateCoordinateSpaceInterfaceOrientationTraitCollection']) {
++		it(`raises orientationChanged from ${callback}`, () => {
++			const scene = createScene(UIInterfaceOrientation.Portrait, UIInterfaceOrientation.Portrait);
++			const window = new IOSNativeWindow(scene, {} as UIWindow);
++			vi.spyOn(Application.ios, '_getWindowForScene').mockImplementation((s) => (s === scene ? window : undefined));
++
++			expect(window.orientation()).toBe('portrait');
++
++			const changes: string[] = [];
++			window.on('orientationChanged', (args: any) => changes.push(args.newValue));
++
++			scene.effectiveGeometry.interfaceOrientation = UIInterfaceOrientation.LandscapeLeft;
++			createSceneDelegate()[callback](scene, null, null, null);
++
++			expect(changes).toEqual(['landscape']);
++
++			createSceneDelegate()[callback](scene, null, null, null);
++
++			expect(changes).toEqual(['landscape']);
++		});
++	}
++
++	it('ignores geometry updates for a scene with no window', () => {
++		vi.spyOn(Application.ios, '_getWindowForScene').mockReturnValue(undefined);
++
++		expect(() => createSceneDelegate().windowSceneDidUpdateEffectiveGeometry(createScene(UIInterfaceOrientation.Portrait), null)).not.toThrow();
++	});
++});
+```
+
+**File**: `packages/core/native-window/native-window.ios.ts` (modified, +10/-1)
+```diff
+@@ -123,11 +123,20 @@ export class IOSNativeWindow extends NativeWindow {
+ 			return this._getOrientationValue(NativeScriptEmbedder.sharedInstance().windowScene?.interfaceOrientation);
+ 		}
+ 		if (this._scene) {
+-			return this._getOrientationValue(this._scene.interfaceOrientation);
++			return this._getOrientationValue(this._scene.effectiveGeometry?.interfaceOrientation ?? this._scene.interfaceOrientation);
+ 		}
+ 		return this._getOrientationValue(UIApplication.sharedApplication.statusBarOrientation);
+ 	}
+ 
++	/**
++	 * @internal – re-reads the native orientation and raises `orientationChanged` if it moved.
++	 */
++	_syncOrientation(): void {
++		if (this.state === 'attached') {
++			this._setOrientation(this._getOrientation());
++		}
++	}
++
+ 	protected _getSystemAppearance(): 'light' | 'dark' | null {
+ 		if (!__VISIONOS__ && SDK_VERSION <= 11) {
+ 			return null;
+```
+
+---
+
+### Incident Patch 3: `ff081de9` (2026-11-14)
+**Commit Message**: fix(core): register touch animations once per view (#11641)
+
+**File**: `packages/core/ui/gestures/touch-manager.ts` (modified, +98/-52)
+```diff
+@@ -26,6 +26,34 @@ export type VisionHoverOptions = {
+ 	shapeCornerRadius?: number;
+ };
+ 
++/**
++ * What TouchManager.addAnimations has wired for a view. Kept on the view, so it lives exactly as long as the view does.
++ */
++const touchState = Symbol('touchState');
++type TouchState = {
++	/** The down animation is hooked to the view's touchDown event. */
++	down?: boolean;
++	/** The up animation is hooked to the view's touchUp event. */
++	up?: boolean;
++	/** The gesture that raises touchDown/touchUp is attached: touch on Android, long press on iOS views that are not a UIControl. */
++	gesture?: boolean;
++	/** Target of the UIControl events. Held here because a UIControl does not retain its targets. */
++	handler?: any /* TouchControlHandler */;
++	/** The handler is registered with the current native view for down. */
++	nativeDown?: boolean;
++	/** The handler is registered with the current native view for up. */
++	nativeUp?: boolean;
++	disposeHook?: boolean;
++};
++
++function getTouchState(view: View): TouchState {
++	const holder = view as unknown as { [touchState]?: TouchState };
++	if (!holder[touchState]) {
++		holder[touchState] = {};
++	}
++	return holder[touchState];
++}
++
+ /**
+  * Manage interactivity in your apps easily with TouchManager.
+  * Store reusable down/up animation settings for touches as well as optionally enable automatic tap (down/up) animations for your app.
+@@ -66,8 +94,7 @@ export class TouchManager {
+ 	// }
+ 	static animations: TouchAnimationOptions;
  	/**
+-	 * Native Touch handlers (iOS only) registered with the view through the TouchManager.
+-	 * The TouchManager uses this internally but makes public for other versatility if needed.
++	 * @deprecated No longer populated. The native touch handler (iOS only) is kept with its view and released with it.
+ 	 */
+ 	static touchHandlers: Array<{ view: View; handler: any /* UIGestureRecognizer */ }>;
+ 	/**
+@@ -84,59 +111,74 @@ export class TouchManager {
+ 		const handleDown = (view?.touchAnimation && (<TouchAnimationOptions>view?.touchAnimation).down) || (TouchManager.animations && TouchManager.animations.down);
+ 		const handleUp = (view?.touchAnimation && (<TouchAnimationOptions>view?.touchAnimation).up) || (TouchManager.animations && TouchManager.animations.up);
+ 
++		// View.onLoaded calls this on every load, not only the first one, and a view can gain a
++		// direction between two loads. Down and up are tracked separately so each is wired once:
++		// the listeners per view, the control target per native view.
++		const state = getTouchState(view);
++		const wireDown = !!handleDown && !state.down;
++		const wireUp = !!handleUp && !state.up;
++		if (wireDown) {
++			state.down = true;
++		}
++		if (wireUp) {
++			state.up = true;
++		}
++
+ 		if (__APPLE__) {
+ 			if (view?.ios?.addTargetActionForControlEvents) {
+ 				// can use UIControlEvents
+-				if (!TouchManager.touchHandlers) {
+-					TouchManager.touchHandlers = [];
++				if (!state.handler) {
++					state.handler = TouchControlHandler.initWithOwner(new WeakRef(view));
++				}
++				if (handleDown && !state.nativeDown) {
++					state.nativeDown = true;
++					(<UIControl>view.ios).addTargetActionForControlEvents(state.handler, GestureEvents.touchDown, UIControlEvents.TouchDown | UIControlEvents.TouchDragEnter);
++				}
++				if (handleUp && !state.nativeUp) {
++					state.nativeUp = true;
++					(<UIControl>view.ios).addTargetActionForControlEvents(state.handler, GestureEvents.touchUp, UIControlEvents.TouchDragExit | UIControlEvents.TouchCancel | UIControlEvents.TouchUpInside | UIControlEvents.TouchUpOutside);
+ 				}
+-				TouchManager.touchHandlers.push({
+-					view,
+-					handler: TouchControlHandler.initWithOwner(new WeakRef(view)),
+-				});
+ 
+-				if (handleDown) {
+-					(<UIControl>view.ios).addTargetActionForControlEvents(TouchManager.touchHandlers[TouchManager.touchHandlers.length - 1].handler, GestureEvents.touchDown, UIControlEvents.TouchDown | UIControlEvents.TouchDragEnter);
++				if (wireDown) {
+ 					view.on(GestureEvents.touchDown, (args) => {
+ 						TouchManager.startAnimationForType(view, TouchAnimationTypes.down);
+ 					});
+ 				}
+-				if (handleUp) {
+-					(<UIControl>view.ios).addTargetActionForControlEvents(TouchManager.touchHandlers[TouchManager.touchHandlers.length - 1].handler, GestureEvents.touchUp, UIControlEvents.TouchDragExit | UIControlEvents.TouchCancel | UIControlEvents.TouchUpInside | UIControlEvents.TouchUpOutside);
++				if (wireUp) {
+ 					view.on(GestureEvents.touchUp, (args) => {
+ 						TouchManager.startAnimationForType(view, TouchAnimationTypes.up);
+ 					});
+ 				}
+-			} else {
+-				if (handleDown || handleUp) {
+-					view.on(GestureEvents.gestureAttached, (args: GestureEventData) => {
+-						if (args.type === GestureTypes.longPress) {
+-							(<UILongPressGestureRecognizer>args.ios).minimumPressDuration = (<View>args.object)?.touchDelay || 0;
+-						}
+-					});
+-					view.on(GestureTypes[GestureTypes.longPress], (args: GestureEventDataWithState) => {
+-						switch (args.state) {
+-			
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #11642** (2026-11-14): fix(ios): never re-attach torn-down ListView item views (@edusperoni)
+- **PR #11641** (2026-11-14): fix(core): register touch animations once per view (@edusperoni)
+- **PR #11640** (2026-11-13): fix(android): resume Frame navigation after early Activity attachment (@NathanWalker)
+- **PR #11638** (2026-11-12): fix(ios): raise orientationChanged from scene geometry updates (@NathanWalker)
+- **PR #11637** (closed): fix(ios): keep ListView item views attached when UIKit removes their cell (@NathanWalker)
 - **PR #11633** (2026-11-10): fix(webpack): find ExternalModuleFactoryPlugin where webpack 5.112 moved it (@edusperoni)
-- **PR #11629** (2026-11-09): fix(vite): serve HMR app modules with source maps (@NathanWalker)
-- **PR #11628** (2026-11-09): fix(vite): resolve Solid runtime dev builds from package exports (@NathanWalker)
-- **PR #11626** (2026-11-09): feat(webpack,vite): keep ns: builtin module imports for the runtime (@edusperoni)
-- **PR #11625** (2026-11-08): fix(linux): restore a page's focus without scrolling to it (@triniwiz)
-- **PR #11623** (2026-11-08): fix(linux): CSS keyframe animations, mouse enter/leave/move and ActivityIndicator spin (@triniwiz)
 
 ---
 
@@ -1721,51 +1398,51 @@ webpack 5.112 moved lib/ExternalModuleFactoryPlugin.js to lib/externals/, so loa
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. webpack,vite): keep ns: builtin module imports for the runtime (#11626) [skip ci
+## X. ios): never re-attach torn-down ListView item views
 
 **RULE**:
-When implementing operations in `packages/vite/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NativeScript/NativeScript. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/automated/src/ui/list-view/list-view-tests.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NativeScript/NativeScript. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e532d623`: webpack,vite): keep ns: builtin module imports for the runtime (#11626) [skip ci]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ce4102b0`: ios): never re-attach torn-down ListView item views. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/vite/README.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/automated/src/ui/list-view/list-view-tests.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-### Runtime builtin modules (`ns:` / `node:`)
+	// UIKit can take a cell out of the table and display it again without asking for it in
+	// tableView:cellForRowAtIndexPath: (constantly while an accessibility client disables cell reuse).
+	public test_cell_displayed_again_after_teardown_gets_new_content_ios() {
+		if (__APPLE__) {
+			const listView = this.testView;
+			listView.on(ListView.itemLoadingEvent, this.loadViewWithItemNumber);
+			listView.items = FEW_ITEMS;
+			this.waitUntilListViewReady();
 
-The NativeScript runtimes provide builtin modules under the `ns:` scheme (`ns:util`, `ns:module`, `ns:worker_threads`, …) and resolve them themselves. Every `ns:` import is left as-is in the output, including modules added in future runtime versions. This covers `vite build`, workers and HMR dev sessions.
+			const tableView = <UITableView>listView.ios;
+			const indexPath = NSIndexPath.indexPathForRowInSection(1, 0);
+			const cell = <any>tableView.cellForRowAtIndexPath(indexPath);
+			const tableContent = cell.superview;
+			const tornDownView = cell.view;
+			TKUnit.assertNotNull(tornDownView, 'cell has an item view');
 
-To also use the runtime's `node:` shims, add another `nativescriptBuiltinModules` instance (only list the ones your runtime version ships; other `node:` imports become an empty stub). Use `resolve.alias` to forward bare names, which libraries often import, or to polyfill a builtin the runtime doesn't ship:
+			cell.removeFromSuperview();
+			TKUnit.assertEqual(cell.contentView.subviews.count, 0, 'the torn-down item view is detached from the cell');
+			TKUnit.assertNull(cell.view, 'the cell no longer refers to the torn-down item view');
 
-```ts
-import { defineConfig, mergeConfig, UserConfig } from 'vite';
-import { nativescriptBuiltinModules } from '@nativescript/vite';
-import { typescriptConfig } from '@nativescript/vite/typescript';
+			tableView.delegate.tableViewWillDisplayCellForRowAtIndexPath(tableView, cell, indexPath);
+			TKUnit.assertNull(cell.view, 'a cell outside the table is not prepared');
 
-export default defineConfig(({ mode }): UserConfig => {
-	return mergeConfig(typescriptConfig({ mode }), {
-		plugins: [nativescriptBuiltinModules({ include: ['node:worker_threads'] })],
-		resolve: {
-			alias: {
-				worker_threads: 'node:worker_threads',
-				'ns:url': '/abs/path/to/polyfills/ns-url.js',
-			},
-		},
-	});
-});
-```
-
+			tableContent.addSub
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
+// Induced defect failure mode:
 // Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e532d623` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ce4102b0` are properly handled with clean fallback behavior.

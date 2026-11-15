@@ -1565,8 +1565,8 @@
     "sourceUrl": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B",
     "sourceVersion": "hf-meta-models-muse-spark-open-816b-a42b",
     "license": "Open-Source",
-    "contentHash": "f4fe60d7bc57b9299885925c6a24399293637227a2ffd2ada26edd421c4faf2a",
-    "lastHarvestedAt": "2026-11-09T15:17:35.616Z",
+    "contentHash": "c75d5fac8b844852ee547b21402989680acdf9afc88fc4a0b145e866a3ee7126",
+    "lastHarvestedAt": "2026-11-15T03:48:03.267Z",
     "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b"
   },
   "hf-black-forest-labs-flux-3-image-klein-comfy": {
@@ -5963,10 +5963,10 @@
     "repository": "rook/rook",
     "platform": "github",
     "sourceUrl": "https://github.com/rook/rook",
-    "sourceVersion": "83afdeee",
+    "sourceVersion": "5301ca41",
     "license": "Apache-2.0",
-    "contentHash": "23431232df306e9a0de2dab6ecb9377b334cffef5a437ce56437a03769c630be",
-    "lastHarvestedAt": "2026-11-13T19:39:58.591Z",
+    "contentHash": "76eb2a292bd1ebd5b7d82b95ab933822e28bd885176e080796a81aff4a1f0477",
+    "lastHarvestedAt": "2026-11-15T03:48:13.035Z",
     "learningId": "learn-github-rook-rook"
   },
   "genkit-ai-genkit": {
@@ -7453,10 +7453,10 @@
     "repository": "NativeScript/NativeScript",
     "platform": "github",
     "sourceUrl": "https://github.com/NativeScript/NativeScript",
-    "sourceVersion": "36a88dd6",
+    "sourceVersion": "283eb0c5",
     "license": "MIT",
-    "contentHash": "f54260707cf7aef4fbca63c6f639eb8bee6ac9d10bdc0924b412991c117d09a1",
-    "lastHarvestedAt": "2026-11-11T16:35:59.576Z",
+    "contentHash": "45651c2f09dfca00320505909044bacfd270c20a4c15f872742b058cc0bdec25",
+    "lastHarvestedAt": "2026-11-15T03:48:10.781Z",
     "learningId": "learn-github-nativescript-nativescript"
   },
   "oramasearch-orama": {

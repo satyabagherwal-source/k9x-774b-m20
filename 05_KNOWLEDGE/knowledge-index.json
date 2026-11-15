@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-15T03:35:16.746Z",
-  "total_verified_learnings": 8655,
+  "last_updated": "2026-11-15T03:48:48.214Z",
+  "total_verified_learnings": 8657,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18095,
+  "total_items": 18111,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -213146,14 +213146,19 @@
       "slug": "rook-rook",
       "platform": "github",
       "source_url": "https://github.com/rook/rook",
-      "source_version": "83afdeee",
-      "content_hash": "23431232df306e9a0de2dab6ecb9377b334cffef5a437ce56437a03769c630be",
+      "source_version": "5301ca41",
+      "content_hash": "76eb2a292bd1ebd5b7d82b95ab933822e28bd885176e080796a81aff4a1f0477",
       "dossier_path": "07_PROJECT_LEARNING/rook-rook-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rook-rook-learnings.md",
       "promoted_rules": [
         {
           "number": 8365,
           "title": "build(deps): bump the github-dependencies group with 3 updates",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8574,
+          "title": "Empirical Invariant Guard in cephcluster.yaml",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -213162,7 +213167,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T19:39:58.415Z",
+      "verified_at": "2026-11-15T03:48:12.860Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -213204,10 +213209,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rook-rook-architecture-intelligence-rook-rook-core-invariants.md",
       "title": "Architecture Intelligence: rook/rook Core Invariants",
       "repository": "rook/rook",
-      "source_version": "83afdeee",
-      "content_hash": "3dc0282a42fa87ffbfbf30727a7312c5d25caab88190613dcfd51c3273c69bf7",
+      "source_version": "5301ca41",
+      "content_hash": "6fff9d7f3d955e4cc1e6ed837103539388956c548fa491a8375a05f9d9cd4610",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T19:39:58.920Z"
+      "persisted_at": "2026-11-15T03:48:13.367Z"
     },
     "agent_contract-agent-contract-rook-rook-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-rook-rook-autonomous-specialist-persona",
@@ -213216,10 +213221,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/rook-rook-agent-contract-rook-rook-autonomous-specialist-persona.md",
       "title": "Agent Contract: rook/rook Autonomous Specialist Persona",
       "repository": "rook/rook",
-      "source_version": "83afdeee",
-      "content_hash": "dba01260f61a888bf1de9bd083fd9ac1d233afa3b848a8a657f8e44c7c35bb28",
+      "source_version": "5301ca41",
+      "content_hash": "70b3a1f3ab7bbffc4b8106adb96a56fdd0d3b67a3d4c7d6882cc485d9b40ea9c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T19:39:59.038Z"
+      "persisted_at": "2026-11-15T03:48:13.478Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rook-rook": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rook-rook",
@@ -213228,10 +213233,10 @@
       "relative_path": "08_VERIFICATION/rook-rook-verification-protocol-empirical-defect-shield-for-rook-rook.md",
       "title": "Verification Protocol: Empirical Defect Shield for rook/rook",
       "repository": "rook/rook",
-      "source_version": "83afdeee",
-      "content_hash": "f4df0be8e72196dcd6a80b56487fcf05ba8c514980d43f3e0bd3eed6aed18293",
+      "source_version": "5301ca41",
+      "content_hash": "92e599654b2d894c07a6b5ceba81c5dc2bfde894ce95d80a33ba632adc99f1aa",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T19:39:59.153Z"
+      "persisted_at": "2026-11-15T03:48:13.584Z"
     },
     "learn-github-zama-ai-tfhe-rs": {
       "learning_id": "learn-github-zama-ai-tfhe-rs",
@@ -238786,6 +238791,238 @@
       "content_hash": "02523407982d43c609abc58727db325bda92f09c2c82bf77e602d04406cfcbd9",
       "domain_letter": "D",
       "persisted_at": "2026-11-15T03:35:15.266Z"
+    },
+    "learn-huggingface-meta-models-muse-spark-open-816b-a42b": {
+      "learning_id": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "meta-models/Muse-Spark-Open-816B-A42B",
+      "repository": "meta-models/Muse-Spark-Open-816B-A42B",
+      "slug": "hf-meta-models-muse-spark-open-816b-a42b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B",
+      "source_version": "hf-meta-models-muse-spark-open-816b-a42b",
+      "content_hash": "c75d5fac8b844852ee547b21402989680acdf9afc88fc4a0b145e866a3ee7126",
+      "dossier_path": "07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T03:48:03.087Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-meta-models-muse-spark-open-816b-a42b-core-invar": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-meta-models-muse-spark-open-816b-a42b-core-invar",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-models-muse-spark-open-816b-a42b-research-knowledge-intelligence-meta-mo.md",
+      "title": "Research & Knowledge Intelligence: meta-models/Muse-Spark-Open-816B-A42B Core Invariants",
+      "repository": "meta-models/Muse-Spark-Open-816B-A42B",
+      "source_version": "hf-meta-models-muse-spark-open-816b-a42b",
+      "content_hash": "a018f3fb4098b3fa8e205ac929ed77eaf76059de9337dd71176442dd06fc6ed4",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T03:48:03.464Z"
+    },
+    "learn-github-nativescript-nativescript": {
+      "learning_id": "learn-github-nativescript-nativescript",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "NativeScript/NativeScript",
+      "repository": "NativeScript/NativeScript",
+      "slug": "nativescript-nativescript",
+      "platform": "github",
+      "source_url": "https://github.com/NativeScript/NativeScript",
+      "source_version": "283eb0c5",
+      "content_hash": "45651c2f09dfca00320505909044bacfd270c20a4c15f872742b058cc0bdec25",
+      "dossier_path": "07_PROJECT_LEARNING/nativescript-nativescript-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/nativescript-nativescript-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8573,
+          "title": "never re-attach torn-down ListView item views",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T03:48:10.607Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8573": {
+      "learning_id": "rule-8573",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8573,
+      "title": "never re-attach torn-down ListView item views",
+      "source_url": "https://github.com/NativeScript/NativeScript",
+      "source_version": "283eb0c5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T03:48:10.607Z"
+    },
+    "candidate_directive-never-re-attach-torn-down-listview-item-views": {
+      "item_id": "candidate_directive-never-re-attach-torn-down-listview-item-views",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-O41D-never-re-attach-torn-down-listview-item-views.md",
+      "title": "never re-attach torn-down ListView item views",
+      "repository": "NativeScript/NativeScript",
+      "source_version": "283eb0c5",
+      "content_hash": "f9391b9e6ebffdb1152abe280d31ff7701e74479548b0b74e764f4292f546fa8",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T03:48:10.994Z"
+    },
+    "domain_intelligence-architecture-intelligence-nativescript-nativescript-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-nativescript-nativescript-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nativescript-nativescript-architecture-intelligence-nativescript-nativescript-co.md",
+      "title": "Architecture Intelligence: NativeScript/NativeScript Core Invariants",
+      "repository": "NativeScript/NativeScript",
+      "source_version": "283eb0c5",
+      "content_hash": "1e3cc4689e71a88e968125695792ffea38cb5d874b49d87e020e692c26bf6ad0",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T03:48:11.114Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-nativescript-nativescript": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nativescript-nativescript",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/nativescript-nativescript-verification-protocol-empirical-defect-shield-for-nati.md",
+      "title": "Verification Protocol: Empirical Defect Shield for NativeScript/NativeScript",
+      "repository": "NativeScript/NativeScript",
+      "source_version": "283eb0c5",
+      "content_hash": "9971b93d4698d66a176d41c3297a29b4bab03ec0e55bd31d9baed9a6b7f6c8e0",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T03:48:11.225Z"
+    },
+    "rule-8574": {
+      "learning_id": "rule-8574",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8574,
+      "title": "Empirical Invariant Guard in cephcluster.yaml",
+      "source_url": "https://github.com/rook/rook",
+      "source_version": "5301ca41",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T03:48:12.860Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-cephcluster-yaml": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-cephcluster-yaml",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-OWGN-empirical-invariant-guard-in-cephcluster-yaml.md",
+      "title": "Empirical Invariant Guard in cephcluster.yaml",
+      "repository": "rook-rook-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d5b971232cf796238945c41d7cef1eee8e2206421ff679a2f8f02e5c11fcf6ef",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T03:48:47.832Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-meta-models-muse-spark-open-816b-a42b-learnin": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-meta-models-muse-spark-open-816b-a42b-learnin",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-models-muse-spark-open-816b-a42b-learnings-research-knowledge-intelligen.md",
+      "title": "Research & Knowledge Intelligence: hf-meta-models-muse-spark-open-816b-a42b-learnings Core Invariants",
+      "repository": "hf-meta-models-muse-spark-open-816b-a42b-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4793566fed85169c27c70553cb12de7896c8fd7d29df425850d3a1ea4c5efac0",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T03:48:46.648Z"
+    },
+    "candidate_directive-ios-never-re-attach-torn-down-listview-item-views": {
+      "item_id": "candidate_directive-ios-never-re-attach-torn-down-listview-item-views",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-OVYX-ios-never-re-attach-torn-down-listview-item-views.md",
+      "title": "ios): never re-attach torn-down ListView item views",
+      "repository": "nativescript-nativescript-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7ee99c6e9d7b88ba367725d8b33f1b594731e454b97b455e9d9caa6626f3ef4c",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T03:48:47.193Z"
+    },
+    "domain_intelligence-architecture-intelligence-nativescript-nativescript-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-nativescript-nativescript-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nativescript-nativescript-learnings-architecture-intelligence-nativescript-nativ.md",
+      "title": "Architecture Intelligence: nativescript-nativescript-learnings Core Invariants",
+      "repository": "nativescript-nativescript-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4744aedc1c774ce7d26dbdccf1b4898f9ecc2c010eaab2873bcfd5aa6d17246b",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T03:48:47.325Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-nativescript-nativescript-lear": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nativescript-nativescript-lear",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/nativescript-nativescript-learnings-verification-protocol-empirical-defect-shiel.md",
+      "title": "Verification Protocol: Empirical Defect Shield for nativescript-nativescript-learnings",
+      "repository": "nativescript-nativescript-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6fbe01ed7701bc97b6f84b31a4bb90ea69ddcb2c1fe393a48f61d62aa5d4069a",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T03:48:47.459Z"
+    },
+    "domain_intelligence-architecture-intelligence-rook-rook-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-rook-rook-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rook-rook-learnings-architecture-intelligence-rook-rook-learnings-core-invariant.md",
+      "title": "Architecture Intelligence: rook-rook-learnings Core Invariants",
+      "repository": "rook-rook-learnings",
+      "source_version": "HEAD",
+      "content_hash": "68a826073a6dfa9ed3682ccce44a561f8f65769c44290801904f7a314196f426",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T03:48:47.962Z"
+    },
+    "agent_contract-agent-contract-rook-rook-learnings-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-rook-rook-learnings-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/rook-rook-learnings-agent-contract-rook-rook-learnings-autonomous-specialist-per.md",
+      "title": "Agent Contract: rook-rook-learnings Autonomous Specialist Persona",
+      "repository": "rook-rook-learnings",
+      "source_version": "HEAD",
+      "content_hash": "df0e87bb3bb0c574a06c80d1215ec800b46cd501041599e502330a354efb4ff2",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T03:48:48.098Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-rook-rook-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rook-rook-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/rook-rook-learnings-verification-protocol-empirical-defect-shield-for-rook-rook-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for rook-rook-learnings",
+      "repository": "rook-rook-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6e2b04cce87e380e1636f5ba5b0aba64c608a607d04446c0e714b1031fc987af",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T03:48:48.214Z"
     }
   },
   "ai-builder-brain": {

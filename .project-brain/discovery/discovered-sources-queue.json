@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T03:35:16.302Z",
+  "updated_at": "2026-11-15T03:48:46.981Z",
   "stats": {
-    "total_discovered": 3580,
-    "approved_pending_harvest": 3370,
+    "total_discovered": 3587,
+    "approved_pending_harvest": 3377,
     "harvested_count": 0,
     "rejected_count": 210,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3351,
+      "COMMUNITY_AND_EXPERT": 3358,
       "OFFICIAL_DOCUMENTATION": 125,
       "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
@@ -77311,6 +77311,160 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
         "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-0CA06B6FD094": {
+      "id": "SRC-0CA06B6FD094",
+      "url": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B",
+      "title": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T03:48:46.434Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-learnings.md",
+        "fileName": "hf-meta-models-muse-spark-open-816b-a42b-learnings.md"
+      }
+    },
+    "SRC-F00DD2AD89F6": {
+      "id": "SRC-F00DD2AD89F6",
+      "url": "https://github.com/NativeScript/NativeScript",
+      "title": "https://github.com/NativeScript/NativeScript",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T03:48:46.846Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nativescript-nativescript-learnings.md",
+        "fileName": "nativescript-nativescript-learnings.md"
+      }
+    },
+    "SRC-0A79D5D63AF3": {
+      "id": "SRC-0A79D5D63AF3",
+      "url": "https://http-echo.nativescript.org/get",
+      "title": "https://http-echo.nativescript.org/get",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T03:48:46.873Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nativescript-nativescript-learnings.md",
+        "fileName": "nativescript-nativescript-learnings.md"
+      }
+    },
+    "SRC-0159F1B2295D": {
+      "id": "SRC-0159F1B2295D",
+      "url": "https://github.com/Microsoft/TSJS-lib-generator/pull/623",
+      "title": "https://github.com/Microsoft/TSJS-lib-generator/pull/623",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T03:48:46.897Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nativescript-nativescript-learnings.md",
+        "fileName": "nativescript-nativescript-learnings.md"
+      }
+    },
+    "SRC-A526A274CC5F": {
+      "id": "SRC-A526A274CC5F",
+      "url": "https://dom.spec.whatwg.org/",
+      "title": "https://dom.spec.whatwg.org/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T03:48:46.921Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nativescript-nativescript-learnings.md",
+        "fileName": "nativescript-nativescript-learnings.md"
+      }
+    },
+    "SRC-BA2798BD7605": {
+      "id": "SRC-BA2798BD7605",
+      "url": "https://github.com/NativeScript/NativeScript/blob/71d2203e1c95d009fd1daa1a15c52b9e8c10db8b/packages/core/fetch/index.mjs",
+      "title": "https://github.com/NativeScript/NativeScript/blob/71d2203e1c95d009fd1daa1a15c52b9e8c10db8b/packages/core/fetch/index.mjs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T03:48:46.955Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nativescript-nativescript-learnings.md",
+        "fileName": "nativescript-nativescript-learnings.md"
+      }
+    },
+    "SRC-14CADBF7141B": {
+      "id": "SRC-14CADBF7141B",
+      "url": "https://github.com/NativeScript/NativeScript/commit/cc0b5034c4042418aa5b54f0b1f448430a9d0297",
+      "title": "https://github.com/NativeScript/NativeScript/commit/cc0b5034c4042418aa5b54f0b1f448430a9d0297",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T03:48:46.981Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nativescript-nativescript-learnings.md",
+        "fileName": "nativescript-nativescript-learnings.md"
       }
     }
   }
