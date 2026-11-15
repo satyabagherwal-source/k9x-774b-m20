@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261110-X6C3",
-    "timestamp": "2026-11-10T00:44:55.251Z",
-    "repository": "domcyrus/rustnet",
-    "learningId": "learn-github-domcyrus-rustnet",
-    "contentHash": "0739449e85ad2fe5e8ca7bcf9381ab66eeaff603928fde1d57fcfe638da5a7b8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261110-XGVP",
     "timestamp": "2026-11-10T00:45:08.917Z",
     "repository": "duckdb/duckdb",
@@ -7490,6 +7475,21 @@
     "repository": "mitmproxy/mitmproxy",
     "learningId": "learn-github-mitmproxy-mitmproxy",
     "contentHash": "9db5b8b665a834a2ab787f415b7a77a9d1305a8ae216c7e6d7ee843e8f550e87",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-NZCK",
+    "timestamp": "2026-11-15T07:04:02.228Z",
+    "repository": "ClementTsang/bottom",
+    "learningId": "learn-github-clementtsang-bottom",
+    "contentHash": "e6060d147012f4254d7cadf71ba03062f06db842214fe2c0267442e10d5ac8a1",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

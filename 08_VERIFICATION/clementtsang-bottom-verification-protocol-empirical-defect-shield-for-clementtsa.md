@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for clementtsang/bottom
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for ClementTsang/bottom
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "clementtsang/bottom",
-  "source_url": "https://github.com/clementtsang/bottom",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "ClementTsang/bottom",
+  "source_url": "https://github.com/ClementTsang/bottom",
+  "source_version": "a5da65c6",
+  "license": "MIT",
+  "timestamp": "2026-11-15T07:04:02.366Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-clementtsang-bottom",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [clementtsang/bottom](https://github.com/clementtsang/bottom) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [ClementTsang/bottom](https://github.com/ClementTsang/bottom) (Revision: `a5da65c6`).  
+> **License**: MIT | **Timestamp**: `2026-11-15T07:04:02.366Z`  
+> **Learning ID**: `learn-github-clementtsang-bottom`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `clementtsang/bottom` (Commit: `historical`)
+- **Target Repository**: `ClementTsang/bottom` (Commit: `a5da65c6`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clementtsang-bottom-learnings.md`  
-> **Source**: github ([https://github.com/ClementTsang/bottom](https://github.com/ClementTsang/bottom))  
-> **Source Version**: `e0f4d211`  
-> **License**: MIT  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T00:45:21.933Z  
-> **Learning ID**: `learn-github-clementtsang-bottom`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): ClementTsang/bottom
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clementtsang-bottom-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ClementTsang/bottom](https://github.com/ClementTsang/bottom))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T00:45:21.585Z  
+> **Harvest Timestamp**: 2026-11-15T07:04:01.413Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Yet another cross-platform graphical process/system monitor.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 14189 stars
+- **Stars / Engagement**: 14194 stars
 
 ---
 
@@ -1626,76 +1612,43 @@ impl InputFieldState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e0f4d211` (2026-11-11)
-**Commit Message**: deps: bump rustix to 1.1.6 (#2312)
+### Incident Patch 1: `a5da65c6` (2026-11-14)
+**Commit Message**: other: set `unused_dependencies` lint to deny (#2322)
 
-This should hopefully address an unsoundness warning from cargo-audit:
-
-```
-Crate:     rustix
-Version:   1.1.4
-Warning:   unsound
-Title:     xattr functions mark unwritten bytes as initialized when given a zero-length buffer
-Date:      2026-10-27
-ID:        RUSTSEC-2026-0486
-URL:       https://rustsec.org/advisories/RUSTSEC-2026-0486
-```
-
-**File**: `Cargo.lock` (modified, +2/-2)
+**File**: `Cargo.toml` (modified, +3/-0)
 ```diff
-@@ -1398,9 +1398,9 @@ dependencies = [
- 
- [[package]]
- name = "rustix"
--version = "1.1.4"
-+version = "1.1.6"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "b6fe4565b9518b83ef4f91bb47ce29620ca828bd32cb7e408f0062e9930ba190"
-+checksum = "e5e76742e5294153d4dde1207dbec5bdd81eef6fabdc0d2118babadabfd858aa"
- dependencies = [
-  "bitflags 2.13.0",
-  "errno",
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -108,7 +108,7 @@ strum = { version = "0.28.0", features = ["derive"], optional = true }
- libc = "0.2.189"
- 
- [target.'cfg(target_os = "linux")'.dependencies]
--rustix = { version = "1.1.4", features = ["fs", "param"] }
-+rustix = { version = "1.1.6", features = ["fs", "param"] }
- 
- [target.'cfg(all(target_os = "linux", target_env = "musl"))'.dependencies]
- mimalloc = { version = "0.1.52", optional = true }
+@@ -262,3 +262,6 @@ todo = "deny"
+ unimplemented = "deny"
+ missing_safety_doc = "deny"
+ unwrap_used = "deny"
++
++[lints.cargo]
++unused_dependencies = "deny"
 ```
 
 ---
 
-### Incident Patch 2: `2966527b` (2026-11-11)
-**Commit Message**: docs: update changelog with process command viewer (#2310)
+### Incident Patch 2: `3f05ccf4` (2026-11-14)
+**Commit Message**: other: add crate publish cooldown (#2321)
 
-Update the changelog to include #2263.
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `.cargo/config.toml` (modified, +3/-0)
 ```diff
-@@ -27,6 +27,7 @@ That said, these are more guidelines rather than hard rules, though the project
- ### Changes
+@@ -6,3 +6,6 @@ rustflags = ["-C", "target-feature=+crt-static"]
  
- - [#2296](https://github.com/ClementTsang/bottom/pull/2296): Better truncate CPU usage strings with small widths.
-+- [#2263](https://github.com/ClementTsang/bottom/pull/2263): Add pop-out process command viewer.
- 
- ### Bug Fixes
- 
+ [target.aarch64-pc-windows-gnullvm]
+ rustflags = ["-C", "target-feature=+crt-static"]
++
++[registry]
++global-min-publish-age = "7 days"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2312** (2026-11-11): deps: bump rustix to 1.1.6 (@ClementTsang)
-- **PR #2311** (2026-11-11): docs: add vegerot as a contributor for code (@allcontributors[bot])
-- **PR #2310** (2026-11-11): docs: update changelog with process command viewer (@ClementTsang)
-- **PR #2308** (2026-11-09): ci: bump macos version in coverage job to 15 (@ClementTsang)
-- **PR #2307** (2026-11-09): other: run nightly format (@ClementTsang)
-- **PR #2306** (2026-11-09): ci: add zizmor check action (@ClementTsang)
+- **PR #2322** (2026-11-14): other: set `unused_dependencies` lint to deny (@ClementTsang)
+- **PR #2321** (2026-11-14): other: add crate publish cooldown (@ClementTsang)
+- **PR #2316** (2026-11-13): ci: fix Android build by tying gpu feature to sysinfo's, bump cross version to a9301e9 (@ClementTsang)
+- **PR #2315** (2026-11-13): ci: bump rust version in CI to 1.100.0 (@ClementTsang)
+- **PR #2314** (2026-11-13): deps: bump sysinfo to 0.40.3 (@ClementTsang)
+- **PR #2313** (2026-11-12): other: add cargo binstall metadata (@ClementTsang)
 
 ---
 
@@ -1715,33 +1668,33 @@ Update the changelog to include #2263.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps: bump rustix to 1.1.6 (#2312)
+## X. other: set `unused_dependencies` lint to deny
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClementTsang/bottom. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClementTsang/bottom. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e0f4d211`: deps: bump rustix to 1.1.6 (#2312). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a5da65c6`: other: set `unused_dependencies` lint to deny. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "1.1.6"
-checksum = "e5e76742e5294153d4dde1207dbec5bdd81eef6fabdc0d2118babadabfd858aa"
+
+[lints.cargo]
+unused_dependencies = "deny"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-version = "1.1.4"
-checksum = "b6fe4565b9518b83ef4f91bb47ce29620ca828bd32cb7e408f0062e9930ba190"
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e0f4d211` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a5da65c6` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

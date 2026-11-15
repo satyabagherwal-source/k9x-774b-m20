@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T06:45:15.882Z",
-  "total_cycles_completed": 9681,
-  "total_learnings_persisted": 9681,
-  "total_rules_promoted": 9312,
+  "last_updated": "2026-11-15T07:04:02.235Z",
+  "total_cycles_completed": 9682,
+  "total_learnings_persisted": 9682,
+  "total_rules_promoted": 9313,
   "history": [
-    {
-      "timestamp": "2026-11-14T07:30:37.380Z",
-      "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
-      "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T07:30:51.307Z",
       "repository": "HelixDB/helix-db",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-15T06:45:15.882Z",
       "repository": "mitmproxy/mitmproxy",
       "learningId": "learn-github-mitmproxy-mitmproxy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T07:04:02.235Z",
+      "repository": "ClementTsang/bottom",
+      "learningId": "learn-github-clementtsang-bottom",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

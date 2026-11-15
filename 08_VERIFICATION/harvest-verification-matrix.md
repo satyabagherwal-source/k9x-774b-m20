@@ -10051,3 +10051,4 @@
 | `CYCLE-20261115-ZKVV` | `2026-11-15T06:45:03.739Z` | `tencent/Hy-Memory-30B-A3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tencent-hy-memory-30b-a3b-learnings.md` | Yes (`950c357f...`) |
 | `CYCLE-20261115-ZU8X` | `2026-11-15T06:45:15.873Z` | `mitmproxy/mitmproxy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8585` | Yes (`9db5b8b6...`) |
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T06:45:47.842Z` | `hf-tencent-hy-memory-30b-a3b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-8C16206C` [Domain H] | Yes (`ff4f8ada...`) |
+| `CYCLE-20261115-NZCK` | `2026-11-15T07:04:02.228Z` | `ClementTsang/bottom` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8586` | Yes (`e6060d14...`) |

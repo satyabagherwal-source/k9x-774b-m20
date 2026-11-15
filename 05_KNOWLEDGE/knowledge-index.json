@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-15T06:45:50.426Z",
-  "total_verified_learnings": 8672,
+  "last_updated": "2026-11-15T07:04:14.444Z",
+  "total_verified_learnings": 8673,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18213,
+  "total_items": 18221,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112155,9 +112155,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "af5eac9c66678e40597ea7be3e62abad28288e177a25c8f2449a5a1b9adffe25",
+      "content_hash": "ae9dc3de5072f5271b93cf193fd2a63167f3c7aacf15d9fe016f98dfc7e24627",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T22:16:50.546Z"
+      "persisted_at": "2026-11-15T07:04:14.358Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112167,9 +112167,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "6f796265ee4820545548698bcd9b77820a5b00a8180c45938a310069f8a454ea",
+      "content_hash": "8e71e678c2831c89f7a0e8803325601a3a58faa90ab6fa13e48b07b8546e89ef",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T22:16:50.652Z"
+      "persisted_at": "2026-11-15T07:04:14.444Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -113663,13 +113663,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-0KPV-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-O8CE-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "3d0a6d517308aecf60eb7e529c9f04f71f34645d62edcce63526b4810a8723e7",
+      "content_hash": "3244813c95067f4507ffafe1532d922589367428f7bdf37cfcb5ae389016d026",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T06:45:50.192Z"
+      "persisted_at": "2026-11-15T07:04:13.891Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113679,9 +113679,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "0482fb53e222e4f3e5c06b60534b96d70db41191663e5190d2514ca77e929ecf",
+      "content_hash": "b3ecad4390ed70d0400951ca72aa51901b45924aef811fbfc5d6bbda57405144",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T06:45:50.301Z"
+      "persisted_at": "2026-11-15T07:04:13.967Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113691,9 +113691,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "60a66ca6d4344670402d48a65f4078c4725b150f10a5fd4202da7a0eef6f1c23",
+      "content_hash": "7d22d2f58f8c2a7099e848b22b5b3f69ea52be7be26f3c006ff2dbdd9eed250a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T06:45:50.426Z"
+      "persisted_at": "2026-11-15T07:04:14.051Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -214776,13 +214776,13 @@
       "item_id": "candidate_directive-puppet-fix-postgresql-failing-to-start-on-new-installs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-U03N-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-O8N9-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
       "title": "puppet: Fix PostgreSQL failing to start on new installs.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "209936bc6a18deb98408b935e8b75b12eaafe207df174949fc1d0610accec27f",
+      "content_hash": "f106dcf41062ba6f7a5281a001d1d9ff06c97c8867f07920b3f2df128453e558",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T22:16:50.447Z"
+      "persisted_at": "2026-11-15T07:04:14.282Z"
     },
     "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
@@ -240567,6 +240567,125 @@
       "content_hash": "5d3b662b1d0434867e9a7ca436f2cf29c14c2eb614a47cb935664c44e78d5a93",
       "domain_letter": "D",
       "persisted_at": "2026-11-15T06:45:48.063Z"
+    },
+    "learn-github-clementtsang-bottom": {
+      "learning_id": "learn-github-clementtsang-bottom",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "ClementTsang/bottom",
+      "repository": "ClementTsang/bottom",
+      "slug": "clementtsang-bottom",
+      "platform": "github",
+      "source_url": "https://github.com/ClementTsang/bottom",
+      "source_version": "a5da65c6",
+      "content_hash": "e6060d147012f4254d7cadf71ba03062f06db842214fe2c0267442e10d5ac8a1",
+      "dossier_path": "07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8586,
+          "title": "set `unused_dependencies` lint to deny",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T07:04:02.114Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8586": {
+      "learning_id": "rule-8586",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8586,
+      "title": "set `unused_dependencies` lint to deny",
+      "source_url": "https://github.com/ClementTsang/bottom",
+      "source_version": "a5da65c6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T07:04:02.114Z"
+    },
+    "candidate_directive-set-unused_dependencies-lint-to-deny": {
+      "item_id": "candidate_directive-set-unused_dependencies-lint-to-deny",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NZGE-set-unused_dependencies-lint-to-deny.md",
+      "title": "set `unused_dependencies` lint to deny",
+      "repository": "ClementTsang/bottom",
+      "source_version": "a5da65c6",
+      "content_hash": "067d3c5483897980370582f7637f5798cb87838a3bf76ca66e753b795638a26e",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T07:04:02.367Z"
+    },
+    "domain_intelligence-architecture-intelligence-clementtsang-bottom-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-clementtsang-bottom-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-clementtsang-bottom-architecture-intelligence-clementtsang-bottom-core-invariant.md",
+      "title": "Architecture Intelligence: ClementTsang/bottom Core Invariants",
+      "repository": "ClementTsang/bottom",
+      "source_version": "a5da65c6",
+      "content_hash": "5973420442a700077143ea5b93c73b6d2773ba2c0938c8bafd4812e6845ad013",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T07:04:02.479Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-clementtsang-bottom": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-clementtsang-bottom",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/clementtsang-bottom-verification-protocol-empirical-defect-shield-for-clementtsa.md",
+      "title": "Verification Protocol: Empirical Defect Shield for ClementTsang/bottom",
+      "repository": "ClementTsang/bottom",
+      "source_version": "a5da65c6",
+      "content_hash": "8326f921ca681676b38733fedb5d721e31d73f1622536d190adfec62242f5c47",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T07:04:02.560Z"
+    },
+    "candidate_directive-other-set-unused_dependencies-lint-to-deny": {
+      "item_id": "candidate_directive-other-set-unused_dependencies-lint-to-deny",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-O7Z4-other-set-unused_dependencies-lint-to-deny.md",
+      "title": "other: set `unused_dependencies` lint to deny",
+      "repository": "clementtsang-bottom-learnings",
+      "source_version": "HEAD",
+      "content_hash": "cf3e6f76c72feb85d3b69fac527b2931d8db4b53bb6af21757885316863eceda",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T07:04:13.412Z"
+    },
+    "domain_intelligence-architecture-intelligence-clementtsang-bottom-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-clementtsang-bottom-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-clementtsang-bottom-learnings-architecture-intelligence-clementtsang-bottom-lear.md",
+      "title": "Architecture Intelligence: clementtsang-bottom-learnings Core Invariants",
+      "repository": "clementtsang-bottom-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4799242cb43b0f68db8f7e3c9f62acbca59daef6dc2b024547ac960b81c92bd3",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T07:04:13.492Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-clementtsang-bottom-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-clementtsang-bottom-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/clementtsang-bottom-learnings-verification-protocol-empirical-defect-shield-for-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for clementtsang-bottom-learnings",
+      "repository": "clementtsang-bottom-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f7ec3913adb69819bfb389d3ef661afde66f139cff3b3b09710da183e96b8a41",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T07:04:13.575Z"
     }
   },
   "ai-builder-brain": {

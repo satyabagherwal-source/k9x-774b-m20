@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T06:45:50.192Z",
+  "last_updated": "2026-11-15T07:04:14.282Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4835,11 +4835,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-0KPV",
+      "id": "CD-O8CE",
       "directive_title": "editor): add scoped ios account deletion",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-0KPV-editor-add-scoped-ios-account-deletion.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-O8CE-editor-add-scoped-ios-account-deletion.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-15",
@@ -10262,14 +10262,14 @@
       "staged_date": "2026-11-13"
     },
     {
-      "id": "CD-U03N",
+      "id": "CD-O8N9",
       "directive_title": "puppet: Fix PostgreSQL failing to start on new installs.",
       "source_repo": "zulip-zulip-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-U03N-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-O8N9-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-14",
+      "date_staged": "2026-11-15",
       "domain_letter": "G"
     },
     {
@@ -14752,6 +14752,46 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-3FC5E0-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-15"
+    },
+    {
+      "id": "CD-NZGE",
+      "directive_title": "set `unused_dependencies` lint to deny",
+      "source_repo": "ClementTsang/bottom",
+      "source_commit": "a5da65c6",
+      "staged_file": "11_INBOX/candidate-directives/CD-NZGE-set-unused_dependencies-lint-to-deny.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-15",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-O7Z4",
+      "directive_title": "other: set `unused_dependencies` lint to deny",
+      "source_repo": "clementtsang-bottom-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-O7Z4-other-set-unused_dependencies-lint-to-deny.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-15",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-716F00",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-716F00-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-15"
+    },
+    {
+      "id": "CD-REV-6F567D",
+      "directive_title": "puppet: Fix PostgreSQL failing to start on new installs.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-6F567D-puppet-fix-postgresql-failing-to-start-o.md",
       "staged_date": "2026-11-15"
     }
   ]

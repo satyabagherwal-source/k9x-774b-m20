@@ -10084,3 +10084,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-tencent-hy-memory-30b-a3b` | `https://huggingface.co/tencent/Hy-Memory-30B-A3B` | `hf-tencent` | Multi-dimensional audit evidence | 2026-11-15T06:45:03.743Z |
 | `learn-github-mitmproxy-mitmproxy` | `https://github.com/mitmproxy/mitmproxy` | `f7701d5f` | Multi-dimensional audit evidence | 2026-11-15T06:45:15.877Z |
 | `learn-dom-h-8c16206c` | `project://hf-tencent-hy-memory-30b-a3b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-tencent-hy-memory-30b-a3b-learnings.md` | 2026-11-15T06:45:47.842Z |
+| `learn-github-clementtsang-bottom` | `https://github.com/ClementTsang/bottom` | `a5da65c6` | Multi-dimensional audit evidence | 2026-11-15T07:04:02.231Z |

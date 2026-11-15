@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T06:45:50.301Z",
-  "total_records": 986,
+  "last_updated": "2026-11-15T07:04:14.358Z",
+  "total_records": 988,
   "domains": {
     "A": {
       "total": 6,
@@ -562,7 +562,7 @@
       ]
     },
     "G": {
-      "total": 163,
+      "total": 165,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -726,7 +726,9 @@
         "domain_intelligence-architecture-intelligence-zeronsh-zeron-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-temporalio-temporal-core-invariants",
         "domain_intelligence-architecture-intelligence-temporalio-temporal-learnings-core-invariants",
-        "domain_intelligence-architecture-intelligence-projectdiscovery-nuclei-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-projectdiscovery-nuclei-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-clementtsang-bottom-core-invariants",
+        "domain_intelligence-architecture-intelligence-clementtsang-bottom-learnings-core-invariants"
       ]
     },
     "H": {
@@ -6801,8 +6803,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "af5eac9c66678e40597ea7be3e62abad28288e177a25c8f2449a5a1b9adffe25",
-      "created_at": "2026-11-14T22:16:50.546Z"
+      "content_hash": "ae9dc3de5072f5271b93cf193fd2a63167f3c7aacf15d9fe016f98dfc7e24627",
+      "created_at": "2026-11-15T07:04:14.358Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -7719,8 +7721,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "0482fb53e222e4f3e5c06b60534b96d70db41191663e5190d2514ca77e929ecf",
-      "created_at": "2026-11-15T06:45:50.301Z"
+      "content_hash": "b3ecad4390ed70d0400951ca72aa51901b45924aef811fbfc5d6bbda57405144",
+      "created_at": "2026-11-15T07:04:13.967Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -19141,6 +19143,24 @@
       "repository": "hf-tencent-hy-memory-30b-a3b-learnings",
       "content_hash": "5d3b662b1d0434867e9a7ca436f2cf29c14c2eb614a47cb935664c44e78d5a93",
       "created_at": "2026-11-15T06:45:48.063Z"
+    },
+    "domain_intelligence-architecture-intelligence-clementtsang-bottom-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-clementtsang-bottom-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: ClementTsang/bottom Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-clementtsang-bottom-architecture-intelligence-clementtsang-bottom-core-invariant.md",
+      "repository": "ClementTsang/bottom",
+      "content_hash": "5973420442a700077143ea5b93c73b6d2773ba2c0938c8bafd4812e6845ad013",
+      "created_at": "2026-11-15T07:04:02.479Z"
+    },
+    "domain_intelligence-architecture-intelligence-clementtsang-bottom-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-clementtsang-bottom-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: clementtsang-bottom-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-clementtsang-bottom-learnings-architecture-intelligence-clementtsang-bottom-lear.md",
+      "repository": "clementtsang-bottom-learnings",
+      "content_hash": "4799242cb43b0f68db8f7e3c9f62acbca59daef6dc2b024547ac960b81c92bd3",
+      "created_at": "2026-11-15T07:04:13.492Z"
     }
   }
 }
