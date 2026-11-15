@@ -10145,3 +10145,6 @@ Every entry in this ledger must capture:
 | `learn-github-siteline-swiftui-introspect` | `https://github.com/siteline/swiftui-introspect` | `4d977db9` | Multi-dimensional audit evidence | 2026-11-15T15:23:22.364Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `42260613` | Multi-dimensional audit evidence | 2026-11-15T15:23:25.026Z |
 | `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `a2a3b8b8` | Multi-dimensional audit evidence | 2026-11-15T15:47:53.826Z |
+| `learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf` | `https://huggingface.co/unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-15T16:07:01.054Z |
+| `learn-github-tableproapp-tablepro` | `https://github.com/TableProApp/TablePro` | `e3ca8837` | Multi-dimensional audit evidence | 2026-11-15T16:07:07.776Z |
+| `learn-dom-d-3b7c0b67` | `project://hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf-learnings.md` | 2026-11-15T16:07:37.495Z |

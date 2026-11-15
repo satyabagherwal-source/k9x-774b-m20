@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T15:47:59.538Z",
+  "last_updated": "2026-11-15T16:07:38.931Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-15T15:47:58.797Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-15T15:47:57.953Z",
+      "processed_at": "2026-11-15T16:07:38.355Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -778,7 +778,7 @@
       "staged_for_review": 1
     },
     "tableproapp-tablepro-learnings.md": {
-      "processed_at": "2026-11-12T03:56:31.366Z",
+      "processed_at": "2026-11-15T16:07:37.787Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3006,9 +3006,14 @@
       "processed_at": "2026-11-15T15:23:28.133Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf-learnings.md": {
+      "processed_at": "2026-11-15T16:07:37.495Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 1068,
-  "total_canonical_promoted": 264,
-  "total_staged_for_review": 805
+  "total_dossiers_evaluated": 1071,
+  "total_canonical_promoted": 265,
+  "total_staged_for_review": 807
 }

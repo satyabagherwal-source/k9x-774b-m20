@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T15:47:59.241Z",
-  "total_records": 1067,
+  "last_updated": "2026-11-15T16:07:38.740Z",
+  "total_records": 1072,
   "domains": {
     "A": {
       "total": 7,
@@ -37,7 +37,7 @@
       ]
     },
     "D": {
-      "total": 521,
+      "total": 524,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -559,7 +559,10 @@
         "domain_intelligence-research-knowledge-intelligence-ccore-qwen3-5-4b-glb-3d-coder-core-invariants",
         "DOM-D-55AF5812",
         "domain_intelligence-research-knowledge-intelligence-hf-ccore-qwen3-5-4b-glb-3d-coder-learnings-core-",
-        "DOM-D-E86C357A"
+        "DOM-D-E86C357A",
+        "domain_intelligence-research-knowledge-intelligence-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf-core-i",
+        "DOM-D-3B7C0B67",
+        "domain_intelligence-research-knowledge-intelligence-hf-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf-lea"
       ]
     },
     "E": {
@@ -598,7 +601,7 @@
       ]
     },
     "G": {
-      "total": 182,
+      "total": 184,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -781,7 +784,9 @@
         "domain_intelligence-architecture-intelligence-tencent-loopforge-core-invariants",
         "domain_intelligence-architecture-intelligence-tencent-loopforge-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-momenbasel-puremac-core-invariants",
-        "domain_intelligence-architecture-intelligence-momenbasel-puremac-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-momenbasel-puremac-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-tableproapp-tablepro-core-invariants",
+        "domain_intelligence-architecture-intelligence-tableproapp-tablepro-learnings-core-invariants"
       ]
     },
     "H": {
@@ -7800,8 +7805,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "430f48769ac71125fa9b30ce9a32d82961f66bb1f0078240d029f5b4cb335ccd",
-      "created_at": "2026-11-15T15:47:58.486Z"
+      "content_hash": "23ffc60727eeed0910b2f482aa270bf6a792b360bf609b0515da405629506f6e",
+      "created_at": "2026-11-15T16:07:38.740Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -20447,6 +20452,84 @@
       "repository": "lioensky-vcptoolbox-learnings",
       "content_hash": "7fa2bd27886bf25ea90c0a4257d9daaf110efa4203340e7e239fcada7e92998a",
       "created_at": "2026-11-15T15:47:57.645Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf-core-i": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf-core-i",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf-research-knowledge-intelligence-uns.md",
+      "repository": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
+      "content_hash": "2591ff68b88934c4f35c0eed91961e4ed37bc668b31e3c52613836cbfbda220f",
+      "created_at": "2026-11-15T16:07:01.206Z"
+    },
+    "domain_intelligence-architecture-intelligence-tableproapp-tablepro-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-tableproapp-tablepro-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: TableProApp/TablePro Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tableproapp-tablepro-architecture-intelligence-tableproapp-tablepro-core-invaria.md",
+      "repository": "TableProApp/TablePro",
+      "content_hash": "43d829fdab21f0e837c8789850f6a785db2463babd2f7d56534ebadc84c29078",
+      "created_at": "2026-11-15T16:07:08.049Z"
+    },
+    "DOM-D-3B7C0B67": {
+      "record_id": "DOM-D-3B7C0B67",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF](https://huggingface.co/unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF))  \n> **Source Version**",
+      "content_hash": "cdf032889670336508b6c09207080a0d65b9a5d129abe034601eeebb10767bd5",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf-learnings.md`  \n> **Source**: huggingfa -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf-learnings.md`  \n> **Source**: huggingfa",
+      "provenance": {
+        "source_uri": "project://hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf/hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T16:07:13.047Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-15T16:07:37.480Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf-lea": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf-lea",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf-learnings-research-knowledge-intell.md",
+      "repository": "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf-learnings",
+      "content_hash": "ab49d30ad028c29a60ec3280162efb2b2654f0c077d7918314a77dbcf28bba1d",
+      "created_at": "2026-11-15T16:07:37.672Z"
+    },
+    "domain_intelligence-architecture-intelligence-tableproapp-tablepro-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-tableproapp-tablepro-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: tableproapp-tablepro-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tableproapp-tablepro-learnings-architecture-intelligence-tableproapp-tablepro-le.md",
+      "repository": "tableproapp-tablepro-learnings",
+      "content_hash": "dec10081debb595590760738be49a3eb5bc80f2a2a01c5b96199daee4d08b1b2",
+      "created_at": "2026-11-15T16:07:38.153Z"
     }
   }
 }

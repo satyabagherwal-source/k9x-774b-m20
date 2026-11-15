@@ -10112,3 +10112,6 @@
 | `CYCLE-20261115-I4QG` | `2026-11-15T15:23:22.360Z` | `siteline/swiftui-introspect` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8623` | Yes (`e686d618...`) |
 | `CYCLE-20261115-I6SE` | `2026-11-15T15:23:25.022Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8624` | Yes (`d271937c...`) |
 | `CYCLE-20261115-DO4E` | `2026-11-15T15:47:53.822Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8625` | Yes (`73ef8d9c...`) |
+| `CYCLE-20261115-29BU` | `2026-11-15T16:07:01.050Z` | `unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf-learnings.md` | Yes (`ebcff828...`) |
+| `CYCLE-20261115-2EIL` | `2026-11-15T16:07:07.773Z` | `TableProApp/TablePro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8626` | Yes (`3eebd630...`) |
+| `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T16:07:37.495Z` | `hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-3B7C0B67` [Domain D] | Yes (`cdf03288...`) |

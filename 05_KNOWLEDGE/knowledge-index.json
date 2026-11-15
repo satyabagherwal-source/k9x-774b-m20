@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-15T15:47:59.405Z",
-  "total_verified_learnings": 8703,
+  "last_updated": "2026-11-15T16:07:38.841Z",
+  "total_verified_learnings": 8705,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18445,
+  "total_items": 18456,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113672,13 +113672,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-DRLV-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-32BW-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "adf48c6fffc72f19449a0b483ece5b2b8677934bb49d71132ff4bde3e6ba57ac",
+      "content_hash": "b9de152178ac2df3d454f66775cb937b3139ca551ed25cdc511e63ef379ae290",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T15:47:58.342Z"
+      "persisted_at": "2026-11-15T16:07:38.642Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113688,9 +113688,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "430f48769ac71125fa9b30ce9a32d82961f66bb1f0078240d029f5b4cb335ccd",
+      "content_hash": "23ffc60727eeed0910b2f482aa270bf6a792b360bf609b0515da405629506f6e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T15:47:58.486Z"
+      "persisted_at": "2026-11-15T16:07:38.740Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113700,9 +113700,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "d54d7b66354ef4f2b9ce8c85a1f539ce70cba87a97f93af41dace45b0334fdc3",
+      "content_hash": "c1dd641b3219541b210c5b81992fd574bdd59c563bd5e44a77d11d39dd9ac76a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T15:47:58.650Z"
+      "persisted_at": "2026-11-15T16:07:38.841Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -244113,6 +244113,176 @@
       "content_hash": "0d09c08382bea1acada2cf892213314519e78065b1d946cb8a33af0bbc06b3ed",
       "domain_letter": "K",
       "persisted_at": "2026-11-15T15:47:57.802Z"
+    },
+    "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf": {
+      "learning_id": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
+      "repository": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
+      "slug": "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
+      "source_version": "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf",
+      "content_hash": "ebcff82856f5c1ddb65f39cb50c14d066d277ef57bc1d768c61822e1eeced4fc",
+      "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T16:07:00.915Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf-core-i": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf-core-i",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf-research-knowledge-intelligence-uns.md",
+      "title": "Research & Knowledge Intelligence: unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF Core Invariants",
+      "repository": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
+      "source_version": "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf",
+      "content_hash": "2591ff68b88934c4f35c0eed91961e4ed37bc668b31e3c52613836cbfbda220f",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T16:07:01.206Z"
+    },
+    "learn-github-tableproapp-tablepro": {
+      "learning_id": "learn-github-tableproapp-tablepro",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "TableProApp/TablePro",
+      "repository": "TableProApp/TablePro",
+      "slug": "tableproapp-tablepro",
+      "platform": "github",
+      "source_url": "https://github.com/TableProApp/TablePro",
+      "source_version": "e3ca8837",
+      "content_hash": "3eebd6309c39c324212cd5d5b7135ef8230f932b5f421fb41e040ed4da6413d1",
+      "dossier_path": "07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8626,
+          "title": "keep DuckDB's expression recursion within the stacks it runs on",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T16:07:07.628Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8626": {
+      "learning_id": "rule-8626",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8626,
+      "title": "keep DuckDB's expression recursion within the stacks it runs on",
+      "source_url": "https://github.com/TableProApp/TablePro",
+      "source_version": "e3ca8837",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T16:07:07.628Z"
+    },
+    "candidate_directive-keep-duckdb-s-expression-recursion-within-the-stacks-it-runs-on": {
+      "item_id": "candidate_directive-keep-duckdb-s-expression-recursion-within-the-stacks-it-runs-on",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2ENJ-keep-duckdb-s-expression-recursion-within-the-stacks-it-runs-on.md",
+      "title": "keep DuckDB's expression recursion within the stacks it runs on",
+      "repository": "TableProApp/TablePro",
+      "source_version": "e3ca8837",
+      "content_hash": "60dcf62988cd211280ea2da5b08274b273b7e890d870bb585326ad7981b1b3fb",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T16:07:07.954Z"
+    },
+    "domain_intelligence-architecture-intelligence-tableproapp-tablepro-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-tableproapp-tablepro-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tableproapp-tablepro-architecture-intelligence-tableproapp-tablepro-core-invaria.md",
+      "title": "Architecture Intelligence: TableProApp/TablePro Core Invariants",
+      "repository": "TableProApp/TablePro",
+      "source_version": "e3ca8837",
+      "content_hash": "43d829fdab21f0e837c8789850f6a785db2463babd2f7d56534ebadc84c29078",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T16:07:08.049Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-tableproapp-tablepro": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tableproapp-tablepro",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/tableproapp-tablepro-verification-protocol-empirical-defect-shield-for-tableproa.md",
+      "title": "Verification Protocol: Empirical Defect Shield for TableProApp/TablePro",
+      "repository": "TableProApp/TablePro",
+      "source_version": "e3ca8837",
+      "content_hash": "3c38966fc757c7f9c4897bcde8b33cda85e11df1ddacd063413e5dd73e209f2b",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T16:07:08.141Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf-lea": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf-lea",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf-learnings-research-knowledge-intell.md",
+      "title": "Research & Knowledge Intelligence: hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf-learnings Core Invariants",
+      "repository": "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ab49d30ad028c29a60ec3280162efb2b2654f0c077d7918314a77dbcf28bba1d",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T16:07:37.672Z"
+    },
+    "candidate_directive-duckdb-keep-duckdb-s-expression-recursion-within-the-stacks-it-runs-on": {
+      "item_id": "candidate_directive-duckdb-keep-duckdb-s-expression-recursion-within-the-stacks-it-runs-on",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-31VK-duckdb-keep-duckdb-s-expression-recursion-within-the-stacks-it-runs-on.md",
+      "title": "duckdb): keep DuckDB's expression recursion within the stacks it runs on",
+      "repository": "tableproapp-tablepro-learnings",
+      "source_version": "HEAD",
+      "content_hash": "be25b0d462cfe942419befb79a38d5dff3b2cca773a0c7b3447cf89b0e1aa939",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T16:07:38.054Z"
+    },
+    "domain_intelligence-architecture-intelligence-tableproapp-tablepro-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-tableproapp-tablepro-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tableproapp-tablepro-learnings-architecture-intelligence-tableproapp-tablepro-le.md",
+      "title": "Architecture Intelligence: tableproapp-tablepro-learnings Core Invariants",
+      "repository": "tableproapp-tablepro-learnings",
+      "source_version": "HEAD",
+      "content_hash": "dec10081debb595590760738be49a3eb5bc80f2a2a01c5b96199daee4d08b1b2",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T16:07:38.153Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-tableproapp-tablepro-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tableproapp-tablepro-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/tableproapp-tablepro-learnings-verification-protocol-empirical-defect-shield-for.md",
+      "title": "Verification Protocol: Empirical Defect Shield for tableproapp-tablepro-learnings",
+      "repository": "tableproapp-tablepro-learnings",
+      "source_version": "HEAD",
+      "content_hash": "61f1e24dcd72093a0bc7b610d608808ed6d8789542ff81ad5ed078e0627f3524",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T16:07:38.253Z"
     }
   },
   "ai-builder-brain": {

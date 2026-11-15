@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261110-TBOW",
-    "timestamp": "2026-11-10T05:21:51.728Z",
-    "repository": "agent-of-empires/agent-of-empires",
-    "learningId": "learn-github-agent-of-empires-agent-of-empires",
-    "contentHash": "86a55c7090fab300960f474ce3f977d3692ab9c248c0dec58e14a2e5f8dfb0b6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261110-TG0R",
-    "timestamp": "2026-11-10T05:21:57.339Z",
-    "repository": "gocd/gocd",
-    "learningId": "learn-github-gocd-gocd",
-    "contentHash": "197e4103c65da590216a02206945b16f2618fd5a303bff2d0cc3c9e4f3c27a65",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261110-D9ZM",
     "timestamp": "2026-11-10T06:05:22.258Z",
     "repository": "VideoRebirthAI/hyperflow-h3-flash",
@@ -7490,6 +7460,36 @@
     "repository": "lioensky/VCPToolBox",
     "learningId": "learn-github-lioensky-vcptoolbox",
     "contentHash": "73ef8d9c89c6fce0081ea8d524529674556ed6bafe78f67b462e9e9c309ae71c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-29BU",
+    "timestamp": "2026-11-15T16:07:01.050Z",
+    "repository": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
+    "learningId": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
+    "contentHash": "ebcff82856f5c1ddb65f39cb50c14d066d277ef57bc1d768c61822e1eeced4fc",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-2EIL",
+    "timestamp": "2026-11-15T16:07:07.773Z",
+    "repository": "TableProApp/TablePro",
+    "learningId": "learn-github-tableproapp-tablepro",
+    "contentHash": "3eebd6309c39c324212cd5d5b7135ef8230f932b5f421fb41e040ed4da6413d1",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

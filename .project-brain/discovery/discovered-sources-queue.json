@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T15:47:57.248Z",
+  "updated_at": "2026-11-15T16:07:37.881Z",
   "stats": {
-    "total_discovered": 3776,
-    "approved_pending_harvest": 3561,
+    "total_discovered": 3780,
+    "approved_pending_harvest": 3565,
     "harvested_count": 0,
     "rejected_count": 215,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3545,
+      "COMMUNITY_AND_EXPERT": 3549,
       "OFFICIAL_DOCUMENTATION": 126,
       "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
@@ -81588,6 +81588,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
         "fileName": "lioensky-vcptoolbox-learnings.md"
+      }
+    },
+    "SRC-6D9022411210": {
+      "id": "SRC-6D9022411210",
+      "url": "https://huggingface.co/unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
+      "title": "https://huggingface.co/unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T16:07:37.507Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf-learnings.md",
+        "fileName": "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf-learnings.md"
+      }
+    },
+    "SRC-658E176D3C14": {
+      "id": "SRC-658E176D3C14",
+      "url": "https://github.com/TableProApp/TablePro/pull/4234",
+      "title": "https://github.com/TableProApp/TablePro/pull/4234",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T16:07:37.832Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md",
+        "fileName": "tableproapp-tablepro-learnings.md"
+      }
+    },
+    "SRC-06957B67CC05": {
+      "id": "SRC-06957B67CC05",
+      "url": "https://learn.microsoft.com/en-us/previous-versions/windows/desktop/ms700677(v=vs.85",
+      "title": "https://learn.microsoft.com/en-us/previous-versions/windows/desktop/ms700677(v=vs.85",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T16:07:37.854Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md",
+        "fileName": "tableproapp-tablepro-learnings.md"
+      }
+    },
+    "SRC-C5769096C657": {
+      "id": "SRC-C5769096C657",
+      "url": "https://learn.microsoft.com/en-us/windows/win32/rstmgr/guidelines-for-applications",
+      "title": "https://learn.microsoft.com/en-us/windows/win32/rstmgr/guidelines-for-applications",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T16:07:37.881Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md",
+        "fileName": "tableproapp-tablepro-learnings.md"
       }
     }
   }

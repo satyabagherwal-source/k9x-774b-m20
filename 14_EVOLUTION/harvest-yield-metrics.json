@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T15:47:53.833Z",
-  "total_cycles_completed": 9726,
-  "total_learnings_persisted": 9726,
-  "total_rules_promoted": 9353,
+  "last_updated": "2026-11-15T16:07:07.781Z",
+  "total_cycles_completed": 9728,
+  "total_learnings_persisted": 9728,
+  "total_rules_promoted": 9354,
   "history": [
-    {
-      "timestamp": "2026-11-14T14:23:04.325Z",
-      "repository": "google/gemma-4-31B-it",
-      "learningId": "learn-huggingface-google-gemma-4-31b-it",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T14:27:57.968Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T14:40:07.665Z",
       "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-15T15:47:53.833Z",
       "repository": "lioensky/VCPToolBox",
       "learningId": "learn-github-lioensky-vcptoolbox",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T16:07:01.058Z",
+      "repository": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
+      "learningId": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T16:07:07.781Z",
+      "repository": "TableProApp/TablePro",
+      "learningId": "learn-github-tableproapp-tablepro",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

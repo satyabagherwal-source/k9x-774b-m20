@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-15T15:47:53.837Z",
+  "last_updated": "2026-11-15T16:07:07.784Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -12096,14 +12096,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tableproapp-tablepro",
-      "content_hash": "72ca180511be4fe2bf6ba6081bf2fd8c85a41631e90c35a829271cccbabc6fe9",
-      "verified_at": "2026-11-12T03:56:24.179Z",
+      "content_hash": "3eebd6309c39c324212cd5d5b7135ef8230f932b5f421fb41e040ed4da6413d1",
+      "verified_at": "2026-11-15T16:07:07.783Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T03:56:24.179Z"
+      "last_updated": "2026-11-15T16:07:07.783Z"
     },
     "twostraws/ControlRoom": {
       "repository": "twostraws/ControlRoom",
@@ -17241,14 +17241,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
-      "content_hash": "cab7f7b77e9e1802b8c390ad3a60fedfbf1586a6c372a3251f2212cbecaf2a69",
-      "verified_at": "2026-11-10T01:19:26.299Z",
+      "content_hash": "ebcff82856f5c1ddb65f39cb50c14d066d277ef57bc1d768c61822e1eeced4fc",
+      "verified_at": "2026-11-15T16:07:01.061Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-10T01:19:26.299Z"
+      "last_updated": "2026-11-15T16:07:01.061Z"
     },
     "liketrek/TREK": {
       "repository": "liketrek/TREK",

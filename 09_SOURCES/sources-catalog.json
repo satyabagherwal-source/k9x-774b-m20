@@ -8043,10 +8043,10 @@
     "repository": "TableProApp/TablePro",
     "platform": "github",
     "sourceUrl": "https://github.com/TableProApp/TablePro",
-    "sourceVersion": "9f7bb87b",
+    "sourceVersion": "e3ca8837",
     "license": "AGPL-3.0",
-    "contentHash": "72ca180511be4fe2bf6ba6081bf2fd8c85a41631e90c35a829271cccbabc6fe9",
-    "lastHarvestedAt": "2026-11-12T03:56:24.167Z",
+    "contentHash": "3eebd6309c39c324212cd5d5b7135ef8230f932b5f421fb41e040ed4da6413d1",
+    "lastHarvestedAt": "2026-11-15T16:07:07.776Z",
     "learningId": "learn-github-tableproapp-tablepro"
   },
   "twostraws-controlroom": {
@@ -11465,8 +11465,8 @@
     "sourceUrl": "https://huggingface.co/unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
     "sourceVersion": "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf",
     "license": "Open-Source",
-    "contentHash": "cab7f7b77e9e1802b8c390ad3a60fedfbf1586a6c372a3251f2212cbecaf2a69",
-    "lastHarvestedAt": "2026-11-10T01:19:26.284Z",
+    "contentHash": "ebcff82856f5c1ddb65f39cb50c14d066d277ef57bc1d768c61822e1eeced4fc",
+    "lastHarvestedAt": "2026-11-15T16:07:01.054Z",
     "learningId": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf"
   },
   "liketrek-trek": {

@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-15T15:47:57.077Z",
-    "lastVerified": "2026-11-15T15:47:57.077Z",
+    "lastChecked": "2026-11-15T16:07:12.964Z",
+    "lastVerified": "2026-11-15T16:07:12.964Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -468,12 +468,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "nucleoidai-nucleoid": {
-    "name": "NucleoidAI/Nucleoid",
+    "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-15T14:36:40.104Z",
-    "lastVerified": "2026-11-15T14:36:40.104Z",
+    "lastChecked": "2026-11-15T16:07:12.957Z",
+    "lastVerified": "2026-11-15T16:07:12.958Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -482,7 +482,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "d594b14b"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -2158,12 +2159,12 @@
     "revisionIdentifier": "e4d319d7"
   },
   "projectdiscovery-nuclei": {
-    "name": "projectdiscovery/nuclei",
+    "name": "nuclei",
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-15T06:00:11.345Z",
-    "lastVerified": "2026-11-15T06:00:11.345Z",
+    "lastChecked": "2026-11-15T16:07:08.072Z",
+    "lastVerified": "2026-11-15T16:07:08.072Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectdiscovery-nuclei",
@@ -2172,7 +2173,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "fe3421e7"
   },
   "zilliztech-claude-context": {
     "name": "claude-context",
@@ -2245,12 +2247,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "higress-group-higress": {
-    "name": "higress-group/higress",
+    "name": "higress",
     "officialUrl": "https://github.com/higress-group/higress",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-14T03:49:12.895Z",
-    "lastVerified": "2026-11-14T03:49:12.895Z",
+    "lastChecked": "2026-11-15T16:07:05.456Z",
+    "lastVerified": "2026-11-15T16:07:05.456Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-higress-group-higress",
@@ -2259,7 +2261,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "0316bc90"
   },
   "trufflesecurity-trufflehog": {
     "name": "trufflehog",
@@ -3618,9 +3621,9 @@
   "vearch-vearch": {
     "name": "vearch",
     "officialUrl": "https://github.com/vearch/vearch",
-    "lastChecked": "2026-11-14T02:21:33.206Z",
+    "lastChecked": "2026-11-15T16:07:10.519Z",
     "revisionIdentifier": "bae78b18",
-    "lastVerified": "2026-11-14T02:21:33.206Z"
+    "lastVerified": "2026-11-15T16:07:10.519Z"
   },
   "imsnif-bandwhich": {
     "name": "bandwhich",
@@ -4739,9 +4742,9 @@
   "sharkdp-pastel": {
     "name": "pastel",
     "officialUrl": "https://github.com/sharkdp/pastel",
-    "lastChecked": "2026-11-13T18:25:42.705Z",
+    "lastChecked": "2026-11-15T16:06:57.965Z",
     "revisionIdentifier": "01d4252a",
-    "lastVerified": "2026-11-13T18:25:42.705Z"
+    "lastVerified": "2026-11-15T16:06:57.965Z"
   },
   "hf-openai-whisper-large-v3": {
     "name": "openai/whisper-large-v3",
@@ -9786,14 +9789,14 @@
     "officialUrl": "https://github.com/TableProApp/TablePro",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-12T03:56:12.978Z",
-    "lastVerified": "2026-11-12T03:56:12.978Z",
+    "lastChecked": "2026-11-15T16:07:06.977Z",
+    "lastVerified": "2026-11-15T16:07:06.977Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tableproapp-tablepro",
-    "contentHash": "72ca180511be4fe2bf6ba6081bf2fd8c85a41631e90c35a829271cccbabc6fe9",
+    "contentHash": "3eebd6309c39c324212cd5d5b7135ef8230f932b5f421fb41e040ed4da6413d1",
     "promotedRulesCount": 1,
-    "recentFixesCount": 17,
+    "recentFixesCount": 15,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10043,13 +10046,13 @@
     "officialUrl": "https://huggingface.co/unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-10T01:19:14.798Z",
-    "lastVerified": "2026-11-10T01:19:14.798Z",
+    "lastChecked": "2026-11-15T16:07:00.629Z",
+    "lastVerified": "2026-11-15T16:07:00.629Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
-    "contentHash": "cab7f7b77e9e1802b8c390ad3a60fedfbf1586a6c372a3251f2212cbecaf2a69",
-    "promotedRulesCount": 2,
+    "contentHash": "ebcff82856f5c1ddb65f39cb50c14d066d277ef57bc1d768c61822e1eeced4fc",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
