@@ -2293,10 +2293,10 @@
     "repository": "Ontos-AI/knowhere",
     "platform": "github",
     "sourceUrl": "https://github.com/Ontos-AI/knowhere",
-    "sourceVersion": "f3874c83",
+    "sourceVersion": "208f3fc1",
     "license": "Apache-2.0",
-    "contentHash": "fcb34bc0efbd06692340ffc7bdb8532882805213e01a8822f817364d03898b41",
-    "lastHarvestedAt": "2026-11-13T23:28:52.133Z",
+    "contentHash": "7e8cb2b2b731fd718ebbeb591bf664e50006ccc836589329ef60ee05b8fa143a",
+    "lastHarvestedAt": "2026-11-15T13:09:06.680Z",
     "learningId": "learn-github-ontos-ai-knowhere"
   },
   "bitterbot-ai-bitterbot-desktop": {
@@ -4493,10 +4493,10 @@
     "repository": "fujiapple852/trippy",
     "platform": "github",
     "sourceUrl": "https://github.com/fujiapple852/trippy",
-    "sourceVersion": "54c8f399",
+    "sourceVersion": "2dd303a1",
     "license": "Apache-2.0",
-    "contentHash": "7c1b7452254e361efc28f520b19648c80845a97a68dc559e32be891d8be50bbc",
-    "lastHarvestedAt": "2026-10-25T16:15:24.432Z",
+    "contentHash": "ef6b98551c1aace4ac9c5906f029a5585d68c99c383d15dcecf371c54ad32cc5",
+    "lastHarvestedAt": "2026-11-15T13:08:57.210Z",
     "learningId": "learn-github-fujiapple852-trippy"
   },
   "builderio-builder": {
@@ -7103,10 +7103,10 @@
     "repository": "pingcap/tidb",
     "platform": "github",
     "sourceUrl": "https://github.com/pingcap/tidb",
-    "sourceVersion": "7a158c6a",
+    "sourceVersion": "eca4674a",
     "license": "Apache-2.0",
-    "contentHash": "20b38ab38e9ac2f9f73eee0bbee5ded34e795122431f1d3d5e50847f820848fd",
-    "lastHarvestedAt": "2026-11-14T01:26:20.937Z",
+    "contentHash": "371369efeac5c632ebb64e5e8bd6deeac9500b10b63392631eff27fd0ac77dff",
+    "lastHarvestedAt": "2026-11-15T13:09:01.007Z",
     "learningId": "learn-github-pingcap-tidb"
   },
   "neondatabase-neon": {

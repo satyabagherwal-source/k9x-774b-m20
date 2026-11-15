@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T12:54:30.832Z",
-  "total_cycles_completed": 9711,
-  "total_learnings_persisted": 9711,
-  "total_rules_promoted": 9342,
+  "last_updated": "2026-11-15T13:09:06.684Z",
+  "total_cycles_completed": 9714,
+  "total_learnings_persisted": 9714,
+  "total_rules_promoted": 9345,
   "history": [
-    {
-      "timestamp": "2026-11-14T12:04:13.832Z",
-      "repository": "czy0729/Bangumi",
-      "learningId": "learn-github-czy0729-bangumi",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T12:04:15.378Z",
-      "repository": "PeerDB-io/peerdb",
-      "learningId": "learn-github-peerdb-io-peerdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T12:33:50.937Z",
-      "repository": "intfloat/multilingual-e5-small",
-      "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T12:33:54.020Z",
       "repository": "agent-of-empires/agent-of-empires",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-15T12:54:30.832Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T13:08:57.215Z",
+      "repository": "fujiapple852/trippy",
+      "learningId": "learn-github-fujiapple852-trippy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T13:09:01.012Z",
+      "repository": "pingcap/tidb",
+      "learningId": "learn-github-pingcap-tidb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T13:09:06.684Z",
+      "repository": "Ontos-AI/knowhere",
+      "learningId": "learn-github-ontos-ai-knowhere",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

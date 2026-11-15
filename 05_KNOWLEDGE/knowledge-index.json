@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-15T12:54:35.442Z",
-  "total_verified_learnings": 8695,
+  "last_updated": "2026-11-15T13:09:11.286Z",
+  "total_verified_learnings": 8696,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18383,
+  "total_items": 18395,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -218297,14 +218297,19 @@
       "slug": "ontos-ai-knowhere",
       "platform": "github",
       "source_url": "https://github.com/Ontos-AI/knowhere",
-      "source_version": "f3874c83",
-      "content_hash": "fcb34bc0efbd06692340ffc7bdb8532882805213e01a8822f817364d03898b41",
+      "source_version": "208f3fc1",
+      "content_hash": "7e8cb2b2b731fd718ebbeb591bf664e50006ccc836589329ef60ee05b8fa143a",
       "dossier_path": "07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md",
       "promoted_rules": [
         {
           "number": 8404,
           "title": "page memory services to enhance fine skills integration and improve title detect",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8617,
+          "title": "Potential fix for pull request finding 'CodeQL / Statement has no effect'",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -218313,7 +218318,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T23:28:52.001Z",
+      "verified_at": "2026-11-15T13:09:06.532Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -218355,10 +218360,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ontos-ai-knowhere-architecture-intelligence-ontos-ai-knowhere-core-invariants.md",
       "title": "Architecture Intelligence: Ontos-AI/knowhere Core Invariants",
       "repository": "Ontos-AI/knowhere",
-      "source_version": "f3874c83",
-      "content_hash": "c2f9aaca0e75ca2f2280d7794b13077d51dffa803e3237cb524719451ee13a33",
+      "source_version": "208f3fc1",
+      "content_hash": "343a207e3add8af97081ef948f324796996cd4c43710afdc5a04ef6c94bde86e",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T23:28:52.389Z"
+      "persisted_at": "2026-11-15T13:09:06.951Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ontos-ai-knowhere": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ontos-ai-knowhere",
@@ -218367,10 +218372,10 @@
       "relative_path": "08_VERIFICATION/ontos-ai-knowhere-verification-protocol-empirical-defect-shield-for-ontos-ai-kno.md",
       "title": "Verification Protocol: Empirical Defect Shield for Ontos-AI/knowhere",
       "repository": "Ontos-AI/knowhere",
-      "source_version": "f3874c83",
-      "content_hash": "aad3670aba82d6c9f925b07c39ef5b2cca462d278034c1b0f7df91ee6ebbc827",
+      "source_version": "208f3fc1",
+      "content_hash": "ad89ed9d66ac457b19d3f794604c8a5398bb6ef568db558f01ca0eec4343fcf5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T23:28:52.481Z"
+      "persisted_at": "2026-11-15T13:09:07.052Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-meta-llama-3-8b-learnings-core-inv": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-meta-llama-3-8b-learnings-core-inv",
@@ -218392,9 +218397,9 @@
       "title": "Architecture Intelligence: ontos-ai-knowhere-learnings Core Invariants",
       "repository": "ontos-ai-knowhere-learnings",
       "source_version": "HEAD",
-      "content_hash": "b178ead341794932f7f59642d02445a86ee86f8133f2850bdfd257b3eb70c4cc",
+      "content_hash": "1ef90e4aa850741220571af7fd63cbc48eca851bda76d91ae4e659ef77927af6",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T23:29:25.115Z"
+      "persisted_at": "2026-11-15T13:09:11.191Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ontos-ai-knowhere-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ontos-ai-knowhere-learnings",
@@ -218404,9 +218409,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for ontos-ai-knowhere-learnings",
       "repository": "ontos-ai-knowhere-learnings",
       "source_version": "HEAD",
-      "content_hash": "3f0d89e462ca351b3ad80d72865b750661f3a306ba661a4c814f9bb606059fd4",
+      "content_hash": "9ed46360c8e8487626cc7f7483fdd14a555deb2c359657842bd4213645af2b2d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T23:29:25.222Z"
+      "persisted_at": "2026-11-15T13:09:11.286Z"
     },
     "learn-github-gardener-gardener": {
       "learning_id": "learn-github-gardener-gardener",
@@ -219514,14 +219519,19 @@
       "slug": "pingcap-tidb",
       "platform": "github",
       "source_url": "https://github.com/pingcap/tidb",
-      "source_version": "7a158c6a",
-      "content_hash": "20b38ab38e9ac2f9f73eee0bbee5ded34e795122431f1d3d5e50847f820848fd",
+      "source_version": "eca4674a",
+      "content_hash": "371369efeac5c632ebb64e5e8bd6deeac9500b10b63392631eff27fd0ac77dff",
       "dossier_path": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "promoted_rules": [
         {
           "number": 8414,
           "title": "recognize runtime exit tails in diagnostic goroutine profiles",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8616,
+          "title": "keep same-upper groups together at global histogram cuts",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -219530,7 +219540,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T01:26:20.794Z",
+      "verified_at": "2026-11-15T13:09:00.855Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -219572,10 +219582,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pingcap-tidb-content-information-intelligence-pingcap-tidb-core-invariants.md",
       "title": "Content & Information Intelligence: pingcap/tidb Core Invariants",
       "repository": "pingcap/tidb",
-      "source_version": "7a158c6a",
-      "content_hash": "5ef3dc8b38cd1ff456cdeb091edd17de690c4673f4a67233430da4847812f1fb",
+      "source_version": "eca4674a",
+      "content_hash": "f0e366dad0db3a3a2fb43151e3ab6b6090023d4a23fa60cce36cded928224943",
       "domain_letter": "I",
-      "persisted_at": "2026-11-14T01:26:21.203Z"
+      "persisted_at": "2026-11-15T13:09:01.278Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pingcap-tidb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pingcap-tidb",
@@ -219584,10 +219594,10 @@
       "relative_path": "08_VERIFICATION/pingcap-tidb-verification-protocol-empirical-defect-shield-for-pingcap-tidb.md",
       "title": "Verification Protocol: Empirical Defect Shield for pingcap/tidb",
       "repository": "pingcap/tidb",
-      "source_version": "7a158c6a",
-      "content_hash": "3a16f1151a48e6902cfe4c7cf5c8404745d73aca1e2ff0815d993ee55bb54219",
+      "source_version": "eca4674a",
+      "content_hash": "8082c0f75aa9f0290841baba0ef7a9e5830033a34f93e1c97474779c0778dbec",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T01:26:21.294Z"
+      "persisted_at": "2026-11-15T13:09:01.378Z"
     },
     "rule-8415": {
       "learning_id": "rule-8415",
@@ -219659,9 +219669,9 @@
       "title": "Content & Information Intelligence: pingcap-tidb-learnings Core Invariants",
       "repository": "pingcap-tidb-learnings",
       "source_version": "HEAD",
-      "content_hash": "e10c0257ac9bc0467ecd9c985f3e8b4cdcd91f64b13fcdb4c40ba8cad2937bed",
+      "content_hash": "2f25bc0cd1f798b9ef6742fa2e197031c135da35918b0819525a0f324725a93b",
       "domain_letter": "I",
-      "persisted_at": "2026-11-14T01:26:58.724Z"
+      "persisted_at": "2026-11-15T13:09:10.757Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pingcap-tidb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pingcap-tidb-learnings",
@@ -219671,9 +219681,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for pingcap-tidb-learnings",
       "repository": "pingcap-tidb-learnings",
       "source_version": "HEAD",
-      "content_hash": "8a485aeaaf3e1d3ba55f182ef1d33e1a47957164e027207bb04a3b1cd27daddd",
+      "content_hash": "89afbd60b32dc59516294d1a445f04f5a0ad1d16dc9a05fee0199ab213a3821e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T01:26:58.821Z"
+      "persisted_at": "2026-11-15T13:09:10.857Z"
     },
     "candidate_directive-deps-bump-lock-file": {
       "item_id": "candidate_directive-deps-bump-lock-file",
@@ -243174,6 +243184,177 @@
       "content_hash": "cb691919ea5c3c54ff4ae825314ae55b9c80908c4c89609992f76c9c3ab830c4",
       "domain_letter": "K",
       "persisted_at": "2026-11-15T12:54:34.343Z"
+    },
+    "learn-github-fujiapple852-trippy": {
+      "learning_id": "learn-github-fujiapple852-trippy",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "fujiapple852/trippy",
+      "repository": "fujiapple852/trippy",
+      "slug": "fujiapple852-trippy",
+      "platform": "github",
+      "source_url": "https://github.com/fujiapple852/trippy",
+      "source_version": "2dd303a1",
+      "content_hash": "ef6b98551c1aace4ac9c5906f029a5585d68c99c383d15dcecf371c54ad32cc5",
+      "dossier_path": "07_PROJECT_LEARNING/fujiapple852-trippy-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/fujiapple852-trippy-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8615,
+          "title": "update dependencies to latest semver compatible version",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T13:08:57.063Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8615": {
+      "learning_id": "rule-8615",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8615,
+      "title": "update dependencies to latest semver compatible version",
+      "source_url": "https://github.com/fujiapple852/trippy",
+      "source_version": "2dd303a1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T13:08:57.063Z"
+    },
+    "candidate_directive-update-dependencies-to-latest-semver-compatible-version": {
+      "item_id": "candidate_directive-update-dependencies-to-latest-semver-compatible-version",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PJJJ-update-dependencies-to-latest-semver-compatible-version.md",
+      "title": "update dependencies to latest semver compatible version",
+      "repository": "fujiapple852-trippy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3e87528debabff1d358bf9bc7746942d86e9b8b56c419f7c50f2471a850f84c2",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T13:09:10.067Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-fujiapple852-trippy-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-fujiapple852-trippy-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-fujiapple852-trippy-quality-verification-intelligence-fujiapple852-trippy-core-i.md",
+      "title": "Quality & Verification Intelligence: fujiapple852/trippy Core Invariants",
+      "repository": "fujiapple852/trippy",
+      "source_version": "2dd303a1",
+      "content_hash": "c894e9379456a7ae301137b9a15d39a75c63be9753ac68931b4b4d1595279dfd",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T13:08:57.474Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-fujiapple852-trippy": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-fujiapple852-trippy",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/fujiapple852-trippy-verification-protocol-empirical-defect-shield-for-fujiapple8.md",
+      "title": "Verification Protocol: Empirical Defect Shield for fujiapple852/trippy",
+      "repository": "fujiapple852/trippy",
+      "source_version": "2dd303a1",
+      "content_hash": "2bf86d260d1dbe9a0d9e9c567608468536e90451ee733bd659fc574471371796",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T13:08:57.575Z"
+    },
+    "rule-8616": {
+      "learning_id": "rule-8616",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8616,
+      "title": "keep same-upper groups together at global histogram cuts",
+      "source_url": "https://github.com/pingcap/tidb",
+      "source_version": "eca4674a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T13:09:00.856Z"
+    },
+    "candidate_directive-keep-same-upper-groups-together-at-global-histogram-cuts": {
+      "item_id": "candidate_directive-keep-same-upper-groups-together-at-global-histogram-cuts",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PCOP-keep-same-upper-groups-together-at-global-histogram-cuts.md",
+      "title": "keep same-upper groups together at global histogram cuts",
+      "repository": "pingcap/tidb",
+      "source_version": "eca4674a",
+      "content_hash": "40ad965affa4b6121d4b7dfd50736c0f123d3128c90e34fee2047a0d09b8686c",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-15T13:09:01.180Z"
+    },
+    "rule-8617": {
+      "learning_id": "rule-8617",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8617,
+      "title": "Potential fix for pull request finding 'CodeQL / Statement has no effect'",
+      "source_url": "https://github.com/Ontos-AI/knowhere",
+      "source_version": "208f3fc1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T13:09:06.532Z"
+    },
+    "candidate_directive-potential-fix-for-pull-request-finding-codeql-statement-has-no-effect": {
+      "item_id": "candidate_directive-potential-fix-for-pull-request-finding-codeql-statement-has-no-effect",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PKC5-potential-fix-for-pull-request-finding-codeql-statement-has-no-effect.md",
+      "title": "Potential fix for pull request finding 'CodeQL / Statement has no effect'",
+      "repository": "ontos-ai-knowhere-learnings",
+      "source_version": "HEAD",
+      "content_hash": "da62aef143dc45142e907f1c9f00fd5a856e70416346f9e6bf2fac497c01e81a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T13:09:11.096Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-fujiapple852-trippy-learnings-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-fujiapple852-trippy-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-fujiapple852-trippy-learnings-quality-verification-intelligence-fujiapple852-tri.md",
+      "title": "Quality & Verification Intelligence: fujiapple852-trippy-learnings Core Invariants",
+      "repository": "fujiapple852-trippy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6501cdb1f8ea33dcea57f6d3c4902212556db439ee6080e0e9a610a5b53d9be9",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T13:09:10.169Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-fujiapple852-trippy-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-fujiapple852-trippy-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/fujiapple852-trippy-learnings-verification-protocol-empirical-defect-shield-for-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for fujiapple852-trippy-learnings",
+      "repository": "fujiapple852-trippy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "76491694d4743a981766d1844d769667561cf05ad92f6ca1e07ab7fc44bd7646",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T13:09:10.266Z"
+    },
+    "candidate_directive-statistics-keep-same-upper-groups-together-at-global-histogram-cuts": {
+      "item_id": "candidate_directive-statistics-keep-same-upper-groups-together-at-global-histogram-cuts",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PJZY-statistics-keep-same-upper-groups-together-at-global-histogram-cuts.md",
+      "title": "statistics: keep same-upper groups together at global histogram cuts",
+      "repository": "pingcap-tidb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "51c3d4276ed408020cd3fa913488c8249d3a7a91a1928b2b0a9fcf895403e867",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-15T13:09:10.657Z"
     }
   },
   "ai-builder-brain": {

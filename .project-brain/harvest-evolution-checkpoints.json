@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T12:54:35.515Z",
+  "last_updated": "2026-11-15T13:09:11.375Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-15T12:13:20.634Z",
@@ -218,7 +218,7 @@
       "staged_for_review": 1
     },
     "ontos-ai-knowhere-learnings.md": {
-      "processed_at": "2026-11-13T23:29:24.833Z",
+      "processed_at": "2026-11-15T13:09:10.956Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -413,7 +413,7 @@
       "staged_for_review": 1
     },
     "pingcap-tidb-learnings.md": {
-      "processed_at": "2026-11-14T01:26:58.401Z",
+      "processed_at": "2026-11-15T13:09:10.365Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2976,9 +2976,14 @@
       "processed_at": "2026-11-15T12:54:33.854Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "fujiapple852-trippy-learnings.md": {
+      "processed_at": "2026-11-15T13:09:09.777Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1041,
+  "total_dossiers_evaluated": 1044,
   "total_canonical_promoted": 260,
-  "total_staged_for_review": 781
+  "total_staged_for_review": 784
 }

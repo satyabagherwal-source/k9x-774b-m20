@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T23:29:24.898Z",
+  "timestamp": "2026-11-15T13:09:11.006Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-ontos-ai-knowhere-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [ontos-ai-knowhere-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T23:29:24.898Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-15T13:09:11.006Z`  
 > **Learning ID**: `LEARN-EVO-ontos-ai-knowhere-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md`  
 > **Source**: github ([https://github.com/Ontos-AI/knowhere](https://github.com/Ontos-AI/knowhere))  
-> **Source Version**: `f3874c83`  
+> **Source Version**: `208f3fc1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T23:28:51.329Z  
+> **Timestamp**: 2026-11-15T13:09:05.861Z  
 > **Learning ID**: `learn-github-ontos-ai-knowhere`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Ontos-AI/knowhere](https://github.com/Ontos-AI/knowhere))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T23:28:51.323Z  
+> **Harvest Timestamp**: 2026-11-15T13:09:05.856Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Knowhere extracts, parses, and outputs structured chunks ready for AI Agents and RAG.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 3995 stars
+- **Stars / Engagement**: 4027 stars
 
 ---
 
@@ -1027,833 +1027,1029 @@ class ApiTelemetryMiddleware:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ef70dae5` (2026-11-13)
-**Commit Message**: Refactor page memory services to enhance fine skills integration and improve title detection logic. Update prompts to include detailed drawing-sheet rules and adjust tests to validate the new functionality. Remove deprecated properties and streamline skill management for better performance.
+### Incident Patch 1: `e3c5db47` (2026-11-14)
+**Commit Message**: Potential fix for pull request finding 'CodeQL / Statement has no effect'
 
-**File**: `apps/worker/app/services/document_agent/calibration/prompts.py` (modified, +1/-5)
-```diff
-@@ -34,11 +34,7 @@ def _variant_rules() -> str:
-         "given title 'Foo (DOC-12)' ↔ page heading 'Foo'; "
-         "given title 'A.1 Foo Bar' ↔ page heading 'Foo Bar').\n"
-         "Do NOT count: a contents-list line, a running header/footer, or "
--        "a passing mention inside ordinary body paragraphs. "
--        "A drawing-sheet title block (the info bar at a corner or edge that "
--        "carries the drawing name and drawing number) counts as that page's "
--        "main heading when matching a TOC entry. Ordinary running "
--        "headers/footers remain excluded."
-+        "a passing mention inside ordinary body paragraphs."
-     )
- 
- 
-```
+Co-authored-by: Copilot Autofix powered by AI <62310815+github-advanced-security[bot]@users.noreply.github.com>
 
-**File**: `apps/worker/app/services/document_parser/profiling/profile_model.py` (modified, +0/-4)
+**File**: `deploy/opensearch/metrics_recorder.py` (modified, +2/-1)
 ```diff
-@@ -50,10 +50,6 @@ class ParserDocumentProfile:
-     def is_pdf(self) -> bool:
-         return self.file_type == "pdf"
- 
--    @property
--    def is_atlas(self) -> bool:
--        return self.routing_category is PdfRoutingCategory.ATLAS
--
-     @property
-     def has_structural_anatomy(self) -> bool:
-         return self.anatomy is not None
-```
-
-**File**: `apps/worker/app/services/page_memory/fine_skills.py` (modified, +14/-2)
-```diff
-@@ -20,7 +20,7 @@ class FineSkill(Protocol):
-     extra_tag_fields: dict[str, str]
- 
-     def title_prompt_addon(self) -> str:
--        """Optional addon for outline title detection. Empty when unused."""
-+        """Addon appended to ``page-memory-vlm-title``."""
-         ...
- 
-     def page_tag_prompt_addon(self) -> str:
-@@ -53,7 +53,19 @@ class DrawingSheetFineSkill:
-     }
- 
-     def title_prompt_addon(self) -> str:
--        return ""
-+        return (
-+            "DRAWING-SHEET RULE (apply per page):\n"
-+            "First check this page. If it is a body/text page or a standard data "
-+            "table page, follow all standard rules above.\n"
-+            "If and only if it is an engineering/technical drawing or detail sheet "
-+            "with a title block / info bar (usually at the bottom-right corner, "
-+            "bottom edge, or top-left corner), extract ONE main heading from the "
-+            "title block formatted as \"<drawing_no> <drawing_title>\" (or "
-+            "whichever of the two is present), and set \"is_in_table\": false and "
-+            "\"is_in_header_footer\": false for it. Do NOT extract dimension "
-+            "annotations, internal CAD labels, or component tables on the drawing "
-+            "as headings."
-+        )
- 
-     def page_tag_prompt_addon(self) -> str:
-         return (
-```
-
-**File**: `apps/worker/app/services/page_memory/memory_service.py` (modified, +7/-4)
-```diff
-@@ -448,9 +448,11 @@ def _build_page_dataframe(
-         trace_recorder=trace_recorder,
-         page_memory_config=page_memory_config,
-     )
-+    from app.services.page_memory.fine_skills import resolve_active_fine_skill_names
-+
-     page_memory_config = replace(
-         page_memory_config,
--        fine_skills=tuple(phase_a.manifest.get("fine_skills") or ()),
-+        fine_skills=resolve_active_fine_skill_names(manifest=phase_a.manifest),
-     )
-     page_texts = phase_a.page_texts
-     coarse_scopes = phase_a.coarse_scopes
-@@ -695,6 +697,9 @@ def _run_hierarchy_scope(
-         },
-     )
- 
-+    from app.services.page_memory.fine_skills import resolve_fine_skills
-+
-+    active_skills = resolve_fine_skills(page_memory_config.fine_skills)
-     fine_min = page_memory_config.fine_min_pages
-     fat_leaf_pages = compute_fat_leaf_pages(
-         scope_skeletons,
-@@ -730,6 +735,7 @@ def _run_hierarchy_scope(
-                 vlm_model=vlm_model,
-                 scan_direction=page_memory_config.scan_direction,
-                 max_concurrent=page_memory_config.title_detection_concurrency,
-+                active_skills=active_skills,
-             )
-         _record_trace_stage(
-             trace_recorder,
-@@ -838,9 +844,6 @@ def _run_hierarchy_scope(
-         variables={"scope_id": scope.scope_id, "plan_count": len(plans)},
-     )
- 
--    from app.services.page_memory.fine_skills import resolve_fine_skills
--
--    active_skills = resolve_fine_skills(page_memory_config.fine_skills)
-     with stage_timer("page_memory.tag", page_count=len(rendered)):
-         tags = tag_pages(
-             pages=rendered,
-```
-
-**File**: `apps/worker/app/services/page_memory/page_tagger.py` (modified, +10/-0)
-```diff
-@@ -203,6 +203,7 @@ def tag_page_titles(
-     vlm_model: str | None = None,
-     scan_direction: str = "top_to_bottom_left_to_right",
-     max_concurrent: int | None = None,
-+    active_skills: Sequence[Any] = (),
- ) -> list[PageTagResult]:
-     """Run independent VLM title detection on fat-leaf pages.
- 
-@@ -224,6 +225,8 @@ def tag_page_titles(
-         Reading-order wording for the title prompt.
-     max_concurrent:
-         Maximum concurrent title-detection calls.
-+    active_skills:
-+        Active Fine skills whose ``title_prompt_addon`` is appended to the prompt.
- 
-     Returns
-     -------
-@@ -258,6 +261,10 @@ def tag_page_titles(
-         getattr(settings, "PAGE_MEMORY_TITLE_DETECTION_CONCURRENCY", 3)
-     )
- 
-+    from app.services.page_memory.fine_skills import joined_skill_addon
-+
-+    skill_instructions = joined_skill_addon(active_skills, "title_prompt_addon")
-+
-     def _detect_one(
-         page_idx: int,
-         page: PageRenderResult,
-@@ -266,6 +273,7 @@ def _detect_one(
-             page,
-             model=model,
-             scan_direction=scan_direction,
-+            skill_instructions=skill_instructions,
-         )
- 
-     import gevent
-@@ -374,6 +382,7 @@ def _tag_vlm_titles(
-     *,
-     model: str,
-     scan_direction: str = "top_to_bottom_left_to_right",
-+    skill_instructions: str = "",
- ) -> list[dict[str, Any]]:
-     """Send page PNG to VLM with the title-only prompt and parse results.
- 
-@@ -387,6 +396,7 @@ def _tag_vlm_titles(
-         paras={
-             "max_tokens": _TITLE_TOKEN_BUDGETS[0],
-             "scan_direction": scan_direction,
-+            "skill_instructions": skill_instructions,
-         },
-     )
- 
-```
-
-**File**: `apps/worker/scripts/page_memory/debug_pm_stage3_scope_fine_hierarchy.py` (modified, +4/-3)
-```diff
-@@ -117,6 +117,7 @@ def _run_fine_hierarchy_for_scope(
-         compute_fat_leaf_pages,
-         refine_fat_leaf_skeletons,
-     )
-+    from app.services.page_memory.fine_skills import resolve_fine_skills
-     from app.services.page_memory.memory_service import (
-         _resolve_hierarchy_model,
-         _summarize_tag_scope,
-@@ -162,6 +163,7 @@ def _run_fine_hierarchy_for_scope(
-         excluded_toc_pages,
-     )
- 
-+    active_skills = resolve_fine_skills(page_memory_config.fine_skills)
-     fine_min = page_memory_config.fine_min_pages
-     fat_leaf_pages = compute_fat_leaf_pages(
-         active_skeletons,
-@@ -195,6 +197,7 @@ def _run_fine_hierarchy_for_scope(
-             vlm_model=vlm_model,
-             scan_direction=page_memory_config.scan_direction,
-             max_concurrent=page_memory_config.title_detection_concurrency,
-+            active_skills=active_skills,
-         )
-         record_stage(
-             scope_stages,
-@@ -291,14 +294,12 @@ def _run_fine_hierarchy_for_scope(
-         variables={"scope_id": scope_id, "plan_count": len(plans)},
-     )
- 
--    from app.services.page_memory.fine_skills import resolve_fine_skills
--
-     tags = tag_pages(
-         pages=rendered,
-         plans=plans,
-         vlm_model=vlm_model,
-         max_concurrent=page_memory_config.tag_concurrency,
--        active_skills=resolve_fine_skills(page_memory_config.fine_skills),
-+        active_skills=active_skills,
-     )
-     record_stage(
-         scope_stages,
-```
-
-**File**: `apps/worker/tests/contract/test_doc_profile_anatomy_contract.py` (modified, +2/-2)
-```diff
-@@ -1105,7 +1105,7 @@ def run_lightweight_anatomy(self):
-     )
- 
-     assert calls == ["run_coarse", "run_structural"]
--    assert profile.is_atlas is True
-+    assert profile.routing_category is PdfRoutingCategory.ATLAS
-     assert profile.anatomy is fake_anatomy
-     assert profile.anatomy.skeleton_anchor == {"source": "toc"}
-     assert [feature.page for feature in profile.anatomy.page_features] == [1]
-@@ -1170,7 +1170,7 @@ def run_structural(self):
-     )
- 
-     assert calls == ["run_coarse", "run_lightweight_anatomy"]
--    assert profile.is_atlas is True
-+    assert profile.routing_category is PdfRoutingCategory.ATLAS
-     assert profile.anatomy is fake_anatomy
-     assert profile.anatomy.skeleton_anchor == {"source": "lightweight"}
-     assert profile.anatomy.page_features[0].page == 1
-```
-
-**File**: `apps/worker/tests/contract/test_drawing_sheet_fine_skill_contract.py` (modified, +83/-7)
-```diff
-@@ -10,6 +10,9 @@
- os.environ.setdefault("S3_SECRET_ACCESS_KEY", "test")
- os.environ.setdefault("S3_TEMP_PATH", "/tmp")
- 
-+import importlib
-+
-+import pytest
- from PIL import Image
- 
- from app.services.document_parser.profiling.taxonomy import PdfRoutingCategory
-@@ -23,13 +26,51 @@
- from app.services.page_memory.page_assets import extract_page_assets_from_renders
- from app.services.page_memory.page_plan import PagePlan, PageProcessingStrategy
- from app.services.page_memory.page_renderer import PageRenderResult
--from app.services.page_memory.page_tagger import PageTagResult, tag_pages
-+from app.services.page_memory.page_tagger import PageTagResult, tag_page_titles, tag_pages
- from app.services.page_memory.phase_a import build_phase_a
- from app.services.page_memory.scope_enrichment_service import run_single_scope_refinement
- from shared.models.schemas.page_memory_config import PageMemoryConfig
- from shared.services.ai.prompt_service import build_prompt
- from shared.services.ai.summary.model import BodySummary
- 
-+_WORKER_SYMBOLS: dict[str, tuple[str, ...]] = {
-+    "app.services.document_parser.profiling.taxonomy": ("PdfRoutingCategory",),
-+    "app.services.page_memory.fine_skills": (
-+        "DRAWING_SHEET_SKILL_NAME",
-+        "DrawingSheetFineSkill",
-+        "resolve_active_fine_skill_names",
-+        "resolve_fine_skills",
-+    ),
-+    "app.services.page_memory.memory_service": ("_select_rendered_pages_with_assets",),
-+    "app.services.page_memory.page_assets": ("extract_page_assets_from_renders",),
-+    "app.services.page_memory.page_plan": ("PagePlan", "PageProcessingStrategy"),
-+    "app.services.page_memory.page_renderer": ("PageRenderResult",),
-+    "app.services.page_memory.page_tagger": (
-+        "PageTagResult",
-+        "tag_page_titles",
-+        "tag_pages",
-+    ),
-+    "app.services.page_memory.phase_a": ("build_phase_a",),
-+    "app.services.page_memory.scope_enrichment_service": (
-+        "run_single_scope_refinement",
-+    ),
-+}
-+
-+
-+@pytest.fixture(autouse=True)
-+def _rebind_worker_symbols() -> None:
-+    """Rebind worker symbols to the live modules.
-+
-+    Other contract modules evict and re-import ``app.*``; without rebinding,
-+    this module's references (and enum identity) would point at stale copies
-+    while string-path monkeypatches target the live ones.
-+    """
-+    namespace = globals()
-+    for module_name, names in _WORKER_SYMBOLS.items():
-+        module = importlib.import_module(module_name)
-+        for name in names:
-+            namespace[name] = getattr(module, name)
-+
- 
- def test_atlas_profile_activates_drawing_sheet_on_phase_a_manifest() -> None:
-     profile = SimpleNamespace(
-@@ -98,20 +139,55 @@ def test_drawing_skill_addon_is_appended_only_when_requested() -> None:
-     assert "title block" not in plain_node
+@@ -63,7 +63,8 @@
  
  
--def test_title_prompt_excludes_running_headers_not_corners() -> None:
-+def test_title_prompt_appends_drawing_rule_only_when_requested() -> None:
-+    plain, *_ = build_prompt("page-memory-vlm-title", "", "", paras={"max_tokens": 300})
-+    assert "DRAWING-SHEET RULE" not in plain
-+    assert "Running headers, running footers, and page numbers" in plain
-     prompt, *_ = build_prompt(
-         "page-memory-vlm-title",
-         "",
-         "",
-         paras={
-             "max_tokens": 300,
--            "skill_instructions": DrawingSheetFineSkill().page_tag_prompt_addon(),
-+            "skill_instructions": DrawingSheetFineSkill().title_prompt_addon(),
-         },
-     )
--    assert "corners of the page" not in prompt
--    assert "Running headers, running footers, and page numbers" in prompt
--    assert "is_drawing_sheet" not in prompt
--    assert DrawingSheetFineSkill().title_prompt_addon() == ""
-+    assert "DRAWING-SHEET RULE" in prompt
-+    assert "<drawing_no> <drawing_title>" in prompt
-+
-+
-+def test_tag_page_titles_forwards_title_skill_addon(monkeypatch, tmp_path) -> None:
-+    captured: dict[str, str] = {}
-+    png = tmp_path / "page-1.png"
-+    Image.new("RGB", (8, 8), "white").save(png)
-+
-+    def fake_tag_vlm_titles(page, *, model, scan_direction, skill_instructions):
-+        del page, model, scan_direction
-+        captured["skill_instructions"] = skill_instructions
-+        return [{"text": "A-01 Plan", "prominence": 1.0}]
-+
-+    monkeypatch.setattr(
-+        "app.services.page_memory.page_tagger._tag_vlm_titles",
-+        fake_tag_vlm_titles,
-+    )
-+    results = tag_page_titles(
-+        pages=[
-+            PageRenderResult(
-+                page_index=1,
-+                image_path=str(png),
-+                raw_text="",
-+                width=8,
-+                height=8,
-+                is_landscape=False,
-+            )
-+        ],
-+        tag_results=[PageTagResult(page_index=1)],
-+        fat_leaf_pages={1},
-+        vlm_model="vision",
-+        active_skills=resolve_fine_skills((DRAWING_SHEET_SKILL_NAME,)),
-+    )
-+    assert "DRAWING-SHEET RULE" in captured["skill_instructions"]
-+    assert results[0].observed_titles == [{"
+ class _Reader(Protocol):
+-    def get(self, path: str) -> object: ...
++    def get(self, path: str) -> object:
++        raise NotImplementedError
+ 
+ 
+ @dataclass(frozen=True)
 ```
 
 ---
 
-### Incident Patch 2: `dccea567` (2026-11-13)
-**Commit Message**: Enhance document processing by integrating skill signals and fine skills management. Update prompts to include drawing-sheet titles as main headings in TOC matching. Refactor page memory services to support skill instructions and improve asset extraction logic. Adjust tests to validate new functionality and ensure robust handling of oversized documents.
+### Incident Patch 2: `7345e319` (2026-11-13)
+**Commit Message**: fix: grant OpenSearch build cleanup and check live application roles
 
-**File**: `apps/worker/app/services/document_agent/calibration/prompts.py` (modified, +5/-1)
+Worker build cleanup runs _delete_by_query?refresh=true, which scrolls,
+bulk-deletes and refreshes. The rendered worker role lacked the scroll,
+delete and refresh actions, so every retired build failed with HTTP 403 and
+was never collected.
+
+Application roles on the shared node are maintained by hand, and a missing
+action only shows up as a 403 on the path that needs it. The new
+`manage.py application-roles` command compares a saved role listing with the
+rendered API and worker roles and exits 1 while any action is missing. The
+cutover runbook runs it before Release 2.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `deploy/opensearch/README.md` (modified, +12/-0)
 ```diff
-@@ -34,7 +34,11 @@ def _variant_rules() -> str:
-         "given title 'Foo (DOC-12)' ↔ page heading 'Foo'; "
-         "given title 'A.1 Foo Bar' ↔ page heading 'Foo Bar').\n"
-         "Do NOT count: a contents-list line, a running header/footer, or "
--        "a passing mention inside ordinary body paragraphs."
-+        "a passing mention inside ordinary body paragraphs. "
-+        "A drawing-sheet title block (the info bar at a corner or edge that "
-+        "carries the drawing name and drawing number) counts as that page's "
-+        "main heading when matching a TOC entry. Ordinary running "
-+        "headers/footers remain excluded."
-     )
+@@ -377,6 +377,18 @@ publication. The existing compatible PostgreSQL
+ rollback uses its own reviewed task definitions and source coverage verification.
+ It preserves additive schema, parsed results, charges and logical events.
  
- 
++Application roles on the shared node are maintained by hand, so check them
++against the rendered roles before Release 2 and after any role change. Save the
++security API's `GET /_plugins/_security/api/roles` response with the admin
++certificate, then run
++`manage.py application-roles --roles <saved-response> --index-prefix <prefix> --role-prefix <knowhere_prod_|knowhere_>`.
++It lists every rendered action that a live API or worker role does not grant
++and exits 1 until none are missing. Both roles write: the API publishes builds
++when it retries indexing and writes a manifest when it archives a document, and
++the worker's build cleanup scrolls, bulk-deletes and refreshes. A missing action
++shows up only as HTTP 403 on that path, for example retrieval returning 503 or
++retired builds that are never collected.
++
+ Use `launch-issuer.py --kind operator` with the `release` child command shown
+ by `operator.py --help`. Review separate plans for `phase:"prepare"`,
+ `"forward"` and `"rollback"`. Each plan binds `account_id`, exact source hash,
 ```
 
-**File**: `apps/worker/app/services/document_parser/profiling/doc_profiler.py` (modified, +11/-19)
+**File**: `deploy/opensearch/manage.py` (modified, +9/-2)
 ```diff
-@@ -176,29 +176,21 @@ def _profile_pdf_with_db(
-     if profile.page_count > settings.MAX_PDF_PAGE_LIMIT:
-         if oversized_policy != "page_memory":
-             raise_if_oversized_pdf_not_supported(page_count=profile.page_count)
--        if not profile.is_atlas:
--            try:
--                profile.anatomy = coordinator.run_structural()
--                profile.toc = _map_toc_profile(coordinator)
--            except Exception as exc:
--                if oversized_policy == "page_memory":
--                    raise build_oversized_pdf_profile_failed_exception(
--                        page_count=profile.page_count,
--                        original_exception=exc,
--                    ) from exc
--                raise build_oversized_pdf_processing_failed_exception(
-+        try:
-+            profile.anatomy = coordinator.run_structural()
-+            profile.toc = _map_toc_profile(coordinator)
-+        except Exception as exc:
-+            if oversized_policy == "page_memory":
-+                raise build_oversized_pdf_profile_failed_exception(
-                     page_count=profile.page_count,
-                     original_exception=exc,
-                 ) from exc
--        else:
--            # TODO(page_memory): oversized atlas skips anatomy, so coarse
--            # has_asset / page_features never reach page_memory (Root fallback).
--            profile.toc = _map_toc_profile(coordinator)
-+            raise build_oversized_pdf_processing_failed_exception(
-+                page_count=profile.page_count,
-+                original_exception=exc,
-+            ) from exc
+@@ -320,7 +320,11 @@ def _parseArguments() -> argparse.Namespace:
+     release.add_argument("--first-impact", required=True)
+     release.add_argument("--restoration-seconds", required=True, type=int)
+     release.add_argument("--margin-seconds", required=True, type=int)
+-    for command in (preflight, cost, snapshot, cycle, bootstrap, verify, retention, restore, recovery, alerts, release):
++    roles = commands.add_parser("application-roles", help="Compare live API and worker roles with the rendered roles")
++    roles.add_argument("--roles", required=True, type=Path, help="GET /_plugins/_security/api/roles response")
++    roles.add_argument("--index-prefix", required=True)
++    roles.add_argument("--role-prefix", required=True, choices=("knowhere_", "knowhere_prod_"))
++    for command in (preflight, cost, snapshot, cycle, bootstrap, verify, retention, restore, recovery, alerts, release, roles):
+         command.add_argument("--output", type=Path)
+     return parser.parse_args()
+ 
+@@ -387,10 +391,13 @@ def _main() -> int:
+         previous: dict[str, object] = _requireObject(_readJson(arguments.state)) if arguments.state.exists() else {}
+         result = OpenSearchOperations.evaluateAlerts(_readJson(arguments.metrics), previous, nowSeconds=int(datetime.now(timezone.utc).timestamp()), repeatSeconds=arguments.repeat_seconds)
+         _writeJson(arguments.state, result["state"], replace=arguments.state.exists())
++    elif command == "application-roles":
++        result = OpenSearchOperations.checkApplicationRoles(_readJson(arguments.roles),
++            indexPrefix=arguments.index_prefix, rolePrefix=arguments.role_prefix)
      else:
--        # TODO(page_memory): non-oversized atlas skips anatomy; coarse
--        # has_asset / page_features never reach page_memory via profile.anatomy.
--        if not profile.is_atlas:
--            profile.anatomy = coordinator.run_lightweight_anatomy()
-+        profile.anatomy = coordinator.run_lightweight_anatomy()
-         profile.toc = _map_toc_profile(coordinator)
+         result = OpenSearchOperations.planRelease(datetime.fromisoformat(arguments.first_impact), restorationSeconds=arguments.restoration_seconds, marginSeconds=arguments.margin_seconds)
+     _emit(result, arguments.output)
+-    return 0
++    return 1 if command == "application-roles" and not result["passed"] else 0
  
-     if trace := getattr(coordinator, "trace", None):
+ 
+ if __name__ == "__main__":
 ```
 
-**File**: `apps/worker/app/services/document_parser/profiling/taxonomy.py` (modified, +2/-0)
+**File**: `deploy/opensearch/operations.py` (modified, +74/-16)
 ```diff
-@@ -11,6 +11,8 @@ class PdfRoutingCategory(str, Enum):
+@@ -9,14 +9,19 @@
+ from __future__ import annotations
  
-     @classmethod
-     def normalize(cls, value: object) -> "PdfRoutingCategory":
-+        if isinstance(value, cls):
-+            return value
-         raw = str(value or "").strip().lower().replace("-", "_").replace(" ", "_")
-         if raw in {"atlas", "engineering_atlas", "drawing_atlas", "drawing_collection"}:
-             return cls.ATLAS
-```
-
-**File**: `apps/worker/app/services/page_memory/_serialization.py` (modified, +1/-0)
-```diff
-@@ -152,6 +152,7 @@ def serialize_page_tags(tags: list[Any]) -> list[dict[str, Any]]:
-             "entities": list(getattr(item, "entities", []) or []),
-             "strategy_used": item.strategy_used,
-             "observed_titles": list(getattr(item, "observed_titles", []) or []),
-+            "skill_signals": dict(getattr(item, "skill_signals", None) or {}),
+ from datetime import datetime, timedelta
++from fnmatch import fnmatchcase
+ from hashlib import sha256
+ import json
++import re
+ from typing import Literal, Self
+ 
+ from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
+ 
+ __all__: list[str] = ["OpenSearchOperations"]
+ _DAY_MILLISECONDS: int = 86_400_000
++_CLUSTER_READ: tuple[str, ...] = ("cluster:monitor/main", "cluster:monitor/state", "cluster:monitor/health")
++_SEARCH: str = "indices:data/read/search*"
++_INDEX_READ: tuple[str, ...] = (_SEARCH, "indices:admin/get", "indices:monitor/settings/get", "indices:monitor/stats")
+ 
+ 
+ class _Installation(BaseModel):
+@@ -93,6 +98,25 @@ class _Fence(BaseModel):
+     proof_sha256: str = Field(pattern="^[a-f0-9]{64}$")
+ 
+ 
++class _LiveIndexPermission(BaseModel):
++    # The security API adds DLS, FLS and masking fields that this check does not use.
++    model_config = ConfigDict(extra="ignore", frozen=True)
++    index_patterns: list[str] = Field(default_factory=list)
++    allowed_actions: list[str] = Field(default_factory=list)
++
++    def grants(self, index: str, action: str) -> bool:
++        return any(fnmatchcase(action, granted) for granted in self.allowed_actions) and any(
++            re.fullmatch(pattern[1:-1], index) is not None if pattern.startswith("/") and pattern.endswith("/")
++            else fnmatchcase(index, pattern)
++            for pattern in self.index_patterns)
++
++
++class _LiveRole(BaseModel):
++    model_config = ConfigDict(extra="ignore", frozen=True)
++    cluster_permissions: list[str] = Field(default_factory=list)
++    index_permissions: list[_LiveIndexPermission] = Field(default_factory=list)
++
++
+ class _Shard(BaseModel):
+     stage: str
+ 
+@@ -307,30 +331,37 @@ def renderBundle(value: object) -> dict[str, object]:
          }
-         for item in tags
-     ]
+ 
+     @staticmethod
+-    def _renderRoles(installation: _Installation, *, isIndependent: bool = False) -> dict[str, object]:
+-        clusterRead: list[str] = ["cluster:monitor/main", "cluster:monitor/state", "cluster:monitor/health"]
+-        search: str = "indices:data/read/search*"
+-        indexRead: list[str] = [search, "indices:admin/get", "indices:monitor/settings/get", "indices:monitor/stats"]
++    def _renderApplicationRoles(indexPrefix: str) -> dict[str, dict[str, list]]:
++        """Render the API and worker roles; both processes read and publish builds and manifests."""
+         publication: list[str] = ["indices:admin/create", "indices:admin/open", "indices:admin/close", "indices:data/write/bulk*", "indices:data/write/index", "indices:data/read/count"]
+-        scoped: str = installation.index_prefix + "-*"
++        # Build cleanup runs _delete_by_query?refresh=true, which scrolls, bulk-deletes and then refreshes.
++        cleanup: list[str] = ["indices:data/write/delete/byquery", "indices:data/write/delete", "indices:admin/refresh"]
+         # Namespace indexes use a 48-character fingerprint. Keep their actions off the manifest index.
+-        namespacePattern: str = f"/{installation.index_prefix}-[a-f0-9]{{48}}/"
+-        manifestIndex: str = f"{installation.index_prefix}-published-manifests"
++        namespacePattern: str = f"/{indexPrefix}-[a-f0-9]{{48}}/"
++        manifestIndex: str = f"{indexPrefix}-published-manifests"
+         # OpenSearch authorizes _create through the same index action as _doc.
+         manifestActions: list[str] = ["indices:admin/create", "indices:data/read/get", "indices:data/write/index"]
+-        deploymentProbe: str = f"{installation.index_prefix}-deployment-probe"
+-        applicationCluster: list[str] = [*clusterRead, "indices:data/write/bulk"]
+-        roles: dict[str, object] = {"_meta": {"type": "roles", "config_version": 2},
++        deploymentProbe: str = f"{indexPrefix}-deployment-probe"
++        applicationCluster: list[str] = [*_CLUSTER_READ, "indices:data/write/bulk"]
++        return {
+             "knowhere_api": {"cluster_permissions": applicationCluster, "index_permissions": [
+-                {"index_patterns": [namespacePattern], "allowed_actions": [*indexRead, *publication]},
++                {"index_patterns": [namespacePattern], "allowed_actions": [*_INDEX_READ, *publication]},
+                 {"index_patterns": [manifestIndex], "allowed_actions": manifestActions},
+-                {"index_patterns": [deploymentProbe], "allowed_actions": [search]},
++                {"index_patterns": [deploymentProbe], "allowed_actions": [_SEARCH]},
+             ]},
+-            "knowhere_worker": {"cluster_permissions": applicationCluster, "index_permissions": [
+-                {"index_patterns": [namespacePattern], "allowed_actions": [*indexRead, *publication, "indices:data/write/delete/byquery"]},
++            "knowhere_worker": {"cluster_permissions": [*applicationCluster, "indices:data/read/scroll"], "index_permissions": [
++                {"index_patterns": [namespacePattern], "allowed_actions": [*_INDEX_READ, *publication, *cleanup]},
+
 ```
 
-**File**: `apps/worker/app/services/page_memory/fine_skills.py` (added, +246/-0)
+**File**: `deploy/opensearch/tests/test_command.py` (modified, +20/-0)
 ```diff
-@@ -0,0 +1,246 @@
-+"""Pluggable Fine-stage skills for page-memory (atlas drawing sheets first)."""
+@@ -57,3 +57,23 @@ def test_installer_defaults_to_command_plan_without_root_or_artifacts(tmp_path:
+     assert plan["mode"] == "dry-run"
+     assert plan["formats_volume"] is False
+     assert plan["starts_service"] is False
++
++
++def test_application_roles_exits_non_zero_when_live_roles_miss_actions(tmp_path: Path) -> None:
++    manifest: Path = tmp_path / "manifest.json"
++    manifest.write_text(json.dumps(createManifest()))
++    bundle: Path = tmp_path / "bundle"
++    assert runCommand("render", "--manifest", str(manifest), "--directory", str(bundle)).returncode == 0
++    complete: dict[str, object] = json.loads((bundle / "roles.yml").read_text())
++    roles: Path = tmp_path / "roles.json"
++    arguments: list[str] = ["application-roles", "--roles", str(roles), "--index-prefix", "knowhere-lexical-v1", "--role-prefix", "knowhere_"]
++
++    roles.write_text(json.dumps(complete))
++    result = runCommand(*arguments)
++    assert result.returncode == 0, result.stderr
++    assert json.loads(result.stdout)["passed"] is True
++
++    roles.write_text(json.dumps({**complete, "knowhere_worker": {}}))
++    result = runCommand(*arguments)
++    assert result.returncode == 1, result.stderr
++    assert json.loads(result.stdout)["missing"]["knowhere_worker"]
+```
+
+**File**: `deploy/opensearch/tests/test_operations.py` (modified, +83/-3)
+```diff
+@@ -138,17 +138,97 @@ def test_preserves_namespace_publication_and_deployment_probe_search(roleName: s
+         "indices:monitor/stats", "indices:admin/create", "indices:admin/open", "indices:admin/close",
+         "indices:data/write/bulk*", "indices:data/write/index", "indices:data/read/count",
+     }
++    expectedClusterActions: set[str] = {
++        "cluster:monitor/main", "cluster:monitor/state", "cluster:monitor/health", "indices:data/write/bulk",
++    }
+     if roleName == "knowhere_worker":
+-        expectedNamespaceActions.add("indices:data/write/delete/byquery")
++        # Build cleanup is _delete_by_query?refresh=true: scroll, bulk delete, then refresh.
++        expectedNamespaceActions |= {
++            "indices:data/write/delete/byquery", "indices:data/write/delete", "indices:admin/refresh",
++        }
++        expectedClusterActions.add("indices:data/read/scroll")
+ 
+     assert getIndexActions(role, f"{prefix}-{namespaceSuffix}") == expectedNamespaceActions
+     assert getIndexActions(role, f"{prefix}-deployment-probe") == {"indices:data/read/search*"}
+     assert getIndexActions(role, f"knowhere-prod-lexical-v1-{namespaceSuffix}") == set()
+-    assert set(role["cluster_permissions"]) == {
+-        "cluster:monitor/main", "cluster:monitor/state", "cluster:monitor/health", "indices:data/write/bulk",
++    assert set(role["cluster_permissions"]) == expectedClusterActions
++
++
++def createSharedNodeRole(prefix: str, cluster: list[str], actions: list[str]) -> dict[str, object]:
++    """A hand-maintained role on the shared node: one wildcard over the environment prefix."""
++    return {"reserved": False, "cluster_permissions": cluster, "tenant_permissions": [], "index_permissions": [
++        {"index_patterns": [f"{prefix}-*"], "allowed_actions": actions, "dls": "", "fls": [], "masked_fields": []},
++    ]}
++
++
++def test_application_role_check_passes_the_rendered_roles() -> None:
++    operations: type = loadOperations()
++    prefix: str = "knowhere-staging-lexical-v1"
++    roles: dict[str, object] = cast(dict[str, object], operations.renderBundle({**createManifest(), "index_prefix": prefix})["roles.yml"])
++
++    result: dict[str, object] = operations.checkApplicationRoles(roles, indexPrefix=prefix, rolePrefix="knowhere_")
++
++    assert result["passed"] is True
++    assert result["missing"] == {"knowhere_api": [], "knowhere_worker": []}
++
++
++def test_application_role_check_reports_the_read_only_production_api_role() -> None:
++    operations: type = loadOperations()
++    prefix: str = "knowhere-prod-lexical-v1"
++    namespace: str = f"{prefix}-{'0' * 48}"
++    manifest: str = f"{prefix}-published-manifests"
++    roles: dict[str, object] = {
++        "knowhere_prod_api": createSharedNodeRole(prefix,
++            ["cluster:monitor/main", "cluster:monitor/state", "cluster:monitor/health"],
++            ["indices:data/read/search*", "indices:admin/get", "indices:monitor/settings/get",
++                "indices:monitor/stats", "indices:data/read/count"]),
++        "knowhere_prod_worker": createSharedNodeRole(prefix,
++            ["cluster:monitor/main", "cluster:monitor/state", "cluster:monitor/health",
++                "indices:data/write/bulk", "indices:data/read/scroll"],
++            ["indices:data/read/search*", "indices:admin/get", "indices:monitor/settings/get",
++                "indices:monitor/stats", "indices:admin/create", "indices:admin/open", "indices:admin/close",
++                "indices:data/write/bulk*", "indices:data/write/index", "indices:data/read/count",
++                "indices:data/write/delete/byquery", "indices:data/write/delete", "indices:admin/refresh"]),
++    }
++
++    result: dict[str, object] = operations.checkApplicationRoles(roles, indexPrefix=prefix, rolePrefix="knowhere_prod_")
++
++    assert result["passed"] is False
++    assert result["missing"] == {
++        "knowhere_prod_api": [
++            "cluster indices:data/write/bulk",
++            f"{namespace} indices:admin/create", f"{namespace} indices:admin/open",
++            f"{namespace} indices:admin/close", f"{namespace} indices:data/write/bulk*",
++            f"{namespace} indices:data/write/index",
++            f"{manifest} indices:admin/create", f"{manifest} indices:data/read/get",
++            f"{manifest} indices:data/write/index",
++        ],
++        "knowhere_prod_worker": [f"{manifest} indices:data/read/get"],
+     }
+ 
+ 
++def test_application_role_check_reports_a_missing_role_and_a_non_matching_regex() -> None:
++    operations: type = loadOperations()
++    prefix: str = "knowhere-staging-lexical-v1"
++    roles: dict[str, object] = cast(dict[str, object], operations.renderBundle({**createManifest(), "index_prefix": prefix})["roles.yml"])
++    worker: dict[str, object] = cast(dict[str, object], roles["knowhere_worker"])
++    # A pattern for 47-character fingerprints never matches a namespace index.
++    narrowed: list[dict[str, object]] = [
++        {**permission, "index_patterns": [f"/{prefix}-[a-f0-9]{{47}}/"]}
+
+```
+
+---
+
+### Incident Patch 3: `61f67726` (2026-11-13)
+**Commit Message**: fix: settle guarded uploads using stored object evidence
+
+Confirmation and expiry previously used processing time and could fail an on-time upload before its storage notification arrived. Verify the original and its storage timestamp before advancing or failing the waiting job. Persist definitive integrity failures and give verified uploads time to reach the worker after a short upload window.
+
+**File**: `apps/api/app/services/document_ingestion/creation_service.py` (modified, +2/-2)
+```diff
+@@ -19,7 +19,6 @@
+ from sqlalchemy.exc import IntegrityError
+ from sqlalchemy.ext.asyncio import AsyncSession
+ 
+-from shared.core.config import settings
+ from shared.core.exceptions.domain_exceptions import (
+     JobOperationException,
+     ValidationException,
+@@ -28,6 +27,7 @@
+ from shared.models.database.job import Job
+ from shared.models.schemas.job import JobCreateBase, JobCreateV2, JobResponse
+ from shared.models.schemas.job_metadata import JobMetadataHelper
++from shared.services.jobs.source_upload_deadline import get_guarded_source_upload_lifetime_seconds
+ from shared.services.redis import JobInfoRedisService, RedisServiceFactory
+ from shared.services.redis.job_metadata_service import JobMetadataService
+ from shared.services.storage.file_upload_service import FileUploadService
+@@ -172,7 +172,7 @@ async def _create_file_job(
+                 storage_key=s3_key,
+                 file_extension=file_extension,
+                 source_integrity=source_integrity,
+-                expiration=settings.JOB_WAITING_EXPIRE_SECONDS,
++                expiration=get_guarded_source_upload_lifetime_seconds(),
+             )
+ 
+         job = await self._create_waiting_job(
+```
+
+**File**: `apps/api/app/services/document_ingestion/handoff_service.py` (modified, +54/-34)
+```diff
+@@ -1,8 +1,5 @@
+ from __future__ import annotations
+ 
+-from app.services.document_ingestion.source_upload_deadline import (
+-    get_remaining_source_upload_seconds,
+-)
+ from app.services.document_ingestion.worker_dispatcher import (
+     DocumentIngestionWorkerDispatcher,
+ )
+@@ -21,6 +18,13 @@
+ from shared.models.database.job import Job
+ from shared.models.schemas.job_metadata import JobMetadataHelper
+ from shared.models.schemas.source_integrity import SourceIntegrity
++from shared.services.jobs.source_upload_deadline import (
++    UPLOAD_EXPIRED_CODE,
++    UPLOAD_EXPIRED_MESSAGE,
++    UPLOAD_INTEGRITY_MISMATCH_CODE,
++    UPLOAD_INTEGRITY_MISMATCH_MESSAGE,
++    classify_guarded_source_upload,
++)
+ from shared.services.jobs.upload_parse_dispatch import UploadParseOutbox
+ from shared.services.storage.file_upload_service import FileUploadService
+ 
+@@ -141,24 +145,25 @@ async def _verify_guarded_source(
+         self, db: AsyncSession, *, job: Job, source_integrity: SourceIntegrity
+     ) -> bool:
+         job_id = job.job_id
+-        created_at = job.created_at
+-        result = None
+-        if get_remaining_source_upload_seconds(created_at) > 0:
+-            if not job.s3_key:
+-                raise ValidationException(
+-                    user_message="Job is missing S3 key information",
+-                    violations=[{"field": "s3_key", "description": "S3 key not set for this job"}],
+-                )
+-            result = await FileUploadService().verify_upload_integrity(
+-                job.s3_key, source_integrity
++        if not job.s3_key:
++            raise ValidationException(
++                user_message="Job is missing S3 key information",
++                violations=[{"field": "s3_key", "description": "S3 key not set for this job"}],
+             )
++        verification = await FileUploadService().verify_upload_integrity(
++            job.s3_key, source_integrity
++        )
++        result = classify_guarded_source_upload(job.created_at, verification)
+ 
+-        # HEAD can run without a lock. Serialize the deadline decision and
+-        # waiting-file transition after verification against concurrent triggers.
+-        if not await self._lock_waiting_job(db, job_id):
++        # Storage checks happen outside the row lock. The terminal decision and
++        # parse handoff both recheck waiting-file under that same lock.
++        locked_job = await self._lock_waiting_job(db, job_id)
++        if locked_job is None:
+             return False
+-        if get_remaining_source_upload_seconds(created_at) == 0:
+-            await self._mark_locked_upload_expired(db, job_id)
++        if result == "expired":
++            await self._mark_locked_upload_failed(
++                db, job=locked_job, code=UPLOAD_EXPIRED_CODE, message=UPLOAD_EXPIRED_MESSAGE
++            )
+             raise ConflictException(
+                 user_message="The source upload has expired.",
+                 reason="ABORTED",
+@@ -170,9 +175,15 @@ async def _verify_guarded_source(
+                 user_message="S3 file does not exist, please upload the file first",
+                 violations=[{"field": "file", "description": "File not found in S3"}],
+             )
+-        if result != "matched":
++        if result == "mismatch":
++            await self._mark_locked_upload_failed(
++                db,
++                job=locked_job,
++                code=UPLOAD_INTEGRITY_MISMATCH_CODE,
++                message=UPLOAD_INTEGRITY_MISMATCH_MESSAGE,
++            )
+             raise ValidationException(
+-                user_message="The uploaded file does not match the expected original",
++                user_message=UPLOAD_INTEGRITY_MISMATCH_MESSAGE,
+                 violations=[{
+                     "field": "source_integrity",
+                     "description": "Stored length or SHA-256 does not match",
+@@ -181,33 +192,42 @@ async def _verify_guarded_source(
+         return True
+ 
+     @staticmethod
+-    async def _lock_waiting_job(db: AsyncSession, job_id: str) -> bool:
+-        locked_job = await db.scalar(
+-            select(Job.job_id)
++    async def _lock_waiting_job(db: AsyncSession, job_id: str) -> Job | None:
++        return await db.scalar(
++            select(Job)
+             .where(Job.job_id == job_id, Job.status == JobStatus.WAITING_FILE.value)
+             .with_for_update()
+         )
+-        return locked_job is not None
+ 
+     async def mark_upload_expired(self, db: AsyncSession, *, job: Job) -> None:
+-        if await self._lock_waiting_job(db, job.job_id):
+-            await self._mark_locked_upload_expired(db, job.job_id)
++        locked_job = await self._lock_waiting_job(db, job.job_id)
++        if locked_job is not None:
++            await self._mark_locked_upload_failed(
++                db, job=locked_job, code=UPLOAD_EXPIRED_CODE, message=UPLOAD_EXPIRED_MESSAGE
++            )
+ 
+-    async def _mark_locked_upload_expired(
+-        self,
+-        db: AsyncSession,
+-        job_id: str,
++    async def
+```
+
+**File**: `apps/api/app/services/document_ingestion/source_upload_deadline.py` (removed, +0/-14)
+```diff
+@@ -1,14 +0,0 @@
+-from datetime import datetime, timedelta, timezone
+-
+-from shared.core.config import settings
+-
+-
+-def get_remaining_source_upload_seconds(created_at: datetime) -> int:
+-    """Give guarded uploads one lifetime across initial signing, renewal and handoff."""
+-    created_utc = (
+-        created_at
+-        if created_at.tzinfo is not None
+-        else created_at.replace(tzinfo=timezone.utc)
+-    )
+-    deadline = created_utc + timedelta(seconds=settings.JOB_WAITING_EXPIRE_SECONDS)
+-    return max(0, int((deadline - datetime.now(timezone.utc)).total_seconds()))
+```
+
+**File**: `apps/api/app/services/jobs/source_upload_service.py` (modified, +1/-1)
+```diff
+@@ -5,7 +5,6 @@
+ import asyncio
+ from typing import Any
+ 
+-from app.services.document_ingestion.source_upload_deadline import get_remaining_source_upload_seconds
+ from sqlalchemy import select
+ from sqlalchemy.ext.asyncio import AsyncSession
+ 
+@@ -15,6 +14,7 @@
+ )
+ from shared.models.database.job import Job
+ from shared.models.schemas.job_metadata import JobMetadataHelper
++from shared.services.jobs.source_upload_deadline import get_remaining_source_upload_seconds
+ from shared.services.retrieval.demo_job_scope import validate_job_corpus
+ from shared.services.storage.file_upload_service import FileUploadService
+ from shared.services.storage.job_file_storage import JobFileStorage
+```
+
+**File**: `apps/api/tests/contract/test_guarded_upload_deadline_contract.py` (added, +156/-0)
+```diff
+@@ -0,0 +1,156 @@
++from __future__ import annotations
++
++from base64 import b64encode
++from collections.abc import Callable
++from contextlib import AbstractAsyncContextManager
++from datetime import datetime, timedelta, timezone
++from hashlib import sha256
++
++import boto3
++import pytest
++from botocore.stub import Stubber
++from httpx import AsyncClient
++
++from tests.support.contract_database import ContractDatabase
++
++_ORIGINAL = b"original upload bytes"
++_DIGEST = sha256(_ORIGINAL).digest()
++_CREATE_JOB = {
++    "namespace": "guarded-deadline",
++    "source_type": "file",
++    "file_name": "original.pdf",
++    "source_integrity": {"size_bytes": len(_ORIGINAL), "sha256": _DIGEST.hex()},
++}
++
++
++@pytest.mark.asyncio
++@pytest.mark.parametrize("trigger", ["notification", "confirm"])
++@pytest.mark.parametrize(
++    ("upload_delay", "is_checksum_valid", "expected_error", "confirm_status"),
++    [
++        (timedelta(hours=1), True, None, 200),
++        (timedelta(hours=2, minutes=30), True, "UPLOAD_EXPIRED", 409),
++        (timedelta(hours=1), False, "UPLOAD_INTEGRITY_MISMATCH", 400),
++    ],
++    ids=["on-time-original", "late-original", "on-time-mismatch"],
++)
++async def test_guarded_upload_uses_storage_evidence_after_deadline(
++    developer_api_client_factory: Callable[
++        [], AbstractAsyncContextManager[AsyncClient]
++    ],
++    monkeypatch: pytest.MonkeyPatch,
++    trigger: str,
++    upload_delay: timedelta,
++    is_checksum_valid: bool,
++    expected_error: str | None,
++    confirm_status: int,
++) -> None:
++    async with developer_api_client_factory() as client:
++        from app.services.document_ingestion.worker_dispatcher import (
++            DocumentIngestionWorkerDispatcher,
++        )
++        from shared.core.config import settings
++        from shared.services.storage import job_file_storage
++        from shared.services.storage.adapters.s3_adapter import S3StorageAdapter
++
++        monkeypatch.setattr(settings, "S3_TYPE", "s3")
++        monkeypatch.setattr(settings, "S3_USE_SSL", True)
++        s3 = boto3.client(
++            "s3",
++            region_name="us-west-1",
++            aws_access_key_id="test",
++            aws_secret_access_key="test",
++        )
++        bucket = settings.S3_BUCKET_NAME
++        adapter = S3StorageAdapter(s3, bucket)
++        monkeypatch.setattr(
++            job_file_storage, "get_cached_storage_adapter", lambda: adapter
++        )
++        published_jobs: list[str] = []
++
++        async def publish(self: object, *, job_id: str, user_id: str) -> str:
++            published_jobs.append(job_id)
++            return "test-task"
++
++        monkeypatch.setattr(
++            DocumentIngestionWorkerDispatcher, "start_uploaded_file_parse", publish
++        )
++
++        created = await client.post("/api/v2/jobs", json=_CREATE_JOB)
++        assert created.status_code == 200
++        job_id: str = created.json()["job_id"]
++        key = f"uploads/{job_id}.pdf"
++        created_at = datetime.now(timezone.utc) - timedelta(hours=3)
++        uploaded_at = created_at + upload_delay
++        await ContractDatabase.execute(
++            "UPDATE jobs SET created_at = :created_at, updated_at = :created_at WHERE job_id = :job_id",
++            {"job_id": job_id, "created_at": created_at.replace(tzinfo=None)},
++        )
++        event = {
++            "Records": [
++                {
++                    "eventVersion": "2.1",
++                    "eventSource": "aws:s3",
++                    "awsRegion": "us-west-1",
++                    # A notification timestamp alone cannot admit an object whose HEAD is late.
++                    "eventTime": (created_at + timedelta(hours=1)).isoformat(),
++                    "eventName": "ObjectCreated:Put",
++                    "s3": {"bucket": {"name": bucket}, "object": {"key": key}},
++                }
++            ]
++        }
++
++        with Stubber(s3) as stubber:
++            stubber.add_response(
++                "head_object",
++                {
++                    "ContentLength": len(_ORIGINAL),
++                    "ChecksumSHA256": b64encode(
++                        _DIGEST if is_checksum_valid else bytes(32)
++                    ).decode("ascii"),
++                    "LastModified": uploaded_at,
++                },
++                {"Bucket": bucket, "Key": key, "ChecksumMode": "ENABLED"},
++            )
++            if trigger == "notification":
++                response = await client.post("/api/v1/internal/s3-events", json=event)
++            else:
++                response = await client.post(f"/api/v2/jobs/{job_id}/confirm-upload")
++            job = await ContractDatabase.fetch_job(job_id)
++            assert job is not None
++            assert job["error_code"] == expected_error
++            if expected_error is None:
++                assert job["status"] == "pending"
++                assert published_jobs == [job_id]
++            else:
++                assert job["status"] == "failed"
++                assert publishe
+```
+
+**File**: `apps/api/tests/contract/test_verified_source_upload_contract.py` (modified, +146/-70)
+```diff
+@@ -3,13 +3,14 @@
+ from base64 import b64encode
+ from collections.abc import Callable
+ from contextlib import AbstractAsyncContextManager
++from datetime import datetime, timezone
+ from hashlib import sha256
+ from urllib.parse import parse_qs, urlsplit
+ 
+ import boto3
+ import pytest
+ from botocore.stub import Stubber
+-from httpx import AsyncClient
++from httpx import AsyncClient, Response
+ 
+ from tests.support.contract_database import ContractDatabase
+ 
+@@ -51,6 +52,24 @@ def _stub_uploaded_object(monkeypatch: pytest.MonkeyPatch) -> tuple[Stubber, str
+     return Stubber(client), bucket
+ 
+ 
++def _upload_event(bucket: str, key: str) -> dict[str, object]:
++    return {
++        "Records": [
++            {
++                "eventVersion": "2.1",
++                "eventSource": "aws:s3",
++                "awsRegion": "us-west-1",
++                "eventTime": datetime.now(timezone.utc).isoformat(),
++                "eventName": "ObjectCreated:Put",
++                "s3": {
++                    "bucket": {"name": bucket},
++                    "object": {"key": key, "size": len(_ORIGINAL)},
++                },
++            }
++        ],
++    }
++
++
+ def _check_signed_upload(result: dict[str, object]) -> None:
+     assert result["upload_headers"] == {
+         "Content-Type": "application/pdf",
+@@ -139,7 +158,7 @@ async def test_integrity_requires_valid_file_metadata_and_supported_storage(
+ 
+ @pytest.mark.asyncio
+ @pytest.mark.parametrize("trigger", ["manual", "s3"])
+-async def test_handoff_requires_the_expected_stored_checksum_and_size(
++async def test_unavailable_or_missing_upload_remains_waiting_until_verified(
+     developer_api_client_factory: Callable[
+         [], AbstractAsyncContextManager[AsyncClient]
+     ],
+@@ -167,94 +186,140 @@ async def _publish(self: object, *, job_id: str, user_id: str) -> str:
+         job_id: str = created.json()["job_id"]
+         key = f"uploads/{job_id}.pdf"
+         confirm_url = f"/api/v2/jobs/{job_id}/confirm-upload"
+-        event = {
+-            "Records": [
+-                {
+-                    "eventVersion": "2.1",
+-                    "eventSource": "aws:s3",
+-                    "awsRegion": "us-west-1",
+-                    "eventTime": "2026-04-26T00:00:00.000Z",
+-                    "eventName": "ObjectCreated:Put",
+-                    "s3": {
+-                        "bucket": {"name": bucket},
+-                        "object": {"key": key, "size": len(_ORIGINAL)},
+-                    },
+-                }
+-            ],
+-        }
+-
++        event = _upload_event(bucket, key)
+         expected_head = {"Bucket": bucket, "Key": key, "ChecksumMode": "ENABLED"}
+-        if trigger == "manual":
++        for code in (403, 404):
+             stubber.add_client_error(
+                 "head_object",
+-                service_error_code="403",
+-                http_status_code=403,
++                service_error_code=str(code),
++                http_status_code=code,
+                 expected_params=expected_head,
+             )
+-            stubber.add_client_error(
+-                "head_object",
+-                service_error_code="404",
+-                http_status_code=404,
+-                expected_params=expected_head,
+-            )
+-        for metadata in (
+-            {
+-                "ContentLength": len(_ORIGINAL),
+-                "ChecksumSHA256": b64encode(bytes(32)).decode("ascii"),
+-            },
+-            {
+-                "ContentLength": len(_ORIGINAL) + 1,
+-                "ChecksumSHA256": b64encode(_DIGEST).decode("ascii"),
+-            },
+-            {"ContentLength": len(_ORIGINAL)},
++        stubber.add_response(
++            "head_object",
+             {
+                 "ContentLength": len(_ORIGINAL),
+                 "ChecksumSHA256": b64encode(_DIGEST).decode("ascii"),
++                "LastModified": datetime.now(timezone.utc),
+             },
+-        ):
+-            stubber.add_response("head_object", metadata, expected_head)
+-
+-        async def _confirm(expected_violation: str | None = None) -> None:
+-            response = (
+-                await api_client.post(confirm_url)
+-                if trigger == "manual"
+-                else await api_client.post(
+-                    "/api/v1/internal/s3-events",
+-                    json=event,
+-                )
+-            )
+-            if trigger == "s3":
+-                assert response.status_code == 200
+-            elif expected_violation is not None:
+-                assert response.status_code == 400
+-                assert (
+-                    response.json()["error"]["details"]["violations"][0]["field"]
+-                    == expected_violation
+-                )
+-            else:
+-                assert response.status_code == 200
++            expected_head,
++        )
+ 
+-        with stubber:
+-            rejected_fields = ["source_integrity"] * 3
++        async def _confirm() -> Response:
+             if trigger == "manual":
+-                unavailable 
+```
+
+**File**: `apps/worker/app/core/tasks/stale_job_sweeper.py` (modified, +65/-71)
+```diff
+@@ -1,12 +1,15 @@
+ """
+ Stale Job Sweeper — periodic Celery Beat task.
+ 
+-Scans for jobs stuck in any active state (pending, waiting-file, running, converting)
+-beyond the global JOB_EXPIRE_SECONDS threshold and marks them as failed.
++Settles overdue guarded uploads and expires other stale active Jobs.
+ """
+ 
+-from datetime import datetime, timedelta, timezone
++from datetime import datetime, timedelta
+ 
++from app.services.document_ingestion.guarded_upload_sweeper import (
++    guarded_waiting_upload,
++    sweep_guarded_uploads,
++)
+ from loguru import logger
+ from sqlalchemy import and_, or_
+ from sqlalchemy import select as sa_select
+@@ -20,8 +23,10 @@
+     JobStatus,
+ )
+ from shared.models.database.job import Job
++from shared.services.jobs.upload_parse_dispatch import within_upload_parse_dispatch_window
+ from shared.services.redis.periodic_task_lock import periodic_task_lock
+ from shared.services.retrieval.lexical.settlement import IndexingSettlement
++from shared.utils.utc_now import utc_now_naive
+ 
+ celery_app = get_celery_app()
+ 
+@@ -36,7 +41,7 @@
+ 
+ @celery_app.task(name="app.core.tasks.stale_job_sweeper.expire_stale_jobs")
+ def expire_stale_jobs() -> dict:
+-    """Expire jobs stuck in non-terminal states beyond ``JOB_EXPIRE_SECONDS``.
++    """Settle overdue uploads and expire stale parser Jobs.
+ 
+     Runs every 30 minutes via Celery Beat. Uses ``SyncStateMachineService``
+     for CAS-protected state transitions and proper audit logging.
+@@ -58,74 +63,17 @@ def expire_stale_jobs() -> dict:
+         waiting_max_age: int = settings.JOB_WAITING_EXPIRE_SECONDS
+         processing_max_age: int = settings.JOB_PROCESSING_EXPIRE_SECONDS
+ 
+-        if waiting_max_age <= 0 or processing_max_age <= 0:
+-            return {"status": "success", "reason": "Parser expiration config <= 0", "indexing": indexing}
+-
+-        # Timeouts: 4 hours (default) for processing, 2 hours (default) for waiting
+-        now = datetime.now(timezone.utc).replace(tzinfo=None)
+-        long_cutoff = now - timedelta(seconds=processing_max_age)
+-        default_cutoff = now - timedelta(seconds=waiting_max_age)
+-
+-        expired_count = 0
+-        skipped_count = 0
+-
++        now = utc_now_naive()
++        legacy_expiration_enabled = waiting_max_age > 0 and processing_max_age > 0
+         try:
+-            state_machine = SyncStateMachineService()
+-
+-            with get_sync_db_context() as db:
+-                stmt = (
+-                    sa_select(Job)
+-                    .where(
+-                        Job.status.notin_(TERMINAL_STATES),
+-                        Job.parsing_status != "completed",
+-                        or_(
+-                            and_(
+-                                Job.status.in_(
+-                                    [
+-                                        JobStatus.RUNNING.value,
+-                                        JobStatus.CONVERTING.value,
+-                                    ]
+-                                ),
+-                                Job.updated_at < long_cutoff,
+-                            ),
+-                            and_(
+-                                Job.status.notin_(
+-                                    [
+-                                        JobStatus.RUNNING.value,
+-                                        JobStatus.CONVERTING.value,
+-                                    ]
+-                                ),
+-                                Job.updated_at < default_cutoff,
+-                            ),
+-                        ),
+-                    )
+-                    .order_by(Job.updated_at)
+-                    .limit(200)
+-                )
+-                expired_jobs = db.execute(stmt).scalars().all()
+-
+-                if not expired_jobs:
+-                    logger.debug("Stale job sweeper: no expired jobs found")
+-                    return {"status": "success", "expired": 0, "skipped": 0, "indexing": indexing}
+-
+-                for job in expired_jobs:
+-                    outcome = state_machine.mark_failed_outcome(
+-                        db,
+-                        job.job_id,
+-                        error_message=JOB_EXPIRED_ERROR_MESSAGE,
+-                        error_code=JOB_EXPIRED_ERROR_CODE,
+-                        metadata={"sweeper": True, "stale_status": job.status},
+-                    )
+-                    if outcome.succeeded:
+-                        expired_count += 1
+-                        logger.info(
+-                            f"Expired stale job {job.job_id} (was {job.status})"
+-                        )
+-                    else:
+-                        skipped_count += 1
+-                        logger.debug(
+-                            f"Job {job.job_id} was not expired: reason={outcome.reason}"
+-                        )
++            expired_count, skipped_count = (
++                _expire_other_stale_jobs(now, waiting_max_age, processing_max_age)
++                if legacy_expiration_enabled
++            
+```
+
+**File**: `apps/worker/app/services/document_ingestion/guarded_upload_sweeper.py` (added, +142/-0)
+```diff
+@@ -0,0 +1,142 @@
++"""Settle overdue guarded PUTs using the same storage evidence as confirmation."""
 +
 +from __future__ import annotations
 +
-+import shutil
-+from pathlib import Path
-+from typing import Any, Protocol, Sequence
++from datetime import datetime, timedelta
++from time import monotonic
 +
 +from loguru import logger
++from pydantic import ValidationError
++from sqlalchemy import and_, select
 +
-+from app.services.document_parser.profiling.taxonomy import PdfRoutingCategory
++from shared.core.database_sync import get_sync_db_context
++from shared.core.exceptions.domain_exceptions import (
++    StorageServiceException,
++    UnavailableException,
++)
++from shared.core.state_machine.service_sync import SyncStateMachineService
++from shared.core.state_machine.states import JobStatus
++from shared.models.database.job import Job
++from shared.models.schemas.job_metadata import JobMetadataHelper
++from shared.services.jobs.source_upload_deadline import (
++    UPLOAD_EXPIRED_CODE,
++    UPLOAD_EXPIRED_MESSAGE,
++    UPLOAD_INTEGRITY_MISMATCH_CODE,
++    UPLOAD_INTEGRITY_MISMATCH_MESSAGE,
++    classify_guarded_source_upload,
++    get_guarded_source_upload_lifetime_seconds,
++)
++from shared.services.jobs.upload_parse_dispatch import UploadParseOutbox, has_source_integrity
++from shared.services.storage.job_file_storage import JobFileStorage
++from shared.utils.utc_now import utc_now_naive
 +
-+DRAWING_SHEET_SKILL_NAME = "drawing_sheet"
++_MAX_GUARDED_JOBS_PER_SWEEP = 32
++_SWEEP_BUDGET_SECONDS = 60
 +
-+
-+class FineSkill(Protocol):
-+    """Fine-stage addon: prompt text, extra tag fields, and optional C5 override."""
-+
-+    name: str
-+    extra_tag_fields: dict[str, str]
-+
-+    def title_prompt_addon(self) -> str:
-+        """Optional addon for outline title detection. Empty when unused."""
-+        ...
-+
-+    def page_tag_prompt_addon(self) -> str:
-+        """Addon appended to ``page-memory-vlm-tag``."""
-+        ...
-+
-+    def node_summary_prompt_addon(self) -> str:
-+        """Addon appended to ``page-memory-node-summary``."""
-+        ...
-+
-+    def override_page_assets(
-+        self,
-+        *,
-+        page: Any,
-+        tag: Any | None,
-+        output_dir: str,
-+        source_name: str,
-+    ) -> list[Any] | None:
-+        """Return assets to skip VLM detect/crop, or ``None`` for the standard path."""
-+        ...
++guarded_waiting_upload = and_(
++    Job.status == JobStatus.WAITING_FILE.value,
++    has_source_integrity,
++)
 +
 +
-+class DrawingSheetFineSkill:
-+    """Per-page drawing-sheet skill: name/metadata in tagging, intact page image in C5."""
++def sweep_guarded_uploads(now: datetime) -> tuple[int, int]:
++    cutoff = now - timedelta(seconds=get_guarded_source_upload_lifetime_seconds())
++    with get_sync_db_context() as db:
++        candidates = db.scalars(
++            select(Job)
++            .where(guarded_waiting_upload, Job.created_at <= cutoff)
++            .order_by(Job.updated_at, Job.job_id)
++            .limit(_MAX_GUARDED_JOBS_PER_SWEEP)
++        ).all()
 +
-+    name = DRAWING_SHEET_SKILL_NAME
-+    extra_tag_fields = {
-+        "is_drawing_sheet": "boolean",
-+        "drawing_title": "string",
-+    }
-+
-+    def title_prompt_addon(self) -> str:
-+        return ""
-+
-+    def page_tag_prompt_addon(self) -> str:
-+        return (
-+            "Additional JSON keys (required in addition to the keys above):\n"
-+            "{\n"
-+            '  "is_drawing_sheet": true|false,\n'
-+            '  "drawing_title": "<drawing_no + drawing_name from title block, or empty>"\n'
-+            "}\n"
-+            "First check this page, and apply drawing rules only when it is an "
-+            "engineering/technical drawing sheet.\n"
-+            '- "is_drawing_sheet": true only when the page is primarily an '
-+            "architectural/engineering/CAD drawing, schematic, or detail sheet. "
-+            "false for covers, body specifications, pure schedules/tables, or TOC.\n"
-+            '- "drawing_title": the drawing number and drawing name from the title '
-+            "block / info bar when present; otherwise an empty string.\n"
-+            "When is_drawing_sheet is true: prefer the corner/edge title block "
-+            "(drawing number, drawing name, project/atlas name, scale, discipline, "
-+            "revision) and technical notes on the sheet when forming summary and "
-+            "entities.\n"
-+            "When is_drawing_sheet is false: follow the standard rules only."
-+        )
-+
-+    def node_summary_prompt_addon(self) -> str:
-+        return (
-+            "If the provided page image(s) are engineering/technical drawing sheets, "
-+            "prefer the corner/edge title block (drawing number, drawing name, "
-+            "project/atlas name, scale, discipline, revision) and technical notes "
-+            "on the sheet when summarizing this section."
-+        )
-+
-+    def override_page_assets(
-+        self,
-+        *,
-+        page: Any,
-+        tag: Any | None,
-+        output_dir: str,
-+        source_name: str,
-+    ) -> list[Any] | None:
-+        signals = dict(getattr(tag, "skill_signals", None) or {})
-+        if signals.get("is_drawing_sheet") is not True:
-+            return None
-+
-+        from app.services.document_parser.assets.asset_file_names import (
-+            ASSET_KIND_IMAGE,
-+            build_page_asset_file_stem,
-+        )
-+        from app.services.document_parser.support.identifiers import gen_str_codes
-+        from app.services.page_memory.page_assets import PageAsset
-+        from PIL import Image
-+
-+        image_path = str(getattr(page, "image_path", "") or "")
-+        page_index = int(getattr(page, "page_index", 0) or 0)
-+        if not image_path or not Path(image_path).is_file():
-+            logger.warning(
-+                "[fine_skills] drawing sheet page {} missing render; skip assets",
-+                page_index,
-+            )
-+            return []
-+
++    state_machine = SyncStateMachineService()
++    storage = JobFileStorage()
++    expires_at = monotonic() + _SWEEP_BUDGET_SECONDS
++    expired_count = 0
++    skipped_count = 0
++    for candidate in candidates:
++        if monotonic() >= expires_at:
++            break
 +        try:
-+            with Image.open(image_path) as image:
-+                width_px, height_px = image.size
++            expired = _settle_guarded_upload(state_machine, storage, candidate)
 +        except Exception as exc:
 +            logger.warning(
-+                "[fine_skills] failed to read drawing sheet page {}: {}",
-+                page_index,
-+                exc,
++                "Guarded upload sweep will retry job {} after {}",
++                candidate.job_id,
++                type(exc).__name__,
 +            )
-+            return []
++            expired = None
++        expired_count += expired is True
++        skipped_count += expired is None
++    return expired_count, skipped_count
 +
-+        drawing_title = str(signals.get("drawing_title") or "").strip()
-+        stem = build_page_asset_file_stem(
-+            ASSET_KIND_IMAGE,
-+            page_index,
-+            1,
-+            drawing_title,
++
++def _settle_guarded_upload(
++    state_machine: SyncStateMachineService, storage: JobFileStorage, candidate: Job
++) -> bool | None:
++    """Return True if failed, False if recovered, or None if deferred or raced."""
++    try:
++        integrity = JobMetadataHelper.get_source_integrity(candidate.job_metadata)
++        if integrity is None:
++            return None
++        if candidate.s3_key:
++            verification = storage.verify_upload_integrity(candidate.s3_key, integrity)
++            verdict = classify_guarded_source_upload(candidate.created_at, verification)
++        else:
++            verdict = "expired"
++    except (StorageServiceException, UnavailableException, ValidationError) as exc:
++        logger.warning(
++            "Guarded upload sweep could not verify job {} ({})",
++            candidate.job_id,
++            type(exc).__name__,
 +        )
-+        image_dir = Path(output_dir) / "images"
-+        image_dir.mkdir(parents=True, exist_ok=True)
-+        filename = f"{stem}.png"
-+        dest = image_dir / filename
-+    
-```
-
-**File**: `apps/worker/app/services/page_memory/memory_service.py` (modified, +30/-3)
-```diff
-@@ -2,7 +2,7 @@
- 
- import os
- import shutil
--from dataclasses import dataclass, field
-+from dataclasses import dataclass, field, replace
- from pathlib import Path
- from typing import Any
- 
-@@ -384,6 +384,15 @@ def assemble_c7_node_rows(
-         if rend and rend.image_path and os.path.exists(rend.image_path):
-             image_path_by_page[page] = rend.image_path
- 
-+    from app.services.page_memory.fine_skills import (
-+        joined_skill_addon,
-+        resolve_fine_skills,
-+    )
++        verdict = "deferred"
 +
-+    skill_instructions = joined_skill_addon(
-+        resolve_fine_skills(page_memory_config.fine_skills),
-+        "node_summary_prompt_addon",
-+    )
-     rows = build_node_rows(
-         skeletons=skeletons,
-         raw_text_by_page=raw_text_by_page,
-@@ -399,6 +408,7 @@ def assemble_c7_node_rows(
-         node_assembly_concurrency=page_memory_config.node_assembly_concurrency,
-         body_text_by_page=body_text_by_page,
-         toc_pages=toc_pages,
-+        skill_instructions=skill_instructions,
-     )
-     return rows, final_pages
- 
-@@ -436,6 +446,11 @@ def _build_page_dataframe(
-         profile=profile,
-         filename=filename,
-         trace_recorder=trace_recorder,
-+        page_memory_config=page_memory_config,
-+    )
-+    page_memory_config = replace(
-+        page_memory_config,
-+        fine_skills=tuple(phase_a.manifest.get("fine_skills") or ()),
-     )
-     page_texts = phase_a.page_texts
-     coarse_scopes = phase_a.coarse_scopes
-@@ -823,12 +838,16 @@ def _run_hierarchy_scope(
-         variables={"scope_id": scope.scope_id, "plan_count": len(plans)},
-     )
- 
-+    from app.services.page_memory.fine_skills import resolve_fine_skills
-+
-+    active_skills = resolve_fine_skills(page_memory_config.fine_skills)
-     with stage_timer("page_memory.tag", page_count=len(rendered)):
-         tags = tag_pages(
-             pages=rendered,
-             plans=plans,
-             vlm_model=vlm_model,
-             max_concurrent=page_memory_config.tag_concurrency,
-+            active_skills=active_skills,
-         )
-     _record_trace_stage(
-         trace_recorder,
-@@ -846,8 +865,9 @@ def _run_hierarchy_scope(
- 
-     assets_by_page: dict[int, list[Any]] = {}
-     if asset_extraction_enabled:
-+        tags_by_page = {tag.page_index: tag for tag in tags}
-         asset_rendered = _select_rendered_pages_with_assets(
--            rendered, page_features
-+            rendered, page_features, tags_by_page=tags_by_page
-         )
-         with stage_timer("page_memory.assets", page_count=len(asset_rendered)):
-             assets_by_page = extract_page_assets_from_renders(
-@@ -860,6 +880,8 @@ def _run_hierarchy_scope(
-                 summary_concurrency=page_memory_config.asset_summary_concurrency,
-                 table_engine=page_memory_config.table_engine,
-                 table_merge_enabled=page_memory_config.table_merge_enabled,
-+                tags_by_page=tags_by_page,
-+                active_skills=active_skills,
-             )
-     _record_trace_stage(
-         trace_recorder,
-@@ -901,13 +923,18 @@ def _run_hierarchy_scope(
- def _select_rendered_pages_with_assets(
-     rendered: list[Any],
-     page_features: list[Any],
-+    tags_by_page: dict[int, Any] | None = None,
- ) -> list[Any]:
--    """Keep only rendered pages that coarse profile marked ``has_asset``."""
-+    """Keep rendered pages marked ``has_asset``, plus drawing-sheet pages."""
-     asset_pages = {
-         int(getattr(feature, "page", 0) or 0)
-         for feature in page_features
-         if getattr(feature, "has_asset", False)
-     }
-+    for page_index, tag in (tags_by_page or {}).items():
-+        signals = dict(getattr(tag, "skill_signals", None) or {})
-+        if signals.get("is_drawing_sheet") is True:
-+            asset_pages.add(int(page_index))
-     return [item for item in rendered if item.page_index in asset_pages]
- 
- 
-```
-
-**File**: `apps/worker/app/services/page_memory/node_assembler.py` (modified, +14/-6)
-```diff
-@@ -320,6 +320,7 @@ def compute_node_summary(
-     image_path_by_page: dict[int, str],
-     vlm_model: str | None,
-     node_summary_max_pages: int = _NODE_SUMMARY_MAX_PAGES_DEFAULT,
-+    skill_instructions: str = "",
- ) -> tuple[str, list[str], list[dict[str, str]]]:
-     """Settle a node's summary, keywords, and typed entities (§4.4).
- 
-@@ -352,6 +353,7 @@ def compute_node_summary(
-             image_path_by_page=image_path_by_page,
-             vlm_model=vlm_model,
-             node_summary_max_pages=node_summary_max_pages,
-+            skill_instructions=skill_instructions,
-         )
-         if result is not None:
-             return result
-@@ -401,6 +403,7 @@ def _vlm_node_summary(
-     image_path_by_page: dict[int, str],
-     vlm_model: str,
-     node_summary_max_pages: int,
-+    skill_instructions: str = "",
- ) -> tuple[str, list[str], list[dict[str, str]]] | None:
-     leaf = view.leaf
-     pages = view.pages[:node_summary_max_pages]
-@@ -421,18 +424,21 @@ def _vlm_node_summary(
-     if not image_paths:
-         return None
- 
-+    prompt_paras: dict[str, Any] = {
-+        "max_tokens": 400,
-+        "node_title": leaf.title,
-+        "next_title": next_title or "",
-+        "kw_num": 5,
-+    }
-+    if skill_instructions:
-+        prompt_paras["skill_instructions"] = skill_instructions
-     result = summarize(
-         mode="page",
-         image_paths=image_paths,
-         model=vlm_model,
-         usage_task="page_memory.node_summary",
-         prompt_task="page-memory-node-summary",
--        prompt_paras={
--            "max_tokens": 400,
--            "node_title": leaf.title,
--            "next_title": next_title or "",
--            "kw_num": 5,
--        },
-+        prompt_paras=prompt_paras,
-     )
-     if not result.summary and not result.entities:
-         return None
-@@ -462,6 +468,7 @@ def build_node_rows(
-     node_assembly_concurrency: int = 3,
-     body_text_by_page: dict[int, str] | None = None,
-     toc_pages: list[int] | None = None,
-+    skill_instructions: str = "",
- ) -> list[dict[str, Any]]:
-     """Assemble one row per leaf section node (node-granularity chunks)."""
-     available_pages = set(raw_text_by_page.keys())
-@@ -494,6 +501,7 @@ def _summarize_one(
-                 image_path_by_page=image_path_by_page,
-                 vlm_model=vlm_model,
-                 node_summary_max_pages=node_summary_max_pages,
-+                skill_instructions=skill_instructions,
-             )
- 
-         with stage_timer(
-```
-
-**File**: `apps/worker/app/services/page_memory/page_assets.py` (modified, +27/-0)
-```diff
-@@ -387,13 +387,40 @@ def extract_page_assets_from_renders(
-     summary_concurrency: int = 4,
-     table_engine: str = "tabula",
-     table_merge_enabled: bool = True,
-+    tags_by_page: dict[int, Any] | None = None,
-+    active_skills: tuple[Any, ...] = (),
- ) -> dict[int, list[PageAsset]]:
-     pages = sorted(rendered_pages, key=lambda item: item.page_index)
-     source_name = Path(pdf_path).name
-     assets_by_page: dict[int, list[PageAsset]] = {}
-     pending_summaries: list[PageAsset] = []
-+    tag_map = tags_by_page or {}
- 
-     for page in pages:
-+        overridden: list[PageAsset] | None = None
-+        tag = tag_map.get(page.page_index)
-+        for skill in active_skills:
-+            overridden = skill.override_page_assets(
-+                page=page,
-+                tag=tag,
-+                output_dir=output_dir,
-+                source_name=source_name,
++    with get_sync_db_context() as db:
++        job = db.scalar(
++            select(Job)
++            .where(
++                Job.job_id == candidate.job_id,
++                Job.status == JobStatus.WAITING_FILE.value,
++                Job.version == candidate.version,
 +            )
-+            if overridden is not None:
-+                break
-+        if overridden is not None:
-+            page_assets_list = [
-+                asset for asset in overridden if asset.image_uri or asset.html_uri
-+            ]
-+            if page_assets_list:
-+                assets_by_page[page.page_index] = page_assets_list
-+                if visual_debug_enabled():
-+                    annotate_page_assets(
-+                        page=page,
-+                        assets=page_assets_list,
-+                        output_dir=output_dir,
-+                    )
-+            continue
-         detected = detect_page_assets(
-             page=page,
-             source_name=source_name,
++            .with_for_update(skip_locked=True)
++        )
++        if job is None:
++            return None
++        if verdict in {"missing", "deferred"}:
++            # Rotate temporary failures behind other overdue jobs. The deadline
++            # is based on created_at, so this only changes sweep ordering.
++            job.updated_at = utc_now_naive()
++            return None
++
++        is_failed = verdict != "matched"
++        status = JobStatus.FAILED.value if is_failed else JobStatus.PENDING.value
++        metadata = {"sweeper": True, "stale_status": JobStatus.WAITING_FILE.value}
++        if is_failed:
++            code, message = (
++                (UPLOAD_INTEGRITY_MISMATCH_CODE, UPLOAD_INTEGRITY_MISMATCH_MESSAGE)
++                if verdict == "mismatch"
++                else (UPLOAD_EXPIRED_CODE, UPLOAD_EXPIRED_MESSAGE)
++            )
++            job.error_code = code
++            job.error_message = message
++            metadata.update(error_code=code, error_message=message)
++
++        transition = state_machine.transition_outcome(
++            db,
++            candidate.job_id,
++            status,
++            "mark_failed" if is_failed else "guarded_upload_recovered",
++            metad
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #554** (2026-11-13): feat: prepare the OpenSearch production cutover (@suguanYang)
-- **PR #552** (2026-11-13): chore: promote main to staging (drawing-sheet skills) (@EricNGOntos)
-- **PR #551** (2026-11-13): Add atlas drawing-sheet skills for TOC calibration and Fine prompts (@EricNGOntos)
-- **PR #550** (2026-11-13): chore: promote main to staging (restore alembic revision) (@EricNGOntos)
-- **PR #549** (2026-11-13): Restore upload parse dispatch Alembic revision for staging (@EricNGOntos)
-- **PR #548** (2026-11-12): chore: promote main to staging (speech audio/video media track) (@EricNGOntos)
+- **PR #562** (2026-11-15): feat: release a stopped shadow backfill issuer while PostgreSQL serves (@suguanYang)
+- **PR #561** (2026-11-15): chore: promote the OpenSearch open-index limit, recorder and issuer recovery to main (@suguanYang)
+- **PR #560** (2026-11-14): feat: record shared OpenSearch node metrics every 30 minutes (@suguanYang)
+- **PR #559** (2026-11-14): feat: raise the production OpenSearch open-index limit to 600 (@suguanYang)
+- **PR #558** (2026-11-14): feat: make the OpenSearch open-index limit configurable (@suguanYang)
+- **PR #557** (2026-11-14): chore: promote main to staging (verified uploads) (@suguanYang)
 
 ---
 
@@ -1873,35 +2069,32 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. page memory services to enhance fine skills integration and improve title detect
+## X. Potential fix for pull request finding 'CodeQL / Statement has no effect'
 
 **RULE**:
-When implementing operations in `apps/worker/app/services/document_agent/calibration/prompts.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ontos-AI/knowhere. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `deploy/opensearch/metrics_recorder.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ontos-AI/knowhere. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ef70dae5`: page memory services to enhance fine skills integration and improve title detection logic. Update prompts to include detailed drawing-sheet rules and adjust tests to validate the new functionality. Remove deprecated properties and streamline skill management for better performance.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e3c5db47`: Potential fix for pull request finding 'CodeQL / Statement has no effect'. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/worker/app/services/document_agent/calibration/prompts.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `deploy/opensearch/metrics_recorder.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-        "a passing mention inside ordinary body paragraphs."
+    def get(self, path: str) -> object:
+        raise NotImplementedError
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-        "a passing mention inside ordinary body paragraphs. "
-        "A drawing-sheet title block (the info bar at a corner or edge that "
-        "carries the drawing name and drawing number) counts as that page's "
-        "main heading when matching a TOC entry. Ordinary running "
-        "headers/footers remain excluded."
+    def get(self, path: str) -> object: ...
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ef70dae5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e3c5db47` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

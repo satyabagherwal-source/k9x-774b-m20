@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T12:54:35.363Z",
-  "total_records": 1048,
+  "last_updated": "2026-11-15T13:09:11.191Z",
+  "total_records": 1050,
   "domains": {
     "A": {
       "total": 7,
@@ -1055,7 +1055,7 @@
       ]
     },
     "K": {
-      "total": 35,
+      "total": 37,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -1091,7 +1091,9 @@
         "domain_intelligence-quality-verification-intelligence-thaw-app-thaw-core-invariants",
         "domain_intelligence-quality-verification-intelligence-open-policy-agent-gatekeeper-core-invariants",
         "domain_intelligence-quality-verification-intelligence-thaw-app-thaw-learnings-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-open-policy-agent-gatekeeper-learnings-core-in"
+        "domain_intelligence-quality-verification-intelligence-open-policy-agent-gatekeeper-learnings-core-in",
+        "domain_intelligence-quality-verification-intelligence-fujiapple852-trippy-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-fujiapple852-trippy-learnings-core-invariants"
       ]
     },
     "L": {
@@ -10562,8 +10564,8 @@
       "title": "Architecture Intelligence: Ontos-AI/knowhere Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ontos-ai-knowhere-architecture-intelligence-ontos-ai-knowhere-core-invariants.md",
       "repository": "Ontos-AI/knowhere",
-      "content_hash": "c2f9aaca0e75ca2f2280d7794b13077d51dffa803e3237cb524719451ee13a33",
-      "created_at": "2026-11-13T23:28:52.389Z"
+      "content_hash": "343a207e3add8af97081ef948f324796996cd4c43710afdc5a04ef6c94bde86e",
+      "created_at": "2026-11-15T13:09:06.951Z"
     },
     "DOM-J-44A35728": {
       "record_id": "DOM-J-44A35728",
@@ -10628,8 +10630,8 @@
       "title": "Architecture Intelligence: ontos-ai-knowhere-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ontos-ai-knowhere-learnings-architecture-intelligence-ontos-ai-knowhere-learning.md",
       "repository": "ontos-ai-knowhere-learnings",
-      "content_hash": "b178ead341794932f7f59642d02445a86ee86f8133f2850bdfd257b3eb70c4cc",
-      "created_at": "2026-11-13T23:29:25.115Z"
+      "content_hash": "1ef90e4aa850741220571af7fd63cbc48eca851bda76d91ae4e659ef77927af6",
+      "created_at": "2026-11-15T13:09:11.191Z"
     },
     "domain_intelligence-deployment-operations-intelligence-gardener-gardener-core-invariants": {
       "record_id": "domain_intelligence-deployment-operations-intelligence-gardener-gardener-core-invariants",
@@ -11096,8 +11098,8 @@
       "title": "Content & Information Intelligence: pingcap/tidb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pingcap-tidb-content-information-intelligence-pingcap-tidb-core-invariants.md",
       "repository": "pingcap/tidb",
-      "content_hash": "5ef3dc8b38cd1ff456cdeb091edd17de690c4673f4a67233430da4847812f1fb",
-      "created_at": "2026-11-14T01:26:21.203Z"
+      "content_hash": "f0e366dad0db3a3a2fb43151e3ab6b6090023d4a23fa60cce36cded928224943",
+      "created_at": "2026-11-15T13:09:01.278Z"
     },
     "domain_intelligence-architecture-intelligence-dathere-qsv-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-dathere-qsv-core-invariants",
@@ -11165,8 +11167,8 @@
       "title": "Content & Information Intelligence: pingcap-tidb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pingcap-tidb-learnings-content-information-intelligence-pingcap-tidb-learnings-c.md",
       "repository": "pingcap-tidb-learnings",
-      "content_hash": "e10c0257ac9bc0467ecd9c985f3e8b4cdcd91f64b13fcdb4c40ba8cad2937bed",
-      "created_at": "2026-11-14T01:26:58.724Z"
+      "content_hash": "2f25bc0cd1f798b9ef6742fa2e197031c135da35918b0819525a0f324725a93b",
+      "created_at": "2026-11-15T13:09:10.757Z"
     },
     "domain_intelligence-architecture-intelligence-dathere-qsv-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-dathere-qsv-learnings-core-invariants",
@@ -20133,6 +20135,24 @@
       "repository": "mochidiffusion-mochidiffusion-learnings",
       "content_hash": "32f4bc1e274ab97156809c66a1ccddc718846b70ca821b4a5c36fbcb2d34082b",
       "created_at": "2026-11-15T12:54:34.261Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-fujiapple852-trippy-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-fujiapple852-trippy-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: fujiapple852/trippy Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-fujiapple852-trippy-quality-verification-intelligence-fujiapple852-trippy-core-i.md",
+      "repository": "fujiapple852/trippy",
+      "content_hash": "c894e9379456a7ae301137b9a15d39a75c63be9753ac68931b4b4d1595279dfd",
+      "created_at": "2026-11-15T13:08:57.474Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-fujiapple852-trippy-learnings-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-fujiapple852-trippy-learnings-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: fujiapple852-trippy-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-fujiapple852-trippy-learnings-quality-verification-intelligence-fujiapple852-tri.md",
+      "repository": "fujiapple852-trippy-learnings",
+      "content_hash": "6501cdb1f8ea33dcea57f6d3c4902212556db439ee6080e0e9a610a5b53d9be9",
+      "created_at": "2026-11-15T13:09:10.169Z"
     }
   }
 }

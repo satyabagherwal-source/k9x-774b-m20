@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-15T12:54:30.835Z",
+  "last_updated": "2026-11-15T13:09:06.688Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3576,14 +3576,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ontos-ai-knowhere",
-      "content_hash": "fcb34bc0efbd06692340ffc7bdb8532882805213e01a8822f817364d03898b41",
-      "verified_at": "2026-11-13T23:28:52.140Z",
+      "content_hash": "7e8cb2b2b731fd718ebbeb591bf664e50006ccc836589329ef60ee05b8fa143a",
+      "verified_at": "2026-11-15T13:09:06.687Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T23:28:52.140Z"
+      "last_updated": "2026-11-15T13:09:06.687Z"
     },
     "Bitterbot-AI/bitterbot-desktop": {
       "repository": "Bitterbot-AI/bitterbot-desktop",
@@ -6861,14 +6861,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fujiapple852-trippy",
-      "content_hash": "7c1b7452254e361efc28f520b19648c80845a97a68dc559e32be891d8be50bbc",
-      "verified_at": "2026-10-25T16:15:24.440Z",
+      "content_hash": "ef6b98551c1aace4ac9c5906f029a5585d68c99c383d15dcecf371c54ad32cc5",
+      "verified_at": "2026-11-15T13:08:57.218Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T16:15:24.440Z"
+      "last_updated": "2026-11-15T13:08:57.218Z"
     },
     "BuilderIO/builder": {
       "repository": "BuilderIO/builder",
@@ -10701,14 +10701,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pingcap-tidb",
-      "content_hash": "20b38ab38e9ac2f9f73eee0bbee5ded34e795122431f1d3d5e50847f820848fd",
-      "verified_at": "2026-11-14T01:26:20.945Z",
+      "content_hash": "371369efeac5c632ebb64e5e8bd6deeac9500b10b63392631eff27fd0ac77dff",
+      "verified_at": "2026-11-15T13:09:01.015Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T01:26:20.945Z"
+      "last_updated": "2026-11-15T13:09:01.015Z"
     },
     "neondatabase/neon": {
       "repository": "neondatabase/neon",

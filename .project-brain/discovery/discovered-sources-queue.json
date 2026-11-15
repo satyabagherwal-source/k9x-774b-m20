@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T12:54:34.669Z",
+  "updated_at": "2026-11-15T13:09:10.507Z",
   "stats": {
-    "total_discovered": 3696,
-    "approved_pending_harvest": 3486,
+    "total_discovered": 3705,
+    "approved_pending_harvest": 3495,
     "harvested_count": 0,
     "rejected_count": 210,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3465,
+      "COMMUNITY_AND_EXPERT": 3474,
       "OFFICIAL_DOCUMENTATION": 126,
       "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
@@ -79863,6 +79863,204 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
         "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-2104F66ED0FF": {
+      "id": "SRC-2104F66ED0FF",
+      "url": "https://github.com/fujiapple852/trippy",
+      "title": "https://github.com/fujiapple852/trippy",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T13:09:09.792Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fujiapple852-trippy-learnings.md",
+        "fileName": "fujiapple852-trippy-learnings.md"
+      }
+    },
+    "SRC-07DC8780BA07": {
+      "id": "SRC-07DC8780BA07",
+      "url": "https://en.wikipedia.org/wiki/Equal-cost_multi-path_routing",
+      "title": "https://en.wikipedia.org/wiki/Equal-cost_multi-path_routing",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T13:09:09.817Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fujiapple852-trippy-learnings.md",
+        "fileName": "fujiapple852-trippy-learnings.md"
+      }
+    },
+    "SRC-6B6A33BBCB6A": {
+      "id": "SRC-6B6A33BBCB6A",
+      "url": "https://github.com/libparistraceroute/libparistraceroute/wiki/Checksum",
+      "title": "https://github.com/libparistraceroute/libparistraceroute/wiki/Checksum",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T13:09:09.839Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fujiapple852-trippy-learnings.md",
+        "fileName": "fujiapple852-trippy-learnings.md"
+      }
+    },
+    "SRC-E7C640F439A3": {
+      "id": "SRC-E7C640F439A3",
+      "url": "https://github.com/insomniacslk/dublin-traceroute",
+      "title": "https://github.com/insomniacslk/dublin-traceroute",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T13:09:09.860Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fujiapple852-trippy-learnings.md",
+        "fileName": "fujiapple852-trippy-learnings.md"
+      }
+    },
+    "SRC-BA3682970F3E": {
+      "id": "SRC-BA3682970F3E",
+      "url": "https://trippy.rs/",
+      "title": "https://trippy.rs/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T13:09:09.881Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fujiapple852-trippy-learnings.md",
+        "fileName": "fujiapple852-trippy-learnings.md"
+      }
+    },
+    "SRC-9F5F26221AC4": {
+      "id": "SRC-9F5F26221AC4",
+      "url": "https://github.com/fujiapple852/trippy/actions/runs/24526729292/job/71766060138",
+      "title": "https://github.com/fujiapple852/trippy/actions/runs/24526729292/job/71766060138",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T13:09:09.901Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fujiapple852-trippy-learnings.md",
+        "fileName": "fujiapple852-trippy-learnings.md"
+      }
+    },
+    "SRC-7DDF8265469A": {
+      "id": "SRC-7DDF8265469A",
+      "url": "https://git.k8s.io/community/contributors/guide/release-notes.md",
+      "title": "https://git.k8s.io/community/contributors/guide/release-notes.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T13:09:10.435Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
+        "fileName": "pingcap-tidb-learnings.md"
+      }
+    },
+    "SRC-31574790342F": {
+      "id": "SRC-31574790342F",
+      "url": "https://github.com/kubernetes-sigs/prow/issues/new?title=Prow+issue",
+      "title": "https://github.com/kubernetes-sigs/prow/issues/new?title=Prow+issue",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T13:09:10.466Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
+        "fileName": "pingcap-tidb-learnings.md"
+      }
+    },
+    "SRC-88E0FF311C14": {
+      "id": "SRC-88E0FF311C14",
+      "url": "https://pingcap.github.io/tidb-dev-guide/contribut",
+      "title": "https://pingcap.github.io/tidb-dev-guide/contribut",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T13:09:10.507Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
+        "fileName": "pingcap-tidb-learnings.md"
       }
     }
   }

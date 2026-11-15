@@ -10093,3 +10093,6 @@
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T12:36:57.559Z` | `hf-sensenova-sensenova-loop-9b-preview` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-20A9ABE9` [Domain D] | Yes (`02883ae2...`) |
 | `CYCLE-20261115-6HTM` | `2026-11-15T12:54:21.370Z` | `MochiDiffusion/MochiDiffusion` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8613` | Yes (`cde4890f...`) |
 | `CYCLE-20261115-6P49` | `2026-11-15T12:54:30.825Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8614` | Yes (`17b6bffe...`) |
+| `CYCLE-20261115-P9MF` | `2026-11-15T13:08:57.207Z` | `fujiapple852/trippy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8615` | Yes (`ef6b9855...`) |
+| `CYCLE-20261115-PCJV` | `2026-11-15T13:09:01.003Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8616` | Yes (`371369ef...`) |
+| `CYCLE-20261115-PGXG` | `2026-11-15T13:09:06.676Z` | `Ontos-AI/knowhere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8617` | Yes (`7e8cb2b2...`) |

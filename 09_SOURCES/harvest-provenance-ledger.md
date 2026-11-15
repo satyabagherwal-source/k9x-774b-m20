@@ -10126,3 +10126,6 @@ Every entry in this ledger must capture:
 | `learn-dom-d-20a9abe9` | `project://hf-sensenova-sensenova-loop-9b-preview` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-sensenova-sensenova-loop-9b-preview-learnings.md` | 2026-11-15T12:36:57.559Z |
 | `learn-github-mochidiffusion-mochidiffusion` | `https://github.com/MochiDiffusion/MochiDiffusion` | `e9e0d755` | Multi-dimensional audit evidence | 2026-11-15T12:54:21.373Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `4ec3d2c8` | Multi-dimensional audit evidence | 2026-11-15T12:54:30.828Z |
+| `learn-github-fujiapple852-trippy` | `https://github.com/fujiapple852/trippy` | `2dd303a1` | Multi-dimensional audit evidence | 2026-11-15T13:08:57.210Z |
+| `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `eca4674a` | Multi-dimensional audit evidence | 2026-11-15T13:09:01.007Z |
+| `learn-github-ontos-ai-knowhere` | `https://github.com/Ontos-AI/knowhere` | `208f3fc1` | Multi-dimensional audit evidence | 2026-11-15T13:09:06.680Z |
