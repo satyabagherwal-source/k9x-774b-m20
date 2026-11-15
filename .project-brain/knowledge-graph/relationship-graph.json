@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-15T20:23:09.700Z",
+  "updated_at": "2026-11-15T20:51:39.372Z",
   "statistics": {
-    "total_nodes": 267,
+    "total_nodes": 268,
     "total_edges": 142,
     "domain_distribution": {
       "D": 210,
       "M": 1,
       "H": 23,
       "J": 10,
-      "K": 11,
+      "K": 12,
       "L": 3,
       "G": 1,
       "F": 6,
@@ -5993,6 +5993,28 @@
       ],
       "created_at": "2026-11-15T20:23:09.700Z",
       "updated_at": "2026-11-15T20:23:09.700Z"
+    },
+    "DOM-K-9BB3D64B": {
+      "id": "DOM-K-9BB3D64B",
+      "domain": "K",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "ci: fix macOS Service Unit timeouts (reuse e2e build, warm cache)",
+      "summary": "Prevents defects observed in production commit `66b4a932`: ci: fix macOS Service Unit timeouts (reuse e2e build, warm cache). Unvalidated ex -> When implementing operations in `.github/scripts/check_cache_warm_parity.py`, engineers MUST enforce rigorous boundary validation, safe stat",
+      "confidence": 0.64,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://freenet-freenet-core/freenet-freenet-core-learnings.md",
+        "source_version": "fdc05210",
+        "observed_at": "2026-11-15T20:51:00.903Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (freenet-freenet-core)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "K",
+        "Quality & Verification Intelligence"
+      ],
+      "created_at": "2026-11-15T20:51:39.372Z",
+      "updated_at": "2026-11-15T20:51:39.372Z"
     }
   },
   "edges": [

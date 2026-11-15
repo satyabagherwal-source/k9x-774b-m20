@@ -4,22 +4,22 @@
 {
   "source_repository": "dathere/qsv",
   "source_url": "https://github.com/dathere/qsv",
-  "source_version": "6aa325ba",
+  "source_version": "3af21c2b",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-15T19:45:45.487Z",
+  "timestamp": "2026-11-15T20:51:05.562Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dathere-qsv",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `6aa325ba`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-15T19:45:45.487Z`  
+> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `3af21c2b`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-15T20:51:05.562Z`  
 > **Learning ID**: `learn-github-dathere-qsv`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `dathere/qsv` (Commit: `6aa325ba`)
+- **Target Repository**: `dathere/qsv` (Commit: `3af21c2b`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T19:45:44.698Z  
+> **Harvest Timestamp**: 2026-11-15T20:51:04.504Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2212,209 +2212,54 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6aa325ba` (2026-11-15)
-**Commit Message**: docs(changelog): 29.0.0 Performance section from the benchmark run
+### Incident Patch 1: `3af21c2b` (2026-11-15)
+**Commit Message**: docs(changelog): link the SARIF example, wiki walk-through and sample repo
 
-Same text as the Performance section in the 29.0.0 release notes:
-stats --everything, searchset, luau, joinp and to ods gains, and plain
-stats about 4% slower, measured against 28.0.0 on the same benchmark box.
+Same links as the 29.0.0 release notes: the example workflow, the wiki's
+#sarif walk-through, and jqnatividad/qsv-sarif-test with its PR #1.
+
+[skip ci]
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `CHANGELOG.md` (modified, +10/-0)
+**File**: `CHANGELOG.md` (modified, +1/-1)
 ```diff
-@@ -32,6 +32,16 @@ Also in this release:
+@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
- This is a major release because some `sqlp`, `validate`, `profile --strict`, `luau` and `stats` results and exit codes change. See [Breaking Changes](#v29-breaking-changes). The MSRV is now Rust 1.100.
+ ~104 commits since 28.0.0, and the theme is **correctness**. We develop qsv with the latest models from Anthropic and review every change adversarially with OpenAI's. [Codacy](https://www.codacy.com) adds one more layer of correctness review on top of that. Thanks to their generosity, we have free access to their platform. With all three, we swept several core commands for correctness: `stats` and `moarstats`, `luau`, `profile`, `scoresql`, `sqlp --format avro`, and every command that reads piped stdin. Thank you, Codacy!
  
-+### ⚡ Performance
-+
-+Measured with qsv's benchmark suite, using the same machine, dataset and build type as 28.0.0: a Mac mini (M2 Pro, 12 cores, 32 GiB), 1M rows × 41 columns of NYC 311 data (520 MB), and the prebuilt PGO binary. Across 305 benchmarks, the median one is 1.2% faster, 69 are more than 5% faster, and 6 are more than 5% slower. Full results are in the [Benchmarks Data Schematic](https://dathere.github.io/qsv/benchmarks/).
-+
-+- **`stats --everything` is 12–28% faster and uses 13–24% less memory** ([#5011](https://github.com/dathere/qsv/pull/5011), [#5013](https://github.com/dathere/qsv/pull/5013)). A full pass over the dataset drops from 2.41 s to 2.02 s, and from 0.55 s to 0.39 s with an index. `stats --cardinality` is 15% faster and uses 20% less memory. Commands that run `stats` internally gain as well: `schema` is 11% faster and `synthesize` 13% faster. Plain `stats` (without `--everything` or `--cardinality`) is about 4% slower: 1.04 s → 1.08 s.
-+- **`searchset` is 11–12% faster, uses half the CPU time, and peaks at 22 MiB instead of ~990 MiB** ([#5012](https://github.com/dathere/qsv/pull/5012)). It no longer counts every row up front unless the progress bar is on.
-+- **`luau` scripts are 9–11% faster** with Luau 0.745 ([#5026](https://github.com/dathere/qsv/pull/5026)). `luau filter` is unchanged.
-+- **`joinp` is 5–12% faster** with the newer Polars ([#5055](https://github.com/dathere/qsv/pull/5055) and earlier bumps).
-+- **`to ods` is 41% faster**, taking 16.2 s instead of 27.6 s.
-+
- ### 🙏 Contributors
+-- **`validate --sarif` writes JSON Schema errors as a [SARIF 2.1.0](https://www.oasis-open.org/standard/sarif-v2-1-0/) log** ([#5031](https://github.com/dathere/qsv/pull/5031)). Though SARIF is typically used for static analysis of code, we're now using it to report validation errors in a standardized format, with an example GitHub Actions workflow that uploads them to GitHub code scanning. This sets the stage for integrating qsv's validation capabilities into Datapusher+, CI/CD pipelines and other automated workflows.
++- **`validate --sarif` writes JSON Schema errors as a [SARIF 2.1.0](https://www.oasis-open.org/standard/sarif-v2-1-0/) log** ([#5031](https://github.com/dathere/qsv/pull/5031)). Though SARIF is typically used for static analysis of code, we're now using it to report validation errors in a standardized format, with an [example GitHub Actions workflow](https://github.com/dathere/qsv/tree/master/resources/examples/validate-sarif) that uploads them to GitHub code scanning. See the [wiki walk-through](https://github.com/dathere/qsv/wiki/Validation-and-Schema#sarif) and the [sample repo](https://github.com/jqnatividad/qsv-sarif-test) where the workflow raised code scanning alerts, including on a [pull request](https://github.com/jqnatividad/qsv-sarif-test/pull/1). This sets the stage for integrating qsv's validation capabilities into Datapusher+, CI/CD pipelines and other automated workflows.
+ - **`stats` no longer crashes on `NaN` cells** ([#5053](https://github.com/dathere/qsv/pull/5053)). If you run `stats` on data written by pandas or numpy, upgrade. In qsv 28.0.0 and 27.0.1, `stats --median`, `--quartiles` or `--everything` panicked on a float column of a few hundred rows or more that holds a `NaN`, `nan` or `NAN` cell, which is how pandas and numpy write missing values. So did `moarstats`, which runs `stats`. On smaller columns, the `sum` came out empty and the quartiles, MAD, IQR, fences and percentiles were empty or shifted. Every numeric statistic now skips `NaN` cells, as the mean and `--quantile-method approx` already did. A `NaN` cell still counts as a value for `nullcount`, `sparsity` and `cardinality`.
  
- Thanks to everyone who made 29.0.0 possible:
+ Also in this release:
 ```
 
 ---
 
-### Incident Patch 2: `359c4b36` (2026-11-15)
-**Commit Message**: bench: use the long-view chart as the wiki hero image (#5061)
+### Incident Patch 2: `3b7b3f04` (2026-11-15)
+**Commit Message**: docs(validate): --fail-fast still writes the SARIF log
 
-* bench: use the long-view chart as the wiki hero image
+The SARIF notes said any run that stops early writes no SARIF file.
+Only a run that stops with an error does (a CSV read error, or a ragged
+row without --split-ragged). --fail-fast breaks out of the batch loop
+and still writes the results for the rows it validated. roborev 6531.
 
-hero.png was the index-advantage bar chart. It is now a headless-Chrome
-screenshot of the rendered "long view" chart (trend.html), which shows
-throughput across every release on a log axis. It is a screenshot
-rather than a `qsv viz -o hero.png` render because the trend chart's
-log y-axis is patched into its HTML after rendering (set_log_y), and
-`viz line` has no flag for it. Chrome is found via BROWSER_PATH, the
-macOS app bundle, then PATH; without one the hero is skipped as before.
-
-index.html changes only in its "view on GitHub" source-line links,
-which moved with the script.
+[skip ci]
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* bench: link the wiki hero image to the live long-view chart (#trend)
-
-GitHub's wiki strips <script> and <iframe>, so the live Plotly chart
-can't be embedded there. Clicking the thumbnail now opens the
-interactive long view directly instead of the top of the Data Schematic.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `benchmarks/Benchmarks.wiki.md` (modified, +1/-1)
+**File**: `docs/Validate.md` (modified, +1/-1)
 ```diff
-@@ -20,7 +20,7 @@ schema-cache knob, throughput across every release, deep-dives into four flagshi
- commands (`stats`, `frequency`, `validate` and `moarstats`) showing they grew features
- without losing speed, and this release's biggest speedups.
+@@ -163,7 +163,7 @@ The usual `sales.csv.validation-errors.tsv` report is still written. The SARIF l
+ * `startLine` is the file line where the row starts, not the row number. Row 2's quoted `notes` field spans two lines, so row 3 starts on line 5.
+ * `uri` is relative to the root of the git checkout the CSV is in (here, the qsv repo), so results point at the right file wherever qsv runs. Outside a checkout, it is relative to the current directory.
+ * The log is written even when every row is valid (with no results), so a CI run clears earlier alerts.
+-* A run that stops early writes no SARIF file, and removes one left by an earlier run. Without `--split-ragged`, a row with the wrong number of fields stops validation, which is why the example uses it.
++* A run that stops with an error writes no SARIF file, and removes one left by an earlier run. That happens on a CSV read error, or on a row with the wrong number of fields when `--split-ragged` isn't set, which is why the example uses it. `--fail-fast` is different: it stops after the first batch with an invalid row, but still writes the results for the rows it validated.
+ * Output stops at 25,000 results by default, GitHub code scanning's limit per run. `--sarif-max-results <n>` sets another cap, and 0 means no limit.
+ * `--sarif` works only in JSON Schema mode with a file input. RFC 4180 mode and stdin reject it.
  
--[![qsv benchmark Data Schematic](https://dathere.github.io/qsv/benchmarks/hero.png)](https://dathere.github.io/qsv/benchmarks/)
-+[![qsv benchmark Data Schematic](https://dathere.github.io/qsv/benchmarks/hero.png)](https://dathere.github.io/qsv/benchmarks/#trend)
- 
- > **Note:** cross-version numbers are not strictly apples-to-apples — commands gain features
- > over time. Treat the historical trend as a broad trajectory, not an exact speedup.
-```
-
-**File**: `benchmarks/index.html` (modified, +13/-13)
-```diff
-@@ -64,7 +64,7 @@ <h2 id=index_advantage>The index advantage<a class=anchor href='#index_advantage
-                 &quot;Build an index once and qsv can skip the opening scan on every run after. &quot;
-                 f&quot;The payoff is lopsided — {ip_span} on this run, and next to nothing for &quot;
-                 &quot;streaming commands, so only the pairs where an index actually moves the &quot;
--                &quot;needle are shown here.&quot;))</code></pre><a class=srclink href='https://github.com/dathere/qsv/blob/master/scripts/gen_benchmark_viz.py#L794-L801' target=_blank rel=noopener>view on GitHub ↗ (gen_benchmark_viz.py, lines 794–801)</a></details>
-+                &quot;needle are shown here.&quot;))</code></pre><a class=srclink href='https://github.com/dathere/qsv/blob/master/scripts/gen_benchmark_viz.py#L810-L817' target=_blank rel=noopener>view on GitHub ↗ (gen_benchmark_viz.py, lines 810–817)</a></details>
- </section>
- <section>
- <h2 id=count_callout>count with an index is effectively instant<a class=anchor href='#count_callout' aria-label='Permalink to “count with an index is effectively instant”'>#</a></h2>
-@@ -78,7 +78,7 @@ <h2 id=count_callout>count with an index is effectively instant<a class=anchor h
-                 f&quot;it reads a row count qsv already stored, {c_jump}. It sits on its own axis &quot;
-                 &quot;precisely because that number would flatten every other bar on the page. The &quot;
-                 &quot;un-indexed bar scans the file to count it, so it tracks whatever the current &quot;
--                &quot;scan path costs; the indexed bar reads the stored count and does not.&quot;))</code></pre><a class=srclink href='https://github.com/dathere/qsv/blob/master/scripts/gen_benchmark_viz.py#L809-L817' target=_blank rel=noopener>view on GitHub ↗ (gen_benchmark_viz.py, lines 809–817)</a></details>
-+                &quot;scan path costs; the indexed bar reads the stored count and does not.&quot;))</code></pre><a class=srclink href='https://github.com/dathere/qsv/blob/master/scripts/gen_benchmark_viz.py#L825-L833' target=_blank rel=noopener>view on GitHub ↗ (gen_benchmark_viz.py, lines 825–833)</a></details>
- </section>
- <section>
- <h2 id=index_superpowers>The index superpowers<a class=anchor href='#index_superpowers' aria-label='Permalink to “The index superpowers”'>#</a></h2>
-@@ -94,7 +94,7 @@ <h2 id=index_superpowers>The index superpowers<a class=anchor href='#index_super
-                 f&quot;cached statistics. That&#x27;s a different order of magnitude: {sp_top_cmd} leads at &quot;
-                 f&quot;{sp_top_x:.0f}x faster, with the rest of the seek-and-reuse tier &quot;
-                 f&quot;{min(sp_rest):.0f}x to {max(sp_rest):.0f}x faster — versus the low single &quot;
--                &quot;digits for the scan-skippers above.&quot;))</code></pre><a class=srclink href='https://github.com/dathere/qsv/blob/master/scripts/gen_benchmark_viz.py#L823-L833' target=_blank rel=noopener>view on GitHub ↗ (gen_benchmark_viz.py, lines 823–833)</a></details>
-+                &quot;digits for the scan-skippers above.&quot;))</code></pre><a class=srclink href='https://github.com/dathere/qsv/blob/master/scripts/gen_benchmark_viz.py#L839-L849' target=_blank rel=noopener>view on GitHub ↗ (gen_benchmark_viz.py, lines 839–849)</a></details>
- </section>
- <section>
- <h2 id=sqlp_tuning>sqlp tuning: the schema-cache knob<a class=anchor href='#sqlp_tuning' aria-label='Permalink to “sqlp tuning: the schema-cache knob”'>#</a></h2>
-@@ -107,7 +107,7 @@ <h2 id=sqlp_tuning>sqlp tuning: the schema-cache knob<a class=anchor href='#sqlp
-                 &quot;sqlp_tuning&quot;, &quot;sqlp tuning: the schema-cache knob&quot;,
-                 &quot;sqlp infers a schema before it runs. Cache that schema and the re-inference &quot;
-                 &quot;cost disappears on the next query — worth about a third more throughput on &quot;
--                &quot;these aggregations, for a one-line option.&quot;))</code></pre><a class=srclink href='https://github.com/dathere/qsv/blob/master/scripts/gen_benchmark_viz.py#L834-L841' target=_blank rel=noopener>view on GitHub ↗ (gen_benchmark_viz.py, lines 834–841)</a></details>
-+                &quot;these aggregations, for a one-line option.&quot;))</code></pre><a class=srclink href='https://github.com/dathere/qsv/blob/master/scripts/gen_benchmark_viz.py#L850-L857' target=_blank rel=noopener>view on GitHub ↗ (gen_benchmark_viz.py, lines 850–857)</a></details>
- </section>
- <section>
- <h2 id=trend>The long view — every release<a class=anchor href='#trend' aria-label='Permalink to “The long view — every release”'>#</a></h2>
-@@ -133,7 +133,7 @@ <h2 id=trend>The long view — every release<a class=anchor href='#trend' aria-l
-                 &quot;on a log axis a constant multiple reads as a constant vertical gap. Broad &quot;
-                 &quot;trajectory only (see the note above); count and moarstats are omitted for &quot;
-            
-```
-
-**File**: `scripts/gen_benchmark_viz.py` (modified, +34/-18)
-```diff
-@@ -21,8 +21,9 @@
- Set QSV_BIN to point at a specific binary; otherwise target/{debug,release}/qsv or a
- `qsv` on PATH is used.
- 
--A static PNG (benchmarks/hero.png) for the Wiki thumbnail is rendered best-effort via the
--`viz_static` feature (needs a local Chrome/Firefox); it's skipped gracefully if unavailable.
-+A static PNG (benchmarks/hero.png) for the Wiki thumbnail — the "long view" chart — is a
-+best-effort headless-Chrome screenshot of benchmarks/trend.html (set BROWSER_PATH for a
-+non-default Chrome/Chromium); it's skipped gracefully if no browser is found.
- 
- Publishing the Wiki "Benchmarks" page is a separate MANUAL step (the wiki is its own
- repo and interactive Plotly can't render in wiki markdown, which strips <script>):
-@@ -697,7 +698,7 @@ def build_index(figs, info):
- commands (`stats`, `frequency`, `validate` and `moarstats`) showing they grew features
- without losing speed, and this release's biggest speedups.
- 
--[![qsv benchmark Data Schematic]({url}hero.png)]({url})
-+[![qsv benchmark Data Schematic]({url}hero.png)]({url}#trend)
- 
- > **Note:** cross-version numbers are not strictly apples-to-apples — commands gain features
- > over time. Treat the historical trend as a broad trajectory, not an exact speedup.
-@@ -716,22 +717,37 @@ def write_wiki_stub(info, total):
-         fh.write(md)
- 
- 
--def render_hero(index_src):
--    """Best-effort static PNG (benchmarks/hero.png) for the Wiki thumbnail — the index-advantage
--    chart. Needs the `viz_static` feature + a local Chrome/Firefox (webdriver auto-downloads), so
--    it is skipped gracefully if unavailable (the interactive Data Schematic never needs it)."""
-+def find_chrome():
-+    """BROWSER_PATH (the same override `qsv viz` honors), the macOS app bundle, then PATH."""
-+    candidates = [os.environ.get("BROWSER_PATH"),
-+                  "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-+                  *(shutil.which(n) for n in ("google-chrome", "google-chrome-stable",
-+                                              "chromium", "chromium-browser", "chrome"))]
-+    return next((c for c in candidates if c and os.access(c, os.X_OK)), None)
-+
-+
-+def render_hero():
-+    """Best-effort static PNG (benchmarks/hero.png) for the Wiki thumbnail — a headless-Chrome
-+    screenshot of the rendered "long view" chart (trend.html). A screenshot rather than a
-+    `qsv viz ... -o hero.png` render, because the trend chart's log y-axis is patched into its HTML
-+    after rendering (see set_log_y) and `viz line` has no flag for it. Skipped gracefully when no
-+    Chrome/Chromium is found (the interactive Data Schematic never needs it)."""
-     out = os.path.join(OUT, "hero.png")
--    env = {**os.environ, "QSV_PROGRESSBAR": "0"}
-+    chrome = find_chrome()
-+    if not chrome:
-+        print("NOTE: skipped hero.png (no Chrome/Chromium found; set BROWSER_PATH)")
-+        return
-+    # 470 px tall stops just below the x-axis title, leaving out the page's notices footer.
-+    # trend.html loads plotly.js from its CDN, so the budget covers that fetch plus the render.
-+    cmd = [chrome, "--headless=new", "--disable-gpu", "--hide-scrollbars",
-+           "--window-size=1200,470", "--virtual-time-budget=15000", f"--screenshot={out}",
-+           "file://" + os.path.abspath(os.path.join(OUT, "trend.html"))]
-     try:
--        subprocess.run([QSV, "viz", "bar", index_src, "--x", "command", "--y", "recs_per_sec",
--                        "--series", "index_status", "--width", "1200", "--height", "600",
--                        "--title", "The index advantage — qsv throughput with vs without an index",
--                        "--y-title", "records/sec", "-o", out],
--                       check=True, capture_output=True, text=True, env=env)
--        print("Wrote hero.png (static PNG for the Wiki)")
--    except subprocess.CalledProcessError as e:
--        print(f"NOTE: skipped hero.png (viz_static/browser unavailable): "
--              f"{(e.stderr or '').strip().splitlines()[-1] if e.stderr else e}")
-+        subprocess.run(cmd, check=True, capture_output=True, text=True, timeout=120)
-+    except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as e:
-+        print(f"NOTE: skipped hero.png (headless Chrome screenshot failed): {e}")
-+        return
-+    print("Wrote hero.png (static PNG of the long-view chart for the Wiki)")
- 
- 
- def count_rows(path):
-@@ -993,7 +1009,7 @@ def main():
-                     "every point charted here is visible."))
- 
-     build_index(figs, info)
--    render_hero(index_src)
-+    render_hero()
-     write_wiki_stub(info, total)
-     shutil.rmtree(TMP, ignore_errors=True)
-     print(f"Wrote {len(figs)} charts + index.html to {OUT}")
 ```
 
 #### Recent Merged Pull Requests:
@@ -2443,13 +2288,13 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(changelog): 29.0.0 Performance section from the benchmark run
+## X. docs(changelog): link the SARIF example, wiki walk-through and sample repo
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6aa325ba`: docs(changelog): 29.0.0 Performance section from the benchmark run. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3af21c2b`: docs(changelog): link the SARIF example, wiki walk-through and sample repo. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2457,23 +2302,17 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-### ⚡ Performance
-
-Measured with qsv's benchmark suite, using the same machine, dataset and build type as 28.0.0: a Mac mini (M2 Pro, 12 cores, 32 GiB), 1M rows × 41 columns of NYC 311 data (520 MB), and the prebuilt PGO binary. Across 305 benchmarks, the median one is 1.2% faster, 69 are more than 5% faster, and 6 are more than 5% slower. Full results are in the [Benchmarks Data Schematic](https://dathere.github.io/qsv/benchmarks/).
-
-- **`stats --everything` is 12–28% faster and uses 13–24% less memory** ([#5011](https://github.com/dathere/qsv/pull/5011), [#5013](https://github.com/dathere/qsv/pull/5013)). A full pass over the dataset drops from 2.41 s to 2.02 s, and from 0.55 s to 0.39 s with an index. `stats --cardinality` is 15% faster and uses 20% less memory. Commands that run `stats` internally gain as well: `schema` is 11% faster and `synthesize` 13% faster. Plain `stats` (without `--everything` or `--cardinality`) is about 4% slower: 1.04 s → 1.08 s.
-- **`searchset` is 11–12% faster, uses half the CPU time, and peaks at 22 MiB instead of ~990 MiB** ([#5012](https://github.com/dathere/qsv/pull/5012)). It no longer counts every row up front unless the progress bar is on.
-- *
+- **`validate --sarif` writes JSON Schema errors as a [SARIF 2.1.0](https://www.oasis-open.org/standard/sarif-v2-1-0/) log** ([#5031](https://github.com/dathere/qsv/pull/5031)). Though SARIF is typically used for static analysis of code, we're now using it to report validation errors in a standardized format, with an [example GitHub Actions workflow](https://github.com/dathere/qsv/tree/master/resources/examples/validate-sarif) that uploads them to GitHub code scanning. See the [wiki walk-through](https://github.com/dathere/qsv/wiki/Validation-and-Schema#sarif) and the [sample repo](https://github.com/jqnatividad/qsv-sarif-test) where the workflow raised code scanning alerts, including on a [pull request](https://github.com/jqnatividad/qsv-sarif-test/pull/1). This sets the stage for integrating qsv's validation capabilities into Datapusher+, CI/CD pipelines and other automated workflows.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+- **`validate --sarif` writes JSON Schema errors as a [SARIF 2.1.0](https://www.oasis-open.org/standard/sarif-v2-1-0/) log** ([#5031](https://github.com/dathere/qsv/pull/5031)). Though SARIF is typically used for static analysis of code, we're now using it to report validation errors in a standardized format, with an example GitHub Actions workflow that uploads them to GitHub code scanning. This sets the stage for integrating qsv's validation capabilities into Datapusher+, CI/CD pipelines and other automated workflows.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6aa325ba` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3af21c2b` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

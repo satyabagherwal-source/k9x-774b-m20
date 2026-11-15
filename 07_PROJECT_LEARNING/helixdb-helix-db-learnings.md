@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/helixdb-helix-db-learnings.md`  
 > **Source**: github ([https://github.com/HelixDB/helix-db](https://github.com/HelixDB/helix-db))  
-> **Source Version**: `26c3f138`  
+> **Source Version**: `4b0982fd`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T07:30:50.413Z  
+> **Timestamp**: 2026-11-15T20:51:02.542Z  
 > **Learning ID**: `learn-github-helixdb-helix-db`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/helixdb-helix-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/HelixDB/helix-db](https://github.com/HelixDB/helix-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T07:30:50.407Z  
+> **Harvest Timestamp**: 2026-11-15T20:51:02.537Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: HelixDB is an OLTP graph database with native vector and full-text search built in Rust on Object Storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 6289 stars
+- **Stars / Engagement**: 6294 stars
 
 ---
 
@@ -854,10 +854,17 @@ use std::num::NonZeroUsize;
 
 const DEFAULT_SCAN_READ_AHEAD_BYTES: usize = 256 * 1024;
 const DEFAULT_SCAN_FETCH_TASKS: usize = 4;
-const DEFAULT_TOTAL_OPERATION_TASKS: usize = 2;
-const DEFAULT_SECONDARY_TASKS: usize = 2;
+// Secondary steps are mostly durable commits, so tasks overlap their WAL
+// uploads: one tenant's first 122 empty builds take 24 s with eight and 54 s
+// with two (`examples/index_build_throughput.rs`). More vector or text tasks
+// did not help. Every family lane and the queued-publication lane (one task per
+// vector and text task) fits in the total at once, so secondary work never
+// holds the permits vector, text or publication need.
+const DEFAULT_SECONDARY_TASKS: usize = 8;
 const DEFAULT_VECTOR_TASKS: usize = 1;
 const DEFAULT_TEXT_TASKS: usize = 1;
+const DEFAULT_TOTAL_OPERATION_TASKS: usize =
+    DEFAULT_SECONDARY_TASKS + 2 * (DEFAULT_VECTOR_TASKS + DEFAULT_TEXT_TASKS);
 
 /// Invalid runtime throughput policy rejected before lifecycle work starts.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -1068,8 +1075,8 @@ mod tests {
         assert_eq!(tuning.scan().read_ahead_bytes().get(), 256 * 1024);
         assert_eq!(tuning.scan().max_fetch_tasks().get(), 4);
         assert!(!tuning.scan().cache_admission_enabled());
-        assert_eq!(tuning.concurrency().total_operation_tasks().get(), 2);
-        assert_eq!(tuning.concurrency().secondary_tasks().get(), 2);
+        assert_eq!(tuning.concurrency().total_operation_tasks().get(), 12);
+        assert_eq!(tuning.concurrency().secondary_tasks().get(), 8);
         assert_eq!(tuning.concurrency().vector_tasks().get(), 1);
         assert_eq!(tuning.concurrency().text_tasks().get(), 1);
     }
@@ -2078,300 +2085,663 @@ pub(super) fn validate_body(family: QueueFamily, body: &[u8]) -> Result<(), Enco
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `26c3f138` (2026-11-13)
-**Commit Message**: docs: fix audit findings across HelixDB, Cloud, CLI and Foundry (#1298)
+### Incident Patch 1: `4b0982fd` (2026-11-14)
+**Commit Message**: Claim index operations in their tasks and wait once per index DDL request (#1297)
 
-* docs: fix HelixDB start-here and core-concepts pages
+* Time one tenant's first batch of index builds by worker concurrency
 
-- Release notes: add CLI 3.5.0-3.7.0 / Docker v0.0.12-v0.0.16, with the
-  breaking [] empty-return and error-status changes called out; refresh
-  the roadmap's recently shipped list.
-- Installs that work: Rust embedded via a git dependency (crates.io 3.0.0
-  has no embedded feature), Go embedded marked unavailable, TypeScript
-  withDatabaseId needs 3.2.0, Python 3.10+; Verify steps check the
-  reader's project instead of the SDK repo's tests.
-- Local server: no-auth/no-TLS warning, loopback publishing, endpoints and
-  listen-address variables, S3 cache volume in Compose, telemetry opt-out,
-  --disk needs --persist, helix update keeps a project's pinned tag.
-- Embedded: AWS_* credentials, cache config per SDK, one writer per
-  database, request options that are ignored vs rejected.
-- Data model: no relabel operation, no text-analysis settings, tenant
-  property, async vector/text publishing; overview return/encoding rules.
+* Claim index operations in their tasks instead of one at a time in the dispatch loop
 
-* docs: correct query guides and add ordering and pagination
+* Wait for durability once per index DDL request instead of once per create
 
-- New ordering-and-pagination page (order_by, order_by_multiple, skip,
- 
+A write batch of index creates committed and waited for a WAL upload per
+create, so 122 creates took 12 s. Creates from a query now commit applied
+and the request waits once, at its end, for every visible write to be
+durable, failed or not, so it still returns only once its DDL is durable.
 
-**File**: `docs/README.md` (modified, +1/-1)
+* Run eight secondary index tasks by default and prove claims overlap
+
+Claims now commit in their tasks, so secondary steps overlap their WAL
+uploads: a tenant's first 122 empty builds take 12 s at eight tasks
+instead of 41 s at two. Vector and text stay at one; the total is the
+lanes' sum so secondary work never holds the permits they need.
+
+* Let the index build benchmark run against a server over HTTP
+
+* Treat a claim that lost its operation and one that lost a conflict alike
+
+* Give each benchmark run its own labels, so a server's earlier runs never leave them built
+
+* Format the
+
+**File**: `crates/db/examples/index_build_throughput.rs` (added, +275/-0)
 ```diff
-@@ -34,7 +34,7 @@ any name a reader is likely to type. Shortcut sources must not match a live rout
- | --- | --- | --- |
- | HelixDB | Start Here, Core Concepts, Query Guides | The engine in every run mode: setup, SDKs, data model, queries, indexes and search, HTTP API, error codes, troubleshooting |
- | Helix Cloud | Start Here, Connect and automate, Operate | Managed deployments only: account setup, connecting, architecture, MCP, security, tenancy, limits, gateway errors |
--| Helix Foundry | Start Here, Data, Ontologies, Explore, Ask, Workspace, Reference | The hosted Foundry website (foundry.helix-db.com): connecting and syncing sources, documents, generating, loading, exploring and asking ontologies, members and billing |
-+| Helix Foundry | Start Here, Data, Ontologies, Explore, Analyst, Agents, Workspace, Reference | The hosted Foundry website (foundry.helix-db.com): connecting and syncing sources, documents, generating, loading, exploring and asking ontologies, members and billing |
- | CLI Reference | Using the helix CLI, CLI Command Reference | The `helix` CLI: workflows, configuration, and one page per command |
- | Learn | One group per topic | Vendor-neutral explainers that answer one broad question each, such as "What is BM25?" |
- 
+@@ -0,0 +1,275 @@
++//! How long one tenant's first batch of index builds takes, by worker concurrency.
++//!
++//! Opens a fresh disk-backed writer, creates the index set one Helix Foundry
++//! load asks for (112 equality and range indexes, 10 text indexes partitioned
++//! by `foundry_part`) on an empty tenant in one write batch, then polls every
++//! operation until each has succeeded. Prints when each finished.
++//!
++//! `cargo run --release -p db --example index_build_throughput -- <runs>`
++//!
++//! - `IBT_TASKS`: `total,secondary,vector,text` worker tasks (default: the
++//!   database's defaults).
++//! - `IBT_FLUSH_MS`: WAL flush interval (default 100, SlateDB's).
++//! - `IBT_ROOT`: directory for the databases (default a temp dir).
++//! - `IBT_URL`: a running server (`http://host:8080`) to send the same requests
++//!   to over `/v2/query` instead. The server's own
++//!   settings apply, so `IBT_TASKS`, `IBT_FLUSH_MS` and `IBT_ROOT` don't.
++use std::num::NonZeroU64;
++use std::time::{Duration, Instant};
++
++use db::config::{IndexLifecycleConcurrency, IndexLifecycleThroughputTuning};
++use db::encoding::keys::scope::{DataScope, TenantId};
++use db::{HelixDB, HelixDbSource};
++use helix_ast::{batch, index::IndexSpec, query::QueryRequest, traversal};
++
++type Result<T> = std::result::Result<T, Box<dyn std::error::Error + Send + Sync>>;
++
++/// Where the requests go: an embedded writer, or a server over HTTP.
++enum Target {
++    Embedded(HelixDB, DataScope),
++    Http {
++        client: reqwest::Client,
++        url: String,
++        tenant: String,
++    },
++}
++
++impl Target {
++    async fn query(&self, request: QueryRequest) -> Result<serde_json::Value> {
++        match self {
++            Self::Embedded(db, scope) => Ok(db.query_scoped(request, *scope).await?),
++            Self::Http {
++                client,
++                url,
++                tenant,
++            } => {
++                let response = client
++                    .post(format!("{url}/v2/query"))
++                    .header("x-helix-tenant-id", tenant)
++                    .header("content-type", "application/json")
++                    .body(serde_json::to_vec(&request)?)
++                    .send()
++                    .await?;
++                let status = response.status();
++                let body = response.text().await?;
++                if !status.is_success() {
++                    return Err(format!("{status}: {body}").into());
++                }
++                Ok(serde_json::from_str(&body)?)
++            }
++        }
++    }
++}
++
++const OWN_NODES: [&str; 9] = [
++    "FoundryLoad",
++    "FoundryDocument",
++    "FoundrySection",
++    "FoundryMention",
++    "FoundryEvidence",
++    "FoundryReview",
++    "FoundryChunk",
++    "FoundryViolation",
++    "FoundrySwept",
++];
++const OWN_EDGES: [&str; 7] = [
++    "FOUNDRY_IN_DOCUMENT",
++    "FOUNDRY_IN_SECTION",
++    "FOUNDRY_MENTION_OF",
++    "FOUNDRY_FROM_SECTION",
++    "FOUNDRY_FROM_CHUNK",
++    "FOUNDRY_CONCERNS",
++    "FOUNDRY_ABOUT",
++];
++const TYPES: usize = 10;
++const LINKS: usize = 15;
++
++/// The ontology engine's `ensure_indexes` for an ontology of `TYPES` named
++/// types with one name each and `LINKS` links, every label after `prefix`.
++fn foundry_specs(prefix: &str) -> Vec<IndexSpec> {
++    let own = [
++        ("FoundryDocument", "doc_id"),
++        ("FoundryDocument", "content_hash"),
++        ("FoundryDocument", "sweep"),
++        ("FoundryEvidence", "fact_key"),
++        ("FoundryEvidence", "fact_source"),
++        ("FoundryEvidence", "prop_key"),
++        ("FoundryEvidence", "row_entity"),
++        ("FoundryReview", "chunk_key"),
++        ("FoundryReview", "doc_id"),
++        ("FoundryReview", "prop_key"),
++        ("FoundrySwept", "sweep_key"),
++        ("FoundryViolation", "violation_key"),
++        ("FoundryViolation", "constraint"),
++        ("FoundryChunk", "chunk_key"),
++        ("FoundryChunk", "stream"),
++    ]
++    .map(|(label, prop)| IndexSpec::node_equality(format!("{prefix}{label}"), prop))
++    .into_iter()
++    .chain([IndexSpec::node_range(
++        format!("{prefix}FoundryViolation"),
++        "violation_key",
++    )]);
++    let types = (0..TYPES).flat_map(|t| {
++        let ty = format!("{prefix}Type{t}");
++        [
++            IndexSpec::node_equality(&ty, "norm_name"),
++            IndexSpec::node_range(&ty, "norm_name"),
++            IndexSpec::node_equality(&ty, "foundry_part"),
++            IndexSpec::node_equality(&ty, "name__nn"),
++            IndexSpec::node_text(&ty, "name", Some("foundry_part")),
++        ]
++    });
++    let links =
++        (0..LINKS).map(|l| IndexSpec::edge_equality(format!("{prefix}LINK_{l}"), "fact_key"));
++    let loads = OWN_NODES
++        .iter()
++        .map(|l| format!("{prefix}{l}"))
++        .chain((0..TYPES).map(|t| format!("{prefix}Type{t}")))
++        .map(|l| IndexSpec::node_equality(l, "foundry_load"))
++        .chain(
++            OWN_EDGES
++                .iter()
++                .map(|l| format!("{prefix}{
 ```
 
-**File**: `docs/cli/command-reference.mdx` (modified, +31/-17)
+**File**: `crates/db/src/config/index_lifecycle_throughput.rs` (modified, +11/-4)
 ```diff
-@@ -29,7 +29,7 @@ They never accept or store application database keys or service credentials.
- | [`helix stop`](/cli/command-reference/stop) | Local | Stop a local instance and remove its containers |
- | [`helix restart`](/cli/command-reference/restart) | Local | Restart a local instance |
- | [`helix status`](/cli/command-reference/status) | Local, Cloud | Inspect runtime or database status |
--| [`helix doctor`](/cli/command-reference/doctor) | Local, Cloud | Check an instance's setup and recent queries' index use |
-+| [`helix doctor`](/cli/command-reference/doctor) | Local | Check a local or self-hosted server's setup and recent queries' index use. A Cloud database gets only the CLI version check. |
- | [`helix logs`](/cli/command-reference/logs) | Local, Cloud | Follow local logs or list Cloud query errors |
- | [`helix query`](/cli/command-reference/query) | Local, Cloud | Execute one v3 JSON/SDK query |
- | [`helix cypher`](/cli/command-reference/cypher) | Local | Execute or explain one Cypher statement |
-@@ -61,7 +61,7 @@ They never accept or store application database keys or service credentials.
+@@ -24,10 +24,17 @@ use std::num::NonZeroUsize;
  
- ## Global options
+ const DEFAULT_SCAN_READ_AHEAD_BYTES: usize = 256 * 1024;
+ const DEFAULT_SCAN_FETCH_TASKS: usize = 4;
+-const DEFAULT_TOTAL_OPERATION_TASKS: usize = 2;
+-const DEFAULT_SECONDARY_TASKS: usize = 2;
++// Secondary steps are mostly durable commits, so tasks overlap their WAL
++// uploads: one tenant's first 122 empty builds take 24 s with eight and 54 s
++// with two (`examples/index_build_throughput.rs`). More vector or text tasks
++// did not help. Every family lane and the queued-publication lane (one task per
++// vector and text task) fits in the total at once, so secondary work never
++// holds the permits vector, text or publication need.
++const DEFAULT_SECONDARY_TASKS: usize = 8;
+ const DEFAULT_VECTOR_TASKS: usize = 1;
+ const DEFAULT_TEXT_TASKS: usize = 1;
++const DEFAULT_TOTAL_OPERATION_TASKS: usize =
++    DEFAULT_SECONDARY_TASKS + 2 * (DEFAULT_VECTOR_TASKS + DEFAULT_TEXT_TASKS);
  
--These flags work with every command.
-+These flags work with every command, except `-V`, which works only as `helix --version`.
- 
- | Flag | Description |
- | --- | --- |
-@@ -76,21 +76,37 @@ These flags work with every command.
- - stdout carries only the command's result: tables, detail views, query results, one-time tokens, or the `--json` payload. It is always safe to pipe.
- - stderr carries everything else: progress sessions, spinners, warnings, hints, and errors.
- - Destructive Cloud commands (`project delete`, `database delete`, `database key revoke`, `service-credential revoke`) ask for confirmation in a terminal. Without one, or with `--json`, they fail before any request unless you pass `-y`/`--yes`. They never act on an "only candidate" they were not told about: the target must be named, linked in `helix.toml`, or picked in a terminal.
--- Commands whose output is a live terminal session have no JSON result and refuse `--json`: `chef`, `start --foreground`, local `logs`, and `skills install` / `skills list`.
- 
--With `--json`, a failed command prints one JSON object on stderr and exits with status `1`, or `2`
--for invalid arguments. Only `message` is always present:
-+See [Scripting and CI](/cli/scripting) for exit codes, JSON errors, each command's `--json` payload,
-+and the commands that refuse `--json`.
- 
--```json
--{"error":{"message":"...","context":"...","caused_by":"...","hint":"...","candidates":[{"id":"...","name":"..."}]}}
--```
-+## Targets and resolution
-+
-+Instance names come from `helix.toml`. Helix Cloud workspaces, projects, clusters, and databases
-+have their own IDs, slugs, and names, resolved through the Helix Cloud API. The namespaces are
-+separate: `helix query production` looks for an instance named `production`, while
-+`helix database get orders` looks for a Cloud database named `orders`.
-+
-+| Command | `INSTANCE` accepts | When omitted |
-+| --- | --- | --- |
-+| `start`, `stop`, `restart`, `explorer` | A local instance | `dev`, then the only local instance, then a picker in a terminal |
-+| `query`, `shell`, `doctor` | Any instance, or a typed `tenant:<id>` / `cluster:<id>` Cloud database, which needs no `helix.toml` | `dev`, then the only instance, then a picker in a terminal |
-+| `logs` | Any instance | Same as `query` |
-+| `cypher` | A local instance | Same as `query`; a Cloud instance fails |
-+| `status` | Any instance | Every instance; never prompts |
-+| `prune` | A local instance | A picker in a terminal; otherwise pass `--all` |
-+| `delete` | Any instance; required | — |
-+
-+`logs`, `status`, `cypher`, and `explorer` reject typed `tenant:<id>` / `cluster:<id>` targets; link
-+the database with `helix add cloud` first. Without a terminal, a command that cannot pick a default
-+fails with `no default query target` or `no default local instance` and lists the instances.
- 
- ## Cloud resource resolution
- 
--Cloud commands never require raw IDs. Workspace, project, cluster, and database arguments are
--optional and accept an ID, slug, or display name, matched in that order (names are
--case-insensitive). Databases also accept `tenant:<id>` and `cluster:<id>`. Application keys and
--service credentials are passed by ID or name.
-+Workspace, project, cluster, and database arguments are optional and accept an ID, slug, or display
-+name, matched in that order (names are case-insensitive). Databases also accept `tenant:<id>` and
-+`cluster:<id>`. Application keys and service credentials are passed by ID or name. Exception:
-+`helix service-credential --grant` takes a project ID only; find it with `helix project get <project>`.
- 
- An omitted resource resolves to:
- 
-@@ -104,12 +120,10 @@ a terminal; pickers only fill in arguments you left out. A resource passed by ID
- `tenant:<id>` / `cluster:<id>` must belong to any `--project` / `--workspace` you also pass, so
- `helix database de
+ /// Invalid runtime throughput policy rejected before lifecycle work starts.
+ #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+@@ -238,8 +245,8 @@ mod tests {
+         assert_eq!(tuning.scan().read_ahead_bytes().get(), 256 * 1024);
+         assert_eq!(tuning.scan().max_fetch_tasks().get(), 4);
+         assert!(!tuning.scan().cache_admission_enabled());
+-        assert_eq!(tuning.concurrency().total_operation_tasks().get(), 2);
+-        assert_eq!(tuning.concurrency().secondary_tasks().get(), 2);
++        assert_eq!(tuning.concurrency().total_operation_tasks().get(), 12);
++        assert_eq!(tuning.concurrency().secondary_tasks().get(), 8);
+         assert_eq!(tuning.concurrency().vector_tasks().get(), 1);
+         assert_eq!(tuning.concurrency().text_tasks().get(), 1);
+     }
 ```
 
-**File**: `docs/cli/command-reference/add.mdx` (modified, +3/-1)
+**File**: `crates/db/src/execution/interpreter/ddl.rs` (modified, +3/-0)
 ```diff
-@@ -39,7 +39,7 @@ Run `helix add` with no subcommand in a terminal to choose interactively.
+@@ -3,6 +3,8 @@
+ //! Status/control operations point-read or mutate the retained operation in
+ //! the execution scope. Family CREATE/DROP crosses the DB-owned capability and
+ //! canonical-definition boundary before atomically enqueueing durable work.
++//! CREATE commits applied: its request waits once, at its end, for every DDL
++//! it ran to be durable, so a batch of creates waits for one WAL upload.
  
- | Flag | Description | Default |
- | --- | --- | --- |
--| `--port <PORT>` | Host port for the instance. | `6969` |
-+| `--port <PORT>` | Host port for the instance. Not checked against other instances, and two instances on one port cannot run at once, so pass it for each additional instance. | `6969` |
- | `--disk` | Use on-disk storage backed by a CLI-managed SeaweedFS container. Cannot be combined with `--storage-uri`. | Off (in-memory) |
- | `--storage-uri <URI>` | Use an S3 or S3-compatible bucket and prefix, for example `s3://bucket/prefix/`. | — |
- | `--s3-region <REGION>` | Region for S3 storage. | — |
-@@ -57,6 +57,8 @@ Run `helix add` with no subcommand in a terminal to choose interactively.
- ## Behavior
+ use super::*;
  
- - Fails if an instance with the same name already exists in `helix.toml`.
-+- `add local` pins the CLI's default `image` and `tag` in the new table; see [Image pinning](/cli/configuration#image-pinning).
-+- Rewrites `helix.toml`, removing its comments; see [Commands that rewrite helix.toml](/cli/configuration#commands-that-rewrite-the-file).
- - Without a subcommand, the CLI prompts for the instance type in a terminal and fails in non-interactive shells.
- - `--s3-region`, `--s3-endpoint-url`, and `--s3-allow-http` require `--storage-uri`.
- - `add cloud` uses the WorkOS session and resolves the database as described in [Cloud resource resolution](/cli/command-reference#cloud-resource-resolution).
+@@ -61,6 +63,7 @@ impl<'db> ExecutionContext<'db> {
+                         self.tenant_scope,
+                         spec,
+                         *mode,
++                        crate::transaction::CommitDurability::Applied,
+                         &self.execution_control,
+                     )
+                     .await?;
 ```
 
-**File**: `docs/cli/command-reference/auth.mdx` (modified, +18/-4)
+**File**: `crates/db/src/execution/interpreter/dispatch.rs` (modified, +2/-10)
 ```diff
-@@ -38,21 +38,35 @@ helix auth logout
- 
- | Flag | Description | Default |
- | --- | --- | --- |
--| `--json` | Print the result as JSON on stdout and never prompt. `status` prints `{"email":"...","workspaces":[{"id":"...","name":"..."}]}`. | Off |
-+| `--json` | Print the result as JSON on stdout and never prompt. `status` prints `{"email":"...","workspaces":[{"id":"...","name":"..."}]}` and `logout` prints `{"loggedOut":true}`. `login` refuses `--json`. | Off |
- 
- ## Behavior
- 
- ### Login
- 
--- `login` requires an interactive terminal, so it fails with `--json`.
--- Browser methods start WorkOS PKCE in a browser (and print the URL in case the browser does not open), then show a spinner while they wait for the loopback callback on `http://localhost:8765/callback`. The login times out after 5 minutes.
--- `password` signs in with an existing account. To create an account or reset a password, use [the sign-in page](https://helix-db.com/login). It only runs when Helix Cloud is reached over HTTPS or on this machine, so a password never travels unencrypted; browser methods are not affected.
-+- `login` needs a terminal on stdin and stderr, so it fails with `--json`, in CI, or with piped input (`logging in needs an interactive terminal`). There is no unattended mode; see [Run in CI](/cli/scripting#run-in-ci).
-+- Browser methods start WorkOS PKCE in a browser (and print the URL in case the browser does not open), then show a spinner while they wait for the loopback callback on `http://localhost:8765/callback`. The CLI listens on `127.0.0.1:8765`, a fixed port registered with WorkOS; if another program holds it, login fails with `bind the WorkOS callback listener on port 8765`. The login times out after 5 minutes.
-+- `password` signs in with an existing account. To create an account or reset a password, use [the sign-in page](https://helix-db.com/login). It runs only when Helix Cloud is reached over HTTPS or on this machine, so a password never travels unencrypted; with a plain `http://` `CLOUD_AUTHORITY` it fails with `refusing to send a password over an unencrypted connection`. Browser methods are not affected.
- - A login request that gets no answer fails after 60 seconds. During email verification, the CLI asks for the code again instead.
- - `--quiet` still prints what a login needs: the URL, why a code prompt repeats, and the notice before single sign-on opens a second tab.
- - If your company requires single sign-on, any method continues through its identity provider in the browser.
- - If WorkOS requires email verification, the CLI prompts for the code and accepts up to three attempts.
- - It hydrates all current workspace memberships and stores only the rotating WorkOS session in `~/.helix/credentials` (or `$HELIX_HOME/credentials`).
- 
-+### Log in over SSH
-+
-+On a remote machine, a browser method's callback must reach the remote CLI on port 8765. Forward that
-+port when you connect, then open the printed URL in your local browser:
-+
-+```bash
-+ssh -L 8765:127.0.0.1:8765 you@remote-host
-+helix auth login github
-+```
-+
-+Port 8765 must be free on your local machine. `helix auth login password` needs no callback, so it
-+also works over SSH without forwarding, unless your account must use single sign-on, which continues
-+in the browser.
-+
- ### Session handling
- 
- - The CLI refreshes tokens within 60 seconds of expiry and serializes refreshes across processes.
+@@ -180,17 +180,9 @@ impl<'db> ExecutionContext<'db> {
+                 let resume_request_scope = self.has_request_write_scope();
+                 self.check_execution_deadline()?;
+                 self.commit_request_write_scope().await?;
++                // The request waits once, at its end, for this DDL to be
++                // durable (`Interpreter::run`).
+                 let result = self.execute_index_ddl(input, plan).await;
+-                if result.is_ok() {
+-                    // A DDL that changed nothing commits nothing, and its
+-                    // receipt may rest on a racing DDL's applied record.
+-                    self.execution_control
+-                        .run_within(
+-                            self.durable_wait_limit,
+-                            self.db.await_visible_writes_durable(),
+-                        )
+-                        .await?;
+-                }
+                 if resume_request_scope && result.is_ok() {
+                     self.enable_request_write_scope().await?;
+                 }
 ```
 
-**File**: `docs/cli/command-reference/chef.mdx` (modified, +3/-3)
+**File**: `crates/db/src/execution/interpreter/mod.rs` (modified, +22/-1)
 ```diff
-@@ -15,7 +15,7 @@ Bootstrap a first HelixDB app for a coding agent. `helix chef` installs agent co
- helix chef
- ```
+@@ -200,7 +200,8 @@ impl<'db> Interpreter<'db> {
  
--`helix cook` is an alias for `helix chef`. The command takes no flags — it is fully interactive (and falls back to sensible defaults when run without a TTY).
-+`helix cook` is an alias for `helix chef`. The command takes no flags — it is fully interactive (and falls back to sensible defaults when run without a TTY). It refuses `--json`.
- 
- <Note>
- `helix chef` uses `npx`, so **Node.js/npm must be on `PATH`** for the skills and docs-MCP install, and it needs **Docker or Podman running** to start the local database. It is intended for local development inside a coding-agent environment.
-@@ -24,8 +24,8 @@ helix chef
- ## Behavior
- 
- 1. Installs the Helix skills (`npx skills add HelixDB/skills`) and docs MCP.
--2. Initializes a local project (`helix init local`) with a `dev` instance on port `6969`, then starts it in-memory.
--3. Writes `HELIX_CHEF_PROMPT.md` (your build intent, or a Personal CRM default) and, for the default build, starter query files under `examples/` — then seeds the data.
-+2. Initializes a local project (`helix init local`) in `~/my-first-helix-project` by default, with a `dev` instance on port `6969`, then starts it in-memory.
-+3. Writes `HELIX_CHEF_PROMPT.md` (your build intent, or a Personal CRM default), `DESIGN.md` (the agent's UI styling guide) and, for the default build, starter query files under `examples/` — then seeds the data.
- 4. Detects an installed coding agent (Claude Code → OpenAI Codex → OpenCode → Cursor Agent), asks for a permission mode, and launches it against the build prompt.
- 5. Opens the generated app at `http://localhost:3000` once the agent's frontend is running.
- 
+     /// Selects when this request's graph commits return.
+     ///
+-    /// Reads never commit, and index DDL always commits durably.
++    /// Reads never commit, and an index DDL request always returns once its
++    /// DDL is durable.
+     pub(crate) const fn with_commit_durability(
+         mut self,
+         durability: crate::transaction::CommitDurability,
+@@ -261,6 +262,26 @@ impl<'db> Interpreter<'db> {
+                 plan.execution_program(),
+             )
+             .await;
++        // Index DDL commits applied, so its request waits for durability
++        // once for all of it, failed or not, as each DDL used to wait, and
++        // as that wait was, within the request's deadline and the durable
++        // wait limit. It covers every visible write: a DDL that changed
++        // nothing commits nothing, and its receipt may rest on a racing DDL's
++        // applied record.
++        let result = match request_mode {
++            RequestExecutionMode::IndexDdl => {
++                let durable = self
++                    .ctx
++                    .execution_control
++                    .run_within(
++                        self.ctx.durable_wait_limit,
++                        self.ctx.db.await_visible_writes_durable(),
++                    )
++                    .await;
++                result.and_then(|value| durable.map(|()| value))
++            }
++            RequestExecutionMode::Read | RequestExecutionMode::GraphWrite => result,
++        };
+         if let Err(err) = result {
+             self.ctx.abort_request_write_scope();
+             return Err(err);
 ```
 
-**File**: `docs/cli/command-reference/cluster.mdx` (modified, +5/-1)
+**File**: `crates/db/src/index_lifecycle/lifecycle.rs` (modified, +29/-8)
 ```diff
-@@ -13,11 +13,15 @@ cluster. Cloud only; these commands are read-only.
- ## Usage
+@@ -22,7 +22,7 @@ use crate::encoding::v2::values::{
+ };
+ use crate::error::{HelixDbError, Result};
+ use crate::execution_control;
+-use crate::transaction::Mutation;
++use crate::transaction::{CommitDurability, Mutation};
  
- ```bash
--helix cluster [list] [--workspace <workspace>] [--project <project>]
-+helix cluster
-+helix cluster list [--workspace <workspace>] [--project <project>]
- helix cluster get [CLUSTER] [--workspace <workspace>] [--project <project>]
- helix cluster indexes [CLUSTER] [--workspace <workspace>] [--project <project>]
- ```
+ use super::failpoints::{self, IndexOutboxFailpoint};
+ use super::outbox::{self, ExpectedCanonicalRevision};
+@@ -129,17 +129,21 @@ pub(crate) async fn create_index_operation_from_current_source(
+         scope,
+         definition,
+         mode,
++        CommitDurability::Durable,
+         &execution_control,
+     )
+     .await
+ }
  
-+Bare `helix cluster` lists clusters with the defaults below. Flags go after the subcommand:
-+`helix cluster list --project <project>`.
+-/// Captures and enqueues one request-owned BUILD at its durable boundary.
++/// Captures and enqueues one request-owned BUILD, returning once its commit
++/// is as durable as `durability` asks. A query's DDL commits applied and its
++/// request waits once for all of them.
+ pub(crate) async fn create_index_operation_from_current_source_with_control(
+     db: &Db,
+     scope: DataScope,
+     definition: ValidatedDynamicIndexDefinition,
+     mode: helix_planner::ir::IndexCreateMode,
++    durability: CommitDurability,
+     execution_control: &execution_control::ExecutionControl,
+ ) -> Result<IndexDdlReceipt> {
+     failpoints::trip(IndexOutboxFailpoint::DdlEnqueueBefore)?;
+@@ -153,7 +157,10 @@ pub(crate) async fn create_index_operation_from_current_source_with_control(
+         mode,
+         initial_progress,
+         VectorPhysicalSelection::Allocate,
+-        execution_control,
++        CreateCommit {
++            durability,
++            execution_control,
++        },
+     )
+     .await
+ }
+@@ -175,7 +182,10 @@ pub(crate) async fn create_legacy_vector_adoption_operation(
+         helix_planner::ir::IndexCreateMode::IfNotExists,
+         InitialBuildProgress::legacy_vector(),
+         VectorPhysicalSelection::AdoptLegacy(physical_index_id),
+-        &execution_control,
++        CreateCommit {
++            durability: CommitDurability::Durable,
++            execution_control: &execution_control,
++        },
+     )
+     .await
+ }
+@@ -197,7 +207,10 @@ async fn create_index_operation_in_transaction(
+         mode,
+         initial_progress,
+         VectorPhysicalSelection::Allocate,
+-        execution_control,
++        CreateCommit {
++            durability: CommitDurability::Durable,
++            execution_control,
++        },
+     )
+     .await
+ }
+@@ -208,16 +221,24 @@ enum VectorPhysicalSelection {
+     AdoptLegacy(VectorPhysicalIndexId),
+ }
+ 
++/// How one create commits: returning once as durable as `durability` asks,
++/// unless `execution_control` stops it first.
++#[derive(Clone, Copy)]
++struct CreateCommit<'a> {
++    durability: CommitDurability,
++    execution_control: &'a execution_control::ExecutionControl,
++}
 +
- ## Subcommands
- 
- | Subcommand | Description |
+ async fn create_index_operation_in_transaction_with_physical(
+     transaction: DbTransaction,
+     scope: DataScope,
+     definition: ValidatedDynamicIndexDefinition,
+     mode: helix_planner::ir::IndexCreateMode,
+     initial_progress: InitialBuildProgress,
+     vector_physical: VectorPhysicalSelection,
+-    execution_control: &execution_control::ExecutionControl,
++    commit: CreateCommit<'_>,
+ ) -> Result<IndexDdlReceipt> {
+-    execution_control.check()?;
++    commit.execution_control.check()?;
+     let family = operation_family(definition.family());
+     if initial_progress.family() != family {
+         return Err(HelixDbError::InvariantViolation(
+@@ -348,7 +369,7 @@ async fn create_index_operation_in_transaction_with_physical(
+     outbox::stage_operation(&transaction, scope, expected, &next_index, &operation).await?;
+     failpoints::trip(IndexOutboxFailpoint::DdlEnqueueAfterStaging)?;
+     transaction
+-        .commit()
++        .commit_with_options(&commit.durability.write_options())
+         .await
+         .map_err(HelixDbError::from_storage_commit)?;
+     Ok(IndexDdlReceipt::Accepted {
 ```
 
-**File**: `docs/cli/command-reference/database.mdx` (modified, +8/-5)
+**File**: `crates/db/src/index_lifecycle/scope_gate.rs` (modified, +84/-2)
 ```diff
-@@ -13,7 +13,8 @@ application keys your software uses to reach them. Cloud only.
- ## Usage
+@@ -174,6 +174,7 @@ pub(crate) struct IndexScopeGates {
+     catalogs: Mutex<HashMap<DataScope, CatalogGate>>,
+     catalog_refreshes: Mutex<HashMap<DataScope, Weak<AsyncMutex<()>>>>,
+     publications: Mutex<HashMap<super::queue::QueueTarget, Weak<AsyncMutex<()>>>>,
++    build_steps: Mutex<HashMap<DataScope, Weak<AsyncMutex<()>>>>,
+ }
  
- ```bash
--helix database [list] [--workspace <workspace>] [--project <project>]
-+helix database
-+helix database list [--workspace <workspace>] [--project <project>]
- helix database get [DATABASE]
- helix database indexes [DATABASE]
- helix database create <NAME> [--slug <slug>] [--plan <plan> | --cluster <cluster>]
-@@ -24,7 +25,9 @@ helix database key list [--database <database>]
- helix database key revoke <KEY> [--database <database>] [--yes]
- ```
+ impl IndexScopeGates {
+@@ -232,15 +233,28 @@ impl IndexScopeGates {
+     }
  
--Every subcommand also accepts `--workspace` and `--project`.
-+Every subcommand also accepts `--workspace` and `--project`, after the subcommand:
-+`helix database list --project <project>`, not `helix database --project <project>`. Bare
-+`helix database` lists the linked or only project's databases.
+     /// Acquires the permit `gate` names for one operation step.
++    ///
++    /// Gated steps of one scope first queue on the scope's build-step gate,
++    /// so at most one waits for the fair mutation gate at a time: graph
++    /// transactions, which take it shared, queue behind one step's exclusive
++    /// wait however many of the scope's builds run. Nothing waits for the
++    /// build-step gate while holding a scope gate, so it adds no lock cycle.
++    /// The tuple drops the scope permit before the build-step gate.
+     pub(crate) async fn step_permit(
+         &self,
+         scope: DataScope,
+         gate: StepGate,
+     ) -> Box<dyn super::outbox::IndexOperationStepPermit> {
+         match gate {
+             StepGate::None => Box::new(()),
+-            StepGate::WriteFence => Box::new(self.write_fence_permit(scope).await),
+-            StepGate::Lifecycle => Box::new(self.lifecycle_permit(scope).await),
++            StepGate::WriteFence => {
++                let queued = self.build_step_gate(scope).lock_owned().await;
++                Box::new((self.write_fence_permit(scope).await, queued))
++            }
++            StepGate::Lifecycle => {
++                let queued = self.build_step_gate(scope).lock_owned().await;
++                Box::new((self.lifecycle_permit(scope).await, queued))
++            }
+         }
+     }
  
- ## Subcommands
+@@ -321,6 +335,20 @@ impl IndexScopeGates {
+             .clone()
+     }
  
-@@ -55,7 +58,7 @@ Every subcommand also accepts `--workspace` and `--project`.
- | `--project <PROJECT>` | Project ID, slug, or name that owns the database. | Project linked in `helix.toml` |
- | `--database <DATABASE>` | `key create`, `key list`, `key revoke`: the database, in the same forms as `DATABASE`. | Same as `DATABASE` |
- | `--slug <SLUG>` | `create`: URL-safe database slug. | Derived from `NAME` |
--| `--plan <PLAN>` | `create`: plan code for a shared tenant database. Not allowed with `--cluster`. | Prompted in a terminal; required otherwise |
-+| `--plan <PLAN>` | `create`: plan code for a shared tenant database. Not allowed with `--cluster`. List the codes with `helix api get /v1/workspace-plans`. | Prompted in a terminal; required otherwise |
- | `--cluster <CLUSTER>` | `create`: dedicated cluster ID, slug, or name to create the tenant on. | — |
- | `--access <ACCESS>` | `key create`: `read-only` or `read-write`. Required. | — |
- | `--name <NAME>` | `key create`: optional key name. | — |
-@@ -66,10 +69,10 @@ Every subcommand also accepts `--workspace` and `--project`.
++    fn build_step_gate(&self, scope: DataScope) -> Arc<AsyncMutex<()>> {
++        let mut gates = self
++            .build_steps
++            .lock()
++            .unwrap_or_else(std::sync::PoisonError::into_inner);
++        let Some(gate) = gates.get(&scope).and_then(Weak::upgrade) else {
++            gates.retain(|_, gate| gate.strong_count() != 0);
++            let gate = Arc::new(AsyncMutex::new(()));
++            gates.insert(scope, Arc::downgrade(&gate));
++            return gate;
++        };
++        gate
++    }
++
+     fn catalog_refresh_gate(&self, scope: DataScope) -> Arc<AsyncMutex<()>> {
+         let mut gates = self
+             .catalog_refreshes
+@@ -387,6 +415,60 @@ mod tests {
+         drop(mutation);
+     }
  
- - Arguments and defaults resolve as described in [Cloud resource resolution](/cli/command-reference#cloud-resource-resolution). When `helix.toml` links several databases, the CLI picks among them in a terminal.
- - `list` includes dedicated clusters and tenants in the project and marks linked databases; shared clusters are not listed.
--- `create` always creates a tenant database, either on a shared plan (`--plan`) or inside a dedicated cluster (`--cluster`).
-+- `create` always creates a tenant database, either on a shared plan (`--plan`) or inside a dedicated cluster (`--cluster`). A shared database needs an active workspace plan.
- - Creating a database creates a default read-write application key and prints its raw token once on stdout. With `--json`, the full create response, including the token, is printed instead. The session-authenticated CLI never stores or uses the key.
- - Additional key creation is explicit, and each new raw token is also printed once. `key create` prints only the token on stdout, so you can capture it in a script.
--- Application keys are for software that calls the gateway (the Cloud database endpoint your application connects to) directly.
-+- Application keys are for software that calls the gateway (the Cloud database endpoint your application connects to) directly. `get --json` prints a tenant's gateway host as `connectionEndpoint`. See [Run in CI](/cli/scripting#helix-cloud).
- - `delete` and `key revoke` ask for confirmation in a terminal. Without one, or with `--json`, they fail before any request unless you pass `--yes`. `delete` removes the named or linked database only; it never picks a project's only database on its own.
- - `delete` removes tenant databases only. Dedicated-cluster create/delete lifecycle is not supported by this CLI.
- 
++    /// Gated build steps of one scope queue on its build-step gate, so a
++    /// graph write that arrives behind several of them waits for one step's
++    /// exclusive turn, not for all of them: the fair mutation gate only ever
++    /// holds one step's wait.
++    #[tokio::test]
++    async fn graph_writes_wait_behind_one_queued_build_step() {
++        let gates = Arc::new(IndexScopeGates::default());
++        let scope = DataScope::LegacyUnscoped;
++        let settle = Duration::from_millis(20);
++        let writing = gates.mutation_permit(scope).await;
++        let (acquired, mut acquisitions) = tokio::sync::mpsc::unbounded_channel();
++        let mut releases = Vec::new();
++        for step in 0..3 {
++            let (release, released) = tokio::sync::oneshot::channel::<()>();
++            releases.push(release);
++            let (gates, acquired) = (Arc::clone(&gates), acquired.clone());
++            tokio::spawn(async move {
++                let permit = gates.step_permit(scope, StepGate::WriteFence).await;
++                acquired.send(step).expect("the test awaits acquisitions");
++                let _ = released.await;
++                drop(permit);
++            });
++        }
++        tokio::time::sleep(settle).await;
++        let next_write = {
++            let gates = Arc::clone(&gates);
++            tokio::spawn(async move { gates.mutation_permit(scope).await })
++        };
++        tokio::time::sleep(settle).await;
++        drop(writing);
++        let first = acquisitions.recv().await.expect("one step takes the fence");
++        tokio::time::sleep(settle).await;
++        assert!(
++            !next_write.is_finished(),
++            "the step holding the fence excludes writes"
++        );
++        releases
++            .remove(first)
++            .send(())
++            .expect("the step awaits its release");
++        let write = tokio::time::timeout(Duration::from_secs(1), next_write)
++            .await
++            .expect("the write is next, not behind every queued step")
++            .expect("the write joins");
++        assert!(
++            acquisitions.try_recv().is_err(),
++            "no other step holds the fence while the write runs"
++        );
++        drop(write);
++        for release in releases {
++            let _ = release.send(());
++        }
++    }
++
+     /// Each step gate excludes exactly what its holder needs: none nothing,
+     /
 ```
 
-**File**: `docs/cli/command-reference/delete.mdx` (modified, +3/-2)
+**File**: `crates/db/src/index_lifecycle/worker.rs` (modified, +195/-21)
 ```diff
-@@ -30,10 +30,11 @@ helix delete <INSTANCE> [OPTIONS]
+@@ -248,11 +248,21 @@ impl WorkerPermits {
+     }
+ }
  
- ## Behavior
- 
--- For local instances, Helix-owned containers, networks, disk-mode and disk-cache volumes, and the per-instance directory under `.helix/` are deleted.
-+- For local instances, Helix-owned containers, networks, disk-mode and disk-cache volumes, and the per-instance directory under `.helix/` are deleted. Cleanup errors are ignored: with Docker or Podman stopped, the instance leaves `helix.toml` but its volumes stay. Start the runtime and run `helix prune <instance>`, which works for removed instances.
- - For Helix Cloud instances, only the `[enterprise.<name>]` block in `helix.toml` is removed — the database itself is untouched.
- - Remote S3 object-store data is not deleted.
--- The CLI refuses to delete the last instance in `helix.toml`; add a replacement first.
-+- The CLI refuses to delete the last instance in `helix.toml` (`Cannot delete the final instance '<instance>'`); add a replacement first.
-+- Rewrites `helix.toml`, removing its comments; see [Commands that rewrite helix.toml](/cli/configuration#commands-that-rewrite-the-file).
- - In a TTY, `helix delete` prints a warning and asks for confirmation. Without a TTY, or with `--json`, it refuses to run without `--yes`:
- 
-   ```text
+-/// Typed work retained by the task set after its durable claim succeeds.
++/// An eligible operation the task claims before its step, so claims of
++/// separate operations commit concurrently instead of one at a time in the
++/// dispatch loop.
++struct PendingClaim {
++    eligible: outbox::EligibleOperation,
++    writer_epoch: WriterEpoch,
++    sequence: ClaimSequence,
++    permission: ClaimPermission,
++}
++
++/// Typed work retained by the task set once its target is reserved.
+ enum InFlightTask {
+     Operation {
+         target: IndexOperationId,
+-        claimed: Box<outbox::ClaimedOperation>,
++        claim: Box<PendingClaim>,
+         driver: Arc<dyn IndexOperationDriver>,
+         limits: SearchIndexBatchLimits,
+         _permits: InFlightPermits,
+@@ -283,14 +293,48 @@ impl InFlightTask {
+         let target = self.target();
+         let (delay_millis, did_work) = match self {
+             Self::Operation {
+-                claimed,
++                claim,
+                 driver,
+                 limits,
+                 _permits,
+                 #[cfg(feature = "index-lifecycle-testing")]
+                 lifecycle_metrics,
+                 ..
+-            } => {
++            } => 'operation: {
++                let PendingClaim {
++                    eligible,
++                    writer_epoch,
++                    sequence,
++                    permission,
++                } = *claim;
++                let claimed = match outbox::claim_operation(
++                    db.as_ref(),
++                    &eligible,
++                    writer_epoch,
++                    sequence,
++                    now_unix_millis(),
++                    permission,
++                )
++                .await
++                {
++                    Ok(Some(claimed)) => claimed,
++                    Err(error) if !error.is_transaction_conflict() => return Err(error),
++                    // Another claim or step moved the operation first, or won a
++                    // serializable conflict with this claim: nothing committed.
++                    // It counts as work, because the operation may still be
++                    // eligible: a task that did none lets the dispatcher idle
++                    // (up to `IDLE_DELAY`) before the queue is scanned again.
++                    lost => {
++                        tracing::debug!(
++                            operation_id = %eligible.record.operation_id().as_uuid(),
++                            conflict = lost.is_err(),
++                            "index operation claim lost; the queue offers it again"
++                        );
++                        #[cfg(feature = "index-lifecycle-testing")]
++                        lifecycle_metrics.observe_worker_claim_conflict();
++                        break 'operation (None, true);
++                    }
++                };
+                 #[cfg(feature = "index-lifecycle-testing")]
+                 let _in_flight =
+                     lifecycle_metrics.begin_worker_task(match claimed.record.family() {
+@@ -308,7 +352,7 @@ impl InFlightTask {
+                 lifecycle_metrics.observe_operation(
+                     outbox::execute_claimed_step_with_evidence(
+                         db.as_ref(),
+-                        claimed.as_ref(),
++                        &claimed,
+                         driver.as_ref(),
+                         limits,
+                         now_unix_millis(),
+@@ -318,7 +362,7 @@ impl InFlightTask {
+                 #[cfg(not(feature = "index-lifecycle-testing"))]
+                 outbox::execute_claimed_step(
+                     db.as_ref(),
+-                    claimed.as_ref(),
++                    &claimed,
+                     driver.as_ref(),
+                     limits,
+                     now_unix_millis(),
+@@ -1041,24 +1085,15 @@ async fn schedule_operation_task(
+         if eligible.record.family() != family {
+             continue;
+         }
+-        let claimed = outbox::claim_operation(
+-            db,
+-            &eligible,
+-            writer_epoch,
+-            claim_sequences.next()?,
+-            now_unix_millis(),
+-            permission,
+-        )
+-        .await?;
+-        let Some(claimed) = claimed else {
+-            #[cfg(feature = "index-lifecycle-testing")]
+-            lifecycle_metrics.observe_worker_claim_conflict();
+-            continue;
+-        };
+         return Ok(DispatchAttempt::Scheduled(Box::new(
+             InFlightTask::Operation {
+                 target: operation_id,
+-                claimed: Box::new(claimed),
++                claim: Box::new(PendingClaim {
++                    eligible,
++                    writer_epoch,
++                    sequence: claim_sequences.next()?,
++                    permission,
++                }),
+                 driver,
+                 limits,
+                 _permits: task_permits,
+@@ -1083,3 +1118,142 @@ async fn schedule_operation_task(
+ fn now_u
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #1298** (2026-11-13): docs: fix audit findings across HelixDB, Cloud, CLI and Foundry (@xav-db)
+- **PR #1297** (2026-11-14): Claim index operations in their tasks and wait once per index DDL request (@xav-db)
 - **PR #1290** (2026-11-11): Release CLI v3.7.0 with Docker v0.0.16 default (@xav-db)
 - **PR #1289** (2026-11-11): Hand docs readers off to the dashboard at app.helix-db.com (@xav-db)
 - **PR #1288** (2026-11-11): Attribute OSS telemetry to projects and deployments, and count every query (@xav-db)
 - **PR #1287** (2026-11-10): Fix the durable wait limit contracts after commits moved to their own thread (@xav-db)
-- **PR #1286** (2026-11-10): Re-export the embedded cache config types from the Rust SDK (@xav-db)
 
 ---
 
@@ -2391,28 +2761,50 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: fix audit findings across HelixDB, Cloud, CLI and Foundry
+## X. Claim index operations in their tasks and wait once per index DDL request
 
 **RULE**:
-When implementing operations in `docs/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in HelixDB/helix-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/db/examples/index_build_throughput.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in HelixDB/helix-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `26c3f138`: docs: fix audit findings across HelixDB, Cloud, CLI and Foundry. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4b0982fd`: Claim index operations in their tasks and wait once per index DDL request. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/db/examples/index_build_throughput.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| Helix Foundry | Start Here, Data, Ontologies, Explore, Analyst, Agents, Workspace, Reference | The hosted Foundry website (foundry.helix-db.com): connecting and syncing sources, documents, generating, loading, exploring and asking ontologies, members and billing |
+//! How long one tenant's first batch of index builds takes, by worker concurrency.
+//!
+//! Opens a fresh disk-backed writer, creates the index set one Helix Foundry
+//! load asks for (112 equality and range indexes, 10 text indexes partitioned
+//! by `foundry_part`) on an empty tenant in one write batch, then polls every
+//! operation until each has succeeded. Prints when each finished.
+//!
+//! `cargo run --release -p db --example index_build_throughput -- <runs>`
+//!
+//! - `IBT_TASKS`: `total,secondary,vector,text` worker tasks (default: the
+//!   database's defaults).
+//! - `IBT_FLUSH_MS`: WAL flush interval (default 100, SlateDB's).
+//! - `IBT_ROOT`: directory for the databases (default a temp dir).
+//! - `IBT_URL`: a running server (`http://host:8080`) to send the same requests
+//!   to over `/v2/query` instead. The server's own
+//!   settings apply, so `IBT_TASKS`, `IBT_FLUSH_MS` and `IBT_ROOT` don't.
+use std::num::NonZeroU64;
+use std::time::{Duration, Instant};
+
+use db::config::{IndexLifecycleConcurrency, IndexLifecycleThroughputTuning};
+use db::encoding::keys::scope::{DataScope, TenantId};
+use db::{HelixDB, HelixDbSource};
+use helix_ast::{batch, index::IndexSpec, query::Que
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-| Helix Foundry | Start Here, Data, Ontologies, Explore, Ask, Workspace, Reference | The hosted Foundry website (foundry.helix-db.com): connecting and syncing sources, documents, generating, loading, exploring and asking ontologies, members and billing |
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `26c3f138` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4b0982fd` are properly handled with clean fallback behavior.

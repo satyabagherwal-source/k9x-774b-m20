@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-15T20:42:06.014Z",
+  "last_updated": "2026-11-15T20:51:05.399Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "4f60503be7baf1cdb1d18d5c70fcf5606c37f3e4031187ef21b37e5b5690150d",
-      "verified_at": "2026-11-15T19:45:45.264Z",
+      "content_hash": "2b7eaf82263b8d8d5143f87bfee8e6e274407f98a13e6216b10ae92352482c1c",
+      "verified_at": "2026-11-15T20:51:05.398Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T19:45:45.264Z"
+      "last_updated": "2026-11-15T20:51:05.398Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "a710a6f16d73ae5afc1ac7f0b22a1d64e99031580252451fa3ff6fb9012550e3",
-      "verified_at": "2026-11-14T08:10:38.950Z",
+      "content_hash": "0c602308aab2127e5b305d077cebcaa7b40ad69f7a266235fa60d3531a61b2d4",
+      "verified_at": "2026-11-15T20:51:01.796Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T08:10:38.950Z"
+      "last_updated": "2026-11-15T20:51:01.796Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -6081,14 +6081,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-helixdb-helix-db",
-      "content_hash": "5419b10249288346b7db86182a5d9c87e60fbeb95d32c191819927af8386fc7e",
-      "verified_at": "2026-11-14T07:30:51.311Z",
+      "content_hash": "df12d3a87b05c3d35b2bd185a902d86686776856e28a76681fdbc5b5141017e7",
+      "verified_at": "2026-11-15T20:51:03.428Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T07:30:51.311Z"
+      "last_updated": "2026-11-15T20:51:03.428Z"
     },
     "microsoft/fluentui": {
       "repository": "microsoft/fluentui",
@@ -8661,14 +8661,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mlua-rs-mlua",
-      "content_hash": "70ad9dfb5075bb6828e8731319bc45a49b619d7db90a7b11535d4f0307103cc6",
-      "verified_at": "2026-11-04T09:57:42.810Z",
+      "content_hash": "0423954249d5f7605b1f98e2a3b1efcce78cae33b77281681a58a9a145ca4a7f",
+      "verified_at": "2026-11-15T20:50:51.720Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T09:57:42.810Z"
+      "last_updated": "2026-11-15T20:50:51.720Z"
     },
     "APSL/react-native-keyboard-aware-scroll-view": {
       "repository": "APSL/react-native-keyboard-aware-scroll-view",

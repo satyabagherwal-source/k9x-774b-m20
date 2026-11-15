@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for mlua/rs/mlua
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for mlua-rs/mlua
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "mlua/rs/mlua",
-  "source_url": "https://github.com/mlua/rs/mlua",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "mlua-rs/mlua",
+  "source_url": "https://github.com/mlua-rs/mlua",
+  "source_version": "e4699f2f",
+  "license": "NOASSERTION",
+  "timestamp": "2026-11-15T20:50:51.888Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-mlua-rs-mlua",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [mlua/rs/mlua](https://github.com/mlua/rs/mlua) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [mlua-rs/mlua](https://github.com/mlua-rs/mlua) (Revision: `e4699f2f`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-15T20:50:51.888Z`  
+> **Learning ID**: `learn-github-mlua-rs-mlua`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `mlua/rs/mlua` (Commit: `historical`)
+- **Target Repository**: `mlua-rs/mlua` (Commit: `e4699f2f`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mlua-rs-mlua-learnings.md`  
-> **Source**: github ([https://github.com/mlua-rs/mlua](https://github.com/mlua-rs/mlua))  
-> **Source Version**: `a0ad4535`  
-> **License**: NOASSERTION  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T09:57:42.045Z  
-> **Learning ID**: `learn-github-mlua-rs-mlua`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): mlua-rs/mlua
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mlua-rs-mlua-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mlua-rs/mlua](https://github.com/mlua-rs/mlua))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T09:57:40.415Z  
+> **Harvest Timestamp**: 2026-11-15T20:50:50.567Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: High level Lua 5.5/5.4/5.3/5.2/5.1 (including LuaJIT) and Luau bindings to Rust with async/await support
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 2936 stars
+- **Stars / Engagement**: 2947 stars
 
 ---
 
@@ -102,7 +88,7 @@ use crate::value::{Nil, Value};
 use crate::{debug::HookTriggers, types::HookKind};
 
 #[cfg(any(feature = "luau", doc))]
-use crate::{buffer::Buffer, chunk::Compiler};
+use crate::{buffer::Buffer, chunk::Compiler, luau::InterruptHandle};
 
 #[cfg(feature = "async")]
 use {
@@ -389,11 +375,7 @@ impl fmt::Debug for Lua {
 impl Default for Lua {
     #[inline]
     fn default() -> Self {
-        Lua::new()
-    }
-}
-
-
+     
 ```
 
 ### Core Architecture Module: `src/state/extra.rs`
@@ -437,6 +419,8 @@ pub(crate) struct ExtraData {
     pub(super) lua: MaybeUninit<Lua>,
     pub(super) weak: MaybeUninit<WeakLua>,
     pub(super) owned: bool,
+    #[cfg(not(feature = "luau"))]
+    pub(super) closing: bool,
 
     pub(super) pending_userdata_reg: FxHashMap<TypeId, RawUserDataRegistry>,
     pub(super) registered_userdata_t: FxHashMap<TypeId, c_int>,
@@ -490,6 +474,8 @@ pub(crate) struct ExtraData {
     pub(super) warn_callback: Option<crate::types::WarnCallback>,
     #[cfg(feature = "luau")]
     pub(super) interrupt_callback: Option<crate::types::InterruptCallback>,
+    #[cfg(feature = "luau")]
+    pub(super) interrupt_handle: Option<crate::luau::InterruptHandle>,
     pub(super) thread_triggers: ThreadTriggers,
     pub(super) thread_event_callback: Option<ThreadEventCallback>,
     pub(super) thread_event_state: *mut ffi::lua_State,
@@ -508,6 +494,12 @@ pub(crate) struct ExtraData {
 
 impl Drop for ExtraData {
     fn drop(&mut self) {
+        #[cfg(feature = "luau")]
+        if self.owned {
+            debug_assert!(self.interrupt_handle.is_none());
+        } else if let Some(handle) = self.interrupt_handle.take() {
+            handle.invalidate();
+        }
         unsafe {
             if !self.owned {
                 self.lua.assume_init_drop();
@@ -568,6 +560,8 @@ impl ExtraData {
             lua: MaybeUninit::uninit(),
             weak: MaybeUninit::uninit(),
             owned,
+            #[cfg(not(feature = "luau"))]
+            closing: false,
             pending_userdata_reg: FxHashMap::default(),
             registered_userdata_t: FxHashMap::default(),
             registered_userdata_mt: FxHashMap::default(),
@@ -606,6 +600,8 @@ impl ExtraData {
             warn_callback: None,
             #[cfg(feature = "luau")]
             interrupt_callback: None,
+            #[cfg(feature = "luau")]
+            interrupt_handle: None,
             thread_triggers: ThreadTriggers::default(),
             thread_event_callback: None,
             thread_event_state: ptr::null_mut(),
@@ -647,21 +643,7 @@ impl ExtraData {
             // `ExtraData` can be null only when Lua state is foreign.
             // This case in used in `Lua::try_from_ptr()`.
             ffi::lua_pop(state, 1);
-            return ptr::null_mut();
-        }
-        let extra_ptr = ffi::lua_touserdata(state, -1) as *mut Rc<UnsafeCell<ExtraData>>;
-        ffi::lua_pop(state, 1);
-        (*extra_ptr).get()
-    }
-
-    unsafe fn store(extra: &XRc<UnsafeCell<Self>>, state: *mut ffi::lua_State) -> Result<()> {
-        #[cfg(feature = "luau")]
-        if cfg!(not(feature = "module")) {
-            (*ffi::lua_callbacks(state)).userdata = extra.get() as *mut _;
-            return Ok(());
-        }
-
-        push_internal_userdata(state, XRc::clone(extra), tr
+          
 ```
 
 ### Core Architecture Module: `src/state/raw.rs`
@@ -739,11 +721,18 @@ impl Drop for RawLua {
 
             #[cfg(feature = "luau")]
             {
+                if let Some(handle) = (*self.extra.get()).interrupt_handle.take() {
+                    handle.invalidate();
+                }
                 // Reset any callbacks
                 (*ffi::lua_callbacks(self.main_state())).interrupt = None;
                 (*ffi::lua_callbacks(self.main_state())).userthread = None;
             }
 
+            #[cfg(not(feature = "luau"))]
+            {
+                (*self.extra.get()).closing = true;
+            }
             ffi::lua_close(self.main_state());
 
             // Deallocate `MemoryState`
@@ -942,20 +931,12 @@ impl RawLua {
     }
 
     unsafe fn try_from_ptr(state: *mut ffi::lua_State) -> Option<XRc<ReentrantMutex<Self>>> {
-        match ExtraData::get(state) {
-            extra if extra.is_null() => None,
-            extra => Some(XRc::clone(&(*extra).lua().raw)),
-        }
-    }
-
-    /// Marks the Lua state as safe.
-    #[inline(always)]
-    pub(super) fn mark_safe(&self) {
-        unsafe { (*self.extra.get()
+        match ExtraData::ge
 ```
 
 ### Core Architecture Module: `src/state/util.rs`
 ```
+use std::mem::ManuallyDrop;
 use std::os::raw::c_int;
 use std::panic::{AssertUnwindSafe, catch_unwind};
 use std::ptr::{self, NonNull};
@@ -991,8 +972,13 @@ pub(crate) unsafe fn callback_error_ext<F, R>(
 where
     F: FnOnce(*mut ExtraData, c_int) -> Result<R>,
 {
+    let f = ManuallyDrop::new(f);
     if extra.is_null() {
         extra = ExtraData::get(state);
+    }
+    #[cfg(not(feature = "luau"))]
+    if (*extra).closing {
+        raise_closing_error(state);
     }
 
     let nargs = ffi::lua_gettop(state);
@@ -1073,6 +1059,7 @@ where
     // We cannot shadow Rust errors with Lua ones, so we need to reserve pre-allocated memory
     // to store a wrapped failure (error or panic) *before* we proceed.
     let prealloc_failure = PreallocatedFailure::reserve(state, extra);
+    let f = ManuallyDrop::into_inner(f);
 
     // Keep the Error payload out of catch_unwind return value
     let mut callback_error = None;
@@ -1139,6 +1126,14 @@ where
             ffi::lua_error(state)
         }
     }
+}
+
+#[cfg(not(feature = "luau"))]
+#[cold]
+#[inline(never)]
+unsafe fn raise_closing_error(state: *mut ffi::lua_State) -> ! {
+    ffi::lua_pushliteral(state, c"Lua state is closing");
+    ffi::lua_error(state)
 }
 
 ```
@@ -2272,6 +2267,11 @@ use crate::types::{AsyncCallback, AsyncCallbackUpvalue, AsyncPollUpvalue};
 
 pub(crate) trait TypeKey: Any {
     fn type_key() -> *const c_void;
+
+    #[cfg(not(feature = "luau"))]
+    unsafe fn drop_userdata(ud: *mut Self) {
+        std::ptr::drop_in_place(ud);
+    }
 }
 
 impl TypeKey for Callback {
@@ -2287,6 +2287,11 @@ impl TypeKey for CallbackUpvalue {
     fn type_key() -> *const c_void {
         static CALLBACK_UPVALUE_TYPE_KEY: u8 = 0;
         &CALLBACK_UPVALUE_TYPE_KEY as *const u8 as *const c_void
+    }
+
+    #[cfg(not(feature = "luau"))]
+    unsafe fn drop_userdata(ud: *mut Self) {
+        CallbackUpvalue::drop_userdata(ud);
     }
 }
 
@@ -2314,6 +2319,11 @@ impl TypeKey for AsyncCallbackUpvalue {
     fn type_key() -> *const c_void {
         static ASYNC_CALLBACK_UPVALUE_TYPE_KEY: u8 = 0;
         &ASYNC_CALLBACK_UPVALUE_TYPE_KEY as *const u8 as *const c_void
+    }
+
+    #[cfg(not(feature = "luau"))]
+    unsafe fn drop_userdata(ud: *mut Self) {
+        AsyncCallbackUpvalue::drop_userdata(ud);
     }
 }
 
@@ -2364,43 +2374,314 @@ impl TypeKey for Option<std::task::Waker> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a0ad4535` (2026-11-03)
-**Commit Message**: Bump Luau to 0.745
+### Incident Patch 1: `e4699f2f` (2026-11-15)
+**Commit Message**: Fix scope teardown re-entry aliasing
 
-**File**: `mlua-sys/Cargo.toml` (modified, +1/-1)
+Closes #765
+
+**File**: `src/scope.rs` (modified, +2/-2)
 ```diff
-@@ -43,7 +43,7 @@ cfg-if = "1.0"
- pkg-config = "0.3.17"
- lua-src = { version = ">= 551.1.0, < 551.2.0", optional = true }
- luajit-src = { version = ">= 210.7.0, < 210.8.0", optional = true }
--luau0-src = { version = "0.22.1", optional = true }
-+luau0-src = { version = "0.23.0", optional = true }
+@@ -28,14 +28,14 @@ pub struct Scope<'scope, 'env: 'scope> {
+ type DestructorCallback<'a> = Box<dyn FnOnce(&RawLua, ValueRef) -> Vec<Box<dyn FnOnce() + 'a>>>;
  
- [lints.rust]
- unexpected_cfgs = { level = "warn", check-cfg = ['cfg(raw_dylib)'] }
+ // Implement Drop on Destructors instead of Scope to avoid compilation error
+-struct Destructors<'a>(RefCell<Option<Vec<(ValueRef, DestructorCallback<'a>)>>>);
++struct Destructors<'a>(Box<RefCell<Option<Vec<(ValueRef, DestructorCallback<'a>)>>>>);
+ 
+ struct UserDestructors<'a>(RefCell<Vec<Box<dyn FnOnce() + 'a>>>);
+ 
+ impl<'scope, 'env: 'scope> Scope<'scope, 'env> {
+     pub(crate) fn new(lua: LuaGuard) -> Self {
+         Scope {
+-            destructors: Destructors(RefCell::new(Some(Vec::new()))),
++            destructors: Destructors(Box::new(RefCell::new(Some(Vec::new())))),
+             lua,
+             user_destructors: UserDestructors(RefCell::new(Vec::new())),
+             _scope_invariant: PhantomData,
 ```
 
-**File**: `mlua-sys/src/luau/lua.rs` (modified, +2/-1)
+---
+
+### Incident Patch 2: `c15d1f73` (2026-11-15)
+**Commit Message**: Fix userdata metatable re-registration race
+
+Closes #764.
+
+**File**: `src/state/raw.rs` (modified, +4/-3)
 ```diff
-@@ -350,7 +350,8 @@ unsafe extern "C-unwind" {
+@@ -1145,13 +1145,14 @@ impl RawLua {
+     ) -> Result<AnyUserData> {
+         let state = self.state();
+         let _sg = StackGuard::new(state);
+-        check_stack(state, 3)?;
++        check_stack(state, 4)?;
  
- pub type lua_UserdataMark = unsafe extern "C-unwind" fn(L: *mut lua_State, ud: *mut c_void);
- pub type lua_EmbedderMark = unsafe extern "C-unwind" fn(L: *mut lua_State, r#ref: c_int);
--pub type lua_EmbedderGc = unsafe extern "C-unwind" fn(L: *mut lua_State, markref: Option<lua_EmbedderMark>);
-+pub type lua_EmbedderGc =
-+    unsafe extern "C-unwind" fn(L: *mut lua_State, markref: Option<lua_EmbedderMark>) -> c_int;
+-        // We generate metatable first to make sure it *always* available when userdata pushed
++        // Keep the metatable alive while allocating userdata, which may run GC finalizers.
+         let mt_id = get_metatable_id()?;
++        ffi::lua_rawgeti(state, ffi::LUA_REGISTRYINDEX, mt_id as _);
+         let protect = !self.unlikely_memory_error();
+         push_userdata(state, data, protect)?;
+-        ffi::lua_rawgeti(state, ffi::LUA_REGISTRYINDEX, mt_id as _);
++        ffi::lua_insert(state, -2);
+         ffi::lua_setmetatable(state, -2);
  
- //
- // Reference system, can be used to pin objects
+         // Set empty environment for Lua 5.1
+```
+
+**File**: `tests/userdata.rs` (modified, +32/-0)
+```diff
+@@ -958,6 +958,38 @@ fn test_userdata_reregister_type() -> Result<()> {
+     Ok(())
+ }
+ 
++#[cfg(not(feature = "luau"))]
++#[test]
++fn test_userdata_reregister_during_creation() -> Result<()> {
++    use std::sync::atomic::{AtomicBool, Ordering};
++
++    struct Reentrant;
++    impl UserData for Reentrant {}
++
++    let lua = Lua::new();
++    let called = Arc::new(AtomicBool::new(false));
++    let called2 = Arc::clone(&called);
++    let reregister = lua.create_function(move |lua, ()| {
++        called2.store(true, Ordering::Relaxed);
++        lua.register_userdata_type::<Reentrant>(|_| {})
++    })?;
++    lua.globals().set("reregister", reregister)?;
++
++    #[cfg(not(any(feature = "lua51", feature = "luajit")))]
++    lua.load("for _ = 1, 50 do setmetatable({}, { __gc = reregister }) end")
++        .exec()?;
++    #[cfg(any(feature = "lua51", feature = "luajit"))]
++    lua.load("for _ = 1, 50 do local ud = newproxy(true); getmetatable(ud).__gc = reregister end")
++        .exec()?;
++    called.store(false, Ordering::Relaxed);
++    for _ in 0..2000 {
++        drop(lua.create_userdata(Reentrant)?);
++    }
++    assert!(called.load(Ordering::Relaxed));
++
++    Ok(())
++}
++
+ #[test]
+ fn test_any_userdata_wrap() -> Result<()> {
+     let lua = Lua::new();
+```
+
+---
+
+### Incident Patch 3: `682fb4cd` (2026-11-15)
+**Commit Message**: Fix userdata reference drop ordering
+
+Closes #760 and #763.
+
+**File**: `Cargo.toml` (modified, +1/-0)
+```diff
+@@ -55,6 +55,7 @@ bstr = { version = "1.0", features = ["std"], default-features = false }
+ either = "1.0"
+ num-traits = { version = "0.2.14" }
+ rustc-hash = "2.0"
++maybe-dangling = "=0.1.2"
+ futures-util = { version = "0.3", optional = true, default-features = false, features = ["std"] }
+ serde = { version = "1.0", optional = true }
+ erased-serde = { version = "0.4", optional = true }
+```
+
+**File**: `src/userdata/ref.rs` (modified, +135/-83)
+```diff
+@@ -3,6 +3,8 @@ use std::ops::{Deref, DerefMut};
+ use std::os::raw::c_int;
+ use std::{fmt, mem};
+ 
++use maybe_dangling::MaybeDangling;
++
+ use crate::error::{Error, Result};
+ use crate::state::{Lua, RawLua};
+ use crate::traits::FromLua;
+@@ -27,12 +29,62 @@ use {
+     std::rc::Rc,
+ };
+ 
++#[cfg(all(feature = "userdata-wrappers", not(feature = "send")))]
++type RcRefCellRef<T> = MaybeDangling<Ref<'static, T>>;
++#[cfg(all(feature = "userdata-wrappers", not(feature = "send")))]
++type RcRefCellRefMut<T> = MaybeDangling<RefMut<'static, T>>;
++
++struct UserDataGuard<T: 'static> {
++    // Keep the guard before its owner so the lock is released before the allocation is freed.
++    _guard: MaybeDangling<LockGuard<'static, RawLock>>,
++    variant: UserDataVariant<T>,
++}
++
++impl<T> UserDataGuard<T> {
++    #[inline]
++    fn try_read(variant: UserDataVariant<T>) -> Result<Self> {
++        let guard = variant
++            .raw_lock()
++            .try_lock_shared_guarded()
++            .map_err(|_| Error::UserDataBorrowError)?;
++        let guard = unsafe { mem::transmute::<LockGuard<'_, _>, LockGuard<'static, _>>(guard) };
++        Ok(Self::new(variant, guard))
++    }
++
++    #[inline]
++    fn try_write(variant: UserDataVariant<T>) -> Result<Self> {
++        let guard = variant
++            .raw_lock()
++            .try_lock_exclusive_guarded()
++            .map_err(|_| Error::UserDataBorrowMutError)?;
++        let guard = unsafe { mem::transmute::<LockGuard<'_, _>, LockGuard<'static, _>>(guard) };
++        Ok(Self::new(variant, guard))
++    }
++
++    #[inline(always)]
++    fn new(variant: UserDataVariant<T>, guard: LockGuard<'static, RawLock>) -> Self {
++        Self {
++            _guard: MaybeDangling::new(guard),
++            variant,
++        }
++    }
++
++    #[inline(always)]
++    fn as_ptr(&self) -> *mut T {
++        self.variant.as_ptr()
++    }
++
++    #[inline(always)]
++    fn get(&self) -> &T {
++        // SAFETY: `variant` owns the value and `_guard` keeps it locked.
++        unsafe { &*self.as_ptr() }
++    }
++}
++
+ /// A wrapper type for a userdata value that provides read access.
+ ///
+ /// It implements [`FromLua`] and can be used to receive a typed userdata from Lua.
+ pub struct UserDataRef<T: 'static> {
+-    // It's important to drop the guard first, as it refers to the `inner` data.
+-    _guard: LockGuard<'static, RawLock>,
+     inner: UserDataRefInner<T>,
+ }
+ 
+@@ -66,10 +118,9 @@ impl<T> TryFrom<UserDataVariant<T>> for UserDataRef<T> {
+         // - with `send` feature, `T: Sync` is guaranteed by the `MaybeSync` bound on userdata
+         //   creation
+         // - without `send` feature, single-threaded access makes shared lock safe for any `T`
+-        let guard = variant.raw_lock().try_lock_shared_guarded();
+-        let guard = guard.map_err(|_| Error::UserDataBorrowError)?;
+-        let guard = unsafe { mem::transmute::<LockGuard<_>, LockGuard<'static, _>>(guard) };
+-        Ok(UserDataRef::from_parts(UserDataRefInner::Default(variant), guard))
++        Ok(UserDataRef {
++            inner: UserDataRefInner::Default(UserDataGuard::try_read(variant)?),
++        })
+     }
+ }
+ 
+@@ -85,21 +136,13 @@ impl<T: 'static> FromLua for UserDataRef<T> {
+ }
+ 
+ impl<T: 'static> UserDataRef<T> {
+-    #[inline(always)]
+-    fn from_parts(inner: UserDataRefInner<T>, guard: LockGuard<'static, RawLock>) -> Self {
+-        Self { _guard: guard, inner }
+-    }
+-
+     #[cfg(feature = "userdata-wrappers")]
+     fn remap<U>(
+         self,
+-        f: impl FnOnce(UserDataVariant<T>) -> Result<UserDataRefInner<U>>,
++        f: impl FnOnce(UserDataGuard<T>) -> Result<UserDataRefInner<U>>,
+     ) -> Result<UserDataRef<U>> {
+-        match &self.inner {
+-            UserDataRefInner::Default(variant) => {
+-                let inner = f(variant.clone())?;
+-                Ok(UserDataRef::from_parts(inner, self._guard))
+-            }
++        match self.inner {
++            UserDataRefInner::Default(guard) => Ok(UserDataRef { inner: f(guard)? }),
+             _ => Err(Error::UserDataTypeMismatch),
+         }
+     }
+@@ -150,68 +193,79 @@ impl<T: 'static> UserDataRef<T> {
+ #[cfg(all(feature = "userdata-wrappers", not(feature = "send")))]
+ impl<T> UserDataRef<Rc<T>> {
+     fn transform_rc(self) -> Result<UserDataRef<T>> {
+-        self.remap(|variant| Ok(UserDataRefInner::Rc(variant)))
++        self.remap(|owner| Ok(UserDataRefInner::Rc(owner)))
+     }
+ }
+ 
+ #[cfg(all(feature = "userdata-wrappers", not(feature = "send")))]
+ impl<T> UserDataRef<Rc<RefCell<T>>> {
+     fn transform_rc_refcell(self) -> Result<UserDataRef<T>> {
+-        self.remap(|variant| unsafe {
+-            let obj = &*variant.as_ptr();
+-            let r#ref = obj.try_borrow().map_err(|_| Error::UserDataBorrowError)?;
+-            let borrow = std::mem::transmute::<Ref<T>, Ref<'static, T>>(r#ref);
+-            Ok(UserDataRefInner::RcRefCell(borrow, variant))
++        self.remap(|owner| {
++            let obj = owner.get();
++            let borrow = obj.try_borrow().map_err
+```
+
+**File**: `tests/userdata.rs` (modified, +36/-0)
+```diff
+@@ -1524,6 +1524,42 @@ fn test_userdata_wrappers() -> Result<()> {
+     Ok(())
+ }
+ 
++#[cfg(all(feature = "userdata-wrappers", feature = "send"))]
++#[test]
++fn test_userdata_wrapper_ref_drop_race() -> Result<()> {
++    use std::sync::mpsc;
++
++    use parking_lot::Mutex;
++
++    struct MyUserData;
++
++    let lua = Lua::new();
++
++    let ud = lua.create_any_userdata(Arc::new(Mutex::new(MyUserData)))?;
++    let (tx, rx) = mpsc::sync_channel::<UserDataRef<MyUserData>>(0);
++    let thread = std::thread::spawn(move || {
++        while let Ok(ud) = rx.recv() {
++            drop(ud);
++        }
++    });
++
++    for _ in 0..10_000 {
++        tx.send(ud.borrow::<MyUserData>()?).unwrap();
++        loop {
++            if let Ok(mut inner) = ud.borrow_mut::<Arc<Mutex<MyUserData>>>() {
++                *inner = Arc::new(Mutex::new(MyUserData));
++                break;
++            }
++            std::hint::spin_loop();
++        }
++    }
++
++    drop(tx);
++    thread.join().unwrap();
++
++    Ok(())
++}
++
+ #[cfg(feature = "luau")]
+ #[test]
+ fn test_userdata_namecall() -> Result<()> {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #752** (2026-11-15): Add one-shot Luau interrupts (@khvzak)
 - **PR #743** (closed): Compile `luau` for `wasm32-unknown-unknown`: skip stdio heap dump there (@nikolchaa)
 - **PR #732** (closed): Clippy fixes (@notpeter)
 - **PR #727** (closed): Allow `#[mlua::userdata_impl]` in a different module than the type (@teddytennant)
 - **PR #719** (closed): Expose `ValueRef` via trait. (@Renderthegreat)
 - **PR #712** (2026-07-05): mlua-sys: separate compile error when no Lua feature is enabled (@mrcjkb)
-- **PR #707** (2026-06-09): Remove unmaintained proc-macro-error2 dependency (RUSTSEC-2026-0173) (@thomasqueirozb)
 
 ---
 
@@ -2420,31 +2701,33 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Bump Luau to 0.745
+## X. scope teardown re-entry aliasing
 
 **RULE**:
-When implementing operations in `mlua-sys/Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mlua-rs/mlua. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/scope.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mlua-rs/mlua. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a0ad4535`: Bump Luau to 0.745. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e4699f2f`: scope teardown re-entry aliasing. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `mlua-sys/Cargo.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/scope.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-luau0-src = { version = "0.23.0", optional = true }
+struct Destructors<'a>(Box<RefCell<Option<Vec<(ValueRef, DestructorCallback<'a>)>>>>);
+            destructors: Destructors(Box::new(RefCell::new(Some(Vec::new())))),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-luau0-src = { version = "0.22.1", optional = true }
+// Induced defect failure mode:
+struct Destructors<'a>(RefCell<Option<Vec<(ValueRef, DestructorCallback<'a>)>>>);
+            destructors: Destructors(RefCell::new(Some(Vec::new()))),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a0ad4535` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e4699f2f` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

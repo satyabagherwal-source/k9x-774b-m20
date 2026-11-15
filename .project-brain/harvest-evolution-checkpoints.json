@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T20:42:11.951Z",
+  "last_updated": "2026-11-15T20:51:40.576Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-15T20:08:57.329Z",
@@ -603,9 +603,9 @@
       "staged_for_review": 1
     },
     "freenet-freenet-core-learnings.md": {
-      "processed_at": "2026-11-14T08:11:05.366Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-15T20:51:39.384Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "slatedb-slatedb-learnings.md": {
       "processed_at": "2026-11-13T07:06:53.334Z",
@@ -2473,7 +2473,7 @@
       "staged_for_review": 0
     },
     "helixdb-helix-db-learnings.md": {
-      "processed_at": "2026-11-14T07:31:23.044Z",
+      "processed_at": "2026-11-15T20:51:39.972Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3061,9 +3061,14 @@
       "processed_at": "2026-11-15T20:23:09.702Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "mlua-rs-mlua-learnings.md": {
+      "processed_at": "2026-11-15T20:51:08.539Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1122,
-  "total_canonical_promoted": 271,
-  "total_staged_for_review": 851
+  "total_dossiers_evaluated": 1125,
+  "total_canonical_promoted": 272,
+  "total_staged_for_review": 853
 }

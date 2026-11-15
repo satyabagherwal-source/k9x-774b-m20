@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-15T20:42:11.819Z",
-  "total_verified_learnings": 8722,
+  "last_updated": "2026-11-15T20:51:40.454Z",
+  "total_verified_learnings": 8723,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18595,
+  "total_items": 18609,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112103,10 +112103,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "6aa325ba",
-      "content_hash": "4091cd53ab42c5e49a655e035e1bf914729340dc381f7885b655fcfd51d8d691",
+      "source_version": "3af21c2b",
+      "content_hash": "5e7fcc2b823f13d63b99fbae3bec06ff01f41069fe15e8970187f89372e299bd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T19:45:45.768Z"
+      "persisted_at": "2026-11-15T20:51:05.796Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -114623,10 +114623,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "repository": "freenet/freenet-core",
-      "source_version": "cfed3caa",
-      "content_hash": "d9d076b054a1f453a7f5cc7865a4632a322ac0c684d32bd58e8c78f3b1231d90",
+      "source_version": "fdc05210",
+      "content_hash": "2db185371796568c9099f147506c4982495a68ae981396644b74e228451c1d4e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T08:10:39.142Z"
+      "persisted_at": "2026-11-15T20:51:02.083Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core",
@@ -114635,10 +114635,10 @@
       "relative_path": "08_VERIFICATION/freenet-freenet-core-verification-protocol-empirical-defect-shield-for-freenet-f.md",
       "title": "Verification Protocol: Empirical Defect Shield for freenet/freenet-core",
       "repository": "freenet/freenet-core",
-      "source_version": "cfed3caa",
-      "content_hash": "77d460f371834a027b5f8d535bcf7da9d15617d112f8a6066652ffa1914c1845",
+      "source_version": "fdc05210",
+      "content_hash": "fc227bfd23880add5a0a3f11fef756af6860a22ca9e04e133b439849b22d50d6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T08:10:39.222Z"
+      "persisted_at": "2026-11-15T20:51:02.199Z"
     },
     "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674": {
       "item_id": "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674",
@@ -114720,9 +114720,9 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "b526fdd9aa10fc3641f85eae2176591f57bf880b0deead580d1b032835d5fb95",
+      "content_hash": "00c974315a6cd75ce1fa5afdd1c2e9b05aed0425c33ef2ac4549255bcc8f62fa",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T08:11:05.612Z"
+      "persisted_at": "2026-11-15T20:51:39.711Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings",
@@ -114732,9 +114732,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for freenet-freenet-core-learnings",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "4929cd7d9dc4ae13d8e5a192bf78258d201b63076400de7a5ab3d365cf329ae2",
+      "content_hash": "71b216e3825454c6c3f171326af68dba3f0be0a71b898a3e1a5352d0805626a7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T08:11:05.694Z"
+      "persisted_at": "2026-11-15T20:51:39.842Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -218776,8 +218776,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "6aa325ba",
-      "content_hash": "4f60503be7baf1cdb1d18d5c70fcf5606c37f3e4031187ef21b37e5b5690150d",
+      "source_version": "3af21c2b",
+      "content_hash": "2b7eaf82263b8d8d5143f87bfee8e6e274407f98a13e6216b10ae92352482c1c",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -218840,6 +218840,11 @@
           "number": 8624,
           "title": "v29.0.0 release of MCP Server and Claude Cowork plugin",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8651,
+          "title": "docs(changelog): link the SARIF example, wiki walk-through and sample repo",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -218847,7 +218852,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T19:45:45.027Z",
+      "verified_at": "2026-11-15T20:51:05.230Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -219147,8 +219152,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "cfed3caa",
-      "content_hash": "a710a6f16d73ae5afc1ac7f0b22a1d64e99031580252451fa3ff6fb9012550e3",
+      "source_version": "fdc05210",
+      "content_hash": "0c602308aab2127e5b305d077cebcaa7b40ad69f7a266235fa60d3531a61b2d4",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -219161,6 +219166,11 @@
           "number": 8469,
           "title": "release 0.2.157",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8649,
+          "title": "fix macOS Service Unit timeouts (reuse e2e build, warm cache)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -219168,7 +219178,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T08:10:38.842Z",
+      "verified_at": "2026-11-15T20:51:01.629Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -225216,14 +225226,19 @@
       "slug": "helixdb-helix-db",
       "platform": "github",
       "source_url": "https://github.com/HelixDB/helix-db",
-      "source_version": "26c3f138",
-      "content_hash": "5419b10249288346b7db86182a5d9c87e60fbeb95d32c191819927af8386fc7e",
+      "source_version": "4b0982fd",
+      "content_hash": "df12d3a87b05c3d35b2bd185a902d86686776856e28a76681fdbc5b5141017e7",
       "dossier_path": "07_PROJECT_LEARNING/helixdb-helix-db-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/helixdb-helix-db-learnings.md",
       "promoted_rules": [
         {
           "number": 8464,
           "title": "fix audit findings across HelixDB, Cloud, CLI and Foundry",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8650,
+          "title": "Claim index operations in their tasks and wait once per index DDL request",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -225232,7 +225247,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T07:30:51.133Z",
+      "verified_at": "2026-11-15T20:51:03.261Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -225274,10 +225289,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-helixdb-helix-db-architecture-intelligence-helixdb-helix-db-core-invariants.md",
       "title": "Architecture Intelligence: HelixDB/helix-db Core Invariants",
       "repository": "HelixDB/helix-db",
-      "source_version": "26c3f138",
-      "content_hash": "02c8123a33754c9da6efedda4ab9aa98ca66f138ad87db8af9c98afc8d6557b9",
+      "source_version": "4b0982fd",
+      "content_hash": "56d1752a2b949a8ecafb465a80e8861b810e8e33fdcae734847eaa4f50a31251",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T07:30:51.620Z"
+      "persisted_at": "2026-11-15T20:51:03.706Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-helixdb-helix-db": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-helixdb-helix-db",
@@ -225286,10 +225301,10 @@
       "relative_path": "08_VERIFICATION/helixdb-helix-db-verification-protocol-empirical-defect-shield-for-helixdb-helix.md",
       "title": "Verification Protocol: Empirical Defect Shield for HelixDB/helix-db",
       "repository": "HelixDB/helix-db",
-      "source_version": "26c3f138",
-      "content_hash": "828fec295b7571bd8cf0def81ca01735548a8376c740c09b0552fda0c59b3ab0",
+      "source_version": "4b0982fd",
+      "content_hash": "c328c8c80d3d90f4db1951c9b8448465714c2d694a47e742efa969d955b462fc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T07:30:51.740Z"
+      "persisted_at": "2026-11-15T20:51:03.821Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-venastine-research-xing4-0-29b-a4b-gguf-learn": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-venastine-research-xing4-0-29b-a4b-gguf-learn",
@@ -225323,9 +225338,9 @@
       "title": "Architecture Intelligence: helixdb-helix-db-learnings Core Invariants",
       "repository": "helixdb-helix-db-learnings",
       "source_version": "HEAD",
-      "content_hash": "ae189173afd05677d346c45d2791ac3fb75e2fda71b6547f0a8b121cdc922aff",
+      "content_hash": "91373cacc2c2282ce6a27861d0ab2d2ea0fbe55ad133841f889ca0bc09956d66",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T07:31:23.440Z"
+      "persisted_at": "2026-11-15T20:51:40.322Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-helixdb-helix-db-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-helixdb-helix-db-learnings",
@@ -225335,9 +225350,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for helixdb-helix-db-learnings",
       "repository": "helixdb-helix-db-learnings",
       "source_version": "HEAD",
-      "content_hash": "f85c6997d990f972bfa0f919c79e61865e3c664c29ce80e3559f0201369e64eb",
+      "content_hash": "f176e3975965c287cfedbd25a9e781c8be5db180cc6f0cd765907336774f096a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T07:31:23.552Z"
+      "persisted_at": "2026-11-15T20:51:40.454Z"
     },
     "learn-github-lingyired-status-trio": {
       "learning_id": "learn-github-lingyired-status-trio",
@@ -235356,10 +235371,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dathere-qsv-technical-construction-intelligence-dathere-qsv-core-invariants.md",
       "title": "Technical Construction Intelligence: dathere/qsv Core Invariants",
       "repository": "dathere/qsv",
-      "source_version": "6aa325ba",
-      "content_hash": "5b8b1339ee7e75aaf41cbdeeb7da07a8eeafa1bb3eac69fb0a6a1d81ca36e11c",
+      "source_version": "3af21c2b",
+      "content_hash": "a4e23169c384c8af6aee808a11d4280e7bc616058d64b9fa59d767acb87f01ed",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T19:45:45.624Z"
+      "persisted_at": "2026-11-15T20:51:05.676Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-francisring-prism-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-francisring-prism-learnings-core-invariants",
@@ -246369,6 +246384,203 @@
       "content_hash": "3f94998cba25fe0fc1ee49223ba8251928b57c4ffdcf74142b5dd06ddd2f3c4e",
       "domain_letter": "K",
       "persisted_at": "2026-11-15T20:42:11.819Z"
+    },
+    "learn-github-mlua-rs-mlua": {
+      "learning_id": "learn-github-mlua-rs-mlua",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "mlua-rs/mlua",
+      "repository": "mlua-rs/mlua",
+      "slug": "mlua-rs-mlua",
+      "platform": "github",
+      "source_url": "https://github.com/mlua-rs/mlua",
+      "source_version": "e4699f2f",
+      "content_hash": "0423954249d5f7605b1f98e2a3b1efcce78cae33b77281681a58a9a145ca4a7f",
+      "dossier_path": "07_PROJECT_LEARNING/mlua-rs-mlua-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/mlua-rs-mlua-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8648,
+          "title": "scope teardown re-entry aliasing",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T20:50:51.550Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8648": {
+      "learning_id": "rule-8648",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8648,
+      "title": "scope teardown re-entry aliasing",
+      "source_url": "https://github.com/mlua-rs/mlua",
+      "source_version": "e4699f2f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T20:50:51.550Z"
+    },
+    "candidate_directive-scope-teardown-re-entry-aliasing": {
+      "item_id": "candidate_directive-scope-teardown-re-entry-aliasing",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-7NGY-scope-teardown-re-entry-aliasing.md",
+      "title": "scope teardown re-entry aliasing",
+      "repository": "mlua-rs-mlua-learnings",
+      "source_version": "HEAD",
+      "content_hash": "356ca781c4c792c4880174beadc20f326394ab79716f137852f1380b5ef897b9",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-15T20:51:08.821Z"
+    },
+    "domain_intelligence-architecture-intelligence-mlua-rs-mlua-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-mlua-rs-mlua-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mlua-rs-mlua-architecture-intelligence-mlua-rs-mlua-core-invariants.md",
+      "title": "Architecture Intelligence: mlua-rs/mlua Core Invariants",
+      "repository": "mlua-rs/mlua",
+      "source_version": "e4699f2f",
+      "content_hash": "2018b8a769d43cde4496f387e7520ee0a3710a61534f3af902b5c72e427137e5",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T20:50:52.000Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-mlua-rs-mlua": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-mlua-rs-mlua",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/mlua-rs-mlua-verification-protocol-empirical-defect-shield-for-mlua-rs-mlua.md",
+      "title": "Verification Protocol: Empirical Defect Shield for mlua-rs/mlua",
+      "repository": "mlua-rs/mlua",
+      "source_version": "e4699f2f",
+      "content_hash": "49bccd9f84add0cb542ddb6170d6ce16f9854f3dba0e35fe84c932065fa3f43f",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T20:50:52.116Z"
+    },
+    "rule-8649": {
+      "learning_id": "rule-8649",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8649,
+      "title": "fix macOS Service Unit timeouts (reuse e2e build, warm cache)",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "fdc05210",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T20:51:01.629Z"
+    },
+    "candidate_directive-fix-macos-service-unit-timeouts-reuse-e2e-build-warm-cache": {
+      "item_id": "candidate_directive-fix-macos-service-unit-timeouts-reuse-e2e-build-warm-cache",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-7I6P-fix-macos-service-unit-timeouts-reuse-e2e-build-warm-cache.md",
+      "title": "fix macOS Service Unit timeouts (reuse e2e build, warm cache)",
+      "repository": "freenet/freenet-core",
+      "source_version": "fdc05210",
+      "content_hash": "9f81a63dab3a54697af3efea412afcfc65c13eca2337047b3676abbf4bce2059",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T20:51:01.973Z"
+    },
+    "rule-8650": {
+      "learning_id": "rule-8650",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8650,
+      "title": "Claim index operations in their tasks and wait once per index DDL request",
+      "source_url": "https://github.com/HelixDB/helix-db",
+      "source_version": "4b0982fd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T20:51:03.261Z"
+    },
+    "candidate_directive-claim-index-operations-in-their-tasks-and-wait-once-per-index-ddl-request": {
+      "item_id": "candidate_directive-claim-index-operations-in-their-tasks-and-wait-once-per-index-ddl-request",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-8BOF-claim-index-operations-in-their-tasks-and-wait-once-per-index-ddl-request.md",
+      "title": "Claim index operations in their tasks and wait once per index DDL request",
+      "repository": "helixdb-helix-db-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0b5bb51ff7e6a2d2c9d7e5fe622419eb33f70db89eea34ee3c2a605d8c0546a6",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T20:51:40.204Z"
+    },
+    "rule-8651": {
+      "learning_id": "rule-8651",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8651,
+      "title": "docs(changelog): link the SARIF example, wiki walk-through and sample repo",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "3af21c2b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T20:51:05.230Z"
+    },
+    "candidate_directive-docs-changelog-link-the-sarif-example-wiki-walk-through-and-sample-repo": {
+      "item_id": "candidate_directive-docs-changelog-link-the-sarif-example-wiki-walk-through-and-sample-repo",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-7KYF-docs-changelog-link-the-sarif-example-wiki-walk-through-and-sample-repo.md",
+      "title": "docs(changelog): link the SARIF example, wiki walk-through and sample repo",
+      "repository": "dathere/qsv",
+      "source_version": "3af21c2b",
+      "content_hash": "3129bca6eedcc6571a221508b20237fd1ddb157e4de44a8b7e14e93d394f992c",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T20:51:05.562Z"
+    },
+    "domain_intelligence-architecture-intelligence-mlua-rs-mlua-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-mlua-rs-mlua-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mlua-rs-mlua-learnings-architecture-intelligence-mlua-rs-mlua-learnings-core-inv.md",
+      "title": "Architecture Intelligence: mlua-rs-mlua-learnings Core Invariants",
+      "repository": "mlua-rs-mlua-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c90228ece5ca613876fe15293cfd4a058e9325e22016ea13a9927ad15c717459",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T20:51:08.938Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-mlua-rs-mlua-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-mlua-rs-mlua-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/mlua-rs-mlua-learnings-verification-protocol-empirical-defect-shield-for-mlua-rs.md",
+      "title": "Verification Protocol: Empirical Defect Shield for mlua-rs-mlua-learnings",
+      "repository": "mlua-rs-mlua-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9c6aa5ab8ba0704599bb15aeba52d5877677dcc118e1782620c68665e37f4a48",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T20:51:09.060Z"
+    },
+    "candidate_directive-ci-fix-macos-service-unit-timeouts-reuse-e2e-build-warm-cache": {
+      "item_id": "candidate_directive-ci-fix-macos-service-unit-timeouts-reuse-e2e-build-warm-cache",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-8B7I-ci-fix-macos-service-unit-timeouts-reuse-e2e-build-warm-cache.md",
+      "title": "ci: fix macOS Service Unit timeouts (reuse e2e build, warm cache)",
+      "repository": "freenet-freenet-core-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f8b58a1a96b89d3fa99ee348a3348d698de0e9c509cc42a0d0864c3af7be4441",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T20:51:39.595Z"
     }
   },
   "ai-builder-brain": {

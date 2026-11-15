@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T20:42:11.534Z",
-  "total_records": 1116,
+  "last_updated": "2026-11-15T20:51:40.322Z",
+  "total_records": 1119,
   "domains": {
     "A": {
       "total": 7,
@@ -617,7 +617,7 @@
       ]
     },
     "G": {
-      "total": 191,
+      "total": 193,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -809,7 +809,9 @@
         "domain_intelligence-architecture-intelligence-nsh07-tomato-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-modelcontextprotocol-kotlin-sdk-core-invariants",
         "domain_intelligence-architecture-intelligence-modelcontextprotocol-kotlin-sdk-learnings-core-invaria",
-        "domain_intelligence-architecture-intelligence-materializeinc-materialize-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-materializeinc-materialize-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-mlua-rs-mlua-core-invariants",
+        "domain_intelligence-architecture-intelligence-mlua-rs-mlua-learnings-core-invariants"
       ]
     },
     "H": {
@@ -1116,7 +1118,7 @@
       ]
     },
     "K": {
-      "total": 42,
+      "total": 43,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -1159,7 +1161,8 @@
         "DOM-K-8A108F40",
         "domain_intelligence-quality-verification-intelligence-seo-skills-seo-audit-skill-learnings-core-inva",
         "domain_intelligence-quality-verification-intelligence-matrixorigin-matrixone-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-matrixorigin-matrixone-learnings-core-invarian"
+        "domain_intelligence-quality-verification-intelligence-matrixorigin-matrixone-learnings-core-invarian",
+        "DOM-K-9BB3D64B"
       ]
     },
     "L": {
@@ -8482,8 +8485,8 @@
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "repository": "freenet/freenet-core",
-      "content_hash": "d9d076b054a1f453a7f5cc7865a4632a322ac0c684d32bd58e8c78f3b1231d90",
-      "created_at": "2026-11-14T08:10:39.142Z"
+      "content_hash": "2db185371796568c9099f147506c4982495a68ae981396644b74e228451c1d4e",
+      "created_at": "2026-11-15T20:51:02.083Z"
     },
     "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants",
@@ -8560,8 +8563,8 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-learnings-technical-construction-intelligence-freenet-freen.md",
       "repository": "freenet-freenet-core-learnings",
-      "content_hash": "b526fdd9aa10fc3641f85eae2176591f57bf880b0deead580d1b032835d5fb95",
-      "created_at": "2026-11-14T08:11:05.612Z"
+      "content_hash": "00c974315a6cd75ce1fa5afdd1c2e9b05aed0425c33ef2ac4549255bcc8f62fa",
+      "created_at": "2026-11-15T20:51:39.711Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -13352,8 +13355,8 @@
       "title": "Architecture Intelligence: HelixDB/helix-db Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-helixdb-helix-db-architecture-intelligence-helixdb-helix-db-core-invariants.md",
       "repository": "HelixDB/helix-db",
-      "content_hash": "02c8123a33754c9da6efedda4ab9aa98ca66f138ad87db8af9c98afc8d6557b9",
-      "created_at": "2026-11-14T07:30:51.620Z"
+      "content_hash": "56d1752a2b949a8ecafb465a80e8861b810e8e33fdcae734847eaa4f50a31251",
+      "created_at": "2026-11-15T20:51:03.706Z"
     },
     "DOM-D-C8957CC0": {
       "record_id": "DOM-D-C8957CC0",
@@ -13412,8 +13415,8 @@
       "title": "Architecture Intelligence: helixdb-helix-db-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-helixdb-helix-db-learnings-architecture-intelligence-helixdb-helix-db-learnings-.md",
       "repository": "helixdb-helix-db-learnings",
-      "content_hash": "ae189173afd05677d346c45d2791ac3fb75e2fda71b6547f0a8b121cdc922aff",
-      "created_at": "2026-11-14T07:31:23.440Z"
+      "content_hash": "91373cacc2c2282ce6a27861d0ab2d2ea0fbe55ad133841f889ca0bc09956d66",
+      "created_at": "2026-11-15T20:51:40.322Z"
     },
     "domain_intelligence-technical-construction-intelligence-lingyired-status-trio-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-lingyired-status-trio-core-invariants",
@@ -17151,8 +17154,8 @@
       "title": "Technical Construction Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dathere-qsv-technical-construction-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "5b8b1339ee7e75aaf41cbdeeb7da07a8eeafa1bb3eac69fb0a6a1d81ca36e11c",
-      "created_at": "2026-11-15T19:45:45.624Z"
+      "content_hash": "a4e23169c384c8af6aee808a11d4280e7bc616058d64b9fa59d767acb87f01ed",
+      "created_at": "2026-11-15T20:51:05.676Z"
     },
     "DOM-D-11540386": {
       "record_id": "DOM-D-11540386",
@@ -21168,6 +21171,66 @@
       "repository": "materializeinc-materialize-learnings",
       "content_hash": "834238b977162c795bc9d39ba2c78531b1a75e5d33431ff6146390d2f1a0c22a",
       "created_at": "2026-11-15T20:42:11.534Z"
+    },
+    "domain_intelligence-architecture-intelligence-mlua-rs-mlua-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-mlua-rs-mlua-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: mlua-rs/mlua Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mlua-rs-mlua-architecture-intelligence-mlua-rs-mlua-core-invariants.md",
+      "repository": "mlua-rs/mlua",
+      "content_hash": "2018b8a769d43cde4496f387e7520ee0a3710a61534f3af902b5c72e427137e5",
+      "created_at": "2026-11-15T20:50:52.000Z"
+    },
+    "domain_intelligence-architecture-intelligence-mlua-rs-mlua-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-mlua-rs-mlua-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: mlua-rs-mlua-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mlua-rs-mlua-learnings-architecture-intelligence-mlua-rs-mlua-learnings-core-inv.md",
+      "repository": "mlua-rs-mlua-learnings",
+      "content_hash": "c90228ece5ca613876fe15293cfd4a058e9325e22016ea13a9927ad15c717459",
+      "created_at": "2026-11-15T20:51:08.938Z"
+    },
+    "DOM-K-9BB3D64B": {
+      "record_id": "DOM-K-9BB3D64B",
+      "domain_letter": "K",
+      "domain_id": "quality_verification",
+      "domain_name": "Quality & Verification Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "K",
+          "id": "quality_verification",
+          "name": "Quality & Verification Intelligence"
+        }
+      ],
+      "title": "ci: fix macOS Service Unit timeouts (reuse e2e build, warm cache)",
+      "content": "When implementing operations in `.github/scripts/check_cache_warm_parity.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "0bdf98f3c70e7a9693cc2dac5a469c113ed14ad0c4b13e3c1c4db8130656467a",
+      "summary": "Prevents defects observed in production commit `66b4a932`: ci: fix macOS Service Unit timeouts (reuse e2e build, warm cache). Unvalidated ex -> When implementing operations in `.github/scripts/check_cache_warm_parity.py`, engineers MUST enforce rigorous boundary validation, safe stat",
+      "provenance": {
+        "source_uri": "project://freenet-freenet-core/freenet-freenet-core-learnings.md",
+        "source_version": "fdc05210",
+        "observed_at": "2026-11-15T20:51:00.903Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (freenet-freenet-core)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of freenet-freenet-core"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "K"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.64,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-15T20:51:39.357Z"
     }
   }
 }

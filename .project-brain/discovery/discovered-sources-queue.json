@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T20:42:11.190Z",
+  "updated_at": "2026-11-15T20:51:40.010Z",
   "stats": {
-    "total_discovered": 3850,
-    "approved_pending_harvest": 3631,
+    "total_discovered": 3855,
+    "approved_pending_harvest": 3635,
     "harvested_count": 0,
-    "rejected_count": 219,
+    "rejected_count": 220,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3613,
+      "COMMUNITY_AND_EXPERT": 3618,
       "OFFICIAL_DOCUMENTATION": 130,
       "STANDARDS_AND_SPECIFICATIONS": 90,
       "ENGINEERING_BLOGS": 2,
@@ -83188,6 +83188,109 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
         "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-AB78A9403BF3": {
+      "id": "SRC-AB78A9403BF3",
+      "url": "https://github.com/mlua-rs/mlua",
+      "title": "https://github.com/mlua-rs/mlua",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T20:51:08.555Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mlua-rs-mlua-learnings.md",
+        "fileName": "mlua-rs-mlua-learnings.md"
+      }
+    },
+    "SRC-CCD18E8BE3B8": {
+      "id": "SRC-CCD18E8BE3B8",
+      "url": "https://www.lua.org/manual/5.4/manual.html",
+      "title": "https://www.lua.org/manual/5.4/manual.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T20:51:08.584Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mlua-rs-mlua-learnings.md",
+        "fileName": "mlua-rs-mlua-learnings.md"
+      }
+    },
+    "SRC-C3F375E8C86D": {
+      "id": "SRC-C3F375E8C86D",
+      "url": "https://github.com/luau-lang/luau/issues/446",
+      "title": "https://github.com/luau-lang/luau/issues/446",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T20:51:08.611Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mlua-rs-mlua-learnings.md",
+        "fileName": "mlua-rs-mlua-learnings.md"
+      }
+    },
+    "SRC-52EC2A4BCE90": {
+      "id": "SRC-52EC2A4BCE90",
+      "url": "https://github.com/bevyengine/disqualified/blob/main/src/short_name.rs",
+      "title": "https://github.com/bevyengine/disqualified/blob/main/src/short_name.rs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T20:51:08.638Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mlua-rs-mlua-learnings.md",
+        "fileName": "mlua-rs-mlua-learnings.md"
+      }
+    },
+    "SRC-598134B19165": {
+      "id": "SRC-598134B19165",
+      "url": "http://host:8080`",
+      "title": "http://host:8080`",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-15T20:51:40.010Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/helixdb-helix-db-learnings.md",
+        "fileName": "helixdb-helix-db-learnings.md"
       }
     }
   }

@@ -10183,3 +10183,8 @@ Every entry in this ledger must capture:
 | `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `348895e4` | Multi-dimensional audit evidence | 2026-11-15T20:41:53.073Z |
 | `learn-github-modelcontextprotocol-kotlin-sdk` | `https://github.com/modelcontextprotocol/kotlin-sdk` | `af5d784d` | Multi-dimensional audit evidence | 2026-11-15T20:41:58.083Z |
 | `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `2026293a` | Multi-dimensional audit evidence | 2026-11-15T20:42:06.003Z |
+| `learn-github-mlua-rs-mlua` | `https://github.com/mlua-rs/mlua` | `e4699f2f` | Multi-dimensional audit evidence | 2026-11-15T20:50:51.713Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `fdc05210` | Multi-dimensional audit evidence | 2026-11-15T20:51:01.789Z |
+| `learn-github-helixdb-helix-db` | `https://github.com/HelixDB/helix-db` | `4b0982fd` | Multi-dimensional audit evidence | 2026-11-15T20:51:03.419Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `3af21c2b` | Multi-dimensional audit evidence | 2026-11-15T20:51:05.391Z |
+| `learn-dom-k-9bb3d64b` | `project://freenet-freenet-core` | `fdc05210` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/freenet-freenet-core-learnings.md` | 2026-11-15T20:51:39.384Z |

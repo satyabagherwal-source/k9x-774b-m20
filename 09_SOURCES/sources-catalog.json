@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "6aa325ba",
+    "sourceVersion": "3af21c2b",
     "license": "NOASSERTION",
-    "contentHash": "4f60503be7baf1cdb1d18d5c70fcf5606c37f3e4031187ef21b37e5b5690150d",
-    "lastHarvestedAt": "2026-11-15T19:45:45.243Z",
+    "contentHash": "2b7eaf82263b8d8d5143f87bfee8e6e274407f98a13e6216b10ae92352482c1c",
+    "lastHarvestedAt": "2026-11-15T20:51:05.391Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "cfed3caa",
+    "sourceVersion": "fdc05210",
     "license": "NOASSERTION",
-    "contentHash": "a710a6f16d73ae5afc1ac7f0b22a1d64e99031580252451fa3ff6fb9012550e3",
-    "lastHarvestedAt": "2026-11-14T08:10:38.943Z",
+    "contentHash": "0c602308aab2127e5b305d077cebcaa7b40ad69f7a266235fa60d3531a61b2d4",
+    "lastHarvestedAt": "2026-11-15T20:51:01.789Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -3973,10 +3973,10 @@
     "repository": "HelixDB/helix-db",
     "platform": "github",
     "sourceUrl": "https://github.com/HelixDB/helix-db",
-    "sourceVersion": "26c3f138",
+    "sourceVersion": "4b0982fd",
     "license": "Apache-2.0",
-    "contentHash": "5419b10249288346b7db86182a5d9c87e60fbeb95d32c191819927af8386fc7e",
-    "lastHarvestedAt": "2026-11-14T07:30:51.301Z",
+    "contentHash": "df12d3a87b05c3d35b2bd185a902d86686776856e28a76681fdbc5b5141017e7",
+    "lastHarvestedAt": "2026-11-15T20:51:03.419Z",
     "learningId": "learn-github-helixdb-helix-db"
   },
   "microsoft-fluentui": {
@@ -5693,10 +5693,10 @@
     "repository": "mlua-rs/mlua",
     "platform": "github",
     "sourceUrl": "https://github.com/mlua-rs/mlua",
-    "sourceVersion": "a0ad4535",
+    "sourceVersion": "e4699f2f",
     "license": "NOASSERTION",
-    "contentHash": "70ad9dfb5075bb6828e8731319bc45a49b619d7db90a7b11535d4f0307103cc6",
-    "lastHarvestedAt": "2026-11-04T09:57:42.801Z",
+    "contentHash": "0423954249d5f7605b1f98e2a3b1efcce78cae33b77281681a58a9a145ca4a7f",
+    "lastHarvestedAt": "2026-11-15T20:50:51.713Z",
     "learningId": "learn-github-mlua-rs-mlua"
   },
   "apsl-react-native-keyboard-aware-scroll-view": {

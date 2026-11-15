@@ -10150,3 +10150,8 @@
 | `CYCLE-20261115-VQNH` | `2026-11-15T20:41:53.069Z` | `NVIDIA/cuda-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8645` | Yes (`5cf71739...`) |
 | `CYCLE-20261115-VUIN` | `2026-11-15T20:41:58.079Z` | `modelcontextprotocol/kotlin-sdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8646` | Yes (`753e4a10...`) |
 | `CYCLE-20261115-W0MN` | `2026-11-15T20:42:05.999Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8647` | Yes (`f47afe19...`) |
+| `CYCLE-20261115-7A9O` | `2026-11-15T20:50:51.708Z` | `mlua-rs/mlua` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8648` | Yes (`04239542...`) |
+| `CYCLE-20261115-7I1L` | `2026-11-15T20:51:01.785Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8649` | Yes (`0c602308...`) |
+| `CYCLE-20261115-7JAW` | `2026-11-15T20:51:03.416Z` | `HelixDB/helix-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8650` | Yes (`df12d3a8...`) |
+| `CYCLE-20261115-7KTN` | `2026-11-15T20:51:05.387Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8651` | Yes (`2b7eaf82...`) |
+| `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T20:51:39.384Z` | `freenet-freenet-core` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-9BB3D64B` [Domain K] | Yes (`0bdf98f3...`) |
