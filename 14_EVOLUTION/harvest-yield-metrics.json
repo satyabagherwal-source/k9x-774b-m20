@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T10:04:31.077Z",
-  "total_cycles_completed": 9698,
-  "total_learnings_persisted": 9698,
-  "total_rules_promoted": 9334,
+  "last_updated": "2026-11-15T10:53:00.249Z",
+  "total_cycles_completed": 9700,
+  "total_learnings_persisted": 9700,
+  "total_rules_promoted": 9335,
   "history": [
-    {
-      "timestamp": "2026-11-14T10:16:38.308Z",
-      "repository": "software-mansion/react-native-gesture-handler",
-      "learningId": "learn-github-software-mansion-react-native-gesture-handler",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T10:16:40.731Z",
-      "repository": "kumahq/kuma",
-      "learningId": "learn-github-kumahq-kuma",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T10:30:01.053Z",
       "repository": "deepseek-ai/DeepSeek-V3.2",
@@ -1403,6 +1389,20 @@
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T10:48:14.774Z",
+      "repository": "databendlabs/databend",
+      "learningId": "learn-github-databendlabs-databend",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T10:53:00.249Z",
+      "repository": "FusionCow/Sulphur-3",
+      "learningId": "learn-huggingface-fusioncow-sulphur-3",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

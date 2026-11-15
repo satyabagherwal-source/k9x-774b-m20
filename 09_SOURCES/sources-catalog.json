@@ -7493,10 +7493,10 @@
     "repository": "databendlabs/databend",
     "platform": "github",
     "sourceUrl": "https://github.com/databendlabs/databend",
-    "sourceVersion": "328efad7",
+    "sourceVersion": "4fc66b82",
     "license": "Apache-2.0",
-    "contentHash": "cec55f565d9e78a3edda52cd89ad1e25e6ba6c1f8332c7c6bef48f8ddf91bb13",
-    "lastHarvestedAt": "2026-11-13T21:45:20.694Z",
+    "contentHash": "cda1e3381c8cff5838ada0572053b9d633b78bd6c97452dc34fab43c80559cb9",
+    "lastHarvestedAt": "2026-11-15T10:48:14.768Z",
     "learningId": "learn-github-databendlabs-databend"
   },
   "atanunq-viu": {
@@ -11715,8 +11715,8 @@
     "sourceUrl": "https://huggingface.co/FusionCow/Sulphur-3",
     "sourceVersion": "hf-fusioncow-sulphur-3",
     "license": "Open-Source",
-    "contentHash": "98783c2040d07ee2ab23a6a6666eb8fa4e132e86dbb2dc346648d7ac6a014f9a",
-    "lastHarvestedAt": "2026-11-09T21:57:34.512Z",
+    "contentHash": "99952ab2f72cdc7e7524db333db8a7c98703ea38e88d943a741ab1ba2525fe1a",
+    "lastHarvestedAt": "2026-11-15T10:53:00.243Z",
     "learningId": "learn-huggingface-fusioncow-sulphur-3"
   },
   "hf-xiaomi-research-xiaomi-ocr-0": {

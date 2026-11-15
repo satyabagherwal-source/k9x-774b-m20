@@ -10108,3 +10108,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-tencent-qwen3-8-27b-dspine-b16` | `https://huggingface.co/tencent/Qwen3.8-27B-DSpine-b16` | `hf-tencent` | Multi-dimensional audit evidence | 2026-11-15T10:04:13.087Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `a19be499` | Multi-dimensional audit evidence | 2026-11-15T10:04:31.072Z |
 | `learn-dom-d-b5a599c0` | `project://hf-tencent-qwen3.8-27b-dspine-b16` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-tencent-qwen3.8-27b-dspine-b16-learnings.md` | 2026-11-15T10:05:03.880Z |
+| `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `4fc66b82` | Multi-dimensional audit evidence | 2026-11-15T10:48:14.768Z |
+| `learn-huggingface-fusioncow-sulphur-3` | `https://huggingface.co/FusionCow/Sulphur-3` | `hf-fusionc` | Multi-dimensional audit evidence | 2026-11-15T10:53:00.243Z |
+| `learn-dom-d-51dd327c` | `project://hf-fusioncow-sulphur-3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-fusioncow-sulphur-3-learnings.md` | 2026-11-15T10:53:36.123Z |

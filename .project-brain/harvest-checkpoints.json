@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-15T10:04:31.081Z",
+  "last_updated": "2026-11-15T10:53:00.254Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -11286,14 +11286,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-databendlabs-databend",
-      "content_hash": "cec55f565d9e78a3edda52cd89ad1e25e6ba6c1f8332c7c6bef48f8ddf91bb13",
-      "verified_at": "2026-11-13T21:45:20.700Z",
+      "content_hash": "cda1e3381c8cff5838ada0572053b9d633b78bd6c97452dc34fab43c80559cb9",
+      "verified_at": "2026-11-15T10:48:14.778Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T21:45:20.700Z"
+      "last_updated": "2026-11-15T10:48:14.778Z"
     },
     "atanunq/viu": {
       "repository": "atanunq/viu",
@@ -17631,14 +17631,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-fusioncow-sulphur-3",
-      "content_hash": "98783c2040d07ee2ab23a6a6666eb8fa4e132e86dbb2dc346648d7ac6a014f9a",
-      "verified_at": "2026-11-09T21:57:34.521Z",
+      "content_hash": "99952ab2f72cdc7e7524db333db8a7c98703ea38e88d943a741ab1ba2525fe1a",
+      "verified_at": "2026-11-15T10:53:00.253Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T21:57:34.521Z"
+      "last_updated": "2026-11-15T10:53:00.253Z"
     },
     "xiaomi-research/Xiaomi-OCR-0": {
       "repository": "xiaomi-research/Xiaomi-OCR-0",

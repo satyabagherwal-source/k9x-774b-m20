@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T10:05:03.894Z",
+  "updated_at": "2026-11-15T10:53:36.616Z",
   "stats": {
-    "total_discovered": 3669,
-    "approved_pending_harvest": 3459,
+    "total_discovered": 3673,
+    "approved_pending_harvest": 3463,
     "harvested_count": 0,
     "rejected_count": 210,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3439,
-      "OFFICIAL_DOCUMENTATION": 125,
+      "COMMUNITY_AND_EXPERT": 3442,
+      "OFFICIAL_DOCUMENTATION": 126,
       "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
       "SECURITY_ADVISORIES": 11,
@@ -79269,6 +79269,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-tencent-qwen3.8-27b-dspine-b16-learnings.md",
         "fileName": "hf-tencent-qwen3.8-27b-dspine-b16-learnings.md"
+      }
+    },
+    "SRC-BBF2ECDA5260": {
+      "id": "SRC-BBF2ECDA5260",
+      "url": "https://huggingface.co/FusionCow/Sulphur-3",
+      "title": "https://huggingface.co/FusionCow/Sulphur-3",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T10:53:36.140Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-fusioncow-sulphur-3-learnings.md",
+        "fileName": "hf-fusioncow-sulphur-3-learnings.md"
+      }
+    },
+    "SRC-DE7751428436": {
+      "id": "SRC-DE7751428436",
+      "url": "https://github.com/databendlabs/databend",
+      "title": "https://github.com/databendlabs/databend",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T10:53:36.542Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
+        "fileName": "databendlabs-databend-learnings.md"
+      }
+    },
+    "SRC-2606944D9E43": {
+      "id": "SRC-2606944D9E43",
+      "url": "https://www.elastic.co/licensing/elastic-license",
+      "title": "https://www.elastic.co/licensing/elastic-license",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T10:53:36.587Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
+        "fileName": "databendlabs-databend-learnings.md"
+      }
+    },
+    "SRC-F5D722F6B9B1": {
+      "id": "SRC-F5D722F6B9B1",
+      "url": "https://docs.databend.com/dev/policies/cla",
+      "title": "https://docs.databend.com/dev/policies/cla",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T10:53:36.616Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
+        "fileName": "databendlabs-databend-learnings.md"
       }
     }
   }

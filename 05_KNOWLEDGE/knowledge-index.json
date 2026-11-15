@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-15T10:05:05.473Z",
-  "total_verified_learnings": 8687,
+  "last_updated": "2026-11-15T10:53:37.974Z",
+  "total_verified_learnings": 8688,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18335,
+  "total_items": 18343,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112023,9 +112023,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "90b601b81f32c53343387fe515d377995a15bea5810a436fc325836f75b4a2e4",
+      "content_hash": "ae7f05bda5be0a83c9da770c7b7e87d99f31c611ac3744465b66311cf9bfc4de",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T11:34:38.257Z"
+      "persisted_at": "2026-11-15T10:53:37.694Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112035,9 +112035,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "b337d1a780091e422967ca1ff82715caad675f4c85385162a093c4de1b22ca0f",
+      "content_hash": "e13ab439484349df222a713d79f7295e6a2a3f1f42d31409128749962d0ab670",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T11:34:38.394Z"
+      "persisted_at": "2026-11-15T10:53:37.840Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112047,9 +112047,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "be15447114ba1b2bdb7b6c46f24817fc478ffe791d524ae78629ae88dce1a9fa",
+      "content_hash": "d3292bf3a1d7847bd0e5ea8553df81948ca6fb0ccadc97667000f68acf8be3cd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T11:34:38.524Z"
+      "persisted_at": "2026-11-15T10:53:37.974Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -216635,14 +216635,19 @@
       "slug": "databendlabs-databend",
       "platform": "github",
       "source_url": "https://github.com/databendlabs/databend",
-      "source_version": "328efad7",
-      "content_hash": "cec55f565d9e78a3edda52cd89ad1e25e6ba6c1f8332c7c6bef48f8ddf91bb13",
+      "source_version": "4fc66b82",
+      "content_hash": "cda1e3381c8cff5838ada0572053b9d633b78bd6c97452dc34fab43c80559cb9",
       "dossier_path": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "promoted_rules": [
         {
           "number": 8391,
           "title": "scope fault injection rules to the installing fixture's prefix",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8608,
+          "title": "stop Iceberg DDL/DML from silently doing nothing",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -216651,7 +216656,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T21:45:20.568Z",
+      "verified_at": "2026-11-15T10:48:14.588Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -216693,10 +216698,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-databendlabs-databend-technical-construction-intelligence-databendlabs-databend-.md",
       "title": "Technical Construction Intelligence: databendlabs/databend Core Invariants",
       "repository": "databendlabs/databend",
-      "source_version": "328efad7",
-      "content_hash": "8f2cf57046074f8109388c4c9a8b5071e9cdc40b01ef9687e6da3105bc11a345",
+      "source_version": "4fc66b82",
+      "content_hash": "7f8b434f1bb98caa0d9f0797ab2b33215015cf6d7db8c1b68240ba3d2952fb08",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T21:45:20.937Z"
+      "persisted_at": "2026-11-15T10:48:15.109Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-databendlabs-databend": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-databendlabs-databend",
@@ -216705,10 +216710,10 @@
       "relative_path": "08_VERIFICATION/databendlabs-databend-verification-protocol-empirical-defect-shield-for-databend.md",
       "title": "Verification Protocol: Empirical Defect Shield for databendlabs/databend",
       "repository": "databendlabs/databend",
-      "source_version": "328efad7",
-      "content_hash": "c1fb85f5b8898bfbdc51ad0641162fd36a0e4f8bba0f0e2d761be8ec775a1b62",
+      "source_version": "4fc66b82",
+      "content_hash": "f13171d7ebc1046e658365012d735c94024b33dd591cfdfbadb929da8f48c4f3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T21:45:21.024Z"
+      "persisted_at": "2026-11-15T10:48:15.241Z"
     },
     "learn-huggingface-google-t5-t5-small": {
       "learning_id": "learn-huggingface-google-t5-t5-small",
@@ -224371,13 +224376,13 @@
       "item_id": "candidate_directive-watcher-filter-access-events-before-queueing",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-W4DN-watcher-filter-access-events-before-queueing.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-V8GH-watcher-filter-access-events-before-queueing.md",
       "title": "watcher): filter access events before queueing",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "56ae5354f7a035fced46642e72b0df743d0079421571bed2d28b7e97e27fc6bb",
+      "content_hash": "6e8aef306e7127eab643c199205dd0e8200b4ad04052afe09789c4caf4725ece",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T11:34:38.135Z"
+      "persisted_at": "2026-11-15T10:53:37.565Z"
     },
     "candidate_directive-hybrid-linear-attention-full-attention-layer-synchronization-invariant": {
       "item_id": "candidate_directive-hybrid-linear-attention-full-attention-layer-synchronization-invariant",
@@ -242421,6 +242426,119 @@
       "content_hash": "7d5a51786043eceb107c77586f5c600ebc003fc9a3e02a923960b6f053df785b",
       "domain_letter": "D",
       "persisted_at": "2026-11-15T10:05:04.103Z"
+    },
+    "rule-8608": {
+      "learning_id": "rule-8608",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8608,
+      "title": "stop Iceberg DDL/DML from silently doing nothing",
+      "source_url": "https://github.com/databendlabs/databend",
+      "source_version": "4fc66b82",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T10:48:14.588Z"
+    },
+    "candidate_directive-stop-iceberg-ddl-dml-from-silently-doing-nothing": {
+      "item_id": "candidate_directive-stop-iceberg-ddl-dml-from-silently-doing-nothing",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-OBK0-stop-iceberg-ddl-dml-from-silently-doing-nothing.md",
+      "title": "stop Iceberg DDL/DML from silently doing nothing",
+      "repository": "databendlabs/databend",
+      "source_version": "4fc66b82",
+      "content_hash": "9b7e5e958238a068b7d9beda1c2bab2272e38b200b33b561d75a8356635da70a",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T10:48:14.982Z"
+    },
+    "learn-huggingface-fusioncow-sulphur-3": {
+      "learning_id": "learn-huggingface-fusioncow-sulphur-3",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "FusionCow/Sulphur-3",
+      "repository": "FusionCow/Sulphur-3",
+      "slug": "hf-fusioncow-sulphur-3",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/FusionCow/Sulphur-3",
+      "source_version": "hf-fusioncow-sulphur-3",
+      "content_hash": "99952ab2f72cdc7e7524db333db8a7c98703ea38e88d943a741ab1ba2525fe1a",
+      "dossier_path": "07_PROJECT_LEARNING/hf-fusioncow-sulphur-3-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-fusioncow-sulphur-3-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T10:53:00.061Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-fusioncow-sulphur-3-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-fusioncow-sulphur-3-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-fusioncow-sulphur-3-research-knowledge-intelligence-fusioncow-sulphur-3-core-.md",
+      "title": "Research & Knowledge Intelligence: FusionCow/Sulphur-3 Core Invariants",
+      "repository": "FusionCow/Sulphur-3",
+      "source_version": "hf-fusioncow-sulphur-3",
+      "content_hash": "93c8253595023402dd7c50e74ff2690a99e1bc5aa606ffc5bfcdfbec6cc7a23c",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T10:53:00.456Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-fusioncow-sulphur-3-learnings-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fusioncow-sulphur-3-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-fusioncow-sulphur-3-learnings-research-knowledge-intelligence-hf-fusioncow-su.md",
+      "title": "Research & Knowledge Intelligence: hf-fusioncow-sulphur-3-learnings Core Invariants",
+      "repository": "hf-fusioncow-sulphur-3-learnings",
+      "source_version": "HEAD",
+      "content_hash": "50fefcd4d76253075da7923f1eb710df35b088e0c754429f0f5a4203d72c9e40",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T10:53:36.359Z"
+    },
+    "candidate_directive-iceberg-stop-iceberg-ddl-dml-from-silently-doing-nothing": {
+      "item_id": "candidate_directive-iceberg-stop-iceberg-ddl-dml-from-silently-doing-nothing",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-V7X1-iceberg-stop-iceberg-ddl-dml-from-silently-doing-nothing.md",
+      "title": "iceberg): stop Iceberg DDL/DML from silently doing nothing",
+      "repository": "databendlabs-databend-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d33f192917a39f355cc042883c4309ac36528a93d815f19080476beb20d0051c",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T10:53:36.865Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-databendlabs-databend-learnings-core-invaria": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-databendlabs-databend-learnings-core-invaria",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-databendlabs-databend-learnings-technical-construction-intelligence-databendlabs.md",
+      "title": "Technical Construction Intelligence: databendlabs-databend-learnings Core Invariants",
+      "repository": "databendlabs-databend-learnings",
+      "source_version": "HEAD",
+      "content_hash": "877a38bb7d8431b3f939164e1eee3b77a968ca170dcf0c4d1606cef92bd2cb4e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T10:53:36.993Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-databendlabs-databend-learning": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-databendlabs-databend-learning",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/databendlabs-databend-learnings-verification-protocol-empirical-defect-shield-fo.md",
+      "title": "Verification Protocol: Empirical Defect Shield for databendlabs-databend-learnings",
+      "repository": "databendlabs-databend-learnings",
+      "source_version": "HEAD",
+      "content_hash": "fedfd0e7b68873197c5af2dfba124feea01c7f7e95c0394d205687783633eaa0",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T10:53:37.138Z"
     }
   },
   "ai-builder-brain": {

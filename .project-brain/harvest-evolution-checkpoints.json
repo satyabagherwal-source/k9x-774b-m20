@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T10:05:05.590Z",
+  "last_updated": "2026-11-15T10:53:38.110Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-15T10:05:05.015Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-14T11:34:37.860Z",
+      "processed_at": "2026-11-15T10:53:37.281Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2946,9 +2946,19 @@
       "processed_at": "2026-11-15T10:05:03.880Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-fusioncow-sulphur-3-learnings.md": {
+      "processed_at": "2026-11-15T10:53:36.124Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "databendlabs-databend-learnings.md": {
+      "processed_at": "2026-11-15T10:53:36.515Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1023,
-  "total_canonical_promoted": 255,
-  "total_staged_for_review": 768
+  "total_dossiers_evaluated": 1026,
+  "total_canonical_promoted": 256,
+  "total_staged_for_review": 770
 }

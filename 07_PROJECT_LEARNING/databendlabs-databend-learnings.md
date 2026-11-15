@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source**: github ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
-> **Source Version**: `328efad7`  
+> **Source Version**: `4fc66b82`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T21:45:19.896Z  
+> **Timestamp**: 2026-11-15T10:48:13.741Z  
 > **Learning ID**: `learn-github-databendlabs-databend`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T21:45:19.890Z  
+> **Harvest Timestamp**: 2026-11-15T10:43:13.054Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Data Agent Ready Warehouse : One for  Analytics, Search, AI, Python Sandbox.  — rebuilt from scratch. Unified architecture on your S3.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9494 stars
+- **Stars / Engagement**: 9495 stars
 
 ---
 
@@ -1196,11 +1196,11 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #21093** (2026-11-15): **fix(query): link cosine HNSW graphs with normalized vectors**
+  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  - On main, `HNSWIndex::build` normalizes cosine vectors only for SQ8 and links the graph with the raw vectors (inner product), so non-unit-length data gets a poor graph and needs a much larger ef. Link the graph with the normalized vectors; L1/L2 are unchanged. - Test: `test_cosine_graph_ignores_vector_lengths` (recall 0.196 before, 0.904 after).  Cohere 1M (768d, cosine, top 100), aarch64 8 vCPU, warm cache, refine 2, single round. Both columns use the same binary (it also carries a separate aarch64 SQ8 kernel tweak, not part of this PR), so they differ only in how the index was built:  | | 18 blocks (default)<br>main | 18 blocks (default)<br>this PR | 4 × 250K rows<br>main | 4 × 250K rows<br>this PR | 1 × 1M rows<br>this PR | |---|---:|---:|---:|---:|---:| | ef | 200 | 200 | 800 | 200 | 400 | | Recall@100 | 0.9677 | 0.9858 | 0.9686 | 0.9767 | 0.9742 | | c1 QPS | 86.3 | 85.1 | 97.6 | 111.7 | 103.5 | | c8 QPS | 334.9 | 335.8 | 415.7 | 524.7 | 570.9 | | c80 QPS | 438.0 | 437.1 | 583.1 | **812.2** | **948.4** | | c80 P99 (ms) | 295.0 | 293.3 | 219.1 | 149.5 | 129.2 |  At Recall ≥ 0.9677, the best c80 goes from 583.1 QPS (main, 4 × 250K, ef 800) to 948.4 QPS (this PR, 1 × 1M, ef 400), **+63%**. main needs ef 800 on 4 blocks because ef 200 only reaches recall 0.8943.  Layouts: `CREATE TABLE t (id BIGINT, emb VECTOR(768), VECTOR INDEX vi (emb) distance='cosine' m=16 ef_con
+
 - **Issue #21092** (2026-11-13): **fix(query): truncate REPLACE statements in query logs**
   *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  - Long `REPLACE INTO ... VALUES ...` statements bypass `short_sql_max_length` because `short_sql` only recognizes `INSERT`. Add `REPLACE` to the existing keyword list so its query log text is truncated in the same way, including in `system_history.query_history`. - Keep truncation behavior unchanged for all other statement types. For example, an oversized `REPLACE INTO t ON (id) VALUES (1, '...')` now retains the configured prefix followed by `...[X more characters]`; execution SQL is unaffected. - Add `test_short_sql_replace` covering keyword case, leading whitespace, Unicode, and lengths below, at, and above the limit. Confirmed the regression fails before the fix and passes afterward alongside the existing `INSERT` tests. - Validation: `cargo test --offline -p databend-common-base --test it test_short_sql`, `cargo clippy --offline -p databend-common-base --tests -- -D warnings`, formatting, and `git diff --check` passed. Full-service end-to-end validation was not run. No migrations or new settings are required.  ## Tests  - [x] Unit Test - [ ] Logic Test - [ ] Benchmark Test - [ ] No Test - _Explain why_  ## Type of change  - [x] Bug Fix (non-breaking change which fixes an issue) - [ ] New Feature (non-breaking change which adds functionality) - [ ] Breaking Change (fix or feature that could cause existing functionality not to work as expected) - [ ] Documentation 
-
-- **Issue #21090** (2026-11-13): **refactor(query): scan only the rows matched by the inverted index**
-  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  When `match()` / `query()` is the only filter, the scan output every row of each kept block and left the `Filter` operator to drop the unmatched ones. Now the scan outputs only the matched rows.  MS MARCO passage, 8,841,823 rows in 22 blocks, `WHERE match(...) ORDER BY score() DESC LIMIT 100`, one 16-core node, CPU saturated:  | per query | before | after | |---|---|---| | rows output by the scan | up to 8,841,823 (every row of 22 blocks) | up to 2,200 (top 100 of each block) | | CPU in scan + filter | 23.1 ms | 5.8 ms | | CPU total | 78 ms | 60 ms | | QPS | 190-193 | 246-250 (+29%) |  Results are identical for all 6,980 queries (same score lists, Recall@100 0.6188). The row counts follow from the table layout; the timings are from a prototype of the same change. This revision has not been re-measured or tested locally, hence the draft.  - `BlockMetaIndex` holds the result of each index as one `IndexMatches { rows, scores, rows_only }`: `inverted_index_matches` replaces `matched_rows` / `matched_scores`, and `vector_index_matches` replaces the `VectorScores` enum. - `rows_only` tells the scan to output only `rows`. The inverted index pruner sets it when the filter is the index match alone; vector TopN pruning sets it as before. `BlockMetaIndex::selected_rows` derives the row selection from both, so the read path has one row selection instead of a vector-specific one. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1217,1069 +1217,858 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7cac7adf` (2026-11-13)
-**Commit Message**: fix(storage): scope fault injection rules to the installing fixture's prefix (#21075)
+### Incident Patch 1: `86507e14` (2026-11-14)
+**Commit Message**: fix(iceberg): stop Iceberg DDL/DML from silently doing nothing (#21073)
 
-* fix(storage): scope fault injection rules to the installing fixture's prefix
+* fix(iceberg): reject silent no-ops and fix DDL/DML on Iceberg tables
 
-`FaultInjectionLayer` keeps its rules in a process-wide registry, so a rule
-that only named a path fragment could fire for any other test in the same
-binary. The reported failure was a `_ss/` rule hitting another test's snapshot
-write.
+Several Iceberg statements reported success while changing nothing, and a
+few write paths could not handle the schemas they were given.
 
-Match rules as a prefix instead of a substring: current rules are all built
-from the fixture's table prefix, and a bare `_ss/` now matches nothing rather
-than every table. Also reject an empty pattern (it matches everything) and
-remove a rule when its handle is dropped, so a panicking test cannot leave a
-live global rule behind for the rest of the process.
+- CREATE TABLE ... AS SELECT panicked on the missing table id sequence of an
+  Iceberg catalog reply, and then hit the meta-only staging and
+  commit_table_meta paths. External catalogs now create and insert without
+  the staging protocol.
+- CREATE TABLE with DECIMAL, TUPLE, ARRAY or MAP columns failed during the
+  arrow to iceberg schema conversion: decimals were handed over as
+  Decimal64/Decimal256 and nested fields carried no field id. Convert the
+  databend schema recursively instead.
+- The writer cast block columns to the physical iceberg types, so a
+  decimal(10, 2) or an array column can be written at all.
+- INSERT OVERWRITE, TRUNCATE TABLE and ALTER TABLE ADD/DROP COLUMN return a
+  clear unsupported error instead of silently appending or leaving rows and
+  schemas untouched.
+- Partition values are computed through the partition transform; only
+  identity was applied before, which corrupted (or pa
 
-* fix(storage): bind fault rules to the installing fixture's storage root
-
-Fixtures use separate storage roots and embedded metastores, so their
-root-relative table prefixes can repeat; a prefix-only rule could still
-fail another fixture's IO. FaultRule::in_root restricts a rule to one
-operator root (normalized, since Fs and Memory report it differently),
-and the query fault-injection tests use it.
-
-Also drop the unsynchronized Faul
-
-**File**: `src/common/storage/src/fault_injection_layer.rs` (modified, +171/-15)
+**File**: `Cargo.lock` (modified, +1/-0)
 ```diff
-@@ -27,8 +27,19 @@
- //! optionally expires after a number of hits; the [`FaultHandle`] returned on install
- //! reports how often the rule fired, so a test can assert the fault was actually exercised.
- //!
-+//! A rule is process-global, so it must be scoped to the fixture that installed it: other
-+//! tests in the same binary keep doing storage IO while it is installed, and they must not see
-+//! it. The path is matched as a prefix, and [`FaultRule::in_root`] binds the rule to one
-+//! storage root, since fixtures with separate roots and metastores can share a relative table
-+//! prefix. The rule is removed when its [`FaultHandle`] is dropped, so a failing test cannot
-+//! leave it behind for the rest of the process.
-+//!
- //! ```ignore
--//! let fault = FaultInjection::install(FaultRule::new(FaultOp::Write, "_ss/", FaultKind::Permanent));
-+//! let prefix = table_prefix(&fixture);
-+//! let fault = FaultInjection::install(
-+//!     FaultRule::new(FaultOp::Write, format!("{prefix}/_ss/"), FaultKind::Permanent)
-+//!         .in_root(fixture.storage_root()),
-+//! );
- //! assert!(insert(...).await.is_err());
- //! assert_eq!(fault.hits(), 1);
- //! fault.remove();
-@@ -59,6 +70,7 @@ use opendal::raw::RpList;
- use opendal::raw::RpRead;
- use opendal::raw::RpStat;
- use opendal::raw::RpWrite;
-+use opendal::raw::normalize_root;
- use opendal::raw::oio;
- 
- /// The storage operation a rule applies to.
-@@ -93,14 +105,24 @@ impl FaultKind {
-     }
- }
- 
--/// A fault to inject: `kind` for every `op` whose path contains `path_contains`, at most
-+/// A fault to inject: `kind` for every `op` on a path under `path_contains`, at most
- /// `remaining` times (unlimited when `None`).
-+///
-+/// `path_contains` is matched as a prefix, so a rule is anchored to the storage prefix of the
-+/// fixture that installed it. A pattern like `_ss/` does not match another fixture's
-+/// `1/11/_ss/…`, which a substring match would.
-+///
-+/// The path an operator reports is relative to its root, and fixtures with separate roots and
-+/// separate metastores can hand out the same relative table prefix. `root`, when set,
-+/// restricts the rule to operators with that storage root; see [`FaultRule::in_root`].
- #[derive(Debug, Clone)]
- pub struct FaultRule {
-     pub op: FaultOp,
-     pub path_contains: String,
-     pub kind: FaultKind,
-     pub remaining: Option<usize>,
-+    /// Normalized as opendal does (`/a/b/`), compared with the operator's reported root.
-+    pub root: Option<String>,
- }
- 
- impl FaultRule {
-@@ -110,6 +132,7 @@ impl FaultRule {
-             path_contains: path_contains.into(),
-             kind,
-             remaining: None,
-+            root: None,
-         }
-     }
- 
-@@ -118,6 +141,13 @@ impl FaultRule {
-         self.remaining = Some(times);
-         self
-     }
-+
-+    /// Fire only for operators whose storage root is `root` (a fixture's `storage_root()`).
-+    /// Without it, a rule reaches every operator in the process whose relative paths match.
-+    pub fn in_root(mut self, root: impl AsRef<str>) -> Self {
-+        self.root = Some(normalize_root(root.as_ref()));
-+        self
-+    }
- }
- 
- struct RuleState {
-@@ -128,8 +158,11 @@ struct RuleState {
- 
- impl RuleState {
-     /// Returns the error to inject if this rule matches and has budget left.
--    fn fire(&self, op: FaultOp, path: &str) -> Option<Error> {
--        if self.rule.op != op || !path.contains(&self.rule.path_contains) {
-+    fn fire(&self, op: FaultOp, root: &str, path: &str) -> Option<Error> {
-+        if self.rule.op != op || !path.starts_with(&self.rule.path_contains) {
-+            return None;
-+        }
-+        if self.rule.root.as_deref().is_some_and(|r| r != root) {
-             return None;
-         }
-         if let Some(remaining) = &self.remaining {
-@@ -162,8 +195,15 @@ static RULES: LazyLock<Mutex<Vec<Arc<RuleState>>>> = LazyLock::new(|| Mutex::new
- pub struct FaultInjection;
- 
- impl FaultInjection {
--    /// Install a rule; it applies to every operator until removed.
-+    /// Install a rule; it applies to every operator that touches a matching path until the
-+    /// returned handle is dropped (or [`FaultHandle::remove`] is called).
-     pub fn install(rule: FaultRule) -> FaultHandle {
-+        // An empty pattern matches every path, which would also fail unrelated tests that run
-+        // storage IO in the same process. Rules are only useful when scoped.
-+        assert!(
-+            !rule.path_contains.is_empty(),
-+            "a fault rule must be scoped to a path such as the fixture's table prefix"
-+        );
-         let state = Arc::new(RuleState {
-             remaining: rule.remaining.map(AtomicUsize::new),
-             hits: AtomicUsize::new(0),
-@@ -182,13 +222,13 @@ impl FaultInjection {
-         ENABLED.store(false, Ordering::Release);
-     }
- 
--    fn check(op: FaultOp, path: &str) -> Result<()> {
-+    fn check(op: FaultOp, root: &str, path: &str) -> Result<()> {
-         if !ENABLED.load(Ordering::Relaxed) {
-             return Ok(()
+@@ -4302,6 +4302,7 @@ version = "0.1.0"
+ dependencies = [
+  "anyhow",
+  "arrow-array",
++ "arrow-cast",
+  "arrow-schema",
+  "async-backtrace",
+  "async-trait",
 ```
 
-**File**: `src/query/service/tests/it/storages/fuse/operations/fault_injection.rs` (modified, +34/-23)
+**File**: `src/query/service/src/interpreters/interpreter_table_add_column.rs` (modified, +5/-1)
 ```diff
-@@ -16,8 +16,9 @@
- //! `databend_common_storage::FaultInjection`.
- //!
- //! The rule registry is process-global: rules are scoped to the test table's storage prefix
--//! so that other tests running in the same process are not affected, and these tests still
--//! run one at a time to keep the hit counters unambiguous.
-+//! and to the fixture's storage root (another fixture's table can have the same relative
-+//! prefix) so that other tests running in the same process are not affected, and these tests
-+//! still run one at a time to keep the hit counters unambiguous.
- 
- use databend_common_exception::ErrorCode;
- use databend_common_exception::Result;
-@@ -86,11 +87,14 @@ async fn test_failed_snapshot_write_fails_the_statement_and_leaves_the_table_int
- 
-     // Every snapshot write fails: the commit cannot succeed, the statement must report it,
-     // and the table must still be exactly what it was before.
--    let fault = FaultInjection::install(FaultRule::new(
--        FaultOp::Write,
--        format!("{prefix}/_ss/"),
--        FaultKind::Permanent,
--    ));
-+    let fault = FaultInjection::install(
-+        FaultRule::new(
-+            FaultOp::Write,
-+            format!("{prefix}/_ss/"),
-+            FaultKind::Permanent,
-+        )
-+        .in_root(fixture.storage_root()),
-+    );
-     let insert = format!(
-         "INSERT INTO {}.{} VALUES (3, (3, 3))",
-         fixture.default_db_name(),
-@@ -122,11 +126,10 @@ async fn test_missing_block_is_reported_as_an_error() -> Result<()> {
-     let _serial = SERIAL.lock().await;
-     let (fixture, prefix) = setup().await?;
- 
--    let fault = FaultInjection::install(FaultRule::new(
--        FaultOp::Read,
--        format!("{prefix}/_b/"),
--        FaultKind::NotFound,
--    ));
-+    let fault = FaultInjection::install(
-+        FaultRule::new(FaultOp::Read, format!("{prefix}/_b/"), FaultKind::NotFound)
-+            .in_root(fixture.storage_root()),
-+    );
-     let err = count(&fixture).await.unwrap_err();
-     assert_ne!(
-         err.code(),
-@@ -148,7 +151,9 @@ async fn test_temporary_read_failure_is_retried() -> Result<()> {
-     // One transient failure on a block read: the retry layer must absorb it and the query
-     // must succeed with the right result.
-     let fault = FaultInjection::install(
--        FaultRule::new(FaultOp::Read, format!("{prefix}/_b/"), FaultKind::Temporary).times(1),
-+        FaultRule::new(FaultOp::Read, format!("{prefix}/_b/"), FaultKind::Temporary)
-+            .times(1)
-+            .in_root(fixture.storage_root()),
-     );
-     assert_eq!(count(&fixture).await?, 2);
-     assert_eq!(fault.hits(), 1, "the fault was never exercised");
-@@ -206,11 +211,14 @@ async fn test_compact_segment_write_failure_cleans_concurrent_output() -> Result
-     // Both outputs start together. Fail either PUT and check the successful
-     // sibling cannot survive as an unreferenced file.
-     for output in ["_sg", "_hs"] {
--        let fault = FaultInjection::install(FaultRule::new(
--            FaultOp::Write,
--            format!("{prefix}/{output}/"),
--            FaultKind::Permanent,
--        ));
-+        let fault = FaultInjection::install(
-+            FaultRule::new(
-+                FaultOp::Write,
-+                format!("{prefix}/{output}/"),
-+                FaultKind::Permanent,
-+            )
-+            .in_root(fixture.storage_root()),
-+        );
-         let err = fixture
-             .execute_command("OPTIMIZE TABLE default.t_compact_fault COMPACT SEGMENT")
-             .await
-@@ -240,11 +248,14 @@ async fn test_failed_segment_write_fails_the_statement_and_leaves_the_table_inta
-     let _serial = SERIAL.lock().await;
-     let (fixture, prefix) = setup().await?;
- 
--    let fault = FaultInjection::install(FaultRule::new(
--        FaultOp::Write,
--        format!("{prefix}/_sg/"),
--        FaultKind::Permanent,
--    ));
-+    let fault = FaultInjection::install(
-+        FaultRule::new(
-+            FaultOp::Write,
-+            format!("{prefix}/_sg/"),
-+            FaultKind::Permanent,
-+        )
-+        .in_root(fixture.storage_root()),
-+    );
-     let insert = format!(
-         "INSERT INTO {}.{} VALUES (3, (3, 3))",
-         fixture.default_db_name(),
-```
-
----
-
-### Incident Patch 2: `fec8fc42` (2026-11-13)
-**Commit Message**: fix(query): keep multi-table insert distributed when the source needs reorder (#21083)
-
-`build_source_physical_plan` wraps the SELECT plan in a reorder EvalScalar
-when the physical column order differs from the select list. The wrapper
-sat above the Merge exchange, so `build_physical_plan` no longer saw an
-Exchange at the root and fell back to writing every target on the
-coordinator, including bloom/inverted index building.
-
-Place the reorder below the Merge exchange instead. The reorder is
-positional and the exchange output follows its input, so the plan is
-equivalent and the write stays distributed.
-
-**File**: `src/query/service/src/interpreters/interpreter_insert_multi_table.rs` (modified, +20/-2)
-```diff
-@@ -382,8 +382,26 @@ impl InsertMultiTableInterpreter {
-                 let projections: BTreeSet<usize> =
-                     (input_col_num..input_col_num + exprs.len()).collect();
- 
--                let reordered =
--                    PhysicalPlan::new(EvalScalar::create(input_source, exprs, projections, None));
-+                // `build_physical_plan` distributes the write only when the source root is a Merge
-+                // exchange. The reorder is positional and the exchange output follows its input, so
-+                // put the reorder below the exchange rather than wrapping (and hiding) it.
-+                let reordered = match Exchange::from_physical_plan(&input_source) {
-+                    Some(exchange) if exchange.kind == FragmentKind::Merge => {
-+                        let input = exchange.input.clone();
-+                        exchange.derive(vec![PhysicalPlan::new(EvalScalar::create(
-+                            input,
-+                            exprs,
-+                            projections,
-+                            None,
-+                        ))])
-+                    }
-+                    _ => PhysicalPlan::new(EvalScalar::create(
-+                        input_source,
-+                        exprs,
-+                        projections,
-+                        None,
-+                    )),
-+                };
-                 Ok((reordered, metadata.clone()))
-             }
-             _ => unreachable!(),
-```
-
-**File**: `tests/sqllogictests/suites/mode/cluster/multi_table_insert_distributed.test` (modified, +58/-0)
-```diff
-@@ -125,6 +125,64 @@ Fragment 2:
-         └── source fragment: [0]
- (empty)
- 
-+# A select list whose order differs from the physical column order needs a reorder
-+# EvalScalar. It must stay below the Merge exchange, otherwise the write runs only
-+# on the coordinator.
-+statement ok
-+create table mti_reorder(b int, s int, a int, tag string)
-+
-+query T
-+EXPLAIN INSERT ALL
-+  WHEN true THEN INTO mti_reorder
-+  WHEN b = 0 THEN INTO mti_even(a, tag) VALUES(a, 'mod0')
-+SELECT b, a + b AS s, a, 'x' AS tag FROM mti_src
-+----
-+Commit
-+└── Exchange
-+    ├── output columns: []
-+    ├── exchange type: Merge
-+    └── CommitMeta
-+        └── WriteData
-+            └── EvalScalar
-+                ├── branch 0: mti_src.a (#0), 'mod0'
-+                ├── branch 1: None
-+                └── Filter
-+                    ├── branch 0: is_true(mti_src.b (#1) = CAST(0 AS Int32 NULL))
-+                    ├── branch 1: true
-+                    └── Duplicate
-+                        ├── Duplicate data to 2 branch
-+                        └── EvalScalar
-+                            ├── output columns: [mti_src.b (#1), s (#2), mti_src.a (#0), tag (#3)]
-+                            ├── expressions: [1, 2, 0, 3]
-+                            └── EvalScalar
-+                                ├── output columns: [mti_src.a (#0), mti_src.b (#1), s (#2), tag (#3)]
-+                                ├── expressions: [mti_src.a (#0) + mti_src.b (#1), 'x']
-+                                ├── estimated rows: 100.00
-+                                └── TableScan
-+                                    ├── table: default.mti_distributed.mti_src
-+                                    ├── scan id: 0
-+                                    ├── output columns: [a (#0), b (#1)]
-+                                    ├── read rows: 100
-+                                    ├── read size: < 1 KiB
-+                                    ├── partitions total: <slt:ignore>
-+                                    ├── partitions scanned: <slt:ignore>
-+                                    ├── pruning stats: [segments: <read cost: <slt:ignore>, range pruning: <slt:ignore> to <slt:ignore> cost: <slt:ignore>>, blocks: <range pruning: <slt:ignore> to <slt:ignore> cost: <slt:ignore>>]
-+                                    ├── push downs: [filters: [], limit: NONE]
-+                                    └── estimated rows: 100.00
-+
-+query II
-+INSERT ALL
-+  WHEN true THEN INTO mti_reorder
-+  WHEN b = 0 THEN INTO mti_even(a, tag) VALUES(a, 'mod0')
-+SELECT b, a + b AS s, a, 'x' AS tag FROM mti_src
-+----
-+34 100
-+
-+query IIIIT
-+select count(*), sum(b), sum(s), sum(a), min(tag) from mti_reorder
-+----
-+100 99 5049 4950 x
-+
- # Each target keeps the original source-once and multi-table commit pipeline,
- # but uses its own partition key for distributed hash routing.
- statement ok
-```
-
----
-
-### Incident Patch 3: `e8974097` (2026-11-13)
-**Commit Message**: fix(storage): stop vector RECLUSTER FINAL from rewriting clustered blocks every round (#21054)
-
-* fix(storage): stop vector RECLUSTER FINAL from rewriting clustered blocks every round
-
-* fix
-
-* fix
-
-* fix
-
-**File**: `src/query/service/src/interpreters/interpreter_table_recluster.rs` (modified, +54/-1)
-```diff
-@@ -44,7 +44,10 @@ use databend_common_storages_fuse::FUSE_OPT_KEY_AGGRESSIVE_RECLUSTER;
+@@ -36,6 +36,7 @@ use databend_common_sql::plans::Mutation;
+ use databend_common_sql::plans::Plan;
+ use databend_common_storages_basic::view_table::VIEW_ENGINE;
  use databend_common_storages_fuse::FuseTable;
- use databend_common_storages_fuse::operations::ReclusterFinalCarry;
- use databend_common_storages_fuse::operations::ReclusterMode;
-+use databend_common_storages_fuse::operations::VectorFinalPlan;
-+use databend_common_storages_fuse::operations::VectorReclusterBlock;
- use databend_common_storages_fuse::operations::is_auto_vacuum_enabled;
-+use databend_common_storages_fuse::operations::vector_final_plan;
- use databend_common_storages_fuse::segment_zone_map::RefreshOutcome;
- use databend_enterprise_vacuum_handler::get_vacuum_handler;
++use databend_common_storages_iceberg::table::ICEBERG_ENGINE;
+ use databend_common_storages_stream::stream_table::STREAM_ENGINE;
+ use databend_meta_client::types::MatchSeq;
  use databend_storages_common_table_meta::meta::TableSnapshot;
-@@ -149,6 +152,35 @@ impl Interpreter for ReclusterTableInterpreter {
-             let start = SystemTime::now();
-             let timeout = Duration::from_secs(recluster_timeout_secs);
-             let is_final = self.plan.is_final;
-+            // Vector FINAL: what it does is decided from the blocks when it starts (see
-+            // `vector_final_plan`); the full pass starts at once. This scans every block
-+            // meta, so it is skipped when FINAL rewrites part of the table at most:
-+            // `LIMIT 0` does no work, and a `WHERE` selection only rewrites the selected
-+            // segments, which the scan would not tell apart. These recluster the level-0
-+            // blocks by rounds, as a recluster without FINAL does.
-+            let vector_plan =
-+                if is_final && self.plan.limit != Some(0) && self.plan.selection.is_none() {
-+                    match self.vector_recluster_blocks().await {
-+                        Ok(Some(blocks)) => {
-+                            let plan = vector_final_plan(&blocks);
-+                            if plan == VectorFinalPlan::FullPass {
-+                                let blocks: HashSet<String> =
-+                                    blocks.into_iter().map(|block| block.location).collect();
-+                                info!(
-+                                    event = "recluster.vector_full_pass",
-+                                    blocks = blocks.len();
-+                                    "Recluster starts the vector full pass"
-+                                );
-+                                linear_final_carry.start_vector_full_pass(blocks);
-+                            }
-+                            plan
-+                        }
-+                        Ok(None) => VectorFinalPlan::Rounds,
-+                        Err(e) => return Err(e.with_context("failed to execute")),
-+                    }
-+                } else {
-+                    VectorFinalPlan::Rounds
-+                };
-             let mut committed_rounds = 0;
-             let mut zone_map_rounds = 0;
-             let (result, stop_reason) = loop {
-@@ -160,6 +192,11 @@ impl Interpreter for ReclusterTableInterpreter {
-                     );
-                     break (Err(err.with_context("failed to execute")), "aborted");
-                 }
-+                if vector_plan == VectorFinalPlan::Skip {
-+                    // Rows not mixed yet are below the full pass threshold, or none:
-+                    // they keep their level to add up.
-+                    break (Ok(()), "vector rows not mixed below full pass threshold");
-+                }
+@@ -91,7 +92,10 @@ impl Interpreter for AddTableColumnInterpreter {
  
-                 rounds += 1;
-                 let res = self
-@@ -168,6 +205,7 @@ impl Interpreter for ReclusterTableInterpreter {
- 
-                 match res {
-                     Ok(outcome) => {
-+                        // The full pass ends when only blocks it wrote remain.
-                         if let Some(reason) = outcome.stop_reason() {
-                             break (Ok(()), reason);
-                         }
-@@ -262,6 +300,21 @@ impl Interpreter for ReclusterTableInterpreter {
- }
- 
- impl ReclusterTableInterpreter {
-+    async fn vector_recluster_blocks(&self) -> Result<Option<Vec<VectorReclusterBlock>>> {
-+        let ReclusterPlan {
-+            catalog,
-+            database,
-+            table,
-+            ..
-+        } = &self.plan;
-+        self.ctx.evict_table_from_cache(catalog, database, table)?;
-+        let tbl = self.ctx.get_table(catalog, database, table).await?;
-+        let Ok(fuse_table) = FuseTable::try_from_table(tbl.as_ref()) else {
-+            return Ok(None);
-+        };
-+        fuse_table.vector_recluster_blocks(self.ctx.clone()).await
-+    }
-+
-     /// Refresh the segment zone map on the snapshot the last round committed,
-     /// subject to its start decision. Recluster is the only writer that builds
-     /// it; every other commit carries the pointer along. Failures never fail
-@@ -430,7 +483,7 @@ impl ReclusterTableInterpreter {
-             claim_retries += 1;
- 
-             // Let concurrent losers spread out before selecting another candidate set.
--            *linear_final_carry = ReclusterFinalCarry::default();
-+            linear_final
+             let mut table_info = tbl.get_table_info().clone();
+             let engine = table_info.engine();
+-            if matches!(engine, VIEW_ENGINE | STREAM_ENGINE) {
++            if matches!(
++                engine.to_uppercase().as_str(),
++                VIEW_ENGINE | STREAM_ENGINE | ICEBERG_ENGINE
++            ) {
+                 return Err(ErrorCode::TableEngineNotSupported(format!(
+                     "{}.{} engine is {} that doesn't support alter",
+                     self.plan.database, self.plan.table, engine
 ```
 
-**File**: `src/query/service/tests/it/storages/fuse/operations/mutation/recluster_mutator.rs` (modified, +110/-63)
+**File**: `src/query/service/src/interpreters/interpreter_table_create.rs` (modified, +31/-7)
 ```diff
-@@ -365,6 +365,7 @@ async fn gen_recluster_segments_by_vector_stats(
-     file_size: u64,
-     thresholds: BlockThresholds,
-     cluster_key_id: u32,
-+    level: i32,
- ) -> anyhow::Result<Vec<meta::Location>> {
-     if let Some(partitions) = partitions {
-         assert_eq!(partitions.len(), blocks_by_segment.len());
-@@ -411,7 +412,7 @@ async fn gen_recluster_segments_by_vector_stats(
-                     } else {
-                         vec![]
-                     },
--                    0,
-+                    level,
-                 )),
-                 location,
-                 None,
-@@ -1586,6 +1587,7 @@ async fn test_recluster_mutator_vector_mixed_key_overlap_selection() -> anyhow::
-         100,
-         thresholds,
-         cluster_key_id,
-+        0,
-     )
-     .await?;
+@@ -279,13 +279,18 @@ impl CreateTableInterpreter {
+         let tenant = self.ctx.get_tenant();
  
-@@ -1661,71 +1663,115 @@ async fn test_recluster_mutator_vector_only_overlap_selection() -> anyhow::Resul
-     let cluster_key_id = 0;
-     let thresholds = BlockThresholds::new(1000, 100, 100, 1);
+         let catalog = self.ctx.get_catalog(&self.plan.catalog).await?;
++        // Tables of an external catalog (iceberg) are committed by the catalog itself right
++        // away: they cannot be staged as dropped and they have no meta table id to commit.
++        let external_catalog = catalog.is_external();
  
--    let segment_locations = gen_recluster_segments_by_vector_stats(
--        &data_accessor,
--        &location_generator,
--        &[
--            vec![(1, 1, [0.0, 0.0], 1.0)],
--            vec![(2, 2, [0.5, 0.0], 1.0)],
--            vec![(3, 3, [10.0, 0.0], 1.0)],
--        ],
--        None,
--        false,
--        1000,
--        100,
--        100,
--        thresholds,
--        cluster_key_id,
--    )
--    .await?;
-+    // (level, full pass of RECLUSTER FINAL)
-+    for (level, full_pass) in [(0, false), (1, false), (2, false), (1, true), (2, true)] {
-+        let segment_locations = gen_recluster_segments_by_vector_stats(
-+            &data_accessor,
-+            &location_generator,
-+            &[
-+                vec![(1, 1, [0.0, 0.0], 1.0)],
-+                vec![(2, 2, [0.5, 0.0], 1.0)],
-+                vec![(3, 3, [10.0, 0.0], 1.0)],
-+            ],
-+            None,
-+            false,
-+            1000,
-+            100,
-+            100,
-+            thresholds,
-+            cluster_key_id,
-+            level,
-+        )
-+        .await?;
+         let mut req = self.build_request()?;
+         let dictionary_indexes = self.take_dictionary_indexes(&mut req.table_meta).await?;
  
--    let schema = vector_recluster_schema();
--    let ctx: Arc<dyn TableContext> = ctx.clone();
--    let compact_segments = segment_pruning(
--        &ctx,
--        schema.clone(),
--        data_accessor.clone(),
--        create_segment_location_vector(segment_locations, None),
--    )
--    .await?;
-+        let schema = vector_recluster_schema();
-+        let query_ctx: Arc<dyn TableContext> = ctx.clone();
-+        let compact_segments = segment_pruning(
-+            &query_ctx,
-+            schema.clone(),
-+            data_accessor.clone(),
-+            create_segment_location_vector(segment_locations, None),
-+        )
-+        .await?;
+         // create a dropped table first.
+-        req.as_dropped = true;
+-        req.table_meta.drop_on = Some(Utc::now());
++        if !external_catalog {
++            req.as_dropped = true;
++            req.table_meta.drop_on = Some(Utc::now());
++        }
+         let table_meta = req.table_meta.clone();
+         // The prefix is moved into the pipeline's 'static finish hook, while the request itself can
+         // be consumed by the catalog.
+@@ -321,7 +326,7 @@ impl CreateTableInterpreter {
+             .expect("internal error: table_id_seq must have been set. CTAS(replace) of table");
+         let db_id = reply.db_id;
  
--    let vector_cluster_info = VectorClusterInfo {
--        key_index: 0,
--        column_id: 1,
--        column_name: "embedding".to_string(),
--        dimension: 2,
--        distance_type: VectorDistanceType::L2,
--    };
--    let mutator = ReclusterMutator::new(
--        ctx,
--        data_accessor,
--        schema,
--        vec![test_vector_cluster_key_expr()],
--        1.0,
--        thresholds,
--        ClusterKeyInfo::new((cluster_key_id, "(c0)".to_string()), ClusterType::Linear),
--        0,
--        1,
--        ReclusterMode::Conservative,
--        Some(vector_cluster_info),
--    );
-+        // Selected by overlap, and with larger thresholds by the shared small-block
-+        // compaction: vector recluster output may stay below them, so level >= 1
-+        // blocks must not be compacted either. FINAL runs in the aggressive mode on
-+        // tables with the `aggressive_recluster` option, whose groups differ.
-+        let large = BlockThresholds::new(10000, 10000, 10000, 1);
-+        for (mutator_thresholds, mode) in [
-+            (thresholds, ReclusterMode::Conservative),
-+            (large, ReclusterMode::Conservative),
-+            (thresholds, ReclusterMode::Aggressive),
-+            (large, ReclusterMode::Aggressive),
-+        ] {
-+            let vector_cluster_info = VectorClusterInfo {
-+                key_index: 0,
-+                column_id: 1,
-+                column_name: "embedding".to_string(),
-+                dimension: 2,
-+                distance_type: VectorDistanceType::L2,
-+            };
-+            let mutator = ReclusterMutator::new(
-+                query_ctx.clone(),
-+                data_accessor.clone(),
-+                schema.clone(),
-+                vec![test_vector_cluster_key_expr()],
-+                1.0,
-+                mutator_thresholds,
-+                ClusterKeyInfo::new((cluster_key_id, "(c0)".to_string()), ClusterType::Linear),
-+                0,
-+                1,
-+                mode,
-+                Some(vector_cluster_info),
-+            );
-+            let mutator = if full_pass {
-+                let mut blocks = HashSet::new();
-+                for (_, segment) in &compact_segments {
-+                    for block in segment.block_metas()? {
-+                        blocks.inse
-```
-
-**File**: `src/query/storages/fuse/src/io/write/vector_index_writer.rs` (modified, +54/-36)
-```diff
-@@ -55,12 +55,53 @@ use crate::io::write::block_index::PendingVectorIndex;
- const DEFAULT_M: usize = 16;
- const DEFAULT_EF_CONSTRUCT: usize = 100;
+-        if temp_prefix.is_none() {
++        if temp_prefix.is_none() && !external_catalog {
+             self.process_ownership(&tenant, reply).await?;
+         }
  
--/// Whether the index stores FP16 vectors for refinement (`refine = true`).
--fn vector_index_refine(options: &BTreeMap<String, String>) -> Result<bool> {
--    match options.get(VECTOR_INDEX_OPT_REFINE) {
--        None => Ok(false),
--        Some(value) => parse_vector_index_refine(value)
--            .ok_or_else(|| ErrorCode::IndexOptionInvalid("`refine` must be `true` or `false`")),
-+/// The options of a vector index (`TableIndex::options`), as vector index writes,
-+/// searches and the block size limit use them.
-+#[derive(Clone, Debug, PartialEq, Eq)]
-+pub(crate) struct VectorIndexOptions {
-+    pub m: usize,
-+    pub ef_construct: usize,
-+    /// The known distance types, in their configured order. Without any, no index
-+    /// is built.
-+    pub distances: Vec<DistanceType>,
-+    /// Whether the index stores FP16 vectors for refinement (`refine = true`).
-+    pub refine: bool,
-+}
-+
-+impl VectorIndexOptions {
-+    /// An `m` or `ef_construct` that is not a number takes the default, and unknown
-+    /// distance types are skipped. `refine` is validated at bind time too, and an
-+    /// invalid persisted value is an error: it must not silently omit FP16 data.
-+    pub(crate) fn parse(options: &BTreeMap<String, String>) -> Result<Self> {
-+        let number = |key: &str, default: usize| {
-+            options
-+                .get(key)
-+                .and_then(|value| value.parse::<usize>().ok())
-+                .unwrap_or(default)
-+        };
-+        let distances = options
-+            .get(VECTOR_INDEX_OPT_DISTANCE)
-+            .into_iter()
-+            .flat_map(|value| value.split(','))
-+            .filter_map(|distance| match distance {
-+                "cosine" => Some(DistanceType::Dot),
-+                "l1" => Some(DistanceType::L1),
-+                "l2" => Some(DistanceType::L2),
-+                _ => None,
-+            })
-+            .collect();
-+        let refine = match options.get(VECTOR_INDEX_OPT_REFINE) {
-+            None => false,
-+            Some(value) => parse_vector_index_refine(value).ok_or_else(|| {
-+                ErrorCode::IndexOptionInvalid("`refine` must be `true` or `false`")
-+            })?,
-+        };
-+        Ok(Self {
-+            m: number(VECTOR_INDEX_OPT_M, DEFAULT_M),
-+            ef_construct: number(VECTOR_INDEX_OPT_EF_CONSTRUCT, DEFAULT_EF_CONSTRUCT),
-+            distances,
-+            refine,
-+        })
-     }
- }
- 
-@@ -79,7 +120,7 @@ impl VectorIndexSearchOptions {
-         refine_factor: u64,
-         search_ef: u64,
-     ) -> Result<Self> {
--        let refine = refine_factor > 0 && vector_index_refine(index_options)?;
-+        let refine = refine_factor > 0 && VectorIndexOptions::parse(index_options)?.refine;
-         Ok(Self {
-             refine_factor: refine.then_some(refine_factor as usize),
-             search_ef: (search_ef > 0).then_some(search_ef as usize),
-@@ -180,35 +221,12 @@ impl VectorIndexBuilder {
-                 continue;
-             }
- 
--            // Validated at bind time too; invalid persisted metadata must return an
--            // error, not silently omit the index.
--            let refine = vector_index_refine(&index.options)?;
--            let m = match index.options.get(VECTOR_INDEX_OPT_M) {
--                Some(value) => value.parse::<usize>().unwrap_or(DEFAULT_M),
--                None => DEFAULT_M,
--            };
--
--            let ef_construct = match index.options.get(VECTOR_INDEX_OPT_EF_CONSTRUCT) {
--                Some(value) => value.parse::<usize>().unwrap_or(DEFAULT_EF_CONSTRUCT),
--                None => DEFAULT_EF_CONSTRUCT,
--            };
--
--            let mut distances = Vec::new();
--            match index.options.get(VECTOR_INDEX_OPT_DISTANCE) {
--                Some(value) => {
--                    let distance_types: Vec<&str> = value.split(',').collect();
--                    for distance_type in distance_types {
--                        let distance = match distance_type {
--                            "cosine" => DistanceType::Dot,
--                            "l1" => DistanceType::L1,
--                            "l2" => DistanceType::L2,
--                            _ => continue,
--                        };
--                        distances.push(distance);
--                    }
--                }
--                None => continue,
--            };
-+            let VectorIndexOptions {
-+                m,
-+                ef_construct,
-+                distances,
-+                refine,
-+            } = VectorIndexOptions::parse(&index.options)?;
-             if distances.is_empty() {
-                 debug!(
-                     "Ignoring vector index: {}, no valid distance types",
-```
-
-**File**: `src/query/storages/fuse/src/operations/mod.rs` (modified, +3/-0)
-```diff
-@@ -64,6 +64,9 @@ pub use recluster::ReclusterFinalCarry;
- pub use recluster::ReclusterMode;
- pub use recluster::ReclusterMutator;
- pub use recluster::SelectedReclusterSegment;
-+pub use recluster::VectorFinalPlan;
-+pub use recluster::VectorReclusterBlock;
-+pub use recluster::vector_final_plan;
- pub use replace_into::*;
- pub use snapshot_hint::*;
- pub use table_index::do_refresh_table_index;
-```
-
-**File**: `src/query/storages/fuse/src/operations/recluster/mod.rs` (modified, +5/-0)
-```diff
-@@ -38,4 +38,9 @@ pub(crate) use recluster_strategy::ReclusterTaskCandidate;
- pub use recluster_strategy::SelectedReclusterSegment;
- pub(crate) use recluster_strategy::passes_depth_gate;
- pub(crate) use recluster_strategy::task_candidate;
-+pub use recluster_table::VectorFinalPlan;
-+pub use recluster_table::VectorReclusterBlock;
-+pub use recluster_table::vector_final_plan;
-+pub(crate) use vector_recluster::VECTOR_LEVEL_MIXED;
-+pub(crate) use vector_recluster::VECTOR_LEVEL_NEW;
- pub(crate) use vector_recluster::VectorReclusterStrategy;
-```
-
-**File**: `src/query/storages/fuse/src/operations/recluster/recluster_mutator.rs` (modified, +52/-11)
-```diff
-@@ -71,6 +71,7 @@ use crate::operations::recluster::ReclusterProperties;
- use crate::operations::recluster::ReclusterStrategy;
- use crate::operations::recluster::ReclusterTaskCandidate;
- use crate::operations::recluster::SelectedReclusterSegment;
-+use crate::operations::recluster::VECTOR_LEVEL_MIXED;
- use crate::operations::recluster::task_candidate;
- use crate::statistics::VectorClusterInfo;
- use crate::statistics::partition_values;
-@@ -145,9 +146,28 @@ pub struct ReclusterFinalCarry {
-     pub(crate) cluster_key_id: u32,
-     // Reuse block-meta decode workers across rounds of one FINAL statement.
-     pub(crate) decode_runtime: Option<Arc<Runtime>>,
-+    // The full pass of a vector RECLUSTER FINAL (see `vector_final_plan`): the blocks
-+    // present when it starts, rewritten once together regardless of level, so new
-+    // data is mixed with older clustered blocks. Blocks written by this pass are not
-+    // in the set, which ends it.
-+    pub(crate) vector_full_pass: Option<Arc<HashSet<String>>>,
- }
- 
- impl ReclusterFinalCarry {
-+    /// Starts the full pass of a vector RECLUSTER FINAL over `blocks`, scanning the
-+    /// table again from the start.
-+    pub fn start_vector_full_pass(&mut self, blocks: HashSet<String>) {
-+        self.reset();
-+        self.vector_full_pass = Some(Arc::new(blocks));
-+    }
-+
-+    /// Forgets the scan state, keeping a started vector full pass.
-+    pub fn reset(&mut self) {
-+        let vector_full_pass = self.vector_full_pass.take();
-+        *self = Self::default();
-+        self.vector_full_pass = vector_full_pass;
-+    }
-+
-     /// Lazily create or reuse the block-meta decode runtime for FINAL recluster.
-     pub(crate) fn decode_runtime(&mut self, workers: usize) -> Result<Arc<Runtime>> {
-         if self.decode_runtime.is_none() {
-@@ -282,6 +302,13 @@ impl ReclusterMutator {
-         })
-     }
- 
-+    /// Restricts selection to the full pass of a vector RECLUSTER FINAL over
-+    /// `blocks`; see `ReclusterFinalCarry`.
-+    pub fn with_vector_full_pass(mut self, blocks: Option<Arc<HashSet<String>>>) -> Self {
-+        self.properties.vector_full_pass = blocks;
-+        self
-+    }
-+
-     /// Build a recluster mutator directly for tests.
-     #[allow(clippy::too_many_arguments)]
-     pub fn new(
-@@ -448,10 +475,22 @@ impl ReclusterMutator {
-             if level < 0 {
-                 continue;
-             }
--            if level >= MAX_RECLUSTER_LEVEL {
-+            let group = if let Some(full_pass) = &self.properties.vector_full_pass {
-+                // The full pass rewrites the blocks present when it started, in one
-+                // group whose output (the group level + 1) is `VECTOR_LEVEL_MIXED`, so
-+                // levels stay bounded. A level group, in every mode: the aggressive
-+                // low-maturity group would take the output level from the levels of
-+                // the blocks.
-+                if !full_pass.contains(&block.meta.location.0) {
-+                    continue;
-+                }
-+                ReclusterGroup::Level(VECTOR_LEVEL_MIXED - 1)
-+            } else if level >= MAX_RECLUSTER_LEVEL {
-                 // Terminal-level blocks are excluded from further rewrite tasks.
-                 continue;
--            }
+@@ -381,7 +386,13 @@ impl CreateTableInterpreter {
+             schema: self.plan.schema.clone(),
+             overwrite: false,
+             source: InsertInputSource::SelectPlan(select_plan),
+-            table_info: Some(table_info),
++            // An external catalog resolves the table it created from the catalog; the staged
++            // table info has no iceberg engine options to read it with.
++            table_info: if external_catalog {
++                None
 +            } else {
-+                ReclusterGroup::assign(level, self.properties.mode)
-+            };
-             let partition = if self.properties.partition_key_count == 0 {
-                 Vec::new()
-             } else if let Some(partition) = partition_values(
-@@ -465,13 +504,7 @@ impl ReclusterMutator {
-                 // together with another partition.
-                 continue;
-             };
--            blocks_map
--                .entry((
--                    ReclusterGroup::assign(level, self.properties.mode),
--                    partition,
--                ))
--                .or_default()
--                .push(idx);
-+            blocks_map.entry((group, partition)).or_default().push(idx);
-         }
++                Some(table_info)
++            },
+             lineage_target_table_id: None,
+             lineage_target_catalog_type: if self.plan.engine == Engine::Iceberg {
+                 CatalogType::Iceberg
+@@ -433,9 +444,8 @@ impl CreateTableInterpreter {
+         //
+         // If the un-drop fails, data inserted and the table will be invisible, and available for vacuum.
  
-         let mut tasks: Vec<ReclusterTaskCandidate> = Vec::new();
-@@ -711,11 +744,19 @@ impl ReclusterMutator {
-         task_budget: usize,
-     ) -> Result<Vec<ReclusterTaskCandidate>> {
-         debug_assert!(task_budget > 0);
-+        let indices = self
-+            .strategy
-+            .eligible_blocks(&self.properties, indices, blocks);
-         let block_count = indices.len();
--        if block_count < 2 && !self.properties.split_sort_tasks {
-+        // The full pass of a vector RECLUSTER FINAL rewrites every block it holds
-+        // once, whatever their level and also alone, so that new data mixes with all
-+        // of them and none stays unmixed (see `VectorReclusterStrategy`).
-+        let full_pass = self.properties.vector_full_pass.is_some();
-+        if block_count < 2 && !self.properties.split_sort_tasks && !full_pass {
-             return Ok(Vec::new());
-         }
-         if block_count == 2
-+            && !full_pass
-             && indices
-                 .
+-        pipeline
+-            .main_pipeline
+-            .lift_on_finished(move |info: &ExecutionInfo| {
++        if !external_catalog {
++            pipeline.main_pipeline.lift_on_finished(move |info: &ExecutionInfo| {
+                 let qualified_table_name = format!("{}.{}", db_name, table_name);
+ 
+                 if info.res.is_ok() {
+@@ -466,6 +476,20 @@ impl CreateTableInterpreter {
+ 
+                 Ok(())
+             });
++        } else {
++            let qualified_table_name = format!("{}.{}", db_name, table_name);
++            pipeline
++                .main_pipeline
++                .lift_on_finished(move |info: &ExecutionInfo| {
++                    if info.res.is_ok() {
++                        info!(
++                            "create_table_as_select {} success, committed by the external catalog",
++                            qualified_table_name
++                        );
++                    }
++                    Ok(())
++                });
++        }
+ 
+         if let Some(temp_prefix) = temp_prefix {
+             let temp_tbl_mgr = self.ctx.get_current_session().temp_tbl_mgr();
 ```
 
-**File**: `src/query/storages/fuse/src/operations/recluster/recluster_strategy.rs` (modified, +17/-0)
+**File**: `src/query/service/src/interpreters/interpreter_table_drop_column.rs` (modified, +5/-1)
 ```diff
-@@ -14,6 +14,7 @@
+@@ -24,6 +24,7 @@ use databend_common_sql::BloomIndexColumns;
+ use databend_common_sql::binder::validate_constraints_by_schema;
+ use databend_common_sql::plans::DropTableColumnPlan;
+ use databend_common_storages_basic::view_table::VIEW_ENGINE;
++use databend_common_storages_iceberg::table::ICEBERG_ENGINE;
+ use databend_common_storages_stream::stream_table::STREAM_ENGINE;
+ use databend_storages_common_table_meta::table::OPT_KEY_ANALYZE_FREQUENCY_COLUMNS;
+ use databend_storages_common_table_meta::table::OPT_KEY_APPROX_DISTINCT_COLUMNS;
+@@ -77,7 +78,10 @@ impl Interpreter for DropTableColumnInterpreter {
  
- use std::cmp;
- use std::collections::BTreeMap;
-+use std::collections::HashSet;
- use std::fmt;
+             let table_info = table.get_table_info();
+             let engine = table_info.engine();
+-            if matches!(engine, VIEW_ENGINE | STREAM_ENGINE) {
++            if matches!(
++                engine.to_uppercase().as_str(),
++                VIEW_ENGINE | STREAM_ENGINE | ICEBERG_ENGINE
++            ) {
+                 return Err(ErrorCode::TableEngineNotSupported(format!(
+                     "{}.{} engine is {} that doesn't support alter",
+                     self.plan.database, self.plan.table, engine
+```
+
+**File**: `src/query/storages/iceberg/Cargo.toml` (modified, +1/-0)
+```diff
+@@ -9,6 +9,7 @@ publish = false
+ [dependencies]
+ anyhow = { workspace = true }
+ arrow-array = { workspace = true }
++arrow-cast = { workspace = true }
+ arrow-schema = { workspace = true }
+ async-backtrace = { workspace = true }
+ async-trait = { workspace = true }
+```
+
+**File**: `src/query/storages/iceberg/src/append.rs` (modified, +403/-94)
+```diff
+@@ -28,6 +28,7 @@ use databend_common_expression::DataBlock;
+ use databend_common_expression::ScalarRef;
+ use databend_common_expression::types::Bitmap;
+ use databend_common_expression::types::MutableBitmap;
++use databend_common_expression::types::NumberScalar;
+ use databend_common_meta_app::schema::CatalogInfo;
+ use databend_common_pipeline::core::InputPort;
+ use databend_common_pipeline::core::ProcessorPtr;
+@@ -37,11 +38,17 @@ use databend_common_pipeline_transforms::AsyncAccumulatingTransform;
+ use databend_common_storage::MutationStatus;
+ use iceberg::arrow::schema_to_arrow_schema;
+ use iceberg::spec::DataFileFormat;
++use iceberg::spec::Datum;
+ use iceberg::spec::Literal;
+ use iceberg::spec::PartitionKey;
++use iceberg::spec::PrimitiveLiteral;
++use iceberg::spec::PrimitiveType;
+ use iceberg::spec::Struct as IcebergStruct;
+ use iceberg::transaction::ApplyTransactionAction;
+ use iceberg::transaction::Transaction;
++use iceberg::transform::BoxedTransformFunction;
++use iceberg::transform::TransformFunction;
++use iceberg::transform::create_transform_function;
+ use iceberg::writer::IcebergWriter;
+ use iceberg::writer::IcebergWriterBuilder;
+ use iceberg::writer::base_writer::data_file_writer::DataFileWriterBuilder;
+@@ -211,7 +218,7 @@ impl IcebergDataFileWriter {
+     {
+         // Get partition column indices and field info
+         let partition_fields = partition_spec.fields();
+-        let mut partition_column_indices = Vec::with_capacity(partition_fields.len());
++        let mut partition_sources = Vec::with_capacity(partition_fields.len());
+ 
+         for field in partition_fields {
+             // Find the source column index in the schema
+@@ -234,7 +241,29 @@ impl IcebergDataFileWriter {
+                     ))
+                 })?;
+ 
+-            partition_column_indices.push((col_idx, field.clone()));
++            let source_type = match schema_field.field_type.as_ref() {
++                iceberg::spec::Type::Primitive(primitive) => primitive.clone(),
++                _ => {
++                    return Err(ErrorCode::TableEngineNotSupported(format!(
++                        "Iceberg partition source column '{field_name}' is not a primitive type"
++                    )));
++                }
++            };
++
++            // The stored partition value is the transformed source value, which is not
++            // necessarily the raw column value (bucket, truncate, temporal transforms).
++            let transform = create_transform_function(&field.transform).map_err(|err| {
++                ErrorCode::TableEngineNotSupported(format!(
++                    "Iceberg partition transform '{}' on column '{field_name}' is not supported: {err}",
++                    field.transform
++                ))
++            })?;
++
++            partition_sources.push(PartitionSource {
++                column_index: col_idx,
++                transform,
++                source_type,
++            });
+         }
+ 
+         // Group rows by partition values
+@@ -244,7 +273,7 @@ impl IcebergDataFileWriter {
+         for row_idx in 0..num_rows {
+             // Build partition value for this row
+             let partition_value =
+-                self.extract_partition_value(&block, row_idx, &partition_column_indices)?;
++                self.extract_partition_value(&block, row_idx, &partition_sources)?;
+             let bitmap = partition_groups.entry(partition_value).or_insert_with(|| {
+                 let mut bitmap = MutableBitmap::new();
+                 bitmap.extend_constant(num_rows, false);
+@@ -293,118 +322,186 @@ impl IcebergDataFileWriter {
+         &self,
+         block: &DataBlock,
+         row_idx: usize,
+-        partition_column_indices: &[(usize, iceberg::spec::PartitionField)],
++        partition_sources: &[PartitionSource],
+     ) -> Result<IcebergStruct> {
+-        let mut literals: Vec<Option<Literal>> = Vec::with_capacity(partition_column_indices.len());
++        let mut literals: Vec<Option<Literal>> = Vec::with_capacity(partition_sources.len());
+ 
+-        for (col_idx, _field) in partition_column_indices {
+-            let entry = &block.columns()[*col_idx];
++        for source in partition_sources {
++            let entry = &block.columns()[source.column_index];
+             let column = entry.to_column();
+             let value = column.index(row_idx);
+-
+-            // Convert Databend ScalarRef to Iceberg Literal
+-            // Note: We only support Identity transform for now
+-            let literal = self.scalar_to_iceberg_literal(value)?;
+-            literals.push(literal);
++            literals.push(transform_partition_literal(
++                value,
++                &source.source_type,
++                source.transform.as_ref(),
++            )?);
+         }
+ 
+         Ok(IcebergStruct::from_iter(literals))
+     }
+ 
+-    fn scalar_to_iceberg_literal(&self, scalar: Option<ScalarRef>) -> Result<Option<Literal>> {
+-        match scalar {
+-            None => Ok(None),
+-            Some(s) => {
+-    
+```
+
+**File**: `src/query/storages/iceberg/src/database.rs` (modified, +286/-19)
+```diff
+@@ -17,14 +17,17 @@
+ use std::collections::HashMap;
  use std::sync::Arc;
  
-@@ -71,6 +72,9 @@ pub(crate) struct ReclusterProperties {
-     pub(crate) split_sort_tasks: bool,
-     pub(crate) prepared_cluster_key_exprs: Vec<PreparedClusterKeyExpr>,
-     pub(crate) scalar_cluster_key_types: Vec<DataType>,
-+    /// Blocks of the final full pass of a vector RECLUSTER FINAL, which are
-+    /// rewritten once regardless of level; see `ReclusterFinalCarry`.
-+    pub(crate) vector_full_pass: Option<Arc<HashSet<String>>>,
++use arrow_schema::DataType as ArrowDataType;
+ use arrow_schema::Field;
+ use arrow_schema::Schema;
++use arrow_schema::TimeUnit;
+ use async_trait::async_trait;
+ use databend_common_catalog::catalog::Catalog;
+ use databend_common_catalog::database::Database;
+ use databend_common_catalog::table::Table;
+ use databend_common_exception::ErrorCode;
+ use databend_common_exception::Result;
++use databend_common_expression::ColumnId;
+ use databend_common_expression::TableDataType;
+ use databend_common_expression::TableDataType::Null;
+ use databend_common_expression::TableDataType::Timestamp;
+@@ -194,17 +197,29 @@ impl Database for IcebergDatabase {
+         match req.create_option {
+             CreateOption::Create => {}
+             CreateOption::CreateIfNotExists => {
+-                if let Ok(exists) = self.ctl.iceberg_catalog().table_exists(&table_name).await {
+-                    if exists {
+-                        return Ok(CreateTableReply {
+-                            table_id: 0,
+-                            table_id_seq: None,
+-                            db_id: 0,
+-                            new_table: true,
+-                            prev_table_id: None,
+-                            orphan_table_name: None,
+-                        });
+-                    }
++                // `Catalog::table_exists` asks the REST catalog with a HEAD request, which older
++                // REST servers (iceberg-rest 0.10 answers 400 to any HEAD) reject, so the table
++                // is looked up instead: a GET works everywhere, and a failed lookup means there
++                // is nothing to do.
++                if self
++                    .ctl
++                    .iceberg_catalog()
++                    .load_table(&table_name)
++                    .await
++                    .is_ok()
++                {
++                    return Ok(CreateTableReply {
++                        table_id: 0,
++                        table_id_seq: Some(0),
++                        db_id: 0,
++                        // The table is already there, so `CREATE TABLE IF NOT EXISTS` has
++                        // nothing to do. Callers such as CTAS only skip their write when the
++                        // reply says the table is not new; reporting a new table here made them
++                        // append to the existing one.
++                        new_table: false,
++                        prev_table_id: None,
++                        orphan_table_name: None,
++                    });
+                 }
+             }
+             CreateOption::CreateOrReplace => {
+@@ -250,7 +265,9 @@ impl Database for IcebergDatabase {
+             })?;
+         Ok(CreateTableReply {
+             table_id: 0,
+-            table_id_seq: None,
++            // Iceberg tables are not managed by the meta service, but callers such as CTAS
++            // expect the sequence number of the created table to be present.
++            table_id_seq: Some(0),
+             db_id: 0,
+             new_table: true,
+             prev_table_id: None,
+@@ -300,14 +317,20 @@ fn convert_table_schema(
+     db_name: &str,
+     table_name: &str,
+ ) -> Result<IcebergSchema> {
+-    let mut fields = vec![];
++    // Nested fields have no column id of their own, but iceberg requires a unique id on every
++    // field of the schema, including struct members, list elements and map keys/values.
++    let mut next_field_id = schema
++        .fields()
++        .iter()
++        .map(|f| f.column_id)
++        .max()
++        .unwrap_or(0)
++        + 1;
++    let mut fields = Vec::with_capacity(schema.fields().len());
+     for f in schema.fields() {
+-        let mut metadata = HashMap::new();
+-        metadata.insert(
+-            PARQUET_FIELD_ID_META_KEY.to_string(),
+-            f.column_id.to_string(),
+-        );
+-        fields.push(Field::from(f).with_metadata(metadata));
++        let field =
++            databend_field_to_arrow(&f.name, &f.data_type, f.column_id, &mut next_field_id)?;
++        fields.push(field.with_nullable(f.is_nullable() || f.data_type.is_nullable()));
+     }
+     let metadata = schema
+         .metadata
+@@ -326,6 +349,119 @@ fn convert_table_schema(
+     Ok(schema) // Return the converted Iceberg schema
  }
  
- impl ReclusterProperties {
-@@ -129,6 +133,7 @@ impl ReclusterProperties {
-             memory_threshold,
-             prepared_cluster_key_exprs,
-             scalar_cluster_key_types,
-+            vector_full_pass: None,
-         };
-         Ok((properties, strategy))
-     }
-@@ -176,6 +181,7 @@ impl ReclusterProperties {
-             memory_threshold,
-             prepared_cluster_key_exprs,
-             scalar_cluster_key_types,
-+            vector_full_pass: None,
-         };
-         (properties, strategy)
-     }
-@@ -199,6 +205,17 @@ pub(crate) trait ReclusterStrategy: Send + Sync {
-         window_len: usize,
-     ) -> Result<Vec<Vec<SelectedReclusterSegment>>>;
- 
-+    /// The blocks of a group that may be rewritten, before any selection, including
-+    /// small-block compaction. All by default.
-+    fn eligible_blocks(
-+        &self,
-+        _properties: &ReclusterProperties,
-+        indices: Vec<usize>,
-+        _blocks: &[&ReclusterBlock],
-+    ) -> Vec<usize> {
-+        indices
-+    }
++/// Convert a databend field to an arrow field that [`arrow_schema_to_schema`] accepts.
++///
++/// Decimals are restricted to `Decimal128` and every field carries the field id that iceberg
++/// expects in its metadata.
++fn databend_field_to_arrow(
++    name: &str,
++    ty: &TableDataType,
++    field_id: ColumnId,
++    next_field_id: &mut ColumnId,
++) -> Result<Field> {
++    let arrow_ty = databend_type_to_arrow(ty, next_field_id)?;
++    let metadata = HashMap::from([(PARQUET_FIELD_ID_META_KEY.to_string(), field_id.to_string())]);
++    Ok(Field::new(name, arrow_ty, ty.is_nullable()).with_metadata(metadata))
++}
 +
-     fn fetch_task_candidates(
-         &self,
-         properties: &ReclusterProperties,
++fn next_nested_field(
++    name: &str,
++    ty: &TableDataType,
++
 ```
 
-**File**: `src/query/storages/fuse/src/operations/recluster/recluster_table.rs` (modified, +150/-7)
+**File**: `src/query/storages/iceberg/src/statistics.rs` (modified, +36/-7)
 ```diff
-@@ -30,7 +30,11 @@ use databend_common_meta_app::schema::MAX_SEGMENT_LOCATIONS_PER_CLAIM;
- use databend_common_metrics::storage::metrics_inc_recluster_build_task_milliseconds;
- use databend_common_metrics::storage::metrics_inc_recluster_segment_nums_scheduled;
- use databend_common_sql::BloomIndexColumns;
-+use databend_common_sql::ClusterKeys;
-+use databend_common_sql::parse_cluster_keys;
-+use databend_storages_common_cache::CachePolicy;
- use databend_storages_common_table_meta::meta::CompactSegmentInfo;
-+use databend_storages_common_table_meta::meta::SegmentInfo;
- use databend_storages_common_table_meta::meta::TableSnapshot;
- use log::debug;
- use log::info;
-@@ -40,11 +44,14 @@ use tokio::sync::Semaphore;
+@@ -60,7 +60,17 @@ impl IcebergStatistics {
+         let Some(snapshot) = table.metadata().current_snapshot() else {
+             return Ok(IcebergStatistics::default());
+         };
++        Self::parse_snapshot(table, snapshot).await
++    }
  
- use crate::FuseTable;
- use crate::SegmentLocation;
-+use crate::io::SegmentsIO;
- use crate::operations::recluster::CandidateScore;
- use crate::operations::recluster::ReclusterCandidateWindow;
- use crate::operations::recluster::ReclusterFinalCarry;
- use crate::operations::recluster::ReclusterMode;
- use crate::operations::recluster::ReclusterMutator;
-+use crate::operations::recluster::VECTOR_LEVEL_MIXED;
-+use crate::operations::recluster::VECTOR_LEVEL_NEW;
- use crate::pruning::PruningContext;
- use crate::pruning::SegmentPruner;
++    /// Get statistics of the given snapshot.
++    ///
++    /// Time travel reads a historical snapshot, so its row counts and column bounds must be
++    /// computed from that snapshot's manifests instead of the current one.
++    pub async fn parse_snapshot(
++        table: &iceberg::table::Table,
++        snapshot: &iceberg::spec::Snapshot,
++    ) -> Result<IcebergStatistics> {
+         // Map from column id to the total size on disk of all regions that
+         // store the column. Does not include bytes necessary to read other
+         // columns, like footers. Leave null for row-oriented formats (Avro)
+@@ -95,6 +105,10 @@ impl IcebergStatistics {
+             .await
+             .map_err(|err| ErrorCode::Internal(format!("load manifest list error: {err:?}")))?;
  
-@@ -109,7 +116,109 @@ fn select_task_candidates(
-     selected_task_indices
++        let snapshot_schema = snapshot.schema(table.metadata()).map_err(|err| {
++            ErrorCode::TableSchemaMismatch(format!("Iceberg snapshot schema: {err}"))
++        })?;
++
+         for manifest_file in manifest.entries() {
+             statistics.number_of_manifest_files += 1;
+ 
+@@ -167,13 +181,28 @@ impl IcebergStatistics {
+ 
+         let mut computed_statistics = HashMap::new();
+         for field in IcebergTable::get_schema(table)?.fields() {
+-            let column_stats = get_column_stats(
+-                field,
+-                &column_sizes,
+-                &lower_bounds,
+-                &upper_bounds,
+-                &null_value_counts,
+-            );
++            // A column that the scanned snapshot does not know about has no files in it, so
++            // it can only report nulls. Lookups stay on the field id, which both schemas share.
++            let known_in_snapshot = snapshot_schema
++                .field_by_id(field.column_id as i32)
++                .is_some();
++            let column_stats = if known_in_snapshot {
++                get_column_stats(
++                    field,
++                    &column_sizes,
++                    &lower_bounds,
++                    &upper_bounds,
++                    &null_value_counts,
++                )
++            } else {
++                BasicColumnStatistics {
++                    min: None,
++                    max: None,
++                    ndv: None,
++                    null_count: statistics.record_count,
++                    in_memory_size: 0,
++                }
++            };
+             computed_statistics.insert(field.column_id, column_stats);
+         }
+ 
+```
+
+---
+
+### Incident Patch 2: `4fc66b82` (2026-11-15)
+**Commit Message**: feat(query): enable the memory limit and the shared cache by default (#21091)
+
+* feat(query): enable the memory limit and the shared cache by default
+
+max_memory_limit_enabled and cache.shared_memory_enabled now default to
+true. A max_server_memory_usage of 0 is derived as 80% of the memory of
+the machine, or of the cgroup the process runs in; the process limit and
+the shared cache pools both use it.
+
+The shared backend no longer refuses to start without the memory limit:
+its pools are then sized but not shrunk under pressure.
+
+CI keeps the legacy backend covered by the former shared-cache job, and
+tests that need the legacy backend select it explicitly.
+
+* test(query): pin the memory limit in the system.caches golden test
+
+The shared cache backend is the default, so system.caches lists its pools, sized by the memory limit. Fix the limit at 1 GiB so the capacities do not depend on the machine.
+
+* test(query): ignore the cache-dependent read sources in the cluster EXPLAIN ANALYZE test
+
+The shared cache backend is the default and keeps table data in memory, so
+re-reads of a table are served partly from the memory cache of whichever node
+scans each block. The remote/memory split is no
+
+**File**: `.github/actions/test_sqllogic_standalone_linux/action.yml` (modified, +3/-9)
+```diff
+@@ -18,9 +18,9 @@ inputs:
+     required: false
+     default: "true"
+   shared_cache:
+-    description: "Use the shared cache backend"
++    description: "Use the shared cache backend, the default; false runs the legacy backend"
+     required: false
+-    default: "false"
++    default: "true"
+ 
+ runs:
+   using: "composite"
+@@ -36,10 +36,4 @@ runs:
+         TEST_PARALLEL: ${{ inputs.parallel }}
+         CACHE_ENABLE_TABLE_META_CACHE: ${{ inputs.enable_table_meta_cache}}
+         CACHE_SHARED_MEMORY_ENABLED: ${{ inputs.shared_cache }}
+-      run: |
+-        if [ "$CACHE_SHARED_MEMORY_ENABLED" = "true" ]; then
+-          # The shared cache backend requires a server memory limit: 80% of the runner memory.
+-          export QUERY_MAX_MEMORY_LIMIT_ENABLED=true
+-          export QUERY_MAX_SERVER_MEMORY_USAGE=$(( $(awk '/MemTotal/{print $2}' /proc/meminfo) * 1024 * 8 / 10 ))
+-        fi
+-        bash ./scripts/ci/ci-run-sqllogic-tests.sh ${{ inputs.dirs }}
++      run: bash ./scripts/ci/ci-run-sqllogic-tests.sh ${{ inputs.dirs }}
+```
+
+**File**: `.github/workflows/reuse.sqllogic.yml` (modified, +6/-3)
+```diff
+@@ -370,13 +370,16 @@ jobs:
+           dirs: ${{ matrix.dirs }}
+           handlers: ${{ matrix.handler }}
+           enable_table_meta_cache: false
++          # `enable_table_meta_cache` is an option of the legacy cache backend.
++          shared_cache: false
+       - name: Upload failure
+         if: failure()
+         uses: ./.github/actions/artifact_failure
+         with:
+           name: test-sqllogic-standalone-no-table-meta-cache-${{ matrix.dirs }}-${{ matrix.handler }}
+ 
+-  standalone_shared_cache:
++  # The cache backend is the shared one by default; these keep the legacy one covered.
++  standalone_legacy_cache:
+     runs-on:
+       - self-hosted
+       - ${{ inputs.runner_arch }}
+@@ -397,12 +400,12 @@ jobs:
+         with:
+           dirs: ${{ matrix.tests.dirs }}
+           handlers: http
+-          shared_cache: true
++          shared_cache: false
+       - name: Upload failure
+         if: failure()
+         uses: ./.github/actions/artifact_failure
+         with:
+-          name: test-sqllogic-standalone-shared-cache-${{ matrix.tests.dirs }}
++          name: test-sqllogic-standalone-legacy-cache-${{ matrix.tests.dirs }}
+ 
+   ee:
+     runs-on:
+```
+
+**File**: `Cargo.lock` (modified, +1/-11)
+```diff
+@@ -3294,6 +3294,7 @@ dependencies = [
+  "serde_ignored",
+  "serde_with",
+  "serfig",
++ "sysinfo",
+  "temp-env",
+  "tempfile",
+  "toml 0.8.22",
+@@ -3998,7 +3999,6 @@ dependencies = [
+  "once_cell",
+  "serde",
+  "serde_json",
+- "sys-info",
+  "tokio",
+ ]
+ 
+@@ -14687,16 +14687,6 @@ dependencies = [
+  "syn 2.0.106",
+ ]
+ 
+-[[package]]
+-name = "sys-info"
+-version = "0.9.1"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "0b3a0d0aba8bf96a0e1ddfdc352fc53b3df7f39318c71854910c3c4b024ae52c"
+-dependencies = [
+- "cc",
+- "libc",
+-]
+-
+ [[package]]
+ name = "sysinfo"
+ version = "0.34.2"
+```
+
+**File**: `Cargo.toml` (modified, +0/-1)
+```diff
+@@ -465,7 +465,6 @@ stringslice = "0.2.0"
+ strum = "0.24.1"
+ sub-cache = "0.2.1"
+ syn = { version = "2.0", features = ["full"] }
+-sys-info = "0.9"
+ sysinfo = "0.34.2"
+ tantivy = { version = "0.26.2", features = ["quickwit"] }
+ tantivy-common = "0.11.0"
+```
+
+**File**: `src/binaries/query/entry.rs` (modified, +2/-2)
+```diff
+@@ -135,7 +135,7 @@ async fn precheck_services(conf: &InnerConfig) -> Result<(), MainError> {
+     let make_error = || "failed to precheck";
+ 
+     if conf.query.common.max_memory_limit_enabled {
+-        let size = conf.query.common.max_server_memory_usage as i64;
++        let size = conf.server_memory_limit() as i64;
+         info!("Set memory limit: {}", size);
+         GLOBAL_MEM_STAT.set_limit(size, false);
+     }
+@@ -324,7 +324,7 @@ pub async fn start_services(conf: &InnerConfig) -> Result<(), MainError> {
+         if conf.query.common.max_memory_limit_enabled {
+             format!(
+                 "Memory: server memory limit to {} (bytes)",
+-                conf.query.common.max_server_memory_usage
++                conf.server_memory_limit()
+             )
+         } else {
+             "unlimited".to_string()
+```
+
+**File**: `src/query/config/Cargo.toml` (modified, +1/-0)
+```diff
+@@ -28,6 +28,7 @@ serde = { workspace = true }
+ serde_ignored = { workspace = true }
+ serde_with = { workspace = true }
+ serfig = { workspace = true }
++sysinfo = { workspace = true }
+ toml = { workspace = true }
+ 
+ [dev-dependencies]
+```
+
+**File**: `src/query/config/src/config.rs` (modified, +10/-8)
+```diff
+@@ -1715,15 +1715,17 @@ pub struct QueryConfig {
+     #[clap(long, value_name = "VALUE", default_value = "false")]
+     pub global_statement_queue: bool,
+ 
+-    /// The max total memory in bytes that can be used by this process.
++    /// The max total memory in bytes that can be used by this process. 0, the default, is 80%
++    /// of the memory of the machine, or of the cgroup the process runs in.
+     #[clap(long, value_name = "VALUE", default_value = "0")]
+     pub max_server_memory_usage: u64,
+ 
++    /// Enforce `max_server_memory_usage`: queries are killed when the process reaches it.
+     #[clap(
+         long,
+         value_name = "VALUE",
+         value_parser = clap::value_parser!(bool),
+-        default_value = "false"
++        default_value = "true"
+     )]
+     pub max_memory_limit_enabled: bool,
+ 
+@@ -3551,15 +3553,15 @@ pub struct CacheConfig {
+ 
+     /// Use the shared cache backend: three memory pools (meta, index and data), each sized as a
+     /// percentage of the server memory limit, evicted with S3-FIFO and shrunk under memory
+-    /// pressure before queries are killed. Requires a server memory limit
+-    /// (`max_memory_limit_enabled` and `max_server_memory_usage`). The per-cache capacity options
+-    /// above and `enable_table_meta_cache` are then ignored; disk cache options still apply.
++    /// pressure before queries are killed, which takes `max_memory_limit_enabled`. The per-cache
++    /// capacity options above and `enable_table_meta_cache` are then ignored; disk cache options
++    /// still apply. Set it to false for the legacy backend, sized by those options.
+     #[clap(
+         long = "cache-shared-memory-enabled",
+         value_name = "VALUE",
+-        default_value = "false"
++        default_value = "true"
+     )]
+-    #[serde(default = "bool_false")]
++    #[serde(default = "bool_true")]
+     pub shared_memory_enabled: bool,
+ 
+     /// Shared backend: percentage of the server memory limit for table, segment and index
+@@ -3647,7 +3649,7 @@ impl Default for CacheConfig {
+             table_data_deserialized_memory_ratio: 0,
+             table_data_encoded_dictionary_ndv_ratio: 100,
+             iceberg_table_meta_count: 1024,
+-            shared_memory_enabled: false,
++            shared_memory_enabled: true,
+             meta_max_ratio: 10,
+             index_max_ratio: 40,
+             data_max_ratio: 10,
+```
+
+**File**: `src/query/config/src/inner.rs` (modified, +20/-0)
+```diff
+@@ -128,6 +128,16 @@ impl InnerConfig {
+         Config::load_with_config_file("")?.try_into()
+     }
+ 
++    /// The server memory limit in bytes: `max_server_memory_usage`, or when that is 0,
++    /// [`default_server_memory_limit`]. The allocator limit, the cache pools and the
++    /// `max_memory_usage` setting, from which the spill thresholds derive, all use it.
++    pub fn server_memory_limit(&self) -> u64 {
++        match self.query.common.max_server_memory_usage {
++            0 => default_server_memory_limit(),
++            limit => limit,
++        }
++    }
++
+     pub fn tls_query_cli_enabled(&self) -> bool {
+         !self
+             .query
+@@ -170,6 +180,16 @@ impl InnerConfig {
+     }
  }
  
-+/// Rows not mixed yet (below `VECTOR_LEVEL_MIXED`), in percent of all rows, from
-+/// which a vector RECLUSTER FINAL rewrites the whole table once to mix them in.
-+const VECTOR_FULL_PASS_NEW_DATA_PERCENT: u64 = 10;
-+
-+/// A block of a table with a vector cluster key, as a vector RECLUSTER FINAL sees it
-+/// when it starts.
-+#[derive(Clone, Debug, PartialEq, Eq)]
-+pub struct VectorReclusterBlock {
-+    pub location: String,
-+    /// Recluster level (see `VECTOR_LEVEL_NEW`). Blocks whose cluster statistics are
-+    /// missing or belong to another cluster key have level 0: recluster normalizes
-+    /// their statistics to level 0 and rewrites them as new data.
-+    pub level: i32,
-+    pub rows: u64,
++/// 80% of the memory of the machine, or of the cgroup the process runs in.
++pub fn default_server_memory_limit() -> u64 {
++    let mut system = sysinfo::System::new();
++    system.refresh_memory();
++    let total = system
++        .cgroup_limits()
++        .map_or(system.total_memory(), |limits| limits.total_memory);
++    total / 10 * 8
 +}
 +
-+/// What a vector RECLUSTER FINAL does, decided from its blocks when it starts.
-+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-+pub enum VectorFinalPlan {
-+    /// Recluster the level-0 blocks round by round, as a recluster without FINAL
-+    /// does: for a FINAL that may only rewrite part of the table (`WHERE`, `LIMIT`).
-+    Rounds,
-+    /// Rewrite every block once, together, so that the rows not mixed yet mix with
-+    /// the others. This is also the first clustering of a table.
-+    FullPass,
-+    /// Rewrite nothing: the rows not mixed yet are fewer than
-+    /// `VECTOR_FULL_PASS_NEW_DATA_PERCENT` of all rows. They keep their level, so they
-+    /// add up across statements until they reach the threshold.
-+    Skip,
-+}
-+
-+/// The plan of a vector RECLUSTER FINAL over `blocks`. Rows below
-+/// `VECTOR_LEVEL_MIXED` are not mixed yet: new data, and data that the recluster after
-+/// writes clustered on its own. Only the full pass mixes them in; it runs when they
-+/// are all the data, or at least `VECTOR_FULL_PASS_NEW_DATA_PERCENT` of it. Blocks
-+/// excluded from recluster (level < 0) count as neither.
-+pub fn vector_final_plan(blocks: &[VectorReclusterBlock]) -> VectorFinalPlan {
-+    let rows = |mixed: bool| -> u64 {
-+        blocks
-+            .iter()
-+            .filter(|block| block.level >= VECTOR_LEVEL_NEW)
-+            .filter(|block| (block.level >= VECTOR_LEVEL_MIXED) == mixed)
-+            .map(|block| block.rows)
-+            .sum()
-+    };
-+    let (unmixed_rows, mixed_rows) = (rows(false), rows(true));
-+    if unmixed_rows > 0
-+        && unmixed_rows.saturating_mul(100)
-+            >= unmixed_rows
-+                .saturating_add(mixed_rows)
-+                .saturating_mul(VECTOR_FULL_PASS_NEW_DATA_PERCENT)
-+    {
-+        VectorFinalPlan::FullPass
-+    } else {
-+        VectorFinalPlan::Skip
-+    }
-+}
-+
- impl FuseTable {
-+    /// The blocks in the latest snapshot of a table with a vector cluster key, or
-+    /// `None` for other tables.
-+    #[async_backtrace::framed]
-+    pub async fn vector_recluster_blocks(
-+        &self,
-+        ctx: Arc<dyn TableContext>,
-+    ) -> Result<Option<Vec<VectorReclusterBlock>>> {
-+        let (Some(cluster_key_id), Some(cluster_keys)) =
-+            (self.cluster_key_id(), self.resolve_cluster_keys())
-+        else {
-+            return Ok(None);
-+        };
-+        let parsed = parse_cluster_keys(ctx.clone(), Arc::new(self.clone()), cluster_keys)?;
-+        if !matches!(parsed, ClusterKeys::Vector { .. }) {
-+            return Ok(None);
-+        }
-+        let Some(snapshot) = self.read_table_snapshot().await? else {
-+            return Ok(Some(Vec::new()));
-+        };
-+        let chunk_size = ctx.get_settings().get_max_threads()? as usize * 4;
-+        let segments_io = SegmentsIO::create(ctx, self.get_operator(), self.schema());
-+        let mut blocks = Vec::new();
-+        for chunk in snapshot.segments.chunks(chunk_size.max(1)) {
+ impl Debug for InnerConfig {
+     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+         f.debug_struct("InnerConfig")
+```
 
+---
+
+### Incident Patch 3: `2c77ade4` (2026-11-15)
+**Commit Message**: fix(query): link cosine HNSW graphs with normalized vectors (#21093)
+
+HNSWIndex::build normalized cosine vectors only for SQ8 encoding and linked
+the graph with the raw column, which builds an inner product graph for
+vectors that are not unit length. Queries, SQ8 codes and FP16 refinement all
+score cosine, so recall needed a much larger ef.
+
+Link the graph with the normalized vectors. L1 and L2 are unchanged.
+
+**File**: `src/query/storages/common/index/src/hnsw_index/hnsw.rs` (modified, +62/-0)
+```diff
+@@ -289,6 +289,11 @@ impl HNSWIndex {
+         let column = column.remove_nullable();
+         let vector_column = column.as_vector().unwrap();
+         let vector_column = preprocess(distance_type, vector_column.clone());
++        // Link the graph with the vectors that queries are scored against. For
++        // cosine, those are normalized (the SQ8 codes, the query and the FP16
++        // refinement all use cosine); linking raw vectors would build an inner
++        // product graph that favours long vectors and loses recall.
++        let column = Column::Vector(vector_column.clone());
+ 
+         let mut rng = thread_rng();
+         let mut graph_layers_builder = GraphLayersBuilder::new(
+@@ -655,4 +660,61 @@ mod tests {
+         }
+         Ok(())
+     }
++
++    /// A cosine graph is linked by the angles between rows, not their lengths:
++    /// with lengths from 1 to 1000, an inner product graph links rows to the
++    /// longest ones and a small ef misses most nearest neighbours.
++    #[test]
++    fn test_cosine_graph_ignores_vector_lengths() -> Result<()> {
++        use rand::Rng as _;
++        use rand::SeedableRng as _;
++        use rand::rngs::StdRng;
++
++        // Measured 0.904 with the normalized graph and 0.196 with the inner
++        // product graph; the threshold sits far from both.
++        const RECALL_THRESHOLD: f64 = 0.6;
++        let (dim, num_points, num_queries, limit, ef) = (16, 3000, 50, 10, 16);
++        let mut rng = StdRng::seed_from_u64(7);
++        let mut direction = || -> Vec<f32> { (0..dim).map(|_| rng.gen_range(-1.0..1.0)).collect() };
++        let queries: Vec<Vec<f32>> = (0..num_queries).map(|_| direction()).collect();
++        let directions: Vec<Vec<f32>> = (0..num_points).map(|_| direction()).collect();
++        let rows: Vec<Vec<f32>> = directions
++            .iter()
++            .enumerate()
++            .map(|(i, row)| {
++                // Lengths spread evenly over 1..1000 on a log scale.
++                let length = 10f32.powf(3.0 * (i * 7919 % num_points) as f32 / num_points as f32);
++                row.iter().map(|value| value * length).collect()
++            })
++            .collect();
++        let values: Vec<F32> = rows.iter().flatten().map(|&v| F32::from(v)).collect();
++        let column = Column::Vector(VectorColumn::Float32((values.into(), dim)));
++        let (_, entries) = HNSWIndex::build(8, 64, 0, column, DistanceType::Dot)?;
++        let columns: Vec<_> = entries.iter().map(|entry| entry.to_column()).collect();
++        let components: Vec<_> = columns
++            .iter()
++            .map(|column| column.as_binary().unwrap().index(0).unwrap())
++            .collect();
++        let index = HNSWIndex::open(DistanceType::Dot, dim, num_points, &components, None)?;
++
++        let cosine = |a: &[f32], b: &[f32]| {
++            let dot: f32 = a.iter().zip(b).map(|(x, y)| x * y).sum();
++            let norm = |v: &[f32]| v.iter().map(|x| x * x).sum::<f32>().sqrt();
++            dot / (norm(a) * norm(b))
++        };
++        let mut hits = 0;
++        for query in &queries {
++            let mut exact: Vec<usize> = (0..num_points).collect();
++            exact.sort_by(|&a, &b| cosine(query, &rows[b]).total_cmp(&cosine(query, &rows[a])));
++            let query = HNSWIndex::preprocess_query(DistanceType::Dot, query.clone());
++            let found = index.search_with_ef(limit, Some(ef), &query, false)?;
++            hits += found
++                .iter()
++                .filter(|point| exact[..limit].contains(&(point.idx as usize)))
++                .count();
++        }
++        let recall = hits as f64 / (num_queries * limit) as f64;
++        assert!(recall >= RECALL_THRESHOLD, "cosine recall {recall}");
++        Ok(())
++    }
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #21093** (2026-11-15): fix(query): link cosine HNSW graphs with normalized vectors (@bohutang)
 - **PR #21092** (2026-11-13): fix(query): truncate REPLACE statements in query logs (@TCeason)
+- **PR #21091** (2026-11-15): feat(query): enable the memory limit and the shared cache by default (@bohutang)
 - **PR #21090** (2026-11-13): refactor(query): scan only the rows matched by the inverted index (@bohutang)
 - **PR #21087** (2026-11-13): feat(query): support native charset conversion for binary strings (@sundy-li)
 - **PR #21083** (2026-11-13): fix(query): keep multi-table insert distributed when the source needs reorder (@zhang2014)
-- **PR #21082** (closed): feat(query): enable meta-service ownership cache by default (@TCeason)
-- **PR #21079** (2026-11-13): fix(query): fix virtual column binding (@b41sh)
 
 ---
 
@@ -2299,53 +2088,28 @@ equivalent and the write stays distributed.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. storage): scope fault injection rules to the installing fixture's prefix
+## X. iceberg): stop Iceberg DDL/DML from silently doing nothing
 
 **RULE**:
-When implementing operations in `src/common/storage/src/fault_injection_layer.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7cac7adf`: storage): scope fault injection rules to the installing fixture's prefix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `86507e14`: iceberg): stop Iceberg DDL/DML from silently doing nothing. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/common/storage/src/fault_injection_layer.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-//! A rule is process-global, so it must be scoped to the fixture that installed it: other
-//! tests in the same binary keep doing storage IO while it is installed, and they must not see
-//! it. The path is matched as a prefix, and [`FaultRule::in_root`] binds the rule to one
-//! storage root, since fixtures with separate roots and metastores can share a relative table
-//! prefix. The rule is removed when its [`FaultHandle`] is dropped, so a failing test cannot
-//! leave it behind for the rest of the process.
-//!
-//! let prefix = table_prefix(&fixture);
-//! let fault = FaultInjection::install(
-//!     FaultRule::new(FaultOp::Write, format!("{prefix}/_ss/"), FaultKind::Permanent)
-//!         .in_root(fixture.storage_root()),
-//! );
-use opendal::raw::normalize_root;
-/// A fault to inject: `kind` for every `op` on a path under `path_contains`, at most
-///
-/// `path_contains` is matched as a prefix, so a rule is anchored to the storage prefix of the
-/// fixture that installed it. A pattern like `_ss/` does not match another fixture's
-/// `1/11/_ss/…`, which a substring match would.
-///
-/// The path an operator reports is relative to its root, and fixtures with separate roots and
-/// se
+ "arrow-cast",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-//! let fault = FaultInjection::install(FaultRule::new(FaultOp::Write, "_ss/", FaultKind::Permanent));
-/// A fault to inject: `kind` for every `op` whose path contains `path_contains`, at most
-    fn fire(&self, op: FaultOp, path: &str) -> Option<Error> {
-        if self.rule.op != op || !path.contains(&self.rule.path_contains) {
-    /// Install a rule; it applies to every operator until removed.
-    fn check(op: FaultOp, path: &str) -> Result<()> {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7cac7adf` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `86507e14` are properly handled with clean fallback behavior.
