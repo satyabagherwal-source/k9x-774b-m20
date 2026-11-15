@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-UD3J",
-    "timestamp": "2026-11-13T15:29:32.623Z",
-    "repository": "crossplane/crossplane",
-    "learningId": "learn-github-crossplane-crossplane",
-    "contentHash": "a437bfefb77772bef10d9c36ef9d2fd78e24f007ce1d16d17f47e04875ef5be4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-UGER",
     "timestamp": "2026-11-13T15:29:36.915Z",
     "repository": "mitmproxy/mitmproxy",
@@ -7492,6 +7477,21 @@
     "contentHash": "ab1f2b6d8f8b8113f0463f385d68cc970cc76704bc90f5647ae532394caaebdb",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-8RN3",
+    "timestamp": "2026-11-15T23:39:58.575Z",
+    "repository": "sfu-db/connector-x",
+    "learningId": "learn-github-sfu-db-connector-x",
+    "contentHash": "d20ece584333aab26e520d95f3e50038d47955f1366eb336c9c9a559655ca310",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

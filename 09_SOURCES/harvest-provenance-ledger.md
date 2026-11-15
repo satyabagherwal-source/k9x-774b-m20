@@ -10213,3 +10213,6 @@ Every entry in this ledger must capture:
 | `learn-github-ataraxy-labs-sem` | `https://github.com/Ataraxy-Labs/sem` | `5d74e1fe` | Multi-dimensional audit evidence | 2026-11-15T23:25:57.097Z |
 | `learn-github-searchsolved-search-solved-public-seo` | `https://github.com/searchsolved/search-solved-public-seo` | `6d8d30b4` | Multi-dimensional audit evidence | 2026-11-15T23:26:01.140Z |
 | `learn-github-argoproj-argo-events` | `https://github.com/argoproj/argo-events` | `ba2dd434` | Multi-dimensional audit evidence | 2026-11-15T23:26:05.047Z |
+| `learn-github-sfu-db-connector-x` | `https://github.com/sfu-db/connector-x` | `ac243a1b` | Multi-dimensional audit evidence | 2026-11-15T23:39:58.580Z |
+| `learn-dom-d-9a5a6c46` | `project://sfu-db-connector-x` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md` | 2026-11-15T23:40:36.463Z |
+| `learn-dom-h-503996f3` | `project://sfu-db-connector-x` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md` | 2026-11-15T23:41:17.020Z |

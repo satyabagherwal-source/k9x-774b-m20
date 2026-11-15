@@ -10180,3 +10180,6 @@
 | `CYCLE-20261115-QQCM` | `2026-11-15T23:25:57.094Z` | `Ataraxy-Labs/sem` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md` | Yes (`d57b19c7...`) |
 | `CYCLE-20261115-QTGX` | `2026-11-15T23:26:01.137Z` | `searchsolved/search-solved-public-seo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8665` | Yes (`facdea82...`) |
 | `CYCLE-20261115-QWHG` | `2026-11-15T23:26:05.044Z` | `argoproj/argo-events` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8666` | Yes (`ab1f2b6d...`) |
+| `CYCLE-20261115-8RN3` | `2026-11-15T23:39:58.575Z` | `sfu-db/connector-x` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8667, Rule 8668` | Yes (`d20ece58...`) |
+| `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T23:40:36.463Z` | `sfu-db-connector-x` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-9A5A6C46` [Domain D] | Yes (`74935131...`) |
+| `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T23:41:17.020Z` | `sfu-db-connector-x` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-503996F3` [Domain H] | Yes (`74789975...`) |

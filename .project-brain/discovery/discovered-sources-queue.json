@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T23:26:10.926Z",
+  "updated_at": "2026-11-15T23:41:17.039Z",
   "stats": {
-    "total_discovered": 3925,
-    "approved_pending_harvest": 3684,
+    "total_discovered": 3926,
+    "approved_pending_harvest": 3685,
     "harvested_count": 0,
     "rejected_count": 241,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3683,
+      "COMMUNITY_AND_EXPERT": 3684,
       "OFFICIAL_DOCUMENTATION": 132,
       "STANDARDS_AND_SPECIFICATIONS": 92,
       "ENGINEERING_BLOGS": 2,
@@ -84684,6 +84684,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-events-learnings.md",
         "fileName": "argoproj-argo-events-learnings.md"
+      }
+    },
+    "SRC-076D034E9149": {
+      "id": "SRC-076D034E9149",
+      "url": "https://github.com/sfu-db/connector-x",
+      "title": "https://github.com/sfu-db/connector-x",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T23:41:17.039Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md",
+        "fileName": "sfu-db-connector-x-learnings.md"
       }
     }
   }

@@ -627717,3 +627717,269 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `ba2dd434` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8667. URL Preservation Invariant Under Parameter Stripping (Harvested from sfu-db/connector-x)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "URL Preservation Invariant Under Parameter Stripping",
+  "source": "sfu-db/connector-x",
+  "source_url": "https://github.com/sfu-db/connector-x",
+  "source_version": "ac243a1b",
+  "license": "MIT",
+  "extracted_at": "2026-11-15T23:39:57.481Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-sfu-db-connector-x",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [sfu-db/connector-x](https://github.com/sfu-db/connector-x) (Revision: `ac243a1b`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When filtering, stripping, or modifying query parameters in connection strings or URIs forwarded to downstream database drivers, systems **MUST NOT** parse and re-serialize the entire query string using standard `application/x-www-form-urlencoded` formatters. Instead, parameter stripping **MUST** be performed via raw byte/string slice decomposition that selectively excises matched key-value pairs while keeping all untouched parameters, original separators, and percent-encodings byte-for-byte identical.
+
+**WHY**:
+Standard URI query mutators (such as Rust's `url::Url::query_pairs_mut()` or Python's `urllib.parse.urlencode()`) convert spaces (`%20`) into plus signs (`+`) under standard HTML form conventions. Downstream database engines and network drivers (e.g., `libpq`, `rust-postgres`, `tiberius`, `prusto`) adhere strictly to RFC 3986 percent-decoding rules. If an engine passes connection parameters (such as `options=-c statement_timeout=1s` or password salts) through an HTML form serializer, `-c%20statement_timeout=1s` becomes `-c+statement_timeout=1s`. The target database server then receives the literal parameter `+statement_timeout=1s`, fails option parsing, and aborts the connection.
+
+**WHEN TO APPLY**:
+Apply in any proxy, gateway, driver wrapper, microservice, or ETL engine that intercepts, validates, or rewrites database connection strings, S3/blob store URIs, or webhook endpoints before passing them to low-level native network drivers.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use url::{form_urlencoded, Url};
+
+/// Strips targeted parameters from a URL's query string while leaving 
+/// untouched parameters completely identical at the raw byte/slice level.
+pub fn excise_query_params(url: &Url, params_to_remove: &[&str]) -> Url {
+    let mut sanitized_url = url.clone();
+    let query_str = match url.query() {
+        Some(q) if !q.is_empty() => q,
+        _ => return sanitized_url,
+    };
+
+    let preserved_segments: Vec<&str> = query_str
+        .split('&')
+        .filter(|segment| !segment.is_empty())
+        .filter(|segment| {
+            // Extract the raw key up to the first '=' delimiter
+            let raw_key = segment.split('=').next().unwrap_or_default();
+            
+            // Decode ONLY the key slice to compare against target removal tokens
+            let decoded_key = form_urlencoded::parse(raw_key.as_bytes())
+                .next()
+                .map(|(k, _)| k)
+                .unwrap_or_default();
+            
+            // Retain segment only if it does not match any targeted removal keys
+            !params_to_remove.contains(&&*decoded_key)
+        })
+        .collect();
+
+    let new_query = preserved_segments.join("&");
+    sanitized_url.set_query(if new_query.is_empty() {
+        None
+    } else {
+        Some(&new_query)
+    });
+
+    sanitized_url
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// NEVER use standard form-url-encoding builders to strip query parameters from database URIs!
+pub fn BAD_strip_query_param(mut url: Url, param: &str) -> Url {
+    // BUG: query_pairs_mut re-serializes spaces as '+'!
+    // Result: "options=-c%20statement_timeout=1s" becomes "options=-c+statement_timeout=1s"
+    // Downstream driver interprets the '+' as a syntax error in the configuration key.
+    let pairs: Vec<(String, String)> = url
+        .query_pairs()
+        .filter(|(k, _)| k != param)
+        .map(|(k, v)| (k.into_owned(), v.into_owned()))
+        .collect();
+    
+    url.query_pairs_mut().clear().extend_pairs(pairs).finish();
+    url
+}
+```
+
+**VERIFICATION METHOD**:
+Enforce property testing asserting zero byte-drift on unstripped parameters:
+```rust
+#[test]
+fn test_query_preservation_invariant() {
+    let raw = "postgresql://user:pass@host:5432/db?options=-c%20statement_timeout%3D1s&custom_flag=true";
+    let url = Url::parse(raw).unwrap();
+    let stripped = excise_query_params(&url, &["custom_flag"]);
+    assert_eq!(
+        stripped.as_str(),
+        "postgresql://user:pass@host:5432/db?options=-c%20statement_timeout%3D1s"
+    );
+}
+```
+
+---
+
+
+---
+
+## 8668. Cross-Language Panic Boundary Containment Invariant (Harvested from sfu-db/connector-x)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Cross-Language Panic Boundary Containment Invariant",
+  "source": "sfu-db/connector-x",
+  "source_url": "https://github.com/sfu-db/connector-x",
+  "source_version": "ac243a1b",
+  "license": "MIT",
+  "extracted_at": "2026-11-15T23:39:58.053Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-sfu-db-connector-x",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [sfu-db/connector-x](https://github.com/sfu-db/connector-x) (Revision: `ac243a1b`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+Any native thread, background task, or asynchronous worker executing within a Rust or C++ extension library bound to a host language (Python, Node.js, Go) **MUST NOT** panic or terminate without capturing the unwinding panic via `std::panic::catch_unwind` and explicitly piping the resulting error into the host language's error marshaling channel. Asynchronous streams and iterators **MUST** transmit terminating error sentinels rather than dropping channels silently.
+
+**WHY**:
+When a Rust worker thread spawned inside an FFI boundary encounters a panic (e.g., an unexpected `Option::unwrap()` on an unsupported temporal value such as `0001-04-17 21:12:06.000000 DATETIME(6)`), the default behavior terminates the thread. If the error is not captured and transmitted across the IPC/FFI stream, the consumer stream simply perceives a premature `None` or EOF. This causes silent data truncation, data corruption, and dropped batches without raising an exception in the caller's execution environment. The client application marks the query as successfully finished with incomplete rows.
+
+**WHEN TO APPLY**:
+Every FFI boundary, native stream, C-API callback, PyO3 generator, or background multithreaded worker returning data to a caller runtime.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use std::panic::{catch_unwind, AssertUnwindSafe};
+use tokio::sync::mpsc::Sender;
+
+pub struct StreamPayload<T> {
+    pub data: Option<T>,
+    pub error: Option<String>,
+}
+
+pub async fn safe_stream_producer<T, F>(
+    tx: Sender<StreamPayload<T>>,
+    mut producer_fn: F,
+) where
+    F: FnMut() -> Result<Option<T>, String> + Send + 'static,
+    T: Send + 'static,
+{
+    loop {
+        // Enforce panic containment barrier inside worker loop
+        let outcome = catch_unwind(AssertUnwindSafe(|| {
+            producer_fn()
+        }));
+
+        match outcome {
+            Ok(Ok(Some(item))) => {
+                if tx.send(StreamPayload { data: Some(item), error: None }).await.is_err() {
+                    break; // Receiver dropped
+                }
+            }
+            Ok(Ok(None)) => {
+                // Legitimate EOF
+                break;
+            }
+            Ok(Err(err_msg)) => {
+                // Domain error: push down to host stream
+                let _ = tx.send(StreamPayload { data: None, error: Some(err_msg) }).await;
+                break;
+            }
+            Err(panic_err) => {
+                // Caught panic: extract string or payload
+                let panic_msg = if let Some(s) = panic_err.downcast_ref::<&str>() {
+                    s.to_string()
+                } else if let Some(s) = panic_err.downcast_ref::<String>() {
+                    s.clone()
+                } else {
+                    "Unknown native panic occurred inside stream worker".to_string()
+                };
+                
+                // Transmit error sentinel before terminating thread
+                let _ = tx.send(StreamPayload {
+                    data: None, 
+                    error: Some(format!("FATAL NATIVE WORKER PANIC: {}", panic_msg))
+                }).await;
+                break;
+            }
+        }
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// NEVER allow thread panic or silent worker drop to act as stream termination!
+pub fn BAD_stream_producer<T>(tx: std::sync::mpsc::Sender<T>) {
+    std::thread::spawn(move || {
+        // If this unwraps on an out-of-range date (e.g. year 0001), 
+        // the thread dies instantly, tx is dropped, and the Python client
+        // receives an empty stream with ZERO error raised!
+        let row = fetch_next_database_row().unwrap(); 
+        tx.send(row).unwrap();
+    });
+}
+```
+
+**VERIFICATION METHOD**:
+Implement integration test harnesses that inject poison payloads (e.g., date ranges outside chrono/arrow bounds) and assert that an explicit Python `ConnectorXError` exception is thrown instead of returning an empty or truncated DataFrame.
+
+---

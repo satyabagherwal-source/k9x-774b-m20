@@ -4,8 +4,8 @@
     "officialUrl": "https://github.com/rustls/rustls",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-15T17:22:47.717Z",
-    "lastVerified": "2026-11-15T17:22:47.717Z",
+    "lastChecked": "2026-11-15T23:37:51.875Z",
+    "lastVerified": "2026-11-15T23:37:51.875Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustls-rustls",
@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-15T23:26:08.475Z",
-    "lastVerified": "2026-11-15T23:26:08.475Z",
+    "lastChecked": "2026-11-15T23:40:02.141Z",
+    "lastVerified": "2026-11-15T23:40:02.141Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -474,8 +474,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-15T22:46:50.125Z",
-    "lastVerified": "2026-11-15T22:46:50.125Z",
+    "lastChecked": "2026-11-15T23:37:56.862Z",
+    "lastVerified": "2026-11-15T23:37:56.862Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -4493,8 +4493,8 @@
     "officialUrl": "https://github.com/krakend/krakend-ce",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-14T15:25:41.341Z",
-    "lastVerified": "2026-11-14T15:25:41.341Z",
+    "lastChecked": "2026-11-15T23:37:49.387Z",
+    "lastVerified": "2026-11-15T23:37:49.387Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-krakend-krakend-ce",
@@ -5806,22 +5806,21 @@
     "revisionIdentifier": "786343a3"
   },
   "sfu-db-connector-x": {
-    "name": "connector-x",
+    "name": "sfu-db/connector-x",
     "officialUrl": "https://github.com/sfu-db/connector-x",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-14T13:29:08.813Z",
-    "lastVerified": "2026-11-14T13:29:08.813Z",
+    "lastChecked": "2026-11-15T23:37:57.462Z",
+    "lastVerified": "2026-11-15T23:37:57.462Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sfu-db-connector-x",
-    "contentHash": "c5f104155959d0b1ef8d6003070701385280cb1346bf30a14c4bfc07b261d865",
-    "promotedRulesCount": 1,
+    "contentHash": "d20ece584333aab26e520d95f3e50038d47955f1366eb336c9c9a559655ca310",
+    "promotedRulesCount": 2,
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "7ad4ba05"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "nvidia-cuda-rust": {
     "name": "NVIDIA/cuda-rust",
@@ -6906,9 +6905,9 @@
   "sentrux-sentrux": {
     "name": "sentrux",
     "officialUrl": "https://github.com/sentrux/sentrux",
-    "lastChecked": "2026-11-14T01:26:08.679Z",
+    "lastChecked": "2026-11-15T23:37:41.875Z",
     "revisionIdentifier": "6f8ff3c1",
-    "lastVerified": "2026-11-14T01:26:08.679Z"
+    "lastVerified": "2026-11-15T23:37:41.875Z"
   },
   "hf-google-gemma-4-26b-a4b-it": {
     "name": "google/gemma-4-26B-A4B-it",
@@ -10527,16 +10526,16 @@
   "indexcraft-ai-seo-audit-agent": {
     "name": "ai-seo-audit-agent",
     "officialUrl": "https://github.com/indexcraft/ai-seo-audit-agent",
-    "lastChecked": "2026-11-11T09:12:09.488Z",
+    "lastChecked": "2026-11-15T23:37:44.387Z",
     "revisionIdentifier": "20d2e73081",
-    "lastVerified": "2026-11-11T09:12:09.488Z"
+    "lastVerified": "2026-11-15T23:37:44.387Z"
   },
   "sayaka-sh-spmp": {
     "name": "spmp",
     "officialUrl": "https://github.com/sayaka-sh/spmp",
-    "lastChecked": "2026-11-12T12:32:36.092Z",
+    "lastChecked": "2026-11-15T23:37:46.875Z",
     "revisionIdentifier": "2fb03e84",
-    "lastVerified": "2026-11-12T12:32:36.092Z"
+    "lastVerified": "2026-11-15T23:37:46.875Z"
   },
   "kaimodev-trivium": {
     "name": "trivium",

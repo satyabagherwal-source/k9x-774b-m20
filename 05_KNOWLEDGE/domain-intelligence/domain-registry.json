@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T23:26:11.200Z",
-  "total_records": 1151,
+  "last_updated": "2026-11-15T23:41:19.612Z",
+  "total_records": 1155,
   "domains": {
     "A": {
       "total": 7,
@@ -37,7 +37,7 @@
       ]
     },
     "D": {
-      "total": 557,
+      "total": 558,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -595,7 +595,8 @@
         "domain_intelligence-research-knowledge-intelligence-microsoft-florence-2-base-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-hf-microsoft-florence-2-base-learnings-core-inva",
         "domain_intelligence-research-knowledge-intelligence-ataraxy-labs-sem-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-ataraxy-labs-sem-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-ataraxy-labs-sem-learnings-core-invariants",
+        "DOM-D-9A5A6C46"
       ]
     },
     "E": {
@@ -838,7 +839,7 @@
       ]
     },
     "H": {
-      "total": 236,
+      "total": 239,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1075,7 +1076,10 @@
         "DOM-H-0A98A103",
         "domain_intelligence-technical-construction-intelligence-vercel-labs-agent-desktop-learnings-core-inv",
         "domain_intelligence-technical-construction-intelligence-jellyfin-swiftfin-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-jellyfin-swiftfin-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-jellyfin-swiftfin-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-sfu-db-connector-x-core-invariants",
+        "DOM-H-503996F3",
+        "domain_intelligence-technical-construction-intelligence-sfu-db-connector-x-learnings-core-invariants"
       ]
     },
     "I": {
@@ -7884,8 +7888,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "ee6a4f9e56dd11e387bba68235c6cf92de1f2cb921a6d3473fa2f46348770f18",
-      "created_at": "2026-11-15T22:46:53.611Z"
+      "content_hash": "35bcb6e979605aac59069d13ac7060a5af2b856bb60b30197eb9c27dbe196d62",
+      "created_at": "2026-11-15T23:41:19.612Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -10542,8 +10546,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "87c8d7bc2cc9068bec9e718f82bc876e663e2b831b5e0281c1603aaea6e9450f",
-      "created_at": "2026-11-15T22:46:53.117Z"
+      "content_hash": "c10087565013e6c8a34518bab5fad84156ed6150ac4488c13978725740588466",
+      "created_at": "2026-11-15T23:41:18.675Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -21683,6 +21687,92 @@
       "repository": "searchsolved-search-solved-public-seo-learnings",
       "content_hash": "4db8f22f2a1e4c6ba0e8ef6ffe28b053914fa61182c919966b9f15a26ea53281",
       "created_at": "2026-11-15T23:26:10.525Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-sfu-db-connector-x-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-sfu-db-connector-x-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: sfu-db/connector-x Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-sfu-db-connector-x-technical-construction-intelligence-sfu-db-connector-x-core-i.md",
+      "repository": "sfu-db/connector-x",
+      "content_hash": "5971c2a0d84eb5e2882dd74306334377d2ea40491dc462510a4d044fe525067a",
+      "created_at": "2026-11-15T23:39:59.059Z"
+    },
+    "DOM-D-9A5A6C46": {
+      "record_id": "DOM-D-9A5A6C46",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [],
+      "title": "Silent Trino Partition TLS Failure & Header Drop (BUG-TRINO-PARAM-01)",
+      "content": "Connection factories must be centralized into single, non-divergent configuration dispatchers. Auxiliary probes (such as partition range calculators) must never reconstruct client connections using partial ad-hoc parsers.",
+      "content_hash": "74935131d42a5dae09c5357d6fbbf96fafef2dd50f1c066b94ce982817ec0e61",
+      "summary": "Architectural fragmentation between the primary source client factory and the auxiliary partition sampler. The partition sampler parsed the  -> Connection factories must be centralized into single, non-divergent configuration dispatchers. Auxiliary probes (such as partition range cal",
+      "provenance": {
+        "source_uri": "project://sfu-db-connector-x/sfu-db-connector-x-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T23:40:02.284Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (sfu-db-connector-x)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Issue #927 (Closed: 2026-08-28)."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-15T23:40:36.443Z"
+    },
+    "DOM-H-503996F3": {
+      "record_id": "DOM-H-503996F3",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "Silent Stream Truncation on Out-of-Range DATETIME Panic (BUG-STREAM-PANIC-02)",
+      "content": "Channel disconnection in an asynchronous producer-consumer pipeline must never be conflated with intentional stream termination (`EOF`).",
+      "content_hash": "747899754ba93b660b8968d2ca8f37e508775e9668b2a19fddbc4d85aa3be3a7",
+      "summary": "Reliance on `.expect()`/`.unwrap()` in chrono timestamp conversions inside worker threads combined with an absence of error-signaling channe -> Channel disconnection in an asynchronous producer-consumer pipeline must never be conflated with intentional stream termination (`EOF`).",
+      "provenance": {
+        "source_uri": "project://sfu-db-connector-x/sfu-db-connector-x-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T23:40:02.284Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (sfu-db-connector-x)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Issue #913 (Closed: 2026-08-28)."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-15T23:41:17.002Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-sfu-db-connector-x-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-sfu-db-connector-x-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: sfu-db-connector-x-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-sfu-db-connector-x-learnings-technical-construction-intelligence-sfu-db-connecto.md",
+      "repository": "sfu-db-connector-x-learnings",
+      "content_hash": "3f1d6a92a8a30818b58b917e2e1e3ca27834fe6b1beab09811123772a3dccd2e",
+      "created_at": "2026-11-15T23:41:17.626Z"
     }
   }
 }

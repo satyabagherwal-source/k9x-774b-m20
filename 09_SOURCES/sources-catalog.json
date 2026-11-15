@@ -4673,10 +4673,10 @@
     "repository": "sfu-db/connector-x",
     "platform": "github",
     "sourceUrl": "https://github.com/sfu-db/connector-x",
-    "sourceVersion": "7ad4ba05",
+    "sourceVersion": "ac243a1b",
     "license": "MIT",
-    "contentHash": "c5f104155959d0b1ef8d6003070701385280cb1346bf30a14c4bfc07b261d865",
-    "lastHarvestedAt": "2026-11-09T15:12:51.553Z",
+    "contentHash": "d20ece584333aab26e520d95f3e50038d47955f1366eb336c9c9a559655ca310",
+    "lastHarvestedAt": "2026-11-15T23:39:58.580Z",
     "learningId": "learn-github-sfu-db-connector-x"
   },
   "stenciljs-core": {
