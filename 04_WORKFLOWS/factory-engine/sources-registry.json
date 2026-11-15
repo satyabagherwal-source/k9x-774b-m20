@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-15T23:40:02.141Z",
-    "lastVerified": "2026-11-15T23:40:02.141Z",
+    "lastChecked": "2026-11-15T23:49:58.439Z",
+    "lastVerified": "2026-11-15T23:49:58.439Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -121,8 +121,8 @@
     "officialUrl": "https://github.com/gravitl/netmaker",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-15T17:31:47.211Z",
-    "lastVerified": "2026-11-15T17:31:47.211Z",
+    "lastChecked": "2026-11-15T23:49:53.636Z",
+    "lastVerified": "2026-11-15T23:49:53.636Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gravitl-netmaker",
@@ -156,8 +156,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-15T22:58:47.367Z",
-    "lastVerified": "2026-11-15T22:58:47.367Z",
+    "lastChecked": "2026-11-15T23:49:58.427Z",
+    "lastVerified": "2026-11-15T23:49:58.427Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -4578,9 +4578,9 @@
   "apptainer-singularity": {
     "name": "singularity",
     "officialUrl": "https://github.com/apptainer/singularity",
-    "lastChecked": "2026-11-14T15:34:32.108Z",
+    "lastChecked": "2026-11-15T23:49:50.970Z",
     "revisionIdentifier": "9dceb424",
-    "lastVerified": "2026-11-14T15:34:32.108Z"
+    "lastVerified": "2026-11-15T23:49:50.970Z"
   },
   "risingwavelabs-risingwave": {
     "name": "risingwave",
@@ -5885,8 +5885,8 @@
     "officialUrl": "https://github.com/sqlpage/SQLPage",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-14T13:38:44.078Z",
-    "lastVerified": "2026-11-14T13:38:44.078Z",
+    "lastChecked": "2026-11-15T23:49:55.938Z",
+    "lastVerified": "2026-11-15T23:49:55.938Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sqlpage-sqlpage",
@@ -6950,9 +6950,9 @@
   "silasmarvin-lsp-ai": {
     "name": "lsp-ai",
     "officialUrl": "https://github.com/SilasMarvin/lsp-ai",
-    "lastChecked": "2026-11-14T01:48:29.568Z",
+    "lastChecked": "2026-11-15T23:49:43.396Z",
     "revisionIdentifier": "1e910a8c",
-    "lastVerified": "2026-11-14T01:48:29.568Z"
+    "lastVerified": "2026-11-15T23:49:43.396Z"
   },
   "hf-intfloat-multilingual-e5-small": {
     "name": "intfloat/multilingual-e5-small",
@@ -10540,17 +10540,17 @@
   "kaimodev-trivium": {
     "name": "trivium",
     "officialUrl": "https://github.com/KaiMOdev/trivium",
-    "lastChecked": "2026-11-11T09:27:28.682Z",
+    "lastChecked": "2026-11-15T23:49:45.910Z",
     "revisionIdentifier": "6f50e34a69",
-    "lastVerified": "2026-11-11T09:27:28.682Z"
+    "lastVerified": "2026-11-15T23:49:45.910Z"
   },
   "touchlab-xcode-kotlin": {
-    "name": "touchlab/xcode-kotlin",
+    "name": "xcode-kotlin",
     "officialUrl": "https://github.com/touchlab/xcode-kotlin",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-12T12:45:18.963Z",
-    "lastVerified": "2026-11-12T12:45:18.963Z",
+    "lastChecked": "2026-11-15T23:49:48.414Z",
+    "lastVerified": "2026-11-15T23:49:48.414Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-touchlab-xcode-kotlin",
@@ -10559,7 +10559,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "8e9834df"
   },
   "ilamaaa-hreflang-checker": {
     "name": "hreflang-checker",
