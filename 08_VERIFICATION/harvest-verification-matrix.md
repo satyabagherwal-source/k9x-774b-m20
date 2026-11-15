@@ -10061,3 +10061,7 @@
 | `CYCLE-20261115-X82M` | `2026-11-15T08:07:12.670Z` | `tuist/tuist` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8589` | Yes (`033b8230...`) |
 | `CYCLE-20261115-ZOG5` | `2026-11-15T08:09:07.205Z` | `OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8590, Rule 8591, Rule 8592` | Yes (`401365fa...`) |
 | `CYCLE-20261115-035P` | `2026-11-15T08:09:26.270Z` | `SimonSchubert/LinuxCommandLibrary` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8593, Rule 8594, Rule 8595` | Yes (`34e584f0...`) |
+| `CYCLE-20261115-EV3Q` | `2026-11-15T08:48:55.286Z` | `GitoxideLabs/gitoxide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8596` | Yes (`20381fcb...`) |
+| `CYCLE-20261115-JC6Q` | `2026-11-15T08:52:24.050Z` | `MelnixDev/seo-crawl-audit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8597, Rule 8598, Rule 8599` | Yes (`32664a22...`) |
+| `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T08:52:52.332Z` | `melnixdev-seo-crawl-audit` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-J-C5E210D6` [Domain J] | Yes (`d95e845e...`) |
+| `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T08:53:19.661Z` | `melnixdev-seo-crawl-audit` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-DDC06A14` [Domain F] | Yes (`7f5b8da3...`) |

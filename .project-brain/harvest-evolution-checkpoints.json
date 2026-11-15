@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T08:09:32.397Z",
+  "last_updated": "2026-11-15T08:53:21.007Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-15T07:33:00.027Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-15T07:32:59.316Z",
+      "processed_at": "2026-11-15T08:53:20.398Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -643,7 +643,7 @@
       "staged_for_review": 0
     },
     "gitoxidelabs-gitoxide-learnings.md": {
-      "processed_at": "2026-11-13T14:06:18.652Z",
+      "processed_at": "2026-11-15T08:52:27.273Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2926,9 +2926,14 @@
       "processed_at": "2026-11-15T08:09:30.602Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
+    },
+    "melnixdev-seo-crawl-audit-learnings.md": {
+      "processed_at": "2026-11-15T08:53:19.661Z",
+      "promoted_canonical": 2,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 1011,
-  "total_canonical_promoted": 250,
-  "total_staged_for_review": 759
+  "total_dossiers_evaluated": 1014,
+  "total_canonical_promoted": 252,
+  "total_staged_for_review": 761
 }

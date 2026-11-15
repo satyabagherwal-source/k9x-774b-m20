@@ -10094,3 +10094,7 @@ Every entry in this ledger must capture:
 | `learn-github-tuist-tuist` | `https://github.com/tuist/tuist` | `3851a198` | Multi-dimensional audit evidence | 2026-11-15T08:07:12.674Z |
 | `learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated` | `https://huggingface.co/OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated` | `hf-obliter` | Multi-dimensional audit evidence | 2026-11-15T08:09:07.209Z |
 | `learn-github-simonschubert-linuxcommandlibrary` | `https://github.com/SimonSchubert/LinuxCommandLibrary` | `6641ebf0` | Multi-dimensional audit evidence | 2026-11-15T08:09:26.274Z |
+| `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `154ffbc6` | Multi-dimensional audit evidence | 2026-11-15T08:48:55.290Z |
+| `learn-github-melnixdev-seo-crawl-audit` | `https://github.com/MelnixDev/seo-crawl-audit` | `abed0505` | Multi-dimensional audit evidence | 2026-11-15T08:52:24.053Z |
+| `learn-dom-j-c5e210d6` | `project://melnixdev-seo-crawl-audit` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/melnixdev-seo-crawl-audit-learnings.md` | 2026-11-15T08:52:52.332Z |
+| `learn-dom-f-ddc06a14` | `project://melnixdev-seo-crawl-audit` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/melnixdev-seo-crawl-audit-learnings.md` | 2026-11-15T08:53:19.661Z |

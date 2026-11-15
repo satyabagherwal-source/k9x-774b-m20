@@ -1763,10 +1763,10 @@
     "repository": "MelnixDev/seo-crawl-audit",
     "platform": "github",
     "sourceUrl": "https://github.com/MelnixDev/seo-crawl-audit",
-    "sourceVersion": "082076c",
-    "license": "Open-Source",
-    "contentHash": "b14dd7161951d90edc4ee7f5c1a0747c11af4e74789919cc51773faf1ee402b9",
-    "lastHarvestedAt": "2026-10-18T04:51:28.844Z",
+    "sourceVersion": "abed0505",
+    "license": "MIT",
+    "contentHash": "32664a22ec4793b1b8bec6e306b36d81e80c02221ea28f24d341c91c9dd76107",
+    "lastHarvestedAt": "2026-11-15T08:52:24.053Z",
     "learningId": "learn-github-melnixdev-seo-crawl-audit"
   },
   "istifano-seo-auditor": {
@@ -4043,10 +4043,10 @@
     "repository": "GitoxideLabs/gitoxide",
     "platform": "github",
     "sourceUrl": "https://github.com/GitoxideLabs/gitoxide",
-    "sourceVersion": "ca90fe79",
+    "sourceVersion": "154ffbc6",
     "license": "Apache-2.0",
-    "contentHash": "0615ef7b17e515d8be5f79284975e1a550f070cee0dae81be9949f33472d3a24",
-    "lastHarvestedAt": "2026-11-13T14:06:02.475Z",
+    "contentHash": "20381fcb29238b7d094e4b0e5f6232f9e4a588f427f07dbe9681ad68b677ac05",
+    "lastHarvestedAt": "2026-11-15T08:48:55.290Z",
     "learningId": "learn-github-gitoxidelabs-gitoxide"
   },
   "devhubapp-devhub": {

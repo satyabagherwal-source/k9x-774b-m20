@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T08:09:31.473Z",
+  "updated_at": "2026-11-15T08:53:19.720Z",
   "stats": {
-    "total_discovered": 3661,
-    "approved_pending_harvest": 3451,
+    "total_discovered": 3665,
+    "approved_pending_harvest": 3455,
     "harvested_count": 0,
     "rejected_count": 210,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3431,
+      "COMMUNITY_AND_EXPERT": 3435,
       "OFFICIAL_DOCUMENTATION": 125,
       "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
@@ -79093,6 +79093,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md",
         "fileName": "simonschubert-linuxcommandlibrary-learnings.md"
+      }
+    },
+    "SRC-9A043A8C345F": {
+      "id": "SRC-9A043A8C345F",
+      "url": "https://github.com/gitpython-developers/GitPython/pull/2345",
+      "title": "https://github.com/gitpython-developers/GitPython/pull/2345",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T08:52:27.296Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
+        "fileName": "gitoxidelabs-gitoxide-learnings.md"
+      }
+    },
+    "SRC-65FC3C5A3DFA": {
+      "id": "SRC-65FC3C5A3DFA",
+      "url": "https://github.com/MelnixDev/seo-crawl-audit",
+      "title": "https://github.com/MelnixDev/seo-crawl-audit",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T08:53:19.674Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/melnixdev-seo-crawl-audit-learnings.md",
+        "fileName": "melnixdev-seo-crawl-audit-learnings.md"
+      }
+    },
+    "SRC-D1F409772008": {
+      "id": "SRC-D1F409772008",
+      "url": "https://registry.npmjs.org/@eslint/core/-/core-0.17.1.tgz",
+      "title": "https://registry.npmjs.org/@eslint/core/-/core-0.17.1.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T08:53:19.697Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/melnixdev-seo-crawl-audit-learnings.md",
+        "fileName": "melnixdev-seo-crawl-audit-learnings.md"
+      }
+    },
+    "SRC-C28BC9AC1DF3": {
+      "id": "SRC-C28BC9AC1DF3",
+      "url": "https://registry.npmjs.org/@eslint/core/-/core-0.17.0.tgz",
+      "title": "https://registry.npmjs.org/@eslint/core/-/core-0.17.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T08:53:19.720Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/melnixdev-seo-crawl-audit-learnings.md",
+        "fileName": "melnixdev-seo-crawl-audit-learnings.md"
       }
     }
   }

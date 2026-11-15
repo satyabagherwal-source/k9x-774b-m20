@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T08:09:32.028Z",
-  "total_records": 1004,
+  "last_updated": "2026-11-15T08:53:20.806Z",
+  "total_records": 1010,
   "domains": {
     "A": {
       "total": 7,
@@ -542,7 +542,7 @@
       ]
     },
     "F": {
-      "total": 22,
+      "total": 23,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -565,11 +565,12 @@
         "DOM-F-053419E8",
         "domain_intelligence-design-intelligence-dealignai-deepseek-v4-1-flash-uncensored-fp8-core-invariants",
         "domain_intelligence-design-intelligence-crosspaste-crosspaste-desktop-core-invariants",
-        "domain_intelligence-design-intelligence-crosspaste-crosspaste-desktop-learnings-core-invariants"
+        "domain_intelligence-design-intelligence-crosspaste-crosspaste-desktop-learnings-core-invariants",
+        "DOM-F-DDC06A14"
       ]
     },
     "G": {
-      "total": 171,
+      "total": 173,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -741,11 +742,13 @@
         "domain_intelligence-architecture-intelligence-tuist-tuist-core-invariants",
         "domain_intelligence-architecture-intelligence-simonschubert-linuxcommandlibrary-core-invariants",
         "domain_intelligence-architecture-intelligence-tuist-tuist-learnings-core-invariants",
-        "domain_intelligence-architecture-intelligence-simonschubert-linuxcommandlibrary-learnings-core-invar"
+        "domain_intelligence-architecture-intelligence-simonschubert-linuxcommandlibrary-learnings-core-invar",
+        "domain_intelligence-architecture-intelligence-gitoxidelabs-gitoxide-core-invariants",
+        "domain_intelligence-architecture-intelligence-gitoxidelabs-gitoxide-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 203,
+      "total": 205,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -949,7 +952,9 @@
         "domain_intelligence-technical-construction-intelligence-orange-opensource-hurl-core-invariants",
         "domain_intelligence-technical-construction-intelligence-orange-opensource-hurl-learnings-core-invari",
         "domain_intelligence-technical-construction-intelligence-t8y2-dbx-learnings-core-invariants",
-        "DOM-H-8C16206C"
+        "DOM-H-8C16206C",
+        "domain_intelligence-technical-construction-intelligence-melnixdev-seo-crawl-audit-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-melnixdev-seo-crawl-audit-learnings-core-inv"
       ]
     },
     "I": {
@@ -997,7 +1002,7 @@
       ]
     },
     "J": {
-      "total": 13,
+      "total": 14,
       "record_ids": [
         "DOM-J-C14FC2D6",
         "DOM-J-B305372A",
@@ -1011,7 +1016,8 @@
         "DOM-J-C6558B0E",
         "domain_intelligence-search-distribution-intelligence-sharkdp-fd-core-invariants",
         "domain_intelligence-search-distribution-intelligence-sharkdp-fd-learnings-core-invariants",
-        "DOM-J-6AB1B121"
+        "DOM-J-6AB1B121",
+        "DOM-J-C5E210D6"
       ]
     },
     "K": {
@@ -7737,8 +7743,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "c66ca429d36bf861e571d394aa2720788533f894cacc81d3629a016a00e5db75",
-      "created_at": "2026-11-15T07:32:59.787Z"
+      "content_hash": "3770dcf88a207c4d62d507bac5663bc029e09e08de5e856a9a3fb8ab98eab9d5",
+      "created_at": "2026-11-15T08:53:20.806Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -19387,6 +19393,110 @@
       "repository": "simonschubert-linuxcommandlibrary-learnings",
       "content_hash": "2c59916018718077efbd41a2b335fe8404a5a2f33bfb75418308c4cf1d894c14",
       "created_at": "2026-11-15T08:09:32.028Z"
+    },
+    "domain_intelligence-architecture-intelligence-gitoxidelabs-gitoxide-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-gitoxidelabs-gitoxide-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: GitoxideLabs/gitoxide Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-gitoxidelabs-gitoxide-architecture-intelligence-gitoxidelabs-gitoxide-core-invar.md",
+      "repository": "GitoxideLabs/gitoxide",
+      "content_hash": "97c816855bfe6d01f35b93cb7d4488c45d97ccb01a7f60d50e634f1e70666b8d",
+      "created_at": "2026-11-15T08:48:55.540Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-melnixdev-seo-crawl-audit-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-melnixdev-seo-crawl-audit-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: MelnixDev/seo-crawl-audit Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-melnixdev-seo-crawl-audit-technical-construction-intelligence-melnixdev-seo-craw.md",
+      "repository": "MelnixDev/seo-crawl-audit",
+      "content_hash": "0093daee3e5f7bcaffb3f6155d2cd4f44fd8af6cb2eaa965b478a2182d1d10fb",
+      "created_at": "2026-11-15T08:52:24.469Z"
+    },
+    "domain_intelligence-architecture-intelligence-gitoxidelabs-gitoxide-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-gitoxidelabs-gitoxide-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: gitoxidelabs-gitoxide-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-gitoxidelabs-gitoxide-learnings-architecture-intelligence-gitoxidelabs-gitoxide-.md",
+      "repository": "gitoxidelabs-gitoxide-learnings",
+      "content_hash": "e47024bf52cc5f82e42bfdb22983382965fb583f165a07b8a2d8c32d7101dd9f",
+      "created_at": "2026-11-15T08:52:27.555Z"
+    },
+    "DOM-J-C5E210D6": {
+      "record_id": "DOM-J-C5E210D6",
+      "domain_letter": "J",
+      "domain_id": "search_distribution",
+      "domain_name": "Search & Distribution Intelligence",
+      "secondary_domains": [],
+      "title": "Crawl Budget Override in Non-Interactive Scans (BUG-BUDGET-01)",
+      "content": "Configuration cascades (`CLI flags > Config file > Saved baseline > Defaults`) must be resolved strictly in a single, authoritative configuration resolution phase; downstream execution branches must consume the resolved configuration rather than re-evaluating fallback heuristics.",
+      "content_hash": "d95e845e2c6bc36e38aa6dd73146a9ca3bbb6bf5c2f5eb988112507215e6b962",
+      "summary": "`args.ts` correctly parsed `file.maxPages`, but `selectScan()` in `commands.ts` contained an implicit override: whenever a sitemap was detec -> Configuration cascades (`CLI flags > Config file > Saved baseline > Defaults`) must be resolved strictly in a single, authoritative configur",
+      "provenance": {
+        "source_uri": "project://melnixdev-seo-crawl-audit/melnixdev-seo-crawl-audit-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T08:52:27.733Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (melnixdev-seo-crawl-audit)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Closed Issue #42, reported on version `0.16.1`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-15T08:52:52.318Z"
+    },
+    "DOM-F-DDC06A14": {
+      "record_id": "DOM-F-DDC06A14",
+      "domain_letter": "F",
+      "domain_id": "design",
+      "domain_name": "Design Intelligence",
+      "secondary_domains": [],
+      "title": "UI Asynchronous Clipboard Race Condition and Premature Reset (BUG-UI-02)",
+      "content": "Always bind asynchronous UI mutation lifecycles to an monotonically increasing generation token (`currentAttempt = ++attempt`), ensuring stale promises cannot mutate the DOM.",
+      "content_hash": "7f5b8da36a68a8cdd1fb1a64a76c70435560ef3cb655d2313447b3f3607ab936",
+      "summary": "Lack of an execution generation counter and failure to clear existing timers prior to initiating an asynchronous clipboard call. -> Always bind asynchronous UI mutation lifecycles to an monotonically increasing generation token (`currentAttempt = ++attempt`), ensuring sta",
+      "provenance": {
+        "source_uri": "project://melnixdev-seo-crawl-audit/melnixdev-seo-crawl-audit-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T08:52:27.733Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (melnixdev-seo-crawl-audit)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `b15c71a9` and unit test update in `test/site-agent-prompt.test.js`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.83,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-15T08:53:19.649Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-melnixdev-seo-crawl-audit-learnings-core-inv": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-melnixdev-seo-crawl-audit-learnings-core-inv",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: melnixdev-seo-crawl-audit-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-melnixdev-seo-crawl-audit-learnings-technical-construction-intelligence-melnixde.md",
+      "repository": "melnixdev-seo-crawl-audit-learnings",
+      "content_hash": "923f66ac9a11f2a9f1a6f0ff1a66b55f94bd61b703924bc78f88aaf175bc4777",
+      "created_at": "2026-11-15T08:53:20.194Z"
     }
   }
 }

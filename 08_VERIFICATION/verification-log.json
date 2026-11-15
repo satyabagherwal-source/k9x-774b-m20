@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261110-5KCP",
-    "timestamp": "2026-11-10T01:19:26.281Z",
-    "repository": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
-    "learningId": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
-    "contentHash": "cab7f7b77e9e1802b8c390ad3a60fedfbf1586a6c372a3251f2212cbecaf2a69",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261110-5MAB",
-    "timestamp": "2026-11-10T01:19:28.787Z",
-    "repository": "sigstore/cosign",
-    "learningId": "learn-github-sigstore-cosign",
-    "contentHash": "a83186ef43d430c2e28fdb97364dbf9b91ac62c82a6eaf1df72bacbefdf4ec61",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261110-Y38Y",
     "timestamp": "2026-11-10T01:41:37.138Z",
     "repository": "cilium/cilium",
@@ -7490,6 +7460,36 @@
     "repository": "SimonSchubert/LinuxCommandLibrary",
     "learningId": "learn-github-simonschubert-linuxcommandlibrary",
     "contentHash": "34e584f07e24e7dbb0bf127ae7a9333f0861e79c7291af03fea2760146a65996",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-EV3Q",
+    "timestamp": "2026-11-15T08:48:55.286Z",
+    "repository": "GitoxideLabs/gitoxide",
+    "learningId": "learn-github-gitoxidelabs-gitoxide",
+    "contentHash": "20381fcb29238b7d094e4b0e5f6232f9e4a588f427f07dbe9681ad68b677ac05",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-JC6Q",
+    "timestamp": "2026-11-15T08:52:24.050Z",
+    "repository": "MelnixDev/seo-crawl-audit",
+    "learningId": "learn-github-melnixdev-seo-crawl-audit",
+    "contentHash": "32664a22ec4793b1b8bec6e306b36d81e80c02221ea28f24d341c91c9dd76107",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

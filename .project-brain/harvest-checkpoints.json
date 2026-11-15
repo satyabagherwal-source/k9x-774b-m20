@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-15T08:09:26.286Z",
+  "last_updated": "2026-11-15T08:52:24.060Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2781,14 +2781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-melnixdev-seo-crawl-audit",
-      "content_hash": "b14dd7161951d90edc4ee7f5c1a0747c11af4e74789919cc51773faf1ee402b9",
-      "verified_at": "2026-10-18T04:51:28.866Z",
+      "content_hash": "32664a22ec4793b1b8bec6e306b36d81e80c02221ea28f24d341c91c9dd76107",
+      "verified_at": "2026-11-15T08:52:24.060Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T04:51:28.866Z"
+      "last_updated": "2026-11-15T08:52:24.060Z"
     },
     "ISTIFANO/seo-auditor": {
       "repository": "ISTIFANO/seo-auditor",
@@ -6186,14 +6186,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gitoxidelabs-gitoxide",
-      "content_hash": "0615ef7b17e515d8be5f79284975e1a550f070cee0dae81be9949f33472d3a24",
-      "verified_at": "2026-11-13T14:06:02.506Z",
+      "content_hash": "20381fcb29238b7d094e4b0e5f6232f9e4a588f427f07dbe9681ad68b677ac05",
+      "verified_at": "2026-11-15T08:48:55.297Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T14:06:02.506Z"
+      "last_updated": "2026-11-15T08:48:55.297Z"
     },
     "devhubapp/devhub": {
       "repository": "devhubapp/devhub",
