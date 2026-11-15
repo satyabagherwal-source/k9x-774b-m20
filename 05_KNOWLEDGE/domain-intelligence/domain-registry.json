@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T03:14:20.440Z",
-  "total_records": 931,
+  "last_updated": "2026-11-15T03:35:16.620Z",
+  "total_records": 936,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 458,
+      "total": 461,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -495,7 +495,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-vllm-sr-d3-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-black-forest-labs-flux-3-image-klein-core-invari",
         "DOM-D-1DE3F011",
-        "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-3-image-klein-learning"
+        "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-3-image-klein-learning",
+        "domain_intelligence-research-knowledge-intelligence-pyannote-speaker-diarization-community-1-core-in",
+        "DOM-D-8240E8AC",
+        "domain_intelligence-research-knowledge-intelligence-hf-pyannote-speaker-diarization-community-1-lear"
       ]
     },
     "E": {
@@ -531,7 +534,7 @@
       ]
     },
     "G": {
-      "total": 151,
+      "total": 153,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -683,7 +686,9 @@
         "domain_intelligence-architecture-intelligence-jetbrains-kotlinconf-app-core-invariants",
         "domain_intelligence-architecture-intelligence-jetbrains-kotlinconf-app-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-tw93-mole-core-invariants",
-        "domain_intelligence-architecture-intelligence-tw93-mole-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-tw93-mole-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-flox-flox-core-invariants",
+        "domain_intelligence-architecture-intelligence-flox-flox-learnings-core-invariants"
       ]
     },
     "H": {
@@ -10988,8 +10993,8 @@
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "2ae46f17cbe63c9e387425b588cedd10ba3b2ca471445de890bbc69b9f22469c",
-      "created_at": "2026-11-15T02:15:12.298Z"
+      "content_hash": "0e8af40b6e1e783f3007a160a32ec2367f8f07440c7496a478fe558e7bd6940c",
+      "created_at": "2026-11-15T03:34:41.537Z"
     },
     "DOM-D-F5645095": {
       "record_id": "DOM-D-F5645095",
@@ -11057,8 +11062,8 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-learnings-architecture-intelligence-dathere-qsv-learnings-core-invar.md",
       "repository": "dathere-qsv-learnings",
-      "content_hash": "08d2d4187bf7a090a3aca3ae40712e3345dc899ef7444c0a1b81544b37fbc840",
-      "created_at": "2026-11-15T02:16:50.361Z"
+      "content_hash": "5919e5c9124f47e5a1018ed55bb201660e916294aa8d5b3c4b158e85def5890f",
+      "created_at": "2026-11-15T03:35:16.620Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants",
@@ -18183,6 +18188,84 @@
       "repository": "tw93-mole-learnings",
       "content_hash": "56c54d2691a3b7620eedfcc046c3e7d19db838ea742f718a448565bf1224ee97",
       "created_at": "2026-11-15T03:14:19.654Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-pyannote-speaker-diarization-community-1-core-in": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-pyannote-speaker-diarization-community-1-core-in",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: pyannote/speaker-diarization-community-1 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-pyannote-speaker-diarization-community-1-research-knowledge-intelligence-pyan.md",
+      "repository": "pyannote/speaker-diarization-community-1",
+      "content_hash": "e3133251659100aa77d60ff80a7cd81a757f778574c2cb6e2ab34209b75ac89d",
+      "created_at": "2026-11-15T03:34:20.974Z"
+    },
+    "domain_intelligence-architecture-intelligence-flox-flox-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-flox-flox-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: flox/flox Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-flox-flox-architecture-intelligence-flox-flox-core-invariants.md",
+      "repository": "flox/flox",
+      "content_hash": "569acb00adccb1729ff9f0d5d798a42e7b25b2667dae661244c63dee098eceef",
+      "created_at": "2026-11-15T03:34:24.182Z"
+    },
+    "domain_intelligence-architecture-intelligence-flox-flox-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-flox-flox-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: flox-flox-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-flox-flox-learnings-architecture-intelligence-flox-flox-learnings-core-invariant.md",
+      "repository": "flox-flox-learnings",
+      "content_hash": "0b3bad621ee7a4ef324e9333fa85404ccdbfb5fe19159f8a2d75af863af7008a",
+      "created_at": "2026-11-15T03:34:44.776Z"
+    },
+    "DOM-D-8240E8AC": {
+      "record_id": "DOM-D-8240E8AC",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): pyannote/speaker-diarization-community-1",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-pyannote-speaker-diarization-community-1-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/pyannote/speaker-diarization-community-1](https://huggingface.co/pyannote/speaker-diarization-community-1))  \n> **Source Version**: `",
+      "content_hash": "3f78745f90d3976d70b6cb4763a6f2fa521eeaeff5707fa2947c979f2f412e76",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-pyannote-speaker-diarization-community-1-learnings.md`  \n> **Source**: huggingfac -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-pyannote-speaker-diarization-community-1-learnings.md`  \n> **Source**: huggingfac",
+      "provenance": {
+        "source_uri": "project://hf-pyannote-speaker-diarization-community-1/hf-pyannote-speaker-diarization-community-1-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T03:34:44.986Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-pyannote-speaker-diarization-community-1)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-pyannote-speaker-diarization-community-1"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-15T03:35:15.040Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-pyannote-speaker-diarization-community-1-lear": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-pyannote-speaker-diarization-community-1-lear",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-pyannote-speaker-diarization-community-1-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-pyannote-speaker-diarization-community-1-learnings-research-knowledge-intelli.md",
+      "repository": "hf-pyannote-speaker-diarization-community-1-learnings",
+      "content_hash": "02523407982d43c609abc58727db325bda92f09c2c82bf77e602d04406cfcbd9",
+      "created_at": "2026-11-15T03:35:15.266Z"
     }
   }
 }

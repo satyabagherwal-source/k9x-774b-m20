@@ -10010,3 +10010,7 @@
 | `CYCLE-20261115-FN5H` | `2026-11-15T03:13:36.245Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8569` | Yes (`0c484764...`) |
 | `CYCLE-20261115-FRD1` | `2026-11-15T03:13:41.701Z` | `VectifyAI/PageIndex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8570` | Yes (`cb37ad22...`) |
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T03:14:18.862Z` | `hf-black-forest-labs-flux-3-image-klein` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-1DE3F011` [Domain D] | Yes (`9432cf20...`) |
+| `CYCLE-20261115-6BG9` | `2026-11-15T03:34:20.793Z` | `pyannote/speaker-diarization-community-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-pyannote-speaker-diarization-community-1-learnings.md` | Yes (`0242fd5e...`) |
+| `CYCLE-20261115-6DUH` | `2026-11-15T03:34:23.897Z` | `flox/flox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8571` | Yes (`6359b612...`) |
+| `CYCLE-20261115-6R85` | `2026-11-15T03:34:41.237Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8572` | Yes (`15d8710c...`) |
+| `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T03:35:15.055Z` | `hf-pyannote-speaker-diarization-community-1` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-8240E8AC` [Domain D] | Yes (`3f78745f...`) |

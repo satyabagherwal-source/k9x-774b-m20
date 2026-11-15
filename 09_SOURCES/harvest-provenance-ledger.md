@@ -10043,3 +10043,7 @@ Every entry in this ledger must capture:
 | `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `5ecc44fc` | Multi-dimensional audit evidence | 2026-11-15T03:13:36.249Z |
 | `learn-github-vectifyai-pageindex` | `https://github.com/VectifyAI/PageIndex` | `cc035e8d` | Multi-dimensional audit evidence | 2026-11-15T03:13:41.705Z |
 | `learn-dom-d-1de3f011` | `project://hf-black-forest-labs-flux-3-image-klein` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-learnings.md` | 2026-11-15T03:14:18.862Z |
+| `learn-huggingface-pyannote-speaker-diarization-community-1` | `https://huggingface.co/pyannote/speaker-diarization-community-1` | `hf-pyannot` | Multi-dimensional audit evidence | 2026-11-15T03:34:20.796Z |
+| `learn-github-flox-flox` | `https://github.com/flox/flox` | `d1b1f5f7` | Multi-dimensional audit evidence | 2026-11-15T03:34:23.901Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `313132b8` | Multi-dimensional audit evidence | 2026-11-15T03:34:41.241Z |
+| `learn-dom-d-8240e8ac` | `project://hf-pyannote-speaker-diarization-community-1` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-pyannote-speaker-diarization-community-1-learnings.md` | 2026-11-15T03:35:15.055Z |

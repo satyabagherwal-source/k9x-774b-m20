@@ -1555,8 +1555,8 @@
     "sourceUrl": "https://huggingface.co/pyannote/speaker-diarization-community-1",
     "sourceVersion": "hf-pyannote-speaker-diarization-community-1",
     "license": "Open-Source",
-    "contentHash": "2fe79bb09c2c72b7da7834a1295289ebd3eff8677289aa415d2cd34421008466",
-    "lastHarvestedAt": "2026-11-09T14:59:52.797Z",
+    "contentHash": "0242fd5e465141f5f1c1423d85996b316f1452a82b725c910bb950bb6bf23b59",
+    "lastHarvestedAt": "2026-11-15T03:34:20.796Z",
     "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1"
   },
   "hf-meta-models-muse-spark-open-816b-a42b": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "8052fac6",
+    "sourceVersion": "313132b8",
     "license": "NOASSERTION",
-    "contentHash": "6313cc0e3c7a7660a44b7ad8beef8b76271b7285e78e4ed7827fe1691887bf9a",
-    "lastHarvestedAt": "2026-11-15T02:15:12.045Z",
+    "contentHash": "15d8710cacadd1d24c64f4c3c258e25eb9bc253c97372476456be57721373b51",
+    "lastHarvestedAt": "2026-11-15T03:34:41.241Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -3253,10 +3253,10 @@
     "repository": "flox/flox",
     "platform": "github",
     "sourceUrl": "https://github.com/flox/flox",
-    "sourceVersion": "3ee0d1d6",
+    "sourceVersion": "d1b1f5f7",
     "license": "GPL-2.0",
-    "contentHash": "8feb434e98741e501d644f894526fce3055ad4124c54f00033cc13e1347ea80c",
-    "lastHarvestedAt": "2026-11-13T11:24:30.135Z",
+    "contentHash": "6359b612c310615b55bf97116eb146ba4ccaf6fa3d0ab602b8cc78752b70e2b3",
+    "lastHarvestedAt": "2026-11-15T03:34:23.901Z",
     "learningId": "learn-github-flox-flox"
   },
   "wix-react-native-navigation": {

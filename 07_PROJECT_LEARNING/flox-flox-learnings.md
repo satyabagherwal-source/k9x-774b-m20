@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/flox-flox-learnings.md`  
 > **Source**: github ([https://github.com/flox/flox](https://github.com/flox/flox))  
-> **Source Version**: `3ee0d1d6`  
+> **Source Version**: `d1b1f5f7`  
 > **License**: GPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T11:24:18.575Z  
+> **Timestamp**: 2026-11-15T03:34:23.032Z  
 > **Learning ID**: `learn-github-flox-flox`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/flox-flox-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/flox/flox](https://github.com/flox/flox))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T11:24:18.570Z  
+> **Harvest Timestamp**: 2026-11-15T03:34:23.026Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Deterministic Foundation for your SDLC
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4204 stars
+- **Stars / Engagement**: 4206 stars
 
 ---
 
@@ -1446,946 +1446,1174 @@ impl ActivateEnvironmentRef {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cc3dcd2c` (2026-11-12)
-**Commit Message**: fix(activate): let the shell hook follow Flox upgrades (#4848)
+### Incident Patch 1: `2e05186a` (2026-11-13)
+**Commit Message**: feat(build): add `--override-input` to `flox build` and `flox develop` (#4856)
 
-Fixes
-[DEV-340](https://linear.app/floxdotdev/issue/DEV-340/upgrade-shell-hook-when-flox-is-upgraded).
+## Proposed Changes
 
-## Problem
+Adds `--override-input <input> <flakeref>` to `flox build` and `flox
+develop`. It builds a Nix expression build against a different source
+for one catalog input, for example a local checkout with changes that
+are not published yet:
 
-The prompt hook that `flox activate` installs in a shell calls flox by
-the store path of the binary that created it. The `activate` command
-that `hook-env` emits for auto-activation does the same. After an
-upgrade, a shell that is already open keeps running the old binary on
-every prompt. When the new `flox init` creates an environment, the old
-hook offers to auto-activate it and then fails:
-
-```
-ERROR: failed to parse lockfile JSON: manifest had invalid schema version '1.19.0' at line 8 column 3
+```console
+$ flox build --override-input catalogs.myorg.hello path:../hello app
+ℹ Overriding catalogs.myorg.hello with path:../hello.
 ```
 
-The `_FLOX_PROMPT_HOOK_VERSION` check does not catch this. It is a
-protocol number, not the Flox version, and it is the same in both
-releases.
+The override is applied to the in-memory catalog lock before it is
+written for the builder. The committed `.flox/catalog.lock` is not
+changed.
 
-## Fix
+Resolves
+[ECO-315](https://linear.app/floxdotdev/issue/ECO-315/add-override-input-support-to-flox-build).
 
-The hook and the emitted `activate` command now call flox by the path an
-upgrade replaces, taken from how the user invoked it (argv[0]):
+### How an override is applied
 
-- a path such as `/usr/local/bin/flox` or `~/.nix-profile/bin/flox` is
-used as is;
-- a bare `flox` is resolved on PATH once, at activation, without
-following symlinks. Resolving once matters because activation puts the
-envi
+`nef_lock_catalog::override_input(lock, client, reference, flakeref)`:
 
-**File**: `cli/flox-activations/src/gen_rc/bash.rs` (modified, +2/-2)
+1. Refuses a wildcard reference, and a reference the lock does not
+contain (listing what it does contain). Both happen before anything is
+fetched.
+2. Fetches the flakeref with `nix flake prefetch`. The new source is the
+prefetch's `locked` attrs, with `dir` pointing at `.flox` beneath any
+`dir` the flakeref names.
+3. Scans the overridden package in the fetched tree. Cat
+
+**File**: `cli/flox-rust-sdk/src/providers/build.rs` (modified, +96/-256)
 ```diff
-@@ -420,7 +420,7 @@ mod tests {
-             _flox_hook() {
-               local _prev_exit=$?;
-               local _flox_vars;
--              _flox_vars="$("/flox" hook-env --shell bash --shell-pid $$ --invocation-types "${_FLOX_INVOCATION_TYPES:-}")";
-+              _flox_vars="$(command /flox hook-env --shell bash --shell-pid $$ --invocation-types "${_FLOX_INVOCATION_TYPES:-}")";
-               trap -- '' SIGINT;
-               eval "$_flox_vars";
-               trap - SIGINT;
-@@ -469,7 +469,7 @@ mod tests {
-             _flox_hook() {
-               local _prev_exit=$?;
-               local _flox_vars;
--              _flox_vars="$("/flox" hook-env --shell bash --shell-pid $$ --invocation-types "${_FLOX_INVOCATION_TYPES:-}")";
-+              _flox_vars="$(command /flox hook-env --shell bash --shell-pid $$ --invocation-types "${_FLOX_INVOCATION_TYPES:-}")";
-               trap -- '' SIGINT;
-               eval "$_flox_vars";
-               trap - SIGINT;
+@@ -1,8 +1,8 @@
+ use std::collections::{BTreeMap, HashMap};
++use std::env;
+ use std::path::{Path, PathBuf};
+ use std::process::{Command, ExitStatus, Stdio};
+ use std::sync::LazyLock;
+-use std::{env, fs};
+ 
+ use flox_manifest::interfaces::AsLatestSchema;
+ use flox_manifest::lockfile::Lockfile;
+@@ -800,115 +800,6 @@ pub fn nix_expression_dir_in(dot_flox_path: impl AsRef<Path>) -> PathBuf {
+     dot_flox_path.as_ref().join("pkgs")
+ }
+ 
+-/// The marker file that promotes a package directory to a deep override,
+-/// mirroring `deepOverrideMarkerFile` in
+-/// `package-builder/nef/lib/deepOverrides.nix`.
+-const DEEP_OVERRIDE_MARKER_FILE: &str = "deep-override";
+-
+-/// One name's classified `pkgs/` entry, for the collision rule
+-/// [deep_override_attr_paths_in] follows: a `.nix` file replaces a
+-/// same-named directory in the scan, never the reverse.
+-#[derive(Debug, Clone)]
+-enum PkgsEntry {
+-    NixFile,
+-    Directory(PathBuf),
+-}
+-
+-/// Attribute paths of the deep overrides declared under a repository's
+-/// `pkgs/` directory (FLO-95), for reporting to the catalog at publish
+-/// time.
+-///
+-/// Mirrors how NEF classifies `pkgs/` entries
+-/// (`package-builder/nef/lib/dirToAttrs.nix`) and marks one as a deep
+-/// override (`isMarkedAsDeepOverride` in
+-/// `package-builder/nef/lib/deepOverrides.nix`): a directory holding a
+-/// `default.nix` is a package, and a package is a deep override iff it
+-/// also holds a `deep-override` file beside that `default.nix`. A
+-/// package directory is never recursed into. A directory without
+-/// `default.nix` is a package set and is recursed into, so a nested
+-/// override is reported with its full path, e.g.
+-/// `["setMakeScope", "makeScopeDependency"]`. A `.nix` file has no
+-/// directory of its own to hold the marker, so it is never an override.
+-/// Where a `.nix` file and a directory share a name, the file wins the name
+-/// (`dirToAttrs.nix`), so the directory is not scanned at all, marked or
+-/// not.
+-///
+-/// An absent `pkgs/` directory is a repository with no overrides, so
+-/// this returns an empty list rather than an error. The result is
+-/// sorted.
+-pub fn deep_override_attr_paths_in(dot_flox_path: impl AsRef<Path>) -> Vec<Vec<String>> {
+-    let mut attr_paths = Vec::new();
+-    scan_pkgs_dir_for_deep_overrides(
+-        &nix_expression_dir_in(dot_flox_path),
+-        &mut Vec::new(),
+-        &mut attr_paths,
+-    );
+-    attr_paths.sort();
+-    attr_paths
+-}
+-
+-/// Recursive worker for [deep_override_attr_paths_in]. `attr_path` is the
+-/// path to `dir` from the `pkgs/` root, mutated in place as a scratch
+-/// stack rather than rebuilt per call, and restored before returning so
+-/// a sibling directory sees the prefix as it found it.
+-fn scan_pkgs_dir_for_deep_overrides(
+-    dir: &Path,
+-    attr_path: &mut Vec<String>,
+-    out: &mut Vec<Vec<String>>,
+-) {
+-    let Ok(read_dir) = fs::read_dir(dir) else {
+-        return;
+-    };
+-    let entries: Vec<PathBuf> = read_dir.flatten().map(|entry| entry.path()).collect();
+-
+-    // Two passes so a `.nix` file always wins its name over a same-named
+-    // directory, regardless of the order `read_dir` happens to yield them.
+-    let mut by_name: BTreeMap<String, PkgsEntry> = BTreeMap::new();
+-    for path in &entries {
+-        if !path.is_dir() {
+-            continue;
+-        }
+-        let Some(name) = path.file_name().and_then(|name| name.to_str()) else {
+-            continue;
+-        };
+-        by_name.insert(name.to_string(), PkgsEntry::Directory(path.clone()));
+-    }
+-    for path in &entries {
+-        if path.extension().and_then(|ext| ext.to_str()) != Some("nix") {
+-            continue;
+-        }
+-        let Some(file_name) = path.file_name().and_then(|name| name.to_str()) else {
+-            continue;
+-        };
+-        // dirToAttrs.nix excludes any file ending in "flake.nix" from the
+-        // scan, not only a file named exactly that.
+-        if file_name.ends_with("flake.nix") {
+-            continue;
+-        }
+-        let Some(stem) = path.file_stem().and_then(|stem| stem.to_str()) else {
+-            continue;
+-        };
+-        by_name.insert(stem.to_string(), PkgsEntry::NixFile);
+-    }
+-
+-    for (name, entry) in by_name {
+-        let PkgsEntry::Directory(path) = entry else {
+-            continue;
+-        };
+-        if !path.join("default.nix").is_file() {
+-            attr_path.push(name);
+-            scan_pkgs_dir_for_deep_overrides(&path, attr_path, out);
+-            attr_path.pop();
+-            continue;
+-        }
+-        if path.join(DEEP_OVERRIDE_MARKER_FILE).is_file() {
+-            let mut marked_path = attr_path.clone();
+-            marked_path.push(name);
+-            out.push(marked_path);
+-        }
+-    }
+-}
+-
+ pub fn build_symlink_path(
+     environment: &impl Environment,
+     package: &str,
+@@ -1740,119 +1631,6 @@ mod tests {
+         assert_eq!(slug, "build.build_failure");
+     }
+ 
+-    /// A package directory marked with `deep-override` beside its
 ```
 
-**File**: `cli/flox-activations/src/gen_rc/fish.rs` (modified, +6/-6)
+**File**: `cli/flox-rust-sdk/src/providers/publish.rs` (modified, +7/-5)
 ```diff
-@@ -373,7 +373,7 @@ mod tests {
-             /nix/store/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-coreutils-9.10/bin/rm /path/to/rc/file;
-             set -gx _FLOX_PROMPT_HOOK_VERSION 1:true;
-             function _flox_hook --on-event fish_prompt;
--                eval ("/flox" hook-env --shell fish --shell-pid $fish_pid --invocation-types "$_FLOX_INVOCATION_TYPES" | string collect);
-+                eval (command /flox hook-env --shell fish --shell-pid $fish_pid --invocation-types "$_FLOX_INVOCATION_TYPES" | string collect);
-                 if test "$FLOX_AUTO_ACTIVATE_FISH_MODE" != "disable_arrow";
-                     set -g _flox_pwd_hook_active 1;
-                 end;
-@@ -383,14 +383,14 @@ mod tests {
-                     if test "$FLOX_AUTO_ACTIVATE_FISH_MODE" = "eval_after_arrow";
-                         set -g _flox_env_again 0;
-                     else;
--                        eval ("/flox" hook-env --shell fish --shell-pid $fish_pid --invocation-types "$_FLOX_INVOCATION_TYPES" | string collect);
-+                        eval (command /flox hook-env --shell fish --shell-pid $fish_pid --invocation-types "$_FLOX_INVOCATION_TYPES" | string collect);
-                     end;
-                 end;
-             end;
-             function _flox_hook_preexec --on-event fish_preexec;
-                 if set -q _flox_env_again;
-                     set -e _flox_env_again;
--                    eval ("/flox" hook-env --shell fish --shell-pid $fish_pid --invocation-types "$_FLOX_INVOCATION_TYPES" | string collect);
-+                    eval (command /flox hook-env --shell fish --shell-pid $fish_pid --invocation-types "$_FLOX_INVOCATION_TYPES" | string collect);
-                 end;
-                 set -e _flox_pwd_hook_active;
-             end;
-@@ -431,7 +431,7 @@ mod tests {
-             /nix/store/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-coreutils-9.10/bin/rm /path/to/rc/file;
-             set -gx _FLOX_PROMPT_HOOK_VERSION 1:true;
-             function _flox_hook --on-event fish_prompt;
--                eval ("/flox" hook-env --shell fish --shell-pid $fish_pid --invocation-types "$_FLOX_INVOCATION_TYPES" | string collect);
-+                eval (command /flox hook-env --shell fish --shell-pid $fish_pid --invocation-types "$_FLOX_INVOCATION_TYPES" | string collect);
-                 if test "$FLOX_AUTO_ACTIVATE_FISH_MODE" != "disable_arrow";
-                     set -g _flox_pwd_hook_active 1;
-                 end;
-@@ -441,14 +441,14 @@ mod tests {
-                     if test "$FLOX_AUTO_ACTIVATE_FISH_MODE" = "eval_after_arrow";
-                         set -g _flox_env_again 0;
-                     else;
--                        eval ("/flox" hook-env --shell fish --shell-pid $fish_pid --invocation-types "$_FLOX_INVOCATION_TYPES" | string collect);
-+                        eval (command /flox hook-env --shell fish --shell-pid $fish_pid --invocation-types "$_FLOX_INVOCATION_TYPES" | string collect);
-                     end;
-                 end;
-             end;
-             function _flox_hook_preexec --on-event fish_preexec;
-                 if set -q _flox_env_again;
-                     set -e _flox_env_again;
--                    eval ("/flox" hook-env --shell fish --shell-pid $fish_pid --invocation-types "$_FLOX_INVOCATION_TYPES" | string collect);
-+                    eval (command /flox hook-env --shell fish --shell-pid $fish_pid --invocation-types "$_FLOX_INVOCATION_TYPES" | string collect);
-                 end;
-                 set -e _flox_pwd_hook_active;
-             end;
-```
-
-**File**: `cli/flox-activations/src/gen_rc/zsh.rs` (modified, +2/-2)
-```diff
-@@ -412,7 +412,7 @@ mod tests {
-             _flox_hook() {
-               if (( ZSH_SUBSHELL )); then return; fi;
-               local _flox_vars;
--              _flox_vars="$("/flox" hook-env --shell zsh --shell-pid $$ --invocation-types "${_FLOX_INVOCATION_TYPES:-}")";
-+              _flox_vars="$(command /flox hook-env --shell zsh --shell-pid $$ --invocation-types "${_FLOX_INVOCATION_TYPES:-}")";
-               trap -- '' SIGINT;
-               eval "$_flox_vars";
-               trap - SIGINT;
-@@ -458,7 +458,7 @@ mod tests {
-             _flox_hook() {
-               if (( ZSH_SUBSHELL )); then return; fi;
-               local _flox_vars;
--              _flox_vars="$("/flox" hook-env --shell zsh --shell-pid $$ --invocation-types "${_FLOX_INVOCATION_TYPES:-}")";
-+              _flox_vars="$(command /flox hook-env --shell zsh --shell-pid $$ --invocation-types "${_FLOX_INVOCATION_TYPES:-}")";
-               trap -- '' SIGINT;
-               eval "$_flox_vars";
-               trap - SIGINT;
-```
-
-**File**: `cli/flox-activations/src/hook.rs` (modified, +45/-5)
-```diff
-@@ -32,26 +32,36 @@
- //! only runs the hook from `PROMPT_COMMAND`, which a fork never evaluates,
- //! and fish has no forked subshells.
- //!
-+//! `flox_bin` is the path an upgrade replaces, not the store path of the
-+//! running binary (see `FLOX_BIN_FOR_SHELL` in the `flox` crate). It is
-+//! user-controlled text, so each hook escapes it for its shell, and `command`
-+//! (`exec` in tcsh, which only alias-expands the first word) keeps a user
-+//! function or alias named `flox` from injecting output into the text the
-+//! hook evals.
-+//!
- //! Each hook also exports [`PROMPT_HOOK_VERSION_ENV`] =
- //! `<version>:true` at registration time (top level, so it is set before the
- //! first prompt); subshell activations export `<version>:false` instead (see
- //! `gen_rc`). It is exported, unlike `_FLOX_INVOCATION_TYPES`, so a
- //! subprocess such as `flox deactivate` can confirm a compatible hook is set
- //! up before writing an action file the hook would otherwise never consume.
- 
-+use std::borrow::Cow;
-+
- use flox_core::activate::vars::{FLOX_INVOCATION_TYPES_VAR, FLOX_INVOCATION_TYPES_WIRE_VAR};
- use flox_core::hook_actions::{PROMPT_HOOK_VERSION_ENV, prompt_hook_marker_value};
- use indoc::formatdoc;
- 
- pub fn bash_hook(flox_bin: &str) -> String {
-+    let flox_bin = shell_escape::escape(Cow::Borrowed(flox_bin));
-     let marker = prompt_hook_marker_value(true);
-     formatdoc!(
-         r#"
-         export {PROMPT_HOOK_VERSION_ENV}={marker};
-         _flox_hook() {{
-           local _prev_exit=$?;
-           local _flox_vars;
--          _flox_vars="$("{flox_bin}" hook-env --shell bash --shell-pid $$ --invocation-types "${{{FLOX_INVOCATION_TYPES_VAR}:-}}")";
-+          _flox_vars="$(command {flox_bin} hook-env --shell bash --shell-pid $$ --invocation-types "${{{FLOX_INVOCATION_TYPES_VAR}:-}}")";
-           trap -- '' SIGINT;
-           eval "$_flox_vars";
-           trap - SIGINT;
-@@ -74,14 +84,15 @@ pub fn bash_hook(flox_bin: &str) -> String {
- // The `ZSH_SUBSHELL` check keeps the hook out of forked subshells (see the
- // module docs).
- pub fn zsh_hook(flox_bin: &str) -> String {
-+    let flox_bin = shell_escape::escape(Cow::Borrowed(flox_bin));
-     let marker = prompt_hook_marker_value(true);
-     formatdoc!(
-         r#"
-         export {PROMPT_HOOK_VERSION_ENV}={marker};
-         _flox_hook() {{
-           if (( ZSH_SUBSHELL )); then return; fi;
-           local _flox_vars;
--          _flox_vars="$("{flox_bin}" hook-env --shell zsh --shell-pid $$ --invocation-types "${{{FLOX_INVOCATION_TYPES_VAR}:-}}")";
-+          _flox_vars="$(command {flox_bin} hook-env --shell zsh --shell-pid $$ --invocation-types "${{{FLOX_INVOCATION_TYPES_VAR}:-}}")";
-           trap -- '' SIGINT;
-           eval "$_flox_vars";
-           trap - SIGINT;
-@@ -126,12 +137,13 @@ pub fn fish_hook(flox_bin: &str) -> String {
-     //   - eval_after_arrow: PWD hook sets a flag; evaluation is deferred
-     //     until before the next command executes (fish_preexec).
-     //   - disable_arrow: no PWD reaction; only prompt-based evaluation.
-+    let flox_bin = shell_escape::escape(Cow::Borrowed(flox_bin));
-     let marker = prompt_hook_marker_value(true);
-     formatdoc!(
-         r#"
-         set -gx {PROMPT_HOOK_VERSION_ENV} {marker};
-         function _flox_hook --on-event fish_prompt;
--            eval ("{flox_bin}" hook-env --shell fish --shell-pid $fish_pid --invocation-types "${FLOX_INVOCATION_TYPES_VAR}" | string collect);
-+            eval (command {flox_bin} hook-env --shell fish --shell-pid $fish_pid --invocation-types "${FLOX_INVOCATION_TYPES_VAR}" | string collect);
-             if test "$FLOX_AUTO_ACTIVATE_FISH_MODE" != "disable_arrow";
-                 set -g _flox_pwd_hook_active 1;
-             end;
-@@ -141,14 +153,14 @@ pub fn fish_hook(flox_bin: &str) -> String {
-                 if test "$FLOX_AUTO_ACTIVATE_FISH_MODE" = "eval_after_arrow";
-                     set -g _flox_env_again 0;
-                 else;
--                    eval ("{flox_bin}" hook-env --shell fish --shell-pid $fish_pid --invocation-types "${FLOX_INVOCATION_TYPES_VAR}" | string collect);
-+                    eval (command {flox_bin} hook-env --shell fish --shell-pid $fish_pid --invocation-types "${FLOX_INVOCATION_TYPES_VAR}" | string collect);
-                 end;
-             end;
-         end;
-         function _flox_hook_preexec --on-event fish_preexec;
-             if set -q _flox_env_again;
-                 set -e _flox_env_again;
--                eval ("{flox_bin}" hook-env --shell fish --shell-pid $fish_pid --invocation-types "${FLOX_INVOCATION_TYPES_VAR}" | string collect);
-+                eval (command {flox_bin} hook-env --shell fish --shell-pid $fish_pid --invocation-types "${FLOX_INVOCATION_TYPES_VAR}" | string collect);
-             end;
-             set -e _flox_pwd_hook_active;
-         end;
-@@ -192,7 +204,17 @@ pub fn fish_hook(flox_bin: &str) -> String {
- // `exec` makes the shell evaluating the alias its parent process, and
- // `--skip
-```
-
-**File**: `cli/flox-core/src/activate/context.rs` (modified, +2/-1)
-```diff
-@@ -118,7 +118,8 @@ pub struct ActivateCtx {
-     #[serde(default)]
-     pub disable_hook: bool,
- 
--    /// Path to the flox binary, used for generating hook code.
-+    /// The command the generated hook code runs to reach flox (see
-+    /// `FLOX_BIN_FOR_SHELL` in the `flox` crate).
-     #[serde(default)]
-     pub flox_bin: String,
- 
-```
-
-**File**: `cli/flox/src/beta/extensions/dispatch.rs` (modified, +5/-2)
-```diff
-@@ -20,6 +20,7 @@ use thiserror::Error;
- use tracing::{debug, warn};
- 
- use super::manifest::{InstalledState, parse_installed_state};
-+use crate::utils::FLOX_BIN_FOR_SHELL;
- 
- #[derive(Debug, Error)]
- pub enum FindError {
-@@ -186,14 +187,16 @@ pub fn try_dispatch_external(data_dir: &Path, disable_metrics: bool) -> Option<E
-         .as_ref()
-         .map(|p| p.as_os_str().to_owned())
-         .unwrap_or_else(|| path.as_os_str().to_owned());
--    let flox_bin = std::env::current_exe().unwrap_or_else(|_| PathBuf::from("flox"));
-+    // The same command the shell hook embeds, so an activation an extension
-+    // starts follows a Flox upgrade too; a store path would pin the old binary.
-+    let flox_bin = FLOX_BIN_FOR_SHELL.as_str();
- 
-     let mut command = Command::new(&path);
-     command
-         .args(&rest)
-         .env("FLOX_EXTENSION_NAME", &extension_name)
-         .env("FLOX_EXTENSION_PATH", &extension_path)
--        .env("FLOX_BIN", &flox_bin);
-+        .env("FLOX_BIN", flox_bin);
-     flox_core::util::restore_startup_tls_env(&mut command);
-     export_telemetry_opt_out(&mut command, disable_metrics);
- 
-```
-
-**File**: `cli/flox/src/beta/extensions/docs/author-guide.md` (modified, +1/-1)
-```diff
-@@ -68,7 +68,7 @@ extension's environment:
- |----------|-------|
- | `FLOX_EXTENSION_NAME` | The extension's declared name. |
- | `FLOX_EXTENSION_PATH` | Absolute path to the managed install directory, or to the executable itself when the extension was found on `$PATH` rather than installed. |
--| `FLOX_BIN` | Path to the flox binary that dispatched the extension. |
-+| `FLOX_BIN` | The flox command that dispatched the extension, as the user invoked it (a path an upgrade replaces, not the store path). |
- 
- Extensions can read these to find their own install directory
- or to shell out to other `flox` subcommands.
-```
-
-**File**: `cli/flox/src/commands/activate.rs` (modified, +3/-5)
-```diff
-@@ -69,7 +69,7 @@ use crate::utils::errors::format_diverged_metadata;
- use crate::utils::events::{env_detail_from_concrete, env_detail_from_concrete_without_lineage};
- use crate::utils::markdown::render_markdown_to_stderr;
- use crate::utils::upgrade_output::{count_upgrade_categories, format_upgrade_summary};
--use crate::utils::{FLOX_ACTIVATIONS_BIN, message};
-+use crate::utils::{FLOX_ACTIVATIONS_BIN, flox_bin_for_hook, message};
- use crate::{Exit, environment_subcommand_metric, subcommand_metric, utils};
- 
- #[derive(Debug, Clone, Bpaf)]
-@@ -733,6 +733,7 @@ impl ActivateOptions {
-             && flox.verbosity >= 0
-             && now_active.name().as_ref() != DEFAULT_NAME;
- 
-+        let flox_bin = flox_bin_for_hook(&shell);
-         let activate_data = ActivateCtx {
-             flox_activate_store_path: store_path.to_string_lossy().to_string(),
-             attach_ctx: core,
-@@ -746,10 +747,7 @@ impl ActivateOptions {
-             remove_after_reading: true,
-             metrics_uuid: flox.metrics_device_uuid,
-             disable_hook: config.flox.disable_hook.unwrap_or(false),
--            flox_bin: std::env::current_exe()
--                .ok()
--                .and_then(|p| p.to_str().map(String::from))
--                .unwrap_or_else(|| "flox".to_string()),
-+            flox_bin,
-             auto_activate_fish_mode: config.flox.auto_activate_fish_mode,
-             announce_activation,
+@@ -31,7 +31,7 @@ use git_url_parse::GitUrl;
+ use indexmap::IndexSet;
+ use indoc::{formatdoc, indoc};
+ use itertools::Itertools;
+-use nef_lock_catalog::{NixFlakeref, PackageClosure};
++use nef_lock_catalog::{NixFlakeref, PackageClosure, deep_override_attr_paths_in};
+ use thiserror::Error;
+ use tracing::{debug, instrument};
+ use url::Url;
+@@ -44,8 +44,8 @@ use super::build::{
+     PackageTarget,
+     PackageTargetError,
+     PackageTargetKind,
+-    deep_override_attr_paths_in,
+     find_toplevel_group_nixpkgs,
++    nix_expression_dir_in,
+ };
+ use super::buildenv::BuildEnvOutputs;
+ use super::git::{GitCommandError, GitCommandGetOriginError, GitCommandProvider, StatusInfo};
+@@ -818,9 +818,11 @@ where
+             // states that the repository declares no overrides, rather
+             // than leaving the field unstated for the server to guess at.
+             deep_overrides: Some(deep_overrides_for_wire(deep_override_attr_paths_in(
+-                self.env_metadata
+-                    .repo_root_path
+-                    .join(&self.env_metadata.rel_expression_build_base_dir),
++                nix_expression_dir_in(
++                    self.env_metadata
++                        .repo_root_path
++                        .join(&self.env_metadata.rel_expression_build_base_dir),
++                ),
+             ))?),
          };
+ 
+```
+
+**File**: `cli/flox/doc/flox-build.md` (modified, +37/-0)
+```diff
+@@ -16,6 +16,7 @@ flox-build - Build packages with Flox
+ flox [<general-options>] build
+      [-d=<path>]
+      [--stability <stability>]
++     [--override-input <input> <flakeref>]...
+      [<package>]...
+ ```
+ 
+@@ -125,6 +126,24 @@ Catalog references resolve to the latest published versions and are
+ independent of `--stability`, which selects only the nixpkgs base
+ package set.
+ 
++### Overriding a catalog input
++
++`--override-input <input> <flakeref>` builds against a different source
++for one catalog input, such as a local checkout with changes that are not
++published yet.
++`<input>` names the package as the expressions reference it, for example
++`catalogs.myorg.hello`, and must be in the catalog lock the build uses.
++`<flakeref>` is a Nix flake reference to the repository that defines the
++package.
++Flox reads the package from `.flox/pkgs/` beneath the flakeref's `dir`,
++or beneath the repository root when the flakeref has no `dir`.
++A local path needs a scheme, as in `path:../hello` or `git+file:../hello`.
++
++Catalog references that the overriding source makes and the lock does not
++contain are resolved from the catalog.
++The override applies to the current invocation only.
++The committed `.flox/catalog.lock` is not changed.
++
+ # OPTIONS
+ 
+ `<package>`
+@@ -141,6 +160,14 @@ package set.
+     builds a manifest build reaches, which use the environment's revision.
+     Cannot be used with manifest builds.
+ 
++`--override-input <input> <flakeref>`
++:   Build against the source at `<flakeref>` for the catalog input
++    `<input>` (e.g. `catalogs.myorg.hello`), for this invocation only.
++    May be given more than once.
++    Applies only to Nix expression builds.
++    `<input>` must name a single package; wildcards are not accepted.
++    See "Overriding a catalog input" above.
++
+ 
+ ```{.include}
+ ./include/dir-environment-options.md
+@@ -232,6 +259,16 @@ mv dist $out/
+ npx serve result-app
+ ```
+ 
++## Building against a local checkout of a catalog input
++
++A package references `catalogs.myorg.hello`, and a checkout of the
++repository that publishes `hello` sits next to the project:
++
++```console
++$ flox build --override-input catalogs.myorg.hello path:../hello app
++ℹ Overriding catalogs.myorg.hello with path:../hello.
++```
++
+ # SEE ALSO
+ 
+ [`flox-build-clean(1)`](./flox-build-clean.md)
+```
+
+**File**: `cli/flox/doc/flox-develop.md` (modified, +7/-0)
+```diff
+@@ -16,6 +16,7 @@ flox-develop - Enter a development shell for a Nix expression build
+ flox [<general-options>] develop
+      [-d=<path>]
+      [--stability <stability>]
++     [--override-input <input> <flakeref>]...
+      [-c=<cmd>]
+      [<package>]
+ ```
+@@ -147,6 +148,12 @@ fails the same way `flox build` does on an empty project.
+     `--stability` does for [`flox-build(1)`](./flox-build.md). Pass the
+     same value to both so the shell and the build agree on their inputs.
+ 
++`--override-input <input> <flakeref>`
++:   Use the source at `<flakeref>` for the catalog input `<input>`
++    (e.g. `catalogs.myorg.hello`), exactly as `--override-input` does
++    for [`flox-build(1)`](./flox-build.md). May be given more than once.
++    The committed `.flox/catalog.lock` is not changed.
++
+ `-c`, `--command <cmd>`
+ :   Run a shell command string in the development shell instead of
+     entering it interactively, mirroring the `-c` flag of
+```
+
+**File**: `cli/flox/src/commands/build.rs` (modified, +74/-3)
+```diff
+@@ -33,7 +33,13 @@ use flox_rust_sdk::utils::{CommandExt, FLOX_INTERPRETER};
+ use floxhub_client::{BaseCatalogUrl, CatalogClientTrait, FloxhubClientError};
+ use indoc::formatdoc;
+ use itertools::Itertools;
+-use nef_lock_catalog::{NixFlakeref, catalog_lockfile_path, lock_project_catalog};
++use nef_lock_catalog::{
++    BuildLock,
++    CatalogRef,
++    NixFlakeref,
++    catalog_lockfile_path,
++    lock_project_catalog,
++};
+ use thiserror::Error;
+ use tracing::{debug, instrument, trace};
+ use url::Url;
+@@ -79,6 +85,47 @@ impl SystemOverride {
+     }
+ }
+ 
++// `--override-input <input> <flakeref>`, shared by `flox build` and
++// `flox develop`.
++#[derive(Debug, Bpaf, Clone)]
++#[bpaf(adjacent)]
++#[allow(clippy::manual_non_exhaustive)]
++pub struct OverrideInput {
++    /// Use a different source for a catalog input
++    #[bpaf(long("override-input"))]
++    _option: (),
++
++    /// The catalog input to override, as referenced in Nix expressions
++    /// (e.g. 'catalogs.myorg.hello')
++    #[bpaf(positional("input"))]
++    pub reference: CatalogRef,
++
++    /// The flakeref of the source to use instead (e.g. 'path:../hello')
++    #[bpaf(positional("flakeref"))]
++    pub flakeref: String,
++}
++
++/// Apply `--override-input` flags to the lock a build consumes, before the
++/// lock is written for the builder.
++pub(crate) async fn apply_override_inputs(
++    client: &impl CatalogClientTrait,
++    lock: &mut BuildLock,
++    override_inputs: &[OverrideInput],
++) -> Result<()> {
++    for OverrideInput {
++        reference,
++        flakeref,
++        ..
++    } in override_inputs
++    {
++        let parsed = NixFlakeref::try_from(flakeref.as_str())
++            .with_context(|| format!("Invalid flakeref '{flakeref}' for '--override-input'"))?;
++        nef_lock_catalog::override_input(lock, client, reference, &parsed).await?;
++        message::info(format!("Overriding {reference} with {flakeref}."));
++    }
++    Ok(())
++}
++
+ #[derive(Bpaf, Clone)]
+ pub struct Build {
+     #[bpaf(external(dir_environment_select), fallback(Default::default()))]
+@@ -140,6 +187,9 @@ enum SubcommandOrBuildTargets {
+         #[bpaf(external(system_override))]
+         system_override: SystemOverride,
+ 
++        #[bpaf(external(override_input), many)]
++        override_inputs: Vec<OverrideInput>,
++
+         /// The package to build.
+         /// Corresponds to entries in the 'build' table in the environment's manifest.toml.
+         /// If not specified, all packages are built.
+@@ -198,6 +248,7 @@ impl Build {
+                 targets,
+                 base_catalog_url_select,
+                 system_override,
++                override_inputs,
+             } => {
+                 let env = self
+                     .environment
+@@ -210,6 +261,7 @@ impl Build {
+                     targets,
+                     base_catalog_url_select,
+                     system_override.into_inner(),
++                    override_inputs,
+                 )
+                 .await
+             },
+@@ -266,6 +318,7 @@ impl Build {
+         packages: Vec<String>,
+         nixpkgs_url_select: Option<BaseCatalogUrlSelect>,
+         system_override: Option<String>,
++        override_inputs: Vec<OverrideInput>,
+     ) -> Result<()> {
+         match &env {
+             ConcreteEnvironment::Path(_) => (),
+@@ -371,13 +424,28 @@ impl Build {
+             None => None,
+         };
+ 
+-        let catalog_lock = BuildLockGuard::for_expression_builds(
++        if !override_inputs.is_empty() && expression_lock_rel_paths.is_empty() {
++            bail!(formatdoc! {"
++                The '--override-input' option only applies to Nix expression builds.
++                None of the selected packages is a Nix expression build.
++                Omit '--override-input', or name a Nix expression build.
++            "});
++        }
++        let mut catalog_lock = BuildLockGuard::for_expression_builds(
+             &flox.floxhub_client,
+             env.dot_flox_path(),
+             &expression_lock_rel_paths,
+             flox.retain_diagnostic_tempfiles,
+         )
+         .await?;
++        if let Some(lock) = catalog_lock.as_mut() {
++            apply_override_inputs(
++                &flox.floxhub_client,
++                lock.build_lock_mut(),
++                &override_inputs,
++            )
++            .await?;
++        }
+ 
+         let cache_path = env.cache_path()?;
+         let builder = FloxBuildMk::new(
+@@ -392,7 +460,10 @@ impl Build {
+             expression_nixpkgs_flakeref.as_ref(),
+             &FLOX_INTERPRETER,
+             &target_names,
+-            catalog_lock.as_ref().map(|lock| lock.path()),
++            catalog_lock
++                .as_mut()
++                .map(BuildLockGuard::write_builder_file)
++                .transpose()?,
+             None,
+             system_override,
+         );
+```
+
+**File**: `cli/flox/src/commands/develop.rs` (modified, +15/-2)
+```diff
+@@ -27,11 +27,14 @@ use tracing::debug;
+ 
+ use super::build::{
+     BaseCatalogUrlSelect,
++    OverrideInput,
+     TargetChoice,
++    apply_override_inputs,
+     base_catalog_url_select,
+     base_nixpkgs_url_from_url_select,
+     check_git_tracking_for_expression_builds,
+     describe_nixpkgs,
++    override_input,
+     packages_to_build,
+     prefetch_expression_build_flake_ref,
+     prefetch_flake_ref,
+@@ -85,6 +88,9 @@ pub struct Develop {
+     )]
+     shell_command: Option<String>,
+ 
++    #[bpaf(external(override_input), many)]
++    override_inputs: Vec<OverrideInput>,
++
+     /// The package to develop, as defined by its expression file in '.flox/pkgs/'.
+     /// If omitted, the project's sole such package is used.
+     /// With more than one, prompts for one when running interactively,
+@@ -108,6 +114,7 @@ impl Develop {
+             environment,
+             base_catalog_url_select,
+             shell_command,
++            override_inputs,
+             package,
+         } = opts;
+ 
+@@ -155,13 +162,19 @@ impl Develop {
+                 unreachable!("manifest builds are refused before the eval")
+             },
+         };
+-        let catalog_lock = BuildLockGuard::new_existing_or_ephemeral(
++        let mut catalog_lock = BuildLockGuard::new_existing_or_ephemeral(
+             &flox.floxhub_client,
+             env.dot_flox_path(),
+             [&rel_file_path],
+             flox.retain_diagnostic_tempfiles,
+         )
+         .await?;
++        apply_override_inputs(
++            &flox.floxhub_client,
++            catalog_lock.build_lock_mut(),
++            &override_inputs,
++        )
++        .await?;
+ 
+         let expression_nixpkgs =
+             base_nixpkgs_url_from_url_select(&flox, base_catalog_url_select).await?;
+@@ -185,7 +198,7 @@ impl Develop {
+         .eval(
+             &base_nixpkgs_url,
+             std::slice::from_ref(&target),
+-            catalog_lock.path(),
++            catalog_lock.write_builder_file()?,
+             None,
+         )?;
+         // eval has finished reading CATALOG_LOCKFILE through make and Nix.
+```
+
+**File**: `cli/flox/src/commands/publish.rs` (modified, +6/-7)
+```diff
+@@ -541,7 +541,7 @@ impl Publish {
+                 )
+             },
+         };
+-        let catalog_lock = BuildLockGuard::for_expression_builds(
++        let mut catalog_lock = BuildLockGuard::for_expression_builds(
+             &flox.floxhub_client,
+             path_env.dot_flox_path(),
+             &lock_rel_paths,
+@@ -636,7 +636,10 @@ impl Publish {
+             system_override_inner,
+             &publish_provider.env_metadata,
+             &publish_provider.package_metadata.package,
+-            catalog_lock.as_ref().map(|lock| lock.path()),
++            catalog_lock
++                .as_mut()
++                .map(BuildLockGuard::write_builder_file)
++                .transpose()?,
+         )?;
+ 
+         // CLI args take precedence over config
+@@ -770,11 +773,7 @@ mod tests {
+         .unwrap();
+         let references = scan_package(expressions_dir.path(), "hello.nix").unwrap();
+ 
+-        let lock = build_lock_guard_from_parts(
+-            "/project/.flox/catalog.lock",
+-            nef_lock_catalog::BuildLock::default(),
+-            true,
+-        );
++        let lock = build_lock_guard_from_parts(nef_lock_catalog::BuildLock::default(), true);
+         let err = project_for_publish(&lock, &references)
+             .expect_err("an empty committed lock cannot cover the reference");
+         let message = format!("{err:#}");
+```
+
+**File**: `cli/flox/src/utils/catalog_lock.rs` (modified, +117/-73)
+```diff
+@@ -24,13 +24,12 @@ use tracing::debug;
+ 
+ /// The lock a build consumes, created before the package builder is
+ /// invoked and handed to it as `CATALOG_LOCKFILE`. Owns the builder-facing
+-/// file: dropping the guard removes it, unless diagnostic retention asked
+-/// for it to be kept.
++/// file, written by [Self::write_builder_file]: dropping the guard removes
++/// it, unless diagnostic retention asked for it to be kept.
+ #[derive(Debug)]
+ pub struct BuildLockGuard {
+-    path: PathBuf,
+     lock: BuildLock,
+-    /// Keeps the builder-facing file alive for the build.
++    /// The builder-facing file, once written.
+     ephemeral: Option<tempfile::TempPath>,
+     /// Leave the builder-facing file in place on drop, with its path logged.
+     retain: bool,
+@@ -56,8 +55,8 @@ impl BuildLockGuard {
+     }
+ 
+     /// Read the committed lock if present; otherwise resolve the scanned
+-    /// references. Always materialize a temporary builder-facing file,
+-    /// which outlives the guard when `retain` is set.
++    /// references. The builder-facing file outlives the guard when `retain`
++    /// is set.
+     pub async fn new_existing_or_ephemeral(
+         client: &impl CatalogClientTrait,
+         dot_flox_path: impl AsRef<Path>,
+@@ -73,35 +72,41 @@ impl BuildLockGuard {
+             let references = scan_references(nix_expression_dir_in(dot_flox_path), rel_file_paths)?;
+             resolve_lock(client, references).await?
+         };
+-        // The system temp dir, not flox's own temp dir: flox's derives from
+-        // `$HOME`, which the user may have placed at a path containing
+-        // whitespace, and the ephemeral path reaches make's word-splitting
+-        // positions. The system temp dir shares the whitespace-free
+-        // assumption the makefile's own PROJECT_TMPDIR (`$(TMPDIR)/<hash>`)
+-        // already makes. This deliberately sits outside flox's centralized
+-        // per-process temp cleanup; the guard's drop removes the file
+-        // instead, or keeps it when diagnostic retention is enabled.
+-        let temp_path = tempfile::Builder::new()
+-            .prefix("flox-catalog.lock.")
+-            .tempfile()
+-            .context("Could not create a temporary file for the catalog lock.")?
+-            .into_temp_path();
+-        std::fs::write(&temp_path, render_builder_lock(&lock)?)
+-            .context("Could not write the temporary builder catalog lock")?;
+-        debug!(path = %temp_path.display(), committed = is_existing, "build consumes a materialized catalog lock");
+         Ok(BuildLockGuard {
+-            path: temp_path.to_path_buf(),
+             lock,
+-            ephemeral: Some(temp_path),
++            ephemeral: None,
+             retain,
+             committed: is_existing,
+         })
+     }
+ 
+-    /// The path to hand to the package builder as `CATALOG_LOCKFILE`:
+-    /// an absolute, whitespace-free temporary path.
+-    pub fn path(&self) -> &Path {
+-        &self.path
++    /// Materialize the lock into the builder-facing file and return its
++    /// path, to hand to the package builder as `CATALOG_LOCKFILE`: an
++    /// absolute, whitespace-free temporary path. Writing again replaces the
++    /// file's contents.
++    pub fn write_builder_file(&mut self) -> Result<&Path> {
++        let temp_path = match self.ephemeral.take() {
++            Some(temp_path) => temp_path,
++            // The system temp dir, not flox's own temp dir: flox's derives
++            // from `$HOME`, which the user may have placed at a path
++            // containing whitespace, and the ephemeral path reaches make's
++            // word-splitting positions. The system temp dir shares the
++            // whitespace-free assumption the makefile's own PROJECT_TMPDIR
++            // (`$(TMPDIR)/<hash>`) already makes. This deliberately sits
++            // outside flox's centralized per-process temp cleanup; the
++            // guard's drop removes the file instead, or keeps it when
++            // diagnostic retention is enabled.
++            None => tempfile::Builder::new()
++                .prefix("flox-catalog.lock.")
++                .tempfile()
++                .context("Could not create a temporary file for the catalog lock.")?
++                .into_temp_path(),
++        };
++        let temp_path = self.ephemeral.insert(temp_path);
++        std::fs::write(&*temp_path, render_builder_lock(&self.lock)?)
++            .context("Could not write the temporary builder catalog lock")?;
++        debug!(path = %temp_path.display(), committed = self.committed, "build consumes a materialized catalog lock");
++        Ok(temp_path)
+     }
+ 
+     /// The lock itself, to project the subset a publish submits out of.
+@@ -113,6 +118,12 @@ impl BuildLockGuard {
+     pub fn is_existing(&self) -> bool {
+         self.committed
+     }
++
++    /// The lock, to change before the builder-facing file is written, such
++    /// as by `--override-input`. The committed lock is not changed.
++    pub fn build_lock_mut(&
 ```
 
 ---
 
-### Incident Patch 2: `f0a868ba` (2026-10-28)
-**Commit Message**: fix(activate): let the shell hook follow Flox upgrades
+### Incident Patch 2: `2c887713` (2026-10-30)
+**Commit Message**: refactor(build): write the builder catalog lock when it is needed
 
-The prompt hook that `flox activate` registers, and the `activate`
-command `hook-env` emits for it, embedded `current_exe()`: the store
-path of the binary that created them. A shell that was already open
-kept running the old binary on every prompt after an upgrade, so the
-old `hook-env` would prompt to auto-activate an environment the new
-`flox init` had just written and then fail with
-"failed to parse lockfile JSON: manifest had invalid schema version".
-The protocol marker did not catch this because it did not change
-between the two releases, and the pinned path also broke once the old
-store path was garbage-collected.
-
-Embed the command the user invoked (argv[0]) instead. A bare `flox`
-resolves through PATH on every run, and an installer or profile path is
-replaced by the upgrade, so open shells follow it either way. The hooks
-call `command "<flox>"` so a user function or alias named `flox` cannot
-inject output into the text the hook evals.
-
-Shells carrying a hook from 1.19.x or earlier still pin the old store
-path and need one restart after upgrading.
-
-Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
-
-**File**: `cli/flox-activations/src/gen_rc/bash.rs` (modified, +2/-2)
+**File**: `cli/flox/src/commands/build.rs` (modified, +5/-2)
 ```diff
-@@ -420,7 +420,7 @@ mod tests {
-             _flox_hook() {
-               local _prev_exit=$?;
-               local _flox_vars;
--              _flox_vars="$("/flox" hook-env --shell bash --shell-pid $$ --invocation-types "${_FLOX_INVOCATION_TYPES:-}")";
-+              _flox_vars="$(command "/flox" hook-env --shell bash --shell-pid $$ --invocation-types "${_FLOX_INVOCATION_TYPES:-}")";
-               trap -- '' SIGINT;
-               eval "$_flox_vars";
-               trap - SIGINT;
-@@ -469,7 +469,7 @@ mod tests {
-             _flox_hook() {
-               local _prev_exit=$?;
-               local _flox_vars;
--              _flox_vars="$("/flox" hook-env --shell bash --shell-pid $$ --invocation-types "${_FLOX_INVOCATION_TYPES:-}")";
-+              _flox_vars="$(command "/flox" hook-env --shell bash --shell-pid $$ --invocation-types "${_FLOX_INVOCATION_TYPES:-}")";
-               trap -- '' SIGINT;
-               eval "$_flox_vars";
-               trap - SIGINT;
-```
-
-**File**: `cli/flox-activations/src/gen_rc/fish.rs` (modified, +6/-6)
-```diff
-@@ -373,7 +373,7 @@ mod tests {
-             /nix/store/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-coreutils-9.10/bin/rm /path/to/rc/file;
-             set -gx _FLOX_PROMPT_HOOK_VERSION 1:true;
-             function _flox_hook --on-event fish_prompt;
--                eval ("/flox" hook-env --shell fish --shell-pid $fish_pid --invocation-types "$_FLOX_INVOCATION_TYPES" | string collect);
-+                eval (command "/flox" hook-env --shell fish --shell-pid $fish_pid --invocation-types "$_FLOX_INVOCATION_TYPES" | string collect);
-                 if test "$FLOX_AUTO_ACTIVATE_FISH_MODE" != "disable_arrow";
-                     set -g _flox_pwd_hook_active 1;
-                 end;
-@@ -383,14 +383,14 @@ mod tests {
-                     if test "$FLOX_AUTO_ACTIVATE_FISH_MODE" = "eval_after_arrow";
-                         set -g _flox_env_again 0;
-                     else;
--                        eval ("/flox" hook-env --shell fish --shell-pid $fish_pid --invocation-types "$_FLOX_INVOCATION_TYPES" | string collect);
-+                        eval (command "/flox" hook-env --shell fish --shell-pid $fish_pid --invocation-types "$_FLOX_INVOCATION_TYPES" | string collect);
-                     end;
-                 end;
-             end;
-             function _flox_hook_preexec --on-event fish_preexec;
-                 if set -q _flox_env_again;
-                     set -e _flox_env_again;
--                    eval ("/flox" hook-env --shell fish --shell-pid $fish_pid --invocation-types "$_FLOX_INVOCATION_TYPES" | string collect);
-+                    eval (command "/flox" hook-env --shell fish --shell-pid $fish_pid --invocation-types "$_FLOX_INVOCATION_TYPES" | string collect);
-                 end;
-                 set -e _flox_pwd_hook_active;
-             end;
-@@ -431,7 +431,7 @@ mod tests {
-             /nix/store/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-coreutils-9.10/bin/rm /path/to/rc/file;
-             set -gx _FLOX_PROMPT_HOOK_VERSION 1:true;
-             function _flox_hook --on-event fish_prompt;
--                eval ("/flox" hook-env --shell fish --shell-pid $fish_pid --invocation-types "$_FLOX_INVOCATION_TYPES" | string collect);
-+                eval (command "/flox" hook-env --shell fish --shell-pid $fish_pid --invocation-types "$_FLOX_INVOCATION_TYPES" | string collect);
-                 if test "$FLOX_AUTO_ACTIVATE_FISH_MODE" != "disable_arrow";
-                     set -g _flox_pwd_hook_active 1;
-                 end;
-@@ -441,14 +441,14 @@ mod tests {
-                     if test "$FLOX_AUTO_ACTIVATE_FISH_MODE" = "eval_after_arrow";
-                         set -g _flox_env_again 0;
-                     else;
--                        eval ("/flox" hook-env --shell fish --shell-pid $fish_pid --invocation-types "$_FLOX_INVOCATION_TYPES" | string collect);
-+                        eval (command "/flox" hook-env --shell fish --shell-pid $fish_pid --invocation-types "$_FLOX_INVOCATION_TYPES" | string collect);
-                     end;
-                 end;
-             end;
-             function _flox_hook_preexec --on-event fish_preexec;
-                 if set -q _flox_env_again;
-                     set -e _flox_env_again;
--                    eval ("/flox" hook-env --shell fish --shell-pid $fish_pid --invocation-types "$_FLOX_INVOCATION_TYPES" | string collect);
-+                    eval (command "/flox" hook-env --shell fish --shell-pid $fish_pid --invocation-types "$_FLOX_INVOCATION_TYPES" | string collect);
-                 end;
-                 set -e _flox_pwd_hook_active;
-             end;
-```
-
-**File**: `cli/flox-activations/src/gen_rc/zsh.rs` (modified, +2/-2)
-```diff
-@@ -412,7 +412,7 @@ mod tests {
-             _flox_hook() {
-               if (( ZSH_SUBSHELL )); then return; fi;
-               local _flox_vars;
--              _flox_vars="$("/flox" hook-env --shell zsh --shell-pid $$ --invocation-types "${_FLOX_INVOCATION_TYPES:-}")";
-+              _flox_vars="$(command "/flox" hook-env --shell zsh --shell-pid $$ --invocation-types "${_FLOX_INVOCATION_TYPES:-}")";
-               trap -- '' SIGINT;
-               eval "$_flox_vars";
-               trap - SIGINT;
-@@ -458,7 +458,7 @@ mod tests {
-             _flox_hook() {
-               if (( ZSH_SUBSHELL )); then return; fi;
-               local _flox_vars;
--              _flox_vars="$("/flox" hook-env --shell zsh --shell-pid $$ --invocation-types "${_FLOX_INVOCATION_TYPES:-}")";
-+              _flox_vars="$(command "/flox" hook-env --shell zsh --shell-pid $$ --invocation-types "${_FLOX_INVOCATION_TYPES:-}")";
-               trap -- '' SIGINT;
-               eval "$_flox_vars";
-               trap - SIGINT;
-```
-
-**File**: `cli/flox-activations/src/hook.rs` (modified, +13/-5)
-```diff
-@@ -32,6 +32,14 @@
- //! only runs the hook from `PROMPT_COMMAND`, which a fork never evaluates,
- //! and fish has no forked subshells.
- //!
-+//! `flox_bin` is the command the user invoked (`flox`, or the path they
-+//! typed), not the store path of the running binary: the hook outlives Flox
-+//! upgrades, and a bare name resolves through PATH on every run, so an open
-+//! shell follows the upgrade instead of calling a binary that cannot read the
-+//! environments the new one writes. `command` (and `exec` in tcsh, which only
-+//! alias-expands the first word) keeps a user function or alias named `flox`
-+//! from injecting output into the text the hook evals.
-+//!
- //! Each hook also exports [`PROMPT_HOOK_VERSION_ENV`] =
- //! `<version>:true` at registration time (top level, so it is set before the
- //! first prompt); subshell activations export `<version>:false` instead (see
-@@ -51,7 +59,7 @@ pub fn bash_hook(flox_bin: &str) -> String {
-         _flox_hook() {{
-           local _prev_exit=$?;
-           local _flox_vars;
--          _flox_vars="$("{flox_bin}" hook-env --shell bash --shell-pid $$ --invocation-types "${{{FLOX_INVOCATION_TYPES_VAR}:-}}")";
-+          _flox_vars="$(command "{flox_bin}" hook-env --shell bash --shell-pid $$ --invocation-types "${{{FLOX_INVOCATION_TYPES_VAR}:-}}")";
-           trap -- '' SIGINT;
-           eval "$_flox_vars";
-           trap - SIGINT;
-@@ -81,7 +89,7 @@ pub fn zsh_hook(flox_bin: &str) -> String {
-         _flox_hook() {{
-           if (( ZSH_SUBSHELL )); then return; fi;
-           local _flox_vars;
--          _flox_vars="$("{flox_bin}" hook-env --shell zsh --shell-pid $$ --invocation-types "${{{FLOX_INVOCATION_TYPES_VAR}:-}}")";
-+          _flox_vars="$(command "{flox_bin}" hook-env --shell zsh --shell-pid $$ --invocation-types "${{{FLOX_INVOCATION_TYPES_VAR}:-}}")";
-           trap -- '' SIGINT;
-           eval "$_flox_vars";
-           trap - SIGINT;
-@@ -131,7 +139,7 @@ pub fn fish_hook(flox_bin: &str) -> String {
-         r#"
-         set -gx {PROMPT_HOOK_VERSION_ENV} {marker};
-         function _flox_hook --on-event fish_prompt;
--            eval ("{flox_bin}" hook-env --shell fish --shell-pid $fish_pid --invocation-types "${FLOX_INVOCATION_TYPES_VAR}" | string collect);
-+            eval (command "{flox_bin}" hook-env --shell fish --shell-pid $fish_pid --invocation-types "${FLOX_INVOCATION_TYPES_VAR}" | string collect);
-             if test "$FLOX_AUTO_ACTIVATE_FISH_MODE" != "disable_arrow";
-                 set -g _flox_pwd_hook_active 1;
-             end;
-@@ -141,14 +149,14 @@ pub fn fish_hook(flox_bin: &str) -> String {
-                 if test "$FLOX_AUTO_ACTIVATE_FISH_MODE" = "eval_after_arrow";
-                     set -g _flox_env_again 0;
-                 else;
--                    eval ("{flox_bin}" hook-env --shell fish --shell-pid $fish_pid --invocation-types "${FLOX_INVOCATION_TYPES_VAR}" | string collect);
-+                    eval (command "{flox_bin}" hook-env --shell fish --shell-pid $fish_pid --invocation-types "${FLOX_INVOCATION_TYPES_VAR}" | string collect);
-                 end;
-             end;
-         end;
-         function _flox_hook_preexec --on-event fish_preexec;
-             if set -q _flox_env_again;
-                 set -e _flox_env_again;
--                eval ("{flox_bin}" hook-env --shell fish --shell-pid $fish_pid --invocation-types "${FLOX_INVOCATION_TYPES_VAR}" | string collect);
-+                eval (command "{flox_bin}" hook-env --shell fish --shell-pid $fish_pid --invocation-types "${FLOX_INVOCATION_TYPES_VAR}" | string collect);
-             end;
-             set -e _flox_pwd_hook_active;
-         end;
-```
-
-**File**: `cli/flox-core/src/activate/context.rs` (modified, +3/-1)
-```diff
-@@ -118,7 +118,9 @@ pub struct ActivateCtx {
-     #[serde(default)]
-     pub disable_hook: bool,
- 
--    /// Path to the flox binary, used for generating hook code.
-+    /// The command the generated hook code runs to reach flox: the name or
-+    /// path the user invoked, not this process's store path, so that an
-+    /// upgrade takes effect in shells that are already open.
-     #[serde(default)]
-     pub flox_bin: String,
- 
-```
-
-**File**: `cli/flox/src/commands/activate.rs` (modified, +2/-5)
-```diff
-@@ -69,7 +69,7 @@ use crate::utils::errors::format_diverged_metadata;
- use crate::utils::events::{env_detail_from_concrete, env_detail_from_concrete_without_lineage};
- use crate::utils::markdown::render_markdown_to_stderr;
- use crate::utils::upgrade_output::{count_upgrade_categories, format_upgrade_summary};
--use crate::utils::{FLOX_ACTIVATIONS_BIN, message};
-+use crate::utils::{FLOX_ACTIVATIONS_BIN, FLOX_BIN_FOR_SHELL, message};
- use crate::{Exit, environment_subcommand_metric, subcommand_metric, utils};
- 
- #[derive(Debug, Clone, Bpaf)]
-@@ -746,10 +746,7 @@ impl ActivateOptions {
-             remove_after_reading: true,
-             metrics_uuid: flox.metrics_device_uuid,
-             disable_hook: config.flox.disable_hook.unwrap_or(false),
--            flox_bin: std::env::current_exe()
--                .ok()
--                .and_then(|p| p.to_str().map(String::from))
--                .unwrap_or_else(|| "flox".to_string()),
-+            flox_bin: FLOX_BIN_FOR_SHELL.clone(),
-             auto_activate_fish_mode: config.flox.auto_activate_fish_mode,
-             announce_activation,
+@@ -371,7 +371,7 @@ impl Build {
+             None => None,
          };
+ 
+-        let catalog_lock = BuildLockGuard::for_expression_builds(
++        let mut catalog_lock = BuildLockGuard::for_expression_builds(
+             &flox.floxhub_client,
+             env.dot_flox_path(),
+             &expression_lock_rel_paths,
+@@ -392,7 +392,10 @@ impl Build {
+             expression_nixpkgs_flakeref.as_ref(),
+             &FLOX_INTERPRETER,
+             &target_names,
+-            catalog_lock.as_ref().map(|lock| lock.path()),
++            catalog_lock
++                .as_mut()
++                .map(BuildLockGuard::write_builder_file)
++                .transpose()?,
+             None,
+             system_override,
+         );
 ```
 
-**File**: `cli/flox/src/commands/hook_env.rs` (modified, +10/-7)
+**File**: `cli/flox/src/commands/develop.rs` (modified, +2/-2)
 ```diff
-@@ -37,7 +37,7 @@ use super::deactivate::{deactivation_target, emit_deactivate_script, flox_activa
- use crate::subcommand_metric;
- use crate::utils::active_environments::ActiveEnvironment;
- use crate::utils::dialog::{Confirm, Dialog};
--use crate::utils::message;
-+use crate::utils::{FLOX_BIN_FOR_SHELL, message};
+@@ -155,7 +155,7 @@ impl Develop {
+                 unreachable!("manifest builds are refused before the eval")
+             },
+         };
+-        let catalog_lock = BuildLockGuard::new_existing_or_ephemeral(
++        let mut catalog_lock = BuildLockGuard::new_existing_or_ephemeral(
+             &flox.floxhub_client,
+             env.dot_flox_path(),
+             [&rel_file_path],
+@@ -185,7 +185,7 @@ impl Develop {
+         .eval(
+             &base_nixpkgs_url,
+             std::slice::from_ref(&target),
+-            catalog_lock.path(),
++            catalog_lock.write_builder_file()?,
+             None,
+         )?;
+         // eval has finished reading CATALOG_LOCKFILE through make and Nix.
+```
+
+**File**: `cli/flox/src/commands/publish.rs` (modified, +6/-7)
+```diff
+@@ -541,7 +541,7 @@ impl Publish {
+                 )
+             },
+         };
+-        let catalog_lock = BuildLockGuard::for_expression_builds(
++        let mut catalog_lock = BuildLockGuard::for_expression_builds(
+             &flox.floxhub_client,
+             path_env.dot_flox_path(),
+             &lock_rel_paths,
+@@ -636,7 +636,10 @@ impl Publish {
+             system_override_inner,
+             &publish_provider.env_metadata,
+             &publish_provider.package_metadata.package,
+-            catalog_lock.as_ref().map(|lock| lock.path()),
++            catalog_lock
++                .as_mut()
++                .map(BuildLockGuard::write_builder_file)
++                .transpose()?,
+         )?;
  
- #[derive(Debug, Clone, Bpaf)]
- pub struct HookEnv {
-@@ -1000,23 +1000,26 @@ async fn prompt_for_auto_activation(project_dirs: &[PathBuf]) -> Result<AutoActi
- /// runs `flox activate` with stdout captured — which selects in-place mode —
- /// so this reuses the full activation path (hooks, services, attach
- /// semantics) of `eval "$(flox activate)"`.
-+///
-+/// It runs flox through [`FLOX_BIN_FOR_SHELL`], the same command the hook used
-+/// to start this process, so an upgraded Flox is picked up rather than this
-+/// binary's store path. `command` keeps a user function or alias named `flox`
-+/// out of the way, as in the hook itself.
- fn write_activate_command(shell: Shell, project_dir: &Path, writer: &mut impl Write) -> Result<()> {
--    let flox_bin = std::env::current_exe().context("failed to determine flox executable path")?;
--    let flox_bin = flox_bin.to_string_lossy().to_string();
--    let escaped_bin = shell_escape::escape(Cow::Borrowed(&*flox_bin));
-+    let escaped_bin = shell_escape::escape(Cow::Borrowed(FLOX_BIN_FOR_SHELL.as_str()));
-     let dir = project_dir.to_string_lossy().to_string();
-     let escaped_dir = shell_escape::escape(Cow::Borrowed(&*dir));
-     match shell {
-         Shell::Bash | Shell::Zsh => {
-             writeln!(
-                 writer,
--                r#"eval "$({escaped_bin} activate --dir {escaped_dir})";"#
-+                r#"eval "$(command {escaped_bin} activate --dir {escaped_dir})";"#
-             )?;
-         },
-         Shell::Fish => {
-             writeln!(
-                 writer,
--                "{escaped_bin} activate --dir {escaped_dir} | source;"
-+                "command {escaped_bin} activate --dir {escaped_dir} | source;"
-             )?;
-         },
-         Shell::Tcsh => {
-@@ -1853,7 +1856,7 @@ mod tests {
-             script.contains("activate --dir '/home/user/my proj'"),
-             "{script}"
-         );
--        assert!(script.starts_with(r#"eval "$("#), "{script}");
-+        assert!(script.starts_with(r#"eval "$(command "#), "{script}");
+         // CLI args take precedence over config
+@@ -770,11 +773,7 @@ mod tests {
+         .unwrap();
+         let references = scan_package(expressions_dir.path(), "hello.nix").unwrap();
+ 
+-        let lock = build_lock_guard_from_parts(
+-            "/project/.flox/catalog.lock",
+-            nef_lock_catalog::BuildLock::default(),
+-            true,
+-        );
++        let lock = build_lock_guard_from_parts(nef_lock_catalog::BuildLock::default(), true);
+         let err = project_for_publish(&lock, &references)
+             .expect_err("an empty committed lock cannot cover the reference");
+         let message = format!("{err:#}");
+```
+
+**File**: `cli/flox/src/utils/catalog_lock.rs` (modified, +61/-73)
+```diff
+@@ -24,13 +24,12 @@ use tracing::debug;
+ 
+ /// The lock a build consumes, created before the package builder is
+ /// invoked and handed to it as `CATALOG_LOCKFILE`. Owns the builder-facing
+-/// file: dropping the guard removes it, unless diagnostic retention asked
+-/// for it to be kept.
++/// file, written by [Self::write_builder_file]: dropping the guard removes
++/// it, unless diagnostic retention asked for it to be kept.
+ #[derive(Debug)]
+ pub struct BuildLockGuard {
+-    path: PathBuf,
+     lock: BuildLock,
+-    /// Keeps the builder-facing file alive for the build.
++    /// The builder-facing file, once written.
+     ephemeral: Option<tempfile::TempPath>,
+     /// Leave the builder-facing file in place on drop, with its path logged.
+     retain: bool,
+@@ -56,8 +55,8 @@ impl BuildLockGuard {
+     }
+ 
+     /// Read the committed lock if present; otherwise resolve the scanned
+-    /// references. Always materialize a temporary builder-facing file,
+-    /// which outlives the guard when `retain` is set.
++    /// references. The builder-facing file outlives the guard when `retain`
++    /// is set.
+     pub async fn new_existing_or_ephemeral(
+         client: &impl CatalogClientTrait,
+         dot_flox_path: impl AsRef<Path>,
+@@ -73,35 +72,41 @@ impl BuildLockGuard {
+             let references = scan_references(nix_expression_dir_in(dot_flox_path), rel_file_paths)?;
+             resolve_lock(client, references).await?
+         };
+-        // The system temp dir, not flox's own temp dir: flox's derives from
+-        // `$HOME`, which the user may have placed at a path containing
+-        // whitespace, and the ephemeral path reaches make's word-splitting
+-        // positions. The system temp dir shares the whitespace-free
+-        // assumption the makefile's own PROJECT_TMPDIR (`$(TMPDIR)/<hash>`)
+-        // already makes. This deliberately sits outside flox's centralized
+-        // per-process temp cleanup; the guard's drop removes the file
+-        // instead, or keeps it when diagnostic retention is enabled.
+-        let temp_path = tempfile::Builder::new()
+-            .prefix("flox-catalog.lock.")
+-            .tempfile()
+-            .context("Could not create a temporary file for the catalog lock.")?
+-            .into_temp_path();
+-        std::fs::write(&temp_path, render_builder_lock(&lock)?)
+-            .context("Could not write the temporary builder catalog lock")?;
+-        debug!(path = %temp_path.display(), committed = is_existing, "build consumes a materialized catalog lock");
+         Ok(BuildLockGuard {
+-            path: temp_path.to_path_buf(),
+             lock,
+-            ephemeral: Some(temp_path),
++            ephemeral: None,
+             retain,
+             committed: is_existing,
+         })
+     }
+ 
+-    /// The path to hand to the package builder as `CATALOG_LOCKFILE`:
+-    /// an absolute, whitespace-free temporary path.
+-    pub fn path(&self) -> &Path {
+-        &self.path
++    /// Materialize the lock into the builder-facing file and return its
++    /// path, to hand to the package builder as `CATALOG_LOCKFILE`: an
++    /// absolute, whitespace-free temporary path. Writing again replaces the
++    /// file's contents.
++    pub fn write_builder_file(&mut self) -> Result<&Path> {
++        let temp_path = match self.ephemeral.take() {
++            Some(temp_path) => temp_path,
++            // The system temp dir, not flox's own temp dir: flox's derives
++            // from `$HOME`, which the user may have placed at a path
++            // containing whitespace, and the ephemeral path reaches make's
++            // word-splitting positions. The system temp dir shares the
++            // whitespace-free assumption the makefile's own PROJECT_TMPDIR
++            // (`$(TMPDIR)/<hash>`) already makes. This deliberately sits
++            // outside flox's centralized per-process temp cleanup; the
++            // guard's drop removes the file instead, or keeps it when
++            // diagnostic retention is enabled.
++            None => tempfile::Builder::new()
++                .prefix("flox-catalog.lock.")
++                .tempfile()
++                .context("Could not create a temporary file for the catalog lock.")?
++                .into_temp_path(),
++        };
++        let temp_path = self.ephemeral.insert(temp_path);
++        std::fs::write(&*temp_path, render_builder_lock(&self.lock)?)
++            .context("Could not write the temporary builder catalog lock")?;
++        debug!(path = %temp_path.display(), committed = self.committed, "build consumes a materialized catalog lock");
++        Ok(temp_path)
+     }
+ 
+     /// The lock itself, to project the subset a publish submits out of.
+@@ -139,19 +144,10 @@ pub mod test_helpers {
+     /// Construct a [BuildLockGuard] from parts, for tests that need to
+     /// exercise consumers (e.g. publish's stale-lock messaging) without a
+     /// scan or a catalog round-trip.
+-    pub fn build_lock_guard_from_parts(
+-        path: imp
+```
+
+---
+
+### Incident Patch 3: `307ad6c2` (2026-10-30)
+**Commit Message**: refactor(nef-lock-catalog): share test fixtures across modules
+
+**File**: `cli/nef-lock-catalog/src/lib.rs` (modified, +2/-0)
+```diff
+@@ -6,6 +6,8 @@ mod lock;
+ mod nix;
+ mod project;
+ mod scan;
++#[cfg(test)]
++mod test_helpers;
+ 
+ /// Common identifier for a catalog and its `CatalogLock` in a build lock.
+ /// Also exposed to nix expressions in the NEF as the `<catalog>` in
+```
+
+**File**: `cli/nef-lock-catalog/src/lock/build_lock.rs` (modified, +2/-26)
+```diff
+@@ -510,31 +510,11 @@ pub fn write_lock(lock: &BuildLock, path: impl AsRef<Path>) -> Result<(), Lockfi
+ mod tests {
+     use std::collections::HashMap;
+ 
+-    use floxhub_client::{BuildType, LockedGitSource, LockedInputEntry};
++    use floxhub_client::LockedInputEntry;
+ 
+     use super::*;
+     use crate::lock::transform::build_lock_from_locked_inputs;
+-
+-    fn entry(catalog: &str, attr_path: &[&str]) -> LockedInputEntry {
+-        LockedInputEntry {
+-            attr_path: attr_path.iter().map(|s| s.to_string()).collect(),
+-            build_type: BuildType::Nef,
+-            catalog: catalog.to_string(),
+-            inputs: Some(vec![]),
+-            locked_inputs_hash: "sha256-test".to_string(),
+-            version: None,
+-            build: None,
+-            source: LockedGitSource {
+-                dir: ".".to_string(),
+-                ref_: "refs/heads/main".to_string(),
+-                rev: "abc".to_string(),
+-                type_: "git".to_string(),
+-                url: "https://example.com/repo".to_string(),
+-                extra: BTreeMap::new(),
+-            },
+-            deep_overrides: None,
+-        }
+-    }
++    use crate::test_helpers::{nef_entry as entry, references};
+ 
+     /// A lock whose direct inputs are exactly the given canonical keys
+     /// (`<catalog>/<attr-path>`, the server's keying — see
+@@ -553,10 +533,6 @@ mod tests {
+         build_lock_from_locked_inputs(locked, direct_keys.iter()).expect("transform succeeds")
+     }
+ 
+-    fn references(refs: &[&str]) -> BTreeSet<CatalogRef> {
+-        refs.iter().map(|r| CatalogRef::new_unchecked(r)).collect()
+-    }
+-
+     #[test]
+     fn project_package_selects_only_the_requested_references() {
+         let lock = lock_with(&["myorg/hello", "myorg/world", "other/tool"]);
+```
+
+**File**: `cli/nef-lock-catalog/src/lock/transform.rs` (modified, +2/-35)
+```diff
+@@ -116,44 +116,11 @@ pub fn render_builder_lock(lock: &BuildLock) -> Result<String> {
+ 
+ #[cfg(test)]
+ mod tests {
+-    use std::collections::BTreeMap;
+-
+-    use floxhub_client::{BuildType, LockedGitSource};
++    use floxhub_client::BuildType;
+     use serde_json::json;
+ 
+     use super::*;
+-
+-    /// A locked git source. Locked inputs are only ever tracked as git
+-    /// flakerefs, so the typed wire model carries exactly these fields.
+-    fn git_source(url: &str, rev: &str) -> LockedGitSource {
+-        LockedGitSource {
+-            dir: ".".to_string(),
+-            ref_: "refs/heads/main".to_string(),
+-            rev: rev.to_string(),
+-            type_: "git".to_string(),
+-            url: url.to_string(),
+-            extra: BTreeMap::new(),
+-        }
+-    }
+-
+-    fn entry(
+-        catalog: &str,
+-        attr_path: &[&str],
+-        build_type: BuildType,
+-        source: LockedGitSource,
+-    ) -> LockedInputEntry {
+-        LockedInputEntry {
+-            attr_path: attr_path.iter().map(|s| s.to_string()).collect(),
+-            build_type,
+-            catalog: catalog.to_string(),
+-            inputs: Some(vec![]),
+-            locked_inputs_hash: "sha256-test".to_string(),
+-            deep_overrides: None,
+-            version: None,
+-            build: None,
+-            source,
+-        }
+-    }
++    use crate::test_helpers::{entry, git_source};
+ 
+     #[test]
+     fn single_package_single_catalog() {
+```
+
+**File**: `cli/nef-lock-catalog/src/project.rs` (modified, +1/-7)
+```diff
+@@ -142,18 +142,12 @@ pub async fn lock_project_catalog(
+ mod tests {
+     use floxhub_client::FloxhubClient;
+     use floxhub_client::client::test_helpers::{client_config, new_noop};
+-    use tempfile::tempdir;
+ 
+     use super::*;
+ 
+     /// A project directory whose single expression is `expression`.
+     fn project_with_expression(expression: &str) -> (tempfile::TempDir, PathBuf, PathBuf) {
+-        let project = tempdir().unwrap();
+-        let dot_flox = project.path().join(".flox");
+-        let pkgs_dir = dot_flox.join("pkgs");
+-        std::fs::create_dir_all(&pkgs_dir).unwrap();
+-        std::fs::write(pkgs_dir.join("hello.nix"), expression).unwrap();
+-        (project, dot_flox, pkgs_dir)
++        crate::test_helpers::project_with_expressions(&[("hello.nix", expression)])
      }
  
      #[test]
 ```
 
-**File**: `cli/flox/src/utils/mod.rs` (modified, +96/-1)
+**File**: `cli/nef-lock-catalog/src/scan/mod.rs` (modified, +10/-13)
 ```diff
-@@ -1,6 +1,7 @@
- use std::env;
-+use std::ffi::OsString;
- use std::io::Stderr;
--use std::path::PathBuf;
-+use std::path::{Path, PathBuf};
- use std::sync::{LazyLock, Mutex};
- use std::time::Duration;
+@@ -228,10 +228,7 @@ mod tests {
+     use std::{assert_matches, fs};
  
-@@ -40,6 +41,51 @@ pub static FLOX_ACTIVATIONS_BIN: LazyLock<PathBuf> = LazyLock::new(|| {
-         env::var("FLOX_ACTIVATIONS_BIN").unwrap_or(env!("FLOX_ACTIVATIONS_BIN").to_string()),
-     )
- });
+     use super::*;
+-
+-    fn set(items: &[&str]) -> BTreeSet<CatalogRef> {
+-        items.iter().map(|s| CatalogRef::new_unchecked(s)).collect()
+-    }
++    use crate::test_helpers::references;
+ 
+     #[test]
+     fn catalog_ref_rejects_references_that_cannot_resolve() {
+@@ -353,7 +350,7 @@ mod tests {
+         // turn it into a failure.
+         let base_dir = Path::new("test_data/catalog_refs");
+         let got = scan_package(base_dir, Path::new("nixpkgs-arg.nix")).unwrap();
+-        assert_eq!(got, set(&["catalogs.myorg.toolkit.readVersion"]));
++        assert_eq!(got, references(&["catalogs.myorg.toolkit.readVersion"]));
+     }
+ 
+     #[test]
+@@ -364,7 +361,7 @@ mod tests {
+         let got = scan_package(base_dir, Path::new("pkg-a.nix")).unwrap();
+         assert_eq!(
+             got,
+-            set(&[
++            references(&[
+                 "catalogs.myorg.toolkit.readVersion",
+                 "catalogs.myorg.python3Packages.alpha-lib",
+             ])
+@@ -379,7 +376,7 @@ mod tests {
+         let got = scan_package_with_roots(base_dir, Path::new("main.nix"), ["inputs"]).unwrap();
+         assert_eq!(
+             got,
+-            set(&[
++            references(&[
+                 "inputs.nixpkgs.lib",
+                 "inputs.devtools-flake.packages.default",
+             ])
+@@ -395,7 +392,7 @@ mod tests {
+         let got = scan_package(base_dir, Path::new("dep-entry-wrapped.nix")).unwrap();
+         assert_eq!(
+             got,
+-            set(&[
++            references(&[
+                 "catalogs.myorg.toolkit.readVersion",
+                 "catalogs.myorg.python3Packages.alpha-lib",
+             ])
+@@ -411,7 +408,7 @@ mod tests {
+         let got = scan_package(base_dir, Path::new("dep-entry.nix")).unwrap();
+         assert_eq!(
+             got,
+-            set(&[
++            references(&[
+                 "catalogs.myorg.toolkit.readVersion",
+                 "catalogs.myorg.python3Packages.alpha-lib",
+             ])
+@@ -430,7 +427,7 @@ mod tests {
+         let got = scan_package(base_dir, Path::new("entry.nix")).unwrap();
+         assert_eq!(
+             got,
+-            set(&["catalogs.myorg.direct", "catalogs.myorg.helper-ref"]),
++            references(&["catalogs.myorg.direct", "catalogs.myorg.helper-ref"]),
+         );
+     }
+ 
+@@ -446,7 +443,7 @@ mod tests {
+     fn scan_package_follows_alias_to_pkgset_member() {
+         let base_dir = Path::new("test_data/catalog_refs/pkgset-member-alias");
+         let got = scan_package(base_dir, Path::new("isdr-zk-client.nix")).unwrap();
+-        assert_eq!(got, set(&["catalogs.myorg.toolkit.readVersion"]));
++        assert_eq!(got, references(&["catalogs.myorg.toolkit.readVersion"]));
+     }
+ 
+     /// A nested file as the scan target resolves dependency_args against the root.
+@@ -460,7 +457,7 @@ mod tests {
+         let got = scan_package(base_dir, Path::new("foo/bar.nix")).unwrap();
+         assert_eq!(
+             got,
+-            set(&["catalogs.myorg.bar-own", "catalogs.myorg.top-src"]),
++            references(&["catalogs.myorg.bar-own", "catalogs.myorg.top-src"]),
+         );
+     }
+ 
+@@ -476,7 +473,7 @@ mod tests {
+         let got = scan_package(base_dir, Path::new("top.nix")).unwrap();
+         assert_eq!(
+             got,
+-            set(&["catalogs.myorg.widget-src", "catalogs.myorg.helper-lib-src"]),
++            references(&["catalogs.myorg.widget-src", "catalogs.myorg.helper-lib-src"]),
+         );
+     }
+ 
+```
+
+**File**: `cli/nef-lock-catalog/src/test_helpers.rs` (added, +72/-0)
+```diff
+@@ -0,0 +1,72 @@
++//! Fixtures shared by the crate's tests.
 +
-+/// The command a shell can use to reach this flox again.
-+///
-+/// Embedded in code the shell keeps running after Flox may have been upgraded:
-+/// the prompt hook `flox activate` registers and the activation commands
-+/// `flox hook-env` emits for it. `current_exe()` would pin this process's store
-+/// path, which keeps an open shell on the old binary after an upgrade (and
-+/// breaks it once that store path is garbage-collected). argv[0] is how the
-+/// user reached flox instead: a bare name resolves through PATH every time the
-+/// hook runs, and a path names the installer- or profile-managed location, both
-+/// of which an upgrade replaces.
-+pub static FLOX_BIN_FOR_SHELL: LazyLock<String> = LazyLock::new(|| {
-+    flox_bin_for_shell(
-+        env::args_os().next(),
-+        env::current_dir().ok(),
-+        env::current_exe().ok(),
-+    )
-+});
++use std::collections::{BTreeMap, BTreeSet};
++use std::path::PathBuf;
 +
-+/// See [`FLOX_BIN_FOR_SHELL`]. A relative `argv0` is anchored to `cwd` but never
-+/// canonicalized, since resolving symlinks would pin the store path again.
-+fn flox_bin_for_shell(
-+    argv0: Option<OsString>,
-+    cwd: Option<PathBuf>,
-+    exe: Option<PathBuf>,
-+) -> String {
-+    let fallback = || {
-+        exe.as_deref()
-+            .map(Path::to_string_lossy)
-+            .map_or_else(|| "flox".to_string(), |exe| exe.into_owned())
-+    };
-+    let Some(argv0) = argv0.filter(|argv0| !argv0.is_empty()) else {
-+        return fallback();
-+    };
-+    let argv0 = PathBuf::from(argv0);
-+    // A bare name (one component) is left to the shell's PATH lookup.
-+    if argv0.is_absolute() || argv0.components().count() == 1 {
-+        return argv0.to_string_lossy().into_owned();
++use floxhub_client::{BuildType, LockedGitSource, LockedInputEntry};
++
++use crate::CatalogRef;
++
++/// A project directory whose `.flox/pkgs` holds `expressions`, given as
++/// paths relative to `pkgs` and their contents.
++pub(crate) fn project_with_expressions(
++    expressions: &[(&str, &str)],
++) -> (tempfile::TempDir, PathBuf, PathBuf) {
++    let project = tempfile::tempdir().unwrap();
++    let dot_flox = project.path().join(".flox");
++    let pkgs_dir = dot_flox.join("pkgs");
++    for (rel_path, expression) in expressions {
++        let file = pkgs_dir.join(rel_path);
++        std::fs::create_dir_all(file.parent().unwrap()).unwrap();
++        std::fs::write(file, expression).unwrap();
 +    }
-+    match cwd {
-+        Some(cwd) => cwd.join(argv0).to_string_lossy().into_owned(),
-+        None => fallback(),
++    (project, dot_flox, pkgs_dir)
++}
++
++/// References built from literals, without checking them.
++pub(crate) fn references(refs: &[&str]) -> BTreeSet<CatalogRef> {
++    refs.iter().map(|r| CatalogRef::new_unchecked(r)).collect()
++}
++
++/// A locked git source. Locked inputs are only ever tracked as git
++/// flakerefs, so the typed wire model carries exactly these fields.
++pub(crate) fn git_source(url: &str, rev: &str) -> LockedGitSource {
++    LockedGitSource {
++        dir: ".".to_string(),
++        ref_: "refs/heads/main".to_string(),
++        rev: rev.to_string(),
++        type_: "git".to_string(),
++        url: url.to_string(),
++        extra: BTreeMap::new(),
 +    }
 +}
 +
- /// Timeout used for network operations that run after the main flox command has
- /// completed.
- ///
-@@ -57,3 +103,52 @@ pub fn populate_default_nix_env_vars() {
-         unsafe { env::set_var(key, value) }
-     }
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+
-+    fn exe() -> Option<PathBuf> {
-+        Some(PathBuf::from("/nix/store/abc-flox/bin/.flox-wrapped"))
-+    }
-+
-+    #[test]
-+    fn bare_name_is_left_for_path_lookup() {
-+        assert_eq!(
-+            flox_bin_for_shell(Some("flox".into()), Some("/work".into()), exe()),
-+            "flox"
-+        );
-+    }
-+
-+    #[test]
-+    fn relative_path_is_anchored_to_cwd() {
-+        assert_eq!(
-+            flox_bin_for_shell(
-+                Some("./target/debug/flox".into()),
-+                Some("/work".into()),
-+                exe()
-+            ),
-+            "/work/./target/debug/flox"
-+        );
-+    }
-+
-+    #[test]
-+    fn absolute_path_is_kept_unresolved() {
-+        assert_eq!(
-+            flox_bin_for_shell(
-+                Some("/usr/local/bin/flox".into()),
-+                Some("/work".into()),
-+                exe()
-+            ),
-+            "/usr/local/bin/flox"
-+        );
-+    }
-+
-+    #[test]
-+    fn missing_argv0_falls_back_to_the_running_binary() {
-+        assert_eq!(
-+            flox_bin_for_shell(None, Some("/work".into()), exe()),
-+            "/nix/store/abc-flox/bin/.flox-wrapped"
-+        );
++/// A lookup entry with no inputs.
++pub(crate) fn entry(
++    catalog: &str,
++    attr_path: &[&str],
++    build_type: BuildType,
++    source: LockedGitSource,
++) -> LockedInputEntry {
++    LockedInputEntry {
++        attr_path: attr_path.iter().map(|s| s.to_string()).collect(),
++        build_type,
++        catalog: catalog.to_string(),
++        inputs: Some(vec![]),
++        locked_inputs_hash: "sha256-test".to_string(),
++        deep_overrides: None,
++        version: None,
++        build: None,
++        source,
 +    }
 +}
-```
-
----
-
-### Incident Patch 3: `3ee0d1d6` (2026-11-12)
-**Commit Message**: fix(nef): percent-encode path flakerefs so paths with spaces work (#4870)
-
-Fixes #4675
-
-**Cause.** `NixFlakeref::from_path` built the flakeref with
-`format!("path:{}", path)`. Flakerefs are URL-like, so a space in the
-project path (or `%`, `?`, `#`) is not understood by
-`builtins.parseFlakeRef`, and NEF builds under such a directory fail.
-The issue shows that `path:/tmp/space%20demo` round-trips correctly
-while the raw form does not.
-
-**Fix.** A small helper, `path_flakeref_string`, percent-encodes `%`,
-`?`, `#`, `"`, `\`, whitespace and control characters, and leaves
-everything else (including non-ASCII) untouched. `from_path` uses it;
-all callers (`build.rs`, `develop.rs`, `publish.rs`) go through
-`from_path`, so they are covered.
-
-**Test.** Unit tests on the helper (plain path unchanged, space and URL
-delimiters encoded, non-ASCII kept). The space/delimiter case reproduces
-the issue's rejected string (`path:/tmp/space demo/...`) with the
-previous `format!` and passes with the fix. They don't need nix; a bats
-test (`develop.bats`) builds an expression from a project directory
-containing a space; it was not run locally (no nix available) and is
-left to CI.
-
-Disclosure: this change
-
-**File**: `.github/CONTRIBUTORS.csv` (modified, +1/-0)
-```diff
-@@ -33,3 +33,4 @@ yes,jsoref,Josh Soref,<jsoref@gmail.com>
- yes,esteve,Esteve Fernández,<github@nara.ac>
- yes,fzakaria,Farid Zakaria,<farid.m.zakaria@gmail.com>
- yes,nixfred,Fred Nix,<frednix@gmail.com>
-+yes,pcbeingused333,Alex Castillo,<alex.castillog33@gmail.com>
-```
-
-**File**: `Cargo.lock` (modified, +1/-0)
-```diff
-@@ -3167,6 +3167,7 @@ dependencies = [
-  "httpmock",
-  "indent",
-  "indoc",
-+ "percent-encoding",
-  "rnix",
-  "rowan",
-  "serde",
-```
-
-**File**: `Cargo.toml` (modified, +1/-0)
-```diff
-@@ -86,6 +86,7 @@ nix = { version = "0.31", features = ["signal", "process", "user", "fs"] }
- # uses, because native-tls takes precedence.
- oauth2 = { version = "5.0", default-features = false, features = ["reqwest"] }
- path-dedot = "3.1.1"
-+percent-encoding = "2.3"
- pollster = "0.4.0"
- progenitor-client = "0.11.2"
- proptest = "1.9.0"
-```
-
-**File**: `cli/nef-lock-catalog/Cargo.toml` (modified, +1/-0)
-```diff
-@@ -11,6 +11,7 @@ anyhow.workspace = true
- clap.workspace = true
- indent.workspace = true
- indoc.workspace = true
-+percent-encoding.workspace = true
- url.workspace = true
- serde_json.workspace = true
- serde.workspace = true
-```
-
-**File**: `cli/nef-lock-catalog/src/lock/flakeref.rs` (modified, +54/-3)
-```diff
-@@ -2,6 +2,7 @@ use std::path::Path;
- use std::str::FromStr;
- 
- use anyhow::{Context, Result};
-+use percent_encoding::{AsciiSet, NON_ALPHANUMERIC, utf8_percent_encode};
- use serde::{Deserialize, Serialize};
- use serde_json::{Value, json};
- use url::Url;
-@@ -72,11 +73,24 @@ impl TryFrom<Value> for NixFlakeref {
-     }
- }
- 
-+/// Format a filesystem path as a `path:` flakeref string.
-+/// Keep path separators and URI-unreserved characters; Nix decodes the rest.
-+fn path_flakeref_string(path: &Path) -> String {
-+    const PATH_FLAKEREF_SET: &AsciiSet = &NON_ALPHANUMERIC
-+        .remove(b'/')
-+        .remove(b'-')
-+        .remove(b'.')
-+        .remove(b'_')
-+        .remove(b'~');
-+    format!(
-+        "path:{}",
-+        utf8_percent_encode(&path.to_string_lossy(), PATH_FLAKEREF_SET)
++
++/// A NEF lookup entry with no inputs, sourced from a fixed git revision.
++pub(crate) fn nef_entry(catalog: &str, attr_path: &[&str]) -> LockedInputEntry {
++    entry(
++        catalog,
++        attr_path,
++        BuildType::Nef,
++        git_source("https://example.com/repo", "abc"),
 +    )
 +}
-+
- impl NixFlakeref {
-     pub fn from_path(path: impl AsRef<Path>) -> Result<Self> {
--        format!("path:{}", path.as_ref().to_string_lossy())
--            .as_str()
--            .try_into()
-+        path_flakeref_string(path.as_ref()).as_str().try_into()
-     }
- 
-     pub fn from_git_with_dir(url: &Url, dir: Option<&Path>) -> Result<Self> {
-@@ -154,3 +168,40 @@ impl From<&crate::lock::build_lock::GitSource> for RawNixFlakerefAttrs {
-         }))
-     }
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+
-+    #[test]
-+    fn path_flakeref_plain_path_is_unchanged() {
-+        assert_eq!(
-+            path_flakeref_string(Path::new("/tmp/demo/.flox")),
-+            "path:/tmp/demo/.flox"
-+        );
-+    }
-+
-+    #[test]
-+    fn path_flakeref_encodes_spaces_and_url_delimiters() {
-+        assert_eq!(
-+            path_flakeref_string(Path::new("/tmp/space demo/a%b?c#d")),
-+            "path:/tmp/space%20demo/a%25b%3Fc%23d"
-+        );
-+    }
-+
-+    #[test]
-+    fn path_flakeref_encodes_punctuation() {
-+        assert_eq!(
-+            path_flakeref_string(Path::new("/tmp/a^b'c’d")),
-+            "path:/tmp/a%5Eb%27c%E2%80%99d"
-+        );
-+    }
-+
-+    #[test]
-+    fn path_flakeref_encodes_non_ascii_characters() {
-+        assert_eq!(
-+            path_flakeref_string(Path::new("/tmp/café dir")),
-+            "path:/tmp/caf%C3%A9%20dir"
-+        );
-+    }
-+}
-```
-
-**File**: `cli/tests/develop.bats` (modified, +17/-0)
-```diff
-@@ -512,3 +512,20 @@ logged_catalog_lock_path() {
-   link_count="$(find "$PROJECT_DIR/.flox/run" -maxdepth 1 -name "$NIX_SYSTEM.greet.develop*" | wc -l)"
-   assert_equal "$link_count" 1
- }
-+
-+@test "develop: builds a Nix expression from a project directory containing a space" {
-+  project_setup_common
-+  PROJECT_DIR="${BATS_TEST_TMPDIR?}/project with space"
-+  rm -rf "${PROJECT_DIR?}"
-+  mkdir -p "$PROJECT_DIR"
-+  popd >/dev/null || true
-+  pushd "$PROJECT_DIR" >/dev/null || return
-+  "$FLOX_BIN" init -d "$PROJECT_DIR"
-+  git_init_project
-+  nef_package_setup greet
-+  export _FLOX_USE_CATALOG_MOCK="$UNIT_TEST_GENERATED/get_base_catalog_nixpkgs_url.yaml"
-+
-+  run "$FLOX_BIN" build -d "$PROJECT_DIR" greet
-+  assert_success
-+  assert [ -e "$PROJECT_DIR/result-greet/hi" ]
-+}
-```
-
-**File**: `package-builder/flox-build.mk` (modified, +3/-1)
-```diff
-@@ -322,8 +322,10 @@ define COMMON_BUILD_VARS_template =
- 	@# Having confirmed the links, create the $(_pvarname)_resultLinks_json
- 	@# variable used to construct build-meta.json in the form of a json string
- 	@# like '{ "result-link1":"store-path1","result-link2":"store-path2",... }'.
-+	@# Entries are space-separated, but $(PWD) may itself contain spaces, so
-+	@# only replace the space between the closing and opening quotes.
- 	$$(eval $(_pvarname)_resultLinks_json = \
--	  { $$(subst $$(space),$$(comma),$$($(_pvarname)_resultLinks)) })
-+	  { $$(subst "$$(space)","$$(comma)",$$($(_pvarname)_resultLinks)) })
- 
- endef
- 
-```
-
-**File**: `pkgs/crate2nix/Cargo.nix` (modified, +4/-0)
-```diff
-@@ -10693,6 +10693,10 @@ rec {
-             name = "indoc";
-             packageId = "indoc";
-           }
-+          {
-+            name = "percent-encoding";
-+            packageId = "percent-encoding";
-+          }
-           {
-             name = "rnix";
-             packageId = "rnix";
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4882** (2026-11-13): chore(agents): factor out skills from AGENTS.md (@mkenigs)
 - **PR #4876** (2026-11-10): fix(show): clarify when no builds are available (@mkenigs)
 - **PR #4873** (2026-11-12): Community ci (@ysndr)
 - **PR #4871** (2026-11-10): ci(github-actions): bump macos runner for nix-plugin and CLI-unit jobs (@ysndr)
 - **PR #4870** (2026-11-12): fix(nef): percent-encode path flakerefs so paths with spaces work (@pcbeingused333)
 - **PR #4863** (2026-11-09): chore: community CI (@mkenigs)
-- **PR #4861** (2026-11-09): fix(modules): trust the floxhub-1 key so published packages install (@nixfred)
 
 ---
 
@@ -2405,30 +2633,55 @@ Disclosure: this change
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. activate): let the shell hook follow Flox upgrades (#4848)
+## X. build): add `--override-input` to `flox build` and `flox develop`
 
 **RULE**:
-When implementing operations in `cli/flox-activations/src/gen_rc/bash.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in flox/flox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cli/flox-rust-sdk/src/providers/build.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in flox/flox. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cc3dcd2c`: activate): let the shell hook follow Flox upgrades (#4848). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2e05186a`: build): add `--override-input` to `flox build` and `flox develop`. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cli/flox-activations/src/gen_rc/bash.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cli/flox-rust-sdk/src/providers/build.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-              _flox_vars="$(command /flox hook-env --shell bash --shell-pid $$ --invocation-types "${_FLOX_INVOCATION_TYPES:-}")";
-              _flox_vars="$(command /flox hook-env --shell bash --shell-pid $$ --invocation-types "${_FLOX_INVOCATION_TYPES:-}")";
+use std::env;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-              _flox_vars="$("/flox" hook-env --shell bash --shell-pid $$ --invocation-types "${_FLOX_INVOCATION_TYPES:-}")";
-              _flox_vars="$("/flox" hook-env --shell bash --shell-pid $$ --invocation-types "${_FLOX_INVOCATION_TYPES:-}")";
+// Induced defect failure mode:
+use std::{env, fs};
+/// The marker file that promotes a package directory to a deep override,
+/// mirroring `deepOverrideMarkerFile` in
+/// `package-builder/nef/lib/deepOverrides.nix`.
+const DEEP_OVERRIDE_MARKER_FILE: &str = "deep-override";
+
+/// One name's classified `pkgs/` entry, for the collision rule
+/// [deep_override_attr_paths_in] follows: a `.nix` file replaces a
+/// same-named directory in the scan, never the reverse.
+#[derive(Debug, Clone)]
+enum PkgsEntry {
+    NixFile,
+    Directory(PathBuf),
+}
+
+/// Attribute paths of the deep overrides declared under a repository's
+/// `pkgs/` directory (FLO-95), for reporting to the catalog at publish
+/// time.
+///
+/// Mirrors how NEF classifies `pkgs/` entries
+/// (`package-builder/nef/lib/dirToAttrs.nix`) and marks one as a deep
+/// override (`isMarkedAsDeepOverride` in
+/// `package-builder/nef/lib/deepOverrides.nix`): a directory holding a
+/// `default.nix` is a package, and a package is a deep override iff it
+/// also holds a `deep-override` file beside that `default.nix`. A
+/// package directory is never recursed into. A directory without
+/// `default.nix` is a package set and is recursed into, so a nested
+/// override is reporte
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cc3dcd2c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2e05186a` are properly handled with clean fallback behavior.

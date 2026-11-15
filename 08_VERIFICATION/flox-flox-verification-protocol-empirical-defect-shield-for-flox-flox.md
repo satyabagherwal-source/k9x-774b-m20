@@ -4,45 +4,31 @@
 {
   "source_repository": "flox/flox",
   "source_url": "https://github.com/flox/flox",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "d1b1f5f7",
+  "license": "GPL-2.0",
+  "timestamp": "2026-11-15T03:34:24.081Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-flox-flox",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [flox/flox](https://github.com/flox/flox) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [flox/flox](https://github.com/flox/flox) (Revision: `d1b1f5f7`).  
+> **License**: GPL-2.0 | **Timestamp**: `2026-11-15T03:34:24.081Z`  
+> **Learning ID**: `learn-github-flox-flox`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `flox/flox` (Commit: `historical`)
+- **Target Repository**: `flox/flox` (Commit: `d1b1f5f7`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/flox-flox-learnings.md`  
-> **Source**: github ([https://github.com/flox/flox](https://github.com/flox/flox))  
-> **Source Version**: `9a1a9e7c`  
-> **License**: GPL-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T18:16:45.724Z  
-> **Learning ID**: `learn-github-flox-flox`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): flox/flox
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/flox-flox-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/flox/flox](https://github.com/flox/flox))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T18:11:44.806Z  
+> **Harvest Timestamp**: 2026-11-15T03:34:23.026Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: The Deterministic Foundation for your SDLC
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4201 stars
+- **Stars / Engagement**: 4206 stars
 
 ---
 
@@ -327,6 +313,13 @@ impl ClientHooks<RequestHooks> for crate::Client {
 //! only runs the hook from `PROMPT_COMMAND`, which a fork never evaluates,
 //! and fish has no forked subshells.
 //!
+//! `flox_bin` is the path an upgrade replaces, not the store path of the
+//! running binary (see `FLOX_BIN_FOR_SHELL` in the `flox` crate). It is
+//! user-controlled text, so each hook escapes it for its shell, and `command`
+//! (`exec` in tcsh, which only alias-expands the first word) keeps a user
+//! function or alias named `flox` from injecting output into the text the
+//! hook evals.
+//!
 //! Each hook also exports [`PROMPT_HOOK_VERSION_ENV`] =
 //! `<version>:true` at registration time (top level, so it is set before the
 //! first prompt); subshell activations export `<version>:false` instead (see
@@ -334,11 +327,14 @@ impl ClientHooks<RequestHooks> for crate::Client {
 //! subprocess such as `flox deactivate` can confirm a compatible hook is set
 //! up before writing an action file the hook would otherwise never consume.
 
+use std::borrow::Cow;
+
 use flox_core::activate::vars::{FLOX_INVOCATION_TYPES_VAR, FLOX_INVOCATION_TYPES_WIRE_VAR};
 use flox_core::hook_actions::{PROMPT_HOOK_VERSION_ENV, prompt_hook_marker_value};
 use indoc::formatdoc;
 
 pub fn bash_hook(flox_bin: &str) -> String {
+    let flox_bin = shell_escape::escape(Cow::Borrowed(flox_bin));
     let marker = prompt_hook_marker_value(true);
     formatdoc!(
         r#"
@@ -346,7 +342,7 @@ pub fn bash_hook(flox_bin: &str) -> String {
         _flox_hook() {{
           local _prev_exit=$?;
           local _flox_vars;
-          _flox_vars="$("{flox_bin}" hook-env --shell bash --shell-pid $$ --invocation-types "${{{FLOX_INVOCATION_TYPES_VAR}:-}}")";
+          _flox_vars="$(command {flox_bin} hook-env --shell bash --shell-pid $$ --invocation-types "${{{FLOX_INVOCATION_TYPES_VAR}:-}}")";
           trap -- '' SIGINT;
           eval "$_flox_vars";
           trap - SIGINT;
@@ -369,6 +365,7 @@ pub fn bash_hook(flox_bin: &str) -> String {
 // The `ZSH_SUBSHELL` check keeps the hook out of forked subshells (see the
 // module docs).
 pub fn zsh_hook(flox_bin: &str) -> String {
+    let flox_bin = shell_escape::escape(Cow::Borrowed(flox_bin));
     let marker = prompt_hook_marker_value(true);
     formatdoc!(
         r#"
@@ -376,7 +373,7 @@ pub fn zsh_hook(flox_bin: &str) -> String {
         _flox_hook() {{
           if (( ZSH_SUBSHELL )); then return; fi;
           local _flox_vars;
-          _flox_vars="$("{flox_bin}" hook-env --shell zsh --shell-pid $$ --invocation-types "${{{FLOX_INVOCATION_TYPES_VAR}:-}}")";
+          _flox_vars="$(command {flox_bin} hook-env --shell zsh --shell-pid $$ --invocation-types "${{{FLOX_INVOCATION_TYPES_VAR}:-}}")";
           trap -- '' SIGINT;
           eval "$_flox_vars";
           trap - SIGINT;
@@ -421,12 +418,13 @@ pub fn fish_hook(flox_bin: &str) -> String {
     //   - eval_after_arrow: PWD hook sets a flag; evaluation is deferred
     //     until before the next command executes (fish_preexec).
     //   - disable_arrow: no PWD reaction; only prompt-based evaluation.
+    let flox_bin = shell_escape::escape(Cow::Borrowed(flox_bin));
     let marker = prompt_hook_marker_value(true);
     formatdoc!(
         r#"
         set -gx {PROMPT_HOOK_VERSION_ENV} {marker};
         function _flox_hook --on-event fish_prompt;
-            eval ("{flox_bin}" hook-env --shell fish --shell-pid $fish_pid --invocation-types "${FLOX_INVOCATION_TYPES_VAR}" | string collect);
+            eval (command {flox_bin} hook-env --shell fish --shell-pid $fish_pid --invocation-types "${FLOX_INVOCATION_TYPES_VAR}" | string collect);
             if test "$FLOX_AUTO_ACTIVATE_FISH_MODE" != "disable_arrow";
                 set -g _flox_pwd_hook_active 1;
             end;
@@ -436,14 +434,14 @@ pub fn fish_hook(flox_bin: &str) -> String {
                 if test "$FLOX_AUTO_ACTIVATE_FISH_MODE" = "eval_after_arrow";
                     set -g _flox_env_again 0;
                 else;
-                    eval ("{flox_bin}" hook-env --shell fish --shell-pid $fish_pid --invocation-types "${FLOX_INVOCATION_TYPES_VAR}" | string collect);
+                    eval (command {flox_bin} hook-env --shell fish --shell-pid $fish_pid --invocation-types "${FLOX_INVOCATION_TYPES_VAR}" | string collect);
                 end;
             end;
         end;
         function _flox_hook_preexec --on-event fish_preexec;
             if set -q _flox_env_again;
                 set -e _flox_env_again;
-                eval ("{flox_bin}" hook-env --shell fish --shell-pid $fish_pid --invocation-types "${FLOX_INVOCATION_TYPES_VAR}" | string collect);
+                eval (command {flox_bin} hook-env --shell fish --shell-pid $fish_pid --invocation-types "${FLOX_INVOCATION_TYPES_VAR}" | string collect);
             end;
             set -e _flox_pwd_hook_active;
         end;
@@ -474,17 +472,7 @@ pub fn fish_hook(flox_bin: &str) -> String {
 //   `unsetenv` immediately after, so it never outlives the hook run.
 //
 // Exiting from the hook is also awkward: if `exit` unwinds out of the eval'd
-// `hook-env` output, tcsh treats the special alias as broken, prints
-// "Faulty alias 'precmd' removed.", deletes the alias, and does NOT exit. An
-// `exit` at the alias-body top level is fine, so for an interactive
-// deactivation `hook-env` emits `set _flox_exit=1` (see
-// `emit_deactivate_script` in the `flox` crate) and the alias body checks the
-// flag after the eval completes — after the `unsetenv`, so the wire variable
-// dies with the hook run even when the shell exits.
 //
-// tcsh has nothing like `ZSH_SUBSHELL` to keep the hook out of forked
-// subshells (see the module docs), so `hook-env` detects the fork instead:
-// `exec` makes
 ```
 
 ### Core Architecture Module: `cli/flox-core/src/activate/context.rs`
@@ -609,7 +597,8 @@ pub struct ActivateCtx {
     #[serde(default)]
     pub disable_hook: bool,
 
-    /// Path to the flox binary, used for generating hook code.
+    /// The command the generated hook code runs to reach flox (see
+    /// `FLOX_BIN_FOR_SHELL` in the `flox` crate).
     #[serde(default)]
     pub flox_bin: String,
 
@@ -788,9 +777,7 @@ mod tests {
             (InvocationType::Interactive, InvocationKind::Interactive),
             (
                 InvocationType::ShellCommand("echo hi".to_string()),
-                InvocationKind::ShellCommand,
-            ),
-           
+                I
 ```
 
 ### Core Architecture Module: `cli/flox-core/src/activate/mod.rs`
@@ -1470,1047 +1457,1174 @@ impl ActivateEnvironmentRef {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `12b42fe6` (2026-11-09)
-**Commit Message**: fix(telemetry): keep metrics files out of the current directory on config errors (#4762)
+### Incident Patch 1: `2e05186a` (2026-11-13)
+**Commit Message**: feat(build): add `--override-input` to `flox build` and `flox develop` (#4856)
 
-When Flox can't parse its config, every invocation now prints the parse
-error and exits 1, including `--help` and shell completion. Flox no
-longer falls back to the default config, which has metrics on and empty
-dirs. So it no longer creates `metrics-uuid` and `metrics-lock` in the
-current directory, prints the first-run notice, or starts Sentry.
+## Proposed Changes
 
-**Worth checking:** `--help` and completion now fail on an invalid
-config, where they used to exit 0. Every subcommand, `flox config`
-included, already failed on one. `run()` now takes the config `main()`
-parsed rather than parsing it again.
+Adds `--override-input <input> <flakeref>` to `flox build` and `flox
+develop`. It builds a Nix expression build against a different source
+for one catalog input, for example a local checkout with changes that
+are not published yet:
 
-**Not covered:** an empty or relative `FLOX_CACHE_DIR`, `FLOX_DATA_DIR`
-or `FLOX_STATE_DIR` still resolves against the current directory.
-`FLOX_DISABLE_METRICS` still accepts only `true`/`false`. Files that
-earlier versions left behind are not cleaned up.
-
-## Release Notes
-
-- Fixed: Flox no longer writes `metrics-uuid` and `metrics-lock` into
-the current directory when it can't parse its configuration. It now
-reports the error for every command, including `flox --help`.
-
-Stack: 2 of 6, merge bottom-up. Refs DEV-
-
-**File**: `cli/flox/src/main.rs` (modified, +12/-4)
-```diff
-@@ -45,8 +45,7 @@ mod beta;
- mod commands;
- mod utils;
- 
--async fn run(args: FloxArgs) -> Result<()> {
--    let config = Config::parse()?;
-+async fn run(args: FloxArgs, config: Config) -> Result<()> {
-     args.handle(config).await?;
-     Ok(())
- }
-@@ -119,7 +118,16 @@ fn main() -> ExitCode {
-         return ExitCode::from(1);
-     }
- 
--    let config = Config::parse().unwrap_or_default();
-+    // Exit rather than fall back to the defaults, which enable metrics and
-+    // leave the data and cache dirs empty, so they would create the metrics
-+    // UUID in the current directory whatever the unparsed sources set.
-+    let config = match Config::parse() {
-+        Ok(config) => config,
-+        Err(err) => {
-+            message::error(format!("{err:#}"));
-+            return ExitCode::from(1);
-+        },
-+    };
-     let metrics_uuid = if !config.flox.disable_metrics {
-         init_telemetry_uuid(&config.flox.data_dir, &config.flox.cache_dir)
-             .and_then(|_| read_metrics_uuid(&config))
-@@ -206,7 +214,7 @@ fn main() -> ExitCode {
-     let runtime = tokio::runtime::Runtime::new().unwrap();
- 
-     let dispatch_start = Instant::now();
--    let result = runtime.block_on(run(args));
-+    let result = runtime.block_on(run(args, config.clone()));
- 
-     // Print errors; derive the exit code and the telemetry `error_kind`.
-     let (code, error_kind): (u8, Option<&'static str>) = match &result {
+```console
+$ flox build --override-input catalogs.myorg.hello path:../hello app
+ℹ Overriding catalogs.myorg.hello with path:../hello.
 ```
 
-**File**: `cli/tests/config-errors.bats` (added, +80/-0)
+The override is applied to the in-memory catalog lock before it is
+written for the builder. The committed `.flox/catalog.lock` is not
+changed.
+
+Resolves
+[ECO-315](https://linear.app/floxdotdev/issue/ECO-315/add-override-input-support-to-flox-build).
+
+### How an override is applied
+
+`nef_lock_catalog::override_input(lock, client, reference, flakeref)`:
+
+1. Refuses a wildcard reference, and a reference the lock does not
+contain (listing what it does contain). Both happen before anything is
+fetched.
+2. Fetches the flakeref with `nix flake prefetch`. The new source is the
+prefetch's `locked` attrs, with `dir` pointing at `.flox` beneath any
+`dir` the flakeref names.
+3. Scans the overridden package in the fetched tree. Cat
+
+**File**: `cli/flox-rust-sdk/src/providers/build.rs` (modified, +96/-256)
 ```diff
-@@ -0,0 +1,80 @@
-+#! /usr/bin/env bats
-+# -*- mode: bats; -*-
-+# ============================================================================ #
-+#
-+# Test that a config that does not parse is an error for every invocation,
-+# and creates no telemetry state (no device ID, no Sentry client) and no files
-+# in the current directory.
-+#
-+# ---------------------------------------------------------------------------- #
-+
-+load test_support.bash
-+
-+# bats file_tags=config,telemetry
-+
-+# ---------------------------------------------------------------------------- #
-+
-+setup() {
-+  common_test_setup
-+  setup_isolated_flox
-+  # Turn metrics on, as on a user's machine, so that falling back to the
-+  # default config would create telemetry state.
-+  export FLOX_DISABLE_METRICS=false
-+  export _FLOX_METRICS_URL_OVERRIDE="http://127.0.0.1:1/legacy"
-+  export _FLOX_METRICS_URL_V2_OVERRIDE="http://127.0.0.1:1/v2"
-+  export PROJECT_DIR="${BATS_TEST_TMPDIR?}/cwd"
-+  mkdir -p "$PROJECT_DIR"
-+  cd "$PROJECT_DIR" || return
-+}
-+
-+assert_cwd_empty() {
-+  run ls -A "$PROJECT_DIR"
-+  assert_success
-+  assert_output ""
-+}
-+
-+# ---------------------------------------------------------------------------- #
-+
-+@test "invalid FLOX_DISABLE_METRICS creates no device ID" {
-+  FLOX_DISABLE_METRICS=1 run "$FLOX_BIN" --help
-+  assert_failure
-+  assert_output --partial "Could not parse config"
-+
-+  # Allow the detached telemetry sender, which would log into the current
-+  # directory if it ran with the default config.
-+  _FLOX_TESTING_DISABLE_BG_SIDE_EFFECTS=false _FLOX_FORCE_FLUSH_METRICS=true \
-+    FLOX_DISABLE_METRICS=garbage run "$FLOX_BIN" envs --active
-+  assert_failure
-+  assert_output --partial "Could not parse config"
-+
-+  assert_cwd_empty
-+  assert [ ! -e "$FLOX_DATA_DIR/metrics-uuid" ]
-+}
-+
-+@test "malformed flox.toml creates no device ID" {
-+  # A quoted boolean is a string, which does not parse as `disable_metrics`.
-+  unset FLOX_DISABLE_METRICS
-+  mkdir -p "$FLOX_CONFIG_DIR"
-+  echo 'disable_metrics = "true"' > "$FLOX_CONFIG_DIR/flox.toml"
-+
-+  run "$FLOX_BIN" envs --active
-+  assert_failure
-+  assert_output --partial "Could not parse config"
-+
-+  assert_cwd_empty
-+  assert [ ! -e "$FLOX_DATA_DIR/metrics-uuid" ]
-+}
-+
-+@test "invalid config does not initialize Sentry" {
-+  export FLOX_SENTRY_DSN="http://public@127.0.0.1:1/1"
-+  export RUST_LOG="flox_core::sentry=debug"
-+
-+  # A valid config with metrics on initializes Sentry.
-+  run "$FLOX_BIN" --help
-+  assert_success
-+  assert_output --partial "Initializing Sentry"
-+
-+  FLOX_DISABLE_METRICS=1 run "$FLOX_BIN" --help
-+  assert_failure
-+  refute_output --partial "Initializing Sentry"
-+}
-```
-
----
-
-### Incident Patch 2: `ef109fde` (2026-11-09)
-**Commit Message**: fix(telemetry): make reset-metrics delete buffered events (#4760)
-
-`flox reset-metrics` now deletes the unsent v2 events
-(`events-v2.json`), the legacy buffer, `send-telemetry.log`, and the
-buffers' lock files, along with the device ID. It records no event,
-sends no Sentry trace under the ID it deletes, and doesn't start the
-background sender.
-
-Before, the v2 buffer survived the reset, so the next flush sent events
-carrying the old ID. That defeated the reset.
-
-**Worth checking:** the Sentry client is unbound
-(`flox_core::sentry::stop_sentry_reporting`) before the handler's span
-starts. The device ID is deleted last, so a failed deletion leaves the
-old ID with its events, and rerunning the command finishes the job.
-`is_telemetry_reset_command` is checked in the dispatcher and in
-`send_telemetry::spawn_if_due_with`.
-
-**Not covered:** events already sent; a `send-telemetry` child or
-another `flox` process that is already running; upgrade-check logs
-inside environments. While the lock files are being deleted, a waiting
-process and a new one don't exclude each other for a short window
-(documented on `EventsBuffer::delete`).
-
-<details><summary>Tests and open questions</summary>
-
-- Unit 
-
-**File**: `cli/flox-core/src/sentry.rs` (modified, +34/-0)
-```diff
-@@ -59,6 +59,16 @@ pub fn init_sentry(release_name: &str, metrics_uuid: Uuid) -> Option<ClientInitG
-     Some(sentry)
+@@ -1,8 +1,8 @@
+ use std::collections::{BTreeMap, HashMap};
++use std::env;
+ use std::path::{Path, PathBuf};
+ use std::process::{Command, ExitStatus, Stdio};
+ use std::sync::LazyLock;
+-use std::{env, fs};
+ 
+ use flox_manifest::interfaces::AsLatestSchema;
+ use flox_manifest::lockfile::Lockfile;
+@@ -800,115 +800,6 @@ pub fn nix_expression_dir_in(dot_flox_path: impl AsRef<Path>) -> PathBuf {
+     dot_flox_path.as_ref().join("pkgs")
  }
  
-+/// Stop reporting events and transactions to Sentry for the rest of the process.
-+///
-+/// Call it before the span or event that must not be reported starts,
-+/// because a transaction keeps the client it started with.
-+/// It affects the calling thread's hub, which on the main thread is the
-+/// process hub that [init_sentry] bound the client to.
-+pub fn stop_sentry_reporting() {
-+    sentry::Hub::current().bind_client(None);
-+}
-+
- /// Client options for every flox binary that reports to Sentry, minus the DSN.
- fn client_options(release_name: &str, sentry_env: String) -> ClientOptions {
-     ClientOptions {
-@@ -145,6 +155,30 @@ mod tests {
-         (events, transactions)
-     }
- 
-+    #[test]
-+    fn stopped_reporting_sends_neither_events_nor_transactions() {
-+        let options = sentry::apply_defaults(client_options("flox-test", "test".to_string()));
-+        let sent_item_counts = [false, true].map(|stopped| {
-+            sentry::test::with_captured_envelopes_options(
-+                || {
-+                    if stopped {
-+                        stop_sentry_reporting();
-+                    }
-+                    sentry::capture_message("error", sentry::Level::Error);
-+                    sentry::start_transaction(sentry::TransactionContext::new("transaction", "op"))
-+                        .finish();
-+                },
-+                options.clone(),
-+            )
-+            .iter()
-+            .flat_map(|envelope| envelope.items())
-+            .count()
-+        });
-+
-+        // The first count is the control: without stopping, both are sent.
-+        assert_eq!(sent_item_counts, [2, 0]);
-+    }
-+
-     #[test]
-     fn events_and_transactions_omit_hostname() {
-         let options = client_options("flox-test", "test".to_string());
-```
-
-**File**: `cli/flox-events/src/buffer.rs` (modified, +61/-0)
-```diff
-@@ -179,6 +179,35 @@ impl EventsBuffer {
-         }))
-     }
- 
-+    /// Delete the buffer file and its lock file from `data_dir`, discarding
-+    /// every buffered event, including entries this binary cannot parse.
-+    /// Succeeds without doing anything when `data_dir` does not exist.
-+    ///
-+    /// Blocks until the file lock is acquired, so no other process is
-+    /// mid-write. The lock file is deleted while still held. A process that
-+    /// was already waiting on it then locks the deleted file, while a process
-+    /// that starts later creates and locks a new one, so those two processes
-+    /// do not exclude each other until the first one releases its lock.
-+    pub fn delete(data_dir: &Path) -> Result<()> {
-+        if !data_dir
-+            .try_exists()
-+            .context("Could not check the v2 events buffer directory")?
-+        {
-+            return Ok(());
-+        }
-+
-+        let lock_file_path = data_dir.join(EVENTS_LOCK_FILE_NAME);
-+        let events_lock =
-+            open_lock_file(&lock_file_path).context("Could not open v2 events lock file")?;
-+        events_lock
-+            .lock()
-+            .context("Could not lock v2 events buffer")?;
-+
-+        remove_file_if_present(&data_dir.join(EVENTS_BUFFER_FILE_NAME))
-+            .context("Could not delete v2 events buffer file")?;
-+        remove_file_if_present(&lock_file_path).context("Could not delete v2 events lock file")
-+    }
-+
-     pub(crate) fn is_expired(&self, expiry: Duration) -> bool {
-         let now = OffsetDateTime::now_utc();
-         self.oldest_timestamp()
-@@ -313,6 +342,13 @@ impl EventsBuffer {
-     }
- }
- 
-+fn remove_file_if_present(path: &Path) -> std::io::Result<()> {
-+    match std::fs::remove_file(path) {
-+        Err(err) if err.kind() == std::io::ErrorKind::NotFound => Ok(()),
-+        result => result,
-+    }
-+}
-+
- #[cfg(test)]
- mod tests {
-     use super::*;
-@@ -369,4 +405,29 @@ mod tests {
-             "the sent entry is drained and the unreadable one is written back"
-         );
-     }
-+
-+    #[test]
-+    fn delete_removes_the_buffer_with_unreadable_entries_and_the_lock_file() {
-+        let dir = tempfile::tempdir().unwrap();
-+        std::fs::write(
-+            dir.path().join(EVENTS_BUFFER_FILE_NAME),
-+            format!(
-+                "{}\n{}\n",
-+                envelope("cli.environment.delete"),
-+                envelope("cli.environment.from.the.future"),
-+            ),
-+        )
-+        .unwrap();
-+        drop(EventsBuffer::read(dir.path()).unwrap());
-+
-+        EventsBuffer::delete(dir.path()).unwrap();
-+
-+        let remaining: Vec<_> = std::fs::read_dir(dir.path()).unwrap().collect();
-+        assert!(remaining.is_empty(), "left behind: {remaining:?}");
-+
-+        EventsBuffer::delete(dir.path()).expect("deleting a missing buffer succeeds");
-+        EventsBuffer::delete(&dir.path().join("missing"))
-+            .expect("deleting from a missing directory succeeds");
-+        assert!(!dir.path().join("missing").exists());
-+    }
- }
-```
-
-**File**: `cli/flox/src/commands/general.rs` (modified, +92/-22)
-```diff
-@@ -6,6 +6,7 @@ use anyhow::{Context, Result};
- use bpaf::Bpaf;
- use flox_config::{Config, FLOX_CONFIG_FILE, ReadWriteError};
- use flox_core::open_lock_file;
-+use flox_events::{EventsBuffer, EventsHub};
- use flox_rust_sdk::flox::Flox;
- use indoc::indoc;
- use serde::Serialize;
-@@ -15,6 +16,7 @@ use toml_edit::{Key, TomlError};
- use tracing::{debug, instrument};
- 
- use crate::subcommand_metric;
-+use crate::utils::detached::{SEND_TELEMETRY_LOG_NAME, send_telemetry_log_dir};
- use crate::utils::message;
- use crate::utils::metrics::{
-     METRICS_EVENTS_FILE_NAME,
-@@ -28,32 +30,18 @@ pub struct ResetMetrics {}
- impl ResetMetrics {
-     #[instrument(name = "reset-metrics", skip_all)]
-     pub async fn handle(self, flox: Flox) -> Result<()> {
--        subcommand_metric!("reset-metrics");
--        let metrics_lock = open_lock_file(flox.cache_dir.join(METRICS_LOCK_FILE_NAME))?;
--        // Hand the file back out of the closure, so the lock is held while
--        // the metrics files are removed rather than dropped with the closure.
--        let _metrics_lock =
--            tokio::task::spawn_blocking(move || metrics_lock.lock().map(|()| metrics_lock))
--                .await??;
+-/// The marker file that promotes a package directory to a deep override,
+-/// mirroring `deepOverrideMarkerFile` in
+-/// `package-builder/nef/lib/deepOverrides.nix`.
+-const DEEP_OVERRIDE_MARKER_FILE: &str = "deep-override";
 -
--        if let Err(err) =
--            tokio::fs::remove_file(flox.cache_dir.join(METRICS_EVENTS_FILE_NAME)).await
--        {
--            match err.kind() {
--                std::io::ErrorKind::NotFound => {},
--                _ => Err(err)?,
--            }
+-/// One name's classified `pkgs/` entry, for the collision rule
+-/// [deep_override_attr_paths_in] follows: a `.nix` file replaces a
+-/// same-named directory in the scan, never the reverse.
+-#[derive(Debug, Clone)]
+-enum PkgsEntry {
+-    NixFile,
+-    Directory(PathBuf),
+-}
+-
+-/// Attribute paths of the deep overrides declared under a repository's
+-/// `pkgs/` directory (FLO-95), for reporting to the catalog at publish
+-/// time.
+-///
+-/// Mirrors how NEF classifies `pkgs/` entries
+-/// (`package-builder/nef/lib/dirToAttrs.nix`) and marks one as a deep
+-/// override (`isMarkedAsDeepOverride` in
+-/// `package-builder/nef/lib/deepOverrides.nix`): a directory holding a
+-/// `default.nix` is a package, and a package is a deep override iff it
+-/// also holds a `deep-override` file beside that `default.nix`. A
+-/// package directory is never recursed into. A directory without
+-/// `default.nix` is a package set and is recursed into, so a nested
+-/// override is reported with its full path, e.g.
+-/// `["setMakeScope", "makeScopeDependency"]`. A `.nix` file has no
+-/// directory of its own to hold the marker, so it is never an override.
+-/// Where a `.nix` file and a directory share a name, the file wins the name
+-/// (`dirToAttrs.nix`), so the directory is not scanned at all, marked or
+-/// not.
+-///
+-/// An absent `pkgs/` directory is a repository with no overrides, so
+-/// this returns an empty list rather than an error. The result is
+-/// sorted.
+-pub fn deep_override_attr_paths_in(dot_flox_path: impl AsRef<Path>) -> Vec<Vec<String>> {
+-    let mut attr_paths = Vec::new();
+-    scan_pkgs_dir_for_deep_overrides(
+-        &nix_expression_dir_in(dot_flox_path),
+-        &mut Vec::new(),
+-        &mut attr_paths,
+-    );
+-    attr_paths.sort();
+-    attr_paths
+-}
+-
+-/// Recursive worker for [deep_override_attr_paths_in]. `attr_path` is the
+-/// path to `dir` from the `pkgs/` root, mutated in place as a scratch
+-/// stack rather than rebuilt per call, and restored before returning so
+-/// a sibling directory sees the prefix as it found it.
+-fn scan_pkgs_dir_for_deep_overrides(
+-    dir: &Path,
+-    attr_path: &mut Vec<String>,
+-    out: &mut Vec<Vec<String>>,
+-) {
+-    let Ok(read_dir) = fs::read_dir(dir) else {
+-        return;
+-    };
+-    let entries: Vec<PathBuf> = read_dir.flatten().map(|entry| entry.path()).collect();
+-
+-    // Two passes so a `.nix` file always wins its name over a same-named
+-    // directory, regardless of the order `read_dir` happens to yield them.
+-    let mut by_name: BTreeMap<String, PkgsEntry> = BTreeMap::new();
+-    for path in &entries {
+-        if !path.is_dir() {
+-            continue;
 -        }
-+        // An event recorded from here on would carry the ID this command
-+        // deletes, and would recreate the v2 buffer.
-+        EventsHub::global().clear_client();
- 
--        if let Err(err) = tokio::fs::remove_file(flox.data_dir.join(METRICS_UUID_FILE_NAME)).await {
--            match err.kind() {
--                std::io::ErrorKind::NotFound => {},
--                _ => Err(err)?,
--            }
+-        let Some(name) = path.file_name().and_then(|name| name.to_str()) else {
+-            continue;
+-        };
+-        by_name.insert(name.to_string(), PkgsEntry::Directory(path.clone()));
+-    }
+-    for path in &entries {
+-        if path.extension().and_then(|ext| ext.to_str()) != Some("nix") {
+-            continue;
 -        }
-+        let data_dir = flox.data_dir.clone();
-+        let cache_dir = flox.cache_dir.clone();
-+        tokio::task::spawn_blocking(move || delete_device_id_and_buffers(&data_dir, &cache_dir))
-+            .await??;
+-        let Some(file_name) = path.file_name().and_then(|name| name.to_str()) else {
+-            continue;
+-        };
+-        // dirToAttrs.nix excludes any file ending in "flake.nix" from the
+-        // scan, not only a file named exactly that.
+-        if file_name.ends_with("flake.nix") {
+-            continue;
+-        }
+-        let Some(stem) = path.file_stem().and_then(|stem| stem.to_str()) else {
+-            continue;
+-        };
+-        by_name.insert(stem.to_string(), PkgsEntry::NixFile);
+-    }
+-
+-    for (name, entry) in by_name {
+-        let PkgsEntry::Directory(path) = entry else {
+-            continue;
+-        };
+-        if !path.join("default.nix").is_file() {
+-            attr_path.push(name);
+-            scan_pkgs_dir_for_deep_overrides(&path, attr_path, out);
+-            attr_path.pop();
+-            continue;
+-        }
+-        if path.join(DEEP_OVERRIDE_MARKER_FILE).is_file() {
+-            let mut marked_path = attr_path.clone();
+-            marked_path.push(name);
+-            out.push(marked_path);
+-        }
+-    }
+-}
+-
+ pub fn build_symlink_path(
+     environment: &impl Environment,
+     package: &str,
+@@ -1740,119 +1631,6 @@ mod tests {
+         assert_eq!(slug, "build.build_failure");
+     }
  
-         let notice = indoc! {"
-             Successfully reset telemetry ID for this machine!
-+            Deleted unsent telemetry events.
+-    /// A package directory marked with `deep-override` beside its
+```
+
+**File**: `cli/flox-rust-sdk/src/providers/publish.rs` (modified, +7/-5)
+```diff
+@@ -31,7 +31,7 @@ use git_url_parse::GitUrl;
+ use indexmap::IndexSet;
+ use indoc::{formatdoc, indoc};
+ use itertools::Itertools;
+-use nef_lock_catalog::{NixFlakeref, PackageClosure};
++use nef_lock_catalog::{NixFlakeref, PackageClosure, deep_override_attr_paths_in};
+ use thiserror::Error;
+ use tracing::{debug, instrument};
+ use url::Url;
+@@ -44,8 +44,8 @@ use super::build::{
+     PackageTarget,
+     PackageTargetError,
+     PackageTargetKind,
+-    deep_override_attr_paths_in,
+     find_toplevel_group_nixpkgs,
++    nix_expression_dir_in,
+ };
+ use super::buildenv::BuildEnvOutputs;
+ use super::git::{GitCommandError, GitCommandGetOriginError, GitCommandProvider, StatusInfo};
+@@ -818,9 +818,11 @@ where
+             // states that the repository declares no overrides, rather
+             // than leaving the field unstated for the server to guess at.
+             deep_overrides: Some(deep_overrides_for_wire(deep_override_attr_paths_in(
+-                self.env_metadata
+-                    .repo_root_path
+-                    .join(&self.env_metadata.rel_expression_build_base_dir),
++                nix_expression_dir_in(
++                    self.env_metadata
++                        .repo_root_path
++                        .join(&self.env_metadata.rel_expression_build_base_dir),
++                ),
+             ))?),
+         };
  
-             A new ID will be assigned next time you use Flox.
+```
+
+**File**: `cli/flox/doc/flox-build.md` (modified, +37/-0)
+```diff
+@@ -16,6 +16,7 @@ flox-build - Build packages with Flox
+ flox [<general-options>] build
+      [-d=<path>]
+      [--stability <stability>]
++     [--override-input <input> <flakeref>]...
+      [<package>]...
+ ```
  
-@@ -69,6 +57,43 @@ impl ResetMetrics {
+@@ -125,6 +126,24 @@ Catalog references resolve to the latest published versions and are
+ independent of `--stability`, which selects only the nixpkgs base
+ package set.
+ 
++### Overriding a catalog input
++
++`--override-input <input> <flakeref>` builds against a different source
++for one catalog input, such as a local checkout with changes that are not
++published yet.
++`<input>` names the package as the expressions reference it, for example
++`catalogs.myorg.hello`, and must be in the catalog lock the build uses.
++`<flakeref>` is a Nix flake reference to the repository that defines the
++package.
++Flox reads the package from `.flox/pkgs/` beneath the flakeref's `dir`,
++or beneath the repository root when the flakeref has no `dir`.
++A local path needs a scheme, as in `path:../hello` or `git+file:../hello`.
++
++Catalog references that the overriding source makes and the lock does not
++contain are resolved from the catalog.
++The override applies to the current invocation only.
++The committed `.flox/catalog.lock` is not changed.
++
+ # OPTIONS
+ 
+ `<package>`
+@@ -141,6 +160,14 @@ package set.
+     builds a manifest build reaches, which use the environment's revision.
+     Cannot be used with manifest builds.
+ 
++`--override-input <input> <flakeref>`
++:   Build against the source at `<flakeref>` for the catalog input
++    `<input>` (e.g. `catalogs.myorg.hello`), for this invocation only.
++    May be given more than once.
++    Applies only to Nix expression builds.
++    `<input>` must name a single package; wildcards are not accepted.
++    See "Overriding a catalog input" above.
++
+ 
+ ```{.include}
+ ./include/dir-environment-options.md
+@@ -232,6 +259,16 @@ mv dist $out/
+ npx serve result-app
+ ```
+ 
++## Building against a local checkout of a catalog input
++
++A package references `catalogs.myorg.hello`, and a checkout of the
++repository that publishes `hello` sits next to the project:
++
++```console
++$ flox build --override-input catalogs.myorg.hello path:../hello app
++ℹ Overriding catalogs.myorg.hello with path:../hello.
++```
++
+ # SEE ALSO
+ 
+ [`flox-build-clean(1)`](./flox-build-clean.md)
+```
+
+**File**: `cli/flox/doc/flox-develop.md` (modified, +7/-0)
+```diff
+@@ -16,6 +16,7 @@ flox-develop - Enter a development shell for a Nix expression build
+ flox [<general-options>] develop
+      [-d=<path>]
+      [--stability <stability>]
++     [--override-input <input> <flakeref>]...
+      [-c=<cmd>]
+      [<package>]
+ ```
+@@ -147,6 +148,12 @@ fails the same way `flox build` does on an empty project.
+     `--stability` does for [`flox-build(1)`](./flox-build.md). Pass the
+     same value to both so the shell and the build agree on their inputs.
+ 
++`--override-input <input> <flakeref>`
++:   Use the source at `<flakeref>` for the catalog input `<input>`
++    (e.g. `catalogs.myorg.hello`), exactly as `--override-input` does
++    for [`flox-build(1)`](./flox-build.md). May be given more than once.
++    The committed `.flox/catalog.lock` is not changed.
++
+ `-c`, `--command <cmd>`
+ :   Run a shell command string in the development shell instead of
+     entering it interactively, mirroring the `-c` flag of
+```
+
+**File**: `cli/flox/src/commands/build.rs` (modified, +74/-3)
+```diff
+@@ -33,7 +33,13 @@ use flox_rust_sdk::utils::{CommandExt, FLOX_INTERPRETER};
+ use floxhub_client::{BaseCatalogUrl, CatalogClientTrait, FloxhubClientError};
+ use indoc::formatdoc;
+ use itertools::Itertools;
+-use nef_lock_catalog::{NixFlakeref, catalog_lockfile_path, lock_project_catalog};
++use nef_lock_catalog::{
++    BuildLock,
++    CatalogRef,
++    NixFlakeref,
++    catalog_lockfile_path,
++    lock_project_catalog,
++};
+ use thiserror::Error;
+ use tracing::{debug, instrument, trace};
+ use url::Url;
+@@ -79,6 +85,47 @@ impl SystemOverride {
      }
  }
  
-+/// Delete the device ID, the two event buffers and the send-telemetry log,
-+/// which all hold the ID, and the buffers' lock files.
-+///
-+/// Holds the metrics lock throughout, so no process creates a new ID or
-+/// appends to the legacy buffer until the old ID is gone. Deletes the device
-+/// ID last, so when an earlier deletion fails, the old ID and the events
-+/// recorded under it stay together and rerunning the command finishes the
-+/// reset.
-+fn delete_device_id_and_buffers(data_dir: &Path, cache_dir: &Path) -> Result<()> {
-+    let metrics_lock_path = cache_dir.join(METRICS_LOCK_FILE_NAME);
-+    let metrics_lock =
-+        open_lock_file(&metrics_lock_path).context("Could not open metrics lock file")?;
-+    metrics_lock
-+        .lock()
-+        .context("Could not lock metrics lock file")?;
++// `--override-input <input> <flakeref>`, shared by `flox build` and
++// `flox develop`.
++#[derive(Debug, Bpaf, Clone)]
++#[bpaf(adjacent)]
++#[allow(clippy::manual_non_exhaustive)]
++pub struct OverrideInput {
++    /// Use a different source for a catalog input
++    #[bpaf(long("override-input"))]
++    _option: (),
 +
-+    remove_file_if_present(&cache_dir.join(METRICS_EVENTS_FILE_NAME))?;
-+    EventsBuffer::delete(data_dir)?;
-+    remove_file_if_present(&send_telemetry_log_dir(cache_dir).join(SEND_TELEMETRY_LOG_NAME))?;
-+    remove_file_if_present(&data_dir.join(METRICS_UUID_FILE_NAME))?;
++    /// The catalog input to override, as referenced in Nix expressions
++    /// (e.g. 'catalogs.myorg.hello')
++    #[bpaf(positional("input"))]
++    pub reference: CatalogRef,
 +
-+    // Best effort: the lock file holds no data. Deleting it while it is held
-+    // has the effect described on `EventsBuffer::delete`: a process already
-+    // waiting on it and a process that starts later do not exclude each other.
-+    if let Err(err) = remove_file_if_present(&metrics_lock_path) {
-+        debug!(error = %err, "Failed to delete metrics lock file");
++    /// The flakeref of the source to use instead (e.g. 'path:../hello')
++    #[bpaf(positional("flakeref"))]
++    pub flakeref: String,
++}
++
++/// Apply `--override-input` flags to the lock a build consumes, before the
++/// lock is written for the builder.
++pub(crate) async fn apply_override_inputs(
++    client: &impl CatalogClientTrait,
++    lock: &mut BuildLock,
++    override_inputs: &[OverrideInput],
++) -> Result<()> {
++    for OverrideInput {
++        reference,
++        flakeref,
++        ..
++    } in override_inputs
++    {
++        let parsed = NixFlakeref::try_from(flakeref.as_str())
++            .with_context(|| format!("Invalid flakeref '{flakeref}' for '--override-input'"))?;
++        nef_lock_catalog::override_input(lock, client, reference, &parsed).await?;
++        message::info(format!("Overriding {reference} with {flakeref}."));
 +    }
 +    Ok(())
 +}
 +
-+fn remove_file_if_present(path: &Path) -> Result<()> {
-+    match std::fs::remove_file(path) {
-+        Err(err) if err.kind() == io::ErrorKind::NotFound => Ok(()),
-+        result => result.with_context(|| format!("Could not delete {}", path.display())),
-+    }
-+}
-+
  #[derive(Bpaf, Clone)]
- #[bpaf(fallback(ConfigArgs::List))]
- pub enum ConfigArgs {
-@@ -288,4 +313,49 @@ mod tests {
-             invalid unquoted key, expected letters, numbers, `-`, `_`
-         "#});
-     }
+ pub struct Build {
+     #[bpaf(external(dir_environment_select), fallback(Default::default()))]
+@@ -140,6 +187,9 @@ enum SubcommandOrBuildTargets {
+         #[bpaf(external(system_override))]
+         system_override: SystemOverride,
+ 
++        #[bpaf(external(override_input), many)]
++        override_inputs: Vec<OverrideInput>,
 +
-+    fn sorted_entries(dir: &Path) -> Vec<String> {
-+        let mut names: Vec<String> = std::fs::read_dir(dir)
-+            .unwrap()
-+            .map(|entry| entry.unwrap().file_name().to_string_lossy().into_owned())
-+            .collect();
-+        names.sort();
-+        names
-+    }
-+
-+    #[test]
-+    fn delete_device_id_and_buffers_leaves_no_telemetry_files() {
-+        let data_dir = tempfile::tempdir().unwrap();
-+        let cache_dir = tempfile::tempdir().unwrap();
-+        let log_dir = send_telemetry_log_dir(cache_dir.path());
-+        std::fs::create_dir_all(&log_dir).unwrap();
-+        drop(EventsBuffer::read(data_dir.path()).unwrap());
-+   
-```
-
-**File**: `cli/flox/src/commands/mod.rs` (modified, +44/-1)
-```diff
-@@ -46,6 +46,7 @@ use bpaf::{Args, Bpaf, ParseFailure, Parser, ShellComp};
- use flox_config::{Config, EnvironmentTrust, FLOX_DIR_NAME, TokenStorageMode};
- use flox_core::data::environment_ref::{self, DEFAULT_NAME, RemoteEnvironmentRef};
- use flox_core::floxhub::{DEFAULT_FLOXHUB_URL, Floxhub};
-+use flox_core::sentry::stop_sentry_reporting;
- use flox_core::vars::FLOX_DISABLE_METRICS_VAR;
- use flox_events::{EventKind, EventsHub};
- use flox_manifest::interfaces::AsLatestSchema;
-@@ -274,6 +275,17 @@ pub struct Interrupted;
- impl FloxArgs {
-     /// Initialize the command line by creating an initial FloxBuilder
-     pub async fn handle(self, config: Config) -> Result<()> {
-+        // Sentry was initialized with the device ID that this command deletes,
-+        // and a span of the command would be reported under that ID.
-+        // Unbind before the handler's span starts; see `is_telemetry_reset_command`.
-+        if self
-+            .command
-+            .as_ref()
-+            .is_some_and(|command| is_telemetry_reset_command(command.subcommand_name()))
-+        {
-+            stop_sentry_reporting();
+         /// The package to build.
+         /// Corresponds to entries in the 'build' table in the environment's manifest.toml.
+         /// If not specified, all packages are built.
+@@ -198,6 +248,7 @@ impl Build {
+                 targets,
+                 base_catalog_url_select,
+                 system_override,
++                override_inputs,
+             } => {
+                 let env = self
+                     .environment
+@@ -210,6 +261,7 @@ impl Build {
+                     targets,
+                     base_catalog_url_select,
+                     system_override.into_inner(),
++                    override_inputs,
+                 )
+                 .await
+             },
+@@ -266,6 +318,7 @@ impl Build {
+         packages: Vec<String>,
+         nixpkgs_url_select: Option<BaseCatalogUrlSelect>,
+         system_override: Option<String>,
++        override_inputs: Vec<OverrideInput>,
+     ) -> Result<()> {
+         match &env {
+             ConcreteEnvironment::Path(_) => (),
+@@ -371,13 +424,28 @@ impl Build {
+             None => None,
+         };
+ 
+-        let catalog_lock = BuildLockGuard::for_expression_builds(
++        if !override_inputs.is_empty() && expression_lock_rel_paths.is_empty() {
++            bail!(formatdoc! {"
++                The '--override-input' option only applies to Nix expression builds.
++                None of the selected packages is a Nix expression build.
++                Omit '--override-input', or name a Nix expression build.
++            "});
 +        }
-+
-         // ensure xdg dirs exist
-         tokio::fs::create_dir_all(&config.flox.config_dir).await?;
-         tokio::fs::create_dir_all(&config.flox.data_dir).await?;
-@@ -445,8 +457,10 @@ impl FloxArgs {
-             .as_ref()
-             .map(Commands::subcommand_name)
-             .unwrap_or("help");
--        // Recording is gated by `is_telemetry_flush_command` — see its doc.
-+        // Recording is gated by `is_telemetry_flush_command` and
-+        // `is_telemetry_reset_command` — see their docs.
-         if !is_telemetry_flush_command(v2_subcommand)
-+            && !is_telemetry_reset_command(v2_subcommand)
-             && let Err(err) = EventsHub::global().record_command_run(v2_subcommand.to_string())
-         {
-             debug!(error = %err, "Failed to record v2 cli.command_run event");
-@@ -1210,6 +1224,20 @@ pub fn is_telemetry_flush_command(name: &str) -> bool {
-     name == "send-telemetry"
- }
++        let mut catalog_lock = BuildLockGuard::for_expression_builds(
+             &flox.floxhub_client,
+             env.dot_flox_path(),
+             &expression_lock_rel_paths,
+             flox.retain_diagnostic_tempfiles,
+         )
+         .await?;
++        if let Some(lock) = catalog_lock.as_mut() {
++            apply_override_inputs(
++                &flox.floxhub_client,
++                lock.build_lock_mut(),
++                &override_inputs,
++            )
++            .await?;
++        }
  
-+/// Whether `name` deletes the device ID. Such a command must not report
-+/// anything under the ID it deletes, nor recreate the files it deleted.
-+///
-+/// - `FloxArgs::handle` neither records its `cli.command_run` event nor leaves
-+///   Sentry bound, because a span or event would carry the old ID.
-+/// - `send_telemetry::spawn_if_due_with` does not spawn the `send-telemetry`
-+///   child: the flush check recreates `metrics-lock` and the legacy buffer,
-+///   and the spawn recreates the send-telemetry log.
-+///
-+/// The `reset-metrics` handler removes the events client for everything else.
-+pub fn is_telemetry_reset_command(name: &str) -> bool {
-+    name == "reset-metrics"
-+}
-+
- /// Special command to check for the presence of the `--prefix` flag.
- ///
- /// With `--prefix` the application will print the prefix of the program
-@@ -2039,6 +2067,21 @@ mod detached_predicate_tests {
-         assert!(!is_telemetry_flush_command("check-for-upgrades"));
-         assert!(!is_telemetry_flush_command("install"));
-     }
-+
-+    /// The reset exclusion matches the name that the parsed `reset-metrics`
-+    /// command derives, so renaming either one cannot silently drop it.
-+    #[test]
-+    fn reset_exclusion_covers_only_the_reset_command() {
-+        let reset = flox_args()
-+            .to_options()
-+            .run_inner(&["reset-metrics"])
-+            .unwrap_or_else(|err| panic!("failed to parse reset-metrics: {err:?}"))
-+            .command
-+            .expect("expected the reset-metrics subcommand");
-+        assert!(is_telemetry_reset_command(reset.subcommand_name()));
-+        assert!(!is_telemetry_reset_command("send-telemetry"));
-+        assert!(!is_telemetry_reset_command("install"));
-+    }
- }
- 
- #[cfg(test)]
+         let cache_path = env.cache_path()?;
+         let builder = FloxBuildMk::new(
+@@ -392,7 +460,10 @@ impl Build {
+             expression_nixpkgs_flakeref.as_ref(),
+             &FLOX_INTERPRETER,
+             &target_names,
+-            catalog_lock.as_ref().map(|lock| lock.path()),
++            catalog_lock
++                .as_mut()
++                .map(BuildLockGuard::write_builder_file)
++                .transpose()?,
+             None,
+             system_override,
+         );
 ```
 
-**File**: `cli/flox/src/commands/send_telemetry.rs` (modified, +4/-2)
+**File**: `cli/flox/src/commands/develop.rs` (modified, +15/-2)
 ```diff
-@@ -19,7 +19,7 @@ use flox_events::{EventsHub, LifecycleFields};
- use flox_rust_sdk::flox::Flox;
- use tracing::debug;
+@@ -27,11 +27,14 @@ use tracing::debug;
  
--use super::is_detached_side_effect_command;
-+use super::{is_detached_side_effect_command, is_telemetry_reset_command};
- use crate::utils::detached::{self, DetachedCommand, LogFile};
- use crate::utils::metrics::Hub;
+ use super::build::{
+     BaseCatalogUrlSelect,
++    OverrideInput,
+     TargetChoice,
++    apply_override_inputs,
+     base_catalog_url_select,
+     base_nixpkgs_url_from_url_select,
+     check_git_tracking_for_expression_builds,
+     describe_nixpkgs,
++    override_input,
+     packages_to_build,
+     prefetch_expression_build_flake_ref,
+     prefetch_flake_ref,
+@@ -85,6 +88,9 @@ pub struct Develop {
+     )]
+     shell_command: Option<String>,
  
-@@ -115,6 +115,7 @@ fn telemetry_flush_due() -> bool {
- /// - neither buffer is due and flushing was not explicitly forced;
- /// - `subcommand` is itself a detached side-effect command (prevents a
- ///   fork-bomb and stops `send-telemetry` from re-spawning itself);
-+/// - `subcommand` reset the device ID (see [`is_telemetry_reset_command`]);
- /// - `_FLOX_TESTING_DISABLE_BG_SIDE_EFFECTS=1` (CI escape hatch).
- ///
- /// The child logs to a single rolling file; see [`LogFile::Rolling`].
-@@ -128,13 +129,14 @@ pub fn spawn_if_due(config: &Config, subcommand: &str) {
- fn spawn_if_due_with(config: &Config, subcommand: &str, self_executable: Option<PathBuf>) -> bool {
-     if config.flox.disable_metrics
-         || is_detached_side_effect_command(subcommand)
-+        || is_telemetry_reset_command(subcommand)
-         || detached::bg_side_effects_disabled()
-         || !telemetry_flush_due()
-     {
-         return false;
-     }
++    #[bpaf(external(override_input), many)]
++    override_inputs: Vec<OverrideInput>,
++
+     /// The package to develop, as defined by its expression file in '.flox/pkgs/'.
+     /// If omitted, the project's sole such package is used.
+     /// With more than one, prompts for one when running interactively,
+@@ -108,6 +114,7 @@ impl Develop {
+             environment,
+             base_catalog_url_select,
+             shell_command,
++            override_inputs,
+             package,
+         } = opts;
  
--    let log_dir = config.flox.cache_dir.join("log");
-+    let log_dir = detached::send_telemetry_log_dir(&config.flox.cache_dir);
-     let args = [String::from("send-telemetry"), String::from("-vv")];
-     let spawn_result = DetachedCommand {
-         args: &args,
+@@ -155,13 +162,19 @@ impl Develop {
+                 unreachable!("manifest builds are refused before the eval")
+             },
+         };
+-        let catalog_lock = BuildLockGuard::new_existing_or_ephemeral(
++        let mut catalog_lock = BuildLockGuard::new_existing_or_ephemeral(
+             &flox.floxhub_client,
+             env.dot_flox_path(),
+             [&rel_file_path],
+             flox.retain_diagnostic_tempfiles,
+         )
+         .await?;
++        apply_override_inputs(
++            &flox.floxhub_client,
++            catalog_lock.build_lock_mut(),
++            &override_inputs,
++        )
++        .await?;
+ 
+         let expression_nixpkgs =
+             base_nixpkgs_url_from_url_select(&flox, base_catalog_url_select).await?;
+@@ -185,7 +198,7 @@ impl Develop {
+         .eval(
+             &base_nixpkgs_url,
+             std::slice::from_ref(&target),
+-            catalog_lock.path(),
++            catalog_lock.write_builder_file()?,
+             None,
+         )?;
+         // eval has finished reading CATALOG_LOCKFILE through make and Nix.
 ```
 
-**File**: `cli/flox/src/utils/detached.rs` (modified, +6/-1)
+**File**: `cli/flox/src/commands/publish.rs` (modified, +6/-7)
 ```diff
-@@ -8,7 +8,7 @@
+@@ -541,7 +541,7 @@ impl Publish {
+                 )
+             },
+         };
+-        let catalog_lock = BuildLockGuard::for_expression_builds(
++        let mut catalog_lock = BuildLockGuard::for_expression_builds(
+             &flox.floxhub_client,
+             path_env.dot_flox_path(),
+             &lock_rel_paths,
+@@ -636,7 +636,10 @@ impl Publish {
+             system_override_inner,
+             &publish_provider.env_metadata,
+             &publish_provider.package_metadata.package,
+-            catalog_lock.as_ref().map(|lock| lock.path()),
++            catalog_lock
++                .as_mut()
++                .map(BuildLockGuard::write_builder_file)
++                .transpose()?,
+         )?;
  
- use std::fs::{File, OpenOptions};
- use std::os::fd::AsRawFd;
--use std::path::Path;
-+use std::path::{Path, PathBuf};
- use std::process::{Command, Stdio};
+         // CLI args take precedence over config
+@@ -770,11 +773,7 @@ mod tests {
+         .unwrap();
+         let references = scan_package(expressions_dir.path(), "hello.nix").unwrap();
  
- use anyhow::{Context, Result, bail};
-@@ -213,6 +213,11 @@ impl DetachedCommand<'_> {
- /// The rolling log filename for the send-telemetry child.
- pub const SEND_TELEMETRY_LOG_NAME: &str = "send-telemetry.log";
+-        let lock = build_lock_guard_from_parts(
+-            "/project/.flox/catalog.lock",
+-            nef_lock_catalog::BuildLock::default(),
+-            true,
+-        );
++        let lock = build_lock_guard_from_parts(nef_lock_catalog::BuildLock::default(), true);
+         let err = project_for_publish(&lock, &references)
+             .expect_err("an empty committed lock cannot cover the reference");
+         let message = format!("{err:#}");
+```
+
+**File**: `cli/flox/src/utils/catalog_lock.rs` (modified, +117/-73)
+```diff
+@@ -24,13 +24,12 @@ use tracing::debug;
  
-+/// The directory under `cache_dir` that holds the send-telemetry log.
-+pub fn send_telemetry_log_dir(cache_dir: &Path) -> PathBuf {
-+    cache_dir.join("log")
-+}
+ /// The lock a build consumes, created before the package builder is
+ /// invoked and handed to it as `CATALOG_LOCKFILE`. Owns the builder-facing
+-/// file: dropping the guard removes it, unless diagnostic retention asked
+-/// for it to be kept.
++/// file, written by [Self::write_builder_file]: dropping the guard removes
++/// it, unless diagnostic retention asked for it to be kept.
+ #[derive(Debug)]
+ pub struct BuildLockGuard {
+-    path: PathBuf,
+     lock: BuildLock,
+-    /// Keeps the builder-facing file alive for the build.
++    /// The builder-facing file, once written.
+     ephemeral: Option<tempfile::TempPath>,
+     /// Leave the builder-facing file in place on drop, with its path logged.
+     retain: bool,
+@@ -56,8 +55,8 @@ impl BuildLockGuard {
+     }
+ 
+     /// Read the committed lock if present; otherwise resolve the scanned
+-    /// references. Always materialize a temporary builder-facing file,
+-    /// which outlives the guard when `retain` is set.
++    /// references. The builder-facing file outlives the guard when `retain`
++    /// is set.
+     pub async fn new_existing_or_ephemeral(
+         client: &impl CatalogClientTrait,
+         dot_flox_path: impl AsRef<Path>,
+@@ -73,35 +72,41 @@ impl BuildLockGuard {
+             let references = scan_references(nix_expression_dir_in(dot_flox_path), rel_file_paths)?;
+             resolve_lock(client, references).await?
+         };
+-        // The system temp dir, not flox's own temp dir: flox's derives from
+-        // `$HOME`, which the user may have placed at a path containing
+-        // whitespace, and the ephemeral path reaches make's word-splitting
+-        // positions. The system temp dir shares the whitespace-free
+-        // assumption the makefile's own PROJECT_TMPDIR (`$(TMPDIR)/<hash>`)
+-        // already makes. This deliberately sits outside flox's centralized
+-        // per-process temp cleanup; the guard's drop removes the file
+-        // instead, or keeps it when diagnostic retention is enabled.
+-        let temp_path = tempfile::Builder::new()
+-            .prefix("flox-catalog.lock.")
+-            .tempfile()
+-            .context("Could not create a temporary file for the catalog lock.")?
+-            .into_temp_path();
+-        std::fs::write(&temp_path, render_builder_lock(&lock)?)
+-            .context("Could not write the temporary builder catalog lock")?;
+-        debug!(path = %temp_path.display(), committed = is_existing, "build consumes a materialized catalog lock");
+         Ok(BuildLockGuard {
+-            path: temp_path.to_path_buf(),
+             lock,
+-            ephemeral: Some(temp_path),
++            ephemeral: None,
+             retain,
+             committed: is_existing,
+         })
+     }
+ 
+-    /// The path to hand to the package builder as `CATALOG_LOCKFILE`:
+-    /// an absolute, whitespace-free temporary path.
+-    pub fn path(&self) -> &Path {
+-        &self.path
++    /// Materialize the lock into the builder-facing file and return its
++    /// path, to hand to the package builder as `CATALOG_LOCKFILE`: an
++    /// absolute, whitespace-free temporary path. Writing again replaces the
++    /// file's contents.
++    pub fn write_builder_file(&mut self) -> Result<&Path> {
++        let temp_path = match self.ephemeral.take() {
++            Some(temp_path) => temp_path,
++            // The system temp dir, not flox's own temp dir: flox's derives
++            // from `$HOME`, which the user may have placed at a path
++            // containing whitespace, and the ephemeral path reaches make's
++            // word-splitting positions. The system temp dir shares the
++            // whitespace-free assumption the makefile's own PROJECT_TMPDIR
++            // (`$(TMPDIR)/<hash>`) already makes. This deliberately sits
++            // outside flox's centralized per-process temp cleanup; the
++            // guard's drop removes the file instead, or keeps it when
++            // diagnostic retention is enabled.
++            None => tempfile::Builder::new()
++                .prefix("flox-catalog.lock.")
++                .tempfile()
++                .context("Could not create a temporary file for the catalog lock.")?
++                .into_temp_path(),
++        };
++        let temp_path = self.ephemeral.insert(temp_path);
++        std::fs::write(&*temp_path, render_builder_lock(&self.lock)?)
++            .context("Could not write the temporary builder catalog lock")?;
++        debug!(path = %temp_path.display(), committed = self.committed, "build consumes a materialized catalog lock");
++        Ok(temp_path)
+     }
+ 
+     /// The lock itself, to project the subset a publish submits out of.
+@@ -113,6 +118,12 @@ impl BuildLockGuard {
+     pub fn is_existing(&self) -> bool {
+         self.committed
+     }
 +
- #[cfg(test)]
- mod tests {
-     use super::*;
++    /// The lock, to change before the builder-facing file is written, such
++    /// as by `--override-input`. The committed lock is not changed.
++    pub fn build_lock_mut(&
 ```
 
 ---
 
-### Incident Patch 3: `4b4da59e` (2026-10-03)
-**Commit Message**: fix(telemetry): make reset-metrics delete buffered events
+### Incident Patch 2: `2c887713` (2026-10-30)
+**Commit Message**: refactor(build): write the builder catalog lock when it is needed
 
-`flox reset-metrics` deleted the device ID and the legacy event buffer,
-but it left the v2 event buffer (`events-v2.json`) in place. The next
-flush sent the events recorded under the old ID together with the events
-recorded under the new ID.
-
-`flox reset-metrics` now also deletes:
-- the v2 event buffer and its lock file (`events-v2.json`,
-  `events-v2.lock`), through a new `EventsBuffer::delete` that takes the
-  buffer lock first
-- the send-telemetry log (`<cache>/log/send-telemetry.log`), which
-  records the device ID
-- the metrics lock file (`metrics-lock`), best effort
-
-It deletes the device ID last, so when an earlier deletion fails, the old
-ID stays with its events and rerunning the command finishes the reset.
-
-The command no longer records its `cli.command_run` event or a legacy
-event, and it removes the v2 client before it deletes the buffers, so
-none of its own telemetry events survive it. It also skips the flush
-check and the detached send-telemetry child that run after a command.
-The check would recreate `metrics-lock` and the legacy buffer, and the
-spawn would recreate the send-telemetry log.
-
-Sentry starts befor
-
-**File**: `cli/flox-core/src/sentry.rs` (modified, +34/-0)
+**File**: `cli/flox/src/commands/build.rs` (modified, +5/-2)
 ```diff
-@@ -59,6 +59,16 @@ pub fn init_sentry(release_name: &str, metrics_uuid: Uuid) -> Option<ClientInitG
-     Some(sentry)
- }
+@@ -371,7 +371,7 @@ impl Build {
+             None => None,
+         };
  
-+/// Stop reporting events and transactions to Sentry for the rest of the process.
-+///
-+/// Call it before the span or event that must not be reported starts,
-+/// because a transaction keeps the client it started with.
-+/// It affects the calling thread's hub, which on the main thread is the
-+/// process hub that [init_sentry] bound the client to.
-+pub fn stop_sentry_reporting() {
-+    sentry::Hub::current().bind_client(None);
-+}
-+
- /// Client options for every flox binary that reports to Sentry, minus the DSN.
- fn client_options(release_name: &str, sentry_env: String) -> ClientOptions {
-     ClientOptions {
-@@ -145,6 +155,30 @@ mod tests {
-         (events, transactions)
-     }
- 
-+    #[test]
-+    fn stopped_reporting_sends_neither_events_nor_transactions() {
-+        let options = sentry::apply_defaults(client_options("flox-test", "test".to_string()));
-+        let sent_item_counts = [false, true].map(|stopped| {
-+            sentry::test::with_captured_envelopes_options(
-+                || {
-+                    if stopped {
-+                        stop_sentry_reporting();
-+                    }
-+                    sentry::capture_message("error", sentry::Level::Error);
-+                    sentry::start_transaction(sentry::TransactionContext::new("transaction", "op"))
-+                        .finish();
-+                },
-+                options.clone(),
-+            )
-+            .iter()
-+            .flat_map(|envelope| envelope.items())
-+            .count()
-+        });
-+
-+        // The first count is the control: without stopping, both are sent.
-+        assert_eq!(sent_item_counts, [2, 0]);
-+    }
-+
-     #[test]
-     fn events_and_transactions_omit_hostname() {
-         let options = client_options("flox-test", "test".to_string());
+-        let catalog_lock = BuildLockGuard::for_expression_builds(
++        let mut catalog_lock = BuildLockGuard::for_expression_builds(
+             &flox.floxhub_client,
+             env.dot_flox_path(),
+             &expression_lock_rel_paths,
+@@ -392,7 +392,10 @@ impl Build {
+             expression_nixpkgs_flakeref.as_ref(),
+             &FLOX_INTERPRETER,
+             &target_names,
+-            catalog_lock.as_ref().map(|lock| lock.path()),
++            catalog_lock
++                .as_mut()
++                .map(BuildLockGuard::write_builder_file)
++                .transpose()?,
+             None,
+             system_override,
+         );
 ```
 
-**File**: `cli/flox-events/src/buffer.rs` (modified, +61/-0)
+**File**: `cli/flox/src/commands/develop.rs` (modified, +2/-2)
 ```diff
-@@ -179,6 +179,35 @@ impl EventsBuffer {
-         }))
+@@ -155,7 +155,7 @@ impl Develop {
+                 unreachable!("manifest builds are refused before the eval")
+             },
+         };
+-        let catalog_lock = BuildLockGuard::new_existing_or_ephemeral(
++        let mut catalog_lock = BuildLockGuard::new_existing_or_ephemeral(
+             &flox.floxhub_client,
+             env.dot_flox_path(),
+             [&rel_file_path],
+@@ -185,7 +185,7 @@ impl Develop {
+         .eval(
+             &base_nixpkgs_url,
+             std::slice::from_ref(&target),
+-            catalog_lock.path(),
++            catalog_lock.write_builder_file()?,
+             None,
+         )?;
+         // eval has finished reading CATALOG_LOCKFILE through make and Nix.
+```
+
+**File**: `cli/flox/src/commands/publish.rs` (modified, +6/-7)
+```diff
+@@ -541,7 +541,7 @@ impl Publish {
+                 )
+             },
+         };
+-        let catalog_lock = BuildLockGuard::for_expression_builds(
++        let mut catalog_lock = BuildLockGuard::for_expression_builds(
+             &flox.floxhub_client,
+             path_env.dot_flox_path(),
+             &lock_rel_paths,
+@@ -636,7 +636,10 @@ impl Publish {
+             system_override_inner,
+             &publish_provider.env_metadata,
+             &publish_provider.package_metadata.package,
+-            catalog_lock.as_ref().map(|lock| lock.path()),
++            catalog_lock
++                .as_mut()
++                .map(BuildLockGuard::write_builder_file)
++                .transpose()?,
+         )?;
+ 
+         // CLI args take precedence over config
+@@ -770,11 +773,7 @@ mod tests {
+         .unwrap();
+         let references = scan_package(expressions_dir.path(), "hello.nix").unwrap();
+ 
+-        let lock = build_lock_guard_from_parts(
+-            "/project/.flox/catalog.lock",
+-            nef_lock_catalog::BuildLock::default(),
+-            true,
+-        );
++        let lock = build_lock_guard_from_parts(nef_lock_catalog::BuildLock::default(), true);
+         let err = project_for_publish(&lock, &references)
+             .expect_err("an empty committed lock cannot cover the reference");
+         let message = format!("{err:#}");
+```
+
+**File**: `cli/flox/src/utils/catalog_lock.rs` (modified, +61/-73)
+```diff
+@@ -24,13 +24,12 @@ use tracing::debug;
+ 
+ /// The lock a build consumes, created before the package builder is
+ /// invoked and handed to it as `CATALOG_LOCKFILE`. Owns the builder-facing
+-/// file: dropping the guard removes it, unless diagnostic retention asked
+-/// for it to be kept.
++/// file, written by [Self::write_builder_file]: dropping the guard removes
++/// it, unless diagnostic retention asked for it to be kept.
+ #[derive(Debug)]
+ pub struct BuildLockGuard {
+-    path: PathBuf,
+     lock: BuildLock,
+-    /// Keeps the builder-facing file alive for the build.
++    /// The builder-facing file, once written.
+     ephemeral: Option<tempfile::TempPath>,
+     /// Leave the builder-facing file in place on drop, with its path logged.
+     retain: bool,
+@@ -56,8 +55,8 @@ impl BuildLockGuard {
      }
  
-+    /// Delete the buffer file and its lock file from `data_dir`, discarding
-+    /// every buffered event, including entries this binary cannot parse.
-+    /// Succeeds without doing anything when `data_dir` does not exist.
-+    ///
-+    /// Blocks until the file lock is acquired, so no other process is
-+    /// mid-write. The lock file is deleted while still held. A process that
-+    /// was already waiting on it then locks the deleted file, while a process
-+    /// that starts later creates and locks a new one, so those two processes
-+    /// do not exclude each other until the first one releases its lock.
-+    pub fn delete(data_dir: &Path) -> Result<()> {
-+        if !data_dir
-+            .try_exists()
-+            .context("Could not check the v2 events buffer directory")?
-+        {
-+            return Ok(());
-+        }
-+
-+        let lock_file_path = data_dir.join(EVENTS_LOCK_FILE_NAME);
-+        let events_lock =
-+            open_lock_file(&lock_file_path).context("Could not open v2 events lock file")?;
-+        events_lock
-+            .lock()
-+            .context("Could not lock v2 events buffer")?;
-+
-+        remove_file_if_present(&data_dir.join(EVENTS_BUFFER_FILE_NAME))
-+            .context("Could not delete v2 events buffer file")?;
-+        remove_file_if_present(&lock_file_path).context("Could not delete v2 events lock file")
-+    }
-+
-     pub(crate) fn is_expired(&self, expiry: Duration) -> bool {
-         let now = OffsetDateTime::now_utc();
-         self.oldest_timestamp()
-@@ -313,6 +342,13 @@ impl EventsBuffer {
+     /// Read the committed lock if present; otherwise resolve the scanned
+-    /// references. Always materialize a temporary builder-facing file,
+-    /// which outlives the guard when `retain` is set.
++    /// references. The builder-facing file outlives the guard when `retain`
++    /// is set.
+     pub async fn new_existing_or_ephemeral(
+         client: &impl CatalogClientTrait,
+         dot_flox_path: impl AsRef<Path>,
+@@ -73,35 +72,41 @@ impl BuildLockGuard {
+             let references = scan_references(nix_expression_dir_in(dot_flox_path), rel_file_paths)?;
+             resolve_lock(client, references).await?
+         };
+-        // The system temp dir, not flox's own temp dir: flox's derives from
+-        // `$HOME`, which the user may have placed at a path containing
+-        // whitespace, and the ephemeral path reaches make's word-splitting
+-        // positions. The system temp dir shares the whitespace-free
+-        // assumption the makefile's own PROJECT_TMPDIR (`$(TMPDIR)/<hash>`)
+-        // already makes. This deliberately sits outside flox's centralized
+-        // per-process temp cleanup; the guard's drop removes the file
+-        // instead, or keeps it when diagnostic retention is enabled.
+-        let temp_path = tempfile::Builder::new()
+-            .prefix("flox-catalog.lock.")
+-            .tempfile()
+-            .context("Could not create a temporary file for the catalog lock.")?
+-            .into_temp_path();
+-        std::fs::write(&temp_path, render_builder_lock(&lock)?)
+-            .context("Could not write the temporary builder catalog lock")?;
+-        debug!(path = %temp_path.display(), committed = is_existing, "build consumes a materialized catalog lock");
+         Ok(BuildLockGuard {
+-            path: temp_path.to_path_buf(),
+             lock,
+-            ephemeral: Some(temp_path),
++            ephemeral: None,
+             retain,
+             committed: is_existing,
+         })
      }
- }
  
-+fn remove_file_if_present(path: &Path) -> std::io::Result<()> {
-+    match std::fs::remove_file(path) {
-+        Err(err) if err.kind() == std::io::ErrorKind::NotFound => Ok(()),
-+        result => result,
-+    }
-+}
-+
+-    /// The path to hand to the package builder as `CATALOG_LOCKFILE`:
+-    /// an absolute, whitespace-free temporary path.
+-    pub fn path(&self) -> &Path {
+-        &self.path
++    /// Materialize the lock into the builder-facing file and return its
++    /// path, to hand to the package builder as `CATALOG_LOCKFILE`: an
++    /// absolute, whitespace-free temporary path. Writing again replaces the
++    /// file's contents.
++    pub fn write_builder_file(&mut self) -> Result<&Path> {
++        let temp_path = match self.ephemeral.take() {
++            Some(temp_path) => temp_path,
++            // The system temp dir, not flox's own temp dir: flox's derives
++            // from `$HOME`, which the user may have placed at a path
++            // containing whitespace, and the ephemeral path reaches make's
++            // word-splitting positions. The system temp dir shares the
++            // whitespace-free assumption the makefile's own PROJECT_TMPDIR
++            // (`$(TMPDIR)/<hash>`) already makes. This deliberately sits
++            // outside flox's centralized per-process temp cleanup; the
++            // guard's drop removes the file instead, or keeps it when
++            // diagnostic retention is enabled.
++            None => tempfile::Builder::new()
++                .prefix("flox-catalog.lock.")
++                .tempfile()
++                .context("Could not create a temporary file for the catalog lock.")?
++                .into_temp_path(),
++        };
++        let temp_path = self.ephemeral.insert(temp_path);
++        std::fs::write(&*temp_path, render_builder_lock(&self.lock)?)
++            .context("Could not write the temporary builder catalog lock")?;
++        debug!(path = %temp_path.display(), committed = self.committed, "build consumes a materialized catalog lock");
++        Ok(temp_path)
+     }
+ 
+     /// The lock itself, to project the subset a publish submits out of.
+@@ -139,19 +144,10 @@ pub mod test_helpers {
+     /// Construct a [BuildLockGuard] from parts, for tests that need to
+     /// exercise consumers (e.g. publish's stale-lock messaging) without a
+     /// scan or a catalog round-trip.
+-    pub fn build_lock_guard_from_parts(
+-        path: imp
+```
+
+---
+
+### Incident Patch 3: `307ad6c2` (2026-10-30)
+**Commit Message**: refactor(nef-lock-catalog): share test fixtures across modules
+
+**File**: `cli/nef-lock-catalog/src/lib.rs` (modified, +2/-0)
+```diff
+@@ -6,6 +6,8 @@ mod lock;
+ mod nix;
+ mod project;
+ mod scan;
++#[cfg(test)]
++mod test_helpers;
+ 
+ /// Common identifier for a catalog and its `CatalogLock` in a build lock.
+ /// Also exposed to nix expressions in the NEF as the `<catalog>` in
+```
+
+**File**: `cli/nef-lock-catalog/src/lock/build_lock.rs` (modified, +2/-26)
+```diff
+@@ -510,31 +510,11 @@ pub fn write_lock(lock: &BuildLock, path: impl AsRef<Path>) -> Result<(), Lockfi
+ mod tests {
+     use std::collections::HashMap;
+ 
+-    use floxhub_client::{BuildType, LockedGitSource, LockedInputEntry};
++    use floxhub_client::LockedInputEntry;
+ 
+     use super::*;
+     use crate::lock::transform::build_lock_from_locked_inputs;
+-
+-    fn entry(catalog: &str, attr_path: &[&str]) -> LockedInputEntry {
+-        LockedInputEntry {
+-            attr_path: attr_path.iter().map(|s| s.to_string()).collect(),
+-            build_type: BuildType::Nef,
+-            catalog: catalog.to_string(),
+-            inputs: Some(vec![]),
+-            locked_inputs_hash: "sha256-test".to_string(),
+-            version: None,
+-            build: None,
+-            source: LockedGitSource {
+-                dir: ".".to_string(),
+-                ref_: "refs/heads/main".to_string(),
+-                rev: "abc".to_string(),
+-                type_: "git".to_string(),
+-                url: "https://example.com/repo".to_string(),
+-                extra: BTreeMap::new(),
+-            },
+-            deep_overrides: None,
+-        }
+-    }
++    use crate::test_helpers::{nef_entry as entry, references};
+ 
+     /// A lock whose direct inputs are exactly the given canonical keys
+     /// (`<catalog>/<attr-path>`, the server's keying — see
+@@ -553,10 +533,6 @@ mod tests {
+         build_lock_from_locked_inputs(locked, direct_keys.iter()).expect("transform succeeds")
+     }
+ 
+-    fn references(refs: &[&str]) -> BTreeSet<CatalogRef> {
+-        refs.iter().map(|r| CatalogRef::new_unchecked(r)).collect()
+-    }
+-
+     #[test]
+     fn project_package_selects_only_the_requested_references() {
+         let lock = lock_with(&["myorg/hello", "myorg/world", "other/tool"]);
+```
+
+**File**: `cli/nef-lock-catalog/src/lock/transform.rs` (modified, +2/-35)
+```diff
+@@ -116,44 +116,11 @@ pub fn render_builder_lock(lock: &BuildLock) -> Result<String> {
+ 
  #[cfg(test)]
  mod tests {
+-    use std::collections::BTreeMap;
+-
+-    use floxhub_client::{BuildType, LockedGitSource};
++    use floxhub_client::BuildType;
+     use serde_json::json;
+ 
      use super::*;
-@@ -369,4 +405,29 @@ mod tests {
-             "the sent entry is drained and the unreadable one is written back"
+-
+-    /// A locked git source. Locked inputs are only ever tracked as git
+-    /// flakerefs, so the typed wire model carries exactly these fields.
+-    fn git_source(url: &str, rev: &str) -> LockedGitSource {
+-        LockedGitSource {
+-            dir: ".".to_string(),
+-            ref_: "refs/heads/main".to_string(),
+-            rev: rev.to_string(),
+-            type_: "git".to_string(),
+-            url: url.to_string(),
+-            extra: BTreeMap::new(),
+-        }
+-    }
+-
+-    fn entry(
+-        catalog: &str,
+-        attr_path: &[&str],
+-        build_type: BuildType,
+-        source: LockedGitSource,
+-    ) -> LockedInputEntry {
+-        LockedInputEntry {
+-            attr_path: attr_path.iter().map(|s| s.to_string()).collect(),
+-            build_type,
+-            catalog: catalog.to_string(),
+-            inputs: Some(vec![]),
+-            locked_inputs_hash: "sha256-test".to_string(),
+-            deep_overrides: None,
+-            version: None,
+-            build: None,
+-            source,
+-        }
+-    }
++    use crate::test_helpers::{entry, git_source};
+ 
+     #[test]
+     fn single_package_single_catalog() {
+```
+
+**File**: `cli/nef-lock-catalog/src/project.rs` (modified, +1/-7)
+```diff
+@@ -142,18 +142,12 @@ pub async fn lock_project_catalog(
+ mod tests {
+     use floxhub_client::FloxhubClient;
+     use floxhub_client::client::test_helpers::{client_config, new_noop};
+-    use tempfile::tempdir;
+ 
+     use super::*;
+ 
+     /// A project directory whose single expression is `expression`.
+     fn project_with_expression(expression: &str) -> (tempfile::TempDir, PathBuf, PathBuf) {
+-        let project = tempdir().unwrap();
+-        let dot_flox = project.path().join(".flox");
+-        let pkgs_dir = dot_flox.join("pkgs");
+-        std::fs::create_dir_all(&pkgs_dir).unwrap();
+-        std::fs::write(pkgs_dir.join("hello.nix"), expression).unwrap();
+-        (project, dot_flox, pkgs_dir)
++        crate::test_helpers::project_with_expressions(&[("hello.nix", expression)])
+     }
+ 
+     #[test]
+```
+
+**File**: `cli/nef-lock-catalog/src/scan/mod.rs` (modified, +10/-13)
+```diff
+@@ -228,10 +228,7 @@ mod tests {
+     use std::{assert_matches, fs};
+ 
+     use super::*;
+-
+-    fn set(items: &[&str]) -> BTreeSet<CatalogRef> {
+-        items.iter().map(|s| CatalogRef::new_unchecked(s)).collect()
+-    }
++    use crate::test_helpers::references;
+ 
+     #[test]
+     fn catalog_ref_rejects_references_that_cannot_resolve() {
+@@ -353,7 +350,7 @@ mod tests {
+         // turn it into a failure.
+         let base_dir = Path::new("test_data/catalog_refs");
+         let got = scan_package(base_dir, Path::new("nixpkgs-arg.nix")).unwrap();
+-        assert_eq!(got, set(&["catalogs.myorg.toolkit.readVersion"]));
++        assert_eq!(got, references(&["catalogs.myorg.toolkit.readVersion"]));
+     }
+ 
+     #[test]
+@@ -364,7 +361,7 @@ mod tests {
+         let got = scan_package(base_dir, Path::new("pkg-a.nix")).unwrap();
+         assert_eq!(
+             got,
+-            set(&[
++            references(&[
+                 "catalogs.myorg.toolkit.readVersion",
+                 "catalogs.myorg.python3Packages.alpha-lib",
+             ])
+@@ -379,7 +376,7 @@ mod tests {
+         let got = scan_package_with_roots(base_dir, Path::new("main.nix"), ["inputs"]).unwrap();
+         assert_eq!(
+             got,
+-            set(&[
++            references(&[
+                 "inputs.nixpkgs.lib",
+                 "inputs.devtools-flake.packages.default",
+             ])
+@@ -395,7 +392,7 @@ mod tests {
+         let got = scan_package(base_dir, Path::new("dep-entry-wrapped.nix")).unwrap();
+         assert_eq!(
+             got,
+-            set(&[
++            references(&[
+                 "catalogs.myorg.toolkit.readVersion",
+                 "catalogs.myorg.python3Packages.alpha-lib",
+             ])
+@@ -411,7 +408,7 @@ mod tests {
+         let got = scan_package(base_dir, Path::new("dep-entry.nix")).unwrap();
+         assert_eq!(
+             got,
+-            set(&[
++            references(&[
+                 "catalogs.myorg.toolkit.readVersion",
+                 "catalogs.myorg.python3Packages.alpha-lib",
+             ])
+@@ -430,7 +427,7 @@ mod tests {
+         let got = scan_package(base_dir, Path::new("entry.nix")).unwrap();
+         assert_eq!(
+             got,
+-            set(&["catalogs.myorg.direct", "catalogs.myorg.helper-ref"]),
++            references(&["catalogs.myorg.direct", "catalogs.myorg.helper-ref"]),
          );
      }
-+
-+    #[test]
-+    fn delete_removes_the_buffer_with_unreadable_entries_and_the_lock_file() {
-+        let dir = tempfile::tempdir().unwrap();
-+        std::fs::write(
-+            dir.path().join(EVENTS_BUFFER_FILE_NAME),
-+            format!(
-+                "{}\n{}\n",
-+                envelope("cli.environment.delete"),
-+                envelope("cli.environment.from.the.future"),
-+            ),
-+        )
-+        .unwrap();
-+        drop(EventsBuffer::read(dir.path()).unwrap());
-+
-+        EventsBuffer::delete(dir.path()).unwrap();
-+
-+        let remaining: Vec<_> = std::fs::read_dir(dir.path()).unwrap().collect();
-+        assert!(remaining.is_empty(), "left behind: {remaining:?}");
-+
-+        EventsBuffer::delete(dir.path()).expect("deleting a missing buffer succeeds");
-+        EventsBuffer::delete(&dir.path().join("missing"))
-+            .expect("deleting from a missing directory succeeds");
-+        assert!(!dir.path().join("missing").exists());
-+    }
- }
+ 
+@@ -446,7 +443,7 @@ mod tests {
+     fn scan_package_follows_alias_to_pkgset_member() {
+         let base_dir = Path::new("test_data/catalog_refs/pkgset-member-alias");
+         let got = scan_package(base_dir, Path::new("isdr-zk-client.nix")).unwrap();
+-        assert_eq!(got, set(&["catalogs.myorg.toolkit.readVersion"]));
++        assert_eq!(got, references(&["catalogs.myorg.toolkit.readVersion"]));
+     }
+ 
+     /// A nested file as the scan target resolves dependency_args against the root.
+@@ -460,7 +457,7 @@ mod tests {
+         let got = scan_package(base_dir, Path::new("foo/bar.nix")).unwrap();
+         assert_eq!(
+             got,
+-            set(&["catalogs.myorg.bar-own", "catalogs.myorg.top-src"]),
++            references(&["catalogs.myorg.bar-own", "catalogs.myorg.top-src"]),
+         );
+     }
+ 
+@@ -476,7 +473,7 @@ mod tests {
+         let got = scan_package(base_dir, Path::new("top.nix")).unwrap();
+         assert_eq!(
+             got,
+-            set(&["catalogs.myorg.widget-src", "catalogs.myorg.helper-lib-src"]),
++            references(&["catalogs.myorg.widget-src", "catalogs.myorg.helper-lib-src"]),
+         );
+     }
+ 
 ```
 
-**File**: `cli/flox/src/commands/general.rs` (modified, +92/-22)
+**File**: `cli/nef-lock-catalog/src/test_helpers.rs` (added, +72/-0)
 ```diff
-@@ -6,6 +6,7 @@ use anyhow::{Context, Result};
- use bpaf::Bpaf;
- use flox_config::{Config, FLOX_CONFIG_FILE, ReadWriteError};
- use flox_core::open_lock_file;
-+use flox_events::{EventsBuffer, EventsHub};
- use flox_rust_sdk::flox::Flox;
- use indoc::indoc;
- use serde::Serialize;
-@@ -15,6 +16,7 @@ use toml_edit::{Key, TomlError};
- use tracing::{debug, instrument};
- 
- use crate::subcommand_metric;
-+use crate::utils::detached::{SEND_TELEMETRY_LOG_NAME, send_telemetry_log_dir};
- use crate::utils::message;
- use crate::utils::metrics::{
-     METRICS_EVENTS_FILE_NAME,
-@@ -28,32 +30,18 @@ pub struct ResetMetrics {}
- impl ResetMetrics {
-     #[instrument(name = "reset-metrics", skip_all)]
-     pub async fn handle(self, flox: Flox) -> Result<()> {
--        subcommand_metric!("reset-metrics");
--        let metrics_lock = open_lock_file(flox.cache_dir.join(METRICS_LOCK_FILE_NAME))?;
--        // Hand the file back out of the closure, so the lock is held while
--        // the metrics files are removed rather than dropped with the closure.
--        let _metrics_lock =
--            tokio::task::spawn_blocking(move || metrics_lock.lock().map(|()| metrics_lock))
--                .await??;
--
--        if let Err(err) =
--            tokio::fs::remove_file(flox.cache_dir.join(METRICS_EVENTS_FILE_NAME)).await
--        {
--            match err.kind() {
--                std::io::ErrorKind::NotFound => {},
--                _ => Err(err)?,
--            }
--        }
-+        // An event recorded from here on would carry the ID this command
-+        // deletes, and would recreate the v2 buffer.
-+        EventsHub::global().clear_client();
- 
--        if let Err(err) = tokio::fs::remove_file(flox.data_dir.join(METRICS_UUID_FILE_NAME)).await {
--            match err.kind() {
--                std::io::ErrorKind::NotFound => {},
--                _ => Err(err)?,
--            }
--        }
-+        let data_dir = flox.data_dir.clone();
-+        let cache_dir = flox.cache_dir.clone();
-+        tokio::task::spawn_blocking(move || delete_device_id_and_buffers(&data_dir, &cache_dir))
-+            .await??;
- 
-         let notice = indoc! {"
-             Successfully reset telemetry ID for this machine!
-+            Deleted unsent telemetry events.
- 
-             A new ID will be assigned next time you use Flox.
- 
-@@ -69,6 +57,43 @@ impl ResetMetrics {
-     }
- }
- 
-+/// Delete the device ID, the two event buffers and the send-telemetry log,
-+/// which all hold the ID, and the buffers' lock files.
-+///
-+/// Holds the metrics lock throughout, so no process creates a new ID or
-+/// appends to the legacy buffer until the old ID is gone. Deletes the device
-+/// ID last, so when an earlier deletion fails, the old ID and the events
-+/// recorded under it stay together and rerunning the command finishes the
-+/// reset.
-+fn delete_device_id_and_buffers(data_dir: &Path, cache_dir: &Path) -> Result<()> {
-+    let metrics_lock_path = cache_dir.join(METRICS_LOCK_FILE_NAME);
-+    let metrics_lock =
-+        open_lock_file(&metrics_lock_path).context("Could not open metrics lock file")?;
-+    metrics_lock
-+        .lock()
-+        .context("Could not lock metrics lock file")?;
+@@ -0,0 +1,72 @@
++//! Fixtures shared by the crate's tests.
 +
-+    remove_file_if_present(&cache_dir.join(METRICS_EVENTS_FILE_NAME))?;
-+    EventsBuffer::delete(data_dir)?;
-+    remove_file_if_present(&send_telemetry_log_dir(cache_dir).join(SEND_TELEMETRY_LOG_NAME))?;
-+    remove_file_if_present(&data_dir.join(METRICS_UUID_FILE_NAME))?;
++use std::collections::{BTreeMap, BTreeSet};
++use std::path::PathBuf;
 +
-+    // Best effort: the lock file holds no data. Deleting it while it is held
-+    // has the effect described on `EventsBuffer::delete`: a process already
-+    // waiting on it and a process that starts later do not exclude each other.
-+    if let Err(err) = remove_file_if_present(&metrics_lock_path) {
-+        debug!(error = %err, "Failed to delete metrics lock file");
++use floxhub_client::{BuildType, LockedGitSource, LockedInputEntry};
++
++use crate::CatalogRef;
++
++/// A project directory whose `.flox/pkgs` holds `expressions`, given as
++/// paths relative to `pkgs` and their contents.
++pub(crate) fn project_with_expressions(
++    expressions: &[(&str, &str)],
++) -> (tempfile::TempDir, PathBuf, PathBuf) {
++    let project = tempfile::tempdir().unwrap();
++    let dot_flox = project.path().join(".flox");
++    let pkgs_dir = dot_flox.join("pkgs");
++    for (rel_path, expression) in expressions {
++        let file = pkgs_dir.join(rel_path);
++        std::fs::create_dir_all(file.parent().unwrap()).unwrap();
++        std::fs::write(file, expression).unwrap();
 +    }
-+    Ok(())
++    (project, dot_flox, pkgs_dir)
 +}
 +
-+fn remove_file_if_present(path: &Path) -> Result<()> {
-+    match std::fs::remove_file(path) {
-+        Err(err) if err.kind() == io::ErrorKind::NotFound => Ok(()),
-+        result => result.with_context(|| format!("Could not delete {}", path.display())),
++/// References built from literals, without checking them.
++pub(crate) fn references(refs: &[&str]) -> BTreeSet<CatalogRef> {
++    refs.iter().map(|r| CatalogRef::new_unchecked(r)).collect()
++}
++
++/// A locked git source. Locked inputs are only ever tracked as git
++/// flakerefs, so the typed wire model carries exactly these fields.
++pub(crate) fn git_source(url: &str, rev: &str) -> LockedGitSource {
++    LockedGitSource {
++        dir: ".".to_string(),
++        ref_: "refs/heads/main".to_string(),
++        rev: rev.to_string(),
++        type_: "git".to_string(),
++        url: url.to_string(),
++        extra: BTreeMap::new(),
 +    }
 +}
 +
- #[derive(Bpaf, Clone)]
- #[bpaf(fallback(ConfigArgs::List))]
- pub enum ConfigArgs {
-@@ -288,4 +313,49 @@ mod tests {
-             invalid unquoted key, expected letters, numbers, `-`, `_`
-         "#});
-     }
-+
-+    fn sorted_entries(dir: &Path) -> Vec<String> {
-+        let mut names: Vec<String> = std::fs::read_dir(dir)
-+            .unwrap()
-+            .map(|entry| entry.unwrap().file_name().to_string_lossy().into_owned())
-+            .collect();
-+        names.sort();
-+        names
++/// A lookup entry with no inputs.
++pub(crate) fn entry(
++    catalog: &str,
++    attr_path: &[&str],
++    build_type: BuildType,
++    source: LockedGitSource,
++) -> LockedInputEntry {
++    LockedInputEntry {
++        attr_path: attr_path.iter().map(|s| s.to_string()).collect(),
++        build_type,
++        catalog: catalog.to_string(),
++        inputs: Some(vec![]),
++        locked_inputs_hash: "sha256-test".to_string(),
++        deep_overrides: None,
++        version: None,
++        build: None,
++        source,
 +    }
-+
-+    #[test]
-+    fn delete_device_id_and_buffers_leaves_no_telemetry_files() {
-+        let data_dir = tempfile::tempdir().unwrap();
-+        let cache_dir = tempfile::tempdir().unwrap();
-+        let log_dir = send_telemetry_log_dir(cache_dir.path());
-+        std::fs::create_dir_all(&log_dir).unwrap();
-+        drop(EventsBuffer::read(data_dir.path()).unwrap());
-+   
-```
-
-**File**: `cli/flox/src/commands/mod.rs` (modified, +44/-1)
-```diff
-@@ -46,6 +46,7 @@ use bpaf::{Args, Bpaf, ParseFailure, Parser, ShellComp};
- use flox_config::{Config, EnvironmentTrust, FLOX_DIR_NAME, TokenStorageMode};
- use flox_core::data::environment_ref::{self, DEFAULT_NAME, RemoteEnvironmentRef};
- use flox_core::floxhub::{DEFAULT_FLOXHUB_URL, Floxhub};
-+use flox_core::sentry::stop_sentry_reporting;
- use flox_core::vars::FLOX_DISABLE_METRICS_VAR;
- use flox_events::{EventKind, EventsHub};
- use flox_manifest::interfaces::AsLatestSchema;
-@@ -274,6 +275,17 @@ pub struct Interrupted;
- impl FloxArgs {
-     /// Initialize the command line by creating an initial FloxBuilder
-     pub async fn handle(self, config: Config) -> Result<()> {
-+        // Sentry was initialized with the device ID that this command deletes,
-+        // and a span of the command would be reported under that ID.
-+        // Unbind before the handler's span starts; see `is_telemetry_reset_command`.
-+        if self
-+            .command
-+            .as_ref()
-+            .is_some_and(|command| is_telemetry_reset_command(command.subcommand_name()))
-+        {
-+            stop_sentry_reporting();
-+        }
-+
-         // ensure xdg dirs exist
-         tokio::fs::create_dir_all(&config.flox.config_dir).await?;
-         tokio::fs::create_dir_all(&config.flox.data_dir).await?;
-@@ -445,8 +457,10 @@ impl FloxArgs {
-             .as_ref()
-             .map(Commands::subcommand_name)
-             .unwrap_or("help");
--        // Recording is gated by `is_telemetry_flush_command` — see its doc.
-+        // Recording is gated by `is_telemetry_flush_command` and
-+        // `is_telemetry_reset_command` — see their docs.
-         if !is_telemetry_flush_command(v2_subcommand)
-+            && !is_telemetry_reset_command(v2_subcommand)
-             && let Err(err) = EventsHub::global().record_command_run(v2_subcommand.to_string())
-         {
-             debug!(error = %err, "Failed to record v2 cli.command_run event");
-@@ -1210,6 +1224,20 @@ pub fn is_telemetry_flush_command(name: &str) -> bool {
-     name == "send-telemetry"
- }
- 
-+/// Whether `name` deletes the device ID. Such a command must not report
-+/// anything under the ID it deletes, nor recreate the files it deleted.
-+///
-+/// - `FloxArgs::handle` neither records its `cli.command_run` event nor leaves
-+///   Sentry bound, because a span or event would carry the old ID.
-+/// - `send_telemetry::spawn_if_due_with` does not spawn the `send-telemetry`
-+///   child: the flush check recreates `metrics-lock` and the legacy buffer,
-+///   and the spawn recreates the send-telemetry log.
-+///
-+/// The `reset-metrics` handler removes the events client for everything else.
-+pub fn is_telemetry_reset_command(name: &str) -> bool {
-+    name == "reset-metrics"
 +}
 +
- /// Special command to check for the presence of the `--prefix` flag.
- ///
- /// With `--prefix` the application will print the prefix of the program
-@@ -2039,6 +2067,21 @@ mod detached_predicate_tests {
-         assert!(!is_telemetry_flush_command("check-for-upgrades"));
-         assert!(!is_telemetry_flush_command("install"));
-     }
-+
-+    /// The reset exclusion matches the name that the parsed `reset-metrics`
-+    /// command derives, so renaming either one cannot silently drop it.
-+    #[test]
-+    fn reset_exclusion_covers_only_the_reset_command() {
-+        let reset = flox_args()
-+            .to_options()
-+            .run_inner(&["reset-metrics"])
-+            .unwrap_or_else(|err| panic!("failed to parse reset-metrics: {err:?}"))
-+            .command
-+            .expect("expected the reset-metrics subcommand");
-+        assert!(is_telemetry_reset_command(reset.subcommand_name()));
-+        assert!(!is_telemetry_reset_command("send-telemetry"));
-+        assert!(!is_telemetry_reset_command("install"));
-+    }
- }
- 
- #[cfg(test)]
-```
-
-**File**: `cli/flox/src/commands/send_telemetry.rs` (modified, +4/-2)
-```diff
-@@ -19,7 +19,7 @@ use flox_events::{EventsHub, LifecycleFields};
- use flox_rust_sdk::flox::Flox;
- use tracing::debug;
- 
--use super::is_detached_side_effect_command;
-+use super::{is_detached_side_effect_command, is_telemetry_reset_command};
- use crate::utils::detached::{self, DetachedCommand, LogFile};
- use crate::utils::metrics::Hub;
- 
-@@ -115,6 +115,7 @@ fn telemetry_flush_due() -> bool {
- /// - neither buffer is due and flushing was not explicitly forced;
- /// - `subcommand` is itself a detached side-effect command (prevents a
- ///   fork-bomb and stops `send-telemetry` from re-spawning itself);
-+/// - `subcommand` reset the device ID (see [`is_telemetry_reset_command`]);
- /// - `_FLOX_TESTING_DISABLE_BG_SIDE_EFFECTS=1` (CI escape hatch).
- ///
- /// The child logs to a single rolling file; see [`LogFile::Rolling`].
-@@ -128,13 +129,14 @@ pub fn spawn_if_due(config: &Config, subcommand: &str) {
- fn spawn_if_due_with(config: &Config, subcommand: &str, self_executable: Option<PathBuf>) -> bool {
-     if config.flox.disable_metrics
-         || is_detached_side_effect_command(subcommand)
-+        || is_telemetry_reset_command(subcommand)
-         || detached::bg_side_effects_disabled()
-         || !telemetry_flush_due()
-     {
-         return false;
-     }
- 
--    let log_dir = config.flox.cache_dir.join("log");
-+    let log_dir = detached::send_telemetry_log_dir(&config.flox.cache_dir);
-     let args = [String::from("send-telemetry"), String::from("-vv")];
-     let spawn_result = DetachedCommand {
-         args: &args,
-```
-
-**File**: `cli/flox/src/utils/detached.rs` (modified, +6/-1)
-```diff
-@@ -8,7 +8,7 @@
- 
- use std::fs::{File, OpenOptions};
- use std::os::fd::AsRawFd;
--use std::path::Path;
-+use std::path::{Path, PathBuf};
- use std::process::{Command, Stdio};
- 
- use anyhow::{Context, Result, bail};
-@@ -213,6 +213,11 @@ impl DetachedCommand<'_> {
- /// The rolling log filename for the send-telemetry child.
- pub const SEND_TELEMETRY_LOG_NAME: &str = "send-telemetry.log";
- 
-+/// The directory under `cache_dir` that holds the send-telemetry log.
-+pub fn send_telemetry_log_dir(cache_dir: &Path) -> PathBuf {
-+    cache_dir.join("log")
++/// A NEF lookup entry with no inputs, sourced from a fixed git revision.
++pub(crate) fn nef_entry(catalog: &str, attr_path: &[&str]) -> LockedInputEntry {
++    entry(
++        catalog,
++        attr_path,
++        BuildType::Nef,
++        git_source("https://example.com/repo", "abc"),
++    )
 +}
-+
- #[cfg(test)]
- mod tests {
-     use super::*;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4882** (2026-11-13): chore(agents): factor out skills from AGENTS.md (@mkenigs)
 - **PR #4876** (2026-11-10): fix(show): clarify when no builds are available (@mkenigs)
+- **PR #4873** (2026-11-12): Community ci (@ysndr)
 - **PR #4871** (2026-11-10): ci(github-actions): bump macos runner for nix-plugin and CLI-unit jobs (@ysndr)
+- **PR #4870** (2026-11-12): fix(nef): percent-encode path flakerefs so paths with spaces work (@pcbeingused333)
 - **PR #4863** (2026-11-09): chore: community CI (@mkenigs)
-- **PR #4861** (2026-11-09): fix(modules): trust the floxhub-1 key so published packages install (@nixfred)
-- **PR #4860** (2026-11-10): docs(agents): PR hot fixes against the release branch (@mkenigs)
-- **PR #4858** (2026-11-04): fix(auth): drop the CI hint from expired and rejected login errors (@tanjadev)
 
 ---
 
@@ -2530,45 +2644,58 @@ Sentry starts befor
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. telemetry): keep metrics files out of the current directory on config errors (#4
+## X. build): add `--override-input` to `flox build` and `flox develop`
 
 **RULE**:
-When implementing operations in `cli/flox/src/main.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in flox/flox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cli/flox-rust-sdk/src/providers/build.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in flox/flox. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `12b42fe6`: telemetry): keep metrics files out of the current directory on config errors (#4762). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2e05186a`: build): add `--override-input` to `flox build` and `flox develop`. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cli/flox/src/main.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cli/flox-rust-sdk/src/providers/build.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-async fn run(args: FloxArgs, config: Config) -> Result<()> {
-    // Exit rather than fall back to the defaults, which enable metrics and
-    // leave the data and cache dirs empty, so they would create the metrics
-    // UUID in the current directory whatever the unparsed sources set.
-    let config = match Config::parse() {
-        Ok(config) => config,
-        Err(err) => {
-            message::error(format!("{err:#}"));
-            return ExitCode::from(1);
-        },
-    };
-    let result = runtime.block_on(run(args, config.clone()));
+use std::env;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-async fn run(args: FloxArgs) -> Result<()> {
-    let config = Config::parse()?;
-    let config = Config::parse().unwrap_or_default();
-    let result = runtime.block_on(run(args));
+// Induced defect failure mode:
+use std::{env, fs};
+/// The marker file that promotes a package directory to a deep override,
+/// mirroring `deepOverrideMarkerFile` in
+/// `package-builder/nef/lib/deepOverrides.nix`.
+const DEEP_OVERRIDE_MARKER_FILE: &str = "deep-override";
+
+/// One name's classified `pkgs/` entry, for the collision rule
+/// [deep_override_attr_paths_in] follows: a `.nix` file replaces a
+/// same-named directory in the scan, never the reverse.
+#[derive(Debug, Clone)]
+enum PkgsEntry {
+    NixFile,
+    Directory(PathBuf),
+}
+
+/// Attribute paths of the deep overrides declared under a repository's
+/// `pkgs/` directory (FLO-95), for reporting to the catalog at publish
+/// time.
+///
+/// Mirrors how NEF classifies `pkgs/` entries
+/// (`package-builder/nef/lib/dirToAttrs.nix`) and marks one as a deep
+/// override (`isMarkedAsDeepOverride` in
+/// `package-builder/nef/lib/deepOverrides.nix`): a directory holding a
+/// `default.nix` is a package, and a package is a deep override iff it
+/// also holds a `deep-override` file beside that `default.nix`. A
+/// package directory is never recursed into. A directory without
+/// `default.nix` is a package set and is recursed into, so a nested
+/// override is reporte
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `12b42fe6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2e05186a` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

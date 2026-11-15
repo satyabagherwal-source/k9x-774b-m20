@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-0TIZ",
-    "timestamp": "2026-11-09T21:31:47.963Z",
-    "repository": "fabio-rovai/open-ontologies",
-    "learningId": "learn-github-fabio-rovai-open-ontologies",
-    "contentHash": "c774db36f8d43d802517f2b77424f46c34e4a1e05d2cd9aea46ecb34d0bc520e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-XYUK",
-    "timestamp": "2026-11-09T21:57:34.508Z",
-    "repository": "FusionCow/Sulphur-3",
-    "learningId": "learn-huggingface-fusioncow-sulphur-3",
-    "contentHash": "98783c2040d07ee2ab23a6a6666eb8fa4e132e86dbb2dc346648d7ac6a014f9a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-0HAV",
-    "timestamp": "2026-11-09T21:59:31.735Z",
-    "repository": "smallstep/cli",
-    "learningId": "learn-github-smallstep-cli",
-    "contentHash": "3afb8375131063f51e7ad28e152e2df6a80bede05772e254df18099fce9f11c9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-0KG3",
     "timestamp": "2026-11-09T21:59:35.811Z",
     "repository": "tencent/Qwen3.8-27B-DSpine-b16",
@@ -7490,6 +7445,51 @@
     "repository": "VectifyAI/PageIndex",
     "learningId": "learn-github-vectifyai-pageindex",
     "contentHash": "cb37ad2263f56a04ac785fee6a40cff1300bfdef6824fecf40e4eb84ba242b1d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-6BG9",
+    "timestamp": "2026-11-15T03:34:20.793Z",
+    "repository": "pyannote/speaker-diarization-community-1",
+    "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
+    "contentHash": "0242fd5e465141f5f1c1423d85996b316f1452a82b725c910bb950bb6bf23b59",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-6DUH",
+    "timestamp": "2026-11-15T03:34:23.897Z",
+    "repository": "flox/flox",
+    "learningId": "learn-github-flox-flox",
+    "contentHash": "6359b612c310615b55bf97116eb146ba4ccaf6fa3d0ab602b8cc78752b70e2b3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-6R85",
+    "timestamp": "2026-11-15T03:34:41.237Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "15d8710cacadd1d24c64f4c3c258e25eb9bc253c97372476456be57721373b51",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
