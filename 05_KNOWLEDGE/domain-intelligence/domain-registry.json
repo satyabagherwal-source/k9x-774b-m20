@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T08:53:20.806Z",
-  "total_records": 1010,
+  "last_updated": "2026-11-15T09:27:09.020Z",
+  "total_records": 1015,
   "domains": {
     "A": {
       "total": 7,
@@ -748,7 +748,7 @@
       ]
     },
     "H": {
-      "total": 205,
+      "total": 210,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -954,7 +954,12 @@
         "domain_intelligence-technical-construction-intelligence-t8y2-dbx-learnings-core-invariants",
         "DOM-H-8C16206C",
         "domain_intelligence-technical-construction-intelligence-melnixdev-seo-crawl-audit-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-melnixdev-seo-crawl-audit-learnings-core-inv"
+        "domain_intelligence-technical-construction-intelligence-melnixdev-seo-crawl-audit-learnings-core-inv",
+        "domain_intelligence-technical-construction-intelligence-lancedb-lancedb-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-meshtastic-meshtastic-android-core-invariant",
+        "DOM-H-EE93AFC9",
+        "domain_intelligence-technical-construction-intelligence-meshtastic-meshtastic-android-learnings-core",
+        "domain_intelligence-technical-construction-intelligence-lancedb-lancedb-learnings-core-invariants"
       ]
     },
     "I": {
@@ -13801,8 +13806,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "f2031e45de47edae8c87e83b513a224b781eaf4d4e7671921338c282f7382bd0",
-      "created_at": "2026-11-15T04:45:04.853Z"
+      "content_hash": "95f15e5b25276a8c8943e6fea9ac34c81e8da5144e689a24f6b599da82296bc5",
+      "created_at": "2026-11-15T09:27:09.020Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
@@ -19497,6 +19502,76 @@
       "repository": "melnixdev-seo-crawl-audit-learnings",
       "content_hash": "923f66ac9a11f2a9f1a6f0ff1a66b55f94bd61b703924bc78f88aaf175bc4777",
       "created_at": "2026-11-15T08:53:20.194Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-lancedb-lancedb-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-lancedb-lancedb-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: lancedb/lancedb Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lancedb-lancedb-technical-construction-intelligence-lancedb-lancedb-core-invaria.md",
+      "repository": "lancedb/lancedb",
+      "content_hash": "1b9a06dbbd43aa846c339e5fed29669f0f775dc8f4089cb8206490c46421a028",
+      "created_at": "2026-11-15T09:21:42.352Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-meshtastic-meshtastic-android-core-invariant": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-meshtastic-meshtastic-android-core-invariant",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: meshtastic/Meshtastic-Android Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-meshtastic-meshtastic-android-technical-construction-intelligence-meshtastic-mes.md",
+      "repository": "meshtastic/Meshtastic-Android",
+      "content_hash": "71fb8c9864ed8870e0bb8fa9650d8ccf8c7da6533b8c97c2465fa4aa71637705",
+      "created_at": "2026-11-15T09:26:37.345Z"
+    },
+    "DOM-H-EE93AFC9": {
+      "record_id": "DOM-H-EE93AFC9",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "Native Maps SDK Out-Of-Memory Crash via Vertex Explosion (BUG-MAP-02)",
+      "content": "When bridging managed runtime data structures to closed native SDKs, memory consumption must be gated before the data crosses the JNI boundary.",
+      "content_hash": "49cea7abbd8a29525f07fe852f2fd849952b5cae66f5162b1d0f3c3bfc94a8fa",
+      "summary": "The Google Maps SDK maintains multiple copies of geometry: original model vertices, Java `LatLng` wrappers, and native C++ JNI rendering buf -> When bridging managed runtime data structures to closed native SDKs, memory consumption must be gated before the data crosses the JNI bounda",
+      "provenance": {
+        "source_uri": "project://meshtastic-meshtastic-android/meshtastic-meshtastic-android-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T09:26:40.161Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (meshtastic-meshtastic-android)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `a6fc1e52` (\"fix(map): bound the memory map layers and coverage terrain hold (#8030)\")."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-15T09:27:07.302Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-meshtastic-meshtastic-android-learnings-core": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-meshtastic-meshtastic-android-learnings-core",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: meshtastic-meshtastic-android-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-meshtastic-meshtastic-android-learnings-technical-construction-intelligence-mesh.md",
+      "repository": "meshtastic-meshtastic-android-learnings",
+      "content_hash": "c98cf43e9375afa50fad3a3c7e0605c133e5fe5c146df372fa3fc95dd4877370",
+      "created_at": "2026-11-15T09:27:07.800Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-lancedb-lancedb-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-lancedb-lancedb-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: lancedb-lancedb-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lancedb-lancedb-learnings-technical-construction-intelligence-lancedb-lancedb-le.md",
+      "repository": "lancedb-lancedb-learnings",
+      "content_hash": "e6bf3705ac3345562f0b0680a771aa1884f12472d583e1052571acbb26f45f85",
+      "created_at": "2026-11-15T09:27:08.404Z"
     }
   }
 }

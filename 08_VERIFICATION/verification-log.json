@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261110-Y38Y",
-    "timestamp": "2026-11-10T01:41:37.138Z",
-    "repository": "cilium/cilium",
-    "learningId": "learn-github-cilium-cilium",
-    "contentHash": "3759605db1e1f0a147d25aa1902e3078da07016cfdb474b0f8b8d7989243e617",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261110-Y5HI",
-    "timestamp": "2026-11-10T01:41:40.038Z",
-    "repository": "tursodatabase/turso",
-    "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "dc78c1965f15695513c4dd9ce3383048f310a57c406f3d27aa7d3af80556d22a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261110-4AWG",
     "timestamp": "2026-11-10T01:46:26.992Z",
     "repository": "restatedev/restate",
@@ -7490,6 +7460,36 @@
     "repository": "MelnixDev/seo-crawl-audit",
     "learningId": "learn-github-melnixdev-seo-crawl-audit",
     "contentHash": "32664a22ec4793b1b8bec6e306b36d81e80c02221ea28f24d341c91c9dd76107",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-L0MH",
+    "timestamp": "2026-11-15T09:21:41.993Z",
+    "repository": "lancedb/lancedb",
+    "learningId": "learn-github-lancedb-lancedb",
+    "contentHash": "b0d20128c906d99208e6e8c47d2c77d299ee5584655880a24ae838860335ea51",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-RC6H",
+    "timestamp": "2026-11-15T09:26:36.905Z",
+    "repository": "meshtastic/Meshtastic-Android",
+    "learningId": "learn-github-meshtastic-meshtastic-android",
+    "contentHash": "7d45f78be9227ea7c25d098099ffeacc6943a900ace2f5b0faa063d75802d5c8",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

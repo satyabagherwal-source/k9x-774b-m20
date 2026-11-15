@@ -621655,3 +621655,612 @@ button.addEventListener("click", async () => {
 Simulate double-click concurrency in headless tests (`node:test` + VM/JSDOM): dispatch two click events 50ms apart where the first clipboard promise resolves in 200ms and the second in 100ms. Assert that the button remains in the `Success!` state for exactly 2500ms after the second click, with zero label flickering or premature resets.
 
 ---
+
+
+---
+
+## 8600. Snapshot-Bound Deferred Dereferencing for Disaggregated Blob Payloads (Harvested from lancedb/lancedb)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Snapshot-Bound Deferred Dereferencing for Disaggregated Blob Payloads",
+  "source": "lancedb/lancedb",
+  "source_url": "https://github.com/lancedb/lancedb",
+  "source_version": "f17a07a2",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-15T09:21:41.134Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-lancedb-lancedb",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [lancedb/lancedb](https://github.com/lancedb/lancedb) (Revision: `f17a07a2`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When an engine decouples metadata/scalar queries from deferred payload retrieval (e.g., Blobs, LOBs, out-of-band tensors), the query response MUST inject immutable snapshot provenance (`version` + content digest/UUID) into stream-level metadata. The client MUST bind subsequent payload fetch calls exclusively to that immutable snapshot identity and MUST NOT query the live or floating table HEAD.
+
+**WHY**:
+In a multi-version concurrency control (MVCC) or cloud-backed database, concurrent write transactions, table overwrites, or schema mutations occurring between query execution (T1) and deferred payload hydration (T2) cause payload corruption. A query executed at version $V_1$ fetching payloads from $V_2$ produces silent scalar-payload mismatches: Row ID $N$ in $V_1$ might refer to record $A$, but after an overwrite or compaction, Row ID $N$ in $V_2$ refers to record $B$ or points out of bounds.
+
+**WHEN TO APPLY**:
+- Systems with separated storage/index engines (vector databases, lakehouses, search engines).
+- Columnar layouts with externalized blob storage (Lance Blob v2, Parquet byte-range pointers).
+- Distributed SDKs with lazy-loading interfaces (`toArray()`, `toArrow()`, `fetch_blobs()`).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Node.js/TypeScript query execution binding deferred reads to response snapshot
+export async function collectAndHydrateBlobs(
+  query: QueryBase,
+  context: QueryContext,
+  options: QueryExecutionOptions
+): Promise<ArrowTable> {
+  const addRowId = !context.withRowId;
+  // Execute query stream and retain executed stream schema metadata
+  const table = await query.collect(options, addRowId);
+  const sources = projectedBlobSources(table.schema, context.projection);
+
+  if (sources.length === 0) {
+    return addRowId ? table.select(nonRowIdFields(table.schema)) : table;
+  }
+
+  // Extract immutable provenance injected by query node into stream metadata
+  const version = table.schema.metadata.get("lancedb:query_version");
+  const identity = table.schema.metadata.get("lancedb:query_snapshot");
+
+  if (version === undefined || identity === undefined) {
+    throw new Error(
+      'blobMode "bytes" requires a trustworthy query snapshot: missing, invalid, ' +
+      'or inconsistent x-lancedb-query-version or x-lancedb-query-snapshot headers. ' +
+      'Upgrade serving nodes or use blobMode "descriptions".'
+    );
+  }
+
+  // Materialize an independent read-only handle pinned to the exact version + content hash
+  const pinnedSnapshot = await context.table.querySnapshotWithIdentity(
+    version,
+    identity
+  );
+
+  // Fetch binary payloads exclusively through pinned snapshot
+  return readBlobBytes(table, sources, pinnedSnapshot, addRowId);
+}
+```
+
+```rust
+// Rust remote query hybrid fusion snapshot verification
+let snapshot = |schema: SchemaRef| {
+    schema
+        .metadata()
+        .get("lancedb:query_version")
+        .zip(schema.metadata().get("lancedb:query_snapshot"))
+        .map(|(version, identity)| (version.clone(), identity.clone()))
+};
+
+let stream_schemas = (fts_results.schema(), vec_results.schema());
+let fts_snapshot = snapshot(stream_schemas.0.clone());
+let vec_snapshot = snapshot(stream_schemas.1.clone());
+
+// Require strict identity equivalence across all producing legs of a hybrid query
+let query_snapshot = fts_snapshot.filter(|value| Some(value) == vec_snapshot.as_ref());
+if query_snapshot.is_none() && self.parent.as_native().is_none() {
+    return Err(Error::InvalidInput {
+        message: "Hybrid query legs resolved against inconsistent snapshot identities".into(),
+    });
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Querying live table handle for deferred blob chunks
+async function unsafeReadBlobs(table: Table, rowIds: bigint[]): Promise<Buffer[]> {
+  // FAILS: If another worker committed an overwrite or compaction between the vector query 
+  // and this call, table.fetchBlobs reads unaligned bytes from the current HEAD version.
+  return await table.fetchBlobs("image_bytes", rowIds); 
+}
+```
+
+**VERIFICATION METHOD**:
+1. Integration test setting up a local HTTP mock server representing a remote dataset.
+2. Execute query returning version $V_1$ with dataset identity `v1:aaaa...`.
+3. Concurrently commit a complete table overwrite advancing the dataset to $V_2$ with identity `v1:bbbb...` reusing the same row IDs.
+4. Execute payload fetch. Assert that the client sends `x-lancedb-query-snapshot: v1:aaaa...` and rejects responses from $V_2$, failing explicitly with mismatched provenance errors instead of returning corrupt bytes.
+
+---
+
+
+---
+
+## 8601. Preserving Terminal Server Build Identity in Asynchronous Distributed Job Waits (Harvested from lancedb/lancedb)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Preserving Terminal Server Build Identity in Asynchronous Distributed Job Waits",
+  "source": "lancedb/lancedb",
+  "source_url": "https://github.com/lancedb/lancedb",
+  "source_version": "f17a07a2",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-15T09:21:41.598Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-lancedb-lancedb",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [lancedb/lancedb](https://github.com/lancedb/lancedb) (Revision: `f17a07a2`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When an asynchronous distributed task or compute function fails, the system MUST persist and report the build provenance (commit SHA, release version, build date) of the specific worker node that produced the terminal failure. Polling or query nodes MUST NOT substitute their own identity for the recorded terminal identity.
+
+**WHY**:
+In distributed architectures where heterogeneous compute nodes process background jobs (e.g., remote data transforms, indexing, serverless function workers) while separate query nodes respond to status polling requests, clusters undergo rolling upgrades. If worker node running version $1.13.0$ crashes or produces a deterministic calculation error, and a client later polls a query node running version $2.0.0$ via `job.wait()`, reporting the query node's version misleads engineers into debugging newer code paths that never ran the failing workload.
+
+**WHEN TO APPLY**:
+- Distributed batch/job processing frameworks.
+- Long-running async workflows with separate worker and coordination/API tiers.
+- Client SDK error propagation paths for background tasks.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Rust remote job terminal identity retention
+impl<S: HttpSend> JobHandle for RemoteJob<S> {
+    async fn wait(&self) -> Result<TerminalResult> {
+        let description = self.poll_until_completed().await?;
+        match description.state() {
+            JobState::Done => Ok(description.into_terminal_result(request_id)),
+            JobState::Failed => {
+                let mut failure = description
+                    .failure
+                    .map(ReportedFailure::into_job_failure)
+                    .unwrap_or_default();
+
+                // Persisted terminal server identity MUST take precedence over the responding node.
+                // The responding query node may have upgraded since this job failed.
+                if let Some(server) = description
+                    .result
+                    .as_ref()
+                    .and_then(|result| result.get("terminal_server"))
+                    .and_then(|server| {
+                        serde_json::from_value::<crate::server_info::ServerBuildInfo>(
+                            server.clone(),
+                        )
+                        .ok()
+                    })
+                {
+                    let provenance = format!("[server: {server}]");
+                    failure.message = Some(match failure.message {
+                        Some(message) => format!("{message} {provenance}"),
+                        None => provenance,
+                    });
+                }
+                
+                Err(Error::JobFailed {
+                    job_id: Some(self.job_id.clone()),
+                    failure: Box::new(failure),
+                })
+            }
+            JobState::Cancelled => Err(Error::JobCancelled { job_id: self.job_id.clone() }),
+        }
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Synthesizing error context from current transport response headers
+let response = client.get_job_status(&self.job_id).await?;
+if response.status == "FAILED" {
+    // FAILS: x-lancedb-server-build is set by the API gateway or query node serving this HTTP GET,
+    // NOT the executor worker that crashed hours ago on older binaries.
+    let current_node = response.headers().get("x-lancedb-server-build");
+    return Err(Error::JobFailed(format!("{}: from {}", response.error, current_node)));
+}
+```
+
+**VERIFICATION METHOD**:
+Mock an HTTP endpoint for `/v1/jobs/describe` returning HTTP 200 with header `x-lancedb-server-build: 2.0.0` and JSON payload containing `result.terminal_server: { release: "1.13.0-beta.0", git_sha: "2a7874ecd589" }`. Call `job.wait()` and verify via string assertions and structured error inspection that `error.to_string()` includes `1.13.0-beta.0` and does NOT contain `2.0.0`.
+
+---
+
+
+---
+
+## 8602. Platform Quota Pre-emptive Accounting Rule (Harvested from meshtastic/Meshtastic-Android)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Platform Quota Pre-emptive Accounting Rule",
+  "source": "meshtastic/Meshtastic-Android",
+  "source_url": "https://github.com/meshtastic/Meshtastic-Android",
+  "source_version": "fd407372",
+  "license": "GPL-3.0",
+  "extracted_at": "2026-11-15T09:26:35.582Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-meshtastic-meshtastic-android",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [meshtastic/Meshtastic-Android](https://github.com/meshtastic/Meshtastic-Android) (Revision: `fd407372`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When interacting with OS-level hardware daemons that impose rolling rate-limits or quotas (e.g., Android `BluetoothLeScanner.startScan()`), client software **MUST** track and account for resource reservations in-memory prior to executing the platform system call. If the system call would breach the threshold, the client **MUST NOT** make the platform call and **MUST** fail immediately with a deterministic quota error specifying the backoff duration.
+
+**WHY**:
+Android's `BluetoothManager` enforces an undocumented rate-limit (e.g., a maximum of 5 BLE scan starts within a rolling 30-second window). If an application breaches this quota, the OS framework silences the callback without returning an error or advertisement results. The app remains indefinitely suspended in a `Scanning` state without an advertisement arriving or an exception being raised, inducing complete radio desynchronization.
+
+**WHEN TO APPLY**:
+Apply to all mobile, embedded, or desktop hardware driver interfaces where the underlying operating system enforces undocumented, silent-suppression rate ceilings (Bluetooth LE scans, Wi-Fi RTT scans, Camera open requests, GNSS batch requests).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```kotlin
+package org.meshtastic.core.ble
+
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.TimeMark
+import kotlin.time.TimeSource
+
+internal const val ANDROID_BLE_SCAN_START_LIMIT = 5
+internal val ANDROID_BLE_SCAN_START_WINDOW: Duration = 30.seconds
+
+class AndroidBleScanStartLimiter(
+    private val timeSource: TimeSource = TimeSource.Monotonic,
+    private val maxStarts: Int = ANDROID_BLE_SCAN_START_LIMIT,
+    private val window: Duration = ANDROID_BLE_SCAN_START_WINDOW,
+) : BleScanStartLimiter {
+    private val mutex = Mutex()
+    private val scanStarts = ArrayDeque<TimeMark>()
+
+    init {
+        require(maxStarts > 0) { "maxStarts must be positive" }
+        require(window.isPositive()) { "window must be positive" }
+    }
+
+    override suspend fun reserveStart() {
+        mutex.withLock {
+            discardExpiredStarts()
+            if (scanStarts.size >= maxStarts) {
+                val oldest = scanStarts.first()
+                val retryAfter = (window - oldest.elapsedNow()).coerceAtLeast(Duration.ZERO)
+                throw BleScanStartException(
+                    reason = BleScanStartFailureReason.ScanningTooFrequently,
+                    cause = IllegalStateException("Android BLE scan-start quota exhausted"),
+                    retryAfter = retryAfter,
+                )
+            }
+            scanStarts.add(timeSource.markNow())
+        }
+    }
+
+    private fun discardExpiredStarts() {
+        while (scanStarts.firstOrNull()?.elapsedNow()?.let { it >= window } == true) {
+            scanStarts.removeFirst()
+        }
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```kotlin
+// ANTI-PATTERN: Blindly delegating scan requests directly to the Android Framework
+suspend fun startScanUnsafe(scanner: BluetoothLeScanner, callback: ScanCallback) {
+    // If called 6 times within 30 seconds, Android OS drops the scan silently.
+    // The coroutine or subscriber hangs forever waiting for onScanResult().
+    scanner.startScan(callback)
+}
+```
+
+**VERIFICATION METHOD**:
+Instantiate `AndroidBleScanStartLimiter` with a `TestTimeSource`. Fire `maxStarts` calls sequentially and assert success. Fire the `(maxStarts + 1)`-th call and assert that `BleScanStartException` is thrown with the exact delta time remaining on the oldest timestamp. Advance test time past `window` and assert scan permits can be acquired again.
+
+---
+
+
+---
+
+## 8603. Native Heap Pre-Allocation Vertex Budget Rule (Harvested from meshtastic/Meshtastic-Android)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Native Heap Pre-Allocation Vertex Budget Rule",
+  "source": "meshtastic/Meshtastic-Android",
+  "source_url": "https://github.com/meshtastic/Meshtastic-Android",
+  "source_version": "fd407372",
+  "license": "GPL-3.0",
+  "extracted_at": "2026-11-15T09:26:36.046Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-meshtastic-meshtastic-android",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.71,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [meshtastic/Meshtastic-Android](https://github.com/meshtastic/Meshtastic-Android) (Revision: `fd407372`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 71%).
+
+**RULE**:
+Before ingesting and dispatching arbitrary vector geometries (GeoJSON, KML, PMTiles) to closed-source native UI renderers (e.g., Google Maps SDK, Mapbox Native), the ingestion pipeline **MUST** compute the worst-case resident memory requirement per vertex and enforce an explicit application heap quota (e.g., maximum $\frac{1}{8}$ of available JVM heap). If a layer or composite view exceeds the budget, the layer **MUST** be rejected before parsing or dispatching to the native SDK.
+
+**WHY**:
+Mobile map SDKs render coordinates by instantiating complex wrapper objects (e.g., `LatLng`, `PolygonOptions`, internal native C++ JNI bridge nodes). Each GeoJSON coordinate consumes ~120 bytes of resident memory, plus ~300 bytes of transient parser memory. Loading dense polygon contours or user-supplied GeoJSON shapefiles easily allocates millions of vertices, triggering an uncaught `OutOfMemoryError` on native renderer background worker threads outside coroutine error boundaries, terminating the application process.
+
+**WHEN TO APPLY**:
+All client-side geospatial map renderers, vector graphics processors, and SVG/canvas renderers accepting external or dynamically computed polygon rings and line strings.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```kotlin
+package org.meshtastic.app.map
+
+import com.google.maps.android.data.renderer.model.DataLayer
+import com.google.maps.android.data.renderer.model.Geometry
+import com.google.maps.android.data.renderer.model.LineString
+import com.google.maps.android.data.renderer.model.MultiGeometry
+import com.google.maps.android.data.renderer.model.Polygon
+
+internal class MapLayerVertexBudget(val perLayer: Int, val total: Int) {
+    private var held = 0
+
+    val inUse: Int
+        @Synchronized get() = held
+
+    @Synchronized
+    fun tryAcquire(vertices: Int): Boolean {
+        if (vertices > perLayer || vertices > (total - held)) return false
+        held += vertices
+        return true
+    }
+
+    @Synchronized
+    fun release(vertices: Int) {
+        held = (held - vertices).coerceAtLeast(0)
+    }
+
+    companion object {
+        private const val HEAP_SHARE = 8
+        private const val RESIDENT_BYTES_PER_VERTEX = 120L
+        private const val LOADING_BYTES_PER_VERTEX = 300L
+
+        fun forHeap(maxHeapBytes: Long): MapLayerVertexBudget {
+            val share = maxHeapBytes / HEAP_SHARE
+            return MapLayerVertexBudget(
+                perLayer = (share / LOADING_BYTES_PER_VERTEX).coerceAtMost(Int.MAX_VALUE.toLong()).toInt(),
+                total = (share / RESIDENT_BYTES_PER_VERTEX).coerceAtMost(Int.MAX_VALUE.toLong()).toInt(),
+            )
+        }
+    }
+}
+
+internal fun Geometry.vertexCount(): Int = when (this) {
+    is Polygon -> outerBoundary.size + innerBoundaries.sumOf { it.size }
+    is LineString -> points.size
+    is MultiGeometry -> geometries.sumOf { it.vertexCount() }
+    else -> 1
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```kotlin
+// ANTI-PATTERN: Streaming raw GeoJSON direct into Google Map Layer without budgeting
+fun renderGeoJsonUnbounded(map: GoogleMap, inputStream: InputStream) {
+    // If the input file is a detailed 50MB contour map, GeoJsonLayer parses 800k points.
+    // The allocation fails asynchronously inside GMS renderer threads, crashing the app.
+    val layer = GeoJsonLayer(map, inputStream)
+    layer.addLayerToMap() 
+}
+```
+
+**VERIFICATION METHOD**:
+Run unit tests simulating low-memory devices (heap size = 256MB). Instantiate a mock polygon containing 250,000 vertices. Assert that `budget.tryAcquire(250_000)` returns `false` without making any allocation calls to the Google Maps SDK, and verify the memory budget releases back to 0 when discarded.
+
+---
+
+
+---
+
+## 8604. Public-Key Cryptographic Precision Ceiling Rule (Harvested from meshtastic/Meshtastic-Android)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Public-Key Cryptographic Precision Ceiling Rule",
+  "source": "meshtastic/Meshtastic-Android",
+  "source_url": "https://github.com/meshtastic/Meshtastic-Android",
+  "source_version": "fd407372",
+  "license": "GPL-3.0",
+  "extracted_at": "2026-11-15T09:26:36.521Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-meshtastic-meshtastic-android",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [meshtastic/Meshtastic-Android](https://github.com/meshtastic/Meshtastic-Android) (Revision: `fd407372`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When an application entity broadcasts telemetry (such as GNSS coordinates) over a communication channel whose encryption key is shared, default, or publicly decryptable, the serialization engine **MUST** programmatically clamp precision parameters to a predetermined security ceiling (e.g., $\le 15$ bits of precision, roughly equivalent to ~100-meter uncertainty). Omitted precision configurations on public channels **MUST NOT** default to raw precision; they **MUST** be explicitly normalized to degraded or disabled status.
+
+**WHY**:
+In mesh and IoT radio topologies, users share channels using standard public default pre-shared keys (e.g., Meshtastic's `LongFast` default PSK). If an imported profile or UI setting fails to specify explicit precision bits for a channel, legacy firmware/nodes treat the absence of precision configuration as an authorization to broadcast full 32-bit centimetre-level GPS coordinates. This leaks the physical location of emergency responders, activists, or private citizens to anyone possessing the public default key within radio frequency range.
+
+**WHEN TO APPLY**:
+Every system where data can traverse multiple cryptographic tiers (public broadcast vs. private pre-shared key groups) and physical privacy/telemetry is serialized into protobufs or wire frames.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```kotlin
+package org.meshtastic.core.model.util
+
+import okio.ByteString
+import org.meshtastic.core.model.Channel
+import org.meshtastic.proto.ChannelSettings
+import org.meshtastic.proto.ModuleSettings
+
+const val MAX_PUBLIC_KEY_PRECISION_BITS = 15
+
+fun onWirePrecisionBits(precisionBits: Int, usesPublicKey: Boolean): Int =
+    if (usesPublicKey) precisionBits.coerceAtMost(MAX_PUBLIC_KEY_PRECISION_BITS) else precisionBits
+
+fun ChannelSettings.withOnWirePrecision(usesPublicKey: Boolean): ChannelSettings {
+    val module = module_settings
+    // Crucial: absent module settings MUST become explicit 0 (disabled) on public keys
+    val onWire = onWirePrecisionBits(module?.position_precision ?: 0, usesPublicKey)
+    if (!usesPublicKey || onWire == module?.position_precision) return this
+    
+    val capped = (module ?: ModuleSettings.Builder().build())
+        .newBuilder()
+        .also { wb -> wb.position_precision = onWire }
+        .build()
+        
+    return newBuilder().also { wb -> wb.module_settings = capped }.build()
+}
+
+fun List<ChannelSettings>.withOnWirePrecision(): List<ChannelSettings> {
+    val primary = firstOrNull()
+    return mapIndexed { index, settings ->
+        settings.withOnWirePrecision(Channel.usesPublicKey(settings, primary.takeIf { index > 0 }))
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```kotlin
+// ANTI-PATTERN: Trusting the imported profile or UI model directly onto the wire
+fun ChannelSet.exportToRadio(): ChannelSet {
+    // SECURITY DISASTER: If position_precision is null or set to 32 bits on the
+    // default public channel, physical coordinates are broadcast in the clear.
+    return this 
+}
+```
+
+**VERIFICATION METHOD**:
+Execute property-based or parameterized unit tests against `ChannelSettings.withOnWirePrecision()`:
+1. Public default key with `precision = 32` -> yields `precision = 15`.
+2. Public default key with `precision = null` -> yields explicit `precision = 0`.
+3. Private key with `precision = 32` -> yields preserved `precision = 32`.
+
+---

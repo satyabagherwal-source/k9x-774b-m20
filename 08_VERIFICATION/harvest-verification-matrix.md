@@ -10065,3 +10065,6 @@
 | `CYCLE-20261115-JC6Q` | `2026-11-15T08:52:24.050Z` | `MelnixDev/seo-crawl-audit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8597, Rule 8598, Rule 8599` | Yes (`32664a22...`) |
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T08:52:52.332Z` | `melnixdev-seo-crawl-audit` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-J-C5E210D6` [Domain J] | Yes (`d95e845e...`) |
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T08:53:19.661Z` | `melnixdev-seo-crawl-audit` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-DDC06A14` [Domain F] | Yes (`7f5b8da3...`) |
+| `CYCLE-20261115-L0MH` | `2026-11-15T09:21:41.993Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8600, Rule 8601` | Yes (`b0d20128...`) |
+| `CYCLE-20261115-RC6H` | `2026-11-15T09:26:36.905Z` | `meshtastic/Meshtastic-Android` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8602, Rule 8603, Rule 8604` | Yes (`7d45f78b...`) |
+| `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T09:27:07.322Z` | `meshtastic-meshtastic-android` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-EE93AFC9` [Domain H] | Yes (`49cea7ab...`) |

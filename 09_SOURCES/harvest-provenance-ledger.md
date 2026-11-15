@@ -10098,3 +10098,6 @@ Every entry in this ledger must capture:
 | `learn-github-melnixdev-seo-crawl-audit` | `https://github.com/MelnixDev/seo-crawl-audit` | `abed0505` | Multi-dimensional audit evidence | 2026-11-15T08:52:24.053Z |
 | `learn-dom-j-c5e210d6` | `project://melnixdev-seo-crawl-audit` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/melnixdev-seo-crawl-audit-learnings.md` | 2026-11-15T08:52:52.332Z |
 | `learn-dom-f-ddc06a14` | `project://melnixdev-seo-crawl-audit` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/melnixdev-seo-crawl-audit-learnings.md` | 2026-11-15T08:53:19.661Z |
+| `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `f17a07a2` | Multi-dimensional audit evidence | 2026-11-15T09:21:41.997Z |
+| `learn-github-meshtastic-meshtastic-android` | `https://github.com/meshtastic/Meshtastic-Android` | `fd407372` | Multi-dimensional audit evidence | 2026-11-15T09:26:36.909Z |
+| `learn-dom-h-ee93afc9` | `project://meshtastic-meshtastic-android` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md` | 2026-11-15T09:27:07.322Z |

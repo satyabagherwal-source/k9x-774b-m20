@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T08:53:20.707Z",
+  "last_updated": "2026-11-15T09:27:08.917Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4797,11 +4797,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-PA3V",
+      "id": "CD-S0VO",
       "directive_title": "splash screen staying visible after warm start on Android 12+",
       "source_repo": "zoontek-react-native-bootsplash-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-PA3V-splash-screen-staying-visible-after-warm-start-on-android-12.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-S0VO-splash-screen-staying-visible-after-warm-start-on-android-12.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-15",
@@ -15013,6 +15013,77 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-D5969E-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-15"
+    },
+    {
+      "id": "CD-S0BN",
+      "directive_title": "Snapshot-Bound Deferred Dereferencing for Disaggregated Blob Payloads",
+      "source_repo": "lancedb-lancedb-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-S0BN-snapshot-bound-deferred-dereferencing-for-disaggregated-blob-payloads.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-15",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-S0BO",
+      "directive_title": "Preserving Terminal Server Build Identity in Asynchronous Distributed Job Waits",
+      "source_repo": "lancedb-lancedb-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-S0BO-preserving-terminal-server-build-identity-in-asynchronous-distributed-job-waits.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-15",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-RZS0",
+      "directive_title": "Native Heap Pre-Allocation Vertex Budget Rule",
+      "source_repo": "meshtastic-meshtastic-android-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-RZS0-native-heap-pre-allocation-vertex-budget-rule.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-15",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-RZS1",
+      "directive_title": "Public-Key Cryptographic Precision Ceiling Rule",
+      "source_repo": "meshtastic-meshtastic-android-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-RZS1-public-key-cryptographic-precision-ceiling-rule.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-15",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-D381CA",
+      "directive_title": "Precise Physical Location Leak on Public-Key LoRa Channels (BUG-LOCATION-01)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "meshtastic-meshtastic-android",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-D381CA-precise-physical-location-leak-on-public.md",
+      "staged_date": "2026-11-15"
+    },
+    {
+      "id": "CD-REV-C94A04",
+      "directive_title": "Loss of Terminal Worker Identity in Remote Job Wait Failures (BUG-LANCE-02)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "lancedb-lancedb",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C94A04-loss-of-terminal-worker-identity-in-remo.md",
+      "staged_date": "2026-11-15"
+    },
+    {
+      "id": "CD-REV-3AF796",
+      "directive_title": "splash screen staying visible after warm start on Android 12+",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-bootsplash",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-3AF796-splash-screen-staying-visible-after-warm.md",
       "staged_date": "2026-11-15"
     }
   ]

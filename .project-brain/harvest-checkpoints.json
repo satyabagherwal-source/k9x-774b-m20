@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-15T08:52:24.060Z",
+  "last_updated": "2026-11-15T09:26:36.917Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -11196,14 +11196,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lancedb-lancedb",
-      "content_hash": "395b32b2c2df240bb7d1f791d851e22c7803589d21a5c179ed772cc9461fc9f7",
-      "verified_at": "2026-11-13T21:16:18.132Z",
+      "content_hash": "b0d20128c906d99208e6e8c47d2c77d299ee5584655880a24ae838860335ea51",
+      "verified_at": "2026-11-15T09:21:42.005Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T21:16:18.132Z"
+      "last_updated": "2026-11-15T09:21:42.005Z"
     },
     "agent-of-empires/agent-of-empires": {
       "repository": "agent-of-empires/agent-of-empires",
@@ -11751,14 +11751,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meshtastic-meshtastic-android",
-      "content_hash": "3cf8d6ebc7046004190a026cb68b74492b022e205d58011e3152616644b3a436",
-      "verified_at": "2026-11-11T23:57:06.861Z",
+      "content_hash": "7d45f78be9227ea7c25d098099ffeacc6943a900ace2f5b0faa063d75802d5c8",
+      "verified_at": "2026-11-15T09:26:36.916Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T23:57:06.861Z"
+      "last_updated": "2026-11-15T09:26:36.916Z"
     },
     "astral-sh/uv": {
       "repository": "astral-sh/uv",
