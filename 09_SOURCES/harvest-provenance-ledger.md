@@ -10121,3 +10121,6 @@ Every entry in this ledger must capture:
 | `learn-dom-d-f3c32546` | `project://darrylmorley-whatcable` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/darrylmorley-whatcable-learnings.md` | 2026-11-15T11:14:39.611Z |
 | `learn-github-nasiko-labs-nasiko` | `https://github.com/Nasiko-Labs/nasiko` | `0ec91fb2` | Multi-dimensional audit evidence | 2026-11-15T11:40:24.335Z |
 | `learn-github-infiniflow-infinity` | `https://github.com/infiniflow/infinity` | `79ce0cb3` | Multi-dimensional audit evidence | 2026-11-15T12:13:15.748Z |
+| `learn-github-vi-websocat` | `https://github.com/vi/websocat` | `097582e3` | Multi-dimensional audit evidence | 2026-11-15T12:31:18.742Z |
+| `learn-huggingface-sensenova-sensenova-loop-9b-preview` | `https://huggingface.co/sensenova/SenseNova-Loop-9B-Preview` | `hf-senseno` | Multi-dimensional audit evidence | 2026-11-15T12:36:19.599Z |
+| `learn-dom-d-20a9abe9` | `project://hf-sensenova-sensenova-loop-9b-preview` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-sensenova-sensenova-loop-9b-preview-learnings.md` | 2026-11-15T12:36:57.559Z |

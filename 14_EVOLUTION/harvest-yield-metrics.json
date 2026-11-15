@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T12:13:15.755Z",
-  "total_cycles_completed": 9707,
-  "total_learnings_persisted": 9707,
-  "total_rules_promoted": 9339,
+  "last_updated": "2026-11-15T12:36:19.605Z",
+  "total_cycles_completed": 9709,
+  "total_learnings_persisted": 9709,
+  "total_rules_promoted": 9340,
   "history": [
-    {
-      "timestamp": "2026-11-14T11:04:37.991Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T11:33:59.735Z",
-      "repository": "nomic-ai/nomic-embed-text-v1.5",
-      "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T12:04:05.084Z",
       "repository": "google/gemma-4-26B-A4B-it",
@@ -1403,6 +1389,20 @@
       "repository": "infiniflow/infinity",
       "learningId": "learn-github-infiniflow-infinity",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T12:31:18.748Z",
+      "repository": "vi/websocat",
+      "learningId": "learn-github-vi-websocat",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T12:36:19.605Z",
+      "repository": "sensenova/SenseNova-Loop-9B-Preview",
+      "learningId": "learn-huggingface-sensenova-sensenova-loop-9b-preview",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T11:40:32.911Z",
+  "updated_at": "2026-11-15T12:36:57.573Z",
   "stats": {
-    "total_discovered": 3678,
-    "approved_pending_harvest": 3468,
+    "total_discovered": 3680,
+    "approved_pending_harvest": 3470,
     "harvested_count": 0,
     "rejected_count": 210,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3447,
+      "COMMUNITY_AND_EXPERT": 3449,
       "OFFICIAL_DOCUMENTATION": 126,
       "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
@@ -79467,6 +79467,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nasiko-labs-nasiko-learnings.md",
         "fileName": "nasiko-labs-nasiko-learnings.md"
+      }
+    },
+    "SRC-E4DB035E6FA7": {
+      "id": "SRC-E4DB035E6FA7",
+      "url": "https://github.com/Homebrew/homebrew-core/pull/324983",
+      "title": "https://github.com/Homebrew/homebrew-core/pull/324983",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T12:36:22.727Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vi-websocat-learnings.md",
+        "fileName": "vi-websocat-learnings.md"
+      }
+    },
+    "SRC-FED77A35994E": {
+      "id": "SRC-FED77A35994E",
+      "url": "https://huggingface.co/sensenova/SenseNova-Loop-9B-Preview",
+      "title": "https://huggingface.co/sensenova/SenseNova-Loop-9B-Preview",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T12:36:57.573Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-sensenova-sensenova-loop-9b-preview-learnings.md",
+        "fileName": "hf-sensenova-sensenova-loop-9b-preview-learnings.md"
       }
     }
   }

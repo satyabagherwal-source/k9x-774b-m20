@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-15T12:13:15.760Z",
+  "last_updated": "2026-11-15T12:36:19.610Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6711,14 +6711,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vi-websocat",
-      "content_hash": "84feebe60d2749e442bd1594babe3632d0d7a95245a917bb6ab5ab8bf6c29f0c",
-      "verified_at": "2026-11-12T03:10:29.257Z",
+      "content_hash": "f3d51d8316b610635589ac5c59198df4d91bb43e22d36f3e82e181826211ca22",
+      "verified_at": "2026-11-15T12:31:18.755Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T03:10:29.257Z"
+      "last_updated": "2026-11-15T12:31:18.755Z"
     },
     "keybase/client": {
       "repository": "keybase/client",
@@ -17676,14 +17676,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sensenova-sensenova-loop-9b-preview",
-      "content_hash": "09d23ae29cb895658270545ffe33e29c38d8ded70b19e05bf4410d3874b96763",
-      "verified_at": "2026-11-09T22:41:01.031Z",
+      "content_hash": "31d59e7664099f318243d443ff74470d6a204a7aeaecb5fcb683060fed083087",
+      "verified_at": "2026-11-15T12:36:19.610Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T22:41:01.031Z"
+      "last_updated": "2026-11-15T12:36:19.610Z"
     },
     "pyannote/speaker-diarization-3.1": {
       "repository": "pyannote/speaker-diarization-3.1",

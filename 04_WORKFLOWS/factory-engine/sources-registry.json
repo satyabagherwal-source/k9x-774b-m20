@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-15T12:13:18.935Z",
-    "lastVerified": "2026-11-15T12:13:18.935Z",
+    "lastChecked": "2026-11-15T12:36:22.496Z",
+    "lastVerified": "2026-11-15T12:36:22.496Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -155,8 +155,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-15T10:43:10.491Z",
-    "lastVerified": "2026-11-15T10:43:10.491Z",
+    "lastChecked": "2026-11-15T12:31:29.289Z",
+    "lastVerified": "2026-11-15T12:31:29.289Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1133,9 +1133,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-11-15T02:15:02.863Z",
+    "lastChecked": "2026-11-15T12:31:24.324Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-11-15T02:15:02.863Z"
+    "lastVerified": "2026-11-15T12:31:24.324Z"
   },
   "influxdata-influxdb": {
     "name": "influxdb",
@@ -1197,12 +1197,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "flux-iac-tofu-controller": {
-    "name": "flux-iac/tofu-controller",
+    "name": "tofu-controller",
     "officialUrl": "https://github.com/flux-iac/tofu-controller",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-14T00:36:24.594Z",
-    "lastVerified": "2026-11-14T00:36:24.594Z",
+    "lastChecked": "2026-11-15T12:31:21.870Z",
+    "lastVerified": "2026-11-15T12:31:21.870Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-flux-iac-tofu-controller",
@@ -1211,7 +1211,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "e938178a"
   },
   "provablehq-snarkos": {
     "name": "snarkOS",
@@ -2845,8 +2846,8 @@
     "officialUrl": "https://github.com/CaviraOSS/LongMemory",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-13T22:43:05.282Z",
-    "lastVerified": "2026-11-13T22:43:05.282Z",
+    "lastChecked": "2026-11-15T12:31:26.788Z",
+    "lastVerified": "2026-11-15T12:31:26.788Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-caviraoss-longmemory",
@@ -4050,22 +4051,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "vi-websocat": {
-    "name": "websocat",
+    "name": "vi/websocat",
     "officialUrl": "https://github.com/vi/websocat",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-13T15:47:00.483Z",
-    "lastVerified": "2026-11-13T15:47:00.483Z",
+    "lastChecked": "2026-11-15T12:31:17.915Z",
+    "lastVerified": "2026-11-15T12:31:17.915Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-vi-websocat",
-    "contentHash": "84feebe60d2749e442bd1594babe3632d0d7a95245a917bb6ab5ab8bf6c29f0c",
+    "contentHash": "f3d51d8316b610635589ac5c59198df4d91bb43e22d36f3e82e181826211ca22",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "734de478"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-google-bert-bert-base-uncased": {
     "name": "google-bert/bert-base-uncased",
@@ -9467,9 +9467,9 @@
   "swiftuix-swiftuix": {
     "name": "SwiftUIX",
     "officialUrl": "https://github.com/SwiftUIX/SwiftUIX",
-    "lastChecked": "2026-11-12T01:44:20.113Z",
+    "lastChecked": "2026-11-15T12:31:19.477Z",
     "revisionIdentifier": "3a99044b",
-    "lastVerified": "2026-11-12T01:44:20.113Z"
+    "lastVerified": "2026-11-15T12:31:19.477Z"
   },
   "hf-black-forest-labs-flux-3-image-klein-comfy": {
     "name": "black-forest-labs/flux-3-image-klein-comfy",
@@ -14018,13 +14018,13 @@
     "officialUrl": "https://huggingface.co/sensenova/SenseNova-Loop-9B-Preview",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-09T22:40:53.420Z",
-    "lastVerified": "2026-11-09T22:40:53.420Z",
+    "lastChecked": "2026-11-15T12:31:16.895Z",
+    "lastVerified": "2026-11-15T12:31:16.895Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-sensenova-sensenova-loop-9b-preview",
-    "contentHash": "09d23ae29cb895658270545ffe33e29c38d8ded70b19e05bf4410d3874b96763",
-    "promotedRulesCount": 3,
+    "contentHash": "31d59e7664099f318243d443ff74470d6a204a7aeaecb5fcb683060fed083087",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

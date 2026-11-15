@@ -4393,10 +4393,10 @@
     "repository": "vi/websocat",
     "platform": "github",
     "sourceUrl": "https://github.com/vi/websocat",
-    "sourceVersion": "734de478",
+    "sourceVersion": "097582e3",
     "license": "MIT",
-    "contentHash": "84feebe60d2749e442bd1594babe3632d0d7a95245a917bb6ab5ab8bf6c29f0c",
-    "lastHarvestedAt": "2026-11-12T03:10:29.250Z",
+    "contentHash": "f3d51d8316b610635589ac5c59198df4d91bb43e22d36f3e82e181826211ca22",
+    "lastHarvestedAt": "2026-11-15T12:31:18.742Z",
     "learningId": "learn-github-vi-websocat"
   },
   "keybase-client": {
@@ -11745,8 +11745,8 @@
     "sourceUrl": "https://huggingface.co/sensenova/SenseNova-Loop-9B-Preview",
     "sourceVersion": "hf-sensenova-sensenova-loop-9b-preview",
     "license": "Open-Source",
-    "contentHash": "09d23ae29cb895658270545ffe33e29c38d8ded70b19e05bf4410d3874b96763",
-    "lastHarvestedAt": "2026-11-09T22:41:01.013Z",
+    "contentHash": "31d59e7664099f318243d443ff74470d6a204a7aeaecb5fcb683060fed083087",
+    "lastHarvestedAt": "2026-11-15T12:36:19.599Z",
     "learningId": "learn-huggingface-sensenova-sensenova-loop-9b-preview"
   },
   "hf-pyannote-speaker-diarization-3.1": {

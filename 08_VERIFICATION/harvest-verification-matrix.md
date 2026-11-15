@@ -10088,3 +10088,6 @@
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T11:14:39.611Z` | `darrylmorley-whatcable` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-F3C32546` [Domain D] | Yes (`1ead0fbb...`) |
 | `CYCLE-20261115-JE6J` | `2026-11-15T11:40:24.331Z` | `Nasiko-Labs/nasiko` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8611` | Yes (`ba1e71c6...`) |
 | `CYCLE-20261115-PNC0` | `2026-11-15T12:13:15.744Z` | `infiniflow/infinity` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8612` | Yes (`fe7e91af...`) |
+| `CYCLE-20261115-CUZ5` | `2026-11-15T12:31:18.737Z` | `vi/websocat` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8012` | Yes (`f3d51d83...`) |
+| `CYCLE-20261115-JB4A` | `2026-11-15T12:36:19.594Z` | `sensenova/SenseNova-Loop-9B-Preview` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sensenova-sensenova-loop-9b-preview-learnings.md` | Yes (`31d59e76...`) |
+| `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T12:36:57.559Z` | `hf-sensenova-sensenova-loop-9b-preview` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-20A9ABE9` [Domain D] | Yes (`02883ae2...`) |

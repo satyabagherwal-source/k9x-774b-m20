@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vi-websocat-learnings.md`  
 > **Source**: github ([https://github.com/vi/websocat](https://github.com/vi/websocat))  
-> **Source Version**: `734de478`  
+> **Source Version**: `097582e3`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T03:10:20.977Z  
+> **Timestamp**: 2026-11-15T12:31:18.025Z  
 > **Learning ID**: `learn-github-vi-websocat`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vi-websocat-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vi/websocat](https://github.com/vi/websocat))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T03:10:20.785Z  
+> **Harvest Timestamp**: 2026-11-15T12:31:17.915Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Command-line client for WebSockets, like netcat (or curl) for ws:// with advanced socat-like functions
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 8756 stars
+- **Stars / Engagement**: 8757 stars
 
 ---
 
@@ -2023,11 +2023,14 @@ impl AsyncRead for JsonRpcWrapper {}
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #315** (2026-11-12): **Don't auto-enable async stdio for character devices on Mac**
-  *Symptoms*: Fixes #89  ### Problem  On macOS, websocat exits with an error when stdin or stdout is `/dev/null` and neither of them is a terminal:  ``` $ websocat -t ws-l:127.0.0.1:38189 mirror: & $ echo x | websocat -t ws://127.0.0.1:38189/ > /dev/null websocat: Invalid argument (os error 22) websocat: error running ```  `websocat -b - mirror: < /dev/null > /dev/null` and `echo x | websocat -b - mirror: > /dev/null` fail the same way, so the usual script, cron and launchd redirections don't work. `--no-async-stdio` or `threadedstdio:` avoid it.  ### Cause  When neither stdin nor stdout is a tty, `main.rs` turns on `--async-stdio` automatically, and stdio then goes through tokio-file-unix. On Linux, epoll returns `EPERM` for `/dev/null` and regular files. tokio-file-unix handles that case by treating the fd as always ready. On macOS, kqueue returns `EINVAL` for character devices such as `/dev/null`, `/dev/zero` and `/dev/urandom` (pipes and regular files are fine). tokio-file-unix does not handle `EINVAL`, so the first poll fails.  ### Fix  On macOS only, async stdio is no longer turned on automatically when stdin or stdout is a character device (checked with `fstat`). Threaded stdio is used in that case, the same as with `--no-async-stdio`. An explicit `--async-stdio` or `asyncstdio:` behaves as before, and other platforms are unchanged.  In the issue you mentioned making `threadedstdio:` the default on Mac. This change is narrower: Mac keeps async stdio for pipes, files and sockets, and
+- **Issue #319** (2026-11-14): **Fix root package version in Cargo.lock**
+  *Symptoms*: Cargo.toml declares websocat 1.14.2, but the root package entry in Cargo.lock still declares 1.14.1. This makes locked Cargo operations require a lockfile update, blocking the Homebrew 1.14.2 update in https://github.com/Homebrew/homebrew-core/pull/324983.  Update only the root package version to match Cargo.toml; dependency versions and checksums are unchanged.  Validation: `cargo fetch --locked --target aarch64-apple-darwin` succeeds with the existing Homebrew Rust toolchain.
+  **Post-Mortem & Fix Analysis**:
+  > Shall I re-tag `v1.14.2` or does Homebrew rely on `master` ref?
+  > > Shall I re-tag `v1.14.2` or does Homebrew rely on `master` ref?  with the patch, homebrew would be fine, I think it is better to cut a new release if you want (to roll forward :) )
 
-- **Issue #314** (2026-11-12): **Fix l-ws-abstract: alias and ws-l: misuse in help examples**
-  *Symptoms*: Fixes #264  ## Problem  `websocat l-ws-abstract:test -` always fails with `websocat: invalid socket address syntax`, so the `l-ws-abstract:` server cannot be used at all. `l-abstract:test` and `l-ws-unix:...` work.  ## Cause  `l-ws-abstract:` is defined as an alias for `ws-l:abstract-l:`. But `ws-l:` is itself an alias for `ws-u:tcp-l:`, so the specifier expands to `ws-u:tcp-l:abstract-l:test`, and `tcp-l:` then tries to parse `abstract-l:test` as a socket address. The sibling `l-ws-unix:` uses `ws-u:unix-l:`, which is correct.  ## Fix  - `src/ws_server_peer.rs`: change the `l-ws-abstract:` alias to `ws-u:abstract-l:`. - `tests/test.rs`: add a `#[cfg(unix)]` test that checks how `l-ws-unix:zxc` and `l-ws-abstract:zxc` parse.  A second commit fixes the help text that makes the same `ws-l:` / `ws-u:` mistake, which is what #260 ran into. The edits are mirrored by hand in `doc.md`:  - `ws-l:` example: `ws-l:tcp-l:127.0.0.1:8808 reuse:-` -> `ws-u:tcp-l:127.0.0.1:8808 reuse:-` - wacky mode example: `ws-c:ws-l:ws-c:- tcp:127.0.0.1:5678` -> `ws-c:ws-u:ws-c:- tcp:127.0.0.1:5678` - `inetd:` help: "`inetd-ws:` - is of `ws-l:inetd:`" -> "`ws-u:inetd:`", which is what the alias actually expands to  If you want this PR to cover only #264, the second commit can be dropped.  ## Testing  Tested on macOS (aarch64), Rust 1.97.1 stable:  - `cargo test --test test ws_unix_server_aliases` on the unmodified code fails at the `l-ws-abstract:zxc` line with ``called `Result::unwrap()` on an `Err` val
+- **Issue #317** (2026-11-13): **Don't write WebSocket close reason (and other control payloads) to the output stream**
+  *Symptoms*: Fixes #316  Websocat4 wrote the payload of a received Close frame (status code bytes + reason) to stdout as if it were message data. With `websocat1 ... --close-status-code 1234 --close-reason qwerty` on the other side, `websocat4 ws://...` printed `qqq` and then `\x04\xd2qwerty`.  The decoder hands the Close payload upstream with the `Eof` flag, which is right: `lengthprefixed` with `--lengthprefixed-include-control` encodes control packets with their payload (`wslprc1` covers that). The problem is the two packet-to-stream sinks, `write_stream_chunks` and `line_chunks`, which wrote any packet's bytes. The same path also leaked ping payloads when `--inhibit-pongs=0` passes pings upstream, and payloads of received pongs.  Change: both sinks now skip the payload of control packets (`is_control()`: Eof / Ping / Pong). An Eof packet still flushes and shuts down the writer, as before. This matches the `Defragmenter`, which already ignores control packets.  ### Tests  New ioless tests `wsclosereason1..4` (binary and text mode; close with a reason; inhibited ping + pong around a data frame). All 4 fail on `websocat4` with the mock reporting an unexpected write, and pass with the change. Full `cargo test`: 105 ioless tests pass.  Also checked by hand against a small raw WebSocket server that sends `qqq\n` and then Close(1234, "qwerty"): before, stdout got `qqq \n\x04\xd2qwerty` (text) / `qqq\n\x04\xd2qwerty` (`-b`); after, only `qqq \n` / `qqq\n`.  Side note, not changed here: with `
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2044,240 +2047,53 @@ impl AsyncRead for JsonRpcWrapper {}
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `62b85d8a` (2026-10-22)
-**Commit Message**: Fix help examples that use ws-l: where ws-u: is meant
+### Incident Patch 1: `097582e3` (2026-11-14)
+**Commit Message**: Merge pull request #319 from chenrui333/fix-lockfile-package-version
 
-`ws-l:` already includes `tcp-l:`, so `ws-l:tcp-l:127.0.0.1:8808` and
-the wacky mode example `ws-c:ws-l:ws-c:-` fail with "invalid socket
-address syntax" (#260). Use `ws-u:` there, and describe `inetd-ws:` as
-`ws-u:inetd:`, which is what it actually expands to.
+Fix root package version in Cargo.lock
 
-Co-authored-by: Claude Opus-5-5 <[REDACTED_EMAIL]>
-
-**File**: `doc.md` (modified, +3/-3)
+**File**: `Cargo.lock` (modified, +1/-1)
 ```diff
-@@ -371,7 +371,7 @@ Example: Dump all incoming websocket data to console
+@@ -1878,7 +1878,7 @@ checksum = "9c8d87e72b64a3b4db28d11ce29237c246188f4f51057d65a7eab63b7987e423"
  
- Example: the same, but more verbose:
- 
--    websocat ws-l:tcp-l:127.0.0.1:8808 reuse:-
-+    websocat ws-u:tcp-l:127.0.0.1:8808 reuse:-
- 
- 
- ### `inetd-ws:`
-@@ -484,7 +484,7 @@ Like `asyncstdio:`, but intended for inetd(8) usage. [A]
- 
- Automatically enables `-q` (`--quiet`) mode.
- 
--`inetd-ws:` - is of `ws-l:inetd:`
-+`inetd-ws:` - is of `ws-u:inetd:`
- 
- Example of inetd.conf line that makes it listen for websocket
- connections on port 1234 and redirect the data to local SSH server.
-@@ -1356,7 +1356,7 @@ between them.
- 
- Final example just for fun: wacky mode
- 
--    websocat ws-c:ws-l:ws-c:- tcp:127.0.0.1:5678
-+    websocat ws-c:ws-u:ws-c:- tcp:127.0.0.1:5678
-     
- Connect to a websocket using stdin/stdout as a transport,
- then accept a websocket connection over the previous websocket used as a transport,
-```
-
-**File**: `src/help.rs` (modified, +1/-1)
-```diff
-@@ -238,7 +238,7 @@ Some address types may be "aliases" to other address types or combinations of ov
- 
- Final example just for fun: wacky mode
- 
--    websocat ws-c:ws-l:ws-c:- tcp:127.0.0.1:5678
-+    websocat ws-c:ws-u:ws-c:- tcp:127.0.0.1:5678
-     
- Connect to a websocket using stdin/stdout as a transport,
- then accept a websocket connection over the previous websocket used as a transport,
-```
-
-**File**: `src/stdio_peer.rs` (modified, +1/-1)
-```diff
-@@ -72,7 +72,7 @@ Like `asyncstdio:`, but intended for inetd(8) usage. [A]
- 
- Automatically enables `-q` (`--quiet`) mode.
- 
--`inetd-ws:` - is of `ws-l:inetd:`
-+`inetd-ws:` - is of `ws-u:inetd:`
- 
- Example of inetd.conf line that makes it listen for websocket
- connections on port 1234 and redirect the data to local SSH server.
-```
-
-**File**: `src/ws_server_peer.rs` (modified, +1/-1)
-```diff
-@@ -72,7 +72,7 @@ Example: Dump all incoming websocket data to console
- 
- Example: the same, but more verbose:
- 
--    websocat ws-l:tcp-l:127.0.0.1:8808 reuse:-
-+    websocat ws-u:tcp-l:127.0.0.1:8808 reuse:-
- "#
- );
- 
+ [[package]]
+ name = "websocat"
+-version = "1.14.1"
++version = "1.14.2"
+ dependencies = [
+  "anymap",
+  "argon2",
 ```
 
 ---
 
-### Incident Patch 2: `bb6ee9fa` (2026-10-22)
-**Commit Message**: Fix l-ws-abstract: alias
+### Incident Patch 2: `dbeaa845` (2026-11-14)
+**Commit Message**: Fix root package version in Cargo.lock
 
-It expanded to `ws-l:abstract-l:`, but `ws-l:` is itself an alias for
-`ws-u:tcp-l:`, so `l-ws-abstract:test` became
-`ws-u:tcp-l:abstract-l:test` and failed with "invalid socket address
-syntax". Use `ws-u:abstract-l:`, like `l-ws-unix:` uses `ws-u:unix-l:`.
+Match the websocat package version to Cargo.toml so locked dependency fetches do not require updating the lockfile.
 
-Fixes #264
+Signed-off-by: Rui Chen <[REDACTED_EMAIL]>
 
-Co-authored-by: Claude Opus-5-5 <[REDACTED_EMAIL]>
-
-**File**: `src/ws_server_peer.rs` (modified, +1/-1)
+**File**: `Cargo.lock` (modified, +1/-1)
 ```diff
-@@ -99,7 +99,7 @@ WebSocket UNIX socket-based server. [A]
- specifier_alias!(
-     name = WsAbstractUnixServerClass,
-     prefixes = ["l-ws-abstract:"],
--    alias = "ws-l:abstract-l:",
-+    alias = "ws-u:abstract-l:",
-     help = r#"
- WebSocket abstract-namespaced UNIX socket server. [A]
- "#
-```
-
-**File**: `tests/test.rs` (modified, +9/-0)
-```diff
-@@ -242,3 +242,12 @@ fn abstract_() {
-     let prog = prog1.join(prog2);
-     run!(core, prog);
- }
-+
-+#[test]
-+#[cfg(unix)]
-+fn ws_unix_server_aliases() {
-+    let s1 = spec("l-ws-unix:zxc").unwrap();
-+    assert_eq!(format!("{:?}", s1), r#"WsServer(UnixListen("zxc"))"#);
-+    let s2 = spec("l-ws-abstract:zxc").unwrap();
-+    assert_eq!(format!("{:?}", s2), r#"WsServer(AbstractListen("zxc"))"#);
-+}
-```
-
----
-
-### Incident Patch 3: `bd41195b` (2026-11-12)
-**Commit Message**: Merge pull request #314 from StevenLi-phoenix/fix/264-l-ws-abstract-alias
-
-Fix l-ws-abstract: alias and ws-l: misuse in help examples
-
-**File**: `doc.md` (modified, +3/-3)
-```diff
-@@ -371,7 +371,7 @@ Example: Dump all incoming websocket data to console
+@@ -1878,7 +1878,7 @@ checksum = "9c8d87e72b64a3b4db28d11ce29237c246188f4f51057d65a7eab63b7987e423"
  
- Example: the same, but more verbose:
- 
--    websocat ws-l:tcp-l:127.0.0.1:8808 reuse:-
-+    websocat ws-u:tcp-l:127.0.0.1:8808 reuse:-
- 
- 
- ### `inetd-ws:`
-@@ -484,7 +484,7 @@ Like `asyncstdio:`, but intended for inetd(8) usage. [A]
- 
- Automatically enables `-q` (`--quiet`) mode.
- 
--`inetd-ws:` - is of `ws-l:inetd:`
-+`inetd-ws:` - is of `ws-u:inetd:`
- 
- Example of inetd.conf line that makes it listen for websocket
- connections on port 1234 and redirect the data to local SSH server.
-@@ -1356,7 +1356,7 @@ between them.
- 
- Final example just for fun: wacky mode
- 
--    websocat ws-c:ws-l:ws-c:- tcp:127.0.0.1:5678
-+    websocat ws-c:ws-u:ws-c:- tcp:127.0.0.1:5678
-     
- Connect to a websocket using stdin/stdout as a transport,
- then accept a websocket connection over the previous websocket used as a transport,
-```
-
-**File**: `src/help.rs` (modified, +1/-1)
-```diff
-@@ -238,7 +238,7 @@ Some address types may be "aliases" to other address types or combinations of ov
- 
- Final example just for fun: wacky mode
- 
--    websocat ws-c:ws-l:ws-c:- tcp:127.0.0.1:5678
-+    websocat ws-c:ws-u:ws-c:- tcp:127.0.0.1:5678
-     
- Connect to a websocket using stdin/stdout as a transport,
- then accept a websocket connection over the previous websocket used as a transport,
-```
-
-**File**: `src/stdio_peer.rs` (modified, +1/-1)
-```diff
-@@ -72,7 +72,7 @@ Like `asyncstdio:`, but intended for inetd(8) usage. [A]
- 
- Automatically enables `-q` (`--quiet`) mode.
- 
--`inetd-ws:` - is of `ws-l:inetd:`
-+`inetd-ws:` - is of `ws-u:inetd:`
- 
- Example of inetd.conf line that makes it listen for websocket
- connections on port 1234 and redirect the data to local SSH server.
-```
-
-**File**: `src/ws_server_peer.rs` (modified, +2/-2)
-```diff
-@@ -72,7 +72,7 @@ Example: Dump all incoming websocket data to console
- 
- Example: the same, but more verbose:
- 
--    websocat ws-l:tcp-l:127.0.0.1:8808 reuse:-
-+    websocat ws-u:tcp-l:127.0.0.1:8808 reuse:-
- "#
- );
- 
-@@ -99,7 +99,7 @@ WebSocket UNIX socket-based server. [A]
- specifier_alias!(
-     name = WsAbstractUnixServerClass,
-     prefixes = ["l-ws-abstract:"],
--    alias = "ws-l:abstract-l:",
-+    alias = "ws-u:abstract-l:",
-     help = r#"
- WebSocket abstract-namespaced UNIX socket server. [A]
- "#
-```
-
-**File**: `tests/test.rs` (modified, +9/-0)
-```diff
-@@ -242,3 +242,12 @@ fn abstract_() {
-     let prog = prog1.join(prog2);
-     run!(core, prog);
- }
-+
-+#[test]
-+#[cfg(unix)]
-+fn ws_unix_server_aliases() {
-+    let s1 = spec("l-ws-unix:zxc").unwrap();
-+    assert_eq!(format!("{:?}", s1), r#"WsServer(UnixListen("zxc"))"#);
-+    let s2 = spec("l-ws-abstract:zxc").unwrap();
-+    assert_eq!(format!("{:?}", s2), r#"WsServer(AbstractListen("zxc"))"#);
-+}
+ [[package]]
+ name = "websocat"
+-version = "1.14.1"
++version = "1.14.2"
+ dependencies = [
+  "anymap",
+  "argon2",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #319** (2026-11-14): Fix root package version in Cargo.lock (@chenrui333)
+- **PR #317** (2026-11-13): Don't write WebSocket close reason (and other control payloads) to the output stream (@bardrop)
 - **PR #315** (2026-11-12): Don't auto-enable async stdio for character devices on Mac (@StevenLi-phoenix)
 - **PR #314** (2026-11-12): Fix l-ws-abstract: alias and ws-l: misuse in help examples (@StevenLi-phoenix)
 - **PR #310** (2026-07-22): Handle canceled pinger in ws_peer.rs (@zobo)
 - **PR #309** (closed): Add writefile_ts:, readfile_ts:, and readfile_ts_loop: specifiers (@eriang)
-- **PR #307** (closed): Support SSLKEYLOGFILE for TLS session key logging (@uglykitty)
-- **PR #306** (closed): Support SSLKEYLOGFILE for TLS session key logging (@uglykitty)
 
 ---
 
@@ -2297,32 +2113,28 @@ Fix l-ws-abstract: alias and ws-l: misuse in help examples
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. help examples that use ws-l: where ws-u: is meant
+## X. Empirical Invariant Guard in Cargo.lock
 
 **RULE**:
-When implementing operations in `doc.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vi/websocat. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vi/websocat. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `62b85d8a`: help examples that use ws-l: where ws-u: is meant. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `097582e3`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `doc.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    websocat ws-u:tcp-l:127.0.0.1:8808 reuse:-
-`inetd-ws:` - is of `ws-u:inetd:`
-    websocat ws-c:ws-u:ws-c:- tcp:127.0.0.1:5678
+version = "1.14.2"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-    websocat ws-l:tcp-l:127.0.0.1:8808 reuse:-
-`inetd-ws:` - is of `ws-l:inetd:`
-    websocat ws-c:ws-l:ws-c:- tcp:127.0.0.1:5678
+// Induced defect failure mode:
+version = "1.14.1"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `62b85d8a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `097582e3` are properly handled with clean fallback behavior.

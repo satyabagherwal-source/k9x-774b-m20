@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T12:13:20.865Z",
+  "last_updated": "2026-11-15T12:36:58.374Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1687,14 +1687,14 @@
       "learning_id": "learn-github-svenstaro-miniserve"
     },
     {
-      "id": "CD-EA1A",
+      "id": "CD-JDPS",
       "directive_title": "Empirical Invariant Guard in Cargo.lock",
-      "source_repo": "provablehq-snarkos-learnings",
+      "source_repo": "vi-websocat-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-EA1A-empirical-invariant-guard-in-cargo-lock.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-JDPS-empirical-invariant-guard-in-cargo-lock.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-14",
+      "date_staged": "2026-11-15",
       "domain_letter": "D"
     },
     {
@@ -4835,11 +4835,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-PQS9",
+      "id": "CD-K516",
       "directive_title": "editor): add scoped ios account deletion",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-PQS9-editor-add-scoped-ios-account-deletion.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-K516-editor-add-scoped-ios-account-deletion.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-15",
@@ -15284,6 +15284,24 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-DB6DCA-puppet-fix-postgresql-failing-to-start-o.md",
+      "staged_date": "2026-11-15"
+    },
+    {
+      "id": "CD-REV-303E60",
+      "directive_title": "Empirical Invariant Guard in Cargo.lock",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "vi-websocat",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-303E60-empirical-invariant-guard-in-cargo-lock.md",
+      "staged_date": "2026-11-15"
+    },
+    {
+      "id": "CD-REV-62B916",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-62B916-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-15"
     }
   ]

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T12:13:20.997Z",
-  "total_records": 1041,
+  "last_updated": "2026-11-15T12:36:58.507Z",
+  "total_records": 1046,
   "domains": {
     "A": {
       "total": 7,
@@ -37,7 +37,7 @@
       ]
     },
     "D": {
-      "total": 511,
+      "total": 514,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -549,7 +549,10 @@
         "DOM-D-29746EF6",
         "domain_intelligence-research-knowledge-intelligence-hf-xiaomi-research-xiaomi-ocr-0-learnings-core-i",
         "DOM-D-F3C32546",
-        "domain_intelligence-research-knowledge-intelligence-darrylmorley-whatcable-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-darrylmorley-whatcable-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-sensenova-sensenova-loop-9b-preview-core-invaria",
+        "DOM-D-20A9ABE9",
+        "domain_intelligence-research-knowledge-intelligence-hf-sensenova-sensenova-loop-9b-preview-learnings"
       ]
     },
     "E": {
@@ -588,7 +591,7 @@
       ]
     },
     "G": {
-      "total": 176,
+      "total": 178,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -765,7 +768,9 @@
         "domain_intelligence-architecture-intelligence-gitoxidelabs-gitoxide-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-paradedb-paradedb-core-invariants",
         "domain_intelligence-architecture-intelligence-nasiko-labs-nasiko-core-invariants",
-        "domain_intelligence-architecture-intelligence-nasiko-labs-nasiko-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-nasiko-labs-nasiko-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-vi-websocat-core-invariants",
+        "domain_intelligence-architecture-intelligence-vi-websocat-learnings-core-invariants"
       ]
     },
     "H": {
@@ -7774,8 +7779,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "df84b1a90ae283d81f0bf979cf7eda183be015f24525f96087f157d08ee80906",
-      "created_at": "2026-11-15T12:13:20.353Z"
+      "content_hash": "7f137c315e51ab7935003c4b14ea6d041a1e2ca5dae96e1ba01f67542cf5aea8",
+      "created_at": "2026-11-15T12:36:58.507Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -20030,6 +20035,84 @@
       "repository": "nasiko-labs-nasiko-learnings",
       "content_hash": "2cf0d3be21a4753ce26c877efcded5ceabb74ba62665a41a401ceecfae37399c",
       "created_at": "2026-11-15T11:40:33.265Z"
+    },
+    "domain_intelligence-architecture-intelligence-vi-websocat-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-vi-websocat-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: vi/websocat Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-vi-websocat-architecture-intelligence-vi-websocat-core-invariants.md",
+      "repository": "vi/websocat",
+      "content_hash": "0c7d97f933d237b2477d2f7a15eb08dd9ece4b8b48e604300a5ef89c95ce670c",
+      "created_at": "2026-11-15T12:31:19.100Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-sensenova-sensenova-loop-9b-preview-core-invaria": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-sensenova-sensenova-loop-9b-preview-core-invaria",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: sensenova/SenseNova-Loop-9B-Preview Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sensenova-sensenova-loop-9b-preview-research-knowledge-intelligence-sensenova.md",
+      "repository": "sensenova/SenseNova-Loop-9B-Preview",
+      "content_hash": "356787931adb43faccf3b73094abdd88fa60c281b8dbadfcdb438cc99e3dd0dd",
+      "created_at": "2026-11-15T12:36:19.827Z"
+    },
+    "domain_intelligence-architecture-intelligence-vi-websocat-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-vi-websocat-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: vi-websocat-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-vi-websocat-learnings-architecture-intelligence-vi-websocat-learnings-core-invar.md",
+      "repository": "vi-websocat-learnings",
+      "content_hash": "4ee747b25d1ab0cc5acc598a0a0e5107e680e64359794ca3898da12ebda6a562",
+      "created_at": "2026-11-15T12:36:23.098Z"
+    },
+    "DOM-D-20A9ABE9": {
+      "record_id": "DOM-D-20A9ABE9",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): sensenova/SenseNova-Loop-9B-Preview",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-sensenova-sensenova-loop-9b-preview-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/sensenova/SenseNova-Loop-9B-Preview](https://huggingface.co/sensenova/SenseNova-Loop-9B-Preview))  \n> **Source Version**: `hf-sensenova`",
+      "content_hash": "02883ae2202253f7f481622f4544fb273974cc5409e43b51a2d03658caf16a6c",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-sensenova-sensenova-loop-9b-preview-learnings.md`  \n> **Source**: huggingface ([h -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-sensenova-sensenova-loop-9b-preview-learnings.md`  \n> **Source**: huggingface ([h",
+      "provenance": {
+        "source_uri": "project://hf-sensenova-sensenova-loop-9b-preview/hf-sensenova-sensenova-loop-9b-preview-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T12:36:23.360Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-sensenova-sensenova-loop-9b-preview)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-sensenova-sensenova-loop-9b-preview"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-15T12:36:57.541Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-sensenova-sensenova-loop-9b-preview-learnings": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-sensenova-sensenova-loop-9b-preview-learnings",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-sensenova-sensenova-loop-9b-preview-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sensenova-sensenova-loop-9b-preview-learnings-research-knowledge-intelligence.md",
+      "repository": "hf-sensenova-sensenova-loop-9b-preview-learnings",
+      "content_hash": "5351b834778f05d4a888d5cf889579a9169bd5f12e1d730235cbc3eb7efd9d8e",
+      "created_at": "2026-11-15T12:36:57.789Z"
     }
   }
 }
