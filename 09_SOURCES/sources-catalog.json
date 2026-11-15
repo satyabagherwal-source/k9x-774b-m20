@@ -11755,8 +11755,8 @@
     "sourceUrl": "https://huggingface.co/pyannote/speaker-diarization-3.1",
     "sourceVersion": "hf-pyannote-speaker-diarization-3.1",
     "license": "Open-Source",
-    "contentHash": "10fe6053571c03bc41d31bfbff823b73985029bb6e267ea34df852e9fde4f4a3",
-    "lastHarvestedAt": "2026-11-10T04:59:26.605Z",
+    "contentHash": "894bfa8ae41ef18962f4e8b1e8f46a2875227fd8a9fd4017944b78c3afb1e9d2",
+    "lastHarvestedAt": "2026-11-15T19:12:00.644Z",
     "learningId": "learn-huggingface-pyannote-speaker-diarization-3-1"
   },
   "hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf": {

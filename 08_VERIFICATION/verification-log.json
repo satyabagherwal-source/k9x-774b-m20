@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261111-40VR",
-    "timestamp": "2026-11-11T07:37:49.431Z",
-    "repository": "codewhale-hq/Codewhale",
-    "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "5097ed16c67a11323aea2322929986d99608c69e858063b36ce5e63e22aa82f8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261111-45PA",
     "timestamp": "2026-11-11T07:37:55.678Z",
     "repository": "callstack/agent-device",
@@ -7490,6 +7475,21 @@
     "repository": "Diffuspace/Clover-35B-A3B-Preview",
     "learningId": "learn-huggingface-diffuspace-clover-35b-a3b-preview",
     "contentHash": "11aa01ab9ee5f67aeb9fb7f906312e25d86f617d79c767dcc22c7cf398081fa4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-O5TR",
+    "timestamp": "2026-11-15T19:12:00.639Z",
+    "repository": "pyannote/speaker-diarization-3.1",
+    "learningId": "learn-huggingface-pyannote-speaker-diarization-3-1",
+    "contentHash": "894bfa8ae41ef18962f4e8b1e8f46a2875227fd8a9fd4017944b78c3afb1e9d2",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

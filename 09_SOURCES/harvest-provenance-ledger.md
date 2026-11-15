@@ -10171,3 +10171,5 @@ Every entry in this ledger must capture:
 | `learn-github-llphant-llphant` | `https://github.com/LLPhant/LLPhant` | `93f05675` | Multi-dimensional audit evidence | 2026-11-15T18:47:46.831Z |
 | `learn-huggingface-diffuspace-clover-35b-a3b-preview` | `https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview` | `hf-diffusp` | Multi-dimensional audit evidence | 2026-11-15T19:04:03.117Z |
 | `learn-dom-d-cbbb279c` | `project://hf-diffuspace-clover-35b-a3b-preview` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-diffuspace-clover-35b-a3b-preview-learnings.md` | 2026-11-15T19:04:44.285Z |
+| `learn-huggingface-pyannote-speaker-diarization-3-1` | `https://huggingface.co/pyannote/speaker-diarization-3.1` | `hf-pyannot` | Multi-dimensional audit evidence | 2026-11-15T19:12:00.644Z |
+| `learn-dom-d-6a7f4f3b` | `project://hf-pyannote-speaker-diarization-3.1` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-pyannote-speaker-diarization-3.1-learnings.md` | 2026-11-15T19:12:44.648Z |

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T19:04:03.122Z",
-  "total_cycles_completed": 9747,
-  "total_learnings_persisted": 9747,
+  "last_updated": "2026-11-15T19:12:00.650Z",
+  "total_cycles_completed": 9748,
+  "total_learnings_persisted": 9748,
   "total_rules_promoted": 9370,
   "history": [
-    {
-      "timestamp": "2026-11-14T15:59:49.329Z",
-      "repository": "zed-industries/zed",
-      "learningId": "learn-github-zed-industries-zed",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T16:22:46.688Z",
       "repository": "jialinyyzz/humanizer",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-15T19:04:03.122Z",
       "repository": "Diffuspace/Clover-35B-A3B-Preview",
       "learningId": "learn-huggingface-diffuspace-clover-35b-a3b-preview",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T19:12:00.650Z",
+      "repository": "pyannote/speaker-diarization-3.1",
+      "learningId": "learn-huggingface-pyannote-speaker-diarization-3-1",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

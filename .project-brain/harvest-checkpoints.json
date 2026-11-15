@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-15T19:04:03.126Z",
+  "last_updated": "2026-11-15T19:12:00.654Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -17691,14 +17691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-pyannote-speaker-diarization-3-1",
-      "content_hash": "10fe6053571c03bc41d31bfbff823b73985029bb6e267ea34df852e9fde4f4a3",
-      "verified_at": "2026-11-10T04:59:26.615Z",
+      "content_hash": "894bfa8ae41ef18962f4e8b1e8f46a2875227fd8a9fd4017944b78c3afb1e9d2",
+      "verified_at": "2026-11-15T19:12:00.653Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-10T04:59:26.615Z"
+      "last_updated": "2026-11-15T19:12:00.653Z"
     },
     "AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF": {
       "repository": "AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",

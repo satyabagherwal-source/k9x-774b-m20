@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T19:04:44.310Z",
+  "updated_at": "2026-11-15T19:12:44.674Z",
   "stats": {
-    "total_discovered": 3822,
-    "approved_pending_harvest": 3603,
+    "total_discovered": 3823,
+    "approved_pending_harvest": 3604,
     "harvested_count": 0,
     "rejected_count": 219,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3586,
+      "COMMUNITY_AND_EXPERT": 3587,
       "OFFICIAL_DOCUMENTATION": 129,
       "STANDARDS_AND_SPECIFICATIONS": 90,
       "ENGINEERING_BLOGS": 2,
@@ -82572,6 +82572,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-diffuspace-clover-35b-a3b-preview-learnings.md",
         "fileName": "hf-diffuspace-clover-35b-a3b-preview-learnings.md"
+      }
+    },
+    "SRC-1F4838397144": {
+      "id": "SRC-1F4838397144",
+      "url": "https://huggingface.co/pyannote/speaker-diarization-3.1",
+      "title": "https://huggingface.co/pyannote/speaker-diarization-3.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T19:12:44.674Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-pyannote-speaker-diarization-3.1-learnings.md",
+        "fileName": "hf-pyannote-speaker-diarization-3.1-learnings.md"
       }
     }
   }
