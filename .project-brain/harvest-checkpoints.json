@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-15T11:40:24.346Z",
+  "last_updated": "2026-11-15T12:13:15.760Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -11466,14 +11466,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-infiniflow-infinity",
-      "content_hash": "905631e7e0c2b1a81bd2d3deec89b159c3bb72ca3bef33c96120a56620934f2a",
-      "verified_at": "2026-11-13T22:30:57.492Z",
+      "content_hash": "fe7e91af040471d4905c2c499cb3bc917252b8cb73be3bb7b7ac9fe74d6abc40",
+      "verified_at": "2026-11-15T12:13:15.760Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T22:30:57.492Z"
+      "last_updated": "2026-11-15T12:13:15.760Z"
     },
     "astral-sh/ruff": {
       "repository": "astral-sh/ruff",

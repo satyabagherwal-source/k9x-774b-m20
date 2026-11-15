@@ -10087,3 +10087,4 @@
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T11:13:54.995Z` | `hf-xiaomi-research-xiaomi-ocr-0` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-29746EF6` [Domain D] | Yes (`7945c5cf...`) |
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T11:14:39.611Z` | `darrylmorley-whatcable` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-F3C32546` [Domain D] | Yes (`1ead0fbb...`) |
 | `CYCLE-20261115-JE6J` | `2026-11-15T11:40:24.331Z` | `Nasiko-Labs/nasiko` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8611` | Yes (`ba1e71c6...`) |
+| `CYCLE-20261115-PNC0` | `2026-11-15T12:13:15.744Z` | `infiniflow/infinity` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8612` | Yes (`fe7e91af...`) |

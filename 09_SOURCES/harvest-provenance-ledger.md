@@ -10120,3 +10120,4 @@ Every entry in this ledger must capture:
 | `learn-dom-d-29746ef6` | `project://hf-xiaomi-research-xiaomi-ocr-0` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-xiaomi-research-xiaomi-ocr-0-learnings.md` | 2026-11-15T11:13:54.995Z |
 | `learn-dom-d-f3c32546` | `project://darrylmorley-whatcable` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/darrylmorley-whatcable-learnings.md` | 2026-11-15T11:14:39.611Z |
 | `learn-github-nasiko-labs-nasiko` | `https://github.com/Nasiko-Labs/nasiko` | `0ec91fb2` | Multi-dimensional audit evidence | 2026-11-15T11:40:24.335Z |
+| `learn-github-infiniflow-infinity` | `https://github.com/infiniflow/infinity` | `79ce0cb3` | Multi-dimensional audit evidence | 2026-11-15T12:13:15.748Z |

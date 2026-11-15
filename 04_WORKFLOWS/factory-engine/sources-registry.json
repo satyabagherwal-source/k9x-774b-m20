@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-15T11:40:32.639Z",
-    "lastVerified": "2026-11-15T11:40:32.639Z",
+    "lastChecked": "2026-11-15T12:13:18.935Z",
+    "lastVerified": "2026-11-15T12:13:18.935Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -469,12 +469,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "nucleoidai-nucleoid": {
-    "name": "NucleoidAI/Nucleoid",
+    "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-15T10:04:30.161Z",
-    "lastVerified": "2026-11-15T10:04:30.161Z",
+    "lastChecked": "2026-11-15T12:13:13.338Z",
+    "lastVerified": "2026-11-15T12:13:13.338Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -483,7 +483,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "a19be499"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -1028,8 +1029,8 @@
     "officialUrl": "https://github.com/bee-san/Ciphey",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-15T01:46:44.569Z",
-    "lastVerified": "2026-11-15T01:46:44.569Z",
+    "lastChecked": "2026-11-15T12:13:08.311Z",
+    "lastVerified": "2026-11-15T12:13:08.311Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bee-san-ciphey",
@@ -1116,8 +1117,8 @@
     "officialUrl": "https://github.com/Kong/kubernetes-ingress-controller",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-14T00:25:04.886Z",
-    "lastVerified": "2026-11-14T00:25:04.886Z",
+    "lastChecked": "2026-11-15T12:13:05.851Z",
+    "lastVerified": "2026-11-15T12:13:05.851Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kong-kubernetes-ingress-controller",
@@ -2778,14 +2779,14 @@
     "officialUrl": "https://github.com/infiniflow/infinity",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-13T22:30:56.722Z",
-    "lastVerified": "2026-11-13T22:30:56.722Z",
+    "lastChecked": "2026-11-15T12:13:14.511Z",
+    "lastVerified": "2026-11-15T12:13:14.511Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-infiniflow-infinity",
-    "contentHash": "905631e7e0c2b1a81bd2d3deec89b159c3bb72ca3bef33c96120a56620934f2a",
+    "contentHash": "fe7e91af040471d4905c2c499cb3bc917252b8cb73be3bb7b7ac9fe74d6abc40",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3967,8 +3968,8 @@
     "officialUrl": "https://github.com/mfontanini/presenterm",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-13T15:38:02.308Z",
-    "lastVerified": "2026-11-13T15:38:02.308Z",
+    "lastChecked": "2026-11-15T12:12:58.322Z",
+    "lastVerified": "2026-11-15T12:12:58.322Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mfontanini-presenterm",
@@ -9442,9 +9443,9 @@
   "sindresorhus-gifski": {
     "name": "Gifski",
     "officialUrl": "https://github.com/sindresorhus/Gifski",
-    "lastChecked": "2026-11-12T01:31:08.241Z",
+    "lastChecked": "2026-11-15T12:13:03.308Z",
     "revisionIdentifier": "e184b284",
-    "lastVerified": "2026-11-12T01:31:08.241Z"
+    "lastVerified": "2026-11-15T12:13:03.308Z"
   },
   "hf-meta-models-muse-spark-open-816b-a42b": {
     "name": "meta-models/Muse-Spark-Open-816B-A42B",
@@ -9790,9 +9791,9 @@
   "hartemyaakoub-seo-toolkit": {
     "name": "seo-toolkit",
     "officialUrl": "https://github.com/hartemyaakoub/seo-toolkit",
-    "lastChecked": "2026-11-09T22:34:06.856Z",
+    "lastChecked": "2026-11-15T12:13:00.855Z",
     "revisionIdentifier": "e1126c75",
-    "lastVerified": "2026-11-09T22:34:06.856Z"
+    "lastVerified": "2026-11-15T12:13:00.855Z"
   },
   "jacklandrin-onlyswitch": {
     "name": "jacklandrin/OnlySwitch",

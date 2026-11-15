@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-15T11:40:34.752Z",
+  "last_updated": "2026-11-15T12:13:21.141Z",
   "total_verified_learnings": 8692,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18364,
+  "total_items": 18366,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112155,9 +112155,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "273b4c0a3aba8c9e598370db5636e258781f0a8f42ac62a60a90204414469ad3",
+      "content_hash": "8bae5179083da4824e8d210ee5fb56d416d8b213a4944ee1c8411a8269a70947",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T11:40:34.622Z"
+      "persisted_at": "2026-11-15T12:13:20.997Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112167,9 +112167,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "64dd3e2f943b8c655a25c603a2d704758bd062cad7316b501f858836f442c524",
+      "content_hash": "d2429b61d539a72e19ceb365b81a37ec23f8cc51f84b72d58dca987a9368114b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T11:40:34.752Z"
+      "persisted_at": "2026-11-15T12:13:21.141Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -113663,13 +113663,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-JLK1-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-PQS9-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "2b1231fa01bd8583ced67896b19c5115130e64de067d72d592937080178ef17e",
+      "content_hash": "6a23c4de0f3428939926f491e4e4d85416a935674c5755bc2d9e5bb1c0604bbd",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T11:40:33.894Z"
+      "persisted_at": "2026-11-15T12:13:20.223Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113679,9 +113679,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "833fe6bbd80886b36b2d9b79aa552d7c3bb7d116540495d450f990375dfcc371",
+      "content_hash": "df84b1a90ae283d81f0bf979cf7eda183be015f24525f96087f157d08ee80906",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T11:40:34.017Z"
+      "persisted_at": "2026-11-15T12:13:20.353Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113691,9 +113691,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "ba0771f545d7ff1b055a7f76350020053a600f365406f39b65c6f3d3e7519732",
+      "content_hash": "4c7da759020f726827095541cbdb4b3ddc7e6998e3e5c46d7890768cf085f8b4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T11:40:34.147Z"
+      "persisted_at": "2026-11-15T12:13:20.494Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -214776,13 +214776,13 @@
       "item_id": "candidate_directive-puppet-fix-postgresql-failing-to-start-on-new-installs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-JM0V-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-PRA4-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
       "title": "puppet: Fix PostgreSQL failing to start on new installs.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "b9b69530f65e19c92521920d081c2edd0374150860f6979646a3fd70b8b2e1a1",
+      "content_hash": "d4857adddd1bc4b0b0c23bc877f4ac5ffa38b079dcd4f07e8b65ae29534b3d87",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T11:40:34.500Z"
+      "persisted_at": "2026-11-15T12:13:20.865Z"
     },
     "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
@@ -217447,14 +217447,19 @@
       "slug": "infiniflow-infinity",
       "platform": "github",
       "source_url": "https://github.com/infiniflow/infinity",
-      "source_version": "7eb3b476",
-      "content_hash": "905631e7e0c2b1a81bd2d3deec89b159c3bb72ca3bef33c96120a56620934f2a",
+      "source_version": "79ce0cb3",
+      "content_hash": "fe7e91af040471d4905c2c499cb3bc917252b8cb73be3bb7b7ac9fe74d6abc40",
       "dossier_path": "07_PROJECT_LEARNING/infiniflow-infinity-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/infiniflow-infinity-learnings.md",
       "promoted_rules": [
         {
           "number": 8396,
           "title": "Rust engine: match the reference on the pysdk suites",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8612,
+          "title": "Run Rust engine requests as statement trees, not rendered SQL text",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -217463,7 +217468,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T22:30:57.366Z",
+      "verified_at": "2026-11-15T12:13:15.554Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -217505,10 +217510,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-infiniflow-infinity-architecture-intelligence-infiniflow-infinity-core-invariant.md",
       "title": "Architecture Intelligence: infiniflow/infinity Core Invariants",
       "repository": "infiniflow/infinity",
-      "source_version": "7eb3b476",
-      "content_hash": "d729dfc205ec88646c1d2e1c92ecbf32f72f292a5a3c398fc5c4ce15cdd0e552",
+      "source_version": "79ce0cb3",
+      "content_hash": "56e6e0778cc1cecf96d726536815b7ca96e50646cc9c84ebb81b28280b8c0fb8",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T22:30:57.717Z"
+      "persisted_at": "2026-11-15T12:13:16.116Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-infiniflow-infinity": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-infiniflow-infinity",
@@ -217517,10 +217522,10 @@
       "relative_path": "08_VERIFICATION/infiniflow-infinity-verification-protocol-empirical-defect-shield-for-infiniflow.md",
       "title": "Verification Protocol: Empirical Defect Shield for infiniflow/infinity",
       "repository": "infiniflow/infinity",
-      "source_version": "7eb3b476",
-      "content_hash": "d29a9b12913a1e2f47c2955e87643b320adfe57a2d3a8f63eb40da8d8b08c8a5",
+      "source_version": "79ce0cb3",
+      "content_hash": "e77ed524c7b0448c87372bb8363118b40c30b0be8652af490c607f695574ef2e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T22:30:57.799Z"
+      "persisted_at": "2026-11-15T12:13:16.254Z"
     },
     "learn-github-bitterbot-ai-bitterbot-desktop": {
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -217628,9 +217633,9 @@
       "title": "Architecture Intelligence: infiniflow-infinity-learnings Core Invariants",
       "repository": "infiniflow-infinity-learnings",
       "source_version": "HEAD",
-      "content_hash": "80b461bf4f55f9369923c9093a02ab566bc41c896dd3c39ebc4bdc5419e3a029",
+      "content_hash": "ffc85b832553fa31dfca6e0cda8700b585cbe6a2cb227bea7e06bec8434ec57c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T22:31:03.626Z"
+      "persisted_at": "2026-11-15T12:13:19.553Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-infiniflow-infinity-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-infiniflow-infinity-learnings",
@@ -217640,9 +217645,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for infiniflow-infinity-learnings",
       "repository": "infiniflow-infinity-learnings",
       "source_version": "HEAD",
-      "content_hash": "3924a3fc9b5735abeb29ebbb072b565a9504e8a764cbbfe3acef76ddfa2dc1ab",
+      "content_hash": "2646446ba46a31bb8310a50dfa5c7ec959688c62e42ce10839e1db226dfa6cd9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T22:31:03.707Z"
+      "persisted_at": "2026-11-15T12:13:19.694Z"
     },
     "candidate_directive-wallet-stop-coinbase-agentkit-sending-analytics-to-coinbase": {
       "item_id": "candidate_directive-wallet-stop-coinbase-agentkit-sending-analytics-to-coinbase",
@@ -242873,6 +242878,32 @@
       "content_hash": "6a29e4bc7da658e46b88059f0eccb0e868a612bd976b107111d144506daed2f1",
       "domain_letter": "K",
       "persisted_at": "2026-11-15T11:40:33.401Z"
+    },
+    "rule-8612": {
+      "learning_id": "rule-8612",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8612,
+      "title": "Run Rust engine requests as statement trees, not rendered SQL text",
+      "source_url": "https://github.com/infiniflow/infinity",
+      "source_version": "79ce0cb3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T12:13:15.554Z"
+    },
+    "candidate_directive-run-rust-engine-requests-as-statement-trees-not-rendered-sql-text": {
+      "item_id": "candidate_directive-run-rust-engine-requests-as-statement-trees-not-rendered-sql-text",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PQ5S-run-rust-engine-requests-as-statement-trees-not-rendered-sql-text.md",
+      "title": "Run Rust engine requests as statement trees, not rendered SQL text",
+      "repository": "infiniflow-infinity-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9a4cb5fbaf0555ca48561971ccb417404aa47d99c04d037de968c6007b0de0f2",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T12:13:19.414Z"
     }
   },
   "ai-builder-brain": {

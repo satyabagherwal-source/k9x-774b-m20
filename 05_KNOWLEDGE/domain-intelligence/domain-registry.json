@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T11:40:34.622Z",
+  "last_updated": "2026-11-15T12:13:20.997Z",
   "total_records": 1041,
   "domains": {
     "A": {
@@ -6856,8 +6856,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "273b4c0a3aba8c9e598370db5636e258781f0a8f42ac62a60a90204414469ad3",
-      "created_at": "2026-11-15T11:40:34.622Z"
+      "content_hash": "8bae5179083da4824e8d210ee5fb56d416d8b213a4944ee1c8411a8269a70947",
+      "created_at": "2026-11-15T12:13:20.997Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -7774,8 +7774,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "833fe6bbd80886b36b2d9b79aa552d7c3bb7d116540495d450f990375dfcc371",
-      "created_at": "2026-11-15T11:40:34.017Z"
+      "content_hash": "df84b1a90ae283d81f0bf979cf7eda183be015f24525f96087f157d08ee80906",
+      "created_at": "2026-11-15T12:13:20.353Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -10327,8 +10327,8 @@
       "title": "Architecture Intelligence: infiniflow/infinity Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-infiniflow-infinity-architecture-intelligence-infiniflow-infinity-core-invariant.md",
       "repository": "infiniflow/infinity",
-      "content_hash": "d729dfc205ec88646c1d2e1c92ecbf32f72f292a5a3c398fc5c4ce15cdd0e552",
-      "created_at": "2026-11-13T22:30:57.717Z"
+      "content_hash": "56e6e0778cc1cecf96d726536815b7ca96e50646cc9c84ebb81b28280b8c0fb8",
+      "created_at": "2026-11-15T12:13:16.116Z"
     },
     "domain_intelligence-technical-construction-intelligence-bitterbot-ai-bitterbot-desktop-core-invarian": {
       "record_id": "domain_intelligence-technical-construction-intelligence-bitterbot-ai-bitterbot-desktop-core-invarian",
@@ -10345,8 +10345,8 @@
       "title": "Architecture Intelligence: infiniflow-infinity-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-infiniflow-infinity-learnings-architecture-intelligence-infiniflow-infinity-lear.md",
       "repository": "infiniflow-infinity-learnings",
-      "content_hash": "80b461bf4f55f9369923c9093a02ab566bc41c896dd3c39ebc4bdc5419e3a029",
-      "created_at": "2026-11-13T22:31:03.626Z"
+      "content_hash": "ffc85b832553fa31dfca6e0cda8700b585cbe6a2cb227bea7e06bec8434ec57c",
+      "created_at": "2026-11-15T12:13:19.553Z"
     },
     "domain_intelligence-technical-construction-intelligence-bitterbot-ai-bitterbot-desktop-learnings-cor": {
       "record_id": "domain_intelligence-technical-construction-intelligence-bitterbot-ai-bitterbot-desktop-learnings-cor",

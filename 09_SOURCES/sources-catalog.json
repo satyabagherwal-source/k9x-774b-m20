@@ -7613,10 +7613,10 @@
     "repository": "infiniflow/infinity",
     "platform": "github",
     "sourceUrl": "https://github.com/infiniflow/infinity",
-    "sourceVersion": "7eb3b476",
+    "sourceVersion": "79ce0cb3",
     "license": "Apache-2.0",
-    "contentHash": "905631e7e0c2b1a81bd2d3deec89b159c3bb72ca3bef33c96120a56620934f2a",
-    "lastHarvestedAt": "2026-11-13T22:30:57.485Z",
+    "contentHash": "fe7e91af040471d4905c2c499cb3bc917252b8cb73be3bb7b7ac9fe74d6abc40",
+    "lastHarvestedAt": "2026-11-15T12:13:15.748Z",
     "learningId": "learn-github-infiniflow-infinity"
   },
   "astral-sh-ruff": {

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261110-QO3G",
-    "timestamp": "2026-11-10T02:31:50.140Z",
-    "repository": "mitmproxy/mitmproxy",
-    "learningId": "learn-github-mitmproxy-mitmproxy",
-    "contentHash": "f27ccb9c5b932ded3e636a5ac25a4871d294f0d2b54c191354f14de5fd38bcf0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261110-QOKD",
     "timestamp": "2026-11-10T02:31:50.749Z",
     "repository": "pulumi/pulumi",
@@ -7490,6 +7475,21 @@
     "repository": "Nasiko-Labs/nasiko",
     "learningId": "learn-github-nasiko-labs-nasiko",
     "contentHash": "ba1e71c66731667ae312eadf1eeaff065b0ae4386a8bf34b91dfdce5c5dd8d62",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-PNC0",
+    "timestamp": "2026-11-15T12:13:15.744Z",
+    "repository": "infiniflow/infinity",
+    "learningId": "learn-github-infiniflow-infinity",
+    "contentHash": "fe7e91af040471d4905c2c499cb3bc917252b8cb73be3bb7b7ac9fe74d6abc40",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
