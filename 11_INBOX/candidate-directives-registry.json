@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T16:30:51.039Z",
+  "last_updated": "2026-11-15T16:50:40.408Z",
   "directives": [
     {
       "id": "CD-001",
@@ -15774,6 +15774,72 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-B92744-splash-screen-staying-visible-after-warm.md",
       "staged_date": "2026-11-15"
+    },
+    {
+      "id": "CD-M4TM",
+      "directive_title": "make the icon switch take effect from the window",
+      "source_repo": "Jarvis322/macos-sysdata",
+      "source_commit": "e06a5803",
+      "staged_file": "11_INBOX/candidate-directives/CD-M4TM-make-the-icon-switch-take-effect-from-the-window.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-15",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-M7Z4",
+      "directive_title": "deflake TestHTTPBandwidth on coarse-clock machines",
+      "source_repo": "tailscale/tailscale",
+      "source_commit": "daf82a50",
+      "staged_file": "11_INBOX/candidate-directives/CD-M7Z4-deflake-testhttpbandwidth-on-coarse-clock-machines.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-15",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-MB6R",
+      "directive_title": "tagline consistency",
+      "source_repo": "dathere/qsv",
+      "source_commit": "b1d9ed30",
+      "staged_file": "11_INBOX/candidate-directives/CD-MB6R-tagline-consistency.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-15",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-MDLN",
+      "directive_title": "menu-bar): make the icon switch take effect from the window",
+      "source_repo": "jarvis322-macos-sysdata-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-MDLN-menu-bar-make-the-icon-switch-take-effect-from-the-window.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-15",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-MDY7",
+      "directive_title": "prober: deflake TestHTTPBandwidth on coarse-clock machines",
+      "source_repo": "tailscale-tailscale-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-MDY7-prober-deflake-testhttpbandwidth-on-coarse-clock-machines.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-15",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-MEFP",
+      "directive_title": "docs: tagline consistency",
+      "source_repo": "dathere-qsv-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-MEFP-docs-tagline-consistency.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-15",
+      "domain_letter": "G"
     }
   ]
 }

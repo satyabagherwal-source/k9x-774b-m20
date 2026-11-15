@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T03:33:01.247Z",
+  "timestamp": "2026-11-15T16:50:39.689Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-tailscale-tailscale-learnings",
@@ -14,13 +14,13 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [tailscale-tailscale-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T03:33:01.247Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-15T16:50:39.689Z`  
 > **Learning ID**: `LEARN-EVO-tailscale-tailscale-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
 - **Confidence Rating**: 57%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -28,10 +28,10 @@ The following architectural invariants have been empirically discovered and reco
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `0d822c9d`  
+> **Source Version**: `daf82a50`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T03:32:24.754Z  
+> **Timestamp**: 2026-11-15T16:50:31.085Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T03:32:24.749Z  
+> **Harvest Timestamp**: 2026-11-15T16:50:31.080Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39065 stars
+- **Stars / Engagement**: 39155 stars
 
 ---
 
@@ -851,148 +851,92 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `283569e7` (2026-11-13)
-**Commit Message**: derp/derpserver: fix data race on sclient.keepAliveTimer
+### Incident Patch 1: `daf82a50` (2026-11-14)
+**Commit Message**: prober: deflake TestHTTPBandwidth on coarse-clock machines
 
-run assigned keepAliveTimer after AfterFunc had already armed it, and
-the timer's func uses the field (writePending resets it), so nothing
-ordered the assignment before the first keepalive. Assign it first and
-arm it with Reset, which does.
+The test asserts that a successful probe records a positive transfer
+time, but the transfer is shorter than one clock tick on the Windows CI
+runner: four attempts at 1 MiB plus their connection setups took 2.3ms
+in total, yet every measurement read exactly 0, so the retry loop added
+in #20214 just re-measured zero and then failed with
+"http_bw_transfer_time_seconds_total = 0 after 4 attempts".
 
-No existing test ran long enough for a keepalive to fire. The new
-TestKeepAlive waits for three under synctest; with the race detector it
-fails without this fix.
+A 1 MiB loopback transfer takes ~0.4ms here, so no payload small enough
+for a unit test is reliably measurable against a millisecond-coarse
+clock. Make the transfer span more than one tick instead: /download now
+writes half the payload, flushes, sleeps 50ms, then writes the rest.
+The probe measures ~52ms, so the >0 assertion holds deterministically
+and the retry loop can be deleted.
 
-Updates #13038
+Fixes #21620
 
-Signed-off-by: Brad Fitzpatrick <[REDACTED_EMAIL]>
-Change-Id: I8f2c4e6a1b3d5f7091a2c3e4d5f6a7b8c9d0e1f2
+Signed-off-by: Yunus Emre Karaman <[REDACTED_EMAIL]>
 
-**File**: `derp/derpserver/derpserver.go` (modified, +5/-1)
+**File**: `prober/http_test.go` (modified, +14/-21)
 ```diff
-@@ -1265,7 +1265,11 @@ func (c *sclient) run(ctx context.Context) error {
- 		c.startStatsLoop(ctx)
- 	}
+@@ -55,10 +55,18 @@ func TestHTTPBandwidth(t *testing.T) {
+ 	const size = 1 << 20 // 1 MiB
  
--	c.keepAliveTimer = c.s.clock.AfterFunc(keepAliveInterval(), c.onKeepAliveTimer)
-+	// Assign keepAliveTimer before arming it with Reset: its func
-+	// resets it (in writePending), and Reset is what orders this
-+	// assignment before the func runs.
-+	c.keepAliveTimer = c.s.clock.AfterFunc(365*24*time.Hour, c.onKeepAliveTimer)
-+	c.keepAliveTimer.Reset(keepAliveInterval())
+ 	mux := http.NewServeMux()
+-	// /download writes exactly `size` zero bytes.
++	// /download writes exactly `size` zero bytes, pausing halfway so the
++	// transfer spans more than one clock tick. A 1 MiB loopback transfer
++	// takes well under a millisecond, which is below the monotonic clock's
++	// granularity on the Windows CI runner, so the probe would measure a
++	// transfer time of exactly 0 there.
++	// See https://github.com/tailscale/tailscale/issues/21620.
+ 	mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
+ 		w.WriteHeader(http.StatusOK)
+-		io.CopyN(w, zeroReader{}, size)
++		io.CopyN(w, zeroReader{}, size/2)
++		w.(http.Flusher).Flush()
++		time.Sleep(50 * time.Millisecond)
++		io.CopyN(w, zeroReader{}, size/2)
+ 	})
+ 	// /bad returns a non-200 status.
+ 	mux.HandleFunc("/bad", func(w http.ResponseWriter, r *http.Request) {
+@@ -135,28 +143,13 @@ func TestHTTPBandwidth(t *testing.T) {
+ 			}
  
- 	for {
- 		ft, fl, err := derp.ReadFrameHeader(c.br)
-```
-
-**File**: `derp/derpserver/handler_test.go` (modified, +36/-0)
-```diff
-@@ -4,6 +4,7 @@
- package derpserver
- 
- import (
-+	"bufio"
- 	"bytes"
- 	"context"
- 	"crypto/tls"
-@@ -158,3 +159,38 @@ func TestHandlerTLSReaderSize(t *testing.T) {
+ 			// On a successful transfer the recorded byte count should equal the
+-			// full payload size, and the transfer should take a positive,
+-			// finite amount of time.
++			// full payload size, and the transfer should take a positive
++			// amount of time.
+ 			if got := metricValue(t, metrics, "http_bw_bytes_total"); got != float64(tc.size) {
+ 				t.Errorf("http_bw_bytes_total = %v, want %v", got, tc.size)
+ 			}
+-			// The transfer time counter accumulates across Probe calls.
+-			// At 1 MiB over loopback a zero reading means the timing logic
+-			// is broken, but retry a few times.
+-			if transferTime() <= 0 {
+-				const retries = 3
+-				for range retries {
+-					if err := pc.Probe(ctx); err != nil {
+-						t.Fatalf("Probe() = %v, want nil", err)
+-					}
+-					metrics = pc.Metrics(prometheus.Labels{})
+-					if transferTime() > 0 {
+-						break
+-					}
+-				}
+-				if transferTime() <= 0 {
+-					t.Fatalf("http_bw_transfer_time_seconds_total = 0 after %d attempts, want > 0", retries+1)
+-				}
++			if got := transferTime(); got <= 0 {
++				t.Errorf("http_bw_transfer_time_seconds_total = %v, want > 0", got)
+ 			}
  		})
  	}
- }
-+
-+// TestKeepAlive verifies that the server sends a client keepalives. Run
-+// with the race detector, it also verifies that the keepalive timer's
-+// func (which resets the timer) is ordered after the timer is assigned.
-+func TestKeepAlive(t *testing.T) {
-+	synctest.Test(t, func(t *testing.T) {
-+		s := New(key.NewNode(), t.Logf)
-+		defer s.Close()
-+		ctx, cancel := context.WithCancel(context.Background())
-+		defer cancel()
-+		connIn, connOut := memnet.NewConn("derp", 64<<10)
-+		defer connIn.Close()
-+		defer connOut.Close()
-+		go s.Accept(ctx, connIn, bufio.NewReadWriter(bufio.NewReader(connIn), bufio.NewWriter(connIn)), "test-client")
-+
-+		brw := bufio.NewReadWriter(bufio.NewReader(connOut), bufio.NewWriter(connOut))
-+		c, err := derp.NewClient(key.NewNode(), connOut, brw, t.Logf)
-+		if err != nil {
-+			t.Fatal(err)
-+		}
-+		start := time.Now()
-+		for got := 0; got < 3; {
-+			m, err := c.Recv()
-+			if err != nil {
-+				t.Fatal(err)
-+			}
-+			if _, ok := m.(derp.KeepAliveMessage); ok {
-+				got++
-+			}
-+		}
-+		if d := time.Since(start); d < 3*derp.KeepAlive {
-+			t.Errorf("got 3 keepalives in %v; want at least %v", d, 3*derp.KeepAlive)
-+		}
-+	})
-+}
-```
-
----
-
-### Incident Patch 2: `027c2a82` (2026-11-13)
-**Commit Message**: clientupdate: stop requesting the -winui MSI variant on Windows
-
-The Windows installers no longer come in a separate -winui variant.
-Remove the temporary qualifier.
-
-Updates tailscale/corp#50987
-
-Signed-off-by: Nick Khyl <[REDACTED_EMAIL]>
-
-**File**: `clientupdate/clientupdate_windows.go` (modified, +1/-19)
-```diff
-@@ -91,17 +91,6 @@ func verifyAuthenticode(path string) error {
- 	return authenticode.Verify(path, certSubjectTailscale)
- }
- 
--func isTSGUIPresent() bool {
--	us, err := os.Executable()
--	if err != nil {
--		return false
--	}
--
--	tsgui := filepath.Join(filepath.Dir(us), "tsgui.dll")
--	_, err = os.Stat(tsgui)
--	return err == nil
--}
--
- func (up *Updater) updateWindows() error {
- 	if msi := os.Getenv(winMSIEnv); msi != "" {
- 		// stdout/stderr from this part of the install could be lost since the
-@@ -156,14 +145,7 @@ you can run the command prompt as Administrator one of these ways:
- 	}
- 	up.cleanupOldDownloads(filepath.Join(msiDir, "*.msi"))
- 
--	qualifiers := []string{ver, arch}
--	// TODO(aaron): Temporary hack so autoupdate still works on winui builds;
--	// remove when we enable winui by default on the unstable track.
--	if isTSGUIPresent() {
--		qualifiers = append(qualifiers, "winui")
--	}
--
--	pkgsPath := fmt.Sprintf("%s/tailscale-setup-%s.msi", up.Track, strings.Join(qualifiers, "-"))
-+	pkgsPath := fmt.Sprintf("%s/tailscale-setup-%s-%s.msi", up.Track, ver, arch)
- 	msiTarget := filepath.Join(msiDir, path.Base(pkgsPath))
- 	if err := up.downloadURLToFile(pkgsPath, msiTarget); err != nil {
- 		return err
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22408** (2026-11-15): prober: deflake TestHTTPBandwidth on coarse-clock machines (@emrelab)
+- **PR #22406** (2026-11-14): go.mod: bump golang.org/x/sys (@tailscale-code-updater[bot])
 - **PR #22393** (2026-11-14): cmd/testwrapper, .github/workflows: bound hung CI test jobs (@bradfitz)
 - **PR #22392** (2026-11-13): clientupdate: stop requesting the -winui MSI variant on Windows (@nickkhyl)
+- **PR #22391** (closed): go.mod: bump golang.org/x/sys to v0.50.0 (@wrenix)
 - **PR #22382** (2026-11-13): derp/derpserver: fix data race on sclient.keepAliveTimer (@bradfitz)
-- **PR #22375** (2026-11-13): ipn/ipnlocal: add stub for LocalBackend.SetLogUploader (@dsnet)
-- **PR #22372** (2026-11-12): ipn/ipnstate,tailcfg: fix comment (@franbull)
-- **PR #22371** (2026-11-12): cmd/k8s-proxy: listen on the PORT that the operator sets (@ChaosInTheCRD)
 
 ---
 
@@ -1012,35 +956,64 @@ Signed-off-by: Nick Khyl <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. derp/derpserver: fix data race on sclient.keepAliveTimer
+## X. prober: deflake TestHTTPBandwidth on coarse-clock machines
 
 **RULE**:
-When implementing operations in `derp/derpserver/derpserver.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `prober/http_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `283569e7`: derp/derpserver: fix data race on sclient.keepAliveTimer. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `daf82a50`: prober: deflake TestHTTPBandwidth on coarse-clock machines. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `derp/derpserver/derpserver.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `prober/http_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// Assign keepAliveTimer before arming it with Reset: its func
-	// resets it (in writePending), and Reset is what orders this
-	// assignment before the func runs.
-	c.keepAliveTimer = c.s.clock.AfterFunc(365*24*time.Hour, c.onKeepAliveTimer)
-	c.keepAliveTimer.Reset(keepAliveInterval())
+	// /download writes exactly `size` zero bytes, pausing halfway so the
+	// transfer spans more than one clock tick. A 1 MiB loopback transfer
+	// takes well under a millisecond, which is below the monotonic clock's
+	// granularity on the Windows CI runner, so the probe would measure a
+	// transfer time of exactly 0 there.
+	// See https://github.com/tailscale/tailscale/issues/21620.
+		io.CopyN(w, zeroReader{}, size/2)
+		w.(http.Flusher).Flush()
+		time.Sleep(50 * time.Millisecond)
+		io.CopyN(w, zeroReader{}, size/2)
+			// full payload size, and the transfer should take a positive
+			// amount of time.
+			if got := transferTime(); got <= 0 {
+				t.Errorf("http_bw_transfer_time_seconds_total = %v, want > 0", got)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	c.keepAliveTimer = c.s.clock.AfterFunc(keepAliveInterval(), c.onKeepAliveTimer)
+	// /download writes exactly `size` zero bytes.
+		io.CopyN(w, zeroReader{}, size)
+			// full payload size, and the transfer should take a positive,
+			// finite amount of time.
+			// The transfer time counter accumulates across Probe calls.
+			// At 1 MiB over loopback a zero reading means the timing logic
+			// is broken, but retry a few times.
+			if transferTime() <= 0 {
+				const retries = 3
+				for range retries {
+					if err := pc.Probe(ctx); err != nil {
+						t.Fatalf("Probe() = %v, want nil", err)
+					}
+					metrics = pc.Metrics(prometheus.Labels{})
+					if transferTime() > 0 {
+						break
+					}
+				}
+				if transferTime() <= 0 {
+					t.Fatalf("http_bw_transfer_time_seconds_total = 0 after %d attempts, want > 0", retries+1)
+				}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `283569e7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `daf82a50` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

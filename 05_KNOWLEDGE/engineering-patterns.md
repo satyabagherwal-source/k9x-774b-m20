@@ -624073,3 +624073,187 @@ Subsystems managing Swift data structures, boundary deserialization, API parsing
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `2aca62ea` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8627. make the icon switch take effect from the window (Harvested from Jarvis322/macos-sysdata)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "make the icon switch take effect from the window",
+  "source": "Jarvis322/macos-sysdata",
+  "source_url": "https://github.com/Jarvis322/macos-sysdata",
+  "source_version": "e06a5803",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-15T16:50:27.424Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-jarvis322-macos-sysdata",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Jarvis322/macos-sysdata](https://github.com/Jarvis322/macos-sysdata) (Revision: `e06a5803`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `Sources/SysDataMenu/Services/MainWindow.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Jarvis322/macos-sysdata. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `1553cbcd`: menu-bar): make the icon switch take effect from the window. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/SysDataMenu/Services/MainWindow.swift`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+        MenuBarIcon.apply(model.showsMenuBarIcon)
+                // The status item's own windows are always visible; they are
+                // not the panel this waits for.
+                && !$0.className.contains("NSStatusBarWindow")
+        applyMenuBarIconPreference()
+    /// Puts the status item in the state the preference asks for. Called after
+    /// launch as well as on the switch, because the item does not exist yet
+    /// when the app is being built.
+    func applyMenuBarIconPreference() {
+        MenuBarIcon.apply(model?.showsMenuBarIcon ?? true)
+    }
+
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `1553cbcd` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8628. deflake TestHTTPBandwidth on coarse-clock machines (Harvested from tailscale/tailscale)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "deflake TestHTTPBandwidth on coarse-clock machines",
+  "source": "tailscale/tailscale",
+  "source_url": "https://github.com/tailscale/tailscale",
+  "source_version": "daf82a50",
+  "license": "BSD-3-Clause",
+  "extracted_at": "2026-11-15T16:50:31.489Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-tailscale-tailscale",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [tailscale/tailscale](https://github.com/tailscale/tailscale) (Revision: `daf82a50`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `prober/http_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `daf82a50`: prober: deflake TestHTTPBandwidth on coarse-clock machines. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `prober/http_test.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+	// /download writes exactly `size` zero bytes, pausing halfway so the
+	// transfer spans more than one clock tick. A 1 MiB loopback transfer
+	// takes well under a millisecond, which is below the monotonic clock's
+	// granularity on the Windows CI runner, so the probe would measure a
+	// transfer time of exactly 0 there.
+	// See https://github.com/tailscale/tailscale/issues/21620.
+		io.CopyN(w, zeroReader{}, size/2)
+		w.(http.Flusher).Flush()
+		time.Sleep(50 * time.Millisecond)
+		io.CopyN(w, zeroReader{}, size/2)
+			// full payload size, and the transfer should take a positive
+			// amount of time.
+			if got := transferTime(); got <= 0 {
+				t.Errorf("http_bw_transfer_time_seconds_total = %v, want > 0", got)
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+	// /download writes exactly `size` zero bytes.
+		io.CopyN(w, zeroReader{}, size)
+			// full payload size, and the transfer should take a positive,
+			// finite amount of time.
+			// The transfer time counter accumulates across Probe calls.
+			// At 1 MiB over loopback a zero reading means the timing logic
+			// is broken, but retry a few times.
+			if transferTime() <= 0 {
+				const retries = 3
+				for range retries {
+					if err := pc.Probe(ctx); err != nil {
+						t.Fatalf("Probe() = %v, want nil", err)
+					}
+					metrics = pc.Metrics(prometheus.Labels{})
+					if transferTime() > 0 {
+						break
+					}
+				}
+				if transferTime() <= 0 {
+					t.Fatalf("http_bw_transfer_time_seconds_total = 0 after %d attempts, want > 0", retries+1)
+				}
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `daf82a50` are properly handled with clean fallback behavior.

@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "42260613",
+    "sourceVersion": "b1d9ed30",
     "license": "NOASSERTION",
-    "contentHash": "d271937c0c69ed69a60f989f0a7f065150d77d1c3108c1c2d8ba6daeacf59070",
-    "lastHarvestedAt": "2026-11-15T15:23:25.026Z",
+    "contentHash": "dd1fd21d4461f1d005f93939bf81c0011c225f7133921cdcf495cd4992a4a2dc",
+    "lastHarvestedAt": "2026-11-15T16:50:36.027Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "9d531366",
+    "sourceVersion": "daf82a50",
     "license": "BSD-3-Clause",
-    "contentHash": "71d9e7361ba3ec0b36c7e4fc831e06df1e3278f8f9163a08fc6f5c0f1de90297",
-    "lastHarvestedAt": "2026-11-14T21:21:02.315Z",
+    "contentHash": "f8b2f88593e73385581a33a1dd390e8947648958f3e2e277b95a7310bd16d701",
+    "lastHarvestedAt": "2026-11-15T16:50:31.874Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -11933,10 +11933,10 @@
     "repository": "Jarvis322/macos-sysdata",
     "platform": "github",
     "sourceUrl": "https://github.com/Jarvis322/macos-sysdata",
-    "sourceVersion": "bcfd205a",
+    "sourceVersion": "e06a5803",
     "license": "NOASSERTION",
-    "contentHash": "f2312bae65b09026cf3b919401048a50996e5cb485e8ef1ef8e19b3ae70aa690",
-    "lastHarvestedAt": "2026-11-08T04:26:49.283Z",
+    "contentHash": "2c82cb0e832815be5f43b2d6ad5023561255ba4677f45e0b7be739519742f48f",
+    "lastHarvestedAt": "2026-11-15T16:50:27.791Z",
     "learningId": "learn-github-jarvis322-macos-sysdata"
   },
   "hf-nvidia-nvidia-nemotronlabs-re-use": {

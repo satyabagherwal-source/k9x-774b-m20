@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `42260613`  
+> **Source Version**: `b1d9ed30`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T15:23:24.194Z  
+> **Timestamp**: 2026-11-15T16:50:35.691Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T15:23:24.188Z  
+> **Harvest Timestamp**: 2026-11-15T16:50:35.685Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2201,170 +2201,231 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `42260613` (2026-11-15)
-**Commit Message**: chore(mcp): v29.0.0 release of MCP Server and Claude Cowork plugin
+### Incident Patch 1: `b1d9ed30` (2026-11-15)
+**Commit Message**: docs: tagline consistency
 
-[skip ci]
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `.claude-plugin/marketplace.json` (modified, +2/-2)
+**File**: `README.md` (modified, +1/-1)
 ```diff
-@@ -6,14 +6,14 @@
-   },
-   "metadata": {
-     "description": "Blazingly fast data wrangling plugins for Claude Code — 57 skill-based commands for CSV, TSV, Excel, JSONL, and Parquet files",
--    "version": "28.0.0"
-+    "version": "29.0.0"
-   },
-   "plugins": [
-     {
-       "name": "qsv-data-wrangling",
-       "source": "./.claude/skills",
-       "description": "Blazingly fast tabular data wrangling with 57 qsv skill-based commands for CSV, TSV, Excel, JSONL, and Parquet files",
--      "version": "28.0.0",
-+      "version": "29.0.0",
-       "author": {
-         "name": "datHere, Inc.",
-         "email": "qsv@dathere.com",
+@@ -1,4 +1,4 @@
+-## qsv: Blazing-fast Data-Wrangling toolkit
++## qsv: Blazing-fast Neuro-symbolic Data-Wrangling toolkit
+ 
+ [![Linux build status](https://github.com/dathere/qsv/actions/workflows/rust.yml/badge.svg)](https://github.com/dathere/qsv/actions/workflows/rust.yml)
+ [![Windows build status](https://github.com/dathere/qsv/actions/workflows/rust-windows.yml/badge.svg)](https://github.com/dathere/qsv/actions/workflows/rust-windows.yml)
 ```
 
-**File**: `.claude/skills/.claude-plugin/plugin.json` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "qsv-data-wrangling",
--  "version": "28.0.0",
-+  "version": "29.0.0",
-   "description": "Blazingly fast tabular data wrangling with 57 qsv skill-based commands for CSV, TSV, Excel, JSONL, and Parquet files",
-   "author": {
-     "name": "datHere, Inc.",
-```
+---
 
-**File**: `.claude/skills/CHANGELOG.md` (modified, +7/-1)
-```diff
-@@ -5,11 +5,17 @@ All notable changes to the qsv Agent Skills (MCP Server) project will be documen
- The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
- and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
- 
--## [Unreleased]
-+## [29.0.0] - 2026-11-15
-+Companion release to qsv 29.0.0, "The Trust the numbers Release". The MCP server tracks the qsv binary version per the policy adopted in 20.0.0, and `minimum_qsv_version` is raised to 29.0.0 because the regenerated skills describe options and behavior that only the new binary has: `qsv-validate --sarif`, and `qsv-sqlp --format avro` converting the types Avro can't write. The skill count stays at **57**. Update your qsv binary first.
- 
- ### Added
- - **`qsv-validate` describes `--sarif <file>`** ([#5031](https://github.com/dathere/qsv/pull/5031)): in JSON Schema mode, it writes the validation errors as a SARIF 2.1.0 log for code scanning tools. The skill was regenerated from the qsv USAGE. It needs a qsv binary with the option.
- 
-+### Changed
-+- **`qsv-sqlp` describes how `--format avro` converts types** ([#5024](https://github.com/dathere/qsv/pull/5024)): Avro has fewer types than Polars, so small and unsigned integers become int or long (a value above 2^63-1 is an error), zoned timestamps become UTC, nanosecond timestamps become microseconds, and TIME and durations become strings (durations in ISO 8601).
-+- **`qsv-sqlp` and `qsv-joinp` corrections** ([#5046](https://github.com/dathere/qsv/pull/5046)): `<=>` is described as the NULL-safe equality operator (same as `IS NOT DISTINCT FROM`), not a three-way comparison, and the `--cache-schema` text names the right Polars schema file.
-+- **`qsv-viz` documents stdin input** ([#5018](https://github.com/dathere/qsv/pull/5018)): pass `-` to chart piped CSV with every chart type except `smart`, which needs a file. A piped-input example was added.
-+
- ### Fixed
- - **The `.mcpb` no longer ships development-only packages** ([#5014](https://github.com/dathere/qsv/pull/5014)). The packager zipped all of `node_modules`, so the 28.0.0 bundle included typescript, c8, archiver and 116 other packages the server never loads, among them three minimatch copies flagged by GHSA-g3hv-75wg-m249. Packages that `package-lock.json` marks dev-only are now skipped, as is `node_modules/.bin`, and the download shrinks from 11.4 MB to 5.6 MB. `verify-bundles` checks that none of them is bundled.
- - **security: `hono` 4.13.18 and `@hono/node-server` 2.1.8** (from 4.13.13 and 2.1.5; [#5043](https://github.com/dathere/qsv/pull/5043), [#5042](https://github.com/dathere/qsv/pull/5042)). These Dependabot bumps pick up upstream security fixes, which are listed in the PRs.
-```
+### Incident Patch 2: `b8dd4570` (2026-11-15)
+**Commit Message**: deps: bump lock file
 
-**File**: `.claude/skills/README-MCP.md` (modified, +3/-3)
-```diff
-@@ -60,7 +60,7 @@ Excel and JSONL files are automatically converted to CSV before processing - no
- 
- The **MCP Desktop Extension** (MCPB) provides the easiest installation experience:
- 
--1. Download `qsv-mcp-server-<version>.mcpb` (e.g. `qsv-mcp-server-28.0.0.mcpb`) from [releases](https://github.com/dathere/qsv/releases/latest)
-+1. Download `qsv-mcp-server-<version>.mcpb` (e.g. `qsv-mcp-server-29.0.0.mcpb`) from [releases](https://github.com/dathere/qsv/releases/latest)
- 2. Open Claude Desktop Settings → Extensions
- 3. Click "Install from file" and select the `.mcpb` file
- 4. Configure your allowed directories when prompted
-@@ -621,8 +621,8 @@ For issues or questions:
- 
- ---
- 
--**Updated**: 2026-11-02
--**Version**: 28.0.0
-+**Updated**: 2026-11-15
-+**Version**: 29.0.0
- **Tools**: 23 tools at startup (10 core + 13 commonly-used; +1 app-only when MCP Apps enabled), all 57 discoverable via `qsv_search_tools`
- **Skills**: 57 qsv commands
- **Status**: Production Ready
-```
+Update actix-http, brotli, fantoccini, jiff, rand, webdriver, xxhash-rust, and zip. Remove obsolete ICU dependency versions.
 
-**File**: `.claude/skills/README.md` (modified, +3/-3)
+**File**: `Cargo.lock` (modified, +90/-229)
 ```diff
-@@ -49,7 +49,7 @@ Each skill file provides:
+@@ -33,9 +33,9 @@ dependencies = [
  
- **Installation**:
- 1. Install qsv: `brew install qsv` (macOS) or see [qsv installation](https://github.com/dathere/qsv#installation)
--2. Download `qsv-mcp-server-<version>.mcpb` (e.g. `qsv-mcp-server-28.0.0.mcpb`) from releases
-+2. Download `qsv-mcp-server-<version>.mcpb` (e.g. `qsv-mcp-server-29.0.0.mcpb`) from releases
- 3. Double-click the `.mcpb` file (opens with Claude Desktop)
- 4. **That's it!** qsv binary path is auto-detected, no manual configuration needed
- 5. Restart Claude Desktop
-@@ -467,8 +467,8 @@ MIT
+ [[package]]
+ name = "actix-http"
+-version = "3.21.0"
++version = "3.21.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "3422032be73eeb15bafdb64086386385875b653eb418a80241d1f98473e86ea6"
++checksum = "a190bdb9595ac6111ca520bc7db0819153cead7d68ca3faaf71f114f697dda07"
+ dependencies = [
+  "actix-codec",
+  "actix-service",
+@@ -1110,9 +1110,9 @@ checksum = "36f64beae40a84da1b4b26ff2761a5b895c12adc41dc25aaee1c4f2bbfe97a6e"
  
- ---
+ [[package]]
+ name = "brotli"
+-version = "9.1.1"
++version = "9.1.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "627b7cfb0578f0eafce087a90fcd40add1231900b69e4d4de2d456260a4f5d81"
++checksum = "05e0144f854f7cfbc157229554c4a9580b8a653448e2bab608022ee0398a07dc"
+ dependencies = [
+  "alloc-no-stdlib",
+  "alloc-stdlib",
+@@ -2025,7 +2025,7 @@ dependencies = [
+  "petgraph",
+  "postgres",
+  "qsv-stats",
+- "rand 0.10.3",
++ "rand 0.10.4",
+  "rayon",
+  "regex",
+  "rusqlite",
+@@ -2623,7 +2623,7 @@ dependencies = [
+  "deunicode",
+  "dummy",
+  "either",
+- "rand 0.10.3",
++ "rand 0.10.4",
+  "random_color",
+  "time",
+  "uuid",
+@@ -2670,11 +2670,11 @@ dependencies = [
  
--**Updated**: 2026-11-02
--**Version**: 28.0.0
-+**Updated**: 2026-11-15
-+**Version**: 29.0.0
- **Generator**: `qsv --update-mcp-skills`
- **Skills**: 57 commands
- **Usage Examples**: 263 from documentation
-```
-
-**File**: `.claude/skills/docs/desktop/README-MCPB.md` (modified, +2/-2)
-```diff
-@@ -576,7 +576,7 @@ Same license as qsv: MIT OR Apache-2.0
+ [[package]]
+ name = "fantoccini"
+-version = "0.22.1"
++version = "0.22.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "7737298823a6f9ca743e372e8cb03658d55354fbab843424f575706ba9563046"
++checksum = "1a1ccdca7be680925093d9be9aec25f9f067c9db03c61b5c3625996022e23807"
+ dependencies = [
+- "base64 0.22.1",
++ "base64 0.23.1",
+  "cookie 0.18.2",
+  "http 1.5.0",
+  "http-body-util",
+@@ -3690,18 +3690,6 @@ dependencies = [
+  "cc",
+ ]
  
- ---
+-[[package]]
+-name = "icu_collections"
+-version = "1.5.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "db2fa452206ebee18c4b5c2274dbf1de17008e874b4dc4f0aea9d01ca79e4526"
+-dependencies = [
+- "displaydoc",
+- "yoke 0.7.5",
+- "zerofrom",
+- "zerovec 0.10.4",
+-]
+-
+ [[package]]
+ name = "icu_collections"
+ version = "2.4.0"
+@@ -3711,9 +3699,9 @@ dependencies = [
+  "displaydoc",
+  "potential_utf",
+  "utf8_iter",
+- "yoke 0.8.4",
++ "yoke",
+  "zerofrom",
+- "zerovec 0.11.9",
++ "zerovec",
+ ]
  
--**Updated**: 2026-11-02
--**Version**: 28.0.0
-+**Updated**: 2026-11-15
-+**Version**: 29.0.0
- **Format**: MCP Bundle (MCPB) v0.3
- **Compatibility**: Claude Desktop 1.0+
-```
-
-**File**: `.claude/skills/manifest.json` (modified, +2/-2)
-```diff
-@@ -1,7 +1,7 @@
- {
-   "manifest_version": "0.3",
-   "name": "qsv",
--  "version": "28.0.0",
-+  "version": "29.0.0",
-   "description": "Blazingly fast Data Wrangling Toolkit for Tabular Data",
-   "long_description": "Comprehensive data-wrangling toolkit for transforming, analyzing, querying & validating tabular data. Process local CSV, TSV, SSV, Excel/ODS, Parquet and JSONL files w/o uploading. Despite the warning, only accesses APPROVED DIRECTORIES on your computer.",
-   "author": {
-@@ -260,7 +260,7 @@
-         "Smart caching with stats/frequency files",
-         "Automatic Excel, Parquet and JSONL conversion"
-       ],
--      "minimum_qsv_version": "28.0.0"
-+      "minimum_qsv_version": "29.0.0"
-     }
-   }
- }
-```
-
-**File**: `.claude/skills/package-lock.json` (modified, +2/-2)
-```diff
-@@ -1,12 +1,12 @@
- {
-   "name": "@qsv/agent-skills",
--  "version": "28.0.0",
-+  "version": "29.0.0",
-   "lockfileVersion": 3,
-   "requires": true,
-   "packages": {
-     "": {
-       "name": "@qsv/agent-skills",
--      "version": "28.0.0",
-+      "version": "29.0.0",
-       "license": "MIT",
-       "dependencies": {
-         "@modelcontextprotocol/ext-apps": "^1.7.2",
+ [[package]]
+@@ -3723,11 +3711,11 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "25d29b57c17c6528d0dc4c2141cfa2d08200465acb537a3909c8b9b8a4a984c0"
+ dependencies = [
+  "displaydoc",
+- "litemap 0.8.3",
++ "litemap",
+  "serde",
+- "tinystr 0.8.5",
+- "writeable 0.6.4",
+- "zerovec 0.11.9",
++ "tinystr",
++ "writeable",
++ "zerovec",
+ ]
+ 
+ [[package]]
+@@ -3738,10 +3726,10 @@ checksum = "406e9ae5b95d8aa37db6293405931b766a6172d1848daee22d70eb44aa78a43c"
+ dependencies = [
+  "icu_locale_core",
+  "icu_locale_fallback_data",
+- "icu_provider 2.4.0",
++ "icu_provider",
+  "potential_utf",
+- "tinystr 0.8.5",
+- "zerovec 0.11.9",
++ "tinystr",
++ "zerovec",
+ ]
+ 
+ [[package]]
+@@ -3750,30 +3738,18 @@ version = "2.4.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "3632ebbd0c5c3637ba1a40bdf8288f2cb9d2268e73441a69d5fc73d7cfbaa87c"
+ 
+-[[package]]
+-name = "icu_locid"
+-version = "1.5.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "13acbb8371917fc971be86fc8057c41a64b521c184808a698c02acc242dbf637"
+-dependencies = [
+- "displaydoc",
+- "litemap 0.7.5",
+- "tinystr 0.7.6",
+- "writeable 0.5.5",
+-]
+-
+ [[package]]
+ name = "icu_normalizer"
+ version = "2.4.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "404a3b8c486f205c87fe7f23ab6894d84a4ad76d6e4671ae1981ba7def87c599"
+ dependencies = [
+- "icu_collections 2.4.0",
++ "icu_collections",
+  "icu_normalizer_data",
+  "icu_properties",
+- "icu_provider 2.4.0",
++ "icu_provider",
+  "smallvec",
+- "zerovec 0.11.9",
++ "zerovec",
+ ]
+ 
+ [[package]]
+@@ -3789,12 +3765,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "2ea83d991c56158f7cf898bf86436c1dfe7c07ee82fe88951f2695c9f37a379f"
+ dependencies = [
+  "displaydoc",
+- "icu_collections 2.4.0",
++ "icu_collections",
+  "icu_locale_core",
+  "icu_properties_data",
+- "icu_provider 2.4.0",
++ "icu_provider",
+  "zerotrie",
+- "zerovec 0.11.9",
++ "zerovec",
+ ]
+ 
+ [[package]]
+@@ -3803,23 +3779,6 @@ version = "2.4.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "b98f29af82d02b163fe50161388350e743bb3107cc8e8c2f7314cb505faddfcf"
+ 
+-[[package]]
+-name = "icu_provider"
+-version = "1.5.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "6ed421c8a8ef78d3e2dbc98a973be2f3770cb42b606e3ab18d6237c4dfde68d9"
+-dependencies = [
+- "displaydoc",
+- "icu_locid",
+- "icu_provider_macros",
+- "stable_deref_trait",
+- "tinystr 0.7.6",
+- "writeable 0.5.5",
+- "yoke 0.7.5",
+- "zerofrom",
+- "zerovec 0.10.4",
+-]
+-
+ [[package]]
+ name = "icu_provider"
+ version = "2.4.0"
+@@ -3830,38 +3789,11 @@ dependencies = [
+  "icu_locale_core",
+  "serde",
+  "stable_deref_trait",
+- "writeable 0.6.4",
+- "yoke 0.8.4",
++ "writeable",
++ "yoke",
+  "zerofrom",
+  "zerotrie",
+- "zerovec 0.11
 ```
 
 #### Recent Merged Pull Requests:
@@ -2393,30 +2454,28 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. mcp): v29.0.0 release of MCP Server and Claude Cowork plugin
+## X. docs: tagline consistency
 
 **RULE**:
-When implementing operations in `.claude-plugin/marketplace.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `42260613`: mcp): v29.0.0 release of MCP Server and Claude Cowork plugin. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b1d9ed30`: docs: tagline consistency. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude-plugin/marketplace.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    "version": "29.0.0"
-      "version": "29.0.0",
+## qsv: Blazing-fast Neuro-symbolic Data-Wrangling toolkit
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    "version": "28.0.0"
-      "version": "28.0.0",
+## qsv: Blazing-fast Data-Wrangling toolkit
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `42260613` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b1d9ed30` are properly handled with clean fallback behavior.

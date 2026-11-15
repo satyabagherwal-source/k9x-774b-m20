@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261110-D9ZM",
-    "timestamp": "2026-11-10T06:05:22.258Z",
-    "repository": "VideoRebirthAI/hyperflow-h3-flash",
-    "learningId": "learn-huggingface-videorebirthai-hyperflow-h3-flash",
-    "contentHash": "5a57b913598e6c3e80704e0df5b663a5e62da022f5587c55dae2eb154f4d742a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261110-MWP8",
-    "timestamp": "2026-11-10T06:12:51.596Z",
-    "repository": "weaviate/weaviate",
-    "learningId": "learn-github-weaviate-weaviate",
-    "contentHash": "7446a3dd617fd9c1fd3ed40e5d7705b4038a3e6a7917a44c4fa5c46538bdb820",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261111-3HB1",
-    "timestamp": "2026-11-11T06:13:25.213Z",
-    "repository": "Comfy-Org/MiniMax-H3-Image",
-    "learningId": "learn-huggingface-comfy-org-minimax-h3-image",
-    "contentHash": "dbf9358cbae02c83578a49f886b99eddc5d06c913e9aa5dd43fce24721f2fc9e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261111-3JAT",
     "timestamp": "2026-11-11T06:13:27.797Z",
     "repository": "mradermacher/gemma-4-31B-it-ARA-heretic-GGUF",
@@ -7492,6 +7447,51 @@
     "contentHash": "3eebd6309c39c324212cd5d5b7135ef8230f932b5f421fb41e040ed4da6413d1",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-M4P8",
+    "timestamp": "2026-11-15T16:50:27.788Z",
+    "repository": "Jarvis322/macos-sysdata",
+    "learningId": "learn-github-jarvis322-macos-sysdata",
+    "contentHash": "2c82cb0e832815be5f43b2d6ad5023561255ba4677f45e0b7be739519742f48f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-M7UN",
+    "timestamp": "2026-11-15T16:50:31.871Z",
+    "repository": "tailscale/tailscale",
+    "learningId": "learn-github-tailscale-tailscale",
+    "contentHash": "f8b2f88593e73385581a33a1dd390e8947648958f3e2e277b95a7310bd16d701",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-MB20",
+    "timestamp": "2026-11-15T16:50:36.024Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "dd1fd21d4461f1d005f93939bf81c0011c225f7133921cdcf495cd4992a4a2dc",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-15T16:07:07.784Z",
+  "last_updated": "2026-11-15T16:50:36.042Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "d271937c0c69ed69a60f989f0a7f065150d77d1c3108c1c2d8ba6daeacf59070",
-      "verified_at": "2026-11-15T15:23:25.033Z",
+      "content_hash": "dd1fd21d4461f1d005f93939bf81c0011c225f7133921cdcf495cd4992a4a2dc",
+      "verified_at": "2026-11-15T16:50:36.042Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T15:23:25.033Z"
+      "last_updated": "2026-11-15T16:50:36.042Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "71d9e7361ba3ec0b36c7e4fc831e06df1e3278f8f9163a08fc6f5c0f1de90297",
-      "verified_at": "2026-11-14T21:21:02.322Z",
+      "content_hash": "f8b2f88593e73385581a33a1dd390e8947648958f3e2e277b95a7310bd16d701",
+      "verified_at": "2026-11-15T16:50:31.882Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T21:21:02.322Z"
+      "last_updated": "2026-11-15T16:50:31.882Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",
@@ -17961,14 +17961,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-jarvis322-macos-sysdata",
-      "content_hash": "f2312bae65b09026cf3b919401048a50996e5cb485e8ef1ef8e19b3ae70aa690",
-      "verified_at": "2026-11-08T04:26:49.293Z",
+      "content_hash": "2c82cb0e832815be5f43b2d6ad5023561255ba4677f45e0b7be739519742f48f",
+      "verified_at": "2026-11-15T16:50:27.798Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T04:26:49.293Z"
+      "last_updated": "2026-11-15T16:50:27.798Z"
     },
     "nvidia/NVIDIA-NemotronLabs-RE-USE": {
       "repository": "nvidia/NVIDIA-NemotronLabs-RE-USE",

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-15T16:30:51.233Z",
-  "total_verified_learnings": 8705,
+  "last_updated": "2026-11-15T16:50:40.596Z",
+  "total_verified_learnings": 8706,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18456,
+  "total_items": 18469,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112103,10 +112103,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "42260613",
-      "content_hash": "c05e00ee12885d2b09e2159da3fea7d62e1174bff26b4bae1b9e597ad6a03d42",
+      "source_version": "b1d9ed30",
+      "content_hash": "8c7fa0e8e879b2bc0c189e8f0b0ffd64a4cd55e09ac4c2363f50a9da24f2b2c3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T15:23:25.402Z"
+      "persisted_at": "2026-11-15T16:50:36.387Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -112140,9 +112140,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dathere-qsv-learnings",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "670c6e67f3f0e607c6d5e10dffddfb9751d7fdf8ba8ee15937310bc38b852f0e",
+      "content_hash": "08a3eb6c1008569a20dba36a4d83629e316daf471d8ae30756ebc49a93187af2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T15:23:30.104Z"
+      "persisted_at": "2026-11-15T16:50:40.596Z"
     },
     "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels": {
       "item_id": "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels",
@@ -112379,10 +112379,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
       "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
       "repository": "tailscale/tailscale",
-      "source_version": "9d531366",
-      "content_hash": "e938946f2baf4047091f2199b793a220b267443f8a44acbc208c6010deae9c5f",
+      "source_version": "daf82a50",
+      "content_hash": "9de62675eb768655e7ff4f61a84d0ae4ce2afa8152078e31a696732c6143cf60",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T21:21:02.528Z"
+      "persisted_at": "2026-11-15T16:50:32.135Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale",
@@ -112391,10 +112391,10 @@
       "relative_path": "08_VERIFICATION/tailscale-tailscale-verification-protocol-empirical-defect-shield-for-tailscale-.md",
       "title": "Verification Protocol: Empirical Defect Shield for tailscale/tailscale",
       "repository": "tailscale/tailscale",
-      "source_version": "9d531366",
-      "content_hash": "a75ecbba20c026c15af123f3ea7137360a7baa988e6a34022375b7309d07def3",
+      "source_version": "daf82a50",
+      "content_hash": "afca41f02fe860a2f392b3933ceeba857d88f0ea826fd122691734cd31e97e79",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T21:21:02.609Z"
+      "persisted_at": "2026-11-15T16:50:32.229Z"
     },
     "candidate_directive-order-small-runtime-filter-builds-before-filtered-and-nested-scans-28768": {
       "item_id": "candidate_directive-order-small-runtime-filter-builds-before-filtered-and-nested-scans-28768",
@@ -218745,8 +218745,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "42260613",
-      "content_hash": "d271937c0c69ed69a60f989f0a7f065150d77d1c3108c1c2d8ba6daeacf59070",
+      "source_version": "b1d9ed30",
+      "content_hash": "dd1fd21d4461f1d005f93939bf81c0011c225f7133921cdcf495cd4992a4a2dc",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -218816,7 +218816,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T15:23:24.878Z",
+      "verified_at": "2026-11-15T16:50:35.903Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -219651,10 +219651,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "repository": "dathere/qsv",
-      "source_version": "42260613",
-      "content_hash": "ac653680f77fff3a5e83828431d5fa5288f6041934a0550d3d79e7baaf086a85",
+      "source_version": "b1d9ed30",
+      "content_hash": "0f8041132bf1fae8aeb4babe0c8d8d456e594347a1b4787adeff7b80f8192795",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T15:23:25.291Z"
+      "persisted_at": "2026-11-15T16:50:36.294Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant",
@@ -219724,9 +219724,9 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "dfd526229897849cceaed3a77f3cf783aa4d3b2ede9436783867541ec2c86a41",
+      "content_hash": "d0a2addb202f9f094564927b98e88ba430657e21ef877fa3f8fbd88f13e1e479",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T15:23:29.998Z"
+      "persisted_at": "2026-11-15T16:50:40.502Z"
     },
     "learn-huggingface-qwen-qwen3-8-flash-next": {
       "learning_id": "learn-huggingface-qwen-qwen3-8-flash-next",
@@ -221678,8 +221678,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "9d531366",
-      "content_hash": "71d9e7361ba3ec0b36c7e4fc831e06df1e3278f8f9163a08fc6f5c0f1de90297",
+      "source_version": "daf82a50",
+      "content_hash": "f8b2f88593e73385581a33a1dd390e8947648958f3e2e277b95a7310bd16d701",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -221692,6 +221692,11 @@
           "number": 8536,
           "title": "go.mod: bump golang.org/x/sys",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8628,
+          "title": "deflake TestHTTPBandwidth on coarse-clock machines",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -221699,7 +221704,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T21:21:02.201Z",
+      "verified_at": "2026-11-15T16:50:31.720Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -221790,9 +221795,9 @@
       "title": "Architecture Intelligence: tailscale-tailscale-learnings Core Invariants",
       "repository": "tailscale-tailscale-learnings",
       "source_version": "HEAD",
-      "content_hash": "99454cb3e6de58f7ebaf97e3e04338b9c9857afd9f4897e3eb180b85bf6230e9",
+      "content_hash": "a2080a587ffbb83242b266ce848706e8f2b844e3c398bfe51d9135c6b6cc1919",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T03:33:01.453Z"
+      "persisted_at": "2026-11-15T16:50:39.873Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale-learnings",
@@ -221802,9 +221807,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tailscale-tailscale-learnings",
       "repository": "tailscale-tailscale-learnings",
       "source_version": "HEAD",
-      "content_hash": "4f1a3b24995370d799e9c54c7aadee90711c9d2d5b1474a2630a2bb7ec65a882",
+      "content_hash": "cd17ab664cdd9b003e69f7d69334557916a0baab107c9578aebb666c4357172f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T03:33:01.567Z"
+      "persisted_at": "2026-11-15T16:50:39.970Z"
     },
     "learn-huggingface-stabilityai-stable-diffusion-3-medium": {
       "learning_id": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
@@ -244283,6 +244288,187 @@
       "content_hash": "61f1e24dcd72093a0bc7b610d608808ed6d8789542ff81ad5ed078e0627f3524",
       "domain_letter": "K",
       "persisted_at": "2026-11-15T16:07:38.253Z"
+    },
+    "learn-github-jarvis322-macos-sysdata": {
+      "learning_id": "learn-github-jarvis322-macos-sysdata",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Jarvis322/macos-sysdata",
+      "repository": "Jarvis322/macos-sysdata",
+      "slug": "jarvis322-macos-sysdata",
+      "platform": "github",
+      "source_url": "https://github.com/Jarvis322/macos-sysdata",
+      "source_version": "e06a5803",
+      "content_hash": "2c82cb0e832815be5f43b2d6ad5023561255ba4677f45e0b7be739519742f48f",
+      "dossier_path": "07_PROJECT_LEARNING/jarvis322-macos-sysdata-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/jarvis322-macos-sysdata-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8627,
+          "title": "make the icon switch take effect from the window",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T16:50:27.654Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8627": {
+      "learning_id": "rule-8627",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8627,
+      "title": "make the icon switch take effect from the window",
+      "source_url": "https://github.com/Jarvis322/macos-sysdata",
+      "source_version": "e06a5803",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T16:50:27.654Z"
+    },
+    "candidate_directive-make-the-icon-switch-take-effect-from-the-window": {
+      "item_id": "candidate_directive-make-the-icon-switch-take-effect-from-the-window",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-M4TM-make-the-icon-switch-take-effect-from-the-window.md",
+      "title": "make the icon switch take effect from the window",
+      "repository": "Jarvis322/macos-sysdata",
+      "source_version": "e06a5803",
+      "content_hash": "9591b7707add806d191e2011fe85e051e4df90817713b1a567275566343080f9",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T16:50:27.949Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-jarvis322-macos-sysdata-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-jarvis322-macos-sysdata-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-jarvis322-macos-sysdata-technical-construction-intelligence-jarvis322-macos-sysd.md",
+      "title": "Technical Construction Intelligence: Jarvis322/macos-sysdata Core Invariants",
+      "repository": "Jarvis322/macos-sysdata",
+      "source_version": "e06a5803",
+      "content_hash": "65ac7b968b3e43ef08586d63d026cdb39323194f60536c2caad58b1f45f97d67",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T16:50:28.047Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-jarvis322-macos-sysdata": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-jarvis322-macos-sysdata",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/jarvis322-macos-sysdata-verification-protocol-empirical-defect-shield-for-jarvis.md",
+      "title": "Verification Protocol: Empirical Defect Shield for Jarvis322/macos-sysdata",
+      "repository": "Jarvis322/macos-sysdata",
+      "source_version": "e06a5803",
+      "content_hash": "93c74bfa6a7f4eb837e84d3dac9bd1e895567b1e960bd8aac5af0dcf928f48cc",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T16:50:28.145Z"
+    },
+    "rule-8628": {
+      "learning_id": "rule-8628",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8628,
+      "title": "deflake TestHTTPBandwidth on coarse-clock machines",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "daf82a50",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T16:50:31.720Z"
+    },
+    "candidate_directive-deflake-testhttpbandwidth-on-coarse-clock-machines": {
+      "item_id": "candidate_directive-deflake-testhttpbandwidth-on-coarse-clock-machines",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-M7Z4-deflake-testhttpbandwidth-on-coarse-clock-machines.md",
+      "title": "deflake TestHTTPBandwidth on coarse-clock machines",
+      "repository": "tailscale/tailscale",
+      "source_version": "daf82a50",
+      "content_hash": "567f744c43e86c1cff8b8d925c4e46aa8b4716a886a354dfebbb3b5c8b4700c0",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T16:50:32.033Z"
+    },
+    "candidate_directive-tagline-consistency": {
+      "item_id": "candidate_directive-tagline-consistency",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MB6R-tagline-consistency.md",
+      "title": "tagline consistency",
+      "repository": "dathere/qsv",
+      "source_version": "b1d9ed30",
+      "content_hash": "c7f62f665a5c4432ad03b94d3b0b63605d10cea2bf81e72de4ac24a90daf026f",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T16:50:36.198Z"
+    },
+    "candidate_directive-menu-bar-make-the-icon-switch-take-effect-from-the-window": {
+      "item_id": "candidate_directive-menu-bar-make-the-icon-switch-take-effect-from-the-window",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MDLN-menu-bar-make-the-icon-switch-take-effect-from-the-window.md",
+      "title": "menu-bar): make the icon switch take effect from the window",
+      "repository": "jarvis322-macos-sysdata-learnings",
+      "source_version": "HEAD",
+      "content_hash": "256b7e85d628d4ddac5d012703d89cd3327fe9bfb40aa17f9fd221cecd1f9da2",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T16:50:39.326Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-jarvis322-macos-sysdata-learnings-core-invar": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-jarvis322-macos-sysdata-learnings-core-invar",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-jarvis322-macos-sysdata-learnings-technical-construction-intelligence-jarvis322-.md",
+      "title": "Technical Construction Intelligence: jarvis322-macos-sysdata-learnings Core Invariants",
+      "repository": "jarvis322-macos-sysdata-learnings",
+      "source_version": "HEAD",
+      "content_hash": "86ba50153d3ea37de91a9f731193771af9da3fd10476c960fa6192fe4bd73d94",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T16:50:39.421Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-jarvis322-macos-sysdata-learni": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-jarvis322-macos-sysdata-learni",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/jarvis322-macos-sysdata-learnings-verification-protocol-empirical-defect-shield-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for jarvis322-macos-sysdata-learnings",
+      "repository": "jarvis322-macos-sysdata-learnings",
+      "source_version": "HEAD",
+      "content_hash": "53b833e8c462468973698d2db43916c17c5290765c46dea48d0db11233807761",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T16:50:39.514Z"
+    },
+    "candidate_directive-prober-deflake-testhttpbandwidth-on-coarse-clock-machines": {
+      "item_id": "candidate_directive-prober-deflake-testhttpbandwidth-on-coarse-clock-machines",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MDY7-prober-deflake-testhttpbandwidth-on-coarse-clock-machines.md",
+      "title": "prober: deflake TestHTTPBandwidth on coarse-clock machines",
+      "repository": "tailscale-tailscale-learnings",
+      "source_version": "HEAD",
+      "content_hash": "51f4930345bcf05b79e27aafee2a48f08ca420ac5fb88c5560bc462ddfd43718",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T16:50:39.775Z"
+    },
+    "candidate_directive-docs-tagline-consistency": {
+      "item_id": "candidate_directive-docs-tagline-consistency",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MEFP-docs-tagline-consistency.md",
+      "title": "docs: tagline consistency",
+      "repository": "dathere-qsv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "82c6bcdd9881ab8fc1042f103c1602e1e7ce8000072c6576da2c2533e565611e",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T16:50:40.408Z"
     }
   },
   "ai-builder-brain": {

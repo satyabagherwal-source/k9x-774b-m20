@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for jarvis322/macos/sysdata
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for Jarvis322/macos-sysdata
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "jarvis322/macos/sysdata",
-  "source_url": "https://github.com/jarvis322/macos/sysdata",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "Jarvis322/macos-sysdata",
+  "source_url": "https://github.com/Jarvis322/macos-sysdata",
+  "source_version": "e06a5803",
+  "license": "NOASSERTION",
+  "timestamp": "2026-11-15T16:50:27.949Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-jarvis322-macos-sysdata",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [jarvis322/macos/sysdata](https://github.com/jarvis322/macos/sysdata) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [Jarvis322/macos-sysdata](https://github.com/Jarvis322/macos-sysdata) (Revision: `e06a5803`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-15T16:50:27.949Z`  
+> **Learning ID**: `learn-github-jarvis322-macos-sysdata`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `jarvis322/macos/sysdata` (Commit: `historical`)
+- **Target Repository**: `Jarvis322/macos-sysdata` (Commit: `e06a5803`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/jarvis322-macos-sysdata-learnings.md`  
-> **Source**: github ([https://github.com/Jarvis322/macos-sysdata](https://github.com/Jarvis322/macos-sysdata))  
-> **Source Version**: `bcfd205a`  
-> **License**: NOASSERTION  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T04:26:47.825Z  
-> **Learning ID**: `learn-github-jarvis322-macos-sysdata`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): Jarvis322/macos-sysdata
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/jarvis322-macos-sysdata-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Jarvis322/macos-sysdata](https://github.com/Jarvis322/macos-sysdata))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T04:26:47.554Z  
+> **Harvest Timestamp**: 2026-11-15T16:50:25.839Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: See what is really inside macOS System Data and delete it item by item. A free menu bar app that explains every category and shows each command before it runs.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2032 stars
+- **Stars / Engagement**: 2221 stars
 
 ---
 
@@ -248,6 +234,126 @@ extension StorageItem {
 
 ```
 
+### Core Architecture Module: `Sources/SysDataMenu/Model/Recovery.swift`
+```
+import Foundation
+
+/// What it takes to get an item back after it is deleted.
+///
+/// Asked for by someone about to work offline: the gigabytes on the
+/// confirmation say what a delete frees, and this says which of them would
+/// need a network to come back. Where a row could go either way it is put in
+/// the less hopeful group. Telling someone on a plane that a folder will
+/// rebuild when it needs a download is the mistake to avoid; the opposite
+/// costs nothing.
+enum Recovery: Sendable, CaseIterable {
+    /// Recreated on this Mac by the tool that made it: build products,
+    /// indexes, thumbnails.
+    case rebuilds
+    /// Comes back, but only with a network: package caches, SDKs, models,
+    /// dependencies.
+    case downloads
+    /// Nothing will ask for it again: logs, temporary files, swap.
+    case notNeeded
+    /// Nothing recreates it: backups, virtual machines, app data, anything
+    /// this app cannot name.
+    case gone
+
+    var label: String {
+        switch self {
+        case .rebuilds: L("Rebuilds on this Mac")
+        case .downloads: L("Downloads again")
+        case .notNeeded: L("Not needed again")
+        case .gone: L("Doesn't come back")
+        }
+    }
+
+    var symbol: String {
+        switch self {
+        case .rebuilds: "arrow.triangle.2.circlepath"
+        case .downloads: "arrow.down.circle"
+        case .notNeeded: "checkmark.circle"
+        case .gone: "exclamationmark.circle"
+        }
+    }
+}
+
+extension StorageItem {
+    var recovery: Recovery { Recovery.of(self) }
+}
+
+extension Recovery {
+    /// Folders inside a project that its own build recreates without a
+    /// download. node_modules, Pods and .build are not among them: each holds
+    /// fetched dependencies.
+    private static let localBuildOutput: Set<String> = [
+        ".next", ".nuxt", ".svelte-kit", ".astro", ".angular", ".turbo", ".parcel-cache", ".expo", "DerivedData",
+    ]
+
+    /// Caches an app fills from the network as it is used.
+    private static let networkCaches: Set<String> = [
+        "cache-slack", "cache-slack-sw", "cache-discord", "cache-teams", "cache-spotify", "cache-safari",
+        "cache-steam", "cache-epic", "cache-zoom", "cache-adobe-cc",
+    ]
+
+    /// Caches built from files already on this Mac.
+    private static let localCaches: Set<String> = [
+        "cache-quicklook", "cache-photos-cache", "cache-adobe-media", "cache-adobe-caches", "cache-xcode-device-logs",
+        "sim-caches", "sim-system-dyld", "sys-library-caches", "sys-spotlight", "xcode-caches",
+    ]
+
+    /// Toolchains, SDKs and caches a version manager or package manager
+    /// downloads again on request.
+    private static let downloadedTools: Set<String> = [
+        "tool-.lmstudio", "tool-.nvm/versions", "tool-.rustup/toolchains", "tool-.pyenv/versions",
+        "tool-.rbenv/versions", "tool-.sdkman/candidates", "tool-.conda/pkgs", "tool-.m2/repository",
+        "tool-.ivy2", "tool-.cocoapods/repos", "tool-.gradle/wrapper/dists", "tool-.android/cache",
+        "tool-go/pkg/mod", "tool-.bun/install/cache", "tool-.npm/_npx", "tool-.deno", "tool-.vscode/extensions",
+        "tool-.cursor/extensions", "tool-.antigravity-ide/extensions", "tool-.cache/torch",
+    ]
+
+    static func of(_ item: StorageItem) -> Recovery {
+        let id = item.id
+
+        // Logs, temporary files and memory images: nothing reads them back.
+        if id.hasPrefix("log-") || id.hasPrefix("temp-") || id == "sys-vm" || id.hasPrefix("sim-unavailable-") {
+            return .notNeeded
+        }
+
+        if localCaches.contains(id) || id.hasPrefix("jetbrains-caches-") || id.hasPrefix("android-studio-cache-")
+            || id.hasPrefix("fcp-renders-") || id.hasPrefix("xcode-deriveddata-") || id == "xcode-DerivedData"
+            || id == "docker-build-cache" || id.hasSuffix("DeviceSupport")
+            || id == "xcode-UserData/Previews/Simulator Devices" {
+            return .rebuilds
+        }
+
+        if id.hasPrefix("project-"), let folder = item.revealURL?.lastPathComponent {
+            return localBuildOutput.contains(folder) ? .rebuilds : .downloads
+        }
+
+        if networkCaches.contains(id) || downloadedTools.contains(id) || id.hasPrefix("pkg-")
+            || id.hasPrefix("runtime-") || id.hasPrefix("ai-") || id == "app-claude-vm" || id == "app-chrome-model"
+            || id.hasPrefix("android-image-") || id.hasPrefix("android-platforms-") || id.hasPrefix("android-build-tools-")
+            || id.hasPrefix("android-ndk-") || id.hasPrefix("android-cmake-") || id.hasPrefix("android-sources-")
+            || ["android-emulator", "android-cmdline-tools", "android-platform-tools", "android-extras", "android-skins"].contains(id)
+            || id.hasPrefix("unity-cache") || id.hasPrefix("unity-Asset Store") || id.hasPrefix("xcode-app-")
+            || id == "docker-images" || id.hasPrefix("docker-project-images-")
+            || id.hasPrefix("sys-ipsw-") || id.hasPrefix("sys-installer-") || id == "sys-clt"
+            || id == "sys-icloud" || id == "sys-mail-downloads"
+            // Generic caches are mostly downloads, and a cache that turns out
+            // to be local only costs the person a needless warning.
+            || id.hasPrefix("tool-cache-") || id.hasPrefix("app-cache-") {
+            return .downloads
+        }
+
+        // Backups, virtual machines, simulator data, app data, volumes, the
+        // Trash, old IDE settings and everything the catch-all found.
+        return .gone
+    }
+}
+
+```
+
 ### Core Architecture Module: `Sources/SysDataMenu/Model/ScanModel.swift`
 ```
 import Foundation
@@ -282,6 +388,12 @@ final class ScanModel {
     private(set) var lastScan: Date?
     /// Items the user chose not to see again. Persisted; ids are path-based.
     private(set) var hiddenIDs: Set<String>
+    /// Answers about a row that need the disk: whether its folder can be
+    /// expanded, and whether it can be shrunk. They used to be worked out
+    /// while the view was built, once per row and per redraw, so a scroll
+    /// that laid rows out again was also making filesystem calls. The disk
+    /// changes between scans far less often than the list redraws.
+    @ObservationIgnored private var rowFacts: [String: RowFacts] = [:]
     var selectedIDs: Set<String> = []
     /// Narrows the list to matching items. The selection survives it: ticking
     /// "Select safe" and then typing a filter to untick two of them is the
@@ -312,6 +424,11 @@ final class ScanModel {
     /// What previous scans and deletions recorded. Read once per scan rather
     /// than per row, because the list redraws far more often than it changes.
     private(set) var history = ScanHistory.load()
+    /// Bumped whenever `history` is replaced, so the answers derived from it
+    /// can be kept instead of walking the log again for every redraw.
+    @ObservationIgnored private var historyRevision = 0
+    @ObservationIgnored private var growthCache: (revision: Int, value: [StorageCategory: Int64])?
+    @ObservationIgnored private var weeklyChangeCache: (revision: Int, value: Int64?)?
     /// Whether scans and deletions are written down at all. On by default:
     /// the app already knows everything the log holds, and without it the
     /// list cannot say anything about change. Turning it off deletes the file.
@@ -320,7 +437,7 @@ final class ScanModel {
             UserDefaults.standard.set(keepsHistory, forKey: Self.historyKey)
             if !keepsHistory {
                 ScanHistory.forget()
-                history = ScanHistory.Log()
+                setHistory(ScanHistory.Log())
             }
         }
     }
@@ -414,23 +531,7 @@ final class ScanModel {
         }
     }
 
-    /// Scans on launch and once a day after that, so the menu bar total is
-    /// meaningful without opening the window.
-    private func runBackgroundScans() async {
-        while !Task.isCancelled {
-            await scan(quietly: true)
-            // A scan the person started was already running, so this pass
-            // found a list still being built. The clean waits for tomorrow
-            // rather than act on part of the picture.
-            if isScanning {
-                try? await Task.sleep(for: Self.rescanInterval)
-                continue
-            }
-            // These run only on the unattended scans, never on a Rescan the
-            // person is watching: the weekly note, then the optional automatic
-            // clean of the safe subset. Both are no-ops unless switched on.
-            await WeeklyDigest.check(log: history)
-            await GrowthAlert
+    /// Scans on launch and once a day after that, so the me
 ```
 
 ### Core Architecture Module: `Sources/SysDataMenu/Model/SpacePlan.swift`
@@ -1376,207 +1477,6 @@ struct RuntimeProbe: StorageProbe {
     /// different one, and there i
 ```
 
-### Core Architecture Module: `Sources/SysDataMenu/Probes/DockerProjects.swift`
-```
-import Foundation
-
-/// What each Docker Compose project costs, traced back to its folder so the
-/// Projects view can put it next to that project's node_modules and
-/// DerivedData.
-///
-/// Compose labels every container with the folder it was started from, which
-/// is the only link from Docker's world back to a project on disk. Images and
-/// volumes are reached through those containers, which also keeps the rows
-/// here apart from the Docker category's prune rows: an image no container
-/// uses and a volume nothing is attached to are already counted there, as
-/// reclaimable, and counting them again would inflate every total.
-///
-/// Sizes come from the Engine API rather than `docker system df`, because
-/// only the API gives each image's shared size as a number. Images share
-/// layers — every Node project's image starts from the same base — so an
-/// image is sized by what only it holds: the part deleting it would free.
-enum DockerProjects {
-    static let workingDirLabel = "com.docker.compose.project.working_dir"
-    static let projectLabel = "com.docker.compose.project"
-
-    /// The parts of a `GET /system/df?verbose=1` response this reads. API
-    /// 1.52 moved the lists under `ImagesUsage.Items` and friends, and 1.53
-    /// dropped the old top-level `Images`, `Containers` and `Volumes`; both
-    /// shapes are read, so neither an old daemon nor a new one is missed.
-    struct Usage: Decodable {
-        var images: [Image] = []
-        var containers: [Container] = []
-        var volumes: [Volume] = []
-
-        struct Image: Decodable {
-            let Id: String
-            let RepoTags: [String]?
-            let Size: Int64
-            let SharedSize: Int64
-            let Created: Int64?
-
-            /// What deleting it frees. `SharedSize` is -1 when the daemon did
-            /// not compute it, and then nothing is claimed rather than the
-            /// full size, which would count shared layers once per image.
-            var uniqueSize: Int64 { SharedSize >= 0 ? max(Size - SharedSize, 0) : 0 }
-        }
-
-        struct Container: Decodable {
-            let Id: String
-            let ImageID: String?
-            let Labels: [String: String]?
-            /// `running`, `exited`, `paused`... Absent from older fixtures.
-            let State: String?
-
-            /// A container that is up, or about to be: it holds its image
-            /// and its data, and removing it would stop someone's work.
-            var isActive: Bool { ["running", "paused", "restarting"].contains(State ?? "") }
-        }
-
-        struct Volume: Decodable {
-            let Name: String
-            let Labels: [String: String]?
-            let UsageData: UsageData?
-
-            struct UsageData: Decodable {
-                let Size: Int64
-                let RefCount: Int64
-            }
-        }
-
-        private struct List<Item: Decodable>: Decodable {
-            let Items: [Item]?
-        }
-
-        private enum Keys: String, CodingKey {
-            case Images, Containers, Volumes
-            case ImagesUsage, ContainersUsage, VolumesUsage
-            // The API reference spells these in the singular.
-            case ImageUsage, ContainerUsage, VolumeUsage
-        }
-
-        init(from decoder: Decoder) throws {
-            let c = try decoder.container(keyedBy: Keys.self)
-            func list<T: Decodable>(_ legacy: Keys, _ current: [Keys]) throws -> [T] {
-                for key in current {
-                    if let items = try c.decodeIfPresent(List<T>.self, forKey: key)?.Items { return items }
-                }
-                return try c.decodeIfPresent([T].self, forKey: legacy) ?? []
-            }
-            images = try list(.Images, [.ImagesUsage, .ImageUsage])
-            containers = try list(.Containers, [.ContainersUsage, .ContainerUsage])
-            volumes = try list(.Volumes, [.VolumesUsage, .VolumeUsage])
-        }
-    }
-
-    /// Asks the daemon the CLI is pointed at, over its socket, at the API
-    /// version the daemon itself reports. Nil when any step fails: no Docker,
-    /// not running, a remote context, or an answer that does not parse.
-    static func usage(docker: String) async -> Usage? {
-        guard let host = try? await Shell.run(
-                  docker, ["context", "inspect", "--format", "{{.Endpoints.docker.Host}}"],
-                  mergeStderr: false, timeout: Shell.probeTimeout),
-              host.succeeded,
-              let socket = socketPath(fromHost: host.output),
-              let version = try? await Shell.run(
-                  docker, ["version", "--format", "{{.Server.APIVersion}}"],
-                  mergeStderr: false, timeout: Shell.probeTimeout),
-              version.succeeded
-        else { return nil }
-        let api = version.output.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard api.allSatisfy({ $0.isNumber || $0 == "." }), !api.isEmpty,
-              let df = try? await Shell.run(
-                  "/usr/bin/curl",
-                  ["--silent", "--fail", "--max-time", "60", "--unix-socket", socket,
-                   "http://localhost/v\(api)/system/df?verbose=1"],
-                  mergeStderr: false, timeout: .seconds(70)),
-              df.succeeded
-        else { return nil }
-        return try? JSONDecoder().decode(Usage.self, from: Data(df.output.utf8))
-    }
-
-    /// `unix:///Users/me/.docker/run/docker.sock` → its path. A TCP or SSH
-    /// context points at another machine, whose disk is not this one's.
-    static func socketPath(fromHost host: String) -> String? {
-        let trimmed = host.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard trimmed.hasPrefix("unix://") else { return nil }
-        let path = String(trimmed.dropFirst("unix://".count))
-        return path.isEmpty ? nil : path
-    }
-
-    /// One row per Compose project for its images, and one for its volumes.
-    ///
-    /// An image counts toward a project only when every container using it
-    /// is that project's: a postgres image two projects run belongs to
-    /// neither, and removing it for one would break the other.
-    static func items(
-        from usage: Usage, docker: String, now: Date = .now,
-        projectRoot: (URL) -> URL = { ProjectProbe.projectRoot(of: $0) }
-    ) -> [StorageItem] {
-        struct Compose {
-            var folder: URL
-            var containerIDs: [String] = []
-            var activeCount = 0
-        }
-        var projects: [String: Compose] = [:]
-        var projectsUsingImage: [String: Set<String>] = [:]
-        for container in usage.containers {
-            let labels = container.Labels ?? [:]
-            let project = labels[projectLabel]
-            if let image = container.ImageID {
-                projectsUsingImage[image, default: []].insert(project ?? "")
-            }
-            guard let project, let dir = labels[workingDirLabel], dir.hasPrefix("/") else { continue }
-            projects[project, default: Compose(folder: URL(fileURLWithPath: dir))].containerIDs.append(container.Id)
-            if container.isActive { projects[project]?.activeCount += 1 }
-        }
-
-        var items: [StorageItem] = []
-        for (name, compose) in projects.sorted(by: { $0.key < $1.key }) {
-            let root = compose.folder.exists ? projectRoot(compose.folder) : compose.folder
-            let images = usage.images.filter { projectsUsingImage[$0.Id] == [name] }
-            let imageBytes = images.reduce(0) { $0 + $1.uniqueSize }
-            if imageBytes > 0 {
-                // A tag is removed by name; an image with several tags cannot
-                // be removed by ID without forcing, and one with none can.
-                let references = images.flatMap { image -> [String] in
-                    let tags = (image.RepoTags ?? []).filter { $0 != "<none>:<none>" }
-                    return tags.isEmpty ? [image.Id] : tags
-                }
-                let created = images.compactMap(\.Created).max().map { Date(timeIntervalSince1970: TimeInterval($0)) }
-                // Containers that are up are never removed from here. Their
-                // images are in use and could not go anyway, and removing a
-                // running container would stop someone's database mid-work.
-                let isRunning = compose.activeCount > 0
-                items.append(StorageItem(
-                    id: "docker-project-images-\(name)", category: .docker,
-                    name: "Docker images: \(name)",
-                    detail: isRunning
-                        ? "\(compose.folder.abbreviatedPath). \(compose.activeCount) of its containers are running, so its images are in use."
-                        : "\(compose.folder.abbreviatedPath). Its containers and the images only they use; "
-                            + "volumes are kept. docker compose up builds or pulls them again.",
-                    sizeBytes: imageBytes, safety: isRunning ? .manual : .review,
-                    action: isRunning
-                        ? .manual("Stop the project first, keeping its volumes:\ndocker compose -p \(name) down")
-                        : .steps([
-                            .command(executable: docker, arguments: ["container", "rm"] + compose.containerIDs),
-                            .command(executable: docker, arguments: ["image", "rm"] + references),
-                        ]),
-                    revealURL: compose.folder, project: root, builtAt: created
-                ))
-            }
-
-            let volumes = usage.volumes.filter {
-                $0.Labels?[projectLabel] == name && ($0.UsageData?.RefCount ?? 0) > 0
-            }
-            let volumeBytes = volumes.reduce(0) { $0 + max($1.UsageData?.Size ?? 0, 0) }
-            if volumeBytes > 0 {
-                items.append(StorageItem(
-                    id: "docker-project-volumes-\(name)", category: .docker,
-                    name: "Docker volumes: \(name)",
-                    detail: "\(compose.folder.abbreviatedPath). Data its containe
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1604,362 +1504,284 @@ enum DockerProjects {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `18f2dafd` (2026-11-06)
-**Commit Message**: fix(scan): give up on folders that stop answering
+### Incident Patch 1: `1553cbcd` (2026-11-12)
+**Commit Message**: fix(menu-bar): make the icon switch take effect from the window (#30)
 
-A folder read on a file system that has stopped answering, such as a
-network share that went away, a cloud-synced folder waiting on its
-provider or a stuck FUSE mount, blocks in the kernel for good. The
-sample attached to #27 showed two walks there, holding the scan at
-22 of 23.
+* fix(menu-bar): apply the icon switch when the window changes it
 
-Each walk now counts the entries it reads and is given up on after
-reading nothing for 30 seconds; a long walk that keeps reading is
-never cut short. The location is listed as could not be measured,
-without a size or a delete, and the catch-all is guarded the same way.
-Walks run on dispatch threads so blocked ones do not hold the
-concurrency pool, at most one per core and at user-initiated QoS,
-which keeps the scan as fast as before.
+MenuBarExtra applies `isInserted` when the scene is built. Changing the
+preference afterwards did not remove the icon, so the switch in the window
+looked dead; it also went through the panel hand-off and waited three
+seconds for a panel that was not open.
 
-Fixes #27
+Keep the extra inserted and hide its status item instead. SwiftUI has no
+public accessor for that item, so it is found through the status bar window
+the extra creates. While the icon is hidden a short timer re-applies that,
+because a label update can rebuild the item visible; the label itself is
+static while hidden so scans do not rebuild it. The window switch applies
+the preference immediately; the panel path still waits for the panel to
+close.
 
-**File**: `Sources/SysDataMenu/Probes/CatchAllProbes.swift` (modified, +20/-15)
+The window and the panel share the same model, so both switches and the
+"Menu bar shows" picker stay in step.
+
+* fix(app): keep one model for the menu bar panel and the window
+
+The App created a ScanModel in its state initializer and handed that to
+MainWindow, while the panel's environment used whichever model the scene
+had. Re-initializing the App cou
+
+**File**: `Sources/SysDataMenu/Services/MainWindow.swift` (modified, +12/-0)
 ```diff
-@@ -218,22 +218,27 @@ struct LargeFolderProbe: StorageProbe {
-                     guard DiskSize.isOnBootVolume(child),
-                           !skipping.contains(DiskSize.realPath(child.path)) else { continue }
-                     group.addTask {
--                        await Task.detached(priority: .utility) {
--                            // Nothing under a claimed or excluded directory can
--                            // ever be reported: `visit` returns on both before it
--                            // looks at a size. Their bytes only ever fed the totals
--                            // of parents, and a parent holding a claimed child is
--                            // recursed into rather than listed, so leaving those
--                            // bytes out cannot hide an item — a child that survives
--                            // the filters is smaller than the reduced parent total
--                            // by definition.
--                            let sizes = DiskSize.directorySizes(
--                                under: child, maxDepth: Self.maxDepth - 1, skipping: skipping
-+                        // Nothing under a claimed or excluded directory can
-+                        // ever be reported: `visit` returns on both before it
-+                        // looks at a size. Their bytes only ever fed the totals
-+                        // of parents, and a parent holding a claimed child is
-+                        // recursed into rather than listed, so leaving those
-+                        // bytes out cannot hide an item — a child that survives
-+                        // the filters is smaller than the reduced parent total
-+                        // by definition.
-+                        let walked = await DiskSize.watched { progress in
-+                            DiskSize.directorySizes(
-+                                under: child, maxDepth: Self.maxDepth - 1, skipping: skipping, progress: progress
-                             )
--                            var items: [StorageItem] = []
--                            Self.visit(child, depth: 1, sizes: sizes, claimed: claimedPaths, excluded: excludedPaths, apps: apps, into: &items)
--                            return items
--                        }.value
-+                        }
-+                        guard let sizes = walked else {
-+                            return [ProbeSupport.unansweredItem(
-+                                id: "other-\(child.path)", category: .other, name: child.abbreviatedPath, url: child
-+                            )]
-+                        }
-+                        var items: [StorageItem] = []
-+                        Self.visit(child, depth: 1, sizes: sizes, claimed: claimedPaths, excluded: excludedPaths, apps: apps, into: &items)
-+                        return items
-                     }
-                 }
-             }
-```
-
-**File**: `Sources/SysDataMenu/Probes/StorageProbe.swift` (modified, +23/-0)
-```diff
-@@ -18,8 +18,16 @@ enum ProbeSupport {
-         action: ReclaimAction,
-         minimumBytes: Int64 = 1
-     ) async -> StorageItem? {
-+        // Checked before the walk rather than inside it: most locations a
-+        // probe asks about do not exist on a given Mac, and each would
-+        // otherwise wait for a walk slot behind the real walks. What hangs
-+        // on a file system that has stopped answering is reading a folder's
-+        // entries, which the walk does and is watched for (#27).
-         guard url.exists else { return nil }
-         let measured = await DiskSize.measure(at: url)
-+        if measured.stalled {
-+            return unansweredItem(id: id, category: category, name: name, url: url)
-+        }
-         guard measured.bytes >= minimumBytes else { return nil }
-         return StorageItem(
-             id: id,
-@@ -53,6 +61,21 @@ enum ProbeSupport {
+@@ -40,6 +40,7 @@ final class MainWindow: NSObject, NSWindowDelegate {
+     /// and nothing to show in it.
+     func use(_ model: ScanModel) {
+         self.model = model
++        MenuBarIcon.apply(model.showsMenuBarIcon)
+         syncActivationPolicy(windowIsOpen: window?.isVisible ?? false)
+     }
+ 
+@@ -129,16 +130,27 @@ final class MainWindow: NSObject, NSWindowDelegate {
+     private var hasOpenMenuBarPanel: Bool {
+         NSApplication.shared.windows.contains {
+             $0 !== window && $0 !== prompt && $0.isVisible
++                // The status item's own windows are always visible; they are
++                // not the panel this waits for.
++                && !$0.className.contains("NSStatusBarWindow")
          }
      }
  
-+    /// A location whose file system stopped answering while it was measured.
-+    ///
-+    /// Listed rather than dropped, so the scan says where it gave up instead
-+    /// of quietly showing less, and claimed, so the catch-all does not walk
-+    /// into the same place. It has no size, so nothing offers to delete it.
-+    static func unansweredItem(id: String, category: StorageCategory, name: String, url: URL) -> StorageItem {
-+        StorageItem(
-+            id: id, category: category, name: name,
-+            detail: "Could not be measured: reading this folder stopped getting answers. It may be on a network drive, a disconnected disk, or in a cloud-synced folder.",
-+            sizeBytes: nil, safety: .manual,
-+            action: .manual("Open it in Finder to see what it is. If it is on a network or cloud drive, check that the drive is connected or the files are downloaded, then scan again."),
-+            revealURL: url
-+        )
+     /// Re-reads the menu bar preference. Turning the icon off has to put the
+     /// app in the Dock: an app with no icon and no Dock tile cannot be
+     /// reached again, which is not a preference, it is a disappearance.
+     func menuBarPreferenceChanged() {
++        applyMenuBarIconPreference()
+         syncActivationPolicy(windowIsOpen: window?.isVisible ?? false)
+     }
+ 
++    /// Puts the status item in the state the preference asks for. Called after
++    /// launch as well as on the switch, because the item does not exist yet
++    /// when the app is being built.
++    func applyMenuBarIconPreference() {
++        MenuBarIcon.apply(model?.showsMenuBarIcon ?? true)
 +    }
 +
-     /// Runs a JSON-producing command and decodes its top-level object.
-     static func json(_ executable: String, _ arguments: [String]) async -> [String: Any]? {
-         guard let result = try? await Shell.run(executable, arguments, mergeStderr: false, timeout: Shell.probeTimeout),
+     func windowWillClose(_ notification: Notification) {
+         let closing = notification.object as AnyObject?
+         if closing === prompt {
 ```
 
-**File**: `Sources/SysDataMenu/Services/DiskSize.swift` (modified, +107/-5)
+**File**: `Sources/SysDataMenu/Services/MenuBarIcon.swift` (added, +77/-0)
 ```diff
-@@ -1,4 +1,5 @@
- import Foundation
-+import os
- 
- enum DiskSize {
-     /// What one walk of a location reports: how much it takes up, and when
-@@ -14,6 +15,104 @@ enum DiskSize {
-         /// Newest modification date under the location, or nil when it holds
-         /// no regular files.
-         var lastModified: Date?
-+        /// The walk stopped getting answers and was given up on, so `bytes`
-+        /// is not the size of the location (see `watched`).
-+        var stalled = false
-+    }
+@@ -0,0 +1,77 @@
++import AppKit
 +
-+    /// Counts the entries a walk has read, so a walk that has stopped reading
-+    /// can be told apart from one that is merely long.
-+    final class WalkProgress: Sendable {
-+        private let entries = OSAllocatedUnfairLock(initialState: 0)
++/// The menu bar icon as a status item the app can hide and show.
++///
++/// `MenuBarExtra(isInserted:)` is read when the scene is built: changing the
++/// preference afterwards did not take the icon out of the menu bar on macOS
++/// 26, and a published scene value did not either. The extra now stays
++/// inserted and the status item behind it is hidden instead.
++///
++/// SwiftUI has no public accessor for that status item. It is reached through
++/// the window `MenuBarExtra` creates for it, the same way the menu bar extra
++/// helpers do. A status item can be rebuilt when SwiftUI updates the extra,
++/// so the preference is also re-applied by a short timer and by KVO on the
++/// item's own `isVisible`; keep all of that in this one place.
++@MainActor
++enum MenuBarIcon {
++    /// What the preference asks for, even while no item exists yet.
++    private static var isWanted = true
++    private static var timer: Timer?
 +
-+        func advance() { entries.withLock { $0 += 1 } }
-+        var count: Int { entries.withLock { $0 } }
-+    }
-+
-+    /// How many walks read the disk at once. The concurrency pool used to
-+    /// set this by having one thread per core; dispatch has no such limit,
-+    /// and forty walks at once made the scan slower, not faster.
-+    private static let walkSlots = WalkSlots(count: ProcessInfo.processInfo.activeProcessorCount)
-+
-+    /// A counting gate for walks. A slot is given back when its walk ends or
-+    /// is given up on, whichever comes first, so walks stuck in the kernel
-+    /// never hold slots the rest of the scan needs.
-+    private actor WalkSlots {
-+        private var free: Int
-+        private var waiting: [CheckedContinuation<Void, Never>] = []
-+
-+        init(count: Int) { free = max(count, 1) }
-+
-+        func acquire() async {
-+            if free > 0 {
-+                free -= 1
-+                return
-+            }
-+            await withCheckedContinuation { waiting.append($0) }
++    static func apply(_ visible: Bool, attempt: Int = 0) {
++        isWanted = visible
++        enforce()
++        if visible {
++            stopWatching()
++        } else {
++            startWatching()
 +        }
 +
-+        func release() {
-+            if waiting.isEmpty {
-+                free += 1
-+            } else {
-+                waiting.removeFirst().resume()
-+            }
-+        }
-+    }
-+
-+    /// How long a walk may go without reading a single entry before the scan
-+    /// stops waiting for it. A large folder keeps reading; this only ever
-+    /// catches one whose file system has stopped answering.
-+    static let stallLimit: Duration = .seconds(30)
-+
-+    /// Runs a walk off the concurrency pool and returns its result, or nil if
-+    /// it read nothing for `stallLimit`.
-+    ///
-+    /// A directory read on a file system that has stopped answering — a
-+    /// network share that went away, a cloud-synced folder waiting on its
-+    /// provider, a stuck FUSE mount — blocks in the kernel and never returns,
-+    /// and nothing can cancel it. The scan used to wait with it and sit at
-+    /// "22 of 23" for good (#27). The walk still blocks, on a dispatch thread
-+    /// that is left to it; the scan goes on without that location.
-+    static func watched<T: Sendable>(
-+        stallLimit: Duration = DiskSize.stallLimit, checkEvery: Duration = .seconds(2),
-+        _ walk: @escaping @Sendable (WalkProgress) -> T
-+    ) async -> T? {
-+        let progress = WalkProgress()
-+        let slots = walkSlots
-+        await slots.acquire()
-+        return await withCheckedContinuation { (continuation: CheckedContinuation<T?, Never>) in
-+            let resumed = OSAllocatedUnfairLock(initialState: false)
-+            let finish: @Sendable (T?) -> Void = { value in
-+                let first = resumed.withLock { done in
-+                    defer { done = true }
-+                    return !done
-+                }
-+                guard first else { return }
-+                continuation.resume(returning: value)
-+                Task { await slots.release() }
-+            }
-+            // Not a detached task: a walk blocked in the kernel would hold one
-+            // of the concurrency pool's few threads for good, and enough of
-+            // them would stall every other probe. Dispatch adds threads.
-+            // User-initiated, not utility: on a dispatch queue utility walks
-+            // had their disk reads throttled, and the scan took 30% longer
-+            // than the same walks run as utility tasks had.
-+            DispatchQueue.global(qos: .userInitiated).async { finish(walk(progress)) }
-+            Task.detached(priority: .utility) {
-+                var lastCount = -1
-+                var quietFor: Duration = .zero
-+                while !resumed.withLock({ $0 }) {
-+                    try? await Task.sleep(for: checkEvery)
-+                    let count = progress.count
-+                    if count == lastCount { quietFor += checkEvery } else { lastCount = count; quietFor = .zero }
-+                    if quietFor >= stallLimit {
-+                        finish(nil)
-+                        return
-+                    }
++        // The item is created with the scene, a moment after launch.
++        if items().isEmpty, attempt < 40 {
++            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
++                MainActor.assumeIsolated {
++                    apply(visible, attempt: attempt + 1)
 +                }
 +            }
 +        }
-     }
- 
-     /// Allocated bytes under `url`, following the same rules Finder uses for
-@@ -23,16 +122,15 @@ enum DiskSize {
-     }
- 
-     static func measure(at url: URL, old
-```
-
-**File**: `Tests/SysDataMenuTests/StalledWalkTests.swift` (added, +45/-0)
-```diff
-@@ -0,0 +1,45 @@
-+import Foundation
-+import Testing
-+@testable import SysDataMenu
-+
-+/// A directory read on a file system that stopped answering never returns.
-+/// The scan must give up on that one location and finish (#27), and must
-+/// never give up on a walk that is merely long.
-+@Suite struct StalledWalkTests {
-+    @Test(.timeLimit(.minutes(1))) func aWalkThatStopsReadingIsGivenUpOn() async {
-+        let release = DispatchSemaphore(value: 0)
-+        defer { release.signal() }
-+
-+        let result = await DiskSize.watched(stallLimit: .milliseconds(600), checkEvery: .milliseconds(100)) { progress in
-+            progress.advance()
-+            // Blocked, the way a read on a dead network share is.
-+            release.wait()
-+            return 42
-+        }
-+
-+        #expect(result == nil)
 +    }
 +
-+    /// Slow is not stalled: a walk that keeps reading entries is waited for
-+    /// however long it takes.
-+    @Test(.timeLimit(.minutes(1))) func aSlowWalkThatKeepsReadingIsWaitedFor() async {
-+        let result = await DiskSize.watched(stallLimit: .milliseconds(600), checkEvery: .milliseconds(100)) { progress in
-+            for _ in 0..<12 {
-+                progress.advance()
-+                Thread.sleep(forTimeInterval: 0.2)
++    private static func enforce() {
++        for item in items() where item.isVisible != isWanted {
++            item.isVisible = isWanted
++        }
++    }
++
++    /// The status item can be replaced when SwiftUI rebuilds the extra. The
++    /// timer is what hides a replacement; a few times a second is enough, and
++    /// it only changes an item that is in the wrong state.
++    private static func startWatching() {
++        guard timer == nil else { return }
++        let timer = Timer(timeInterval: 0.25, repeats: true) { _ in
++            Task { @MainActor in
++                enforce()
 +            }
-+            return 42
 +        }
-+
-+        #expect(result == 42, "2.4 s of steady reading outlasts the 0.6 s limit and still finishes")
++        RunLoop.main.add(timer, forMode: .common)
++        self.timer = timer
 +    }
 +
-+    @Test func anUnansweredLocationIsListedWithoutASizeOrADelete() {
-+        let url = URL(fileURLWithPath: "/Volumes/share/stuck")
-+        let item = ProbeSupport.unansweredItem(id: "x", category: .apps, name: "stuck", url: url)
++    private static func stopWatching() {
++        timer?.invalidate()
++        timer = nil
++    }
 +
-+        #expect(item.sizeBytes == nil)
-+        #expect(item.action.isManual, "a folder nobody could measure is not offered for deletion")
-+        #expect(item.claimedURLs.contains(url), "the catch-all must not walk into it again")
++    private static func items() -> [NSStatusItem] {
++        NSApplication.shared.windows
++            .filter { $0.className.contains("NSStatusBarWindow") }
++            .compactMap { window in
++                window.value(forKey: "statusItem") as? NSStatusItem
++            }
++            .filter { item in
++                // A second display gets a replicant, which is not the item
++                // that can be hidden.
++                item.className == "NSStatusItem" || item.className == "NSSceneStatusItem"
++            }
 +    }
 +}
 ```
 
----
-
-### Incident Patch 2: `32ecae38` (2026-11-06)
-**Commit Message**: fix(shell): stop waiting on children left running
-
-After a command exited normally, the output pipe was read until it
-closed. A child the command left behind, such as a daemon a CLI starts
-on first use or a shim's helper, keeps it open for as long as it lives,
-so the probe that ran the command never finished and the scan stayed
-at its last place. The pipe now gets two seconds after the exit; what
-the command wrote is already in it by then.
-
-Refs #27
-
-**File**: `Sources/SysDataMenu/Services/Shell.swift` (modified, +10/-4)
+**File**: `Sources/SysDataMenu/Services/PowerOffGuard.swift` (modified, +1/-0)
 ```diff
-@@ -63,6 +63,8 @@ enum Shell {
+@@ -21,6 +21,7 @@ final class PowerOffGuard: NSObject, NSApplicationDelegate {
  
-     /// How long a program has to exit after SIGTERM before it is killed.
-     private static let terminationGrace: Double = 5
-+    /// How long the output pipe may stay open after the program has exited.
-+    private static let pipeGrace: Double = 2
- 
-     /// The blocking half of `run`, kept synchronous because it waits on the
-     /// pipe and the process; it only ever runs on the queue above.
-@@ -123,11 +125,15 @@ enum Shell {
-         exited.withLock { $0 = true }
-         deadline?.cancel()
-         let wasStopped = timedOut.withLock { $0 }
--        if wasStopped {
--            // Whatever still holds the pipe is not waited for.
-+        // Whatever still holds the pipe is not waited for. After a timeout
-+        // that is the program's own children; after a normal exit it is a
-+        // child the program left behind — a daemon a CLI starts on first
-+        // use, a shim's helper — which can live for as long as the Mac is
-+        // up, and waiting for it held the scan at its last place (#27).
-+        // What the program itself wrote is in the pipe by the time it
-+        // exits, so a short grace reads all of it.
-+        if wasStopped || ended.wait(timeout: .now() + pipeGrace) == .timedOut {
-             pipe.fileHandleForReading.readabilityHandler = nil
--        } else {
--            ended.wait()
-         }
- 
-         return CommandResult(
+     func applicationDidFinishLaunching(_ notification: Notification) {
+         MainWindow.shared.showIfMenuBarIsHidden()
++        MainWindow.shared.applyMenuBarIconPreference()
+         MainWindow.shared.askWherePresentationBelongs()
+         NSWorkspace.shared.notificationCenter.addObserver(
+             self,
 ```
 
-**File**: `Tests/SysDataMenuTests/ShellTimeoutTests.swift` (modified, +15/-0)
+**File**: `Sources/SysDataMenu/SysDataMenuApp.swift` (modified, +32/-21)
 ```diff
-@@ -37,4 +37,19 @@ struct ShellTimeoutTests {
-         #expect(result.succeeded)
-         #expect(result.output == "hello\n")
+@@ -30,12 +30,18 @@ enum Entry {
      }
-+
-+    /// A program that exits normally but leaves a child holding the output
-+    /// pipe — a daemon a CLI starts on first use, a shim's helper — used to
-+    /// leave the scan on "22 of 23" for as long as that child lived (#27).
-+    /// The child here sleeps for 60 seconds; the run must not wait for it.
-+    @Test(.timeLimit(.minutes(1))) func aChildLeftRunningAfterANormalExitIsNotWaitedFor() async throws {
-+        let clock = ContinuousClock()
-+        let start = clock.now
-+        let result = try await Shell.run(
-+            "/bin/sh", ["-c", "echo done; sleep 60 &"], timeout: .seconds(20)
-+        )
-+        #expect(result.succeeded)
-+        #expect(result.output.contains("done"))
-+        #expect(clock.now - start < .seconds(15))
-+    }
  }
+ 
++/// The one model the menu bar panel and the window both use. A fresh
++/// `ScanModel()` per App initialization gave the window and the panel
++/// separate settings, which is how the icon switch could take effect while
++/// the other surface still showed the old state.
++@MainActor
++private enum AppModel {
++    static let shared = ScanModel()
++}
++
+ struct SysDataMenuApp: App {
+     @NSApplicationDelegateAdaptor(PowerOffGuard.self) private var powerOffGuard
+-    @State private var model = ScanModel()
+-    /// The same preference `ScanModel` stores, read through `@AppStorage`
+-    /// because that is what makes this scene re-evaluate when it changes.
+-    @AppStorage(ScanModel.menuBarIconKey) private var showsMenuBarIcon = true
++    @State private var model = AppModel.shared
+ 
+     init() {
+         // No Dock icon while the app is only a menu bar item; MainWindow puts
+@@ -47,12 +53,10 @@ struct SysDataMenuApp: App {
+     }
+ 
+     var body: some Scene {
+-        // Read here, so the scene re-evaluates when the preference changes,
+-        // and hand the binding a value it cannot write back to: the icon is
+-        // switched where the person switches it, and SwiftUI writing its own
+-        // idea of the state into the preference would undo that.
+-        let showsIcon = showsMenuBarIcon
+-        MenuBarExtra(isInserted: Binding(get: { showsIcon }, set: { _ in })) {
++        // Always inserted. The icon is hidden through the status item itself
++        // (MenuBarIcon), because changing isInserted after the scene is built
++        // did not take the icon out of the menu bar.
++        MenuBarExtra(isInserted: .constant(true)) {
+             MenuView()
+                 .environment(model)
+         } label: {
+@@ -66,19 +70,26 @@ struct SysDataMenuApp: App {
+     /// app exists to surface; free space and icon-only are the alternatives.
+     @ViewBuilder
+     private var menuBarLabel: some View {
+-        switch model.menuBarContent {
+-        case .systemData:
+-            if model.measuredBytes >= 100 * ProbeSupport.megabyte {
+-                labelWithValue(model.measuredBytes.byteString,
+-                               help: L("System Data found: %@", model.measuredBytes.byteString))
+-            } else {
++        if !model.showsMenuBarIcon {
++            // Hidden. Keep the label static: one that changes with every scan
++            // rebuilds the status item, and a rebuilt item comes back visible
++            // even though the preference says otherwise.
++            Image(systemName: "internaldrive")
++        } else {
++            switch model.menuBarContent {
++            case .systemData:
++                if model.measuredBytes >= 100 * ProbeSupport.megabyte {
++                    labelWithValue(model.measuredBytes.byteString,
++                                   help: L("System Data found: %@", model.measuredBytes.byteString))
++                } else {
++                    Image(systemName: "internaldrive")
++                }
++            case .freeSpace:
++                labelWithValue(model.freeBytes.byteString,
++                               help: L("%@ free on disk", model.freeBytes.byteString))
++            case .iconOnly:
+                 Image(systemName: "internaldrive")
+             }
+-        case .freeSpace:
+-            labelWithValue(model.freeBytes.byteString,
+-                           help: L("%@ free on disk", model.freeBytes.byteString))
+-        case .iconOnly:
+-            Image(systemName: "internaldrive")
+         }
+     }
+ 
+```
+
+**File**: `Sources/SysDataMenu/Views/MenuView.swift` (modified, +10/-6)
+```diff
+@@ -973,13 +973,17 @@ struct MenuView: View {
+             Toggle(L("Show in menu bar"), isOn: Binding(
+                 get: { model.showsMenuBarIcon },
+                 set: { wanted in
+-                    // Taking the icon away while it is the only way into the
+-                    // app would leave it with nowhere to appear, so the window
+-                    // opens before the icon goes — and when the switch is
+-                    // thrown from the menu bar panel, the icon waits for that
+-                    // panel to close.
+                     guard wanted else {
+-                        MainWindow.shared.openWindowLeavingTheMenuBar()
++                        // From the panel, the window opens first: the icon is
++                        // the panel's anchor, and the switch waits for the
++                        // panel to close. From the window there is nothing to
++                        // wait for.
++                        if presentation == .menuBar {
++                            MainWindow.shared.openWindowLeavingTheMenuBar()
++                            return
++                        }
++                        model.showsMenuBarIcon = false
++                        MainWindow.shared.menuBarPreferenceChanged()
+                         return
+                     }
+                     model.showsMenuBarIcon = true
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #30** (2026-11-12): fix(menu-bar): make the icon switch take effect from the window (@MaiwulanjiangMaiming)
+- **PR #29** (2026-11-12): perf(window): stop re-laying out the list on every hover and fold (@MaiwulanjiangMaiming)
 - **PR #23** (closed): fix(localization): declare CFBundleLocalizations so macOS 27 matches non-English languages (@Souitou-iop)
 - **PR #22** (2026-09-25): fix(localization): declare packaged languages in the app bundle (@VailElla)
 - **PR #19** (2026-09-07): feat(i18n): add Simplified Chinese localization (@Mavlan)
 - **PR #18** (closed): fix: avoid inventory layout crashes while scanning and scrolling (@dzy1997)
-- **PR #17** (2026-09-07): Copy the plan from the confirmation (@peechycreation)
-- **PR #16** (2026-09-07): Keep the selection through a filter, and let Select safe untick (@peechycreation)
 
 ---
 
@@ -1979,62 +1801,42 @@ Refs #27
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. scan): give up on folders that stop answering
+## X. menu-bar): make the icon switch take effect from the window
 
 **RULE**:
-When implementing operations in `Sources/SysDataMenu/Probes/CatchAllProbes.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Jarvis322/macos-sysdata. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Sources/SysDataMenu/Services/MainWindow.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Jarvis322/macos-sysdata. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `18f2dafd`: scan): give up on folders that stop answering. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1553cbcd`: menu-bar): make the icon switch take effect from the window. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/SysDataMenu/Probes/CatchAllProbes.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/SysDataMenu/Services/MainWindow.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-                        // Nothing under a claimed or excluded directory can
-                        // ever be reported: `visit` returns on both before it
-                        // looks at a size. Their bytes only ever fed the totals
-                        // of parents, and a parent holding a claimed child is
-                        // recursed into rather than listed, so leaving those
-                        // bytes out cannot hide an item — a child that survives
-                        // the filters is smaller than the reduced parent total
-                        // by definition.
-                        let walked = await DiskSize.watched { progress in
-                            DiskSize.directorySizes(
-                                under: child, maxDepth: Self.maxDepth - 1, skipping: skipping, progress: progress
-                        }
-                        guard let sizes = walked else {
-                            return [ProbeSupport.unansweredItem(
-                                id: "other-\(child.path)", category: .other, name: child.abbreviatedPath, url: child
-                            )]
-                        }
-                        var items: [Stora
+        MenuBarIcon.apply(model.showsMenuBarIcon)
+                // The status item's own windows are always visible; they are
+                // not the panel this waits for.
+                && !$0.className.contains("NSStatusBarWindow")
+        applyMenuBarIconPreference()
+    /// Puts the status item in the state the preference asks for. Called after
+    /// launch as well as on the switch, because the item does not exist yet
+    /// when the app is being built.
+    func applyMenuBarIconPreference() {
+        MenuBarIcon.apply(model?.showsMenuBarIcon ?? true)
+    }
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
-// Anti-pattern to NEVER write (induced failure mode):
-                        await Task.detached(priority: .utility) {
-                            // Nothing under a claimed or excluded directory can
-                            // ever be reported: `visit` returns on both before it
-                            // looks at a size. Their bytes only ever fed the totals
-                            // of parents, and a parent holding a claimed child is
-                            // recursed into rather than listed, so leaving those
-                            // bytes out cannot hide an item — a child that survives
-                            // the filters is smaller than the reduced parent total
-                            // by definition.
-                            let sizes = DiskSize.directorySizes(
-                                under: child, maxDepth: Self.maxDepth - 1, skipping: skipping
-                            var items: [StorageItem] = []
-                            Self.visit(child, depth: 1, sizes: sizes, claimed: claimedPaths, excluded: excludedPaths, apps: apps, into: &items)
-                            return items
-                        }.value
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `18f2dafd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1553cbcd` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

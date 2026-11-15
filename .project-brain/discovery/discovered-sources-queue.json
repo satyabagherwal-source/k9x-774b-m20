@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T16:07:37.881Z",
+  "updated_at": "2026-11-15T16:50:40.255Z",
   "stats": {
-    "total_discovered": 3780,
-    "approved_pending_harvest": 3565,
+    "total_discovered": 3788,
+    "approved_pending_harvest": 3573,
     "harvested_count": 0,
     "rejected_count": 215,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3549,
+      "COMMUNITY_AND_EXPERT": 3557,
       "OFFICIAL_DOCUMENTATION": 126,
       "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
@@ -81676,6 +81676,182 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md",
         "fileName": "tableproapp-tablepro-learnings.md"
+      }
+    },
+    "SRC-8C86C1593561": {
+      "id": "SRC-8C86C1593561",
+      "url": "https://github.com/Jarvis322/macos-sysdata",
+      "title": "https://github.com/Jarvis322/macos-sysdata",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T16:50:39.122Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jarvis322-macos-sysdata-learnings.md",
+        "fileName": "jarvis322-macos-sysdata-learnings.md"
+      }
+    },
+    "SRC-D5E1CE0C4155": {
+      "id": "SRC-D5E1CE0C4155",
+      "url": "https://github.com/Jarvis322/macos-sysdata/releases/tag/v1.11.2",
+      "title": "https://github.com/Jarvis322/macos-sysdata/releases/tag/v1.11.2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T16:50:39.145Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jarvis322-macos-sysdata-learnings.md",
+        "fileName": "jarvis322-macos-sysdata-learnings.md"
+      }
+    },
+    "SRC-0481869495CB": {
+      "id": "SRC-0481869495CB",
+      "url": "https://github.com/user-attachments/files/34475714/sysdata-sample.txt",
+      "title": "https://github.com/user-attachments/files/34475714/sysdata-sample.txt",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T16:50:39.166Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jarvis322-macos-sysdata-learnings.md",
+        "fileName": "jarvis322-macos-sysdata-learnings.md"
+      }
+    },
+    "SRC-2F199AD58AE7": {
+      "id": "SRC-2F199AD58AE7",
+      "url": "https://github.com/tailscale/tailscale/issues/21620",
+      "title": "https://github.com/tailscale/tailscale/issues/21620",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T16:50:39.631Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
+        "fileName": "tailscale-tailscale-learnings.md"
+      }
+    },
+    "SRC-320DB461876D": {
+      "id": "SRC-320DB461876D",
+      "url": "https://github.com/dathere/qsv/actions/workflows/rust.yml/badge.svg",
+      "title": "https://github.com/dathere/qsv/actions/workflows/rust.yml/badge.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T16:50:40.189Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-45B3E4F13D71": {
+      "id": "SRC-45B3E4F13D71",
+      "url": "https://github.com/dathere/qsv/actions/workflows/rust.yml",
+      "title": "https://github.com/dathere/qsv/actions/workflows/rust.yml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T16:50:40.210Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-FD5D8E54D705": {
+      "id": "SRC-FD5D8E54D705",
+      "url": "https://github.com/dathere/qsv/actions/workflows/rust-windows.yml/badge.svg",
+      "title": "https://github.com/dathere/qsv/actions/workflows/rust-windows.yml/badge.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T16:50:40.231Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-C4E3A127C8C1": {
+      "id": "SRC-C4E3A127C8C1",
+      "url": "https://github.com/dathere/qsv/actions/workflows/rust-windows.yml",
+      "title": "https://github.com/dathere/qsv/actions/workflows/rust-windows.yml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T16:50:40.255Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
       }
     }
   }

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T16:30:51.133Z",
-  "total_records": 1072,
+  "last_updated": "2026-11-15T16:50:40.502Z",
+  "total_records": 1074,
   "domains": {
     "A": {
       "total": 7,
@@ -790,7 +790,7 @@
       ]
     },
     "H": {
-      "total": 214,
+      "total": 216,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1005,7 +1005,9 @@
         "domain_intelligence-technical-construction-intelligence-databendlabs-databend-learnings-core-invaria",
         "domain_intelligence-technical-construction-intelligence-mochidiffusion-mochidiffusion-core-invariant",
         "domain_intelligence-technical-construction-intelligence-mochidiffusion-mochidiffusion-learnings-core",
-        "domain_intelligence-technical-construction-intelligence-lioensky-vcptoolbox-learnings-core-invariant"
+        "domain_intelligence-technical-construction-intelligence-lioensky-vcptoolbox-learnings-core-invariant",
+        "domain_intelligence-technical-construction-intelligence-jarvis322-macos-sysdata-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-jarvis322-macos-sysdata-learnings-core-invar"
       ]
     },
     "I": {
@@ -6959,8 +6961,8 @@
       "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
       "repository": "tailscale/tailscale",
-      "content_hash": "e938946f2baf4047091f2199b793a220b267443f8a44acbc208c6010deae9c5f",
-      "created_at": "2026-11-14T21:21:02.528Z"
+      "content_hash": "9de62675eb768655e7ff4f61a84d0ae4ce2afa8152078e31a696732c6143cf60",
+      "created_at": "2026-11-15T16:50:32.135Z"
     },
     "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants",
@@ -11129,8 +11131,8 @@
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "ac653680f77fff3a5e83828431d5fa5288f6041934a0550d3d79e7baaf086a85",
-      "created_at": "2026-11-15T15:23:25.291Z"
+      "content_hash": "0f8041132bf1fae8aeb4babe0c8d8d456e594347a1b4787adeff7b80f8192795",
+      "created_at": "2026-11-15T16:50:36.294Z"
     },
     "DOM-D-F5645095": {
       "record_id": "DOM-D-F5645095",
@@ -11198,8 +11200,8 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-learnings-architecture-intelligence-dathere-qsv-learnings-core-invar.md",
       "repository": "dathere-qsv-learnings",
-      "content_hash": "dfd526229897849cceaed3a77f3cf783aa4d3b2ede9436783867541ec2c86a41",
-      "created_at": "2026-11-15T15:23:29.998Z"
+      "content_hash": "d0a2addb202f9f094564927b98e88ba430657e21ef877fa3f8fbd88f13e1e479",
+      "created_at": "2026-11-15T16:50:40.502Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants",
@@ -11986,8 +11988,8 @@
       "title": "Architecture Intelligence: tailscale-tailscale-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-learnings-architecture-intelligence-tailscale-tailscale-lear.md",
       "repository": "tailscale-tailscale-learnings",
-      "content_hash": "99454cb3e6de58f7ebaf97e3e04338b9c9857afd9f4897e3eb180b85bf6230e9",
-      "created_at": "2026-11-14T03:33:01.453Z"
+      "content_hash": "a2080a587ffbb83242b266ce848706e8f2b844e3c398bfe51d9135c6b6cc1919",
+      "created_at": "2026-11-15T16:50:39.873Z"
     },
     "domain_intelligence-research-knowledge-intelligence-stabilityai-stable-diffusion-3-medium-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-stabilityai-stable-diffusion-3-medium-core-invar",
@@ -20530,6 +20532,24 @@
       "repository": "tableproapp-tablepro-learnings",
       "content_hash": "dec10081debb595590760738be49a3eb5bc80f2a2a01c5b96199daee4d08b1b2",
       "created_at": "2026-11-15T16:07:38.153Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-jarvis322-macos-sysdata-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-jarvis322-macos-sysdata-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: Jarvis322/macos-sysdata Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-jarvis322-macos-sysdata-technical-construction-intelligence-jarvis322-macos-sysd.md",
+      "repository": "Jarvis322/macos-sysdata",
+      "content_hash": "65ac7b968b3e43ef08586d63d026cdb39323194f60536c2caad58b1f45f97d67",
+      "created_at": "2026-11-15T16:50:28.047Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-jarvis322-macos-sysdata-learnings-core-invar": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-jarvis322-macos-sysdata-learnings-core-invar",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: jarvis322-macos-sysdata-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-jarvis322-macos-sysdata-learnings-technical-construction-intelligence-jarvis322-.md",
+      "repository": "jarvis322-macos-sysdata-learnings",
+      "content_hash": "86ba50153d3ea37de91a9f731193771af9da3fd10476c960fa6192fe4bd73d94",
+      "created_at": "2026-11-15T16:50:39.421Z"
     }
   }
 }

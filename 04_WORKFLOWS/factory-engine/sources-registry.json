@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-15T16:30:49.651Z",
-    "lastVerified": "2026-11-15T16:30:49.651Z",
+    "lastChecked": "2026-11-15T16:50:38.991Z",
+    "lastVerified": "2026-11-15T16:50:38.991Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -258,13 +258,13 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-15T15:23:24.188Z",
-    "lastVerified": "2026-11-15T15:23:24.188Z",
+    "lastChecked": "2026-11-15T16:50:35.685Z",
+    "lastVerified": "2026-11-15T16:50:35.685Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "d271937c0c69ed69a60f989f0a7f065150d77d1c3108c1c2d8ba6daeacf59070",
-    "promotedRulesCount": 1,
+    "contentHash": "dd1fd21d4461f1d005f93939bf81c0011c225f7133921cdcf495cd4992a4a2dc",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
@@ -2369,22 +2369,21 @@
     "revisionIdentifier": "8152c961"
   },
   "tailscale-tailscale": {
-    "name": "tailscale",
+    "name": "tailscale/tailscale",
     "officialUrl": "https://github.com/tailscale/tailscale",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-15T06:36:49.915Z",
-    "lastVerified": "2026-11-15T06:36:49.915Z",
+    "lastChecked": "2026-11-15T16:50:31.080Z",
+    "lastVerified": "2026-11-15T16:50:31.080Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "71d9e7361ba3ec0b36c7e4fc831e06df1e3278f8f9163a08fc6f5c0f1de90297",
+    "contentHash": "f8b2f88593e73385581a33a1dd390e8947648958f3e2e277b95a7310bd16d701",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "9d531366"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "oramasearch-orama": {
     "name": "orama",
@@ -2429,8 +2428,8 @@
     "officialUrl": "https://github.com/chaos-mesh/chaos-mesh",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-14T04:14:35.361Z",
-    "lastVerified": "2026-11-14T04:14:35.361Z",
+    "lastChecked": "2026-11-15T16:50:24.226Z",
+    "lastVerified": "2026-11-15T16:50:24.226Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-chaos-mesh-chaos-mesh",
@@ -3741,9 +3740,9 @@
   "tensorchord-pgvecto.rs": {
     "name": "pgvecto.rs",
     "officialUrl": "https://github.com/tensorchord/pgvecto.rs",
-    "lastChecked": "2026-11-14T02:46:00.588Z",
+    "lastChecked": "2026-11-15T16:50:29.222Z",
     "revisionIdentifier": "2b290b34",
-    "lastVerified": "2026-11-14T02:46:00.588Z"
+    "lastVerified": "2026-11-15T16:50:29.222Z"
   },
   "sigoden-aichat": {
     "name": "aichat",
@@ -4871,12 +4870,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "kucherenko-jscpd": {
-    "name": "kucherenko/jscpd",
+    "name": "jscpd",
     "officialUrl": "https://github.com/kucherenko/jscpd",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-13T18:43:40.462Z",
-    "lastVerified": "2026-11-13T18:43:40.462Z",
+    "lastChecked": "2026-11-15T16:50:16.672Z",
+    "lastVerified": "2026-11-15T16:50:16.672Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kucherenko-jscpd",
@@ -4885,7 +4884,8 @@
     "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "b79927a3"
   },
   "hf-minimaxai-minimax-h3": {
     "name": "MiniMaxAI/MiniMax-H3",
@@ -10061,9 +10061,9 @@
   "luzikov-codex-seo-skill": {
     "name": "codex-seo-skill",
     "officialUrl": "https://github.com/Luzikov/codex-seo-skill",
-    "lastChecked": "2026-11-10T01:58:16.957Z",
+    "lastChecked": "2026-11-15T16:50:19.173Z",
     "revisionIdentifier": "cdbf66bf55",
-    "lastVerified": "2026-11-10T01:58:16.957Z"
+    "lastVerified": "2026-11-15T16:50:19.173Z"
   },
   "vanniktech-emoji": {
     "name": "Emoji",
@@ -14357,22 +14357,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "jarvis322-macos-sysdata": {
-    "name": "macos-sysdata",
+    "name": "Jarvis322/macos-sysdata",
     "officialUrl": "https://github.com/Jarvis322/macos-sysdata",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-12T04:31:57.865Z",
-    "lastVerified": "2026-11-12T04:31:57.865Z",
+    "lastChecked": "2026-11-15T16:50:25.839Z",
+    "lastVerified": "2026-11-15T16:50:25.839Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-jarvis322-macos-sysdata",
-    "contentHash": "f2312bae65b09026cf3b919401048a50996e5cb485e8ef1ef8e19b3ae70aa690",
+    "contentHash": "2c82cb0e832815be5f43b2d6ad5023561255ba4677f45e0b7be739519742f48f",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 1,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "bcfd205a"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-nvidia-nvidia-nemotronlabs-re-use": {
     "name": "nvidia/NVIDIA-NemotronLabs-RE-USE",

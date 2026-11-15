@@ -10115,3 +10115,6 @@
 | `CYCLE-20261115-29BU` | `2026-11-15T16:07:01.050Z` | `unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf-learnings.md` | Yes (`ebcff828...`) |
 | `CYCLE-20261115-2EIL` | `2026-11-15T16:07:07.773Z` | `TableProApp/TablePro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8626` | Yes (`3eebd630...`) |
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T16:07:37.495Z` | `hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-3B7C0B67` [Domain D] | Yes (`cdf03288...`) |
+| `CYCLE-20261115-M4P8` | `2026-11-15T16:50:27.788Z` | `Jarvis322/macos-sysdata` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8627` | Yes (`2c82cb0e...`) |
+| `CYCLE-20261115-M7UN` | `2026-11-15T16:50:31.871Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8628` | Yes (`f8b2f885...`) |
+| `CYCLE-20261115-MB20` | `2026-11-15T16:50:36.024Z` | `dathere/qsv` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/dathere-qsv-learnings.md` | Yes (`dd1fd21d...`) |

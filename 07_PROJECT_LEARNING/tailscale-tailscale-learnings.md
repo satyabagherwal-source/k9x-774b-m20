@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `9d531366`  
+> **Source Version**: `daf82a50`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T21:21:01.648Z  
+> **Timestamp**: 2026-11-15T16:50:31.085Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T21:21:01.644Z  
+> **Harvest Timestamp**: 2026-11-15T16:50:31.080Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39106 stars
+- **Stars / Engagement**: 39155 stars
 
 ---
 
@@ -823,130 +823,92 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9d531366` (2026-11-14)
-**Commit Message**: go.mod: bump golang.org/x/sys
+### Incident Patch 1: `daf82a50` (2026-11-14)
+**Commit Message**: prober: deflake TestHTTPBandwidth on coarse-clock machines
 
-* golang.org/x/sys: v0.49.0 to v0.50.0
+The test asserts that a successful probe records a positive transfer
+time, but the transfer is shorter than one clock tick on the Windows CI
+runner: four attempts at 1 MiB plus their connection setups took 2.3ms
+in total, yet every measurement read exactly 0, so the retry loop added
+in #20214 just re-measured zero and then failed with
+"http_bw_transfer_time_seconds_total = 0 after 4 attempts".
 
-Triggered by @bradfitz via the bumpdep workflow.
+A 1 MiB loopback transfer takes ~0.4ms here, so no payload small enough
+for a unit test is reliably measurable against a millisecond-coarse
+clock. Make the transfer span more than one tick instead: /download now
+writes half the payload, flushes, sleeps 50ms, then writes the rest.
+The probe measures ~52ms, so the >0 assertion holds deterministically
+and the retry loop can be deleted.
 
-Updates #22390
+Fixes #21620
 
-Change-Id: I402717314704a7f7b164a15e073608ef9dcc31fb
-Signed-off-by: Dep Updater <[REDACTED_EMAIL]>
+Signed-off-by: Yunus Emre Karaman <[REDACTED_EMAIL]>
 
-**File**: `flake.nix` (modified, +1/-1)
+**File**: `prober/http_test.go` (modified, +14/-21)
 ```diff
-@@ -173,4 +173,4 @@
-     });
-   };
- }
--# nix-direnv cache busting line: sha256-Ackcupvrl5NqcyZZ7D3X3h/COrZ6Uz/rtxtzeu3ciU8=
-+# nix-direnv cache busting line: sha256-lVBZo9FQC4BFAK1yQesPxjLzBqnzWk9CsMm8ixydnoo=
-```
-
-**File**: `flakehashes.json` (modified, +2/-2)
-```diff
-@@ -4,7 +4,7 @@
-     "sri": "sha256-Up4oMG6TVLQkV9inAYF3uYbxu+bMHeU7q9BLcXIllow="
-   },
-   "vendor": {
--    "goModSum": "sha256-nepP7wcKXAWXPMCY+/X7majAmQAkszokN3VMaKdgk2k=",
--    "sri": "sha256-Ackcupvrl5NqcyZZ7D3X3h/COrZ6Uz/rtxtzeu3ciU8="
-+    "goModSum": "sha256-mM783v/r/aHCqXYS+9xjrbYMmq0D8T1+6P1LnDHVCAE=",
-+    "sri": "sha256-lVBZo9FQC4BFAK1yQesPxjLzBqnzWk9CsMm8ixydnoo="
-   }
- }
-```
-
-**File**: `go.mod` (modified, +1/-1)
-```diff
-@@ -144,7 +144,7 @@ require (
- 	golang.org/x/net v0.62.0
- 	golang.org/x/oauth2 v0.37.0
- 	golang.org/x/sync v0.24.0
--	golang.org/x/sys v0.49.0
-+	golang.org/x/sys v0.50.0
- 	golang.org/x/term v0.47.0
- 	golang.org/x/text v0.43.0
- 	golang.org/x/time v0.16.0
-```
-
-**File**: `go.sum` (modified, +2/-2)
-```diff
-@@ -1401,8 +1401,8 @@ golang.org/x/sys v0.5.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.6.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.10.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.12.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
--golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
--golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
-+golang.org/x/sys v0.50.0 h1:dkKZEFTEKaLr1sjhs0WiKqoi8Jj5nHbS3Njmx1UoMJs=
-+golang.org/x/sys v0.50.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
- golang.org/x/telemetry v0.0.0-20260924152758-ed294f943157 h1:DftxASHKl6JolFPqoN+2WrFO53JvkHwRXvFqf8gsivA=
- golang.org/x/telemetry v0.0.0-20260924152758-ed294f943157/go.mod h1:i+ivNqjDnTF3WTElsdk5g9V5DTSBYgdNo7xTU9SDwYA=
- golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
-```
-
-**File**: `ipn/desktop/zsyscall_windows.go` (modified, +1/-1)
-```diff
-@@ -118,7 +118,7 @@ func sendMessage(hwnd windows.HWND, msg uint32, wparam uintptr, lparam uintptr)
+@@ -55,10 +55,18 @@ func TestHTTPBandwidth(t *testing.T) {
+ 	const size = 1 << 20 // 1 MiB
  
- func translateMessage(lpMsg *_MSG) (res bool) {
- 	r0, _, _ := syscall.SyscallN(procTranslateMessage.Addr(), uintptr(unsafe.Pointer(lpMsg)))
--	res = r0 != 0
-+	res = uint32(r0) != 0
- 	return
- }
+ 	mux := http.NewServeMux()
+-	// /download writes exactly `size` zero bytes.
++	// /download writes exactly `size` zero bytes, pausing halfway so the
++	// transfer spans more than one clock tick. A 1 MiB loopback transfer
++	// takes well under a millisecond, which is below the monotonic clock's
++	// granularity on the Windows CI runner, so the probe would measure a
++	// transfer time of exactly 0 there.
++	// See https://github.com/tailscale/tailscale/issues/21620.
+ 	mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
+ 		w.WriteHeader(http.StatusOK)
+-		io.CopyN(w, zeroReader{}, size)
++		io.CopyN(w, zeroReader{}, size/2)
++		w.(http.Flusher).Flush()
++		time.Sleep(50 * time.Millisecond)
++		io.CopyN(w, zeroReader{}, size/2)
+ 	})
+ 	// /bad returns a non-200 status.
+ 	mux.HandleFunc("/bad", func(w http.ResponseWriter, r *http.Request) {
+@@ -135,28 +143,13 @@ func TestHTTPBandwidth(t *testing.T) {
+ 			}
  
-```
-
-**File**: `net/netns/zsyscall_windows.go` (modified, +2/-2)
-```diff
-@@ -46,8 +46,8 @@ var (
- 
- func getBestInterfaceEx(sockaddr *winipcfg.RawSockaddrInet, bestIfaceIndex *uint32) (ret error) {
- 	r0, _, _ := syscall.SyscallN(procGetBestInterfaceEx.Addr(), uintptr(unsafe.Pointer(sockaddr)), uintptr(unsafe.Pointer(bestIfaceIndex)))
--	if r0 != 0 {
--		ret = syscall.Errno(r0)
-+	if uint32(r0) != 0 {
-+		ret = syscall.Errno(uint32(r0))
+ 			// On a successful transfer the recorded byte count should equal the
+-			// full payload size, and the transfer should take a positive,
+-			// finite amount of time.
++			// full payload size, and the transfer should take a positive
++			// amount of time.
+ 			if got := metricValue(t, metrics, "http_bw_bytes_total"); got != float64(tc.size) {
+ 				t.Errorf("http_bw_bytes_total = %v, want %v", got, tc.size)
+ 			}
+-			// The transfer time counter accumulates across Probe calls.
+-			// At 1 MiB over loopback a zero reading means the timing logic
+-			// is broken, but retry a few times.
+-			if transferTime() <= 0 {
+-				const retries = 3
+-				for range retries {
+-					if err := pc.Probe(ctx); err != nil {
+-						t.Fatalf("Probe() = %v, want nil", err)
+-					}
+-					metrics = pc.Metrics(prometheus.Labels{})
+-					if transferTime() > 0 {
+-						break
+-					}
+-				}
+-				if transferTime() <= 0 {
+-					t.Fatalf("http_bw_transfer_time_seconds_total = 0 after %d attempts, want > 0", retries+1)
+-				}
++			if got := transferTime(); got <= 0 {
++				t.Errorf("http_bw_transfer_time_seconds_total = %v, want > 0", got)
+ 			}
+ 		})
  	}
- 	return
- }
-```
-
-**File**: `shell.nix` (modified, +1/-1)
-```diff
-@@ -16,4 +16,4 @@
- ) {
-   src =  ./.;
- }).shellNix
--# nix-direnv cache busting line: sha256-Ackcupvrl5NqcyZZ7D3X3h/COrZ6Uz/rtxtzeu3ciU8=
-+# nix-direnv cache busting line: sha256-lVBZo9FQC4BFAK1yQesPxjLzBqnzWk9CsMm8ixydnoo=
-```
-
-**File**: `util/osdiag/zsyscall_windows.go` (modified, +2/-2)
-```diff
-@@ -52,8 +52,8 @@ var (
- 
- func regEnumValue(key registry.Key, index uint32, valueName *uint16, valueNameLen *uint32, reserved *uint32, valueType *uint32, pData *byte, cbData *uint32) (ret error) {
- 	r0, _, _ := syscall.SyscallN(procRegEnumValueW.Addr(), uintptr(key), uintptr(index), uintptr(unsafe.Pointer(valueName)), uintptr(unsafe.Pointer(valueNameLen)), uintptr(unsafe.Pointer(reserved)), uintptr(unsafe.Pointer(valueType)), uintptr(unsafe.Pointer(pData)), uintptr(unsafe.Pointer(cbData)))
--	if r0 != 0 {
--		ret = syscall.Errno(r0)
-+	if uint32(r0) != 0 {
-+		ret = syscall.Errno(uint32(r0))
- 	}
- 	return
- }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22408** (2026-11-15): prober: deflake TestHTTPBandwidth on coarse-clock machines (@emrelab)
 - **PR #22406** (2026-11-14): go.mod: bump golang.org/x/sys (@tailscale-code-updater[bot])
 - **PR #22393** (2026-11-14): cmd/testwrapper, .github/workflows: bound hung CI test jobs (@bradfitz)
 - **PR #22392** (2026-11-13): clientupdate: stop requesting the -winui MSI variant on Windows (@nickkhyl)
+- **PR #22391** (closed): go.mod: bump golang.org/x/sys to v0.50.0 (@wrenix)
 - **PR #22382** (2026-11-13): derp/derpserver: fix data race on sclient.keepAliveTimer (@bradfitz)
-- **PR #22375** (2026-11-13): ipn/ipnlocal: add stub for LocalBackend.SetLogUploader (@dsnet)
-- **PR #22372** (2026-11-12): ipn/ipnstate,tailcfg: fix comment (@franbull)
 
 ---
 
@@ -966,28 +928,61 @@ Signed-off-by: Dep Updater <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. go.mod: bump golang.org/x/sys
+## X. prober: deflake TestHTTPBandwidth on coarse-clock machines
 
 **RULE**:
-When implementing operations in `flake.nix`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `prober/http_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9d531366`: go.mod: bump golang.org/x/sys. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `daf82a50`: prober: deflake TestHTTPBandwidth on coarse-clock machines. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flake.nix`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `prober/http_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-# nix-direnv cache busting line: sha256-lVBZo9FQC4BFAK1yQesPxjLzBqnzWk9CsMm8ixydnoo=
+	// /download writes exactly `size` zero bytes, pausing halfway so the
+	// transfer spans more than one clock tick. A 1 MiB loopback transfer
+	// takes well under a millisecond, which is below the monotonic clock's
+	// granularity on the Windows CI runner, so the probe would measure a
+	// transfer time of exactly 0 there.
+	// See https://github.com/tailscale/tailscale/issues/21620.
+		io.CopyN(w, zeroReader{}, size/2)
+		w.(http.Flusher).Flush()
+		time.Sleep(50 * time.Millisecond)
+		io.CopyN(w, zeroReader{}, size/2)
+			// full payload size, and the transfer should take a positive
+			// amount of time.
+			if got := transferTime(); got <= 0 {
+				t.Errorf("http_bw_transfer_time_seconds_total = %v, want > 0", got)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-# nix-direnv cache busting line: sha256-Ackcupvrl5NqcyZZ7D3X3h/COrZ6Uz/rtxtzeu3ciU8=
+	// /download writes exactly `size` zero bytes.
+		io.CopyN(w, zeroReader{}, size)
+			// full payload size, and the transfer should take a positive,
+			// finite amount of time.
+			// The transfer time counter accumulates across Probe calls.
+			// At 1 MiB over loopback a zero reading means the timing logic
+			// is broken, but retry a few times.
+			if transferTime() <= 0 {
+				const retries = 3
+				for range retries {
+					if err := pc.Probe(ctx); err != nil {
+						t.Fatalf("Probe() = %v, want nil", err)
+					}
+					metrics = pc.Metrics(prometheus.Labels{})
+					if transferTime() > 0 {
+						break
+					}
+				}
+				if transferTime() <= 0 {
+					t.Fatalf("http_bw_transfer_time_seconds_total = 0 after %d attempts, want > 0", retries+1)
+				}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9d531366` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `daf82a50` are properly handled with clean fallback behavior.

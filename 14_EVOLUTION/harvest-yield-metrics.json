@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T16:07:07.781Z",
-  "total_cycles_completed": 9728,
-  "total_learnings_persisted": 9728,
-  "total_rules_promoted": 9354,
+  "last_updated": "2026-11-15T16:50:36.039Z",
+  "total_cycles_completed": 9731,
+  "total_learnings_persisted": 9731,
+  "total_rules_promoted": 9356,
   "history": [
-    {
-      "timestamp": "2026-11-14T14:40:07.665Z",
-      "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
-      "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T14:40:09.671Z",
-      "repository": "codewhale-hq/Codewhale",
-      "learningId": "learn-github-codewhale-hq-codewhale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T15:03:42.320Z",
-      "repository": "Bingsu/adetailer",
-      "learningId": "learn-huggingface-bingsu-adetailer",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T15:03:52.314Z",
       "repository": "argoproj/argo-events",
@@ -1403,6 +1382,27 @@
       "repository": "TableProApp/TablePro",
       "learningId": "learn-github-tableproapp-tablepro",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T16:50:27.796Z",
+      "repository": "Jarvis322/macos-sysdata",
+      "learningId": "learn-github-jarvis322-macos-sysdata",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T16:50:31.879Z",
+      "repository": "tailscale/tailscale",
+      "learningId": "learn-github-tailscale-tailscale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T16:50:36.039Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
