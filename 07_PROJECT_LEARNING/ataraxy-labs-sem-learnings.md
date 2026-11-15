@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md`  
 > **Source**: github ([https://github.com/Ataraxy-Labs/sem](https://github.com/Ataraxy-Labs/sem))  
-> **Source Version**: `036dde8e`  
+> **Source Version**: `5d74e1fe`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T13:50:42.836Z  
+> **Timestamp**: 2026-11-15T23:25:56.716Z  
 > **Learning ID**: `learn-github-ataraxy-labs-sem`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Ataraxy-Labs/sem](https://github.com/Ataraxy-Labs/sem))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T13:40:41.598Z  
+> **Harvest Timestamp**: 2026-11-15T23:25:56.568Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Semantic version control => entity-level diffs, blame, and impact analysis on top of git. 28 languages via tree-sitter. Built for coding agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 3450 stars
+- **Stars / Engagement**: 3452 stars
 
 ---
 
@@ -1820,11 +1820,11 @@ fn main() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #546** (2026-11-10): **fix: sem starts on Debian 12 and Ubuntu 22.04 (0.30.1)**
-  *Symptoms*: Reported by Grump (grump.run): on Debian 12 and Ubuntu 22.04, sem installs but won't start (`GLIBC_2.38 not found`), and the installer still says "Installed unknown" and exits 0. `cargo install sem-cli` also fails everywhere because cargo pulls rmcp 1.8.0.  - **Linux binaries are built on ubuntu-22.04** (glibc 2.35) instead of ubuntu-latest (2.39). A new release step fails the build if a Linux binary needs a glibc newer than 2.35. - **install.sh and npm postinstall check that sem starts.** If it doesn't, they show the error and exit non-zero instead of reporting success. - **sem-mcp accepts rmcp ~1.6.** I checked that rmcp 1.8.0 fails to compile sem-mcp (E0308). The README now uses `cargo install --locked`. - **Release 0.30.1.** package.json was still at 0.29.1 and is now 0.30.1 too, so npm users get the fixed binary.
+- **Issue #550** (2026-11-14): **fix: sem update across filesystems, and sem find --text honors --in and --json**
+  *Symptoms*: Fixes #549 and #548.  **#549.** `sem update` extracted the release into the temp dir and renamed the binary from there onto the installed one, which fails with EXDEV (os error 18) when `/tmp` is tmpfs and the binary is on ext4, btrfs or xfs. The new binary is now copied next to the installed one first (`sem.new`, 0755), so the swap is two renames inside one directory. Rollback on failure is unchanged.  **#548.** `sem find --text` and `sem entities --text` returned before reading `--in`, `--only`/`--except` and `--json`. The entities are now narrowed by path (a file or folder, from the repo root or a subfolder) and by kind, and `--json` prints `{text, total, hits: [{file, entity, type, line, text}]}`. The reproduction from the issue now returns only `src/a.rs::keep`, as JSON.  Thanks @kevmoo for both reports and the clear reproductions. 
 
-- **Issue #544** (2026-11-06): **Add jq support behind an opt-in lang-jq feature**
-  *Symptoms*: Adds jq (`.jq`) via `tree-sitter-jq` 1.0.2. Because that grammar is GPL-3.0-or-later, the feature is opt-in and **not** in `grammar-all`, pending your answer on #543. Moving it into `grammar-all` is a one-line change.  - Each top-level `def` is a `function` entity. A nested `def` stays inside its parent. A `def` after a top-level pipeline is still found. The trailing program is not an entity, so edits to it show up as orphan changes. - New `StripStrategy::HashLine` for jq. `//` is jq's alternative operator, so the generic stripper blanked every reference after `.x // …` on a line. - Edges come from the existing same-file word scan: `f(args)` is `calls`, a bare `f` is `TypeRef`. - Known limits: builtins and defs in other files are not resolved, and a `$name` variable that shares a def's name creates a false edge. That last one is an `#[ignore]`d test with the reason attached.  Tested on a real jq codebase: 11 defs across 6 files, no parse errors.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
+- **Issue #549** (2026-11-14): **`sem update` fails with `os error 18` when `/tmp` is on `tmpfs`**
+  *Symptoms*: Running `sem update` on Linux fails with `Failed to install new binary: Invalid cross-device link (os error 18)` whenever `std::env::temp_dir()` (`/tmp`, commonly `tmpfs`) and the installed `sem` binary (for example, `~/.local/bin/sem`) sit on different mountpoints, because [`crates/sem-cli/src/commands/update.rs#L209-L248`](https://github.com/Ataraxy-Labs/sem/blob/036dde8/crates/sem-cli/src/commands/update.rs#L209-L248) extracts into `std::env::temp_dir()` and calls `fs::rename(&new_binary, &exe)` across filesystems.  ### Reproduction (`sem 0.30.1` / `036dde8`)  1. On a Linux host where `/tmp` is mounted as `tmpfs` and `~/.local/bin` is on an `ext4`/`btrfs`/`xfs` filesystem (`df -T /tmp ~/.local/bin`), install an older `sem` release to `~/.local/bin/sem`. 2. Run `sem update` with default `TMPDIR` (`/tmp`):    ```text    Error: Failed to install new binary: Invalid cross-device link (os error 18)    ``` 3. Setting `TMPDIR` onto the target binary's filesystem (`mkdir -p ~/.local/tmp && TMPDIR="$HOME/.local/tmp" sem update`) succeeds.  ### Possible Directions  - Stage or copy `new_binary` to a sibling temp path in `exe.parent()` (for example, `exe.with_extension("new")`, setting `0o755` permissions before `fs::rename`) so the final `fs::rename` onto `exe` is always same-filesystem and atomic. - Alternatively, fall back to `fs::copy` + `fs::remove_file` when `fs::rename(&new_binary, &exe)` returns `io::ErrorKind::CrossesDevices` (`EXDEV`). 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1841,235 +1841,280 @@ fn main() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `036dde8e` (2026-11-10)
-**Commit Message**: fix: sem starts on Debian 12 and Ubuntu 22.04 (0.30.1) (#546)
+### Incident Patch 1: `5d74e1fe` (2026-11-14)
+**Commit Message**: fix: sem update across filesystems, and sem find --text honors --in and --json (#550)
 
-Reported by Grump (grump.run): on Debian 12 and Ubuntu 22.04, sem
-installs but won't start (`GLIBC_2.38 not found`), and the installer
-still says "Installed unknown" and exits 0. `cargo install sem-cli` also
-fails everywhere because cargo pulls rmcp 1.8.0.
+Fixes #549 and #548.
 
-- **Linux binaries are built on ubuntu-22.04** (glibc 2.35) instead of
-ubuntu-latest (2.39). A new release step fails the build if a Linux
-binary needs a glibc newer than 2.35.
-- **install.sh and npm postinstall check that sem starts.** If it
-doesn't, they show the error and exit non-zero instead of reporting
-success.
-- **sem-mcp accepts rmcp ~1.6.** I checked that rmcp 1.8.0 fails to
-compile sem-mcp (E0308). The README now uses `cargo install --locked`.
-- **Release 0.30.1.** package.json was still at 0.29.1 and is now 0.30.1
-too, so npm users get the fixed binary.
+**#549.** `sem update` extracted the release into the temp dir and
+renamed the binary from there onto the installed one, which fails with
+EXDEV (os error 18) when `/tmp` is tmpfs and the binary is on ext4,
+btrfs or xfs. The new binary is now copied next to the installed one
+first (`sem.new`, 0755), so the swap is two renames inside one
+directory. Rollback on failure is unchanged.
 
-**File**: `.github/workflows/release.yml` (modified, +16/-2)
+**#548.** `sem find --text` and `sem entities --text` returned before
+reading `--in`, `--only`/`--except` and `--json`. The entities are now
+narrowed by path (a file or folder, from the repo root or a subfolder)
+and by kind, and `--json` prints `{text, total, hits: [{file, entity,
+type, line, text}]}`. The reproduction from the issue now returns only
+`src/a.rs::keep`, as JSON.
+
+Thanks @kevmoo for both reports and the clear reproductions.
+
+---------
+
+Co-authored-by: Rohan Sharma <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +5/-0)
 ```diff
-@@ -87,11 +87,13 @@ jobs:
-       fail-fast: false
-       matrix:
-         include:
-+          # Linux builds run on the oldest supported Ubuntu: a binary needs the glibc it was built against or newer,
-+          # so building on ubuntu-latest (glibc 2.39) broke Debian 12 (2.36) and Ubuntu 22.04 (2.35).
-           - target: x86_64-unknown-linux-gnu
--            os: ubuntu-latest
-+            os: ubuntu-22.04
-             name: sem-linux-x86_64
-           - target: aarch64-unknown-linux-gnu
--            os: ubuntu-latest
-+            os: ubuntu-22.04
-             name: sem-linux-arm64
-             cross_package: gcc-aarch64-linux-gnu
-             cross_linker: aarch64-linux-gnu-gcc
-@@ -141,6 +143,18 @@ jobs:
-       - name: Build
-         run: cargo build --release --target ${{ matrix.target }} -p sem-cli ${{ matrix.vendor_openssl && '--features vendored-openssl' || '' }}
- 
-+      - name: Check the binary runs on glibc 2.35 (Ubuntu 22.04, Debian 12)
-+        if: runner.os == 'Linux'
-+        run: |
-+          OBJDUMP=objdump
-+          [ "${{ matrix.target }}" = aarch64-unknown-linux-gnu ] && OBJDUMP=aarch64-linux-gnu-objdump
-+          need=$($OBJDUMP -T target/${{ matrix.target }}/release/sem | grep -o 'GLIBC_[0-9.]*' | sed 's/GLIBC_//' | sort -V | tail -1)
-+          echo "highest glibc symbol needed: $need"
-+          if [ "$(printf '%s\n2.35\n' "$need" | sort -V | tail -1)" != "2.35" ]; then
-+            echo "::error::sem needs glibc $need, newer than 2.35: it would not start on Ubuntu 22.04 or Debian 12"
-+            exit 1
-+          fi
-+
-       - name: Package (Unix)
-         if: runner.os != 'Windows'
-         run: |
-```
-
-**File**: `CHANGELOG.md` (modified, +8/-0)
-```diff
-@@ -4,6 +4,14 @@ All notable changes to sem are documented in this file.
+@@ -4,6 +4,11 @@ All notable changes to sem are documented in this file.
  
  ## [Unreleased]
  
-+## [0.30.1] - 2026-11-11
-+
 +### Fixed
 +
-+- sem starts on Debian 12 and Ubuntu 22.04 again. The Linux binaries were built against glibc 2.39 and failed with `GLIBC_2.38 not found`; they are now built on Ubuntu 22.04, and a release fails if a binary needs anything newer than glibc 2.35. Thanks to Grump for the report and repro.
-+- The install script and `npm install` no longer report success when sem can't start. They now show the error and exit with a failure.
-+- `cargo install sem-cli` builds again: sem-mcp now accepts rmcp 1.6.x only, since rmcp 1.8.0 doesn't compile with it. The README also uses `--locked`.
++- `sem update` works when `/tmp` is on a different filesystem from the installed binary (tmpfs is common on Linux). It failed with `Invalid cross-device link (os error 18)`; the new binary is now copied next to the installed one before the swap. Thanks @kevmoo for the report (#549).
++- `sem find --text` and `sem entities --text` honor `--in`, `--only`, `--except` and `--json`. They used to search the whole repository and always print text. With `--json` they now print `{text, total, hits: [{file, entity, type, line, text}]}`. Thanks @kevmoo for the report (#548).
 +
- ## [0.30.0] - 2026-11-09
+ ## [0.30.1] - 2026-11-11
  
- ### Added
+ ### Fixed
 ```
 
-**File**: `README.md` (modified, +2/-2)
+**File**: `crates/sem-cli/src/commands/entities.rs` (modified, +66/-1)
 ```diff
-@@ -166,13 +166,13 @@ sem config update
- Or via cargo, from [crates.io](https://crates.io/crates/sem-cli):
+@@ -505,12 +505,62 @@ fn text_search(opts: &EntitiesOptions, needle: &str) {
+     );
+     let (_, all_entities) =
+         super::graph::get_or_build_graph(&root, &file_paths, &registry, false, source_scope);
++
++    // --in and --only/--except narrow the search exactly as they narrow a listing (#548).
++    if !opts.only_kinds.is_empty() && !opts.except_kinds.is_empty() {
++        eprintln!("{} --only and --except cannot be used together", "error:".red().bold());
++        std::process::exit(2);
++    }
++    let scopes = text_scopes(&root, Path::new(&opts.cwd), &opts.paths);
++    let entities: Vec<SemanticEntity> = all_entities
++        .iter()
++        .filter(|e| scopes.is_empty() || scopes.iter().any(|s| in_text_scope(&e.file_path, s)))
++        .filter(|e| opts.only_kinds.is_empty() || opts.only_kinds.iter().any(|k| k == &e.entity_type))
++        .filter(|e| !opts.except_kinds.iter().any(|k| k == &e.entity_type))
++        .cloned()
++        .collect();
++
++    if opts.json {
++        let hits = sem_mcp::server::SemServer::collect_text_hits(&entities, needle, None);
++        let rows: Vec<serde_json::Value> = hits
++            .iter()
++            .take(TEXT_SEARCH_LIMIT)
++            .map(|(file, line, name, ty, text)| {
++                serde_json::json!({"file": file, "entity": name, "type": ty, "line": line, "text": text.trim()})
++            })
++            .collect();
++        let out = serde_json::json!({"text": needle, "total": hits.len(), "hits": rows});
++        println!("{}", serde_json::to_string_pretty(&out).unwrap_or_default());
++        return;
++    }
+     print!(
+         "{}",
+-        sem_mcp::server::SemServer::render_text_hits(&all_entities, needle, TEXT_SEARCH_LIMIT)
++        sem_mcp::server::SemServer::render_text_hits(&entities, needle, TEXT_SEARCH_LIMIT)
+     );
+ }
  
- ```bash
--cargo install sem-cli
-+cargo install --locked sem-cli
- ```
++/// The `--in` paths as repo-relative scopes (a file or a directory). Empty means
++/// the whole repository, as does any path that resolves to the repository root.
++fn text_scopes(root: &Path, cwd: &Path, paths: &[String]) -> Vec<String> {
++    let root = root.canonicalize().unwrap_or_else(|_| root.to_path_buf());
++    let mut scopes = Vec::new();
++    for p in paths.iter().map(|p| p.trim()).filter(|p| !p.is_empty()) {
++        let abs = cwd.join(p);
++        let abs = abs.canonicalize().unwrap_or(abs);
++        let rel = abs.strip_prefix(&root).map(|r| r.to_string_lossy().replace('\\', "/")).unwrap_or_else(|_| p.to_string());
++        let rel = rel.trim_start_matches("./").trim_end_matches('/').to_string();
++        if rel.is_empty() || rel == "." {
++            return Vec::new();
++        }
++        scopes.push(rel);
++    }
++    scopes
++}
++
++fn in_text_scope(file: &str, scope: &str) -> bool {
++    file == scope || file.strip_prefix(scope).is_some_and(|rest| rest.starts_with('/'))
++}
++
+ fn extract_file_entities(
+     full_path: &Path,
+     registry: &ParserRegistry,
+@@ -703,6 +753,21 @@ fn print_entity_row(
+ mod tests {
+     use super::*;
  
- Or build the latest `main` from source (requires Rust):
- 
- ```bash
--cargo install --git https://github.com/Ataraxy-Labs/sem sem-cli
-+cargo install --locked --git https://github.com/Ataraxy-Labs/sem sem-cli
- ```
- 
- Or grab a binary from [GitHub Releases](https://github.com/Ataraxy-Labs/sem/releases).
++    /// Issue #548: `--in` scopes a text search to a file or a folder, from the repo
++    /// root or from a subfolder, and the repo root itself means everything.
++    #[test]
++    fn text_search_scopes_follow_in_paths() {
++        let root = std::env::temp_dir().join(format!("sem-text-scope-{}", std::process::id()));
++        std::fs::create_dir_all(root.join("src")).unwrap();
++        let s = |cwd: &Path, p: &[&str]| text_scopes(&root, cwd, &p.iter().map(|x| x.to_string()).collect::<Vec<_>>());
++        assert_eq!(s(&root, &["src"]), vec!["src"]);
++        assert_eq!(s(&root.join("src"), &["."]), vec!["src"]);
++        assert!(s(&root, &["."]).is_empty() && s(&root, &[]).is_empty(), "the root is the whole repo");
++        assert!(in_text_scope("src/a.rs", "src") && in_text_scope("src/a.rs", "src/a.rs"));
++        assert!(!in_text_scope("srcx/a.rs", "src") && !in_text_scope("tests/b.rs", "src"));
++        let _ = std::fs::remove_dir_all(&root);
++    }
++
+     fn entity(id: &str, parent_id: Option<&str>) -> SemanticEntity {
+         SemanticEntity {
+             id: id.to_string(),
 ```
 
-**File**: `crates/Cargo.lock` (modified, +5/-5)
+**File**: `crates/sem-cli/src/commands/update.rs` (modified, +61/-10)
 ```diff
-@@ -2300,7 +2300,7 @@ checksum = "94143f37725109f92c262ed2cf5e59bce7498c01bcc1502d7b9afe439a4e9f49"
+@@ -228,33 +228,42 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
  
- [[package]]
- name = "sem-cli"
--version = "0.30.0"
-+version = "0.30.1"
- dependencies = [
-  "axum",
-  "ciborium",
-@@ -2330,7 +2330,7 @@ dependencies = [
+     let new_binary = find_binary(&tmp).ok_or("No sem binary found in release archive")?;
  
- [[package]]
- name = "sem-cloud-client"
--version = "0.30.0"
-+version = "0.30.1"
- dependencies = [
-  "serde",
-  "serde_json",
-@@ -2339,7 +2339,7 @@ dependencies = [
++    // Stage the new binary beside the installed one first. The temp dir is often
++    // on another filesystem (/tmp on tmpfs), where a rename fails with EXDEV
++    // (os error 18); a copy works anywhere, and the swap below is then two
++    // renames inside one directory.
++    let staged = exe.with_extension("new");
++    if let Err(e) = stage(&new_binary, &staged) {
++        let _ = fs::remove_file(&staged);
++        cleanup(&tmp);
++        return Err(format!(
++            "Cannot write next to {} ({e}). Try with elevated permissions, or reinstall:\n  curl -fsSL https://raw.githubusercontent.com/{REPO}/main/install.sh | sh",
++            exe.display()
++        )
++        .into());
++    }
++    cleanup(&tmp);
++
+     // Swap in place: move the running binary aside (allowed on Unix and
+     // Windows), then move the new one into its path.
+     let old = exe.with_extension("old");
+     let _ = fs::remove_file(&old);
+     if let Err(e) = fs::rename(&exe, &old) {
+-        cleanup(&tmp);
++        let _ = fs::remove_file(&staged);
+         return Err(format!(
+             "Cannot replace {} ({e}). Try with elevated permissions, or reinstall:\n  curl -fsSL https://raw.githubusercontent.com/{REPO}/main/install.sh | sh",
+             exe.display()
+         )
+         .into());
+     }
+-    if let Err(e) = fs::rename(&new_binary, &exe) {
++    if let Err(e) = fs::rename(&staged, &exe) {
+         // Roll back so the user still has a working sem.
+         let _ = fs::rename(&old, &exe);
+-        cleanup(&tmp);
++        let _ = fs::remove_file(&staged);
+         return Err(format!("Failed to install new binary: {e}").into());
+     }
  
- [[package]]
- name = "sem-core"
--version = "0.30.0"
-+version = "0.30.1"
- dependencies = [
-  "ciborium",
-  "criterion",
-@@ -2406,7 +2406,7 @@ dependencies = [
+-    #[cfg(unix)]
+-    {
+-        use std::os::unix::fs::PermissionsExt;
+-        let _ = fs::set_permissions(&exe, fs::Permissions::from_mode(0o755));
+-    }
+-
+     let _ = fs::remove_file(&old); // fails harmlessly on Windows while running
+-    cleanup(&tmp);
  
- [[package]]
- name = "sem-mcp"
--version = "0.30.0"
-+version = "0.30.1"
- dependencies = [
-  "axum",
-  "git2",
-@@ -2434,7 +2434,7 @@ dependencies = [
- 
- [[package]]
- name = "sem-plugin"
--version = "0.30.0"
-+version = "0.30.1"
- dependencies = [
-  "sem-core",
-  "serde",
+     println!(
+         "{} Updated to v{latest} ({})",
+@@ -378,3 +387,45 @@ fn find_binary(dir: &Path) -> Option<PathBuf> {
+ fn cleanup(tmp: &Path) {
+     let _ = fs::remove_dir_all(tmp);
+ }
++
++/// Copy `from` to `to` (any filesystem) and make it executable.
++fn stage(from: &Path, to: &Path) -> std::io::Result<()> {
++    let _ = fs::remove_file(to);
++    fs::copy(from, to)?;
++    #[cfg(unix)]
++    {
++        use std::os::unix::fs::PermissionsExt;
++        fs::set_permissions(to, fs::Permissions::from_mode(0o755))?;
++    }
++    Ok(())
++}
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++
++    /// Issue #549: the staged binary lands beside the installed one, executable, so
++    /// the final swap never renames across filesystems.
++    #[test]
++    fn stage_copies_next_to_the_target_and_makes_it_executable() {
++        let dir = std::env::temp_dir().join(format!("sem-stage-test-{}", std::process::id()));
++        fs::create_dir_all(dir.join("download")).unwrap();
++        let from = dir.join("download").join("sem");
++        fs::write(&from, b"new sem").unwrap();
++        let exe = dir.join("sem");
++        let staged = exe.with_extension("new");
++        fs::write(&staged, b"stale").unwrap();
++
++        stage(&from, &staged).unwrap();
++        assert_eq!(fs::read(&staged).unwrap(), b"new sem");
++        assert_eq!(staged.parent(), exe.parent());
++        #[cfg(unix)]
++        {
++            use std::os::unix::fs::PermissionsExt;
++            assert_eq!(fs::metadata(&staged).unwrap().permissions().mode() & 0o777, 0o755);
++        }
++        fs::rename(&staged, &exe).unwrap();
++        assert_eq!(fs::read(&exe).unwrap(), b"new sem");
++        let _ = fs::remove_dir_all(&dir);
++    }
++}
 ```
 
-**File**: `crates/sem-cli/Cargo.toml` (modified, +4/-4)
+**File**: `crates/sem-cli/tests/fixtures/cli_simplify/entities_text_search_json.out` (modified, +13/-2)
 ```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "sem-cli"
--version = "0.30.0"
-+version = "0.30.1"
- edition = "2021"
- license = "MIT OR Apache-2.0"
- description = "Semantic version control CLI. Shows what entities changed (functions, classes, methods) instead of lines."
-@@ -15,9 +15,9 @@ path = "src/main.rs"
- 
- [dependencies]
- tempfile = "3.24.0"
--sem-core = { path = "../sem-core", version = "0.30.0", features = ["disk-cache", "topology"] }
--sem-mcp = { path = "../sem-mcp", version = "0.30.0" }
--sem-cloud-client = { path = "../sem-cloud-client", version = "0.30.0" }
-+sem-core = { path = "../sem-core", version = "0.30.1", features = ["disk-cache", "topology"] }
-+sem-mcp = { path = "../sem-mcp", version = "0.30.1" }
-+sem-cloud-client = { path = "../sem-cloud-client", version = "0.30.1" }
- serde = { version = "1", features = ["derive"] }
- clap = { version = "4", features = ["derive", "env"] }
- colored = "2"
+@@ -1,2 +1,13 @@
+-⊕ text "splitlines" · 1 hits · 1 files
+-╰─▶ src/config.py: parse_config (L2): pairs = [line.split("=", 1) for line in text.splitlines() if line]
++{
++  "hits": [
++    {
++      "entity": "parse_config",
++      "file": "src/config.py",
++      "line": 2,
++      "text": "pairs = [line.split(\"=\", 1) for line in text.splitlines() if line]",
++      "type": "function"
++    }
++  ],
++  "text": "splitlines",
++  "total": 1
++}
 ```
 
-**File**: `crates/sem-cloud-client/Cargo.toml` (modified, +1/-1)
+**File**: `crates/sem-mcp/src/server.rs` (modified, +1/-1)
 ```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "sem-cloud-client"
--version = "0.30.0"
-+version = "0.30.1"
- edition = "2021"
- license = "MIT OR Apache-2.0"
- description = "Shared client for sem-cloud: credentials, repo resolution, caching, and the metered graph API. Used by both the sem CLI and the sem MCP server."
-```
-
-**File**: `crates/sem-core/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "sem-core"
--version = "0.30.0"
-+version = "0.30.1"
- edition = "2021"
- license = "MIT OR Apache-2.0"
- description = "Entity-level semantic diff engine. Extracts functions, classes, and methods from 28 languages via tree-sitter and diffs at the entity level."
-```
-
-**File**: `crates/sem-mcp/Cargo.toml` (modified, +4/-4)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "sem-mcp"
--version = "0.30.0"
-+version = "0.30.1"
- edition = "2021"
- license = "MIT OR Apache-2.0"
- description = "MCP server for entity-level semantic code intelligence. 6 tools: sem_entities, sem_diff, sem_blame, sem_impact, sem_log, sem_context."
-@@ -14,11 +14,11 @@ name = "sem-mcp"
- path = "src/main.rs"
- 
- [dependencies]
--sem-core = { path = "../sem-core", version = "0.30.0", features = ["disk-cache"] }
--sem-cloud-client = { path = "../sem-cloud-client", version = "0.30.0" }
-+sem-core = { path = "../sem-core", version = "0.30.1", features = ["disk-cache"] }
-+sem-cloud-client = { path = "../sem-cloud-client", version = "0.30.1" }
- git2 = { version = "0.20", default-features = false }
- lru = "0.16"
--rmcp = { version = "1", features = ["server", "transport-io", "transport-streamable-http-server"] }
-+rmcp = { version = "~1.6", features = ["server", "transport-io", "transport-streamable-http-server"] }
- axum = "0.8"
- subtle = "2"
- tower-http = { version = "0.6", features = ["limit"] }
+@@ -1363,7 +1363,7 @@ impl SemServer {
+     /// both renderings of the entity-body text search: one hit per matching
+     /// line as `(file, line, entity name, entity type, line text)`, the
+     /// smallest-span (innermost) enclosing entity winning a contested line.
+-    fn collect_text_hits<'a>(
++    pub fn collect_text_hits<'a>(
+         all_entities: &'a [SemanticEntity],
+         needle: &str,
+         scope: Option<&str>,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #550** (2026-11-14): fix: sem update across filesystems, and sem find --text honors --in and --json (@rs545837)
 - **PR #546** (2026-11-10): fix: sem starts on Debian 12 and Ubuntu 22.04 (0.30.1) (@rs545837)
 - **PR #544** (2026-11-06): Add jq support behind an opt-in lang-jq feature (@alycda)
 - **PR #542** (2026-11-04): Parse Quarto documents (.qmd) as Markdown (@rs545837)
 - **PR #541** (2026-11-02): chore(release): prepare Sem 0.29.1 (@rs545837)
 - **PR #540** (2026-10-31): Intent search ranks code by meaning; edit hook stops refusing scratch writes (@rs545837)
-- **PR #539** (2026-10-30): release: Sem 0.29.0 (@rs545837)
 
 ---
 
@@ -2089,44 +2134,32 @@ too, so npm users get the fixed binary.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sem starts on Debian 12 and Ubuntu 22.04 (0.30.1) (#546)
+## X. sem update across filesystems, and sem find --text honors --in and --json
 
 **RULE**:
-When implementing operations in `.github/workflows/release.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ataraxy-Labs/sem. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ataraxy-Labs/sem. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `036dde8e`: sem starts on Debian 12 and Ubuntu 22.04 (0.30.1) (#546). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5d74e1fe`: sem update across filesystems, and sem find --text honors --in and --json. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-          # Linux builds run on the oldest supported Ubuntu: a binary needs the glibc it was built against or newer,
-          # so building on ubuntu-latest (glibc 2.39) broke Debian 12 (2.36) and Ubuntu 22.04 (2.35).
-            os: ubuntu-22.04
-            os: ubuntu-22.04
-      - name: Check the binary runs on glibc 2.35 (Ubuntu 22.04, Debian 12)
-        if: runner.os == 'Linux'
-        run: |
-          OBJDUMP=objdump
-          [ "${{ matrix.target }}" = aarch64-unknown-linux-gnu ] && OBJDUMP=aarch64-linux-gnu-objdump
-          need=$($OBJDUMP -T target/${{ matrix.target }}/release/sem | grep -o 'GLIBC_[0-9.]*' | sed 's/GLIBC_//' | sort -V | tail -1)
-          echo "highest glibc symbol needed: $need"
-          if [ "$(printf '%s\n2.35\n' "$need" | sort -V | tail -1)" != "2.35" ]; then
-            echo "::error::sem needs glibc $need, newer than 2.35: it would not start on Ubuntu 22.04 or Debian 12"
-            exit 1
-          fi
+### Fixed
+
+- `sem update` works when `/tmp` is on a different filesystem from the installed binary (tmpfs is common on Linux). It failed with `Invalid cross-device link (os error 18)`; the new binary is now copied next to the installed one before the swap. Thanks @kevmoo for the report (#549).
+- `sem find --text` and `sem entities --text` honor `--in`, `--only`, `--except` and `--json`. They used to search the whole repository and always print text. With `--json` they now print `{text, total, hits: [{file, entity, type, line, text}]}`. Thanks @kevmoo for the report (#548).
 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-            os: ubuntu-latest
-            os: ubuntu-latest
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `036dde8e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5d74e1fe` are properly handled with clean fallback behavior.

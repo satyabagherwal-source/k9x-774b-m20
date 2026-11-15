@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-GB44",
-    "timestamp": "2026-11-13T15:18:36.868Z",
-    "repository": "tailscale/tailscale",
-    "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "45ea91e4e73ceae47284b3095a08cf21857db91bbdb590d944b1b31153319edf",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-GE28",
-    "timestamp": "2026-11-13T15:18:40.688Z",
-    "repository": "duckdb/duckdb",
-    "learningId": "learn-github-duckdb-duckdb",
-    "contentHash": "fe578b2976f8ba1c3e34470d7cdbf3d9c75117c0629c1fa7e5a8950fb1ac8ceb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-U64Y",
-    "timestamp": "2026-11-13T15:29:23.602Z",
-    "repository": "apple/LensVLM-9B",
-    "learningId": "learn-huggingface-apple-lensvlm-9b",
-    "contentHash": "6f1d39f942c7d43c507bb7b95c4ed506b8a6125479852d1b7209e013ef78f9ee",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-UD3J",
     "timestamp": "2026-11-13T15:29:32.623Z",
     "repository": "crossplane/crossplane",
@@ -7490,6 +7445,51 @@
     "repository": "tailscale/tailscale",
     "learningId": "learn-github-tailscale-tailscale",
     "contentHash": "540d235719c5aa8d14ff054ff86eda42049874a8d46bf50f157c9e7709bc5032",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-QQCM",
+    "timestamp": "2026-11-15T23:25:57.094Z",
+    "repository": "Ataraxy-Labs/sem",
+    "learningId": "learn-github-ataraxy-labs-sem",
+    "contentHash": "d57b19c73fe4a1d1d53ad8a8d88b45d825d2864b29a1ab86f8a4a0ba39095cab",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-QTGX",
+    "timestamp": "2026-11-15T23:26:01.137Z",
+    "repository": "searchsolved/search-solved-public-seo",
+    "learningId": "learn-github-searchsolved-search-solved-public-seo",
+    "contentHash": "facdea82f8b15e166cb99a5d7ee5689f3e3caa29aeee367cf53b0da04184b1d8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-QWHG",
+    "timestamp": "2026-11-15T23:26:05.044Z",
+    "repository": "argoproj/argo-events",
+    "learningId": "learn-github-argoproj-argo-events",
+    "contentHash": "ab1f2b6d8f8b8113f0463f385d68cc970cc76704bc90f5647ae532394caaebdb",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T22:58:50.487Z",
+  "updated_at": "2026-11-15T23:26:10.926Z",
   "stats": {
-    "total_discovered": 3877,
-    "approved_pending_harvest": 3657,
+    "total_discovered": 3925,
+    "approved_pending_harvest": 3684,
     "harvested_count": 0,
-    "rejected_count": 220,
+    "rejected_count": 241,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3636,
-      "OFFICIAL_DOCUMENTATION": 131,
+      "COMMUNITY_AND_EXPERT": 3683,
+      "OFFICIAL_DOCUMENTATION": 132,
       "STANDARDS_AND_SPECIFICATIONS": 92,
       "ENGINEERING_BLOGS": 2,
       "SECURITY_ADVISORIES": 11,
@@ -83775,6 +83775,915 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md",
         "fileName": "jellyfin-swiftfin-learnings.md"
+      }
+    },
+    "SRC-B24FEFC91219": {
+      "id": "SRC-B24FEFC91219",
+      "url": "https://github.com/Ataraxy-Labs/sem/blob/036dde8/crates/sem-cli/src/commands/update.rs",
+      "title": "https://github.com/Ataraxy-Labs/sem/blob/036dde8/crates/sem-cli/src/commands/update.rs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T23:26:08.605Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md",
+        "fileName": "ataraxy-labs-sem-learnings.md"
+      }
+    },
+    "SRC-5EEBBA6025E8": {
+      "id": "SRC-5EEBBA6025E8",
+      "url": "https://raw.githubusercontent.com/%7BREPO",
+      "title": "https://raw.githubusercontent.com/%7BREPO",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T23:26:08.631Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md",
+        "fileName": "ataraxy-labs-sem-learnings.md"
+      }
+    },
+    "SRC-9BF59178D1F7": {
+      "id": "SRC-9BF59178D1F7",
+      "url": "https://github.com/searchsolved/search-solved-public-seo",
+      "title": "https://github.com/searchsolved/search-solved-public-seo",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T23:26:09.268Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md",
+        "fileName": "searchsolved-search-solved-public-seo-learnings.md"
+      }
+    },
+    "SRC-EBF809A5A69B": {
+      "id": "SRC-EBF809A5A69B",
+      "url": "https://www.leefoot.com/",
+      "title": "https://www.leefoot.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T23:26:09.291Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md",
+        "fileName": "searchsolved-search-solved-public-seo-learnings.md"
+      }
+    },
+    "SRC-8D32D699B1FA": {
+      "id": "SRC-8D32D699B1FA",
+      "url": "https://www.leefoot.com/contact",
+      "title": "https://www.leefoot.com/contact",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T23:26:09.315Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md",
+        "fileName": "searchsolved-search-solved-public-seo-learnings.md"
+      }
+    },
+    "SRC-3DC717D92442": {
+      "id": "SRC-3DC717D92442",
+      "url": "https://www.linkedin.com/in/lee-foot",
+      "title": "https://www.linkedin.com/in/lee-foot",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T23:26:09.339Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md",
+        "fileName": "searchsolved-search-solved-public-seo-learnings.md"
+      }
+    },
+    "SRC-3AFB8C520912": {
+      "id": "SRC-3AFB8C520912",
+      "url": "https://bsky.app/profile/leefootseo.bsky.social",
+      "title": "https://bsky.app/profile/leefootseo.bsky.social",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T23:26:09.364Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md",
+        "fileName": "searchsolved-search-solved-public-seo-learnings.md"
+      }
+    },
+    "SRC-FAB3EC298FD3": {
+      "id": "SRC-FAB3EC298FD3",
+      "url": "https://img.shields.io/badge/-leefoot.com-2A9D8F?logoColor=white",
+      "title": "https://img.shields.io/badge/-leefoot.com-2A9D8F?logoColor=white",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T23:26:09.388Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md",
+        "fileName": "searchsolved-search-solved-public-seo-learnings.md"
+      }
+    },
+    "SRC-99763EC41EB7": {
+      "id": "SRC-99763EC41EB7",
+      "url": "https://img.shields.io/badge/-Hire%20Me-FF6B6B?logoColor=white",
+      "title": "https://img.shields.io/badge/-Hire%20Me-FF6B6B?logoColor=white",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T23:26:09.412Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md",
+        "fileName": "searchsolved-search-solved-public-seo-learnings.md"
+      }
+    },
+    "SRC-4E290677CFE4": {
+      "id": "SRC-4E290677CFE4",
+      "url": "https://img.shields.io/badge/-LinkedIn-0A66C2?logo=linkedin&logoColor=white",
+      "title": "https://img.shields.io/badge/-LinkedIn-0A66C2?logo=linkedin&logoColor=white",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T23:26:09.435Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md",
+        "fileName": "searchsolved-search-solved-public-seo-learnings.md"
+      }
+    },
+    "SRC-1335A5224D69": {
+      "id": "SRC-1335A5224D69",
+      "url": "https://img.shields.io/badge/-Bluesky-0285FF?logoColor=white",
+      "title": "https://img.shields.io/badge/-Bluesky-0285FF?logoColor=white",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T23:26:09.460Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md",
+        "fileName": "searchsolved-search-solved-public-seo-learnings.md"
+      }
+    },
+    "SRC-446C3AC53579": {
+      "id": "SRC-446C3AC53579",
+      "url": "https://img.shields.io/badge/-More%20Tools-8B5CF6?logoColor=white",
+      "title": "https://img.shields.io/badge/-More%20Tools-8B5CF6?logoColor=white",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T23:26:09.483Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md",
+        "fileName": "searchsolved-search-solved-public-seo-learnings.md"
+      }
+    },
+    "SRC-3A4C1080EBAD": {
+      "id": "SRC-3A4C1080EBAD",
+      "url": "https://leefoot.com/tools",
+      "title": "https://leefoot.com/tools",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T23:26:09.507Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md",
+        "fileName": "searchsolved-search-solved-public-seo-learnings.md"
+      }
+    },
+    "SRC-F3C229E68B6C": {
+      "id": "SRC-F3C229E68B6C",
+      "url": "https://img.shields.io/badge/-GitHub-6B7280?logoColor=white",
+      "title": "https://img.shields.io/badge/-GitHub-6B7280?logoColor=white",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T23:26:09.531Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md",
+        "fileName": "searchsolved-search-solved-public-seo-learnings.md"
+      }
+    },
+    "SRC-E8DDDEB9EA4E": {
+      "id": "SRC-E8DDDEB9EA4E",
+      "url": "https://example.com/sitemap.xml",
+      "title": "https://example.com/sitemap.xml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T23:26:09.559Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md",
+        "fileName": "searchsolved-search-solved-public-seo-learnings.md"
+      }
+    },
+    "SRC-779300449599": {
+      "id": "SRC-779300449599",
+      "url": "https://example.com/page1/nhttps://example.com/page2",
+      "title": "https://example.com/page1/nhttps://example.com/page2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T23:26:09.583Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md",
+        "fileName": "searchsolved-search-solved-public-seo-learnings.md"
+      }
+    },
+    "SRC-9B514B1A65F6": {
+      "id": "SRC-9B514B1A65F6",
+      "url": "http://127.0.0.1:11434/v1",
+      "title": "http://127.0.0.1:11434/v1",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-15T23:26:09.607Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md",
+        "fileName": "searchsolved-search-solved-public-seo-learnings.md"
+      }
+    },
+    "SRC-A7D18EB62084": {
+      "id": "SRC-A7D18EB62084",
+      "url": "http://www.guardian.co.uk/",
+      "title": "http://www.guardian.co.uk/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-15T23:26:09.643Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md",
+        "fileName": "searchsolved-search-solved-public-seo-learnings.md"
+      }
+    },
+    "SRC-49365E2B6B26": {
+      "id": "SRC-49365E2B6B26",
+      "url": "https://www.example.com/",
+      "title": "https://www.example.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T23:26:09.666Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md",
+        "fileName": "searchsolved-search-solved-public-seo-learnings.md"
+      }
+    },
+    "SRC-AF3C4F086229": {
+      "id": "SRC-AF3C4F086229",
+      "url": "https://api.dataforseo.com/v3/serp/google/organic/live/advanced",
+      "title": "https://api.dataforseo.com/v3/serp/google/organic/live/advanced",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T23:26:09.690Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md",
+        "fileName": "searchsolved-search-solved-public-seo-learnings.md"
+      }
+    },
+    "SRC-6D9BED0AB4C2": {
+      "id": "SRC-6D9BED0AB4C2",
+      "url": "https://{url/",
+      "title": "https://{url/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T23:26:09.714Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md",
+        "fileName": "searchsolved-search-solved-public-seo-learnings.md"
+      }
+    },
+    "SRC-58EF8C866FA6": {
+      "id": "SRC-58EF8C866FA6",
+      "url": "https://leefoot.com/",
+      "title": "https://leefoot.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T23:26:09.740Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md",
+        "fileName": "searchsolved-search-solved-public-seo-learnings.md"
+      }
+    },
+    "SRC-F0F038369720": {
+      "id": "SRC-F0F038369720",
+      "url": "http://localhost:8765/how-to-choose-running-shoes.html",
+      "title": "http://localhost:8765/how-to-choose-running-shoes.html",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-15T23:26:09.773Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md",
+        "fileName": "searchsolved-search-solved-public-seo-learnings.md"
+      }
+    },
+    "SRC-30D60F655241": {
+      "id": "SRC-30D60F655241",
+      "url": "http://localhost:8765`",
+      "title": "http://localhost:8765`",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-15T23:26:09.797Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md",
+        "fileName": "searchsolved-search-solved-public-seo-learnings.md"
+      }
+    },
+    "SRC-561001BEF42C": {
+      "id": "SRC-561001BEF42C",
+      "url": "http://localhost:8765/how-to-choose-running-shoes.html,Article",
+      "title": "http://localhost:8765/how-to-choose-running-shoes.html,Article",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-15T23:26:09.823Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md",
+        "fileName": "searchsolved-search-solved-public-seo-learnings.md"
+      }
+    },
+    "SRC-0B567F94EA0C": {
+      "id": "SRC-0B567F94EA0C",
+      "url": "http://localhost:8765/how-to-choose-running-shoes.html,Related",
+      "title": "http://localhost:8765/how-to-choose-running-shoes.html,Related",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-15T23:26:09.846Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md",
+        "fileName": "searchsolved-search-solved-public-seo-learnings.md"
+      }
+    },
+    "SRC-97A8EE09F654": {
+      "id": "SRC-97A8EE09F654",
+      "url": "http://localhost:8765/trail-shoes-vs-road-shoes.html,Article",
+      "title": "http://localhost:8765/trail-shoes-vs-road-shoes.html,Article",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-15T23:26:09.870Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md",
+        "fileName": "searchsolved-search-solved-public-seo-learnings.md"
+      }
+    },
+    "SRC-297CD07492ED": {
+      "id": "SRC-297CD07492ED",
+      "url": "http://localhost:8765/trail-shoes-vs-road-shoes.html,Related",
+      "title": "http://localhost:8765/trail-shoes-vs-road-shoes.html,Related",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-15T23:26:09.894Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md",
+        "fileName": "searchsolved-search-solved-public-seo-learnings.md"
+      }
+    },
+    "SRC-D00B2B1BC27F": {
+      "id": "SRC-D00B2B1BC27F",
+      "url": "http://localhost:8765/couch-to-5k-week-by-week.html,Article",
+      "title": "http://localhost:8765/couch-to-5k-week-by-week.html,Article",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-15T23:26:09.924Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md",
+        "fileName": "searchsolved-search-solved-public-seo-learnings.md"
+      }
+    },
+    "SRC-80C91ED1EDD6": {
+      "id": "SRC-80C91ED1EDD6",
+      "url": "http://localhost:8765/couch-to-5k-week-by-week.html,Related",
+      "title": "http://localhost:8765/couch-to-5k-week-by-week.html,Related",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-15T23:26:09.952Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md",
+        "fileName": "searchsolved-search-solved-public-seo-learnings.md"
+      }
+    },
+    "SRC-35AFA8D33DC3": {
+      "id": "SRC-35AFA8D33DC3",
+      "url": "http://localhost:8765/when-to-replace-running-shoes.html,Main",
+      "title": "http://localhost:8765/when-to-replace-running-shoes.html,Main",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-15T23:26:09.975Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md",
+        "fileName": "searchsolved-search-solved-public-seo-learnings.md"
+      }
+    },
+    "SRC-80B5F7CB981B": {
+      "id": "SRC-80B5F7CB981B",
+      "url": "http://localhost:8765/when-to-replace-running-shoes.html,Article",
+      "title": "http://localhost:8765/when-to-replace-running-shoes.html,Article",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-15T23:26:09.999Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md",
+        "fileName": "searchsolved-search-solved-public-seo-learnings.md"
+      }
+    },
+    "SRC-DA4C29E77AA6": {
+      "id": "SRC-DA4C29E77AA6",
+      "url": "http://localhost:8765/when-to-replace-running-shoes.html,Related",
+      "title": "http://localhost:8765/when-to-replace-running-shoes.html,Related",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-15T23:26:10.023Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md",
+        "fileName": "searchsolved-search-solved-public-seo-learnings.md"
+      }
+    },
+    "SRC-7C0A4EBBFDDF": {
+      "id": "SRC-7C0A4EBBFDDF",
+      "url": "http://localhost:8765/first-10k-training-plan.html,Main",
+      "title": "http://localhost:8765/first-10k-training-plan.html,Main",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-15T23:26:10.049Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md",
+        "fileName": "searchsolved-search-solved-public-seo-learnings.md"
+      }
+    },
+    "SRC-0EC9A844439D": {
+      "id": "SRC-0EC9A844439D",
+      "url": "http://localhost:8765/first-10k-training-plan.html,Article",
+      "title": "http://localhost:8765/first-10k-training-plan.html,Article",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-15T23:26:10.073Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md",
+        "fileName": "searchsolved-search-solved-public-seo-learnings.md"
+      }
+    },
+    "SRC-AFBD80EEE297": {
+      "id": "SRC-AFBD80EEE297",
+      "url": "http://localhost:8765/first-10k-training-plan.html,Related",
+      "title": "http://localhost:8765/first-10k-training-plan.html,Related",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-15T23:26:10.097Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md",
+        "fileName": "searchsolved-search-solved-public-seo-learnings.md"
+      }
+    },
+    "SRC-906AAA801A58": {
+      "id": "SRC-906AAA801A58",
+      "url": "http://localhost:8765/how-to-choose-running-shoes.html,Main",
+      "title": "http://localhost:8765/how-to-choose-running-shoes.html,Main",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-15T23:26:10.124Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md",
+        "fileName": "searchsolved-search-solved-public-seo-learnings.md"
+      }
+    },
+    "SRC-3EFCDBED049C": {
+      "id": "SRC-3EFCDBED049C",
+      "url": "http://localhost:8765/when-to-replace-running-shoes.html",
+      "title": "http://localhost:8765/when-to-replace-running-shoes.html",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-15T23:26:10.147Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md",
+        "fileName": "searchsolved-search-solved-public-seo-learnings.md"
+      }
+    },
+    "SRC-2B967AA515CA": {
+      "id": "SRC-2B967AA515CA",
+      "url": "http://localhost:8765/trail-shoes-vs-road-shoes.html",
+      "title": "http://localhost:8765/trail-shoes-vs-road-shoes.html",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-15T23:26:10.171Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md",
+        "fileName": "searchsolved-search-solved-public-seo-learnings.md"
+      }
+    },
+    "SRC-9764B7C021DD": {
+      "id": "SRC-9764B7C021DD",
+      "url": "http://localhost:8765/couch-to-5k-week-by-week.html",
+      "title": "http://localhost:8765/couch-to-5k-week-by-week.html",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-15T23:26:10.195Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md",
+        "fileName": "searchsolved-search-solved-public-seo-learnings.md"
+      }
+    },
+    "SRC-23830B30A526": {
+      "id": "SRC-23830B30A526",
+      "url": "http://localhost:8765/first-10k-training-plan.html",
+      "title": "http://localhost:8765/first-10k-training-plan.html",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-15T23:26:10.221Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md",
+        "fileName": "searchsolved-search-solved-public-seo-learnings.md"
+      }
+    },
+    "SRC-854BA0F6DFB9": {
+      "id": "SRC-854BA0F6DFB9",
+      "url": "https://example.com/shoes",
+      "title": "https://example.com/shoes",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T23:26:10.244Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/searchsolved-search-solved-public-seo-learnings.md",
+        "fileName": "searchsolved-search-solved-public-seo-learnings.md"
+      }
+    },
+    "SRC-4532E40C78EC": {
+      "id": "SRC-4532E40C78EC",
+      "url": "https://docs.nats.io/reference/config",
+      "title": "https://docs.nats.io/reference/config",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T23:26:10.803Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-events-learnings.md",
+        "fileName": "argoproj-argo-events-learnings.md"
+      }
+    },
+    "SRC-F94AA8093328": {
+      "id": "SRC-F94AA8093328",
+      "url": "https://github.com/nats-io/nats-server/blob/v2.14.3/server/jetstream.go",
+      "title": "https://github.com/nats-io/nats-server/blob/v2.14.3/server/jetstream.go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T23:26:10.829Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-events-learnings.md",
+        "fileName": "argoproj-argo-events-learnings.md"
+      }
+    },
+    "SRC-4097565F435B": {
+      "id": "SRC-4097565F435B",
+      "url": "https://github.com/argoproj/argo-events/pull/3388",
+      "title": "https://github.com/argoproj/argo-events/pull/3388",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T23:26:10.852Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-events-learnings.md",
+        "fileName": "argoproj-argo-events-learnings.md"
+      }
+    },
+    "SRC-14AA84E8F043": {
+      "id": "SRC-14AA84E8F043",
+      "url": "https://github.com/argoproj/argo-events/blob/master/pkg/reconciler/eventbus/installer/assets/jetstream/nats.conf",
+      "title": "https://github.com/argoproj/argo-events/blob/master/pkg/reconciler/eventbus/installer/assets/jetstream/nats.conf",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T23:26:10.876Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-events-learnings.md",
+        "fileName": "argoproj-argo-events-learnings.md"
+      }
+    },
+    "SRC-49771AF5D0AA": {
+      "id": "SRC-49771AF5D0AA",
+      "url": "https://github.com/argoproj/argo-events/blob/master/pkg/r",
+      "title": "https://github.com/argoproj/argo-events/blob/master/pkg/r",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T23:26:10.900Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-events-learnings.md",
+        "fileName": "argoproj-argo-events-learnings.md"
+      }
+    },
+    "SRC-CA49037FC5A5": {
+      "id": "SRC-CA49037FC5A5",
+      "url": "https://github.com/argoproj/argo-events/issues/4240",
+      "title": "https://github.com/argoproj/argo-events/issues/4240",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T23:26:10.926Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-events-learnings.md",
+        "fileName": "argoproj-argo-events-learnings.md"
       }
     }
   }

@@ -10210,3 +10210,6 @@ Every entry in this ledger must capture:
 | `learn-github-yvgude-lean-ctx` | `https://github.com/yvgude/lean-ctx` | `5ae3dfff` | Multi-dimensional audit evidence | 2026-11-15T22:58:35.904Z |
 | `learn-github-jellyfin-swiftfin` | `https://github.com/jellyfin/Swiftfin` | `e956be4a` | Multi-dimensional audit evidence | 2026-11-15T22:58:41.239Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `a6baab33` | Multi-dimensional audit evidence | 2026-11-15T22:58:46.501Z |
+| `learn-github-ataraxy-labs-sem` | `https://github.com/Ataraxy-Labs/sem` | `5d74e1fe` | Multi-dimensional audit evidence | 2026-11-15T23:25:57.097Z |
+| `learn-github-searchsolved-search-solved-public-seo` | `https://github.com/searchsolved/search-solved-public-seo` | `6d8d30b4` | Multi-dimensional audit evidence | 2026-11-15T23:26:01.140Z |
+| `learn-github-argoproj-argo-events` | `https://github.com/argoproj/argo-events` | `ba2dd434` | Multi-dimensional audit evidence | 2026-11-15T23:26:05.047Z |

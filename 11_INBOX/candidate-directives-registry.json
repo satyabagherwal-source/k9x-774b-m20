@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T23:11:14.641Z",
+  "last_updated": "2026-11-15T23:26:11.085Z",
   "directives": [
     {
       "id": "CD-001",
@@ -16943,6 +16943,66 @@
       "source_repo": "zleap-ai-sag",
       "domain_letter": "M",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-CAA012-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-15"
+    },
+    {
+      "id": "CD-QZDQ",
+      "directive_title": "sem update across filesystems, and sem find --text honors --in and --json",
+      "source_repo": "ataraxy-labs-sem-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-QZDQ-sem-update-across-filesystems-and-sem-find-text-honors-in-and-json.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-15",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-R0MK",
+      "directive_title": "SERP N-gram Extractor: fix crash on special characters and silent page skips",
+      "source_repo": "searchsolved-search-solved-public-seo-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-R0MK-serp-n-gram-extractor-fix-crash-on-special-characters-and-silent-page-skips.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-15",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-R158",
+      "directive_title": "stop PrevCronTime looping on the DST fall-back day",
+      "source_repo": "argoproj-argo-events-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-R158-stop-prevcrontime-looping-on-the-dst-fall-back-day.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-15",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-21DE7F",
+      "directive_title": "sem update across filesystems, and sem find --text honors --in and --json",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "ataraxy-labs-sem",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-21DE7F-sem-update-across-filesystems-and-sem-fi.md",
+      "staged_date": "2026-11-15"
+    },
+    {
+      "id": "CD-REV-06C0A3",
+      "directive_title": "SERP N-gram Extractor: fix crash on special characters and silent page skips",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "searchsolved-search-solved-public-seo",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-06C0A3-serp-n-gram-extractor-fix-crash-on-speci.md",
+      "staged_date": "2026-11-15"
+    },
+    {
+      "id": "CD-REV-C49BE6",
+      "directive_title": "stop PrevCronTime looping on the DST fall-back day",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "argoproj-argo-events",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C49BE6-stop-prevcrontime-looping-on-the-dst-fal.md",
       "staged_date": "2026-11-15"
     }
   ]

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-15T22:58:46.509Z",
+  "last_updated": "2026-11-15T23:26:05.055Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6066,14 +6066,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-argoproj-argo-events",
-      "content_hash": "38b7719bde30b641f7cf0fd3a843ddfe9ff06adb2ed79a73bad45581ce419308",
-      "verified_at": "2026-11-14T15:03:52.316Z",
+      "content_hash": "ab1f2b6d8f8b8113f0463f385d68cc970cc76704bc90f5647ae532394caaebdb",
+      "verified_at": "2026-11-15T23:26:05.055Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T15:03:52.316Z"
+      "last_updated": "2026-11-15T23:26:05.055Z"
     },
     "HelixDB/helix-db": {
       "repository": "HelixDB/helix-db",
@@ -9606,14 +9606,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ataraxy-labs-sem",
-      "content_hash": "69f11793433213e9a220cd1ea1cf38bb51cabbf7efcbdba365a9c2679bb11fcf",
-      "verified_at": "2026-11-12T13:50:57.885Z",
+      "content_hash": "d57b19c73fe4a1d1d53ad8a8d88b45d825d2864b29a1ab86f8a4a0ba39095cab",
+      "verified_at": "2026-11-15T23:25:57.116Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T13:50:57.885Z"
+      "last_updated": "2026-11-15T23:25:57.116Z"
     },
     "komi-store/komi-store": {
       "repository": "komi-store/komi-store",
@@ -19064,6 +19064,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-15T17:03:54.428Z"
+    },
+    "searchsolved/search-solved-public-seo": {
+      "repository": "searchsolved/search-solved-public-seo",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-searchsolved-search-solved-public-seo",
+      "content_hash": "facdea82f8b15e166cb99a5d7ee5689f3e3caa29aeee367cf53b0da04184b1d8",
+      "verified_at": "2026-11-15T23:26:01.148Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-15T23:26:01.148Z"
     }
   },
   "repos": {

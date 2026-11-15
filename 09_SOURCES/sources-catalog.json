@@ -3963,10 +3963,10 @@
     "repository": "argoproj/argo-events",
     "platform": "github",
     "sourceUrl": "https://github.com/argoproj/argo-events",
-    "sourceVersion": "c1654c54",
+    "sourceVersion": "ba2dd434",
     "license": "Apache-2.0",
-    "contentHash": "38b7719bde30b641f7cf0fd3a843ddfe9ff06adb2ed79a73bad45581ce419308",
-    "lastHarvestedAt": "2026-11-14T15:03:52.310Z",
+    "contentHash": "ab1f2b6d8f8b8113f0463f385d68cc970cc76704bc90f5647ae532394caaebdb",
+    "lastHarvestedAt": "2026-11-15T23:26:05.047Z",
     "learningId": "learn-github-argoproj-argo-events"
   },
   "helixdb-helix-db": {
@@ -6343,10 +6343,10 @@
     "repository": "Ataraxy-Labs/sem",
     "platform": "github",
     "sourceUrl": "https://github.com/Ataraxy-Labs/sem",
-    "sourceVersion": "036dde8e",
+    "sourceVersion": "5d74e1fe",
     "license": "Apache-2.0",
-    "contentHash": "69f11793433213e9a220cd1ea1cf38bb51cabbf7efcbdba365a9c2679bb11fcf",
-    "lastHarvestedAt": "2026-11-12T13:50:57.875Z",
+    "contentHash": "d57b19c73fe4a1d1d53ad8a8d88b45d825d2864b29a1ab86f8a4a0ba39095cab",
+    "lastHarvestedAt": "2026-11-15T23:25:57.097Z",
     "learningId": "learn-github-ataraxy-labs-sem"
   },
   "komi-store-komi-store": {
@@ -12648,5 +12648,15 @@
     "contentHash": "ebddf28b5523f4864d6594d9e4282ab11fc2a7d252894e9ad4bd2f084f227c5a",
     "lastHarvestedAt": "2026-11-15T17:03:54.418Z",
     "learningId": "learn-github-chocoford-excalidrawz"
+  },
+  "searchsolved-search-solved-public-seo": {
+    "repository": "searchsolved/search-solved-public-seo",
+    "platform": "github",
+    "sourceUrl": "https://github.com/searchsolved/search-solved-public-seo",
+    "sourceVersion": "6d8d30b4",
+    "license": "NOASSERTION",
+    "contentHash": "facdea82f8b15e166cb99a5d7ee5689f3e3caa29aeee367cf53b0da04184b1d8",
+    "lastHarvestedAt": "2026-11-15T23:26:01.140Z",
+    "learningId": "learn-github-searchsolved-search-solved-public-seo"
   }
 }

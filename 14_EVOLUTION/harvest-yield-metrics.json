@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T22:58:46.506Z",
-  "total_cycles_completed": 9779,
-  "total_learnings_persisted": 9779,
-  "total_rules_promoted": 9393,
+  "last_updated": "2026-11-15T23:26:05.052Z",
+  "total_cycles_completed": 9782,
+  "total_learnings_persisted": 9782,
+  "total_rules_promoted": 9395,
   "history": [
-    {
-      "timestamp": "2026-11-14T19:03:26.762Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T19:20:38.245Z",
-      "repository": "autotrust/GEV-26B-Decide-NVFP4",
-      "learningId": "learn-huggingface-autotrust-gev-26b-decide-nvfp4",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T19:20:45.806Z",
-      "repository": "pulumi/pulumi",
-      "learningId": "learn-github-pulumi-pulumi",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T19:20:50.983Z",
       "repository": "ytsaurus/ytsaurus",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-15T22:58:46.506Z",
       "repository": "tailscale/tailscale",
       "learningId": "learn-github-tailscale-tailscale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T23:25:57.113Z",
+      "repository": "Ataraxy-Labs/sem",
+      "learningId": "learn-github-ataraxy-labs-sem",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T23:26:01.145Z",
+      "repository": "searchsolved/search-solved-public-seo",
+      "learningId": "learn-github-searchsolved-search-solved-public-seo",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T23:26:05.052Z",
+      "repository": "argoproj/argo-events",
+      "learningId": "learn-github-argoproj-argo-events",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

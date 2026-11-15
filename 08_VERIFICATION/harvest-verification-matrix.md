@@ -10177,3 +10177,6 @@
 | `CYCLE-20261115-RJZX` | `2026-11-15T22:58:35.901Z` | `yvgude/lean-ctx` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md` | Yes (`95b71da2...`) |
 | `CYCLE-20261115-RO44` | `2026-11-15T22:58:41.236Z` | `jellyfin/Swiftfin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8663` | Yes (`5b8c4581...`) |
 | `CYCLE-20261115-RS6A` | `2026-11-15T22:58:46.498Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8664` | Yes (`540d2357...`) |
+| `CYCLE-20261115-QQCM` | `2026-11-15T23:25:57.094Z` | `Ataraxy-Labs/sem` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md` | Yes (`d57b19c7...`) |
+| `CYCLE-20261115-QTGX` | `2026-11-15T23:26:01.137Z` | `searchsolved/search-solved-public-seo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8665` | Yes (`facdea82...`) |
+| `CYCLE-20261115-QWHG` | `2026-11-15T23:26:05.044Z` | `argoproj/argo-events` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8666` | Yes (`ab1f2b6d...`) |

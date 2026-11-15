@@ -4,22 +4,22 @@
 {
   "source_repository": "argoproj/argo-events",
   "source_url": "https://github.com/argoproj/argo-events",
-  "source_version": "c1654c54",
+  "source_version": "ba2dd434",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-14T15:03:52.470Z",
+  "timestamp": "2026-11-15T23:26:05.212Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-argoproj-argo-events",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [argoproj/argo-events](https://github.com/argoproj/argo-events) (Revision: `c1654c54`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-14T15:03:52.470Z`  
+> **Provenance**: Harvested from [argoproj/argo-events](https://github.com/argoproj/argo-events) (Revision: `ba2dd434`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-15T23:26:05.212Z`  
 > **Learning ID**: `learn-github-argoproj-argo-events`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `argoproj/argo-events` (Commit: `c1654c54`)
+- **Target Repository**: `argoproj/argo-events` (Commit: `ba2dd434`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/argoproj-argo-events-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/argoproj/argo-events](https://github.com/argoproj/argo-events))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T15:03:51.604Z  
+> **Harvest Timestamp**: 2026-11-15T23:26:04.182Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Event-driven Automation Framework for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 2714 stars
+- **Stars / Engagement**: 2717 stars
 
 ---
 
@@ -1036,11 +1036,11 @@ func (g *gerritWebhookService) Delete(project, remoteName string) error {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4221** (2026-10-18): **The NATS event source silently stops delivering events when the connection to the NATS server is broken.**
-  *Symptoms*: **Describe the bug** The NATS event source silently stops delivering events when the connection to the NATS server is broken, with nothing logged about it.  We run a staging environment where NATS is intentionally turned off for long periods as a cost-saving measure. While NATS is down, the eventsource reconnect attempts are eventually exhausted and the connection is closed for good. When NATS is started back up, the connection between Argo Events and NATS stays broken: no events are delivered anymore, and — as far as I can tell — nothing is logged related to this broken state. The eventsource pod remains "up", so the only way to recover is a manual restart.  **To Reproduce** Steps to reproduce the behavior: 1. Create a NATS event source pointing at a NATS server and confirm events    are being delivered. 2. Stop the NATS server for longer than the client's reconnect budget    (default: 60 attempts, ~2 minutes). 3. Start the NATS server again. 4. Observe that no events are delivered to the eventsource, the    eventsource pod is still running, and no error/warning is logged about    the dead connection.  **Expected behavior** When the NATS client exhausts its reconnect attempts and closes the connection, the listener should return an error so the controller runner restarts it and re-establishes the subscription. At minimum, the final connection close should be logged.  **Screenshots** N/A  **Environment:**  - Kubernetes: v1.36.4-eks-4cc7921 (EKS)  - Argo: v3.7.9 (helm chart ar
+- **Issue #4240** (2026-11-15): **Sensor hangs at 100% CPU on DST fall-back day: PrevCronTime infinite loop with conditionsReset.byTime.timezone**
+  *Symptoms*: <head></head><p md-src-pos="128..603" style="font-style: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-line: none; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; box-sizing: border-box; margin-top: 16px; margin-bottom: 16px; color: rgb(188, 190, 196); font-family: Helvetica, Arial, freesans, sans-serif; font-size: 13px; font-variant-ligatures: normal; background-color: rgb(25, 26, 28);"><strong md-src-pos="128..148" style="font-weight: bold; box-sizing: border-box;">Describe the bug</strong><span> </span><span md-src-pos="149..175" style="box-sizing: border-box;">When a Sensor trigger uses</span><span> </span><code md-src-pos="176..200" style="box-sizing: border-box; font-style: normal; font-variant-caps: normal; font-weight: normal; font-width: normal; font-size: 0.9em; line-height: normal; font-family: JetBrains Mono, Consolas, Liberation Mono, Menlo, Courier, monospace; font-size-adjust: none; font-kerning: auto; font-variant-alternates: normal; font-variant-ligatures: normal; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-position: normal; font-variant-emoji: normal; font-feature-settings: normal; font-optical-sizing: auto; font-variation-settings: normal; padding: 0.2em 0.4em; margin: 2px; bor
 
-- **Issue #4178** (2026-09-20): **AMQP eventsource never ACKs messages when `consume.autoAck` is `false`**
-  *Symptoms*: **Describe the bug** The AMQP eventsource does not acknowledge (ACK) messages when `consume.autoAck` is set to `false`. Messages are successfully consumed and dispatched to the eventbus, and downstream sensors trigger workflows as expected, but the messages remain permanently in `Unacked` state in RabbitMQ.  Inspecting [`pkg/eventsources/sources/amqp/start.go`](https://github.com/argoproj/argo-events/blob/main/pkg/eventsources/sources/amqp/start.go), the `handleOne` method receives the `amqplib.Delivery`, marshals the event data, calls `dispatch()`, and returns. There is no call to `msg.Ack()` anywhere in the file. The only references to "Ack" are the `AutoAck` configuration field itself (used when calling `ch.Consume()`).  When the `consume` block is omitted, `setDefaults` sets `AutoAck` to `true`, so the broker auto-acknowledges on delivery and the problem is hidden. But as soon as `autoAck: false` is explicitly configured for manual acknowledgment, no ACK is ever sent.  Setting `autoAck: true` is not an acceptable workaround because it acknowledges messages before they are dispatched to the eventbus, risking silent message loss if the dispatch fails.  **To Reproduce** 1. Deploy an AMQP eventsource with `consume.autoAck: false`:     ```yaml     apiVersion: argoproj.io/v1alpha1     kind: EventSource     metadata:       name: amqp-eventsource     spec:       amqp:         example:           url: amqp://user:pass@rabbitmq-host:5672/           exchangeName: test           excha
+- **Issue #4223** (2026-11-14): **Managed JetStream EventBus uses the publicly known literal $JS_KEY as its encryption key**
+  *Symptoms*: **Describe the bug**  Argo Events’ managed JetStream EventBus renders its NATS configuration with a quoted environment-variable reference:  ```conf jetstream {   key: "$JS_KEY"   store_dir: "/data/jetstream/store" } ```  [[NATS configuration variables must be referenced without quotes](https://docs.nats.io/reference/config/#variables)](https://docs.nats.io/reference/config/#variables). Consequently, the effective JetStream encryption key is the literal seven-byte string `$JS_KEY`, rather than the installation-specific value stored in the generated Kubernetes Secret.  Affected managed EventBuses therefore use the same publicly known root encryption key for data at rest. [[NATS uses this key in HMAC-SHA256 to derive storage encryption keys](https://github.com/nats-io/nats-server/blob/v2.14.3/server/jetstream.go#L240-L252)](https://github.com/nats-io/nats-server/blob/v2.14.3/server/jetstream.go#L240-L252). An attacker who obtains JetStream storage files, snapshots, or backups can derive those keys without obtaining the Kubernetes Secret.  The quoted reference was introduced by [[#3388](https://github.com/argoproj/argo-events/pull/3388)](https://github.com/argoproj/argo-events/pull/3388), is present in v1.9.4 and v1.9.11, and remains in both templates on `master` as of October 14, 2026:  - [[nats.conf](https://github.com/argoproj/argo-events/blob/master/pkg/reconciler/eventbus/installer/assets/jetstream/nats.conf#L16-L20)](https://github.com/argoproj/argo-events/blob/master/pkg/r
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1057,189 +1057,331 @@ func (g *gerritWebhookService) Delete(project, remoteName string) error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ca9817ff` (2026-11-13)
-**Commit Message**: fix(deps): update Go and crypto security baseline (#4272)
+### Incident Patch 1: `ba2dd434` (2026-11-15)
+**Commit Message**: fix: stop PrevCronTime looping on the DST fall-back day (#4241)
 
-Signed-off-by: Helena Brewster <[REDACTED_EMAIL]>
+Signed-off-by: Ahmed Laban <[REDACTED_EMAIL]>
 
-**File**: `go.mod` (modified, +1/-1)
+**File**: `pkg/shared/util/cronutil.go` (modified, +8/-4)
 ```diff
-@@ -87,7 +87,7 @@ require (
- 	go.uber.org/ratelimit v0.3.1
- 	go.uber.org/zap v1.28.0
- 	go.yaml.in/yaml/v3 v3.0.6
--	golang.org/x/crypto v0.58.0
-+	golang.org/x/crypto v0.58.1-0.20261009181718-2f1f834330b2
- 	golang.org/x/tools v0.52.0
- 	google.golang.org/api v0.310.0
- 	google.golang.org/grpc v1.85.0
-```
-
-**File**: `go.sum` (modified, +2/-2)
-```diff
-@@ -998,8 +998,8 @@ golang.org/x/crypto v0.0.0-20220722155217-630584e8d5aa/go.mod h1:IxCIyHEi3zRg3s0
- golang.org/x/crypto v0.5.0/go.mod h1:NK/OQwhpMQP3MwtdjgLlYHnH9ebylxKWv3e0fK+mkQU=
- golang.org/x/crypto v0.6.0/go.mod h1:OFC/31mSvZgRz0V1QTNCzfAI1aIRzbiufJtkMIlEp58=
- golang.org/x/crypto v0.18.0/go.mod h1:R0j02AL6hcrfOiy9T4ZYp/rcWeMxM3L6QYxlOuEG1mg=
--golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
--golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
-+golang.org/x/crypto v0.58.1-0.20261009181718-2f1f834330b2 h1:zGDaB+/Mus2mScKvZ23k+W9NAUbP56sNM9SptgvWI5A=
-+golang.org/x/crypto v0.58.1-0.20261009181718-2f1f834330b2/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
- golang.org/x/exp v0.0.0-20190121172915-509febef88a4/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
- golang.org/x/exp v0.0.0-20190306152737-a1d7652674e8/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
- golang.org/x/exp v0.0.0-20200908183739-ae8ad444f925/go.mod h1:1phAWC201xIgDyaFpmDeZkgf70Q4Pd/CNqfRtVPtxNw=
-```
-
----
-
-### Incident Patch 2: `b6e3d89a` (2026-11-13)
-**Commit Message**: chore(deps): bump slack-go/slack to v0.35.0 and fix Slack signature test timestamp (#4275)
-
-Signed-off-by: Michael Walsh <[REDACTED_EMAIL]>
-
-**File**: `go.mod` (modified, +1/-1)
-```diff
-@@ -73,7 +73,7 @@ require (
- 	github.com/radovskyb/watcher v1.0.7
- 	github.com/riferrei/srclient v0.7.4
- 	github.com/robfig/cron/v3 v3.0.1
--	github.com/slack-go/slack v0.31.0
-+	github.com/slack-go/slack v0.35.0
- 	github.com/smartystreets/goconvey v1.8.1
- 	github.com/spf13/cobra v1.10.2
- 	github.com/spf13/viper v1.21.0
-```
-
-**File**: `go.sum` (modified, +2/-2)
-```diff
-@@ -834,8 +834,8 @@ github.com/sirupsen/logrus v1.10.2 h1:G2SED73/qrAu6YwbdxOD6peLkCBI3z7L+ykJFTXJBB
- github.com/sirupsen/logrus v1.10.2/go.mod h1:SLEg8TqYulVKKfIGHldVp2K2aYz2DKSVBq4g/H5bR7Q=
- github.com/skeema/knownhosts v1.3.1 h1:X2osQ+RAjK76shCbvhHHHVl3ZlgDm8apHEHFqRjnBY8=
- github.com/skeema/knownhosts v1.3.1/go.mod h1:r7KTdC8l4uxWRyK2TpQZ/1o5HaSzh06ePQNxPwTcfiY=
--github.com/slack-go/slack v0.31.0 h1:gjep/mWO7igMHh9GU/Yc4jTgDlRkjMZWz99AD6zBuwY=
--github.com/slack-go/slack v0.31.0/go.mod h1:ph5iUlM1bUhqOeRynzryiWfkv6vVElt5JbhXbhtApsI=
-+github.com/slack-go/slack v0.35.0 h1:lxUmPzkYYlSHLMNdmgvtdzGFnKAJiApA5gZiMcGEYiw=
-+github.com/slack-go/slack v0.35.0/go.mod h1:swfK2lWHa2StZ3TXdUdK9sBzcC+oDXpW+jsHd5PoPRM=
- github.com/smarty/assertions v1.15.0 h1:cR//PqUBUiQRakZWqBiFFQ9wb8emQGDb0HeGdqGByCY=
- github.com/smarty/assertions v1.15.0/go.mod h1:yABtdzeQs6l1brC900WlRNwj6ZR55d7B+E8C6HtKdec=
- github.com/smartystreets/assertions v0.0.0-20180927180507-b2de0cb4f26d/go.mod h1:OnSkiWE9lh6wB0YB77sQom3nweQdgAjqCqsofrRNTgc=
-```
-
-**File**: `pkg/eventsources/sources/slack/start_test.go` (modified, +1/-1)
-```diff
-@@ -84,7 +84,7 @@ func TestSlackSignature(t *testing.T) {
- 			payload := []byte("payload=%7B%22type%22%3A%22block_actions%22%2C%22team%22%3A%7B%22id%22%3A%22T0CAG%22%2C%22domain%22%3A%22acme-creamery%22%7D%2C%22user%22%3A%7B%22id%22%3A%22U0CA5%22%2C%22username%22%3A%22Amy%20McGee%22%2C%22name%22%3A%22Amy%20McGee%22%2C%22team_id%22%3A%22T3MDE%22%7D%2C%22api_app_id%22%3A%22A0CA5%22%2C%22token%22%3A%22Shh_its_a_seekrit%22%2C%22container%22%3A%7B%22type%22%3A%22message%22%2C%22text%22%3A%22The%20contents%20of%20the%20original%20message%20where%20the%20action%20originated%22%7D%2C%22trigger_id%22%3A%2212466734323.1395872398%22%2C%22response_url%22%3A%22https%3A%2F%2Fwww.postresponsestome.com%2FT123567%2F1509734234%22%2C%22actions%22%3A%5B%7B%22type%22%3A%22button%22%2C%22block_id%22%3A%22actionblock789%22%2C%22action_id%22%3A%2227S%22%2C%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Link%20Button%22%2C%22emoji%22%3Atrue%7D%2C%22action_ts%22%3A%221564701248.149432%22%7D%5D%7D")
- 			h := make(http.Header)
+@@ -90,8 +90,12 @@ WRAP:
  
--			rts := int(time.Now().UTC().UnixNano())
-+			rts := int(time.Now().UTC().Unix())
- 			hmac := hmac.New(sha256.New, []byte(router.signingSecret))
- 			b := strings.Join([]string{"v0", strconv.Itoa(rts), string(payload)}, ":")
- 			_, err := hmac.Write([]byte(b))
+ 	for 1<<uint(t.Hour())&s.Hour == 0 {
+ 		// set t to the last second of the previous hour
+-		t = time.Date(t.Year(), t.Month(), t.Day(), t.Hour(), 0, 0, 0, loc)
+-		t = t.Add(-1 * time.Second)
++		//
++		// Subtract the elapsed minutes and seconds instead of using time.Date:
++		// on the day the clocks fall back, an hour happens twice and time.Date
++		// returns the later of the two instants, which can move t forward and
++		// loop forever.
++		t = t.Add(-time.Duration(t.Minute())*time.Minute - time.Duration(t.Second()+1)*time.Second)
+ 
+ 		if t.Hour() == 23 {
+ 			goto WRAP
+@@ -100,8 +104,8 @@ WRAP:
+ 
+ 	for 1<<uint(t.Minute())&s.Minute == 0 {
+ 		// set t to the last second of the previous minute
+-		t = time.Date(t.Year(), t.Month(), t.Day(), t.Hour(), t.Minute(), 0, 0, loc)
+-		t = t.Add(-1 * time.Second)
++		// (see the hour loop above for why time.Date isn't used here)
++		t = t.Add(-time.Duration(t.Second()+1) * time.Second)
+ 
+ 		if t.Minute() == 59 {
+ 			goto WRAP
 ```
 
----
-
-### Incident Patch 3: `4b00e71c` (2026-11-13)
-**Commit Message**: fix(eventsources): enforce webhook payload limit on form posts (#4189)
-
-Signed-off-by: immanuwell <[REDACTED_EMAIL]>
-
-**File**: `pkg/eventsources/sources/webhook/payload_limit_test.go` (added, +58/-0)
+**File**: `pkg/shared/util/cronutil_test.go` (modified, +57/-0)
 ```diff
-@@ -0,0 +1,58 @@
-+package webhook
+@@ -104,3 +104,60 @@ func getTime(value string) time.Time {
+ 	}
+ 	panic("could not parse time value " + value)
+ }
 +
-+import (
-+	"io"
-+	"net/http"
-+	"net/http/httptest"
-+	"strings"
-+	"testing"
++// TestPrevCronTimeDSTFallBack covers the day the clocks fall back, when one
++// wall-clock hour happens twice. time.Date returns the later of the two
++// instants for such a wall time, so truncating with time.Date there can move
++// t forward instead of backward. See
++// https://github.com/argoproj/argo-events/issues/4240.
++func TestPrevCronTimeDSTFallBack(t *testing.T) {
++	parser := cronlib.NewParser(cronlib.Second | cronlib.Minute | cronlib.Hour | cronlib.Dom | cronlib.Month | cronlib.DowOptional | cronlib.Descriptor)
 +
-+	"github.com/argoproj/argo-events/pkg/apis/events/v1alpha1"
-+	"github.com/argoproj/argo-events/pkg/eventsources/common/webhook"
-+)
++	runs := []struct {
++		time, spec string
++		expected   string
++	}{
++		// Europe/Berlin: 2026-10-25 03:00 CEST (+0200) -> 02:00 CET (+0100).
++		// Walking back through the repeated 02:xx hour used to loop forever.
++		{"2026-10-25T03:30:00+0100", "TZ=Europe/Berlin 0 0 0 * * *", "2026-10-25T00:00:00+0200"},
++		{"2026-10-25T12:00:00+0100", "TZ=Europe/Berlin 0 0 0 * * *", "2026-10-25T00:00:00+0200"},
++		{"2026-10-25T02:30:00+0100", "TZ=Europe/Berlin 0 0 0 * * *", "2026-10-25T00:00:00+0200"},
++		{"2026-10-25T03:30:00+0100", "TZ=Europe/Berlin 0 0 1 * * *", "2026-10-25T01:00:00+0200"},
 +
-+func TestFormPayloadRespectsDefaultMaxPayloadSize(t *testing.T) {
-+	route := webhook.GetFakeRoute()
-+	context := *route.Context
-+	route.Context = &context
-+	route.Context.Method = http.MethodPost
-+	route.Active = true
-+	router := &Router{route: route}
++		// Hourly job during the repeated hour: the first 02:00 (CEST) must not
++		// be reported as the second 02:00 (CET), which is in the future.
++		{"2026-10-25T02:30:00+0200", "TZ=Europe/Berlin 0 0 * * * *", "2026-10-25T02:00:00+0200"},
++		{"2026-10-25T02:30:00+0100", "TZ=Europe/Berlin 0 0 * * * *", "2026-10-25T02:00:00+0100"},
++		{"2026-10-25T03:00:00+0100", "TZ=Europe/Berlin 0 30 * * * *", "2026-10-25T02:30:00+0100"},
 +
-+	server := httptest.NewServer(http.HandlerFunc(router.HandleRoute))
-+	defer server.Close()
-+	dispatched := make(chan bool, 1)
-+	done := make(chan struct{})
-+	go func() {
-+		select {
-+		case event := <-route.DispatchChan:
-+			dispatched <- true
-+			event.SuccessChan <- true
-+		case <-done:
++		// America/New_York: 2026-11-01 02:00 EDT (-0400) -> 01:00 EST (-0500).
++		{"2026-11-01T02:30:00-0500", "TZ=America/New_York 0 0 0 * * *", "2026-11-01T00:00:00-0400"},
++		{"2026-11-01T01:30:00-0400", "TZ=America/New_York 0 0 * * * *", "2026-11-01T01:00:00-0400"},
++	}
++
++	for _, c := range runs {
++		type result struct {
++			t   time.Time
++			err error
 +		}
-+	}()
-+	form := "a=" + strings.Repeat("x", int(v1alpha1.DefaultMaxWebhookPayloadSize))
-+	response, err := http.Post(server.URL+"/fake", "application/x-www-form-urlencoded", strings.NewReader(form))
-+	if err != nil {
-+		close(done)
-+		t.Fatal(err)
-+	}
-+	defer response.Body.Close()
-+	close(done)
-+	body, err := io.ReadAll(response.Body)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
++		done := make(chan result, 1)
++		go func() {
++			actual, err := PrevCronTime(c.spec, parser, getTime(c.time))
++			done <- result{actual, err}
++		}()
 +
-+	if response.StatusCode != http.StatusBadRequest {
-+		t.Errorf("status = %d, want %d", response.StatusCode, http.StatusBadRequest)
-+	}
-+	if !strings.Contains(string(body), "http: request body too large") {
-+		t.Errorf("response = %q, want request body too large error", body)
-+	}
-+	select {
-+	case <-dispatched:
-+		t.Error("oversized form was dispatched")
-+	default:
++		select {
++		case r := <-done:
++			if r.err != nil {
++				t.Errorf("%s, %q: error: %v", c.time, c.spec, r.err)
++				continue
++			}
++			expected := getTime(c.expected)
++			if !r.t.Equal(expected) {
++				t.Errorf("%s, %q: (expected) %v != %v (actual)", c.time, c.spec, expected, r.t)
++			}
++		case <-time.After(5 * time.Second):
++			t.Fatalf("%s, %q: PrevCronTime did not return within 5s", c.time, c.spec)
++		}
 +	}
 +}
 ```
 
-**File**: `pkg/eventsources/sources/webhook/start.go` (modified, +1/-5)
+---
+
+### Incident Patch 2: `3b39ad67` (2026-11-14)
+**Commit Message**: fix: encrypt the JetStream store with the generated key, not the literal $JS_KEY (#4224)
+
+Signed-off-by: Youssef Omar Bouden <[REDACTED_EMAIL]>
+
+**File**: `docs/eventbus/jetstream.md` (modified, +2/-0)
 ```diff
-@@ -165,6 +165,7 @@ func GetBody(writer *http.ResponseWriter, request *http.Request, route *webhook.
- 		ret := json.RawMessage(body)
- 		return &ret, nil
- 	case http.MethodPost:
-+		request.Body = http.MaxBytesReader(*writer, request.Body, route.Context.GetMaxPayloadSize())
- 		contentType := ""
- 		if len(request.Header["Content-Type"]) > 0 {
- 			contentType = request.Header["Content-Type"][0]
-@@ -174,21 +175,16 @@ func GetBody(writer *http.ResponseWriter, request *http.Request, route *webhook.
- 		case "application/x-www-form-urlencoded":
- 			if err := request.ParseForm(); err != nil {
- 				logger.Errorw("failed to parse form data", zap.Error(err))
--				sharedutil.SendInternalErrorResponse(*writer, err.Error())
--				route.Metrics.EventProcessingFailed(route.EventSourceName, route.EventName)
- 				return nil, err
- 			}
- 			body, _ := json.Marshal(request.PostForm)
- 			ret := json.RawMessage(body)
- 			return &ret, nil
- 		// default including "application/json" is parsing body as JSON
- 		default:
--			request.Body = http.MaxBytesReader(*writer, request.Body, route.Context.GetMaxPayloadSize())
- 			body, err := getRequestBody(request)
- 			if err != nil {
- 				logger.Errorw("failed to read request body", zap.Error(err))
--				sharedutil.SendErrorResponse(*writer, err.Error())
--				route.Metrics.EventProcessingFailed(route.EventSourceName, route.EventName)
- 				return nil, err
- 			}
- 			ret := json.RawMessage(body)
+@@ -65,6 +65,8 @@ spec:
+ 
+ For Jetstream, TLS is turned on for all client-server communication as well as between Jetstream nodes. In addition, for client-server communication we by default use password authentication (and because TLS is turned on, the password is encrypted).
+ 
++The JetStream store on disk is encrypted with a key the controller generates and keeps in the `eventbus-<name>-js-server` Secret. On NATS 2.10 and later the server reads that key from the Secret; a server that was created by an earlier controller release encrypted its store with the literal string `$JS_KEY`, and the configuration names it as `prev_key`, so the store is re-encrypted with the real key on the first start after the upgrade. NATS 2.8 and 2.9 have no `prev_key`, so on those versions the configuration keeps the literal key to leave existing stores readable; move to 2.10 or later to have the generated key used.
++
+ ## How it works under the hood
+ 
+ Jetstream has the concept of a Stream, and Subjects (i.e. topics) which are used on a Stream. From the documentation: “Each Stream defines how messages are stored and what the limits (duration, size, interest) of the retention are.” For Argo Events, we have one Stream called "default" with a single set of settings, but we have multiple subjects, each of which is named `default.<eventsourcename>.<eventname>`. Sensors subscribe to the subjects they need using durable consumers.
+```
+
+**File**: `go.mod` (modified, +1/-1)
+```diff
+@@ -19,6 +19,7 @@ require (
+ 	github.com/Azure/azure-sdk-for-go/sdk/storage/azqueue v1.0.1
+ 	github.com/IBM/sarama v1.43.0
+ 	github.com/Knetic/govaluate v3.0.1-0.20171022003610-9aa49832a739+incompatible
++	github.com/Masterminds/semver/v3 v3.5.0
+ 	github.com/Masterminds/sprig/v3 v3.3.0
+ 	github.com/ahmetb/gen-crd-api-reference-docs v0.3.0
+ 	github.com/aliyun/aliyun-mns-go-sdk v1.0.11
+@@ -130,7 +131,6 @@ require (
+ 	github.com/AzureAD/microsoft-authentication-library-for-go v1.10.1 // indirect
+ 	github.com/DataDog/zstd v1.5.0 // indirect
+ 	github.com/Masterminds/goutils v1.1.1 // indirect
+-	github.com/Masterminds/semver/v3 v3.5.0 // indirect
+ 	github.com/Microsoft/go-winio v0.6.2 // indirect
+ 	github.com/OvyFlash/telegram-bot-api v0.0.0-20241219171906-3f2ca0c14ada // indirect
+ 	github.com/PagerDuty/go-pagerduty v1.8.0 // indirect
+```
+
+**File**: `pkg/reconciler/eventbus/installer/assets/jetstream/nats-cluster.conf` (modified, +5/-0)
+```diff
+@@ -14,7 +14,12 @@ server_name: $POD_NAME
+ #                                 #
+ ###################################
+ jetstream {
++{{- if .KeyFromEnv }}
++  key: $JS_KEY
++  prev_key: "$JS_KEY"
++{{- else }}
+   key: "$JS_KEY"
++{{- end }}
+   store_dir: "/data/jetstream/store"
+   {{.Settings}}
+ }
+```
+
+**File**: `pkg/reconciler/eventbus/installer/assets/jetstream/nats.conf` (modified, +5/-0)
+```diff
+@@ -14,7 +14,12 @@ server_name: $POD_NAME
+ #                                 #
+ ###################################
+ jetstream {
++{{- if .KeyFromEnv }}
++  key: $JS_KEY
++  prev_key: "$JS_KEY"
++{{- else }}
+   key: "$JS_KEY"
++{{- end }}
+   store_dir: "/data/jetstream/store"
+   {{.Settings}}
+ }
+```
+
+**File**: `pkg/reconciler/eventbus/installer/installer_test.go` (modified, +9/-0)
+```diff
+@@ -23,6 +23,9 @@ const (
+ )
+ 
+ var (
++	// testJetStreamPrevKeyVersion is the first NATS release with prev_key support.
++	testJetStreamPrevKeyVersion = "2.10.29"
++
+ 	fakeConfig = &reconciler.GlobalConfig{
+ 		EventBus: &reconciler.EventBusConfig{
+ 			NATS: &reconciler.StanConfig{
+@@ -42,6 +45,12 @@ var (
+ 						ConfigReloaderImage:  testJSReloaderImage,
+ 						MetricsExporterImage: testJetStreamExporterImage,
+ 					},
++					{
++						Version:              testJetStreamPrevKeyVersion,
++						NatsImage:            testJetStreamImage,
++						ConfigReloaderImage:  testJSReloaderImage,
++						MetricsExporterImage: testJetStreamExporterImage,
++					},
+ 				},
+ 			},
+ 		},
+```
+
+**File**: `pkg/reconciler/eventbus/installer/jetstream.go` (modified, +22/-1)
+```diff
+@@ -10,6 +10,7 @@ import (
+ 	"text/template"
+ 	"time"
+ 
++	"github.com/Masterminds/semver/v3"
+ 	"github.com/spf13/viper"
+ 	"go.uber.org/zap"
+ 	appv1 "k8s.io/api/apps/v1"
+@@ -365,7 +366,9 @@ func (r *jetStreamInstaller) buildStatefulSetSpec(jsVersion *reconciler.JetStrea
+ 							{Name: "SERVER_NAME", Value: "$(POD_NAME)"},
+ 							{Name: "POD_NAMESPACE", ValueFrom: &corev1.EnvVarSource{FieldRef: &corev1.ObjectFieldSelector{FieldPath: "metadata.namespace"}}},
+ 							{Name: "CLUSTER_ADVERTISE", Value: "$(POD_NAME)." + generateJetStreamServiceName(r.eventBus) + ".$(POD_NAMESPACE).svc"},
+-							{Name: "JS_KEY", ValueFrom: &corev1.EnvVarSource{SecretKeyRef: &corev1.SecretKeySelector{LocalObjectReference: corev1.LocalObjectReference{Name: generateJetStreamServerSecretName(r.eventBus)}, Key: v1alpha1.JetStreamServerSecretEncryptionKey}}},
++							{Name: "JS_KEY_RAW", ValueFrom: &corev1.EnvVarSource{SecretKeyRef: &corev1.SecretKeySelector{LocalObjectReference: corev1.LocalObjectReference{Name: generateJetStreamServerSecretName(r.eventBus)}, Key: v1alpha1.JetStreamServerSecretEncryptionKey}}},
++							// Quoted so that nats-server reads the key as a string whatever characters it holds.
++							{Name: "JS_KEY", Value: `"$(JS_KEY_RAW)"`},
+ 						},
+ 						VolumeMounts: []corev1.VolumeMount{
+ 							{Name: configVolumeName, MountPath: "/etc/nats-config"},
+@@ -676,6 +679,7 @@ func (r *jetStreamInstaller) createConfigMap(ctx context.Context) error {
+ 	}
+ 	var confTplOutput bytes.Buffer
+ 	if err := confTpl.Execute(&confTplOutput, struct {
++		KeyFromEnv     bool
+ 		MaxPayloadSize string
+ 		ClusterName    string
+ 		MonitorPort    string
+@@ -684,6 +688,7 @@ func (r *jetStreamInstaller) createConfigMap(ctx context.Context) error {
+ 		Routes         string
+ 		Settings       string
+ 	}{
++		KeyFromEnv:     jetStreamSupportsPrevKey(r.eventBus.Spec.JetStream.Version),
+ 		MaxPayloadSize: maxPayload,
+ 		ClusterName:    r.eventBus.Name,
+ 		MonitorPort:    strconv.Itoa(int(jsMonitorPort)),
+@@ -771,6 +776,22 @@ func (r *jetStreamInstaller) getPVCs(ctx context.Context) ([]corev1.PersistentVo
+ 	return pvcl.Items, nil
+ }
+ 
++// jetStreamSupportsPrevKey reports whether the nats-server of the given version accepts the
++// prev_key setting, added in 2.10. Those servers get the encryption key through an unquoted
++// variable reference, with prev_key set to the literal "$JS_KEY" that older releases of this
++// template encrypted the stores with, so an existing store is re-encrypted on the first start.
++// Older servers keep the quoted reference, as the literal key is the only one they can read.
++func jetStreamSupportsPrevKey(version string) bool {
++	if version == "latest" {
++		return true
++	}
++	v, err := semver.NewVersion(version)
++	if err != nil {
++		return false
++	}
++	return !v.LessThan(semver.MustParse("2.10.0"))
++}
++
+ func generateJetStreamServerSecretName(eventBus *v1alpha1.EventBus) string {
+ 	return fmt.Sprintf("eventbus-%s-js-server", eventBus.Name)
+ }
+```
+
+**File**: `pkg/reconciler/eventbus/installer/jetstream_test.go` (modified, +40/-1)
+```diff
+@@ -113,9 +113,14 @@ func TestJetStreamCreateObjects(t *testing.T) {
+ 		for _, e := range sts.Spec.Template.Spec.Containers[0].Env {
+ 			envNames = append(envNames, e.Name)
+ 		}
+-		for _, e := range []string{"POD_NAME", "SERVER_NAME", "POD_NAMESPACE", "CLUSTER_ADVERTISE", "JS_KEY"} {
++		for _, e := range []string{"POD_NAME", "SERVER_NAME", "POD_NAMESPACE", "CLUSTER_ADVERTISE", "JS_KEY_RAW", "JS_KEY"} {
+ 			assert.Contains(t, envNames, e)
+ 		}
++		for _, e := range sts.Spec.Template.Spec.Containers[0].Env {
++			if e.Name == "JS_KEY" {
++				assert.Equal(t, `"$(JS_KEY_RAW)"`, e.Value)
++			}
++		}
+ 	})
+ 
+ 	t.Run("test create svc", func(t *testing.T) {
+@@ -169,9 +174,43 @@ func TestJetStreamCreateObjects(t *testing.T) {
+ 		assert.NoError(t, err)
+ 		assert.Equal(t, 1, len(c.Data))
+ 		assert.Contains(t, c.Annotations, v1alpha1.AnnotationResourceSpecHash)
++		conf := c.Data[v1alpha1.JetStreamConfigMapKey]
++		assert.Contains(t, conf, "\n  key: \"$JS_KEY\"\n")
++		assert.NotContains(t, conf, "prev_key")
++	})
++
++	t.Run("test create configmap with prev_key", func(t *testing.T) {
++		testObj := testJetStreamEventBus.DeepCopy()
++		testObj.Spec.JetStream.Version = testJetStreamPrevKeyVersion
++		i.eventBus = testObj
++		err := i.createConfigMap(ctx)
++		assert.NoError(t, err)
++		c := &corev1.ConfigMap{}
++		err = cl.Get(ctx, types.NamespacedName{Namespace: testObj.Namespace, Name: generateJetStreamConfigMapName(testObj)}, c)
++		assert.NoError(t, err)
++		conf := c.Data[v1alpha1.JetStreamConfigMapKey]
++		assert.Contains(t, conf, "\n  key: $JS_KEY\n")
++		assert.Contains(t, conf, "\n  prev_key: \"$JS_KEY\"\n")
++		assert.NotContains(t, conf, "\n  key: \"$JS_KEY\"\n")
+ 	})
+ }
+ 
++func TestJetStreamSupportsPrevKey(t *testing.T) {
++	for version, want := range map[string]bool{
++		"2.8.2":         false,
++		"2.8.2-alpine":  false,
++		"2.9.16":        false,
++		"2.10.0":        true,
++		"2.10.29":       true,
++		"2.14.4":        true,
++		"latest":        true,
++		"":              false,
++		"not-a-version": false,
++	} {
++		assert.Equal(t, want, jetStreamSupportsPrevKey(version), version)
++	}
++}
++
+ func TestBuildJetStreamStatefulSetSpec(t *testing.T) {
+ 	cl := fake.NewClientBuilder().Build()
+ 	i := &jetStreamInstaller{
 ```
 
 #### Recent Merged Pull Requests:
@@ -1248,7 +1390,7 @@ Signed-off-by: immanuwell <[REDACTED_EMAIL]>
 - **PR #4284** (2026-11-14): chore(deps): bump github.com/xdg-go/scram from 1.3.0 to 1.4.0 (@dependabot[bot])
 - **PR #4283** (2026-11-13): chore(deps): bump cloud.google.com/go/pubsub/v2 from 2.8.0 to 2.8.1 (@dependabot[bot])
 - **PR #4282** (2026-11-13): chore(deps): bump github.com/tidwall/sjson from 1.2.5 to 1.2.9 (@dependabot[bot])
-- **PR #4277** (2026-11-13): chore: update dependency bot running interval to monthly (@whynowy)
+- **PR #4280** (2026-11-14): feat(controller): make leader election timing configurable (@cvas22)
 
 ---
 
@@ -1268,31 +1410,41 @@ Signed-off-by: immanuwell <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update Go and crypto security baseline
+## X. stop PrevCronTime looping on the DST fall-back day
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-events. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/shared/util/cronutil.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-events. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ca9817ff`: deps): update Go and crypto security baseline. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ba2dd434`: stop PrevCronTime looping on the DST fall-back day. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/shared/util/cronutil.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	golang.org/x/crypto v0.58.1-0.20261009181718-2f1f834330b2
+		//
+		// Subtract the elapsed minutes and seconds instead of using time.Date:
+		// on the day the clocks fall back, an hour happens twice and time.Date
+		// returns the later of the two instants, which can move t forward and
+		// loop forever.
+		t = t.Add(-time.Duration(t.Minute())*time.Minute - time.Duration(t.Second()+1)*time.Second)
+		// (see the hour loop above for why time.Date isn't used here)
+		t = t.Add(-time.Duration(t.Second()+1) * time.Second)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	golang.org/x/crypto v0.58.0
+		t = time.Date(t.Year(), t.Month(), t.Day(), t.Hour(), 0, 0, 0, loc)
+		t = t.Add(-1 * time.Second)
+		t = time.Date(t.Year(), t.Month(), t.Day(), t.Hour(), t.Minute(), 0, 0, loc)
+		t = t.Add(-1 * time.Second)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ca9817ff` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ba2dd434` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

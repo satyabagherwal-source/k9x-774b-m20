@@ -627556,3 +627556,164 @@ func (c *connHalf) CloseRead() error {
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `a6baab33` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8665. SERP N-gram Extractor: fix crash on special characters and silent page skips (Harvested from searchsolved/search-solved-public-seo)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "SERP N-gram Extractor: fix crash on special characters and silent page skips",
+  "source": "searchsolved/search-solved-public-seo",
+  "source_url": "https://github.com/searchsolved/search-solved-public-seo",
+  "source_version": "6d8d30b4",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-15T23:26:00.714Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-searchsolved-search-solved-public-seo",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [searchsolved/search-solved-public-seo](https://github.com/searchsolved/search-solved-public-seo) (Revision: `6d8d30b4`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `content-analysis/ngram-serp-extractor/ngram_serp_extractor.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in searchsolved/search-solved-public-seo. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `aebea3d3`: SERP N-gram Extractor: fix crash on special characters and silent page skips. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `content-analysis/ngram-serp-extractor/ngram_serp_extractor.py`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+                # trafilatura 2.x returns a Document object, not a dict
+                if d is None or not d.text:
+                    continue
+                text.append(d.text)
+                title.append(d.title or '')
+                extracted_url.append(d.url or url)
+        df_title['title'] = df_title['title'].str.replace(char, ' ', regex=False)
+        df_serp['text'] = df_serp['text'].str.replace(char, ' ', regex=False)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Induced defect failure mode:
+                text.append((d['text']))
+                title.append(d['title'])
+                extracted_url.append(d['url'])
+        df_title['title'] = df_title['title'].str.replace(char, ' ', regex=True)
+        df_serp['text'] = df_serp['text'].str.replace(char, ' ', regex=True)
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `aebea3d3` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8666. stop PrevCronTime looping on the DST fall-back day (Harvested from argoproj/argo-events)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "stop PrevCronTime looping on the DST fall-back day",
+  "source": "argoproj/argo-events",
+  "source_url": "https://github.com/argoproj/argo-events",
+  "source_version": "ba2dd434",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-15T23:26:04.633Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-argoproj-argo-events",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [argoproj/argo-events](https://github.com/argoproj/argo-events) (Revision: `ba2dd434`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `pkg/shared/util/cronutil.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-events. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `ba2dd434`: stop PrevCronTime looping on the DST fall-back day. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/shared/util/cronutil.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+		//
+		// Subtract the elapsed minutes and seconds instead of using time.Date:
+		// on the day the clocks fall back, an hour happens twice and time.Date
+		// returns the later of the two instants, which can move t forward and
+		// loop forever.
+		t = t.Add(-time.Duration(t.Minute())*time.Minute - time.Duration(t.Second()+1)*time.Second)
+		// (see the hour loop above for why time.Date isn't used here)
+		t = t.Add(-time.Duration(t.Second()+1) * time.Second)
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+		t = time.Date(t.Year(), t.Month(), t.Day(), t.Hour(), 0, 0, 0, loc)
+		t = t.Add(-1 * time.Second)
+		t = time.Date(t.Year(), t.Month(), t.Day(), t.Hour(), t.Minute(), 0, 0, loc)
+		t = t.Add(-1 * time.Second)
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `ba2dd434` are properly handled with clean fallback behavior.
