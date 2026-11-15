@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "a6e090ae",
+    "sourceVersion": "42260613",
     "license": "NOASSERTION",
-    "contentHash": "cd3e3a4c8ceaac1a655f979698e61d35b2a97641407eb9fd602f30bb00003240",
-    "lastHarvestedAt": "2026-11-15T14:07:08.608Z",
+    "contentHash": "d271937c0c69ed69a60f989f0a7f065150d77d1c3108c1c2d8ba6daeacf59070",
+    "lastHarvestedAt": "2026-11-15T15:23:25.026Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -8023,10 +8023,10 @@
     "repository": "siteline/swiftui-introspect",
     "platform": "github",
     "sourceUrl": "https://github.com/siteline/swiftui-introspect",
-    "sourceVersion": "7f32b29d",
+    "sourceVersion": "4d977db9",
     "license": "MIT",
-    "contentHash": "de2d5946bdf741a1acc471ea4d569dd7371581c0314c194162e5d24f9ef77b2a",
-    "lastHarvestedAt": "2026-10-19T12:44:58.319Z",
+    "contentHash": "e686d618a018fa041e7cc62b648a4ea293dee7b999d221b8cf106371b105f172",
+    "lastHarvestedAt": "2026-11-15T15:23:22.364Z",
     "learningId": "learn-github-siteline-swiftui-introspect"
   },
   "github-copilotforxcode": {

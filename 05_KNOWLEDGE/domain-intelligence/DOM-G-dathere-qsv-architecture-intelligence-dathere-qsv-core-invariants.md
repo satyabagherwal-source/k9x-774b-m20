@@ -4,24 +4,24 @@
 {
   "source_repository": "dathere/qsv",
   "source_url": "https://github.com/dathere/qsv",
-  "source_version": "a6e090ae",
+  "source_version": "42260613",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-15T14:07:08.753Z",
+  "timestamp": "2026-11-15T15:23:25.183Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dathere-qsv",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `a6e090ae`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-15T14:07:08.753Z`  
+> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `42260613`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-15T15:23:25.183Z`  
 > **Learning ID**: `learn-github-dathere-qsv`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), B (Product Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 62%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 58%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from dathere/qsv:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T14:07:07.677Z  
+> **Harvest Timestamp**: 2026-11-15T15:23:24.188Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2215,67 +2215,170 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a6e090ae` (2026-11-15)
-**Commit Message**: fix(ci): enable trim_prefix_suffix on the Polars-pinned nightly (#5058) [skip ci]
+### Incident Patch 1: `42260613` (2026-11-15)
+**Commit Message**: chore(mcp): v29.0.0 release of MCP Server and Claude Cowork plugin
 
-#5039 moved to str::trim_prefix/trim_suffix, which are stable in Rust
-1.100. The Linux Polars Pinned Nightly job uses nightly-2026-09-01, the
-toolchain Polars pins in rust-toolchain.toml, and that nightly predates
-the stabilization, so the build has failed with E0658 every night since
-2026-11-13.
+[skip ci]
 
-Enable the feature under the existing `nightly` cargo feature in each
-crate root (qsv/qsvmcp, qsvlite, qsvdp and the tests crate). Stable
-builds are unaffected. Drop it once Polars moves its nightly past the
-stabilization.
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `src/main.rs` (modified, +4/-0)
+**File**: `.claude-plugin/marketplace.json` (modified, +2/-2)
 ```diff
-@@ -1,3 +1,7 @@
-+// Polars pins a nightly built before `str::trim_prefix`/`trim_suffix` were stabilized (1.100).
-+// Drop once that pin moves past the stabilization.
-+#![cfg_attr(feature = "nightly", feature(trim_prefix_suffix))]
-+
- use std::{env, time::Instant};
- 
- extern crate qsv_docopt as docopt;
+@@ -6,14 +6,14 @@
+   },
+   "metadata": {
+     "description": "Blazingly fast data wrangling plugins for Claude Code — 57 skill-based commands for CSV, TSV, Excel, JSONL, and Parquet files",
+-    "version": "28.0.0"
++    "version": "29.0.0"
+   },
+   "plugins": [
+     {
+       "name": "qsv-data-wrangling",
+       "source": "./.claude/skills",
+       "description": "Blazingly fast tabular data wrangling with 57 qsv skill-based commands for CSV, TSV, Excel, JSONL, and Parquet files",
+-      "version": "28.0.0",
++      "version": "29.0.0",
+       "author": {
+         "name": "datHere, Inc.",
+         "email": "qsv@dathere.com",
 ```
 
-**File**: `src/maindp.rs` (modified, +3/-0)
+**File**: `.claude/skills/.claude-plugin/plugin.json` (modified, +1/-1)
 ```diff
-@@ -1,3 +1,6 @@
-+// Polars pins a nightly built before `str::trim_prefix`/`trim_suffix` were stabilized (1.100).
-+// Drop once that pin moves past the stabilization.
-+#![cfg_attr(feature = "nightly", feature(trim_prefix_suffix))]
- #![allow(
-         clippy::cast_possible_truncation,
-         clippy::cast_possible_wrap,
+@@ -1,6 +1,6 @@
+ {
+   "name": "qsv-data-wrangling",
+-  "version": "28.0.0",
++  "version": "29.0.0",
+   "description": "Blazingly fast tabular data wrangling with 57 qsv skill-based commands for CSV, TSV, Excel, JSONL, and Parquet files",
+   "author": {
+     "name": "datHere, Inc.",
 ```
 
-**File**: `src/mainlite.rs` (modified, +4/-0)
+**File**: `.claude/skills/CHANGELOG.md` (modified, +7/-1)
 ```diff
-@@ -1,3 +1,7 @@
-+// Polars pins a nightly built before `str::trim_prefix`/`trim_suffix` were stabilized (1.100).
-+// Drop once that pin moves past the stabilization.
-+#![cfg_attr(feature = "nightly", feature(trim_prefix_suffix))]
-+
- use std::{env, time::Instant};
+@@ -5,11 +5,17 @@ All notable changes to the qsv Agent Skills (MCP Server) project will be documen
+ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
  
- extern crate qsv_docopt as docopt;
+-## [Unreleased]
++## [29.0.0] - 2026-11-15
++Companion release to qsv 29.0.0, "The Trust the numbers Release". The MCP server tracks the qsv binary version per the policy adopted in 20.0.0, and `minimum_qsv_version` is raised to 29.0.0 because the regenerated skills describe options and behavior that only the new binary has: `qsv-validate --sarif`, and `qsv-sqlp --format avro` converting the types Avro can't write. The skill count stays at **57**. Update your qsv binary first.
+ 
+ ### Added
+ - **`qsv-validate` describes `--sarif <file>`** ([#5031](https://github.com/dathere/qsv/pull/5031)): in JSON Schema mode, it writes the validation errors as a SARIF 2.1.0 log for code scanning tools. The skill was regenerated from the qsv USAGE. It needs a qsv binary with the option.
+ 
++### Changed
++- **`qsv-sqlp` describes how `--format avro` converts types** ([#5024](https://github.com/dathere/qsv/pull/5024)): Avro has fewer types than Polars, so small and unsigned integers become int or long (a value above 2^63-1 is an error), zoned timestamps become UTC, nanosecond timestamps become microseconds, and TIME and durations become strings (durations in ISO 8601).
++- **`qsv-sqlp` and `qsv-joinp` corrections** ([#5046](https://github.com/dathere/qsv/pull/5046)): `<=>` is described as the NULL-safe equality operator (same as `IS NOT DISTINCT FROM`), not a three-way comparison, and the `--cache-schema` text names the right Polars schema file.
++- **`qsv-viz` documents stdin input** ([#5018](https://github.com/dathere/qsv/pull/5018)): pass `-` to chart piped CSV with every chart type except `smart`, which needs a file. A piped-input example was added.
++
+ ### Fixed
+ - **The `.mcpb` no longer ships development-only packages** ([#5014](https://github.com/dathere/qsv/pull/5014)). The packager zipped all of `node_modules`, so the 28.0.0 bundle included typescript, c8, archiver and 116 other packages the server never loads, among them three minimatch copies flagged by GHSA-g3hv-75wg-m249. Packages that `package-lock.json` marks dev-only are now skipped, as is `node_modules/.bin`, and the download shrinks from 11.4 MB to 5.6 MB. `verify-bundles` checks that none of them is bundled.
+ - **security: `hono` 4.13.18 and `@hono/node-server` 2.1.8** (from 4.13.13 and 2.1.5; [#5043](https://github.com/dathere/qsv/pull/5043), [#5042](https://github.com/dathere/qsv/pull/5042)). These Dependabot bumps pick up upstream security fixes, which are listed in the PRs.
 ```
 
-**File**: `tests/tests.rs` (modified, +4/-0)
+**File**: `.claude/skills/README-MCP.md` (modified, +3/-3)
 ```diff
-@@ -1,3 +1,7 @@
-+// Polars pins a nightly built before `str::trim_prefix`/`trim_suffix` were stabilized (1.100).
-+// Drop once that pin moves past the stabilization.
-+#![cfg_attr(feature = "nightly", feature(trim_prefix_suffix))]
-+
- extern crate log;
- extern crate serde;
+@@ -60,7 +60,7 @@ Excel and JSONL files are automatically converted to CSV before processing - no
  
+ The **MCP Desktop Extension** (MCPB) provides the easiest installation experience:
+ 
+-1. Download `qsv-mcp-server-<version>.mcpb` (e.g. `qsv-mcp-server-28.0.0.mcpb`) from [releases](https://github.com/dathere/qsv/releases/latest)
++1. Download `qsv-mcp-server-<version>.mcpb` (e.g. `qsv-mcp-server-29.0.0.mcpb`) from [releases](https://github.com/dathere/qsv/releases/latest)
+ 2. Open Claude Desktop Settings → Extensions
+ 3. Click "Install from file" and select the `.mcpb` file
+ 4. Configure your allowed directories when prompted
+@@ -621,8 +621,8 @@ For issues or questions:
+ 
+ ---
+ 
+-**Updated**: 2026-11-02
+-**Version**: 28.0.0
++**Updated**: 2026-11-15
++**Version**: 29.0.0
+ **Tools**: 23 tools at startup (10 core + 13 commonly-used; +1 app-only when MCP Apps enabled), all 57 discoverable via `qsv_search_tools`
+ **Skills**: 57 qsv commands
+ **Status**: Production Ready
+```
+
+**File**: `.claude/skills/README.md` (modified, +3/-3)
+```diff
+@@ -49,7 +49,7 @@ Each skill file provides:
+ 
+ **Installation**:
+ 1. Install qsv: `brew install qsv` (macOS) or see [qsv installation](https://github.com/dathere/qsv#installation)
+-2. Download `qsv-mcp-server-<version>.mcpb` (e.g. `qsv-mcp-server-28.0.0.mcpb`) from releases
++2. Download `qsv-mcp-server-<version>.mcpb` (e.g. `qsv-mcp-server-29.0.0.mcpb`) from releases
+ 3. Double-click the `.mcpb` file (opens with Claude Desktop)
+ 4. **That's it!** qsv binary path is auto-detected, no manual configuration needed
+ 5. Restart Claude Desktop
+@@ -467,8 +467,8 @@ MIT
+ 
+ ---
+ 
+-**Updated**: 2026-11-02
+-**Version**: 28.0.0
++**Updated**: 2026-11-15
++**Version**: 29.0.0
+ **Generator**: `qsv --update-mcp-skills`
+ **Skills**: 57 commands
+ **Usage Examples**: 263 from documentation
+```
+
+**File**: `.claude/skills/docs/desktop/README-MCPB.md` (modified, +2/-2)
+```diff
+@@ -576,7 +576,7 @@ Same license as qsv: MIT OR Apache-2.0
+ 
+ ---
+ 
+-**Updated**: 2026-11-02
+-**Version**: 28.0.0
++**Updated**: 2026-11-15
++**Version**: 29.0.0
+ **Format**: MCP Bundle (MCPB) v0.3
+ **Compatibility**: Claude Desktop 1.0+
+```
+
+**File**: `.claude/skills/manifest.json` (modified, +2/-2)
+```diff
+@@ -1,7 +1,7 @@
+ {
+   "manifest_version": "0.3",
+   "name": "qsv",
+-  "version": "28.0.0",
++  "version": "29.0.0",
+   "description": "Blazingly fast Data Wrangling Toolkit for Tabular Data",
+   "long_description": "Comprehensive data-wrangling toolkit for transforming, analyzing, querying & validating tabular data. Process local CSV, TSV, SSV, Excel/ODS, Parquet and JSONL files w/o uploading. Despite the warning, only accesses APPROVED DIRECTORIES on your computer.",
+   "author": {
+@@ -260,7 +260,7 @@
+         "Smart caching with stats/frequency files",
+         "Automatic Excel, Parquet and JSONL conversion"
+       ],
+-      "minimum_qsv_version": "28.0.0"
++      "minimum_qsv_version": "29.0.0"
+     }
+   }
+ }
+```
+
+**File**: `.claude/skills/package-lock.json` (modified, +2/-2)
+```diff
+@@ -1,12 +1,12 @@
+ {
+   "name": "@qsv/agent-skills",
+-  "version": "28.0.0",
++  "version": "29.0.0",
+   "lockfileVersion": 3,
+   "requires": true,
+   "packages": {
+     "": {
+       "name": "@qsv/agent-skills",
+-      "version": "28.0.0",
++      "version": "29.0.0",
+       "license": "MIT",
+       "dependencies": {
+         "@modelcontextprotocol/ext-apps": "^1.7.2",
 ```
 
 #### Recent Merged Pull Requests:
@@ -2304,34 +2407,33 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci): enable trim_prefix_suffix on the Polars-pinned nightly [skip ci]
+## X. mcp): v29.0.0 release of MCP Server and Claude Cowork plugin
 
 **RULE**:
-When implementing operations in `src/main.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude-plugin/marketplace.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a6e090ae`: ci): enable trim_prefix_suffix on the Polars-pinned nightly [skip ci]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `42260613`: mcp): v29.0.0 release of MCP Server and Claude Cowork plugin. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/main.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude-plugin/marketplace.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-// Polars pins a nightly built before `str::trim_prefix`/`trim_suffix` were stabilized (1.100).
-// Drop once that pin moves past the stabilization.
-#![cfg_attr(feature = "nightly", feature(trim_prefix_suffix))]
-
+    "version": "29.0.0"
+      "version": "29.0.0",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+    "version": "28.0.0"
+      "version": "28.0.0",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a6e090ae` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `42260613` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

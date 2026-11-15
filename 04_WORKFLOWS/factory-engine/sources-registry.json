@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-15T14:56:11.941Z",
-    "lastVerified": "2026-11-15T14:56:11.941Z",
+    "lastChecked": "2026-11-15T15:23:28.030Z",
+    "lastVerified": "2026-11-15T15:23:28.030Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -258,14 +258,14 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-15T14:07:07.677Z",
-    "lastVerified": "2026-11-15T14:07:07.677Z",
+    "lastChecked": "2026-11-15T15:23:24.188Z",
+    "lastVerified": "2026-11-15T15:23:24.188Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "cd3e3a4c8ceaac1a655f979698e61d35b2a97641407eb9fd602f30bb00003240",
+    "contentHash": "d271937c0c69ed69a60f989f0a7f065150d77d1c3108c1c2d8ba6daeacf59070",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1950,8 +1950,8 @@
     "officialUrl": "https://github.com/sigstore/cosign",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-15T04:53:20.389Z",
-    "lastVerified": "2026-11-15T04:53:20.389Z",
+    "lastChecked": "2026-11-15T15:23:16.350Z",
+    "lastVerified": "2026-11-15T15:23:16.350Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sigstore-cosign",
@@ -2035,12 +2035,12 @@
     "revisionIdentifier": "8c007bc4"
   },
   "siderolabs-talos": {
-    "name": "siderolabs/talos",
+    "name": "talos",
     "officialUrl": "https://github.com/siderolabs/talos",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-14T03:10:33.005Z",
-    "lastVerified": "2026-11-14T03:10:33.005Z",
+    "lastChecked": "2026-11-15T15:23:13.863Z",
+    "lastVerified": "2026-11-15T15:23:13.863Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-siderolabs-talos",
@@ -2049,7 +2049,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "ba4a88b6"
   },
   "cilium-cilium": {
     "name": "cilium/cilium",
@@ -3483,9 +3484,9 @@
   "milvus-io-bootcamp": {
     "name": "bootcamp",
     "officialUrl": "https://github.com/milvus-io/bootcamp",
-    "lastChecked": "2026-11-14T01:48:42.115Z",
+    "lastChecked": "2026-11-15T15:23:18.834Z",
     "revisionIdentifier": "b2be8cc8",
-    "lastVerified": "2026-11-14T01:48:42.115Z"
+    "lastVerified": "2026-11-15T15:23:18.834Z"
   },
   "o2sh-onefetch": {
     "name": "onefetch",
@@ -4594,8 +4595,8 @@
     "officialUrl": "https://github.com/wasm-bindgen/wasm-pack",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-13T17:54:53.161Z",
-    "lastVerified": "2026-11-13T17:54:53.161Z",
+    "lastChecked": "2026-11-15T15:23:06.327Z",
+    "lastVerified": "2026-11-15T15:23:06.327Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-wasm-bindgen-wasm-pack",
@@ -9731,11 +9732,21 @@
     "lastVerified": "2026-11-15T07:04:00.642Z"
   },
   "siteline-swiftui-introspect": {
-    "name": "swiftui-introspect",
+    "name": "siteline/swiftui-introspect",
     "officialUrl": "https://github.com/siteline/swiftui-introspect",
-    "lastChecked": "2026-11-12T03:30:33.387Z",
-    "revisionIdentifier": "7f32b29d",
-    "lastVerified": "2026-11-12T03:30:33.387Z"
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-11-15T15:23:14.625Z",
+    "lastVerified": "2026-11-15T15:23:14.625Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-siteline-swiftui-introspect",
+    "contentHash": "e686d618a018fa041e7cc62b648a4ea293dee7b999d221b8cf106371b105f172",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 4,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "melnixdev-seo-crawl-audit": {
     "name": "MelnixDev/seo-crawl-audit",
@@ -9965,9 +9976,9 @@
   "bourd-dev-seo-skills": {
     "name": "seo-skills",
     "officialUrl": "https://github.com/bourd-dev/seo-skills",
-    "lastChecked": "2026-11-10T00:44:51.050Z",
+    "lastChecked": "2026-11-15T15:23:08.838Z",
     "revisionIdentifier": "4b0005f6e6",
-    "lastVerified": "2026-11-10T00:44:51.050Z"
+    "lastVerified": "2026-11-15T15:23:08.838Z"
   },
   "gitliveapp-firebase-kotlin-sdk": {
     "name": "firebase-kotlin-sdk",

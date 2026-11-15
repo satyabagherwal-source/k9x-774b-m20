@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-15T14:56:42.007Z",
-  "total_verified_learnings": 8702,
+  "last_updated": "2026-11-15T15:23:30.690Z",
+  "total_verified_learnings": 8703,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18429,
+  "total_items": 18440,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112103,10 +112103,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "a6e090ae",
-      "content_hash": "3d62f20c02ae9df637cf17f820d6be2c62baa40661f66590d7e35627365953f9",
+      "source_version": "42260613",
+      "content_hash": "c05e00ee12885d2b09e2159da3fea7d62e1174bff26b4bae1b9e597ad6a03d42",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T14:07:08.921Z"
+      "persisted_at": "2026-11-15T15:23:25.402Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -112140,9 +112140,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dathere-qsv-learnings",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "c9c473317b70bfd9d67035f35683b5a29582a4f58b20bf595dfcdcd817c8118a",
+      "content_hash": "670c6e67f3f0e607c6d5e10dffddfb9751d7fdf8ba8ee15937310bc38b852f0e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T14:07:12.077Z"
+      "persisted_at": "2026-11-15T15:23:30.104Z"
     },
     "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels": {
       "item_id": "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels",
@@ -113672,13 +113672,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-JTPJ-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-IAZY-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "9b5b8f4cc5914a5ffabdbbea0590eaa3be8f6106385e82ca8c5b58ec2363c6af",
+      "content_hash": "2795040a3a1e618a611124bada521782991e6badc3df64575d3fa4b9066c3320",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T14:56:41.778Z"
+      "persisted_at": "2026-11-15T15:23:30.481Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113688,9 +113688,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "cc87341a3facd46152f8682c8993d50270e4161549d1947282dd34d9c8494c28",
+      "content_hash": "f87a4cc06a113f4da327d478dba91de8556e75dbdd69598a9114cfe9be82424d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T14:56:41.886Z"
+      "persisted_at": "2026-11-15T15:23:30.583Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113700,9 +113700,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "20266f1bec8d200356d1f52ae8c0c0c8baf07fbb53fc46c6fdd0b362537f49ce",
+      "content_hash": "42925faa17aa0c53a139e437a987130fd8dbae1c0789763d656aa9767d141a23",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T14:56:42.007Z"
+      "persisted_at": "2026-11-15T15:23:30.690Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -218745,8 +218745,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "a6e090ae",
-      "content_hash": "cd3e3a4c8ceaac1a655f979698e61d35b2a97641407eb9fd602f30bb00003240",
+      "source_version": "42260613",
+      "content_hash": "d271937c0c69ed69a60f989f0a7f065150d77d1c3108c1c2d8ba6daeacf59070",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -218804,6 +218804,11 @@
           "number": 8619,
           "title": "enable trim_prefix_suffix on the Polars-pinned nightly [skip ci]",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8624,
+          "title": "v29.0.0 release of MCP Server and Claude Cowork plugin",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -218811,7 +218816,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T14:07:08.488Z",
+      "verified_at": "2026-11-15T15:23:24.878Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -219646,10 +219651,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "repository": "dathere/qsv",
-      "source_version": "a6e090ae",
-      "content_hash": "45bcc2be0468bbbd328031dbbaa43c222ccdca9ef84fd4328ecd2a4874565b25",
+      "source_version": "42260613",
+      "content_hash": "ac653680f77fff3a5e83828431d5fa5288f6041934a0550d3d79e7baaf086a85",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T14:07:08.837Z"
+      "persisted_at": "2026-11-15T15:23:25.291Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant",
@@ -219719,9 +219724,9 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "95cb36f50ed1d79bb2267b91992e3a4e21a32c82b234c76849cfd07513cb6f29",
+      "content_hash": "dfd526229897849cceaed3a77f3cf783aa4d3b2ede9436783867541ec2c86a41",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T14:07:11.985Z"
+      "persisted_at": "2026-11-15T15:23:29.998Z"
     },
     "learn-huggingface-qwen-qwen3-8-flash-next": {
       "learning_id": "learn-huggingface-qwen-qwen3-8-flash-next",
@@ -243884,6 +243889,163 @@
       "content_hash": "8be642e62e3e8f5d8c0976c0b00a1112dc31c8a309962d22ccf41bf007c0e09a",
       "domain_letter": "K",
       "persisted_at": "2026-11-15T14:56:41.324Z"
+    },
+    "learn-github-siteline-swiftui-introspect": {
+      "learning_id": "learn-github-siteline-swiftui-introspect",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "siteline/swiftui-introspect",
+      "repository": "siteline/swiftui-introspect",
+      "slug": "siteline-swiftui-introspect",
+      "platform": "github",
+      "source_url": "https://github.com/siteline/swiftui-introspect",
+      "source_version": "4d977db9",
+      "content_hash": "e686d618a018fa041e7cc62b648a4ea293dee7b999d221b8cf106371b105f172",
+      "dossier_path": "07_PROJECT_LEARNING/siteline-swiftui-introspect-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/siteline-swiftui-introspect-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8623,
+          "title": "use the xcode-27 image's xcodes for the Showcase build",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T15:23:22.219Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8623": {
+      "learning_id": "rule-8623",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8623,
+      "title": "use the xcode-27 image's xcodes for the Showcase build",
+      "source_url": "https://github.com/siteline/swiftui-introspect",
+      "source_version": "4d977db9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T15:23:22.219Z"
+    },
+    "candidate_directive-use-the-xcode-27-image-s-xcodes-for-the-showcase-build": {
+      "item_id": "candidate_directive-use-the-xcode-27-image-s-xcodes-for-the-showcase-build",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-I4V6-use-the-xcode-27-image-s-xcodes-for-the-showcase-build.md",
+      "title": "use the xcode-27 image's xcodes for the Showcase build",
+      "repository": "siteline/swiftui-introspect",
+      "source_version": "4d977db9",
+      "content_hash": "e0ba3d0ab4a9a6009ce840ea4c5f46b1c3bf9f071191dfb9c04d696a6dcb1963",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-15T15:23:22.531Z"
+    },
+    "domain_intelligence-content-information-intelligence-siteline-swiftui-introspect-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-siteline-swiftui-introspect-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-siteline-swiftui-introspect-content-information-intelligence-siteline-swiftui-in.md",
+      "title": "Content & Information Intelligence: siteline/swiftui-introspect Core Invariants",
+      "repository": "siteline/swiftui-introspect",
+      "source_version": "4d977db9",
+      "content_hash": "add5a820e1e68186d7434879a24a4d263085c364e0fce7927bd74db94299ddcd",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-15T15:23:22.638Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-siteline-swiftui-introspect": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-siteline-swiftui-introspect",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/siteline-swiftui-introspect-verification-protocol-empirical-defect-shield-for-si.md",
+      "title": "Verification Protocol: Empirical Defect Shield for siteline/swiftui-introspect",
+      "repository": "siteline/swiftui-introspect",
+      "source_version": "4d977db9",
+      "content_hash": "0d28d1a9420852fb18eee8c1d728dc08a1a00a2df34fff7bfe4c5bf4b4deced9",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T15:23:22.741Z"
+    },
+    "rule-8624": {
+      "learning_id": "rule-8624",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8624,
+      "title": "v29.0.0 release of MCP Server and Claude Cowork plugin",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "42260613",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T15:23:24.878Z"
+    },
+    "candidate_directive-v29-0-0-release-of-mcp-server-and-claude-cowork-plugin": {
+      "item_id": "candidate_directive-v29-0-0-release-of-mcp-server-and-claude-cowork-plugin",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-I6WV-v29-0-0-release-of-mcp-server-and-claude-cowork-plugin.md",
+      "title": "v29.0.0 release of MCP Server and Claude Cowork plugin",
+      "repository": "dathere/qsv",
+      "source_version": "42260613",
+      "content_hash": "d2cb585047d4e431df7a86b4f6ce4475c1c7ed701c70a423ee046ac3e04cfc1f",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T15:23:25.186Z"
+    },
+    "candidate_directive-ci-use-the-xcode-27-image-s-xcodes-for-the-showcase-build": {
+      "item_id": "candidate_directive-ci-use-the-xcode-27-image-s-xcodes-for-the-showcase-build",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-I9Z8-ci-use-the-xcode-27-image-s-xcodes-for-the-showcase-build.md",
+      "title": "ci: use the xcode-27 image's xcodes for the Showcase build",
+      "repository": "siteline-swiftui-introspect-learnings",
+      "source_version": "HEAD",
+      "content_hash": "79e2dd31981212a5c6d9b5a4e63c91be6c8c2092f14d14ae596dae10c845637b",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-15T15:23:29.157Z"
+    },
+    "domain_intelligence-content-information-intelligence-siteline-swiftui-introspect-learnings-core-inva": {
+      "item_id": "domain_intelligence-content-information-intelligence-siteline-swiftui-introspect-learnings-core-inva",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-siteline-swiftui-introspect-learnings-content-information-intelligence-siteline-.md",
+      "title": "Content & Information Intelligence: siteline-swiftui-introspect-learnings Core Invariants",
+      "repository": "siteline-swiftui-introspect-learnings",
+      "source_version": "HEAD",
+      "content_hash": "93389da9fabfeabec03269683bc423f1c73ece680b564ffecbd3565cbfe86b1b",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-15T15:23:29.263Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-siteline-swiftui-introspect-le": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-siteline-swiftui-introspect-le",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/siteline-swiftui-introspect-learnings-verification-protocol-empirical-defect-shi.md",
+      "title": "Verification Protocol: Empirical Defect Shield for siteline-swiftui-introspect-learnings",
+      "repository": "siteline-swiftui-introspect-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d9f5e6e5dc82350326341710d1de5955ffbfd45cd2a94acd30370dac12d93774",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T15:23:29.367Z"
+    },
+    "candidate_directive-mcp-v29-0-0-release-of-mcp-server-and-claude-cowork-plugin": {
+      "item_id": "candidate_directive-mcp-v29-0-0-release-of-mcp-server-and-claude-cowork-plugin",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-IAJN-mcp-v29-0-0-release-of-mcp-server-and-claude-cowork-plugin.md",
+      "title": "mcp): v29.0.0 release of MCP Server and Claude Cowork plugin",
+      "repository": "dathere-qsv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "709c0137f08db70d1fe05f0c0336196fa00a66655433e90b1eb9ab08833612dc",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T15:23:29.894Z"
     }
   },
   "ai-builder-brain": {

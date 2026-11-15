@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T14:56:03.585Z",
-  "total_cycles_completed": 9723,
-  "total_learnings_persisted": 9723,
-  "total_rules_promoted": 9350,
+  "last_updated": "2026-11-15T15:23:25.030Z",
+  "total_cycles_completed": 9725,
+  "total_learnings_persisted": 9725,
+  "total_rules_promoted": 9352,
   "history": [
-    {
-      "timestamp": "2026-11-14T13:38:46.605Z",
-      "repository": "google/vit-base-patch16-224",
-      "learningId": "learn-huggingface-google-vit-base-patch16-224",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T13:38:52.505Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T13:57:11.093Z",
       "repository": "BAAI/bge-base-en-v1.5",
@@ -1403,6 +1389,20 @@
       "repository": "seo-skills/seo-audit-skill",
       "learningId": "learn-github-seo-skills-seo-audit-skill",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T15:23:22.368Z",
+      "repository": "siteline/swiftui-introspect",
+      "learningId": "learn-github-siteline-swiftui-introspect",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T15:23:25.030Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-15T14:56:03.588Z",
+  "last_updated": "2026-11-15T15:23:25.034Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "cd3e3a4c8ceaac1a655f979698e61d35b2a97641407eb9fd602f30bb00003240",
-      "verified_at": "2026-11-15T14:07:08.614Z",
+      "content_hash": "d271937c0c69ed69a60f989f0a7f065150d77d1c3108c1c2d8ba6daeacf59070",
+      "verified_at": "2026-11-15T15:23:25.033Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T14:07:08.614Z"
+      "last_updated": "2026-11-15T15:23:25.033Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -12066,14 +12066,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-siteline-swiftui-introspect",
-      "content_hash": "de2d5946bdf741a1acc471ea4d569dd7371581c0314c194162e5d24f9ef77b2a",
-      "verified_at": "2026-10-19T12:44:58.326Z",
+      "content_hash": "e686d618a018fa041e7cc62b648a4ea293dee7b999d221b8cf106371b105f172",
+      "verified_at": "2026-11-15T15:23:22.371Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T12:44:58.326Z"
+      "last_updated": "2026-11-15T15:23:22.371Z"
     },
     "github/CopilotForXcode": {
       "repository": "github/CopilotForXcode",

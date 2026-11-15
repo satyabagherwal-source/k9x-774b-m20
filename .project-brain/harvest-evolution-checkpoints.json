@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T14:56:42.118Z",
+  "last_updated": "2026-11-15T15:23:30.790Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-15T14:25:56.573Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-15T14:56:41.442Z",
+      "processed_at": "2026-11-15T15:23:30.209Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -748,7 +748,7 @@
       "staged_for_review": 1
     },
     "dathere-qsv-learnings.md": {
-      "processed_at": "2026-11-15T14:07:11.643Z",
+      "processed_at": "2026-11-15T15:23:29.472Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3001,9 +3001,14 @@
       "processed_at": "2026-11-15T14:56:40.646Z",
       "promoted_canonical": 1,
       "staged_for_review": 1
+    },
+    "siteline-swiftui-introspect-learnings.md": {
+      "processed_at": "2026-11-15T15:23:28.133Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1062,
+  "total_dossiers_evaluated": 1065,
   "total_canonical_promoted": 264,
-  "total_staged_for_review": 799
+  "total_staged_for_review": 802
 }

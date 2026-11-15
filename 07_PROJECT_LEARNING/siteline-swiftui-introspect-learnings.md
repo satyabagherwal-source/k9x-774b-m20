@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/siteline-swiftui-introspect-learnings.md`  
 > **Source**: github ([https://github.com/siteline/swiftui-introspect](https://github.com/siteline/swiftui-introspect))  
-> **Source Version**: `7f32b29d`  
+> **Source Version**: `4d977db9`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T12:44:58.056Z  
+> **Timestamp**: 2026-11-15T15:23:21.496Z  
 > **Learning ID**: `learn-github-siteline-swiftui-introspect`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/siteline-swiftui-introspect-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/siteline/swiftui-introspect](https://github.com/siteline/swiftui-introspect))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T12:44:58.049Z  
+> **Harvest Timestamp**: 2026-11-15T15:23:14.625Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Introspect underlying UIKit/AppKit components from SwiftUI
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 6563 stars
+- **Stars / Engagement**: 6579 stars
 
 ---
 
@@ -171,8 +171,8 @@ struct ContentView: View {
 			}
 		}
 		#elseif os(macOS)
-		.introspect(.tabView, on: .macOS(.v12, .v13, .v14)) { splitView in
-			splitView.subviews.first?.layer?.backgroundColor = NSColor.green.cgColor
+		.introspect(.tabView, on: .macOS(.v12, .v13, .v14)) { tabView in
+			tabView.subviews.first?.layer?.backgroundColor = NSColor.green.cgColor
 		}
 		#endif
 	}
@@ -353,12 +353,12 @@ struct ControlsShowcase: View {
 					on: .iOS(.v15, .v16, .v17, .v18, .v26, .v27),
 					.tvOS(.v15, .v16, .v17, .v18, .v26, .v27),
 					.visionOS(.v1, .v2, .v26, .v27),
-				) { datePicker in
-					datePicker.backgroundColor = .red
+				) { segmentedControl in
+					segmentedControl.backgroundColor = .red
 				}
 				#elseif os(macOS)
-				.introspect(.picker(style: .segmented), on: .macOS(.v12, .v13, .v14, .v15, .v26, .v27)) { datePicker in
-					datePicker.layer?.backgroundColor = NSColor.red.cgColor
+				.introspect(.picker(style: .segmented), on: .macOS(.v12, .v13, .v14, .v15, .v26, .v27)) { segmentedControl in
+					segmentedControl.layer?.backgroundColor = NSColor.red.cgColor
 				}
 				#endif
 			}
@@ -751,93 +751,456 @@ struct ScrollViewShowcase: View {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7f32b29d` (2026-10-03)
-**Commit Message**: docs(maintenance): define post-merge feature and fix backports
+### Incident Patch 1: `59370c3c` (2026-11-14)
+**Commit Message**: ci: use the xcode-27 image's xcodes for the Showcase build
 
-Assess features and fixes for maintenance branches after they merge into
-main. Allow compatible additive features while preserving each branch’s
-toolchain, supported platforms, products, and existing API.
-
-Exclude breaking changes and unrelated maintenance work. Use minor
-releases for additive features and patch releases for fixes.
-
-**File**: `AGENTS.md` (modified, +10/-10)
+**File**: `.github/workflows/ci.yml` (modified, +2/-5)
 ```diff
-@@ -4,18 +4,18 @@
+@@ -148,11 +148,8 @@ jobs:
+       - name: Git Checkout
+         uses: actions/checkout@v5
  
- | Branch | Baseline | Purpose |
- | --- | --- | --- |
--| `main` | Current 27 beta | Development branch and first destination for bug fixes |
--| `release/26.x` | `26.0.1` | Maintenance branch for version 26 patch releases |
--| `release/1.x` | `1.3.0` | Maintenance branch for version 1 patch releases |
-+| `main` | Current 27 beta | Development branch and first destination for features and fixes |
-+| `release/26.x` | `26.0.1` | Maintenance branch for version 26 releases |
-+| `release/1.x` | `1.3.0` | Maintenance branch for version 1 releases |
+-      - name: Install xcodes
+-        run: |
+-          brew uninstall xcodes
+-          brew install xcodesorg/made/xcodes
+-
++      # The xcodesorg/made formula fails to build on macOS 27, so this uses the image's xcodes:
++      # https://github.com/XcodesOrg/homebrew-made/issues/4
+       - name: Select Xcode
+         run: sudo xcodes select 27.2
  
- Version 1 maintenance starts from `1.3.0`. The `1.4.0-beta` tags are not release baselines.
- 
--### Bug Fixes
-+### Features and Fixes
- 
--- Land bug fixes on `main` first.
--- Assess every bug fix merged into `main` for both maintenance branches. Backport it when the bug affects that branch and the fix preserves its public API and supported platforms.
--- Keep each backport focused on one fix. Cherry-pick the original commit when it applies cleanly; otherwise adapt only the required source and tests.
-+- Land features and fixes on `main` first. Assess and backport them only after they have merged, as a separate maintenance step rather than part of feature development.
-+- Assess every feature and fix merged into `main` for both maintenance branches. Backport applicable, backward-compatible changes that preserve each branch's toolchain, supported platforms, and existing public API. Additive public API is allowed when it preserves compatibility with the existing API.
-+- Keep each backport focused on one feature or fix. Cherry-pick the original commit when it applies cleanly; otherwise adapt only the required source and tests.
- - Preserve each maintenance branch's Swift tools version, language mode, deployment targets, package products, formatting, and test framework. Do not merge `main` wholesale into a maintenance branch.
--- Do not backport features, new view types, new platform versions, public API changes, toolchain updates, deployment-target changes, packaging changes, or unrelated CI and documentation work.
--- If a fix cannot be backported without one of those changes, explain the incompatibility and obtain maintainer approval before changing the maintenance branch.
--- Run the affected tests on every changed branch. Create version 1 and version 26 patch releases from their respective maintenance branches.
-+- Do not backport breaking public API changes, new platform versions, toolchain updates, deployment-target changes, packaging changes, or unrelated CI and documentation work.
-+- If a feature or fix cannot be backported while preserving those compatibility constraints, explain the incompatibility and obtain maintainer approval before changing the maintenance branch.
-+- Run the affected tests on every changed branch. Create version 1 and version 26 releases from their respective maintenance branches. Use minor releases for additive features and patch releases for fixes.
 ```
 
 ---
 
-### Incident Patch 2: `c3db5696` (2026-05-19)
-**Commit Message**: CI: bump retry timeout to 15 minutes
+### Incident Patch 2: `d9478992` (2026-11-14)
+**Commit Message**: chore(showcase): convert project to JSON format and build it on Xcode 27
 
-**File**: `.github/workflows/ci.yml` (modified, +1/-1)
+**File**: `.github/workflows/ci.yml` (modified, +33/-7)
 ```diff
-@@ -109,7 +109,7 @@ jobs:
-         if: matrix.runtime
-         uses: nick-fields/retry@v3
-         with:
--          timeout_minutes: 10
-+          timeout_minutes: 15
-           max_attempts: 3
-           command: |
-             RUNTIME="${{ matrix.runtime }}"
+@@ -121,21 +121,47 @@ jobs:
+           echo "SIM_UDID=$UDID" >> "$GITHUB_ENV"
+           echo "Created simulator: ${{ matrix.device }} -> $UDID"
+ 
+-      - name: Build Showcase
++      - name: Run Tests
+         run: |
+           set -eo pipefail
+-          xcodebuild build \
+-            -scheme Showcase \
++          xcodebuild test \
++            -scheme SwiftUIIntrospectTests \
+             -destination "${{ matrix.destination || format('id={0}', env.SIM_UDID) }}" \
+             -configuration Debug \
+             | xcbeautify
+ 
+-      - name: Run Tests
++  showcase:
++    if: github.event_name != 'pull_request' || !contains(github.event.pull_request.title, '[skip ci]')
++    name: Build Showcase (${{ matrix.platform }})
++    # The Showcase project uses the JSON project format, which requires Xcode 27.
++    runs-on: xcode-27
++    strategy:
++      fail-fast: false
++      matrix:
++        include:
++          - { platform: iOS,         destination: "generic/platform=iOS Simulator" }
++          - { platform: macCatalyst, destination: "generic/platform=macOS,variant=Mac Catalyst" }
++          - { platform: macOS,       destination: "generic/platform=macOS" }
++          - { platform: tvOS,        destination: "generic/platform=tvOS Simulator" }
++          - { platform: visionOS,    destination: "generic/platform=visionOS Simulator" }
++    steps:
++      - name: Git Checkout
++        uses: actions/checkout@v5
++
++      - name: Install xcodes
++        run: |
++          brew uninstall xcodes
++          brew install xcodesorg/made/xcodes
++
++      - name: Select Xcode
++        run: sudo xcodes select 27.2
++
++      - name: Build Showcase
+         run: |
+           set -eo pipefail
+-          xcodebuild test \
+-            -scheme SwiftUIIntrospectTests \
+-            -destination "${{ matrix.destination || format('id={0}', env.SIM_UDID) }}" \
++          xcodebuild build \
++            -scheme Showcase \
++            -destination "${{ matrix.destination }}" \
+             -configuration Debug \
+             | xcbeautify
+ 
+```
+
+**File**: `Examples/Showcase/Showcase.xcodeproj/project.pbxproj` (removed, +0/-412)
+```diff
+@@ -1,412 +0,0 @@
+-// !$*UTF8*$!
+-{
+-	archiveVersion = 1;
+-	classes = {
+-	};
+-	objectVersion = 55;
+-	objects = {
+-
+-/* Begin PBXBuildFile section */
+-		D53071F729983CEF00F1936C /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53071F629983CEF00F1936C /* App.swift */; };
+-		D53071F929983CEF00F1936C /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53071F829983CEF00F1936C /* AppView.swift */; };
+-		D5B829752999738200920EBD /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5B829742999738200920EBD /* Helpers.swift */; };
+-		D5B864E82E72BF0F002F5243 /* ScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5B864E72E72BF0F002F5243 /* ScrollView.swift */; };
+-		D5B864EA2E72CE71002F5243 /* List.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5B864E92E72CE71002F5243 /* List.swift */; };
+-		D5B864EC2E72D9E1002F5243 /* Navigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5B864EB2E72D9E1002F5243 /* Navigation.swift */; };
+-		D5B864EE2E72DB42002F5243 /* Presentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5B864ED2E72DB42002F5243 /* Presentation.swift */; };
+-		D5B864F02E72DC75002F5243 /* Controls.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5B864EF2E72DC75002F5243 /* Controls.swift */; };
+-		D5B864F22E72DCA7002F5243 /* UIViewRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5B864F12E72DCA7002F5243 /* UIViewRepresentable.swift */; };
+-		D5E3180329C132B6005847DC /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = D5E3180229C132B6005847DC /* SwiftUIIntrospect */; };
+-/* End PBXBuildFile section */
+-
+-/* Begin PBXFileReference section */
+-		D53071F329983CEF00F1936C /* Showcase.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Showcase.app; sourceTree = BUILT_PRODUCTS_DIR; };
+-		D53071F629983CEF00F1936C /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
+-		D53071F829983CEF00F1936C /* AppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppView.swift; sourceTree = "<group>"; };
+-		D530720429983D9300F1936C /* Showcase.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Showcase.entitlements; sourceTree = "<group>"; };
+-		D5B829742999738200920EBD /* Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
+-		D5B864E72E72BF0F002F5243 /* ScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollView.swift; sourceTree = "<group>"; };
+-		D5B864E92E72CE71002F5243 /* List.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = List.swift; sourceTree = "<group>"; };
+-		D5B864EB2E72D9E1002F5243 /* Navigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Navigation.swift; sourceTree = "<group>"; };
+-		D5B864ED2E72DB42002F5243 /* Presentation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Presentation.swift; sourceTree = "<group>"; };
+-		D5B864EF2E72DC75002F5243 /* Controls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Controls.swift; sourceTree = "<group>"; };
+-		D5B864F12E72DCA7002F5243 /* UIViewRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewRepresentable.swift; sourceTree = "<group>"; };
+-/* End PBXFileReference section */
+-
+-/* Begin PBXFrameworksBuildPhase section */
+-		D53071F029983CEF00F1936C /* Frameworks */ = {
+-			isa = PBXFrameworksBuildPhase;
+-			buildActionMask = 2147483647;
+-			files = (
+-				D5E3180329C132B6005847DC /* SwiftUIIntrospect in Frameworks */,
+-			);
+-			runOnlyForDeploymentPostprocessing = 0;
+-		};
+-/* End PBXFrameworksBuildPhase section */
+-
+-/* Begin PBXGroup section */
+-		D53071EA29983CEF00F1936C = {
+-			isa = PBXGroup;
+-			children = (
+-				D53071F529983CEF00F1936C /* Showcase */,
+-				D53071F429983CEF00F1936C /* Products */,
+-				D530720529983DCA00F1936C /* Frameworks */,
+-			);
+-			sourceTree = "<group>";
+-		};
+-		D53071F429983CEF00F1936C /* Products */ = {
+-			isa = PBXGroup;
+-			children = (
+-				D53071F329983CEF00F1936C /* Showcase.app */,
+-			);
+-			name = Products;
+-			sourceTree = "<group>";
+-		};
+-		D53071F529983CEF00F1936C /* Showcase */ = {
+-			isa = PBXGroup;
+-			children = (
+-				D530720429983D9300F1936C /* Showcase.entitlements */,
+-				D53071F629983CEF00F1936C /* App.swift */,
+-				D53071F829983CEF00F1936C /* AppView.swift */,
+-				D5B864E92E72CE71002F5243 /* List.swift */,
+-				D5B864E72E72BF0F002F5243 /* ScrollView.swift */,
+-				D5B864EB2E72D9E1002F5243 /* Navigation.swift */,
+-				D5B864ED2E72DB42002F5243 /* Presentation.swift */,
+-				D5B864EF2E72DC75002F5243 /* Controls.swift */,
+-				D5B864F12E72DCA7002F5243 /* UIViewRepresentable.swift */,
+-				D5B829742999738200
+```
+
+**File**: `Examples/Showcase/Showcase.xcodeproj/project.xcproj` (added, +163/-0)
+```diff
+@@ -0,0 +1,163 @@
++{
++  "default-configuration": "Release",
++  "configurations": [
++    "Debug",
++    "Release",
++  ],
++  "localizations": {
++    "development": "en",
++    "supported": [
++      "Base",
++    ],
++  },
++  "files": [
++    {
++      "kind": "group",
++      "path": "Showcase",
++      "children": [
++        { "path": "Showcase.entitlements" },
++        { "path": "App.swift", "target-membership": [ "Showcase/compile-sources" ] },
++        { "path": "AppView.swift", "target-membership": [ "Showcase/compile-sources" ] },
++        { "path": "List.swift", "target-membership": [ "Showcase/compile-sources" ] },
++        { "path": "ScrollView.swift", "target-membership": [ "Showcase/compile-sources" ] },
++        { "path": "Navigation.swift", "target-membership": [ "Showcase/compile-sources" ] },
++        { "path": "Presentation.swift", "target-membership": [ "Showcase/compile-sources" ] },
++        { "path": "Controls.swift", "target-membership": [ "Showcase/compile-sources" ] },
++        { "path": "UIViewRepresentable.swift", "target-membership": [ "Showcase/compile-sources" ] },
++        { "path": "Helpers.swift", "target-membership": [ "Showcase/compile-sources" ] },
++      ],
++    }, {
++      "kind": "group",
++      "name": "Products",
++      "children": [
++        { "path": "<PRODUCTS>/Showcase.app", "id": "D53071F329983CEF00F1936C", "type": "wrapper.application", "index": false },
++      ],
++    },
++    { "kind": "group", "name": "Frameworks" },
++  ],
++  "targets": [
++    {
++      "name": "Showcase",
++      "id": "D53071F229983CEF00F1936C",
++      "product": "Products/Showcase.app",
++      "product-type": "application",
++      "build-phases": [
++        "compile-sources",
++        "frameworks",
++        "resources",
++      ],
++      "package-product-members": [
++        {
++          "product-name": "SwiftUIIntrospect",
++          "build-phase": { "build-phase": "frameworks" },
++        },
++      ],
++      "build-settings": {
++        "ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME": "AccentColor",
++        "CODE_SIGN_ENTITLEMENTS": "Showcase/Showcase.entitlements",
++        "CODE_SIGN_IDENTITY[sdk=macosx*]": "-",
++        "CODE_SIGN_STYLE": "Automatic",
++        "CURRENT_PROJECT_VERSION": "1",
++        "ENABLE_APP_SANDBOX": "YES",
++        "ENABLE_OUTGOING_NETWORK_CONNECTIONS": "YES",
++        "ENABLE_PREVIEWS": "YES",
++        "GENERATE_INFOPLIST_FILE": "YES",
++        "INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents": "YES",
++        "INFOPLIST_KEY_UILaunchScreen_Generation": "YES",
++        "INFOPLIST_KEY_UILaunchStoryboardName": "",
++        "INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad": "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight",
++        "INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone": "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight",
++        "INFOPLIST_KEY_UIUserInterfaceStyle": "Light",
++        "LD_RUNPATH_SEARCH_PATHS": [
++          "$(inherited)",
++          "@executable_path/Frameworks",
++        ],
++        "MARKETING_VERSION": "1.0",
++        "PRODUCT_BUNDLE_IDENTIFIER": "com.siteline.Showcase",
++        "PRODUCT_NAME": "$(TARGET_NAME)",
++        "SUPPORTED_PLATFORMS": "appletvos appletvsimulator iphoneos iphonesimulator macosx xros xrsimulator",
++        "SUPPORTS_MACCATALYST": "YES",
++        "SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD": "NO",
++        "SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD": "NO",
++        "SWIFT_EMIT_LOC_STRINGS": "YES",
++        "TARGETED_DEVICE_FAMILY": "1,2,3,6,7",
++      },
++    },
++  ],
++  "build-settings": {
++    "ALLOW_TARGET_PLATFORM_SPECIALIZATION": "YES",
++    "ALWAYS_SEARCH_USER_PATHS": "NO",
++    "ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS": "YES",
++    "CLANG_ANALYZER_NONNULL": "YES",
++    "CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION": "YES_AGGRESSIVE",
++    "CLANG_CXX_LANGUAGE_STANDARD": "gnu++20",
++    "CLANG_ENABLE_MODULES": "YES",
++    "CLANG_ENABLE_OBJC_ARC": "YES",
++    "CLANG_ENABLE_OBJC_WEAK": "YES",
++    "CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING": "YES",
++    "CLANG_WARN_BOOL_CONVERSION": "YES",
++    "CLANG_WARN_COMMA": "YES",
++    "CLANG_WARN_CONSTANT_CONVERSION": "YES",
++    "CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS": "YES",
++    "CLANG_WARN_DIRECT_OBJC_ISA_USAGE": "YES_ERROR",
++    "CLANG_WARN_DOCUMENTATION_COMMENTS": "YES",
++    "CLANG_WARN_EMPTY_BODY": "YES",
++    "CLANG_WARN_ENUM_CONVERSION": "YES",
++    "CLANG_WARN_INFINITE_RECURSION": "YES",
++    "CLANG_WARN_INT_CONVERSION": "YES",
++    "CLANG_WARN_NON_LITERAL_NULL_CONVERSION": "YES",
++    "CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF": "YES",
++    "CLANG_WARN_OBJC_LITERAL_CONVERSION": "YES",
++    "CLANG_WARN_OBJC_ROOT_CLASS": "YES_ERROR",
++    "CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER": "YES",
++    "CLANG_WARN_RANGE_LOOP_ANALYSIS": "YES",
++    "CLANG_WARN_STRICT_PROTOTYPES": "YES",
++    "CLANG_WARN
 ```
 
 ---
 
-### Incident Patch 3: `2fd59a7a` (2026-09-15)
-**Commit Message**: revert(ci): stop running on release branch pushes
+### Incident Patch 3: `404c0ed9` (2026-11-13)
+**Commit Message**: chore: fix inaccurate docs and remove stale project files (#530)
 
-Revert commit 55be6f4c19c30edd79f72a12a584be58b01b7326.
-
-**File**: `.github/workflows/ci.yml` (modified, +0/-1)
+**File**: `.editorconfig` (modified, +3/-2)
 ```diff
-@@ -4,7 +4,6 @@ on:
-   push:
-     branches:
-       - main
--      - "release/**"
-   pull_request:
-     branches:
-       - "**"
+@@ -17,8 +17,9 @@ indent_style = space
+ indent_size = 4
+ 
+ [*.json]
+-indent_style = tab
++indent_style = space
++indent_size = 2
+ 
+ [*.yml]
+ indent_style = space
+-indent_size = 4
++indent_size = 2
+```
+
+**File**: `.github/ISSUE_TEMPLATE/bug_report.yml` (modified, +1/-1)
+```diff
+@@ -54,7 +54,7 @@ body:
+   attributes:
+     label: Version information
+     description: The version of SwiftUIIntrospect used to reproduce this issue.
+-    placeholder: "'0.11.0' for example, or a commit hash"
++    placeholder: "'27.0.0' for example, or a commit hash"
+ - type: input
+   attributes:
+     label: Destination operating system
+```
+
+**File**: `.gitignore` (modified, +3/-10)
+```diff
+@@ -1,13 +1,6 @@
+ .DS_Store
+ .build/
+-/.swiftpm
+-/Packages
+-/*.xcodeproj
+-xcuserdata/
+-DerivedData/
+ .netrc
+-
+-fastlane/report.xml
+-fastlane/Preview.html
+-fastlane/screenshots/**/*.png
+-fastlane/test_output
++.swiftpm/
++DerivedData/
++xcuserdata/
+```
+
+**File**: `Examples/.swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata` (removed, +0/-7)
+```diff
+@@ -1,7 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<Workspace
+-   version = "1.0">
+-   <FileRef
+-      location = "self:">
+-   </FileRef>
+-</Workspace>
+```
+
+**File**: `Examples/Showcase/Showcase/AppView.swift` (modified, +2/-2)
+```diff
+@@ -64,8 +64,8 @@ struct ContentView: View {
+ 			}
+ 		}
+ 		#elseif os(macOS)
+-		.introspect(.tabView, on: .macOS(.v12, .v13, .v14)) { splitView in
+-			splitView.subviews.first?.layer?.backgroundColor = NSColor.green.cgColor
++		.introspect(.tabView, on: .macOS(.v12, .v13, .v14)) { tabView in
++			tabView.subviews.first?.layer?.backgroundColor = NSColor.green.cgColor
+ 		}
+ 		#endif
+ 	}
+```
+
+**File**: `Examples/Showcase/Showcase/Controls.swift` (modified, +4/-4)
+```diff
+@@ -165,12 +165,12 @@ struct ControlsShowcase: View {
+ 					on: .iOS(.v15, .v16, .v17, .v18, .v26, .v27),
+ 					.tvOS(.v15, .v16, .v17, .v18, .v26, .v27),
+ 					.visionOS(.v1, .v2, .v26, .v27),
+-				) { datePicker in
+-					datePicker.backgroundColor = .red
++				) { segmentedControl in
++					segmentedControl.backgroundColor = .red
+ 				}
+ 				#elseif os(macOS)
+-				.introspect(.picker(style: .segmented), on: .macOS(.v12, .v13, .v14, .v15, .v26, .v27)) { datePicker in
+-					datePicker.layer?.backgroundColor = NSColor.red.cgColor
++				.introspect(.picker(style: .segmented), on: .macOS(.v12, .v13, .v14, .v15, .v26, .v27)) { segmentedControl in
++					segmentedControl.layer?.backgroundColor = NSColor.red.cgColor
+ 				}
+ 				#endif
+ 			}
+```
+
+**File**: `README.md` (modified, +9/-9)
+```diff
+@@ -90,7 +90,7 @@ View Types
+ - [`DatePicker` with `.wheel` style](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/datepickerwithwheelstyletype)
+ - [`Form`](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/formtype)
+ - [`Form` with `.grouped` style](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/formwithgroupedstyletype)
+-- [`.fullScreenCover`](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/fullScreenCovertype)
++- [`.fullScreenCover`](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/fullscreencovertype)
+ - [`List`](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/listtype)
+ - [`List` with `.bordered` style](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/listwithborderedstyletype)
+ - [`List` with `.grouped` style](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/listwithgroupedstyletype)
+@@ -101,8 +101,8 @@ View Types
+ - [`Map`](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/maptype)
+ - [`NavigationSplitView`](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/navigationsplitviewtype)
+ - [`NavigationStack`](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/navigationstacktype)
+-- [`NavigationView` with `.columns` style](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/NavigationViewWithColumnsStyleType)
+-- [`NavigationView` with `.stack` style](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/NavigationViewWithStackStyleType)
++- [`NavigationView` with `.columns` style](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/navigationviewwithcolumnsstyletype)
++- [`NavigationView` with `.stack` style](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/navigationviewwithstackstyletype)
+ - [`PageControl`](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/pagecontroltype)
+ - [`Picker` with `.menu` style](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/pickerwithmenustyletype)
+ - [`Picker` with `.segmented` style](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/pickerwithsegmentedstyletype)
+@@ -119,14 +119,14 @@ View Types
+ - [`Stepper`](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/steppertype)
+ - [`Table`](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/tabletype)
+ - [`TabView`](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/tabviewtype)
+-- [`TabView` with `.page` style](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/TabViewWithPageStyleType)
++- [`TabView` with `.page` style](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/tabviewwithpagestyletype)
+ - [`TextEditor`](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/texteditortype)
+ - [`TextField`](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/textfieldtype)
+-- [`TextField` with `.vertical` axis](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/TextFieldWithVerticalAxisType)
++- [`TextField` with `.vertical` axis](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/textfieldwithverticalaxistype)
+ - [`Toggle`](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/toggletype)
+-- [`Toggle` with `button` style](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/togglewithbuttonstyletype)
+-- [`Toggle` with `checkbox` style](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/togglewithcheckboxstyletype)
+-- [`Toggle` with `switch` style](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/togglewithswitchstyletype)
++- [`Toggle` with `.button` style](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/togglewithbuttonstyletype)
++- [`Toggle` with `.checkbox` style](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/togglewithcheckboxstyletype)
++- [`Toggle` with `.switch` style](https://swiftpac
+```
+
+**File**: `Sources/PlatformViewVersion.swift` (modified, +0/-1)
+```diff
+@@ -106,7 +106,6 @@ public enum PlatformViewVersion<
+ 		}
+ 	}
+ 
+-	@MainActor
+ 	fileprivate var selector: IntrospectionSelector<PlatformSpecificEntity>? {
+ 		if case let .available(_, selector) = self {
+ 			selector
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #530** (2026-11-13): chore: fix inaccurate docs and remove stale project files (@davdroman)
+- **PR #529** (2026-11-13): test: run tests that were being silently skipped (@davdroman)
+- **PR #528** (2026-11-13): fix: correct `.sheet` inference on `.v27` and unavailability diagnostics (@davdroman)
 - **PR #527** (2026-10-03): feat: add default indeterminate `ProgressView` introspection (@davdroman)
 - **PR #525** (2026-09-03): CI: run SwiftFormat through hk (@davdroman)
 - **PR #524** (2026-09-03): chore: enforce SwiftFormat configuration (@davdroman)
-- **PR #523** (2026-09-02): CI: enable SwiftFormat linting (@davdroman)
-- **PR #522** (2026-08-05): Stop hierarchy traversal after the first matching entity (@2dubu)
-- **PR #521** (closed): Stop hierarchy traversal after the first match (@2dubu)
 
 ---
 
@@ -857,45 +1220,33 @@ Revert commit 55be6f4c19c30edd79f72a12a584be58b01b7326.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(maintenance): define post-merge feature and fix backports
+## X. ci: use the xcode-27 image's xcodes for the Showcase build
 
 **RULE**:
-When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siteline/swiftui-introspect. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siteline/swiftui-introspect. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7f32b29d`: docs(maintenance): define post-merge feature and fix backports. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `59370c3c`: ci: use the xcode-27 image's xcodes for the Showcase build. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-| `main` | Current 27 beta | Development branch and first destination for features and fixes |
-| `release/26.x` | `26.0.1` | Maintenance branch for version 26 releases |
-| `release/1.x` | `1.3.0` | Maintenance branch for version 1 releases |
-### Features and Fixes
-- Land features and fixes on `main` first. Assess and backport them only after they have merged, as a separate maintenance step rather than part of feature development.
-- Assess every feature and fix merged into `main` for both maintenance branches. Backport applicable, backward-compatible changes that preserve each branch's toolchain, supported platforms, and existing public API. Additive public API is allowed when it preserves compatibility with the existing API.
-- Keep each backport focused on one feature or fix. Cherry-pick the original commit when it applies cleanly; otherwise adapt only the required source and tests.
-- Do not backport breaking public API changes, new platform versions, toolchain updates, deployment-target changes, packaging changes, or unrelated CI and documentation work.
-- If a feature or fix cannot be backported while preserving those compatibility constraints, explain the incompatibility and obta
+      # The xcodesorg/made formula fails to build on macOS 27, so this uses the image's xcodes:
+      # https://github.com/XcodesOrg/homebrew-made/issues/4
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
-// Anti-pattern to NEVER write (induced failure mode):
-| `main` | Current 27 beta | Development branch and first destination for bug fixes |
-| `release/26.x` | `26.0.1` | Maintenance branch for version 26 patch releases |
-| `release/1.x` | `1.3.0` | Maintenance branch for version 1 patch releases |
-### Bug Fixes
-- Land bug fixes on `main` first.
-- Assess every bug fix merged into `main` for both maintenance branches. Backport it when the bug affects that branch and the fix preserves its public API and supported platforms.
-- Keep each backport focused on one fix. Cherry-pick the original commit when it applies cleanly; otherwise adapt only the required source and tests.
-- Do not backport features, new view types, new platform versions, public API changes, toolchain updates, deployment-target changes, packaging changes, or unrelated CI and documentation work.
-- If a fix cannot be backported without one of those changes, explain the incompatibility and obtain maintainer approval before changing the maintenance branch.
-- Run the affected tests on every changed branch. Create version 1 and version 26 patch releases from their respective maintenance branches.
+// Induced defect failure mode:
+      - name: Install xcodes
+        run: |
+          brew uninstall xcodes
+          brew install xcodesorg/made/xcodes
+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7f32b29d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `59370c3c` are properly handled with clean fallback behavior.

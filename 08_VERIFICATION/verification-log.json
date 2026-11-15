@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261110-JKGQ",
-    "timestamp": "2026-11-10T05:14:16.538Z",
-    "repository": "bahdotsh/wrkflw",
-    "learningId": "learn-github-bahdotsh-wrkflw",
-    "contentHash": "4bcc131da93ccae4640244361e05ce2bb7c390e2a3f72a41ca15fb5e49733974",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261110-JO2I",
-    "timestamp": "2026-11-10T05:14:21.210Z",
-    "repository": "lingodotdev/lingo.dev",
-    "learningId": "learn-github-lingodotdev-lingo-dev",
-    "contentHash": "c4b3a7614263b8bf4e20a5048c0a6757426cc36f6359576fb25323601baddd17",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261110-JR2Y",
     "timestamp": "2026-11-10T05:14:25.114Z",
     "repository": "AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
@@ -7492,6 +7462,36 @@
     "contentHash": "f0576e7c724480e6d241a6526a39c230f00768d82dc0051053f73b26c95c72b1",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-I4QG",
+    "timestamp": "2026-11-15T15:23:22.360Z",
+    "repository": "siteline/swiftui-introspect",
+    "learningId": "learn-github-siteline-swiftui-introspect",
+    "contentHash": "e686d618a018fa041e7cc62b648a4ea293dee7b999d221b8cf106371b105f172",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-I6SE",
+    "timestamp": "2026-11-15T15:23:25.022Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "d271937c0c69ed69a60f989f0a7f065150d77d1c3108c1c2d8ba6daeacf59070",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
