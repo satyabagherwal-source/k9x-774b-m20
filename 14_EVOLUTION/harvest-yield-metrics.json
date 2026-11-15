@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T04:43:56.245Z",
-  "total_cycles_completed": 9664,
-  "total_learnings_persisted": 9664,
-  "total_rules_promoted": 9302,
+  "last_updated": "2026-11-15T04:53:19.400Z",
+  "total_cycles_completed": 9666,
+  "total_learnings_persisted": 9666,
+  "total_rules_promoted": 9303,
   "history": [
-    {
-      "timestamp": "2026-11-14T05:07:04.586Z",
-      "repository": "restatedev/restate",
-      "learningId": "learn-github-restatedev-restate",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T05:31:29.996Z",
-      "repository": "baidu/Unlimited-OCR",
-      "learningId": "learn-huggingface-baidu-unlimited-ocr",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T05:46:26.560Z",
       "repository": "Aleph-Alpha/Kolibri-1",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-15T04:43:56.245Z",
       "repository": "microsoft/react-native-windows",
       "learningId": "learn-github-microsoft-react-native-windows",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T04:53:13.248Z",
+      "repository": "OpenMOSS-Team/MOSS-Image-Base",
+      "learningId": "learn-huggingface-openmoss-team-moss-image-base",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T04:53:19.400Z",
+      "repository": "CrossPaste/crosspaste-desktop",
+      "learningId": "learn-github-crosspaste-crosspaste-desktop",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

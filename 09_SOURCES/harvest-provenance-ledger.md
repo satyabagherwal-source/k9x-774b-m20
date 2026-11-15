@@ -10060,3 +10060,6 @@ Every entry in this ledger must capture:
 | `learn-github-microsoft-react-native-windows` | `https://github.com/microsoft/react-native-windows` | `e49cdf04` | Multi-dimensional audit evidence | 2026-11-15T04:43:56.240Z |
 | `learn-dom-d-31a60a1e` | `project://hf-nvidia-qwen3.8-flash-next-fp4-local` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md` | 2026-11-15T04:44:29.706Z |
 | `learn-dom-h-e5aa5217` | `project://microsoft-react-native-windows` | `e49cdf04` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md` | 2026-11-15T04:45:03.819Z |
+| `learn-huggingface-openmoss-team-moss-image-base` | `https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base` | `hf-openmos` | Multi-dimensional audit evidence | 2026-11-15T04:53:13.243Z |
+| `learn-github-crosspaste-crosspaste-desktop` | `https://github.com/CrossPaste/crosspaste-desktop` | `bf971f9a` | Multi-dimensional audit evidence | 2026-11-15T04:53:19.395Z |
+| `learn-dom-d-5d6e0080` | `project://hf-openmoss-team-moss-image-base` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openmoss-team-moss-image-base-learnings.md` | 2026-11-15T04:53:52.300Z |

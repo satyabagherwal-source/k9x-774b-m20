@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T04:45:03.937Z",
+  "updated_at": "2026-11-15T04:53:52.703Z",
   "stats": {
-    "total_discovered": 3597,
-    "approved_pending_harvest": 3387,
+    "total_discovered": 3601,
+    "approved_pending_harvest": 3391,
     "harvested_count": 0,
     "rejected_count": 210,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3368,
+      "COMMUNITY_AND_EXPERT": 3372,
       "OFFICIAL_DOCUMENTATION": 125,
       "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
@@ -77685,6 +77685,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md",
         "fileName": "microsoft-react-native-windows-learnings.md"
+      }
+    },
+    "SRC-07395AAAB74E": {
+      "id": "SRC-07395AAAB74E",
+      "url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base",
+      "title": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T04:53:52.312Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openmoss-team-moss-image-base-learnings.md",
+        "fileName": "hf-openmoss-team-moss-image-base-learnings.md"
+      }
+    },
+    "SRC-CC6576F6C943": {
+      "id": "SRC-CC6576F6C943",
+      "url": "https://github.com/phax/ph-css",
+      "title": "https://github.com/phax/ph-css",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T04:53:52.657Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crosspaste-crosspaste-desktop-learnings.md",
+        "fileName": "crosspaste-crosspaste-desktop-learnings.md"
+      }
+    },
+    "SRC-E58989561CF4": {
+      "id": "SRC-E58989561CF4",
+      "url": "https://github.com/phax/ph-css/releases",
+      "title": "https://github.com/phax/ph-css/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T04:53:52.680Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crosspaste-crosspaste-desktop-learnings.md",
+        "fileName": "crosspaste-crosspaste-desktop-learnings.md"
+      }
+    },
+    "SRC-3F446683ED36": {
+      "id": "SRC-3F446683ED36",
+      "url": "https://github.com/phax/ph-css/compare/ph-css-parent-pom-8.2.3...ph-css-parent-pom-8.4.0",
+      "title": "https://github.com/phax/ph-css/compare/ph-css-parent-pom-8.2.3...ph-css-parent-pom-8.4.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T04:53:52.703Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crosspaste-crosspaste-desktop-learnings.md",
+        "fileName": "crosspaste-crosspaste-desktop-learnings.md"
       }
     }
   }

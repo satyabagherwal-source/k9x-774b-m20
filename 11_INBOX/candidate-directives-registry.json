@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T04:45:04.747Z",
+  "last_updated": "2026-11-15T04:53:53.682Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4835,11 +4835,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-SE3X",
+      "id": "CD-0M86",
       "directive_title": "editor): add scoped ios account deletion",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-SE3X-editor-add-scoped-ios-account-deletion.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-0M86-editor-add-scoped-ios-account-deletion.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-15",
@@ -14559,6 +14559,35 @@
       "source_repo": "zoontek-react-native-bootsplash",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-259190-splash-screen-staying-visible-after-warm.md",
+      "staged_date": "2026-11-15"
+    },
+    {
+      "id": "CD-0LMF",
+      "directive_title": ":lipstick: Distinguish iPhone, iPad, and iPhone Duo in device lists",
+      "source_repo": "crosspaste-crosspaste-desktop-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-0LMF-lipstick-distinguish-iphone-ipad-and-iphone-duo-in-device-lists.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-15",
+      "domain_letter": "F"
+    },
+    {
+      "id": "CD-REV-6E7D1A",
+      "directive_title": ":lipstick: Distinguish iPhone, iPad, and iPhone Duo in device lists",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "crosspaste-crosspaste-desktop",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-6E7D1A--lipstick-distinguish-iphone-ipad-and-ip.md",
+      "staged_date": "2026-11-15"
+    },
+    {
+      "id": "CD-REV-A9A703",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-A9A703-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-15"
     }
   ]

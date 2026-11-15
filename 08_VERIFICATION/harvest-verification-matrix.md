@@ -10027,3 +10027,6 @@
 | `CYCLE-20261115-NT8T` | `2026-11-15T04:43:56.237Z` | `microsoft/react-native-windows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8578` | Yes (`30b42071...`) |
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T04:44:29.706Z` | `hf-nvidia-qwen3.8-flash-next-fp4-local` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-31A60A1E` [Domain D] | Yes (`daffa621...`) |
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T04:45:03.819Z` | `microsoft-react-native-windows` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-E5AA5217` [Domain H] | Yes (`20e40faa...`) |
+| `CYCLE-20261115-ZR13` | `2026-11-15T04:53:13.239Z` | `OpenMOSS-Team/MOSS-Image-Base` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openmoss-team-moss-image-base-learnings.md` | Yes (`474e1c14...`) |
+| `CYCLE-20261115-ZVS0` | `2026-11-15T04:53:19.392Z` | `CrossPaste/crosspaste-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8579` | Yes (`f5f81661...`) |
+| `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T04:53:52.300Z` | `hf-openmoss-team-moss-image-base` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-5D6E0080` [Domain D] | Yes (`a75b6def...`) |

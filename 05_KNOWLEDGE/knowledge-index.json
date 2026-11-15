@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-15T04:45:04.974Z",
-  "total_verified_learnings": 8663,
+  "last_updated": "2026-11-15T04:53:53.902Z",
+  "total_verified_learnings": 8665,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18150,
+  "total_items": 18162,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113663,13 +113663,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-SE3X-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-0M86-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "3ae0d7b23f5cb75b1b11c2ea6518bac9b758e4a6e9e4748c13c3cee5581ffaec",
+      "content_hash": "62ace9c6d58a96c76ff81b9e777ae30b1eaf700317b49c69e21b53f9842cb78d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T04:19:30.291Z"
+      "persisted_at": "2026-11-15T04:53:53.682Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113679,9 +113679,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "2dd5ed1a4a8fed4b539a3a0e9cc847fef74252112c618c6f43c1d19876fc32f6",
+      "content_hash": "18056d9d2d43f757b992ed7d8e874654a60eff7b904eb073f935dff769216ac0",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T04:19:30.419Z"
+      "persisted_at": "2026-11-15T04:53:53.786Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113691,9 +113691,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "7dfe8e7851f3fab5a895f3b801778fdde5c65ff9c48741c4f83637e1a993acd2",
+      "content_hash": "c80daf0e2a351aa241f8c8b1374256c417119f2903f899e84c0957d8b70069d6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T04:19:30.549Z"
+      "persisted_at": "2026-11-15T04:53:53.902Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -239612,6 +239612,188 @@
       "content_hash": "a519fb09030f732bee464ac2210507e4da5e5f7cf46df1a1939dbe59897f93d8",
       "domain_letter": "H",
       "persisted_at": "2026-11-15T04:45:04.260Z"
+    },
+    "learn-huggingface-openmoss-team-moss-image-base": {
+      "learning_id": "learn-huggingface-openmoss-team-moss-image-base",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "OpenMOSS-Team/MOSS-Image-Base",
+      "repository": "OpenMOSS-Team/MOSS-Image-Base",
+      "slug": "hf-openmoss-team-moss-image-base",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base",
+      "source_version": "hf-openmoss-team-moss-image-base",
+      "content_hash": "474e1c1498c4d659d0100a94664fa9382fd45e6ddba941b9c779634738bef909",
+      "dossier_path": "07_PROJECT_LEARNING/hf-openmoss-team-moss-image-base-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-openmoss-team-moss-image-base-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T04:53:13.102Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-openmoss-team-moss-image-base-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-openmoss-team-moss-image-base-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openmoss-team-moss-image-base-research-knowledge-intelligence-openmoss-team-m.md",
+      "title": "Research & Knowledge Intelligence: OpenMOSS-Team/MOSS-Image-Base Core Invariants",
+      "repository": "OpenMOSS-Team/MOSS-Image-Base",
+      "source_version": "hf-openmoss-team-moss-image-base",
+      "content_hash": "53834231e1716fbac5c0611c92fd30734ec27a48adc974d7fd131e0a5f30fcfd",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T04:53:13.403Z"
+    },
+    "learn-github-crosspaste-crosspaste-desktop": {
+      "learning_id": "learn-github-crosspaste-crosspaste-desktop",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "CrossPaste/crosspaste-desktop",
+      "repository": "CrossPaste/crosspaste-desktop",
+      "slug": "crosspaste-crosspaste-desktop",
+      "platform": "github",
+      "source_url": "https://github.com/CrossPaste/crosspaste-desktop",
+      "source_version": "bf971f9a",
+      "content_hash": "f5f816616beca5de49082772105f5ba4895ac806c3f4e05b038eee7bb874e9d9",
+      "dossier_path": "07_PROJECT_LEARNING/crosspaste-crosspaste-desktop-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/crosspaste-crosspaste-desktop-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8579,
+          "title": ":lipstick: Distinguish iPhone, iPad, and iPhone Duo in device lists",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T04:53:19.259Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8579": {
+      "learning_id": "rule-8579",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8579,
+      "title": ":lipstick: Distinguish iPhone, iPad, and iPhone Duo in device lists",
+      "source_url": "https://github.com/CrossPaste/crosspaste-desktop",
+      "source_version": "bf971f9a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T04:53:19.259Z"
+    },
+    "candidate_directive-lipstick-distinguish-iphone-ipad-and-iphone-duo-in-device-lists": {
+      "item_id": "candidate_directive-lipstick-distinguish-iphone-ipad-and-iphone-duo-in-device-lists",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0LMF-lipstick-distinguish-iphone-ipad-and-iphone-duo-in-device-lists.md",
+      "title": ":lipstick: Distinguish iPhone, iPad, and iPhone Duo in device lists",
+      "repository": "crosspaste-crosspaste-desktop-learnings",
+      "source_version": "HEAD",
+      "content_hash": "08c8809ee61835b4f756c813709f5a71ca1987af3110b66ab43dd6d44a2c978f",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-15T04:53:52.887Z"
+    },
+    "domain_intelligence-design-intelligence-crosspaste-crosspaste-desktop-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-crosspaste-crosspaste-desktop-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-crosspaste-crosspaste-desktop-design-intelligence-crosspaste-crosspaste-desktop-.md",
+      "title": "Design Intelligence: CrossPaste/crosspaste-desktop Core Invariants",
+      "repository": "CrossPaste/crosspaste-desktop",
+      "source_version": "bf971f9a",
+      "content_hash": "8e436936da95e722f7cd3e1a05a5c3425db95a875703850c74d4476699db4824",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-15T04:53:19.644Z"
+    },
+    "agent_contract-agent-contract-crosspaste-crosspaste-desktop-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-crosspaste-crosspaste-desktop-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/crosspaste-crosspaste-desktop-agent-contract-crosspaste-crosspaste-desktop-auton.md",
+      "title": "Agent Contract: CrossPaste/crosspaste-desktop Autonomous Specialist Persona",
+      "repository": "CrossPaste/crosspaste-desktop",
+      "source_version": "bf971f9a",
+      "content_hash": "d232fe9f63892b462ff9cc4d6762d3ece7f97b4ce12207eedf9e5c4dfdbab61b",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-15T04:53:19.739Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-crosspaste-crosspaste-desktop": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-crosspaste-crosspaste-desktop",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/crosspaste-crosspaste-desktop-verification-protocol-empirical-defect-shield-for-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for CrossPaste/crosspaste-desktop",
+      "repository": "CrossPaste/crosspaste-desktop",
+      "source_version": "bf971f9a",
+      "content_hash": "7f0ed9a56702c2dca7299227aa4d7b8ff1bffdd3ffa94dd86a68b1302cef60a2",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T04:53:19.825Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-openmoss-team-moss-image-base-learnings-core-": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-openmoss-team-moss-image-base-learnings-core-",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openmoss-team-moss-image-base-learnings-research-knowledge-intelligence-hf-op.md",
+      "title": "Research & Knowledge Intelligence: hf-openmoss-team-moss-image-base-learnings Core Invariants",
+      "repository": "hf-openmoss-team-moss-image-base-learnings",
+      "source_version": "HEAD",
+      "content_hash": "472111da960dbc39f7ed910f0a4fb94f1a703223e1a93a05787447b5aa7457ad",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T04:53:52.485Z"
+    },
+    "domain_intelligence-design-intelligence-crosspaste-crosspaste-desktop-learnings-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-crosspaste-crosspaste-desktop-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-crosspaste-crosspaste-desktop-learnings-design-intelligence-crosspaste-crosspast.md",
+      "title": "Design Intelligence: crosspaste-crosspaste-desktop-learnings Core Invariants",
+      "repository": "crosspaste-crosspaste-desktop-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3e6e570b951697c3b9c90bbc52f01ff8a7dd4c336bab80123434741c9ee42be2",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-15T04:53:53.005Z"
+    },
+    "agent_contract-agent-contract-crosspaste-crosspaste-desktop-learnings-autonomous-specialist-per": {
+      "item_id": "agent_contract-agent-contract-crosspaste-crosspaste-desktop-learnings-autonomous-specialist-per",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/crosspaste-crosspaste-desktop-learnings-agent-contract-crosspaste-crosspaste-des.md",
+      "title": "Agent Contract: crosspaste-crosspaste-desktop-learnings Autonomous Specialist Persona",
+      "repository": "crosspaste-crosspaste-desktop-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f4c70053a966d079b8aafea8904bb74625193789516f1413805528d29cff589d",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-15T04:53:53.121Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-crosspaste-crosspaste-desktop-": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-crosspaste-crosspaste-desktop-",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/crosspaste-crosspaste-desktop-learnings-verification-protocol-empirical-defect-s.md",
+      "title": "Verification Protocol: Empirical Defect Shield for crosspaste-crosspaste-desktop-learnings",
+      "repository": "crosspaste-crosspaste-desktop-learnings",
+      "source_version": "HEAD",
+      "content_hash": "47c63de8316152cc5fa76ac7563bac67c751fcc23d1e8b8286f2dad8690275ba",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T04:53:53.229Z"
     }
   },
   "ai-builder-brain": {

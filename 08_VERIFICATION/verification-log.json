@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-RKNK",
-    "timestamp": "2026-11-09T22:48:35.408Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "b1a35d23ea0b1270603fe21cf38e956e73ce5debd1348b40f87083e44c4d0d1f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-0E9U",
-    "timestamp": "2026-11-09T22:55:27.042Z",
-    "repository": "graphprotocol/graph-node",
-    "learningId": "learn-github-graphprotocol-graph-node",
-    "contentHash": "d1eb4826ef58785d11a6851393d41b2474564a4db76d782ce4a1002a20605df4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-FW69",
     "timestamp": "2026-11-09T23:07:30.081Z",
     "repository": "aleo-labs-protocol/snarkOS",
@@ -7490,6 +7460,36 @@
     "repository": "microsoft/react-native-windows",
     "learningId": "learn-github-microsoft-react-native-windows",
     "contentHash": "30b42071349ac385dcc4164df5514524d3bfed6048cec461fc7034d1dc89b980",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-ZR13",
+    "timestamp": "2026-11-15T04:53:13.239Z",
+    "repository": "OpenMOSS-Team/MOSS-Image-Base",
+    "learningId": "learn-huggingface-openmoss-team-moss-image-base",
+    "contentHash": "474e1c1498c4d659d0100a94664fa9382fd45e6ddba941b9c779634738bef909",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-ZVS0",
+    "timestamp": "2026-11-15T04:53:19.392Z",
+    "repository": "CrossPaste/crosspaste-desktop",
+    "learningId": "learn-github-crosspaste-crosspaste-desktop",
+    "contentHash": "f5f816616beca5de49082772105f5ba4895ac806c3f4e05b038eee7bb874e9d9",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

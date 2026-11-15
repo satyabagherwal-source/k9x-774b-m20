@@ -1675,8 +1675,8 @@
     "sourceUrl": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base",
     "sourceVersion": "hf-openmoss-team-moss-image-base",
     "license": "Open-Source",
-    "contentHash": "e196a6a131d99d457cfb05f4ce1984135c14ea563fead73169d762bbd2e2bcbe",
-    "lastHarvestedAt": "2026-11-09T16:10:53.621Z",
+    "contentHash": "474e1c1498c4d659d0100a94664fa9382fd45e6ddba941b9c779634738bef909",
+    "lastHarvestedAt": "2026-11-15T04:53:13.243Z",
     "learningId": "learn-huggingface-openmoss-team-moss-image-base"
   },
   "hf-openmoss-team-moss-image-sft": {
@@ -7603,10 +7603,10 @@
     "repository": "CrossPaste/crosspaste-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/CrossPaste/crosspaste-desktop",
-    "sourceVersion": "c3c5fe6a",
+    "sourceVersion": "bf971f9a",
     "license": "AGPL-3.0",
-    "contentHash": "cd232e3053530f38bc6494bf7e5a9740d5c6f46926b97163e51f6571d101988e",
-    "lastHarvestedAt": "2026-11-11T17:46:20.585Z",
+    "contentHash": "f5f816616beca5de49082772105f5ba4895ac806c3f4e05b038eee7bb874e9d9",
+    "lastHarvestedAt": "2026-11-15T04:53:19.395Z",
     "learningId": "learn-github-crosspaste-crosspaste-desktop"
   },
   "infiniflow-infinity": {

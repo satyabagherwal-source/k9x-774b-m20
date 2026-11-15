@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-15T04:43:56.249Z",
+  "last_updated": "2026-11-15T04:53:19.403Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2646,14 +2646,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openmoss-team-moss-image-base",
-      "content_hash": "e196a6a131d99d457cfb05f4ce1984135c14ea563fead73169d762bbd2e2bcbe",
-      "verified_at": "2026-11-09T16:10:53.628Z",
+      "content_hash": "474e1c1498c4d659d0100a94664fa9382fd45e6ddba941b9c779634738bef909",
+      "verified_at": "2026-11-15T04:53:13.251Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T16:10:53.628Z"
+      "last_updated": "2026-11-15T04:53:13.251Z"
     },
     "OpenMOSS-Team/MOSS-Image-SFT": {
       "repository": "OpenMOSS-Team/MOSS-Image-SFT",
@@ -11451,14 +11451,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crosspaste-crosspaste-desktop",
-      "content_hash": "cd232e3053530f38bc6494bf7e5a9740d5c6f46926b97163e51f6571d101988e",
-      "verified_at": "2026-11-11T17:46:20.594Z",
+      "content_hash": "f5f816616beca5de49082772105f5ba4895ac806c3f4e05b038eee7bb874e9d9",
+      "verified_at": "2026-11-15T04:53:19.402Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T17:46:20.594Z"
+      "last_updated": "2026-11-15T04:53:19.402Z"
     },
     "infiniflow/infinity": {
       "repository": "infiniflow/infinity",

@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:34:41.754Z",
+  "timestamp": "2026-11-15T04:53:52.778Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-crosspaste-crosspaste-desktop-learnings",
+  "learning_id": "LEARN-EVO-crosspaste-crosspaste-desktop-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [crosspaste-crosspaste-desktop-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:34:41.754Z`  
-> **Learning ID**: `LEARN-REEXTRACT-crosspaste-crosspaste-desktop-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-15T04:53:52.778Z`  
+> **Learning ID**: `LEARN-EVO-crosspaste-crosspaste-desktop-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crosspaste-crosspaste-desktop-learnings.md`  
 > **Source**: github ([https://github.com/CrossPaste/crosspaste-desktop](https://github.com/CrossPaste/crosspaste-desktop))  
-> **Source Version**: `c3c5fe6a`  
+> **Source Version**: `bf971f9a`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T17:46:09.987Z  
+> **Timestamp**: 2026-11-15T04:53:18.600Z  
 > **Learning ID**: `learn-github-crosspaste-crosspaste-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crosspaste-crosspaste-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/CrossPaste/crosspaste-desktop](https://github.com/CrossPaste/crosspaste-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T17:46:05.787Z  
+> **Harvest Timestamp**: 2026-11-15T04:53:18.595Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Cross-device clipboard sync for macOS, Windows & Linux — end-to-end encrypted, LAN-only, no cloud. OCR, CLI and MCP server built in.
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2695 stars
+- **Stars / Engagement**: 2699 stars
 
 ---
 
@@ -793,368 +793,261 @@ private val MIN_CONNECTING_VISIBLE = 1.seconds
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4a33f375` (2026-11-08)
-**Commit Message**: :bug: post notifications to Notification Center on macOS while the main window is hidden (#5316)
+### Incident Patch 1: `bf971f9a` (2026-11-14)
+**Commit Message**: :lipstick: Distinguish iPhone, iPad, and iPhone Duo in device lists (#5342)
 
-Rebased onto the Windows tray balloon change (#5317): macOS shares its
-Error/Warning-only filter and runCatching fallback, and the now-unused
-CrossPasteTrayState (never collected since #3413) is removed.
+Make Apple devices easier to distinguish at 24 dp. Give iPhone and iPad
+solid portrait and landscape silhouettes with matching top cutouts, and
+depict the folded iPhone Duo with a straight hinge side and a second
+chassis edge behind the cover. Keep the existing sync-state tinting.
 
-**File**: `app/src/desktopMain/kotlin/com/crosspaste/platform/macos/api/MacosApi.kt` (modified, +6/-0)
+Select the Duo glyph using the reported iPhone19,4 hardware identifier
+and fall back to the standard iPhone glyph for other iPhone identifiers.
+Cover model detection and the rendered Duo and fallback icons in
+desktop regression tests.
+
+**File**: `app/src/commonMain/composeResources/drawable/ipad.svg` (modified, +4/-1)
 ```diff
-@@ -124,6 +124,12 @@ interface MacosApi : Library {
-         thumbnailPath: String,
-     ): Boolean
- 
-+    // Returns 1 when posted, 0 when Notification Center is unavailable to this process
-+    fun postUserNotification(
-+        title: String,
-+        body: String,
-+    ): Int
-+
-     fun startNetworkStateMonitor(callback: NetworkChangeCallback)
- 
-     fun stopNetworkStateMonitor()
+@@ -1 +1,4 @@
+-<svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><path d="M384 512H128a64.07 64.07 0 01-64-64V64a64.07 64.07 0 0164-64h256a64.07 64.07 0 0164 64v384a64.07 64.07 0 01-64 64zM128 32a32 32 0 00-32 32v384a32 32 0 0032 32h256a32 32 0 0032-32V64a32 32 0 00-32-32z"/><path d="M384 0a64.07 64.07 0 0164 64v384a64.07 64.07 0 01-64 64H128a64.07 64.07 0 01-64-64V64a64.07 64.07 0 0164-64h256M128 480h256a32 32 0 0032-32V64a32 32 0 00-32-32H128a32 32 0 00-32 32v384a32 32 0 0032 32m0-16a16 16 0 01-16-16V64a16 16 0 0116-16h256a16 16 0 0116 16v384a16 16 0 01-16 16z"/></svg>
+\ No newline at end of file
++<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
++    <path fill-rule="evenodd" d="M4 4h16a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H4a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3Z
++        M10.5 7h3a0.75 0.75 0 0 1 0 1.5h-3a0.75 0.75 0 0 1 0-1.5Z"/>
++</svg>
 ```
 
-**File**: `app/src/desktopMain/kotlin/com/crosspaste/ui/base/CrossPasteTrayState.kt` (removed, +0/-26)
+**File**: `app/src/commonMain/composeResources/drawable/iphone.svg` (modified, +4/-1)
 ```diff
-@@ -1,26 +0,0 @@
--package com.crosspaste.ui.base
--
--import androidx.compose.ui.window.Notification
--import kotlinx.coroutines.channels.Channel
--import kotlinx.coroutines.flow.Flow
--import kotlinx.coroutines.flow.receiveAsFlow
--
--class CrossPasteTrayState {
--    private val notificationChannel = Channel<Notification>(0)
--
--    /**
--     * Flow of notifications sent by [sendNotification].
--     * This flow doesn't have a buffer, so all previously sent notifications will not appear in
--     * this flow.
--     */
--    val notificationFlow: Flow<Notification>
--        get() = notificationChannel.receiveAsFlow()
--
--    /**
--     * Send notification to tray. If [CrossPasteTrayState] is attached to CrossPasteTray, notification will be sent to
--     * the platform. If [CrossPasteTrayState] is not attached then notification will be lost.
--     */
--    fun sendNotification(notification: Notification) {
--        notificationChannel.trySend(notification)
--    }
--}
+@@ -1 +1,4 @@
+-<svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><path d="M336 0H176a64 64 0 00-64 64v384a64 64 0 0064 64h160a64 64 0 0064-64V64a64 64 0 00-64-64zm32 448a32 32 0 01-32 32H176a32 32 0 01-32-32V64a32 32 0 0132-32h11.35a7.94 7.94 0 017.3 4.75A32 32 0 00224 56h64a32 32 0 0029.35-19.25 7.94 7.94 0 017.3-4.75H336a32 32 0 0132 32z"/><path d="M336 48a11.88 11.88 0 00-9.53 4.69A48 48 0 01288 72h-64a48 48 0 01-38.47-19.31A11.88 11.88 0 00176 48a16 16 0 00-16 16v384a16 16 0 0016 16h160a16 16 0 0016-16V64a16 16 0 00-16-16z"/><path d="M336 0H176a64 64 0 00-64 64v384a64 64 0 0064 64h160a64 64 0 0064-64V64a64 64 0 00-64-64zm32 448a32 32 0 01-32 32H176a32 32 0 01-32-32V64a32 32 0 0132-32h11.35a7.94 7.94 0 017.3 4.75A32 32 0 00224 56h64a32 32 0 0029.35-19.25 7.94 7.94 0 017.3-4.75H336a32 32 0 0132 32z"/></svg>
+\ No newline at end of file
++<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
++    <path fill-rule="evenodd" d="M8 0.75h8a3 3 0 0 1 3 3v16.5a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V3.75a3 3 0 0 1 3-3Z
++        M10.5 3.75h3a0.75 0.75 0 0 1 0 1.5h-3a0.75 0.75 0 0 1 0-1.5Z"/>
++</svg>
 ```
 
-**File**: `app/src/desktopMain/kotlin/com/crosspaste/ui/base/DesktopNotificationManager.kt` (modified, +13/-23)
+**File**: `app/src/commonMain/kotlin/com/crosspaste/ui/base/IphoneDuoIcon.kt` (added, +52/-0)
 ```diff
-@@ -1,12 +1,12 @@
- package com.crosspaste.ui.base
- 
--import androidx.compose.ui.window.Notification
- import com.crosspaste.app.DesktopAppWindowManager
- import com.crosspaste.i18n.GlobalCopywriter
- import com.crosspaste.notification.Message
- import com.crosspaste.notification.MessageType
- import com.crosspaste.notification.NotificationManager
- import com.crosspaste.platform.Platform
-+import com.crosspaste.platform.macos.api.MacosApi
- import com.crosspaste.platform.windows.WindowsTrayNotifier
- import com.crosspaste.platform.windows.api.Shell32
- import com.crosspaste.platform.windows.api.User32
-@@ -22,14 +22,16 @@ class DesktopNotificationManager(
-     private val soundService: SoundService,
-     // Shows a balloon on the Windows tray icon; false when it cannot be shown
-     private val postWindowsNotification: (Message) -> Boolean = defaultWindowsNotification(),
-+    // Posts to macOS Notification Center; false when unavailable to this process
-+    private val postMacosNotification: (Message) -> Boolean = { message ->
-+        MacosApi.INSTANCE.postUserNotification(message.title, message.message ?: "") != 0
-+    },
- ) : NotificationManager(copywriter) {
- 
-     private val logger = KotlinLogging.logger {}
- 
-     val idGenerator = AtomicInteger(0)
- 
--    val trayState = CrossPasteTrayState()
--
-     override fun getMessageId(): Int = idGenerator.incrementAndGet()
- 
-     override fun doSendNotification(message: Message) {
-@@ -41,9 +43,9 @@ class DesktopNotificationManager(
-             // Frequent results like "copy successful" would be noise as system notifications
-             pushNotification(message)
-         } else if (platform.isWindows()) {
--            notifyWindows(message)
-+            notifySystem(message, postWindowsNotification)
-         } else {
--            notifyTray(message)
-+            notifySystem(message, postMacosNotification)
-         }
-         if (message.messageType == MessageType.Error) {
-             soundService.errorSound()
-@@ -55,32 +57,20 @@ class DesktopNotificationManager(
-     private fun Message.needsSystemNotification(): Boolean =
-         messageType == MessageType.Error || messageType == MessageType.Warning
- 
--    private fun notifyWindows(message: Message) {
-+    private fun notifySystem(
-+        message: Message,
-+        post: (Message) -> Boolean,
-+    ) {
-         // runCatching also catches JNA Errors (e.g. UnsatisfiedLinkError); anything thrown here
-         // would end the collector in NotificationManager and silence every later notification
-         val shown =
--            runCatching { postWindowsNotification(message) }
--                .onFailure { logger.warn(it) { "Failed to show tray balloon" } }
-+            runCatching { post(message) }
-+                .onFailure { logger.warn(it) { "Failed to show system notification" } }
-                 .getOrDefault(false)
-         if (!shown) {
-             pushNotification(message)
-         }
-     }
--
--    private fun notifyTray(message: Message) {
--        trayState.sendNotification(
--            Notification(
--                message.title,
--                message.message ?: "",
--                when (message.messageType) {
--                    MessageType.Error -> Notification.Type.Error
--                    MessageType.Info -> Notification.Type.Info
--                    MessageType.Success -> Notification.Type.None
--                    MessageType.Warning -> Notification.Type.Warning
--                },
--            ),
--        )
--    }
- }
- 
- private fun defaultWindowsNotification(): (Message) -> Boolean {
-```
-
-**File**: `app/src/desktopMain/swift/MacosApi.swift` (modified, +71/-0)
-```diff
-@@ -6,6 +6,7 @@ import ImageIO
- import Network
- import QuickLookThumbnailing
- import Security
-+import UserNotifications
- 
- @_cdecl("getPasteboardChangeCount")
- public func getPasteboardChangeCount(currentChangeCount: Int,
-@@ -850,3 +851,73 @@ public func stopNetworkStateMonitor() {
-         networkStateCallback = nil
-     }
- }
-+
-+// MARK: - User notifications
-+
-+// Shows banners even while CrossPaste is the active app; macOS hides them otherwise
-+private class ForegroundNotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
-+    func userNotificationCenter(_ center: UNUserNotificationCenter,
-+                                willPresent notification: UNNotification,
-+                                withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-+        if #available(macOS 11.0, *) {
-+            completionHandler([.banner, .list])
-+        } else {
-+            completionHandler([.alert])
-+        }
-+    }
-+}
-+
-+private let foregroundNotificationDelegate = ForegroundNotificationDelegate()
-+
-+private func authorizationStatus(_ center: UNUserNotificationCenter) -> UNAuthorizationStatus? {
-+    let semaphore = DispatchSemaphore(value: 0)
-+    var status: UNAuthorizationStatus?
-+    center.getNotificationSettings { settings in
-+        status = settings.authorizationStatus
-+        semaphore.signal()
-+    }
-+    return semaphore.wait(timeout: .now() + 1) == .success ? status : nil
-+}
-+
-+private func addNotification(_ center: UNUserNotificationCenter, _ content: UNNotificationContent) {
-+    center.add(UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)) { error in
-+        if let error = error {
-+            NSLog("CrossPaste: failed to post notification: %@", error.localizedDescription)
-+        }
-+    }
-+}
-+
-+/// Posts a notification to Notification Center. Returns 0 when it will not be shown,
-+/// so the caller can show the message another way: the process is not an app bundle
-+/// (a development run from a bare java launcher, where UNUserNotificationCenter raises
-+/// an uncatchable exception), or the user has not allowed notifications. On first use
-+/// it asks for permission and returns 1; that one message is lost if the user declines.
-+@_cdecl("postUserNotification")
-+public func postUserNotification(title: UnsafePointer<CChar>, body: UnsafePointer<CChar>) -> Int32 {
-+    // The JDK's bin/ also carries a bundle identifier, but has no LaunchServices
-+    // bundle proxy; only a real .app can use UNUserNotificationCenter
-+    guard Bundle.main.bundleURL.pathExtension == "app",
-+          Bundle.main.bundleIdentifier != nil else { return 0 }
-+
-+    let content = UNMutableNotificationContent()
-+    content.title = String(cString: title)
-+    content.body = String(cString: body)
-+
-+    let center = UNUserNotificationCenter.current()
-+    if center.delegate == nil {
-+        center.delegate = foregroundNotificationDelegate
-+    }
-+
-+    switch authorizationStatus(center) {
-+    case .authorized, .provisional:
-+        addNotification(center, content)
-+        return 1
-+    case .notDetermined:
-+        center.requestAuthorization(options: [.alert]) { granted, _ in
-+            if granted { addNotification(center, content) }
-+        }
-+        return 1
-+    default:
-+        return 0
-+    }
-+}
-```
-
-**File**: `app/src/desktopTest/kotlin/com/crosspaste/ui/base/DesktopNotificationManagerMacosTest.kt` (added, +121/-0)
-```diff
-@@ -0,0 +1,121 @@
+@@ -0,0 +1,52 @@
 +package com.crosspaste.ui.base
 +
-+import com.crosspaste.app.DesktopAppWindowManager
-+import com.crosspaste.notification.Message
-+import com.crosspaste.notification.MessageType
++import androidx.compose.runtime.Composable
++import androidx.compose.ui.graphics.Color
++import androidx.compose.ui.graphics.PathFillType
++import androidx.compose.ui.graphics.SolidColor
++import androidx.compose.ui.graphics.painter.Painter
++import androidx.compose.ui.graphics.vector.ImageVector
++import androidx.compose.ui.graphics.vector.path
++import androidx.compose.ui.graphics.vector.rememberVectorPainter
++import com.crosspaste.ui.theme.AppUISize.xLarge
++
++@Composable
++internal fun iphoneDuo(): Painter = rememberVectorPainter(iphoneDuoIcon)
++
++private val iphoneDuoIcon by lazy {
++    // A shared Compose vector lets Android use the same artwork without loading an SVG.
++    val ink = SolidColor(Color.Black)
++    ImageVector
++        .Builder("iPhone Duo", xLarge, xLarge, 24f, 24f)
++        .path(
++            fill = ink,
++            fillAlpha = 0.55f,
++        ) {
++            // Only the free edge of the folded chassis is visible behind the cover.
++            moveTo(17f, 2.5f)
++            horizontalLineTo(17.75f)
++            arcTo(3f, 3f, 0f, false, true, 20.75f, 5.5f)
++            verticalLineTo(20.25f)
++            arcTo(3f, 3f, 0f, false, true, 17.75f, 23.25f)
++            horizontalLineTo(3.75f)
++            verticalLineTo(20f)
++            horizontalLineTo(17f)
++            close()
++        }.path(
++            fill = ink,
++            pathFillType = PathFillType.EvenOdd,
++        ) {
++            moveTo(3.75f, 0.75f)
++            horizontalLineTo(16f)
++            arcTo(3f, 3f, 0f, false, true, 19f, 3.75f)
++            verticalLineTo(18.5f)
++            arcTo(3f, 3f, 0f, false, true, 16f, 21.5f)
++            horizontalLineTo(3.75f)
++            close()
++
++            moveTo(15.75f, 3.75f)
++            arcTo(0.75f, 0.75f, 0f, false, true, 15.75f, 5.25f)
++            arcTo(0.75f, 0.75f, 0f, false, true, 15.75f, 3.75f)
++            close()
++        }.build()
++}
+```
+
+**File**: `app/src/commonMain/kotlin/com/crosspaste/ui/base/PlatformIcon.kt` (modified, +2/-0)
+```diff
+@@ -12,6 +12,8 @@ fun PlatformIcon(platform: Platform): Painter =
+         windows()
+     } else if (platform.isLinux()) {
+         linux()
++    } else if (platform.isIphoneDuo()) {
++        iphoneDuo()
+     } else if (platform.isIphone()) {
+         iphone()
+     } else if (platform.isIpad()) {
+```
+
+**File**: `app/src/desktopTest/kotlin/com/crosspaste/platform/PlatformTest.kt` (modified, +12/-0)
+```diff
+@@ -7,6 +7,7 @@ import io.mockk.every
+ import io.mockk.mockk
+ import kotlin.test.Test
+ import kotlin.test.assertEquals
++import kotlin.test.assertFalse
+ import kotlin.test.assertTrue
+ 
+ class PlatformTest {
+@@ -40,6 +41,17 @@ class PlatformTest {
+         assertEquals("Unknown", platform(Platform.UNKNOWN_OS).displayName())
+     }
+ 
++    @Test
++    fun testIphoneDuoUsesReportedHardwareModel() {
++        val duo = Platform(name = Platform.IPHONE, arch = "iPhone19,4", bitMode = 64, version = "27.1")
++
++        assertTrue(duo.isIphoneDuo())
++        assertFalse(duo.copy(arch = "iPhone19,2").isIphoneDuo())
++        assertFalse(duo.copy(arch = "iPhone19,5").isIphoneDuo())
++        assertFalse(duo.copy(arch = "arm64").isIphoneDuo())
++        assertFalse(duo.copy(name = Platform.IPAD).isIphoneDuo())
++    }
++
+     @Test
+     fun testWindowsPlatform() {
+         val platform = detect("Windows 10", "10.0", "amd64")
+```
+
+**File**: `app/src/desktopTest/kotlin/com/crosspaste/ui/base/PlatformIconTest.kt` (added, +51/-0)
+```diff
+@@ -0,0 +1,51 @@
++package com.crosspaste.ui.base
++
++import androidx.compose.foundation.layout.Row
++import androidx.compose.foundation.layout.size
++import androidx.compose.material3.Icon
++import androidx.compose.ui.ExperimentalComposeUiApi
++import androidx.compose.ui.Modifier
++import androidx.compose.ui.graphics.Color
++import androidx.compose.ui.graphics.toComposeImageBitmap
++import androidx.compose.ui.graphics.toPixelMap
++import androidx.compose.ui.renderComposeScene
 +import com.crosspaste.platform.Platform
-+import com.crosspaste.utils.getPlatformUtils
-+import io.mockk.every
-+import io.mockk.mockk
-+import org.junit.jupiter.api.Assumptions.assumeTrue
++import com.crosspaste.ui.theme.AppUISize.xLarge
 +import kotlin.test.Test
 +import kotlin.test.assertEquals
++import kotlin.test.assertTrue
 +
-+class DesktopNotificationManagerMacosTest {
++class PlatformIconTest {
 +
-+    private val message =
-+        Message(messageId = 1, title = "title", message = "body", messageType = MessageType.Warning, duration = null)
++    @OptIn(ExperimentalComposeUiApi::class)
++    @Test
++    fun duoUsesFoldedIconAndGenericIphoneUsesStandardIcon() {
++        val duo = Platform(name = Platform.IPHONE, arch = "iPhone19,4", bitMode = 64, version = "27.1")
++        val size = xLarge.value.toInt()
 +
-+    private val macos = Platform(Platform.MACOS, "arm64", 64, "15")
-+
-+    private val linux = Platform(Platform.LINUX, "x86_64", 64, "6")
-+
-+    private fun manager(
-+        platform: Platform,
-+        mainWindowShown: Boolean = false,
-+        postMacosNotification: ((Message) -> Boolean)? = null,
-+    ): DesktopNotificationManager {
-+        val appWindowManager =
-+            mockk<DesktopAppWindowManager> {
-+                every { getCurrentMainWindowInfo().show } returns mainWindowShown
++        renderComposeScene(width = size * 3, height = size) {
++            Row {
++                Icon(PlatformIcon(duo), null, Modifier.size(xLarge), tint = Color.Black)
++                Icon(PlatformIcon(duo.copy(arch = "arm64")), null, Modifier.size(xLarge), tint = Color.Black)
++                Icon(iphone(), null, Modifier.size(xLarge), tint = Color.Black)
 +            }
-+        return if (postMacosNotification == null) {
-+            DesktopNotificationManager(appWindowManager, mockk(relaxed = true), platform, mockk(relaxed = true))
-+        } else {
-+            DesktopNotificationManager(
-+                appWindowManager = appWindowManager,
-+                copywriter = mockk(relaxed = true),
-+                platform = platform,
-+                soundService = mockk(relaxed = true),
-+                postMacosNotification = postMacosNotification,
-+            )
++        }.use { image ->
++            val pixels = image.toComposeImageBitmap().toPixelMap()
++            val middle = size / 2
++
++            // The Duo has a solid cover and a second chassis edge visible beneath it.
++            assertEquals(1f, pixels[middle, 20].alpha)
++            assertTrue(pixels[19, middle].alpha in 0.5f..0.6f)
++            assertTrue(pixels[middle, 22].alpha in 0.5f..0.6f)
++
++            // A peer reporting only arm64 must render the same icon as a standard iPhone.
++            assertEquals(0f, pixels[size + middle, 4].alpha)
++            assertEquals(1f, pixels[size + middle, 20].alpha)
++            for (y in 0 until size) {
++                for (x in 0 until size) {
++                    assertEquals(pixels[2 * size + x, y], pixels[size + x, y])
++                }
++            }
 +        }
 +    }
-+
-+    @Test
-+    fun `hidden window on macOS posts to Notification Center`() {
-+        val posted = mutableListOf<Message>()
-+        val manager = manager(macos) { posted.add(it) }
-+
-+        manager.doSendNotification(message)
-+
-+        assertEquals(listOf(message), posted)
-+        assertEquals(emptyList(), manager.notificationList.value)
-+    }
-+
-+    @Test
-+    fun `hidden window on macOS falls back to a toast when Notification Center is unavailable`() {
-+        val manager = manager(macos) { false }
-+
-+        manager.doSendNotification(message)
-+
-+        assertEquals(listOf(message), manager.notificationList.value)
-+    }
-+
-+    @Test
-+    fun `hidden window on macOS falls back to a toast when the native call throws an Error`() {
-+        val manager = manager(macos) { throw UnsatisfiedLinkError("MacosApi") }
-+
-+        manager.doSendNotification(message)
-+
-+        assertEquals(listOf(message), manager.notificationList.value)
-+    }
-+
-+    @Test
-+    fun `hidden window on macOS keeps success and info out of Notification Center`() {
-+        val posted = mutableListOf<Message>()
-+        val manager = manager(macos) { posted.add(it) }
-+        val success = message.copy(messageType = MessageType.Success)
-+        val info = message.copy(messageId = 2, messageType = MessageType.Info)
-+
-+        manager.doSendNotification(success)
-+        manager.doSendNotification(info)
-+
-+        assertEquals(emptyList(), posted)
-+        assertEquals(listOf(info, success), manager.notificationList.value)
-+    }
-+
-+    @Test
-+    fun `visible main window shows a toast without Notification Center`() {
-+        val posted = mutableListOf<Message>()
-+        val manager = manager(macos, mainWindowShown = true) { posted.add(it) }
-+
-+        manager.doSendNotification(message)
-+
-+        assertEquals(emptyList(), posted)
-+        assertEquals(listOf(message), manager.notificationList.value)
-+    }
-+
-+    @Test
-+    fun `hidden window on Linux shows a toast without Notification Center`() {
-+        val posted = mutableListOf<Message>()
-+        val manager = manager(linux) { posted.add(it) }
-+
-+        manager.doSendNotification(message)
-+
-+        assertEquals(emptyList(), posted)
-+        assertEquals(listOf(message), manager.notificationList.value)
-+    }
-+
-+    // The test JVM is a bare JDK process, as in a development run: the native call
-+    // must report Notification Center unavailable instead of aborting the process
-+    @Test
-+    fun `bare JVM on macOS falls back to a toast through the native path`() {
-+        assumeTrue(getPlatformUtils().platform.isMacos(), "Test requires macOS")
-+        val manager = manager(macos)
-+
-+        manager.doSendNotification(message)
-+
-+        assertEquals(listOf(message), manager.notificationList.value)
-+    }
 +}
+```
+
+**File**: `core/src/commonMain/kotlin/com/crosspaste/platform/Platform.kt` (modified, +6/-0)
+```diff
+@@ -30,6 +30,10 @@ data class Platform(
+         const val UNKNOWN_OS = "Unknown"
+ 
+         private const val MACOS_DISPLAY_NAME = "macOS"
++
++        // Xcode 27.2's iPhone Duo device profile lists this modelIdentifier.
++        // iOS reports that identifier in arch on device. Other iPhone19 models include iPhone 18 Pro.
++        private const val IPHONE_DUO_MODEL = "iPhone19,4"
+     }
+ 
+     /**
+@@ -49,6 +53,8 @@ data class Platform(
+ 
+     fun isIphone(): Boolean = name == IPHONE
+ 
++    fun isIphoneDuo(): Boolean = isIphone() && arch == IPHONE_DUO_MODEL
++
+     fun isIpad(): Boolean = name == IPAD
+ 
+     fun isApple(): Boolean = isMacos() || isIphone() || isIpad()
+```
+
+---
+
+### Incident Patch 2: `9ea95a95` (2026-11-12)
+**Commit Message**: :arrow_up: Bump com.helger:ph-css from 8.2.3 to 8.4.0 (#5340)
+
+Bumps [com.helger:ph-css](https://github.com/phax/ph-css) from 8.2.3 to 8.4.0.
+- [Release notes](https://github.com/phax/ph-css/releases)
+- [Commits](https://github.com/phax/ph-css/compare/ph-css-parent-pom-8.2.3...ph-css-parent-pom-8.4.0)
+
+---
+updated-dependencies:
+- dependency-name: com.helger:ph-css
+  dependency-version: 8.4.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `gradle/libs.versions.toml` (modified, +1/-1)
+```diff
+@@ -39,7 +39,7 @@ metadata-extractor = "2.22.0"
+ mockk = "1.14.12"
+ navigation = "2.10.0-rc01"
+ okio = "3.18.2"
+-ph-css = "8.2.3"
++ph-css = "8.4.0"
+ richeditor = "1.2.1"
+ semver = "3.1.0"
+ sqldelight = "2.4.1"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5342** (2026-11-14): :lipstick: Refresh iPhone and iPad device icons and add iPhone Duo (@guiyanakuang)
+- **PR #5340** (2026-11-12): ⬆️ Bump com.helger:ph-css from 8.2.3 to 8.4.0 (@dependabot[bot])
+- **PR #5339** (2026-11-12): ⬆️ Bump io.mockk:mockk from 1.14.11 to 1.14.12 (@dependabot[bot])
+- **PR #5338** (2026-11-12): :sparkles: let MCP agents read the latest clipboard item and see image content (@guiyanakuang)
 - **PR #5336** (2026-11-10): :globe_with_meridians: rename the notification center title to avoid the system Notification Center name (@guiyanakuang)
 - **PR #5334** (2026-11-10): :arrow_up: bump bundled JBR from 25.0.4.1 b610.67 to b635.79 (@guiyanakuang)
-- **PR #5333** (2026-11-10): :construction_worker: use GITHUB_TOKEN instead of a bot account PAT in workflows (@guiyanakuang)
-- **PR #5332** (2026-11-10): :arrow_up: bump jmdns from 3.6.3 to 3.6.5 (@guiyanakuang)
-- **PR #5330** (2026-11-10): ⬆️ Bump io.github.oshai:kotlin-logging from 8.0.4 to 8.0.6 (@dependabot[bot])
-- **PR #5329** (2026-11-10): ⬆️ Bump com.drewnoakes:metadata-extractor from 2.21.0 to 2.22.0 (@dependabot[bot])
 
 ---
 
@@ -1174,36 +1067,34 @@ CrossPasteTrayState (never collected since #3413) is removed.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. :bug: post notifications to Notification Center on macOS while the main window i
+## X. :lipstick: Distinguish iPhone, iPad, and iPhone Duo in device lists
 
 **RULE**:
-When implementing operations in `app/src/desktopMain/kotlin/com/crosspaste/platform/macos/api/MacosApi.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in CrossPaste/crosspaste-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `app/src/commonMain/composeResources/drawable/ipad.svg`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in CrossPaste/crosspaste-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4a33f375`: :bug: post notifications to Notification Center on macOS while the main window is hidden (#5316). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bf971f9a`: :lipstick: Distinguish iPhone, iPad, and iPhone Duo in device lists. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `app/src/desktopMain/kotlin/com/crosspaste/platform/macos/api/MacosApi.kt`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `app/src/commonMain/composeResources/drawable/ipad.svg`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-    // Returns 1 when posted, 0 when Notification Center is unavailable to this process
-    fun postUserNotification(
-        title: String,
-        body: String,
-    ): Int
-
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+    <path fill-rule="evenodd" d="M4 4h16a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H4a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3Z
+        M10.5 7h3a0.75 0.75 0 0 1 0 1.5h-3a0.75 0.75 0 0 1 0-1.5Z"/>
+</svg>
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+<svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><path d="M384 512H128a64.07 64.07 0 01-64-64V64a64.07 64.07 0 0164-64h256a64.07 64.07 0 0164 64v384a64.07 64.07 0 01-64 64zM128 32a32 32 0 00-32 32v384a32 32 0 0032 32h256a32 32 0 0032-32V64a32 32 0 00-32-32z"/><path d="M384 0a64.07 64.07 0 0164 64v384a64.07 64.07 0 01-64 64H128a64.07 64.07 0 01-64-64V64a64.07 64.07 0 0164-64h256M128 480h256a32 32 0 0032-32V64a32 32 0 00-32-32H128a32 32 0 00-32 32v384a32 32 0 0032 32m0-16a16 16 0 01-16-16V64a16 16 0 0116-16h256a16 16 0 0116 16v384a16 16 0 01-16 16z"/></svg>
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4a33f375` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bf971f9a` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

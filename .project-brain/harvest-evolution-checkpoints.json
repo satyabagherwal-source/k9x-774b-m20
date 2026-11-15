@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T04:45:05.087Z",
+  "last_updated": "2026-11-15T04:53:54.009Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-14T22:16:50.251Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-15T04:19:29.899Z",
+      "processed_at": "2026-11-15T04:53:53.342Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -453,7 +453,7 @@
       "staged_for_review": 1
     },
     "crosspaste-crosspaste-desktop-learnings.md": {
-      "processed_at": "2026-11-11T17:51:42.079Z",
+      "processed_at": "2026-11-15T04:53:52.614Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2881,9 +2881,14 @@
       "processed_at": "2026-11-15T04:44:29.707Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-openmoss-team-moss-image-base-learnings.md": {
+      "processed_at": "2026-11-15T04:53:52.300Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 981,
-  "total_canonical_promoted": 241,
-  "total_staged_for_review": 739
+  "total_dossiers_evaluated": 984,
+  "total_canonical_promoted": 242,
+  "total_staged_for_review": 741
 }

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T04:45:04.853Z",
-  "total_records": 957,
+  "last_updated": "2026-11-15T04:53:53.786Z",
+  "total_records": 962,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 469,
+      "total": 472,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -506,7 +506,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-3-image-klein-comfy-le",
         "domain_intelligence-research-knowledge-intelligence-nvidia-qwen3-8-flash-next-fp4-local-core-invaria",
         "DOM-D-31A60A1E",
-        "domain_intelligence-research-knowledge-intelligence-hf-nvidia-qwen3-8-flash-next-fp4-local-learnings"
+        "domain_intelligence-research-knowledge-intelligence-hf-nvidia-qwen3-8-flash-next-fp4-local-learnings",
+        "domain_intelligence-research-knowledge-intelligence-openmoss-team-moss-image-base-core-invariants",
+        "DOM-D-5D6E0080",
+        "domain_intelligence-research-knowledge-intelligence-hf-openmoss-team-moss-image-base-learnings-core-"
       ]
     },
     "E": {
@@ -517,7 +520,7 @@
       ]
     },
     "F": {
-      "total": 20,
+      "total": 22,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -538,7 +541,9 @@
         "domain_intelligence-design-intelligence-hf-baai-bge-reranker-v2-m3-learnings-core-invariants",
         "DOM-F-0C4992D6",
         "DOM-F-053419E8",
-        "domain_intelligence-design-intelligence-dealignai-deepseek-v4-1-flash-uncensored-fp8-core-invariants"
+        "domain_intelligence-design-intelligence-dealignai-deepseek-v4-1-flash-uncensored-fp8-core-invariants",
+        "domain_intelligence-design-intelligence-crosspaste-crosspaste-desktop-core-invariants",
+        "domain_intelligence-design-intelligence-crosspaste-crosspaste-desktop-learnings-core-invariants"
       ]
     },
     "G": {
@@ -7690,8 +7695,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "2dd5ed1a4a8fed4b539a3a0e9cc847fef74252112c618c6f43c1d19876fc32f6",
-      "created_at": "2026-11-15T04:19:30.419Z"
+      "content_hash": "18056d9d2d43f757b992ed7d8e874654a60eff7b904eb073f935dff769216ac0",
+      "created_at": "2026-11-15T04:53:53.786Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -18614,6 +18619,84 @@
       "repository": "microsoft-react-native-windows-learnings",
       "content_hash": "a519fb09030f732bee464ac2210507e4da5e5f7cf46df1a1939dbe59897f93d8",
       "created_at": "2026-11-15T04:45:04.260Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-openmoss-team-moss-image-base-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-openmoss-team-moss-image-base-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: OpenMOSS-Team/MOSS-Image-Base Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openmoss-team-moss-image-base-research-knowledge-intelligence-openmoss-team-m.md",
+      "repository": "OpenMOSS-Team/MOSS-Image-Base",
+      "content_hash": "53834231e1716fbac5c0611c92fd30734ec27a48adc974d7fd131e0a5f30fcfd",
+      "created_at": "2026-11-15T04:53:13.403Z"
+    },
+    "domain_intelligence-design-intelligence-crosspaste-crosspaste-desktop-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-crosspaste-crosspaste-desktop-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: CrossPaste/crosspaste-desktop Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-crosspaste-crosspaste-desktop-design-intelligence-crosspaste-crosspaste-desktop-.md",
+      "repository": "CrossPaste/crosspaste-desktop",
+      "content_hash": "8e436936da95e722f7cd3e1a05a5c3425db95a875703850c74d4476699db4824",
+      "created_at": "2026-11-15T04:53:19.644Z"
+    },
+    "DOM-D-5D6E0080": {
+      "record_id": "DOM-D-5D6E0080",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): OpenMOSS-Team/MOSS-Image-Base",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openmoss-team-moss-image-base-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base](https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base))  \n> **Source Version**: `hf-openmoss-`  \n> **License**: Op",
+      "content_hash": "a75b6def5c78398e60c17bf52e04d086d40f849c215e2bc4178e5c5537ad3035",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openmoss-team-moss-image-base-learnings.md`  \n> **Source**: huggingface ([https:/ -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openmoss-team-moss-image-base-learnings.md`  \n> **Source**: huggingface ([https:/",
+      "provenance": {
+        "source_uri": "project://hf-openmoss-team-moss-image-base/hf-openmoss-team-moss-image-base-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T04:53:25.398Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-openmoss-team-moss-image-base)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-openmoss-team-moss-image-base"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-15T04:53:52.286Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-openmoss-team-moss-image-base-learnings-core-": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-openmoss-team-moss-image-base-learnings-core-",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-openmoss-team-moss-image-base-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openmoss-team-moss-image-base-learnings-research-knowledge-intelligence-hf-op.md",
+      "repository": "hf-openmoss-team-moss-image-base-learnings",
+      "content_hash": "472111da960dbc39f7ed910f0a4fb94f1a703223e1a93a05787447b5aa7457ad",
+      "created_at": "2026-11-15T04:53:52.485Z"
+    },
+    "domain_intelligence-design-intelligence-crosspaste-crosspaste-desktop-learnings-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-crosspaste-crosspaste-desktop-learnings-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: crosspaste-crosspaste-desktop-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-crosspaste-crosspaste-desktop-learnings-design-intelligence-crosspaste-crosspast.md",
+      "repository": "crosspaste-crosspaste-desktop-learnings",
+      "content_hash": "3e6e570b951697c3b9c90bbc52f01ff8a7dd4c336bab80123434741c9ee42be2",
+      "created_at": "2026-11-15T04:53:53.005Z"
     }
   }
 }
