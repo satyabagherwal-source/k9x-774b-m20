@@ -10058,3 +10058,6 @@
 | `CYCLE-20261115-0O0R` | `2026-11-15T07:41:53.691Z` | `mrkai77/Loop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8587` | Yes (`feed4018...`) |
 | `CYCLE-20261115-0RYN` | `2026-11-15T07:41:58.799Z` | `gravitl/netmaker` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8588` | Yes (`198f9ed6...`) |
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T07:42:32.101Z` | `hf-edge0-audio8-tts-realistic-air` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-BDC1BDD2` [Domain D] | Yes (`d6ddd6f3...`) |
+| `CYCLE-20261115-X82M` | `2026-11-15T08:07:12.670Z` | `tuist/tuist` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8589` | Yes (`033b8230...`) |
+| `CYCLE-20261115-ZOG5` | `2026-11-15T08:09:07.205Z` | `OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8590, Rule 8591, Rule 8592` | Yes (`401365fa...`) |
+| `CYCLE-20261115-035P` | `2026-11-15T08:09:26.270Z` | `SimonSchubert/LinuxCommandLibrary` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8593, Rule 8594, Rule 8595` | Yes (`34e584f0...`) |

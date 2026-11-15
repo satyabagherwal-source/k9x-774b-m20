@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-15T07:41:58.813Z",
+  "last_updated": "2026-11-15T08:09:26.286Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -11706,14 +11706,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-simonschubert-linuxcommandlibrary",
-      "content_hash": "cb94dc1e1a0f35afe6d32520600e7538b546d7c14e64264a50205874a6c80736",
-      "verified_at": "2026-11-11T19:53:46.601Z",
+      "content_hash": "34e584f07e24e7dbb0bf127ae7a9333f0861e79c7291af03fea2760146a65996",
+      "verified_at": "2026-11-15T08:09:26.285Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T19:53:46.601Z"
+      "last_updated": "2026-11-15T08:09:26.285Z"
     },
     "zed-industries/zed": {
       "repository": "zed-industries/zed",
@@ -17601,14 +17601,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated",
-      "content_hash": "38f4f10ec0d73b9ac5b09fe13b97bde04c5fecab4468c27b78ad29d1981eb36f",
-      "verified_at": "2026-11-09T17:57:07.630Z",
+      "content_hash": "401365fa57ac10107acc302aecbc17b274002e337e4fe427ab77f8c64544ab89",
+      "verified_at": "2026-11-15T08:09:07.221Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T17:57:07.630Z"
+      "last_updated": "2026-11-15T08:09:07.221Z"
     },
     "burner22/numbat": {
       "repository": "burner22/numbat",
@@ -18741,14 +18741,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tuist-tuist",
-      "content_hash": "a6963985aee561a30fd1550efe7e8a9e511dc088f889b90a5fc16f9e20a65947",
-      "verified_at": "2026-11-13T13:50:18.674Z",
+      "content_hash": "033b8230391ce14bfbe416ea0e21a0a6fc183ca78daa658e1dd12db28c14f2e4",
+      "verified_at": "2026-11-15T08:07:12.688Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T13:50:18.674Z"
+      "last_updated": "2026-11-15T08:07:12.688Z"
     },
     "mixelpixx/KiCAD-MCP-Server": {
       "repository": "mixelpixx/KiCAD-MCP-Server",

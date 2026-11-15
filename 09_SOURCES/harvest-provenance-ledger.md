@@ -10091,3 +10091,6 @@ Every entry in this ledger must capture:
 | `learn-github-mrkai77-loop` | `https://github.com/mrkai77/Loop` | `e8560f45` | Multi-dimensional audit evidence | 2026-11-15T07:41:53.695Z |
 | `learn-github-gravitl-netmaker` | `https://github.com/gravitl/netmaker` | `ccc98823` | Multi-dimensional audit evidence | 2026-11-15T07:41:58.803Z |
 | `learn-dom-d-bdc1bdd2` | `project://hf-edge0-audio8-tts-realistic-air` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-air-learnings.md` | 2026-11-15T07:42:32.101Z |
+| `learn-github-tuist-tuist` | `https://github.com/tuist/tuist` | `3851a198` | Multi-dimensional audit evidence | 2026-11-15T08:07:12.674Z |
+| `learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated` | `https://huggingface.co/OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated` | `hf-obliter` | Multi-dimensional audit evidence | 2026-11-15T08:09:07.209Z |
+| `learn-github-simonschubert-linuxcommandlibrary` | `https://github.com/SimonSchubert/LinuxCommandLibrary` | `6641ebf0` | Multi-dimensional audit evidence | 2026-11-15T08:09:26.274Z |

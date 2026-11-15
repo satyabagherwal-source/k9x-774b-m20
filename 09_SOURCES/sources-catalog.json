@@ -7773,10 +7773,10 @@
     "repository": "SimonSchubert/LinuxCommandLibrary",
     "platform": "github",
     "sourceUrl": "https://github.com/SimonSchubert/LinuxCommandLibrary",
-    "sourceVersion": "026a4532",
+    "sourceVersion": "6641ebf0",
     "license": "Apache-2.0",
-    "contentHash": "cb94dc1e1a0f35afe6d32520600e7538b546d7c14e64264a50205874a6c80736",
-    "lastHarvestedAt": "2026-11-11T19:53:46.579Z",
+    "contentHash": "34e584f07e24e7dbb0bf127ae7a9333f0861e79c7291af03fea2760146a65996",
+    "lastHarvestedAt": "2026-11-15T08:09:26.274Z",
     "learningId": "learn-github-simonschubert-linuxcommandlibrary"
   },
   "zed-industries-zed": {
@@ -11695,8 +11695,8 @@
     "sourceUrl": "https://huggingface.co/OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
     "sourceVersion": "hf-obliteratus-deepseek-v4.1-flash-1017-obliterated",
     "license": "Open-Source",
-    "contentHash": "38f4f10ec0d73b9ac5b09fe13b97bde04c5fecab4468c27b78ad29d1981eb36f",
-    "lastHarvestedAt": "2026-11-09T17:57:07.620Z",
+    "contentHash": "401365fa57ac10107acc302aecbc17b274002e337e4fe427ab77f8c64544ab89",
+    "lastHarvestedAt": "2026-11-15T08:09:07.209Z",
     "learningId": "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated"
   },
   "hf-burner22-numbat": {
@@ -12453,10 +12453,10 @@
     "repository": "tuist/tuist",
     "platform": "github",
     "sourceUrl": "https://github.com/tuist/tuist",
-    "sourceVersion": "98a0fcec",
+    "sourceVersion": "3851a198",
     "license": "NOASSERTION",
-    "contentHash": "a6963985aee561a30fd1550efe7e8a9e511dc088f889b90a5fc16f9e20a65947",
-    "lastHarvestedAt": "2026-11-13T13:50:18.662Z",
+    "contentHash": "033b8230391ce14bfbe416ea0e21a0a6fc183ca78daa658e1dd12db28c14f2e4",
+    "lastHarvestedAt": "2026-11-15T08:07:12.674Z",
     "learningId": "learn-github-tuist-tuist"
   },
   "mixelpixx-kicad-mcp-server": {

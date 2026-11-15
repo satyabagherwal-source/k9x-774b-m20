@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261110-GE04",
-    "timestamp": "2026-11-10T00:59:51.652Z",
-    "repository": "ClickHouse/ClickHouse",
-    "learningId": "learn-github-clickhouse-clickhouse",
-    "contentHash": "bff4ca5ada9f6aef85074b5289b4698beba50a00c4576e7d080b48ce76522e6e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261110-JUEY",
-    "timestamp": "2026-11-10T01:02:32.890Z",
-    "repository": "topgrade-rs/topgrade",
-    "learningId": "learn-github-topgrade-rs-topgrade",
-    "contentHash": "fc86cf2cbceb74a5546b1cc63d7176b7ace351d4f7972db57b70c366c581f8ef",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261110-5E89",
-    "timestamp": "2026-11-10T01:19:18.345Z",
-    "repository": "medialab/xan",
-    "learningId": "learn-github-medialab-xan",
-    "contentHash": "395e962cacc5ca78f4e439c6559907388025a52ea4de9661c880b459477fe6df",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261110-5KCP",
     "timestamp": "2026-11-10T01:19:26.281Z",
     "repository": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
@@ -7492,6 +7447,51 @@
     "contentHash": "198f9ed6cadb6f0184664283e264914e64f99530af8dadf4943aea24e6cbe101",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-X82M",
+    "timestamp": "2026-11-15T08:07:12.670Z",
+    "repository": "tuist/tuist",
+    "learningId": "learn-github-tuist-tuist",
+    "contentHash": "033b8230391ce14bfbe416ea0e21a0a6fc183ca78daa658e1dd12db28c14f2e4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-ZOG5",
+    "timestamp": "2026-11-15T08:09:07.205Z",
+    "repository": "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
+    "learningId": "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated",
+    "contentHash": "401365fa57ac10107acc302aecbc17b274002e337e4fe427ab77f8c64544ab89",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-035P",
+    "timestamp": "2026-11-15T08:09:26.270Z",
+    "repository": "SimonSchubert/LinuxCommandLibrary",
+    "learningId": "learn-github-simonschubert-linuxcommandlibrary",
+    "contentHash": "34e584f07e24e7dbb0bf127ae7a9333f0861e79c7291af03fea2760146a65996",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

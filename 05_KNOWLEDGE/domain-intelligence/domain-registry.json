@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T07:42:33.499Z",
-  "total_records": 998,
+  "last_updated": "2026-11-15T08:09:32.028Z",
+  "total_records": 1004,
   "domains": {
     "A": {
       "total": 7,
@@ -569,7 +569,7 @@
       ]
     },
     "G": {
-      "total": 167,
+      "total": 171,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -737,7 +737,11 @@
         "domain_intelligence-architecture-intelligence-clementtsang-bottom-core-invariants",
         "domain_intelligence-architecture-intelligence-clementtsang-bottom-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-mrkai77-loop-core-invariants",
-        "domain_intelligence-architecture-intelligence-mrkai77-loop-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-mrkai77-loop-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-tuist-tuist-core-invariants",
+        "domain_intelligence-architecture-intelligence-simonschubert-linuxcommandlibrary-core-invariants",
+        "domain_intelligence-architecture-intelligence-tuist-tuist-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-simonschubert-linuxcommandlibrary-learnings-core-invar"
       ]
     },
     "H": {
@@ -1011,7 +1015,7 @@
       ]
     },
     "K": {
-      "total": 29,
+      "total": 31,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -1041,7 +1045,9 @@
         "domain_intelligence-quality-verification-intelligence-automattic-harper-core-invariants",
         "domain_intelligence-quality-verification-intelligence-automattic-harper-learnings-core-invariants",
         "domain_intelligence-quality-verification-intelligence-tencent-tds-kuiklyui-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-tencent-tds-kuiklyui-learnings-core-invariants"
+        "domain_intelligence-quality-verification-intelligence-tencent-tds-kuiklyui-learnings-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-obliteratus-deepseek-v4-1-flash-1017-obliterat",
+        "domain_intelligence-quality-verification-intelligence-hf-obliteratus-deepseek-v4-1-flash-1017-oblite"
       ]
     },
     "L": {
@@ -19327,6 +19333,60 @@
       "repository": "gravitl-netmaker-learnings",
       "content_hash": "49cad1117f24027b1727c417187c68536f36f1114225a50160f64d4c13df472c",
       "created_at": "2026-11-15T07:42:33.499Z"
+    },
+    "domain_intelligence-architecture-intelligence-tuist-tuist-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-tuist-tuist-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: tuist/tuist Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tuist-tuist-architecture-intelligence-tuist-tuist-core-invariants.md",
+      "repository": "tuist/tuist",
+      "content_hash": "c1cf62e5e3124550135046e415a8656abfd117c663fc65b62e3cea1c6ca7d244",
+      "created_at": "2026-11-15T08:07:13.038Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-obliteratus-deepseek-v4-1-flash-1017-obliterat": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-obliteratus-deepseek-v4-1-flash-1017-obliterat",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-hf-obliteratus-deepseek-v4-1-flash-1017-obliterated-quality-verification-intelli.md",
+      "repository": "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
+      "content_hash": "8e21b33f14f877b3f60153718ae1d388e1cb313f6eb033bd7bab2b777f837fb7",
+      "created_at": "2026-11-15T08:09:07.687Z"
+    },
+    "domain_intelligence-architecture-intelligence-simonschubert-linuxcommandlibrary-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-simonschubert-linuxcommandlibrary-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: SimonSchubert/LinuxCommandLibrary Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-simonschubert-linuxcommandlibrary-architecture-intelligence-simonschubert-linuxc.md",
+      "repository": "SimonSchubert/LinuxCommandLibrary",
+      "content_hash": "468c62d3f963ea931937f39d33a69ed0b057c01afbfe6ffe92d3c015ea2bc3f6",
+      "created_at": "2026-11-15T08:09:26.873Z"
+    },
+    "domain_intelligence-architecture-intelligence-tuist-tuist-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-tuist-tuist-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: tuist-tuist-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tuist-tuist-learnings-architecture-intelligence-tuist-tuist-learnings-core-invar.md",
+      "repository": "tuist-tuist-learnings",
+      "content_hash": "6a0cf8249ba535bcb4723a010107b190729be7edd5ebf394dde9331b59a70dee",
+      "created_at": "2026-11-15T08:09:30.348Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-hf-obliteratus-deepseek-v4-1-flash-1017-oblite": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-hf-obliteratus-deepseek-v4-1-flash-1017-oblite",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: hf-obliteratus-deepseek-v4.1-flash-1017-obliterated-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-hf-obliteratus-deepseek-v4-1-flash-1017-obliterated-learnings-quality-verificati.md",
+      "repository": "hf-obliteratus-deepseek-v4.1-flash-1017-obliterated-learnings",
+      "content_hash": "c8c974541c5f1bc2887ee97e94845a2e6e24767960a9e6542aa29ef08204808c",
+      "created_at": "2026-11-15T08:09:31.188Z"
+    },
+    "domain_intelligence-architecture-intelligence-simonschubert-linuxcommandlibrary-learnings-core-invar": {
+      "record_id": "domain_intelligence-architecture-intelligence-simonschubert-linuxcommandlibrary-learnings-core-invar",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: simonschubert-linuxcommandlibrary-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-simonschubert-linuxcommandlibrary-learnings-architecture-intelligence-simonschub.md",
+      "repository": "simonschubert-linuxcommandlibrary-learnings",
+      "content_hash": "2c59916018718077efbd41a2b335fe8404a5a2f33bfb75418308c4cf1d894c14",
+      "created_at": "2026-11-15T08:09:32.028Z"
     }
   }
 }

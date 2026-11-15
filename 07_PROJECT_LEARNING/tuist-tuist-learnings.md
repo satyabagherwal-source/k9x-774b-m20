@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tuist-tuist-learnings.md`  
 > **Source**: github ([https://github.com/tuist/tuist](https://github.com/tuist/tuist))  
-> **Source Version**: `98a0fcec`  
+> **Source Version**: `3851a198`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T13:50:18.421Z  
+> **Timestamp**: 2026-11-15T08:07:11.617Z  
 > **Learning ID**: `learn-github-tuist-tuist`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tuist-tuist-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tuist/tuist](https://github.com/tuist/tuist))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T13:50:18.416Z  
+> **Harvest Timestamp**: 2026-11-15T08:07:05.261Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -457,13 +457,11 @@ struct AppPreviewsEmptyStateView: View {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #15705** (2026-11-13): **feat(pulse): deploy the GreptimeDB fork as Pulse (CI run)**
-  *Symptoms*: CI-only draft: runs the path-filtered suites (pulse.yml Rust checks, greptimedb-deployment validate, helm tests) on the Pulse fork stack before it is pushed to main. It will be closed once the commits land.  Contains the GreptimeDB v1.3.0 import under pulse/ without enterprise code, the query nesting limits, removal of the Elixir Pulse deployment and the ingestion gateway, the chart rename to the `pulse` release running ghcr.io/tuist/pulse, and the collector change that writes to it.
-  **Post-Mortem & Fix Analysis**:
-  > CI passed. The fork commits landed on main in e4d0f32de9; the collector commit is held until Pulse is running.
+- **Issue #15735** (2026-11-14): **chore(infra): name Pulse's Kafka WAL topics pulse_wal_topic**
+  *Symptoms*: ## What  Switches Pulse's Kafka WAL topic prefix from `greptimedb_wal_topic` to `pulse_wal_topic`, which is also the fork's built-in default. Apart from the staging Grafana plugin ID and URL, this was the last GreptimeDB name outside `pulse/`. The Grafana plugin is intentionally left unchanged.  ## Why it's safe on live clusters  The earlier comment said that changing the prefix would orphan unflushed writes. The source shows otherwise:  - Every region's WAL topic is recorded at creation in its table metadata (`DatanodeTableValue.region_wal_options`). Datanodes replay and write that recorded topic when they open a region, including during failover and migration. - metasrv persists each topic it creates (`TopicNameManager`). It never deletes those keys, and WAL pruning and flush triggers range over all persisted topics.  When metasrv restarts with the new prefix, it creates and persists 16 `pulse_wal_topic_*` topics, and only regions created after that use them. Existing regions keep writing to, pruning and flushing their earlier topics. The `wait-for-wal` init container still passes on a fresh install, because it also accepts three registered brokers.  The staging leg of the cascade qualifies this before canary and production: smoke writes and reads, a reread after restarting every stateful component, and checks on real collector telemetry.  ## Validation  - `infra/helm/pulse/test-managed.sh` passes. - `rg -i greptime` outside `pulse/` now matches only `infra/helm/pulse-grafa
 
-- **Issue #15704** (2026-11-13): **feat(kura): enroll eu-east and us-west in thin volumes**
-  *Symptoms*: ## What changed  Adds eu-east and us-west to `kuraVolumesCSI.thinRegions` and `thinEnrolledRegions` in `values-managed-production.yaml`.  ## Why  Both regions now have a thin-ready landing host, added by #15699 and prepared on 2026-11-13:  | Region | Node | Disks | Thin pool | `tuist.dev/kura-disk` | | --- | --- | --- | --- | --- | | eu-east | `ovh-fleet-eu-east-nh9pb-7bnjr` (waw1) | 4×960 NVMe | 1588G | 1,704,028,274,688 B | | us-west | `ovh-fleet-us-west-qgdlc-v4x2c` (hil1) | 2×960 NVMe | 690G | 739,808,116,736 B |  Each one was annotated `lvm-v1` before it adopted its box, then cordoned, given a thin pool and labelled `tuist.dev/kura-thin-ready=true`. It was uncordoned once `PrivateNetworkReady` was True. Enrolling the regions is the step us-east took with #15635. It lets the existing hosts be drained onto thin one at a time, each followed by a reinstall with `lvm-v1`.  ## Impact  - New instances in eu-east and us-west are placed only on thin-ready nodes. For now that is one host per region. - Existing legacy replicas stay where they are. A legacy claim moves only when its host is selected with `tuist.dev/kura-lvm-migrate=true`, and the controller holds the storage half of every other instance's template until then. - us-west's landing host has 690G of pool against 1.63 TiB claimed in the region, so its hosts drain one at a time after a capacity preflight. eu-east's 1588G pool is larger than any single eu-east host's claims.  ## Validation  - Checked the two lists in the v
+- **Issue #15734** (2026-11-14): **chore(infra): drop Pulse's one-time pre-rename Grafana uninstall**
+  *Symptoms*: ## What  Removes the one-time `helm uninstall greptime-grafana-staging` from the staging Grafana step of `pulse-deployment.yml`. After this, the only remaining GreptimeDB references outside `pulse/` are the live WAL topic prefix and the third-party Grafana datasource plugin ID and URL.  ## Why  The uninstall only existed to remove the pre-rename Grafana release (#15731). The first continuous Pulse deploy (run 43635787145, commit b68a033) calls `pulse-deployment.yml` as it was at that commit, so its staging leg still performs the uninstall. Later runs no longer need it.  ## Validation  - actionlint passes on `pulse-deployment.yml`. - `rg -i greptime` outside `pulse/` returns only the WAL topic prefix and the Grafana plugin references. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -480,770 +478,623 @@ struct AppPreviewsEmptyStateView: View {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a7a7c488` (2026-11-13)
-**Commit Message**: fix(pulse): reject queries nested deep enough to overflow the stack
+### Incident Patch 1: `2419de4e` (2026-11-14)
+**Commit Message**: feat(server): add MCP tools to explore Pulse metrics, logs and traces
 
-GreptimeDB v1.3.0 aborts the whole process with a stack overflow on short
-nested queries that any reader can send: a PromQL chain of 80 binary
-operators (72 through TQL), 48 nested PromQL subqueries, PromQL's format
-and parse endpoints at 16k levels, a SQL chain of 4,096 operators and 256
-chained UNION ALLs. The parsers' recursion limits miss these because they
-build operator chains in a loop, and the analyzer's expression depth
-check runs after the crash points.
+Agents could only page through Pulse with query_pulse and read its fixed
+widgets. These tools give them roughly what Atlas offers through Grafana's
+MCP server, mapped onto what Pulse serves:
 
-The new sql::nesting module checks right after parsing:
-- PromQL: at most 32 levels (planning a level takes up to ~100 KiB of
-  stack) and 4,096 operators, parentheses and brackets, which also bounds
-  the parser's quadratic time on long chains. Every non-test PromQL parse
-  goes through sql::nesting::parse_promql. The deepest query in Tuist's
-  dashboards and alerts is 14 levels deep.
-- SQL: expressions up to 128 levels, the analyzer's existing limit, and
-  at most 64 chained set operations, checked for each statement in
-  ParserContext::create_with_dialect before anything else walks it.
-  Parsing runs on a stack sized to the input, so even huge chains 
+- query_pulse_metrics: instant or range PromQL.
+- list_pulse_labels: metric, log and trace label names, or one label's
+  values (with entry counts for logs and traces).
+- search_pulse_logs and search_pulse_traces: structured label filters,
+  body text, duration and root-span filters, newest/oldest/slowest.
+- get_pulse_trace: one trace's spans with attributes, events, links and
+  deduplicated resources.
 
-**File**: `pulse/AGENTS.md` (modified, +26/-0)
+Every tool uses the same Pulse.authorized?/2 check as the Pulse pages and
+existing tools, so only members of the configured organization with the
+pulse flag can read, and no other account is reachable. Callers never send
+SQL: values reach SQL only as escaped literals, trace labels become
+identifiers only when they name an existing safe column, and log labels are
+known columns or JSON paths. Windows stay at most 24h, results are row
+limited, and the read-only dashboard credential and timeouts still apply.
+
+Log columns are dis
+
+**File**: `server/lib/tuist/mcp/AGENTS.md` (modified, +11/-0)
 ```diff
-@@ -1,5 +1,31 @@
- # AGENTS.md
+@@ -93,6 +93,17 @@
+   must explicitly provide; Phoenix's `"arguments"` parameter filter keeps MCP
+   tool arguments out of request logs, so do not log or report them elsewhere.
  
-+## Tuist fork
++- Pulse tools share `Tuist.Pulse` with the Pulse pages: `PulseTools.execute/3`
++  requires a user (or user-associated `mcp` credential), account read, then
++  `Pulse.authorized?/2` (configured account, `pulse` flag, current
++  membership) before any read. Exploration tools (`query_pulse_metrics`,
++  `list_pulse_labels`, `search_pulse_logs`, `search_pulse_traces`,
++  `get_pulse_trace`) go through `Pulse.explore/4` and `Pulse.Explore`, which
++  takes structured filters only: values reach SQL as escaped literals, log
++  labels as literal JSON paths, and trace labels only when they name an
++  existing scalar trace column. Never accept SQL from callers; keep the
++  15m–24h windows, row limits and transport bounds.
 +
-+This directory is Pulse, Tuist's fork of GreptimeDB. [`FORK.md`](FORK.md) records
-+the upstream tag and commit, what the import left out, every Tuist change, and
-+how releases reach the clusters. The rest of this file is upstream's guidance.
-+
-+- Keep Tuist changes small and listed in `FORK.md`, and add a
-+  `// Modified by Tuist; see pulse/FORK.md.` line under the license header of
-+  each upstream file you change. New files carry the Apache-2.0 header with
-+  Tuist's copyright.
-+- Never add files under the GreptimeDB Enterprise License or enable the
-+  `enterprise` feature.
-+- Parse PromQL with `sql::nesting::parse_promql`, never
-+  `promql_parser::parser::parse`, outside tests.
-+- Upstream's CI does not run here. `.github/workflows/pulse.yml` is the CI; run
-+  `cargo test -p sql --lib` for the nesting limits. Build scripts call `protoc`
-+  outside the repository, so set `PROTOC` to a real binary rather than a mise
-+  shim. `cargo fmt` needs the enterprise modules stubbed; `pulse.yml` shows how.
-+- Upstream's guidance below overrides nothing above. `make clippy` and
-+  `make check` enable `--all-features`, which turns on `enterprise` and fails on
-+  the missing files: run `cargo clippy --workspace --all-targets -- -D warnings`
-+  and `cargo check --workspace --all-targets` instead. Skip every enterprise step
-+  (`--features enterprise`, `make check-enterprise-license`, enterprise headers).
-+
-+## Upstream guidance
-+
- Guidance for coding agents (Claude Code, Codex, ...) and contributors working in
- this repository. `CLAUDE.md` is a symlink to this file. If `.local/AGENTS.md` or
- `.local/CLAUDE.md` is present, you **MUST** read it as well — it holds personal
+ - Organization invitation tools reuse `Accounts.invite_user_to_organization/3`
+   and the `:invitation` policies, matching the dashboard and REST API. They
+   never return invitation tokens or links; `email_sent` tells the agent when
 ```
 
-**File**: `pulse/Cargo.lock` (modified, +1/-0)
+**File**: `server/lib/tuist/mcp/components/tools/pulse_tools.ex` (modified, +344/-4)
 ```diff
-@@ -14232,6 +14232,7 @@ dependencies = [
-  "snafu 0.8.6",
-  "sqlparser",
-  "sqlparser_derive 0.1.1",
-+ "stacker",
-  "table",
-  "uuid",
- ]
-```
-
-**File**: `pulse/FORK.md` (added, +105/-0)
-```diff
-@@ -0,0 +1,105 @@
-+# Pulse: Tuist's fork of GreptimeDB
-+
-+Pulse is the observability backend in Tuist's clusters. Since November 2026 it is
-+a fork of [GreptimeDB](https://github.com/GreptimeTeam/greptimedb); before that it
-+was a separate Elixir application, which is in this directory's history before
-+the import commit. The code keeps GreptimeDB's names; Tuist publishes it as
-+`ghcr.io/tuist/pulse`. Deployments still run the upstream v1.3.0 image until
-+they are pinned to a fork release (see below).
-+
-+## Upstream base
-+
-+| | |
-+| --- | --- |
-+| Repository | https://github.com/GreptimeTeam/greptimedb |
-+| Tag | `v1.3.0` |
-+| Commit | `badceec12a0e98fd69e83e9b9b9b06d9358b78dd` (2026-10-28) |
-+| License | Apache-2.0, in [`LICENSE`](LICENSE). Upstream has no NOTICE file. |
-+
-+The import is the upstream tree at that commit, except:
-+
-+- **Enterprise sources.** GreptimeDB is open core. The files under the GreptimeDB
-+  Enterprise License are not Apache-2.0, and that license forbids copying or
-+  distributing them, so they are not in this repository: `LICENSE-ENTERPRISE`,
-+  `licenserc-enterprise.toml`, `licenses/enterprise-header.txt`, and the sources
-+  below (triggers, the recycle bin, and undrop and purge of dropped tables).
-+  They compile only with the `enterprise` Cargo feature, which the fork never
-+  enables; the default build is unchanged, and building with the feature fails
-+  on the missing files. `pulse.yml` reads this list to stub the files for
-+  rustfmt, which follows `mod` declarations even when they are cfg'd out.
-+
-+  - `src/catalog/src/system_schema/information_schema/recycle_bin.rs`
-+  - `src/catalog/src/system_schema/information_schema/recycle_bin_test.rs`
-+  - `src/common/function/src/admin/purge_table.rs`
-+  - `src/common/meta/src/ddl/purge_dropped_table.rs`
-+  - `src/common/meta/src/ddl/undrop_table.rs`
-+  - `src/common/meta/src/rpc/ddl/trigger.rs`
-+  - `src/mito2/src/extension.rs`
-+  - `src/operator/src/expr_helper/trigger.rs`
-+  - `src/sql/src/parsers/alter_parser/trigger.rs`
-+  - `src/sql/src/parsers/create_parser/trigger.rs`
-+  - `src/sql/src/parsers/show_parser/trigger.rs`
-+  - `src/sql/src/statements/alter/trigger.rs`
-+  - `src/sql/src/statements/create/trigger.rs`
-+  - `src/sql/src/statements/drop/trigger.rs`
-+  - `src/sql/src/statements/show/trigger.rs`
-+
-+- **Upstream automation.** `.github/` (its workflows do not run inside this
-+  monorepo) and the agent skills in `.agents/skills/` and `.claude/`.
-+  `AGENTS.md`, its `CLAUDE.md` symlink and the rest of `.agents/` are kept.
-+
-+## Tuist changes
-+
-+Every Tuist change to an upstream file is marked with a `Modified by Tuist`
-+line under its license header, or a `Tuist:` comment at the change.
-+
-+- **Query nesting limits** ([`src/sql/src/nesting.rs`](src/sql/src/nesting.rs)).
-+  GreptimeDB v1.3.0 aborts the whole process with a stack overflow on short,
-+  deeply nested queries, and any reader can send them: a PromQL chain of about
-+  80 binary operators (`vector(1)+vector(1)+…`, around 800 bytes), 48 nested
-+  subqueries, a SQL chain of about 4,000 operators (`SELECT 1+1+…`) or 256
-+  chained `UNION ALL`s. Parsing now rejects, with an ordinary syntax error:
-+  - PromQL nested more than 32 levels, or with more than 4,096 operators,
-+    parentheses and brackets. Every PromQL parse in the query path goes through
-+    `sql::nesting::parse_promql`: the HTTP API, TQL, and the format, parse and
-+    series endpoints. The deepest query in Tuist's dashboards and alerts is 14
-+    levels deep.
-+  - SQL expressions nested more than 128 levels and queries chaining more than
-+    64 set operations, checked in `ParserContext::create_with_dialect`. This is
-+    stricter than the query analyzer's later limit of the same number: depth
-+    carries across subqueries and parentheses count, so a `WHERE` with about
-+    130 chained `AND`s is rejected. MySQL `EXECUTE … USING` arguments bypass
-+    this check; Tuist's deployments do not expose the MySQL port.
-+  - SQL texts over 8 MiB. Parsing runs on a stack sized to the input, so a long
-+    statement cannot overflow the parser or its drop.
-+
-+## Build, release and deploy
-+
-+- [`pulse.yml`](../.github/workflows/pulse.yml) checks formatting, runs the
-+  `sql` crate's tests (where the limits live), and type-checks the `greptime`
-+  binary, which covers the other changed crates.
-+- [`pulse-release.yml`](../.github/workflows/pulse-release.yml) publishes
-+  `ghcr.io/tuist/pulse:<version>` and the `pulse@<version>` tag when `pulse/`
-+  changes on main. Versions are the upstream version plus a fork revision, such
-+  as `1.3.0-tuist.1`. The image is built with upstream's
-+  `docker/buildx/ubuntu/Dockerfile` and release profile (`nightly`), without
-+  the embedded web dashboard (`servers/dashboard`).
-+- Publishing deploys nothing. In each cluster's `observability` namespace the
-+  `greptimedb` release ([`infra/helm/greptimedb`](../infra/helm/greptimedb))
-+  runs the image pinned in its `values.yaml`, and colle
-```
-
-**File**: `pulse/src/query/src/parser.rs` (modified, +3/-1)
-```diff
-@@ -12,6 +12,8 @@
- // See the License for the specific language governing permissions and
- // limitations under the License.
+@@ -11,12 +11,11 @@ defmodule Tuist.MCP.Components.Tools.PulseTools do
+     with %User{} = user <- credential_user(conn.assigns),
+          {:ok, account} <- Tool.resolve_and_authorize_account(args, conn.assigns, :read, :account_dashboard),
+          true <- Pulse.authorized?(user, account) do
+-      params = Map.drop(args, ~w(account_handle signal))
+-
+       result =
+         case action do
+-          :query -> Pulse.query(user, account, args["signal"], params)
+-          :analytics -> Pulse.analytics(user, account, args["signal"], params)
++          :query -> Pulse.query(user, account, args["signal"], Map.drop(args, ~w(account_handle signal)))
++          :analytics -> Pulse.analytics(user, account, args["signal"], Map.drop(args, ~w(account_handle signal)))
++          operation -> Pulse.explore(user, account, operation, Map.delete(args, "account_handle"))
+         end
  
-+// Modified by Tuist; see pulse/FORK.md.
-+
- use std::any::Any;
- use std::collections::HashMap;
- use std::sync::Arc;
-@@ -143,7 +145,7 @@ impl QueryLanguageParser {
-     pub fn parse_promql(query: &PromQuery, _query_ctx: &QueryContextRef) -> Result<QueryStatement> {
-         let _timer = PARSE_PROMQL_ELAPSED.start_timer();
+       case result do
+@@ -55,8 +54,96 @@ defmodule Tuist.MCP.Components.Tools.PulseTools do
  
--        let expr = promql_parser::parser::parse(&query.query)
-+        let expr = sql::nesting::parse_promql(&query.query)
-             .map_err(|msg| BoxedError::new(PlainError::new(msg, StatusCode::InvalidArguments)))
-             .context(QueryParseSnafu {
-                 query: &query.query,
-```
-
-**File**: `pulse/src/servers/src/http/prometheus.rs` (modified, +7/-5)
-```diff
-@@ -12,6 +12,8 @@
- // See the License for the specific language governing permissions and
- // limitations under the License.
+   defp message(:query_result_limit), do: "Pulse query exceeded its result limit. Narrow the query or time range."
  
-+// Modified by Tuist; see pulse/FORK.md.
++  defp message(:match_required),
++    do: "Listing a metric label other than __name__ requires match, a series selector such as up or {job=\"tuist\"}."
 +
- //! prom supply the prometheus HTTP API Server compliance
- 
- use std::borrow::Borrow;
-@@ -246,7 +248,7 @@ pub async fn format_query(
-     Form(form_params): Form<InstantQuery>,
- ) -> PrometheusJsonResponse {
-     let query = params.query.or(form_params.query).unwrap_or_default();
--    match promql_parser::parser::parse(&query) {
-+    match sql::nesting::parse_promql(&query) {
-         Ok(expr) => {
-             let pretty = expr.prettify();
-             PrometheusJsonResponse::success(PrometheusResponse::FormatQuery(pretty))
-@@ -2049,7 +2051,7 @@ fn split_selectors_by_label_use(matches: &[String]) -> Result<(Vec<String>, Vec<
-     let mut with_labels = Vec::new();
- 
-     for selector in matches {
--        let expr = promql_parser::parser::parse(selector)
-+        let expr = sql::nesting::parse_promql(selector)
-             .map_err(|reason| InvalidQuerySnafu { reason }.build())?;
-         let PromqlExpr::VectorSelector(vector_selector) = expr else {
-             return InvalidQuerySnafu {
-@@ -2136,7 +2138,7 @@ async fn retrieve_table_names(
-     let name_matchers = matches
-         .iter()
-         .map(|selector| {
--            let expr = promql_parser::parser::parse(selector)
-+            let expr = sql::nesting::parse_promql(selector)
-                 .map_err(|reason| InvalidQuerySnafu { reason }.build())?;
-             let PromqlExpr::VectorSelector(selector) = expr else {
-                 return InvalidQuerySnafu {
-@@ -2397,7 +2399,7 @@ async fn retrieve_schema_names(
- }
- 
- fn retrieve_exact_metric_name_from_promql(query: &str) -> Option<String> {
--    let PromqlExpr::VectorSelector(selector) = promql_parser::parser::parse(query).ok()? else {
-+    let PromqlExpr::VectorSelector(selector) = sql::nesting::parse_promql(query).ok()? else {
-         return None;
-     };
-     if let Some(name) = selector.name {
-@@ -2584,7 +2586,7 @@ pub async fn parse_query(
- ) -> PrometheusJsonResponse {
-     if let Some(query) = params.query.or(form_params.query) {
-         let ast = try_call_return_response!(
--            promql_parser::parser::parse(&query),
-+            sql::nesting::parse_promql(&query),
-             StatusCode::InvalidArguments
-         );
-         PrometheusJsonResponse::success(PrometheusResponse::ParseResult(ast))
-```
-
-**File**: `pulse/src/sql/Cargo.toml` (modified, +2/-0)
-```diff
-@@ -1,3 +1,4 @@
-+# Modified by Tuist; see pulse/FORK.md.
- [package]
- name = "sql"
- version.workspace = true
-@@ -38,6 +39,7 @@ serde_json.workspace = true
- snafu.workspace = true
- sqlparser.workspace = true
- sqlparser_derive = "0.1"
-+stacker = "0.1"
- table.workspace = true
- uuid.workspace = true
- 
-```
-
-**File**: `pulse/src/sql/src/lib.rs` (modified, +3/-0)
-```diff
-@@ -12,9 +12,12 @@
- // See the License for the specific language governing permissions and
- // limitations under the License.
- 
-+// Modified by Tuist; see pulse/FORK.md.
++  defp message(:instant_window), do: "range and step apply only to type range; an instant query evaluates once at end_at."
 +
- pub mod ast;
- pub mod dialect;
- pub mod error;
-+pub mod nesting;
- pub mod parser;
- pub mod parsers;
- pub mod partition;
-```
-
-**File**: `pulse/src/sql/src/nesting.rs` (added, +322/-0)
-```diff
-@@ -0,0 +1,322 @@
-+// Copyright 2026 Tuist GmbH
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
++  defp message(:unknown_label), do: "Unknown Pulse trace label. List trace label names with list_pulse_labels."
 +
-+//! Rejects queries nested too deeply to process.
-+//!
-+//! Planning, cloning, displaying and dropping a query recurse once per level of
-+//! nesting, and an 8 MiB worker stack overflows after a few dozen PromQL levels or
-+//! a few thousand SQL levels. A stack overflow aborts the whole process, so any
-+//! reader could stop the database with a short query. The parsers' own recursion
-+//! limits do not help: they build operator chains (`a + b + ...`,
-+//! `SELECT ... UNION ALL SELECT ...`) in a loop. These checks run right after
-+//! parsing, before anything else walks the tree.
+   defp message(:rate_limited), do: "Pulse is rate limited. Try again later."
+   defp message(_), do: "Pulse is temporarily unavailable."
 +
-+use std::ops::ControlFlow;
-+
-+use promql_parser::parser::Expr as PromExpr;
-+use sqlparser::ast::{Expr, Query, SetExpr, Visit, Visitor};
-+
-+/// Deepest SQL expression accepted, the same as the query analyzer's limit.
-+pub const MAX_SQL_EXPR_DEPTH: usize = 128;
-+/// Longest chain of set operations (UNION, INTERSECT, EXCEPT) in one query.
-+/// GreptimeDB v1.3.0 overflowed at 256 chained `UNION ALL`s.
-+pub const MAX_SQL_SET_OPERATION_DEPTH: usize = 64;
-+/// Deepest PromQL expression accepted, counting every node. Planning a level
-+/// takes up to about 100 KiB of stack: GreptimeDB v1.3.0 overflowed an 8 MiB
-+/// stack at 72 chained binary operators (through TQL) and 48 nested subqueries.
-+pub const MAX_PROMQL_DEPTH: usize = 32;
-+/// Most PromQL operators, parentheses and brackets accepted in one query. Each
-+/// inner node of the tree needs one, so this bounds what the parser builds before
-+/// the depth check, and the parser's time, which grows with the square of a
-+/// chain's length.
-+pub const MAX_PROMQL_NODES: usize = 4096;
-+/// Stack reserved per byte of SQL for parsing and dropping its tree. The longest
-+/// chains take 2 bytes per level and 70 bytes of stack per level.
-+const SQL_PARSE_STACK_PER_BYTE: usize = 128;
-+const SQL_PARSE_STACK_BASE: usize = 1024 * 1024;
-+/// Largest stack set aside for parsing one SQL text, which caps SQL at 8 MiB.
-+const MAX_SQL_PARSE_STACK: usize = 1024 * 1024 * 1024;
-+
-+/// Parses PromQL, rejecting queries nested deeper than [`MAX_PROMQL_DEPTH`].
-+pub fn parse_promql(query: &str) -> Result<PromExpr, String> {
-+    if promql_node_bound(query) > MAX_PROMQL_NODES {
-+        return Err(format!(
-+            "query has more than {MAX_PROMQL_NODES} operators, parentheses and brackets"
-+        ));
++  @doc false
++  def input_schema(properties, required, default_range \\ "1h") do
++    %{
++      "type" => "object",
++      "properties" =>
++        Map.merge(
++          %{
++            "account_handle" => %{"type" => "string"},
++            "range" => %{
++              "type" => "string",
++              "enum" => ~w(15m 1h 6h 24h),
++              "default" => default_range,
++              "description" => "Window length ending at end_at."
++            },
++            "end_at" => %{
++              "type" => "string",
++              "maxLength" => 64,
++              "description" => "ISO8601 window end, default now. Reuse a response's end_at to keep the same window."
++            }
++          },
++          properties
++        ),
++      "required" => ["account_handle" | required],
++      "additionalProperties" => false
 +    }
-+    let expr = promql_parser::parser::parse(query)?;
-+    if promql_depth(&expr) > MAX_PROMQL_DEPTH {
-+        return Err(format!(
-+            "query is nested more than {MAX_PROMQL_DEPTH} levels deep"
-+        ));
-+    }
-+    Ok(expr)
-+}
++  end
 +
-+/// An upper bound on the inner nodes of the query's tree: its operator
-+/// characters, operator keywords, parentheses and brackets, outside strings,
-+/// label matchers and comments.
-+fn promql_node_bound(query: &str) -> usize {
-+    let bytes = query.as_bytes();
-+    let mut count = 0;
-+    let mut i = 0;
-+    while i < bytes.len() {
-+        match bytes[i] {
-+            quote @ (b'"' | b'\'' | b'`') => i = skip_string(bytes, i + 1, quote),
-+            // Label matchers hold no expressions, only names and strings.
-+            b'{' => {
-+                i += 1;
-+                while i < bytes.len() && bytes[i] != b'}' {
-+                    match bytes[i] {
-+                        quote @ (b'"' | b'\'' | b'`') => i = skip_string(bytes, i + 1, quote),
-+                        _ => i += 1,
-+                    }
-+                }
-+                i += 1;
-+            }
-+            b'#' => {
-+                while i < bytes.len() && bytes[i] != b'\n' {
-+                    i += 1;
-+                }
-+            }
-+            b'(' | b'[' | b'+' | b'-' | b'*' | b'/' | b'%' | b'^' | b'=' | b'!' | b'<' | b'>' => {
-+                count += 1;
-+                i += 1;
-+            }
-+            byte if byte.is_ascii_alphabetic() || byte == b'_' => {
-+                let start = i;
-+                while i < bytes.len() && (bytes[i].is_ascii_alphanumeric() || bytes[i] == b'_') {
-+                    i += 1;
-+                }
-+                let word = &query[start..i];
-+                if ["and", "or", "unless", "atan2"]
-+                    .iter()
-+                    .any(|keyword| word.eq_ignore_ascii_case(keyword))
-+                {
-+                    count += 1;
-+                }
-+            }
-+            _ => i += 1,
-+        }
++  @doc false
++  def filters_schema(description) do
++    %{
++      "type" => "array",
++      "maxItems" => 10,
++      "description" => description <> " Filters are ANDed. contains and not_contains are case-insensitive literals.",
++      "items" => %{
++        "type" => "object",
++        "properties" => %{
++          "label" => %{"type" => "string", "maxLength" => 255},
++          "op" => %{"type" => "string", "enum" => ~w(eq neq contains not_contains), "default" => "eq"},
++          "value" => %{"type" => "string", "maxLength" => 4096}
++        },
++        "required" => ["label", "value"],
++        "additionalProperties" => false
++      }
 +    }
++  end
 +
++  @doc false
++  def limit_schema(max, default), do: %{"type" => "integer", "minimum" => 1, "maximum" => max, "default" => default}
++
++  @doc false
++  def output_schema(properties) do
++    properties =
++      Map.merge(%{"start_at" => %{"type" => "string"}, "end_at" => %{"type" => "string"}}, properties)
++
++    object(properties)
++  end
++
++  @doc false
++  def object(properties, extra \\ %{}),
++    do:
++      Map.merge(
++        %{
++          "type" => "object",
++          "properties" => properties,
++          "required" => Map.keys(properties),
++          "additionalProperties" => false
++        },
++        extra
++      )
++
++  @doc false
++  def span_fields,
++    do:
++      ~w(trace_id span_id parent_span_id service_name span_name span_kind span_status_code span_status_message scope_name)
++
++  @doc false
++  def nullable(type), do: %{"type" => [type, "null"]}
++
++  @doc false
++  def array(items), do: %{"type" => "array", "items" => items}
+ end
+ 
+ defmodule Tuist.MCP.Components.Tools.QueryPulse do
+@@ -92,3 +179,256 @@ defmodule Tuist.MCP.Components.Tools.GetPulseAnalytics do
+ 
+   def execute(conn, args), do: Tuist.MCP.Components.Tools.PulseTools.execute(:analytics, conn, args)
+ end
++
++defmodule Tuist.MCP.Components.Tools.QueryPulseMetrics do
++  @moduledoc false
++  use Tuist.MCP.Tool,
++    name: "query_pulse_metrics",
++    title: "Query Pulse Metrics",
++    read_only_hint: true,
++    schema:
++      Tuist.MCP.Components.Tools.PulseTools.input_schema(
++        %{
++          "query" => %{"type" => "string", "maxLength" => 4096, "description" => "PromQL expression."},
++          "type" => %{
++            "type" => "string",
++            "enum" => ~w(instant range),
++            "default" => "instant",
++            "description" =>
++              "instant evaluates once at end_at and rejects range and step; range evaluates every step ov
+```
+
+**File**: `server/lib/tuist/mcp/server.ex` (modified, +6/-1)
+```diff
+@@ -23,6 +23,11 @@ defmodule Tuist.MCP.Server do
+     Tools.GetBazelIntegrationGuide,
+     Tools.QueryPulse,
+     Tools.GetPulseAnalytics,
++    Tools.QueryPulseMetrics,
++    Tools.ListPulseLabels,
++    Tools.SearchPulseLogs,
++    Tools.SearchPulseTraces,
++    Tools.GetPulseTrace,
+     Tools.ListAccounts,
+     Tools.GetOrganization,
+     Tools.ListAccountTokens,
+@@ -178,7 +183,7 @@ defmodule Tuist.MCP.Server do
+   def server do
+     EMCP.Server.new(
+       name: "tuist",
+-      version: "1.64.0",
++      version: "1.65.0",
+       title: "Tuist",
+       description: "Tuist project setup, build, cache, and test insights.",
+       instructions: instructions(),
+```
+
+**File**: `server/lib/tuist/mcp/web_mcp.ex` (modified, +10/-1)
+```diff
+@@ -200,7 +200,16 @@ defmodule Tuist.MCP.WebMCP do
+ 
+   defp page_tools("projects", _build_system), do: [Tools.ListAccounts]
+ 
+-  defp page_tools("pulse", _build_system), do: [Tools.QueryPulse, Tools.GetPulseAnalytics]
++  defp page_tools("pulse", _build_system),
++    do: [
++      Tools.QueryPulse,
++      Tools.GetPulseAnalytics,
++      Tools.QueryPulseMetrics,
++      Tools.ListPulseLabels,
++      Tools.SearchPulseLogs,
++      Tools.SearchPulseTraces,
++      Tools.GetPulseTrace
++    ]
+ 
+   defp page_tools("runners", _build_system), do: @runner_tools
+   defp page_tools("webhooks", _build_system), do: @webhook_tools
+```
+
+**File**: `server/lib/tuist/pulse.ex` (modified, +48/-4)
+```diff
+@@ -36,7 +36,8 @@ defmodule Tuist.Pulse do
+   alias Tuist.Accounts
+   alias Tuist.Environment
+   alias Tuist.FeatureFlags
+-  alias Tuist.Pulse.Greptime
++  alias Tuist.Pulse.Explore
++  alias Tuist.Pulse.SQL
+   alias Tuist.Pulse.Table
+   alias Tuist.Tasks
+ 
+@@ -75,6 +76,49 @@ defmodule Tuist.Pulse do
+     end
+   end
+ 
++  @doc """
++  Structured, read-only exploration for agents. Operations: `:metrics`
++  (instant or range PromQL), `:labels` (label names, or one label's values with
++  counts for logs and traces), `:logs` and `:traces` (filtered newest, oldest or
++  slowest matches, at most 100) and `:trace` (one trace's spans, at most 1000).
++  See `Tuist.Pulse.Explore` for parameters. Windows reuse the table's 15m, 1h,
++  6h and 24h ranges ending at `end_at`; range queries have at most 361 points
++  per series and 5000 series.
++  """
++  def explore(user, account, operation, params) do
++    with true <- authorized?(user, account),
++         {:ok, opts} <- Explore.validate(operation, params),
++         {:ok, client} <- credentials() do
++      if operation == :metrics,
++        do: explore_metrics(opts, client),
++        else: Explore.run(operation, opts, &request(client, &1, &2))
++    else
++      false -> {:error, :forbidden}
++      error -> error
++    end
++  end
++
++  defp explore_metrics(opts, client) do
++    {path, params} =
++      if opts.type == "range",
++        do: {"/api/v1/query_range", [query: opts.query, start: opts.start, end: opts.finish, step: opts.step]},
++        else: {"/api/v1/query", [query: opts.query, time: opts.finish]}
++
++    with {:ok, body} <- request(client, path, params),
++         {:ok, result} <- normalize(body),
++         :ok <- complete_result("metrics", result) do
++      {:ok,
++       %{
++         type: opts.type,
++         series: Enum.sort_by(result.series, & &1["name"]),
++         warnings: result.warnings,
++         step: opts.step,
++         start_at: opts.start_at,
++         end_at: opts.end_at
++       }}
++    end
++  end
++
+   @doc """
+   Fixed aggregate widgets, independent of the table query. Only string-keyed
+   `range` is accepted. Values are end-of-window gauges for metrics and full-window
+@@ -157,7 +201,7 @@ defmodule Tuist.Pulse do
+   defp analytics_sample(client, signal, {id, unit}, period, window) do
+     mode = if period == :previous, do: :instant, else: period
+ 
+-    with {:ok, values, warnings} <- Greptime.aggregate(signal, id, mode, window, &request(client, "/v1/sql", &1)) do
++    with {:ok, values, warnings} <- SQL.aggregate(signal, id, mode, window, &request(client, "/v1/sql", &1)) do
+       {:ok, {id, unit, period, values, warnings}}
+     end
+   end
+@@ -180,7 +224,7 @@ defmodule Tuist.Pulse do
+     ]
+   end
+ 
+-  # Log and trace widget SQL is authored by Tuist.Pulse.Greptime from the id.
++  # Log and trace widget SQL is authored by Tuist.Pulse.SQL from the id.
+   defp widget_queries("logs"), do: [{"entries", :count}, {"errors", :count}, {"warnings", :count}]
+   defp widget_queries("traces"), do: [{"spans", :count}, {"errors", :count}, {"duration_p95", :milliseconds}]
+ 
+@@ -326,7 +370,7 @@ defmodule Tuist.Pulse do
+         with {:ok, body} <- request(client, "/api/v1/query", query: opts.query, time: opts.finish),
+              do: normalize(body)
+       else
+-        Greptime.query(signal, opts, &request(client, "/v1/sql", &1))
++        SQL.query(signal, opts, &request(client, "/v1/sql", &1))
+       end
+ 
+     with {:ok, result} <- result,
+```
+
+**File**: `server/lib/tuist/pulse/explore.ex` (added, +607/-0)
+```diff
+@@ -0,0 +1,607 @@
++defmodule Tuist.Pulse.Explore do
++  @moduledoc """
++  Validation and SQL for agent-facing Pulse exploration: label discovery,
++  structured log and span search, and trace lookup. `Tuist.Pulse.explore/4`
++  authorizes the caller and supplies the read-only transport.
++
++  Callers never supply SQL. Their text reaches SQL only as escaped string
++  literals. A trace label becomes a column only when it names one of Pulse's
++  own trace columns; a log label is either a fixed log column or a JSON
++  attribute key addressed through a literal path. Every read is bounded by a
++  window of at most 24 hours ending at `end_at` and by a row limit, in
++  addition to the transport's body-size and timeout limits.
++
++  Log labels are the optional log columns the table has (the Loki pipeline
++  omits `span_id` and `scope_name`) and the keys of each entry's resource
++  attributes (Loki stream labels such as `namespace` or `container`) and log
++  attributes (structured metadata such as `pod`); a key present in both
++  resolves to the resource attribute. Log label discovery returns only keys
++  that filters accept and inspects at most 1000 distinct attribute sets of each
++  kind in the window.
++  """
++
++  alias Tuist.Pulse.SQL
++
++  @ranges %{"15m" => 900, "1h" => 3600, "6h" => 21_600, "24h" => 86_400}
++  @ops ~w(eq neq contains not_contains)
++  @log_columns ~w(severity_text scope_name trace_id span_id)
++  @label ~r/\A[A-Za-z0-9_][A-Za-z0-9_.\-\/]{0,254}\z/
++  @metric_label ~r/\A[A-Za-z_][A-Za-z0-9_]{0,127}\z/
++  @trace_id ~r/\A[0-9a-f]{1,64}\z/
++  @attribute_sets 1000
++  @spans 1000
++  @keys %{
++    metrics: ~w(query type range end_at step),
++    labels: ~w(signal label match filters search range end_at limit),
++    logs: ~w(text filters range end_at limit order),
++    traces: ~w(filters min_duration_ms max_duration_ms root_only range end_at limit order),
++    trace: ~w(trace_id range end_at)
++  }
++  @span_fields ~w(trace_id span_id parent_span_id service_name span_name span_kind span_status_code span_status_message scope_name)
++
++  def validate(operation, params) when is_map_key(@keys, operation) and is_map(params) do
++    with true <- Enum.all?(Map.keys(params), &(&1 in @keys[operation])),
++         {:ok, window} <- window(params, if(operation == :trace, do: "24h", else: "1h")),
++         {:ok, options} <- options(operation, params, window) do
++      {:ok, Map.merge(window, options)}
++    else
++      {:error, _} = error -> error
++      _ -> {:error, :invalid_params}
++    end
++  end
++
++  def validate(_operation, _params), do: {:error, :invalid_params}
++
++  defp window(params, default) do
++    range = Map.get(params, "range", default)
++
++    with true <- is_binary(range) and Map.has_key?(@ranges, range),
++         {:ok, finish} <- finish(Map.get(params, "end_at")),
++         seconds = @ranges[range],
++         true <- finish >= seconds and finish <= 9_223_372_036 do
++      {:ok,
++       %{
++         start: finish - seconds,
++         finish: finish,
++         seconds: seconds,
++         start_at: iso8601(finish - seconds),
++         end_at: iso8601(finish)
++       }}
++    else
++      _ -> {:error, :invalid_params}
++    end
++  end
++
++  defp finish(nil), do: {:ok, DateTime.to_unix(DateTime.utc_now())}
++
++  defp finish(value) when is_binary(value) and byte_size(value) <= 64 do
++    case DateTime.from_iso8601(value) do
++      {:ok, time, _} -> {:ok, DateTime.to_unix(time)}
++      _ -> :error
++    end
++  end
++
++  defp finish(_value), do: :error
++
++  defp iso8601(seconds), do: seconds |> DateTime.from_unix!() |> DateTime.to_iso8601()
++
++  defp options(:metrics, params, window) do
++    query = params["query"]
++    min_step = max(1, ceil(window.seconds / 360))
++
++    if text?(query, 4096) and String.trim(query) != "" do
++      case Map.get(params, "type", "instant") do
++        "instant" ->
++          if Map.has_key?(params, "range") or Map.has_key?(params, "step"),
++            do: {:error, :instant_window},
++            else: {:ok, %{query: query, type: "instant", step: nil, start_at: iso8601(window.finish)}}
++
++        "range" ->
++          with {:ok, step} <- integer(Map.get(params, "step", min_step), min_step, window.seconds),
++               do: {:ok, %{query: query, type: "range", step: step}}
++
++        _ ->
++          :error
++      end
++    end
++  end
++
++  defp options(:labels, params, _window) do
++    signal = params["signal"]
++    label = params["label"]
++    match = params["match"]
++
++    with true <- signal in ~w(metrics logs traces),
++         true <- is_nil(label) or (is_binary(label) and Regex.match?(label_pattern(signal), label)),
++         true <- is_nil(match) or (signal == "metrics" and text?(match, 4096) and String.trim(match) != ""),
++         true <- signal != "metrics" or not Map.has_key?(params, "filters"),
++         # Trace label names come from the schema, so there are no entries to filter.
++         true <- not (signal == "traces" and is_nil(label) and Map.has_key?(params, "filters")),
++    
+```
+
+**File**: `server/lib/tuist/pulse/sql.ex` (renamed, +5/-4)
+```diff
+@@ -1,4 +1,4 @@
+-defmodule Tuist.Pulse.Greptime do
++defmodule Tuist.Pulse.SQL do
+   @moduledoc false
+ 
+   # SQL is authored here, never supplied by a dashboard user. The database
+@@ -99,12 +99,13 @@ defmodule Tuist.Pulse.Greptime do
+   defp aggregate_expression("traces", "duration_p95"),
+     do: {"opentelemetry_traces", "approx_percentile_cont(duration_nano, 0.95) / 1000000000.0", ""}
+ 
+-  defp bounds(start, finish),
++  def bounds(start, finish),
+     do: "timestamp > to_timestamp_seconds(#{start}) AND timestamp <= to_timestamp_seconds(#{finish})"
+ 
+-  defp literal(value), do: "'" <> String.replace(value, "'", "''") <> "'"
++  # Pulse's SQL treats backslashes literally; doubling quotes is the only escape.
++  def literal(value), do: "'" <> String.replace(value, "'", "''") <> "'"
+ 
+-  defp sql(request, query) do
++  def sql(request, query) do
+     with {:ok, %{"output" => [%{"records" => %{"schema" => %{"column_schemas" => columns}, "rows" => rows}}]}} <-
+            request.(sql: query),
+          true <- is_list(columns) and is_list(rows),
+```
+
+**File**: `server/priv/docs/en/guides/features/agentic-coding/mcp.md` (modified, +25/-6)
+```diff
+@@ -49,14 +49,19 @@ Tuist operators investigating a customer's account do so through Tuist's interna
+ 
+ ### Pulse
+ 
+-Pulse exposes two read-only tools, both addressed by `account_handle`:
++Pulse exposes read-only tools for the account's operational metrics, logs, and traces, all addressed by `account_handle`. The first two mirror the Pulse pages and their REST API; the other five let an agent explore telemetry directly and have no REST equivalent:
+ 
+-| Tool | REST equivalent under `/api/accounts/:account_handle/pulse` |
+-| --- | --- |
+-| `query_pulse` | `GET /:signal` |
+-| `get_pulse_analytics` | `GET /:signal/analytics` |
++| Tool | Purpose | REST equivalent under `/api/accounts/:account_handle/pulse` |
++| --- | --- | --- |
++| `query_pulse` | Pulse page tables | `GET /:signal` |
++| `get_pulse_analytics` | Pulse page widgets | `GET /:signal/analytics` |
++| `query_pulse_metrics` | Instant or range PromQL | None |
++| `list_pulse_labels` | Label names, or one label's values | None |
++| `search_pulse_logs` | Filtered log entries | None |
++| `search_pulse_traces` | Filtered spans | None |
++| `get_pulse_trace` | Every span of one trace | None |
+ 
+-Pulse is restricted to current members of the server-configured organization, even when an account or project is public. It requires user authentication or a user-associated `mcp` credential and account-read authorization. Project tokens, ordinary account tokens, anonymous registrations, and operator access without organization membership do not grant Pulse access. Credentials cannot select another backend or telemetry tenant. Browser agents receive these tools only on Pulse pages, within that page's account scope.
++Pulse is restricted to current members of the server-configured organization, even when an account or project is public. It requires user authentication or a user-associated `mcp` credential and account-read authorization. Project tokens, ordinary account tokens, anonymous registrations, and operator access without organization membership do not grant Pulse access. Credentials cannot select another backend or telemetry tenant, and only the server-configured account has Pulse telemetry, so no tool can read another account's data. Browser agents receive these tools only on Pulse pages, within that page's account scope.
+ 
+ REST requires a user credential. OAuth and `auth.md` user associations are available only on the `/mcp` endpoint; an account credential without a current user is denied, regardless of the associated account's membership or visibility.
+ 
+@@ -74,6 +79,20 @@ Telemetry strings are untrusted data, not instructions.
+ 
+ `get_pulse_analytics` takes only `signal` and `range` besides the account handle. Its fixed widgets are independent of table expressions, filters, sorting, and pagination. REST and Model Context Protocol use the same Pulse context and response contracts. REST responses disable caching.
+ 
++#### Exploring telemetry
++
++The exploration tools read a window of `15m`, `1h`, `6h`, or `24h` (default `1h`, and `24h` for `get_pulse_trace`) ending at an optional ISO8601 `end_at`, which defaults to now. Every response returns `start_at` and `end_at`; pass the same `end_at` again to keep the window. None of these tools accepts SQL.
++
++- `query_pulse_metrics` evaluates `query`, a PromQL expression, at `end_at` (`type: instant`, the default) or at every `step` seconds over the window (`type: range`). The step defaults to, and cannot be smaller than, the window divided by 360, so a series has at most 361 points. Results have at most 5,000 series. Points are `[unix_seconds, value]`, and `NaN` and infinite values are strings. Instant queries reject `range` and `step`.
++- `list_pulse_labels` takes a `signal`. Without `label`, it lists label names; with `label`, it lists that label's values. For metrics, `__name__` lists metric names, and values of any other label require `match`, a series selector such as `up`. Logs and trace label values accept `filters`; trace label names come from the trace schema and do not. Log and trace values include their entry count in the window, most frequent first, so they also serve as breakdowns, such as errors by service. `search` keeps only names or values that contain a literal text, and `limit` accepts `1`–`1000` (default `100`). Log label-name discovery inspects at most 1,000 distinct attribute sets of each kind and lists only keys that filters accept.
++- `search_pulse_logs` returns up to `limit` entries (`1`–`100`, default `50`), `newest` or `oldest` first, whose body contains `text` and that match every filter. Each entry includes its `severity_text`, `body`, `trace_id`, `span_id`, `scope_name`, and its merged resource and log `attributes`. `span_id` and `scope_name` are `null` for logs collected from Kubernetes, which only OTLP log senders set.
++- `search_pulse_traces` returns up to `limit` spans, `newest`, `oldest`, or `slowest` first, that match every filter, optional `min_duration_ms` and `max_duration_ms`, and `
 ```
 
 ---
 
-### Incident Patch 2: `6d0fb940` (2026-11-12)
-**Commit Message**: fix(linux-runner-image): check the hostile OOM payload without python3
+### Incident Patch 2: `3851a198` (2026-11-15)
+**Commit Message**: fix(infra): let management's Pulse reset run after the release is gone [skip ci]
 
-The sampler test runs in bare ubuntu:24.04 and 22.04 containers, which have
-no python3, so the check added in 4f80153b58 failed every image build.
+The reset copied its S3 key references from the release's pulse-credentials
+ExternalSecret, which helm uninstall deletes, so a rerun after an uninstall
+failed. It now renders them from the chart, as the workload storage probe does.
 
-Amp-Thread-ID: https://ampcode.com/threads/T-01a1acac-4c5d-77e3-a32e-cab0a52bca6d
-Co-authored-by: Marek Fort <[REDACTED_EMAIL]>
+Amp-Thread-ID: https://ampcode.com/threads/T-01a1d998-868c-775b-9e3f-8f81b1a21da7
+Co-authored-by: Pedro Piñera Buendía <[REDACTED_EMAIL]>
 
-**File**: `infra/linux-runner-image/metrics-sampler_test.sh` (modified, +5/-1)
+**File**: `.github/workflows/mgmt-cluster-apply.yml` (modified, +7/-3)
 ```diff
-@@ -186,7 +186,11 @@ fi
- # reach the JSON.
- printf 'oom.victim=a"b\\c oom.victim.anon.kb=1e9x oom.victim.container=c"},{"x":1\n' >"${DIND_MEMORY_PATH}"
- payload="$(metrics_payload 1750684800 42.5 1.2 1024 2048 1)"
--if printf '%s' "${payload}" | python3 -c 'import json, sys; s = json.load(sys.stdin)["samples"]; assert len(s) == 1 and s[0]["oom_victim_process"] == "abc" and s[0]["oom_victim_container"] == "cx:1" and s[0]["oom_victim_memory_bytes"] == 19 * 1024, s'; then
-+# The test runs in bare Ubuntu images, which have no JSON parser: one sample
-+# ending in exactly the sanitized fields, and no stray quote or backslash.
-+if [[ "${payload}" == *'"oom_victim_process":"abc","oom_victim_memory_bytes":19456,"oom_victim_container":"cx:1"}]}' ]] &&
-+  [[ "$(grep -o '"timestamp"' <<<"${payload}" | wc -l)" -eq 1 ]] &&
-+  [[ "${payload}" != *'\'* && "${payload}" != *'"x"'* ]]; then
-   echo "  ok   a hostile file stays one valid sample"
- else
-   echo "  FAIL hostile payload: ${payload}"
+@@ -178,7 +178,7 @@ jobs:
+       - uses: actions/checkout@v4
+       - uses: ./.github/actions/mise
+         with:
+-          install_args: "--locked helm kubectl jq"
++          install_args: "--locked helm kubectl jq yq"
+           cache: "false"
+       - uses: 1password/install-cli-action@v2
+       - name: Load mgmt kubeconfig from 1Password
+@@ -453,9 +453,13 @@ jobs:
+           trap 'kubectl -n observability delete pod pulse-reset --ignore-not-found --wait=true --timeout=60s > /dev/null || true
+             kubectl -n observability delete externalsecret pulse-reset --ignore-not-found --wait=true --timeout=60s > /dev/null || true' EXIT
+           kubectl -n observability delete pod pulse-reset --ignore-not-found --wait=true --timeout=60s > /dev/null
+-          # The wipe needs the release's S3 key, whose ExternalSecret goes with it.
++          # The wipe needs the release's S3 key. Its references come from the
++          # rendered chart, since the release's ExternalSecret goes with it.
+           if [[ -z "$(kubectl -n observability get externalsecret pulse-reset --ignore-not-found -o name)" ]]; then
+-            kubectl -n observability get externalsecret pulse-credentials -o json | jq -e '
++            helm template pulse infra/helm/pulse -n observability \
++              -f infra/helm/pulse/values.yaml -f infra/helm/pulse/values-management.yaml |
++              yq -o json 'select(.kind == "ExternalSecret" and .metadata.name == "pulse-credentials")' | jq -se '
++              select(length == 1) | .[0] |
+               select([.spec.data[].secretKey] == ["accessKey", "secretKey"]) |
+               {apiVersion, kind, metadata:{name:"pulse-reset", namespace:"observability"}, spec:{
+                 refreshInterval:"0", secretStoreRef:.spec.secretStoreRef, data:.spec.data,
 ```
 
 ---
 
-### Incident Patch 3: `faa571d2` (2026-11-13)
-**Commit Message**: fix(server): serve macOS sandboxes and CI first come, first served
+### Incident Patch 3: `aec3a626` (2026-11-14)
+**Commit Message**: fix(server): make the no-new-matches recovery test deterministic
 
-A macOS sandbox created or resumed through the API could be paused about a
-second after its 20 s boot: the server asked for a fresh CI grant before the
-running VM could take its session lease, and when CI demand had closed the
-host's grant meanwhile, the refused lease left the sandbox idle and its
-zero-delay pause ran. The host likewise checkpointed an idle VM early when the
-grant was withdrawn. Commands then waited 25 s and failed with 503 while the
-sandbox bounced between resumes and pauses.
+The test backdated each batch of runs by up to a millisecond per run
+from the time it reported them, while the worker stamps triggers and
+recoveries with NaiveDateTime.utc_now() just before it returns. When
+the next batch was reported within those few milliseconds, its earliest
+runs predated the stamp, recovery saw too few quiet runs, and the test
+failed on fast machines (9 of 10 local runs).
 
-Neither CI nor sandboxes take preference now. Work on a running VM (the
-lease, a turn, a hold, a worker start) needs no grant, since the VM already
-holds its charge; only creates and resumes, which ask for new capacity, need
-one. Idle VMs still give their room back after their own idle grace.
+The test now stubs NaiveDateTime.utc_now/0 with a clock that advances
+one millisecond per read, so every run falls strictly between the
+stamps around it. It still fails when recovery waits for the condition
+to clear, when a new flaky run does not restart the quiet period, or
+when old flaky runs re-mute after a recovery.
 
-Amp-Thread-ID: https://ampcode.com/threads/T-01a1d19d-8d74-764f-98a5-510f2d9bc018
-Co-authored-by: Marek Fort <[REDACTED_EMAIL]>
+Amp-Thread-ID: https://ampcode.com/threads/T-01a1d97b-d86b-7771-b7e8-dfe00b7e2deb
+Co-authored-by: Pedro Piñera Buendía <[REDACTED_EMAIL]>
 
-**File**: `infra/tart-kubelet/internal/macosandbox/acceptance_test.go` (modified, +1/-0)
+**File**: `server/test/tuist/automations/workers/alert_evaluation_worker_test.exs` (modified, +11/-8)
 ```diff
-@@ -123,6 +123,7 @@ func TestNativeControlPlaneAcceptance(t *testing.T) {
- 		t.Fatal("interrupted active work")
- 	}
- 	call("stop_worker", map[string]any{}, true)
-+	recovered.Grace = time.Nanosecond
- 	if err := recovered.Reconcile(ctx); err != nil {
- 		t.Fatal(err)
- 	}
-```
-
-**File**: `infra/tart-kubelet/internal/macosandbox/checkout_test.go` (modified, +3/-2)
-```diff
-@@ -7,6 +7,7 @@ import (
- 	"path/filepath"
- 	"strings"
- 	"testing"
-+	"time"
+@@ -892,15 +892,18 @@ defmodule Tuist.Automations.Workers.AlertEvaluationWorkerTest do
+     passing = fn ran_at -> run_attrs(project.id, test_case_id, ran_at) end
+     flaky = fn ran_at -> run_attrs(project.id, test_case_id, ran_at, git_branch: "experiment", is_flaky: true) end
  
- 	"github.com/tuist/tuist/infra/sandboxd/pkg/protocol"
- 	"github.com/tuist/tuist/infra/tart-kubelet/internal/tart"
-@@ -34,7 +35,7 @@ func testGrant() *protocol.CheckoutGrant {
- // A session's worker starts from the master in its VM's share, and the host
- // takes its export only once an eviction has fenced the VM.
- func TestCheckoutSeedsAtWorkerStartAndCollectsAfterTheFence(t *testing.T) {
--	m, r, c, a := harness(t)
-+	m, r, _, a := harness(t)
- 	checkouts := &fakeCheckouts{}
- 	m.Checkouts = checkouts
- 	ctx := context.Background()
-@@ -68,7 +69,7 @@ func TestCheckoutSeedsAtWorkerStartAndCollectsAfterTheFence(t *testing.T) {
- 	if len(checkouts.collected) != 0 {
- 		t.Fatal("collected from a running VM")
- 	}
--	c.allow = false // CI needs the room: the idle sandbox is saved.
-+	m.Grace = time.Nanosecond // The idle grace is up: the idle sandbox is saved.
- 	if err := m.Reconcile(ctx); err != nil {
- 		t.Fatal(err)
- 	}
-```
-
-**File**: `infra/tart-kubelet/internal/macosandbox/manager.go` (modified, +10/-16)
-```diff
-@@ -372,12 +372,13 @@ func (m *Manager) resume(ctx context.Context, r *Record) error {
- 	if r.Operation != "" || r.State == "error" {
- 		return errors.New("sandbox requires reconciliation")
- 	}
--	if err = m.Capacity.Allow(ctx, r); err != nil {
--		return err
--	}
-+	// A running VM already holds its charge; only a paused one asks for it.
- 	if r.State == "running" {
- 		return nil
- 	}
-+	if err = m.Capacity.Allow(ctx, r); err != nil {
-+		return err
-+	}
- 	if r.State != "paused" {
- 		return errors.New("sandbox is not paused")
- 	}
-@@ -505,8 +506,8 @@ var holdIDPattern = regexp.MustCompile(`^[A-Za-z0-9_.:-]{1,255}$`)
- // Hold protects a running sandbox from idle eviction for detached guest work,
- // resuming it first like a worker start. A positive ttl ends the hold that
- // long from now unless it is renewed; zero keeps it until a release or pause.
--// Only a new hold needs the grant: renewing the current one takes no capacity
--// it does not already hold, so it succeeds while CI holds the grant.
-+// A hold on a running VM takes no capacity it does not already hold, so it
-+// needs no grant; only resuming a paused one does.
- func (m *Manager) Hold(ctx context.Context, id, work string, ttl time.Duration) error {
- 	m.Gate.Lock()
- 	defer m.Gate.Unlock()
-@@ -525,11 +526,6 @@ func (m *Manager) Hold(ctx context.Context, id, work string, ttl time.Duration)
- 	if r.State != "running" || r.Operation != "" {
- 		return errors.New("sandbox is not running")
- 	}
--	if r.HoldID != work {
--		if err = m.Capacity.Allow(ctx, r); err != nil {
--			return err
--		}
--	}
- 	until := time.Time{}
- 	if ttl > 0 {
- 		until = time.Now().UTC().Add(ttl)
-@@ -598,8 +594,9 @@ func (m *Manager) SampleCPU(ctx context.Context) {
- 	m.cpuMu.Unlock()
- }
+-    # Runs are dated when they are reported, in order, so the trigger and the
+-    # recovery, which are stamped with the clock, fall between the batches.
+-    report = fn runs ->
+-      now = NaiveDateTime.utc_now()
++    # Every read of the clock advances it, so each run is dated after the
++    # trigger or recovery stamped before it was reported and before the next.
++    clock = start_supervised!({Agent, fn -> NaiveDateTime.utc_now() end})
++
++    stub(NaiveDateTime, :utc_now, fn ->
++      Agent.get_and_update(clock, fn now ->
++        next = NaiveDateTime.add(now, 1, :millisecond)
++        {next, next}
++      end)
++    end)
  
--// Reconcile retries interrupted operations and checkpoints idle residents when
--// CI demand is queued, unknown, stale, or their bounded grace expires.
-+// Reconcile retries interrupted operations and checkpoints idle residents once
-+// their bounded grace expires. CI and sandboxes are first come, first served:
-+// CI demand arriving later does not checkpoint a VM before its grace is up.
- func (m *Manager) Reconcile(ctx context.Context) error {
- 	m.Gate.Lock()
- 	defer m.Gate.Unlock()
-@@ -695,7 +692,7 @@ func (m *Manager) Reconcile(ctx context.Context) error {
- 				continue
- 			}
- 		}
--		if r.Resident && r.WorkerID == "" && r.HoldID == "" && m.active[r.SandboxID] == 0 && (time.Since(r.IdleAt) >= grace || m.Capacity.Allow(ctx, r) != nil) {
-+		if r.Resident && r.WorkerID == "" && r.HoldID == "" && m.active[r.SandboxID] == 0 && time.Since(r.IdleAt) >= grace {
- 			if err := m.evict(ctx, r); err != nil {
- 				errs = append(errs, err)
- 			}
-@@ -763,9 +760,6 @@ func (m *Manager) worker(ctx context.Context, id, action string, env map[string]
- 		if r.State != "running" || r.Operation != "" {
- 			return WorkerStatus{}, errors.New("sandbox is not running")
- 		}
--		if err = m.Capacity.Allow(ctx, r); err != nil {
--			return WorkerStatus{}, err
--		}
- 		work := env["ANTHROPIC_WORK_ID"]
- 		if work == "" {
- 			return WorkerStatus{}, errors.New("worker identity is required")
-```
-
-**File**: `infra/tart-kubelet/internal/macosandbox/manager_test.go` (modified, +16/-9)
-```diff
-@@ -283,9 +283,10 @@ func TestResidencyHoldOutlivesIdleGraceAndCIUntilItsOwnerEndsIt(t *testing.T) {
- 	}
- }
+-      runs
+-      |> Enum.with_index(fn build, index -> build.(NaiveDateTime.add(now, index - length(runs), :millisecond)) end)
+-      |> insert_test_case_runs()
+-    end
++    report = fn runs -> runs |> Enum.map(& &1.(NaiveDateTime.utc_now())) |> insert_test_case_runs() end
  
--// A session renews its timed hold between commands even while CI holds the
--// grant; a hold nobody renews expires, and the idle VM goes back to CI.
--func TestTimedHoldRenewsWithoutTheGrantAndExpires(t *testing.T) {
-+// A running VM already holds its charge, so holds on it, new or renewed, need
-+// no grant while CI holds it. A hold nobody renews expires, and the idle VM is
-+// checkpointed once its idle grace is up, not when CI asks for the room.
-+func TestHoldsOnARunningVMNeedNoGrantAndExpire(t *testing.T) {
- 	m, r, c, a := harness(t)
- 	m.Grace = time.Minute
- 	ctx := context.Background()
-@@ -299,18 +300,22 @@ func TestTimedHoldRenewsWithoutTheGrantAndExpires(t *testing.T) {
- 	if err := m.Hold(ctx, a.SandboxID, "commands", 100*time.Millisecond); err != nil {
- 		t.Fatalf("renewing the current hold needed the grant: %v", err)
- 	}
--	if err := m.Hold(ctx, a.SandboxID, "amp:other", 0); !errors.Is(err, ErrCapacity) {
--		t.Fatalf("a new hold was admitted without the grant: %v", err)
-+	if err := m.Hold(ctx, a.SandboxID, "amp:other", 100*time.Millisecond); err != nil {
-+		t.Fatalf("a new hold on a running VM needed the grant: %v", err)
- 	}
- 	if err := m.Reconcile(ctx); err != nil || r.states[a.SandboxID] != "running" {
- 		t.Fatal("CI evicted a sandbox under a live hold", err)
- 	}
- 	time.Sleep(150 * time.Millisecond)
-+	if err := m.Reconcile(ctx); err != nil || r.states[a.SandboxID] != "running" {
-+		t.Fatal("CI demand evicted an idle VM before its grace was up", err)
-+	}
-+	m.Grace = time.Nanosecond
- 	if err := m.Reconcile(ctx); err != nil {
- 		t.Fatal(err)
- 	}
- 	if r.states[a.SandboxID] != "evicted" || c.held[a.SandboxID] {
--		t.Fatal("an expired hold kept the VM from CI")
-+		t.Fatal("an expired hold kept the VM past its idle grace")
- 	}
- }
+     report.([passing, passing, flaky])
  
-@@ -335,8 +340,9 @@ func TestGuestCPUIntegratesIntoMonotonicReportedTime(t *testing.T) {
- 		t.Fatal("a paused sandbox reported guest CPU")
- 	}
- }
--func TestCIRevocationEvictsOnlyIdleAndRetainsFailedFence(t *testing.T) {
-+func TestIdleEvictionSparesWorkAndRetainsFailedFence(t *testing.T) {
- 	m, r, c, a := harness(t)
-+	m.Grace = time.Nanosecond
- 	ctx := context.Background()
- 	if err := m.Create(ctx, a); err != nil {
- 		t.Fatal(err)
-@@ -349,7 +355,7 @@ func TestCIRevocationEvictsOnlyIdleAndRetainsFailedFence(t *testing.T) {
- 		t.Fatal(err)
- 	}
- 	if !c.held[a.SandboxID] {
--		t.Fatal("CI interrupted active work")
-+		t.Fatal("idle eviction interrupted active work")
- 	}
- 	r.worker.Running = false
- 	r.saveErr = errors.New("checkpoint failed")
-@@ -367,7 +373,7 @@ func TestCIRevocationEvictsOnlyIdleAndRetainsFailedFence(t *testing.T) {
- 		t.Fatal("successful eviction kept charge")
- 	}
- 	if err := m.Resume(ctx, a.SandboxID); !errors.Is(err, ErrCapacity) {
--		t.Fatalf("resume admitted while CI queued: %v", err)
-+		t.Fatalf("resume admitted while CI holds the grant: %v", err)
- 	}
- }
- 
-@@ -428,6 +434,7 @@ func TestReportsAndCILaunchDoNotWaitForCheckpoint(t *testing.T) {
- 		t.Fatal(err)
- 	}
- 	c.allow = false
-+	m.Grace = time.Nanosecond
- 	r.saveStarted = make(chan struct{})
- 	r.saveRelease = make(chan struct{})
- 	done := make(chan error, 1)
-```
-
-**File**: `infra/tart-kubelet/internal/macosandbox/service_test.go` (modified, +4/-3)
-```diff
-@@ -136,8 +136,9 @@ func TestFencedReservationReleaseCompletesPodDeletion(t *testing.T) {
- 	}
- }
- 
--func TestControlPreparationFailureDoesNotBlockCIEviction(t *testing.T) {
-+func TestControlPreparationFailureDoesNotBlockIdleEviction(t *testing.T) {
- 	m, runtime, _, args := harness(t)
-+	m.Grace = time.Nanosecond
- 	capacity, node, _ := capacityFixture()
- 	m.Capacity = capacity
- 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-@@ -148,7 +149,7 @@ func TestControlPreparationFailureDoesNotBlockCIEviction(t *testing.T) {
- 	if err := m.Pause(ctx, args.SandboxID); err != nil {
- 		t.Fatal(err)
- 	}
--	// A replacement control Pod cannot connect, while CI has revoked the grant.
-+	// A replacement control Pod cannot connect while the VM's idle grace is up.
- 	control := &corev1.Pod{ObjectMeta: metav1.ObjectMeta{
- 		Name: "control", Namespace: Namespace, UID: "replacement",
- 		Labels:      map[string]string{RoleLabel: "control"},
-@@ -174,7 +175,7 @@ func TestControlPreparationFailureDoesNotBlockCIEviction(t *testing.T) {
- 	select {
- 	case <-runtime.saveStarted:
- 	case <-ctx.Done():
--		t.Fatal("invalid replacement control configuration blocked CI eviction")
-+		t.Fatal("invalid replacement control configuration blocked idle eviction")
- 	}
- 	// A checkpoint in progress must still retain its capacity reservation.
- 	if _, err := capacity.Kube.CoreV1().Pods(Namespace).Get(ctx, "macos-sbx-"+args.SandboxID, metav1.GetOptions{}); err != nil {
-```
-
-**File**: `infra/tart-kubelet/macos-sandboxes.md` (modified, +8/-6)
-```diff
-@@ -77,8 +77,11 @@ Each grant specifies CPU, RAM and VM slots remaining after non-reclaimable CI
- reservations. Placement subtracts existing native reservations from that allowance,
- so a host occupied by CI is not selected just because its queue is empty.
- CI can revoke admission between server placement and the host's final check.
--A command into a running VM needs no grant, since the VM already holds its
--charge; a command that has to resume a paused VM does.
-+Work on a running VM (a command, a worker start, a hold, the server's lease)
-+needs no grant, since the VM already holds its charge; work that has to resume
-+a paused VM does. CI and sandboxes are served first come, first served: a grant
-+gates only new capacity, and CI demand arriving later never takes a running
-+VM's place.
- An explicit host capacity refusal returns HTTP 503 and leaves a saved environment
- paused for retry; its server charge stays conservative until the next host report.
- A create the host refuses for capacity moves on to the next host.
-@@ -99,16 +102,15 @@ and Terminating Pods, enforcing CPU, RAM and Apple's two-VM limit. A resident
- pause retains the full Pod charge. The host repairs missing reservation Pods
- from its journals before CI launches; uncertain ownership fails closed.
- 
--The background controller checkpoints idle residents when CI revokes admission,
--or after the bounded 30-second idle grace. Ownership reconciliation and eviction
-+The background controller checkpoints idle residents after the bounded
-+30-second idle grace; a revoked grant does not shorten it. Ownership reconciliation and eviction
- run independently of image downloads and control connection preparation, so a
- failed or slow image update cannot delay returning idle capacity to CI.
- It does not interrupt an active managed
- worker or exec command, nor a hold (`hold_residency`): an Amp Orb's turn, or
- the server's `commands` residency, which on macOS outlives the last command as
- a ten-minute session lease so an agent thinking between commands keeps its VM
--(`server/lib/tuist/sandboxes/commands.ex`). Only a new hold needs a grant;
--renewing the current one does not. A hold with `hold_ms` ends that long after
-+(`server/lib/tuist/sandboxes/commands.ex`). A hold with `hold_ms` ends that long after
- it was last renewed even if the server never releases it; the server sets it
- two minutes past the lease, so this only backstops a lost release. CI may therefore wait for active native work to finish
- and for the checkpoint to complete. A failed checkpoint or process fence retains
-```
-
-**File**: `server/lib/tuist/sandboxes/AGENTS.md` (modified, +6/-4)
-```diff
-@@ -169,9 +169,10 @@ See [the rollout and recovery contract](../../../../infra/sandbox-image/remote-e
-   resumes it and records the residency in one step
-   (`Sandboxes.prepare_residency/2`), then starts `sbx-worker` with the
-   session credentials; force-stops the work item on any failure so
--  Anthropic re-queues it. Like an Amp Orb's spawn, a turn that just
--  created a macOS sandbox records its residency without a fresh CI grant
--  (`created: true`): the VM already holds its slot. Inside the residency
-+  Anthropic re-queues it. A turn on a running macOS sandbox records
-+  its residency without a fresh CI grant (`MacosCapacity.admit_turn/2`):
-+  the VM already holds its slot, and CI and sandboxes are served first
-+  come, first served. Only a resume asks for the grant. Inside the residency
-   that created the sandbox, the router binds it to the `AgentSession` row
-   (looked up by `anthropic_session_id`) and clones the requested
-   repository into `<workspace>/<name>` (`/workspace` on Linux,
-@@ -337,7 +338,8 @@ serialization are specified in [`fleet-sharing.md`](../../../../infra/sandboxd/f
- Shared-node idle pauses (all macOS hosts too) have zero grace and enqueue
- shrink work, except 20 s after the last command ends on Linux (`Commands`
- residency), so a command run such as a sync then a build does not wait out a
--pause and a resume; CI pressure still pauses that idle sandbox at once. On
-+pause and a resume; CI pressure still pauses that idle sandbox at once. CI demand never pauses or evicts a running macOS VM: there the grant
-+gates only creates and resumes. On
- macOS the `Commands` residency itself outlives the last command as the
- session's ten-minute lease (see `Commands` below). Active residencies and
- daemon worker/exec guards remain authoritative.
-```
-
-**File**: `server/lib/tuist/sandboxes/commands.ex` (modified, +2/-2)
-```diff
-@@ -205,8 +205,8 @@ defmodule Tuist.Sandboxes.Commands do
-   chose, so that sending the request again answers the command it started
-   instead of starting another).
- 
--  While CI holds the sandbox's host, admission refuses the resume or the
--  command. The start then tries again every second for up to
-+  While CI holds the sandbox's host, admission refuses the resume of a
-+  paused sandbox; a running one needs no grant. The start then tries again every second for up to
-   #{div(@host_wait_ms, 1000)} seconds before it answers the refusal, so the
-   command starts as soon as the host frees instead of after the client's
-   next retry.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #15705** (closed): feat(pulse): deploy the GreptimeDB fork as Pulse (CI run) (@pepicrft)
-- **PR #15704** (2026-11-13): feat(kura): enroll eu-east and us-west in thin volumes (@fortmarek)
-- **PR #15701** (2026-11-13): feat(docs): point Amp users to Tuist Macs instead of macOS Satellites (@fortmarek)
-- **PR #15700** (closed): chore(infra): retire the two Tahoe VM image builders (@fortmarek)
-- **PR #15699** (2026-11-13): feat(kura): add a landing box to four OVH cache fleets (@fortmarek)
-- **PR #15696** (2026-11-13): fix(cli): backport conditioning fallback module maps across SDK overrides to 4.216.x (@pepicrft)
+- **PR #15735** (2026-11-14): chore(infra): name Pulse's Kafka WAL topics pulse_wal_topic (@pepicrft)
+- **PR #15734** (2026-11-14): chore(infra): drop Pulse's one-time pre-rename Grafana uninstall (@pepicrft)
+- **PR #15732** (2026-11-14): feat(infra): deploy Pulse continuously like Kura (@pepicrft)
+- **PR #15731** (2026-11-14): refactor(infra): rename Pulse's infrastructure from GreptimeDB to Pulse (@pepicrft)
+- **PR #15730** (2026-11-14): feat(infra): add a sixth general node to canary for Pulse's cluster topology (@pepicrft)
+- **PR #15729** (2026-11-14): fix(infra): drain Pulse frontends before they stop serving (@pepicrft)
 
 ---
 
@@ -1263,48 +1114,38 @@ Co-authored-by: Marek Fort <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. pulse): reject queries nested deep enough to overflow the stack
+## X. server): add MCP tools to explore Pulse metrics, logs and traces
 
 **RULE**:
-When implementing operations in `pulse/AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tuist/tuist. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/lib/tuist/mcp/AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tuist/tuist. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a7a7c488`: pulse): reject queries nested deep enough to overflow the stack. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2419de4e`: server): add MCP tools to explore Pulse metrics, logs and traces. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `pulse/AGENTS.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/lib/tuist/mcp/AGENTS.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## Tuist fork
+- Pulse tools share `Tuist.Pulse` with the Pulse pages: `PulseTools.execute/3`
+  requires a user (or user-associated `mcp` credential), account read, then
+  `Pulse.authorized?/2` (configured account, `pulse` flag, current
+  membership) before any read. Exploration tools (`query_pulse_metrics`,
+  `list_pulse_labels`, `search_pulse_logs`, `search_pulse_traces`,
+  `get_pulse_trace`) go through `Pulse.explore/4` and `Pulse.Explore`, which
+  takes structured filters only: values reach SQL as escaped literals, log
+  labels as literal JSON paths, and trace labels only when they name an
+  existing scalar trace column. Never accept SQL from callers; keep the
+  15m–24h windows, row limits and transport bounds.
 
-This directory is Pulse, Tuist's fork of GreptimeDB. [`FORK.md`](FORK.md) records
-the upstream tag and commit, what the import left out, every Tuist change, and
-how releases reach the clusters. The rest of this file is upstream's guidance.
-
-- Keep Tuist changes small and listed in `FORK.md`, and add a
-  `// Modified by Tuist; see pulse/FORK.md.` line under the license header of
-  each upstream file you change. New files carry the Apache-2.0 header with
-  Tuist's copyright.
-- Never add files under the GreptimeDB Enterprise License or enable the
-  `enterprise` feature.
-- Parse PromQL with `sql::nesting::parse_promql`, never
-  `promql_parser::parser::parse`, outside tests.
-- Upstream's CI does not run here. `.github/workflows/pulse.yml` is the CI; run
-  `cargo test -p sql --lib` for the nesting limits. Build scripts call `protoc`
-  outside the repository, so set `PROTOC` to a real binary rather than a mise
-  shim. `cargo fmt` needs the enterprise modules stubbed; `pulse.yml` shows how.
-- Upstream's guidance below overrides nothing above. `make clippy` and
-  `make check` enable `--all-features`, which turns on `enterprise` and fails on
-  the missing files: run `cargo cli
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
+// Induced defect failure mode:
 // Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a7a7c488` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2419de4e` are properly handled with clean fallback behavior.

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T07:41:58.809Z",
-  "total_cycles_completed": 9686,
-  "total_learnings_persisted": 9686,
-  "total_rules_promoted": 9315,
+  "last_updated": "2026-11-15T08:09:26.280Z",
+  "total_cycles_completed": 9689,
+  "total_learnings_persisted": 9689,
+  "total_rules_promoted": 9322,
   "history": [
-    {
-      "timestamp": "2026-11-14T07:53:31.529Z",
-      "repository": "beclab/Olares",
-      "learningId": "learn-github-beclab-olares",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T08:05:23.255Z",
-      "repository": "sentence-transformers/all-mpnet-base-v2",
-      "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T08:10:38.947Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T08:10:41.338Z",
       "repository": "typedb/typedb",
@@ -1403,6 +1382,27 @@
       "repository": "gravitl/netmaker",
       "learningId": "learn-github-gravitl-netmaker",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T08:07:12.684Z",
+      "repository": "tuist/tuist",
+      "learningId": "learn-github-tuist-tuist",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T08:09:07.215Z",
+      "repository": "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
+      "learningId": "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T08:09:26.280Z",
+      "repository": "SimonSchubert/LinuxCommandLibrary",
+      "learningId": "learn-github-simonschubert-linuxcommandlibrary",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

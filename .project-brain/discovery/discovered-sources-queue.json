@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T07:42:32.520Z",
+  "updated_at": "2026-11-15T08:09:31.473Z",
   "stats": {
-    "total_discovered": 3657,
-    "approved_pending_harvest": 3447,
+    "total_discovered": 3661,
+    "approved_pending_harvest": 3451,
     "harvested_count": 0,
     "rejected_count": 210,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3427,
+      "COMMUNITY_AND_EXPERT": 3431,
       "OFFICIAL_DOCUMENTATION": 125,
       "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
@@ -79005,6 +79005,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mrkai77-loop-learnings.md",
         "fileName": "mrkai77-loop-learnings.md"
+      }
+    },
+    "SRC-750251AFA14A": {
+      "id": "SRC-750251AFA14A",
+      "url": "https://ampcode.com/threads/T-01a1d998-868c-775b-9e3f-8f81b1a21da7",
+      "title": "https://ampcode.com/threads/T-01a1d998-868c-775b-9e3f-8f81b1a21da7",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T08:09:29.977Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-353A4C5757EB": {
+      "id": "SRC-353A4C5757EB",
+      "url": "https://ampcode.com/threads/T-01a1d97b-d86b-7771-b7e8-dfe00b7e2deb",
+      "title": "https://ampcode.com/threads/T-01a1d97b-d86b-7771-b7e8-dfe00b7e2deb",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T08:09:30.010Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-9529DBA0BF82": {
+      "id": "SRC-9529DBA0BF82",
+      "url": "https://huggingface.co/OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
+      "title": "https://huggingface.co/OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T08:09:30.617Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-obliteratus-deepseek-v4.1-flash-1017-obliterated-learnings.md",
+        "fileName": "hf-obliteratus-deepseek-v4.1-flash-1017-obliterated-learnings.md"
+      }
+    },
+    "SRC-D74428F0D1D2": {
+      "id": "SRC-D74428F0D1D2",
+      "url": "https://linuxcommandlibrary.com/man/grep%60",
+      "title": "https://linuxcommandlibrary.com/man/grep%60",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T08:09:31.473Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md",
+        "fileName": "simonschubert-linuxcommandlibrary-learnings.md"
       }
     }
   }
