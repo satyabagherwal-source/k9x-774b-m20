@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "c10b67e8",
+    "sourceVersion": "a19be499",
     "license": "Apache-2.0",
-    "contentHash": "76107d486b9adc06837896f4e9180b09c77c8f623a73a0d497d124a6fd6b516c",
-    "lastHarvestedAt": "2026-11-14T19:03:26.757Z",
+    "contentHash": "12fdf0025cfd636ff4ab1ae09c6740307c64df23dc378e13b7d54c71f7d9c503",
+    "lastHarvestedAt": "2026-11-15T10:04:31.072Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -12265,8 +12265,8 @@
     "sourceUrl": "https://huggingface.co/tencent/Qwen3.8-27B-DSpine-b16",
     "sourceVersion": "hf-tencent-qwen3.8-27b-dspine-b16",
     "license": "Open-Source",
-    "contentHash": "c796e23219ff0340379b29b3121cf4a98c4c874fdedfce01cd3b13b2cd4ee1f0",
-    "lastHarvestedAt": "2026-11-09T21:59:35.824Z",
+    "contentHash": "e6194710e86bc75260b9f9c8e0a35e6c2cfea189f173555d4a3118f582e35af2",
+    "lastHarvestedAt": "2026-11-15T10:04:13.087Z",
     "learningId": "learn-huggingface-tencent-qwen3-8-27b-dspine-b16"
   },
   "hf-videorebirthai-hyperflow-h3-flash": {

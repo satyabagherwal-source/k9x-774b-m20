@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261110-JV0Q",
-    "timestamp": "2026-11-10T01:58:32.906Z",
-    "repository": "projectdiscovery/nuclei",
-    "learningId": "learn-github-projectdiscovery-nuclei",
-    "contentHash": "3ecdfe00e8740b5f6f37c04fccb2362203e8437324cb2e17a7491cb0f85b9d70",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261110-JV6Z",
-    "timestamp": "2026-11-10T01:58:33.131Z",
-    "repository": "openyurtio/openyurt",
-    "learningId": "learn-github-openyurtio-openyurt",
-    "contentHash": "4491deafb264fb0fe67524d1beb33e830430d17350c55137dbe6655a078bfecf",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261110-JXXO",
     "timestamp": "2026-11-10T01:58:36.684Z",
     "repository": "dathere/qsv",
@@ -7492,6 +7462,36 @@
     "contentHash": "50adaf2ae139c9170e96ee6dc00d56e3a62578edb8a82c30974a1a65654f95cb",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-3P23",
+    "timestamp": "2026-11-15T10:04:13.083Z",
+    "repository": "tencent/Qwen3.8-27B-DSpine-b16",
+    "learningId": "learn-huggingface-tencent-qwen3-8-27b-dspine-b16",
+    "contentHash": "e6194710e86bc75260b9f9c8e0a35e6c2cfea189f173555d4a3118f582e35af2",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-42XO",
+    "timestamp": "2026-11-15T10:04:31.068Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "12fdf0025cfd636ff4ab1ae09c6740307c64df23dc378e13b7d54c71f7d9c503",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

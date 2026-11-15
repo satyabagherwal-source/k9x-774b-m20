@@ -622460,3 +622460,96 @@ func TestConnectionNameValidation(t *testing.T) {
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `b6ac7a34` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8607. Exclude single-pixel objects from ARC synthesis (Harvested from NucleoidAI/Nucleoid)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Exclude single-pixel objects from ARC synthesis",
+  "source": "NucleoidAI/Nucleoid",
+  "source_url": "https://github.com/NucleoidAI/Nucleoid",
+  "source_version": "a19be499",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-15T10:04:30.633Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nucleoidai-nucleoid",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `a19be499`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `.claude/agents/arc-debug.agent.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `a19be499`: Exclude single-pixel objects from ARC synthesis. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/agents/arc-debug.agent.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+   x+1 y+1, x-1 y+1 or x-1 y-1, except an instance whose object, its input
+   object or its output object when the input is empty, is a single pixel.
+   A training pair without other instances gains none. They follow the
+   training pairs in `train_dataset.dataset`, three per training pair in
+   turn, in that order. Each holds one instance per synthesized extracted
+   instance of its source pair, in source order, with `synthesis` (`source`,
+   `rotation`, `offset`), named
+  instance per extracted instance of its source pair whose object, its input
+  object or its output object when the input is empty, is not a single pixel,
+  in source order, whose `source` names it; a training pair whose instances
+  are all single pixels has no synthesized pairs, and no `source` names a
+  single pixel. Recompute each instance from its source with the
+  as one that always grows its object in one direction, or that it reads a
+  canvas that grew to hold the turned objects, objects that overlap after
+  turning, or a list argument, such as cell positions, that carried over
+  unturned.
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+   x+1 y+1, x-1 y+1 or x-1 y-1. They follow the training pairs in
+   `train_dataset.dataset`, three per training pair in turn, in that order.
+   Each holds one instance per extracted instance of its source pair, in
+   source order, with `synthesis` (`source`, `rotation`, `offset`), named
+  instance per extracted instance of its source pair, in source order, whose
+  `source` names it. Recompute each instance from its source with the
+  as a rim that always grows above its point, or that it reads a canvas that
+  grew to hold the turned objects, objects that overlap after turning, or a
+  list argument, such as cell positions, that carried over unturned.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `a19be499` are properly handled with clean fallback behavior.

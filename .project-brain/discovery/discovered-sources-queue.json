@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T09:55:28.749Z",
+  "updated_at": "2026-11-15T10:05:03.894Z",
   "stats": {
-    "total_discovered": 3668,
-    "approved_pending_harvest": 3458,
+    "total_discovered": 3669,
+    "approved_pending_harvest": 3459,
     "harvested_count": 0,
     "rejected_count": 210,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3438,
+      "COMMUNITY_AND_EXPERT": 3439,
       "OFFICIAL_DOCUMENTATION": 125,
       "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
@@ -79247,6 +79247,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-policy-agent-gatekeeper-learnings.md",
         "fileName": "open-policy-agent-gatekeeper-learnings.md"
+      }
+    },
+    "SRC-A64346D6B971": {
+      "id": "SRC-A64346D6B971",
+      "url": "https://huggingface.co/tencent/Qwen3.8-27B-DSpine-b16",
+      "title": "https://huggingface.co/tencent/Qwen3.8-27B-DSpine-b16",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T10:05:03.894Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-tencent-qwen3.8-27b-dspine-b16-learnings.md",
+        "fileName": "hf-tencent-qwen3.8-27b-dspine-b16-learnings.md"
       }
     }
   }

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `c10b67e8`  
+> **Source Version**: `a19be499`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T19:03:25.903Z  
+> **Timestamp**: 2026-11-15T10:04:30.167Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T19:03:25.898Z  
+> **Harvest Timestamp**: 2026-11-15T10:04:30.161Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1164,7 +1164,11 @@ export async function declarations({
         role: "user",
         content: `
           query:
-          ${JSON.stringify(train_dataset)}
+          ${JSON.stringify({
+            ...train_dataset,
+            declarations: "<DECLARATIONS>",
+            output_canvas: "<OUTPUT_CANVAS>",
+          })}
           json_format:
           { "declarations": <DECLARATIONS>, "output_canvas": <OUTPUT_CANVAS> }
         `,
@@ -1192,7 +1196,18 @@ export async function instances({
         role: "user",
         content: `
           query:
-          ${JSON.stringify(train_dataset)}
+          ${JSON.stringify({
+            ...train_dataset,
+            dataset: train_dataset.dataset.map((dataset) => ({
+              ...dataset,
+              instances: [
+                {
+                  input_instance_matrix: "<INPUT_INSTANCE_MATRIX>",
+                  output_instance_matrix: "<OUTPUT_INSTANCE_MATRIX>",
+                },
+              ],
+            })),
+          })}
           json_format:
           {
             "dataset": [{
@@ -1266,6 +1281,15 @@ function frame(drawing, drawings) {
   return Matrix.merge(drawing, ...blanks).matrix;
 }
 
+// The bounding box an instance turns about: its input object's, or its output
+// object's when the input is empty.
+function pivot_box(instance) {
+  const input = Matrix.locate(instance.input_instance_matrix);
+  return input.width > 0
+    ? input
+    : Matrix.locate(instance.output_instance_matrix);
+}
+
 // The training pair that one synthesis makes of a training pair's extracted
 // instances: each instance's input and output objects turn together about its
 // input object's bounding box, or its output object's when the input is empty,
@@ -1277,9 +1301,7 @@ function frame(drawing, drawings) {
 // where turned objects overlap.
 function synthesized_pair(instances, { rotation, offset }, output_canvas) {
   const drawings = instances.map((instance) => {
-    const input = Matrix.locate(instance.input_instance_matrix);
-    const pivot =
-      input.width > 0 ? input : Matrix.locate(instance.output_instance_matrix);
+    const pivot = pivot_box(instance);
 
     return {
       source: instance.instance_name,
@@ -1309,13 +1331,18 @@ function synthesized_pair(instances, { rotation, offset }, output_canvas) {
 }
 
 // Synthesizes three training pairs from a training pair's extracted instances,
-// one per synthesis, each holding every instance turned and moved by it. A
-// pair without instances synthesizes none.
+// one per synthesis, each holding every instance turned and moved by it. An
+// instance whose object is a single pixel is not synthesized, and a pair
+// without other instances synthesizes none.
 export function synthesize({ instances, output_canvas }) {
+  const sources = instances.filter((instance) => {
+    const { width, height } = pivot_box(instance);
+    return width !== 1 || height !== 1;
+  });
   const dataset =
-    instances.length > 0
+    sources.length > 0
       ? SYNTHESES.map((synthesis) =>
-          synthesized_pair(instances, synthesis, output_canvas)
+          synthesized_pair(sources, synthesis, output_canvas)
         )
       : [];
 
@@ -1427,44 +1454,7 @@ export async function value({
                   .map((instance) => ({
                     ...instance,
                     input_matrix: Matrix.crop(instance.input_instance_matrix),
-                    output_matrix: Matrix.crop(instance.output_instance_matrix),
-                  })),
-              })),
-          })}
-        `,
-      },
-      {
-        role: "user",
-        content: `
-          query:
-          ${JSON.stringify({
-            dataset: [
-              {
-                instances: [instance],
-              },
-            ],
-          })}
-          input_x: ${x}
-          input_y: ${y}
-          input_width: ${width}
-          input_height: ${height}
-          orientation: ${orientation}
-          json_format:
-          {
-            "dataset": [{
-              "instances": [{
-                "implementation": <IMPLEMENTATION>
-              }]
-            }]
-          }  
-        `,
-      },
-    ],
-  });
-
-  const implementation = dataset[0].instances[0].implementation;
-
-  milestone.evaluating_rules({ instance_name: instance.instance_name }
+           
 ```
 
 ### Core Architecture Module: `arc/src/app.ts`
@@ -1739,538 +1729,254 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c10b67e8` (2026-11-14)
-**Commit Message**: Draft NUC 107 Python-Style Self Parameters
+### Incident Patch 1: `a19be499` (2026-11-15)
+**Commit Message**: Exclude single-pixel objects from ARC synthesis
 
-Category: Language compatibility, drawn uniformly at random (index 4 of the
-five eligible categories in NUC 1's registry, p = 1/5, no redraw) for a
-continuous /nuc-proposal cycle, so token comparison is skipped for this
-category.
+Skip single-pixel instances when generating rotated training pairs, and update synthesis documentation. Add output placeholders to analyzer queries for declarations and instance segmentation.
 
-Requested change: let a method written with `def` directly in a class's
-indented body declare its receiver explicitly as a leading `self`
-parameter, as Python methods do. `def deposit(self, amount):` declares
-exactly what `def deposit(amount):` declares, and
-`def __init__(self, balance):` declares exactly what `def init(balance):`
-declares. The receiver parameter is the keyword `self`, or its alias
-`this`, followed by `,` or `)`; it adds no binding, no token, keyword,
-syntax-tree node or runtime path. `def __init__` without a leading `self`,
-`super().__init__(...)` and `class Dog(Animal):` keep their accepted
-meanings, and `self` parameters keep their accepted error everywhere else.
-Only inputs that raised
-SyntaxError("Expected a parameter but found keyword 'this'") change.
-
-This allocation changes only the Draft and its two index rows.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://
-
-**File**: `docs/nuc-0000.md` (modified, +2/-0)
+**File**: `.claude/agents/arc-debug.agent.md` (modified, +16/-9)
 ```diff
-@@ -150,6 +150,7 @@ Created: 31-Jul-2026
- | [89](nuc-0089.md) | Named Function Declarations | Accepted |
- | [92](nuc-0092.md) | List Comprehensions | Accepted |
- | [99](nuc-0099.md) | SQL-Style Inequality | Rejected: full suite fails 14 corpus-count assertions |
-+| [107](nuc-0107.md) | Python-Style Self Parameters | Draft |
- 
- ### Documentation
- 
-@@ -267,6 +268,7 @@ Created: 31-Jul-2026
- | [104](nuc-0104.md) | Any and All Class References | Standards Track | Syntax enhancement | Accepted |
- | [105](nuc-0105.md) | List and Population Sorting by Key | Standards Track | Utility enhancement | Accepted |
- | [106](nuc-0106.md) | Intersect and Except Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
-+| [107](nuc-0107.md) | Python-Style Self Parameters | Standards Track | Language compatibility | Draft |
- 
- ## Copyright
- 
+@@ -82,10 +82,13 @@ between that code and the log. At the time of writing, `start()` writes
+    instances get their `instance_name`, then `analyzer.synthesize` (no LLM)
+    creates three synthesized pairs per training pair, one per synthesis:
+    every extracted instance turned clockwise by 90 degrees and moved by
+-   x+1 y+1, x-1 y+1 or x-1 y-1. They follow the training pairs in
+-   `train_dataset.dataset`, three per training pair in turn, in that order.
+-   Each holds one instance per extracted instance of its source pair, in
+-   source order, with `synthesis` (`source`, `rotation`, `offset`), named
++   x+1 y+1, x-1 y+1 or x-1 y-1, except an instance whose object, its input
++   object or its output object when the input is empty, is a single pixel.
++   A training pair without other instances gains none. They follow the
++   training pairs in `train_dataset.dataset`, three per training pair in
++   turn, in that order. Each holds one instance per synthesized extracted
++   instance of its source pair, in source order, with `synthesis` (`source`,
++   `rotation`, `offset`), named
+    after every training pair's instances. Its `input_matrix` merges their
+    input grids, and its `output_matrix` merges their output grids under
+    `output_canvas`. Logs written before the synthesis have no synthesized
+@@ -150,8 +153,11 @@ Run every check that applies and record each result:
+ - **Synthesis.** Three synthesized pairs per training pair follow the
+   training pairs, in training pair order, each pair's three in the synthesis
+   order x+1 y+1, x-1 y+1, x-1 y-1, all with rotation 90. Each holds one
+-  instance per extracted instance of its source pair, in source order, whose
+-  `source` names it. Recompute each instance from its source with the
++  instance per extracted instance of its source pair whose object, its input
++  object or its output object when the input is empty, is not a single pixel,
++  in source order, whose `source` names it; a training pair whose instances
++  are all single pixels has no synthesized pairs, and no `source` names a
++  single pixel. Recompute each instance from its source with the
+   `Matrix.ts` helpers: turn the input and output crops with `Matrix.rotate`,
+   place the input crop at the source's located position plus the offset, and
+   place the output crop so that its gaps to the input object's bounding box
+@@ -186,9 +192,10 @@ Run every check that applies and record each result:
+   test answer. Re-run the logged declarations and implementations offline, one
+   program per pair, to confirm the state. For a synthesized instance, a
+   disagreement can also mean that a rule does not turn with its object, such
+-  as a rim that always grows above its point, or that it reads a canvas that
+-  grew to hold the turned objects, objects that overlap after turning, or a
+-  list argument, such as cell positions, that carried over unturned.
++  as one that always grows its object in one direction, or that it reads a
++  canvas that grew to hold the turned objects, objects that overlap after
++  turning, or a list argument, such as cell positions, that carried over
++  unturned.
+   Report those separately from the extracted instances' disagreements, which
+   alone show the world model mispredicting its own training data.
+ - **Test composition.** Every test `output_value` has integer `x` and `y`; a
 ```
 
-**File**: `docs/nuc-0107.md` (added, +103/-0)
+**File**: `arc/README.md` (modified, +65/-60)
 ```diff
-@@ -0,0 +1,103 @@
-+# NUC 107 -- Python-Style Self Parameters
+@@ -183,8 +183,8 @@ panels keep the same full number. The declarations header includes the
+ output canvas instead of adding a separate milestone. Segmented-object panels
+ use `Input` and `Output` without object-number labels. After each pair's
+ segmentation, a `<count> training objects synthesized` step shows the `Input`
+-and `Output` panels of the three training pairs synthesized from it, titled
+-with their synthesis, such as `Input · +90° x-1 y+1`. A synthesized
++and `Output` panels of the training pairs synthesized from it, titled with
++their synthesis, such as `Input · +90° x-1 y+1`. A synthesized
+ instance's construction starts with a `Deriving <instance> from <source>`
+ step. Model
+ token usage remains
+@@ -2562,63 +2562,69 @@ it by an offset:
+ 2. `+90` degrees, x `-1`, y `+1`
+ 3. `+90` degrees, x `-1`, y `-1`
+ 
++An instance whose object, its input object or its output object when the input
++is empty, is a single pixel is not synthesized, and a training pair without
++other instances gains no synthesized pairs.
 +
-+```
-+NUC: 107
-+Title: Python-Style Self Parameters
-+Author: Can Mingir <canmingir@gmail.com>
-+Status: Draft
-+Type: Standards Track
-+Category: Language compatibility
-+Created: 14-Nov-2026
-+Requires: 8, 47, 87
-+```
-+
-+## Abstract
-+
-+- Lets a method written with `def` directly in a class's indented body
-+  declare its receiver explicitly as a leading `self` parameter, as Python
-+  methods do:
-+  - `def deposit(self, amount):` declares exactly what
-+    `def deposit(amount):` declares;
-+  - `def area(self) => self.w * self.h` declares exactly what
-+    `def area() => self.w * self.h` declares.
-+
-+  Calls pass no receiver: `account.deposit(5)` runs as before.
-+- `def __init__(self, ...)` declares the class's `init` constructor, as
-+  Python's `__init__` does: `def __init__(self, balance):` declares exactly
-+  what `def init(balance):` declares, so `Account(100)` runs it.
-+- The receiver parameter is the keyword `self`, or its accepted alias
-+  `this`, followed by `,` or `)`. It adds no binding: the body reads the
-+  receiver through `self` or `this`, as every accepted method does.
-+- Every accepted program keeps its parse and behavior:
-+  - `def __init__(...)` without a leading `self` stays an ordinary method
-+    named `__init__`;
-+  - `super().__init__(...)` keeps its accepted behavior;
-+  - `class Dog(Animal):` still declares a constructor parameter named
-+    `Animal`, not a parent class.
-+- Only inputs that were parse errors at the accepted revision change. A
-+  leading `self` raised
-+  `SyntaxError("Expected a parameter but found keyword 'this'")`, so the
-+  whole program did not run. `self` and `this` parameters keep that error
-+  everywhere else: in top-level functions, function literals, arrows and
-+  lambdas, class headers such as `class P(self)`, bare signatures, and
-+  methods outside a class's indented body.
-+- No token, keyword, syntax-tree node or runtime path is added: each form
-+  parses to the tree its accepted spelling parses to.
-+
-+## Motivation
-+
-+- Python is among the languages that language models read and write most,
-+  and its classes declare every method's receiver as `self`. A model writing
-+  a Nucleoid world model writes the class the way it writes Python:
-+
-+  ```
-+  class Account:
-+      def __init__(self, balance):
-+          self.balance = balance
-+      def deposit(self, amount):
-+          self.balance = self.balance + amount
-+          return self.balance
-+  account = Account(100)
-+  account.deposit(5)
-+  ```
-+
-+  The accepted parser rejects the whole program with
-+  `SyntaxError("Expected a parameter but found keyword 'this'")` at line 2,
-+  column 22, and nothing runs. Writing `def init(balance):` and
-+  `def deposit(amount):` makes it run and return `105`, with the same
-+  method bodies.
-+- The two spellings differ only where Python declares what Nucleoid leaves
-+  implicit: the receiver parameter and the constructor's name. Nucleoid
-+  methods already read their receiver as `self`, the accepted alias of
-+  `this`, so the bodies need no change.
-+- Accepted Nucleoid already welcomes familiar forms from Python and its
-+  neighbours: [NUC 57](nuc-0057.md)'s Python-style lambdas,
-+  [NUC 87](nuc-0087.md)'s `self.x` initializing parameters, which Dart and
-+  TypeScript also have, and [NUC 92](nuc-0092.md)'s list comprehensions.
-+  Explicit receivers are the Python habit that still fails a whole program.
-+- Prior art: Python's explicit `self` and `__init__`; Rust's `&self` method
-+  receivers, as in `fn area(&self) -> f64`; and TypeScript's `this`
-+  parameters, as in `function f(this: Window)`.
-+
-+## Rationale
-+
-+- Pending: the proposer completes this section.
-+
-+## Specification
-+
-+- Pending: the proposer completes this section.
-+
-+## Errors
-+
-+- Pending: the proposer completes this section.
-+
-+## Reference Implementation
-+
-+- Pending: the proposer completes this section.
-+
-+## Copyright
-+
-+Copyright 2020 Nucleoid
-+
-+This document is licensed under the Apache License, Version 2.0. See
-+[LICENSE](../LICENSE) for the full text.
+ An instance's input and output objects turn together about its input object's
+ bounding box, which keeps its top-left corner, so the input object moves to its
+ position plus the offset, and the output object keeps its place relative to
+ the input object, turned with it. A marker beyond a corner's vertex in
+ `dataset.core.json` stays beyond the turned vertex, and a line in
+ `dataset.line.json` still grows at its turned tail, so the rules of both
+ datasets give each synthesized output the box it is drawn in. A rule that does
+-not turn with its object, such as the curve rim that always grows above or
+-below its point, disagrees with the synthesized output instead. An instance
++not turn with its object disagrees with the synthesized output instead. The
++curve rim, which always grows above or below its point, is such a rule, but
++the points of `dataset.curve.json` are single pixels, so they are not
++synthesized. An instance
+ whose input is empty turns about its output object, and an object without
+ cells stays an all-zero grid. Turning swaps an object's row and column counts.
+ 
+-A synthesized pair holds one instance per extracted instance, in the same
+-order, each turned and moved by the pair's synthesis. `Matrix.draw` draws each
+-turned object on a grid of its source matrix's size that grows left, up,
+-right, or down to hold it, and every grid of the pair is then drawn on one
++A synthesized pair holds one instance per synthesized extracted instance, in
++the same order, each turned and moved by the pair's synthesis. `Matrix.draw`
++draws each turned object on a grid of its source matrix's size that grows left,
++up, right, or down to hold it, and every grid of the pair is then drawn on one
+ frame that covers them all, so they line up. The frame starts at its top-left
+ cell, so positions in a synthesized pair are never negative, and a pair whose
+-objects reach past an edge of the source canvas is larger than its source
+-pair. These grids are the instances' `input_instance_matrix` and
+-`output_instance_matrix`. The pair's `input_matrix` merges its input grids,
+-and its `output_matrix` merges its output grids under the output canvas, so
+-`FIT` crops it. Turned objects that land on the same cell overlap there, and
+-the later one wins in the merge, as in `Matrix.merge`. Each instance records
+-its synthesis. For x `-1` and y `+1`, a vertical domino at a 3 by 3 grid's
+-left edge, with a marker right of its bottom cell, turns into a horizontal
+-domino with the marker below its left cell, growing the frame one column left
+-and one row down, and a dot in the grid's top-right corner moves one column
+-left and one row down:
++objects reach past an edge of the source canvas is larger than its source pair.
++These grids are the instances' `input_instance_matrix` and
++`output_instance_matrix`. The pair's `input_matrix` merges its input grids, and
++its `output_matrix` merges its output grids under the output canvas, so `FIT`
++crops it. Turned objects that land on the same cell overlap there, and the
++later one wins in the merge, as in `Matrix.merge`. Each instance records its
++synthesis. For x `-1` and y `+1`, in a grid of 3 rows and 4 columns, a vertical
++domino at the left edge, with a marker right of its bottom cell, turns into a
++horizontal domino with the marker below its left cell, growing the frame one
++column left and one row down, and a horizontal domino in the top-right corner
++turns vertical and moves one column left and one row down:
+ 
+ ```json
+ {
+   "input_matrix": [
+-    [0, 0, 0, 0],
+-    [0, 0, 7, 0],
+-    [5, 5, 0, 0],
+-    [0, 0, 0, 0]
++    [0, 0, 0, 0, 0],
++    [0, 0, 7, 0, 0],
++    [5, 5, 7, 0, 0],
++    [0, 0, 0, 0, 0]
+   ],
+   "output_matrix": [
+-    [0, 0, 0, 0],
+-    [0, 0, 7, 0],
+-    [5, 5, 0, 0],
+-    [1, 0, 0, 0]
++    [0, 0, 0, 0, 0],
++    [0, 0, 7, 0, 0],
++    [5, 5, 7, 0, 0],
++    [1, 0, 0, 0, 0]
+   ],
+   "instances": [
+     {
+       "input_instance_matrix": [
+-        [0, 0, 0, 0],
+-     
 ```
 
----
-
-### Incident Patch 2: `52cad61b` (2026-11-14)
-**Commit Message**: NUC 106 Intersect and Except Reasoning Selections
-
-Accepted under the automatic acceptance rule, in a continuous
-/nuc-proposal cycle (Reasoning enhancement): the frozen candidate meets
-every hard criterion and passes every policy check. The cycle picked
-NUC 106 up as a stale Draft, allocated in cc21315a, under the claim
-4cba3006, with a fresh baseline, candidate, proposer, Rust improvement
-pass and evaluator.
-
-Adds the reasoning pipeline stages `SELECTION |> intersect(OTHER)` and
-`SELECTION |> except(OTHER)`. They keep the steps of SELECTION whose node
-OTHER selects, or does not select, in SELECTION's order and with their
-fields, walk direction and NUC 82 distances. OTHER is any selection: a
-reference, `model`, a prefix stage or a pipeline. It is evaluated once per
-application, and an undefined OTHER makes the selection undefined. A
-binding named intersect or except shadows its stage, standing selections
-stay live through both sides, and the stages render as
-`SOURCE|>intersect(OTHER)`. Only inputs that were whole-program parse
-errors at the accepted revision change: they raised
-TypeError("intersect is not an operation") or
-TypeError("except is not an operation"), or, for unpacking 
-
-**File**: `README.md` (modified, +30/-0)
+**File**: `arc/src/analyzer.ts` (modified, +37/-10)
 ```diff
-@@ -2193,6 +2193,36 @@ assert(tasks.map(task -> task.name), ["ship", "plan", "build", "test"])
-   and strings as text. See the
-   [root contract](nucleoid.spec.md#list-and-population-sorting-by-key).
+@@ -19,7 +19,11 @@ export async function declarations({
+         role: "user",
+         content: `
+           query:
+-          ${JSON.stringify(train_dataset)}
++          ${JSON.stringify({
++            ...train_dataset,
++            declarations: "<DECLARATIONS>",
++            output_canvas: "<OUTPUT_CANVAS>",
++          })}
+           json_format:
+           { "declarations": <DECLARATIONS>, "output_canvas": <OUTPUT_CANVAS> }
+         `,
+@@ -47,7 +51,18 @@ export async function instances({
+         role: "user",
+         content: `
+           query:
+-          ${JSON.stringify(train_dataset)}
++          ${JSON.stringify({
++            ...train_dataset,
++            dataset: train_dataset.dataset.map((dataset) => ({
++              ...dataset,
++              instances: [
++                {
++                  input_instance_matrix: "<INPUT_INSTANCE_MATRIX>",
++                  output_instance_matrix: "<OUTPUT_INSTANCE_MATRIX>",
++                },
++              ],
++            })),
++          })}
+           json_format:
+           {
+             "dataset": [{
+@@ -121,6 +136,15 @@ function frame(drawing, drawings) {
+   return Matrix.merge(drawing, ...blanks).matrix;
+ }
  
-+## Intersect and except reasoning selections
++// The bounding box an instance turns about: its input object's, or its output
++// object's when the input is empty.
++function pivot_box(instance) {
++  const input = Matrix.locate(instance.input_instance_matrix);
++  return input.width > 0
++    ? input
++    : Matrix.locate(instance.output_instance_matrix);
++}
 +
-+**Intersect and except tell apart what two symptoms rest on**
-+
-+```nuc
-+fan = 2
-+load = 40
-+voltage = 230
-+current = load / voltage * 100
-+heat = current * 3 + fan
-+noise = fan * 10
-+shared = why heat |> intersect(why noise)
-+own = why heat |> except(why noise)
-+assert(shared.map(step -> step.node), ["fan"])
-+assert(own.map(step -> step.node), ["heat", "current", "load", "voltage"])
-+noise = fan * 10 + load
-+assert(shared.map(step -> step.node), ["fan", "load"])
-+assert(own.map(step -> step.node), ["heat", "current", "voltage"])
-+```
-+
-+- [NUC 106](docs/nuc-0106.md) adds the reasoning stages `|> intersect(OTHER)`
-+  and `|> except(OTHER)`. `why heat |> intersect(why noise)` keeps the steps
-+  of the heat's explanation whose node the noise's explanation also selects,
-+  here the fan, and `why heat |> except(why noise)` keeps the others: what
-+  only the heat rests on.
-+- Both keep the first selection's order and every field of the steps they
-+  keep, and they stay live: once the noise also reads the load, the load
-+  moves from the heat's own causes to the shared ones. See the
-+  [root contract](nucleoid.spec.md#intersect-and-except-reasoning-selections).
-+
- ## Reactive list flattening
+ // The training pair that one synthesis makes of a training pair's extracted
+ // instances: each instance's input and output objects turn together about its
+ // input object's bounding box, or its output object's when the input is empty,
+@@ -132,9 +156,7 @@ function frame(drawing, drawings) {
+ // where turned objects overlap.
+ function synthesized_pair(instances, { rotation, offset }, output_canvas) {
+   const drawings = instances.map((instance) => {
+-    const input = Matrix.locate(instance.input_instance_matrix);
+-    const pivot =
+-      input.width > 0 ? input : Matrix.locate(instance.output_instance_matrix);
++    const pivot = pivot_box(instance);
  
- **Flat turns nested lists into one live list**
-```
-
-**File**: `dataset/nucleoid.spec.jsonl` (modified, +22/-16)
-```diff
-@@ -737,19 +737,25 @@
- {"id":"spec-0737","description":"Nucleoid ranks instances by key in class level rules","code":"class Runner(name, time):\n    this.name = name\n    this.time = time\n$Runner.place = Runner.sortBy(runner -> runner.time).indexOf($Runner) + 1\nana = Runner(\"ana\", 31)\nbo = Runner(\"bo\", 28)\ncy = Runner(\"cy\", 31)\nassert([ana.place, bo.place, cy.place], [2, 1, 3])\nbo.time = 33\nassert([ana.place, bo.place, cy.place], [1, 3, 2])\nRunner(\"di\", 25)\n[ana.place, bo.place, cy.place]","return":"[2,4,3]"}
- {"id":"spec-0738","description":"Nucleoid waits for every sortBy key to be comparable","code":"class Job(name):\n    this.name = name\nqueue = Job.sortBy(job -> job.due)\npress = Job(\"press\")\npress.due = new Date(\"2026-12-01\")\ncoat = Job(\"coat\")\nassert(queue, null)\ncoat.due = new Date(\"2026-11-20\")\nassert(queue, [coat, press])\nweld = Job(\"weld\")\nweld.due = new Date(\"2026-11-28\")\nassert(queue, [coat, weld, press])\nweld.due = 0 / 0\nassert(queue, null)\nweld.due = coat.due\nqueue.map(job -> job.name)","return":"[\"coat\",\"weld\",\"press\"]"}
- {"id":"spec-0739","description":"Nucleoid rolls back failed key sorting updates","code":"parcels = [{id: 1, code: \"B2\"}, {id: 2, code: \"a9\"}]\nlabels = parcels.sortBy(parcel -> parcel.code.toUpperCase()).map(parcel -> parcel.id)\nfailure = \"\"\ntry:\n    parcels.push({id: 3, code: 7})\ncatch error:\n    failure = error\nassert(failure, TypeError(\"number.toUpperCase is not a function\"))\nassert([parcels.length, labels], [2, [2, 1]])\nparcels.push({id: 4, code: \"a1\"})\nassert(labels, [4, 2, 1])\ntry:\n    parcels[0].code = \"a0\"\n    assert(labels, [1, 4, 2])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nlabels","return":"[4,2,1]"}
--{"id":"spec-0740","description":"Nucleoid flattens nested lists by one level","code":"nested = [[1, 2], 2, [[3, [4]]], [], \"ab\"]\nonce = nested.flat()\ntwice = once.flat(1)\nassert(once, [1, 2, 2, [3, [4]], \"ab\"])\nassert(twice, [1, 2, 2, 3, [4], \"ab\"])\nassert(nested, [[1, 2], 2, [[3, [4]]], [], \"ab\"])\nnested.push([[5]], 6)\nassert(once, [1, 2, 2, [3, [4]], \"ab\", [5], 6])\nassert(twice, [1, 2, 2, 3, [4], \"ab\", 5, 6])\ntwice.length","return":"8"}
--{"id":"spec-0741","description":"Nucleoid flattens lists to a given depth","code":"deep = [1, [2, [3, [4, [5]]]], [[6]]]\ntwo = deep.flat(2)\nthree = deep.flat(3)\nsame = deep.flat(0)\nassert(two, [1, 2, 3, [4, [5]], 6])\nassert(three, [1, 2, 3, 4, [5], 6])\nassert(same, [1, [2, [3, [4, [5]]]], [[6]]])\ndeep.push([[7, [8]]])\nassert(two, [1, 2, 3, [4, [5]], 6, 7, [8]])\nassert(three, [1, 2, 3, 4, [5], 6, 7, 8])\nassert(same, deep)\nthree.length","return":"8"}
--{"id":"spec-0742","description":"Nucleoid keeps flattened lists live","code":"shifts = [[\"ana\", \"bo\"], [\"cy\"]]\nstaff = shifts.flat()\nsize = staff.length\nassert([staff, size], [[\"ana\", \"bo\", \"cy\"], 3])\nshifts.push([\"di\"])\nassert([staff, size], [[\"ana\", \"bo\", \"cy\", \"di\"], 4])\nshifts = [[\"eve\"], [], [\"fay\", \"gus\"]]\nassert([staff, size], [[\"eve\", \"fay\", \"gus\"], 3])\nshifts.shift()\nassert([staff, size], [[\"fay\", \"gus\"], 2])\nsize","return":"2"}
--{"id":"spec-0743","description":"Nucleoid flattens lists in class level rules","code":"class Team(squads):\n    this.squads = squads\n$Team.members = $Team.squads.flat()\nred = Team([[\"ana\", \"bo\"], [\"cy\"]])\nblue = Team([[\"di\"]])\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\"], [\"di\"]])\nred.squads.push([\"ed\"])\nblue.squads = [[\"fay\"], [\"gus\", \"hal\"]]\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\", \"ed\"], [\"fay\", \"gus\", \"hal\"]])\nred.members.length","return":"4"}
--{"id":"spec-0744","description":"Nucleoid queries the cells of flattened grids","code":"grid = [[1, 0, 2], [0, 3, 2]]\ncells = grid.flat()\ntotal = cells.sum()\ncolors = cells.distinct()\nfilled = cells.count(cell => cell > 0)\nassert([total, colors, filled], [8, [1, 0, 2, 3], 4])\ngrid.push([5, 0, 0])\nassert([total, colors, filled], [13, [1, 0, 2, 3, 5], 5])\ngrid = [[4, 4], [0]]\n[total, colors, filled]","return":"[8,[4,0],2]"}
--{"id":"spec-0745","description":"Nucleoid rolls back failed flattening updates","code":"rows = [[1, [2]], [3]]\ncells = rows.flat()\ntry:\n    rows.push([4])\n    assert(cells, [1, [2], 3, 4])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert([rows, cells], [[[1, [2]], [3]], [1, [2], 3]])\ntry:\n    cells = rows.flat(2)\n    assert(cells, [1, 2, 3])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nrows.push([[5]])\ncells","return":"[1,[2],3,[5]]"}
--{"id":"spec-0746","description":"Nucleoid tests membership with in and not in","code":"tags = [\"red\", \"blue\"]\nassert(\"red\" in tags, true)\nassert(\"green\" in tags, false)\nassert(\"green\" not in tags, true)\nassert(\"red\" not in tags, false)\nassert([1, 2] in [[1, 2], [3]], true)\nassert({ x: 1 } in [{ x: 1 }, null], true)\nassert(null in [1, nul
-```
-
-**File**: `dataset/nucleoid.synth.70.jsonl` (added, +10/-0)
-```diff
-@@ -0,0 +1,10 @@
-+{"id":"synth-70-0001","description":"Intersect keeps the steps of an explanation whose node another explanation also selects, in the first explanation's order","code":"price = 10\nquantity = 3\nrate = 0.2\nsubtotal = price * quantity\ntax = subtotal * rate\nshipping = quantity * 2 + price\n(why tax |> intersect(why shipping)).map(step -> step.node)","return":"[\"price\",\"quantity\"]"}
-+{"id":"synth-70-0002","description":"Except keeps what one explanation rests on and another does not","code":"fan = 2\nload = 40\ncurrent = load * 2\nheat = current + fan\nnoise = fan * 10\n(why heat |> except(why noise)).map(step -> step.node)","return":"[\"heat\",\"current\",\"load\"]"}
-+{"id":"synth-70-0003","description":"Intersecting two impact selections gives what both inputs move","code":"price = 10\nrate = 0.2\nsubtotal = price * 3\ntax = subtotal * rate\ntotal = subtotal + tax\nfee = rate * 5\n(affects price |> intersect(affects rate)).map(step -> step.node)","return":"[\"tax\",\"total\"]"}
-+{"id":"synth-70-0004","description":"A state filter keeps the same steps before or after intersect","code":"a = 1\nb = 2\nc = a + b\nd = c * 2\ne = b + 5\n[(why d |> stated |> intersect(why e)).map(step -> step.node), (why d |> intersect(why e) |> stated).map(step -> step.node)]","return":"[[\"b\"],[\"b\"]]"}
-+{"id":"synth-70-0005","description":"A depth stage keeps the same steps before or after intersect, because intersect keeps each step's distance","code":"x = 1\ny = x + 1\nz = y * 2\nw = z + x\n[(why w |> depth(1) |> intersect(why z)).map(step -> step.node), (why w |> intersect(why z) |> depth(1)).map(step -> step.node)]","return":"[[\"z\",\"x\"],[\"z\",\"x\"]]"}
-+{"id":"synth-70-0006","description":"A walk after intersect starts from the steps the intersection kept","code":"price = 10\nquantity = 3\nsubtotal = price * quantity\nshipping = quantity * 2\nlabel = shipping + 1\n(why subtotal |> intersect(why shipping) |> affects).map(step -> step.node)","return":"[\"subtotal\",\"shipping\",\"label\"]"}
-+{"id":"synth-70-0007","description":"A standing intersection follows a rule rewired on the other side","code":"a = 1\nb = 2\nleft = a + 1\nright = b + 1\ncommon = why left |> intersect(why right)\nright = a + b\ncommon.map(step -> step.node)","return":"[\"a\"]"}
-+{"id":"synth-70-0008","description":"Except with a reference drops only that node, and intersect with model keeps every step","code":"price = 10\nquantity = 3\ntax = price * quantity\n[(why tax |> except(tax)).map(step -> step.node), (why tax |> intersect(model)).length]","return":"[[\"price\",\"quantity\"],3]"}
-+{"id":"synth-70-0009","description":"A name that holds a selection is a reasoning observer, so it selects nothing as the other selection; the pipeline is written in place","code":"price = 10\ntax = price * 2\nshipping = price + 1\ncauses = why shipping\n[(why tax |> intersect(causes)).length, (why tax |> intersect(why shipping)).length]","return":"[0,1]"}
-+{"id":"synth-70-0010","description":"A class-level rule gives every instance its own intersection","code":"class Item(price, qty, fee):\n    this.price = price\n    this.qty = qty\n    this.fee = fee\n$Item.total = $Item.price * $Item.qty\n$Item.cost = $Item.qty + $Item.fee\n$Item.shared = why $Item.total |> intersect(why $Item.cost)\npen = Item(2, 5, 1)\ncup = Item(3, 1, 4)\n[pen.shared.map(step -> step.node), cup.shared.map(step -> step.node)]","return":"[[\"pen.qty\"],[\"cup.qty\"]]"}
-```
-
-**File**: `docs/README.md` (modified, +63/-3)
-```diff
-@@ -3837,6 +3837,59 @@ link.map(step => step.holds)
-   [derivation path selections](../nucleoid.spec.md#derivation-path-selections)
-   section.
+     return {
+       source: instance.instance_name,
+@@ -164,13 +186,18 @@ function synthesized_pair(instances, { rotation, offset }, output_canvas) {
+ }
  
-+### Intersect and except selections
-+
-+```
-+price = 10
-+quantity = 3
-+rate = 0.2
-+subtotal = price * quantity
-+tax = subtotal * rate
-+shipping = quantity * 2
-+common = tax |> why |> intersect(shipping |> why)
-+only = tax |> why |> except(shipping |> why)
-+assert(common.map(step => step.node), ["quantity"])
-+assert(only.map(step => step.node), ["tax", "subtotal", "rate", "price"])
-+shipping = price + quantity
-+common.map(step => step.node)
-+```
-+
-+- This is the complete `Nucleoid compares two explanations with intersect and except`
-+  program in `tests/reference.md`, without its title and expected-return
-+  metadata; it returns `["price","quantity"]`.
-+- [NUC 106](nuc-0106.md) adds the stages `selection |> intersect(other)` and
-+  `selection |> except(other)`. `intersect` keeps the steps whose node `other`
-+  also selects and `except` the steps whose node it does not, in their order
-+  and with their fields unchanged, so `tax |> why |> intersect(shipping |> why)`
-+  is what the tax and the shipping both rest on, and
-+  `tax |> why |> except(shipping |> why)` what only the tax rests on.
-+- `other` is written as a pipeline's source is: a reference, `model`, a prefix
-+  stage such as `why shipping` or a pipeline. It is evaluated in place each
-+  time the stage applies, and steps are compared by their node, whatever they
-+  hold. A name that holds a selection is a reasoning observer, which no
-+  selection holds, so the selection is written out, as in
-+  `intersect(why shipping)`.
-+- The kept steps keep the direction of the most recent walk and their
-+  distances, so the stages compose with `stated`, `derived`, `depth`, `diff`,
-+  `path` and each other in either order, and a later `why` or `affects` walks
-+  from the kept steps. An `other` that is undefined, because a `depth` in it
-+  has a `null` limit, makes the selection undefined.
-+- An invalid `other` keeps the diagnostics of a pipeline source, such as
-+  `TypeError("Cannot explain 1")`. Only `|>` followed by `intersect` or
-+  `except` and `(` is a stage; both names stay ordinary everywhere else, and a
-+  bare `|> intersect` keeps its parse-time
-+  `TypeError("intersect is not an operation")`. A local or parameter,
-+  variable, function or class named `intersect` or `except` shadows its stage,
-+  as bindings shadow the state filters, `depth`, `diff` and `path`: the stage
-+  then raises `TypeError("intersect is not an operation")` or
-+  `TypeError("except is not an operation")` before selecting its source.
-+- The selection stays live through every observation of both selections,
-+  including the steps each one drops. It renders as
-+  `selection|>intersect(other)` and `selection|>except(other)`.
-+- The authoritative contract is the
-+  [intersect and except reasoning selections](../nucleoid.spec.md#intersect-and-except-reasoning-selections)
-+  section.
-+
- ### Live structure
+ // Synthesizes three training pairs from a training pair's extracted instances,
+-// one per synthesis, each holding every instance turned and moved by it. A
+-// pair without instances synthesizes none.
++// one per synthesis, each holding every instance turned and moved by it. An
++// instance whose object is a single pixel is not synthesized, and a pair
++// without other instances synthesizes none.
+ export function synthesize({ instances, output_canvas }) {
++  const sources = instances.filter((instance) => {
++    const { width, height } = pivot_box(instance);
++    return width !== 1 || height !== 1;
++  });
+   const dataset =
+-    instances.length > 0
++    sources.length > 0
+       ? SYNTHESES.map((synthesis) =>
+-          synthesized_pair(instances, synthesis, output_canvas)
++          synthesized_pair(sources, synthesis, output_canvas)
+         )
+       : [];
  
- - A reasoning assignment follows both values and graph structure.
-@@ -3872,9 +3925,11 @@ c = b * 2
-   without `diff`, the [NUC 82](nuc-0082.md) candidate adds its `depth` stage
-   without the `depth(x, n)` call form, and the [NUC 83](nuc-0083.md)
-   candidate adds its `diff` as the `|> diff` stage, without the bare `diff`
--  and its `before` and `after` fields, and the [NUC 88](nuc-0088.md)
--  candidate adds a `path(target)` stage that NUC 11 does not plan. Other
--  NUC 11 operations remain proposals, not dependencies.
-+  and its `before` and `after` fields, the [NUC 88](nuc-0088.md)
-+  candidate adds a `path(target)` stage that NUC 11 does not plan, and the
-+  [NUC 106](nuc-0106.md) candidate adds `intersect(other)` and
-+  `except(other)` stages, which NUC 11 does not plan either. Other NUC 11
-+  operations remain proposals, not dependencies.
+@@ -340,7 +367,7 @@ export async function value({
  
- ### Quantifiers
- 
-@@ -4337,6 +4392,11 @@ selection |> depth(limit)             steps within limit steps of where the last
- reference |> why |> path(target)      how target reaches the reference (NUC 88)
- reference |> affects |> path(target)  what the reference moves on its way to target (NUC 88)
- selection |> path(target)             steps on a dependency path to target (NUC 88)
-+why a |> intersect(why b)             the causes a and b share (NUC 106)
-+why a |> except(why b)                what a rests on and b does not (NUC 106)
-+affects a |> intersect(affects b)     what a and b both move (NUC 106)
-+selection |> intersect(other)         steps whose node other also selects (NUC 106)
-+selection |> except(other)            steps whose node other does not select (NUC 106)
- all name in collection: condition     true when the condition holds for every member (NUC 62)
- every name in collection: condition   the same quantifier as all (NUC 98)
- any name in collection: condition     true when the condition holds for some member (NUC 62)
-```
-
-**File**: `docs/examples.md` (modified, +32/-0)
-```diff
-@@ -3700,6 +3700,38 @@ assert(ana.stops[0].name, "mill")
-   [NUC 105](nuc-0105.md) and the
-   [root contract](../nucleoid.spec.md#list-and-population-sorting-by-key).
- 
-+## Intersect and except reasoning selections
-+
-+**Except shows what a steel delay moves and a glass delay does not**
-+
-+```nuc
-+steel = 5
-+glass = 3
-+frame = steel + 2
-+panes = glass + 1
-+assembly = frame + panes
-+crating = steel + 1
-+delivery = assembly + 4
-+invoice = crating * 10
-+pushed = affects steel |> except(affects glass)
-+shared = affects steel |> intersect(affects glass)
-+assert(pushed.map(step -> step.node), ["frame", "crating", "invoice"])
-+assert(shared.map(step -> step.node), ["assembly", "delivery"])
-+crating = panes + 1
-+steel = 9
-+[pushed.map(step -> step.node), shared.map(step -> step.holds)]
-+# return: [["frame"],[15,19]]
-+```
-+
-+- `affects steel |> except(affects glass)` is what a later steel delivery
-+  moves and a later glass delivery does not: the frame, the crating and the
-+  invoice. `affects steel |> intersect(affects glass)` is what both delays
-+  move: the assembly and the delivery.
-+- Both follow the model: once the crating is built from the panes, a steel
-+  delay moves only the frame of its own, and the shared steps hold the new
-+  dates. See [NUC 106](nuc-0106.md) and the
-+  [root contract](../nucleoid.spec.md#intersect-and-except-reasoning-selections).
-+
- ## Reactive list flattening
- 
- **Flattening keeps the dirty tiles of every room counted**
-```
-
-**File**: `docs/nuc-0000.md` (modified, +2/-2)
-```diff
-@@ -138,7 +138,7 @@ Created: 31-Jul-2026
- | [83](nuc-0083.md) | Hypothetical Difference Selections | Accepted |
- | [88](nuc-0088.md) | Derivation Path Selections | Accepted |
- | [101](nuc-0101.md) | Exact-Depth Reasoning Selections | Rejected: existing selector-case audit fails |
--| [106](nuc-0106.md) | Intersect and Except Reasoning Selections | Draft |
-+| [106](nuc-0106.md) | Intersect and Except Reasoning Selections | Accepted |
- 
- ### Language compatibility
- 
-@@ -266,7 +266,7 @@ Created: 31-Jul-2026
- | [103](nuc-0103.md) | Reactive List Flattening | Standards Track | Utility enhancement | Accepted |
- | [104](nuc-0104.md) | Any and All Class References | Standards Track | Syntax enhancement | Accepted |
- | [105](nuc-0105.md) | List and Population Sorting by Key | Standards Track | Utility enhancement | Accepted |
--| [106](nuc-0106.md) | Intersect and Except Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
-+| [106](nuc-0106.md) | Intersect and Except Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
- 
- ## Copyright
- 
-```
-
-**File**: `docs/nuc-0106.md` (modified, +1207/-34)
-```diff
-@@ -4,7 +4,7 @@
- NUC: 106
- Title: Intersect and Except Reasoning Selections
- Author: Can Mingir <canmingir@gmail.com>
--Status: Draft
-+Status: Accepted
- Type: Standards Track
- Category: Reasoning enhancement
- Created: 11-Nov-2026
-@@ -23,22 +23,24 @@ Requires: 48, 82, 83, 88
-   `holds`, `rule`, `state` and `from` fields unchanged. With
-   `subtotal = price * quantity`, `tax = subtotal * rate` and
-   `shipping = quantity * 2`:
--  - `tax |> why |> intersect(shipping |> why)` selects `quantity`, the one
--    node both values rest on;
--  - `tax |> why |> except(shipping |> why)` selects `tax`, `subtotal`,
--    `rate` and `price`, what the tax rests on and the shipping does not;
-+  - `why tax |> intersect(why shipping)` selects `quantity`, the one node
-+    both values rest on;
-+  - `why tax |> except(why shipping)` selects `tax`, `subtotal`, `rate` and
-+    `price`, what the tax rests on and the shipping does not;
-   - with `total = subtotal + tax + shipping`,
--    `price |> affects |> intersect(rate |> affects)` selects `tax` and
--    `total`, what both inputs move.
--- `OTHER` is one expression in parentheses that denotes a selection, as the
--  source of a pipeline does: a reference, `model`, a prefix stage such as
--  `why b`, or a pipeline such as `b |> why |> stated`. It is evaluated in
--  place each time the stage applies, after the source selection and the
--  stages before it.
-+    `affects price |> intersect(affects rate)` selects `tax` and `total`,
-+    what both inputs move.
-+- Steps are compared by their graph node, not by value. `OTHER` is one
-+  expression in parentheses that denotes a selection, as the source of a
-+  pipeline does: a reference, `model`, a prefix stage such as `why b`, or a
-+  pipeline such as `b |> why |> stated`. It is evaluated in place each time
-+  the stage applies, after the source selection and the stages before it.
- - The kept steps keep the direction of `SELECTION`'s most recent walk and
--  their [NUC 82](nuc-0082.md) distances. Both stages therefore compose with
--  `stated`, `derived`, `depth`, `diff`, `path` and each other in either
--  order, and a later `why` or `affects` walks from the kept steps as usual.
-+  their [NUC 82](nuc-0082.md) distances. Between two walks, the stages
-+  therefore select the same steps in any order with `stated`, `derived`,
-+  `depth`, `diff`, `path` and each other, and a later `why` or `affects`
-+  walks from the kept steps. An `OTHER` that a `depth(null)` makes undefined
-+  makes the whole selection undefined.
- - A standing selection that holds either stage stays live through every
-   value and structural observation of both `SELECTION` and `OTHER`,
-   including the steps each one drops. It renders as
-@@ -51,33 +53,47 @@ Requires: 48, 82, 83, 88
-   such as `TypeError("Cannot explain 1")`.
- - No keyword, lexer token or error type is added, and no union stage is
-   added. Every accepted program keeps its parse and behavior. Only inputs
--  that were errors at the accepted revision change: a `|>` followed by
--  `intersect` or `except` raised the parse-time
--  `TypeError("intersect is not an operation")` or
--  `TypeError("except is not an operation")`.
-+  that were parse errors at the accepted revision change: most raised the
-+  parse-time `TypeError("intersect is not an operation")` or
-+  `TypeError("except is not an operation")`, and where the parser
-+  backtracks some raised another parse error first, such as
-+  `SyntaxError("Unexpected ','")` for an unpacking declaration.
-+- The public `Expr` enum gains one variant, `Expr::Combine`, with a new
-+  public `SetOperation` enum, which needs human SemVer review. No project
-+  version is changed. The authoritative contract is
-+  [Intersect and except reasoning selections](../nucleoid.spec.md#intersect-and-except-reasoning-selections).
- 
- ## Motivation
- 
--- Diagnosis asks what two observations have in common. When two alarms
--  fire, the stated facts behind both are the candidate root causes, and the
--  facts behind one but not the other tell them apart. Impact analysis asks
--  the dual question: what do two inputs both move? Each answer is the
-+- Diagnosis asks what two observations have in common. When two symptoms
-+  appear, the facts behind both are the candidate root causes, and the facts
-+  behind one but not the other tell them apart. Impact analysis asks the
-+  dual question: what do two inputs both move? Each answer is the
-   intersection or the difference of two explanations or impact selections.
- - The accepted stages each narrow a single selection: `stated` and
-   `derived` by a step's state, `depth` by distance, `path` by reachability
-   of one target and `diff` by change since a `suppose` block began. None
-   compares a selection with another one.
--- Accepted Nucleoid can spell the comparison only as a membership test that
--  walks the second selection inside a lambda:
--  `(tax |> why).filter(s -> s.node in (shipping |> why).map(t -> t.node))`
--  is 29 lexer tokens, against 10 for
--  `tax |
-```
-
-**File**: `docs/nucleoid.g4` (modified, +6/-0)
-```diff
-@@ -462,6 +462,7 @@ stage
-     | DIFF                                                // Expr::Reason
-     | DEPTH LPAREN expression RPAREN                       // Expr::Depth
-     | PATH LPAREN expression RPAREN                        // Expr::Path
-+    | (INTERSECT | EXCEPT) LPAREN expression RPAREN        // Expr::Combine
-     ;
- 
- logicalOr
-@@ -797,6 +798,8 @@ enumName
-     | DIFF
-     | DEPTH
-     | PATH
-+    | INTERSECT
-+    | EXCEPT
-     | MODEL
-     | FIRST
-     | LAST
-@@ -879,6 +882,8 @@ DERIVED          : 'derived';
- DIFF             : 'diff';
- DEPTH            : 'depth';
- PATH             : 'path';
-+INTERSECT        : 'intersect';
-+EXCEPT           : 'except';
- MODEL            : 'model';
- FIRST            : 'first';
- LAST             : 'last';
-@@ -1049,6 +1054,7 @@ fragment REGEX_CHAR
-  * for xs:                  -> iteration with the item name "it".
-  * catch without a name     -> the binding "error".
-  * model directly before |> -> Expr::Model.
-+ * |> intersect(model)      -> its other selection is Expr::Model; also except.
-  * An object containing spread uses Expr::SpreadObject, with later entries
-  * winning; otherwise it uses Expr::ObjectLiteral. Numeric keys become text.
-  *
+ // The orientation of a shape turned clockwise by the rotation, as the datasets
+ // label orientation by shape: a shape that the turn leaves unchanged, such as a
+-// single cell, keeps its orientation, a shape that a half turn leaves
++// square, keeps its orientation, a shape that a half turn leaves
+ // unchanged, such as a bar, counts it modulo 180 degrees, and any other shape
+ // counts it modulo 360 degrees.
+ function turned_orientation(matrix, orientation: number, rotation: number) {
 ```
 
 #### Recent Merged Pull Requests:
@@ -2299,29 +2005,51 @@ TypeError("except is not an operation"), or, for unpacking
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Draft NUC 107 Python-Style Self Parameters
+## X. Exclude single-pixel objects from ARC synthesis
 
 **RULE**:
-When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/agents/arc-debug.agent.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c10b67e8`: Draft NUC 107 Python-Style Self Parameters. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a19be499`: Exclude single-pixel objects from ARC synthesis. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/agents/arc-debug.agent.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [107](nuc-0107.md) | Python-Style Self Parameters | Draft |
-| [107](nuc-0107.md) | Python-Style Self Parameters | Standards Track | Language compatibility | Draft |
+   x+1 y+1, x-1 y+1 or x-1 y-1, except an instance whose object, its input
+   object or its output object when the input is empty, is a single pixel.
+   A training pair without other instances gains none. They follow the
+   training pairs in `train_dataset.dataset`, three per training pair in
+   turn, in that order. Each holds one instance per synthesized extracted
+   instance of its source pair, in source order, with `synthesis` (`source`,
+   `rotation`, `offset`), named
+  instance per extracted instance of its source pair whose object, its input
+  object or its output object when the input is empty, is not a single pixel,
+  in source order, whose `source` names it; a training pair whose instances
+  are all single pixels has no synthesized pairs, and no `source` names a
+  single pixel. Recompute each instance from its source with the
+  as one that always grows its object in one direction, or that it reads a
+  canvas that grew to hold the turned objects, objects that overlap after
+  turning, or a list argument, such as cell positions, that carried over
+  unturned.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+   x+1 y+1, x-1 y+1 or x-1 y-1. They follow the training pairs in
+   `train_dataset.dataset`, three per training pair in turn, in that order.
+   Each holds one instance per extracted instance of its source pair, in
+   source order, with `synthesis` (`source`, `rotation`, `offset`), named
+  instance per extracted instance of its source pair, in source order, whose
+  `source` names it. Recompute each instance from its source with the
+  as a rim that always grows above its point, or that it reads a canvas that
+  grew to hold the turned objects, objects that overlap after turning, or a
+  list argument, such as cell positions, that carried over unturned.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c10b67e8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a19be499` are properly handled with clean fallback behavior.

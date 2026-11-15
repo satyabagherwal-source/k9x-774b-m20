@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-15T09:55:27.964Z",
+  "updated_at": "2026-11-15T10:05:03.878Z",
   "statistics": {
-    "total_nodes": 250,
+    "total_nodes": 251,
     "total_edges": 139,
     "domain_distribution": {
-      "D": 195,
+      "D": 196,
       "M": 1,
       "H": 22,
       "J": 10,
@@ -5616,6 +5616,28 @@
       ],
       "created_at": "2026-11-15T09:55:27.964Z",
       "updated_at": "2026-11-15T09:55:27.964Z"
+    },
+    "DOM-D-B5A599C0": {
+      "id": "DOM-D-B5A599C0",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): tencent/Qwen3.8-27B-DSpine-b16",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-tencent-qwen3.8-27b-dspine-b16-learnings.md`  \n> **Source**: huggingface ([https: -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-tencent-qwen3.8-27b-dspine-b16-learnings.md`  \n> **Source**: huggingface ([https:",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-tencent-qwen3.8-27b-dspine-b16/hf-tencent-qwen3.8-27b-dspine-b16-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T10:04:34.224Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-tencent-qwen3.8-27b-dspine-b16)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-15T10:05:03.878Z",
+      "updated_at": "2026-11-15T10:05:03.878Z"
     }
   },
   "edges": [

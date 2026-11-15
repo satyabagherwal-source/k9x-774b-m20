@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-15T09:55:06.833Z",
-    "lastVerified": "2026-11-15T09:55:06.833Z",
+    "lastChecked": "2026-11-15T10:04:34.112Z",
+    "lastVerified": "2026-11-15T10:04:34.112Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -469,22 +469,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-15T08:07:15.591Z",
-    "lastVerified": "2026-11-15T08:07:15.591Z",
+    "lastChecked": "2026-11-15T10:04:30.161Z",
+    "lastVerified": "2026-11-15T10:04:30.161Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "76107d486b9adc06837896f4e9180b09c77c8f623a73a0d497d124a6fd6b516c",
+    "contentHash": "12fdf0025cfd636ff4ab1ae09c6740307c64df23dc378e13b7d54c71f7d9c503",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "c10b67e8"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -650,12 +649,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "nolabs-ai-nono": {
-    "name": "nolabs-ai/nono",
+    "name": "nono",
     "officialUrl": "https://github.com/nolabs-ai/nono",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-15T00:37:30.071Z",
-    "lastVerified": "2026-11-15T00:37:30.071Z",
+    "lastChecked": "2026-11-15T10:04:19.909Z",
+    "lastVerified": "2026-11-15T10:04:19.909Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nolabs-ai-nono",
@@ -664,7 +663,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "165e2f7a"
   },
   "vectifyai-pageindex": {
     "name": "VectifyAI/PageIndex",
@@ -739,8 +739,8 @@
     "officialUrl": "https://github.com/projectcontour/contour",
     "sourceType": "github",
     "technology": "HTML",
-    "lastChecked": "2026-11-13T23:01:36.319Z",
-    "lastVerified": "2026-11-13T23:01:36.319Z",
+    "lastChecked": "2026-11-15T10:04:17.516Z",
+    "lastVerified": "2026-11-15T10:04:17.516Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectcontour-contour",
@@ -2455,8 +2455,8 @@
     "officialUrl": "https://github.com/oceanbase/oceanbase",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-13T21:36:42.672Z",
-    "lastVerified": "2026-11-13T21:36:42.672Z",
+    "lastChecked": "2026-11-15T10:04:22.414Z",
+    "lastVerified": "2026-11-15T10:04:22.414Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-oceanbase-oceanbase",
@@ -3738,9 +3738,9 @@
   "sigoden-aichat": {
     "name": "aichat",
     "officialUrl": "https://github.com/sigoden/aichat",
-    "lastChecked": "2026-11-13T15:10:46.259Z",
+    "lastChecked": "2026-11-15T10:04:09.903Z",
     "revisionIdentifier": "82976d34",
-    "lastVerified": "2026-11-13T15:10:46.259Z"
+    "lastVerified": "2026-11-15T10:04:09.903Z"
   },
   "hf-cloudflare-clef": {
     "name": "Cloudflare/clef",
@@ -9302,9 +9302,9 @@
   "gao-sun-eul": {
     "name": "eul",
     "officialUrl": "https://github.com/gao-sun/eul",
-    "lastChecked": "2026-11-12T00:45:22.832Z",
+    "lastChecked": "2026-11-15T10:04:14.919Z",
     "revisionIdentifier": "b5c3bd0a",
-    "lastVerified": "2026-11-12T00:45:22.832Z"
+    "lastVerified": "2026-11-15T10:04:14.919Z"
   },
   "tw93-pake": {
     "name": "tw93/Pake",
@@ -14886,13 +14886,13 @@
     "officialUrl": "https://huggingface.co/tencent/Qwen3.8-27B-DSpine-b16",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-09T21:55:28.192Z",
-    "lastVerified": "2026-11-09T21:55:28.192Z",
+    "lastChecked": "2026-11-15T10:04:12.478Z",
+    "lastVerified": "2026-11-15T10:04:12.478Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-tencent-qwen3-8-27b-dspine-b16",
-    "contentHash": "c796e23219ff0340379b29b3121cf4a98c4c874fdedfce01cd3b13b2cd4ee1f0",
-    "promotedRulesCount": 2,
+    "contentHash": "e6194710e86bc75260b9f9c8e0a35e6c2cfea189f173555d4a3118f582e35af2",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

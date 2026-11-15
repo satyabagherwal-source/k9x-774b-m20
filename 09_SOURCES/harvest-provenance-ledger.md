@@ -10105,3 +10105,6 @@ Every entry in this ledger must capture:
 | `learn-github-open-policy-agent-gatekeeper` | `https://github.com/open-policy-agent/gatekeeper` | `b6ac7a34` | Multi-dimensional audit evidence | 2026-11-15T09:49:58.381Z |
 | `learn-huggingface-liquidai-d1-2b` | `https://huggingface.co/LiquidAI/d1-2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-15T09:55:04.092Z |
 | `learn-dom-d-4ee8ade1` | `project://hf-liquidai-d1-2b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-liquidai-d1-2b-learnings.md` | 2026-11-15T09:55:27.966Z |
+| `learn-huggingface-tencent-qwen3-8-27b-dspine-b16` | `https://huggingface.co/tencent/Qwen3.8-27B-DSpine-b16` | `hf-tencent` | Multi-dimensional audit evidence | 2026-11-15T10:04:13.087Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `a19be499` | Multi-dimensional audit evidence | 2026-11-15T10:04:31.072Z |
+| `learn-dom-d-b5a599c0` | `project://hf-tencent-qwen3.8-27b-dspine-b16` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-tencent-qwen3.8-27b-dspine-b16-learnings.md` | 2026-11-15T10:05:03.880Z |

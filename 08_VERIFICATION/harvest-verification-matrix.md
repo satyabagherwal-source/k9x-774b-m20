@@ -10072,3 +10072,6 @@
 | `CYCLE-20261115-LDK9` | `2026-11-15T09:49:58.377Z` | `open-policy-agent/gatekeeper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8606` | Yes (`7c8cc1c0...`) |
 | `CYCLE-20261115-RXG9` | `2026-11-15T09:55:04.089Z` | `LiquidAI/d1-2B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-d1-2b-learnings.md` | Yes (`50adaf2a...`) |
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T09:55:27.966Z` | `hf-liquidai-d1-2b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-4EE8ADE1` [Domain D] | Yes (`33cc586a...`) |
+| `CYCLE-20261115-3P23` | `2026-11-15T10:04:13.083Z` | `tencent/Qwen3.8-27B-DSpine-b16` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tencent-qwen3.8-27b-dspine-b16-learnings.md` | Yes (`e6194710...`) |
+| `CYCLE-20261115-42XO` | `2026-11-15T10:04:31.068Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8607` | Yes (`12fdf002...`) |
+| `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T10:05:03.880Z` | `hf-tencent-qwen3.8-27b-dspine-b16` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-B5A599C0` [Domain D] | Yes (`22f9bb91...`) |

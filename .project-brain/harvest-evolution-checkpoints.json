@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T09:55:29.172Z",
+  "last_updated": "2026-11-15T10:05:05.590Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-15T07:33:00.027Z",
+      "processed_at": "2026-11-15T10:05:05.015Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -773,7 +773,7 @@
       "staged_for_review": 1
     },
     "nucleoidai-nucleoid-learnings.md": {
-      "processed_at": "2026-11-14T14:28:35.829Z",
+      "processed_at": "2026-11-15T10:05:04.291Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2941,9 +2941,14 @@
       "processed_at": "2026-11-15T09:55:28.701Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-tencent-qwen3.8-27b-dspine-b16-learnings.md": {
+      "processed_at": "2026-11-15T10:05:03.880Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 1020,
-  "total_canonical_promoted": 254,
-  "total_staged_for_review": 766
+  "total_dossiers_evaluated": 1023,
+  "total_canonical_promoted": 255,
+  "total_staged_for_review": 768
 }

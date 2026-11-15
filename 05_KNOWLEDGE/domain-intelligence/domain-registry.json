@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T09:55:28.992Z",
-  "total_records": 1022,
+  "last_updated": "2026-11-15T10:05:05.348Z",
+  "total_records": 1025,
   "domains": {
     "A": {
       "total": 7,
@@ -37,7 +37,7 @@
       ]
     },
     "D": {
-      "total": 496,
+      "total": 499,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -534,7 +534,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-edge0-audio8-tts-realistic-air-learnings-core",
         "domain_intelligence-research-knowledge-intelligence-liquidai-d1-2b-core-invariants",
         "DOM-D-4EE8ADE1",
-        "domain_intelligence-research-knowledge-intelligence-hf-liquidai-d1-2b-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-hf-liquidai-d1-2b-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-tencent-qwen3-8-27b-dspine-b16-core-invariants",
+        "DOM-D-B5A599C0",
+        "domain_intelligence-research-knowledge-intelligence-hf-tencent-qwen3-8-27b-dspine-b16-learnings-core"
       ]
     },
     "E": {
@@ -6837,8 +6840,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "183ac9c295971bf2661b7c806930c571fcbb3437542dc9e880febf5e8232f1c4",
-      "created_at": "2026-11-15T07:33:00.343Z"
+      "content_hash": "1ba0a6c2efb74951c0d4428f2ccee40913faf1f645b2a321db24216be20d6f38",
+      "created_at": "2026-11-15T10:05:05.348Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -14101,8 +14104,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "9d206430708c425f3d64e2040d8b28e569260fb9695b21efdc39061eea0ae29e",
-      "created_at": "2026-11-14T12:57:43.743Z"
+      "content_hash": "ffde8384ba7381ffd934821196e526c2b63fdb17b7cde56f5ba5b4ca02bacabb",
+      "created_at": "2026-11-15T10:04:31.359Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -14551,8 +14554,8 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-learnings-architecture-intelligence-nucleoidai-nucleoid-lear.md",
       "repository": "nucleoidai-nucleoid-learnings",
-      "content_hash": "e78270d05686dc105ee9e441c9009f4a3bd9404d5a141a045b71bdeb6374f4d0",
-      "created_at": "2026-11-14T12:58:49.646Z"
+      "content_hash": "774fff39825a22f030c11ba4162def401d8e049a3f84892a19b272266798d8bd",
+      "created_at": "2026-11-15T10:05:04.764Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants",
@@ -19675,6 +19678,66 @@
       "repository": "open-policy-agent-gatekeeper-learnings",
       "content_hash": "89022f6fb45b1246dfe7399a8f2e79d3101a330810e49eef5b9e6ddf2499c857",
       "created_at": "2026-11-15T09:55:28.992Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-tencent-qwen3-8-27b-dspine-b16-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-tencent-qwen3-8-27b-dspine-b16-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: tencent/Qwen3.8-27B-DSpine-b16 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-tencent-qwen3-8-27b-dspine-b16-research-knowledge-intelligence-tencent-qwen3-.md",
+      "repository": "tencent/Qwen3.8-27B-DSpine-b16",
+      "content_hash": "ab1d4ce7c6f034f0611bb3f51e99128ec5e497a1622de91e6422719202886b99",
+      "created_at": "2026-11-15T10:04:13.270Z"
+    },
+    "DOM-D-B5A599C0": {
+      "record_id": "DOM-D-B5A599C0",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): tencent/Qwen3.8-27B-DSpine-b16",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-tencent-qwen3.8-27b-dspine-b16-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/tencent/Qwen3.8-27B-DSpine-b16](https://huggingface.co/tencent/Qwen3.8-27B-DSpine-b16))  \n> **Source Version**: `hf-tencent-q`  \n> **License**:",
+      "content_hash": "22f9bb91c7ef06d5c9c7f68f7cff67a44b08627f672972fec322d2ca0693d585",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-tencent-qwen3.8-27b-dspine-b16-learnings.md`  \n> **Source**: huggingface ([https: -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-tencent-qwen3.8-27b-dspine-b16-learnings.md`  \n> **Source**: huggingface ([https:",
+      "provenance": {
+        "source_uri": "project://hf-tencent-qwen3.8-27b-dspine-b16/hf-tencent-qwen3.8-27b-dspine-b16-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T10:04:34.224Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-tencent-qwen3.8-27b-dspine-b16)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-tencent-qwen3.8-27b-dspine-b16"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-15T10:05:03.863Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-tencent-qwen3-8-27b-dspine-b16-learnings-core": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-tencent-qwen3-8-27b-dspine-b16-learnings-core",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-tencent-qwen3.8-27b-dspine-b16-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-tencent-qwen3-8-27b-dspine-b16-learnings-research-knowledge-intelligence-hf-t.md",
+      "repository": "hf-tencent-qwen3.8-27b-dspine-b16-learnings",
+      "content_hash": "7d5a51786043eceb107c77586f5c600ebc003fc9a3e02a923960b6f053df785b",
+      "created_at": "2026-11-15T10:05:04.103Z"
     }
   }
 }

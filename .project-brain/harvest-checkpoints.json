@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-15T09:55:04.100Z",
+  "last_updated": "2026-11-15T10:04:31.081Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "76107d486b9adc06837896f4e9180b09c77c8f623a73a0d497d124a6fd6b516c",
-      "verified_at": "2026-11-14T19:03:26.766Z",
+      "content_hash": "12fdf0025cfd636ff4ab1ae09c6740307c64df23dc378e13b7d54c71f7d9c503",
+      "verified_at": "2026-11-15T10:04:31.080Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T19:03:26.766Z"
+      "last_updated": "2026-11-15T10:04:31.080Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -18456,14 +18456,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-tencent-qwen3-8-27b-dspine-b16",
-      "content_hash": "c796e23219ff0340379b29b3121cf4a98c4c874fdedfce01cd3b13b2cd4ee1f0",
-      "verified_at": "2026-11-09T21:59:35.832Z",
+      "content_hash": "e6194710e86bc75260b9f9c8e0a35e6c2cfea189f173555d4a3118f582e35af2",
+      "verified_at": "2026-11-15T10:04:13.095Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T21:59:35.832Z"
+      "last_updated": "2026-11-15T10:04:13.095Z"
     },
     "VideoRebirthAI/hyperflow-h3-flash": {
       "repository": "VideoRebirthAI/hyperflow-h3-flash",

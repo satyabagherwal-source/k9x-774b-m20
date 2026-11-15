@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T09:55:04.096Z",
-  "total_cycles_completed": 9696,
-  "total_learnings_persisted": 9696,
-  "total_rules_promoted": 9333,
+  "last_updated": "2026-11-15T10:04:31.077Z",
+  "total_cycles_completed": 9698,
+  "total_learnings_persisted": 9698,
+  "total_rules_promoted": 9334,
   "history": [
-    {
-      "timestamp": "2026-11-14T10:16:29.224Z",
-      "repository": "onehumanbeing/esp32-iphone-agent",
-      "learningId": "learn-github-onehumanbeing-esp32-iphone-agent",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T10:16:31.348Z",
-      "repository": "adventists-ai/Sophon-Realtime-v1",
-      "learningId": "learn-huggingface-adventists-ai-sophon-realtime-v1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T10:16:38.308Z",
       "repository": "software-mansion/react-native-gesture-handler",
@@ -1403,6 +1389,20 @@
       "repository": "LiquidAI/d1-2B",
       "learningId": "learn-huggingface-liquidai-d1-2b",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T10:04:13.092Z",
+      "repository": "tencent/Qwen3.8-27B-DSpine-b16",
+      "learningId": "learn-huggingface-tencent-qwen3-8-27b-dspine-b16",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T10:04:31.077Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
