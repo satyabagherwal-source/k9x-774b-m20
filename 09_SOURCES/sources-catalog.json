@@ -5443,10 +5443,10 @@
     "repository": "telemt/telemt",
     "platform": "github",
     "sourceUrl": "https://github.com/telemt/telemt",
-    "sourceVersion": "b594ee55",
+    "sourceVersion": "dac7aeee",
     "license": "NOASSERTION",
-    "contentHash": "0e72d7a54a886c3d6fa0f276d5666f8b6a2aeaf72a3d9422891b9deb01c0439c",
-    "lastHarvestedAt": "2026-11-13T19:54:23.053Z",
+    "contentHash": "90de0edaa9635f840ac1daf41092570a84737fd78d2be5fce7e5ef709a826265",
+    "lastHarvestedAt": "2026-11-15T18:17:17.699Z",
     "learningId": "learn-github-telemt-telemt"
   },
   "react-native-modal-react-native-modal": {

@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T17:40:52.993Z",
+  "updated_at": "2026-11-15T18:17:21.054Z",
   "stats": {
-    "total_discovered": 3818,
-    "approved_pending_harvest": 3600,
+    "total_discovered": 3819,
+    "approved_pending_harvest": 3601,
     "harvested_count": 0,
     "rejected_count": 218,
     "category_distribution": {
       "COMMUNITY_AND_EXPERT": 3583,
       "OFFICIAL_DOCUMENTATION": 129,
-      "STANDARDS_AND_SPECIFICATIONS": 89,
+      "STANDARDS_AND_SPECIFICATIONS": 90,
       "ENGINEERING_BLOGS": 2,
       "SECURITY_ADVISORIES": 11,
       "LEGAL_AND_REGULATORY": 1,
@@ -82491,6 +82491,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md",
         "fileName": "seekstorm-seekstorm-learnings.md"
+      }
+    },
+    "SRC-98F5AFE43D8B": {
+      "id": "SRC-98F5AFE43D8B",
+      "url": "https://www.rfc-editor.org/rfc/rfc7323",
+      "title": "IETF RFC 7323",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T18:17:21.054Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/telemt-telemt-learnings.md",
+        "fileName": "telemt-telemt-learnings.md"
       }
     }
   }

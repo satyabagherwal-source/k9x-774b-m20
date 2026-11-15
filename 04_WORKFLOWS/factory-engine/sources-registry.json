@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-15T17:52:50.060Z",
-    "lastVerified": "2026-11-15T17:52:50.060Z",
+    "lastChecked": "2026-11-15T18:17:20.920Z",
+    "lastVerified": "2026-11-15T18:17:20.920Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -156,8 +156,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-15T17:22:52.694Z",
-    "lastVerified": "2026-11-15T17:22:52.694Z",
+    "lastChecked": "2026-11-15T18:08:16.756Z",
+    "lastVerified": "2026-11-15T18:08:16.756Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -439,8 +439,8 @@
     "officialUrl": "https://github.com/openziti/zrok",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-15T09:16:38.512Z",
-    "lastVerified": "2026-11-15T09:16:38.512Z",
+    "lastChecked": "2026-11-15T18:08:11.751Z",
+    "lastVerified": "2026-11-15T18:08:11.751Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openziti-zrok",
@@ -3001,8 +3001,8 @@
     "officialUrl": "https://github.com/easegress-io/easegress",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-14T06:23:35.688Z",
-    "lastVerified": "2026-11-14T06:23:35.689Z",
+    "lastChecked": "2026-11-15T18:08:09.271Z",
+    "lastVerified": "2026-11-15T18:08:09.271Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-easegress-io-easegress",
@@ -4240,9 +4240,9 @@
   "parthsarthi03-raptor": {
     "name": "raptor",
     "officialUrl": "https://github.com/parthsarthi03/raptor",
-    "lastChecked": "2026-11-14T04:32:18.271Z",
+    "lastChecked": "2026-11-15T18:08:14.249Z",
     "revisionIdentifier": "7da1d48a",
-    "lastVerified": "2026-11-14T04:32:18.271Z"
+    "lastVerified": "2026-11-15T18:08:14.249Z"
   },
   "svenstaro-miniserve": {
     "name": "miniserve",
@@ -5284,14 +5284,14 @@
     "officialUrl": "https://github.com/telemt/telemt",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-13T19:52:49.457Z",
-    "lastVerified": "2026-11-13T19:52:49.457Z",
+    "lastChecked": "2026-11-15T18:08:04.632Z",
+    "lastVerified": "2026-11-15T18:08:04.632Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-telemt-telemt",
-    "contentHash": "0e72d7a54a886c3d6fa0f276d5666f8b6a2aeaf72a3d9422891b9deb01c0439c",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "contentHash": "90de0edaa9635f840ac1daf41092570a84737fd78d2be5fce7e5ef709a826265",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9974,12 +9974,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "vanniktech-gradle-maven-publish-plugin": {
-    "name": "vanniktech/gradle-maven-publish-plugin",
+    "name": "gradle-maven-publish-plugin",
     "officialUrl": "https://github.com/vanniktech/gradle-maven-publish-plugin",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-12T06:19:35.683Z",
-    "lastVerified": "2026-11-12T06:19:35.683Z",
+    "lastChecked": "2026-11-15T18:08:06.755Z",
+    "lastVerified": "2026-11-15T18:08:06.755Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-vanniktech-gradle-maven-publish-plugin",
@@ -9988,7 +9988,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "086c4bd6"
   },
   "bourd-dev-seo-skills": {
     "name": "seo-skills",
@@ -10232,9 +10233,9 @@
   "yuripinto-xseo": {
     "name": "xseo",
     "officialUrl": "https://github.com/yuripinto/xseo",
-    "lastChecked": "2026-11-10T04:36:45.558Z",
+    "lastChecked": "2026-11-15T18:08:04.275Z",
     "revisionIdentifier": "d335452f68",
-    "lastVerified": "2026-11-10T04:36:45.558Z"
+    "lastVerified": "2026-11-15T18:08:04.275Z"
   },
   "jinxiansen-swiftui": {
     "name": "SwiftUI",

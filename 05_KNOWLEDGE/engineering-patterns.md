@@ -624995,3 +624995,429 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `d52fcc0a` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8638. Dual-Tier Socket Segmentation via Userspace Record Chunking (Harvested from telemt/telemt)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Dual-Tier Socket Segmentation via Userspace Record Chunking",
+  "source": "telemt/telemt",
+  "source_url": "https://github.com/telemt/telemt",
+  "source_version": "dac7aeee",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-15T18:17:16.436Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-telemt-telemt",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [telemt/telemt](https://github.com/telemt/telemt) (Revision: `dac7aeee`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When shaping outbound TCP transport traffic to evade network pattern-matching (such as DPI fingerprinting) on established TCP sockets under Linux, software MUST NOT rely on modifying `TCP_MAXSEG` via `setsockopt`. Instead, software MUST execute explicit userspace fragmentation using `MSG_EOR` stream flags while factoring in negotiated TCP timestamp header overheads.
+
+**WHY**:
+In the Linux network stack (`net/ipv4/tcp.c`), calling `setsockopt(fd, IPPROTO_TCP, TCP_MAXSEG, ...)` on an already established connection (`TCP_ESTABLISHED`) only alters the internal `tp->rx_opt.user_mss` setting for future incoming MSS advertisements; it does **not** recalculate or clamp `tp->snd_mss` for outbound transmission queues. Attempting to clamp MSS post-handshake to shape the initial `ServerHello` record silently fails, causing full-sized MTU packets (1500 bytes) to hit the wire and allowing DPI systems to immediately flag and censor the connection.
+
+**WHEN TO APPLY**:
+Apply to any high-performance network proxy, anti-censorship transport layer, or obfuscation tunnel implementing custom TLS/TCP segment layout shaping under Linux.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use std::io::{self, IoSlice};
+use std::os::fd::AsRawFd;
+use tokio::net::TcpStream;
+
+pub struct DualTierMssWriter<'a> {
+    stream: &'a TcpStream,
+    handshake_mss: usize,
+    bulk_mss: usize,
+    prefix_budget: usize,
+    has_timestamps: bool,
+}
+
+impl<'a> DualTierMssWriter<'a> {
+    pub fn new(
+        stream: &'a TcpStream,
+        handshake_mss: usize,
+        bulk_mss: usize,
+        prefix_limit: usize,
+        has_timestamps: bool,
+    ) -> Self {
+        // TCP Timestamp option (RFC 7323) consumes exactly 12 bytes in TCP options
+        let timestamp_overhead = if has_timestamps { 12 } else { 0 };
+        let effective_handshake_mss = handshake_mss.saturating_sub(timestamp_overhead).max(64);
+
+        Self {
+            stream,
+            handshake_mss: effective_handshake_mss,
+            bulk_mss,
+            prefix_budget: prefix_limit,
+            has_timestamps,
+        }
+    }
+
+    /// Writes data enforcing userspace chunking for the handshake prefix
+    pub async fn write_shaped_prefix(&mut self, payload: &[u8]) -> io::Result<usize> {
+        let fd = self.stream.as_raw_fd();
+        let mut total_written = 0;
+
+        while total_written < payload.len() {
+            let remaining = &payload[total_written..];
+            let chunk_size = if self.prefix_budget > 0 {
+                let limit = self.handshake_mss.min(self.prefix_budget);
+                remaining.len().min(limit)
+            } else {
+                remaining.len().min(self.bulk_mss)
+            };
+
+            let chunk = &remaining[..chunk_size];
+
+            // Wait for socket to become writable via Tokio async engine
+            self.stream.writable().await?;
+
+            // Send via libc::send with MSG_EOR to signal record boundaries
+            let res = unsafe {
+                libc::send(
+                    fd,
+                    chunk.as_ptr() as *const libc::c_void,
+                    chunk.len(),
+                    libc::MSG_EOR | libc::MSG_DONTWAIT,
+                )
+            };
+
+            if res < 0 {
+                let err = io::Error::last_os_error();
+                if err.kind() == io::ErrorKind::WouldBlock {
+                    continue;
+                }
+                return Err(err);
+            }
+
+            let written = res as usize;
+            total_written += written;
+            self.prefix_budget = self.prefix_budget.saturating_sub(written);
+        }
+
+        Ok(total_written)
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// NEVER assume setsockopt(TCP_MAXSEG) clamps active established TCP egress
+pub fn bad_mss_clamping(raw_fd: std::os::fd::RawFd, target_mss: i32) {
+    unsafe {
+        // ANTI-PATTERN: Linux kernel ignores TCP_MAXSEG for egress on ESTABLISHED sockets!
+        libc::setsockopt(
+            raw_fd,
+            libc::IPPROTO_TCP,
+            libc::TCP_MAXSEG,
+            &target_mss as *const _ as *const libc::c_void,
+            std::mem::size_of::<i32>() as libc::socklen_t,
+        );
+    }
+    // Writing here will STILL emit full MTU frames (e.g., 1460 bytes)!
+}
+```
+
+**VERIFICATION METHOD**:
+Capture outgoing packets via `tcpdump -i any -nn -vvv 'tcp and port <LISTEN_PORT>'` during connection initialization and assert with `tshark`:
+```bash
+tshark -r handshake.pcap -T fields -e tcp.len | awk '$1 > 0 { if ($1 > 256 && NR <= 3) exit 1 }'
+```
+Assert that no handshake packet exceeds `client_mss` before `client_mss_prefix` bytes are exhausted.
+
+---
+
+
+---
+
+## 8639. Guarded Scope Admission with Two-Phase Disarm Ownership (Harvested from telemt/telemt)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Guarded Scope Admission with Two-Phase Disarm Ownership",
+  "source": "telemt/telemt",
+  "source_url": "https://github.com/telemt/telemt",
+  "source_version": "dac7aeee",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-15T18:17:16.873Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-telemt-telemt",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [telemt/telemt](https://github.com/telemt/telemt) (Revision: `dac7aeee`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+Every background runtime scope or session generator that spawns concurrent asynchronous tasks MUST be wrapped in an RAII Preparation Guard that triggers immediate linear cancellation on `Drop`. Ownership MUST NOT be transferred implicitly; the guard MUST require an explicit `.disarm()` call once ownership has been successfully committed to the active generational supervisor.
+
+**WHY**:
+In complex async orchestrators, runtime generation changes, listener rebinds, or upstream health check setups can fail or panic midway (e.g., due to an address-in-use error, timeout, or config validation failure). If spawned child tasks run detached before full supervisor registration, orphan tasks leak memory, hold open file descriptors/epoll instances, and trigger concurrency deadlocks during runtime shutdown.
+
+**WHEN TO APPLY**:
+Apply to any daemon managing runtime generation swaps, connection drains, worker pools, or long-lived Tokio task scopes where unhandled errors during configuration changeovers can leave tasks detached.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use std::sync::Arc;
+use tokio_util::sync::CancellationToken;
+
+pub struct RuntimeTaskScope {
+    cancel_token: CancellationToken,
+}
+
+impl RuntimeTaskScope {
+    pub fn new() -> Self {
+        Self {
+            cancel_token: CancellationToken::new(),
+        }
+    }
+
+    pub fn begin_stop(&self) {
+        self.cancel_token.cancel();
+    }
+}
+
+/// Disarmable RAII guard guarding scope transfer
+#[must_use = "runtime preparation guards must be explicitly disarmed"]
+pub struct RuntimePreparationGuard {
+    scope: Arc<RuntimeTaskScope>,
+    armed: bool,
+}
+
+impl RuntimePreparationGuard {
+    pub fn new(scope: Arc<RuntimeTaskScope>) -> Self {
+        Self { scope, armed: true }
+    }
+
+    /// Disarms guard and confirms that the generational supervisor took ownership
+    pub fn disarm(mut self) {
+        self.armed = false;
+    }
+}
+
+impl Drop for RuntimePreparationGuard {
+    fn drop(&mut self) {
+        if self.armed {
+            // Cancel everything immediately if aborted before clean ownership handoff
+            self.scope.begin_stop();
+        }
+    }
+}
+
+pub struct GenerationSupervisor {
+    active_scope: Arc<RuntimeTaskScope>,
+}
+
+impl GenerationSupervisor {
+    pub async fn transition_generation(&mut self) -> Result<(), &'static str> {
+        let new_scope = Arc::new(RuntimeTaskScope::new());
+        let guard = RuntimePreparationGuard::new(Arc::clone(&new_scope));
+
+        // Perform volatile asynchronous initialization:
+        // If this returns an Err or panics, `guard` drops and cancels `new_scope`
+        risky_subsystem_bind().await?;
+
+        // Commit ownership safely
+        self.active_scope = new_scope;
+        guard.disarm();
+
+        Ok(())
+    }
+}
+
+async fn risky_subsystem_bind() -> Result<(), &'static str> {
+    // Simulated potential failure point
+    Ok(())
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// NEVER spawn asynchronous background workers across generations without RAII drop guards
+pub async fn bad_task_init() -> Result<(), &'static str> {
+    let cancel = CancellationToken::new();
+    // Task spawned without an ownership-transfer guard
+    tokio::spawn(async move {
+        // Runs forever if downstream registration fails
+    });
+    risky_subsystem_bind().await?; // If this errors, the spawned task is orphaned!
+    Ok(())
+}
+```
+
+**VERIFICATION METHOD**:
+Implement a property-based test or deterministic unit test with `NotifyOnDrop` that forces an error after spawning a child task inside the scope, asserting that `scope.cancellation_token().is_cancelled()` evaluates to `true` and the child task terminates within 100 milliseconds.
+
+---
+
+
+---
+
+## 8640. Bounded-Frame Body Ingestion with Saturating Cap Defense (Harvested from telemt/telemt)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Bounded-Frame Body Ingestion with Saturating Cap Defense",
+  "source": "telemt/telemt",
+  "source_url": "https://github.com/telemt/telemt",
+  "source_version": "dac7aeee",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-15T18:17:17.330Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-telemt-telemt",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [telemt/telemt](https://github.com/telemt/telemt) (Revision: `dac7aeee`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+Network API ingestion endpoints parsing untrusted HTTP chunked or raw byte streams MUST NOT use unbounded `read_to_end()` or allocate before validating size. The stream reader MUST check each incoming frame using `saturating_add` against a strict byte limit and reject oversized payloads immediately before copying bytes into memory.
+
+**WHY**:
+Using `.len() + chunk.len() > limit` without saturation causes integer overflow bugs on 32-bit targets or under crafted huge chunk lengths. Furthermore, collecting chunks into an internal buffer before checking the aggregate size allows an attacker to consume gigabytes of heap memory through slow-drip HTTP/1.1 chunk-encoded attacks, leading to OOM crashes in the host proxy process.
+
+**WHEN TO APPLY**:
+Apply to all REST/JSON administrative endpoints, webhook receivers, and configuration mutation controllers.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use http_body_util::BodyExt;
+use hyper::body::Incoming;
+
+#[derive(Debug)]
+pub enum IngestionError {
+    PayloadTooLarge { limit: usize },
+    StreamError,
+}
+
+pub async fn read_bounded_payload(
+    mut body: Incoming,
+    max_allowed_bytes: usize,
+) -> Result<Vec<u8>, IngestionError> {
+    let mut collected = Vec::new();
+
+    while let Some(frame_res) = body.frame().await {
+        let frame = frame_res.map_err(|_| IngestionError::StreamError)?;
+        
+        if let Some(chunk) = frame.data_ref() {
+            // SATURATING CHECK: Guard against overflow while enforcing strict limit
+            let projected_len = collected.len().saturating_add(chunk.len());
+            if projected_len > max_allowed_bytes {
+                return Err(IngestionError::PayloadTooLarge {
+                    limit: max_allowed_bytes,
+                });
+            }
+            collected.extend_from_slice(chunk);
+        }
+    }
+
+    Ok(collected)
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// NEVER use standard read_to_end or unchecked addition for external HTTP frames
+pub async fn bad_read(mut body: Incoming, limit: usize) -> Vec<u8> {
+    let mut buf = Vec::new();
+    while let Some(frame) = body.frame().await {
+        let chunk = frame.unwrap().into_data().unwrap();
+        // ANTI-PATTERN: Unchecked addition + buffer allocation before verification
+        buf.extend(chunk);
+        if buf.len() > limit { // Already allocated the excess memory!
+            panic!("too large");
+        }
+    }
+    buf
+}
+```
+
+**VERIFICATION METHOD**:
+Run unit tests supplying an `Incoming` mock stream generating `max_allowed_bytes + 1` across multiple chunks; assert that the reader returns `IngestionError::PayloadTooLarge` immediately upon receiving the frame that crosses the boundary, without accumulating subsequent data.
+
+---

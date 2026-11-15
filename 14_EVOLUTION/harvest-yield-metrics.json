@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T17:52:40.640Z",
-  "total_cycles_completed": 9744,
-  "total_learnings_persisted": 9744,
-  "total_rules_promoted": 9366,
+  "last_updated": "2026-11-15T18:17:17.703Z",
+  "total_cycles_completed": 9745,
+  "total_learnings_persisted": 9745,
+  "total_rules_promoted": 9369,
   "history": [
-    {
-      "timestamp": "2026-11-14T15:49:37.757Z",
-      "repository": "Agent-Field/agentfield",
-      "learningId": "learn-github-agent-field-agentfield",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T15:49:43.555Z",
       "repository": "trinodb/trino",
@@ -1403,6 +1396,13 @@
       "repository": "embassy-rs/embassy",
       "learningId": "learn-github-embassy-rs-embassy",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T18:17:17.703Z",
+      "repository": "telemt/telemt",
+      "learningId": "learn-github-telemt-telemt",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

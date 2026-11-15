@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-15T17:52:51.413Z",
+  "last_updated": "2026-11-15T18:17:22.683Z",
   "total_verified_learnings": 8715,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18536,
+  "total_items": 18544,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112032,9 +112032,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "fd7b63274f03fcc56fa04ba3c5238c7fb5a41458d5f913b30c141737eef612c9",
+      "content_hash": "0ad2c599ef9cd3a706a9c1b6e314a901f0f2d7f03cf6d90e10d728e4a7d1ed0b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T17:52:51.241Z"
+      "persisted_at": "2026-11-15T18:17:22.511Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112044,9 +112044,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "6e3f5fba9f626cb7e7d6bf125ae21a4c8202f442868c9c5de47cd6bda7fa2aaf",
+      "content_hash": "0344f18a47f3e8e01080c6b93fe9a9e7b1fe939dde3df859d9aafcdea601c3ad",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T17:52:51.329Z"
+      "persisted_at": "2026-11-15T18:17:22.601Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112056,9 +112056,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "a6e8f3605dfcab5dea424638058cd8ae22fae0d4d18ccde0d37c797c1fc266c9",
+      "content_hash": "4bc3a4537887bb80400f7202c1c3f3e58edbd59c91b954e894b91c993630de6e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T17:52:51.413Z"
+      "persisted_at": "2026-11-15T18:17:22.683Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112164,9 +112164,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "7b6dbe2ad576fdc95cce120fabd7f0e2e3196b566bc8b1a9062900dc90e9c030",
+      "content_hash": "23b1bd920d7e38ff1a544934007d10add7b74cef258dec605295ce7cd17afff6",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T17:52:50.809Z"
+      "persisted_at": "2026-11-15T18:17:22.068Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112176,9 +112176,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "17209beed2f287b1a657e5e4e7d25134aacb661501970e1fb58e121176e88840",
+      "content_hash": "1bf69da7b6f1a479bcac2b490f74a4194110a966fcfa5d84a77bab6b23df98ce",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T17:52:50.900Z"
+      "persisted_at": "2026-11-15T18:17:22.159Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -213613,14 +213613,29 @@
       "slug": "telemt-telemt",
       "platform": "github",
       "source_url": "https://github.com/telemt/telemt",
-      "source_version": "b594ee55",
-      "content_hash": "0e72d7a54a886c3d6fa0f276d5666f8b6a2aeaf72a3d9422891b9deb01c0439c",
+      "source_version": "dac7aeee",
+      "content_hash": "90de0edaa9635f840ac1daf41092570a84737fd78d2be5fce7e5ef709a826265",
       "dossier_path": "07_PROJECT_LEARNING/telemt-telemt-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/telemt-telemt-learnings.md",
       "promoted_rules": [
         {
           "number": 8369,
           "title": "Empirical Invariant Guard in emulator.rs",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8638,
+          "title": "Dual-Tier Socket Segmentation via Userspace Record Chunking",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8639,
+          "title": "Guarded Scope Admission with Two-Phase Disarm Ownership",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8640,
+          "title": "Bounded-Frame Body Ingestion with Saturating Cap Defense",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -213629,7 +213644,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T19:54:22.943Z",
+      "verified_at": "2026-11-15T18:17:17.561Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -213671,10 +213686,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-telemt-telemt-technical-construction-intelligence-telemt-telemt-core-invariants.md",
       "title": "Technical Construction Intelligence: telemt/telemt Core Invariants",
       "repository": "telemt/telemt",
-      "source_version": "b594ee55",
-      "content_hash": "c359963790e9b13c024d9679ae2bf2cf921adb6b78de7ffdae61847a397c6d37",
+      "source_version": "dac7aeee",
+      "content_hash": "58961c15ff6ccaf88226cba782419b022c76d57e82d1f0834b11a5bd8c44b702",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T19:54:23.260Z"
+      "persisted_at": "2026-11-15T18:17:18.127Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-telemt-telemt": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-telemt-telemt",
@@ -213683,10 +213698,10 @@
       "relative_path": "08_VERIFICATION/telemt-telemt-verification-protocol-empirical-defect-shield-for-telemt-telemt.md",
       "title": "Verification Protocol: Empirical Defect Shield for telemt/telemt",
       "repository": "telemt/telemt",
-      "source_version": "b594ee55",
-      "content_hash": "174522015c1c9b16f6dc583b233c99de3d2f58aad916e317b745943eab326087",
+      "source_version": "dac7aeee",
+      "content_hash": "5e4f584450299d2a513e59aec521d3c70e04d0d6a9f088daa9555c60d440e089",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T19:54:23.329Z"
+      "persisted_at": "2026-11-15T18:17:18.312Z"
     },
     "domain_intelligence-technical-construction-intelligence-telemt-telemt-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-telemt-telemt-learnings-core-invariants",
@@ -213696,9 +213711,9 @@
       "title": "Technical Construction Intelligence: telemt-telemt-learnings Core Invariants",
       "repository": "telemt-telemt-learnings",
       "source_version": "HEAD",
-      "content_hash": "36246863d699b8dfebb754e56c8903da3d93d94e6bfc737a0d79ec2a35b01657",
+      "content_hash": "6657b28791313df4961ce728b75c1fc31c12d5be860993fd1f83b559aa7bd9f2",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T19:54:26.280Z"
+      "persisted_at": "2026-11-15T18:17:21.510Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-telemt-telemt-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-telemt-telemt-learnings",
@@ -213708,9 +213723,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for telemt-telemt-learnings",
       "repository": "telemt-telemt-learnings",
       "source_version": "HEAD",
-      "content_hash": "87c17d625ec36213c73c907f9ec17679a5bdf08d2c39d4928ef61a5e154be4f3",
+      "content_hash": "d309190f90011ccb50c6023db6a759345ac960187bf883e1522eb126e42872e6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T19:54:26.350Z"
+      "persisted_at": "2026-11-15T18:17:21.708Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-prunaai-p-h3-image-comfy-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-prunaai-p-h3-image-comfy-learnings-core-invar",
@@ -214790,13 +214805,13 @@
       "item_id": "candidate_directive-puppet-fix-postgresql-failing-to-start-on-new-installs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-UCRM-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-PVZP-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
       "title": "puppet: Fix PostgreSQL failing to start on new installs.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "b334d2b69baf5671acda62c8b763c70c23a99c11e909e4c45c6adeea72c7a46d",
+      "content_hash": "17c3f797eb2b10f24a3c51531a21ee76b41b36a4086c2b4e38b7e3b98cd4bb5b",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T17:52:50.727Z"
+      "persisted_at": "2026-11-15T18:17:21.974Z"
     },
     "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
@@ -224460,13 +224475,13 @@
       "item_id": "candidate_directive-watcher-filter-access-events-before-queueing",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-UD3L-watcher-filter-access-events-before-queueing.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-PWC2-watcher-filter-access-events-before-queueing.md",
       "title": "watcher): filter access events before queueing",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "ad8b3b94a407563ebd9277292b85fae48175625777882452ef36c88f94cebc69",
+      "content_hash": "213f414ca6fee32143b4b0d061b1ed1c87c1315cf98469b41cc52c3bbfb2235c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T17:52:51.158Z"
+      "persisted_at": "2026-11-15T18:17:22.420Z"
     },
     "candidate_directive-hybrid-linear-attention-full-attention-layer-synchronization-invariant": {
       "item_id": "candidate_directive-hybrid-linear-attention-full-attention-layer-synchronization-invariant",
@@ -245482,6 +245497,108 @@
       "content_hash": "4479588779441adc5cb701d59284c8695dd9d2803f2f5a51f7df2b2a3f244288",
       "domain_letter": "K",
       "persisted_at": "2026-11-15T17:40:53.425Z"
+    },
+    "rule-8638": {
+      "learning_id": "rule-8638",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8638,
+      "title": "Dual-Tier Socket Segmentation via Userspace Record Chunking",
+      "source_url": "https://github.com/telemt/telemt",
+      "source_version": "dac7aeee",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T18:17:17.561Z"
+    },
+    "rule-8639": {
+      "learning_id": "rule-8639",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8639,
+      "title": "Guarded Scope Admission with Two-Phase Disarm Ownership",
+      "source_url": "https://github.com/telemt/telemt",
+      "source_version": "dac7aeee",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T18:17:17.561Z"
+    },
+    "rule-8640": {
+      "learning_id": "rule-8640",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8640,
+      "title": "Bounded-Frame Body Ingestion with Saturating Cap Defense",
+      "source_url": "https://github.com/telemt/telemt",
+      "source_version": "dac7aeee",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T18:17:17.561Z"
+    },
+    "candidate_directive-dual-tier-socket-segmentation-via-userspace-record-chunking": {
+      "item_id": "candidate_directive-dual-tier-socket-segmentation-via-userspace-record-chunking",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PVEI-dual-tier-socket-segmentation-via-userspace-record-chunking.md",
+      "title": "Dual-Tier Socket Segmentation via Userspace Record Chunking",
+      "repository": "telemt-telemt-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0d9388783b8762120c391250cdadf0310d499ac58f08d389d9c872f076dfb9de",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-15T18:17:21.212Z"
+    },
+    "candidate_directive-guarded-scope-admission-with-two-phase-disarm-ownership": {
+      "item_id": "candidate_directive-guarded-scope-admission-with-two-phase-disarm-ownership",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PVEI-guarded-scope-admission-with-two-phase-disarm-ownership.md",
+      "title": "Guarded Scope Admission with Two-Phase Disarm Ownership",
+      "repository": "telemt-telemt-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ef2366cb3d2083aa420c3f4bab9707851ea07932f03af624718a03fe7f2d2c89",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-15T18:17:21.310Z"
+    },
+    "candidate_directive-bounded-frame-body-ingestion-with-saturating-cap-defense": {
+      "item_id": "candidate_directive-bounded-frame-body-ingestion-with-saturating-cap-defense",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PVEJ-bounded-frame-body-ingestion-with-saturating-cap-defense.md",
+      "title": "Bounded-Frame Body Ingestion with Saturating Cap Defense",
+      "repository": "telemt-telemt-learnings",
+      "source_version": "HEAD",
+      "content_hash": "826b8024ee875ff231d305784a8e91991ab5266b25be8520fa3c8fd1dee56198",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T18:17:21.413Z"
+    },
+    "agent_contract-agent-contract-telemt-telemt-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-telemt-telemt-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/telemt-telemt-agent-contract-telemt-telemt-autonomous-specialist-persona.md",
+      "title": "Agent Contract: telemt/telemt Autonomous Specialist Persona",
+      "repository": "telemt/telemt",
+      "source_version": "dac7aeee",
+      "content_hash": "f82a6243d766002f2f9419ea027c8211e57d07f9ba7ff5f3ffd759467b0cbeda",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T18:17:18.224Z"
+    },
+    "agent_contract-agent-contract-telemt-telemt-learnings-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-telemt-telemt-learnings-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/telemt-telemt-learnings-agent-contract-telemt-telemt-learnings-autonomous-specia.md",
+      "title": "Agent Contract: telemt-telemt-learnings Autonomous Specialist Persona",
+      "repository": "telemt-telemt-learnings",
+      "source_version": "HEAD",
+      "content_hash": "100d5c07cd971dbffecf4037cb6b3f699f2e6d1178077a7c07f921e80c1a6de3",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T18:17:21.612Z"
     }
   },
   "ai-builder-brain": {

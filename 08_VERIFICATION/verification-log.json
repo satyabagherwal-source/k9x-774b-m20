@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261111-1TQZ",
-    "timestamp": "2026-11-11T07:08:07.259Z",
-    "repository": "ConwayResearch/Underdog-Woof",
-    "learningId": "learn-huggingface-conwayresearch-underdog-woof",
-    "contentHash": "b106b3ed0cdbaf1f6aeb6dd66314ddcad21374cd6bdda0e7c13c6b91fbab2af4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261111-R61R",
     "timestamp": "2026-11-11T07:27:49.599Z",
     "repository": "Checkmarx/kics",
@@ -7492,6 +7477,21 @@
     "contentHash": "39bf0f408236c78e4cfc371b25a77c7e1857cbbe2b2ce48bbc5413169344920b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-PSOW",
+    "timestamp": "2026-11-15T18:17:17.696Z",
+    "repository": "telemt/telemt",
+    "learningId": "learn-github-telemt-telemt",
+    "contentHash": "90de0edaa9635f840ac1daf41092570a84737fd78d2be5fce7e5ef709a826265",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T17:52:51.158Z",
+  "last_updated": "2026-11-15T18:17:22.420Z",
   "directives": [
     {
       "id": "CD-001",
@@ -10262,11 +10262,11 @@
       "staged_date": "2026-11-13"
     },
     {
-      "id": "CD-UCRM",
+      "id": "CD-PVZP",
       "directive_title": "puppet: Fix PostgreSQL failing to start on new installs.",
       "source_repo": "zulip-zulip-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-UCRM-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-PVZP-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-15",
@@ -11821,11 +11821,11 @@
       "domain_letter": "H"
     },
     {
-      "id": "CD-UD3L",
+      "id": "CD-PWC2",
       "directive_title": "watcher): filter access events before queueing",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-UD3L-watcher-filter-access-events-before-queueing.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-PWC2-watcher-filter-access-events-before-queueing.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-15",
@@ -16110,6 +16110,46 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-251016-watcher-filter-access-events-before-queu.md",
+      "staged_date": "2026-11-15"
+    },
+    {
+      "id": "CD-PVEI",
+      "directive_title": "Guarded Scope Admission with Two-Phase Disarm Ownership",
+      "source_repo": "telemt-telemt-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-PVEI-guarded-scope-admission-with-two-phase-disarm-ownership.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-15",
+      "domain_letter": "B"
+    },
+    {
+      "id": "CD-PVEJ",
+      "directive_title": "Bounded-Frame Body Ingestion with Saturating Cap Defense",
+      "source_repo": "telemt-telemt-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-PVEJ-bounded-frame-body-ingestion-with-saturating-cap-defense.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-15",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-6A7067",
+      "directive_title": "puppet: Fix PostgreSQL failing to start on new installs.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-6A7067-puppet-fix-postgresql-failing-to-start-o.md",
+      "staged_date": "2026-11-15"
+    },
+    {
+      "id": "CD-REV-78B2F7",
+      "directive_title": "watcher): filter access events before queueing",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-78B2F7-watcher-filter-access-events-before-queu.md",
       "staged_date": "2026-11-15"
     }
   ]

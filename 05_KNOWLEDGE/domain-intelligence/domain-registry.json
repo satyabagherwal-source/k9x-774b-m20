@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T17:52:51.241Z",
+  "last_updated": "2026-11-15T18:17:22.511Z",
   "total_records": 1095,
   "domains": {
     "A": {
@@ -6865,8 +6865,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "fd7b63274f03fcc56fa04ba3c5238c7fb5a41458d5f913b30c141737eef612c9",
-      "created_at": "2026-11-15T17:52:51.241Z"
+      "content_hash": "0ad2c599ef9cd3a706a9c1b6e314a901f0f2d7f03cf6d90e10d728e4a7d1ed0b",
+      "created_at": "2026-11-15T18:17:22.511Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -6910,8 +6910,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "7b6dbe2ad576fdc95cce120fabd7f0e2e3196b566bc8b1a9062900dc90e9c030",
-      "created_at": "2026-11-15T17:52:50.809Z"
+      "content_hash": "23b1bd920d7e38ff1a544934007d10add7b74cef258dec605295ce7cd17afff6",
+      "created_at": "2026-11-15T18:17:22.068Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -9040,8 +9040,8 @@
       "title": "Technical Construction Intelligence: telemt/telemt Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-telemt-telemt-technical-construction-intelligence-telemt-telemt-core-invariants.md",
       "repository": "telemt/telemt",
-      "content_hash": "c359963790e9b13c024d9679ae2bf2cf921adb6b78de7ffdae61847a397c6d37",
-      "created_at": "2026-11-13T19:54:23.260Z"
+      "content_hash": "58961c15ff6ccaf88226cba782419b022c76d57e82d1f0834b11a5bd8c44b702",
+      "created_at": "2026-11-15T18:17:18.127Z"
     },
     "domain_intelligence-technical-construction-intelligence-telemt-telemt-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-telemt-telemt-learnings-core-invariants",
@@ -9049,8 +9049,8 @@
       "title": "Technical Construction Intelligence: telemt-telemt-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-telemt-telemt-learnings-technical-construction-intelligence-telemt-telemt-learni.md",
       "repository": "telemt-telemt-learnings",
-      "content_hash": "36246863d699b8dfebb754e56c8903da3d93d94e6bfc737a0d79ec2a35b01657",
-      "created_at": "2026-11-13T19:54:26.280Z"
+      "content_hash": "6657b28791313df4961ce728b75c1fc31c12d5be860993fd1f83b559aa7bd9f2",
+      "created_at": "2026-11-15T18:17:21.510Z"
     },
     "DOM-D-DFE22270": {
       "record_id": "DOM-D-DFE22270",
