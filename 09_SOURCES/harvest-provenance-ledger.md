@@ -10087,3 +10087,7 @@ Every entry in this ledger must capture:
 | `learn-github-clementtsang-bottom` | `https://github.com/ClementTsang/bottom` | `a5da65c6` | Multi-dimensional audit evidence | 2026-11-15T07:04:02.231Z |
 | `learn-huggingface-burner22-numbat` | `https://huggingface.co/burner22/numbat` | `hf-burner2` | Multi-dimensional audit evidence | 2026-11-15T07:32:18.290Z |
 | `learn-dom-d-e891ac55` | `project://hf-burner22-numbat` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-burner22-numbat-learnings.md` | 2026-11-15T07:32:59.003Z |
+| `learn-huggingface-edge0-audio8-tts-realistic-air` | `https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air` | `hf-edge0-a` | Multi-dimensional audit evidence | 2026-11-15T07:41:47.230Z |
+| `learn-github-mrkai77-loop` | `https://github.com/mrkai77/Loop` | `e8560f45` | Multi-dimensional audit evidence | 2026-11-15T07:41:53.695Z |
+| `learn-github-gravitl-netmaker` | `https://github.com/gravitl/netmaker` | `ccc98823` | Multi-dimensional audit evidence | 2026-11-15T07:41:58.803Z |
+| `learn-dom-d-bdc1bdd2` | `project://hf-edge0-audio8-tts-realistic-air` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-air-learnings.md` | 2026-11-15T07:42:32.101Z |

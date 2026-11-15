@@ -3703,10 +3703,10 @@
     "repository": "gravitl/netmaker",
     "platform": "github",
     "sourceUrl": "https://github.com/gravitl/netmaker",
-    "sourceVersion": "5b68aa9e",
+    "sourceVersion": "ccc98823",
     "license": "NOASSERTION",
-    "contentHash": "c0a274c39ef6a0ed72682b6ba66ddc30b685b59430c01714421217ca34856cae",
-    "lastHarvestedAt": "2026-11-12T22:21:25.656Z",
+    "contentHash": "198f9ed6cadb6f0184664283e264914e64f99530af8dadf4943aea24e6cbe101",
+    "lastHarvestedAt": "2026-11-15T07:41:58.803Z",
     "learningId": "learn-github-gravitl-netmaker"
   },
   "pixeltable-pixeltable": {
@@ -7753,10 +7753,10 @@
     "repository": "mrkai77/Loop",
     "platform": "github",
     "sourceUrl": "https://github.com/mrkai77/Loop",
-    "sourceVersion": "b041fcbb",
+    "sourceVersion": "e8560f45",
     "license": "GPL-3.0",
-    "contentHash": "c86f06af578c860a35da29746c5d01261576911246ff5bd9e10a09ed060151a7",
-    "lastHarvestedAt": "2026-11-11T19:46:23.705Z",
+    "contentHash": "feed40183186728bdb4d5b73878ac526921f8317e498d524e5abc437fbcbbf2f",
+    "lastHarvestedAt": "2026-11-15T07:41:53.695Z",
     "learningId": "learn-github-mrkai77-loop"
   },
   "tokio-rs-tokio": {
@@ -11685,8 +11685,8 @@
     "sourceUrl": "https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air",
     "sourceVersion": "hf-edge0-audio8-tts-realistic-air",
     "license": "Open-Source",
-    "contentHash": "192dddb81799e3a03fb164c65c08241a0faa00e35af45e5b23094d405dfc7fab",
-    "lastHarvestedAt": "2026-11-09T17:49:08.096Z",
+    "contentHash": "3bb2af68d457fd360dbf72782a9b379d30b5621d0611dadfe0ff9d430e59c288",
+    "lastHarvestedAt": "2026-11-15T07:41:47.230Z",
     "learningId": "learn-huggingface-edge0-audio8-tts-realistic-air"
   },
   "hf-obliteratus-deepseek-v4.1-flash-1017-obliterated": {

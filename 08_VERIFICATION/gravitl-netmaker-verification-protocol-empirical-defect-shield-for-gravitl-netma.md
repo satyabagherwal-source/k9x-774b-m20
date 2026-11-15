@@ -4,45 +4,31 @@
 {
   "source_repository": "gravitl/netmaker",
   "source_url": "https://github.com/gravitl/netmaker",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "ccc98823",
+  "license": "NOASSERTION",
+  "timestamp": "2026-11-15T07:41:58.981Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-gravitl-netmaker",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [gravitl/netmaker](https://github.com/gravitl/netmaker) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [gravitl/netmaker](https://github.com/gravitl/netmaker) (Revision: `ccc98823`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-15T07:41:58.981Z`  
+> **Learning ID**: `learn-github-gravitl-netmaker`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `gravitl/netmaker` (Commit: `historical`)
+- **Target Repository**: `gravitl/netmaker` (Commit: `ccc98823`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gravitl-netmaker-learnings.md`  
-> **Source**: github ([https://github.com/gravitl/netmaker](https://github.com/gravitl/netmaker))  
-> **Source Version**: `e50f0f23`  
-> **License**: NOASSERTION  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T11:00:58.929Z  
-> **Learning ID**: `learn-github-gravitl-netmaker`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): gravitl/netmaker
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gravitl-netmaker-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gravitl/netmaker](https://github.com/gravitl/netmaker))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T11:00:58.924Z  
+> **Harvest Timestamp**: 2026-11-15T07:41:57.898Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Netmaker makes networks with WireGuard. Netmaker automates fast, secure, and distributed virtual networks.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11869 stars
+- **Stars / Engagement**: 11873 stars
 
 ---
 
@@ -1042,8 +1028,8 @@ const CheckInInterval = 1
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e50f0f23` (2026-11-12)
-**Commit Message**: NM-356: keep static WireGuard configs on JIT, IdP, and access cleanup  (#4225)
+### Incident Patch 1: `ccc98823` (2026-11-14)
+**Commit Message**: NM-356: Enable CE user ACL policies with All Users and per-user sources (#4231)
 
 * NM-356: add username filter to nodes api
 
@@ -1071,570 +1057,649 @@ through a peer's RelayedBy as relayed even when that relay is an exit router.
 * fix: require network query on network-scoped mutations for network admins
 
 ACL/egress/nameserver/tags/posture create-update-delete ignored ?network=
-after NM-378, so auth fell thro
+after NM-378, so auth fell thr
 
-**File**: `controllers/user.go` (modified, +13/-1)
+**File**: `controllers/acls.go` (modified, +95/-96)
 ```diff
-@@ -1983,6 +1983,18 @@ func updateUser(w http.ResponseWriter, r *http.Request) {
- 			}
+@@ -19,6 +19,7 @@ import (
+ 	"github.com/gravitl/netmaker/mq"
+ 	"github.com/gravitl/netmaker/schema"
+ 	"github.com/gravitl/netmaker/scope"
++	"github.com/gravitl/netmaker/servercfg"
+ )
  
- 			if !logic.UserHasNetworkGroupAccess(ctx, user, extclient.Network) {
-+				if logic.IsStaticConfigExtClient(extclient) {
-+					changed, err := logic.DisableExtClient(ctx, &extclient)
-+					if err != nil {
-+						slog.Error("failed to disable static extclient",
-+							"id", extclient.ClientID, "owner", user.Username, "error", err)
-+					} else if changed {
-+						if err := mq.PublishDeletedClientPeerUpdate(ctx, &extclient); err != nil {
-+							slog.Error("error setting ext peers: " + err.Error())
-+						}
-+					}
-+					continue
-+				}
- 				err = logic.DeleteExtClient(r.Context(), extclient)
- 				if err != nil {
- 					slog.Error("failed to delete extclient",
-@@ -2160,7 +2172,7 @@ func cleanupUserRefs(ctx context.Context, username string, forceDeleteConfigs bo
- 			if extclient.OwnerID != username {
- 				continue
- 			}
--			if extclient.DeviceID == "" && extclient.RemoteAccessClientID == "" && !forceDeleteConfigs {
-+			if logic.IsStaticConfigExtClient(extclient) && !forceDeleteConfigs {
- 				// only delete wireguard configs on force
- 				continue
- 			}
+ func aclHandlers(r *mux.Router) {
+@@ -46,6 +47,20 @@ func aclHandlers(r *mux.Router) {
+ // @Success     200 {object} models.AclPolicyTypes
+ // @Failure     500 {object} models.ErrorResponse
+ func aclPolicyTypes(w http.ResponseWriter, r *http.Request) {
++	srcGroupTypes := []models.AclGroupType{
++		models.UserAclID,
++		models.NodeTagID,
++		models.NodeID,
++	}
++	// User groups remain Pro-only.
++	if servercfg.IsPro {
++		srcGroupTypes = []models.AclGroupType{
++			models.UserAclID,
++			models.UserGroupAclID,
++			models.NodeTagID,
++			models.NodeID,
++		}
++	}
+ 	resp := models.AclPolicyTypes{
+ 		RuleTypes: []models.AclPolicyType{
+ 			models.DevicePolicy,
+@@ -55,119 +70,103 @@ func aclPolicyTypes(w http.ResponseWriter, r *http.Request) {
+ 			models.NetworkAccess,
+ 			models.ManagedAccess,
+ 		},
+-		SrcGroupTypes: []models.AclGroupType{
+-			models.UserAclID,
+-			models.UserGroupAclID,
+-			models.NodeTagID,
+-			models.NodeID,
+-		},
++		SrcGroupTypes: srcGroupTypes,
+ 		DstGroupTypes: []models.AclGroupType{
+ 			models.NodeTagID,
+ 			models.NodeID,
+ 			models.EgressID,
+ 			models.NetmakerIPAclID,
+ 			// models.NetmakerSubNetRangeAClID,
+ 		},
+-		ProtocolTypes: []models.ProtocolType{
+-			{
+-				Name:       models.Any,
+-				AccessType: models.NetworkAccess,
+-				AllowedProtocols: []models.Protocol{
+-					models.ALL,
+-				},
+-				PortRange:        "All ports",
+-				AllowPortSetting: false,
+-			},
+-			{
+-				Name:       models.Http,
+-				AccessType: models.NetworkAccess,
+-				AllowedProtocols: []models.Protocol{
+-					models.TCP,
+-				},
+-				PortRange: "80",
++		ProtocolTypes: ceOrProProtocolTypes(),
++	}
++	logic.ReturnSuccessResponseWithJson(w, r, resp, "fetched acls types")
++}
++
++// ceOrProProtocolTypes returns Any-only protocol types on CE. Custom
++// protocol/port policies are Pro-only.
++func ceOrProProtocolTypes() []models.ProtocolType {
++	anyType := models.ProtocolType{
++		Name:       models.Any,
++		AccessType: models.NetworkAccess,
++		AllowedProtocols: []models.Protocol{
++			models.ALL,
++		},
++		PortRange:        "All ports",
++		AllowPortSetting: false,
++	}
++	if !servercfg.IsPro {
++		return []models.ProtocolType{anyType}
++	}
++	return []models.ProtocolType{
++		anyType,
++		{
++			Name:       models.Http,
++			AccessType: models.NetworkAccess,
++			AllowedProtocols: []models.Protocol{
++				models.TCP,
+ 			},
+-			{
+-				Name:       models.Https,
+-				AccessType: models.NetworkAccess,
+-				AllowedProtocols: []models.Protocol{
+-					models.TCP,
+-				},
+-				PortRange: "443",
++			PortRange: "80",
++		},
++		{
++			Name:       models.Https,
++			AccessType: models.NetworkAccess,
++			AllowedProtocols: []models.Protocol{
++				models.TCP,
+ 			},
+-			// {
+-			// 	Name: "MySQL",
+-			// 	AllowedProtocols: []models.Protocol{
+-			// 		models.TCP,
+-			// 	},
+-			// 	PortRange: "3306",
+-			// },
+-			// {
+-			// 	Name: "DNS TCP",
+-			// 	AllowedProtocols: []models.Protocol{
+-			// 		models.TCP,
+-			// 	},
+-			// 	PortRange: "53",
+-			// },
+-			// {
+-			// 	Name: "DNS UDP",
+-			// 	AllowedProtocols: []models.Protocol{
+-			// 		models.UDP,
+-			// 	},
+-			// 	PortRange: "53",
+-			// },
+-			{
+-				Name:       models.AllTCP,
+-				AccessType: models.NetworkAccess,
+-				AllowedProtocols: []models.Protocol{
+-					models.TCP,
+-				},
+-				PortRange: "All ports",
++			PortRange: "443",
++		},
++		{
++			Name:       models.AllTCP,
++			AccessType: models.NetworkAccess,
++			AllowedProtocols: []models.Protocol{
++				models.TCP,
+ 			},
+-			{
+-				Name:       models.AllUDP,
+-				AccessType: models.NetworkAccess,
+-				AllowedProtocols: []models.Protocol{
+-					models.UDP,
+-				},
+-				PortRange: "All ports",
++			PortRange: "All ports",
++		},
++		{
++			Name:       models.AllUDP,
++			AccessType: models.NetworkAccess,
++			AllowedProtocols: []models.Protocol{
++				models.UDP,
+ 			},
+-			{
+-				Name:       models.ICMPService,
+-				AccessType: models.NetworkAccess,
+-				AllowedProtocols: []models.Protocol{
+-					models.ICMP,
+-				},
+-				PortRange: "",
++			PortRange: "All ports",
++		},
++		{
++			Name:       models.ICMPService,
++			AccessType: models.NetworkAccess,
++			AllowedProtocols: []models.Protocol{
++				models.ICMP,
+ 			},
+-			{
+-				Name:       models.SSH,
+-				AccessType: models.NetworkAccess,
+-				AllowedProtocols: []models.Protocol{
+-					models.TCP,
+-				},
+-				PortRange: "22",
++			PortRange: "",
++		},
++		{
++			Name:       models.SSH,
++			AccessType: models.NetworkAccess,
++			AllowedProtocols: []models.Protocol{
++				models.TCP,
+ 			},
+-			{
+-				Name:       models.ManagedSSH,
+-				AccessType: models.ManagedAccess,
+-				AllowedProtocols: []models.Protocol{
+-					models.TCP,
+-				},
+-				AllowPortSetting: false,
++			PortRange: "22",
++		},
++		{
++			Name:       models.ManagedSSH,
++			AccessType: models.ManagedAccess,
++			AllowedProtocols: []models.Protocol{
++				models.TCP,
+ 			},
+-			
 ```
 
-**File**: `logic/extpeers.go` (modified, +54/-19)
+**File**: `controllers/ext_client.go` (modified, +8/-0)
 ```diff
-@@ -315,9 +315,15 @@ func UpdateExtClient(old *models.ExtClient, update *models.CustomExtClient) mode
- 	if update.DeniedACLs != nil && !reflect.DeepEqual(old.DeniedACLs, update.DeniedACLs) {
- 		new.DeniedACLs = update.DeniedACLs
+@@ -1629,6 +1629,14 @@ func validateCustomExtClient(ctx context.Context, customExtClient *models.Custom
+ 			}
+ 		}
  	}
--	// replace any \r\n with \n in postup and postdown from HTTP request
--	new.PostUp = strings.Replace(update.PostUp, "\r\n", "\n", -1)
--	new.PostDown = strings.Replace(update.PostDown, "\r\n", "\n", -1)
-+	// PostUp/PostDown: omitted and explicit "" both decode to empty, so treat
-+	// empty as "leave unchanged" (same idea as PublicKey). Sparse updates
-+	// (toggle, rename) must not wipe existing scripts.
-+	if update.PostUp != "" {
-+		new.PostUp = strings.Replace(update.PostUp, "\r\n", "\n", -1)
++	// PostUp/PostDown: nil = omit/leave unchanged on update; non-nil applies
++	// (including "" to clear). Enforce max length when the field is present.
++	if customExtClient.PostUp != nil && len(*customExtClient.PostUp) > 1024 {
++		return errors.New("postup exceeds max length of 1024")
 +	}
-+	if update.PostDown != "" {
-+		new.PostDown = strings.Replace(update.PostDown, "\r\n", "\n", -1)
++	if customExtClient.PostDown != nil && len(*customExtClient.PostDown) > 1024 {
++		return errors.New("postdown exceeds max length of 1024")
 +	}
- 	// Tags are usually managed via the tags API. Extclient edit payloads often
- 	// omit tags (nil); overwriting would drop the client from all tags. Only
- 	// apply when the caller explicitly sends a tags map (including {} to clear).
-@@ -388,25 +394,24 @@ func listExtClients(ctx context.Context, options ...dbtypes.Option) ([]models.Ex
+ 	return nil
  }
  
- // ToggleExtClientConnectivity - enables or disables an ext client
-+//
-+// Flips Enabled in place and saves. Does not go through UpdateExtClient with a
-+// sparse CustomExtClient, which would drop fields omitted from the update
-+// (notably PostUp/PostDown before those were guarded).
- func ToggleExtClientConnectivity(ctx context.Context, client *models.ExtClient, enable bool) (models.ExtClient, error) {
--	update := models.CustomExtClient{
--		Enabled:              enable,
--		ClientID:             client.ClientID,
--		PublicKey:            client.PublicKey,
--		DNS:                  client.DNS,
--		ExtraAllowedIPs:      client.ExtraAllowedIPs,
--		DeniedACLs:           client.DeniedACLs,
--		RemoteAccessClientID: client.RemoteAccessClientID,
-+	if client == nil {
-+		return models.ExtClient{}, errors.New("nil ext client")
- 	}
--
--	// update in DB (same ClientID — upsert, no delete/recreate)
--	newClient := UpdateExtClient(client, &update)
--	if err := SaveExtClient(ctx, &newClient); err != nil {
--		slog.Error("failed to save updated ext client during update", "id", newClient.ClientID, "network", newClient.Network, "error", err)
--		return newClient, err
-+	if client.Enabled == enable {
-+		return *client, nil
- 	}
--
--	return newClient, nil
-+	updated := *client
-+	updated.Enabled = enable
-+	if err := SaveExtClient(ctx, &updated); err != nil {
-+		slog.Error("failed to save updated ext client during update", "id", updated.ClientID, "network", updated.Network, "error", err)
-+		return updated, err
-+	}
-+	return updated, nil
+```
+
+**File**: `controllers/user.go` (modified, +35/-0)
+```diff
+@@ -70,6 +70,7 @@ func userHandlers(r *mux.Router) {
+ 	r.HandleFunc("/api/v1/users/access_token", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(getUserAccessTokens)))).Methods(http.MethodGet).Queries("username", "{username}")
+ 	r.HandleFunc("/api/v1/users/access_token", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(deleteUserAccessTokens)))).Methods(http.MethodDelete)
+ 	r.HandleFunc("/api/v1/users/logout", middleware.Scope(scope.TenantScope, logic.SecurityCheck(false, logic.ContinueIfUserMatch(http.HandlerFunc(logout))))).Methods(http.MethodPost).Queries("username", "{username}")
++	r.HandleFunc("/api/v1/users/network", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(listNetworkUsers)))).Methods(http.MethodGet).Queries("network", "{network}")
  }
  
- func GetExtPeers(ctx context.Context, g *PeerGraph, node, peer *models.Node, addressIdentityMap map[string]models.PeerIdentity) ([]wgtypes.PeerConfig, []models.IDandAddr, []models.EgressNetworkRoutes, error) {
-@@ -690,6 +695,36 @@ func GetStaticNodesByNetwork(ctx context.Context, network schema.NetworkID, only
+ // @Summary     Create a user API access token
+@@ -1282,6 +1283,40 @@ func getUsers(w http.ResponseWriter, r *http.Request) {
+ 	json.NewEncoder(w).Encode(users)
+ }
+ 
++// @Summary     List users with access to a network
++// @Router      /api/v1/users/network [get]
++// @Tags        Users
++// @Security    oauth
++// @Produce     json
++// @Param       network query string true "Network ID"
++// @Success     200 {array} models.ReturnUser
++// @Failure     400 {object} models.ErrorResponse
++// @Failure     500 {object} models.ErrorResponse
++func listNetworkUsers(w http.ResponseWriter, r *http.Request) {
++	network := r.URL.Query().Get("network")
++	if network == "" {
++		logic.ReturnErrorResponse(w, r, logic.FormatError(errors.New("network is required"), logic.BadReq))
++		return
++	}
++	if err := (&schema.Network{Name: network}).Get(r.Context()); err != nil {
++		logic.ReturnErrorResponse(w, r, logic.FormatError(fmt.Errorf("network %s not found", network), logic.BadReq))
++		return
++	}
++
++	_users, err := (&schema.User{}).ListAllWithMembership(r.Context())
++	if err != nil {
++		logic.ReturnErrorResponse(w, r, logic.FormatError(err, logic.Internal))
++		return
++	}
++	networkUsers := make([]models.ReturnUser, 0)
++	for i := range _users {
++		if logic.UserHasAccessToNetwork(r.Context(), &_users[i], network) {
++			networkUsers = append(networkUsers, logic.ToReturnUser(&_users[i]))
++		}
++	}
++	logic.ReturnSuccessResponseWithJson(w, r, networkUsers, "fetched users for network "+network)
++}
++
+ // @Summary     List all users
+ // @Router      /api/v2/users [get]
+ // @Tags        Users
+```
+
+**File**: `logic/acls.go` (modified, +90/-33)
+```diff
+@@ -3207,6 +3207,24 @@ func getSelectedEgressIPNets(dstTags []models.AclPolicyTag) (dst4, dst6 []net.IP
  	return
  }
  
-+// IsRACExtClient reports whether the ext client was created by the remote
-+// access / desktop client app (has a device or RAC id). Admin-managed static
-+// WireGuard config files have neither.
-+func IsRACExtClient(client models.ExtClient) bool {
-+	return client.DeviceID != "" || client.RemoteAccessClientID != ""
++// validateCENetworkAclProtoAndPorts rejects protocol/port scoping on CE.
++// Network-access policies must be all-protocols / all-ports (type Any).
++func validateCENetworkAclProtoAndPorts(acl models.Acl) error {
++	if servercfg.IsPro || !acl.IsNetworkAccess() {
++		return nil
++	}
++	if acl.ServiceType != "" && acl.ServiceType != models.Any {
++		return errors.New("custom protocol and port policies are not allowed on CE")
++	}
++	if acl.Proto != "" && acl.Proto != models.ALL {
++		return errors.New("custom protocols are not allowed on CE")
++	}
++	if len(acl.Port) > 0 {
++		return errors.New("custom ports are not allowed on CE")
++	}
++	return nil
 +}
 +
-+// IsStaticConfigExtClient reports whether the ext client is an admin-managed
-+// static WireGuard config file (no device / RAC id). JIT never deletes or
-+// disables these. On IdP sync or group/network access loss they are disabled
-+// (not deleted) so the config remains but cannot be used until re-enabled.
-+func IsStaticConfigExtClient(client models.ExtClient) bool {
-+	return !IsRACExtClient(client)
-+}
-+
-+// DisableExtClient disables an ext client without deleting it. No-op if
-+// already disabled. Callers should publish a deleted-client peer update when
-+// changed is true so gateways drop the peer.
-+func DisableExtClient(ctx context.Context, client *models.ExtClient) (changed bool, err error) {
-+	if client == nil || !client.Enabled {
-+		return false, nil
-+	}
-+	updated, err := ToggleExtClientConnectivity(ctx, client, false)
-+	if err != nil {
-+		return false, err
-+	}
-+	*client = updated
-+	return true, nil
-+}
-+
- // CleanupOtherExtclients cleans up other clients owned by the same use for the same device and network.
- func CleanupOtherExtclients(ctx context.Context, extclient *models.ExtClient) error {
- 	extclients, err := GetNetworkExtClients(ctx, extclient.Network)
-```
-
-**File**: `logic/extpeers_test.go` (modified, +95/-0)
-```diff
-@@ -173,6 +173,101 @@ func TestGetNetworkAndAllExtClients(t *testing.T) {
- 	assert.Equal(t, "tenant-list-other", all[0].TenantID)
- }
- 
-+func TestIsRACExtClient(t *testing.T) {
-+	assert.True(t, IsRACExtClient(models.ExtClient{DeviceID: "dev-1"}))
-+	assert.True(t, IsRACExtClient(models.ExtClient{RemoteAccessClientID: "rac-1"}))
-+	assert.True(t, IsRACExtClient(models.ExtClient{DeviceID: "dev-1", RemoteAccessClientID: "rac-1"}))
-+	assert.False(t, IsRACExtClient(models.ExtClient{}))
-+	assert.True(t, IsStaticConfigExtClient(models.ExtClient{}))
-+	assert.False(t, IsStaticConfigExtClient(models.ExtClient{DeviceID: "dev-1"}))
-+}
-+
-+func TestDisableExtClient(t *testing.T) {
-+	ctx := extClientTestCtx("tenant-1")
-+	network := createExtClientTestNetwork(t, ctx, "extclient-disable-"+uuid.NewString()[:8])
-+
-+	extclient := newTestExtClient("client-disable", network.Name)
-+	extclient.DeviceID = ""
-+	extclient.RemoteAccessClientID = ""
-+	extclient.Enabled = true
-+	require.NoError(t, SaveExtClient(ctx, extclient))
-+
-+	changed, err := DisableExtClient(ctx, extclient)
-+	require.NoError(t, err)
-+	assert.True(t, changed)
-+	assert.False(t, extclient.Enabled)
-+
-+	got, err := GetExtClient(ctx, "client-disable", network.Name)
-+	require.NoError(t, err)
-+	assert.False(t, got.Enabled)
-+
-+	changed, err = DisableExtClient(ctx, &got)
-+	require.NoError(t, err)
-+	assert.False(t, changed, "already disabled is a no-op")
-+}
-+
-+func TestDisableExtClientPreservesPostUpPostDown(t *testing.T) {
-+	ctx := extClientTestCtx("tenant-1")
-+	network := createExtClientTestNetwork(t, ctx, "extclient-disable-post-"+uuid.NewString()[:8])
-+
-+	extclient := newTestExtClient("client-disable-post", network.Name)
-+	extclient.DeviceID = ""
-+	extclient.RemoteAccessClientID = ""
-+	extclient.Enabled = true
-+	extclient.PostUp = "iptables -A FORWARD -j ACCEPT"
-+	extclient.PostDown = "iptables -D FORWARD -j ACCEPT"
-+	require.NoError(t, SaveExtClient(ctx, extclient))
-+
-+	changed, err := DisableExtClient(ctx, extclient)
-+	require.NoError(t, err)
-+	assert.True(t, changed)
-+
-+	disabled, err := GetExtClient(ctx, "client-disable-post", network.Name)
-+	require.NoError(t, err)
-+	assert.False(t, disabled.Enabled)
-+	assert.Equal(t, "iptables -A FORWARD -j ACCEPT", disabled.PostUp)
-+	assert.Equal(t, "iptables -D FORWARD -j ACCEPT", disabled.PostDown)
-+
-+	reenabled, err := ToggleExtClientConnectivity(ctx, &disabled, true)
-+	require.NoError(t, err)
-+	assert.True(t, reenabled.Enabled)
-+	assert.Equal(t, "iptables -A FORWARD -j ACCEPT", reenabled.PostUp)
-+	assert.Equal(t, "iptables -D FORWARD -j ACCEPT", reenabled.PostDown)
-+
-+	got, err := GetExtClient(ctx, "client-disable-post", network.Name)
-+	require.NoError(t, err)
-+	assert.True(t, got.Enabled)
-+	assert.Equal(t, "iptables -A FORWARD -j ACCEPT", got.PostUp)
-+	assert.Equal(t, "iptables -D FORWARD -j ACCEPT", got.PostDown)
-+}
-+
-+func TestUpdateExtClientPreservesPostUpPostDownWhenOmitted(t *testing.T) {
-+	old := models.ExtClient{
-+		ClientID: "client-1",
-+		Enabled:  true,
-+		PostUp:   "iptables -A FORWARD -j ACCEPT",
-+		PostDown: "iptables -D FORWARD -j ACCEPT",
-+		DNS:      "1.1.1.1",
-+	}
-+	updated := UpdateExtClient(&old, &models.CustomExtClient{
-+		ClientID:  "client-1-renamed",
-+		PublicKey: "pub",
-+		Enabled:   false,
-+	})
-+	assert.Equal(t, "client-1-renamed", updated.ClientID)
-+	assert.False(t, updated.Enabled)
-+	assert.Equal(t, "iptables -A FORWARD -j ACCEPT", updated.PostUp)
-+	assert.Equal(t, "iptables -D FORWARD -j ACCEPT", updated.PostDown)
-+
-+	withScripts := UpdateExtClient(&old, &models.CustomExtClient{
-+		ClientID: "client-1",
-+		PostUp:   "echo up\r\necho up2",
-+		PostDown: "echo down\r\necho down2",
-+	})
-+	assert.Equal(t, "echo up\necho up2", withScripts.PostUp)
-+	assert.Equal(t, "echo down\necho down2", withScripts.PostDown)
-+}
-+
- func TestDeleteExtClient(t *testing.T) {
- 	ctx := extClientTestCtx("tenant-1")
- 	network := createExtClientTestNetwork(t, ctx, "extclient-delete-net")
-```
-
-**File**: `logic/network_topology.go` (modified, +19/-0)
-```diff
-@@ -601,10 +601,29 @@ func (b *networkStatusBuilder) connection(node, peer *models.Node) models.Networ
- 	if via != "" {
- 		conn.Via = b.nodeRef(via)
- 	}
-+	// Peers disconnected from the network keep stale metrics; force
-+	// connected=false and skip metric lookups. Otherwise connected/latency
-+	// come from metrics as before.
-+	if !peerNetworkConnected(peer) {
-+		conn.Connected = false
-+		return conn
-+	}
- 	b.applyConnectionLiveness(&conn, node, peer, via)
- 	return conn
- }
- 
-+// peerNetworkConnected reports whether the peer is attached to the network
-+// (node.Connected, or Enabled for static ExtClients).
-+func peerNetworkConnected(peer *models.Node) bool {
-+	if peer == nil {
-+		return false
-+	}
-+	if peer.IsStatic {
-+		return peer.StaticNode.Enabled
-+	}
-+	return peer.Connected
-+}
-+
- // connectionPath classifies the clicked node's path to peer: direct, through a
- // relay, or through the viewer's selected internet exit.
- func (b *networkStatusBuilder) connectionPath(node, peer *models.Node) (models.NetworkConnectionType, string) {
-```
-
-**File**: `logic/network_topology_test.go` (modified, +57/-0)
-```diff
-@@ -403,20 +403,27 @@ func TestNodeConnectionsUsesLoadedUserPolicy(t *testing.T) {
- func TestNodeConnectionsRelayedExitAndExtClient(t *testing.T) {
- 	relay := newTestNode()
- 	relay.IsRelay = true
-+	relay.Connected = true
- 	exitNode := newTestNode()
-+	exitNode.Connected = true
- 	site := newTestNode()
-+	site.Connected = true
- 	plain := newTestNode()
-+	plain.Connected = true
- 	client := newTestNode()
-+	client.Connected = true
- 	client.IsRelayed = true
- 	client.RelayedBy = relay.ID.String()
- 	exitClient := newTestNode()
-+	exitClient.Connected = true
- 	exitClient.IsRelayed = true
- 	exitClient.RelayedBy = exitNode.ID.String()
- 	exitClient.SelectedInternetEgressID = "exit"
- 	exitClient.InternetGwID = exitNode.ID.String()
- 	// Peer manually RelayedBy a node that is also an internet-egress router —
- 	// path type must stay "relayed", not flip to "exit".
- 	relayedByExit := newTestNode()
-+	relayedByExit.Connected = true
- 	relayedByExit.IsRelayed = true
- 	relayedByExit.RelayedBy = exitNode.ID.String()
- 
-@@ -550,12 +557,17 @@ func TestNodeConnectionsExtClientLiveness(t *testing.T) {
- 	gw := newTestNode()
- 	gw.IsIngressGateway = true
- 	gw.IsRelay = true
-+	gw.Connected = true
- 	viewer := newTestNode()
-+	viewer.Connected = true
- 	relayed := newTestNode()
-+	relayed.Connected = true
- 	relayed.IsRelayed = true
- 	relayed.RelayedBy = gw.ID.String()
- 	partial := newTestNode()
-+	partial.Connected = true
- 	down := newTestNode()
-+	down.Connected = true
- 
- 	ext := &models.Node{IsStatic: true}
- 	ext.StaticNode.ClientID = "laptop"
-@@ -622,6 +634,51 @@ func TestNodeConnectionsExtClientLiveness(t *testing.T) {
- 	}
- }
- 
-+func TestNodeConnectionsSkipsMetricsWhenPeerDisconnected(t *testing.T) {
-+	viewer := newTestNode()
-+	viewer.Connected = true
-+	peer := newTestNode()
-+	peer.Connected = false
-+
-+	b := newTestStatusBuilder(nil, NetworkStatusOptions{}, viewer, peer)
-+	stubMetrics(t, map[string]map[string]models.Metric{
-+		viewer.ID.String(): {
-+			peer.ID.String(): {Connected: true, Latency: 50, PercentUp: 99},
-+		},
-+	})
-+
-+	got, err := b.nodeConnections([]models.Node{*viewer, *peer}, viewer.ID.String())
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	c := indexConns(t, got.Connections)[peer.ID.String()]
-+	if c.Connected || c.LatencyMs != 0 || c.PercentUp != 0 {
-+		t.Fatalf("disconnected peer should skip metrics = %+v", c)
-+	}
-+
-+	disabled := &models.Node{IsStatic: true}
-+	disabled.StaticNode.ClientID = "off-cfg"
-+	disabled.StaticNode.Enabled = false
-+	gw := newTestNode()
-+	gw.IsIngressGateway = true
-+	gw.Connected = true
-+	b2 := newTestStatusBuilder(nil, NetworkStatusOptions{}, gw)
-+	b2.names[disabled.StaticNode.ClientID] = "off-cfg"
-+	stubMetrics(t, map[string]map[string]models.Metric{
-+		gw.ID.String(): {
-+			disabled.StaticNode.ClientID: {Connected: true, Latency: 9, PercentUp: 80},
-+		},
-+	})
-+	fromGW, err := b2.nodeConnections([]models.Node{*gw, *disabled}, gw.ID.String())
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	c = indexConns(t, fromGW.Connections)[disabled.StaticNode.ClientID]
-+	if c.Connected || c.LatencyMs != 0 || c.PercentUp != 0 {
-+		t.Fatalf("disabled config file should skip metrics = %+v", c)
-+	}
-+}
-+
- func indexConns(t *testing.T, conns []models.NetworkConnection) map[string]models.NetworkConnection {
- 	t.Helper()
- 	out := make(map[string]models.NetworkConnection, len(conns))
-```
-
-**File**: `pro/auth/sync.go` (modified, +15/-5)
-```diff
-@@ -337,7 +337,8 @@ func syncUsers(ctx context.Context, idpUsers []idp.User, filters []string, remov
- 			// delete the user if it has been archived.
- 			user, ok := dbUsersMap[user.Username]
- 			if ok {
--				_ = deleteUser(ctx, user, true, cleanupUserRefs)
-+				// Keep admin-managed static WireGuard configs; RAC clients are cleaned up.
-+				_ = deleteUser(ctx, user, false, cleanupUserRefs)
- 			}
- 			continue
+ func checkIfAclTagisValid(ctx context.Context, a models.Acl, t models.AclPolicyTag, isSrc bool) (err error) {
+ 	switch t.ID {
+ 	case models.NodeID:
+@@ -3233,6 +3251,23 @@ func checkIfAclTagisValid(ctx context.Context, a models.Acl, t models.AclPolicyT
+ 		if err != nil {
+ 			return err
  		}
-@@ -459,8 +460,8 @@ func syncUsers(ctx context.Context, idpUsers []idp.User, filters []string, remov
- 				}
++	case models.UserAclID:
++		if a.RuleType == models.DevicePolicy {
++			return errors.New("device policy source mismatch")
++		}
++		if !isSrc {
++			return errors.New("user cannot be added to destination")
++		}
++		if t.Value == "*" {
++			return nil
++		}
++		userCheck := &schema.User{Username: t.Value}
++		if err := userCheck.Get(ctx); err != nil {
++			return errors.New("invalid user " + t.Value)
++		}
++	case models.UserGroupAclID:
++		// User groups remain Pro-only.
++		return errors.New("user groups are not supported")
+ 	default:
+ 		return errors.New("invalid policy")
+ 	}
+@@ -3248,12 +3283,42 @@ var IsAclPolicyValid = func(ctx context.Context, acl models.Acl) (err error) {
+ 		return err
+ 	}
  
- 				// delete the user if it has been deleted on idp
--				// or is filtered out.
--				err = deleteUser(ctx, user, true, cleanupUserRefs)
-+				// or is filtered out. Keep admin-managed static WireGuard configs.
-+				err = deleteUser(ctx, user, false, cleanupUserRefs)
- 				if err != nil {
- 					return err
- 				}
-@@ -694,10 +695,19 @@ func cleanupUserRefs(ctx context.Context, username string, forceDeleteConfigs bo
- 		extclients, err := logic.GetAllExtClients(ctx)
- 		if err == nil {
- 			for _, extclient := range extclients {
--				if extclient.OwnerID == username {
--					if err := logic.DeleteExtClient(ctx, extclient); err == nil {
-+				if extclient.OwnerID != username {
-+					continue
+-	//check if src and dst are valid
+-	if acl.IsNetworkAccess() && acl.AllowedDirection == models.TrafficDirectionUni {
++	// Device/resource policies on CE must be bidirectional. User policies are
++	// always unidirectional (users → resources).
++	if acl.RuleType == models.DevicePolicy && acl.IsNetworkAccess() &&
++		acl.AllowedDirection == models.TrafficDirectionUni {
+ 		return errors.New("uni traffic flow not allowed on CE")
+ 	}
++	if err := validateCENetworkAclProtoAndPorts(acl); err != nil {
++		return err
++	}
+ 	switch acl.RuleType {
+-
++	case models.UserPolicy:
++		for _, srcI := range acl.Src {
++			if srcI.Value == "*" {
++				if srcI.ID != models.UserAclID {
++					return errors.New("user policy source mismatch")
 +				}
-+				if logic.IsStaticConfigExtClient(extclient) && !forceDeleteConfigs {
-+					// Keep the config file but disable it so it cannot be used.
-+					changed, err := logic.DisableExtClient(ctx, &extclient)
-+					if err == nil && changed {
- 						_ = mq.PublishDeletedClientPeerUpdate(ctx, &extclient)
- 					}
-+					continue
-+				}
-+				if err := logic.DeleteExtClient(ctx, extclient); err == nil {
-+					_ = mq.PublishDeletedClientPeerUpdate(ctx, &extclient)
- 				}
- 			}
++				continue
++			}
++			if srcI.ID == models.UserGroupAclID {
++				return errors.New("user groups are not supported")
++			}
++			if err = checkIfAclTagisValid(ctx, acl, srcI, true); err != nil {
++				return err
++			}
++		}
++		for _, dstI := range acl.Dst {
++			if dstI.Value == "*" {
++				continue
++			}
++			if dstI.ID == models.NodeTagID && dstI.Value == fmt.Sprintf("%s.%s", acl.NetworkID.String(), models.GwTagName) {
++				continue
++			}
++			if err = checkIfAclTagisValid(ctx, acl, dstI, false); err != nil {
++				return err
++			}
++		}
+ 	case models.DevicePolicy:
+ 		for _, srcI := range acl.Src {
+ 			if srcI.Value == "*" {
+@@ -3473,7 +3538,9 @@ func MigrateAclPolicies(ctx context.Context) {
+ 			UpsertAcl(ctx, acl)
  		}
-```
-
-**File**: `pro/logic/jit.go` (modified, +21/-15)
-```diff
-@@ -721,12 +721,12 @@ func DisconnectExtClientsFromNetwork(ctx context.Context, networkID string) erro
- 
- // extClientFromClientApp reports whether the ext client was created by the desktop/RAC app.
- func extClientFromClientApp(client models.ExtClient) bool {
--	return client.DeviceID != "" || client.RemoteAccessClientID != ""
-+	return logic.IsRACExtClient(client)
- }
- 
- // DisconnectExtClientsFromNetworkForScope removes client-app ext clients for users who require
--// a JIT grant under the given network configuration. Admin-managed config files (no device/
--// remote_access_client id) are kept.
-+// a JIT grant under the given network configuration. Admin-managed static config files (no
-+// device / remote_access_client id) are left untouched — JIT does not apply to them.
- func DisconnectExtClientsFromNetworkForScope(ctx context.Context, network *schema.Network) error {
- 	extClients, err := logic.GetNetworkExtClients(ctx, network.Name)
+ 		if !servercfg.IsPro {
+-			if acl.IsNetworkAccess() && acl.AllowedDirection == models.TrafficDirectionUni {
++			// Keep user policies unidirectional; only force device policies to bi on CE.
++			if acl.RuleType == models.DevicePolicy && acl.IsNetworkAccess() &&
++				acl.AllowedDirection == models.TrafficDirectionUni {
+ 				acl.AllowedDirection = models.TrafficDirectionBi
+ 				UpsertAcl(ctx, acl)
+ 			}
+@@ -3747,9 +3814,6 @@ func GetDefaultPolicy(ctx context.Context, netID schema.NetworkID, ruleType mode
+ 	if ruleType == models.DevicePolicy {
+ 		aclID = "all-nodes"
+ 	}
+-	if !servercfg.IsPro && ruleType == models.UserPolicy {
+-		return models.Acl{Enabled: true}, nil
+-	}
+ 	acl, err := GetAcl(ctx, fmt.Sprintf("%s.%s", netID, aclID))
  	if err != nil {
-@@ -805,7 +805,8 @@ func DeactivateUserGrantsOnNetwork(ctx context.Context, networkID, userID string
- }
- 
- // RemoveUserJITNetworkAccess removes a user's network presence after JIT ends:
--// ExtClients are deleted; host-backed user device nodes are disconnected.
-+// RAC ExtClients are deleted (static config files are left alone); host-backed
-+// user device nodes are disconnected.
- func RemoveUserJITNetworkAccess(ctx context.Context, networkID, userID string) error {
- 	return removeUserJITNetworkAccess(ctx, networkID, userID)
- }
-@@ -844,17 +845,22 @@ func disconnectUserExtClients(ctx context.Context, networkID, userID string) err
- 	for _, client := range extClients {
- 		// Check if this ext client belongs to the user
- 		// Ext clients have OwnerID field that should match userID
--		if client.OwnerID == userID {
--			clientCopy := client
--			if err := logic.DeleteExtClient(ctx, client); err != nil {
--				slog.Warn("failed to delete ext client after JIT ended",
--					"client_id", client.ClientID, "error", err)
+ 		return models.Acl{}, errors.New("default rule not found")
+@@ -3789,9 +3853,6 @@ func ListAclsByNetwork(ctx context.Context, netID schema.NetworkID) ([]models.Ac
+ 	allAcls := ListAcls(ctx)
+ 	var netAcls []models.Acl
+ 	for _, acl := range allAcls {
+-		if !servercfg.IsPro && acl.RuleType == models.UserPolicy {
+-			continue
+-		}
+ 		if acl.NetworkID == netID {
+ 			netAcls = append(netAcls, acl)
+ 		}
+@@ -3803,9 +3864,6 @@ func ListEgressAcls(ctx context.Context, egressID string) ([]models.Acl, error)
+ 	acls := ListAcls(ctx)
+ 	var egressAcls []models.Acl
+ 	for _, acl := range acls {
+-		if !servercfg.IsPro && acl.RuleType == models.UserPolicy {
+-			continue
+-		}
+ 		for _, dst := range acl.Dst {
+ 			if dst.ID == models.EgressID && dst.Value == egressID {
+ 				egressAcls = append(egressAcls, acl)
+@@ -3954,28 +4012,27 @@ func ListAcls(ctx context.Context) (acls []models.Acl) {
+ 	for _, r := range aclRecords {
+ 		acl := r.Value.Data()
+ 		if !servercfg.IsPro {
+-			if acl.RuleType == models.UserPolicy {
 -				continue
 -			}
--			if err := mq.PublishDeletedClientPeerUpdate(ctx, &clientCopy); err != nil {
--				slog.Warn("failed to publish deleted client peer update",
--					"client_id", client.ClientID, "error", err)
--			}
-+		if client.OwnerID != userID {
-+			continue
-+		}
-+		// Admin-managed static configs are outside JIT — never delete or disable them.
-+		if !logic.IsRACExtClient(client) {
-+			continue
-+		}
-+		clientCopy := client
-+		if err := logic.DeleteExtClient(ctx, client); err != nil {
-+			slog.Warn("failed to delete ext client after JIT ended",
-+				"client_id", client.ClientID, "error", err)
-+			continue
-+		}
-+		if err := mq.PublishDeletedClientPeerUpdate(ctx, &clientCopy); err != nil {
-+			slog.Warn("failed to publish deleted client peer update",
-+				"client_id", client.ClientID, "error", err)
- 		}
- 	}
- 
+-			skip :
 ```
 
-**File**: `pro/logic/jit_extclient_cleanup_test.go` (added, +64/-0)
+**File**: `logic/extpeers.go` (modified, +8/-9)
 ```diff
-@@ -0,0 +1,64 @@
-+package logic
+@@ -315,14 +315,13 @@ func UpdateExtClient(old *models.ExtClient, update *models.CustomExtClient) mode
+ 	if update.DeniedACLs != nil && !reflect.DeepEqual(old.DeniedACLs, update.DeniedACLs) {
+ 		new.DeniedACLs = update.DeniedACLs
+ 	}
+-	// PostUp/PostDown: omitted and explicit "" both decode to empty, so treat
+-	// empty as "leave unchanged" (same idea as PublicKey). Sparse updates
+-	// (toggle, rename) must not wipe existing scripts.
+-	if update.PostUp != "" {
+-		new.PostUp = strings.Replace(update.PostUp, "\r\n", "\n", -1)
++	// PostUp/PostDown are *string: nil leaves the stored script unchanged;
++	// non-nil (including "") applies the value after normalizing newlines.
++	if update.PostUp != nil {
++		new.PostUp = strings.Replace(*update.PostUp, "\r\n", "\n", -1)
+ 	}
+-	if update.PostDown != "" {
+-		new.PostDown = strings.Replace(update.PostDown, "\r\n", "\n", -1)
++	if update.PostDown != nil {
++		new.PostDown = strings.Replace(*update.PostDown, "\r\n", "\n", -1)
+ 	}
+ 	// Tags are usually managed via the tags API. Extclient edit payloads often
+ 	// omit tags (nil); overwriting would drop the client from all tags. Only
+@@ -396,8 +395,8 @@ func listExtClients(ctx context.Context, options ...dbtypes.Option) ([]models.Ex
+ // ToggleExtClientConnectivity - enables or disables an ext client
+ //
+ // Flips Enabled in place and saves. Does not go through UpdateExtClient with a
+-// sparse CustomExtClient, which would drop fields omitted from the update
+-// (notably PostUp/PostDown before those were guarded).
++// sparse CustomExtClient (nil PostUp/PostDown would leave scripts unchanged
++// now, but toggling still bypasses the full update path).
+ func ToggleExtClientConnectivity(ctx context.Context, client *models.ExtClient, enable bool) (models.ExtClient, error) {
+ 	if client == nil {
+ 		return models.ExtClient{}, errors.New("nil ext client")
+```
+
+**File**: `logic/extpeers_test.go` (modified, +16/-2)
+```diff
+@@ -259,13 +259,27 @@ func TestUpdateExtClientPreservesPostUpPostDownWhenOmitted(t *testing.T) {
+ 	assert.Equal(t, "iptables -A FORWARD -j ACCEPT", updated.PostUp)
+ 	assert.Equal(t, "iptables -D FORWARD -j ACCEPT", updated.PostDown)
+ 
++	postUp := "echo up\r\necho up2"
++	postDown := "echo down\r\necho down2"
+ 	withScripts := UpdateExtClient(&old, &models.CustomExtClient{
+ 		ClientID: "client-1",
+-		PostUp:   "echo up\r\necho up2",
+-		PostDown: "echo down\r\necho down2",
++		PostUp:   &postUp,
++		PostDown: &postDown,
+ 	})
+ 	assert.Equal(t, "echo up\necho up2", withScripts.PostUp)
+ 	assert.Equal(t, "echo down\necho down2", withScripts.PostDown)
 +
-+import (
-+	"context"
-+	"testing"
-+
-+	"github.com/gravitl/netmaker/db"
-+	"github.com/gravitl/netmaker/logic"
-+	"github.com/gravitl/netmaker/models"
-+	"github.com/gravitl/netmaker/schema"
-+	"github.com/gravitl/netmaker/scope"
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+	"gorm.io/gorm"
-+)
-+
-+func TestDisconnectUserExtClientsLeavesStaticConfigsAlone(t *testing.T) {
-+	t.Chdir(t.TempDir())
-+	require.NoError(t, db.InitializeDB(schema.ListModels()...))
-+	t.Cleanup(db.CloseDB)
-+
-+	ctx := scope.WithContext(db.WithContext(context.Background()), scope.TenantScope, "tenant-1")
-+	network := &schema.Network{TenantID: "tenant-1", Name: "jit-ext-net", AddressRange: "10.10.0.0/24"}
-+	require.NoError(t, network.Create(ctx))
-+
-+	staticCfg := &models.ExtClient{
-+		ClientID: "static-cfg",
-+		Network:  network.Name,
-+		OwnerID:  "alice",
-+		Enabled:  true,
-+	}
-+	require.NoError(t, logic.SaveExtClient(ctx, staticCfg))
-+
-+	racClient := &models.ExtClient{
-+		ClientID:             "rac-client",
-+		Network:              network.Name,
-+		OwnerID:              "alice",
-+		Enabled:              true,
-+		DeviceID:             "device-1",
-+		RemoteAccessClientID: "rac-1",
-+	}
-+	require.NoError(t, logic.SaveExtClient(ctx, racClient))
-+
-+	otherOwner := &models.ExtClient{
-+		ClientID:             "other-rac",
-+		Network:              network.Name,
-+		OwnerID:              "bob",
-+		Enabled:              true,
-+		RemoteAccessClientID: "rac-2",
-+	}
-+	require.NoError(t, logic.SaveExtClient(ctx, otherOwner))
-+
-+	require.NoError(t, disconnectUserExtClients(ctx, network.Name, "alice"))
-+
-+	got, err := logic.GetExtClient(ctx, "static-cfg", network.Name)
-+	require.NoError(t, err, "static config file should be kept")
-+	assert.True(t, got.Enabled, "static config should stay enabled; JIT does not apply")
-+
-+	_, err = logic.GetExtClient(ctx, "rac-client", network.Name)
-+	assert.ErrorIs(t, err, gorm.ErrRecordNotFound, "RAC client should be deleted")
-+
-+	_, err = logic.GetExtClient(ctx, "other-rac", network.Name)
-+	require.NoError(t, err, "other owners should be untouched")
++	empty := ""
++	cleared := UpdateExtClient(&old, &models.CustomExtClient{
++		ClientID: "client-1",
++		PostUp:   &empty,
++		PostDown: &empty,
++	})
++	assert.Equal(t, "", cleared.PostUp)
++	assert.Equal(t, "", cleared.PostDown)
++	// Omitted pointers still leave scripts unchanged after a clear payload shape.
++	assert.Equal(t, "iptables -A FORWARD -j ACCEPT", old.PostUp)
++	assert.Equal(t, "iptables -D FORWARD -j ACCEPT", old.PostDown)
+ }
+ 
+ func TestDeleteExtClient(t *testing.T) {
+```
+
+**File**: `logic/peers.go` (modified, +0/-3)
+```diff
+@@ -210,9 +210,6 @@ func (g *PeerGraph) HostPeerInfo(ctx context.Context, host *schema.Host) (models
+ func defaultsAllowAllTraffic(device, user models.Acl, acls []models.Acl) bool {
+ 	deviceOn := device.Enabled && aclOpenBothSides(device)
+ 	userOn := user.Enabled && aclOpenBothSides(user)
+-	if !servercfg.IsPro {
+-		userOn = true
+-	}
+ 	for _, acl := range acls {
+ 		if !acl.Enabled || !aclOpenBothSides(acl) {
+ 			continue
+```
+
+**File**: `logic/user_device_acls.go` (renamed, +58/-53)
+```diff
+@@ -4,22 +4,27 @@ import (
+ 	"context"
+ 	"net"
+ 
+-	"github.com/gravitl/netmaker/logic"
+ 	"github.com/gravitl/netmaker/models"
+ 	"github.com/gravitl/netmaker/schema"
+ )
+ 
++func init() {
++	GetUserDeviceAclRulesForNode = getUserDeviceAclRulesForNode
++	GetUserDeviceEgressRulesForNode = getUserDeviceEgressRulesForNode
++	GetFwRulesForUserDevicesOnGw = getFwRulesForUserDevicesOnGw
 +}
++
+ // Host-backed user devices (schema.Host.OwnerUsername) are real nodes, so their
+ // firewall source is the node's own overlay address instead of a static-node
+ // address. These hooks run alongside the ExtClient/RAC user hooks in
+-// pro/logic/acls.go, which stay untouched.
++// logic/user_policy_acls.go, which stay untouched.
+ 
+ // userDeviceRuleSuffix keeps user-device rule IDs from colliding with the
+ // ExtClient user rules, which are keyed by the bare policy ID.
+ const userDeviceRuleSuffix = "#user-device"
+ 
+ // listUserDevicesForACL lists host-backed user devices; tests may override.
+-var listUserDevicesForACL = logic.ListUserDevicesByNetwork
++var listUserDevicesForACL = ListUserDevicesByNetwork
+ 
+ // listEgressForUserDeviceACL lists network egresses; tests may override.
+ var listEgressForUserDeviceACL = func(ctx context.Context, network string) ([]schema.Egress, error) {
+@@ -28,7 +33,7 @@ var listEgressForUserDeviceACL = func(ctx context.Context, network string) ([]sc
+ 
+ // getDefaultUserPolicyForUserDeviceACL loads the default user policy; tests may override.
+ var getDefaultUserPolicyForUserDeviceACL = func(ctx context.Context, netID schema.NetworkID) (models.Acl, error) {
+-	return logic.GetDefaultPolicy(ctx, netID, models.UserPolicy)
++	return GetDefaultPolicy(ctx, netID, models.UserPolicy)
+ }
+ 
+ // userDeviceSrcIPsForPolicy returns the overlay addresses of the devices whose
+@@ -55,10 +60,10 @@ func userDeviceSrcIPsForPolicy(policy models.Acl, devices []models.Node,
+ 		return
+ 	}
+ 	for i := range devices {
+-		if _, ok := owners[logic.NodeOwnerUsername(&devices[i])]; !ok {
++		if _, ok := owners[NodeOwnerUsername(&devices[i])]; !ok {
+ 			continue
+ 		}
+-		deviceSrc4, deviceSrc6 := logic.UserDeviceSrcIPs(&devices[i])
++		deviceSrc4, deviceSrc6 := UserDeviceSrcIPs(&devices[i])
+ 		if deviceSrc4.IP != nil {
+ 			src4 = append(src4, deviceSrc4)
+ 		}
+@@ -73,7 +78,7 @@ func userDeviceSrcIPsForPolicy(policy models.Acl, devices []models.Node,
+ // policy which covers all users.
+ func allUserDeviceSrcIPs(devices []models.Node) (src4, src6 []net.IPNet) {
+ 	for i := range devices {
+-		deviceSrc4, deviceSrc6 := logic.UserDeviceSrcIPs(&devices[i])
++		deviceSrc4, deviceSrc6 := UserDeviceSrcIPs(&devices[i])
+ 		if deviceSrc4.IP != nil {
+ 			src4 = append(src4, deviceSrc4)
+ 		}
+@@ -94,7 +99,7 @@ func egressMatchesPolicyDst(e schema.Egress, dstTags map[string]struct{}) bool {
+ 			return true
+ 		}
+ 	}
+-	for _, domainAns := range logic.AllDomainAnsFromEgress(e) {
++	for _, domainAns := range AllDomainAnsFromEgress(e) {
+ 		if _, ok := dstTags[domainAns]; ok {
+ 			return true
+ 		}
+@@ -128,8 +133,8 @@ func nodeRoutesEgress(node *models.Node, e *schema.Egress) bool {
+ // show up as iptables "anywhere" and bypass per-egress IP restrictions.
+ func appendUserDevicePolicyEgressDsts(ctx context.Context, node *models.Node,
+ 	policy models.Acl, egs []schema.Egress, dst4, dst6 *[]net.IPNet) {
+-	selectedIP4, selectedIP6 := getSelectedUserEgressIPNets(policy.Dst)
+-	dstTags := logic.ConvAclTagToValueMap(policy.Dst)
++	selectedIP4, selectedIP6 := getSelectedEgressIPNets(policy.Dst)
++	dstTags := ConvAclTagToValueMap(policy.Dst)
+ 	_, dstAll := dstTags["*"]
+ 	for _, egI := range egs {
+ 		if !egI.Status || (len(egI.Nodes) == 0 && len(egI.Tags) == 0) {
+@@ -139,12 +144,12 @@ func appendUserDevicePolicyEgressDsts(ctx context.Context, node *models.Node,
+ 			continue
+ 		}
+ 		routes := nodeRoutesEgress(node, &egI)
+-		if logic.IsEgressInternetGateway(egI) {
++		if IsEgressInternetGateway(egI) {
+ 			// 0.0.0.0/0 must only be installed on the exit's routing node.
+ 			if !routes {
+ 				continue
+ 			}
+-			logic.AppendEgressPolicyRange(egI, egI.Range, dst4, dst6)
++			AppendEgressPolicyRange(egI, egI.Range, dst4, dst6)
+ 			continue
+ 		}
+ 		if len(selectedIP4) > 0 || len(selectedIP6) > 0 {
+@@ -160,11 +165,11 @@ func appendUserDevicePolicyEgressDsts(ctx context.Context, node *models.Node,
+ 			egressRange = egI.VirtualRange
+ 		}
+ 		if egressRange != "" {
+-			logic.AppendEgressPolicyRange(egI, egressRange, dst4, dst6)
++			AppendEgressPolicyRange(egI, egressRange, dst4, dst6)
+ 			continue
+ 		}
+-		if logic.HasEgressDomainAns(egI) {
+-			for _, domainAns := range logic.AllDomainAnsFromEgress(egI) {
++		if HasEgressDomainAns(egI) {
++			for _, domainAns := range AllDomainAnsFromEgress(egI) {
+ 				ip, cidr, err := net.ParseCIDR(domainAns)
+ 				if err != nil {
+ 					continue
+@@ -201,21 +206,21 @@ func addUserDeviceAclRule(rules map[string]models.AclRule, policy models.Acl,
+ 			Allowed:         true,
+ 		}
+ 	}
+-	r.IPList = logic.UniqueIPNetList(append(r.IPList, src4...))
+-	r.IP6List = logic.UniqueIPN
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4231** (2026-11-14): NM-356: Enable CE user ACL policies with All Users and per-user sources (@abhishek9686)
+- **PR #4230** (2026-11-12): Pre-Release Fixes v1.8.0 (@VishalDalwadi)
 - **PR #4225** (2026-11-12): NM-356: keep static WireGuard configs on JIT, IdP, and access cleanup  (@abhishek9686)
 - **PR #4224** (2026-11-11): Pre-Release Fixes v1.8.0 (@VishalDalwadi)
 - **PR #4223** (closed): Release v1.7.0 (@abhishek9686)
 - **PR #4222** (2026-11-11): NM-356: skip FwUpdate calc for user-owned devices, allow relayed/auto-relayed egress traffic on gateway ACL paths (@abhishek9686)
-- **PR #4219** (2026-11-11): Pre-Release Fixes v1.8.0 (@VishalDalwadi)
-- **PR #4217** (2026-11-05): Pre-Release Fixes v1.8.0 (@VishalDalwadi)
 
 ---
 
@@ -1654,43 +1719,133 @@ after NM-378, so auth fell thro
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. NM-356: keep static WireGuard configs on JIT, IdP, and access cleanup  (#4225)
+## X. NM-356: Enable CE user ACL policies with All Users and per-user sources
 
 **RULE**:
-When implementing operations in `controllers/user.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gravitl/netmaker. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `controllers/acls.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gravitl/netmaker. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e50f0f23`: NM-356: keep static WireGuard configs on JIT, IdP, and access cleanup  (#4225). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ccc98823`: NM-356: Enable CE user ACL policies with All Users and per-user sources. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `controllers/user.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `controllers/acls.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-				if logic.IsStaticConfigExtClient(extclient) {
-					changed, err := logic.DisableExtClient(ctx, &extclient)
-					if err != nil {
-						slog.Error("failed to disable static extclient",
-							"id", extclient.ClientID, "owner", user.Username, "error", err)
-					} else if changed {
-						if err := mq.PublishDeletedClientPeerUpdate(ctx, &extclient); err != nil {
-							slog.Error("error setting ext peers: " + err.Error())
-						}
-					}
-					continue
-				}
-			if logic.IsStaticConfigExtClient(extclient) && !forceDeleteConfigs {
+	"github.com/gravitl/netmaker/servercfg"
+	srcGroupTypes := []models.AclGroupType{
+		models.UserAclID,
+		models.NodeTagID,
+		models.NodeID,
+	}
+	// User groups remain Pro-only.
+	if servercfg.IsPro {
+		srcGroupTypes = []models.AclGroupType{
+			models.UserAclID,
+			models.UserGroupAclID,
+			models.NodeTagID,
+			models.NodeID,
+		}
+	}
+		SrcGroupTypes: srcGroupTypes,
+		ProtocolTypes: ceOrProProtocolTypes(),
+	}
+	logic.ReturnSuccessResponseWithJson(w, r, resp, "fetched acls types")
+}
+
+// ceOrProProtocolTypes returns Any-only protocol types on CE. Custom
+// protocol/port policies are Pro-only.
+func ceOrProProtocolTypes() []models.ProtocolType {
+	anyType := models.ProtocolType{
+		Name:       models.Any,
+		AccessType: models.NetworkAccess,
+		AllowedProtocols: []models.Protocol{
+			models.ALL,
+		},
+		PortRange:        "All ports",
+		AllowPortSetting: false,
+	}
+	if !servercfg.IsPro {
+		return []models.ProtocolType{anyType}
+	}
+	return []models.ProtocolType{
+		anyType,
+		{
+			Name:       models.Http,
+			AccessType: models.NetworkAccess,
+			AllowedProtocols: []models.Protocol{
+				models.TCP,
+			PortRange: "80",
+		},
+		{
+			Name:       models.Https,
+			AccessType: models.NetworkAccess,
+			AllowedPr
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-			if extclient.DeviceID == "" && extclient.RemoteAccessClientID == "" && !forceDeleteConfigs {
+// Induced defect failure mode:
+		SrcGroupTypes: []models.AclGroupType{
+			models.UserAclID,
+			models.UserGroupAclID,
+			models.NodeTagID,
+			models.NodeID,
+		},
+		ProtocolTypes: []models.ProtocolType{
+			{
+				Name:       models.Any,
+				AccessType: models.NetworkAccess,
+				AllowedProtocols: []models.Protocol{
+					models.ALL,
+				},
+				PortRange:        "All ports",
+				AllowPortSetting: false,
+			},
+			{
+				Name:       models.Http,
+				AccessType: models.NetworkAccess,
+				AllowedProtocols: []models.Protocol{
+					models.TCP,
+				},
+				PortRange: "80",
+			{
+				Name:       models.Https,
+				AccessType: models.NetworkAccess,
+				AllowedProtocols: []models.Protocol{
+					models.TCP,
+				},
+				PortRange: "443",
+			// {
+			// 	Name: "MySQL",
+			// 	AllowedProtocols: []models.Protocol{
+			// 		models.TCP,
+			// 	},
+			// 	PortRange: "3306",
+			// },
+			// {
+			// 	Name: "DNS TCP",
+			// 	AllowedProtocols: []models.Protocol{
+			// 		models.TCP,
+			// 	},
+			// 	PortRange: "53",
+			// },
+			// {
+			// 	Name: "DNS UDP",
+			// 	AllowedProtocols: []models.Protocol{
+			// 		models.UDP,
+			// 	},
+			// 	PortRange: "53",
+			// },
+			{
+				Name:       models.AllTCP,
+				AccessType: models.NetworkAccess,
+				AllowedPro
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e50f0f23` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ccc98823` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

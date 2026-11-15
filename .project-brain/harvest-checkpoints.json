@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-15T07:32:18.299Z",
+  "last_updated": "2026-11-15T07:41:58.813Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5676,14 +5676,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gravitl-netmaker",
-      "content_hash": "c0a274c39ef6a0ed72682b6ba66ddc30b685b59430c01714421217ca34856cae",
-      "verified_at": "2026-11-12T22:21:25.671Z",
+      "content_hash": "198f9ed6cadb6f0184664283e264914e64f99530af8dadf4943aea24e6cbe101",
+      "verified_at": "2026-11-15T07:41:58.812Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T22:21:25.671Z"
+      "last_updated": "2026-11-15T07:41:58.812Z"
     },
     "pixeltable/pixeltable": {
       "repository": "pixeltable/pixeltable",
@@ -11676,14 +11676,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mrkai77-loop",
-      "content_hash": "c86f06af578c860a35da29746c5d01261576911246ff5bd9e10a09ed060151a7",
-      "verified_at": "2026-11-11T19:46:23.720Z",
+      "content_hash": "feed40183186728bdb4d5b73878ac526921f8317e498d524e5abc437fbcbbf2f",
+      "verified_at": "2026-11-15T07:41:53.704Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T19:46:23.720Z"
+      "last_updated": "2026-11-15T07:41:53.704Z"
     },
     "tokio-rs/tokio": {
       "repository": "tokio-rs/tokio",
@@ -17585,15 +17585,15 @@
       "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-edge0-audio8-tts-realistic-0-6b",
-      "content_hash": "1f461fb5197df286cf1e679d720e3d0fae602ac804029978d6d6bdf12e840e9d",
-      "verified_at": "2026-11-14T05:05:33.409Z",
+      "learning_id": "learn-huggingface-edge0-audio8-tts-realistic-air",
+      "content_hash": "3bb2af68d457fd360dbf72782a9b379d30b5621d0611dadfe0ff9d430e59c288",
+      "verified_at": "2026-11-15T07:41:47.239Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T05:05:33.409Z"
+      "last_updated": "2026-11-15T07:41:47.239Z"
     },
     "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated": {
       "repository": "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",

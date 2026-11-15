@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gravitl-netmaker-learnings.md`  
 > **Source**: github ([https://github.com/gravitl/netmaker](https://github.com/gravitl/netmaker))  
-> **Source Version**: `5b68aa9e`  
+> **Source Version**: `ccc98823`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T22:21:00.252Z  
+> **Timestamp**: 2026-11-15T07:41:57.904Z  
 > **Learning ID**: `learn-github-gravitl-netmaker`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gravitl-netmaker-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gravitl/netmaker](https://github.com/gravitl/netmaker))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T22:21:00.233Z  
+> **Harvest Timestamp**: 2026-11-15T07:41:57.898Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Netmaker makes networks with WireGuard. Netmaker automates fast, secure, and distributed virtual networks.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11870 stars
+- **Stars / Engagement**: 11873 stars
 
 ---
 
@@ -1017,444 +1017,678 @@ const CheckInInterval = 1
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5b68aa9e` (2026-11-12)
-**Commit Message**: Pre-Release Fixes v1.8.0 (#4230)
+### Incident Patch 1: `ccc98823` (2026-11-14)
+**Commit Message**: NM-356: Enable CE user ACL policies with All Users and per-user sources (#4231)
 
-* fix(go): validate traffic public key;
+* NM-356: add username filter to nodes api
 
-* feat(go): rekey tenant idp sync hook;
+* NM-356: disconnect user devices and force Desktop logout on disable/delete
 
-* feat(go): check if membership exists before creating;
+When a user is disabled or deleted (including IdP sync), disconnect their
+nodes and publish FORCE_LOGOUT so Desktop sessions end immediately.
 
-* feat(go): parse node addr without cidr as well;
+* NM-356: rm force logout from delete user path
 
-* feat(go): only check for orphans before the cursor;
+* NM-356: keep AllowAll when both default ACL policies are open
 
-* feat(go): normalize usernames in idp synced users;
+Uni/proto-scoped policies were defeating FwUpdate.AllowAll even with All
+Resources and All Users enabled, leaving clients on DROP + per-peer ACCEPT
+rules. Short-circuit on open defaults only, and document the constraint.
 
-* feat(go): allow patch method;
+* fix: enrich topology and connections with location, is_gw, and egresses
 
-* feat(go): allow master user to list all tenants;
+Add location/country and is_gw on topology vertices and connection peers,
+with egresses listing egress vs internet_gateway (exit). Also classify paths
+through a peer's RelayedBy as relayed even when that relay is an exit router.
 
-* feat(go): publish server sync for non-master pods on idp sync hook rekey;
+* add update fallback ns error
 
-* feat(go): add before peer can be skipped;
+* fix: require network query on network-scoped mutations for network admins
 
-* feat(go): ignore vendor dir;
+ACL/egress/nameserver/tags/posture create-update-delete ignored ?network=
+after NM-378, so auth fell thr
 
-* fix(go): use normalized usernames when verifying auth request;
-
-* fix(go): return error on user device host sso callback if user is disabled;
-
-* fix(go): reset auto relayed peers on inet gw creation;
-
-* feat(go): reset host owner_username field;
-
-* feat(go): return user-auth host registration unsupported error;
-
-* feat(go): remove unused file;
-
-* feat(go): move auto relayed peers reset to callers;
-
-* feat(go): allow updating static port;
-
-* feat(go): set net id is passed for flow logs;
-
-* feat(go): validate egress node firewall; optimize db queries on egress validation;
-
-* fix(go): add exclusion filter to list host api
-
-**File**: `controllers/auto_relay.go` (renamed, +60/-68)
+**File**: `controllers/acls.go` (modified, +95/-96)
 ```diff
-@@ -1,4 +1,4 @@
--package controllers
-+package controller
- 
- import (
- 	"context"
-@@ -9,37 +9,34 @@ import (
- 	"strconv"
- 
- 	"github.com/gorilla/mux"
--	controller "github.com/gravitl/netmaker/controllers"
- 	"github.com/gravitl/netmaker/db"
- 	dbtypes "github.com/gravitl/netmaker/db/types"
- 	"github.com/gravitl/netmaker/logger"
- 	"github.com/gravitl/netmaker/logic"
- 	"github.com/gravitl/netmaker/middleware"
- 	"github.com/gravitl/netmaker/models"
+@@ -19,6 +19,7 @@ import (
  	"github.com/gravitl/netmaker/mq"
--	proLogic "github.com/gravitl/netmaker/pro/logic"
  	"github.com/gravitl/netmaker/schema"
  	"github.com/gravitl/netmaker/scope"
--	"github.com/gravitl/netmaker/servercfg"
- 	"golang.org/x/exp/slog"
- 	"gorm.io/gorm"
++	"github.com/gravitl/netmaker/servercfg"
  )
  
--// AutoRelayHandlers - handlers for AutoRelay
--func AutoRelayHandlers(r *mux.Router) {
--	r.HandleFunc("/api/v1/node/{nodeid}/auto_relay", middleware.Scope(scope.TenantScope, controller.AuthorizeHost(http.HandlerFunc(getAutoRelayGws)))).
-+// autoRelayHandlers - handlers for AutoRelay
-+func autoRelayHandlers(r *mux.Router) {
-+	r.HandleFunc("/api/v1/node/{nodeid}/auto_relay", middleware.Scope(scope.TenantScope, AuthorizeHost(http.HandlerFunc(getAutoRelayGws)))).
- 		Methods(http.MethodGet)
- 	r.HandleFunc("/api/v1/node/{nodeid}/auto_relay", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(setAutoRelay)))).
- 		Methods(http.MethodPost)
- 	r.HandleFunc("/api/v1/node/{nodeid}/auto_relay", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(unsetAutoRelay)))).
- 		Methods(http.MethodDelete)
- 	r.HandleFunc("/api/v1/node/{network}/auto_relay/reset", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(resetAutoRelayGw)))).
- 		Methods(http.MethodPost)
--	r.HandleFunc("/api/v1/node/{nodeid}/auto_relay_me", middleware.Scope(scope.TenantScope, controller.AuthorizeHost(http.HandlerFunc(autoRelayME)))).
-+	r.HandleFunc("/api/v1/node/{nodeid}/auto_relay_me", middleware.Scope(scope.TenantScope, AuthorizeHost(http.HandlerFunc(autoRelayME)))).
- 		Methods(http.MethodPost)
--	r.HandleFunc("/api/v1/node/{nodeid}/auto_relay_me", middleware.Scope(scope.TenantScope, controller.AuthorizeHost(http.HandlerFunc(autoRelayMEUpdate)))).
-+	r.HandleFunc("/api/v1/node/{nodeid}/auto_relay_me", middleware.Scope(scope.TenantScope, AuthorizeHost(http.HandlerFunc(autoRelayMEUpdate)))).
- 		Methods(http.MethodPut)
--	r.HandleFunc("/api/v1/node/{nodeid}/auto_relay_check", middleware.Scope(scope.TenantScope, controller.AuthorizeHost(http.HandlerFunc(checkautoRelayCtx)))).
-+	r.HandleFunc("/api/v1/node/{nodeid}/auto_relay_check", middleware.Scope(scope.TenantScope, AuthorizeHost(http.HandlerFunc(checkautoRelayCtx)))).
- 		Methods(http.MethodGet)
- 	r.HandleFunc("/api/v1/node/{nodeid}/auto_relayed_peers", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(listAutoRelayedPeers)))).
- 		Methods(http.MethodGet)
-@@ -63,7 +60,7 @@ func getAutoRelayGws(w http.ResponseWriter, r *http.Request) {
- 		logic.ReturnErrorResponse(w, r, logic.FormatError(err, "badrequest"))
- 		return
- 	}
--	autoRelayNodes := proLogic.DoesAutoRelayExist(r.Context(), node.Network)
-+	autoRelayNodes := logic.DoesAutoRelayExist(r.Context(), node.Network)
- 	if len(autoRelayNodes) == 0 {
- 		logic.ReturnErrorResponse(
- 			w,
-@@ -219,7 +216,7 @@ func setAutoRelay(w http.ResponseWriter, r *http.Request) {
- 		logic.ReturnErrorResponse(w, r, logic.FormatError(err, "badrequest"))
- 		return
- 	}
--	err = proLogic.CreateAutoRelay(node)
-+	err = logic.CreateAutoRelay(node)
- 	if err != nil {
- 		errType := logic.Internal
- 		switch err.Error() {
-@@ -299,12 +296,9 @@ func unsetAutoRelay(w http.ResponseWriter, r *http.Request) {
- 		logic.ReturnErrorResponse(w, r, logic.FormatError(err, "internal"))
- 		return
- 	}
--	if servercfg.CacheEnabled() {
--		proLogic.RemoveAutoRelayFromCache(node.Network)
--	}
- 	ctx := scope.WithContext(db.WithContext(context.Background()), scope.Level(r.Context()), scope.ID(r.Context()))
- 	go func(ctx context.Context) {
--		proLogic.ResetAutoRelay(ctx, &node)
-+		logic.ResetAutoRelay(ctx, &node)
- 		mq.PublishPeerUpdate(ctx, false)
- 	}(ctx)
- 	w.Header().Set("Content-Type", "application/json")
-@@ -325,21 +319,14 @@ func unsetAutoRelay(w http.ResponseWriter, r *http.Request) {
- func autoRelayME(w http.ResponseWriter, r *http.Request) {
- 	var params = mux.Vars(r)
- 	nodeid := params["nodeid"]
--	// confirm host exists
--	node, err := logic.GetNodeByID(nodeid)
-+	_node := &schema.Node{ID: nodeid}
-+	err := _node.Get(r.Context(), dbtypes.WithAllPreloads())
- 	if err != nil {
- 		logger.Log(0, r.Header.Get("user"), "failed to get node:", err.Error())
- 		logic.ReturnErrorResponse(w, r, logic.FormatError(err, "badrequest"))
- 		return
- 	}
--	host := &schema.Host{
--		ID: node.HostID,
--	}
--	err = host.Get(r.Context())
--	if err != nil {
--		logic.ReturnErrorResponse(w, r, logic.FormatError(err, "badrequest"))
--		return
--	}
-+	node := *logic.ConvertSchemaNodeToModelsNodeWithContext(r.Context(), _node, logic.SkipViolations())
- 	v
+ func aclHandlers(r *mux.Router) {
+@@ -46,6 +47,20 @@ func aclHandlers(r *mux.Router) {
+ // @Success     200 {object} models.AclPolicyTypes
+ // @Failure     500 {object} models.ErrorResponse
+ func aclPolicyTypes(w http.ResponseWriter, r *http.Request) {
++	srcGroupTypes := []models.AclGroupType{
++		models.UserAclID,
++		models.NodeTagID,
++		models.NodeID,
++	}
++	// User groups remain Pro-only.
++	if servercfg.IsPro {
++		srcGroupTypes = []models.AclGroupType{
++			models.UserAclID,
++			models.UserGroupAclID,
++			models.NodeTagID,
++			models.NodeID,
++		}
++	}
+ 	resp := models.AclPolicyTypes{
+ 		RuleTypes: []models.AclPolicyType{
+ 			models.DevicePolicy,
+@@ -55,119 +70,103 @@ func aclPolicyTypes(w http.ResponseWriter, r *http.Request) {
+ 			models.NetworkAccess,
+ 			models.ManagedAccess,
+ 		},
+-		SrcGroupTypes: []models.AclGroupType{
+-			models.UserAclID,
+-			models.UserGroupAclID,
+-			models.NodeTagID,
+-			models.NodeID,
+-		},
++		SrcGroupTypes: srcGroupTypes,
+ 		DstGroupTypes: []models.AclGroupType{
+ 			models.NodeTagID,
+ 			models.NodeID,
+ 			models.EgressID,
+ 			models.NetmakerIPAclID,
+ 			// models.NetmakerSubNetRangeAClID,
+ 		},
+-		ProtocolTypes: []models.ProtocolType{
+-			{
+-				Name:       models.Any,
+-				AccessType: models.NetworkAccess,
+-				AllowedProtocols: []models.Protocol{
+-					models.ALL,
+-				},
+-				PortRange:        "All ports",
+-				AllowPortSetting: false,
+-			},
+-			{
+-				Name:       models.Http,
+-				AccessType: models.NetworkAccess,
+-				AllowedProtocols: []models.Protocol{
+-					models.TCP,
+-				},
+-				PortRange: "80",
++		ProtocolTypes: ceOrProProtocolTypes(),
++	}
++	logic.ReturnSuccessResponseWithJson(w, r, resp, "fetched acls types")
++}
++
++// ceOrProProtocolTypes returns Any-only protocol types on CE. Custom
++// protocol/port policies are Pro-only.
++func ceOrProProtocolTypes() []models.ProtocolType {
++	anyType := models.ProtocolType{
++		Name:       models.Any,
++		AccessType: models.NetworkAccess,
++		AllowedProtocols: []models.Protocol{
++			models.ALL,
++		},
++		PortRange:        "All ports",
++		AllowPortSetting: false,
++	}
++	if !servercfg.IsPro {
++		return []models.ProtocolType{anyType}
++	}
++	return []models.ProtocolType{
++		anyType,
++		{
++			Name:       models.Http,
++			AccessType: models.NetworkAccess,
++			AllowedProtocols: []models.Protocol{
++				models.TCP,
+ 			},
+-			{
+-				Name:       models.Https,
+-				AccessType: models.NetworkAccess,
+-				AllowedProtocols: []models.Protocol{
+-					models.TCP,
+-				},
+-				PortRange: "443",
++			PortRange: "80",
++		},
++		{
++			Name:       models.Https,
++			AccessType: models.NetworkAccess,
++			AllowedProtocols: []models.Protocol{
++				models.TCP,
+ 			},
+-			// {
+-			// 	Name: "MySQL",
+-			// 	AllowedProtocols: []models.Protocol{
+-			// 		models.TCP,
+-			// 	},
+-			// 	PortRange: "3306",
+-			// },
+-			// {
+-			// 	Name: "DNS TCP",
+-			// 	AllowedProtocols: []models.Protocol{
+-			// 		models.TCP,
+-			// 	},
+-			// 	PortRange: "53",
+-			// },
+-			// {
+-			// 	Name: "DNS UDP",
+-			// 	AllowedProtocols: []models.Protocol{
+-			// 		models.UDP,
+-			// 	},
+-			// 	PortRange: "53",
+-			// },
+-			{
+-				Name:       models.AllTCP,
+-				AccessType: models.NetworkAccess,
+-				AllowedProtocols: []models.Protocol{
+-					models.TCP,
+-				},
+-				PortRange: "All ports",
++			PortRange: "443",
++		},
++		{
++			Name:       models.AllTCP,
++			AccessType: models.NetworkAccess,
++			AllowedProtocols: []models.Protocol{
++				models.TCP,
+ 			},
+-			{
+-				Name:       models.AllUDP,
+-				AccessType: models.NetworkAccess,
+-				AllowedProtocols: []models.Protocol{
+-					models.UDP,
+-				},
+-				PortRange: "All ports",
++			PortRange: "All ports",
++		},
++		{
++			Name:       models.AllUDP,
++			AccessType: models.NetworkAccess,
++			AllowedProtocols: []models.Protocol{
++				models.UDP,
+ 			},
+-			{
+-				Name:       models.ICMPService,
+-				AccessType: models.NetworkAccess,
+-				AllowedProtocols: []models.Protocol{
+-					models.ICMP,
+-				},
+-				PortRange: "",
++			PortRange: "All ports",
++		},
++		{
++			Name:       models.ICMPService,
++			AccessType: models.NetworkAccess,
++			AllowedProtocols: []models.Protocol{
++				models.ICMP,
+ 			},
+-			{
+-				Name:       models.SSH,
+-				AccessType: models.NetworkAccess,
+-				AllowedProtocols: []models.Protocol{
+-					models.TCP,
+-				},
+-				PortRange: "22",
++			PortRange: "",
++		},
++		{
++			Name:       models.SSH,
++			AccessType: models.NetworkAccess,
++			AllowedProtocols: []models.Protocol{
++				models.TCP,
+ 			},
+-			{
+-				Name:       models.ManagedSSH,
+-				AccessType: models.ManagedAccess,
+-				AllowedProtocols: []models.Protocol{
+-					models.TCP,
+-				},
+-				AllowPortSetting: false,
++			PortRange: "22",
++		},
++		{
++			Name:       models.ManagedSSH,
++			AccessType: models.ManagedAccess,
++			AllowedProtocols: []models.Protocol{
++				models.TCP,
+ 			},
+-			
 ```
 
-**File**: `controllers/controller.go` (modified, +1/-0)
+**File**: `controllers/ext_client.go` (modified, +8/-0)
 ```diff
-@@ -47,6 +47,7 @@ var HttpHandlers = []interface{}{
- 	egressHandlers,
- 	internetGatewayHandlers,
- 	orgHandlers,
-+	autoRelayHandlers,
+@@ -1629,6 +1629,14 @@ func validateCustomExtClient(ctx context.Context, customExtClient *models.Custom
+ 			}
+ 		}
+ 	}
++	// PostUp/PostDown: nil = omit/leave unchanged on update; non-nil applies
++	// (including "" to clear). Enforce max length when the field is present.
++	if customExtClient.PostUp != nil && len(*customExtClient.PostUp) > 1024 {
++		return errors.New("postup exceeds max length of 1024")
++	}
++	if customExtClient.PostDown != nil && len(*customExtClient.PostDown) > 1024 {
++		return errors.New("postdown exceeds max length of 1024")
++	}
+ 	return nil
  }
  
- func HandleRESTRequests(wg *sync.WaitGroup, ctx context.Context) {
 ```
 
-**File**: `controllers/hosts.go` (modified, +8/-0)
+**File**: `controllers/user.go` (modified, +35/-0)
 ```diff
-@@ -223,6 +223,7 @@ func getHosts(w http.ResponseWriter, r *http.Request) {
- // @Param       os query []string false "Filter by OS" Enums(windows, linux, darwin)
- // @Param       q query string false "Search across fields"
- // @Param       not_in_network query []string false "Exclude hosts that have a node in this network (repeatable)"
-+// @Param       exclude_owned query bool false "Exclude user-owned devices (hosts registered via the desktop/device flow)"
- // @Param       page query int false "Page number"
- // @Param       per_page query int false "Items per page"
- // @Success     200 {array} models.ApiHost
-@@ -244,6 +245,11 @@ func listHosts(w http.ResponseWriter, r *http.Request) {
- 		notInNetworkIDs = append(notInNetworkIDs, network.ID)
- 	}
+@@ -70,6 +70,7 @@ func userHandlers(r *mux.Router) {
+ 	r.HandleFunc("/api/v1/users/access_token", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(getUserAccessTokens)))).Methods(http.MethodGet).Queries("username", "{username}")
+ 	r.HandleFunc("/api/v1/users/access_token", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(deleteUserAccessTokens)))).Methods(http.MethodDelete)
+ 	r.HandleFunc("/api/v1/users/logout", middleware.Scope(scope.TenantScope, logic.SecurityCheck(false, logic.ContinueIfUserMatch(http.HandlerFunc(logout))))).Methods(http.MethodPost).Queries("username", "{username}")
++	r.HandleFunc("/api/v1/users/network", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(listNetworkUsers)))).Methods(http.MethodGet).Queries("network", "{network}")
+ }
  
-+	var ownerFilters []interface{}
-+	if r.URL.Query().Get("exclude_owned") == "true" {
-+		ownerFilters = append(ownerFilters, "")
+ // @Summary     Create a user API access token
+@@ -1282,6 +1283,40 @@ func getUsers(w http.ResponseWriter, r *http.Request) {
+ 	json.NewEncoder(w).Encode(users)
+ }
+ 
++// @Summary     List users with access to a network
++// @Router      /api/v1/users/network [get]
++// @Tags        Users
++// @Security    oauth
++// @Produce     json
++// @Param       network query string true "Network ID"
++// @Success     200 {array} models.ReturnUser
++// @Failure     400 {object} models.ErrorResponse
++// @Failure     500 {object} models.ErrorResponse
++func listNetworkUsers(w http.ResponseWriter, r *http.Request) {
++	network := r.URL.Query().Get("network")
++	if network == "" {
++		logic.ReturnErrorResponse(w, r, logic.FormatError(errors.New("network is required"), logic.BadReq))
++		return
++	}
++	if err := (&schema.Network{Name: network}).Get(r.Context()); err != nil {
++		logic.ReturnErrorResponse(w, r, logic.FormatError(fmt.Errorf("network %s not found", network), logic.BadReq))
++		return
 +	}
 +
- 	var page, pageSize int
- 	page, _ = strconv.Atoi(r.URL.Query().Get("page"))
- 	if page == 0 {
-@@ -260,6 +266,7 @@ func listHosts(w http.ResponseWriter, r *http.Request) {
- 		dbtypes.WithFilter("os", osFilters...),
- 		dbtypes.WithSearchQuery(q, "id", "name", "public_key", expr.ByteaField("endpoint_ip"), expr.ByteaField("endpoint_ipv6")),
- 		schema.ExcludeHostsInNetworks(r.Context(), notInNetworkIDs...),
-+		dbtypes.WithFilter("owner_username", ownerFilters...),
- 		dbtypes.InAscOrder("name"),
- 		dbtypes.WithPagination(page, pageSize),
- 	)
-@@ -280,6 +287,7 @@ func listHosts(w http.ResponseWriter, r *http.Request) {
- 		dbtypes.WithFilter("os", osFilters...),
- 		dbtypes.WithSearchQuery(q, "id", "name", "public_key", expr.ByteaField("endpoint_ip"), expr.ByteaField("endpoint_ipv6")),
- 		schema.ExcludeHostsInNetworks(r.Context(), notInNetworkIDs...),
-+		dbtypes.WithFilter("owner_username", ownerFilters...),
- 	)
- 	if err != nil {
- 		logic.ReturnErrorResponse(w, r, logic.FormatError(err, logic.Internal))
++	_users, err := (&schema.User{}).ListAllWithMembership(r.Context())
++	if err != nil {
++		logic.ReturnErrorResponse(w, r, logic.FormatError(err, logic.Internal))
++		return
++	}
++	networkUsers := make([]models.ReturnUser, 0)
++	for i := range _users {
++		if logic.UserHasAccessToNetwork(r.Context(), &_users[i], network) {
++			networkUsers = append(networkUsers, logic.ToReturnUser(&_users[i]))
++		}
++	}
++	logic.ReturnSuccessResponseWithJson(w, r, networkUsers, "fetched users for network "+network)
++}
++
+ // @Summary     List all users
+ // @Router      /api/v2/users [get]
+ // @Tags        Users
 ```
 
-**File**: `controllers/user.go` (modified, +1/-1)
+**File**: `logic/acls.go` (modified, +90/-33)
 ```diff
-@@ -60,7 +60,7 @@ func userHandlers(r *mux.Router) {
- 	r.HandleFunc("/api/users/{username}/disable", middleware.InferScope(logic.SecurityCheck(true, http.HandlerFunc(disableUserAccount)))).Methods(http.MethodPost)
- 	r.HandleFunc("/api/users/{username}/settings", middleware.InferScope(logic.SecurityCheck(false, logic.ContinueIfUserMatch(http.HandlerFunc(getUserSettings))))).Methods(http.MethodGet)
- 	r.HandleFunc("/api/users/{username}/settings", middleware.InferScope(logic.SecurityCheck(false, logic.ContinueIfUserMatch(http.HandlerFunc(updateUserSettings))))).Methods(http.MethodPut)
--	r.HandleFunc("/api/v1/users", middleware.InferScope(logic.SecurityCheck(false, logic.ContinueIfUserMatchOrAdmin(http.HandlerFunc(getUserV1))))).Methods(http.MethodGet).Queries("username", "{username}")
-+	r.HandleFunc("/api/v1/users", middleware.InferScope(logic.SecurityCheck(false, logic.ContinueIfUserMatchOrAdminOrAuditor(http.HandlerFunc(getUserV1))))).Methods(http.MethodGet).Queries("username", "{username}")
- 	r.HandleFunc("/api/users", middleware.InferScope(logic.SecurityCheck(true, http.HandlerFunc(getUsers)))).Methods(http.MethodGet)
- 	r.HandleFunc("/api/v2/users", middleware.InferScope(logic.SecurityCheck(true, http.HandlerFunc(listUsers)))).Methods(http.MethodGet)
- 	r.HandleFunc("/api/v1/users/bulk", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(bulkDeleteUsers)))).Methods(http.MethodDelete)
-```
-
-**File**: `logic/auto_relay.go` (renamed, +49/-147)
-```diff
-@@ -4,86 +4,49 @@ import (
- 	"context"
- 	"errors"
- 	"net"
--	"sync"
+@@ -3207,6 +3207,24 @@ func getSelectedEgressIPNets(dstTags []models.AclPolicyTag) (dst4, dst6 []net.IP
+ 	return
+ }
  
- 	"github.com/gravitl/netmaker/db"
- 	"github.com/gravitl/netmaker/logger"
++// validateCENetworkAclProtoAndPorts rejects protocol/port scoping on CE.
++// Network-access policies must be all-protocols / all-ports (type Any).
++func validateCENetworkAclProtoAndPorts(acl models.Acl) error {
++	if servercfg.IsPro || !acl.IsNetworkAccess() {
++		return nil
++	}
++	if acl.ServiceType != "" && acl.ServiceType != models.Any {
++		return errors.New("custom protocol and port policies are not allowed on CE")
++	}
++	if acl.Proto != "" && acl.Proto != models.ALL {
++		return errors.New("custom protocols are not allowed on CE")
++	}
++	if len(acl.Port) > 0 {
++		return errors.New("custom ports are not allowed on CE")
++	}
++	return nil
++}
++
+ func checkIfAclTagisValid(ctx context.Context, a models.Acl, t models.AclPolicyTag, isSrc bool) (err error) {
+ 	switch t.ID {
+ 	case models.NodeID:
+@@ -3233,6 +3251,23 @@ func checkIfAclTagisValid(ctx context.Context, a models.Acl, t models.AclPolicyT
+ 		if err != nil {
+ 			return err
+ 		}
++	case models.UserAclID:
++		if a.RuleType == models.DevicePolicy {
++			return errors.New("device policy source mismatch")
++		}
++		if !isSrc {
++			return errors.New("user cannot be added to destination")
++		}
++		if t.Value == "*" {
++			return nil
++		}
++		userCheck := &schema.User{Username: t.Value}
++		if err := userCheck.Get(ctx); err != nil {
++			return errors.New("invalid user " + t.Value)
++		}
++	case models.UserGroupAclID:
++		// User groups remain Pro-only.
++		return errors.New("user groups are not supported")
+ 	default:
+ 		return errors.New("invalid policy")
+ 	}
+@@ -3248,12 +3283,42 @@ var IsAclPolicyValid = func(ctx context.Context, acl models.Acl) (err error) {
+ 		return err
+ 	}
+ 
+-	//check if src and dst are valid
+-	if acl.IsNetworkAccess() && acl.AllowedDirection == models.TrafficDirectionUni {
++	// Device/resource policies on CE must be bidirectional. User policies are
++	// always unidirectional (users → resources).
++	if acl.RuleType == models.DevicePolicy && acl.IsNetworkAccess() &&
++		acl.AllowedDirection == models.TrafficDirectionUni {
+ 		return errors.New("uni traffic flow not allowed on CE")
+ 	}
++	if err := validateCENetworkAclProtoAndPorts(acl); err != nil {
++		return err
++	}
+ 	switch acl.RuleType {
+-
++	case models.UserPolicy:
++		for _, srcI := range acl.Src {
++			if srcI.Value == "*" {
++				if srcI.ID != models.UserAclID {
++					return errors.New("user policy source mismatch")
++				}
++				continue
++			}
++			if srcI.ID == models.UserGroupAclID {
++				return errors.New("user groups are not supported")
++			}
++			if err = checkIfAclTagisValid(ctx, acl, srcI, true); err != nil {
++				return err
++			}
++		}
++		for _, dstI := range acl.Dst {
++			if dstI.Value == "*" {
++				continue
++			}
++			if dstI.ID == models.NodeTagID && dstI.Value == fmt.Sprintf("%s.%s", acl.NetworkID.String(), models.GwTagName) {
++				continue
++			}
++			if err = checkIfAclTagisValid(ctx, acl, dstI, false); err != nil {
++				return err
++			}
++		}
+ 	case models.DevicePolicy:
+ 		for _, srcI := range acl.Src {
+ 			if srcI.Value == "*" {
+@@ -3473,7 +3538,9 @@ func MigrateAclPolicies(ctx context.Context) {
+ 			UpsertAcl(ctx, acl)
+ 		}
+ 		if !servercfg.IsPro {
+-			if acl.IsNetworkAccess() && acl.AllowedDirection == models.TrafficDirectionUni {
++			// Keep user policies unidirectional; only force device policies to bi on CE.
++			if acl.RuleType == models.DevicePolicy && acl.IsNetworkAccess() &&
++				acl.AllowedDirection == models.TrafficDirectionUni {
+ 				acl.AllowedDirection = models.TrafficDirectionBi
+ 				UpsertAcl(ctx, acl)
+ 			}
+@@ -3747,9 +3814,6 @@ func GetDefaultPolicy(ctx context.Context, netID schema.NetworkID, ruleType mode
+ 	if ruleType == models.DevicePolicy {
+ 		aclID = "all-nodes"
+ 	}
+-	if !servercfg.IsPro && ruleType == models.UserPolicy {
+-		return models.Acl{Enabled: true}, nil
+-	}
+ 	acl, err := GetAcl(ctx, fmt.Sprintf("%s.%s", netID, aclID))
+ 	if err != nil {
+ 		return models.Acl{}, errors.New("default rule not found")
+@@ -3789,9 +3853,6 @@ func ListAclsByNetwork(ctx context.Context, netID schema.NetworkID) ([]models.Ac
+ 	allAcls := ListAcls(ctx)
+ 	var netAcls []models.Acl
+ 	for _, acl := range allAcls {
+-		if !servercfg.IsPro && acl.RuleType == models.UserPolicy {
+-			continue
+-		}
+ 		if acl.NetworkID == netID {
+ 			netAcls = append(netAcls, acl)
+ 		}
+@@ -3803,9 +3864,6 @@ func ListEgressAcls(ctx context.Context, egressID string) ([]models.Acl, error)
+ 	acls := ListAcls(ctx)
+ 	var egressAcls []models.Acl
+ 	for _, acl := range acls {
+-		if !servercfg.IsPro && acl.RuleType == models.UserPolicy {
+-			continue
+-		}
+ 		for _, dst := range acl.Dst {
+ 			if dst.ID == models.EgressID && dst.Value == egressID {
+ 				egressAcls = append(egressAcls, acl)
+@@ -3954,28 +4012,27 @@ func ListAcls(ctx context.Context) (acls []models.Acl) {
+ 	for _, r := range aclRecords {
+ 		acl := r.Value.Data()
+ 		if !servercfg.IsPro {
+-			if acl.RuleType == models.UserPolicy {
+-				continue
+-			}
+-			skip :
+```
+
+**File**: `logic/extpeers.go` (modified, +8/-9)
+```diff
+@@ -315,14 +315,13 @@ func UpdateExtClient(old *models.ExtClient, update *models.CustomExtClient) mode
+ 	if update.DeniedACLs != nil && !reflect.DeepEqual(old.DeniedACLs, update.DeniedACLs) {
+ 		new.DeniedACLs = update.DeniedACLs
+ 	}
+-	// PostUp/PostDown: omitted and explicit "" both decode to empty, so treat
+-	// empty as "leave unchanged" (same idea as PublicKey). Sparse updates
+-	// (toggle, rename) must not wipe existing scripts.
+-	if update.PostUp != "" {
+-		new.PostUp = strings.Replace(update.PostUp, "\r\n", "\n", -1)
++	// PostUp/PostDown are *string: nil leaves the stored script unchanged;
++	// non-nil (including "") applies the value after normalizing newlines.
++	if update.PostUp != nil {
++		new.PostUp = strings.Replace(*update.PostUp, "\r\n", "\n", -1)
+ 	}
+-	if update.PostDown != "" {
+-		new.PostDown = strings.Replace(update.PostDown, "\r\n", "\n", -1)
++	if update.PostDown != nil {
++		new.PostDown = strings.Replace(*update.PostDown, "\r\n", "\n", -1)
+ 	}
+ 	// Tags are usually managed via the tags API. Extclient edit payloads often
+ 	// omit tags (nil); overwriting would drop the client from all tags. Only
+@@ -396,8 +395,8 @@ func listExtClients(ctx context.Context, options ...dbtypes.Option) ([]models.Ex
+ // ToggleExtClientConnectivity - enables or disables an ext client
+ //
+ // Flips Enabled in place and saves. Does not go through UpdateExtClient with a
+-// sparse CustomExtClient, which would drop fields omitted from the update
+-// (notably PostUp/PostDown before those were guarded).
++// sparse CustomExtClient (nil PostUp/PostDown would leave scripts unchanged
++// now, but toggling still bypasses the full update path).
+ func ToggleExtClientConnectivity(ctx context.Context, client *models.ExtClient, enable bool) (models.ExtClient, error) {
+ 	if client == nil {
+ 		return models.ExtClient{}, errors.New("nil ext client")
+```
+
+**File**: `logic/extpeers_test.go` (modified, +16/-2)
+```diff
+@@ -259,13 +259,27 @@ func TestUpdateExtClientPreservesPostUpPostDownWhenOmitted(t *testing.T) {
+ 	assert.Equal(t, "iptables -A FORWARD -j ACCEPT", updated.PostUp)
+ 	assert.Equal(t, "iptables -D FORWARD -j ACCEPT", updated.PostDown)
+ 
++	postUp := "echo up\r\necho up2"
++	postDown := "echo down\r\necho down2"
+ 	withScripts := UpdateExtClient(&old, &models.CustomExtClient{
+ 		ClientID: "client-1",
+-		PostUp:   "echo up\r\necho up2",
+-		PostDown: "echo down\r\necho down2",
++		PostUp:   &postUp,
++		PostDown: &postDown,
+ 	})
+ 	assert.Equal(t, "echo up\necho up2", withScripts.PostUp)
+ 	assert.Equal(t, "echo down\necho down2", withScripts.PostDown)
++
++	empty := ""
++	cleared := UpdateExtClient(&old, &models.CustomExtClient{
++		ClientID: "client-1",
++		PostUp:   &empty,
++		PostDown: &empty,
++	})
++	assert.Equal(t, "", cleared.PostUp)
++	assert.Equal(t, "", cleared.PostDown)
++	// Omitted pointers still leave scripts unchanged after a clear payload shape.
++	assert.Equal(t, "iptables -A FORWARD -j ACCEPT", old.PostUp)
++	assert.Equal(t, "iptables -D FORWARD -j ACCEPT", old.PostDown)
+ }
+ 
+ func TestDeleteExtClient(t *testing.T) {
+```
+
+**File**: `logic/peers.go` (modified, +0/-3)
+```diff
+@@ -210,9 +210,6 @@ func (g *PeerGraph) HostPeerInfo(ctx context.Context, host *schema.Host) (models
+ func defaultsAllowAllTraffic(device, user models.Acl, acls []models.Acl) bool {
+ 	deviceOn := device.Enabled && aclOpenBothSides(device)
+ 	userOn := user.Enabled && aclOpenBothSides(user)
+-	if !servercfg.IsPro {
+-		userOn = true
+-	}
+ 	for _, acl := range acls {
+ 		if !acl.Enabled || !aclOpenBothSides(acl) {
+ 			continue
+```
+
+**File**: `logic/user_device_acls.go` (renamed, +58/-53)
+```diff
+@@ -4,22 +4,27 @@ import (
+ 	"context"
+ 	"net"
+ 
 -	"github.com/gravitl/netmaker/logic"
  	"github.com/gravitl/netmaker/models"
  	"github.com/gravitl/netmaker/schema"
--	"github.com/gravitl/netmaker/servercfg"
- 	"golang.org/x/exp/slog"
  )
  
--var autoRelayCtxMutex = &sync.RWMutex{}
--var autoRelayCacheMutex = &sync.RWMutex{}
--var autoRelayCache = make(map[schema.NetworkID][]string)
--
--func InitAutoRelayCache() {
--	autoRelayCacheMutex.Lock()
--	defer autoRelayCacheMutex.Unlock()
--	allNodes, err := logic.GetAllNodes(db.WithContext(context.Background()))
--	if err != nil {
--		return
--	}
--	for _, node := range allNodes {
--		if node.IsAutoRelay {
--			autoRelayCache[schema.NetworkID(node.Network)] = append(autoRelayCache[schema.NetworkID(node.Network)], node.ID.String())
--		}
--	}
--
--}
--func SetAutoRelay(node *models.Node) {
--	node.IsAutoRelay = true
--}
--
- func CheckAutoRelayCtx(autoRelayNode, victimNode, peerNode models.Node) error {
--	autoRelayCtxMutex.RLock()
--	defer autoRelayCtxMutex.RUnlock()
--	if err := logic.ErrExitNodeBlocksAutoRelay(&victimNode); err != nil {
-+	if err := ErrExitNodeBlocksAutoRelay(&victimNode); err != nil {
- 		return err
- 	}
--	if err := logic.ErrExitNodeBlocksAutoRelay(&peerNode); err != nil {
-+	if err := ErrExitNodeBlocksAutoRelay(&peerNode); err != nil {
- 		return err
- 	}
--	if err := logic.ErrExitClientBlocksAutoRelayRole(&autoRelayNode); err != nil {
-+	if err := ErrExitClientBlocksAutoRelayRole(&autoRelayNode); err != nil {
- 		return err
- 	}
--	if peerNode.AutoRelayedPeers == nil {
--		return nil
--	}
--	if victimNode.AutoRelayedPeers == nil {
-+	if peerNode.AutoRelayedPeers == nil || victimNode.AutoRelayedPeers == nil {
- 		return nil
- 	}
--	if peerNode.Mutex != nil {
--		peerNode.Mutex.Lock()
--	}
- 	autoRelayNodeIDPeerNode, peerHasAutoRelayed := peerNode.AutoRelayedPeers[victimNode.ID.String()]
--	if peerNode.Mutex != nil {
--		peerNode.Mutex.Unlock()
--	}
--	if victimNode.Mutex != nil {
--		victimNode.Mutex.Lock()
--	}
- 	autoRelayNodeIDVictim, victimHasAutoRelayed := victimNode.AutoRelayedPeers[peerNode.ID.String()]
--	if victimNode.Mutex != nil {
--		victimNode.Mutex.Unlock()
--	}
- 	if peerHasAutoRelayed && victimHasAutoRelayed && autoRelayNodeIDVictim == autoRelayNodeIDPeerNode {
- 		return errors.New("auto relay ctx is already set")
- 	}
- 	return nil
- }
--func SetAutoRelayCtx(autoRelayNode, victimNode, peerNode models.Node) error {
--	autoRelayCtxMutex.Lock()
--	defer autoRelayCtxMutex.Unlock()
--	if err := logic.ErrExitNodeBlocksAutoRelay(&victimNode); err != nil {
++func init() {
++	GetUserDeviceAclRulesForNode = getUserDeviceAclRulesForNode
++	GetUserDeviceEgressRulesForNode = getUserDeviceEgressRulesForNode
++	GetFwRulesForUserDevicesOnGw = getFwRulesForUserDevicesOnGw
++}
 +
-+// SetAutoRelayCtx pairs victimNode and peerNode via autoRelayNode. Each side's
-+// AutoRelayedPeers entry is written with a single targeted JSON-key update
-+// (schema.Node.SetAutoRelayedPeer) rather than a full-row fetch/mutate/upsert,
-+// so two concurrent calls for different pairs on the same node never race or
-+// clobber each other's key (or any unrelated column) — no app-level lock
-+// needed, same as CheckAutoRelayCtx.
-+func SetAutoRelayCtx(ctx context.Context, autoRelayNode, victimNode, peerNode models.Node) error {
-+	if err := ErrExitNodeBlocksAutoRelay(&victimNode); err != nil {
- 		return err
+ // Host-backed user devices (schema.Host.OwnerUsername) are real nodes, so their
+ // firewall source is the node's own overlay address instead of a static-node
+ // address. These hooks run alongside the ExtClient/RAC user hooks in
+-// pro/logic/acls.go, which stay untouched.
++// logic/user_policy_acls.go, which stay untouched.
+ 
+ // userDeviceRuleSuffix keeps user-device rule IDs from colliding with the
+ // ExtClient user rules, which are keyed by the bare policy ID.
+ const userDeviceRuleSuffix = "#user-device"
+ 
+ // listUserDevicesForACL lists host-backed user devices; tests may override.
+-var listUserDevicesForACL = logic.ListUserDevicesByNetwork
++var listUserDevicesForACL = ListUserDevicesByNetwork
+ 
+ // listEgressForUserDeviceACL lists network egresses; tests may override.
+ var listEgressForUserDeviceACL = func(ctx context.Context, network string) ([]schema.Egress, error) {
+@@ -28,7 +33,7 @@ var listEgressForUserDeviceACL = func(ctx context.Context, network string) ([]sc
+ 
+ // getDefaultUserPolicyForUserDeviceACL loads the default user policy; tests may override.
+ var getDefaultUserPolicyForUserDeviceACL = func(ctx context.Context, netID schema.NetworkID) (models.Acl, error) {
+-	return logic.GetDefaultPolicy(ctx, netID, models.UserPolicy)
++	return GetDefaultPolicy(ctx, netID, models.UserPolicy)
+ }
+ 
+ // userDeviceSrcIPsForPolicy returns the overlay addresses of the devices whose
+@@ -55,10 +60,10 @@ func userDeviceSrcIPsForPolicy(policy models.Acl, devices []models.Node,
+ 		return
  	}
--	if err := logic.ErrExitNodeBlocksAutoRelay(&peerNode); err != nil {
-+	if err := ErrExitNodeBlocksAutoRelay(&peerNode); err != nil {
- 		return err
- 	}
--	if err := logic.ErrExitClientBlocksAutoRelayRole(&autoRelayNode); err != nil {
-+	if err := ErrExitClientBlocksAutoRelayRole(&autoRelayNode); err != nil {
- 		return err
- 	}
- 	if peerNode.AutoRelayedPeers == nil {
-@@ -92,89 +55,31 @@ func SetAutoRelayCtx(autoRelayNode, victimNode, peerNode models.Node) error {
- 	if victimNode.AutoRelayedPeers == nil {
- 		victimNode.AutoRelayedPeers = make(map[string]string)
- 	}
--	if peerNode.Mutex != nil {
--		peerNode.Mutex.Lock()
--	}
- 	autoRelayNodeIDPeerNode, peerHasAutoRelayed := peerNode.AutoRelayedPeers[victimNode.ID.String()]
--	if peerNode.Mutex != nil {
--		peerNode.Mutex.Unlock()
--	}
--	if victimNode.Mutex != nil {
--		victimNode.Mutex.Lock()
--	}
- 	autoRelayNodeIDVictim, victimHasAutoRelayed := victimNode.AutoRelayedPeers[peerNode.ID.String()]
--	if victimNode.Mutex != nil {
--		victimNode.Mutex.Unlock()
--	}
- 	if peerHasAutoRelayed && victimHasAutoRelayed && autoRelayNodeIDVictim == autoRelayNodeIDPeerNode {
- 		return errors.New("auto relay ctx is already set")
- 	}
--	if peerNode.Mutex != nil {
--		peerNode.Mutex.Lock()
--	}
- 	peerNode.AutoRelayedPeers[victimNode.ID.String()] = autoRelayNode.ID.String()
--	if peerNode.Mutex != nil {
--		peerNode.Mutex.Unlock()
--	}
--	if victimNode.Mutex != nil {
--		victimNode.Mutex.Lock()
--	}
- 	victimNode.AutoRelayedPeers[peerNode.ID.String()] = autoRelayNode.ID.String()
--	if victimNode.Mutex != nil {
--		victimNode.Mutex.Unlock()
--	}
--	if err := logic.UpsertNode(&victimNode); err != nil {
-+	_peerNode := &schema.Node{ID: peerNode.ID.String()}
-+	if err := _peerNode.SetAutoRelayedPeer(ctx, victimNode.ID.String(), autoRelayNode.ID.String());
-```
-
-**File**: `logic/dns.go` (modified, +3/-0)
-```diff
-@@ -318,6 +318,9 @@ func GetNodeDNS(ctx context.Context, network string) ([]models.DNSEntry, error)
- 		if err != nil {
+ 	for i := range devices {
+-		if _, ok := owners[logic.NodeOwnerUsername(&devices[i])]; !ok {
++		if _, ok := owners[NodeOwnerUsername(&devices[i])]; !ok {
  			continue
  		}
-+		if IsUserOwnedHost(host) {
-+			continue
-+		}
- 		var entry = models.DNSEntry{}
- 		if defaultDomain == "" {
- 			entry.Name = fmt.Sprintf("%s.%s", host.Name, network)
-```
-
-**File**: `logic/peers.go` (modified, +0/-19)
-```diff
-@@ -23,25 +23,6 @@ import (
- 	"gorm.io/gorm"
- )
- 
--var (
--	// ResetAutoRelay - function to reset autorelayed peers on this node
--	ResetAutoRelay = func(ctx context.Context, autoRelayNode *models.Node) error {
--		return nil
--	}
--	// ResetAutoRelayedPeer - removes relayed peers for node
--	ResetAutoRelayedPeer = func(ctx context.Context, failedOverNode *models.Node) error {
--		return nil
--	}
--	// GetAutoRelayPeerIps - gets autorelay peerips
--	GetAutoRelayPeerIps = func(ctx context.Context, g *PeerGraph, peer, node *models.Node) []net.IPNet {
--		return []net.IPNet{}
--	}
--	// SetAutoRelay - sets autorelay flag on the node
--	SetAutoRelay = func(node *models.Node) {
--		node.IsAutoRelay = false
--	}
--)
--
- var (
- 	hostPeerInfoCache   map[string]map[string]models.HostPeerInfo
- 	hostPeerInfoCacheMu sync.RWMutex
-```
-
-**File**: `logic/security.go` (modified, +2/-2)
-```diff
-@@ -206,7 +206,7 @@ func ContinueIfUserMatch(next http.Handler) http.HandlerFunc {
+-		deviceSrc4, deviceSrc6 := logic.UserDeviceSrcIPs(&devices[i])
++		deviceSrc4, deviceSrc6 := UserDeviceSrcIPs(&devices[i])
+ 		if deviceSrc4.IP != nil {
+ 			src4 = append(src4, deviceSrc4)
+ 		}
+@@ -73,7 +78,7 @@ func userDeviceSrcIPsForPolicy(policy models.Acl, devices []models.Node,
+ // policy which covers all users.
+ func allUserDeviceSrcIPs(devices []models.Node) (src4, src6 []net.IPNet) {
+ 	for i := range devices {
+-		deviceSrc4, deviceSrc6 := logic.UserDeviceSrcIPs(&devices[i])
++		deviceSrc4, deviceSrc6 := UserDeviceSrcIPs(&devices[i])
+ 		if deviceSrc4.IP != nil {
+ 			src4 = append(src4, deviceSrc4)
+ 		}
+@@ -94,7 +99,7 @@ func egressMatchesPolicyDst(e schema.Egress, dstTags map[string]struct{}) bool {
+ 			return true
+ 		}
  	}
- }
- 
--func ContinueIfUserMatchOrAdmin(next http.Handler) http.HandlerFunc {
-+func ContinueIfUserMatchOrAdminOrAuditor(next http.Handler) http.HandlerFunc {
- 	return func(w http.ResponseWriter, r *http.Request) {
- 		var errorResponse = models.ErrorResponse{
- 			Code: http.StatusForbidden, Message: Forbidden_Msg,
-@@ -232,7 +232,7 @@ func ContinueIfUserMatchOrAdmin(next http.Handler) http.HandlerFunc {
- 			next.ServeHTTP(w, r)
- 			return
- 		case scope.TenantScope:
--			if user.PlatformRoleID == schema.SuperAdminRole || user.PlatformRoleID == schema.AdminRole {
-+			if user.PlatformRoleID == schema.SuperAdminRole || user.PlatformRoleID == schema.AdminRole || user.PlatformRoleID == schema.Auditor {
- 				next.ServeHTTP(w, r)
- 				return
+-	for _, domainAns := range logic.AllDomainAnsFromEgress(e) {
++	for _, domainAns := range AllDomainAnsFromEgress(e) {
+ 		if _, ok := dstTags[domainAns]; ok {
+ 			return true
+ 		}
+@@ -128,8 +133,8 @@ func nodeRoutesEgress(node *models.Node, e *schema.Egress) bool {
+ // show up as iptables "anywhere" and bypass per-egress IP restrictions.
+ func appendUserDevicePolicyEgressDsts(ctx context.Context, node *models.Node,
+ 	policy models.Acl, egs []schema.Egress, dst4, dst6 *[]net.IPNet) {
+-	selectedIP4, selectedIP6 := getSelectedUserEgressIPNets(policy.Dst)
+-	dstTags := logic.ConvAclTagToValueMap(policy.Dst)
++	selectedIP4, selectedIP6 := getSelectedEgressIPNets(policy.Dst)
++	dstTags := ConvAclTagToValueMap(policy.Dst)
+ 	_, dstAll := dstTags["*"]
+ 	for _, egI := range egs {
+ 		if !egI.Status || (len(egI.Nodes) == 0 && len(egI.Tags) == 0) {
+@@ -139,12 +144,12 @@ func appendUserDevicePolicyEgressDsts(ctx context.Context, node *models.Node,
+ 			continue
+ 		}
+ 		routes := nodeRoutesEgress(node, &egI)
+-		if logic.IsEgressInternetGateway(egI) {
++		if IsEgressInternetGateway(egI) {
+ 			// 0.0.0.0/0 must only be installed on the exit's routing node.
+ 			if !routes {
+ 				continue
  			}
+-			logic.AppendEgressPolicyRange(egI, egI.Range, dst4, dst6)
++			AppendEgressPolicyRange(egI, egI.Range, dst4, dst6)
+ 			continue
+ 		}
+ 		if len(selectedIP4) > 0 || len(selectedIP6) > 0 {
+@@ -160,11 +165,11 @@ func appendUserDevicePolicyEgressDsts(ctx context.Context, node *models.Node,
+ 			egressRange = egI.VirtualRange
+ 		}
+ 		if egressRange != "" {
+-			logic.AppendEgressPolicyRange(egI, egressRange, dst4, dst6)
++			AppendEgressPolicyRange(egI, egressRange, dst4, dst6)
+ 			continue
+ 		}
+-		if logic.HasEgressDomainAns(egI) {
+-			for _, domainAns := range logic.AllDomainAnsFromEgress(egI) {
++		if HasEgressDomainAns(egI) {
++			for _, domainAns := range AllDomainAnsFromEgress(egI) {
+ 				ip, cidr, err := net.ParseCIDR(domainAns)
+ 				if err != nil {
+ 					continue
+@@ -201,21 +206,21 @@ func addUserDeviceAclRule(rules map[string]models.AclRule, policy models.Acl,
+ 			Allowed:         true,
+ 		}
+ 	}
+-	r.IPList = logic.UniqueIPNetList(append(r.IPList, src4...))
+-	r.IP6List = logic.UniqueIPN
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4231** (2026-11-14): NM-356: Enable CE user ACL policies with All Users and per-user sources (@abhishek9686)
 - **PR #4230** (2026-11-12): Pre-Release Fixes v1.8.0 (@VishalDalwadi)
 - **PR #4225** (2026-11-12): NM-356: keep static WireGuard configs on JIT, IdP, and access cleanup  (@abhishek9686)
 - **PR #4224** (2026-11-11): Pre-Release Fixes v1.8.0 (@VishalDalwadi)
 - **PR #4223** (closed): Release v1.7.0 (@abhishek9686)
 - **PR #4222** (2026-11-11): NM-356: skip FwUpdate calc for user-owned devices, allow relayed/auto-relayed egress traffic on gateway ACL paths (@abhishek9686)
-- **PR #4219** (2026-11-11): Pre-Release Fixes v1.8.0 (@VishalDalwadi)
 
 ---
 
@@ -1474,60 +1708,130 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Pre-Release Fixes v1.8.0 (#4230)
+## X. NM-356: Enable CE user ACL policies with All Users and per-user sources
 
 **RULE**:
-When implementing operations in `controllers/auto_relay.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gravitl/netmaker. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `controllers/acls.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gravitl/netmaker. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5b68aa9e`: Pre-Release Fixes v1.8.0 (#4230). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ccc98823`: NM-356: Enable CE user ACL policies with All Users and per-user sources. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `controllers/auto_relay.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `controllers/acls.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-package controller
-// autoRelayHandlers - handlers for AutoRelay
-func autoRelayHandlers(r *mux.Router) {
-	r.HandleFunc("/api/v1/node/{nodeid}/auto_relay", middleware.Scope(scope.TenantScope, AuthorizeHost(http.HandlerFunc(getAutoRelayGws)))).
-	r.HandleFunc("/api/v1/node/{nodeid}/auto_relay_me", middleware.Scope(scope.TenantScope, AuthorizeHost(http.HandlerFunc(autoRelayME)))).
-	r.HandleFunc("/api/v1/node/{nodeid}/auto_relay_me", middleware.Scope(scope.TenantScope, AuthorizeHost(http.HandlerFunc(autoRelayMEUpdate)))).
-	r.HandleFunc("/api/v1/node/{nodeid}/auto_relay_check", middleware.Scope(scope.TenantScope, AuthorizeHost(http.HandlerFunc(checkautoRelayCtx)))).
-	autoRelayNodes := logic.DoesAutoRelayExist(r.Context(), node.Network)
-	err = logic.CreateAutoRelay(node)
-		logic.ResetAutoRelay(ctx, &node)
-	_node := &schema.Node{ID: nodeid}
-	err := _node.Get(r.Context(), dbtypes.WithAllPreloads())
-	node := *logic.ConvertSchemaNodeToModelsNodeWithContext(r.Context(), _node, logic.SkipViolations())
+	"github.com/gravitl/netmaker/servercfg"
+	srcGroupTypes := []models.AclGroupType{
+		models.UserAclID,
+		models.NodeTagID,
+		models.NodeID,
+	}
+	// User groups remain Pro-only.
+	if servercfg.IsPro {
+		srcGroupTypes = []models.AclGroupType{
+			models.UserAclID,
+			models.UserGroupAclID,
+			models.NodeTagID,
+			models.NodeID,
+		}
+	}
+		SrcGroupTypes: srcGroupTypes,
+		ProtocolTypes: ceOrProProtocolTypes(),
+	}
+	logic.ReturnSuccessResponseWithJson(w, r, resp, "fetched acls types")
+}
+
+// ceOrProProtocolTypes returns Any-only protocol types on CE. Custom
+// protocol/port policies are Pro-only.
+func ceOrProProtocolTypes() []models.ProtocolType {
+	anyType := models.ProtocolType{
+		Name:       models.Any,
+		AccessType: models.NetworkAccess,
+		AllowedProtocols: []models.Protocol{
+			models.ALL,
+		},
+		PortRange:        "All ports",
+		AllowPortSetting: false,
+	}
+	if !servercfg.IsPro {
+		return []models.ProtocolType{anyType}
+	}
+	return []models.ProtocolType{
+		anyType,
+		{
+			Name:       models.Http,
+			AccessType: models.NetworkAccess,
+			AllowedProtocols: []models.Protocol{
+				models.TCP,
+			PortRange: "80",
+		},
+		{
+			Name:       models.Https,
+			AccessType: models.NetworkAccess,
+			AllowedPr
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-package controllers
-	controller "github.com/gravitl/netmaker/controllers"
-	proLogic "github.com/gravitl/netmaker/pro/logic"
-	"github.com/gravitl/netmaker/servercfg"
-// AutoRelayHandlers - handlers for AutoRelay
-func AutoRelayHandlers(r *mux.Router) {
-	r.HandleFunc("/api/v1/node/{nodeid}/auto_relay", middleware.Scope(scope.TenantScope, controller.AuthorizeHost(http.HandlerFunc(getAutoRelayGws)))).
-	r.HandleFunc("/api/v1/node/{nodeid}/auto_relay_me", middleware.Scope(scope.TenantScope, controller.AuthorizeHost(http.HandlerFunc(autoRelayME)))).
-	r.HandleFunc("/api/v1/node/{nodeid}/auto_relay_me", middleware.Scope(scope.TenantScope, controller.AuthorizeHost(http.HandlerFunc(autoRelayMEUpdate)))).
-	r.HandleFunc("/api/v1/node/{nodeid}/auto_relay_check", middleware.Scope(scope.TenantScope, controller.AuthorizeHost(http.HandlerFunc(checkautoRelayCtx)))).
-	autoRelayNodes := proLogic.DoesAutoRelayExist(r.Context(), node.Network)
-	err = proLogic.CreateAutoRelay(node)
-	if servercfg.CacheEnabled() {
-		proLogic.RemoveAutoRelayFromCache(node.Network)
-	}
-		proLogic.ResetAutoRelay(ctx, &node)
-	// confirm host exists
-	node, err := logic.GetNodeByID(nodeid)
-	host := &schema.Host{
-		ID: node.HostID,
-	
+// Induced defect failure mode:
+		SrcGroupTypes: []models.AclGroupType{
+			models.UserAclID,
+			models.UserGroupAclID,
+			models.NodeTagID,
+			models.NodeID,
+		},
+		ProtocolTypes: []models.ProtocolType{
+			{
+				Name:       models.Any,
+				AccessType: models.NetworkAccess,
+				AllowedProtocols: []models.Protocol{
+					models.ALL,
+				},
+				PortRange:        "All ports",
+				AllowPortSetting: false,
+			},
+			{
+				Name:       models.Http,
+				AccessType: models.NetworkAccess,
+				AllowedProtocols: []models.Protocol{
+					models.TCP,
+				},
+				PortRange: "80",
+			{
+				Name:       models.Https,
+				AccessType: models.NetworkAccess,
+				AllowedProtocols: []models.Protocol{
+					models.TCP,
+				},
+				PortRange: "443",
+			// {
+			// 	Name: "MySQL",
+			// 	AllowedProtocols: []models.Protocol{
+			// 		models.TCP,
+			// 	},
+			// 	PortRange: "3306",
+			// },
+			// {
+			// 	Name: "DNS TCP",
+			// 	AllowedProtocols: []models.Protocol{
+			// 		models.TCP,
+			// 	},
+			// 	PortRange: "53",
+			// },
+			// {
+			// 	Name: "DNS UDP",
+			// 	AllowedProtocols: []models.Protocol{
+			// 		models.UDP,
+			// 	},
+			// 	PortRange: "53",
+			// },
+			{
+				Name:       models.AllTCP,
+				AccessType: models.NetworkAccess,
+				AllowedPro
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5b68aa9e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ccc98823` are properly handled with clean fallback behavior.

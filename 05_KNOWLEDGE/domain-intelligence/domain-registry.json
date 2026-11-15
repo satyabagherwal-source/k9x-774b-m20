@@ -1,18 +1,19 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T07:33:00.343Z",
-  "total_records": 991,
+  "last_updated": "2026-11-15T07:42:33.499Z",
+  "total_records": 998,
   "domains": {
     "A": {
-      "total": 6,
+      "total": 7,
       "record_ids": [
         "DOM-A-DD59FA01",
         "domain_intelligence-human-need-intelligence-foreactlabs-openexecutive-core-invariants",
         "domain_intelligence-human-need-intelligence-foreactlabs-openexecutive-learnings-core-invariants",
         "domain_intelligence-human-need-intelligence-argoproj-argo-workflows-core-invariants",
         "domain_intelligence-human-need-intelligence-argoproj-argo-workflows-learnings-core-invariants",
-        "domain_intelligence-human-need-intelligence-kumahq-kuma-core-invariants"
+        "domain_intelligence-human-need-intelligence-kumahq-kuma-core-invariants",
+        "domain_intelligence-human-need-intelligence-gravitl-netmaker-core-invariants"
       ]
     },
     "B": {
@@ -36,7 +37,7 @@
       ]
     },
     "D": {
-      "total": 490,
+      "total": 493,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -527,7 +528,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-tencent-hy-memory-30b-a3b-learnings-core-inva",
         "domain_intelligence-research-knowledge-intelligence-burner22-numbat-core-invariants",
         "DOM-D-E891AC55",
-        "domain_intelligence-research-knowledge-intelligence-hf-burner22-numbat-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-hf-burner22-numbat-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-edge0-audio8-tts-realistic-air-core-invariants",
+        "DOM-D-BDC1BDD2",
+        "domain_intelligence-research-knowledge-intelligence-hf-edge0-audio8-tts-realistic-air-learnings-core"
       ]
     },
     "E": {
@@ -565,7 +569,7 @@
       ]
     },
     "G": {
-      "total": 165,
+      "total": 167,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -731,7 +735,9 @@
         "domain_intelligence-architecture-intelligence-temporalio-temporal-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-projectdiscovery-nuclei-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-clementtsang-bottom-core-invariants",
-        "domain_intelligence-architecture-intelligence-clementtsang-bottom-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-clementtsang-bottom-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-mrkai77-loop-core-invariants",
+        "domain_intelligence-architecture-intelligence-mrkai77-loop-learnings-core-invariants"
       ]
     },
     "H": {
@@ -943,7 +949,7 @@
       ]
     },
     "I": {
-      "total": 38,
+      "total": 39,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -982,7 +988,8 @@
         "domain_intelligence-content-information-intelligence-kcl-lang-kcl-core-invariants",
         "domain_intelligence-content-information-intelligence-kcl-lang-kcl-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-1jehuang-jcode-core-invariants",
-        "domain_intelligence-content-information-intelligence-1jehuang-jcode-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-1jehuang-jcode-learnings-core-invariants",
+        "domain_intelligence-content-information-intelligence-gravitl-netmaker-learnings-core-invariants"
       ]
     },
     "J": {
@@ -19224,6 +19231,102 @@
       "repository": "hf-burner22-numbat-learnings",
       "content_hash": "2da1c4523020265d2d35a1a113761ee37ae8efc0e4166f855883f1cd2ea8e59d",
       "created_at": "2026-11-15T07:32:59.188Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-edge0-audio8-tts-realistic-air-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-edge0-audio8-tts-realistic-air-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: Edge0/Audio8-TTS-Realistic-Air Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-edge0-audio8-tts-realistic-air-research-knowledge-intelligence-edge0-audio8-t.md",
+      "repository": "Edge0/Audio8-TTS-Realistic-Air",
+      "content_hash": "cd4a84c819f27972e7745a5088918f86212d7e5abd82d2570d5a0a485b5d08e6",
+      "created_at": "2026-11-15T07:41:47.398Z"
+    },
+    "domain_intelligence-architecture-intelligence-mrkai77-loop-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-mrkai77-loop-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: mrkai77/Loop Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mrkai77-loop-architecture-intelligence-mrkai77-loop-core-invariants.md",
+      "repository": "mrkai77/Loop",
+      "content_hash": "0143926d45908bc5da550cde509d175031b12bb483b0aa693ac0b980fa8e176b",
+      "created_at": "2026-11-15T07:41:53.998Z"
+    },
+    "domain_intelligence-human-need-intelligence-gravitl-netmaker-core-invariants": {
+      "record_id": "domain_intelligence-human-need-intelligence-gravitl-netmaker-core-invariants",
+      "domain_letter": "A",
+      "title": "Human & Need Intelligence: gravitl/netmaker Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-gravitl-netmaker-human-need-intelligence-gravitl-netmaker-core-invariants.md",
+      "repository": "gravitl/netmaker",
+      "content_hash": "88d0cb8f131cd112a37dcac36ecaaab87adc66a441952f6835e446dccddd3481",
+      "created_at": "2026-11-15T07:41:59.093Z"
+    },
+    "DOM-D-BDC1BDD2": {
+      "record_id": "DOM-D-BDC1BDD2",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Edge0/Audio8-TTS-Realistic-Air",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-air-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air](https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air))  \n> **Source Version**: `hf-edge0-aud`  \n> **License**:",
+      "content_hash": "d6ddd6f341aab8b506408529a831717350aba2ace7e163f07aa33ee62a8786a3",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-air-learnings.md`  \n> **Source**: huggingface ([https: -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-air-learnings.md`  \n> **Source**: huggingface ([https:",
+      "provenance": {
+        "source_uri": "project://hf-edge0-audio8-tts-realistic-air/hf-edge0-audio8-tts-realistic-air-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T07:42:01.950Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-edge0-audio8-tts-realistic-air)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-edge0-audio8-tts-realistic-air"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-15T07:42:32.084Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-edge0-audio8-tts-realistic-air-learnings-core": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-edge0-audio8-tts-realistic-air-learnings-core",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-edge0-audio8-tts-realistic-air-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-edge0-audio8-tts-realistic-air-learnings-research-knowledge-intelligence-hf-e.md",
+      "repository": "hf-edge0-audio8-tts-realistic-air-learnings",
+      "content_hash": "f9ea4b08a4d23556b01c8588f03d754ba1a4dd3ad0dc240a205046077bbdfc06",
+      "created_at": "2026-11-15T07:42:32.311Z"
+    },
+    "domain_intelligence-architecture-intelligence-mrkai77-loop-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-mrkai77-loop-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: mrkai77-loop-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mrkai77-loop-learnings-architecture-intelligence-mrkai77-loop-learnings-core-inv.md",
+      "repository": "mrkai77-loop-learnings",
+      "content_hash": "5abd0f0f8fac079c0e009599a70787c127b29f30be8496cf1a6071bd6469be8f",
+      "created_at": "2026-11-15T07:42:32.842Z"
+    },
+    "domain_intelligence-content-information-intelligence-gravitl-netmaker-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-gravitl-netmaker-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: gravitl-netmaker-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-gravitl-netmaker-learnings-content-information-intelligence-gravitl-netmaker-lea.md",
+      "repository": "gravitl-netmaker-learnings",
+      "content_hash": "49cad1117f24027b1727c417187c68536f36f1114225a50160f64d4c13df472c",
+      "created_at": "2026-11-15T07:42:33.499Z"
     }
   }
 }

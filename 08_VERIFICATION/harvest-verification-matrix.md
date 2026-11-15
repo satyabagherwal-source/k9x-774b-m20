@@ -10054,3 +10054,7 @@
 | `CYCLE-20261115-NZCK` | `2026-11-15T07:04:02.228Z` | `ClementTsang/bottom` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8586` | Yes (`e6060d14...`) |
 | `CYCLE-20261115-OC1A` | `2026-11-15T07:32:18.286Z` | `burner22/numbat` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-burner22-numbat-learnings.md` | Yes (`38afcc68...`) |
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T07:32:59.003Z` | `hf-burner22-numbat` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-E891AC55` [Domain D] | Yes (`dad1b5d0...`) |
+| `CYCLE-20261115-0J16` | `2026-11-15T07:41:47.226Z` | `Edge0/Audio8-TTS-Realistic-Air` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-air-learnings.md` | Yes (`3bb2af68...`) |
+| `CYCLE-20261115-0O0R` | `2026-11-15T07:41:53.691Z` | `mrkai77/Loop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8587` | Yes (`feed4018...`) |
+| `CYCLE-20261115-0RYN` | `2026-11-15T07:41:58.799Z` | `gravitl/netmaker` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8588` | Yes (`198f9ed6...`) |
+| `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T07:42:32.101Z` | `hf-edge0-audio8-tts-realistic-air` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-BDC1BDD2` [Domain D] | Yes (`d6ddd6f3...`) |

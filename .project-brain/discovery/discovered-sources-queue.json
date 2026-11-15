@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T07:32:59.016Z",
+  "updated_at": "2026-11-15T07:42:32.520Z",
   "stats": {
-    "total_discovered": 3655,
-    "approved_pending_harvest": 3445,
+    "total_discovered": 3657,
+    "approved_pending_harvest": 3447,
     "harvested_count": 0,
     "rejected_count": 210,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3425,
+      "COMMUNITY_AND_EXPERT": 3427,
       "OFFICIAL_DOCUMENTATION": 125,
       "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
@@ -78961,6 +78961,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-burner22-numbat-learnings.md",
         "fileName": "hf-burner22-numbat-learnings.md"
+      }
+    },
+    "SRC-477085610748": {
+      "id": "SRC-477085610748",
+      "url": "https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air",
+      "title": "https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T07:42:32.115Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-air-learnings.md",
+        "fileName": "hf-edge0-audio8-tts-realistic-air-learnings.md"
+      }
+    },
+    "SRC-1216579E883F": {
+      "id": "SRC-1216579E883F",
+      "url": "https://github.com/koekeishiya/skhd/issues/1",
+      "title": "https://github.com/koekeishiya/skhd/issues/1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T07:42:32.520Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mrkai77-loop-learnings.md",
+        "fileName": "mrkai77-loop-learnings.md"
       }
     }
   }
