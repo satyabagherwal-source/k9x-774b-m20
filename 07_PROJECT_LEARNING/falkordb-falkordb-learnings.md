@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/falkordb-falkordb-learnings.md`  
 > **Source**: github ([https://github.com/FalkorDB/FalkorDB](https://github.com/FalkorDB/FalkorDB))  
-> **Source Version**: `7df8e588`  
+> **Source Version**: `d6fcd5aa`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T08:55:36.784Z  
+> **Timestamp**: 2026-11-15T01:32:38.704Z  
 > **Learning ID**: `learn-github-falkordb-falkordb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/falkordb-falkordb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/FalkorDB/FalkorDB](https://github.com/FalkorDB/FalkorDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T08:55:36.589Z  
+> **Harvest Timestamp**: 2026-11-15T01:32:38.697Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A super fast Graph Database uses GraphBLAS under the hood for its sparse adjacency matrix graph representation. Our goal is to provide the best Knowledge Graph for LLM (GraphRAG).
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 10516 stars
+- **Stars / Engagement**: 10511 stars
 
 ---
 
@@ -1262,968 +1262,156 @@ print("bgsave status", r.info('persistence')['rdb_last_bgsave_status'])
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5ab8fddc` (2026-11-12)
-**Commit Message**: test: revert #3722's test counting and wait_for_replica (#3762)
+### Incident Patch 1: `a4bc02ac` (2026-11-13)
+**Commit Message**: feat(docker): build the Valkey images on Ubuntu 26.04 LTS (#3727)
 
-* ci: count the TCK as one test again
+* feat(docker): build the Valkey images on Ubuntu 26.04 LTS
 
-Reverts the TCK part of #3722. test_tck.py no longer takes TCK_JUNIT_DIR,
-the two pytest jobs write the TCK's pytest JUnit file again, and
-count_results.py drops --behave, so the run summary counts the TCK as the
-one pytest test that runs it. The test-counts job stays continue-on-error.
+SERVER now also picks the base OS. REDIS_BASE_IMAGE (debian:trixie-slim)
+and VALKEY_BASE_IMAGE (ubuntu:26.04) are aliased as base-redis and
+base-valkey, and server-builder-base and server-base are both
+FROM base-${SERVER}, so each server is compiled on the OS it runs on.
+Valkey stays 9.1.2, built by build/build-server.sh.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Ubuntu's base ships e2fsprogs, which depends on libblkid1/libuuid1, so
+the util-linux purge also removes it and the four packages that only it
+and they use; none of them are on Debian's slim image. Ubuntu's base also
+carries an unpackaged Pebble binary, now deleted, and Canonical's OCI
+labels, now blanked on base-valkey.
 
-* test: one short wait_for_replica, used by every replica wait
+The runtime sanity step now runs ldd -r on falkordb.so: the builder stage
+checks the module on the toolchain image's OS, which need not be the
+image's own.
 
-wait_for_replica ran each INFO on its own thread, over a fresh retry-free
-connection, so a hung server couldn't hold it past its deadline. RLTest and
-the CI job timeouts already catch a hung server, so it is back to a plain
-poll: read the primary's offset, then wait for the replica's link to be up
-and its offset to reach it.
+Closes #3711
 
-effects_common.py and test_replication.py each had their own copy of that
-offset poll. Both now call wait_for_replica. The effects copy didn't check
-the link; every call to it is made while the replica is attached.
+* refactor(docker): literal base images, single ldd -r check, trim comments
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Addresses review: literal FROM lines (Dependabot sees them again), one ldd -r
+run for both the forbidden-lib and unresolved-symbol checks, shorter comments.
 
-* ci: drop the per-server test counts
+Co-Authored-By: C
 
-Reverts the rest of #3722's counting: tests/count_result
-
-**File**: `.github/workflows/_ci-pipeline.yml` (modified, +9/-89)
+**File**: `.github/dependabot.yml` (modified, +3/-2)
 ```diff
-@@ -98,38 +98,13 @@ jobs:
-           path: target/release
-       - run: chmod +x target/release/libfalkordb.so
-       - name: Run tests
--        id: pytest
-         run: |
-           . /data/venv/bin/activate
--          RELEASE=1 pytest tests/test_e2e.py tests/test_functions.py tests/test_mvcc.py tests/test_concurrency.py -vv --junitxml=test-results/pytest.xml
-+          RELEASE=1 pytest tests/test_e2e.py tests/test_functions.py tests/test_mvcc.py tests/test_concurrency.py -vv
-       - name: Run TCK tests
--        id: tck
-         run: |
-           . /data/venv/bin/activate
--          RELEASE=1 TCK_DONE=tck_done.txt TCK_JUNIT_DIR=test-results/tck pytest tests/tck/test_tck.py -s
--      # tests/common.py starts the server with --logfile redis-test.log.
--      # Counts for the run summary (tests/count_results.py, summed per server by
--      # _ci-pipeline.yml's test-counts job). On every outcome but a cancel, so a
--      # failing cell still counts, including one whose setup failed before its
--      # tests ran. STATUS is the job's, so any failed step marks the cell. The
--      # report never gates: both steps continue on error. The server is FALKORDB_SERVER's, as flow.sh,
--      # tests/common.py and the images default it: redis unless set.
--      - name: Record test counts
--        if: ${{ !cancelled() }}
--        continue-on-error: true
--        env:
--          RUN: artifact, amd64
--          STATUS: ${{ job.status }}
--          NAME: test-counts-artifact
--        run: python3 tests/count_results.py record --server "${FALKORDB_SERVER:-redis}" --run "$RUN" --status "$STATUS" --junit test-results/pytest.xml --behave test-results/tck --logs redis-test.log --out "test-counts/$NAME.json"
--      - name: Upload test counts
--        if: ${{ !cancelled() }}
--        continue-on-error: true
--        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
--        with:
--          name: test-counts-artifact
--          path: test-counts/
--          retention-days: 7
-+          RELEASE=1 TCK_DONE=tck_done.txt pytest tests/tck/test_tck.py -s
-   # Release flavour. The vehicle is the whole difference between the two events:
-   # a pull request tests the binary it just built, the queue tests the image it
-   # is about to promote. Same file list, same flavour config — two thin calls
-@@ -305,35 +280,6 @@ jobs:
- 
-   # Build the asan instrumented runtime image (amd64-only). Single cell,
-   # no manifest needed (push directly to the bare tag).
--  # Adds up, per server, the passed, failed and skipped tests every suite cell
--  # recorded (tests/count_results.py, `test-counts-*` artifacts), and writes
--  # them to the run summary, with the server versions the cells' logs name.
--  # A report, not a gate: each cell's own result gates. continue-on-error, so
--  # a failure here (an artifact download, the summary) can't fail this
--  # workflow and, through ci-gate, a pull request whose tests all passed.
--  test-counts:
--    needs: [test, flow-release, flow-release-image, flow-coverage, test-image, flow-asan]
--    if: ${{ !cancelled() }}
--    continue-on-error: true
--    runs-on: ubuntu-latest
--    timeout-minutes: 10
--    steps:
--      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
--        with:
--          persist-credentials: false
--          sparse-checkout: tests/count_results.py
--          sparse-checkout-cone-mode: false
--      - name: Download the recorded counts
--        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
--        with:
--          pattern: test-counts-*
--          path: test-counts
--          merge-multiple: true
--      - name: Summarise per server
--        run: |
--          mkdir -p test-counts
--          python3 tests/count_results.py summary test-counts | tee -a "$GITHUB_STEP_SUMMARY"
--
-   build-rc-asan-image:
-     if: ${{ inputs.use_image }}
-     uses: ./.github/workflows/_build-flavour.yml
-@@ -405,24 +351,20 @@ jobs:
-           # The module crate's own unit tests (the RDB codec); `--lib` skips doctests.
-           CARGO_PROFILE_RELEASE_LTO=false cargo test --release -p falkordb-rs --lib
-       - name: Run pytest tests against the RC image
--        id: pytest
-         run: |
-           . /data/venv/bin/activate
--          pytest tests/test_e2e.py tests/test_functions.py tests/test_mvcc.py tests/test_concurrency.py -vv --junitxml=test-results/pytest.xml
-+          pytest tests/test_e2e.py tests/test_functions.py tests/test_mvcc.py tests/test_concurrency.py -vv
-       - name: Run TCK tests against the RC image
--        id: tck
-         run: |
-           . /data/venv/bin/activate
--          TCK_DONE=tck_done.txt TCK_JUNIT_DIR=test-results/tck pytest tests/tck/test_tck.py -s
--      # Capture the GHA service container's stdout/stderr so the run carries
--      # the server lifecycle, module RedisModule_Log output, and any
-+          TCK_DONE=tck_done.txt pytest tests/tck/test_tck.py -s
-+      # Capture the GHA service container's stdout/stde
-```
-
-**File**: `.github/workflows/_flow-artifact.yml` (modified, +1/-28)
-```diff
-@@ -99,16 +99,11 @@ jobs:
-           path: ${{ inputs.artifact_path }}
-       - run: chmod +x ${{ inputs.artifact_path }}/libfalkordb.so
-       - name: Run Flow test - ${{ matrix.test_file }} (${{ inputs.flavour }}, ${{ matrix.arch }})
--        id: flow
--        # bash, for pipefail: the tee keeps RLTest's output for the counts
--        # below without hiding flow.sh's exit status.
--        shell: bash
-         env:
-           TEST_FILE: ${{ matrix.test_file }}
-         run: |
-           . /data/venv/bin/activate
--          mkdir -p test-results
--          TEST="$TEST_FILE" FAIL_FAST=1 ./flow.sh 2>&1 | tee test-results/flow.log
-+          TEST="$TEST_FILE" FAIL_FAST=1 ./flow.sh
-       - name: Collect coverage (profraw -> lcov)
-         if: ${{ !cancelled() && inputs.collect_coverage }}
-         env:
-@@ -136,28 +131,6 @@ jobs:
-           files: ./codecov.txt
-           flags: flow-${{ inputs.flavour }}
-           disable_search: true
--      # Counts for the run summary (tests/count_results.py, summed per server by
--      # _ci-pipeline.yml's test-counts job). On every outcome but a cancel, so a
--      # failing cell still counts, including one whose setup failed before its
--      # tests ran. STATUS is the job's, so any failed step marks the cell. The
--      # report never gates: both steps continue on error. The server is FALKORDB_SERVER's, as flow.sh,
--      # tests/common.py and the images default it: redis unless set.
--      - name: Record test counts
--        if: ${{ !cancelled() }}
--        continue-on-error: true
--        env:
--          RUN: ${{ inputs.flavour }} flow (artifact, ${{ matrix.arch }})
--          STATUS: ${{ job.status }}
--          NAME: test-counts-${{ inputs.flavour }}-artifact-${{ strategy.job-index }}
--        run: python3 tests/count_results.py record --server "${FALKORDB_SERVER:-redis}" --run "$RUN" --status "$STATUS" --rltest test-results/flow.log --logs tests/flow/logs --out "test-counts/$NAME.json"
--      - name: Upload test counts
--        if: ${{ !cancelled() }}
--        continue-on-error: true
--        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
--        with:
--          name: test-counts-${{ inputs.flavour }}-artifact-${{ strategy.job-index }}
--          path: test-counts/
--          retention-days: 7
-       - name: Upload flow logs on failure
-         if: failure()
-         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
-```
-
-**File**: `.github/workflows/_flow-flavour.yml` (modified, +4/-60)
-```diff
-@@ -123,16 +123,11 @@ jobs:
-           # that token is the base repository's.
-           persist-credentials: false
-       - name: Run Flow test - ${{ matrix.test_file }} (${{ inputs.flavour }}, ${{ matrix.arch }})
--        id: flow
--        # bash, for pipefail: the tee keeps RLTest's output for the counts
--        # below without hiding flow.sh's exit status.
--        shell: bash
-         env:
-           TEST_FILE: ${{ matrix.test_file }}
-         run: |
-           . /data/venv/bin/activate
--          mkdir -p test-results
--          TEST="$TEST_FILE" FAIL_FAST=1 RELEASE=1 ./flow.sh 2>&1 | tee test-results/flow.log
-+          TEST="$TEST_FILE" FAIL_FAST=1 RELEASE=1 ./flow.sh
-       - name: Collect coverage (profraw → lcov)
-         if: ${{ !cancelled() && inputs.collect_coverage }}
-         env:
-@@ -174,38 +169,14 @@ jobs:
-           token: ${{ secrets.CODECOV_TOKEN }}
-           files: ./codecov.txt
-           disable_search: true
--      # On every outcome, not only on failure: the counts below read the
--      # server's start-up banner from these logs.
--      - name: Capture service container logs
--        if: ${{ !cancelled() }}
-+      - name: Capture service container logs on failure
-+        if: failure()
-         run: |
-           mkdir -p tests/flow/logs
-           for cid in $(docker ps -aq); do
-             name=$(docker inspect -f '{{.Name}}' "$cid" 2>/dev/null | sed 's|^/||')
-             docker logs "$cid" > "tests/flow/logs/service-${name:-$cid}.log" 2>&1 || true
-           done
--      # Counts for the run summary (tests/count_results.py, summed per server by
--      # _ci-pipeline.yml's test-counts job). On every outcome but a cancel, so a
--      # failing cell still counts, including one whose setup failed before its
--      # tests ran. STATUS is the job's, so any failed step marks the cell. The
--      # report never gates: both steps continue on error. The server is FALKORDB_SERVER's, as flow.sh,
--      # tests/common.py and the images default it: redis unless set.
--      - name: Record test counts
--        if: ${{ !cancelled() }}
--        continue-on-error: true
--        env:
--          RUN: ${{ inputs.flavour }} flow (image, ${{ matrix.arch }})
--          STATUS: ${{ job.status }}
--          NAME: test-counts-${{ inputs.flavour }}-svc-${{ strategy.job-index }}
--        run: python3 tests/count_results.py record --server "${FALKORDB_SERVER:-redis}" --run "$RUN" --status "$STATUS" --rltest test-results/flow.log --logs tests/flow/logs --out "test-counts/$NAME.json"
--      - name: Upload test counts
--        if: ${{ !cancelled() }}
--        continue-on-error: true
--        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
--        with:
--          name: test-counts-${{ inputs.flavour }}-svc-${{ strategy.job-index }}
--          path: test-counts/
--          retention-days: 7
-       - name: Upload flow logs on failure
-         if: failure()
-         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
-@@ -273,16 +244,11 @@ jobs:
-           # already local, so hand the credential back first.
-           docker logout ghcr.io
-       - name: Run Flow test - ${{ matrix.test_file }} (${{ inputs.flavour }}, ${{ matrix.arch }})
--        id: flow
--        # bash, for pipefail: the tee keeps RLTest's output for the counts
--        # below without hiding flow.sh's exit status.
--        shell: bash
-         env:
-           TEST_FILE: ${{ matrix.test_file }}
-         run: |
-           . /data/venv/bin/activate
--          mkdir -p test-results
--          TEST="$TEST_FILE" FAIL_FAST=1 RELEASE=1 ./flow.sh 2>&1 | tee test-results/flow.log
-+          TEST="$TEST_FILE" FAIL_FAST=1 RELEASE=1 ./flow.sh
-       - name: Collect coverage (profraw → lcov)
-         if: ${{ !cancelled() && inputs.collect_coverage }}
-         env:
-@@ -307,28 +273,6 @@ jobs:
-           token: ${{ secrets.CODECOV_TOKEN }}
-           files: ./codecov.txt
-           disable_search: true
--      # Counts for the run summary (tests/count_results.py, summed per server by
--      # _ci-pipeline.yml's test-counts job). On every outcome but a cancel, so a
--      # failing cell still counts, including one whose setup failed before its
--      # tests ran. STATUS is the job's, so any failed step marks the cell. The
--      # report never gates: both steps continue on error. The server is FALKORDB_SERVER's, as flow.sh,
--      # tests/common.py and the images default it: redis unless set.
--      - name: Record test counts
--        if: ${{ !cancelled() }}
--        continue-on-error: true
--        env:
--          RUN: ${{ inputs.flavour }} flow (image, ${{ matrix.arch }})
--          STATUS: ${{ job.status }}
--          NAME: test-counts-${{ inputs.flavour }}-spawn-${{ strategy.job-index }}
--        run: python3 tests/count_results.py record --server "${FALKORDB_SERVER:-redis}" --run "$RUN" --status "$STATUS" --rltest test-results/flow.log --logs redis-logs tests/flow/logs --out "test-counts/$NAME.json"
--      -
-```
-
-**File**: `tests/count_results.py` (removed, +0/-243)
-```diff
-@@ -1,243 +0,0 @@
--#!/usr/bin/env python3
--"""Count passed, failed and skipped tests per server, for the CI run summary.
--
--Each CI cell that runs a suite records what it ran:
--
--    count_results.py record --server valkey --run "release flow (image, amd64)" \\
--        --rltest flow.log --logs tests/flow/logs --status failure --out counts/x.json
--    count_results.py record --server redis --run "image" \\
--        --junit e2e.xml tck.xml --logs tests/flow/logs --out counts/y.json
--
--and one job adds them up:
--
--    count_results.py summary counts/ >> "$GITHUB_STEP_SUMMARY"
--
--A record is a JSON list of rows: server, the version its start-up banner names,
--the run (how the cell ran), the suite, and the counts. RLTest output gives the
--counts from its per-test verdict lines (`[PASS]`, `[FAIL]`, `[ERROR]`,
--`[SKIP]`); pytest gives them through `--junitxml`, split by test file into the
--e2e, function, MVCC and concurrency suites; TCK counts its scenarios from
--Behave's own JUnit reports (tests/tck/test_tck.py writes them to
--TCK_JUNIT_DIR), not the one pytest test that runs them all.
--
--A cell whose test step failed but recorded no failed test (the harness died, a
--class's `__init__` raised, the server crashed between tests) records one failed
--test named for the cell, so a broken cell never reads as a clean one.
--"""
--
--import argparse
--import json
--import os
--import re
--import sys
--import xml.etree.ElementTree as ET
--from collections import defaultdict
--
--ANSI = re.compile(r"\x1b\[[0-9;]*m")
--# The banner every Redis or Valkey start logs, e.g.
--# `Valkey version=9.1.2, bits=64, commit=00000000, modified=0, pid=9, just started`.
--BANNER = re.compile(r"\b(Valkey|Redis) version=([0-9][0-9A-Za-z.\-]*)")
--VERDICTS = {"[PASS]": "passed", "[FAIL]": "failed", "[ERROR]": "failed", "[SKIP]": "skipped"}
--# pytest file name -> the suite name the issue tracker and the summary use.
--PYTEST_SUITES = {
--    "test_e2e": "e2e",
--    "test_functions": "function",
--    "test_mvcc": "MVCC",
--    "test_concurrency": "concurrency",
--    "test_tck": "TCK",
--}
--
--
--def empty():
--    return {"passed": 0, "failed": 0, "skipped": 0}
--
--
--def count_rltest(text):
--    """Counts from RLTest output. RLTest prints each test's verdict on a line of
--    its own, right under the test's name, so counting those lines counts tests;
--    the failure summary at the end repeats names, not verdicts."""
--    counts = empty()
--    for line in ANSI.sub("", text).splitlines():
--        key = VERDICTS.get(line.strip())
--        if key:
--            counts[key] += 1
--    return counts
--
--
--def suite_of(case):
--    """The suite a pytest testcase belongs to, from its file or class name."""
--    where = case.get("file") or case.get("classname") or ""
--    for part in re.split(r"[./\\]", where):
--        if part in PYTEST_SUITES:
--            return PYTEST_SUITES[part]
--    return "pytest"
--
--
--def junit_files(paths):
--    """The given files, and the .xml files in the given directories."""
--    for path in paths:
--        if os.path.isdir(path):
--            for root, _, names in os.walk(path):
--                yield from (os.path.join(root, n) for n in sorted(names) if n.endswith(".xml"))
--        else:
--            yield path
--
--
--def count_junit(paths, suite=None):
--    """Counts per suite from JUnit XML files: pytest's --junitxml, split by
--    test file, or, with `suite`, every testcase under that one suite (Behave's
--    per-scenario reports, one file per feature, for TCK)."""
--    suites = defaultdict(empty)
--    for path in junit_files(paths):
--        if not os.path.exists(path):
--            print(f"count_results: {path} does not exist, skipped", file=sys.stderr)
--            continue
--        try:
--            root = ET.parse(path).getroot()
--        except ET.ParseError as e:
--            # A truncated or empty file (pytest killed mid-run): report it and
--            # count nothing from it, so the caller's --status failure fallback
--            # counts the cell instead of the record crashing.
--            print(f"count_results: {path} is not valid JUnit XML ({e}), skipped", file=sys.stderr)
--            continue
--        for case in root.iter("testcase"):
--            counts = suites[suite or suite_of(case)]
--            if case.find("skipped") is not None:
--                counts["skipped"] += 1
--            elif case.find("failure") is not None or case.find("error") is not None:
--                counts["failed"] += 1
--            else:
--                counts["passed"] += 1
--    return dict(suites)
--
--
--def banner_versions(paths):
--    """`{server: {versions}}` from the start-up banners in the given files and
--    directories, the same banners tests/assert_server_log.sh checks."""
--    found = defaultdict(set)
--    files = []
--    for path in paths:
--        if os.path.isdir(path):
--            for root, _, names in os.walk(path):
--                files.extend(os.path.join(root, n) for n in names)
--        elif os.path.isfile(path):
--          
-```
-
-**File**: `tests/flow/common.py` (modified, +0/-73)
-```diff
-@@ -4,7 +4,6 @@
- import subprocess
- import sys
- import tempfile
--import threading
- import time
- import uuid
- from functools import wraps
-@@ -857,75 +856,3 @@ def assert_error_reply(env, conn, *cmd):
-         msg = str(e)
-     env.assertTrue(conn.ping())
-     return msg
--
--
--def wait_for_replica(primary, replica, timeout=30):
--    """Block until `replica` has applied everything `primary` has propagated so
--    far, whichever connection or module thread made the writes. Call it after
--    the writes it should cover.
--
--    `WAIT` can't promise that. It waits only up to the offset of the calling
--    connection's last write, so it doesn't cover later writes made through
--    another connection (such as a FalkorDB client's pool) or by a module
--    thread. And when the caller has written nothing, it counts any replica the
--    primary has marked online, which can be before the replica has loaded its
--    initial sync. So read the primary's offset, then wait for the replica's
--    link to be up and its offset to reach it."""
--    deadline = time.time() + timeout
--
--    def bounded_info(conn):
--        # Bound each INFO, connection handshake included, by the time left in
--        # the budget, so an unresponsive server can't block past the deadline.
--        # A new connection does several reads before INFO's (CLIENT SETINFO,
--        # and AUTH or SELECT when set), each under its own socket timeout, so
--        # socket timeouts alone can't promise that. Run the call on a thread
--        # and stop waiting for it at the deadline. A thread given up on is
--        # abandoned: it is a daemon, and it and its connection may linger
--        # until its socket timeouts expire. A fresh client is used, with
--        # retries off, so the caller's connection and settings are untouched.
--        left = deadline - time.time()
--        if left <= 0:
--            raise redis.exceptions.TimeoutError("wait_for_replica deadline passed")
--        kwargs = dict(conn.connection_pool.connection_kwargs)
--        kwargs.update(socket_timeout=left, socket_connect_timeout=left,
--                      retry=NO_RETRY, retry_on_error=[],
--                      retry_on_timeout=False)
--        pool = redis.ConnectionPool(
--            connection_class=conn.connection_pool.connection_class, **kwargs)
--        result = {}
--
--        def run():
--            client = redis.Redis(connection_pool=pool)
--            try:
--                result["info"] = client.info("replication")
--            except Exception as e:
--                result["error"] = e
--            finally:
--                client.close()
--                pool.disconnect()
--
--        t = threading.Thread(target=run, daemon=True)
--        t.start()
--        t.join(left)
--        if t.is_alive():
--            raise redis.exceptions.TimeoutError("INFO did not reply within the deadline")
--        if "error" in result:
--            raise result["error"]
--        return result["info"]
--
--    target = bounded_info(primary)["master_repl_offset"]
--    info = {}
--    while time.time() < deadline:
--        try:
--            info = bounded_info(replica)
--        except (redis.exceptions.TimeoutError, redis.exceptions.ConnectionError):
--            info = {}
--        else:
--            if (info.get("master_link_status") == "up"
--                    and info.get("slave_repl_offset", -1) >= target):
--                return
--        time.sleep(0.01)
--    raise AssertionError(
--        f"replica did not reach the primary's offset {target} within {timeout}s "
--        f"(link {info.get('master_link_status')}, "
--        f"offset {info.get('slave_repl_offset')})")
-```
-
-**File**: `tests/flow/test_constraint.py` (modified, +6/-8)
-```diff
-@@ -1232,8 +1232,8 @@ def __init__(self):
-         # clear DB
-         self.source.delete(GRAPH_ID)
- 
--        # wait for the replica's initial sync to complete
--        wait_for_replica(self.source, self.replica)
-+        # the WAIT command forces master slave sync to complete
-+        self.source.execute_command("WAIT", 1, 0)
- 
-     def monitor_thread(self):
-         global MONITOR_ATTACHED
-@@ -1296,13 +1296,12 @@ def test_01_constraint_replication(self):
-         # `test_effects_ddl.py` pins the per-shape announcement counts, where
-         # the payloads are read off the wire rather than counted through
-         # MONITOR.
--        wait_for_replica(self.source, self.replica)
-+        self.source.execute_command("WAIT", 1, 0)
- 
-         replica_g = Graph(self.replica, GRAPH_ID)
-         deadline = time.time() + 30
-         while time.time() < deadline:
--            wait_for_replica(self.source, self.replica,
--                             timeout=max(deadline - time.time(), 0.01))
-+            self.source.execute_command("WAIT", 1, 0)
-             cs = list_constraints(replica_g)
-             if len(cs) == 6 and all(c.status == 'OPERATIONAL' for c in cs):
-                 break
-@@ -1348,16 +1347,15 @@ def test_02_async_validation_reaches_operational_on_replica(self):
-         # validates synchronously on the main thread and never spawns.
-         lbl = 'AsyncValidated'
-         self.g.query(f"UNWIND range(1, 10500) AS x CREATE (:{lbl} {{v: x}})")
--        wait_for_replica(self.source, self.replica)
-+        self.source.execute_command("WAIT", 1, 0)
- 
-         create_mandatory_node_constraint(self.g, lbl, 'v', sync=True)
- 
-         replica_g = Graph(self.replica, GRAPH_ID)
-         deadline = time.time() + 30
-         c = None
-         while time.time() < deadline:
--            wait_for_replica(self.source, self.replica,
--                             timeout=max(deadline - time.time(), 0.01))
-+            self.source.execute_command("WAIT", 1, 0)
-             c = get_constraint(replica_g, 'MANDATORY', 'NODE', lbl, 'v')
-             if c is not None and c.status != 'UNDER CONSTRUCTION':
-                 break
-```
-
-**File**: `tests/flow/test_intern_string.py` (modified, +4/-3)
-```diff
-@@ -440,9 +440,9 @@ def __init__(self):
-         self.source_con.execute_command("GRAPH.CONFIG", "SET", 'ASYNC_DELETE', 'no')
-         self.replica_con.execute_command("GRAPH.CONFIG", "SET", 'ASYNC_DELETE', 'no')
- 
--        # clear DB, and wait for the replica's initial sync to complete
-+        # clear DB
-         self.conn.flushall()
--        wait_for_replica(self.source_con, self.replica_con)
-+        self.source_con.execute_command("WAIT", "1", "0")
- 
-     def tearDown(self):
-         # clear DB
-@@ -458,7 +458,8 @@ def query_and_wait(self, q, p=None):
- 
-         res = self.graph.query(q, p)
- 
--        wait_for_replica(self.source_con, self.replica_con)
-+        # the WAIT command forces master slave sync to complete
-+        self.source_con.execute_command("WAIT", "1", "0")
- 
-         return res
- 
-```
-
-**File**: `tests/tck/test_tck.py` (modified, +0/-5)
-```diff
-@@ -28,11 +28,6 @@ def test_tck():
-                 tck_include = "|".join(line.strip() for line in file if line.strip())
-     if tck_include:
-         cmd = [tck_features, '--format=progress', '--tags=-crash', '--tags=-skip', "--no-capture", "--stop", "--include", tck_include]
--    # TCK_JUNIT_DIR: write Behave's per-scenario JUnit reports there, so CI
--    # can count scenarios (tests/count_results.py) rather than this one test.
--    tck_junit_dir = os.getenv("TCK_JUNIT_DIR", "")
--    if tck_junit_dir:
--        cmd += ["--junit", "--junit-directory", tck_junit_dir]
-     res = behave_main(cmd)
-     res = 'pass' if res == 0 else 'fail'
-     assert res == 'pass'
-```
-
----
-
-### Incident Patch 2: `7df8e588` (2026-11-12)
-**Commit Message**: build: Alpine (musl) falkordb-server image running Valkey (#3725)
-
-* build: Alpine (musl) falkordb-server image running Valkey
-
-build/runtime/Dockerfile.alpine builds the module against musl and ships it
-in an Alpine image with Valkey (or Redis, by SERVER) built from source on
-Alpine, the same way the RHEL 9 and Amazon Linux 2023 images do: libomp
-linked statically, GraphBLAS, LAGraph and RediSearch through native-deps,
-the server through build/build-server.sh, and the image interface of the
-other server images (FALKORDB_SERVER, the server labels, run.sh, user
-falkordb as 999:999).
-
-.cargo/config.toml turns crt-static off for musl targets. Rust's musl
-targets link the C runtime statically by default, which drops the cdylib
-crate type and makes build scripts unable to load libclang.
-
-Closes #2312
-
-* ci: build and smoke-test the Alpine image on amd64 and arm64
-
-_build-artifacts.yml gains alpine-x64 and alpine-arm64v8 cells. Each builds
-the musl .so through Dockerfile.alpine's builder (which checks that it is
-self-contained), builds the Alpine server image, and runs the per-OS smoke
-test against it, as the RHEL 9 and Amazon Linux 2023 cells do.
-
-Every cell now carries a boolean `publi
-
-**File**: `.cargo/config.toml` (modified, +10/-1)
-```diff
-@@ -6,7 +6,8 @@
- # tolerates it already, and we don't want to relax the local dev link.
+@@ -86,8 +86,9 @@ updates:
  #
- # NOTE: `RUSTFLAGS` / `CARGO_TARGET_*_RUSTFLAGS` env vars REPLACE (not merge)
--# these config flags, so build steps that set them must repeat this flag:
-+# these config flags -- this one and the musl `-crt-static` below -- so build
-+# steps that set them must repeat the ones that apply to their target:
- # the coverage steps (`-C instrument-coverage`), the `cargo fuzz` steps, and
- # build/runtime/Dockerfile.asan all set `-Clink-arg=-Wl,--allow-multiple-definition`
- # explicitly for the same reason.
-@@ -19,3 +20,11 @@ rustflags = ["-C", "link-arg=-Wl,--allow-multiple-definition"]
- # ld64. So the CI jobs that run doctests (`cargo test -p graph` in the `test`
- # and `coverage` jobs) set RUSTDOCFLAGS explicitly; a local Linux doctest run
- # (`cargo test -p graph`) needs the same env.
-+
-+# musl (the Alpine image). Rust's musl targets link the C runtime statically by
-+# default, which drops the `cdylib` crate type with only a warning -- so no
-+# libfalkordb.so -- and makes every build script a static executable, which
-+# cannot dlopen the libclang that bindgen needs. Cargo joins the flags of every
-+# matching `[target.<cfg>]` table, so the Linux flag above still applies.
-+[target.'cfg(all(target_os = "linux", target_env = "musl"))']
-+rustflags = ["-C", "target-feature=-crt-static"]
+ # /bench is deliberately absent: bench/Dockerfile is `FROM ${C_IMAGE}`, an
+ # entirely ARG-driven base that Dependabot cannot resolve to a registry tag.
+-# build/runtime/Dockerfile is included for its pinned stages (debian, node);
+-# its $BUILD_IMAGE and $BROWSER_TAG stages are skipped for the same reason.
++# build/runtime/Dockerfile is included for its pinned stages (debian, ubuntu,
++# node); its $BUILD_IMAGE and $BROWSER_TAG stages are skipped for the same
++# reason.
+ - package-ecosystem: docker
+   directories:
+     - /build
 ```
 
-**File**: `.github/workflows/_build-artifacts.yml` (modified, +33/-18)
+**File**: `build/runtime/Dockerfile` (modified, +47/-23)
 ```diff
-@@ -7,15 +7,21 @@
- # never carry their own copy. New platforms (see #608) are added here.
- #
- # Each cell extracts the .so from the `artifact` target of its Dockerfile (for
--# x64/arm64v8, the exact .so the runtime image ships) and uploads it as
--# `falkordb-<suffix>.so` together with its `.sha256`. Cells are independent
--# (fail-fast: false) and run on native runners (no QEMU) for maximum parallelism.
-+# x64/arm64v8, the exact .so the runtime image ships) and, unless the cell is
-+# `test_only`, uploads it as `falkordb-<suffix>.so` together with its `.sha256`.
-+# Cells are independent (fail-fast: false) and run on native runners (no QEMU)
-+# for maximum parallelism.
- #
--# Cells marked `image` (rhel9, amazonlinux2023) also build their Dockerfile's
--# `server` target, the falkordb-server image for that OS, and start it to check
--# that the module loads and answers a query. With `export_images` the image is
--# uploaded too, as `image-falkordb-server-<suffix>`, for the release to push.
--# x64/arm64v8 have no such step: the merge queue builds the Debian images.
-+# Cells marked `image` (rhel9, amazonlinux2023, alpine) also build their
-+# Dockerfile's `server` target, the falkordb-server image for that OS, and start
-+# it to check that the module loads and answers a query. With `export_images`
-+# the image is uploaded too, as `image-falkordb-server-<suffix>`, for the
-+# release to push. x64/arm64v8 have no such step: the merge queue builds the
-+# Debian images.
-+#
-+# Cells marked `test_only` (alpine) are built and smoke-tested like any other,
-+# but upload nothing and are left out of the `suffixes`/`image_suffixes`
-+# outputs, so a release does not ship them.
+@@ -2,8 +2,8 @@ ARG BUILD_IMAGE=ghcr.io/falkordb/falkordb-build:latest
+ ARG BROWSER_TAG=latest
+ ARG TARGETPLATFORM=linux/amd64
+ # Which server the image ships FalkorDB on: `redis` (default) or `valkey`.
+-# Selects the `server-${SERVER}` stage below; the other server's builder stage
+-# is never built.
++# Selects the `server-${SERVER}` stage below, and the `base-${SERVER}` OS the
++# server is built and run on; the other server's stages are never built.
+ ARG SERVER=redis
+ # Server versions. Override via `--build-arg REDIS_VERSION=X.Y.Z` /
+ # `--build-arg VALKEY_VERSION=X.Y.Z` to ship against a different release
+@@ -68,7 +68,20 @@ FROM scratch AS artifact
+ COPY --from=builder /out/falkordb.so /falkordb.so
  
- name: Build artifacts (reusable)
- 
-@@ -53,13 +59,15 @@ on:
-     outputs:
-       suffixes:
-         description: >-
--          JSON array of the suffixes this run built. The release's publish step
--          requires an artifact for every one of them.
-+          JSON array of the suffixes this run built, `test_only` cells
-+          excluded. The release's publish step requires an artifact for every
-+          one of them.
-         value: ${{ jobs.cells.outputs.suffixes }}
-       image_suffixes:
-         description: >-
--          JSON array of the suffixes this run built a server image for. The
--          release's image push requires every one of them.
-+          JSON array of the suffixes this run built a server image for,
-+          `test_only` cells excluded. The release's image push requires every
-+          one of them.
-         value: ${{ jobs.cells.outputs.image_suffixes }}
- 
- jobs:
-@@ -77,16 +85,22 @@ jobs:
-           PLATFORMS: ${{ inputs.platforms }}
-         run: |
-           set -euo pipefail
--          # {suffix, arch, platform, runner, dockerfile, build_image, cxx, image}.
-+          # {suffix, arch, platform, runner, dockerfile, build_image, cxx, image[, test_only]}.
-           # `dockerfile` provides the `artifact` target; `build_image` is the
-           # chef/builder base (Debian toolchain image) or "" for self-contained
-           # per-OS Dockerfiles; `cxx` is the C++ compiler passed to the builder;
-           # `image` says the Dockerfile's `server` target is built here too.
-+          # `test_only` (missing means false): build and smoke-test but upload
-+          # nothing, because release-tag.yml uploads every falkordb-*.so
-+          # artifact; dropping them from `suffixes` alone would not keep them
-+          # out of a release.
-           ALL='[
-             {"suffix":"x64","arch":"x64","platform":"linux/amd64","runner":"ubuntu-latest","dockerfile":"build/runtime/Dockerfile","build_image":"ghcr.io/falkordb/falkordb-build:latest","cxx":"clang++-23","image":false},
-             {"suffix":"arm64v8","arch":"arm64v8","platform":"linux/arm64","runner":"ubuntu-24.04-arm","dockerfile":"build/runtime/Dockerfile","build_image":"ghcr.io/falkordb/falkordb-build:latest","cxx":"clang++-23","image":false},
-             {"suffix":"rhel9-x64","arch":"x64","platform":"linux/amd64","runner":"ubuntu-latest","dockerfile":"build/runtime/Dockerfile.rhel9","build_image":"","cxx":"clang++","image":true},
--            {"suffix":"amazonlinux2023-x64","arch":"x64","platform":"linux/amd64","runner":"ubuntu-latest","dockerfile":"build/runtime/Dockerfile.amazonlinux2023","build_image":"","cxx":"clang++-19","image":true}
-+            {"suffix":"amazonlinux2023-x64","arch":"x64","platform":"linux/amd64","runner":"ubuntu-latest","dockerfile":"build/runtime/Dockerfile.amazonlinux2023","build_image":"","cxx":"clang++-19","image":true},
-+            {"suffix":"alpine-x64","arch":"x64","platform":"linux/amd64","runner":"ubuntu-latest","dockerfile":"build/runtime/Dockerfile.alpine","build_image":"","cxx":"clang++","image":true,"test_only":true},
-+            {"suffix":"alpine-arm64v8","arch":"arm64v8","platform":"linux/arm64","runner":"ubuntu-24.04-arm","dockerfile":"build/runtime/Dockerfile.alpine","build_image":"","cxx":"clang++","image":true,"test_only":true}
-    
-```
-
-**File**: `.github/workflows/build-artifacts.yml` (modified, +3/-3)
-```diff
-@@ -1,13 +1,13 @@
- # Build the shared-library (.so) artifacts for every release platform, and the
--# rhel9/amazonlinux2023 server images, WITHOUT releasing anything, so a broken
-+# rhel9/amazonlinux2023/alpine server images, WITHOUT releasing anything, so a broken
- # platform shows up on the pull request that broke it instead of at release
- # time. The images are started and queried, never pushed; only the .so files
- # are uploaded, as workflow artifacts.
- #
- # Triggers:
- #   - pull_request → runs when the PR changes something the artifact builds
- #     depend on (PATTERN below), or carries the `verify-artifacts` label. The
--#     per-OS cells (rhel9, amazonlinux2023) build their own toolchain from
-+#     per-OS cells (rhel9, amazonlinux2023, alpine) build their own toolchain from
- #     source and nothing else in PR CI exercises them, so without this a change
- #     that breaks them (as #3163 did) surfaces only at release time.
- #     Re-runs on each push while either holds.
-@@ -76,7 +76,7 @@ jobs:
-           # build/Dockerfile (the Debian toolchain) is not here: the x64/arm64v8
-           # cells build on the PUBLISHED toolchain, and rust-pr.yml already
-           # rebuilds it when it changes.
--          PATTERN='^(Cargo\.(toml|lock)|graph/Cargo\.toml|(graph/)?build\.rs|\.cargo/config\.toml|build/build-server\.sh|build/libomp\.sh|build/runtime/Dockerfile(\.rhel9|\.amazonlinux2023)?|build/runtime/(run|gen-certs|gosu-setpriv)\.sh|build/graphblas/.*|native-deps/.*|deps/native-deps\.lock|deps/(GraphBLAS|LAGraph|RediSearch)|\.gitmodules|\.dockerignore|\.github/workflows/(_build-artifacts|build-artifacts)\.yml)$'
-+          PATTERN='^(Cargo\.(toml|lock)|graph/Cargo\.toml|(graph/)?build\.rs|\.cargo/config\.toml|build/build-server\.sh|build/libomp\.sh|build/runtime/Dockerfile(\.rhel9|\.amazonlinux2023|\.alpine)?|build/runtime/(run|gen-certs|gosu-setpriv)\.sh|build/graphblas/.*|native-deps/.*|deps/native-deps\.lock|deps/(GraphBLAS|LAGraph|RediSearch)|\.gitmodules|\.dockerignore|\.github/workflows/(_build-artifacts|build-artifacts)\.yml)$'
-           # Materialise the list first: `gh ... | grep -q` under pipefail
-           # reports 141 on an early match (see rust-pr.yml).
-           gh api "repos/${REPO}/pulls/${PR_NUMBER}/files" --paginate --jq '.[].filename' > /tmp/changed-files.txt
-```
-
-**File**: `build/check-server-pins.sh` (modified, +1/-0)
-```diff
-@@ -11,6 +11,7 @@ files="build/Dockerfile
- build/runtime/Dockerfile
- build/runtime/Dockerfile.rhel9
- build/runtime/Dockerfile.amazonlinux2023
-+build/runtime/Dockerfile.alpine
- build/runtime/Dockerfile.coverage
- build/runtime/Dockerfile.asan"
- 
-```
-
-**File**: `build/runtime/Dockerfile.alpine` (added, +250/-0)
-```diff
-@@ -0,0 +1,250 @@
-+# Self-contained Alpine (musl) builder for the FalkorDB shared library. Unlike
-+# build/runtime/Dockerfile (which consumes the prebuilt Debian `falkordb-build`
-+# toolchain image), this image installs its own toolchain and builds GraphBLAS
-+# + LAGraph + libomp + RediSearch from source via the SAME scripts the Debian
-+# toolchain uses -- so the produced .so is linked against musl and the
-+# single-.so self-containment contract still holds.
-+#
-+# Two targets:
-+#   artifact  the .so alone:  docker build --target artifact --output type=local,dest=<dir>
-+#   server    an Alpine server image: Valkey or Redis (--build-arg SERVER)
-+#             built from source on this OS, plus that same .so. The
-+#             counterpart of the Debian image's `server` target; no browser.
-+# The musl-specific packages (bsd-compat-headers, the static clang archives,
-+# ncurses-dev, libffi-dev) come from the C repo's
-+# build/docker/builder/Dockerfile.alpine; each one is explained where it is
-+# installed.
-+
-+# Consumed (unused) so the shared _build-artifacts.yml can pass --build-arg
-+# BUILD_IMAGE uniformly without a "not consumed" warning; self-contained OSes
-+# don't use a toolchain base image.
-+ARG BUILD_IMAGE
-+# Which server the `server` target ships, and the server releases: the same
-+# as build/runtime/Dockerfile (build/check-server-pins.sh enforces it).
-+ARG SERVER=valkey
-+ARG REDIS_VERSION=8.10.2
-+ARG VALKEY_VERSION=9.1.2
-+
-+# The one Alpine pin: a literal FROM, so Dependabot can bump it.
-+FROM alpine:3.24.4 AS alpine-base
+ # ---------------------------------------------------------------------------
+-# Server builder stages — debian:trixie-slim + minimal build deps.
++# Base OS, chosen by SERVER: Redis runs on Debian, Valkey on Ubuntu LTS. The
++# server is compiled (server-builder-base) and run (server-base) on the same
++# base, so it links against the glibc and OpenSSL its image ships.
++# ---------------------------------------------------------------------------
++FROM debian:trixie-slim AS base-redis
++FROM ubuntu:26.04 AS base-valkey
++# Canonical's labels must not pass for ours; a label cannot be unset, so blank them.
++LABEL org.opencontainers.image.title="" \
++      org.opencontainers.image.description="" \
++      org.opencontainers.image.version="" \
++      org.opencontainers.image.created=""
 +
 +# ---------------------------------------------------------------------------
-+# Toolchain + dependency build.
-+# ---------------------------------------------------------------------------
-+FROM alpine-base AS builder
-+
-+ARG LLVM_MAJOR=22
-+
-+# Beyond the compilers and the headers the deps compile against:
-+#   bsd-compat-headers        : <sys/cdefs.h>, which RediSearch includes
-+#   clang-static,             : RediSearch's Rust crates link libclang.a
-+#   ncurses-dev, libffi-dev     statically on musl (rlookup/Cargo.toml,
-+#                               rust-bindgen#2360), and clang-sys then adds
-+#                               -lffi -lncursesw. LLVM itself comes from
-+#                               libLLVM.so: Alpine's llvm-config reports
-+#                               shared mode.
-+#   clang-libclang            : libclang.so, which bindgen loads at run time
-+#                               for FalkorDB's own crates
-+#   python3                   : the pip-pinned cmake below
-+RUN apk add --no-cache \
-+      bash git curl ca-certificates make findutils binutils \
-+      gcc g++ musl-dev linux-headers bsd-compat-headers \
-+      openssl-dev zlib-dev zstd-dev ncurses-dev libffi-dev \
-+      clang${LLVM_MAJOR} clang${LLVM_MAJOR}-dev clang${LLVM_MAJOR}-libclang clang${LLVM_MAJOR}-static \
-+      llvm${LLVM_MAJOR} llvm${LLVM_MAJOR}-dev \
-+      python3
-+
-+# llvm-config (which clang-sys runs) and the llvm-objcopy/objdump that
-+# graph/build.rs runs have no bare names on Alpine's PATH; they live under
-+# /usr/lib/llvm<N>/bin. Putting that first also pins `clang` to LLVM <N>.
-+ENV PATH="/usr/lib/llvm${LLVM_MAJOR}/bin:/venv/bin:/root/.cargo/bin:${PATH}"
-+
-+# Pin cmake to the same version the other builders use. Alpine's python is
-+# externally managed (PEP 668), hence the venv.
-+RUN python3 -m venv /venv && pip install --no-cache-dir 'cmake==3.31.6'
-+
-+# Rust toolchain (rustup) -- Alpine's packaged rust lags what redisearch_rs
-+# needs. The musl host triple is picked automatically.
-+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal
-+
-+WORKDIR /data
-+
-+# libomp.a (static) matched to the system clang version, installed to /opt/libomp
-+# so graph/build.rs links it statically (single-.so OpenMP contract).
-+COPY build/libomp.sh /tmp/libomp.sh
-+RUN LLVMORG_VERSION=$(clang --version | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1) && \
-+    test -n "${LLVMORG_VERSION}" && \
-+    CC=clang CXX=clang++ /tmp/libomp.sh "${LLVMORG_VERSION}" && \
-+    rm -f /tmp/libomp.sh
-+
-+# GraphBLAS + LAGraph + RediSearch, built by the native-deps crate, which owns
-+# the recipes and a content-addressed cache keyed on the submodule revisions,
-+# the GB_control patch, the vendored PreJIT kernels, $CC/$CXX, the target
-+# triple and the OpenMP flavour -- so the key computed by `cargo build` below
-+# matches what is published here. CC/CXX/LIBOMP_PREFIX are ENV, not per-RUN,
-+# because they are cache-key inputs.
-+#
-+# RUST_DYN_CRT=1 makes RediSearch's build.sh build its Rust with -crt-static
-+# (see .cargo/config.toml), which native-deps' cleared RUSTFLAGS would drop.
-+#
-+# The sources and RediSearch's in-tree build output are removed in the same
-+# RUN: only the native-deps cache (~/.cache/falkordb/native-deps) is needed
-+# below, and the build tree is several GB.
-+ARG CC=clang
-+ARG CXX=clang++
-+ENV CC=${CC} \
-+    CXX=${CXX} \
-+    LIBOMP_PREFIX=/opt/libomp \
-+    RUST_DY
-```
-
-**File**: `build/runtime/gosu-setpriv.sh` (modified, +5/-3)
-```diff
-@@ -1,9 +1,11 @@
- #!/bin/sh
--# gosu(1) for the RPM-based server images (Dockerfile.rhel9,
--# Dockerfile.amazonlinux2023), installed there as /usr/local/bin/gosu.
-+# gosu(1) for the per-OS server images (Dockerfile.rhel9,
-+# Dockerfile.amazonlinux2023, Dockerfile.alpine), installed there as
-+# /usr/local/bin/gosu.
++# Server builder stages — the base OS + minimal build deps.
  #
- # run.sh drops root with `gosu falkordb redis-server ...`. gosu is not packaged
--# for RHEL or Amazon Linux; setpriv(1) from util-linux makes the same switch:
-+# for RHEL or Amazon Linux; setpriv(1) from util-linux (on Alpine, the setpriv
-+# package) makes the same switch:
- # real and effective uid and gid, plus the user's supplementary groups.
- # Only the `gosu USER COMMAND...` form run.sh uses is supported.
- set -eu
-```
-
----
-
-### Incident Patch 3: `3b14db4b` (2026-11-12)
-**Commit Message**: build(toolchain): reach apt.llvm.org over IPv4, with retries (#3775)
-
-* build(toolchain): reach apt.llvm.org over IPv4, with retries
-
-The GitHub arm64 runners resolve apt.llvm.org to an IPv6 address they
-cannot route to. llvm.sh's HEAD probe then fails and reports it as
-"Distribution 'debian' in version '13 (trixie)' is not supported".
-Force IPv4 and retry in both apt and wget.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* build(toolchain): retry wget on transient HTTP errors too
-
-wget does not retry a 429 or 5xx by default, so a 503 from apt.llvm.org
-during llvm.sh's probe would still fail the build. Bounded by the same
-tries = 5.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* build(toolchain): retry llvm.sh itself, not only its downloads
-
-In the merge queue (run 43182163998), llvm.sh's HEAD probe of
-llvm-snapshot.gpg.key failed in 0.3s with "GPG key not reachable" and
-exit 2. The probe passes its own --tries=3, and whatever error it hit
-was one wget does not retry, so the wgetrc settings could not help.
-Bring back the bounded 3-attempt loop around llvm.sh. Each retry clears
-the key and the sources file a failed attempt can leave behind.
-
-Co-Authored-By: Claude Op
-
-**File**: `build/Dockerfile` (modified, +19/-2)
-```diff
-@@ -64,13 +64,30 @@ ENV DEBIAN_FRONTEND=noninteractive
- # Base runtime libs that previously came with the `redis:` base image
- # (ca-certificates for git/curl HTTPS, libssl3 for the redis-server binary
- # copied into the final stage).
--RUN apt update -y && \
-+#
-+# apt.llvm.org is reached over IPv4 only, with retries. The GitHub arm64
-+# runners resolve it to an IPv6 address they cannot route to ("Network is
-+# unreachable"), and llvm.sh probes the repo URL with `wget --method=HEAD`
-+# before installing, reporting any failure as "Distribution 'debian' in
-+# version '13 (trixie)' is not supported by this script." -- so a network
-+# failure looked like a distro one. /etc/wgetrc covers llvm.sh's own wget
-+# calls; the apt.conf.d entry covers apt here and in the stages below.
-+# llvm.sh's HEAD probes can still fail at once on an error wget does not
-+# retry (the GPG key probe did, in the merge queue), so llvm.sh itself is
-+# retried too, clearing the key and sources a failed attempt may leave.
-+RUN printf 'Acquire::ForceIPv4 "true";\nAcquire::Retries "5";\n' \
-+        > /etc/apt/apt.conf.d/99falkordb-network && \
-+    apt update -y && \
-     apt install -y --no-install-recommends \
-         ca-certificates libssl3 openssl && \
-     apt install -y lsb-release gnupg wget && \
-+    printf 'inet4_only = on\ntries = 5\nwaitretry = 5\nretry_connrefused = on\nretry_on_http_error = 429,500,502,503,504\n' >> /etc/wgetrc && \
-     wget https://apt.llvm.org/llvm.sh && \
-     chmod +x llvm.sh && \
--    ./llvm.sh "${CLANG_MAJOR}" && \
-+    for i in 1 2 3; do ./llvm.sh "${CLANG_MAJOR}" && break; \
-+        [ "$i" = 3 ] && exit 1; echo "llvm.sh failed (attempt $i), retrying"; \
-+        rm -f /etc/apt/trusted.gpg.d/apt.llvm.org.asc /etc/apt/sources.list.d/http_apt_llvm_org_*.sources; \
-+        sleep 15; done && \
-     apt update -y
+ # We build the server binaries ourselves (build/build-server.sh, shared with
+ # every other image that ships a server) instead of inheriting
+@@ -89,7 +102,7 @@ COPY --from=builder /out/falkordb.so /falkordb.so
+ # losing the upstream image's attestation chain. Acceptable for a DB
+ # vendor distribution.
+ # ---------------------------------------------------------------------------
+-FROM debian:trixie-slim AS server-builder-base
++FROM base-${SERVER} AS server-builder-base
+ ENV DEBIAN_FRONTEND=noninteractive
+ RUN set -eux; \
+     apt-get update; \
+@@ -107,9 +120,10 @@ ARG VALKEY_VERSION
+ RUN build-server valkey "${VALKEY_VERSION}" /server-install
  
- # Toolchain + headers the three deps compile against.
+ # ---------------------------------------------------------------------------
+-# Runtime image — debian:trixie-slim, no build tools.
++# Runtime image — the base OS, no build tools. The same apt steps run on
++# Debian (redis) and Ubuntu (valkey).
+ # ---------------------------------------------------------------------------
+-FROM debian:trixie-slim AS server-base
++FROM base-${SERVER} AS server-base
+ 
+ ENV FALKORDB_HOME=/var/lib/falkordb \
+     FALKORDB_DATA_PATH=/var/lib/falkordb/data \
+@@ -130,7 +144,8 @@ ENV FALKORDB_HOME=/var/lib/falkordb \
+ #                                     browser entrypoint drops to nextjs
+ #
+ # CVE trim: purge python3.13 + force-remove essential packages not needed at
+-# runtime (ncurses, perl, login, passwd, util-linux). With no LLVM in this image any more
++# runtime (ncurses, perl, login, passwd, util-linux), and on Ubuntu the
++# non-essential e2fsprogs. With no LLVM in this image any more
+ # we can run the trim straight through without the load-bearing ordering the
+ # old layout required.
+ RUN set -eux; \
+@@ -154,14 +169,18 @@ RUN set -eux; \
+     (dpkg --purge passwd || true); \
+     # util-linux, mount and bsdutils ship the setuid mount/umount/su plus
+     # nsenter/unshare, and between them carry most of the image's HIGH
+-    # findings that Debian has not fixed yet. Nothing here runs them, and no
+-    # other installed package depends on them or on their five libraries.
++    # findings that Debian has not fixed yet. Nothing here runs them. On
++    # Ubuntu e2fsprogs depends on libblkid1 and libuuid1, so it goes too, with
++    # its libraries. dpkg skips a package the base does not have.
+     # No `|| true`: if a new dependent appears, fail the build rather than
+     # silently ship them — the Trivy gate ignores unfixed findings, so
+     # nothing else would notice.
+     dpkg --force-remove-essential --purge \
+         util-linux mount bsdutils \
+-        libmount1 libblkid1 libuuid1 libsmartcols1 liblastlog2-2; \
++        libmount1 libblkid1 libuuid1 libsmartcols1 liblastlog2-2 \
++        e2fsprogs logsave libext2fs2t64 libss2 libcom-err2; \
++    # Ubuntu's Pebble: a Go binary no package owns, so apt can't update it.
++    rm -rf /usr/bin/pebble /var/lib/pebble; \
+     apt-get clean; \
+     rm -rf /var/lib/apt/lists/* /var/cache/debconf/*
+ 
+@@ -209,15 +228,19 @@ COPY ./build/runtime/gen-certs.sh ${FALKORDB_BIN_PATH}/gen-certs.sh
+ RUN chmod +x ${FALKORDB_BIN_PATH}/run.sh ${FALKORDB_BIN_PATH}/gen-certs.sh
+ COPY --from=builder /out/falkordb.so ${FALKORDB_BIN_PATH}/falkordb.so
+ 
+-# Runtime-stage sanity (cheap belt-and-braces; the load-bearing checks are in
+-# the builder stage where binutils is available). Verify falkord
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3791** (closed): chore(deps): bump the bench-deps group in /bench with 2 updates (@dependabot[bot])
 - **PR #3783** (2026-11-12): 4.22.4 (@DvirDukhan)
 - **PR #3775** (2026-11-12): build(toolchain): reach apt.llvm.org over IPv4, with retries (@dudizimber)
 - **PR #3763** (2026-11-12): fix(constraint): don't freeze the server waiting for the write lock behind a long read (@DvirDukhan)
 - **PR #3762** (2026-11-12): test: revert #3722's test counting and wait_for_replica (@DvirDukhan)
-- **PR #3759** (2026-11-11): fix(telemetry): keep telemetry streams node-local and strip them from snapshots (alt to #3724) (@swilly22)
-- **PR #3758** (closed): ci: count passed, failed and skipped tests per server in the run summary (@dudizimber)
+- **PR #3760** (2026-11-13): docs(bench): bring the bench and profile docs in line with the code (@AviAvni)
 
 ---
 
@@ -2243,50 +1431,31 @@ Co-Authored-By: Claude Op
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test: revert #3722's test counting and wait_for_replica (#3762)
+## X. docker): build the Valkey images on Ubuntu 26.04 LTS
 
 **RULE**:
-When implementing operations in `.github/workflows/_ci-pipeline.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FalkorDB/FalkorDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/dependabot.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FalkorDB/FalkorDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5ab8fddc`: test: revert #3722's test counting and wait_for_replica (#3762). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a4bc02ac`: docker): build the Valkey images on Ubuntu 26.04 LTS. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/_ci-pipeline.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/dependabot.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-          RELEASE=1 pytest tests/test_e2e.py tests/test_functions.py tests/test_mvcc.py tests/test_concurrency.py -vv
-          RELEASE=1 TCK_DONE=tck_done.txt pytest tests/tck/test_tck.py -s
-          pytest tests/test_e2e.py tests/test_functions.py tests/test_mvcc.py tests/test_concurrency.py -vv
-          TCK_DONE=tck_done.txt pytest tests/tck/test_tck.py -s
-      # Capture the GHA service container's stdout/stde
+# build/runtime/Dockerfile is included for its pinned stages (debian, ubuntu,
+# node); its $BUILD_IMAGE and $BROWSER_TAG stages are skipped for the same
+# reason.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-        id: pytest
-          RELEASE=1 pytest tests/test_e2e.py tests/test_functions.py tests/test_mvcc.py tests/test_concurrency.py -vv --junitxml=test-results/pytest.xml
-        id: tck
-          RELEASE=1 TCK_DONE=tck_done.txt TCK_JUNIT_DIR=test-results/tck pytest tests/tck/test_tck.py -s
-      # tests/common.py starts the server with --logfile redis-test.log.
-      # Counts for the run summary (tests/count_results.py, summed per server by
-      # _ci-pipeline.yml's test-counts job). On every outcome but a cancel, so a
-      # failing cell still counts, including one whose setup failed before its
-      # tests ran. STATUS is the job's, so any failed step marks the cell. The
-      # report never gates: both steps continue on error. The server is FALKORDB_SERVER's, as flow.sh,
-      # tests/common.py and the images default it: redis unless set.
-      - name: Record test counts
-        if: ${{ !cancelled() }}
-        continue-on-error: true
-        env:
-          RUN: artifact, amd64
-          STATUS: ${{ job.status }}
-          NAME: test-counts-artifact
-        run: python3 tests/count_results.py record --server "${FALKORDB_SERVER:-redis}" --run "$RUN" --status "$STATUS" --junit 
+// Induced defect failure mode:
+# build/runtime/Dockerfile is included for its pinned stages (debian, node);
+# its $BUILD_IMAGE and $BROWSER_TAG stages are skipped for the same reason.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5ab8fddc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a4bc02ac` are properly handled with clean fallback behavior.

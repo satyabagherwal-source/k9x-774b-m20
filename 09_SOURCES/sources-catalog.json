@@ -1445,8 +1445,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B",
     "sourceVersion": "hf-liquidai-lfm2.5-24b-a2b",
     "license": "Open-Source",
-    "contentHash": "36b08ff165c49f0f18df64919fc2f8f52d4c0e65b4f74cda846967ffdbf2da4a",
-    "lastHarvestedAt": "2026-11-09T13:26:55.260Z",
+    "contentHash": "77487a5d72db50f68312a01f1dbaf6ca1b7b70a2768e1ff4c4c65f01f5a4c61b",
+    "lastHarvestedAt": "2026-11-15T01:32:38.669Z",
     "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b"
   },
   "hf-fishaudio-drama-3": {
@@ -2893,10 +2893,10 @@
     "repository": "FalkorDB/FalkorDB",
     "platform": "github",
     "sourceUrl": "https://github.com/FalkorDB/FalkorDB",
-    "sourceVersion": "7df8e588",
+    "sourceVersion": "d6fcd5aa",
     "license": "NOASSERTION",
-    "contentHash": "7550396d292aa72564783c47b2326fcbf7b5c0f7e83d28069b9c7cc258c81ef4",
-    "lastHarvestedAt": "2026-11-13T08:55:49.411Z",
+    "contentHash": "3533a4c7b1ea8e7a6bbe25e4df1a0f82ec5291ad21c049412a420726bc3494d3",
+    "lastHarvestedAt": "2026-11-15T01:32:39.580Z",
     "learningId": "learn-github-falkordb-falkordb"
   },
   "feathersjs-feathers": {
@@ -7233,10 +7233,10 @@
     "repository": "Tencent-TDS/KuiklyUI",
     "platform": "github",
     "sourceUrl": "https://github.com/Tencent-TDS/KuiklyUI",
-    "sourceVersion": "d54d2ba1",
+    "sourceVersion": "b53b6c4c",
     "license": "NOASSERTION",
-    "contentHash": "b335030336d8c343480f3e97a750930e5f7771b17e77547f287ab52b71cea325",
-    "lastHarvestedAt": "2026-11-11T14:16:53.847Z",
+    "contentHash": "e27bc1add262e86512b24fd366ae618263605365dc0fdd576962bba562145d12",
+    "lastHarvestedAt": "2026-11-15T01:32:44.885Z",
     "learningId": "learn-github-tencent-tds-kuiklyui"
   },
   "seaql-sea-orm": {

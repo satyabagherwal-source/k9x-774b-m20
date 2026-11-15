@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T01:03:34.899Z",
-  "total_cycles_completed": 9635,
-  "total_learnings_persisted": 9635,
-  "total_rules_promoted": 9284,
+  "last_updated": "2026-11-15T01:32:44.896Z",
+  "total_cycles_completed": 9638,
+  "total_learnings_persisted": 9638,
+  "total_rules_promoted": 9285,
   "history": [
-    {
-      "timestamp": "2026-11-14T02:37:06.884Z",
-      "repository": "nats-io/nats-server",
-      "learningId": "learn-github-nats-io-nats-server",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T02:45:51.145Z",
-      "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
-      "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T03:01:47.298Z",
-      "repository": "zai-org/GLM-5.2",
-      "learningId": "learn-huggingface-zai-org-glm-5-2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T03:01:49.848Z",
       "repository": "loft-sh/vcluster",
@@ -1403,6 +1382,27 @@
       "repository": "Mintplex-Labs/anything-llm",
       "learningId": "learn-github-mintplex-labs-anything-llm",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T01:32:38.674Z",
+      "repository": "LiquidAI/LFM2.5-24B-A2B",
+      "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T01:32:39.585Z",
+      "repository": "FalkorDB/FalkorDB",
+      "learningId": "learn-github-falkordb-falkordb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T01:32:44.896Z",
+      "repository": "Tencent-TDS/KuiklyUI",
+      "learningId": "learn-github-tencent-tds-kuiklyui",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -9988,3 +9988,7 @@
 | `CYCLE-20261115-SAIB` | `2026-11-15T01:03:28.307Z` | `JetBrains/kotlinconf-app` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8557` | Yes (`adfff6c8...`) |
 | `CYCLE-20261115-SFL8` | `2026-11-15T01:03:34.892Z` | `Mintplex-Labs/anything-llm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8558` | Yes (`a2ae6076...`) |
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T01:04:02.100Z` | `hf-autotrust-jev-35b-nvfp4` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-100E5003` [Domain D] | Yes (`ab6ae3d0...`) |
+| `CYCLE-20261115-TT3D` | `2026-11-15T01:32:38.665Z` | `LiquidAI/LFM2.5-24B-A2B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-learnings.md` | Yes (`77487a5d...`) |
+| `CYCLE-20261115-TTSP` | `2026-11-15T01:32:39.577Z` | `FalkorDB/FalkorDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8559` | Yes (`3533a4c7...`) |
+| `CYCLE-20261115-TXW1` | `2026-11-15T01:32:44.881Z` | `Tencent-TDS/KuiklyUI` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/tencent-tds-kuiklyui-learnings.md` | Yes (`e27bc1ad...`) |
+| `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T01:33:20.676Z` | `hf-liquidai-lfm2.5-24b-a2b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-04368044` [Domain D] | Yes (`5620d660...`) |

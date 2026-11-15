@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T01:04:03.060Z",
-  "total_records": 900,
+  "last_updated": "2026-11-15T01:33:21.307Z",
+  "total_records": 907,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 444,
+      "total": 447,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -481,7 +481,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-openbmb-minicpm-v-4-7-1b-learnings-core-invar",
         "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-35b-nvfp4-core-i",
         "DOM-D-100E5003",
-        "domain_intelligence-research-knowledge-intelligence-hf-autotrust-jev-35b-nvfp4-learnings-core-invari"
+        "domain_intelligence-research-knowledge-intelligence-hf-autotrust-jev-35b-nvfp4-learnings-core-invari",
+        "domain_intelligence-research-knowledge-intelligence-liquidai-lfm2-5-24b-a2b-core-invariants",
+        "DOM-D-04368044",
+        "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm2-5-24b-a2b-learnings-core-invari"
       ]
     },
     "E": {
@@ -670,7 +673,7 @@
       ]
     },
     "H": {
-      "total": 184,
+      "total": 186,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -855,7 +858,9 @@
         "domain_intelligence-technical-construction-intelligence-apollographql-apollo-kotlin-core-invariants",
         "domain_intelligence-technical-construction-intelligence-apollographql-apollo-kotlin-learnings-core-i",
         "domain_intelligence-technical-construction-intelligence-necolas-react-native-web-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-necolas-react-native-web-learnings-core-inva"
+        "domain_intelligence-technical-construction-intelligence-necolas-react-native-web-learnings-core-inva",
+        "domain_intelligence-technical-construction-intelligence-falkordb-falkordb-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-falkordb-falkordb-learnings-core-invariants"
       ]
     },
     "I": {
@@ -915,7 +920,7 @@
       ]
     },
     "K": {
-      "total": 27,
+      "total": 29,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -943,7 +948,9 @@
         "domain_intelligence-quality-verification-intelligence-astral-sh-ruff-core-invariants",
         "domain_intelligence-quality-verification-intelligence-astral-sh-ruff-learnings-core-invariants",
         "domain_intelligence-quality-verification-intelligence-automattic-harper-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-automattic-harper-learnings-core-invariants"
+        "domain_intelligence-quality-verification-intelligence-automattic-harper-learnings-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-tencent-tds-kuiklyui-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-tencent-tds-kuiklyui-learnings-core-invariants"
       ]
     },
     "L": {
@@ -17708,6 +17715,102 @@
       "repository": "jetbrains-kotlinconf-app-learnings",
       "content_hash": "bb6d06fc9775216cf973e92ddebadc73bfd1d15eadfe2cb2524de8d410bb5dff",
       "created_at": "2026-11-15T01:04:02.606Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-liquidai-lfm2-5-24b-a2b-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-liquidai-lfm2-5-24b-a2b-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: LiquidAI/LFM2.5-24B-A2B Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-lfm2-5-24b-a2b-research-knowledge-intelligence-liquidai-lfm2-5-24b-a.md",
+      "repository": "LiquidAI/LFM2.5-24B-A2B",
+      "content_hash": "1b8dc0c42d859369729c21b25895077e36a78160300874f95cf3eae42a1c9fef",
+      "created_at": "2026-11-15T01:32:38.849Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-falkordb-falkordb-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-falkordb-falkordb-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: FalkorDB/FalkorDB Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-falkordb-falkordb-technical-construction-intelligence-falkordb-falkordb-core-inv.md",
+      "repository": "FalkorDB/FalkorDB",
+      "content_hash": "9d5b730e72bf751a4b17e2220c156e69bd20de136ece4b7a035caada51caf576",
+      "created_at": "2026-11-15T01:32:39.859Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-tencent-tds-kuiklyui-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-tencent-tds-kuiklyui-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: Tencent-TDS/KuiklyUI Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-tencent-tds-kuiklyui-quality-verification-intelligence-tencent-tds-kuiklyui-core.md",
+      "repository": "Tencent-TDS/KuiklyUI",
+      "content_hash": "6c6965487daaaccbf473ba4cded1229b168a3d0fc279eed311071a798f2f6922",
+      "created_at": "2026-11-15T01:32:45.162Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-falkordb-falkordb-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-falkordb-falkordb-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: falkordb-falkordb-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-falkordb-falkordb-learnings-technical-construction-intelligence-falkordb-falkord.md",
+      "repository": "falkordb-falkordb-learnings",
+      "content_hash": "4638bf2c0ee5170eb623cc08cf26569bc9b3ccb99243f1a3420f5b6cf7b95327",
+      "created_at": "2026-11-15T01:32:51.042Z"
+    },
+    "DOM-D-04368044": {
+      "record_id": "DOM-D-04368044",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): LiquidAI/LFM2.5-24B-A2B",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/LiquidAI/LFM2.5-24B-A2B](https://huggingface.co/LiquidAI/LFM2.5-24B-A2B))  \n> **Source Version**: `hf-liquidai-`  \n> **License**: Open-Source  \n> **Sy",
+      "content_hash": "5620d6601e6b12b6c6c9d4c4c45812d88aaf59b781c5a2a911e28146fbd4948e",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-learnings.md`  \n> **Source**: huggingface ([https://huggi -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-learnings.md`  \n> **Source**: huggingface ([https://huggi",
+      "provenance": {
+        "source_uri": "project://hf-liquidai-lfm2.5-24b-a2b/hf-liquidai-lfm2.5-24b-a2b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T01:32:51.247Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-liquidai-lfm2.5-24b-a2b)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-liquidai-lfm2.5-24b-a2b"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-15T01:33:20.663Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm2-5-24b-a2b-learnings-core-invari": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm2-5-24b-a2b-learnings-core-invari",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-liquidai-lfm2.5-24b-a2b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-lfm2-5-24b-a2b-learnings-research-knowledge-intelligence-hf-liquidai.md",
+      "repository": "hf-liquidai-lfm2.5-24b-a2b-learnings",
+      "content_hash": "d97f1475fcf568fa11a81e82eff5e9409b0884a59ead35addc2297ba61bb9371",
+      "created_at": "2026-11-15T01:33:20.849Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-tencent-tds-kuiklyui-learnings-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-tencent-tds-kuiklyui-learnings-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: tencent-tds-kuiklyui-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-tencent-tds-kuiklyui-learnings-quality-verification-intelligence-tencent-tds-kui.md",
+      "repository": "tencent-tds-kuiklyui-learnings",
+      "content_hash": "d90851f41c9d24a6c5799f0357baf74007bf84a9419f4bc9d49ea3528c710446",
+      "created_at": "2026-11-15T01:33:21.307Z"
     }
   }
 }

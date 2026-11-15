@@ -10021,3 +10021,7 @@ Every entry in this ledger must capture:
 | `learn-github-jetbrains-kotlinconf-app` | `https://github.com/JetBrains/kotlinconf-app` | `146e891c` | Multi-dimensional audit evidence | 2026-11-15T01:03:28.310Z |
 | `learn-github-mintplex-labs-anything-llm` | `https://github.com/Mintplex-Labs/anything-llm` | `4d09fa5f` | Multi-dimensional audit evidence | 2026-11-15T01:03:34.895Z |
 | `learn-dom-d-100e5003` | `project://hf-autotrust-jev-35b-nvfp4` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md` | 2026-11-15T01:04:02.100Z |
+| `learn-huggingface-liquidai-lfm2-5-24b-a2b` | `https://huggingface.co/LiquidAI/LFM2.5-24B-A2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-15T01:32:38.669Z |
+| `learn-github-falkordb-falkordb` | `https://github.com/FalkorDB/FalkorDB` | `d6fcd5aa` | Multi-dimensional audit evidence | 2026-11-15T01:32:39.580Z |
+| `learn-github-tencent-tds-kuiklyui` | `https://github.com/Tencent-TDS/KuiklyUI` | `b53b6c4c` | Multi-dimensional audit evidence | 2026-11-15T01:32:44.885Z |
+| `learn-dom-d-04368044` | `project://hf-liquidai-lfm2.5-24b-a2b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-learnings.md` | 2026-11-15T01:33:20.676Z |

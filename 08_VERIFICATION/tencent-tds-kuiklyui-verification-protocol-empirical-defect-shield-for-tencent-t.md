@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for tencent/tds/kuiklyui
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for Tencent-TDS/KuiklyUI
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "tencent/tds/kuiklyui",
-  "source_url": "https://github.com/tencent/tds/kuiklyui",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "Tencent-TDS/KuiklyUI",
+  "source_url": "https://github.com/Tencent-TDS/KuiklyUI",
+  "source_version": "b53b6c4c",
+  "license": "NOASSERTION",
+  "timestamp": "2026-11-15T01:32:45.064Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-tencent-tds-kuiklyui",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [tencent/tds/kuiklyui](https://github.com/tencent/tds/kuiklyui) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [Tencent-TDS/KuiklyUI](https://github.com/Tencent-TDS/KuiklyUI) (Revision: `b53b6c4c`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-15T01:32:45.064Z`  
+> **Learning ID**: `learn-github-tencent-tds-kuiklyui`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `tencent/tds/kuiklyui` (Commit: `historical`)
+- **Target Repository**: `Tencent-TDS/KuiklyUI` (Commit: `b53b6c4c`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tencent-tds-kuiklyui-learnings.md`  
-> **Source**: github ([https://github.com/Tencent-TDS/KuiklyUI](https://github.com/Tencent-TDS/KuiklyUI))  
-> **Source Version**: `d54d2ba1`  
-> **License**: NOASSERTION  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T14:16:42.571Z  
-> **Learning ID**: `learn-github-tencent-tds-kuiklyui`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): Tencent-TDS/KuiklyUI
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tencent-tds-kuiklyui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Tencent-TDS/KuiklyUI](https://github.com/Tencent-TDS/KuiklyUI))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T14:16:42.566Z  
+> **Harvest Timestamp**: 2026-11-15T01:32:44.497Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A Kotlin Multiplatform UI framework from Tencent TDS — high-performance, one codebase for six platforms, with dynamic delivery.
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3636 stars
+- **Stars / Engagement**: 3637 stars
 
 ---
 
@@ -781,11 +767,11 @@ class Animatable<T, V : AnimationVector>(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1888** (2026-11-11): **feat(compose): modifier support attr turboDisplayAutoUpdateEnable**
-  *Symptoms*: feat(compose): modifier support attr turboDisplayAutoUpdateEnable
+- **Issue #1898** (2026-11-13): **feat(ohos): add support for  kotlin 2.4.21**
+  *Symptoms*: 
 
-- **Issue #1885** (2026-11-10): **feat(input): 扩展 Input/TextArea 与 Compose 的 keyboardType 映射**
-  *Symptoms*: 新增 Ascii/Phone/Uri/NumberPassword/Decimal 的 DSL 与三端渲染映射
+- **Issue #1895** (2026-11-13): **fix(touch): preserve pressed state for multi-touch events**
+  *Symptoms*: Carry per-pointer pressed flags through core event params and Android/iOS/OHOS/Web renderers so releasing one finger does not flip other live pointers. Add a diagnostics demo, unit tests and view event documentation.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -802,398 +788,739 @@ class Animatable<T, V : AnimationVector>(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `99e03f21` (2026-11-10)
-**Commit Message**: fix(ohos): align paste truncation to UTF-8 boundary to avoid renderer… (#1857)
+### Incident Patch 1: `71e4bcf9` (2026-11-12)
+**Commit Message**: docs: add Compose DSL coroutine and thread switching guide (#1891)
 
-* fix(ohos): align paste truncation to UTF-8 boundary to avoid renderer abort
+* docs: add Compose DSL coroutine and thread switching guide
 
-Pasting text longer than maxTextLength into a TextField crashed the app with
-SIGABRT on HarmonyOS. OnPasteText coarsely cut the pasted buffer at
-max_length_ * 4 bytes, which splits multi-byte UTF-8 sequences: 18 CJK
-characters (54 bytes) cut at 40 bytes end mid-character. The malformed UTF-8
-then reached ToUTF32, whose fallback std::wstring_convert throws
-std::range_error, and nothing caught it.
+Add content to docs/Compose/thread-and-coroutines.md covering:
+- ComposeDispatcher mechanism for automatic Kuikly thread dispatching
+- LaunchedEffect and rememberCoroutineScope usage
+- Page-layer kotlinx coroutines with Dispatchers.Kuikly for thread switching
 
-Add kuikly::util::utf::TruncateToUTF8Boundary and use it in OnPasteText, plus
-the same guard in OnWillInsertText where the framework can cut the insert
-buffer at its capacity limit. ToUTF32 keeps its throwing contract, which is
-deliberately aligned with Kotlin String(byteArray).
+Co-Authored-By: Claude Opus 4.6 <[REDACTED_EMAIL]>
 
-* perf(ohos): scan UTF-8 boundary from the tail
-
-* fix(ohos): preserve insert-buffer truncation state
-
-* refactor(ohos): simplify paste and UTF-8 boundary handling
-
-* perf(ohos): dispatch UTF-8 boundary by trailing bytes
-
-* perf(ohos): scan UTF-8 boundary once with fast and slow pointers
-
-* test(ohos): keep upstream UTF boundary cases intact
-
-**File**: `core-render-ohos/src/main/cpp/libohos_render/expand/components/input/KRTextFieldView.cpp` (modified, +18/-12)
-```diff
-@@ -22,6 +22,7 @@
- #include <arkui/drag_and_drop.h>
- #include <cstddef>
- #include <cstdint>
-+#include <cstring>
- #include <deviceinfo.h>
- #include <regex>
- 
-@@ -795,11 +796,19 @@ void KRTextFieldView::OnWillInsertText(ArkUI_NodeEvent *event) {
-         int32_t size = MAX_INSERT_LENGTH;
-         char *pBuffer = buffer;
-         OH_ArkUI_NodeEvent_GetStringValue(event, 0, &pBuffer, &size);
-+        // ArkUI copies at most MAX_INSERT_LENGTH - 1 bytes, which can leave an incomplete UTF-8
-+        // tail. Drop that tail before filter -> CalculateTextLength decodes the buffer.
-+        buffer[MAX_INSERT_LENGTH - 1] = '\0';
-+        const auto boundary = kuikly::util::utf::ScanUTF8Boundary(buffer);
-+        // Trimming the incomplete tail can make the buffer shorter than the cap.
-+        // Preserve the full-buffer state so the temporary max-length path still runs.
-+        const bool insertBufferTruncated = boundary.length >= MAX_INSERT_LENGTH - 1;
-+        buffer[boundary.boundary] = '\0';
-         // KR_LOG_DEBUG << "OnWillInsertText: to insert text: " << buffer;
-         auto destText = GetContentText();
-         auto range = GetInputNodeTextSelectionRange();
-         bool filtered = filter(buffer, destText, range.first, range.second);
--        if (filtered || strlen(buffer) >= MAX_INSERT_LENGTH - 1) {
-+        if (filtered || insertBufferTruncated) {
-             if (filtered) {
-                 KR_LOG_DEBUG << "OnWillInsertText beyond limit";
-                 // 超过最大输入长度限制
-@@ -829,25 +838,22 @@ void KRTextFieldView::OnPasteText(ArkUI_NodeEvent *event) {
-         if (!stringAsyncEvent || !stringAsyncEvent->pStr) {
-             return;
-         }
--        size_t size = std::min(strlen(stringAsyncEvent->pStr), static_cast<size_t>(max_length_) * 4);
--        // 这里只是避免拷贝超大剪贴板的粗估上限，不是语义截断（语义截断由 filter 完成）。
--        // 必须回退到字符边界：buffer 随后进入 filter → CalculateTextLength，CHARACTER /
--        // VISUAL_WIDTH 分支会对它调 ConvertToU32String，残缺序列会让长度计算与截断都失真。
--        size = kuikly::util::utf::UTF8BoundaryLength(stringAsyncEvent->pStr, size);
--        char *buffer = new char[size + 1];
--        strncpy(buffer, stringAsyncEvent->pStr, size);
--        buffer[size] = '\0';
-+        // Semantic truncation happens in filter; process the full paste buffer here.
-+        std::string pasteText(stringAsyncEvent->pStr);
-         auto destText = GetContentText();
-         auto range = GetInputNodeTextSelectionRange();
--        if (filter(buffer, destText, range.first, range.second)) {
-+        const bool filtered = filter(pasteText.data(), destText, range.first, range.second);
-+        if (filtered) {
-+            // filter writes a NUL into the writable C++17 string buffer.
-+            pasteText.resize(strlen(pasteText.data()));
-             KR_LOG_DEBUG << "OnPasteText beyond limit";
-             // 超过最大输入长度限制
-             NotifyTextLengthBeyondLimit();
--            uint32_t realMaxLength = GetUTF16Length(destText) - (range.second - range.first) + GetUTF16Length(buffer);
-+            uint32_t realMaxLength = GetUTF16Length(destText) - (range.second - range.first) +
-+                                     GetUTF16Length(pasteText);
-             UpdateInputNodeMaxLength(realMaxLength);
-             DelayResetMaxLength();
-         }
--        delete[] buffer;
-     }
- }
- 
-```
-
-**File**: `core-render-ohos/src/main/cpp/libohos_render/utils/KRUtfUtil.cpp` (modified, +33/-9)
-```diff
-@@ -162,17 +162,41 @@ size_t UTF16Length(const std::string &input) {
-     return simdutf::utf16_length_from_utf8_with_replacement(input.data(), input.size()).count;
- }
- 
--size_t UTF8BoundaryLength(const char *input, size_t bytes) {
--    // A UTF-8 sequence is at most 4 bytes, so only the last 3 bytes can hold an incomplete tail.
--    for (size_t back = 1; back <= 3 && back <= bytes; ++back) {
--        const unsigned char lead = static_cast<unsigned char>(input[bytes - back]);
--        if ((lead & 0xC0) == 0x80) {
--            continue;
-+UTF8BoundaryInfo ScanUTF8Boundary(const char *input) {
-+    if (input == nullptr) {
-+        return {0, 0};
-+    }
-+
-+    // fast scans each byte once; slow stays on the last byte that starts a sequence.
-+    const char *slow = nullptr;
-+    const char *fast = input;
-+    size_t leadLength = 0;
-+    size_t trailingContinuations = 0;
-+    while (*fast != '\0') {
-+        const unsigned char byte = static_cast<unsigned char>(*fast);
-+        if ((byte & 0xC0) == 0x80) {
-+            ++trailingContinuations;
-+        } else {
-+            slow = fast;
-+            leadLength = byte < 0x80 ? 1 : byte < 0xE0 ? 2 : byte < 0xF0 ? 3 : 4;
-+            trailingContinuations = 0;
-         }
--        const size_t sequenceLength = lead < 0x80 ? 1 : lead < 0xE0 ? 2 : lead < 0xF0 ? 3 : 4;
--        return bytes - back + sequenceLength > bytes ? bytes - back : bytes;
-+        ++fast;
-     }
--    return bytes;
-+
-+    const size_t length = static_cast<size_t>(fast - input);
-+    if (slow == nullptr) {
-+        // A string made only of continuation bytes keeps the existing contract.
-+        return {length, length};
-+    }
-+    const size_t leadOffset = static_cast<size_t>(slow - input);
-+    const size_t boundary =
-+        trailingContinuations + 1 < leadLength ? leadOffset : length;
-+    return {length, boundary};
-+}
-+
-+size_t UTF8BoundaryLength(const char *input) {
-+    return ScanUTF8Boundary(input).boundary;
- }
- 
- }  // namespace utf
-```
-
-**File**: `core-render-ohos/src/main/cpp/libohos_render/utils/KRUtfUtil.h` (modified, +10/-3)
-```diff
-@@ -30,9 +30,16 @@ std::string ToUTF8(const uint16_t *input, size_t units, bool strict = false);
- std::u32string ToUTF32(const std::string &input);
- std::string ToUTF8(const std::u32string &input);
- 
--// Largest prefix length not exceeding bytes that ends on a UTF-8 character boundary. Byte-estimated
--// copy caps use it so a truncated buffer never carries a partial sequence.
--size_t UTF8BoundaryLength(const char *input, size_t bytes);
-+// Result of one NUL-terminated UTF-8 scan: bytes before NUL and the longest safe prefix.
-+struct UTF8BoundaryInfo {
-+    size_t length;
-+    size_t boundary;
-+};
-+
-+UTF8BoundaryInfo ScanUTF8Boundary(const char *input);
-+
-+// Length of a NUL-terminated UTF-8 string after removing any incomplete trailing sequence.
-+size_t UTF8BoundaryLength(const char *input);
- 
- // UTF-16 unit count after Unicode maximal-subpart replacement.
- size_t UTF16Length(const std::string &input);
-```
-
-**File**: `core-render-ohos/src/main/cpp/libohos_render/utils/test/krutfutil_test.cpp` (modified, +43/-0)
-```diff
-@@ -27,6 +27,20 @@ namespace utf = kuikly::util::utf;
- 
- static int g_failures = 0;
- 
-+namespace kuikly {
-+namespace util {
-+namespace utf {
-+
-+// Keeps the original byte-cap test cases intact while the production API takes
-+// only a NUL-terminated string.
-+static size_t UTF8BoundaryLength(const char *input, size_t bytes) {
-+    return UTF8BoundaryLength(std::string(input, bytes).c_str());
-+}
-+
-+}  // namespace utf
-+}  // namespace util
-+}  // namespace kuikly
-+
- #define EXPECT(cond)                                                                    \
-     do {                                                                                \
-         if (!(cond)) {                                                                  \
-@@ -114,13 +128,42 @@ void TestSupplementaryPlaneRoundTrips() {
-     EXPECT(utf::ToUTF32(utf::ToUTF8(emoji)) == emoji);
- }
- 
-+void TestNulTerminatedBoundaryLength() {
-+    EXPECT_EQ_SIZE(utf::UTF8BoundaryLength(kCjkText), 24);
-+    const char *kEmoji = "\xF0\x9F\x98\x80";  // U+1F600
-+    EXPECT_EQ_SIZE(utf::UTF8BoundaryLength(kEmoji), 4);
-+    EXPECT_EQ_SIZE(utf::UTF8BoundaryLength("abc"), 3);
-+    EXPECT_EQ_SIZE(utf::UTF8BoundaryLength(""), 0);
-+    EXPECT_EQ_SIZE(utf::UTF8BoundaryLength(nullptr), 0);
-+
-+    // ArkUI can truncate a fixed-size insert buffer in the middle of a character.
-+    EXPECT_EQ_SIZE(utf::UTF8BoundaryLength("a\xE4\xB8"), 1);
-+    EXPECT_EQ_SIZE(utf::UTF8BoundaryLength("a\xF0\x9F\x98"), 1);
-+    EXPECT_EQ_SIZE(utf::UTF8BoundaryLength("\xE4\xB8"), 0);
-+    EXPECT_EQ_SIZE(utf::UTF8BoundaryLength("\xF0\x9F\x98"), 0);
-+
-+    const std::string maxInsert = std::string(252, 'a') + "\xF0\x9F\x98";
-+    const auto maxInsertInfo = utf::ScanUTF8Boundary(maxInsert.c_str());
-+    EXPECT_EQ_SIZE(maxInsertInfo.length, 255);
-+    EXPECT_EQ_SIZE(maxInsertInfo.boundary, 252);
-+
-+    // Ill-formed tails without a start byte keep the existing contract.
-+    EXPECT_EQ_SIZE(utf::UTF8BoundaryLength("\x80"), 1);
-+    EXPECT_EQ_SIZE(utf::UTF8BoundaryLength("a\x80\x80\x80\x80"), 5);
-+
-+    const auto info = utf::ScanUTF8Boundary(kCjkText);
-+    EXPECT_EQ_SIZE(info.length, 24);
-+    EXPECT_EQ_SIZE(info.boundary, 24);
-+}
-+
- int main() {
-     TestByteTruncatedPasteDecodes();
-     TestBoundaryLengthFloorsToCharacterBoundary();
-     TestValidInputRoundTrips();
-     TestIllFormedUTF8DecodesWithReplacement();
-     TestIllFormedUTF32EncodesWithReplacement();
-     TestSupplementaryPlaneRoundTrips();
-+    TestNulTerminatedBoundaryLength();
-     if (g_failures != 0) {
-         std::fprintf(stderr, "%d failure(s)\n", g_failures);
-         return 1;
-```
-
----
-
-### Incident Patch 2: `39a760fb` (2026-11-10)
-**Commit Message**: fix(ohos): avoid draw-time typography relayout corruption (#1835)
-
-* fix(ohos): lay out text at its final width during measure
-
-Return that paragraph height from the current measure so parent layout
-can place the following siblings without a second pager pass.
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-* fix(ohos): keep absolute text on its final width
-
-Left/right text was finalized at its natural width, then the frame grew back without another measure. Record the accepted width, remeasure those leaves when the width arrives later, and reuse a left-aligned paragraph when the narrower container does not change line breaks.
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-* Revert "fix(ohos): keep absolute text on its final width"
-
-This reverts commit e289adadca7beffd402594e0be1a6d52d25d3358.
-
-* fix(ohos): avoid draw-time typography relayout
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-* chore: keep text fix PR free of demo assets
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-* fix(ohos): narrow typography relayout workaround
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
+* docs: simplify Compose coroutine guide, remove internal details
 
 ---------
 
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
+Co-authored-by: KuiklyAI <[REDACTED_EMAIL]>
 
-**File**: `core-render-ohos/src/main/cpp/libohos_render/expand/components/richtext/KRRichTextView.cpp` (modified, +3/-18)
+**File**: `docs/Compose/thread-and-coroutines.md` (modified, +64/-1)
 ```diff
-@@ -148,7 +148,6 @@ void KRRichTextView::DidRemoveFromParentView() {
-     IKRRenderViewExport::DidRemoveFromParentView();
-     shadow_ = nullptr;
-     paragraph_ = nullptr;
--    last_draw_frame_width_ = -1.0;
- }
+@@ -1,5 +1,68 @@
+ # 多线程与协程
  
- void KRRichTextView::OnForegroundDraw(ArkUI_NodeCustomEvent *event) {
-@@ -186,27 +185,13 @@ void KRRichTextView::OnForegroundDraw(ArkUI_NodeCustomEvent *event) {
-         return;
-     }
-     double drawOffsetY = richTextShadow->DrawOffsetY();
--    OH_Drawing_TextAlign textAlign = richTextShadow->TextAlign();
--    auto textTypoSize = richTextShadow->MainMeasureSize();
-     // 在容器前景上绘制额外图形，实现图形显示在子组件之上。
-     auto *drawContext = OH_ArkUI_NodeCustomEvent_GetDrawContextInDraw(event);
-     auto *drawingHandle = reinterpret_cast<OH_Drawing_Canvas *>(OH_ArkUI_DrawContext_GetCanvas(drawContext));
-     auto frameWidth = GetFrame().width;
--    bool needReLayout = false;
--    if (last_draw_frame_width_ > 0 && fabs(last_draw_frame_width_ - frameWidth) > 0.01) {
--        needReLayout = true;
--    }
--    if (fabs(textTypoSize.width - frameWidth) > 1 || textAlign != TEXT_ALIGN_LEFT) {
--        needReLayout = true;
--    }
--    if (needReLayout) {
--        auto dpi = KRConfig::GetDpi();
--        OH_Drawing_TypographyLayout(textTypo, frameWidth * dpi);
--        last_draw_frame_width_ = frameWidth;
--        if (textAlign != TEXT_ALIGN_LEFT) {
--            richTextShadow->ResetTextAlign();
--        }
--    }
-+    // Do not lay out an already formatted Typography again while drawing.
-+    // TypographyLayout is not idempotent on HarmonyOS 6 and may corrupt
-+    // multiline Chinese glyphs.
+-持续更新中
++## Compose 中的协程调用
  
-     if (!selection_rects_.selection_rects.empty()) {
-         double density = KRConfig::GetDpi();
-```
-
-**File**: `core-render-ohos/src/main/cpp/libohos_render/expand/components/richtext/KRRichTextView.h` (modified, +0/-1)
-```diff
-@@ -192,7 +192,6 @@ class KRRichTextView : public IKRRenderViewExport {
-  private:
-     std::shared_ptr<KRParagraph> paragraph_;
-     std::shared_ptr<IKRRenderShadowExport> shadow_;
--    float last_draw_frame_width_ = -1.0;
-     float line_break_margin_ = 0;
-     KRParagraphSelectionInfo selection_rects_;
-     void OnForegroundDraw(ArkUI_NodeCustomEvent *event);
++Compose 管理的协程（`LaunchedEffect`、`rememberCoroutineScope()` 等）默认在 **Kuikly 线程** 执行，可以直接修改 `mutableStateOf` 状态，无需手动切换线程。
+ 
++```kotlin
++@Composable
++fun MyContent() {
++    var data by remember { mutableStateOf("") }
++
++    LaunchedEffect(Unit) {
++        // 在 Kuikly 线程中执行
++        data = fetchData()
++    }
++
++    Text(text = data, fontSize = 24.sp)
++}
++```
++
++也可以通过 `rememberCoroutineScope()` 响应用户交互时启动协程：
++
++```kotlin
++@Composable
++fun MyContent() {
++    var data by remember { mutableStateOf("") }
++    val scope = rememberCoroutineScope()
++
++    Button(onClick = {
++        scope.launch {
++            // 在 Kuikly 线程中执行
++            data = fetchData()
++        }
++    }) {
++        Text("加载数据")
++    }
++}
++```
++
++## Page 层使用 kotlinx 协程库
++
++在 `ComposeContainer` 的 Page 生命周期方法（如 `created()`、`willInit()` 等）中，可以使用 `kotlinx.coroutines` 库配合 `Dispatchers.Kuikly` 进行线程切换：
++
++```kotlin
++@Page("MyComposePage")
++class MyComposePage : ComposeContainer() {
++
++    override fun created() {
++        super.created()
++        val ctx = this
++        GlobalScope.launch(Dispatchers.Kuikly[ctx]) {
++            val data = withContext(Dispatchers.IO) {
++                kmpFetchData()
++            }
++            // 回到 Kuikly 线程，安全更新 UI
++        }
++    }
++
++    override fun willInit() {
++        super.willInit()
++        setContent {
++            MyContent()
++        }
++    }
++}
++```
++
++依赖配置参考 [协程和多线程编程指引](../DevGuide/thread-and-coroutines.md#接入方式) 中的 kotlinx 协程库和 kuiklyx 协程库接入方式。
+\ No newline at end of file
 ```
 
 ---
 
-### Incident Patch 3: `7feb72c2` (2026-11-10)
-**Commit Message**: fix(ohos): guard empty HTTP response in KRNetworkModule (#1876)
+### Incident Patch 2: `b53b6c4c` (2026-11-13)
+**Commit Message**: fix(touch): preserve pressed state for remaining pointers in multi-touch events (#1895)
 
-* fix(ohos): guard empty HTTP response in KRNetworkModule
+Carry per-pointer pressed flags through core event params and Android/iOS/OHOS/Web renderers so releasing one finger does not flip other live pointers. Add a diagnostics demo, unit tests and view event documentation.
 
-Avoid calling toString() on undefined response.result/responseCode when the HTTP response has an empty body or is otherwise abnormal.
-
-* fix(ohos): align empty-response failure semantics in KRNetworkModule
-
-Address review feedback: narrow response.result once for binary handling, and mark missing response/statusCode as success=0 with statusCode=-1000 instead of returning a contradictory success.
-
-**File**: `core-render-ohos/src/main/ets/modules/KRNetworkModule.ets` (modified, +15/-6)
+**File**: `compose/src/commonMain/kotlin/com/tencent/kuikly/compose/container/SuperTouchManager.kt` (modified, +30/-15)
 ```diff
-@@ -436,16 +436,25 @@ export class KRNetworkModule extends KuiklyRenderBaseModule {
-             resultObject['data'] = '';
-             resultObject['errorMsg'] = JSON.stringify(err);
-             resultObject['success'] = '0';
--            resultObject['statusCode'] = response ? response.responseCode.toString() : '-1000';
-+            resultObject['statusCode'] = response?.responseCode?.toString() ?? '-1000';
-+          } else if (response == null || response.responseCode == null) {
-+            // 没有有效 HTTP 响应 / 状态码时不能伪装成功：success 与 statusCode 必须一致。
-+            resultObject['data'] = '';
-+            resultObject['errorMsg'] = 'empty response';
-+            resultObject['success'] = '0';
-+            resultObject['statusCode'] = '-1000';
-           } else {
-+            // 先窄化 response.result，binary 分支体不要直接读 response.result，避免依赖 ?. 的类型收窄
-+            const result = response.result;
-             if (binaryMode) {
--              if (response.result instanceof ArrayBuffer) {
--                bytes = new Int8Array(response.result);
--              } else if (typeof response.result == 'string') {
--                bytes = new Int8Array(buffer.from(response.result).buffer);
-+              if (result instanceof ArrayBuffer) {
-+                bytes = new Int8Array(result);
-+              } else if (typeof result == 'string') {
-+                bytes = new Int8Array(buffer.from(result).buffer);
-               }
-             } else {
--              resultObject['data'] = response.result.toString();
-+              // 空 body / 异常响应时 result 可能为 undefined，不能直接 toString()
-+              resultObject['data'] = result?.toString() ?? '';
+@@ -72,10 +72,12 @@ class SuperTouchManager {
+     internal fun DivEvent.setTouchUp(isSync: Boolean) {
+         touchUp(isSync) {
+             touchesDelegate.onTouchesEvent(it.touches, PointerEventType.Release, it.timestamp, it.consumed)
+-            TouchActivityTracker.onTouchEnd(container.getPager().pageData, touchActivityOwner)
+-            if (container.getViewAttr().getProp(StyleConst.PREVENT_TOUCH) == true) {
+-                container.getViewAttr().preventTouch(false)
+-                container.getViewEvent().setTouchMove(true)
++            if (!it.touches.hasPressedPointers()) {
++                TouchActivityTracker.onTouchEnd(container.getPager().pageData, touchActivityOwner)
++                if (container.getViewAttr().getProp(StyleConst.PREVENT_TOUCH) == true) {
++                    container.getViewAttr().preventTouch(false)
++                    container.getViewEvent().setTouchMove(true)
++                }
              }
-             resultObject['errorMsg'] = '';
-             resultObject['success'] = '1';
+         }
+     }
+@@ -165,15 +167,7 @@ class SuperTouchManager {
+                 val pageDensity = container.getPager().pagerDensity()
+                 return scene.sendPointerEvent(
+                     eventType = type,
+-                    pointers = touches.map { touch ->
+-                        val position = Offset(touch.x * pageDensity, touch.y * pageDensity)
+-                        ComposeScenePointer(
+-                            id = PointerId(touch.pointerId),
+-                            position = position,
+-                            pressed = (type != PointerEventType.Release),
+-                            type = PointerType.Touch,
+-                        )
+-                    },
++                    pointers = touches.toComposeScenePointers(pageDensity, type),
+                     timeMillis = timestamp,
+                     nativeEvent = if (isConsumeByNative) {
+                         "cancel"
+@@ -185,5 +179,26 @@ class SuperTouchManager {
+             }
+         }
+     }
+-
+-}
+\ No newline at end of file
++}
++
++/**
++ * 优先使用渲染层为每个触点上报的 [Touch.pressed] 状态。多指操作中某个触点抬起时，其他触点仍保持按下；
++ * 这与 androidx `MotionEventAdapter` 根据 `actionIndex` 确定本次抬起触点的规则一致。
++ *
++ * `null` 表示渲染层版本低于 2.32.0 或渲染层无法确定该状态。此时根据事件类型推断本次事件中所有触点的状态，
++ * 无法准确处理多指操作。
++ */
++internal fun List<Touch>.hasPressedPointers(): Boolean = any { it.pressed == true }
++
++@OptIn(ExperimentalComposeUiApi::class)
++internal fun List<Touch>.toComposeScenePointers(
++    pageDensity: Float,
++    eventType: PointerEventType,
++): List<ComposeScenePointer> = map { touch ->
++    ComposeScenePointer(
++        id = PointerId(touch.pointerId),
++        position = Offset(touch.x * pageDensity, touch.y * pageDensity),
++        pressed = touch.pressed ?: (eventType != PointerEventType.Release),
++        type = PointerType.Touch,
++    )
++}
+```
+
+**File**: `compose/src/commonMain/kotlin/com/tencent/kuikly/compose/ui/ScaleWithDensity.kt` (modified, +3/-1)
+```diff
+@@ -29,7 +29,9 @@ fun Touch.scaleWithDensity(density: Float): Touch {
+         pageX = pageX * density,
+         pageY = pageY * density,
+         hash = hash,
+-        pointerId = pointerId
++        pointerId = pointerId,
++        // 若不传递该状态，缩放后的触点将改为根据事件类型推断按下状态。
++        pressed = pressed
+     )
+ }
+ 
+```
+
+**File**: `compose/src/commonTest/kotlin/com/tencent/kuikly/compose/container/MultiTouchPointerPressedTest.kt` (added, +126/-0)
+```diff
+@@ -0,0 +1,126 @@
++/*
++ * Tencent is pleased to support the open source community by making KuiklyUI
++ * available.
++ * Copyright (C) 2026 Tencent. All rights reserved.
++ * Licensed under the License of KuiklyUI;
++ * you may not use this file except in compliance with the License.
++ */
++
++package com.tencent.kuikly.compose.container
++
++import com.tencent.kuikly.compose.ui.ExperimentalComposeUiApi
++import com.tencent.kuikly.compose.ui.geometry.Offset
++import com.tencent.kuikly.compose.ui.input.pointer.PointerEventType
++import com.tencent.kuikly.compose.ui.input.pointer.PointerInputEvent
++import com.tencent.kuikly.compose.ui.input.pointer.SyntheticEventSender
++import com.tencent.kuikly.core.base.event.Touch
++import com.tencent.kuikly.compose.ui.scene.PointerInputEvent as scenePointerInputEvent
++import kotlin.test.Test
++import kotlin.test.assertEquals
++import kotlin.test.assertTrue
++
++/**
++ * 按以下顺序模拟多指操作：id=0 按下、id=1 按下、id=1 抬起（id=0 仍按下）、id=0 移动、id=0 抬起，
++ * 验证渲染层上报每个触点的 `pressed` 状态后 Compose 输入处理的结果，以及缺失该状态时的推断逻辑。
++ */
++@OptIn(ExperimentalComposeUiApi::class)
++class MultiTouchPointerPressedTest {
++
++    @Test
++    fun perPointerPressedKeepsRemainingFingerDown() {
++        val frames = feed(physicalSequence())
++
++        assertTrue(
++            frames.any { it.type == PointerEventType.Release && it.down == mapOf(0L to true, 1L to false) },
++            "抬起 id=1 时，id=0 应仍处于按下状态",
++        )
++        assertTrue(
++            frames.any { it.type == PointerEventType.Release && it.down[0L] == false },
++            "id=0 最终应收到抬起状态",
++        )
++    }
++
++    /** 未提供 pressed 状态时，单指点击仍应依据事件类型正确处理。 */
++    @Test
++    fun singleTapWorksWithoutPressed() {
++        val frames = feed(
++            listOf(
++                PressFrame(PointerEventType.Press, listOf(touch(0, null))),
++                PressFrame(PointerEventType.Release, listOf(touch(0, null))),
++            )
++        )
++        assertTrue(frames.any { it.type == PointerEventType.Press && it.down[0L] == true })
++        assertTrue(frames.any { it.type == PointerEventType.Release && it.down[0L] == false })
++    }
++
++    @Test
++    fun touchActivityEndsOnlyAfterLastPointerIsReleased() {
++        assertTrue(listOf(touch(0, false), touch(1, true)).hasPressedPointers())
++        assertTrue(!listOf(touch(0, false), touch(1, null)).hasPressedPointers())
++        assertTrue(!listOf(touch(0, null)).hasPressedPointers())
++    }
++
++    /** 同一事件中的部分触点未提供 pressed 状态时，各触点应分别使用上报值或事件类型推断。 */
++    @Test
++    fun missingPressedIsInferredForEachTouch() {
++        val release = listOf(touch(0, true), touch(1, null))
++            .toComposeScenePointers(PAGE_DENSITY, PointerEventType.Release)
++        assertEquals(listOf(true, false), release.map { it.pressed })
++
++        val move = listOf(touch(0, null), touch(1, false))
++            .toComposeScenePointers(PAGE_DENSITY, PointerEventType.Move)
++        assertEquals(listOf(true, false), move.map { it.pressed })
++    }
++
++    // ---- 测试辅助方法 ----
++
++    private class PressFrame(val type: PointerEventType, val touches: List<Touch>)
++
++    private class SentFrame(val type: PointerEventType, val down: Map<Long, Boolean>)
++
++    private fun touch(pointerId: Long, pressed: Boolean?): Touch = Touch(
++        x = pointerId * 100f,
++        y = pointerId * 100f,
++        pageX = pointerId * 100f,
++        pageY = pointerId * 100f,
++        hash = pointerId.toFloat(),
++        pointerId = pointerId,
++        pressed = pressed,
++    )
++
++    private fun physicalSequence(): List<PressFrame> = listOf(
++        PressFrame(PointerEventType.Press, listOf(touch(0, true))),
++        PressFrame(PointerEventType.Press, listOf(touch(0, true), touch(1, true))),
++        PressFrame(PointerEventType.Release, listOf(touch(0, true), touch(1, false))),
++        PressFrame(PointerEventType.Move, listOf(touch(0, true))),
++        PressFrame(PointerEventType.Release, listOf(touch(0, false))),
++    )
++
++    private fun feed(frames: List<PressFrame>): List<SentFrame> {
++        val sent = mutableListOf<PointerInputEvent>()
++        val syntheticEventSender = SyntheticEventSender { sent.add(it) }
++        var timeMillis = 1_000L
++        frames.forEach { frame ->
++            timeMillis += FRAME_INTERVAL_MILLIS
++            syntheticEventSender.send(
++                scenePointerInputEvent(
++                    eventType = frame.type,
++                    pointers = frame.touches.toComposeScenePointers(PAGE_DENSITY, frame.type),
++                    timeMillis = timeMillis,
++                    nativeEvent = null,
++                    scrollDelta = Offset.Zero,
++                    changedButton = null,
++                    rootNode = null,
++                )
++            )
++        }
++        return sent.map { event ->
++            SentFrame(event.eventType, event.pointers.associate { it.id.value to it.down })
++        }
++    }
++
++    private companion object {
++        const val PAGE_DENSITY = 2f
++        const val FRAME_INTERVAL_MILLIS = 16L
++    }
++}
+```
+
+**File**: `compose/src/commonTest/kotlin/com/tencent/kuikly/compose/container/TouchCompatTest.kt` (added, +79/-0)
+```diff
+@@ -0,0 +1,79 @@
++/*
++ * Tencent is pleased to support the open source community by making KuiklyUI
++ * available.
++ * Copyright (C) 2026 Tencent. All rights reserved.
++ * Licensed under the License of KuiklyUI;
++ * you may not use this file except in compliance with the License.
++ */
++
++package com.tencent.kuikly.compose.container
++
++import com.tencent.kuikly.compose.ui.scaleWithDensity
++import com.tencent.kuikly.core.base.event.Touch
++import com.tencent.kuikly.core.nvi.serialization.json.JSONObject
++import kotlin.test.Test
++import kotlin.test.assertEquals
++import kotlin.test.assertNotEquals
++import kotlin.test.assertNull
++import kotlin.test.assertTrue
++
++/**
++ * [Touch] 改为普通类后的行为测试，包括为兼容旧代码保留的六参数构造方法、copy 和解构操作。
++ */
++class TouchCompatTest {
++
++    @Suppress("DEPRECATION")
++    @Test
++    fun legacyMembersRemainUsable() {
++        val legacy = Touch(1f, 2f, 3f, 4f, 5f, 6L)
++        assertNull(legacy.pressed)
++        val (x, y, pageX, pageY, hash, pointerId) = legacy
++        assertEquals(listOf(1f, 2f, 3f, 4f, 5f), listOf(x, y, pageX, pageY, hash))
++        assertEquals(6L, pointerId)
++        assertEquals(false, Touch(1f, 2f, 3f, 4f, 5f, 6L, false).copy(x = 9f).pressed)
++    }
++
++    @Test
++    fun pressedIsExplicitAndNullable() {
++        assertEquals(true, Touch(1f, 2f, 3f, 4f, 5f, 6L, true).pressed)
++        assertEquals(false, Touch(1f, 2f, 3f, 4f, 5f, 6L, false).pressed)
++        assertNull(Touch(1f, 2f, 3f, 4f, 5f, 6L, null).pressed)
++    }
++
++    @Test
++    fun equalityCoversAllFields() {
++        val base = Touch(1f, 2f, 3f, 4f, 5f, 6L, true)
++        assertEquals(base, Touch(1f, 2f, 3f, 4f, 5f, 6L, true))
++        assertEquals(base.hashCode(), Touch(1f, 2f, 3f, 4f, 5f, 6L, true).hashCode())
++        assertNotEquals(base, Touch(1f, 2f, 3f, 4f, 5f, 6L, false))
++        assertNotEquals(base, Touch(1f, 2f, 3f, 4f, 5f, 6L, null))
++        // 与 data class 生成的 equals 语义一致：Float 按 compare 比较
++        assertEquals(
++            Touch(Float.NaN, 0f, 0f, 0f, 0f, 0L, null),
++            Touch(Float.NaN, 0f, 0f, 0f, 0f, 0L, null)
++        )
++    }
++
++    @Test
++    fun decodeDistinguishesMissingAndFalse() {
++        assertNull(Touch.decode(JSONObject().put("pointerId", 1)).pressed)
++        assertNull(Touch.decode(JSONObject().put("pointerId", 1).put("pressed", null)).pressed)
++        assertNull(Touch.decode(JSONObject().put("pointerId", 1).put("pressed", "unknown")).pressed)
++        assertEquals(false, Touch.decode(JSONObject().put("pointerId", 1).put("pressed", false)).pressed)
++        assertEquals(true, Touch.decode(JSONObject().put("pointerId", 1).put("pressed", true)).pressed)
++        assertEquals(false, Touch.decode(JSONObject().put("pointerId", 1).put("pressed", 0)).pressed)
++        assertEquals(true, Touch.decode(JSONObject().put("pointerId", 1).put("pressed", 1)).pressed)
++    }
++
++    @Test
++    fun scaleWithDensityKeepsPressed() {
++        assertEquals(false, Touch(1f, 2f, 3f, 4f, 5f, 6L, false).scaleWithDensity(2f).pressed)
++        assertEquals(true, Touch(1f, 2f, 3f, 4f, 5f, 6L, true).scaleWithDensity(2f).pressed)
++        assertNull(Touch(1f, 2f, 3f, 4f, 5f, 6L, null).scaleWithDensity(2f).pressed)
++    }
++
++    @Test
++    fun toStringContainsPressed() {
++        assertTrue(Touch(1f, 2f, 3f, 4f, 5f, 6L, false).toString().contains("pressed:false"))
++    }
++}
+```
+
+**File**: `core-render-android/src/main/java/com/tencent/kuikly/core/render/android/expand/component/KRView.kt` (modified, +20/-3)
+```diff
+@@ -382,9 +382,8 @@ open class KRView(context: Context) : FrameLayout(context), IKuiklyRenderViewExp
+         krRootView.getLocationInWindow(rootViewRect)
+         val currentViewRect = IntArray(2)
+         getLocationInWindow(currentViewRect)
+-        val x = motionEvent.x
+-        val y = motionEvent.y
+         val touches = arrayListOf<Map<String, Any>>()
++        val pressedStates = resolvePressedStates(motionEvent, eventName)
+         // 遍历所有触摸点
+         for (i in 0 until motionEvent.pointerCount) {
+             // 获取触摸点的ID和坐标
+@@ -397,7 +396,8 @@ open class KRView(context: Context) : FrameLayout(context), IKuiklyRenderViewExp
+                 KRViewConst.Y to kuiklyRenderContext.toDpF(y),
+                 PAGE_X to kuiklyRenderContext.toDpF((currentViewRect[0] - rootViewRect[0] + x)),
+                 PAGE_Y to kuiklyRenderContext.toDpF(currentViewRect[1] - rootViewRect[1] + y),
+-                POINTER_ID to pointerId
++                POINTER_ID to pointerId,
++                POINTER_PRESSED to pressedStates[i]
+             ))
+         }
+         return (touches.first() ?: mapOf()).toMutableMap().apply {
+@@ -414,6 +414,22 @@ open class KRView(context: Context) : FrameLayout(context), IKuiklyRenderViewExp
+         }
+     }
+ 
++    /**
++     * `ACTION_POINTER_UP` 会在 MotionEvent 中保留刚抬起的手指，并由 `actionIndex` 指明对应触点。
++     * 若不单独识别该触点，会把本次事件中的所有触点都标记为已抬起；取消事件则将全部触点标记为未按下。
++     */
++    private fun resolvePressedStates(motionEvent: MotionEvent, eventName: String): BooleanArray {
++        val pointerCount = motionEvent.pointerCount
++        if (eventName == EVENT_TOUCH_CANCEL) {
++            return BooleanArray(pointerCount)
++        }
++        return when (motionEvent.actionMasked) {
++            MotionEvent.ACTION_POINTER_UP -> BooleanArray(pointerCount) { it != motionEvent.actionIndex }
++            MotionEvent.ACTION_UP -> BooleanArray(pointerCount)
++            else -> BooleanArray(pointerCount) { true }
++        }
++    }
++
+     override fun onDetachedFromWindow() {
+         resetTextSelector()
+         super.onDetachedFromWindow()
+@@ -518,6 +534,7 @@ open class KRView(context: Context) : FrameLayout(context), IKuiklyRenderViewExp
+         private const val PAGE_Y = "pageY"
+         private const val TOUCHES = "touches"
+         private const val POINTER_ID = "pointerId"
++        private const val POINTER_PRESSED = "pressed"
+         private const val SCREEN_FRAME_PAUSE = "screenFramePause"
+         private const val TIMESTAMP = "timestamp"
+         private const val CONSUMED = "consumed"
+```
+
+**File**: `core-render-ios/Extension/Components/KRComposeGesture.m` (modified, +6/-0)
+```diff
+@@ -274,12 +274,15 @@ - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
+ // 从触摸事件生成参数
+ - (NSDictionary *)generateParamsWithTouches:(NSSet<UITouch *> *)touches event:(UIEvent *)event eventName:(NSString *)eventName {
+     NSMutableArray *touchesParam = [NSMutableArray new];
++    // 取消事件按事件名称将全部触点标记为未按下，不依赖各触点的 phase。
++    BOOL isCancel = [eventName isEqualToString:@"touchCancel"];
+     
+ #if !TARGET_OS_OSX // [macOS]
+     // 处理所有触摸点
+     for (UITouch *touch in touches) {
+         CGPoint locationInSelf = [touch locationInView:self.containerView];
+         CGPoint locationInRootView = [touch locationInView:(UIView *)[self.containerView hr_rootView]];
++        BOOL pressed = !isCancel && touch.phase != UITouchPhaseEnded && touch.phase != UITouchPhaseCancelled;
+                         
+         [touchesParam addObject:@{
+             @"x" : @(locationInSelf.x),
+@@ -288,6 +291,7 @@ - (NSDictionary *)generateParamsWithTouches:(NSSet<UITouch *> *)touches event:(U
+             @"pageY" : @(locationInRootView.y),
+             @"hash" : @(touch.hash),
+             @"pointerId" : @(touch.hash),  // 使用 touch.hash 作为唯一的 pointerId
++            @"pressed" : @(pressed),
+         }];
+     }
+ #else // [macOS
+@@ -305,6 +309,7 @@ - (NSDictionary *)generateParamsWithTouches:(NSSet<UITouch *> *)touches event:(U
+             // manually flipped the y-coordinate if rootView does not flip coordinate system.
+             locationInRootView.y = rootView.bounds.size.height - locationInRootView.y;
+         }
++        BOOL pressed = !isCancel && ![eventName isEqualToString:@"touchUp"];
+         
+         [touchesParam addObject:@{
+             @"x" : @(locationInSelf.x),
+@@ -313,6 +318,7 @@ - (NSDictionary *)generateParamsWithTouches:(NSSet<UITouch *> *)touches event:(U
+             @"pageY" : @(locationInRootView.y),
+             @"hash" : @(kMacMousePointerId),
+             @"pointerId" : @(kMacMousePointerId),
++            @"pressed" : @(pressed),
+         }];
+     }
+ #endif // macOS]
+```
+
+**File**: `core-render-ios/Extension/Components/KRView+Compose.m` (modified, +18/-8)
+```diff
+@@ -26,6 +26,16 @@ @interface KRView ()
+ 
+ @end
+ 
++/// 参数中是否仍有按下的触点，与 Kotlin 侧依据每个触点 pressed 判断的逻辑一致。
++static BOOL KRHasPressedTouch(NSDictionary *params) {
++    for (NSDictionary *touch in params[@"touches"]) {
++        if ([touch[@"pressed"] boolValue]) {
++            return YES;
++        }
++    }
++    return NO;
++}
++
+ @implementation KRView (Compose)
+ 
+ - (KRComposeGestureRecognizer *)composeGesture {
+@@ -89,19 +99,19 @@ - (void)setCss_superTouch:(NSNumber *)css_superTouch {
+                         }
+                         break;
+                     case TouchesEventKindEnd:
++                    case TouchesEventKindCancel: {
++                        NSString *eventName = phase == TouchesEventKindEnd ? @"touchUp" : @"touchCancel";
++                        NSDictionary *params = [weakSelf.composeGesHandler generateParamsWithTouches:touches event:event eventName:eventName];
+                         if (weakSelf.css_touchUp) {
+-                            NSDictionary *params = [weakSelf.composeGesHandler generateParamsWithTouches:touches event:event eventName:@"touchUp"];
+                             weakSelf.css_touchUp(params);
+                         }
+-                        weakSelf.composeGesHandler.enableNativeGesture = YES;
+-                        break;
+-                    case TouchesEventKindCancel:
+-                        if (weakSelf.css_touchUp) {
+-                            NSDictionary *params = [weakSelf.composeGesHandler generateParamsWithTouches:touches event:event eventName:@"touchCancel"];
+-                            weakSelf.css_touchUp(params);
++                        // 仍有触点按下时保持原生手势禁用，与 Kotlin 侧"最后一根手指抬起才结束触摸"保持一致，
++                        // 避免一边拦截触摸、一边被原生滚动接管。
++                        if (!KRHasPressedTouch(params)) {
++                            weakSelf.composeGesHandler.enableNativeGesture = YES;
+                         }
+-                        weakSelf.composeGesHandler.enableNativeGesture = YES;
+                         break;
++                    }
+                     default:
+                         break;
+                 }
+```
+
+**File**: `core-render-ios/Extension/Components/KRView.m` (modified, +9/-2)
+```diff
+@@ -302,13 +302,20 @@ - (NSDictionary *)p_generateBaseParamsWithEvent:(UIEvent *)event eventName:(NSSt
+ #if !TARGET_OS_OSX // [macOS]
+     NSSet<UITouch *> *touches = [event allTouches];
+     NSMutableArray *touchesParam = [NSMutableArray new];
++    // 取消事件按事件名称将全部触点标记为未按下，不依赖各触点的 phase。
++    BOOL isCancel = [eventName isEqualToString:@"touchCancel"];
+     [touches enumerateObjectsUsingBlock:^(UITouch * _Nonnull touchObj, BOOL * _Nonnull stop) {
+-        [touchesParam addObject:[self p_generateTouchParamWithTouch:touchObj]];
++        NSMutableDictionary *touchParam = [[self p_generateTouchParamWithTouch:touchObj] mutableCopy];
++        BOOL pressed = !isCancel && touchObj.phase != UITouchPhaseEnded && touchObj.phase != UITouchPhaseCancelled;
++        touchParam[@"pressed"] = @(pressed);
++        [touchesParam addObject:touchParam];
+     }];
+     __block NSMutableDictionary *result = [([touchesParam firstObject] ?: @{}) mutableCopy];
+ #else // [macOS
+     // macOS uses NSEvent (single mouse event) instead of multi-touch UITouch
+-    NSDictionary *touchParam = [self p_generateTouchParamWithTouch:event];
++    NSMutableDictionary *touchParam = [[self p_generateTouchParamWithTouch:event] mutableCopy];
++    BOOL pressed = !([eventName isEqualToString:@"touchUp"] || [eventName isEqualToString:@"touchCancel"]);
++    touchParam[@"pressed"] = @(pressed);
+     NSArray *touchesParam = @[touchParam];
+     NSMutableDictionary *result = [touchParam mutableCopy];
+ #endif // macOS]
+```
+
+---
+
+### Incident Patch 3: `fbe81659` (2026-11-13)
+**Commit Message**: fix(ios): use KRTapGestureRecognizer with TouchUpInside semantics (#1893)
+
+Replace the system tap recognizer so a click fires when the finger lifts inside the view bounds plus a 10pt inset. Scroll pan still cancels the tap, matching UITapGestureRecognizer.
+
+Co-authored-by: Cursor <[REDACTED_EMAIL]>
+
+**File**: `core-render-ios/Extension/Category/UIView+CSS.m` (modified, +123/-4)
+```diff
+@@ -16,6 +16,9 @@
+ #import "UIView+CSS.h"
+ #import "UIView+CSSDebug.h"
+ #import <objc/runtime.h>
++#if !TARGET_OS_OSX
++#import <UIKit/UIGestureRecognizerSubclass.h>
++#endif
+ #import "KRConvertUtil.h"
+ #import "KRView.h"
+ #import "KuiklyRenderBridge.h"
+@@ -63,6 +66,20 @@ - (void)addKeyframeWithRelativeStartTime:(double)frameStartTime relativeDuration
+ 
+ @end
+ 
++#if !TARGET_OS_OSX
++/**
++ * 自定义点击手势识别器（TouchUpInside 语义）
++ * 在非滚动状态下，只要手指在视图 bounds（含容差外扩）内抬起即可触发点击。
++ * 与 ScrollView 的关系对齐系统 UITapGestureRecognizer：滚动手势可以阻止点击，二者不同时识别。
++ */
++@interface KRTapGestureRecognizer : UIGestureRecognizer
++
++/// 视图边界向外扩展的点击有效容差（默认 10pt）
++@property (nonatomic, assign) CGFloat allowableBoundsInset;
++
++@end
++#endif
++
+ @interface CSSTransform : NSObject
+ 
+ 
+@@ -94,7 +111,7 @@ @interface UIView() <KuiklyRenderViewLifyCycleProtocol>
+ @property (nonatomic, strong) CSSLazyAnimationImp *css_lazyAnimationImp;
+ @property (nonatomic, strong) CSSGradientLayer *css_gradientLayer;
+ @property (nonatomic, strong) CSSBorderLayer *css_borderLayer;
+-@property (nonatomic, strong) UITapGestureRecognizer *css_tapGR;
++@property (nonatomic, strong) UIGestureRecognizer *css_tapGR;
+ @property (nonatomic, strong) UITapGestureRecognizer *css_doubleTapGR;
+ @property (nonatomic, strong) UILongPressGestureRecognizer *css_longPressGR;
+ @property (nonatomic, strong) UIPanGestureRecognizer *css_panGR;
+@@ -889,11 +906,11 @@ - (void)p_limitMaxBorderRadisuIfNeed {
+ }
+ 
+ 
+-- (UITapGestureRecognizer *)css_tapGR {
++- (UIGestureRecognizer *)css_tapGR {
+     return objc_getAssociatedObject(self, @selector(css_tapGR));
+ }
+ 
+-- (void)setCss_tapGR:(UITapGestureRecognizer *)css_tapGR {
++- (void)setCss_tapGR:(UIGestureRecognizer *)css_tapGR {
+     objc_setAssociatedObject(self, @selector(css_tapGR), css_tapGR, OBJC_ASSOCIATION_RETAIN);
+ }
+ 
+@@ -933,11 +950,13 @@ - (void)setCss_click:(KuiklyRenderCallback)css_click {
+             self.css_tapGR = nil;
+         }
+         if (css_click != nil) {
++            #if TARGET_OS_OSX // [macOS]
+             self.css_tapGR = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(css_onClickTapWithSender:)];
+             [self addGestureRecognizer:self.css_tapGR];
+-            #if TARGET_OS_OSX // [macOS]
+             // macOS NSGestureRecognizer 无 requireGestureRecognizerToFail 方法，使用 delegate 方式处理手势依赖
+             #else
++            self.css_tapGR = [[KRTapGestureRecognizer alloc] initWithTarget:self action:@selector(css_onClickTapWithSender:)];
++            [self addGestureRecognizer:self.css_tapGR];
+             if (self.css_doubleTapGR) {
+                 [self.css_tapGR requireGestureRecognizerToFail:self.css_doubleTapGR];
+             }
+@@ -2429,3 +2448,103 @@ - (BOOL)performAnimationWithKey:(NSString *)animationKey withView:(UIView *)view
+ }
+ 
+ @end
++
++#if !TARGET_OS_OSX
++@implementation KRTapGestureRecognizer {
++    UITouch *_trackedTouch;
++}
++
++- (instancetype)initWithTarget:(id)target action:(SEL)action {
++    self = [super initWithTarget:target action:action];
++    if (self) {
++        _allowableBoundsInset = 10.0;
++    }
++    return self;
++}
++
++- (BOOL)isTouchInsideView:(UITouch *)touch {
++    if (!self.view) {
++        return NO;
++    }
++    CGPoint loc = [touch locationInView:self.view];
++    CGRect hitBounds = CGRectInset(self.view.bounds, -self.allowableBoundsInset, -self.allowableBoundsInset);
++    return CGRectContainsPoint(hitBounds, loc);
++}
++
++- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
++    [super touchesBegan:touches withEvent:event];
++    NSSet<UITouch *> *allTouches = [event touchesForGestureRecognizer:self];
++    if (touches.count > 1 || allTouches.count > 1 || (_trackedTouch && ![touches containsObject:_trackedTouch])) {
++        self.state = UIGestureRecognizerStateFailed;
++        return;
++    }
++    UITouch *touch = [touches anyObject];
++    if (!touch || !self.view) {
++        self.state = UIGestureRecognizerStateFailed;
++        return;
++    }
++    _trackedTouch = touch;
++    if (![self isTouchInsideView:touch]) {
++        self.state = UIGestureRecognizerStateFailed;
++    }
++}
++
++- (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
++    [super touchesMoved:touches withEvent:event];
++    if (self.state != UIGestureRecognizerStatePossible) {
++        return;
++    }
++    if (!_trackedTouch || ![touches containsObject:_trackedTouch]) {
++        return;
++    }
++    if (![self isTouchInsideView:_trackedTouch]) {
++        self.state = UIGestureRecognizerStateFailed;
++    }
++}
++
++- (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
++    [super touchesEnded:touches withEvent:event];
++    if (self.state != UIGestureRecognizerStatePossible) {
++        return;
++    }
++    if (!_trackedTouch || ![touches containsObject:_trackedTouch]) {
++        self.state = UIGestureRecognizerStateFailed;
++        return;
++    }
++    if (![self isTouchInsideView:_trackedTouch]) {
++        self.state = UIGestureRecognizerStateFailed;
++  
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1888** (2026-11-11): feat(compose): modifier support attr turboDisplayAutoUpdateEnable (@RoeKun)
-- **PR #1885** (2026-11-10): feat(input): 扩展 Input/TextArea 与 Compose 的 keyboardType 映射 (@elixxli)
-- **PR #1880** (2026-11-09): Bugfix/mini app global this (@etkmao)
-- **PR #1878** (2026-11-06): fix(ohos): manage snapshot drawable descriptors with shared ownership (@ruifanyuan)
-- **PR #1877** (2026-11-06): docs(ohos): document the V2 custom native view registration approach (@ruifanyuan)
-- **PR #1876** (2026-11-10): fix(ohos): guard empty HTTP response in KRNetworkModule (@rainbow7)
+- **PR #1898** (2026-11-13): feat(ohos): add support for  kotlin 2.4.21 (@ruifanyuan)
+- **PR #1895** (2026-11-13): fix(touch): preserve pressed state for multi-touch events (@iPel)
+- **PR #1893** (2026-11-13): fix(ios): use KRTapGestureRecognizer with TouchUpInside semantics (@ruifanyuan)
+- **PR #1892** (2026-11-13): 处理与宿主的联合滚动 (@ruzhuxiaogu)
+- **PR #1891** (2026-11-12): docs: add Compose DSL coroutine and thread switching guide (@KuiklyAI)
+- **PR #1890** (closed): fix(ios): respect parent lock in nested scroll coordination (@ruzhuxiaogu)
 
 ---
 
@@ -1213,59 +1540,83 @@ Address review feedback: narrow response.result once for binary handling, and ma
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ohos): align paste truncation to UTF-8 boundary to avoid renderer… (#1857)
+## X. docs: add Compose DSL coroutine and thread switching guide
 
 **RULE**:
-When implementing operations in `core-render-ohos/src/main/cpp/libohos_render/expand/components/input/KRTextFieldView.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Tencent-TDS/KuiklyUI. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/Compose/thread-and-coroutines.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Tencent-TDS/KuiklyUI. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `99e03f21`: ohos): align paste truncation to UTF-8 boundary to avoid renderer… (#1857). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `71e4bcf9`: docs: add Compose DSL coroutine and thread switching guide. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `core-render-ohos/src/main/cpp/libohos_render/expand/components/input/KRTextFieldView.cpp`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/Compose/thread-and-coroutines.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-#include <cstring>
-        // ArkUI copies at most MAX_INSERT_LENGTH - 1 bytes, which can leave an incomplete UTF-8
-        // tail. Drop that tail before filter -> CalculateTextLength decodes the buffer.
-        buffer[MAX_INSERT_LENGTH - 1] = '\0';
-        const auto boundary = kuikly::util::utf::ScanUTF8Boundary(buffer);
-        // Trimming the incomplete tail can make the buffer shorter than the cap.
-        // Preserve the full-buffer state so the temporary max-length path still runs.
-        const bool insertBufferTruncated = boundary.length >= MAX_INSERT_LENGTH - 1;
-        buffer[boundary.boundary] = '\0';
-        if (filtered || insertBufferTruncated) {
-        // Semantic truncation happens in filter; process the full paste buffer here.
-        std::string pasteText(stringAsyncEvent->pStr);
-        const bool filtered = filter(pasteText.data(), destText, range.first, range.second);
-        if (filtered) {
-            // filter writes a NUL into the writable C++17 string buffer.
-            pasteText.resize(strlen(pasteText.data()));
-            uint32_t realMaxLength = GetUTF16Length(destText) - (range.second - range.first) +
-                                     GetUTF16L
+## Compose 中的协程调用
+Compose 管理的协程（`LaunchedEffect`、`rememberCoroutineScope()` 等）默认在 **Kuikly 线程** 执行，可以直接修改 `mutableStateOf` 状态，无需手动切换线程。
+```kotlin
+@Composable
+fun MyContent() {
+    var data by remember { mutableStateOf("") }
+
+    LaunchedEffect(Unit) {
+        // 在 Kuikly 线程中执行
+        data = fetchData()
+    }
+
+    Text(text = data, fontSize = 24.sp)
+}
+```
+
+也可以通过 `rememberCoroutineScope()` 响应用户交互时启动协程：
+
+```kotlin
+@Composable
+fun MyContent() {
+    var data by remember { mutableStateOf("") }
+    val scope = rememberCoroutineScope()
+
+    Button(onClick = {
+        scope.launch {
+            // 在 Kuikly 线程中执行
+            data = fetchData()
+        }
+    }) {
+        Text("加载数据")
+    }
+}
+```
+
+## Page 层使用 kotlinx 协程库
+
+在 `ComposeContainer` 的 Page 生命周期方法（如 `created()`、`willInit()` 等）中，可以使用 `kotlinx.coroutines` 库配合 `Dispatchers.Kuikly` 进行线程切换：
+
+```kotlin
+@Page("MyComposePage")
+class MyComposePage : ComposeContainer() {
+
+    override fun created() {
+        super.created()
+        val ctx = this
+        GlobalScope.launch(Dispatchers.Kuikly[ctx]) {
+            val data = withContext(Dispatchers.IO) {
+                kmpFetchData()
+            }
+            // 回到 Kuikly 线程，安全更新 UI
+        }
+  
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
-// Anti-pattern to NEVER write (induced failure mode):
-        if (filtered || strlen(buffer) >= MAX_INSERT_LENGTH - 1) {
-        size_t size = std::min(strlen(stringAsyncEvent->pStr), static_cast<size_t>(max_length_) * 4);
-        // 这里只是避免拷贝超大剪贴板的粗估上限，不是语义截断（语义截断由 filter 完成）。
-        // 必须回退到字符边界：buffer 随后进入 filter → CalculateTextLength，CHARACTER /
-        // VISUAL_WIDTH 分支会对它调 ConvertToU32String，残缺序列会让长度计算与截断都失真。
-        size = kuikly::util::utf::UTF8BoundaryLength(stringAsyncEvent->pStr, size);
-        char *buffer = new char[size + 1];
-        strncpy(buffer, stringAsyncEvent->pStr, size);
-        buffer[size] = '\0';
-        if (filter(buffer, destText, range.first, range.second)) {
-            uint32_t realMaxLength = GetUTF16Length(destText) - (range.second - range.first) + GetUTF16Length(buffer);
-        delete[] buffer;
+// Induced defect failure mode:
+持续更新中
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `99e03f21` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `71e4bcf9` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

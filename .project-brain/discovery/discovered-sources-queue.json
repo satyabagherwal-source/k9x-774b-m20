@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T01:04:02.390Z",
+  "updated_at": "2026-11-15T01:33:21.021Z",
   "stats": {
-    "total_discovered": 3539,
-    "approved_pending_harvest": 3329,
+    "total_discovered": 3542,
+    "approved_pending_harvest": 3332,
     "harvested_count": 0,
     "rejected_count": 210,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3310,
+      "COMMUNITY_AND_EXPERT": 3313,
       "OFFICIAL_DOCUMENTATION": 125,
       "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
@@ -76409,6 +76409,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jetbrains-kotlinconf-app-learnings.md",
         "fileName": "jetbrains-kotlinconf-app-learnings.md"
+      }
+    },
+    "SRC-07A9EFC843A0": {
+      "id": "SRC-07A9EFC843A0",
+      "url": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B",
+      "title": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T01:33:20.688Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-learnings.md",
+        "fileName": "hf-liquidai-lfm2.5-24b-a2b-learnings.md"
+      }
+    },
+    "SRC-DCED16BAB5B7": {
+      "id": "SRC-DCED16BAB5B7",
+      "url": "https://github.com/Tencent-TDS/KuiklyUI",
+      "title": "https://github.com/Tencent-TDS/KuiklyUI",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T01:33:20.997Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tencent-tds-kuiklyui-learnings.md",
+        "fileName": "tencent-tds-kuiklyui-learnings.md"
+      }
+    },
+    "SRC-43E53342525A": {
+      "id": "SRC-43E53342525A",
+      "url": "https://github.com/Tencent-TDS/KuiklyUI/blob/main/LICENSE",
+      "title": "https://github.com/Tencent-TDS/KuiklyUI/blob/main/LICENSE",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T01:33:21.021Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tencent-tds-kuiklyui-learnings.md",
+        "fileName": "tencent-tds-kuiklyui-learnings.md"
       }
     }
   }

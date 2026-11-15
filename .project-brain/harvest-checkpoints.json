@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-15T01:03:34.902Z",
+  "last_updated": "2026-11-15T01:32:44.900Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2242,14 +2242,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
-      "content_hash": "36b08ff165c49f0f18df64919fc2f8f52d4c0e65b4f74cda846967ffdbf2da4a",
-      "verified_at": "2026-11-09T13:26:55.267Z",
+      "content_hash": "77487a5d72db50f68312a01f1dbaf6ca1b7b70a2768e1ff4c4c65f01f5a4c61b",
+      "verified_at": "2026-11-15T01:32:38.677Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T13:26:55.267Z"
+      "last_updated": "2026-11-15T01:32:38.677Z"
     },
     "fishaudio/drama-3": {
       "repository": "fishaudio/drama-3",
@@ -4476,14 +4476,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-falkordb-falkordb",
-      "content_hash": "7550396d292aa72564783c47b2326fcbf7b5c0f7e83d28069b9c7cc258c81ef4",
-      "verified_at": "2026-11-13T08:55:49.426Z",
+      "content_hash": "3533a4c7b1ea8e7a6bbe25e4df1a0f82ec5291ad21c049412a420726bc3494d3",
+      "verified_at": "2026-11-15T01:32:39.588Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T08:55:49.426Z"
+      "last_updated": "2026-11-15T01:32:39.588Z"
     },
     "feathersjs/feathers": {
       "repository": "feathersjs/feathers",
@@ -10896,14 +10896,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tencent-tds-kuiklyui",
-      "content_hash": "b335030336d8c343480f3e97a750930e5f7771b17e77547f287ab52b71cea325",
-      "verified_at": "2026-11-11T14:16:53.857Z",
+      "content_hash": "e27bc1add262e86512b24fd366ae618263605365dc0fdd576962bba562145d12",
+      "verified_at": "2026-11-15T01:32:44.899Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T14:16:53.857Z"
+      "last_updated": "2026-11-15T01:32:44.899Z"
     },
     "SeaQL/sea-orm": {
       "repository": "SeaQL/sea-orm",
