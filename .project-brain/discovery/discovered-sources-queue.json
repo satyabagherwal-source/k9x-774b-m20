@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T22:15:22.836Z",
+  "updated_at": "2026-11-15T22:24:49.654Z",
   "stats": {
-    "total_discovered": 3866,
-    "approved_pending_harvest": 3646,
+    "total_discovered": 3867,
+    "approved_pending_harvest": 3647,
     "harvested_count": 0,
     "rejected_count": 220,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3626,
+      "COMMUNITY_AND_EXPERT": 3627,
       "OFFICIAL_DOCUMENTATION": 130,
       "STANDARDS_AND_SPECIFICATIONS": 92,
       "ENGINEERING_BLOGS": 2,
@@ -83533,6 +83533,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-conwayresearch-underdog-woof-learnings.md",
         "fileName": "hf-conwayresearch-underdog-woof-learnings.md"
+      }
+    },
+    "SRC-A70E6E6D0125": {
+      "id": "SRC-A70E6E6D0125",
+      "url": "https://huggingface.co/Cactus-Compute/mirage",
+      "title": "https://huggingface.co/Cactus-Compute/mirage",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T22:24:49.654Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-cactus-compute-mirage-learnings.md",
+        "fileName": "hf-cactus-compute-mirage-learnings.md"
       }
     }
   }

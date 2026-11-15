@@ -10202,3 +10202,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-conwayresearch-underdog-woof` | `https://huggingface.co/ConwayResearch/Underdog-Woof` | `hf-conwayr` | Multi-dimensional audit evidence | 2026-11-15T22:14:46.566Z |
 | `learn-github-fabio-rovai-open-ontologies` | `https://github.com/fabio-rovai/open-ontologies` | `214e948e` | Multi-dimensional audit evidence | 2026-11-15T22:14:50.531Z |
 | `learn-dom-d-5fcf2e96` | `project://hf-conwayresearch-underdog-woof` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-conwayresearch-underdog-woof-learnings.md` | 2026-11-15T22:15:22.823Z |
+| `learn-huggingface-cactus-compute-mirage` | `https://huggingface.co/Cactus-Compute/mirage` | `hf-cactus-` | Multi-dimensional audit evidence | 2026-11-15T22:24:37.552Z |

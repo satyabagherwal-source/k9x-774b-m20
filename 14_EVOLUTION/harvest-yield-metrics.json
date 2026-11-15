@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T22:14:50.537Z",
-  "total_cycles_completed": 9771,
-  "total_learnings_persisted": 9771,
+  "last_updated": "2026-11-15T22:24:37.556Z",
+  "total_cycles_completed": 9772,
+  "total_learnings_persisted": 9772,
   "total_rules_promoted": 9388,
   "history": [
-    {
-      "timestamp": "2026-11-14T18:26:22.490Z",
-      "repository": "google/tcmalloc",
-      "learningId": "learn-github-google-tcmalloc",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T18:26:28.376Z",
       "repository": "open-ani/animeko",
@@ -1403,6 +1396,13 @@
       "repository": "fabio-rovai/open-ontologies",
       "learningId": "learn-github-fabio-rovai-open-ontologies",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T22:24:37.556Z",
+      "repository": "Cactus-Compute/mirage",
+      "learningId": "learn-huggingface-cactus-compute-mirage",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

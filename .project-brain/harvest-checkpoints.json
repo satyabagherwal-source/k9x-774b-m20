@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-15T22:14:50.540Z",
+  "last_updated": "2026-11-15T22:24:37.559Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -18561,14 +18561,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-cactus-compute-mirage",
-      "content_hash": "cee3ae7d63ad7be61edc5544a30b3799f1cd4db665512daa9ef8343f2b3c90ac",
-      "verified_at": "2026-11-11T07:03:08.642Z",
+      "content_hash": "02eb66aba41c2fdd756da7f626c30bdca676b0383d23f56f52d78de2295b7c7b",
+      "verified_at": "2026-11-15T22:24:37.558Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T07:03:08.642Z"
+      "last_updated": "2026-11-15T22:24:37.558Z"
     },
     "ConwayResearch/Underdog-Woof": {
       "repository": "ConwayResearch/Underdog-Woof",

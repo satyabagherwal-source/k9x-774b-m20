@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-15T22:15:24.330Z",
-  "total_verified_learnings": 8729,
+  "last_updated": "2026-11-15T22:24:50.732Z",
+  "total_verified_learnings": 8730,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18652,
+  "total_items": 18655,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112164,9 +112164,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "58559b2cbd7bd857d456d5d9621130215f25d6b116d704b87b45b1a1b06f2269",
+      "content_hash": "76a6ff8fd9b0104a5b03571f1083abe429a8e2c00312f64a729be1c3ad6d29b5",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T22:03:48.739Z"
+      "persisted_at": "2026-11-15T22:24:50.645Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112176,9 +112176,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "f599b35755b0cb97e396bc2e91d7266e6488807acfc18fb4e8500b5cfada96f7",
+      "content_hash": "80c472651b321a213407db76ce4b623ba1cd655b6d957fde9f9b3cc03d5e8a4e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T22:03:48.858Z"
+      "persisted_at": "2026-11-15T22:24:50.732Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -113672,13 +113672,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-T32W-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-K4WL-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "ab21b27b86c60b68ac0520e6c43f155169c8c5e2f1063cd1f3c281d2b18af4ab",
+      "content_hash": "ce561e0286bf7626d54a7a75b5ed528169843286a96628d785ad3ee56a502365",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T22:03:48.061Z"
+      "persisted_at": "2026-11-15T22:24:50.137Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113688,9 +113688,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "ac5d34ce3ca3dc59178aedcb6ce9eba701d9888f7d0d0fdd65218a2346df1f21",
+      "content_hash": "5b2d1a6c95ea3552edf08a1d269d8cfb1fb3aad7cf1fb2927a7913d934372d50",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T22:03:48.175Z"
+      "persisted_at": "2026-11-15T22:24:50.216Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113700,9 +113700,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "99d3b270645880130d578112d5307e769fb4dee19bde583824724563314dd1a0",
+      "content_hash": "a574df2d9471bcf62454d3fd43fb1c780dbd6b5d86ef6ca8096467e50e8d178f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T22:03:48.313Z"
+      "persisted_at": "2026-11-15T22:24:50.303Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -214811,13 +214811,13 @@
       "item_id": "candidate_directive-puppet-fix-postgresql-failing-to-start-on-new-installs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-T3IO-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-K57O-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
       "title": "puppet: Fix PostgreSQL failing to start on new installs.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "1a905f6fbaa6c0badca0a4265b264c2feabc11bfb58842b9a313b7d606742e2f",
+      "content_hash": "080769ec403232641908b954da95217c83a2c7775d41cf46a5261a7c7e5315cf",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T22:03:48.628Z"
+      "persisted_at": "2026-11-15T22:24:50.532Z"
     },
     "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
@@ -247245,6 +247245,57 @@
       "content_hash": "1b9b3f5b5e1ad5aff0a4a5a3de75c1458bbc11d6170a8afa52ec46e010c9ffa1",
       "domain_letter": "K",
       "persisted_at": "2026-11-15T22:15:23.706Z"
+    },
+    "learn-huggingface-cactus-compute-mirage": {
+      "learning_id": "learn-huggingface-cactus-compute-mirage",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Cactus-Compute/mirage",
+      "repository": "Cactus-Compute/mirage",
+      "slug": "hf-cactus-compute-mirage",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Cactus-Compute/mirage",
+      "source_version": "hf-cactus-compute-mirage",
+      "content_hash": "02eb66aba41c2fdd756da7f626c30bdca676b0383d23f56f52d78de2295b7c7b",
+      "dossier_path": "07_PROJECT_LEARNING/hf-cactus-compute-mirage-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-cactus-compute-mirage-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T22:24:37.433Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-cactus-compute-mirage-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-cactus-compute-mirage-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-cactus-compute-mirage-research-knowledge-intelligence-cactus-compute-mirage-c.md",
+      "title": "Research & Knowledge Intelligence: Cactus-Compute/mirage Core Invariants",
+      "repository": "Cactus-Compute/mirage",
+      "source_version": "hf-cactus-compute-mirage",
+      "content_hash": "af2d321e4d273fd308a260085b016d3e7573dec3e6c2c4469db2ec8705886b87",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T22:24:37.686Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-cactus-compute-mirage-learnings-core-invarian": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-cactus-compute-mirage-learnings-core-invarian",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-cactus-compute-mirage-learnings-research-knowledge-intelligence-hf-cactus-com.md",
+      "title": "Research & Knowledge Intelligence: hf-cactus-compute-mirage-learnings Core Invariants",
+      "repository": "hf-cactus-compute-mirage-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1c5c669d82fa555fdf89c8e0de1ee02bf844ae100c1e185e2fc6d133661d6869",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T22:24:49.782Z"
     }
   },
   "ai-builder-brain": {

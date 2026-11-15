@@ -3,7 +3,7 @@
 > **Source Version**: `hf-cactus-co`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T07:03:08.346Z  
+> **Timestamp**: 2026-11-15T22:24:37.273Z  
 > **Learning ID**: `learn-huggingface-cactus-compute-mirage`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-cactus-compute-mirage-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Cactus-Compute/mirage](https://huggingface.co/Cactus-Compute/mirage))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T07:03:08.166Z  
+> **Harvest Timestamp**: 2026-11-15T22:24:37.101Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 12844 downloads | 136 likes
+- **Stars / Engagement**: 28553 downloads | 319 likes
 
 ---
 

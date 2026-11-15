@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T22:15:24.199Z",
-  "total_records": 1137,
+  "last_updated": "2026-11-15T22:24:50.645Z",
+  "total_records": 1139,
   "domains": {
     "A": {
       "total": 7,
@@ -37,7 +37,7 @@
       ]
     },
     "D": {
-      "total": 551,
+      "total": 553,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -589,7 +589,9 @@
         "domain_intelligence-research-knowledge-intelligence-hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf-",
         "domain_intelligence-research-knowledge-intelligence-conwayresearch-underdog-woof-core-invariants",
         "DOM-D-5FCF2E96",
-        "domain_intelligence-research-knowledge-intelligence-hf-conwayresearch-underdog-woof-learnings-core-i"
+        "domain_intelligence-research-knowledge-intelligence-hf-conwayresearch-underdog-woof-learnings-core-i",
+        "domain_intelligence-research-knowledge-intelligence-cactus-compute-mirage-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-cactus-compute-mirage-learnings-core-invarian"
       ]
     },
     "E": {
@@ -6952,8 +6954,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "58559b2cbd7bd857d456d5d9621130215f25d6b116d704b87b45b1a1b06f2269",
-      "created_at": "2026-11-15T22:03:48.739Z"
+      "content_hash": "76a6ff8fd9b0104a5b03571f1083abe429a8e2c00312f64a729be1c3ad6d29b5",
+      "created_at": "2026-11-15T22:24:50.645Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -7870,8 +7872,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "ac5d34ce3ca3dc59178aedcb6ce9eba701d9888f7d0d0fdd65218a2346df1f21",
-      "created_at": "2026-11-15T22:03:48.175Z"
+      "content_hash": "5b2d1a6c95ea3552edf08a1d269d8cfb1fb3aad7cf1fb2927a7913d934372d50",
+      "created_at": "2026-11-15T22:24:50.216Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -21543,6 +21545,24 @@
       "repository": "fabio-rovai-open-ontologies-learnings",
       "content_hash": "e119d2ecada51b85838309228c74d3d23ab08f1da3c4c95f2187f6450155dfd4",
       "created_at": "2026-11-15T22:15:23.574Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-cactus-compute-mirage-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-cactus-compute-mirage-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: Cactus-Compute/mirage Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-cactus-compute-mirage-research-knowledge-intelligence-cactus-compute-mirage-c.md",
+      "repository": "Cactus-Compute/mirage",
+      "content_hash": "af2d321e4d273fd308a260085b016d3e7573dec3e6c2c4469db2ec8705886b87",
+      "created_at": "2026-11-15T22:24:37.686Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-cactus-compute-mirage-learnings-core-invarian": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-cactus-compute-mirage-learnings-core-invarian",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-cactus-compute-mirage-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-cactus-compute-mirage-learnings-research-knowledge-intelligence-hf-cactus-com.md",
+      "repository": "hf-cactus-compute-mirage-learnings",
+      "content_hash": "1c5c669d82fa555fdf89c8e0de1ee02bf844ae100c1e185e2fc6d133661d6869",
+      "created_at": "2026-11-15T22:24:49.782Z"
     }
   }
 }

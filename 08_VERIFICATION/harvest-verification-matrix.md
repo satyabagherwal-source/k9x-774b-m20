@@ -10169,3 +10169,4 @@
 | `CYCLE-20261115-776P` | `2026-11-15T22:14:46.561Z` | `ConwayResearch/Underdog-Woof` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-conwayresearch-underdog-woof-learnings.md` | Yes (`17c29779...`) |
 | `CYCLE-20261115-7A8V` | `2026-11-15T22:14:50.527Z` | `fabio-rovai/open-ontologies` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8659` | Yes (`3383144c...`) |
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T22:15:22.823Z` | `hf-conwayresearch-underdog-woof` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-5FCF2E96` [Domain D] | Yes (`8540ee54...`) |
+| `CYCLE-20261115-JV71` | `2026-11-15T22:24:37.549Z` | `Cactus-Compute/mirage` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cactus-compute-mirage-learnings.md` | Yes (`02eb66ab...`) |
