@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T21:27:44.145Z",
+  "last_updated": "2026-11-15T21:45:22.988Z",
   "directives": [
     {
       "id": "CD-001",
@@ -16615,6 +16615,57 @@
       "source_repo": "zleap-ai-sag",
       "domain_letter": "M",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-FCCFA1-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-15"
+    },
+    {
+      "id": "CD-4LGZ",
+      "directive_title": "Dual-Channel Exit-Status and Pipe-Cap Buffering",
+      "source_repo": "vercel-labs-agent-desktop-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-4LGZ-dual-channel-exit-status-and-pipe-cap-buffering.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-15",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-4LH0",
+      "directive_title": "Dynamic TCC/Security Identity Attribution via Dynamic Symbol Loading",
+      "source_repo": "vercel-labs-agent-desktop-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-4LH0-dynamic-tcc-security-identity-attribution-via-dynamic-symbol-loading.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-15",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-DB7D65",
+      "directive_title": "Host Compromise via Symlink Traversal on Guest Disk Mount (BUG-SANDBOX-01)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "vercel-labs-agent-desktop",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-DB7D65-host-compromise-via-symlink-traversal-on.md",
+      "staged_date": "2026-11-15"
+    },
+    {
+      "id": "CD-4LGZ",
+      "directive_title": "Inode/Device-Bound Symlink Traversal Verification (O_NOFOLLOW & Same-Device Pinning)",
+      "source_repo": "vercel-labs-agent-desktop-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-4LGZ-inode-device-bound-symlink-traversal-verification-o_nofollow-same-device-pinning.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-15",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-51B81A",
+      "directive_title": "Forensic Learning Record (Deep Inspection): Zleap-AI/SAG",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zleap-ai-sag",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-51B81A-forensic-learning-record-deep-inspection.md",
       "staged_date": "2026-11-15"
     }
   ]

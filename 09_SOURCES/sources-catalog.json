@@ -11633,10 +11633,10 @@
     "repository": "vercel-labs/agent-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/vercel-labs/agent-desktop",
-    "sourceVersion": "b0b7277b",
+    "sourceVersion": "8ffecc1d",
     "license": "Apache-2.0",
-    "contentHash": "93d404a51ebf3649bbb99647ce59f1b26aaadcc2d64b9a14598df3c12e3b90f8",
-    "lastHarvestedAt": "2026-11-13T22:17:32.214Z",
+    "contentHash": "2d84356171ecc16f548f9240cb7799d6dbbcda149bf4f84467155e02fa8935d1",
+    "lastHarvestedAt": "2026-11-15T21:44:16.816Z",
     "learningId": "learn-github-vercel-labs-agent-desktop"
   },
   "hf-efficient-large-model-open-h3-regenerate-2k": {
@@ -12295,8 +12295,8 @@
     "sourceUrl": "https://huggingface.co/mradermacher/gemma-4-31B-it-ARA-heretic-GGUF",
     "sourceVersion": "hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf",
     "license": "Open-Source",
-    "contentHash": "54d27af0af82d7e285a385983afed95f52a4982f77f05bdf8845370b97b98672",
-    "lastHarvestedAt": "2026-11-11T06:13:27.802Z",
+    "contentHash": "ea2c5f9b232e71c2f3691f9453616373bfc043fcc34c919322e64223d02421cd",
+    "lastHarvestedAt": "2026-11-15T21:41:40.897Z",
     "learningId": "learn-huggingface-mradermacher-gemma-4-31b-it-ara-heretic-gguf"
   },
   "yyjeqhc-webcodex": {

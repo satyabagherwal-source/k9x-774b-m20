@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T21:27:34.084Z",
-  "total_cycles_completed": 9767,
-  "total_learnings_persisted": 9767,
-  "total_rules_promoted": 9384,
+  "last_updated": "2026-11-15T21:44:16.821Z",
+  "total_cycles_completed": 9769,
+  "total_learnings_persisted": 9769,
+  "total_rules_promoted": 9387,
   "history": [
-    {
-      "timestamp": "2026-11-14T18:14:39.515Z",
-      "repository": "meta/folly",
-      "learningId": "learn-github-meta-folly",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T18:14:44.181Z",
-      "repository": "gkd-kit/gkd",
-      "learningId": "learn-github-gkd-kit-gkd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T18:14:51.599Z",
       "repository": "ydb-platform/ydb",
@@ -1403,6 +1389,20 @@
       "repository": "Xudong-Huang/may",
       "learningId": "learn-github-xudong-huang-may",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T21:41:40.902Z",
+      "repository": "mradermacher/gemma-4-31B-it-ARA-heretic-GGUF",
+      "learningId": "learn-huggingface-mradermacher-gemma-4-31b-it-ara-heretic-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T21:44:16.821Z",
+      "repository": "vercel-labs/agent-desktop",
+      "learningId": "learn-github-vercel-labs-agent-desktop",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

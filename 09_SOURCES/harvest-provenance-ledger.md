@@ -10195,3 +10195,7 @@ Every entry in this ledger must capture:
 | `learn-dom-d-37d23f0d` | `project://hf-minimaxai-minimax-h3-image` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-image-learnings.md` | 2026-11-15T21:16:17.469Z |
 | `learn-huggingface-comfy-org-minimax-h3-image` | `https://huggingface.co/Comfy-Org/MiniMax-H3-Image` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-15T21:27:31.576Z |
 | `learn-github-xudong-huang-may` | `https://github.com/Xudong-Huang/may` | `bcbc907a` | Multi-dimensional audit evidence | 2026-11-15T21:27:34.079Z |
+| `learn-huggingface-mradermacher-gemma-4-31b-it-ara-heretic-gguf` | `https://huggingface.co/mradermacher/gemma-4-31B-it-ARA-heretic-GGUF` | `hf-mraderm` | Multi-dimensional audit evidence | 2026-11-15T21:41:40.897Z |
+| `learn-github-vercel-labs-agent-desktop` | `https://github.com/vercel-labs/agent-desktop` | `8ffecc1d` | Multi-dimensional audit evidence | 2026-11-15T21:44:16.816Z |
+| `learn-dom-h-0a98a103` | `project://vercel-labs-agent-desktop` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vercel-labs-agent-desktop-learnings.md` | 2026-11-15T21:44:45.307Z |
+| `learn-dom-d-e9ae08d3` | `project://hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf-learnings.md` | 2026-11-15T21:45:22.627Z |

@@ -10162,3 +10162,7 @@
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T21:16:17.469Z` | `hf-minimaxai-minimax-h3-image` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-37D23F0D` [Domain D] | Yes (`0045e878...`) |
 | `CYCLE-20261115-IFP1` | `2026-11-15T21:27:31.573Z` | `Comfy-Org/MiniMax-H3-Image` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-image-learnings.md` | Yes (`84157cd6...`) |
 | `CYCLE-20261115-IHMK` | `2026-11-15T21:27:34.076Z` | `Xudong-Huang/may` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8655` | Yes (`1d64b1b9...`) |
+| `CYCLE-20261115-0N1A` | `2026-11-15T21:41:40.894Z` | `mradermacher/gemma-4-31B-it-ARA-heretic-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf-learnings.md` | Yes (`ea2c5f9b...`) |
+| `CYCLE-20261115-3ZCD` | `2026-11-15T21:44:16.813Z` | `vercel-labs/agent-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8656, Rule 8657, Rule 8658` | Yes (`2d843561...`) |
+| `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T21:44:45.307Z` | `vercel-labs-agent-desktop` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-0A98A103` [Domain H] | Yes (`058b8ffa...`) |
+| `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T21:45:22.627Z` | `hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-E9AE08D3` [Domain D] | Yes (`bba814b5...`) |

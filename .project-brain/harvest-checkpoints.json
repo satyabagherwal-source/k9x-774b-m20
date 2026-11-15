@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-15T21:27:34.087Z",
+  "last_updated": "2026-11-15T21:44:16.824Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -17511,14 +17511,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vercel-labs-agent-desktop",
-      "content_hash": "93d404a51ebf3649bbb99647ce59f1b26aaadcc2d64b9a14598df3c12e3b90f8",
-      "verified_at": "2026-11-13T22:17:32.224Z",
+      "content_hash": "2d84356171ecc16f548f9240cb7799d6dbbcda149bf4f84467155e02fa8935d1",
+      "verified_at": "2026-11-15T21:44:16.824Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T22:17:32.224Z"
+      "last_updated": "2026-11-15T21:44:16.824Z"
     },
     "Efficient-Large-Model/Open-H3-Regenerate-2K": {
       "repository": "Efficient-Large-Model/Open-H3-Regenerate-2K",
@@ -18501,14 +18501,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-mradermacher-gemma-4-31b-it-ara-heretic-gguf",
-      "content_hash": "54d27af0af82d7e285a385983afed95f52a4982f77f05bdf8845370b97b98672",
-      "verified_at": "2026-11-11T06:13:27.812Z",
+      "content_hash": "ea2c5f9b232e71c2f3691f9453616373bfc043fcc34c919322e64223d02421cd",
+      "verified_at": "2026-11-15T21:41:40.905Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T06:13:27.812Z"
+      "last_updated": "2026-11-15T21:41:40.905Z"
     },
     "yyjeqhc/webcodex": {
       "repository": "yyjeqhc/webcodex",

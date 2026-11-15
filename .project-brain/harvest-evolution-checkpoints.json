@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T21:27:44.609Z",
+  "last_updated": "2026-11-15T21:45:23.704Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-15T21:06:41.941Z",
@@ -13,7 +13,7 @@
       "staged_for_review": 1
     },
     "zleap-ai-sag-learnings.md": {
-      "processed_at": "2026-11-15T21:27:44.147Z",
+      "processed_at": "2026-11-15T21:45:22.990Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1048,8 +1048,8 @@
       "staged_for_review": 1
     },
     "vercel-labs-agent-desktop-learnings.md": {
-      "processed_at": "2026-11-13T22:17:43.371Z",
-      "promoted_canonical": 0,
+      "processed_at": "2026-11-15T21:44:45.307Z",
+      "promoted_canonical": 1,
       "staged_for_review": 1
     },
     "hf-microsoft-mage-vl-cowork-learnings.md": {
@@ -3066,9 +3066,14 @@
       "processed_at": "2026-11-15T20:51:08.539Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf-learnings.md": {
+      "processed_at": "2026-11-15T21:45:22.627Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 1134,
-  "total_canonical_promoted": 273,
-  "total_staged_for_review": 860
+  "total_dossiers_evaluated": 1137,
+  "total_canonical_promoted": 275,
+  "total_staged_for_review": 862
 }

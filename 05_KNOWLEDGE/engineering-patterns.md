@@ -626622,3 +626622,351 @@ When creating coroutines in [MAY][may], the library would alloc a chunk of memor
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `a9ef8881` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8656. Inode/Device-Bound Symlink Traversal Verification (O_NOFOLLOW & Same-Device Pinning) (Harvested from vercel-labs/agent-desktop)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Inode/Device-Bound Symlink Traversal Verification (O_NOFOLLOW & Same-Device Pinning)",
+  "source": "vercel-labs/agent-desktop",
+  "source_url": "https://github.com/vercel-labs/agent-desktop",
+  "source_version": "8ffecc1d",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-15T21:44:15.489Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-vercel-labs-agent-desktop",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.69,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "WARN",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "WARN",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [vercel-labs/agent-desktop](https://github.com/vercel-labs/agent-desktop) (Revision: `8ffecc1d`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 69%).
+
+**RULE**:
+When writing into untrusted or externally mounted filesystem trees, the caller **MUST NOT** use recursive path resolution or standard shell redirection (`>`). The process **MUST** open every path segment individually using `O_NOFOLLOW | O_NONBLOCK`, verify with `fstat(2)` that each segment resides on the exact target volume root device (`st_dev`), confirm directory types via `S_ISDIR`, and verify target file types via `S_ISREG` before performing zero-truncation or writing.
+
+**WHY**:
+An untrusted guest or unprivileged worker can create a symbolic link targeting arbitrary host files (e.g., `/etc/passwd`, `~/.ssh/authorized_keys`, or host kernel artifacts). Simple operations like `cat key > $mount/private/etc/ssh/ssh_host_ed25519_key` resolve the symlink on the host kernel, causing arbitrary host file overwrite (arbitrary file write / host compromise).
+
+**WHEN TO APPLY**:
+Any orchestration system, container agent, hypervisor host, or build tool that modifies guest disks, virtual machine volume mounts, or non-root user workspaces.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```perl
+use strict;
+use warnings;
+use Fcntl qw(:mode O_WRONLY O_CREAT O_NOFOLLOW O_NONBLOCK);
+
+sub secure_write_volume_file {
+    my ($volume_root, $relative_dir_path, $file_name, $content) = @_;
+
+    chdir $volume_root or die "Cannot chdir to target volume: $!";
+    my @root_stat = stat "." or die "Cannot stat volume root: $!";
+    my $volume_dev = $root_stat[0]; # st_dev
+
+    my @segments = split m{/+}, $relative_dir_path;
+    for my $segment (@segments) {
+        next if $segment eq '' || $segment eq '.';
+        die "Path traversal attempt detected" if $segment eq '..';
+
+        my @lstat_info = lstat $segment or die "Failed lstat for $segment: $!";
+        # Invariant 1: Must belong to identical device/volume
+        $lstat_info[0] == $volume_dev or die "Symlink or bind mount crossed device boundary: $segment";
+        # Invariant 2: Segment MUST be a directory, never a link
+        S_ISDIR($lstat_info[2]) or die "$segment is not a directory";
+
+        chdir $segment or die "Failed chdir into $segment: $!";
+        my @entered = stat "." or die "Failed stat inside $segment: $!";
+        ($entered[0] == $lstat_info[0] && $entered[1] == $lstat_info[1])
+            or die "TOCTOU race detected while stepping into $segment";
+    }
+
+    # Open file strictly without following symlinks and non-blocking
+    sysopen(my $out, $file_name, O_WRONLY | O_CREAT | O_NOFOLLOW | O_NONBLOCK, 0644)
+        or die "Refusing to open file (possible symlink): $!";
+
+    my @held = stat $out or die "stat failed on opened descriptor: $!";
+    (S_ISREG($held[2]) && $held[0] == $volume_dev)
+        or die "Opened file is not a regular file on the designated volume";
+
+    truncate($out, 0) or die "Failed to truncate destination: $!";
+    my $written = syswrite($out, $content);
+    defined $written && $written == length($content)
+        or die "Incomplete write to target: $!";
+    close($out) or die "Failed to flush/close descriptor: $!";
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```bash
+# FATAL ANTI-PATTERN: Blindly writing into an untrusted guest/container mount point
+mount -o loop guest_disk.img /mnt/guest
+# If guest ran: ln -s /Users/host_user/.ssh/authorized_keys /private/etc/ssh/ssh_host_ed25519_key
+# The line below overwrites the host's credentials!
+cat "$HOST_SSH_KEY" > /mnt/guest/private/etc/ssh/ssh_host_ed25519_key
+```
+
+**VERIFICATION METHOD**:
+Set up an integration harness that creates malicious symbolic links at each path depth:
+```bash
+ln -s /etc/shadow $FAKE_VOLUME/private/etc/ssh/ssh_host_ed25519_key
+# Run the key rotation routine. It MUST fail with exit code 1 or 2,
+# verify that /etc/shadow is untouched, and confirm the guest disk is detached.
+```
+
+---
+
+
+---
+
+## 8657. Dual-Channel Exit-Status and Pipe-Cap Buffering (Harvested from vercel-labs/agent-desktop)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Dual-Channel Exit-Status and Pipe-Cap Buffering",
+  "source": "vercel-labs/agent-desktop",
+  "source_url": "https://github.com/vercel-labs/agent-desktop",
+  "source_version": "8ffecc1d",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-15T21:44:15.925Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-vercel-labs-agent-desktop",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.76,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [vercel-labs/agent-desktop](https://github.com/vercel-labs/agent-desktop) (Revision: `8ffecc1d`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 76%).
+
+**RULE**:
+When capturing command execution output from potentially untrusted or unverified sub-shells/RPC bridges, the consumer **MUST NOT** buffer `stdout`/`stderr` unbounded into memory, and **MUST NOT** execute probe commands without hard consumption caps. Consumers **MUST** decouple the remote status code transmission from the remote data stream using a separate file descriptor pipe (e.g., `FD 3`), while truncating the data stream to an exact byte ceiling (`head -c 65536`) on a separate descriptor (e.g., `FD 4`).
+
+**WHY**:
+If a guest or probe command outputs an infinite loop of noise (e.g., `/dev/zero` or a run-away stack trace), capturing stdout directly via shell variable assignment (`output=$(cmd)`) exhausts host memory, triggering the OS OOM killer. Moreover, terminating stdout via `head -c` breaks traditional pipeline status capture (`$?` reflects `head`, losing the process crash code).
+
+**WHEN TO APPLY**:
+Subprocess runners, agent probing loops, container telemetry probes, and SSH/RPC host-guest agents.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```bash
+PROBE_REPLY_LIMIT=65536
+
+# Captures status and bounded payload without host memory starvation
+guest_probe() {
+  {
+    reply_status=$(
+      {
+        {
+          probe_status=0
+          guest_transport ssh "$@" 2>/dev/null 3>&- 4>&- || probe_status=$?
+          printf '%s\n' "$probe_status" >&3
+        } | head -c "$PROBE_REPLY_LIMIT" >&4
+      } 3>&1
+    )
+  } 4>&1
+  return "${reply_status:-255}"
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```bash
+# FATAL ANTI-PATTERN: Captures unbounded output and loses exit status on truncation
+result=$(guest_ssh "cat /var/log/unbounded.log") # Host OOMs if log is > 8GB!
+
+# FLAWED TRUNCATION: Always returns 0 (head's exit status), masking remote failure
+result=$(guest_ssh "failing_command" | head -c 65536)
+if [ $? -ne 0 ]; then
+  # This block is NEVER reached because head exits 0!
+  handle_error
+fi
+```
+
+**VERIFICATION METHOD**:
+Test with an integration fake that spews 32MB of `/dev/zero` data while returning an explicit failure status code (e.g., `7`):
+```bash
+head -c 33554432 /dev/zero | tr '\0' 'x'
+# Assert that memory consumption never exceeds 64KiB and probe returns exit status 7.
+```
+
+---
+
+
+---
+
+## 8658. Dynamic TCC/Security Identity Attribution via Dynamic Symbol Loading (Harvested from vercel-labs/agent-desktop)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Dynamic TCC/Security Identity Attribution via Dynamic Symbol Loading",
+  "source": "vercel-labs/agent-desktop",
+  "source_url": "https://github.com/vercel-labs/agent-desktop",
+  "source_version": "8ffecc1d",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-15T21:44:16.411Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-vercel-labs-agent-desktop",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.76,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [vercel-labs/agent-desktop](https://github.com/vercel-labs/agent-desktop) (Revision: `8ffecc1d`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 76%).
+
+**RULE**:
+When building command-line utilities that interface with OS-level privacy/entitlement subsystems (such as Apple's TCC: Transparency, Consent, and Control), diagnostic and guidance tools **MUST NOT** assume the immediate process parent (`getppid()`) is the principal security debtor. The system **MUST** resolve the actual responsible process via dynamic library linkage (`dlsym(libc::RTLD_DEFAULT, "responsibility_get_pid_responsible_for_pid")`), falling back to an ancestor tree walk only if dynamic loading returns `NULL`.
+
+**WHY**:
+Terminal multiplexers (such as `tmux` or `screen`) detach their servers and become reparented to system init (`launchd` or `systemd`, PID 1). Walking parent PIDs returns PID 1 or an orphaned shell, causing permission diagnostics to report the wrong executable bundle or prompt the user to authorize binary paths that the kernel does not honor.
+
+**WHEN TO APPLY**:
+Security permission verifiers, CLI accessibility assistants, and GUI session hooks on macOS 10.14+.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use std::path::{Path, PathBuf};
+
+pub fn resolve_responsible_app() -> Option<PathBuf> {
+    let current_pid = i32::try_from(std::process::id()).ok()?;
+    host_app_of(current_pid, responsible_pid)
+}
+
+fn host_app_of(pid: i32, responsible_lookup: impl Fn(i32) -> Option<i32>) -> Option<PathBuf> {
+    responsible_lookup(pid)
+        .and_then(app_of)
+        .or_else(|| ancestor_app(pid))
+}
+
+fn app_of(pid: i32) -> Option<PathBuf> {
+    executable_path(pid)
+        .as_deref()
+        .and_then(outermost_app)
+}
+
+fn responsible_pid(pid: i32) -> Option<i32> {
+    // Dynamically resolve private libSystem symbol to avoid static linkage failures on older OS versions
+    let symbol = unsafe {
+        libc::dlsym(
+            libc::RTLD_DEFAULT,
+            c"responsibility_get_pid_responsible_for_pid".as_ptr(),
+        )
+    };
+    if symbol.is_null() {
+        return None;
+    }
+    let responsible_fn: unsafe extern "C" fn(libc::pid_t) -> libc::pid_t =
+        unsafe { std::mem::transmute(symbol) };
+    let resp = unsafe { responsible_fn(pid) };
+    (resp > 0).then_some(resp)
+}
+
+fn ancestor_app(mut pid: i32) -> Option<PathBuf> {
+    const MAX_ANCESTORS: usize = 32;
+    for _ in 0..MAX_ANCESTORS {
+        if pid <= 1 {
+            return None;
+        }
+        if let Some(app) = app_of(pid) {
+            return Some(app);
+        }
+        pid = parent_pid(pid)?;
+    }
+    None
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// FATAL ANTI-PATTERN: Relying strictly on getppid()
+fn get_security_debtor_bad() -> PathBuf {
+    let ppid = unsafe { libc::getppid() };
+    // If running under tmux, ppid is 1 (launchd), returning None or /sbin/launchd!
+    executable_path(ppid).unwrap()
+}
+```
+
+**VERIFICATION METHOD**:
+Spawn a detached shell child in a unit test:
+```rust
+let orphan = Command::new("/bin/sh")
+    .args(["-c", "/bin/sleep 30 >/dev/null 2>&1 & echo $!"])
+    .output().unwrap();
+// Wait until parent_pid(orphan) == Some(1)
+// Verify responsible_pid(orphan) returns the parent test binary, NOT 1.
+```
+
+---

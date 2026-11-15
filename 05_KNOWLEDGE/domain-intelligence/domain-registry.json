@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T21:27:44.524Z",
-  "total_records": 1126,
+  "last_updated": "2026-11-15T21:45:23.592Z",
+  "total_records": 1132,
   "domains": {
     "A": {
       "total": 7,
@@ -37,7 +37,7 @@
       ]
     },
     "D": {
-      "total": 545,
+      "total": 548,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -583,7 +583,10 @@
         "DOM-D-37D23F0D",
         "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-image-learnings-core-inv",
         "domain_intelligence-research-knowledge-intelligence-comfy-org-minimax-h3-image-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-minimax-h3-image-learnings-core-inv"
+        "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-minimax-h3-image-learnings-core-inv",
+        "domain_intelligence-research-knowledge-intelligence-mradermacher-gemma-4-31b-it-ara-heretic-gguf-cor",
+        "DOM-D-E9AE08D3",
+        "domain_intelligence-research-knowledge-intelligence-hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf-"
       ]
     },
     "E": {
@@ -820,7 +823,7 @@
       ]
     },
     "H": {
-      "total": 231,
+      "total": 234,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1052,7 +1055,10 @@
         "domain_intelligence-technical-construction-intelligence-goodrain-rainbond-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-dathere-qsv-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-maziyarpanahi-openmed-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-maziyarpanahi-openmed-learnings-core-invaria"
+        "domain_intelligence-technical-construction-intelligence-maziyarpanahi-openmed-learnings-core-invaria",
+        "domain_intelligence-technical-construction-intelligence-vercel-labs-agent-desktop-core-invariants",
+        "DOM-H-0A98A103",
+        "domain_intelligence-technical-construction-intelligence-vercel-labs-agent-desktop-learnings-core-inv"
       ]
     },
     "I": {
@@ -16776,8 +16782,8 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zleap-ai-sag-learnings-technical-construction-intelligence-zleap-ai-sag-learning.md",
       "repository": "zleap-ai-sag-learnings",
-      "content_hash": "f8a587abec1f1c55fbfd28b7a4ca3019241bc0b85b8922e072665f7d64788ee1",
-      "created_at": "2026-11-15T21:27:44.524Z"
+      "content_hash": "64400699a5f5bc5d62d1b253558b6418e0b23a1c0e990ff4a7951e3219f38be3",
+      "created_at": "2026-11-15T21:45:23.592Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co",
@@ -21334,6 +21340,126 @@
       "repository": "hf-comfy-org-minimax-h3-image-learnings",
       "content_hash": "c3d88c398679178f2ceda8c5a53c0d8ee750d93147fcbd9a65e7253b4bbd46b3",
       "created_at": "2026-11-15T21:27:44.055Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-mradermacher-gemma-4-31b-it-ara-heretic-gguf-cor": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-mradermacher-gemma-4-31b-it-ara-heretic-gguf-cor",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: mradermacher/gemma-4-31B-it-ARA-heretic-GGUF Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf-research-knowledge-intelligence-.md",
+      "repository": "mradermacher/gemma-4-31B-it-ARA-heretic-GGUF",
+      "content_hash": "905c5243357fadddf52789ae901d960467682ac50488bb1cdc492e709f4771a8",
+      "created_at": "2026-11-15T21:41:41.058Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-vercel-labs-agent-desktop-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-vercel-labs-agent-desktop-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: vercel-labs/agent-desktop Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-vercel-labs-agent-desktop-technical-construction-intelligence-vercel-labs-agent-.md",
+      "repository": "vercel-labs/agent-desktop",
+      "content_hash": "2fdef57d98df93670367a816e4565e35fd74ab805c0d21ba8e9278f2d03292af",
+      "created_at": "2026-11-15T21:44:17.294Z"
+    },
+    "DOM-H-0A98A103": {
+      "record_id": "DOM-H-0A98A103",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "K",
+          "id": "quality_verification",
+          "name": "Quality & Verification Intelligence"
+        }
+      ],
+      "title": "Host Memory Exhaustion (OOM) via Unbounded Guest Probe Streams (BUG-SANDBOX-02)",
+      "content": "All external stream ingestions must have strict byte caps enforced at the kernel pipe level, while preserving out-of-band error return channels.",
+      "content_hash": "058b8ffadaa2a15c90281790fe9e29a4ec3d376e31bc34c7d8e08e961b68b347",
+      "summary": "Missing upper-bound windowing on input streams from unauthenticated or semi-trusted remote execution endpoints. -> All external stream ingestions must have strict byte caps enforced at the kernel pipe level, while preserving out-of-band error return chann",
+      "provenance": {
+        "source_uri": "project://vercel-labs-agent-desktop/vercel-labs-agent-desktop-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T21:44:20.240Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (vercel-labs-agent-desktop)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `2a63c28b`, PR `#673`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "K"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-15T21:44:45.283Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-vercel-labs-agent-desktop-learnings-core-inv": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-vercel-labs-agent-desktop-learnings-core-inv",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: vercel-labs-agent-desktop-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-vercel-labs-agent-desktop-learnings-technical-construction-intelligence-vercel-l.md",
+      "repository": "vercel-labs-agent-desktop-learnings",
+      "content_hash": "148a53dcaff60fc86ebbfbf08d9ddfbeee6bec9370c13cec691eb571e90a02cf",
+      "created_at": "2026-11-15T21:44:45.847Z"
+    },
+    "DOM-D-E9AE08D3": {
+      "record_id": "DOM-D-E9AE08D3",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): mradermacher/gemma-4-31B-it-ARA-heretic-GGUF",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/mradermacher/gemma-4-31B-it-ARA-heretic-GGUF](https://huggingface.co/mradermacher/gemma-4-31B-it-ARA-heretic-GGUF))  \n> **Source",
+      "content_hash": "bba814b50e2fd9bf340ec8c03e6f73e5301fc628be73649171c346432d64d080",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf-learnings.md`  \n> **Source**: huggin -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf-learnings.md`  \n> **Source**: huggin",
+      "provenance": {
+        "source_uri": "project://hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf/hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T21:44:46.190Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-15T21:45:22.614Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf-": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf-",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf-learnings-research-knowledge-int.md",
+      "repository": "hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf-learnings",
+      "content_hash": "26b3f138acad8914cc0db2850490d8f43e7d29085b90ab3efa4bccfc1f9a3ffd",
+      "created_at": "2026-11-15T21:45:22.835Z"
     }
   }
 }

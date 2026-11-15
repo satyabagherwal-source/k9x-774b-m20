@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-15T21:27:43.430Z",
-    "lastVerified": "2026-11-15T21:27:43.430Z",
+    "lastChecked": "2026-11-15T21:44:20.138Z",
+    "lastVerified": "2026-11-15T21:44:20.138Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -255,12 +255,12 @@
     "revisionIdentifier": "1b782653"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-15T20:51:04.504Z",
-    "lastVerified": "2026-11-15T20:51:04.504Z",
+    "lastChecked": "2026-11-15T21:41:49.503Z",
+    "lastVerified": "2026-11-15T21:41:49.503Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -269,7 +269,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "3af21c2b"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1677,9 +1678,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-15T14:25:50.211Z",
+    "lastChecked": "2026-11-15T21:41:44.482Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-15T14:25:50.211Z"
+    "lastVerified": "2026-11-15T21:41:44.482Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -3870,8 +3871,8 @@
     "officialUrl": "https://github.com/dragonflyoss/dragonfly",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-14T11:29:03.498Z",
-    "lastVerified": "2026-11-14T11:29:03.498Z",
+    "lastChecked": "2026-11-15T21:41:42.074Z",
+    "lastVerified": "2026-11-15T21:41:42.074Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dragonflyoss-dragonfly",
@@ -5134,9 +5135,9 @@
   "qovery-replibyte": {
     "name": "Replibyte",
     "officialUrl": "https://github.com/Qovery/Replibyte",
-    "lastChecked": "2026-11-14T08:44:01.922Z",
+    "lastChecked": "2026-11-15T21:41:46.973Z",
     "revisionIdentifier": "5504db91",
-    "lastVerified": "2026-11-14T08:44:01.922Z"
+    "lastVerified": "2026-11-15T21:41:46.973Z"
   },
   "grpc-grpc-rust": {
     "name": "grpc-rust",
@@ -10329,9 +10330,9 @@
   "productdevbook-port-killer": {
     "name": "port-killer",
     "officialUrl": "https://github.com/productdevbook/port-killer",
-    "lastChecked": "2026-11-12T09:45:43.990Z",
+    "lastChecked": "2026-11-15T21:41:39.462Z",
     "revisionIdentifier": "2209b0fd",
-    "lastVerified": "2026-11-12T09:45:43.990Z"
+    "lastVerified": "2026-11-15T21:41:39.462Z"
   },
   "lokoe-mehdi-scouter": {
     "name": "scouter",
@@ -13884,14 +13885,14 @@
     "officialUrl": "https://github.com/vercel-labs/agent-desktop",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-13T22:17:31.157Z",
-    "lastVerified": "2026-11-13T22:17:31.157Z",
+    "lastChecked": "2026-11-15T21:41:38.122Z",
+    "lastVerified": "2026-11-15T21:41:38.122Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-vercel-labs-agent-desktop",
-    "contentHash": "93d404a51ebf3649bbb99647ce59f1b26aaadcc2d64b9a14598df3c12e3b90f8",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "contentHash": "2d84356171ecc16f548f9240cb7799d6dbbcda149bf4f84467155e02fa8935d1",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 3,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -14990,12 +14991,12 @@
     "officialUrl": "https://huggingface.co/mradermacher/gemma-4-31B-it-ARA-heretic-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-11T06:13:27.390Z",
-    "lastVerified": "2026-11-11T06:13:27.390Z",
+    "lastChecked": "2026-11-15T21:41:37.102Z",
+    "lastVerified": "2026-11-15T21:41:37.102Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-mradermacher-gemma-4-31b-it-ara-heretic-gguf",
-    "contentHash": "54d27af0af82d7e285a385983afed95f52a4982f77f05bdf8845370b97b98672",
+    "contentHash": "ea2c5f9b232e71c2f3691f9453616373bfc043fcc34c919322e64223d02421cd",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

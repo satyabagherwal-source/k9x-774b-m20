@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-15T21:16:17.467Z",
+  "updated_at": "2026-11-15T21:45:22.626Z",
   "statistics": {
-    "total_nodes": 269,
-    "total_edges": 143,
+    "total_nodes": 271,
+    "total_edges": 144,
     "domain_distribution": {
-      "D": 211,
+      "D": 212,
       "M": 1,
-      "H": 23,
+      "H": 24,
       "J": 10,
       "K": 12,
       "L": 3,
@@ -19,7 +19,8 @@
       "E": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 143
+      "CONSTRAINED_BY_ARCHITECTURE": 143,
+      "VERIFIED_BY_TEST": 1
     }
   },
   "nodes": {
@@ -6038,6 +6039,51 @@
       ],
       "created_at": "2026-11-15T21:16:17.467Z",
       "updated_at": "2026-11-15T21:16:17.467Z"
+    },
+    "DOM-H-0A98A103": {
+      "id": "DOM-H-0A98A103",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Host Memory Exhaustion (OOM) via Unbounded Guest Probe Streams (BUG-SANDBOX-02)",
+      "summary": "Missing upper-bound windowing on input streams from unauthenticated or semi-trusted remote execution endpoints. -> All external stream ingestions must have strict byte caps enforced at the kernel pipe level, while preserving out-of-band error return chann",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://vercel-labs-agent-desktop/vercel-labs-agent-desktop-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T21:44:20.240Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (vercel-labs-agent-desktop)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence",
+        "K"
+      ],
+      "created_at": "2026-11-15T21:44:45.305Z",
+      "updated_at": "2026-11-15T21:44:45.305Z"
+    },
+    "DOM-D-E9AE08D3": {
+      "id": "DOM-D-E9AE08D3",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): mradermacher/gemma-4-31B-it-ARA-heretic-GGUF",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf-learnings.md`  \n> **Source**: huggin -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf-learnings.md`  \n> **Source**: huggin",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf/hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T21:44:46.190Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-15T21:45:22.626Z",
+      "updated_at": "2026-11-15T21:45:22.626Z"
     }
   },
   "edges": [
@@ -7470,6 +7516,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-37D23F0D [D] with Domain M",
       "created_at": "2026-11-15T21:16:17.467Z"
+    },
+    {
+      "id": "EDGE-0F859B184C67",
+      "sourceId": "DOM-H-0A98A103",
+      "targetId": "NODE-K-domain-bridge-k",
+      "relationType": "VERIFIED_BY_TEST",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-H-0A98A103 [H] with Domain K",
+      "created_at": "2026-11-15T21:44:45.305Z"
     }
   ]
 }
