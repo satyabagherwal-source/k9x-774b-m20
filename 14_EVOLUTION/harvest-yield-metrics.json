@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T16:50:36.039Z",
-  "total_cycles_completed": 9731,
-  "total_learnings_persisted": 9731,
-  "total_rules_promoted": 9356,
+  "last_updated": "2026-11-15T17:04:03.848Z",
+  "total_cycles_completed": 9735,
+  "total_learnings_persisted": 9735,
+  "total_rules_promoted": 9359,
   "history": [
-    {
-      "timestamp": "2026-11-14T15:03:52.314Z",
-      "repository": "argoproj/argo-events",
-      "learningId": "learn-github-argoproj-argo-events",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T15:03:57.241Z",
-      "repository": "rqlite/rqlite",
-      "learningId": "learn-github-rqlite-rqlite",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T15:03:59.624Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T15:08:40.305Z",
-      "repository": "higurashi-ai/Haru-4B",
-      "learningId": "learn-huggingface-higurashi-ai-haru-4b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T15:25:36.813Z",
       "repository": "lilylilith/QI_2.1_AnyAngle",
@@ -1403,6 +1375,34 @@
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T17:03:47.005Z",
+      "repository": "autotrust/AutoTrust-Decider-Pro-Vision-27B",
+      "learningId": "learn-huggingface-autotrust-autotrust-decider-pro-vision-27b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T17:03:54.424Z",
+      "repository": "chocoford/ExcalidrawZ",
+      "learningId": "learn-github-chocoford-excalidrawz",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T17:03:57.190Z",
+      "repository": "jacklandrin/OnlySwitch",
+      "learningId": "learn-github-jacklandrin-onlyswitch",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T17:04:03.848Z",
+      "repository": "neuron-core/neuron-ai",
+      "learningId": "learn-github-neuron-core-neuron-ai",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

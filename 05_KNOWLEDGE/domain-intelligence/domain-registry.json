@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T16:50:40.502Z",
-  "total_records": 1074,
+  "last_updated": "2026-11-15T17:04:42.950Z",
+  "total_records": 1080,
   "domains": {
     "A": {
       "total": 7,
@@ -37,7 +37,7 @@
       ]
     },
     "D": {
-      "total": 524,
+      "total": 526,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -562,7 +562,9 @@
         "DOM-D-E86C357A",
         "domain_intelligence-research-knowledge-intelligence-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf-core-i",
         "DOM-D-3B7C0B67",
-        "domain_intelligence-research-knowledge-intelligence-hf-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf-lea"
+        "domain_intelligence-research-knowledge-intelligence-hf-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf-lea",
+        "DOM-D-A223FE37",
+        "domain_intelligence-research-knowledge-intelligence-hf-autotrust-autotrust-decider-pro-vision-27b-le"
       ]
     },
     "E": {
@@ -790,7 +792,7 @@
       ]
     },
     "H": {
-      "total": 216,
+      "total": 220,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1007,7 +1009,11 @@
         "domain_intelligence-technical-construction-intelligence-mochidiffusion-mochidiffusion-learnings-core",
         "domain_intelligence-technical-construction-intelligence-lioensky-vcptoolbox-learnings-core-invariant",
         "domain_intelligence-technical-construction-intelligence-jarvis322-macos-sysdata-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-jarvis322-macos-sysdata-learnings-core-invar"
+        "domain_intelligence-technical-construction-intelligence-jarvis322-macos-sysdata-learnings-core-invar",
+        "domain_intelligence-technical-construction-intelligence-chocoford-excalidrawz-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-jacklandrin-onlyswitch-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-chocoford-excalidrawz-learnings-core-invaria",
+        "domain_intelligence-technical-construction-intelligence-jacklandrin-onlyswitch-learnings-core-invari"
       ]
     },
     "I": {
@@ -11692,8 +11698,8 @@
       "title": "Technical Construction Intelligence: neuron-core/neuron-ai Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-neuron-core-neuron-ai-technical-construction-intelligence-neuron-core-neuron-ai-.md",
       "repository": "neuron-core/neuron-ai",
-      "content_hash": "ee45877616dd7e90bd8622b42eafcc269311f86d9ac8dad54f777a97e4debe18",
-      "created_at": "2026-11-14T03:01:55.098Z"
+      "content_hash": "c2c46d0c8473e476a8c7f96dc0113844905a9add917757a099cd5d08ed9e8b54",
+      "created_at": "2026-11-15T17:04:04.180Z"
     },
     "DOM-D-78E4F99B": {
       "record_id": "DOM-D-78E4F99B",
@@ -15642,10 +15648,10 @@
       "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-vision-27b-core-",
       "domain_letter": "D",
       "title": "Research & Knowledge Intelligence: autotrust/AutoTrust-Decider-Pro-Vision-27B Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-jev-27b-vl-research-knowledge-intelligence-autotrust-autotrust-deci.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-autotrust-decider-pro-vision-27b-research-knowledge-intelligence-au.md",
       "repository": "autotrust/AutoTrust-Decider-Pro-Vision-27B",
-      "content_hash": "3b1e5ae2cef228a90ed8e709b420bb314cd8039a8cb05f4ac4e8b0dc2ebddb49",
-      "created_at": "2026-11-14T16:43:18.539Z"
+      "content_hash": "372389035b918036d3d6e58cbc9f28c8bea7959dcee1c52b37cf7a5bd63bc7e0",
+      "created_at": "2026-11-15T17:03:47.211Z"
     },
     "domain_intelligence-technical-construction-intelligence-tokio-rs-tokio-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-tokio-rs-tokio-learnings-core-invariants",
@@ -20550,6 +20556,93 @@
       "repository": "jarvis322-macos-sysdata-learnings",
       "content_hash": "86ba50153d3ea37de91a9f731193771af9da3fd10476c960fa6192fe4bd73d94",
       "created_at": "2026-11-15T16:50:39.421Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-chocoford-excalidrawz-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-chocoford-excalidrawz-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: chocoford/ExcalidrawZ Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-chocoford-excalidrawz-technical-construction-intelligence-chocoford-excalidrawz-.md",
+      "repository": "chocoford/ExcalidrawZ",
+      "content_hash": "56aaea52ec57565dc4ab5f6255ffa83f5867d0cdec9379dffcf9fcd5d9978db9",
+      "created_at": "2026-11-15T17:03:54.786Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-jacklandrin-onlyswitch-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-jacklandrin-onlyswitch-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: jacklandrin/OnlySwitch Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-jacklandrin-onlyswitch-technical-construction-intelligence-jacklandrin-onlyswitc.md",
+      "repository": "jacklandrin/OnlySwitch",
+      "content_hash": "34192aa9fe5b513b276c546181ec0f0b6d8c52ee6f8cdada05d45a1ca8f51d32",
+      "created_at": "2026-11-15T17:03:57.538Z"
+    },
+    "DOM-D-A223FE37": {
+      "record_id": "DOM-D-A223FE37",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): autotrust/AutoTrust-Decider-Pro-Vision-27B",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-autotrust-autotrust-decider-pro-vision-27b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/autotrust/AutoTrust-Decider-Pro-Vision-27B](https://huggingface.co/autotrust/AutoTrust-Decider-Pro-Vision-27B))  \n> **Source Versio",
+      "content_hash": "2051043361a4d4b1e60d9a677903ff5b4ce45a2c23244eeab0681db27312c487",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-autotrust-autotrust-decider-pro-vision-27b-learnings.md`  \n> **Source**: huggingf -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-autotrust-autotrust-decider-pro-vision-27b-learnings.md`  \n> **Source**: huggingf",
+      "provenance": {
+        "source_uri": "project://hf-autotrust-autotrust-decider-pro-vision-27b/hf-autotrust-autotrust-decider-pro-vision-27b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T17:04:07.128Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-autotrust-autotrust-decider-pro-vision-27b)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-autotrust-autotrust-decider-pro-vision-27b"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-15T17:04:41.292Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-autotrust-autotrust-decider-pro-vision-27b-le": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-autotrust-autotrust-decider-pro-vision-27b-le",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-autotrust-autotrust-decider-pro-vision-27b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-autotrust-decider-pro-vision-27b-learnings-research-knowledge-intel.md",
+      "repository": "hf-autotrust-autotrust-decider-pro-vision-27b-learnings",
+      "content_hash": "89019f6a7a0fb67e10fc58546ccdf25acc603441b8dcb8445651c871ae1d8997",
+      "created_at": "2026-11-15T17:04:41.565Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-chocoford-excalidrawz-learnings-core-invaria": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-chocoford-excalidrawz-learnings-core-invaria",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: chocoford-excalidrawz-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-chocoford-excalidrawz-learnings-technical-construction-intelligence-chocoford-ex.md",
+      "repository": "chocoford-excalidrawz-learnings",
+      "content_hash": "541976f4a923b33a859cc6f5c87894286f764e876445e7132bfc437f7208aba8",
+      "created_at": "2026-11-15T17:04:42.254Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-jacklandrin-onlyswitch-learnings-core-invari": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-jacklandrin-onlyswitch-learnings-core-invari",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: jacklandrin-onlyswitch-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-jacklandrin-onlyswitch-learnings-technical-construction-intelligence-jacklandrin.md",
+      "repository": "jacklandrin-onlyswitch-learnings",
+      "content_hash": "2758d7f93287fd6a4d634200c3eb0ec8c2bcf4793e89fb6e4ca74d69db4c6960",
+      "created_at": "2026-11-15T17:04:42.950Z"
     }
   }
 }

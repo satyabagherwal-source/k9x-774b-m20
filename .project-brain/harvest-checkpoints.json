@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-15T16:50:36.042Z",
+  "last_updated": "2026-11-15T17:04:03.853Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4791,14 +4791,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-neuron-core-neuron-ai",
-      "content_hash": "551f515a22ba0da3009d78d7f27ba39d4b405bd997da682b5e682df05e6ce0db",
-      "verified_at": "2026-11-14T03:01:54.875Z",
+      "content_hash": "ad57dabb6696007d3ca730f8a05e1cf919457449c0c0094c586ffdc572875275",
+      "verified_at": "2026-11-15T17:04:03.853Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T03:01:54.875Z"
+      "last_updated": "2026-11-15T17:04:03.853Z"
     },
     "GeekyAnts/NativeBase": {
       "repository": "GeekyAnts/NativeBase",
@@ -12126,14 +12126,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-jacklandrin-onlyswitch",
-      "content_hash": "07a847cc25fbaa6b7f724aa2b9511506a879fe42245f1ef9f9a09e5e5ad72dfc",
-      "verified_at": "2026-11-12T04:50:34.388Z",
+      "content_hash": "9cc41d8c90ad84a1efea53836204a7a0144436b4caf67c1df0ba56f71d3ac295",
+      "verified_at": "2026-11-15T17:03:57.194Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T04:50:34.388Z"
+      "last_updated": "2026-11-15T17:03:57.194Z"
     },
     "alin23/Lunar": {
       "repository": "alin23/Lunar",
@@ -18950,15 +18950,15 @@
       "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-autotrust-jev-27b-vl",
-      "content_hash": "3a005cb391aab9fcb892ae95a29c266a79abc7fbdec01e72dd59605b80f189f7",
-      "verified_at": "2026-11-14T16:43:18.397Z",
+      "learning_id": "learn-huggingface-autotrust-autotrust-decider-pro-vision-27b",
+      "content_hash": "6f41447e0ad2272a92818e9d23efb3a72b8df211149c4d6de3e4b5bebbbd2c45",
+      "verified_at": "2026-11-15T17:03:47.009Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T16:43:18.397Z"
+      "last_updated": "2026-11-15T17:03:47.009Z"
     },
     "autotrust/AutoTrust-Decider-Pro-35B": {
       "repository": "autotrust/AutoTrust-Decider-Pro-35B",
@@ -19049,6 +19049,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-15T14:56:03.588Z"
+    },
+    "chocoford/ExcalidrawZ": {
+      "repository": "chocoford/ExcalidrawZ",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-chocoford-excalidrawz",
+      "content_hash": "ebddf28b5523f4864d6594d9e4282ab11fc2a7d252894e9ad4bd2f084f227c5a",
+      "verified_at": "2026-11-15T17:03:54.428Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-15T17:03:54.428Z"
     }
   },
   "repos": {

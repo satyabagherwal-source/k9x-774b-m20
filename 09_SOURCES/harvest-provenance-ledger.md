@@ -10151,3 +10151,8 @@ Every entry in this ledger must capture:
 | `learn-github-jarvis322-macos-sysdata` | `https://github.com/Jarvis322/macos-sysdata` | `e06a5803` | Multi-dimensional audit evidence | 2026-11-15T16:50:27.791Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `daf82a50` | Multi-dimensional audit evidence | 2026-11-15T16:50:31.874Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `b1d9ed30` | Multi-dimensional audit evidence | 2026-11-15T16:50:36.027Z |
+| `learn-huggingface-autotrust-autotrust-decider-pro-vision-27b` | `https://huggingface.co/autotrust/AutoTrust-Decider-Pro-Vision-27B` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-15T17:03:46.999Z |
+| `learn-github-chocoford-excalidrawz` | `https://github.com/chocoford/ExcalidrawZ` | `19216eb2` | Multi-dimensional audit evidence | 2026-11-15T17:03:54.418Z |
+| `learn-github-jacklandrin-onlyswitch` | `https://github.com/jacklandrin/OnlySwitch` | `ff711c47` | Multi-dimensional audit evidence | 2026-11-15T17:03:57.185Z |
+| `learn-github-neuron-core-neuron-ai` | `https://github.com/neuron-core/neuron-ai` | `5e9c7b57` | Multi-dimensional audit evidence | 2026-11-15T17:04:03.842Z |
+| `learn-dom-d-a223fe37` | `project://hf-autotrust-autotrust-decider-pro-vision-27b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-autotrust-autotrust-decider-pro-vision-27b-learnings.md` | 2026-11-15T17:04:41.313Z |

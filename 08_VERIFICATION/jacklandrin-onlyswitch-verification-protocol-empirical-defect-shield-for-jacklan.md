@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for jacklandrin/onlyswitch
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for jacklandrin/OnlySwitch
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "jacklandrin/onlyswitch",
-  "source_url": "https://github.com/jacklandrin/onlyswitch",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "jacklandrin/OnlySwitch",
+  "source_url": "https://github.com/jacklandrin/OnlySwitch",
+  "source_version": "ff711c47",
+  "license": "MIT",
+  "timestamp": "2026-11-15T17:03:57.403Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-jacklandrin-onlyswitch",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [jacklandrin/onlyswitch](https://github.com/jacklandrin/onlyswitch) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [jacklandrin/OnlySwitch](https://github.com/jacklandrin/OnlySwitch) (Revision: `ff711c47`).  
+> **License**: MIT | **Timestamp**: `2026-11-15T17:03:57.403Z`  
+> **Learning ID**: `learn-github-jacklandrin-onlyswitch`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `jacklandrin/onlyswitch` (Commit: `historical`)
+- **Target Repository**: `jacklandrin/OnlySwitch` (Commit: `ff711c47`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/jacklandrin-onlyswitch-learnings.md`  
-> **Source**: github ([https://github.com/jacklandrin/OnlySwitch](https://github.com/jacklandrin/OnlySwitch))  
-> **Source Version**: `9f6d833e`  
-> **License**: MIT  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T04:50:18.907Z  
-> **Learning ID**: `learn-github-jacklandrin-onlyswitch`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): jacklandrin/OnlySwitch
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/jacklandrin-onlyswitch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/jacklandrin/OnlySwitch](https://github.com/jacklandrin/OnlySwitch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T04:50:18.897Z  
+> **Harvest Timestamp**: 2026-11-15T17:03:56.116Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: 👑 The all-in-one macOS menu bar companion: customizable controls, system monitor, AI Agent, Shortcuts, widgets, remote control, and more.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 6049 stars
+- **Stars / Engagement**: 6058 stars
 
 ---
 
@@ -1177,233 +1163,319 @@ extension BluetoothDevicesManager:CBCentralManagerDelegate {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ec1066ef` (2026-11-10)
-**Commit Message**: Read Claude Code credential via security tool to avoid Keychain prompts
+### Incident Patch 1: `c2731435` (2026-11-14)
+**Commit Message**: fix: post the desktop pet hunger setting change on the main actor
 
-Claude Code stores its Keychain item with /usr/bin/security, so that tool
-is on the item's ACL and can read it silently. Try it first and fall back
-to SecItemCopyMatching only when it fails.
+The settings reducer saved from a TCA effect on the cooperative pool, so
+NotificationCenter delivered .desktopPetNeedsSettingsChanged to the
+main-actor AppDelegate off the main thread, tripping Swift 6 dynamic
+isolation checks. Make save async and post from the main actor.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `Modules/Sources/OnlyAgent/ClaudeUsage/ClaudeKeychainSecurityTool.swift` (added, +41/-0)
+**File**: `Modules/Sources/AppFeature/Features/Settings/DesktopPet/DesktopPetHungerSetting.swift` (modified, +6/-2)
 ```diff
-@@ -0,0 +1,41 @@
-+import Foundation
-+
-+/// Reads Claude Code's Keychain item through Apple's `/usr/bin/security` tool.
-+///
-+/// Claude Code writes `Claude Code-credentials` with `security add-generic-password`, so the item's
-+/// access list trusts `/usr/bin/security`. Reading through the same tool therefore never shows the
-+/// Keychain password dialog, whereas a direct `SecItemCopyMatching` from OnlySwitch does — and any
-+/// "Always Allow" granted to OnlySwitch is lost each time Claude Code rewrites the item on token refresh.
-+enum ClaudeKeychainSecurityTool {
-+    static let executable = URL(fileURLWithPath: "/usr/bin/security")
-+
-+    /// Returns the item's secret, or nil when the tool is unavailable, the item is missing, or the
-+    /// tool could not read it without interaction. Callers fall back to the Security framework.
-+    static func read(service: String) async -> Data? {
-+        guard FileManager.default.isExecutableFile(atPath: executable.path) else { return nil }
-+        // A minimal environment: the tool needs nothing from OnlySwitch's process environment.
-+        let environment = ["PATH": "/usr/bin:/bin:/usr/sbin:/sbin", "HOME": NSHomeDirectory()]
-+        guard let result = await ClaudeCodeCLI.run(executable, arguments: ["find-generic-password", "-s", service, "-w"],
-+                                                   environment: environment, timeout: .seconds(5), captureOutput: true),
-+              result.status == 0 else { return nil }
-+        return decodeOutput(result.output)
-+    }
-+
-+    /// `security -w` prints the secret as text, or as hex when the stored bytes are not printable.
-+    static func decodeOutput(_ output: String) -> Data? {
-+        let trimmed = output.trimmingCharacters(in: .whitespacesAndNewlines)
-+        guard !trimmed.isEmpty else { return nil }
-+        if trimmed.hasPrefix("{") { return Data(trimmed.utf8) }
-+        guard trimmed.count.isMultiple(of: 2), trimmed.allSatisfy(\.isHexDigit) else { return Data(trimmed.utf8) }
-+        var bytes = [UInt8]()
-+        bytes.reserveCapacity(trimmed.count / 2)
-+        var index = trimmed.startIndex
-+        while index < trimmed.endIndex {
-+            let next = trimmed.index(index, offsetBy: 2)
-+            guard let byte = UInt8(trimmed[index ..< next], radix: 16) else { return nil }
-+            bytes.append(byte)
-+            index = next
-+        }
-+        return Data(bytes)
-+    }
-+}
+@@ -6,7 +6,7 @@ import Foundation
+ /// Reads and writes whether the desktop pet gets hungry, and tells the running pet about changes.
+ struct DesktopPetHungerSetting: Sendable {
+     var load: @Sendable () -> Bool
+-    var save: @Sendable (Bool) -> Void
++    var save: @Sendable (Bool) async -> Void
+ 
+     static func userDefaults(_ defaults: UserDefaults, notificationCenter: NotificationCenter = .default) -> Self {
+         // Both types are documented as thread-safe but are not declared `Sendable`.
+@@ -17,7 +17,11 @@ struct DesktopPetHungerSetting: Sendable {
+             load: { defaults.value.object(forKey: key) as? Bool ?? true },
+             save: { isEnabled in
+                 defaults.value.set(isEnabled, forKey: key)
+-                center.value.post(name: .desktopPetNeedsSettingsChanged, object: nil)
++                // Observers such as `AppDelegate` are main-actor isolated, and notifications are
++                // delivered on the posting thread, so post from the main actor.
++                await MainActor.run {
++                    center.value.post(name: .desktopPetNeedsSettingsChanged, object: nil)
++                }
+             }
+         )
+     }
 ```
 
-**File**: `Modules/Sources/OnlyAgent/ClaudeUsage/ClaudeOAuthCredentialClient.swift` (modified, +5/-2)
+**File**: `Modules/Sources/AppFeature/Features/Settings/DesktopPet/DesktopPetSettingsFeature.swift` (modified, +1/-1)
 ```diff
-@@ -41,7 +41,7 @@ struct ClaudeOAuthCredentialReader: Sendable {
-     let configDirectory: String?
-     let homeDirectory: URL
-     let readFile: @Sendable (URL) throws -> Data
--    let readKeychain: @Sendable (String, Bool) throws -> Data?
-+    let readKeychain: @Sendable (String, Bool) async throws -> Data?
-     var now: @Sendable () -> Date = { Date() }
+@@ -59,7 +59,7 @@ struct DesktopPetSettingsFeature {
  
-     func read(allowKeychainPrompt: Bool) async throws -> ClaudeOAuthCredential {
-@@ -63,7 +63,7 @@ struct ClaudeOAuthCredentialReader: Sendable {
-         if configured != nil && directory.standardizedFileURL != homeDirectory.appending(path: ".claude", directoryHint: .isDirectory).standardizedFileURL { throw lastFailure }
-         try Task.checkCancellation()
-         do {
--            if let data = try readKeychain("Claude Code-credentials", allowKeychainPrompt) {
-+            if let data = try await readKeychain("Claude Code-credentials", allowKeychainPrompt) {
-                 return try ClaudeOAuthCredential.decode(data, now: now())
-             }
-         } catch is CancellationError { throw CancellationError() }
-@@ -82,6 +82,9 @@ struct ClaudeOAuthCredentialReader: Sendable {
-             return try Data(contentsOf: url)
+             case .binding(\.isHungerEnabled):
+                 let isEnabled = state.isHungerEnabled
+-                return .run { [hungerSetting] _ in hungerSetting.save(isEnabled) }
++                return .run { [hungerSetting] _ in await hungerSetting.save(isEnabled) }
+ 
+             case .binding:
+                 return .none
+```
+
+**File**: `Modules/Tests/AppFeatureTests/DesktopPet/DesktopPetHungerSettingTests.swift` (modified, +5/-5)
+```diff
+@@ -17,21 +17,21 @@ struct DesktopPetHungerSettingTests {
+         #expect(!UserDefaults.Key.exportableKeys.contains(UserDefaults.Key.desktopPetNeeds))
+     }
+ 
+-    @Test func savesAndPostsChange() throws {
++    @Test func savesAndPostsChangeOnTheMainThread() async throws {
+         let suite = "DesktopPetHungerSettingTests.\(UUID().uuidString)"
+         let defaults = try #require(UserDefaults(suiteName: suite))
+         defer { defaults.removePersistentDomain(forName: suite) }
+         let center = NotificationCenter()
+-        let posted = LockIsolated(0)
++        let posted = LockIsolated<[Bool]>([])
+         let token = center.addObserver(forName: .desktopPetNeedsSettingsChanged, object: nil, queue: nil) { _ in
+-            posted.withValue { $0 += 1 }
++            posted.withValue { $0.append(Thread.isMainThread) }
+         }
+         defer { center.removeObserver(token) }
+         let setting = DesktopPetHungerSetting.userDefaults(defaults, notificationCenter: center)
+ 
+         #expect(setting.load())
+-        setting.save(false)
++        await setting.save(false)
+         #expect(!setting.load())
+-        #expect(posted.value == 1)
++        #expect(posted.value == [true])
+     }
+ }
+```
+
+---
+
+### Incident Patch 2: `8dbe2fe3` (2026-11-14)
+**Commit Message**: fix: fence the current pet markup in the edit prompt and polish edit translations
+
+Fence the current skin in an html code block so it matches the reply format
+and stays clearly separated from the instructions. Cover replacing a skin
+while the library is full. Fix the Filipino, Italian, Russian and Ukrainian
+examples and use the Dutch infinitive button style.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `Localization/Localizable.xcstrings` (modified, +5/-5)
+```diff
+@@ -129740,7 +129740,7 @@
+         "nl" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "Bewerk met AI…"
++            "value" : "Bewerken met AI…"
+           }
          },
-         readKeychain: { service, allowPrompt in
-+            // Claude Code's item trusts /usr/bin/security, so this path never prompts.
-+            if let data = await ClaudeKeychainSecurityTool.read(service: service) { return data }
-+            try Task.checkCancellation()
-             var query: [String: Any] = [
-                 kSecClass as String: kSecClassGenericPassword,
-                 kSecAttrService as String: service,
+         "pl" : {
+@@ -129829,7 +129829,7 @@
+         "fil" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "Maglarawan ng pagbabago, hal. “bigyan ng sombrero ng wizard”"
++            "value" : "Maglarawan ng pagbabago, hal. “bigyan ito ng sombrero ng wizard”"
+           }
+         },
+         "fr" : {
+@@ -129847,7 +129847,7 @@
+         "it" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "Descrivi una modifica, ad es. «dagli un cappello da mago»"
++            "value" : "Descrivi una modifica, ad es. «mettile un cappello da mago»"
+           }
+         },
+         "ja" : {
+@@ -129883,7 +129883,7 @@
+         "ru" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "Опишите изменение, например: «добавь волшебную шляпу»"
++            "value" : "Опишите изменение, например: «надень на него шляпу волшебника»"
+           }
+         },
+         "sk" : {
+@@ -129907,7 +129907,7 @@
+         "uk" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "Опишіть зміну, наприклад: «додай чарівницький капелюх»"
++            "value" : "Опишіть зміну, наприклад: «одягни йому капелюх чарівника»"
+           }
+         },
+         "zh-Hans" : {
 ```
 
-**File**: `Modules/Tests/AppFeatureTests/ClaudeUsageIntegrationTests.swift` (modified, +19/-0)
+**File**: `Modules/Sources/DesktopPetSkinKit/DesktopPetSkinPromptBuilder.swift` (modified, +2/-0)
 ```diff
-@@ -530,3 +530,22 @@ private extension ClaudeUsageSnapshot {
-         .init(account: .init(email: "fixture@example.com", plan: "Pro"), session: .init(remainingPercent: 75, resetAt: nil), weekly: nil, models: [], extraUsage: nil, fetchedAt: Date(timeIntervalSince1970: 1_800_000_000))
+@@ -56,7 +56,9 @@ public enum DesktopPetSkinPromptBuilder {
+         Keep NAME: as the current name unless the request asks you to rename the pet.
+ 
+         Current skin:
++        ```html
+         \(currentMarkup)
++        ```
+         """
      }
- }
-+
-+struct ClaudeKeychainSecurityToolTests {
-+    @Test func textOutputIsReturnedAsJSON() throws {
-+        let json = #"{"claudeAiOauth":{"accessToken":"fixture-token","scopes":["user:profile"]}}"#
-+        let data = try #require(ClaudeKeychainSecurityTool.decodeOutput(json + "\n"))
-+        #expect(String(decoding: data, as: UTF8.self) == json)
+ 
+```
+
+**File**: `Modules/Tests/ModulesTests/DesktopPetSkinLibraryTests.swift` (modified, +14/-0)
+```diff
+@@ -58,6 +58,20 @@ struct DesktopPetSkinLibraryTests {
+         await #expect(throws: DesktopPetSkinLibraryError.full) { _ = try await client.save(skin("extra")) }
+     }
+ 
++    @Test func replacingAnExistingSkinIsAllowedWhenFull() async throws {
++        let (client, _) = try makeClient()
++        var skins: [DesktopPetSkin] = []
++        for index in 0..<DesktopPetSkinLibraryClient.maximumSkins {
++            let next = skin("\(index)")
++            skins.append(next)
++            _ = try await client.save(next)
++        }
++        var edited = skins[3]
++        edited.name = "Edited"
++        skins[3] = edited
++        #expect(try await client.save(edited) == skins)
 +    }
 +
-+    @Test func hexOutputIsDecoded() throws {
-+        let json = #"{"claudeAiOauth":{"accessToken":"fixture-token"}}"#
-+        let hex = Data(json.utf8).map { String(format: "%02x", $0) }.joined()
-+        let data = try #require(ClaudeKeychainSecurityTool.decodeOutput(hex + "\n"))
-+        #expect(String(decoding: data, as: UTF8.self) == json)
+     @Test func deletingSelectedSkinClearsSelection() async throws {
+         let (client, _) = try makeClient()
+         let cat = skin()
+```
+
+**File**: `Modules/Tests/ModulesTests/DesktopPetSkinPromptTests.swift` (modified, +8/-0)
+```diff
+@@ -36,6 +36,14 @@ struct DesktopPetSkinPromptTests {
+         #expect(prompt.contains("give it a wizard hat"))
+     }
+ 
++    @Test func editPromptFencesTheCurrentMarkupLast() {
++        let markup = "<style>#pet{color:red}</style><div id=\"pet\"></div>"
++        let prompt = DesktopPetSkinPromptBuilder.editPrompt(
++            instruction: "make it blue", currentName: "Cat", currentMarkup: markup
++        )
++        #expect(prompt.hasSuffix("```html\n\(markup)\n```"))
 +    }
 +
-+    @Test func emptyOutputIsNil() {
-+        #expect(ClaudeKeychainSecurityTool.decodeOutput(" \n") == nil)
-+    }
-+}
+     @Test func editPromptAsksForAMinimalCompleteChange() {
+         let prompt = DesktopPetSkinPromptBuilder.editPrompt(
+             instruction: "make it blue", currentName: "Cat", currentMarkup: "<div id=\"pet\"></div>"
 ```
 
 ---
 
-### Incident Patch 2: `9f6d833e` (2026-11-11)
-**Commit Message**: Fix truncated buttons in Evolution empty state
+### Incident Patch 3: `4f51d6c3` (2026-11-14)
+**Commit Message**: fix: tear down the skin web view while the desktop pet is hidden
 
-Lay out the actions side by side when they fit, otherwise stack them,
-and keep each button at its ideal width so titles are never truncated.
+Also let only the latest skin change apply when several arrive while the
+library loads.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `Modules/Sources/AppFeature/Features/Settings/Evolution/EvolutionEmptyStateView.swift` (modified, +23/-13)
+**File**: `Modules/Sources/AppFeature/AppDelegate.swift` (modified, +5/-1)
 ```diff
-@@ -16,20 +16,30 @@ struct EvolutionEmptyStateView: View {
-         } description: {
-             Text("Build your own switches and buttons with Shell or AppleScript.".localized())
-         } actions: {
--            HStack {
--                Button("New Evolution".localized(), systemImage: "plus") {
--                    store.send(.newTapped)
--                }
--                .evolutionProminentButtonStyle()
--                Button("Browse Gallery".localized(), systemImage: "square.grid.2x2") {
--                    store.send(.tabChanged(.gallery))
--                }
--                if store.isOnlyAgentAvailable {
--                    Button("Create with Only Agent".localized(), systemImage: "sparkles") {
--                        store.send(.openOnlyAgent)
--                    }
--                }
-+            // Side by side when the labels fit; otherwise stacked so no title gets truncated.
-+            ViewThatFits(in: .horizontal) {
-+                HStack { buttons }
-+                VStack { buttons }
-             }
-         }
+@@ -43,6 +43,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
      }
-+
-+    @ViewBuilder
-+    private var buttons: some View {
-+        Button("New Evolution".localized(), systemImage: "plus") {
-+            store.send(.newTapped)
-+        }
-+        .evolutionProminentButtonStyle()
-+        .fixedSize()
-+        Button("Browse Gallery".localized(), systemImage: "square.grid.2x2") {
-+            store.send(.tabChanged(.gallery))
-+        }
-+        .fixedSize()
-+        if store.isOnlyAgentAvailable {
-+            Button("Create with Only Agent".localized(), systemImage: "sparkles") {
-+                store.send(.openOnlyAgent)
-+            }
-+            .fixedSize()
-+        }
-+    }
+     var checkUpdatePresenter = GitHubPresenter.shared
+     private var desktopPetController: DesktopPetController?
++    private var desktopPetSkinTask: Task<Void, Never>?
+     private var desktopPetPomodoroRefreshTask: Task<Void, Never>?
+     private let remoteAccessController = RemoteAccessController()
+     private lazy var crashReportPrompt = CrashReportPrompt()
+@@ -249,8 +250,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
+     /// Shows the selected custom skin, or the built-in pet when none is selected or it no longer exists.
+     @objc private func applySelectedDesktopPetSkin() {
+         let library = DesktopPetSkinLibraryClient.liveValue
+-        Task { @MainActor [weak self] in
++        // Only the latest change wins when several arrive while the library is loading.
++        desktopPetSkinTask?.cancel()
++        desktopPetSkinTask = Task { @MainActor [weak self] in
+             let skins = await library.load()
++            guard !Task.isCancelled else { return }
+             let selected = library.selectedID().flatMap { id in skins.first { $0.id == id } }
+             self?.desktopPetController?.setSkin(selected)
+         }
+```
+
+**File**: `Modules/Sources/DesktopPet/DesktopPetController.swift` (modified, +2/-0)
+```diff
+@@ -106,6 +106,7 @@ public final class DesktopPetController: NSObject {
+         constrainPanelToVisibleScreen()
+         saveFrame()
+         presentation.isActive = true
++        presentation.isShown = true
+         isVisible = true
+         activityStore.send(.start)
+         needsStore.send(.start)
+@@ -127,6 +128,7 @@ public final class DesktopPetController: NSObject {
+         saveFrame()
+         presentation.isActive = false
+         presentation.isDragging = false
++        presentation.isShown = false
+         isVisible = false
+         panel.orderOut(nil)
+     }
+```
+
+**File**: `Modules/Sources/DesktopPet/DesktopPetPresentation.swift` (modified, +4/-0)
+```diff
+@@ -10,6 +10,10 @@ final class DesktopPetPresentation {
+     var pomodoroState: DesktopPetPomodoroState?
+     /// Lean in degrees while the pet peeks out from behind a screen edge.
+     var edgeTilt: Double = 0
++    /// Whether the pet panel is on screen; edge docking may still pause it via `isActive`.
++    var isShown = false
+     /// The custom skin to show instead of the built-in pet.
+     var skin: DesktopPetSkin?
++    /// The skin to render. `nil` while hidden, so the skin's web view exists only while it is shown.
++    var renderedSkin: DesktopPetSkin? { isShown ? skin : nil }
  }
 ```
 
----
-
-### Incident Patch 3: `9bbe4cad` (2026-11-11)
-**Commit Message**: fix item clicking
-
-**File**: `Modules/Sources/OnlyRemoteFeature/Features/Pairing/PairingView.swift` (modified, +5/-5)
+**File**: `Modules/Sources/DesktopPet/DesktopPetRootView.swift` (modified, +1/-1)
 ```diff
-@@ -73,12 +73,12 @@ struct PairingView: View {
-                                 HStack {
-                                     Label(mac.displayName, systemImage: "desktopcomputer")
-                                     Spacer()
--                                    if store.selectedMacID == mac.id {
--                                        Image(systemName: "checkmark.circle.fill")
--                                            .foregroundStyle(.tint)
--                                            .accessibilityHidden(true)
--                                    }
-+                                    Image(systemName: store.selectedMacID == mac.id ? "checkmark.circle.fill" : "circle")
-+                                        .foregroundStyle(store.selectedMacID == mac.id ? AnyShapeStyle(.tint) : AnyShapeStyle(.secondary))
-+                                        .imageScale(.large)
-+                                        .accessibilityHidden(true)
-                                 }
-+                                .contentShape(.rect)
-                             }
-                             .buttonStyle(.plain)
-                             .disabled(store.isPairing)
+@@ -75,7 +75,7 @@ struct DesktopPetRootView: View {
+             isHungry: needsStore.isHungry,
+             reaction: needsStore.reaction,
+             reactionStartedAt: needsStore.reactionStartedAt,
+-            skin: presentation.skin
++            skin: presentation.renderedSkin
+         )
+         .rotationEffect(.degrees(presentation.edgeTilt))
+         .animation(
 ```
 
-**File**: `Modules/Sources/OnlyRemoteFeature/Features/Settings/GlobalSettingsView.swift` (modified, +3/-0)
+**File**: `Modules/Tests/ModulesTests/DesktopPetSkinDocumentTests.swift` (modified, +12/-0)
 ```diff
-@@ -53,6 +53,7 @@ struct GlobalSettingsView: View {
-                                     }
-                                     Spacer()
-                                 }
-+                                .contentShape(.rect)
-                             }
-                             .buttonStyle(.plain)
-                             .accessibilityLabel(Text(mac.id == store.selectedMacID ? "Selected Mac: \(mac.displayName)" : "Select Mac: \(mac.displayName)"))
-@@ -188,6 +189,8 @@ struct GlobalSettingsView: View {
-             Text(title)
-                 .foregroundStyle(Color.primary)
-         }
-+        .frame(maxWidth: .infinity, alignment: .leading)
-+        .contentShape(.rect)
-     }
+@@ -1,7 +1,19 @@
++import DesktopPetSkinKit
++import Foundation
+ import Testing
+ @testable import DesktopPet
  
-     private static let reviewURL = URL(string: "itms-apps://itunes.apple.com/app/id6793657946?action=write-review")!
+ struct DesktopPetSkinDocumentTests {
++    @MainActor @Test func skinRendersOnlyWhileThePetIsShown() {
++        let presentation = DesktopPetPresentation()
++        presentation.skin = DesktopPetSkin(
++            id: UUID(), name: "Cat", summary: "", createdAt: .distantPast, contractVersion: 1, markup: ""
++        )
++        #expect(presentation.renderedSkin == nil)
++        presentation.isShown = true
++        #expect(presentation.renderedSkin == presentation.skin)
++    }
++
+     @Test func attributesReflectState() {
+         let state = DesktopPetAnimationState(pomodoroPhase: .breakTime, isHungry: true, isControlPresented: true)
+         let values = Dictionary(uniqueKeysWithValues: DesktopPetSkinAttributes.values(
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #233** (2026-11-14): Fix and improve Hide Menu Bar Icons feature (@seanjseymour)
 - **PR #229** (2026-10-28): Add option to turn off Keep Awake after manual sleep (@oecer)
 - **PR #221** (2026-09-24): Add settings export/import (Backup section) (@oecer)
 - **PR #219** (2026-09-19): Revise OnlyRemote section in README.md (@jacklandrin)
 - **PR #217** (2026-09-15): docs: explain how to restore the OnlySwitch menu bar icon (@mvanhorn)
 - **PR #215** (2026-08-11): Fix Show List shortcut being treated as a right-click (@EhsanAzish80)
-- **PR #213** (2026-08-10): feat: add a per-app sound mixer switch (@lou1s19)
 
 ---
 
@@ -1423,48 +1495,37 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Read Claude Code credential via security tool to avoid Keychain prompts
+## X. post the desktop pet hunger setting change on the main actor
 
 **RULE**:
-When implementing operations in `Modules/Sources/OnlyAgent/ClaudeUsage/ClaudeKeychainSecurityTool.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jacklandrin/OnlySwitch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Modules/Sources/AppFeature/Features/Settings/DesktopPet/DesktopPetHungerSetting.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jacklandrin/OnlySwitch. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ec1066ef`: Read Claude Code credential via security tool to avoid Keychain prompts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c2731435`: post the desktop pet hunger setting change on the main actor. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Modules/Sources/OnlyAgent/ClaudeUsage/ClaudeKeychainSecurityTool.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Modules/Sources/AppFeature/Features/Settings/DesktopPet/DesktopPetHungerSetting.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-import Foundation
-
-/// Reads Claude Code's Keychain item through Apple's `/usr/bin/security` tool.
-///
-/// Claude Code writes `Claude Code-credentials` with `security add-generic-password`, so the item's
-/// access list trusts `/usr/bin/security`. Reading through the same tool therefore never shows the
-/// Keychain password dialog, whereas a direct `SecItemCopyMatching` from OnlySwitch does — and any
-/// "Always Allow" granted to OnlySwitch is lost each time Claude Code rewrites the item on token refresh.
-enum ClaudeKeychainSecurityTool {
-    static let executable = URL(fileURLWithPath: "/usr/bin/security")
-
-    /// Returns the item's secret, or nil when the tool is unavailable, the item is missing, or the
-    /// tool could not read it without interaction. Callers fall back to the Security framework.
-    static func read(service: String) async -> Data? {
-        guard FileManager.default.isExecutableFile(atPath: executable.path) else { return nil }
-        // A minimal environment: the tool needs nothing from OnlySwitch's process environment.
-        let environment = ["PATH": "/usr/bin:/bin:/usr/sbin:/sbin", "HOME": NSHomeDirectory()]
-        guard let result = await ClaudeCodeCL
+    var save: @Sendable (Bool) async -> Void
+                // Observers such as `AppDelegate` are main-actor isolated, and notifications are
+                // delivered on the posting thread, so post from the main actor.
+                await MainActor.run {
+                    center.value.post(name: .desktopPetNeedsSettingsChanged, object: nil)
+                }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+    var save: @Sendable (Bool) -> Void
+                center.value.post(name: .desktopPetNeedsSettingsChanged, object: nil)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ec1066ef` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c2731435` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T16:50:40.255Z",
+  "updated_at": "2026-11-15T17:04:41.857Z",
   "stats": {
-    "total_discovered": 3788,
-    "approved_pending_harvest": 3573,
+    "total_discovered": 3793,
+    "approved_pending_harvest": 3576,
     "harvested_count": 0,
-    "rejected_count": 215,
+    "rejected_count": 217,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3557,
+      "COMMUNITY_AND_EXPERT": 3562,
       "OFFICIAL_DOCUMENTATION": 126,
       "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
@@ -81852,6 +81852,102 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
         "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-898DFE7A743B": {
+      "id": "SRC-898DFE7A743B",
+      "url": "https://huggingface.co/autotrust/AutoTrust-Decider-Pro-Vision-27B",
+      "title": "https://huggingface.co/autotrust/AutoTrust-Decider-Pro-Vision-27B",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T17:04:41.339Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-autotrust-autotrust-decider-pro-vision-27b-learnings.md",
+        "fileName": "hf-autotrust-autotrust-decider-pro-vision-27b-learnings.md"
+      }
+    },
+    "SRC-326A2E2BF3A8": {
+      "id": "SRC-326A2E2BF3A8",
+      "url": "https://github.com/chocoford/ExcalidrawZ",
+      "title": "https://github.com/chocoford/ExcalidrawZ",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T17:04:41.761Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chocoford-excalidrawz-learnings.md",
+        "fileName": "chocoford-excalidrawz-learnings.md"
+      }
+    },
+    "SRC-C37342130184": {
+      "id": "SRC-C37342130184",
+      "url": "http://127.0.0.1:8486/index.html",
+      "title": "http://127.0.0.1:8486/index.html",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-15T17:04:41.794Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chocoford-excalidrawz-learnings.md",
+        "fileName": "chocoford-excalidrawz-learnings.md"
+      }
+    },
+    "SRC-1C086D8022F2": {
+      "id": "SRC-1C086D8022F2",
+      "url": "http://127.0.0.1:8487/index.html",
+      "title": "http://127.0.0.1:8487/index.html",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-15T17:04:41.825Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chocoford-excalidrawz-learnings.md",
+        "fileName": "chocoford-excalidrawz-learnings.md"
+      }
+    },
+    "SRC-0089331F9D49": {
+      "id": "SRC-0089331F9D49",
+      "url": "https://github.com/user-attachments/assets/6b5db696-897d-4c9d-901c-19e13b6a91a8",
+      "title": "https://github.com/user-attachments/assets/6b5db696-897d-4c9d-901c-19e13b6a91a8",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T17:04:41.857Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chocoford-excalidrawz-learnings.md",
+        "fileName": "chocoford-excalidrawz-learnings.md"
       }
     }
   }

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-15T16:50:40.596Z",
-  "total_verified_learnings": 8706,
+  "last_updated": "2026-11-15T17:04:43.105Z",
+  "total_verified_learnings": 8709,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18469,
+  "total_items": 18487,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -220828,14 +220828,19 @@
       "slug": "neuron-core-neuron-ai",
       "platform": "github",
       "source_url": "https://github.com/neuron-core/neuron-ai",
-      "source_version": "0ee0f399",
-      "content_hash": "551f515a22ba0da3009d78d7f27ba39d4b405bd997da682b5e682df05e6ce0db",
+      "source_version": "5e9c7b57",
+      "content_hash": "ad57dabb6696007d3ca730f8a05e1cf919457449c0c0094c586ffdc572875275",
       "dossier_path": "07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md",
       "promoted_rules": [
         {
           "number": 8423,
           "title": "streaming channel",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8631,
+          "title": "sync streaming 0.4.1 in the frontend tests and lock file",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -220844,7 +220849,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T03:01:54.754Z",
+      "verified_at": "2026-11-15T17:04:03.655Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -220886,10 +220891,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-neuron-core-neuron-ai-technical-construction-intelligence-neuron-core-neuron-ai-.md",
       "title": "Technical Construction Intelligence: neuron-core/neuron-ai Core Invariants",
       "repository": "neuron-core/neuron-ai",
-      "source_version": "0ee0f399",
-      "content_hash": "ee45877616dd7e90bd8622b42eafcc269311f86d9ac8dad54f777a97e4debe18",
+      "source_version": "5e9c7b57",
+      "content_hash": "c2c46d0c8473e476a8c7f96dc0113844905a9add917757a099cd5d08ed9e8b54",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T03:01:55.098Z"
+      "persisted_at": "2026-11-15T17:04:04.180Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-neuron-core-neuron-ai": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-neuron-core-neuron-ai",
@@ -220898,10 +220903,10 @@
       "relative_path": "08_VERIFICATION/neuron-core-neuron-ai-verification-protocol-empirical-defect-shield-for-neuron-c.md",
       "title": "Verification Protocol: Empirical Defect Shield for neuron-core/neuron-ai",
       "repository": "neuron-core/neuron-ai",
-      "source_version": "0ee0f399",
-      "content_hash": "47b5d040030b3783a305a3cf663c2990777ab8b30438b0a419bba2130b18ffac",
+      "source_version": "5e9c7b57",
+      "content_hash": "1841283dc95167a931b05c554e68463e2b3a3a9da751ac0d39d2067208b1cff1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T03:01:55.179Z"
+      "persisted_at": "2026-11-15T17:04:04.320Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-zai-org-glm-5-2-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-zai-org-glm-5-2-learnings-core-invariants",
@@ -230987,13 +230992,13 @@
       "item_id": "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-vision-27b-core-",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-jev-27b-vl-research-knowledge-intelligence-autotrust-autotrust-deci.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-autotrust-decider-pro-vision-27b-research-knowledge-intelligence-au.md",
       "title": "Research & Knowledge Intelligence: autotrust/AutoTrust-Decider-Pro-Vision-27B Core Invariants",
       "repository": "autotrust/AutoTrust-Decider-Pro-Vision-27B",
-      "source_version": "hf-autotrust-jev-27b-vl",
-      "content_hash": "3b1e5ae2cef228a90ed8e709b420bb314cd8039a8cb05f4ac4e8b0dc2ebddb49",
+      "source_version": "hf-autotrust-autotrust-decider-pro-vision-27b",
+      "content_hash": "372389035b918036d3d6e58cbc9f28c8bea7959dcee1c52b37cf7a5bd63bc7e0",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T16:43:18.539Z"
+      "persisted_at": "2026-11-15T17:03:47.211Z"
     },
     "candidate_directive-ci-remove-atomics-flags-from-wasm32-wasip1-job": {
       "item_id": "candidate_directive-ci-remove-atomics-flags-from-wasm32-wasip1-job",
@@ -244469,6 +244474,285 @@
       "content_hash": "82c6bcdd9881ab8fc1042f103c1602e1e7ce8000072c6576da2c2533e565611e",
       "domain_letter": "G",
       "persisted_at": "2026-11-15T16:50:40.408Z"
+    },
+    "learn-huggingface-autotrust-autotrust-decider-pro-vision-27b": {
+      "learning_id": "learn-huggingface-autotrust-autotrust-decider-pro-vision-27b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "autotrust/AutoTrust-Decider-Pro-Vision-27B",
+      "repository": "autotrust/AutoTrust-Decider-Pro-Vision-27B",
+      "slug": "hf-autotrust-autotrust-decider-pro-vision-27b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/autotrust/AutoTrust-Decider-Pro-Vision-27B",
+      "source_version": "hf-autotrust-autotrust-decider-pro-vision-27b",
+      "content_hash": "6f41447e0ad2272a92818e9d23efb3a72b8df211149c4d6de3e4b5bebbbd2c45",
+      "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-autotrust-decider-pro-vision-27b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-autotrust-decider-pro-vision-27b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T17:03:46.797Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-chocoford-excalidrawz": {
+      "learning_id": "learn-github-chocoford-excalidrawz",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "chocoford/ExcalidrawZ",
+      "repository": "chocoford/ExcalidrawZ",
+      "slug": "chocoford-excalidrawz",
+      "platform": "github",
+      "source_url": "https://github.com/chocoford/ExcalidrawZ",
+      "source_version": "19216eb2",
+      "content_hash": "ebddf28b5523f4864d6594d9e4282ab11fc2a7d252894e9ad4bd2f084f227c5a",
+      "dossier_path": "07_PROJECT_LEARNING/chocoford-excalidrawz-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/chocoford-excalidrawz-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8629,
+          "title": "Improve file icons and compact search UX",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T17:03:54.230Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8629": {
+      "learning_id": "rule-8629",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8629,
+      "title": "Improve file icons and compact search UX",
+      "source_url": "https://github.com/chocoford/ExcalidrawZ",
+      "source_version": "19216eb2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T17:03:54.230Z"
+    },
+    "candidate_directive-improve-file-icons-and-compact-search-ux": {
+      "item_id": "candidate_directive-improve-file-icons-and-compact-search-ux",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4FW5-improve-file-icons-and-compact-search-ux.md",
+      "title": "Improve file icons and compact search UX",
+      "repository": "chocoford-excalidrawz-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3b01033793d933622cff96fdc37b50e7a9f6df7ef791adbc2704b3bde65a74a6",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-15T17:04:42.114Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-chocoford-excalidrawz-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-chocoford-excalidrawz-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-chocoford-excalidrawz-technical-construction-intelligence-chocoford-excalidrawz-.md",
+      "title": "Technical Construction Intelligence: chocoford/ExcalidrawZ Core Invariants",
+      "repository": "chocoford/ExcalidrawZ",
+      "source_version": "19216eb2",
+      "content_hash": "56aaea52ec57565dc4ab5f6255ffa83f5867d0cdec9379dffcf9fcd5d9978db9",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T17:03:54.786Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-chocoford-excalidrawz": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-chocoford-excalidrawz",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/chocoford-excalidrawz-verification-protocol-empirical-defect-shield-for-chocofor.md",
+      "title": "Verification Protocol: Empirical Defect Shield for chocoford/ExcalidrawZ",
+      "repository": "chocoford/ExcalidrawZ",
+      "source_version": "19216eb2",
+      "content_hash": "0184f8abdb32d4083b4f8beaba33c5a3d5b632e63a03f3e743dd4b3cf2daf716",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T17:03:54.925Z"
+    },
+    "learn-github-jacklandrin-onlyswitch": {
+      "learning_id": "learn-github-jacklandrin-onlyswitch",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "jacklandrin/OnlySwitch",
+      "repository": "jacklandrin/OnlySwitch",
+      "slug": "jacklandrin-onlyswitch",
+      "platform": "github",
+      "source_url": "https://github.com/jacklandrin/OnlySwitch",
+      "source_version": "ff711c47",
+      "content_hash": "9cc41d8c90ad84a1efea53836204a7a0144436b4caf67c1df0ba56f71d3ac295",
+      "dossier_path": "07_PROJECT_LEARNING/jacklandrin-onlyswitch-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/jacklandrin-onlyswitch-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8630,
+          "title": "post the desktop pet hunger setting change on the main actor",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T17:03:57.001Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8630": {
+      "learning_id": "rule-8630",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8630,
+      "title": "post the desktop pet hunger setting change on the main actor",
+      "source_url": "https://github.com/jacklandrin/OnlySwitch",
+      "source_version": "ff711c47",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T17:03:57.001Z"
+    },
+    "candidate_directive-post-the-desktop-pet-hunger-setting-change-on-the-main-actor": {
+      "item_id": "candidate_directive-post-the-desktop-pet-hunger-setting-change-on-the-main-actor",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4GFW-post-the-desktop-pet-hunger-setting-change-on-the-main-actor.md",
+      "title": "post the desktop pet hunger setting change on the main actor",
+      "repository": "jacklandrin-onlyswitch-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7a672451fa9b5128c58ec28a64a4b77e735481a7dd31514e44d7ba600c95ce2e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T17:04:42.813Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-jacklandrin-onlyswitch-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-jacklandrin-onlyswitch-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-jacklandrin-onlyswitch-technical-construction-intelligence-jacklandrin-onlyswitc.md",
+      "title": "Technical Construction Intelligence: jacklandrin/OnlySwitch Core Invariants",
+      "repository": "jacklandrin/OnlySwitch",
+      "source_version": "ff711c47",
+      "content_hash": "34192aa9fe5b513b276c546181ec0f0b6d8c52ee6f8cdada05d45a1ca8f51d32",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T17:03:57.538Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-jacklandrin-onlyswitch": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-jacklandrin-onlyswitch",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/jacklandrin-onlyswitch-verification-protocol-empirical-defect-shield-for-jacklan.md",
+      "title": "Verification Protocol: Empirical Defect Shield for jacklandrin/OnlySwitch",
+      "repository": "jacklandrin/OnlySwitch",
+      "source_version": "ff711c47",
+      "content_hash": "fe33e454b45166ef342de74bce69d6d07f0b54c0b96c836cab5d77e3952f7dca",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T17:03:57.679Z"
+    },
+    "rule-8631": {
+      "learning_id": "rule-8631",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8631,
+      "title": "sync streaming 0.4.1 in the frontend tests and lock file",
+      "source_url": "https://github.com/neuron-core/neuron-ai",
+      "source_version": "5e9c7b57",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T17:04:03.655Z"
+    },
+    "candidate_directive-sync-streaming-0-4-1-in-the-frontend-tests-and-lock-file": {
+      "item_id": "candidate_directive-sync-streaming-0-4-1-in-the-frontend-tests-and-lock-file",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3MIY-sync-streaming-0-4-1-in-the-frontend-tests-and-lock-file.md",
+      "title": "sync streaming 0.4.1 in the frontend tests and lock file",
+      "repository": "neuron-core/neuron-ai",
+      "source_version": "5e9c7b57",
+      "content_hash": "f880fbec6bc842dfcd64b812140781e96ea02cfe00f5165dc7cc91a04e96063d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T17:04:04.043Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-autotrust-autotrust-decider-pro-vision-27b-le": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-autotrust-autotrust-decider-pro-vision-27b-le",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-autotrust-decider-pro-vision-27b-learnings-research-knowledge-intel.md",
+      "title": "Research & Knowledge Intelligence: hf-autotrust-autotrust-decider-pro-vision-27b-learnings Core Invariants",
+      "repository": "hf-autotrust-autotrust-decider-pro-vision-27b-learnings",
+      "source_version": "HEAD",
+      "content_hash": "89019f6a7a0fb67e10fc58546ccdf25acc603441b8dcb8445651c871ae1d8997",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T17:04:41.565Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-chocoford-excalidrawz-learnings-core-invaria": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-chocoford-excalidrawz-learnings-core-invaria",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-chocoford-excalidrawz-learnings-technical-construction-intelligence-chocoford-ex.md",
+      "title": "Technical Construction Intelligence: chocoford-excalidrawz-learnings Core Invariants",
+      "repository": "chocoford-excalidrawz-learnings",
+      "source_version": "HEAD",
+      "content_hash": "541976f4a923b33a859cc6f5c87894286f764e876445e7132bfc437f7208aba8",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T17:04:42.254Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-chocoford-excalidrawz-learning": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-chocoford-excalidrawz-learning",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/chocoford-excalidrawz-learnings-verification-protocol-empirical-defect-shield-fo.md",
+      "title": "Verification Protocol: Empirical Defect Shield for chocoford-excalidrawz-learnings",
+      "repository": "chocoford-excalidrawz-learnings",
+      "source_version": "HEAD",
+      "content_hash": "edad9e0dd6b124458aa48e58977b968491294821f595b35a69fdd0bde5e3a5e3",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T17:04:42.407Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-jacklandrin-onlyswitch-learnings-core-invari": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-jacklandrin-onlyswitch-learnings-core-invari",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-jacklandrin-onlyswitch-learnings-technical-construction-intelligence-jacklandrin.md",
+      "title": "Technical Construction Intelligence: jacklandrin-onlyswitch-learnings Core Invariants",
+      "repository": "jacklandrin-onlyswitch-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2758d7f93287fd6a4d634200c3eb0ec8c2bcf4793e89fb6e4ca74d69db4c6960",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T17:04:42.950Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-jacklandrin-onlyswitch-learnin": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-jacklandrin-onlyswitch-learnin",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/jacklandrin-onlyswitch-learnings-verification-protocol-empirical-defect-shield-f.md",
+      "title": "Verification Protocol: Empirical Defect Shield for jacklandrin-onlyswitch-learnings",
+      "repository": "jacklandrin-onlyswitch-learnings",
+      "source_version": "HEAD",
+      "content_hash": "589b705b9c53f951c8006398fd1204bfa51294b5bf8dbbbb64f382bfe2c38f47",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T17:04:43.105Z"
     }
   },
   "ai-builder-brain": {

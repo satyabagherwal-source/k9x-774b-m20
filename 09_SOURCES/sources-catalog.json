@@ -3113,10 +3113,10 @@
     "repository": "neuron-core/neuron-ai",
     "platform": "github",
     "sourceUrl": "https://github.com/neuron-core/neuron-ai",
-    "sourceVersion": "0ee0f399",
+    "sourceVersion": "5e9c7b57",
     "license": "MIT",
-    "contentHash": "551f515a22ba0da3009d78d7f27ba39d4b405bd997da682b5e682df05e6ce0db",
-    "lastHarvestedAt": "2026-11-14T03:01:54.868Z",
+    "contentHash": "ad57dabb6696007d3ca730f8a05e1cf919457449c0c0094c586ffdc572875275",
+    "lastHarvestedAt": "2026-11-15T17:04:03.842Z",
     "learningId": "learn-github-neuron-core-neuron-ai"
   },
   "geekyants-nativebase": {
@@ -8063,10 +8063,10 @@
     "repository": "jacklandrin/OnlySwitch",
     "platform": "github",
     "sourceUrl": "https://github.com/jacklandrin/OnlySwitch",
-    "sourceVersion": "9f6d833e",
+    "sourceVersion": "ff711c47",
     "license": "MIT",
-    "contentHash": "07a847cc25fbaa6b7f724aa2b9511506a879fe42245f1ef9f9a09e5e5ad72dfc",
-    "lastHarvestedAt": "2026-11-12T04:50:34.374Z",
+    "contentHash": "9cc41d8c90ad84a1efea53836204a7a0144436b4caf67c1df0ba56f71d3ac295",
+    "lastHarvestedAt": "2026-11-15T17:03:57.185Z",
     "learningId": "learn-github-jacklandrin-onlyswitch"
   },
   "alin23-lunar": {
@@ -12628,5 +12628,25 @@
     "contentHash": "f0576e7c724480e6d241a6526a39c230f00768d82dc0051053f73b26c95c72b1",
     "lastHarvestedAt": "2026-11-15T14:56:03.572Z",
     "learningId": "learn-github-seo-skills-seo-audit-skill"
+  },
+  "hf-autotrust-autotrust-decider-pro-vision-27b": {
+    "repository": "autotrust/AutoTrust-Decider-Pro-Vision-27B",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/autotrust/AutoTrust-Decider-Pro-Vision-27B",
+    "sourceVersion": "hf-autotrust-autotrust-decider-pro-vision-27b",
+    "license": "Open-Source",
+    "contentHash": "6f41447e0ad2272a92818e9d23efb3a72b8df211149c4d6de3e4b5bebbbd2c45",
+    "lastHarvestedAt": "2026-11-15T17:03:46.999Z",
+    "learningId": "learn-huggingface-autotrust-autotrust-decider-pro-vision-27b"
+  },
+  "chocoford-excalidrawz": {
+    "repository": "chocoford/ExcalidrawZ",
+    "platform": "github",
+    "sourceUrl": "https://github.com/chocoford/ExcalidrawZ",
+    "sourceVersion": "19216eb2",
+    "license": "MIT",
+    "contentHash": "ebddf28b5523f4864d6594d9e4282ab11fc2a7d252894e9ad4bd2f084f227c5a",
+    "lastHarvestedAt": "2026-11-15T17:03:54.418Z",
+    "learningId": "learn-github-chocoford-excalidrawz"
   }
 }

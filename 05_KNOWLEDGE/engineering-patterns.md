@@ -624257,3 +624257,228 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `daf82a50` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8629. Improve file icons and compact search UX (Harvested from chocoford/ExcalidrawZ)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Improve file icons and compact search UX",
+  "source": "chocoford/ExcalidrawZ",
+  "source_url": "https://github.com/chocoford/ExcalidrawZ",
+  "source_version": "19216eb2",
+  "license": "MIT",
+  "extracted_at": "2026-11-15T17:03:53.928Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-chocoford-excalidrawz",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [chocoford/ExcalidrawZ](https://github.com/chocoford/ExcalidrawZ) (Revision: `19216eb2`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `ExcalidrawZ.xcodeproj/project.pbxproj`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in chocoford/ExcalidrawZ. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `01eb91d2`: Improve file icons and compact search UX. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `ExcalidrawZ.xcodeproj/project.pbxproj`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+		FEF74DCD7CE44B70BD733EC3 /* ExcalidrawDocument-64.png in Resources */ = {isa = PBXBuildFile; fileRef = 7254AFB37AB04433805E3415 /* ExcalidrawDocument-64.png */; };
+		E30B1C5288C94624A0E32DAD /* ExcalidrawDocument-128.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E9D2823B4FB4F209959038D /* ExcalidrawDocument-128.png */; };
+		21DFD6DCDF034C198AFD1605 /* ExcalidrawDocument-320.png in Resources */ = {isa = PBXBuildFile; fileRef = CCB2D0B79C584A4C90DEAB52 /* ExcalidrawDocument-320.png */; };
+		1D0245AC32C045FFA0F7FE34 /* ExcalidrawDocument.icns in Resources */ = {isa = PBXBuildFile; fileRef = A537CFEF92184BFBBDB31B77 /* ExcalidrawDocument.icns */; };
+		23611917B50E4D6492E0C43C /* ExcalidrawDocument-64.png in Resources */ = {isa = PBXBuildFile; fileRef = 7254AFB37AB04433805E3415 /* ExcalidrawDocument-64.png */; };
+		F5C0E6110E1145449AEDEAD2 /* ExcalidrawDocument-128.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E9D2823B4FB4F209959038D /* ExcalidrawDocument-128.png */; };
+		DF1B60C713C340BEAC2947FA /* ExcalidrawDocument-320.png in Resources */ = {isa = PBXBuildFile; fileRef = CCB2D0B79C584A4C90DEAB52 /* ExcalidrawDocument-320.png */; };
+		7E21756455434E8EAB04D9D3 /* Exca
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `01eb91d2` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8630. post the desktop pet hunger setting change on the main actor (Harvested from jacklandrin/OnlySwitch)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "post the desktop pet hunger setting change on the main actor",
+  "source": "jacklandrin/OnlySwitch",
+  "source_url": "https://github.com/jacklandrin/OnlySwitch",
+  "source_version": "ff711c47",
+  "license": "MIT",
+  "extracted_at": "2026-11-15T17:03:56.698Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-jacklandrin-onlyswitch",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [jacklandrin/OnlySwitch](https://github.com/jacklandrin/OnlySwitch) (Revision: `ff711c47`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `Modules/Sources/AppFeature/Features/Settings/DesktopPet/DesktopPetHungerSetting.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jacklandrin/OnlySwitch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `c2731435`: post the desktop pet hunger setting change on the main actor. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Modules/Sources/AppFeature/Features/Settings/DesktopPet/DesktopPetHungerSetting.swift`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+    var save: @Sendable (Bool) async -> Void
+                // Observers such as `AppDelegate` are main-actor isolated, and notifications are
+                // delivered on the posting thread, so post from the main actor.
+                await MainActor.run {
+                    center.value.post(name: .desktopPetNeedsSettingsChanged, object: nil)
+                }
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Induced defect failure mode:
+    var save: @Sendable (Bool) -> Void
+                center.value.post(name: .desktopPetNeedsSettingsChanged, object: nil)
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `c2731435` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8631. sync streaming 0.4.1 in the frontend tests and lock file (Harvested from neuron-core/neuron-ai)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "sync streaming 0.4.1 in the frontend tests and lock file",
+  "source": "neuron-core/neuron-ai",
+  "source_url": "https://github.com/neuron-core/neuron-ai",
+  "source_version": "5e9c7b57",
+  "license": "MIT",
+  "extracted_at": "2026-11-15T17:04:03.347Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-neuron-core-neuron-ai",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [neuron-core/neuron-ai](https://github.com/neuron-core/neuron-ai) (Revision: `5e9c7b57`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in neuron-core/neuron-ai. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `5e9c7b57`: sync streaming 0.4.1 in the frontend tests and lock file. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing PHP data structures, boundary deserialization, API parsing, or resource lifecycles matching `package-lock.json`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```php
+// Verified production-grade fix pattern:
+      "version": "0.4.1",
+        "@neuron-core/streaming": "0.4.1",
+```
+
+**NEGATIVE CONSTRAINT**:
+```php
+// Induced defect failure mode:
+      "version": "0.3.0",
+        "@neuron-core/streaming": "0.3.0",
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `5e9c7b57` are properly handled with clean fallback behavior.

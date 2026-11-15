@@ -10118,3 +10118,8 @@
 | `CYCLE-20261115-M4P8` | `2026-11-15T16:50:27.788Z` | `Jarvis322/macos-sysdata` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8627` | Yes (`2c82cb0e...`) |
 | `CYCLE-20261115-M7UN` | `2026-11-15T16:50:31.871Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8628` | Yes (`f8b2f885...`) |
 | `CYCLE-20261115-MB20` | `2026-11-15T16:50:36.024Z` | `dathere/qsv` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/dathere-qsv-learnings.md` | Yes (`dd1fd21d...`) |
+| `CYCLE-20261115-39DE` | `2026-11-15T17:03:46.994Z` | `autotrust/AutoTrust-Decider-Pro-Vision-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-autotrust-decider-pro-vision-27b-learnings.md` | Yes (`6f41447e...`) |
+| `CYCLE-20261115-3F3I` | `2026-11-15T17:03:54.414Z` | `chocoford/ExcalidrawZ` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8629` | Yes (`ebddf28b...`) |
+| `CYCLE-20261115-3H8C` | `2026-11-15T17:03:57.180Z` | `jacklandrin/OnlySwitch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8630` | Yes (`9cc41d8c...`) |
+| `CYCLE-20261115-3MDA` | `2026-11-15T17:04:03.838Z` | `neuron-core/neuron-ai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8631` | Yes (`ad57dabb...`) |
+| `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T17:04:41.313Z` | `hf-autotrust-autotrust-decider-pro-vision-27b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-A223FE37` [Domain D] | Yes (`20510433...`) |

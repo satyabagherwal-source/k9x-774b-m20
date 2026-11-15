@@ -21217,5 +21217,32 @@
     "qualityScore": 1979,
     "verifiedOrg": true,
     "discoveredAt": "2026-11-15T14:21:48.029Z"
+  },
+  {
+    "name": "autotrust/AutoTrust-Decider-Pro-Vision-27B",
+    "fullName": "autotrust/AutoTrust-Decider-Pro-Vision-27B",
+    "url": "https://huggingface.co/autotrust/AutoTrust-Decider-Pro-Vision-27B",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: autotrust/AutoTrust-Decider-Pro-Vision-27B (5072 likes, 1411039 downloads)",
+    "likes": 5072,
+    "downloads": 1411039,
+    "qualityScore": 52720,
+    "discoveredAt": "2026-11-15T17:01:32.016Z"
+  },
+  {
+    "name": "ExcalidrawZ",
+    "fullName": "chocoford/ExcalidrawZ",
+    "url": "https://github.com/chocoford/ExcalidrawZ",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Excalidraw app for mac. Powered by pure SwiftUI.",
+    "stars": 1910,
+    "forks": 104,
+    "openIssues": 57,
+    "language": "Swift",
+    "qualityScore": 1350,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-15T17:01:36.079Z"
   }
 ]
