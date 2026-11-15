@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for jellyfin/swiftfin
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for jellyfin/Swiftfin
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "jellyfin/swiftfin",
-  "source_url": "https://github.com/jellyfin/swiftfin",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "jellyfin/Swiftfin",
+  "source_url": "https://github.com/jellyfin/Swiftfin",
+  "source_version": "e956be4a",
+  "license": "MPL-2.0",
+  "timestamp": "2026-11-15T22:58:41.403Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-jellyfin-swiftfin",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [jellyfin/swiftfin](https://github.com/jellyfin/swiftfin) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [jellyfin/Swiftfin](https://github.com/jellyfin/Swiftfin) (Revision: `e956be4a`).  
+> **License**: MPL-2.0 | **Timestamp**: `2026-11-15T22:58:41.403Z`  
+> **Learning ID**: `learn-github-jellyfin-swiftfin`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `jellyfin/swiftfin` (Commit: `historical`)
+- **Target Repository**: `jellyfin/Swiftfin` (Commit: `e956be4a`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md`  
-> **Source**: github ([https://github.com/jellyfin/Swiftfin](https://github.com/jellyfin/Swiftfin))  
-> **Source Version**: `e523ba9d`  
-> **License**: MPL-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T11:37:15.523Z  
-> **Learning ID**: `learn-github-jellyfin-swiftfin`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): jellyfin/Swiftfin
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/jellyfin/Swiftfin](https://github.com/jellyfin/Swiftfin))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T11:37:15.518Z  
+> **Harvest Timestamp**: 2026-11-15T22:58:40.420Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Native Jellyfin Client for iOS and tvOS 
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4273 stars
+- **Stars / Engagement**: 4285 stars
 
 ---
 
@@ -663,11 +649,11 @@ extension MediaPlayerQueue {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #2437** (2026-11-14): **Map mpv tracks past external Jellyfin streams**
+  *Symptoms*: ## Summary  Fixes mpv playing the wrong audio/subtitle track when an item has external subtitles.  ## Problem  Jellyfin lists external subtitles before the embedded streams, so every embedded stream's `Index` is shifted by the number of external subtitles. The mpv track map matched that `Index` directly against mpv's `ff-index` (`sourceStreamIndex`), which is the stream's position in the container.  Example, a movie with one external subtitle and two audio tracks:  | Stream | Jellyfin `Index` | ff-index | |---|---|---| | external subtitle | 0 | – | | video | 1 | 0 | | audio: main | 2 | 1 | | audio: commentary | 3 | 2 |  Selecting the main audio (`Index` 2) plays the commentary (ff-index 2).  This only happens on direct play. When the server remuxes, it maps the selected stream itself, so the player receives the right track.  ## Change  Before matching, subtract the number of external streams whose `Index` is lower than the stream's own. This is the mapping jellyfin/jellyfin#18523 describes as expected ("14 minus the 4 external subtitles").  Only external streams *before* the stream are counted, so this also holds if Jellyfin adopts stable numbering as proposed in jellyfin/jellyfin#17681, where new external subtitles are appended after the embedded streams. Without external subtitles nothing changes.  ## Testing  Built in fork here: https://github.com/Miista/Swiftfin/actions/runs/43617798420  ~Will test on Apple TV later tonight. May als
+
 - **Issue #2425** (2026-11-12): **tvOS Various Fixes**
   *Symptoms*: ### Summary  This is a small grab bag of new items I noticed:  ### Search the filter bar would move to the center while suggestions were loading in. This anchors it to the top for tvOS since the filter bar is inside the view instead of in the toolbar.  #### Before  <img width="1920" height="1080" alt="Screenshot Apple TV 4K (3rd generation) (at 1080p) 11-11-2026 at 15 40 08" src="https://github.com/user-attachments/assets/8bc44098-f313-4e30-8558-94219369b334" />  #### After  <img width="1920" height="1080" alt="Screenshot Apple TV 4K (3rd generation) (at 1080p) 11-11-2026 at 11 08 47" src="https://github.com/user-attachments/assets/3f0a01b6-b8f4-44f3-800b-122d931acc59" />  ### Capsules are skinny on tvOS. This just increases the padding on tvOS. Most notable for the seasons capsules:  #### Before  <img width="1056" height="258" alt="Pasted 2026-11-11 at 10 14 32" src="https://github.com/user-attachments/assets/1c95e14f-712e-402f-ac76-31c44a4af9a2" />  #### After  <img width="1920" height="1080" alt="Screenshot Apple TV 4K (3rd generation) (at 1080p) 11-11-2026 at 10 12 25" src="https://github.com/user-attachments/assets/cfe86af2-2609-4dcc-906b-8230d307a999" />  ### ItemView and Home scrolling back to the top doesn't move focus up with it. This was a weird one where it was just the CollectionHStackFocusScope needed to sit around the scrollview instead or the parent to resolve this.  **Claude Code was used to diagnose this issue**  #### Before  htt
-
-- **Issue #2421** (2026-11-10): **1.7 tvOS Cleanup**
-  *Symptoms*: ### Summary  Fixes toggles using `accentColor` instead of `Color.primary`. Changes the user sign in button height. Flattens the liquid glass for `ListRowMenu` to better mirror existing items like the `ChevronButton` etc.  ### Sign In  #### Before  <img width="1920" height="1080" alt="Screenshot Apple TV 4K (3rd generation) (at 1080p) 11-09-2026 at 13 55 09" src="https://github.com/user-attachments/assets/6bf2736e-1e44-4635-8168-5506945467ba" />  #### After  <img width="1920" height="1080" alt="Screenshot Apple TV 4K (3rd generation) (at 1080p) 11-09-2026 at 13 54 02" src="https://github.com/user-attachments/assets/763f974d-89ab-440b-b254-22d7a122bd58" />  ### Toggles  #### Before  <img width="1920" height="1080" alt="Screenshot Apple TV 4K (3rd generation) (at 1080p) 11-09-2026 at 13 55 16" src="https://github.com/user-attachments/assets/07feac2c-ead3-4ca8-b4c4-cf042dd9f79a" />  #### After  <img width="1920" height="1080" alt="Screenshot Apple TV 4K (3rd generation) (at 1080p) 11-09-2026 at 14 37 31" src="https://github.com/user-attachments/assets/4898584e-455d-40f1-b8d4-4ac97ddd325b" />  ### Flattening the LIstRowMenu  #### Before  <img width="1920" height="1080" alt="Screenshot Apple TV 4K (3rd generation) (at 1080p) 11-09-2026 at 13 54 11" src="https://github.com/user-attachments/assets/196933d8-7961-4e00-93b1-bc71ad286933" />  #### After  <img width="1920" height="1080" alt="Screenshot Apple TV 4K (3rd generation) (at 1080p) 11-09-2026 at 1
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -684,435 +670,682 @@ extension MediaPlayerQueue {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c923cd58` (2026-11-12)
-**Commit Message**: tvOS Various Fixes (#2425)
+### Incident Patch 1: `e956be4a` (2026-11-15)
+**Commit Message**: `ActiveSessions` Fully Utilize `PagingLibrary` (#2423)
 
-Co-authored-by: Ethan Pippin <[REDACTED_EMAIL]>
-
-**File**: `Shared/Components/ButtonStyles/CapsuleButtonStyle.swift` (modified, +26/-23)
+**File**: `Shared/Extensions/JellyfinAPI/SessionInfoDto+Poster.swift` (added, +210/-0)
 ```diff
-@@ -39,49 +39,52 @@ struct CapsuleButtonStyle: ButtonStyle {
-         let minimumHeight: CGFloat
-         let labelSpacing: CGFloat
- 
--        init(_ controlSize: ControlSize) {
-+        init(_ controlSize: ControlSize, layout: ViewLayout) {
-             switch controlSize {
-             case .mini:
-                 self.font = .caption2
--                self.horizontalPadding = 6
--                self.verticalPadding = 2
--                self.minimumHeight = 20
--                self.labelSpacing = 2
-+                self.horizontalPadding = layout.value(standard: 6, large: 12)
-+                self.verticalPadding = layout.value(standard: 2, large: 4)
-+                self.minimumHeight = layout.value(standard: 20, large: 40)
-+                self.labelSpacing = layout.value(standard: 2, large: 4)
- 
-             case .small:
-                 self.font = .footnote
--                self.horizontalPadding = 8
--                self.verticalPadding = 4
--                self.minimumHeight = 26
--                self.labelSpacing = 2
-+                self.horizontalPadding = layout.value(standard: 8, large: 16)
-+                self.verticalPadding = layout.value(standard: 4, large: 8)
-+                self.minimumHeight = layout.value(standard: 26, large: 52)
-+                self.labelSpacing = layout.value(standard: 2, large: 4)
- 
-             case .regular:
-                 self.font = .callout
--                self.horizontalPadding = 10
--                self.verticalPadding = 5
--                self.minimumHeight = 30
--                self.labelSpacing = 4
-+                self.horizontalPadding = layout.value(standard: 10, large: 20)
-+                self.verticalPadding = layout.value(standard: 5, large: 10)
-+                self.minimumHeight = layout.value(standard: 30, large: 60)
-+                self.labelSpacing = layout.value(standard: 4, large: 8)
- 
-             case .large:
-                 self.font = .headline
--                self.horizontalPadding = 12
--                self.verticalPadding = 6
--                self.minimumHeight = 36
--                self.labelSpacing = 5
-+                self.horizontalPadding = layout.value(standard: 12, large: 24)
-+                self.verticalPadding = layout.value(standard: 6, large: 12)
-+                self.minimumHeight = layout.value(standard: 36, large: 72)
-+                self.labelSpacing = layout.value(standard: 5, large: 10)
- 
-             case .extraLarge:
-                 self.font = .title3
--                self.horizontalPadding = 16
--                self.verticalPadding = 8
--                self.minimumHeight = 44
--                self.labelSpacing = 6
-+                self.horizontalPadding = layout.value(standard: 16, large: 32)
-+                self.verticalPadding = layout.value(standard: 8, large: 16)
-+                self.minimumHeight = layout.value(standard: 44, large: 88)
-+                self.labelSpacing = layout.value(standard: 6, large: 12)
- 
-             @unknown default:
--                self = CapsuleControlMetrics(.regular)
-+                self = CapsuleControlMetrics(.regular, layout: layout)
-             }
-         }
-     }
- 
-+    @AdaptiveLayout
-+    private var viewLayout
+@@ -0,0 +1,210 @@
++//
++// Swiftfin is subject to the terms of the Mozilla Public
++// License, v2.0. If a copy of the MPL was not distributed with this
++// file, you can obtain one at https://mozilla.org/MPL/2.0/.
++//
++// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
++//
 +
-     @Environment(\.controlSize)
-     private var controlSize
-     @Environment(\.isEnabled)
-@@ -99,7 +102,7 @@ struct CapsuleButtonStyle: ButtonStyle {
-     var anchor: HorizontalEdge?
- 
-     private var metrics: CapsuleControlMetrics {
--        CapsuleControlMetrics(controlSize)
-+        CapsuleControlMetrics(controlSize, layout: viewLayout)
-     }
- 
-     private var isHighlighted: Bool {
-```
-
-**File**: `Shared/Components/ContentGroupVStack.swift` (modified, +1/-13)
-```diff
-@@ -6,7 +6,6 @@
- // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
- //
- 
--import CollectionHStack
- import SwiftUI
- 
- struct ContentGroupVStack: View {
-@@ -26,7 +25,7 @@ struct ContentGroupVStack: View {
-     }
- 
-     @ContentBuilder
--    private var content: some View {
-+    var body: some View {
-         VStack(alignment: .leading, spacing: spacing) {
-             ForEach(groups, id: \.id) { group in
-                 makeGroupBody(group)
-@@ -36,15 +35,4 @@ struct ContentGroupVStack: View {
-         }
-         .frame(maxWidth: .infinity, alignment: .topLeading)
-     }
--
--    @ContentBuilder
--    var body: some View {
--        #if os(tvOS)
--        CollectionHStackFocusScope {
--            content
--        }
--        #else
--        content
--        #endif
--    }
- }
-```
-
-**File**: `Shared/Components/FilterTrack.swift` (modified, +37/-7)
-```diff
-@@ -19,23 +19,42 @@ private struct FilterTrackLabelStyle: LabelStyle {
-     let showsTitle: Bool
-     let iconEdge: HorizontalEdge
- 
-+    private var metrics: CapsuleButtonStyle.CapsuleControlMetrics {
-+        FilterTrack.metrics(for: viewLayout)
++import FactoryKit
++import JellyfinAPI
++import SwiftUI
++
++extension SessionInfoDto: Poster {
++
++    typealias Environment = BaseItemDto.Environment
++
++    var displayTitle: String {
++        userName ?? L10n.unknown
 +    }
 +
-+    private var collapsedLabelWidth: CGFloat {
-+        metrics.minimumHeight - 2 * metrics.horizontalPadding
++    var subtitle: String? {
++        nowPlayingItem?.displayTitle ?? deviceName
 +    }
 +
-+    @ContentBuilder
-+    private func icon(_ image: some View) -> some View {
-+        image
-+            #if os(tvOS)
-+                .frame(width: showsTitle || isFocused ? nil : collapsedLabelWidth)
-+            #endif
++    var preferredPosterDisplayType: PosterDisplayType {
++        .landscape
 +    }
 +
-     @ContentBuilder
-     func makeBody(configuration: Configuration) -> some View {
--        HStack(spacing: viewLayout.value(standard: 4, large: 12)) {
-+        HStack(spacing: viewLayout.value(standard: 4, large: metrics.labelSpacing)) {
-             if iconEdge == .leading {
--                configuration.icon
-+                icon(configuration.icon)
-             }
- 
-             configuration.title
-                 .isVisible(showsTitle || isFocused)
- 
-             if iconEdge == .trailing {
--                configuration.icon
-+                icon(configuration.icon)
-             }
-         }
-         .lineLimit(1)
-         .fixedSize()
--        .frame(width: showsTitle || isFocused ? nil : 32, alignment: iconEdge == .leading ? .leading : .trailing)
-+        .frame(
-+            width: showsTitle || isFocused ? nil : viewLayout.value(standard: 32, large: collapsedLabelWidth),
-+            alignment: iconEdge == .leading ? .leading : .trailing
-+        )
-     }
- }
- 
-@@ -88,6 +107,18 @@ struct FilterTrack: View {
-     var style: Style = .regular
-     var iconEdge: HorizontalEdge = .leading
- 
-+    static func controlSize(for layout: ViewLayout) -> ControlSize {
-+        layout.value(standard: .small, large: .large)
++    var systemImage: String {
++        nowPlayingItem?.systemImage ?? "person.fill"
 +    }
 +
-+    static func metrics(for layout: ViewLayout) -> CapsuleButtonStyle.CapsuleControlMetrics {
-+        .init(controlSize(for: layout), layout: layout)
++    func resolveEnvironment(_ environment: EnvironmentValues) -> Environment {
++        nowPlayingItem?.resolveEnvironment(environment) ?? .default
 +    }
 +
-+    private var metrics: CapsuleButtonStyle.CapsuleControlMetrics {
-+        Self.metrics(for: viewLayout)
-+    }
++    func posterAccessibility(configuration: PosterConfiguration) -> PosterAccessibility {
++        var details: [String?] = [client, deviceName]
 +
-     private var targets: [FocusTarget] {
-         (viewModel.hasFilterOptions ? [.options] : []) + types.map(FocusTarget.filter)
-     }
-@@ -118,7 +149,6 @@ struct FilterTrack: View {
-                 .resizable()
-                 .aspectRatio(contentMode: .fit)
-                 .frame(width: 32, height: 32)
--                .padding(.vertical, 8)
-             #endif
-     }
- 
-@@ -224,8 +254,8 @@ struct FilterTrack: View {
-             button(for: target)
-                 .fixedSize()
-         }
--        .font(viewLayout.value(standard: .footnote, large: .callout))
--        .controlSize(viewLayout.value(standard: .small, large: .large))
-+        .font(metrics.font)
-+        .controlSize(Self.controlSize(for: viewLayout))
-         .buttonStyle(.capsule(selectionTint: theme.accentColor, focusTint: viewLayout.value(standard: nil, large: .white)))
-         #if os(tvOS)
-         .animation(.snappy(duration: 0.2), value: focus.wrappedValue)
-```
-
-**File**: `Shared/Extensions/LabelStyle/HorizontalLabelStyle.swift` (modified, +4/-1)
-```diff
-@@ -21,14 +21,17 @@ extension LabelStyle where Self == HorizontalLabelStyle {
- 
- struct HorizontalLabelStyle: LabelStyle {
- 
-+    @AdaptiveLayout
-+    private var viewLayout
++        if let nowPlayingItem, let playState {
++            details.append(playState.isPaused == true ? L10n.pause : L10n.play)
 +
-     @Environment(\.controlSize)
-     private var controlSize
- 
-     var iconEdge: HorizontalEdge
- 
-     @ContentBuilder
-     func makeBody(configuration: Configuration) -> some View {
--        HStack(spacing: CapsuleButtonStyle.CapsuleControlMetrics(controlSize).labelSpacing) {
-+        HStack(spacing: CapsuleButtonStyle.CapsuleControlMetrics(controlSize, layout: viewLayout).labelSpacing) {
-             if iconEdge == .leading {
-                 configuration.icon
-             }
-```
-
-**File**: `Shared/Objects/ContentGroup/PillGroup.swift` (modified, +0/-1)
-```diff
-@@ -72,7 +72,6 @@ struct PillGroup<Element: Displayable>: ContentGroup {
-                     }
-                     .labelStyle(.leadingIcon)
-                     .buttonStyle(.capsule)
--                    .controlSize(viewLayout.value(standard: .regular, large: .large))
-                     .edgePadding(.horizontal)
-                 }
-                 .scrollIndicators(.hidden)
-```
-
-**File**: `Shared/Objects/MediaPlayerManager/Supplements/Components/PlaybackAdjustmentSlider.swift` (modified, +0/-1)
-```diff
-@@ -148,7 +148,6 @@ struct PlaybackAdjustmentSlider: View {
-             .buttonStyle(.capsule)
-             .padding(.top, viewLayout.isLarge ? 8 : 4)
-         }
--        .controlSize(viewLayout.isLarge ? .large : .regular)
-         .accessibilityElement(children: .contain)
-     }
- }
-```
-
-**File**: `Shared/Views/ItemView/Components/ItemView+ParentButton.swift` (modified, +0/-4)
-```diff
-@@ -12,9 +12,6 @@ extension ItemView {
- 
-     struct ParentButton: View {
- 
--        @AdaptiveLayout
--        private var viewLayout
--
-         @Router
-         private var router
- 
-@@ -38,7 +35,6 @@ extension ItemView {
-             .foregroundStyle(.primary, .secondary)
-             .labelStyle(.trailingIcon)
-             .buttonStyle(.capsule)
--            .controlSize(viewLayout.value(standard: .regular, large: .large))
-         }
-     }
- }
-```
-
-**File**: `Shared/Views/ItemView/Components/ScrollViews/ContentGroupScrollView.swift` (modified, +19/-4)
-```diff
-@@ -6,6 +6,7 @@
- // Copyright (c) 2026 Jellyfin & Jellyfin Contributors
- //
- 
-+import CollectionHStack
- import JellyfinAPI
- import SwiftUI
- 
-@@ -74,6 +75,15 @@ extension ItemView {
-             .animation(.linear(duration: 0.2), value: isHeaderFocused)
-         }
- 
-+        @ContentBuilder
-+        private var scrollView: some View {
-+            ScrollView {
-+                ContentGroupVStack(groups: groups)
-+                    .edgePadding(.bottom)
-+                    .padding(.top, isEnhanced ? 0 : (frameForParentView[.tabView]?.safeAreaInsets.top ?? 0))
++            let position = PosterAccessibility.duration(playState.position ?? .zero)
++
++            if let runtime = nowPlayingItem.runtime {
++                details.append(L10n.playbackPositionOfTotal(position, PosterAccessibility.duration(runtime)))
++            } else {
++                details.append(position)
++            }
++
++            details.append(playMethodDisplayTitle)
++
++            if playState.playMethod == .transcode {
++                details.append(contentsOf: transcodingInfo?.transcodeReasons?.map(\.displayTitle) ?? [])
 +            }
 +        }
 +
-         @ContentBuilder
-         var body: some View {
-             ZStack {
-@@ -82,10 +92,15 @@ extension ItemView {
-                         .ignoresSafeArea()
-                 }
++        return PosterAccessibility(
++            label: PosterAccessibility.joined([displayTitle, nowPlayingItem?.displayTitle]),
++            value: PosterAccessibility.joined(details)
++        )
++    }
++
++    @ContentBuilder
++    var posterLabel: some View {
++        VStack(alignment: .leading, spacing: 2) {
++            Text(displayTitle)
++                .font(.footnote)
++                .lineLimit(1, reservesSpace: true)
++
++            Text(subtitle ?? .emptyDash)
++                .font(.caption)
++                .fontWeight(.medium)
++                .foregroundStyle(.secondary)
++                .lineLimit(1, reservesSpace: true)
++        }
++        .frame(maxWidth: .infinity, alignment: .leading)
++    }
++
++    @ContentBuilder
++    var posterContextMenu: some View {
++        SessionPosterContextMenu(session: self)
++    }
++
++    @ContentBuilder
++    func posterOverlay(for displayType: PosterDisplayType) -> some View {
++        SessionPosterOverlay(session: self, displayType: displayType)
++    }
++
++    func imageSources(
++        for displayType: PosterDisplayType,
++        environment: Environment
++    ) -> [ImageSource] {
++        nowPlayingItem?.imageSources(for: displayType, environment: environment) ?? []
++    }
++
++    @ContentBuilder
++    func transform(image: Image, displayType: PosterDisplayType) -> some View {
++        if let nowPlayingItem {
++            nowPlayingItem.transform(image: image, displayType: displayType)
++        } else {
++            image
++        }
++    }
++}
++
++private struct SessionPosterContextMenu: View {
++
++    @Router
++    private var router
++
++    let session: SessionInfoDto
++
++    private var isPaused: Bool {
++        session.playState?.isPaused == true
++    }
++
++    @ContentBuilder
++    var body: some View {
++        if let itemID = session.nowPlayingItem?.id {
++            Button(L10n.goToItem, systemImage: "info.circle") {
++                router.route(to: .item(id: itemID))
++            }
++        }
++
++        if session.canControlPlayback(by: Container.shared.currentUserSession()?.userData) {
++            Button(isPaused ? L10n.play : L10n.pause, systemImage: isPaused ? "play.fill" : "pause.fill") {
++                Task {
++                    await sendPlaystateCommand(isPaused ? .unpause : .pause)
++                }
++            }
++
++            Button(L10n.stop, systemImage: "stop.fill", role: .destructive) {
++                Task {
++                    await sendPlaystateCommand(.stop)
++                }
++            }
++        }
++    }
++
++    @MainActor
++    private func sendPlaystateCommand(_ command: PlaystateCommand) async {
++        guard let userSession = Container.shared.currentUserSession(), let id = session.id else { return }
++
++        do {
++            try await userSession.client.send(Paths.sendPlaystateCommand(sessionID: id, command: command.rawValue))
++        } catch {
++            userSession.itemActionErrors.send(error)
++        }
++    }
++}
++
++private struct SessionPosterOverlay: View {
++
++    @AppTheme
++    private var theme
++
++    let session: SessionInfoDto
++    let displayType: PosterDisplayType
++
++    private var playbackProgress: Double {
++        guard let runtime = session.nowPlayingI
+```
+
+**File**: `Shared/Extensions/JellyfinAPI/SessionInfoDto.swift` (modified, +9/-0)
+```diff
+@@ -41,6 +41,15 @@ extension SessionInfoDto: @retroactive Comparable {
+         }
+     }
  
--                ScrollView {
--                    ContentGroupVStack(groups: groups)
--                        .edgePadding(.bottom)
--                        .padding(.top, isEnhanced ? 0 : (frameForParentView[.tabView]?.safeAreaInsets.top ?? 0))
-+                Group {
-+                    #if os(tvOS)
-+                    CollectionHStackFocusScope {
-+                        scrollView
-+                            .scrollClipDisabled()
-+                    }
-+                    #else
-+                    scrollView
-+                    #endif
++    func canControlPlayback(by user: UserDto?) -> Bool {
++        guard let user, isSupportsMediaControl == true, nowPlayingItem != nil else { return false }
++
++        return user.policy?.enableRemoteControlOfOtherUsers == true
++            || userID == nil
++            || userID == user.id
++            || additionalUsers?.contains { $0.userID == user.id } == true
++    }
++
+     /// Orders by:
+     /// - Now playing status
+     /// - Username
+```
+
+**File**: `Shared/Objects/PagingLibrary/PagingLibraryView/Components/LibraryStyleSection.swift` (modified, +55/-53)
+```diff
+@@ -8,70 +8,72 @@
+ 
+ import SwiftUI
+ 
+-extension PagingLibraryView {
++struct LibraryStyleSection: View {
+ 
+-    struct LibraryStyleSection: View {
++    @StateOrBinding
++    private var libraryStyle: LibraryStyle
+ 
+-        @StateOrBinding
+-        private var libraryStyle: LibraryStyle
++    private let options: LibraryStyleOptions
++    private let canAdjustListColumns: Bool
+ 
+-        private let options: LibraryStyleOptions
+-        private let canAdjustListColumns: Bool
+-
+-        init(
+-            libraryStyle: Binding<LibraryStyle>,
+-            options: LibraryStyleOptions,
+-            canAdjustListColumns: Bool
+-        ) {
+-            self._libraryStyle = .init(libraryStyle)
+-            self.options = options
+-            self.canAdjustListColumns = canAdjustListColumns
+-        }
+-
+-        @ContentBuilder
+-        var body: some View {
+-            if options.displayTypes.count > 1 {
+-                Picker(selection: $libraryStyle.displayType) {
+-                    ForEach(options.displayTypes, id: \.self) { displayType in
+-                        Label(
+-                            displayType.displayTitle,
+-                            systemImage: displayType.systemImage
+-                        )
+-                        .tag(displayType)
+-                    }
+-                } label: {
+-                    Text(L10n.layout)
+-
+-                    Text(libraryStyle.displayType.displayTitle)
++    init(
++        libraryStyle: Binding<LibraryStyle>,
++        options: LibraryStyleOptions,
++        canAdjustListColumns: Bool
++    ) {
++        self._libraryStyle = .init(libraryStyle)
++        self.options = options
++        self.canAdjustListColumns = canAdjustListColumns
++    }
+ 
+-                    Image(systemName: libraryStyle.displayType.systemImage)
++    @ContentBuilder
++    var body: some View {
++        if options.displayTypes.count > 1 {
++            Picker(selection: $libraryStyle.displayType) {
++                ForEach(options.displayTypes, id: \.self) { displayType in
++                    Label(
++                        displayType.displayTitle,
++                        systemImage: displayType.systemImage
++                    )
++                    .tag(displayType)
                  }
-                 .trackingFrame(for: .scrollView)
-                 .ignoresSafeArea(.container, edges: viewLayout.value(standard: [], large: isEnhanced ? .all : [.horizontal, .top]))
+-                .pickerStyle(.menu)
+-            }
++            } label: {
++                Text(L10n.layout)
+ 
+-            if libraryStyle.displayType == .list,
+-               options.displayTypes.contains(.list),
+-               canAdjustListColumns {
+-                Stepper(
+-                    L10n.columnsWithCount(libraryStyle.listColumnCount),
+-                    value: $libraryStyle.listColumnCount,
+-                    in: 1 ... 3
+-                )
++                Text(libraryStyle.displayType.displayTitle)
++
++                Image(systemName: libraryStyle.displayType.systemImage)
+             }
++            .pickerStyle(.menu)
++        }
+ 
+-            if options.posterDisplayTypes.count > 1 {
+-                Picker(selection: $libraryStyle.posterDisplayType) {
+-                    ForEach(options.posterDisplayTypes, id: \.self) { displayType in
+-                        Text(displayType.displayTitle)
+-                            .tag(displayType)
+-                    }
+-                } label: {
+-                    Text(L10n.posters)
++        if libraryStyle.displayType == .list,
++           options.displayTypes.contains(.list),
++           canAdjustListColumns {
++            Stepper(
++                L10n.columnsWithCount(libraryStyle.listColumnCount),
++                value: $libraryStyle.listColumnCount,
++                in: 1 ... 3
++            )
++        }
+ 
+-                    Text(libraryStyle.posterDisplayType.displayTitle)
++        if options.posterDisplayTypes.count > 1 {
++            Picker(selection: $libraryStyle.posterDisplayType) {
++                ForEach(options.posterDisplayTypes, id: \.self) { displayType in
++                    Label(
++                        displayType.displayTitle,
++                        systemImage: displayType.systemImage
++                    )
++                    .tag(displayType)
+                 }
+-                .pickerStyle(.menu)
++            } label: {
++                Text(L10n.posters)
++
++                Text(libraryStyle.posterDisplayType.displayTitle)
++
++                Image(systemName: libraryStyle.posterDisplayType.systemImage)
+             }
++            .pickerStyle(.menu)
+         }
+     }
+ }
+```
+
+**File**: `Swiftfin/Views/AdminDashboardView/ActiveSessions/ActiveSessionDetailsView/ActiveSessionDetailsView.swift` (modified, +1/-12)
+```diff
+@@ -31,19 +31,8 @@ struct ActiveSessionDetailsView: View {
+         viewModel.session.playState?.isPaused == true
+     }
+ 
+-    private var canControl: Bool {
+-        guard let user = viewModel.userSession?.userData else { return false }
+-
+-        let session = viewModel.session
+-
+-        return user.policy?.enableRemoteControlOfOtherUsers == true
+-            || session.userID == nil
+-            || session.userID == user.id
+-            || session.additionalUsers?.contains { $0.userID == user.id } == true
+-    }
+-
+     private var hasPlaybackControls: Bool {
+-        canControl && viewModel.session.isSupportsMediaControl == true && viewModel.session.nowPlayingItem != nil
++        viewModel.session.canControlPlayback(by: viewModel.userSession?.userData)
+     }
+ 
+     private var hasMessageControl: Bool {
+```
+
+**File**: `Swiftfin/Views/AdminDashboardView/ActiveSessions/ActiveSessionsView/ActiveSessionsView.swift` (modified, +47/-10)
+```diff
+@@ -12,12 +12,20 @@ import SwiftUI
+ 
+ struct ActiveSessionsView: View {
+ 
++    @AdaptiveLayout
++    private var viewLayout
++
+     @Router
+     private var router
+ 
++    @StateObject
++    private var gridProxy = CollectionVGridProxy()
+     @StateObject
+     private var viewModel = ActiveSessionsViewModel()
+ 
++    @StoredValue(.User.libraryStyle(id: "active-sessions"))
++    private var libraryStyle: LibraryStyle
++
+     @ContentBuilder
+     private var activeWithinFilterButton: some View {
+         Picker(selection: $viewModel.environment.activeWithinSeconds) {
+@@ -90,17 +98,33 @@ struct ActiveSessionsView: View {
+                 systemImage: "waveform.path.ecg"
+             )
+         } else {
+-            CollectionVGrid(
+-                uniqueElements: viewModel.sessions.values,
+-                layout: .columns(1, insets: .zero, itemSpacing: 0, lineSpacing: 0)
+-            ) { session in
+-                ActiveSessionRow(viewModel: session) {
+-                    router.route(
+-                        to: .activeSessionDetails(viewModel: session)
++            GeometryReader { geometry in
++                let horizontalSpacing = libraryStyle.displayType == .list ? 0 : viewLayout.itemSpacing
++
++                CollectionVGrid(
++                    uniqueElements: viewModel.sessions.values,
++                    layout: SessionViewModel.layout(
++                        for: libraryStyle,
++                        options: SessionViewModel.supportedLibraryStyleOptions,
++                        insets: EdgeInsets(
++                            top: geometry.safeAreaInsets.top + viewLayout.itemSpacing,
++                            leading: horizontalSpacing,
++                            bottom: geometry.safeAreaInsets.bottom + viewLayout.itemSpacing,
++                            trailing: horizontalSpacing
++                        ),
++                        viewLayout: viewLayout.resolving(size: geometry.size)
+                     )
++                ) { session in
++                    session.makeBody(libraryStyle: libraryStyle) {
++                        router.route(
++                            to: .activeSessionDetails(viewModel: session)
++                        )
++                    }
+                 }
++                .proxy(gridProxy)
++                .contentInsetAdjustmentBehavior(.never)
++                .ignoresSafeArea(edges: .vertical)
+             }
+-            .ignoresSafeArea(edges: .vertical)
+         }
+     }
+ 
+@@ -126,6 +150,9 @@ struct ActiveSessionsView: View {
+         .refreshable {
+             viewModel.refresh()
+         }
++        .onChange(of: libraryStyle) {
++            gridProxy.redraw()
++        }
+         .onFirstAppear {
+             viewModel.refresh()
+         }
+@@ -144,8 +171,18 @@ struct ActiveSessionsView: View {
+                 L10n.filters,
+                 systemImage: systemImage
+             ) {
+-                activeWithinFilterButton
+-                showInactiveSessionsButton
++                Section {
++                    LibraryStyleSection(
++                        libraryStyle: $libraryStyle,
++                        options: SessionViewModel.supportedLibraryStyleOptions,
++                        canAdjustListColumns: viewLayout.canAdjustLibraryListColumns
++                    )
++                }
++
++                Section(L10n.filters) {
++                    activeWithinFilterButton
++                    showInactiveSessionsButton
++                }
+             }
+             .menuStyle(.button)
+             .buttonStyle(.isPressed { isPressed in
+```
+
+**File**: `Swiftfin/Views/AdminDashboardView/ActiveSessions/ActiveSessionsView/Components/ActiveSessionRow.swift` (modified, +51/-40)
+```diff
+@@ -20,9 +20,13 @@ extension ActiveSessionsView {
+         @CurrentDate
+         private var currentDate: Date
+ 
++        @Environment(\.viewContext)
++        private var viewContext
++
+         @ObservedObject
+         var viewModel: SessionViewModel
+ 
++        let posterDisplayType: PosterDisplayType
+         let action: () -> Void
+ 
+         private var session: SessionInfoDto {
+@@ -35,28 +39,20 @@ extension ActiveSessionsView {
+ 
+         @ContentBuilder
+         private var rowLeading: some View {
+-            if let nowPlayingItem = session.nowPlayingItem {
+-                PosterImage(
+-                    item: nowPlayingItem,
+-                    type: nowPlayingItem.posterDisplayType(for: .compact),
+-                    contentMode: .fit
+-                )
+-                .frame(width: 60)
+-                .frame(minHeight: 90)
+-                .subtleShadow()
+-            } else {
+-                ZStack {
+-                    session.device.clientColor
+-
+-                    Image(session.device.image)
+-                        .resizable()
+-                        .aspectRatio(contentMode: .fit)
+-                        .padding(8)
++            PosterImage(
++                item: session,
++                type: posterDisplayType,
++                size: .extraSmall
++            )
++            .id(session.nowPlayingItem?.id)
++            .overlay {
++                if session.nowPlayingItem == nil {
++                    session.posterOverlay(for: posterDisplayType)
++                        .posterStyle(posterDisplayType)
+                 }
+-                .posterStyle(.square)
+-                .frame(width: 60, height: 60)
+-                .subtleShadow()
+             }
++            .subtleShadow()
++            .frame(width: posterDisplayType == .landscape ? 110 : 60)
+         }
+ 
+         @ContentBuilder
+@@ -68,7 +64,7 @@ extension ActiveSessionsView {
+ 
+                 Text(nowPlayingItem.name ?? L10n.unknown)
+                     .multilineTextAlignment(.leading)
+-                    .lineLimit(2)
++                    .lineLimit(1)
+ 
+                 ProgressSection(
+                     item: nowPlayingItem,
+@@ -86,28 +82,21 @@ extension ActiveSessionsView {
+                 Text(session.userName ?? L10n.unknown)
+                     .font(.headline)
+ 
+-                if let client = session.client {
+-                    LabeledContent(
+-                        L10n.client,
+-                        value: client
+-                    )
+-                }
++                DotHStack {
++                    if let client = session.client {
++                        Text(client)
++                    }
+ 
+-                if let device = session.deviceName {
+-                    LabeledContent(
+-                        L10n.device,
+-                        value: device
+-                    )
++                    if let device = session.deviceName {
++                        Text(device)
++                    }
+                 }
++                .lineLimit(1)
+ 
+-                if let lastActivityDate = session.lastActivityDate {
+-                    LabeledContent(
+-                        L10n.lastSeen,
+-                        value: lastActivityDate,
+-                        format: .lastSeen
+-                    )
+-                    .id(currentDate)
+-                    .monospacedDigit()
++                LabeledContent(L10n.lastSeen) {
++                    Text(session.lastActivityDate, format: .lastSeen)
++                        .id(currentDate)
++                        .monospacedDigit()
+                 }
+             }
+             .font(.subheadline)
+@@ -126,6 +115,28 @@ extension ActiveSessionsView {
+             } action: {
+                 action()
+             }
++            .posterContextMenu(for: session) {
++                VStack(alignment: .leading) {
++                    PosterImage(
++                        item: session,
++                        type: posterDisplayType,
++                        size: .small
++                    )
++                    .frame(maxWidth: .infinity, maxHeight: .infinity)
++                    .subtleShadow()
++
++                    session.posterLabel
++                        .allowsHitTesting(false)
++                }
++                .environment(\.posterDisplayType, posterDisplayType)
++                .foregroundStyle(.primary, .secondary)
++                .posterAccessibility(for: session)
++                .frame(width: viewLayout.posterMinimumWidth(for: posterDisplayType))
++                .padding(20)
++                .backport
++                .glassEffect(in: .rect(cornerRadius: 10))
++                .withViewContext(viewContext)
++            }
+             .withViewContext(.isListRowSeparatorVisible)
+         }
+     }
+```
+
+**File**: `Swiftfin/Views/AdminDashboardView/ActiveSessions/ActiveSessionsView/Components/SessionViewModel+LibraryElement.swift` (added, +71/-0)
+```diff
+@@ -0,0 +1,71 @@
++//
++// Swiftfin is subject to the terms of the Mozilla Public
++// License, v2.0. If a copy of the MPL was not distributed with this
++// file, you can obtain one at https://mozilla.org/MPL/2.0/.
++//
++// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
++//
++
++import SwiftUI
++
++extension SessionViewModel: @MainActor LibraryElement {
++
++    nonisolated static func == (lhs: SessionViewModel, rhs: SessionViewModel) -> Bool {
++        lhs === rhs
++    }
++
++    nonisolated func hash(into hasher: inout Hasher) {
++        hasher.combine(ObjectIdentifier(self))
++    }
++
++    var displayTitle: String {
++        session.displayTitle
++    }
++
++    static var supportedLibraryStyleOptions: LibraryStyleOptions {
++        .default
++    }
++
++    @ContentBuilder
++    func makeBody(
++        libraryStyle: LibraryStyle,
++        action: (() -> Void)?
++    ) -> some View {
++        switch libraryStyle.displayType {
++        case .grid:
++            SessionGridElement(
++                viewModel: self,
++                displayType: libraryStyle.posterDisplayType,
++                action: action
++            )
++
++        case .list:
++            ActiveSessionsView.ActiveSessionRow(
++                viewModel: self,
++                posterDisplayType: libraryStyle.posterDisplayType
++            ) {
++                action?()
++            }
++        }
++    }
++}
++
++private struct SessionGridElement: View {
++
++    @ObservedObject
++    var viewModel: SessionViewModel
++
++    let displayType: PosterDisplayType
++    let action: (() -> Void)?
++
++    @ContentBuilder
++    var body: some View {
++        PosterButton(
++            item: viewModel.session,
++            displayType: displayType
++        ) { _ in
++            action?()
++        }
++        .id(viewModel.session.nowPlayingItem?.id)
++    }
++}
 ```
 
 ---
 
-### Incident Patch 2: `227faf71` (2026-11-08)
-**Commit Message**: Fix playback closing on completion (#2417)
+### Incident Patch 2: `b5bfb8d1` (2026-11-15)
+**Commit Message**: Translated using Weblate (Polish)
 
-**File**: `Shared/Objects/MediaPlayerManager/MediaSession.swift` (modified, +3/-5)
-```diff
-@@ -211,8 +211,6 @@ final class MediaSession {
-         progressReporter.mediaSession = self
- 
-         lifecycleObservation = core.statePublisher.sink { [weak self] state in
--            // Error and cancel are special synchronous actions in StatefulMacros.
--            // Cleanup follows their committed state, including generated action calls.
-             if state == .error || state == .stopped {
-                 self?.tearDown()
-             }
-@@ -254,7 +252,7 @@ final class MediaSession {
-         }
- 
-         var nextIntent = intent
--        if canControlPlayback, let playbackItem {
-+        if let playbackItem {
-             nextIntent.configuration.continuation = MediaPlaybackContinuation(
-                 item: playbackItem.baseItem,
-                 source: playbackItem.mediaSource,
-@@ -429,7 +427,6 @@ final class MediaSession {
-     func stop() {
-         guard state != .stopped else { return }
- 
--        // StatefulMacros' cancel action commits synchronously and invalidates late completions.
-         cancel()
-     }
- 
-@@ -491,7 +488,8 @@ final class MediaSession {
-     }
- 
-     func ended(from player: any MediaPlayer) {
--        guard self.player === player, canControlPlayback, !isSeeking, !item.isLiveStream else { return }
-+        guard self.player === player, playbackItem != nil, state == .preparing || state == .playback,
-+              !isSeeking, !item.isLiveStream else { return }
-         guard let queue, userSession.userData.configuration?.enableNextEpisodeAutoPlay == true else {
-             stop()
-             return
-```
+Currently translated at 100.0% (1023 of 1023 strings)
 
-**File**: `Shared/Objects/MediaPlayerManager/Supplements/EpisodeMediaPlayerQueue.swift` (modified, +12/-4)
-```diff
-@@ -27,7 +27,9 @@ final class EpisodeMediaPlayerQueue: MediaPlayerQueue {
-     }
- 
-     @ObservationIgnored
--    private var currentAdjacentEpisodesTask: AnyCancellable?
-+    private var currentAdjacentEpisodesTask: Task<Void, Error>? {
-+        didSet { oldValue?.cancel() }
-+    }
- 
-     @ObservationIgnored
-     private var seasonLibrary: PagingLibraryViewModel<EpisodeLibrary>?
-@@ -65,7 +67,15 @@ final class EpisodeMediaPlayerQueue: MediaPlayerQueue {
-         currentAdjacentEpisodesTask = Task { [weak self] in
-             try await self?.getAdjacentEpisodes(for: newItem.baseItem)
-         }
--        .asAnyCancellable()
-+    }
-+
-+    func next() async throws -> PlaybackIntent? {
-+        try await currentAdjacentEpisodesTask?.value
-+        return nextItem
-+    }
-+
-+    isolated deinit {
-+        currentAdjacentEpisodesTask?.cancel()
-     }
- 
-     func refresh() {
-@@ -86,8 +96,6 @@ final class EpisodeMediaPlayerQueue: MediaPlayerQueue {
-             resetSeason()
-             return
-         }
--
--        // Keep the list and its loading work when playback moves within the same season.
-         guard seasonLibrary?.library.parent.id != seasonID else { return }
- 
-         resetSeason()
-```
+Translation: Swiftfin/Swiftfin
+Translate-URL: https://translate.jellyfin.org/projects/swiftfin/swiftfin/pl/
+
+
 
 #### Recent Merged Pull Requests:
+- **PR #2437** (2026-11-14): Map mpv tracks past external Jellyfin streams (@Miista)
+- **PR #2436** (2026-11-15): tvOS player: don't strand the supplement panel without focus (@alex-hall)
+- **PR #2432** (2026-11-13): Show PhotoAlbum folders in Folders grouping view (@lzgh0102)
+- **PR #2428** (2026-11-14): Sleep timer (@JPKribs)
 - **PR #2426** (2026-11-12): Hide Empty Filters (@JPKribs)
 - **PR #2425** (2026-11-12): tvOS Various Fixes (@JPKribs)
-- **PR #2424** (2026-11-11): Update formatting (@LePips)
-- **PR #2421** (2026-11-10): 1.7 tvOS Cleanup (@JPKribs)
-- **PR #2420** (2026-11-09): Virtual folder grouping (@LePips)
-- **PR #2419** (2026-11-09): Adjust caption settings and updating (@LePips)
 
 ---
 
@@ -1132,69 +1365,73 @@ Co-authored-by: Ethan Pippin <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tvOS Various Fixes (#2425)
+## X. `ActiveSessions` Fully Utilize `PagingLibrary`
 
 **RULE**:
-When implementing operations in `Shared/Components/ButtonStyles/CapsuleButtonStyle.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jellyfin/Swiftfin. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Shared/Extensions/JellyfinAPI/SessionInfoDto+Poster.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jellyfin/Swiftfin. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c923cd58`: tvOS Various Fixes (#2425). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e956be4a`: `ActiveSessions` Fully Utilize `PagingLibrary`. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Shared/Components/ButtonStyles/CapsuleButtonStyle.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Shared/Extensions/JellyfinAPI/SessionInfoDto+Poster.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-        init(_ controlSize: ControlSize, layout: ViewLayout) {
-                self.horizontalPadding = layout.value(standard: 6, large: 12)
-                self.verticalPadding = layout.value(standard: 2, large: 4)
-                self.minimumHeight = layout.value(standard: 20, large: 40)
-                self.labelSpacing = layout.value(standard: 2, large: 4)
-                self.horizontalPadding = layout.value(standard: 8, large: 16)
-                self.verticalPadding = layout.value(standard: 4, large: 8)
-                self.minimumHeight = layout.value(standard: 26, large: 52)
-                self.labelSpacing = layout.value(standard: 2, large: 4)
-                self.horizontalPadding = layout.value(standard: 10, large: 20)
-                self.verticalPadding = layout.value(standard: 5, large: 10)
-                self.minimumHeight = layout.value(standard: 30, large: 60)
-                self.labelSpacing = layout.value(standard: 4, large: 8)
-                self.horizontalPadding = layout.value(standard: 12, large: 24)
-                self.verticalPadding = layout.value(standard: 6, large: 12)
-                self.minimumHeight = layout.value(standard: 36, large: 72)
-     
+//
+// Swiftfin is subject to the terms of the Mozilla Public
+// License, v2.0. If a copy of the MPL was not distributed with this
+// file, you can obtain one at https://mozilla.org/MPL/2.0/.
+//
+// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
+//
+
+import FactoryKit
+import JellyfinAPI
+import SwiftUI
+
+extension SessionInfoDto: Poster {
+
+    typealias Environment = BaseItemDto.Environment
+
+    var displayTitle: String {
+        userName ?? L10n.unknown
+    }
+
+    var subtitle: String? {
+        nowPlayingItem?.displayTitle ?? deviceName
+    }
+
+    var preferredPosterDisplayType: PosterDisplayType {
+        .landscape
+    }
+
+    var systemImage: String {
+        nowPlayingItem?.systemImage ?? "person.fill"
+    }
+
+    func resolveEnvironment(_ environment: EnvironmentValues) -> Environment {
+        nowPlayingItem?.resolveEnvironment(environment) ?? .default
+    }
+
+    func posterAccessibility(configuration: PosterConfiguration) -> PosterAccessibility {
+        var details: [String?] = [client, deviceName]
+
+        if let nowPlayingItem, let playState {
+            details.append(playState.isPaused == true ? L10n.pause : L10n.play)
+
+            let position = PosterAccessibility.du
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
-// Anti-pattern to NEVER write (induced failure mode):
-        init(_ controlSize: ControlSize) {
-                self.horizontalPadding = 6
-                self.verticalPadding = 2
-                self.minimumHeight = 20
-                self.labelSpacing = 2
-                self.horizontalPadding = 8
-                self.verticalPadding = 4
-                self.minimumHeight = 26
-                self.labelSpacing = 2
-                self.horizontalPadding = 10
-                self.verticalPadding = 5
-                self.minimumHeight = 30
-                self.labelSpacing = 4
-                self.horizontalPadding = 12
-                self.verticalPadding = 6
-                self.minimumHeight = 36
-                self.labelSpacing = 5
-                self.horizontalPadding = 16
-                self.verticalPadding = 8
-                self.minimumHeight = 44
-                self.labelSpacing = 6
-                self = CapsuleControlMetrics(.regular)
-        CapsuleControlMetrics(controlSize)
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c923cd58` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e956be4a` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

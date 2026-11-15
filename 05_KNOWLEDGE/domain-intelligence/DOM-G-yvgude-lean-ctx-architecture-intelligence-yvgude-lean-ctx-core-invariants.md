@@ -4,24 +4,24 @@
 {
   "source_repository": "yvgude/lean-ctx",
   "source_url": "https://github.com/yvgude/lean-ctx",
-  "source_version": "b6de365b",
+  "source_version": "5ae3dfff",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-14T00:25:03.404Z",
+  "timestamp": "2026-11-15T22:58:36.089Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-yvgude-lean-ctx",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [yvgude/lean-ctx](https://github.com/yvgude/lean-ctx) (Revision: `b6de365b`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-14T00:25:03.404Z`  
+> **Provenance**: Harvested from [yvgude/lean-ctx](https://github.com/yvgude/lean-ctx) (Revision: `5ae3dfff`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-15T22:58:36.089Z`  
 > **Learning ID**: `learn-github-yvgude-lean-ctx`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence), E (Creative Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 65%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence), A (Human & Need Intelligence), E (Creative Intelligence)
+- **Confidence Rating**: 58%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from yvgude/lean-ctx:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yvgude/lean-ctx](https://github.com/yvgude/lean-ctx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T00:25:02.712Z  
+> **Harvest Timestamp**: 2026-11-15T22:58:35.536Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: LeanCTX is the Context Gateway for AI Systems. Select task-relevant context, apply supported controls, connect local knowledge and inspect recorded evidence. Open-source Engine: CLI, MCP, hooks and supported proxy paths.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3944 stars
+- **Stars / Engagement**: 3952 stars
 
 ---
 
@@ -2507,11 +2507,11 @@ impl HiveStore {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #2252** (2026-11-15): **bug: excessive memory consumption by the cockpit**
+  *Symptoms*: **lean-ctx version:** Engine 3.12.5 according to MCP metadata; installed Cockpit runtime 3.12.3. CLI `--version` was not independently verified.  **OS:** Windows 11 Pro, build 26200, 32 GB RAM.  **AI tool:** Codex desktop with LeanCTX MCP.  **What happened:**  The separate `leanctx-cockpit.exe` process rapidly consumed tens of GiB of committed memory and exhausted Windows system commit.  Windows Resource Exhaustion Detector, Event ID 2004, identified Cockpit as the largest allocator during two separate incidents:  - Approximately **42 GiB within 91 seconds** of process creation. - Approximately **54 GiB** during another launch.  An unexpected system shutdown followed the latest incident. The logs confirm memory exhaustion and an unclean shutdown, but do not establish the exact shutdown mechanism.  These measurements are **process commit**, not RSS or Working Set.  The allocating function inside the proprietary Cockpit runtime remains unknown. Reviewing the public launcher revealed two relevant gaps: no child-process memory limit in the inspected Windows launch path, and discarded runtime stderr.  **What you expected:**  Cockpit should maintain bounded memory usage and remain responsive. Excessive allocation should trigger cancellation or controlled termination before exhausting system commit. Diagnostic logs should preserve the failing operation and exit reason while redacting credentials.  **Steps to reproduce:**  No deterministic minimal reproduction is available yet. The o
+
 - **Issue #2244** (2026-11-13): **bug: Multi repo search is not working**
   *Symptoms*: **lean-ctx version:** (run `lean-ctx --version`)  3.12.3  **OS:** (macOS / Linux / Windows)  MacOS and Windows  **AI tool:** (Cursor / Claude Code / Copilot / Crush / other)  VSCode with Copilot harness  **What happened:**  ctx_multi_repo was working in 3.12.2, but in 3.12.3 it stopped working:  <img width="471" height="568" alt="image" src="https://github.com/user-attachments/assets/3ca05e06-bb75-492e-b913-b3e71d978ff6" />  If l call `ctx_multi_repo list_roots` I get (pending) on each folder. It did not resolve by just waiting (in case there is some background operation that needs to finish).  **What you expected:**  A ctx_multi_repo query and multiple roots to return results.   **Steps to reproduce:**  1. a VS Code code-worspace with multiple projects  2. a `.lean-ctx.toml `file with extra_roots and absolute paths that are valid based on the OS (MacOS/Windows)  3. `lean-ctx trust`  - to truest the workspace, specifically the extra roots 4. for each directory i call manually `lean-ctx index build` 5. for each repository we call ctx_multi_repo add_root - results in multi-repo status: ACTIVE and N number of roots 6. try to query across repos - which results in the error on the screenshot above 
-
-- **Issue #2212** (2026-11-08): **shell gate: curl --hsts/--alt-svc and wget --save-cookies after an unfollowable cd are not judged as writes (#2201 follow-up)**
-  *Symptoms*: ### What happens  After a `cd` the shell gate cannot follow, a `curl`/`wget` call is judged only by the files it writes (#2201, `rust/src/core/shell_allowlist/download_targets.rs`). That list is incomplete. These options write a file named on the command line, but the list misses them, so a call like  ```sh cd "$(some-dir)" && curl --hsts config.toml https://example.com cd "$(some-dir)" && wget --save-cookies config.toml https://example.com ```  is no longer refused when the named file is a protected LeanCTX config file, while `curl -o config.toml` is.  ### Missing write targets  - curl (`CURL_OUTPUT_LONGS`, lines 27-35): `--hsts <file>`, `--alt-svc <file>` (both read *and write* their cache file) - wget (`wget_targets`, only `-O`/`-P`/`-o`/`-a` today): `--save-cookies <file>`, `--hsts-file <file>`, `--warc-file <file>` (writes `<file>.warc[.gz]`), `--rejected-log <file>`  Each must be read in both the `--opt value` and `--opt=value` forms.  ### Expected  Every option that writes a file named on the command line counts as a write target, with tests per option in both forms. The fix lands in the 3.12.x line.  Found while reviewing the 3.12.3 port of #2201. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2528,108 +2528,82 @@ impl HiveStore {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b6de365b` (2026-11-12)
-**Commit Message**: Merge pull request #2242 from yvgude/release/3.12.4-r4
+### Incident Patch 1: `5ae3dfff` (2026-11-15)
+**Commit Message**: Merge pull request #2253 from yvgude/release/3.12.6
 
-Release 3.12.4
+chore(release): 3.12.6
 
-**File**: `CHANGELOG.md` (modified, +125/-0)
+**File**: `CHANGELOG.md` (modified, +46/-0)
 ```diff
-@@ -6,6 +6,8 @@ Current positioning: [LeanCTX Engine — Context Gateway for AI Systems](docs/PO
+@@ -6,6 +6,52 @@ Current positioning: [LeanCTX Engine — Context Gateway for AI Systems](docs/PO
  
  ## [Unreleased]
  
-+## [3.12.4] — 2026-11-12
++## [3.12.6] — 2026-11-15
 +
++### Added
++
++- **Nine more Local Read kinds.** The local read surface now serves `overlays.list`,
++  `overlays.removed`, `checkpoints.list`, `session.context`, `session.handoff`,
++  `session.value`, `update.status`, `security.status` and `telemetry.status` as JSON documents
++  (`GET /v1/local/...` and the matching `--json` CLI commands, e.g. `lean-ctx overlays list
++  --json`, `lean-ctx session context --json --session <id>`). A local client reads them
++  instead of parsing `ctx_control`, `ctx_checkpoint` or `update --status` text. Every body is a
++  function of the stored data, with no generated timestamps or counters, and is released
++  through the tool run of its tool. Project kinds need a project root; overlay removal only
++  accepts files inside the project. The status documents carry versions, switches and counts
++  only: no paths, digests, secrets or installation id.
++
++- **Shared parse cache across worktrees (#2247), opt-in.** With `[cache] derivations_enabled =
++  true` or `LEAN_CTX_DERIVATION_CACHE=1`, index builds reuse BM25 chunks, the deep analysis
++  behind graph and call-graph edges, and graph-scan signatures by exact content hash plus
++  language, path selector and build identity. A fresh worktree then parses only the files it
++  changed. Only pure parse results are shared: no project index, root, absolute path, retrieval
++  result or permission decision. The store (`derivations_dir` /
++  `LEAN_CTX_DERIVATION_CACHE_DIR`, default `<cache dir>/derivations`) must be a private
++  directory of the current user. It refuses links and FIFOs, writes atomically, treats
++  corruption as a miss, and evicts the oldest entries beyond `derivations_max_bytes`
++  (default 512 MiB). Output after a parser panic is never stored. The setting is read once per
++  process, so a running daemon picks up a change after a restart. Requested by @dkiaulakis.
++
++### Fixed
++
++- **A Windows Cockpit can no longer exhaust system memory (#2252).** On Windows, the Engine now
++  starts `leanctx-cockpit.exe` in a job that caps its committed memory at 4 GiB and ends it
++  when the Engine goes away. A Cockpit that reaches the cap fails its allocation and is
++  restarted after the usual backoff, instead of committing tens of GiB until Windows runs out
++  of virtual memory. `LEAN_CTX_COCKPIT_MEMORY_MB` sets another cap (at least 256; `0` turns it
++  off); if the job cannot be set up, the Cockpit runs without a cap and the log says so. When
++  a Cockpit exits, the log names its exit status, on Windows its peak memory against the cap,
++  and the last whole lines of its stderr (at most 4 KiB), with the session tokens and
++  credential-shaped text redacted. Before, stderr was discarded and a restart was logged only
++  as "cockpit exited". Reported by @vik-borisov.
++
++- **`ctx_read` task mode no longer runs for hours on large files.** The MMR line ranking rebuilt
++  both token sets for every candidate and selected pair, so one read on a large file could run
++  for hours and a long-lived MCP server kept 150–550 % CPU. Token sets are now built once per
++  line and each round costs linear time. Selection order, ties and scores are unchanged; a test
++  checks the result against the previous implementation.
++
+ ## [3.12.5] — 2026-11-13
+ 
  ### Added
- 
- - **Policy enforcement acknowledged to Hive (D4).** The bus hello now names the features
-@@ -18,6 +20,129 @@ Current positioning: [LeanCTX Engine — Context Gateway for AI Systems](docs/PO
-   `policy.sessions` adds `installed.enforcement` (`applied_version`, `acknowledged_at`,
-   `sessions`, `reported_at`), additively.
- 
-+- **ECCP L/I/G change classifier (task 156).** `scripts/change-class <base> <head>`
-+  prints `L` (no public Rust item changed), `I` (public items only added) or `G`
-+  (public item changed or removed, Cargo features or dependency tables,
-+  `Cargo.lock`, `build.rs`, Cargo config, toolchain pin, CI configuration or a
-+  generated registry) from the git objects alone, without a build or network,
-+  and serves as `$ECCP_CLASSIFIER` for `scripts/eccp-envelope`.
-+
-+- **ECCP change envelope in git notes (task 157).** `scripts/eccp-envelope` writes,
-+  shows and verifies a `leanctx.change-envelope/v1` JSON note under
-+  `refs/notes/eccp` on a merge request head: intent, base, class, read set,
-+  derivations and check evidence (`docs/contracts/change-envelope-v1.md`).
-+
-+- **Audit entries v2 bind each tool call to its session (ent3-1).** Every new
-+  audit-trail entry carries `v: 2` and a chained `v2_hash` over its timestamp
-+  and, for a call of an MCP session, the `session_id`, a per-session `seq`,
-+  the decision and an output digest, so an edited timestamp, seq or fact fails
-+  `verify_chain` and `verify_chain_full` at that entry. Input and output digests
-+  are HMAC-SHA256 under the engine-local key (`hive/receipts.hmac-key`, never
-+  uploaded). The v1 `entry_hash` is unchanged: older engines and
-+  `leanctx-verify` still verify a mixed trail, and an entry of a newer version
-+  counts as forward-compatible, not as tampering.
-+
-+- **Managed configuration for MDM-provisioned machines (task 169).** An organisation can
-+  preconfigure an Instance through a macOS configuration profile, the Windows policy key
-+  `HKLM\SOFTWARE\Policies\LeanCTX\Managed` or `/etc/lean-ctx/managed.toml`
-+  (`leanctx.managed-config/v1`, `docs/contracts/managed-config-v1.md`). Managed
-+  `hive.url` and `hive.root_key` win over `[hive]` and `config set` on them is refused;
-+  `hive.org` refuses an enrollment for another org; `hive.require` makes tools refuse
-+  until the machine is signed in and has a policy floor. A carrier that is malformed,
-+  a symlink, or not root-owned (it or its directory) fails closed; it is checked and
-+  read through one open handle. `hive status` and the cockpit `hive status --json`
-+  (`managed`, since 1.7) show the carrier and each member.
-+
-+- **Unit claims warn before two agents edit the same code.** A `ctx_patch` or `ctx_edit`
-+  write claims the functions, types and Markdown sections it touches for the editing agent
-+  (10-minute lease, renewed on each edit). When another agent holds a claim on a touched
-+  unit, the write goes ahead and the result names the holder (`LEAN_CTX_CLAIM_MODE=warn`,
-+  the default). `strict` refuses the write before anything is written, and `off` turns the
-+  check off. `ctx_agent action=claims` lists the live claims. `action=plan_claims` plans a
-+  task against them, through an optional local planner (`LEAN_CTX_CLAIM_PLANNER`) or a
-+  built-in fallback without network, and claims the free units. Claims are released when
-+  the agent reports `status=finished` and when the server shuts down.
-+
-+### Security
-+
-+The first five fixes below were reported by @dkiaulakis.
-+
-+- **A redirection written another way cannot write past the gate (GHSA-4gm5-2mgw-9r9r).** A
-+  redirection with a file-descriptor prefix, an `&>`/`>|`/`<>` operator, a quoted or escaped
-+  target, or no space before its target was missed, so an agent shell could write lean-ctx's
-+  own state or an unlisted file. The gate now reads every redirection in its canonical form
-+  before any other check.
-+
-+- **A command inside `( … )` or `{ …; }` is checked like any other (GHSA-9jrf-q94p-frhr).** A
-+  subshell or group was one segment to the gate, whose first word (`(eval`, `(rm`) matched no
-+  rule, and a redirection after the group was dropped. Every group is now opened into its
-+  commands for the checks, and a redirection after it is checked too; a command in a `case`
-+  arm or after `then`, `do`, `else` or `coproc` is judged as its own command. The line that
-+  runs is unchanged.
-+
-+- **The state guard follows the working directory and the values a line builds
-+  (GHSA-cfmv-qg29-3rvp).** Repeated or conditional `cd ..`, a `cd` in a loop, function or trap,
-+  `CDPATH`/`HOME`/`OLDPWD` assignments, variables assigned or read at run time (also
-+  `${d:=…}` and `set --` arguments, also inside a longer word), the shell's own
-+  `$PWD`/`$OLDPWD`/`$_` and `~+`/`~-`/`~N`, brace and parameter expansions, function
-+  arguments, `alias` bodies, `GIT_DIR`-
 ```
 
-**File**: `PUBLIC-EXPORT-RECEIPT.json` (modified, +663/-411)
+**File**: `PUBLIC-EXPORT-RECEIPT.json` (modified, +131/-96)
 ```diff
 @@ -331,11 +331,11 @@
     "size": 1033
    },
    {
--   "blob": "c64f0b1ac0eaa0e6f40489cf23046d142a60a727",
-+   "blob": "1516a1ee651df535b86515a6d72266efad671428",
+-   "blob": "967aed0e3121be747a277739beebd7bec18c6077",
++   "blob": "6b70ae57d067b78404c19d7f27ca7b9bcf85fc85",
     "mode": "100644",
     "path": "CHANGELOG.md",
--   "sha256": "5f708d8498443961ea47028c9f12422c8df16b792b63df46c30f1f1ca1db4f8f",
--   "size": 1272010
-+   "sha256": "b21ed364e667e4239709a8a01a0d04688b0f3784571a5001a8823b23f5f05514",
-+   "size": 1280635
+-   "sha256": "bdf05b987261bd789401a12917323d9db56a6c6270097977fdf1d11eb9678ae7",
+-   "size": 1286052
++   "sha256": "d1aa5b5c925c9898f226ea0627885d2ebc0ea331b9177041ddf608fb4510777b",
++   "size": 1289271
    },
    {
     "blob": "77a7c7a520af8fc8b4df372eb5bd5fddcefbfecf",
@@ -2637,14 +2611,14 @@ Release 3.12.4
     "size": 525
    },
    {
--   "blob": "5ea3b6397ca88514f5ab94d0848164921d0ce4cc",
-+   "blob": "3cd05e74c413de624925a3fc8c5f0a27e0c76b86",
+-   "blob": "ab4480118f0abbd4e85c3996c981a11b6753224e",
++   "blob": "74c1dd3b279be11a6a37bd14a689b269055432b2",
     "mode": "100644",
     "path": "PUBLISH_MANIFEST.toml",
--   "sha256": "ec6665ab41d39d72cd40d9db1abea9461cb723d6dff6ba9a9237729ea520b8ce",
--   "size": 310499
-+   "sha256": "7392d39258c40018285ae618f4ed3a14f7c5358109fb89ec6adb34c52311935a",
-+   "size": 312964
+-   "sha256": "cb51978380c5fc9cbc5e9ac54ef56cb07f420a6e4e283b936241c28e834e3535",
+-   "size": 313044
++   "sha256": "933596972f528fbae7a0eb120df0957ab5cc544bd44b0f8708495a6ea8f238d6",
++   "size": 313479
    },
    {
     "blob": "b50ec9ee68e230777b65ff932e22735417a8e540",
@@ -2652,12 +2626,12 @@ Release 3.12.4
     "size": 38306
    },
    {
--   "blob": "79c8d5f64ce9040787790be6d7af987644efac54",
-+   "blob": "90cdc9b4223cbe89ea594c2afae3478fb370c776",
+-   "blob": "0a5db1fa66f77583638f4bf6bde44b3c2710b978",
++   "blob": "d40c14a6ab07e0a4739ce045fba3d9b70bea5637",
     "mode": "100644",
     "path": "SBOM.cdx.json",
--   "sha256": "a32ffd39a679765dec3231701a978dbc1eeaaba4fb1ffe48b4d71e0f0d6e9e0a",
-+   "sha256": "d702d0d8eeca3baf404bc3191ad6bf5c159bf460f2e9e4e9e91b936e1b33a2cd",
+-   "sha256": "8dc3dd14b662c89777a5edd4abb9f56e9fb60708765f90836dded1d9f6fa109e",
++   "sha256": "265e4ef4cfbc8e0d834c240ca4ce667957f5a1b898ba41ba97dd11a9f60a677d",
     "size": 689556
    },
    {
@@ -2665,12 +2639,12 @@ Release 3.12.4
     "size": 32425
    },
    {
--   "blob": "b2b8efcc513cd0a0ab69410b047eb7a94f1c5c54",
-+   "blob": "97a8bfd612479e9df3c40f4c1d3284de52b4c7c5",
+-   "blob": "67f2bf8c0bb2957f9bc07294c494e79a1a10eddb",
++   "blob": "b67247278b8e8ef29d153849cfeafb91c790c529",
     "mode": "100644",
     "path": "THIRD_PARTY_NOTICES",
--   "sha256": "c7ab236b6d058ed5b2c598e6ba1e749faa2087221c2b3a514b4937e7f231e5ac",
-+   "sha256": "d3d27f494df715682fd7306fbf9a60f49fc99b87f1e95c929c25c09867bd9074",
+-   "sha256": "58d3cb2c06ae4ab8c72371aa04e5ccc8f643989b2f25c4298b636b1be04d0e45",
++   "sha256": "dbfcb518430bb1236ce66b4bfaee3a12a5e77531175c19d8247f1026d2f65e08",
     "size": 331754
    },
    {
@@ -2678,324 +2652,215 @@ Release 3.12.4
     "size": 593
    },
    {
--   "blob": "99ea4539c31f8772ad014df1a6350d98c4b8c5f2",
-+   "blob": "bc0d0484a42c163ee07dc5c0b7e853fbd4968739",
+-   "blob": "c926a3f56b957ceb994abaa2e0e0f193c65de420",
++   "blob": "69a61a655d860714675aa9ca87fde8511b457797",
     "mode": "100644",
     "path": "aur/lean-ctx/PKGBUILD",
--   "sha256": "6ccda55f6860646b3c94bd0601eac844d9542f1abae1d9efd06faaa0019ba265",
-+   "sha256": "721a41ab8854f5785cd63e1519f76ba526975580aae109fcce42ad3aa3a6e38d",
+-   "sha256": "c65babff124b7a00abf5690df87ceb94d9a287890677972a20d3fa10323b85a8",
++   "sha256": "f6c3b1a6f0755daad424192619ac16f811482f9adc83a5102e92a39b8376fb8e",
     "size": 2096
    },
    {
-@@ -527,11 +527,11 @@
-    "size": 6789
-   },
-   {
--   "blob": "e735e77f234e947a9bc6715383f814634a45ff9b",
-+   "blob": "3bf3d255849fe76b9a95099510d9940099118f70",
-    "mode": "100644",
-    "path": "ci/gitlab-ci.yml",
--   "sha256": "da2e8500337f3bf1d2e9574823e59ab48be589a461f418b46cdc560400a10e8c",
--   "size": 53224
-+   "sha256": "bc10f112e6b5228694c78f8bd23e5da91253fdb5263ea7b5697c1bccb4835c35",
-+   "size": 60637
-   },
-   {
-    "blob": "102f24e836104cc226bf24b5a5ce582ec184eb39",
-@@ -3264,11 +3264,11 @@
-    "size": 8690
-   },
-   {
--   "blob": "437206a949df05418ba4568f9ccf5a9c33990aa1",
-+   "blob": "d99134e5d44f81033ce5c8f6c1c1c786a99d1127",
-    "mode": "100644",
-    "path": "docs/reference/generated/config-keys.md",
--   "sha256": "f6cdc32b8dd13845923e5c14ca1853d0128e1a3f87ab35154ffdc0a0c6c8ba54",
--   "size": 72058
-+   "sha256": "5e431aad9867b6e9e06e0e77d884dca22ea8e68efaa5259718505a241361fa6b",
-+   "size": 72738
-   },
-   {
-    "blob": "e13f846428672699c0599c3951fce4ad25fbe648",
-@@ -3278,11 +3278,11 @@
-    "size": 5512
-   },
-   {
--   "blob": "13db6570848b81860092c6473bd99acb9a4ab22c",
-+   "blob": "dd0dd6f74c89aa1f5c3818dc22e92138afce860c",
-    "mode": "100644",
-    "path": "docs/reference/generated/mcp-tools.md",
--   "sha256": "2107f1f7ab9af2e0bf7da6535e49af938ab3a20466b325dc233b6d94f9098291",
--   "size": 23420
-+   "sha256": "08f517964b066fe064d85e75eb2dbac701a88be19c4f2763607c5c37035f65bd",
-+   "size": 23520
-   },
-   {
-    "blob": "392dce35ae93180bf5953b4e7e77f2d56a3102be",
-@@ -3656,11 +3656,11 @@
-    "size": 9354
-   },
-   {
--   "blob": "d45801744365bff4f74744692821e317b0295b38",
-+   "blob": "019df3bb674de25b71c9b37084c2647f14bb6b21",
-    "mode": "100644",
-    "path": "integrations/claude-code-mod/hooks/cockpit.tsx",
--   "sha256": "7705784f31ecdb0bf0c6872a22d76d392af2410836897945afff896af54f0a5c",
--   "size": 64696
-+   "sha256": "d71bf5f35d9a94030b3ddc500fc375c3734697fc81858e340bd62922925c31d8",
-+   "size": 65938
-   },
-   {
-    "blob": "9f45101460f1aad4ec66b7747876b8a64c40c739",
-@@ -3691,11 +3691,11 @@
-    "size": 35330
-   },
-   {
--   "blob": "c727b23ee499d95d9566bf06af867132d9077e39",
-+   "blob": "e4b9cecdd08f780eb5079f42a49543928a38f2b9",
-    "mode": "100644",
-    "path": "integrations/claude-code-mod/tests/cockpit.test.tsx",
--   "sha256": "c360f62b14ad315d10700e8796cc7081fecc2052e7e21d17413fc575224cbe39",
--   "size": 4334
-+   "sha256": "40d311e3823abae9c251d1a4cf04f53beb8009a7bb163664e48c90b2d34dcd81",
-+   "size": 6809
-   },
-   {
-    "blob": "770c0e5660f09fa6175f5a67d6352cca1ff6f101",
 @@ -4006,18 +4006,18 @@
     "size": 193663
    },
    {
--   "blob": "9ef0440b7a4cacbd751127a77909c28aea8db8f5",
-+   "blob": "bee3e7eac086bf2cd7ce0edb6066478fd71e5914",
+-   "blob": "9db68450c504924f4caeedd2a88e1713f004a060",
++   "blob": "00fd17348052b8c243a561c4b17d1c7359c45b93",
     "mode": "100644",
     "path": "legal/third-party-assets.toml",
--   "sha256": "d081cb4f7dfa289
+-   "sha256": "425dd8b96788160bf4fc3a3a512dd05816fb4edb078c822cefeb92dfc5dc542d",
++   "sha256": "eb4d0cfd3d81fad8de02741f6adbcc25872c1a4f2913561cf9d31e3649cfc536",
+    "size": 4279
+   },
+   {
+-   "blob": "9457fa56d74f1d4090d8983715d6dc1344a872c6",
++   "blob": "ab2e46dcb2aacf194f19a0455ca797ae4503cd7d",
+    "mode": "100644",
+    "path": "legal/third-party-notices-approval.toml",
+-   "sha256": "6b3ebca2d0584bd4e9dc8aa64e9e1c5b45d8a905c2c4d702190a869e9630c9c8",
+-   "size": 900
++   "sha256": "dd18b6eb83fab6a17eb037f34d7cf42961bb4b3f681f6a82e389eef10118b940",
++   "size": 874
+   },
+   {
+    "blob": "670fbcf808b965b53ce1309fc8d0c6d3b347c142",
+@@ -4041,10 +4041,10 @@
+    "size": 606
+   },
+   {
+-   "blob": "0bbe0315e4f5c8fc22bc5c2510d8f630d842f551",
++   "blob": "19e2502a38bd2e7680575d8370c7575977dab39f",
+    "mode": "100644",
+    "path": "packages/lean-ctx-bin/package.json",
+-   "sha256": "dae7701e12521ec98589bd3327e2df8a65b0188c367e2981556cac06be5fedfc",
++   "sha256": "67c3d23d9e0f781061f112fd56032bdb5257c649c8c9d9fdc25d2da025c8a1f0",
+    "size": 934
+   },
+   {
+@@ -4391,10 +4391,10 @@
+    "size": 25813
+   },
+   {
+-   "blob": "049d39444b8c9bf15d1bbfc2c8c988f5591367cb",
++   "blob": "def484fc96a11151c72587a986944add5c2ba2e9",
+    "mode": "100644",
+    "path": "packages/pi-lean-ctx/extensions/mcp-cache.ts",
+-   "sha256": "20cddaf551dcab4a8797b39ef2b59d7f351855e46ca64fc89266842e79fc8dc7",
++   "sha256": "c1b0b6e1f55a951c61827ab5903875f922c32811f7badb6b37e6c35917f9c585",
+    "size": 12725
+   },
+   {
+@@ -4419,17 +4419,17 @@
+    "size": 443
+   },
+   {
+-   "blob": "bdc8301f3631a7d27136b542fefb54323e3ff9ac",
++   "blob": "5039a2ae67d27ea46ea33259d5adbcf31b764182",
+    "mode": "100644",
+    "path": "packages/pi-lean-ctx/package-lock.json",
+-   "sha256": "80be0b272b759c509fee6c44185755ceae9d23e4331b78867c5e4722475fb1d8",
++   "sha256": "2f3d2808b17c364e7c3acbf09582f687328f46f427678be8c66d2755d0d3e03a",
+    "size": 147229
+   },
+   {
+-   "blob": "0be348c6f4e1aec1d1ac3ce19cb5f62d2d24f535",
++   "blob": "9a4a2ff79e345b1809b4ba0157599a0b73ce8dc9",
+    "mode": "100644",
+    "path": "packages/pi-lean-ctx/package.json",
+-   "sha256": "02529f396d645044d120fc79758695ad26af1aca2ae94a53946c273982e0f168",
++   "sha256": "93035b6e20a8093255358fe2f05181c877a6db56870f759202c1dbdcc661a04e",
+    "size": 1775
+   },
+   {
+@@ -4769,17 +4769,17 @@
+    "size": 5568
+   },
+   {
+-   "blob": "20c466f1d4c928b698a3259dbae13c8055f43264",
++   "blob": "057385f63d331ab9c25dc891d2f404165d37e804",
+    "mode": "100644",
+    "path": "rust/Cargo.lock",
+-   "sha256": "4bbcd5c7a3c
 ```
 
-**File**: `PUBLISH_MANIFEST.toml` (modified, +48/-0)
+**File**: `PUBLISH_MANIFEST.toml` (modified, +7/-0)
 ```diff
-@@ -345,6 +345,8 @@ new_paths = [
-   "rust/src/core/context_admission/cross_line.rs",
-   "rust/src/core/context_admission/egress_api_tests.rs",
-   "rust/src/core/context_admission/egress_walk.rs",
-+  # GHSA-xmx8-69qv-7f86 regression tests: Apache-2.0, own work.
-+  "rust/src/core/context_admission/operand_tests.rs",
-   "rust/src/core/context_admission/origin.rs",
-   "rust/src/core/context_admission/receipt_store/anchors.rs",
-   "rust/src/core/context_admission/receipt_store/capacity.rs",
-@@ -395,6 +397,7 @@ new_paths = [
-   "rust/src/shell/containment/starter.rs",
-   "rust/src/shell/containment/tests.rs",
-   "rust/src/shell/containment/wire.rs",
-+  "scripts/ci/postmerge_bisect.py",
-   "scripts/eccp-envelope",
-   "scripts/agent_tools_compatibility.py",
-   "scripts/check-capabilities.py",
-@@ -408,6 +411,7 @@ new_paths = [
-   "rust/crates/lean-ctx-server/tests/main.rs",
-   "rust/crates/lean-ctx-protocol/tests/main.rs",
-   "scripts/check-local-free.py",
-+  "scripts/tests/test_postmerge_bisect.py",
-   "tests/delivery/test_check_local_free.py",
-   "tests/hive-e2e/lifecycle.cjs",
-   "tests/hive-e2e/lifecycle.sh",
-@@ -430,6 +434,14 @@ new_paths = [
-   "scripts/scan-release-artifacts.py",
-   "scripts/source-export-manifest.py",
-   "scripts/sync-capabilities.py",
-+  # W3-08 deterministic checkers: own code, Apache-2.0 SPDX-headed.
-+  "scripts/mutants-changed",
-+  "scripts/tests/test_mutants_changed.py",
-+  "rust/crates/lean-ctx-shell-policy/tests/proptest_tokenizer.rs",
-+  "rust/fuzz/.gitignore",
-+  "rust/fuzz/Cargo.toml",
-+  "rust/fuzz/README.md",
-+  "rust/fuzz/fuzz_targets/shell_tokenizer.rs",
-   # ECCP W1b-02 change classifier (task 156): own code, Apache-2.0 SPDX-headed.
-   "scripts/change-class",
-   "scripts/tests/test_change_class.py",
-@@ -1337,6 +1349,7 @@ new_paths = [
-   "rust/crates/lean-ctx-hive/src/metrics_v2/tests.rs",
-   "rust/crates/lean-ctx-hive/src/metrics_v2/upload.rs",
-   "rust/crates/lean-ctx-hive/src/migrate.rs",
-+  "rust/crates/lean-ctx-hive/src/models_access.rs",
-   "rust/crates/lean-ctx-hive/src/migrate_tests.rs",
-   "rust/crates/lean-ctx-hive/src/policy_tests.rs",
-   "rust/crates/lean-ctx-hive/src/receipts_tests.rs",
-@@ -1378,6 +1391,7 @@ new_paths = [
-   "rust/crates/lean-ctx-hive/src/throttle_tests.rs",
-   "rust/src/core/untrusted.rs",
-   "rust/src/core/hive_gate.rs",
-+  "rust/src/core/hive_models.rs",
-   "rust/src/core/config/hive.rs",
-   "rust/src/core/engine_interface/receipt_sink.rs",
-   "rust/crates/lean-ctx-hive/src/vault.rs",
-@@ -1407,6 +1421,10 @@ new_paths = [
-   "rust/crates/lean-ctx-shell-policy/src/tests_ps_quotes.rs",
-   "rust/crates/lean-ctx-shell-policy/src/tests_ps_escapes.rs",
-   "rust/crates/lean-ctx-shell-policy/src/redaction_marker.rs",
-+  # 3.12.4 shell-gate advisories (GHSA-4gm5/9jrf/cfmv/fv44).
-+  "rust/crates/lean-ctx-shell-policy/src/groups.rs",
-+  "rust/crates/lean-ctx-shell-policy/src/redirections.rs",
-+  "rust/crates/lean-ctx-shell-policy/src/tests_ghsa_3124.rs",
-   "rust/crates/lean-ctx-server/tests/agent_wait_roundtrip.rs",
-   "rust/tests/suite/hive_fake_wire_conformance.rs",
-   "scripts/sync-hive-c0.sh",
-@@ -1859,6 +1877,7 @@ new_paths = [
-   "rust/crates/lean-ctx/src/cli/migrate_legacy.rs",
-   "rust/crates/lean-ctx/src/cli/mod.rs",
-   "rust/crates/lean-ctx/src/cli/model_cmd.rs",
-+  "rust/crates/lean-ctx/src/cli/models_cmd.rs",
-   "rust/crates/lean-ctx/src/cli/ocla_cmd.rs",
-   "rust/crates/lean-ctx/src/cli/output_savings_cmd.rs",
-   "rust/crates/lean-ctx/src/cli/overview_cmd.rs",
-@@ -2073,6 +2092,8 @@ new_paths = [
-   "rust/src/core/mcp_roots/derive.rs",
-   "rust/src/core/policy/audit_filter.rs",
-   "rust/src/core/read_mode.rs",
-+  # redaction.rs tests moved into their own file (LOC gate): Apache-2.0, own work.
-+  "rust/src/core/redaction/tests.rs",
-   "rust/src/core/reference_store.rs",
-   "rust/src/core/reference_store/tests.rs",
-   "rust/src/core/rooted_read.rs",
-@@ -2159,6 +2180,7 @@ new_paths = [
-   "rust/crates/lean-ctx-proxy/src/integration_tests.rs",
-   "rust/crates/lean-ctx-proxy/src/intent.rs",
-   "rust/crates/lean-ctx-proxy/src/introspect.rs",
-+  "rust/crates/lean-ctx-proxy/src/leanctx_provider.rs",
-   "rust/crates/lean-ctx-proxy/src/lib.rs",
-   "rust/crates/lean-ctx-proxy/src/lineage.rs",
-   "rust/crates/lean-ctx-proxy/src/live_zone.rs",
-@@ -2672,6 +2694,7 @@ new_paths = [
-   "rust/crates/lean-ctx-hooks/src/hook_handlers/tests_search_rewrites.rs",
-   "rust/crates/lean-ctx-hooks/src/hook_handlers/value_recap.rs",
-   "rust/crates/lean-ctx-hooks/src/hook_handlers/vibe.rs",
-+  "rust/crates/lean-ctx-hooks/src/hook_handlers/write_guard.rs",
-   "rust/crates/lean-ctx-hooks/src/hooks/agents/amp.rs",
-   "rust/crates/lean-ctx-hooks/src/hooks/agents/antigravity.rs",
-   "rust/crates/lean-ctx-hooks/src/hooks/agents/claude.rs",
-@@ -2730,6 +2753,15 @@ new_paths = [
-   "rust/src/ipc/detached.rs",
-   "rust/src/ipc/process/services.rs",
-   "rust/src/ipc/process/tests.rs",
-+  # mz6/mz14 T4: model origin/host-country enforcement. Own code, Apache-2.0;
-+  # the catalog d
+@@ -1854,6 +1854,7 @@ new_paths = [
+   "rust/crates/lean-ctx/src/cli/local_read/activity.rs",
+   "rust/crates/lean-ctx/src/cli/local_read/bus_presence.rs",
+   "rust/crates/lean-ctx/src/cli/local_read/capabilities.rs",
++  "rust/crates/lean-ctx/src/cli/local_read/context_part.rs",
+   "rust/crates/lean-ctx/src/cli/local_read/daemon.rs",
+   "rust/crates/lean-ctx/src/cli/local_read/evidence.rs",
+   "rust/crates/lean-ctx/src/cli/local_read/kinds.rs",
+@@ -2882,6 +2883,12 @@ new_paths = [
+   "rust/crates/lean-ctx-server/src/tools/claims_gate.rs",
+   "rust/crates/lean-ctx-server/src/tools/ctx_agent_claims.rs",
+   "rust/src/core/unit_claims.rs",
++  # Shared parse derivations across worktrees (GitHub #2247; own work, Apache-2.0).
++  "rust/src/core/derivation_cache.rs",
++  "rust/src/core/derivation_cache_tests.rs",
++  # Test modules split out of cockpit.rs and config/sections.rs for the LOC gate (own work, Apache-2.0).
++  "rust/src/core/intelligence_runtime/cockpit_tests.rs",
++  "rust/src/core/config/sections_tests.rs",
+ ]
+ 
+ # Public paths the export no longer carries: each one is a feature sunset with
 ```
 
-**File**: `SBOM.cdx.json` (modified, +26/-26)
+**File**: `SBOM.cdx.json` (modified, +13/-13)
 ```diff
-@@ -94,7 +94,7 @@
-       "version": "0.2.0"
+@@ -158,7 +158,7 @@
+       "version": "0.7.0"
      },
      {
--      "bom-ref": "path+file://./rust/crates/lean-ctx-ocla#6.0.0",
-+      "bom-ref": "path+file://./rust/crates/lean-ctx-ocla#7.0.0",
-       "description": "Open Context & Token Lifecycle Architecture \u2014 the provider-neutral contract boundary (capability traits, canonical types, token envelopes) shared between lean-ctx-core (OSS) and lean-ctx-enterprise (proprietary).",
+-      "bom-ref": "path+file://./rust/crates/lean-ctx-syntax#0.1.0",
++      "bom-ref": "path+file://./rust/crates/lean-ctx-syntax#0.1.1",
+       "description": "Tree-sitter based code structure for LeanCTX | OSS: signatures, deep AST queries, import resolution and the post-edit syntax gate.",
        "externalReferences": [
          {
-@@ -108,10 +108,10 @@
+@@ -176,10 +176,10 @@
          }
        ],
-       "name": "lean-ctx-ocla",
--      "purl": "pkg:cargo/lean-ctx-ocla@6.0.0?download_url=file://crates/lean-ctx-ocla",
-+      "purl": "pkg:cargo/lean-ctx-ocla@7.0.0?download_url=file://crates/lean-ctx-ocla",
+       "name": "lean-ctx-syntax",
+-      "purl": "pkg:cargo/lean-ctx-syntax@0.1.0?download_url=file://crates/lean-ctx-syntax",
++      "purl": "pkg:cargo/lean-ctx-syntax@0.1.1?download_url=file://crates/lean-ctx-syntax",
        "scope": "required",
        "type": "library",
--      "version": "6.0.0"
-+      "version": "7.0.0"
+-      "version": "0.1.0"
++      "version": "0.1.1"
      },
      {
-       "bom-ref": "path+file://./rust/crates/lean-ctx-patterns#0.1.0",
-@@ -138,7 +138,7 @@
-       "version": "0.1.0"
-     },
-     {
--      "bom-ref": "path+file://./rust/crates/lean-ctx-protocol#0.6.0",
-+      "bom-ref": "path+file://./rust/crates/lean-ctx-protocol#0.7.0",
-       "description": "Open wire contracts for lean-ctx: events, observations, assignments, evidence gaps.",
-       "externalReferences": [
-         {
-@@ -152,10 +152,10 @@
-         }
-       ],
-       "name": "lean-ctx-protocol",
--      "purl": "pkg:cargo/lean-ctx-protocol@0.6.0?download_url=file://crates/lean-ctx-protocol",
-+      "purl": "pkg:cargo/lean-ctx-protocol@0.7.0?download_url=file://crates/lean-ctx-protocol",
-       "scope": "required",
-       "type": "library",
--      "version": "0.6.0"
-+      "version": "0.7.0"
-     },
-     {
-       "bom-ref": "path+file://./rust/crates/lean-ctx-syntax#0.1.0",
-@@ -182,7 +182,7 @@
-       "version": "0.1.0"
-     },
-     {
--      "bom-ref": "path+file://./rust/crates/lean-ctx-workgraph#0.2.0",
-+      "bom-ref": "path+file://./rust/crates/lean-ctx-workgraph#0.3.0",
-       "description": "Bounded multi-agent work graph, budget cascade and outcome evaluation model for LeanCTX | OSS.",
-       "externalReferences": [
-         {
-@@ -200,10 +200,10 @@
-         }
-       ],
-       "name": "lean-ctx-workgraph",
--      "purl": "pkg:cargo/lean-ctx-workgraph@0.2.0?download_url=file://crates/lean-ctx-workgraph",
-+      "purl": "pkg:cargo/lean-ctx-workgraph@0.3.0?download_url=file://crates/lean-ctx-workgraph",
-       "scope": "required",
-       "type": "library",
--      "version": "0.2.0"
-+      "version": "0.3.0"
-     },
-     {
-       "bom-ref": "path+file://./rust/crates/leanctx-native-storage#0.1.1",
-@@ -16916,11 +16916,11 @@
-         "path+file://./rust/crates/lean-ctx-compress#0.1.0",
-         "path+file://./rust/crates/lean-ctx-doc#0.2.0",
-         "path+file://./rust/crates/lean-ctx-fs#0.2.0",
--        "path+file://./rust/crates/lean-ctx-ocla#6.0.0",
-+        "path+file://./rust/crates/lean-ctx-ocla#7.0.0",
+       "bom-ref": "path+file://./rust/crates/lean-ctx-workgraph#0.3.0",
+@@ -16919,7 +16919,7 @@
+         "path+file://./rust/crates/lean-ctx-ocla#7.0.0",
          "path+file://./rust/crates/lean-ctx-patterns#0.1.0",
--        "path+file://./rust/crates/lean-ctx-protocol#0.6.0",
-+        "path+file://./rust/crates/lean-ctx-protocol#0.7.0",
-         "path+file://./rust/crates/lean-ctx-syntax#0.1.0",
--        "path+file://./rust/crates/lean-ctx-workgraph#0.2.0",
-+        "path+file://./rust/crates/lean-ctx-workgraph#0.3.0",
+         "path+file://./rust/crates/lean-ctx-protocol#0.7.0",
+-        "path+file://./rust/crates/lean-ctx-syntax#0.1.0",
++        "path+file://./rust/crates/lean-ctx-syntax#0.1.1",
+         "path+file://./rust/crates/lean-ctx-workgraph#0.3.0",
          "path+file://./rust/crates/leanctx-native-storage#0.1.1",
          "registry+https://github.com/rust-lang/crates.io-index#libc@0.2.189",
-         "registry+https://github.com/rust-lang/crates.io-index#libloading@0.8.9",
 @@ -16977,7 +16977,7 @@
          "registry+https://github.com/rust-lang/crates.io-index#zip@9.0.5",
          "registry+https://github.com/rust-lang/crates.io-index#zstd@0.14.3"
        ],
--      "ref": "path+file://./rust#lean-ctx-engine@3.12.3"
-+      "ref": "path+file://./rust#lean-ctx-engine@3.12.4"
+-      "ref": "path+file://./rust#lean-ctx-engine@3.12.5"
++      "ref": "path+file://./rust#lean-ctx-engine@3.12.6"
      },
      {
        "dependsOn": [
-@@ -17027,14 +17027,14 @@
-         "registry+https://github.com/rust-lang/crates.io-index#blake3@1.8.6",
-         "registry+https://github.com/rust-lang/crates.io-index#ed25519-dalek@2.2.0",
-         "registry+https://github.com/rust-lang/crates.io-index#getrandom@0.4.3",
--        "path+file://./rust/crates/lean-ctx-protocol#0.6.0",
-+        "path+file://./rust/crates/lean-ctx-protocol#0.7.0",
-         "registry+https://github.com/rust-lang/crates.io-index#semver@1.0.28",
-         "registry+https://github.com/rust-lang/crates.io-index#serde@1.0.229",
-         "registry+https://github.com/rust-lang/crates.io-index#serde_json@1.0.151",
-         "registry+https://github.com/rust-lang/crates.io-index#sha2@0.11.0",
-         "registry+https://github.com/rust-lang/crates.io-index#thiserror@2.0.20"
+@@ -17089,7 +17089,7 @@
+         "registry+https://github.com/rust-lang/crates.io-index#tree-sitter-typescript@0.23.2",
+         "registry+https://github.com/rust-lang/crates.io-index#tree-sitter-zig@1.1.2"
        ],
--      "ref": "path+file://./rust/crates/lean-ctx-ocla#6.0.0"
-+      "ref": "path+file://./rust/crates/lean-ctx-ocla#7.0.0"
+-      "ref": "path+file://./rust/crates/lean-ctx-syntax#0.1.0"
++      "ref": "path+file://./rust/crates/lean-ctx-syntax#0.1.1"
      },
      {
        "dependsOn": [
-@@ -17057,7 +17057,7 @@
-         "registry+https://github.com/rust-lang/crates.io-index#serde_json@1.0.151",
-         "registry+https://github.com/rust-lang/crates.io-index#sha2@0.11.0"
- 
+@@ -20872,14 +20872,14 @@
+   ],
+   "metadata": {
+     "component": {
+-      "bom-ref": "path+file://./rust#lean-ctx-engine@3.12.5",
++      "bom-ref": "path+file://./rust#lean-ctx-engine@3.12.6",
+       "components": [
+         {
+-          "bom-ref": "path+file://./rust#lean-ctx-engine@3.12.5 bin-target-0",
++          "bom-ref": "path+file://./rust#lean-ctx-engine@3.12.6 bin-target-0",
+           "name": "lean_ctx",
+-          "purl": "pkg:cargo/lean-ctx-engine@3.12.5?download_url=file://.#src/lib.rs",
++          "purl": "pkg:cargo/lean-ctx-engine@3.12.6?download_url=file://.#src/lib.rs",
+           "type": "library",
+-          "version": "3.12.5"
++          "version": "3.12.6"
+         }
+       ],
+       "description": "LeanCTX | OSS library: the open-source runtime for the Context Gateway for AI agents behind the lean-ctx CLI, MCP server and proxy integrations.",
+@@ -20899,10 +20899,10 @@
+         }
+       ],
+       "name": "lean-ctx-engine",
+-      "purl": "pkg:cargo/lean-ctx-engine@3.12.5?download_url=file://.",
++      "purl": "pkg:cargo/lean-ctx-engine@3.12.6?download_url=file://.",
+       "scope": "required",
+       "type": "library",
+-      "version": "3.12.5"
++      "version": "3.12.6"
+     },
+     "properties": [
+       {
+@@ -20911,7 +20911,7 @@
+       },
+       {
+         "name": "leanctx:cargo-lock-sha256",
+-        "value": "4bbcd5c7a3cbd2692264f508ddf6eaa0e41000296e04cbdc0d16680cd5e197a7"
++        "value": "3f36e6edaf70dd16aaa140a76fe27726f6308a93bd31614fe66382db70931a5b"
+       }
+     ],
+     "tools": [
 ```
 
 **File**: `THIRD_PARTY_NOTICES` (modified, +5/-5)
@@ -3004,21 +2869,21 @@ Release 3.12.4
  Schema: leanctx.third-party-notices/v1
  Status: GENERATED AND APPROVED
  Content-Digest-Scope: SHA-256 of this file with the Content-Digest value zeroed
--Content-Digest: sha256:4a5fee5839343fcffba0b23ec686f31e15fa29ed6ad2a4d769f34076b8a66bff
-+Content-Digest: sha256:34ade52836261ab9442d08e834c836746595985a214b739a0939b1148ea8d226
+-Content-Digest: sha256:08ccc74e65587ae7257accadbb006a0e2a84e8a38361708fb5367acac9f4f220
++Content-Digest: sha256:7820ef5ed1f811b380510bd202a32045bd5e8b027930033f24cb6d2a13d110fb
  Source inventory: rust/Cargo.lock + cargo metadata --locked --offline --all-features + SBOM.cdx.json + legal/third-party-assets.toml + packages/pi-lean-ctx/package-lock.json
  Generation command: cargo metadata --locked --offline --all-features --manifest-path rust/Cargo.toml --format-version 1
  Approval contract: legal/third-party-notices-approval.toml binds approved_content_sha256 to this file's exact SHA-256
--Cargo.lock SHA-256: 244406655444ce38a045358b0780179fe504634f075af30d8252e60e9fdd3e74
-+Cargo.lock SHA-256: ee5d9e5ba2cedd3e2345074b40f0e29ceaf6b2f5c77663b53057ad148fb44475
- Cargo metadata inventory SHA-256: 7034b4be10f229be5a7a64b15e9aa88df642468dc286ab14c8f22840e8d7c9df
--SBOM.cdx.json SHA-256: a32ffd39a679765dec3231701a978dbc1eeaaba4fb1ffe48b4d71e0f0d6e9e0a
-+SBOM.cdx.json SHA-256: d702d0d8eeca3baf404bc3191ad6bf5c159bf460f2e9e4e9e91b936e1b33a2cd
+-Cargo.lock SHA-256: 4bbcd5c7a3cbd2692264f508ddf6eaa0e41000296e04cbdc0d16680cd5e197a7
++Cargo.lock SHA-256: 3f36e6edaf70dd16aaa140a76fe27726f6308a93bd31614fe66382db70931a5b
+ Cargo metadata inventory SHA-256: 0ec86e75785b11497500997a1c951d7ea4406d7559dd7d605dd0350a23cb179f
+-SBOM.cdx.json SHA-256: 8dc3dd14b662c89777a5edd4abb9f56e9fb60708765f90836dded1d9f6fa109e
++SBOM.cdx.json SHA-256: 265e4ef4cfbc8e0d834c240ca4ce667957f5a1b898ba41ba97dd11a9f60a677d
  SBOM components: 559
--Asset manifest SHA-256: d081cb4f7dfa2892dd6d8999be5dae00fc5b785dd40f81360a6fa4fe92abbd2a
--npm package-lock.json SHA-256: afae69f88fa3c76df4c3520744ec90fa507ae9f5f0fc2ec075183c3790cae1ef
-+Asset manifest SHA-256: 4a17f7c4335e1bd1dc67fbbad3c4dfe9693c302a9312645ec72850ef49cd94e6
-+npm package-lock.json SHA-256: 5eaa80ca72ed4df8d3022adfdb3af4c050b5f6c53ee8c3a3b3159ac63eb0d9ba
+-Asset manifest SHA-256: 425dd8b96788160bf4fc3a3a512dd05816fb4edb078c822cefeb92dfc5dc542d
+-npm package-lock.json SHA-256: 80be0b272b759c509fee6c44185755ceae9d23e4331b78867c5e4722475fb1d8
++Asset manifest SHA-256: eb4d0cfd3d81fad8de02741f6adbcc25872c1a4f2913561cf9d31e3649cfc536
++npm package-lock.json SHA-256: 2f3d2808b17c364e7c3acbf09582f687328f46f427678be8c66d2755d0d3e03a
  Bundled MCP SDK: @modelcontextprotocol/sdk 1.32.1 (sha512-2DdE+SJDtzLEEWzY1ZjY7Q+VcPhcV1KisD3zI4u0XZyktsjHum1mwbMI+JaulUBi2OZk+KJAi2uPXzxichPkdw==)
  Cargo graph packages: 624
  Third-party Cargo packages: 601
@@ -3029,8 +2894,8 @@ Release 3.12.4
 @@ -1,6 +1,6 @@
  # Maintainer: Yves Gugger <yves@pounce.ch>
  pkgname=lean-ctx
--pkgver=3.12.2
-+pkgver=3.12.3
+-pkgver=3.12.4
++pkgver=3.12.5
  pkgrel=1
  pkgdesc="LeanCTX | OSS — open-source Context Gateway for AI Systems. Context selection, supported controls, and evidence through local integration paths."
  arch=('x86_64' 'aarch64')
@@ -3038,756 +2903,122 @@ Release 3.12.4
  # resolver finds it — no manual install, no runtime download.
  depends=('gcc-libs' 'onnxruntime')
  source=("$pkgname-$pkgver.tar.gz::https://github.com/yvgude/lean-ctx/releases/download/v$pkgver/lean-ctx-$pkgver-source.tar.gz")
--sha256sums=('2601b71bc2aae00fdc84b2c63479fa87ed5791342ae98a5da77e490e617eac4a')
-+sha256sums=('0c6ba5f54555e2f6714ffe9705fedfb6144865834d56671869caba2c0a2dae95')
+-sha256sums=('748dc85ade919090b297d5e23fd4bb4b3a99d967533e8f6ea8069f115014cbdb')
++sha256sums=('2cb849ddbb2623e20033b69331807aa4dc359d49015e184cfc4e4e2060f09daf')
  
  prepare() {
    cd "$pkgname-$pkgver/rust"
 ```
 
-**File**: `ci/gitlab-ci.yml` (modified, +148/-54)
+**File**: `legal/third-party-assets.toml` (modified, +3/-3)
 ```diff
-@@ -190,7 +190,7 @@ ip-boundary-skill-installed:
-     name: lean-ctx-ci-rust:65e3bbf776c5
-     pull_policy: if-not-present
-   # Python only: run on the small runner (2 CPU / 4 GB slots), so the job does
--  # not queue behind Rust builds for a 12-CPU slot.
-+  # not queue behind Rust builds for a 6-CPU slot.
-   tags: [light]
-   timeout: 5 minutes
-   interruptible: false
-@@ -334,9 +334,15 @@ v4-runtime:
-     # `target`: tests recognise build output by paths like /target/debug/deps.
-     # It is the only compiler cache (W1-08: sccache is gone; the persistent
-     # target already holds every unchanged crate).
--    CI_TARGET_DIR: "/builds/.ci-cache/$CI_PROJECT_PATH_SLUG/target"
--    # A target over this size (GiB) is wiped at job start.
--    CI_TARGET_CAP_GB: "40"
-+    # One target per concurrent build directory of a runner, keyed like the
-+    # runner's own /builds/<short token>/<concurrent id> (11.11., p5 jobs
-+    # 32317/32318/32345: jobs in /builds/<token>/1 and /2 built into one
-+    # target, and one job's cargo replaced or removed the other's test
-+    # binaries mid-run).
-+    CI_TARGET_DIR: "/builds/.ci-cache/$CI_PROJECT_PATH_SLUG/slot-$CI_RUNNER_SHORT_TOKEN-$CI_CONCURRENT_PROJECT_ID/target"
-+    # A target over this size (GiB) is wiped at job start. Per slot: with
-+    # about six slots on the host, 30 keeps the worst case near 180 GiB.
-+    CI_TARGET_CAP_GB: "30"
-     # Warm build farm (W4-04, scripts/ci/warm_farm.py). The runner mounts the
-     # root-owned host directory /srv/ci-cache/warm-farm here. A green
-     # protected post-merge run publishes its target (incremental data
-@@ -352,8 +358,9 @@ v4-runtime:
-     # Incremental compilation of the workspace crates into the slot's
-     # persistent target (W1-08): a change recompiles only what it touched.
-     CARGO_INCREMENTAL: "1"
--    # The runner gives each job a 12-CPU / 20-GiB cgroup (all jobs share the
--    # host's 24-CPU / 64-GiB CI slice); more jobs than CPUs gain nothing. The
-+    # The runner gives each job a cgroup of 6 CPUs (cpu.max 600000/100000, as
-+    # mr-quick prints it, 12.11.); all jobs share the host's 24-CPU / 64-GiB CI
-+    # slice. 12 jobs exceed the quota and the cgroup throttles the excess. The
-     # two ~9-GiB engine rustc (lib, lib test) dominate and fit side by side.
-     CARGO_BUILD_JOBS: "12"
-     CARGO_PROFILE_DEV_DEBUG: line-tables-only
-@@ -380,7 +387,7 @@ v4-runtime:
-     # The image carries every tool; nothing is installed at job time. The
-     # resolved compiler version is recorded with the evidence.
-     - |
--      for ci_tool in git python3 cmake clang mold node npm useradd runuser cargo-clippy cargo-nextest rustfmt; do
-+      for ci_tool in git python3 cmake clang mold node npm useradd runuser flock cargo-clippy cargo-nextest rustfmt; do
-         command -v "$ci_tool" >/dev/null || { echo "CI image lacks $ci_tool" >&2; exit 1; }
-       done
-     - |
-@@ -440,101 +447,168 @@ v4-runtime:
-       # swap the target for a link nor forge the stamp beside it; the target
-       # belongs to ci-runner. Nothing here follows a symlink. Toolchain or
-       # image changes and targets over CI_TARGET_CAP_GB start fresh.
-+      # Each concurrent build directory has its own target (CI_TARGET_DIR).
-+      # Should two jobs ever share one (11.11., p5 jobs 32317/32318/32321: a
-+      # wipe deleted a running job's test binaries and du failed on files
-+      # another job removed), each holds a shared lock on target.lock (fd 9)
-+      # until the job ends; only a job that gets the lock exclusively without
-+      # waiting (fd 8) wipes or cleans up. A busy slot keeps its target.
-       test "${CI_BUILDS_DIR:-}" = /builds || { echo "target: unexpected CI_BUILDS_DIR" >&2; exit 1; }
-       case "${CI_PROJECT_PATH_SLUG:-}" in ''|*[!a-z0-9-]*) echo "target: unexpected CI_PROJECT_PATH_SLUG" >&2; exit 1;; esac
-       case "${CI_TARGET_CAP_GB:-}" in ''|*[!0-9]*) echo "target: unexpected CI_TARGET_CAP_GB" >&2; exit 1;; esac
--      ci_target_parent="/builds/.ci-cache/$CI_PROJECT_PATH_SLUG"
-+      case "${CI_RUNNER_SHORT_TOKEN:-}" in ''|*[!A-Za-z0-9_-]*) echo "target: unexpected CI_RUNNER_SHORT_TOKEN" >&2; exit 1;; esac
-+      case "${CI_CONCURRENT_PROJECT_ID:-}" in ''|*[!0-9]*) echo "target: unexpected CI_CONCURRENT_PROJECT_ID" >&2; exit 1;; esac
-+      ci_target_parent="/builds/.ci-cache/$CI_PROJECT_PATH_SLUG/slot-$CI_RUNNER_SHORT_TOKEN-$CI_CONCURRENT_PROJECT_ID"
-       ci_target="$ci_target_parent/target"
-       test "${CI_TARGET_DIR:-}" = "$ci_target" || { echo "target: unexpected CI_TARGET_DIR" >&2; exit 1; }
-       case "$ci_target/" in "$CI_PROJECT_DIR"/*) echo "target: inside the checkout" >&2; exit 1;; esac
-+      case "${CI_JOB_ID:-}" in ''|*[!0-9]*) echo "target: unexpected CI_JOB_ID" >&2; exit 1;; esac
-       if test -L /builds; then echo "target: /builds is a symlink" >&2; exit 1; fi
--      for ci_dir in /builds/.ci-cache "$ci_target_parent"; do
-+      for ci_dir in /builds/.ci-cache "/builds/.ci-cache/$CI_PROJECT_PATH_SLUG" "$
+@@ -4,11 +4,11 @@ authority = "THIRD_PARTY_NOTICES"
+ 
+ [inputs]
+ cargo_lock = "rust/Cargo.lock"
+-cargo_lock_sha256 = "4bbcd5c7a3cbd2692264f508ddf6eaa0e41000296e04cbdc0d16680cd5e197a7"
++cargo_lock_sha256 = "3f36e6edaf70dd16aaa140a76fe27726f6308a93bd31614fe66382db70931a5b"
+ sbom = "SBOM.cdx.json"
+-sbom_sha256 = "8dc3dd14b662c89777a5edd4abb9f56e9fb60708765f90836dded1d9f6fa109e"
++sbom_sha256 = "265e4ef4cfbc8e0d834c240ca4ce667957f5a1b898ba41ba97dd11a9f60a677d"
+ npm_lock = "packages/pi-lean-ctx/package-lock.json"
+-npm_lock_sha256 = "80be0b272b759c509fee6c44185755ceae9d23e4331b78867c5e4722475fb1d8"
++npm_lock_sha256 = "2f3d2808b17c364e7c3acbf09582f687328f46f427678be8c66d2755d0d3e03a"
+ 
+ [license_texts]
+ mit = """
 ```
 
-**File**: `docs/reference/generated/config-keys.md` (modified, +8/-0)
+**File**: `legal/third-party-notices-approval.toml` (modified, +3/-3)
 ```diff
-@@ -214,6 +214,12 @@ MCP decision-loop runtime settings
- - `enabled` (bool, default `true`) — Enable the MCP decision-loop runtime
- - `max_filter_level` (u8, default `0`) — Maximum lossy post-dispatch triage level (0 disables output filtering)
- 
-+## `[decisions]`
-+
-+Decision layer (.leanctx/decisions/*.toml): pre-edit check mode
-+
-+- `enforce` (string, default `hint`) — Pre-edit check of .leanctx/decisions: hint (report), refuse (strict: edit not written), off
-+
- ## `[embedding]`
- 
- Semantic-embedding engine settings (model selection for ctx_search action=semantic)
-@@ -275,6 +281,8 @@ LeanCTX | Hive: workspace knowledge, policies and the shared agent bus.
- - `bus` (string: auto | off, default `auto`) — Relay the agent bus through Hive (auto) or keep it local (off).
- - `enabled` (bool, default `null`) — Pause all Hive traffic with false; unset means on while this machine is connected.
- - `metrics_upload` (bool, default `true`) — Send hourly instance metrics to Hive (counts only, including full re-fetches and unregulated program names; never content).
-+- `models_anthropic_agents` (bool, default `false`) — Let Anthropic-shaped agents reach the subscription models through shape-xlat routing aliases; false means OpenAI-shaped agents only. Owner question Q3 is open: true takes effect only once it is decided.
-+- `models_url` (string, default `null`) — Origin of the Hive models gateway for the leanctx provider; unset means https://models.<hive host>. Only the Hive host or a direct subdomain of it is honoured.
- - `pull_interval_minutes` (integer, default `5`) — Minutes between Hive sync passes (1-60; values outside are clamped).
- - `queen_identity` (string: warn | enforce, default `warn` — env `LEAN_CTX_HIVE_QUEEN_IDENTITY`) — A bus sender presenting as the Queen that is no registered Queen session: warn (pass, log in bus/queen-warnings.json, mark for the receiver) or enforce (refuse); any other value counts as enforce. Enforce only once queen-sessions.json lists every Queen session.
- - `receipts_upload` (bool, default `true`) — Upload context receipts to Hive.
+@@ -1,5 +1,5 @@
+ schema = "leanctx.third-party-notices-approval/v1"
+-approved_content_sha256 = "58d3cb2c06ae4ab8c72371aa04e5ccc8f643989b2f25c4298b636b1be04d0e45"
++approved_content_sha256 = "dbfcb518430bb1236ce66b4bfaee3a12a5e77531175c19d8247f1026d2f65e08"
+ approving_owner = "Yves Gugger"
+-approval_evidence = "Copyright owner approval of the generated THIRD_PARTY_NOTICES (GENERATED AND APPROVED variant of scripts/generate-third-party-notices.py) for 3.12.5 after the Dependabot bumps hono 4.13.13 -> 4.13.18 and @hono/node-server 2.1.5 -> 2.1.8 in packages/pi-lean-ctx/package-lock.json (GitHub PRs #2246, #2243): pending variant 8dd23dcbb2e3fa04d61455b7731219d0d3acf5a7780ccf88ecf6825e538d334c, approved variant 58d3cb2c06ae4ab8c72371aa04e5ccc8f643989b2f25c4298b636b1be04d0e45; license texts and package inventory unchanged, only the npm lockfile and asset manifest input digests changed. Owner approval in the 3.12.5 release session on 2026-11-14 (answer \"Approve 58d3cb2c...\")."
+-approved_at = "2026-11-14"
++approval_evidence = "Copyright owner approval of the generated THIRD_PARTY_NOTICES (GENERATED AND APPROVED variant of scripts/generate-third-party-notices.py) for 3.12.6 after the version bump (engine 3.12.6, lean-ctx-syntax 0.1.1) and the offline workspace lockfile update: pending variant edadbf8f534dbbf0fbf4ce3fae080975115abf49bf2a0438f2bf3e4c35f88921, approved variant dbfcb518430bb1236ce66b4bfaee3a12a5e77531175c19d8247f1026d2f65e08; license texts and package inventory unchanged from 3.12.5, only the Cargo.lock, SBOM, asset manifest and npm lock input digests changed. Owner approval in the 3.12.6 release session on 2026-11-15 (answer \"Approve dbfcb518...\")."
++approved_at = "2026-11-15"
 ```
 
 ---
 
-### Incident Patch 2: `7476f371` (2026-11-12)
-**Commit Message**: Release 3.12.4
+### Incident Patch 2: `1560e703` (2026-11-15)
+**Commit Message**: test(local-read): make the overlay tests portable to Windows
 
-Release 3.12.4 export (private source b7ef2ff147, integration/3.12.3). Supersedes #2241.
+Two tests in cli/local_read/context_part.rs assumed Unix paths and failed on Windows CI; test-only change (private !366).
 
-- **Security:** six fixes. Five were reported by @dkiaulakis: the agent shell state gate (redirections, subshells and groups, the working directory and values built at run time, read-only git subcommands) and context admission (the detector and the redactor now judge the same operand). One was reported by @kasparovabi: memory compaction, context bundles, rule exports and the artifact registry no longer write through a symlink. Details are in `CHANGELOG.md` under `[3.12.4]`.
-- **Added:**
-  - Policy enforcement acknowledged to Hive (D4).
-  - The ECCP change classifier and envelope.
-  - Audit entries v2.
-  - Managed configuration for MDM-provisioned machines.
-  - Unit claims: `ctx_patch` and `ctx_edit` warn when another agent holds a claim on the code they change.
-- **Fixed:**
-  - The PowerShell verb-prefix check no longer panics the shell gate on a multi-byte character.
-  - #2240: the cockpit's proof clock no longer pins a core per session. `lean-ctx value` streams the audit trail and the savings ledger (on a 2.3 GB trail: 18.5 s / 2.2 GB RSS → 1.7 s / 19 MB, same result). The co
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `CHANGELOG.md` (modified, +125/-0)
+Exported from the private source 7ef4dd67f4655d2b5bf39f06c2e6a239ae6767a8 (integration/3.12.3).
+
+**File**: `PUBLIC-EXPORT-RECEIPT.json` (modified, +5/-5)
 ```diff
-@@ -6,6 +6,8 @@ Current positioning: [LeanCTX Engine — Context Gateway for AI Systems](docs/PO
- 
- ## [Unreleased]
- 
-+## [3.12.4] — 2026-11-12
-+
- ### Added
- 
- - **Policy enforcement acknowledged to Hive (D4).** The bus hello now names the features
-@@ -18,6 +20,129 @@ Current positioning: [LeanCTX Engine — Context Gateway for AI Systems](docs/PO
-   `policy.sessions` adds `installed.enforcement` (`applied_version`, `acknowledged_at`,
-   `sessions`, `reported_at`), additively.
- 
-+- **ECCP L/I/G change classifier (task 156).** `scripts/change-class <base> <head>`
-+  prints `L` (no public Rust item changed), `I` (public items only added) or `G`
-+  (public item changed or removed, Cargo features or dependency tables,
-+  `Cargo.lock`, `build.rs`, Cargo config, toolchain pin, CI configuration or a
-+  generated registry) from the git objects alone, without a build or network,
-+  and serves as `$ECCP_CLASSIFIER` for `scripts/eccp-envelope`.
-+
-+- **ECCP change envelope in git notes (task 157).** `scripts/eccp-envelope` writes,
-+  shows and verifies a `leanctx.change-envelope/v1` JSON note under
-+  `refs/notes/eccp` on a merge request head: intent, base, class, read set,
-+  derivations and check evidence (`docs/contracts/change-envelope-v1.md`).
-+
-+- **Audit entries v2 bind each tool call to its session (ent3-1).** Every new
-+  audit-trail entry carries `v: 2` and a chained `v2_hash` over its timestamp
-+  and, for a call of an MCP session, the `session_id`, a per-session `seq`,
-+  the decision and an output digest, so an edited timestamp, seq or fact fails
-+  `verify_chain` and `verify_chain_full` at that entry. Input and output digests
-+  are HMAC-SHA256 under the engine-local key (`hive/receipts.hmac-key`, never
-+  uploaded). The v1 `entry_hash` is unchanged: older engines and
-+  `leanctx-verify` still verify a mixed trail, and an entry of a newer version
-+  counts as forward-compatible, not as tampering.
-+
-+- **Managed configuration for MDM-provisioned machines (task 169).** An organisation can
-+  preconfigure an Instance through a macOS configuration profile, the Windows policy key
-+  `HKLM\SOFTWARE\Policies\LeanCTX\Managed` or `/etc/lean-ctx/managed.toml`
-+  (`leanctx.managed-config/v1`, `docs/contracts/managed-config-v1.md`). Managed
-+  `hive.url` and `hive.root_key` win over `[hive]` and `config set` on them is refused;
-+  `hive.org` refuses an enrollment for another org; `hive.require` makes tools refuse
-+  until the machine is signed in and has a policy floor. A carrier that is malformed,
-+  a symlink, or not root-owned (it or its directory) fails closed; it is checked and
-+  read through one open handle. `hive status` and the cockpit `hive status --json`
-+  (`managed`, since 1.7) show the carrier and each member.
-+
-+- **Unit claims warn before two agents edit the same code.** A `ctx_patch` or `ctx_edit`
-+  write claims the functions, types and Markdown sections it touches for the editing agent
-+  (10-minute lease, renewed on each edit). When another agent holds a claim on a touched
-+  unit, the write goes ahead and the result names the holder (`LEAN_CTX_CLAIM_MODE=warn`,
-+  the default). `strict` refuses the write before anything is written, and `off` turns the
-+  check off. `ctx_agent action=claims` lists the live claims. `action=plan_claims` plans a
-+  task against them, through an optional local planner (`LEAN_CTX_CLAIM_PLANNER`) or a
-+  built-in fallback without network, and claims the free units. Claims are released when
-+  the agent reports `status=finished` and when the server shuts down.
-+
-+### Security
-+
-+The first five fixes below were reported by @dkiaulakis.
-+
-+- **A redirection written another way cannot write past the gate (GHSA-4gm5-2mgw-9r9r).** A
-+  redirection with a file-descriptor prefix, an `&>`/`>|`/`<>` operator, a quoted or escaped
-+  target, or no space before its target was missed, so an agent shell could write lean-ctx's
-+  own state or an unlisted file. The gate now reads every redirection in its canonical form
-+  before any other check.
-+
-+- **A command inside `( … )` or `{ …; }` is checked like any other (GHSA-9jrf-q94p-frhr).** A
-+  subshell or group was one segment to the gate, whose first word (`(eval`, `(rm`) matched no
-+  rule, and a redirection after the group was dropped. Every group is now opened into its
-+  commands for the checks, and a redirection after it is checked too; a command in a `case`
-+  arm or after `then`, `do`, `else` or `coproc` is judged as its own command. The line that
-+  runs is unchanged.
-+
-+- **The state guard follows the working directory and the values a line builds
-+  (GHSA-cfmv-qg29-3rvp).** Repeated or conditional `cd ..`, a `cd` in a loop, function or trap,
-+  `CDPATH`/`HOME`/`OLDPWD` assignments, variables assigned or read at run time (also
-+  `${d:=…}` and `set --` arguments, also inside a longer word), the shell's own
-+  `$PWD`/`$OLDPWD`/`$_` and `~+`/`~-`/`~N`, brace and parameter expansions, function
-+  arguments, `alias` bodies, `GIT_DIR`-
+@@ -19616,11 +19616,11 @@
+    "size": 9964
+   },
+   {
+-   "blob": "4d027e2bb4b88140e4aef8987a2c0e6342ee5073",
++   "blob": "20859875b867862e81a0e7316e7d79eb29ee379b",
+    "mode": "100644",
+    "path": "rust/crates/lean-ctx/src/cli/local_read/context_part.rs",
+-   "sha256": "171f6f1ef380e97e5fd5c16c78fbbe621db3840d6a90e06cff18ff514dc69fc2",
+-   "size": 49150
++   "sha256": "f05e8818019b168b8d37490eb5fb8c2aa0e6873efb96edc48f5ec91c0cb0f0a3",
++   "size": 49501
+   },
+   {
+    "blob": "b962fc1c953dcc809335e0c4013fe489aef03b40",
+@@ -37009,7 +37009,7 @@
+  ],
+  "manifest_sha256": "933596972f528fbae7a0eb120df0957ab5cc544bd44b0f8708495a6ea8f238d6",
+  "schema": 1,
+- "source_commit": "1254ce8209c7a27ae23c09d0287323e4e43118e2",
++ "source_commit": "7ef4dd67f4655d2b5bf39f06c2e6a239ae6767a8",
+  "tool_sha256": "86ea08dc440cce975409b9f805c74bf5beb402284f3200800381def3714c8f3c",
+- "tree_sha256": "5d52c22e4b0dddb1ab9e74b5e454e0756666779c0a5bbf59d0246cb3199b72e5"
++ "tree_sha256": "edb890fc4b87c9cbeaa5757460210e0387283d38b5a6816129a0c64451a5403b"
+ }
 ```
 
-**File**: `PUBLIC-EXPORT-RECEIPT.json` (modified, +663/-411)
+**File**: `rust/crates/lean-ctx/src/cli/local_read/context_part.rs` (modified, +9/-2)
 ```diff
-@@ -331,11 +331,11 @@
-    "size": 1033
-   },
-   {
--   "blob": "c64f0b1ac0eaa0e6f40489cf23046d142a60a727",
-+   "blob": "1516a1ee651df535b86515a6d72266efad671428",
-    "mode": "100644",
-    "path": "CHANGELOG.md",
--   "sha256": "5f708d8498443961ea47028c9f12422c8df16b792b63df46c30f1f1ca1db4f8f",
--   "size": 1272010
-+   "sha256": "b21ed364e667e4239709a8a01a0d04688b0f3784571a5001a8823b23f5f05514",
-+   "size": 1280635
-   },
-   {
-    "blob": "77a7c7a520af8fc8b4df372eb5bd5fddcefbfecf",
-@@ -436,11 +436,11 @@
-    "size": 525
-   },
-   {
--   "blob": "5ea3b6397ca88514f5ab94d0848164921d0ce4cc",
-+   "blob": "3cd05e74c413de624925a3fc8c5f0a27e0c76b86",
-    "mode": "100644",
-    "path": "PUBLISH_MANIFEST.toml",
--   "sha256": "ec6665ab41d39d72cd40d9db1abea9461cb723d6dff6ba9a9237729ea520b8ce",
--   "size": 310499
-+   "sha256": "7392d39258c40018285ae618f4ed3a14f7c5358109fb89ec6adb34c52311935a",
-+   "size": 312964
-   },
-   {
-    "blob": "b50ec9ee68e230777b65ff932e22735417a8e540",
-@@ -450,10 +450,10 @@
-    "size": 38306
-   },
-   {
--   "blob": "79c8d5f64ce9040787790be6d7af987644efac54",
-+   "blob": "90cdc9b4223cbe89ea594c2afae3478fb370c776",
-    "mode": "100644",
-    "path": "SBOM.cdx.json",
--   "sha256": "a32ffd39a679765dec3231701a978dbc1eeaaba4fb1ffe48b4d71e0f0d6e9e0a",
-+   "sha256": "d702d0d8eeca3baf404bc3191ad6bf5c159bf460f2e9e4e9e91b936e1b33a2cd",
-    "size": 689556
-   },
-   {
-@@ -464,10 +464,10 @@
-    "size": 32425
-   },
-   {
--   "blob": "b2b8efcc513cd0a0ab69410b047eb7a94f1c5c54",
-+   "blob": "97a8bfd612479e9df3c40f4c1d3284de52b4c7c5",
-    "mode": "100644",
-    "path": "THIRD_PARTY_NOTICES",
--   "sha256": "c7ab236b6d058ed5b2c598e6ba1e749faa2087221c2b3a514b4937e7f231e5ac",
-+   "sha256": "d3d27f494df715682fd7306fbf9a60f49fc99b87f1e95c929c25c09867bd9074",
-    "size": 331754
-   },
-   {
-@@ -513,10 +513,10 @@
-    "size": 593
-   },
-   {
--   "blob": "99ea4539c31f8772ad014df1a6350d98c4b8c5f2",
-+   "blob": "bc0d0484a42c163ee07dc5c0b7e853fbd4968739",
-    "mode": "100644",
-    "path": "aur/lean-ctx/PKGBUILD",
--   "sha256": "6ccda55f6860646b3c94bd0601eac844d9542f1abae1d9efd06faaa0019ba265",
-+   "sha256": "721a41ab8854f5785cd63e1519f76ba526975580aae109fcce42ad3aa3a6e38d",
-    "size": 2096
-   },
-   {
-@@ -527,11 +527,11 @@
-    "size": 6789
-   },
-   {
--   "blob": "e735e77f234e947a9bc6715383f814634a45ff9b",
-+   "blob": "3bf3d255849fe76b9a95099510d9940099118f70",
-    "mode": "100644",
-    "path": "ci/gitlab-ci.yml",
--   "sha256": "da2e8500337f3bf1d2e9574823e59ab48be589a461f418b46cdc560400a10e8c",
--   "size": 53224
-+   "sha256": "bc10f112e6b5228694c78f8bd23e5da91253fdb5263ea7b5697c1bccb4835c35",
-+   "size": 60637
-   },
-   {
-    "blob": "102f24e836104cc226bf24b5a5ce582ec184eb39",
-@@ -3264,11 +3264,11 @@
-    "size": 8690
-   },
-   {
--   "blob": "437206a949df05418ba4568f9ccf5a9c33990aa1",
-+   "blob": "d99134e5d44f81033ce5c8f6c1c1c786a99d1127",
-    "mode": "100644",
-    "path": "docs/reference/generated/config-keys.md",
--   "sha256": "f6cdc32b8dd13845923e5c14ca1853d0128e1a3f87ab35154ffdc0a0c6c8ba54",
--   "size": 72058
-+   "sha256": "5e431aad9867b6e9e06e0e77d884dca22ea8e68efaa5259718505a241361fa6b",
-+   "size": 72738
-   },
-   {
-    "blob": "e13f846428672699c0599c3951fce4ad25fbe648",
-@@ -3278,11 +3278,11 @@
-    "size": 5512
-   },
-   {
--   "blob": "13db6570848b81860092c6473bd99acb9a4ab22c",
-+   "blob": "dd0dd6f74c89aa1f5c3818dc22e92138afce860c",
-    "mode": "100644",
-    "path": "docs/reference/generated/mcp-tools.md",
--   "sha256": "2107f1f7ab9af2e0bf7da6535e49af938ab3a20466b325dc233b6d94f9098291",
--   "size": 23420
-+   "sha256": "08f517964b066fe064d85e75eb2dbac701a88be19c4f2763607c5c37035f65bd",
-+   "size": 23520
-   },
-   {
-    "blob": "392dce35ae93180bf5953b4e7e77f2d56a3102be",
-@@ -3656,11 +3656,11 @@
-    "size": 9354
-   },
-   {
--   "blob": "d45801744365bff4f74744692821e317b0295b38",
-+   "blob": "019df3bb674de25b71c9b37084c2647f14bb6b21",
-    "mode": "100644",
-    "path": "integrations/claude-code-mod/hooks/cockpit.tsx",
--   "sha256": "7705784f31ecdb0bf0c6872a22d76d392af2410836897945afff896af54f0a5c",
--   "size": 64696
-+   "sha256": "d71bf5f35d9a94030b3ddc500fc375c3734697fc81858e340bd62922925c31d8",
-+   "size": 65938
-   },
-   {
-    "blob": "9f45101460f1aad4ec66b7747876b8a64c40c739",
-@@ -3691,11 +3691,11 @@
-    "size": 35330
-   },
-   {
--   "blob": "c727b23ee499d95d9566bf06af867132d9077e39",
-+   "blob": "e4b9cecdd08f780eb5079f42a49543928a38f2b9",
-    "mode": "100644",
-    "path": "integrations/claude-code-mod/tests/cockpit.test.tsx",
--   "sha256": "c360f62b14ad315d10700e8796cc7081fecc2052e7e21d17413fc575224cbe39",
--   "size": 4334
-+   "sha256": "40d311e3823abae9c251d1a4cf04f53beb8009a7bb163664e48c90b2d34dcd81",
-+   "size": 6809
-   },
-   {
-    "blob": "770c0e5660f09fa6175f5a67d6352cca1ff6f101",
-@@ -4006,18 +4006,18 @@
-    "size": 193663
-   },
-   {
--   "blob": "9ef0440b7a4cacbd751127a77909c28aea8db8f5",
-+   "blob": "bee3e7eac086bf2cd7ce0edb6066478fd71e5914",
-    "mode": "100644",
-    "path": "legal/third-party-assets.toml",
--   "sha256": "d081cb4f7dfa289
-```
-
-**File**: `PUBLISH_MANIFEST.toml` (modified, +48/-0)
-```diff
-@@ -345,6 +345,8 @@ new_paths = [
-   "rust/src/core/context_admission/cross_line.rs",
-   "rust/src/core/context_admission/egress_api_tests.rs",
-   "rust/src/core/context_admission/egress_walk.rs",
-+  # GHSA-xmx8-69qv-7f86 regression tests: Apache-2.0, own work.
-+  "rust/src/core/context_admission/operand_tests.rs",
-   "rust/src/core/context_admission/origin.rs",
-   "rust/src/core/context_admission/receipt_store/anchors.rs",
-   "rust/src/core/context_admission/receipt_store/capacity.rs",
-@@ -395,6 +397,7 @@ new_paths = [
-   "rust/src/shell/containment/starter.rs",
-   "rust/src/shell/containment/tests.rs",
-   "rust/src/shell/containment/wire.rs",
-+  "scripts/ci/postmerge_bisect.py",
-   "scripts/eccp-envelope",
-   "scripts/agent_tools_compatibility.py",
-   "scripts/check-capabilities.py",
-@@ -408,6 +411,7 @@ new_paths = [
-   "rust/crates/lean-ctx-server/tests/main.rs",
-   "rust/crates/lean-ctx-protocol/tests/main.rs",
-   "scripts/check-local-free.py",
-+  "scripts/tests/test_postmerge_bisect.py",
-   "tests/delivery/test_check_local_free.py",
-   "tests/hive-e2e/lifecycle.cjs",
-   "tests/hive-e2e/lifecycle.sh",
-@@ -430,6 +434,14 @@ new_paths = [
-   "scripts/scan-release-artifacts.py",
-   "scripts/source-export-manifest.py",
-   "scripts/sync-capabilities.py",
-+  # W3-08 deterministic checkers: own code, Apache-2.0 SPDX-headed.
-+  "scripts/mutants-changed",
-+  "scripts/tests/test_mutants_changed.py",
-+  "rust/crates/lean-ctx-shell-policy/tests/proptest_tokenizer.rs",
-+  "rust/fuzz/.gitignore",
-+  "rust/fuzz/Cargo.toml",
-+  "rust/fuzz/README.md",
-+  "rust/fuzz/fuzz_targets/shell_tokenizer.rs",
-   # ECCP W1b-02 change classifier (task 156): own code, Apache-2.0 SPDX-headed.
-   "scripts/change-class",
-   "scripts/tests/test_change_class.py",
-@@ -1337,6 +1349,7 @@ new_paths = [
-   "rust/crates/lean-ctx-hive/src/metrics_v2/tests.rs",
-   "rust/crates/lean-ctx-hive/src/metrics_v2/upload.rs",
-   "rust/crates/lean-ctx-hive/src/migrate.rs",
-+  "rust/crates/lean-ctx-hive/src/models_access.rs",
-   "rust/crates/lean-ctx-hive/src/migrate_tests.rs",
-   "rust/crates/lean-ctx-hive/src/policy_tests.rs",
-   "rust/crates/lean-ctx-hive/src/receipts_tests.rs",
-@@ -1378,6 +1391,7 @@ new_paths = [
-   "rust/crates/lean-ctx-hive/src/throttle_tests.rs",
-   "rust/src/core/untrusted.rs",
-   "rust/src/core/hive_gate.rs",
-+  "rust/src/core/hive_models.rs",
-   "rust/src/core/config/hive.rs",
-   "rust/src/core/engine_interface/receipt_sink.rs",
-   "rust/crates/lean-ctx-hive/src/vault.rs",
-@@ -1407,6 +1421,10 @@ new_paths = [
-   "rust/crates/lean-ctx-shell-policy/src/tests_ps_quotes.rs",
-   "rust/crates/lean-ctx-shell-policy/src/tests_ps_escapes.rs",
-   "rust/crates/lean-ctx-shell-policy/src/redaction_marker.rs",
-+  # 3.12.4 shell-gate advisories (GHSA-4gm5/9jrf/cfmv/fv44).
-+  "rust/crates/lean-ctx-shell-policy/src/groups.rs",
-+  "rust/crates/lean-ctx-shell-policy/src/redirections.rs",
-+  "rust/crates/lean-ctx-shell-policy/src/tests_ghsa_3124.rs",
-   "rust/crates/lean-ctx-server/tests/agent_wait_roundtrip.rs",
-   "rust/tests/suite/hive_fake_wire_conformance.rs",
-   "scripts/sync-hive-c0.sh",
-@@ -1859,6 +1877,7 @@ new_paths = [
-   "rust/crates/lean-ctx/src/cli/migrate_legacy.rs",
-   "rust/crates/lean-ctx/src/cli/mod.rs",
-   "rust/crates/lean-ctx/src/cli/model_cmd.rs",
-+  "rust/crates/lean-ctx/src/cli/models_cmd.rs",
-   "rust/crates/lean-ctx/src/cli/ocla_cmd.rs",
-   "rust/crates/lean-ctx/src/cli/output_savings_cmd.rs",
-   "rust/crates/lean-ctx/src/cli/overview_cmd.rs",
-@@ -2073,6 +2092,8 @@ new_paths = [
-   "rust/src/core/mcp_roots/derive.rs",
-   "rust/src/core/policy/audit_filter.rs",
-   "rust/src/core/read_mode.rs",
-+  # redaction.rs tests moved into their own file (LOC gate): Apache-2.0, own work.
-+  "rust/src/core/redaction/tests.rs",
-   "rust/src/core/reference_store.rs",
-   "rust/src/core/reference_store/tests.rs",
-   "rust/src/core/rooted_read.rs",
-@@ -2159,6 +2180,7 @@ new_paths = [
-   "rust/crates/lean-ctx-proxy/src/integration_tests.rs",
-   "rust/crates/lean-ctx-proxy/src/intent.rs",
-   "rust/crates/lean-ctx-proxy/src/introspect.rs",
-+  "rust/crates/lean-ctx-proxy/src/leanctx_provider.rs",
-   "rust/crates/lean-ctx-proxy/src/lib.rs",
-   "rust/crates/lean-ctx-proxy/src/lineage.rs",
-   "rust/crates/lean-ctx-proxy/src/live_zone.rs",
-@@ -2672,6 +2694,7 @@ new_paths = [
-   "rust/crates/lean-ctx-hooks/src/hook_handlers/tests_search_rewrites.rs",
-   "rust/crates/lean-ctx-hooks/src/hook_handlers/value_recap.rs",
-   "rust/crates/lean-ctx-hooks/src/hook_handlers/vibe.rs",
-+  "rust/crates/lean-ctx-hooks/src/hook_handlers/write_guard.rs",
-   "rust/crates/lean-ctx-hooks/src/hooks/agents/amp.rs",
-   "rust/crates/lean-ctx-hooks/src/hooks/agents/antigravity.rs",
-   "rust/crates/lean-ctx-hooks/src/hooks/agents/claude.rs",
-@@ -2730,6 +2753,15 @@ new_paths = [
-   "rust/src/ipc/detached.rs",
-   "rust/src/ipc/process/services.rs",
-   "rust/src/ipc/process/tests.rs",
-+  # mz6/mz14 T4: model origin/host-country enforcement. Own code, Apache-2.0;
-+  # the catalog d
-```
-
-**File**: `SBOM.cdx.json` (modified, +26/-26)
-```diff
-@@ -94,7 +94,7 @@
-       "version": "0.2.0"
-     },
-     {
--      "bom-ref": "path+file://./rust/crates/lean-ctx-ocla#6.0.0",
-+      "bom-ref": "path+file://./rust/crates/lean-ctx-ocla#7.0.0",
-       "description": "Open Context & Token Lifecycle Architecture \u2014 the provider-neutral contract boundary (capability traits, canonical types, token envelopes) shared between lean-ctx-core (OSS) and lean-ctx-enterprise (proprietary).",
-       "externalReferences": [
-         {
-@@ -108,10 +108,10 @@
-         }
-       ],
-       "name": "lean-ctx-ocla",
--      "purl": "pkg:cargo/lean-ctx-ocla@6.0.0?download_url=file://crates/lean-ctx-ocla",
-+      "purl": "pkg:cargo/lean-ctx-ocla@7.0.0?download_url=file://crates/lean-ctx-ocla",
-       "scope": "required",
-       "type": "library",
--      "version": "6.0.0"
-+      "version": "7.0.0"
-     },
-     {
-       "bom-ref": "path+file://./rust/crates/lean-ctx-patterns#0.1.0",
-@@ -138,7 +138,7 @@
-       "version": "0.1.0"
-     },
-     {
--      "bom-ref": "path+file://./rust/crates/lean-ctx-protocol#0.6.0",
-+      "bom-ref": "path+file://./rust/crates/lean-ctx-protocol#0.7.0",
-       "description": "Open wire contracts for lean-ctx: events, observations, assignments, evidence gaps.",
-       "externalReferences": [
-         {
-@@ -152,10 +152,10 @@
-         }
-       ],
-       "name": "lean-ctx-protocol",
--      "purl": "pkg:cargo/lean-ctx-protocol@0.6.0?download_url=file://crates/lean-ctx-protocol",
-+      "purl": "pkg:cargo/lean-ctx-protocol@0.7.0?download_url=file://crates/lean-ctx-protocol",
-       "scope": "required",
-       "type": "library",
--      "version": "0.6.0"
-+      "version": "0.7.0"
-     },
-     {
-       "bom-ref": "path+file://./rust/crates/lean-ctx-syntax#0.1.0",
-@@ -182,7 +182,7 @@
-       "version": "0.1.0"
-     },
-     {
--      "bom-ref": "path+file://./rust/crates/lean-ctx-workgraph#0.2.0",
-+      "bom-ref": "path+file://./rust/crates/lean-ctx-workgraph#0.3.0",
-       "description": "Bounded multi-agent work graph, budget cascade and outcome evaluation model for LeanCTX | OSS.",
-       "externalReferences": [
-         {
-@@ -200,10 +200,10 @@
-         }
-       ],
-       "name": "lean-ctx-workgraph",
--      "purl": "pkg:cargo/lean-ctx-workgraph@0.2.0?download_url=file://crates/lean-ctx-workgraph",
-+      "purl": "pkg:cargo/lean-ctx-workgraph@0.3.0?download_url=file://crates/lean-ctx-workgraph",
-       "scope": "required",
-       "type": "library",
--      "version": "0.2.0"
-+      "version": "0.3.0"
-     },
-     {
-       "bom-ref": "path+file://./rust/crates/leanctx-native-storage#0.1.1",
-@@ -16916,11 +16916,11 @@
-         "path+file://./rust/crates/lean-ctx-compress#0.1.0",
-         "path+file://./rust/crates/lean-ctx-doc#0.2.0",
-         "path+file://./rust/crates/lean-ctx-fs#0.2.0",
--        "path+file://./rust/crates/lean-ctx-ocla#6.0.0",
-+        "path+file://./rust/crates/lean-ctx-ocla#7.0.0",
-         "path+file://./rust/crates/lean-ctx-patterns#0.1.0",
--        "path+file://./rust/crates/lean-ctx-protocol#0.6.0",
-+        "path+file://./rust/crates/lean-ctx-protocol#0.7.0",
-         "path+file://./rust/crates/lean-ctx-syntax#0.1.0",
--        "path+file://./rust/crates/lean-ctx-workgraph#0.2.0",
-+        "path+file://./rust/crates/lean-ctx-workgraph#0.3.0",
-         "path+file://./rust/crates/leanctx-native-storage#0.1.1",
-         "registry+https://github.com/rust-lang/crates.io-index#libc@0.2.189",
-         "registry+https://github.com/rust-lang/crates.io-index#libloading@0.8.9",
-@@ -16977,7 +16977,7 @@
-         "registry+https://github.com/rust-lang/crates.io-index#zip@9.0.5",
-         "registry+https://github.com/rust-lang/crates.io-index#zstd@0.14.3"
-       ],
--      "ref": "path+file://./rust#lean-ctx-engine@3.12.3"
-+      "ref": "path+file://./rust#lean-ctx-engine@3.12.4"
-     },
-     {
-       "dependsOn": [
-@@ -17027,14 +17027,14 @@
-         "registry+https://github.com/rust-lang/crates.io-index#blake3@1.8.6",
-         "registry+https://github.com/rust-lang/crates.io-index#ed25519-dalek@2.2.0",
-         "registry+https://github.com/rust-lang/crates.io-index#getrandom@0.4.3",
--        "path+file://./rust/crates/lean-ctx-protocol#0.6.0",
-+        "path+file://./rust/crates/lean-ctx-protocol#0.7.0",
-         "registry+https://github.com/rust-lang/crates.io-index#semver@1.0.28",
-         "registry+https://github.com/rust-lang/crates.io-index#serde@1.0.229",
-         "registry+https://github.com/rust-lang/crates.io-index#serde_json@1.0.151",
-         "registry+https://github.com/rust-lang/crates.io-index#sha2@0.11.0",
-         "registry+https://github.com/rust-lang/crates.io-index#thiserror@2.0.20"
-       ],
--      "ref": "path+file://./rust/crates/lean-ctx-ocla#6.0.0"
-+      "ref": "path+file://./rust/crates/lean-ctx-ocla#7.0.0"
-     },
-     {
-       "dependsOn": [
-@@ -17057,7 +17057,7 @@
-         "registry+https://github.com/rust-lang/crates.io-index#serde_json@1.0.151",
-         "registry+https://github.com/rust-lang/crates.io-index#sha2@0.11.0"
- 
-```
-
-**File**: `THIRD_PARTY_NOTICES` (modified, +5/-5)
-```diff
-@@ -2,16 +2,16 @@
- Schema: leanctx.third-party-notices/v1
- Status: GENERATED AND APPROVED
- Content-Digest-Scope: SHA-256 of this file with the Content-Digest value zeroed
--Content-Digest: sha256:4a5fee5839343fcffba0b23ec686f31e15fa29ed6ad2a4d769f34076b8a66bff
-+Content-Digest: sha256:34ade52836261ab9442d08e834c836746595985a214b739a0939b1148ea8d226
- Source inventory: rust/Cargo.lock + cargo metadata --locked --offline --all-features + SBOM.cdx.json + legal/third-party-assets.toml + packages/pi-lean-ctx/package-lock.json
- Generation command: cargo metadata --locked --offline --all-features --manifest-path rust/Cargo.toml --format-version 1
- Approval contract: legal/third-party-notices-approval.toml binds approved_content_sha256 to this file's exact SHA-256
--Cargo.lock SHA-256: 244406655444ce38a045358b0780179fe504634f075af30d8252e60e9fdd3e74
-+Cargo.lock SHA-256: ee5d9e5ba2cedd3e2345074b40f0e29ceaf6b2f5c77663b53057ad148fb44475
- Cargo metadata inventory SHA-256: 7034b4be10f229be5a7a64b15e9aa88df642468dc286ab14c8f22840e8d7c9df
--SBOM.cdx.json SHA-256: a32ffd39a679765dec3231701a978dbc1eeaaba4fb1ffe48b4d71e0f0d6e9e0a
-+SBOM.cdx.json SHA-256: d702d0d8eeca3baf404bc3191ad6bf5c159bf460f2e9e4e9e91b936e1b33a2cd
- SBOM components: 559
--Asset manifest SHA-256: d081cb4f7dfa2892dd6d8999be5dae00fc5b785dd40f81360a6fa4fe92abbd2a
--npm package-lock.json SHA-256: afae69f88fa3c76df4c3520744ec90fa507ae9f5f0fc2ec075183c3790cae1ef
-+Asset manifest SHA-256: 4a17f7c4335e1bd1dc67fbbad3c4dfe9693c302a9312645ec72850ef49cd94e6
-+npm package-lock.json SHA-256: 5eaa80ca72ed4df8d3022adfdb3af4c050b5f6c53ee8c3a3b3159ac63eb0d9ba
- Bundled MCP SDK: @modelcontextprotocol/sdk 1.32.1 (sha512-2DdE+SJDtzLEEWzY1ZjY7Q+VcPhcV1KisD3zI4u0XZyktsjHum1mwbMI+JaulUBi2OZk+KJAi2uPXzxichPkdw==)
- Cargo graph packages: 624
- Third-party Cargo packages: 601
-```
-
-**File**: `aur/lean-ctx/PKGBUILD` (modified, +2/-2)
-```diff
-@@ -1,6 +1,6 @@
- # Maintainer: Yves Gugger <yves@pounce.ch>
- pkgname=lean-ctx
--pkgver=3.12.2
-+pkgver=3.12.3
- pkgrel=1
- pkgdesc="LeanCTX | OSS — open-source Context Gateway for AI Systems. Context selection, supported controls, and evidence through local integration paths."
- arch=('x86_64' 'aarch64')
-@@ -12,7 +12,7 @@ makedepends=('cargo' 'gcc')
- # resolver finds it — no manual install, no runtime download.
- depends=('gcc-libs' 'onnxruntime')
- source=("$pkgname-$pkgver.tar.gz::https://github.com/yvgude/lean-ctx/releases/download/v$pkgver/lean-ctx-$pkgver-source.tar.gz")
--sha256sums=('2601b71bc2aae00fdc84b2c63479fa87ed5791342ae98a5da77e490e617eac4a')
-+sha256sums=('0c6ba5f54555e2f6714ffe9705fedfb6144865834d56671869caba2c0a2dae95')
- 
- prepare() {
-   cd "$pkgname-$pkgver/rust"
-```
-
-**File**: `ci/gitlab-ci.yml` (modified, +148/-54)
-```diff
-@@ -190,7 +190,7 @@ ip-boundary-skill-installed:
-     name: lean-ctx-ci-rust:65e3bbf776c5
-     pull_policy: if-not-present
-   # Python only: run on the small runner (2 CPU / 4 GB slots), so the job does
--  # not queue behind Rust builds for a 12-CPU slot.
-+  # not queue behind Rust builds for a 6-CPU slot.
-   tags: [light]
-   timeout: 5 minutes
-   interruptible: false
-@@ -334,9 +334,15 @@ v4-runtime:
-     # `target`: tests recognise build output by paths like /target/debug/deps.
-     # It is the only compiler cache (W1-08: sccache is gone; the persistent
-     # target already holds every unchanged crate).
--    CI_TARGET_DIR: "/builds/.ci-cache/$CI_PROJECT_PATH_SLUG/target"
--    # A target over this size (GiB) is wiped at job start.
--    CI_TARGET_CAP_GB: "40"
-+    # One target per concurrent build directory of a runner, keyed like the
-+    # runner's own /builds/<short token>/<concurrent id> (11.11., p5 jobs
-+    # 32317/32318/32345: jobs in /builds/<token>/1 and /2 built into one
-+    # target, and one job's cargo replaced or removed the other's test
-+    # binaries mid-run).
-+    CI_TARGET_DIR: "/builds/.ci-cache/$CI_PROJECT_PATH_SLUG/slot-$CI_RUNNER_SHORT_TOKEN-$CI_CONCURRENT_PROJECT_ID/target"
-+    # A target over this size (GiB) is wiped at job start. Per slot: with
-+    # about six slots on the host, 30 keeps the worst case near 180 GiB.
-+    CI_TARGET_CAP_GB: "30"
-     # Warm build farm (W4-04, scripts/ci/warm_farm.py). The runner mounts the
-     # root-owned host directory /srv/ci-cache/warm-farm here. A green
-     # protected post-merge run publishes its target (incremental data
-@@ -352,8 +358,9 @@ v4-runtime:
-     # Incremental compilation of the workspace crates into the slot's
-     # persistent target (W1-08): a change recompiles only what it touched.
-     CARGO_INCREMENTAL: "1"
--    # The runner gives each job a 12-CPU / 20-GiB cgroup (all jobs share the
--    # host's 24-CPU / 64-GiB CI slice); more jobs than CPUs gain nothing. The
-+    # The runner gives each job a cgroup of 6 CPUs (cpu.max 600000/100000, as
-+    # mr-quick prints it, 12.11.); all jobs share the host's 24-CPU / 64-GiB CI
-+    # slice. 12 jobs exceed the quota and the cgroup throttles the excess. The
-     # two ~9-GiB engine rustc (lib, lib test) dominate and fit side by side.
-     CARGO_BUILD_JOBS: "12"
-     CARGO_PROFILE_DEV_DEBUG: line-tables-only
-@@ -380,7 +387,7 @@ v4-runtime:
-     # The image carries every tool; nothing is installed at job time. The
-     # resolved compiler version is recorded with the evidence.
-     - |
--      for ci_tool in git python3 cmake clang mold node npm useradd runuser cargo-clippy cargo-nextest rustfmt; do
-+      for ci_tool in git python3 cmake clang mold node npm useradd runuser flock cargo-clippy cargo-nextest rustfmt; do
-         command -v "$ci_tool" >/dev/null || { echo "CI image lacks $ci_tool" >&2; exit 1; }
-       done
-     - |
-@@ -440,101 +447,168 @@ v4-runtime:
-       # swap the target for a link nor forge the stamp beside it; the target
-       # belongs to ci-runner. Nothing here follows a symlink. Toolchain or
-       # image changes and targets over CI_TARGET_CAP_GB start fresh.
-+      # Each concurrent build directory has its own target (CI_TARGET_DIR).
-+      # Should two jobs ever share one (11.11., p5 jobs 32317/32318/32321: a
-+      # wipe deleted a running job's test binaries and du failed on files
-+      # another job removed), each holds a shared lock on target.lock (fd 9)
-+      # until the job ends; only a job that gets the lock exclusively without
-+      # waiting (fd 8) wipes or cleans up. A busy slot keeps its target.
-       test "${CI_BUILDS_DIR:-}" = /builds || { echo "target: unexpected CI_BUILDS_DIR" >&2; exit 1; }
-       case "${CI_PROJECT_PATH_SLUG:-}" in ''|*[!a-z0-9-]*) echo "target: unexpected CI_PROJECT_PATH_SLUG" >&2; exit 1;; esac
-       case "${CI_TARGET_CAP_GB:-}" in ''|*[!0-9]*) echo "target: unexpected CI_TARGET_CAP_GB" >&2; exit 1;; esac
--      ci_target_parent="/builds/.ci-cache/$CI_PROJECT_PATH_SLUG"
-+      case "${CI_RUNNER_SHORT_TOKEN:-}" in ''|*[!A-Za-z0-9_-]*) echo "target: unexpected CI_RUNNER_SHORT_TOKEN" >&2; exit 1;; esac
-+      case "${CI_CONCURRENT_PROJECT_ID:-}" in ''|*[!0-9]*) echo "target: unexpected CI_CONCURRENT_PROJECT_ID" >&2; exit 1;; esac
-+      ci_target_parent="/builds/.ci-cache/$CI_PROJECT_PATH_SLUG/slot-$CI_RUNNER_SHORT_TOKEN-$CI_CONCURRENT_PROJECT_ID"
-       ci_target="$ci_target_parent/target"
-       test "${CI_TARGET_DIR:-}" = "$ci_target" || { echo "target: unexpected CI_TARGET_DIR" >&2; exit 1; }
-       case "$ci_target/" in "$CI_PROJECT_DIR"/*) echo "target: inside the checkout" >&2; exit 1;; esac
-+      case "${CI_JOB_ID:-}" in ''|*[!0-9]*) echo "target: unexpected CI_JOB_ID" >&2; exit 1;; esac
-       if test -L /builds; then echo "target: /builds is a symlink" >&2; exit 1; fi
--      for ci_dir in /builds/.ci-cache "$ci_target_parent"; do
-+      for ci_dir in /builds/.ci-cache "/builds/.ci-cache/$CI_PROJECT_PATH_SLUG" "$
-```
-
-**File**: `docs/reference/generated/config-keys.md` (modified, +8/-0)
-```diff
-@@ -214,6 +214,12 @@ MCP decision-loop runtime settings
- - `enabled` (bool, default `true`) — Enable the MCP decision-loop runtime
- - `max_filter_level` (u8, default `0`) — Maximum lossy post-dispatch triage level (0 disables output filtering)
- 
-+## `[decisions]`
-+
-+Decision layer (.leanctx/decisions/*.toml): pre-edit check mode
-+
-+- `enforce` (string, default `hint`) — Pre-edit check of .leanctx/decisions: hint (report), refuse (strict: edit not written), off
-+
- ## `[embedding]`
- 
- Semantic-embedding engine settings (model selection for ctx_search action=semantic)
-@@ -275,6 +281,8 @@ LeanCTX | Hive: workspace knowledge, policies and the shared agent bus.
- - `bus` (string: auto | off, default `auto`) — Relay the agent bus through Hive (auto) or keep it local (off).
- - `enabled` (bool, default `null`) — Pause all Hive traffic with false; unset means on while this machine is connected.
- - `metrics_upload` (bool, default `true`) — Send hourly instance metrics to Hive (counts only, including full re-fetches and unregulated program names; never content).
-+- `models_anthropic_agents` (bool, default `false`) — Let Anthropic-shaped agents reach the subscription models through shape-xlat routing aliases; false means OpenAI-shaped agents only. Owner question Q3 is open: true takes effect only once it is decided.
-+- `models_url` (string, default `null`) — Origin of the Hive models gateway for the leanctx provider; unset means https://models.<hive host>. Only the Hive host or a direct subdomain of it is honoured.
- - `pull_interval_minutes` (integer, default `5`) — Minutes between Hive sync passes (1-60; values outside are clamped).
- - `queen_identity` (string: warn | enforce, default `warn` — env `LEAN_CTX_HIVE_QUEEN_IDENTITY`) — A bus sender presenting as the Queen that is no registered Queen session: warn (pass, log in bus/queen-warnings.json, mark for the receiver) or enforce (refuse); any other value counts as enforce. Enforce only once queen-sessions.json lists every Queen session.
- - `receipts_upload` (bool, default `true`) — Upload context receipts to Hive.
+@@ -1063,7 +1063,8 @@ mod tests {
+     fn overlays_list_the_effective_control_per_file() {
+         let dir = tempfile::tempdir().unwrap();
+         let root = dir.path();
+-        let abs = root.join("src/a.rs").to_string_lossy().into_owned();
++        // Joined part by part: the listed path uses the platform separator.
++        let abs = root.join("src").join("a.rs").to_string_lossy().into_owned();
+         let mut store = OverlayStore::new();
+         store.add(overlay(
+             &abs,
+@@ -1183,8 +1184,14 @@ mod tests {
+             file_of(root, "a.rs").unwrap_err().code,
+             Code::InvalidArgument
+         );
++        // An absolute path outside the project (on Windows, `/elsewhere`
++        // has no drive and is not absolute).
++        let other = tempfile::tempdir().unwrap();
++        let elsewhere = other.path().join("a.rs");
+         assert_eq!(
+-            file_of(root, "/elsewhere/a.rs").unwrap_err().code,
++            file_of(root, &elsewhere.to_string_lossy())
++                .unwrap_err()
++                .code,
+             Code::Forbidden
+         );
+         let up = format!("{}/../a.rs", root.display());
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2242** (2026-11-12): Release 3.12.4 (@yvgude)
-- **PR #2241** (closed): Release 3.12.4 (@yvgude)
-- **PR #2239** (closed): Release 3.12.4 (@yvgude)
-- **PR #2238** (closed): Release 3.12.4 (@yvgude)
-- **PR #2235** (2026-11-11): release: LeanCTX 3.12.3 (final export, GitHub issues) (@yvgude)
-- **PR #2234** (closed): release: LeanCTX 3.12.3 (final export) (@yvgude)
+- **PR #2253** (2026-11-15): chore(release): 3.12.6 (@yvgude)
+- **PR #2251** (2026-11-14): Release 3.12.5 (@yvgude)
+- **PR #2249** (2026-11-14): Release 3.12.5 (@yvgude)
+- **PR #2246** (closed): chore(deps): bump hono from 4.13.13 to 4.13.18 in /packages/pi-lean-ctx (@dependabot[bot])
+- **PR #2245** (closed): Release 3.12.5 (@yvgude)
+- **PR #2243** (closed): chore(deps): bump @hono/node-server from 2.1.5 to 2.1.8 in /packages/pi-lean-ctx (@dependabot[bot])
 
 ---
 
@@ -3813,7 +3044,7 @@ Release 3.12.4 export (private source b7ef2ff147, integration/3.12.3). Supersede
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yvgude/lean-ctx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b6de365b`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5ae3dfff`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -3821,26 +3052,25 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## [3.12.4] — 2026-11-12
+## [3.12.6] — 2026-11-15
 
-- **ECCP L/I/G change classifier (task 156).** `scripts/change-class <base> <head>`
-  prints `L` (no public Rust item changed), `I` (public items only added) or `G`
-  (public item changed or removed, Cargo features or dependency tables,
-  `Cargo.lock`, `build.rs`, Cargo config, toolchain pin, CI configuration or a
-  generated registry) from the git objects alone, without a build or network,
-  and serves as `$ECCP_CLASSIFIER` for `scripts/eccp-envelope`.
+### Added
 
-- **ECCP change envelope in git notes (task 157).** `scripts/eccp-envelope` writes,
-  shows and verifies a `leanctx.change-envelope/v1` JSON note under
-  `refs/notes/eccp` on a merge request head: intent, base, class, read set,
-  derivations and check evidence (`docs/contracts/change-envelope-v1.md`).
+- **Nine more Local Read kinds.** The local read surface now serves `overlays.list`,
+  `overlays.removed`, `checkpoints.list`, `session.context`, `session.handoff`,
+  `session.value`, `update.status`, `security.status` and `telemetry.status` as JSON documents
+  (`GET /v1/local/...` and the matching `--json` CLI commands, e.g. `lean-ctx overlays list
+  --json`, `lean-ctx session context --json --session <id>`). A local client reads them
+  instead of parsing `ctx_control`, `ctx_checkpoint` or `update --status` text. Every body is a
+  function of the stored data, with no generated timestamps or counters, and is released
+  through the tool run of its tool. Project kinds need a project root; overlay removal only
+  accepts files inside the project. The status documents carry versions, switches and counts
+  only: no paths, digests, secrets or installation id.
 
-- **Audit entries v2 bind each tool call to its session (ent3-1).** Every new
-  audit-trail entry carries `v: 2` and a chained `v2_hash` over its timestamp
-  and, for a call of an MCP session, the `session_id`, a per-session `seq`,
-  the decision and an output digest, so an edited timestamp, seq or fact fails
-  `verify_chain` and `verify_chain_full` at that entry. Input and output digests
-  are HMAC-SHA256 u
+- **Shared parse cache across worktrees (#2247), opt-in.** With `[cache] derivations_enabled =
+  true` or `LEAN_CTX_DERIVATION_CACHE=1`, index builds reuse BM25 chunks, the deep analysis
+  behind graph and call-graph edges, and graph-scan signatures by exact content hash plus
+  language, path sel
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3850,7 +3080,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b6de365b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5ae3dfff` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

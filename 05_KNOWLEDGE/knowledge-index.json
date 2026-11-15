@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-15T22:46:53.696Z",
-  "total_verified_learnings": 8731,
+  "last_updated": "2026-11-15T22:58:50.841Z",
+  "total_verified_learnings": 8733,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18670,
+  "total_items": 18682,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112379,10 +112379,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
       "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
       "repository": "tailscale/tailscale",
-      "source_version": "daf82a50",
-      "content_hash": "9de62675eb768655e7ff4f61a84d0ae4ce2afa8152078e31a696732c6143cf60",
+      "source_version": "a6baab33",
+      "content_hash": "704c3ba92cc5215783c38926479de66bb37762edd97057a810b46bb8593fc926",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T16:50:32.135Z"
+      "persisted_at": "2026-11-15T22:58:46.761Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale",
@@ -112391,10 +112391,10 @@
       "relative_path": "08_VERIFICATION/tailscale-tailscale-verification-protocol-empirical-defect-shield-for-tailscale-.md",
       "title": "Verification Protocol: Empirical Defect Shield for tailscale/tailscale",
       "repository": "tailscale/tailscale",
-      "source_version": "daf82a50",
-      "content_hash": "afca41f02fe860a2f392b3933ceeba857d88f0ea826fd122691734cd31e97e79",
+      "source_version": "a6baab33",
+      "content_hash": "fa3b4d74bff91f2243c402a8197afe9222cbea3a16454edc21d9265b9f60725e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T16:50:32.229Z"
+      "persisted_at": "2026-11-15T22:58:46.860Z"
     },
     "candidate_directive-order-small-runtime-filter-builds-before-filtered-and-nested-scans-28768": {
       "item_id": "candidate_directive-order-small-runtime-filter-builds-before-filtered-and-nested-scans-28768",
@@ -219019,8 +219019,8 @@
       "slug": "yvgude-lean-ctx",
       "platform": "github",
       "source_url": "https://github.com/yvgude/lean-ctx",
-      "source_version": "b6de365b",
-      "content_hash": "4e9bd0a2bd5cef8313547b27230a3e5094e3e598cdfc39e28186cb18fd7b37b5",
+      "source_version": "5ae3dfff",
+      "content_hash": "95b71da2e21c78c0969e58ed5a1364b3aad9db5553da0151d938acae07f7d5cc",
       "dossier_path": "07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md",
       "promoted_rules": [],
@@ -219029,7 +219029,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T00:25:03.009Z",
+      "verified_at": "2026-11-15T22:58:35.749Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -219042,13 +219042,13 @@
       "item_id": "candidate_directive-empirical-invariant-guard-in-changelog-md",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-UCG3-empirical-invariant-guard-in-changelog-md.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-RUPX-empirical-invariant-guard-in-changelog-md.md",
       "title": "Empirical Invariant Guard in CHANGELOG.md",
-      "repository": "embassy-rs-embassy-learnings",
+      "repository": "yvgude-lean-ctx-learnings",
       "source_version": "HEAD",
-      "content_hash": "5536a33d428c7168f79231d83932b924a3b6a353cba8e8952f727c1cd4acd189",
+      "content_hash": "ca021400cfecdb97ff29d2c18ce9d08659bbe6d9ca0e21ec7be89df93e6f41c4",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T17:52:50.312Z"
+      "persisted_at": "2026-11-15T22:58:49.800Z"
     },
     "domain_intelligence-architecture-intelligence-yvgude-lean-ctx-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-yvgude-lean-ctx-core-invariants",
@@ -219057,10 +219057,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-yvgude-lean-ctx-architecture-intelligence-yvgude-lean-ctx-core-invariants.md",
       "title": "Architecture Intelligence: yvgude/lean-ctx Core Invariants",
       "repository": "yvgude/lean-ctx",
-      "source_version": "b6de365b",
-      "content_hash": "27a4a35ae5b8e97e66c6e540aeb74865b2989ccf0927ee3e48a92b4c5219d2e8",
+      "source_version": "5ae3dfff",
+      "content_hash": "ee2a4088463787c5c3edc365ecf592c8f6b7a57303698ed770039a0dcc6ba111",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T00:25:03.523Z"
+      "persisted_at": "2026-11-15T22:58:36.194Z"
     },
     "agent_contract-agent-contract-yvgude-lean-ctx-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-yvgude-lean-ctx-autonomous-specialist-persona",
@@ -219081,10 +219081,10 @@
       "relative_path": "08_VERIFICATION/yvgude-lean-ctx-verification-protocol-empirical-defect-shield-for-yvgude-lean-ct.md",
       "title": "Verification Protocol: Empirical Defect Shield for yvgude/lean-ctx",
       "repository": "yvgude/lean-ctx",
-      "source_version": "b6de365b",
-      "content_hash": "8de203f47f96070218b9c99d21d7f70ce200ade0fd66a0c6159f5c998d4bc3af",
+      "source_version": "5ae3dfff",
+      "content_hash": "741315aa3f604beaa2eb7bd5d690142844318e049f1999c7cfa4a8ec82ee2e9b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T00:25:03.746Z"
+      "persisted_at": "2026-11-15T22:58:36.298Z"
     },
     "learn-github-invertase-react-native-firebase": {
       "learning_id": "learn-github-invertase-react-native-firebase",
@@ -219246,9 +219246,9 @@
       "title": "Architecture Intelligence: yvgude-lean-ctx-learnings Core Invariants",
       "repository": "yvgude-lean-ctx-learnings",
       "source_version": "HEAD",
-      "content_hash": "78f1a6e92f833b48339f7e819581e3bdc9f7080b67dfa6decda3d6e1069d57da",
+      "content_hash": "2fd84fe9fa8122d60c278b1ed9094c1a237b61b0defd8fedec0a38dd81e58b47",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T00:25:16.689Z"
+      "persisted_at": "2026-11-15T22:58:49.902Z"
     },
     "agent_contract-agent-contract-yvgude-lean-ctx-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-yvgude-lean-ctx-learnings-autonomous-specialist-persona",
@@ -219270,9 +219270,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for yvgude-lean-ctx-learnings",
       "repository": "yvgude-lean-ctx-learnings",
       "source_version": "HEAD",
-      "content_hash": "9972bbd1319217dcbd972cd7651e0a6900e7f2fae64430820d8c303abbf78580",
+      "content_hash": "151916d91333b0fd3f81c8971b81f1a30a43c10e6676bd8a2bc31fe7c387f15d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T00:25:16.912Z"
+      "persisted_at": "2026-11-15T22:58:50.004Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-ricursiveai-ripple-65b-preview-learnings-core": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-ricursiveai-ripple-65b-preview-learnings-core",
@@ -221759,8 +221759,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "daf82a50",
-      "content_hash": "f8b2f88593e73385581a33a1dd390e8947648958f3e2e277b95a7310bd16d701",
+      "source_version": "a6baab33",
+      "content_hash": "540d235719c5aa8d14ff054ff86eda42049874a8d46bf50f157c9e7709bc5032",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -221778,6 +221778,11 @@
           "number": 8628,
           "title": "deflake TestHTTPBandwidth on coarse-clock machines",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8664,
+          "title": "net/memnet: implement CloseRead and CloseWrite",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -221785,7 +221790,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T16:50:31.720Z",
+      "verified_at": "2026-11-15T22:58:46.361Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -247513,6 +247518,190 @@
       "content_hash": "bb3e3da5075ddc5774ae81603bd134971d164c85517f348bd729e29b99c55dec",
       "domain_letter": "G",
       "persisted_at": "2026-11-15T22:46:52.696Z"
+    },
+    "learn-huggingface-microsoft-florence-2-base": {
+      "learning_id": "learn-huggingface-microsoft-florence-2-base",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "microsoft/Florence-2-base",
+      "repository": "microsoft/Florence-2-base",
+      "slug": "hf-microsoft-florence-2-base",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/microsoft/Florence-2-base",
+      "source_version": "hf-microsoft-florence-2-base",
+      "content_hash": "c4682ca23ba016bfff7372e12e8c640f2a386cf4110c92b146f0901518a0aef0",
+      "dossier_path": "07_PROJECT_LEARNING/hf-microsoft-florence-2-base-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-microsoft-florence-2-base-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T22:58:35.219Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-microsoft-florence-2-base-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-microsoft-florence-2-base-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-microsoft-florence-2-base-research-knowledge-intelligence-microsoft-florence-.md",
+      "title": "Research & Knowledge Intelligence: microsoft/Florence-2-base Core Invariants",
+      "repository": "microsoft/Florence-2-base",
+      "source_version": "hf-microsoft-florence-2-base",
+      "content_hash": "56b7871333350a75cc31bf50fa0f0b4c324eeb508ac1dd10c2c6a11150b0ce83",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T22:58:35.526Z"
+    },
+    "learn-github-jellyfin-swiftfin": {
+      "learning_id": "learn-github-jellyfin-swiftfin",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "jellyfin/Swiftfin",
+      "repository": "jellyfin/Swiftfin",
+      "slug": "jellyfin-swiftfin",
+      "platform": "github",
+      "source_url": "https://github.com/jellyfin/Swiftfin",
+      "source_version": "e956be4a",
+      "content_hash": "5b8c45813fff41ceeab4b9638d834ec0114fef90488a8449fa71ac0f489a203a",
+      "dossier_path": "07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8663,
+          "title": "`ActiveSessions` Fully Utilize `PagingLibrary`",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T22:58:41.098Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8663": {
+      "learning_id": "rule-8663",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8663,
+      "title": "`ActiveSessions` Fully Utilize `PagingLibrary`",
+      "source_url": "https://github.com/jellyfin/Swiftfin",
+      "source_version": "e956be4a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T22:58:41.098Z"
+    },
+    "candidate_directive-activesessions-fully-utilize-paginglibrary": {
+      "item_id": "candidate_directive-activesessions-fully-utilize-paginglibrary",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-RVD7-activesessions-fully-utilize-paginglibrary.md",
+      "title": "`ActiveSessions` Fully Utilize `PagingLibrary`",
+      "repository": "jellyfin-swiftfin-learnings",
+      "source_version": "HEAD",
+      "content_hash": "02a351cf95d2f7b4622386d0d6227626c9023574dedf7db8d32cb8c2f3b4f12b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T22:58:50.635Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-jellyfin-swiftfin-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-jellyfin-swiftfin-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-jellyfin-swiftfin-technical-construction-intelligence-jellyfin-swiftfin-core-inv.md",
+      "title": "Technical Construction Intelligence: jellyfin/Swiftfin Core Invariants",
+      "repository": "jellyfin/Swiftfin",
+      "source_version": "e956be4a",
+      "content_hash": "4653f7dccbd8d921250fc257180e9ea3004d5bdd8417f5ab2db4f47ab4741f67",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T22:58:41.505Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-jellyfin-swiftfin": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-jellyfin-swiftfin",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/jellyfin-swiftfin-verification-protocol-empirical-defect-shield-for-jellyfin-swi.md",
+      "title": "Verification Protocol: Empirical Defect Shield for jellyfin/Swiftfin",
+      "repository": "jellyfin/Swiftfin",
+      "source_version": "e956be4a",
+      "content_hash": "62a3a30d8eea93a3e6e15aa5f90d4b85269ea1f3c84538e7b5da6c6733871bc4",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T22:58:41.608Z"
+    },
+    "rule-8664": {
+      "learning_id": "rule-8664",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8664,
+      "title": "net/memnet: implement CloseRead and CloseWrite",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "a6baab33",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T22:58:46.361Z"
+    },
+    "candidate_directive-net-memnet-implement-closeread-and-closewrite": {
+      "item_id": "candidate_directive-net-memnet-implement-closeread-and-closewrite",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-RSAR-net-memnet-implement-closeread-and-closewrite.md",
+      "title": "net/memnet: implement CloseRead and CloseWrite",
+      "repository": "tailscale/tailscale",
+      "source_version": "a6baab33",
+      "content_hash": "9104859857703a4ad076bcaeb1488654c5dd18baae84424ca75ff67bdc083e87",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T22:58:46.660Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-microsoft-florence-2-base-learnings-core-inva": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-microsoft-florence-2-base-learnings-core-inva",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-microsoft-florence-2-base-learnings-research-knowledge-intelligence-hf-micros.md",
+      "title": "Research & Knowledge Intelligence: hf-microsoft-florence-2-base-learnings Core Invariants",
+      "repository": "hf-microsoft-florence-2-base-learnings",
+      "source_version": "HEAD",
+      "content_hash": "63cabc7e51e73cb5959bbda76524bfc2286af985f1129d6ce0be1ec308ae6d4a",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T22:58:50.265Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-jellyfin-swiftfin-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-jellyfin-swiftfin-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-jellyfin-swiftfin-learnings-technical-construction-intelligence-jellyfin-swiftfi.md",
+      "title": "Technical Construction Intelligence: jellyfin-swiftfin-learnings Core Invariants",
+      "repository": "jellyfin-swiftfin-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a040a06cd1fe8ae22f51c3ee4a8d2db9a85ee83e0852cf3086de40c6620b4640",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T22:58:50.737Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-jellyfin-swiftfin-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-jellyfin-swiftfin-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/jellyfin-swiftfin-learnings-verification-protocol-empirical-defect-shield-for-je.md",
+      "title": "Verification Protocol: Empirical Defect Shield for jellyfin-swiftfin-learnings",
+      "repository": "jellyfin-swiftfin-learnings",
+      "source_version": "HEAD",
+      "content_hash": "786f5c109795802be3ba4c39788af8eb5e4b5ef5c818dd4035c80a403f1d8015",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T22:58:50.841Z"
     }
   },
   "ai-builder-brain": {

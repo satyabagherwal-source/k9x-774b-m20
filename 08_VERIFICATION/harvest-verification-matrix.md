@@ -10173,3 +10173,7 @@
 | `CYCLE-20261115-3BP6` | `2026-11-15T22:39:45.402Z` | `Dicklesworthstone/destructive_command_guard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8660` | Yes (`f73dae4c...`) |
 | `CYCLE-20261115-3JKT` | `2026-11-15T22:39:55.613Z` | `slatedb/slatedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8661` | Yes (`b6e26128...`) |
 | `CYCLE-20261115-CEQE` | `2026-11-15T22:46:49.238Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8662` | Yes (`ce8d173b...`) |
+| `CYCLE-20261115-RJKY` | `2026-11-15T22:58:35.362Z` | `microsoft/Florence-2-base` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-microsoft-florence-2-base-learnings.md` | Yes (`c4682ca2...`) |
+| `CYCLE-20261115-RJZX` | `2026-11-15T22:58:35.901Z` | `yvgude/lean-ctx` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md` | Yes (`95b71da2...`) |
+| `CYCLE-20261115-RO44` | `2026-11-15T22:58:41.236Z` | `jellyfin/Swiftfin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8663` | Yes (`5b8c4581...`) |
+| `CYCLE-20261115-RS6A` | `2026-11-15T22:58:46.498Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8664` | Yes (`540d2357...`) |

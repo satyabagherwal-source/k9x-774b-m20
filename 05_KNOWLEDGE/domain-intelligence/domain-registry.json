@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T22:46:53.611Z",
-  "total_records": 1143,
+  "last_updated": "2026-11-15T22:58:50.737Z",
+  "total_records": 1147,
   "domains": {
     "A": {
       "total": 7,
@@ -37,7 +37,7 @@
       ]
     },
     "D": {
-      "total": 553,
+      "total": 555,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -591,7 +591,9 @@
         "DOM-D-5FCF2E96",
         "domain_intelligence-research-knowledge-intelligence-hf-conwayresearch-underdog-woof-learnings-core-i",
         "domain_intelligence-research-knowledge-intelligence-cactus-compute-mirage-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-cactus-compute-mirage-learnings-core-invarian"
+        "domain_intelligence-research-knowledge-intelligence-hf-cactus-compute-mirage-learnings-core-invarian",
+        "domain_intelligence-research-knowledge-intelligence-microsoft-florence-2-base-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-microsoft-florence-2-base-learnings-core-inva"
       ]
     },
     "E": {
@@ -834,7 +836,7 @@
       ]
     },
     "H": {
-      "total": 234,
+      "total": 236,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1069,7 +1071,9 @@
         "domain_intelligence-technical-construction-intelligence-maziyarpanahi-openmed-learnings-core-invaria",
         "domain_intelligence-technical-construction-intelligence-vercel-labs-agent-desktop-core-invariants",
         "DOM-H-0A98A103",
-        "domain_intelligence-technical-construction-intelligence-vercel-labs-agent-desktop-learnings-core-inv"
+        "domain_intelligence-technical-construction-intelligence-vercel-labs-agent-desktop-learnings-core-inv",
+        "domain_intelligence-technical-construction-intelligence-jellyfin-swiftfin-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-jellyfin-swiftfin-learnings-core-invariants"
       ]
     },
     "I": {
@@ -7030,8 +7034,8 @@
       "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
       "repository": "tailscale/tailscale",
-      "content_hash": "9de62675eb768655e7ff4f61a84d0ae4ce2afa8152078e31a696732c6143cf60",
-      "created_at": "2026-11-15T16:50:32.135Z"
+      "content_hash": "704c3ba92cc5215783c38926479de66bb37762edd97057a810b46bb8593fc926",
+      "created_at": "2026-11-15T22:58:46.761Z"
     },
     "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants",
@@ -10923,8 +10927,8 @@
       "title": "Architecture Intelligence: yvgude/lean-ctx Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-yvgude-lean-ctx-architecture-intelligence-yvgude-lean-ctx-core-invariants.md",
       "repository": "yvgude/lean-ctx",
-      "content_hash": "27a4a35ae5b8e97e66c6e540aeb74865b2989ccf0927ee3e48a92b4c5219d2e8",
-      "created_at": "2026-11-14T00:25:03.523Z"
+      "content_hash": "ee2a4088463787c5c3edc365ecf592c8f6b7a57303698ed770039a0dcc6ba111",
+      "created_at": "2026-11-15T22:58:36.194Z"
     },
     "domain_intelligence-technical-construction-intelligence-invertase-react-native-firebase-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-invertase-react-native-firebase-core-invaria",
@@ -10941,8 +10945,8 @@
       "title": "Architecture Intelligence: yvgude-lean-ctx-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-yvgude-lean-ctx-learnings-architecture-intelligence-yvgude-lean-ctx-learnings-co.md",
       "repository": "yvgude-lean-ctx-learnings",
-      "content_hash": "78f1a6e92f833b48339f7e819581e3bdc9f7080b67dfa6decda3d6e1069d57da",
-      "created_at": "2026-11-14T00:25:16.689Z"
+      "content_hash": "2fd84fe9fa8122d60c278b1ed9094c1a237b61b0defd8fedec0a38dd81e58b47",
+      "created_at": "2026-11-15T22:58:49.902Z"
     },
     "DOM-D-BCB68B52": {
       "record_id": "DOM-D-BCB68B52",
@@ -21603,6 +21607,42 @@
       "repository": "trufflesecurity-trufflehog-learnings",
       "content_hash": "bb3e3da5075ddc5774ae81603bd134971d164c85517f348bd729e29b99c55dec",
       "created_at": "2026-11-15T22:46:52.696Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-microsoft-florence-2-base-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-microsoft-florence-2-base-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: microsoft/Florence-2-base Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-microsoft-florence-2-base-research-knowledge-intelligence-microsoft-florence-.md",
+      "repository": "microsoft/Florence-2-base",
+      "content_hash": "56b7871333350a75cc31bf50fa0f0b4c324eeb508ac1dd10c2c6a11150b0ce83",
+      "created_at": "2026-11-15T22:58:35.526Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-jellyfin-swiftfin-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-jellyfin-swiftfin-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: jellyfin/Swiftfin Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-jellyfin-swiftfin-technical-construction-intelligence-jellyfin-swiftfin-core-inv.md",
+      "repository": "jellyfin/Swiftfin",
+      "content_hash": "4653f7dccbd8d921250fc257180e9ea3004d5bdd8417f5ab2db4f47ab4741f67",
+      "created_at": "2026-11-15T22:58:41.505Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-microsoft-florence-2-base-learnings-core-inva": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-microsoft-florence-2-base-learnings-core-inva",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-microsoft-florence-2-base-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-microsoft-florence-2-base-learnings-research-knowledge-intelligence-hf-micros.md",
+      "repository": "hf-microsoft-florence-2-base-learnings",
+      "content_hash": "63cabc7e51e73cb5959bbda76524bfc2286af985f1129d6ce0be1ec308ae6d4a",
+      "created_at": "2026-11-15T22:58:50.265Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-jellyfin-swiftfin-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-jellyfin-swiftfin-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: jellyfin-swiftfin-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-jellyfin-swiftfin-learnings-technical-construction-intelligence-jellyfin-swiftfi.md",
+      "repository": "jellyfin-swiftfin-learnings",
+      "content_hash": "a040a06cd1fe8ae22f51c3ee4a8d2db9a85ee83e0852cf3086de40c6620b4640",
+      "created_at": "2026-11-15T22:58:50.737Z"
     }
   }
 }

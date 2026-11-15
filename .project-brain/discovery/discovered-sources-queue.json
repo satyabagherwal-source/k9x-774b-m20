@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T22:46:52.462Z",
+  "updated_at": "2026-11-15T22:58:50.487Z",
   "stats": {
-    "total_discovered": 3874,
-    "approved_pending_harvest": 3654,
+    "total_discovered": 3877,
+    "approved_pending_harvest": 3657,
     "harvested_count": 0,
     "rejected_count": 220,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3633,
+      "COMMUNITY_AND_EXPERT": 3636,
       "OFFICIAL_DOCUMENTATION": 131,
       "STANDARDS_AND_SPECIFICATIONS": 92,
       "ENGINEERING_BLOGS": 2,
@@ -83709,6 +83709,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
         "fileName": "trufflesecurity-trufflehog-learnings.md"
+      }
+    },
+    "SRC-3725E9747AE0": {
+      "id": "SRC-3725E9747AE0",
+      "url": "https://huggingface.co/microsoft/Florence-2-base",
+      "title": "https://huggingface.co/microsoft/Florence-2-base",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T22:58:50.120Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-microsoft-florence-2-base-learnings.md",
+        "fileName": "hf-microsoft-florence-2-base-learnings.md"
+      }
+    },
+    "SRC-738116590332": {
+      "id": "SRC-738116590332",
+      "url": "https://github.com/Miista/Swiftfin/actions/runs/43617798420",
+      "title": "https://github.com/Miista/Swiftfin/actions/runs/43617798420",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T22:58:50.424Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md",
+        "fileName": "jellyfin-swiftfin-learnings.md"
+      }
+    },
+    "SRC-6700DA1FFB23": {
+      "id": "SRC-6700DA1FFB23",
+      "url": "https://translate.jellyfin.org/projects/swiftfin/swiftfin/pl",
+      "title": "https://translate.jellyfin.org/projects/swiftfin/swiftfin/pl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T22:58:50.487Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md",
+        "fileName": "jellyfin-swiftfin-learnings.md"
       }
     }
   }

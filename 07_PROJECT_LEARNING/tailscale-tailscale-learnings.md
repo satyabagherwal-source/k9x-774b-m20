@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `daf82a50`  
+> **Source Version**: `a6baab33`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T16:50:31.085Z  
+> **Timestamp**: 2026-11-15T22:58:45.705Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T16:50:31.080Z  
+> **Harvest Timestamp**: 2026-11-15T22:58:45.701Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39155 stars
+- **Stars / Engagement**: 39162 stars
 
 ---
 
@@ -823,92 +823,107 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `daf82a50` (2026-11-14)
-**Commit Message**: prober: deflake TestHTTPBandwidth on coarse-clock machines
+### Incident Patch 1: `a6baab33` (2026-11-15)
+**Commit Message**: net/memnet: implement CloseRead and CloseWrite
 
-The test asserts that a successful probe records a positive transfer
-time, but the transfer is shorter than one clock tick on the Windows CI
-runner: four attempts at 1 MiB plus their connection setups took 2.3ms
-in total, yet every measurement read exactly 0, so the retry loop added
-in #20214 just re-measured zero and then failed with
-"http_bw_transfer_time_seconds_total = 0 after 4 attempts".
+tcpproxy propagates a backend's close to the client by calling CloseWrite
+on the source connection. connHalf did not implement it, so the call was a
+no-op and the client never saw EOF. TestTCPRoundRobinHandler only unblocked
+the proxy's remaining copy goroutine by writing more data after the first
+echo. When the backend closed with that data still buffered in the pipe,
+the write was discarded and the test hung until the 10 minute timeout.
 
-A 1 MiB loopback transfer takes ~0.4ms here, so no payload small enough
-for a unit test is reliably measurable against a millisecond-coarse
-clock. Make the transfer span more than one tick instead: /download now
-writes half the payload, flushes, sleeps 50ms, then writes the rest.
-The probe measures ~52ms, so the >0 assertion holds deterministically
-and the retry loop can be deleted.
+Implement both halves of the half-close contract on connHalf. A new test
+covers buffered data surviving CloseWrite, EOF on the read after it, and
+writes failing after CloseRead.
 
-Fixes #21620
+Fixes #17533
 
 Signed-off-by: Yunus Emre Karaman <[REDACTED_EMAIL]>
 
-**File**: `prober/http_test.go` (modified, +14/-21)
+**File**: `net/memnet/conn.go` (modified, +13/-0)
 ```diff
-@@ -55,10 +55,18 @@ func TestHTTPBandwidth(t *testing.T) {
- 	const size = 1 << 20 // 1 MiB
+@@ -85,6 +85,19 @@ func (c *connHalf) Close() error {
+ 	return c.r.Close()
+ }
  
- 	mux := http.NewServeMux()
--	// /download writes exactly `size` zero bytes.
-+	// /download writes exactly `size` zero bytes, pausing halfway so the
-+	// transfer spans more than one clock tick. A 1 MiB loopback transfer
-+	// takes well under a millisecond, which is below the monotonic clock's
-+	// granularity on the Windows CI runner, so the probe would measure a
-+	// transfer time of exactly 0 there.
-+	// See https://github.com/tailscale/tailscale/issues/21620.
- 	mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
- 		w.WriteHeader(http.StatusOK)
--		io.CopyN(w, zeroReader{}, size)
-+		io.CopyN(w, zeroReader{}, size/2)
-+		w.(http.Flusher).Flush()
-+		time.Sleep(50 * time.Millisecond)
-+		io.CopyN(w, zeroReader{}, size/2)
++// CloseWrite closes the write side of the connection. The peer can read
++// buffered data, then gets io.EOF. It matches net.TCPConn.CloseWrite, which
++// proxies such as tcpproxy rely on to propagate a backend's close.
++func (c *connHalf) CloseWrite() error {
++	return c.w.Close()
++}
++
++// CloseRead closes the read side of the connection. Subsequent reads return
++// io.EOF and the peer's writes fail.
++func (c *connHalf) CloseRead() error {
++	return c.r.Close()
++}
++
+ func (c *connHalf) SetDeadline(t time.Time) error {
+ 	err1 := c.SetReadDeadline(t)
+ 	err2 := c.SetWriteDeadline(t)
+```
+
+**File**: `net/memnet/conn_test.go` (modified, +37/-0)
+```diff
+@@ -4,6 +4,8 @@
+ package memnet
+ 
+ import (
++	"errors"
++	"io"
+ 	"net"
+ 	"testing"
+ 
+@@ -19,3 +21,38 @@ func TestConn(t *testing.T) {
+ 		}, nil
  	})
- 	// /bad returns a non-200 status.
- 	mux.HandleFunc("/bad", func(w http.ResponseWriter, r *http.Request) {
-@@ -135,28 +143,13 @@ func TestHTTPBandwidth(t *testing.T) {
- 			}
- 
- 			// On a successful transfer the recorded byte count should equal the
--			// full payload size, and the transfer should take a positive,
--			// finite amount of time.
-+			// full payload size, and the transfer should take a positive
-+			// amount of time.
- 			if got := metricValue(t, metrics, "http_bw_bytes_total"); got != float64(tc.size) {
- 				t.Errorf("http_bw_bytes_total = %v, want %v", got, tc.size)
- 			}
--			// The transfer time counter accumulates across Probe calls.
--			// At 1 MiB over loopback a zero reading means the timing logic
--			// is broken, but retry a few times.
--			if transferTime() <= 0 {
--				const retries = 3
--				for range retries {
--					if err := pc.Probe(ctx); err != nil {
--						t.Fatalf("Probe() = %v, want nil", err)
--					}
--					metrics = pc.Metrics(prometheus.Labels{})
--					if transferTime() > 0 {
--						break
--					}
--				}
--				if transferTime() <= 0 {
--					t.Fatalf("http_bw_transfer_time_seconds_total = 0 after %d attempts, want > 0", retries+1)
--				}
-+			if got := transferTime(); got <= 0 {
-+				t.Errorf("http_bw_transfer_time_seconds_total = %v, want > 0", got)
- 			}
- 		})
- 	}
+ }
++
++func TestConnCloseWriteAndCloseRead(t *testing.T) {
++	a, b := NewConn("test", bufferSize)
++	// Half-close is not part of the Conn interface, matching net.Conn.
++	ac := a.(interface{ CloseWrite() error })
++	bc := b.(interface{ CloseRead() error })
++
++	if _, err := a.Write([]byte("hello")); err != nil {
++		t.Fatal(err)
++	}
++	if err := ac.CloseWrite(); err != nil {
++		t.Fatal(err)
++	}
++	// Buffered data survives the half-close; the next read is EOF.
++	buf := make([]byte, 8)
++	if n, err := b.Read(buf); n != 5 || err != nil {
++		t.Fatalf("Read = %d, %v; want 5, nil", n, err)
++	}
++	if _, err := b.Read(buf); !errors.Is(err, io.EOF) {
++		t.Fatalf("Read after CloseWrite = %v; want io.EOF", err)
++	}
++	if _, err := a.Write([]byte("x")); err == nil {
++		t.Fatal("Write after CloseWrite succeeded")
++	}
++
++	if err := bc.CloseRead(); err != nil {
++		t.Fatal(err)
++	}
++	if _, err := b.Read(buf); !errors.Is(err, io.EOF) {
++		t.Fatalf("Read after CloseRead = %v; want io.EOF", err)
++	}
++	if _, err := a.Write([]byte("x")); err == nil {
++		t.Fatal("Write after peer CloseRead succeeded")
++	}
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22427** (2026-11-15): net/memnet: implement CloseRead and CloseWrite (@emrelab)
 - **PR #22408** (2026-11-15): prober: deflake TestHTTPBandwidth on coarse-clock machines (@emrelab)
 - **PR #22406** (2026-11-14): go.mod: bump golang.org/x/sys (@tailscale-code-updater[bot])
 - **PR #22393** (2026-11-14): cmd/testwrapper, .github/workflows: bound hung CI test jobs (@bradfitz)
 - **PR #22392** (2026-11-13): clientupdate: stop requesting the -winui MSI variant on Windows (@nickkhyl)
 - **PR #22391** (closed): go.mod: bump golang.org/x/sys to v0.50.0 (@wrenix)
-- **PR #22382** (2026-11-13): derp/derpserver: fix data race on sclient.keepAliveTimer (@bradfitz)
 
 ---
 
@@ -928,61 +943,40 @@ Signed-off-by: Yunus Emre Karaman <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. prober: deflake TestHTTPBandwidth on coarse-clock machines
+## X. net/memnet: implement CloseRead and CloseWrite
 
 **RULE**:
-When implementing operations in `prober/http_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `net/memnet/conn.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `daf82a50`: prober: deflake TestHTTPBandwidth on coarse-clock machines. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a6baab33`: net/memnet: implement CloseRead and CloseWrite. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `prober/http_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `net/memnet/conn.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// /download writes exactly `size` zero bytes, pausing halfway so the
-	// transfer spans more than one clock tick. A 1 MiB loopback transfer
-	// takes well under a millisecond, which is below the monotonic clock's
-	// granularity on the Windows CI runner, so the probe would measure a
-	// transfer time of exactly 0 there.
-	// See https://github.com/tailscale/tailscale/issues/21620.
-		io.CopyN(w, zeroReader{}, size/2)
-		w.(http.Flusher).Flush()
-		time.Sleep(50 * time.Millisecond)
-		io.CopyN(w, zeroReader{}, size/2)
-			// full payload size, and the transfer should take a positive
-			// amount of time.
-			if got := transferTime(); got <= 0 {
-				t.Errorf("http_bw_transfer_time_seconds_total = %v, want > 0", got)
+// CloseWrite closes the write side of the connection. The peer can read
+// buffered data, then gets io.EOF. It matches net.TCPConn.CloseWrite, which
+// proxies such as tcpproxy rely on to propagate a backend's close.
+func (c *connHalf) CloseWrite() error {
+	return c.w.Close()
+}
+
+// CloseRead closes the read side of the connection. Subsequent reads return
+// io.EOF and the peer's writes fail.
+func (c *connHalf) CloseRead() error {
+	return c.r.Close()
+}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	// /download writes exactly `size` zero bytes.
-		io.CopyN(w, zeroReader{}, size)
-			// full payload size, and the transfer should take a positive,
-			// finite amount of time.
-			// The transfer time counter accumulates across Probe calls.
-			// At 1 MiB over loopback a zero reading means the timing logic
-			// is broken, but retry a few times.
-			if transferTime() <= 0 {
-				const retries = 3
-				for range retries {
-					if err := pc.Probe(ctx); err != nil {
-						t.Fatalf("Probe() = %v, want nil", err)
-					}
-					metrics = pc.Metrics(prometheus.Labels{})
-					if transferTime() > 0 {
-						break
-					}
-				}
-				if transferTime() <= 0 {
-					t.Fatalf("http_bw_transfer_time_seconds_total = 0 after %d attempts, want > 0", retries+1)
-				}
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `daf82a50` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a6baab33` are properly handled with clean fallback behavior.

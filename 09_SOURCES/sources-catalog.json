@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "daf82a50",
+    "sourceVersion": "a6baab33",
     "license": "BSD-3-Clause",
-    "contentHash": "f8b2f88593e73385581a33a1dd390e8947648958f3e2e277b95a7310bd16d701",
-    "lastHarvestedAt": "2026-11-15T16:50:31.874Z",
+    "contentHash": "540d235719c5aa8d14ff054ff86eda42049874a8d46bf50f157c9e7709bc5032",
+    "lastHarvestedAt": "2026-11-15T22:58:46.501Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -6233,10 +6233,10 @@
     "repository": "yvgude/lean-ctx",
     "platform": "github",
     "sourceUrl": "https://github.com/yvgude/lean-ctx",
-    "sourceVersion": "b6de365b",
+    "sourceVersion": "5ae3dfff",
     "license": "Apache-2.0",
-    "contentHash": "4e9bd0a2bd5cef8313547b27230a3e5094e3e598cdfc39e28186cb18fd7b37b5",
-    "lastHarvestedAt": "2026-11-14T00:25:03.168Z",
+    "contentHash": "95b71da2e21c78c0969e58ed5a1364b3aad9db5553da0151d938acae07f7d5cc",
+    "lastHarvestedAt": "2026-11-15T22:58:35.904Z",
     "learningId": "learn-github-yvgude-lean-ctx"
   },
   "gkd-kit-gkd": {
@@ -8333,10 +8333,10 @@
     "repository": "jellyfin/Swiftfin",
     "platform": "github",
     "sourceUrl": "https://github.com/jellyfin/Swiftfin",
-    "sourceVersion": "e523ba9d",
+    "sourceVersion": "e956be4a",
     "license": "MPL-2.0",
-    "contentHash": "66d3eef4921b5ef73c39bb16073e9e5a4f169ced659e93dc1a1c54fb9f38f1ed",
-    "lastHarvestedAt": "2026-11-12T11:37:31.667Z",
+    "contentHash": "5b8c45813fff41ceeab4b9638d834ec0114fef90488a8449fa71ac0f489a203a",
+    "lastHarvestedAt": "2026-11-15T22:58:41.239Z",
     "learningId": "learn-github-jellyfin-swiftfin"
   },
   "sergdort-moderncleanarchitectureswiftui": {
@@ -12055,8 +12055,8 @@
     "sourceUrl": "https://huggingface.co/microsoft/Florence-2-base",
     "sourceVersion": "hf-microsoft-florence-2-base",
     "license": "Open-Source",
-    "contentHash": "3edc255cfadbf304b15e9d9efc027c13436d4859e9cc0c7f339fe3d368308970",
-    "lastHarvestedAt": "2026-11-11T07:45:58.987Z",
+    "contentHash": "c4682ca23ba016bfff7372e12e8c640f2a386cf4110c92b146f0901518a0aef0",
+    "lastHarvestedAt": "2026-11-15T22:58:35.366Z",
     "learningId": "learn-huggingface-microsoft-florence-2-base"
   },
   "hf-webai-official-twil-8b": {

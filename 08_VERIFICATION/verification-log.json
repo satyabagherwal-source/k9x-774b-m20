@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-6LJX",
-    "timestamp": "2026-11-13T15:11:03.837Z",
-    "repository": "dragonflydb/dragonfly",
-    "learningId": "learn-github-dragonflydb-dragonfly",
-    "contentHash": "9b59296e40577994fa05e0c4e3662ca9318471bc684dd6ff09440b7d95cf99ab",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-G1MJ",
-    "timestamp": "2026-11-13T15:18:24.571Z",
-    "repository": "Comfy-Org/Wan-2.2",
-    "learningId": "learn-huggingface-comfy-org-wan-2-2",
-    "contentHash": "d7d7e794f0f7cc2831e56d2800bf81bb11a18a3d8a473109fdd982c0532a012a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-G7SH",
-    "timestamp": "2026-11-13T15:18:32.561Z",
-    "repository": "electron/electron",
-    "learningId": "learn-github-electron-electron",
-    "contentHash": "f557062aca9923d45328ba84b33a84467648eb87f629f770219736edfb7c9f02",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-G8X8",
-    "timestamp": "2026-11-13T15:18:34.028Z",
-    "repository": "encoredev/encore",
-    "learningId": "learn-github-encoredev-encore",
-    "contentHash": "94bef1b67a807f849105d446a72cd91d4700fc23fe5aff4a66793e08787928d4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-GB44",
     "timestamp": "2026-11-13T15:18:36.868Z",
     "repository": "tailscale/tailscale",
@@ -7490,6 +7430,66 @@
     "repository": "trufflesecurity/trufflehog",
     "learningId": "learn-github-trufflesecurity-trufflehog",
     "contentHash": "ce8d173ba42fcdae0f3aa8ac376dd62dd1e9345244a1211042006d096c2a1ac3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-RJKY",
+    "timestamp": "2026-11-15T22:58:35.362Z",
+    "repository": "microsoft/Florence-2-base",
+    "learningId": "learn-huggingface-microsoft-florence-2-base",
+    "contentHash": "c4682ca23ba016bfff7372e12e8c640f2a386cf4110c92b146f0901518a0aef0",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-RJZX",
+    "timestamp": "2026-11-15T22:58:35.901Z",
+    "repository": "yvgude/lean-ctx",
+    "learningId": "learn-github-yvgude-lean-ctx",
+    "contentHash": "95b71da2e21c78c0969e58ed5a1364b3aad9db5553da0151d938acae07f7d5cc",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-RO44",
+    "timestamp": "2026-11-15T22:58:41.236Z",
+    "repository": "jellyfin/Swiftfin",
+    "learningId": "learn-github-jellyfin-swiftfin",
+    "contentHash": "5b8c45813fff41ceeab4b9638d834ec0114fef90488a8449fa71ac0f489a203a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-RS6A",
+    "timestamp": "2026-11-15T22:58:46.498Z",
+    "repository": "tailscale/tailscale",
+    "learningId": "learn-github-tailscale-tailscale",
+    "contentHash": "540d235719c5aa8d14ff054ff86eda42049874a8d46bf50f157c9e7709bc5032",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -10206,3 +10206,7 @@ Every entry in this ledger must capture:
 | `learn-github-dicklesworthstone-destructive_command_guard` | `https://github.com/Dicklesworthstone/destructive_command_guard` | `37d14736` | Multi-dimensional audit evidence | 2026-11-15T22:39:45.406Z |
 | `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `8b688002` | Multi-dimensional audit evidence | 2026-11-15T22:39:55.617Z |
 | `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `db665f0c` | Multi-dimensional audit evidence | 2026-11-15T22:46:49.240Z |
+| `learn-huggingface-microsoft-florence-2-base` | `https://huggingface.co/microsoft/Florence-2-base` | `hf-microso` | Multi-dimensional audit evidence | 2026-11-15T22:58:35.366Z |
+| `learn-github-yvgude-lean-ctx` | `https://github.com/yvgude/lean-ctx` | `5ae3dfff` | Multi-dimensional audit evidence | 2026-11-15T22:58:35.904Z |
+| `learn-github-jellyfin-swiftfin` | `https://github.com/jellyfin/Swiftfin` | `e956be4a` | Multi-dimensional audit evidence | 2026-11-15T22:58:41.239Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `a6baab33` | Multi-dimensional audit evidence | 2026-11-15T22:58:46.501Z |
