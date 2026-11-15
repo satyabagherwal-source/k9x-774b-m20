@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T15:23:25.030Z",
-  "total_cycles_completed": 9725,
-  "total_learnings_persisted": 9725,
-  "total_rules_promoted": 9352,
+  "last_updated": "2026-11-15T15:47:53.833Z",
+  "total_cycles_completed": 9726,
+  "total_learnings_persisted": 9726,
+  "total_rules_promoted": 9353,
   "history": [
-    {
-      "timestamp": "2026-11-14T13:57:11.093Z",
-      "repository": "BAAI/bge-base-en-v1.5",
-      "learningId": "learn-huggingface-baai-bge-base-en-v1-5",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T14:23:04.325Z",
       "repository": "google/gemma-4-31B-it",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-15T15:23:25.030Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T15:47:53.833Z",
+      "repository": "lioensky/VCPToolBox",
+      "learningId": "learn-github-lioensky-vcptoolbox",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

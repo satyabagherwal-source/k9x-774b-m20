@@ -2993,10 +2993,10 @@
     "repository": "lioensky/VCPToolBox",
     "platform": "github",
     "sourceUrl": "https://github.com/lioensky/VCPToolBox",
-    "sourceVersion": "9373aa70",
+    "sourceVersion": "a2a3b8b8",
     "license": "NOASSERTION",
-    "contentHash": "bf8378e742a8e5153646614e05b65cbdfbb6d09d964f59658103fdbc259c583e",
-    "lastHarvestedAt": "2026-11-14T02:06:27.244Z",
+    "contentHash": "73ef8d9c89c6fce0081ea8d524529674556ed6bafe78f67b462e9e9c309ae71c",
+    "lastHarvestedAt": "2026-11-15T15:47:53.826Z",
     "learningId": "learn-github-lioensky-vcptoolbox"
   },
   "megabit-blazorise": {

@@ -10144,3 +10144,4 @@ Every entry in this ledger must capture:
 | `learn-dom-k-8a108f40` | `project://seo-skills-seo-audit-skill` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/seo-skills-seo-audit-skill-learnings.md` | 2026-11-15T14:56:40.646Z |
 | `learn-github-siteline-swiftui-introspect` | `https://github.com/siteline/swiftui-introspect` | `4d977db9` | Multi-dimensional audit evidence | 2026-11-15T15:23:22.364Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `42260613` | Multi-dimensional audit evidence | 2026-11-15T15:23:25.026Z |
+| `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `a2a3b8b8` | Multi-dimensional audit evidence | 2026-11-15T15:47:53.826Z |

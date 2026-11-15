@@ -10111,3 +10111,4 @@
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T14:56:40.646Z` | `seo-skills-seo-audit-skill` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-8A108F40` [Domain K] | Yes (`6ea7d5d7...`) |
 | `CYCLE-20261115-I4QG` | `2026-11-15T15:23:22.360Z` | `siteline/swiftui-introspect` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8623` | Yes (`e686d618...`) |
 | `CYCLE-20261115-I6SE` | `2026-11-15T15:23:25.022Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8624` | Yes (`d271937c...`) |
+| `CYCLE-20261115-DO4E` | `2026-11-15T15:47:53.822Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8625` | Yes (`73ef8d9c...`) |

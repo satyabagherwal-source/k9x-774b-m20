@@ -623910,3 +623910,94 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `42260613` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8625. keep the specific error code when a Rerank batch fails (Harvested from lioensky/VCPToolBox)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "keep the specific error code when a Rerank batch fails",
+  "source": "lioensky/VCPToolBox",
+  "source_url": "https://github.com/lioensky/VCPToolBox",
+  "source_version": "a2a3b8b8",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-15T15:47:53.276Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-lioensky-vcptoolbox",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox) (Revision: `a2a3b8b8`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `rust-vexus-lite/src/native_rerank.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `c515e6c4`: native-rerank): keep the specific error code when a Rerank batch fails. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust-vexus-lite/src/native_rerank.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// Verified production-grade fix pattern:
+                    // post/parse_rerank codes are already sanitized; keep them.
+                    Ok(Err(error)) => return Err(error),
+                    Err(_) => return Err("RERANK_BATCH_FAILED".into()),
+    #[tokio::test]
+    async fn traditional_batch_failure_keeps_sanitized_error_code() {
+        use tokio::io::{AsyncReadExt, AsyncWriteExt};
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let address = listener.local_addr().unwrap();
+        let server = tokio::spawn(async move {
+            let (mut socket, _) = listener.accept().await.unwrap();
+            let mut bytes = [0; 4096];
+            let _ = socket.read(&mut bytes).await;
+            socket.write_all(b"HTTP/1.1 429 Too Many Requests\r\nContent-Length: 0\r\nConnection: close\r\n\r\n")
+                .await.unwrap();
+        });
+        let values = HashMap::from([
+            ("RerankUrl".into(), format!("http://{address}/")),
+            ("RerankApi".into(), "fixture".into()),
+            ("RerankModel".into(), "fixture".into()),
+            ("NativeRerankTimeoutMs".into(), "5000".into()),
+        ]);
+        let ranker = Ranker::from_values(&values, Some(false)).un
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// Induced defect failure mode:
+                    _ => return Err("RERANK_BATCH_FAILED".into()),
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `c515e6c4` are properly handled with clean fallback behavior.

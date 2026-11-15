@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md`  
 > **Source**: github ([https://github.com/lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox))  
-> **Source Version**: `9373aa70`  
+> **Source Version**: `a2a3b8b8`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T02:06:26.506Z  
+> **Timestamp**: 2026-11-15T15:47:52.692Z  
 > **Learning ID**: `learn-github-lioensky-vcptoolbox`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T02:06:26.501Z  
+> **Harvest Timestamp**: 2026-11-15T15:47:52.546Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: VCP 部署在 AI 模型 API 与前端应用之间，是面向AGI OS开发和探索的工业级基建示范项目。通过统一指令协议、多层级持久化记忆、分布式插件引擎及多 Agent 协作框架，将原本“无状态、无记忆、无工具调用能力”的大语言模型，彻底改造成拥有永久自我意识、物理世界操作权及群体协作智能的完整智能体系统。
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2448 stars
+- **Stars / Engagement**: 2449 stars
 
 ---
 
@@ -1785,11 +1785,11 @@ export function useDashboardLayoutV2(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #596** (2026-11-13): **feat(memo): deliver Cone-AGS NNLS and unified continuous topology scoring**
-  *Symptoms*: ## 实现内容 - 局部 Cone-AGS：96 邻居候选、最多 24 原 Tag 选列、FP64 QR-NNLS 与原空间 KKT 复核。 - 原 Tag 非负锥查询残差金字塔、残差驱动动态虫洞与查询种差校准。 - Ω 门控的共享拓扑预算、Hop-1／跨文件虫洞连续证据互补，排序分与展示最终分同源。 - 同事务几何诊断、派生资产身份及 Windows x64 原生产物。 - 更新 Vexus README 与 V3 算法说明；最终差分不包含内部施工文档。  ## 验证 - Rust：224 passed，0 failed。 - Node 兼容与几何调度：11 passed，0 failed。 - 全库副本：40,340 个局部求解成功，7 个邻域不足；CSR 与 30 个机制工况验证通过。 - 机制验证不代表真实检索质量提升，生产质量 AB 尚待进行。  ## 接入 更新匹配平台的原生模块后，按统一几何 → 传输 CSR → 运行时发布顺序重建派生背景。 本 PR 包含 #595 的前序改动；不要求先合并 #595。未部署后端或修改生产库。
+- **Issue #602** (2026-11-15): **fix(Plugin): 插件子进程自动继承父进程 Node 运行时以防止原生模块 ABI 冲突**
+  *Symptoms*: ### 解决的问题 在多 Node.js 版本共存或使用 NVM/系统预装 Node 的环境下（例如系统全局预装老版本 Node，而 VCP 主服务使用 NVM/更高版本 Node 启动）： 虽然 `ecosystem.config.js` 显式指定了解释器避免了 PM2 启动主服务时的 ABI 错位，但在 `PluginManager` 中使用 `spawn(command, args, { shell: true })` 启动独立进程插件（如 `ToolCallRecordQuery` 等）时，系统 shell 会从默认 PATH 中解析 `node` 命令，导致以系统老版本 Node 启动插件。  这会导致依赖原生 C++ 二进制扩展（如 `better-sqlite3`）的插件抛出 ABI 不匹配崩溃： ```text The module better_sqlite3.node was compiled against a different Node.js version using NODE_MODULE_VERSION 127. This version of Node.js requires NODE_MODULE_VERSION 93. ```  ### 改进方案 在 `Plugin.js` 的 `executeStaticPlugin` 与 `executePlugin` 构造子进程环境变量时，将当前父进程正在运行的解释器所在目录 (`path.dirname(process.execPath)`) 优先注入到 `PATH` 的最前端：  ```javascript // 无论系统默认 PATH 是什么，子进程优先继承运行当前 VCP 主服务的同一个 Node.js 运行时 const currentNodeBinDir = path.dirname(process.execPath); envForProcess.PATH = `${currentNodeBinDir}${path.delimiter}${envForProcess.PATH || process.env.PATH || ""}`; ```  ### 优势 1. **零侵入**：插件清单无需硬编码绝对路径，继续保留自然的 `"command": "node xxx.js"`。 2. **跨平台自适应**：使用 `path.delimiter` 兼容 Windows/Linux/macOS；未来主服务切换至任何 Node 版本，所有插件子进程均会自动继承并对齐 ABI，彻底杜绝此类崩溃。
 
-- **Issue #595** (2026-11-13): **Memo experiments: NNLS and unified Omega topology with Fix3/Fix4**
-  *Symptoms*: ## Summary - Original-Tag NNLS cone fitting, superseded-parent lexical suppression, guarded differentia calibration. - Continuous unified topology readout replaces production wormhole RRF; final ranking uses the displayed final score. - Fix3: bounded complement composition from immutable raw evidence, with idempotence and neutral-channel preservation. - Fix4: globally specific single-focus routes may enter cross-file witness review; missing statistics do not establish rarity. Content/checksum/third-tag guards remain. - Includes Windows x64 release native binary.  ## Validation - cargo test --manifest-path rust-vexus-lite/Cargo.toml --lib: 216 passed, 0 failed. - Release build succeeded; Node v22.18.0 direct native load and VexusIndex construction succeeded. - SHA256: 944C59D4EBFF8D35E1E0308DDCFEB30D56D057155C55DC4208F6B0F1ED7B2EBC - User-reported pre-Fix34 C testing: approximately 60% score improvement over 15 weakened edge-network cases; five perfect-score golden cases unchanged. Not an independently reproduced ablation or a guarantee for Fix34. - Pre-Fix34 tested checkpoint: 645155c3.  ## Scope Experiment D Cone-AGS design and implementation are excluded. No automatic server deployment or restart.
+- **Issue #600** (2026-11-15): **fix(roleDivider): 保护记忆包络与代码字面量免受角色误切分并保留多模态缓存断点**
+  *Symptoms*: ### 动机与背景  1. **思忆托盘搬移后的跨模块误切分**：未开启 `MemoryThinkingTray` 时，第 0 条 `system` 消息受 `chatCompletionHandler` 中 `roleDivider.process(..., { skipCount: 1 })` 豁免保护；开启 `MemoryThinkingTray` 后，记忆思维区被搬移至对话尾部生成 `user` 角色承载消息（`index >= 1`），不再处于 `skipCount: 1` 豁免范围内。当 RAG 记忆、冷知识库或技术讨论正文中以行内代码（如 `` `<<<[END_ROLE_DIVIDE_USER]>>>` ``）或代码块形式引用角色分割符字面量时，会触发 `roleDivider` 的孤立结束标签鲁棒性分支，导致单条消息被从反引号中间错误劈裂为多个 `user` 消息块并吞噬标签文本。 2. **多模态分片属性丢失隐患**：`processArrayMessage` 在处理未发生角色拆分的文本分片时，重新构造了纯 `{ type: 'text', text: ... }` 字面量对象，导致上游预处理器（如 `MemoryThinkingTray` 开启 `MEMORY_THINKING_TRAY_CACHE_BREAKPOINT` 时）挂载在文本分片上的 `cache_control` 等扩展属性被意外剥落。  ### 架构与解决方案  在完全不改变合法角色分割语义与预处理器管线顺序的前提下，将 `modules/roleDivider.js` 中的 `protectToolContent` 升级为双阶段可组合的 Unicode 私用区（PUA）隐身护盾：  1. **`O(1)` 特征子串门禁直通**：扫描前快速检测消息是否包含 `ROLE_DIVIDE_` 子串，确保 99.9% 不含分割标记的常规消息零额外解析开销直接放行。 2. **第一阶段：结构化数据包络遮蔽（`findEnvelopeRanges`）**：在原有 `TOOL_REQUEST`（同步兼容 `TOOL_REQUEST_ESCAPE`）与工具结果汇总块保护基础上，增补对闭合 `<!-- VCP_RAG_BLOCK_START ... <!-- VCP_RAG_BLOCK_END -->` 与 `[--- TDB 冷知识库检索 ... [--- 知识库检索结束 ---]` 记忆包络的区间遮蔽，跨越上游多次对象浅拷贝依然稳定生效。 3. **第二阶段：带外层作用域上界的单遍代码词法护盾（`findCodeLiteralRanges`）**：    - **CommonMark 围栏与行内代码解析**：支持 3 字符及以上变长反引号/波浪线围栏（含 `>` 引用块前缀）、HTML `<pre>` / 单行 `<code>` 标签，以及遵循单行约束与前置反斜杠转义识别的等长行内反引号代码段；普通代码块通过统一游标整体跨过，防止代码块内奇数个孤立反引号泄露至外部引发错位配对。    - **外层角色作用域上界守卫（`isBrokenAcrossOuterRole`）**：当合法的未加引号 `ROLE_DIVIDE` 开启标签位于代码块外部时，严格校验内部围栏不得跨越并破坏外层配对的 `END` 标签；未闭合的孤立反引号或半截残缺代码围栏自动退化为普通字符推进，绝不吞噬真实的分割指令。 4. **多模态文本分片元数据保真**：在 `processArrayMessage`
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1806,492 +1806,174 @@ export function useDashboardLayoutV2(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9373aa70` (2026-11-13)
-**Commit Message**: Merge pull request #594 from KeZenkk/fix/thought-tags-and-tool-loop-keepalive
+### Incident Patch 1: `c515e6c4` (2026-11-12)
+**Commit Message**: fix(native-rerank): keep the specific error code when a Rerank batch fails
 
-fix(stream,parser): 完善 <thought>/<thoughts> 思考标签兼容与长耗时工具循环 SSE 保活
+Every traditional Rerank batch failure was reported as
+RERANK_BATCH_FAILED, so a wrong key (RERANK_HTTP_401), rate limiting
+(RERANK_HTTP_429), an oversized response or an invalid response all
+looked the same in diagnostics.nativeRerank.error. The codes returned by
+post and parse_rerank are static and contain no URL, key or document
+text, and the Jev path already passes them through. They are now passed
+through for Rerank too; a task that panicked or was cancelled still
+reports RERANK_BATCH_FAILED. Successful rankings are unchanged.
 
-**File**: `modules/handlers/nonStreamHandler.js` (modified, +1/-0)
+**File**: `rust-vexus-lite/src/native_rerank.rs` (modified, +28/-1)
 ```diff
-@@ -26,6 +26,7 @@ function hasReasoningOnlySignal(message, choice) {
-     'reasoning_content',
-     'reasoning',
-     'reasoning_details',
-+    'thought',
-     'thoughts',
-     'thinking',
-     'reasoning_text'
-```
-
-**File**: `modules/handlers/streamHandler.js` (modified, +38/-18)
-```diff
-@@ -188,7 +188,8 @@ class StreamHandler {
-         let streamAborted = false;
-         let keepAliveTimer = null;
-         let chunkIdleTimer = null;
--        const CHUNK_IDLE_TIMEOUT = 90000; // 90 秒无新 chunk 则判定上游流冻结
-+        const configuredIdleTimeout = Number(process.env.STREAM_CHUNK_IDLE_TIMEOUT_MS);
-+        const CHUNK_IDLE_TIMEOUT = Number.isFinite(configuredIdleTimeout) && configuredIdleTimeout > 0 ? configuredIdleTimeout : 90000; // 默认 90 秒（可通过 STREAM_CHUNK_IDLE_TIMEOUT_MS 配置）
-         let message = { content: '', reasoning_content: '' };
-         let clientReasoningBlockOpen = false;
-         let clientReasoningEndsWithNewline = false;
-@@ -655,8 +656,22 @@ class StreamHandler {
-         break;
-       }
+@@ -229,7 +229,9 @@ impl Ranker {
+             while let Some(result) = pending.join_next().await {
+                 match result {
+                     Ok(Ok(mut scores)) => output.append(&mut scores),
+-                    _ => return Err("RERANK_BATCH_FAILED".into()),
++                    // post/parse_rerank codes are already sanitized; keep them.
++                    Ok(Err(error)) => return Err(error),
++                    Err(_) => return Err("RERANK_BATCH_FAILED".into()),
+                 }
+             }
+         }
+@@ -430,6 +432,31 @@ mod tests {
+         }
+     }
  
--      // 执行普通调用
--      const toolResults = await toolExecutor.executeAll(normalCalls, clientIp, currentMessagesForLoop);
-+      // 执行普通调用（启动 SSE 保活心跳，防止长耗时工具/RAG刷新/下轮首字等待期间连接空闲断开）
-+      const loopKeepAliveTimer = setInterval(() => {
-+        if (!res.writableEnded && !res.destroyed) {
-+          try {
-+            res.write(': vcp-tool-keepalive\n\n');
-+          } catch (e) { /* ignore */ }
-+        }
-+      }, 5000);
-+      loopKeepAliveTimer.unref?.();
-+      let toolResults;
-+      try {
-+        toolResults = await toolExecutor.executeAll(normalCalls, clientIp, currentMessagesForLoop);
-+      } catch (toolExecErr) {
-+        clearInterval(loopKeepAliveTimer);
-+        throw toolExecErr;
-+      }
-       const combinedToolResultsForAI = toolResults.map(r => r.content).flat();
-       if (archeryErrorContents.length > 0) combinedToolResultsForAI.push(...archeryErrorContents);
- 
-@@ -742,22 +757,27 @@ class StreamHandler {
-         } catch (e) { }
-       }
- 
--      if (this.context.handoffGate?.isReady()) await waitForHandoff();
--      if (abortController.signal.aborted || res.writableEnded || res.destroyed) break;
--      const nextAiAPIResponse = await fetchWithRetry(
--        `${apiUrl}/v1/chat/completions`,
--        {
--          method: 'POST',
--          headers: {
--            'Content-Type': 'application/json',
--            Authorization: `Bearer ${apiKey}`,
--            Accept: 'text/event-stream',
-+      let nextAiAPIResponse;
-+      try {
-+        if (this.context.handoffGate?.isReady()) await waitForHandoff();
-+        if (abortController.signal.aborted || res.writableEnded || res.destroyed) break;
-+        nextAiAPIResponse = await fetchWithRetry(
-+          `${apiUrl}/v1/chat/completions`,
-+          {
-+            method: 'POST',
-+            headers: {
-+              'Content-Type': 'application/json',
-+              Authorization: `Bearer ${apiKey}`,
-+              Accept: 'text/event-stream',
-+            },
-+            body: JSON.stringify(projectToolBatchForUpstream({ ...originalBody, messages: currentMessagesForLoop, stream: true })),
-+            signal: abortController.signal,
-           },
--          body: JSON.stringify(projectToolBatchForUpstream({ ...originalBody, messages: currentMessagesForLoop, stream: true })),
--          signal: abortController.signal,
--        },
--        { retries: apiRetries, delay: apiRetryDelay, debugMode: DEBUG_MODE, connectionTimeout: apiConnectionTimeoutMs, modelFallbackCandidates: semanticModelFallbackCandidates }
--      );
-+          { retries: apiRetries, delay: apiRetryDelay, debugMode: DEBUG_MODE, connectionTimeout: apiConnectionTimeoutMs, modelFallbackCandidates: semanticModelFallbackCandidates }
-+        );
-+      } finally {
-+        clearInterval(loopKeepAliveTimer);
-+      }
- 
-       if (!nextAiAPIResponse.ok) {
-         await streamUpstreamErrorAndEnd(res, nextAiAPIResponse, originalBody?.model, 'Normal Tool Loop');
-```
-
-**File**: `modules/reasoningContentAdapter.js` (modified, +9/-4)
-```diff
-@@ -10,6 +10,7 @@ const REASONING_KEYS = Object.freeze([
-   'reasoning_text',
-   'reasoningText',
-   'thinking',
-+  'thought',
-   'thoughts'
- ]);
- 
-@@ -19,13 +20,17 @@ const TEXT_VALUE_KEYS = new Set([
-   'summary',
-   'value',
-   'reasoning',
--  'thinking'
-+  'thinking',
-+  'thought',
-+  'thoughts'
- ]);
- 
- function normalizeReasoningTag(value) {
--  return String(value || '').trim().toLowerCase() === 'thinking'
--    ? 'thinking'
--    : 'think';
-+  const normalized = String(value || '').trim().toLowerCase();
-+  if (normalized === 'thinking' || normalized === 'thought' || normalized === 'thoughts') {
-+    return normalized;
-+  }
-+  return 'think';
- }
- 
- function normalizeReasoningModelFilters(value) {
-```
-
-**File**: `modules/vcpLoop/toolCallParser.js` (modified, +1/-1)
-```diff
-@@ -315,7 +315,7 @@ class ToolCallParser {
-     };
- 
-     // 严格单行无尖括号思考标签正则（动态构造以避免自指）：
--    const TAG_PATTERN = '<[ \\t]*(\\/?)[ \\t]*(think(?:ing)?|thought|antthinking)\\b(?:[ \\t]+[^>\\r\\n<]*?)?[ \\t]*>';
-+    const TAG_PATTERN = '<[ \\t]*(\\/?)[ \\t]*(think(?:ing)?|thought(?:s)?|antthinking)\\b(?:[ \\t]+[^>\\r\\n<]*?)?[ \\t]*>';
-     const tagRegex = new RegExp(TAG_PATTERN, 'gi');
- 
-     // 预检某个句中内联开标签（!lineStart）在后续非保护域中是否存在配对的闭合标签：
-```
-
-**File**: `tests/reasoningAndSelfReference.test.js` (modified, +20/-0)
-```diff
-@@ -399,3 +399,23 @@ test('M19 & M20 [前端协同] EmotionTagScanner：行内反引号与句中提
-   assert.equal(tagEvents2.length, 1);
-   assert.equal(tagEvents2[0].emotion, 'calm');
- });
++    #[tokio::test]
++    async fn traditional_batch_failure_keeps_sanitized_error_code() {
++        use tokio::io::{AsyncReadExt, AsyncWriteExt};
++        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
++        let address = listener.local_addr().unwrap();
++        let server = tokio::spawn(async move {
++            let (mut socket, _) = listener.accept().await.unwrap();
++            let mut bytes = [0; 4096];
++            let _ = socket.read(&mut bytes).await;
++            socket.write_all(b"HTTP/1.1 429 Too Many Requests\r\nContent-Length: 0\r\nConnection: close\r\n\r\n")
++                .await.unwrap();
++        });
++        let values = HashMap::from([
++            ("RerankUrl".into(), format!("http://{address}/")),
++            ("RerankApi".into(), "fixture".into()),
++            ("RerankModel".into(), "fixture".into()),
++            ("NativeRerankTimeoutMs".into(), "5000".into()),
++        ]);
++        let ranker = Ranker::from_values(&values, Some(false)).unwrap();
++        let error = ranker.rank("query", &[json!({"id":1,"text":"one"}), json!({"id":2,"text":"two"})])
++            .await.unwrap_err();
++        assert_eq!(error, "RERANK_HTTP_429");
++        server.abort();
++    }
 +
-+test('M21 [外测度与适配器] 支持复数 <thoughts> 思考标签剥离与 reasoningContentAdapter 单复数归一化', () => {
-+  const { extractReasoningText, normalizeReasoningTag, wrapReasoningText } = require('../modules/reasoningContentAdapter');
-+  const input = [
-+    openTag('thoughts'),
-+    buildToolBlock('FakeToolInsideThoughts'),
-+    closeTag('thoughts'),
-+    buildToolBlock('RealToolAfterThoughts')
-+  ].join('\n');
-+
-+  const calls = ToolCallParser.parse(input);
-+  assert.equal(calls.length, 1);
-+  assert.equal(calls[0].name, 'RealToolAfterThoughts');
-+
-+  assert.equal(extractReasoningText({ thought: 'step-1' }), 'step-1');
-+  assert.equal(extractReasoningText({ thoughts: [{ thought: 'step-2' }] }), 'step-2');
-+  assert.equal(normalizeReasoningTag('thought'), 'thought');
-+  assert.equal(normalizeReasoningTag('thoughts'), 'thoughts');
-+  assert.equal(wrapReasoningText('abc', 'thought'), '<thought>\nabc\n</thought>\n');
-+});
+     #[test]
+     fn prompt_override_is_local_and_preserves_legacy_default() {
+         let values = HashMap::from([
 ```
 
 ---
 
-### Incident Patch 2: `dce07f44` (2026-11-13)
-**Commit Message**: fix(memo): compose bounded topology evidence and admit witnessed rare single focus
+### Incident Patch 2: `c1e9c4a9` (2026-11-14)
+**Commit Message**: perf(wormhole): build unified-bonus trace objects only when a trace is requested
 
-**File**: `docs/MEMO_EXPERIMENT_C_UNIFIED_OMEGA_PLAN.md` (modified, +10/-1)
-```diff
-@@ -70,4 +70,13 @@
- - 正交种差采用 FP64 双遍正交化、相对残差护栏；仅在存在受遮蔽父词时启用。真实案例排序需主人实测，不预承诺名次或零退化。
- - NNLS 解释率由 pyramid 原始能量闭合读出，独立保存在请求快照；不把多层非正交投影的逐 Tag 系数平方冒充能量。
- - Ω 为候选无关结构授权；Hop-1 与 XW 连续读出共享结构预算，直锚保留独立通道。ranking_score 与 final_score 同源。
--- 单焦点见证保留不同 checksum、跨文件共现与第三桥标签要求；这些只证明关联，不宣称独立证据或真实上下位关系。
-\ No newline at end of file
-+- 单焦点见证保留不同 checksum、跨文件共现与第三桥标签要求；这些只证明关联，不宣称独立证据或真实上下位关系。
-+
-+## 5. C 检查点与 Fix3 / Fix4 验收
-+- 已上机测试的 C 检查点：`645155c3`；Windows x64 SHA256 `36F305A20221945105B655467C37FA56AF54ABD0E708A97AE7F78846B3B89C0B`。
-+- 主人报告：15 组弱化边缘河网测试跑分提升约 60%，5 组黄金满分组无衰退。属于主人实测汇报；未在此附录中提供逐组原始分数、指标定义与消融，不能据此认定每一机制的独立贡献。
-+- Fix3：普通 Hop-1 与 XW 仍取最大包络；该输运证据与原始 `v2_bonus * Omega^gamma` 采用共享预算内的有界互补合成，不作统计独立性声明；从原始证据重算以保证幂等；零输运保留原奖励逐位不变。
-+- Fix4：唯一显式焦点为路由源，且已触发种差校准，或已知全局特异性 `1-sqrt(inbound/maxInbound) >= 0.65` 时，可进入单焦点见证审查。统计缺失、非有限或无效全局分母不能作为稀有依据；仍要求两文件不同非空 checksum 与共享第三非焦点桥标签；截断证据拒绝。
-+- 全量 Rust 单测：216 passed / 0 failed / 0 ignored，117.97s，`FIX34_TEST_EXIT=0`（主人提供完成终端结果）。
-+- Fix1（缩写/上位词判别）和 Fix2（双场去母体）未纳入本次发布，交实验 D 源码调查与消融决定，不顺手扩大改动。
-+- 实验 D 的性能数字必须实测；此前“额外20ms/零成本边张力/NNLS直接证明父子关系”均非已验证结论。小核求解的等价性仅覆盖实际保留的原始生成列；不能把选轴后的近似说成完整邻域锥最优解。
-\ No newline at end of file
-```
+V4 retired the RRF fusion to a test-only reference, so the earlier change to its trace is reverted to upstream and the same gating moves to apply_unified_bonus: every numeric field is computed as before and only the JSON trace is skipped when includeTrace is off. Scores are bit-identical (test unified_trace_is_optional_and_preserves_score_bits).
 
-**File**: `rust-vexus-lite/src/rivermemo_topology_v3.rs` (modified, +1/-1)
+**File**: `rust-vexus-lite/src/rivermemo_wormhole.rs` (modified, +46/-1)
 ```diff
-@@ -2928,7 +2928,7 @@ pub(crate) fn run_native_with_observation(
-     let query_and_seed_tag_vectors = tag_vectors;
-     let mut wormhole_model = wormhole::build(&input, &query_and_seed_tag_vectors, &artifact);
-     let mut wormhole_gate = wormhole::gate(&mut wormhole_model, connection)?;
--    wormhole::refine(&mut wormhole_model, &mut wormhole_gate, connection, &input)?;
-+    wormhole::refine(&mut wormhole_model, &mut wormhole_gate, connection, &input, &artifact)?;
-     let load_ms = load_started.elapsed().as_secs_f64() * 1000.0;
- 
-     let compute_started = Instant::now();
-```
-
-**File**: `rust-vexus-lite/src/rivermemo_wormhole.rs` (modified, +97/-10)
-```diff
-@@ -57,7 +57,7 @@ pub(super) fn gate(model: &mut Model, connection: &Connection)
- }
-  
- pub(super) fn refine(model: &mut Model, decisions: &mut [GateDecision],
--    connection: &Connection, input: &NativeInput)
-+    connection: &Connection, input: &NativeInput, artifact: &NativeArtifact)
-     -> std::result::Result<(), String> {
-     const FILE_LIMIT: usize = 128;
-     const TAG_LIMIT: usize = 128;
-@@ -97,10 +97,16 @@ pub(super) fn refine(model: &mut Model, decisions: &mut [GateDecision],
-                     let other_focus = focus.iter().copied().filter(|id|
-                         *id != decision.source_id && *id != decision.target_id
-                         && (left.2.contains(id) || right.2.contains(id))).min();
-+                    // Missing global statistics are not evidence of rarity.
-+                    let specificity = artifact.inbound.get(&decision.source_id)
-+                        .filter(|mass| mass.is_finite() && **mass >= 0.0)
-+                        .filter(|_| artifact.max_inbound.is_finite() && artifact.max_inbound > 0.0)
-+                        .map(|mass| 1.0 - clamp01(*mass / artifact.max_inbound).sqrt());
-+                    let calibrated = !input.calibration.superseded_ids.is_empty()
-+                        && input.calibration.differentia_confidence > 0.0;
-                     let single_specific = focus.len() == 1
-                         && focus.contains(&decision.source_id)
--                        && !input.calibration.superseded_ids.is_empty()
--                        && input.calibration.differentia_confidence > 0.0;
-+                        && (calibrated || specificity.is_some_and(|value| value >= 0.65));
-                     if other_focus.is_none() && !single_specific { continue; }
-                     let anchor = other_focus;
-                     let bridge = left.2.intersection(&right.2).copied().filter(|id|
-@@ -109,7 +115,8 @@ pub(super) fn refine(model: &mut Model, decisions: &mut [GateDecision],
-                     if let Some(bridge) = bridge {
-                         witness = Some(serde_json::json!({
-                             "fileIds": [left.0, right.0], "focusId": anchor,
--                            "bridgeTagId": bridge, "differentChecksums": true
-+                            "bridgeTagId": bridge, "differentChecksums": true,
-+                            "sourceSpecificity": specificity, "singleFocusAdmission": single_specific
-                         }));
-                         break 'pairs;
-                     }
-@@ -381,7 +388,7 @@ mod gate_regressions {
-         let check = |db: &Connection| {
-             let mut m = model();
-             let mut d = gate(&mut m, db).unwrap();
--            refine(&mut m, &mut d, db, &input).unwrap();
-+            refine(&mut m, &mut d, db, &input, &NativeArtifact::default()).unwrap();
-             d[0].accepted
-         };
-         assert!(!check(&db), "same content cannot qualify");
-@@ -409,7 +416,7 @@ mod gate_regressions {
-         let check = |input: &NativeInput| {
-             let mut m = model();
-             let mut decisions = gate(&mut m, &db).unwrap();
--            refine(&mut m, &mut decisions, &db, input).unwrap();
-+            refine(&mut m, &mut decisions, &db, input, &NativeArtifact::default()).unwrap();
-             decisions[0].accepted
-         };
-         assert!(!check(&input), "ordinary single focus must not bypass the firewall");
-@@ -423,6 +430,42 @@ mod gate_regressions {
-         assert!(!check(&input), "endpoints alone are not a bridge");
+@@ -541,6 +541,9 @@ pub(super) fn apply_unified_bonus(
+         item.final_score = clamp01(item.pure_score + item.path_bonus
+             + item.gated_bonus + item.anchor_bonus);
+         item.ranking_score = item.final_score;
++        // Only the optional topology trace consumes this JSON; score clipping
++        // and ranking use the numeric fields above directly.
++        if !input.include_trace { continue; }
+         traces.insert(item.curve.id, serde_json::json!({
+             "mode":"continuous-shared-topology-budget", "active": xw.eligible || proxy > 0.0,
+             "wormhole":xw, "proxyEvidence":proxy, "proxyEdge":proxy_edge,
+@@ -720,6 +723,48 @@ mod score_contract_fixture_tests {
+         assert_eq!(work[1].final_score,0.9);
      }
  
 +    #[test]
-+    fn rare_single_focus_requires_known_statistics_and_full_witness() {
-+        let db = Connection::open_in_memory().unwrap();
-+        db.execute_batch("CREATE TABLE file_tags(file_id INTEGER, tag_id INTEGER);
-+            CREATE TABLE files(id INTEGER PRIMARY KEY, checksum TEXT);
-+            INSERT INTO files VALUES (10,'a'),(11,'b');
-+            INSERT INTO file_tags VALUES (10,1),(10,2),(10,9),(11,1),(11,2),(11,9);").unwrap();
-+        let input: NativeInput = serde_json::from_value(serde_json::json!({
-+            "query":{"vector":[1,0]}, "queryState":{"fieldProvenance":[
-+                {"id":1,"hop":0,"sourceType":"lexical_seed"}
-+            ]}
++    fn unified_trace_is_optional_and_preserves_score_bits() {
++        let mut input: NativeInput = serde_json::from_value(json!({
++            "query":{"vector":[1,0]}, "queryState":{
++                "completeObservation":true,
++                "fieldProvenance":[{"id":1,"hop":0,"sourceType":"core"}],
++                "riverNodes":[{"id":1,"hop":0},{"id":2,"hop":1}],
++                "riverEdges":[{"sourceId":1,"targetId":2,"flow":0.1}]
++            }
 +        })).unwrap();
-+        let check = |graph: &NativeArtifact| {
-+            let mut m = model();
-+            let mut d = gate(&mut m, &db).unwrap();
-+            refine(&mut m, &mut d, &db, &input, graph).unwrap();
-+            d[0].accepted
++        let omega = compute_omega(&input);
++        let graph = NativeArtifact {
++            node_ids:vec![1,2], node_index:HashMap::from([(1,0),(2,1)]),
++            row_offsets:vec![0,1,1], targets:vec![1], weights:vec![0.4],
++            ..NativeArtifact::default()
 +        };
-+        let mut graph = NativeArtifact { max_inbound:100.0,
-+            inbound:HashMap::from([(1,4.0)]), ..NativeArtifact::default() };
-+        assert!(check(&graph), "known rare focus qualifies without superseded parents");
-+        graph.inbound.insert(1,100.0);
-+        assert!(!check(&graph), "hub cannot use rarity admission");
-+        graph.inbound.clear();
-+        assert!(!check(&graph), "missing is not rare");
-+        graph.inbound.insert(1,4.0);
-+        graph.max_inbound=0.0;
-+        assert!(
++        let model = Model { eligible_routes:1, routes:vec![Route {
++            source_id:1,target_id:2,flow:1.0,relative_flow:0.625,
++            vector:Arc::from(vec![1.0_f32,0.0]),
++        }] };
++        let mut expected = None;
++        for trace in [true, false] {
++            input.include_trace = trace;
++            let mut work = vec![candidate(1,0.5,true),candidate(2,0.5,false)];
++            work[0].v2_bonus = 0.013;
++            let traces = apply_unified_bonus(&mut work,&model,&input,&omega,&graph);
++            assert_eq!(traces.len(), if trace { work.len() } else { 0 });
++            let bits = work.iter().map(|item| (item.curve.id,
++                item.gated_bonus.to_bits(), item.final_score.to_bits(), item.ranking_score.to_bits()))
++                .collect::<Vec<_>>();
++            if trace {
++                for item in &work {
++                    assert_eq!(traces[&item.curve.id]["finalScore"].as_f64().unwrap().to_bits(),
++                        item.final_score.to_bits());
++                }
++                expected = Some(bits);
++            } else {
++                assert_eq!(&bits, expected.as_ref().unwrap());
++            }
++        }
++    }
++
+     #[test]
+     fn complementary_graph_and_transport_are_bounded_and_idempotent() {
+         let input: NativeInput = serde_json::from_value(json!({
+@@ -803,4 +848,4 @@ mod score_contract_fixture_tests {
+         items.sort_by(|a,b| b.ranking_score.total_cmp(&a.ranking_score));
+         assert_eq!(items.iter().map(|c|c.curve.id).collect::<Vec<_>>(),vec![30,10,20]);
+     }
+-}
+\ No newline at end of file
++}
 ```
 
 ---
 
-### Incident Patch 3: `980d3db1` (2026-11-13)
-**Commit Message**: fix(stream,parser): support <thought>/<thoughts> reasoning tags and keep SSE stream alive during long tool loops
+### Incident Patch 3: `f73945c2` (2026-11-12)
+**Commit Message**: refactor(index): use RetrievalIndex::model_hash for the SQL build identity
 
-**File**: `modules/handlers/nonStreamHandler.js` (modified, +1/-0)
-```diff
-@@ -26,6 +26,7 @@ function hasReasoningOnlySignal(message, choice) {
-     'reasoning_content',
-     'reasoning',
-     'reasoning_details',
-+    'thought',
-     'thoughts',
-     'thinking',
-     'reasoning_text'
-```
+index_source.rs hashed the model signature with its own
+Sha256::digest(model_sig.as_bytes()), while retrieval_index.rs and
+index_lifecycle.rs use RetrievalIndex::model_hash for the same identity
+field. Same input to the same SHA-256, so the identity is unchanged;
+the existing sql_owned_asset_is_removed_after_host_mapping_is_released
+test asserts this equality.
 
-**File**: `modules/handlers/streamHandler.js` (modified, +38/-18)
+**File**: `rust-vexus-lite/src/index_source.rs` (modified, +1/-1)
 ```diff
-@@ -188,7 +188,8 @@ class StreamHandler {
-         let streamAborted = false;
-         let keepAliveTimer = null;
-         let chunkIdleTimer = null;
--        const CHUNK_IDLE_TIMEOUT = 90000; // 90 秒无新 chunk 则判定上游流冻结
-+        const configuredIdleTimeout = Number(process.env.STREAM_CHUNK_IDLE_TIMEOUT_MS);
-+        const CHUNK_IDLE_TIMEOUT = Number.isFinite(configuredIdleTimeout) && configuredIdleTimeout > 0 ? configuredIdleTimeout : 90000; // 默认 90 秒（可通过 STREAM_CHUNK_IDLE_TIMEOUT_MS 配置）
-         let message = { content: '', reasoning_content: '' };
-         let clientReasoningBlockOpen = false;
-         let clientReasoningEndsWithNewline = false;
-@@ -655,8 +656,22 @@ class StreamHandler {
-         break;
-       }
- 
--      // 执行普通调用
--      const toolResults = await toolExecutor.executeAll(normalCalls, clientIp, currentMessagesForLoop);
-+      // 执行普通调用（启动 SSE 保活心跳，防止长耗时工具/RAG刷新/下轮首字等待期间连接空闲断开）
-+      const loopKeepAliveTimer = setInterval(() => {
-+        if (!res.writableEnded && !res.destroyed) {
-+          try {
-+            res.write(': vcp-tool-keepalive\n\n');
-+          } catch (e) { /* ignore */ }
-+        }
-+      }, 5000);
-+      loopKeepAliveTimer.unref?.();
-+      let toolResults;
-+      try {
-+        toolResults = await toolExecutor.executeAll(normalCalls, clientIp, currentMessagesForLoop);
-+      } catch (toolExecErr) {
-+        clearInterval(loopKeepAliveTimer);
-+        throw toolExecErr;
-+      }
-       const combinedToolResultsForAI = toolResults.map(r => r.content).flat();
-       if (archeryErrorContents.length > 0) combinedToolResultsForAI.push(...archeryErrorContents);
- 
-@@ -742,22 +757,27 @@ class StreamHandler {
-         } catch (e) { }
-       }
- 
--      if (this.context.handoffGate?.isReady()) await waitForHandoff();
--      if (abortController.signal.aborted || res.writableEnded || res.destroyed) break;
--      const nextAiAPIResponse = await fetchWithRetry(
--        `${apiUrl}/v1/chat/completions`,
--        {
--          method: 'POST',
--          headers: {
--            'Content-Type': 'application/json',
--            Authorization: `Bearer ${apiKey}`,
--            Accept: 'text/event-stream',
-+      let nextAiAPIResponse;
-+      try {
-+        if (this.context.handoffGate?.isReady()) await waitForHandoff();
-+        if (abortController.signal.aborted || res.writableEnded || res.destroyed) break;
-+        nextAiAPIResponse = await fetchWithRetry(
-+          `${apiUrl}/v1/chat/completions`,
-+          {
-+            method: 'POST',
-+            headers: {
-+              'Content-Type': 'application/json',
-+              Authorization: `Bearer ${apiKey}`,
-+              Accept: 'text/event-stream',
-+            },
-+            body: JSON.stringify(projectToolBatchForUpstream({ ...originalBody, messages: currentMessagesForLoop, stream: true })),
-+            signal: abortController.signal,
-           },
--          body: JSON.stringify(projectToolBatchForUpstream({ ...originalBody, messages: currentMessagesForLoop, stream: true })),
--          signal: abortController.signal,
--        },
--        { retries: apiRetries, delay: apiRetryDelay, debugMode: DEBUG_MODE, connectionTimeout: apiConnectionTimeoutMs, modelFallbackCandidates: semanticModelFallbackCandidates }
--      );
-+          { retries: apiRetries, delay: apiRetryDelay, debugMode: DEBUG_MODE, connectionTimeout: apiConnectionTimeoutMs, modelFallbackCandidates: semanticModelFallbackCandidates }
-+        );
-+      } finally {
-+        clearInterval(loopKeepAliveTimer);
-+      }
- 
-       if (!nextAiAPIResponse.ok) {
-         await streamUpstreamErrorAndEnd(res, nextAiAPIResponse, originalBody?.model, 'Normal Tool Loop');
-```
-
-**File**: `modules/reasoningContentAdapter.js` (modified, +9/-4)
-```diff
-@@ -10,6 +10,7 @@ const REASONING_KEYS = Object.freeze([
-   'reasoning_text',
-   'reasoningText',
-   'thinking',
-+  'thought',
-   'thoughts'
- ]);
- 
-@@ -19,13 +20,17 @@ const TEXT_VALUE_KEYS = new Set([
-   'summary',
-   'value',
-   'reasoning',
--  'thinking'
-+  'thinking',
-+  'thought',
-+  'thoughts'
- ]);
- 
- function normalizeReasoningTag(value) {
--  return String(value || '').trim().toLowerCase() === 'thinking'
--    ? 'thinking'
--    : 'think';
-+  const normalized = String(value || '').trim().toLowerCase();
-+  if (normalized === 'thinking' || normalized === 'thought' || normalized === 'thoughts') {
-+    return normalized;
-+  }
-+  return 'think';
- }
- 
- function normalizeReasoningModelFilters(value) {
-```
-
-**File**: `modules/vcpLoop/toolCallParser.js` (modified, +1/-1)
-```diff
-@@ -315,7 +315,7 @@ class ToolCallParser {
+@@ -161,7 +161,7 @@ fn build_with_source(
+     let identity = AssetIdentity {
+         dimension,
+         scope: u8::from(diary.is_none()),
+-        model_hash: Sha256::digest(model_sig.as_bytes()).into(),
++        model_hash: crate::retrieval_index::RetrievalIndex::model_hash(model_sig),
+         content_digest: digest.finalize().into(),
      };
- 
-     // 严格单行无尖括号思考标签正则（动态构造以避免自指）：
--    const TAG_PATTERN = '<[ \\t]*(\\/?)[ \\t]*(think(?:ing)?|thought|antthinking)\\b(?:[ \\t]+[^>\\r\\n<]*?)?[ \\t]*>';
-+    const TAG_PATTERN = '<[ \\t]*(\\/?)[ \\t]*(think(?:ing)?|thought(?:s)?|antthinking)\\b(?:[ \\t]+[^>\\r\\n<]*?)?[ \\t]*>';
-     const tagRegex = new RegExp(TAG_PATTERN, 'gi');
- 
-     // 预检某个句中内联开标签（!lineStart）在后续非保护域中是否存在配对的闭合标签：
-```
-
-**File**: `tests/reasoningAndSelfReference.test.js` (modified, +20/-0)
-```diff
-@@ -399,3 +399,23 @@ test('M19 & M20 [前端协同] EmotionTagScanner：行内反引号与句中提
-   assert.equal(tagEvents2.length, 1);
-   assert.equal(tagEvents2[0].emotion, 'calm');
- });
-+
-+test('M21 [外测度与适配器] 支持复数 <thoughts> 思考标签剥离与 reasoningContentAdapter 单复数归一化', () => {
-+  const { extractReasoningText, normalizeReasoningTag, wrapReasoningText } = require('../modules/reasoningContentAdapter');
-+  const input = [
-+    openTag('thoughts'),
-+    buildToolBlock('FakeToolInsideThoughts'),
-+    closeTag('thoughts'),
-+    buildToolBlock('RealToolAfterThoughts')
-+  ].join('\n');
-+
-+  const calls = ToolCallParser.parse(input);
-+  assert.equal(calls.length, 1);
-+  assert.equal(calls[0].name, 'RealToolAfterThoughts');
-+
-+  assert.equal(extractReasoningText({ thought: 'step-1' }), 'step-1');
-+  assert.equal(extractReasoningText({ thoughts: [{ thought: 'step-2' }] }), 'step-2');
-+  assert.equal(normalizeReasoningTag('thought'), 'thought');
-+  assert.equal(normalizeReasoningTag('thoughts'), 'thoughts');
-+  assert.equal(wrapReasoningText('abc', 'thought'), '<thought>\nabc\n</thought>\n');
-+});
+     let lookup = if diary.is_some() {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #602** (2026-11-15): fix(Plugin): 插件子进程自动继承父进程 Node 运行时以防止原生模块 ABI 冲突 (@InSciTech)
+- **PR #600** (2026-11-15): fix(roleDivider): 保护记忆包络与代码字面量免受角色误切分并保留多模态缓存断点 (@infinite-vector)
+- **PR #599** (2026-11-14): perf(rust-vexus-lite): 去重、NNLS、索引、存储、入库、Spike、元思考、LightMemo 的一批逐位不变改进 (@CI-IISATO)
+- **PR #598** (2026-11-14): fix(RAGDiary): ContextVectorManager 向量表加上限，分段排除当前这一轮，复用清洗缓存 (@CI-IISATO)
+- **PR #597** (2026-11-14): fix(RAGDiary): ::TimeDecay 中文标签、::Time 名额、时间表头时区、联合日记本补三篇、时间片段日期 (@CI-IISATO)
 - **PR #596** (2026-11-13): feat(memo): deliver Cone-AGS NNLS and unified continuous topology scoring (@lioensky)
-- **PR #595** (closed): Memo experiments: NNLS and unified Omega topology with Fix3/Fix4 (@lioensky)
-- **PR #594** (2026-11-13): fix(stream,parser): 完善 <thought>/<thoughts> 思考标签兼容与长耗时工具循环 SSE 保活 (@KeZenkk)
-- **PR #593** (2026-11-13): fix(interrupt): 贯通预处理管线AbortSignal级联中断并拦截中止请求污染ResponseReplayCache (@infinite-vector)
-- **PR #592** (2026-11-12): docs(TVStxt): 补充 VchatRendering 内联 DOM 岛按钮防劫持规范 (data-vcp-system-control) (@zardkon)
-- **PR #591** (2026-11-12): fix(test): 修复 safeFilePath 依赖 mock 与 Windows fs.watch 句柄泄漏引发的 libuv abort (Fix #581, Fix #582) (@infinite-vector)
 
 ---
 
@@ -2311,28 +1993,49 @@ fix(stream,parser): 完善 <thought>/<thoughts> 思考标签兼容与长耗时�
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in nonStreamHandler.js
+## X. native-rerank): keep the specific error code when a Rerank batch fails
 
 **RULE**:
-When implementing operations in `modules/handlers/nonStreamHandler.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rust-vexus-lite/src/native_rerank.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9373aa70`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c515e6c4`: native-rerank): keep the specific error code when a Rerank batch fails. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `modules/handlers/nonStreamHandler.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust-vexus-lite/src/native_rerank.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-    'thought',
+                    // post/parse_rerank codes are already sanitized; keep them.
+                    Ok(Err(error)) => return Err(error),
+                    Err(_) => return Err("RERANK_BATCH_FAILED".into()),
+    #[tokio::test]
+    async fn traditional_batch_failure_keeps_sanitized_error_code() {
+        use tokio::io::{AsyncReadExt, AsyncWriteExt};
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let address = listener.local_addr().unwrap();
+        let server = tokio::spawn(async move {
+            let (mut socket, _) = listener.accept().await.unwrap();
+            let mut bytes = [0; 4096];
+            let _ = socket.read(&mut bytes).await;
+            socket.write_all(b"HTTP/1.1 429 Too Many Requests\r\nContent-Length: 0\r\nConnection: close\r\n\r\n")
+                .await.unwrap();
+        });
+        let values = HashMap::from([
+            ("RerankUrl".into(), format!("http://{address}/")),
+            ("RerankApi".into(), "fixture".into()),
+            ("RerankModel".into(), "fixture".into()),
+            ("NativeRerankTimeoutMs".into(), "5000".into()),
+        ]);
+        let ranker = Ranker::from_values(&values, Some(false)).un
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+                    _ => return Err("RERANK_BATCH_FAILED".into()),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9373aa70` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c515e6c4` are properly handled with clean fallback behavior.

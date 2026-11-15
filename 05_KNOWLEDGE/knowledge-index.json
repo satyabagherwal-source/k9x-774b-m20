@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-15T15:23:30.690Z",
+  "last_updated": "2026-11-15T15:47:59.405Z",
   "total_verified_learnings": 8703,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18440,
+  "total_items": 18445,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112164,9 +112164,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "c8d54af6cb0ae00f75e275c0325189d6716af655c5a9ce672e7325babee76d86",
+      "content_hash": "4d457c2f9f38a51135d0f3a27f167950d8f461bd5799c61460415b5319058b6f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T14:25:56.850Z"
+      "persisted_at": "2026-11-15T15:47:59.241Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112176,9 +112176,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "d8bbf9a99fc688d05b85ca9d2e8d4a34a61d4e3bdf3ca2ab849e1028cf7f96bb",
+      "content_hash": "0a89f5b11dfec7292bf94f1ee794211b5ff2d02ac7c7d65a138b0ba5ec9ddc65",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T14:25:56.962Z"
+      "persisted_at": "2026-11-15T15:47:59.405Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -113672,13 +113672,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-IAZY-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-DRLV-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "2795040a3a1e618a611124bada521782991e6badc3df64575d3fa4b9066c3320",
+      "content_hash": "adf48c6fffc72f19449a0b483ece5b2b8677934bb49d71132ff4bde3e6ba57ac",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T15:23:30.481Z"
+      "persisted_at": "2026-11-15T15:47:58.342Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113688,9 +113688,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "f87a4cc06a113f4da327d478dba91de8556e75dbdd69598a9114cfe9be82424d",
+      "content_hash": "430f48769ac71125fa9b30ce9a32d82961f66bb1f0078240d029f5b4cb335ccd",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T15:23:30.583Z"
+      "persisted_at": "2026-11-15T15:47:58.486Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113700,9 +113700,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "42925faa17aa0c53a139e437a987130fd8dbae1c0789763d656aa9767d141a23",
+      "content_hash": "d54d7b66354ef4f2b9ce8c85a1f539ce70cba87a97f93af41dace45b0334fdc3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T15:23:30.690Z"
+      "persisted_at": "2026-11-15T15:47:58.650Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -214785,13 +214785,13 @@
       "item_id": "candidate_directive-puppet-fix-postgresql-failing-to-start-on-new-installs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-GA2V-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-DS53-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
       "title": "puppet: Fix PostgreSQL failing to start on new installs.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "95d26e751f74454bc897ed474b1bc16db271a5ba6015a73ecd9136ae2d5c4111",
+      "content_hash": "4484e36f4bd9f612667fbc8b36175d7f6dc78c19d7d4ea8c4d6d7c0fd9e1e01a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T14:25:56.745Z"
+      "persisted_at": "2026-11-15T15:47:59.034Z"
     },
     "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
@@ -220223,14 +220223,19 @@
       "slug": "lioensky-vcptoolbox",
       "platform": "github",
       "source_url": "https://github.com/lioensky/VCPToolBox",
-      "source_version": "9373aa70",
-      "content_hash": "bf8378e742a8e5153646614e05b65cbdfbb6d09d964f59658103fdbc259c583e",
+      "source_version": "a2a3b8b8",
+      "content_hash": "73ef8d9c89c6fce0081ea8d524529674556ed6bafe78f67b462e9e9c309ae71c",
       "dossier_path": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "promoted_rules": [
         {
           "number": 8420,
           "title": "Empirical Invariant Guard in nonStreamHandler.js",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8625,
+          "title": "keep the specific error code when a Rerank batch fails",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -220239,7 +220244,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T02:06:27.125Z",
+      "verified_at": "2026-11-15T15:47:53.596Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -220281,10 +220286,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lioensky-vcptoolbox-technical-construction-intelligence-lioensky-vcptoolbox-core.md",
       "title": "Technical Construction Intelligence: lioensky/VCPToolBox Core Invariants",
       "repository": "lioensky/VCPToolBox",
-      "source_version": "9373aa70",
-      "content_hash": "e12d65ec51414377c10c7b56dca67b18859cb3ac3ac27d5a9f1225e2d1e6ba39",
+      "source_version": "a2a3b8b8",
+      "content_hash": "1293779c5775c810423869895cb4967e074dcaac696508ed31be048791512879",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T02:06:27.478Z"
+      "persisted_at": "2026-11-15T15:47:54.214Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-lioensky-vcptoolbox": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-lioensky-vcptoolbox",
@@ -220293,10 +220298,10 @@
       "relative_path": "08_VERIFICATION/lioensky-vcptoolbox-verification-protocol-empirical-defect-shield-for-lioensky-v.md",
       "title": "Verification Protocol: Empirical Defect Shield for lioensky/VCPToolBox",
       "repository": "lioensky/VCPToolBox",
-      "source_version": "9373aa70",
-      "content_hash": "849209627996ae2d0c500d4335b353b00735a266980275651eb8c00218f06def",
+      "source_version": "a2a3b8b8",
+      "content_hash": "09dc84772c243aff533c23f67a0db6135a50fb13338c21c6fd0390c23fb65c4c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T02:06:27.558Z"
+      "persisted_at": "2026-11-15T15:47:54.377Z"
     },
     "candidate_directive-gnd-don-t-unset-nullable-primitive-fields-set-to-0-or-false": {
       "item_id": "candidate_directive-gnd-don-t-unset-nullable-primitive-fields-set-to-0-or-false",
@@ -244046,6 +244051,68 @@
       "content_hash": "709c0137f08db70d1fe05f0c0336196fa00a66655433e90b1eb9ab08833612dc",
       "domain_letter": "G",
       "persisted_at": "2026-11-15T15:23:29.894Z"
+    },
+    "rule-8625": {
+      "learning_id": "rule-8625",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8625,
+      "title": "keep the specific error code when a Rerank batch fails",
+      "source_url": "https://github.com/lioensky/VCPToolBox",
+      "source_version": "a2a3b8b8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T15:47:53.596Z"
+    },
+    "candidate_directive-keep-the-specific-error-code-when-a-rerank-batch-fails": {
+      "item_id": "candidate_directive-keep-the-specific-error-code-when-a-rerank-batch-fails",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DOA3-keep-the-specific-error-code-when-a-rerank-batch-fails.md",
+      "title": "keep the specific error code when a Rerank batch fails",
+      "repository": "lioensky/VCPToolBox",
+      "source_version": "a2a3b8b8",
+      "content_hash": "1d36d7c9b1779d51b67701a1f0af1746f21116d95fbdfd530484ec1dd030b36f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T15:47:54.031Z"
+    },
+    "candidate_directive-native-rerank-keep-the-specific-error-code-when-a-rerank-batch-fails": {
+      "item_id": "candidate_directive-native-rerank-keep-the-specific-error-code-when-a-rerank-batch-fails",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DQXG-native-rerank-keep-the-specific-error-code-when-a-rerank-batch-fails.md",
+      "title": "native-rerank): keep the specific error code when a Rerank batch fails",
+      "repository": "lioensky-vcptoolbox-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8f6255ab60e6d6b65eae74a1ca8a0feaa0857df2bd7ecab00d47bb1adbfcc5b3",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T15:47:57.464Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-lioensky-vcptoolbox-learnings-core-invariant": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-lioensky-vcptoolbox-learnings-core-invariant",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lioensky-vcptoolbox-learnings-technical-construction-intelligence-lioensky-vcpto.md",
+      "title": "Technical Construction Intelligence: lioensky-vcptoolbox-learnings Core Invariants",
+      "repository": "lioensky-vcptoolbox-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7fa2bd27886bf25ea90c0a4257d9daaf110efa4203340e7e239fcada7e92998a",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T15:47:57.645Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-lioensky-vcptoolbox-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-lioensky-vcptoolbox-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/lioensky-vcptoolbox-learnings-verification-protocol-empirical-defect-shield-for-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for lioensky-vcptoolbox-learnings",
+      "repository": "lioensky-vcptoolbox-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0d09c08382bea1acada2cf892213314519e78065b1d946cb8a33af0bbc06b3ed",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T15:47:57.802Z"
     }
   },
   "ai-builder-brain": {

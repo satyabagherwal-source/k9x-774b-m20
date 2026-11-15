@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-15T15:23:28.030Z",
-    "lastVerified": "2026-11-15T15:23:28.030Z",
+    "lastChecked": "2026-11-15T15:47:57.077Z",
+    "lastVerified": "2026-11-15T15:47:57.077Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -370,8 +370,8 @@
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-15T14:25:55.213Z",
-    "lastVerified": "2026-11-15T14:25:55.213Z",
+    "lastChecked": "2026-11-15T15:47:49.869Z",
+    "lastVerified": "2026-11-15T15:47:49.869Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-synalinks-synalinks-skills",
@@ -2053,12 +2053,12 @@
     "revisionIdentifier": "ba4a88b6"
   },
   "cilium-cilium": {
-    "name": "cilium/cilium",
+    "name": "cilium",
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-15T05:31:51.735Z",
-    "lastVerified": "2026-11-15T05:31:51.735Z",
+    "lastChecked": "2026-11-15T15:47:44.986Z",
+    "lastVerified": "2026-11-15T15:47:44.986Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
@@ -2067,7 +2067,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "ba8940f6"
   },
   "langchain4j-langchain4j": {
     "name": "langchain4j",
@@ -2139,12 +2140,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "moby-buildkit": {
-    "name": "moby/buildkit",
+    "name": "buildkit",
     "officialUrl": "https://github.com/moby/buildkit",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-14T03:32:22.224Z",
-    "lastVerified": "2026-11-14T03:32:22.224Z",
+    "lastChecked": "2026-11-15T15:47:42.404Z",
+    "lastVerified": "2026-11-15T15:47:42.404Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-moby-buildkit",
@@ -2153,7 +2154,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "e4d319d7"
   },
   "projectdiscovery-nuclei": {
     "name": "projectdiscovery/nuclei",
@@ -3553,14 +3555,14 @@
     "officialUrl": "https://github.com/lioensky/VCPToolBox",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-14T02:06:26.501Z",
-    "lastVerified": "2026-11-14T02:06:26.501Z",
+    "lastChecked": "2026-11-15T15:47:52.546Z",
+    "lastVerified": "2026-11-15T15:47:52.546Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-lioensky-vcptoolbox",
-    "contentHash": "bf8378e742a8e5153646614e05b65cbdfbb6d09d964f59658103fdbc259c583e",
+    "contentHash": "73ef8d9c89c6fce0081ea8d524529674556ed6bafe78f67b462e9e9c309ae71c",
     "promotedRulesCount": 1,
-    "recentFixesCount": 8,
+    "recentFixesCount": 12,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4672,8 +4674,8 @@
     "officialUrl": "https://github.com/aome510/spotify-player",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-13T18:05:47.159Z",
-    "lastVerified": "2026-11-13T18:05:47.159Z",
+    "lastChecked": "2026-11-15T15:47:34.879Z",
+    "lastVerified": "2026-11-15T15:47:34.879Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aome510-spotify-player",
@@ -9768,9 +9770,9 @@
   "github-copilotforxcode": {
     "name": "CopilotForXcode",
     "officialUrl": "https://github.com/github/CopilotForXcode",
-    "lastChecked": "2026-11-12T03:48:29.252Z",
+    "lastChecked": "2026-11-15T15:47:39.850Z",
     "revisionIdentifier": "258d4577",
-    "lastVerified": "2026-11-12T03:48:29.252Z"
+    "lastVerified": "2026-11-15T15:47:39.850Z"
   },
   "istifano-seo-auditor": {
     "name": "seo-auditor",
@@ -10001,9 +10003,9 @@
   "jeffli1993-seo-audit-skill": {
     "name": "seo-audit-skill",
     "officialUrl": "https://github.com/JeffLi1993/seo-audit-skill",
-    "lastChecked": "2026-11-10T00:59:34.183Z",
+    "lastChecked": "2026-11-15T15:47:37.339Z",
     "revisionIdentifier": "523bdfb2",
-    "lastVerified": "2026-11-10T00:59:34.183Z"
+    "lastVerified": "2026-11-15T15:47:37.339Z"
   },
   "mohamedrejeb-calf": {
     "name": "MohamedRejeb/Calf",
