@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-15T01:46:46.740Z",
+  "last_updated": "2026-11-15T02:16:10.783Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2272,14 +2272,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
-      "content_hash": "a5ed876e2dab2e83df7ced43c12e38c5772bdbe67f86dfd1ff59fc5236b1fb2e",
-      "verified_at": "2026-11-09T13:46:44.781Z",
+      "content_hash": "42bb4cb96e065602bcf14e17cc96057c8b3b459a7c14189fa24b9c5f119ed1b7",
+      "verified_at": "2026-11-15T02:16:10.783Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T13:46:44.781Z"
+      "last_updated": "2026-11-15T02:16:10.783Z"
     },
     "amplifthq/opentag": {
       "repository": "amplifthq/opentag",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "ad36621f639ff8582037b48c61847609aeeb271a7250fe78d3a1c8604b7edaf6",
-      "verified_at": "2026-11-15T00:50:53.652Z",
+      "content_hash": "6313cc0e3c7a7660a44b7ad8beef8b76271b7285e78e4ed7827fe1691887bf9a",
+      "verified_at": "2026-11-15T02:15:12.056Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T00:50:53.652Z"
+      "last_updated": "2026-11-15T02:15:12.056Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -4641,14 +4641,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-metalbear-co-mirrord",
-      "content_hash": "efc7c5ea4b1de353ed42ec95064e0ef01ee69cc24d36a9a1e042569fce9157aa",
-      "verified_at": "2026-11-13T09:57:03.574Z",
+      "content_hash": "82e18676215350b325b11e44611e458f7f02e786e4e30058c8db21a75884004e",
+      "verified_at": "2026-11-15T02:14:57.993Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T09:57:03.574Z"
+      "last_updated": "2026-11-15T02:14:57.993Z"
     },
     "openkruise/kruise": {
       "repository": "openkruise/kruise",
@@ -9906,14 +9906,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-run-llama-llama_index",
-      "content_hash": "2ee32cd7bc534bd583978466a870409c0ec69134ca6591a8c32a1d212c3b61b4",
-      "verified_at": "2026-11-12T12:15:17.372Z",
+      "content_hash": "b846cd6b1e95f24799483fd2aae5358d4ea6e082f2a1d348ada344c7abf25452",
+      "verified_at": "2026-11-15T02:15:10.454Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T12:15:17.372Z"
+      "last_updated": "2026-11-15T02:15:10.454Z"
     },
     "vercel-labs/opensrc": {
       "repository": "vercel-labs/opensrc",

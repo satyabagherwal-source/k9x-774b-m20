@@ -4,24 +4,24 @@
 {
   "source_repository": "dathere/qsv",
   "source_url": "https://github.com/dathere/qsv",
-  "source_version": "7abf98c0",
+  "source_version": "8052fac6",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-15T00:50:53.839Z",
+  "timestamp": "2026-11-15T02:15:12.292Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dathere-qsv",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `7abf98c0`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-15T00:50:53.839Z`  
+> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `8052fac6`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-15T02:15:12.292Z`  
 > **Learning ID**: `learn-github-dathere-qsv`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), B (Product Intelligence), F (Design Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 58%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 55%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from dathere/qsv:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T00:50:52.533Z  
+> **Harvest Timestamp**: 2026-11-15T02:15:11.570Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2215,234 +2215,28 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7abf98c0` (2026-11-14)
-**Commit Message**: test(stats): NaN cells crashed the exact quantiles on larger columns; cover it and Codacy's suggestions (#5054)
+### Incident Patch 1: `8052fac6` (2026-11-15)
+**Commit Message**: deps: bump Polars to upstream rev 2d9938d; EXPLAIN takes queries only (#5055)
 
-* test(stats): NaN cells crashed the exact quantiles on larger columns; cover it and Codacy's suggestions
+* deps: bump Polars to upstream rev 2d9938d; EXPLAIN takes queries only
 
-Before #5053, sorting a quantile buffer that held a NaN panicked once
-the column was large enough for Rust's sort to notice the comparison is
-not a total order: qsv 28.0.0 exits 101 on `stats --quartiles` for a
-302-row float column with two NaN cells. #5053's tests use four rows,
-too few to trigger it, and its CHANGELOG entry only spoke of empty or
-shifted values.
+8 commits past 36ea0f9 (still py-2.1.0, crates 0.55.1). Manifests, toolchain,
+features and [patch] are unchanged upstream; the lock moves only the polars
+source lines.
 
-- stats_nan_cells_do_not_crash_the_exact_quantiles: 300 values plus two
-  NaN cells, for --median, --quartiles and --everything.
-- Codacy's suggestions on #5053: the NAN spelling, moarstats' derived
-  statistics with and without NaN rows, inf cells left as they were,
-  and a NaN cell summing like a float cell past 2^53.
-- CHANGELOG: the #5053 entry now says larger columns crashed.
+One sqlp change (pola-rs/polars#30798): EXPLAIN over a statement that is not
+a query now fails with "EXPLAIN supports queries only". Before, the statement
+was run to get a plan, so `EXPLAIN DROP TABLE t` in a script dropped the
+table. New test sqlp_explain_rejects_non_queries fails on 36ea0f9.
 
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
-* docs(changelog): a NaN cell's column stays Float even when its other values are integers
-
-The #5053 entry said the statistics equal those of the column without
-the NaN cell
-
-**File**: `CHANGELOG.md` (modified, +1/-1)
-```diff
-@@ -42,7 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
-   - **New SQL:** join keys of different numeric types ([#30401](https://github.com/pola-rs/polars/pull/30401)); correlated subqueries with any outer condition, `GROUP BY`, `HAVING`, `LIMIT`, `ANY`/`ALL`, and `LATERAL` derived tables ([#30378](https://github.com/pola-rs/polars/pull/30378), [#30453](https://github.com/pola-rs/polars/pull/30453), [#30466](https://github.com/pola-rs/polars/pull/30466), [#30459](https://github.com/pola-rs/polars/pull/30459), [#30490](https://github.com/pola-rs/polars/pull/30490), [#30467](https://github.com/pola-rs/polars/pull/30467)); `PERCENTILE_CONT`/`PERCENTILE_DISC ... WITHIN GROUP` ([#30442](https://github.com/pola-rs/polars/pull/30442)); non-literal `LIKE` patterns ([#30364](https://github.com/pola-rs/polars/pull/30364), [#30372](https://github.com/pola-rs/polars/pull/30372)); typed numeric/string literals ([#30486](https://github.com/pola-rs/polars/pull/30486)); `LIMIT`/`OFFSET` expressions such as scalar subqueries ([#30425](https://github.com/pola-rs/polars/pull/30425)); repeated unnamed constants ([#30488](https://github.com/pola-rs/polars/pull/30488)); `RANDOM()`, `REPEAT`, `CARDINALITY`, constant `GROUP BY` keys and row values in `IN (subquery)`.
- 
- ### Fixed
--- **`stats`: a `NaN` cell in a float column is skipped by every numeric statistic** ([#5053](https://github.com/dathere/qsv/pull/5053)). A `NaN`, `nan` or `NAN` cell is read as a float (pandas and numpy write missing values this way). The mean already skipped it, but the `sum` came out empty, and the exact median, quartiles, IQR, MAD, fences, skewness and percentiles were computed with it and came out empty or shifted. With `--weight`, one such cell emptied the weighted mean and standard deviation of the whole column. They now all skip it, as `--quantile-method approx` already did, so the statistics equal those of the column without that cell. The cell still counts as a value: `nullcount`, `sparsity` and `cardinality` are unchanged, and the column stays Float. `inf` cells are unchanged.
-+- **`stats`: a `NaN` cell in a float column is skipped by every numeric statistic** ([#5053](https://github.com/dathere/qsv/pull/5053)). A `NaN`, `nan` or `NAN` cell is read as a float (pandas and numpy write missing values this way). The mean already skipped it, but the `sum` came out empty, and the exact median, quartiles, IQR, MAD, fences, skewness and percentiles were computed with it. On a column of a few hundred rows or more that crashed `stats` (qsv 28.0.0 exits with a panic on `stats --quartiles`, as does `moarstats`, which runs it); on a smaller one they came out empty or shifted. With `--weight`, one such cell emptied the weighted mean and standard deviation of the whole column. They now all skip it, as `--quantile-method approx` already did, so the statistics are those of the column's other values. The cell still counts as a value: `nullcount`, `sparsity` and `cardinality` are unchanged, and the column stays Float. That holds when the other values are all integers too: such a column is summarized as floats, so its minimum and maximum read `1.0` and not `1`, and its sum is no longer exact past 2^53. `inf` cells are unchanged.
- - **`stats`: the cache follows the delimiter set by `QSV_SNIFF_DELIMITER` and `QSV_DEFAULT_DELIMITER`** ([#5052](https://github.com/dathere/qsv/pull/5052)). The stats cache recorded only the `--delimiter` flag. A semicolon-separated `data.csv` read as one comma-delimited column kept that one-column cache after `QSV_SNIFF_DELIMITER` was set, so `stats` and the commands that read its cache went on describing the wrong columns. The cache now records the delimiter the file was read with, and `stats` and its readers compare against the delimiter they resolve the same way. Checking the cache still does not decompress a compressed or Parquet input. A cache written before this change did not record the delimiter it was read with, so it is recomputed on its next use.
- - **`moarstats`: two `QSV_STATS_SEPARATOR` fixes** ([#5051](https://github.com/dathere/qsv/pull/5051)):
-   - **`mode_zscore` is computed for a column with several modes under any separator.** The first mode was looked up by splitting on `|`, so with another separator a multi-modal numeric column had an empty `mode_zscore`.
-```
-
-**File**: `tests/test_moarstats.rs` (modified, +38/-0)
-```diff
-@@ -8266,3 +8266,41 @@ fn moarstats_uses_stats_without_a_sidecar_as_they_are() {
-     );
-     assert!(stats_csv_columns(&wrk, "percentiles")[1][0].contains('|'));
- }
-+
-+#[test]
-+fn moarstats_derived_statistics_skip_nan_cells() {
-+    // the statistics moarstats derives from a float column are those of the column without
-+    // its NaN cells. Count-based ones (cardinality, entropy, ...) are not compared: a NaN cell
-+    // is still a value.
-+    let values: Vec<String> = (1..=300)
-+        .map(|i| {
-+            format!(
-+                "{:.2}",
-+                f64::from((i * 37) % 101) * 0.5 + f64::from(i) / 9.0
-+            )
-+        })
-+        .collect();
-+    let mut with_nan = values.clone();
-+    with_nan.insert(200, "NaN".to_string());
-+    with_nan.insert(40, "NaN".to_string());
-+
-+    let cols = "kurtosis,gini_coefficient,median_mean_ratio,pearson_skewness,kelly_skewness,\
-+                mad_stddev_ratio,quartile_coefficient_dispersion,percentile_ratio_90_10";
-+    let mut derived = Vec::new();
-+    for (name, rows) in [("without", &values), ("with", &with_nan)] {
-+        let wrk = Workdir::new(&format!(
-+            "moarstats_derived_statistics_skip_nan_cells_{name}"
-+        ));
-+        wrk.create_from_string("d.csv", &format!("v\n{}\n", rows.join("\n")));
-+        let mut cmd = wrk.command("moarstats");
-+        cmd.args(["--advanced", "d.csv"]);
-+        wrk.assert_success(&mut cmd);
-+        derived.push(stats_csv_columns(&wrk, cols));
-+    }
-+    assert!(
-+        derived[0][1].iter().all(|v| !v.is_empty()),
-+        "{:?}",
-+        derived[0]
-+    );
-+    assert_eq!(derived[0], derived[1]);
-+}
-```
-
-**File**: `tests/test_stats.rs` (modified, +103/-1)
-```diff
-@@ -10976,7 +10976,7 @@ fn stats_nan_cells_are_skipped_by_every_numeric_statistic() {
-         "v\n1.5\n3.5\n4.5\n",
-         &["--everything"],
-     );
--    for (name, nan) in [("upper", "NaN"), ("lower", "nan")] {
-+    for (name, nan) in [("upper", "NaN"), ("lower", "nan"), ("allcaps", "NAN")] {
-         let with = stats_first_row(
-             &format!("stats_nan_cells_are_skipped_with_{name}"),
-             &format!("v\n1.5\n{nan}\n3.5\n4.5\n"),
-@@ -11033,3 +11033,105 @@ fn stats_weighted_nan_cells_are_skipped() {
-         assert_eq!(with[stat], without[stat], "{stat}");
-     }
- }
-+
-+#[test]
-+fn stats_inf_cells_are_not_skipped() {
-+    // only NaN is skipped. An "inf" cell is a value: it is the max, and the sum, mean and
-+    // stddev it makes infinite render as empty - as before NaN cells were skipped.
-+    let row = stats_first_row(
-+        "stats_inf_cells_are_not_skipped",
-+        "v\n1.5\ninf\n3.5\n4.5\n",
-+        &["--everything"],
-+    );
-+    assert_eq!(
-+        [
-+            &row["type"],
-+            &row["sum"],
-+            &row["mean"],
-+            &row["stddev"],
-+            &row["min"],
-+            &row["max"]
-+        ],
-+        ["Float", "", "", "", "1.5", "inf"]
-+    );
-+    assert_eq!(
-+        [&row["q1"], &row["q2_median"], &row["n_positive"]],
-+        ["2.5", "4", "4"]
-+    );
-+}
-+
-+#[test]
-+fn stats_nan_cell_sums_like_a_float_cell_past_2_pow_53() {
-+    // a NaN makes the column Float, and a Float column's sum is an f64: past 2^53 it is no
-+    // longer exact, with a NaN cell just as with any float cell in its place. The all-integer
-+    // column keeps its exact total.
-+    let integers = stats_first_row(
-+        "stats_nan_cell_sums_like_a_float_cell_integers",
-+        "v\n9007199254740992\n1\n",
-+        &[],
-+    );
-+    assert_eq!(
-+        [&integers["type"], &integers["sum"]],
-+        ["Integer", "9007199254740993"]
-+    );
-+
-+    let with_float = stats_first_row(
-+        "stats_nan_cell_sums_like_a_float_cell_float",
-+        "v\n9007199254740992\n1\n0.0\n",
-+        &[],
-+    );
-+    let with_nan = stats_first_row(
-+        "stats_nan_cell_sums_like_a_float_cell_nan",
-+        "v\n9007199254740992\n1\nNaN\n",
-+        &[],
-+    );
-+    assert_eq!(
-+        [&with_nan["type"], &with_nan["sum"]],
-+        ["Float", "9007199254740992"]
-+    );
-+    assert_eq!(with_nan["sum"], with_float["sum"]);
-+}
-+
-+#[test]
-+fn stats_nan_cells_do_not_crash_the_exact_quantiles() {
-+    // With enough rows, sorting a quantile buffer that holds a NaN panicked: Rust's sort
-+    // detects a comparison that is not a total order. qsv 28.0.0 exits 101 on this file.
-+    // A handful of rows is too few for the sort to notice, so this needs a few hundred.
-+    let values: Vec<String> = (1..=300)
-+        .map(|i| {
-+            format!(
-+                "{:.2}",
-+                f64::from((i * 37) % 101) * 0.5 + f64::from(i) / 9.0
-+            )
-+        })
-+        .collect();
-+    let mut with_nan = values.clone();
-+    with_nan.insert(200, "NaN".to_string());
-+    with_nan.insert(40, "NaN".to_string());
-+
-+    for args in [
-+        &["--median"][..],
-+        &["--quartiles"][..],
-+        &["--everything"][..],
-+    ] {
-+        let name = args[0].trim_start_matches('-');
-+        let without = stats_first_row(
-+            &format!("stats_nan_cells_do_not_crash_without_{name}"),
-+            &format!("v\n{}\n", values.join("\n")),
-+            args,
-+        );
-+        let with = stats_first_row(
-+            &format!("stats_nan_cells_do_not_crash_with_{name}"),
-+            &format!("v\n{}\n", with_nan.join("\n")),
-+            args,
-+        );
-+        let median = if name == "median" {
-+            "median"
-+        } else {
-+            "q2_median"
-+        };
-+        assert!(!without[median].is_empty(), "{name}");
-+        assert_eq!(with[median], without[median], "{name}");
-+        assert_eq!(with["sum"], without["sum"], "{name}");
-+    }
-+}
-```
-
----
-
-### Incident Patch 2: `f7576f43` (2026-11-14)
-**Commit Message**: fix(stats): a NaN cell is skipped by the sum, the exact quantiles and the weighted statistics (#5053)
-
-* fix(stats): a NaN cell is skipped by the sum, the exact quantiles and the weighted statistics
-
-A "NaN" cell parses as a float, so it stays in a Float column. The
-running mean (qsv-stats' OnlineStats) and the t-digest already skip it,
-but the sum, the exact quantile buffer and the weighted accumulators did
-not: the sum rendered empty, the exact median, quartiles, IQR, MAD,
-fences, skewness and percentiles were computed over the NaN and came out
-empty or shifted, and under --weight one NaN emptied the weighted mean
-and stddev of the whole column.
-
-add_numeric_value now returns early on NaN, and TypedSum adds nothing
-for it while still switching to a float sum that carries the integer
-total. The statistics of a column with a NaN cell equal those of the
-column without it. The cell remains a value: nullcount, sparsity and
-cardinality are unchanged, and inf cells behave as before.
+No sqlp or pivotp result changed in side-by-side runs (GROUP BY, joins and
+windows over sorted/clustered string keys, plain and --streaming; every
+pivotp aggregation). pola-rs/polars#30523 still panics, so
+sqlp_count_over_limited_union stays ignored.
 
 Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
 
-* docs(changelog): cite #5053
+* docs(changelog): cite #5055 for the Polars 2d9938d bump
 
 Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
 
@@ -2450,155 +2244,228 @@ Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
 
 Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
 
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `CHANGELOG.md` (modified, +1/-1)
 ```diff
-@@ -42,6 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
-   - **New SQL:** join keys of different numeric types ([#30401](https://github.com/pola-rs/polars/pull/30401)); correlated subqueries with any outer condition, `GROUP BY`, `HAVING`, `LIMIT`, `ANY`/`ALL`, and `LATERAL` derived tables ([#30378](https://github.com/pola-rs/polars/pull/30378), [#30453](https://github.com/pola-rs/polars/pull/30453), [#30466](https://github.com/pola-rs/polars/pull/30466), [#30459](https://github.com/pola-rs/polars/pull/30459), [#30490](https://github.com/pola-rs/polars/pull/30490), [#30467](https://github.com/pola-rs/polars/pull/30467)); `PERCENTILE_CONT`/`PERCENTILE_DISC ... WITHIN GROUP` ([#30442](https://github.com/pola-rs/polars/pull/30442)); non-literal `LIKE` patterns ([#30364](https://github.com/pola-rs/polars/pull/30364), [#30372](https://github.com/pola-rs/polars/pull/30372)); typed numeric/string literals ([#30486](https://github.com/pola-rs/polars/pull/30486)); `LIMIT`/`OFFSET` expressions such as scalar subqueries ([#30425](https://github.com/pola-rs/polars/pull/30425)); repeated unnamed constants ([#30488](https://github.com/pola-rs/polars/pull/30488)); `RANDOM()`, `REPEAT`, `CARDINALITY`, constant `GROUP BY` keys and row values in `IN (subquery)`.
+@@ -34,7 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+   - The 25 `frequency` benchmarks require every field's counts to add up to the row count, and every selected column to be present.
+   - 13 `sqlp` benchmarks must return the exact expected rows or groups (cross-checked with DuckDB), in CSV, JSON, JSONL, Parquet and Arrow output.
+   - Also fixed: an output check on a benchmark that has a `--conclude` or `--cleanup` hook checked the hook's output instead, because hyperfine writes it to the same file.
+-- **deps: Polars bumped to upstream rev [`36ea0f9`](https://github.com/pola-rs/polars/commit/36ea0f99d67213f0593f8096ffc7d037cc7aa158)** (from `py-2.1.0`, 275 commits: `0b47007` in [#4993](https://github.com/dathere/qsv/pull/4993), `a598c51` in [#5021](https://github.com/dathere/qsv/pull/5021), `a9bce97` in [#5030](https://github.com/dathere/qsv/pull/5030), `ff1b37d` in [#5034](https://github.com/dathere/qsv/pull/5034), `8ecd1ca` in [#5041](https://github.com/dathere/qsv/pull/5041), `61fdb30` in [#5045](https://github.com/dathere/qsv/pull/5045), then `36ea0f9` in [#5048](https://github.com/dathere/qsv/pull/5048)). The `36ea0f9` step is 17 commits and changes no `sqlp` result that already worked. It adds SQL that used to fail: comma-separated `LATERAL` derived tables, and aggregates without `GROUP BY` inside them (`FROM t, LATERAL (SELECT MAX(v) FROM t2 WHERE t2.k = t.k) a, LATERAL (...) b`; [#30768](https://github.com/pola-rs/polars/pull/30768)); `CREATE VIEW`, `DROP VIEW` and `DESCRIBE <table>` ([#30778](https://github.com/pola-rs/polars/pull/30778)); and a leading `~` in `read_csv`/`read_parquet`/`read_ipc`/`read_ndjson` paths now means the home directory ([#30774](https://github.com/pola-rs/polars/pull/30774)). Date parts are now computed with integer arithmetic ([#30777](https://github.com/pola-rs/polars/pull/30777)); every `EXTRACT` field gave the same result on both revs for 21,260 dates and timestamps from year 1 to 9999. Arithmetic with a literal on the left now plans with the type it runs with ([#30765](https://github.com/pola-rs/polars/pull/30765)), and temporal `total_*` overflows give NULL ([#30743](https://github.com/pola-rs/polars/pull/30743)); neither changed a `sqlp` result in side-by-side tests. The `61fdb30` step is 11 commits. Its one `sqlp` result change is a fix: a signed integer literal combined with an unsigned value no longer gives NULL for the negative rows ([#30742](https://github.com/pola-rs/polars/pull/30742)). For example, `CASE WHEN side = 'buy' THEN 1 ELSE -1 END * CAST(qty AS UINTEGER)` returned NULL for the `-1` rows, so a `SUM` over it skipped them. It also adds `BOOL_AND`, `BOOL_OR`, `COUNT_IF`, `MAX_BY`, `MIN_BY`, `ANY_VALUE`, `APPROX_COUNT_DISTINCT` and `REGEXP_EXTRACT` to `sqlp` ([#30763](https://github.com/pola-rs/polars/pull/30763)); qsv now enables polars' `approx_unique` feature for `APPROX_COUNT_DISTINCT`. `REGEXP_EXTRACT(s, pattern[, group])` returns the whole match or the given capture group, and an empty string when nothing matches. The other fixes left `sqlp` results unchanged in side-by-side tests: calendar-part offsets applied in one step ([#30744](https://github.com/pola-rs/polars/pull/30744), checked with month-end `INTERVAL` arithmetic), and population variance of a single null in a sorted group-by ([#30747](https://github.com/pola-rs/polars/pull/30747); `sqlp`'s `VARIANCE`/`STDDEV` are the sample forms, which this doesn't touch). The `8ecd1ca` step is 14 commits of performance work: quantiles and medians computed by selection instead of sorting, in parallel ([#30569](https://github.com/pola-rs/polars/pull/30569), [#30570](https://github.com/pola-rs/polars/pull/30570)), multi-column join and group-by keys packed into fixed-width integers ([#30708](https://github.com/pola-rs/polars/pull/30708)), and joins that skip the probe side when the build side has no non-null keys ([#30692](https://github.com/pola-rs/polars/pull/30692)). No `sqlp` result changed in side-by-side tests of quantiles, medians, `NTILE`/`PERCENT_RANK`, multi-key `GROUP BY`s and joins, and joins on all-NULL keys. The `ff1b37d` step is 10 commits. Its one `sqlp` result change is a fix: a `CASE` whose `ELSE` applies a strict `CAST` no longer fails on values from rows that take an earlier branch ([#30682](https://github.com/pola-rs/polars/pull/30682)). For example, `CASE WHEN a THEN 0 ELSE CAST(COALESCE(v, -1) AS UTINYINT) END` used to fail when `v` was NULL only in rows where `a` is true. The rest is Decimal `SUM`/`AVG` and Parquet string decoding speedups ([#30704](https://github.com/pola-rs/polars/pull/30704), [#30632](https://github.com/pola-rs/polars/pull/30632)), and slice pushdown and unnest fixes that left `sqlp` results unchanged in side-by-side tests. The `a9bce97` step is 11 commits of join planning and performance: out-of-core joins ([#30679](https://github.com/pola-rs/polars/pull/30679)), join reordering ([#30680](https://github.com/pola-
+```
+
+**File**: `Cargo.lock` (modified, +27/-27)
+```diff
+@@ -6021,7 +6021,7 @@ dependencies = [
+ [[package]]
+ name = "polars"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=36ea0f99d67213f0593f8096ffc7d037cc7aa158#36ea0f99d67213f0593f8096ffc7d037cc7aa158"
++source = "git+https://github.com/pola-rs/polars?rev=2d9938dfa3558a89c5d7a05d4ff1b0e5afccfd59#2d9938dfa3558a89c5d7a05d4ff1b0e5afccfd59"
+ dependencies = [
+  "getrandom 0.2.17",
+  "getrandom 0.4.3",
+@@ -6046,7 +6046,7 @@ dependencies = [
+ [[package]]
+ name = "polars-arrow"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=36ea0f99d67213f0593f8096ffc7d037cc7aa158#36ea0f99d67213f0593f8096ffc7d037cc7aa158"
++source = "git+https://github.com/pola-rs/polars?rev=2d9938dfa3558a89c5d7a05d4ff1b0e5afccfd59#2d9938dfa3558a89c5d7a05d4ff1b0e5afccfd59"
+ dependencies = [
+  "avro-schema",
+  "bitflags 2.13.2",
+@@ -6089,7 +6089,7 @@ dependencies = [
+ [[package]]
+ name = "polars-async"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=36ea0f99d67213f0593f8096ffc7d037cc7aa158#36ea0f99d67213f0593f8096ffc7d037cc7aa158"
++source = "git+https://github.com/pola-rs/polars?rev=2d9938dfa3558a89c5d7a05d4ff1b0e5afccfd59#2d9938dfa3558a89c5d7a05d4ff1b0e5afccfd59"
+ dependencies = [
+  "atomic-waker",
+  "crossbeam-channel",
+@@ -6108,7 +6108,7 @@ dependencies = [
+ [[package]]
+ name = "polars-buffer"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=36ea0f99d67213f0593f8096ffc7d037cc7aa158#36ea0f99d67213f0593f8096ffc7d037cc7aa158"
++source = "git+https://github.com/pola-rs/polars?rev=2d9938dfa3558a89c5d7a05d4ff1b0e5afccfd59#2d9938dfa3558a89c5d7a05d4ff1b0e5afccfd59"
+ dependencies = [
+  "bytemuck",
+  "either",
+@@ -6120,7 +6120,7 @@ dependencies = [
+ [[package]]
+ name = "polars-compute"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=36ea0f99d67213f0593f8096ffc7d037cc7aa158#36ea0f99d67213f0593f8096ffc7d037cc7aa158"
++source = "git+https://github.com/pola-rs/polars?rev=2d9938dfa3558a89c5d7a05d4ff1b0e5afccfd59#2d9938dfa3558a89c5d7a05d4ff1b0e5afccfd59"
+ dependencies = [
+  "atoi_simd",
+  "bytemuck",
+@@ -6146,7 +6146,7 @@ dependencies = [
+ [[package]]
+ name = "polars-config"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=36ea0f99d67213f0593f8096ffc7d037cc7aa158#36ea0f99d67213f0593f8096ffc7d037cc7aa158"
++source = "git+https://github.com/pola-rs/polars?rev=2d9938dfa3558a89c5d7a05d4ff1b0e5afccfd59#2d9938dfa3558a89c5d7a05d4ff1b0e5afccfd59"
+ dependencies = [
+  "polars-error",
+  "serde",
+@@ -6156,7 +6156,7 @@ dependencies = [
+ [[package]]
+ name = "polars-core"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=36ea0f99d67213f0593f8096ffc7d037cc7aa158#36ea0f99d67213f0593f8096ffc7d037cc7aa158"
++source = "git+https://github.com/pola-rs/polars?rev=2d9938dfa3558a89c5d7a05d4ff1b0e5afccfd59#2d9938dfa3558a89c5d7a05d4ff1b0e5afccfd59"
+ dependencies = [
+  "atoi_simd",
+  "bitflags 2.13.2",
+@@ -6197,7 +6197,7 @@ dependencies = [
+ [[package]]
+ name = "polars-defs"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=36ea0f99d67213f0593f8096ffc7d037cc7aa158#36ea0f99d67213f0593f8096ffc7d037cc7aa158"
++source = "git+https://github.com/pola-rs/polars?rev=2d9938dfa3558a89c5d7a05d4ff1b0e5afccfd59#2d9938dfa3558a89c5d7a05d4ff1b0e5afccfd59"
+ dependencies = [
+  "chrono",
+  "chrono-tz",
+@@ -6212,7 +6212,7 @@ dependencies = [
+ [[package]]
+ name = "polars-descriptions"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=36ea0f99d67213f0593f8096ffc7d037cc7aa158#36ea0f99d67213f0593f8096ffc7d037cc7aa158"
++source = "git+https://github.com/pola-rs/polars?rev=2d9938dfa3558a89c5d7a05d4ff1b0e5afccfd59#2d9938dfa3558a89c5d7a05d4ff1b0e5afccfd59"
+ dependencies = [
+  "serde",
+  "strum_macros 0.28.0",
+@@ -6221,7 +6221,7 @@ dependencies = [
+ [[package]]
+ name = "polars-dtype"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=36ea0f99d67213f0593f8096ffc7d037cc7aa158#36ea0f99d67213f0593f8096ffc7d037cc7aa158"
++source = "git+https://github.com/pola-rs/polars?rev=2d9938dfa3558a89c5d7a05d4ff1b0e5afccfd59#2d9938dfa3558a89c5d7a05d4ff1b0e5afccfd59"
+ dependencies = [
+  "boxcar",
+  "hashbrown 0.17.1",
+@@ -6235,7 +6235,7 @@ dependencies = [
+ [[package]]
+ name = "polars-error"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=36ea0f99d67213f0593f8096ffc7d037cc7aa158#36ea0f99d67213f0593f8096ffc7d037cc7aa158"
++source = "git+https://github.com/pola-rs/polars?rev=2d9938dfa3558a89c5d7a05d4ff1b0e5afccfd59#2d9938dfa3558a89c5d7a05d4ff1b0e5afccfd59"
+ dependencies = [
+  "avro-schema",
+  "parking_lot 0.12.5",
+@@ -6248,7 +6248,7 @@ dependencies = [
+ [[package]]
+ name = "polars-expr"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=36ea0f99d67213f0593f8096ffc7d037cc7aa158#36ea0f99d67213f0593f8096ffc7d037cc7aa158"
++source = "git+https://github.com/pola-rs/polars?rev=2d9938dfa3558a89c5d7a05d4ff1b0e5afccfd59#2d9938dfa3558a89c5d7a05d4ff1b0e5afccfd59"
+ dependencies = 
+```
+
+**File**: `Cargo.toml` (modified, +4/-4)
+```diff
+@@ -544,8 +544,8 @@ serial_test = { version = "4.0", features = ["file_locks"] }
+ [patch.crates-io]
+ # polars-readstat-rs depends on these directly; redirect them onto the same git polars
+ # revision qsv pins, otherwise a second, incompatible polars tree resolves from crates.io. (#5021)
+-polars-core  = { git = "https://github.com/pola-rs/polars", rev = "36ea0f99d67213f0593f8096ffc7d037cc7aa158" }
+-polars-arrow = { git = "https://github.com/pola-rs/polars", rev = "36ea0f99d67213f0593f8096ffc7d037cc7aa158" }
++polars-core  = { git = "https://github.com/pola-rs/polars", rev = "2d9938dfa3558a89c5d7a05d4ff1b0e5afccfd59" }
++polars-arrow = { git = "https://github.com/pola-rs/polars", rev = "2d9938dfa3558a89c5d7a05d4ff1b0e5afccfd59" }
+ # Polars (since py-2.0.0) calls HashTable::prefetch_{get,insert}, which exist only in its
+ # hashbrown fork (https://github.com/rust-lang/hashbrown/pull/727). Polars' own workspace
+ # [patch] doesn't propagate to dependents, so mirror it here; keep the rev in sync with the
+@@ -622,9 +622,9 @@ compact_bytes = { git = "https://github.com/jqnatividad/compact_bytes", branch =
+ #      and the commit hash 52ea381)
+ # ================================
+ # Keep the next line bare: build.rs reads everything after `=` into --version.
+-# QSV_POLARS_REV=py-2.1.0:36ea0f9
++# QSV_POLARS_REV=py-2.1.0:2d9938d
+ # polars = { git = "https://github.com/pola-rs/polars", tag = "py-2.1.0", optional = true }
+-polars = { git = "https://github.com/pola-rs/polars", rev = "36ea0f99d67213f0593f8096ffc7d037cc7aa158", optional = true }
++polars = { git = "https://github.com/pola-rs/polars", rev = "2d9938dfa3558a89c5d7a05d4ff1b0e5afccfd59", optional = true }
  
- ### Fixed
-+- **`stats`: a `NaN` cell in a float column is skipped by every numeric statistic** ([#5053](https://github.com/dathere/qsv/pull/5053)). A `NaN`, `nan` or `NAN` cell is read as a float (pandas and numpy write missing values this way). The mean already skipped it, but the `sum` came out empty, and the exact median, quartiles, IQR, MAD, fences, skewness and percentiles were computed with it and came out empty or shifted. With `--weight`, one such cell emptied the weighted mean and standard deviation of the whole column. They now all skip it, as `--quantile-method approx` already did, so the statistics equal those of the column without that cell. The cell still counts as a value: `nullcount`, `sparsity` and `cardinality` are unchanged, and the column stays Float. `inf` cells are unchanged.
- - **`stats`: the cache follows the delimiter set by `QSV_SNIFF_DELIMITER` and `QSV_DEFAULT_DELIMITER`** ([#5052](https://github.com/dathere/qsv/pull/5052)). The stats cache recorded only the `--delimiter` flag. A semicolon-separated `data.csv` read as one comma-delimited column kept that one-column cache after `QSV_SNIFF_DELIMITER` was set, so `stats` and the commands that read its cache went on describing the wrong columns. The cache now records the delimiter the file was read with, and `stats` and its readers compare against the delimiter they resolve the same way. Checking the cache still does not decompress a compressed or Parquet input. A cache written before this change did not record the delimiter it was read with, so it is recomputed on its next use.
- - **`moarstats`: two `QSV_STATS_SEPARATOR` fixes** ([#5051](https://github.com/dathere/qsv/pull/5051)):
-   - **`mode_zscore` is computed for a column with several modes under any separator.** The first mode was looked up by splitting on `|`, so with another separator a multi-modal numeric column had an empty `mode_zscore`.
+ # Apache DataSketches (t-digest, HLL, Frequent Items) — upstream C++ does not
+ # support big-endian targets, so we exclude the crate on big-endian builds.
 ```
 
-**File**: `src/cmd/stats.rs` (modified, +12/-2)
+**File**: `README.md` (modified, +1/-1)
 ```diff
-@@ -5663,6 +5663,13 @@ impl Stats {
-     #[allow(clippy::inline_always)]
-     #[inline(always)]
-     fn add_numeric_value(&mut self, value: f64, weight: f64) {
-+        // A "NaN" cell parses as a float, so it reaches here on a Float column. It is not a
-+        // number to summarize: qsv-stats' OnlineStats and the t-digest both skip it already,
-+        // so the buffers below must too, or the exact quantiles would be computed over a
-+        // value the mean leaves out (and one NaN would poison the weighted mean for good).
-+        if value.is_nan() {
-+            return;
-+        }
-         if let Some(v) = self.unsorted_stats.as_mut() {
-             v.add(value);
-         }
-@@ -7111,10 +7118,13 @@ impl TypedSum {
-                 }
-             },
-             TFloat => {
-+                // a "NaN" cell is skipped, as the mean skips it - it would turn the whole sum
-+                // into NaN. It still switches the sum to floats, carrying the integer total.
-+                let addend = if float_val.is_nan() { 0.0 } else { float_val };
-                 if let Some(ref mut f) = self.float {
--                    *f += float_val;
-+                    *f += addend;
-                 } else {
--                    self.float = Some((self.integer as f64) + float_val);
-+                    self.float = Some((self.integer as f64) + addend);
-                 }
-             },
-             // TString length captured above; TNull / TDate / TDateTime have no
+@@ -115,7 +115,7 @@
+ 🧠: expensive operations are memoized with available inter-session Redis/Disk caching for fetch commands.  
+ 🗄️: [Extended input support](#extended-input-support).  
+ 🗃️: [Limited Extended input support](#limited-extended-input-support).  
+-🐻‍❄️: command powered/accelerated by [![polars 0.55.1 at py-2.1.0:36ea0f9](https://img.shields.io/badge/polars-0.55.1:py--2.1.0:36ea0f9-blue?logo=polars)](https://github.com/pola-rs/polars/releases/tag/py-2.1.0) vectorized query engine.  
++🐻‍❄️: command powered/accelerated by [![polars 0.55.1 at py-2.1.0:2d9938d](https://img.shields.io/badge/polars-0.55.1:py--2.1.0:2d9938d-blue?logo=polars)](https://github.com/pola-rs/polars/releases/tag/py-2.1.0) vectorized query engine.  
+ 🤖: command uses Natural Language Processing or Generative AI.  
+ 🏎️: multithreaded and/or faster when an index (📇) is available.  
+ 🚀: multithreaded even without an index.  
 ```
 
-**File**: `tests/test_stats.rs` (modified, +88/-0)
+**File**: `docs/help/TableOfContents.md` (modified, +1/-1)
 ```diff
-@@ -10945,3 +10945,91 @@ fn stats_cache_hit_does_not_convert_a_compressed_input() {
-         "a cache hit converted the input: {log}"
-     );
+@@ -96,7 +96,7 @@
+ 🧠: expensive operations are memoized with available inter-session Redis/Disk caching for fetch commands.  
+ 🗄️: [Extended input support](../../README.md#extended-input-support).  
+ 🗃️: [Limited Extended input support](../../README.md#limited-extended-input-support).  
+-🐻‍❄️: command powered/accelerated by [![polars 0.55.1 at py-2.1.0:36ea0f9](https://img.shields.io/badge/polars-0.55.1:py--2.1.0:36ea0f9-blue?logo=polars)](https://github.com/pola-rs/polars/releases/tag/py-2.1.0) vectorized query engine.  
++🐻‍❄️: command powered/accelerated by [![polars 0.55.1 at py-2.1.0:2d9938d](https://img.shields.io/badge/polars-0.55.1:py--2.1.0:2d9938d-blue?logo=polars)](https://github.com/pola-rs/polars/releases/tag/py-2.1.0) vectorized query engine.  
+ 🤖: command uses Natural Language Processing or Generative AI.  
+ 🏎️: multithreaded and/or faster when an index (📇) is available.  
+ 🚀: multithreaded even without an index.  
+```
+
+**File**: `tests/test_sqlp.rs` (modified, +32/-0)
+```diff
+@@ -7658,6 +7658,38 @@ fn sqlp_read_csv_expands_home_dir() {
+     assert_eq!(got, vec![svec!["n"], svec!["5"]]);
  }
-+
-+/// The stats columns that must not change when a "NaN" cell is added to a float column.
-+const NAN_BLIND_STATS: [&str; 17] = [
-+    "sum",
-+    "mean",
-+    "sem",
-+    "stddev",
-+    "variance",
-+    "cv",
-+    "q1",
-+    "q2_median",
-+    "q3",
-+    "iqr",
-+    "mad",
-+    "skewness",
-+    "lower_outer_fence",
-+    "lower_inner_fence",
-+    "upper_inner_fence",
-+    "upper_outer_fence",
-+    "percentiles",
-+];
+ 
++// Polars SQL behavior changed between 36ea0f9 and 2d9938d.
 +
 +#[test]
-+fn stats_nan_cells_are_skipped_by_every_numeric_statistic() {
-+    // a "NaN" cell parses as a float. The mean skips it, so the sum and the exact quantiles
-+    // must skip it too: with the NaN row, they equal the stats of the file without it.
-+    let without = stats_first_row(
-+        "stats_nan_cells_are_skipped_without",
-+        "v\n1.5\n3.5\n4.5\n",
-+        &["--everything"],
-+    );
-+    for (name, nan) in [("upper", "NaN"), ("lower", "nan")] {
-+        let with = stats_first_row(
-+            &format!("stats_nan_cells_are_skipped_with_{name}"),
-+            &format!("v\n1.5\n{nan}\n3.5\n4.5\n"),
-+            &["--everything"],
-+        );
-+        for stat in NAN_BLIND_STATS {
-+            assert!(!without[stat].is_empty(), "{stat} has no value to compare");
-+            assert_eq!(with[stat], without[stat], "{stat} ({nan})");
-+        }
-+        // the NaN cell is a value, not a NULL
-+        assert_eq!(
-+            [
-+                &with["type"],
-+                &with["nullcount"],
-+                &with["sparsity"],
-+                &with["cardinality"]
-+            ],
-+            ["Float", "0", "0", "4"],
-+            "{nan}"
++fn sqlp_explain_rejects_non_queries() {
++    // pola-rs/polars#30798: EXPLAIN takes queries only. On 36ea0f9, EXPLAIN over any other
++    // statement RAN it to get a plan (the view was created, the table dropped) and exited 0.
++    let wrk = Workdir::new("sqlp_explain_rejects_non_queries");
++    sides_fixture(&wrk);
++
++    for stmt in [
++        "DROP TABLE t",
++        "CREATE VIEW buys AS SELECT name FROM t WHERE side = 'buy'",
++        "CREATE TABLE t2 AS SELECT * FROM t",
++        "TRUNCATE TABLE t",
++        "SHOW TABLES",
++    ] {
++        let mut cmd = wrk.command("sqlp");
++        cmd.arg("t.csv").arg(format!("EXPLAIN {stmt}"));
++        let stderr = wrk.output_stderr(&mut cmd);
++        assert!(
++            stderr.contains("EXPLAIN supports queries only"),
++            "{stmt}: {stderr}"
 +        );
 +    }
++
++    // a query is still explained
++    let mut cmd = wrk.command("sqlp");
++    cmd.arg("t.csv").arg("EXPLAIN SELECT name FROM t");
++    let plan: String = wrk.stdout_on_success(&mut cmd);
++    assert!(plan.contains("Csv SCAN"), "{plan}");
 +}
 +
-+#[test]
-+fn stats_nan_cell_after_integers_keeps_the_integer_total() {
-+    // the NaN switches the column to Float without adding to the sum
-+    let row = stats_first_row(
-+        "stats_nan_cell_after_integers_keeps_the_integer_total",
-+        "v\n1\n2\nNaN\n",
-+        &[],
-+    );
-+    assert_eq!(
-+        [&row["type"], &row["sum"], &row["mean"]],
-+        ["Float", "3", "1.5"]
-+    );
-+}
-+
-+#[test]
-+fn stats_weighted_nan_cells_are_skipped() {
-+    // one NaN value used to blank the weighted mean and stddev of the whole column
-+    let args = ["--weight", "w", "--everything"];
-+    let without = stats_first_row(
-+        "stats_weighted_nan_cells_are_skipped_without",
-+        "v,w\n1.5,1\n3.5,2\n4.5,1\n",
-+        &args,
-+    );
-+    let with = stats_first_row(
-+        "stats_weighted_nan_cells_are_skipped_with",
-+        "v,w\n1.5,1\nNaN,1\n3.5,2\n4.5,1\n",
-+        &args,
-+    );
-+    for stat in NAN_BLIND_STATS {
-+        assert!(!without[stat].is_empty(), "{stat} has no value to compare");
-+        assert_eq!(with[stat], without[stat], "{stat}");
-+    }
-+}
+ // ---------------------------------------------------------------------------
+ // sqlp --streaming writes the result batch by batch (csv, jsonl, parquet, arrow).
+ // ---------------------------------------------------------------------------
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5055** (2026-11-15): deps: bump Polars to upstream rev 2d9938d; EXPLAIN takes queries only (@jqnatividad)
 - **PR #5054** (2026-11-14): test(stats): NaN cells crashed the exact quantiles on larger columns; cover it and Codacy's suggestions (@jqnatividad)
 - **PR #5053** (2026-11-14): fix(stats): a NaN cell is skipped by the sum, the exact quantiles and the weighted statistics (@jqnatividad)
 - **PR #5052** (2026-11-14): fix(stats): the cache key records the resolved delimiter, not the --delimiter flag (@jqnatividad)
 - **PR #5051** (2026-11-14): fix(moarstats): honor QSV_STATS_SEPARATOR for the first mode; recompute a stats CSV written with another separator (@jqnatividad)
 - **PR #5050** (2026-11-14): fix(stats): max_precision for exponent-form floats, weighted quantiles with no positive weight, *ALL antimodes (@jqnatividad)
-- **PR #5049** (2026-11-14): fix(stats): cache follows QSV_NO_HEADERS and QSV_STATS_SEPARATOR; re-sniff date columns after an upgrade (@jqnatividad)
 
 ---
 
@@ -2612,37 +2479,6 @@ Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. test(stats): NaN cells crashed the exact quantiles on larger columns; cover it a
-
-**RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `7abf98c0`: test(stats): NaN cells crashed the exact quantiles on larger columns; cover it and Codacy's suggestions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-- **`stats`: a `NaN` cell in a float column is skipped by every numeric statistic** ([#5053](https://github.com/dathere/qsv/pull/5053)). A `NaN`, `nan` or `NAN` cell is read as a float (pandas and numpy write missing values this way). The mean already skipped it, but the `sum` came out empty, and the exact median, quartiles, IQR, MAD, fences, skewness and percentiles were computed with it. On a column of a few hundred rows or more that crashed `stats` (qsv 28.0.0 exits with a panic on `stats --quartiles`, as does `moarstats`, which runs it); on a smaller one they came out empty or shifted. With `--weight`, one such cell emptied the weighted mean and standard deviation of the whole column. They now all skip it, as `--quantile-method approx` already did, so the statistics are those of the column's other values. The cell still counts as a value: `nullcount`, `sparsity` and `cardinality` are unchanged, and the column stays Float. That holds when the other values are all integers too: such a column is summarized as floats, so its minimum and maximum read `1.0` and not `1`, and its sum is no longer exact past 2^53. `inf` cells are unchanged.
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Induced defect failure mode:
-- **`stats`: a `NaN` cell in a float column is skipped by every numeric statistic** ([#5053](https://github.com/dathere/qsv/pull/5053)). A `NaN`, `nan` or `NAN` cell is read as a float (pandas and numpy write missing values this way). The mean already skipped it, but the `sum` came out empty, and the exact median, quartiles, IQR, MAD, fences, skewness and percentiles were computed with it and came out empty or shifted. With `--weight`, one such cell emptied the weighted mean and standard deviation of the whole column. They now all skip it, as `--quantile-method approx` already did, so the statistics equal those of the column without that cell. The cell still counts as a value: `nullcount`, `sparsity` and `cardinality` are unchanged, and the column stays Float. `inf` cells are unchanged.
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7abf98c0` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -10028,3 +10028,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-fishaudio-drama-3` | `https://huggingface.co/fishaudio/drama-3` | `hf-fishaud` | Multi-dimensional audit evidence | 2026-11-15T01:46:37.666Z |
 | `learn-github-kcl-lang-kcl` | `https://github.com/kcl-lang/kcl` | `f8a29788` | Multi-dimensional audit evidence | 2026-11-15T01:46:46.728Z |
 | `learn-dom-d-57d6ced2` | `project://hf-fishaudio-drama-3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-fishaudio-drama-3-learnings.md` | 2026-11-15T01:47:18.115Z |
+| `learn-github-metalbear-co-mirrord` | `https://github.com/metalbear-co/mirrord` | `77c2d33d` | Multi-dimensional audit evidence | 2026-11-15T02:14:57.978Z |
+| `learn-github-run-llama-llama_index` | `https://github.com/run-llama/llama_index` | `99d7433f` | Multi-dimensional audit evidence | 2026-11-15T02:15:10.444Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `8052fac6` | Multi-dimensional audit evidence | 2026-11-15T02:15:12.045Z |
+| `learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8` | `https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8` | `hf-dealign` | Multi-dimensional audit evidence | 2026-11-15T02:16:10.763Z |
+| `learn-dom-d-f32fc521` | `project://dathere-qsv` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md` | 2026-11-15T02:16:49.212Z |

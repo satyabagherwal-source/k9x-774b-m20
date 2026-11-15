@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md`  
 > **Source**: github ([https://github.com/metalbear-co/mirrord](https://github.com/metalbear-co/mirrord))  
-> **Source Version**: `4c3c4935`  
+> **Source Version**: `77c2d33d`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T09:56:49.715Z  
+> **Timestamp**: 2026-11-15T02:14:56.925Z  
 > **Learning ID**: `learn-github-metalbear-co-mirrord`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/metalbear-co/mirrord](https://github.com/metalbear-co/mirrord))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T09:56:49.708Z  
+> **Harvest Timestamp**: 2026-11-15T02:14:56.754Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1529,501 +1529,481 @@ mod test {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ef278b41` (2026-11-12)
-**Commit Message**: Fix serverless exec progress (#5229)
+### Incident Patch 1: `77c2d33d` (2026-11-14)
+**Commit Message**: Remove GitHub PATs in CI (#5239)
 
-* Fix serverless exec progress
+* Publish the changelog to docs-changelog with a Cubby app token
 
-* Blame the proxy for a sessions-manager 403, and keep the pick reason
+Replace CHANGELOG_PAT with a token minted from the Cubby app, scoped to
+metalbear-co/docs-changelog with contents: write. The reusable workflow
+now takes CUBBY_CLIENT_ID and CUBBY_PRIVATE_KEY instead of the PAT, and
+commits as cubby-mb[bot], the same as the operator, VS Code and IntelliJ
+changelogs.
 
-sessions-manager answers a refused token with 401, so a 403 comes from
-whatever fronts it, such as a load balancer checking the shared secret.
-Report it as such instead of telling the user to run `mirrord login`.
+Part of COR-2178.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* Push the Homebrew formula with a Cubby app token
+
+Replace BREW_GITHUB_PAT with a token minted from the Cubby app, scoped to
+metalbear-co/homebrew-mirrord with contents: write. Formula commits are
+now made as cubby-mb[bot] instead of a personal identity.
+
+Part of COR-2178.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* Restore info log
+* Pin return-dispatch and await-remote-run to commits in the operator E2E workflow
 
-* Show the remote bootstrap help only when the first connect times out
+Both actions were referenced by @main. They are about to receive a token
+minted from the Cubby app key, so pin them to their current main commits
+like the other actions in this repo.
 
-The other sessions-manager errors name their own fix, and the timeout
-is the one whose message alone doesn't.
+Part of COR-2178.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* Dispatch the operator E2E run with Cubby app tokens
+
+Repla
+
+**File**: `.github/workflows/changelog-update.yaml` (modified, +15/-4)
+```diff
+@@ -16,7 +16,9 @@ on:
+         type: string
+         default: ''
+     secrets:
+-      CHANGELOG_PAT:
++      CUBBY_CLIENT_ID:
++        required: true
++      CUBBY_PRIVATE_KEY:
+         required: true
+ 
+ jobs:
+@@ -25,6 +27,15 @@ jobs:
+     permissions:
+       contents: read
+     steps:
++      - name: Create GitHub App token (docs-changelog repo)
++        id: app-token
++        uses: actions/create-github-app-token@f8d387b68d61c58ab83c6c016672934102569859 # v3.0.0
++        with:
++          app-id: ${{ secrets.CUBBY_CLIENT_ID }}
++          private-key: ${{ secrets.CUBBY_PRIVATE_KEY }}
++          owner: metalbear-co
++          repositories: docs-changelog
++          permission-contents: write
+       - name: Prepare changelog to be published at /docs/changelog
+         uses: metalbear-co/release-changelog-docs@747e23c4fbb265ddd583a37e709549e1dbfc4e60
+         with:
+@@ -34,9 +45,9 @@ jobs:
+           public_source_url: https://github.com/metalbear-co/mirrord
+           destination_repo: metalbear-co/docs-changelog
+           destination_file_path: ./changelog/mirrord.md
+-          git_user: Eyal Bukchin
+-          git_email: eyal@metalbear.co
+-          git_access_token: ${{ secrets.CHANGELOG_PAT }}
++          git_user: cubby-mb[bot]
++          git_email: 273354325+cubby-mb[bot]@users.noreply.github.com
++          git_access_token: ${{ steps.app-token.outputs.token }}
+           title: mirrord Changelog
+           description: The release changelog for the mirrord CLI.
+           tags: oss,team,enterprise
+```
+
+**File**: `.github/workflows/operator-e2e.yaml` (modified, +31/-14)
+```diff
+@@ -10,10 +10,10 @@ name: Operator E2E Test
+ # when commits are pushed to those branches in `metalbear-co/mirrord`, so fork
+ # PRs do not trigger this workflow.
+ #
+-# `OPERATOR_E2E_PAT` requirements for the remote operator workflow:
+-# - Classic PAT: `repo`
+-# - Fine-grained PAT:
+-#   - `metalbear-co/operator`: `Actions: read` and `Actions: write`
++# The remote operator workflow is dispatched and polled with Cubby app tokens
++# scoped to `metalbear-co/operator` (`Actions: write` to dispatch, `Actions:
++# read` to poll). App tokens expire after one hour, so a fresh one is minted
++# before waiting on the run, and both timeouts stay under an hour.
+ #
+ # Automatic runs only proceed when the pushed branch matches
+ # `releases/<major>.<minor>.<patch>`.
+@@ -70,14 +70,22 @@ jobs:
+     runs-on: blacksmith-4vcpu-ubuntu-2404
+     continue-on-error: true
+     steps:
++      - name: Create GitHub App token (operator repo, dispatch)
++        id: dispatch-token
++        uses: actions/create-github-app-token@f8d387b68d61c58ab83c6c016672934102569859 # v3.0.0
++        with:
++          app-id: ${{ secrets.CUBBY_CLIENT_ID }}
++          private-key: ${{ secrets.CUBBY_PRIVATE_KEY }}
++          owner: metalbear-co
++          repositories: operator
++          permission-actions: write
++
+       - name: Trigger operator E2E workflow and wait for completion
+         id: trigger-e2e
+-        uses: metalbear-co/return-dispatch@main
++        uses: metalbear-co/return-dispatch@dac7338c24ea3a5c470ba13f9c3425537afa3439 # main
+         continue-on-error: true
+         with:
+-          # This PAT is only used to dispatch the workflow in
+-          # `metalbear-co/operator`.
+-          token: ${{ secrets.OPERATOR_E2E_PAT }}
++          token: ${{ steps.dispatch-token.outputs.token }}
+           ref: ${{ needs.resolve_trigger_context.outputs.operator_branch }}
+           repo: operator
+           owner: metalbear-co
+@@ -87,24 +95,33 @@ jobs:
+               "mirrord_commit": "${{ needs.resolve_trigger_context.outputs.mirrord_commit }}",
+               "mirrord_branch": "${{ needs.resolve_trigger_context.outputs.mirrord_branch }}"
+             }
+-          workflow_timeout_seconds: 7200
++          workflow_timeout_seconds: 3300
+           workflow_job_steps_retry_seconds: 30
+ 
+       - name: Use the output run ID and URL
+         run: |
+           echo ${{steps.trigger-e2e.outputs.run_id}}
+           echo ${{steps.trigger-e2e.outputs.run_url}}
+ 
++      # Minted after the dispatch so the full hour is available while waiting.
++      - name: Create GitHub App token (operator repo, await)
++        id: await-token
++        uses: actions/create-github-app-token@f8d387b68d61c58ab83c6c016672934102569859 # v3.0.0
++        with:
++          app-id: ${{ secrets.CUBBY_CLIENT_ID }}
++          private-key: ${{ secrets.CUBBY_PRIVATE_KEY }}
++          owner: metalbear-co
++          repositories: operator
++          permission-actions: read
++
+       - name: Await Run ID ${{ steps.trigger-e2e.outputs.run_id }}
+-        uses: metalbear-co/await-remote-run@main
++        uses: metalbear-co/await-remote-run@1fef79c6a9f061b4acf1773834285709fa4a7d5f # main
+         with:
+-          # This PAT is only used to read workflow runs in
+-          # `metalbear-co/operator`.
+-          token: ${{ secrets.OPERATOR_E2E_PAT }}
++          token: ${{ steps.await-token.outputs.token }}
+           repo: operator
+           owner: metalbear-co
+           run_id: ${{ steps.trigger-e2e.outputs.run_id }}
+-          run_timeout_seconds: 7200 # Optional
++          run_timeout_seconds: 3300 # Optional
+           poll_interval_ms: 5000 # Optional
+ 
+       - name: Show operator E2E results
+```
+
+**File**: `.github/workflows/release.yaml` (modified, +14/-4)
+```diff
+@@ -1131,7 +1131,8 @@ jobs:
+     with:
+       ref: ${{ needs.validate_release_request.outputs.sha }}
+     secrets:
+-      CHANGELOG_PAT: ${{ secrets.CHANGELOG_PAT }}
++      CUBBY_CLIENT_ID: ${{ secrets.CUBBY_CLIENT_ID }}
++      CUBBY_PRIVATE_KEY: ${{ secrets.CUBBY_PRIVATE_KEY }}
+ 
+   release_homebrew:
+     needs: [validate_release_request, release_gh]
+@@ -1152,12 +1153,21 @@ jobs:
+           echo "sha256_mac=$(cat /tmp/artifacts/universal-apple-darwin/mirrord_mac_universal.shasum256 | awk '{ print $1 }')" >> $GITHUB_ENV
+           echo "sha256_linux_aarch64=$(cat /tmp/artifacts/aarch64-unknown-linux-gnu/mirrord_linux_aarch64.shasum256 | awk '{ print $1 }')" >> $GITHUB_ENV
+           echo "sha256_linux_x86_64=$(cat /tmp/artifacts/x86_64-unknown-linux-gnu/mirrord_linux_x86_64.shasum256 | awk '{ print $1 }')" >> $GITHUB_ENV
++      - name: Create GitHub App token (homebrew-mirrord repo)
++        id: app-token
++        uses: actions/create-github-app-token@f8d387b68d61c58ab83c6c016672934102569859 # v3.0.0
++        with:
++          app-id: ${{ secrets.CUBBY_CLIENT_ID }}
++          private-key: ${{ secrets.CUBBY_PRIVATE_KEY }}
++          owner: metalbear-co
++          repositories: homebrew-mirrord
++          permission-contents: write
+       - name: Checkout into homebrew-mirrord
+         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+         with:
+           repository: metalbear-co/homebrew-mirrord
+           path: ./
+-          token: ${{ secrets.BREW_GITHUB_PAT }}
++          token: ${{ steps.app-token.outputs.token }}
+       - name: Update hashes and urls
+         run: |
+           sed -i -e 's/\([0-9]\+\.[0-9]\+\.[0-9]\+\)/${{ env.version }}/g' mirrord.rb
+@@ -1168,8 +1178,8 @@ jobs:
+         run: cat mirrord.rb
+       - name: Commit to metalbear-co/homebrew-mirrord
+         run: |
+-          git config --global user.email "eyal@metalbear.co"
+-          git config --global user.name "Eyal Bukchin"
++          git config --global user.email "273354325+cubby-mb[bot]@users.noreply.github.com"
++          git config --global user.name "cubby-mb[bot]"
+           git add .
+           git commit -m "Update to ${{ env.version }}"
+           git push
+```
+
+**File**: `changelog.d/+ci-cubby-app-tokens.internal.md` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++Replace personal access tokens in CI with Cubby app tokens.
+```
+
+---
+
+### Incident Patch 2: `fe91e1c2` (2026-11-13)
+**Commit Message**: Revise wizard (#5236)
+
+* up: ask to customize traffic instead of configure it
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* up: say what the traffic question's default does
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* ui: show the traffic default in the wizard's traffic step
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* Typo
 
 ---------
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `changelog.d/+serverless-connection-progress.fixed.md` (added, +1/-0)
+**File**: `changelog.d/+up-wizard-traffic-default.changed.md` (added, +1/-0)
 ```diff
 @@ -0,0 +1 @@
-+`mirrord exec` with a serverless target shows its progress while it waits for the target's agent, and fails with an error that names the cause instead of appearing to hang.
-\ No newline at end of file
++`mirrord wizard` and `mirrord up init` now say what `mirrord up` does with traffic when you skip customizing the header filter and ports.
 ```
 
-**File**: `mirrord/cli/src/connection.rs` (modified, +14/-8)
+**File**: `mirrord/cli/src/error.rs` (modified, +1/-1)
 ```diff
-@@ -552,22 +552,21 @@ pub(crate) async fn create_and_connect<R: Reporter>(
-         let standalone =
-             standalone_sessions_manager(config).map_err(CliError::SessionsManagerUrl)?;
-         let message = match &standalone {
--            None => "Connecting through the sessions-manager hosted by the mirrord operator, \
-+            None => "connecting through the sessions-manager hosted by the mirrord operator, \
-                      because `operator` is `true`"
-                 .to_owned(),
-             Some(endpoint) => match endpoint.source {
-                 EndpointSource::Explicit => format!(
--                    "Connecting through the sessions-manager at {endpoint}, set by \
-+                    "connecting through the sessions-manager at {endpoint}, set by \
-                      `sessions_manager.url` or MIRRORD_SESSIONS_MANAGER_URL"
-                 ),
-                 EndpointSource::Default => {
--                    format!("Connecting through the MetalBear Cloud sessions-manager at {endpoint}")
-+                    format!("connecting through the MetalBear Cloud sessions-manager at {endpoint}")
-                 }
-             },
-         };
-         tracing::info!("{message}");
--        progress.info(&message);
--
-+        let mut first_connect_progress = progress.subtask(&message);
-         let (route, agent_connect_info) = match standalone {
-             None => (
-                 SessionsManagerRoute::Operator(
-@@ -583,14 +582,21 @@ pub(crate) async fn create_and_connect<R: Reporter>(
-                 )
-             }
-         };
--        let connector = AgentConnector::SessionsManager(SessionsManagerConnector {
-+        let mut connector = SessionsManagerConnector {
-             connect_info,
-             route,
--        });
-+            first_conn: None,
-+        };
-+        let conn = connector.connect().await.map_err(|error| match error {
-+            SessionsManagerClientError::OperationTimeout => CliError::SessionsManagerConnectTimeout,
-+            error => CliError::SessionsManagerConnect(error),
-+        })?;
-+        connector.first_conn = Some(Box::new(conn));
-+        first_connect_progress.success(None);
+@@ -823,7 +823,7 @@ pub(crate) enum CliError {
  
-         return Ok(ConnectData {
-             connect_info: agent_connect_info,
--            connector,
-+            connector: AgentConnector::SessionsManager(connector),
-             // Implement - see MBE-1981
-             api_version: (0, 0),
-             target_container_ports: Vec::new(),
-```
-
-**File**: `mirrord/cli/src/connector.rs` (modified, +18/-7)
-```diff
-@@ -122,12 +122,15 @@ pub(crate) struct DirectConnector {
- 
- /// Connects to an agent through a mirrord-sessions-manager room.
- ///
--/// Each [`connect`](AgentConnector::connect) call opens a fresh, one-shot data plane connection
--/// to the room. There is no reconnect support: once a connection to the room fails, the session
--/// is over, same as [`DirectConnector`].
-+/// The first connection is established while the session is set up, so its wait for an agent
-+/// shows up in the progress, and is parked in [`Self::first_conn`], to be handed out on the first
-+/// [`connect`](AgentConnector::connect) call. Any later call opens a fresh, one-shot data plane
-+/// connection to the room. There is no reconnect support: once a connection to the room fails,
-+/// the session is over, same as [`DirectConnector`].
- pub(crate) struct SessionsManagerConnector {
-     pub(crate) connect_info: SessionsManagerConnectInfo,
-     pub(crate) route: SessionsManagerRoute,
-+    pub(crate) first_conn: Option<Box<OperatorConnection>>,
- }
- 
- /// How a [`SessionsManagerConnector`] reaches its sessions-manager.
-@@ -139,7 +142,11 @@ pub(crate) enum SessionsManagerRoute {
- }
- 
- impl SessionsManagerConnector {
--    async fn connect(&self) -> Result<OperatorConnection, SessionsManagerClientError> {
-+    /// Takes `&mut self` only to keep the future [`Send`], since [`Self::first_conn`] isn't
-+    /// [`Sync`].
-+    pub(crate) async fn connect(
-+        &mut self,
-+    ) -> Result<OperatorConnection, SessionsManagerClientError> {
-         match &self.route {
-             SessionsManagerRoute::Operator(client) => {
-                 self.connect_with(OperatorTransport::new(client.clone()))
-@@ -157,7 +164,7 @@ impl SessionsManagerConnector {
- 
-     /// Generic over the transport because [`SessionsManagerTransport`] isn't object-safe.
-     async fn connect_with<T: SessionsManagerTransport>(
--        &self,
-+        &mut self,
-         transport: T,
-     ) -> Result<OperatorConnection, SessionsManagerClientError> {
-         let client = IntproxyClient::with_transport(self.connect_info.clone(), transport)?;
-@@ -173,6 +180,7 @@ impl fmt::Debug for SessionsManagerConnector {
-                 "operator_hosted",
-                 &matches!(self.route, SessionsManagerRoute::Operator(_)),
-             )
-+            .field("has_first_conn", &self.first_conn.is_some())
-             .finish()
-     }
- }
-@@ -369,9 +377,12 @@ impl ProtocolConnector for AgentConnector {
-                 Ok(AgentConnection::Direct(Framed::new(stream, Codec)))
-             }
-             AgentConnector::SessionsManager(sessions_manager) => {
--                let conn = sessions_manager.connect().await?;
-+                let conn = match sessions_manager.first_conn.take() {
-+                    Some(conn) => conn,
-+                    None => Box::new(sessions_manager.connect().await?),
-+                };
- 
--                Ok(AgentConnection::SessionsManager(Box::new(conn)))
-+                Ok(AgentConnection::SessionsManager(conn))
-             }
-         }
-     }
-```
-
-**File**: `mirrord/cli/src/error.rs` (modified, +15/-0)
-```diff
-@@ -562,6 +562,21 @@ pub(crate) enum CliError {
+     #[error("Failed to setup mirrord startup retry config with `{0}`")]
+     #[diagnostic(help(
+-        "This may happen when `startup_retry.min_ms > startup_retry.max_ms` or when `startup_retry.max_ms == 0`. If this is not teh case in your config, then this might be a bug!"
++        "This may happen when `startup_retry.min_ms > startup_retry.max_ms` or when `startup_retry.max_ms == 0`. If this is not the case in your config, then this might be a bug!"
      ))]
-     SessionsManagerUrl(#[source] mirrord_sessions_manager_client::SessionsManagerClientError),
+     InvalidBackoff(String),
  
-+    #[error("failed to connect to the serverless target's agent through sessions-manager: {0}")]
-+    #[diagnostic(help("{GENERAL_HELP}"))]
-+    SessionsManagerConnect(mirrord_sessions_manager_client::SessionsManagerClientError),
-+
-+    /// Kept apart from [`CliError::SessionsManagerConnect`] because the timeout's message alone
-+    /// doesn't say what to fix, while the other errors name it themselves.
-+    #[error("timed out connecting to the serverless target's agent through sessions-manager")]
-+    #[diagnostic(help(
-+        "Either sessions-manager didn't answer, or no workload of the target registered with it. \
-+        Check that the target's workload runs the mirrord remote bootstrap, and that it reaches \
-+        the same sessions-manager as this session. Its logs show whether it registered.\
-+        {GENERAL_HELP}"
-+    ))]
-+    SessionsManagerConnectTimeout,
-+
-     #[error("mirrord operator {0} failed: {1}")]
-     #[diagnostic(help("{GENERAL_HELP}"))]
-     OperatorBranchCreationFailed(OperatorOperation, String),
 ```
 
-**File**: `mirrord/sessions-manager/client/src/error.rs` (modified, +8/-0)
+**File**: `mirrord/cli/src/ui/wizard.rs` (modified, +2/-0)
 ```diff
-@@ -77,6 +77,14 @@ pub enum SessionsManagerClientError {
-          logs you in again, or MIRRORD_SESSIONS_MANAGER_AUTH_TOKEN is wrong"
-     )]
-     LoginTokenOrSharedSecretRejected,
-+    /// sessions-manager itself answers a refused token with 401, so a 403 comes from whatever
-+    /// fronts it.
-+    #[error(
-+        "the proxy in front of sessions-manager refused this session with 403 Forbidden; check \
-+         MIRRORD_SESSIONS_MANAGER_AUTH_TOKEN, the shared secret that proxy expects, and that \
-+         MIRRORD_SESSIONS_MANAGER_URL (or `sessions_manager.url`) points at sessions-manager"
-+    )]
-+    Forbidden,
-     #[error(
-         "MIRRORD_SESSIONS_MANAGER_API_KEY must hold a MetalBear API key, which begins with \
-          `metalbear_key_`"
+@@ -73,6 +73,7 @@ struct ModeInfo {
+     targetless: bool,
+     http_filter: bool,
+     traffic_question: &'static str,
++    traffic_default: &'static str,
+ }
+ 
+ /// ### Response for `GET /api/v1/up/modes`
+@@ -95,6 +96,7 @@ async fn up_modes() -> Json<ModesResponse> {
+             targetless: mode.allows_targetless(),
+             http_filter: mode.uses_http_filter(),
+             traffic_question: mode.traffic_question(),
++            traffic_default: mode.traffic_default(),
+         })
+         .collect();
+     Json(ModesResponse { modes })
 ```
 
-**File**: `mirrord/sessions-manager/client/src/transport/direct.rs` (modified, +41/-10)
+**File**: `mirrord/up/src/init.rs` (modified, +10/-3)
 ```diff
-@@ -260,6 +260,9 @@ impl SessionsManagerTransport for DirectTransport {
-         {
-             return Err(error);
-         }
-+        if response.status() == StatusCode::FORBIDDEN {
-+            return Err(SessionsManagerClientError::Forbidden);
+@@ -28,6 +28,7 @@ use mirrord_kube::{
+     api::kubernetes::create_kube_config, error::KubeApiError,
+     resolved::ResolvedTarget as KubeResolvedTarget,
+ };
++use modes::MODES_DOCS_URL;
+ pub use skeleton::{
+     PickedService, PickedWorkload, SkeletonError, render_skeleton, service_name_for,
+ };
+@@ -313,9 +314,15 @@ async fn prompt_traffic(
+     namespace: &str,
+ ) -> Result<(Option<String>, BTreeSet<u16>), InitError> {
+     let message = mode.traffic_question();
+-    if prompt(move || Confirm::new(message).with_default(false).prompt())
+-        .await?
+-        .not()
++    let help = format!("{} See {MODES_DOCS_URL}", mode.traffic_default());
++    if prompt(move || {
++        Confirm::new(message)
++            .with_default(false)
++            .with_help_message(&help)
++            .prompt()
++    })
++    .await?
++    .not()
+     {
+         return Ok(Default::default());
+     }
+```
+
+**File**: `mirrord/up/src/init/modes.rs` (modified, +17/-2)
+```diff
+@@ -7,6 +7,10 @@ use mirrord_config::target::TargetType;
+ 
+ use crate::{INFERRED_TARGET_TYPES, config::ServiceMode};
+ 
++/// The `mirrord up` docs on the modes, linked from the traffic question.
++pub const MODES_DOCS_URL: &str =
++    "https://metalbear.com/mirrord/docs/using-mirrord/multiple-concurrent-sessions/#service-modes";
++
+ impl ServiceMode {
+     /// The modes offered, in order. The first is preselected.
+     pub const OFFERED: [Self; 3] = [Self::Split, Self::Mirror, Self::Replace];
+@@ -70,9 +74,20 @@ impl ServiceMode {
+     /// The yes/no question before the traffic questions.
+     pub fn traffic_question(self) -> &'static str {
+         if self.uses_http_filter() {
+-            "Configure traffic filtering and ports?"
++            "Customize the header filter and ports?"
++        } else {
++            "Customize ports?"
 +        }
-         verify_event_stream(response.status(), response.headers())?;
- 
-         Ok(ControlPlaneEventStream::from_bytes(response.bytes_stream()))
-@@ -328,22 +331,31 @@ mod tests {
++    }
++
++    /// What `mirrord up` does when the [`Self::traffic_question`] is answered
++    /// no. The fallback filter is built in `ServiceConfig::unpatched_config`,
++    /// without `ports`, so it applies to every port not in `ignore_ports`.
++    pub fn traffic_default(self) -> &'static str {
++        if self.uses_http_filter() {
++            "Default: `baggage: .*mirrord-session={key}.*` header filter on every port your app listens on."
+         } else {
+-            "Configure ports?"
++            "Default: all traffic on every port your app listens on, unfiltered."
          }
      }
- 
--    /// No login token was sent, so `mirrord login` is not what refused the session, and the 401
--    /// is reported as is.
--    #[tokio::test]
--    async fn a_401_without_a_login_token_is_reported_as_the_bare_status() {
--        let app = Router::new().fallback(|| async { StatusCode::UNAUTHORIZED.into_response() });
-+    struct FixedLogin;
-+
-+    impl LoginTokenSource for FixedLogin {
-+        fn login_token(
-+            &self,
-+        ) -> BoxFuture<'_, Result<Option<LoginToken>, SessionsManagerClientError>> {
-+            std::future::ready(Ok(Some(LoginToken::from("login-token".to_owned())))).boxed()
-+        }
-+    }
-+
-+    /// Connects an intproxy authenticating with `login` to a sessions-manager that answers every
-+    /// request with `status`, and returns the error the connect fails with.
-+    async fn connect_error(
-+        status: StatusCode,
-+        login: Arc<dyn LoginTokenSource>,
-+    ) -> SessionsManagerClientError {
-+        let app = Router::new().fallback(move || async move { status.into_response() });
-         let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
-         let base_url =
-             Url::parse(&format!("http://{}/sm", listener.local_addr().unwrap())).unwrap();
-         tokio::spawn(async move { axum::serve(listener, app).await.unwrap() });
- 
-         let transport = DirectTransport::new(base_url.clone())
-             .unwrap()
--            .with_credentials(Arc::new(LoginTokenCredentials::new(
--                Arc::new(NoLogin),
--                &base_url,
--            )));
-+            .with_credentials(Arc::new(LoginTokenCredentials::new(login, &base_url)));
-         let client = IntproxyClient::with_transport(
-             SessionsManagerConnectInfo {
-                 scope: ServiceScope {
-@@ -357,7 +369,14 @@ mod tests {
-         )
-         .unwrap();
- 
--        let error = client.connect(Duration::from_secs(5)).await.unwrap_err();
-+        client.connect(Duration::from_secs(5)).await.unwrap_err()
-+    }
-+
-+    /// No login token was sent, so `mirrord login` is not what refused the session, and the 401
-+    /// is reported as is.
-+    #[tokio::test]
-+    async fn a_401_without_a_login_token_is_reported_as_the_bare_status() {
-+        let error = connect_error(StatusCode::UNAUTHORIZED, Arc::new(NoLogin)).await;
- 
-         assert!(
-             matches!(
-@@ -368,6 +387,18 @@ mod tests {
-         );
-     }
- 
-+    /// sessions-manager never answers 403, so even with a login token sent, a 403 is the
-+    /// fronting proxy's, and the login is not blamed for it.
-+    #[tokio::test]
-+    async fn a_403_with_a_login_token_blames_the_proxy() {
-+        let error = connect_error(StatusCode::FORBIDDEN, Arc::new(FixedLogin)).await;
-+
-+        assert!(
-+            matches!(error, SessionsManagerClientError::Forbidden),
-+            "got {error:?}"
-+        );
-+    }
-+
-     #[test]
-     fn explicit_url_is_used_as_set() {
-         let endpoint = SessionsManagerEndpoint::resolve(Some("https://sm.example.com/sm")).unwrap();
-```
-
----
-
-### Incident Patch 2: `1f96c918` (2026-11-11)
-**Commit Message**: Revert "Enable linux fs fixes for all users" (#5226)
-
-* Revert "Enable linux fs fixes for all users (#5214)"
-
-This reverts commit 0dc6e26fb6ded4800832d9c0647891235a252ed7.
-
-* Changelog
-
-**File**: `changelog.d/+linux-fs-fixes-default-operator.changed.md` (removed, +0/-1)
-```diff
-@@ -1 +0,0 @@
--On Linux, `experimental.hook_libc_syscall` and `experimental.old_glibc_support` are now enabled by default for all users.
-```
-
-**File**: `changelog.d/+revert-linux-fs-fixes-default-operator.internal.md` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+Reverted making Linux file system fixes default for operator sessions.
-```
-
-**File**: `mirrord-schema.json` (modified, +2/-2)
-```diff
-@@ -3301,7 +3301,7 @@
-         },
-         "hook_libc_syscall": {
-           "title": "_experimental_ hook_libc_syscall {#experimental-hook_libc_syscall}",
--          "description": "Hooks libc's generic `syscall` function on Linux, to handle scenarios where libraries\nlike libuv opt into doing syscalls by hand instead of through the libc export (for\nexample, for `statx` or `close`).\n\nDefaults to `true`.",
-+          "description": "Hooks libc's generic `syscall` function on Linux, to handle scenarios where libraries\nlike libuv opt into doing syscalls by hand instead of through the libc export (for\nexample, for `statx` or `close`).\n\nDefaults to `true` in OSS.\nDefaults to `false` in mfT.",
-           "type": [
-             "boolean",
-             "null"
-@@ -3349,7 +3349,7 @@
-         },
-         "old_glibc_support": {
-           "title": "_experimental_ old_glibc_support {#experimental-old_glibc_support}",
--          "description": "Hooks `__fxstat` and `__fxstat64` on Linux.\n\nBinaries linked against glibc older than 2.33, such as the official Node.js builds, call\nthese instead of `fstat`. Without this hook they see the local placeholder of a remote\nfile: an empty character device. In Node.js, `fs.copyFileSync` then copies nothing.\n\nDefaults to `true`.",
-+          "description": "Hooks `__fxstat` and `__fxstat64` on Linux.\n\nBinaries linked against glibc older than 2.33, such as the official Node.js builds, call\nthese instead of `fstat`. Without this hook they see the local placeholder of a remote\nfile: an empty character device. In Node.js, `fs.copyFileSync` then copies nothing.\n\nDefaults to `true` in OSS.\nDefaults to `false` in mfT.",
-           "type": [
-             "boolean",
-             "null"
-```
-
-**File**: `mirrord/cli/src/connection.rs` (modified, +2/-0)
-```diff
-@@ -793,6 +793,8 @@ fn process_config_oss<P: Progress>(config: &mut LayerConfig, progress: &mut P) -
- 
-     config.experimental.disable_reuseaddr = config.experimental.disable_reuseaddr.or(Some(true));
-     config.experimental.go_asmcgocall = config.experimental.go_asmcgocall.or(Some(true));
-+    config.experimental.hook_libc_syscall = config.experimental.hook_libc_syscall.or(Some(true));
-+    config.experimental.old_glibc_support = config.experimental.old_glibc_support.or(Some(true));
- 
-     Ok(())
  }
 ```
 
-**File**: `mirrord/config/src/experimental.rs` (modified, +14/-8)
+**File**: `packages/wizard/BUSINESS_LOGIC.md` (modified, +4/-3)
 ```diff
-@@ -137,7 +137,8 @@ pub struct ExperimentalConfig {
-     /// like libuv opt into doing syscalls by hand instead of through the libc export (for
-     /// example, for `statx` or `close`).
-     ///
--    /// Defaults to `true`.
-+    /// Defaults to `true` in OSS.
-+    /// Defaults to `false` in mfT.
-     //
-     // Libraries sometimes skip a libc export and make the syscall through `syscall(SYS_..., ...)`
-     // instead, which none of the named hooks see. Known cases:
-@@ -146,8 +147,8 @@ pub struct ExperimentalConfig {
-     //   on remote files and `fs.fstatSync` described the local placeholder. It also closes fds
-     //   this way in `copyfile`, which left the fd mapped, so the next local file that got its
-     //   number read the remote file.
--    #[config(default = true)]
--    pub hook_libc_syscall: bool,
-+    #[config(default = None)]
-+    pub hook_libc_syscall: Option<bool>,
- 
-     /// ### _experimental_ old_glibc_support {#experimental-old_glibc_support}
-     ///
-@@ -157,12 +158,13 @@ pub struct ExperimentalConfig {
-     /// these instead of `fstat`. Without this hook they see the local placeholder of a remote
-     /// file: an empty character device. In Node.js, `fs.copyFileSync` then copies nothing.
-     ///
--    /// Defaults to `true`.
-+    /// Defaults to `true` in OSS.
-+    /// Defaults to `false` in mfT.
-     //
-     // COR-2032: Node.js linked against glibc 2.28 calls `__fxstat64` for `fstat`, and libuv's
-     // `copyfile` sizes the copy from it, so `fs.copyFileSync` copied 0 bytes from remote files.
--    #[config(default = true)]
--    pub old_glibc_support: bool,
-+    #[config(default = None)]
-+    pub old_glibc_support: Option<bool>,
- 
-     /// ### _experimental_ latency {#experimental-latency}
-     ///
-@@ -240,8 +242,12 @@ impl CollectAnalytics for &ExperimentalConfig {
-         analytics.add("browser_extension_config", self.browser_extension_config);
-         analytics.add("non_blocking_tcp_connect", self.non_blocking_tcp_connect);
-         analytics.add("dlopen_cgo", self.dlopen_cgo);
--        analytics.add("hook_libc_syscall", self.hook_libc_syscall);
--        analytics.add("old_glibc_support", self.old_glibc_support);
-+        if let Some(hook_libc_syscall) = self.hook_libc_syscall {
-+            analytics.add("hook_libc_syscall", hook_libc_syscall);
-+        }
-+        if let Some(old_glibc_support) = self.old_glibc_support {
-+            analytics.add("old_glibc_support", old_glibc_support);
-+        }
-         analytics.add("latency_transmit_delay", self.latency.transmit_delay);
-         analytics.add("latency_receive_delay", self.latency.receive_delay);
-         analytics.add("applev", self.applev.is_some());
+@@ -30,9 +30,10 @@ The steps follow `mirrord up init` (`mirrord/up/src/init.rs`):
+    named after the workload (`<workload>-2` and so on when the name is taken); a targetless
+    service is named by the user.
+ 3. **Traffic** (`TrafficStep`), skipped for a targetless service: the mode's `traffic_question`,
+-   off by default. When on: the HTTP header filter (not in Replace), the ports the target
+-   declares (from `GET /api/v1/up/ports`) to intercept (all ticked; unticked ones are ignored),
+-   and other ports to ignore.
++   off by default. When off: the mode's `traffic_default`, what `mirrord up` does without
++   customizing, linking to the service modes docs. When on: the HTTP header filter (not in
++   Replace), the ports the target declares (from `GET /api/v1/up/ports`) to intercept (all
++   ticked; unticked ones are ignored), and other ports to ignore.
+ 4. **Run** (`RunStep`): the local command (required) and the working directory.
+ 5. **Export** (`ExportStep`): the services so far, "Add another service" (back to Mode), the YAML
+    from `POST /api/v1/up/render`, copy and download as `mirrord-up.yaml`, and how to run it. It
 ```
 
-**File**: `mirrord/layer-tests/tests/configs/node_libuv.json` (added, +6/-0)
+**File**: `packages/wizard/mock-server.js` (modified, +9/-3)
 ```diff
-@@ -0,0 +1,6 @@
-+{
-+  "experimental": {
-+    "hook_libc_syscall": true,
-+    "old_glibc_support": true
-+  }
-+}
+@@ -13,7 +13,9 @@ const mockData = {
+       target_types: ["deployment", "statefulset", "rollout", "pod"],
+       targetless: true,
+       http_filter: true,
+-      traffic_question: "Configure traffic filtering and ports?",
++      traffic_question: "Customize the header filter and ports?",
++      traffic_default:
++        "Default: `baggage: .*mirrord-session={key}.*` header filter on every port your app listens on.",
+     },
+     {
+       id: "mirror",
+@@ -24,7 +26,9 @@ const mockData = {
+       target_types: ["deployment", "statefulset", "rollout", "pod"],
+       targetless: false,
+       http_filter: true,
+-      traffic_question: "Configure traffic filtering and ports?",
++      traffic_question: "Customize the header filter and ports?",
++      traffic_default:
++        "Default: `baggage: .*mirrord-session={key}.*` header filter on every port your app listens on.",
+     },
+     {
+       id: "replace",
+@@ -35,7 +39,9 @@ const mockData = {
+       target_types: ["deployment", "statefulset"],
+       targetless: false,
+       http_filter: false,
+-      traffic_question: "Configure ports?",
++      traffic_question: "Customize ports?",
++      traffic_default:
++        "Default: all traffic on every port your app listens on, unfiltered.",
+     },
+   ],
+   contexts: {
 ```
 
-**File**: `mirrord/layer-tests/tests/node_copyfile.rs` (modified, +6/-4)
+**File**: `packages/wizard/src/components/Wizard.test.tsx` (modified, +24/-3)
 ```diff
-@@ -2,6 +2,7 @@
- #![warn(clippy::indexing_slicing)]
+@@ -75,7 +75,7 @@ describe('Wizard', () => {
+     next()
  
- use core::assert_matches;
-+use std::path::Path;
+     fireEvent.click(
+-      screen.getByLabelText('Configure traffic filtering and ports?'),
++      screen.getByLabelText('Customize the header filter and ports?'),
+     )
+     typeInto(/HTTP header filter/, 'x-user: me')
+     fireEvent.click(await screen.findByLabelText('intercept port 9090'))
+@@ -135,6 +135,27 @@ describe('Wizard', () => {
+     ).toBeInTheDocument()
+   })
  
- use mirrord_protocol::{
-     ClientMessage, DaemonMessage, FileRequest, FileResponse, Payload,
-@@ -18,18 +19,19 @@ mod common;
- pub use common::*;
++  it('says what the traffic defaults are until the user customizes them', async () => {
++    render(<Wizard open={true} onClose={onClose} />)
++
++    await pickMode('Split')
++    await pickOption(/server-echo deployment/)
++    next()
++
++    const toggle = screen.getByLabelText(
++      'Customize the header filter and ports?',
++    )
++    expect(toggle).toHaveAccessibleDescription(/header filter on every port/)
++    expect(screen.getByRole('link', { name: 'Learn more' })).toHaveAttribute(
++      'href',
++      'https://metalbear.com/mirrord/docs/using-mirrord/multiple-concurrent-sessions/#service-modes',
++    )
++    fireEvent.click(toggle)
++    expect(
++      screen.queryByText(/header filter on every port/),
++    ).not.toBeInTheDocument()
++  })
++
+   it('offers no targetless option and no header filter in replace mode', async () => {
+     render(<Wizard open={true} onClose={onClose} />)
  
- /// On Linux, libuv's `copyfile` sizes the copy with `fstat`, which official Node.js builds call
--/// as `__fxstat64`, and closes both files through libc's `syscall`. The layer hooks both by
--/// default, so it sees the same requests as on macOS.
-+/// as `__fxstat64`, and closes both files through libc's `syscall`. The config enables the hooks
-+/// for both, so the layer sees the same requests as on macOS.
- #[rstest]
- #[tokio::test]
--async fn node_copyfile() {
-+async fn node_copyfile(config_dir: &Path) {
-     let _tracing = init_tracing();
+@@ -145,7 +166,7 @@ describe('Wizard', () => {
+     ).not.toBeInTheDocument()
+     next()
  
-     let application = Application::NodeCopyFile;
-+    let config = config_dir.join("node_libuv.json");
-     let (mut test_process, mut intproxy) = application
-         .start_process(
-             vec![("MIRRORD_FILE_READ_WRITE_PATTERN", "/app/dummy")],
--            None,
-+            Some(&config),
-         )
-         .await;
- 
-```
-
-**File**: `mirrord/layer-tests/tests/node_stat.rs` (modified, +4/-4)
-```diff
-@@ -15,11 +15,10 @@ mod common;
- pub use common::*;
- 
- /// libuv stats paths and fds with `statx` through libc's `syscall`, so the layer only sees
--/// `statSync`, `lstatSync` and `fstatSync` through `experimental.hook_libc_syscall`, which is on
--/// by default.
-+/// `statSync`, `lstatSync` and `fstatSync` with `experimental.hook_libc_syscall`.
- #[rstest]
- #[tokio::test]
--async fn node_stat() {
-+async fn node_stat(config_dir: &Path) {
-     let _tracing = init_tracing();
- 
-     const FD: u64 = 1;
-@@ -29,13 +28,14 @@ async fn node_stat() {
-         ..Default::default()
-     };
- 
-+    let config = config_dir.join("node_libuv.json");
-     let (mut test_process, mut intproxy) = Application::NodeStat
-         .start_process(
-             vec![
-                 ("MIRRORD_FILE_MODE", "localwithoverrides"),
-                 ("MIRRORD_FILE_READ_ONLY_PATTERN", "^/app/"),
-             ],
--            None,
-+            Some(&config),
-         )
-         .await;
- 
+-    fireEvent.click(screen.getByLabelText('Configure ports?'))
++    fireEvent.click(screen.getByLabelText('Customize ports?'))
+     expect(
+       screen.queryByLabelText(/HTTP header filter/),
+     ).not.toBeInTheDocument()
+@@ -158,7 +179,7 @@ describe('Wizard', () => {
+     await pickOption(/server-echo deployment/)
+     next()
+     fireEvent.click(
+-      screen.getByLabelText('Configure traffic filtering and ports?'),
++      screen.getByLabelText('Customize the header filter and ports?'),
+     )
+     await screen.findByLabelText('intercept port 80')
+     typeInto(/Other ports to ignore/, 'http')
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5239** (2026-11-14): Remove GitHub PATs in CI (@0x00A5)
+- **PR #5236** (2026-11-13): Revise wizard (@0x00A5)
+- **PR #5235** (2026-11-13): Run serverless targets with mirrord up (@Razz4780)
 - **PR #5234** (2026-11-12): agent: add http_detect_inactive_ports config option (@0x00A5)
 - **PR #5231** (2026-11-12): MBE-2174: Clear zip, minimatch and x/crypto Dependabot alerts (@hank-metalbear)
 - **PR #5230** (2026-11-12): agent: warn when HTTP detection times out (@MintSoup)
-- **PR #5229** (2026-11-12): Fix serverless exec progress (@Razz4780)
-- **PR #5227** (2026-11-12): Fail config verification when branching or splitting is used with serverless (@Razz4780)
-- **PR #5226** (2026-11-11): Revert "Enable linux fs fixes for all users" (@0x00A5)
 
 ---
 
@@ -2043,28 +2023,45 @@ This reverts commit 0dc6e26fb6ded4800832d9c0647891235a252ed7.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. serverless exec progress (#5229)
+## X. Remove GitHub PATs in CI
 
 **RULE**:
-When implementing operations in `changelog.d/+serverless-connection-progress.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in metalbear-co/mirrord. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/changelog-update.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in metalbear-co/mirrord. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ef278b41`: serverless exec progress (#5229). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `77c2d33d`: Remove GitHub PATs in CI. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/+serverless-connection-progress.fixed.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/changelog-update.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-`mirrord exec` with a serverless target shows its progress while it waits for the target's agent, and fails with an error that names the cause instead of appearing to hang.
+      CUBBY_CLIENT_ID:
+        required: true
+      CUBBY_PRIVATE_KEY:
+      - name: Create GitHub App token (docs-changelog repo)
+        id: app-token
+        uses: actions/create-github-app-token@f8d387b68d61c58ab83c6c016672934102569859 # v3.0.0
+        with:
+          app-id: ${{ secrets.CUBBY_CLIENT_ID }}
+          private-key: ${{ secrets.CUBBY_PRIVATE_KEY }}
+          owner: metalbear-co
+          repositories: docs-changelog
+          permission-contents: write
+          git_user: cubby-mb[bot]
+          git_email: 273354325+cubby-mb[bot]@users.noreply.github.com
+          git_access_token: ${{ steps.app-token.outputs.token }}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+      CHANGELOG_PAT:
+          git_user: Eyal Bukchin
+          git_email: eyal@metalbear.co
+          git_access_token: ${{ secrets.CHANGELOG_PAT }}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ef278b41` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `77c2d33d` are properly handled with clean fallback behavior.

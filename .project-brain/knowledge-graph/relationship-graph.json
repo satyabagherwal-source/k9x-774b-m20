@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-15T01:47:18.114Z",
+  "updated_at": "2026-11-15T02:16:49.210Z",
   "statistics": {
-    "total_nodes": 229,
+    "total_nodes": 230,
     "total_edges": 129,
     "domain_distribution": {
-      "D": 180,
+      "D": 181,
       "M": 1,
       "H": 19,
       "J": 8,
@@ -5144,6 +5144,28 @@
       ],
       "created_at": "2026-11-15T01:47:18.113Z",
       "updated_at": "2026-11-15T01:47:18.113Z"
+    },
+    "DOM-D-F32FC521": {
+      "id": "DOM-D-F32FC521",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): dathere/qsv",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  \n> **Source**: github ([https://github.com/dathere/qsv](h -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  \n> **Source**: github ([https://github.com/dathere/qsv](h",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://dathere-qsv/dathere-qsv-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T02:16:15.647Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (dathere-qsv)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-15T02:16:49.210Z",
+      "updated_at": "2026-11-15T02:16:49.210Z"
     }
   },
   "edges": [

@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for metalbear/co/mirrord
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for metalbear-co/mirrord
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "metalbear/co/mirrord",
-  "source_url": "https://github.com/metalbear/co/mirrord",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "metalbear-co/mirrord",
+  "source_url": "https://github.com/metalbear-co/mirrord",
+  "source_version": "77c2d33d",
+  "license": "MIT",
+  "timestamp": "2026-11-15T02:14:58.192Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-metalbear-co-mirrord",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [metalbear/co/mirrord](https://github.com/metalbear/co/mirrord) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [metalbear-co/mirrord](https://github.com/metalbear-co/mirrord) (Revision: `77c2d33d`).  
+> **License**: MIT | **Timestamp**: `2026-11-15T02:14:58.192Z`  
+> **Learning ID**: `learn-github-metalbear-co-mirrord`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `metalbear/co/mirrord` (Commit: `historical`)
+- **Target Repository**: `metalbear-co/mirrord` (Commit: `77c2d33d`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md`  
-> **Source**: github ([https://github.com/metalbear-co/mirrord](https://github.com/metalbear-co/mirrord))  
-> **Source Version**: `f28032b1`  
-> **License**: MIT  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T16:55:48.602Z  
-> **Learning ID**: `learn-github-metalbear-co-mirrord`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): metalbear-co/mirrord
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/metalbear-co/mirrord](https://github.com/metalbear-co/mirrord))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T16:55:48.328Z  
+> **Harvest Timestamp**: 2026-11-15T02:14:56.754Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Run any process, on your machine or in an AI agent's environment, as if it were a pod in your Kubernetes cluster: real env vars, DNS, network, traffic.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 5410 stars
+- **Stars / Engagement**: 5411 stars
 
 ---
 
@@ -600,11 +586,14 @@ use std::{
 use bytes::{Buf, Bytes};
 use futures::{Sink, SinkExt, Stream};
 use pin_project_lite::pin_project;
+use prometheus::IntGauge;
 use tokio::{
     io::AsyncWrite,
     sync::{OwnedSemaphorePermit, Semaphore},
 };
 use tokio_util::sync::PollSemaphore;
+
+use crate::metrics::IntGaugeGuard;
 
 /// Shared store for permits that can be used to throttle data [`Stream`]s and [`Sink`]s.
 ///
@@ -613,17 +602,23 @@ use tokio_util::sync::PollSemaphore;
 ///
 /// An instance can be cloned and shared.
 /// Clones use the same permit pool.
+///
+/// The permits in use stand for the memory held: each chunk of data takes its length plus a fixed
+/// per-chunk overhead. They are reported in the `in_use` gauge, through [`ThrottlePermit`]s, and
+/// clones report to the same gauge.
 #[derive(Debug, Clone)]
 pub struct Throttle {
     max_permits: usize,
     sem: PollSemaphore,
+    in_use: IntGauge,
 }
 
 impl Throttle {
-    pub fn new(max_permits: usize) -> Self {
+    pub fn new(max_permits: usize, in_use: IntGauge) -> Self {
         Self {
             max_permits,
             sem: PollSemaphore::new(Arc::new(Semaphore::new(max_permits))),
+            in_use,
         }
     }
 
@@ -631,12 +626,24 @@ impl Throttle {
         &mut self,
         data: &D,
         cx: &mut Context<'_>,
-    ) -> Poll<Option<OwnedSemaphorePermit>> {
+    ) -> Poll<Option<ThrottlePermit>> {
         let permits = data.size() + std::mem::size_of::<Bytes>();
         let permits = permits.min(self.max_permits);
         let permits = u32::try_from(permits).unwrap_or(u32::MAX);
-        self.sem.poll_acquire_many(cx, permits)
+        self.sem.poll_acquire_many(cx, permits).map(|permit| {
+            permit.map(|permit| ThrottlePermit {
+                _in_use: IntGaugeGuard::new(self.in_use.clone(), permit.num_permits()),
+                _permit: permit,
+            })
+        })
     }
+}
+
+/// Permits of a [`Throttle`], reported in its `in_use` gauge until dropped.
+#[derive(Debug)]
+pub struct ThrottlePermit {
+    _permit: OwnedSemaphorePermit,
+    _in_use: IntGaugeGuard,
 }
 
 /// Trait for values that store client data.
@@ -658,14 +665,14 @@ impl IsClientData for Bytes {
 #[derive(Debug)]
 pub struct Throttled<D> {
     data: D,
-    permit: OwnedSemaphorePermit,
+    permit: ThrottlePermit,
 }
 
 impl<D> Throttled<D> {
     /// Returns the client data and the permits acquired from the parent [`Throttle`] instance.
     ///
     /// Drop the permits after removing the data from memory.
-    pub fn unpack(self) -> (D, OwnedSemaphorePermit) {
+    pub fn unpack(self) -> (D, ThrottlePermit) {
         (self.data, self.permit)
     }
 }
@@ -898,34 +905,7 @@ where
     }
 
     fn poll_close(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
-        std::task::ready!(self.as_mut().poll_flush_buffer_down_to(0, cx))?;
-        self.project().writer.poll_shutdown(cx)
-    }
-}
-
-#[cfg(test)]
-mod test {
-    use futures::SinkExt;
-    use tokio::io::AsyncWrite;
-
-    use super::*;
-
-    /// Accepts at most a fixed number of bytes per
-    /// [`AsyncWrite::poll_write`]/[`AsyncWrite::poll_write_vectored`] call, forcing the
-    /// [`IoVecThrottledSink`] to handle partial writes.
-    struct ShortWriter {
-        max_per_write: usize,
-        written: Vec<u8>,
-    }
-
-    impl AsyncWrite for ShortWriter {
-        fn poll_write(
-            self: Pin<&mut Self>,
-            _: &mut Context<'_>,
-            buf: &[u8],
-        ) -> Poll<io::Result<usize>> {
-            let this = self.get_mut();
-            let accepted = buf.g
+        std::task::ready!(self.as_mut().p
 ```
 
 ### Core Architecture Module: `mirrord/agent/src/util/io/timeout.rs`
@@ -1560,328 +1540,481 @@ mod test {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0dc6e26f` (2026-11-11)
-**Commit Message**: Enable linux fs fixes for all users (#5214)
+### Incident Patch 1: `77c2d33d` (2026-11-14)
+**Commit Message**: Remove GitHub PATs in CI (#5239)
 
-**File**: `changelog.d/+linux-fs-fixes-default-operator.changed.md` (added, +1/-0)
+* Publish the changelog to docs-changelog with a Cubby app token
+
+Replace CHANGELOG_PAT with a token minted from the Cubby app, scoped to
+metalbear-co/docs-changelog with contents: write. The reusable workflow
+now takes CUBBY_CLIENT_ID and CUBBY_PRIVATE_KEY instead of the PAT, and
+commits as cubby-mb[bot], the same as the operator, VS Code and IntelliJ
+changelogs.
+
+Part of COR-2178.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* Push the Homebrew formula with a Cubby app token
+
+Replace BREW_GITHUB_PAT with a token minted from the Cubby app, scoped to
+metalbear-co/homebrew-mirrord with contents: write. Formula commits are
+now made as cubby-mb[bot] instead of a personal identity.
+
+Part of COR-2178.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* Pin return-dispatch and await-remote-run to commits in the operator E2E workflow
+
+Both actions were referenced by @main. They are about to receive a token
+minted from the Cubby app key, so pin them to their current main commits
+like the other actions in this repo.
+
+Part of COR-2178.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* Dispatch the operator E2E run with Cubby app tokens
+
+Repla
+
+**File**: `.github/workflows/changelog-update.yaml` (modified, +15/-4)
+```diff
+@@ -16,7 +16,9 @@ on:
+         type: string
+         default: ''
+     secrets:
+-      CHANGELOG_PAT:
++      CUBBY_CLIENT_ID:
++        required: true
++      CUBBY_PRIVATE_KEY:
+         required: true
+ 
+ jobs:
+@@ -25,6 +27,15 @@ jobs:
+     permissions:
+       contents: read
+     steps:
++      - name: Create GitHub App token (docs-changelog repo)
++        id: app-token
++        uses: actions/create-github-app-token@f8d387b68d61c58ab83c6c016672934102569859 # v3.0.0
++        with:
++          app-id: ${{ secrets.CUBBY_CLIENT_ID }}
++          private-key: ${{ secrets.CUBBY_PRIVATE_KEY }}
++          owner: metalbear-co
++          repositories: docs-changelog
++          permission-contents: write
+       - name: Prepare changelog to be published at /docs/changelog
+         uses: metalbear-co/release-changelog-docs@747e23c4fbb265ddd583a37e709549e1dbfc4e60
+         with:
+@@ -34,9 +45,9 @@ jobs:
+           public_source_url: https://github.com/metalbear-co/mirrord
+           destination_repo: metalbear-co/docs-changelog
+           destination_file_path: ./changelog/mirrord.md
+-          git_user: Eyal Bukchin
+-          git_email: eyal@metalbear.co
+-          git_access_token: ${{ secrets.CHANGELOG_PAT }}
++          git_user: cubby-mb[bot]
++          git_email: 273354325+cubby-mb[bot]@users.noreply.github.com
++          git_access_token: ${{ steps.app-token.outputs.token }}
+           title: mirrord Changelog
+           description: The release changelog for the mirrord CLI.
+           tags: oss,team,enterprise
+```
+
+**File**: `.github/workflows/operator-e2e.yaml` (modified, +31/-14)
+```diff
+@@ -10,10 +10,10 @@ name: Operator E2E Test
+ # when commits are pushed to those branches in `metalbear-co/mirrord`, so fork
+ # PRs do not trigger this workflow.
+ #
+-# `OPERATOR_E2E_PAT` requirements for the remote operator workflow:
+-# - Classic PAT: `repo`
+-# - Fine-grained PAT:
+-#   - `metalbear-co/operator`: `Actions: read` and `Actions: write`
++# The remote operator workflow is dispatched and polled with Cubby app tokens
++# scoped to `metalbear-co/operator` (`Actions: write` to dispatch, `Actions:
++# read` to poll). App tokens expire after one hour, so a fresh one is minted
++# before waiting on the run, and both timeouts stay under an hour.
+ #
+ # Automatic runs only proceed when the pushed branch matches
+ # `releases/<major>.<minor>.<patch>`.
+@@ -70,14 +70,22 @@ jobs:
+     runs-on: blacksmith-4vcpu-ubuntu-2404
+     continue-on-error: true
+     steps:
++      - name: Create GitHub App token (operator repo, dispatch)
++        id: dispatch-token
++        uses: actions/create-github-app-token@f8d387b68d61c58ab83c6c016672934102569859 # v3.0.0
++        with:
++          app-id: ${{ secrets.CUBBY_CLIENT_ID }}
++          private-key: ${{ secrets.CUBBY_PRIVATE_KEY }}
++          owner: metalbear-co
++          repositories: operator
++          permission-actions: write
++
+       - name: Trigger operator E2E workflow and wait for completion
+         id: trigger-e2e
+-        uses: metalbear-co/return-dispatch@main
++        uses: metalbear-co/return-dispatch@dac7338c24ea3a5c470ba13f9c3425537afa3439 # main
+         continue-on-error: true
+         with:
+-          # This PAT is only used to dispatch the workflow in
+-          # `metalbear-co/operator`.
+-          token: ${{ secrets.OPERATOR_E2E_PAT }}
++          token: ${{ steps.dispatch-token.outputs.token }}
+           ref: ${{ needs.resolve_trigger_context.outputs.operator_branch }}
+           repo: operator
+           owner: metalbear-co
+@@ -87,24 +95,33 @@ jobs:
+               "mirrord_commit": "${{ needs.resolve_trigger_context.outputs.mirrord_commit }}",
+               "mirrord_branch": "${{ needs.resolve_trigger_context.outputs.mirrord_branch }}"
+             }
+-          workflow_timeout_seconds: 7200
++          workflow_timeout_seconds: 3300
+           workflow_job_steps_retry_seconds: 30
+ 
+       - name: Use the output run ID and URL
+         run: |
+           echo ${{steps.trigger-e2e.outputs.run_id}}
+           echo ${{steps.trigger-e2e.outputs.run_url}}
+ 
++      # Minted after the dispatch so the full hour is available while waiting.
++      - name: Create GitHub App token (operator repo, await)
++        id: await-token
++        uses: actions/create-github-app-token@f8d387b68d61c58ab83c6c016672934102569859 # v3.0.0
++        with:
++          app-id: ${{ secrets.CUBBY_CLIENT_ID }}
++          private-key: ${{ secrets.CUBBY_PRIVATE_KEY }}
++          owner: metalbear-co
++          repositories: operator
++          permission-actions: read
++
+       - name: Await Run ID ${{ steps.trigger-e2e.outputs.run_id }}
+-        uses: metalbear-co/await-remote-run@main
++        uses: metalbear-co/await-remote-run@1fef79c6a9f061b4acf1773834285709fa4a7d5f # main
+         with:
+-          # This PAT is only used to read workflow runs in
+-          # `metalbear-co/operator`.
+-          token: ${{ secrets.OPERATOR_E2E_PAT }}
++          token: ${{ steps.await-token.outputs.token }}
+           repo: operator
+           owner: metalbear-co
+           run_id: ${{ steps.trigger-e2e.outputs.run_id }}
+-          run_timeout_seconds: 7200 # Optional
++          run_timeout_seconds: 3300 # Optional
+           poll_interval_ms: 5000 # Optional
+ 
+       - name: Show operator E2E results
+```
+
+**File**: `.github/workflows/release.yaml` (modified, +14/-4)
+```diff
+@@ -1131,7 +1131,8 @@ jobs:
+     with:
+       ref: ${{ needs.validate_release_request.outputs.sha }}
+     secrets:
+-      CHANGELOG_PAT: ${{ secrets.CHANGELOG_PAT }}
++      CUBBY_CLIENT_ID: ${{ secrets.CUBBY_CLIENT_ID }}
++      CUBBY_PRIVATE_KEY: ${{ secrets.CUBBY_PRIVATE_KEY }}
+ 
+   release_homebrew:
+     needs: [validate_release_request, release_gh]
+@@ -1152,12 +1153,21 @@ jobs:
+           echo "sha256_mac=$(cat /tmp/artifacts/universal-apple-darwin/mirrord_mac_universal.shasum256 | awk '{ print $1 }')" >> $GITHUB_ENV
+           echo "sha256_linux_aarch64=$(cat /tmp/artifacts/aarch64-unknown-linux-gnu/mirrord_linux_aarch64.shasum256 | awk '{ print $1 }')" >> $GITHUB_ENV
+           echo "sha256_linux_x86_64=$(cat /tmp/artifacts/x86_64-unknown-linux-gnu/mirrord_linux_x86_64.shasum256 | awk '{ print $1 }')" >> $GITHUB_ENV
++      - name: Create GitHub App token (homebrew-mirrord repo)
++        id: app-token
++        uses: actions/create-github-app-token@f8d387b68d61c58ab83c6c016672934102569859 # v3.0.0
++        with:
++          app-id: ${{ secrets.CUBBY_CLIENT_ID }}
++          private-key: ${{ secrets.CUBBY_PRIVATE_KEY }}
++          owner: metalbear-co
++          repositories: homebrew-mirrord
++          permission-contents: write
+       - name: Checkout into homebrew-mirrord
+         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+         with:
+           repository: metalbear-co/homebrew-mirrord
+           path: ./
+-          token: ${{ secrets.BREW_GITHUB_PAT }}
++          token: ${{ steps.app-token.outputs.token }}
+       - name: Update hashes and urls
+         run: |
+           sed -i -e 's/\([0-9]\+\.[0-9]\+\.[0-9]\+\)/${{ env.version }}/g' mirrord.rb
+@@ -1168,8 +1178,8 @@ jobs:
+         run: cat mirrord.rb
+       - name: Commit to metalbear-co/homebrew-mirrord
+         run: |
+-          git config --global user.email "eyal@metalbear.co"
+-          git config --global user.name "Eyal Bukchin"
++          git config --global user.email "273354325+cubby-mb[bot]@users.noreply.github.com"
++          git config --global user.name "cubby-mb[bot]"
+           git add .
+           git commit -m "Update to ${{ env.version }}"
+           git push
+```
+
+**File**: `changelog.d/+ci-cubby-app-tokens.internal.md` (added, +1/-0)
 ```diff
 @@ -0,0 +1 @@
-+On Linux, `experimental.hook_libc_syscall` and `experimental.old_glibc_support` are now enabled by default for all users.
-```
-
-**File**: `mirrord-schema.json` (modified, +2/-2)
-```diff
-@@ -3292,7 +3292,7 @@
-         },
-         "hook_libc_syscall": {
-           "title": "_experimental_ hook_libc_syscall {#experimental-hook_libc_syscall}",
--          "description": "Hooks libc's generic `syscall` function on Linux, to handle scenarios where libraries\nlike libuv opt into doing syscalls by hand instead of through the libc export (for\nexample, for `statx` or `close`).\n\nDefaults to `true` in OSS.\nDefaults to `false` in mfT.",
-+          "description": "Hooks libc's generic `syscall` function on Linux, to handle scenarios where libraries\nlike libuv opt into doing syscalls by hand instead of through the libc export (for\nexample, for `statx` or `close`).\n\nDefaults to `true`.",
-           "type": [
-             "boolean",
-             "null"
-@@ -3340,7 +3340,7 @@
-         },
-         "old_glibc_support": {
-           "title": "_experimental_ old_glibc_support {#experimental-old_glibc_support}",
--          "description": "Hooks `__fxstat` and `__fxstat64` on Linux.\n\nBinaries linked against glibc older than 2.33, such as the official Node.js builds, call\nthese instead of `fstat`. Without this hook they see the local placeholder of a remote\nfile: an empty character device. In Node.js, `fs.copyFileSync` then copies nothing.\n\nDefaults to `true` in OSS.\nDefaults to `false` in mfT.",
-+          "description": "Hooks `__fxstat` and `__fxstat64` on Linux.\n\nBinaries linked against glibc older than 2.33, such as the official Node.js builds, call\nthese instead of `fstat`. Without this hook they see the local placeholder of a remote\nfile: an empty character device. In Node.js, `fs.copyFileSync` then copies nothing.\n\nDefaults to `true`.",
-           "type": [
-             "boolean",
-             "null"
-```
-
-**File**: `mirrord/cli/src/connection.rs` (modified, +0/-2)
-```diff
-@@ -787,8 +787,6 @@ fn process_config_oss<P: Progress>(config: &mut LayerConfig, progress: &mut P) -
- 
-     config.experimental.disable_reuseaddr = config.experimental.disable_reuseaddr.or(Some(true));
-     config.experimental.go_asmcgocall = config.experimental.go_asmcgocall.or(Some(true));
--    config.experimental.hook_libc_syscall = config.experimental.hook_libc_syscall.or(Some(true));
--    config.experimental.old_glibc_support = config.experimental.old_glibc_support.or(Some(true));
- 
-     Ok(())
- }
-```
-
-**File**: `mirrord/config/src/experimental.rs` (modified, +8/-14)
-```diff
-@@ -137,8 +137,7 @@ pub struct ExperimentalConfig {
-     /// like libuv opt into doing syscalls by hand instead of through the libc export (for
-     /// example, for `statx` or `close`).
-     ///
--    /// Defaults to `true` in OSS.
--    /// Defaults to `false` in mfT.
-+    /// Defaults to `true`.
-     //
-     // Libraries sometimes skip a libc export and make the syscall through `syscall(SYS_..., ...)`
-     // instead, which none of the named hooks see. Known cases:
-@@ -147,8 +146,8 @@ pub struct ExperimentalConfig {
-     //   on remote files and `fs.fstatSync` described the local placeholder. It also closes fds
-     //   this way in `copyfile`, which left the fd mapped, so the next local file that got its
-     //   number read the remote file.
--    #[config(default = None)]
--    pub hook_libc_syscall: Option<bool>,
-+    #[config(default = true)]
-+    pub hook_libc_syscall: bool,
- 
-     /// ### _experimental_ old_glibc_support {#experimental-old_glibc_support}
-     ///
-@@ -158,13 +157,12 @@ pub struct ExperimentalConfig {
-     /// these instead of `fstat`. Without this hook they see the local placeholder of a remote
-     /// file: an empty character device. In Node.js, `fs.copyFileSync` then copies nothing.
-     ///
--    /// Defaults to `true` in OSS.
--    /// Defaults to `false` in mfT.
-+    /// Defaults to `true`.
-     //
-     // COR-2032: Node.js linked against glibc 2.28 calls `__fxstat64` for `fstat`, and libuv's
-     // `copyfile` sizes the copy from it, so `fs.copyFileSync` copied 0 bytes from remote files.
--    #[config(default = None)]
--    pub old_glibc_support: Option<bool>,
-+    #[config(default = true)]
-+    pub old_glibc_support: bool,
- 
-     /// ### _experimental_ latency {#experimental-latency}
-     ///
-@@ -242,12 +240,8 @@ impl CollectAnalytics for &ExperimentalConfig {
-         analytics.add("browser_extension_config", self.browser_extension_config);
-         analytics.add("non_blocking_tcp_connect", self.non_blocking_tcp_connect);
-         analytics.add("dlopen_cgo", self.dlopen_cgo);
--        if let Some(hook_libc_syscall) = self.hook_libc_syscall {
--            analytics.add("hook_libc_syscall", hook_libc_syscall);
--        }
--        if let Some(old_glibc_support) = self.old_glibc_support {
--            analytics.add("old_glibc_support", old_glibc_support);
--        }
-+        analytics.add("hook_libc_syscall", self.hook_libc_syscall);
-+        analytics.add("old_glibc_support", self.old_glibc_support);
-         analytics.add("latency_transmit_delay", self.latency.transmit_delay);
-         analytics.add("latency_receive_delay", self.latency.receive_delay);
-         analytics.add("applev", self.applev.is_some());
-```
-
-**File**: `mirrord/layer-tests/tests/configs/node_libuv.json` (removed, +0/-6)
-```diff
-@@ -1,6 +0,0 @@
--{
--  "experimental": {
--    "hook_libc_syscall": true,
--    "old_glibc_support": true
--  }
--}
-```
-
-**File**: `mirrord/layer-tests/tests/node_copyfile.rs` (modified, +4/-6)
-```diff
-@@ -2,7 +2,6 @@
- #![warn(clippy::indexing_slicing)]
- 
- use core::assert_matches;
--use std::path::Path;
- 
- use mirrord_protocol::{
-     ClientMessage, DaemonMessage, FileRequest, FileResponse, Payload,
-@@ -19,19 +18,18 @@ mod common;
- pub use common::*;
- 
- /// On Linux, libuv's `copyfile` sizes the copy with `fstat`, which official Node.js builds call
--/// as `__fxstat64`, and closes both files through libc's `syscall`. The config enables the hooks
--/// for both, so the layer sees the same requests as on macOS.
-+/// as `__fxstat64`, and closes both files through libc's `syscall`. The layer hooks both by
-+/// default, so it sees the same requests as on macOS.
- #[rstest]
- #[tokio::test]
--async fn node_copyfile(config_dir: &Path) {
-+async fn node_copyfile() {
-     let _tracing = init_tracing();
- 
-     let application = Application::NodeCopyFile;
--    let config = config_dir.join("node_libuv.json");
-     let (mut test_process, mut intproxy) = application
-         .start_process(
-             vec![("MIRRORD_FILE_READ_WRITE_PATTERN", "/app/dummy")],
--            Some(&config),
-+            None,
-         )
-         .await;
- 
-```
-
-**File**: `mirrord/layer-tests/tests/node_stat.rs` (modified, +4/-4)
-```diff
-@@ -15,10 +15,11 @@ mod common;
- pub use common::*;
- 
- /// libuv stats paths and fds with `statx` through libc's `syscall`, so the layer only sees
--/// `statSync`, `lstatSync` and `fstatSync` with `experimental.hook_libc_syscall`.
-+/// `statSync`, `lstatSync` and `fstatSync` through `experimental.hook_libc_syscall`, which is on
-+/// by default.
- #[rstest]
- #[tokio::test]
--async fn node_stat(config_dir: &Path) {
-+async fn node_stat() {
-     let _tracing = init_tracing();
- 
-     const FD: u64 = 1;
-@@ -28,14 +29,13 @@ async fn node_stat(config_dir: &Path) {
-         ..Default::default()
-     };
- 
--    let config = config_dir.join("node_libuv.json");
-     let (mut test_process, mut intproxy) = Application::NodeStat
-         .start_process(
-             vec![
-                 ("MIRRORD_FILE_MODE", "localwithoverrides"),
-                 ("MIRRORD_FILE_READ_ONLY_PATTERN", "^/app/"),
-             ],
--            Some(&config),
-+            None,
-         )
-         .await;
- 
-```
-
-**File**: `mirrord/layer/src/file/hooks.rs` (modified, +1/-5)
-```diff
-@@ -1834,11 +1834,7 @@ pub(crate) unsafe fn enable_file_hooks(hook_manager: &mut HookManager) {
-                 Fn__lxstat64,
-                 FN___LXSTAT64
-             );
--            if crate::setup()
--                .experimental()
--                .old_glibc_support
--                .unwrap_or_default()
--            {
-+            if crate::setup().experimental().old_glibc_support {
-                 replace!(
-                     hook_manager,
-                     "__fxstat",
++Replace personal access tokens in CI with Cubby app tokens.
 ```
 
 ---
 
-### Incident Patch 2: `a63324ba` (2026-11-10)
-**Commit Message**: Remove unused v1 /api/contexts and /api/namespaces routes from mirrord ui (#5221)
+### Incident Patch 2: `fe91e1c2` (2026-11-13)
+**Commit Message**: Revise wizard (#5236)
 
-**File**: `changelog.d/+remove-unused-ui-api.internal.md` (added, +1/-0)
+* up: ask to customize traffic instead of configure it
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* up: say what the traffic question's default does
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* ui: show the traffic default in the wizard's traffic step
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* Typo
+
+---------
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `changelog.d/+up-wizard-traffic-default.changed.md` (added, +1/-0)
 ```diff
 @@ -0,0 +1 @@
-+Removed unused local mirrord ui server APIs.
++`mirrord wizard` and `mirrord up init` now say what `mirrord up` does with traffic when you skip customizing the header filter and ports.
 ```
 
-**File**: `mirrord/cli/src/ui/server.rs` (modified, +3/-68)
+**File**: `mirrord/cli/src/error.rs` (modified, +1/-1)
 ```diff
-@@ -22,14 +22,11 @@ use axum::{
- use axum_extra::extract::cookie::{Cookie, CookieJar, SameSite};
- use futures::stream::StreamExt as _;
- use itertools::Itertools as _;
--use k8s_openapi::{
--    api::{authentication::v1::SelfSubjectReview, core::v1::Namespace},
--    jiff::Timestamp,
--};
-+use k8s_openapi::{api::authentication::v1::SelfSubjectReview, jiff::Timestamp};
- use kube::{
-     Api, Client,
--    api::{ListParams, PostParams},
--    config::{Config, KubeConfigOptions, Kubeconfig},
-+    api::PostParams,
-+    config::{Config, KubeConfigOptions},
+@@ -823,7 +823,7 @@ pub(crate) enum CliError {
+ 
+     #[error("Failed to setup mirrord startup retry config with `{0}`")]
+     #[diagnostic(help(
+-        "This may happen when `startup_retry.min_ms > startup_retry.max_ms` or when `startup_retry.max_ms == 0`. If this is not teh case in your config, then this might be a bug!"
++        "This may happen when `startup_retry.min_ms > startup_retry.max_ms` or when `startup_retry.max_ms == 0`. If this is not the case in your config, then this might be a bug!"
+     ))]
+     InvalidBackoff(String),
+ 
+```
+
+**File**: `mirrord/cli/src/ui/wizard.rs` (modified, +2/-0)
+```diff
+@@ -73,6 +73,7 @@ struct ModeInfo {
+     targetless: bool,
+     http_filter: bool,
+     traffic_question: &'static str,
++    traffic_default: &'static str,
+ }
+ 
+ /// ### Response for `GET /api/v1/up/modes`
+@@ -95,6 +96,7 @@ async fn up_modes() -> Json<ModesResponse> {
+             targetless: mode.allows_targetless(),
+             http_filter: mode.uses_http_filter(),
+             traffic_question: mode.traffic_question(),
++            traffic_default: mode.traffic_default(),
+         })
+         .collect();
+     Json(ModesResponse { modes })
+```
+
+**File**: `mirrord/up/src/init.rs` (modified, +10/-3)
+```diff
+@@ -28,6 +28,7 @@ use mirrord_kube::{
+     api::kubernetes::create_kube_config, error::KubeApiError,
+     resolved::ResolvedTarget as KubeResolvedTarget,
  };
- use mirrord_config::target::{Target, TargetDisplay};
- use mirrord_intproxy::session_monitor::MonitorEvent;
-@@ -782,44 +779,6 @@ async fn current_user() -> axum::Json<CurrentUserResponse> {
++use modes::MODES_DOCS_URL;
+ pub use skeleton::{
+     PickedService, PickedWorkload, SkeletonError, render_skeleton, service_name_for,
+ };
+@@ -313,9 +314,15 @@ async fn prompt_traffic(
+     namespace: &str,
+ ) -> Result<(Option<String>, BTreeSet<u16>), InitError> {
+     let message = mode.traffic_question();
+-    if prompt(move || Confirm::new(message).with_default(false).prompt())
+-        .await?
+-        .not()
++    let help = format!("{} See {MODES_DOCS_URL}", mode.traffic_default());
++    if prompt(move || {
++        Confirm::new(message)
++            .with_default(false)
++            .with_help_message(&help)
++            .prompt()
++    })
++    .await?
++    .not()
+     {
+         return Ok(Default::default());
+     }
+```
+
+**File**: `mirrord/up/src/init/modes.rs` (modified, +17/-2)
+```diff
+@@ -7,6 +7,10 @@ use mirrord_config::target::TargetType;
+ 
+ use crate::{INFERRED_TARGET_TYPES, config::ServiceMode};
+ 
++/// The `mirrord up` docs on the modes, linked from the traffic question.
++pub const MODES_DOCS_URL: &str =
++    "https://metalbear.com/mirrord/docs/using-mirrord/multiple-concurrent-sessions/#service-modes";
++
+ impl ServiceMode {
+     /// The modes offered, in order. The first is preselected.
+     pub const OFFERED: [Self; 3] = [Self::Split, Self::Mirror, Self::Replace];
+@@ -70,9 +74,20 @@ impl ServiceMode {
+     /// The yes/no question before the traffic questions.
+     pub fn traffic_question(self) -> &'static str {
+         if self.uses_http_filter() {
+-            "Configure traffic filtering and ports?"
++            "Customize the header filter and ports?"
++        } else {
++            "Customize ports?"
++        }
++    }
++
++    /// What `mirrord up` does when the [`Self::traffic_question`] is answered
++    /// no. The fallback filter is built in `ServiceConfig::unpatched_config`,
++    /// without `ports`, so it applies to every port not in `ignore_ports`.
++    pub fn traffic_default(self) -> &'static str {
++        if self.uses_http_filter() {
++            "Default: `baggage: .*mirrord-session={key}.*` header filter on every port your app listens on."
+         } else {
+-            "Configure ports?"
++            "Default: all traffic on every port your app listens on, unfiltered."
+         }
      }
  }
+```
+
+**File**: `packages/wizard/BUSINESS_LOGIC.md` (modified, +4/-3)
+```diff
+@@ -30,9 +30,10 @@ The steps follow `mirrord up init` (`mirrord/up/src/init.rs`):
+    named after the workload (`<workload>-2` and so on when the name is taken); a targetless
+    service is named by the user.
+ 3. **Traffic** (`TrafficStep`), skipped for a targetless service: the mode's `traffic_question`,
+-   off by default. When on: the HTTP header filter (not in Replace), the ports the target
+-   declares (from `GET /api/v1/up/ports`) to intercept (all ticked; unticked ones are ignored),
+-   and other ports to ignore.
++   off by default. When off: the mode's `traffic_default`, what `mirrord up` does without
++   customizing, linking to the service modes docs. When on: the HTTP header filter (not in
++   Replace), the ports the target declares (from `GET /api/v1/up/ports`) to intercept (all
++   ticked; unticked ones are ignored), and other ports to ignore.
+ 4. **Run** (`RunStep`): the local command (required) and the working directory.
+ 5. **Export** (`ExportStep`): the services so far, "Add another service" (back to Mode), the YAML
+    from `POST /api/v1/up/render`, copy and download as `mirrord-up.yaml`, and how to run it. It
+```
+
+**File**: `packages/wizard/mock-server.js` (modified, +9/-3)
+```diff
+@@ -13,7 +13,9 @@ const mockData = {
+       target_types: ["deployment", "statefulset", "rollout", "pod"],
+       targetless: true,
+       http_filter: true,
+-      traffic_question: "Configure traffic filtering and ports?",
++      traffic_question: "Customize the header filter and ports?",
++      traffic_default:
++        "Default: `baggage: .*mirrord-session={key}.*` header filter on every port your app listens on.",
+     },
+     {
+       id: "mirror",
+@@ -24,7 +26,9 @@ const mockData = {
+       target_types: ["deployment", "statefulset", "rollout", "pod"],
+       targetless: false,
+       http_filter: true,
+-      traffic_question: "Configure traffic filtering and ports?",
++      traffic_question: "Customize the header filter and ports?",
++      traffic_default:
++        "Default: `baggage: .*mirrord-session={key}.*` header filter on every port your app listens on.",
+     },
+     {
+       id: "replace",
+@@ -35,7 +39,9 @@ const mockData = {
+       target_types: ["deployment", "statefulset"],
+       targetless: false,
+       http_filter: false,
+-      traffic_question: "Configure ports?",
++      traffic_question: "Customize ports?",
++      traffic_default:
++        "Default: all traffic on every port your app listens on, unfiltered.",
+     },
+   ],
+   contexts: {
+```
+
+**File**: `packages/wizard/src/components/Wizard.test.tsx` (modified, +24/-3)
+```diff
+@@ -75,7 +75,7 @@ describe('Wizard', () => {
+     next()
  
--#[derive(Serialize)]
--#[serde(rename_all = "camelCase")]
--struct ContextsResponse {
--    contexts: Vec<String>,
--    current_context: Option<String>,
--}
--
--/// Lists the kube contexts available in the user's kubeconfig, along with the one currently
--/// selected. Read straight from the merged kubeconfig files (honouring `KUBECONFIG`) — this touches
--/// no cluster, so it works even when no cluster is reachable.
--async fn list_contexts() -> UiResult<axum::Json<ContextsResponse>> {
--    let kubeconfig = Kubeconfig::read().map_err(ApiError::ReadKubeconfig)?;
--    Ok(axum::Json(ContextsResponse {
--        contexts: kubeconfig
--            .contexts
--            .iter()
--            .map(|context| context.name.clone())
--            .collect(),
--        current_context: GlobalConfig::fresh_kube_context()
--            .await
--            .or(kubeconfig.current_context),
--    }))
--}
--
--#[derive(Deserialize)]
--struct NamespacesQuery {
--    /// Context to list namespaces from. When absent, the global default is used, else the
--    /// kubeconfig's current context.
--    context: Option<String>,
--}
--
--#[derive(Serialize)]
--#[serde(rename_all = "camelCase")]
--struct NamespacesResponse {
--    namespaces: Vec<String>,
--    context: Option<String>,
--}
--
- /// How long building a kube client may take before the context counts as unreachable. Bounds an
- /// auth-exec plugin that blocks on an expired credential.
- const CLIENT_BUILD_TIMEOUT: Duration = Duration::from_secs(15);
-@@ -877,28 +836,6 @@ fn baggage_from_env() -> Option<String> {
-         .filter(|baggage| !baggage.is_empty())
- }
+     fireEvent.click(
+-      screen.getByLabelText('Configure traffic filtering and ports?'),
++      screen.getByLabelText('Customize the header filter and ports?'),
+     )
+     typeInto(/HTTP header filter/, 'x-user: me')
+     fireEvent.click(await screen.findByLabelText('intercept port 9090'))
+@@ -135,6 +135,27 @@ describe('Wizard', () => {
+     ).toBeInTheDocument()
+   })
  
--/// Lists the namespaces visible to the user in the requested context (or the current context when
--/// none is supplied). Unlike [`list_contexts`], this queries the cluster's API server, so it
--/// requires the context to be reachable and the user authorized to list namespaces.
--async fn list_namespaces(
--    Query(query): Query<NamespacesQuery>,
--) -> UiResult<axum::Json<NamespacesResponse>> {
--    let client = client_for_context(query.context.as_deref()).await?;
--    let api: Api<Namespace> = Api::all(client);
--    let namespaces = api
--        .list(&ListParams::default())
--        .await
--        .map_err(ApiError::KubeApi)?;
--
--    Ok(axum::Json(NamespacesResponse {
--        namespaces: namespaces
--            .iter()
--            .filter_map(|namespace| namespace.metadata.name.clone())
--            .collect(),
--        context: query.context,
--    }))
--}
--
- pub(crate) async fn list_operator_sessions(
-     State(state): State<AppState>,
- ) -> axum::Json<OperatorSessionsResponse> {
-@@ -1329,8 +1266,6 @@ pub(crate) fn build_router(state: AppState) -> Router {
-         .route("/sessions/{id}/kill", post(kill_session))
-         .route("/operator-sessions", get(list_operator_sessions))
-         .route("/operator-previews", get(list_operator_previews))
--        .route("/contexts", get(list_contexts))
--        .route("/namespaces", get(list_namespaces))
-         .route("/me", get(current_user))
-         .route("/token", get(auth_token))
-         .nest("/chaos/rules", chaos_router(state.clone()));
++  it('says what the traffic defaults are until the user customizes them', async () => {
++    render(<Wizard open={true} onClose={onClose} />)
++
++    await pickMode('Split')
++    await pickOption(/server-echo deployment/)
++    next()
++
++    const toggle = screen.getByLabelText(
++      'Customize the header filter and ports?',
++    )
++    expect(toggle).toHaveAccessibleDescription(/header filter on every port/)
++    expect(screen.getByRole('link', { name: 'Learn more' })).toHaveAttribute(
++      'href',
++      'https://metalbear.com/mirrord/docs/using-mirrord/multiple-concurrent-sessions/#service-modes',
++    )
++    fireEvent.click(toggle)
++    expect(
++      screen.queryByText(/header filter on every port/),
++    ).not.toBeInTheDocument()
++  })
++
+   it('offers no targetless option and no header filter in replace mode', async () => {
+     render(<Wizard open={true} onClose={onClose} />)
+ 
+@@ -145,7 +166,7 @@ describe('Wizard', () => {
+     ).not.toBeInTheDocument()
+     next()
+ 
+-    fireEvent.click(screen.getByLabelText('Configure ports?'))
++    fireEvent.click(screen.getByLabelText('Customize ports?'))
+     expect(
+       screen.queryByLabelText(/HTTP header filter/),
+     ).not.toBeInTheDocument()
+@@ -158,7 +179,7 @@ describe('Wizard', () => {
+     await pickOption(/server-echo deployment/)
+     next()
+     fireEvent.click(
+-      screen.getByLabelText('Configure traffic filtering and ports?'),
++      screen.getByLabelText('Customize the header filter and ports?'),
+     )
+     await screen.findByLabelText('intercept port 80')
+     typeInto(/Other ports to ignore/, 'http')
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5224** (2026-11-11): Update rustix to 1.1.6 for RUSTSEC-2026-0486 (@vladrbg)
-- **PR #5221** (2026-11-10): Remove unused v1 UI server APIs (@0x00A5)
-- **PR #5214** (2026-11-11): Enable linux fs fixes for all users (@0x00A5)
-- **PR #5212** (2026-11-09): Update rmcp to 3.9.0 for RUSTSEC-2026-0457 (@hank-metalbear)
-- **PR #5209** (2026-11-10): Release 3.286.0 (@cubby-mb[bot])
-- **PR #5205** (2026-11-05): Add KubeCon Salt Lake City raffle information (@jakepage91)
+- **PR #5239** (2026-11-14): Remove GitHub PATs in CI (@0x00A5)
+- **PR #5236** (2026-11-13): Revise wizard (@0x00A5)
+- **PR #5235** (2026-11-13): Run serverless targets with mirrord up (@Razz4780)
+- **PR #5234** (2026-11-12): agent: add http_detect_inactive_ports config option (@0x00A5)
+- **PR #5231** (2026-11-12): MBE-2174: Clear zip, minimatch and x/crypto Dependabot alerts (@hank-metalbear)
+- **PR #5230** (2026-11-12): agent: warn when HTTP detection times out (@MintSoup)
 
 ---
 
@@ -1901,31 +2034,48 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Enable linux fs fixes for all users (#5214)
+## X. Remove GitHub PATs in CI
 
 **RULE**:
-When implementing operations in `changelog.d/+linux-fs-fixes-default-operator.changed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in metalbear-co/mirrord. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/changelog-update.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in metalbear-co/mirrord. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0dc6e26f`: Enable linux fs fixes for all users (#5214). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `77c2d33d`: Remove GitHub PATs in CI. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/+linux-fs-fixes-default-operator.changed.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/changelog-update.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-On Linux, `experimental.hook_libc_syscall` and `experimental.old_glibc_support` are now enabled by default for all users.
+      CUBBY_CLIENT_ID:
+        required: true
+      CUBBY_PRIVATE_KEY:
+      - name: Create GitHub App token (docs-changelog repo)
+        id: app-token
+        uses: actions/create-github-app-token@f8d387b68d61c58ab83c6c016672934102569859 # v3.0.0
+        with:
+          app-id: ${{ secrets.CUBBY_CLIENT_ID }}
+          private-key: ${{ secrets.CUBBY_PRIVATE_KEY }}
+          owner: metalbear-co
+          repositories: docs-changelog
+          permission-contents: write
+          git_user: cubby-mb[bot]
+          git_email: 273354325+cubby-mb[bot]@users.noreply.github.com
+          git_access_token: ${{ steps.app-token.outputs.token }}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+      CHANGELOG_PAT:
+          git_user: Eyal Bukchin
+          git_email: eyal@metalbear.co
+          git_access_token: ${{ secrets.CHANGELOG_PAT }}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0dc6e26f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `77c2d33d` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

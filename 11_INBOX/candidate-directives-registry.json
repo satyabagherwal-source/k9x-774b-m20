@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T01:47:19.437Z",
+  "last_updated": "2026-11-15T02:16:14.941Z",
   "directives": [
     {
       "id": "CD-001",
@@ -14162,6 +14162,73 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-EC75DF-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-15"
+    },
+    {
+      "id": "CD-DVTK",
+      "directive_title": "Remove GitHub PATs in CI",
+      "source_repo": "metalbear-co-mirrord-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-DVTK-remove-github-pats-in-ci.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-15",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-CI7Z",
+      "directive_title": "raise requires-python for security fixes across integrations (stacked",
+      "source_repo": "run-llama/llama_index",
+      "source_commit": "99d7433f",
+      "staged_file": "11_INBOX/candidate-directives/CD-CI7Z-raise-requires-python-for-security-fixes-across-integrations-stacked.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-15",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-DSLW",
+      "directive_title": "Invariant 1: Attention Compression Consistency",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
+      "source_commit": "hf-dealignai",
+      "date_staged": "2026-11-15",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHY** technical rationale",
+      "learning_id": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
+      "candidateDomain": "K",
+      "candidateDomainName": "Quality & Verification Intelligence",
+      "secondaryDomains": [],
+      "classificationConfidence": 0.6,
+      "intendedFolder": "05_KNOWLEDGE",
+      "intendedPath": "05_KNOWLEDGE/engineering-patterns.md",
+      "isUntrusted": false
+    },
+    {
+      "id": "CD-DSLW",
+      "directive_title": "Invariant 2: YaRN Context Scaling Bounds",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
+      "source_commit": "hf-dealignai",
+      "date_staged": "2026-11-15",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHY** technical rationale",
+      "learning_id": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
+      "candidateDomain": "K",
+      "candidateDomainName": "Quality & Verification Intelligence",
+      "secondaryDomains": [],
+      "classificationConfidence": 0.6,
+      "intendedFolder": "05_KNOWLEDGE",
+      "intendedPath": "05_KNOWLEDGE/engineering-patterns.md",
+      "isUntrusted": false
+    },
+    {
+      "id": "CD-REV-6CDA5D",
+      "directive_title": "Remove GitHub PATs in CI",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "metalbear-co-mirrord",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-6CDA5D-remove-github-pats-in-ci.md",
       "staged_date": "2026-11-15"
     }
   ]

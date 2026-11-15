@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-15T01:46:49.793Z",
-    "lastVerified": "2026-11-15T01:46:49.793Z",
+    "lastChecked": "2026-11-15T02:16:14.452Z",
+    "lastVerified": "2026-11-15T02:16:14.452Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -259,14 +259,14 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-15T00:50:52.533Z",
-    "lastVerified": "2026-11-15T00:50:52.533Z",
+    "lastChecked": "2026-11-15T02:15:11.570Z",
+    "lastVerified": "2026-11-15T02:15:11.570Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "ad36621f639ff8582037b48c61847609aeeb271a7250fe78d3a1c8604b7edaf6",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "contentHash": "6313cc0e3c7a7660a44b7ad8beef8b76271b7285e78e4ed7827fe1691887bf9a",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -451,22 +451,21 @@
     "revisionIdentifier": "f2c7dcf6"
   },
   "run-llama-llama_index": {
-    "name": "llama_index",
+    "name": "run-llama/llama_index",
     "officialUrl": "https://github.com/run-llama/llama_index",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-13T17:37:40.373Z",
-    "lastVerified": "2026-11-13T17:37:40.373Z",
+    "lastChecked": "2026-11-15T02:15:09.432Z",
+    "lastVerified": "2026-11-15T02:15:09.432Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-run-llama-llama_index",
-    "contentHash": "2ee32cd7bc534bd583978466a870409c0ec69134ca6591a8c32a1d212c3b61b4",
+    "contentHash": "b846cd6b1e95f24799483fd2aae5358d4ea6e082f2a1d348ada344c7abf25452",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "baeabbfe"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "nucleoidai-nucleoid": {
     "name": "Nucleoid",
@@ -1131,9 +1130,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-11-14T17:39:59.008Z",
+    "lastChecked": "2026-11-15T02:15:02.863Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-11-14T17:39:59.008Z"
+    "lastVerified": "2026-11-15T02:15:02.863Z"
   },
   "influxdata-influxdb": {
     "name": "influxdb",
@@ -2085,14 +2084,14 @@
     "officialUrl": "https://github.com/metalbear-co/mirrord",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-13T09:56:49.708Z",
-    "lastVerified": "2026-11-13T09:56:49.708Z",
+    "lastChecked": "2026-11-15T02:14:56.754Z",
+    "lastVerified": "2026-11-15T02:14:56.754Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-metalbear-co-mirrord",
-    "contentHash": "efc7c5ea4b1de353ed42ec95064e0ef01ee69cc24d36a9a1e042569fce9157aa",
+    "contentHash": "82e18676215350b325b11e44611e458f7f02e786e4e30058c8db21a75884004e",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6910,9 +6909,9 @@
   "cycloidio-terracognita": {
     "name": "terracognita",
     "officialUrl": "https://github.com/cycloidio/terracognita",
-    "lastChecked": "2026-11-13T18:43:42.195Z",
+    "lastChecked": "2026-11-15T02:15:00.433Z",
     "revisionIdentifier": "802bd4b5",
-    "lastVerified": "2026-11-13T18:43:42.195Z"
+    "lastVerified": "2026-11-15T02:15:00.433Z"
   },
   "netflix-dynomite": {
     "name": "dynomite",
@@ -8278,9 +8277,9 @@
   "mobilenativefoundation-store": {
     "name": "Store",
     "officialUrl": "https://github.com/MobileNativeFoundation/Store",
-    "lastChecked": "2026-11-11T14:56:19.140Z",
+    "lastChecked": "2026-11-15T02:14:57.896Z",
     "revisionIdentifier": "74a5988f",
-    "lastVerified": "2026-11-11T14:56:19.140Z"
+    "lastVerified": "2026-11-15T02:14:57.896Z"
   },
   "volcengine-openviking": {
     "name": "volcengine/OpenViking",
@@ -9275,12 +9274,12 @@
     "officialUrl": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-09T13:46:43.610Z",
-    "lastVerified": "2026-11-09T13:46:43.610Z",
+    "lastChecked": "2026-11-15T02:14:55.483Z",
+    "lastVerified": "2026-11-15T02:14:55.483Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
-    "contentHash": "a5ed876e2dab2e83df7ced43c12e38c5772bdbe67f86dfd1ff59fc5236b1fb2e",
+    "contentHash": "42bb4cb96e065602bcf14e17cc96057c8b3b459a7c14189fa24b9c5f119ed1b7",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

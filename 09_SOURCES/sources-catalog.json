@@ -1465,8 +1465,8 @@
     "sourceUrl": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
     "sourceVersion": "hf-dealignai-deepseek-v4.1-flash-uncensored-fp8",
     "license": "Open-Source",
-    "contentHash": "a5ed876e2dab2e83df7ced43c12e38c5772bdbe67f86dfd1ff59fc5236b1fb2e",
-    "lastHarvestedAt": "2026-11-09T13:46:44.772Z",
+    "contentHash": "42bb4cb96e065602bcf14e17cc96057c8b3b459a7c14189fa24b9c5f119ed1b7",
+    "lastHarvestedAt": "2026-11-15T02:16:10.763Z",
     "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8"
   },
   "amplifthq-opentag": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "7abf98c0",
+    "sourceVersion": "8052fac6",
     "license": "NOASSERTION",
-    "contentHash": "ad36621f639ff8582037b48c61847609aeeb271a7250fe78d3a1c8604b7edaf6",
-    "lastHarvestedAt": "2026-11-15T00:50:53.642Z",
+    "contentHash": "6313cc0e3c7a7660a44b7ad8beef8b76271b7285e78e4ed7827fe1691887bf9a",
+    "lastHarvestedAt": "2026-11-15T02:15:12.045Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -3013,10 +3013,10 @@
     "repository": "metalbear-co/mirrord",
     "platform": "github",
     "sourceUrl": "https://github.com/metalbear-co/mirrord",
-    "sourceVersion": "4c3c4935",
+    "sourceVersion": "77c2d33d",
     "license": "MIT",
-    "contentHash": "efc7c5ea4b1de353ed42ec95064e0ef01ee69cc24d36a9a1e042569fce9157aa",
-    "lastHarvestedAt": "2026-11-13T09:57:03.563Z",
+    "contentHash": "82e18676215350b325b11e44611e458f7f02e786e4e30058c8db21a75884004e",
+    "lastHarvestedAt": "2026-11-15T02:14:57.978Z",
     "learningId": "learn-github-metalbear-co-mirrord"
   },
   "openkruise-kruise": {
@@ -6553,10 +6553,10 @@
     "repository": "run-llama/llama_index",
     "platform": "github",
     "sourceUrl": "https://github.com/run-llama/llama_index",
-    "sourceVersion": "baeabbfe",
+    "sourceVersion": "99d7433f",
     "license": "MIT",
-    "contentHash": "2ee32cd7bc534bd583978466a870409c0ec69134ca6591a8c32a1d212c3b61b4",
-    "lastHarvestedAt": "2026-11-12T12:15:17.343Z",
+    "contentHash": "b846cd6b1e95f24799483fd2aae5358d4ea6e082f2a1d348ada344c7abf25452",
+    "lastHarvestedAt": "2026-11-15T02:15:10.444Z",
     "learningId": "learn-github-run-llama-llama_index"
   },
   "vercel-labs-opensrc": {

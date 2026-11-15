@@ -9995,3 +9995,8 @@
 | `CYCLE-20261115-BSGU` | `2026-11-15T01:46:37.662Z` | `fishaudio/drama-3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fishaudio-drama-3-learnings.md` | Yes (`8f006a0f...`) |
 | `CYCLE-20261115-BZGJ` | `2026-11-15T01:46:46.723Z` | `kcl-lang/kcl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8560` | Yes (`100b4fed...`) |
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T01:47:18.115Z` | `hf-fishaudio-drama-3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-57D6CED2` [Domain D] | Yes (`9b1cd794...`) |
+| `CYCLE-20261115-C8FQ` | `2026-11-15T02:14:57.974Z` | `metalbear-co/mirrord` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8561` | Yes (`82e18676...`) |
+| `CYCLE-20261115-CI20` | `2026-11-15T02:15:10.440Z` | `run-llama/llama_index` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8562` | Yes (`b846cd6b...`) |
+| `CYCLE-20261115-CJAG` | `2026-11-15T02:15:12.040Z` | `dathere/qsv` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/dathere-qsv-learnings.md` | Yes (`6313cc0e...`) |
+| `CYCLE-20261115-DSLJ` | `2026-11-15T02:16:10.759Z` | `dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md` | Yes (`42bb4cb9...`) |
+| `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T02:16:49.212Z` | `dathere-qsv` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-F32FC521` [Domain D] | Yes (`822f0cf4...`) |

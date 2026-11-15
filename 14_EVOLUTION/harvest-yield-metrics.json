@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T01:46:46.735Z",
-  "total_cycles_completed": 9640,
-  "total_learnings_persisted": 9640,
-  "total_rules_promoted": 9286,
+  "last_updated": "2026-11-15T02:16:10.778Z",
+  "total_cycles_completed": 9644,
+  "total_learnings_persisted": 9644,
+  "total_rules_promoted": 9288,
   "history": [
-    {
-      "timestamp": "2026-11-14T03:10:30.630Z",
-      "repository": "i18next/react-i18next",
-      "learningId": "learn-github-i18next-react-i18next",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T03:10:34.118Z",
-      "repository": "siderolabs/talos",
-      "learningId": "learn-github-siderolabs-talos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T03:10:36.105Z",
-      "repository": "trufflesecurity/trufflehog",
-      "learningId": "learn-github-trufflesecurity-trufflehog",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T03:10:39.473Z",
-      "repository": "matrixorigin/matrixone",
-      "learningId": "learn-github-matrixorigin-matrixone",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T03:15:21.657Z",
       "repository": "openai/gpt-oss-20b",
@@ -1403,6 +1375,34 @@
       "repository": "kcl-lang/kcl",
       "learningId": "learn-github-kcl-lang-kcl",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T02:14:57.985Z",
+      "repository": "metalbear-co/mirrord",
+      "learningId": "learn-github-metalbear-co-mirrord",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T02:15:10.450Z",
+      "repository": "run-llama/llama_index",
+      "learningId": "learn-github-run-llama-llama_index",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T02:15:12.051Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T02:16:10.778Z",
+      "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
+      "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

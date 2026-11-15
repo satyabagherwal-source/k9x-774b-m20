@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T01:47:19.542Z",
-  "total_records": 912,
+  "last_updated": "2026-11-15T02:16:50.361Z",
+  "total_records": 918,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 450,
+      "total": 452,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -487,7 +487,9 @@
         "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm2-5-24b-a2b-learnings-core-invari",
         "domain_intelligence-research-knowledge-intelligence-fishaudio-drama-3-core-invariants",
         "DOM-D-57D6CED2",
-        "domain_intelligence-research-knowledge-intelligence-hf-fishaudio-drama-3-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-hf-fishaudio-drama-3-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-",
+        "DOM-D-F32FC521"
       ]
     },
     "E": {
@@ -498,7 +500,7 @@
       ]
     },
     "F": {
-      "total": 19,
+      "total": 20,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -518,7 +520,8 @@
         "domain_intelligence-design-intelligence-baai-bge-reranker-v2-m3-core-invariants",
         "domain_intelligence-design-intelligence-hf-baai-bge-reranker-v2-m3-learnings-core-invariants",
         "DOM-F-0C4992D6",
-        "DOM-F-053419E8"
+        "DOM-F-053419E8",
+        "domain_intelligence-design-intelligence-dealignai-deepseek-v4-1-flash-uncensored-fp8-core-invariants"
       ]
     },
     "G": {
@@ -676,7 +679,7 @@
       ]
     },
     "H": {
-      "total": 186,
+      "total": 189,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -863,7 +866,10 @@
         "domain_intelligence-technical-construction-intelligence-necolas-react-native-web-core-invariants",
         "domain_intelligence-technical-construction-intelligence-necolas-react-native-web-learnings-core-inva",
         "domain_intelligence-technical-construction-intelligence-falkordb-falkordb-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-falkordb-falkordb-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-falkordb-falkordb-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-metalbear-co-mirrord-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-run-llama-llama_index-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-metalbear-co-mirrord-learnings-core-invarian"
       ]
     },
     "I": {
@@ -10969,8 +10975,8 @@
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "ac0a18181e45aa4257d6f8c011a03e48afd006330fd5a9898f758017c8266336",
-      "created_at": "2026-11-15T00:50:53.967Z"
+      "content_hash": "2ae46f17cbe63c9e387425b588cedd10ba3b2ca471445de890bbc69b9f22469c",
+      "created_at": "2026-11-15T02:15:12.298Z"
     },
     "DOM-D-F5645095": {
       "record_id": "DOM-D-F5645095",
@@ -11038,8 +11044,8 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-learnings-architecture-intelligence-dathere-qsv-learnings-core-invar.md",
       "repository": "dathere-qsv-learnings",
-      "content_hash": "426dafbba6bd410edbf5a7c7ec95d734bcf6222e92b983bb08a5424f6e648328",
-      "created_at": "2026-11-14T13:39:26.868Z"
+      "content_hash": "08d2d4187bf7a090a3aca3ae40712e3345dc899ef7444c0a1b81544b37fbc840",
+      "created_at": "2026-11-15T02:16:50.361Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants",
@@ -17894,6 +17900,93 @@
       "repository": "kcl-lang-kcl-learnings",
       "content_hash": "54205badba354ed0f9a14fe5ff28930ad1db27a949f462af7727566aded5bf74",
       "created_at": "2026-11-15T01:47:18.857Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-metalbear-co-mirrord-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-metalbear-co-mirrord-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: metalbear-co/mirrord Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-metalbear-co-mirrord-technical-construction-intelligence-metalbear-co-mirrord-co.md",
+      "repository": "metalbear-co/mirrord",
+      "content_hash": "af07253ab92086fe7ef780f7ecd8f0751191c15143fd0c186a5460786f44a262",
+      "created_at": "2026-11-15T02:14:58.314Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-run-llama-llama_index-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-run-llama-llama_index-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: run-llama/llama_index Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-run-llama-llama_index-technical-construction-intelligence-run-llama-llama_index-.md",
+      "repository": "run-llama/llama_index",
+      "content_hash": "6d9bce6e85e4c87a41593fb69dca82bca0848fd62fede43ff8720c37ffdfa363",
+      "created_at": "2026-11-15T02:15:10.784Z"
+    },
+    "domain_intelligence-design-intelligence-dealignai-deepseek-v4-1-flash-uncensored-fp8-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-dealignai-deepseek-v4-1-flash-uncensored-fp8-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-design-intelligence-dealignai-de.md",
+      "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
+      "content_hash": "d62c418b0013d08c9df9adcb0854b2a341381c7d811448d8951616908192798f",
+      "created_at": "2026-11-15T02:16:11.595Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-metalbear-co-mirrord-learnings-core-invarian": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-metalbear-co-mirrord-learnings-core-invarian",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: metalbear-co-mirrord-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-metalbear-co-mirrord-learnings-technical-construction-intelligence-metalbear-co-.md",
+      "repository": "metalbear-co-mirrord-learnings",
+      "content_hash": "2f0bdc829e3e4a3e2b03c14a961d434ac653ba4b1e42ab0608dbcae25f779067",
+      "created_at": "2026-11-15T02:16:15.065Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-learnings-research-knowledge-int.md",
+      "repository": "hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings",
+      "content_hash": "8423593f054881c5330176252fb0874671b9c2e79c8f417317e7ddbdd58cf28c",
+      "created_at": "2026-11-15T02:16:15.517Z"
+    },
+    "DOM-D-F32FC521": {
+      "record_id": "DOM-D-F32FC521",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): dathere/qsv",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  \n> **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  \n> **Source Version**: `8052fac6`  \n> **License**: NOASSERTION  \n> **Synthesized By**: zero-clone-structural-synthesizer  \n> **",
+      "content_hash": "822f0cf4d2198561faaa21fc5c775c09d3368aa3413115106eebb11177a7dffa",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  \n> **Source**: github ([https://github.com/dathere/qsv](h -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  \n> **Source**: github ([https://github.com/dathere/qsv](h",
+      "provenance": {
+        "source_uri": "project://dathere-qsv/dathere-qsv-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T02:16:15.647Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (dathere-qsv)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of dathere-qsv"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-15T02:16:49.186Z"
     }
   }
 }
