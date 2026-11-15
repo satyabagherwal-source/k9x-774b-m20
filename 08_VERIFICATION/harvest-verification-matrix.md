@@ -9978,3 +9978,9 @@
 | `CYCLE-20261115-UWZ1` | `2026-11-15T00:37:31.117Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8553` | Yes (`36cab490...`) |
 | `CYCLE-20261115-V81B` | `2026-11-15T00:37:45.455Z` | `openbmb/MiniCPM-V-4.7-35B-A3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md` | Yes (`e64fe6a5...`) |
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T00:38:22.621Z` | `hf-openbmb-minicpm-v-4.7-35b-a3b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-C5F6E511` [Domain D] | Yes (`b6ef0585...`) |
+| `CYCLE-20261115-BPBH` | `2026-11-15T00:50:34.349Z` | `openbmb/MiniCPM-V-4.7-1B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md` | Yes (`6c95e86a...`) |
+| `CYCLE-20261115-BQZB` | `2026-11-15T00:50:36.503Z` | `cachix/devenv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8554` | Yes (`933ecc1d...`) |
+| `CYCLE-20261115-BUB4` | `2026-11-15T00:50:40.816Z` | `necolas/react-native-web` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8555` | Yes (`cd96f639...`) |
+| `CYCLE-20261115-C0UY` | `2026-11-15T00:50:49.306Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/volcengine-openviking-learnings.md` | Yes (`9f450dc2...`) |
+| `CYCLE-20261115-C479` | `2026-11-15T00:50:53.637Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8556` | Yes (`ad36621f...`) |
+| `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T00:51:33.728Z` | `hf-openbmb-minicpm-v-4.7-1b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-B43360BC` [Domain D] | Yes (`fecbb1ae...`) |

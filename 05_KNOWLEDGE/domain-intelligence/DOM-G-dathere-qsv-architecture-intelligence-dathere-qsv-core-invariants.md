@@ -4,24 +4,24 @@
 {
   "source_repository": "dathere/qsv",
   "source_url": "https://github.com/dathere/qsv",
-  "source_version": "229979d6",
+  "source_version": "7abf98c0",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-14T22:57:51.199Z",
+  "timestamp": "2026-11-15T00:50:53.839Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dathere-qsv",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `229979d6`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-14T22:57:51.199Z`  
+> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `7abf98c0`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-15T00:50:53.839Z`  
 > **Learning ID**: `learn-github-dathere-qsv`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), B (Product Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 61%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), B (Product Intelligence), F (Design Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 58%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from dathere/qsv:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T22:57:49.833Z  
+> **Harvest Timestamp**: 2026-11-15T00:50:52.533Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2215,35 +2215,240 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `229979d6` (2026-11-14)
-**Commit Message**: fix(stats): the cache key records the resolved delimiter, not the --delimiter flag (#5052)
+### Incident Patch 1: `7abf98c0` (2026-11-14)
+**Commit Message**: test(stats): NaN cells crashed the exact quantiles on larger columns; cover it and Codacy's suggestions (#5054)
 
-* fix(stats): the cache key records the resolved delimiter, not the --delimiter flag
+* test(stats): NaN cells crashed the exact quantiles on larger columns; cover it and Codacy's suggestions
 
-QSV_SNIFF_DELIMITER and QSV_DEFAULT_DELIMITER change how a file is
-parsed without touching --delimiter, and the stats cache recorded only
-the flag. A semicolon-separated data.csv read as one comma-delimited
-column kept that cache after QSV_SNIFF_DELIMITER was set, so stats and
-the commands that read its cache went on describing one column.
+Before #5053, sorting a quantile buffer that held a NaN panicked once
+the column was large enough for Rust's sort to notice the comparison is
+not a total order: qsv 28.0.0 exits 101 on `stats --quartiles` for a
+302-row float column with two NaN cells. #5053's tests use four rows,
+too few to trigger it, and its CHANGELOG entry only spoke of empty or
+shifted values.
 
-The sidecar now records the delimiter the Config resolved
-(Config::configured_delimiter), and the cache readers resolve the
-consuming command's delimiter the same way
-(config::resolved_delimiter). A sidecar with an empty delimiter still
-stands for the extension default.
-
-configured_delimiter does not convert a special-format input the way
-get_delimiter does, so checking a cache still decompresses nothing.
-
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
-* docs(changelog): cite #5052
+- stats_nan_cells_do_not_crash_the_exact_quantiles: 300 values plus two
+  NaN cells, for --median, --quartiles and --everything.
+- Codacy's suggestions on #5053: the NAN spelling, moarstats' derived
+  statistics with and without NaN rows, inf cells left as they were,
+  and a NaN cell summing like a float cell past 2^53.
+- CHANGELOG: the #5053 entry now says larger columns crashed.
 
 Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
 
-* fix(stats): cache readers refuse metadata with no recorded delimiter
+* docs(changelog): a NaN cell's column stays Float even when its other values are integers
 
-A sidecar written before the resolved delimiter was recorded
+The #5053 entry said the statistics equal those of the column without
+the NaN cell
+
+**File**: `CHANGELOG.md` (modified, +1/-1)
+```diff
+@@ -42,7 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+   - **New SQL:** join keys of different numeric types ([#30401](https://github.com/pola-rs/polars/pull/30401)); correlated subqueries with any outer condition, `GROUP BY`, `HAVING`, `LIMIT`, `ANY`/`ALL`, and `LATERAL` derived tables ([#30378](https://github.com/pola-rs/polars/pull/30378), [#30453](https://github.com/pola-rs/polars/pull/30453), [#30466](https://github.com/pola-rs/polars/pull/30466), [#30459](https://github.com/pola-rs/polars/pull/30459), [#30490](https://github.com/pola-rs/polars/pull/30490), [#30467](https://github.com/pola-rs/polars/pull/30467)); `PERCENTILE_CONT`/`PERCENTILE_DISC ... WITHIN GROUP` ([#30442](https://github.com/pola-rs/polars/pull/30442)); non-literal `LIKE` patterns ([#30364](https://github.com/pola-rs/polars/pull/30364), [#30372](https://github.com/pola-rs/polars/pull/30372)); typed numeric/string literals ([#30486](https://github.com/pola-rs/polars/pull/30486)); `LIMIT`/`OFFSET` expressions such as scalar subqueries ([#30425](https://github.com/pola-rs/polars/pull/30425)); repeated unnamed constants ([#30488](https://github.com/pola-rs/polars/pull/30488)); `RANDOM()`, `REPEAT`, `CARDINALITY`, constant `GROUP BY` keys and row values in `IN (subquery)`.
+ 
+ ### Fixed
+-- **`stats`: a `NaN` cell in a float column is skipped by every numeric statistic** ([#5053](https://github.com/dathere/qsv/pull/5053)). A `NaN`, `nan` or `NAN` cell is read as a float (pandas and numpy write missing values this way). The mean already skipped it, but the `sum` came out empty, and the exact median, quartiles, IQR, MAD, fences, skewness and percentiles were computed with it and came out empty or shifted. With `--weight`, one such cell emptied the weighted mean and standard deviation of the whole column. They now all skip it, as `--quantile-method approx` already did, so the statistics equal those of the column without that cell. The cell still counts as a value: `nullcount`, `sparsity` and `cardinality` are unchanged, and the column stays Float. `inf` cells are unchanged.
++- **`stats`: a `NaN` cell in a float column is skipped by every numeric statistic** ([#5053](https://github.com/dathere/qsv/pull/5053)). A `NaN`, `nan` or `NAN` cell is read as a float (pandas and numpy write missing values this way). The mean already skipped it, but the `sum` came out empty, and the exact median, quartiles, IQR, MAD, fences, skewness and percentiles were computed with it. On a column of a few hundred rows or more that crashed `stats` (qsv 28.0.0 exits with a panic on `stats --quartiles`, as does `moarstats`, which runs it); on a smaller one they came out empty or shifted. With `--weight`, one such cell emptied the weighted mean and standard deviation of the whole column. They now all skip it, as `--quantile-method approx` already did, so the statistics are those of the column's other values. The cell still counts as a value: `nullcount`, `sparsity` and `cardinality` are unchanged, and the column stays Float. That holds when the other values are all integers too: such a column is summarized as floats, so its minimum and maximum read `1.0` and not `1`, and its sum is no longer exact past 2^53. `inf` cells are unchanged.
+ - **`stats`: the cache follows the delimiter set by `QSV_SNIFF_DELIMITER` and `QSV_DEFAULT_DELIMITER`** ([#5052](https://github.com/dathere/qsv/pull/5052)). The stats cache recorded only the `--delimiter` flag. A semicolon-separated `data.csv` read as one comma-delimited column kept that one-column cache after `QSV_SNIFF_DELIMITER` was set, so `stats` and the commands that read its cache went on describing the wrong columns. The cache now records the delimiter the file was read with, and `stats` and its readers compare against the delimiter they resolve the same way. Checking the cache still does not decompress a compressed or Parquet input. A cache written before this change did not record the delimiter it was read with, so it is recomputed on its next use.
+ - **`moarstats`: two `QSV_STATS_SEPARATOR` fixes** ([#5051](https://github.com/dathere/qsv/pull/5051)):
+   - **`mode_zscore` is computed for a column with several modes under any separator.** The first mode was looked up by splitting on `|`, so with another separator a multi-modal numeric column had an empty `mode_zscore`.
+```
+
+**File**: `tests/test_moarstats.rs` (modified, +38/-0)
+```diff
+@@ -8266,3 +8266,41 @@ fn moarstats_uses_stats_without_a_sidecar_as_they_are() {
+     );
+     assert!(stats_csv_columns(&wrk, "percentiles")[1][0].contains('|'));
+ }
++
++#[test]
++fn moarstats_derived_statistics_skip_nan_cells() {
++    // the statistics moarstats derives from a float column are those of the column without
++    // its NaN cells. Count-based ones (cardinality, entropy, ...) are not compared: a NaN cell
++    // is still a value.
++    let values: Vec<String> = (1..=300)
++        .map(|i| {
++            format!(
++                "{:.2}",
++                f64::from((i * 37) % 101) * 0.5 + f64::from(i) / 9.0
++            )
++        })
++        .collect();
++    let mut with_nan = values.clone();
++    with_nan.insert(200, "NaN".to_string());
++    with_nan.insert(40, "NaN".to_string());
++
++    let cols = "kurtosis,gini_coefficient,median_mean_ratio,pearson_skewness,kelly_skewness,\
++                mad_stddev_ratio,quartile_coefficient_dispersion,percentile_ratio_90_10";
++    let mut derived = Vec::new();
++    for (name, rows) in [("without", &values), ("with", &with_nan)] {
++        let wrk = Workdir::new(&format!(
++            "moarstats_derived_statistics_skip_nan_cells_{name}"
++        ));
++        wrk.create_from_string("d.csv", &format!("v\n{}\n", rows.join("\n")));
++        let mut cmd = wrk.command("moarstats");
++        cmd.args(["--advanced", "d.csv"]);
++        wrk.assert_success(&mut cmd);
++        derived.push(stats_csv_columns(&wrk, cols));
++    }
++    assert!(
++        derived[0][1].iter().all(|v| !v.is_empty()),
++        "{:?}",
++        derived[0]
++    );
++    assert_eq!(derived[0], derived[1]);
++}
+```
+
+**File**: `tests/test_stats.rs` (modified, +103/-1)
+```diff
+@@ -10976,7 +10976,7 @@ fn stats_nan_cells_are_skipped_by_every_numeric_statistic() {
+         "v\n1.5\n3.5\n4.5\n",
+         &["--everything"],
+     );
+-    for (name, nan) in [("upper", "NaN"), ("lower", "nan")] {
++    for (name, nan) in [("upper", "NaN"), ("lower", "nan"), ("allcaps", "NAN")] {
+         let with = stats_first_row(
+             &format!("stats_nan_cells_are_skipped_with_{name}"),
+             &format!("v\n1.5\n{nan}\n3.5\n4.5\n"),
+@@ -11033,3 +11033,105 @@ fn stats_weighted_nan_cells_are_skipped() {
+         assert_eq!(with[stat], without[stat], "{stat}");
+     }
+ }
++
++#[test]
++fn stats_inf_cells_are_not_skipped() {
++    // only NaN is skipped. An "inf" cell is a value: it is the max, and the sum, mean and
++    // stddev it makes infinite render as empty - as before NaN cells were skipped.
++    let row = stats_first_row(
++        "stats_inf_cells_are_not_skipped",
++        "v\n1.5\ninf\n3.5\n4.5\n",
++        &["--everything"],
++    );
++    assert_eq!(
++        [
++            &row["type"],
++            &row["sum"],
++            &row["mean"],
++            &row["stddev"],
++            &row["min"],
++            &row["max"]
++        ],
++        ["Float", "", "", "", "1.5", "inf"]
++    );
++    assert_eq!(
++        [&row["q1"], &row["q2_median"], &row["n_positive"]],
++        ["2.5", "4", "4"]
++    );
++}
++
++#[test]
++fn stats_nan_cell_sums_like_a_float_cell_past_2_pow_53() {
++    // a NaN makes the column Float, and a Float column's sum is an f64: past 2^53 it is no
++    // longer exact, with a NaN cell just as with any float cell in its place. The all-integer
++    // column keeps its exact total.
++    let integers = stats_first_row(
++        "stats_nan_cell_sums_like_a_float_cell_integers",
++        "v\n9007199254740992\n1\n",
++        &[],
++    );
++    assert_eq!(
++        [&integers["type"], &integers["sum"]],
++        ["Integer", "9007199254740993"]
++    );
++
++    let with_float = stats_first_row(
++        "stats_nan_cell_sums_like_a_float_cell_float",
++        "v\n9007199254740992\n1\n0.0\n",
++        &[],
++    );
++    let with_nan = stats_first_row(
++        "stats_nan_cell_sums_like_a_float_cell_nan",
++        "v\n9007199254740992\n1\nNaN\n",
++        &[],
++    );
++    assert_eq!(
++        [&with_nan["type"], &with_nan["sum"]],
++        ["Float", "9007199254740992"]
++    );
++    assert_eq!(with_nan["sum"], with_float["sum"]);
++}
++
++#[test]
++fn stats_nan_cells_do_not_crash_the_exact_quantiles() {
++    // With enough rows, sorting a quantile buffer that holds a NaN panicked: Rust's sort
++    // detects a comparison that is not a total order. qsv 28.0.0 exits 101 on this file.
++    // A handful of rows is too few for the sort to notice, so this needs a few hundred.
++    let values: Vec<String> = (1..=300)
++        .map(|i| {
++            format!(
++                "{:.2}",
++                f64::from((i * 37) % 101) * 0.5 + f64::from(i) / 9.0
++            )
++        })
++        .collect();
++    let mut with_nan = values.clone();
++    with_nan.insert(200, "NaN".to_string());
++    with_nan.insert(40, "NaN".to_string());
++
++    for args in [
++        &["--median"][..],
++        &["--quartiles"][..],
++        &["--everything"][..],
++    ] {
++        let name = args[0].trim_start_matches('-');
++        let without = stats_first_row(
++            &format!("stats_nan_cells_do_not_crash_without_{name}"),
++            &format!("v\n{}\n", values.join("\n")),
++            args,
++        );
++        let with = stats_first_row(
++            &format!("stats_nan_cells_do_not_crash_with_{name}"),
++            &format!("v\n{}\n", with_nan.join("\n")),
++            args,
++        );
++        let median = if name == "median" {
++            "median"
++        } else {
++            "q2_median"
++        };
++        assert!(!without[median].is_empty(), "{name}");
++        assert_eq!(with[median], without[median], "{name}");
++        assert_eq!(with["sum"], without["sum"], "{name}");
++    }
++}
+```
+
+---
+
+### Incident Patch 2: `f7576f43` (2026-11-14)
+**Commit Message**: fix(stats): a NaN cell is skipped by the sum, the exact quantiles and the weighted statistics (#5053)
+
+* fix(stats): a NaN cell is skipped by the sum, the exact quantiles and the weighted statistics
+
+A "NaN" cell parses as a float, so it stays in a Float column. The
+running mean (qsv-stats' OnlineStats) and the t-digest already skip it,
+but the sum, the exact quantile buffer and the weighted accumulators did
+not: the sum rendered empty, the exact median, quartiles, IQR, MAD,
+fences, skewness and percentiles were computed over the NaN and came out
+empty or shifted, and under --weight one NaN emptied the weighted mean
+and stddev of the whole column.
+
+add_numeric_value now returns early on NaN, and TypedSum adds nothing
+for it while still switching to a float sum that carries the integer
+total. The statistics of a column with a NaN cell equal those of the
+column without it. The cell remains a value: nullcount, sparsity and
+cardinality are unchanged, and inf cells behave as before.
+
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+
+* docs(changelog): cite #5053
+
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
@@ -2251,389 +2456,149 @@ A sidecar written before the resolved delimiter was recorded
    - **New SQL:** join keys of different numeric types ([#30401](https://github.com/pola-rs/polars/pull/30401)); correlated subqueries with any outer condition, `GROUP BY`, `HAVING`, `LIMIT`, `ANY`/`ALL`, and `LATERAL` derived tables ([#30378](https://github.com/pola-rs/polars/pull/30378), [#30453](https://github.com/pola-rs/polars/pull/30453), [#30466](https://github.com/pola-rs/polars/pull/30466), [#30459](https://github.com/pola-rs/polars/pull/30459), [#30490](https://github.com/pola-rs/polars/pull/30490), [#30467](https://github.com/pola-rs/polars/pull/30467)); `PERCENTILE_CONT`/`PERCENTILE_DISC ... WITHIN GROUP` ([#30442](https://github.com/pola-rs/polars/pull/30442)); non-literal `LIKE` patterns ([#30364](https://github.com/pola-rs/polars/pull/30364), [#30372](https://github.com/pola-rs/polars/pull/30372)); typed numeric/string literals ([#30486](https://github.com/pola-rs/polars/pull/30486)); `LIMIT`/`OFFSET` expressions such as scalar subqueries ([#30425](https://github.com/pola-rs/polars/pull/30425)); repeated unnamed constants ([#30488](https://github.com/pola-rs/polars/pull/30488)); `RANDOM()`, `REPEAT`, `CARDINALITY`, constant `GROUP BY` keys and row values in `IN (subquery)`.
  
  ### Fixed
-+- **`stats`: the cache follows the delimiter set by `QSV_SNIFF_DELIMITER` and `QSV_DEFAULT_DELIMITER`** ([#5052](https://github.com/dathere/qsv/pull/5052)). The stats cache recorded only the `--delimiter` flag. A semicolon-separated `data.csv` read as one comma-delimited column kept that one-column cache after `QSV_SNIFF_DELIMITER` was set, so `stats` and the commands that read its cache went on describing the wrong columns. The cache now records the delimiter the file was read with, and `stats` and its readers compare against the delimiter they resolve the same way. Checking the cache still does not decompress a compressed or Parquet input. A cache written before this change did not record the delimiter it was read with, so it is recomputed on its next use.
++- **`stats`: a `NaN` cell in a float column is skipped by every numeric statistic** ([#5053](https://github.com/dathere/qsv/pull/5053)). A `NaN`, `nan` or `NAN` cell is read as a float (pandas and numpy write missing values this way). The mean already skipped it, but the `sum` came out empty, and the exact median, quartiles, IQR, MAD, fences, skewness and percentiles were computed with it and came out empty or shifted. With `--weight`, one such cell emptied the weighted mean and standard deviation of the whole column. They now all skip it, as `--quantile-method approx` already did, so the statistics equal those of the column without that cell. The cell still counts as a value: `nullcount`, `sparsity` and `cardinality` are unchanged, and the column stays Float. `inf` cells are unchanged.
+ - **`stats`: the cache follows the delimiter set by `QSV_SNIFF_DELIMITER` and `QSV_DEFAULT_DELIMITER`** ([#5052](https://github.com/dathere/qsv/pull/5052)). The stats cache recorded only the `--delimiter` flag. A semicolon-separated `data.csv` read as one comma-delimited column kept that one-column cache after `QSV_SNIFF_DELIMITER` was set, so `stats` and the commands that read its cache went on describing the wrong columns. The cache now records the delimiter the file was read with, and `stats` and its readers compare against the delimiter they resolve the same way. Checking the cache still does not decompress a compressed or Parquet input. A cache written before this change did not record the delimiter it was read with, so it is recomputed on its next use.
  - **`moarstats`: two `QSV_STATS_SEPARATOR` fixes** ([#5051](https://github.com/dathere/qsv/pull/5051)):
    - **`mode_zscore` is computed for a column with several modes under any separator.** The first mode was looked up by splitting on `|`, so with another separator a multi-modal numeric column had an empty `mode_zscore`.
-   - **A stats CSV written with another separator is recomputed.** Before, its percentile cells could not be split, so `kelly_skewness` and `percentile_ratio_90_10` were left out without a warning. `moarstats` now reads the separator recorded in the stats cache metadata (#5049) and reruns `stats` when it differs, with a warning. A stats CSV that has no metadata file is used as it is.
 ```
 
-**File**: `src/cmd/stats.rs` (modified, +4/-0)
+**File**: `src/cmd/stats.rs` (modified, +12/-2)
 ```diff
-@@ -1890,6 +1890,10 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-     // the RESOLVED setting, not the flag: QSV_NO_HEADERS turns the header row into data too, and
-     // a cache keyed on the flag alone was served across that change.
-     current_stats_args.flag_no_headers = rconfig.no_headers;
-+    // Likewise the RESOLVED delimiter: QSV_SNIFF_DELIMITER and QSV_DEFAULT_DELIMITER change how
-+    // the file is parsed without touching --delimiter. Not `get_delimiter()`, which converts a
-+    // special-format input - a cache hit must not decompress anything.
-+    current_stats_args.flag_delimiter = (rconfig.configured_delimiter() as char).to_string();
- 
-     // INVARIANT (issue #4462): `rconfig` below is the one and only resolved Config for this
-     // run's input, and every stats path SHARES it - `sequential_stats` and `parallel_stats`
-```
-
-**File**: `src/config.rs` (modified, +17/-0)
-```diff
-@@ -116,6 +116,15 @@ pub fn resolved_no_headers(flag: bool) -> bool {
-     util::get_envvar_flag("QSV_NO_HEADERS") || (flag != util::get_envvar_flag("QSV_TOGGLE_HEADERS"))
- }
- 
-+/// The delimiter a `Config` for `path` resolves from a command's `--delimiter` flag (see
-+/// `Config::configured_delimiter`), for code that must agree with a Config it does not hold -
-+/// the stats cache records the resolved delimiter, and its readers compare against this.
-+pub fn resolved_delimiter(path: &Path, flag: Option<Delimiter>) -> u8 {
-+    Config::new(Some(&path.to_string_lossy().into_owned()))
-+        .delimiter(flag)
-+        .configured_delimiter()
-+}
-+
- /// The preamble rows (as the sniffer counts them) `QSV_SNIFF_PREAMBLE` finds above `path`'s
- /// header, as `Config::preamble_rows` records them; 0 when the env var is unset.
- pub fn sniffed_preamble_rows(path: &Path) -> u64 {
-@@ -572,6 +581,14 @@ impl Config {
-         self
-     }
- 
-+    /// The delimiter this Config resolved from `--delimiter`, `QSV_SNIFF_DELIMITER`, the path's
-+    /// extension and `QSV_DEFAULT_DELIMITER`, WITHOUT converting a special-format input (which
-+    /// `get_delimiter` does). It is what the stats cache records, so that checking a cache
-+    /// never decompresses anything.
-+    pub const fn configured_delimiter(&self) -> u8 {
-+        self.delimiter
-+    }
-+
-     pub fn get_delimiter(&self) -> u8 {
-         // For a special-format input the effective delimiter is the converted
-         // temp's (e.g. a `.tsv` entry inside a `.zip`), not the outer path's
-```
-
-**File**: `src/util/stats_cache.rs` (modified, +17/-16)
-```diff
-@@ -19,10 +19,7 @@ use super::{
- use crate::{
-     CliError, CliResult,
-     cmd::stats::{STATSDATA_TYPES_MAP, StatsData},
--    config::{
--        Config, DEFAULT_RDR_BUFFER_CAPACITY, Delimiter, SpecialFormat, get_delim_by_extension,
--        get_special_format,
--    },
-+    config::{Config, DEFAULT_RDR_BUFFER_CAPACITY, Delimiter, SpecialFormat, get_special_format},
- };
- 
- /// get stats records from stats.csv.data.jsonl file, or if its invalid, by running the stats
-@@ -144,19 +141,23 @@ pub(super) fn stats_cache_parsing_opts_match(
-         return false;
-     }
- 
--    // The effective delimiter must match. Both the cache and the command resolve an unset
--    // delimiter from the same file path, so compare resolved bytes: an explicit recorded/passed
--    // delimiter is a single ASCII byte, otherwise the extension default.
--    let ext_delim = {
--        let (_, d, _) = get_delim_by_extension(input_path, b',');
--        d
--    };
--    let cache_delim = match metadata.get("flag_delimiter").and_then(|v| v.as_str()) {
--        Some(s) if !s.is_empty() => s.as_bytes()[0],
--        _ => ext_delim,
-+    // The effective delimiter must match. The cache records the delimiter its Config RESOLVED
-+    // (flag, QSV_SNIFF_DELIMITER, extension, QSV_DEFAULT_DELIMITER), so resolve the command's
-+    // the same way.
-+    //
-+    // An empty or missing value is refused. A cache written before the resolved delimiter was
-+    // recorded holds only an explicit --delimiter, so "empty" there may be the extension
-+    // default or a delimiter QSV_SNIFF_DELIMITER / QSV_DEFAULT_DELIMITER chose - there is no
-+    // telling which. `stats` itself refuses such a cache too (empty never equals a resolved
-+    // delimiter), and its rerun records the real one.
-+    let Some(cache_delim) = metadata
-+        .get("flag_delimiter")
-+        .and_then(|v| v.as_str())
-+        .and_then(|s| s.bytes().next())
-+    else {
-+        return false;
-     };
--    let cmd_delim = delimiter.map_or(ext_delim, |d| d.as_byte());
--    cache_delim == cmd_delim
-+    cache_delim == crate::config::resolved_delimiter(input_path, delimiter)
- }
- 
- /// Was the stats cache beside `bases` built WITHOUT `--infer-dates`?
-```
-
-**File**: `src/util/tests.rs` (modified, +35/-8)
-```diff
-@@ -250,29 +250,38 @@ fn stats_cache_parsing_opts_match_rejects_mismatched_delimiter() {
- 
- #[test]
- fn stats_cache_parsing_opts_match_resolves_unset_delimiter_from_extension() {
--    // an unset delimiter on BOTH sides resolves from the file extension, so a cache whose
--    // recorded delimiter is empty still matches a consumer that passed none
--    let meta = serde_json::json!({"flag_no_headers": false, "flag_delimiter": ""});
-+    // a consumer that passed no delimiter resolves it from the file extension, and that is
-+    // compared with the delimiter the cache RECORDED
-+    let comma = serde_json::json!({"flag_no_headers": false, "flag_delimiter": ","});
-     assert!(stats_cache_parsing_opts_match(
--        &meta,
-+        &comma,
-         Path::new("data.csv"),
-         false,
-         None,
-         None,
-         false
-     ));
--    // ... and a .tsv input resolves to tab on both sides
-+    // ... and a .tsv input resolves to tab
-+    let tab = serde_json::json!({"flag_no_headers": false, "flag_delimiter": "\t"});
-     assert!(stats_cache_parsing_opts_match(
--        &meta,
-+        &tab,
-         Path::new("data.tsv"),
-         false,
-         None,
-         None,
-         false
-     ));
--    // but an explicit comma against a .tsv input is a genuine mismatch
-     assert!(!stats_cache_parsing_opts_match(
--        &meta,
-+        &comma,
-+        Path::new("data.tsv"),
-+        false,
-+        None,
-+        None,
-+        false
-+    ));
-+    // but an explicit comma against a tab cache is a genuine mismatch
-+    assert!(!stats_cache_parsing_opts_match(
-+        &tab,
-         Path::new("data.tsv"),
-         false,
-         Some(Delimiter(b',')),
-@@ -281,6 +290,24 @@ fn stats_cache_parsing_opts_match_resolves_unset_delimiter_from_extension() {
-     ));
- }
- 
-+#[test]
-+fn stats_cache_parsing_opts_match_refuses_an_unrecorded_delimiter() {
-+    // a cache written before the resolved delimiter was recorded holds "" unless --delimiter
-+    // was passed: it may have been read with the extension default, or with a delimiter
-+    // QSV_SNIFF_DELIMITER / QSV_DEFAULT_DELIMITER chose. It cannot be verified, so it is
-+    // refused even where the extension default would have matched.
-+    let empty = serde_json::json!({"flag_no_headers": false, "flag_delimiter": ""});
-+    let missing = serde_json::json!({"flag_no_headers": false});
-+    for meta in [&empty, &missing] {
-+        for input in ["data.csv", "data.tsv"] {
-+            assert!(
-+                !stats_cache_parsing_opts_match(meta, Path::new(input), false, None, None, false),
-+                "{meta} for {input}"
-+            );
+@@ -5663,6 +5663,13 @@ impl Stats {
+     #[allow(clippy::inline_always)]
+     #[inline(always)]
+     fn add_numeric_value(&mut self, value: f64, weight: f64) {
++        // A "NaN" cell parses as a float, so it reaches here on a Float column. It is not a
++        // number to summarize: qsv-stats' OnlineStats and the t-digest both skip it already,
++        // so the buffers below must too, or the exact quantiles would be computed over a
++        // value the mean leaves out (and one NaN would poison the weighted mean for good).
++        if value.is_nan() {
++            return;
 +        }
-+    }
-+}
-+
- #[test]
- fn stats_cache_parsing_opts_conflict_only_on_a_readable_mismatch() {
-     let dir = tempfile::tempdir().unwrap();
+         if let Some(v) = self.unsorted_stats.as_mut() {
+             v.add(value);
+         }
+@@ -7111,10 +7118,13 @@ impl TypedSum {
+                 }
+             },
+             TFloat => {
++                // a "NaN" cell is skipped, as the mean skips it - it would turn the whole sum
++                // into NaN. It still switches the sum to floats, carrying the integer total.
++                let addend = if float_val.is_nan() { 0.0 } else { float_val };
+                 if let Some(ref mut f) = self.float {
+-                    *f += float_val;
++                    *f += addend;
+                 } else {
+-                    self.float = Some((self.integer as f64) + float_val);
++                    self.float = Some((self.integer as f64) + addend);
+                 }
+             },
+             // TString length captured above; TNull / TDate / TDateTime have no
 ```
 
-**File**: `tests/test_frequency.rs` (modified, +35/-0)
+**File**: `tests/test_stats.rs` (modified, +88/-0)
 ```diff
-@@ -9509,3 +9509,38 @@ fn frequency_piped_stdin_keeps_default_delimiter() {
-         .collect();
-     assert_eq!(fields, ["a", "b"].into_iter().collect(), "{stdout}");
+@@ -10945,3 +10945,91 @@ fn stats_cache_hit_does_not_convert_a_compressed_input() {
+         "a cache hit converted the input: {log}"
+     );
  }
 +
-+// A stats cache written before the resolved delimiter was recorded has an empty
-+// `flag_delimiter` unless --delimiter was passed. This one was built under QSV_SNIFF_DELIMITER
-+// (three semicolon-separated columns). `frequency` without the variable reads one
-+// comma-delimited column, and must regenerate the stats instead of taking that cache: with
-+// its own stats the all-unique column collapses to <ALL_UNIQUE>.
-+#[test]
-+fn frequency_refuses_a_stats_cache_with_an_unrecorded_delimiter() {
-+    let wrk = Workdir::new("frequency_refuses_a_stats_cache_with_an_unrecorded_delimiter");
-+    let rows: String = (0..60)
-+        .map(|i| format!("k{:02};{};row{i}\n", (i * 7) % 60, i * 2))
-+        .collect();
-+    wrk.create_from_string("in.csv", &format!("x;y;z\n{rows}"));
-+    let mut stats_cmd = wrk.command("stats");
-+    stats_cmd
-+        .env("QSV_SNIFF_DELIMITER", "1")
-+        .args(["in.csv", "--everything", "--stats-jsonl"]);
-+    wrk.assert_success(&mut stats_cmd);
-+
-+    let sidecar = wrk.path("in.stats.csv.json");
-+    let mut meta: serde_json::Value =
-+        serde_json::from_str(&std::fs::read_to_string(&sidecar).unwrap()).unwrap();
-+    assert_eq!(meta["flag_delimiter"], ";");
-+    meta["flag_delimiter"] = "".into();
-+    std::fs::write(&sidecar, serde_json::to_string_pretty(&meta).unwrap()).unwrap();
-+    // rewrite the JSONL after the sidecar, so it is not the older of the two
-+    let jsonl = wrk.path("in.stats.csv.data.jsonl");
-+    std::fs::write(&jsonl, std::fs::read_to_string(&jsonl).unwrap()).unwrap();
-+
-+    let mut cmd = wrk.command("frequency");
-+    cmd.arg("in.csv");
-+    let got: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
-+    assert_eq!(got.len(), 2, "{got:?}");
-+    assert_eq!([&got[1][0], &got[1][1]], ["x;y;z", "<ALL_UNIQUE>"]);
-+}
-```
-
-**File**: `tests/test_sortcheck.rs` (modified, +31/-0)
-```diff
-@@ -725,3 +725,34 @@ fn sortcheck_statscache_shortcircuit_under_qsv_no_headers_env() {
-     cmd.args(["--select", "1"]).arg("in.csv");
-     wrk.assert_err(&mut cmd);
- }
-+
-+// the stats cache records the RESOLVED delimiter, so a cache built under QSV_SNIFF_DELIMITER
-+// has to be accepted by a reader running under the same variable, and refused without it. The
-+// tampered sort order shows the cache was used: a full scan finds the column unsorted.
-+#[test]
-+fn sortcheck_statscache_shortcircuit_under_qsv_sniff_delimiter_env() {
-+    let wrk = Workdir::new("sortcheck_statscache_shortcircuit_under_qsv_sniff_delimiter_env");
-+    let rows: String = (0..60)
-+        // a String column: the shortcut only applies when sortcheck's comparison matches the
-+        // cached column's type
-+        .map(|i| format!("k{:02};{};row{i}\n", (i * 7) % 60, i * 2))
-+        .collect();
-+    wrk.create_from_string("in.csv", &format!("x;y;z\n{rows}"));
-+    let mut stats_cmd = wrk.command("stats");
-+    stats_cmd
-+        .env("QSV_SNIFF_DELIMITER", "1")
-+        .args(["in.csv", "--stats-jsonl"]);
-+    wrk.assert_success(&mut stats_cmd);
-+    tamper_sort_order(&wrk, "in", "x", "Ascending");
-+
-+    let mut cmd = wrk.command("sortcheck");
-+    cmd.env("QSV_SNIFF_DELIMITER", "1")
-+        .args(["--select", "1"])
-+        .arg("in.csv");
-+    wrk.assert_success(&mut cmd);
-+
-+    // without the variable the file is one comma-delimited column: full scan, not sorted
-+    let mut cmd = wrk.command("sortcheck");
-+    cmd.args(["--select", "1"]).arg("in.csv");
-+    wrk.assert_err(&mut cmd);
-+}
-```
-
-**File**: `tests/test_stats.rs` (modified, +102/-0)
-```diff
-@@ -10843,3 +10843,105 @@ fn stats_mode_of_a_column_with_no_rows_is_not_all_unique() {
-         );
-     }
- }
-+
-+/// 60 rows of `x;y;z`: a semicolon-separated file under a `.csv` name.
-+fn semicolon_csv() -> String {
-+    let rows: String = (0..60)
-+        .map(|i| format!("{};{};row{i}\n", (i * 7) % 60, i * 2))
-+        .collect();
-+    format!("x;y;z\n{rows}")
-+}
++/// The stats columns that must not change when a "NaN" cell is added to a float column.
++const NAN_BLIND_STATS: [&str; 17] = [
++    "sum",
++    "mean",
++    "sem",
++    "stddev",
++    "variance",
++    "cv",
++    "q1",
++    "q2_median",
++    "q3",
++    "iqr",
++    "mad",
++    "skewness",
++    "lower_outer_fence",
++    "lower_inner_fence",
++    "upper_inner_fence",
++    "upper_outer_fence",
++    "percentiles",
++];
 +
 +#[test]
-+fn stats_cache_not_reused_across_qsv_sniff_delimiter_env() {
-+    // QSV_SNIFF_DELIMITER changes the delimiter without --delimiter: the cache key records the
-+    // delimiter the reader resolved, not the flag alone
-+    for everything in [false, true] {
-+        let wrk = Workdir::new(&format!(
-+            "stats_cache_not_reused_across_qsv_sniff_delimiter_env_{everything}"
-+        ));
-+        wrk.create_from_string("s.csv", &semicolon_csv());
-+        let mut cmd = wrk.command("stats");
-+        cmd.args(["--cache-threshold", "1", "s.csv"]);
-+        if everything {
-+            cmd.arg("--everything");
++fn stats_nan_cells_are_skipped_by_every_numeric_statistic() {
++    // a "NaN" cell parses as a float. The mean skips it, so the sum and the exact quantiles
++    // must skip it too: with the NaN row, they equal the stats of the file without it.
++    let without = stats_first_row(
++        "stats_nan_cells_are_skipped_without",
++        "v\n1.5\n3.5\n4.5\n",
++        &["--everything"],
++    );
++    for (name, nan) in [("upper", "NaN"), ("lower", "nan")] {
++        let with = stats_first_row(
++            &format!("stats_nan_cells_are_skipped_with_{name}"),
++            &format!("v\n1.5\n{nan}\n3.5\n4.5\n"),
++            &["--everything"],
++        );
++        for stat in NAN_BLIND_STATS {
++            assert!(!without[stat].is_empty(), "{stat} has no value to compare");
++            assert_eq!(with[stat], without[stat], "{stat} ({nan})");
 +        }
-+        let got: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
-+        assert_eq!([&got[1][0], &got[1][1]], ["x;y;z", "String"]);
-+
-+        let mut cmd = wrk.command("stats");
-+        cmd.env("QSV_SNIFF_DELIMITER", "1")
-+            .args(["--cache-threshold", "1", "s.csv"]);
-+        let got: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
-+        let fields_types: Vec<[&str; 2]> = got[1..]
-+            .iter()
-+            .map(|r| [r[0].as_str(), r[1].as_str()])
-+            .collect();
++        // the NaN cell is a value, not a NULL
 +        assert_eq!(
-+            fields_types,
-+            [["x", "Integer"], ["y", "Integer"], ["z", "String"]],
-+            "everything={everything}"
++            [
++                &with["type"],
++                &with["nullcount"],
++                &with["sparsity"],
++                &with["cardinality"]
++            ],
++            ["Float", "0", "0", "4"],
++            "{nan}"
 +        );
 +    }
 +}
 +
 +#[test]
-+fn stats_cache_not_reused_across_qsv_default_delimiter_env() {
-+    let wrk = Workdir::new("stats_cache_not_reused_across_qsv_default_delimiter_env");
-+    wrk.create_from_string("f.txt", "x;y\n1;2\n3;4\n");
-+    let mut cmd = wrk.command("stats");
-+    cmd.env("QSV_SKIP_FORMAT_CHECK", "1")
-+        .args(["--cache-threshold", "1", "f.txt"]);
-+    let got: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
-+    assert_eq!([&got[1][0], &got[1][1]], ["x;y", "String"]);
-+
-+    let mut cmd = wrk.command("stats");
-+    cmd.env("QSV_SKIP_FORMAT_CHECK", "1")
-+        .env("QSV_DEFAULT_DELIMITER", ";")
-+        .args(["--cache-threshold", "1", "--output", "out.csv", "f.txt"]);
-+    wrk.assert_success(&mut cmd);
-+    let got = std::fs::read_to_string(wrk.path("out.csv")).unwrap();
-+    let fields_types: Vec<String> = got
-+        .lines()
-+        .skip(1)
-+        .map(|l| l.split(',').take(2).collect::<Vec<_>>().join(","))
-+        .collect();
-+    assert_eq!(fields_types, ["x,Integer", "y,Integer"]);
++fn stats_nan_cell_after_integers_keeps_the_integer_total() {
++    // the NaN switches the column to Float without adding to the sum
++    let row = stats_first_row(
++        "stats_nan_cell_after_integers_keeps_the_integer_total",
++        "v\n1\n2\nNaN\n",
++        &[],
++    );
++    assert_eq!(
++        [&row["type"], &row["sum"], &row["mean"]],
++        ["Float", "3", "1.5"]
++    );
 +}
 +
 +#[test]
-+#[cfg(feature = "polars")]
-+fn stats_cache_hit_does_not_convert_a_compressed_input() {
-+    // checking the cache reads the delimiter the Config resolved, which must not decompress
-+    // the input: a cache hit exists to skip that work
-+    let wrk = Workdir::new("stats_cache_hit_does_not_convert_a_compressed_input");
-+    std::fs::copy(
-+        wrk.load_test_file("boston311-100.csv.gz"),
-+        wrk.path("b.csv.gz"),
-+    )
-+    .unwrap();
-+    let mut cmd = wrk.command("stats");
-+    cmd.args(["--cache-threshold", "1", "b.csv.gz"]);
-+    wrk.assert_success(&mut cmd);
-+
-+    let log_dir = wrk.path("logs");
-+    std::fs::create_dir_all(&log_dir).unwrap();
-+    let mut cmd = wrk.command("stats");
-+    cmd.env("QSV_LOG_LEVEL", "info")
-+        .env("QSV_LOG_DIR", &log_dir)
-+        .args(["--cache-threshold", "1", "b.csv.gz"]);
-+    wrk.assert_success(&mut cmd);
-+
-+    let log: String = std::fs::read_dir(&log_dir)
-+        .unwrap()
-+        .map(|entry| std::fs::read_to_string(entry.unwrap().path()).unwrap())
-+        .collect();
-+    assert!(
-+        log.contains("already exists and is current"),
-+        "expected a cache hit: {log}"
++fn stats_weighted_nan_cells_are_skipped() {
++    // one NaN value used to blank the weighted mean and stddev of the whole column
++    let args = ["--weight", "w", "--everything"];
++    let without = stats_first_row(
++        "stats_weighted_nan_cells_are_skipped_without",
++        "v,w\n1.5,1\n3.5,2\n4.5,1\n",
++        &args,
 +    );
-+    assert!(
-+        !log.contains("converted special-format input"),
-+        "a cache hit converted the input: {log}"
++    let with = stats_first_row(
++        "stats_weighted_nan_cells_are_skipped_with",
++        "v,w\n1.5,1\nNaN,1\n3.5,2\n4.5,1\n",
++        &args,
 +    );
++    for stat in NAN_BLIND_STATS {
++        assert!(!without[stat].is_empty(), "{stat} has no value to compare");
++        assert_eq!(with[stat], without[stat], "{stat}");
++    }
 +}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5054** (2026-11-14): test(stats): NaN cells crashed the exact quantiles on larger columns; cover it and Codacy's suggestions (@jqnatividad)
+- **PR #5053** (2026-11-14): fix(stats): a NaN cell is skipped by the sum, the exact quantiles and the weighted statistics (@jqnatividad)
 - **PR #5052** (2026-11-14): fix(stats): the cache key records the resolved delimiter, not the --delimiter flag (@jqnatividad)
 - **PR #5051** (2026-11-14): fix(moarstats): honor QSV_STATS_SEPARATOR for the first mode; recompute a stats CSV written with another separator (@jqnatividad)
 - **PR #5050** (2026-11-14): fix(stats): max_precision for exponent-form floats, weighted quantiles with no positive weight, *ALL antimodes (@jqnatividad)
 - **PR #5049** (2026-11-14): fix(stats): cache follows QSV_NO_HEADERS and QSV_STATS_SEPARATOR; re-sniff date columns after an upgrade (@jqnatividad)
-- **PR #5048** (2026-11-14): deps: bump Polars to upstream 36ea0f9 (@jqnatividad)
-- **PR #5047** (2026-11-14): fix(viz): category-axis tickvals are category names, not positions (@jqnatividad)
 
 ---
 
@@ -2653,13 +2618,13 @@ A sidecar written before the resolved delimiter was recorded
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. stats): the cache key records the resolved delimiter, not the --delimiter flag
+## X. test(stats): NaN cells crashed the exact quantiles on larger columns; cover it a
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `229979d6`: stats): the cache key records the resolved delimiter, not the --delimiter flag. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7abf98c0`: test(stats): NaN cells crashed the exact quantiles on larger columns; cover it and Codacy's suggestions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2667,17 +2632,17 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **`stats`: the cache follows the delimiter set by `QSV_SNIFF_DELIMITER` and `QSV_DEFAULT_DELIMITER`** ([#5052](https://github.com/dathere/qsv/pull/5052)). The stats cache recorded only the `--delimiter` flag. A semicolon-separated `data.csv` read as one comma-delimited column kept that one-column cache after `QSV_SNIFF_DELIMITER` was set, so `stats` and the commands that read its cache went on describing the wrong columns. The cache now records the delimiter the file was read with, and `stats` and its readers compare against the delimiter they resolve the same way. Checking the cache still does not decompress a compressed or Parquet input. A cache written before this change did not record the delimiter it was read with, so it is recomputed on its next use.
+- **`stats`: a `NaN` cell in a float column is skipped by every numeric statistic** ([#5053](https://github.com/dathere/qsv/pull/5053)). A `NaN`, `nan` or `NAN` cell is read as a float (pandas and numpy write missing values this way). The mean already skipped it, but the `sum` came out empty, and the exact median, quartiles, IQR, MAD, fences, skewness and percentiles were computed with it. On a column of a few hundred rows or more that crashed `stats` (qsv 28.0.0 exits with a panic on `stats --quartiles`, as does `moarstats`, which runs it); on a smaller one they came out empty or shifted. With `--weight`, one such cell emptied the weighted mean and standard deviation of the whole column. They now all skip it, as `--quantile-method approx` already did, so the statistics are those of the column's other values. The cell still counts as a value: `nullcount`, `sparsity` and `cardinality` are unchanged, and the column stays Float. That holds when the other values are all integers too: such a column is summarized as floats, so its minimum and maximum read `1.0` and not `1`, and its sum is no longer exact past 2^53. `inf` cells are unchanged.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+- **`stats`: a `NaN` cell in a float column is skipped by every numeric statistic** ([#5053](https://github.com/dathere/qsv/pull/5053)). A `NaN`, `nan` or `NAN` cell is read as a float (pandas and numpy write missing values this way). The mean already skipped it, but the `sum` came out empty, and the exact median, quartiles, IQR, MAD, fences, skewness and percentiles were computed with it and came out empty or shifted. With `--weight`, one such cell emptied the weighted mean and standard deviation of the whole column. They now all skip it, as `--quantile-method approx` already did, so the statistics equal those of the column without that cell. The cell still counts as a value: `nullcount`, `sparsity` and `cardinality` are unchanged, and the column stays Float. `inf` cells are unchanged.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `229979d6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7abf98c0` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

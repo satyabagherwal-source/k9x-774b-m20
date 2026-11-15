@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T00:38:25.677Z",
-  "total_records": 888,
+  "last_updated": "2026-11-15T00:51:34.597Z",
+  "total_records": 895,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 438,
+      "total": 441,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -475,7 +475,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-autotrust-jev-35b-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-openbmb-minicpm-v-4-7-35b-a3b-core-invariants",
         "DOM-D-C5F6E511",
-        "domain_intelligence-research-knowledge-intelligence-hf-openbmb-minicpm-v-4-7-35b-a3b-learnings-core-"
+        "domain_intelligence-research-knowledge-intelligence-hf-openbmb-minicpm-v-4-7-35b-a3b-learnings-core-",
+        "domain_intelligence-research-knowledge-intelligence-openbmb-minicpm-v-4-7-1b-core-invariants",
+        "DOM-D-B43360BC",
+        "domain_intelligence-research-knowledge-intelligence-hf-openbmb-minicpm-v-4-7-1b-learnings-core-invar"
       ]
     },
     "E": {
@@ -510,7 +513,7 @@
       ]
     },
     "G": {
-      "total": 145,
+      "total": 147,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -656,11 +659,13 @@
         "domain_intelligence-architecture-intelligence-dnscontrol-dnscontrol-core-invariants",
         "domain_intelligence-architecture-intelligence-dnscontrol-dnscontrol-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-shifthackz-sdai-kmp-core-invariants",
-        "domain_intelligence-architecture-intelligence-shifthackz-sdai-kmp-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-shifthackz-sdai-kmp-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-cachix-devenv-core-invariants",
+        "domain_intelligence-architecture-intelligence-cachix-devenv-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 182,
+      "total": 184,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -843,7 +848,9 @@
         "domain_intelligence-technical-construction-intelligence-dathere-qsv-core-invariants",
         "domain_intelligence-technical-construction-intelligence-clickhouse-clickhouse-learnings-core-invaria",
         "domain_intelligence-technical-construction-intelligence-apollographql-apollo-kotlin-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-apollographql-apollo-kotlin-learnings-core-i"
+        "domain_intelligence-technical-construction-intelligence-apollographql-apollo-kotlin-learnings-core-i",
+        "domain_intelligence-technical-construction-intelligence-necolas-react-native-web-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-necolas-react-native-web-learnings-core-inva"
       ]
     },
     "I": {
@@ -7465,8 +7472,8 @@
       "title": "Technical Construction Intelligence: volcengine/OpenViking Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-volcengine-openviking-technical-construction-intelligence-volcengine-openviking-.md",
       "repository": "volcengine/OpenViking",
-      "content_hash": "2aac4ab6faf944d7ec84106c6fa57869e3d3a5983488a03a42b8f158f725ef89",
-      "created_at": "2026-11-13T16:49:10.888Z"
+      "content_hash": "2a5b160d0eeb3236c7971c02f410403de0c07e6215a9b4dcd24780b14c8e32d6",
+      "created_at": "2026-11-15T00:50:49.638Z"
     },
     "DOM-D-E243BB51": {
       "record_id": "DOM-D-E243BB51",
@@ -10945,8 +10952,8 @@
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "38e8a460fc2a30995fd0716764470428c5168bb2bc29dae7c594839bfc3671d4",
-      "created_at": "2026-11-14T22:57:51.331Z"
+      "content_hash": "ac0a18181e45aa4257d6f8c011a03e48afd006330fd5a9898f758017c8266336",
+      "created_at": "2026-11-15T00:50:53.967Z"
     },
     "DOM-D-F5645095": {
       "record_id": "DOM-D-F5645095",
@@ -17522,6 +17529,102 @@
       "repository": "shifthackz-sdai-kmp-learnings",
       "content_hash": "4dbcbf9ca9ca079bcdbda93b040dc297f440119fa547fa26806a659ce880e79c",
       "created_at": "2026-11-15T00:38:24.973Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-openbmb-minicpm-v-4-7-1b-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-openbmb-minicpm-v-4-7-1b-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: openbmb/MiniCPM-V-4.7-1B Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openbmb-minicpm-v-4-7-1b-research-knowledge-intelligence-openbmb-minicpm-v-4-.md",
+      "repository": "openbmb/MiniCPM-V-4.7-1B",
+      "content_hash": "6134141dff1ab2a23593bf8de8fcbcee6c28ca92f000a1e865af9a27c8eaaea7",
+      "created_at": "2026-11-15T00:50:34.539Z"
+    },
+    "domain_intelligence-architecture-intelligence-cachix-devenv-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-cachix-devenv-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: cachix/devenv Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-cachix-devenv-architecture-intelligence-cachix-devenv-core-invariants.md",
+      "repository": "cachix/devenv",
+      "content_hash": "bdf2d7571e77b0da40d43be973d264bbc6433f1b6707b286e6e42d232f1ff55b",
+      "created_at": "2026-11-15T00:50:36.841Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-necolas-react-native-web-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-necolas-react-native-web-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: necolas/react-native-web Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-necolas-react-native-web-technical-construction-intelligence-necolas-react-nativ.md",
+      "repository": "necolas/react-native-web",
+      "content_hash": "f0897af0ec35b16157cf9022442486e1e4e922dc018c6e03ee61b21a1be409e6",
+      "created_at": "2026-11-15T00:50:41.127Z"
+    },
+    "domain_intelligence-architecture-intelligence-cachix-devenv-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-cachix-devenv-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: cachix-devenv-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-cachix-devenv-learnings-architecture-intelligence-cachix-devenv-learnings-core-i.md",
+      "repository": "cachix-devenv-learnings",
+      "content_hash": "b5023f5ce040855f2a8b0c0ad7859a92c21110c357f470eb5aced95225d491b5",
+      "created_at": "2026-11-15T00:50:57.332Z"
+    },
+    "DOM-D-B43360BC": {
+      "record_id": "DOM-D-B43360BC",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): openbmb/MiniCPM-V-4.7-1B",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/openbmb/MiniCPM-V-4.7-1B](https://huggingface.co/openbmb/MiniCPM-V-4.7-1B))  \n> **Source Version**: `hf-openbmb-m`  \n> **License**: Open-Source  \n> *",
+      "content_hash": "fecbb1aea6c3b906dabd2a85054ef6f5d7cfdda7742b8a874c138298367bbc8f",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md`  \n> **Source**: huggingface ([https://hugg -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md`  \n> **Source**: huggingface ([https://hugg",
+      "provenance": {
+        "source_uri": "project://hf-openbmb-minicpm-v-4.7-1b/hf-openbmb-minicpm-v-4.7-1b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T00:50:57.574Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-openbmb-minicpm-v-4.7-1b)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-openbmb-minicpm-v-4.7-1b"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-15T00:51:33.710Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-openbmb-minicpm-v-4-7-1b-learnings-core-invar": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-openbmb-minicpm-v-4-7-1b-learnings-core-invar",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-openbmb-minicpm-v-4.7-1b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openbmb-minicpm-v-4-7-1b-learnings-research-knowledge-intelligence-hf-openbmb.md",
+      "repository": "hf-openbmb-minicpm-v-4.7-1b-learnings",
+      "content_hash": "4e615e8bd61418fe6d1e2c5c0e1191a021cacd971ffb2e956d84505de0867faa",
+      "created_at": "2026-11-15T00:51:33.964Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-necolas-react-native-web-learnings-core-inva": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-necolas-react-native-web-learnings-core-inva",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: necolas-react-native-web-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-necolas-react-native-web-learnings-technical-construction-intelligence-necolas-r.md",
+      "repository": "necolas-react-native-web-learnings",
+      "content_hash": "bb8e9e5f0482180852ab3a38c0b9c812cea15fda91bcf92365e96d8a6c5d2c6f",
+      "created_at": "2026-11-15T00:51:34.597Z"
     }
   }
 }

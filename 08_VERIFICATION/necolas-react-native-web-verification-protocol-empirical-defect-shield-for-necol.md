@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for necolas/react/native/web
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for necolas/react-native-web
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "necolas/react/native/web",
-  "source_url": "https://github.com/necolas/react/native/web",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "necolas/react-native-web",
+  "source_url": "https://github.com/necolas/react-native-web",
+  "source_version": "eb77ba97",
+  "license": "MIT",
+  "timestamp": "2026-11-15T00:50:41.008Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-necolas-react-native-web",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [necolas/react/native/web](https://github.com/necolas/react/native/web) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [necolas/react-native-web](https://github.com/necolas/react-native-web) (Revision: `eb77ba97`).  
+> **License**: MIT | **Timestamp**: `2026-11-15T00:50:41.008Z`  
+> **Learning ID**: `learn-github-necolas-react-native-web`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `necolas/react/native/web` (Commit: `historical`)
+- **Target Repository**: `necolas/react-native-web` (Commit: `eb77ba97`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/necolas-react-native-web-learnings.md`  
-> **Source**: github ([https://github.com/necolas/react-native-web](https://github.com/necolas/react-native-web))  
-> **Source Version**: `dcfd464f`  
-> **License**: MIT  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T13:52:17.019Z  
-> **Learning ID**: `learn-github-necolas-react-native-web`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): necolas/react-native-web
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/necolas-react-native-web-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/necolas/react-native-web](https://github.com/necolas/react-native-web))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T13:52:16.692Z  
+> **Harvest Timestamp**: 2026-11-15T00:50:39.824Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Cross-platform React UI packages
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 22162 stars
+- **Stars / Engagement**: 22158 stars
 
 ---
 
@@ -129,15 +115,24 @@ export type Application = {
   ...
 };
 
-export default function renderApplication<Props extends Object>(
+export type ApplicationElement = {
+  element: Node,
+  getStyleElement: (props?: { ... }) => Node
+};
+
+export type AppProps = { ... };
+
+export type WrapperComponentType = ComponentType<{ children: Node }>;
+
+export default function renderApplication<Props extends AppProps>(
   RootComponent: ComponentType<Props>,
-  WrapperComponent?: ?ComponentType<{ children: Node, ... }>,
+  WrapperComponent?: ?WrapperComponentType,
   callback?: () => void,
   options: {
     hydrate: boolean,
     initialProps: Props,
-    rootTag: any,
-    ...
+    mode: 'concurrent' | 'legacy',
+    rootTag: HTMLElement
   }
 ): Application {
   const { hydrate: shouldHydrate, initialProps, rootTag } = options;
@@ -158,17 +153,17 @@ export default function renderApplication<Props extends Object>(
 }
 
 export function getApplication(
-  RootComponent: ComponentType<Object>,
-  initialProps: Object,
-  WrapperComponent?: ?ComponentType<{ children: Node, ... }>
-): {| element: Node, getStyleElement: (Object) => Node |} {
+  RootComponent: ComponentType<AppProps>,
+  initialProps: ?AppProps,
+  WrapperComponent?: ?WrapperComponentType
+): ApplicationElement {
   const element = (
     <AppContainer WrapperComponent={WrapperComponent} rootTag={{}}>
       <RootComponent {...initialProps} />
     </AppContainer>
   );
   // Don't escape CSS text
-  const getStyleElement = (props: Object) => {
+  const getStyleElement = (props?: { ... }) => {
     const sheet = StyleSheet.getSheet();
     return (
       <style
@@ -338,7 +333,7 @@ export default AccessibilityUtil;
 
 import propsToAriaRole from './propsToAriaRole';
 
-const roleComponents: { [string]: string } = {
+const roleComponents: Record<string, string> = {
   article: 'article',
   banner: 'header',
   blockquote: 'blockquote',
@@ -363,7 +358,7 @@ const roleComponents: { [string]: string } = {
 const emptyObject = {};
 
 const propsToAccessibilityComponent = (
-  props: Object = emptyObject
+  props: Readonly<Record<string, unknown>> = emptyObject
 ): void | string => {
   const roleProp = props.role || props.accessibilityRole;
   // special-case for "label" role which doesn't map to an ARIA role
@@ -376,6 +371,7 @@ const propsToAccessibilityComponent = (
     if (role === 'heading') {
       const level = props['aria-level'];
       if (level != null) {
+        // $FlowFixMe[incompatible-type] aria-level is not checked to be a number at runtime
         return `h${level}`;
       }
       return 'h1';
@@ -399,7 +395,7 @@ export default propsToAccessibilityComponent;
  * @flow
  */
 
-const accessibilityRoleToWebRole: { [string]: ?string } = {
+const accessibilityRoleToWebRole: Record<string, ?string> = {
   adjustable: 'slider',
   button: 'button',
   header: 'heading',
@@ -418,14 +414,17 @@ const propsToAriaRole = ({
   accessibilityRole,
   role
 }: {
-  accessibilityRole?: string,
-  role?: string
+  readonly accessibilityRole?: unknown,
+  readonly role?: unknown,
+  ...
 }): string | void => {
   const _role = role || accessibilityRole;
   if (_role) {
+    // $FlowFixMe[incompatible-type] Role props are not checked to be strings at runtime
     const inferredRole = accessibilityRoleToWebRole[_role];
     if (inferredRole !== null) {
       // ignore roles that don't map to web
+      // $FlowFixMe[incompatible-type] Role props are not checked to be strings at runtime
       return inferredRole || _role;
     }
   }
@@ -504,13 +503,13 @@ const TextInputState = {
   /**
    * Internal state
    */
-  _currentlyFocusedNode: null as ?Object,
+  _currentlyFocusedNode: null as ?HTMLElement,
 
   /**
    * Returns the ID of the currently focused text field, if one exists
    * If no text field is focused it returns null
    */
-  currentlyFocusedField(): ?Object {
+  currentlyFocusedField(): ?HTMLElement {
     if (document.activeElement !== TextInputState._currentlyFocusedNode) {
       TextInputState._currentlyFocusedNode = null;
     }
@@ -522,7 +521,7 @@ const TextInputState = {
    * Focuses the specified text field
    * noop if the text field was already focused
    */
-  focusTextInput(textFieldNode: ?Object) {
+  focusTextInput(textFieldNode: ?HTMLElement) {
     if (textFieldNode != null) {
       TextInputState._currentlyFocusedNode = textFieldNode;
       if (document.activeElement !== textFieldNode) {
@@ -536,7 +535,7 @@ const TextInputState = {
    * Unfocuses the specified text field
    * noop if it wasn't focused
    */
-  blurTextInput(textFieldNode: ?Object) {
+  blurTextInput(textFieldNode: ?HTMLElement) {
     if (textFieldNode != null) {
       TextInputState._currentlyFocusedNode = null;
       if (document.activeElement === textFieldNode) {
@@ -561,11 +560,15 @@ export default TextInputState;
  * @flow
  */
 
+import type { ResponderDOMEvent } from './ResponderEventTypes';
+
 import isSelectionValid from '../../modules/isSelectionValid';
 
 const keyName = '__reactResponderId';
 
-function getEventPath(domEvent: any): Array<any> {
+export type ResponderNode = HTMLElement & { __reactResponderId?: number, ... };
+
+function getEventPath(domEvent: ResponderDOMEvent): Array<ResponderNode> {
   // The 'selectionchange' event always has the 'document' as the target.
   // Use the anchor node as the initial target to reconstruct a path.
   // (We actually only need the first "responder" node in practice.)
@@ -573,13 +576,15 @@ function getEventPath(domEvent: any): Array<any> {
     const target = window.getSelection()?.anchorNode;
     return composedPathFallback(target);
   } else {
+    // $FlowFixMe[incompatible-type] the path of a responder event contains host nodes
     return domEvent.composedPath();
   }
 }
 
-function composedPathFallback(target: any): Array<any> {
-  const path = [];
+function composedPathFallback(target: ?Node): Array<ResponderNode> {
+  const path: Array<ResponderNode> = [];
   while (target != null && target !== document.body) {
+    // $FlowFixMe[incompatible-type] the path of a responder event contains host nodes
     path.push(target);
     target = target.parentNode;
   }
@@ -589,7 +594,7 @@ function composedPathFallback(target: any): Array<any> {
 /**
  * Retrieve the responderId from a host node
  */
-function getResponderId(node: any): ?number {
+function getResponderId(node: ?ResponderNode): ?number {
   if (node != null) {
     return node[keyName];
   }
@@ -599,7 +604,7 @@ function getResponderId(node: any): ?number {
 /**
  * Store the responderId on a host node
  */
-export function setResponderId(node: any, id: number) {
+export function setResponderId(node: ?ResponderNode, id: number) {
   if (node != null) {
     node[keyName] = id;
   }
@@ -608,12 +613,12 @@ export function setResponderId(node: any, id: number) {
 /**
  * Filter the event path to contain only the nodes attached to the responder system
  */
-export function getResponderPaths(domEvent: any): {|
+export function getResponderPaths(domEvent: ResponderDOMEvent): {
   idPath: Array<number>,
-  nodePath: Array<any>
-|} {
-  const idPath = [];
-  const nodePath = [];
+  nodePath: Array<ResponderNode>
+} {
+  const idPath: Array<number> = [];
+  const nodePath: Array<ResponderNode> = [];
   const eventPath = getEventPath(domEvent);
   for (let i = 0; i < eventPath.length; i++) {
     const node = eventPath[i];
@@ -630,9 +635,9 @@ export function getResponderPaths(domEvent: any): {|
  * Walk the paths and find the first common ancestor
  */
 export function getLowestCommonAncestor(
-  pathA: Array<any>,
-  pathB: Array<any>
-): any {
+  pathA: Array<number>,
+  pathB: Array<number>
+): ?number {
   let pathALength = pathA.length;
   let pathBLength = pathB.length;
   if (
@@ -681,13 +686,17 @@ export function getLowestCommonAncestor(
  * Determine whether any of the active touches are within the current responder.
  * This cannot rely on W3C `targetTouches`, as Safari doesn't implement it.
  */
-export function hasTargetTouches(target: any, touches: any): boolean {
+export function hasTargetTouches(
+  target: ResponderNode,
+  touches: ?TouchList
+): boolean {
   if (!touches || touches.length === 0) {
     return false;
   }
   for (let i = 0; i < touches.length; i++) {
     const node = touches[i].target;
     if (node != null) {
+      // $FlowFixMe[incompatible-type] touch targets are DOM nodes
       if (target.contains(node)) {
         return true;
       }
@@ -700,7 +709,7 @@ export function hasTargetTouches(target: any, touches: any): boolean {
  * Ignore 'selectionchange' and 'select' events that don't correspond with a person's intent to
  * select text.
  */
-export function hasValidSelection(domEvent: any): boolean {
+export function hasValidSelection(domEvent: ResponderDOMEvent): boolean {
   if (domEvent.type === 'selectionchange') {
     return isSelectionValid();
   }
@@ -709,6 +718,8 @@ export function hasValidSelection(domEvent: any): boolean {
   }
 
   try {
+    // $FlowFixMe[prop-missing] select events target an input or a textarea
+    // $FlowFixMe[incompatible-use] select events target an input or a textarea
     const { selectionStart, selectionEnd } = domEvent.target;
 
     if (
@@ -728,7 +739,7 @@ export function hasValidSelection(domEvent: any): boolean {
 /**
  * Events are only valid if the primary button was used without specific modifier keys.
  */
-export function isPrimaryPointerDown(domEvent: any): boolean {
+export function isPrimaryPointerDown(domEvent: ResponderDOMEvent): boolean {
   const { altKey, button, buttons, ctrlKey, type } = domEvent;
   const isTouch = type === 'touchstart' || type === 'touchmove';
   const isPrimaryMouseDown =
@@ -775,99 +786,157 @@ export function isPrimaryPointerDown(domEvent: any): boolean {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `91d73b52` (2026-11-10)
-**Commit Message**: [fix] Pressable: remove keyup listener on unmount
+### Incident Patch 1: `eb77ba97` (2026-11-11)
+**Commit Message**: Upgrade Flow to 0.339 and make types more precise (#2963)
 
-If a Pressable unmounted while Enter was held, its document keyup listener stayed attached. Releasing Enter then called onPressOut on the unmounted component.
-
-Closes #2945
-
-**File**: `packages/react-native-web/src/modules/usePressEvents/PressResponder.js` (modified, +5/-0)
+**File**: `.eslintrc.cjs` (modified, +3/-2)
 ```diff
-@@ -236,6 +236,7 @@ export default class PressResponder {
-   |}>;
-   _touchState: TouchState = NOT_RESPONDER;
-   _responderElement: ?HTMLElement = null;
-+  _keyupHandler: ?(KeyboardEvent) => void = null;
- 
-   constructor(config: PressResponderConfig) {
-     this.configure(config);
-@@ -252,6 +253,9 @@ export default class PressResponder {
-     this._cancelLongPressDelayTimeout();
-     this._cancelPressDelayTimeout();
-     this._cancelPressOutDelayTimeout();
-+    if (this._keyupHandler != null) {
-+      document.removeEventListener('keyup', this._keyupHandler);
-+    }
-   }
- 
-   /**
-@@ -358,6 +362,7 @@ export default class PressResponder {
-             this._responderElement = target;
-             // Listen to 'keyup' on document to account for situations where
-             // focus is moved to another element during 'keydown'.
-+            this._keyupHandler = keyupHandler;
-             document.addEventListener('keyup', keyupHandler);
-           }
-           const isSpacebarKey = key === ' ';
+@@ -2,7 +2,7 @@ module.exports = {
+   settings: {
+     react: {
+       version: '19.0',
+-      flowVersion: '0.336.0'
++      flowVersion: '0.339.0'
+     }
+   },
+   // hermes parser to support Flow syntax
+@@ -30,7 +30,8 @@ module.exports = {
+   globals: {
+     ClientRect: 'readonly',
+     Readonly: 'readonly',
+-    ReadonlyArray: 'readonly'
++    ReadonlyArray: 'readonly',
++    Record: 'readonly'
+   },
+   rules: {
+     camelcase: 'off',
 ```
 
----
-
-### Incident Patch 2: `39fc3862` (2026-11-09)
-**Commit Message**: Fix lists page layout in examples app
-
-**File**: `packages/react-native-web-examples/pages/lists/index.js` (modified, +1/-0)
+**File**: `.flowconfig` (modified, +2/-1)
 ```diff
-@@ -371,6 +371,7 @@ class SingleColumnExample extends React.PureComponent {
+@@ -1,7 +1,8 @@
+ [version]
+-0.336.0
++0.339.0
  
- const styles = StyleSheet.create({
-   container: {
-+    alignSelf: 'stretch',
-     backgroundColor: 'rgb(239, 239, 244)',
-     flex: 1
-   },
+ [ignore]
++**/node_modules/invariant/**
+ **/__tests__/**
+ packages/*/dist/**
+ packages/benchmarks/**
 ```
 
----
-
-### Incident Patch 3: `ee8a0980` (2026-11-09)
-**Commit Message**: [fix] ScrollView: support percentage heights on pagingEnabled children
-
-The wrapper View added around each child for scroll snapping was a column, so a horizontal child with height: '100%' (like a FlatList item) collapsed to 0.
-The wrapper now uses the row direction in horizontal mode.
-
-Fix #1299
-
-**File**: `packages/react-native-web/src/exports/ScrollView/index.js` (modified, +4/-0)
+**File**: `flow-typed/environment.js` (modified, +1/-1)
 ```diff
-@@ -328,6 +328,7 @@ class ScrollView extends React.Component<ScrollViewProps> {
-               return (
-                 <View
-                   style={[
-+                    horizontal && styles.childWrapperHorizontal,
-                     isSticky && styles.stickyHeader,
-                     pagingEnabled && styles.pagingEnabledChild
-                   ]}
-@@ -479,6 +480,9 @@ const styles = StyleSheet.create({
-   },
-   pagingEnabledChild: {
-     scrollSnapAlign: 'start'
-+  },
-+  childWrapperHorizontal: {
-+    flexDirection: 'row'
-   }
- });
+@@ -1,7 +1,7 @@
+ // @flow
  
+ declare var process: {
+-  env: { [string]: ?string, ... },
++  env: { [key: string]: ?string, ... },
+   ...
+ };
+ 
+```
+
+**File**: `flow-typed/npm/invariant.js` (added, +7/-0)
+```diff
+@@ -0,0 +1,7 @@
++declare module 'invariant' {
++  declare module.exports: (
++    condition: unknown,
++    format?: string,
++    ...args: Array<unknown>
++  ) => asserts condition;
++}
+```
+
+**File**: `flow-typed/npm/styleq.js` (modified, +2/-4)
+```diff
+@@ -3,9 +3,7 @@ type CompiledStyle = {
+   [key: string]: string,
+ };
+ 
+-type InlineStyle = {
+-  [key: string]: unknown,
+-};
++type InlineStyle = Record<string, unknown>;
+ 
+ type EitherStyle = CompiledStyle | InlineStyle;
+ 
+@@ -16,7 +14,7 @@ type Style<out T = EitherStyle> = StylesArray<false | ?T>;
+ type StyleqOptions = {
+   disableCache?: boolean,
+   disableMix?: boolean,
+-  transform?: (EitherStyle) => EitherStyle,
++  transform?: (style: EitherStyle) => EitherStyle,
+ };
+ 
+ type StyleqResult = [string, InlineStyle | null, string];
+```
+
+**File**: `package-lock.json` (modified, +4/-4)
+```diff
+@@ -28,7 +28,7 @@
+         "eslint-config-prettier": "^10.1.8",
+         "eslint-plugin-react": "^7.37.5",
+         "eslint-plugin-react-hooks": "^7.1.1",
+-        "flow-bin": "0.336.0",
++        "flow-bin": "0.339.0",
+         "hermes-eslint": "0.37.0",
+         "husky": "^9.1.7",
+         "jest": "^30.5.2",
+@@ -8386,9 +8386,9 @@
+       "license": "ISC"
+     },
+     "node_modules/flow-bin": {
+-      "version": "0.336.0",
+-      "resolved": "https://registry.npmjs.org/flow-bin/-/flow-bin-0.336.0.tgz",
+-      "integrity": "sha512-I5sPg/GISpXH4W14eGWgiIsrDKY0uvvvXjlEDOI2t0pguEwbMgpnaYzMMMBoHZcYYtNJIF/0eGsbPnN7uP2zOQ==",
++      "version": "0.339.0",
++      "resolved": "https://registry.npmjs.org/flow-bin/-/flow-bin-0.339.0.tgz",
++      "integrity": "sha512-n7rE8A/hZ0Go4cxWbrot0UZrILJj0oLZZrpT8FRwkY7hmteqrpnZsNT5E9ZexquHjAOkpZy/UMgIAwuUllUr9g==",
+       "dev": true,
+       "license": "MIT",
+       "bin": {
+```
+
+**File**: `package.json` (modified, +1/-1)
+```diff
+@@ -44,7 +44,7 @@
+     "eslint-config-prettier": "^10.1.8",
+     "eslint-plugin-react": "^7.37.5",
+     "eslint-plugin-react-hooks": "^7.1.1",
+-    "flow-bin": "0.336.0",
++    "flow-bin": "0.339.0",
+     "hermes-eslint": "0.37.0",
+     "husky": "^9.1.7",
+     "jest": "^30.5.2",
+```
+
+**File**: `packages/react-native-web/src/exports/AccessibilityInfo/index.js` (modified, +4/-1)
+```diff
+@@ -95,7 +95,10 @@ const AccessibilityInfo = {
+   isReduceTransparencyEnabled: (): Promise<boolean> =>
+     Promise.resolve(prefersReducedTransparencyMedia.matches),
+ 
+-  addEventListener(eventName: string, handler: Function): EventSubscription {
++  addEventListener(
++    eventName: string,
++    handler: ChangeHandler
++  ): EventSubscription {
+     if (eventName === 'highTextContrastChanged') {
+       return prefersContrastMedia.addChangeHandler(handler);
+     } else if (eventName === 'reduceMotionChanged') {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2963** (2026-11-11): Upgrade Flow to 0.339 and make types more precise (@zoontek)
 - **PR #2962** (2026-11-06): [fix] Modal: make a modal active when it shows, not when its animation ends (@zoontek)
 - **PR #2961** (closed): [fix] PanResponder: cancel child click after a pan gesture (@zoontek)
 - **PR #2960** (2026-11-06): [fix] Modal: don't take focus back from a modal shown while closing (@ilazaridis)
 - **PR #2959** (2026-11-05): [fix] VirtualizedList: don't block wheel scroll on the other axis (@zoontek)
 - **PR #2958** (2026-11-05): [fix] UIManager: ignore scroll offsets in measure and measureLayout (@zoontek)
-- **PR #2957** (2026-11-04): Faster `createDOMProps` (@zoontek)
 
 ---
 
@@ -887,35 +956,34 @@ Fix #1299
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [fix] Pressable: remove keyup listener on unmount
+## X. Upgrade Flow to 0.339 and make types more precise
 
 **RULE**:
-When implementing operations in `packages/react-native-web/src/modules/usePressEvents/PressResponder.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in necolas/react-native-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.eslintrc.cjs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in necolas/react-native-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `91d73b52`: [fix] Pressable: remove keyup listener on unmount. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `eb77ba97`: Upgrade Flow to 0.339 and make types more precise. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native-web/src/modules/usePressEvents/PressResponder.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.eslintrc.cjs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-  _keyupHandler: ?(KeyboardEvent) => void = null;
-    if (this._keyupHandler != null) {
-      document.removeEventListener('keyup', this._keyupHandler);
-    }
-            this._keyupHandler = keyupHandler;
+      flowVersion: '0.339.0'
+    ReadonlyArray: 'readonly',
+    Record: 'readonly'
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+      flowVersion: '0.336.0'
+    ReadonlyArray: 'readonly'
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `91d73b52` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `eb77ba97` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -4,45 +4,31 @@
 {
   "source_repository": "cachix/devenv",
   "source_url": "https://github.com/cachix/devenv",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "6c954cc1",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-15T00:50:36.721Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-cachix-devenv",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [cachix/devenv](https://github.com/cachix/devenv) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [cachix/devenv](https://github.com/cachix/devenv) (Revision: `6c954cc1`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-15T00:50:36.721Z`  
+> **Learning ID**: `learn-github-cachix-devenv`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `cachix/devenv` (Commit: `historical`)
+- **Target Repository**: `cachix/devenv` (Commit: `6c954cc1`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cachix-devenv-learnings.md`  
-> **Source**: github ([https://github.com/cachix/devenv](https://github.com/cachix/devenv))  
-> **Source Version**: `622870a7`  
-> **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T16:09:59.126Z  
-> **Learning ID**: `learn-github-cachix-devenv`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): cachix/devenv
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cachix-devenv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cachix/devenv](https://github.com/cachix/devenv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T16:04:56.714Z  
+> **Harvest Timestamp**: 2026-11-15T00:50:35.462Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Fast, Declarative, Reproducible, and Composable Developer Environments using Nix
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7825 stars
+- **Stars / Engagement**: 7834 stars
 
 ---
 
@@ -1725,149 +1711,104 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `622870a7` (2026-11-11)
-**Commit Message**: chore(deps): bump fast-xml-parser from 5.10.1 to 5.12.0 in /docs (#3362)
+### Incident Patch 1: `e080f001` (2026-11-13)
+**Commit Message**: fix(opencode): write opencode.jsonc to .opencode/ (#3366)
 
-Bumps [fast-xml-parser](https://github.com/NaturalIntelligence/fast-xml-parser) from 5.10.1 to 5.12.0.
-- [Release notes](https://github.com/NaturalIntelligence/fast-xml-parser/releases)
-- [Changelog](https://github.com/NaturalIntelligence/fast-xml-parser/blob/master/CHANGELOG.md)
-- [Commits](https://github.com/NaturalIntelligence/fast-xml-parser/compare/v5.10.1...v5.12.0)
-
----
-updated-dependencies:
-- dependency-name: fast-xml-parser
-  dependency-version: 5.12.0
-  dependency-type: indirect
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `docs/package-lock.json` (modified, +19/-19)
+**File**: `src/modules/integrations/opencode.nix` (modified, +4/-4)
 ```diff
-@@ -1976,9 +1976,9 @@
-       }
-     },
-     "node_modules/@nodable/entities": {
--      "version": "3.0.0",
--      "resolved": "https://registry.npmjs.org/@nodable/entities/-/entities-3.0.0.tgz",
--      "integrity": "sha512-8L9xFeTYKhm49xfIypoe2W5wV1m/3Z58kT+7kR9A8OyFxcPduI4VmxaUMQyKYrRjUoLLSXv6EKKID5Tvj9cUVw==",
-+      "version": "3.1.0",
-+      "resolved": "https://registry.npmjs.org/@nodable/entities/-/entities-3.1.0.tgz",
-+      "integrity": "sha512-LsS/DjHr+uDM647Gru/cA8+J3a3HfhttwCKLyuoyN7yXTFCxKBtSgMQBvrW9yNPa2/zDRUNuGPaH5QUFoa4arQ==",
-       "funding": [
+@@ -24,7 +24,7 @@ in
+     settings = lib.mkOption {
+       type = lib.types.attrsOf lib.types.anything;
+       default = { };
+-      description = "Attributes written to opencode.jsonc.";
++      description = "Attributes written to .opencode/opencode.jsonc.";
+       example = lib.literalExpression ''
          {
-           "type": "github",
-@@ -4153,9 +4153,9 @@
-       }
-     },
-     "node_modules/fast-xml-builder": {
--      "version": "1.3.0",
--      "resolved": "https://registry.npmjs.org/fast-xml-builder/-/fast-xml-builder-1.3.0.tgz",
--      "integrity": "sha512-F74cZEdCvuw9P41GAC3rod4X04jjWGM1JPEv/GWSqFTWLsdyMSBMBMlm9Hk3GLBgLBbdBNY8yee0pQh2RBVESQ==",
-+      "version": "1.3.1",
-+      "resolved": "https://registry.npmjs.org/fast-xml-builder/-/fast-xml-builder-1.3.1.tgz",
-+      "integrity": "sha512-pIM/1n3ntFXKYrUZwW7QCK0gAW7XY+wzj1YMIV3tLDvPj/V+zTGJK5e3/4WJfwj0qWw2ElNXiTixda/R+3YSug==",
-       "funding": [
-         {
-           "type": "github",
-@@ -4169,9 +4169,9 @@
-       }
-     },
-     "node_modules/fast-xml-parser": {
--      "version": "5.10.1",
--      "resolved": "https://registry.npmjs.org/fast-xml-parser/-/fast-xml-parser-5.10.1.tgz",
--      "integrity": "sha512-IEMIf7298kXuZSRFoGfMYrl7is8LpavODgbNz1cwIudv7KwVFnuU+UsMporfq6PD6aXSlawZlARiA3UywCTfMw==",
-+      "version": "5.12.0",
-+      "resolved": "https://registry.npmjs.org/fast-xml-parser/-/fast-xml-parser-5.12.0.tgz",
-+      "integrity": "sha512-/pXxRBtwxY9w8z7YbgsvIPPcPvFDsTbIkWwTQJhzNJPokj+TbN6ftmcv4j/pEQDvOCNnKGDzuk5Bo2oogIOiFg==",
-       "funding": [
-         {
-           "type": "github",
-@@ -4180,11 +4180,11 @@
-       ],
-       "license": "MIT",
-       "dependencies": {
--        "@nodable/entities": "^3.0.0",
--        "fast-xml-builder": "^1.2.0",
--        "is-unsafe": "^2.0.0",
-+        "@nodable/entities": "^3.1.0",
-+        "fast-xml-builder": "^1.3.1",
-+        "is-unsafe": "^2.0.3",
-         "path-expression-matcher": "^1.6.2",
--        "strnum": "^2.4.1",
-+        "strnum": "^2.5.1",
-         "xml-naming": "^0.3.0"
-       },
-       "bin": {
-@@ -4857,9 +4857,9 @@
-       }
-     },
-     "node_modules/is-unsafe": {
--      "version": "2.0.0",
--      "resolved": "https://registry.npmjs.org/is-unsafe/-/is-unsafe-2.0.0.tgz",
--      "integrity": "sha512-2LdV822R+wmI86unXA93WCFpL6g+av8ynWk0nrHyJqGop5VoocYsSLFgN8jrfalT6iGeLNM4KXuVSsULP53kEA==",
-+      "version": "2.0.3",
-+      "resolved": "https://registry.npmjs.org/is-unsafe/-/is-unsafe-2.0.3.tgz",
-+      "integrity": "sha512-ZBllczCCO267vgdFb6Tq3pv+LhHaCiGMdr+ZsuL+OopruAg7S+3ZDs1vD0RPC0uSrkjzbraxaGjtX1YBxjPeFQ==",
-       "funding": [
-         {
-           "type": "github",
-@@ -7562,9 +7562,9 @@
-       }
-     },
-     "node_modules/strnum": {
--      "version": "2.4.1",
--      "resolved": "https://registry.npmjs.org/strnum/-/strnum-2.4.1.tgz",
--      "integrity": "sha512-M9eUSMT2dCB2cTNPG7UYj6KuK7RJR2SN2+yCV/fTW3xzTCS6EaGZ5pSMgDIjB7r8zSfTGk+dvvn9rTjpVS9Mwg==",
-+      "version": "2.5.1",
-+      "resolved": "https://registry.npmjs.org/strnum/-/strnum-2.5.1.tgz",
-+      "integrity": "sha512-UM4nTLWzQiDBseVxUGxN0wJzIk0UU89Qi7pKXz9qISo+lhviJikTuikBsK/oFRlpvYHvSdz0TVoLyQ+sEpYwxA==",
-       "funding": [
-         {
-           "type": "github",
+           editor = "nvim";
+@@ -41,7 +41,7 @@ in
+       type = lib.types.attrsOf lib.types.anything;
+       default = { };
+       description = ''
+-        MCP servers written to `opencode.jsonc` under `mcp`.
++        MCP servers written to `.opencode/opencode.jsonc` under `mcp`.
+ 
+         This option mirrors OpenCode's MCP configuration shape directly
+         (`local`/`remote`, `command`, `environment`, `url`, `headers`,
+@@ -240,7 +240,7 @@ in
+ 
+     files = lib.mkMerge [
+       {
+-        "opencode.jsonc".json = {
++        ".opencode/opencode.jsonc".json = {
+           "$schema" = "https://opencode.ai/config.json";
+         }
+         // settingsWithMcp;
+@@ -352,7 +352,7 @@ in
+     };
+ 
+     infoSections."OpenCode" = [
+-      "Settings: opencode.jsonc"
++      "Settings: .opencode/opencode.jsonc"
+     ]
+     ++ lib.optional (cfg.commands != { }) (
+       if builtins.isAttrs cfg.commands then
 ```
 
----
-
-### Incident Patch 2: `f0783152` (2026-11-11)
-**Commit Message**: chore(deps): bump nokogiri in /src/modules/lib/ruby-lsp (#3361)
-
-Bumps [nokogiri](https://github.com/sparklemotion/nokogiri) from 1.18.10 to 1.19.5.
-- [Release notes](https://github.com/sparklemotion/nokogiri/releases)
-- [Changelog](https://github.com/sparklemotion/nokogiri/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/sparklemotion/nokogiri/compare/v1.18.10...v1.19.5)
-
----
-updated-dependencies:
-- dependency-name: nokogiri
-  dependency-version: 1.19.5
-  dependency-type: indirect
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `src/modules/lib/ruby-lsp/Gemfile.lock` (modified, +1/-1)
+**File**: `tests/opencode/devenv.nix` (modified, +15/-15)
 ```diff
-@@ -15,7 +15,7 @@ GEM
-     lint_roller (1.1.0)
-     logger (1.7.0)
-     mini_portile2 (2.8.9)
--    nokogiri (1.18.10)
-+    nokogiri (1.19.5)
-       mini_portile2 (~> 2.8.2)
-       racc (~> 1.4)
-     observer (0.1.2)
+@@ -78,19 +78,19 @@
+   enterTest = ''
+     echo "=== Testing OpenCode Configuration ==="
+ 
+-    # Test 1: opencode.jsonc exists and has correct content
+-    echo "Testing opencode.jsonc..."
+-    test -f opencode.jsonc || { echo "❌ opencode.jsonc not found"; exit 1; }
+-    ${pkgs.jq}/bin/jq -e '."$schema" == "https://opencode.ai/config.json"' opencode.jsonc > /dev/null || { echo "❌ Schema incorrect"; exit 1; }
+-    ${pkgs.jq}/bin/jq -e '.editor == "nvim"' opencode.jsonc > /dev/null || { echo "❌ Custom settings not applied"; exit 1; }
+-    ${pkgs.jq}/bin/jq -e '.theme == "dark"' opencode.jsonc > /dev/null || { echo "❌ Theme setting not applied"; exit 1; }
+-    ${pkgs.jq}/bin/jq -e '.features.autocomplete == true' opencode.jsonc > /dev/null || { echo "❌ Feature settings not applied"; exit 1; }
+-    ${pkgs.jq}/bin/jq -e '.mcp."local-dev".enabled == true' opencode.jsonc > /dev/null || { echo "❌ MCP enabled flag missing"; exit 1; }
+-    ${pkgs.jq}/bin/jq -e '.mcp."local-dev".type == "local"' opencode.jsonc > /dev/null || { echo "❌ MCP local type wrong"; exit 1; }
+-    ${pkgs.jq}/bin/jq -e '.mcp."local-dev".command[0] == "devenv"' opencode.jsonc > /dev/null || { echo "❌ MCP local command wrong"; exit 1; }
+-    ${pkgs.jq}/bin/jq -e '.mcp."local-dev".environment.DEVENV_ROOT == "test-root"' opencode.jsonc > /dev/null || { echo "❌ MCP local environment wrong"; exit 1; }
+-    ${pkgs.jq}/bin/jq -e '.mcp.docs.url == "https://override.example.com"' opencode.jsonc > /dev/null || { echo "❌ settings.mcp did not override opencode.mcp"; exit 1; }
+-    echo "✅ opencode.jsonc OK"
++    # Test 1: .opencode/opencode.jsonc exists and has correct content
++    echo "Testing .opencode/opencode.jsonc..."
++    test -f .opencode/opencode.jsonc || { echo "❌ .opencode/opencode.jsonc not found"; exit 1; }
++    ${pkgs.jq}/bin/jq -e '."$schema" == "https://opencode.ai/config.json"' .opencode/opencode.jsonc > /dev/null || { echo "❌ Schema incorrect"; exit 1; }
++    ${pkgs.jq}/bin/jq -e '.editor == "nvim"' .opencode/opencode.jsonc > /dev/null || { echo "❌ Custom settings not applied"; exit 1; }
++    ${pkgs.jq}/bin/jq -e '.theme == "dark"' .opencode/opencode.jsonc > /dev/null || { echo "❌ Theme setting not applied"; exit 1; }
++    ${pkgs.jq}/bin/jq -e '.features.autocomplete == true' .opencode/opencode.jsonc > /dev/null || { echo "❌ Feature settings not applied"; exit 1; }
++    ${pkgs.jq}/bin/jq -e '.mcp."local-dev".enabled == true' .opencode/opencode.jsonc > /dev/null || { echo "❌ MCP enabled flag missing"; exit 1; }
++    ${pkgs.jq}/bin/jq -e '.mcp."local-dev".type == "local"' .opencode/opencode.jsonc > /dev/null || { echo "❌ MCP local type wrong"; exit 1; }
++    ${pkgs.jq}/bin/jq -e '.mcp."local-dev".command[0] == "devenv"' .opencode/opencode.jsonc > /dev/null || { echo "❌ MCP local command wrong"; exit 1; }
++    ${pkgs.jq}/bin/jq -e '.mcp."local-dev".environment.DEVENV_ROOT == "test-root"' .opencode/opencode.jsonc > /dev/null || { echo "❌ MCP local environment wrong"; exit 1; }
++    ${pkgs.jq}/bin/jq -e '.mcp.docs.url == "https://override.example.com"' .opencode/opencode.jsonc > /dev/null || { echo "❌ settings.mcp did not override opencode.mcp"; exit 1; }
++    echo "✅ .opencode/opencode.jsonc OK"
+ 
+     # Test 2: AGENTS.md exists and has content
+     echo "Testing AGENTS.md..."
+@@ -138,8 +138,8 @@
+ 
+     # Test 9: Verify minimal config works (edge case)
+     echo "Testing minimal configuration support..."
+-    # At minimum, opencode.jsonc should always be created when enabled
+-    test -f opencode.jsonc || { echo "❌ Minimal config didn't create opencode.jsonc"; exit 1; }
++    # At minimum, .opencode/opencode.jsonc should always be created when enabled
++    test -f .opencode/opencode.jsonc || { echo "❌ Minimal config didn't create .opencode/opencode.jsonc"; exit 1; }
+     echo "✅ Minimal config OK"
+ 
+     echo ""
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3366** (2026-11-13): fix(opencode): write opencode.jsonc to .opencode/ (@sand4rt)
+- **PR #3365** (2026-11-13): feat(dotnet): add languages.dotnet.version option (@SVendittelli)
 - **PR #3362** (2026-11-11): chore(deps): bump fast-xml-parser from 5.10.1 to 5.12.0 in /docs (@dependabot[bot])
 - **PR #3361** (2026-11-11): chore(deps): bump nokogiri from 1.18.10 to 1.19.5 in /src/modules/lib/ruby-lsp (@dependabot[bot])
 - **PR #3354** (2026-11-10): feat(elixir): per-project MIX_HOME, mix deps task and versionFile (@nelsonmestevao)
 - **PR #3353** (2026-11-10): feat(elixir): add version option (@nelsonmestevao)
-- **PR #3351** (2026-11-10): chore(deps): bump docker/login-action from 4.7.0 to 4.8.0 (@dependabot[bot])
-- **PR #3348** (closed): fix(top-level): keep `env` values that setup hooks replace (@frankhinek)
 
 ---
 
@@ -1887,67 +1828,37 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump fast-xml-parser from 5.10.1 to 5.12.0 in /docs (#3362)
+## X. opencode): write opencode.jsonc to .opencode/
 
 **RULE**:
-When implementing operations in `docs/package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cachix/devenv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/modules/integrations/opencode.nix`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cachix/devenv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `622870a7`: deps): bump fast-xml-parser from 5.10.1 to 5.12.0 in /docs (#3362). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e080f001`: opencode): write opencode.jsonc to .opencode/. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/package-lock.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/modules/integrations/opencode.nix`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      "version": "3.1.0",
-      "resolved": "https://registry.npmjs.org/@nodable/entities/-/entities-3.1.0.tgz",
-      "integrity": "sha512-LsS/DjHr+uDM647Gru/cA8+J3a3HfhttwCKLyuoyN7yXTFCxKBtSgMQBvrW9yNPa2/zDRUNuGPaH5QUFoa4arQ==",
-      "version": "1.3.1",
-      "resolved": "https://registry.npmjs.org/fast-xml-builder/-/fast-xml-builder-1.3.1.tgz",
-      "integrity": "sha512-pIM/1n3ntFXKYrUZwW7QCK0gAW7XY+wzj1YMIV3tLDvPj/V+zTGJK5e3/4WJfwj0qWw2ElNXiTixda/R+3YSug==",
-      "version": "5.12.0",
-      "resolved": "https://registry.npmjs.org/fast-xml-parser/-/fast-xml-parser-5.12.0.tgz",
-      "integrity": "sha512-/pXxRBtwxY9w8z7YbgsvIPPcPvFDsTbIkWwTQJhzNJPokj+TbN6ftmcv4j/pEQDvOCNnKGDzuk5Bo2oogIOiFg==",
-        "@nodable/entities": "^3.1.0",
-        "fast-xml-builder": "^1.3.1",
-        "is-unsafe": "^2.0.3",
-        "strnum": "^2.5.1",
-      "version": "2.0.3",
-      "resolved": "https://registry.npmjs.org/is-unsafe/-/is-unsafe-2.0.3.tgz",
-      "integrity": "sha512-ZBllczCCO267vgdFb6Tq3pv+LhHaCiGMdr+ZsuL+OopruAg7S+3ZDs1vD0RPC0uSrkjzbraxaGjtX1YBxjPeFQ==",
-      "version": "2.5.1",
-      "resolved": "https://registry.npmjs.org/strnum/-/strnum-2.5.1.tgz",
-      "integrity": "sha512-UM4nTL
+      description = "Attributes written to .opencode/opencode.jsonc.";
+        MCP servers written to `.opencode/opencode.jsonc` under `mcp`.
+        ".opencode/opencode.jsonc".json = {
+      "Settings: .opencode/opencode.jsonc"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-      "version": "3.0.0",
-      "resolved": "https://registry.npmjs.org/@nodable/entities/-/entities-3.0.0.tgz",
-      "integrity": "sha512-8L9xFeTYKhm49xfIypoe2W5wV1m/3Z58kT+7kR9A8OyFxcPduI4VmxaUMQyKYrRjUoLLSXv6EKKID5Tvj9cUVw==",
-      "version": "1.3.0",
-      "resolved": "https://registry.npmjs.org/fast-xml-builder/-/fast-xml-builder-1.3.0.tgz",
-      "integrity": "sha512-F74cZEdCvuw9P41GAC3rod4X04jjWGM1JPEv/GWSqFTWLsdyMSBMBMlm9Hk3GLBgLBbdBNY8yee0pQh2RBVESQ==",
-      "version": "5.10.1",
-      "resolved": "https://registry.npmjs.org/fast-xml-parser/-/fast-xml-parser-5.10.1.tgz",
-      "integrity": "sha512-IEMIf7298kXuZSRFoGfMYrl7is8LpavODgbNz1cwIudv7KwVFnuU+UsMporfq6PD6aXSlawZlARiA3UywCTfMw==",
-        "@nodable/entities": "^3.0.0",
-        "fast-xml-builder": "^1.2.0",
-        "is-unsafe": "^2.0.0",
-        "strnum": "^2.4.1",
-      "version": "2.0.0",
-      "resolved": "https://registry.npmjs.org/is-unsafe/-/is-unsafe-2.0.0.tgz",
-      "integrity": "sha512-2LdV822R+wmI86unXA93WCFpL6g+av8ynWk0nrHyJqGop5VoocYsSLFgN8jrfalT6iGeLNM4KXuVSsULP53kEA==",
-      "version": "2.4.1",
-      "resolved": "https://registry.npmjs.org/strnum/-/strnum-2.4.1.tgz",
-      "integrity": "sha512-M9eUSM
+// Induced defect failure mode:
+      description = "Attributes written to opencode.jsonc.";
+        MCP servers written to `opencode.jsonc` under `mcp`.
+        "opencode.jsonc".json = {
+      "Settings: opencode.jsonc"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `622870a7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e080f001` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

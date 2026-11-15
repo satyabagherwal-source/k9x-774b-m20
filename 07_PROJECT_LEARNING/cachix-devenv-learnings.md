@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cachix-devenv-learnings.md`  
 > **Source**: github ([https://github.com/cachix/devenv](https://github.com/cachix/devenv))  
-> **Source Version**: `9eaaab8d`  
+> **Source Version**: `6c954cc1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T08:21:46.731Z  
+> **Timestamp**: 2026-11-15T00:50:35.469Z  
 > **Learning ID**: `learn-github-cachix-devenv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cachix-devenv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cachix/devenv](https://github.com/cachix/devenv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T08:21:39.433Z  
+> **Harvest Timestamp**: 2026-11-15T00:50:35.462Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Fast, Declarative, Reproducible, and Composable Developer Environments using Nix
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7826 stars
+- **Stars / Engagement**: 7834 stars
 
 ---
 
@@ -1700,483 +1700,104 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9eaaab8d` (2026-11-12)
-**Commit Message**: fix(docs): prevent page reload on navigation
+### Incident Patch 1: `e080f001` (2026-11-13)
+**Commit Message**: fix(opencode): write opencode.jsonc to .opencode/ (#3366)
 
-Use the astro client router to prevent page reloads when clicking on links.
-
-**File**: `docs/astro.config.mjs` (modified, +7/-0)
+**File**: `src/modules/integrations/opencode.nix` (modified, +4/-4)
 ```diff
-@@ -62,6 +62,12 @@ export default defineConfig({
-       '/blog/2026/09/07/devenv-23-portless-and-tui-configuration/',
-   },
-   vite: {
-+    build: {
-+      // vtbot inserts the sidebar before Astro's script deduplication, so returning
-+      // from the homepage can rerun its inline script and register starlight-menu-button twice.
-+      // External JS modules execute once per URL; keep other assets' default inlining.
-+      assetsInlineLimit: (filePath) => filePath.endsWith('.js') ? false : undefined,
-+    },
-     plugins: [tailwindcss(), catalogSearchApi()],
-     server: {
-       watch: {
-@@ -105,6 +111,7 @@ export default defineConfig({
-         themes: codeThemes,
-       },
-       components: {
-+        Head: './src/overrides/Head.astro',
-         Search: './src/overrides/Search.astro',
-         SocialIcons: './src/overrides/SocialIcons.astro',
-       },
-```
-
-**File**: `docs/package-lock.json` (modified, +74/-0)
-```diff
-@@ -29,6 +29,7 @@
-       },
-       "devDependencies": {
-         "@astrojs/check": "^0.9.10",
-+        "astro-vtbot": "3.1.0",
-         "simple-icons": "^16.28.0",
-         "typescript": "6.0.3"
-       },
-@@ -3037,6 +3038,61 @@
-       "dev": true,
-       "license": "MIT"
-     },
-+    "node_modules/@vtbag/cam-shaft": {
-+      "version": "1.0.6",
-+      "resolved": "https://registry.npmjs.org/@vtbag/cam-shaft/-/cam-shaft-1.0.6.tgz",
-+      "integrity": "sha512-Xy1bmJJLXuCqxmY2agwPfhGNv1XZViqh54H0VGK4mouGsItFsh8Mz/wWAP6mZwAOEuu9bEOJ1mJ+oNoaczZ1zw==",
-+      "dev": true,
-+      "license": "ISC",
-+      "funding": {
-+        "type": "github",
-+        "url": "https://github.com/sponsors/martrapp"
-+      }
-+    },
-+    "node_modules/@vtbag/element-crossing": {
-+      "version": "1.1.0",
-+      "resolved": "https://registry.npmjs.org/@vtbag/element-crossing/-/element-crossing-1.1.0.tgz",
-+      "integrity": "sha512-1YL609KPwhHUKRrVNfoogQCVJPfFrE5DubOLcCJZLHVCjWZ2ZAPcaq1wR2OP6nXD0Ok9JLX41YsEtYBYzw6CxQ==",
-+      "dev": true,
-+      "license": "ISC",
-+      "funding": {
-+        "type": "github",
-+        "url": "https://github.com/sponsors/martrapp"
-+      }
-+    },
-+    "node_modules/@vtbag/inspection-chamber": {
-+      "version": "1.0.24",
-+      "resolved": "https://registry.npmjs.org/@vtbag/inspection-chamber/-/inspection-chamber-1.0.24.tgz",
-+      "integrity": "sha512-L6CrMbzJ0gdG/P5WnGyVgRxHVeLhlQgXh3mp+OI4JdJjFiwIhh9+sG/FXM2DneBs5HQvaWUq4qf6NiSlgVbyvQ==",
-+      "dev": true,
-+      "license": "ISC",
-+      "funding": {
-+        "type": "github",
-+        "url": "https://github.com/sponsors/martrapp"
-+      }
-+    },
-+    "node_modules/@vtbag/turn-signal": {
-+      "version": "1.3.1",
-+      "resolved": "https://registry.npmjs.org/@vtbag/turn-signal/-/turn-signal-1.3.1.tgz",
-+      "integrity": "sha512-6rWkG+ik3U+KQGI94yNOrOh5QedB9zmP/8H51X5WQwrJz8m2MAU5YwGRRcweO/dJ6wW/Bn7OsgC1vRURnwrvCg==",
-+      "dev": true,
-+      "license": "ISC",
-+      "funding": {
-+        "type": "github",
-+        "url": "https://github.com/sponsors/martrapp"
-+      }
-+    },
-+    "node_modules/@vtbag/utensil-drawer": {
-+      "version": "1.2.18",
-+      "resolved": "https://registry.npmjs.org/@vtbag/utensil-drawer/-/utensil-drawer-1.2.18.tgz",
-+      "integrity": "sha512-Veg1J8lviA2g878otiEHoyiGR2f4PZ5Rc40UyIR4YS95QnD+1+oAZsprhUPR+YudgZPrqWx5chyPNwjkHyA0uw==",
-+      "dev": true,
-+      "license": "ISC",
-+      "funding": {
-+        "type": "github",
-+        "url": "https://github.com/sponsors/martrapp"
-+      }
-+    },
-     "node_modules/acorn": {
-       "version": "8.18.0",
-       "resolved": "https://registry.npmjs.org/acorn/-/acorn-8.18.0.tgz",
-@@ -3312,6 +3368,24 @@
-         "astro": "^4.0.0-beta || ^5.0.0-beta || ^3.3.0 || ^6.0.0-beta || ^7.0.0"
-       }
-     },
-+    "node_modules/astro-vtbot": {
-+      "version": "3.1.0",
-+      "resolved": "https://registry.npmjs.org/astro-vtbot/-/astro-vtbot-3.1.0.tgz",
-+      "integrity": "sha512-YZX+Sv3EHRaAryyEJ28N9ausnAG4JxM9ivY+BeRJEa/neWBHmZaQ3onMcdxBFg/u7e+8+YOepuQC8Bt2lx8fKg==",
-+      "dev": true,
-+      "license": "ISC",
-+      "dependencies": {
-+        "@vtbag/cam-shaft": "^1.0.6",
-+        "@vtbag/element-crossing": "^1.1.0",
-+        "@vtbag/inspection-chamber": "^1.0.24",
-+        "@vtbag/turn-signal": "^1.3.1",
-+        "@vtbag/utensil-drawer": "^1.2.18"
-+      },
-+      "funding": {
-+        "type": "github",
-+        "url": "https://github.com/sponsors/martrapp"
-+      }
-+    },
-     "node_modules/astro/node_modules/magic-string": {
-       "version": "1.1.0",
-       "resolved": "https://registry.npmjs.org/magic-string/-/magic-string-1.1.0.tgz",
-```
-
-**File**: `docs/package.json` (modified, +1/-0)
-```diff
-@@ -42,6 +42,7 @@
-   },
-   "devDependencies": {
-     "@astrojs/check": "^0.9.10",
-+    "astro-vtbot": "3.1.0",
-     "simple-icons": "^16.28.0",
-     "typescript": "6.0.3"
-   }
-```
-
-**File**: `docs/src/components/TechnologyIcon.astro` (modified, +11/-9)
-```diff
-@@ -33,15 +33,17 @@ const darkIconUrl = technology.icon && darkColor !== technology.color
- </span>
+@@ -24,7 +24,7 @@ in
+     settings = lib.mkOption {
+       type = lib.types.attrsOf lib.types.anything;
+       default = { };
+-      description = "Attributes written to opencode.jsonc.";
++      description = "Attributes written to .opencode/opencode.jsonc.";
+       example = lib.literalExpression ''
+         {
+           editor = "nvim";
+@@ -41,7 +41,7 @@ in
+       type = lib.types.attrsOf lib.types.anything;
+       default = { };
+       description = ''
+-        MCP servers written to `opencode.jsonc` under `mcp`.
++        MCP servers written to `.opencode/opencode.jsonc` under `mcp`.
  
- <script>
--  document.querySelectorAll<HTMLImageElement>('.technology-icon img').forEach((image) => {
--    const showFallback = () => {
--      const icon = image.closest<HTMLElement>('.technology-icon');
--      icon?.querySelectorAll<HTMLImageElement>('img').forEach((candidate) => { candidate.hidden = true; });
--      const fallback = icon?.querySelector('[data-icon-fallback]');
--      if (fallback instanceof HTMLElement) fallback.hidden = false;
--    };
--    if (image.complete && image.naturalWidth === 0) showFallback();
--    else image.addEventListener('error', showFallback, { once: true });
-+  document.addEventListener('astro:page-load', () => {
-+    document.querySelectorAll<HTMLImageElement>('.technology-icon img').forEach((image) => {
-+      const showFallback = () => {
-+        const icon = image.closest<HTMLElement>('.technology-icon');
-+        icon?.querySelectorAll<HTMLImageElement>('img').forEach((candidate) => { candidate.hidden = true; });
-+        const fallback = icon?.querySelector('[data-icon-fallback]');
-+        if (fallback instanceof HTMLElement) fallback.hidden = false;
-+      };
-+      if (image.complete && image.naturalWidth === 0) showFallback();
-+      else image.addEventListener('error', showFallback, { once: true });
-+    });
-   });
- </script>
+         This option mirrors OpenCode's MCP configuration shape directly
+         (`local`/`remote`, `command`, `environment`, `url`, `headers`,
+@@ -240,7 +240,7 @@ in
  
-```
-
-**File**: `docs/src/lib/ai-composition-loader.ts` (modified, +13/-15)
-```diff
-@@ -68,12 +68,15 @@ export function createAiCompositionLoader(loader: HTMLElement, catalog: Ingredie
- 
-   let stageTimer: ReturnType<typeof setInterval> | null = null;
-   let closeTimer: ReturnType<typeof setTimeout> | null = null;
-+  let resolvePendingClose: (() => void) | null = null;
- 
-   function clearTimers() {
-     if (stageTimer) clearInterval(stageTimer);
-     if (closeTimer) clearTimeout(closeTimer);
-     stageTimer = null;
-     closeTimer = null;
-+    resolvePendingClose?.();
-+    resolvePendingClose = null;
-   }
- 
-   function render(selectedIds: string[]) {
-@@ -118,17 +121,19 @@ export function createAiCompositionLoader(loader: HTMLElement, catalog: Ingredie
-     loader.hidden = true;
-   }
- 
--  function dismiss() {
-+  function closeAfter(delay: number) {
-+    clearTimers();
-     return new Promise<void>((resolve) => {
--      clearTimers();
--      loader.classList.add('is-leaving');
--      closeTimer = setTimeout(() => {
--        close();
--        resolve();
--      }, 180);
-+      resolvePendingClose = resolve;
-+      closeTimer = setTimeout(close, delay);
-     });
-   }
- 
-+  function dismiss() {
-+    loader.classList.add('is-leaving');
-+    return closeAfter(180);
-+  }
-+
-   return {
-     open(selectedIds: string[]) {
-       clearTimers();
-@@ -154,16 +159,9 @@ export function createAiCompositionLoader(loader: HTMLElement, catalog: Ingredie
-       stage.textContent = message;
-     },
-     finish() {
--      if (stageTimer) clearInterval(stageTimer);
--      stageTimer = null;
-       stage.textContent = 'Your composition is ready';
-       loader.classList.add('is-complete');
--      return new Promise<void>((resolve) => {
--        closeTimer = setTimeout(() => {
--          close();
--          resolve();
--        }, 620);
--      });
-+      return closeAfter(620);
-     },
-     dismiss,
-     close,
-```
-
-**File**: `docs/src/overrides/Head.astro` (added, +16/-0)
-```diff
-@@ -0,0 +1,16 @@
-+---
-+import DefaultHead from '@astrojs/starlight/components/Head.astro';
-+import VtbotStarlight from 'astro-vtbot/components/starlight/Base.astro';
-+---
-+
-+<VtbotStarlight viewTransitionsFallback="swap">
-+  <DefaultHead {...Astro.props} />
-+</VtbotStarlight>
-+
-+<style is:global>
-+  ::view-transition-group(*),
-+  ::view-transition-old(*),
-+  ::view-transition-new(*) {
-+    animation: none !important;
-+  }
-+</style>
-```
-
-**File**: `docs/src/pages/index.astro` (modified, +56/-29)
-```diff
-@@ -725,8 +725,36 @@ in 12.4s`} />
-     return document.documentElement.dataset.theme === 'dark' ? technology.darkColor : technology.color;
-   }
- 
-+  var hlPromise: Promise<HighlighterCore> | null = null;
-+  function getHighlighter(): Promise<HighlighterCore> {
-+    if (!hlPromise) {
-+      hlPromise = Promise.all([
-+        import('@shikijs/core'),
-+        import('@shikijs/engine-oniguruma'),
-+        import('@shikijs/langs/nix'),
-+        import('@shikijs/langs/yaml'),
-+      ]).then(function (m) {
-+        var core = m[0], onig = m[1], nix = m[2], yaml = m[3];
-+        return core.createHighlighterCore({
-+          themes: codeThemes,
-+          langs: [nix.default, yaml.default],
-+          engine: onig.createOnigurumaEngine(fetch(`${import.meta.env.BASE_URL}shiki/onig.wasm`)),
-+        });
-+      });
-+    }
-+    return hlPromise;
-+  }
-+
-+  let cleanup: Array<() => void> = [];
-+  document.addEventListener('astro:before-swap', () => {
-+    cleanup.forEach((dispose) => dispose());
-+    cleanup = [];
-+  });
-+
-+  document.addEventListener('astro:page-load', initializeLanding);
-+
-   // ── Live preview generator ──
--  (function () {
-+  function initializeEnvironment() {
-     const input = requiredElement(document.querySelector<HTMLInputElement>('#prompt-input'));
-     const output = requiredElement(document.querySelector<HTMLElement>('#preview-code'));
-     const form = requiredElement(document.querySelector<HTMLFormElement>('#generate'));
-@@ -794,26 +822,6 @@ in 12.4s`} />
-       yamlCode.replaceChildren(fragment);
-     }
- 
--    var hlPromise: Promise<HighlighterCore> | null = null;
--    function getHighlighter(): Promise<HighlighterCore> {
--      if (!hlPromise) {
--        hlPromise = Promise.all([
--          import('@shikijs/core'),
--          import('@shikijs/engine-oniguruma'),
--          import('@shikijs/langs/nix'),
--          import('@shikijs/langs/yaml'),
--        ]).then(function (m) {
--          var core = m[0], onig = m[1], nix = m[2], yaml = m[3];
--          return core.createHighlighterCore({
--            themes: codeThemes,
--            langs: [nix.default, yaml.default],
--            engine: onig.createOnigurumaEngine(fetch(`${import.meta.env.BASE_URL}shiki/onig.wasm`)),
--          });
--        });
--      }
--      return hlPromise;
--    }
--
-     function setNodeContent(node: HTMLElement, entry: Pick<EnvironmentEntry, 'id'>, meta: EntryMeta) {
-       var icon = document.createElement('span');
-       icon.className = 'landing-env-node-icon';
-@@ -1237,6 +1245,7 @@ in 12.4s`} />
-     }
- 
-     async function animateFlight(flight: Flight) {
-+      if (!output.isConnected) return;
-       var inlineNode = output.querySelector<HTMLElement>('.landing-line-node[data-entry-id="' + CSS.escape(flight.id) + '"]');
-       var from = flight.fromRect;
-       var inlineTarget = flight.direction === 'in' ? inlineDestination(inlineNode) : null;
-@@ -1803,7 +1812,7 @@ in 12.4s`} />
-     showYaml(initialYaml, false);
-     setComposeState('ready', renderedInitialEnvironment.entries.length + ' declarations ready to explore');
- 
--    new MutationObserver(function () {
-+    var themeObserver = new MutationObserver(function () {
-       syncMinimap(renderedEnvironment);
-       syncNodes(renderedEnvironment.entries);
-       pantryList.querySelectorAll<HTMLButtonElement>('[data-pantry-entry]').forEach(function (button) {
-@@ -1814,11 +1823,22 @@ in 12.4s`} />
-       });
-       syncPantry(renderedEnvironment.entries);
-       if (highlightedEntryIds.length) highlightEntries(highlightedEntryIds, true);
--    }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
--  })();
-+    });
-+    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-+    cleanup.push(() => {
-+      themeObserver.disconnect();
-+      compositionRun += 1;
-+      renderVersion += 1;
-+      yamlRenderVersion += 1;
-+      activeGeneration?.abort();
-+      if (livePreviewTimer) clearTimeout(livePreviewTimer);
-+      if (yamlHideTimer) clearTimeout(yamlHideTimer);
-+      aiLoader.close();
-+    });
-+  }
- 
-   // ── Speed bars animate on view ──
--  (function () {
-+  function initializeSpeedBars() {
-     var container = document.getElementById('speed-bars');
-     if (!container) return;
-     var fills = container.querySelectorAll<HTMLElement>('.landing-bar-fill');
-@@ -1833,10 +1853,11 @@ in 12.4s`} />
-       });
-     }, { threshold: 0.3 });
-     observer.observe(container);
--  })();
-+    cleanup.push(() => observer.disconnect());
-+  }
- 
-   // ── Secret provider switcher ──
--  (function () {
-+  function initializeSecretProviders() {
-     var tabs = document.querySelectorAll<HTMLButtonElement>('#secret-tabs .landing-provider-tab');
-     var name = document.getElementById('secret-provider-name');
-     if (!tabs.length || !name) return;
-@@ -1856,9 +1877,15 @@ in 12.4s`} />
-         providerName.textContent = labels[key] || key;
-       });
-     });
--  })();
-+  }
- 
--  initializeTerminalC
-```
-
----
-
-### Incident Patch 2: `215e857b` (2026-11-11)
-**Commit Message**: nix(zig): package the official zig compiler binary without any of the build hooks
-
-#3296 switched to the upstream binary to work around some linking issue.
-It removed all the tooling needed to build the compiler, but kept around the hooks and build phases which in turn expect those tools to be available.
-
-This commit wraps the upstream binary in a plain derivation to avoid further issues with the upstream source-build derivation.
-
-**File**: `nix/zig-binary.nix` (modified, +17/-15)
-```diff
-@@ -1,6 +1,8 @@
- {
--  stdenv,
-+  lib,
-+  stdenvNoCC,
-   fetchurl,
-+  coreutils,
-   binutils,
-   zig_0_16,
- }:
-@@ -21,39 +23,39 @@ let
-       sha256 = "4e34e279a9f856358de420490b531974c3d37f8f3707eef9f0342e92c14c301f";
+     files = lib.mkMerge [
+       {
+-        "opencode.jsonc".json = {
++        ".opencode/opencode.jsonc".json = {
+           "$schema" = "https://opencode.ai/config.json";
+         }
+         // settingsWithMcp;
+@@ -352,7 +352,7 @@ in
      };
-   };
--  binary = binaries.${stdenv.hostPlatform.system};
-+  binary = binaries.${stdenvNoCC.hostPlatform.system};
- in
- # The source-built Linux compiler in the pinned nixpkgs emits undefined local
- # section symbols in compiler-rt. Use the verified upstream release for Ghostty.
- # Retain nixpkgs' setup hook and stdlib patch for building in Nix sandboxes.
--if !stdenv.hostPlatform.isLinux then
-+if !stdenvNoCC.hostPlatform.isLinux then
-   zig_0_16
- else
--  zig_0_16.overrideAttrs {
-+  stdenvNoCC.mkDerivation {
-     pname = "zig-official";
-     inherit version;
-     src = fetchurl {
-       url = "https://ziglang.org/download/${version}/zig-${binary.target}-${version}.tar.xz";
-       inherit (binary) sha256;
-     };
--    outputs = [ "out" ];
--    nativeBuildInputs = [ ];
--    buildInputs = [ ];
--    phases = [
--      "unpackPhase"
--      "patchPhase"
--      "installPhase"
--      "fixupPhase"
--      "installCheckPhase"
--    ];
-+    strictDeps = true;
-+    dontConfigure = true;
-+    dontBuild = true;
-+
-+    inherit (zig_0_16) setupHook env meta;
-+
-+    # Zig probes this executable to discover the sandbox's dynamic linker.
-+    postPatch = ''
-+      substituteInPlace lib/std/zig/system.zig \
-+        --replace-fail "/usr/bin/env" "${lib.getExe' coreutils "env"}"
-+    '';
-     installPhase = ''
-       runHook preInstall
-       install -Dm755 zig "$out/bin/zig"
-       mkdir -p "$out/lib"
-       cp -r lib "$out/lib/zig"
-       runHook postInstall
-     '';
--    postInstall = "";
-     dontStrip = true;
-     nativeInstallCheckInputs = [ binutils ];
-     doInstallCheck = true;
+ 
+     infoSections."OpenCode" = [
+-      "Settings: opencode.jsonc"
++      "Settings: .opencode/opencode.jsonc"
+     ]
+     ++ lib.optional (cfg.commands != { }) (
+       if builtins.isAttrs cfg.commands then
+```
+
+**File**: `tests/opencode/devenv.nix` (modified, +15/-15)
+```diff
+@@ -78,19 +78,19 @@
+   enterTest = ''
+     echo "=== Testing OpenCode Configuration ==="
+ 
+-    # Test 1: opencode.jsonc exists and has correct content
+-    echo "Testing opencode.jsonc..."
+-    test -f opencode.jsonc || { echo "❌ opencode.jsonc not found"; exit 1; }
+-    ${pkgs.jq}/bin/jq -e '."$schema" == "https://opencode.ai/config.json"' opencode.jsonc > /dev/null || { echo "❌ Schema incorrect"; exit 1; }
+-    ${pkgs.jq}/bin/jq -e '.editor == "nvim"' opencode.jsonc > /dev/null || { echo "❌ Custom settings not applied"; exit 1; }
+-    ${pkgs.jq}/bin/jq -e '.theme == "dark"' opencode.jsonc > /dev/null || { echo "❌ Theme setting not applied"; exit 1; }
+-    ${pkgs.jq}/bin/jq -e '.features.autocomplete == true' opencode.jsonc > /dev/null || { echo "❌ Feature settings not applied"; exit 1; }
+-    ${pkgs.jq}/bin/jq -e '.mcp."local-dev".enabled == true' opencode.jsonc > /dev/null || { echo "❌ MCP enabled flag missing"; exit 1; }
+-    ${pkgs.jq}/bin/jq -e '.mcp."local-dev".type == "local"' opencode.jsonc > /dev/null || { echo "❌ MCP local type wrong"; exit 1; }
+-    ${pkgs.jq}/bin/jq -e '.mcp."local-dev".command[0] == "devenv"' opencode.jsonc > /dev/null || { echo "❌ MCP local command wrong"; exit 1; }
+-    ${pkgs.jq}/bin/jq -e '.mcp."local-dev".environment.DEVENV_ROOT == "test-root"' opencode.jsonc > /dev/null || { echo "❌ MCP local environment wrong"; exit 1; }
+-    ${pkgs.jq}/bin/jq -e '.mcp.docs.url == "https://override.example.com"' opencode.jsonc > /dev/null || { echo "❌ settings.mcp did not override opencode.mcp"; exit 1; }
+-    echo "✅ opencode.jsonc OK"
++    # Test 1: .opencode/opencode.jsonc exists and has correct content
++    echo "Testing .opencode/opencode.jsonc..."
++    test -f .opencode/opencode.jsonc || { echo "❌ .opencode/opencode.jsonc not found"; exit 1; }
++    ${pkgs.jq}/bin/jq -e '."$schema" == "https://opencode.ai/config.json"' .opencode/opencode.jsonc > /dev/null || { echo "❌ Schema incorrect"; exit 1; }
++    ${pkgs.jq}/bin/jq -e '.editor == "nvim"' .opencode/opencode.jsonc > /dev/null || { echo "❌ Custom settings not applied"; exit 1; }
++    ${pkgs.jq}/bin/jq -e '.theme == "dark"' .opencode/opencode.jsonc > /dev/null || { echo "❌ Theme setting not applied"; exit 1; }
++    ${pkgs.jq}/bin/jq -e '.features.autocomplete == true' .opencode/opencode.jsonc > /dev/null || { echo "❌ Feature settings not applied"; exit 1; }
++    ${pkgs.jq}/bin/jq -e '.mcp."local-dev".enabled == true' .opencode/opencode.jsonc > /dev/null || { echo "❌ MCP enabled flag missing"; exit 1; }
++    ${pkgs.jq}/bin/jq -e '.mcp."local-dev".type == "local"' .opencode/opencode.jsonc > /dev/null || { echo "❌ MCP local type wrong"; exit 1; }
++    ${pkgs.jq}/bin/jq -e '.mcp."local-dev".command[0] == "devenv"' .opencode/opencode.jsonc > /dev/null || { echo "❌ MCP local command wrong"; exit 1; }
++    ${pkgs.jq}/bin/jq -e '.mcp."local-dev".environment.DEVENV_ROOT == "test-root"' .opencode/opencode.jsonc > /dev/null || { echo "❌ MCP local environment wrong"; exit 1; }
++    ${pkgs.jq}/bin/jq -e '.mcp.docs.url == "https://override.example.com"' .opencode/opencode.jsonc > /dev/null || { echo "❌ settings.mcp did not override opencode.mcp"; exit 1; }
++    echo "✅ .opencode/opencode.jsonc OK"
+ 
+     # Test 2: AGENTS.md exists and has content
+     echo "Testing AGENTS.md..."
+@@ -138,8 +138,8 @@
+ 
+     # Test 9: Verify minimal config works (edge case)
+     echo "Testing minimal configuration support..."
+-    # At minimum, opencode.jsonc should always be created when enabled
+-    test -f opencode.jsonc || { echo "❌ Minimal config didn't create opencode.jsonc"; exit 1; }
++    # At minimum, .opencode/opencode.jsonc should always be created when enabled
++    test -f .opencode/opencode.jsonc || { echo "❌ Minimal config didn't create .opencode/opencode.jsonc"; exit 1; }
+     echo "✅ Minimal config OK"
+ 
+     echo ""
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3366** (2026-11-13): fix(opencode): write opencode.jsonc to .opencode/ (@sand4rt)
+- **PR #3365** (2026-11-13): feat(dotnet): add languages.dotnet.version option (@SVendittelli)
 - **PR #3362** (2026-11-11): chore(deps): bump fast-xml-parser from 5.10.1 to 5.12.0 in /docs (@dependabot[bot])
 - **PR #3361** (2026-11-11): chore(deps): bump nokogiri from 1.18.10 to 1.19.5 in /src/modules/lib/ruby-lsp (@dependabot[bot])
 - **PR #3354** (2026-11-10): feat(elixir): per-project MIX_HOME, mix deps task and versionFile (@nelsonmestevao)
 - **PR #3353** (2026-11-10): feat(elixir): add version option (@nelsonmestevao)
-- **PR #3351** (2026-11-10): chore(deps): bump docker/login-action from 4.7.0 to 4.8.0 (@dependabot[bot])
-- **PR #3348** (closed): fix(top-level): keep `env` values that setup hooks replace (@frankhinek)
 
 ---
 
@@ -2196,34 +1817,34 @@ This commit wraps the upstream binary in a plain derivation to avoid further iss
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs): prevent page reload on navigation
+## X. opencode): write opencode.jsonc to .opencode/
 
 **RULE**:
-When implementing operations in `docs/astro.config.mjs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cachix/devenv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/modules/integrations/opencode.nix`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cachix/devenv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9eaaab8d`: docs): prevent page reload on navigation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e080f001`: opencode): write opencode.jsonc to .opencode/. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/astro.config.mjs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/modules/integrations/opencode.nix`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    build: {
-      // vtbot inserts the sidebar before Astro's script deduplication, so returning
-      // from the homepage can rerun its inline script and register starlight-menu-button twice.
-      // External JS modules execute once per URL; keep other assets' default inlining.
-      assetsInlineLimit: (filePath) => filePath.endsWith('.js') ? false : undefined,
-    },
-        Head: './src/overrides/Head.astro',
+      description = "Attributes written to .opencode/opencode.jsonc.";
+        MCP servers written to `.opencode/opencode.jsonc` under `mcp`.
+        ".opencode/opencode.jsonc".json = {
+      "Settings: .opencode/opencode.jsonc"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+      description = "Attributes written to opencode.jsonc.";
+        MCP servers written to `opencode.jsonc` under `mcp`.
+        "opencode.jsonc".json = {
+      "Settings: opencode.jsonc"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9eaaab8d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e080f001` are properly handled with clean fallback behavior.

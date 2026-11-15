@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T00:38:24.631Z",
+  "updated_at": "2026-11-15T00:51:34.254Z",
   "stats": {
-    "total_discovered": 3531,
-    "approved_pending_harvest": 3322,
+    "total_discovered": 3537,
+    "approved_pending_harvest": 3327,
     "harvested_count": 0,
-    "rejected_count": 209,
+    "rejected_count": 210,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3302,
+      "COMMUNITY_AND_EXPERT": 3308,
       "OFFICIAL_DOCUMENTATION": 125,
       "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
@@ -76240,6 +76240,131 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
         "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-A70A47526CE0": {
+      "id": "SRC-A70A47526CE0",
+      "url": "https://override.example.com/",
+      "title": "https://override.example.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:50:57.012Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cachix-devenv-learnings.md",
+        "fileName": "cachix-devenv-learnings.md"
+      }
+    },
+    "SRC-30228237199A": {
+      "id": "SRC-30228237199A",
+      "url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
+      "title": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:51:33.742Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md",
+        "fileName": "hf-openbmb-minicpm-v-4.7-1b-learnings.md"
+      }
+    },
+    "SRC-72EE511F3D6A": {
+      "id": "SRC-72EE511F3D6A",
+      "url": "https://github.com/necolas/react-native-web",
+      "title": "https://github.com/necolas/react-native-web",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:51:34.166Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/necolas-react-native-web-learnings.md",
+        "fileName": "necolas-react-native-web-learnings.md"
+      }
+    },
+    "SRC-6B79A1FA134B": {
+      "id": "SRC-6B79A1FA134B",
+      "url": "http://localhost:8081/",
+      "title": "http://localhost:8081/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-15T00:51:34.195Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/necolas-react-native-web-learnings.md",
+        "fileName": "necolas-react-native-web-learnings.md"
+      }
+    },
+    "SRC-5027BCC22AF3": {
+      "id": "SRC-5027BCC22AF3",
+      "url": "https://registry.npmjs.org/flow-bin/-/flow-bin-0.336.0.tgz",
+      "title": "https://registry.npmjs.org/flow-bin/-/flow-bin-0.336.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:51:34.224Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/necolas-react-native-web-learnings.md",
+        "fileName": "necolas-react-native-web-learnings.md"
+      }
+    },
+    "SRC-5ACA26DC0C8D": {
+      "id": "SRC-5ACA26DC0C8D",
+      "url": "https://registry.npmjs.org/flow-bin/-/flow-bin-0.339.0.tgz",
+      "title": "https://registry.npmjs.org/flow-bin/-/flow-bin-0.339.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T00:51:34.254Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/necolas-react-native-web-learnings.md",
+        "fileName": "necolas-react-native-web-learnings.md"
       }
     }
   }

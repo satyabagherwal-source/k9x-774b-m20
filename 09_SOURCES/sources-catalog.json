@@ -1375,8 +1375,8 @@
     "sourceUrl": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
     "sourceVersion": "hf-openbmb-minicpm-v-4.7-1b",
     "license": "Open-Source",
-    "contentHash": "16da8514e1fc6cd2c9ae53c38efadbc59e0734dfec9c781e76c822651b2cdd94",
-    "lastHarvestedAt": "2026-11-09T12:52:43.390Z",
+    "contentHash": "6c95e86afce790a3094f3fa1dd3c3f97179cd06a3aed29fc053cc2c013694994",
+    "lastHarvestedAt": "2026-11-15T00:50:34.356Z",
     "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b"
   },
   "ccfos-nightingale": {
@@ -1603,10 +1603,10 @@
     "repository": "volcengine/OpenViking",
     "platform": "github",
     "sourceUrl": "https://github.com/volcengine/OpenViking",
-    "sourceVersion": "07432564",
+    "sourceVersion": "00c8e7b1",
     "license": "AGPL-3.0",
-    "contentHash": "42251535feba979e0dafdd04df3b3834b5e024562758ffffa76d54a914ce68d7",
-    "lastHarvestedAt": "2026-11-13T16:49:10.617Z",
+    "contentHash": "9f450dc26c42a5ba948ff110e4bfd3d20dab920d1b2e32b56755dd86f1b8ad50",
+    "lastHarvestedAt": "2026-11-15T00:50:49.311Z",
     "learningId": "learn-github-volcengine-openviking"
   },
   "saffsanity-sill": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "229979d6",
+    "sourceVersion": "7abf98c0",
     "license": "NOASSERTION",
-    "contentHash": "26ea2b70a381ebe86478def8b20a1eea0ab53ff6dc28290b390648c4b581bd54",
-    "lastHarvestedAt": "2026-11-14T22:57:50.988Z",
+    "contentHash": "ad36621f639ff8582037b48c61847609aeeb271a7250fe78d3a1c8604b7edaf6",
+    "lastHarvestedAt": "2026-11-15T00:50:53.642Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -2783,10 +2783,10 @@
     "repository": "cachix/devenv",
     "platform": "github",
     "sourceUrl": "https://github.com/cachix/devenv",
-    "sourceVersion": "9eaaab8d",
+    "sourceVersion": "6c954cc1",
     "license": "Apache-2.0",
-    "contentHash": "91700e308434dea7f19b85a54945b892f30e52c32f9906a98fa1a7b8618924f0",
-    "lastHarvestedAt": "2026-11-13T08:22:03.652Z",
+    "contentHash": "933ecc1df7e405bc441ce9c063729039acabe9e20f9fe05eaa649047781a1db1",
+    "lastHarvestedAt": "2026-11-15T00:50:36.509Z",
     "learningId": "learn-github-cachix-devenv"
   },
   "pubkey-rxdb": {
@@ -7123,10 +7123,10 @@
     "repository": "necolas/react-native-web",
     "platform": "github",
     "sourceUrl": "https://github.com/necolas/react-native-web",
-    "sourceVersion": "dcfd464f",
+    "sourceVersion": "eb77ba97",
     "license": "MIT",
-    "contentHash": "f29c3443459d9977ce812f4806fbeb13e980734ba878aa8bec72a9d440771c20",
-    "lastHarvestedAt": "2026-11-11T13:52:28.807Z",
+    "contentHash": "cd96f6396100241f458d1addf5168a927da1f2eb441cf6d8521ec9e98e6711b1",
+    "lastHarvestedAt": "2026-11-15T00:50:40.821Z",
     "learningId": "learn-github-necolas-react-native-web"
   },
   "zvec-ai-zvec-grep": {

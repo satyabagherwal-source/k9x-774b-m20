@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-15T00:38:25.952Z",
-  "total_verified_learnings": 8631,
+  "last_updated": "2026-11-15T00:51:34.741Z",
+  "total_verified_learnings": 8635,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 17958,
+  "total_items": 17980,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112094,10 +112094,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "229979d6",
-      "content_hash": "4a34cf4eeb807a1ef2c2293dd4050a1f37fe87438361fcbfe604ea8b370a0693",
+      "source_version": "7abf98c0",
+      "content_hash": "d75d5303739517cffa0ea1e6ecef2563462808a00cdd47b23e3bdb6495f7794c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T22:57:51.465Z"
+      "persisted_at": "2026-11-15T00:50:54.095Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -113498,10 +113498,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-volcengine-openviking-technical-construction-intelligence-volcengine-openviking-.md",
       "title": "Technical Construction Intelligence: volcengine/OpenViking Core Invariants",
       "repository": "volcengine/OpenViking",
-      "source_version": "07432564",
-      "content_hash": "2aac4ab6faf944d7ec84106c6fa57869e3d3a5983488a03a42b8f158f725ef89",
+      "source_version": "00c8e7b1",
+      "content_hash": "2a5b160d0eeb3236c7971c02f410403de0c07e6215a9b4dcd24780b14c8e32d6",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T16:49:10.888Z"
+      "persisted_at": "2026-11-15T00:50:49.638Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-volcengine-openviking": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-volcengine-openviking",
@@ -113510,10 +113510,10 @@
       "relative_path": "08_VERIFICATION/volcengine-openviking-verification-protocol-empirical-defect-shield-for-volcengi.md",
       "title": "Verification Protocol: Empirical Defect Shield for volcengine/OpenViking",
       "repository": "volcengine/OpenViking",
-      "source_version": "07432564",
-      "content_hash": "d949f3ad03996f66c0681bce4afd905f34d6b13c5acea7dadb41cc50a1d7ee3a",
+      "source_version": "00c8e7b1",
+      "content_hash": "d9badbe2d9ef5446a69636bda2fe49d72fec19c18030ab590dca2fef0d24270c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T16:49:11.014Z"
+      "persisted_at": "2026-11-15T00:50:49.762Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-qwen-image-2-1-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-qwen-image-2-1-learnings-core-invar",
@@ -218671,8 +218671,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "229979d6",
-      "content_hash": "26ea2b70a381ebe86478def8b20a1eea0ab53ff6dc28290b390648c4b581bd54",
+      "source_version": "7abf98c0",
+      "content_hash": "ad36621f639ff8582037b48c61847609aeeb271a7250fe78d3a1c8604b7edaf6",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -218710,6 +218710,11 @@
           "number": 8550,
           "title": "the cache key records the resolved delimiter, not the --delimiter flag",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8556,
+          "title": "test(stats): NaN cells crashed the exact quantiles on larger columns; cover it a",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -218717,7 +218722,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T22:57:50.795Z",
+      "verified_at": "2026-11-15T00:50:53.450Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -219547,10 +219552,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "repository": "dathere/qsv",
-      "source_version": "229979d6",
-      "content_hash": "38e8a460fc2a30995fd0716764470428c5168bb2bc29dae7c594839bfc3671d4",
+      "source_version": "7abf98c0",
+      "content_hash": "ac0a18181e45aa4257d6f8c011a03e48afd006330fd5a9898f758017c8266336",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T22:57:51.331Z"
+      "persisted_at": "2026-11-15T00:50:53.967Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant",
@@ -236650,6 +236655,348 @@
       "content_hash": "0b0b334cac347d2d650acf2c5bec7f370a44174ec02026f07e021b13cdf730e6",
       "domain_letter": "G",
       "persisted_at": "2026-11-15T00:38:25.551Z"
+    },
+    "learn-huggingface-openbmb-minicpm-v-4-7-1b": {
+      "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "openbmb/MiniCPM-V-4.7-1B",
+      "repository": "openbmb/MiniCPM-V-4.7-1B",
+      "slug": "hf-openbmb-minicpm-v-4.7-1b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
+      "source_version": "hf-openbmb-minicpm-v-4.7-1b",
+      "content_hash": "6c95e86afce790a3094f3fa1dd3c3f97179cd06a3aed29fc053cc2c013694994",
+      "dossier_path": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T00:50:34.157Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-openbmb-minicpm-v-4-7-1b-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-openbmb-minicpm-v-4-7-1b-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openbmb-minicpm-v-4-7-1b-research-knowledge-intelligence-openbmb-minicpm-v-4-.md",
+      "title": "Research & Knowledge Intelligence: openbmb/MiniCPM-V-4.7-1B Core Invariants",
+      "repository": "openbmb/MiniCPM-V-4.7-1B",
+      "source_version": "hf-openbmb-minicpm-v-4.7-1b",
+      "content_hash": "6134141dff1ab2a23593bf8de8fcbcee6c28ca92f000a1e865af9a27c8eaaea7",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T00:50:34.539Z"
+    },
+    "learn-github-cachix-devenv": {
+      "learning_id": "learn-github-cachix-devenv",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "cachix/devenv",
+      "repository": "cachix/devenv",
+      "slug": "cachix-devenv",
+      "platform": "github",
+      "source_url": "https://github.com/cachix/devenv",
+      "source_version": "6c954cc1",
+      "content_hash": "933ecc1df7e405bc441ce9c063729039acabe9e20f9fe05eaa649047781a1db1",
+      "dossier_path": "07_PROJECT_LEARNING/cachix-devenv-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/cachix-devenv-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8554,
+          "title": "write opencode.jsonc to .opencode/",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T00:50:36.327Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8554": {
+      "learning_id": "rule-8554",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8554,
+      "title": "write opencode.jsonc to .opencode/",
+      "source_url": "https://github.com/cachix/devenv",
+      "source_version": "6c954cc1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T00:50:36.327Z"
+    },
+    "candidate_directive-write-opencode-jsonc-to-opencode": {
+      "item_id": "candidate_directive-write-opencode-jsonc-to-opencode",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BR5A-write-opencode-jsonc-to-opencode.md",
+      "title": "write opencode.jsonc to .opencode/",
+      "repository": "cachix/devenv",
+      "source_version": "6c954cc1",
+      "content_hash": "3cb7e36e3ed6f09d5339d7552d66c98ce2b07cd9a8d4c8f55d4d1d0be233a9ba",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T00:50:36.722Z"
+    },
+    "domain_intelligence-architecture-intelligence-cachix-devenv-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-cachix-devenv-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-cachix-devenv-architecture-intelligence-cachix-devenv-core-invariants.md",
+      "title": "Architecture Intelligence: cachix/devenv Core Invariants",
+      "repository": "cachix/devenv",
+      "source_version": "6c954cc1",
+      "content_hash": "bdf2d7571e77b0da40d43be973d264bbc6433f1b6707b286e6e42d232f1ff55b",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T00:50:36.841Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-cachix-devenv": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cachix-devenv",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/cachix-devenv-verification-protocol-empirical-defect-shield-for-cachix-devenv.md",
+      "title": "Verification Protocol: Empirical Defect Shield for cachix/devenv",
+      "repository": "cachix/devenv",
+      "source_version": "6c954cc1",
+      "content_hash": "113116a69ec47877d8173e17eac96fc610fa201293ade60e5117b35f56aa73c2",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T00:50:36.988Z"
+    },
+    "learn-github-necolas-react-native-web": {
+      "learning_id": "learn-github-necolas-react-native-web",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "necolas/react-native-web",
+      "repository": "necolas/react-native-web",
+      "slug": "necolas-react-native-web",
+      "platform": "github",
+      "source_url": "https://github.com/necolas/react-native-web",
+      "source_version": "eb77ba97",
+      "content_hash": "cd96f6396100241f458d1addf5168a927da1f2eb441cf6d8521ec9e98e6711b1",
+      "dossier_path": "07_PROJECT_LEARNING/necolas-react-native-web-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/necolas-react-native-web-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8555,
+          "title": "Upgrade Flow to 0.339 and make types more precise",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T00:50:40.635Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8555": {
+      "learning_id": "rule-8555",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8555,
+      "title": "Upgrade Flow to 0.339 and make types more precise",
+      "source_url": "https://github.com/necolas/react-native-web",
+      "source_version": "eb77ba97",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T00:50:40.635Z"
+    },
+    "candidate_directive-upgrade-flow-to-0-339-and-make-types-more-precise": {
+      "item_id": "candidate_directive-upgrade-flow-to-0-339-and-make-types-more-precise",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CZPJ-upgrade-flow-to-0-339-and-make-types-more-precise.md",
+      "title": "Upgrade Flow to 0.339 and make types more precise",
+      "repository": "necolas-react-native-web-learnings",
+      "source_version": "HEAD",
+      "content_hash": "12c8ab40e1017bf678b86e2bec0ea0a27db297ef34dbb43eceefa3b5de14a0b8",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T00:51:34.471Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-necolas-react-native-web-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-necolas-react-native-web-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-necolas-react-native-web-technical-construction-intelligence-necolas-react-nativ.md",
+      "title": "Technical Construction Intelligence: necolas/react-native-web Core Invariants",
+      "repository": "necolas/react-native-web",
+      "source_version": "eb77ba97",
+      "content_hash": "f0897af0ec35b16157cf9022442486e1e4e922dc018c6e03ee61b21a1be409e6",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T00:50:41.127Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-necolas-react-native-web": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-necolas-react-native-web",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/necolas-react-native-web-verification-protocol-empirical-defect-shield-for-necol.md",
+      "title": "Verification Protocol: Empirical Defect Shield for necolas/react-native-web",
+      "repository": "necolas/react-native-web",
+      "source_version": "eb77ba97",
+      "content_hash": "864273c3deffe553f48b3708ec41ee8e928f272da3f9a5846853e80aa9337e11",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T00:50:41.252Z"
+    },
+    "learn-github-volcengine-openviking": {
+      "learning_id": "learn-github-volcengine-openviking",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "volcengine/OpenViking",
+      "repository": "volcengine/OpenViking",
+      "slug": "volcengine-openviking",
+      "platform": "github",
+      "source_url": "https://github.com/volcengine/OpenViking",
+      "source_version": "00c8e7b1",
+      "content_hash": "9f450dc26c42a5ba948ff110e4bfd3d20dab920d1b2e32b56755dd86f1b8ad50",
+      "dossier_path": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T00:50:49.123Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "candidate_directive-align-filebrowser-and-vikingbot-interactions": {
+      "item_id": "candidate_directive-align-filebrowser-and-vikingbot-interactions",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-C10Q-align-filebrowser-and-vikingbot-interactions.md",
+      "title": "align FileBrowser and VikingBot interactions",
+      "repository": "volcengine/OpenViking",
+      "source_version": "00c8e7b1",
+      "content_hash": "a193d5b6a47d0c77e8e15e5e271d0340258e3558a6b6edef0c18258793f5e649",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T00:50:49.518Z"
+    },
+    "rule-8556": {
+      "learning_id": "rule-8556",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8556,
+      "title": "test(stats): NaN cells crashed the exact quantiles on larger columns; cover it a",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "7abf98c0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T00:50:53.450Z"
+    },
+    "candidate_directive-test-stats-nan-cells-crashed-the-exact-quantiles-on-larger-columns-cover-it-a": {
+      "item_id": "candidate_directive-test-stats-nan-cells-crashed-the-exact-quantiles-on-larger-columns-cover-it-a",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-C4CU-test-stats-nan-cells-crashed-the-exact-quantiles-on-larger-columns-cover-it-a.md",
+      "title": "test(stats): NaN cells crashed the exact quantiles on larger columns; cover it a",
+      "repository": "dathere/qsv",
+      "source_version": "7abf98c0",
+      "content_hash": "5e332557439168f702cd12af392e1814c5642ee747602c2d4fecbe32644cbef5",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T00:50:53.842Z"
+    },
+    "candidate_directive-opencode-write-opencode-jsonc-to-opencode": {
+      "item_id": "candidate_directive-opencode-write-opencode-jsonc-to-opencode",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-C6YH-opencode-write-opencode-jsonc-to-opencode.md",
+      "title": "opencode): write opencode.jsonc to .opencode/",
+      "repository": "cachix-devenv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3b2ffc8bbfb40f92025847c281ebbd27dd7b30a6679689836683fefda2d09966",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T00:50:57.213Z"
+    },
+    "domain_intelligence-architecture-intelligence-cachix-devenv-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-cachix-devenv-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-cachix-devenv-learnings-architecture-intelligence-cachix-devenv-learnings-core-i.md",
+      "title": "Architecture Intelligence: cachix-devenv-learnings Core Invariants",
+      "repository": "cachix-devenv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b5023f5ce040855f2a8b0c0ad7859a92c21110c357f470eb5aced95225d491b5",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T00:50:57.332Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-cachix-devenv-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cachix-devenv-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/cachix-devenv-learnings-verification-protocol-empirical-defect-shield-for-cachix.md",
+      "title": "Verification Protocol: Empirical Defect Shield for cachix-devenv-learnings",
+      "repository": "cachix-devenv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7a64e762cf7b3224d95566da60a9fe67730e12461827a462fdc7f1c198ad0cd6",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T00:50:57.456Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-openbmb-minicpm-v-4-7-1b-learnings-core-invar": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-openbmb-minicpm-v-4-7-1b-learnings-core-invar",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openbmb-minicpm-v-4-7-1b-learnings-research-knowledge-intelligence-hf-openbmb.md",
+      "title": "Research & Knowledge Intelligence: hf-openbmb-minicpm-v-4.7-1b-learnings Core Invariants",
+      "repository": "hf-openbmb-minicpm-v-4.7-1b-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4e615e8bd61418fe6d1e2c5c0e1191a021cacd971ffb2e956d84505de0867faa",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T00:51:33.964Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-necolas-react-native-web-learnings-core-inva": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-necolas-react-native-web-learnings-core-inva",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-necolas-react-native-web-learnings-technical-construction-intelligence-necolas-r.md",
+      "title": "Technical Construction Intelligence: necolas-react-native-web-learnings Core Invariants",
+      "repository": "necolas-react-native-web-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bb8e9e5f0482180852ab3a38c0b9c812cea15fda91bcf92365e96d8a6c5d2c6f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T00:51:34.597Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-necolas-react-native-web-learn": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-necolas-react-native-web-learn",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/necolas-react-native-web-learnings-verification-protocol-empirical-defect-shield.md",
+      "title": "Verification Protocol: Empirical Defect Shield for necolas-react-native-web-learnings",
+      "repository": "necolas-react-native-web-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8e1c3125a89d4db51e54ea36c2bc945fc176f1b0a0d09600e6550c4345962cf6",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T00:51:34.741Z"
     }
   },
   "ai-builder-brain": {

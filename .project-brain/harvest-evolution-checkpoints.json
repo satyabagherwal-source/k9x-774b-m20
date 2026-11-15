@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T00:38:26.084Z",
+  "last_updated": "2026-11-15T00:51:34.876Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-14T22:16:50.251Z",
@@ -308,7 +308,7 @@
       "staged_for_review": 1
     },
     "necolas-react-native-web-learnings.md": {
-      "processed_at": "2026-11-11T13:52:34.061Z",
+      "processed_at": "2026-11-15T00:51:34.138Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -378,7 +378,7 @@
       "staged_for_review": 1
     },
     "cachix-devenv-learnings.md": {
-      "processed_at": "2026-11-13T08:22:17.926Z",
+      "processed_at": "2026-11-15T00:50:56.878Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2816,9 +2816,14 @@
       "processed_at": "2026-11-15T00:38:22.621Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-openbmb-minicpm-v-4.7-1b-learnings.md": {
+      "processed_at": "2026-11-15T00:51:33.728Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 942,
-  "total_canonical_promoted": 229,
-  "total_staged_for_review": 713
+  "total_dossiers_evaluated": 945,
+  "total_canonical_promoted": 230,
+  "total_staged_for_review": 715
 }

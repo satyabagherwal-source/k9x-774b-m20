@@ -10011,3 +10011,9 @@ Every entry in this ledger must capture:
 | `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `165e2f7a` | Multi-dimensional audit evidence | 2026-11-15T00:37:31.121Z |
 | `learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-11-15T00:37:45.459Z |
 | `learn-dom-d-c5f6e511` | `project://hf-openbmb-minicpm-v-4.7-35b-a3b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md` | 2026-11-15T00:38:22.621Z |
+| `learn-huggingface-openbmb-minicpm-v-4-7-1b` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-1B` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-11-15T00:50:34.356Z |
+| `learn-github-cachix-devenv` | `https://github.com/cachix/devenv` | `6c954cc1` | Multi-dimensional audit evidence | 2026-11-15T00:50:36.509Z |
+| `learn-github-necolas-react-native-web` | `https://github.com/necolas/react-native-web` | `eb77ba97` | Multi-dimensional audit evidence | 2026-11-15T00:50:40.821Z |
+| `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `00c8e7b1` | Multi-dimensional audit evidence | 2026-11-15T00:50:49.311Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `7abf98c0` | Multi-dimensional audit evidence | 2026-11-15T00:50:53.642Z |
+| `learn-dom-d-b43360bc` | `project://hf-openbmb-minicpm-v-4.7-1b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md` | 2026-11-15T00:51:33.728Z |

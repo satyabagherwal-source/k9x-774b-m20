@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-15T00:37:45.471Z",
+  "last_updated": "2026-11-15T00:50:53.653Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2141,14 +2141,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
-      "content_hash": "16da8514e1fc6cd2c9ae53c38efadbc59e0734dfec9c781e76c822651b2cdd94",
-      "verified_at": "2026-11-09T12:52:43.407Z",
+      "content_hash": "6c95e86afce790a3094f3fa1dd3c3f97179cd06a3aed29fc053cc2c013694994",
+      "verified_at": "2026-11-15T00:50:34.366Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T12:52:43.407Z"
+      "last_updated": "2026-11-15T00:50:34.366Z"
     },
     "ccfos/nightingale": {
       "repository": "ccfos/nightingale",
@@ -2541,14 +2541,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-volcengine-openviking",
-      "content_hash": "42251535feba979e0dafdd04df3b3834b5e024562758ffffa76d54a914ce68d7",
-      "verified_at": "2026-11-13T16:49:10.638Z",
+      "content_hash": "9f450dc26c42a5ba948ff110e4bfd3d20dab920d1b2e32b56755dd86f1b8ad50",
+      "verified_at": "2026-11-15T00:50:49.330Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T16:49:10.638Z"
+      "last_updated": "2026-11-15T00:50:49.330Z"
     },
     "Saffsanity/sill": {
       "repository": "Saffsanity/sill",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "26ea2b70a381ebe86478def8b20a1eea0ab53ff6dc28290b390648c4b581bd54",
-      "verified_at": "2026-11-14T22:57:50.997Z",
+      "content_hash": "ad36621f639ff8582037b48c61847609aeeb271a7250fe78d3a1c8604b7edaf6",
+      "verified_at": "2026-11-15T00:50:53.652Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T22:57:50.997Z"
+      "last_updated": "2026-11-15T00:50:53.652Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -4311,14 +4311,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cachix-devenv",
-      "content_hash": "91700e308434dea7f19b85a54945b892f30e52c32f9906a98fa1a7b8618924f0",
-      "verified_at": "2026-11-13T08:22:03.664Z",
+      "content_hash": "933ecc1df7e405bc441ce9c063729039acabe9e20f9fe05eaa649047781a1db1",
+      "verified_at": "2026-11-15T00:50:36.518Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T08:22:03.664Z"
+      "last_updated": "2026-11-15T00:50:36.518Z"
     },
     "pubkey/rxdb": {
       "repository": "pubkey/rxdb",
@@ -10731,14 +10731,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-necolas-react-native-web",
-      "content_hash": "f29c3443459d9977ce812f4806fbeb13e980734ba878aa8bec72a9d440771c20",
-      "verified_at": "2026-11-11T13:52:28.818Z",
+      "content_hash": "cd96f6396100241f458d1addf5168a927da1f2eb441cf6d8521ec9e98e6711b1",
+      "verified_at": "2026-11-15T00:50:40.830Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T13:52:28.818Z"
+      "last_updated": "2026-11-15T00:50:40.830Z"
     },
     "zvec-ai/zvec-grep": {
       "repository": "zvec-ai/zvec-grep",
