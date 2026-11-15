@@ -10101,3 +10101,7 @@ Every entry in this ledger must capture:
 | `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `f17a07a2` | Multi-dimensional audit evidence | 2026-11-15T09:21:41.997Z |
 | `learn-github-meshtastic-meshtastic-android` | `https://github.com/meshtastic/Meshtastic-Android` | `fd407372` | Multi-dimensional audit evidence | 2026-11-15T09:26:36.909Z |
 | `learn-dom-h-ee93afc9` | `project://meshtastic-meshtastic-android` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md` | 2026-11-15T09:27:07.322Z |
+| `learn-github-thaw-app-thaw` | `https://github.com/thaw-app/Thaw` | `e29a4376` | Multi-dimensional audit evidence | 2026-11-15T09:49:56.399Z |
+| `learn-github-open-policy-agent-gatekeeper` | `https://github.com/open-policy-agent/gatekeeper` | `b6ac7a34` | Multi-dimensional audit evidence | 2026-11-15T09:49:58.381Z |
+| `learn-huggingface-liquidai-d1-2b` | `https://huggingface.co/LiquidAI/d1-2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-15T09:55:04.092Z |
+| `learn-dom-d-4ee8ade1` | `project://hf-liquidai-d1-2b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-liquidai-d1-2b-learnings.md` | 2026-11-15T09:55:27.966Z |

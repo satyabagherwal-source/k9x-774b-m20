@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/open-policy-agent-gatekeeper-learnings.md`  
 > **Source**: github ([https://github.com/open-policy-agent/gatekeeper](https://github.com/open-policy-agent/gatekeeper))  
-> **Source Version**: `763f4021`  
+> **Source Version**: `b6ac7a34`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T18:02:47.718Z  
+> **Timestamp**: 2026-11-15T09:49:57.653Z  
 > **Learning ID**: `learn-github-open-policy-agent-gatekeeper`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/open-policy-agent-gatekeeper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/open-policy-agent/gatekeeper](https://github.com/open-policy-agent/gatekeeper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T17:57:43.242Z  
+> **Harvest Timestamp**: 2026-11-15T09:49:57.649Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🐊 Policy Controller for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 4302 stars
+- **Stars / Engagement**: 4303 stars
 
 ---
 
@@ -1285,294 +1285,501 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `763f4021` (2026-11-06)
-**Commit Message**: feat: harden audit violation export and enable it by default (beta) (#4901)
+### Incident Patch 1: `b6ac7a34` (2026-11-13)
+**Commit Message**: fix: validate Connection names before status creation (#4912)
 
-Signed-off-by: Abhishek Sheth <[REDACTED_EMAIL]>
 Signed-off-by: Jaydip Gabani <[REDACTED_EMAIL]>
-Co-authored-by: Jaydip Gabani <[REDACTED_EMAIL]>
 Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/disk-export.yaml` (modified, +18/-3)
+**File**: `apis/connection/v1alpha1/connection_name_test.go` (added, +203/-0)
 ```diff
-@@ -4,8 +4,11 @@ on:
-     paths:
-       - ".github/workflows/disk-export.yaml"
-       - "Makefile"
-+      - "main.go"
-       - "apis/connection/**"
-+      - "pkg/audit/**"
-       - "pkg/export/**"
-+      - "pkg/operations/**"
-       - "pkg/controller/export/**"
-       - "pkg/webhook/**"
-       - "cmd/build/helmify/**"
-@@ -16,8 +19,11 @@ on:
-     paths:
-       - ".github/workflows/disk-export.yaml"
-       - "Makefile"
-+      - "main.go"
-       - "apis/connection/**"
-+      - "pkg/audit/**"
-       - "pkg/export/**"
-+      - "pkg/operations/**"
-       - "pkg/controller/export/**"
-       - "pkg/webhook/**"
-       - "cmd/build/helmify/**"
-@@ -31,6 +37,10 @@ jobs:
-     name: "Disk export test"
-     runs-on: ubuntu-22.04
-     timeout-minutes: 25
-+    strategy:
-+      fail-fast: false
-+      matrix:
-+        KUBERNETES_VERSION: ["1.35.8", "1.36.4", "1.37.0"]
-     steps:
-       - name: Harden Runner
-         uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
-@@ -44,13 +54,13 @@ jobs:
-         run: |
-           mkdir -p $GITHUB_WORKSPACE/bin
-           echo "$GITHUB_WORKSPACE/bin" >> $GITHUB_PATH
--          make e2e-bootstrap
-+          make e2e-bootstrap KUBERNETES_VERSION=${{ matrix.KUBERNETES_VERSION }}
- 
-       - name: Validate admission-only Helm arguments
-         run: |
-           output="$(make -n e2e-helm-deploy \
-             HELM_REPO=test HELM_CRD_REPO=test HELM_RELEASE=test \
--            ENABLE_EXPORT=false ENABLE_ADMISSION_EXPORT=true EXPORT_BACKEND=disk \
-+            ENABLE_ADMISSION_EXPORT=true EXPORT_BACKEND=disk \
-             EXPORT_DISK_MOUNT=/custom/mount EXPORT_DISK_PATH=/custom/path \
-             MAX_AUDIT_RESULTS=4 FAKE_READER_IMAGE=fake-reader:test)"
-           grep -q -- '--set audit.exportVolumeMount.path=/custom/mount' <<<"$output"
-@@ -61,8 +71,13 @@ jobs:
-             echo "admission-only deployment unexpectedly configured the audit reader" >&2
-             exit 1
-           fi
-+          if grep -q -- '--set enableViolationExport' <<<"$output"; then
-+            echo "unset ENABLE_EXPORT unexpectedly set enableViolationExport" >&2
-+            exit 1
-+          fi
- 
-           make e2e-helm-install
-+          HELM=./.staging/helm/linux-amd64/helm ./test/export/helm-render-test.sh
-           rendered="$(./.staging/helm/linux-amd64/helm template gatekeeper manifest_staging/charts/gatekeeper \
-             --set enableAdmissionViolationExport=true \
-             --set exportBackend=disk \
-@@ -99,7 +114,7 @@ jobs:
-         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-         if: ${{ always() }}
-         with:
--          name: export-logs
-+          name: export-logs-${{ matrix.KUBERNETES_VERSION }}
-           path: |
-             logs-*.json
-             k8s-*.txt
-```
-
-**File**: `.github/workflows/workflow.yaml` (modified, +14/-2)
-```diff
-@@ -29,7 +29,8 @@ jobs:
-   build_test:
-     name: "Build and Test"
-     runs-on: ubuntu-22.04
--    timeout-minutes: 15
-+    # Allow three fresh audit intervals plus the explicit opt-out smoke test.
-+    timeout-minutes: 20
-     strategy:
-       fail-fast: false
-       matrix: &kubernetes-matrix
-@@ -81,6 +82,16 @@ jobs:
-             ENABLE_VAP_TESTS=1 \
-             ENABLE_ADMISSION_AUDIT_ANNOTATION_TESTS=1
- 
-+      - name: Verify explicit audit export opt-out
-+        run: |
-+          kubectl logs -n gatekeeper-system -l control-plane=audit-controller -c manager --tail=-1 > logs-audit-default.json
-+          kubectl -n gatekeeper-system patch deployment gatekeeper-audit --type=json -p='[
-+            {"op":"add","path":"/spec/template/spec/containers/0/args/-","value":"--enable-violation-export=false"},
-+            {"op":"add","path":"/spec/template/spec/containers/0/args/-","value":"--audit-interval=5"}
-+          ]'
-+          kubectl -n gatekeeper-system rollout status deployment/gatekeeper-audit --timeout=120s
-+          bats -t --filter '^audit export without a connection test$' test/bats/test.bats
+@@ -0,0 +1,203 @@
++package v1alpha1_test
 +
-       - name: Save logs
-         if: ${{ always() }}
-         run: |
-@@ -249,7 +260,8 @@ jobs:
-   build_test_generator_expansion:
-     name: "[Generator Resource Expansion] Build and Test"
-     runs-on: ubuntu-22.04
--    timeout-minutes: 15
-+    # The shared suite waits for three fresh audit intervals.
-+    timeout-minutes: 20
- 
-     steps:
-     - name: Harden Runner
-```
-
-**File**: `Makefile` (modified, +3/-2)
-```diff
-@@ -16,7 +16,7 @@ PUSH_TO_GHCR ?= false
- DEV_TAG ?= dev
- USE_LOCAL_IMG ?= false
- ENABLE_GENERATOR_EXPANSION ?= false
--ENABLE_EXPORT ?= false
-+ENABLE_EXPORT ?=
- ENABLE_ADMISSION_EXPORT ?= false
- EMIT_ADMISSION_AUDIT_ANNOTATIONS ?= false
- ADMISSION_AUDIT_ANNOTATIONS_INCLUDE_SUCCESS ?= false
-@@ -59,7 +59,7 @@ HELM_DISK_ADMISSION_EXPORT_ARGS = --set admission.disableExportSidecar=false \
- 	--set admission.exportSidecar.image=${FAKE_READER_IMAGE} \
- 	--set admission.exportSidecar.imagePullPolicy=${FAKE_READER_IMAGE_PULL_POLICY} \
- 
--HELM_EXPORT_ARGS := --set enableViolationExport=${ENABLE_EXPORT} \
-+HELM_EXPORT_ARGS := $(if $(ENABLE_EXPORT),--set enableViolationExport=${ENABLE_EXPORT}) \
- 	--set audit.connection=${AUDIT_CONNECTION} \
- 	--set audit.channel=${AUDIT_CHANNEL} \
- 	--set enableAdmissionViolationExport=${ENABLE_ADMISSION_EXPORT} \
-@@ -323,6 +323,7 @@ else
- 	./.staging/helm/linux-amd64/helm install manifest_staging/charts/gatekeeper --name-template=gatekeeper \
- 		--namespace ${GATEKEEPER_NAMESPACE} --create-namespace \
- 		--debug --wait --timeout ${HELM_TIMEOUT} \
-+		$(if $(ENABLE_EXPORT),--set enableViolationExport=${ENABLE_EXPORT}) \
- 		$(HELM_EXTRA_ARGS)
- endif
- 
-```
-
-**File**: `cmd/build/helmify/main.go` (modified, +10/-5)
-```diff
-@@ -133,23 +133,28 @@ func (ks *kindSet) Write() error {
- 			}
- 
- 			if name == "gatekeeper-controller-manager" && kind == DeploymentKind {
-+				admissionExportDisk := `(eq (include "gatekeeper.exportFlag" (dict "value" .Values.enableAdmissionViolationExport "default" "false")) "true") (eq (.Values.exportBackend | default "" | lower) "disk")`
- 				obj = strings.Replace(obj, "      labels:", "      labels:\n        {{- include \"gatekeeper.podLabels\" . | nindent 8 }}\n        {{- include \"controllerManager.podLabels\" . | nindent 8 }}\n        {{- include \"gatekeeper.commonLabels\" . | nindent 8 }}", 1)
- 				obj = strings.Replace(obj, "      priorityClassName: system-cluster-critical", "      {{- if .Values.controllerManager.priorityClassName }}\n      priorityClassName:  {{ .Values.controllerManager.priorityClassName }}\n      {{- end }}", 1)
- 				// Inject extra volume mounts at the start of the volumeMounts section for stability
--				obj = strings.Replace(obj, "        volumeMounts:", "        volumeMounts:\n        {{- include \"gatekeeper.extraVolumeMounts\" . | nindent 8 }}\n        {{- if and .Values.enableAdmissionViolationExport (eq (.Values.exportBackend | default \"\" | lower) \"disk\") }}\n        - mountPath: {{ .Values.audit.exportVolumeMount.path }}\n          name: {{ .Values.audit.exportVolume.name }}\n        {{- end }}", 1)
--				obj = strings.Replace(obj, "      dnsPolicy:", "      {{- if and .Values.enableAdmissionViolationExport (eq (.Values.exportBackend | default \"\" | lower) \"disk\") (not .Values.admission.disableExportSidecar) }}\n      {{- $admissionSidecar := deepCopy .Values.admission.exportSidecar }}\n      {{- $_ := set $admissionSidecar \"volumeMounts\" (list (dict \"mountPath\" .Values.audit.exportVolumeMount.path \"name\" .Values.audit.exportVolume.name)) }}\n      {{- $admissionEnv := list }}\n      {{- range $env := ($admissionSidecar.env | default (list)) }}\n      {{- if ne $env.name \"ROOT_PATH\" }}\n      {{- $admissionEnv = append $admissionEnv $env }}\n      {{- end }}\n      {{- end }}\n      {{- $admissionEnv = append $admissionEnv (dict \"name\" \"ROOT_PATH\" \"value\" .Values.audit.exportConnection.path) }}\n      {{- $_ := set $admissionSidecar \"env\" $admissionEnv }}\n      - {{ toYaml $admissionSidecar | nindent 8 }}\n      {{- end }}\n      dnsPolicy:", 1)
-+				obj = strings.Replace(obj, "        volumeMounts:", "        volumeMounts:\n        {{- include \"gatekeeper.extraVolumeMounts\" . | nindent 8 }}\n        {{- if and "+admissionExportDisk+" }}\n        - mountPath: {{ .Values.audit.exportVolumeMount.path }}\n          name: {{ .Values.audit.exportVolume.name }}\n        {{- end }}", 1)
-+				obj = strings.Replace(obj, "      dnsPolicy:", "      {{- if and "+admissionExportDisk+" (not .Values.admission.disableExportSidecar) }}\n      {{- $admissionSidecar := deepCopy .Values.admission.exportSidecar }}\n      {{- $_ := set $admissionSidecar \"volumeMounts\" (list (dict \"mountPath\" .Values.audit.exportVolumeMount.path \"name\" .Values.audit.exportVolume.name)) }}\n      {{- $admissionEnv := list }}\n      {{- range $env := ($admissionSidecar.env | default (list)) }}\n      {{- if ne $env.name \"ROOT_PATH\" }}\n      {{- $admissionEnv = append $admissionEnv $env }}\n      {{- end }}\n      {{- end }}\n      {{- $admissionEnv = append $admissionEnv (dict \"name\" \"ROOT_PATH\" \"value\" .Values.audit.exportConnection.path) }}\n      {{- $_ := set $admissionSidecar \"env\" $admissionEnv }}\n      - {{ toYaml $admissionSidecar | nindent 8 }}\n      {{- end }}\n      dnsPolicy:", 1)
- 				// Inject extra volumes at the start of the volumes section for stability
--				obj = strings.Replace(obj, "      volumes:", "      volumes:\n      {{- include \"gatekeeper.extraVolumes\" . | nindent 6 }}\n      {{- if and .Values.enableAdmissionViolationExport (eq (.Values.exportBackend | default \"\" | lower) \"disk\") }}\n      - {{- toYaml .Values.audit.exportVolume | nindent 8 }}\n      {{- end }}", 1)
-+				obj = strings.Replace(obj, "      volumes:", "      volumes:\n      {{- include \"gatekeeper.extraVolumes\" . | nindent 6 }}\n      {{- if and "+admissionExportDisk+" }}\n      - {{- toYaml .Values.audit.exportVolume | nindent 8 }}\n      {{- end }}", 1)
- 				obj = strings.Replace(obj, "        env:", "        env:\n        {{- include \"gatekeeper.extraEnvs\" . | nindent 8 }}\n        {{- include \"controllerManager.extraEnvs\" . | nindent 8 }}", 1)
- 			}
- 
- 			if name == "gatekeeper-audit" && kind == DeploymentKind {
- 				obj = "{{- if not .Values.disableAudit }}\n" + obj + "{{- end }}\n"
- 				obj = strings.Replace(obj, "      labels:", "      labels:\n        {{- include \"gatekeeper.podLabels\" . | nindent 8 }}\n        {{- include \"audit.podLabels\" . | nindent 8 }}\n        {{- include \"gatekeeper.commonLabels\" . | nindent 8 }}", 1)
- 				obj = strings.Replace(obj, "      priorityClassName: system-cluster-critical", "      {{- if .Values.audit.priorityClas
-```
-
-**File**: `cmd/build/helmify/replacements.go` (modified, +5/-5)
-```diff
-@@ -136,9 +136,9 @@ var replacements = map[string]string{
-         - --operation=generate
-         {{- end }}`,
- 
--	"- HELMSUBST_DEPLOYMENT_CONTROLLER_MANAGER_ADMISSION_VIOLATION_EXPORT_ARGS": `{{ if hasKey .Values "enableAdmissionViolationExport" }}{{ if and .Values.enableAdmissionViolationExport (ne (.Values.exportBackend | default "" | lower) "disk") }}{{ fail "enableAdmissionViolationExport requires exportBackend to be disk" }}{{ end }}- --enable-admission-violation-export={{ .Values.enableAdmissionViolationExport }}{{ if .Values.enableAdmissionViolationExport }}
--        - --audit-connection={{ .Values.audit.connection }}
--        - --audit-channel={{ .Values.audit.channel }}
-+	"- HELMSUBST_DEPLOYMENT_CONTROLLER_MANAGER_ADMISSION_VIOLATION_EXPORT_ARGS": `{{ with include "gatekeeper.exportFlag" (dict "value" .Values.enableAdmissionViolationExport "default" "") }}{{ if and (eq . "true") (ne ($.Values.exportBackend | default "" | lower) "disk") }}{{ fail "enableAdmissionViolationExport requires exportBackend to be disk" }}{{ end }}- --enable-admission-violation-export={{ . }}{{ if eq . "true" }}
-+        - --audit-connection={{ $.Values.audit.connection }}
-+        - --audit-channel={{ $.Values.audit.channel }}
-   {{- end }}{{- end }}`,
- 
- 	"- HELMSUBST_AUDIT_OPERATIONS": `
-@@ -152,8 +152,8 @@ var replacements = map[string]string{
-         - --operation=status
-         {{- end }}`,
- 
--	"- HELMSUBST_DEPLOYMENT_AUDIT_VIOLATION_EXPORT_ARGS": `{{ if hasKey .Values "enableViolationExport" }}
--        - --enable-violation-export={{ .Values.enableViolationExport }}
-+	"- HELMSUBST_DEPLOYMENT_AUDIT_VIOLATION_EXPORT_ARGS": `{{ with include "gatekeeper.exportFlag" (dict "value" .Values.enableViolationExport "default" "") }}
-+        - --enable-violation-export={{ . }}
-         {{- end }}
-         {{ if hasKey .Values.audit "connection" }}
-         - --audit-connection={{ .Values.audit.connection }}
-```
-
-**File**: `cmd/build/helmify/static/README.md` (modified, +1/-1)
-```diff
-@@ -240,7 +240,7 @@ information._
- | audit.disableAuditOperation                               | Disable audit operation for audit                                                                                                                                                                                                                                                              | `false`                                                                                                                                                                |
- | audit.disableAuditSidecar                                 | Disable audit sidecar                                                                                                                                                                                                                                                              | `false`                                                                                                                                                                |
- | audit.disableStatusOperation                              | Disable status operation for audit                                                                                                                                                                                                                                                             | `false`                                                                                                                                                                |
--| enableViolationExport                                      | (alpha) Enable exporting audit violations to external systems                                                                                                                                                                                                                                               | `false`                                                                                                                                                               |
-+| enableViolationExport                                      | (beta) Enable exporting audit violations. Export starts only when a matching Connection exists. Set to `false` to opt out                                                                                                                                                                                   | `true`                                                                                                                                                                |
- | enableAdmissionViolationExport                             | (alpha) Enable best-effort export of admission violations using the disk driver; requires `exportBackend: disk`                                                                                                                                                                                              | `false`                                                                                                                                                               |
- | admission.exportSidecar                                    | Optional sidecar that streams and removes completed admission disk segments from the audit export volume                                                                                                                                                                                                   | See `values.yaml`                                                                                                                                                     |
- | admission.disableExportSidecar                             | Disable the admission disk reader sidecar                                                                                                                                                                                                                                                                  | `true`                                                                                                                                                                |
-```
-
-**File**: `cmd/build/helmify/static/templates/_helpers.tpl` (modified, +32/-0)
-```diff
-@@ -206,3 +206,35 @@ deployed namespace is exempted.
- "kubernetes.io/metadata.name":
-   - {{ .Release.Namespace }}
- {{- end -}}
++import (
++	"context"
++	"fmt"
++	"io"
++	"os"
++	"path/filepath"
++	"strings"
++	"testing"
++	"time"
 +
-+{{/*
-+Returns "true" for true, t or 1 and "false" for false, f or 0, in any case.
-+Unset, null or "" returns the default; other values are returned unchanged.
-+Usage: include "gatekeeper.exportFlag" (dict "value" .Values.enableViolationExport "default" "true")
-+*/}}
-+{{- define "gatekeeper.exportFlag" -}}
-+{{- $value := toString .value -}}
-+{{- if or (kindIs "invalid" .value) (eq $value "") -}}
-+{{- .default -}}
-+{{- else if has (lower $value) (list "true" "t" "1") -}}
-+true
-+{{- else if has (lower $value) (list "false" "f" "0") -}}
-+false
-+{{- else -}}
-+{{- $value -}}
-+{{- end -}}
-+{{- end -}}
++	"github.com/stretchr/testify/require"
++	corev1 "k8s.io/api/core/v1"
++	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
++	apierrors "k8s.io/apimachinery/pkg/api/errors"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
++	"k8s.io/apimachinery/pkg/runtime"
++	"k8s.io/apimachinery/pkg/runtime/schema"
++	utilyaml "k8s.io/apimachinery/pkg/util/yaml"
++	"k8s.io/client-go/dynamic"
++	"k8s.io/client-go/rest"
++	"sigs.k8s.io/controller-runtime/pkg/client"
++	"sigs.k8s.io/controller-runtime/pkg/envtest"
++)
 +
-+{{/*
-+Returns "true" if the chart creates the disk Connection: the disk backend and
-+either audit or admission export set to true.
-+*/}}
-+{{- define "gatekeeper.diskConnectionRendered" -}}
-+{{- $audit := include "gatekeeper.exportFlag" (dict "value" .Values.enableViolationExport "default" "false") -}}
-+{{- $admission := include "gatekeeper.exportFlag" (dict "value" .Values.enableAdmissionViolationExport "default" "false") -}}
-+{{- if and (eq (.Values.exportBackend | default "" | lower) "disk") (or (eq $audit "true") (eq $admission "true")) -}}
-+true
-+{{- else -}}
-+false
-+{{- end -}}
-+{{- end -}}
++func TestConnectionNameValidation(t *testing.T) {
++	ctx := context.Background()
++	testEnv := &envtest.Environment{}
++	cfg, err := testEnv.Start()
++	require.NoError(t, err)
++	t.Cleanup(func() { require.NoError(t, testEnv.Stop()) })
++
++	scheme := runtime.NewScheme()
++	require.NoError(t, corev1.AddToScheme(scheme))
++	k8sClient, err := client.New(cfg, client.Options{Scheme: scheme})
++	require.NoError(t, err)
++	namespace := &corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: "connection-name-validation"}}
++	require.NoError(t, k8sClient.Create(ctx, namespace))
++	dynamicClient, err := dynamic.NewForConfig(cfg)
++	require.NoError(t, err)
++
++	root := filepath.Join("..", "..", "..")
++	chartCRD := filepath.Join(root, "manifest_staging", "charts", "gatekeeper", "crds", "connection-customresourcedefinition.yaml")
++	for _, artifact := range []struct {
++		name string
++		path string
++	}{
++		{name: "helm", path: chartCRD},
++		{name: "deployment", path: filepath.Join(root, "manifest_staging", "deploy", "gatekeeper.yaml")},
++	} {
++		t.Run(artifact.name, func(t *testing.T) {
++			crd := installConnectionCRD(t, cfg, artifact.path)
++			for _, version := range crd.Spec.Versions {
++				if !version.Served {
++					continue
++				}
++				t.Run(version.Name, func(t *testing.T) {
++					resource := dynamicClient.Resource(schema.GroupVersionResource{
++						Group: crd.Spec.Group, Version: version.Name, Resource: crd.Spec.Names.Plural,
++					}).Namespace(namespace.Name)
++					for _, length := range []int{62, 63, 64} {
++						t.Run(fmt.Sprint(length), func(t *testing.T) {
++							name := strings.Repeat("c", length)
++							obj := connectionForName(version.Name, namespace.Name, name)
++							created, err := resource.Create(ctx, obj, metav1.CreateOptions{})
++							if err == nil {
++								t.Cleanup(func() { require.NoError(t, resource.Delete(ctx, name, metav1.DeleteOptions{})) })
++							}
++							if length > 63 {
++								requireNameTooLong(t, err)
++								_, err = resource.Get(ctx, name, metav1.GetOptions{})
++								require.True(t, apierrors.IsNotFound(err), "rejected Connection must not be persisted: %v", err)
++								return
++							}
++							require.NoError(t, err)
++							stored, err := resource.Get(ctx, name, metav1.GetOptions{})
++							require.NoError(t, err)
++							require.Equal(t, name, stored.GetName())
++							require.Equal(t, created.GetUID(), stored.GetUID())
++							require.NoError(t, unstructured.SetNestedField(stored.Object, "updated", "spec", "config", "path"))
++							_, err = resource.Update(ctx, stored, metav1.UpdateOptions{})
++							require.NoError(t, err)
++							stored, err = resource.Get(ctx, name, metav1.GetOptions{})
++							require.NoError(t, err)
++							path, found, err := unstructured.NestedString(stored.Object, "spec", "config", "path")
++							require.NoError(t, err)
++							require.True(t, found)
++							require.Equal(t, "updated", path)
++						})
++					}
++				})
++			}
++		})
++	}
++
++	t.Run("existing alpha Connection survives schema tightening", func(t *testing.T) {
++		// The generator's unpatched base reproduces the previously installable schema.
++		installConnectionCRD(t, cfg, filepath.Join(root, "config", "crd", "bases", "connection.gatekeeper.sh_connections.yaml"))
++		resource := dynamicClient.Resource(schema.GroupVersionResource{
++			Group: "connection.gatekeeper.sh", Version: "v1alpha1", Resource: "connections",
++		}).Namespace(namespace.Name)
++		name := strings.Repeat("l", 64)
++		obj := connectionForName("v1alpha1", namespace.Name, name)
++		require.Eventually(t, func() bool {
++			_, err := resource.Create(ctx, obj, metav1.CreateOptions{DryRun: []string{metav1.DryRunAll}})
++			return err == nil
++		}, 10*time.Second, 100*time.Millisecond, "unrestricted schema should accept the old name")
++		created, err := resource.Create(ctx, obj, metav1.CreateOptions{})
++		require.NoError(t, err)
++
++		installConnectionCRD(t, cfg, chartCRD)
++		rejected := connectionForName("v1alpha1", namespace.Name, strings.Repeat("r", 64))
++		var createErr error
++		require.Eventually(t, func() bool {
++			_, createErr = resource.Create(ctx, rejected, metav1.CreateOptions{DryRun: []string{metav1.DryRunAll}})
++			return apierrors.HasStatusCause(createErr, metav1.CauseTypeTooLong)
++		}, 10*time.Second, 100*time.Millisecond, "restri
 ```
 
-**File**: `cmd/build/helmify/static/templates/gatekeeper-audit-violation-export-connection.yaml` (modified, +4/-2)
+**File**: `apis/status/v1alpha1/connectionpodstatus_name_test.go` (added, +136/-0)
 ```diff
-@@ -1,8 +1,10 @@
- ---
--{{- if and (or .Values.enableViolationExport .Values.enableAdmissionViolationExport) (eq (.Values.exportBackend | default "" | lower) "dapr") }}
-+{{- $audit := include "gatekeeper.exportFlag" (dict "value" .Values.enableViolationExport "default" "true") }}
-+{{- $admission := include "gatekeeper.exportFlag" (dict "value" .Values.enableAdmissionViolationExport "default" "false") }}
-+{{- if and (or (eq $audit "true") (eq $admission "true")) (eq (.Values.exportBackend | default "" | lower) "dapr") }}
- {{- fail "exportBackend dapr is no longer supported because the Dapr export driver has been removed; set exportBackend to disk or disable violation export" }}
- {{- end }}
--{{- if and (or .Values.enableViolationExport .Values.enableAdmissionViolationExport) (eq (.Values.exportBackend | default "" | lower) "disk") }}
-+{{- if eq (include "gatekeeper.diskConnectionRendered" .) "true" }}
- apiVersion: connection.gatekeeper.sh/v1alpha1
- kind: Connection
- metadata:
+@@ -0,0 +1,136 @@
++package v1alpha1_test
++
++import (
++	"strings"
++	"testing"
++
++	"github.com/open-policy-agent/gatekeeper/v3/apis/status/v1alpha1"
++	"github.com/open-policy-agent/gatekeeper/v3/apis/status/v1beta1"
++	"github.com/stretchr/testify/require"
++	corev1 "k8s.io/api/core/v1"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/runtime"
++	"k8s.io/apimachinery/pkg/util/validation"
++)
++
++func TestKeyForConnectionNameBoundaries(t *testing.T) {
++	tests := []struct {
++		name         string
++		pod          string
++		namespace    string
++		connection   string
++		legacyLength int
++		want         string
++	}{
++		{
++			name: "ordinary legacy key",
++			pod:  "some-gk-pod", namespace: "a-gk-ns", connection: "audit",
++			legacyLength: 29,
++			want:         "some--gk--pod-a--gk--ns-audit",
++		},
++		{
++			name: "maximum unescaped components",
++			pod:  strings.Repeat("p", 63), namespace: strings.Repeat("n", 63), connection: strings.Repeat("c", 63),
++			legacyLength: 191,
++		},
++		{
++			name: "252 byte legacy key",
++			pod:  strings.Repeat("p", 63), namespace: "n" + strings.Repeat("-", 61) + "n", connection: strings.Repeat("c", 63),
++			legacyLength: 252,
++		},
++		{
++			name: "253 byte legacy key",
++			pod:  "p-" + strings.Repeat("p", 61), namespace: "n" + strings.Repeat("-", 61) + "n", connection: strings.Repeat("c", 63),
++			legacyLength: 253,
++		},
++		{
++			name: "254 byte legacy key",
++			pod:  "p--" + strings.Repeat("p", 60), namespace: "n" + strings.Repeat("-", 61) + "n", connection: strings.Repeat("c", 63),
++			legacyLength: 254,
++		},
++		{
++			name: "dash expansion in the default namespace",
++			pod:  "p" + strings.Repeat("-", 61) + "p", namespace: "gatekeeper-system", connection: "c" + strings.Repeat("-", 61) + "c",
++			legacyLength: 268,
++			want:         "connection-29868b8ad5a78129ec364439add044673db70114c7ca1143501f5ea7fe46cf01",
++		},
++		{
++			name: "dash expansion in a custom namespace",
++			pod:  "p" + strings.Repeat("-", 61) + "p", namespace: "n" + strings.Repeat("-", 61) + "n", connection: "c" + strings.Repeat("-", 61) + "c",
++			legacyLength: 374,
++		},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			legacy, err := v1beta1.DashPacker(tt.pod, tt.namespace, tt.connection)
++			require.NoError(t, err)
++			require.Len(t, legacy, tt.legacyLength)
++
++			key, err := v1alpha1.KeyForConnection(tt.pod, tt.namespace, tt.connection)
++			require.NoError(t, err)
++			require.LessOrEqual(t, len(key), validation.DNS1123SubdomainMaxLength)
++			require.Empty(t, validation.IsDNS1123Subdomain(key))
++			if tt.legacyLength <= validation.DNS1123SubdomainMaxLength {
++				require.Equal(t, legacy, key, "valid legacy keys must not change")
++			} else {
++				require.Len(t, key, len("connection-")+64)
++				// A legacy three-component key has at least two separators.
++				require.Equal(t, 1, strings.Count(key, "-"), "hashed keys must not overlap the legacy format")
++			}
++			if tt.want != "" {
++				require.Equal(t, tt.want, key)
++			}
++			again, err := v1alpha1.KeyForConnection(tt.pod, tt.namespace, tt.connection)
++			require.NoError(t, err)
++			require.Equal(t, key, again)
++
++			t.Setenv("POD_NAMESPACE", tt.namespace)
++			scheme := runtime.NewScheme()
++			require.NoError(t, corev1.AddToScheme(scheme))
++			pod := &corev1.Pod{ObjectMeta: metav1.ObjectMeta{Name: tt.pod, Namespace: tt.namespace, UID: "pod-uid"}}
++			status, err := v1alpha1.NewConnectionStatusForPod(pod, tt.namespace, tt.connection, scheme)
++			require.NoError(t, err)
++			require.Equal(t, key, status.Name)
++			require.Equal(t, tt.namespace, status.Namespace)
++			require.Equal(t, tt.connection, status.Labels[v1beta1.ConnectionNameLabel])
++			require.Equal(t, tt.pod, status.Labels[v1beta1.PodLabel])
++			require.Equal(t, tt.pod, status.Status.ID)
++		})
++	}
++}
++
++func TestKeyForConnectionDistinctNames(t *testing.T) {
++	pod := "p" + strings.Repeat("-", 61) + "p"
++	namespace := "n" + strings.Repeat("-", 61) + "n"
++	connection := "c" + strings.Repeat("-", 61) + "c"
++	shortPod := "p" + strings.Repeat("-", 59) + "p"
++	shortNamespace := "n" + strings.Repeat("-", 57) + "n"
++	tuples := [][3]string{
++		{pod, namespace, connection},
++		{pod[:62] + "q", namespace, connection},
++		{pod, namespace[:62] + "o", connection},
++		{pod, namespace, connection[:62] + "d"},
++		{shortPod + "-a", shortNamespace, connection},
++		{shortPod, "a-" + shortNamespace, connection},
++	}
++	keys := make(map[string]bool)
++	for _, tuple := range tuples {
++		key, err := v1alpha1.KeyForConnection(tuple[0], tuple[1], tuple[2])
++		require.NoError(t, err)
++		require.LessOrEqual(t, len(key), validation.DNS1123SubdomainMaxLength)
++		require.False(t, keys[key], "different pod/namespace/connection tuples must have different keys")
++		keys[key] = true
++	}
++}
++
++func TestKeyForConnectionInvalidComponents(t *testing.T) {
++	for _, invalid := range []string{"", "-invalid", "invalid-"} {
++		for i := range 3 {
++			tuple := []string{"pod", "namespace", "connection"}
++			tu
+```
+
+**File**: `apis/status/v1alpha1/connectionpodstatus_types.go` (modified, +15/-1)
+```diff
+@@ -16,13 +16,17 @@ limitations under the License.
+ package v1alpha1
+ 
+ import (
++	"crypto/sha256"
++	"fmt"
++
+ 	"github.com/open-policy-agent/gatekeeper/v3/apis/status/v1beta1"
+ 	"github.com/open-policy-agent/gatekeeper/v3/pkg/operations"
+ 	"github.com/open-policy-agent/gatekeeper/v3/pkg/util"
+ 	corev1 "k8s.io/api/core/v1"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	"k8s.io/apimachinery/pkg/runtime"
+ 	"k8s.io/apimachinery/pkg/types"
++	"k8s.io/apimachinery/pkg/util/validation"
+ 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
+ )
+ 
+@@ -142,5 +146,15 @@ func NewConnectionStatusForPod(pod *corev1.Pod, connectionNamespace, connectionN
+ 
+ // KeyForConnection returns a unique status object name given the Pod ID and a connection object.
+ func KeyForConnection(id string, connectionNamespace string, connectionName string) (string, error) {
+-	return v1beta1.DashPacker(id, connectionNamespace, connectionName)
++	key, err := v1beta1.DashPacker(id, connectionNamespace, connectionName)
++	if err != nil {
++		return "", err
++	}
++	if len(key) <= validation.DNS1123SubdomainMaxLength {
++		return key, nil
++	}
++	// Preserve every valid legacy key. Hash the unambiguous packed tuple only
++	// when dash escaping exceeds the API name limit. The single separator
++	// keeps this format disjoint from legacy keys, which have at least two.
++	return fmt.Sprintf("connection-%x", sha256.Sum256([]byte(key))), nil
+ }
+```
+
+**File**: `config/crd/kustomization.yaml` (modified, +6/-0)
+```diff
+@@ -57,6 +57,12 @@ patchesJson6902:
+     kind: CustomResourceDefinition
+     name: syncsets.syncset.gatekeeper.sh
+   path: patches/max_name_size.yaml
++- target:
++    group: apiextensions.k8s.io
++    version: v1
++    kind: CustomResourceDefinition
++    name: connections.connection.gatekeeper.sh
++  path: patches/max_name_size.yaml
+ 
+ patchesStrategicMerge:
+ #- patches/max_name_size_for_modifyset.yaml
+```
+
+**File**: `manifest_staging/charts/gatekeeper/crds/connection-customresourcedefinition.yaml` (modified, +4/-0)
+```diff
+@@ -37,6 +37,10 @@ spec:
+               More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+             type: string
+           metadata:
++            properties:
++              name:
++                maxLength: 63
++                type: string
+             type: object
+           spec:
+             description: spec defines the desired state of Connection.
+```
+
+**File**: `manifest_staging/deploy/gatekeeper.yaml` (modified, +4/-0)
+```diff
+@@ -3152,6 +3152,10 @@ spec:
+               More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+             type: string
+           metadata:
++            properties:
++              name:
++                maxLength: 63
++                type: string
+             type: object
+           spec:
+             description: spec defines the desired state of Connection.
+```
+
+**File**: `pkg/controller/export/connection_status_name_test.go` (added, +99/-0)
+```diff
+@@ -0,0 +1,99 @@
++package export
++
++import (
++	"context"
++	"strings"
++	"testing"
++
++	connectionv1alpha1 "github.com/open-policy-agent/gatekeeper/v3/apis/connection/v1alpha1"
++	statusv1alpha1 "github.com/open-policy-agent/gatekeeper/v3/apis/status/v1alpha1"
++	statusv1beta1 "github.com/open-policy-agent/gatekeeper/v3/apis/status/v1beta1"
++	anythingtypes "github.com/open-policy-agent/gatekeeper/v3/pkg/mutation/types"
++	"github.com/stretchr/testify/require"
++	corev1 "k8s.io/api/core/v1"
++	apierrors "k8s.io/apimachinery/pkg/api/errors"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/types"
++	"k8s.io/apimachinery/pkg/util/validation"
++	k8sscheme "k8s.io/client-go/kubernetes/scheme"
++	"sigs.k8s.io/controller-runtime/pkg/client"
++)
++
++func TestConnectionPodStatusNameLifecycle(t *testing.T) {
++	ctx := context.Background()
++	namespace := "n" + strings.Repeat("-", 61) + "n"
++	t.Setenv("POD_NAMESPACE", namespace)
++	k8sClient, err := client.New(cfg, client.Options{Scheme: k8sscheme.Scheme})
++	require.NoError(t, err)
++	ns := &corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: namespace}}
++	require.NoError(t, k8sClient.Create(ctx, ns))
++	t.Cleanup(func() { require.NoError(t, k8sClient.Delete(ctx, ns)) })
++
++	for _, tt := range []struct {
++		name       string
++		pod        string
++		connection string
++	}{
++		{name: "253 byte legacy key", pod: "p-" + strings.Repeat("p", 61), connection: strings.Repeat("c", 63)},
++		{name: "254 byte legacy key", pod: "p--" + strings.Repeat("p", 60), connection: strings.Repeat("c", 63)},
++		{name: "maximum dash expansion", pod: "p" + strings.Repeat("-", 61) + "p", connection: "c" + strings.Repeat("-", 61) + "c"},
++	} {
++		t.Run(tt.name, func(t *testing.T) {
++			pod := &corev1.Pod{
++				ObjectMeta: metav1.ObjectMeta{Name: tt.pod, Namespace: namespace},
++				Spec:       corev1.PodSpec{Containers: []corev1.Container{{Name: "manager", Image: "unused"}}},
++			}
++			require.NoError(t, k8sClient.Create(ctx, pod))
++			t.Cleanup(func() { require.NoError(t, k8sClient.Delete(ctx, pod)) })
++			getPod := func(context.Context) (*corev1.Pod, error) { return pod, nil }
++
++			var statuses []types.NamespacedName
++			for _, name := range []string{tt.connection, tt.connection[:62] + "d"} {
++				conn := &connectionv1alpha1.Connection{
++					ObjectMeta: metav1.ObjectMeta{Name: name, Namespace: namespace},
++					Spec: connectionv1alpha1.ConnectionSpec{
++						Driver: "disk",
++						Config: &anythingtypes.Anything{Value: map[string]interface{}{"path": "unused"}},
++					},
++				}
++				require.NoError(t, k8sClient.Create(ctx, conn))
++				t.Cleanup(func() { require.NoError(t, k8sClient.Delete(ctx, conn)) })
++
++				require.NoError(t, updateOrCreateConnectionPodStatus(ctx, k8sClient, k8sClient, k8sscheme.Scheme, conn, nil, nil, getPod))
++				t.Cleanup(func() { require.NoError(t, deleteStatus(ctx, k8sClient, namespace, name, getPod)) })
++				key, err := statusv1alpha1.KeyForConnection(pod.Name, namespace, name)
++				require.NoError(t, err)
++				require.LessOrEqual(t, len(key), validation.DNS1123SubdomainMaxLength)
++				statusKey := types.NamespacedName{Namespace: namespace, Name: key}
++				statuses = append(statuses, statusKey)
++				status := &statusv1alpha1.ConnectionPodStatus{}
++				require.NoError(t, k8sClient.Get(ctx, statusKey, status))
++				require.Equal(t, name, status.Labels[statusv1beta1.ConnectionNameLabel])
++				require.Equal(t, pod.Name, status.Labels[statusv1beta1.PodLabel])
++				require.Equal(t, pod.Name, status.Status.ID)
++				require.Equal(t, conn.UID, status.Status.ConnectionUID)
++				require.Len(t, status.OwnerReferences, 1)
++				require.Equal(t, pod.UID, status.OwnerReferences[0].UID)
++				uid := status.UID
++
++				connectionErrors := []*statusv1alpha1.ConnectionError{{Type: statusv1alpha1.UpsertConnectionError, Message: "updated"}}
++				require.NoError(t, updateOrCreateConnectionPodStatus(ctx, k8sClient, k8sClient, k8sscheme.Scheme, conn, connectionErrors, nil, getPod))
++				require.NoError(t, k8sClient.Get(ctx, statusKey, status))
++				require.Equal(t, uid, status.UID, "updates must find the original status object")
++				require.Equal(t, connectionErrors, status.Status.ConnectionErrors)
++			}
++
++			require.NotEqual(t, statuses[0], statuses[1], "distinct Connections must not share a status")
++			list := &statusv1alpha1.ConnectionPodStatusList{}
++			require.NoError(t, k8sClient.List(ctx, list, client.InNamespace(namespace), client.MatchingLabels{statusv1beta1.PodLabel: pod.Name}))
++			require.Len(t, list.Items, 2)
++
++			require.NoError(t, deleteStatus(ctx, k8sClient, namespace, tt.connection, getPod))
++			require.True(t, apierrors.IsNotFound(k8sClient.Get(ctx, statuses[0], &statusv1alpha1.ConnectionPodStatus{})))
++			require.NoError(t, k8sClient.Get(ctx, statuses[1], &statusv1alpha1.ConnectionPodStatus{}), "deleting one status must preserve the other")
++			require.NoError(t, deleteStatus(ctx, k8sClient, namespace, tt.connection[:62]+"d", getPod))
++			require.NoError(t, k8sCli
+```
+
+**File**: `website/docs/export.md` (modified, +25/-0)
+```diff
+@@ -103,6 +103,31 @@ Each publisher replaces only the entry it owns. Audit updates `source: audit`, w
+ 
+ The Dapr export driver has been removed. Migrate existing Dapr Connections to disk, providing a writable volume and a consumer, or disable violation export while migrating.
+ 
++### Connection names and upgrade preflight
++
++`Connection.metadata.name` must be at most 63 characters so it can be used in status labels. Earlier alpha CRDs accepted longer names.
++
++Before upgrading the CRD, find existing Connections that need migration:
++
++```shell
++kubectl get connections.connection.gatekeeper.sh --all-namespaces -o json |
++  jq -r '.items[] | select(.metadata.name | length > 63) | [.metadata.namespace, .metadata.name] | @tsv'
++```
++
++Existing long-named Connections remain readable but cannot produce valid status labels. They are not renamed or deleted automatically. New or restored Connections must satisfy the limit.
++
++For each long-named Connection:
++
++1. Back up its configuration and create a replacement in the same namespace with a distinct name of at most 63 characters and the intended driver/configuration.
++2. Update `--audit-connection` on every exporting deployment, or `audit.connection` with Helm. Changing the Helm value replaces the chart-managed Connection; plan for interrupted or overlapping export during the rollout.
++3. Check the replacement's `status.byPod`, export metrics, and consumer output before retiring the old Connection.
++
++#### ConnectionPodStatus names
++
++Status names that would exceed Kubernetes' 253-character limit use a hashed fallback; existing valid names are unchanged. Identify statuses using their `internal.gatekeeper.sh/connection-name` and `internal.gatekeeper.sh/pod` labels and `status.id`, rather than parsing their names.
++
++Downgrading to an older controller restores status-creation failures for these overlength combinations. Pod names remain subject to the separate 63-character status-label limit.
++
+ ## Enabling Gatekeeper to export admission violations
+ 
+ Admission violation export is independent from audit export and is disabled by default. Set `--enable-admission-violation-export=true` on the controller-manager deployment to enable it. Enabling `--enable-violation-export` on the audit deployment does not enable admission export.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4912** (2026-11-13): fix: validate Connection names before status creation (@JaydipGabani)
 - **PR #4908** (2026-11-05): chore: bump follow-redirects from 1.16.1 to 1.16.2 in /website (@dependabot[bot])
 - **PR #4907** (2026-11-05): chore: bump body-parser from 1.20.6 to 1.20.9 in /website (@dependabot[bot])
 - **PR #4906** (2026-11-05): chore: bump the all group across 1 directory with 8 updates (@dependabot[bot])
 - **PR #4905** (2026-11-05): ci: update kubernetes test versions to 1.35-1.37 (@abhisheksheth28)
 - **PR #4904** (2026-11-05): chore: bump node-forge from 1.4.0 to 1.4.3 in /website (@dependabot[bot])
-- **PR #4903** (2026-11-05): chore: bump joi from 17.13.8 to 17.13.9 in /website (@dependabot[bot])
 
 ---
 
@@ -1592,47 +1799,67 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. harden audit violation export and enable it by default (beta) (#4901)
+## X. validate Connection names before status creation
 
 **RULE**:
-When implementing operations in `.github/workflows/disk-export.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/gatekeeper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apis/connection/v1alpha1/connection_name_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/gatekeeper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `763f4021`: harden audit violation export and enable it by default (beta) (#4901). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b6ac7a34`: validate Connection names before status creation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/disk-export.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `apis/connection/v1alpha1/connection_name_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-      - "main.go"
-      - "pkg/audit/**"
-      - "pkg/operations/**"
-      - "main.go"
-      - "pkg/audit/**"
-      - "pkg/operations/**"
-    strategy:
-      fail-fast: false
-      matrix:
-        KUBERNETES_VERSION: ["1.35.8", "1.36.4", "1.37.0"]
-          make e2e-bootstrap KUBERNETES_VERSION=${{ matrix.KUBERNETES_VERSION }}
-            ENABLE_ADMISSION_EXPORT=true EXPORT_BACKEND=disk \
-          if grep -q -- '--set enableViolationExport' <<<"$output"; then
-            echo "unset ENABLE_EXPORT unexpectedly set enableViolationExport" >&2
-            exit 1
-          fi
-          HELM=./.staging/helm/linux-amd64/helm ./test/export/helm-render-test.sh
-          name: export-logs-${{ matrix.KUBERNETES_VERSION }}
+package v1alpha1_test
+
+import (
+	"context"
+	"fmt"
+	"io"
+	"os"
+	"path/filepath"
+	"strings"
+	"testing"
+	"time"
+
+	"github.com/stretchr/testify/require"
+	corev1 "k8s.io/api/core/v1"
+	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/runtime/schema"
+	utilyaml "k8s.io/apimachinery/pkg/util/yaml"
+	"k8s.io/client-go/dynamic"
+	"k8s.io/client-go/rest"
+	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/envtest"
+)
+
+func TestConnectionNameValidation(t *testing.T) {
+	ctx := context.Background()
+	testEnv := &envtest.Environment{}
+	cfg, err := testEnv.Start()
+	require.NoError(t, err)
+	t.Cleanup(func() { require.NoError(t, testEnv.Stop()) })
+
+	scheme := runtime.NewScheme()
+	require.NoError(t, corev1.AddToScheme(scheme))
+	k8sClient, err := client.New(cfg, client.Options{Scheme: scheme})
+	require.NoError(t, err)
+	namespace := &corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: "connection-name-validation"}}
+	require.NoError(t, k8sClient.C
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-          make e2e-bootstrap
-            ENABLE_EXPORT=false ENABLE_ADMISSION_EXPORT=true EXPORT_BACKEND=disk \
-          name: export-logs
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `763f4021` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b6ac7a34` are properly handled with clean fallback behavior.

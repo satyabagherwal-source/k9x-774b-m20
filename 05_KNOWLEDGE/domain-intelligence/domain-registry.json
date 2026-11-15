@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T09:27:09.020Z",
-  "total_records": 1015,
+  "last_updated": "2026-11-15T09:55:28.992Z",
+  "total_records": 1022,
   "domains": {
     "A": {
       "total": 7,
@@ -37,7 +37,7 @@
       ]
     },
     "D": {
-      "total": 493,
+      "total": 496,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -531,7 +531,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-burner22-numbat-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-edge0-audio8-tts-realistic-air-core-invariants",
         "DOM-D-BDC1BDD2",
-        "domain_intelligence-research-knowledge-intelligence-hf-edge0-audio8-tts-realistic-air-learnings-core"
+        "domain_intelligence-research-knowledge-intelligence-hf-edge0-audio8-tts-realistic-air-learnings-core",
+        "domain_intelligence-research-knowledge-intelligence-liquidai-d1-2b-core-invariants",
+        "DOM-D-4EE8ADE1",
+        "domain_intelligence-research-knowledge-intelligence-hf-liquidai-d1-2b-learnings-core-invariants"
       ]
     },
     "E": {
@@ -1026,7 +1029,7 @@
       ]
     },
     "K": {
-      "total": 31,
+      "total": 35,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -1058,7 +1061,11 @@
         "domain_intelligence-quality-verification-intelligence-tencent-tds-kuiklyui-core-invariants",
         "domain_intelligence-quality-verification-intelligence-tencent-tds-kuiklyui-learnings-core-invariants",
         "domain_intelligence-quality-verification-intelligence-obliteratus-deepseek-v4-1-flash-1017-obliterat",
-        "domain_intelligence-quality-verification-intelligence-hf-obliteratus-deepseek-v4-1-flash-1017-oblite"
+        "domain_intelligence-quality-verification-intelligence-hf-obliteratus-deepseek-v4-1-flash-1017-oblite",
+        "domain_intelligence-quality-verification-intelligence-thaw-app-thaw-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-open-policy-agent-gatekeeper-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-thaw-app-thaw-learnings-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-open-policy-agent-gatekeeper-learnings-core-in"
       ]
     },
     "L": {
@@ -19572,6 +19579,102 @@
       "repository": "lancedb-lancedb-learnings",
       "content_hash": "e6bf3705ac3345562f0b0680a771aa1884f12472d583e1052571acbb26f45f85",
       "created_at": "2026-11-15T09:27:08.404Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-thaw-app-thaw-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-thaw-app-thaw-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: thaw-app/Thaw Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-thaw-app-thaw-quality-verification-intelligence-thaw-app-thaw-core-invariants.md",
+      "repository": "thaw-app/Thaw",
+      "content_hash": "87692ae2edc89b6209872e0b82035630c01beddc185b3b8c2d05788ec6f68740",
+      "created_at": "2026-11-15T09:49:56.638Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-open-policy-agent-gatekeeper-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-open-policy-agent-gatekeeper-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: open-policy-agent/gatekeeper Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-open-policy-agent-gatekeeper-quality-verification-intelligence-open-policy-agent.md",
+      "repository": "open-policy-agent/gatekeeper",
+      "content_hash": "950f5c60cc44bb0d74b60f884bda9aa48b4851afd8cb025a2d3f080414245cce",
+      "created_at": "2026-11-15T09:49:58.621Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-liquidai-d1-2b-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-liquidai-d1-2b-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: LiquidAI/d1-2B Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-d1-2b-research-knowledge-intelligence-liquidai-d1-2b-core-invariants.md",
+      "repository": "LiquidAI/d1-2B",
+      "content_hash": "10eccaeaaf77208ee4c8ce0e4cc13f92f0a8f87c3899ebaff244a05693e82ba8",
+      "created_at": "2026-11-15T09:55:04.221Z"
+    },
+    "DOM-D-4EE8ADE1": {
+      "record_id": "DOM-D-4EE8ADE1",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): LiquidAI/d1-2B",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-liquidai-d1-2b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/LiquidAI/d1-2B](https://huggingface.co/LiquidAI/d1-2B))  \n> **Source Version**: `hf-liquidai-`  \n> **License**: Open-Source  \n> **Synthesized By**: zero-clone-",
+      "content_hash": "33cc586ac417b6010446e45ff5f3e0522ab6d1d323d3bdf2876d4c63c67ec9e3",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-liquidai-d1-2b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-liquidai-d1-2b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co",
+      "provenance": {
+        "source_uri": "project://hf-liquidai-d1-2b/hf-liquidai-d1-2b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T09:55:06.929Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-liquidai-d1-2b)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-liquidai-d1-2b"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-15T09:55:27.954Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-liquidai-d1-2b-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-d1-2b-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-liquidai-d1-2b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-d1-2b-learnings-research-knowledge-intelligence-hf-liquidai-d1-2b-le.md",
+      "repository": "hf-liquidai-d1-2b-learnings",
+      "content_hash": "e211fda9014d7669414449fae9f17e03f5416aa00eb0f8cc484bc16a618faaea",
+      "created_at": "2026-11-15T09:55:28.124Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-thaw-app-thaw-learnings-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-thaw-app-thaw-learnings-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: thaw-app-thaw-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-thaw-app-thaw-learnings-quality-verification-intelligence-thaw-app-thaw-learning.md",
+      "repository": "thaw-app-thaw-learnings",
+      "content_hash": "8195d3d41784b39c23a9779acfb832cf58b93977dd8842d274a9bfbd9d8b25dc",
+      "created_at": "2026-11-15T09:55:28.514Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-open-policy-agent-gatekeeper-learnings-core-in": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-open-policy-agent-gatekeeper-learnings-core-in",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: open-policy-agent-gatekeeper-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-open-policy-agent-gatekeeper-learnings-quality-verification-intelligence-open-po.md",
+      "repository": "open-policy-agent-gatekeeper-learnings",
+      "content_hash": "89022f6fb45b1246dfe7399a8f2e79d3101a330810e49eef5b9e6ddf2499c857",
+      "created_at": "2026-11-15T09:55:28.992Z"
     }
   }
 }

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T08:53:19.720Z",
+  "updated_at": "2026-11-15T09:55:28.749Z",
   "stats": {
-    "total_discovered": 3665,
-    "approved_pending_harvest": 3455,
+    "total_discovered": 3668,
+    "approved_pending_harvest": 3458,
     "harvested_count": 0,
     "rejected_count": 210,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3435,
+      "COMMUNITY_AND_EXPERT": 3438,
       "OFFICIAL_DOCUMENTATION": 125,
       "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
@@ -79181,6 +79181,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/melnixdev-seo-crawl-audit-learnings.md",
         "fileName": "melnixdev-seo-crawl-audit-learnings.md"
+      }
+    },
+    "SRC-682FD923D5AC": {
+      "id": "SRC-682FD923D5AC",
+      "url": "https://huggingface.co/LiquidAI/d1-2B",
+      "title": "https://huggingface.co/LiquidAI/d1-2B",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T09:55:27.976Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-liquidai-d1-2b-learnings.md",
+        "fileName": "hf-liquidai-d1-2b-learnings.md"
+      }
+    },
+    "SRC-31967E6312F3": {
+      "id": "SRC-31967E6312F3",
+      "url": "https://github.com/open-policy-agent/gatekeeper",
+      "title": "https://github.com/open-policy-agent/gatekeeper",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T09:55:28.711Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-policy-agent-gatekeeper-learnings.md",
+        "fileName": "open-policy-agent-gatekeeper-learnings.md"
+      }
+    },
+    "SRC-D50FE913EFA9": {
+      "id": "SRC-D50FE913EFA9",
+      "url": "https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md",
+      "title": "https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T09:55:28.749Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-policy-agent-gatekeeper-learnings.md",
+        "fileName": "open-policy-agent-gatekeeper-learnings.md"
       }
     }
   }

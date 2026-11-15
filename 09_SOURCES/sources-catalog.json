@@ -6753,10 +6753,10 @@
     "repository": "open-policy-agent/gatekeeper",
     "platform": "github",
     "sourceUrl": "https://github.com/open-policy-agent/gatekeeper",
-    "sourceVersion": "763f4021",
+    "sourceVersion": "b6ac7a34",
     "license": "Apache-2.0",
-    "contentHash": "3249e7c046f87b2f45cfececbce0b4b332b2e64c7ffbd646ade9f6f17e3daf6e",
-    "lastHarvestedAt": "2026-11-07T18:02:49.291Z",
+    "contentHash": "7c8cc1c0afa2f22d7357bc6e8d3b483ad4616536e1672e5c482a86667673234c",
+    "lastHarvestedAt": "2026-11-15T09:49:58.381Z",
     "learningId": "learn-github-open-policy-agent-gatekeeper"
   },
   "chakra-ui-chakra-ui": {
@@ -7833,10 +7833,10 @@
     "repository": "thaw-app/Thaw",
     "platform": "github",
     "sourceUrl": "https://github.com/thaw-app/Thaw",
-    "sourceVersion": "3cb96a01",
+    "sourceVersion": "e29a4376",
     "license": "GPL-3.0",
-    "contentHash": "134a3d23166a95568455bfc13c9ea51cdbfb9f896f663f3a2ecff2e71193e54f",
-    "lastHarvestedAt": "2026-11-12T00:23:19.029Z",
+    "contentHash": "c72bfc81746e5c50cf43b9f3639b0ef222040d45ec98f8348f17304f21fc8e59",
+    "lastHarvestedAt": "2026-11-15T09:49:56.399Z",
     "learningId": "learn-github-thaw-app-thaw"
   },
   "rtk-ai-rtk": {
@@ -11735,8 +11735,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/d1-2B",
     "sourceVersion": "hf-liquidai-d1-2b",
     "license": "Open-Source",
-    "contentHash": "b9a517d9c2578a1c0dc13c5b2bac459cfa0bab4f0099790e168687d2652ca695",
-    "lastHarvestedAt": "2026-11-09T21:27:18.086Z",
+    "contentHash": "50adaf2ae139c9170e96ee6dc00d56e3a62578edb8a82c30974a1a65654f95cb",
+    "lastHarvestedAt": "2026-11-15T09:55:04.092Z",
     "learningId": "learn-huggingface-liquidai-d1-2b"
   },
   "hf-sensenova-sensenova-loop-9b-preview": {

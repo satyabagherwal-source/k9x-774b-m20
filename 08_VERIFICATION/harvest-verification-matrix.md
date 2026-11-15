@@ -10068,3 +10068,7 @@
 | `CYCLE-20261115-L0MH` | `2026-11-15T09:21:41.993Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8600, Rule 8601` | Yes (`b0d20128...`) |
 | `CYCLE-20261115-RC6H` | `2026-11-15T09:26:36.905Z` | `meshtastic/Meshtastic-Android` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8602, Rule 8603, Rule 8604` | Yes (`7d45f78b...`) |
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T09:27:07.322Z` | `meshtastic-meshtastic-android` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-EE93AFC9` [Domain H] | Yes (`49cea7ab...`) |
+| `CYCLE-20261115-LC18` | `2026-11-15T09:49:56.396Z` | `thaw-app/Thaw` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8605` | Yes (`c72bfc81...`) |
+| `CYCLE-20261115-LDK9` | `2026-11-15T09:49:58.377Z` | `open-policy-agent/gatekeeper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8606` | Yes (`7c8cc1c0...`) |
+| `CYCLE-20261115-RXG9` | `2026-11-15T09:55:04.089Z` | `LiquidAI/d1-2B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-d1-2b-learnings.md` | Yes (`50adaf2a...`) |
+| `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T09:55:27.966Z` | `hf-liquidai-d1-2b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-4EE8ADE1` [Domain D] | Yes (`33cc586a...`) |

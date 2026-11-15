@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/thaw-app-thaw-learnings.md`  
 > **Source**: github ([https://github.com/thaw-app/Thaw](https://github.com/thaw-app/Thaw))  
-> **Source Version**: `3cb96a01`  
+> **Source Version**: `e29a4376`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T00:23:08.325Z  
+> **Timestamp**: 2026-11-15T09:49:55.660Z  
 > **Learning ID**: `learn-github-thaw-app-thaw`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/thaw-app-thaw-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/thaw-app/Thaw](https://github.com/thaw-app/Thaw))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T00:23:02.121Z  
+> **Harvest Timestamp**: 2026-11-15T09:49:55.476Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The open source menu bar manager
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 12691 stars
+- **Stars / Engagement**: 12734 stars
 
 ---
 
@@ -1235,798 +1235,820 @@ extension AppSettings: MenuBarEngineConfiguration {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a9ccd1f9` (2026-11-11)
-**Commit Message**: fix: capture, usability and motion follow-ups, real readings for the widget icon, and Layout out-of-room and design fixes (#1500)
+### Incident Patch 1: `d9b78abe` (2026-11-14)
+**Commit Message**: ci: cap the build, test packages only when they change, key the compile cache on dependencies, and scan legacy/thaw-2 with CodeQL (#1585)
 
-* fix(motion): slide layout reorders, grow the new-items badge from its center, smaller timing fixes
-
-The rest of the motion audit:
-- Layout bar reorders slide 0.2 s with an ease-out, each in its own
-  animation group so the timing doesn't reach other animations, and the
-  gap closes with a slide when a dragged block leaves a section.
-- The new-items badge grows from 0.85 about its center with a short,
-  gentle spring and a fade; Reduce Motion fades it only.
-- The dim while a drop settles fades on the layer, since NSView's
-  animator alpha finishes in one frame on macOS 27.
-- The Thaw Bar preview follows its size and column sliders with the quick
-  timing, the tint resample uses the settle timing instead of SwiftUI's
-  default, onboarding's tiles use a tapering stagger with a 6 pt rise, and
-  the "Waiting for access" row fades in.
+* ci: cap the build, test packages only when they change, and key the compile cache on dependencies
 
 Signed-off-by: René Jiménez <[REDACTED_EMAIL]>
 
-* feat(thaw-bar): drop the Thaw Bar in from the menu bar
+* ci(codeql): scan legacy/thaw-2, since CodeQL can't build Swift 6.4
 
-The Thaw Bar opened instantly. It now fades in while its content settles
-6 pt down from 0.97 scale about its top center
+Signed-off-by: René Jiménez <[REDACTED_EMAIL]>
 
-**File**: `CHANGELOG.md` (modified, +75/-23)
+* ci: key the compile cache on Xcode, keep test results from a hung run, and test packages weekly
+
+The compilation cache key now names the Xcode version and build, and hashes the project's lock file by path. Development restores only an exact match, so a saved cache holds no entries carried over from older ones.
+
+The 22-minute limit is on the Build and Test step, with 30 on the job as a backstop, so a failed or timed-out run can still upload its result bundle.
+
+The skip rule for follow-up pushes judges the package tests against the package patterns, not the code patterns.
+
+A weekly scheduled run on development, in a concurrency group of its own, builds, tests the packages and saves the cache.
+
+Signed-off-by: René Jiménez <[REDACTED_EMAIL]>
+
+* ci: build on macOS only for what the buil
+
+**File**: `.github/workflows/ci.yml` (modified, +176/-51)
 ```diff
-@@ -26,35 +26,87 @@ the items under New and Fixed.
+@@ -1,6 +1,8 @@
+ name: CI
+ concurrency:
+-  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
++  # The weekly run has a group of its own, so a merge doesn't cancel it and it
++  # doesn't cancel a merge's run.
++  group: ${{ github.workflow }}-${{ github.event_name == 'schedule' && 'schedule' || github.head_ref || github.ref }}
+   cancel-in-progress: true
+ # Runs on every PR and push to development so Scorecard sees checks; the
+ # macOS work stays gated on path detection below.
+@@ -9,6 +11,11 @@ on:
+   push:
+     branches:
+       - development
++  # Weekly on development, where path detection reports everything as changed.
++  # Merges cancel most push runs, so this one tests the packages and saves the cache.
++  schedule:
++    # Offset from the hour and from the other scheduled workflows.
++    - cron: "43 2 * * 3"
+   workflow_dispatch:
  
- ### New
- 
--- **Layout warns when items don't fit.** When macOS hides items it has no room for, Layout names them until there's room again.
--- **Release notes can stay closed after an update.** Turn off Show release notes after an update in Privacy. What's New still opens from Thaw's menu and About.
--- **Profiles name Spaces the way Mission Control does.** Pick any Space for a profile, grouped by display, with full screen apps by name. A Space that's gone shows as missing, and the display with the menu bar is marked.
--- **The menu bar can show which Space you're in.** Turn on Show the current Space in the menu bar under Displays › Spaces. Its menu lists the Spaces on each display.
-+#### Spaces
-+
-+- **The current Space in the menu bar.** Turn on Show the current Space in the menu bar in Displays › Spaces. Its menu lists each display's Spaces.
-+- **Profiles name Spaces the way Mission Control does,** grouped by display, with full screen apps by name. The display with the menu bar is marked.
-+
-+#### Widgets
-+
-+- **The widget icon shows real readings.** Wi-Fi shows your actual bars, and the battery turns green while charging, yellow in Low Power Mode and red below 20%. Suggested by @joaofrgomes in [#1378](https://github.com/thaw-app/Thaw/issues/1378).
-+- **Bluetooth audio in the center.** While sound plays through AirPods, headphones or a speaker, the widget shows it, with the volume in blue.
-+- **A larger, better-proportioned widget icon.** The ring fills the icon and opens at the bottom, with the dots along it. Choose Standard or Large and the ring's thickness.
-+
-+#### Layout and Thaw Bar
-+
-+- **Layout warns when items don't fit,** names the ones macOS hid, and Move to Hidden makes room in one click.
-+- **Layout tells you when macOS hides Focus** and turns on Thaw's own Focus icon in one click. Reported by @JosefGvirt in [#1477](https://github.com/thaw-app/Thaw/issues/1477).
-+- **The Thaw Bar drops in from the menu bar.** It still closes at once, and only fades with Reduce Motion.
-+- **Release notes can stay closed after an update,** in Privacy.
- 
- ### Changed
- 
--- **Extras is now called Modules.** The Settings page that turns Profiles, Scripts, Triggers and Widgets on and off, and the sidebar group they appear in, use the same name as the rest of Thaw.
--- **Double-clicking Thaw's icon for Always Hidden has its own switch.** Turn off Double-click the Thaw icon to show Always Hidden in Menu Bar Access, and every click shows or hides your items.
--- **The Thaw Bar has its own switch again.** Show hidden items is now two switches, Thaw Bar and Always show hidden items. Your settings carry over.
--- **Profiles and menu bar looks follow a Space switch sooner.** Thaw hears about the switch as it starts, and a new Space can have its own profile right away.
--- **Spaces settings stay after Thaw quits.** Thaw saves what you set on the Spaces page and applies it again when it starts, when you add a Space and when macOS restarts the menu bar.
-+- **Hold Option on Capture Hidden Items to retake every picture.** The button reads Retake All Pictures while you do.
-+- **Extras is now Modules.**
-+- **One name for each section: Visible, Hidden and Always Hidden.**
-+- **Apply to All Displays always asks first,** since it overwrites every display's own settings.
-+- **The Thaw Bar has its own switch again.** Show hidden items is now two switches, Thaw Bar and Always show hidden items.
-+- **Double-clicking Thaw's icon for Always Hidden has its own switch,** in Menu Bar Access. By @malash in [#1339](https://github.com/thaw-app/Thaw/pull/1339).
-+- **Spaces settings stay after Thaw quits,** and come back when you add a Space or macOS restarts the menu bar.
-+- **Profiles and menu bar looks follow a Space switch sooner.**
-+- **Thaw reads a busy menu bar faster.** With many apps running it asks several at once, so it no longer stops partway.
- 
- ### Fixed
- 
--- **Arrow keys move the Thaw Bar highlight at once.** The item under the keyboard no longer springs up on every key press; the pointer still lifts it.
--- **The layout warning fades in and out.** When Thaw can't move an item, the notice in Layout, the pop-out editor and search no longer pops in and vanishes after a few seconds.
--- **The menu bar shape gets out of the way faster when you drag an item.** It fades out in 0.15 s instead of 0.25 s, and a drag that stops partway fades back sooner.
--- **With Reduce Motion on, the notch panel switches without a pause.** It no longer waits for an animation that Reduce Motion has already turned off.
--- **Layout shows Bluetooth and other switched-off system items as their own symbol.** Items Thaw hides by switching their Control Center module off used to sit in a grey box.
--- **Hidden items no longer collapse right after you point at them or show them again.** A timed rehide that was already finishing could still hide the section you had just reopened.
--- **Diagnostic logs no longer warn on every 
+ permissions:
+@@ -23,8 +30,23 @@ jobs:
+       actions: read
+     env:
+       CODE_PATTERNS: '(\.swift$|(^|/)Package\.swift$|(^|/)Package\.resolved$|^sonar-project\.properties$|^\.swiftlint|^\.swiftformat|^Thaw\.xcodeproj/|^scripts/|\.xcstrings$|^\.github/workflows/ci\.yml$)'
++      # The macOS build runs for a path that matches CODE_PATTERNS and neither of the
++      # two lists below, so a path nobody has listed still builds.
++      #
++      # Lint and format settings, and the scripts only the lint job runs. The build
++      # reads .swiftlint-version, lint.sh and install-swiftlint.sh, so they stay out.
++      LINT_ONLY_PATTERNS: '(^\.swiftlint\.yml$|^\.swiftlint\.baseline$|^\.swiftformat|^scripts/(format|install-swiftformat|update-swiftlint-baseline)\.sh$|^scripts/swiftlint-baseline\.py$|^scripts/tests/test-(format|lint|swiftlint-baseline)\.sh$)'
++      # String catalogs. The lint job checks that they are valid JSON, and nothing
++      # compiles them before the merge. To build for them again, change this to '(^$)'.
++      CATALOG_PATTERNS: '(\.xcstrings$)'
++      # The package tests build only packages/, so the app's own code can't change them.
++      PACKAGE_PATTERNS: '(^packages/|^scripts/test-packages\.sh$|^\.github/workflows/ci\.yml$)'
+     outputs:
+-      code: ${{ steps.since-last-run.outputs.code || steps.filter.outputs.code }}
++      # The skip step below can only turn a "true" into "false"; skipped, or unable
++      # to confirm, it leaves the filter's answer.
++      code: ${{ steps.since-last-run.outputs.code == 'false' && 'false' || steps.filter.outputs.code }}
++      build: ${{ steps.since-last-run.outputs.build == 'false' && 'false' || steps.build-filter.outputs.build }}
++      packages: ${{ steps.since-last-run.outputs.packages == 'false' && 'false' || steps.packages-filter.outputs.code }}
+     steps:
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+         with:
+@@ -35,14 +57,52 @@ jobs:
+         uses: thaw-app/org-ci/actions/detect-code-changes@d57f5f99c6641bbe12e87a54898356000d94f904
+         with:
+           patterns: ${{ env.CODE_PATTERNS }}
+-      # The filter compares the whole pull request with its base, so a push that only
++      - name: Detect package paths
++        id: packages-filter
++        uses: thaw-app/org-ci/actions/detect-code-changes@d57f5f99c6641bbe12e87a54898356000d94f904
++        with:
++          patterns: ${{ env.PACKAGE_PATTERNS }}
++      # The shared action matches one pattern and cannot leave paths out, so this
++      # compares the same range itself, and answers true whenever it cannot tell.
++      - name: Detect paths the build uses
++        id: build-filter
++        env:
++          EVENT_NAME: ${{ github.event_name }}
++          BASE_REF: ${{ github.base_ref }}
++          BEFORE: ${{ github.event.before }}
++          SHA: ${{ github.sha }}
++        run: |
++          set -uo pipefail
++          build=true
++          range=""
++          if [[ "$EVENT_NAME" == "pull_request" ]]; then
++            range="origin/${BASE_REF}...HEAD"
++          elif [[ "$EVENT_NAME" == "push" && -n "$BEFORE" && ! "$BEFORE" =~ ^0+$ ]]; then
++            range="${BEFORE}..${SHA}"
++          fi
++          if [[ -n "$range" ]] && changed=$(git -c core.quotePath=false diff --name-only --no-renames "$range" 2>/dev/null) \
++            && [[ "$(git diff --name-only --no-renames -z "$range" | tr -cd '\n' | wc -c)" -eq 0 ]]; then
++            status=0
++            rest=$(grep -Ev -e "$LINT_ONLY_PATTERNS" -e "$CATALOG_PATTERNS" <<<"$changed") || status=$?
++            if (( status <= 1 )); then
++              status=0
++              grep -Eq -e "$CODE_PATTERNS" <<<"$rest" || status=$?
++              if (( status == 1 )); then
++                build=false
++                echo "Nothing the build or its tests use changed; the macOS build will no-op."
++              fi
++            fi
++          fi
++          echo "build=$build" >> "$GITHUB_OUTPUT"
++      # The filters compare the whole pull request with its base, so a push that only
+       # fixes the changelog would build and test again. When the files changed since
+
 ```
 
-**File**: `Thaw/App/Navigation/NavigationIdentifiers/SettingsNavigationIdentifier.swift` (modified, +1/-1)
+**File**: `.github/workflows/codeql.yml` (modified, +11/-6)
 ```diff
-@@ -71,7 +71,7 @@ enum SettingsNavigationIdentifier: String, @MainActor NavigationIdentifier {
-     var subtitle: LocalizedStringResource {
-         switch self {
-         case .general: "Startup, language and icon"
--        case .menuBarLayout: "Shown, hidden and always hidden"
-+        case .menuBarLayout: "Visible, Hidden and Always Hidden"
-         case .visibility: "How hidden items appear"
-         case .thawBar: "Hidden items below the menu bar"
-         case .displays: "Each display and Space"
+@@ -1,5 +1,8 @@
+ name: CodeQL
+ 
++# Scans legacy/thaw-2. CodeQL supports neither Swift 6.4 nor traced builds with
++# Xcode 27 (GitHub changelog, 2026-10-19), so Thaw 3 on development can't be
++# scanned. Point this back at development once CodeQL lists Swift 6.4.
+ on:
+   schedule:
+     # Weekly, offset from the hour to avoid GitHub's cron pileup.
+@@ -28,8 +31,13 @@ jobs:
+     steps:
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+         with:
++          ref: legacy/thaw-2
+           persist-credentials: false
+ 
++      - name: Record the scanned commit
++        id: scanned
++        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
++
+       - name: Initialize CodeQL
+         uses: github/codeql-action/init@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
+         with:
+@@ -39,12 +47,6 @@ jobs:
+       - name: Select Xcode 26.6
+         run: sudo xcode-select -s /Applications/Xcode_26.6.app/Contents/Developer
+ 
+-      # The Thaw target's lint build phase requires the pinned SwiftLint on PATH.
+-      - name: Install pinned SwiftLint
+-        run: |
+-          sh scripts/install-swiftlint.sh
+-          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+-
+       # CodeQL traces this build to construct the database. Tests are not run;
+       # compilation is all the extractor needs.
+       - name: Build
+@@ -63,3 +65,6 @@ jobs:
+         uses: github/codeql-action/analyze@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
+         with:
+           category: "/language:swift"
++          # File the results under the branch that was scanned, not development.
++          ref: refs/heads/legacy/thaw-2
++          sha: ${{ steps.scanned.outputs.sha }}
 ```
 
-**File**: `Thaw/Items/Capture/GlyphCapturePolicy.swift` (modified, +3/-4)
+---
+
+### Incident Patch 2: `e29a4376` (2026-11-15)
+**Commit Message**: fix(input): don't count a windowless click as a click on the Thaw icon (#1595)
+
+* fix(input): don't count a windowless click as a click on the Thaw icon
+
+handleSmartRehide compared event.window === controlItem.window, which is
+true when both are nil. A click in another app has no window, and the
+control item has none until the system seats its status item, so smart
+rehide skipped that click. A click with no window now never matches.
+
+Signed-off-by: Elior Ashkenazi <[REDACTED_EMAIL]>
+
+* test(capture): run the settle read timer on the injected clock
+
+readBefore raced each pixel read against a real-time timer while the
+deadline came from the injected clock. Under a test clock, three main-actor
+reads that took over 1.2 real seconds lost the race, and
+revealedPixelsSettle saw fewer than three captures. SettleClock now carries
+the timer, Task.sleep(until:) by default, and SettleClock.driven(by:) gives
+tests one that never fires.
+
+Signed-off-by: René Jiménez <[REDACTED_EMAIL]>
+
+* test(items): wait for a hung stand-in on the launcher's clock
+
+restartRunning timed its quit wait on the real clock, so
+restartForcesAHungStandIn waited 3 real seconds. It now uses the launcher's
+now and a new sl
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -23,9 +23,8 @@ extension MenuBarItemImageCache {
+@@ -31,6 +31,7 @@ the items under New and Fixed.
+ - The Shortcuts page no longer shows an empty Profiles tab while Profiles is turned off.
+ - Showing a section in the menu bar while the Thaw Bar is open no longer hides it early, when the Thaw Bar's own hide timer runs out.
+ - `thaw://release-item?bundle=` now lets go of every item of that app the sender holds, instead of failing when it holds more than one.
++- Smart rehide no longer skips a click outside the menu bar while the Thaw icon has no window yet, so the revealed items go away after the click as set.
  
-     /// Chooses between an existing cache entry and a newly captured candidate.
+ ## [3.0.0-alpha.14] - 2026-11-14
+ 
+```
+
+**File**: `Thaw/Input/Events/HIDEventManager+PointerGeometry.swift` (modified, +8/-0)
+```diff
+@@ -121,6 +121,14 @@ extension HIDEventManager {
+         }
+     }
+ 
++    /// Whether a click landed in the control item's window. Pure, so it is testable without a
++    /// live menu bar.
++    static nonisolated func isClick(in eventWindow: NSWindow?, onControlItemWindow controlItemWindow: NSWindow?) -> Bool {
++        // Two nil windows are not the same window: === would call them equal.
++        guard let eventWindow else { return false }
++        return eventWindow === controlItemWindow
++    }
++
+     /// Whether the pointer is over any menu bar item.
      ///
--    /// Prefers keeping a settled non-blank glyph over blank or much-narrower
--    /// replacements (chevron bleed), while still allowing legitimate updates
--    /// when the candidate is at least as wide.
-+    /// Keeps a settled glyph over a blank, much narrower (chevron bleed) or mid-slide one,
-+    /// and takes the candidate when it's at least as wide.
-     static nonisolated func preferredCachedImage(
-         existing: MenuBarItemGlyphCapture,
-         candidate: MenuBarItemGlyphCapture
-@@ -36,7 +35,7 @@ extension MenuBarItemImageCache {
-         if candidate.isEffectivelyBlank {
-             return existing
-         }
--        if candidate.pointSize.width < existing.pointSize.width * 0.75 {
-+        if candidate.pointSize.width < existing.pointSize.width * 0.75 || isLeadingCut(candidate, of: existing) {
-             return existing
-         }
-         return candidate
+     /// Tried cheapest first: the prebuilt bounds table, then the managed item
 ```
 
-**File**: `Thaw/Items/Capture/GlyphInkBounds.swift` (added, +61/-0)
+**File**: `Thaw/Input/Events/HIDEventManager+ShowOnClick.swift` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,61 @@
+@@ -401,7 +401,7 @@ extension HIDEventManager {
+             // Clicking the visible control item or the Thaw Bar drives the sections, so it never rehides them.
+             if
+                 let controlItem = appState.menuBarManager.controlItem(withName: .visible),
+-                event.window === controlItem.window
++                Self.isClick(in: event.window, onControlItemWindow: controlItem.window)
+             {
+                 return false
+             }
+```
+
+**File**: `Thaw/Items/Capture/RevealCaptureSession+Settle.swift` (modified, +3/-2)
+```diff
+@@ -15,6 +15,8 @@ extension RevealCaptureSession {
+     struct SettleClock {
+         var now: @MainActor () -> ContinuousClock.Instant = { .now }
+         var sleep: @MainActor (Duration) async -> Void = { try? await Task.sleep(for: $0) }
++        /// The timer that ends a read at the deadline; it must return early when cancelled.
++        var sleepUntil: @MainActor (ContinuousClock.Instant) async -> Void = { try? await Task.sleep(until: $0) }
+     }
+ 
+     /// Polls a revealed batch, one enumeration per poll, until every member's AX bounds are stable.
+@@ -131,7 +133,6 @@ extension RevealCaptureSession {
+     }
+ 
+     /// Runs read against the deadline. A result that arrives at or after it doesn't count.
+-    /// The timer that ends a read still runs on real time.
+     static func readBefore(
+         _ deadline: ContinuousClock.Instant,
+         clock: SettleClock,
+@@ -140,7 +141,7 @@ extension RevealCaptureSession {
+         guard clock.now() < deadline else { return .pastDeadline }
+         let (outcomes, sink) = AsyncStream.makeStream(of: BoundedRead.self)
+         let timer = Task {
+-            try? await Task.sleep(until: deadline)
++            await clock.sleepUntil(deadline)
+             sink.yield(.pastDeadline)
+         }
+         Task { @MainActor in await sink.yield(.read(read())) }
+```
+
+**File**: `Thaw/Items/Manager/SystemExtraStandIns.swift` (modified, +11/-5)
+```diff
+@@ -230,12 +230,18 @@ final class SystemExtraStandInLauncher: SystemExtraReplacementProviding {
+     private static let restartWindow: Duration = .seconds(30)
+     private static let restartQuitTimeout: Duration = .seconds(3)
+     private let system: StandInSystem
+-    /// The clock the restart window is measured on; tests pass one that only moves when they say.
++    /// The clock the restart window and the quit wait are measured on; tests pass one that only moves when they say.
+     private let now: () -> ContinuousClock.Instant
++    private let sleep: (Duration) async -> Void
+ 
+-    init(system: StandInSystem = StandInSystem(), now: @escaping () -> ContinuousClock.Instant = { .now }) {
++    init(
++        system: StandInSystem = StandInSystem(),
++        now: @escaping () -> ContinuousClock.Instant = { .now },
++        sleep: @escaping (Duration) async -> Void = { try? await Task.sleep(for: $0) }
++    ) {
+         self.system = system
+         self.now = now
++        self.sleep = sleep
+     }
+ 
+     func publish(item: SystemExtraItem, canonicalIdentifier: String, section: MenuBarSectionName) async throws {
+@@ -285,9 +291,9 @@ final class SystemExtraStandInLauncher: SystemExtraReplacementProviding {
+             entry.stopWatching()
+             watched[standIn] = nil
+             entry.app.terminate()
+-            let deadline = ContinuousClock.now + Self.restartQuitTimeout
+-            while !entry.app.isTerminated, ContinuousClock.now < deadline {
+-                try? await Task.sleep(for: .milliseconds(50))
++            let deadline = now() + Self.restartQuitTimeout
++            while !entry.app.isTerminated, now() < deadline {
++                await sleep(.milliseconds(50))
+             }
+             if !entry.app.isTerminated {
+                 entry.app.forceTerminate()
+```
+
+**File**: `ThawTests/App/ControlCenterBridgeTests.swift` (modified, +6/-6)
+```diff
+@@ -13,7 +13,7 @@ import Testing
+ /// Both ends of the Control Center bridge, against a scratch suite in place of the app group
+ /// and a recorder in place of Control Center. The app state is never set up.
+ @MainActor
+-@Suite("Control Center bridge", .serialized)
++@Suite("Control Center bridge", .serialized, .scratchDefaults)
+ struct ControlCenterBridgeTests {
+     private final class Reloads {
+         var kinds: [String] = []
+@@ -46,7 +46,7 @@ struct ControlCenterBridgeTests {
+         #expect(ControlStatePublisher.snapshot(for: nil) == .init(isHiddenSectionRevealed: false, isZenModeActive: false))
+     }
+ 
+-    @Test("Setup publishes the current state once and reloads both controls", .scratchDefaults)
++    @Test("Setup publishes the current state once and reloads both controls")
+     func setupPublishes() throws {
+         try withPublisher { publisher, suite, reloads in
+             let appState = AppState()
+@@ -59,7 +59,7 @@ struct ControlCenterBridgeTests {
+         }
+     }
+ 
+-    @Test("A clean quit erases the snapshot and reloads the controls", .scratchDefaults)
++    @Test("A clean quit erases the snapshot and reloads the controls")
+     func terminationErases() throws {
+         try withPublisher { publisher, suite, reloads in
+             let appState = AppState()
+@@ -74,7 +74,7 @@ struct ControlCenterBridgeTests {
+         }
+     }
+ 
+-    @Test("The app's quit notification erases the snapshot", .scratchDefaults)
++    @Test("The app's quit notification erases the snapshot")
+     func quitNotificationErases() async throws {
+         let name = ScratchDefaults.name("ControlState")
+         defer { ScratchDefaults.remove(name) }
+@@ -94,7 +94,7 @@ struct ControlCenterBridgeTests {
+         #expect(try stored(in: suite) == nil)
+     }
+ 
+-    @Test("Without the app group nothing is written or reloaded", .scratchDefaults)
++    @Test("Without the app group nothing is written or reloaded")
+     func missingGroup() {
+         var reloads = 0
+         let publisher = ControlStatePublisher(defaults: nil) { _ in reloads += 1 }
+@@ -113,7 +113,7 @@ struct ControlCenterBridgeTests {
+         ])
+     }
+ 
+-    @Test("Only the hidden-section toggle confirms, and only once there is a section", .scratchDefaults)
++    @Test("Only the hidden-section toggle confirms, and only once there is a section")
+     func commandConfirmations() {
+         let appState = AppState()
+         #expect(ControlCommandObserver.Command.toggleZen.confirmation(appState: appState) == nil)
+```
+
+**File**: `ThawTests/Environment/DisplayProfileSwitchTests.swift` (modified, +3/-3)
+```diff
+@@ -11,7 +11,7 @@ import Testing
+ 
+ /// The display change's resolveProfile step, which replaced ProfileManager's own screen observer.
+ @MainActor
+-@Suite("Display profile switch", .serialized)
++@Suite("Display profile switch", .serialized, .scratchDefaults)
+ struct DisplayProfileSwitchTests {
+     private let suites = ScratchSuites(prefix: "DisplayProfileSwitchTests")
+ 
+@@ -64,7 +64,7 @@ struct DisplayProfileSwitchTests {
+         #expect(target.applied.isEmpty)
+     }
+ 
+-    @Test("The effect step leaves the profile alone when no profile names a display", .scratchDefaults)
++    @Test("The effect step leaves the profile alone when no profile names a display")
+     func effectWithoutProfilesAppliesNothing() async throws {
+         let directory = try ProfileTestDirectory.make(seeding: ["Default"])
+         defer { try? FileManager.default.removeItem(at: directory) }
+@@ -78,7 +78,7 @@ struct DisplayProfileSwitchTests {
+         #expect(profiles.layoutTask == nil)
+     }
+ 
+-    @Test("A switch started during a settle is the pending apply the settle's tail leaves to finish", .scratchDefaults)
++    @Test("A switch started during a settle is the pending apply the settle's tail leaves to finish")
+     func settleTailLeavesTheSwitchToFinish() throws {
+         let defaults = try #require(suites.make())
+         let settled = ProfileSettleReapply.Record(defaults: defaults)
+```
+
+**File**: `ThawTests/Input/SmartRehideClickTests.swift` (added, +42/-0)
+```diff
+@@ -0,0 +1,42 @@
 +//
-+//  GlyphInkBounds.swift
++//  SmartRehideClickTests.swift
 +//  Project: Thaw
 +//
 +//  Copyright (Thaw) © 2026 Toni Förster
 +//  Licensed under the GNU GPLv3
 +
-+import CoreGraphics
++import AppKit
++import Testing
++@testable import Thaw
 +
-+extension MenuBarItemImageCache {
-+    /// How far, as a share of the kept glyph's width, the left ink edge may move in before a picture counts as cut.
-+    static nonisolated let leadingCutTolerance: CGFloat = 0.15
-+
-+    /// The box around the visible ink in points, or nil for a picture with none.
-+    static nonisolated func inkBounds(of capture: MenuBarItemGlyphCapture) -> CGRect? {
-+        let image = capture.cgImage
-+        let width = image.width, height = image.height
-+        guard width > 0, height > 0, capture.scale > 0 else { return nil }
-+        let context = CGContext(
-+            data: nil,
-+            width: width,
-+            height: height,
-+            bitsPerComponent: 8,
-+            bytesPerRow: width * 4,
-+            space: CGColorSpaceCreateDeviceRGB(),
-+            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
-+        )
-+        guard let context else { return nil }
-+        context.draw(image, in: CGRect(x: 0, y: 0, width: width, height: height))
-+        guard let data = context.data?.assumingMemoryBound(to: UInt8.self) else { return nil }
-+        let stride = context.bytesPerRow
-+        var minX = width, maxX = -1, minY = height, maxY = -1
-+        for row in 0 ..< height {
-+            for column in 0 ..< width where data[row * stride + column * 4 + 3] > 12 {
-+                minX = min(minX, column)
-+                maxX = max(maxX, column)
-+                minY = min(minY, row)
-+                maxY = max(maxY, row)
-+            }
-+        }
-+        guard maxX >= minX else { return nil }
-+        return CGRect(
-+            x: CGFloat(minX) / capture.scale,
-+            y: CGFloat(minY) / capture.scale,
-+            width: CGFloat(maxX - minX + 1) / capture.scale,
-+            height: CGFloat(maxY - minY + 1) / capture.scale
-+        )
++@MainActor
++@Suite("Smart rehide outside clicks")
++struct SmartRehideClickTests {
++    private func makeWindow() -> NSWindow {
++        let window = NSWindow(contentRect: CGRect(x: 0, y: 0, width: 10, height: 10), styleMask: .borderless, backing: .buffered, defer: false)
++        window.isReleasedWhenClosed = false
++        return window
 +    }
 +
-+    /// Whether candidate is the existing picture caught mid-slide: same crop and right edge, left part missing.
-+    /// Shorter text or a narrower centred symbol doesn't count; identical bytes skip the scan.
-+    static nonisolated func isLeadingCut(_ candidate: MenuBarItemGlyphCapture, of existing: MenuBarItemGlyphCapture) -> Bool {
-+        guard abs(candidate.pointSize.width - existing.pointSize.width) < 1,
-+              candidate.cgImage !== existing.cgImage,
-+              candidate.cgImage.dataProvider?.data != existing.cgImage.dataProvider?.data,
-+              let kept = inkBounds(of: existing), let new = inkBounds(of: candidate)
-+        else { return false }
-+        let edgeSlack = max(1, kept.width * 0.05)
-+        return abs(new.maxX - kept.maxX) <= edgeSlack && new.minX - kept.minX > kept.width * leadingCutTolerance
++    /// A global mouse monitor hands over events for other apps' windows with no window, which is
++    /// what an outside click looks like. The control item has no window until the system seats
++    /// its status item, so it must not claim such a click.
++    @Test("A click with no window is not a click on a control item that has no window either")
++    func windowlessClickIsNotOnWindowlessControlItem() {
++        #expect(!HIDEventManager.isClick(in: nil, onControlItemWindow: nil))
++    }
++
++    @Test("A click in the control item's window is a click on it")
++    func clickInControlItemWindow() {
++        let window = makeWindow()
++        #expect(HIDEventManager.isClick(in: window, onControlItemWindow: window))
++    }
++
++    @Test("A click in another window, or a windowless control item, is not a click on it")
++    func clickElsewhere() {
++        let window = makeWindow()
++        #expect(!HIDEventManager.isClick(in: window, onControlItemWindow: makeWindow()))
++        #expect(!HIDEventManager.isClick(in: window, onControlItemWindow: nil))
++        #expect(!HIDEventManager.isClick(in: nil, onControlItemWindow: window))
 +    }
 +}
 ```
 
-**File**: `Thaw/Items/Capture/MenuBarItemImageCache+Reading.swift` (modified, +14/-5)
+---
+
+### Incident Patch 3: `6b709de5` (2026-11-15)
+**Commit Message**: ci: end the hung test runs, shorten the test queues, and split build from test (#1597)
+
+* test: drop the one-minute time limits from the app tests
+
+In the app's test process almost every test waits for the main actor, and a Swift Testing time limit starts counting before the test gets it. On CI the display change, Mission Control and profile layout suites queue for about 60 seconds before they run, so on a slower runner they cross the one-minute limit. Xcode then takes a spindump, kills the test host and relaunches it. The relaunched host hits the same limits, and the loop repeats until the step hits its 22-minute limit.
+
+The package tests keep their limits: they run in their own processes and don't queue behind the app's tests.
+
+Signed-off-by: René Jiménez <[REDACTED_EMAIL]>
+
+* ci: skip the editor index and package updates, and keep every run's test results
+
+The CI build wrote an editor index nothing reads, and looked for newer package versions although Package.resolved is committed. It now passes
+COMPILER_INDEX_STORE_ENABLE=NO, -onlyUsePackageVersionsFromResolvedFile and -skipPackageUpdates.
+
+CI uploaded the test results only when the step failed. A passing run's result bundle gi
+
+**File**: `.github/workflows/ci.yml` (modified, +30/-14)
 ```diff
-@@ -243,6 +243,19 @@ extension MenuBarItemImageCache {
-         let forgivenTags = section != .visible && shouldUseFreshBounds
-             ? Set(items.map(\.tag))
-             : []
-+        let geometryOwners = Self.captureGeometryOwners(
-+            for: items,
-+            knownItems: appState.itemManager.managedItems,
-+            recentItems: appState.itemManager.onScreenItemSnapshot.items
-+        )
-+        if Self.settlesRevealedPixels(
-+            for: section,
-+            revealedSection: revealedSection,
-+            lastRevealChange: appState.barSettling.lastRevealChange,
-+            now: .now
-+        ) {
-+            await settleRevealedSection(items, appState: appState, reader: LiveMenuBarCaptureReader(geometryOwners: geometryOwners))
-+        }
-         // A stale item cache can let concealed items into this pass; the crop
-         // loop rejects them against this set.
-         let concealedIdentifiers = appState.menuBarManager.sectionController
-@@ -256,11 +269,7 @@ extension MenuBarItemImageCache {
-             freshBounds: shouldUseFreshBounds,
-             concealedIdentifiers: concealedIdentifiers,
-             forgivenTags: forgivenTags,
--            geometryOwners: Self.captureGeometryOwners(
--                for: items,
--                knownItems: appState.itemManager.managedItems,
--                recentItems: appState.itemManager.onScreenItemSnapshot.items
--            )
-+            geometryOwners: geometryOwners
-         )
-         if !captureResult.unreadable.isEmpty {
-             MenuBarItemImageCache.diagLog.debug(
+@@ -209,8 +209,9 @@ jobs:
+     if: github.repository == 'thaw-app/Thaw'
+     # A skip runs on Linux so it doesn't wait for, or hold, a macOS runner.
+     runs-on: ${{ needs.changes.outputs.build == 'true' && 'xcode-27' || 'ubuntu-slim' }}
+-    needs: [changes, static_analysis]
+-    # A backstop. The limit that normally ends a hung run is on the Build and Test
++    # Starts alongside static_analysis, so a change that fails lint still uses macOS time.
++    needs: [changes]
++    # A backstop. The limit that normally ends a hung run is on the Test
+     # step, which leaves time to upload what the tests wrote.
+     timeout-minutes: 30
+     permissions:
+@@ -267,20 +268,33 @@ jobs:
+           # nothing over from older ones. A pull request falls back to the newest.
+           restore-keys: ${{ github.ref != 'refs/heads/development' && format('compilation-cache-{0}-xcode{1}-', runner.os, steps.xcode.outputs.id) || '' }}
+ 
+-      # The Thaw target's lint build phase requires the pinned SwiftLint on PATH.
+-      - name: Install pinned SwiftLint
++      # Separate from Test so each step's time shows, and so the timing summary prints.
++      # No editor index or package updates; static_analysis already lints with --strict.
++      - name: Build
+         if: needs.changes.outputs.build == 'true'
++        timeout-minutes: 12
+         run: |
+-          sh scripts/install-swiftlint.sh
+-          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
++          xcodebuild build-for-testing \
++            -project Thaw.xcodeproj \
++            -scheme Thaw \
++            -derivedDataPath Build/ \
++            -destination 'platform=macOS' \
++            -enableCodeCoverage YES \
++            -onlyUsePackageVersionsFromResolvedFile \
++            -skipPackageUpdates \
++            -showBuildTimingSummary \
++            COMPILER_INDEX_STORE_ENABLE=NO \
++            THAW_SKIP_XCODE_LINT=1 \
++            CODE_SIGN_IDENTITY="" \
++            CODE_SIGNING_REQUIRED=NO \
++            CODE_SIGNING_ALLOWED=NO
+ 
+-      # About 12 minutes, 16 at most so far; hung tests have run it past 30. The limit
+-      # is on the step, not only the job, so the upload below still runs.
+-      - name: Build and Test
++      # The limit is on the step, not only the job, so the upload below still runs after a hang.
++      - name: Test
+         if: needs.changes.outputs.build == 'true'
+-        timeout-minutes: 22
++        timeout-minutes: 12
+         run: |
+-          xcodebuild test \
++          xcodebuild test-without-building \
+             -project Thaw.xcodeproj \
+             -scheme Thaw \
+             -derivedDataPath Build/ \
+@@ -290,9 +304,10 @@ jobs:
+             CODE_SIGNING_REQUIRED=NO \
+             CODE_SIGNING_ALLOWED=NO
+ 
+-      # A failed or timed-out run's logs name the tests that failed or never finished.
++      # A failed or timed-out run's results name the tests that failed or never finished.
++      # A passing run's results give each test's real duration; the console log doesn't.
+       - name: Upload test results
+-        if: failure() && needs.changes.outputs.build == 'true'
++        if: ${{ !cancelled() && needs.changes.outputs.build == 'true' }}
+         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+         with:
+           name: test-results
+@@ -359,7 +374,8 @@ jobs:
+   packages:
+     if: github.repository == 'thaw-app/Thaw'
+     runs-on: ${{ needs.changes.outputs.packages == 'true' && 'xcode-27' || 'ubuntu-slim' }}
+-    needs: [changes, static_analysis]
++    # Starts alongside static_analysis, like build.
++    needs: [changes]
+     timeout-minutes: 30
+     steps:
+       - name: Skip package tests (no package changes)
 ```
 
-**File**: `Thaw/Items/Capture/RevealedGlyphPreference.swift` (modified, +1/-20)
+**File**: `Thaw.xcodeproj/project.pbxproj` (modified, +6/-0)
 ```diff
-@@ -29,25 +29,6 @@ extension MenuBarItemImageCache {
+@@ -605,6 +605,12 @@
+ 			name = SwiftLint;
+ 			shellPath = /bin/sh;
+ 			shellScript = (
++				"# CI lints every file with --strict in its own job, so it skips this phase.",
++				"if [ \"${THAW_SKIP_XCODE_LINT:-}\" = 1 ]; then",
++				"    echo \"SwiftLint: skipped, CI lints in static_analysis\"",
++				"    exit 0",
++				"fi",
++				"",
+ 				"if [ \"$(uname -m)\" = arm64 ]; then",
+ 				"    export PATH=\"$PATH:/opt/homebrew/bin\"",
+ 				"fi",
+```
+
+**File**: `Thaw/MenuBar/Appearance/MenuBarAppearanceManager.swift` (modified, +4/-3)
+```diff
+@@ -225,13 +225,14 @@ final class MenuBarAppearanceManager {
+     }
  
-     /// The height in points from the first to the last row with visible ink.
-     static nonisolated func inkPointHeight(of capture: MenuBarItemGlyphCapture) -> CGFloat {
--        let image = capture.cgImage
--        let width = image.width, height = image.height
--        guard width > 0, height > 0, capture.scale > 0 else { return 0 }
--        let context = CGContext(
--            data: nil,
--            width: width,
--            height: height,
--            bitsPerComponent: 8,
--            bytesPerRow: width * 4,
--            space: CGColorSpaceCreateDeviceRGB(),
--            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
--        )
--        guard let context else { return 0 }
--        context.draw(image, in: CGRect(x: 0, y: 0, width: width, height: height))
--        guard let data = context.data?.assumingMemoryBound(to: UInt8.self) else { return 0 }
--        let inkRows = (0 ..< height).filter { row in
--            (0 ..< width).contains { column in data[(row * width + column) * 4 + 3] > 12 }
--        }
--        guard let first = inkRows.first, let last = inkRows.last else { return 0 }
--        return CGFloat(last - first + 1) / capture.scale
-+        inkBounds(of: capture)?.height ?? 0
+     /// Looks 100 ms after a burst, since an overlay left on the old geometry until the settle shows, and
+-    /// again at each settle in case the early look caught the screens mid-change.
++    /// again at each settle in case the early look caught the screens mid-change. Tests pass a scheduler they move by hand.
+     static func overlayRebuildSignal(
+         invalidations: some Publisher<Void, Never>,
+-        settlements: some Publisher<EnvironmentChange, Never>
++        settlements: some Publisher<EnvironmentChange, Never>,
++        scheduler: some Scheduler = DispatchQueue.main
+     ) -> AnyPublisher<Void, Never> {
+         invalidations
+-            .debounce(for: .milliseconds(100), scheduler: DispatchQueue.main)
++            .debounce(for: .milliseconds(100), scheduler: scheduler)
+             .merge(with: settlements.map { _ in () })
+             .eraseToAnyPublisher()
+     }
+```
+
+**File**: `ThawTests/App/ControlCenterBridgeTests.swift` (modified, +6/-6)
+```diff
+@@ -13,7 +13,7 @@ import Testing
+ /// Both ends of the Control Center bridge, against a scratch suite in place of the app group
+ /// and a recorder in place of Control Center. The app state is never set up.
+ @MainActor
+-@Suite("Control Center bridge", .serialized, .scratchDefaults)
++@Suite("Control Center bridge", .serialized)
+ struct ControlCenterBridgeTests {
+     private final class Reloads {
+         var kinds: [String] = []
+@@ -46,7 +46,7 @@ struct ControlCenterBridgeTests {
+         #expect(ControlStatePublisher.snapshot(for: nil) == .init(isHiddenSectionRevealed: false, isZenModeActive: false))
+     }
+ 
+-    @Test("Setup publishes the current state once and reloads both controls")
++    @Test("Setup publishes the current state once and reloads both controls", .scratchDefaults)
+     func setupPublishes() throws {
+         try withPublisher { publisher, suite, reloads in
+             let appState = AppState()
+@@ -59,7 +59,7 @@ struct ControlCenterBridgeTests {
+         }
+     }
+ 
+-    @Test("A clean quit erases the snapshot and reloads the controls")
++    @Test("A clean quit erases the snapshot and reloads the controls", .scratchDefaults)
+     func terminationErases() throws {
+         try withPublisher { publisher, suite, reloads in
+             let appState = AppState()
+@@ -74,7 +74,7 @@ struct ControlCenterBridgeTests {
+         }
+     }
+ 
+-    @Test("The app's quit notification erases the snapshot")
++    @Test("The app's quit notification erases the snapshot", .scratchDefaults)
+     func quitNotificationErases() async throws {
+         let name = ScratchDefaults.name("ControlState")
+         defer { ScratchDefaults.remove(name) }
+@@ -94,7 +94,7 @@ struct ControlCenterBridgeTests {
+         #expect(try stored(in: suite) == nil)
+     }
+ 
+-    @Test("Without the app group nothing is written or reloaded")
++    @Test("Without the app group nothing is written or reloaded", .scratchDefaults)
+     func missingGroup() {
+         var reloads = 0
+         let publisher = ControlStatePublisher(defaults: nil) { _ in reloads += 1 }
+@@ -113,7 +113,7 @@ struct ControlCenterBridgeTests {
+         ])
+     }
+ 
+-    @Test("Only the hidden-section toggle confirms, and only once there is a section")
++    @Test("Only the hidden-section toggle confirms, and only once there is a section", .scratchDefaults)
+     func commandConfirmations() {
+         let appState = AppState()
+         #expect(ControlCommandObserver.Command.toggleZen.confirmation(appState: appState) == nil)
+```
+
+**File**: `ThawTests/Environment/DisplayChangeCoordinatorTests.swift` (modified, +2/-2)
+```diff
+@@ -70,7 +70,7 @@ struct DisplayChangePlanTests {
+ }
+ 
+ @MainActor
+-@Suite("Display change coordinator", .timeLimit(.minutes(1)), .scratchDefaults)
++@Suite("Display change coordinator", .scratchDefaults)
+ struct DisplayChangeCoordinatorTests {
+     private static let single = DisplayArrangement(frames: [1: CGRect(x: 0, y: 0, width: 1512, height: 982)], mainDisplayID: 1)
+     private static let docked = DisplayArrangement(
+@@ -202,7 +202,7 @@ struct DisplayChangeCoordinatorTests {
+ }
+ 
+ @MainActor
+-@Suite("Menu bar display change effects", .timeLimit(.minutes(1)), .scratchDefaults)
++@Suite("Menu bar display change effects", .scratchDefaults)
+ struct MenuBarDisplayChangeEffectsTests {
+     @Test("The stamp calls off the automatic passes planned before the change")
+     func stampCallsOffPlannedWork() {
+```
+
+**File**: `ThawTests/Environment/DisplayChangePresentationTests.swift` (modified, +1/-1)
+```diff
+@@ -73,7 +73,7 @@ struct AlwaysShowDisplayChangeHoldTests {
+ }
+ 
+ @MainActor
+-@Suite("Display change presentation step", .timeLimit(.minutes(1)), .scratchDefaults)
++@Suite("Display change presentation step", .scratchDefaults)
+ struct DisplayChangePresentationTests {
+     @MainActor
+     final class Counter {
+```
+
+**File**: `ThawTests/Environment/DisplayChangeReadersTests.swift` (modified, +76/-5)
+```diff
+@@ -12,7 +12,7 @@ import Testing
+ 
+ /// The postings go to a private center, since the default one would reach the app hosting the tests.
+ @MainActor
+-@Suite("Display change readers", .serialized, .timeLimit(.minutes(1)), .scratchDefaults)
++@Suite("Display change readers", .serialized, .scratchDefaults)
+ struct DisplayChangeReadersTests {
+     private let center = NotificationCenter()
+     private let gate = SettleGate()
+@@ -44,12 +44,17 @@ struct DisplayChangeReadersTests {
+     }
+ 
+     @Test("The overlay rebuilds at each settle, and once after a burst of postings")
+-    func overlayRebuildSignal() async throws {
++    func overlayRebuildSignal() {
+         var rebuilds = 0
+         let invalidations = PassthroughSubject<Void, Never>()
+         let settlements = PassthroughSubject<EnvironmentChange, Never>()
+-        let signal = MenuBarAppearanceManager.overlayRebuildSignal(invalidations: invalidations, settlements: settlements)
+-            .sink { rebuilds += 1 }
++        let scheduler = ManualScheduler()
++        let signal = MenuBarAppearanceManager.overlayRebuildSignal(
++            invalidations: invalidations,
++            settlements: settlements,
++            scheduler: scheduler
++        )
++        .sink { rebuilds += 1 }
+         defer { signal.cancel() }
+ 
+         settlements.send(.none)
+@@ -59,7 +64,7 @@ struct DisplayChangeReadersTests {
+             invalidations.send()
+         }
+         #expect(rebuilds == 1, "Postings wait out their burst")
+-        try await Task.sleep(for: .milliseconds(300))
++        scheduler.advance(by: .milliseconds(100))
+         #expect(rebuilds == 2, "A burst of postings rebuilds once, before the settle")
+     }
+ 
+@@ -152,3 +157,69 @@ private final class SettleGate {
+         }
      }
  }
-```
-
-**File**: `Thaw/Items/Capture/RevealedSectionSettle.swift` (added, +48/-0)
-```diff
-@@ -0,0 +1,48 @@
-+//
-+//  RevealedSectionSettle.swift
-+//  Project: Thaw
-+//
-+//  Copyright (Thaw) © 2026 Toni Förster
-+//  Licensed under the GNU GPLv3
 +
-+import CoreGraphics
-+import MenuBarModel
++/// A Combine scheduler whose clock only the test advances, so a debounce fires exactly when told.
++/// The test drives it from the main actor only.
++private nonisolated final class ManualScheduler: Scheduler {
++    typealias SchedulerTimeType = DispatchQueue.SchedulerTimeType
++    typealias SchedulerOptions = Never
 +
-+extension MenuBarItemImageCache {
-+    /// How long after a reveal a hidden section's pictures wait for its icons to stop moving.
-+    /// Later passes skip the wait, so a clock or graph doesn't cost a settle budget on every pass.
-+    static nonisolated let revealedSettleWindow = Duration.seconds(3)
-+
-+    /// Whether a pass over section should wait for settled pixels before its screenshot. macOS reports
-+    /// a revealed item's final frame while its icon still slides in, so an early picture is cut.
-+    static nonisolated func settlesRevealedPixels(
-+        for section: MenuBarSection.Name,
-+        revealedSection: MenuBarSection.Name?,
-+        lastRevealChange: ContinuousClock.Instant?,
-+        now: ContinuousClock.Instant
-+    ) -> Bool {
-+        section != .visible
-+            && shouldUseFreshBounds(for: section, revealedSection: revealedSection)
-+            && BarSettling.isWithin(revealedSettleWindow, of: lastRevealChange, now: now)
++    private nonisolated struct Action {
++        let date: SchedulerTimeType
++        let run: () -> Void
 +    }
 +
-+    /// Waits, within the reveal settle budget, for items' icons to stop moving. Their frames are read fresh,
-+    /// since the cache can still hold where they were parked; with none on the bar there is nothing to wait for.
-+    func settleRevealedSection(
-+        _ items: [MenuBarItem],
-+        appState: AppState,
-+        reader: some MenuBarCaptureReading,
-+        clock: RevealCaptureSession.SettleClock = RevealCaptureSession.SettleClock()
-+    ) async {
-+        let displayID = Self.captureDisplayID(
-+            itemCacheDisplayID: appState.itemManager.itemDisplayID,
-+            activeMenuBarDisplayID: windowServer.activeMenuBarDisplayID(),
-+            mainDisplayID: CGMainDisplayID()
-+        )
-+        let live = await reader.menuBarItems(displayID: displayID).filter { live in
-+            items.contains { $0.tag.matchesIgnoringWindowID(live.tag) }
++    private(set) var now = SchedulerTimeType(DispatchTime(uptimeNanoseconds: 1))
++    private var pending: [Action] = []
++
++    var minimumTolerance: SchedulerTimeType.Stride {
++        .zero
++    }
++
++    func schedule(options _: Never?, _ action: @escaping () -> Void) {
++        action()
++    }
++
++    func schedule(after date: SchedulerTimeType, tolerance _: SchedulerTimeType.Stride, options _: Never?, _ action: @escaping () -> Void) {
++        pending.append(Action(date: date, run: action))
++    }
++
++    func schedule(
++        after date: SchedulerTimeType,
++        interval: SchedulerTimeType.Stride,
++        tolerance _: SchedulerTimeType.Stride,
++        options _: Never?,
++        _ action: @escaping () -> Void
++    ) -> Cancellable {
++        let cancellable = Repeat()
++        repeatAction(cancellable, at: date, every: interval, action)
++        return cancellable
++    }
++
++    /// Runs every action due by then, earliest first, with the clock at each one's time.
++    func advance(by stride: SchedulerTimeType.Stride) {
++        let target = now.advanced(by: stride)
++        while let index = pending.indices.filter({ pending[$0].date <= target }).min(by: { pending[$0].date < pending[$1].date }) {
++            let action = pending.remove(at: index)
++            now = action.date
++            action.run()
 +        }
-+        guard !live.isEmpty else { return }
-+        await RevealCaptureSession.settleRevealedPixels(live, displayID: displayID, reader: reader, clock: clock)
-+    }
-+}
-```
-
-**File**: `Thaw/Items/Interaction/MenuBarAXSubprocess.swift` (modified, +2/-1)
-```diff
-@@ -180,7 +180,8 @@ extension MenuBarItemAXProvider {
-             guard let item = derived.item else { continue }
-             raw.append(item)
-         }
--        return assemble(raw + extra(raw))
-+        let kept = RetitledItemIdentities.resolve(raw)
-+        return assemble(kept + extra(kept))
-     }
- 
-     private static nonisolated func nilIfBlank(_ value: String?) -> String? {
-```
-
----
-
-### Incident Patch 2: `ede311d2` (2026-11-11)
-**Commit Message**: feat(layout): out-of-room warning, release-notes and Thaw Bar switches, launch read fix (#1470)
-
-* feat(layout): warn in the Layout pane when macOS is hiding items for lack of room
-
-On a notched or narrow display, when the Visible items don't fit, macOS
-puts its own overflow arrow on the bar and stops drawing some items. The
-section engine already tracks this per display, but does not publish it,
-so Settings could not show it.
-
-A small observable, NativeOverflowPresence on AppState, copies the engine's
-answer for each connected display whenever the engine asks for the control
-items to be updated, which it does right after the overflow appears or goes
-away. The Layout pane reads it for the display its bars show and adds a
-warning to its one-banner ranking, after items out of reach and before
-missing Screen Recording. When Thaw already knows which Visible items macOS
-is not drawing, the warning names them. It goes away when the overflow ends.
-
-There is no button: while macOS's overflow is showing, Thaw already opens
-hidden items in the Thaw Bar on that display, so the warning suggests
-moving items to Hidden instead.
-
-Not yet validated on a live menu bar.
-
-Signed-off-by: René Jiménez 
-
-**File**: `CHANGELOG.md` (modified, +10/-0)
-```diff
-@@ -24,8 +24,18 @@ the items under New and Fixed.
- 
- ## [Unreleased]
- 
-+### New
-+
-+- **Layout warns when items don't fit.** When macOS hides items it has no room for, Layout names them until there's room again.
-+- **Release notes can stay closed after an update.** Turn off Show release notes after an update in Privacy. What's New still opens from Thaw's menu and About.
-+
-+### Changed
-+
-+- **The Thaw Bar has its own switch again.** Show hidden items is now two switches, Thaw Bar and Always show hidden items. Your settings carry over.
-+
- ### Fixed
- 
-+- **Items no longer move at launch when Thaw can't read the whole bar in time.** With many apps running, Thaw now waits for a full read before it treats the bar as settled or re-lays it.
- - **Your saved layout is put back once the menu bar settles at launch,** also when Thaw re-applies your profile then and its spacing hasn't changed. Before, that re-apply could stop the final layout pass.
- 
- ## [3.0.0-alpha.13] - 2026-11-05
-```
-
-**File**: `Thaw/App/AppState.swift` (modified, +5/-7)
-```diff
-@@ -51,6 +51,9 @@ final class AppState {
-     /// The sections, their control items, and the show/hide state machine.
-     let menuBarManager: MenuBarManager
- 
-+    /// The displays where macOS's own overflow arrow is showing, for Settings.
-+    let nativeOverflowPresence = NativeOverflowPresence()
-+
-     /// Shared by the menu bar manager, which acts on a display move, and the
-     /// event taps, which ask for a check.
-     private let activeDisplayWatcher = ActiveMenuBarDisplayWatcher()
-@@ -366,13 +369,8 @@ final class AppState {
-     /// First launches and upgrades without changelog content record the version silently, leaving onboarding to handle new users.
-     /// Record synchronously before the async repository fetch to avoid repeated prompts after failures.
-     func presentWhatsNewForUpgradeIfNeeded() {
--        let current = Constants.versionString
--        guard let lastSeen = Defaults.string(forKey: .lastWhatsNewVersion) else {
--            Defaults.set(current, forKey: .lastWhatsNewVersion)
--            return
--        }
--        guard lastSeen != current else { return }
--        Defaults.set(current, forKey: .lastWhatsNewVersion)
-+        let opensAfterUpdate = settings.advanced.showReleaseNotesAfterUpdate
-+        guard WhatsNewUpgradeGate.recordVersion(Constants.versionString, opensAfterUpdate: opensAfterUpdate) else { return }
- 
-         Task {
-             let allowFetch = settings.advanced.fetchReleaseNotes
-```
-
-**File**: `Thaw/App/WhatsNewUpgradeGate.swift` (added, +21/-0)
-```diff
-@@ -0,0 +1,21 @@
-+//
-+//  WhatsNewUpgradeGate.swift
-+//  Project: Thaw
-+//
-+//  Copyright (Thaw) © 2026 Toni Förster
-+//  Licensed under the GNU GPLv3
-+
-+/// Decides whether a launch opens What's New by itself.
-+@MainActor
-+enum WhatsNewUpgradeGate {
-+    /// Records current as the last version seen and reports whether this launch is an update that should open What's New.
-+    ///
-+    /// The version is recorded even when opensAfterUpdate is off, so turning the setting back on later does not replay an old changelog.
-+    static func recordVersion(_ current: String, opensAfterUpdate: Bool) -> Bool {
-+        let lastSeen = Defaults.string(forKey: .lastWhatsNewVersion)
-+        guard lastSeen != current else { return false }
-+        Defaults.set(current, forKey: .lastWhatsNewVersion)
-+        // A first launch has no last version; onboarding greets new users instead.
-+        return lastSeen != nil && opensAfterUpdate
-+    }
-+}
-```
-
-**File**: `Thaw/Items/Manager/MenuBarItemManager+Cache.swift` (modified, +8/-0)
-```diff
-@@ -30,6 +30,9 @@ extension MenuBarItemManager {
-         /// Ordered owner/title identities for macOS 27, where synthetic AX window IDs churn without movement.
-         /// Stable identities prevent a recache loop while detecting real additions, removals, and reorders.
-         fileprivate(set) var cachedItemSignature = [String]()
-+
-+        /// Whether the cache's last read saw the whole bar, which settling and the structural pass check.
-+        fileprivate(set) var lastRead = BarReadRecord()
-     }
- 
-     /// Defined in MenuBarModel so backends can use section buckets without linking the orchestrator.
-@@ -612,9 +615,12 @@ extension MenuBarItemManager {
-             MenuBarItemManager.diagLog.debug("cacheItemsRegardless: serial cache operation already in progress, coalescing (will rerun)")
-             return
-         }
-+        // Noted as the pass ends, so a caller that coalesced into it never sees the read before its cache.
-+        var thisRead: BarReadRecord.Read?
-         // Await gate release to avoid refusing callers after this pass returns.
-         // end() has no cancellation check, so cancelled tasks still release the gate.
-         defer {
-+            cacheCycleState.lastRead.note(thisRead)
-             let needsRerun = await cacheGate.end()
-             // Rerun coalesced drags or resets so layout bars reflect the latest assignments.
-             if needsRerun {
-@@ -646,6 +652,7 @@ extension MenuBarItemManager {
-             return
-         }
-         onScreenItemSnapshot.update(inventory.freshItems.filter(\.isOnScreen), fromCompleteWalk: inventory.completed)
-+        thisRead = BarReadRecord.Read(hasFreshKnownInventory: inventory.hasFreshKnownInventory)
- 
-         MenuBarItemManager.diagLog.debug("cacheItemsRegardless: getMenuBarItems returned \(items.count) items")
- 
-@@ -756,6 +763,7 @@ extension MenuBarItemManager {
-             previousCachedItems: itemCache.managedItems
-         )
-         if isPartialMerge {
-+            thisRead?.mergedWithOlderItems = true
-             guard await recoverPartialCacheSnapshot(&items, itemWindowIDs: itemWindowIDs) else { return }
-         }
-         cacheCycleState.cachedItemWindowIDs = itemWindowIDs
-```
-
-**File**: `Thaw/Items/Manager/MenuBarItemManager+Moving.swift` (modified, +2/-1)
-```diff
-@@ -547,7 +547,8 @@ extension MenuBarItemManager {
-             // laid from the old sections and put the dropped item back. The
-             // reading schedules this pass again once it is done.
-             guard manualMembershipTask == nil else { return }
--            guard WriteHold.first(StructuralNormalizationHolds.checks, in: situation) == nil else {
-+            if let held = WriteHold.first(StructuralNormalizationHolds.checks, in: situation) {
-+                StructuralNormalizationHolds.logDeferral(on: held)
-                 readBarIfItMoved(situation)
-                 rearm()
-                 return
-```
-
-**File**: `Thaw/Items/Manager/MenuBarItemManager+StartupSettling.swift` (modified, +3/-1)
-```diff
-@@ -36,7 +36,9 @@ extension MenuBarItemManager {
-                     return bid
-                 }
-                 return nil
--            })
-+            }),
-+            readGeneration: cacheCycleState.lastRead.generation,
-+            readComplete: cacheCycleState.lastRead.isComplete
-         )
-     }
- 
-```
-
-**File**: `Thaw/Items/Manager/MenuBarItemManager+WriteHoldSituation.swift` (modified, +1/-0)
-```diff
-@@ -34,6 +34,7 @@ extension MenuBarItemManager {
-         situation.revealTransitionActive = barHolds.contains(.revealTransition)
-         let barDisplayID = Bridging.getActiveMenuBarDisplayID() ?? CGMainDisplayID()
-         situation.barOnUncachedDisplay = itemDisplayID.map { $0 != barDisplayID } ?? false
-+        situation.barReadIncomplete = !cacheCycleState.lastRead.isComplete
-         return situation
-     }
- 
-```
-
-**File**: `Thaw/Items/Support/BarReadRecord.swift` (added, +30/-0)
-```diff
-@@ -0,0 +1,30 @@
-+//
-+//  BarReadRecord.swift
-+//  Project: Thaw
-+//
-+//  Copyright (Thaw) © 2026 Toni Förster
-+//  Licensed under the GNU GPLv3
-+
-+/// The last read of the bar the item cache took, numbered so a caller that coalesced into a
-+/// running read can tell it saw no new read, and marked when the read missed part of the bar.
-+nonisolated struct BarReadRecord: Equatable, Sendable {
-+    /// What one cache pass learned about its read, noted when the pass ends.
-+    struct Read: Equatable, Sendable {
-+        /// Whether every owner known to have items answered this read; a quick read can skip apps without items.
-+        var hasFreshKnownInventory: Bool
-+        /// Whether the pass filled the read's gaps from older cached items.
-+        var mergedWithOlderItems = false
++        now = target
 +    }
 +
-+    /// Goes up by one with every read, so the same number means the same read.
-+    private(set) var generation: UInt64 = 0
-+    /// False until a first read, and after a read with stale owners or a merge with older items.
-+    private(set) var isComplete = false
-+
-+    /// Nil, from a pass that ended before it read the bar, leaves the record as it was.
-+    mutating func note(_ read: Read?) {
-+        guard let read else { return }
-+        generation &+= 1
-+        isComplete = read.hasFreshKnownInventory && !read.mergedWithOlderItems
++    private func repeatAction(_ cancellable: Repeat, at date: SchedulerTimeType, every interval: SchedulerTimeType.Stride, _ action: @escaping () -> Void) {
++        pending.append(Action(date: date) { [weak self] in
++            guard !cancellable.isCancelled else { return }
++            action()
++            self?.repeatAction(cancellable, at: date.advanced(by: interval), every: interval, action)
++        })
 +    }
-+}
-```
-
----
-
-### Incident Patch 3: `ce10936f` (2026-11-11)
-**Commit Message**: fix: stack review fixes, item pictures in the profile preview, the app zoom rollback and PlatformRuntimeKit 1.2.13 (#1519)
-
-* feat(profiles): show item pictures in the profile preview
-
-The preview draws each saved item with the picture Layout uses when the item is in the menu bar now. An item that isn't gets its system symbol, Control Center's icon or its app's icon, and only an app that is no longer installed shows the dashed outline. The pictures are read when the selected profile changes, so drawing does not walk the item cache.
-
-Signed-off-by: René Jiménez <[REDACTED_EMAIL]>
-
-* fix(settings): take the app zoom out until zoomed windows stop ignoring clicks
-
-A zoomed Settings window can stop answering clicks on its switches (#1244, #1265). Thaw's windows now stay at actual size: the zoom modifier, the ⌘+, ⌘− and ⌘0 commands and the Zoom menu in Settings are removed. ThawUI's zoom, its strings and the stored level stay, so it can come back with a small change, and Reset Thaw still clears the stored level.
-
-The Settings window log line no longer carries the zoom, and the lint baseline records the shorter SettingsView.
-
-Signed-off-by: René Jiménez <[REDACTED_EMAIL]>
-
-* fix(hiding): 
-
-**File**: `CHANGELOG.md` (modified, +21/-10)
-```diff
-@@ -32,7 +32,7 @@ Layout gets a pop-out window and undo for every edit, search becomes Floe's laun
- 
- - **Pop Out Editor (work in progress).** Opens Layout in a window with every item in a list, a filter, an editor for the selected item and full keyboard control.
- - **Every Layout edit can be undone,** with ⌘Z anywhere on the Layout page.
--- **Drag down the Layout window's checkboxes to show or hide several items at once.** A dragged row opens a gap where it will land, a section's name lights up when a drop there would move it, and the list scrolls when a drag reaches its edge. Moved rows flash where they landed, and the list follows them.
-+- **Drag down the Layout window's checkboxes to show or hide several items at once.** A dragged row opens a gap where it will land, and the list scrolls at its edges.
- - **Trackpad taps for Layout and sliders.** A drag taps as it crosses into another section and when it lands, and the spacing and item size sliders tap at their defaults.
- - **The current Space in the menu bar,** in Displays › Spaces.
- - **Layout warns when items don't fit or macOS hides Focus,** with a one-click fix for each. Reported by @JosefGvirt in [#1477](https://github.com/thaw-app/Thaw/issues/1477).
-@@ -47,27 +47,34 @@ Layout gets a pop-out window and undo for every edit, search becomes Floe's laun
- 
- ### Changed
- 
--- **Search is Floe's launcher,** grouped by section, with Extended and Compact layouts in Visibility. Detailed and Large become Extended. A moved item slides into its new section, and counts roll as they change.
-+- **Search is Floe's launcher,** grouped by section, with Extended and Compact layouts in Visibility. Detailed and Large become Extended.
- - **Settings search goes to the row** and finds each module's switch.
- - **Extras is now Modules.**
-+- **Segmented choices and the tabs in Settings are the system's own control.** The selection is a glass lens you can press and drag across the choices.
- - **One name for each section: Visible, Hidden and Always Hidden.**
- - **The Thaw Bar has its own switch again,** and so does double-clicking Thaw's icon for Always Hidden. By @malash in [#1339](https://github.com/thaw-app/Thaw/pull/1339).
- - **Apply to All Displays asks first.**
- - **Reset Thaw clears everything but your layout and profiles,** and Reset permissions forgets the files you picked.
- - **Thaw reads a busy menu bar faster,** and profiles and looks follow a Space switch sooner.
- - **The Thaw Bar drops in from the menu bar.**
- - **Corners sliders show their value,** Square, a percentage or Round, and match the other sliders.
--- **Switch to Reduced mode from Troubleshooting.**
-+- **Switch to Reduced mode from Troubleshooting,** where Thaw runs as one icon that hides whole apps.
- - **The experimental reorder editor is gone.**
-+- **Zoom is off for now.** ⌘+, ⌘− and the Zoom menu are gone until a zoomed Settings window stops ignoring clicks. Reported in [#1244](https://github.com/thaw-app/Thaw/issues/1244) and [#1265](https://github.com/thaw-app/Thaw/issues/1265).
- 
- ### Fixed
- 
- #### Layout and items
- 
-+- **The Layout window's green button zooms it instead of going full screen,** where only quitting Thaw got you out.
-+- **The widget icon hides again with the Native hiding method.** It stayed on the menu bar in Hidden and Always Hidden.
-+- **Native hiding starts again when a hidden app has no entry in System Settings › Menu Bar,** such as one you removed. Reported by @SebastienBn in [#1513](https://github.com/thaw-app/Thaw/issues/1513).
-+- **Native hiding hides your apps again when macOS puts its list back right after Thaw changed it.** Thaw used to leave every app on the menu bar with a warning. Reported by @macdaddy1944 in [#1501](https://github.com/thaw-app/Thaw/issues/1501).
-+- **An app you switched back on in System Settings says so in Layout,** instead of saying macOS won't let Thaw switch it off.
- - **Undo brings a moved group back whole again.** It used to restore only the batch's ungrouped items.
- - **Live item pictures update again when their left part changes,** like right-aligned text getting shorter on an item that keeps its width.
--- **Shift and the arrow keys extend the selection down the Layout window's list** instead of stopping after one row, a plain arrow key then carries on from where they stopped, and a filter stops a Shift-click selecting rows it hides.
--- **Reordering a group, moving it to another section and the Move to and Move All menu entries can be undone,** and a same-section drag puts the order back as it was even with groups, folders or the new-items badge in the list.
-+- **Shift and the arrow keys extend the selection down the Layout window's list,** and a Shift-click no longer selects rows a filter hides.
-+- **Reordering or moving a group, Move to and Move All can be undone,** and so can a same-section drag in a list with groups or folders.
- - **A read-only Layout window no longer groups the selection.**
- - **The order you drag the menu bar into is pinne
-```
-
-**File**: `FREQUENT_ISSUES.md` (modified, +0/-5)
-```diff
-@@ -17,7 +17,6 @@ Thaw 3.0 runs on macOS 27, and Thaw 2.x runs on macOS 26 and, from 2.2, on macOS
-     - [Full screen](#full-screen)
-     - [Very many apps running](#very-many-apps-running)
-     - [Siri and voice](#siri-and-voice)
--    - [Clicks in Settings](#clicks-in-settings)
-     - [Shortcuts and Focus](#shortcuts-and-focus)
-     - [Live Activities](#live-activities)
-     - [Apps that need their own update](#apps-that-need-their-own-update)
-@@ -100,10 +99,6 @@ With about 240 apps, Thaw can't read the whole menu bar in time, so icons can go
- 
- Siri doesn't run Thaw's actions when you ask by voice. The same actions work from Shortcuts and Spotlight.
- 
--#### Clicks in Settings
--
--If switches in Settings stop responding, the window may be zoomed. Press ⌘0 to return to actual size. [#1244](https://github.com/thaw-app/Thaw/issues/1244), [#1265](https://github.com/thaw-app/Thaw/issues/1265)
--
- #### Shortcuts and Focus
- 
- macOS 27 can hide the Shortcuts item at launch, and the Focus icon may not be visible to Thaw at all. Thaw cannot manage either one yet. [#1105](https://github.com/thaw-app/Thaw/issues/1105), [#1124](https://github.com/thaw-app/Thaw/issues/1124), [#1154](https://github.com/thaw-app/Thaw/issues/1154)
-```
-
-**File**: `Thaw.xcodeproj/project.pbxproj` (modified, +2/-2)
-```diff
-@@ -1145,7 +1145,7 @@
- 			repositoryURL = "https://github.com/thaw-app/ThawUI";
- 			requirement = {
- 				kind = exactVersion;
--				version = 1.3.0;
-+				version = 1.4.0;
- 			};
- 		};
- 		170423D72B56DE78004A2549 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
-@@ -1185,7 +1185,7 @@
- 			repositoryURL = "https://github.com/thaw-app/prk-bin";
- 			requirement = {
- 				kind = exactVersion;
--				version = 1.2.12;
-+				version = 1.2.13;
- 			};
- 		};
- 		6299E164B288ACBB011AC6B1 /* XCRemoteSwiftPackageReference "swift-algorithms" */ = {
-```
-
-**File**: `Thaw.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` (modified, +5/-5)
-```diff
-@@ -1,5 +1,5 @@
- {
--  "originHash" : "9e8064317f7234cd89d89f62b7482e3b282df612080ed82591145f7f62999e68",
-+  "originHash" : "2172eee8f066a0858cf7f975741764e3b2c1a684e3c0dd379b5c658e87db6a79",
-   "pins" : [
-     {
-       "identity" : "compactslider",
-@@ -24,8 +24,8 @@
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/thaw-app/prk-bin",
-       "state" : {
--        "revision" : "cb16740567d990060cddca2e97d6bbb04b2dda34",
--        "version" : "1.2.12"
-+        "revision" : "839597825f43df4cab472c8dfd3272aeea4060e5",
-+        "version" : "1.2.13"
-       }
-     },
-     {
-@@ -96,8 +96,8 @@
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/thaw-app/ThawUI",
-       "state" : {
--        "revision" : "045b5e050e6c0529646737dcb4d325856698ecb9",
--        "version" : "1.3.0"
-+        "revision" : "f9dcca45c4daa339dda2613a3bfa2d5b2a52cf8a",
-+        "version" : "1.4.0"
-       }
-     }
-   ],
-```
-
-**File**: `Thaw/App/AppState.swift` (modified, +1/-1)
-```diff
-@@ -398,7 +398,7 @@ final class AppState {
-         isRestarting = true
- 
-         // Save image cache to disk before restarting so new instance can load it
--        imageCache.saveToDisk()
-+        imageCache.saveToDiskAndWait()
- 
-         let config = NSWorkspace.OpenConfiguration()
-         config.activates = false
-```
-
-**File**: `Thaw/Input/Events/ClockBridgeAvailability.swift` (added, +34/-0)
-```diff
-@@ -0,0 +1,34 @@
-+//
-+//  ClockBridgeAvailability.swift
-+//  Project: Thaw
-+//
-+//  Copyright (Thaw) © 2026 René Jiménez
-+//  Licensed under the GNU GPLv3
 +
-+import Combine
-+import Observation
++    private nonisolated final class Repeat: Cancellable {
++        private(set) var isCancelled = false
 +
-+/// Whether the Clock and Notification Center bridge taps can ever be needed.
-+enum ClockBridgeAvailability {
-+    /// The bridge releases the restriction the Standard method holds. Native hiding holds none,
-+    /// so with it the taps would sit on every left press and drag in the system for nothing.
-+    nonisolated static func isPossible(engineIsOperational: Bool, nativeHidingActive: Bool) -> Bool {
-+        engineIsOperational && !nativeHidingActive
-+    }
-+}
-+
-+extension HIDEventManager {
-+    /// A subscription that brings the bridge taps up or down when Native hiding starts or stops.
-+    func nativeHidingFollower() -> Set<AnyCancellable> {
-+        guard let appState else { return [] }
-+        let experiment = appState.menuBarManager.nativeAppHidingExperiment
-+        let task = Task { @MainActor [weak self] in
-+            for await _ in Observations({ experiment.isActive }) {
-+                guard let self else { return }
-+                synchronizeClockActivationTap()
-+                synchronizeNotificationCenterHotkeyTap()
-+            }
++        func cancel() {
++            isCancelled = true
 +        }
-+        return [AnyCancellable { task.cancel() }]
 +    }
 +}
 ```
 
-**File**: `Thaw/Input/Events/HIDEventManager+Lifecycle.swift` (modified, +1/-1)
+**File**: `ThawTests/Environment/DisplayChangeRecaptureTests.swift` (modified, +1/-1)
 ```diff
-@@ -15,7 +15,7 @@ extension HIDEventManager {
-     /// Subscribes to the settings and system notifications the manager has to
-     /// react to, replacing any subscriptions from a previous call.
-     func configureCancellables() {
--        var c = Set<AnyCancellable>()
-+        var c = nativeHidingFollower()
+@@ -11,7 +11,7 @@ import Testing
+ @testable import Thaw
  
-         if let appState {
-             // Pre-seed so the initial emission does no rearm work when
-```
-
-**File**: `Thaw/Input/Events/HIDEventManager.swift` (modified, +3/-3)
-```diff
-@@ -577,16 +577,16 @@ final class HIDEventManager {
-     /// bridged.
-     ///
-     /// The tap that does the bridging is an active session-level tap on every
--    /// left press, so it is only worth installing when a real section engine
--    /// is behind the controller. The stand-in controller answers false for
-+    /// left press, so it is only installed when a real section engine is behind the
-+    /// controller and Native hiding is off. The stand-in controller answers false for
-     /// MenuBarSectionControlling.shouldBridgeClockActivation forever, so
-     /// with it the tap would only ever pass events straight through. The
-     /// engine's own answer still swings with the assertion state at runtime;
-     /// that is decided per click inside the tap, because nothing in here can
-     /// learn of an assertion being acquired quickly enough to bring the tap
-     /// up before the click that needs it.
-     private var canBridgeClockActivation: Bool {
--        appState?.menuBarManager.sectionController.isOperational ?? false
-+        appState.map { ClockBridgeAvailability.isPossible(engineIsOperational: $0.menuBarManager.sectionController.isOperational, nativeHidingActive: $0.menuBarManager.nativeAppHidingExperiment.isActive) } ?? false
-     }
- 
-     /// Brings the Clock activation tap in line with whether bridging is
+ @MainActor
+-@Suite("Display change recapture", .timeLimit(.minutes(1)), .scratchDefaults)
++@Suite("Display change recapture", .scratchDefaults)
+ struct DisplayChangeRecaptureTests {
+     private let imageCache = RecordingImageCache()
+     private let effects: MenuBarDisplayChangeEffects
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1533** (2026-11-11): test(spacing): keep tests from resetting the Mac's menu bar spacing (@Omoeba)
-- **PR #1532** (2026-11-11): docs(uri): document missing actions and settings keys (@elior-esh)
-- **PR #1530** (2026-11-11): refactor: remove dead code and duplicated logic across the app and packages (@diazdesandi)
-- **PR #1528** (2026-11-11): fix: eleven small Settings, search, Layout and profile bugs (@diazdesandi)
-- **PR #1527** (2026-11-11): ci: save the compile cache per commit on development, and stop saving it per pull request (@diazdesandi)
-- **PR #1526** (2026-11-11): test(layout): cover the Groups tab's navigation and its drop target (@diazdesandi)
+- **PR #1598** (closed): ci: skip the editor index and package updates, and keep every run's test results (@diazdesandi)
+- **PR #1597** (2026-11-15): ci: end the hung test runs, shorten the test queues, and split build from test (@diazdesandi)
+- **PR #1595** (2026-11-15): fix(input): don't count a windowless click as a click on the Thaw icon (@elior-esh)
+- **PR #1594** (2026-11-15): refactor(items): move the section drag skip checks out of MenuBarItemManager+Moving (@elior-esh)
+- **PR #1593** (2026-11-15): refactor(items): move click attempt decisions out of the live click path (@elior-esh)
+- **PR #1592** (2026-11-15): test(items): skip the AppKit screen check when no display is active (@elior-esh)
 
 ---
 
@@ -2046,48 +2068,45 @@ Signed-off-by: René Jiménez <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. capture, usability and motion follow-ups, real readings for the widget icon, and
+## X. ci: cap the build, test packages only when they change, key the compile cache on
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in thaw-app/Thaw. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in thaw-app/Thaw. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a9ccd1f9`: capture, usability and motion follow-ups, real readings for the widget icon, and Layout out-of-room and design fixes (#1500). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d9b78abe`: ci: cap the build, test packages only when they change, key the compile cache on dependencies, and scan legacy/thaw-2 with CodeQL. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-#### Spaces
-
-- **The current Space in the menu bar.** Turn on Show the current Space in the menu bar in Displays › Spaces. Its menu lists each display's Spaces.
-- **Profiles name Spaces the way Mission Control does,** grouped by display, with full screen apps by name. The display with the menu bar is marked.
-
-#### Widgets
-
-- **The widget icon shows real readings.** Wi-Fi shows your actual bars, and the battery turns green while charging, yellow in Low Power Mode and red below 20%. Suggested by @joaofrgomes in [#1378](https://github.com/thaw-app/Thaw/issues/1378).
-- **Bluetooth audio in the center.** While sound plays through AirPods, headphones or a speaker, the widget shows it, with the volume in blue.
-- **A larger, better-proportioned widget icon.** The ring fills the icon and opens at the bottom, with the dots along it. Choose Standard or Large and the ring's thickness.
-
-#### Layout and Thaw Bar
-
-- **Layout warns when items don't fit,** names the ones macOS hid, and Move to Hidden makes room in one click.
-- **Layout tells you when macOS hides Focus** and turns on Thaw's own Focus icon in one click. Reported by @JosefGvirt in [#1477](https://github.com/thaw-app/Thaw/issues/1477).
+  # The weekly run has a group of its own, so a merge doesn't cancel it and it
+  # doesn't cancel a merge's run.
+  group: ${{ github.workflow }}-${{ github.event_name == 'schedule' && 'schedule' || github.head_ref || github.ref }}
+  # Weekly on development, where path detection reports everything as changed.
+  # Merges cancel most push runs, so this one tests the packages and saves the cache.
+  schedule:
+    # Offset from the hour and from the other scheduled workflows.
+    - cron: "43 2 * * 3"
+      # The macOS build runs for a path that matches CODE_PATTERNS and neither of the
+      # two lists below, so a path nobody has listed still builds.
+      #
+      # Lint and format settings, and the scripts only the lint job runs. The build
+      # reads .swiftlint-version, lint.sh and install-swiftlint.sh, so they stay out.
+      LINT_ONLY_PATTERNS: '(^\.swiftlint\.yml$|^\.swiftlint\.baseline$|^\.swiftformat|^scripts/(format|install-swiftformat|update-swiftlint-baseline)\.sh$|^scripts/swiftlint-baseline\.py$|^scripts/tests/test-(format|lint|swiftlint-baseline)\.sh$)'
+      # String catalogs. The lint job checks that they are valid JSON, and nothing
+      # compiles them before the merge
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
-// Anti-pattern to NEVER write (induced failure mode):
-- **Layout warns when items don't fit.** When macOS hides items it has no room for, Layout names them until there's room again.
-- **Release notes can stay closed after an update.** Turn off Show release notes after an update in Privacy. What's New still opens from Thaw's menu and About.
-- **Profiles name Spaces the way Mission Control does.** Pick any Space for a profile, grouped by display, with full screen apps by name. A Space that's gone shows as missing, and the display with the menu bar is marked.
-- **The menu bar can show which Space you're in.** Turn on Show the current Space in the menu bar under Displays › Spaces. Its menu lists the Spaces on each display.
-- **Extras is now called Modules.** The Settings page that turns Profiles, Scripts, Triggers and Widgets on and off, and the sidebar group they appear in, use the same name as the rest of Thaw.
-- **Double-clicking Thaw's icon for Always Hidden has its own switch.** Turn off Double-click the Thaw icon to show Always Hidden in Menu Bar Access, and every click shows or hides your items.
-- **The Thaw Bar has its own switch again.** Show hidden items is now two switches, Thaw Bar and Always show hidden items. Your settings c
+// Induced defect failure mode:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+      code: ${{ steps.since-last-run.outputs.code || steps.filter.outputs.code }}
+      # The filter compares the whole pull request with its base, so a push that only
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a9ccd1f9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d9b78abe` are properly handled with clean fallback behavior.

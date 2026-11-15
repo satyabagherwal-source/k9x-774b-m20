@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T09:26:36.913Z",
-  "total_cycles_completed": 9693,
-  "total_learnings_persisted": 9693,
-  "total_rules_promoted": 9331,
+  "last_updated": "2026-11-15T09:55:04.096Z",
+  "total_cycles_completed": 9696,
+  "total_learnings_persisted": 9696,
+  "total_rules_promoted": 9333,
   "history": [
-    {
-      "timestamp": "2026-11-14T09:08:07.039Z",
-      "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
-      "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T09:18:01.300Z",
-      "repository": "laion/clap-htsat-fused",
-      "learningId": "learn-huggingface-laion-clap-htsat-fused",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T09:52:56.707Z",
-      "repository": "FacebookAI/xlm-roberta-base",
-      "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T10:16:29.224Z",
       "repository": "onehumanbeing/esp32-iphone-agent",
@@ -1403,6 +1382,27 @@
       "repository": "meshtastic/Meshtastic-Android",
       "learningId": "learn-github-meshtastic-meshtastic-android",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T09:49:56.404Z",
+      "repository": "thaw-app/Thaw",
+      "learningId": "learn-github-thaw-app-thaw",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T09:49:58.385Z",
+      "repository": "open-policy-agent/gatekeeper",
+      "learningId": "learn-github-open-policy-agent-gatekeeper",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T09:55:04.096Z",
+      "repository": "LiquidAI/d1-2B",
+      "learningId": "learn-huggingface-liquidai-d1-2b",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
