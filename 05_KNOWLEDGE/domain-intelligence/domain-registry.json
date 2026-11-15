@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T21:53:34.560Z",
+  "last_updated": "2026-11-15T22:03:49.301Z",
   "total_records": 1132,
   "domains": {
     "A": {
@@ -6902,8 +6902,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "df0ebfa419decb4b53ab176469dac227087ba92fceeb83e26d5fe8f1d0f7f043",
-      "created_at": "2026-11-15T21:53:34.560Z"
+      "content_hash": "9024c554f60ba7c28a6937f1b44e01322ee85464cc0ffa2d0734e9b82ef256ab",
+      "created_at": "2026-11-15T22:03:49.301Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -6947,8 +6947,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "574c71a59c06ea1900b72d07b2bd7396745ad78313fddbe70b3eb3927c60442e",
-      "created_at": "2026-11-15T21:53:34.106Z"
+      "content_hash": "58559b2cbd7bd857d456d5d9621130215f25d6b116d704b87b45b1a1b06f2269",
+      "created_at": "2026-11-15T22:03:48.739Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -7865,8 +7865,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "d7f9052ad9409f1f9b11c00918eaed5d0069f62549f4ca37285bf46965d906e4",
-      "created_at": "2026-11-15T21:53:33.662Z"
+      "content_hash": "ac5d34ce3ca3dc59178aedcb6ce9eba701d9888f7d0d0fdd65218a2346df1f21",
+      "created_at": "2026-11-15T22:03:48.175Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",

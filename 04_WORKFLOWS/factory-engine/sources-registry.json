@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-15T21:53:33.195Z",
-    "lastVerified": "2026-11-15T21:53:33.195Z",
+    "lastChecked": "2026-11-15T22:03:47.605Z",
+    "lastVerified": "2026-11-15T22:03:47.605Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -474,8 +474,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-15T21:15:44.985Z",
-    "lastVerified": "2026-11-15T21:15:44.985Z",
+    "lastChecked": "2026-11-15T22:03:47.595Z",
+    "lastVerified": "2026-11-15T22:03:47.595Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1858,8 +1858,8 @@
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-15T14:56:06.937Z",
-    "lastVerified": "2026-11-15T14:56:06.937Z",
+    "lastChecked": "2026-11-15T22:03:42.555Z",
+    "lastVerified": "2026-11-15T22:03:42.555Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
@@ -4030,12 +4030,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "koderover-zadig": {
-    "name": "koderover/zadig",
+    "name": "zadig",
     "officialUrl": "https://github.com/koderover/zadig",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-14T12:34:01.083Z",
-    "lastVerified": "2026-11-14T12:34:01.083Z",
+    "lastChecked": "2026-11-15T22:03:40.062Z",
+    "lastVerified": "2026-11-15T22:03:40.062Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-koderover-zadig",
@@ -4044,7 +4044,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "1174b8c7"
   },
   "doobidoo-mcp-memory-service": {
     "name": "doobidoo/mcp-memory-service",
@@ -5280,9 +5281,9 @@
   "cozodb-cozo": {
     "name": "cozo",
     "officialUrl": "https://github.com/cozodb/cozo",
-    "lastChecked": "2026-11-14T09:48:05.574Z",
+    "lastChecked": "2026-11-15T22:03:45.044Z",
     "revisionIdentifier": "481af058",
-    "lastVerified": "2026-11-14T09:48:05.574Z"
+    "lastVerified": "2026-11-15T22:03:45.044Z"
   },
   "telemt-telemt": {
     "name": "telemt/telemt",
@@ -6318,8 +6319,8 @@
     "officialUrl": "https://github.com/nezhahq/nezha",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-13T22:42:52.814Z",
-    "lastVerified": "2026-11-13T22:42:52.814Z",
+    "lastChecked": "2026-11-15T22:03:32.540Z",
+    "lastVerified": "2026-11-15T22:03:32.540Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nezhahq-nezha",
@@ -10381,9 +10382,9 @@
   "sventiigi-whatsnewkit": {
     "name": "WhatsNewKit",
     "officialUrl": "https://github.com/SvenTiigi/WhatsNewKit",
-    "lastChecked": "2026-11-12T10:07:12.744Z",
+    "lastChecked": "2026-11-15T22:03:37.507Z",
     "revisionIdentifier": "6157c77e",
-    "lastVerified": "2026-11-12T10:07:12.744Z"
+    "lastVerified": "2026-11-15T22:03:37.507Z"
   },
   "kaiopiola-seocheck": {
     "name": "SEOCheck",
@@ -10416,9 +10417,9 @@
   "codetot-web-schema-test": {
     "name": "schema-test",
     "officialUrl": "https://github.com/codetot-web/schema-test",
-    "lastChecked": "2026-11-11T06:33:08.465Z",
+    "lastChecked": "2026-11-15T22:03:35.061Z",
     "revisionIdentifier": "f395034cc2",
-    "lastVerified": "2026-11-11T06:33:08.465Z"
+    "lastVerified": "2026-11-15T22:03:35.061Z"
   },
   "swiftwebui-swiftwebui": {
     "name": "SwiftWebUI",
