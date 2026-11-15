@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261111-RA9N",
-    "timestamp": "2026-11-11T07:27:55.067Z",
-    "repository": "t8y2/dbx",
-    "learningId": "learn-github-t8y2-dbx",
-    "contentHash": "057c1881102a28cecb8c527b8ed6bb89a4285114e0767ae447ab192fdd38aa62",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261111-40VR",
     "timestamp": "2026-11-11T07:37:49.431Z",
     "repository": "codewhale-hq/Codewhale",
@@ -7492,6 +7477,21 @@
     "contentHash": "9b3bdeb97f2803dc7aa1171c92a933c75de8dcd0f4d00bc0948cff71b0c8395f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-DXD5",
+    "timestamp": "2026-11-15T19:04:03.113Z",
+    "repository": "Diffuspace/Clover-35B-A3B-Preview",
+    "learningId": "learn-huggingface-diffuspace-clover-35b-a3b-preview",
+    "contentHash": "11aa01ab9ee5f67aeb9fb7f906312e25d86f617d79c767dcc22c7cf398081fa4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

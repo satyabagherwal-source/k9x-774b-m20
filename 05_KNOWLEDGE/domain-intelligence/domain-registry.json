@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T18:47:51.635Z",
-  "total_records": 1097,
+  "last_updated": "2026-11-15T19:04:45.679Z",
+  "total_records": 1100,
   "domains": {
     "A": {
       "total": 7,
@@ -37,7 +37,7 @@
       ]
     },
     "D": {
-      "total": 529,
+      "total": 532,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -567,7 +567,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-autotrust-autotrust-decider-pro-vision-27b-le",
         "domain_intelligence-research-knowledge-intelligence-mistralai-mistral-large-4-1t-a52b-core-invariant",
         "DOM-D-BBC8733A",
-        "domain_intelligence-research-knowledge-intelligence-hf-mistralai-mistral-large-4-1t-a52b-learnings-c"
+        "domain_intelligence-research-knowledge-intelligence-hf-mistralai-mistral-large-4-1t-a52b-learnings-c",
+        "domain_intelligence-research-knowledge-intelligence-diffuspace-clover-35b-a3b-preview-core-invariant",
+        "DOM-D-CBBB279C",
+        "domain_intelligence-research-knowledge-intelligence-hf-diffuspace-clover-35b-a3b-preview-learnings-c"
       ]
     },
     "E": {
@@ -10488,8 +10491,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "c77a87fb19e202171162b8cd74a3383da8bc95da116478f89d3a734d0de06227",
-      "created_at": "2026-11-15T17:31:59.781Z"
+      "content_hash": "0d2d31f4cb2cfd0c7276d11a74f10e5ac94fa2c3124d7ce51c86f44a5067fc33",
+      "created_at": "2026-11-15T19:04:45.679Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -13888,8 +13891,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "aa571be21251394a0bc69c69aa8c34402f85681b8964305bb45320104a74f9c9",
-      "created_at": "2026-11-15T17:23:19.696Z"
+      "content_hash": "12697b66054dfaf5fa5eaacc550ca2e35beff96ab144f510a0078a270835406c",
+      "created_at": "2026-11-15T19:04:45.054Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
@@ -20879,6 +20882,66 @@
       "repository": "llphant-llphant-learnings",
       "content_hash": "aa47e13f109c51aac303f12ed123a67784d97b9a826caf7763ca1ac449faddf6",
       "created_at": "2026-11-15T18:47:50.397Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-diffuspace-clover-35b-a3b-preview-core-invariant": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-diffuspace-clover-35b-a3b-preview-core-invariant",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: Diffuspace/Clover-35B-A3B-Preview Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-diffuspace-clover-35b-a3b-preview-research-knowledge-intelligence-diffuspace-.md",
+      "repository": "Diffuspace/Clover-35B-A3B-Preview",
+      "content_hash": "56c6da48cdc8cf79ce07e9f1808312cbbe9a90b30e1828b821172bbd5f60a87c",
+      "created_at": "2026-11-15T19:04:03.295Z"
+    },
+    "DOM-D-CBBB279C": {
+      "record_id": "DOM-D-CBBB279C",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Diffuspace/Clover-35B-A3B-Preview",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-diffuspace-clover-35b-a3b-preview-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview](https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview))  \n> **Source Version**: `hf-diffuspac`  \n> **L",
+      "content_hash": "df64076917f0864785f8788aa93c9176897cbed235746b2af2d4b312178a64fb",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-diffuspace-clover-35b-a3b-preview-learnings.md`  \n> **Source**: huggingface ([htt -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-diffuspace-clover-35b-a3b-preview-learnings.md`  \n> **Source**: huggingface ([htt",
+      "provenance": {
+        "source_uri": "project://hf-diffuspace-clover-35b-a3b-preview/hf-diffuspace-clover-35b-a3b-preview-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T19:04:15.123Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-diffuspace-clover-35b-a3b-preview)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-diffuspace-clover-35b-a3b-preview"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-15T19:04:44.268Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-diffuspace-clover-35b-a3b-preview-learnings-c": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-diffuspace-clover-35b-a3b-preview-learnings-c",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-diffuspace-clover-35b-a3b-preview-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-diffuspace-clover-35b-a3b-preview-learnings-research-knowledge-intelligence-h.md",
+      "repository": "hf-diffuspace-clover-35b-a3b-preview-learnings",
+      "content_hash": "7f434c3fa29058a6aa4ebf1e5765befaf4a2c8fa485c277916a49098f8bd881f",
+      "created_at": "2026-11-15T19:04:44.505Z"
     }
   }
 }

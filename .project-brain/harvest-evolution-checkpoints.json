@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T18:47:51.877Z",
+  "last_updated": "2026-11-15T19:04:45.938Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-15T18:47:51.321Z",
@@ -43,7 +43,7 @@
       "staged_for_review": 0
     },
     "zoontek-react-native-permissions-learnings.md": {
-      "processed_at": "2026-11-15T17:31:59.558Z",
+      "processed_at": "2026-11-15T19:04:45.316Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -253,7 +253,7 @@
       "staged_for_review": 1
     },
     "zoontek-react-native-bootsplash-learnings.md": {
-      "processed_at": "2026-11-15T17:23:19.376Z",
+      "processed_at": "2026-11-15T19:04:44.655Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3041,9 +3041,14 @@
       "processed_at": "2026-11-15T17:40:52.123Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-diffuspace-clover-35b-a3b-preview-learnings.md": {
+      "processed_at": "2026-11-15T19:04:44.285Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 1101,
-  "total_canonical_promoted": 268,
-  "total_staged_for_review": 833
+  "total_dossiers_evaluated": 1104,
+  "total_canonical_promoted": 269,
+  "total_staged_for_review": 835
 }

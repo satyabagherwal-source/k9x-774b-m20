@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-15T18:47:46.839Z",
+  "last_updated": "2026-11-15T19:04:03.126Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -17301,14 +17301,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-diffuspace-clover-35b-a3b-preview",
-      "content_hash": "82d8dad52a736f54717c6345338421a26180a1b2145ff91682a06edfda116acb",
-      "verified_at": "2026-11-10T04:51:58.952Z",
+      "content_hash": "11aa01ab9ee5f67aeb9fb7f906312e25d86f617d79c767dcc22c7cf398081fa4",
+      "verified_at": "2026-11-15T19:04:03.126Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-10T04:51:58.952Z"
+      "last_updated": "2026-11-15T19:04:03.126Z"
     },
     "CherryHQ/cherry-studio": {
       "repository": "CherryHQ/cherry-studio",

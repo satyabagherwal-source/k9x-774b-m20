@@ -10136,3 +10136,5 @@
 | `CYCLE-20261115-U4ZD` | `2026-11-15T17:52:40.633Z` | `embassy-rs/embassy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8545` | Yes (`39bf0f40...`) |
 | `CYCLE-20261115-PSOW` | `2026-11-15T18:17:17.696Z` | `telemt/telemt` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8638, Rule 8639, Rule 8640` | Yes (`90de0eda...`) |
 | `CYCLE-20261115-T023` | `2026-11-15T18:47:46.827Z` | `LLPhant/LLPhant` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8641` | Yes (`9b3bdeb9...`) |
+| `CYCLE-20261115-DXD5` | `2026-11-15T19:04:03.113Z` | `Diffuspace/Clover-35B-A3B-Preview` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-diffuspace-clover-35b-a3b-preview-learnings.md` | Yes (`11aa01ab...`) |
+| `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T19:04:44.285Z` | `hf-diffuspace-clover-35b-a3b-preview` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-CBBB279C` [Domain D] | Yes (`df640769...`) |

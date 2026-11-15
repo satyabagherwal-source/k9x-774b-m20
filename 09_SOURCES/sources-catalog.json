@@ -11505,8 +11505,8 @@
     "sourceUrl": "https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview",
     "sourceVersion": "hf-diffuspace-clover-35b-a3b-preview",
     "license": "Open-Source",
-    "contentHash": "82d8dad52a736f54717c6345338421a26180a1b2145ff91682a06edfda116acb",
-    "lastHarvestedAt": "2026-11-10T04:51:58.942Z",
+    "contentHash": "11aa01ab9ee5f67aeb9fb7f906312e25d86f617d79c767dcc22c7cf398081fa4",
+    "lastHarvestedAt": "2026-11-15T19:04:03.117Z",
     "learningId": "learn-huggingface-diffuspace-clover-35b-a3b-preview"
   },
   "cherryhq-cherry-studio": {

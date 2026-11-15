@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T18:47:50.095Z",
+  "updated_at": "2026-11-15T19:04:44.310Z",
   "stats": {
-    "total_discovered": 3821,
-    "approved_pending_harvest": 3602,
+    "total_discovered": 3822,
+    "approved_pending_harvest": 3603,
     "harvested_count": 0,
     "rejected_count": 219,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3585,
+      "COMMUNITY_AND_EXPERT": 3586,
       "OFFICIAL_DOCUMENTATION": 129,
       "STANDARDS_AND_SPECIFICATIONS": 90,
       "ENGINEERING_BLOGS": 2,
@@ -82550,6 +82550,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/llphant-llphant-learnings.md",
         "fileName": "llphant-llphant-learnings.md"
+      }
+    },
+    "SRC-178C5814D606": {
+      "id": "SRC-178C5814D606",
+      "url": "https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview",
+      "title": "https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T19:04:44.310Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-diffuspace-clover-35b-a3b-preview-learnings.md",
+        "fileName": "hf-diffuspace-clover-35b-a3b-preview-learnings.md"
       }
     }
   }

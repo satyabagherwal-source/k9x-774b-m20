@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-15T18:47:49.924Z",
-    "lastVerified": "2026-11-15T18:47:49.924Z",
+    "lastChecked": "2026-11-15T19:04:15.015Z",
+    "lastVerified": "2026-11-15T19:04:15.015Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -372,8 +372,8 @@
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-15T17:40:19.443Z",
-    "lastVerified": "2026-11-15T17:40:19.443Z",
+    "lastChecked": "2026-11-15T19:04:14.997Z",
+    "lastVerified": "2026-11-15T19:04:14.997Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-synalinks-synalinks-skills",
@@ -655,8 +655,8 @@
     "officialUrl": "https://github.com/nolabs-ai/nono",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-15T10:04:19.909Z",
-    "lastVerified": "2026-11-15T10:04:19.909Z",
+    "lastChecked": "2026-11-15T19:04:10.008Z",
+    "lastVerified": "2026-11-15T19:04:10.008Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nolabs-ai-nono",
@@ -3151,12 +3151,12 @@
     "lastVerified": "2026-11-14T00:48:32.458Z"
   },
   "kgateway-dev-kgateway": {
-    "name": "kgateway-dev/kgateway",
+    "name": "kgateway",
     "officialUrl": "https://github.com/kgateway-dev/kgateway",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-14T07:17:59.943Z",
-    "lastVerified": "2026-11-14T07:17:59.943Z",
+    "lastChecked": "2026-11-15T19:04:07.537Z",
+    "lastVerified": "2026-11-15T19:04:07.537Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kgateway-dev-kgateway",
@@ -3165,7 +3165,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "74f2e098"
   },
   "zilliztech-attu": {
     "name": "attu",
@@ -4372,9 +4373,9 @@
   "dingodb-dingo": {
     "name": "dingo",
     "officialUrl": "https://github.com/dingodb/dingo",
-    "lastChecked": "2026-11-14T05:04:00.017Z",
+    "lastChecked": "2026-11-15T19:04:12.529Z",
     "revisionIdentifier": "bb96a741",
-    "lastVerified": "2026-11-14T05:04:00.017Z"
+    "lastVerified": "2026-11-15T19:04:12.529Z"
   },
   "timvisee-ffsend": {
     "name": "ffsend",
@@ -5422,9 +5423,9 @@
   "smol-rs-smol": {
     "name": "smol",
     "officialUrl": "https://github.com/smol-rs/smol",
-    "lastChecked": "2026-11-13T20:16:12.029Z",
+    "lastChecked": "2026-11-15T19:04:00.026Z",
     "revisionIdentifier": "41579301",
-    "lastVerified": "2026-11-13T20:16:12.029Z"
+    "lastVerified": "2026-11-15T19:04:00.026Z"
   },
   "hf-bigscience-bloom": {
     "name": "bigscience/bloom",
@@ -10023,12 +10024,12 @@
     "lastVerified": "2026-11-15T15:47:37.339Z"
   },
   "mohamedrejeb-calf": {
-    "name": "MohamedRejeb/Calf",
+    "name": "Calf",
     "officialUrl": "https://github.com/MohamedRejeb/Calf",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-12T06:41:30.661Z",
-    "lastVerified": "2026-11-12T06:41:30.661Z",
+    "lastChecked": "2026-11-15T19:04:05.070Z",
+    "lastVerified": "2026-11-15T19:04:05.070Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mohamedrejeb-calf",
@@ -10037,7 +10038,8 @@
     "recentFixesCount": 13,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "6b13fad1"
   },
   "anonymousaak-seo-skills": {
     "name": "seo-skills",
@@ -10286,13 +10288,13 @@
     "officialUrl": "https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-10T04:51:39.326Z",
-    "lastVerified": "2026-11-10T04:51:39.326Z",
+    "lastChecked": "2026-11-15T19:04:02.603Z",
+    "lastVerified": "2026-11-15T19:04:02.603Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-diffuspace-clover-35b-a3b-preview",
-    "contentHash": "82d8dad52a736f54717c6345338421a26180a1b2145ff91682a06edfda116acb",
-    "promotedRulesCount": 3,
+    "contentHash": "11aa01ab9ee5f67aeb9fb7f906312e25d86f617d79c767dcc22c7cf398081fa4",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

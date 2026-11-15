@@ -10169,3 +10169,5 @@ Every entry in this ledger must capture:
 | `learn-github-embassy-rs-embassy` | `https://github.com/embassy-rs/embassy` | `552c0412` | Multi-dimensional audit evidence | 2026-11-15T17:52:40.636Z |
 | `learn-github-telemt-telemt` | `https://github.com/telemt/telemt` | `dac7aeee` | Multi-dimensional audit evidence | 2026-11-15T18:17:17.699Z |
 | `learn-github-llphant-llphant` | `https://github.com/LLPhant/LLPhant` | `93f05675` | Multi-dimensional audit evidence | 2026-11-15T18:47:46.831Z |
+| `learn-huggingface-diffuspace-clover-35b-a3b-preview` | `https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview` | `hf-diffusp` | Multi-dimensional audit evidence | 2026-11-15T19:04:03.117Z |
+| `learn-dom-d-cbbb279c` | `project://hf-diffuspace-clover-35b-a3b-preview` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-diffuspace-clover-35b-a3b-preview-learnings.md` | 2026-11-15T19:04:44.285Z |

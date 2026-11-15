@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-15T18:47:51.755Z",
-  "total_verified_learnings": 8716,
+  "last_updated": "2026-11-15T19:04:45.814Z",
+  "total_verified_learnings": 8717,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18551,
+  "total_items": 18554,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -217887,13 +217887,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-3JGV-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-EU3A-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "187d8b29b0e3eaddb0581b4ea02ef0d8851afa6caf549f0c36fc3307ac6674bc",
+      "content_hash": "89245ea372b80fe3b886a09b12d271f6bf3fcc93df93d2c26839ecacbffa67c6",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T17:31:59.696Z"
+      "persisted_at": "2026-11-15T19:04:45.526Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -217903,9 +217903,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "c77a87fb19e202171162b8cd74a3383da8bc95da116478f89d3a734d0de06227",
+      "content_hash": "0d2d31f4cb2cfd0c7276d11a74f10e5ac94fa2c3124d7ce51c86f44a5067fc33",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T17:31:59.781Z"
+      "persisted_at": "2026-11-15T19:04:45.679Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -217915,9 +217915,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "c41a04f8d5739dfa6bea4906622bd1ff30b9c14d15b63189ecf41ef289e60644",
+      "content_hash": "15de89b17f814096f45597aa0c8cc5f980386fc3508846f58c786194d0fe9bd1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T17:31:59.869Z"
+      "persisted_at": "2026-11-15T19:04:45.814Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -226547,13 +226547,13 @@
       "item_id": "candidate_directive-splash-screen-staying-visible-after-warm-start-on-android-12",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-SE5L-splash-screen-staying-visible-after-warm-start-on-android-12.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-ETMJ-splash-screen-staying-visible-after-warm-start-on-android-12.md",
       "title": "splash screen staying visible after warm start on Android 12+",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "15fe4bfb75c187a52a0f556d07e4af6c1e6d1c07b1c1239c3a19439bb38e7213",
+      "content_hash": "12162272a15f4e568f366b5eaefdc804c050cb79370e8a165b81ebc8551ea848",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T17:23:19.593Z"
+      "persisted_at": "2026-11-15T19:04:44.923Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co",
@@ -226563,9 +226563,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "aa571be21251394a0bc69c69aa8c34402f85681b8964305bb45320104a74f9c9",
+      "content_hash": "12697b66054dfaf5fa5eaacc550ca2e35beff96ab144f510a0078a270835406c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T17:23:19.696Z"
+      "persisted_at": "2026-11-15T19:04:45.054Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -226575,9 +226575,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "0b53721225c0a15cdd21e1e6521beb77c0f88911d85c06ebe83130859b616117",
+      "content_hash": "77bb0d745fcf1543bae86488f21c67a7bdae9b2c96354bc361b431fd6218778b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T17:23:19.805Z"
+      "persisted_at": "2026-11-15T19:04:45.186Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -245706,6 +245706,57 @@
       "content_hash": "4f2d0a8f5058e143806f9445b007eac07d32746b71fd21317daed66c0be97cac",
       "domain_letter": "K",
       "persisted_at": "2026-11-15T18:47:50.547Z"
+    },
+    "learn-huggingface-diffuspace-clover-35b-a3b-preview": {
+      "learning_id": "learn-huggingface-diffuspace-clover-35b-a3b-preview",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Diffuspace/Clover-35B-A3B-Preview",
+      "repository": "Diffuspace/Clover-35B-A3B-Preview",
+      "slug": "hf-diffuspace-clover-35b-a3b-preview",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview",
+      "source_version": "hf-diffuspace-clover-35b-a3b-preview",
+      "content_hash": "11aa01ab9ee5f67aeb9fb7f906312e25d86f617d79c767dcc22c7cf398081fa4",
+      "dossier_path": "07_PROJECT_LEARNING/hf-diffuspace-clover-35b-a3b-preview-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-diffuspace-clover-35b-a3b-preview-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T19:04:02.954Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-diffuspace-clover-35b-a3b-preview-core-invariant": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-diffuspace-clover-35b-a3b-preview-core-invariant",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-diffuspace-clover-35b-a3b-preview-research-knowledge-intelligence-diffuspace-.md",
+      "title": "Research & Knowledge Intelligence: Diffuspace/Clover-35B-A3B-Preview Core Invariants",
+      "repository": "Diffuspace/Clover-35B-A3B-Preview",
+      "source_version": "hf-diffuspace-clover-35b-a3b-preview",
+      "content_hash": "56c6da48cdc8cf79ce07e9f1808312cbbe9a90b30e1828b821172bbd5f60a87c",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T19:04:03.295Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-diffuspace-clover-35b-a3b-preview-learnings-c": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-diffuspace-clover-35b-a3b-preview-learnings-c",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-diffuspace-clover-35b-a3b-preview-learnings-research-knowledge-intelligence-h.md",
+      "title": "Research & Knowledge Intelligence: hf-diffuspace-clover-35b-a3b-preview-learnings Core Invariants",
+      "repository": "hf-diffuspace-clover-35b-a3b-preview-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7f434c3fa29058a6aa4ebf1e5765befaf4a2c8fa485c277916a49098f8bd881f",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T19:04:44.505Z"
     }
   },
   "ai-builder-brain": {
