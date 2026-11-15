@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261111-R61R",
-    "timestamp": "2026-11-11T07:27:49.599Z",
-    "repository": "Checkmarx/kics",
-    "learningId": "learn-github-checkmarx-kics",
-    "contentHash": "49773ce1c2f52c1fa1f35aa63f46d6562c8801c3393d9b2e8c6f536886db8a86",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261111-RA9N",
     "timestamp": "2026-11-11T07:27:55.067Z",
     "repository": "t8y2/dbx",
@@ -7492,6 +7477,21 @@
     "contentHash": "90de0edaa9635f840ac1daf41092570a84737fd78d2be5fce7e5ef709a826265",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-T023",
+    "timestamp": "2026-11-15T18:47:46.827Z",
+    "repository": "LLPhant/LLPhant",
+    "learningId": "learn-github-llphant-llphant",
+    "contentHash": "9b3bdeb97f2803dc7aa1171c92a933c75de8dcd0f4d00bc0948cff71b0c8395f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

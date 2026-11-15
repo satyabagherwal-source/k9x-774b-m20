@@ -3533,10 +3533,10 @@
     "repository": "LLPhant/LLPhant",
     "platform": "github",
     "sourceUrl": "https://github.com/LLPhant/LLPhant",
-    "sourceVersion": "d0a94b30",
+    "sourceVersion": "93f05675",
     "license": "MIT",
-    "contentHash": "b1d1b24a1baf60e395a47982bf2563dc4a388a119674b51783132a7203b3a392",
-    "lastHarvestedAt": "2026-11-11T16:43:02.289Z",
+    "contentHash": "9b3bdeb97f2803dc7aa1171c92a933c75de8dcd0f4d00bc0948cff71b0c8395f",
+    "lastHarvestedAt": "2026-11-15T18:47:46.831Z",
     "learningId": "learn-github-llphant-llphant"
   },
   "ant-design-pro-components": {

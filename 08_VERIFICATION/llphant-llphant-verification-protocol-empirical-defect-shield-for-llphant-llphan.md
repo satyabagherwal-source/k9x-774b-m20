@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for llphant/llphant
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for LLPhant/LLPhant
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "llphant/llphant",
-  "source_url": "https://github.com/llphant/llphant",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "LLPhant/LLPhant",
+  "source_url": "https://github.com/LLPhant/LLPhant",
+  "source_version": "93f05675",
+  "license": "MIT",
+  "timestamp": "2026-11-15T18:47:47.004Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-llphant-llphant",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [llphant/llphant](https://github.com/llphant/llphant) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [LLPhant/LLPhant](https://github.com/LLPhant/LLPhant) (Revision: `93f05675`).  
+> **License**: MIT | **Timestamp**: `2026-11-15T18:47:47.004Z`  
+> **Learning ID**: `learn-github-llphant-llphant`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `llphant/llphant` (Commit: `historical`)
+- **Target Repository**: `LLPhant/LLPhant` (Commit: `93f05675`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/llphant-llphant-learnings.md`  
-> **Source**: github ([https://github.com/LLPhant/LLPhant](https://github.com/LLPhant/LLPhant))  
-> **Source Version**: `d0a94b30`  
-> **License**: MIT  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T16:42:52.973Z  
-> **Learning ID**: `learn-github-llphant-llphant`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): LLPhant/LLPhant
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/llphant-llphant-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/LLPhant/LLPhant](https://github.com/LLPhant/LLPhant))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T16:42:52.967Z  
+> **Harvest Timestamp**: 2026-11-15T18:47:45.757Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -261,175 +247,258 @@ export default config
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d0a94b30` (2026-11-09)
-**Commit Message**: Make Anthropic endpoint and API version configurable (#568)
+### Incident Patch 1: `50cfe683` (2026-11-15)
+**Commit Message**: Fix system message parameter assignment logic
 
-**File**: `docker/.env.dist` (modified, +2/-0)
+Co-authored-by: Copilot Autofix powered by AI <[REDACTED_EMAIL]>
+
+**File**: `src/Chat/AnthropicChat.php` (modified, +1/-1)
 ```diff
-@@ -14,6 +14,8 @@ MONGODB_USERNAME=
- MONGODB_PASSWORD=
- SERP_API_KEY=
- ANTHROPIC_API_KEY=
-+ANTHROPIC_BASE_URL=
-+ANTHROPIC_API_VERSION=
- ASTRADB_ENDPOINT=
- ASTRADB_TOKEN=
- PINECONE_HOST=http://pinecone:5080
+@@ -323,7 +323,7 @@ private function createParams(array $messages, bool $stream): array
+         ];
+ 
+         if ($this->systemMessage instanceof Message) {
+-            $params['system'] = $this->promptCaching
++            $params['system'] = $this->promptCaching && $this->systemMessage->content !== ''
+                 ? [[
+                     'type' => 'text',
+                     'text' => $this->systemMessage->content,
 ```
 
-**File**: `docker/docker-compose.yml` (modified, +2/-0)
-```diff
-@@ -24,6 +24,8 @@ services:
-             GEMINI_API_KEY: ${GEMINI_API_KEY}
-             MISTRAL_API_KEY: ${MISTRAL_API_KEY}
-             ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
-+            ANTHROPIC_BASE_URL: ${ANTHROPIC_BASE_URL}
-+            ANTHROPIC_API_VERSION: ${ANTHROPIC_API_VERSION}
-             ASTRADB_ENDPOINT: ${ASTRADB_ENDPOINT}
-             ASTRADB_TOKEN: ${ASTRADB_TOKEN}
-             ELASTIC_URL: ${ELASTIC_URL}
-```
+---
 
-**File**: `docs/usage.rst` (modified, +22/-0)
-```diff
-@@ -146,6 +146,28 @@ To call Anthropic models you have to provide an API key . You can set the ANTHRO
- 
-     export ANTHROPIC_API_KEY=XXXXXX
- 
-+By default, requests use ``https://api.anthropic.com`` and API version
-+``2023-06-01``. To use an Anthropic-compatible gateway or self-hosted endpoint,
-+set ``ANTHROPIC_BASE_URL`` to its base URL (the Messages API path
-+``/v1/messages`` is appended automatically). You can also override the API version
-+with ``ANTHROPIC_API_VERSION``.
-+
-+.. code-block:: bash
-+
-+    export ANTHROPIC_BASE_URL=https://gateway.example
-+    export ANTHROPIC_API_VERSION=2024-01-01
-+
-+Alternatively, pass ``url`` and ``apiVersion`` to ``AnthropicConfig``. Explicit
-+configuration values take precedence over their environment variables.
-+
-+.. code-block:: php
-+
-+    $config = new AnthropicConfig(
-+        url: 'https://gateway.example',
-+        apiVersion: '2024-01-01',
-+    );
-+    $chat = new AnthropicChat($config);
-+
- You also have to specify the model to use using the ``AnthropicConfig`` object and pass it to the ``AnthropicChat``.
- 
- .. code-block:: php
-```
+### Incident Patch 2: `ce885c0b` (2026-10-20)
+**Commit Message**: Fix streamed tool calls being dropped in LmStudioChat
 
-**File**: `src/AnthropicConfig.php` (modified, +2/-0)
+generateChatStream() sends the tools in the request but only yielded
+delta.content, so a streamed answer that asked for a tool call produced
+an empty stream and the tool never ran.
+
+Collect the tool calls from the deltas by index (the first delta of a
+call carries the name and id, the next ones argument fragments) and,
+when the turn ends, call them and continue with the non-streamed answer,
+as OpenAIChat does since #532. Like there, any finish reason except
+length and content_filter runs the calls, so servers that end such a
+turn with "stop" work too. The function-calling part of
+generateChatRecursive() moves into messagesAfterCallingFunctions() so
+both paths share it.
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+**File**: `src/Chat/LmStudioChat.php` (modified, +73/-16)
 ```diff
-@@ -23,6 +23,8 @@ public function __construct(
-         public readonly ?ClientInterface $client = null,
-         public readonly ?RequestFactoryInterface $requestFactory = null,
-         public readonly ?StreamFactoryInterface $streamFactory = null,
-+        public readonly ?string $url = null,
-+        public readonly ?string $apiVersion = null,
-     ) {
+@@ -97,26 +97,38 @@ private function generateChatRecursive(array $messages): string
+         $result = $this->generateResponse($messages);
+ 
+         if (is_array($result)) {
+-            $messages[] = $this->assistantAskingFunctions($result);
+-            foreach ($result as $functionToCall) {
+-                $toolResult = $functionToCall->call();
+-                $normalizedToolResult = $toolResult === null ? null : Message::normalizeContent($toolResult);
+-                $this->functionsCalled[] = new CalledFunction(
+-                    $functionToCall,
+-                    json_decode($functionToCall->jsonArgs, true, 512, JSON_THROW_ON_ERROR),
+-                    $normalizedToolResult,
+-                    $functionToCall->getToolCallId()
+-                );
+-                $toolResultMessage = Message::toolResult($toolResult, $functionToCall->getToolCallId());
+-                $messages[] = $toolResultMessage;
+-            }
+-
+-            return $this->generateChatRecursive($messages);
++            return $this->generateChatRecursive($this->messagesAfterCallingFunctions($messages, $result));
+         }
+ 
+         return $result;
      }
- }
+ 
++    /**
++     * Calls the functions the model asked for and returns the messages extended with the assistant
++     * request and the tool results.
++     *
++     * @param  Message[]  $messages
++     * @param  FunctionInfo[]  $functionsToCall
++     * @return Message[]
++     */
++    private function messagesAfterCallingFunctions(array $messages, array $functionsToCall): array
++    {
++        $messages[] = $this->assistantAskingFunctions($functionsToCall);
++        foreach ($functionsToCall as $functionToCall) {
++            $toolResult = $functionToCall->call();
++            $normalizedToolResult = $toolResult === null ? null : Message::normalizeContent($toolResult);
++            $this->functionsCalled[] = new CalledFunction(
++                $functionToCall,
++                json_decode($functionToCall->jsonArgs, true, 512, JSON_THROW_ON_ERROR),
++                $normalizedToolResult,
++                $functionToCall->getToolCallId()
++            );
++            $messages[] = Message::toolResult($toolResult, $functionToCall->getToolCallId());
++        }
++
++        return $messages;
++    }
++
+     /**
+      * @param  Message[]  $messages
+      * @return string|FunctionInfo[]
+@@ -188,8 +200,10 @@ public function generateChatStream(array $messages): StreamInterface
+ 
+         $response = $this->sendRequest('POST', 'v1/chat/completions', $params, $stream);
+ 
+-        $generator = function (StreamInterface $stream) {
++        $generator = function (StreamInterface $stream) use ($messages) {
+             $buffer = '';
++            /** @var array<int, array{name: string, arguments: string, id: ?string}> $toolsToCall */
++            $toolsToCall = [];
+             while (! $stream->eof()) {
+                 $buffer .= $stream->read(1024);
+ 
+@@ -212,6 +226,40 @@ public function generateChatStream(array $messages): StreamInterface
+                         continue;
+                     }
+ 
++                    foreach ($json['choices'][0]['delta']['tool_calls'] ?? [] as $toolCall) {
++                        $name = $toolCall['function']['name'] ?? null;
++                        $arguments = $toolCall['function']['arguments'] ?? '';
++                        // The first delta of a call carries its name and id, the following ones only argument fragments
++                        if (\is_string($name) && $name !== '') {
++                            $toolsToCall[$toolCall['index'] ?? \count($toolsToCall)] = [
++                                'name' => $name,
++                                'arguments' => $arguments,
++                                'id' => $toolCall['id'] ?? null,
++                            ];
++
++                            continue;
++                        }
++
++                        $index = $toolCall['index'] ?? \array_key_last($toolsToCall);
++                        if ($index !== null && isset($toolsToCall[$index])) {
++                            $toolsToCall[$index]['arguments'] .= $arguments;
++                        }
++                    }
++
++                    if ($toolsToCall !== [] && $this->shouldCallStreamedTools($json['choices'][0]['finish_reason'] ?? null)) {
++                        $functionsToCall = [];
++                        foreach ($toolsToCall as $tool) {
++                            $functionInfo = $this->getFunctionInfoFromName($tool['name']);
++                            $functionInfo->jsonArgs = $tool['arguments'];
++                            $functionInfo->setToolCallId($tool['id']);
++                            $functionsToCall[] = $functionInfo;
++                        }
++                        // We move to a non-streamed answer here, like OpenAIChat does
++                        yield $this->generateChatRecursive($this->messagesAfterCallingFunctions($messages, $functionsToCall));
++
++                        return;
++      
 ```
 
-**File**: `src/Chat/AnthropicChat.php` (modified, +12/-2)
+**File**: `tests/Unit/Chat/LmStudioChatTest.php` (added, +95/-0)
 ```diff
-@@ -44,6 +44,10 @@ class AnthropicChat implements ChatInterface
- 
-     private readonly string $apiKey;
- 
-+    private readonly string $baseUrl;
+@@ -0,0 +1,95 @@
++<?php
 +
-+    private readonly string $apiVersion;
++declare(strict_types=1);
 +
-     /** @var FunctionInfo[] */
-     private array $tools = [];
- 
-@@ -62,6 +66,12 @@ public function __construct(
-         $this->maxTokens = $config->maxTokens;
-         $this->apiKey = $config->apiKey
-             ?? (string) Utility::readEnvironment('ANTHROPIC_API_KEY', '');
-+        $this->baseUrl = rtrim(
-+            $config->url ?? (string) Utility::readEnvironment('ANTHROPIC_BASE_URL', self::DEFAULT_URL),
-+            '/',
-+        );
-+        $this->apiVersion = $config->apiVersion
-+            ?? (string) Utility::readEnvironment('ANTHROPIC_API_VERSION', self::CURRENT_VERSION);
-         $this->logger = $logger ?: new NullLogger();
- 
-         $this->client = $config->client ?: Psr18ClientDiscovery::find();
-@@ -248,12 +258,12 @@ protected function sendRequest(array $data): ResponseInterface
-             'params' => $data,
-         ]);
- 
--        $uri = sprintf('%s/v1/messages', rtrim(self::DEFAULT_URL, '/'));
-+        $uri = sprintf('%s/v1/messages', $this->baseUrl);
- 
-         $request = $this->factory->createRequest('POST', $uri);
-         $request = $request->withAddedHeader('Content-Type', 'application/json');
-         $request = $request->withAddedHeader('x-api-key', $this->apiKey);
--        $request = $request->withAddedHeader('anthropic-version', self::CURRENT_VERSION);
-+        $request = $request->withAddedHeader('anthropic-version', $this->apiVersion);
-         $request = $request->withBody($this->factory->createStream(json_encode($data, JSON_THROW_ON_ERROR)));
-         $response = $this->client->sendRequest($request);
- 
-```
-
-**File**: `tests/Unit/Chat/AnthropicChatTest.php` (modified, +33/-0)
-```diff
-@@ -102,6 +102,39 @@ public function log($level, string|\Stringable $message, array $context = []): v
-     expect($response)->toBe('Hi! My name is Claude.');
- });
- 
-+it('uses the configured base URL and API version', function () {
-+    $historyContainer = [];
-+    $handlerStack = HandlerStack::create(new MockHandler([
-+        new Response(200, [], ANTHROPIC_FAKE_JSON_ANSWER),
-+    ]));
-+    $handlerStack->push(Middleware::history($historyContainer));
-+    $client = new Client(['handler' => $handlerStack]);
-+    $config = new AnthropicConfig(
-+        client: $client,
-+        url: 'https://gateway.example/',
-+        apiVersion: '2024-01-01',
-+    );
++namespace Tests\Unit\Chat;
 +
-+    (new AnthropicChat($config))->generateText('this is the prompt question');
++use GuzzleHttp\Client;
++use GuzzleHttp\Handler\MockHandler;
++use GuzzleHttp\HandlerStack;
++use GuzzleHttp\Middleware;
++use GuzzleHttp\Psr7\Response;
++use LLPhant\Chat\FunctionInfo\FunctionInfo;
++use LLPhant\Chat\FunctionInfo\Parameter;
++use LLPhant\Chat\LmStudioChat;
++use LLPhant\Chat\Message;
++use LLPhant\LmStudioConfig;
++use Tests\Integration\Chat\WeatherExample;
 +
-+    expect((string) $historyContainer[0]['request']->getUri())->toBe('https://gateway.example/v1/messages');
-+    expect($historyContainer[0]['request']->getHeaderLine('anthropic-version'))->toBe('2024-01-01');
++/**
++ * @param  list<array<string, mixed>>  $chunks  the JSON payloads of the "data:" lines
++ */
++function lmStudioSse(array $chunks): string
++{
++    $lines = array_map(fn (array $chunk): string => 'data: '.json_encode($chunk, JSON_THROW_ON_ERROR)."\n\n", $chunks);
++
++    return implode('', $lines)."data: [DONE]\n\n";
++}
++
++/**
++ * @param  Response[]  $responses
++ * @param  array<int, array<string, mixed>>  $history
++ */
++function lmStudioChatWithWeatherTool(array $responses, array &$history, WeatherExample $weather): LmStudioChat
++{
++    $stack = HandlerStack::create(new MockHandler($responses));
++    $stack->push(Middleware::history($history));
++
++    $chat = new LmStudioChat(new LmStudioConfig(model: 'test'), client: new Client(['handler' => $stack]));
++    $chat->addFunction(new FunctionInfo(
++        'currentWeatherForLocation',
++        $weather,
++        'returns the current weather in the given location',
++        [new Parameter('location', 'string', 'the name of the city')]
++    ));
++
++    return $chat;
++}
++
++it('yields the text of a streamed answer', function () {
++    $history = [];
++    $sse = lmStudioSse([
++        ['choices' => [['index' => 0, 'delta' => ['role' => 'assistant', 'content' => 'Hel'], 'finish_reason' => null]]],
++        ['choices' => [['index' => 0, 'delta' => ['content' => 'lo'], 'finish_reason' => null]]],
++        ['choices' => [['index' => 0, 'delta' => [], 'finish_reason' => 'stop']]],
++    ]);
++    $chat = lmStudioChatWithWeatherTool([new Response(200, [], $sse)], $history, new WeatherExample());
++
++    expect($chat->generateStreamOfText('hi')->getContents())->toBe('Hello');
 +});
 +
-+it('uses the default base URL and API version', function () {
-+    $historyContainer = [];
-+    $handlerStack = HandlerStack::create(new MockHandler([
-+        new Response(200, [], ANTHROPIC_FAKE_JSON_ANSWER),
-+    ]));
-+    $handlerStack->push(Middleware::history($historyContainer));
-+    $client = new Client(['handler' => $handlerStack]);
++it('calls the tools of a streamed answer and streams the answer that follows', function (array $chunks) {
++    $history = [];
++    $weather = new WeatherExample();
++    $chat = lmStudioChatWithWeatherTool([
++        new Response(200, [], lmStudioSse($chunks)),
++        new Response(200, [], json_encode(['choices' => [['message' => ['content' => 'Wear a scarf.']]]], JSON_THROW_ON_ERROR)),
++    ], $history, $weather);
 +
-+    (new AnthropicChat(new AnthropicConfig(client: $client)))->generateText('this is the prompt question');
++    $answer = $chat->generateChatStream([Message::user('Should I wear a scarf in Venice?')])->getContents();
 +
-+    expect((string) $historyContainer[0]['request']->getUri())->toBe('https://api.anthropic.com/v1/messages');
-+    expect($historyContainer[0]['request']->getHeaderLine('anthropic-version'))->toBe('2023-06-01');
-+});
++    expect($weather->lastMessage)->toBe('Weather in Venice is sunny, temperature is 26 Celsius')
++        ->and($answer)->toBe('Wear a scarf.')
++        ->and($history)->toHaveCount(2);
 +
- it('returns a stream response using generateStreamOfText()', function () {
-     $anthropicChat = anthropicChatWithFakeHttpConnection(ANTROPIC_FAKE_STREAM_ANSWER);
-     $response = $anthropicChat->generateStreamOfText('this is the prompt question');
++    $followUp = json_decode((string) $history[1]['request']->getBody(), true, 512, JSON_THROW_ON_ERROR);
++    $roles = array_column($followUp['messages'], 'role');
++    expect($roles)->toBe(['user', 'assistant', 'tool'])
++        ->and($followUp['messages'][1]['tool_calls'][0]['function']['name'])->toBe('currentWeatherForLocation')
++        ->and($followUp['messages'][2]['tool_call_id'])->toBe('call_1');
++})->with([
++    'arguments in fragments, tool_calls finish reason' => [[
++        ['choices' => [['index' => 0, 'delta' => ['role' => 'assistant', 'tool_calls' => [
++            ['index' => 0, 'id' => 'call_1', 'type' => 'function', 'function' => ['name' => 'currentWeatherForLocation', 'arguments' => '']],
++        ]], 'finish_reason' => null]]],
++        ['choices' => [['index' => 0, 'delta' => ['tool_calls' => [['index' => 0, 'function' => ['arguments' => '{"location":']]]], 'finish_reason' => null]]],
++        ['choices' => [['index' => 0, 'delta' => ['tool_calls' => [['index' => 0, 'function' => ['arguments' => '"Venice"}']]]], 'finish_reason' => null]]],
++        ['choices' => [['index' => 0, 'delta' => [], 'finish_reason' => 'tool_calls']]],
++    ]],
++    'whole call in one delta without index, stop finish reason' => [[
++        ['choices' => [['index' => 0, 'delta' => ['role' => 'assistant', 'tool_calls' => [
++            ['id' => 'call_1', 'type' => 'function', 'function' => ['name' => 'currentWeatherForLocation', 'arguments' => '{"location":"Venice"}']],
++        ]], 'finish_reason' => null]]],
++        ['choices' => [['index' => 0, 'delta' => [], 'finish_reason' => 'stop']]],
++    ]],
++]);
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #573** (2026-11-15): Feat/anthropic prompt caching (@f-lombardo)
+- **PR #571** (closed): feat(anthropic): support prompt caching (@officialasishkumar)
+- **PR #570** (closed): fix(anthropic): count the tokens of tool call rounds (@skybleak333)
 - **PR #568** (2026-11-09): Make Anthropic endpoint and API version configurable (@Copilot)
 - **PR #565** (closed): Update symfony/cache requirement from ^7.2 to ^8.0 (@dependabot[bot])
 - **PR #564** (closed): Update symfony/var-dumper requirement from ^7.2 to ^8.0 (@dependabot[bot])
-- **PR #562** (closed): Update symfony/var-dumper requirement from ^7.2 to ^8.1 (@dependabot[bot])
-- **PR #561** (closed): Update symfony/cache requirement from ^7.2 to ^8.1 (@dependabot[bot])
-- **PR #560** (2026-11-07): fix(ollama): send tool results that are not strings back to the model (@pcbeingused333)
 
 ---
 
@@ -449,32 +518,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Make Anthropic endpoint and API version configurable (#568)
+## X. system message parameter assignment logic
 
 **RULE**:
-When implementing operations in `docker/.env.dist`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in LLPhant/LLPhant. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/Chat/AnthropicChat.php`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in LLPhant/LLPhant. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d0a94b30`: Make Anthropic endpoint and API version configurable (#568). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `50cfe683`: system message parameter assignment logic. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing PHP data structures, boundary deserialization, API parsing, or resource lifecycles matching `docker/.env.dist`.
+Subsystems managing PHP data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Chat/AnthropicChat.php`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```php
 // Verified production-grade fix pattern:
-ANTHROPIC_BASE_URL=
-ANTHROPIC_API_VERSION=
+            $params['system'] = $this->promptCaching && $this->systemMessage->content !== ''
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```php
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+            $params['system'] = $this->promptCaching
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d0a94b30` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `50cfe683` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

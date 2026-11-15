@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T18:17:17.703Z",
-  "total_cycles_completed": 9745,
-  "total_learnings_persisted": 9745,
-  "total_rules_promoted": 9369,
+  "last_updated": "2026-11-15T18:47:46.835Z",
+  "total_cycles_completed": 9746,
+  "total_learnings_persisted": 9746,
+  "total_rules_promoted": 9370,
   "history": [
-    {
-      "timestamp": "2026-11-14T15:49:43.555Z",
-      "repository": "trinodb/trino",
-      "learningId": "learn-github-trinodb-trino",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T15:59:43.306Z",
       "repository": "mudler/locate-anything.cpp-gguf",
@@ -1403,6 +1396,13 @@
       "repository": "telemt/telemt",
       "learningId": "learn-github-telemt-telemt",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T18:47:46.835Z",
+      "repository": "LLPhant/LLPhant",
+      "learningId": "learn-github-llphant-llphant",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
