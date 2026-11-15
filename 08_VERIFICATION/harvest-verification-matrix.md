@@ -10142,3 +10142,5 @@
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T19:12:44.648Z` | `hf-pyannote-speaker-diarization-3.1` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-6A7F4F3B` [Domain D] | Yes (`e327974f...`) |
 | `CYCLE-20261115-DXXN` | `2026-11-15T19:32:03.467Z` | `salvo-rs/salvo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8642` | Yes (`d0b5e958...`) |
 | `CYCLE-20261115-E7YF` | `2026-11-15T19:32:16.455Z` | `pixeltable/pixeltable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8643` | Yes (`f1663694...`) |
+| `CYCLE-20261115-V4KB` | `2026-11-15T19:45:25.211Z` | `AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf-learnings.md` | Yes (`0082134c...`) |
+| `CYCLE-20261115-VK0M` | `2026-11-15T19:45:45.238Z` | `dathere/qsv` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/dathere-qsv-learnings.md` | Yes (`4f60503b...`) |

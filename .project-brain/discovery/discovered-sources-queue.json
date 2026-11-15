@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T19:32:21.090Z",
+  "updated_at": "2026-11-15T19:45:49.340Z",
   "stats": {
-    "total_discovered": 3831,
-    "approved_pending_harvest": 3612,
+    "total_discovered": 3835,
+    "approved_pending_harvest": 3616,
     "harvested_count": 0,
     "rejected_count": 219,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3594,
+      "COMMUNITY_AND_EXPERT": 3598,
       "OFFICIAL_DOCUMENTATION": 130,
       "STANDARDS_AND_SPECIFICATIONS": 90,
       "ENGINEERING_BLOGS": 2,
@@ -82770,6 +82770,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
         "fileName": "pixeltable-pixeltable-learnings.md"
+      }
+    },
+    "SRC-222E4FED91B3": {
+      "id": "SRC-222E4FED91B3",
+      "url": "https://huggingface.co/AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
+      "title": "https://huggingface.co/AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T19:45:48.605Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf-learnings.md",
+        "fileName": "hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf-learnings.md"
+      }
+    },
+    "SRC-E94C4CDBEB76": {
+      "id": "SRC-E94C4CDBEB76",
+      "url": "https://dathere.github.io/qsv/benchmarks",
+      "title": "https://dathere.github.io/qsv/benchmarks",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T19:45:49.199Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-84145877B3BC": {
+      "id": "SRC-84145877B3BC",
+      "url": "https://dathere.github.io/qsv/benchmarks/hero.png",
+      "title": "https://dathere.github.io/qsv/benchmarks/hero.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T19:45:49.309Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-AAB4D981F229": {
+      "id": "SRC-AAB4D981F229",
+      "url": "https://github.com/dathere/qsv/blob/master/scripts/gen_benchmark_viz.py",
+      "title": "https://github.com/dathere/qsv/blob/master/scripts/gen_benchmark_viz.py",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T19:45:49.340Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
       }
     }
   }

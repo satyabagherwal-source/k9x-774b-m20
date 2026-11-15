@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T19:32:16.466Z",
-  "total_cycles_completed": 9750,
-  "total_learnings_persisted": 9750,
+  "last_updated": "2026-11-15T19:45:45.260Z",
+  "total_cycles_completed": 9752,
+  "total_learnings_persisted": 9752,
   "total_rules_promoted": 9372,
   "history": [
-    {
-      "timestamp": "2026-11-14T16:22:53.323Z",
-      "repository": "react-native-webrtc/react-native-webrtc",
-      "learningId": "learn-github-react-native-webrtc-react-native-webrtc",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T16:38:26.790Z",
-      "repository": "tokio-rs/tokio",
-      "learningId": "learn-github-tokio-rs-tokio",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T16:38:37.138Z",
       "repository": "StarRocks/starrocks",
@@ -1403,6 +1389,20 @@
       "repository": "pixeltable/pixeltable",
       "learningId": "learn-github-pixeltable-pixeltable",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T19:45:25.222Z",
+      "repository": "AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T19:45:45.260Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

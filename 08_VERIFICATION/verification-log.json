@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261111-ETTC",
-    "timestamp": "2026-11-11T07:46:13.488Z",
-    "repository": "biomejs/biome",
-    "learningId": "learn-github-biomejs-biome",
-    "contentHash": "fd859ca2a2c76d59bec10ddd63c6f77df2ee9e4a9a6b43eadfa7361dcd88be80",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261111-F3NE",
-    "timestamp": "2026-11-11T07:46:26.234Z",
-    "repository": "SeaQL/sea-orm",
-    "learningId": "learn-github-seaql-sea-orm",
-    "contentHash": "61f6c6fe6d82d8ab0bfbb1fafd4fa4a677588d67f5da3507c3a1cebb3be65380",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261111-UTV2",
     "timestamp": "2026-11-11T07:58:40.046Z",
     "repository": "oxc-project/oxc",
@@ -7492,6 +7462,36 @@
     "contentHash": "f1663694eff71b1a65c9f77a74eac927fff0e872aee3d95ec3fe9da2a0ba9d66",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-V4KB",
+    "timestamp": "2026-11-15T19:45:25.211Z",
+    "repository": "AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
+    "learningId": "learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf",
+    "contentHash": "0082134c7974e2c2366eb87f99511a49c16e0b0fb32814be350acfe9443cf00f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-VK0M",
+    "timestamp": "2026-11-15T19:45:45.238Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "4f60503be7baf1cdb1d18d5c70fcf5606c37f3e4031187ef21b37e5b5690150d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

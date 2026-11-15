@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-15T19:32:22.503Z",
-  "total_verified_learnings": 8718,
+  "last_updated": "2026-11-15T19:45:50.682Z",
+  "total_verified_learnings": 8719,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18563,
+  "total_items": 18568,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112103,10 +112103,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "b1d9ed30",
-      "content_hash": "8c7fa0e8e879b2bc0c189e8f0b0ffd64a4cd55e09ac4c2363f50a9da24f2b2c3",
+      "source_version": "6aa325ba",
+      "content_hash": "4091cd53ab42c5e49a655e035e1bf914729340dc381f7885b655fcfd51d8d691",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T16:50:36.387Z"
+      "persisted_at": "2026-11-15T19:45:45.768Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -112140,9 +112140,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dathere-qsv-learnings",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "08a3eb6c1008569a20dba36a4d83629e316daf471d8ae30756ebc49a93187af2",
+      "content_hash": "2c395b85d6f29ea081ecbdaa3a0394456a4d36ca66ef242afee1176004b02863",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T16:50:40.596Z"
+      "persisted_at": "2026-11-15T19:45:49.866Z"
     },
     "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels": {
       "item_id": "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels",
@@ -113672,13 +113672,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-ECEQ-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-VNZX-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "5d942b6ce0dd41655fc207b73c245525118f47520a05cb9d8122a01bb83c789c",
+      "content_hash": "ae8cb326c546a38feea333b03b84bcdf00f8c1165e6015971ddc61dc6066ce24",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T19:32:22.231Z"
+      "persisted_at": "2026-11-15T19:45:50.400Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113688,9 +113688,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "1ef09f97007b491d999e882f8c495c2e588c6e890cd0d6932549b68402e31dcb",
+      "content_hash": "6ddeb61450372955d8e65acb0ee2769353605b0cdd1c18cc1e7e22a4a4f65c24",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T19:32:22.363Z"
+      "persisted_at": "2026-11-15T19:45:50.537Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113700,9 +113700,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "4ae9bd8705b45439f590dfbb5d5b924b13350d2493e7f99cd81140b24535e2d3",
+      "content_hash": "ba12e875fcb79ceab248c648ac7991a8168f8988feda9d1c2781954da8ff8a42",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T19:32:22.503Z"
+      "persisted_at": "2026-11-15T19:45:50.682Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -218771,8 +218771,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "b1d9ed30",
-      "content_hash": "dd1fd21d4461f1d005f93939bf81c0011c225f7133921cdcf495cd4992a4a2dc",
+      "source_version": "6aa325ba",
+      "content_hash": "4f60503be7baf1cdb1d18d5c70fcf5606c37f3e4031187ef21b37e5b5690150d",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -218842,7 +218842,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T16:50:35.903Z",
+      "verified_at": "2026-11-15T19:45:45.027Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -235346,10 +235346,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dathere-qsv-technical-construction-intelligence-dathere-qsv-core-invariants.md",
       "title": "Technical Construction Intelligence: dathere/qsv Core Invariants",
       "repository": "dathere/qsv",
-      "source_version": "9045d150",
-      "content_hash": "de55917aa48258f0199c2cc585533cef3f9dd55e22fb0912ce80eb090c2bfebb",
+      "source_version": "6aa325ba",
+      "content_hash": "5b8b1339ee7e75aaf41cbdeeb7da07a8eeafa1bb3eac69fb0a6a1d81ca36e11c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T21:38:33.667Z"
+      "persisted_at": "2026-11-15T19:45:45.624Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-francisring-prism-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-francisring-prism-learnings-core-invariants",
@@ -245895,6 +245895,81 @@
       "content_hash": "14a1e0ec980be48bffb02752579108ebbce5f72b19ef457b2607bd258481b601",
       "domain_letter": "I",
       "persisted_at": "2026-11-15T19:32:21.450Z"
+    },
+    "learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf": {
+      "learning_id": "learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
+      "repository": "AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
+      "slug": "hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
+      "source_version": "hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf",
+      "content_hash": "0082134c7974e2c2366eb87f99511a49c16e0b0fb32814be350acfe9443cf00f",
+      "dossier_path": "07_PROJECT_LEARNING/hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T19:45:25.007Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-atomicchat-deepseek-v4-1-flash-1017-uncensored-g": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-atomicchat-deepseek-v4-1-flash-1017-uncensored-g",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf-research-knowledg.md",
+      "title": "Research & Knowledge Intelligence: AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF Core Invariants",
+      "repository": "AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
+      "source_version": "hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf",
+      "content_hash": "01daf1641e0dac78936a489c4c86742cbc1d27a65dd2d2c349e48bcf43bef7ad",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T19:45:25.433Z"
+    },
+    "candidate_directive-docs-changelog-29-0-0-performance-section-from-the-benchmark-run": {
+      "item_id": "candidate_directive-docs-changelog-29-0-0-performance-section-from-the-benchmark-run",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VND5-docs-changelog-29-0-0-performance-section-from-the-benchmark-run.md",
+      "title": "docs(changelog): 29.0.0 Performance section from the benchmark run",
+      "repository": "dathere-qsv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4c4027dc5595cd079ec46425c402d71d1d4e8191585602354331c04b4b4a14cf",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T19:45:49.580Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-atomicchat-deepseek-v4-1-flash-1017-uncensore": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-atomicchat-deepseek-v4-1-flash-1017-uncensore",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf-learnings-researc.md",
+      "title": "Research & Knowledge Intelligence: hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf-learnings Core Invariants",
+      "repository": "hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "93dcb395c238ef11e1fdaeb9c0a3544426ade063640ee8be7b839519c5c27cc1",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T19:45:48.823Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-dathere-qsv-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-dathere-qsv-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dathere-qsv-learnings-technical-construction-intelligence-dathere-qsv-learnings-.md",
+      "title": "Technical Construction Intelligence: dathere-qsv-learnings Core Invariants",
+      "repository": "dathere-qsv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9363878e1721f1ed9c03f0841528f029788aefda345cb93899ea28457a2ea754",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T19:45:49.720Z"
     }
   },
   "ai-builder-brain": {

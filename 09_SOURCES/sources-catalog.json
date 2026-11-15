@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "b1d9ed30",
+    "sourceVersion": "6aa325ba",
     "license": "NOASSERTION",
-    "contentHash": "dd1fd21d4461f1d005f93939bf81c0011c225f7133921cdcf495cd4992a4a2dc",
-    "lastHarvestedAt": "2026-11-15T16:50:36.027Z",
+    "contentHash": "4f60503be7baf1cdb1d18d5c70fcf5606c37f3e4031187ef21b37e5b5690150d",
+    "lastHarvestedAt": "2026-11-15T19:45:45.243Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -11765,8 +11765,8 @@
     "sourceUrl": "https://huggingface.co/AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
     "sourceVersion": "hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf",
     "license": "Open-Source",
-    "contentHash": "0d0447c552f48fca69249a15d12e545edc5d7086f530bdef831b8cba641edd4d",
-    "lastHarvestedAt": "2026-11-10T05:14:25.118Z",
+    "contentHash": "0082134c7974e2c2366eb87f99511a49c16e0b0fb32814be350acfe9443cf00f",
+    "lastHarvestedAt": "2026-11-15T19:45:25.216Z",
     "learningId": "learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf"
   },
   "alfa546-crawler": {

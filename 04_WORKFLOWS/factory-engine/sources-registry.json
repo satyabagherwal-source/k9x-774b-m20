@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-15T19:32:19.749Z",
-    "lastVerified": "2026-11-15T19:32:19.749Z",
+    "lastChecked": "2026-11-15T19:45:48.426Z",
+    "lastVerified": "2026-11-15T19:45:48.426Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -255,22 +255,21 @@
     "revisionIdentifier": "1b782653"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-15T18:47:44.768Z",
-    "lastVerified": "2026-11-15T18:47:44.768Z",
+    "lastChecked": "2026-11-15T19:45:44.698Z",
+    "lastVerified": "2026-11-15T19:45:44.698Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "dd1fd21d4461f1d005f93939bf81c0011c225f7133921cdcf495cd4992a4a2dc",
+    "contentHash": "4f60503be7baf1cdb1d18d5c70fcf5606c37f3e4031187ef21b37e5b5690150d",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "b1d9ed30"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -955,9 +954,9 @@
   "chrispybacon-dev-dockflare": {
     "name": "DockFlare",
     "officialUrl": "https://github.com/ChrispyBacon-dev/DockFlare",
-    "lastChecked": "2026-11-15T11:40:27.648Z",
+    "lastChecked": "2026-11-15T19:45:31.838Z",
     "revisionIdentifier": "9c7bed82",
-    "lastVerified": "2026-11-15T11:40:27.648Z"
+    "lastVerified": "2026-11-15T19:45:31.838Z"
   },
   "nirdiamant-rag_techniques": {
     "name": "RAG_Techniques",
@@ -3350,12 +3349,12 @@
     "lastVerified": "2026-11-14T02:06:13.024Z"
   },
   "beclab-olares": {
-    "name": "beclab/Olares",
+    "name": "Olares",
     "officialUrl": "https://github.com/beclab/Olares",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-14T07:53:31.160Z",
-    "lastVerified": "2026-11-14T07:53:31.160Z",
+    "lastChecked": "2026-11-15T19:45:29.552Z",
+    "lastVerified": "2026-11-15T19:45:29.552Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-beclab-olares",
@@ -3364,7 +3363,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "226652fd"
   },
   "liyupi-yu-ai-agent": {
     "name": "yu-ai-agent",
@@ -4579,12 +4579,12 @@
     "lastVerified": "2026-11-14T15:34:32.108Z"
   },
   "risingwavelabs-risingwave": {
-    "name": "risingwavelabs/risingwave",
+    "name": "risingwave",
     "officialUrl": "https://github.com/risingwavelabs/risingwave",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-14T06:05:49.377Z",
-    "lastVerified": "2026-11-14T06:05:49.377Z",
+    "lastChecked": "2026-11-15T19:45:34.629Z",
+    "lastVerified": "2026-11-15T19:45:34.629Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-risingwavelabs-risingwave",
@@ -4593,7 +4593,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "24cf8ef7"
   },
   "wasm-bindgen-wasm-pack": {
     "name": "wasm-pack",
@@ -5630,9 +5631,9 @@
   "ekzhang-rustpad": {
     "name": "rustpad",
     "officialUrl": "https://github.com/ekzhang/rustpad",
-    "lastChecked": "2026-11-13T20:46:58.591Z",
+    "lastChecked": "2026-11-15T19:45:21.795Z",
     "revisionIdentifier": "54e4a938",
-    "lastVerified": "2026-11-13T20:46:58.591Z"
+    "lastVerified": "2026-11-15T19:45:21.795Z"
   },
   "hf-mistralai-mixtral-8x7b-instruct-v0.1": {
     "name": "mistralai/Mixtral-8x7B-Instruct-v0.1",
@@ -10096,9 +10097,9 @@
   "zacharee-bifrost": {
     "name": "Bifrost",
     "officialUrl": "https://github.com/zacharee/Bifrost",
-    "lastChecked": "2026-11-12T07:37:48.307Z",
+    "lastChecked": "2026-11-15T19:45:26.940Z",
     "revisionIdentifier": "ed73a034",
-    "lastVerified": "2026-11-12T07:37:48.307Z"
+    "lastVerified": "2026-11-15T19:45:26.940Z"
   },
   "liketrek-trek": {
     "name": "liketrek/TREK",
@@ -14103,13 +14104,13 @@
     "officialUrl": "https://huggingface.co/AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-10T05:14:12.367Z",
-    "lastVerified": "2026-11-10T05:14:12.367Z",
+    "lastChecked": "2026-11-15T19:45:24.532Z",
+    "lastVerified": "2026-11-15T19:45:24.532Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf",
-    "contentHash": "0d0447c552f48fca69249a15d12e545edc5d7086f530bdef831b8cba641edd4d",
-    "promotedRulesCount": 2,
+    "contentHash": "0082134c7974e2c2366eb87f99511a49c16e0b0fb32814be350acfe9443cf00f",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

@@ -10175,3 +10175,5 @@ Every entry in this ledger must capture:
 | `learn-dom-d-6a7f4f3b` | `project://hf-pyannote-speaker-diarization-3.1` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-pyannote-speaker-diarization-3.1-learnings.md` | 2026-11-15T19:12:44.648Z |
 | `learn-github-salvo-rs-salvo` | `https://github.com/salvo-rs/salvo` | `617611e8` | Multi-dimensional audit evidence | 2026-11-15T19:32:03.471Z |
 | `learn-github-pixeltable-pixeltable` | `https://github.com/pixeltable/pixeltable` | `890b85ab` | Multi-dimensional audit evidence | 2026-11-15T19:32:16.459Z |
+| `learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf` | `https://huggingface.co/AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF` | `hf-atomicc` | Multi-dimensional audit evidence | 2026-11-15T19:45:25.216Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `6aa325ba` | Multi-dimensional audit evidence | 2026-11-15T19:45:45.243Z |

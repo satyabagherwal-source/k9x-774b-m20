@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `b1d9ed30`  
+> **Source Version**: `6aa325ba`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T16:50:35.691Z  
+> **Timestamp**: 2026-11-15T19:45:44.707Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T16:50:35.685Z  
+> **Harvest Timestamp**: 2026-11-15T19:45:44.698Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2201,240 +2201,218 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b1d9ed30` (2026-11-15)
-**Commit Message**: docs: tagline consistency
+### Incident Patch 1: `6aa325ba` (2026-11-15)
+**Commit Message**: docs(changelog): 29.0.0 Performance section from the benchmark run
 
-**File**: `README.md` (modified, +1/-1)
+Same text as the Performance section in the 29.0.0 release notes:
+stats --everything, searchset, luau, joinp and to ods gains, and plain
+stats about 4% slower, measured against 28.0.0 on the same benchmark box.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +10/-0)
 ```diff
-@@ -1,4 +1,4 @@
--## qsv: Blazing-fast Data-Wrangling toolkit
-+## qsv: Blazing-fast Neuro-symbolic Data-Wrangling toolkit
+@@ -32,6 +32,16 @@ Also in this release:
  
- [![Linux build status](https://github.com/dathere/qsv/actions/workflows/rust.yml/badge.svg)](https://github.com/dathere/qsv/actions/workflows/rust.yml)
- [![Windows build status](https://github.com/dathere/qsv/actions/workflows/rust-windows.yml/badge.svg)](https://github.com/dathere/qsv/actions/workflows/rust-windows.yml)
+ This is a major release because some `sqlp`, `validate`, `profile --strict`, `luau` and `stats` results and exit codes change. See [Breaking Changes](#v29-breaking-changes). The MSRV is now Rust 1.100.
+ 
++### ⚡ Performance
++
++Measured with qsv's benchmark suite, using the same machine, dataset and build type as 28.0.0: a Mac mini (M2 Pro, 12 cores, 32 GiB), 1M rows × 41 columns of NYC 311 data (520 MB), and the prebuilt PGO binary. Across 305 benchmarks, the median one is 1.2% faster, 69 are more than 5% faster, and 6 are more than 5% slower. Full results are in the [Benchmarks Data Schematic](https://dathere.github.io/qsv/benchmarks/).
++
++- **`stats --everything` is 12–28% faster and uses 13–24% less memory** ([#5011](https://github.com/dathere/qsv/pull/5011), [#5013](https://github.com/dathere/qsv/pull/5013)). A full pass over the dataset drops from 2.41 s to 2.02 s, and from 0.55 s to 0.39 s with an index. `stats --cardinality` is 15% faster and uses 20% less memory. Commands that run `stats` internally gain as well: `schema` is 11% faster and `synthesize` 13% faster. Plain `stats` (without `--everything` or `--cardinality`) is about 4% slower: 1.04 s → 1.08 s.
++- **`searchset` is 11–12% faster, uses half the CPU time, and peaks at 22 MiB instead of ~990 MiB** ([#5012](https://github.com/dathere/qsv/pull/5012)). It no longer counts every row up front unless the progress bar is on.
++- **`luau` scripts are 9–11% faster** with Luau 0.745 ([#5026](https://github.com/dathere/qsv/pull/5026)). `luau filter` is unchanged.
++- **`joinp` is 5–12% faster** with the newer Polars ([#5055](https://github.com/dathere/qsv/pull/5055) and earlier bumps).
++- **`to ods` is 41% faster**, taking 16.2 s instead of 27.6 s.
++
+ ### 🙏 Contributors
+ 
+ Thanks to everyone who made 29.0.0 possible:
 ```
 
 ---
 
-### Incident Patch 2: `b8dd4570` (2026-11-15)
-**Commit Message**: deps: bump lock file
+### Incident Patch 2: `359c4b36` (2026-11-15)
+**Commit Message**: bench: use the long-view chart as the wiki hero image (#5061)
 
-Update actix-http, brotli, fantoccini, jiff, rand, webdriver, xxhash-rust, and zip. Remove obsolete ICU dependency versions.
+* bench: use the long-view chart as the wiki hero image
 
-**File**: `Cargo.lock` (modified, +90/-229)
+hero.png was the index-advantage bar chart. It is now a headless-Chrome
+screenshot of the rendered "long view" chart (trend.html), which shows
+throughput across every release on a log axis. It is a screenshot
+rather than a `qsv viz -o hero.png` render because the trend chart's
+log y-axis is patched into its HTML after rendering (set_log_y), and
+`viz line` has no flag for it. Chrome is found via BROWSER_PATH, the
+macOS app bundle, then PATH; without one the hero is skipped as before.
+
+index.html changes only in its "view on GitHub" source-line links,
+which moved with the script.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* bench: link the wiki hero image to the live long-view chart (#trend)
+
+GitHub's wiki strips <script> and <iframe>, so the live Plotly chart
+can't be embedded there. Clicking the thumbnail now opens the
+interactive long view directly instead of the top of the Data Schematic.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `benchmarks/Benchmarks.wiki.md` (modified, +1/-1)
 ```diff
-@@ -33,9 +33,9 @@ dependencies = [
+@@ -20,7 +20,7 @@ schema-cache knob, throughput across every release, deep-dives into four flagshi
+ commands (`stats`, `frequency`, `validate` and `moarstats`) showing they grew features
+ without losing speed, and this release's biggest speedups.
  
- [[package]]
- name = "actix-http"
--version = "3.21.0"
-+version = "3.21.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "3422032be73eeb15bafdb64086386385875b653eb418a80241d1f98473e86ea6"
-+checksum = "a190bdb9595ac6111ca520bc7db0819153cead7d68ca3faaf71f114f697dda07"
- dependencies = [
-  "actix-codec",
-  "actix-service",
-@@ -1110,9 +1110,9 @@ checksum = "36f64beae40a84da1b4b26ff2761a5b895c12adc41dc25aaee1c4f2bbfe97a6e"
+-[![qsv benchmark Data Schematic](https://dathere.github.io/qsv/benchmarks/hero.png)](https://dathere.github.io/qsv/benchmarks/)
++[![qsv benchmark Data Schematic](https://dathere.github.io/qsv/benchmarks/hero.png)](https://dathere.github.io/qsv/benchmarks/#trend)
  
- [[package]]
- name = "brotli"
--version = "9.1.1"
-+version = "9.1.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "627b7cfb0578f0eafce087a90fcd40add1231900b69e4d4de2d456260a4f5d81"
-+checksum = "05e0144f854f7cfbc157229554c4a9580b8a653448e2bab608022ee0398a07dc"
- dependencies = [
-  "alloc-no-stdlib",
-  "alloc-stdlib",
-@@ -2025,7 +2025,7 @@ dependencies = [
-  "petgraph",
-  "postgres",
-  "qsv-stats",
-- "rand 0.10.3",
-+ "rand 0.10.4",
-  "rayon",
-  "regex",
-  "rusqlite",
-@@ -2623,7 +2623,7 @@ dependencies = [
-  "deunicode",
-  "dummy",
-  "either",
-- "rand 0.10.3",
-+ "rand 0.10.4",
-  "random_color",
-  "time",
-  "uuid",
-@@ -2670,11 +2670,11 @@ dependencies = [
+ > **Note:** cross-version numbers are not strictly apples-to-apples — commands gain features
+ > over time. Treat the historical trend as a broad trajectory, not an exact speedup.
+```
+
+**File**: `benchmarks/index.html` (modified, +13/-13)
+```diff
+@@ -64,7 +64,7 @@ <h2 id=index_advantage>The index advantage<a class=anchor href='#index_advantage
+                 &quot;Build an index once and qsv can skip the opening scan on every run after. &quot;
+                 f&quot;The payoff is lopsided — {ip_span} on this run, and next to nothing for &quot;
+                 &quot;streaming commands, so only the pairs where an index actually moves the &quot;
+-                &quot;needle are shown here.&quot;))</code></pre><a class=srclink href='https://github.com/dathere/qsv/blob/master/scripts/gen_benchmark_viz.py#L794-L801' target=_blank rel=noopener>view on GitHub ↗ (gen_benchmark_viz.py, lines 794–801)</a></details>
++                &quot;needle are shown here.&quot;))</code></pre><a class=srclink href='https://github.com/dathere/qsv/blob/master/scripts/gen_benchmark_viz.py#L810-L817' target=_blank rel=noopener>view on GitHub ↗ (gen_benchmark_viz.py, lines 810–817)</a></details>
+ </section>
+ <section>
+ <h2 id=count_callout>count with an index is effectively instant<a class=anchor href='#count_callout' aria-label='Permalink to “count with an index is effectively instant”'>#</a></h2>
+@@ -78,7 +78,7 @@ <h2 id=count_callout>count with an index is effectively instant<a class=anchor h
+                 f&quot;it reads a row count qsv already stored, {c_jump}. It sits on its own axis &quot;
+                 &quot;precisely because that number would flatten every other bar on the page. The &quot;
+                 &quot;un-indexed bar scans the file to count it, so it tracks whatever the current &quot;
+-                &quot;scan path costs; the indexed bar reads the stored count and does not.&quot;))</code></pre><a class=srclink href='https://github.com/dathere/qsv/blob/master/scripts/gen_benchmark_viz.py#L809-L817' target=_blank rel=noopener>view on GitHub ↗ (gen_benchmark_viz.py, lines 809–817)</a></details>
++                &quot;scan path costs; the indexed bar reads the stored count and does not.&quot;))</code></pre><a class=srclink href='https://github.com/dathere/qsv/blob/master/scripts/gen_benchmark_viz.py#L825-L833' target=_blank rel=noopener>view on GitHub ↗ (gen_benchmark_viz.py, lines 825–833)</a></details>
+ </section>
+ <section>
+ <h2 id=index_superpowers>The index superpowers<a class=anchor href='#index_superpowers' aria-label='Permalink to “The index superpowers”'>#</a></h2>
+@@ -94,7 +94,7 @@ <h2 id=index_superpowers>The index superpowers<a class=anchor href='#index_super
+                 f&quot;cached statistics. That&#x27;s a different order of magnitude: {sp_top_cmd} leads at &quot;
+                 f&quot;{sp_top_x:.0f}x faster, with the rest of the seek-and-reuse tier &quot;
+                 f&quot;{min(sp_rest):.0f}x to {max(sp_rest):.0f}x faster — versus the low single &quot;
+-                &quot;digits for the scan-skippers above.&quot;))</code></pre><a class=srclink href='https://github.com/dathere/qsv/blob/master/scripts/gen_benchmark_viz.py#L823-L833' target=_blank rel=noopener>view on GitHub ↗ (gen_benchmark_viz.py, lines 823–833)</a></details>
++                &quot;digits for the scan-skippers above.&quot;))</code></pre><a class=srclink href='https://github.com/dathere/qsv/blob/master/scripts/gen_benchmark_viz.py#L839-L849' target=_blank rel=noopener>view on GitHub ↗ (gen_benchmark_viz.py, lines 839–849)</a></details>
+ </section>
+ <section>
+ <h2 id=sqlp_tuning>sqlp tuning: the schema-cache knob<a class=anchor href='#sqlp_tuning' aria-label='Permalink to “sqlp tuning: the schema-cache knob”'>#</a></h2>
+@@ -107,7 +107,7 @@ <h2 id=sqlp_tuning>sqlp tuning: the schema-cache knob<a class=anchor href='#sqlp
+                 &quot;sqlp_tuning&quot;, &quot;sqlp tuning: the schema-cache knob&quot;,
+                 &quot;sqlp infers a schema before it runs. Cache that schema and the re-inference &quot;
+                 &quot;cost disappears on the next query — worth about a third more throughput on &quot;
+-                &quot;these aggregations, for a one-line option.&quot;))</code></pre><a class=srclink href='https://github.com/dathere/qsv/blob/master/scripts/gen_benchmark_viz.py#L834-L841' target=_blank rel=noopener>view on GitHub ↗ (gen_benchmark_viz.py, lines 834–841)</a></details>
++                &quot;these aggregations, for a one-line option.&quot;))</code></pre><a class=srclink href='https://github.com/dathere/qsv/blob/master/scripts/gen_benchmark_viz.py#L850-L857' target=_blank rel=noopener>view on GitHub ↗ (gen_benchmark_viz.py, lines 850–857)</a></details>
+ </section>
+ <section>
+ <h2 id=trend>The long view — every release<a class=anchor href='#trend' aria-label='Permalink to “The long view — every release”'>#</a></h2>
+@@ -133,7 +133,7 @@ <h2 id=trend>The long view — every release<a class=anchor href='#trend' aria-l
+                 &quot;on a log axis a constant multiple reads as a constant vertical gap. Broad &quot;
+                 &quot;trajectory only (see the note above); count and moarstats are omitted for &quot;
+            
+```
+
+**File**: `scripts/gen_benchmark_viz.py` (modified, +34/-18)
+```diff
+@@ -21,8 +21,9 @@
+ Set QSV_BIN to point at a specific binary; otherwise target/{debug,release}/qsv or a
+ `qsv` on PATH is used.
  
- [[package]]
- name = "fantoccini"
--version = "0.22.1"
-+version = "0.22.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "7737298823a6f9ca743e372e8cb03658d55354fbab843424f575706ba9563046"
-+checksum = "1a1ccdca7be680925093d9be9aec25f9f067c9db03c61b5c3625996022e23807"
- dependencies = [
-- "base64 0.22.1",
-+ "base64 0.23.1",
-  "cookie 0.18.2",
-  "http 1.5.0",
-  "http-body-util",
-@@ -3690,18 +3690,6 @@ dependencies = [
-  "cc",
- ]
+-A static PNG (benchmarks/hero.png) for the Wiki thumbnail is rendered best-effort via the
+-`viz_static` feature (needs a local Chrome/Firefox); it's skipped gracefully if unavailable.
++A static PNG (benchmarks/hero.png) for the Wiki thumbnail — the "long view" chart — is a
++best-effort headless-Chrome screenshot of benchmarks/trend.html (set BROWSER_PATH for a
++non-default Chrome/Chromium); it's skipped gracefully if no browser is found.
  
--[[package]]
--name = "icu_collections"
--version = "1.5.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "db2fa452206ebee18c4b5c2274dbf1de17008e874b4dc4f0aea9d01ca79e4526"
--dependencies = [
-- "displaydoc",
-- "yoke 0.7.5",
-- "zerofrom",
-- "zerovec 0.10.4",
--]
--
- [[package]]
- name = "icu_collections"
- version = "2.4.0"
-@@ -3711,9 +3699,9 @@ dependencies = [
-  "displaydoc",
-  "potential_utf",
-  "utf8_iter",
-- "yoke 0.8.4",
-+ "yoke",
-  "zerofrom",
-- "zerovec 0.11.9",
-+ "zerovec",
- ]
+ Publishing the Wiki "Benchmarks" page is a separate MANUAL step (the wiki is its own
+ repo and interactive Plotly can't render in wiki markdown, which strips <script>):
+@@ -697,7 +698,7 @@ def build_index(figs, info):
+ commands (`stats`, `frequency`, `validate` and `moarstats`) showing they grew features
+ without losing speed, and this release's biggest speedups.
  
- [[package]]
-@@ -3723,11 +3711,11 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "25d29b57c17c6528d0dc4c2141cfa2d08200465acb537a3909c8b9b8a4a984c0"
- dependencies = [
-  "displaydoc",
-- "litemap 0.8.3",
-+ "litemap",
-  "serde",
-- "tinystr 0.8.5",
-- "writeable 0.6.4",
-- "zerovec 0.11.9",
-+ "tinystr",
-+ "writeable",
-+ "zerovec",
- ]
+-[![qsv benchmark Data Schematic]({url}hero.png)]({url})
++[![qsv benchmark Data Schematic]({url}hero.png)]({url}#trend)
  
- [[package]]
-@@ -3738,10 +3726,10 @@ checksum = "406e9ae5b95d8aa37db6293405931b766a6172d1848daee22d70eb44aa78a43c"
- dependencies = [
-  "icu_locale_core",
-  "icu_locale_fallback_data",
-- "icu_provider 2.4.0",
-+ "icu_provider",
-  "potential_utf",
-- "tinystr 0.8.5",
-- "zerovec 0.11.9",
-+ "tinystr",
-+ "zerovec",
- ]
+ > **Note:** cross-version numbers are not strictly apples-to-apples — commands gain features
+ > over time. Treat the historical trend as a broad trajectory, not an exact speedup.
+@@ -716,22 +717,37 @@ def write_wiki_stub(info, total):
+         fh.write(md)
  
- [[package]]
-@@ -3750,30 +3738,18 @@ version = "2.4.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "3632ebbd0c5c3637ba1a40bdf8288f2cb9d2268e73441a69d5fc73d7cfbaa87c"
  
--[[package]]
--name = "icu_locid"
--version = "1.5.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "13acbb8371917fc971be86fc8057c41a64b521c184808a698c02acc242dbf637"
--dependencies = [
-- "displaydoc",
-- "litemap 0.7.5",
-- "tinystr 0.7.6",
-- "writeable 0.5.5",
--]
--
- [[package]]
- name = "icu_normalizer"
- version = "2.4.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "404a3b8c486f205c87fe7f23ab6894d84a4ad76d6e4671ae1981ba7def87c599"
- dependencies = [
-- "icu_collections 2.4.0",
-+ "icu_collections",
-  "icu_normalizer_data",
-  "icu_properties",
-- "icu_provider 2.4.0",
-+ "icu_provider",
-  "smallvec",
-- "zerovec 0.11.9",
-+ "zerovec",
- ]
+-def render_hero(index_src):
+-    """Best-effort static PNG (benchmarks/hero.png) for the Wiki thumbnail — the index-advantage
+-    chart. Needs the `viz_static` feature + a local Chrome/Firefox (webdriver auto-downloads), so
+-    it is skipped gracefully if unavailable (the interactive Data Schematic never needs it)."""
++def find_chrome():
++    """BROWSER_PATH (the same override `qsv viz` honors), the macOS app bundle, then PATH."""
++    candidates = [os.environ.get("BROWSER_PATH"),
++                  "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
++                  *(shutil.which(n) for n in ("google-chrome", "google-chrome-stable",
++                                              "chromium", "chromium-browser", "chrome"))]
++    return next((c for c in candidates if c and os.access(c, os.X_OK)), None)
++
++
++def render_hero():
++    """Best-effort static PNG (benchmarks/hero.png) for the Wiki thumbnail — a headless-Chrome
++    screenshot of the rendered "long view" chart (trend.html). A screenshot rather than a
++    `qsv viz ... -o hero.png` render, because the trend chart's log y-axis is patched into its HTML
++    after rendering (see set_log_y) and `viz line` has no flag for it. Skipped gracefully when no
++    Chrome/Chromium is found (the interactive Data Schematic never needs it)."""
+     out = os.path.join(OUT, "hero.png")
+-    env = {**os.environ, "QSV_PROGRESSBAR": "0"}
++    chrome = find_chrome()
++    if not chrome:
++        print("NOTE: skipped hero.png (no Chrome/Chromium found; set BROWSER_PATH)")
++        return
++    # 470 px tall stops just below the x-axis title, leaving out the page's notices footer.
++    # trend.html loads plotly.js from its CDN, so the budget covers that fetch plus the render.
++    cmd = [chrome, "--headless=new", "--disable-gpu", "--hide-scrollbars",
++           "--window-size=1200,470", "--virtual-time-budget=15000", f"--screenshot={out}",
++           "file://" + os.path.abspath(os.path.join(OUT, "trend.html"))]
+     try:
+-        subprocess.run([QSV, "viz", "bar", index_src, "--x", "command", "--y", "recs_per_sec",
+-                        "--series", "index_status", "--width", "1200", "--height", "600",
+-                        "--title", "The index advantage — qsv throughput with vs without an index",
+-                        "--y-title", "records/sec", "-o", out],
+-                       check=True, capture_output=True, text=True, env=env)
+-        print("Wrote hero.png (static PNG for the Wiki)")
+-    except subprocess.CalledProcessError as e:
+-        print(f"NOTE: skipped hero.png (viz_static/browser unavailable): "
+-              f"{(e.stderr or '').strip().splitlines()[-1] if e.stderr else e}")
++        subprocess.run(cmd, check=True, capture_output=True, text=True, timeout=120)
++    except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as e:
++        print(f"NOTE: skipped hero.png (headless Chrome screenshot failed): {e}")
++        return
++    print("Wrote hero.png (static PNG of the long-view chart for the Wiki)")
  
- [[package]]
-@@ -3789,12 +3765,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "2ea83d991c56158f7cf898bf86436c1dfe7c07ee82fe88951f2695c9f37a379f"
- dependencies = [
-  "displaydoc",
-- "icu_collections 2.4.0",
-+ "icu_collections",
-  "icu_locale_core",
-  "icu_properties_data",
-- "icu_provider 2.4.0",
-+ "icu_provider",
-  "zerotrie",
-- "zerovec 0.11.9",
-+ "zerovec",
- ]
  
- [[package]]
-@@ -3803,23 +3779,6 @@ version = "2.4.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "b98f29af82d02b163fe50161388350e743bb3107cc8e8c2f7314cb505faddfcf"
+ def count_rows(path):
+@@ -993,7 +1009,7 @@ def main():
+                     "every point charted here is visible."))
  
--[[package]]
--name = "icu_provider"
--version = "1.5.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "6ed421c8a8ef78d3e2dbc98a973be2f3770cb42b606e3ab18d6237c4dfde68d9"
--dependencies = [
-- "displaydoc",
-- "icu_locid",
-- "icu_provider_macros",
-- "stable_deref_trait",
-- "tinystr 0.7.6",
-- "writeable 0.5.5",
-- "yoke 0.7.5",
-- "zerofrom",
-- "zerovec 0.10.4",
--]
--
- [[package]]
- name = "icu_provider"
- version = "2.4.0"
-@@ -3830,38 +3789,11 @@ dependencies = [
-  "icu_locale_core",
-  "serde",
-  "stable_deref_trait",
-- "writeable 0.6.4",
-- "yoke 0.8.4",
-+ "writeable",
-+ "yoke",
-  "zerofrom",
-  "zerotrie",
-- "zerovec 0.11
+     build_index(figs, info)
+-    render_hero(index_src)
++    render_hero()
+     write_wiki_stub(info, total)
+     shutil.rmtree(TMP, ignore_errors=True)
+     print(f"Wrote {len(figs)} charts + index.html to {OUT}")
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5061** (2026-11-15): bench: use the long-view chart as the wiki hero image (@jqnatividad)
+- **PR #5060** (2026-11-15): bench: regenerate Benchmarks Data Schematic for the 29.0.0 run (@jqnatividad)
 - **PR #5058** (2026-11-15): fix(ci): enable trim_prefix_suffix on the Polars-pinned nightly (@jqnatividad)
 - **PR #5057** (2026-11-15): deps(viz): driver.js 1.14.0 for the Data Schematic Tour (@jqnatividad)
 - **PR #5056** (2026-11-15): fix(stats): a column of only NaN cells has no sum, not 0 (@jqnatividad)
 - **PR #5055** (2026-11-15): deps: bump Polars to upstream rev 2d9938d; EXPLAIN takes queries only (@jqnatividad)
-- **PR #5054** (2026-11-14): test(stats): NaN cells crashed the exact quantiles on larger columns; cover it and Codacy's suggestions (@jqnatividad)
-- **PR #5053** (2026-11-14): fix(stats): a NaN cell is skipped by the sum, the exact quantiles and the weighted statistics (@jqnatividad)
 
 ---
 
@@ -2454,28 +2432,34 @@ Update actix-http, brotli, fantoccini, jiff, rand, webdriver, xxhash-rust, and z
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: tagline consistency
+## X. docs(changelog): 29.0.0 Performance section from the benchmark run
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b1d9ed30`: docs: tagline consistency. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6aa325ba`: docs(changelog): 29.0.0 Performance section from the benchmark run. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## qsv: Blazing-fast Neuro-symbolic Data-Wrangling toolkit
+### ⚡ Performance
+
+Measured with qsv's benchmark suite, using the same machine, dataset and build type as 28.0.0: a Mac mini (M2 Pro, 12 cores, 32 GiB), 1M rows × 41 columns of NYC 311 data (520 MB), and the prebuilt PGO binary. Across 305 benchmarks, the median one is 1.2% faster, 69 are more than 5% faster, and 6 are more than 5% slower. Full results are in the [Benchmarks Data Schematic](https://dathere.github.io/qsv/benchmarks/).
+
+- **`stats --everything` is 12–28% faster and uses 13–24% less memory** ([#5011](https://github.com/dathere/qsv/pull/5011), [#5013](https://github.com/dathere/qsv/pull/5013)). A full pass over the dataset drops from 2.41 s to 2.02 s, and from 0.55 s to 0.39 s with an index. `stats --cardinality` is 15% faster and uses 20% less memory. Commands that run `stats` internally gain as well: `schema` is 11% faster and `synthesize` 13% faster. Plain `stats` (without `--everything` or `--cardinality`) is about 4% slower: 1.04 s → 1.08 s.
+- **`searchset` is 11–12% faster, uses half the CPU time, and peaks at 22 MiB instead of ~990 MiB** ([#5012](https://github.com/dathere/qsv/pull/5012)). It no longer counts every row up front unless the progress bar is on.
+- *
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-## qsv: Blazing-fast Data-Wrangling toolkit
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b1d9ed30` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6aa325ba` are properly handled with clean fallback behavior.

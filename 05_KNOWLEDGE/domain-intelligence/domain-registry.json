@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T19:32:22.363Z",
-  "total_records": 1105,
+  "last_updated": "2026-11-15T19:45:50.537Z",
+  "total_records": 1108,
   "domains": {
     "A": {
       "total": 7,
@@ -37,7 +37,7 @@
       ]
     },
     "D": {
-      "total": 535,
+      "total": 537,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -573,7 +573,9 @@
         "domain_intelligence-research-knowledge-intelligence-hf-diffuspace-clover-35b-a3b-preview-learnings-c",
         "domain_intelligence-research-knowledge-intelligence-pyannote-speaker-diarization-3-1-core-invariants",
         "DOM-D-6A7F4F3B",
-        "domain_intelligence-research-knowledge-intelligence-hf-pyannote-speaker-diarization-3-1-learnings-co"
+        "domain_intelligence-research-knowledge-intelligence-hf-pyannote-speaker-diarization-3-1-learnings-co",
+        "domain_intelligence-research-knowledge-intelligence-atomicchat-deepseek-v4-1-flash-1017-uncensored-g",
+        "domain_intelligence-research-knowledge-intelligence-hf-atomicchat-deepseek-v4-1-flash-1017-uncensore"
       ]
     },
     "E": {
@@ -803,7 +805,7 @@
       ]
     },
     "H": {
-      "total": 228,
+      "total": 229,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1032,7 +1034,8 @@
         "domain_intelligence-technical-construction-intelligence-goodrain-rainbond-core-invariants",
         "DOM-H-4F755436",
         "domain_intelligence-technical-construction-intelligence-lottie-react-native-lottie-react-native-lear",
-        "domain_intelligence-technical-construction-intelligence-goodrain-rainbond-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-goodrain-rainbond-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-dathere-qsv-learnings-core-invariants"
       ]
     },
     "I": {
@@ -7838,8 +7841,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "1ef09f97007b491d999e882f8c495c2e588c6e890cd0d6932549b68402e31dcb",
-      "created_at": "2026-11-15T19:32:22.363Z"
+      "content_hash": "6ddeb61450372955d8e65acb0ee2769353605b0cdd1c18cc1e7e22a4a4f65c24",
+      "created_at": "2026-11-15T19:45:50.537Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -17140,8 +17143,8 @@
       "title": "Technical Construction Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dathere-qsv-technical-construction-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "de55917aa48258f0199c2cc585533cef3f9dd55e22fb0912ce80eb090c2bfebb",
-      "created_at": "2026-11-14T21:38:33.667Z"
+      "content_hash": "5b8b1339ee7e75aaf41cbdeeb7da07a8eeafa1bb3eac69fb0a6a1d81ca36e11c",
+      "created_at": "2026-11-15T19:45:45.624Z"
     },
     "DOM-D-11540386": {
       "record_id": "DOM-D-11540386",
@@ -21025,6 +21028,33 @@
       "repository": "pixeltable-pixeltable-learnings",
       "content_hash": "14a1e0ec980be48bffb02752579108ebbce5f72b19ef457b2607bd258481b601",
       "created_at": "2026-11-15T19:32:21.450Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-atomicchat-deepseek-v4-1-flash-1017-uncensored-g": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-atomicchat-deepseek-v4-1-flash-1017-uncensored-g",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf-research-knowledg.md",
+      "repository": "AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
+      "content_hash": "01daf1641e0dac78936a489c4c86742cbc1d27a65dd2d2c349e48bcf43bef7ad",
+      "created_at": "2026-11-15T19:45:25.433Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-atomicchat-deepseek-v4-1-flash-1017-uncensore": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-atomicchat-deepseek-v4-1-flash-1017-uncensore",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf-learnings-researc.md",
+      "repository": "hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf-learnings",
+      "content_hash": "93dcb395c238ef11e1fdaeb9c0a3544426ade063640ee8be7b839519c5c27cc1",
+      "created_at": "2026-11-15T19:45:48.823Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-dathere-qsv-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-dathere-qsv-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: dathere-qsv-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dathere-qsv-learnings-technical-construction-intelligence-dathere-qsv-learnings-.md",
+      "repository": "dathere-qsv-learnings",
+      "content_hash": "9363878e1721f1ed9c03f0841528f029788aefda345cb93899ea28457a2ea754",
+      "created_at": "2026-11-15T19:45:49.720Z"
     }
   }
 }
