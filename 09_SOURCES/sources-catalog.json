@@ -12608,5 +12608,15 @@
     "contentHash": "b0a7f55bab89eec331e9727ff2d676e21a5a566c44a5cebc3b7a528ed2592b45",
     "lastHarvestedAt": "2026-11-15T11:12:30.217Z",
     "learningId": "learn-huggingface-abiray-minimax-h3-image-gguf"
+  },
+  "tencent-loopforge": {
+    "repository": "Tencent/LoopForge",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Tencent/LoopForge",
+    "sourceVersion": "dd565852",
+    "license": "NOASSERTION",
+    "contentHash": "13e1d5169468e38812cdfa41d8b106e8dc7eb78b994b460c10c8ce0655923f50",
+    "lastHarvestedAt": "2026-11-15T14:25:39.800Z",
+    "learningId": "learn-github-tencent-loopforge"
   }
 }

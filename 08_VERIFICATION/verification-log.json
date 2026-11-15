@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261110-QUTO",
-    "timestamp": "2026-11-10T04:51:56.940Z",
-    "repository": "milvus-io/milvus",
-    "learningId": "learn-github-milvus-io-milvus",
-    "contentHash": "e36b0f0a10cc4867d3a03bbce67ff91e62aeeb247e7f12269096f296ef6c65dd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261110-QWD6",
     "timestamp": "2026-11-10T04:51:58.938Z",
     "repository": "Diffuspace/Clover-35B-A3B-Preview",
@@ -7490,6 +7475,21 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "cd3e3a4c8ceaac1a655f979698e61d35b2a97641407eb9fd602f30bb00003240",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-FX04",
+    "timestamp": "2026-11-15T14:25:39.796Z",
+    "repository": "Tencent/LoopForge",
+    "learningId": "learn-github-tencent-loopforge",
+    "contentHash": "13e1d5169468e38812cdfa41d8b106e8dc7eb78b994b460c10c8ce0655923f50",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

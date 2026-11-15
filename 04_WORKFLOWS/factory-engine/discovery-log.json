@@ -21202,5 +21202,20 @@
     "downloads": 127803,
     "qualityScore": 4180,
     "discoveredAt": "2026-11-15T11:10:15.194Z"
+  },
+  {
+    "name": "LoopForge",
+    "fullName": "Tencent/LoopForge",
+    "url": "https://github.com/Tencent/LoopForge",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Self-hosted workflows for coding-agent delivery. Orchestrate CodeBuddy, Codex and Claude Code with scripts and human approval gates. Includes Local workflows for coding assistants.",
+    "stars": 1220,
+    "forks": 251,
+    "openIssues": 72,
+    "language": "Go",
+    "qualityScore": 1979,
+    "verifiedOrg": true,
+    "discoveredAt": "2026-11-15T14:21:48.029Z"
   }
 ]

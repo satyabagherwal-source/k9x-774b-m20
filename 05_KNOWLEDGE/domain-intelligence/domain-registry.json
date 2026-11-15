@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T14:07:12.824Z",
-  "total_records": 1056,
+  "last_updated": "2026-11-15T14:25:56.850Z",
+  "total_records": 1058,
   "domains": {
     "A": {
       "total": 7,
@@ -597,7 +597,7 @@
       ]
     },
     "G": {
-      "total": 178,
+      "total": 180,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -776,7 +776,9 @@
         "domain_intelligence-architecture-intelligence-nasiko-labs-nasiko-core-invariants",
         "domain_intelligence-architecture-intelligence-nasiko-labs-nasiko-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-vi-websocat-core-invariants",
-        "domain_intelligence-architecture-intelligence-vi-websocat-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-vi-websocat-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-tencent-loopforge-core-invariants",
+        "domain_intelligence-architecture-intelligence-tencent-loopforge-learnings-core-invariants"
       ]
     },
     "H": {
@@ -6871,8 +6873,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "1cf4685f926a2110ecba3bcd22a2b3ce91daa666d3dd2d67e624546829f6dfa8",
-      "created_at": "2026-11-15T14:07:12.401Z"
+      "content_hash": "c8d54af6cb0ae00f75e275c0325189d6716af655c5a9ce672e7325babee76d86",
+      "created_at": "2026-11-15T14:25:56.850Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -7789,8 +7791,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "34ce6a169dd5d2e79571c924db758094cb5c6cbf381788261d3b7cde1295a8bc",
-      "created_at": "2026-11-15T13:40:25.631Z"
+      "content_hash": "fad89b8256394f337a42e0556986bfcbee9ae4d021ce4ed19d6223826bee197a",
+      "created_at": "2026-11-15T14:25:56.353Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -20279,6 +20281,24 @@
       "repository": "hf-ccore-qwen3.5-4b-glb-3d-coder-learnings",
       "content_hash": "356978fbd01b37dba2ed25554cd5e303ebe90a5b59360ee34457a9b74c4da471",
       "created_at": "2026-11-15T13:40:24.865Z"
+    },
+    "domain_intelligence-architecture-intelligence-tencent-loopforge-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-tencent-loopforge-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: Tencent/LoopForge Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tencent-loopforge-architecture-intelligence-tencent-loopforge-core-invariants.md",
+      "repository": "Tencent/LoopForge",
+      "content_hash": "a3782c1b39dc30579062c10661daae35107e6945a79f2607cf5769d93d4be0a2",
+      "created_at": "2026-11-15T14:25:40.099Z"
+    },
+    "domain_intelligence-architecture-intelligence-tencent-loopforge-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-tencent-loopforge-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: tencent-loopforge-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tencent-loopforge-learnings-architecture-intelligence-tencent-loopforge-learning.md",
+      "repository": "tencent-loopforge-learnings",
+      "content_hash": "e77df990be63c151efb7725137cdc8832df98e9ea9004e7c07cc8577924cb087",
+      "created_at": "2026-11-15T14:25:55.746Z"
     }
   }
 }

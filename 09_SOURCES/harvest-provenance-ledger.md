@@ -10135,3 +10135,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-ccore-qwen3-5-4b-glb-3d-coder` | `https://huggingface.co/ccore/Qwen3.5-4B-GLB-3D-Coder` | `hf-ccore-q` | Multi-dimensional audit evidence | 2026-11-15T13:39:37.826Z |
 | `learn-dom-d-55af5812` | `project://hf-ccore-qwen3.5-4b-glb-3d-coder` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-glb-3d-coder-learnings.md` | 2026-11-15T13:40:24.606Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `a6e090ae` | Multi-dimensional audit evidence | 2026-11-15T14:07:08.608Z |
+| `learn-github-tencent-loopforge` | `https://github.com/Tencent/LoopForge` | `dd565852` | Multi-dimensional audit evidence | 2026-11-15T14:25:39.800Z |

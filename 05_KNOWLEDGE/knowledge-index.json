@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-15T14:07:12.994Z",
-  "total_verified_learnings": 8698,
+  "last_updated": "2026-11-15T14:25:56.962Z",
+  "total_verified_learnings": 8699,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18407,
+  "total_items": 18415,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112155,9 +112155,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "1cf4685f926a2110ecba3bcd22a2b3ce91daa666d3dd2d67e624546829f6dfa8",
+      "content_hash": "c8d54af6cb0ae00f75e275c0325189d6716af655c5a9ce672e7325babee76d86",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T14:07:12.401Z"
+      "persisted_at": "2026-11-15T14:25:56.850Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112167,9 +112167,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "9b15cf4c2287c66a5731d4c28dc452cfbef076c1ecc831ebd790c15eba34a5a7",
+      "content_hash": "d8bbf9a99fc688d05b85ca9d2e8d4a34a61d4e3bdf3ca2ab849e1028cf7f96bb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T14:07:12.487Z"
+      "persisted_at": "2026-11-15T14:25:56.962Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -113663,13 +113663,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-TQMK-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-G9P7-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "3fbcb84fcd23fca3fb5fa921daac316037262e89c8e4ea2f414e761610a3fb14",
+      "content_hash": "b7f1a81c080c9e6b2e928c5fe04b91e6348abacca7a25a51cfc7e0ef6992dd00",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T13:40:25.494Z"
+      "persisted_at": "2026-11-15T14:25:56.253Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113679,9 +113679,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "34ce6a169dd5d2e79571c924db758094cb5c6cbf381788261d3b7cde1295a8bc",
+      "content_hash": "fad89b8256394f337a42e0556986bfcbee9ae4d021ce4ed19d6223826bee197a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T13:40:25.631Z"
+      "persisted_at": "2026-11-15T14:25:56.353Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113691,9 +113691,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "98dc1cf368d23257a67631d62b634678a12b6e0e199641c128c72b2d44462655",
+      "content_hash": "62d615fa79b205137b98283de6999a89c365609f025d15bff46e98d9469fd63e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T13:40:25.781Z"
+      "persisted_at": "2026-11-15T14:25:56.461Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -214776,13 +214776,13 @@
       "item_id": "candidate_directive-puppet-fix-postgresql-failing-to-start-on-new-installs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-S6GT-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-GA2V-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
       "title": "puppet: Fix PostgreSQL failing to start on new installs.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "208732de67f1d2e84ab745d963c14a07b694c06f0e26a550164f01f6ddbf3937",
+      "content_hash": "95d26e751f74454bc897ed474b1bc16db271a5ba6015a73ecd9136ae2d5c4111",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T14:07:12.321Z"
+      "persisted_at": "2026-11-15T14:25:56.745Z"
     },
     "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
@@ -243543,6 +243543,125 @@
       "content_hash": "8c511af54c0a66e0d44dfc0608fafbe4aef7d6b5ea8c1ad063bbb97dc0d426ac",
       "domain_letter": "G",
       "persisted_at": "2026-11-15T14:07:11.901Z"
+    },
+    "learn-github-tencent-loopforge": {
+      "learning_id": "learn-github-tencent-loopforge",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Tencent/LoopForge",
+      "repository": "Tencent/LoopForge",
+      "slug": "tencent-loopforge",
+      "platform": "github",
+      "source_url": "https://github.com/Tencent/LoopForge",
+      "source_version": "dd565852",
+      "content_hash": "13e1d5169468e38812cdfa41d8b106e8dc7eb78b994b460c10c8ce0655923f50",
+      "dossier_path": "07_PROJECT_LEARNING/tencent-loopforge-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tencent-loopforge-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8620,
+          "title": "keep a live generation through a slow heartbeat",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T14:25:39.643Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8620": {
+      "learning_id": "rule-8620",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8620,
+      "title": "keep a live generation through a slow heartbeat",
+      "source_url": "https://github.com/Tencent/LoopForge",
+      "source_version": "dd565852",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T14:25:39.643Z"
+    },
+    "candidate_directive-keep-a-live-generation-through-a-slow-heartbeat": {
+      "item_id": "candidate_directive-keep-a-live-generation-through-a-slow-heartbeat",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-FX59-keep-a-live-generation-through-a-slow-heartbeat.md",
+      "title": "keep a live generation through a slow heartbeat",
+      "repository": "Tencent/LoopForge",
+      "source_version": "dd565852",
+      "content_hash": "7875c76f10b9c61db227d91fc839ce7417fefb85eb8a794491983684ae672266",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T14:25:39.984Z"
+    },
+    "domain_intelligence-architecture-intelligence-tencent-loopforge-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-tencent-loopforge-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tencent-loopforge-architecture-intelligence-tencent-loopforge-core-invariants.md",
+      "title": "Architecture Intelligence: Tencent/LoopForge Core Invariants",
+      "repository": "Tencent/LoopForge",
+      "source_version": "dd565852",
+      "content_hash": "a3782c1b39dc30579062c10661daae35107e6945a79f2607cf5769d93d4be0a2",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T14:25:40.099Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-tencent-loopforge": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tencent-loopforge",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/tencent-loopforge-verification-protocol-empirical-defect-shield-for-tencent-loop.md",
+      "title": "Verification Protocol: Empirical Defect Shield for Tencent/LoopForge",
+      "repository": "Tencent/LoopForge",
+      "source_version": "dd565852",
+      "content_hash": "0cc2a5cad2955a3b97dee5e79187318034e21c62e05d0e4b7d2b62c97d5ebe74",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T14:25:40.219Z"
+    },
+    "candidate_directive-assistant-keep-a-live-generation-through-a-slow-heartbeat": {
+      "item_id": "candidate_directive-assistant-keep-a-live-generation-through-a-slow-heartbeat",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-G97Z-assistant-keep-a-live-generation-through-a-slow-heartbeat.md",
+      "title": "assistant): keep a live generation through a slow heartbeat",
+      "repository": "tencent-loopforge-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4b3f289ee1755e835eadf0fb7aae5f9e973d5d72f2fc34113cbc641453db4872",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T14:25:55.634Z"
+    },
+    "domain_intelligence-architecture-intelligence-tencent-loopforge-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-tencent-loopforge-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tencent-loopforge-learnings-architecture-intelligence-tencent-loopforge-learning.md",
+      "title": "Architecture Intelligence: tencent-loopforge-learnings Core Invariants",
+      "repository": "tencent-loopforge-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e77df990be63c151efb7725137cdc8832df98e9ea9004e7c07cc8577924cb087",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T14:25:55.746Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-tencent-loopforge-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tencent-loopforge-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/tencent-loopforge-learnings-verification-protocol-empirical-defect-shield-for-te.md",
+      "title": "Verification Protocol: Empirical Defect Shield for tencent-loopforge-learnings",
+      "repository": "tencent-loopforge-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0ea8c7397ec72d4e5a143f04e0929de5b6ee626366f4a189b54fb6b8995f2ece",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T14:25:55.862Z"
     }
   },
   "ai-builder-brain": {

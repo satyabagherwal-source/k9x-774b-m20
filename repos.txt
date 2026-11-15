@@ -5100,3 +5100,7 @@ https://huggingface.co/ConceptCountry/qwen-concept-27b
 # --- Automatically Discovered by AI Scout Engine [2026-11-15T11:12:23.422Z] ---
 # [HUGGINGFACE-AI-MODELS] Abiray/MiniMax-H3-Image-GGUF (4180 score) - Verified Hugging Face Model: Abiray/MiniMax-H3-Image-GGUF (218 likes, 127803 dow
 https://huggingface.co/Abiray/MiniMax-H3-Image-GGUF
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-15T14:25:34.646Z] ---
+# [AI-AGENTS] Tencent/LoopForge (1979 score [VERIFIED ORG]) - Self-hosted workflows for coding-agent delivery. Orchestrate CodeBuddy, Codex an
+https://github.com/Tencent/LoopForge

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T13:40:24.623Z",
+  "updated_at": "2026-11-15T14:25:55.453Z",
   "stats": {
-    "total_discovered": 3708,
-    "approved_pending_harvest": 3498,
+    "total_discovered": 3713,
+    "approved_pending_harvest": 3502,
     "harvested_count": 0,
-    "rejected_count": 210,
+    "rejected_count": 211,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3477,
+      "COMMUNITY_AND_EXPERT": 3482,
       "OFFICIAL_DOCUMENTATION": 126,
       "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
@@ -80127,6 +80127,109 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-glb-3d-coder-learnings.md",
         "fileName": "hf-ccore-qwen3.5-4b-glb-3d-coder-learnings.md"
+      }
+    },
+    "SRC-438083B2E386": {
+      "id": "SRC-438083B2E386",
+      "url": "https://github.com/Tencent/LoopForge",
+      "title": "https://github.com/Tencent/LoopForge",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T14:25:55.349Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tencent-loopforge-learnings.md",
+        "fileName": "tencent-loopforge-learnings.md"
+      }
+    },
+    "SRC-F4417194C78A": {
+      "id": "SRC-F4417194C78A",
+      "url": "https://github.com/user-attachments/assets/0e690c95-e238-40ee-b7ca-d50a331fb121",
+      "title": "https://github.com/user-attachments/assets/0e690c95-e238-40ee-b7ca-d50a331fb121",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T14:25:55.376Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tencent-loopforge-learnings.md",
+        "fileName": "tencent-loopforge-learnings.md"
+      }
+    },
+    "SRC-05AB2C8D8612": {
+      "id": "SRC-05AB2C8D8612",
+      "url": "https://github.com/user-attachments/assets/acc44a0a-eff8-46f4-a700-58a1307aefbe",
+      "title": "https://github.com/user-attachments/assets/acc44a0a-eff8-46f4-a700-58a1307aefbe",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T14:25:55.403Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tencent-loopforge-learnings.md",
+        "fileName": "tencent-loopforge-learnings.md"
+      }
+    },
+    "SRC-2EA6AE81891B": {
+      "id": "SRC-2EA6AE81891B",
+      "url": "https://github.com/user-attachments/assets/6282fb3f-0def-409b-b1bc-6a8d07463be8",
+      "title": "https://github.com/user-attachments/assets/6282fb3f-0def-409b-b1bc-6a8d07463be8",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T14:25:55.429Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tencent-loopforge-learnings.md",
+        "fileName": "tencent-loopforge-learnings.md"
+      }
+    },
+    "SRC-ED735C754775": {
+      "id": "SRC-ED735C754775",
+      "url": "http://isolated.example/",
+      "title": "http://isolated.example/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-15T14:25:55.453Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tencent-loopforge-learnings.md",
+        "fileName": "tencent-loopforge-learnings.md"
       }
     }
   }

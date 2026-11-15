@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T14:07:08.612Z",
-  "total_cycles_completed": 9718,
-  "total_learnings_persisted": 9718,
-  "total_rules_promoted": 9347,
+  "last_updated": "2026-11-15T14:25:39.805Z",
+  "total_cycles_completed": 9719,
+  "total_learnings_persisted": 9719,
+  "total_rules_promoted": 9348,
   "history": [
-    {
-      "timestamp": "2026-11-14T12:57:37.763Z",
-      "repository": "trufflesecurity/trufflehog",
-      "learningId": "learn-github-trufflesecurity-trufflehog",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T12:57:43.469Z",
       "repository": "NucleoidAI/Nucleoid",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-15T14:07:08.612Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T14:25:39.805Z",
+      "repository": "Tencent/LoopForge",
+      "learningId": "learn-github-tencent-loopforge",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
