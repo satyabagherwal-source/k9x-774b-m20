@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-15T17:23:19.805Z",
-  "total_verified_learnings": 8711,
+  "last_updated": "2026-11-15T17:31:59.869Z",
+  "total_verified_learnings": 8712,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18502,
+  "total_items": 18516,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -217867,13 +217867,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-X72W-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-3JGV-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "1b8cdf9b2e99f25ca82e54870d99a8a07611235d9273a2e2665964dcde0e3913",
+      "content_hash": "187d8b29b0e3eaddb0581b4ea02ef0d8851afa6caf549f0c36fc3307ac6674bc",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T23:43:18.296Z"
+      "persisted_at": "2026-11-15T17:31:59.696Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -217883,9 +217883,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "564674781c2466aa3411b144d7a4462054637419dbe1d96e09089871d5346216",
+      "content_hash": "c77a87fb19e202171162b8cd74a3383da8bc95da116478f89d3a734d0de06227",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T23:43:18.446Z"
+      "persisted_at": "2026-11-15T17:31:59.781Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -217895,9 +217895,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "9125e138234f5de140f5ca676ea912f4bdb7fd2d6f5f5f3df251c369a6446755",
+      "content_hash": "c41a04f8d5739dfa6bea4906622bd1ff30b9c14d15b63189ecf41ef289e60644",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T23:43:18.606Z"
+      "persisted_at": "2026-11-15T17:31:59.869Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -222098,14 +222098,19 @@
       "slug": "doobidoo-mcp-memory-service",
       "platform": "github",
       "source_url": "https://github.com/doobidoo/mcp-memory-service",
-      "source_version": "356ceb16",
-      "content_hash": "68e851e39dd54e3ed7829524048c1c30080c6fae67d619e40bb26a58518a51e4",
+      "source_version": "cac9a103",
+      "content_hash": "12804ed099922fe56c2a104e6275af839e48755167193ae0e3013cdb761a2d1b",
       "dossier_path": "07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
       "promoted_rules": [
         {
           "number": 8436,
           "title": "bound model calls by wall clock and skip, not pass, on failure",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8635,
+          "title": "drop hardcoded Cloudflare credentials from sync_status.py",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -222114,7 +222119,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T03:49:19.343Z",
+      "verified_at": "2026-11-15T17:31:55.086Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222156,10 +222161,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-doobidoo-mcp-memory-service-technical-construction-intelligence-doobidoo-mcp-mem.md",
       "title": "Technical Construction Intelligence: doobidoo/mcp-memory-service Core Invariants",
       "repository": "doobidoo/mcp-memory-service",
-      "source_version": "356ceb16",
-      "content_hash": "acf19b739d3e95c883b924f0a2b4609f5384d415aebce7b4d332b9c0465c292f",
+      "source_version": "cac9a103",
+      "content_hash": "9f9a805322880fd918184cd1d9549bc5ee9d9316d808062f507da8d01135997b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T03:49:19.847Z"
+      "persisted_at": "2026-11-15T17:31:55.459Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-doobidoo-mcp-memory-service": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-doobidoo-mcp-memory-service",
@@ -222168,10 +222173,10 @@
       "relative_path": "12_DECISIONS/ADR-doobidoo-mcp-memory-service-adr-subsystem-boundary-modular-decoupling-in-doobido.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in doobidoo/mcp-memory-service",
       "repository": "doobidoo/mcp-memory-service",
-      "source_version": "356ceb16",
-      "content_hash": "01f262d087678b205ab0fa1ced82757e5b1a10d47f542184f6ea31794eaaa6f2",
+      "source_version": "cac9a103",
+      "content_hash": "8f7cf500d794b1f3e601a9938ec4a787b2f1bb5cbde8916a453549533b9b08c1",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T03:49:19.967Z"
+      "persisted_at": "2026-11-15T17:31:55.547Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-doobidoo-mcp-memory-service": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-doobidoo-mcp-memory-service",
@@ -222180,10 +222185,10 @@
       "relative_path": "08_VERIFICATION/doobidoo-mcp-memory-service-verification-protocol-empirical-defect-shield-for-do.md",
       "title": "Verification Protocol: Empirical Defect Shield for doobidoo/mcp-memory-service",
       "repository": "doobidoo/mcp-memory-service",
-      "source_version": "356ceb16",
-      "content_hash": "fe0d08ae32a47250dd1ae0a4d1266472fce9ba6bca996bcc3da2fab4ac2be519",
+      "source_version": "cac9a103",
+      "content_hash": "25cf968285079330b2a115a6d2468ea6f927aa526f3cab2115d970bf135c2108",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T03:49:20.081Z"
+      "persisted_at": "2026-11-15T17:31:55.624Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-stabilityai-stable-diffusion-3-medium-learnin": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-stabilityai-stable-diffusion-3-medium-learnin",
@@ -244978,6 +244983,199 @@
       "content_hash": "0ef78c7e9d99aa295092ca3acb2f39307f3d7ce9a5fc067b2d4ae98c053c09eb",
       "domain_letter": "D",
       "persisted_at": "2026-11-15T17:23:18.613Z"
+    },
+    "learn-github-nats-io-nats-go": {
+      "learning_id": "learn-github-nats-io-nats-go",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "nats-io/nats.go",
+      "repository": "nats-io/nats.go",
+      "slug": "nats-io-nats.go",
+      "platform": "github",
+      "source_url": "https://github.com/nats-io/nats.go",
+      "source_version": "5f66aec1",
+      "content_hash": "f93038c0942d1c0eca7e152baa513454bde13e231e6b5bcdee94c3fe81d71706",
+      "dossier_path": "07_PROJECT_LEARNING/nats-io-nats.go-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/nats-io-nats.go-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8634,
+          "title": "remove duplicated word in MemoryMaxStreamBytes comment",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T17:31:49.399Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8634": {
+      "learning_id": "rule-8634",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8634,
+      "title": "remove duplicated word in MemoryMaxStreamBytes comment",
+      "source_url": "https://github.com/nats-io/nats.go",
+      "source_version": "5f66aec1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T17:31:49.399Z"
+    },
+    "candidate_directive-remove-duplicated-word-in-memorymaxstreambytes-comment": {
+      "item_id": "candidate_directive-remove-duplicated-word-in-memorymaxstreambytes-comment",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3BQ7-remove-duplicated-word-in-memorymaxstreambytes-comment.md",
+      "title": "remove duplicated word in MemoryMaxStreamBytes comment",
+      "repository": "nats-io/nats.go",
+      "source_version": "5f66aec1",
+      "content_hash": "cf4816fe2fa8d9783645fe64a7568c82481075b9f198653364e7d49a3290d9ae",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T17:31:49.664Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-nats-io-nats-go-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-nats-io-nats-go-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nats-io-nats-go-technical-construction-intelligence-nats-io-nats-go-core-invaria.md",
+      "title": "Technical Construction Intelligence: nats-io/nats.go Core Invariants",
+      "repository": "nats-io/nats.go",
+      "source_version": "5f66aec1",
+      "content_hash": "6ed51ef3d772d3eca20768fbb755e52482cd03ffa4f8f8297bcd0538b677a51e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T17:31:49.757Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-nats-io-nats-go": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nats-io-nats-go",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/nats-io-nats-go-verification-protocol-empirical-defect-shield-for-nats-io-nats-g.md",
+      "title": "Verification Protocol: Empirical Defect Shield for nats-io/nats.go",
+      "repository": "nats-io/nats.go",
+      "source_version": "5f66aec1",
+      "content_hash": "8b51316b43a692f1333fa372b7eb8d753a79e69a530f8801eddd158114813eed",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T17:31:49.865Z"
+    },
+    "rule-8635": {
+      "learning_id": "rule-8635",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8635,
+      "title": "drop hardcoded Cloudflare credentials from sync_status.py",
+      "source_url": "https://github.com/doobidoo/mcp-memory-service",
+      "source_version": "cac9a103",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T17:31:55.086Z"
+    },
+    "candidate_directive-drop-hardcoded-cloudflare-credentials-from-sync_status-py": {
+      "item_id": "candidate_directive-drop-hardcoded-cloudflare-credentials-from-sync_status-py",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3G4U-drop-hardcoded-cloudflare-credentials-from-sync_status-py.md",
+      "title": "drop hardcoded Cloudflare credentials from sync_status.py",
+      "repository": "doobidoo/mcp-memory-service",
+      "source_version": "cac9a103",
+      "content_hash": "6d11088dc5eb8b6b9634fa180ebf4afcc01727495d0bd434cae16e42b99ab8d9",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T17:31:55.380Z"
+    },
+    "candidate_directive-docs-remove-duplicated-word-in-memorymaxstreambytes-comment": {
+      "item_id": "candidate_directive-docs-remove-duplicated-word-in-memorymaxstreambytes-comment",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3IJY-docs-remove-duplicated-word-in-memorymaxstreambytes-comment.md",
+      "title": "docs: remove duplicated word in MemoryMaxStreamBytes comment",
+      "repository": "nats-io-nats.go-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4a4174d133c17e7e1dd37fbacb4fa9a4d464f935c83207934d8195b07e1b57b8",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T17:31:58.511Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-nats-io-nats-go-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-nats-io-nats-go-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nats-io-nats-go-learnings-technical-construction-intelligence-nats-io-nats-go-le.md",
+      "title": "Technical Construction Intelligence: nats-io-nats.go-learnings Core Invariants",
+      "repository": "nats-io-nats.go-learnings",
+      "source_version": "HEAD",
+      "content_hash": "34c5e41249e692c8a316ffaec8faec704fadbf9d53c73730bfbcb9ce1468bfd1",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T17:31:58.597Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-nats-io-nats-go-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nats-io-nats-go-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/nats-io-nats-go-learnings-verification-protocol-empirical-defect-shield-for-nats.md",
+      "title": "Verification Protocol: Empirical Defect Shield for nats-io-nats.go-learnings",
+      "repository": "nats-io-nats.go-learnings",
+      "source_version": "HEAD",
+      "content_hash": "685478f90a28431b19e254cc205df38ce383c81f1c6f0a25fae027c4b5ad37f6",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T17:31:58.686Z"
+    },
+    "candidate_directive-security-drop-hardcoded-cloudflare-credentials-from-sync_status-py": {
+      "item_id": "candidate_directive-security-drop-hardcoded-cloudflare-credentials-from-sync_status-py",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3J3I-security-drop-hardcoded-cloudflare-credentials-from-sync_status-py.md",
+      "title": "security): drop hardcoded Cloudflare credentials from sync_status.py",
+      "repository": "doobidoo-mcp-memory-service-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d1c537e88acc87df49d34c6a35a96450cabd15ee8d3e1170b6a73ece927d2de1",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T17:31:59.219Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-doobidoo-mcp-memory-service-learnings-core-i": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-doobidoo-mcp-memory-service-learnings-core-i",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-doobidoo-mcp-memory-service-learnings-technical-construction-intelligence-doobid.md",
+      "title": "Technical Construction Intelligence: doobidoo-mcp-memory-service-learnings Core Invariants",
+      "repository": "doobidoo-mcp-memory-service-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f4b3690a96e8c4113c87fab6e9629296d9412cdc9ab05adc6320226419d62f5d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T17:31:59.303Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-doobidoo-mcp-memory-service-learnin": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-doobidoo-mcp-memory-service-learnin",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-doobidoo-mcp-memory-service-learnings-adr-subsystem-boundary-modular-decoupling-.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in doobidoo-mcp-memory-service-learnings",
+      "repository": "doobidoo-mcp-memory-service-learnings",
+      "source_version": "HEAD",
+      "content_hash": "303522bf1bb28da4d79a5e5cdfa3ae951c4f5c4bdd628b9bf17f5c11d54a64b3",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T17:31:59.391Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-doobidoo-mcp-memory-service-le": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-doobidoo-mcp-memory-service-le",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/doobidoo-mcp-memory-service-learnings-verification-protocol-empirical-defect-shi.md",
+      "title": "Verification Protocol: Empirical Defect Shield for doobidoo-mcp-memory-service-learnings",
+      "repository": "doobidoo-mcp-memory-service-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4cf7799dda61712a144dd2563caf6c260b998a71b1c0781e2b68251b8007d81f",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T17:31:59.472Z"
     }
   },
   "ai-builder-brain": {

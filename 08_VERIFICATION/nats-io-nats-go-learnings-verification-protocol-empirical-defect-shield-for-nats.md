@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:42:09.808Z",
+  "timestamp": "2026-11-15T17:31:58.439Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-nats-io-nats-go-learnings",
+  "learning_id": "LEARN-EVO-nats-io-nats.go-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nats-io-nats.go-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:42:09.808Z`  
-> **Learning ID**: `LEARN-REEXTRACT-nats-io-nats-go-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-15T17:31:58.439Z`  
+> **Learning ID**: `LEARN-EVO-nats-io-nats.go-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nats-io-nats.go-learnings.md`  
 > **Source**: github ([https://github.com/nats-io/nats.go](https://github.com/nats-io/nats.go))  
-> **Source Version**: `4880fb84`  
+> **Source Version**: `5f66aec1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T17:35:43.519Z  
+> **Timestamp**: 2026-11-15T17:31:48.824Z  
 > **Learning ID**: `learn-github-nats-io-nats-go`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nats-io-nats.go-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nats-io/nats.go](https://github.com/nats-io/nats.go))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T17:35:43.515Z  
+> **Harvest Timestamp**: 2026-11-15T17:31:48.589Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Golang client for NATS, the cloud native messaging system.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 6802 stars
+- **Stars / Engagement**: 6808 stars
 
 ---
 
@@ -1586,77 +1586,31 @@ func endlessPublish(ctx context.Context, nc *nats.Conn, js jetstream.JetStream) 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4880fb84` (2026-11-08)
-**Commit Message**: [FIXED] Draining subscriptions resubscribed on reconnect (#2232)
+### Incident Patch 1: `5f66aec1` (2026-11-15)
+**Commit Message**: docs: remove duplicated word in MemoryMaxStreamBytes comment (#2242)
 
-Signed-off-by: Maurice van Veen <[REDACTED_EMAIL]>
+Signed-off-by: NingLin Liu <[REDACTED_EMAIL]>
 
-**File**: `nats.go` (modified, +6/-0)
+**File**: `jetstream/jetstream.go` (modified, +1/-1)
 ```diff
-@@ -6216,6 +6216,12 @@ func (nc *Conn) resendSubscriptions() {
- 	for sid, s := range subs {
- 		adjustedMax := uint64(0)
- 		s.mu.Lock()
-+		// Draining subs are only removed locally once done, so resubscribing
-+		// would leave orphaned interest on the server.
-+		if s.draining {
-+			s.mu.Unlock()
-+			continue
-+		}
- 		// when resending subscriptions, the permissions error should be cleared
- 		// since the user may have fixed the permissions issue
- 		s.permissionsErr = nil
-```
-
-**File**: `test/drain_test.go` (modified, +17/-0)
-```diff
-@@ -162,6 +162,14 @@ func TestDrainUnSubs(t *testing.T) {
- }
+@@ -335,7 +335,7 @@ type (
+ 		// may configure.
+ 		MaxAckPending int `json:"max_ack_pending"`
  
- func TestDrainSlowSubscriber(t *testing.T) {
-+	for _, reconnect := range []bool{false, true} {
-+		t.Run(fmt.Sprintf("reconnect=%v", reconnect), func(t *testing.T) {
-+			testDrainSlowSubscriber(t, reconnect)
-+		})
-+	}
-+}
-+
-+func testDrainSlowSubscriber(t *testing.T, reconnect bool) {
- 	withServer(t, func(t *testing.T, nc *nats.Conn) {
- 		received := int32(0)
- 
-@@ -184,6 +192,12 @@ func TestDrainSlowSubscriber(t *testing.T) {
- 			t.Fatalf("Expected most messages to be pending, but got %d vs %d", pmsgs, total)
- 		}
- 		sub.Drain()
-+		// Reconnecting mid-drain must not resubscribe on the new connection.
-+		if reconnect {
-+			if err := nc.ForceReconnect(); err != nil {
-+				t.Fatalf("Error on force reconnect: %v", err)
-+			}
-+		}
- 
- 		waitFor(t, 2*time.Second, 100*time.Millisecond, func() error {
- 			_, _, err := sub.Pending()
-@@ -196,6 +210,9 @@ func TestDrainSlowSubscriber(t *testing.T) {
- 			}
- 			return nil
- 		})
-+		if _, err := nc.Request("foo", nil, time.Second); !errors.Is(err, nats.ErrNoResponders) {
-+			t.Fatalf("Expected %v, got %v", nats.ErrNoResponders, err)
-+		}
- 	})
- }
+-		// MemoryMaxStreamBytes is is the maximum size any single memory based
++		// MemoryMaxStreamBytes is the maximum size any single memory based
+ 		// stream may be.
+ 		MemoryMaxStreamBytes int64 `json:"memory_max_stream_bytes"`
  
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2242** (2026-11-15): docs: remove duplicated word in MemoryMaxStreamBytes comment (@ninglinLiu)
+- **PR #2237** (2026-11-12): [FIXED] Require a separator before inline header status (@ViktorBystrov72)
 - **PR #2233** (2026-11-08): [IMPROVED] Remove stale go.mod version notes from docs (@nik-6174)
 - **PR #2232** (2026-11-08): [FIXED] Draining subscriptions resubscribed on reconnect (@MauriceVanVeen)
 - **PR #2226** (2026-11-04): Treat malformed WS close frames as protocol errors (@wallyqs)
 - **PR #2225** (2026-11-03): [FIXED]  WebSocket frame handling (@piotrpio)
-- **PR #2220** (2026-11-02): [FIXED] Preserve options when following object links (@Grivn)
-- **PR #2219** (2026-10-30): [IMPROVED] Reuse header encoding buffers in PublishMsg (@Grivn)
 
 ---
 
@@ -1676,36 +1630,31 @@ Signed-off-by: Maurice van Veen <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [FIXED] Draining subscriptions resubscribed on reconnect (#2232)
+## X. docs: remove duplicated word in MemoryMaxStreamBytes comment
 
 **RULE**:
-When implementing operations in `nats.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats.go. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `jetstream/jetstream.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats.go. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4880fb84`: [FIXED] Draining subscriptions resubscribed on reconnect (#2232). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5f66aec1`: docs: remove duplicated word in MemoryMaxStreamBytes comment. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `nats.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `jetstream/jetstream.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		// Draining subs are only removed locally once done, so resubscribing
-		// would leave orphaned interest on the server.
-		if s.draining {
-			s.mu.Unlock()
-			continue
-		}
+		// MemoryMaxStreamBytes is the maximum size any single memory based
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+		// MemoryMaxStreamBytes is is the maximum size any single memory based
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4880fb84` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5f66aec1` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

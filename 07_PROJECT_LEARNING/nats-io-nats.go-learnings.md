@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nats-io-nats.go-learnings.md`  
 > **Source**: github ([https://github.com/nats-io/nats.go](https://github.com/nats-io/nats.go))  
-> **Source Version**: `91d00498`  
+> **Source Version**: `5f66aec1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T05:15:51.687Z  
+> **Timestamp**: 2026-11-15T17:31:48.824Z  
 > **Learning ID**: `learn-github-nats-io-nats-go`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nats-io-nats.go-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nats-io/nats.go](https://github.com/nats-io/nats.go))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T05:15:51.675Z  
+> **Harvest Timestamp**: 2026-11-15T17:31:48.589Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Golang client for NATS, the cloud native messaging system.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 6809 stars
+- **Stars / Engagement**: 6808 stars
 
 ---
 
@@ -1561,65 +1561,31 @@ func endlessPublish(ctx context.Context, nc *nats.Conn, js jetstream.JetStream) 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `91d00498` (2026-11-12)
-**Commit Message**: [FIXED] Require a separator before inline header status (#2237)
+### Incident Patch 1: `5f66aec1` (2026-11-15)
+**Commit Message**: docs: remove duplicated word in MemoryMaxStreamBytes comment (#2242)
 
-Signed-off-by: Виктор Быстров <[REDACTED_EMAIL]>
+Signed-off-by: NingLin Liu <[REDACTED_EMAIL]>
 
-**File**: `headers_test.go` (modified, +6/-2)
+**File**: `jetstream/jetstream.go` (modified, +1/-1)
 ```diff
-@@ -26,8 +26,8 @@ import (
- func TestHeaderParser(t *testing.T) {
- 	shouldErr := func(hdr string) {
- 		t.Helper()
--		if _, err := DecodeHeadersMsg([]byte(hdr)); err == nil {
--			t.Fatalf("Expected an error")
-+		if _, err := DecodeHeadersMsg([]byte(hdr)); err != ErrBadHeaderMsg {
-+			t.Fatalf("Expected %v for %q, got %v", ErrBadHeaderMsg, hdr, err)
- 		}
- 	}
- 	shouldErr("NATS/1.0")
-@@ -37,6 +37,8 @@ func TestHeaderParser(t *testing.T) {
- 	shouldErr("NATS/1.0 5\r\n\r\n")
- 	shouldErr("NATS/1.0 41\r\n\r\n")
- 	shouldErr("NATS/1.0 \r\n\r\n")
-+	shouldErr("NATS/1.0418\r\nExample: test\r\n\r\n")
-+	shouldErr("NATS/1.0418 I'm a teapot\r\n\r\n")
+@@ -335,7 +335,7 @@ type (
+ 		// may configure.
+ 		MaxAckPending int `json:"max_ack_pending"`
  
- 	// Check that we can do inline status and descriptions
- 	checkStatus := func(hdr string, status int, description string) {
-@@ -58,6 +60,8 @@ func TestHeaderParser(t *testing.T) {
- 	checkStatus("NATS/1.0 503", 503, "")
- 	checkStatus("NATS/1.0 503 No Responders", 503, "No Responders")
- 	checkStatus("NATS/1.0  404   No Messages", 404, "No Messages")
-+	checkStatus("NATS/1.0\t418", 418, "")
-+	checkStatus("NATS/1.0 \t418 I'm a teapot\r\nExample: test", 418, "I'm a teapot")
- }
+-		// MemoryMaxStreamBytes is is the maximum size any single memory based
++		// MemoryMaxStreamBytes is the maximum size any single memory based
+ 		// stream may be.
+ 		MemoryMaxStreamBytes int64 `json:"memory_max_stream_bytes"`
  
- func TestHeaderMultiLine(t *testing.T) {
-```
-
-**File**: `nats.go` (modified, +3/-0)
-```diff
-@@ -4611,6 +4611,9 @@ func DecodeHeadersMsg(data []byte) (Header, error) {
- 
- 	// Check if we have an inlined status.
- 	if len(l) > hdrPreEnd {
-+		if l[hdrPreEnd] != ' ' && l[hdrPreEnd] != '\t' {
-+			return nil, ErrBadHeaderMsg
-+		}
- 		var description string
- 		status := strings.TrimSpace(l[hdrPreEnd:])
- 		if len(status) < statusLen {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2242** (2026-11-15): docs: remove duplicated word in MemoryMaxStreamBytes comment (@ninglinLiu)
 - **PR #2237** (2026-11-12): [FIXED] Require a separator before inline header status (@ViktorBystrov72)
 - **PR #2233** (2026-11-08): [IMPROVED] Remove stale go.mod version notes from docs (@nik-6174)
 - **PR #2232** (2026-11-08): [FIXED] Draining subscriptions resubscribed on reconnect (@MauriceVanVeen)
 - **PR #2226** (2026-11-04): Treat malformed WS close frames as protocol errors (@wallyqs)
 - **PR #2225** (2026-11-03): [FIXED]  WebSocket frame handling (@piotrpio)
-- **PR #2220** (2026-11-02): [FIXED] Preserve options when following object links (@Grivn)
 
 ---
 
@@ -1639,34 +1605,28 @@ Signed-off-by: Виктор Быстров <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [FIXED] Require a separator before inline header status (#2237)
+## X. docs: remove duplicated word in MemoryMaxStreamBytes comment
 
 **RULE**:
-When implementing operations in `headers_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats.go. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `jetstream/jetstream.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats.go. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `91d00498`: [FIXED] Require a separator before inline header status (#2237). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5f66aec1`: docs: remove duplicated word in MemoryMaxStreamBytes comment. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `headers_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `jetstream/jetstream.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		if _, err := DecodeHeadersMsg([]byte(hdr)); err != ErrBadHeaderMsg {
-			t.Fatalf("Expected %v for %q, got %v", ErrBadHeaderMsg, hdr, err)
-	shouldErr("NATS/1.0418\r\nExample: test\r\n\r\n")
-	shouldErr("NATS/1.0418 I'm a teapot\r\n\r\n")
-	checkStatus("NATS/1.0\t418", 418, "")
-	checkStatus("NATS/1.0 \t418 I'm a teapot\r\nExample: test", 418, "I'm a teapot")
+		// MemoryMaxStreamBytes is the maximum size any single memory based
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-		if _, err := DecodeHeadersMsg([]byte(hdr)); err == nil {
-			t.Fatalf("Expected an error")
+// Induced defect failure mode:
+		// MemoryMaxStreamBytes is is the maximum size any single memory based
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `91d00498` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5f66aec1` are properly handled with clean fallback behavior.

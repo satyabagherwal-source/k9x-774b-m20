@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T17:23:19.696Z",
-  "total_records": 1085,
+  "last_updated": "2026-11-15T17:31:59.781Z",
+  "total_records": 1088,
   "domains": {
     "A": {
       "total": 7,
@@ -795,7 +795,7 @@
       ]
     },
     "H": {
-      "total": 220,
+      "total": 223,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1016,7 +1016,10 @@
         "domain_intelligence-technical-construction-intelligence-chocoford-excalidrawz-core-invariants",
         "domain_intelligence-technical-construction-intelligence-jacklandrin-onlyswitch-core-invariants",
         "domain_intelligence-technical-construction-intelligence-chocoford-excalidrawz-learnings-core-invaria",
-        "domain_intelligence-technical-construction-intelligence-jacklandrin-onlyswitch-learnings-core-invari"
+        "domain_intelligence-technical-construction-intelligence-jacklandrin-onlyswitch-learnings-core-invari",
+        "domain_intelligence-technical-construction-intelligence-nats-io-nats-go-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-nats-io-nats-go-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-doobidoo-mcp-memory-service-learnings-core-i"
       ]
     },
     "I": {
@@ -10476,8 +10479,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "564674781c2466aa3411b144d7a4462054637419dbe1d96e09089871d5346216",
-      "created_at": "2026-11-14T23:43:18.446Z"
+      "content_hash": "c77a87fb19e202171162b8cd74a3383da8bc95da116478f89d3a734d0de06227",
+      "created_at": "2026-11-15T17:31:59.781Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -12035,8 +12038,8 @@
       "title": "Technical Construction Intelligence: doobidoo/mcp-memory-service Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-doobidoo-mcp-memory-service-technical-construction-intelligence-doobidoo-mcp-mem.md",
       "repository": "doobidoo/mcp-memory-service",
-      "content_hash": "acf19b739d3e95c883b924f0a2b4609f5384d415aebce7b4d332b9c0465c292f",
-      "created_at": "2026-11-14T03:49:19.847Z"
+      "content_hash": "9f9a805322880fd918184cd1d9549bc5ee9d9316d808062f507da8d01135997b",
+      "created_at": "2026-11-15T17:31:55.459Z"
     },
     "DOM-D-0BBA6E16": {
       "record_id": "DOM-D-0BBA6E16",
@@ -20726,6 +20729,33 @@
       "repository": "hf-mistralai-mistral-large-4-1t-a52b-learnings",
       "content_hash": "0ef78c7e9d99aa295092ca3acb2f39307f3d7ce9a5fc067b2d4ae98c053c09eb",
       "created_at": "2026-11-15T17:23:18.613Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-nats-io-nats-go-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-nats-io-nats-go-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: nats-io/nats.go Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nats-io-nats-go-technical-construction-intelligence-nats-io-nats-go-core-invaria.md",
+      "repository": "nats-io/nats.go",
+      "content_hash": "6ed51ef3d772d3eca20768fbb755e52482cd03ffa4f8f8297bcd0538b677a51e",
+      "created_at": "2026-11-15T17:31:49.757Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-nats-io-nats-go-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-nats-io-nats-go-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: nats-io-nats.go-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nats-io-nats-go-learnings-technical-construction-intelligence-nats-io-nats-go-le.md",
+      "repository": "nats-io-nats.go-learnings",
+      "content_hash": "34c5e41249e692c8a316ffaec8faec704fadbf9d53c73730bfbcb9ce1468bfd1",
+      "created_at": "2026-11-15T17:31:58.597Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-doobidoo-mcp-memory-service-learnings-core-i": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-doobidoo-mcp-memory-service-learnings-core-i",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: doobidoo-mcp-memory-service-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-doobidoo-mcp-memory-service-learnings-technical-construction-intelligence-doobid.md",
+      "repository": "doobidoo-mcp-memory-service-learnings",
+      "content_hash": "f4b3690a96e8c4113c87fab6e9629296d9412cdc9ab05adc6320226419d62f5d",
+      "created_at": "2026-11-15T17:31:59.303Z"
     }
   }
 }

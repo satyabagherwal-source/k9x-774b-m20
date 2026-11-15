@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261111-TDX1",
-    "timestamp": "2026-11-11T06:33:33.877Z",
-    "repository": "react-native-webrtc/react-native-webrtc",
-    "learningId": "learn-github-react-native-webrtc-react-native-webrtc",
-    "contentHash": "7be113e6b09c6113db8cf1f9eadd3312409b674da02ac8123f183e98d7e2e1e7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261111-TK7R",
-    "timestamp": "2026-11-11T06:33:42.039Z",
-    "repository": "DNSControl/dnscontrol",
-    "learningId": "learn-github-dnscontrol-dnscontrol",
-    "contentHash": "6d43f52ba96a94ba5a4750794a7ac20022da41d0eb7a7cf1c10427ecc31fdfc5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261111-TNLU",
     "timestamp": "2026-11-11T06:33:46.434Z",
     "repository": "freenet/freenet-core",
@@ -7492,6 +7462,36 @@
     "contentHash": "bffacc603781bdf8786b7f53dc45e277e511805981a8b642dea27e34401b836e",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-3BM4",
+    "timestamp": "2026-11-15T17:31:49.516Z",
+    "repository": "nats-io/nats.go",
+    "learningId": "learn-github-nats-io-nats-go",
+    "contentHash": "f93038c0942d1c0eca7e152baa513454bde13e231e6b5bcdee94c3fe81d71706",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-3G0S",
+    "timestamp": "2026-11-15T17:31:55.228Z",
+    "repository": "doobidoo/mcp-memory-service",
+    "learningId": "learn-github-doobidoo-mcp-memory-service",
+    "contentHash": "12804ed099922fe56c2a104e6275af839e48755167193ae0e3013cdb761a2d1b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

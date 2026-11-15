@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T17:22:41.024Z",
-  "total_cycles_completed": 9738,
-  "total_learnings_persisted": 9738,
-  "total_rules_promoted": 9361,
+  "last_updated": "2026-11-15T17:31:55.235Z",
+  "total_cycles_completed": 9740,
+  "total_learnings_persisted": 9740,
+  "total_rules_promoted": 9363,
   "history": [
-    {
-      "timestamp": "2026-11-14T15:25:50.558Z",
-      "repository": "apple/foundationdb",
-      "learningId": "learn-github-apple-foundationdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T15:34:27.673Z",
-      "repository": "BAAI/bge-large-en-v1.5",
-      "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T15:34:30.271Z",
       "repository": "jithin-sabu/purge-app",
@@ -1403,6 +1389,20 @@
       "repository": "mistralai/Mistral-Large-4-1T-A52B",
       "learningId": "learn-huggingface-mistralai-mistral-large-4-1t-a52b",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T17:31:49.523Z",
+      "repository": "nats-io/nats.go",
+      "learningId": "learn-github-nats-io-nats-go",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T17:31:55.235Z",
+      "repository": "doobidoo/mcp-memory-service",
+      "learningId": "learn-github-doobidoo-mcp-memory-service",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

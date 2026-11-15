@@ -10160,3 +10160,5 @@ Every entry in this ledger must capture:
 | `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `f70c37b1` | Multi-dimensional audit evidence | 2026-11-15T17:14:23.209Z |
 | `learn-huggingface-mistralai-mistral-large-4-1t-a52b` | `https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B` | `hf-mistral` | Multi-dimensional audit evidence | 2026-11-15T17:22:41.019Z |
 | `learn-dom-d-bbc8733a` | `project://hf-mistralai-mistral-large-4-1t-a52b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-mistralai-mistral-large-4-1t-a52b-learnings.md` | 2026-11-15T17:23:18.430Z |
+| `learn-github-nats-io-nats-go` | `https://github.com/nats-io/nats.go` | `5f66aec1` | Multi-dimensional audit evidence | 2026-11-15T17:31:49.519Z |
+| `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `cac9a103` | Multi-dimensional audit evidence | 2026-11-15T17:31:55.231Z |

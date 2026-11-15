@@ -2563,10 +2563,10 @@
     "repository": "nats-io/nats.go",
     "platform": "github",
     "sourceUrl": "https://github.com/nats-io/nats.go",
-    "sourceVersion": "91d00498",
+    "sourceVersion": "5f66aec1",
     "license": "Apache-2.0",
-    "contentHash": "089a887a8c5d8ddca36b23a54488b8ae4bbf08e7b76af37c251f3d5cf83591ee",
-    "lastHarvestedAt": "2026-11-13T05:16:05.012Z",
+    "contentHash": "f93038c0942d1c0eca7e152baa513454bde13e231e6b5bcdee94c3fe81d71706",
+    "lastHarvestedAt": "2026-11-15T17:31:49.519Z",
     "learningId": "learn-github-nats-io-nats-go"
   },
   "chrispybacon-dev-dockflare": {
@@ -3293,10 +3293,10 @@
     "repository": "doobidoo/mcp-memory-service",
     "platform": "github",
     "sourceUrl": "https://github.com/doobidoo/mcp-memory-service",
-    "sourceVersion": "356ceb16",
+    "sourceVersion": "cac9a103",
     "license": "Apache-2.0",
-    "contentHash": "68e851e39dd54e3ed7829524048c1c30080c6fae67d619e40bb26a58518a51e4",
-    "lastHarvestedAt": "2026-11-14T03:49:19.509Z",
+    "contentHash": "12804ed099922fe56c2a104e6275af839e48755167193ae0e3013cdb761a2d1b",
+    "lastHarvestedAt": "2026-11-15T17:31:55.231Z",
     "learningId": "learn-github-doobidoo-mcp-memory-service"
   },
   "21st-dev-magic-mcp": {

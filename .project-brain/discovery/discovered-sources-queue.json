@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T17:23:18.453Z",
+  "updated_at": "2026-11-15T17:31:59.073Z",
   "stats": {
-    "total_discovered": 3795,
-    "approved_pending_harvest": 3578,
+    "total_discovered": 3806,
+    "approved_pending_harvest": 3588,
     "harvested_count": 0,
-    "rejected_count": 217,
+    "rejected_count": 218,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3564,
-      "OFFICIAL_DOCUMENTATION": 126,
-      "STANDARDS_AND_SPECIFICATIONS": 88,
+      "COMMUNITY_AND_EXPERT": 3573,
+      "OFFICIAL_DOCUMENTATION": 127,
+      "STANDARDS_AND_SPECIFICATIONS": 89,
       "ENGINEERING_BLOGS": 2,
       "SECURITY_ADVISORIES": 11,
       "LEGAL_AND_REGULATORY": 1,
@@ -81992,6 +81992,241 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-mistralai-mistral-large-4-1t-a52b-learnings.md",
         "fileName": "hf-mistralai-mistral-large-4-1t-a52b-learnings.md"
+      }
+    },
+    "SRC-C547F61EEA88": {
+      "id": "SRC-C547F61EEA88",
+      "url": "https://github.com/doobidoo/mcp-memory-service",
+      "title": "https://github.com/doobidoo/mcp-memory-service",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T17:31:58.795Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
+      }
+    },
+    "SRC-5F6DEC44B2E3": {
+      "id": "SRC-5F6DEC44B2E3",
+      "url": "https://narrowbox.local:8443/",
+      "title": "https://narrowbox.local:8443/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T17:31:58.841Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
+      }
+    },
+    "SRC-B328600B6ACF": {
+      "id": "SRC-B328600B6ACF",
+      "url": "http://127.0.0.1:8889/",
+      "title": "http://127.0.0.1:8889/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-15T17:31:58.864Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
+      }
+    },
+    "SRC-97C720CD6E68": {
+      "id": "SRC-97C720CD6E68",
+      "url": "https://10.0.1.30:8443/",
+      "title": "https://10.0.1.30:8443/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T17:31:58.922Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
+      }
+    },
+    "SRC-1F786A729D1F": {
+      "id": "SRC-1F786A729D1F",
+      "url": "https://nodejs.org/",
+      "title": "https://nodejs.org/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T17:31:58.940Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
+      }
+    },
+    "SRC-D1CAA9C9ACB5": {
+      "id": "SRC-D1CAA9C9ACB5",
+      "url": "https://example.com/guide",
+      "title": "https://example.com/guide",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T17:31:58.959Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
+      }
+    },
+    "SRC-3B6A567A34B0": {
+      "id": "SRC-3B6A567A34B0",
+      "url": "https://github.com/gitleaks/gitleaks/releases/download/v$%7BGITLEAKS_VERSION",
+      "title": "https://github.com/gitleaks/gitleaks/releases/download/v$%7BGITLEAKS_VERSION",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T17:31:58.977Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
+      }
+    },
+    "SRC-CCAE9E489A00": {
+      "id": "SRC-CCAE9E489A00",
+      "url": "https://your-public-url.com/",
+      "title": "https://your-public-url.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T17:31:59.004Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
+      }
+    },
+    "SRC-761712C30062": {
+      "id": "SRC-761712C30062",
+      "url": "https://evil.example//@claude.ai/cb%60%60",
+      "title": "https://evil.example//@claude.ai/cb%60%60",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T17:31:59.023Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
+      }
+    },
+    "SRC-0160A59A99E9": {
+      "id": "SRC-0160A59A99E9",
+      "url": "https://attacker.example/cb",
+      "title": "https://attacker.example/cb",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T17:31:59.050Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
+      }
+    },
+    "SRC-08750B191A41": {
+      "id": "SRC-08750B191A41",
+      "url": "https://www.rfc-editor.org/rfc/rfc7591",
+      "title": "IETF RFC 7591",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T17:31:59.073Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
       }
     }
   }

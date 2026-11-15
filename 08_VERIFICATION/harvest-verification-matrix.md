@@ -10127,3 +10127,5 @@
 | `CYCLE-20261115-GW9Y` | `2026-11-15T17:14:23.206Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8633` | Yes (`a9c8e8a6...`) |
 | `CYCLE-20261115-RKDZ` | `2026-11-15T17:22:41.015Z` | `mistralai/Mistral-Large-4-1T-A52B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mistralai-mistral-large-4-1t-a52b-learnings.md` | Yes (`bffacc60...`) |
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T17:23:18.430Z` | `hf-mistralai-mistral-large-4-1t-a52b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-BBC8733A` [Domain D] | Yes (`5b149944...`) |
+| `CYCLE-20261115-3BM4` | `2026-11-15T17:31:49.516Z` | `nats-io/nats.go` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8634` | Yes (`f93038c0...`) |
+| `CYCLE-20261115-3G0S` | `2026-11-15T17:31:55.228Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8635` | Yes (`12804ed0...`) |

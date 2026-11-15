@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source**: github ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
-> **Source Version**: `356ceb16`  
+> **Source Version**: `cac9a103`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T03:49:18.490Z  
+> **Timestamp**: 2026-11-15T17:31:54.485Z  
 > **Learning ID**: `learn-github-doobidoo-mcp-memory-service`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T03:49:18.483Z  
+> **Harvest Timestamp**: 2026-11-15T17:31:54.480Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source persistent memory for AI agent pipelines (LangGraph, CrewAI, AutoGen) and Claude. REST API + knowledge graph + autonomous consolidation.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 2125 stars
+- **Stars / Engagement**: 2128 stars
 
 ---
 
@@ -2911,11 +2911,11 @@ Commands:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1990** (2026-11-14): **[Bug]: test_one_result_and_one_chunk_stay_singular_after_a_language_switch fails on Windows with WinError 206**
+  *Symptoms*: ### Bug Description    Running pytest tests/web/test_i18n_manage_search.py on Windows fails with FileNotFoundError: [WinError 206] The filename or     extension is too long because the Node.js script invocation via -e exceeds the Windows CreateProcessW command-line length     limit.  ### Steps to Reproduce    1. On a Windows machine with Python and Node.js installed, clone the repository.   2. Run: pytest tests/web/test_i18n_manage_search.py -k test_one_result_and_one_chunk_stay_singular_after_a_language_switch   3. Observe process failure during subprocess execution.  ### Expected Behavior   The test should execute and pass cleanly on Windows without exceeding command-line length limits.  ### Actual Behavior   The test fails with FileNotFoundError: [WinError 206] The filename or extension is too long raised by _winapi.CreateProcess:      FAILED tests/web/test_i18n_manage_search.py::test_one_result_and_one_chunk_stay_singular_after_a_language_switch -     FileNotFoundError: [WinError 206] The filename or extension is too long  ### Storage Backend  sqlite-vec (local)  ### Operating System  Windows  ### Python Version  3.13.5  ### MCP Memory Service Version  main (v9.2.0)  ### Installation Method  Source (git clone)  ### Interface Used  Python API (direct import)  ### Configuration  ```shell N/A (running pytest test suite) ```  ### Relevant Log Output  ```shell Traceback (most recent call last):       File "subprocess.py", line 1554, in _execute_child         hp, ht, pid, tid =
+
 - **Issue #1975** (2026-11-13): **[Bug]: split_content can split in the middle of a URL, version or decimal when "." is the last character of the chunk window**
   *Symptoms*: ### Bug Description  `_find_best_split_point()` in `src/mcp_memory_service/utils/content_splitter.py` detects sentence ends with `r'[.!?](?=\s|$)'`, applied to `text[:max_length]`. In that window `$` matches the end of the *window*, not the end of the text. So a `.` that happens to be the last character of the window is treated as a sentence end, and the split happens right after it, even when the dot is inside a token such as `example.com`, `3.14159` or `v2.10.4`.  Because only the last regex match is used, this window-end dot also wins over an earlier, genuine sentence end.  This path is used by `MemoryService.store_memory` whenever auto-split is on (the default) and content is longer than the backend limit, so the chunks that are stored and later searched contain broken URLs/versions/numbers.  ### Steps to Reproduce  Run from a source checkout (no server needed):  ```python from mcp_memory_service.utils.content_splitter import split_content  t = "Docs live at https://example.com/guide and the version is 3.14159 today" print(split_content(t, max_length=29, preserve_boundaries=True, overlap=0))  t2 = "Pi is 3.14159. The release is v2.10.4 and the host is api.example.com." print(split_content(t2, max_length=18, preserve_boundaries=True, overlap=0)) print(split_content(t2, max_length=21, preserve_boundaries=True, overlap=0)) ```  ### Expected Behavior  Splits happen at real boundaries (newline, a sentence end followed by whitespace or the end of the text, or a space). A token 
-
-- **Issue #1971** (2026-11-13): **dashboard: type-only search filter is a 422 (page_size=1000 against a cap of 100)**
-  *Symptoms*: In the dashboard's Search tab, filtering by content type alone (no query, no tag, no date) always fails with the toast "Filter search failed", for built-in types as well as custom ones.  `handleFilterChange()` in `web/static/app.js` (line 2948 on `main` at 9e69dab1) takes the type-only branch and asks for every memory:  ``` const allMemoriesResponse = await this.apiCall('/memories?page=1&page_size=1000'); ```  `GET /api/memories` caps `page_size` at 100 (`web/api/memories.py:321`, `Query(10, ge=1, le=100)`), so the request is a 422 before anything is filtered. Server log from a run against a scratch database:  ``` "GET /api/memories?page=1&page_size=1000 HTTP/1.1" 422 Unprocessable Entity ```  The call came in with f739d746. Raising the cap is not the fix: even under it, the branch fetches one page and filters it in the browser, so on a store with more memories than one page it silently misses matches.  ## What has to change  The route already filters server-side: `list_memories` takes `memory_type`. The type-only branch should pass the selected type there instead of fetching everything and filtering client-side, keep `page_size` within the cap, and page through the result (or reuse the paging the Browse view already does at line 3391) so a type with more than 100 memories is complete.  Done when: choosing a type with no query, tag or date returns that type's memories without an error, including a type with more than 100 memories, and the other three filter branches behave as
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2932,762 +2932,529 @@ Commands:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bea66063` (2026-11-13)
-**Commit Message**: fix(quality-gate): bound model calls by wall clock and skip, not pass, on failure (#1982)
+### Incident Patch 1: `b580e597` (2026-11-15)
+**Commit Message**: fix(security): drop hardcoded Cloudflare credentials from sync_status.py (#2023)
 
-* fix(quality-gate): bound model calls by wall clock and skip, not pass, on failure
+* fix(security): drop hardcoded Cloudflare credentials from sync_status.py
 
-MCP_QUALITY_LLM_TIMEOUT never fired against omlx: the server sends a
-whitespace keepalive while a request waits in its queue, and the
-urlopen timeout only limits each socket read. Calls blocked for as
-long as the queue was, measured at 2-11 minutes behind agent traffic.
-llm_prompt.py now bounds the whole request with SIGALRM; the default
-goes from 180 to 600 seconds to match what a busy shared server needs.
+scripts/maintenance/sync_status.py fell back to a real Cloudflare API
+token, account ID and D1 database ID when the environment did not set
+them. The token has been public since b60bc6f6 (2026-01-07) and earlier
+in start_http_server.sh, so it counts as compromised and gets rotated;
+this removes the fallbacks so the
+script exits naming the missing variables instead.
 
-analyze() turned any failed call into empty output, which both the
-complexity and the security check read as clean, so an unreachable
-or overloaded model passed the gate. Failed calls are now counted and
-a run without findings ends as skipped (exit 3).
+Adds a gitleaks scan of each PR's own commits to CI (binary fetched and
+checksum-verified, since third-party actions are not allowed) and an
+optional staged-changes scan to the pre-commit hook.
 
-Answered calls are cached by model and prompt in the shared git dir,
-so rerunning the gate on unchanged files makes no model call.
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* fix(quality-gate): write cache entries atomically and key them by reviewer
+* changelog: name fragment after PR #2023
 
-Greptile on #1982:
-- an entry is written to a temp file and renamed, so a gate in another
-  worktree never reads a half-written answer; an empty ent
-
-**File**: `scripts/pr/lib/llm_prompt.py` (modified, +21/-4)
-```diff
-@@ -24,7 +24,7 @@
-     MCP_QUALITY_LLM_URL      base URL, default http://127.0.0.1:11437/v1
-     MCP_QUALITY_LLM_MODEL    model id; prompt mode defaults to first listed model
-     MCP_QUALITY_LLM_API_KEY  optional bearer token
--    MCP_QUALITY_LLM_TIMEOUT  seconds per request, default 180
-+    MCP_QUALITY_LLM_TIMEOUT  wall-clock seconds per request, default 600
- 
- Exit codes:
-     0  reply printed on stdout
-@@ -41,11 +41,15 @@
- import json
- import os
- import re
-+import signal
- import sys
- import urllib.error
- import urllib.request
- 
- DEFAULT_URL = "http://127.0.0.1:11437/v1"
-+# Measured on a shared omlx server: gate prompts of 3-12k tokens waited 2-11
-+# minutes behind agent traffic, so 180s skipped most calls on a busy machine.
-+DEFAULT_TIMEOUT = "600"
- EXIT_NO_BACKEND = 3
- THINK_BLOCK = re.compile(r"<think>.*?</think>\s*", re.DOTALL)
- 
-@@ -65,10 +69,23 @@ def _headers() -> dict:
- def _request(path: str, payload=None):
-     """POST payload (or GET when payload is None) and return the parsed body."""
-     data = json.dumps(payload).encode() if payload is not None else None
--    timeout = float(os.environ.get("MCP_QUALITY_LLM_TIMEOUT", "180"))
-+    timeout = float(os.environ.get("MCP_QUALITY_LLM_TIMEOUT", DEFAULT_TIMEOUT))
-     req = urllib.request.Request(_base_url() + path, data=data, headers=_headers())
--    with urllib.request.urlopen(req, timeout=timeout) as response:
--        return json.load(response)
-+    # The urlopen timeout limits each socket read, not the request. omlx sends a
-+    # whitespace keepalive while a request waits in its queue, so that limit
-+    # never fired and a call could block for as long as the queue was. SIGALRM
-+    # bounds the whole request.
-+    def on_deadline(signum, frame):
-+        raise TimeoutError(f"no reply within {timeout:g}s")
-+
-+    previous = signal.signal(signal.SIGALRM, on_deadline)
-+    signal.setitimer(signal.ITIMER_REAL, timeout)
-+    try:
-+        with urllib.request.urlopen(req, timeout=timeout) as response:
-+            return json.load(response)
-+    finally:
-+        signal.setitimer(signal.ITIMER_REAL, 0)
-+        signal.signal(signal.SIGALRM, previous)
- 
- 
- def model_candidates() -> list[str]:
-```
-
-**File**: `scripts/pr/quality_gate.sh` (modified, +49/-3)
-```diff
-@@ -82,13 +82,50 @@ else
-     LLM_BACKEND="local ($RESOLVED_MODEL)"
- fi
- 
--# analyze <prompt> - one model call, empty output on failure so callers stay simple.
-+# A failed call used to print nothing, and every check read nothing as clean, so
-+# an unreachable or overloaded model passed the gate. Failures are counted here
-+# and turn a clean run into SKIPPED (see the summary).
-+LLM_FAILURES=$(mktemp)
-+trap 'rm -f "$LLM_FAILURES"' EXIT
-+# Replies are cached by model and prompt; the prompt holds the whole file, so a
-+# rerun on unchanged files makes no model call. Lives in the shared git dir, so
-+# all worktrees of a checkout use it.
-+# ponytail: never pruned; entries are a few hundred bytes. Prune by age if it grows.
-+CACHE_DIR=""
-+if git_dir=$(git rev-parse --git-common-dir 2>/dev/null); then
-+    CACHE_DIR="$git_dir/quality-gate-cache"
-+fi
-+
-+# analyze <prompt> - one model call; prints the reply, or nothing on failure.
- analyze() {
-+    local key="" reply=""
-+    if [ -n "$CACHE_DIR" ]; then
-+        # The reviewer is backend + endpoint + model: "local (<model>)" or "gemini",
-+        # plus the URL, since one model name can be served by different endpoints.
-+        key=$(printf '%s\n%s\n%s' "$LLM_BACKEND" "${MCP_QUALITY_LLM_URL:-}" "$1" \
-+            | git hash-object --stdin)
-+        # -s, not -f: an empty entry is not an answer.
-+        if [ -s "$CACHE_DIR/$key" ]; then
-+            cat "$CACHE_DIR/$key"
-+            return
-+        fi
-+    fi
-     if [ "$LLM_BACKEND" = "gemini" ]; then
--        gemini "$1" 2>&1 || echo ""
-+        reply=$(gemini "$1" 2>/dev/null) || reply=""
-     else
--        printf '%s' "$1" | python3 "$LLM_HELPER" 2>/dev/null || echo ""
-+        reply=$(printf '%s' "$1" | python3 "$LLM_HELPER") || reply=""
-+    fi
-+    if [ -z "$reply" ]; then
-+        echo "failed" >> "$LLM_FAILURES"
-+        return
-     fi
-+    # Write aside and rename: a gate in another worktree must never read a
-+    # half-written entry, and an interrupted write must not leave one behind.
-+    if [ -n "$key" ] && mkdir -p "$CACHE_DIR"; then
-+        printf '%s\n' "$reply" > "$CACHE_DIR/$key.tmp.$$" \
-+            && mv -f "$CACHE_DIR/$key.tmp.$$" "$CACHE_DIR/$key"
-+    fi
-+    printf '%s\n' "$reply"
- }
- 
- if [ "$MODE" = "staged" ]; then
-@@ -342,6 +379,15 @@ fi
- echo "=== Quality Gate Summary ==="
- echo ""
- 
-+llm_failed=$(wc -l < "$LLM_FAILURES" | tr -d ' ')
-+if [ "$llm_failed" -gt 0 ] && [ $exit_code -eq 0 ]; then
-+    echo "WARNING: $llm_failed model call(s) got no usable reply (error above, or no reply"
-+    echo "   within MCP_QUALITY_LLM_TIMEOUT=${MCP_QUALITY_LLM_TIMEOUT:-600}s)."
-+    echo "   Skipped, NOT passed: complexity and security were not fully evaluated."
-+    echo "   Rerun when the endpoint is less busy; answered calls are cached."
-+    exit $EXIT_SKIPPED
-+fi
-+
- if [ $exit_code -eq 0 ]; then
-     echo "ALL CHECKS PASSED"
-     echo ""
-```
-
-**File**: `tests/ci/test_llm_prompt.py` (modified, +159/-0)
-```diff
-@@ -7,6 +7,7 @@
- import subprocess
- import sys
- import threading
-+import time
- from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
- from pathlib import Path
- 
-@@ -136,3 +137,161 @@ def test_quality_gate_preserves_model_failure(
-     assert "Skipped, NOT passed" in result.stdout
-     assert "no local analysis model reachable" not in result.stdout
-     assert "Start the local endpoint" not in result.stdout
-+
-+
-+class _KeepaliveHandler(BaseHTTPRequestHandler):
-+    """Answer like a busy omlx: headers at once, then a space every 0.2s, no body."""
-+
-+    def do_POST(self) -> None:
-+        self.send_response(200)
-+        self.send_header("Content-Type", "application/json")
-+        self.end_headers()
-+        try:
-+            for _ in range(200):
-+                self.wfile.write(b" ")
-+                self.wfile.flush()
-+                time.sleep(0.2)
-+        except OSError:
-+            pass
-+
-+    def log_message(self, format: str, *args: object) -> None:
-+        pass
-+
-+
-+class _GateHandler(_ModelHandler):
-+    """One model; answers the readiness probe, then the analysis prompts per `mode`."""
-+
-+    models = ("m",)
-+    mode = "clean"
-+    analysis_calls = 0
-+
-+    def do_POST(self) -> None:
-+        length = int(self.headers.get("Content-Length", "0"))
-+        prompt = json.loads(self.rfile.read(length))["messages"][0]["content"]
-+        if prompt == "reply with READY":
-+            self._send_json(200, {"choices": [{"message": {"content": "READY"}}]})
-+            return
-+        type(self).analysis_calls += 1
-+        if self.mode == "fail":
-+            self._send_json(500, {"error": "busy"})
-+            return
-+        self._send_json(200, {"choices": [{"message": {"content": "SECURITY_CLEAN"}}]})
-+
-+
-+def _serve(handler: type[BaseHTTPRequestHandler]):
-+    server = ThreadingHTTPServer(("127.0.0.1", 0), handler)
-+    server.daemon_threads = True
-+    thread = threading.Thread(target=server.serve_forever, daemon=True)
-+    thread.start()
-+    return server, f"http://127.0.0.1:{server.server_port}/v1"
-+
-+
-+def test_deadline_is_wall_clock_despite_keepalive_bytes() -> None:
-+    """omlx streams whitespace while a request waits, so a socket read timeout never fires."""
-+    server, url = _serve(_KeepaliveHandler)
-+    env = os.environ | {"MCP_QUALITY_LLM_URL": url, "MCP_QUALITY_LLM_MODEL": "m",
-+                        "MCP_QUALITY_LLM_TIMEOUT": "1"}
-+    try:
-+        started = time.monotonic()
-+        result = subprocess.run([sys.executable, str(HELPER)], input="hi", env=env,
-+                                capture_output=True, text=True, check=False, timeout=20)
-+        elapsed = time.monotonic() - started
-+    finally:
-+        server.shutdown()
-+        server.server_close()
-+    assert result.returncode == 3, result.stderr
-+    assert "no reply within 1s" in result.stderr
-+    assert elapsed < 10
-+
-+
-+def _staged_repo(path: Path) -> None:
-+    subprocess.run(["git", "init", "-q", str(path)], check=True)
-+    (path / "tests").mkdir()
-+    (path / "tests" / "test_mod.py").write_text("def test_one():\n    assert 1\n")
-+    subprocess.run(["git", "-C", str(path), "add", "tests/test_mod.py"], check=True)
-+
-+
-+def _run_gate(path: Path, url: str) -> subprocess.CompletedProcess:
-+    env = os.environ | {"MCP_QUALITY_LLM": "local", "MCP_QUALITY_LLM_URL": url,
-+                        "MCP_QUALITY_LLM_TIMEOUT": "5"}
-+    env.pop("MCP_QUALITY_LLM_MODEL", None)
-+    return subprocess.run(["bash", str(GATE), "--staged"], cwd=path, env=env,
-+                          capture_output=True, text=True, check=False, timeout=60)
-+
-+
-+def test_failed_analysis_call_is_skipped_not_passed(
-+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-+) -> None:
-+    monkeypatch.setattr(_GateHandler, "mode", "fail")
-+    _staged_repo(tmp_path)
-+    server, url = _serve(_GateHandler)
-+    try:
-+        result = _run_gate(tmp_path, url)
-+    finally:
-+        server.shutdown()
-+        server.server_close()
-+    assert result.returncode == 3, result.stdout + result.stderr
-+    assert "Skipped, NOT passed" in result.stdout
-+    assert "ALL CHECKS PASSED" not in result.stdout
-+
-+
-+def test_rerun_on_unchanged_files_reuses_cached_replies(
-+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-+) -> None:
-+    monkeypatch.setattr(_GateHandler, "mode", "clean")
-+    monkeypatch.setattr(_GateHandler, "analysis_calls", 0)
-+    _staged_repo(tmp_path)
-+    server, url = _serve(_GateHandler)
-+    try:
-+        first = _run_gate(tmp_path, url)
-+        calls_after_first = _GateHandler.analysis_calls
-+        second = _run_gate(tmp_path, url)
-+    finally:
-+        server.shutdown()
-+        server.server_close()
-+    assert first.returncode == 0, first.stdout + first.stderr
-+    assert second.returncode == 0, second.stdout + second.stderr
-+    assert calls_after_first > 0
-+    assert _GateHandler.analysis_calls == calls_after_first
-+
-+
-+def _cache_files(path: Path) -> list[Path]:
-+    return [p for p in (path / ".git" / "q
-```
-
----
-
-### Incident Patch 2: `9349b8ac` (2026-11-13)
-**Commit Message**: fix(search): parse a from/to recall range as the whole window (#1935)
-
-* fix(search): parse a from/to recall range as the whole window
-
-"from January to March" and "from 2024-01-01 to 2024-03-31" were read
-as the first month or the first day. They now span the whole window,
-matching "between ... and ...". A from/to phrase that is not a date
-still falls through.
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-* chore: rename changelog fragment for #1935
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-* fix(search): validate from/to range endpoints
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-* fix(search): accept dayparts in range endpoints
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-* refactor(search): match range endpoints directly
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-* fix(search): keep from/to ranges for month years, now, and inverted months
-
-A month name followed by a year keeps that year ("from January 2024 to
-March 2024"), "to now" ends today, and a window whose start comes after
-its end ("from march to january") falls back to the single-expression
-parse instead of returning start > end.
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-* test(search): pin the from/to edge test to fi
-
-**File**: `changelog.d/1935.fixed.md` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+- **A "from … to …" recall range kept only the start (GPT-AGI).** `from January to March` and `from 2024-01-01 to 2024-03-31` were read as the first month or the first day. They now cover the whole window, the same way `between … and …` already did. A from/to phrase that is not a date still falls through, so `from Alice to Bob yesterday` stays yesterday. A month name with a year keeps that year (`from January 2024 to March 2024`), `to now` ends today, and a window whose start comes after its end (`from march to january`) keeps the previous single-month reading.
-```
-
-**File**: `src/mcp_memory_service/utils/time_parser.py` (modified, +63/-8)
-```diff
-@@ -78,6 +78,28 @@
- }
- 
- _MAX_TIME_QUERY_LEN = 500  # guard against ReDoS on user-supplied input
-+_RANGE_ENDPOINT_PATTERNS = (
-+    "relative_days", "relative_weeks", "relative_months", "relative_years",
-+    "last_n_periods", "last_period", "this_period", "month_name", "recent",
-+    "specific_date", "full_date", "named_period", "half_year", "quarter",
-+)
-+_RANGE_DAYPART_ENDPOINT = re.compile(
-+    rf"(?:{PATTERNS['relative_days'].pattern})\s+(?:in\s+the\s+)?"
-+    rf"(?:{PATTERNS['time_of_day'].pattern})|"
-+    rf"(?:{PATTERNS['time_of_day'].pattern})\s+(?:yesterday|today)"
-+)
-+_RANGE_ENDPOINT = "|".join(
-+    f"(?:{PATTERNS[name].pattern})" for name in _RANGE_ENDPOINT_PATTERNS
-+)
-+_RANGE_MONTH_YEAR = re.compile(rf"{PATTERNS['month_name'].pattern}\s+(\d{{4}})")
-+PATTERNS["from_to"] = re.compile(
-+    rf"from\s+(\S[^&]{{0,50}}?)\s+to\s+"
-+    rf"({_RANGE_DAYPART_ENDPOINT.pattern}|{_RANGE_MONTH_YEAR.pattern}|{_RANGE_ENDPOINT}|now)"
-+    # Sentence punctuation may follow a complete endpoint; only "\s|$" made
-+    # "march 2024." fall back to "march" and dropped "2024-03-31." entirely.
-+    rf"(?=[\s.,;:!?]|$)"
-+)
-+
- 
- def _resolve_yearless_date(
-     month: int, day: int, today: date, anchor_year: Optional[int] = None
-@@ -157,6 +179,21 @@ def _anchor_yearless_range(
-     )
- 
- 
-+def _parse_range_side(expr: str) -> Tuple[Optional[float], Optional[float]]:
-+    """Parse one end of a ``from X to Y`` range.
-+
-+    ``now`` means today, and a month name with a year ("march 2024") keeps
-+    that year instead of resolving to the most recent such month.
-+    """
-+    expr = expr.strip()
-+    if expr == "now":
-+        expr = "today"
-+    month_year = _RANGE_MONTH_YEAR.fullmatch(expr)
-+    if month_year:
-+        return get_month_range(month_year.group(1), int(month_year.group(2)))
-+    return parse_time_expression(expr)
-+
-+
- def _calculate_season_date_range(
-     period: str,
-     season_info: Dict[str, int],
-@@ -231,7 +268,24 @@ def parse_time_expression(
-                 start_expr, end_expr, start_ts, end_ts
-             )
-             return start_ts, end_ts
--        
-+
-+        # Documented recall example. Ends that are not times fall through
-+        # ("from Alice to Bob yesterday" is still yesterday).
-+        from_to_match = PATTERNS["from_to"].search(query)
-+        if from_to_match:
-+            start_expr = from_to_match.group(1)
-+            end_expr = from_to_match.group(2)
-+            start_ts, _ = _parse_range_side(start_expr)
-+            _, end_ts = _parse_range_side(end_expr)
-+            if start_ts is not None and end_ts is not None:
-+                start_ts, end_ts = _anchor_yearless_range(
-+                    start_expr, end_expr, start_ts, end_ts
-+                )
-+                # An inverted window ("from march to january") falls through
-+                # to the single-expression parse, as before this pattern.
-+                if start_ts <= end_ts:
-+                    return start_ts, end_ts
-+
-         # Check for full ISO dates (YYYY-MM-DD) FIRST
-         full_date_match = PATTERNS["full_date"].search(query)
-         if full_date_match:
-@@ -619,8 +673,8 @@ def get_this_period_range(period: str) -> Tuple[float, float]:
-         
-     return start_dt.timestamp(), end_dt.timestamp()
- 
--def get_month_range(month_name: str) -> Tuple[float, float]:
--    """Get timestamp range for a named month."""
-+def get_month_range(month_name: str, year: Optional[int] = None) -> Tuple[float, float]:
-+    """Get timestamp range for a named month (the most recent one unless ``year`` is given)."""
-     # Map month name to number
-     month_map = {
-         "january": 1, "february": 2, "march": 3, "april": 4,
-@@ -630,11 +684,12 @@ def get_month_range(month_name: str) -> Tuple[float, float]:
-     
-     if month_name in month_map:
-         month_num = month_map[month_name]
--        current_year = datetime.now().year
--        
--        # If the month is in the future for this year, use last year
--        current_month = datetime.now().month
--        year = current_year if month_num <= current_month else current_year - 1
-+        if year is None:
-+            current_year = datetime.now().year
-+
-+            # If the month is in the future for this year, use last year
-+            current_month = datetime.now().month
-+            year = current_year if month_num <= current_month else current_year - 1
-         
-         # Get first and last day of the month
-         first_day = date(year, month_num, 1)
-```
-
-**File**: `tests/test_time_parser.py` (modified, +88/-1)
-```diff
-@@ -255,7 +255,94 @@ def test_date_ranges(self):
-         
-         assert start_dt.month == 1
-         assert end_dt.month == 3
--    
-+
-+    def test_from_to_covers_the_whole_window(self, monkeypatch):
-+        """`from X to Y` is a range, the same window `between X and Y` already is.
-+
-+        The recall handler documents "from January to March". Without a from/to
-+        pattern the first date or month was returned alone, so an ISO range
-+        collapsed to its first day.
-+        """
-+        # In January and February "march" resolves to last year, which would
-+        # invert the month window; pin the clock after March.
-+        _freeze_clock(monkeypatch, date(2026, 11, 10))
-+        start_ts, end_ts = parse_time_expression("from 2024-01-01 to 2024-03-31")
-+        assert datetime.fromtimestamp(start_ts) == datetime(2024, 1, 1, 0, 0, 0)
-+        end_dt = datetime.fromtimestamp(end_ts)
-+        assert (end_dt.year, end_dt.month, end_dt.day) == (2024, 3, 31)
-+
-+        month_start, month_end = parse_time_expression("from january to march")
-+        between_start, between_end = parse_time_expression("between january and march")
-+        assert (month_start, month_end) == (between_start, between_end)
-+        assert datetime.fromtimestamp(month_end).month == 3
-+
-+        _, (recall_start, recall_end) = extract_time_expression("from January to March")
-+        assert datetime.fromtimestamp(recall_start).month == 1
-+        assert datetime.fromtimestamp(recall_end).month == 3
-+
-+        relative_start, relative_end = parse_time_expression(
-+            "from 3 days ago to 1 day ago"
-+        )
-+        expected_start, _ = parse_time_expression("3 days ago")
-+        _, expected_end = parse_time_expression("1 day ago")
-+        assert (relative_start, relative_end) == (expected_start, expected_end)
-+
-+        daypart_start, daypart_end = parse_time_expression(
-+            "from yesterday morning to today"
-+        )
-+        expected_start, _ = parse_time_expression("yesterday morning")
-+        _, expected_end = parse_time_expression("today")
-+        assert (daypart_start, daypart_end) == (expected_start, expected_end)
-+
-+        # "today in the morning" is a supported expression on its own, so the
-+        # range end keeps the daypart instead of widening to the whole day.
-+        for query, end_expr in (
-+            ("from yesterday to today in the morning", "today in the morning"),
-+            ("from yesterday to today morning", "today morning"),
-+        ):
-+            range_start, range_end = parse_time_expression(query)
-+            expected_start, _ = parse_time_expression("yesterday")
-+            _, expected_end = parse_time_expression(end_expr)
-+            assert (range_start, range_end) == (expected_start, expected_end)
-+
-+    def test_from_to_that_is_not_a_date_keeps_a_later_expression(self):
-+        """`from Alice to Bob yesterday` is not a date range."""
-+        yesterday_start, yesterday_end = parse_time_expression("yesterday")
-+        for query in ("from Alice to Bob yesterday", "from May to Bob yesterday"):
-+            start_ts, end_ts = parse_time_expression(query)
-+            assert (start_ts, end_ts) == (yesterday_start, yesterday_end)
-+
-+    def test_from_to_edge_endpoints(self, monkeypatch):
-+        """Inverted month windows fall back, month-name years are kept, `now` is today."""
-+        _freeze_clock(monkeypatch, date(2026, 1, 10))
-+        march_start, _ = parse_time_expression("march")
-+        _, january_end = parse_time_expression("january")
-+        assert parse_time_expression("from march to january") == (march_start, january_end)
-+
-+        _freeze_clock(monkeypatch, date(2026, 11, 10))
-+        assert parse_time_expression("from march to january") == parse_time_expression("march")
-+
-+        start_ts, end_ts = parse_time_expression("from January 2024 to March 2024")
-+        assert datetime.fromtimestamp(start_ts) == datetime(2024, 1, 1, 0, 0, 0)
-+        end_dt = datetime.fromtimestamp(end_ts)
-+        assert (end_dt.year, end_dt.month, end_dt.day) == (2024, 3, 31)
-+
-+        now_start, now_end = parse_time_expression("from 2024-01-01 to now")
-+        _, today_end = parse_time_expression("today")
-+        assert datetime.fromtimestamp(now_start) == datetime(2024, 1, 1, 0, 0, 0)
-+        assert now_end == today_end
-+
-+        # Sentence punctuation after the end must not shorten the endpoint
-+        # ("march 2024." falling back to "march") or drop the range.
-+        for query in (
-+            "from January 2024 to March 2024",
-+            "from 2024-01-01 to 2024-03-31",
-+            "from yesterday to today in the morning",
-+        ):
-+            expected = parse_time_expression(query)
-+            for punct in (".", ",", "?", "!", ";", ":"):
-+                assert parse_time_expression(query + punct) == expected, query + punct
-+
-     def test_quarters(self):
-         """Test quarter expressions"""
-         start_ts, end_ts = parse_time_expression(
-```
-
----
-
-### Incident Patch 3: `314452aa` (2026-11-13)
-**Commit Message**: fix(milvus): keep the embedding call out of the read-upsert window (#1966) (#1978)
-
-* fix(milvus): keep the embedding call out of the read-upsert window (#1966)
-
-update_memory_metadata and update_memories_batch read the stored vector
-with the row and write it back, as mark_superseded_batch does; only a
-row whose vector did not come back is re-embedded. update_memory_versioned
-embeds the new content before it reads the old row and hands the vector
-to store() through a ContextVar, next to _exclude_versioned_parent.
-
-The window between the read and the whole-row upsert is now a get and an
-upsert with no embedding call in it. It is not closed: pymilvus has no
-conditional upsert and _write_lock is per instance. That limit stays
-documented in the changelog fragment.
-
-Refs #1966
-
-* fix(milvus): the legacy vector read drops a tombstoned row (#1966)
-
-On a collection without the store field the vector is read with a second
-get. That get now returns metadata too and goes through _row_is_live, so
-a row soft-deleted between the two reads is not found and nothing is
-written back, as every other read of a memory here treats a tombstone.
-
-Refs #1966
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ---------
 
-Co-authored-by: massimiliano1991 <[R
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `changelog.d/1966.fixed.md` (added, +8/-0)
+**File**: `.github/workflows/ci.yml` (modified, +27/-0)
 ```diff
-@@ -0,0 +1,8 @@
-+- **Milvus updates no longer embed the content between the read and the upsert**
-+  (#1966). `update_memory_metadata` (and so `update_memory`) and
-+  `update_memories_batch` read the stored vector with the row and write it back,
-+  as `mark_superseded_batch` already did; only a row whose vector does not come
-+  back is re-embedded. `update_memory_versioned` embeds the new content before it
-+  reads the old row. The window between the read and the whole-row upsert is now
-+  two round-trips with no embedding call in it; it is not closed, since pymilvus
-+  has no conditional upsert, and that limit stays documented.
+@@ -145,6 +145,33 @@ jobs:
+     - name: Check bundled hooks config matches template structure
+       run: bash scripts/ci/check_hooks_config_drift.sh
+ 
++  secret-scan:
++    if: github.event_name == 'pull_request'
++    runs-on: ubuntu-latest
++    name: Secret Scan (gitleaks, PR commits)
++    timeout-minutes: 5
++    steps:
++    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
++      with:
++        fetch-depth: 0
++    # Third-party actions are not allowed here, so the binary is fetched directly
++    # and checked against its published checksum. Only the PR's own commits are
++    # scanned: older history holds known, already-rotated findings.
++    - name: Install gitleaks
++      env:
++        GITLEAKS_VERSION: 8.30.1
++      run: |
++        base="https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}"
++        tarball="gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
++        curl -fsSLO "$base/$tarball"
++        curl -fsSL "$base/gitleaks_${GITLEAKS_VERSION}_checksums.txt" | grep " ${tarball}\$" | sha256sum -c -
++        tar -xzf "$tarball" gitleaks
++    - name: Scan PR commits
++      env:
++        BASE_SHA: ${{ github.event.pull_request.base.sha }}
++        HEAD_SHA: ${{ github.event.pull_request.head.sha }}
++      run: ./gitleaks git --redact --no-banner --log-opts="${BASE_SHA}..${HEAD_SHA}" .
++
+   hooks-tests:
+     runs-on: ubuntu-latest
+     name: JS Tests (claude-hooks/, opencode/, codex/)
 ```
 
-**File**: `src/mcp_memory_service/storage/milvus.py` (modified, +124/-33)
+**File**: `changelog.d/2023.fixed.md` (added, +1/-0)
 ```diff
-@@ -97,6 +97,7 @@
-     _exclude_versioned_parent,
-     _escape_like, _tags_to_string, _string_to_tags,
-     _safe_json_loads, _versioned_conflict_exclusion,
-+    _precomputed_store_vector, _store_with_vector,
+@@ -0,0 +1 @@
++- **`scripts/maintenance/sync_status.py` no longer carries Cloudflare credentials.** It fell back to a hardcoded API token, account ID and D1 database ID when the environment did not set them, so the token sat in the public repository since January. The fallbacks are gone and the script exits with a clear message naming the missing variables. CI now runs gitleaks over each pull request's own commits, and the pre-commit hook scans staged changes when gitleaks is installed.
+```
+
+**File**: `scripts/hooks/pre-commit` (modified, +13/-0)
+```diff
+@@ -38,6 +38,19 @@ else
+     PYTHON_BIN="$(command -v python3 || command -v python)"
+ fi
+ 
++# === Secret scan (optional, runs before the LLM checks can exit early) ===
++if command -v gitleaks &> /dev/null; then
++    if gitleaks git --staged --redact --no-banner --log-level warn "$SCRIPT_DIR"; then
++        echo -e "${GREEN}✓${NC} gitleaks: no secrets in staged changes"
++    else
++        echo -e "${RED}✗ gitleaks found a possible secret in staged changes${NC}"
++        echo "  Remove it, or mark a false positive with a trailing 'gitleaks:allow' comment."
++        exit 1
++    fi
++else
++    echo -e "${YELLOW}⚠️${NC} gitleaks not installed, skipping secret scan"
++fi
++
+ # Determine which LLM to use (Groq preferred, Gemini fallback)
+ LLM_CMD=""
+ LLM_NAME=""
+```
+
+**File**: `scripts/maintenance/sync_status.py` (modified, +9/-3)
+```diff
+@@ -12,9 +12,11 @@
+ from typing import Set, Dict, Tuple
+ 
+ # Configuration
+-CLOUDFLARE_ACCOUNT_ID = os.environ.get("CLOUDFLARE_ACCOUNT_ID", "be0e35a26715043ef8df90253268c33f")
+-CLOUDFLARE_D1_DATABASE_ID = os.environ.get("CLOUDFLARE_D1_DATABASE_ID", "f745e9b4-ba8e-4d47-b38f-12af91060d5a")
+-CLOUDFLARE_API_TOKEN = os.environ.get("CLOUDFLARE_API_TOKEN", "Y9qwW1rYkwiE63iWYASxnzfTQlIn-mtwCihRTwZa")
++# No defaults: credentials come from the environment only, never from source.
++REQUIRED_ENV = ("CLOUDFLARE_ACCOUNT_ID", "CLOUDFLARE_D1_DATABASE_ID", "CLOUDFLARE_API_TOKEN")
++CLOUDFLARE_ACCOUNT_ID = os.environ.get("CLOUDFLARE_ACCOUNT_ID", "")
++CLOUDFLARE_D1_DATABASE_ID = os.environ.get("CLOUDFLARE_D1_DATABASE_ID", "")
++CLOUDFLARE_API_TOKEN = os.environ.get("CLOUDFLARE_API_TOKEN", "")
+ 
+ # Default local DB path
+ if sys.platform == "win32":
+@@ -98,6 +100,10 @@ def get_d1_hashes(has_deleted_at: bool = False) -> Tuple[Set[str], Set[str]]:
+ 
+ 
+ def main():
++    missing = [name for name in REQUIRED_ENV if not os.environ.get(name)]
++    if missing:
++        sys.exit(f"Missing environment variable(s): {', '.join(missing)}")
++
+     print("=" * 70)
+     print("MCP Memory Service - Sync Status Report")
+     print(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+```
+
+---
+
+### Incident Patch 2: `19940279` (2026-11-14)
+**Commit Message**: fix(oauth): name the client on the authorize page, keep admin behind gated registration (#2017)
+
+* fix(oauth): name the client on the authorize page, keep admin behind gated registration
+
+GHSA-w8p9-5v6q-h9ch, reported by hgrgr.
+
+With MCP_DCR_REGISTRATION_KEY unset anyone can register a client with their
+own redirect URI and send the owner a link to the owner's own authorize page.
+That page asked for the API key and showed nothing about the request, and the
+code it issued could carry `read write admin`.
+
+- The page shows the redirect host, the self-reported client name and the
+  scope that will be granted. GET and POST resolve the request through the
+  same function, and the form carries the granted scope, not the requested
+  one.
+- `admin` is granted only to a client that declared it in a registration
+  gated by MCP_DCR_REGISTRATION_KEY. Otherwise it is dropped: at
+  registration, at authorize, and on refresh, so tokens issued before this
+  change stop minting it. It is narrowed, not refused, because clients tend
+  to request every advertised scope.
+- Discovery advertises `admin` only while registration is gated.
+- The page is sent with X-Frame-Options: DENY and frame-ancestors 'no
+
+**File**: `changelog.d/ghsa-w8p9-5v6q-h9ch.fixed.md` (added, +14/-0)
+```diff
+@@ -0,0 +1,14 @@
++- **The OAuth authorize page did not say who was asking, and could hand out `admin` (GHSA-w8p9-5v6q-h9ch, reported by hgrgr).**
++  With `MCP_DCR_REGISTRATION_KEY` unset, anyone could register a client with their own
++  redirect URI and send the owner a link to the owner's own authorize page. The page asked
++  for the API key and showed nothing else, so a third party's request looked exactly like a
++  Claude.ai reconnect, and the resulting token could carry `read write admin`. The page now
++  shows the redirect host, the self-reported client name and the scope that will be
++  granted, and it refuses to be framed. `admin` is granted only to a client that declared
++  it in a registration gated by `MCP_DCR_REGISTRATION_KEY`; everywhere else it is dropped
++  from the grant, from refreshed tokens and from the advertised scopes. **Behaviour
++  change:** a client that obtained `admin` through open registration, or through a gated
++  registration that named no scope, now gets `read write`; register it again with
++  `MCP_DCR_REGISTRATION_KEY` set and `admin` in its `scope` to keep it. If the server was
++  reachable from outside with registration open, run `memory oauth list-clients` and
++  remove what you do not recognise with `memory oauth delete-client`.
+```
+
+**File**: `docs/oauth-quickstart.md` (modified, +14/-0)
+```diff
+@@ -56,6 +56,20 @@ export MCP_OAUTH_ISSUER=https://your-public-url.com
+ # No DCR_REGISTRATION_KEY — claude.ai needs open registration
+ ```
+ 
++With registration open, anyone who can reach `/oauth/register` can register a
++client. The page where you enter your API key therefore shows where the access
++will be sent, the name the application gave itself, and the scope it gets.
++Check the destination (`claude.ai` or `claude.com` for the Claude.ai connector)
++before you enter the key, and do not authorize from a link someone sent you.
++
++Openly registered clients receive `read` and `write` at most. The `admin` scope
++is granted only when `MCP_DCR_REGISTRATION_KEY` is set and the client declared
++`admin` in its registration (`"scope": "read write admin"`). A client registered
++without a scope has to register again to get it.
++
++`memory oauth list-clients` shows every registered client and
++`memory oauth delete-client <client_id>` removes one.
++
+ ### Docker
+ Add to your docker-compose environment:
+ ```yaml
+```
+
+**File**: `src/mcp_memory_service/web/oauth/authorization.py` (modified, +330/-153)
+```diff
+@@ -26,7 +26,7 @@
+ import base64
+ import secrets
+ from typing import Optional, Tuple
+-from urllib.parse import urlencode
++from urllib.parse import urlencode, urlsplit
+ from fastapi import APIRouter, Depends, HTTPException, status, Form, Query, Request
+ from fastapi.responses import HTMLResponse, RedirectResponse
+ import jwt
+@@ -37,15 +37,17 @@
+     OAUTH_AUTHORIZATION_CODE_EXPIRE_MINUTES,
+     OAUTH_REFRESH_TOKEN_EXPIRE_DAYS,
+     API_KEY,
++    DCR_REGISTRATION_KEY,
+     get_jwt_algorithm,
+     get_jwt_signing_key,
  )
- from ..compat import _sanitize_log_value
- from ..models.memory import Memory, MemoryQueryResult
-@@ -890,14 +891,24 @@ def _row_fields(self, base: Tuple[str, ...]) -> List[str]:
-     def _row_store(row: Dict[str, Any]) -> str:
-         return row.get("store") or "default"
+-from .models import TokenResponse
++from .models import RegisteredClient, TokenResponse
+ from .middleware import scope_within_ceiling
+ from .storage import get_oauth_storage
+ from .rate_limit import auth_rate_limit
+ from .redirect import (
+     build_redirect_url as _build_redirect_url,
++    reject_ambiguous_redirect_uri,
+     resolve_registered_redirect_uri,
+ )
+ from .limits import (
+@@ -192,6 +194,94 @@ async def create_refresh_token(
+     return token, expires_in
  
--    async def _fetch_live_row(self, content_hash: str) -> Optional[Tuple[Memory, str]]:
--        """Return the live memory under ``content_hash`` and the store it is in."""
-+    async def _fetch_live_row(
-+        self, content_hash: str, include_embedding: bool = False
-+    ) -> Optional[Tuple[Memory, str]]:
-+        """Return the live memory under ``content_hash`` and the store it is in.
-+
-+        With ``include_embedding`` the stored vector comes back on
-+        ``Memory.embedding``, so a write that keeps the content can write it
-+        back instead of embedding the content again (#1966).
-+        """
-+        fields = self._OUTPUT_FIELDS
-+        if include_embedding:
-+            fields = self._OUTPUT_FIELDS_WITH_VECTOR
-         try:
-             rows = await self._call_client(
-                 "get",
-                 collection_name=self.collection_name,
-                 ids=[content_hash],
--                output_fields=self._row_fields(self._OUTPUT_FIELDS),
-+                output_fields=self._row_fields(fields),
-             )
-         except Exception as exc:  # noqa: BLE001
-             logger.error(
-@@ -908,7 +919,7 @@ async def _fetch_live_row(self, content_hash: str) -> Optional[Tuple[Memory, str
  
-         if not rows:
-             return None
--        memory = self._entity_to_memory(rows[0])
-+        memory = self._entity_to_memory(rows[0], include_embedding=include_embedding)
-         # Soft-deleted rows carry ``metadata.deleted_at``. Milvus can't filter a
-         # JSON sub-field in the ``get`` expression, so drop the tombstone here to
-         # match the other backends (sqlite_vec at mixins/retrieve.py, cloudflare
-@@ -918,19 +929,61 @@ async def _fetch_live_row(self, content_hash: str) -> Optional[Tuple[Memory, str
-             return None
-         return memory, self._row_store(rows[0])
- 
-+    async def _stored_vector(
-+        self, content_hash: str
-+    ) -> Tuple[bool, Optional[List[float]]]:
-+        """Read the vector stored under ``content_hash`` on a legacy collection.
++def _without(scope: Optional[str], token: str) -> Optional[str]:
++    """``scope`` with ``token`` removed, or None when nothing is left."""
++    return " ".join(t for t in (scope or "").split() if t != token) or None
 +
-+        Returns ``(live, vector)``. ``live`` is False when the row is gone or
-+        carries a soft-delete tombstone, as every other read of a memory
-+        here treats it (``_fetch_live_row``). A failed read is reported as
-+        live with no vector, so the caller embeds the content again, as it
-+        did before #1966. Never raises.
-+        """
-+        try:
-+            rows = await self._call_client(
-+                "get",
-+                collection_name=self.collection_name,
-+                ids=[content_hash],
-+                output_fields=["vector", "metadata"],
-+            )
-+        except Exception as exc:  # noqa: BLE001
-+            logger.warning(
-+                "Failed to read the vector of %s: %s",
-+                _sanitize_log_value(content_hash), _sanitize_log_value(exc),
-+            )
-+            return True, None
-+        if not rows or not self._row_is_live(rows[0]):
-+            return False, None
-+        return True, self._coerce_vector(rows[0])
 +
-     async def _get_for_write(
--        self, content_hash: str, store: Optional[str]
-+        self, content_hash: str, store: Optional[str], include_embedding: bool = False
-     ) -> Tuple[Optional[Memory], str]:
-         """Read the row a hash-addressed write will replace, with its store.
- 
-         Milvus ``upsert`` replaces the whole row, so the row's own store is
-         written back with it and an update never moves a memory between
-         stores. A legacy collection has no store to carry.
++def _may_hold_admin(client: Optional[RegisteredClient]) -> bool:
++    """Whether ``admin`` may be granted to this client.
 +
-+        With ``include_embedding`` the row's vector is read too (on a legacy
-+        collection with a second ``get``, since ``get_by_hash`` does not
-+        carry it; a row tombstoned by then reads as not found), so the
-+        caller can write it back without an embedding call between the read
-+        and the upsert (#1966).
-         """
-         if not self._has_store:
--            return await self.get_by_hash(content_hash, store), "default"
-+            memory = await self.get_by_hash(content_hash, store)
-+            if memory is not None and include_embedding and not memory.embedding:
-+                live, vector = await self._stored_vector(content_hash)
-+                if not live:
-+                    return None, "default"
-+                memory.embedding = vector
-+            return memory, "default"
-         refused, confine = self._store_scope(store)
--        found = None if refused else await self._fetch_live_row(content_hash)
++    Only to a client whose registered ceiling names it, and only while
++    registration is gated by MCP_DCR_REGISTRATION_KEY. With registration open
++    anyone can register a client and pick its ceiling, so the ceiling says
++    nothing about who is asking (GHSA-w8p9-5v6q-h9ch).
++    """
++    if not DCR_REGISTRATION_KEY or client is None:
++        return False
++    return "admin" in (client.allowed_scope or "").split()
++
++
++def _grantable_scope(scope: Optional[str], client: Optional[RegisteredClient]) -> Optional[str]:
++    """Drop ``admin`` from ``scope`` unless this client may hold it.
++
++    The scope is narrowed rather than refused because clients commonly request
++    every scope the server advertises.
++    """
++    if _may_hold_admin(client):
++        return scope
++    return _without(scope, "admin")
++
++
++def _bind_scope_to_ceiling(
++    scope: Optional[str], ceiling: Optional[str]
++) -> Tuple[Optional[str], bool]:
++    """Apply a client's registered scope ceiling. Returns ``(scope, denied)``.
++
++    offline_access is a protocol scope (refresh-token request), not a
++    data-access grant, so it is exempt from the data-scope ceiling. A client
++    with no ceiling (``None``) is unaffected.
++    """
++    if ceiling is None:
++        return scope, False
++    data_scope = _without(scope, OFFLINE_ACCESS_SCOPE)
++    if data_scope:
++        return scope, not scope_within_ceiling(data_scope, ceiling)
++    # No data scope requested. create_access_token() defaults an empty scope to
++    # the global "read write", which would ESCAPE a store-scoped ceiling. Bind
++    # the grant to the ceiling instead (never conferring admin), preserving an
++    # explicit offline_access.
++    ceil = _without(ceiling, "admin")
++    offline = OFFLINE_ACCESS_SCOPE if _scope_has_offline_access(scope) else None
++    bound = " ".join(t for t in (ceil, offline) if t) or None
++    return bound, not ceil  # an admin-only ceiling has nothing to grant here
++
++
++async def _resolve_authorize_request(
++    client_id: str, redirect_uri: Optional[str], scope: Optional[str]
++) -> Tuple[RegisteredClient, str, Optional[str], bool]:
++    """Resolve what an authorize request would grant, and to whom.
++
++    Returns ``(client, validated_redirect_uri, scope, denied)``. GET and POST
++    both go through here, so the page shows exactly what the POST will issue.
++    """
++    validated_redirect_uri = await validate_redirect_uri(client_id, redirect_uri)
++    # Also here, not only at registration: a client registered before the
++    # check existed still has its URI in the store.
++    reject_ambiguous_redirect_uri(validated_redirect_uri)
++    client = await get_oauth_storage().get_client(client_id)
++    scope, denied = _bind_scope_to_ceiling(
++        _grantable_scope(scope, client), client.allowed_scope
++    )
++    return client, validated_redirect_uri, scope, denied
++
++
++def _callback_url(redirect_uri: str, params: dict[str, str], state: Optional[str]) -> str:
++    """The client's callback URL with ``params``, echoing ``state`` when one was sent."""
++    if state:
++        params = {**params, "state": state}
++    return _build_redirect_url(redirect_uri, params)
++
++
++def _scope_denied_redirect(redirect_uri: str, state: Optional[str]) -> RedirectResponse:
++    logger.warning("Authorization denied: requested scope exceeds client ceiling")
++    error_params = {
++        "error": "invalid_scope",
++        "error_description": "Requested scope exceeds the scope this client is registered for",
++    }
++    return RedirectResponse(url=_callback_url(redirect_uri, error_params, state))
++
++
+ async def validate_redirect_uri(client_id: str, redir
 ```
 
-**File**: `src/mcp_memory_service/storage/shared.py` (modified, +18/-0)
+**File**: `src/mcp_memory_service/web/oauth/discovery.py` (modified, +12/-3)
 ```diff
-@@ -28,6 +28,24 @@ def _exclude_versioned_parent(content_hash: str) -> Iterator[None]:
-     finally:
-         _versioned_conflict_exclusion.reset(token)
+@@ -21,7 +21,7 @@
+ import logging
+ from fastapi import APIRouter
+ from ...compat import _sanitize_log_value
+-from ...config import OAUTH_ISSUER, get_jwt_algorithm, join_url
++from ...config import DCR_REGISTRATION_KEY, OAUTH_ISSUER, get_jwt_algorithm, join_url
+ from .models import OAuthServerMetadata, OAuthProtectedResourceMetadata
  
+ logger = logging.getLogger(__name__)
+@@ -30,6 +30,15 @@
+ 
+ 
+ 
++def _data_scopes_supported() -> list[str]:
++    """``admin`` is advertised only while registration is gated.
 +
-+# A vector computed before the row was read, for ``store()`` to write instead
-+# of embedding the content again. ``update_memory_versioned`` embeds the new
-+# content ahead of its read so that no embedding call sits between the read
-+# and the write (#1966).
-+_precomputed_store_vector: ContextVar[Optional[List[float]]] = ContextVar(
-+    "precomputed_store_vector", default=None
-+)
++    With open registration no client can be granted it (GHSA-w8p9-5v6q-h9ch),
++    and clients tend to request every scope they are shown.
++    """
++    return ["read", "write", "admin"] if DCR_REGISTRATION_KEY else ["read", "write"]
 +
 +
-+@contextmanager
-+def _store_with_vector(embedding: List[float]) -> Iterator[None]:
-+    token = _precomputed_store_vector.set(embedding)
-+    try:
-+        yield
-+    finally:
-+        _precomputed_store_vector.reset(token)
-+
- # ---------------------------------------------------------------------------
- # Bounded LRU embedding cache
- # ---------------------------------------------------------------------------
+ @router.get("/.well-known/oauth-protected-resource")
+ async def oauth_protected_resource_metadata() -> OAuthProtectedResourceMetadata:
+     """
+@@ -43,7 +52,7 @@ async def oauth_protected_resource_metadata() -> OAuthProtectedResourceMetadata:
+     return OAuthProtectedResourceMetadata(
+         resource=OAUTH_ISSUER,
+         authorization_servers=[OAUTH_ISSUER],
+-        scopes_supported=["read", "write", "admin"],
++        scopes_supported=_data_scopes_supported(),
+         bearer_methods_supported=["header"],
+         resource_documentation=join_url(OAUTH_ISSUER, "/docs"),
+     )
+@@ -70,7 +79,7 @@ async def oauth_authorization_server_metadata() -> OAuthServerMetadata:
+         grant_types_supported=["authorization_code", "client_credentials", "refresh_token"],
+         response_types_supported=["code"],
+         token_endpoint_auth_methods_supported=["client_secret_basic", "client_secret_post", "none"],
+-        scopes_supported=["read", "write", "admin", "offline_access"],
++        scopes_supported=[*_data_scopes_supported(), "offline_access"],
+         id_token_signing_alg_values_supported=[algorithm],
+         code_challenge_methods_supported=["S256"]
+     )
 ```
 
-**File**: `tests/storage/test_milvus_update_memory.py` (modified, +6/-4)
+**File**: `src/mcp_memory_service/web/oauth/redirect.py` (modified, +14/-0)
 ```diff
-@@ -97,10 +97,12 @@ async def test_successful_update(self):
-         result = await storage.update_memory(updated)
+@@ -63,6 +63,20 @@ def _invalid_uri(description: str) -> HTTPException:
+     )
  
-         assert result is True
--        # Verify upsert was called (through update_memory_metadata)
--        storage._call_client.assert_called_once()
--        call_args = storage._call_client.call_args
--        assert call_args[0][0] == "upsert"
-+        # Verify upsert was called (through update_memory_metadata). The
-+        # mocked get_by_hash carries no vector, so the row's vector is read
-+        # with a second client call before the upsert (#1966).
-+        upserts = [c for c in storage._call_client.call_args_list if c[0][0] == "upsert"]
-+        assert len(upserts) == 1
-+        assert storage._call_client.call_args[0][0] == "upsert"
  
-     @pytest.mark.asyncio
-     async def test_not_found_returns_false(self):
++def reject_ambiguous_redirect_uri(uri: str) -> None:
++    """Refuse a redirect URI that a browser reads differently from ``urlsplit``.
++
++    Browsers treat a backslash in an http(s) URL as a slash and drop tabs and
++    newlines, so ``https://evil.example\\@claude.ai/cb`` parses here with the
++    host ``claude.ai`` and navigates to ``evil.example``. No legitimate
++    redirect URI carries a backslash, whitespace or a control character.
++    """
++    if any(ch == "\\" or ch <= " " or ch == "\x7f" for ch in uri):
++        raise _invalid_uri(
++            "redirect URI must not contain backslashes, whitespace or control characters"
++        )
++
++
+ def validate_registration_redirect_uris(redirect_uris: Optional[List[str]]) -> None:
+     """
+     Validate redirect URIs supplied at client registration (RFC 7591).
 ```
 
-**File**: `tests/storage/test_milvus_update_stored_vector.py` (added, +352/-0)
+**File**: `src/mcp_memory_service/web/oauth/registration.py` (modified, +88/-65)
 ```diff
-@@ -0,0 +1,352 @@
+@@ -21,7 +21,7 @@
+ import secrets
+ import time
+ import logging
+-from typing import List
++from typing import List, Optional
+ from fastapi import APIRouter, Depends, HTTPException, Request, status
+ from pydantic import ValidationError
+ 
+@@ -32,7 +32,7 @@
+ )
+ from .storage import get_oauth_storage
+ from .rate_limit import auth_rate_limit
+-from .redirect import validate_registration_redirect_uris
++from .redirect import reject_ambiguous_redirect_uri, validate_registration_redirect_uris
+ from mcp_memory_service.config import DCR_REGISTRATION_KEY
+ 
+ logger = logging.getLogger(__name__)
+@@ -148,6 +148,91 @@ def _refuse_client_credentials_while_open(grant_types) -> None:
+     )
+ 
+ 
++def _validate_client_metadata(request: ClientRegistrationRequest) -> None:
++    """Validate the redirect URIs, grant types and response types of a registration."""
++    for uri in request.redirect_uris or []:
++        reject_ambiguous_redirect_uri(str(uri))
++
++    if request.redirect_uris:
++        validate_redirect_uris([str(uri) for uri in request.redirect_uris])
++
++    if request.grant_types:
++        validate_grant_types(request.grant_types)
++
++    if request.response_types:
++        validate_response_types(request.response_types)
++
++    _refuse_client_credentials_while_open(request.grant_types)
++
++
++def _scope_ceiling(requested_scope: Optional[str]) -> Optional[str]:
++    """The requested scope, captured as the client's permanent ceiling.
++
++    An omitted or empty scope leaves the ceiling unbounded (None), unchanged
++    from the pre-ceiling behaviour, so existing clients and callers are
++    unaffected. Open registration cannot declare admin: anyone can register,
++    so the ceiling would be the caller's own wish (GHSA-w8p9-5v6q-h9ch).
++    """
++    tokens = (requested_scope or "").split()
++    if not DCR_REGISTRATION_KEY:
++        tokens = [t for t in tokens if t != "admin"]
++    return " ".join(tokens) or None
++
++
++async def _create_client(request: ClientRegistrationRequest) -> ClientRegistrationResponse:
++    """Validate a registration request, store the client and build the response."""
++    _validate_client_metadata(request)
++
++    # Prepare default values
++    grant_types = request.grant_types or ["authorization_code"]
++    response_types = request.response_types or ["code"]
++    token_endpoint_auth_method = request.token_endpoint_auth_method or "client_secret_basic"
++
++    # Generate client credentials. A public client (RFC 7591: auth method
++    # "none", e.g. the PKCE flow claude.ai uses) must not be issued a secret
++    # at all — handing one out let a caller turn a registration into client
++    # authentication. The empty string is stored rather than None so the model
++    # and the SQLite row stay unchanged; verify_client_secret() already
++    # refuses an empty stored secret, so such a client cannot authenticate
++    # with one.
++    client_id = get_oauth_storage().generate_client_id()
++    is_public_client = token_endpoint_auth_method == "none"
++    client_secret = "" if is_public_client else get_oauth_storage().generate_client_secret()
++
++    allowed_scope = _scope_ceiling(request.scope)
++
++    # Create registered client
++    registered_client = RegisteredClient(
++        client_id=client_id,
++        client_secret=client_secret,
++        redirect_uris=[str(uri) for uri in request.redirect_uris] if request.redirect_uris else [],
++        grant_types=grant_types,
++        response_types=response_types,
++        token_endpoint_auth_method=token_endpoint_auth_method,
++        client_name=request.client_name,
++        created_at=time.time(),
++        allowed_scope=allowed_scope
++    )
++
++    # Store the client
++    await get_oauth_storage().store_client(registered_client)
++
++    # Create response. client_secret is omitted entirely for a public client.
++    response = ClientRegistrationResponse(
++        client_id=client_id,
++        client_secret=client_secret or None,
++        redirect_uris=registered_client.redirect_uris,
++        grant_types=grant_types,
++        response_types=response_types,
++        token_endpoint_auth_method=token_endpoint_auth_method,
++        client_name=request.client_name,
++        scope=allowed_scope
++    )
++
++    logger.info(f"OAuth client registered successfully: client_id={_sanitize_log_value(client_id)}, name={_sanitize_log_value(request.client_name)}, scope={_sanitize_log_value(allowed_scope)}")
++    return response
++
++
+ @router.post(
+     "/register",
+     response_model=ClientRegistrationResponse,
+@@ -173,69 +258,7 @@ async def register_client(
+     logger.info("OAuth client registration request received")
+ 
+     try:
+-        # Validate client metadata
+-        if request.redirect_uris:
+-            validate_redirect_uris([str(uri) for uri in request.redirect_uris])
+-
+-        if request.grant_types:
+-            validate_grant_types(request.grant_types)
+-
+-        if request.response_types:
+-            validate_response_types(request.response_types)
+-
+-        _refuse_client_creden
+```
+
+**File**: `tests/web/test_oauth_authorize_consent.py` (added, +326/-0)
+```diff
+@@ -0,0 +1,326 @@
 +# Copyright 2024 Heinrich Krupp
 +#
 +# Licensed under the Apache License, Version 2.0 (the "License");
@@ -3702,136 +3469,306 @@ Co-authored-by: massimiliano1991 <[R
 +# See the License for the specific language governing permissions and
 +# limitations under the License.
 +
-+"""Milvus updates keep the embedding call out of the read-upsert window (#1966).
++"""GHSA-w8p9-5v6q-h9ch: the authorize page has to say who is asking.
 +
-+Every Milvus update is a read followed by a whole-row ``upsert``, and two
-+clients on one collection share no lock. An update that keeps the content
-+keeps its vector too, so ``update_memory_metadata`` and
-+``update_memories_batch`` read the stored vector with the row and write it
-+back, as ``mark_superseded_batch`` already did, instead of embedding the
-+content between the read and the upsert. ``update_memory_versioned`` stores
-+new content, so it embeds that content before it reads the old row.
++With MCP_DCR_REGISTRATION_KEY unset anyone can register a client with their
++own redirect URI. The owner then authorises on a page that named neither the
++client, nor where the code would go, nor the scope, and the scope could be
++``admin``. The owner's API key was the only control, and the owner had nothing
++to decide with.
 +
-+Mocked-client style of test_milvus_store_scope.py: these run on CI runners
-+without pymilvus or a model.
++Three things are pinned here: the page shows the destination, the
++self-reported name and the scope that will be granted; ``admin`` is granted
++only to a client whose registration was gated and declared it; the page
++cannot be framed.
 +"""
 +
-+from __future__ import annotations
-+
-+import asyncio
-+import json
++import base64
++import hashlib
 +import re
-+import threading
 +import time
-+from typing import Any
-+from unittest.mock import AsyncMock, MagicMock
 +
 +import pytest
++from fastapi import FastAPI
++from fastapi.testclient import TestClient
 +
-+from mcp_memory_service.models.memory import Memory
-+from mcp_memory_service.storage.milvus import MilvusMemoryStorage
-+from mcp_memory_service.storage.shared import _string_to_tags
-+from mcp_memory_service.utils.hashing import generate_content_hash
++from mcp_memory_service.web.oauth import authorization, discovery, registration
++from mcp_memory_service.web.oauth.middleware import validate_jwt_token
++from mcp_memory_service.web.oauth.models import RegisteredClient
++from mcp_memory_service.web.oauth.storage.memory import MemoryOAuthStorage
 +
-+_HASH = "a" * 64
-+_OTHER = "c" * 64
-+_STORED = [0.5, 0.5, 0.5, 0.5]
-+_FRESH = [0.1, 0.2, 0.3, 0.4]
++OWNER_KEY = "owner-api-key"
++ATTACKER_CB = "https://attacker.example/cb"
++VERIFIER = "v" * 64
++CHALLENGE = (
++    base64.urlsafe_b64encode(hashlib.sha256(VERIFIER.encode()).digest())
++    .rstrip(b"=")
++    .decode()
++)
 +
 +
-+def _make_storage(has_store: bool) -> MilvusMemoryStorage:
-+    """A MilvusMemoryStorage with __init__ skipped and the client mocked."""
-+    storage = MilvusMemoryStorage.__new__(MilvusMemoryStorage)
-+    storage.uri = "./milvus.db"
-+    storage.collection_name = "unit_test_collection"
-+    storage.embedding_dimension = 4
-+    storage.embedding_model_name = "test-model"
-+    storage.embedding_model = MagicMock()
-+    storage.embedding_model.encode = MagicMock(
-+        side_effect=lambda texts, **_: [list(_FRESH) for _ in texts]
++@pytest.fixture
++def storage(monkeypatch):
++    store = MemoryOAuthStorage()
++    monkeypatch.setattr(authorization, "get_oauth_storage", lambda: store)
++    monkeypatch.setattr(registration, "get_oauth_storage", lambda: store)
++    monkeypatch.setattr(authorization, "API_KEY", OWNER_KEY)
++    return store
++
++
++def _set_dcr_key(monkeypatch, key):
++    for module in (authorization, registration, discovery):
++        monkeypatch.setattr(module, "DCR_REGISTRATION_KEY", key)
++
++
++@pytest.fixture
++def open_dcr(monkeypatch):
++    _set_dcr_key(monkeypatch, None)
++
++
++@pytest.fixture
++def gated_dcr(monkeypatch):
++    _set_dcr_key(monkeypatch, "registration-key")
++
++
++@pytest.fixture
++def http(storage):
++    app = FastAPI()
++    app.include_router(registration.router, prefix="/oauth")
++    app.include_router(authorization.router, prefix="/oauth")
++    app.include_router(discovery.router)
++    return TestClient(app, follow_redirects=False)
++
++
++async def _store_client(storage, allowed_scope, name="Totally Not Evil"):
++    await storage.store_client(
++        RegisteredClient(
++            client_id="c1",
++            client_secret="",
++            redirect_uris=[ATTACKER_CB],
++            token_endpoint_auth_method="none",
++            client_name=name,
++            created_at=time.time(),
++            allowed_scope=allowed_scope,
++        )
 +    )
-+    storage._initialized = True
-+    storage.client = MagicMock()
-+    storage._has_content_lower = True
-+    storage._has_bm25 = False
-+    storage._has_access_collection = False
-+    storage._has_store = has_store
-+    storage.semantic_dedup_enabled = False
-+    storage._generate_embedding = MagicMock(return_value=list(_FRESH))
-+    storage._detect_conflicts = AsyncMock(return_value=[])
-+    storage._delete_graph_edges = AsyncMock()
-+    return storage
++    return "c1"
 +
 +
-+def _row(
-+    content_hash: str = _HASH,
-+    store: str | None = "team",
-+    vector: list[float] | None = _STORED,
-+    content: str = "body",
-+    **extra: Any,
-+) -> dict[str, Any]:
-+    now = time.time()
-+    row: dict[str, Any] = {
-+        "id": content_hash,
-+        "content": content,
-+        "content_lower": content.lower(),
-+        "tags": "t",
-+        "memory_type": "note",
-+        "metadata": "{}",
-+        "created_at": now,
-+        "updated_at": now,
-+        "created_at_iso": "2026-11-12T00:00:00Z",
-+        "updated_at_iso": "2026-11-12T00:00:00Z",
++def _authorize_params(client_id, scope="read write admin"):
++    return {
++        "response_type": "code",
++        "client_id": client_id,
++        "redirect_uri": ATTACKER_CB,
++        "scope": scope,
++        "state": "x",
++        "code_challenge": CHALLENGE,
++        "code_challenge_method": "S256",
 +    }
-+    if store is not None:
-+        row["store"] = store
-+    if vector is not None:
-+        row["vector"] = list(vector)
-+    row.update(extra)
-+    return row
 +
 +
-+class _Collection:
-+    """An in-memory collection behind ``_call_client``.
++def _granted_scope(http, client_id, scope="read write admin"):
++    """Run authorize + token as the owner would and return the token's scope."""
++    resp = http.post(
++        "/oauth/authorize",
++        params=_authorize_params(client_id, scope),
++        data={"api_key": OWNER_KEY},
++    )
++    assert resp.status_code == 200, resp.text
++    code = re.search(r"code=([^&\"]+)", resp.text).group(1)
++    token = http.post(
++        "/oauth/token",
++        data={
++            "grant_type": "authorization_code",
++            "code": code,
++            "client_id": client_id,
++            "redirect_uri": ATTACKER_CB,
++            "code_verifier": VERIFIER,
++        },
++    )
++    assert token.status_code == 200, token.text
++    # The signed claim is what the API checks, not the response field.
++    return validate_jwt_token(token.json()["access_token"])["scope"]
 +
-+    ``get`` returns only the requested ``output_fields`` (plus ``id``), as
-+    Milvus does, so a test can tell whether the vector was asked for.
-+    """
 +
-+    def __init__(self, rows: list[dict[str, Any]]) -> None:
-+        self.rows: dict[str, dict[str, Any]] = {r["id"]: dict(r) for r in rows}
-+        self.calls: list[tuple[str, dict[str, Any]]] = []
++def test_reported_attack_no_longer_yields_admin(http, open_dcr):
++    """The advisory's steps 2-6, end to end."""
++    reg = http.post(
++        "/oauth/register",
++        json={
++            "client_name": "Totally Not Evil",
++            "redirect_uris": [ATTACKER_CB],
++            "token_endpoint_auth_method": "none",
++        },
++    )
++    assert reg.status_code == 201, reg.text
++    client_id = reg.json()["client_id"]
 +
-+    def client(self) -> AsyncMock:
-+        return AsyncMock(side_effect=self._call)
-+
-+    async def _call(self, method: str, **kwargs: Any) -> Any:
-+        self.calls.append((method, kwargs))
-+        if method == "get":
-+            fields = kwargs.get("output_fields") or []
-+            out = []
-+            for content_hash in kwargs.get("ids") or []:
-+                row = self.rows.get(content_hash)
-+                if row is not None:
-+                    picked = {f: row[f] for f in fields if f in row}
-+                    out.append({"id": row["id"], **picked})
-+            return out
-+        if method in ("insert", "upsert"):
-+            for entity in kwargs["data"]:
-+                self.rows[entity["id"]] = dict(entity)
-+            return {"insert_count": len(kwargs["data"])}
-+        if method == "delete":
-+            if "ids" in kwargs:
-+                gone = [h for h in kwargs["ids"] if self.r
++    page = http.get("/oauth/authorize", params=_authorize_param
+```
+
+**File**: `tests/web/test_root_path.py` (modified, +3/-1)
+```diff
+@@ -73,7 +73,9 @@ def test_dashboard_assets_and_requests_are_root_relative():
+ 
+ 
+ def test_authorization_form_posts_relative_to_root_path():
+-    page = _build_authorize_page("client_id=test")
++    page = _build_authorize_page(
++        "client_id=test", client_name="test", destination="claude.ai", scope="read"
++    )
+ 
+     assert 'action="authorize?client_id=test"' in page
+     assert 'action="/oauth/authorize' not in page
+```
+
+---
+
+### Incident Patch 3: `cac9a103` (2026-11-15)
+**Commit Message**: fix(dashboard): give the status island its own catalog keys (#2010) (#2022)
+
+* fix(dashboard): give the status island its own catalog keys (#2010)
+
+* chore: name the changelog fragment after the PR (#2022)
+
+* chore: name the changelog fragment after the PR (#2022)
+
+---------
+
+Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
+
+**File**: `changelog.d/2022.fixed.md` (added, +8/-0)
+```diff
+@@ -0,0 +1,8 @@
++- **The dashboard status island labeled its reconnect action "Refresh" (#2010,#2022 Shivraj-G).**
++  The island was built without catalog keys of its own, so it borrowed `analytics.refresh`,
++  `manage.ontology.column.detail` and `modal.close`. The reconnect action therefore read
++  "Refresh" instead of "Reconnect", and the connection row in the panel had no name. The
++  island now has its own keys (`island.reconnect`, `island.details`, `island.dismiss`,
++  `island.source.connection`) in all eleven catalogs, and the connection row is named
++  "Live updates".
++  
+\ No newline at end of file
+```
+
+**File**: `src/mcp_memory_service/web/static/app.js` (modified, +2/-1)
+```diff
+@@ -4076,7 +4076,7 @@ class MemoryDashboard {
+                     text: text('status.disconnected', 'Disconnected'),
+                     actions: this.authState.requiresAuth && !this.authState.isAuthenticated ? [] : [{
+                         id: 'reconnect',
+-                        label: text('analytics.refresh', 'Refresh'),
++                        label: text('island.reconnect', 'Reconnect'),
+                         run: () => this.setupSSE(),
+                     }],
+                 };
+@@ -4088,6 +4088,7 @@ class MemoryDashboard {
+             default:
+                 entry = { state: 'error', text: text('status.unknown', 'Unknown') };
+         }
++        entry.label = text('island.source.connection', 'Live updates');
+         // A connection failure is not dismissible: it ends with the next report of this source.
+         this.statusIsland.report('connection', entry);
+     }
+```
+
+**File**: `src/mcp_memory_service/web/static/i18n/de.json` (modified, +4/-0)
+```diff
+@@ -612,6 +612,10 @@
+   "status.disconnected": "Getrennt",
+   "status.connecting": "Verbinde...",
+   "status.unknown": "Unbekannt",
++  "island.details": "Details",
++  "island.dismiss": "Schließen",
++  "island.reconnect": "Reconnect",
++  "island.source.connection": "Live updates",
+   "sync.deltaSync": "Delta-Sync",
+   "sync.checking": "Prüfen...",
+   "sync.pauseTitle": "Synchronisierung pausieren",
+```
+
+**File**: `src/mcp_memory_service/web/static/i18n/en.json` (modified, +4/-0)
+```diff
+@@ -630,6 +630,10 @@
+   "status.disconnected": "Disconnected",
+   "status.connecting": "Connecting...",
+   "status.unknown": "Unknown",
++  "island.reconnect": "Reconnect",
++  "island.details": "Details",
++  "island.dismiss": "Close",
++  "island.source.connection": "Live updates",
+   "sync.deltaSync": "Delta sync",
+   "sync.checking": "Checking...",
+   "sync.pauseTitle": "Pause sync",
+```
+
+**File**: `src/mcp_memory_service/web/static/i18n/es.json` (modified, +4/-0)
+```diff
+@@ -612,6 +612,10 @@
+   "status.disconnected": "Desconectado",
+   "status.connecting": "Conectando...",
+   "status.unknown": "Desconocido",
++  "island.details": "Detalles",
++  "island.dismiss": "Cerrar",
++  "island.reconnect": "Reconnect",
++  "island.source.connection": "Live updates",
+   "sync.deltaSync": "Sincronización delta",
+   "sync.checking": "Comprobando...",
+   "sync.pauseTitle": "Pausar sincronización",
+```
+
+**File**: `src/mcp_memory_service/web/static/i18n/fr.json` (modified, +4/-0)
+```diff
+@@ -612,6 +612,10 @@
+   "status.disconnected": "Déconnecté",
+   "status.connecting": "Connexion...",
+   "status.unknown": "Inconnu",
++  "island.details": "Détails",
++  "island.dismiss": "Fermer",
++  "island.reconnect": "Reconnect",
++  "island.source.connection": "Live updates",
+   "sync.deltaSync": "Sync delta",
+   "sync.checking": "Vérification...",
+   "sync.pauseTitle": "Suspendre la synchronisation",
+```
+
+**File**: `src/mcp_memory_service/web/static/i18n/hi.json` (modified, +4/-0)
+```diff
+@@ -630,6 +630,10 @@
+   "status.disconnected": "डिस्कनेक्टेड",
+   "status.connecting": "कनेक्ट हो रहा है...",
+   "status.unknown": "अज्ञात",
++  "island.reconnect": "फिर से कनेक्ट करें",
++  "island.details": "विवरण",
++  "island.dismiss": "बंद करें",
++  "island.source.connection": "लाइव अपडेट",
+   "sync.deltaSync": "डेल्टा सिंक",
+   "sync.checking": "जाँच हो रही है...",
+   "sync.pauseTitle": "सिंक रोकें",
+```
+
+**File**: `src/mcp_memory_service/web/static/i18n/id.json` (modified, +4/-0)
+```diff
+@@ -630,6 +630,10 @@
+   "status.disconnected": "Terputus",
+   "status.connecting": "Menghubungkan...",
+   "status.unknown": "Tidak diketahui",
++  "island.details": "Rincian",
++  "island.dismiss": "Tutup",
++  "island.reconnect": "Reconnect",
++  "island.source.connection": "Live updates",
+   "sync.deltaSync": "Sinkronisasi delta",
+   "sync.checking": "Memeriksa...",
+   "sync.pauseTitle": "Jeda sinkronisasi",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1988** (2026-11-13): refactor(logging): lazy %-style logger calls in config/oauth.py and config/ontology.py (#1146) (@massimiliano1991)
-- **PR #1987** (2026-11-13): feat(dashboard): split the Manage tab into sub-tabs (#1973) (@shu-chen-dot-ca)
-- **PR #1986** (2026-11-13): chore(release): v12.9.0 (@doobidoo)
-- **PR #1985** (2026-11-13): feat(site): offer a trial prompt for coding agents on the demo page (@doobidoo)
-- **PR #1984** (2026-11-13): fix(dashboard): page the type-only search filter through the server-side type filter (@shu-chen-dot-ca)
-- **PR #1983** (2026-11-13): docs(site): correct claims, fix mobile navigation, add structured data (@doobidoo)
+- **PR #2023** (2026-11-15): fix(security): drop hardcoded Cloudflare credentials from sync_status.py (@doobidoo)
+- **PR #2022** (2026-11-15): fix(dashboard): give the status island its own catalog keys (#2010) (@Shivraj-G)
+- **PR #2021** (2026-11-15): --adapt-pairs: adapt the 4-way head on a store's own labeled pairs, locally (@Yoel-qin)
+- **PR #2020** (2026-11-15): ci(claims): label takeover requests, and read a conditional claim as a claim (@doobidoo)
+- **PR #2019** (2026-11-15): fix(hooks): read the version from _version.py, not the fallback in __init__.py (@doobidoo)
+- **PR #2018** (2026-11-14): chore(release): v12.10.0 (@doobidoo)
 
 ---
 
@@ -3851,51 +3788,54 @@ Co-authored-by: massimiliano1991 <[R
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. quality-gate): bound model calls by wall clock and skip, not pass, on failure
+## X. security): drop hardcoded Cloudflare credentials from sync_status.py
 
 **RULE**:
-When implementing operations in `scripts/pr/lib/llm_prompt.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bea66063`: quality-gate): bound model calls by wall clock and skip, not pass, on failure. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b580e597`: security): drop hardcoded Cloudflare credentials from sync_status.py. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/pr/lib/llm_prompt.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-    MCP_QUALITY_LLM_TIMEOUT  wall-clock seconds per request, default 600
-import signal
-# Measured on a shared omlx server: gate prompts of 3-12k tokens waited 2-11
-# minutes behind agent traffic, so 180s skipped most calls on a busy machine.
-DEFAULT_TIMEOUT = "600"
-    timeout = float(os.environ.get("MCP_QUALITY_LLM_TIMEOUT", DEFAULT_TIMEOUT))
-    # The urlopen timeout limits each socket read, not the request. omlx sends a
-    # whitespace keepalive while a request waits in its queue, so that limit
-    # never fired and a call could block for as long as the queue was. SIGALRM
-    # bounds the whole request.
-    def on_deadline(signum, frame):
-        raise TimeoutError(f"no reply within {timeout:g}s")
+  secret-scan:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    name: Secret Scan (gitleaks, PR commits)
+    timeout-minutes: 5
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        fetch-depth: 0
+    # Third-party actions are not allowed here, so the binary is fetched directly
+    # and checked against its published checksum. Only the PR's own commits are
+    # scanned: older history holds known, already-rotated findings.
+    - name: Install gitleaks
+      env:
+        GITLEAKS_VERSION: 8.30.1
+      run: |
+        base="https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}"
+        tarball="gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+        curl -fsSLO "$base/$tarball"
+        curl -fsSL "$base/gitleaks_${GITLEAKS_VERSION}_checksums.txt" | grep " ${tarball}\$" | sha256sum -c -
+        tar -xzf "$tarball" gitleaks
+    - name: Scan PR commits
+      env:
+        BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+      run: ./gitleaks git --redact --no-banner --log-opts="${BASE_SHA}..${HEAD_SHA}" .
 
-    previous = signal.signal(signal.SIGALRM, on_deadline)
-    signal.setitimer(signal.ITIMER_REAL, timeout)
-    try:
-        with urllib.request.urlopen(req, timeout=timeout) as response:
-            return json.load(response)
-    finally:
-        signal.setitimer(signal.ITIMER_REAL, 0)
-        signal.signal(signal.SIGALRM, previous)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-    MCP_QUALITY_LLM_TIMEOUT  seconds per request, default 180
-    timeout = float(os.environ.get("MCP_QUALITY_LLM_TIMEOUT", "180"))
-    with urllib.request.urlopen(req, timeout=timeout) as response:
-        return json.load(response)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bea66063` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b580e597` are properly handled with clean fallback behavior.

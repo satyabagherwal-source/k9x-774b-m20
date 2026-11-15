@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-15T17:22:52.703Z",
-    "lastVerified": "2026-11-15T17:22:52.703Z",
+    "lastChecked": "2026-11-15T17:31:58.242Z",
+    "lastVerified": "2026-11-15T17:31:58.242Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -117,12 +117,12 @@
     "revisionIdentifier": "e0d1aa05"
   },
   "gravitl-netmaker": {
-    "name": "gravitl/netmaker",
+    "name": "netmaker",
     "officialUrl": "https://github.com/gravitl/netmaker",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-15T07:41:57.898Z",
-    "lastVerified": "2026-11-15T07:41:57.898Z",
+    "lastChecked": "2026-11-15T17:31:47.211Z",
+    "lastVerified": "2026-11-15T17:31:47.211Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gravitl-netmaker",
@@ -131,7 +131,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "ccc98823"
   },
   "mintplex-labs-anything-llm": {
     "name": "Mintplex-Labs/anything-llm",
@@ -254,12 +255,12 @@
     "revisionIdentifier": "1b782653"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-15T16:50:35.685Z",
-    "lastVerified": "2026-11-15T16:50:35.685Z",
+    "lastChecked": "2026-11-15T17:31:52.260Z",
+    "lastVerified": "2026-11-15T17:31:52.260Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -268,7 +269,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "b1d9ed30"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -2766,22 +2768,21 @@
     "lastVerified": "2026-11-13T23:28:39.519Z"
   },
   "nats-io-nats.go": {
-    "name": "nats.go",
+    "name": "nats-io/nats.go",
     "officialUrl": "https://github.com/nats-io/nats.go",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-14T05:31:34.276Z",
-    "lastVerified": "2026-11-14T05:31:34.276Z",
+    "lastChecked": "2026-11-15T17:31:48.589Z",
+    "lastVerified": "2026-11-15T17:31:48.589Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nats-io-nats-go",
-    "contentHash": "089a887a8c5d8ddca36b23a54488b8ae4bbf08e7b76af37c251f3d5cf83591ee",
+    "contentHash": "f93038c0942d1c0eca7e152baa513454bde13e231e6b5bcdee94c3fe81d71706",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "91d00498"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "infiniflow-infinity": {
     "name": "infiniflow/infinity",
@@ -4047,14 +4048,14 @@
     "officialUrl": "https://github.com/doobidoo/mcp-memory-service",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-14T03:49:18.483Z",
-    "lastVerified": "2026-11-14T03:49:18.483Z",
+    "lastChecked": "2026-11-15T17:31:54.480Z",
+    "lastVerified": "2026-11-15T17:31:54.480Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-doobidoo-mcp-memory-service",
-    "contentHash": "68e851e39dd54e3ed7829524048c1c30080c6fae67d619e40bb26a58518a51e4",
+    "contentHash": "12804ed099922fe56c2a104e6275af839e48755167193ae0e3013cdb761a2d1b",
     "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5085,8 +5086,8 @@
     "officialUrl": "https://github.com/transact-rs/sqlx",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-13T19:19:03.074Z",
-    "lastVerified": "2026-11-13T19:19:03.074Z",
+    "lastChecked": "2026-11-15T17:31:37.184Z",
+    "lastVerified": "2026-11-15T17:31:37.184Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-transact-rs-sqlx",
@@ -9897,9 +9898,9 @@
   "apppear-chartview": {
     "name": "ChartView",
     "officialUrl": "https://github.com/AppPear/ChartView",
-    "lastChecked": "2026-11-12T05:34:50.925Z",
+    "lastChecked": "2026-11-15T17:31:42.153Z",
     "revisionIdentifier": "df0b2641",
-    "lastVerified": "2026-11-12T05:34:50.925Z"
+    "lastVerified": "2026-11-15T17:31:42.153Z"
   },
   "hf-liquidai-lfm3-vl-2b": {
     "name": "LiquidAI/LFM3-VL-2B",
@@ -10143,9 +10144,9 @@
   "ildrm-northstar-seo": {
     "name": "northstar-seo",
     "officialUrl": "https://github.com/ildrm/northstar-seo",
-    "lastChecked": "2026-11-10T02:31:34.588Z",
+    "lastChecked": "2026-11-15T17:31:39.628Z",
     "revisionIdentifier": "5ec9c7dc23",
-    "lastVerified": "2026-11-10T02:31:34.588Z"
+    "lastVerified": "2026-11-15T17:31:39.628Z"
   },
   "nsh07-tomato": {
     "name": "nsh07/Tomato",
