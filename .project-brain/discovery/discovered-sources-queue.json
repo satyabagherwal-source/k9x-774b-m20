@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T22:24:49.654Z",
+  "updated_at": "2026-11-15T22:39:59.686Z",
   "stats": {
-    "total_discovered": 3867,
-    "approved_pending_harvest": 3647,
+    "total_discovered": 3870,
+    "approved_pending_harvest": 3650,
     "harvested_count": 0,
     "rejected_count": 220,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3627,
+      "COMMUNITY_AND_EXPERT": 3630,
       "OFFICIAL_DOCUMENTATION": 130,
       "STANDARDS_AND_SPECIFICATIONS": 92,
       "ENGINEERING_BLOGS": 2,
@@ -83555,6 +83555,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-cactus-compute-mirage-learnings.md",
         "fileName": "hf-cactus-compute-mirage-learnings.md"
+      }
+    },
+    "SRC-6E6D87687DEE": {
+      "id": "SRC-6E6D87687DEE",
+      "url": "https://github.com/NordSecurity/uniffi-bindgen-go",
+      "title": "https://github.com/NordSecurity/uniffi-bindgen-go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T22:39:58.990Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
+        "fileName": "slatedb-slatedb-learnings.md"
+      }
+    },
+    "SRC-6390B0B9752A": {
+      "id": "SRC-6390B0B9752A",
+      "url": "https://github.com/golang/go/issues/11263",
+      "title": "https://github.com/golang/go/issues/11263",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T22:39:59.023Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
+        "fileName": "slatedb-slatedb-learnings.md"
+      }
+    },
+    "SRC-CD8EE8D2EBF2": {
+      "id": "SRC-CD8EE8D2EBF2",
+      "url": "https://github.com/Dicklesworthstone/destructive_command_guard",
+      "title": "https://github.com/Dicklesworthstone/destructive_command_guard",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T22:39:59.686Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md",
+        "fileName": "dicklesworthstone-destructive_command_guard-learnings.md"
       }
     }
   }

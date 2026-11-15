@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-15T22:24:37.559Z",
+  "last_updated": "2026-11-15T22:39:55.627Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6981,14 +6981,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-slatedb-slatedb",
-      "content_hash": "e894f3e3548bea2d101852b65693a75ac61b2bc44d40f3438eca799fffb0b81e",
-      "verified_at": "2026-11-14T11:04:34.795Z",
+      "content_hash": "b6e26128b73c0d3ba0ad621009c66c3cda67d54ce249b7ae341ba968b9c63b18",
+      "verified_at": "2026-11-15T22:39:55.627Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T11:04:34.795Z"
+      "last_updated": "2026-11-15T22:39:55.627Z"
     },
     "react-component/slider": {
       "repository": "react-component/slider",
@@ -9336,14 +9336,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dicklesworthstone-destructive_command_guard",
-      "content_hash": "421ec89624cc4c71057f91f562a1f3e3c13386efa4154c6da2d6c2f01e665e17",
-      "verified_at": "2026-11-09T18:16:21.845Z",
+      "content_hash": "f73dae4cae87782c7f676bd3b5e010a88053c61aab5550590301505961e300c2",
+      "verified_at": "2026-11-15T22:39:45.417Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T18:16:21.845Z"
+      "last_updated": "2026-11-15T22:39:45.417Z"
     },
     "xinthink/react-native-material-kit": {
       "repository": "xinthink/react-native-material-kit",

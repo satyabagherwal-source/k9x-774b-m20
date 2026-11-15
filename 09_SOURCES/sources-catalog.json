@@ -4573,10 +4573,10 @@
     "repository": "slatedb/slatedb",
     "platform": "github",
     "sourceUrl": "https://github.com/slatedb/slatedb",
-    "sourceVersion": "0a6a032b",
+    "sourceVersion": "8b688002",
     "license": "Apache-2.0",
-    "contentHash": "e894f3e3548bea2d101852b65693a75ac61b2bc44d40f3438eca799fffb0b81e",
-    "lastHarvestedAt": "2026-11-14T11:04:34.785Z",
+    "contentHash": "b6e26128b73c0d3ba0ad621009c66c3cda67d54ce249b7ae341ba968b9c63b18",
+    "lastHarvestedAt": "2026-11-15T22:39:55.617Z",
     "learningId": "learn-github-slatedb-slatedb"
   },
   "react-component-slider": {
@@ -6143,10 +6143,10 @@
     "repository": "Dicklesworthstone/destructive_command_guard",
     "platform": "github",
     "sourceUrl": "https://github.com/Dicklesworthstone/destructive_command_guard",
-    "sourceVersion": "acbe0665",
+    "sourceVersion": "37d14736",
     "license": "NOASSERTION",
-    "contentHash": "421ec89624cc4c71057f91f562a1f3e3c13386efa4154c6da2d6c2f01e665e17",
-    "lastHarvestedAt": "2026-11-09T18:16:21.805Z",
+    "contentHash": "f73dae4cae87782c7f676bd3b5e010a88053c61aab5550590301505961e300c2",
+    "lastHarvestedAt": "2026-11-15T22:39:45.406Z",
     "learningId": "learn-github-dicklesworthstone-destructive_command_guard"
   },
   "xinthink-react-native-material-kit": {

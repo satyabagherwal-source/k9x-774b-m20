@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-15T22:24:50.732Z",
-  "total_verified_learnings": 8730,
+  "last_updated": "2026-11-15T22:40:01.093Z",
+  "total_verified_learnings": 8731,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18655,
+  "total_items": 18667,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113672,13 +113672,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-K4WL-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-3NKS-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "ce561e0286bf7626d54a7a75b5ed528169843286a96628d785ad3ee56a502365",
+      "content_hash": "cf102b54f7a43a8b6cb2df2415adf888c3d338a7419173abbfb0a349fe0fbc38",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T22:24:50.137Z"
+      "persisted_at": "2026-11-15T22:40:00.802Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113688,9 +113688,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "5b2d1a6c95ea3552edf08a1d269d8cfb1fb3aad7cf1fb2927a7913d934372d50",
+      "content_hash": "4b01bb61065888b2dc30d33f3b4b9b6e1afa4ac224790894dfc5ea7ecb5b5622",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T22:24:50.216Z"
+      "persisted_at": "2026-11-15T22:40:00.935Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113700,9 +113700,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "a574df2d9471bcf62454d3fd43fb1c780dbd6b5d86ef6ca8096467e50e8d178f",
+      "content_hash": "64eaed345b8774861dedb58b8af4183b2b82dd52575d63a3ab7cc532e1bc5ee2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T22:24:50.303Z"
+      "persisted_at": "2026-11-15T22:40:01.093Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -227359,14 +227359,19 @@
       "slug": "slatedb-slatedb",
       "platform": "github",
       "source_url": "https://github.com/slatedb/slatedb",
-      "source_version": "0a6a032b",
-      "content_hash": "e894f3e3548bea2d101852b65693a75ac61b2bc44d40f3438eca799fffb0b81e",
+      "source_version": "8b688002",
+      "content_hash": "b6e26128b73c0d3ba0ad621009c66c3cda67d54ce249b7ae341ba968b9c63b18",
       "dossier_path": "07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
       "promoted_rules": [
         {
           "number": 8482,
           "title": "missing SST error spinning forever in the mirror",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8661,
+          "title": "Record object store metrics for Admin operations",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -227375,7 +227380,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T11:04:34.621Z",
+      "verified_at": "2026-11-15T22:39:55.431Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -227417,10 +227422,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-slatedb-slatedb-architecture-intelligence-slatedb-slatedb-core-invariants.md",
       "title": "Architecture Intelligence: slatedb/slatedb Core Invariants",
       "repository": "slatedb/slatedb",
-      "source_version": "0a6a032b",
-      "content_hash": "c0a3fc89b6779137c593529d9a35f77b696782ca070c842fee23e84baabf98a7",
+      "source_version": "8b688002",
+      "content_hash": "c8dfec1264e8b5494406395d937c5bb92a536f01a6bcc369ab608e9a25233cd3",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T11:04:35.109Z"
+      "persisted_at": "2026-11-15T22:39:55.982Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-slatedb-slatedb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-slatedb-slatedb",
@@ -227429,10 +227434,10 @@
       "relative_path": "08_VERIFICATION/slatedb-slatedb-verification-protocol-empirical-defect-shield-for-slatedb-slated.md",
       "title": "Verification Protocol: Empirical Defect Shield for slatedb/slatedb",
       "repository": "slatedb/slatedb",
-      "source_version": "0a6a032b",
-      "content_hash": "8d5590deaf1d6afc1d2ed3c6a49e29d8a56aab1dd06a3dd2c6de4e6d84cd3d75",
+      "source_version": "8b688002",
+      "content_hash": "8684f77e6b89df570a5a416c26733ae7d406c6f46b9d1bb5dcd91ba6b1d2ba2f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T11:04:35.227Z"
+      "persisted_at": "2026-11-15T22:39:56.126Z"
     },
     "learn-github-nucleoidai-nucleoid": {
       "learning_id": "learn-github-nucleoidai-nucleoid",
@@ -247296,6 +247301,175 @@
       "content_hash": "1c5c669d82fa555fdf89c8e0de1ee02bf844ae100c1e185e2fc6d133661d6869",
       "domain_letter": "D",
       "persisted_at": "2026-11-15T22:24:49.782Z"
+    },
+    "learn-github-dicklesworthstone-destructive_command_guard": {
+      "learning_id": "learn-github-dicklesworthstone-destructive_command_guard",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Dicklesworthstone/destructive_command_guard",
+      "repository": "Dicklesworthstone/destructive_command_guard",
+      "slug": "dicklesworthstone-destructive_command_guard",
+      "platform": "github",
+      "source_url": "https://github.com/Dicklesworthstone/destructive_command_guard",
+      "source_version": "37d14736",
+      "content_hash": "f73dae4cae87782c7f676bd3b5e010a88053c61aab5550590301505961e300c2",
+      "dossier_path": "07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8660,
+          "title": "keep regex fragments from widening Bash heredoc dialects [skip ci]",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T22:39:45.215Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8660": {
+      "learning_id": "rule-8660",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8660,
+      "title": "keep regex fragments from widening Bash heredoc dialects [skip ci]",
+      "source_url": "https://github.com/Dicklesworthstone/destructive_command_guard",
+      "source_version": "37d14736",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T22:39:45.215Z"
+    },
+    "candidate_directive-keep-regex-fragments-from-widening-bash-heredoc-dialects-skip-ci": {
+      "item_id": "candidate_directive-keep-regex-fragments-from-widening-bash-heredoc-dialects-skip-ci",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3BV6-keep-regex-fragments-from-widening-bash-heredoc-dialects-skip-ci.md",
+      "title": "keep regex fragments from widening Bash heredoc dialects [skip ci]",
+      "repository": "Dicklesworthstone/destructive_command_guard",
+      "source_version": "37d14736",
+      "content_hash": "270e16a36f9b04607d94bc4d7d515cc1e86544040254b04d63b150cd353d8604",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T22:39:45.624Z"
+    },
+    "domain_intelligence-architecture-intelligence-dicklesworthstone-destructive_command_guard-core-invar": {
+      "item_id": "domain_intelligence-architecture-intelligence-dicklesworthstone-destructive_command_guard-core-invar",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dicklesworthstone-destructive_command_guard-architecture-intelligence-dickleswor.md",
+      "title": "Architecture Intelligence: Dicklesworthstone/destructive_command_guard Core Invariants",
+      "repository": "Dicklesworthstone/destructive_command_guard",
+      "source_version": "37d14736",
+      "content_hash": "07703971a36a9665dd223a0cf582250298a82912b5d16fa93867519a0df3eb64",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T22:39:45.755Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-dicklesworthstone-destructive_comma": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-dicklesworthstone-destructive_comma",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-dicklesworthstone-destructive_command_guard-learnings-adr-subsystem-boundary-mod.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in dicklesworthstone-destructive_command_guard-learnings",
+      "repository": "dicklesworthstone-destructive_command_guard-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a2c3661961b855a04454473b668abd18eef06fbe9a5dcd3e05fc9d4b5081c687",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T22:40:00.168Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-dicklesworthstone-destructive_": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dicklesworthstone-destructive_",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/dicklesworthstone-destructive_command_guard-learnings-verification-protocol-empi.md",
+      "title": "Verification Protocol: Empirical Defect Shield for dicklesworthstone-destructive_command_guard-learnings",
+      "repository": "dicklesworthstone-destructive_command_guard-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c3c2351060f65f26b92b590ad3a320800ea7320f9ba8a65958dedc648f5b80cf",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T22:40:00.296Z"
+    },
+    "rule-8661": {
+      "learning_id": "rule-8661",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8661,
+      "title": "Record object store metrics for Admin operations",
+      "source_url": "https://github.com/slatedb/slatedb",
+      "source_version": "8b688002",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T22:39:55.431Z"
+    },
+    "candidate_directive-record-object-store-metrics-for-admin-operations": {
+      "item_id": "candidate_directive-record-object-store-metrics-for-admin-operations",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3MDW-record-object-store-metrics-for-admin-operations.md",
+      "title": "Record object store metrics for Admin operations",
+      "repository": "slatedb-slatedb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "16cd913a3d1a17ca923ade309d1dcb23a09ee49b9e812d44e0802ecbb07dbac2",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T22:39:59.258Z"
+    },
+    "domain_intelligence-architecture-intelligence-slatedb-slatedb-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-slatedb-slatedb-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-slatedb-slatedb-learnings-architecture-intelligence-slatedb-slatedb-learnings-co.md",
+      "title": "Architecture Intelligence: slatedb-slatedb-learnings Core Invariants",
+      "repository": "slatedb-slatedb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "06ea5071e16adb346a08f3ab037dd1ad5379ed196302b48f7898fdb6c305a0d1",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T22:39:59.389Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-slatedb-slatedb-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-slatedb-slatedb-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/slatedb-slatedb-learnings-verification-protocol-empirical-defect-shield-for-slat.md",
+      "title": "Verification Protocol: Empirical Defect Shield for slatedb-slatedb-learnings",
+      "repository": "slatedb-slatedb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "df6f31ad622a9bb63aaa3368855a3e24822e5182acb5f8887210b41146b29a17",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T22:39:59.528Z"
+    },
+    "candidate_directive-hook-keep-regex-fragments-from-widening-bash-heredoc-dialects-skip-ci": {
+      "item_id": "candidate_directive-hook-keep-regex-fragments-from-widening-bash-heredoc-dialects-skip-ci",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3MVM-hook-keep-regex-fragments-from-widening-bash-heredoc-dialects-skip-ci.md",
+      "title": "hook): keep regex fragments from widening Bash heredoc dialects [skip ci]",
+      "repository": "dicklesworthstone-destructive_command_guard-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0905604bdc6ee4b64438d42b32bd1159323708e04272090032745f08a37c27df",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T22:39:59.895Z"
+    },
+    "domain_intelligence-architecture-intelligence-dicklesworthstone-destructive_command_guard-learnings-": {
+      "item_id": "domain_intelligence-architecture-intelligence-dicklesworthstone-destructive_command_guard-learnings-",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dicklesworthstone-destructive_command_guard-learnings-architecture-intelligence-.md",
+      "title": "Architecture Intelligence: dicklesworthstone-destructive_command_guard-learnings Core Invariants",
+      "repository": "dicklesworthstone-destructive_command_guard-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b689cc10346cdb2e6cbd83eddb056f6e5b286cb41bc68a510f3b48e6781f9fea",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T22:40:00.027Z"
     }
   },
   "ai-builder-brain": {

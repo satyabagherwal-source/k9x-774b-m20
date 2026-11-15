@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for dicklesworthstone/destructive_command_guard
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for Dicklesworthstone/destructive_command_guard
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "dicklesworthstone/destructive_command_guard",
-  "source_url": "https://github.com/dicklesworthstone/destructive_command_guard",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "Dicklesworthstone/destructive_command_guard",
+  "source_url": "https://github.com/Dicklesworthstone/destructive_command_guard",
+  "source_version": "37d14736",
+  "license": "NOASSERTION",
+  "timestamp": "2026-11-15T22:39:45.623Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-dicklesworthstone-destructive_command_guard",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [dicklesworthstone/destructive_command_guard](https://github.com/dicklesworthstone/destructive_command_guard) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [Dicklesworthstone/destructive_command_guard](https://github.com/Dicklesworthstone/destructive_command_guard) (Revision: `37d14736`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-15T22:39:45.623Z`  
+> **Learning ID**: `learn-github-dicklesworthstone-destructive_command_guard`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `dicklesworthstone/destructive_command_guard` (Commit: `historical`)
+- **Target Repository**: `Dicklesworthstone/destructive_command_guard` (Commit: `37d14736`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md`  
-> **Source**: github ([https://github.com/Dicklesworthstone/destructive_command_guard](https://github.com/Dicklesworthstone/destructive_command_guard))  
-> **Source Version**: `acbe0665`  
-> **License**: NOASSERTION  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T18:16:13.604Z  
-> **Learning ID**: `learn-github-dicklesworthstone-destructive_command_guard`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): Dicklesworthstone/destructive_command_guard
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Dicklesworthstone/destructive_command_guard](https://github.com/Dicklesworthstone/destructive_command_guard))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T18:11:09.431Z  
+> **Harvest Timestamp**: 2026-11-15T22:39:41.685Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A fast Rust safety hook that blocks destructive shell, git, and filesystem commands before AI coding agents run them. 50+ security packs (databases, Kubernetes, Docker, cloud, Terraform), heredoc/inline-script scanning, CI scan mode, and explain mode; works with Claude Code, Codex, Gemini, Copilot, Cursor, and more.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6318 stars
+- **Stars / Engagement**: 6361 stars
 
 ---
 
@@ -2535,556 +2521,271 @@ pub(super) fn scan(code: &str) -> Result<Vec<CredentialFileWrite>, &'static str>
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `46a26cda` (2026-11-08)
-**Commit Message**: fix(heredoc): preserve arithmetic context during shell analysis [skip ci]
+### Incident Patch 1: `37d14736` (2026-11-14)
+**Commit Message**: fix(hook): keep regex fragments from widening Bash heredoc dialects [skip ci]
 
-The heredoc candidate regex and Unknown dialect's secondary PowerShell
-substitution reading can turn POSIX arithmetic shifts into an unterminated
-heredoc. That incomplete-analysis finding masks the configured policy of an
-unrelated destructive command, as reported in #649.
+The Windows-shape precheck split a quoted heredoc regex at parentheses and
+pipes, then treated the fragment .*?)^\\ as a caret-assembled executable.
+The vendored Bash parser correctly recognizes the original heredoc and its
+quoted trailing rg pattern; the false signal comes from the shape precheck.
 
-Exclude only exact shift operator offsets proven by a complete arithmetic
-parse. Recover the vendored grammar's nested-arithmetic ambiguity with a
-bounded, fully validated parse view, retaining original source and executable
-descendants. Mask only proven angle bytes for the secondary Unknown reading.
-Keep genuine heredocs, interpreter scanning, fallback policy and deadlines.
+Use the existing bounded Cmd tokenizer and decoder to withdraw caret
+evidence only from punctuation-only fragments where every actual
+caret-bearing word decodes to directory separators alone. Preserve evidence for executable names, expansions,
+quotes, Unicode whitespace boundary differences, incomplete tokenization,
+and exhausted proof bounds. Heredoc masking and executable-source analysis
+remain unchanged.
 
-Add arithmetic, quoted-delimiter, nested-execution, malformed-input and
-exhausted-proof unit controls. Recovery is bounded by passes, parse bytes and
-queued nodes; failure retains the original diagnostics.
+Add two unit tests and three real-binary regression tests for #654:
+the exact report and five benign variants, Bash/POSIX diagnostic parity,
+executed POSIX destruction, and explicit or mislabeled Windows deletion.
 
-Validation: formatting and focused cargo check/Clippy pass; native scanner
-domain and ordinary runs each pass 4,448,259 cases. Full-codegen attempts and
-the lib-test all-target gates were killed by the constrained environment.
-Patched Rust/CLI runtime tests have n
+Validation completed: vendored Bash-parser probe for the exact report,
+bash -n for all six benign fixtures, independent source review, and a
+static UBS scan (no critical findings or findings on
 
-**File**: `src/evaluator.rs` (modified, +9/-1)
+**File**: `src/hook.rs` (modified, +133/-9)
 ```diff
-@@ -15617,8 +15617,16 @@ fn evaluate_command_substitutions(
-                     ));
-                 }
-             };
-+            // #649: the secondary PowerShell `$()` view of a POSIX `$((...))`
-+            // loses one pair of parentheses and hence its arithmetic context.
-+            // Blank only parser-proven shift operators in this view so their
-+            // `<<` cannot become a heredoc during nested evaluation. The POSIX
-+            // pass above still sees the shifts, and every nested command's
-+            // source remains available to both substitution scanners.
-+            let powershell_view =
-+                crate::heredoc::mask_arithmetic_shift_operators(substitution_source.as_ref());
-             let powershell_bodies = match collect_powershell_substitution_bodies(
--                substitution_source.as_ref(),
-+                powershell_view.as_ref(),
-             ) {
-                 Ok(bodies) => bodies,
-                 Err(()) => {
-```
-
-**File**: `src/heredoc.rs` (modified, +593/-9)
-```diff
-@@ -1590,12 +1590,15 @@ impl SkipReason {
-     /// `UnterminatedHeredoc` deliberately does not. It reports a shape — a
-     /// `<<` with no terminator line — and nothing was dropped on account of
-     /// it; the text is still in the command every pattern is matched against.
--    /// It is also routinely a *misread* of ordinary data, because the operator
--    /// appears in arithmetic (`$((1<<3))`), in prose that a rule is documented
--    /// with (`git commit -m "explain <<EOF"`), and historically in the tail of
--    /// a here-string. Treating it as an incomplete reading would put all of
--    /// those on the bounded-fallback path and deny them outright under
--    /// `fallback_on_parse_error=false`.
-+    /// It can also be a *misread* of ordinary data, such as quoted prose.
-+    /// Treating every such observation as an early stop would turn otherwise
-+    /// complete extractions into partial readings.
-+    ///
-+    /// This distinction governs mixed successes and skips, not an extraction
-+    /// containing only skips: that still yields `Skipped`, whose configured
-+    /// fallback/strict handling must protect genuinely malformed source.
-+    /// Arithmetic shifts therefore have to be rejected as heredoc candidates
-+    /// in `heredoc_operator_captures`, before they create a failure (#649).
-     #[must_use]
-     pub fn stopped_early(&self) -> bool {
-         match self {
-@@ -1687,15 +1690,96 @@ static HEREDOC_EXTRACTOR: LazyLock<Regex> = LazyLock::new(|| {
- /// operator into its delimiter: `echo '<<'; python3 - <<'EOF'` matched once,
- /// as `<<'; python3 - <<'EOF…`, and the Python heredoc was never extracted.
- /// Each search here resumes two bytes into the previous match, so every
--/// operator is a candidate of its own; the callers' checks reject false ones.
-+/// operator is a candidate of its own. Only proven arithmetic shift tokens
-+/// are excluded here; the callers' other checks reject remaining false ones.
- fn heredoc_operator_captures(command: &str) -> impl Iterator<Item = regex::Captures<'_>> {
-     let mut next = 0usize;
-+    let mut arithmetic_shifts = None;
-     std::iter::from_fn(move || {
-         let capture = HEREDOC_EXTRACTOR.captures_at(command, next)?;
-         // A match starts with the ASCII `<<`, so two bytes on is a boundary.
-         next = capture.get(0)?.start() + 2;
-         Some(capture)
-     })
-+    .filter(move |capture| {
-+        let shifts = arithmetic_shifts.get_or_insert_with(|| arithmetic_shift_operators(command));
-+        shifts
-+            .binary_search(&capture.get(0).expect("complete heredoc candidate").start())
-+            .is_err()
-+    })
-+}
-+
-+/// Exact `<<`/`<<=` tokens in portable `$((…))` arithmetic, not the enclosing
-+/// expansion's whole span. Command substitutions inside arithmetic can still
-+/// contain real heredocs; even a `$((` prefix can open a command substitution
-+/// containing a subshell. Only a complete parse can prove the distinction.
-+///
-+/// Bare `((…))` and `$[…]` are intentionally not exempt: Dash can read their
-+/// `<<` as a real redirection (see `context::HeredocRules`). Failure to prove
-+/// arithmetic leaves the existing extraction and incomplete-analysis paths
-+/// intact. This is computed at most once per candidate walk, within the same
-+/// input and pipeline bounds used for command-substitution analysis.
-+fn arithmetic_shift_operators(command: &str) -> Vec<usize> {
-+    if !command.contains("<<")
-+        || !command.contains("$((")
-+        || command.len() > MAX_SUBSTITUTION_SOURCE_BYTES
-+        || longest_pipeline_stages(command) > MAX_PARSED_PIPELINE_STAGES
-+    {
-+        return Vec::new();
-+    }
-+    let Ok(ast) = try_parse_shell_ast(command) else {
-+        return Vec::new();
+@@ -2787,6 +2787,10 @@ fn is_percent_expansion(token: &str) -> bool {
+ /// change which executable runs. A quoted first token is data to whatever
+ /// shell runs it, not an executable name being assembled, so it is excluded.
+ fn segment_command_word_is_cmd_assembled(segment: &str) -> bool {
++    use crate::normalize::{
++        NormalizeTokenKind, ShellTokenDecoder, ShellTokenRole, tokenize_for_shell_dialect,
 +    };
-+    let root = ast.root();
-+    if root.get_inner_node().has_error() {
-+        return Vec::new();
-+    }
-+    let mut shifts = Vec::new();
-+    let mut pending = vec![(root, false)];
-+    while let Some((node, inherited_arithmetic)) = pending.pop() {
-+        let arithmetic = match node.kind().as_ref() {
-+            "arithmetic_expansion" => command
-+                .get(node.range())
-+                .is_some_and(|source| source.starts_with("$((") && source.ends_with("))")),
-+            "binary_expression"
-+            | "unary_expression"
-+            | "ternary_expression"
-+            | "postfix_expression"
-+            | "parenthesized_expression"
-+            | "subscript" => inherited_arithmetic,
-+            // A substitution, command, quoted word, heredoc body or any
-+            // other context is not part of this arithmetic proof.
-+            _ => false,
-+        };
-+        if arithmetic
-+            && node.kind().as_ref() == "binary_expression"
-+            && let Some(operator) = node.field("operator")
-+            && matches!(command.get(operator.range()), Some("<<" | "<<="))
-+        {
-+            shifts.push(operator.range().start);
++
+     let Some(first) = segment.split_whitespace().next() else {
+         return false;
+     };
+@@ -2798,19 +2802,77 @@ fn segment_command_word_is_cmd_assembled(segment: &str) -> bool {
+     // Only an unquoted caret can assemble a cmd executable; a quoted caret
+     // is literal text. Keep real g^it / doc^ker evidence, including inside
+     // interpreter strings passed through an opaque shell sink.
+-    let mut quote = None;
+-    for byte in first.bytes() {
+-        if let Some(delimiter) = quote {
+-            if byte == delimiter {
+-                quote = None;
++    let has_unquoted_caret = |word: &str| {
++        let mut quote = None;
++        for byte in word.bytes() {
++            if let Some(delimiter) = quote {
++                if byte == delimiter {
++                    quote = None;
++                }
++            } else if matches!(byte, b'\'' | b'"') {
++                quote = Some(byte);
++            } else if byte == b'^' {
++                return true;
+             }
+-        } else if matches!(byte, b'\'' | b'"') {
+-            quote = Some(byte);
+-        } else if byte == b'^' {
 +        }
-+        // Carry the context in one walk: checking every shift's
-```
-
----
-
-### Incident Patch 2: `acbe0665` (2026-11-08)
-**Commit Message**: fix(hook): require proof for oversized heredoc data [skip ci]
-
-Oversized scan windows can detach a heredoc body from a piped, wrapped,
-descriptor-fed, conditional, unknown or rebound receiver. Replace the direct
-interpreter-name backstop with a bounded whole-program proof of inert data.
-Preserve headers, real terminators and all exterior source, and require every
-temporary body elision to match exact nodes in a complete AST. Unknown syntax
-and exhausted bounds retain the existing size-limit indeterminate policy.
-
-Keep scanning after an Ask finding so it cannot hide a later concrete Deny
-or bypass unverified_decision=deny. Preserve Deny > Indeterminate > Ask
-ordering, concrete rule attribution and existing protocol output.
-
-Add six focused unit tests and expand the existing oversized-hook target to
-11 tests / 40 hook cases, including arithmetic and quoted-operator controls,
-malformed input, exported function overrides, policy and protocol parity.
-Document that disabling the heredoc tier also disables inline interpreter
-inspection (#648), without changing that opt-out or argv0-scoped unlink rules.
-
-Validation: cargo fmt --check, git diff --check, and focused cargo check and
-Clippy -D
-
-**File**: `README.md` (modified, +15/-9)
-```diff
-@@ -745,7 +745,7 @@ Environment variables override config files (highest priority):
- - `DCG_BRIDGE_CRASH_DECISION=allow`: let a command through when the OpenCode plugin or the Oh My Pi bridge started dcg but got no verdict from it (dcg crashed or was killed); the default blocks (see [Bounded Failure Policy](#bounded-failure-policy))
- - `DCG_BYPASS=1`: bypass dcg entirely (escape hatch; use sparingly)
- - `DCG_CONFIG=/path/to/config.toml`: use explicit config file
--- `DCG_HEREDOC_ENABLED=true|false`: enable/disable heredoc scanning
-+- `DCG_HEREDOC_ENABLED=true|false`: enable/disable the combined heredoc and inline-interpreter scanning tier (see [heredoc configuration](docs/configuration.md#heredoc-and-inline-script-scanning))
- - `DCG_HEREDOC_TIMEOUT=50`: heredoc extraction timeout (milliseconds)
- - `DCG_HEREDOC_TIMEOUT_MS=50`: heredoc extraction timeout (milliseconds)
- - `DCG_HEREDOC_LANGUAGES=python,bash`: filter heredoc languages
-@@ -1007,14 +1007,20 @@ payload is not allowed blind: dcg scans the raw text for a shell tool's
- `"command"` value and evaluates it. A command that this scan finds denied (or
- asked about) gets that answer; only a payload with no evaluable shell command,
- or one whose command the scan allows, falls through to the fail-open allow. The
--scan is a best effort and can allow what the full evaluation would not: hook
--input larger than `max_hook_input_bytes` (256 KiB by default) that holds a
--quoted Python, JavaScript or Ruby heredoc calling `eval` or `exec` on a string
--dcg cannot read is allowed, although the same command asks when the limit is
--raised. To deny oversized input instead, set `general.fail_closed = true` (or
--`DCG_FAIL_CLOSED=1`). Unpaired UTF-16 surrogate escapes (`\ud800`), which
--JavaScript hosts can emit, are replaced with U+FFFD before parsing rather than
--failing it.
-+scan is a best effort. For an over-length command containing a heredoc, its
-+windows cannot preserve the relationship between the body and its consumer.
-+DCG therefore retains the size-limit review/block response unless a bounded
-+parse proves the body is inert data. Piped interpreters, wrappers, descriptor
-+handoffs, unknown receivers, malformed source and exhausted proof bounds do
-+not qualify for that exemption. A completed quoted data-file write can retain
-+the fail-open behavior. Window results use the normal decision ordering:
-+concrete denial, incomplete analysis, then an `ask` finding. To deny every
-+oversized raw input, set `general.fail_closed = true` (or `DCG_FAIL_CLOSED=1`).
-+The data exception requires a complete parse view of at most 64 KiB after
-+quoted bodies are compacted. Larger exterior source, including long quoted
-+text or arithmetic, remains unverified when this proof cannot finish.
-+Unpaired UTF-16 surrogate escapes (`\ud800`), which JavaScript hosts can emit,
-+are replaced with U+FFFD before parsing rather than failing it.
- 
- > A leading UTF-8 BOM (`EF BB BF`) is stripped before parsing in all hook
- > paths, so a BOM-prefixed but otherwise-valid command is correctly evaluated
-```
-
-**File**: `docs/configuration.md` (modified, +17/-3)
-```diff
-@@ -305,9 +305,23 @@ label it `INACTIVE`; default reads operate on effective layers only.
- Scan hooks are loaded from `.dcg/hooks.toml` when present. See
- `docs/scan-precommit-guide.md` for hook configuration and pre-commit examples.
- 
--## Heredoc Scanning
--
--Heredoc scanning can be enabled or configured with:
-+## Heredoc and Inline-Script Scanning
++        false
++    };
++    if !has_unquoted_caret(first) {
++        return is_percent_expansion(first);
++    }
 +
-+The `[heredoc]` section controls the shared embedded-code scanning tier:
-+heredoc bodies, here-strings, and inline interpreter programs such as
-+`python -c`, `perl -e`, and `node -e`. It is enabled by default.
-+
-+Setting `enabled = false`, `DCG_HEREDOC_ENABLED=false`, or
-+`--no-heredoc-scan` disables this entire tier. Direct-command pack checks still
-+run, but they do not replace language-aware inspection of interpreter source.
-+For example, `perl -e "unlink '/etc/passwd'"` is detected by
-+`heredoc.perl:unlink.catastrophic` with the tier enabled and can be allowed
-+when it is disabled. The direct `unlink` rules apply to the executed program,
-+not arbitrary text inside another program's arguments
-+([#648](https://github.com/Dicklesworthstone/destructive_command_guard/issues/648)).
-+Keep the tier enabled to retain inline-interpreter protection.
-+
-+Configuration:
- 
- ```toml
- [heredoc]
-```
-
-**File**: `src/heredoc.rs` (modified, +656/-31)
-```diff
-@@ -8731,54 +8731,486 @@ pub(crate) fn first_heredoc_target_command(command: &str) -> Option<String> {
-     extract_heredoc_target_command(command, operator)
- }
- 
--/// Whether a shell or interpreter directly receives *any* heredoc in `command`.
-+/// Whether an oversized command with heredoc syntax still needs full analysis.
- ///
--/// A receiver [`ScriptLanguage::from_command`] knows counts, whether it reads
--/// its program from standard input (`python3 - <<'EOF'`) or runs a script that
--/// reads the body as input (`python3 load.py <<'EOF'`), which may run it too;
--/// here-strings do not (`<<<` is skipped).
-+/// Scan windows can detach a body from a pipe, wrapper, descriptor handoff or
-+/// later command that runs it. Therefore the exception is a proof of inert
-+/// data, rather than a list of interpreter names: only completed, quoted stdin
-+/// heredocs in a completely understood program of literal data commands can
-+/// answer `false` (bd-oversized-code-heredoc-receivers-azu4).
- ///
--/// Every `<<` operator is examined, not just the first, and the caller passes
--/// the whole command rather than one scan window: an earlier data heredoc
--/// (`cat <<'A'\n…\nA\npython3 - <<'EOF'\n…`) or padding before the interpreter
--/// heredoc otherwise left it undetected and the oversized payload failed open
--/// (bd-oversized-code-heredoc-receivers-azu4). A receiver reached only through
--/// a pipe (`cat <<'EOF' | python3 -`), a wrapper, or a file-descriptor heredoc
--/// is still not detected here — those keep the documented fail-open until the
--/// receiver analysis is generalized.
--///
--/// The oversized hook-input path (bd-ym0p) asks this of a command too large
--/// to evaluate. Its scan windows cut such a body away from the program that
--/// runs it, so finding nothing in them is not an answer about the code, and
--/// the command gets the same indeterminate a merely over-length command gets.
--/// Data receivers (`cat > file <<'EOF'`) and unrecognized programs answer
--/// `false` and keep the documented fail-open default. The operator count is
--/// bounded; past the bound the answer is the conservative `true`.
-+/// Large bodies are replaced only in a temporary parse view. All header,
-+/// terminator and exterior bytes survive, and every replacement must be the
-+/// exact body of a real heredoc in the complete parse. A failed proof, unknown
-+/// reader, expanding body, executable substitution, name override, escaping
-+/// output or exhausted work bound answers `true`. This does not claim that the
-+/// command is destructive; it preserves the caller's incomplete-analysis policy.
-+/// The bounds apply to raw operators and exterior source too, so long quoted
-+/// text or arithmetic is not exempt when its complete proof exceeds them.
- #[must_use]
--pub fn any_heredoc_runs_as_code(command: &str) -> bool {
-+pub fn oversized_heredoc_requires_analysis(command: &str) -> bool {
-     const MAX_HEREDOC_OPERATORS: usize = 256;
-+    if command.len() > MAX_OVERSIZED_HEREDOC_SOURCE_BYTES {
++    // The raw heredoc scan can split a regex at '(' and '|', presenting
++    // ".*?)^\" as an apparent command word (#654). Cmd reads that as ".*?",
++    // a closing group, and "^\": the only caret-bearing word decodes to a
++    // directory root, which cannot be an executable. Use the existing Cmd
++    // lexer so a real ")g^it" still supplies evidence. Do not infer anything
++    // about runtime expansions or quote boundaries: the initial whitespace
++    // split may end inside a quoted word, and Cmd does not quote apostrophes.
++    // Bound this optional proof, which also runs before the whole-command
++    // parse size gate.
++    const MAX_CMD_SHAPE_WORD_BYTES: usize = 4096;
++    // Another word beside the caret word may name an executable without
++    // using a caret itself. Only punctuation-only fragments can lose evidence.
++    if first.len() > MAX_CMD_SHAPE_WORD_BYTES
++        || first.contains(['%', '!', '\'', '"'])
++        || first
++            .bytes()
++            .any(|byte| byte.is_ascii_alphanumeric() || !byte.is_ascii())
++    {
 +        return true;
 +    }
-     let bytes = command.as_bytes();
-     let mut search = 0usize;
--    let mut examined = 0usize;
-+    let mut operators = Vec::new();
-     while let Some(relative) = memchr::memmem::find(&bytes[search..], b"<<") {
-         let operator = search + relative;
-         search = operator + 2;
--        // `<<<` is a here-string, not a heredoc; skip the operator whether this
--        // `<<` is its first two `<` or (via the overlapping scan) its last two.
-         if bytes.get(operator + 2) == Some(&b'<') || (operator > 0 && bytes[operator - 1] == b'<') {
-             continue;
-         }
--        examined += 1;
--        if examined > MAX_HEREDOC_OPERATORS {
-+        if operators.len() == MAX_HEREDOC_OPERATORS {
++    // Cmd only splits ASCII whitespace. A Unicode whitespace byte can be
++    // part of an executable path, so the apparent word must also be complete
++    // under that rule before a directory-only fragment can withdraw evidence.
++    let cmd_word_start = segment.trim_ascii_start();
++    if !cmd_word_start.starts_with(first)
++        || cmd_word_start
++            .as_bytes()
++            .get(first.len())
++            .is_some_and(|byte| !byte.is_ascii_whitespace())
++    {
++        return true;
++    }
++    let mut decoder = ShellTokenDecoder::new(ShellDialect::Cmd);
++    let mut saw_caret_word = false;
++    for word in tokenize_for_shell_dialect(first, ShellDialect::Cmd)
++        .iter()
++        .filter(|token| token.kind == NormalizeTokenKind::Word)
++        .filter_map(|token| token.text(first))
++        .filter(|word| has_unquoted_caret(word))
++    {
++        saw_caret_word = true;
++        if decoder
++            .decode(word, ShellTokenRole::Syntax)
++            .is_none_or(|decoded| {
++                decoded.is_empty() || !decoded.bytes().all(|byte| matches!(byte, b'/' | b'\\'))
++            })
++        {
              return true;
          }
--        if extract_heredoc_target_command(command, operator)
--            .is_some_and(|target| ScriptLanguage::from_command(&target) != ScriptLanguage::Unknown)
-+        operators.push(operator);
-+    }
-+    if operators.is_empty() {
-+        return false;
-+    }
-+    // With no elisions, the complete tree can prove that a quoted `<<` or
-+    // numeric arithmetic is ordinary argv data. No outer heredoc nodes alone
-+    // would be insufficient: `bash -c '... <<EOF ...'` is an executable carrier.
-+    if command.len() <= MAX_OVERSIZED_HEREDOC_VIEW_BYTES {
-+        return !oversized_heredoc_view_is_inert(command, &[]);
-+    }
-+    let Some((view, elisions)) = compact_oversized_heredocs(command, &operators) else {
-+        return true;
-+    };
-+    !oversized_heredoc_view_is_inert(&view, &elisions)
-+}
-+
-+const MAX_OVERSIZED_HEREDOC_SOURCE_BYTES: usize = 4 * 1024 * 1024;
-+const MAX_OVERSIZED_HEREDOC_VIEW_BYTES: usize = 64 * 1024;
-+const MAX_OVERSIZED_HEREDOC_NODES: usize = 16_384;
-+
-+/// Coordinates in a compact view, including the retained terminator's tab
-+/// indentation in `body` when `<<-` makes it part of the grammar's body node.
-+#[derive(Debug)]
-+struct OversizedHeredocEl
-```
-
-**File**: `src/main.rs` (modified, +27/-23)
-```diff
-@@ -771,14 +771,14 @@ fn try_deny_unparseable_payload(
-     // destructive-then-padding.
-     let max_command_bytes = config.general.max_command_bytes();
-     let mut commands: Vec<String> = Vec::new();
--    // An over-length command whose heredoc a shell or interpreter runs as
--    // code (bd-ym0p). The windows below cut its body away from that program,
--    // so a scan that finds nothing has not judged the code. The normal path
--    // answers any command over `max_command_bytes` with the size-limit
--    // indeterminate; without this, the same `python3 - <<'EOF'` body allowed
--    // once the whole input also passed `max_hook_input_bytes`. A data
--    // receiver (`cat > file <<'EOF'`) and padding outside any heredoc keep
--    // the documented fail-open default.
-+    // An over-length command whose heredoc has not been proved inert
-+    // (bd-ym0p, bd-oversized-code-heredoc-receivers-azu4). The windows below
-+    // cut its body away from its consumer: a pipe, wrapper or descriptor can
-+    // feed code to an interpreter without spelling its name at the operator.
-+    // Finding no window-level match therefore does not establish safety.
-+    // Retain the ordinary size-limit indeterminate unless a bounded reading
-+    // proves the heredoc is data. Proven quoted file writes and bounded
-+    // padding without a `<<` marker retain the documented fail-open default.
-     // Also retain a command whose recovered bytes do not fit in the bounded
-     // scan. Limits restrict work; they do not establish that omitted bytes are
-     // safe. A later window's concrete denial still takes precedence.
-@@ -796,11 +796,11 @@ fn try_deny_unparseable_payload(
-     for command in hook::extract_commands_from_truncated_json(prefix) {
-         if command.len() > max_command_bytes
-             && oversized_unverified_command.is_none()
--            && destructive_command_guard::heredoc::any_heredoc_runs_as_code(&command)
-+            && destructive_command_guard::heredoc::oversized_heredoc_requires_analysis(&command)
-         {
--            // The whole command is scanned, not just its first window: padding
--            // or an earlier data heredoc before the interpreter heredoc must
--            // not hide it (bd-oversized-code-heredoc-receivers-azu4).
-+            // The proof sees the whole recovered command. An earlier data
-+            // body cannot vouch for a later executable one, and a later
-+            // command can run a file that an earlier data body wrote.
-             oversized_unverified_command = Some(command.len());
+     }
+-    is_percent_expansion(first)
++    // A different tokenization that loses the candidate supplies no proof.
++    !saw_caret_word
+ }
+ 
+ fn is_windows_path_token(token: &str) -> bool {
+@@ -5622,6 +5684,68 @@ mod tests {
          }
-         if !windows_payload {
-@@ -875,9 +875,9 @@ fn try_deny_unparseable_payload(
-     // records its own audit row in `handle_unparseable_hook_input`, and a
-     // refused payload must not provoke history-writer construction (worker
-     // thread + database) unless a denial is actually published.
--    // Deny if ANY extracted occurrence (or scan window) resolves decisively;
--    // a benign decoy ahead of the real command must not be able to end the
--    // scan.
-+    // A concrete denial in ANY extracted occurrence (or scan window) wins;
-+    // an earlier Ask must not hide it or bypass an unverified-command Deny.
-+    // Use the same Deny > Indeterminate > Ask ordering as `outcome_rank`.
-     //
-     // An exhausted deadline leaves windows unscanned, so "nothing found" is not
-     // something this run established — and this loop used to `break` into the
-@@ -905,6 +905,7 @@ fn try_deny_unparseable_payload(
-     // Keep it until the scan ends, so a later window's proven Deny still
-     // outranks it, and then publish it instead of allowing.
-     let mut pending_indeterminate: Option<ResolvedCommandOutcome> = None;
-+    let mut pending_ask: Option<ResolvedCommandOutcome> = None;
-     for command in &commands {
-         if deadline.is_exceeded() {
-             let mut history_writer = if config.history.enabled {
-@@ -943,9 +944,7 @@ fn try_deny_unparseable_payload(
-         // size. A window of padding costs the evaluator one keyword scan.
-         let outcome = resolve_hook_command(&eval_context, command, refined_dialect, None);
-         match outcome {
--            ResolvedCommandOutcome::DenyFamily(resolved)
--                if matches!(resolved.mode, DecisionMode::Deny | DecisionMode::Ask) =>
--            {
-+            ResolvedCommandOutcome::DenyFamily(resolved) if resolved.mode == DecisionMode::Deny => {
-                 let mut history_writer = if config.history.enabled {
-                     let mut writer = create_history_writer(&config.history);
-                     writer.limit_drop_wait_to(deadline.remaining().unwrap_or_default());
-@@ -963,25 +962,30 @@ fn try_deny_unparseable_payload(
-                 drop_history_writer(history_writer);
-                 return Some(exit_code);
-             }
-+            ResolvedCommandOutcome::DenyFamily(resolved) if resolved.mode == DecisionMode::Ask => {
-+                pending_ask.get_or_insert(ResolvedCommandOutcome::Deny
+     }
+ 
++    #[test]
++    fn issue_654_regex_group_fragments_do_not_name_cmd_executables() {
++        for fragment in [r".*?)^\", r".*?)^/^\", r".*?)^\^\"] {
++            assert!(
++                !segment_command_word_is_cmd_assembled(fragment),
++                "a caret that only escapes directory separators is not an executable: {fragment:?}"
++            );
++        }
++        for fragment in [
++            "g^it reset --hard",
++            "g\"\"^it reset --hard",
++            "foo)g^it reset --hard",
++            r"foo)^\)del/s/q C:\important",
++            r"del/s/q)^\ C:\important",
++            "g^)it reset --hard",
++            "g\")\"^it reset --hard",
++            "a')x'b^it reset --hard",
++            r#"^\"Program Files\g^it.exe" reset --hard"#,
++            "^\\\u{00a0}\\g^it reset --hard",
++           
 ```
 
-**File**: `tests/repro_ym0p_oversized_code_heredoc.rs` (modified, +301/-8)
+**File**: `tests/repro_451_windows_pack_activation.rs` (modified, +121/-0)
 ```diff
-@@ -18,7 +18,7 @@ use std::io::Write;
- use std::path::Path;
- use std::process::{Command, Stdio};
- 
--/// About 320 KB of body: 5,000 lines of 64 bytes, as in the bead's probes.
-+/// About 270 KB of body: 5,000 padding lines, as in the bead's probes.
- fn body(call: &str) -> String {
-     use std::fmt::Write as _;
-     let mut text = String::new();
-@@ -42,25 +42,73 @@ fn envelope(command: &str) -> String {
- }
- 
- fn run_hook(input: &str, home: &Path) -> (String, String, i32) {
-+    run_hook_with_config(input, home, "", "claude-code")
-+}
-+
-+fn run_hook_with_config(
-+    input: &str,
-+    home: &Path,
-+    config: &str,
-+    agent: &str,
-+) -> (String, String, i32) {
-+    run_hook_with_config_and_env(input, home, config, agent, &[])
-+}
-+
-+fn run_hook_with_config_and_env(
-+    input: &str,
-+    home: &Path,
-+    config: &str,
-+    agent: &str,
-+    extra_env: &[(&str, &str)],
-+) -> (String, String, i32) {
-     let config_path = home.join("dcg-test-config.toml");
--    fs::write(&config_path, "").expect("empty config");
--    let mut child = Command::new(env!("CARGO_BIN_EXE_dcg"))
-+    fs::write(
-+        &config_path,
-+        format!("{config}\n[history]\nenabled = false\n"),
-+    )
-+    .expect("isolated config");
-+    let mut command = Command::new(env!("CARGO_BIN_EXE_dcg"));
-+    command
-+        // Keep parent-process detection from changing the expected protocol.
-+        .args(["--agent", agent])
-         .stdin(Stdio::piped())
-         .stdout(Stdio::piped())
-         .stderr(Stdio::piped())
-+        .env_clear()
-         .env("HOME", home)
-         .env("USERPROFILE", home)
--        .env_remove("CLAUDE_CONFIG_DIR")
-         .env("XDG_CONFIG_HOME", home.join("xdg_config"))
-+        .env("XDG_DATA_HOME", home.join("xdg_data"))
-+        .env("XDG_STATE_HOME", home.join("xdg_state"))
-+        .env("XDG_CACHE_HOME", home.join("xdg_cache"))
-+        .env("APPDATA", home.join("appdata"))
-+        .env("LOCALAPPDATA", home.join("localappdata"))
-+        .env("TMPDIR", home)
-+        .env("TEMP", home)
-+        .env("TMP", home)
-         .env("DCG_CONFIG", &config_path)
-+        .env("DCG_ALLOWLIST_SYSTEM_PATH", "")
-+        .env("DCG_ALLOW_ONCE_PATH", home.join("allow-once.jsonl"))
-         .env(
-             "DCG_PENDING_EXCEPTIONS_PATH",
-             home.join("pending_exceptions.jsonl"),
-         )
--        .env_remove("DCG_FAIL_CLOSED")
--        .env_remove("DCG_HOOK_TIMEOUT_MS")
--        .spawn()
--        .expect("spawn dcg");
-+        .env("DCG_SELF_HEAL_HOOK", "0")
-+        .env("DCG_NO_UPDATE_CHECK", "1")
-+        // These assert semantics and rule ownership, not latency. As in the
-+        // heredoc regression suite (bd-e1xl), extraction has its own budget
-+        // independent of the AST and whole-hook budgets. Production deadlines
-+        // and the dedicated deadline tests remain unchanged.
-+        .env("DCG_HOOK_TIMEOUT_MS", "5000")
-+        .env("DCG_AST_TIMEOUT_MS", "5000")
-+        .env("DCG_HEREDOC_TIMEOUT_MS", "5000")
-+        .env("NO_COLOR", "1")
-+        .env("TERM", "dumb")
-+        .current_dir(home);
-+    for (name, value) in extra_env {
-+        command.env(name, value);
-+    }
-+    let mut child = command.spawn().expect("spawn dcg");
-     child
-         .stdin
-         .take()
-@@ -80,6 +128,8 @@ fn oversized_heredoc_run_as_code_is_not_allowed_blind() {
-     const SIZE_LIMIT: &str = "exceeds limit";
-     for (receiver, call, verdict) in [
-         ("python3 -", "exec(x)", SIZE_LIMIT),
-+        // A flag-only wrapper was already recognized by the old backstop.
-+        ("env -i python3 -", "exec(x)", SIZE_LIMIT),
-         // Every window is evaluated as shell, and the one holding the call
-         // reads `eval(x);`, which the POSIX eval rule denies. A window's deny
-         // outranks the size-limit answer.
-@@ -151,3 +201,246 @@ fn oversized_data_heredoc_keeps_the_fail_open_default() {
-         "the oversized-input warning stays: {stderr:?}"
-     );
+@@ -325,3 +325,124 @@ fn windows_cli_payload_defaults_respect_explicit_exclusions() {
+         assert_eq!(diagnostic_json(&explicit)["decision"], "deny");
+     }
  }
 +
-+fn assert_size_limit_verdict(
-+    label: &str,
-+    command: &str,
-+    config: &str,
-+    codex: bool,
-+    expected_decision: &str,
-+) {
-+    let mut payload = serde_json::json!({
-+        "hook_event_name": "PreToolUse",
-+        "tool_name": "Bash",
-+        "tool_input": { "command": command },
-+    });
-+    if codex {
-+        payload["turn_id"] = serde_json::json!("oversized-heredoc-turn");
++/// #654: the body and the single-quoted rg argument both contain << as
++/// literal text. The apostrophe in the body is not a shell quote.
++const ISSUE_654_COMMAND: &str = r#"cat > /tmp/x/a.py <<'EOF'
++p = r"^<<<<<<< [^\n]*\n(.*?)^\|\|\|\|\|\|\| [^\n]*\n(.*?)"
++row's
++EOF
++python3 /tmp/x/a.py && for f in a.txt; do rg -c '^(<<<<<<<|=======|>>>>>>>)( |$)' "$f" || echo 0; done"#;
++
++#[test]
++fn issue_654_quoted_conflict_markers_keep_bash_hook_and_posix_cli_in_agreement() {
++    let commands = [
++        ISSUE_654_COMMAND.to_string(),
++        // Each of these minimal edits was allowed in the original report.
++        ISSUE_654_COMMAND.replace("row's\n", ""),
++        ISSUE_654_COMMAND
++            .lines()
++            .filter(|line| !line.starts_with("p = "))
++            .collect::<Vec<_>>()
++            .join("\n"),
++        ISSUE_654_COMMAND.replace("'^(<<<<<<<|=======|>>>>>>>)( |$)'", "'x'"),
++        // The same literal body is data whether cat writes or appends it,
++        // and a later quoted pattern must not turn it into Windows syntax.
++        ISSUE_654_COMMAND.replace("python3 /tmp/x/a.py && ", ""),
++        ISSUE_654_COMMAND.replacen("cat >", "cat >>", 1),
++    ];
++    for command in &commands {
++        let payload = serde_json::json!({
++            "hook_event_name": "PreToolUse",
++            "tool_name": "Bash",
++            "tool_input": {"command": command},
++        })
++        .to_string();
++        let hook = run_windows_diagnostic(&[], Some(&payload), Some("# empty\n"));
++        assert!(
++            hook.status.success(),
++            "hook failed for {command:?}: {}",
++            String::from_utf8_lossy(&hook.stderr)
++        );
++        // A deny or an incomplete-analysis ask is a JSON document, never a
++        // successful silent allow. Also check the CLI's explicit decision.
++        assert!(
++            hook.stdout.is_empty(),
++            "safe Bash heredoc must be allowed: {command:?}\nstdout: {}\nstderr: {}",
++            String::from_utf8_lossy(&hook.stdout),
++            String::from_utf8_lossy(&hook.stderr)
++        );
++        let diagnostic = run_windows_diagnostic(
++            &["test", "--stdin", "--dialect", "posix", "--format", "json"],
++            Some(command),
++            Some("# empty\n"),
++        );
++        assert_eq!(
++            diagnostic.status.code(),
++            Some(0),
++            "POSIX CLI failed for {command:?}: {}",
++            String::from_utf8_lossy(&diagnostic.stderr)
++        );
++        assert_eq!(
++            diagnostic_json(&diagnostic)["decision"],
++            "allow",
++            "{command}"
++        );
 +    }
-+    let input = payload.to_string();
-+    assert!(input.len() > 256 * 1024, "{label}: input must be oversized");
-+    let home = tempfile::tempdir().expect("isolated hook home");
-+    let agent = if codex { "codex" } else { "claude-code" };
-+    let (stdout, stderr, exit_code) = run_hook_with_config(&input, home.path(), config, agent);
-+    assert_eq!(exit_code, 0, "{label}: hook must exit 0\n{stderr}");
-+    let json: serde_json::Value = serde_json::from_str(&stdout)
-+        .unwrap_or_else(|error| panic!("{label}: {error}: stdout={stdout:?}; stderr={stderr:?}"));
-+    let specific = json["hookSpecificOutput"].as_object().expect
++}
++
++#[test]
++fn issue_654_heredoc_data_does_not_hide_executed_destructive_commands() {
++    let trailing_delete = format!("{ISSUE_654_COMMAND}\nrm -rf ./important");
++    for command in [
++        trailing_delete.as_str(),
++        // The outer shell executes substitutions in an unquoted heredoc.
++        "cat > /tmp/x/a.py <<EOF\n$(rm -rf ./important)\nEOF\nrg '^(<<<<<<<|=======|>>>>>>>)( |$)' a.txt",
++        // A shell receives code, even when the delimiter is quoted.
++        "bash <<'EOF'\nrm -rf ./important\nEOF",
++        // A file written by cat and subsequently run as shell is also code.
++        "cat > /tmp/x/a.sh <<'EOF'\nrm -rf ./important\nEOF\nbash /tmp/x/a.sh\nrg '^(<<<<<<<|=======|>>>>>>>)( |$)' a.txt",
++    ] {
++        let payload = serde_json::json!({
++            "hook_event_name": "PreToolUse",
++            "tool_name": "Bash",
++            "tool_input": {"command": command},
++        })
++        .to_string();
++        let hook = run_windows_diagnostic(&[], Some(&payload), Some("# empty\n"));
++        assert!(hook.status.success(), "structured hook denial exits zero");
++        let json = diagnostic_json(&hook);
++        let verdict = &json["hookSpecificOutput"];
++        assert_eq!(verdict["permissionDecision"], "deny", "{command}: {json}");
++        let rule = verdict["ruleId"]
++            .as_str()
++            .unwrap_or_else(|| panic!("expected a concrete destructive rule: {command}: {json}"));
++        assert!(
++            !rule.starts_with("windows.") && !rule.starts_with("heredoc.powershell:"),
++            "POSIX execution must be denied for its own rule, not the #654 false positive: {command}: {json}"
++        );
++    }
++}
++
++#[test]
++fn issue_654_preserves_explicit_and_mislabeled_windows_deletion_detection() {
++    for tool in ["PowerShell", "Bash"] {
++        let payload = serde_json::json!({
++            "hook_event_name": "PreToolUse",
++            "tool_name": tool,
++            "tool_input": {"command": r"Remove-Item -Recurse -Force C:\important"},
++        })
++        .to_string();
++        let hook = run_windows_diagnostic(&[], Some(&payload), Some("# empty\n"));
++        assert!(hook.status.success(), "structur
 ```
 
 #### Recent Merged Pull Requests:
@@ -3113,39 +2814,68 @@ Clippy -D
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. heredoc): preserve arithmetic context during shell analysis [skip ci]
+## X. hook): keep regex fragments from widening Bash heredoc dialects [skip ci]
 
 **RULE**:
-When implementing operations in `src/evaluator.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Dicklesworthstone/destructive_command_guard. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/hook.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Dicklesworthstone/destructive_command_guard. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `46a26cda`: heredoc): preserve arithmetic context during shell analysis [skip ci]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `37d14736`: hook): keep regex fragments from widening Bash heredoc dialects [skip ci]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/evaluator.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/hook.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            // #649: the secondary PowerShell `$()` view of a POSIX `$((...))`
-            // loses one pair of parentheses and hence its arithmetic context.
-            // Blank only parser-proven shift operators in this view so their
-            // `<<` cannot become a heredoc during nested evaluation. The POSIX
-            // pass above still sees the shifts, and every nested command's
-            // source remains available to both substitution scanners.
-            let powershell_view =
-                crate::heredoc::mask_arithmetic_shift_operators(substitution_source.as_ref());
-                powershell_view.as_ref(),
+    use crate::normalize::{
+        NormalizeTokenKind, ShellTokenDecoder, ShellTokenRole, tokenize_for_shell_dialect,
+    };
+
+    let has_unquoted_caret = |word: &str| {
+        let mut quote = None;
+        for byte in word.bytes() {
+            if let Some(delimiter) = quote {
+                if byte == delimiter {
+                    quote = None;
+                }
+            } else if matches!(byte, b'\'' | b'"') {
+                quote = Some(byte);
+            } else if byte == b'^' {
+                return true;
+        }
+        false
+    };
+    if !has_unquoted_caret(first) {
+        return is_percent_expansion(first);
+    }
+
+    // The raw heredoc scan can split a regex at '(' and '|', presenting
+    // ".*?)^\" as an apparent command word (#654). Cmd reads that as ".*?",
+    // a closing group, and "^\": the only caret-bearing word decodes to a
+    // directory root, which cannot be an executable. Use the existing Cmd
+    // lexer so a real ")g^it" still supplies evidence. Do not infer anything
+    // about runtime expansions or quote boundaries: the initial whitespace
+    // split may end inside a quoted word, and Cmd does not quote apostrophes.
+    // Bound this opti
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-                substitution_source.as_ref(),
+// Induced defect failure mode:
+    let mut quote = None;
+    for byte in first.bytes() {
+        if let Some(delimiter) = quote {
+            if byte == delimiter {
+                quote = None;
+        } else if matches!(byte, b'\'' | b'"') {
+            quote = Some(byte);
+        } else if byte == b'^' {
+    is_percent_expansion(first)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `46a26cda` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `37d14736` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -10203,3 +10203,5 @@ Every entry in this ledger must capture:
 | `learn-github-fabio-rovai-open-ontologies` | `https://github.com/fabio-rovai/open-ontologies` | `214e948e` | Multi-dimensional audit evidence | 2026-11-15T22:14:50.531Z |
 | `learn-dom-d-5fcf2e96` | `project://hf-conwayresearch-underdog-woof` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-conwayresearch-underdog-woof-learnings.md` | 2026-11-15T22:15:22.823Z |
 | `learn-huggingface-cactus-compute-mirage` | `https://huggingface.co/Cactus-Compute/mirage` | `hf-cactus-` | Multi-dimensional audit evidence | 2026-11-15T22:24:37.552Z |
+| `learn-github-dicklesworthstone-destructive_command_guard` | `https://github.com/Dicklesworthstone/destructive_command_guard` | `37d14736` | Multi-dimensional audit evidence | 2026-11-15T22:39:45.406Z |
+| `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `8b688002` | Multi-dimensional audit evidence | 2026-11-15T22:39:55.617Z |

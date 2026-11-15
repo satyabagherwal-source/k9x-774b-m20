@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T22:24:37.556Z",
-  "total_cycles_completed": 9772,
-  "total_learnings_persisted": 9772,
-  "total_rules_promoted": 9388,
+  "last_updated": "2026-11-15T22:39:55.623Z",
+  "total_cycles_completed": 9774,
+  "total_learnings_persisted": 9774,
+  "total_rules_promoted": 9390,
   "history": [
-    {
-      "timestamp": "2026-11-14T18:26:28.376Z",
-      "repository": "open-ani/animeko",
-      "learningId": "learn-github-open-ani-animeko",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T18:26:37.125Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T18:34:34.734Z",
       "repository": "Cactus-Compute/whistle",
@@ -1403,6 +1389,20 @@
       "repository": "Cactus-Compute/mirage",
       "learningId": "learn-huggingface-cactus-compute-mirage",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T22:39:45.413Z",
+      "repository": "Dicklesworthstone/destructive_command_guard",
+      "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T22:39:55.623Z",
+      "repository": "slatedb/slatedb",
+      "learningId": "learn-github-slatedb-slatedb",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

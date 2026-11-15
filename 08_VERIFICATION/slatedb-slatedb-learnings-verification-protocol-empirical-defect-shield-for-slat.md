@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:44:55.309Z",
+  "timestamp": "2026-11-15T22:39:59.135Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-slatedb-slatedb-learnings",
+  "learning_id": "LEARN-EVO-slatedb-slatedb-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [slatedb-slatedb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:44:55.309Z`  
-> **Learning ID**: `LEARN-REEXTRACT-slatedb-slatedb-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-15T22:39:59.135Z`  
+> **Learning ID**: `LEARN-EVO-slatedb-slatedb-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/slatedb-slatedb-learnings.md`  
 > **Source**: github ([https://github.com/slatedb/slatedb](https://github.com/slatedb/slatedb))  
-> **Source Version**: `9aedb400`  
+> **Source Version**: `8b688002`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T00:58:32.922Z  
+> **Timestamp**: 2026-11-15T22:39:54.576Z  
 > **Learning ID**: `learn-github-slatedb-slatedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/slatedb-slatedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/slatedb/slatedb](https://github.com/slatedb/slatedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T00:58:32.912Z  
+> **Harvest Timestamp**: 2026-11-15T22:39:54.568Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A cloud native embedded storage engine built on object storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3640 stars
+- **Stars / Engagement**: 3647 stars
 
 ---
 
@@ -2350,11 +2350,11 @@ func uniffiCheckChecksums() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #2255** (2026-11-13): **Reading a manifest through ObjectStoreMirror spins forever when a referenced SST is missing remotely**
+  *Symptoms*: **Describe the bug** If the latest manifest references an SST that is missing from both the mirror's local directory and object storage (real data loss), reading that manifest through `ObjectStoreMirror` with `SlateDbMirrorPolicy` never returns. It spins at 100% CPU.  **To Reproduce** Dependencies: `slatedb`, `slatedb-mirror`, `tempfile`, `tokio`.  ```rust use std::sync::Arc;  use slatedb::admin::Admin; use slatedb::config::{FlushOptions, FlushType}; use slatedb::object_store::{local::LocalFileSystem, ObjectStore}; use slatedb::{Db, SlateDbMirrorPolicy}; use slatedb_mirror::ObjectStoreMirror; use tempfile::TempDir;  #[tokio::test] async fn test_missing_sst_spins() {     let remote_dir = TempDir::new().unwrap();     let mirror_dir = TempDir::new().unwrap();     let remote: Arc<dyn ObjectStore> =         Arc::new(LocalFileSystem::new_with_prefix(remote_dir.path()).unwrap());      // Write one compacted SST.     let db = Db::open("db", remote.clone()).await.unwrap();     db.put(b"key", b"value").await.unwrap();     db.flush_with_options(FlushOptions { flush_type: FlushType::MemTable })         .await         .unwrap();     db.close().await.unwrap();      // Lose the SST that the latest manifest references.     for sst in std::fs::read_dir(remote_dir.path().join("db/compacted")).unwrap() {         std::fs::remove_file(sst.unwrap().path()).unwrap();     }      let mirror = ObjectStoreMirror::builder(         mirror_dir.path(),         remote,         SlateDbMirrorPolicy::builder()
+
 - **Issue #2086** (2026-09-09): **`foyer = "0.22.4"` floor breaks musl builds (foyer-rs/foyer#1338)**
   *Symptoms*: **Describe the bug**  SlateDB cannot be built for `*-unknown-linux-musl` targets. The workspace requires `foyer = "0.22.4"`, and `foyer-storage` 0.22.4 and 0.22.5 do not compile for musl.  This failure can be fixed either by lowering the required foyer version to 0.22.3, or by waiting for foyer upstream to fix it.  There is an open issue, foyer-rs/foyer#1338, opened 2026-09-05, but it has no PR yet.  **To Reproduce**  1. `rustup target add x86_64-unknown-linux-musl` 2. `apt-get install musl-dev` (or an equivalent musl toolchain) 3. From the SlateDB workspace root, with the default features that include `foyer`: `cargo build -p slatedb --target x86_64-unknown-linux-musl`  The same failure reaches any downstream crate that depends on SlateDB and builds for musl.  **Expected behavior**  SlateDB builds for `*-unknown-linux-musl`.  **Screenshots**  Not applicable. The compiler output is provided.  **Build**  - `uname -a`: `Darwin 25.6.0 Darwin Kernel Version 25.6.0 arm64` locally. The failing target is `x86_64-unknown-linux-musl`, built on Linux CI. - OS: Linux, building the musl target. Cross-compiling from macOS does not reach this error, because the `zstd-sys` and `lz4-sys` build scripts fail first looking for `x86_64-linux-musl-gcc`. - SlateDB Version: 0.16.0, at `4478eb907b98c0a52299f359127ccba82c2716b9` - Object Store: S3  **Additional context**  `foyer-storage/src/io/device/utils.rs` declares four ioctl request constants as `u64`. It selects a platform branch with `cfg!()` 
-
-- **Issue #2055** (2026-08-27): **Make with_wal_object_store safe for incremental deployment**
-  *Symptoms*: **Describe the bug**    `with_wal_object_store()` is unusable for incremental deployment on v0.15.0. When a writer creates a new DB with `with_wal_object_store()`, the manifest persists `wal_object_store_uri = Some("")`. Any subsequent reader opening that DB without `with_wal_object_store()` configured gets `WalStoreReconfigurationError`.   The root cause is that `FlatBufferManifestCodec::encode` writes V1 (which preserves the `wal_object_store_uri` field) unless segment state requires V2. PR #1473 dropped the field from V2, but normal databases without segments still write V1 — so the validation remains active even on 0.15.0.    **To Reproduce**    1. Create a new DB using `DbBuilder` with `with_wal_object_store()` configured   2. Open the same DB using `DbReaderBuilder` without `with_wal_object_store()`   3. Reader fails with `WalStoreReconfigurationError`    **Expected behavior**    On v0.15.0 (which includes the ManifestV2 codec from PR #1473), `wal_object_store_uri` should not block readers from opening a database — either by defaulting to V2 manifest format, or by stripping the field before persisting.    **Screenshots**    N/A    **Build**    - OS: Linux   - SlateDB Version: 0.15.0   - Object Store: S3-compatible (custom)    **Additional context**    - Discord thread: https://discord.com/channels/1232385660460204122/1542581454280851466   - The fix is to default to V2 manifest format in 0.16 (per RFC 0004's phased rollout plan: write V1 → write V2 universally → deprecat
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2371,171 +2371,523 @@ func uniffiCheckChecksums() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3492ae1b` (2026-11-11)
-**Commit Message**: Share one clock in compactor test fixture (#2250)
+### Incident Patch 1: `8b688002` (2026-11-14)
+**Commit Message**: Record object store metrics for Admin operations (#2237)
 
-**File**: `slatedb/src/compactor.rs` (modified, +8/-6)
+Signed-off-by: siddon <[REDACTED_EMAIL]>
+
+**File**: `slatedb/src/admin.rs` (modified, +260/-50)
 ```diff
-@@ -5168,11 +5168,14 @@ mod tests {
-             let compactor_options = Arc::new(compactor_options());
-             let worker_options = Arc::new(CompactionWorkerOptions::default());
-             let options = db_options(None);
-+            // Share a clock so output SST timestamps cannot precede their compaction job timestamps.
-+            let system_clock = Arc::new(DefaultSystemClock::new());
+@@ -14,7 +14,6 @@ use crate::manifest::store::{ManifestStore, StoredManifest};
+ use crate::manifest::VersionedManifest;
+ use slatedb_common::clock::SystemClock;
  
-             let os = Arc::new(InMemory::new());
-             let (manifest_store, compactions_store, table_store) = build_test_stores(os.clone());
-             let db = Db::builder(PATH, os.clone())
-                 .with_settings(options.clone())
-+                .with_system_clock(system_clock.clone())
-                 .build()
-                 .await
-                 .unwrap();
-@@ -5195,7 +5198,7 @@ mod tests {
-                     rand: rand.clone(),
-                     stats: compactor_stats.clone(),
-                     worker_stats: stats::WorkerStats::new(&recorder, "test-worker"),
--                    clock: Arc::new(DefaultSystemClock::new()),
-+                    clock: system_clock.clone(),
-                     merge_operator: None,
-                     #[cfg(feature = "compaction_filters")]
-                     compaction_filter_supplier: None,
-@@ -5208,16 +5211,15 @@ mod tests {
-                 scheduler.clone(),
-                 rand.clone(),
-                 compactor_stats.clone(),
--                Arc::new(DefaultSystemClock::new()),
-+                system_clock.clone(),
-                 MetricsRecorderHelper::noop(),
-                 None,
-             )
-             .await
-             .unwrap();
--            let manifest =
--                StoredManifest::load(manifest_store.clone(), Arc::new(DefaultSystemClock::new()))
--                    .await
--                    .unwrap();
-+            let manifest = StoredManifest::load(manifest_store.clone(), system_clock)
-+                .await
-+                .unwrap();
-             Self {
-                 manifest,
-                 manifest_store,
+-use crate::retrying_object_store::RetryingObjectStore;
+ use crate::seq_tracker::FindOption;
+ use crate::utils::IdGenerator;
+ use crate::utils::ObjectStoreType;
+@@ -24,6 +23,7 @@ use futures::StreamExt;
+ use object_store::path::Path;
+ use object_store::{ObjectStore, ObjectStoreExt};
+ use rand::Rng;
++use slatedb_common::metrics::MetricsRecorder;
+ use slatedb_common::DbRand;
+ use std::env;
+ use std::env::VarError;
+@@ -38,9 +38,24 @@ use uuid::Uuid;
+ 
+ pub use crate::db::builder::AdminBuilder;
+ use crate::merge_operator::MergeOperatorType;
++use crate::wal::slatedb::admin::SlateDbWalAdmin;
+ use crate::wal::WalAdmin;
+ use slatedb_txn_obj::TransactionalObject;
+ 
++pub(crate) enum AdminWal {
++    BuiltIn(Arc<SlateDbWalAdmin>),
++    Custom(Arc<dyn WalAdmin>),
++}
++
++impl AdminWal {
++    fn admin(&self) -> Arc<dyn WalAdmin> {
++        match self {
++            Self::BuiltIn(admin) => admin.clone(),
++            Self::Custom(admin) => admin.clone(),
++        }
++    }
++}
++
+ /// An Admin struct for SlateDB administration operations.
+ ///
+ /// This struct provides methods for administrative functions such as
+@@ -58,14 +73,14 @@ pub struct Admin {
+     pub(crate) system_clock: Arc<dyn SystemClock>,
+     /// The random number generator to use for randomness.
+     pub(crate) rand: Arc<DbRand>,
+-    /// The retry policy applied to admin object-store operations.
+-    pub(crate) object_store_max_retries: Option<u32>,
++    pub(crate) metrics_recorder: Arc<dyn MetricsRecorder>,
+     #[cfg(feature = "compaction_filters")]
+     pub(crate) compaction_filter_supplier:
+         Option<Arc<dyn crate::compaction_filter::CompactionFilterSupplier>>,
+     pub(crate) merge_operator: Option<MergeOperatorType>,
+     pub(crate) block_transformer: Option<Arc<dyn BlockTransformer>>,
+-    pub(crate) wal_admin: Arc<dyn WalAdmin>,
++    pub(crate) wal: AdminWal,
++    pub(crate) retrying_main_object_store: Arc<dyn ObjectStore>,
+ }
+ 
+ impl Admin {
+@@ -298,16 +313,7 @@ impl Admin {
+     /// * `gc_opts`: The garbage collector options.
+     ///
+     pub async fn run_gc_once(&self, gc_opts: GarbageCollectorOptions) -> Result<(), crate::Error> {
+-        let gc = GarbageCollectorBuilder::new(
+-            self.path.clone(),
+-            self.object_store(ObjectStoreType::Main).clone(),
+-        )
+-        .with_system_clock(self.system_clock.clone())
+-        .with_wal_gc(self.wal_admin.garbage_collector(&self.path))
+-        .with_wal_object_store(self.object_store(ObjectStoreType::Wal).clone())
+-        .with_options(gc_opts)
+-        .with_seed(self.rand.rng().next_u64())
+-        .build();
++        let gc = self.garbage_collector_builder(gc_opts).build();
+         gc.run_gc_once().await;
+         Ok(())
+     }
+@@ -332,16 +338,7 @@ impl Admin {
+         cancellation_token: CancellationToken,
+         gc_opts: GarbageCollectorOptions,
+     ) -> Result<(), crate::Error> {
+-        let gc = GarbageCollectorBuilder::new(
+-            self.path.clone(),
+-            self.object_store(ObjectStoreType::Main).clone(),
+-        )
+-        .with_system_clock(self.system_clock.clone())
+-        .with_wal_gc(self.wal_admin.garbage_collector(&self.path))
+-        .with_wal_object_store(self.object_store(ObjectStoreType::Wal).clone())
+-        .with_options(gc_opts)
+-        .with_seed(self.rand.rng().next_u64())
+-        .build();
++        let gc = self.garbage_collector_builder(gc_opts).build();
+ 
+         gc.start()?;
+ 
+@@ -353,6 +350,25 @@ impl Admin {
+         }
+     }
+ 
++    fn garbage_collector_builder(
++        &self,
++        options: GarbageCollectorOptions,
++    ) -> GarbageCollectorBuilder<Path> {
++        let mut builder = GarbageCollectorBuilder::new(
++            self.path.clone(),
++            self.object_store(ObjectStoreType::Main).clone(),
++        )
++        .with_system_clock(self.system_clock.clone())
++        .with_wal_object_store(self.object_store(ObjectStoreType::Wal).clone())
++        .with_metrics_recorder(self.metrics_recorder.clone())
++        .with_options(options)
++        .with_seed(self.rand.rng().next_u64());
++        if let AdminWal::Custom(admin) = &self.wal {
++            builder = builder.with_wal_gc(admin.garbage_collector(&self.path));
++        }
++        builder
++    }
++
+     /// Run the compactor in the foreground until the provided cancellation token is cancelled.
+     ///
+     /// This method blocks until `cancellation_token` is cancelled, at which point it requests a
+@@ -448,6 +464,7 @@ impl Admin {
+             self.object_store(ObjectStoreType::Main).clone(),
+         )
+         .with_options(options)
++        .with_metrics_recorder(self.metrics_recorder.clone())
+         .with_system_clock(self.system_clock.clone())
+         .with_seed(self.rand.rng().next_u64());
+ 
+@@ -479,6 +496,7 @@ impl Admin {
+             self.object_store(ObjectStoreType::Main).clone()
+```
+
+**File**: `slatedb/src/db/builder.rs` (modified, +43/-22)
+```diff
+@@ -114,7 +114,7 @@ use object_store::ObjectStore;
+ use rand::Rng;
+ use tokio::runtime::Handle;
+ 
+-use crate::admin::Admin;
++use crate::admin::{Admin, AdminWal};
+ use crate::batch_write::WriteBatchEventHandler;
+ use crate::batch_write::WRITE_BATCH_TASK_NAME;
+ use crate::block_cache_policy::BlockCachePolicy;
+@@ -938,6 +938,7 @@ pub struct AdminBuilder<P: Into<Path>> {
+     wal_admin: Option<Arc<dyn WalAdmin>>,
+     system_clock: Arc<dyn SystemClock>,
+     rand: Arc<DbRand>,
++    metrics_recorder: Arc<dyn MetricsRecorder>,
+     object_store_max_retries: Option<u32>,
+     #[cfg(feature = "compaction_filters")]
+     compaction_filter_supplier: Option<Arc<dyn CompactionFilterSupplier>>,
+@@ -955,6 +956,7 @@ impl<P: Into<Path>> AdminBuilder<P> {
+             wal_admin: None,
+             system_clock: Arc::new(DefaultSystemClock::new()),
+             rand: Arc::new(DbRand::default()),
++            metrics_recorder: Arc::new(NoopMetricsRecorder::new()),
+             object_store_max_retries: None,
+             #[cfg(feature = "compaction_filters")]
+             compaction_filter_supplier: None,
+@@ -963,6 +965,15 @@ impl<P: Into<Path>> AdminBuilder<P> {
+         }
+     }
+ 
++    /// Sets the metrics recorder for admin requests and delegated maintenance tasks.
++    ///
++    /// Direct requests use the `admin` component label. GC and compactor requests
++    /// use their own component labels. The default recorder discards all metrics.
++    pub fn with_metrics_recorder(mut self, recorder: Arc<dyn MetricsRecorder>) -> Self {
++        self.metrics_recorder = recorder;
++        self
++    }
++
+     /// Sets the system clock to use for administrative functions.
+     pub fn with_system_clock(mut self, system_clock: Arc<dyn SystemClock>) -> Self {
+         self.system_clock = system_clock;
+@@ -1020,36 +1031,46 @@ impl<P: Into<Path>> AdminBuilder<P> {
+ 
+     /// Builds and returns an Admin instance.
+     pub fn build(self) -> Admin {
+-        // Store the raw object stores here. Admin wraps them in a
+-        // `RetryingObjectStore` per-operation (see `Admin::retrying_store`)
+-        // rather than at build time, because several admin operations delegate
+-        // to sub-builders (compactor/GC) that add their own retry layer, and
+-        // wrapping here would double-wrap them.
+-        let main_object_store = self.main_object_store;
+-        let wal_object_store = self
+-            .wal_object_store
+-            .clone()
+-            .unwrap_or_else(|| main_object_store.clone());
+-        let wal_admin = self.wal_admin.unwrap_or_else(|| {
+-            let retrying_object_store = Arc::new(RetryingObjectStore::new(
+-                wal_object_store.clone(),
++        // Keep raw stores for delegated tasks, which add their own wrappers.
++        let recorder =
++            MetricsRecorderHelper::new(self.metrics_recorder.clone(), Default::default());
++        let retrying_main_object_store = instrumented_retrying_object_store(
++            self.main_object_store.clone(),
++            &recorder,
++            ObjectStoreComponent::Admin,
++            ObjectStoreType::Main,
++            self.rand.clone(),
++            self.system_clock.clone(),
++            self.object_store_max_retries,
++        );
++        let wal = if let Some(admin) = self.wal_admin {
++            AdminWal::Custom(admin)
++        } else {
++            let store = instrumented_retrying_object_store(
++                self.wal_object_store
++                    .clone()
++                    .unwrap_or_else(|| self.main_object_store.clone()),
++                &recorder,
++                ObjectStoreComponent::Admin,
++                ObjectStoreType::Wal,
+                 self.rand.clone(),
+                 self.system_clock.clone(),
+                 self.object_store_max_retries,
+-            ));
+-            Arc::new(SlateDbWalAdmin::new(
+-                retrying_object_store,
++            );
++            AdminWal::BuiltIn(Arc::new(SlateDbWalAdmin::new(
++                store,
+                 Arc::new(FailPointRegistry::new()),
+-            ))
+-        });
++            )))
++        };
+         Admin {
+             path: self.path.into(),
+-            main_object_store,
++            main_object_store: self.main_object_store,
+             wal_object_store: self.wal_object_store,
+-            wal_admin,
++            wal,
++            retrying_main_object_store,
+             system_clock: self.system_clock,
+             rand: self.rand,
+-            object_store_max_retries: self.object_store_max_retries,
++            metrics_recorder: self.metrics_recorder,
+             #[cfg(feature = "compaction_filters")]
+             compaction_filter_supplier: self.compaction_filter_supplier,
+             merge_operator: self.merge_operator,
+```
+
+**File**: `slatedb/src/instrumented_object_store.rs` (modified, +4/-1)
+```diff
+@@ -7,7 +7,7 @@
+ //! Every metric is tagged with two independent label dimensions:
+ //!
+ //! - [`ObjectStoreComponent`] — *who* is making the request (db, reader,
+-//!   gc, compactor).
++//!   admin, gc, compactor).
+ //! - [`ObjectStoreType`] — *which* store the request targets (main vs wal).
+ //!
+ //! A single component may interact with both stores (e.g. the `Db`
+@@ -53,6 +53,8 @@ pub(crate) enum ObjectStoreComponent {
+     Db,
+     /// A read-only database reader.
+     Reader,
++    /// Administrative operations.
++    Admin,
+     /// The garbage collector.
+     Gc,
+     /// The compactor.
+@@ -64,6 +66,7 @@ impl ObjectStoreComponent {
+         match self {
+             Self::Db => "db",
+             Self::Reader => "reader",
++            Self::Admin => "admin",
+             Self::Gc => "gc",
+             Self::Compactor => "compactor",
+         }
+```
+
+**File**: `website/src/content/docs/docs/operations/metrics.mdx` (modified, +1/-1)
+```diff
+@@ -159,7 +159,7 @@ All object store metrics carry four labels:
+ 
+ | Label | Values |
+ |-------|--------|
+-| `component` | db, reader, gc, compactor |
++| `component` | db, reader, admin, gc, compactor |
+ | `store_type` | main, wal |
+ | `op` | get, put, delete |
+ | `api` | get, get_range, get_ranges, head, list, list_with_offset, list_with_delimiter, put, multipart_init, multipart_part, multipart_complete, delete |
 ```
 
 ---
 
-### Incident Patch 2: `9aedb400` (2026-11-11)
-**Commit Message**: Fix startup synchronization in writer fencing tests (#2253)
+### Incident Patch 2: `cac8b6c2` (2026-11-14)
+**Commit Message**: Bump uniffi-bindgen-go to v0.7.1+v0.31.0 (#2264)
 
-**File**: `slatedb/src/fence.rs` (modified, +12/-13)
+**File**: `.github/workflows/pr.yaml` (modified, +1/-1)
 ```diff
-@@ -147,8 +147,7 @@ mod tests {
-     use crate::wal::slatedb::store::{WalFileId, WalTableStore};
-     use crate::{CloseReason, Db, ErrorKind, Settings};
-     use bytes::Bytes;
--    use fail_parallel::fail_point_channel;
--    use fail_parallel::FailPointRegistry;
-+    use fail_parallel::{fail_point_channel, FailGuard, FailPointRegistry};
-     use object_store::memory::InMemory;
-     use object_store::path::Path;
-     use object_store::ObjectStore;
-@@ -251,15 +250,15 @@ mod tests {
-                 .build()
-                 .await
-                 .unwrap();
--            // wait for initial manifest poll using "manifest_refresh_count" stat
--            // so the db has settled before the test starts fencing it.
-+            // Wait for the replay validation refresh and the first timer poll.
-+            // The timer must finish its first poll before the test starts fencing.
-             for _ in 0..600 {
--                if lookup_metric(&recorder, MANIFEST_REFRESH_COUNT).unwrap_or(0) > 0 {
-+                if lookup_metric(&recorder, MANIFEST_REFRESH_COUNT).unwrap_or(0) >= 2 {
-                     return db;
-                 }
-                 tokio::time::sleep(Duration::from_millis(10)).await;
-             }
--            panic!("manifest writer did not perform initial poll");
-+            panic!("manifest writer did not complete both startup refreshes");
-         }
+@@ -192,7 +192,7 @@ jobs:
+           sudo apt-get install -y build-essential pkg-config
  
-         async fn db(&self) -> Db {
-@@ -337,7 +336,7 @@ mod tests {
-                 );
-             } else {
-                 self.data.insert(k, v);
--                assert!(result.is_ok());
-+                assert!(result.is_ok(), "expected write to succeed, got {result:?}");
-             }
-         }
+       - name: Install uniffi-bindgen-go
+-        run: cargo install uniffi-bindgen-go --git https://github.com/NordSecurity/uniffi-bindgen-go --tag v0.7.0+v0.31.0
++        run: cargo install uniffi-bindgen-go --git https://github.com/NordSecurity/uniffi-bindgen-go --tag v0.7.1+v0.31.0
  
-@@ -553,15 +552,15 @@ mod tests {
-         // write a wal file
-         h.put(&db, 0, false).await;
- 
--        // configure the fencer to pause
--        fail_parallel::cfg(h.fp_registry.clone(), case.event, "pause").unwrap();
-+        // Release the pause if an assertion fails, so runtime shutdown cannot hang.
-+        let pause = FailGuard::new(h.fp_registry.clone(), case.event, "pause").unwrap();
- 
-         // spawn WriterFencer on another task
-         let fencer = h.fencer.take().unwrap();
-         let stored_manifest = h.stored_manifest.take().unwrap();
-         let jh = tokio::task::spawn(async move { fencer.fence(stored_manifest, None).await });
--        // wait for fencer to load empty wal id and pause
--        h.event_rx.recv().await.unwrap();
-+        // Each failpoint sends an event, so wait for the configured pause.
-+        while h.event_rx.recv().await.unwrap() != case.event {}
- 
-         // write 2 new wal files to fenced db (write with await durable twice)
-         h.put(&db, 1, case.write_fenced).await;
-@@ -593,8 +592,8 @@ mod tests {
-             h.run_gc(replay_after_wal_id).await;
-         }
- 
--        // unpause WriterFencer
--        fail_parallel::cfg(h.fp_registry.clone(), case.event, "off").unwrap();
-+        // Resume the fencer.
-+        drop(pause);
-         // verify it returns successfully
-         let mut result = jh.await.unwrap().unwrap();
-         // The fencer's stale empty_wal_id was retried above the fenced writer's possibly
+       - name: Generate Go bindings
+         run: ./scripts/generate-go-uniffi.sh
 ```
 
----
-
-### Incident Patch 3: `b547b9ab` (2026-11-11)
-**Commit Message**: Reduce build time for nightly pprof benchmarks (#2249)
-
-**File**: `.github/workflows/nightly.yaml` (modified, +4/-6)
+**File**: `bindings/go/DEVELOPMENT.md` (modified, +3/-4)
 ```diff
-@@ -71,13 +71,11 @@ jobs:
+@@ -11,12 +11,12 @@ hand.
+ - Go 1.25.0 or newer
+ - CGO enabled
+ - a working C toolchain
+-- `uniffi-bindgen-go` `0.7.0+v0.31.0`
++- `uniffi-bindgen-go` `0.7.1+v0.31.0`
  
-       - name: Generate pprofs
-         env:
--          CARGO_PROFILE_BENCH_DEBUG: true
--          SLATE_BENCH_PROFILE: true
-+          # Keep source lines in profiles and reduce link time.
-+          CARGO_PROFILE_BENCH_DEBUG: line-tables-only
-+          CARGO_PROFILE_BENCH_LTO: thin
-         run: |
--          BENCHMARKS=$(cargo bench --no-run --message-format=json | jq -r 'select(.profile.test == true and (.target.kind | contains(["bench"]))) | .target.name' | sort -u)
--          for bench in $BENCHMARKS; do
--            cargo bench --bench $bench -- --profile-time 10
--          done
-+          cargo bench -p slatedb --benches -- --profile-time 10
-           find . -name "*.pb" -exec gzip {} \;
+ Install the generator with:
  
-       # install instructions from https://github.com/polarsignals/pprofme/tree/main
+ ```bash
+-cargo install uniffi-bindgen-go --git https://github.com/NordSecurity/uniffi-bindgen-go --tag v0.7.0+v0.31.0
++cargo install uniffi-bindgen-go --git https://github.com/NordSecurity/uniffi-bindgen-go --tag v0.7.1+v0.31.0
+ ```
+ 
+ ## Regenerate Bindings
+@@ -28,8 +28,7 @@ From the repository root:
+ ```
+ 
+ The script builds `slatedb-uniffi`, runs `uniffi-bindgen-go`, copies the
+-generated Go package into `bindings/go/uniffi`, and applies the async error
+-workaround needed by `uniffi-bindgen-go v0.7.0+v0.31.0`.
++generated Go package into `bindings/go/uniffi`, and runs `go fmt`.
+ 
+ ## Validate Changes
+ 
+```
+
+**File**: `bindings/go/uniffi/slatedb.go` (modified, +3/-3)
+```diff
+@@ -13328,7 +13328,7 @@ type BlockTransformerCallbackError struct {
+ 	err error
+ }
+ 
+-// Convience method to turn *BlockTransformerCallbackError into error
++// Convenience method to turn *BlockTransformerCallbackError into error
+ // Avoiding treating nil pointer as non nil error interface
+ func (err *BlockTransformerCallbackError) AsError() error {
+ 	if err == nil {
+@@ -13780,7 +13780,7 @@ type Error struct {
+ 	err error
+ }
+ 
+-// Convience method to turn *Error into error
++// Convenience method to turn *Error into error
+ // Avoiding treating nil pointer as non nil error interface
+ func (err *Error) AsError() error {
+ 	if err == nil {
+@@ -14360,7 +14360,7 @@ type MergeOperatorCallbackError struct {
+ 	err error
+ }
+ 
+-// Convience method to turn *MergeOperatorCallbackError into error
++// Convenience method to turn *MergeOperatorCallbackError into error
+ // Avoiding treating nil pointer as non nil error interface
+ func (err *MergeOperatorCallbackError) AsError() error {
+ 	if err == nil {
+```
+
+**File**: `bindings/go/uniffi/slatedb.h` (modified, +30/-30)
+```diff
+@@ -47,7 +47,7 @@ typedef struct RustCallStatus {
+ #define UNIFFI_FFIDEF_RUST_FUTURE_CONTINUATION_CALLBACK
+ typedef void (*UniffiRustFutureContinuationCallback)(uint64_t data, int8_t poll_result);
+ 
+-// Making function static works arround:
++// Making function static workaround:
+ // https://github.com/golang/go/issues/11263
+ static void call_UniffiRustFutureContinuationCallback(
+ 				UniffiRustFutureContinuationCallback cb, uint64_t data, int8_t poll_result)
+@@ -61,7 +61,7 @@ static void call_UniffiRustFutureContinuationCallback(
+ #define UNIFFI_FFIDEF_FOREIGN_FUTURE_DROPPED_CALLBACK
+ typedef void (*UniffiForeignFutureDroppedCallback)(uint64_t handle);
+ 
+-// Making function static works arround:
++// Making function static workaround:
+ // https://github.com/golang/go/issues/11263
+ static void call_UniffiForeignFutureDroppedCallback(
+ 				UniffiForeignFutureDroppedCallback cb, uint64_t handle)
+@@ -75,7 +75,7 @@ static void call_UniffiForeignFutureDroppedCallback(
+ #define UNIFFI_FFIDEF_CALLBACK_INTERFACE_FREE
+ typedef void (*UniffiCallbackInterfaceFree)(uint64_t handle);
+ 
+-// Making function static works arround:
++// Making function static workaround:
+ // https://github.com/golang/go/issues/11263
+ static void call_UniffiCallbackInterfaceFree(
+ 				UniffiCallbackInterfaceFree cb, uint64_t handle)
+@@ -89,7 +89,7 @@ static void call_UniffiCallbackInterfaceFree(
+ #define UNIFFI_FFIDEF_CALLBACK_INTERFACE_CLONE
+ typedef uint64_t (*UniffiCallbackInterfaceClone)(uint64_t handle);
+ 
+-// Making function static works arround:
++// Making function static workaround:
+ // https://github.com/golang/go/issues/11263
+ static uint64_t call_UniffiCallbackInterfaceClone(
+ 				UniffiCallbackInterfaceClone cb, uint64_t handle)
+@@ -119,7 +119,7 @@ typedef struct UniffiForeignFutureResultU8 {
+ #define UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_U8
+ typedef void (*UniffiForeignFutureCompleteU8)(uint64_t callback_data, UniffiForeignFutureResultU8 result);
+ 
+-// Making function static works arround:
++// Making function static workaround:
+ // https://github.com/golang/go/issues/11263
+ static void call_UniffiForeignFutureCompleteU8(
+ 				UniffiForeignFutureCompleteU8 cb, uint64_t callback_data, UniffiForeignFutureResultU8 result)
+@@ -141,7 +141,7 @@ typedef struct UniffiForeignFutureResultI8 {
+ #define UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_I8
+ typedef void (*UniffiForeignFutureCompleteI8)(uint64_t callback_data, UniffiForeignFutureResultI8 result);
+ 
+-// Making function static works arround:
++// Making function static workaround:
+ // https://github.com/golang/go/issues/11263
+ static void call_UniffiForeignFutureCompleteI8(
+ 				UniffiForeignFutureCompleteI8 cb, uint64_t callback_data, UniffiForeignFutureResultI8 result)
+@@ -163,7 +163,7 @@ typedef struct UniffiForeignFutureResultU16 {
+ #define UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_U16
+ typedef void (*UniffiForeignFutureCompleteU16)(uint64_t callback_data, UniffiForeignFutureResultU16 result);
+ 
+-// Making function static works arround:
++// Making function static workaround:
+ // https://github.com/golang/go/issues/11263
+ static void call_UniffiForeignFutureCompleteU16(
+ 				UniffiForeignFutureCompleteU16 cb, uint64_t callback_data, UniffiForeignFutureResultU16 result)
+@@ -185,7 +185,7 @@ typedef struct UniffiForeignFutureResultI16 {
+ #define UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_I16
+ typedef void (*UniffiForeignFutureCompleteI16)(uint64_t callback_data, UniffiForeignFutureResultI16 result);
+ 
+-// Making function static works arround:
++// Making function static workaround:
+ // https://github.com/golang/go/issues/11263
+ static void call_UniffiForeignFutureCompleteI16(
+ 				UniffiForeignFutureCompleteI16 cb, uint64_t callback_data, UniffiForeignFutureResultI16 result)
+@@ -207,7 +207,7 @@ typedef struct UniffiForeignFutureResultU32 {
+ #define UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_U32
+ typedef void (*UniffiForeignFutureCompleteU32)(uint64_t callback_data, UniffiForeignFutureResultU32 result);
+ 
+-// Making function static works arround:
++// Making function static workaround:
+ // https://github.com/golang/go/issues/11263
+ static void call_UniffiForeignFutureCompleteU32(
+ 				UniffiForeignFutureCompleteU32 cb, uint64_t callback_data, UniffiForeignFutureResultU32 result)
+@@ -229,7 +229,7 @@ typedef struct UniffiForeignFutureResultI32 {
+ #define UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_I32
+ typedef void (*UniffiForeignFutureCompleteI32)(uint64_t callback_data, UniffiForeignFutureResultI32 result);
+ 
+-// Making function static works arround:
++// Making function static workaround:
+ // https://github.com/golang/go/issues/11263
+ static void call_UniffiForeignFutureCompleteI32(
+ 				UniffiForeignFutureCompleteI32 cb, uint64_t callback_data, UniffiForeignFutureResultI32 result)
+@@ -251,7 +251,7 @@ typedef struct UniffiForeignFutureResultU64 {
+ #define UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_U64
+ typedef void (*UniffiForeignFutureCompleteU64)(uint64_t callback_data, UniffiForeignFutureResultU64 result);
+ 
+-// Making 
+```
+
+**File**: `scripts/generate-go-uniffi.sh` (modified, +1/-17)
+```diff
+@@ -12,25 +12,10 @@ cleanup() {
+ }
+ trap cleanup EXIT
+ 
+-apply_async_error_workaround() {
+-  local generated_file="$1"
+-
+-  # uniffi-bindgen-go v0.7.0+v0.31.0 does not include PR #91 yet.
+-  # Patch the generated async helper so RustBuffer-backed error returns
+-  # propagate the original UniFFI error instead of panicking on an empty buffer.
+-  perl -0pi -e 's/"math"\n\t"runtime"/"math"\n\t"reflect"\n\t"runtime"/' "${generated_file}"
+-  perl -0pi -e 's/\tffiValue, err := rustCallWithError\(errConverter, func\(status \*C\.RustCallStatus\) F \{\n\t\treturn completeFunc\(rustFuture, status\)\n\t\}\)\n\treturn liftFunc\(ffiValue\), err/\tvar goValue T\n\tffiValue, err := rustCallWithError(errConverter, func(status *C.RustCallStatus) F {\n\t\treturn completeFunc(rustFuture, status)\n\t})\n\tif value := reflect.ValueOf(err); value.IsValid() && !value.IsZero() {\n\t\treturn goValue, err\n\t}\n\treturn liftFunc(ffiValue), err/' "${generated_file}"
+-
+-  if ! grep -q '"reflect"' "${generated_file}" || ! grep -q 'return goValue, err' "${generated_file}"; then
+-    echo "failed to apply async error workaround to ${generated_file}" >&2
+-    exit 1
+-  fi
+-}
+-
+ if ! command -v uniffi-bindgen-go >/dev/null 2>&1; then
+   echo "uniffi-bindgen-go is required on PATH" >&2
+   echo "Install it with:" >&2
+-  echo "  cargo install uniffi-bindgen-go --git https://github.com/NordSecurity/uniffi-bindgen-go --tag v0.7.0+v0.31.0" >&2
++  echo "  cargo install uniffi-bindgen-go --git https://github.com/NordSecurity/uniffi-bindgen-go --tag v0.7.1+v0.31.0" >&2
+   exit 1
+ fi
+ 
+@@ -74,5 +59,4 @@ rm -f \
+   "${GO_PKG_DIR}/slatedb.h"
+ cp "${GENERATED_GO_FILE}" "${GO_PKG_DIR}/$(basename "${GENERATED_GO_FILE}")"
+ cp "${GENERATED_H_FILE}" "${GO_PKG_DIR}/$(basename "${GENERATED_H_FILE}")"
+-apply_async_error_workaround "${GO_PKG_DIR}/$(basename "${GENERATED_GO_FILE}")"
+ go -C "${GO_PKG_DIR}" fmt ./...
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2264** (2026-11-14): Bump uniffi-bindgen-go to v0.7.1+v0.31.0 (@JayJamieson)
+- **PR #2262** (2026-11-14): Add JayJamieson to VOUCHED list (@criccomini)
+- **PR #2256** (2026-11-13): Fix missing SST error spinning forever in the mirror (@nomiero)
 - **PR #2253** (2026-11-11): Fix startup synchronization in writer fencing tests (@criccomini)
 - **PR #2251** (2026-11-11): Allow committers to vouch via issue comments (@criccomini)
 - **PR #2250** (2026-11-11): Share one clock in compactor test fixture (@criccomini)
-- **PR #2249** (2026-11-11): Reduce build time for nightly pprof benchmarks (@criccomini)
-- **PR #2245** (closed): Dispatch row entry iterators statically instead of boxing every next (@KKould)
-- **PR #2238** (2026-11-10): Remove unused time-based retention (@siddontang)
 
 ---
 
@@ -2555,43 +2907,87 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Share one clock in compactor test fixture (#2250)
+## X. Record object store metrics for Admin operations
 
 **RULE**:
-When implementing operations in `slatedb/src/compactor.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in slatedb/slatedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `slatedb/src/admin.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in slatedb/slatedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3492ae1b`: Share one clock in compactor test fixture (#2250). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8b688002`: Record object store metrics for Admin operations. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `slatedb/src/compactor.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `slatedb/src/admin.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            // Share a clock so output SST timestamps cannot precede their compaction job timestamps.
-            let system_clock = Arc::new(DefaultSystemClock::new());
-                .with_system_clock(system_clock.clone())
-                    clock: system_clock.clone(),
-                system_clock.clone(),
-            let manifest = StoredManifest::load(manifest_store.clone(), system_clock)
-                .await
-                .unwrap();
+use slatedb_common::metrics::MetricsRecorder;
+use crate::wal::slatedb::admin::SlateDbWalAdmin;
+pub(crate) enum AdminWal {
+    BuiltIn(Arc<SlateDbWalAdmin>),
+    Custom(Arc<dyn WalAdmin>),
+}
+
+impl AdminWal {
+    fn admin(&self) -> Arc<dyn WalAdmin> {
+        match self {
+            Self::BuiltIn(admin) => admin.clone(),
+            Self::Custom(admin) => admin.clone(),
+        }
+    }
+}
+
+    pub(crate) metrics_recorder: Arc<dyn MetricsRecorder>,
+    pub(crate) wal: AdminWal,
+    pub(crate) retrying_main_object_store: Arc<dyn ObjectStore>,
+        let gc = self.garbage_collector_builder(gc_opts).build();
+        let gc = self.garbage_collector_builder(gc_opts).build();
+    fn garbage_collector_builder(
+        &self,
+        options: GarbageCollectorOptions,
+    ) -> GarbageCollectorBuilder<Path> {
+        let mut builder = GarbageCollectorBuilder::new(
+            self.path.clone(),
+            self.object_store(ObjectStoreType::Main).clone(),
+        )
+        .with_system_clock(self.system_clock.clone())
+        .with_wal_object_store(self.object_store(ObjectStoreType::Wal).clone())
+        .with_metrics_recorder(self.metrics_recorder.clone())
+        .with_options(options)
+     
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-                    clock: Arc::new(DefaultSystemClock::new()),
-                Arc::new(DefaultSystemClock::new()),
-            let manifest =
-                StoredManifest::load(manifest_store.clone(), Arc::new(DefaultSystemClock::new()))
-                    .await
-                    .unwrap();
+// Induced defect failure mode:
+use crate::retrying_object_store::RetryingObjectStore;
+    /// The retry policy applied to admin object-store operations.
+    pub(crate) object_store_max_retries: Option<u32>,
+    pub(crate) wal_admin: Arc<dyn WalAdmin>,
+        let gc = GarbageCollectorBuilder::new(
+            self.path.clone(),
+            self.object_store(ObjectStoreType::Main).clone(),
+        )
+        .with_system_clock(self.system_clock.clone())
+        .with_wal_gc(self.wal_admin.garbage_collector(&self.path))
+        .with_wal_object_store(self.object_store(ObjectStoreType::Wal).clone())
+        .with_options(gc_opts)
+        .with_seed(self.rand.rng().next_u64())
+        .build();
+        let gc = GarbageCollectorBuilder::new(
+            self.path.clone(),
+            self.object_store(ObjectStoreType::Main).clone(),
+        )
+        .with_system_clock(self.system_clock.clone())
+        .with_wal_gc(self.wal_admin.garbage_collector(&self.path))
+        .with_wal_object_store(self.object_store(ObjectStoreType::Wal).clone())
+        .with_options(gc_opts)
+        .with_seed(self.rand.rng().next_u64())
+        .build();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3492ae1b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8b688002` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
