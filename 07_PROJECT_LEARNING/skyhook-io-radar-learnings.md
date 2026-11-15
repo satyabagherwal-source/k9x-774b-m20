@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source**: github ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
-> **Source Version**: `148a70c8`  
+> **Source Version**: `7f30b56d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T10:30:12.136Z  
+> **Timestamp**: 2026-11-15T21:15:42.234Z  
 > **Learning ID**: `learn-github-skyhook-io-radar`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T10:30:12.128Z  
+> **Harvest Timestamp**: 2026-11-15T21:15:42.228Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The missing open-source Kubernetes UI with a built-in MCP server for AI agents. See what's broken, why, and what changed. Issues, Topology, event timeline, Helm, GitOps, live service traffic, and cluster audits - all in one Go binary.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 4121 stars
+- **Stars / Engagement**: 4129 stars
 
 ---
 
@@ -2426,11 +2426,11 @@ func (s *Server) refreshAIEngine(ctx context.Context) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2592** (2026-11-10): **Applications workload view: clicking any resource chip (cm/secret/svc/ing) or Topology-tab node never opens the resource**
-  *Symptoms*: ## Describe the bug  In the Applications section, inside an application's workload view, clicking any resource chip does nothing: `cm/...` and `secret/...` in **Configuration inputs**, `svc/...` in **Serving configuration**, `ing/...` under **Entry point resources**. The click is actually handled — DevTools shows Radar fetching the resource (`/api/resources/configmaps/<ns>/<name>`, `/api/issues/resource/...`) — but no resource panel ever appears.  Same on the workload's **Topology** tab: clicking a resource node (e.g. the ConfigMap) opens nothing, and as a bonus it kicks you back to the Overview tab (`tab=topology` is dropped from the URL).  For comparison, the main **Topology** view (left nav) works fine: clicking any node, including ConfigMaps, opens the resource panel. Pod rows in the workload view also work (they navigate to `/workload/pods/...`).  ## To reproduce  Steps to reproduce the behavior:  1. Open **Applications**, click an app backed by a Deployment (URL becomes `/applications?app=...&workload=Deployment/...`). 2. In the workload Overview, click the `cm/ ...` chip in **Configuration inputs** (or `secret/`, `svc/`, `ing/` — all behave the same). 3. Nothing happens. The URL briefly loses the `workload` param and immediately gets it back (two consecutive `history.replaceState` calls), the resource is fetched from the API, but no panel is shown. 4. Switch the workload view to its **Topology** tab, click the ConfigMap node → same nothing, plus you're returned to the 
+- **Issue #2687** (2026-11-15): **Release Desktop workflow fails during Apple notarization due to missing/expired agreement**
+  *Symptoms*: ## Describe the bug  The `Release Desktop` GitHub Actions workflow fails during the Apple notarization step for the macOS release artifact. The job reaches the notarization request, then exits with a 403 from Apple’s notarization service.  ## To reproduce  1. Trigger the `Release Desktop` workflow in `skyhook-io/radar` 2. Wait for the macOS build to finish packaging the app 3. Observe the workflow attempt to submit the artifact for Apple notarization 4. The job fails before finishing the release  ## Expected behavior  The release workflow should successfully submit the signed/notarized macOS artifact to Apple and complete the release process without failing.  ## Screenshots  Not applicable.  ## Diagnostics (optional)  N/A  ## Logs  ```text 2026-11-13T10:14:58.9407140Z Conducting pre-submission checks for radar-desktop_v1.20.3_darwin_universal.zip and initiating connection to the Apple notary service... 2026-11-13T10:15:00.9809290Z Error: HTTP status code: 403. A required agreement is missing or has expired. This request requires an in-effect agreement that has not been signed or has expired. Ensure your team has signed the necessary legal agreements and that they are not expired. 2026-11-13T10:15:00.9857090Z ##[error]Process completed with exit code 1. ```  ## Additional context  The workflow URL is: https://github.com/skyhook-io/radar/actions/runs/43406103414/job/131820798764  This appears to be an Apple Developer / notarization account issue rather than a code-level build f
 
-- **Issue #2446** (2026-11-09): **Issue detector reports stale Gateway API route conditions as active**
-  *Symptoms*: TLDR: I made a HTTPRoute with a bad config, fixed it, but Envoy kept the old status from the previous version as a failure indicator - Radar shows this as an active failure even tho it was for a previous version of the resource.  Radar Desktop - Version 1.19.0  ---  ## Description A route can be correctly attached and accepted by its current Gateway listener while retaining an old `status.parents` entry for a removed parent ref. The issue detector appears to treat the obsolete `Accepted=False` condition as a current failure, without checking whether its `observedGeneration` matches the route’s generation or whether its `parentRef` is still in `spec.parentRefs`.  ## Example  The current route spec references `websecure`:  ```yaml metadata:   generation: 2 spec:   parentRefs:     - group: gateway.networking.k8s.io       kind: Gateway       name: public-gateway       namespace: gateway-system       sectionName: websecure ```  But status retains a failed condition for the old `https` parent, alongside a successful condition for the current parent:  ```yaml status:   parents:     - parentRef:         group: gateway.networking.k8s.io         kind: Gateway         name: public-gateway         namespace: gateway-system         sectionName: https       conditions:         - type: Accepted           status: "False"           reason: NoMatchingParent           observedGeneration: 1           message: No listeners match this parent ref         - type: BackendsAvailable           status: 
+- **Issue #2670** (2026-11-15): **Timeline: "spec changed (gen N→N+1, fields not specifically tracked)" for every Argo CD Application every few minutes**
+  *Symptoms*: ## Describe the bug  The timeline shows "spec changed (gen N→N+1, fields not specifically tracked)" for every Argo CD Application every 2–3 minutes. Nothing in spec changed. The noise hides real events.  Argo CD Applications have no status subresource (argoproj/argo-cd#22967), so each status write (e.g. status.reconciledAt on every reconcile) bumps metadata.generation.  In internal/k8s/cache.go, generationBumpSignalsSpecChange() runs the generic check (genericDesiredState ignores metadata and status) only for kinds without an audited differ. Application has one (diffApplication in history.go), so the check is skipped and the function returns true for any generation bump.  ## To reproduce  1. Install Argo CD 3.6 with a few auto-synced Applications. 2. Install Radar (Helm chart 1.20.2, in-cluster, auth mode oidc). 3. Open the timeline and wait 5–10 minutes without changing anything.  ## Expected behavior  No "spec changed" event when only status/metadata changed, like for kinds without an audited differ. Possible fix: also compare genericDesiredState for audited unstructured kinds.  ## Screenshots  - Radar version: 1.20.2 - Kubernetes: 1.35.8 (kubeadm), Argo CD 3.6.1  <img width="1438" height="742" alt="2026-11-14_184927" src="https://github.com/user-attachments/assets/aff5c3ae-2e9e-468a-8b06-ce4051c041db" /> <img width="1441" height="744" alt="2026-11-14_184842" src="https://github.com/user-attachments/assets/200f14aa-f41c-4f3d-b5d0-bd80db87886a" /> <img width="1439" height="7
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2447,57 +2447,488 @@ func (s *Server) refreshAIEngine(ctx context.Context) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `148a70c8` (2026-11-13)
-**Commit Message**: Fix Linux desktop packaging with verified nfpm 2.49.0 binary (#2663)
+### Incident Patch 1: `41dfe716` (2026-11-15)
+**Commit Message**: fix(gitops): let managed resource lists reveal every entry (#2688)
 
-Linux desktop releases fail before packaging because `go install
-.../nfpm@latest` now selects nfpm 2.49.0, which requires Go 1.27.4 while
-the runner uses Go 1.26.10. The last successful release, v1.20.2, used
-the same command and compiler but resolved nfpm 2.48.0.
+## Problem
 
-Install the official nfpm 2.49.0 Linux amd64 binary instead, pinned to
-its published SHA-256. This upgrades the packaging tool without changing
-the application compiler. The archive is verified before extraction and
-the tool directory is added to subsequent steps through GITHUB_PATH.
+The inventory list in the Argo CD Application, Kustomization and
+HelmRelease drawers (`ManagedResourcesList`) cut every kind to an equal
+share of the 20-entry cap even when the whole list fit under it, and
+offered **Show all** only when the total exceeded the cap. An uneven
+list therefore lost entries with no way to reveal them, and each kind's
+header counted only the entries shown.
 
-Validation: workflow syntax, extracted installer Bash syntax and
-ShellCheck passed. [Linux
-recovery](https://github.com/skyhook-io/radar/actions/runs/43419721215)
-built the original v1.20.3 source on ubuntu-22.04 and produced the
-tarball, deb, rpm and AppImage with nfpm 2.49.0. All PR checks passed,
-including the AppImage build-and-launch test. Apple notarization remains
-blocked independently by the account agreement.
+| Inventory | Before |
+|---|---|
+| 12 ConfigMaps, a Deployment, a Service (14) | ConfigMap (7): five
+hidden, no Show all |
+| 15 CRDs, a Namespace (16) | CRD (10): five hidden, no Show all |
 
-**File**: `.github/workflows/release-desktop.yml` (modified, +11/-1)
+Someone checking whether an object is in the inventory, for example
+after reading a "Tracked by" tooltip, could miss one that is there.
+
+## Change
+
+- Kinds are cut only when the list exceeds the cap.
+- **Show all** appears whenever any kind is cut.
+- A cut kind's header reads "N of M" instead of the shown count.
+
+## Tests
+
+`ManagedResourcesList.test.tsx` adds three cases; all fail on `main`:
+- an uneven list under the cap shows every entry and no Show all;
+- over the cap, a cut kind reads "2 of 6" and Show all appears;
+- over the cap wi
+
+**File**: `packages/k8s-ui/src/components/gitops/ManagedResourcesList.test.tsx` (added, +35/-0)
 ```diff
-@@ -267,7 +267,17 @@ jobs:
-         run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
+@@ -0,0 +1,35 @@
++import { describe, expect, it } from 'vitest'
++import { renderToString } from 'react-dom/server'
++import { ManagedResourcesList } from './ManagedResourcesList'
++import type { ManagedResource } from '../../types/gitops'
++
++function render(element: Parameters<typeof renderToString>[0]): string {
++  return renderToString(element).replace(/<!-- -->/g, '')
++}
++
++function list(configMaps: number): ManagedResource[] {
++  return [
++    ...Array.from({ length: configMaps }, (_, i) => ({ group: '', kind: 'ConfigMap', namespace: 'shop', name: `cm-${i}` })),
++    { group: 'apps', kind: 'Deployment', namespace: 'shop', name: 'checkout' },
++    { group: '', kind: 'Service', namespace: 'shop', name: 'checkout' },
++  ]
++}
++
++describe('ManagedResourcesList', () => {
++  it('shows every entry of an uneven list under the cap', () => {
++    const html = render(<ManagedResourcesList resources={list(8)} />)
++    expect(html).toContain('ConfigMap</span><span class="text-theme-text-tertiary">(8)')
++    expect(html).not.toContain('Show all')
++  })
++
++  it('offers Show all whenever a kind is cut', () => {
++    const html = render(<ManagedResourcesList resources={list(6)} maxVisible={6} />)
++    expect(html).toContain('ConfigMap</span><span class="text-theme-text-tertiary">(2 of 6)')
++    expect(html).toContain('Show all 8 resources')
++  })
++
++  it('offers no Show all over the cap when no kind is cut', () => {
++    const html = render(<ManagedResourcesList resources={list(1)} maxVisible={2} />)
++    expect(html).not.toContain('Show all')
++  })
++})
+```
+
+**File**: `packages/k8s-ui/src/components/gitops/ManagedResourcesList.tsx` (modified, +8/-4)
+```diff
+@@ -38,7 +38,9 @@ export function ManagedResourcesList({
  
-       - name: Install nfpm
--        run: go install github.com/goreleaser/nfpm/v2/cmd/nfpm@latest
-+        env:
-+          NFPM_VERSION: '2.49.0'
-+          NFPM_SHA256: '2afaa5ffb5e3493402e31e7c67a5a1fb42133e3f66fc315ca0051934125561c7'
-+        run: |
-+          curl --fail --location --retry 3 --output "$RUNNER_TEMP/nfpm.tar.gz" \
-+            "https://github.com/goreleaser/nfpm/releases/download/v${NFPM_VERSION}/nfpm_${NFPM_VERSION}_Linux_x86_64.tar.gz"
-+          echo "${NFPM_SHA256}  $RUNNER_TEMP/nfpm.tar.gz" | sha256sum --check --strict
-+          mkdir -p "$RUNNER_TEMP/nfpm-bin"
-+          tar -xzf "$RUNNER_TEMP/nfpm.tar.gz" -C "$RUNNER_TEMP/nfpm-bin" nfpm
-+          echo "$RUNNER_TEMP/nfpm-bin" >> "$GITHUB_PATH"
-+          "$RUNNER_TEMP/nfpm-bin/nfpm" --version
+   const grouped = groupManagedResourcesByKind(resources)
+   const sortedGroups = Array.from(grouped.entries()).sort((a, b) => a[0].localeCompare(b[0]))
+-  const hasMore = resources.length > maxVisible && !showAll
++  // Over the cap, each kind shows an equal share; Show all must appear whenever any kind is cut.
++  const perKind = !showAll && resources.length > maxVisible ? Math.ceil(maxVisible / sortedGroups.length) : Infinity
++  const hasMore = sortedGroups.some(([, kindResources]) => kindResources.length > perKind)
  
-       - name: Build frontend
-         run: make frontend embed
+   return (
+     <div className="border-b-subtle pb-4 last:border-0">
+@@ -59,7 +61,8 @@ export function ManagedResourcesList({
+             <ResourceKindGroup
+               key={kind}
+               kind={kind}
+-              resources={showAll ? kindResources : kindResources.slice(0, Math.ceil(maxVisible / sortedGroups.length))}
++              resources={kindResources.slice(0, perKind)}
++              total={kindResources.length}
+               onResourceClick={onResourceClick}
+               showHealth={showHealth}
+             />
+@@ -82,11 +85,12 @@ export function ManagedResourcesList({
+ interface ResourceKindGroupProps {
+   kind: string
+   resources: ManagedResource[]
++  total: number
+   onResourceClick?: (resource: ManagedResource) => void
+   showHealth?: boolean
+ }
+ 
+-function ResourceKindGroup({ kind, resources, onResourceClick, showHealth }: ResourceKindGroupProps) {
++function ResourceKindGroup({ kind, resources, total, onResourceClick, showHealth }: ResourceKindGroupProps) {
+   const [expanded, setExpanded] = useState(resources.length <= 5)
+ 
+   return (
+@@ -97,7 +101,7 @@ function ResourceKindGroup({ kind, resources, onResourceClick, showHealth }: Res
+       >
+         <CollapseChevron open={expanded} className="w-3 h-3" />
+         <span className="font-medium">{kind}</span>
+-        <span className="text-theme-text-tertiary">({resources.length})</span>
++        <span className="text-theme-text-tertiary">({resources.length < total ? `${resources.length} of ${total}` : total})</span>
+       </button>
+ 
+       <Collapse open={expanded} mountLazily>
+```
+
+---
+
+### Incident Patch 2: `2104974b` (2026-11-15)
+**Commit Message**: fix(k8score): don't call self-managed AWS clusters EKS (#2655)
+
+## Description
+
+Radar labels any node with an `aws://` providerID as EKS. That ID only
+says the node is an EC2 instance: the AWS cloud controller manager sets
+it on self-managed clusters too (kubeadm, Cluster API + CAPA, kops), so
+those show up as EKS.
+
+`DetectByProviderID` now returns `eks` for an `aws://` node only when
+its kubelet is an EKS build (`-eks-` in the kubelet version, e.g.
+`v1.31.4-eks-2d5f260`). Otherwise detection falls through to the labels
+as before (`eks.amazonaws.com/nodegroup` / `capacityType` still mean
+EKS; OpenShift and Rancher labels now win on AWS too) and, failing
+those, `generic`, which the UI shows as a standard Kubernetes cluster.
+GKE, AKS, kind, Nutanix, RKE2 and NKP detection are unchanged.
+
+The marker is checked only for nodes, not added to
+`DetectPlatformFromVersion`: the traffic manager reads that from the
+server version before its NKP check, so NKP on EKS would have turned
+into `eks` there.
+
+## Type of change
+
+- [x] Bug fix (non-breaking change that fixes an issue)
+- [ ] New feature (non-breaking change that adds functionality)
+- [ ] Breaking change (fix or feature that would cause e
+
+**File**: `pkg/k8score/cluster_detection.go` (modified, +13/-1)
+```diff
+@@ -77,13 +77,19 @@ func DetectPlatformFromVersion(gitVersion string) string {
+ }
+ 
+ // DetectByProviderID detects the platform from a node's ProviderID field.
++// An aws:// ID only says the node is an EC2 instance: the AWS cloud controller
++// sets it on self-managed clusters too (kubeadm, Cluster API, kops), so it
++// counts as EKS only when the kubelet is an EKS build.
+ func DetectByProviderID(node corev1.Node) string {
+ 	providerID := node.Spec.ProviderID
+ 	switch {
+ 	case strings.HasPrefix(providerID, "gce://") || strings.HasPrefix(providerID, "gke://"):
+ 		return "gke"
+ 	case strings.HasPrefix(providerID, "aws://"):
+-		return "eks"
++		if isEKSKubeletVersion(node.Status.NodeInfo.KubeletVersion) {
++			return "eks"
++		}
++		return "unknown"
+ 	case strings.HasPrefix(providerID, "azure://"):
+ 		return "aks"
+ 	case strings.HasPrefix(providerID, "kind://"):
+@@ -95,6 +101,12 @@ func DetectByProviderID(node corev1.Node) string {
+ 	}
+ }
+ 
++// isEKSKubeletVersion reports whether a kubelet version is an EKS build, such
++// as v1.31.4-eks-2d5f260. Upstream kubelets report a plain v1.31.4.
++func isEKSKubeletVersion(version string) bool {
++	return strings.Contains(version, "-eks-")
++}
++
+ // DetectByLabels detects the platform from a node's labels.
+ func DetectByLabels(node corev1.Node) string {
+ 	if IsNodeGKE(node) {
+```
+
+**File**: `pkg/k8score/cluster_detection_test.go` (modified, +8/-1)
+```diff
+@@ -22,7 +22,12 @@ func TestDetectNodePlatform(t *testing.T) {
+ 		{name: "not an RKE2 suffix", node: nodeWithKubeletVersion("v1.31.7-rke2r1"), want: "unknown"},
+ 		{name: "GCE provider", node: nodeWithProviderID("gce://project/zone/node"), want: "gke"},
+ 		{name: "GKE provider", node: nodeWithProviderID("gke://project/zone/node"), want: "gke"},
+-		{name: "AWS provider", node: nodeWithProviderID("aws:///zone/node"), want: "eks"},
++		{name: "AWS provider on EKS kubelet", node: nodeWithSignals("v1.31.4-eks-2d5f260", "aws:///us-east-1a/i-0abc", nil), want: "eks"},
++		{name: "AWS provider without EKS kubelet", node: nodeWithSignals("v1.36.5", "aws:///us-east-1a/i-0abc", nil), want: "unknown"},
++		{name: "AWS provider with no kubelet version", node: nodeWithProviderID("aws:///zone/node"), want: "unknown"},
++		{name: "AWS provider with EKS nodegroup label", node: nodeWithSignals("v1.31.4", "aws:///us-east-1a/i-0abc", map[string]string{"eks.amazonaws.com/nodegroup": "workers"}), want: "eks"},
++		{name: "AWS provider on OpenShift", node: nodeWithSignals("v1.31.4", "aws:///us-east-1a/i-0abc", map[string]string{"node.openshift.io/os_id": "rhcos"}), want: "openshift"},
++		{name: "EKS marker without AWS provider", node: nodeWithKubeletVersion("v1.31.4-eks-2d5f260"), want: "unknown"},
+ 		{name: "Azure provider", node: nodeWithProviderID("azure:///subscriptions/node"), want: "aks"},
+ 		{name: "kind provider", node: nodeWithProviderID("kind://docker/radar/control-plane"), want: "kind"},
+ 		{name: "Nutanix provider", node: nodeWithProviderID("nutanix://99d71c41-e100-4474-601b-5dd604becea6"), want: "nutanix"},
+@@ -74,6 +79,8 @@ func TestDetectClusterPlatform(t *testing.T) {
+ 		{name: "no nodes", client: fake.NewSimpleClientset(), want: "unknown"},
+ 		{name: "generic node", client: fake.NewSimpleClientset(&corev1.Node{ObjectMeta: metav1.ObjectMeta{Name: "worker-1"}}), want: "generic"},
+ 		{name: "RKE2 node", client: fake.NewSimpleClientset(nodePtr(nodeWithKubeletVersion("v1.31.7+rke2r1"))), want: "rke2"},
++		{name: "self-managed cluster on AWS", client: fake.NewSimpleClientset(nodePtr(nodeWithSignals("v1.36.5", "aws:///us-east-1a/i-0abc", nil))), want: "generic"},
++		{name: "EKS node", client: fake.NewSimpleClientset(nodePtr(nodeWithSignals("v1.31.4-eks-2d5f260", "aws:///us-east-1a/i-0abc", nil))), want: "eks"},
+ 		{name: "NKP on AWS infrastructure", client: fake.NewSimpleClientset(nodePtr(nodeWithProviderID("aws:///zone/node")), &corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: NKPNamespace}}), want: "nkp"},
+ 		{name: "Nutanix without NKP", client: fake.NewSimpleClientset(nodePtr(nodeWithProviderID("nutanix://uuid"))), want: "nutanix"},
+ 		{name: "GKE Autopilot", client: fake.NewSimpleClientset(nodePtr(nodeWithSignals("", "gce://project/zone/node", map[string]string{"cloud.google.com/gke-autopilot": "true"}))), want: "gke-autopilot"},
+```
+
+---
+
+### Incident Patch 3: `7f30b56d` (2026-11-15)
+**Commit Message**: fix(gitops): avoid treating auto-sync off as manual orchestration (#2698)
+
+An Application with auto-sync off can still be synced by another
+controller, including ApplicationSet RollingSync. Radar's drift advice
+previously said nothing would reconcile until the user clicked Sync and
+suggested enabling auto-sync unconditionally.
+
+The advice now states that auto-sync is off and asks for a review of the
+desired changes and sync policy before deciding whether to sync.
+Missing-resource messages in Issues, Resources and the tree use the same
+review step without promising an in-app diff, and rollback copy retains
+the consequence of syncing without implying that auto-sync off prevents
+other controllers from deploying. When existing readable relationships
+identify a parent, both Enable and Disable auto-sync explain that its
+policy or source may overwrite the setting. For an ApplicationSet
+parent, Enable also warns that pending changes may apply immediately and
+bypass rollout ordering. The display label reads “Auto-sync off”; the
+`Manual` wire value and rollback/filter predicates stay unchanged.
+
+Validation: `make test-changed`, including auto-sync-off child shapes,
+rollback and sync-hazard p
+
+**File**: `docs/gitops.md` (modified, +2/-2)
+```diff
+@@ -82,7 +82,7 @@ The Issues band at the top of the detail page surfaces seven classes of problems
+ 
+ - **Operation failures** (Argo) — the parser recognizes known controller failures (annotation-too-large, label-too-long, hook failure, admission webhook denial, RBAC, conflict, immutable field, schema migration, connectivity, etc.) and rewrites each into a plain-English cause
+ - **Stuck-drift loop** — when sync succeeded at the current desired comparison’s sources and revisions but the app is *still* OutOfSync with auto-sync on and a recent reconcile, something is mutating resources after each apply. The Issue calls out likely culprits (mutating webhook, sibling controller, schema migration). An older successful apply or rollback against different desired sources/revisions remains ordinary pending drift, including after auto-sync is re-enabled behind a sync window. Missing apply/comparison evidence does not establish a loop
+-- **Manual drift without auto-sync** — drift exists but auto-sync is disabled. The Issue tells you "nothing will reconcile until you click Sync" so you stop waiting, unless a sync would be hazardous (see below). A rollback marker in the latest operation, if successful, instead gives an informational note naming the applied revision(s) and recorded initiator; resource rows explain that Sync can undo the rollback (a current sync hazard replaces that advice, since the hazard is the more urgent consequence), including Missing rows while the current comparison is Unknown. Rows use `summary.rollbackRevision`, the revision(s) deployed by the latest successful marked rollback, only while effective auto-sync is off, independently of the OutOfSync-only informational note. Its absence does not mean no rollback happened. This records the last rollback, not the current live state: later changes can also show as drift. Syncing or enabling auto-sync deploys the current revision and can undo the rollback. A marked, completed rollback whose result sources or revisions differ from the requested ones instead gives a warning in both detail and cluster Issues, even if the app is Synced. A known requested target with no recorded applied revisions warns that the rollback target could not be verified. This operation-outcome warning uses the shared diagnosis and remains stable while that operation is latest, independently of the manual-drift timer. It belongs to the GitOps operation-failure category, with a distinct issue identity so current sync errors, operation failures or drift loops do not absorb its warning and recovery advice. Cluster Issues retains its delayed manual-drift warning after a successful rollback, with guidance to fix or revert Git before syncing again, or keep auto-sync off. Dry runs and failed or pending operations do not qualify. A later operation, including a dry-run, replaces the rollback evidence even if it does not move the app; Radar then returns to ordinary diagnosis. Argo's native rollback and a sync to an older revision have indistinguishable durable operation records, so Radar does not infer a rollback from old revisions or expiring audit events.
++- **Manual drift without auto-sync** — drift exists but auto-sync is disabled. The Issue asks you to review the desired changes and sync policy before deciding whether to sync, unless a sync would be hazardous (see below). Auto-sync being off does not rule out another controller initiating a sync, including ApplicationSet RollingSync. The visible sync-mode label is "Auto-sync off"; API responses retain "Manual". A rollback marker in the latest operation, if successful, instead gives an informational note naming the applied revision(s) and recorded initiator; resource rows explain that Sync can undo the rollback (a current sync hazard replaces that advice, since the hazard is the more urgent consequence), including Missing rows while the current comparison is Unknown. Rows use `summary.rollbackRevision`, the revision(s) deployed by the latest successful marked rollback, only while effective auto-sync is off, independently of the OutOfSync-only informational note. Its absence does not mean no rollback happened. This records the last rollback, not the current live state: later changes can also show as drift. Syncing or enabling auto-sync deploys the current revision and can undo the rollback. A marked, completed rollback whose result sources or revisions differ from the requested ones instead gives a warning in both detail and cluster Issues, even if the app is Synced. A known requested target with no recorded applied revisions warns that the rollback target could not be verified. This operation-outcome warning uses the shared diagnosis and remains stable while that operation is latest, independently of the manual-drift timer. It belongs to the GitOps operation-failure category, with a distinct issue identity so current sync errors, operation failures or drift loops do not absorb its warning and recovery advice. Cluster Issues retains its 
+```
+
+**File**: `internal/k8s/detect_gitops.go` (modified, +5/-7)
+```diff
+@@ -368,7 +368,7 @@ func detectArgoAppProblems(apps []*unstructured.Unstructured, tracker *argoDrift
+ 				setDetectionOnset(&d, now, outOfSyncAt)
+ 				d.Stuck = true
+ 				d.Cause = "Auto-sync applied cleanly and reconciled recently, yet live state keeps diverging from Git. Common causes: a mutating admission webhook adds defaults Argo isn't told to ignore; a sibling controller (Karpenter, Istio, cert-manager) writes back into spec; or a conversion webhook rewrites a deprecated API schema."
+-				d.Action = "Open Changes to see the per-resource drift, then match it against your Git manifest, the resource's controller, and any mutating webhooks."
++				d.Action = "Open Resources to see the per-resource drift, then match it against your Git manifest, the resource's controller, and any mutating webhooks."
+ 				out = append(out, d)
+ 			} else {
+ 				dd := gitopsProblem(now, "Application", argoGroup, ns, name, "high",
+@@ -380,18 +380,16 @@ func detectArgoAppProblems(apps []*unstructured.Unstructured, tracker *argoDrift
+ 				out = append(out, dd)
+ 			}
+ 		}
+-		// A manual-sync app legitimately sits OutOfSync until an operator syncs
+-		// it, so unlike the auto-synced branch above we only warn once the drift
+-		// has persisted past manualDriftGate — long enough to be a forgotten
+-		// change rather than one mid-review.
++		// Drift with auto-sync off can be intentional, so warn only after the
++		// existing grace period rather than during review or orchestration.
+ 		if !automated && outOfSync && manualDriftFor >= manualDriftGate {
+ 			dd := gitopsProblem(now, "Application", argoGroup, ns, name, "warning", "OutOfSyncManual",
+ 				fmt.Sprintf("Application has been out of sync for %s and auto-sync is not enabled", timeutil.FormatAgeShort(manualDriftFor)), createdAt)
+ 			setDetectionOnset(&dd, now, outOfSyncAt)
+-			dd.Action = "Review the drift in Changes, then Sync the application (or enable auto-sync) if the drift is unintended."
++			dd.Action = "Review the desired changes and sync policy before deciding whether to sync."
+ 			if revision, _ := gitops.ArgoSuccessfulRollback(app); revision != "" {
+ 				dd.Message = "Last rollback deployed " + revision + "; the live state differs from the desired state and auto-sync is off."
+-				dd.Action = "Syncing or enabling auto-sync applies the current source and can undo the rollback. Fix or revert the source first, or keep auto-sync off. Review Changes for later edits."
++				dd.Action = "Syncing or enabling auto-sync applies the current source and can undo the rollback. Fix or revert the source before syncing again. Review Resources for later edits."
+ 			}
+ 			if hazard := argoSyncHazardAction(app); hazard != "" {
+ 				dd.Action = hazard
+```
+
+**File**: `internal/k8s/detect_gitops_test.go` (modified, +4/-4)
+```diff
+@@ -690,8 +690,8 @@ func TestDetectArgoAppProblems_ManualDriftGate(t *testing.T) {
+ 		if !d.OnsetAt.Equal(base) {
+ 			t.Errorf("OnsetAt = %v, want exact first observation %v", d.OnsetAt, base)
+ 		}
+-		if d.Action == "" {
+-			t.Error("OutOfSyncManual should carry an Action")
++		if d.Action != "Review the desired changes and sync policy before deciding whether to sync." {
++			t.Errorf("unexpected manual drift guidance: %s", d.Action)
+ 		}
+ 	})
+ 
+@@ -715,7 +715,7 @@ func TestDetectArgoAppProblems_ManualDriftGate(t *testing.T) {
+ 		if d.Message != "Last rollback deployed rev-old; the live state differs from the desired state and auto-sync is off." {
+ 			t.Errorf("message = %q", d.Message)
+ 		}
+-		if d.Action != "Syncing or enabling auto-sync applies the current source and can undo the rollback. Fix or revert the source first, or keep auto-sync off. Review Changes for later edits." {
++		if d.Action != "Syncing or enabling auto-sync applies the current source and can undo the rollback. Fix or revert the source before syncing again. Review Resources for later edits." {
+ 			t.Errorf("action = %q", d.Action)
+ 		}
+ 	})
+@@ -1239,7 +1239,7 @@ func TestDetectArgoAppProblems_ManualDriftAdviceRespectsSyncHazards(t *testing.T
+ 		name, want string
+ 		mutate     func(*unstructured.Unstructured)
+ 	}{
+-		{"plain drift", "then Sync the application", func(*unstructured.Unstructured) {}},
++		{"plain drift", "before deciding whether to sync", func(*unstructured.Unstructured) {}},
+ 		{"shared resources", "also tracked by Application payments", func(app *unstructured.Unstructured) {
+ 			_ = unstructured.SetNestedSlice(app.Object, []any{map[string]any{"type": "SharedResourceWarning", "message": "Deployment/web is part of applications argocd/billing and payments"}}, "status", "conditions")
+ 		}},
+```
+
+**File**: `packages/k8s-ui/src/components/gitops/GitOpsDetailLayout.tsx` (modified, +9/-6)
+```diff
+@@ -12,11 +12,14 @@ import { RadarUpgradeNote, radarUpgradeNoteText } from '../ui/RadarUpgradeNote'
+ import type { GitOpsHealthStatus, GitOpsInsight, GitOpsIssue, GitOpsRemediation, SyncStatus } from '../../types'
+ import type { RadarUpgradeRequirement } from '../../types/fetch-error'
+ 
+-function argoAutoSyncControllerNote(controller: ArgoActionHandlers['autoSyncController']): string {
++function argoAutoSyncControllerNote(controller: ArgoActionHandlers['autoSyncController'], enabling = false): string {
+   if (!controller) return ''
+-  return controller.kind === 'ApplicationSet'
+-    ? ` ApplicationSet ${controller.name} can turn it back on; to keep it off, change the ApplicationSet's template.`
+-    : ` Application ${controller.name} manages this one from Git and can turn it back on when it syncs; to keep it off, change it in Git.`
++  if (controller.kind === 'ApplicationSet') {
++    return enabling
++      ? ` ApplicationSet ${controller.name} may overwrite this setting. Enabling may apply pending changes immediately and bypass ApplicationSet rollout ordering. Review its template and rollout policy first.`
++      : ` ApplicationSet ${controller.name} may overwrite this setting or control when this Application syncs. Review its template and rollout policy before changing auto-sync.`
++  }
++  return ` Application ${controller.name} manages this one from Git and may overwrite this setting when it syncs. Review its source before changing auto-sync.`
+ }
+ 
+ function argoResumeDescription(suspended: boolean, settings: ArgoActionHandlers['resumeSettings']): string {
+@@ -395,7 +398,7 @@ export function GitOpsDetailLayout(props: GitOpsDetailLayoutProps) {
+                   {detail.path && <AppFact label="Path" value={detail.path} />}
+                   {detail.chart && <AppFact label="Chart" value={detail.chart} />}
+                   <AppFact label="Destination" value={detail.destination || '-'} />
+-                  {detail.autoSyncMode && <AppFact label="Sync mode" value={detail.autoSyncMode} />}
++                  {detail.autoSyncMode && <AppFact label="Sync mode" value={detail.autoSyncMode === 'Manual' ? 'Auto-sync off' : detail.autoSyncMode} />}
+                 </div>
+               )}
+               {resumeBlockedReason && <p className="mt-2 text-xs text-theme-text-secondary">{resumeBlockedReason}</p>}
+@@ -456,7 +459,7 @@ export function GitOpsDetailLayout(props: GitOpsDetailLayoutProps) {
+                   ) : (
+                     <ActionButton
+                       label="Enable auto-sync"
+-                      description={argoResumeDescription(effectiveSuspended, argo.resumeSettings)}
++                      description={argoResumeDescription(effectiveSuspended, argo.resumeSettings) + argoAutoSyncControllerNote(argo.autoSyncController, true)}
+                       icon={Play}
+                       loading={argo.resuming}
+                       onClick={() => !resumeBlockedReason && !resumeUpgrade && argo.onResume()}
+```
+
+**File**: `packages/k8s-ui/src/components/gitops/GitOpsTableView.tsx` (modified, +1/-1)
+```diff
+@@ -1023,7 +1023,7 @@ function GitOpsFilterSidebar({
+ 
+         <GitOpsFilterSection icon={CircleDot} title="Automation (Sync policy)">
+           <GitOpsFacetButton label="Auto-sync" count={automationCounts.auto} active={automationFilters.has('auto')} onClick={() => onToggleAutomation('auto')} />
+-          <GitOpsFacetButton label="Manual" count={automationCounts.manual} active={automationFilters.has('manual')} onClick={() => onToggleAutomation('manual')} />
++          <GitOpsFacetButton label="Auto-sync off" count={automationCounts.manual} active={automationFilters.has('manual')} onClick={() => onToggleAutomation('manual')} />
+           <GitOpsFacetButton label="Suspended" count={automationCounts.suspended} active={automationFilters.has('suspended')} tone="warning" onClick={() => onToggleAutomation('suspended')} />
+         </GitOpsFilterSection>
+ 
+```
+
+**File**: `packages/k8s-ui/src/components/gitops/argo-radar-upgrade.test.tsx` (modified, +9/-6)
+```diff
+@@ -56,7 +56,7 @@ function layout(handlers: ArgoActionHandlers, status: GitOpsDetailStatus | null
+       terminating={false}
+       terminatingChipTooltip=""
+       terminatingActionTooltip=""
+-      detail={{ project: 'default' }}
++      detail={{ project: 'default', autoSyncMode: 'Manual' }}
+       insight={null}
+       insightLoading={false}
+       isArgoApp
+@@ -86,6 +86,7 @@ describe('Enable auto-sync on the GitOps detail page', () => {
+     const markup = html(layout(argo({ resumeUpgrade: null })))
+     expect(enableAutoSync(markup)).not.toMatch(/\sdisabled=""/)
+     expect(markup).not.toContain('need the latest Radar')
++    expect(markup).toContain('Auto-sync off')
+   })
+ 
+   // Disable auto-sync works on every Radar; only the way back on is gated.
+@@ -104,13 +105,15 @@ describe('Enable auto-sync on the GitOps detail page', () => {
+       { name: 'first-time enable on a Radar that starts self-heal off', status: { sync: 'OutOfSync', health: 'Healthy', suspended: false } as GitOpsDetailStatus, settings: { prune: false, selfHeal: false }, copy: 'Argo applies new commits. Resources removed from Git are kept (prune off).' },
+       { name: 'a block switched off in place with prune on', status: { sync: 'OutOfSync', health: 'Healthy', suspended: false } as GitOpsDetailStatus, settings: { prune: true, selfHeal: false }, copy: 'Argo applies new commits. Resources removed from Git are deleted (prune on).' },
+       { name: 'unknown settings', status: null, settings: null, copy: 'Turn on automated sync, so Argo applies new commits from Git.' },
+-    ])('explains $name', async ({ status, settings, copy }) => {
++      { name: 'known ApplicationSet parent', status: null, settings: null, controller: { kind: 'ApplicationSet' as const, name: 'clusters' }, copy: 'Turn on automated sync, so Argo applies new commits from Git. ApplicationSet clusters may overwrite this setting. Enabling may apply pending changes immediately and bypass ApplicationSet rollout ordering. Review its template and rollout policy first.' },
++      { name: 'known parent Application', status: null, settings: null, controller: { kind: 'Application' as const, name: 'bootstrap' }, copy: 'Turn on automated sync, so Argo applies new commits from Git. Application bootstrap manages this one from Git and may overwrite this setting when it syncs. Review its source before changing auto-sync.' },
++    ])('explains $name', async ({ status, settings, controller, copy }) => {
+       vi.useFakeTimers()
+       const element = document.createElement('div')
+       document.body.appendChild(element)
+       const root = createRoot(element)
+       try {
+-        await act(async () => { root.render(layout(argo({ resumeSettings: settings }), status)) })
++        await act(async () => { root.render(layout(argo({ resumeSettings: settings, autoSyncController: controller }), status)) })
+         const button = [...element.querySelectorAll('button')].find((b) => b.textContent === 'Enable auto-sync')!
+         await act(async () => {
+           button.parentElement!.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }))
+@@ -127,9 +130,9 @@ describe('Enable auto-sync on the GitOps detail page', () => {
+       { name: 'Sync is available', copy: 'Stop Argo from automatically syncing Git changes. Manual Sync still works.' },
+       { name: 'an operation holds Sync', running: true, copy: 'Stop Argo from automatically syncing Git changes.' },
+       { name: 'the Application is suspended', suspended: true, copy: 'Stop Argo from automatically syncing Git changes.' },
+-      { name: 'an ApplicationSet owns it', controller: { kind: 'ApplicationSet' as const, name: 'clusters' }, copy: "Stop Argo from automatically syncing Git changes. Manual Sync still works. ApplicationSet clusters can turn it back on; to keep it off, change the ApplicationSet's template." },
+-      { name: 'a parent Application manages it', controller: { kind: 'Application' as const, name: 'apps' }, copy: 'Stop Argo from automatically syncing Git changes. Manual Sync still works. Application apps manages this one from Git and can turn it back on when it syncs; to keep it off, change it in Git.' },
+-      { name: 'an operation holds Sync on an ApplicationSet-owned app', running: true, controller: { kind: 'ApplicationSet' as const, name: 'clusters' }, copy: "Stop Argo from automatically syncing Git changes. ApplicationSet clusters can turn it back on; to keep it off, change the ApplicationSet's template." },
++      { name: 'an ApplicationSet owns it', controller: { kind: 'ApplicationSet' as const, name: 'clusters' }, copy: "Stop Argo from automatically syncing Git changes. Manual Sync still works. ApplicationSet clusters may overwrite this setting or control when this Application syncs. Review its template and rollout policy before changing auto-sync." },
++      { name: 'a parent Application manages it', controller: { kind: 'Application' as const, name: 'apps' }, copy: 'Stop Argo from automatically syncing Git cha
+```
+
+**File**: `packages/k8s-ui/src/components/gitops/insights/ArgoResourceDiff.test.tsx` (modified, +1/-1)
+```diff
+@@ -141,7 +141,7 @@ describe('GitOpsChangesView expanded Argo row', () => {
+     const data = insight(false)
+     data.summary.autoSyncMode = 'Manual'
+     const html = renderToStaticMarkup(<GitOpsChangesView insight={data} />)
+-    expect(html).toContain('Click Sync to apply the desired state.')
++    expect(html).toContain('Review the desired changes and sync policy before deciding whether to sync.')
+     expect(html).not.toContain('See the sync warning above')
+   })
+ 
+```
+
+**File**: `packages/k8s-ui/src/components/gitops/insights/GitOpsInsightViews.tsx` (modified, +3/-7)
+```diff
+@@ -290,7 +290,7 @@ function TerminatingStatusStrip({ summary }: { summary: NonNullable<GitOpsInsigh
+             <MetaFact label="Revision" value={summary.lastRevision || summary.targetRevision || '-'} mono />
+           )}
+           <SummaryTiming summary={summary} />
+-          {summary.autoSyncMode && <MetaFact label="Sync mode" value={summary.autoSyncMode} />}
++          {summary.autoSyncMode && <MetaFact label="Sync mode" value={summary.autoSyncMode === 'Manual' ? 'Auto-sync off' : summary.autoSyncMode} />}
+         </div>
+       </Collapse>
+     </div>
+@@ -1322,10 +1322,6 @@ function refKey(ref: { kind: string; namespace?: string; name: string }): string
+ // nor a health message is available — otherwise those carry the truth and
+ // this would just add noise. Empty string falls through to no row content.
+ //
+-// The "what to do" framing is intentional: badges already communicate state
+-// ("OutOfSync"); the row should communicate what the operator should do
+-// about it. With auto-sync on the answer is usually "wait, Argo will fix
+-// it"; with manual mode the answer is "click Sync".
+ function explainChangeStatus(
+   sync: string | undefined,
+   health: string | undefined,
+@@ -1349,11 +1345,11 @@ function explainChangeStatus(
+     if (inFlight) return 'Live state differs from Git. A sync is in progress — wait for it to finish.'
+     if (context?.rolledBack) return 'Live state differs from Git after a rollback. Sync applies the desired state and can undo the rollback.'
+     if (isAuto) return 'Live state differs from Git. Auto-sync should reconcile this within a few minutes; click Sync to force it.'
+-    return 'Live state differs from Git. Click Sync to apply the desired state.'
++    return 'Live state differs from Git. Review the desired changes and sync policy before deciding whether to sync.'
+   }
+   if (health === 'Missing' && parentFailed) return 'Resource was not created — see the operation error above for the cause.'
+   if (health === 'Degraded') return 'Resource reports an unhealthy state. Open the resource for events and logs.'
+-  if (health === 'Missing') return 'Declared in Git but not present in the cluster. Sync to create it.'
++  if (health === 'Missing') return missingResourceMessage(sync, context)
+   if (health === 'Progressing') return 'Resource is mid-rollout (e.g. pods coming up). Should converge shortly.'
+   if (health === 'Suspended') return 'Resource is paused (e.g. CronJob suspended, HPA disabled). Intentional unless surprising.'
+   return ''
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2663** (2026-11-13): Fix Linux desktop packaging with verified nfpm 2.49.0 binary (@hisco)
-- **PR #2660** (closed): Pin Linux desktop packager to a Go-compatible version (@hisco)
-- **PR #2656** (2026-11-13): Add an optional copy-on-select terminal preference (@hisco)
-- **PR #2637** (2026-11-12): Match resource sidebar icons to Topology kind colors (@hisco)
-- **PR #2636** (2026-11-12): docs: add NVIDIA desktop rendering workaround (@hisco)
-- **PR #2635** (2026-11-12): Delete the auth proxy's session cookies on logout (@hisco)
+- **PR #2701** (2026-11-15): Count every supported integration in usage stats, without mislabeling user apps as add-ons (@nadaverell)
+- **PR #2699** (2026-11-15): Show Topology filter on/off with the accent instead of per-kind colors (@nadaverell)
+- **PR #2698** (2026-11-15): fix(gitops): avoid treating auto-sync off as manual orchestration (@nadaverell)
+- **PR #2697** (2026-11-15): fix(gitops): report ApplicationSet rollout health accurately (@nadaverell)
+- **PR #2693** (2026-11-15): Revert "Match resource sidebar icons to Topology kind colors" (@nadaverell)
+- **PR #2690** (2026-11-15): deps(npm): override minimatch to 11.0.4 for GHSA-g3hv-75wg-m249 (@nadaverell)
 
 ---
 
@@ -2517,38 +2948,54 @@ blocked independently by the account agreement.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Linux desktop packaging with verified nfpm 2.49.0 binary
+## X. gitops): let managed resource lists reveal every entry
 
 **RULE**:
-When implementing operations in `.github/workflows/release-desktop.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/k8s-ui/src/components/gitops/ManagedResourcesList.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `148a70c8`: Linux desktop packaging with verified nfpm 2.49.0 binary. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `41dfe716`: gitops): let managed resource lists reveal every entry. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release-desktop.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/k8s-ui/src/components/gitops/ManagedResourcesList.test.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        env:
-          NFPM_VERSION: '2.49.0'
-          NFPM_SHA256: '2afaa5ffb5e3493402e31e7c67a5a1fb42133e3f66fc315ca0051934125561c7'
-        run: |
-          curl --fail --location --retry 3 --output "$RUNNER_TEMP/nfpm.tar.gz" \
-            "https://github.com/goreleaser/nfpm/releases/download/v${NFPM_VERSION}/nfpm_${NFPM_VERSION}_Linux_x86_64.tar.gz"
-          echo "${NFPM_SHA256}  $RUNNER_TEMP/nfpm.tar.gz" | sha256sum --check --strict
-          mkdir -p "$RUNNER_TEMP/nfpm-bin"
-          tar -xzf "$RUNNER_TEMP/nfpm.tar.gz" -C "$RUNNER_TEMP/nfpm-bin" nfpm
-          echo "$RUNNER_TEMP/nfpm-bin" >> "$GITHUB_PATH"
-          "$RUNNER_TEMP/nfpm-bin/nfpm" --version
+import { describe, expect, it } from 'vitest'
+import { renderToString } from 'react-dom/server'
+import { ManagedResourcesList } from './ManagedResourcesList'
+import type { ManagedResource } from '../../types/gitops'
+
+function render(element: Parameters<typeof renderToString>[0]): string {
+  return renderToString(element).replace(/<!-- -->/g, '')
+}
+
+function list(configMaps: number): ManagedResource[] {
+  return [
+    ...Array.from({ length: configMaps }, (_, i) => ({ group: '', kind: 'ConfigMap', namespace: 'shop', name: `cm-${i}` })),
+    { group: 'apps', kind: 'Deployment', namespace: 'shop', name: 'checkout' },
+    { group: '', kind: 'Service', namespace: 'shop', name: 'checkout' },
+  ]
+}
+
+describe('ManagedResourcesList', () => {
+  it('shows every entry of an uneven list under the cap', () => {
+    const html = render(<ManagedResourcesList resources={list(8)} />)
+    expect(html).toContain('ConfigMap</span><span class="text-theme-text-tertiary">(8)')
+    expect(html).not.toContain('Show all')
+  })
+
+  it('offers Show all whenever a kind is cut', () => {
+    const html = render(<ManagedResourcesList resources={list(6)} maxVisible={6} />)
+    expect(html).toContain('ConfigMap</span
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-        run: go install github.com/goreleaser/nfpm/v2/cmd/nfpm@latest
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `148a70c8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `41dfe716` are properly handled with clean fallback behavior.

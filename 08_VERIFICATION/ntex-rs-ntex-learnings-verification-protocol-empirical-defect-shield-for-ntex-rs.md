@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T21:50:24.270Z",
+  "timestamp": "2026-11-15T21:15:46.590Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-ntex-rs-ntex-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [ntex-rs-ntex-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T21:50:24.270Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-15T21:15:46.590Z`  
 > **Learning ID**: `LEARN-EVO-ntex-rs-ntex-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md`  
 > **Source**: github ([https://github.com/ntex-rs/ntex](https://github.com/ntex-rs/ntex))  
-> **Source Version**: `1a38c4b1`  
+> **Source Version**: `56a4ed76`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T21:45:07.813Z  
+> **Timestamp**: 2026-11-15T21:15:34.170Z  
 > **Learning ID**: `learn-github-ntex-rs-ntex`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ntex-rs/ntex](https://github.com/ntex-rs/ntex))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T21:45:07.629Z  
+> **Harvest Timestamp**: 2026-11-15T21:15:34.164Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2226,679 +2226,275 @@ pub(crate) mod testing {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c355f885` (2026-11-12)
-**Commit Message**: Add support for SO_REUSEPORT on linux
+### Incident Patch 1: `56a4ed76` (2026-11-15)
+**Commit Message**: HTTP/1 spec complience fixes
 
-* Add `LoadBalancing::Reuseport`: on Linux, each worker accepts TCP connections
-  on its own `SO_REUSEPORT` socket, bound to the worker's CPU with
-  `SO_INCOMING_CPU`, instead of receiving them from the accept thread
+* http: The HTTP/1 decoder rejects requests with an empty `Host` header with
+  `400 Bad Request` unless the request target is in absolute or authority form
+  (RFC 9110 §4.2.1)
 
-* Add `ServerConfiguration::local_items()` for items a worker produces itself
+* http: HTTP/1 and HTTP/2 reject asterisk-form (`*`) request targets for methods other
+  than `OPTIONS` with `400 Bad Request` regardless of the request-target settings
+  (RFC 9112 §3.2.4, RFC 9113 §8.3.1)
 
-**File**: `Cargo.toml` (modified, +2/-2)
+* http: The HTTP/1 decoder rejects a request method longer than the start-line limit
+  with `400 Bad Request` instead of `414 URI Too Long`
+
+**File**: `Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -62,10 +62,10 @@ ntex-h2 = "4.5.0"
- ntex-http = "2.2.0"
- ntex-io = "4.7.2"
- ntex-macros = "4.7.0"
--ntex-net = "4.10.3"
-+ntex-net = "4.11.0"
- ntex-router = "2.3.0"
- ntex-rt = "4.8.1"
--ntex-server = "4.5.2"
-+ntex-server = "4.6.0"
- ntex-service = "5.7.2"
- ntex-tls = "4.8.0"
- ntex-util = "4.9.0"
-```
-
-**File**: `ntex-net/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "ntex-net"
--version = "4.10.3"
-+version = "4.11.0"
- authors = ["ntex contributors <team@ntex.rs>"]
- description = "ntexwork utils for ntex framework"
- keywords = ["network", "framework", "async", "futures"]
-```
-
-**File**: `ntex-server/CHANGES.md` (modified, +8/-0)
-```diff
-@@ -1,5 +1,13 @@
- # Changes
+@@ -72,7 +72,7 @@ ntex-util = "4.10.0"
+ urly = "1.4.1"
  
-+## [4.6.0] - 2026-11-12
-+
-+* Add `LoadBalancing::Reuseport`: on Linux, each worker accepts TCP connections
-+  on its own `SO_REUSEPORT` socket, bound to the worker's CPU with
-+  `SO_INCOMING_CPU`, instead of receiving them from the accept thread
-+
-+* Add `ServerConfiguration::local_items()` for items a worker produces itself
-+
- ## [4.5.2] - 2026-11-12
+ ntex-io-uring = "1.2.0"
+-ntex-httparse = "2.4.0"
++ntex-httparse = "2.4.2"
+ ntex-polling = "4.2.0"
  
- * Least loaded balancing no longer counts the time a worker's runtime is
+ async-channel = "2"
 ```
 
-**File**: `ntex-server/Cargo.toml` (modified, +1/-1)
+**File**: `ntex/CHANGES.md` (modified, +11/-0)
 ```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "ntex-server"
--version = "4.5.2"
-+version = "4.6.0"
- authors = ["ntex contributors <team@ntex.rs>"]
- description = "Server for ntex framework"
- keywords = ["network", "framework", "async", "futures"]
+@@ -24,6 +24,17 @@
+   `400 Bad Request` regardless of `HttpServiceConfig::set_host_validation()`
+   (RFC 9112 §3.2)
+ 
++* http: The HTTP/1 decoder rejects requests with an empty `Host` header with
++  `400 Bad Request` unless the request target is in absolute or authority form
++  (RFC 9110 §4.2.1)
++
++* http: HTTP/1 and HTTP/2 reject asterisk-form (`*`) request targets for methods other
++  than `OPTIONS` with `400 Bad Request` regardless of the request-target settings
++  (RFC 9112 §3.2.4, RFC 9113 §8.3.1)
++
++* http: The HTTP/1 decoder rejects a request method longer than the start-line limit
++  with `400 Bad Request` instead of `414 URI Too Long`
++
+ ## [4.8.0] - 2026-11-12
+ 
+ * http: Skip UTF-8 validation and the query search of ASCII request targets, and UTF-8
 ```
 
-**File**: `ntex-server/src/affinity.rs` (modified, +60/-7)
+**File**: `ntex/src/http/config.rs` (modified, +9/-6)
 ```diff
-@@ -1,4 +1,4 @@
--use std::{collections::BTreeMap, fmt};
-+use std::{cell::Cell, collections::BTreeMap, fmt};
- 
- #[non_exhaustive]
- #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
-@@ -130,6 +130,28 @@ pub(crate) fn incoming_cpu(stream: &std::net::TcpStream) -> Option<usize> {
-     sys::incoming_cpu(stream).map(sys::index)
+@@ -174,7 +174,8 @@ impl HttpServiceConfig {
+     ///
+     /// The line, including its line end, may occupy up to and including this
+     /// number of bytes. Requests with a longer request line are rejected with
+-    /// `414 URI Too Long`. The line is also limited by
++    /// `414 URI Too Long`, or with `400 Bad Request` when the method alone
++    /// exceeds the limit. The line is also limited by
+     /// [`set_max_buf_size`](Self::set_max_buf_size). The default is 16 KiB.
+     pub fn set_max_start_line_size(mut self, val: usize) -> Self {
+         self.max_start_line_size = val;
+@@ -320,10 +321,11 @@ impl HttpServiceConfig {
+     /// Enables validation of the HTTP/1 `Host` request header.
+     ///
+     /// When enabled, requests are rejected with `400 Bad Request` if a
+-    /// `Host` value is not a valid host and optional port. An empty `Host`
+-    /// value is accepted. Requests with more than one `Host` header and
+-    /// HTTP/1.1 requests without a `Host` header are always rejected,
+-    /// regardless of this setting, see
++    /// `Host` value is not a valid host and optional port. Requests with more
++    /// than one `Host` header, HTTP/1.1 requests without a `Host` header and
++    /// requests with an empty `Host` value whose target has no authority
++    /// (origin-form or asterisk-form) are always rejected, regardless of this
++    /// setting, see
+     /// [RFC 9112 section 3.2](https://www.rfc-editor.org/rfc/rfc9112#section-3.2).
+     /// This setting does not affect HTTP/2. It is disabled by default.
+     pub fn set_host_validation(mut self, enabled: bool) -> Self {
+@@ -384,7 +386,8 @@ impl HttpServiceConfig {
+     ///
+     /// HTTP/1 Host-header validation is controlled separately by
+     /// [`Self::set_host_validation`]. Mandatory protocol checks, URL
+-    /// representation limits and, for HTTP/1, rejection of raw non-ASCII
++    /// representation limits, rejection of asterisk-form (`*`) targets for
++    /// methods other than OPTIONS and, for HTTP/1, rejection of raw non-ASCII
+     /// bytes in the request target remain enforced regardless of these
+     /// settings.
+     /// The router's existing per-segment percent-decoding is also unchanged.
+```
+
+**File**: `ntex/src/http/h1/decoder.rs` (modified, +58/-19)
+```diff
+@@ -216,6 +216,11 @@ impl<T: MessageType> MessageDecoder<T> {
+         let len = src.len();
+         let max_line = inner.cfg.max_start_line_size;
+         if inner.val.is_none() {
++            // RFC 9112 §3: a method that alone exceeds the start-line limit
++            // is rejected as an invalid method, not as a long target
++            if T::REQUEST && len > max_line && !src[..=max_line].contains(&b' ') {
++                return Err(DecodeError::Method);
++            }
+             // the parser resumes from `line_st`, so data of an incomplete
+             // start line is not scanned again on the next read
+             match T::decode(src, &mut inner.line, &mut inner.line_st, &inner.cfg)? {
+@@ -314,6 +319,7 @@ bitflags::bitflags! {
+         const WS_UPGRADE   = 0b1000_0000;
+         const SEEN_HOST    = 0b0001_0000_0000;
+         const TE_OTHER     = 0b0010_0000_0000;
++        const EMPTY_HOST   = 0b0100_0000_0000;
+     }
  }
  
-+thread_local! {
-+    static CURRENT_CPU: Cell<Option<usize>> = const { Cell::new(None) };
-+}
-+
-+/// Sets the index of the CPU the current worker thread is placed on.
-+pub(crate) fn set_current_cpu(cpu: Option<usize>) {
-+    CURRENT_CPU.with(|c| c.set(cpu));
-+}
-+
-+/// Returns the index of the CPU the current worker thread is placed on.
-+pub(crate) fn current_cpu() -> Option<usize> {
-+    CURRENT_CPU.with(Cell::get)
-+}
-+
-+/// Sets `SO_INCOMING_CPU` of the listener, so `SO_REUSEPORT` sends
-+/// connections whose packets are processed on `cpu` to this listener.
-+///
-+/// Supported on Linux and Android.
-+pub(crate) fn set_incoming_cpu(lst: &std::net::TcpListener, cpu: usize) -> std::io::Result<()> {
-+    sys::set_incoming_cpu(lst, cpu)
-+}
-+
- impl fmt::Display for Placement {
-     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-         write!(f, "{:?} cpu {} (core", self.mode, self.cpu)?;
-@@ -263,7 +285,7 @@ fn interleave<T>(lists: Vec<Vec<T>>) -> Vec<T> {
- 
- #[cfg(any(target_os = "linux", target_os = "android"))]
- mod sys {
--    use std::{fs, mem, path::Path};
-+    use std::{fs, io, mem, path::Path};
- 
-     use super::{Affinity, Cpu, CpuInfo};
- 
-@@ -414,13 +436,36 @@ mod sys {
-         usize::try_from(cpu.num).unwrap_or(usize::MAX)
-     }
- 
--    pub(super) fn incoming_cpu(stream: &std::net::TcpStream) -> Option<Cpu> {
-+    #[cfg(target_os = "linux")]
-+    const SO_INCOMING_CPU: libc::c_int = libc::SO_INCOMING_CPU;
-+    #[cfg(target_os = "android")]
-+    const SO_INCOMING_CPU: libc::c_int = 49;
-+
-+    pub(super) fn set_incoming_cpu(lst: &std::net::TcpListener, cpu: usize) -> io::Result<()> {
-         use std::os::fd::AsRawFd;
- 
--        #[cfg(target_os = "linux")]
--        const SO_INCOMING_CPU: libc::c_int = libc::SO_INCOMING_CPU;
--        #[cfg(target_os = "android")]
--        const SO_INCOMING_CPU: libc::c_int = 49;
-+        let cpu = libc::c_int::try_from(cpu).map_err(io::Error::other)?;
-+        let len =
-+            libc::socklen_t::try_from(mem::size_of::<libc::c_int>()).map_err(io::Error::other)?;
-+        // SAFETY: the input buffer holds `len` bytes
-+        let res = unsafe {
-+            libc::setsockopt(
-+                lst.as_raw_fd(),
-+                libc::SOL_SOCKET,
-+                SO_INCOMING_CPU,
-+                (&raw const cpu).cast(),
-+                len,
-+            )
-+        };
-+        if res == 0 {
-+            Ok(())
-+        } else {
-+            Err(io::Error::last_os_error())
-+        }
-+    }
-+
-+    pub(super) fn incoming_cpu(stream: &std::net::TcpStream) -> Option<Cpu> {
-+        use std::os::fd::AsRawFd;
- 
-         let mut cpu: libc::c_int = -1;
-         let mut len = libc::socklen_t::try_from(mem::size_of::<libc::c_int>()).ok()?;
-@@ -784,6 +829,10 @@ mod sys {
-         (before + cpu.num) as usize
-     }
- 
-+    pub(super) fn set_incoming_cpu(_: &std::net::TcpListener, _: usize) -> std::io::Result<()> {
-+        Err(std::io::ErrorKind::Unsupported.into())
-+    }
-+
-     // sockets are pointer-sized, the output buffer has a few bytes
-     #[allow(clippy::cast_possible_truncation)]
-     pub(super) fn incoming_cpu(stream: &TcpStream) -> Option<Cpu> {
-@@ -903,6 +952,10 @@ mod sys {
-         None
-     }
- 
-+    pub(super) fn set_incoming_cpu(_: &std::net::TcpListener, _: usize) -> std::io::Result<()> {
-+        Err(std::io::ErrorKind::Unsupported.into())
-+    }
-+
-     pub(super) fn apply(_: Affinity, _: Cpu, _: &[Cpu]) -> bool {
-         false
-     }
-```
-
-**File**: `ntex-server/src/balance.rs` (modified, +33/-3)
-```diff
-@@ -41,6 +41,32 @@ pub enum LoadBalancing {
-     /// This is the default.
-     #[default]
-     IncomingCpu,
-+    /// Each worker accepts connections on its own TCP listener.
-+    ///
-+    /// Every TCP listener is replicated with `SO_REUSEPORT`, one socket per
-+    /// worker, and each worker accepts on its own socket on its own thread,
-+    /// so connections do not pass through an accept thread. A worker accepts
-+    /// only while its service is ready, e.g. below the
-+    /// [`max_connections`](crate::net::ServerBuilder::max_connections) limit,
-+    /// otherwise connections wait in its socket's listen backlog.
-+    ///
-+    /// The kernel chooses the socket of a new connection. A socket of a
-+    /// worker placed on a CPU has `SO_INCOMING_CPU` set to that CPU, so the
-+    /// connection goes to the worker on the CPU that processes its packets,
-+    /// with Linux 6.1 or later. Otherwise, and for packets processed on a
-+    /// CPU without a worker, the kernel chooses by a hash of the connection
-+    /// address. Spread the network interrupts, e.g. with RSS or RPS, over
-+    /// the worker CPUs, see [`Affinity`](crate::Affinity).
-+    ///
-+    /// Connections are not rebalanced: connections waiting for a busy or
-+    /// restarting worker are not taken by other workers. Connections queued
-+    /// on a socket are reset when the server stops.
-+    ///
-+    /// Requires Linux or Android and the native `polling` or `io-uring`
-+    /// runtime. Otherwise, and for Unix domain sockets and items submitted
-+    /// with [`Server::process`](crate::Server::process), it works like
-+    /// [`IncomingCpu`](Self::IncomingCpu).
-+    Reuseport,
- }
- 
- /// Minimum interval between worker load samples.
-@@ -204,10 +230,14 @@ impl Balancer {
-     }
- 
-     /// Returns `true` if [`select`](Self::select) uses the incoming CPU of
--    /// items, i.e. the mode is [`LoadBalancing::IncomingCpu`] and some
-+    /// items, i.e. the mode is [`LoadBalancing::IncomingCpu`] or
-+    /// [`LoadBalancing::Reuseport`] and some
-     /// workers are placed on CPUs.
-     pub(crate) fn uses_incoming_cpu<T>(&mut self, workers: &[Worker<T>]) -> bool {
--        if self.mode != LoadBalancing::IncomingCpu {
-+        if !matches!(
-+            self.mode,
-+            LoadBalancing::IncomingCpu | LoadBalancing::Reuseport
-+        ) {
-             return false;
+@@ -479,8 +485,11 @@ pub(crate) trait MessageType: fmt::Debug + Sized {
+                     log::trace!("multiple Host headers not allowed");
+                     return Err(DecodeError::Header);
+                 }
+-                // `Host = uri-host [ ":" port ]`, an empty value is allowed
+-                if st.validate_host
++                // `Host = uri-host [ ":" port ]`, an empty value is checked
++                // against the target once the request is complete
++                if value.as_bytes().trim_ascii().is_empty() {
++                    st.flags.insert(Flags::EMPTY_HOST);
++                } else if st.validate_host
+                     && !matches!(
+                         value.to_str().map(urly::Authority::new),
+                         Ok(Ok(host)) if host.userinfo().is_none()
+@@ -601,6 +610,12 @@ impl MessageType for Request {
+             log::trace!("no Host header specified for HTTP/1.1 request");
+             return Err(DecodeError::Header);
          }
-         if self.local_stale {
-@@ -228,7 +258,7 @@ impl Balancer {
-     ) -> (usize, Option<bool>) {
-         match self.mode {
-             LoadBalancing::RoundRobin => (self.round_robin(workers.len()), None),
--            LoadBalancing::LeastLoaded | LoadBalancing::IncomingCpu => {
-+            LoadBalancing::LeastLoaded | LoadBalancing::IncomingCpu | LoadBalancing::Reuseport => {
-                 let now = Instant::now();
-                 self.refresh(now, |idx| Sample::of(&workers[idx], now));
-                 let load = |idx: usize| workers[idx].load();
-```
-
-**File**: `ntex-server/src/lib.rs` (modified, +15/-0)
-```diff
-@@ -100,6 +100,21 @@ pub trait ServerConfiguration: Send + Clone + 'static {
-         let _ = item;
-         None
-     }
-+
-+    /// Returns a source of items the worker produces itself.
-+    ///
-+    /// Called on the worker thread, once the worker's first service is
-+    /// created. Items of the source are passed to the worker's service like
-+    /// items sent to the worker. The source is polled only while the service
-+    /// is ready, so it is subject to the service's backpressure. It is kept
-+    /// when the service is re-created, and dropped when it ends or the worker
-+    /// stops. Network servers use it for
-+    /// [`LoadBalancing::Reuseport`]. The default returns `None`.
-+    fn local_items(
-+        &self,
-+    ) -> Option<std::pin::Pin<Box<dyn ntex_util::future::Stream<Item = Self::Item>>>> {
-+        None
-+    }
- }
++        // RFC 9110 §4.2.1: an `http` URI with an empty host is invalid, an
++        // empty Host is accepted only when the target carries the authority
++        if st.flags.contains(Flags::EMPTY_HOST) && self.uri().authority().is_none() {
++            log::trace!("empty Host header for a target without authority");
++            return Err(DecodeError::Header);
++        }
  
- #[cfg(test)]
-```
-
-**File**: `ntex-server/src/manager.rs` (modified, +123/-0)
-```diff
-@@ -841,6 +841,129 @@ mod tests {
-         wrk.stop(Millis::ZERO).await;
+         for ctype in st.connection_types() {
+             self.head_mut().set_connection_type(ctype);
+@@ -915,6 +930,7 @@ impl SizeLine {
+             SizeLine::Unknown => false,
+             SizeLine::Lws => bytes.iter().all(|&b| b == b' ' || b == b'\t'),
+             // any octet except control characters other than HTAB, `\r` ends the line
++            // and the complete line, with the extension grammar, is parsed again
+             SizeLine::Ext => bytes
+                 .iter()
+                 .all(|&b| b == b'\t' || (b >= 0x20 && b != 0x7f)),
+@@ -1364,13 +1380,13 @@ mod tests {
+         }};
      }
  
-+    /// Configuration whose services count completed shutdowns after a delay.
-+    #[derive(Clone)]
-+    struct DelayCfg(Arc<AtomicUsize>);
-+
-+    struct DelaySrv(Arc<AtomicUsize>);
-+
-+    impl Service<(), usize> for DelaySrv {
-+        type Res = ();
-+        type Error = ();
-+
-+        async fn call(&self, _: usize, _: Ctx<'_, Self, ()>) -> Result<(), ()> {
-+            Ok(())
-+        }
-+
-+        async fn shutdown(&self, _: Ctx<'_, Self, ()>) {
-+            sleep(Millis(300)).await;
-+            self.0.fetch_add(1, Ordering::SeqCst);
-+        }
-+    }
-+
-+    impl ServerConfiguration for DelayCfg {
-+        type Item = usize;
-+        type Service = DelaySrv;
-+
-+        async fn create(&self) -> std::io::Result<DelaySrv> {
-+            Ok(DelaySrv(self.0.clone()))
-+        }
-+    }
-+
-+    async fn ready_server(graceful_cfg: bool) -> (Server<usize>, Arc<AtomicUsize>) {
-+        let shutdowns = Arc::new(AtomicUsize::new(0));
-+        let mut pool = WorkerPool::new().name("test").workers(1).disable_signals();
-+        if graceful_cfg {
-+            pool = pool.graceful_shutdown();
-+        }
-+        let srv = pool.run(DelayCfg(shutdowns.clone()));
-+        while srv.status() != ServerStatus::Ready {
-+            srv.status_changed().await;
-+        }
-+        (srv, shutdowns)
-+    }
-+
-+    /// STATEMENT: `SIGINT` stops the server immediately, `SIGTERM` stops it
-+    /// gracefully, `SIGQUIT` and fatal signals or panics follow
-+    /// `graceful_shutdown`, and `SIGHUP` is ignored.
-+    ///
-+    /// HOW:
-+    /// - For each signal and `graceful_shutdown` setting, start a one-worker
-+    ///   server whose service shutdown takes 300 ms, deliver the signal, and
-+    ///   wait for the server to stop.
-+    /// - A graceful stop waits for the service shutdown, so the shutdown is
-+    ///   counted once the server is stopped; a non-graceful stop does not.
-+    /// - Deliver `SIGHUP` and check the server stays `Ready` without shutting
-+    ///   down its service.
-+    #[ntex::test]
-+    async fn signals_stop_server() {
-+        let bt = ntex::error::Backtrace::with_current();
-+        let cases = [
-+            (Signal::Int, true, 0),
-+            (Signal::Term, false, 1),
-+            (Signal::Quit, false, 0),
-+            (Signal::Quit, true, 1),
-+            (Signal::Panic(PanicSource::Sig("SIGSEGV")), true, 1),
-+            (Signal::Panic(PanicSource::Sig("SIGSEGV")), false, 0),
-+            (
-+                Signal::Panic(PanicSource::App("boom".into(), bt.clone())),
-+                true,
-+                1,
-+            ),
-+            (Signal::Panic(PanicSource::App("boom".into(), bt)), false, 0),
-+        ];
-+        for (sig, graceful_cfg, expected) in cases {
-+            let (srv, shutdowns) = ready_server(graceful_cfg).await;
-+            let name = format!("{sig:?}, graceful_shutdown({graceful_cfg})");
-+            srv.signal(sig);
-+            srv.clone().await.unwrap();
-+            assert_eq!(srv.status(), ServerStatus::Stopped, "{name}");
-+            assert_eq!(shutdowns.load(Ordering::SeqCst), expected, "{name}");
-+        }
-+
-+        let (srv, shutdowns) = ready_server(true).await;
-+        srv.signal(Signal::Hup);
-+        // the command loop handles commands in order
-+        srv.pause().await;
-+        srv.resume().await;
-+        assert_eq!(srv.status(), ServerStatus::Ready);
-+        assert_eq!(shutdowns.load(Ordering::SeqCst), 0);
-+        srv.stop(true).await;
-+        assert_eq!(shutdowns.load(Ordering::SeqCst), 1);
-+    }
-+
-+    /// STATEMENT: Commands queued while the server stops are answered once
-+    /// the stop completes.
-+    ///
-+    /// HOW:
-+    /// - Start a graceful stop of a server whose service shutdown takes
-+    ///   300 ms.
-+    /// - Queue a pause, a resume, a second non-graceful stop, and a wait for
-+    ///   the server future.
-+    /// - Check all of them complete after the graceful stop has shut the
-+    ///   service down, and the server is `Stopped`.
-+    #[ntex::test]
-+    async fn commands_during_stop_are_answered() {
-+        let (srv, shutdowns) = ready_server(false).await;
-+        let stop = srv.stop(true);
-+        let pause = srv.pause();
-+        let resume = srv.resume();
-+        let stop2 = srv.stop(false);
-+        let wait = srv.clone();
-+
-+        let res = timeout(Millis(5000), async {
-+            stop.await;
-+            assert_eq!(shutdowns.load(Ordering::SeqCst), 1);
-+            pause.await;
-+            resume.await;
-+            stop2.await;
-+            wait.await
-+        })
-+        .await;
-+        assert!(matches!(res, Ok(Ok(()))));
-+        assert_eq!(srv.status(), ServerStatus::Stopped);
-+    }
-+
-     /// An item submitted after the server passed the status check and
-     /// closed its router is returned, not queued.
-     #[test]
-```
-
----
-
-### Incident Patch 2: `1a38c4b1` (2026-11-13)
-**Commit Message**: Fix test race
-
-**File**: `ntex-server/src/net/accept.rs` (modified, +4/-2)
-```diff
-@@ -804,7 +804,8 @@ mod tests {
-     /// - Resume the loop while the server is still paused and check the
-     ///   connection stays in the backlog.
-     /// - Resume the server and the loop and check the queued and a new
--    ///   connection are delivered.
-+    ///   connection are delivered, and the listener metrics count three
-+    ///   accepted connections.
-     /// - Terminate the loop and check the listener is closed.
-     #[ntex::test]
-     async fn backlog_while_server_unavailable() {
-@@ -855,13 +856,14 @@ mod tests {
-         assert_eq!(srv.metrics().accept_backlog, 0);
-         let _c3 = std::net::TcpStream::connect(addr).unwrap();
-         wait_for("third connection", || received.load(Ordering::SeqCst) == 3).await;
-+        assert_eq!(srv.metrics().listeners[0].accepted, 3);
- 
-+        // probe connections may be accepted before the loop handles `Terminate`
-         notify.send(AcceptorCommand::Terminate);
-         wait_for("closed listener", || {
-             std::net::TcpStream::connect(addr).is_err()
-         })
-         .await;
--        assert_eq!(srv.metrics().listeners[0].accepted, 3);
-         srv.stop(false).await;
-     }
- }
-```
-
----
-
-### Incident Patch 3: `43d80a4d` (2026-11-12)
-**Commit Message**: Update load balancing section in framework guide
-
-**File**: `docs/5-server.md` (modified, +87/-6)
-```diff
-@@ -8,6 +8,10 @@ sends each connection to an available worker:
- listeners -> accept thread -> worker-local service
- ```
- 
-+On Linux and Android, `LoadBalancing::Reuseport` removes the accept thread:
-+each worker accepts connections on its own listener. See
-+[Per-worker listeners](#per-worker-listeners).
-+
- The server manages sockets and workers without knowing the connection's
- protocol. Each worker's service decides how to handle the resulting `Io`,
- whether it carries HTTP, MQTT, or a custom protocol.
-@@ -306,8 +310,10 @@ which CPUs run the process. Workers still spread across all allowed CPUs.
- 
- Load balancing chooses which ready worker receives each new connection.
- The accept thread makes that choice and queues the connection to the worker.
--The worker turns the socket into an ntex `Io` and registers it with its own
--runtime. All later I/O for that connection runs on the same worker.
-+With `LoadBalancing::Reuseport`, the kernel chooses instead, see
-+[Per-worker listeners](#per-worker-listeners). The worker turns the socket
-+into an ntex `Io` and registers it with its own runtime. All later I/O for
-+that connection runs on the same worker.
- 
- Items submitted with `Server::process()` follow the same dispatch rules on
- the submitting thread. While no worker is available, items wait in the
-@@ -331,6 +337,10 @@ rules. Among those workers, `LoadBalancing` decides:
-   for current-thread runtimes. Otherwise, the connection count decides.
- * `IncomingCpu`, the default, prefers a worker on the CPU that receives the
-   connection's packets. Otherwise, it works like `LeastLoaded`.
-+* `Reuseport` lets each worker accept TCP connections on its own
-+  `SO_REUSEPORT` socket, without an accept thread. Linux and Android only,
-+  see [Per-worker listeners](#per-worker-listeners). Other connections and
-+  items work like `IncomingCpu`.
- 
- For each connection, `IncomingCpu` follows these steps:
- 
-@@ -451,6 +461,56 @@ For the best locality, use one queue per worker and pin the queue interrupts
- to the worker CPUs. irqbalance may move them again unless you stop it or tell
- it to leave those interrupts alone.
- 
-+#### Per-worker listeners
-+
-+`LoadBalancing::Reuseport` removes the accept thread for TCP listeners on
-+Linux and Android. ntex replicates every bound TCP socket with
-+`SO_REUSEPORT`, one socket per worker, each with the `backlog()` length.
-+Each worker accepts on its own sockets on its own thread, so connections
-+never pass between threads.
-+
-+```rust,no_run
-+use ntex::server::LoadBalancing;
-+
-+let builder = ntex::server::build()
-+    .load_balancing(LoadBalancing::Reuseport);
-+```
-+
-+The kernel chooses the socket for each new connection. ntex sets
-+`SO_INCOMING_CPU` on the sockets of each worker placed on a CPU. On Linux 6.1
-+or later, the kernel then sends the connection to the worker on the CPU that
-+processed its packets. Connections processed on a CPU without a worker are
-+spread by a hash of their addresses and ports, as are all connections with
-+`Affinity::Disabled`. Spread the receive queues, or RPS, over the worker CPUs
-+as described in the previous section.
-+
-+A worker accepts only while it is ready, for example below
-+`max_connections()`. Otherwise, new connections wait in its socket's listen
-+backlog. The kernel has already chosen the socket, so ntex cannot move them:
-+
-+* Utilization and blocked workers are not considered, and
-+  [Rescheduling](#rescheduling) does not apply. A blocked worker delays the
-+  connections queued on its socket until it unblocks.
-+* A failed worker's sockets stay open. Its replacement accepts the
-+  connections waiting there.
-+* `Server::pause()` stops every worker from accepting.
-+* When the server stops, workers close their sockets first. Connections
-+  still in a listen backlog are reset. Accepted connections finish within
-+  the graceful shutdown timeout as usual.
-+
-+The accept thread still handles:
-+
-+* Every listener on the tokio and compio runtimes. Reuseport requires the
-+  `neon-polling` or `neon-uring` runtime. ntex logs a warning and falls back
-+  to the accept thread.
-+* Every listener on platforms other than Linux and Android.
-+* Unix domain sockets.
-+* A TCP listener that cannot be replicated, for example when binding a copy
-+  fails. ntex logs `Cannot replicate <addr>, using an accept thread`.
-+
-+Those connections, and items from `Server::process()`, are balanced like
-+`IncomingCpu`.
-+
- ### Choosing the settings
- 
- Start with the defaults, then compare the workers' `active_connections`
-@@ -468,6 +528,15 @@ Use `LoadBalancing::RoundRobin` when you want connections assigned in turn,
- with blocked workers skipped as described in
- [Connection load balancing](#connection-load-balancing).
- 
-+Consider `LoadBalancing::Reuseport` on Linux when the accept thread limits
-+the connection rate, for example with many short-lived connections. It
-+scales accepting with the workers and avoids a thread hop per connection.
-+It suits workers with similar connection costs that rarely
-```
-
-**File**: `ntex-server/src/manager.rs` (modified, +25/-0)
-```diff
-@@ -964,6 +964,31 @@ mod tests {
-         assert_eq!(srv.status(), ServerStatus::Stopped);
-     }
- 
-+    /// STATEMENT: `Routing` diagnostics show the worker count and whether
-+    /// the router is closed.
-+    ///
-+    /// HOW:
-+    /// - Create a router without workers and check its debug output.
-+    /// - Add a worker, close the router, and check the output again.
-+    #[ntex::test]
-+    async fn debug_routing() {
-+        let callback: IncomingCpu<usize> = Box::new(|_| None);
-+        let r = Routing::new(Balancer::new(LoadBalancing::IncomingCpu), 1, callback);
-+        assert_eq!(
-+            format!("{r:?}"),
-+            "Routing { workers: 0, closed: false, .. }"
-+        );
-+
-+        let mut wrk = Worker::start("test".into(), Cfg, None);
-+        assert_eq!(wrk.wait_for_status().await, WorkerStatus::Available);
-+        {
-+            let mut router = r.lock();
-+            router.workers.push(wrk);
-+            router.closed = true;
-+        }
-+        assert_eq!(format!("{r:?}"), "Routing { workers: 1, closed: true, .. }");
-+    }
-+
-     /// An item submitted after the server passed the status check and
-     /// closed its router is returned, not queued.
-     #[test]
-```
-
-**File**: `ntex-server/src/net/accept.rs` (modified, +18/-0)
-```diff
-@@ -722,6 +722,24 @@ mod tests {
-     #[derive(Clone)]
-     struct Cfg(Arc<AtomicUsize>);
- 
-+    /// STATEMENT: `AcceptLoop` diagnostics show the thread name and the
-+    /// number of accept threads.
-+    ///
-+    /// HOW:
-+    /// - Create an accept loop and set the server name.
-+    /// - Check the debug output has the `{name}:accept` name, one acceptor
-+    ///   and the notify handles.
-+    #[test]
-+    fn debug_accept_loop() {
-+        let mut accept = AcceptLoop::new();
-+        accept.name("srv");
-+        let debug = format!("{accept:?}");
-+        assert!(
-+            debug.starts_with("AcceptLoop { name: \"srv:accept\", acceptors: 1, notify: "),
-+            "{debug}"
-+        );
-+    }
-+
-     struct Srv(Arc<AtomicUsize>);
- 
-     impl Service<(), Connection> for Srv {
-```
-
-**File**: `ntex-server/src/net/config.rs` (modified, +1/-1)
-```diff
-@@ -191,7 +191,7 @@ struct ServiceRuntimeInner {
- impl<Cfg> fmt::Debug for ServiceRuntime<Cfg> {
-     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-         let inner = self.1.borrow();
--        f.debug_struct("ServiceRuntimer")
-+        f.debug_struct("ServiceRuntime")
-             .field("names", &inner.names)
-             .finish()
-     }
-```
-
-**File**: `ntex-server/src/net/mod.rs` (modified, +14/-1)
-```diff
-@@ -67,15 +67,19 @@ mod tests {
+-    /// STATEMENT: Opt-in decoding accepts asterisk-form only for OPTIONS.
++    /// STATEMENT: Asterisk-form is accepted only for OPTIONS, with or without target processing.
+     ///
      /// HOW:
-     /// - Configure one named listener and check its token, backlog and socket name in diagnostics.
-     /// - Build the stream server and worker service, checking the factory count and token routing.
-+    /// - Check the `ServiceRuntime` passed to `on_worker_start` lists the listener entry.
-     #[ntex::test]
-     async fn debug_network_services() {
-         use crate::ServerConfiguration;
-         use ntex_service::cfg::SharedCfg;
- 
-+        let runtime_debug = std::sync::Arc::new(std::sync::Mutex::new(String::new()));
-         let config = ServiceConfig::<NoConfig>::new(Token(7), 64);
-         let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
-         config.listen("debug-listener", listener);
--        config.on_worker_start(async |runtime| {
-+        let rt_debug = runtime_debug.clone();
-+        config.on_worker_start(async move |runtime| {
-+            *rt_debug.lock().unwrap() = format!("{runtime:?}");
-             runtime.service(
-                 "debug-listener",
-                 SharedCfg::default(),
-@@ -106,6 +110,15 @@ mod tests {
-         assert!(debug.starts_with("StreamService { tokens: {Token(7): (0, "));
-         assert!(debug.contains("conns: Counter("));
-         assert!(debug.contains("count: Cell { value: 0 }"));
-+
-+        let debug = runtime_debug.lock().unwrap().clone();
-+        assert!(
-+            debug.starts_with(
-+                "ServiceRuntime { names: {\"debug-listener\": Entry { idx: 0, \
-+                 name: \"debug-listener\", tokens: [(Token(7), "
-+            ),
-+            "{debug}"
-+        );
-     }
- 
+-    /// - Preserve `*` by default for OPTIONS and other methods.
+-    /// - Enable target processing and check that only OPTIONS is accepted.
++    /// - Decode `OPTIONS *` with the default and the normalizing decoder and check `*` is kept.
++    /// - Decode `*` with other methods and require both decoders to reject it.
      #[test]
+-    fn test_asterisk_form_validation_opt_in() {
++    fn test_asterisk_form_options_only() {
+         let cfg: SharedCfg = SharedCfg::new("test")
+             .add(HttpServiceConfig::new().set_request_target_normalization(true))
+             .into();
+@@ -1383,8 +1399,7 @@ mod tests {
+         for method in ["GET", "POST", "HEAD", "CONNECT"] {
+             let mut buf =
+                 BytesMut::from(format!("{method} * HTTP/1.1\r\nhost: a\r\n\r\n").as_str());
+-            let req = parse_ready!(&mut buf.clone());
+-            assert_eq!(req.path(), "*");
++            expect_parse_err!(&mut buf.clone());
+             assert!(reader.decode(&mut buf).is_err(), "{method}");
+         }
+     }
+@@ -1690,6 +1705,8 @@ mod tests {
+     /// HOW:
+     /// - Decode at-limit and oversized complete/partial lines, inspect exact errors, and accept a longer header.
+     /// - Verify the default limit also rejects a large incomplete request target.
++    /// - Check a method longer than the limit fails with `DecodeError::Method`, while a
++    ///   shorter method followed by a long target keeps `StartLineTooLong`.
+     #[test]
+     fn test_max_start_line_size() {
+         let cfg: SharedCfg = SharedCfg::new("test")
+@@ -1736,6 +1753,23 @@ mod tests {
+             reader.decode(&mut buf),
+             Err(DecodeError::StartLineTooLong(_))
+         ));
++
++        // a method longer than the limit is an invalid method, complete or not
++        for line in [
++            format!("{} / HTTP/1.1\r\nhost: a\r\n\r\n", "A".repeat(33))
+```
+
+**File**: `ntex/src/http/h2/service.rs` (modified, +9/-2)
+```diff
+@@ -726,7 +726,8 @@ mod tests {
+     /// HOW:
+     /// - Build targets from pseudo headers, including CONNECT, OPTIONS and double-slash paths.
+     /// - Check raw components with processing disabled and reject malformed values when enabled.
+-    /// - Check normalization length limits and preservation of OPTIONS asterisk-form.
++    /// - Check normalization length limits, preservation of OPTIONS asterisk-form and
++    ///   rejection of asterisk-form for other methods under every policy.
+     #[test]
+     fn test_request_uri() {
+         let mut pseudo = h2::frame::PseudoHeaders::default();
+@@ -828,7 +829,13 @@ mod tests {
+         assert!(request_uri(&pseudo, TargetPolicy::Normalize).is_none());
+ 
+         pseudo.path = Some("*".into());
+-        assert!(!valid_target(&pseudo));
++        for policy in [
++            TargetPolicy::Raw,
++            TargetPolicy::Validate,
++            TargetPolicy::Normalize,
++        ] {
++            assert!(request_uri(&pseudo, policy).is_none());
++        }
+         pseudo.method = Some(Method::OPTIONS);
+         let (_, uri) = request_uri(&pseudo, TargetPolicy::Normalize).unwrap();
+         assert_eq!(uri.path(), "*");
+```
+
+**File**: `ntex/src/http/helpers.rs` (modified, +7/-0)
+```diff
+@@ -43,6 +43,13 @@ pub(crate) fn process_request_target(
+     version: super::Version,
+     uri: &mut urly::Url,
+ ) -> Result<(), super::error::DecodeError> {
++    // RFC 9112 §3.2.4, RFC 9113 §8.3.1: asterisk-form is OPTIONS only,
++    // enforced regardless of the policy
++    if uri.path() == "*" && method != super::Method::OPTIONS {
++        return Err(super::error::DecodeError::InvalidInput(
++            "asterisk-form request-target is only valid for OPTIONS",
++        ));
++    }
+     if policy == TargetPolicy::Raw {
+         return Ok(());
+     }
+```
+
+**File**: `ntex/tests/http_server.rs` (modified, +3/-1)
+```diff
+@@ -241,7 +241,7 @@ async fn test_h1_request_target_normalization() {
+ /// HOW:
+ /// - Send malformed escapes, fragments, authorities and asterisk forms over raw TCP.
+ /// - Require successful fallback responses by default and `400` with validation-only
+-///   or normalization enabled.
++///   or normalization enabled; `GET *` is always rejected with `400`.
+ /// - Check rejected requests never enter application middleware.
+ /// - Send an invalid Host header with either target setting and require `400` only
+ ///   when transport Host validation is enabled.
+@@ -301,6 +301,8 @@ async fn test_h1_request_target_validation() {
+             }
+             let rejected = if host == "invalid/host" {
+                 validate_host
++            } else if target == "*" {
++                true
+             } else {
+                 mode != TargetMode::Raw
+             };
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1221** (2026-11-15): http/1 spec compliance fixes  (@fafhrd91)
+- **PR #1220** (2026-11-14): Various optimizations (@fafhrd91)
 - **PR #1219** (2026-11-13): Fix test race (@fafhrd91)
 - **PR #1218** (2026-11-13): Add Tickets::cancel() (@fafhrd91)
 - **PR #1216** (2026-11-13): Refactor timer (@fafhrd91)
 - **PR #1215** (2026-11-12): Update framework guide (@fafhrd91)
-- **PR #1214** (2026-11-12): Add `tcp_listener()` and `Listener` for accepting TCP connections (@fafhrd91)
-- **PR #1213** (2026-11-12): Fix schannel test (@fafhrd91)
 
 ---
 
@@ -2918,13 +2514,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add support for SO_REUSEPORT on linux
+## X. HTTP/1 spec complience fixes
 
 **RULE**:
 When implementing operations in `Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ntex-rs/ntex. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c355f885`: Add support for SO_REUSEPORT on linux. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `56a4ed76`: HTTP/1 spec complience fixes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.toml`.
@@ -2932,19 +2528,17 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-ntex-net = "4.11.0"
-ntex-server = "4.6.0"
+ntex-httparse = "2.4.2"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-ntex-net = "4.10.3"
-ntex-server = "4.5.2"
+ntex-httparse = "2.4.0"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c355f885` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `56a4ed76` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

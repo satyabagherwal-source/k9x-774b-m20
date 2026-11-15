@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-15T21:06:43.437Z",
-  "total_verified_learnings": 8723,
+  "last_updated": "2026-11-15T21:16:18.385Z",
+  "total_verified_learnings": 8725,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18609,
+  "total_items": 18624,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -216529,14 +216529,19 @@
       "slug": "ntex-rs-ntex",
       "platform": "github",
       "source_url": "https://github.com/ntex-rs/ntex",
-      "source_version": "1a38c4b1",
-      "content_hash": "821896881ab592ed9e767f7726eeff8f522f704a749a6f6829c4b38c8eaae7b9",
+      "source_version": "56a4ed76",
+      "content_hash": "223677ecd9c773c6ce353edce9a02d0184ed8de90e4bf88e0e9a6a9c67df894f",
       "dossier_path": "07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
       "promoted_rules": [
         {
           "number": 8390,
           "title": "Add support for SO_REUSEPORT on linux",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8652,
+          "title": "HTTP/1 spec complience fixes",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -216545,7 +216550,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T21:45:08.491Z",
+      "verified_at": "2026-11-15T21:15:34.926Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -216587,10 +216592,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ntex-rs-ntex-architecture-intelligence-ntex-rs-ntex-core-invariants.md",
       "title": "Architecture Intelligence: ntex-rs/ntex Core Invariants",
       "repository": "ntex-rs/ntex",
-      "source_version": "1a38c4b1",
-      "content_hash": "b93f34efca96c9ed1c28ab85dbe28f3464124fb0ddf68a104cc87a9fa7003e03",
+      "source_version": "56a4ed76",
+      "content_hash": "9c4908c200cd612adeb06403420886bff1b47c4e720fd551aef9595e9180660d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T21:45:08.875Z"
+      "persisted_at": "2026-11-15T21:15:35.416Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ntex-rs-ntex": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ntex-rs-ntex",
@@ -216599,10 +216604,10 @@
       "relative_path": "08_VERIFICATION/ntex-rs-ntex-verification-protocol-empirical-defect-shield-for-ntex-rs-ntex.md",
       "title": "Verification Protocol: Empirical Defect Shield for ntex-rs/ntex",
       "repository": "ntex-rs/ntex",
-      "source_version": "1a38c4b1",
-      "content_hash": "7eff275d9ab8a4dc5c5956d7bb550e0e6e79ac21eb47de7a94a0ec445599286d",
+      "source_version": "56a4ed76",
+      "content_hash": "ef2fa69274f7d6db4d48f4a4f86230440945e7100e8c49518a3c6a4a9f4edac8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T21:45:08.963Z"
+      "persisted_at": "2026-11-15T21:15:35.537Z"
     },
     "learn-github-callstack-react-native-paper": {
       "learning_id": "learn-github-callstack-react-native-paper",
@@ -216802,9 +216807,9 @@
       "title": "Architecture Intelligence: ntex-rs-ntex-learnings Core Invariants",
       "repository": "ntex-rs-ntex-learnings",
       "source_version": "HEAD",
-      "content_hash": "d8c8ef653c0e5818d11b920d09fa752eaffd6e92b9e342d7559ca7f729e5c713",
+      "content_hash": "af54bf688d63baa7247d4dc68900e7d8338ef6680e8e2dee5cb540e541a216b8",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T21:50:24.494Z"
+      "persisted_at": "2026-11-15T21:15:46.817Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ntex-rs-ntex-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ntex-rs-ntex-learnings",
@@ -216814,9 +216819,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for ntex-rs-ntex-learnings",
       "repository": "ntex-rs-ntex-learnings",
       "source_version": "HEAD",
-      "content_hash": "a717fcd4135376958bc6abc356a10aa7fbaeade1abafe2d610b3528c3bb00930",
+      "content_hash": "23e50847667e153b341de65dbe6d8478c54b6b2977cb50b321bbf43628ba6020",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T21:50:24.594Z"
+      "persisted_at": "2026-11-15T21:15:46.935Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-google-t5-t5-small-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-google-t5-t5-small-learnings-core-invariants",
@@ -226993,14 +226998,19 @@
       "slug": "skyhook-io-radar",
       "platform": "github",
       "source_url": "https://github.com/skyhook-io/radar",
-      "source_version": "148a70c8",
-      "content_hash": "fcb78a5266b3d57487fada90b1d9576a21ceaa76274eab6710143049f6a2c909",
+      "source_version": "7f30b56d",
+      "content_hash": "cdbcbbf0eb1332019876e6eaba7eb4e3d333be75f933554a6480cc2c19abfa7b",
       "dossier_path": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "promoted_rules": [
         {
           "number": 8479,
           "title": "Linux desktop packaging with verified nfpm 2.49.0 binary",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8654,
+          "title": "let managed resource lists reveal every entry",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -227009,7 +227019,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T10:30:12.858Z",
+      "verified_at": "2026-11-15T21:15:42.978Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -227051,10 +227061,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-skyhook-io-radar-architecture-intelligence-skyhook-io-radar-core-invariants.md",
       "title": "Architecture Intelligence: skyhook-io/radar Core Invariants",
       "repository": "skyhook-io/radar",
-      "source_version": "148a70c8",
-      "content_hash": "464a79cf7a12adcbbceb361ef5f227141f092a499dc6eae8ace3fc1cb7043f84",
+      "source_version": "7f30b56d",
+      "content_hash": "ac2f4e63ae37eeac309b486f30daffcf8227aee385666cbc994b0a8f80fadab7",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T10:30:13.318Z"
+      "persisted_at": "2026-11-15T21:15:43.438Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-skyhook-io-radar": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-skyhook-io-radar",
@@ -227063,10 +227073,10 @@
       "relative_path": "08_VERIFICATION/skyhook-io-radar-verification-protocol-empirical-defect-shield-for-skyhook-io-ra.md",
       "title": "Verification Protocol: Empirical Defect Shield for skyhook-io/radar",
       "repository": "skyhook-io/radar",
-      "source_version": "148a70c8",
-      "content_hash": "0f76c8c5e031446ed113dadfb7b9dcfbb0c1105b6cb3d027198a3711b241bf64",
+      "source_version": "7f30b56d",
+      "content_hash": "38fb782f652ed1a77f294f90f3525c8b48b56b5b0157f9dc935a800597a2fab5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T10:30:13.417Z"
+      "persisted_at": "2026-11-15T21:15:43.669Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v3-2-learnings-core-inva": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v3-2-learnings-core-inva",
@@ -246581,6 +246591,228 @@
       "content_hash": "f8b58a1a96b89d3fa99ee348a3348d698de0e9c509cc42a0d0864c3af7be4441",
       "domain_letter": "K",
       "persisted_at": "2026-11-15T20:51:39.595Z"
+    },
+    "learn-huggingface-minimaxai-minimax-h3-image": {
+      "learning_id": "learn-huggingface-minimaxai-minimax-h3-image",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "MiniMaxAI/MiniMax-H3-Image",
+      "repository": "MiniMaxAI/MiniMax-H3-Image",
+      "slug": "hf-minimaxai-minimax-h3-image",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-H3-Image",
+      "source_version": "hf-minimaxai-minimax-h3-image",
+      "content_hash": "3970d2dc96d79a81175727bb28da98cece2efcb292bbb9a7da0508fc0e7cf544",
+      "dossier_path": "07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-image-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-image-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T21:15:33.173Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-minimaxai-minimax-h3-image-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-minimaxai-minimax-h3-image-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-minimaxai-minimax-h3-image-research-knowledge-intelligence-minimaxai-minimax-.md",
+      "title": "Research & Knowledge Intelligence: MiniMaxAI/MiniMax-H3-Image Core Invariants",
+      "repository": "MiniMaxAI/MiniMax-H3-Image",
+      "source_version": "hf-minimaxai-minimax-h3-image",
+      "content_hash": "9e96e5550959b9fb843c42940c568d44b1f52a3399ff97209ef55d5560f1aac0",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T21:15:33.517Z"
+    },
+    "rule-8652": {
+      "learning_id": "rule-8652",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8652,
+      "title": "HTTP/1 spec complience fixes",
+      "source_url": "https://github.com/ntex-rs/ntex",
+      "source_version": "56a4ed76",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T21:15:34.926Z"
+    },
+    "candidate_directive-http-1-spec-complience-fixes": {
+      "item_id": "candidate_directive-http-1-spec-complience-fixes",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3BT6-http-1-spec-complience-fixes.md",
+      "title": "HTTP/1 spec complience fixes",
+      "repository": "ntex-rs-ntex-learnings",
+      "source_version": "HEAD",
+      "content_hash": "06dbe1ca760af3f99f6998f4e2bfbdff63a9c060413baf5ed0b514e58723e602",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T21:15:46.702Z"
+    },
+    "learn-github-maziyarpanahi-openmed": {
+      "learning_id": "learn-github-maziyarpanahi-openmed",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "maziyarpanahi/openmed",
+      "repository": "maziyarpanahi/openmed",
+      "slug": "maziyarpanahi-openmed",
+      "platform": "github",
+      "source_url": "https://github.com/maziyarpanahi/openmed",
+      "source_version": "f83eb05b",
+      "content_hash": "ba798c2624eec84f5b4c0b599ec427ad1fbadbcf2c7cc725e127ef8974b31f4d",
+      "dossier_path": "07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8653,
+          "title": "ci(security): skip the private React Native parity app in the kit scan",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T21:15:40.649Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8653": {
+      "learning_id": "rule-8653",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8653,
+      "title": "ci(security): skip the private React Native parity app in the kit scan",
+      "source_url": "https://github.com/maziyarpanahi/openmed",
+      "source_version": "f83eb05b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T21:15:40.649Z"
+    },
+    "candidate_directive-ci-security-skip-the-private-react-native-parity-app-in-the-kit-scan": {
+      "item_id": "candidate_directive-ci-security-skip-the-private-react-native-parity-app-in-the-kit-scan",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-402F-ci-security-skip-the-private-react-native-parity-app-in-the-kit-scan.md",
+      "title": "ci(security): skip the private React Native parity app in the kit scan",
+      "repository": "maziyarpanahi-openmed-learnings",
+      "source_version": "HEAD",
+      "content_hash": "19f25271a46a15ded96c723e65a2961dcb704755e1e7441647c614cd4d9cdac5",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T21:16:18.146Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-maziyarpanahi-openmed-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-maziyarpanahi-openmed-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-maziyarpanahi-openmed-technical-construction-intelligence-maziyarpanahi-openmed-.md",
+      "title": "Technical Construction Intelligence: maziyarpanahi/openmed Core Invariants",
+      "repository": "maziyarpanahi/openmed",
+      "source_version": "f83eb05b",
+      "content_hash": "01895c138cb87f3de47fc108df8f19a3613246f3a69604c8bddcd8831550719c",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T21:15:41.085Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-maziyarpanahi-openmed": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-maziyarpanahi-openmed",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/maziyarpanahi-openmed-verification-protocol-empirical-defect-shield-for-maziyarp.md",
+      "title": "Verification Protocol: Empirical Defect Shield for maziyarpanahi/openmed",
+      "repository": "maziyarpanahi/openmed",
+      "source_version": "f83eb05b",
+      "content_hash": "410fbe1a1a82930122f7c032040890d996e4e3b40631628232ae621f9ddedb8f",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T21:15:41.200Z"
+    },
+    "rule-8654": {
+      "learning_id": "rule-8654",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8654,
+      "title": "let managed resource lists reveal every entry",
+      "source_url": "https://github.com/skyhook-io/radar",
+      "source_version": "7f30b56d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T21:15:42.978Z"
+    },
+    "candidate_directive-let-managed-resource-lists-reveal-every-entry": {
+      "item_id": "candidate_directive-let-managed-resource-lists-reveal-every-entry",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-397C-let-managed-resource-lists-reveal-every-entry.md",
+      "title": "let managed resource lists reveal every entry",
+      "repository": "skyhook-io/radar",
+      "source_version": "7f30b56d",
+      "content_hash": "c03238f3e37d1730829cc99be343eb5cbca9ef6e9059812c7c75e9cfdd90c135",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T21:15:43.324Z"
+    },
+    "agent_contract-agent-contract-skyhook-io-radar-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-skyhook-io-radar-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/skyhook-io-radar-agent-contract-skyhook-io-radar-autonomous-specialist-persona.md",
+      "title": "Agent Contract: skyhook-io/radar Autonomous Specialist Persona",
+      "repository": "skyhook-io/radar",
+      "source_version": "7f30b56d",
+      "content_hash": "1624cc2aaadf0ce51a05317e817bd930fd7ad8f5b471a82a094b21dbb8593b78",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-15T21:15:43.559Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-image-learnings-core-inv": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-image-learnings-core-inv",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-minimaxai-minimax-h3-image-learnings-research-knowledge-intelligence-hf-minim.md",
+      "title": "Research & Knowledge Intelligence: hf-minimaxai-minimax-h3-image-learnings Core Invariants",
+      "repository": "hf-minimaxai-minimax-h3-image-learnings",
+      "source_version": "HEAD",
+      "content_hash": "10ab9e8a596f891064565ee8604cb3bb494ea4f871f077b1a51e07411b2577b8",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T21:16:17.670Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-maziyarpanahi-openmed-learnings-core-invaria": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-maziyarpanahi-openmed-learnings-core-invaria",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-maziyarpanahi-openmed-learnings-technical-construction-intelligence-maziyarpanah.md",
+      "title": "Technical Construction Intelligence: maziyarpanahi-openmed-learnings Core Invariants",
+      "repository": "maziyarpanahi-openmed-learnings",
+      "source_version": "HEAD",
+      "content_hash": "dbbf1a86acbd5c839d460a9b37eec434957beb8698818779dad002277a7828ba",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-15T21:16:18.259Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-maziyarpanahi-openmed-learning": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-maziyarpanahi-openmed-learning",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/maziyarpanahi-openmed-learnings-verification-protocol-empirical-defect-shield-fo.md",
+      "title": "Verification Protocol: Empirical Defect Shield for maziyarpanahi-openmed-learnings",
+      "repository": "maziyarpanahi-openmed-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2d7ca468648cd1975c72088b6a0f24a362ae6e7c60bacda32c3cfeab31813294",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T21:16:18.385Z"
     }
   },
   "ai-builder-brain": {

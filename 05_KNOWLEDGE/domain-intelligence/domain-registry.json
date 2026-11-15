@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T21:06:43.107Z",
-  "total_records": 1119,
+  "last_updated": "2026-11-15T21:16:18.259Z",
+  "total_records": 1124,
   "domains": {
     "A": {
       "total": 7,
@@ -37,7 +37,7 @@
       ]
     },
     "D": {
-      "total": 540,
+      "total": 543,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -578,7 +578,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-atomicchat-deepseek-v4-1-flash-1017-uncensore",
         "domain_intelligence-research-knowledge-intelligence-videorebirthai-hyperflow-h3-flash-core-invariant",
         "DOM-D-FAC11BEC",
-        "domain_intelligence-research-knowledge-intelligence-hf-videorebirthai-hyperflow-h3-flash-learnings-c"
+        "domain_intelligence-research-knowledge-intelligence-hf-videorebirthai-hyperflow-h3-flash-learnings-c",
+        "domain_intelligence-research-knowledge-intelligence-minimaxai-minimax-h3-image-core-invariants",
+        "DOM-D-37D23F0D",
+        "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-image-learnings-core-inv"
       ]
     },
     "E": {
@@ -815,7 +818,7 @@
       ]
     },
     "H": {
-      "total": 229,
+      "total": 231,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1045,7 +1048,9 @@
         "DOM-H-4F755436",
         "domain_intelligence-technical-construction-intelligence-lottie-react-native-lottie-react-native-lear",
         "domain_intelligence-technical-construction-intelligence-goodrain-rainbond-learnings-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-dathere-qsv-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-dathere-qsv-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-maziyarpanahi-openmed-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-maziyarpanahi-openmed-learnings-core-invaria"
       ]
     },
     "I": {
@@ -10090,8 +10095,8 @@
       "title": "Architecture Intelligence: ntex-rs/ntex Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ntex-rs-ntex-architecture-intelligence-ntex-rs-ntex-core-invariants.md",
       "repository": "ntex-rs/ntex",
-      "content_hash": "b93f34efca96c9ed1c28ab85dbe28f3464124fb0ddf68a104cc87a9fa7003e03",
-      "created_at": "2026-11-13T21:45:08.875Z"
+      "content_hash": "9c4908c200cd612adeb06403420886bff1b47c4e720fd551aef9595e9180660d",
+      "created_at": "2026-11-15T21:15:35.416Z"
     },
     "domain_intelligence-design-intelligence-callstack-react-native-paper-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-callstack-react-native-paper-core-invariants",
@@ -10126,8 +10131,8 @@
       "title": "Architecture Intelligence: ntex-rs-ntex-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ntex-rs-ntex-learnings-architecture-intelligence-ntex-rs-ntex-learnings-core-inv.md",
       "repository": "ntex-rs-ntex-learnings",
-      "content_hash": "d8c8ef653c0e5818d11b920d09fa752eaffd6e92b9e342d7559ca7f729e5c713",
-      "created_at": "2026-11-13T21:50:24.494Z"
+      "content_hash": "af54bf688d63baa7247d4dc68900e7d8338ef6680e8e2dee5cb540e541a216b8",
+      "created_at": "2026-11-15T21:15:46.817Z"
     },
     "DOM-D-B528111D": {
       "record_id": "DOM-D-B528111D",
@@ -14042,8 +14047,8 @@
       "title": "Architecture Intelligence: skyhook-io/radar Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-skyhook-io-radar-architecture-intelligence-skyhook-io-radar-core-invariants.md",
       "repository": "skyhook-io/radar",
-      "content_hash": "464a79cf7a12adcbbceb361ef5f227141f092a499dc6eae8ace3fc1cb7043f84",
-      "created_at": "2026-11-14T10:30:13.318Z"
+      "content_hash": "ac2f4e63ae37eeac309b486f30daffcf8227aee385666cbc994b0a8f80fadab7",
+      "created_at": "2026-11-15T21:15:43.438Z"
     },
     "DOM-D-694FEEFE": {
       "record_id": "DOM-D-694FEEFE",
@@ -21231,6 +21236,84 @@
       "confidence": 0.64,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-15T20:51:39.357Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-minimaxai-minimax-h3-image-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-minimaxai-minimax-h3-image-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: MiniMaxAI/MiniMax-H3-Image Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-minimaxai-minimax-h3-image-research-knowledge-intelligence-minimaxai-minimax-.md",
+      "repository": "MiniMaxAI/MiniMax-H3-Image",
+      "content_hash": "9e96e5550959b9fb843c42940c568d44b1f52a3399ff97209ef55d5560f1aac0",
+      "created_at": "2026-11-15T21:15:33.517Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-maziyarpanahi-openmed-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-maziyarpanahi-openmed-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: maziyarpanahi/openmed Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-maziyarpanahi-openmed-technical-construction-intelligence-maziyarpanahi-openmed-.md",
+      "repository": "maziyarpanahi/openmed",
+      "content_hash": "01895c138cb87f3de47fc108df8f19a3613246f3a69604c8bddcd8831550719c",
+      "created_at": "2026-11-15T21:15:41.085Z"
+    },
+    "DOM-D-37D23F0D": {
+      "record_id": "DOM-D-37D23F0D",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): MiniMaxAI/MiniMax-H3-Image",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-image-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/MiniMaxAI/MiniMax-H3-Image](https://huggingface.co/MiniMaxAI/MiniMax-H3-Image))  \n> **Source Version**: `hf-minimaxai`  \n> **License**: Open-Source",
+      "content_hash": "0045e878d5e4a5af1c54d79a9d4efdde47cdc7c4a2236a9b1d4a5531b8a4c6cf",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-image-learnings.md`  \n> **Source**: huggingface ([https://hu -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-image-learnings.md`  \n> **Source**: huggingface ([https://hu",
+      "provenance": {
+        "source_uri": "project://hf-minimaxai-minimax-h3-image/hf-minimaxai-minimax-h3-image-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T21:15:47.045Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-minimaxai-minimax-h3-image)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-minimaxai-minimax-h3-image"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-15T21:16:17.452Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-image-learnings-core-inv": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-image-learnings-core-inv",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-minimaxai-minimax-h3-image-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-minimaxai-minimax-h3-image-learnings-research-knowledge-intelligence-hf-minim.md",
+      "repository": "hf-minimaxai-minimax-h3-image-learnings",
+      "content_hash": "10ab9e8a596f891064565ee8604cb3bb494ea4f871f077b1a51e07411b2577b8",
+      "created_at": "2026-11-15T21:16:17.670Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-maziyarpanahi-openmed-learnings-core-invaria": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-maziyarpanahi-openmed-learnings-core-invaria",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: maziyarpanahi-openmed-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-maziyarpanahi-openmed-learnings-technical-construction-intelligence-maziyarpanah.md",
+      "repository": "maziyarpanahi-openmed-learnings",
+      "content_hash": "dbbf1a86acbd5c839d460a9b37eec434957beb8698818779dad002277a7828ba",
+      "created_at": "2026-11-15T21:16:18.259Z"
     }
   }
 }

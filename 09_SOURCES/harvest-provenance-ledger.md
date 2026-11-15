@@ -10188,3 +10188,8 @@ Every entry in this ledger must capture:
 | `learn-github-helixdb-helix-db` | `https://github.com/HelixDB/helix-db` | `4b0982fd` | Multi-dimensional audit evidence | 2026-11-15T20:51:03.419Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `3af21c2b` | Multi-dimensional audit evidence | 2026-11-15T20:51:05.391Z |
 | `learn-dom-k-9bb3d64b` | `project://freenet-freenet-core` | `fdc05210` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/freenet-freenet-core-learnings.md` | 2026-11-15T20:51:39.384Z |
+| `learn-huggingface-minimaxai-minimax-h3-image` | `https://huggingface.co/MiniMaxAI/MiniMax-H3-Image` | `hf-minimax` | Multi-dimensional audit evidence | 2026-11-15T21:15:33.351Z |
+| `learn-github-ntex-rs-ntex` | `https://github.com/ntex-rs/ntex` | `56a4ed76` | Multi-dimensional audit evidence | 2026-11-15T21:15:35.099Z |
+| `learn-github-maziyarpanahi-openmed` | `https://github.com/maziyarpanahi/openmed` | `f83eb05b` | Multi-dimensional audit evidence | 2026-11-15T21:15:40.810Z |
+| `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `7f30b56d` | Multi-dimensional audit evidence | 2026-11-15T21:15:43.140Z |
+| `learn-dom-d-37d23f0d` | `project://hf-minimaxai-minimax-h3-image` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-image-learnings.md` | 2026-11-15T21:16:17.469Z |

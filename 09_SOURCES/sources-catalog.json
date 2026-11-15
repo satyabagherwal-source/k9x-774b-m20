@@ -3393,10 +3393,10 @@
     "repository": "skyhook-io/radar",
     "platform": "github",
     "sourceUrl": "https://github.com/skyhook-io/radar",
-    "sourceVersion": "148a70c8",
+    "sourceVersion": "7f30b56d",
     "license": "Apache-2.0",
-    "contentHash": "fcb78a5266b3d57487fada90b1d9576a21ceaa76274eab6710143049f6a2c909",
-    "lastHarvestedAt": "2026-11-14T10:30:12.997Z",
+    "contentHash": "cdbcbbf0eb1332019876e6eaba7eb4e3d333be75f933554a6480cc2c19abfa7b",
+    "lastHarvestedAt": "2026-11-15T21:15:43.140Z",
     "learningId": "learn-github-skyhook-io-radar"
   },
   "mitmproxy-mitmproxy": {
@@ -5793,10 +5793,10 @@
     "repository": "ntex-rs/ntex",
     "platform": "github",
     "sourceUrl": "https://github.com/ntex-rs/ntex",
-    "sourceVersion": "1a38c4b1",
+    "sourceVersion": "56a4ed76",
     "license": "Apache-2.0",
-    "contentHash": "821896881ab592ed9e767f7726eeff8f522f704a749a6f6829c4b38c8eaae7b9",
-    "lastHarvestedAt": "2026-11-13T21:45:08.622Z",
+    "contentHash": "223677ecd9c773c6ce353edce9a02d0184ed8de90e4bf88e0e9a6a9c67df894f",
+    "lastHarvestedAt": "2026-11-15T21:15:35.099Z",
     "learningId": "learn-github-ntex-rs-ntex"
   },
   "learnapollo-learnapollo": {
@@ -8233,10 +8233,10 @@
     "repository": "maziyarpanahi/openmed",
     "platform": "github",
     "sourceUrl": "https://github.com/maziyarpanahi/openmed",
-    "sourceVersion": "8097fc0b",
+    "sourceVersion": "f83eb05b",
     "license": "Apache-2.0",
-    "contentHash": "24c39041d34b09597145e2ddb18cd8a8a027c8dc55a4b5c7785939872d138c34",
-    "lastHarvestedAt": "2026-11-12T08:53:00.393Z",
+    "contentHash": "ba798c2624eec84f5b4c0b599ec427ad1fbadbcf2c7cc725e127ef8974b31f4d",
+    "lastHarvestedAt": "2026-11-15T21:15:40.810Z",
     "learningId": "learn-github-maziyarpanahi-openmed"
   },
   "bernaferrari-figmatocode": {
@@ -12315,8 +12315,8 @@
     "sourceUrl": "https://huggingface.co/MiniMaxAI/MiniMax-H3-Image",
     "sourceVersion": "hf-minimaxai-minimax-h3-image",
     "license": "Open-Source",
-    "contentHash": "3067f4fc6e1384329781816fd7366a4881b04bdd4d6e7af9b1ec0df0902ea975",
-    "lastHarvestedAt": "2026-11-11T06:16:20.764Z",
+    "contentHash": "3970d2dc96d79a81175727bb28da98cece2efcb292bbb9a7da0508fc0e7cf544",
+    "lastHarvestedAt": "2026-11-15T21:15:33.351Z",
     "learningId": "learn-huggingface-minimaxai-minimax-h3-image"
   },
   "marker-inc-korea-autorag": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-15T20:51:05.399Z",
+  "last_updated": "2026-11-15T21:15:43.149Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5211,14 +5211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-skyhook-io-radar",
-      "content_hash": "fcb78a5266b3d57487fada90b1d9576a21ceaa76274eab6710143049f6a2c909",
-      "verified_at": "2026-11-14T10:30:13.007Z",
+      "content_hash": "cdbcbbf0eb1332019876e6eaba7eb4e3d333be75f933554a6480cc2c19abfa7b",
+      "verified_at": "2026-11-15T21:15:43.148Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T10:30:13.007Z"
+      "last_updated": "2026-11-15T21:15:43.148Z"
     },
     "mitmproxy/mitmproxy": {
       "repository": "mitmproxy/mitmproxy",
@@ -8811,14 +8811,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ntex-rs-ntex",
-      "content_hash": "821896881ab592ed9e767f7726eeff8f522f704a749a6f6829c4b38c8eaae7b9",
-      "verified_at": "2026-11-13T21:45:08.629Z",
+      "content_hash": "223677ecd9c773c6ce353edce9a02d0184ed8de90e4bf88e0e9a6a9c67df894f",
+      "verified_at": "2026-11-15T21:15:35.107Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T21:45:08.629Z"
+      "last_updated": "2026-11-15T21:15:35.107Z"
     },
     "learnapollo/learnapollo": {
       "repository": "learnapollo/learnapollo",
@@ -12381,14 +12381,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-maziyarpanahi-openmed",
-      "content_hash": "24c39041d34b09597145e2ddb18cd8a8a027c8dc55a4b5c7785939872d138c34",
-      "verified_at": "2026-11-12T08:53:00.419Z",
+      "content_hash": "ba798c2624eec84f5b4c0b599ec427ad1fbadbcf2c7cc725e127ef8974b31f4d",
+      "verified_at": "2026-11-15T21:15:40.819Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T08:53:00.419Z"
+      "last_updated": "2026-11-15T21:15:40.819Z"
     },
     "bernaferrari/FigmaToCode": {
       "repository": "bernaferrari/FigmaToCode",
@@ -18531,14 +18531,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-minimaxai-minimax-h3-image",
-      "content_hash": "3067f4fc6e1384329781816fd7366a4881b04bdd4d6e7af9b1ec0df0902ea975",
-      "verified_at": "2026-11-11T06:16:20.786Z",
+      "content_hash": "3970d2dc96d79a81175727bb28da98cece2efcb292bbb9a7da0508fc0e7cf544",
+      "verified_at": "2026-11-15T21:15:33.360Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T06:16:20.786Z"
+      "last_updated": "2026-11-15T21:15:33.360Z"
     },
     "Marker-Inc-Korea/AutoRAG": {
       "repository": "Marker-Inc-Korea/AutoRAG",

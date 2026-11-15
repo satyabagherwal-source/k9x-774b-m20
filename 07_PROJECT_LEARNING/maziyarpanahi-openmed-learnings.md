@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md`  
 > **Source**: github ([https://github.com/maziyarpanahi/openmed](https://github.com/maziyarpanahi/openmed))  
-> **Source Version**: `8097fc0b`  
+> **Source Version**: `f83eb05b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T08:52:46.910Z  
+> **Timestamp**: 2026-11-15T21:15:39.924Z  
 > **Learning ID**: `learn-github-maziyarpanahi-openmed`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/maziyarpanahi/openmed](https://github.com/maziyarpanahi/openmed))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T08:52:41.217Z  
+> **Harvest Timestamp**: 2026-11-15T21:15:39.918Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Local-first healthcare AI: clinical NER and HIPAA PII de-identification on hardware you control. 2,200+ medical models, 35 model-backed PII languages, and Python, MLX, Android and browser runtimes. Apache-2.0 SDK.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5800 stars
+- **Stars / Engagement**: 5808 stars
 
 ---
 
@@ -299,16 +299,174 @@ class MapleOnnxEngine private constructor(
     
 ```
 
+### Core Architecture Module: `android/openmedkit/src/main/kotlin/com/openmed/openmedkit/OpenMedLifecycle.kt`
+```
+package com.openmed.openmedkit
+
+import android.content.ComponentCallbacks2
+import android.content.Context
+import android.content.res.Configuration
+import java.io.Closeable
+import java.util.concurrent.atomic.AtomicBoolean
+
+/**
+ * Value-free memory-pressure levels understood by [OpenMedRuntime].
+ *
+ * Levels are ordered by severity. [OpenMedRuntimePolicy] decides which level
+ * releases idle sessions and which level stops admission.
+ */
+enum class OpenMedMemoryPressure {
+    /** Pressure has cleared; a memory-pressure admission pause is lifted. */
+    NONE,
+
+    /** Informational; the default policy takes no action. */
+    MODERATE,
+
+    /** Release idle sessions; admission stays open. */
+    LOW,
+
+    /** Stop admission and release sessions once they are idle. */
+    CRITICAL,
+    ;
+
+    companion object {
+        /**
+         * Map an Android `ComponentCallbacks2.onTrimMemory` level.
+         *
+         * | Android level | Pressure |
+         * | --- | --- |
+         * | `TRIM_MEMORY_RUNNING_MODERATE` | [MODERATE] |
+         * | `TRIM_MEMORY_RUNNING_LOW` | [LOW] |
+         * | `TRIM_MEMORY_RUNNING_CRITICAL` | [CRITICAL] |
+         * | `TRIM_MEMORY_UI_HIDDEN` | [MODERATE] |
+         * | `TRIM_MEMORY_BACKGROUND`, `TRIM_MEMORY_MODERATE` | [LOW] |
+         * | `TRIM_MEMORY_COMPLETE` and above | [CRITICAL] |
+         *
+         * Unknown levels below `TRIM_MEMORY_RUNNING_MODERATE` map to
+         * [MODERATE] so an unrecognised signal never lifts a pause.
+         *
+         * @param level The raw Android trim level.
+         * @return The value-free pressure level.
+         */
+        @JvmStatic
+        fun fromTrimLevel(level: Int): OpenMedMemoryPressure = when {
+            level >= ComponentCallbacks2.TRIM_MEMORY_COMPLETE -> CRITICAL
+            level >= ComponentCallbacks2.TRIM_MEMORY_BACKGROUND -> LOW
+            level >= ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN -> MODERATE
+            level >= ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL -> CRITICAL
+            level >= ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW -> LOW
+            else -> MODERATE
+        }
+    }
+}
+
+/**
+ * Host lifecycle signals an [OpenMedRuntime] reacts to.
+ *
+ * Signals carry no host object, so a runtime never retains an Activity,
+ * a bridge context, or caller input through this interface.
+ */
+interface OpenMedLifecycleObserver {
+    /** The host process moved to the foreground. */
+    fun onHostForeground()
+
+    /** The host process moved to the background. */
+    fun onHostBackground()
+
+    /**
+     * The platform reported memory pressure.
+     *
+     * @param pressure The value-free pressure level.
+     */
+    fun onMemoryPressure(pressure: OpenMedMemoryPressure)
+}
+
+/**
+ * A source of host lifecycle signals, such as `ProcessLifecycleOwner` or trim-memory callbacks.
+ *
+ * OpenMedKit does not depend on `androidx.lifecycle`; hosts adapt their own
+ * lifecycle owner with a few lines (see `docs/android-integration.md`).
+ */
+fun interface OpenMedLifecycleSource {
+    /**
+     * Start delivering signals to [observer].
+     *
+     * @param observer The runtime that receives signals.
+     * @return A handle that stops delivery and drops the observer when closed.
+     */
+    fun subscribe(observer: OpenMedLifecycleObserver): Closeable
+}
+
+/**
+ * `ComponentCallbacks2` adapter that forwards trim-memory signals.
+ *
+ * @param observer The runtime that receives value-free pressure levels.
+ */
+class OpenMedComponentCallbacks(
+    private val observer: OpenMedLifecycleObserver,
+) : ComponentCallbacks2 {
+    override fun onTrimMemory(level: Int) {
+        observer.onMemoryPressure(OpenMedMemoryPressure.fromTrimLevel(level))
+    }
+
+    override fun onLowMemory() {
+        observer.onMemoryPressure(OpenMedMemoryPressure.CRITICAL)
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) = Unit
+}
+
+/**
+ * Trim-memory source registered on the application context.
+ *
+ * Only the application context is retained, so binding from an Activity or a
+ * bridge module never keeps that host alive after it is recreated.
+ *
+ * @param context Any context; its application context is used.
+ */
+class OpenMedTrimMemorySource(context: Context) : OpenMedLifecycleSource {
+    private val applicationContext: Context = context.applicationContext ?: context
+
+    override fun subscribe(observer: OpenMedLifecycleObserver): Closeable {
+        val callbacks = OpenMedComponentCallbacks(observer)
+        applicationContext.registerComponentCallbacks(callbacks)
+        val open = AtomicBoolean(true)
+        return Closeable {
+            if (open.compareAndSet(true, false)) {
+                applicationContext.unregisterComponentCallbacks(callbacks)
+            }
+        }
+    }
+}
+
+```
+
 ### Core Architecture Module: `android/openmedkit/src/main/kotlin/com/openmed/openmedkit/deid/DeidentifyEngine.kt`
 ```
 package com.openmed.openmedkit.deid
 
+import com.openmed.openmedkit.secrets.OpenMedSecretException
+import com.openmed.openmedkit.secrets.OpenMedSecretFailure
+import com.openmed.openmedkit.secrets.OpenMedSecretPolicy
+import com.openmed.openmedkit.secrets.OpenMedSecretProvider
+import com.openmed.openmedkit.secrets.OpenMedSecretPurpose
+import com.openmed.openmedkit.secrets.OpenMedSecretReference
 import java.nio.charset.StandardCharsets
+import java.security.MessageDigest
 import java.util.Locale
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 import kotlin.math.max
 import kotlin.math.min
+
+/** How a [DeidentifyEngine] treats the public, pre-4.0 default hash key. */
+enum class HashKeyPolicy {
+    /** Refuse the public default key however it is supplied (default). */
+    STRICT,
+
+    /** Accept the public default key only to reproduce pre-4.0 digests. */
+    ALLOW_LEGACY_PUBLIC_SALT,
+}
 
 /**
  * Rewrites detected identifier spans into de-identified text.
@@ -316,15 +474,58 @@ import kotlin.math.min
  * The engine accepts original-text offsets and applies replacements from
  * right to left, so each span is replaced at its original offsets even when
  * earlier spans expand or shrink the output.
+ *
+ * Hashing, meaning the [DeidentifyMethod.HASH] replacement and each applied
+ * span's `textHash`, is keyed through an [OpenMedSecretProvider] such as
+ * `AndroidKeystoreSecretProvider`, so the key never sits in app memory. An
+ * engine built without a provider omits span digests and refuses
+ * [DeidentifyMethod.HASH] with [OpenMedSecretException]
+ * ([OpenMedSecretFailure.MISSING]); it never falls back to a public key.
  */
-class DeidentifyEngine(
-    hashSalt: ByteArray = DEFAULT_HASH_SALT.toByteArray(StandardCharsets.UTF_8),
+class DeidentifyEngine private constructor(
+    private val hashKeys: HashKeySource?,
 ) {
-    private val hashKey = hashSalt.copyOf()
+    /** Keyless engine: masks, removes, and replaces; refuses hashing. */
+    constructor() : this(null)
 
-    init {
-        require(hashKey.isNotEmpty()) { "hashSalt must not be empty" }
-    }
+    /**
+     * Engine whose hashing runs inside [secretProvider].
+     *
+     * Each `deidentify` call resolves the newest key version, so a rotation
+     * takes effect on the next call. Provider failures surface as
+     * [OpenMedSecretException] before any output is produced.
+     *
+     * @param secretProvider Custody boundary that holds the hash key.
+     * @param hashKeyReference Reference with purpose
+     *   [OpenMedSecretPurpose.DEIDENTIFY_HASH].
+     * @param secretPolicy Protection the hash key must have.
+     * @param hashKeyPolicy [HashKeyPolicy.STRICT] refuses a provider key that
+     *   equals the public default salt.
+     */
+    constructor(
+        secretProvider: OpenMedSecretProvider,
+        hashKeyReference: OpenMedSecretReference = OpenMedSecretReference.DEIDENTIFY_HASH,
+        secretPolicy: OpenMedSecretPolicy = OpenMedSecretPolicy.DEFAULT,
+        hashKeyPolicy: HashKeyPolicy = HashKeyPolicy.STRICT,
+    ) : this(ProviderHashKeys(secretProvider, hashKeyReference, secretPolicy, hashKeyPolicy))
+
+    /**
+     * Engine keyed by raw salt bytes held in app memory.
+     *
+     * Under [HashKeyPolicy.STRICT] the public [LEGACY_PUBLIC_HASH_SALT] is
+     * refused with [OpenMedSecretFailure.PUBLIC_DEFAULT].
+     */
+    @Deprecated(
+        "Raw salts live in app memory. Hold the hash key in an OpenMedSecretProvider.",
+        ReplaceWith(
+            "DeidentifyEngine(AndroidKeystoreSecretProvider())",
+            "com.openmed.openmedkit.secrets.AndroidKeystoreSecretProvider",
+        ),
+    )
+    constructor(
+        hashSalt: ByteArray,
+        hashKeyPolicy: HashKeyPolicy = HashKeyPolicy.STRICT,
+    ) : this(RawSaltHashKeys(hashSalt, hashKeyPolicy))
 
     fun deidentify(
         text: String,
@@ -354,6 +555,7 @@ class DeidentifyEngine(
         }
 
         validateBounds(text, spans)
+        val mac = hashKeys?.open()
         val replacementState = ReplacementState()
         val orderedSpans = resolveOverlaps(spans)
         val actions = mutableListOf<DeidentifyAction>()
@@ -363,8 +565,8 @@ class DeidentifyEngine(
             val method = actionForSpan(span)
             val surface = text.substring(span.start, span.end)
             val label = normalizeLabel(span.canonicalLabel)
-            val textHash = hmacDigest(label, surface)
-            val replacement = replacementFor(method, label, surface, replacementState)
+            val textHash = mac?.let { hmacDigest(it, label, surface) }
+            val replacement = replacementFor(method, label, surface, replacementState, textHash)
             val outputStart = span.start + outputDelta
             val outputEnd = outputStart + replacement.length
             val appliedSpan = span.copy(
@@ -456,6 +658,7 @@ class DeidentifyEngine(
         label: String,
         surface: String,
         state: ReplacementState,
+        textHash: String?,
     ): String {
         return when (method) {
             DeidentifyMethod.MASK -> state.tokenFor(
@@ -471,7 +674,8 @@ class DeidentifyEngine(
                 surface = surface,
             ) { tokenLabel, index -> surrogateToken(tokenLabel, index) }
 
-            DeidentifyMethod.HASH -> hmacDigest(label, surface)
+            DeidentifyMethod.HASH ->
+                textHash ?: throw OpenMedSecretException(OpenMedSecretFailure.MISSING)
         }
     }
 
@@ -487,11 +691,13 @@ class DeidentifyEngine(
         }
     }
 
-    private fun hmacDigest(label: String, surface: String): String {
-        val mac = Mac.getInstance(HMAC_SHA256)
-        mac.init(SecretKeySpec(hashKey, HMAC_SHA256))
+    private fun hmacDigest(
+        mac: (ByteArray) -> ByteArray,
+        label: String,
+        surface: String,
+    ): String {
         val payload = "$label\u0000$surface".toByteArray(StandardCharsets.UTF_8)
-        return "hmac-sha256:${mac.doFinal(payload).toHex()}"
+        return "hmac-sha256:${mac(payload).toHex()}"
     }
 
     private data class ReplacementKey(
@@ -511,39 +717,7 @@ class DeidentifyEngine(
             format: (String, Int) -> String,
         ): String {
             val key = ReplacementKey(method, label, surface)
-            return tokens.getOrPut(key) {
-                val nextIndex = (counters[label] ?: 0) + 1
-                counters[label] = nextIndex
-                format(label, nextIndex)
-            }
-        }
-    }
-
-    private fun ByteArray.toHex(): String {
-        val chars = CharArray(size * 2)
-        forEachIndexed { index, byte ->
-            val value = byte.toInt() and 0xff
-            chars[index * 2] = HEX_CHARS[value ushr 4]
-            chars[index * 2 + 1] = HEX_CHARS[value and 0x0f]
-        }
-        return String(chars)
-    }
-
-    companion object {
-        private const val DEFAULT_HASH_SALT = "openmed-android-deidentify-v1"
-        private const val HMAC_SHA256 = "HmacSHA256"
-        private val HEX_CHARS = "0123456789abcdef".toCharArray()
-
-        fun normalizeLabel(label: String): String {
-            val normalized = label.trim()
-                .uppercase(Locale.US)
-                .replace(Regex("[^A-Z0-9]+"), "_")
-                .trim('_')
-            return normalized.ifEmpty { "PII" }
-        }
-    }
-}
-
+            r
 ```
 
 ### Core Architecture Module: `android/openmedkit/src/main/kotlin/com/openmed/openmedkit/intake/PdfPageRenderer.kt`
@@ -555,15 +729,39 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.pdf.PdfRenderer
 import android.net.Uri
+import java.io.IOException
 import kotlin.math.roundToInt
 
 /**
  * A rendered PDF page ready for OCR.
+ *
+ * @param page Zero-based page index.
+ * @param bitmap Upright rendering of the page, or of its declared crop.
+ * @param geometry Original page geometry for evidence coordinates. When null,
+ *   the bitmap itself is treated as the original page, in pixels.
  */
 data class RenderedPdfPage(
     val page: Int,
     val bitmap: Bitmap,
+    val geometry: DocumentPageGeometry? = null,
 )
+
+/**
+ * One declared PDF page: rendered, or unavailable with a value-free reason.
+ */
+sealed class PdfPageEvent {
+    /** A rendered page; the source recycles the bitmap after the callback. */
+    data class Rendered(val page: RenderedPdfPage) : PdfPageEvent()
+
+    /**
+     * A declared page that could not be read, for example
+     * [DocumentIntakeReason.PAGE_MISSING] or [DocumentIntakeReason.PERMISSION_LOST].
+     */
+    data class Unavailable(
+        val page: Int,
+        val reason: DocumentIntakeReason,
+    ) : PdfPageEvent()
+}
 
 /**
  * Source of rendered PDF page bitmaps.
@@ -574,10 +772,31 @@ fun interface PdfPageSource {
         uri: Uri,
         block: suspend (RenderedPdfPage) -> Unit,
     )
+
+    /**
+     * Renders every declared page in order, reporting unreadable pages instead
+     * of skipping them.
+     *
+     * Throw [DocumentIntakeException] for document-level failures such as
+     * [DocumentIntakeReason.PERMISSION_DENIED]. The default adapts [renderEach].
+     */
+    suspend fun renderPages(
+        context: Context,
+        uri: Uri,
+        block: suspend (PdfPageEvent) -> Unit,
+    ) {
+        renderEach(context, uri) { page -> block(PdfPageEvent.Rendered(page)) }
+    }
 }
 
 /**
  * Renders PDF pages on-device with [PdfRenderer].
+ *
+ * [PdfRenderer] exposes only the displayed page size, so evidence from this
+ * source is in displayed page points with no separate crop or rotation. A
+ * [PdfPageSource] that reads the media box, crop box and `/Rotate` can declare
+ * them through [RenderedPdfPage.geometry]. Bitmaps stay in memory and are
+ * recycled after each callback; nothing is written to storage.
  */
 class PdfPageRenderer(
     private val scale: Float = 2.0f,
@@ -591,40 +810,446 @@ class PdfPageRenderer(
         uri: Uri,
         block: suspend (RenderedPdfPage) -> Unit,
     ) {
-        val descriptor = requireNotNull(context.contentResolver.openFileDescriptor(uri, "r")) {
-            "Unable to open PDF document"
+        renderPages(context, uri) { event ->
+            when (event) {
+                is PdfPageEvent.Rendered -> block(event.page)
+                is PdfPageEvent.Unavailable -> throw DocumentIntakeException(event.reason)
+            }
         }
+    }
+
+    override suspend fun renderPages(
+        context: Context,
+        uri: Uri,
+        block: suspend (PdfPageEvent) -> Unit,
+    ) {
+        val descriptor = try {
+            context.contentResolver.openFileDescriptor(uri, "r")
+        } catch (_: SecurityException) {
+            null
+        } catch (_: IOException) {
+            null
+        } ?: throw DocumentIntakeException(DocumentIntakeReason.PERMISSION_DENIED)
         descriptor.use { fileDescriptor ->
-            val renderer = PdfRenderer(fileDescriptor)
+            val renderer = try {
+                PdfRenderer(fileDescriptor)
+            } catch (_: SecurityException) {
+                throw DocumentIntakeException(DocumentIntakeReason.DOCUMENT_LOCKED)
+            } catch (_: IOException) {
+                throw DocumentIntakeException(DocumentIntakeReason.UNSUPPORTED_DOCUMENT)
+            }
             try {
                 for (pageIndex in 0 until renderer.pageCount) {
-                    val page = renderer.openPage(pageIndex)
+                    val rendered = try {
+                        render(renderer, pageIndex)
+                    } catch (_: IllegalStateException) {
+                        null
+                    } catch (_: IllegalArgumentException) {
+                        null
+                    }
+                    if (rendered == null) {
+                        block(PdfPageEvent.Unavailable(pageIndex, DocumentIntakeReason.PAGE_MISSING))
+                        continue
+                    }
                     try {
-                        val bitmap = Bitmap.createBitmap(
-                            (page.width * scale).roundToInt().coerceAtLeast(1),
-                            (page.height * scale).roundToInt().coerceAtLeast(1),
-                            Bitmap.Config.ARGB_8888,
-                        )
-                        bitmap.eraseColor(Color.WHITE)
-                        page.render(
-                            bitmap,
-                            null,
-                            null,
-                            PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY,
-                        )
-                        try {
-                            block(RenderedPdfPage(page = pageIndex, bitmap = bitmap))
-                        } finally {
-                            bitmap.recycle()
-                        }
+                        block(PdfPageEvent.Rendered(rendered))
                     } finally {
-                        page.close()
+                        rendered.bitmap.recycle()
                     }
                 }
             } finally {
                 renderer.close()
             }
         }
+    }
+
+    private fun render(renderer: PdfRenderer, pageIndex: Int): RenderedPdfPage {
+        val page = renderer.openPage(pageIndex)
+        try {
+            val bitmap = Bitmap.createBitmap(
+                (page.width * scale).roundToInt().coerceAtLeast(1),
+                (page.height * scale).roundToInt().coerceAtLeast(1),
+                Bitmap.Config.ARGB_8888,
+            )
+            try {
+                bitmap.eraseColor(Color.WHITE)
+                page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
+            } catch (error: RuntimeException) {
+                bitmap.recycle()
+                throw error
+            }
+            return RenderedPdfPage(
+                page = pageIndex,
+                bitmap = bitmap,
+                geometry = DocumentPageGeometry(
+                    width = page.width.toDouble(),
+                    height = page.height.toDouble(),
+                    unit = DocumentSpatialUnit.POINT,
+                ),
+            )
+        } finally {
+            page.close()
+        }
+    }
+}
+
+```
+
+### Core Architecture Module: `android/openmedkit/src/main/kotlin/com/openmed/openmedkit/policy/PolicyEngine.kt`
+```
+package com.openmed.openmedkit.policy
+
+import com.openmed.openmedkit.KitParity
+import com.openmed.openmedkit.KitParityResult
+import com.openmed.openmedkit.KitParitySpan
+import com.openmed.openmedkit.UnicodeOffsetContract
+import java.security.MessageDigest
+import javax.crypto.Mac
+import javax.crypto.spec.SecretKeySpec
+
+/**
+ * One normalized detector span offered to [PolicyEngine.decide].
+ *
+ * Offsets are half-open Unicode scalar offsets into the source text.
+ * [source] is `model` for model spans or `semantic` for pattern units;
+ * [validated] reports whether a semantic unit's pattern validator passed.
+ */
+data class PolicyDetection(
+    val label: String,
+    val start: Int,
+    val end: Int,
+    val confidencePpm: Int,
+    val source: String = "model",
+    val validated: Boolean = true,
+)
+
+/** Value-free decision record for one candidate span. */
+data class PolicyDecision(
+    val inputs: List<Int>,
+    /** `model`, `merged`, or `semantic_only`. */
+    val kind: String,
+    val label: String,
+    val canonicalLabel: String,
+    val recognized: Boolean,
+    val start: Int,
+    val end: Int,
+    val confidencePpm: Int,
+    val keepFloorPpm: Int,
+    val escalate: Boolean,
+    val action: String,
+    val strictUpgrade: Boolean,
+    /** `applied`, `overlap_loser`, `duplicate`, or `below_threshold`. */
+    val outcome: String,
+    val span: Int?,
+)
+
+/** Output of [PolicyEngine.decide]. */
+data class PolicyDecisionResult(
+    val policyName: String,
+    val policyDigest: String,
+    val result: KitParityResult,
+    val decisions: List<PolicyDecision>,
+)
+
+/**
+ * The portable policy decision engine (`openmed.portable_merge` version 1).
+ *
+ * Mirrors `openmed.core.portable_policy.decide`: validation, label
+ * normalization, semantic-unit merging, integer parts-per-million threshold
+ * decisions, action lookup with caller overrides and the strict no-leak
+ * upgrade, exact-duplicate collapse, overlap clustering into union spans, and
+ * right-to-left rendering at scalar offsets. Shared vectors in
+ * `tests/fixtures/parity/portable_policy_vectors.json` pin the behavior.
+ */
+object PolicyEngine {
+    const val SURROGATE_KEY_MIN_BYTES = 16
+    const val SURROGATE_KEY_MAX_BYTES = 64
+    private const val SURROGATE_DOMAIN = "openmed.portable_surrogate.v1"
+    private val labelPattern = Regex("^[A-Za-z][A-Za-z0-9_:-]{0,79}$")
+
+    /**
+     * Apply [policy] to normalized [detections].
+     *
+     * Without a [surrogateKey], `replace` renders `[LABEL_REPLACED]`; with a
+     * 16-to-64-byte caller key it renders a deterministic keyed surrogate.
+     */
+    fun decide(
+        policy: PolicyProfile,
+        text: String,
+        detections: List<PolicyDetection>,
+        overrides: Map<String, String> = emptyMap(),
+        surrogateKey: ByteArray? = null,
+    ): PolicyDecisionResult {
+        validate(detections, UnicodeOffsetContract.scalarLength(text))
+        val resolvedOverrides = validate(overrides, policy.taxonomy)
+        if (surrogateKey != null && surrogateKey.size !in SURROGATE_KEY_MIN_BYTES..SURROGATE_KEY_MAX_BYTES) {
+            throw PolicyProfileException("surrogate_key_invalid", "$.surrogate_key")
+        }
+
+        val candidates = buildCandidates(policy.taxonomy, detections)
+        for (candidate in candidates) {
+            val threshold = policy.thresholdFor(candidate.canonicalLabel)
+            candidate.keepFloorPpm = threshold.keepFloorPpm
+            val configured = resolvedOverrides[candidate.canonicalLabel]
+                ?: policy.configuredAction(candidate.canonicalLabel)
+            if (policy.strictNoLeak && configured == PolicyAction.KEEP) {
+                candidate.action = PolicyAction.MASK
+                candidate.strictUpgrade = true
+            } else {
+                candidate.action = configured
+            }
+            if (candidate.confidencePpm >= threshold.keepFloorPpm) {
+                candidate.outcome = "retained"
+                candidate.escalate = candidate.confidencePpm < threshold.escalateBelowPpm
+            }
+        }
+
+        val retained = candidates.filter { it.outcome == "retained" }
+        val unique = collapseDuplicates(retained, policy)
+        val spans = mutableListOf<KitParitySpan>()
+        for (cluster in clusters(unique)) {
+            val representative = representative(cluster, policy)
+            val start = cluster.minOf { it.start }
+            val end = cluster.maxOf { it.end }
+            for (member in cluster) {
+                member.outcome = if (member === representative) "applied" else "overlap_loser"
+                member.span = spans.size
+            }
+            val surface = UnicodeOffsetContract.substring(text, start, end)
+            spans += KitParitySpan(
+                label = representative.label,
+                canonicalLabel = representative.canonicalLabel,
+                action = representative.action.wireName,
+                start = start,
+                end = end,
+                confidencePpm = representative.confidencePpm,
+                replacement = replacement(
+                    representative.action,
+                    representative.canonicalLabel,
+                    surface,
+                    surrogateKey,
+                ),
+            )
+        }
+        for (item in retained) {
+            if (item.outcome == "duplicate") {
+                item.span = unique.first { duplicateKey(it) == duplicateKey(item) }.span
+            }
+        }
+
+        val output = KitParity.applySpans(text, spans)
+        val result = KitParityResult(output, spans).also(KitParity::validate)
+        val decisions = candidates.map {
+            PolicyDecision(
+                inputs = it.inputs,
+                kind = it.kind,
+                label = it.label,
+                canonicalLabel = it.canonicalLabel,
+                recognized = it.recognized,
+                start = it.start,
+                end = it.end,
+                confidencePpm = it.confidencePpm,
+                keepFloorPpm = it.keepFloorPpm,
+                escalate = it.escalate,
+                action = it.action.wireName,
+                strictUpgrade = it.strictUpgrade,
+                outcome = it.outcome,
+                span = it.span,
+            )
+        }
+        return PolicyDecisionResult(policy.name, policy.digest, result, decisions)
+    }
+
+    /** Replacement text for one output span; `null` for `keep`. */
+    fun replacement(
+        action: PolicyAction,
+        canonicalLabel: String,
+        surface: String,
+        surrogateKey: ByteArray? = null,
+    ): String? = when (action) {
+        PolicyAction.KEEP -> null
+        PolicyAction.MASK, PolicyAction.REDACT -> "[$canonicalLabel]"
+        PolicyAction.REMOVE -> ""
+        PolicyAction.REPLACE -> if (surrogateKey == null) {
+            "[${canonicalLabel}_REPLACED]"
+        } else {
+            "[${canonicalLabel}_${surrogateToken(surrogateKey, canonicalLabel, surface)}]"
+        }
+        PolicyAction.HASH -> {
+            val digest = MessageDigest.getInstance("SHA-256").digest(surface.toByteArray(Charsets.UTF_8))
+            "${canonicalLabel}_${hex(digest.copyOf(12))}"
+        }
+    }
+
+    /**
+     * Deterministic keyed surrogate token: HMAC-SHA256 over
+     * `"openmed.portable_surrogate.v1" 0x00 label 0x00 surface`, first 8 bytes
+     * as lowercase hex. The key never leaves the caller.
+     */
+    fun surrogateToken(key: ByteArray, canonicalLabel: String, surface: String): String {
+        val mac = Mac.getInstance("HmacSHA256")
+        mac.init(SecretKeySpec(key, "HmacSHA256"))
+        mac.update(SURROGATE_DOMAIN.toByteArray(Charsets.UTF_8))
+        mac.update(0)
+        mac.update(canonicalLabel.toByteArray(Charsets.UTF_8))
+        mac.update(0)
+        mac.update(surface.toByteArray(Charsets.UTF_8))
+        return hex(mac.doFinal().copyOf(8))
+    }
+
+    private class Candidate(
+        val inputs: List<Int>,
+        val kind: String,
+        val label: String,
+        val canonicalLabel: String,
+        val recognized: Boolean,
+        val start: Int,
+        val end: Int,
+        val confidencePpm: Int,
+    ) {
+        var keepFloorPpm = 0
+        var escalate = false
+        var action = PolicyAction.KEEP
+        var strictUpgrade = false
+        var outcome = "below_threshold"
+        var span: Int? = null
+    }
+
+    private class Normalized(
+        val index: Int,
+        val detection: PolicyDetection,
+        val canonicalLabel: String,
+        val recognized: Boolean,
+    )
+
+    private fun validate(detections: List<PolicyDetection>, length: Int) {
+        detections.forEachIndexed { index, detection ->
+            val path = "$.detections[$index]"
+            if (!labelPattern.matches(detection.label)) {
+                throw PolicyProfileException("detection_label_invalid", "$path.label")
+            }
+            if (detection.start < 0) {
+                throw PolicyProfileException("detection_offset_invalid", "$path.start")
+            }
+            if (detection.end <= detection.start) {
+                throw PolicyProfileException("detection_offset_invalid", "$path.end")
+            }
+            if (detection.end > length) {
+                throw PolicyProfileException("detection_offset_out_of_bounds", "$path.end")
+            }
+            if (detection.confidencePpm !in 0..KitParity.CONFIDENCE_SCALE) {
+                throw PolicyProfileException("detection_confidence_invalid", "$path.confidence_ppm")
+            }
+            if (detection.source != "model" && detection.source != "semantic") {
+                throw PolicyProfileException("detection_source_invalid", "$path.source")
+            }
+        }
+    }
+
+    private fun validate(overrides: Map<String, String>, taxonomy: PolicyTaxonomy): Map<String, PolicyAction> {
+        val resolved = mutableMapOf<String, PolicyAction>()
+        for (label in overrides.keys.sorted()) {
+            if (label !in taxonomy.policyLabels) {
+                throw PolicyProfileException("override_label_unknown", "$.overrides
+```
+
+### Core Architecture Module: `android/openmedkit/src/main/kotlin/com/openmed/openmedkit/util/LeaseGate.kt`
+```
+package com.openmed.openmedkit.util
+
+/**
+ * Reference-counted close guard for a native resource.
+ *
+ * Every use of the resource runs between [tryAcquire] and [release]. [close]
+ * stops new acquisitions immediately but defers [onRelease] until the final
+ * active lease is released, so a native session is never freed while a run
+ * still holds it. [onRelease] runs at most once.
+ *
+ * A failure thrown by an immediate release propagates to the [close] caller.
+ * A deferred release runs on the thread that drops the final lease; its
+ * failure has no caller to report to and is suppressed so it can never replace
+ * the result or failure of the run that triggered it.
+ */
+internal class LeaseGate(
+    private val onRelease: () -> Unit,
+) {
+    private var active = 0
+    private var closeRequested = false
+    private var released = false
+
+    /** Number of uses currently holding the resource. */
+    val activeLeases: Int
+        @Synchronized get() = active
+
+    /** True once [close] has been requested. */
+    val isClosed: Boolean
+        @Synchronized get() = closeRequested
+
+    /** True once [onRelease] has run. */
+    val isReleased: Boolean
+        @Synchronized get() = released
+
+    /** Take a lease, or return false when the resource is closing or closed. */
+    @Synchronized
+    fun tryAcquire(): Boolean {
+        if (closeRequested) {
+            return false
+        }
+        active += 1
+        return true
+    }
+
+    /** Drop a lease taken with [tryAcquire]. */
+    fun release() {
+        val releaseNow = synchronized(this) {
+            check(active > 0) { "lease released more times than acquired" }
+            active -= 1
+            claimReleaseLocked()
+        }
+        if (releaseNow) {
+            try {
+                onRelease()
+            } catch (_: Exception) {
+                // Deferred release has no caller; see the class documentation.
+            }
+        }
+    }
+
+    /** Stop new leases and release the resource once no lease remains. */
+    fun close() {
+        val releaseNow = synchronized(this) {
+            if (closeRequested) {
+                return
+            }
+            closeRequested = true
+            claimReleaseLocked()
+        }
+        if (releaseNow) {
+            onRelease()
+        }
+    }
+
+    private fun claimReleaseLocked(): Boolean {
+        if (!closeRequested || active != 0 || released) {
+            return false
+        }
+        released = true
+        return true
+    }
+}
+
+/** Run [block] under a lease, throwing [onClosed] when the gate is closed. */
+internal inline fun <T> LeaseGate.withLease(
+    onClosed: () -> Nothing,
+    block: () -> T,
+): T {
+    if (!tryAcquire()) {
+        onClosed()
+    }
+    try {
+        return block()
+    } finally {
+        release()
     }
 }
 
@@ -727,219 +1352,263 @@ internal fun sha256Hex(value: String): String =
 
 ```
 
-### Core Architecture Module: `js/openmedkit-electron/src/utility-process.ts`
+### Core Architecture Module: `js/openmedkit-electron/harness/src/renderer.ts`
 ```
-import childProcess from "node:child_process";
-import dgram from "node:dgram";
+/**
+ * Renderer page script of the packaged harness.
+ *
+ * It only reaches OpenMed through `window.openmed` (the production bridge)
+ * and reports value-free outcomes back to the main process: span offsets,
+ * labels, bundle references and error codes. It never logs or stores text.
+ */
+import type { ElectronDeidentifyResponse, ElectronDeidentifyTask } from "../../src/ipc";
+
+interface HarnessBridge {
+  isolation: { sandboxed: boolean; contextIsolated: boolean };
+  onCommand(listener: (command: HarnessCommand) => void): void;
+  reply(message: unknown): void;
+}
+
+type HarnessCommand =
+  | { id: string; op: "probe" }
+  | { id: string; op: "submit"; text: string }
+  | { id: string; op: "cancel"; target: string }
+  | { id: string; op: "navigate" }
+  | { id: string; op: "attack"; channel: string; payload: unknown };
+
+declare global {
+  interface Window {
+    openmed?: { submit(text: string): ElectronDeidentifyTask };
+    openmedHarness?: HarnessBridge;
+    openmedAttack?: { invoke(channel: string, payload: unknown): Promise<unknown> };
+    __openmedInlineRan?: boolean;
+  }
+}
+
+const harness = window.openmedHarness;
+const tasks = new Map<string, ElectronDeidentifyTask>();
+let cspViolations = 0;
+document.addEventListener("securitypolicyviolation", () => {
+  cspViolations += 1;
+});
+
+function codeOf(error: unknown): string {
+  const code = (error as { code?: unknown } | null)?.code;
+  return typeof code === "string" ? code : "UNTYPED_ERROR";
+}
+
+function outcome(response: ElectronDeidentifyResponse) {
+  return {
+    ok: true,
+    requestId: response.requestId,
+    spans: response.spans,
+    bundle: response.bundle,
+  };
+}
+
+async function probe() {
+  const scope = globalThis as unknown as Record<string, unknown>;
+  let evalBlocked = false;
+  try {
+    (0, eval)("1");
+  } catch {
+    evalBlocked = true;
+  }
+  let functionBlocked = false;
+  try {
+    new Function("return 1")();
+  } catch {
+    functionBlocked = true;
+  }
+  const inline = document.createElement("script");
+  inline.textContent = "window.__openmedInlineRan = true;";
+  document.body.appendChild(inline);
+  await new Promise<void>((resolve) => setTimeout(resolve, 50));
+  const fetchBlocked = await fetch("https://example.invalid/model.onnx").then(
+    () => false,
+    () => true,
+  );
+  const popup = window.open("https://example.invalid/", "_blank");
+  return {
+    requireType: typeof scope.require,
+    processType: typeof scope.process,
+    moduleType: typeof scope.module,
+    bufferType: typeof scope.Buffer,
+    ipcRendererExposed: "ipcRenderer" in scope,
+    bridgeKeys: Object.keys(window.openmed ?? {}).sort(),
+    sandboxed: harness?.isolation.sandboxed === true,
+    contextIsolated: harness?.isolation.contextIsolated === true,
+    evalBlocked,
+    functionBlocked,
+    inlineScriptBlocked: window.__openmedInlineRan !== true,
+    fetchBlocked,
+    windowOpenBlocked: popup === null,
+    cspViolations,
+    origin: `${location.protocol}//${location.host}`,
+  };
+}
+
+harness?.onCommand((command) => {
+  void (async () => {
+    switch (command.op) {
+      case "probe":
+        harness.reply({ id: command.id, op: "probe", probe: await probe() });
+        return;
+      case "submit": {
+        const openmed = window.openmed;
+        if (openmed === undefined) {
+          harness.reply({ id: command.id, op: "result", ok: false, errorCode: "NO_BRIDGE" });
+          return;
+        }
+        const task = openmed.submit(command.text);
+        tasks.set(command.id, task);
+        harness.reply({ id: command.id, op: "submitted", requestId: task.requestId });
+        // `contextBridge` copies errors without their `code`; `outcome` keeps it.
+        task.outcome.then(
+          (response) =>
+            harness.reply(
+              response.ok
+                ? { id: command.id, op: "result", ...outcome(response) }
+                : { id: command.id, op: "result", ok: false, errorCode: response.errorCode },
+            ),
+          (error: unknown) =>
+            harness.reply({ id: command.id, op: "result", ok: false, errorCode: codeOf(error) }),
+        );
+        return;
+      }
+      case "cancel": {
+        const task = tasks.get(command.target);
+        const acknowledged = task === undefined ? false : await task.cancel();
+        harness.reply({ id: command.id, op: "cancelled", acknowledged });
+        return;
+      }
+      case "navigate":
+        harness.reply({ id: command.id, op: "navigating" });
+        location.href = "https://example.invalid/";
+        return;
+      case "attack": {
+        const attack = window.openmedAttack;
+        if (attack === undefined) {
+          harness.reply({ id: command.id, op: "attack", threw: true, response: null });
+          return;
+        }
+        try {
+          const response = (await attack.invoke(command.channel, command.payload)) as Record<
+            string,
+            unknown
+          >;
+          harness.reply({
+            id: command.id,
+            op: "attack",
+            threw: false,
+            response: {
+              ok: response?.ok ?? null,
+              errorCode: response?.errorCode ?? null,
+              cancelled: response?.cancelled ?? null,
+            },
+          });
+        } catch {
+          harness.reply({ id: command.id, op: "attack", threw: true, response: null });
+        }
+        return;
+      }
+    }
+  })();
+});
+
+harness?.reply({ id: "ready", op: "ready" });
+
+```
+
+### Core Architecture Module: `js/openmedkit-electron/harness/src/worker.ts`
+```
+/**
+ * Utility-process entrypoint of the packaged harness.
+ *
+ * It runs the production OpenMed utility loop (`startUtilityProcess`) with the
+ * production bundle verifier. Only the pipeline loader is synthetic: it
+ * refuses to build a pipeline unless the verified bundle bytes contain the
+ * label map and the selected runtime's entrypoint.
+ */
 import dns from "node:dns";
-import dnsPromises from "node:dns/promises";
-import http from "node:http";
-import http2 from "node:http2";
-import https from "node:https";
 import net from "node:net";
-import tls from "node:tls";
 
 import {
-  deidentify,
-  loadTokenClassificationPipeline,
-  type TokenClassificationPipeline,
-} from "openmed";
+  startUtilityProcess,
+  type UtilityParentPortLike,
+  type VerifiedElectronBundle,
+} from "../../src/utility-runtime";
+import { createSyntheticPipeline } from "./synthetic-model";
 
-import {
-  assertRendererSpans,
-  toRendererOpenMedSpan,
-  type UtilityDeidentifyRequest,
-  type UtilityDeidentifyResponse,
-} from "./ipc";
-import { inferenceFailure, isUtilityDeidentifyMessage } from "./main-service";
-
-export interface UtilityMessageEvent {
-  data: unknown;
-}
-
-export interface UtilityParentPortLike {
-  on(event: "message", listener: (event: UtilityMessageEvent) => void): this;
-  postMessage(message: unknown): void;
-}
-
-export interface UtilityHandlerOptions {
-  loadPipeline?: (modelPath: string) => Promise<TokenClassificationPipeline>;
-}
-
-export function createUtilityDeidentifyHandler(
-  options: UtilityHandlerOptions = {},
-): (message: unknown) => Promise<UtilityDeidentifyResponse> {
-  const modelCache = new Map<string, Promise<TokenClassificationPipeline>>();
-  let inferenceQueue: Promise<void> = Promise.resolve();
-  const loadPipeline =
-    options.loadPipeline ??
-    ((modelPath: string) =>
-      loadTokenClassificationPipeline(modelPath, {
-        allowRemoteModels: false,
-        localFilesOnly: true,
-      }));
-
-  const run = async (
-    message: UtilityDeidentifyRequest,
-  ): Promise<UtilityDeidentifyResponse> => {
+function probeNetwork(): void {
+  const attempts: Array<() => unknown> = [
+    () => globalThis.fetch("https://example.invalid/model.onnx"),
+    () => net.connect(443, "example.invalid"),
+    () => dns.lookup("example.invalid", () => undefined),
+  ];
+  for (const attempt of attempts) {
+    let blocked = false;
     try {
-      let pipeline = modelCache.get(message.modelPath);
-      if (!pipeline) {
-        pipeline = loadPipeline(message.modelPath);
-        modelCache.set(message.modelPath, pipeline);
-      }
-      const result = await deidentify(message.text, {
-        pipeline: await pipeline,
-        docId: "electron-document",
-        detector: "electron-utility-process",
-      });
-      const spans = result.spans.map(toRendererOpenMedSpan);
-      assertRendererSpans(spans, message.text.length);
-      return {
-        type: "deidentify-result",
-        requestId: message.requestId,
-        ok: true,
-        spans,
-      };
+      attempt();
     } catch {
-      modelCache.delete(message.modelPath);
-      return inferenceFailure(message.requestId, "INFERENCE_FAILED");
+      blocked = true;
     }
-  };
-
-  return async (message: unknown): Promise<UtilityDeidentifyResponse> => {
-    if (!isUtilityDeidentifyMessage(message)) {
-      return inferenceFailure(requestIdFrom(message), "INVALID_REQUEST");
+    if (!blocked) {
+      throw new Error("network probe was not blocked");
     }
-    const response = inferenceQueue.then(() => run(message));
-    inferenceQueue = response.then(
-      () => undefined,
-      () => undefined,
-    );
-    return response;
-  };
+  }
 }
 
-export function installOfflineNetworkGuard(): () => void {
-  const restorers: Array<() => void> = [];
-  const blocked = (): never => {
-    throw new Error("Network access is disabled in the OpenMed utility process.");
-  };
-
-  blockMethods(globalThis, ["fetch", "WebSocket", "EventSource"], blocked, restorers);
-  blockMethods(http, ["request", "get"], blocked, restorers);
-  blockMethods(https, ["request", "get"], blocked, restorers);
-  blockMethods(http2, ["connect"], blocked, restorers);
-  blockMethods(net, ["connect", "createConnection"], blocked, restorers);
-  blockMethods(tls, ["connect"], blocked, restorers);
-  blockMethods(dgram, ["createSocket"], blocked, restorers);
-  blockMethods(
-    dns,
-    [
-      "lookup",
-      "lookupService",
-      "resolve",
-      "resolve4",
-      "resolve6",
-      "resolveAny",
-      "resolveCaa",
-      "resolveCname",
-      "resolveMx",
-      "resolveNaptr",
-      "resolveNs",
-      "resolvePtr",
-      "resolveSoa",
-      "resolveSrv",
-      "resolveTxt",
-      "reverse",
-    ],
-    blocked,
-    restorers,
-  );
-  blockMethods(
-    dnsPromises,
-    [
-      "lookup",
-      "lookupService",
-      "resolve",
-      "resolve4",
-      "resolve6",
-      "resolveAny",
-      "resolveCaa",
-      "resolveCname",
-      "resolveMx",
-      "resolveNaptr",
-      "resolveNs",
-      "resolvePtr",
-      "resolveSoa",
-      "resolveSrv",
-      "resolveTxt",
-      "reverse",
-    ],
-    blocked,
-    restorers,
-  );
-  blockMethods(
-    childProcess,
-    ["exec", "execFile", "execFileSync", "execSync", "fork", "spawn", "spawnSync"],
-    blocked,
-    restorers,
-  );
-
-  return () => {
-    for (const restore of restorers.reverse()) {
-      restore();
-    }
-  };
-}
-
-export function startUtilityProcess(parentPort: UtilityParentPortLike): void {
-  installOfflineNetworkGuard();
-  const handleMessage = createUtilityDeidentifyHandler();
-  parentPort.on("message", (event) => {
-    void handleMessage(event.data).then((response) => {
-      try {
-        parentPort.postMessage(response);
-      } catch {
-        // The main process timeout owns recovery; never serialize process errors.
-      }
-    });
+async function loadBundlePipeline(bundle: VerifiedElectronBundle) {
+  const labels = bundle.files.get("id2label.json");
+  const entrypoint = bundle.files.get(bundle.runtime.entrypoint);
+  if (labels === undefined || entrypoint === undefined || entrypoint.length === 0) {
+    throw new Error("verified bundle is incomplete");
+  }
+  JSON.parse(new TextDecoder().decode(labels));
+  return createSyntheticPipeline({
+    crash: () => {
+      process.crash();
+      throw new Error("unreachable");
+    },
+    probeNetwork,
   });
 }
 
-function blockMethods(
-  target: object,
-  methodNames: readonly string[],
-  blocked: () => never,
-  restorers: Array<() => void>,
-): void {
-  const mutableTarget = target as Record<string, unknown>;
-  for (const methodName of methodNames) {
-    const original = mutableTarget[methodName];
-    if (typeof original !== "function") {
-      continue;
-    }
-    mutableTarget[methodName] = blocked;
-    restorers.push(() => {
-      mutableTarget[methodName] = original;
-    });
-  }
+const parentPort = (process as NodeJS.Process & { parentPort?: UtilityParentPortLike })
+  .parentPort;
+if (parentPort) {
+  startUtilityProcess(parentPort, { loadBundlePipeline });
 }
 
-function requestIdFrom(message: unknown): string {
-  if (typeof message === "object" && message !== null) {
-    const requestId = (message as Record<string, unknown>).requestId;
-    if (
-      typeof requestId === "string" &&
-      requestId.length > 0 &&
-      requestId.length <= 80 &&
-      /^[A-Za-z0-9_-]+$/.test(requestId)
-    ) {
-      return requestId;
-    }
-  }
-  return "invalid-request";
-}
+```
+
+### Core Architecture Module: `js/openmedkit-electron/src/utility-process.ts`
+```
+/**
+ * Default OpenMed utility-process entrypoint.
+ *
+ * Bundle this module as the app's utility-process script. When it runs inside
+ * an Electron utility process it starts the OpenMed loop with the default
+ * `openmed` loaders. Apps that need a custom pipeline loader should build
+ * their own entrypoint around `startUtilityProcess` from
+ * `@openmed/openmedkit-electron/utility-runtime` instead, so only one loop
+ * starts.
+ */
+import { startUtilityProcess, type UtilityParentPortLike } from "./utility-runtime";
+
+export {
+  createUtilityDeidentifyHandler,
+  installOfflineNetworkGuard,
+  loadVerifiedBundlePipeline,
+  startUtilityProcess,
+  type UtilityHandlerOptions,
+  type UtilityMessageEvent,
+  type UtilityMessageHandler,
+  type UtilityParentPortLike,
+  type VerifiedBundleRuntime,
+  type VerifiedElectronBundle,
+} from "./utility-runtime";
 
 const electronProcess = process as NodeJS.Process & {
   parentPort?: UtilityParentPortLike | null;
@@ -948,1354 +1617,6 @@ if (electronProcess.parentPort) {
   startUtilityProcess(electronProcess.parentPort);
 }
 
-```
-
-### Core Architecture Module: `openmed/clinical/coref/__init__.py`
-```
-"""Clinical mention coreference and document-level entity linking."""
-
-from .clustering import (
-    COMPATIBILITY_SCORER_VERSION,
-    COMPATIBILITY_WEIGHTS,
-    COREFERENCE_ADVISORY,
-    DEFAULT_LINK_THRESHOLD,
-    ClusteringMetric,
-    CoreferenceResult,
-    EntityCluster,
-    PairCompatibility,
-    ResolvedCoreferenceCluster,
-    ResolvedCoreferenceResult,
-    bcubed_precision_recall_f1,
-    link_mentions,
-    resolve_coreference,
-    score_mention_pair,
-)
-from .mentions import (
-    DEFAULT_ABBREVIATION_EXPANSIONS,
-    DEFAULT_CANONICAL_ALIASES,
-    DEFAULT_DOCUMENT_ID,
-    EVENT_COREFERENCE_SEMANTIC_TYPES,
-    CanonicalMention,
-    SpanOffset,
-    canonicalize_mentions,
-    canonicalize_text,
-    event_coreference_mentions,
-)
-
-__all__ = [
-    "COREFERENCE_ADVISORY",
-    "COMPATIBILITY_SCORER_VERSION",
-    "COMPATIBILITY_WEIGHTS",
-    "DEFAULT_ABBREVIATION_EXPANSIONS",
-    "DEFAULT_CANONICAL_ALIASES",
-    "DEFAULT_DOCUMENT_ID",
-    "DEFAULT_LINK_THRESHOLD",
-    "EVENT_COREFERENCE_SEMANTIC_TYPES",
-    "CanonicalMention",
-    "ClusteringMetric",
-    "CoreferenceResult",
-    "EntityCluster",
-    "PairCompatibility",
-    "ResolvedCoreferenceCluster",
-    "ResolvedCoreferenceResult",
-    "SpanOffset",
-    "bcubed_precision_recall_f1",
-    "canonicalize_mentions",
-    "canonicalize_text",
-    "event_coreference_mentions",
-    "link_mentions",
-    "resolve_coreference",
-    "score_mention_pair",
-]
-
-```
-
-### Core Architecture Module: `openmed/clinical/coref/clustering.py`
-```
-"""Deterministic clinical mention coreference and entity linking."""
-
-from __future__ import annotations
-
-import hashlib
-import hmac
-from collections.abc import Iterable, Mapping
-from dataclasses import dataclass
-from difflib import SequenceMatcher
-from typing import Any
-
-from openmed.clinical.context import FAMILY_EXPERIENCER, PATIENT_EXPERIENCER
-
-from .mentions import (
-    DEFAULT_DOCUMENT_ID,
-    CanonicalMention,
-    SpanOffset,
-    canonicalize_mentions,
-    event_coreference_mentions,
-)
-
-COREFERENCE_ADVISORY = (
-    "Clinical mention coreference and entity linking are deterministic "
-    "assistive grouping aids for review and downstream organization, not a "
-    "clinical decision."
-)
-
-COMPATIBILITY_SCORER_VERSION = "clinical-coref-compat-v1"
-
-# Versioned feature weights for COMPATIBILITY_SCORER_VERSION. The features are
-# intentionally transparent: lexical canonicalization carries most of the
-# signal, semantic type and code agreement add conservative support, clinical
-# context prevents unsafe merges, and distance is only a weak tie-breaker.
-COMPATIBILITY_WEIGHTS: dict[str, float] = {
-    "string_similarity": 0.42,
-    "semantic_type": 0.18,
-    "section_temporality": 0.14,
-    "distance": 0.10,
-    "code": 0.16,
-}
-
-DEFAULT_LINK_THRESHOLD = 0.72
-
-
-@dataclass(frozen=True)
-class PairCompatibility:
-    """Feature-based mention-pair compatibility score and constraints."""
-
-    score: float
-    features: Mapping[str, float]
-    version: str
-    must_link: bool = False
-    cannot_link: bool = False
-    reasons: tuple[str, ...] = ()
-
-
-@dataclass(frozen=True)
-class EntityCluster:
-    """A deterministic per-document entity cluster with provenance offsets."""
-
-    entity_id: str
-    document_id: str
-    representative: str
-    canonical_text: str
-    semantic_type: str | None
-    members: tuple[CanonicalMention, ...]
-    member_offsets: tuple[SpanOffset, ...]
-    advisory: str = COREFERENCE_ADVISORY
-
-
-@dataclass(frozen=True)
-class ResolvedCoreferenceCluster:
-    """Privacy-safe cluster record for public event-coreference output."""
-
-    cluster_id: str
-    document_id: str
-    semantic_type: str | None
-    member_offsets: tuple[SpanOffset, ...]
-    member_hashes: tuple[str, ...]
-    canonical_hash: str
-    mention_count: int
-    advisory: str = COREFERENCE_ADVISORY
-
-    def to_dict(self) -> dict[str, Any]:
-        """Return a JSON-compatible cluster without raw mention text."""
-
-        return {
-            "cluster_id": self.cluster_id,
-            "document_id": self.document_id,
-            "semantic_type": self.semantic_type,
-            "member_offsets": [list(offset) for offset in self.member_offsets],
-            "member_hashes": list(self.member_hashes),
-            "canonical_hash": self.canonical_hash,
-            "mention_count": self.mention_count,
-            "advisory": self.advisory,
-        }
-
-
-@dataclass(frozen=True)
-class ResolvedCoreferenceResult:
-    """Privacy-safe event clusters returned by ``resolve_coreference``."""
-
-    clusters: tuple[ResolvedCoreferenceCluster, ...]
-    advisory: str = COREFERENCE_ADVISORY
-    scorer_version: str = COMPATIBILITY_SCORER_VERSION
-
-    def cluster_ids_by_offset(self) -> dict[tuple[str, SpanOffset], str]:
-        """Return one canonical cluster id for every event mention offset."""
-
-        return {
-            (cluster.document_id, offset): cluster.cluster_id
-            for cluster in self.clusters
-            for offset in cluster.member_offsets
-        }
-
-    def entity_ids_by_offset(self) -> dict[tuple[str, SpanOffset], str]:
-        """Return the event cluster index under its compatibility name."""
-
-        return self.cluster_ids_by_offset()
-
-    def to_dict(self) -> dict[str, Any]:
-        """Return a JSON-compatible result without raw mention text."""
-
-        return {
-            "advisory": self.advisory,
-            "scorer_version": self.scorer_version,
-            "clusters": [cluster.to_dict() for cluster in self.clusters],
-        }
-
-
-@dataclass(frozen=True)
-class CoreferenceResult:
-    """Document-level coreference output returned by ``link_mentions``."""
-
-    clusters: tuple[EntityCluster, ...]
-    advisory: str = COREFERENCE_ADVISORY
-    scorer_version: str = COMPATIBILITY_SCORER_VERSION
-
-    def entity_ids_by_offset(self) -> dict[tuple[str, SpanOffset], str]:
-        """Return ``(document_id, offset) -> entity_id`` for all members."""
-
-        return {
-            (cluster.document_id, member.offset): cluster.entity_id
-            for cluster in self.clusters
-            for member in cluster.members
-        }
-
-
-@dataclass(frozen=True)
-class ClusteringMetric:
-    """Precision/recall/F1 metric result for clustering evaluations."""
-
-    precision: float
-    recall: float
-    f1: float
-
-
-def link_mentions(
-    mentions: Iterable[Any],
-    *,
-    document_text: str | None = None,
-    abbreviation_expansions: Mapping[str, str] | None = None,
-    canonical_aliases: Mapping[str, str] | None = None,
-    threshold: float = DEFAULT_LINK_THRESHOLD,
-) -> CoreferenceResult:
-    """Link clinical mentions into deterministic per-document entity clusters.
-
-    Args:
-        mentions: Candidate mention mappings or objects with text and offsets.
-        document_text: Optional source text used by canonicalization when
-            mentions need to be located or validated.
-        abbreviation_expansions: Optional expansion hook for local clinical
-            abbreviations.
-        canonical_aliases: Optional alias hook for local surface-form variants.
-        threshold: Minimum pair compatibility score for an agglomerative link.
-
-    Returns:
-        A ``CoreferenceResult`` containing stable entity ids, cluster members,
-        member offsets, representative mentions, and the advisory disclaimer.
-    """
-
-    canonical_mentions = canonicalize_mentions(
-        mentions,
-        document_text=document_text,
-        abbreviation_expansions=abbreviation_expansions,
-        canonical_aliases=canonical_aliases,
-    )
-    if not canonical_mentions:
-        return CoreferenceResult(clusters=())
-    if not 0 <= threshold <= 1:
-        raise ValueError("coreference threshold must be between 0 and 1")
-
-    parents = list(range(len(canonical_mentions)))
-    pair_scores = _pair_scores(canonical_mentions)
-    candidates = [
-        (left, right, compatibility)
-        for (left, right), compatibility in pair_scores.items()
-        if compatibility.must_link or compatibility.score >= threshold
-    ]
-    candidates.sort(
-        key=lambda item: (
-            not item[2].must_link,
-            -item[2].score,
-            canonical_mentions[item[0]].stable_key,
-            canonical_mentions[item[1]].stable_key,
-        )
-    )
-
-    for left, right, compatibility in candidates:
-        if compatibility.cannot_link:
-            continue
-        left_root = _find(parents, left)
-        right_root = _find(parents, right)
-        if left_root == right_root:
-            continue
-        if _would_violate_cannot_link(
-            parents,
-            left_root,
-            right_root,
-            pair_scores,
-            len(canonical_mentions),
-        ):
-            continue
-        _union(parents, left_root, right_root, canonical_mentions)
-
-    clusters = _build_clusters(canonical_mentions, parents)
-    return CoreferenceResult(clusters=clusters)
-
-
-def resolve_coreference(
-    mentions: Iterable[Any] | None = None,
-    *,
-    document_text: str | None = None,
-    document_id: str = DEFAULT_DOCUMENT_ID,
-    include_anaphora: bool = True,
-    abbreviation_expansions: Mapping[str, str] | None = None,
-    canonical_aliases: Mapping[str, str] | None = None,
-    threshold: float = DEFAULT_LINK_THRESHOLD,
-    hash_secret: str | bytes | None = None,
-) -> ResolvedCoreferenceResult:
-    """Resolve clinical event mentions into privacy-safe document clusters.
-
-    With ``document_text``, typed PROBLEM-, TEST-, and TREATMENT-like seed
-    spans are augmented with definite-NP and pronoun candidates before
-    clustering. Public clusters retain ids, offsets, hashes, safe type metadata,
-    and counts; they never retain raw or canonical mention text.
-
-    Args:
-        mentions: Typed seed spans or candidate mappings.
-        document_text: Optional source text used to validate spans and detect
-            anaphoric candidates.
-        document_id: Fallback document id for seeds without one.
-        include_anaphora: Whether to detect definite-NP and pronoun candidates.
-        abbreviation_expansions: Optional clinical abbreviation overrides.
-        canonical_aliases: Optional local canonical-surface aliases.
-        threshold: Minimum pair compatibility score for a cluster link.
-        hash_secret: Optional HMAC key for returned content hashes. Without a
-            key, deterministic SHA-256 fingerprints are returned.
-
-    Returns:
-        Sanitized document clusters with no raw mention text.
-    """
-
-    if not isinstance(document_id, str) or not document_id.strip():
-        raise ValueError("document_id must be a non-empty string")
-    if hash_secret is not None and not isinstance(hash_secret, (str, bytes)):
-        raise TypeError("hash_secret must be a string or bytes when provided")
-    source_mentions: Iterable[Any]
-    validation_text: str | None
-    if document_text is not None:
-        source_mentions = event_coreference_mentions(
-            document_text,
-            tuple(mentions or ()),
-            document_id=document_id,
-            include_anaphora=include_anaphora,
-        )
-        validation_text = document_text
-    else:
-        source_mentions = tuple(mentions or ())
-        validation_text = None
-
-    linked = link_mentions(
-        source_mentions,
-        document_text=validation_text,
-        abbreviation_expansions=abbreviation_expansions,
-        canonical_aliases=canonical_aliases,
-        threshold=threshold,
-    )
-    return ResolvedCoreferenceResult(
-        clusters=tuple(
-            _sanitize_cluster(cluster, hash_secret=hash_secret)
-            for
-```
-
-### Core Architecture Module: `openmed/clinical/coref/mentions.py`
-```
-"""Canonical clinical mention normalization for document-level coreference."""
-
-from __future__ import annotations
-
-import re
-from collections.abc import Iterable, Mapping
-from dataclasses import dataclass
-from typing import Any, cast
-
-from openmed.clinical.context import (
-    AFFIRMED,
-    CERTAIN,
-    FAMILY_EXPERIENCER,
-    NEGATION_VALUES,
-    PATIENT_EXPERIENCER,
-    RECENT,
-    TEMPORALITY_VALUES,
-    ClinicalAssertion,
-    Negation,
-    apply_section_context,
-    canonical_section_name,
-    resolve_negation,
-    resolve_temporality,
-)
-from openmed.clinical.sections import UNSECTIONED_SECTION, detect_sections
-
-SpanOffset = tuple[int, int]
-
-DEFAULT_DOCUMENT_ID = "document"
-
-DEFAULT_ABBREVIATION_EXPANSIONS: dict[str, str] = {
-    "af": "atrial fibrillation",
-    "afib": "atrial fibrillation",
-    "cad": "coronary artery disease",
-    "chf": "congestive heart failure",
-    "ckd": "chronic kidney disease",
-    "copd": "chronic obstructive pulmonary disease",
-    "dm": "diabetes mellitus",
-    "gerd": "gastroesophageal reflux disease",
-    "hld": "hyperlipidemia",
-    "htn": "hypertension",
-    "mi": "myocardial infarction",
-    "t2dm": "diabetes mellitus",
-    "uti": "urinary tract infection",
-}
-
-DEFAULT_CANONICAL_ALIASES: dict[str, str] = {
-    "blood glucose": "diabetes mellitus",
-    "blood sugar": "diabetes mellitus",
-    "blood sugars": "diabetes mellitus",
-    "diabetes": "diabetes mellitus",
-    "elevated blood glucose": "diabetes mellitus",
-    "elevated blood sugar": "diabetes mellitus",
-    "elevated sugar": "diabetes mellitus",
-    "elevated sugars": "diabetes mellitus",
-    "heart attack": "myocardial infarction",
-    "high blood pressure": "hypertension",
-    "kidney disease": "chronic kidney disease",
-    "sugar": "diabetes mellitus",
-    "sugars": "diabetes mellitus",
-}
-
-_TEXT_KEYS = (
-    "text",
-    "surface",
-    "mention",
-    "label",
-    "name",
-    "term",
-    "literal",
-    "value",
-)
-_DOCUMENT_ID_KEYS = ("document_id", "doc_id", "source_doc_id")
-_START_KEYS = ("start", "start_char", "start_offset", "begin", "offset_start")
-_END_KEYS = ("end", "end_char", "end_offset", "stop", "offset_end")
-_OCCURRENCE_KEYS = ("occurrence", "text_occurrence", "occurrence_index")
-_SEMANTIC_TYPE_KEYS = (
-    "semantic_type",
-    "entity_type",
-    "label",
-    "role",
-    "type",
-    "category",
-    "canonical_label",
-)
-_EVENT_TEXT_KEYS = ("text", "surface", "mention", "name", "term", "literal", "value")
-_SECTION_KEYS = ("section", "section_label", "section_name")
-_SYSTEM_KEYS = ("system", "coding_system", "code_system")
-_CODE_KEYS = ("code", "concept_code", "coding_code")
-_COREF_ENTITY_KEYS = ("coref_entity_id", "entity_id", "cluster_id")
-_CANONICAL_TEXT_KEYS = (
-    "canonical_text",
-    "canonical_mention",
-    "referent_text",
-    "antecedent_text",
-)
-_TEXT_HASH_KEYS = ("text_hash", "mention_hash", "surface_hash")
-_NEGATION_KEYS = ("negation", "polarity")
-_TEMPORALITY_KEYS = ("temporality", "temporal_status")
-_EXPERIENCER_KEYS = ("experiencer",)
-_WHITESPACE_RE = re.compile(r"\s+")
-_SAFE_TEXT_HASH_RE = re.compile(r"^(?:hmac-)?sha256:[0-9a-f]{64}$")
-_PUNCTUATION_RE = re.compile(r"[^a-z0-9/+]+")
-_POSSESSIVE_RE = re.compile(r"\b([a-z]+)'s\b")
-_LEADING_CONTEXT_RE = re.compile(
-    r"^(?:"
-    r"past medical history of|family history of|history of|hx of|h/o|"
-    r"status post|s/p|patient has|patient with|the patient has|"
-    r"the patient with|mother with|father with|mother had|father had"
-    r")\s+"
-)
-_STOPWORDS = {
-    "a",
-    "an",
-    "and",
-    "her",
-    "his",
-    "of",
-    "patient",
-    "patients",
-    "the",
-    "their",
-    "with",
-}
-_SINGULAR_EXCEPTIONS = {
-    "asbestosis",
-    "diabetes",
-    "fibrosis",
-    "hyperlipidemia",
-    "necrosis",
-    "sepsis",
-    "status",
-}
-EVENT_COREFERENCE_SEMANTIC_TYPES = frozenset(
-    {
-        "analyte",
-        "condition",
-        "diagnosis",
-        "disease",
-        "drug",
-        "finding",
-        "lab",
-        "laboratory",
-        "lab_test",
-        "medication",
-        "medication_name",
-        "medicine",
-        "problem",
-        "procedure",
-        "test",
-        "treatment",
-    }
-)
-_EVENT_SEMANTIC_ALIASES = {
-    "analyte": "test",
-    "condition": "problem",
-    "diagnosis": "problem",
-    "disease": "problem",
-    "drug": "treatment",
-    "finding": "problem",
-    "lab": "test",
-    "laboratory": "test",
-    "lab_test": "test",
-    "medication": "treatment",
-    "medication_name": "treatment",
-    "medicine": "treatment",
-    "problem": "problem",
-    "procedure": "treatment",
-    "test": "test",
-    "treatment": "treatment",
-}
-_DEFINITE_EVENT_NP_RE = re.compile(
-    r"\b(?:the|this|that|these|those)\s+"
-    r"(?P<head>"
-    r"antibiotics?|conditions?|coughs?|diseases?|drugs?|findings?|"
-    r"infections?|labs?|lesions?|masses|medications?|medicines?|"
-    r"nodules?|pneumonia|problems?|results?|studies|study|tests?|"
-    r"treatments?|tumou?rs?"
-    r")\b",
-    re.IGNORECASE,
-)
-_PRONOUN_RE = re.compile(r"\b(?:it|this|that|they|them|these|those)\b", re.IGNORECASE)
-_TIME_ANAPHORA_FOLLOWERS = {
-    "afternoon",
-    "am",
-    "evening",
-    "morning",
-    "night",
-    "pm",
-    "week",
-}
-_ANAPHORA_WINDOW_CHARS = 700
-
-
-@dataclass(frozen=True)
-class CanonicalMention:
-    """Clinical mention normalized for deterministic document coreference.
-
-    ``text``, ``start``, and ``end`` preserve the original surface form and
-    document offsets. ``canonical_text`` is the comparison key after
-    abbreviation expansion, alias hooks, and conservative morphological
-    normalization.
-    """
-
-    document_id: str
-    source_index: int
-    text: str
-    start: int
-    end: int
-    normalized_text: str
-    canonical_text: str
-    semantic_type: str | None = None
-    section: str | None = None
-    canonical_section: str | None = None
-    negation: Negation = AFFIRMED
-    temporality: str = RECENT
-    experiencer: str = PATIENT_EXPERIENCER
-    system: str | None = None
-    code: str | None = None
-    coref_entity_id: str | None = None
-    text_hash: str | None = None
-
-    @property
-    def offset(self) -> SpanOffset:
-        """Return the preserved source span offsets."""
-
-        return self.start, self.end
-
-    @property
-    def stable_key(self) -> tuple[str, int, int, str, str]:
-        """Return a deterministic key independent of input iteration order."""
-
-        return (
-            self.document_id,
-            self.start,
-            self.end,
-            self.canonical_text,
-            self.text.casefold(),
-        )
-
-
-def canonicalize_mentions(
-    mentions: Iterable[Any],
-    *,
-    document_text: str | None = None,
-    abbreviation_expansions: Mapping[str, str] | None = None,
-    canonical_aliases: Mapping[str, str] | None = None,
-) -> tuple[CanonicalMention, ...]:
-    """Canonicalize candidate mentions while preserving provenance offsets.
-
-    Args:
-        mentions: Candidate mention mappings or objects. Each mention must
-            expose a text-like field plus ``start``/``end`` offsets, an
-            ``offset`` pair, or enough information to be located in
-            ``document_text``.
-        document_text: Optional source text used to locate mentions without
-            explicit offsets and to validate provided offsets.
-        abbreviation_expansions: Optional hook for project- or caller-specific
-            abbreviation expansion. Values override the default clinical
-            abbreviations for matching keys.
-        canonical_aliases: Optional hook for surface-form aliases that should
-            normalize to one canonical clinical concept.
-
-    Returns:
-        Canonical mentions sorted by document id and source offsets. Sorting
-        makes downstream clustering deterministic and order-invariant after
-        canonicalization.
-    """
-
-    expansions = _normalized_mapping(DEFAULT_ABBREVIATION_EXPANSIONS)
-    if abbreviation_expansions:
-        expansions.update(_normalized_mapping(abbreviation_expansions))
-
-    aliases = _normalized_mapping(DEFAULT_CANONICAL_ALIASES)
-    if canonical_aliases:
-        aliases.update(_normalized_mapping(canonical_aliases))
-
-    canonicalized = [
-        _coerce_mention(
-            mention,
-            source_index=index,
-            document_text=document_text,
-            abbreviation_expansions=expansions,
-            canonical_aliases=aliases,
-        )
-        for index, mention in enumerate(mentions)
-    ]
-    return tuple(sorted(canonicalized, key=lambda mention: mention.stable_key))
-
-
-def canonicalize_text(
-    text: str,
-    *,
-    abbreviation_expansions: Mapping[str, str] | None = None,
-    canonical_aliases: Mapping[str, str] | None = None,
-) -> str:
-    """Return the canonical comparison key for a mention surface form."""
-
-    if not isinstance(text, str):
-        raise TypeError("mention text must be a string")
-    normalized = _normalize_surface(text)
-
-    expansions = _normalized_mapping(DEFAULT_ABBREVIATION_EXPANSIONS)
-    if abbreviation_expansions:
-        expansions.update(_normalized_mapping(abbreviation_expansions))
-
-    aliases = _normalized_mapping(DEFAULT_CANONICAL_ALIASES)
-    if canonical_aliases:
-        aliases.update(_normalized_mapping(canonical_aliases))
-
-    return _canonicalize_normalized_text(normalized, expansions, aliases)
-
-
-def event_coreference_mentions(
-    document_text: str,
-    mentions: Iterable[Any],
-    *,
-    document_id: str = DEFAULT_DOCUMENT_ID,
-    include_anaphora: bool = True,
-) -> tuple[Mapping[str, Any], ...]:
-    """Detect event-coreference candidates from typed clinical spans.
-
-    Only PROBLEM-, TEST-, and TREATMENT-like seed spans are retained. When
-    requested, the detector adds conservative definite noun phrases and simple
-    pronouns that have an earlier compatible event antecedent. Raw surfaces are
-    kept only in these internal candidate records; public clustering output is
-    sanitized by :func:`openmed.clinical.coref.resolve_coreference`.
-
-    Args:
-        document_text: Source text for a single synthetic or clini
-```
-
-### Core Architecture Module: `openmed/clinical/coreference.py`
-```
-"""Deterministic span-native clinical coreference resolution.
-
-The resolver preserves its span-native API for already-detected
-:class:`~openmed.core.schemas.OpenMedSpan` mentions and also dispatches the
-event-candidate API when ``document_text`` is provided. Both modes use only
-local lexical and structural features and never log source text.
-"""
-
-from __future__ import annotations
-
-import hashlib
-import re
-from collections.abc import Iterable, Mapping
-from dataclasses import dataclass
-
-from openmed.core.labels import (
-    CONDITION,
-    MEDICATION,
-    OTHER,
-    PERSON,
-)
-from openmed.core.schemas import OpenMedSpan
-
-from .context import FAMILY_EXPERIENCER, PATIENT_EXPERIENCER
-from .coref import (
-    DEFAULT_DOCUMENT_ID,
-    DEFAULT_LINK_THRESHOLD,
-    ResolvedCoreferenceResult,
-    canonicalize_text,
-)
-from .coref import (
-    resolve_coreference as resolve_event_coreference,
-)
-from .experiencer import resolve_experiencer
-
-SpanChainKey = tuple[str, tuple[int, int]]
-
-COREFERENCE_RESOLUTION_ADVISORY = (
-    "Clinical coreference chains are deterministic assistive annotations. "
-    "Review them before clinical use."
-)
-
-COREFERENCE_FEATURES = (
-    "section",
-    "sentence_distance",
-    "head_noun",
-    "entity_type",
-)
-
-DEFAULT_COREFERENCE_THRESHOLD = 0.70
-
-_WORD_RE = re.compile(
-    r"[^\W_]+(?:['\N{RIGHT SINGLE QUOTATION MARK}-][^\W_]+)?", re.UNICODE
-)
-_SENTENCE_BOUNDARY_RE = re.compile(r"(?:[.!?]+(?=\s|$)|\n+)")
-_SPACE_RE = re.compile(r"\s+")
-
-_PRONOUNS = {
-    "he",
-    "her",
-    "hers",
-    "him",
-    "his",
-    "it",
-    "its",
-    "she",
-    "that",
-    "their",
-    "theirs",
-    "them",
-    "these",
-    "they",
-    "this",
-    "those",
-}
-_PERSON_PRONOUNS = {"he", "her", "hers", "him", "his", "she"}
-_NEUTRAL_PRONOUNS = {"it", "its", "that", "this"}
-_PATIENT_ANCHORS = {
-    "patient",
-    "the patient",
-    "this patient",
-}
-_DETERMINERS = {
-    "a",
-    "an",
-    "another",
-    "that",
-    "the",
-    "these",
-    "this",
-    "those",
-}
-_POSSESSIVES = {"her", "his", "its", "their"}
-
-_CONDITION_HEADS = {
-    "condition",
-    "diagnosis",
-    "disease",
-    "finding",
-    "lesion",
-    "problem",
-    "symptom",
-}
-_MEDICATION_HEADS = {
-    "agent",
-    "drug",
-    "medication",
-    "medicine",
-    "prescription",
-    "therapy",
-}
-_PERSON_HEADS = {"individual", "person", "patient"}
-_GENERIC_TYPE_HEADS = (_CONDITION_HEADS | _MEDICATION_HEADS | _PERSON_HEADS) - {
-    "lesion"
-}
-_FAMILY_ANCHORS = {
-    "aunt",
-    "brother",
-    "daughter",
-    "father",
-    "mother",
-    "parent",
-    "relative",
-    "sibling",
-    "sister",
-    "son",
-}
-
-_TYPE_ALIASES = {
-    "condition": CONDITION,
-    "diagnosis": CONDITION,
-    "disease": CONDITION,
-    "finding": CONDITION,
-    "lesion": CONDITION,
-    "problem": CONDITION,
-    "symptom": CONDITION,
-    "drug": MEDICATION,
-    "med": MEDICATION,
-    "medication": MEDICATION,
-    "medicine": MEDICATION,
-    "person": PERSON,
-    "patient": PERSON,
-}
-_UNINFORMATIVE_TYPES = {
-    "clinical entity",
-    "entity",
-    "mention",
-    "nominal",
-    "pronoun",
-    "unknown",
-}
-_CONDITION_LABELS = {
-    CONDITION,
-    "CKD_STAGE",
-    "CLINICAL_SIGNIFICANCE",
-    "DYSPNEA_GRADE",
-    "ENDOSCOPIC_FINDING",
-    "GI_SYMPTOM",
-    "POLYP_DESCRIPTOR",
-    "RESPIRATORY_FINDING",
-    "URINE_FINDING",
-}
-_MEDICATION_LABELS = {
-    MEDICATION,
-    "ANESTHETIC_AGENT",
-    "ANTIBIOTIC",
-    "INSULIN_REGIMEN",
-    "VACCINE_NAME",
-}
-_PERSON_LABELS = {
-    PERSON,
-    "FIRST_NAME",
-    "LAST_NAME",
-    "MIDDLE_NAME",
-}
-
-
-@dataclass(frozen=True)
-class CoreferenceChain:
-    """One resolved entity chain with source-span provenance.
-
-    ``members`` contains the original immutable spans in document order.
-    ``representative`` is the most informative non-anaphoric member when one is
-    available. ``confidence`` is the mean confidence of the deterministic links
-    that formed the chain; singleton chains have confidence ``1.0``.
-    """
-
-    chain_id: str
-    members: tuple[OpenMedSpan, ...]
-    representative: OpenMedSpan
-    confidence: float
-    advisory: str = COREFERENCE_RESOLUTION_ADVISORY
-
-    @property
-    def member_spans(self) -> tuple[OpenMedSpan, ...]:
-        """Return ``members`` under the explicit issue-facing field name."""
-
-        return self.members
-
-    @property
-    def representative_mention(self) -> OpenMedSpan:
-        """Return the representative source mention."""
-
-        return self.representative
-
-
-@dataclass(frozen=True)
-class _Mention:
-    span: OpenMedSpan
-    surface: str
-    canonical_text: str
-    head_noun: str
-    form: str
-    entity_class: str | None
-    section: str | None
-    sentence_index: int
-    experiencer: str
-
-    @property
-    def key(self) -> SpanChainKey:
-        return self.span.doc_id, (self.span.start, self.span.end)
-
-
-def resolve_coreference(
-    spans: Iterable[OpenMedSpan] | Iterable[object] | None = None,
-    text: str | None = None,
-    *,
-    threshold: float | None = None,
-    document_text: str | None = None,
-    document_id: str = DEFAULT_DOCUMENT_ID,
-    include_anaphora: bool = True,
-    abbreviation_expansions: Mapping[str, str] | None = None,
-    canonical_aliases: Mapping[str, str] | None = None,
-    hash_secret: str | bytes | None = None,
-) -> (
-    tuple[tuple[CoreferenceChain, ...], dict[SpanChainKey, str]]
-    | ResolvedCoreferenceResult
-):
-    """Resolve clinical coreference using the span or event-candidate API.
-
-    The established ``resolve_coreference(spans, text)`` form returns span
-    chains and an offset index. The event-specific
-    ``resolve_coreference(mentions, document_text=...)`` form detects
-    PROBLEM/TEST/TREATMENT anaphora and returns sanitized clusters containing
-    no raw mention text.
-
-    Args:
-        spans: Existing ``OpenMedSpan`` mentions in span mode, or typed event
-            seed mentions in event mode.
-        text: Positional source text for the established span-native mode.
-        threshold: Optional minimum deterministic compatibility score. Each
-            mode uses its own stable default when omitted.
-        document_text: Keyword-only source text selecting event-candidate mode.
-        document_id: Fallback id for event seeds without a document id.
-        include_anaphora: Whether event mode detects definite NPs and pronouns.
-        abbreviation_expansions: Optional event-mode abbreviation overrides.
-        canonical_aliases: Optional event-mode canonical aliases.
-        hash_secret: Optional HMAC key for event-mode content hashes.
-
-    Returns:
-        Span mode returns ``(chains, span_to_chain)``. Event mode returns a
-        :class:`ResolvedCoreferenceResult` containing only privacy-safe cluster
-        metadata, source offsets, and hashes.
-
-    Raises:
-        TypeError: If source text or a span has the wrong type.
-        ValueError: If offsets are invalid, duplicate span keys are supplied,
-            spans refer to more than one document, or ``threshold`` is outside
-            ``[0, 1]``.
-    """
-
-    if document_text is not None:
-        if text is not None:
-            raise ValueError("pass either text or document_text, not both")
-        return resolve_event_coreference(
-            spans,
-            document_text=document_text,
-            document_id=document_id,
-            include_anaphora=include_anaphora,
-            abbreviation_expansions=abbreviation_expansions,
-            canonical_aliases=canonical_aliases,
-            threshold=DEFAULT_LINK_THRESHOLD if threshold is None else threshold,
-            hash_secret=hash_secret,
-        )
-
-    if text is None:
-        raise TypeError("text is required for span-native coreference")
-    if threshold is None:
-        threshold = DEFAULT_COREFERENCE_THRESHOLD
-
-    if not isinstance(text, str):
-        raise TypeError("text must be a string")
-    if not 0.0 <= threshold <= 1.0:
-        raise ValueError("coreference threshold must be between 0 and 1")
-
-    span_list = list(() if spans is None else spans)
-    if not span_list:
-        return (), {}
-
-    sentence_starts = _sentence_starts(text)
-    mentions = tuple(
-        sorted(
-            (_build_mention(span, text, sentence_starts) for span in span_list),
-            key=lambda mention: (
-                mention.span.doc_id,
-                mention.span.start,
-                mention.span.end,
-                mention.span.canonical_label,
-                mention.span.entity_type,
-            ),
-        )
-    )
-    _validate_unique_keys(mentions)
-    _validate_single_document(mentions)
-
-    parents = list(range(len(mentions)))
-    link_scores: dict[int, float] = {}
-    for current_index, current in enumerate(mentions):
-        candidate = _best_antecedent(
-            mentions,
-            parents,
-            current_index,
-            threshold,
-        )
-        if candidate is None:
-            continue
-        antecedent_index, score = candidate
-        parents[current_index] = _find(parents, antecedent_index)
-        link_scores[current_index] = score
-
-    chains = _build_chains(mentions, parents, link_scores)
-    span_to_chain = {
-        (span.doc_id, (span.start, span.end)): chain.chain_id
-        for chain in chains
-        for span in chain.members
-    }
-    return chains, span_to_chain
-
-
-def _build_mention(
-    span: OpenMedSpan,
-    text: str,
-    sentence_starts: tuple[int, ...],
-) -> _Mention:
-    if not isinstance(span, OpenMedSpan):
-        raise TypeError("spans must contain OpenMedSpan instances")
-    if span.start == span.end:
-        raise ValueError("coreference spans must not be empty")
-    if span.end > len(text):
-        raise ValueError("span offsets must be within text")
-
-    surface = text[span.start : span.end]
-    if not surface.strip():
-        raise ValueError("coreference spans must contain non-whitespace text")
-
-    words = _words(surface)
-    if not words:
-        raise ValueError("coreference spans must contain at least one word")
-    normalized_surface = " ".join(words)
-    form = _mention_form(normalized_surface, words)
- 
-```
-
-### Core Architecture Module: `openmed/clinical/exporters/fhir/uscore.py`
-```
-"""Offline US Core STU9 checks for selected OpenMed FHIR R4 exports.
-
-The checker intentionally implements a compact, OpenMed-authored subset of US
-Core 9.0.0. It validates the four resource profiles used by OpenMed exports,
-runs the bundled base-R4 validator first, and never downloads implementation
-guide or terminology content. Findings contain only fixed messages and element
-paths so clinical values are not copied into logs or audit artifacts.
-"""
-
-from __future__ import annotations
-
-import json
-from collections.abc import Mapping, Sequence
-from dataclasses import dataclass
-from functools import lru_cache
-from importlib import resources
-from typing import Any
-
-from ._validation_primitives import _extract_codes, _occurrence_groups
-from .validate import ValidationFinding, validate_resource
-
-__all__ = ["ConformanceResult", "US_CORE_VERSION", "check_us_core"]
-
-US_CORE_VERSION = "9.0.0"
-
-
-@dataclass(frozen=True)
-class ConformanceResult:
-    """Immutable findings from base R4 and US Core profile checks.
-
-    Attributes:
-        profile: Resolved US Core canonical URL, when a profile was selected.
-        resource_type: FHIR resource type reported by the input, when valid.
-        errors: Findings that prevent a conformance claim.
-        warnings: Advisory findings, including absent must-support elements.
-    """
-
-    profile: str | None
-    resource_type: str | None
-    errors: tuple[ValidationFinding, ...] = ()
-    warnings: tuple[ValidationFinding, ...] = ()
-
-    @property
-    def findings(self) -> tuple[ValidationFinding, ...]:
-        """Return every finding, with errors before warnings."""
-
-        return self.errors + self.warnings
-
-    @property
-    def issues(self) -> tuple[ValidationFinding, ...]:
-        """Return findings for the shared OperationOutcome adapter."""
-
-        return self.findings
-
-    @property
-    def is_valid(self) -> bool:
-        """Return ``True`` when neither validation layer found an error."""
-
-        return not self.errors
-
-    @property
-    def valid(self) -> bool:
-        """Alias for :attr:`is_valid`."""
-
-        return self.is_valid
-
-
-def check_us_core(
-    resource: Mapping[str, Any],
-    profile: str | None = None,
-) -> ConformanceResult:
-    """Check one resource against base R4 and a bundled US Core profile subset.
-
-    Supported profiles cover Condition problems/health concerns, Condition
-    encounter diagnoses, laboratory Observation, MedicationRequest, and
-    AllergyIntolerance. A profile can be supplied as its canonical URL, a
-    versioned canonical (``url|9.0.0``), or its StructureDefinition id. When it
-    is omitted, a supported canonical in ``meta.profile`` takes precedence,
-    followed by the resource type's default profile.
-
-    Args:
-        resource: FHIR R4 resource mapping. Malformed resources are returned as
-            structured findings rather than raising.
-        profile: Optional US Core profile canonical URL or id.
-
-    Returns:
-        A :class:`ConformanceResult` containing sanitized base and profile
-        findings. No network access is performed.
-    """
-
-    base_result = validate_resource(resource)
-    resource_type = _resource_type(resource)
-    selected, selection_finding = _select_profile(resource, resource_type, profile)
-
-    findings = list(base_result.findings)
-    if selection_finding is not None:
-        findings.append(selection_finding)
-    elif selected is not None:
-        findings.extend(_check_profile(resource, selected))
-
-    unique = _deduplicate(findings)
-    return ConformanceResult(
-        profile=selected["url"] if selected is not None else None,
-        resource_type=resource_type,
-        errors=tuple(item for item in unique if item.severity == "error"),
-        warnings=tuple(item for item in unique if item.severity == "warning"),
-    )
-
-
-def _resource_type(resource: Any) -> str | None:
-    if not isinstance(resource, Mapping):
-        return None
-    resource_type = resource.get("resourceType")
-    return resource_type if isinstance(resource_type, str) and resource_type else None
-
-
-def _select_profile(
-    resource: Any,
-    resource_type: str | None,
-    requested: str | None,
-) -> tuple[Mapping[str, Any] | None, ValidationFinding | None]:
-    if resource_type is None:
-        return None, None
-
-    candidate = (
-        requested
-        or _declared_profile(resource)
-        or _definitions()["defaults"].get(resource_type)
-    )
-    root = resource_type
-    if candidate is None:
-        return None, _warning(
-            f"{root}.resourceType",
-            "Resource type has no bundled US Core profile subset.",
-            "not-supported",
-        )
-
-    canonical, version = _split_version(candidate)
-    if version is not None and version != US_CORE_VERSION:
-        return None, _error(
-            f"{root}.meta.profile",
-            "US Core profile version is not supported by the bundled subset.",
-            "not-supported",
-        )
-
-    selected = _profile_aliases().get(_normalise_canonical(canonical))
-    if selected is None:
-        return None, _error(
-            f"{root}.meta.profile",
-            "US Core profile is not supported by the bundled subset.",
-            "not-supported",
-        )
-    if selected["resourceType"] != resource_type:
-        return None, _error(
-            f"{root}.meta.profile",
-            "US Core profile does not match the resource type.",
-            "value",
-        )
-    return selected, None
-
-
-def _declared_profile(resource: Any) -> str | None:
-    if not isinstance(resource, Mapping):
-        return None
-    meta = resource.get("meta")
-    if not isinstance(meta, Mapping):
-        return None
-    declared = meta.get("profile")
-    if not isinstance(declared, Sequence) or isinstance(declared, (str, bytes)):
-        return None
-    for item in declared:
-        if not isinstance(item, str):
-            continue
-        canonical, _ = _split_version(item)
-        if _normalise_canonical(canonical) in _profile_aliases():
-            return item
-    return None
-
-
-def _split_version(candidate: str) -> tuple[str, str | None]:
-    canonical, separator, version = candidate.strip().partition("|")
-    return canonical.rstrip("/"), version if separator else None
-
-
-def _normalise_canonical(candidate: str) -> str:
-    normalised = candidate.strip().rstrip("/")
-    for prefix in ("https://hl7.org/", "https://www.hl7.org/", "http://www.hl7.org/"):
-        if normalised.startswith(prefix):
-            return "http://hl7.org/" + normalised[len(prefix) :]
-    return normalised
-
-
-@lru_cache(maxsize=1)
-def _profile_aliases() -> Mapping[str, Mapping[str, Any]]:
-    aliases: dict[str, Mapping[str, Any]] = {}
-    for profile in _definitions()["profiles"]:
-        aliases[_normalise_canonical(profile["url"])] = profile
-        aliases[profile["id"]] = profile
-        aliases[f"StructureDefinition/{profile['id']}"] = profile
-    return aliases
-
-
-def _check_profile(
-    resource: Mapping[str, Any],
-    profile: Mapping[str, Any],
-) -> list[ValidationFinding]:
-    root = profile["resourceType"]
-    findings: list[ValidationFinding] = []
-    for element in profile["elements"]:
-        findings.extend(_check_element(resource, root, element))
-    for group in profile.get("mustSupportAnyOf", ()):
-        findings.extend(_check_must_support_group(resource, root, group))
-    return findings
-
-
-def _check_element(
-    resource: Mapping[str, Any],
-    root: str,
-    element: Mapping[str, Any],
-) -> list[ValidationFinding]:
-    path = element["path"]
-    groups = _occurrence_groups(resource, path.split("."), root)
-    location = f"{root}.{element.get('location', path.replace('[x]', ''))}"
-    findings: list[ValidationFinding] = []
-
-    # A nested must-support child is only actionable when its parent exists.
-    if not groups:
-        return findings
-
-    for group in groups:
-        occurrences = tuple(group.occurrences)
-        selector = element.get("selector")
-        if selector is not None:
-            matching = tuple(
-                occurrence
-                for occurrence in occurrences
-                if _matches_selector(occurrence.value, selector)
-            )
-        else:
-            matching = occurrences
-
-        minimum = int(element.get("min", 0))
-        maximum_value = element.get("max", "*")
-        maximum = None if maximum_value == "*" else int(maximum_value)
-
-        if len(matching) < minimum:
-            code = (
-                "code-invalid" if occurrences and selector is not None else "required"
-            )
-            message = (
-                "Element does not satisfy the required US Core binding."
-                if code == "code-invalid"
-                else "Required US Core profile element is missing or empty."
-            )
-            findings.append(_error(location, message, code))
-        if maximum is not None and len(matching) > maximum:
-            findings.append(
-                _error(
-                    location,
-                    "Maximum US Core profile element cardinality is exceeded.",
-                    "structure",
-                )
-            )
-
-        binding_name = element.get("binding")
-        if binding_name is not None and selector is None:
-            binding = _definitions()["bindings"][binding_name]
-            for occurrence in occurrences:
-                if not _matches_binding(occurrence.value, binding):
-                    findings.append(
-                        _error(
-                            occurrence.expression,
-                            "Element does not satisfy the required US Core binding.",
-                            "code-invalid",
-                        )
-                    )
-
-        if (
-            element.get("mustSupport")
-            and not matching
-            and not any(
-                item.severity == "error" and item.location == location
-                for item in findings
-            )
-        ):
-            findings.append(
-                _warning(
-                    location,
-        
 ```
 
 
@@ -2307,8 +1628,8 @@ def _check_element(
 - **Issue #5499** (2026-11-08): **fix: reject non-JSON request media types at the privacy proxy**
   *Symptoms*: # Pull Request  ## Description Validate the request `Content-Type` header on the privacy proxy chat completion routes (`/v1/chat/completions` and `/chat/completions`) before reading or parsing the request body. Requests with non-JSON or missing media types now return HTTP 415 with `reason: "unsupported_content_type"` through the existing PHI-safe error payload without invoking the transport or echoing request text.  ## Type of Change - [x] Bug fix (non-breaking change which fixes an issue) - [ ] New feature (non-breaking change which adds functionality) - [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected) - [ ] Documentation update - [ ] Code refactoring - [ ] Performance improvement - [x] Test addition/improvement  ## Changes Made - Reused `_normalize_content_type` from `openmed.service.privacy_proxy.outbound` in `chat_completions` (`openmed/service/privacy_proxy/app.py`) to validate the `Content-Type` header before calling `await request.json()`. - Added optional `status_code` override support to `PrivacyProxyError` so `PrivacyProxyRequestError(reason_code="unsupported_content_type", status_code=415)` returns HTTP 415 via `_error_response`. - Added unit tests in `tests/unit/service/privacy_proxy/test_app.py` covering `application/json; charset=utf-8`, `text/plain` with a JSON payload, and a missing `Content-Type` header.  ## Testing - [x] I have added tests that prove my fix is effective or that my feature works - [x] New an
 
-- **Issue #5185** (2026-11-08): **Reject non-JSON request media types at the privacy proxy**
-  *Symptoms*: ## Problem and existing coverage  `chat_completions` (`app.py:461-468`) calls `request.json()` whatever the `Content-Type` header says, so a `text/plain` or form body is parsed if it happens to be JSON. The outbound filter already normalizes and checks media types (`outbound.py:597-606`, `SUPPORTED_CONTENT_TYPES` at `:31`), but the route does not.  ## Implementation  - Check the `Content-Type` header before reading the body, accepting `application/json` with parameters such as `charset=utf-8`. - Return 415 with reason `unsupported_content_type` otherwise, through the existing error payload. - Add tests for JSON, JSON with charset, text/plain and a missing header.  ## Acceptance criteria  - [ ] `application/json; charset=utf-8` requests behave as before. - [ ] `text/plain` with a JSON body returns 415 and the transport is not called. - [ ] The error body contains no request text. - [ ] `.venv/bin/python -m pytest tests/unit/service/privacy_proxy/test_app.py -q` passes.  ## Independent development boundary  Owns the media-type check on the chat route.  ## Starting points and validation  `openmed/service/privacy_proxy/app.py`, `openmed/service/privacy_proxy/outbound.py`, `tests/unit/service/privacy_proxy/test_app.py`.  Add focused offline unit and integration tests for this slice and document the public behavior. Use synthetic fixtures, injected transports/clocks/providers where needed, and negative controls. Record exact validation commands in the implementation PR.  ## For fir
+- **Issue #5431** (2026-11-15): **Make Android OpenMedKit native libraries load on 16 KB page-size devices**
+  *Symptoms*: Closes #3927. Depends on #4450.  This adds an offline ELF checker, `scripts/android/check_elf_page_alignment.py`, that reads the program headers of every packaged `.so` and fails when a 64-bit library has a `PT_LOAD` segment with `p_align` below 16 KB. It reads `jni/<abi>/` in AARs, `lib/<abi>/` in APKs and JARs, loose files and directories. Desktop natives inside JVM jars are ignored and 32-bit libraries are reported as skipped. Output lists only library names, ABIs, alignment values and the containing archive's file name.  Two Gradle gates run it. `:openmedkit:verifyReleaseNativeLibraryAlignment` checks the release AAR plus every AAR on the release runtime classpath, and is now part of `:openmedkit:verifyAndroidBudgets`. A per-variant `verify<Variant>ApkElfAlignment` task, with an aggregate `verifyApkElfAlignment`, sits next to the #4450 zip-alignment tasks and checks every debug demo APK and the OpenMedKit test APK. Both gates fail when no 64-bit library is found. Android CI runs both, and the Flutter CI mobile job runs the checker on its consumer APK.  DJL tokenizers: - `ai.djl.android:tokenizer-native` 0.33.0 is still the only version on Maven Central. Its `libdjl_tokenizer.so` is 4 KB aligned on `arm64-v8a` and `x86_64`, and the upstream fix is still open (deepjavalibrary/djl#3815). So there is no release to bump to, and rebuilding the Rust/JNI library here was out of scope. - The gap is recorded in `android/gradle/native-page-alignment-allowlist.toml`. The entry names 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2325,517 +1646,423 @@ def _check_element(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8097fc0b` (2026-11-11)
-**Commit Message**: Merge pull request #5545 from maziyarpanahi/fix/v3.3-public-claims-refresh
+### Incident Patch 1: `d9461297` (2026-11-15)
+**Commit Message**: ci(security): skip the private React Native parity app in the kit scan
 
-fix(docs): refresh expired public metric evidence
+The parity example pins React Native 0.77, whose Metro bundler needs
+image-size 1.x; the two HIGH advisories are only fixed in 2.x, which Metro
+0.81 cannot load. The app is a private test harness that never ships in a
+kit artifact, so scope the OpenMedKit lockfile scan to shipped kits and
+document the exclusion. The bridge package's own lockfile is still
+scanned.
 
-**File**: `README.ar.md` (modified, +1/-1)
+**File**: `.github/workflows/vuln-scan.yml` (modified, +8/-3)
 ```diff
-@@ -470,7 +470,7 @@ curl -X POST http://127.0.0.1:8080/pii/extract \
- 
- </div>
- 
--[5,400+ GitHub stars · 9 Oct 2026 snapshot](https://github.com/maziyarpanahi/openmed/stargazers)
-+[5,700+ GitHub stars · 11 Nov 2026 snapshot](https://github.com/maziyarpanahi/openmed/stargazers)
- 
- ---
- 
+@@ -269,16 +269,21 @@ jobs:
+             --source android \
+             --output "$raw/android-release-runtime"
+           scan() {
++            local name="$1" target="$2"
++            shift 2
+             trivy fs \
+               --scanners vuln \
+               --pkg-types library \
+               --format json \
+-              --output "$raw/trivy-$1.json" \
+-              "$2"
++              --output "$raw/trivy-$name.json" \
++              "$@" \
++              "$target"
+           }
+           scan swiftpm-root Package.resolved
+           scan swiftpm-demos swift
+-          scan js js
++          # The React Native parity example is a private test app that never
++          # ships in a kit artifact; see docs/supply-chain/vulnerability-scanning.md.
++          scan js js --skip-dirs "**/openmedkit-react-native/example"
+           scan clients clients
+           scan android "$raw/android-release-runtime"
+           {
 ```
 
-**File**: `README.de.md` (modified, +1/-1)
+**File**: `docs/supply-chain/vulnerability-scanning.md` (modified, +8/-0)
 ```diff
-@@ -393,7 +393,7 @@ Wenn OpenMed für deine Forschung nützlich ist, zitiere es bitte:
+@@ -97,6 +97,14 @@ The gate uses the same severity threshold and `deploy/security/cve-allowlist.yam
+ waivers as the image scan. `swift/OpenMedKit/Package.resolved` is not committed,
+ so the root `Package.resolved` is the scanned SwiftPM resolution.
  
- Wenn OpenMed dir nützlich ist, hilft ein Stern anderen, es zu entdecken.
- 
--[5,400+ GitHub stars · 9 Oct 2026 snapshot](https://github.com/maziyarpanahi/openmed/stargazers)
-+[5,700+ GitHub stars · 11 Nov 2026 snapshot](https://github.com/maziyarpanahi/openmed/stargazers)
- 
- ---
- 
++The scan skips `js/openmedkit-react-native/example`, the React Native parity
++test app. It is private, never ships in a kit artifact, and pins a React Native
++toolchain whose Metro bundler needs `image-size` 1.x, so its lockfile carries
++build-tool advisories that no shipped kit inherits. The bridge package itself,
++`js/openmedkit-react-native/package-lock.json`, is still scanned. Any other
++exclusion has to be added to `KIT_SCAN_EXCLUSIONS` in
++`tests/unit/security/test_kit_lockfile_scan.py` and documented here.
++
+ Trivy already skips npm and Cargo development dependencies. It cannot tell a
+ Gradle test or tooling configuration from a shipped one, so
+ `scripts/security/gradle_lockfile_view.py` first copies each `gradle.lockfile`
 ```
 
-**File**: `README.es.md` (modified, +1/-1)
+**File**: `tests/unit/security/test_kit_lockfile_scan.py` (modified, +27/-1)
 ```diff
-@@ -393,7 +393,7 @@ Si OpenMed te resulta útil en tu investigación, cítalo:
- 
- Si OpenMed te resulta útil, una estrella ayuda a que otros lo descubran.
- 
--[5,400+ GitHub stars · 9 Oct 2026 snapshot](https://github.com/maziyarpanahi/openmed/stargazers)
-+[5,700+ GitHub stars · 11 Nov 2026 snapshot](https://github.com/maziyarpanahi/openmed/stargazers)
- 
- ---
- 
+@@ -24,6 +24,8 @@
+     "js": "js",
+     "clients": "clients",
+ }
++# Private test apps under a scan target that never ship in a kit artifact.
++KIT_SCAN_EXCLUSIONS = {"js": ("openmedkit-react-native/example",)}
+ LOCKFILE_NAMES = (
+     "Package.resolved",
+     "package-lock.json",
+@@ -148,7 +150,12 @@ def test_kit_scan_covers_every_surface_with_the_lockfile_scanner_options() -> No
+     assert "--pkg-types library" in scan
+     assert "--format json" in scan
+     for name, target in KIT_SCAN_TARGETS.items():
+-        assert f"scan {name} {target}\n" in scan
++        skips = "".join(
++            f' --skip-dirs "**/{directory}"'
++            for directory in KIT_SCAN_EXCLUSIONS.get(name, ())
++        )
++        assert f"scan {name} {target}{skips}\n" in scan
++    assert '"$@"' in scan
+     assert "gradle_lockfile_view.py" in scan
+     assert "--source android" in scan
+     assert 'scan android "$raw/android-release-runtime"' in scan
+@@ -229,7 +236,26 @@ def test_every_committed_kit_lockfile_is_under_a_scan_target() -> None:
+     # Negative control: discovery sees every ecosystem the issue covers.
+     assert {"Package.resolved", "package-lock.json", "Cargo.lock"} <= names
+     assert "gradle.lockfile" in names
++    excluded = [
++        ROOT / KIT_SCAN_TARGETS[name] / directory
++        for name, directories in KIT_SCAN_EXCLUSIONS.items()
++        for directory in directories
++    ]
++    skipped = [
++        lockfile
++        for lockfile in lockfiles
++        if any(directory in lockfile.parents for directory in excluded)
++    ]
++    # Only the documented test apps are excluded, and each holds a lockfile.
++    assert {
++        directory
++        for directory in excluded
++        for lockfile in skipped
++        if directory in lockfile.parents
++    } == set(excluded)
+     for lockfile in lockfiles:
++        if lockfile in skipped:
++            continue
+         assert any(
+             lockfile == target or target in lockfile.parents for target in targets
+         ), lockfile.relative_to(ROOT)
 ```
 
-**File**: `README.fa.md` (modified, +1/-1)
-```diff
-@@ -472,7 +472,7 @@ OpenMed بر پایهٔ کارهای عالیِ متن‌باز ساخته شد
- 
- </div>
- 
--[5,400+ GitHub stars · 9 Oct 2026 snapshot](https://github.com/maziyarpanahi/openmed/stargazers)
-+[5,700+ GitHub stars · 11 Nov 2026 snapshot](https://github.com/maziyarpanahi/openmed/stargazers)
- 
- ---
- 
-```
+---
 
-**File**: `README.fr.md` (modified, +1/-1)
-```diff
-@@ -393,7 +393,7 @@ Si OpenMed vous est utile dans vos recherches, merci de le citer :
- 
- Si OpenMed vous est utile, une étoile aide les autres à le découvrir.
- 
--[5,400+ GitHub stars · 9 Oct 2026 snapshot](https://github.com/maziyarpanahi/openmed/stargazers)
-+[5,700+ GitHub stars · 11 Nov 2026 snapshot](https://github.com/maziyarpanahi/openmed/stargazers)
- 
- ---
- 
-```
+### Incident Patch 2: `d40c77bd` (2026-11-15)
+**Commit Message**: fix(security): allowlist the synthetic idempotency keys in the job recovery tests
 
-**File**: `README.hi.md` (modified, +1/-1)
-```diff
-@@ -750,7 +750,7 @@ OpenMed SDK का स्रोत [Apache-2.0 License](LICENSE) के अं
- 
- यदि OpenMed आपके लिए उपयोगी है, तो एक star दूसरों को इसे खोजने में मदद करता है।
- 
--[5,400+ GitHub stars · 9 Oct 2026 snapshot](https://github.com/maziyarpanahi/openmed/stargazers)
-+[5,700+ GitHub stars · 11 Nov 2026 snapshot](https://github.com/maziyarpanahi/openmed/stargazers)
- 
- ---
- 
-```
+The durable job tests use fixed synthetic UUID idempotency keys and pass
+them by name, which the generic API key rule flags. Allowlist those exact
+lines by path, as for the other synthetic values.
 
-**File**: `README.it.md` (modified, +1/-1)
+**File**: `.gitleaks.toml` (modified, +16/-0)
 ```diff
-@@ -393,7 +393,7 @@ Se OpenMed ti è utile nella tua ricerca, ti preghiamo di citarlo:
+@@ -104,6 +104,22 @@ regexTarget = "line"
+ paths = ['''tests/unit/service/test_webhook_replay\.py$''']
+ regexes = ['''^\s*tmp_path / "l\.json", integrity_key=LEDGER_KEY, delivery_ttl_seconds=(0|60)\s*$''']
  
- Se OpenMed ti è utile, una stella aiuta altri a scoprirlo.
- 
--[5,400+ GitHub stars · 9 Oct 2026 snapshot](https://github.com/maziyarpanahi/openmed/stargazers)
-+[5,700+ GitHub stars · 11 Nov 2026 snapshot](https://github.com/maziyarpanahi/openmed/stargazers)
- 
- ---
- 
-```
-
-**File**: `README.ja.md` (modified, +1/-1)
-```diff
-@@ -393,7 +393,7 @@ OpenMed SDK のソースは [Apache-2.0 License](LICENSE) の下で公開され
- 
- OpenMed が役立つと感じたら、スターを付けると他の人が見つけやすくなります。
- 
--[5,400+ GitHub stars · 9 Oct 2026 snapshot](https://github.com/maziyarpanahi/openmed/stargazers)
-+[5,700+ GitHub stars · 11 Nov 2026 snapshot](https://github.com/maziyarpanahi/openmed/stargazers)
- 
- ---
++[[allowlists]]
++targetRules = ["generic-api-key"]
++description = "Synthetic idempotency key and its call sites in the job recovery unit test"
++condition = "AND"
++regexTarget = "line"
++paths = ['''tests/unit/service/test_job_recovery\.py$''']
++regexes = ['''^\s*(KEY = "6c1f0a2e-8f3b-4d7e-9a10-5b2c3d4e5f60"|_request\((method="remove"|webhook=hooked)\), KEY, owner_digest=None)\s*$''']
++
++[[allowlists]]
++targetRules = ["generic-api-key"]
++description = "Synthetic idempotency keys in the job recovery integration test"
++condition = "AND"
++regexTarget = "line"
++paths = ['''tests/integration/test_service_job_recovery\.py$''']
++regexes = ['''^\s*((key|shift_key) = "(0f3c1a52-5d4e-4c4f-9a65-2d4b8b8f6e10|7d2b6f0e-93a1-4e58-b4d3-0c6a9e1f2a77)"|scoped = queue\.submit_job\(_request\(\), idempotency_key=key, idempotency_scope="b"\))\s*$''']
++
+ [extend]
+ useDefault = true
  
 ```
 
 ---
 
-### Incident Patch 2: `35fe34e2` (2026-11-08)
-**Commit Message**: fix: reject unsupported privacy proxy media types (#5499)
+### Incident Patch 3: `ccc11d2f` (2026-11-15)
+**Commit Message**: fix(licenses): review the bundled libc++_shared.so in the kit license gate
 
-Validate the media type before reading chat completion requests.
+The OpenMedKit AAR now ships the NDK's libc++_shared.so, which has no Maven
+coordinate. Teach the kit license gate to read a module's
+bundledNdkLibraries list as `ndk` packages, failing closed on a non-static
+list or an unreviewed entry, and review libc++ as Apache-2.0 WITH
+LLVM-exception. Record it in the kit inventory, the redistribution page and
+the root NOTICE, including that the POM does not declare it.
 
-Closes #5185
-
-**File**: `CHANGELOG.md` (modified, +3/-0)
+**File**: `NOTICE` (modified, +14/-0)
 ```diff
-@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -76,6 +76,20 @@ shifting. The table records its source, retrieval date, local modifications,
+ verification references, the MIT permission notice and a SHA-256 digest that
+ the loader verifies.
  
- ### Fixed
- 
-+- Reject missing, repeated, or unsupported content types on the local privacy
-+  proxy's chat routes before reading the request body (#5185).
++Name: LLVM libc++ shared runtime (libc++_shared.so)
++Source: Android NDK r28c (28.2.13676358), built from
++https://github.com/llvm/llvm-project/tree/main/libcxx
++License: Apache-2.0 WITH LLVM-exception; code contributed before the LLVM
++relicensing is also available under the University of Illinois/NCSA or MIT
++licenses (the NDK's NOTICE.toolchain carries the full texts)
++Usage: The OpenMedKit Android AAR packages the NDK's prebuilt libc++_shared.so,
++stripped, for arm64-v8a, armeabi-v7a, x86 and x86_64, because
++ai.djl.android:tokenizer-native links libdjl_tokenizer.so against it without
++shipping it. The Android build copies it from the NDK pinned in
++android/gradle/libs.versions.toml; no binary is committed. Apps that ship
++OpenMedKit Android redistribute it and should include its license in their
++open-source notices.
 +
- - Discover nested public multimodal packages in the API compatibility gate,
-   require committed baseline coverage, and document baseline updates for new
-   packages. Private packages and unavailable optional shims are skipped
+ Name: SHIELD clinical PHI corpus
+ Source: https://github.com/susom/shield_dataset
+ Paper: https://arxiv.org/abs/2605.03301
 ```
 
-**File**: `docs/service/privacy-proxy.md` (modified, +7/-1)
+**File**: `docs/security/export-redistribution.md` (modified, +4/-1)
 ```diff
-@@ -6,7 +6,13 @@ listens locally, redacts text before calling an injected inference transport,
- and restores the placeholders only in the local response.
+@@ -75,7 +75,9 @@ Converter licenses, from the dependency license inventory unless noted:
+ These libraries are linked into, or installed beside, the applications that
+ use OpenMedKit, so an app that ships them redistributes them and must carry
+ their notices. OpenMed declares them as package dependencies; it does not
+-vendor their sources or binaries into this repository.
++vendor their sources or binaries into this repository. The one exception is
++the NDK's `libc++_shared.so`, which the Android build copies from the pinned
++NDK into the OpenMedKit AAR at build time.
  
- The proxy exposes both `POST /v1/chat/completions` and
--`POST /chat/completions`. A request uses the familiar shape:
-+`POST /chat/completions`. Both routes require a single
-+`Content-Type: application/json` header and accept parameters such as
-+`charset=utf-8`. A missing, repeated, or unsupported content type returns
-+HTTP 415 with the reason `unsupported_content_type` before the proxy reads
-+the request body.
-+
-+Send requests using this JSON shape.
+ ### Swift
  
- ```json
- {
+@@ -106,6 +108,7 @@ declares them in `android/openmedkit/build.gradle.kts`.
+ | --- | --- | --- | --- | --- |
+ | `com.microsoft.onnxruntime:onnxruntime-android` | 1.25.1 | `MIT` | Gradle cache POM | Every OpenMedKit Android consumer |
+ | `ai.djl.huggingface:tokenizers`, `ai.djl.android:tokenizer-native` (with `ai.djl:api`) | 0.33.0 | `Apache-2.0` | Gradle cache POMs | Every OpenMedKit Android consumer |
++| LLVM libc++ (`libc++_shared.so`), packaged in the OpenMedKit AAR | NDK r28c (28.2.13676358), `android-ndk` in the version catalog | `Apache-2.0 WITH LLVM-exception` | NDK `NOTICE.toolchain`, which also carries libc++'s legacy NCSA and MIT notice | Every OpenMedKit Android consumer; the POM does not declare it, so add it to the app's notices |
+ | `org.jetbrains.kotlinx:kotlinx-coroutines-core` | 1.8.1 | `Apache-2.0` | Gradle cache POM | Every OpenMedKit Android consumer |
+ | `org.jetbrains.kotlinx:kotlinx-serialization-json` | 1.5.1 | `Apache-2.0` | Gradle cache POM | Every OpenMedKit Android consumer |
+ | `org.jetbrains.kotlin:kotlin-stdlib` | Follows the Kotlin plugin (1.8.22; 1.9.24 in the Flutter plugin) | `Apache-2.0` | Gradle cache POM (1.4.32) | Every Kotlin consumer, including the Flutter Android plugin |
 ```
 
-**File**: `openmed/service/privacy_proxy/app.py` (modified, +15/-0)
+**File**: `docs/security/kit-license-inventory.md` (modified, +37/-3)
 ```diff
-@@ -37,6 +37,7 @@
-     InboundRestorationError,
-     InboundRestorationState,
+@@ -28,6 +28,7 @@ in the `repo-policy` job next to the Python dependency license policy.
+ | Swift (nested package) | `swift/OpenMedKit/Package.swift` |
+ | Swift demo apps | the committed `Package.resolved` of `OpenMedDemo` and `OpenMedScanDemo` |
+ | Android | `android/settings.gradle.kts`, the root and every included module's build file, `android/gradle/libs.versions.toml` |
++| Android NDK runtime libraries | `bundledNdkLibraries` in an Android module's build file |
+ | Web, Electron, React Native, Tauri | `js/*/package-lock.json` with the sibling `package.json` |
+ | Electron packaging harness | `js/openmedkit-electron/harness/package-lock.json` with its `package.json` |
+ | React Native native modules | the bridge's podspec and `android/build.gradle`, and those of the parity probe in `example/probe` |
+@@ -58,9 +59,10 @@ apart:
+ - **runtime** dependencies ship in, or are linked into, a kit artifact or demo
+   app: SwiftPM packages used by non-test targets and all resolved pins, Gradle
+   `implementation`, `api`, `compileOnly`, `runtimeOnly` and custom
+-  configurations, npm production, optional and peer dependencies, Cargo crates
+-  reachable from `[dependencies]`, pub `dependencies`, and podspec
+-  dependencies. Unknown or unreferenced declarations are treated as runtime.
++  configurations, NDK runtime libraries copied into an AAR, npm production,
++  optional and peer dependencies, Cargo crates reachable from
++  `[dependencies]`, pub `dependencies`, and podspec dependencies. Unknown or
++  unreferenced declarations are treated as runtime.
+ - **development** dependencies never ship: SwiftPM packages used only by test
+   targets, Gradle `test*`, `androidTest*`, `debug*`, `kapt`, `ksp`,
+   `annotationProcessor`, `lintChecks` and `classpath` configurations and
+@@ -132,6 +134,32 @@ reviewed expression, fails the gate. ML Kit's own transitive Google Play
+ services artifacts appear only in the Gradle lockfiles, which this gate does
+ not read.
+ 
++## Android NDK runtime libraries
++
++`ai.djl.android:tokenizer-native` ships `libdjl_tokenizer.so`, which links
++against the NDK's shared C++ runtime (`DT_NEEDED libc++_shared.so`), but no
++dependency ships that runtime. The `:openmedkit` build therefore copies
++`libc++_shared.so` out of the NDK it pins through `android.ndkVersion`
++(`android-ndk` in `android/gradle/libs.versions.toml`, NDK r28c,
++28.2.13676358) into the release AAR for `arm64-v8a`, `armeabi-v7a`, `x86` and
++`x86_64`, and AGP strips it with the same NDK. No binary is committed. Every
++app that uses OpenMedKit Android ships this library.
++
++The library has no Maven coordinate, so the gate reads the
++`bundledNdkLibraries` list in the module's build file and reviews each entry
++as an `ndk` package. A list that is not a static set of `lib*.so` string
++literals fails the gate, and a new entry fails until it has a row.
++
++libc++ is part of the LLVM project, licensed `Apache-2.0 WITH LLVM-exception`.
++The NDK's `NOTICE.toolchain` also carries libc++'s legacy license (the
++University of Illinois/NCSA and MIT licenses, offered as alternatives) for
++code contributed before LLVM relicensed. The LLVM exception covers runtime
++portions compiled into an application's own object code. A copy of
++`libc++_shared.so` redistributes the library itself, so an app that ships it
++should carry the libc++ license text with its other open-source notices.
++The OpenMedKit POM declares only OpenMed's own Apache-2.0 license, so license
++tools that read POMs do not list libc++.
++
+ ## Speech recognition (WhisperKit)
+ 
+ `argmax-oss-swift` provides WhisperKit for the `OpenMedSpeech` product. Its
+@@ -224,6 +252,12 @@ the tables. Rows that no manifest uses any more are counted as
+ | gradle-plugin | `org.jetbrains.kotlin.plugin.compose` | `Apache-2.0` | Kotlin Compose compiler plugin for the demo apps |
+ | gradle-plugin | `org.jetbrains.kotlinx.binary-compatibility-validator` | `Apache-2.0` | public API dump and check; build tooling |
+ 
++### NDK runtime libraries
++
++| Ecosystem | Package | License expression | Review note |
++| --- | --- | --- | --- |
++| ndk | `libc++_shared.so` | `Apache-2.0 WITH LLVM-exception` | LLVM libc++ from NDK r28c (28.2.13676358), packaged in the OpenMedKit AAR for four ABIs; legacy NCSA/MIT notice in the NDK `NOTICE.toolchain` |
++
+ ### npm
+ 
+ | Ecosystem | Package | License expression | Review note |
+```
+
+**File**: `scripts/licenses/kit_inventory.py` (modified, +30/-2)
+```diff
+@@ -8,7 +8,9 @@
+ declared package to the reviewed SPDX expression in
+ ``docs/security/kit-license-inventory.md`` and fails closed when a package is
+ unreviewed, unknown, copyleft, source-available or proprietary without a
+-scoped, documented exception.
++scoped, documented exception.  Android NDK runtime libraries that a module
++copies into its AAR (``bundledNdkLibraries``) are reviewed the same way, as
++``ndk`` packages.
+ 
+ The gate never resolves packages, runs a build tool or contacts a registry.
+ Reports carry ecosystems, package names, repository-relative manifest paths,
+@@ -108,7 +110,7 @@ def _load_python_inventory() -> ModuleType:
  )
-+from .outbound import UnsupportedContentTypeError, _normalize_content_type
  
- DEFAULT_MODEL = "openmed-local"
- DEFAULT_REDACTION_MODEL = "OpenMed/OpenMed-PII-SuperClinical-Small-44M-v1"
-@@ -78,6 +79,13 @@ class PrivacyProxyRequestError(PrivacyProxyError):
-     reason_code = "invalid_request"
+ ECOSYSTEMS = frozenset(
+-    {"cargo", "cocoapods", "gradle", "gradle-plugin", "npm", "pub", "swiftpm"}
++    {"cargo", "cocoapods", "gradle", "gradle-plugin", "ndk", "npm", "pub", "swiftpm"}
+ )
+ 
+ # Development-only tooling never ships in a kit artifact, so these reviewed
+@@ -621,6 +623,12 @@ def _parse_swift_resolved(root: Path, manifest: str, discovery: KitDiscovery) ->
+     r"\binclude(?![A-Za-z0-9_])\s*\(?(?P<arguments>[^)\n]*)\)?"
+ )
+ _GRADLE_LOCAL_BINARY_RE = re.compile(r"\b(?P<function>files|fileTree)\s*\(")
++# Android NDK runtime libraries a module copies into its AAR, declared as
++# ``val bundledNdkLibraries = listOf("libc++_shared.so")``.  They ship like a
++# runtime dependency but have no Maven coordinate, so they are reviewed as
++# ``ndk`` rows.
++_GRADLE_BUNDLED_NDK_RE = re.compile(r"\bval\s+bundledNdkLibraries\s*=\s*listOf\s*\(")
++_NDK_LIBRARY_RE = re.compile(r"^lib[A-Za-z0-9_+-]+\.so$")
+ _GRADLE_DEVELOPMENT_CONFIGS = frozenset(
+     {"annotationprocessor", "classpath", "detektplugins", "lintchecks", "lintpublish"}
+ )
+@@ -726,6 +734,25 @@ def _check_local_binaries(body: str, manifest: str) -> None:
+             )
  
  
-+class _UnsupportedRequestMediaTypeError(PrivacyProxyRequestError):
-+    """Raised when the chat request lacks a single supported media type."""
++def _add_bundled_ndk_libraries(
++    text: str, manifest: str, discovery: KitDiscovery
++) -> None:
++    """Record the NDK runtime libraries a build file copies into its artifact."""
 +
-+    status_code = 415
-+    reason_code = "unsupported_content_type"
++    for match in _GRADLE_BUNDLED_NDK_RE.finditer(_blank_strings(text)):
++        open_index = match.end() - 1
++        arguments = text[open_index + 1 : _balanced_end(text, open_index, "(", ")")]
++        names = [value for _start, _end, value in _string_literals(arguments)]
++        if (
++            not names
++            or _blank_strings(arguments).replace(",", "").replace('"', "").strip()
++            or not all(_NDK_LIBRARY_RE.fullmatch(name) for name in names)
++        ):
++            raise KitManifestError("Bundled NDK library list is not static", manifest)
++        for name in names:
++            discovery.add("ndk", name, Usage.RUNTIME, manifest)
 +
 +
- class PrivacyProxyConfigurationError(PrivacyProxyError):
-     """Raised when no local transport has been injected."""
+ def _add_plugin(discovery: KitDiscovery, plugin_id: str, manifest: str) -> None:
+     # Unqualified ids are Gradle core plugins or legacy aliases whose artifact
+     # is reviewed through its ``classpath`` coordinate.
+@@ -762,6 +789,7 @@ def _parse_gradle_build(
+     for match in _GRADLE_USE_MODULE_RE.finditer(text):
+         coordinate = _gradle_coordinate(match["coordinate"], manifest)
+         discovery.add("gradle", coordinate, Usage.DEVELOPMENT, manifest)
++    _add_bundled_ndk_libraries(text, manifest, discovery)
  
-@@ -460,6 +468,13 @@ async def health() -> dict[str, Any]:
- 
-     async def chat_completions(request: Request) -> Any:
-         try:
-+            content_types = request.headers.getlist("content-type")
-+            if len(content_types) != 1:
-+                raise _UnsupportedRequestMediaTypeError()
-+            try:
-+                _normalize_content_type(content_types[0])
-+            except UnsupportedContentTypeError:
-+                raise _UnsupportedRequestMediaTypeError() from None
-             try:
-                 payload = await request.json()
-             except (TypeError, ValueError):
+     for _start, body in _blocks(text, "dependencies"):
+         _check_local_binaries(body, manifest)
 ```
 
-**File**: `tests/unit/service/privacy_proxy/test_app.py` (modified, +90/-0)
+**File**: `tests/unit/licenses/test_kit_inventory.py` (modified, +34/-0)
 ```diff
-@@ -5,6 +5,8 @@
- import json
- from typing import Any
+@@ -433,6 +433,10 @@ def test_checked_in_kits_pass_and_report_mlkit_as_restricted_exception() -> None
+         ].dependency.usage
+         == kit.Usage.DEVELOPMENT
+     )
++    # The NDK C++ runtime the OpenMedKit AAR packages for the DJL tokenizer.
++    libcxx = records[("ndk", "libc++_shared.so", "android/openmedkit/build.gradle.kts")]
++    assert libcxx.decision == kit.Decision.PERMISSIVE
++    assert libcxx.dependency.usage == kit.Usage.RUNTIME
+     assert (
+         records[
+             ("npm", "typescript", "js/openmedkit-web/package-lock.json")
+@@ -594,6 +598,15 @@ def test_synthetic_kits_distinguish_runtime_and_development(tmp_path: Path) -> N
+             "com.example:unreviewed-literal",
+             "runtime",
+         ),
++        (
++            "android/core/build.gradle.kts",
++            "dependencies {",
++            'val bundledNdkLibraries = listOf("libunreviewed_shared.so")\n\n'
++            "dependencies {",
++            "ndk",
++            "libunreviewed_shared.so",
++            "runtime",
++        ),
+         (
+             "android/demo/app/build.gradle.kts",
+             "    debugImplementation(",
+@@ -931,6 +944,27 @@ def test_unresolvable_gradle_declarations_fail_closed(tmp_path: Path) -> None:
+         assert str(root) not in str(error.value)
  
-+import pytest
-+from fastapi import Request
- from fastapi.testclient import TestClient
  
- from openmed.service.privacy_proxy.app import create_app
-@@ -227,3 +229,91 @@ def test_unconfigured_proxy_is_local_and_fails_closed_without_echoing_input():
-     assert health.json()["transport_configured"] is False
-     assert response.status_code == 503
-     assert prompt not in response.text
-+
-+
-+@pytest.mark.parametrize(
-+    "content_type",
-+    ["application/json; charset=utf-8", "Application/JSON; Charset=UTF-8"],
-+)
-+def test_chat_completion_accepts_json_content_type_with_charset(content_type: str):
-+    seen_payloads: list[dict[str, Any]] = []
-+
-+    def transport(payload: dict[str, Any], **_: Any) -> str:
-+        seen_payloads.append(payload)
-+        return payload["messages"][0]["content"]
-+
-+    prompt = f"Contact {SYNTHETIC_NAME} at {SYNTHETIC_PHONE}."
-+    body = json.dumps(
-+        {
-+            "model": "local-fixture",
-+            "messages": [{"role": "user", "content": prompt}],
-+        }
-+    ).encode("utf-8")
-+
-+    with _client(transport) as client:
-+        response = client.post(
-+            "/v1/chat/completions",
-+            content=body,
-+            headers={"Content-Type": content_type},
++def test_bundled_ndk_libraries_must_be_static_library_names(tmp_path: Path) -> None:
++    for label, declaration in [
++        ("variable-entry", 'listOf("libc++_shared.so", extraLibrary)'),
++        ("not-a-library", 'listOf("c++_shared")'),
++        ("empty", "listOf()"),
++    ]:
++        root = tmp_path / label
++        inventory_path = build_repo(root)
++        target = root / "android/core/build.gradle.kts"
++        target.write_text(
++            f"val bundledNdkLibraries = {declaration}\n\n"
++            + target.read_text(encoding="utf-8"),
++            encoding="utf-8",
 +        )
 +
-+    assert response.status_code == 200
-+    assert response.json()["choices"][0]["message"]["content"] == prompt
-+    assert len(seen_payloads) == 1
++        with pytest.raises(kit.KitManifestError, match="not static") as error:
++            kit.audit_kits(root, inventory_path, SYNTHETIC_MANIFESTS)
++
++        assert error.value.manifest == "android/core/build.gradle.kts", label
 +
 +
-+@pytest.mark.parametrize("path", ["/v1/chat/completions", "/chat/completions"])
-+@pytest.mark.parametrize(
-+    "headers",
-+    [
-+        [("Content-Type", "text/plain")],
-+        [],
-+        [("Content-Type", "application/json"), ("Content-Type", "text/plain")],
-+    ],
-+    ids=["non-json", "missing", "conflicting"],
-+)
-+def test_chat_completion_rejects_unsupported_media_type_without_reading_body(
-+    path: str, headers: list[tuple[str, str]], monkeypatch: pytest.MonkeyPatch
-+):
-+    def read_body(_request: Request) -> None:
-+        pytest.fail("Unsupported media type reached the request body reader")
-+
-+    def transport(*_args: Any, **_kwargs: Any) -> str:
-+        pytest.fail("Unsupported media type reached the transport")
-+
-+    monkeypatch.setattr(Request, "stream", read_body)
-+    prompt = f"Contact {SYNTHETIC_NAME} at {SYNTHETIC_PHONE}."
-+    body = json.dumps(
-+        {
-+            "model": "local-fixture",
-+            "messages": [{"role": "user", "content": prompt}],
-+        }
-+    ).encode("utf-8")
-+
-+    with _client(transport) as client:
-+        response = client.post(path, content=body, headers=headers)
-+
-+    assert response.status_code == 415
-+    assert response.json() == {
-+        "error": {
-+            "code": "privacy_proxy_invalid_request",
-+            "message": "Privacy proxy request failed",
-+            "details": {"reason": "unsupported_content_type"},
-+        }
-+    }
-+    assert SYNTHETIC_NAME not in response.text
-+    assert SYNTHETIC_PHONE not in response.text
-+    assert prompt not in response.text
-+
-+
-+def test_chat_completion_returns_safe_400_for_malformed_json():
-+    with TestClient(create_app()) as client:
-+        response = client.post(
-+            "/v1/chat/completions",
-+            content=f'{{"messages": "{SYNTHETIC_NAME}',
-+            headers={"Content-Type": "application/json"},
-+        )
-+
-+    assert response.status_code == 400
-+    assert response.json()["error"]["details"]["reason"] == "invalid_json"
-+    assert SYNTHETIC_NAME not in response.text
-```
-
----
-
-### Incident Patch 3: `96a83ebb` (2026-11-08)
-**Commit Message**: fix: reject ambiguous privacy proxy request media types
-
-**File**: `CHANGELOG.md` (modified, +3/-0)
-```diff
-@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ### Fixed
- 
-+- Reject missing, repeated, or unsupported content types on the local privacy
-+  proxy's chat routes before reading the request body (#5185).
-+
- - Discover nested public multimodal packages in the API compatibility gate,
-   require committed baseline coverage, and document baseline updates for new
-   packages. Private packages and unavailable optional shims are skipped
-```
-
-**File**: `docs/service/privacy-proxy.md` (modified, +7/-1)
-```diff
-@@ -6,7 +6,13 @@ listens locally, redacts text before calling an injected inference transport,
- and restores the placeholders only in the local response.
- 
- The proxy exposes both `POST /v1/chat/completions` and
--`POST /chat/completions`. A request uses the familiar shape:
-+`POST /chat/completions`. Both routes require a single
-+`Content-Type: application/json` header and accept parameters such as
-+`charset=utf-8`. A missing, repeated, or unsupported content type returns
-+HTTP 415 with the reason `unsupported_content_type` before the proxy reads
-+the request body.
-+
-+Send requests using this JSON shape.
- 
- ```json
- {
-```
-
-**File**: `openmed/service/privacy_proxy/app.py` (modified, +12/-8)
-```diff
-@@ -65,13 +65,10 @@ def __init__(
-         message: str = "Privacy proxy request failed",
-         *,
-         reason_code: Optional[str] = None,
--        status_code: Optional[int] = None,
-     ) -> None:
-         super().__init__(message)
-         if reason_code is not None:
-             self.reason_code = reason_code
--        if status_code is not None:
--            self.status_code = status_code
- 
- 
- class PrivacyProxyRequestError(PrivacyProxyError):
-@@ -82,6 +79,13 @@ class PrivacyProxyRequestError(PrivacyProxyError):
-     reason_code = "invalid_request"
- 
- 
-+class _UnsupportedRequestMediaTypeError(PrivacyProxyRequestError):
-+    """Raised when the chat request lacks a single supported media type."""
-+
-+    status_code = 415
-+    reason_code = "unsupported_content_type"
-+
-+
- class PrivacyProxyConfigurationError(PrivacyProxyError):
-     """Raised when no local transport has been injected."""
- 
-@@ -464,13 +468,13 @@ async def health() -> dict[str, Any]:
- 
-     async def chat_completions(request: Request) -> Any:
-         try:
-+            content_types = request.headers.getlist("content-type")
-+            if len(content_types) != 1:
-+                raise _UnsupportedRequestMediaTypeError()
-             try:
--                _normalize_content_type(request.headers.get("content-type", ""))
-+                _normalize_content_type(content_types[0])
-             except UnsupportedContentTypeError:
--                raise PrivacyProxyRequestError(
--                    reason_code="unsupported_content_type",
--                    status_code=415,
--                ) from None
-+                raise _UnsupportedRequestMediaTypeError() from None
-             try:
-                 payload = await request.json()
-             except (TypeError, ValueError):
-```
-
-**File**: `tests/unit/service/privacy_proxy/test_app.py` (modified, +52/-29)
-```diff
-@@ -5,6 +5,8 @@
- import json
- from typing import Any
- 
-+import pytest
-+from fastapi import Request
- from fastapi.testclient import TestClient
- 
- from openmed.service.privacy_proxy.app import create_app
-@@ -229,7 +231,11 @@ def test_unconfigured_proxy_is_local_and_fails_closed_without_echoing_input():
-     assert prompt not in response.text
- 
- 
--def test_chat_completion_accepts_json_content_type_with_charset():
-+@pytest.mark.parametrize(
-+    "content_type",
-+    ["application/json; charset=utf-8", "Application/JSON; Charset=UTF-8"],
-+)
-+def test_chat_completion_accepts_json_content_type_with_charset(content_type: str):
-     seen_payloads: list[dict[str, Any]] = []
- 
-     def transport(payload: dict[str, Any], **_: Any) -> str:
-@@ -248,21 +254,34 @@ def transport(payload: dict[str, Any], **_: Any) -> str:
-         response = client.post(
-             "/v1/chat/completions",
-             content=body,
--            headers={"Content-Type": "application/json; charset=utf-8"},
-+            headers={"Content-Type": content_type},
-         )
- 
-     assert response.status_code == 200
-     assert response.json()["choices"][0]["message"]["content"] == prompt
-     assert len(seen_payloads) == 1
- 
- 
--def test_chat_completion_rejects_non_json_and_missing_content_type():
--    seen_payloads: list[dict[str, Any]] = []
--
--    def transport(payload: dict[str, Any], **_: Any) -> str:
--        seen_payloads.append(payload)
--        return payload["messages"][0]["content"]
--
-+@pytest.mark.parametrize("path", ["/v1/chat/completions", "/chat/completions"])
-+@pytest.mark.parametrize(
-+    "headers",
-+    [
-+        [("Content-Type", "text/plain")],
-+        [],
-+        [("Content-Type", "application/json"), ("Content-Type", "text/plain")],
-+    ],
-+    ids=["non-json", "missing", "conflicting"],
-+)
-+def test_chat_completion_rejects_unsupported_media_type_without_reading_body(
-+    path: str, headers: list[tuple[str, str]], monkeypatch: pytest.MonkeyPatch
-+):
-+    def read_body(_request: Request) -> None:
-+        pytest.fail("Unsupported media type reached the request body reader")
-+
-+    def transport(*_args: Any, **_kwargs: Any) -> str:
-+        pytest.fail("Unsupported media type reached the transport")
-+
-+    monkeypatch.setattr(Request, "stream", read_body)
-     prompt = f"Contact {SYNTHETIC_NAME} at {SYNTHETIC_PHONE}."
-     body = json.dumps(
-         {
-@@ -272,25 +291,29 @@ def transport(payload: dict[str, Any], **_: Any) -> str:
-     ).encode("utf-8")
- 
-     with _client(transport) as client:
--        plain_response = client.post(
-+        response = client.post(path, content=body, headers=headers)
-+
-+    assert response.status_code == 415
-+    assert response.json() == {
-+        "error": {
-+            "code": "privacy_proxy_invalid_request",
-+            "message": "Privacy proxy request failed",
-+            "details": {"reason": "unsupported_content_type"},
-+        }
-+    }
-+    assert SYNTHETIC_NAME not in response.text
-+    assert SYNTHETIC_PHONE not in response.text
-+    assert prompt not in response.text
-+
-+
-+def test_chat_completion_returns_safe_400_for_malformed_json():
-+    with TestClient(create_app()) as client:
-+        response = client.post(
-             "/v1/chat/completions",
--            content=body,
--            headers={"Content-Type": "text/plain"},
-+            content=f'{{"messages": "{SYNTHETIC_NAME}',
-+            headers={"Content-Type": "application/json"},
-         )
--        missing_request = client.build_request("POST", "/v1/chat/completions")
--        missing_request.headers.pop("content-type", None)
--        missing_response = client.send(missing_request)
--
--    for response in (plain_response, missing_response):
--        assert response.status_code == 415
--        assert response.json() == {
--            "error": {
--                "code": "privacy_proxy_invalid_request",
--                "message": "Privacy proxy request failed",
--                "details": {"reason": "unsupported_content_type"},
--            }
--        }
--        assert SYNTHETIC_NAME not in response.text
--        assert SYNTHETIC_PHONE not in response.text
--        assert prompt not in response.text
--    assert seen_payloads == []
-+
-+    assert response.status_code == 400
-+    assert response.json()["error"]["details"]["reason"] == "invalid_json"
-+    assert SYNTHETIC_NAME not in response.text
+ def test_only_the_r8_consumer_may_consume_first_party_aar_build_outputs(
+     tmp_path: Path,
+ ) -> None:
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5559** (2026-11-15): Integrate the v4.0 pull requests (@maziyarpanahi)
+- **PR #5557** (2026-11-15): Remove insecure built-in defaults from eval signing, Android hashing and corpus loading (@maziyarpanahi)
+- **PR #5552** (2026-11-13): fix: restore release image SBOMs and patch blocked dependencies (@maziyarpanahi)
+- **PR #5551** (closed): List valid private-training schemas in errors (@ViviBeri)
+- **PR #5550** (closed): List valid private-training schemas in errors (@ViviBeri)
 - **PR #5545** (2026-11-11): fix(docs): refresh expired public metric evidence (@maziyarpanahi)
-- **PR #5536** (closed): test: pin date-shift offsets with synthetic golden vectors (@damonchandio)
-- **PR #5512** (closed): test: add synthetic date-shift offset vectors (@shu-chen-dot-ca)
-- **PR #5502** (2026-11-11): Prepare OpenMed 3.3.0 release candidate (@maziyarpanahi)
-- **PR #5499** (2026-11-08): fix: reject non-JSON request media types at the privacy proxy (@Mr45401)
-- **PR #5488** (2026-11-08): Fix Nix CLI tests and pinned image signer downloads (@maziyarpanahi)
 
 ---
 
@@ -2855,28 +2082,37 @@ Closes #5185
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #5545 from maziyarpanahi/fix/v3.3-public-claims-refresh
+## X. ci(security): skip the private React Native parity app in the kit scan
 
 **RULE**:
-When implementing operations in `README.ar.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in maziyarpanahi/openmed. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/vuln-scan.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in maziyarpanahi/openmed. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8097fc0b`: Merge pull request #5545 from maziyarpanahi/fix/v3.3-public-claims-refresh. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d9461297`: ci(security): skip the private React Native parity app in the kit scan. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.ar.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/vuln-scan.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-[5,700+ GitHub stars · 11 Nov 2026 snapshot](https://github.com/maziyarpanahi/openmed/stargazers)
+            local name="$1" target="$2"
+            shift 2
+              --output "$raw/trivy-$name.json" \
+              "$@" \
+              "$target"
+          # The React Native parity example is a private test app that never
+          # ships in a kit artifact; see docs/supply-chain/vulnerability-scanning.md.
+          scan js js --skip-dirs "**/openmedkit-react-native/example"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-// Anti-pattern to NEVER write (induced failure mode):
-[5,400+ GitHub stars · 9 Oct 2026 snapshot](https://github.com/maziyarpanahi/openmed/stargazers)
+// Induced defect failure mode:
+              --output "$raw/trivy-$1.json" \
+              "$2"
+          scan js js
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8097fc0b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d9461297` are properly handled with clean fallback behavior.

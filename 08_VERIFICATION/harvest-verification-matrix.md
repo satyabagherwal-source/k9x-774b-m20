@@ -10155,3 +10155,8 @@
 | `CYCLE-20261115-7JAW` | `2026-11-15T20:51:03.416Z` | `HelixDB/helix-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8650` | Yes (`df12d3a8...`) |
 | `CYCLE-20261115-7KTN` | `2026-11-15T20:51:05.387Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8651` | Yes (`2b7eaf82...`) |
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T20:51:39.384Z` | `freenet-freenet-core` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-9BB3D64B` [Domain K] | Yes (`0bdf98f3...`) |
+| `CYCLE-20261115-31IB` | `2026-11-15T21:15:33.347Z` | `MiniMaxAI/MiniMax-H3-Image` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-image-learnings.md` | Yes (`3970d2dc...`) |
+| `CYCLE-20261115-32UV` | `2026-11-15T21:15:35.095Z` | `ntex-rs/ntex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8652` | Yes (`223677ec...`) |
+| `CYCLE-20261115-379I` | `2026-11-15T21:15:40.806Z` | `maziyarpanahi/openmed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8653` | Yes (`ba798c26...`) |
+| `CYCLE-20261115-3928` | `2026-11-15T21:15:43.136Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8654` | Yes (`cdbcbbf0...`) |
+| `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T21:16:17.469Z` | `hf-minimaxai-minimax-h3-image` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-37D23F0D` [Domain D] | Yes (`0045e878...`) |

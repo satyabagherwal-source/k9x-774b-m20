@@ -2,20 +2,20 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T20:51:40.010Z",
+  "updated_at": "2026-11-15T21:16:17.955Z",
   "stats": {
-    "total_discovered": 3855,
-    "approved_pending_harvest": 3635,
+    "total_discovered": 3863,
+    "approved_pending_harvest": 3643,
     "harvested_count": 0,
     "rejected_count": 220,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3618,
+      "COMMUNITY_AND_EXPERT": 3623,
       "OFFICIAL_DOCUMENTATION": 130,
-      "STANDARDS_AND_SPECIFICATIONS": 90,
+      "STANDARDS_AND_SPECIFICATIONS": 92,
       "ENGINEERING_BLOGS": 2,
       "SECURITY_ADVISORIES": 11,
       "LEGAL_AND_REGULATORY": 1,
-      "RESEARCH_AND_ACADEMIA": 3
+      "RESEARCH_AND_ACADEMIA": 4
     }
   },
   "sources": {
@@ -83291,6 +83291,182 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/helixdb-helix-db-learnings.md",
         "fileName": "helixdb-helix-db-learnings.md"
+      }
+    },
+    "SRC-5FB81CCF2887": {
+      "id": "SRC-5FB81CCF2887",
+      "url": "https://www.rfc-editor.org/rfc/rfc9112",
+      "title": "https://www.rfc-editor.org/rfc/rfc9112",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T21:15:46.477Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
+        "fileName": "ntex-rs-ntex-learnings.md"
+      }
+    },
+    "SRC-19B1C63F6292": {
+      "id": "SRC-19B1C63F6292",
+      "url": "https://www.rfc-editor.org/rfc/rfc9113",
+      "title": "IETF RFC 9113",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T21:15:46.515Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
+        "fileName": "ntex-rs-ntex-learnings.md"
+      }
+    },
+    "SRC-F841D7A6D6B4": {
+      "id": "SRC-F841D7A6D6B4",
+      "url": "https://huggingface.co/MiniMaxAI/MiniMax-H3-Image",
+      "title": "https://huggingface.co/MiniMaxAI/MiniMax-H3-Image",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T21:16:17.492Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-image-learnings.md",
+        "fileName": "hf-minimaxai-minimax-h3-image-learnings.md"
+      }
+    },
+    "SRC-625A9B238A9E": {
+      "id": "SRC-625A9B238A9E",
+      "url": "https://example.invalid/model.onnx",
+      "title": "https://example.invalid/model.onnx",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T21:16:17.846Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md",
+        "fileName": "maziyarpanahi-openmed-learnings.md"
+      }
+    },
+    "SRC-D8C0A7DE34BA": {
+      "id": "SRC-D8C0A7DE34BA",
+      "url": "https://example.invalid/",
+      "title": "https://example.invalid/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T21:16:17.870Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md",
+        "fileName": "maziyarpanahi-openmed-learnings.md"
+      }
+    },
+    "SRC-08126445F151": {
+      "id": "SRC-08126445F151",
+      "url": "https://github.com/llvm/llvm-project/tree/main/libcxx",
+      "title": "https://github.com/llvm/llvm-project/tree/main/libcxx",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T21:16:17.895Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md",
+        "fileName": "maziyarpanahi-openmed-learnings.md"
+      }
+    },
+    "SRC-3A081C3B5C08": {
+      "id": "SRC-3A081C3B5C08",
+      "url": "https://github.com/susom/shield_dataset",
+      "title": "https://github.com/susom/shield_dataset",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T21:16:17.930Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md",
+        "fileName": "maziyarpanahi-openmed-learnings.md"
+      }
+    },
+    "SRC-C6DBBA41E4FF": {
+      "id": "SRC-C6DBBA41E4FF",
+      "url": "https://arxiv.org/abs/2605.03301",
+      "title": "https://arxiv.org/abs/2605.03301",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "RESEARCH_AND_ACADEMIA",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.95,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T21:16:17.955Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md",
+        "fileName": "maziyarpanahi-openmed-learnings.md"
       }
     }
   }

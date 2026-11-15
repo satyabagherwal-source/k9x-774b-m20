@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T21:06:43.568Z",
+  "last_updated": "2026-11-15T21:16:18.502Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-15T21:06:41.941Z",
@@ -23,8 +23,8 @@
       "staged_for_review": 1
     },
     "hf-minimaxai-minimax-h3-image-learnings.md": {
-      "processed_at": "2026-11-11T06:16:25.827Z",
-      "promoted_canonical": 0,
+      "processed_at": "2026-11-15T21:16:17.469Z",
+      "promoted_canonical": 1,
       "staged_for_review": 0
     },
     "hf-comfy-org-minimax-h3-image-learnings.md": {
@@ -978,7 +978,7 @@
       "staged_for_review": 1
     },
     "maziyarpanahi-openmed-learnings.md": {
-      "processed_at": "2026-11-12T08:53:59.620Z",
+      "processed_at": "2026-11-15T21:16:17.811Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1028,7 +1028,7 @@
       "staged_for_review": 1
     },
     "ntex-rs-ntex-learnings.md": {
-      "processed_at": "2026-11-13T21:50:24.183Z",
+      "processed_at": "2026-11-15T21:15:46.406Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3068,7 +3068,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1128,
-  "total_canonical_promoted": 272,
-  "total_staged_for_review": 856
+  "total_dossiers_evaluated": 1131,
+  "total_canonical_promoted": 273,
+  "total_staged_for_review": 858
 }

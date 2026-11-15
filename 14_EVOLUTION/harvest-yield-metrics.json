@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T20:51:05.396Z",
-  "total_cycles_completed": 9761,
-  "total_learnings_persisted": 9761,
-  "total_rules_promoted": 9380,
+  "last_updated": "2026-11-15T21:15:43.146Z",
+  "total_cycles_completed": 9765,
+  "total_learnings_persisted": 9765,
+  "total_rules_promoted": 9383,
   "history": [
-    {
-      "timestamp": "2026-11-14T17:39:55.394Z",
-      "repository": "pola-rs/polars",
-      "learningId": "learn-github-pola-rs-polars",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T17:40:09.689Z",
-      "repository": "yugabyte/yugabyte-db",
-      "learningId": "learn-github-yugabyte-yugabyte-db",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T17:51:05.343Z",
-      "repository": "unsloth/embeddinggemma-2-GGUF",
-      "learningId": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T17:51:07.778Z",
-      "repository": "apache/arrow",
-      "learningId": "learn-github-apache-arrow",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T17:51:23.430Z",
       "repository": "GreptimeTeam/greptimedb",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-15T20:51:05.396Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T21:15:33.357Z",
+      "repository": "MiniMaxAI/MiniMax-H3-Image",
+      "learningId": "learn-huggingface-minimaxai-minimax-h3-image",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T21:15:35.104Z",
+      "repository": "ntex-rs/ntex",
+      "learningId": "learn-github-ntex-rs-ntex",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T21:15:40.816Z",
+      "repository": "maziyarpanahi/openmed",
+      "learningId": "learn-github-maziyarpanahi-openmed",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T21:15:43.146Z",
+      "repository": "skyhook-io/radar",
+      "learningId": "learn-github-skyhook-io-radar",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
