@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T13:27:27.873Z",
-  "total_cycles_completed": 9716,
-  "total_learnings_persisted": 9716,
+  "last_updated": "2026-11-15T13:39:37.832Z",
+  "total_cycles_completed": 9717,
+  "total_learnings_persisted": 9717,
   "total_rules_promoted": 9346,
   "history": [
-    {
-      "timestamp": "2026-11-14T12:34:03.354Z",
-      "repository": "projectdiscovery/nuclei",
-      "learningId": "learn-github-projectdiscovery-nuclei",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T12:57:27.312Z",
       "repository": "argmaxinc/whisperkit-coreml",
@@ -1403,6 +1396,13 @@
       "repository": "zeromicro/go-zero",
       "learningId": "learn-github-zeromicro-go-zero",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T13:39:37.832Z",
+      "repository": "ccore/Qwen3.5-4B-GLB-3D-Coder",
+      "learningId": "learn-huggingface-ccore-qwen3-5-4b-glb-3d-coder",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

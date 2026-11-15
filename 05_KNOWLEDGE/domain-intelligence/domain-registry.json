@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-15T13:27:58.775Z",
-  "total_records": 1053,
+  "last_updated": "2026-11-15T13:40:26.328Z",
+  "total_records": 1056,
   "domains": {
     "A": {
       "total": 7,
@@ -37,7 +37,7 @@
       ]
     },
     "D": {
-      "total": 517,
+      "total": 520,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -555,7 +555,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-sensenova-sensenova-loop-9b-preview-learnings",
         "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-vl-2b-core-invariants",
         "DOM-D-98B9F9F9",
-        "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-vl-2b-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-vl-2b-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-ccore-qwen3-5-4b-glb-3d-coder-core-invariants",
+        "DOM-D-55AF5812",
+        "domain_intelligence-research-knowledge-intelligence-hf-ccore-qwen3-5-4b-glb-3d-coder-learnings-core-"
       ]
     },
     "E": {
@@ -6868,8 +6871,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "8bae5179083da4824e8d210ee5fb56d416d8b213a4944ee1c8411a8269a70947",
-      "created_at": "2026-11-15T12:13:20.997Z"
+      "content_hash": "35b848106a965ed8ffabba76667100eceb1f52ddc25e64327ecf048e2a719918",
+      "created_at": "2026-11-15T13:40:26.328Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -7786,8 +7789,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "0aad2cee4c49dfd7432d61a868fe3ebd980108997d1cc48f75096b7702d49ed5",
-      "created_at": "2026-11-15T12:54:35.363Z"
+      "content_hash": "34ce6a169dd5d2e79571c924db758094cb5c6cbf381788261d3b7cde1295a8bc",
+      "created_at": "2026-11-15T13:40:25.631Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -20216,6 +20219,66 @@
       "repository": "hf-liquidai-lfm3-vl-2b-learnings",
       "content_hash": "6ba2e50887d7fc28da8a48127ac7814e9451ba2da350ad97cd9f073d03c8fce8",
       "created_at": "2026-11-15T13:27:57.474Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-ccore-qwen3-5-4b-glb-3d-coder-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-ccore-qwen3-5-4b-glb-3d-coder-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: ccore/Qwen3.5-4B-GLB-3D-Coder Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ccore-qwen3-5-4b-glb-3d-coder-research-knowledge-intelligence-ccore-qwen3-5-4.md",
+      "repository": "ccore/Qwen3.5-4B-GLB-3D-Coder",
+      "content_hash": "1d192bbd60c5579d361461f6eaf14c37693e04a71935ef41745337bc55ed7970",
+      "created_at": "2026-11-15T13:39:38.046Z"
+    },
+    "DOM-D-55AF5812": {
+      "record_id": "DOM-D-55AF5812",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): ccore/Qwen3.5-4B-GLB-3D-Coder",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-glb-3d-coder-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/ccore/Qwen3.5-4B-GLB-3D-Coder](https://huggingface.co/ccore/Qwen3.5-4B-GLB-3D-Coder))  \n> **Source Version**: `hf-ccore-qwe`  \n> **License**: Op",
+      "content_hash": "1563ec67a22703c5bb3d8d30cd271084c9287f3591648850261d132b5c625b6c",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-glb-3d-coder-learnings.md`  \n> **Source**: huggingface ([https:/ -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-glb-3d-coder-learnings.md`  \n> **Source**: huggingface ([https:/",
+      "provenance": {
+        "source_uri": "project://hf-ccore-qwen3.5-4b-glb-3d-coder/hf-ccore-qwen3.5-4b-glb-3d-coder-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-15T13:39:49.403Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-ccore-qwen3.5-4b-glb-3d-coder)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-ccore-qwen3.5-4b-glb-3d-coder"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-15T13:40:24.585Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-ccore-qwen3-5-4b-glb-3d-coder-learnings-core-": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-ccore-qwen3-5-4b-glb-3d-coder-learnings-core-",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-ccore-qwen3.5-4b-glb-3d-coder-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ccore-qwen3-5-4b-glb-3d-coder-learnings-research-knowledge-intelligence-hf-cc.md",
+      "repository": "hf-ccore-qwen3.5-4b-glb-3d-coder-learnings",
+      "content_hash": "356978fbd01b37dba2ed25554cd5e303ebe90a5b59360ee34457a9b74c4da471",
+      "created_at": "2026-11-15T13:40:24.865Z"
     }
   }
 }

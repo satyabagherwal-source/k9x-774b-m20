@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-15T13:27:57.752Z",
+  "updated_at": "2026-11-15T13:40:24.623Z",
   "stats": {
-    "total_discovered": 3707,
-    "approved_pending_harvest": 3497,
+    "total_discovered": 3708,
+    "approved_pending_harvest": 3498,
     "harvested_count": 0,
     "rejected_count": 210,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3476,
+      "COMMUNITY_AND_EXPERT": 3477,
       "OFFICIAL_DOCUMENTATION": 126,
       "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
@@ -80105,6 +80105,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md",
         "fileName": "zeromicro-go-zero-learnings.md"
+      }
+    },
+    "SRC-D8F851D0F37A": {
+      "id": "SRC-D8F851D0F37A",
+      "url": "https://huggingface.co/ccore/Qwen3.5-4B-GLB-3D-Coder",
+      "title": "https://huggingface.co/ccore/Qwen3.5-4B-GLB-3D-Coder",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-15T13:40:24.623Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-glb-3d-coder-learnings.md",
+        "fileName": "hf-ccore-qwen3.5-4b-glb-3d-coder-learnings.md"
       }
     }
   }

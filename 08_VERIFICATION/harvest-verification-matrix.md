@@ -10099,3 +10099,5 @@
 | `CYCLE-20261115-CVIT` | `2026-11-15T13:27:18.677Z` | `LiquidAI/LFM3-VL-2B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm3-vl-2b-learnings.md` | Yes (`0635b947...`) |
 | `CYCLE-20261115-D2M0` | `2026-11-15T13:27:27.864Z` | `zeromicro/go-zero` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8618` | Yes (`7f90b2af...`) |
 | `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T13:27:57.286Z` | `hf-liquidai-lfm3-vl-2b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-98B9F9F9` [Domain D] | Yes (`59705ab6...`) |
+| `CYCLE-20261115-SPUM` | `2026-11-15T13:39:37.822Z` | `ccore/Qwen3.5-4B-GLB-3D-Coder` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-glb-3d-coder-learnings.md` | Yes (`c0c86b71...`) |
+| `CYCLE-2026-11-15-PROJ-EVOLVE` | `2026-11-15T13:40:24.606Z` | `hf-ccore-qwen3.5-4b-glb-3d-coder` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-55AF5812` [Domain D] | Yes (`1563ec67...`) |

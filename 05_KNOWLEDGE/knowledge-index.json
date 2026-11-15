@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-15T13:27:58.775Z",
-  "total_verified_learnings": 8697,
+  "last_updated": "2026-11-15T13:40:26.477Z",
+  "total_verified_learnings": 8698,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18401,
+  "total_items": 18404,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112155,9 +112155,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "8bae5179083da4824e8d210ee5fb56d416d8b213a4944ee1c8411a8269a70947",
+      "content_hash": "35b848106a965ed8ffabba76667100eceb1f52ddc25e64327ecf048e2a719918",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T12:13:20.997Z"
+      "persisted_at": "2026-11-15T13:40:26.328Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112167,9 +112167,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "d2429b61d539a72e19ceb365b81a37ec23f8cc51f84b72d58dca987a9368114b",
+      "content_hash": "c81bb58946f72491bd47b314a0d04440ed6a15c068497c096b99911f0eacfcc2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T12:13:21.141Z"
+      "persisted_at": "2026-11-15T13:40:26.477Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -113663,13 +113663,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-6SK6-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-TQMK-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "ce8dbbc007ddada3fa1d49c05965cad74863da5893f7208423d48f12f8abc0d5",
+      "content_hash": "3fbcb84fcd23fca3fb5fa921daac316037262e89c8e4ea2f414e761610a3fb14",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T12:54:35.290Z"
+      "persisted_at": "2026-11-15T13:40:25.494Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113679,9 +113679,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "0aad2cee4c49dfd7432d61a868fe3ebd980108997d1cc48f75096b7702d49ed5",
+      "content_hash": "34ce6a169dd5d2e79571c924db758094cb5c6cbf381788261d3b7cde1295a8bc",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T12:54:35.363Z"
+      "persisted_at": "2026-11-15T13:40:25.631Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113691,9 +113691,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "19a750d91b15624ad82d41f41ac88649b8f88bacbdc4da9bad24ea01e1fddddf",
+      "content_hash": "98dc1cf368d23257a67631d62b634678a12b6e0e199641c128c72b2d44462655",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T12:54:35.442Z"
+      "persisted_at": "2026-11-15T13:40:25.781Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -214776,13 +214776,13 @@
       "item_id": "candidate_directive-puppet-fix-postgresql-failing-to-start-on-new-installs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-PRA4-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-TR5X-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
       "title": "puppet: Fix PostgreSQL failing to start on new installs.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "d4857adddd1bc4b0b0c23bc877f4ac5ffa38b079dcd4f07e8b65ae29534b3d87",
+      "content_hash": "34abb462ae00b948d39fe3629038ffbb4bcb5e83468f3873018ac5a3a6de6825",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T12:13:20.865Z"
+      "persisted_at": "2026-11-15T13:40:26.190Z"
     },
     "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
@@ -243449,6 +243449,57 @@
       "content_hash": "5d0bdee08dbd9e0859eb32cc30ef18ce56bb30897e9a471332ce0e7ae5b89db9",
       "domain_letter": "G",
       "persisted_at": "2026-11-15T13:27:57.933Z"
+    },
+    "learn-huggingface-ccore-qwen3-5-4b-glb-3d-coder": {
+      "learning_id": "learn-huggingface-ccore-qwen3-5-4b-glb-3d-coder",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "ccore/Qwen3.5-4B-GLB-3D-Coder",
+      "repository": "ccore/Qwen3.5-4B-GLB-3D-Coder",
+      "slug": "hf-ccore-qwen3.5-4b-glb-3d-coder",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/ccore/Qwen3.5-4B-GLB-3D-Coder",
+      "source_version": "hf-ccore-qwen3.5-4b-glb-3d-coder",
+      "content_hash": "c0c86b7118fcc68b8ee90dd0fa84d0d8f2bad0ae7677e3c0c4ca25e7c11bc66e",
+      "dossier_path": "07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-glb-3d-coder-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-glb-3d-coder-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T13:39:37.614Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-ccore-qwen3-5-4b-glb-3d-coder-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-ccore-qwen3-5-4b-glb-3d-coder-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ccore-qwen3-5-4b-glb-3d-coder-research-knowledge-intelligence-ccore-qwen3-5-4.md",
+      "title": "Research & Knowledge Intelligence: ccore/Qwen3.5-4B-GLB-3D-Coder Core Invariants",
+      "repository": "ccore/Qwen3.5-4B-GLB-3D-Coder",
+      "source_version": "hf-ccore-qwen3.5-4b-glb-3d-coder",
+      "content_hash": "1d192bbd60c5579d361461f6eaf14c37693e04a71935ef41745337bc55ed7970",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T13:39:38.046Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-ccore-qwen3-5-4b-glb-3d-coder-learnings-core-": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-ccore-qwen3-5-4b-glb-3d-coder-learnings-core-",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ccore-qwen3-5-4b-glb-3d-coder-learnings-research-knowledge-intelligence-hf-cc.md",
+      "title": "Research & Knowledge Intelligence: hf-ccore-qwen3.5-4b-glb-3d-coder-learnings Core Invariants",
+      "repository": "hf-ccore-qwen3.5-4b-glb-3d-coder-learnings",
+      "source_version": "HEAD",
+      "content_hash": "356978fbd01b37dba2ed25554cd5e303ebe90a5b59360ee34457a9b74c4da471",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-15T13:40:24.865Z"
     }
   },
   "ai-builder-brain": {

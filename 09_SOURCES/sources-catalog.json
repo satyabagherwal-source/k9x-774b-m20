@@ -12015,8 +12015,8 @@
     "sourceUrl": "https://huggingface.co/ccore/Qwen3.5-4B-GLB-3D-Coder",
     "sourceVersion": "hf-ccore-qwen3.5-4b-glb-3d-coder",
     "license": "Open-Source",
-    "contentHash": "503bc0f225bee856d7b4413b941c3d86fd403442a553235c72e89e7dc59dc192",
-    "lastHarvestedAt": "2026-11-09T23:17:47.183Z",
+    "contentHash": "c0c86b7118fcc68b8ee90dd0fa84d0d8f2bad0ae7677e3c0c4ca25e7c11bc66e",
+    "lastHarvestedAt": "2026-11-15T13:39:37.826Z",
     "learningId": "learn-huggingface-ccore-qwen3-5-4b-glb-3d-coder"
   },
   "davila7-claude-code-templates": {
