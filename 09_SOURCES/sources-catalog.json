@@ -4743,10 +4743,10 @@
     "repository": "pimalaya/himalaya",
     "platform": "github",
     "sourceUrl": "https://github.com/pimalaya/himalaya",
-    "sourceVersion": "7518aee3",
+    "sourceVersion": "8e8bdb37",
     "license": "Apache-2.0",
-    "contentHash": "eb3b2de305b0a70f1b393984ce6763435d16805f502404d0597881bc3e25549f",
-    "lastHarvestedAt": "2026-11-13T17:24:41.951Z",
+    "contentHash": "d260d27e945dba5d3a1d50bb38ddcb85b86810bbe495ba08eba27f449d722231",
+    "lastHarvestedAt": "2026-11-15T14:56:01.874Z",
     "learningId": "learn-github-pimalaya-himalaya"
   },
   "shopify-react-native-skia": {
@@ -12618,5 +12618,15 @@
     "contentHash": "13e1d5169468e38812cdfa41d8b106e8dc7eb78b994b460c10c8ce0655923f50",
     "lastHarvestedAt": "2026-11-15T14:25:39.800Z",
     "learningId": "learn-github-tencent-loopforge"
+  },
+  "seo-skills-seo-audit-skill": {
+    "repository": "seo-skills/seo-audit-skill",
+    "platform": "github",
+    "sourceUrl": "https://github.com/seo-skills/seo-audit-skill",
+    "sourceVersion": "4a69dc96",
+    "license": "MIT",
+    "contentHash": "f0576e7c724480e6d241a6526a39c230f00768d82dc0051053f73b26c95c72b1",
+    "lastHarvestedAt": "2026-11-15T14:56:03.572Z",
+    "learningId": "learn-github-seo-skills-seo-audit-skill"
   }
 }

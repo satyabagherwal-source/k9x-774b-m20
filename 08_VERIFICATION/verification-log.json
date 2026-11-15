@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261110-0HS8",
-    "timestamp": "2026-11-10T04:59:26.600Z",
-    "repository": "pyannote/speaker-diarization-3.1",
-    "learningId": "learn-huggingface-pyannote-speaker-diarization-3-1",
-    "contentHash": "10fe6053571c03bc41d31bfbff823b73985029bb6e267ea34df852e9fde4f4a3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261110-9OZL",
-    "timestamp": "2026-11-10T05:06:35.841Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "97d03cef09c292aa60580ecae2579a72ab7ed8f7b0525bca8e5977b810922c65",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261110-JKGQ",
     "timestamp": "2026-11-10T05:14:16.538Z",
     "repository": "bahdotsh/wrkflw",
@@ -7492,6 +7462,36 @@
     "contentHash": "5a444e051d43c0e5d9fc1f3cb214374ca33bbf45bf56c412b99268a17b11d215",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-IYXA",
+    "timestamp": "2026-11-15T14:56:01.870Z",
+    "repository": "pimalaya/himalaya",
+    "learningId": "learn-github-pimalaya-himalaya",
+    "contentHash": "d260d27e945dba5d3a1d50bb38ddcb85b86810bbe495ba08eba27f449d722231",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261115-J08G",
+    "timestamp": "2026-11-15T14:56:03.568Z",
+    "repository": "seo-skills/seo-audit-skill",
+    "learningId": "learn-github-seo-skills-seo-audit-skill",
+    "contentHash": "f0576e7c724480e6d241a6526a39c230f00768d82dc0051053f73b26c95c72b1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

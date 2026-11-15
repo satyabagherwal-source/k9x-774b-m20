@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-15T14:37:12.399Z",
+  "updated_at": "2026-11-15T14:56:40.644Z",
   "statistics": {
-    "total_nodes": 259,
+    "total_nodes": 260,
     "total_edges": 142,
     "domain_distribution": {
       "D": 204,
       "M": 1,
       "H": 22,
       "J": 10,
-      "K": 10,
+      "K": 11,
       "L": 3,
       "G": 1,
       "F": 6,
@@ -5817,6 +5817,28 @@
       ],
       "created_at": "2026-11-15T14:37:12.398Z",
       "updated_at": "2026-11-15T14:37:12.398Z"
+    },
+    "DOM-K-8A108F40": {
+      "id": "DOM-K-8A108F40",
+      "domain": "K",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "none: Start an audit as soon as the server listens A URL without a scheme is an error",
+      "summary": "Start an audit as soon as the server listens. A URL without a scheme is an error that suggests the `https://` form. -> Start an audit as soon as the server listens. A URL without a scheme is an error that suggests the `https://` form.",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://seo-skills-seo-audit-skill/seo-skills-seo-audit-skill-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "`--audit <url>`",
+        "author_or_entity": "AI-Builder-Brain Project Learning (seo-skills-seo-audit-skill)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "K",
+        "Quality & Verification Intelligence"
+      ],
+      "created_at": "2026-11-15T14:56:40.644Z",
+      "updated_at": "2026-11-15T14:56:40.644Z"
     }
   },
   "edges": [

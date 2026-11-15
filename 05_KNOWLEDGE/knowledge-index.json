@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-15T14:37:13.865Z",
-  "total_verified_learnings": 8700,
+  "last_updated": "2026-11-15T14:56:42.007Z",
+  "total_verified_learnings": 8702,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 18420,
+  "total_items": 18429,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -15447,22 +15447,31 @@
     "learn-github-seo-skills-seo-audit-skill": {
       "learning_id": "learn-github-seo-skills-seo-audit-skill",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "seo-skills/seo-audit-skill",
       "repository": "seo-skills/seo-audit-skill",
       "slug": "seo-skills-seo-audit-skill",
       "platform": "github",
       "source_url": "https://github.com/seo-skills/seo-audit-skill",
-      "source_version": "fac4b75f20",
-      "content_hash": "29f6cad735a2b047a91002ecae561e5fe8b1f4b083ce2d51a4be468e510256d3",
+      "source_version": "4a69dc96",
+      "content_hash": "f0576e7c724480e6d241a6526a39c230f00768d82dc0051053f73b26c95c72b1",
       "dossier_path": "07_PROJECT_LEARNING/seo-skills-seo-audit-skill-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/seo-skills-seo-audit-skill-learnings.md",
       "promoted_rules": [
         1610
       ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T05:30:30.975Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T14:56:03.428Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-bourd-dev-seo-skills": {
       "learning_id": "learn-github-bourd-dev-seo-skills",
@@ -113663,13 +113672,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-G9P7-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-JTPJ-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "b7f1a81c080c9e6b2e928c5fe04b91e6348abacca7a25a51cfc7e0ef6992dd00",
+      "content_hash": "9b5b8f4cc5914a5ffabdbbea0590eaa3be8f6106385e82ca8c5b58ec2363c6af",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T14:25:56.253Z"
+      "persisted_at": "2026-11-15T14:56:41.778Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113679,9 +113688,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "fad89b8256394f337a42e0556986bfcbee9ae4d021ce4ed19d6223826bee197a",
+      "content_hash": "cc87341a3facd46152f8682c8993d50270e4161549d1947282dd34d9c8494c28",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T14:25:56.353Z"
+      "persisted_at": "2026-11-15T14:56:41.886Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113691,9 +113700,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "62d615fa79b205137b98283de6999a89c365609f025d15bff46e98d9469fd63e",
+      "content_hash": "20266f1bec8d200356d1f52ae8c0c0c8baf07fbb53fc46c6fdd0b362537f49ce",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T14:25:56.461Z"
+      "persisted_at": "2026-11-15T14:56:42.007Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -113894,10 +113903,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-pimalaya-himalaya-product-intelligence-pimalaya-himalaya-core-invariants.md",
       "title": "Product Intelligence: pimalaya/himalaya Core Invariants",
       "repository": "pimalaya/himalaya",
-      "source_version": "7518aee3",
-      "content_hash": "ddf85dd4f58819f5bc6481d967c1e21d31fefd4f3e33804ff830bb6764711310",
+      "source_version": "8e8bdb37",
+      "content_hash": "a61cd1a7836a2b44d9dcabae84a0663565769ab6c5d56cbd0f0885545953ea56",
       "domain_letter": "B",
-      "persisted_at": "2026-11-13T17:24:42.273Z"
+      "persisted_at": "2026-11-15T14:56:02.156Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pimalaya-himalaya": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pimalaya-himalaya",
@@ -113906,10 +113915,10 @@
       "relative_path": "08_VERIFICATION/pimalaya-himalaya-verification-protocol-empirical-defect-shield-for-pimalaya-him.md",
       "title": "Verification Protocol: Empirical Defect Shield for pimalaya/himalaya",
       "repository": "pimalaya/himalaya",
-      "source_version": "7518aee3",
-      "content_hash": "92898f3f097c128c6045ffed412c96695b5651fd61bd6216ab89f0d5b2e6b10f",
+      "source_version": "8e8bdb37",
+      "content_hash": "0ce7883896ff27492439afd3a98fac7beba9a4b325550b931aeec75cd9b80bb2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T17:24:42.371Z"
+      "persisted_at": "2026-11-15T14:56:02.261Z"
     },
     "candidate_directive-report-zero-progress-for-zero-height-android-keyboards-1731": {
       "item_id": "candidate_directive-report-zero-progress-for-zero-height-android-keyboards-1731",
@@ -113955,9 +113964,9 @@
       "title": "Product Intelligence: pimalaya-himalaya-learnings Core Invariants",
       "repository": "pimalaya-himalaya-learnings",
       "source_version": "HEAD",
-      "content_hash": "f59745061176fb4a6b8bfb38f05ff0e985c80ce83dc19826db949988adafeb63",
+      "content_hash": "6183ffcd1ec39a0dd7911dbec63ec241d381b7f59b8578848ff904259cb58d3e",
       "domain_letter": "B",
-      "persisted_at": "2026-11-13T17:24:52.244Z"
+      "persisted_at": "2026-11-15T14:56:12.641Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pimalaya-himalaya-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pimalaya-himalaya-learnings",
@@ -113967,9 +113976,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for pimalaya-himalaya-learnings",
       "repository": "pimalaya-himalaya-learnings",
       "source_version": "HEAD",
-      "content_hash": "4c1d0173f01d1cff9211fcd5c4afd6eb7e22d90be0fb2887a40b42ae101b8de6",
+      "content_hash": "b631679cf6f2d8f380e50bbec2f9950df46daa2967d08e1f1cb5b822452850cd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T17:24:52.341Z"
+      "persisted_at": "2026-11-15T14:56:12.744Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-ming-image-0-1-design-learnings-c": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-ming-image-0-1-design-learnings-c",
@@ -243744,6 +243753,137 @@
       "content_hash": "26e3fd53e1a8b7d46303a5d5ca43fcb11b1740f49898b775a208de7b1629584c",
       "domain_letter": "G",
       "persisted_at": "2026-11-15T14:37:12.624Z"
+    },
+    "learn-github-pimalaya-himalaya": {
+      "learning_id": "learn-github-pimalaya-himalaya",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "pimalaya/himalaya",
+      "repository": "pimalaya/himalaya",
+      "slug": "pimalaya-himalaya",
+      "platform": "github",
+      "source_url": "https://github.com/pimalaya/himalaya",
+      "source_version": "8e8bdb37",
+      "content_hash": "d260d27e945dba5d3a1d50bb38ddcb85b86810bbe495ba08eba27f449d722231",
+      "dossier_path": "07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8622,
+          "title": "run a credential command shared by IMAP and SMTP once",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-15T14:56:01.709Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8622": {
+      "learning_id": "rule-8622",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8622,
+      "title": "run a credential command shared by IMAP and SMTP once",
+      "source_url": "https://github.com/pimalaya/himalaya",
+      "source_version": "8e8bdb37",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-15T14:56:01.709Z"
+    },
+    "candidate_directive-run-a-credential-command-shared-by-imap-and-smtp-once": {
+      "item_id": "candidate_directive-run-a-credential-command-shared-by-imap-and-smtp-once",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-J75I-run-a-credential-command-shared-by-imap-and-smtp-once.md",
+      "title": "run a credential command shared by IMAP and SMTP once",
+      "repository": "pimalaya-himalaya-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9c14fb544baa30ffb9189c9fe3ca6e71855ee75888def984b27c251de05ce79a",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-15T14:56:12.538Z"
+    },
+    "candidate_directive-make-the-browser-render-opt-in-with-cwv": {
+      "item_id": "candidate_directive-make-the-browser-render-opt-in-with-cwv",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-J0DM-make-the-browser-render-opt-in-with-cwv.md",
+      "title": "make the browser render opt-in with --cwv",
+      "repository": "seo-skills/seo-audit-skill",
+      "source_version": "4a69dc96",
+      "content_hash": "56d30c9be273e48ebc9db307cd2012af1fcfbf4d216834dcb1e1e91abc42edff",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T14:56:03.757Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-seo-skills-seo-audit-skill-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-seo-skills-seo-audit-skill-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-seo-skills-seo-audit-skill-quality-verification-intelligence-seo-skills-seo-audi.md",
+      "title": "Quality & Verification Intelligence: seo-skills/seo-audit-skill Core Invariants",
+      "repository": "seo-skills/seo-audit-skill",
+      "source_version": "4a69dc96",
+      "content_hash": "a33272c8b3c5f967278a790cd9ffccf7d3ca77710c7bdf470e61874caeeb2264",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T14:56:03.853Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-seo-skills-seo-audit-skill": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-seo-skills-seo-audit-skill",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/seo-skills-seo-audit-skill-verification-protocol-empirical-defect-shield-for-seo.md",
+      "title": "Verification Protocol: Empirical Defect Shield for seo-skills/seo-audit-skill",
+      "repository": "seo-skills/seo-audit-skill",
+      "source_version": "4a69dc96",
+      "content_hash": "4639a261c2ea4d2f2904df4059c20532cc345204e26cead96a2beda43b9f6896",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T14:56:03.952Z"
+    },
+    "candidate_directive-cli-make-the-browser-render-opt-in-with-cwv": {
+      "item_id": "candidate_directive-cli-make-the-browser-render-opt-in-with-cwv",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-JT6N-cli-make-the-browser-render-opt-in-with-cwv.md",
+      "title": "cli): make the browser render opt-in with --cwv",
+      "repository": "seo-skills-seo-audit-skill-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e72ad66c2f17fa2f7816f36db07ec4a76ae0040871e9808a26d906fe38adda6b",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T14:56:41.098Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-seo-skills-seo-audit-skill-learnings-core-inva": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-seo-skills-seo-audit-skill-learnings-core-inva",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-seo-skills-seo-audit-skill-learnings-quality-verification-intelligence-seo-skill.md",
+      "title": "Quality & Verification Intelligence: seo-skills-seo-audit-skill-learnings Core Invariants",
+      "repository": "seo-skills-seo-audit-skill-learnings",
+      "source_version": "HEAD",
+      "content_hash": "844fb3e90b020019fe3d044dda1fb62d278cc7a1801cd5590212cd58b3a725fe",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T14:56:41.206Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-seo-skills-seo-audit-skill-lea": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-seo-skills-seo-audit-skill-lea",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/seo-skills-seo-audit-skill-learnings-verification-protocol-empirical-defect-shie.md",
+      "title": "Verification Protocol: Empirical Defect Shield for seo-skills-seo-audit-skill-learnings",
+      "repository": "seo-skills-seo-audit-skill-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8be642e62e3e8f5d8c0976c0b00a1112dc31c8a309962d22ccf41bf007c0e09a",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-15T14:56:41.324Z"
     }
   },
   "ai-builder-brain": {

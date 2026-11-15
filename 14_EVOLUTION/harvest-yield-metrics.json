@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-15T14:36:40.965Z",
-  "total_cycles_completed": 9721,
-  "total_learnings_persisted": 9721,
-  "total_rules_promoted": 9349,
+  "last_updated": "2026-11-15T14:56:03.585Z",
+  "total_cycles_completed": 9723,
+  "total_learnings_persisted": 9723,
+  "total_rules_promoted": 9350,
   "history": [
-    {
-      "timestamp": "2026-11-14T13:29:08.444Z",
-      "repository": "dosco/graphjin",
-      "learningId": "learn-github-dosco-graphjin",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T13:38:43.101Z",
-      "repository": "react/metro",
-      "learningId": "learn-github-react-metro",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T13:38:46.605Z",
       "repository": "google/vit-base-patch16-224",
@@ -1403,6 +1389,20 @@
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T14:56:01.879Z",
+      "repository": "pimalaya/himalaya",
+      "learningId": "learn-github-pimalaya-himalaya",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-15T14:56:03.585Z",
+      "repository": "seo-skills/seo-audit-skill",
+      "learningId": "learn-github-seo-skills-seo-audit-skill",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

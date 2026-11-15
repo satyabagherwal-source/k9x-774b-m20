@@ -10139,3 +10139,6 @@ Every entry in this ledger must capture:
 | `learn-github-momenbasel-puremac` | `https://github.com/momenbasel/PureMac` | `656ec5b1` | Multi-dimensional audit evidence | 2026-11-15T14:36:30.716Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `d594b14b` | Multi-dimensional audit evidence | 2026-11-15T14:36:40.961Z |
 | `learn-dom-d-e86c357a` | `project://momenbasel-puremac` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/momenbasel-puremac-learnings.md` | 2026-11-15T14:37:12.400Z |
+| `learn-github-pimalaya-himalaya` | `https://github.com/pimalaya/himalaya` | `8e8bdb37` | Multi-dimensional audit evidence | 2026-11-15T14:56:01.874Z |
+| `learn-github-seo-skills-seo-audit-skill` | `https://github.com/seo-skills/seo-audit-skill` | `4a69dc96` | Multi-dimensional audit evidence | 2026-11-15T14:56:03.572Z |
+| `learn-dom-k-8a108f40` | `project://seo-skills-seo-audit-skill` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/seo-skills-seo-audit-skill-learnings.md` | 2026-11-15T14:56:40.646Z |
